@@ -1,601 +1,470 @@
 """
-GenomeVault Hypervector Binding Operations
+Binding operations for hyperdimensional computing
 
-Implements binding, bundling, and permutation operations for hyperdimensional computing
-to create composite representations across modalities.
+This module implements various binding operations that combine hypervectors
+while preserving their mathematical properties and biological relationships.
 """
 
+import torch
 import numpy as np
-from typing import List, Dict, Optional, Tuple, Union
-from scipy.fft import fft, ifft
-from functools import reduce
+from typing import List, Dict, Tuple, Optional, Union
+from enum import Enum
 
-from ..utils import get_logger
-from .encoding import Hypervector, VectorType
+from core.exceptions import BindingError
+from utils.logging import get_logger
 
 logger = get_logger(__name__)
 
 
-class HypervectorOperations:
-    """Core operations for hyperdimensional computing"""
+class BindingType(Enum):
+    """Types of binding operations"""
+    MULTIPLY = "multiply"          # Element-wise multiplication
+    CIRCULAR = "circular"          # Circular convolution
+    PERMUTATION = "permutation"    # Permutation-based binding
+    XOR = "xor"                   # XOR for binary vectors
+    FOURIER = "fourier"           # Fourier-based binding
+
+
+class HypervectorBinder:
+    """
+    Implements binding operations for hyperdimensional computing
     
-    @staticmethod
-    def circular_convolution(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    Binding operations combine multiple hypervectors into a single vector
+    that represents their relationship while maintaining reversibility.
+    """
+    
+    def __init__(self, dimension: int = 10000):
         """
-        Circular convolution for position-aware binding
-        
-        Uses FFT for efficient computation:
-        a ⊛ b = IFFT(FFT(a) ⊙ FFT(b))
+        Initialize the binder
         
         Args:
-            a: First hypervector
-            b: Second hypervector
+            dimension: Expected dimension of hypervectors
+        """
+        self.dimension = dimension
+        self._permutation_cache = {}
+        
+        logger.info(f"Initialized HypervectorBinder for {dimension}D vectors")
+    
+    def bind(self, vectors: List[torch.Tensor],
+             binding_type: BindingType = BindingType.CIRCULAR,
+             weights: Optional[List[float]] = None) -> torch.Tensor:
+        """
+        Bind multiple hypervectors together
+        
+        Args:
+            vectors: List of hypervectors to bind
+            binding_type: Type of binding operation
+            weights: Optional weights for weighted binding
             
         Returns:
             Bound hypervector
         """
-        if len(a) != len(b):
-            raise ValueError(f"Vectors must have same dimension: {len(a)} vs {len(b)}")
+        if not vectors:
+            raise BindingError("No vectors provided for binding")
         
-        # Use FFT for efficient circular convolution
-        fft_a = fft(a)
-        fft_b = fft(b)
-        result = ifft(fft_a * fft_b).real
+        # Validate dimensions
+        for i, v in enumerate(vectors):
+            if v.shape[-1] != self.dimension:
+                raise BindingError(
+                    f"Vector {i} has dimension {v.shape[-1]}, expected {self.dimension}"
+                )
+        
+        # Apply weights if provided
+        if weights is not None:
+            if len(weights) != len(vectors):
+                raise BindingError("Number of weights must match number of vectors")
+            vectors = [v * w for v, w in zip(vectors, weights)]
+        
+        # Perform binding based on type
+        if binding_type == BindingType.MULTIPLY:
+            result = self._multiply_bind(vectors)
+        elif binding_type == BindingType.CIRCULAR:
+            result = self._circular_bind(vectors)
+        elif binding_type == BindingType.PERMUTATION:
+            result = self._permutation_bind(vectors)
+        elif binding_type == BindingType.XOR:
+            result = self._xor_bind(vectors)
+        elif binding_type == BindingType.FOURIER:
+            result = self._fourier_bind(vectors)
+        else:
+            raise BindingError(f"Unknown binding type: {binding_type}")
+        
+        logger.debug(f"Bound {len(vectors)} vectors using {binding_type.value}")
+        return result
+    
+    def unbind(self, bound_vector: torch.Tensor,
+               known_vectors: List[torch.Tensor],
+               binding_type: BindingType = BindingType.CIRCULAR) -> torch.Tensor:
+        """
+        Unbind a vector given some known components
+        
+        Args:
+            bound_vector: The bound hypervector
+            known_vectors: List of known component vectors
+            binding_type: Type of binding used
+            
+        Returns:
+            The unknown component vector
+        """
+        if binding_type == BindingType.MULTIPLY:
+            return self._multiply_unbind(bound_vector, known_vectors)
+        elif binding_type == BindingType.CIRCULAR:
+            return self._circular_unbind(bound_vector, known_vectors)
+        elif binding_type == BindingType.PERMUTATION:
+            return self._permutation_unbind(bound_vector, known_vectors)
+        elif binding_type == BindingType.XOR:
+            return self._xor_unbind(bound_vector, known_vectors)
+        else:
+            raise BindingError(f"Unbinding not implemented for {binding_type}")
+    
+    def _multiply_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
+        """Element-wise multiplication binding"""
+        result = vectors[0].clone()
+        for v in vectors[1:]:
+            result = result * v
+        return result
+    
+    def _multiply_unbind(self, bound_vector: torch.Tensor,
+                        known_vectors: List[torch.Tensor]) -> torch.Tensor:
+        """Unbind using element-wise division"""
+        result = bound_vector.clone()
+        for v in known_vectors:
+            # Avoid division by zero
+            result = result / (v + 1e-8)
+        return result
+    
+    def _circular_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
+        """Circular convolution binding"""
+        if len(vectors) == 1:
+            return vectors[0]
+        
+        # Start with first vector
+        result = vectors[0]
+        
+        # Bind remaining vectors using circular convolution
+        for v in vectors[1:]:
+            result = self._circular_convolve(result, v)
         
         return result
     
-    @staticmethod
-    def element_wise_multiplication(a: np.ndarray, b: np.ndarray) -> np.ndarray:
-        """
-        Element-wise multiplication for feature-type binding
-        
-        Args:
-            a: First hypervector
-            b: Second hypervector
-            
-        Returns:
-            Bound hypervector
-        """
-        if len(a) != len(b):
-            raise ValueError(f"Vectors must have same dimension: {len(a)} vs {len(b)}")
-        
-        return a * b
+    def _circular_convolve(self, x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
+        """Perform circular convolution of two vectors"""
+        # Use FFT for efficient circular convolution
+        X = torch.fft.fft(x)
+        Y = torch.fft.fft(y)
+        Z = X * Y
+        z = torch.fft.ifft(Z).real
+        return z
     
-    @staticmethod
-    def bundling(vectors: List[np.ndarray], weights: Optional[List[float]] = None) -> np.ndarray:
+    def _circular_unbind(self, bound_vector: torch.Tensor,
+                        known_vectors: List[torch.Tensor]) -> torch.Tensor:
+        """Unbind using circular correlation (inverse of convolution)"""
+        result = bound_vector
+        
+        for v in known_vectors:
+            # Circular correlation is convolution with reversed vector
+            v_reversed = torch.cat([v[:1], v[1:].flip(0)])
+            result = self._circular_convolve(result, v_reversed)
+        
+        return result
+    
+    def _permutation_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
+        """Permutation-based binding"""
+        result = torch.zeros_like(vectors[0])
+        
+        for i, v in enumerate(vectors):
+            # Get permutation for this position
+            perm = self._get_permutation(i)
+            
+            # Apply permutation and add
+            result += v[perm]
+        
+        return result / len(vectors)
+    
+    def _permutation_unbind(self, bound_vector: torch.Tensor,
+                       known_vectors: List[torch.Tensor]) -> torch.Tensor:
+        """Unbind using inverse permutations"""
+        # Subtract contributions of known vectors
+        result = bound_vector * len(known_vectors + 1)
+        
+        for i, v in enumerate(known_vectors):
+            perm = self._get_permutation(i)
+            inv_perm = self._get_inverse_permutation(i)
+            result -= v[perm]
+        
+        # Apply inverse permutation for unknown position
+        unknown_pos = len(known_vectors)
+        inv_perm = self._get_inverse_permutation(unknown_pos)
+        
+        return result[inv_perm]
+    
+    def _xor_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
+        """XOR binding for binary vectors"""
+        # Convert to binary
+        binary_vectors = [torch.sign(v) > 0 for v in vectors]
+        
+        # XOR all vectors
+        result = binary_vectors[0]
+        for v in binary_vectors[1:]:
+            result = result ^ v
+        
+        # Convert back to {-1, +1}
+        return result.float() * 2 - 1
+    
+    def _xor_unbind(self, bound_vector: torch.Tensor,
+                   known_vectors: List[torch.Tensor]) -> torch.Tensor:
+        """XOR unbinding (XOR is its own inverse)"""
+        return self._xor_bind([bound_vector] + known_vectors)
+    
+    def _fourier_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
+        """Fourier domain binding"""
+        # Transform to frequency domain
+        freq_vectors = [torch.fft.fft(v) for v in vectors]
+        
+        # Multiply in frequency domain
+        result_freq = freq_vectors[0]
+        for fv in freq_vectors[1:]:
+            result_freq = result_freq * fv
+        
+        # Transform back
+        return torch.fft.ifft(result_freq).real
+    
+    def _get_permutation(self, position: int) -> torch.Tensor:
+        """Get deterministic permutation for a position"""
+        if position in self._permutation_cache:
+            return self._permutation_cache[position]
+        
+        # Create deterministic permutation based on position
+        torch.manual_seed(42 + position)  # Fixed seed + position
+        perm = torch.randperm(self.dimension)
+        
+        self._permutation_cache[position] = perm
+        return perm
+    
+    def _get_inverse_permutation(self, position: int) -> torch.Tensor:
+        """Get inverse of a permutation"""
+        perm = self._get_permutation(position)
+        inv_perm = torch.zeros_like(perm)
+        inv_perm[perm] = torch.arange(self.dimension)
+        return inv_perm
+    
+    def bundle(self, vectors: List[torch.Tensor],
+              normalize: bool = True) -> torch.Tensor:
         """
-        Bundle multiple hypervectors through weighted addition
+        Bundle vectors using superposition (addition)
         
         Args:
             vectors: List of hypervectors to bundle
-            weights: Optional weights for each vector
+            normalize: Whether to normalize the result
             
         Returns:
             Bundled hypervector
         """
         if not vectors:
-            raise ValueError("Cannot bundle empty list of vectors")
+            raise BindingError("No vectors provided for bundling")
         
-        if weights is None:
-            # Equal weighting
-            result = np.mean(vectors, axis=0)
-        else:
-            if len(weights) != len(vectors):
-                raise ValueError(f"Number of weights ({len(weights)}) must match vectors ({len(vectors)})")
-            
-            # Normalize weights
-            weights = np.array(weights)
-            weights = weights / np.sum(weights)
-            
-            # Weighted sum
-            result = np.zeros_like(vectors[0])
-            for vec, weight in zip(vectors, weights):
-                result += weight * vec
+        # Simple addition
+        result = torch.stack(vectors).sum(dim=0)
+        
+        # Normalize if requested
+        if normalize:
+            result = result / torch.norm(result)
         
         return result
     
-    @staticmethod
-    def permutation(vector: np.ndarray, shift: int = 1) -> np.ndarray:
+    def protect(self, vector: torch.Tensor, key: torch.Tensor) -> torch.Tensor:
         """
-        Cyclic permutation for sequence representation
+        Protect a hypervector using a key vector
         
         Args:
-            vector: Input hypervector
-            shift: Number of positions to shift (positive = right shift)
+            vector: Hypervector to protect
+            key: Key hypervector
             
         Returns:
-            Permuted hypervector
+            Protected hypervector
         """
-        return np.roll(vector, shift)
+        return self.bind([vector, key], BindingType.MULTIPLY)
     
-    @staticmethod
-    def inverse_permutation(vector: np.ndarray, shift: int = 1) -> np.ndarray:
+    def unprotect(self, protected: torch.Tensor, key: torch.Tensor) -> torch.Tensor:
         """
-        Inverse cyclic permutation
+        Unprotect a hypervector using the key
         
         Args:
-            vector: Input hypervector
-            shift: Number of positions to shift
+            protected: Protected hypervector
+            key: Key hypervector
             
         Returns:
-            Inverse permuted hypervector
+            Original hypervector
         """
-        return np.roll(vector, -shift)
-    
-    @staticmethod
-    def similarity(a: np.ndarray, b: np.ndarray, metric: str = 'cosine') -> float:
-        """
-        Calculate similarity between hypervectors
-        
-        Args:
-            a: First hypervector
-            b: Second hypervector
-            metric: Similarity metric ('cosine', 'hamming', 'euclidean')
-            
-        Returns:
-            Similarity score
-        """
-        if len(a) != len(b):
-            raise ValueError(f"Vectors must have same dimension: {len(a)} vs {len(b)}")
-        
-        if metric == 'cosine':
-            # Cosine similarity
-            norm_a = np.linalg.norm(a)
-            norm_b = np.linalg.norm(b)
-            if norm_a == 0 or norm_b == 0:
-                return 0.0
-            return np.dot(a, b) / (norm_a * norm_b)
-            
-        elif metric == 'hamming':
-            # Hamming distance (for binary vectors)
-            # Convert to binary first
-            binary_a = (a > 0).astype(int)
-            binary_b = (b > 0).astype(int)
-            hamming_dist = np.sum(binary_a != binary_b)
-            # Convert to similarity (0 to 1)
-            return 1.0 - (hamming_dist / len(a))
-            
-        elif metric == 'euclidean':
-            # Euclidean distance converted to similarity
-            dist = np.linalg.norm(a - b)
-            # Convert to similarity using exponential decay
-            return np.exp(-dist / len(a))
-            
-        else:
-            raise ValueError(f"Unknown similarity metric: {metric}")
-    
-    @staticmethod
-    def normalize(vector: np.ndarray, method: str = 'l2') -> np.ndarray:
-        """
-        Normalize hypervector
-        
-        Args:
-            vector: Input hypervector
-            method: Normalization method ('l2', 'l1', 'max')
-            
-        Returns:
-            Normalized hypervector
-        """
-        if method == 'l2':
-            norm = np.linalg.norm(vector)
-            if norm > 0:
-                return vector / norm
-            return vector
-            
-        elif method == 'l1':
-            norm = np.sum(np.abs(vector))
-            if norm > 0:
-                return vector / norm
-            return vector
-            
-        elif method == 'max':
-            max_val = np.max(np.abs(vector))
-            if max_val > 0:
-                return vector / max_val
-            return vector
-            
-        else:
-            raise ValueError(f"Unknown normalization method: {method}")
+        return self.unbind(protected, [key], BindingType.MULTIPLY)
 
 
-class BindingOperations:
-    """High-level binding operations for multi-modal data"""
+class PositionalBinder(HypervectorBinder):
+    """
+    Specialized binder for position-aware binding
     
-    def __init__(self):
-        """Initialize binding operations"""
-        self.ops = HypervectorOperations()
-        logger.info("Initialized BindingOperations")
+    Used for encoding sequential information like genomic positions
+    """
     
-    def bind_genomic_variant(self, 
-                           variant_vector: Hypervector,
-                           position_vector: Hypervector) -> Hypervector:
+    def __init__(self, dimension: int = 10000, max_positions: int = 1000000):
         """
-        Bind variant with positional information
+        Initialize positional binder
         
         Args:
-            variant_vector: Variant features hypervector
-            position_vector: Positional encoding hypervector
-            
-        Returns:
-            Position-aware variant hypervector
+            dimension: Hypervector dimension
+            max_positions: Maximum number of positions to support
         """
-        # Use circular convolution for position binding
-        bound_data = self.ops.circular_convolution(
-            variant_vector.data, 
-            position_vector.data
-        )
-        
-        return Hypervector(
-            vector_id=f"{variant_vector.vector_id}_pos_bound",
-            vector_type=VectorType.COMPOSITE,
-            dimensions=variant_vector.dimensions,
-            data=bound_data,
-            sparsity=0.0,
-            metadata={
-                'binding_type': 'position',
-                'source_vectors': [variant_vector.vector_id, position_vector.vector_id]
-            }
-        )
+        super().__init__(dimension)
+        self.max_positions = max_positions
+        self._position_vectors = {}
     
-    def bind_expression_context(self,
-                              expression_vector: Hypervector,
-                              tissue_vector: Hypervector,
-                              condition_vector: Optional[Hypervector] = None) -> Hypervector:
+    def bind_with_position(self, vector: torch.Tensor,
+                          position: int) -> torch.Tensor:
         """
-        Bind expression with tissue and condition context
+        Bind a vector with its position information
         
         Args:
-            expression_vector: Gene expression hypervector
-            tissue_vector: Tissue type encoding
-            condition_vector: Optional condition/disease context
+            vector: Hypervector to bind
+            position: Position index
             
         Returns:
-            Context-aware expression hypervector
+            Position-bound hypervector
         """
-        # First bind expression with tissue
-        tissue_bound = self.ops.element_wise_multiplication(
-            expression_vector.data,
-            tissue_vector.data
-        )
-        
-        if condition_vector is not None:
-            # Further bind with condition
-            final_data = self.ops.element_wise_multiplication(
-                tissue_bound,
-                condition_vector.data
-            )
-            source_vectors = [expression_vector.vector_id, tissue_vector.vector_id, condition_vector.vector_id]
-        else:
-            final_data = tissue_bound
-            source_vectors = [expression_vector.vector_id, tissue_vector.vector_id]
-        
-        return Hypervector(
-            vector_id=f"{expression_vector.vector_id}_context_bound",
-            vector_type=VectorType.COMPOSITE,
-            dimensions=expression_vector.dimensions,
-            data=final_data,
-            sparsity=0.0,
-            metadata={
-                'binding_type': 'context',
-                'source_vectors': source_vectors
-            }
-        )
+        pos_vector = self._get_position_vector(position)
+        return self.bind([vector, pos_vector], BindingType.CIRCULAR)
     
-    def create_temporal_sequence(self,
-                               vectors: List[Hypervector],
-                               time_deltas: Optional[List[float]] = None) -> Hypervector:
+    def bind_sequence(self, vectors: List[torch.Tensor],
+                     start_position: int = 0) -> torch.Tensor:
         """
-        Create temporal sequence representation
+        Bind a sequence of vectors with their positions
         
         Args:
-            vectors: List of hypervectors in temporal order
-            time_deltas: Optional time differences between measurements
+            vectors: List of hypervectors in sequence order
+            start_position: Starting position index
             
         Returns:
-            Temporal sequence hypervector
+            Sequence-bound hypervector
         """
-        if not vectors:
-            raise ValueError("Cannot create sequence from empty list")
-        
-        # Apply permutation based on position
-        permuted_vectors = []
-        for i, vec in enumerate(vectors):
-            # Shift increases with position in sequence
-            shift = i * (vec.dimensions // len(vectors))
-            permuted = self.ops.permutation(vec.data, shift)
-            
-            # Weight by time delta if provided
-            if time_deltas and i < len(time_deltas):
-                # Exponential decay based on time
-                weight = np.exp(-time_deltas[i] / 365.0)  # Decay over years
-                permuted = permuted * weight
-            
-            permuted_vectors.append(permuted)
-        
-        # Bundle all permuted vectors
-        sequence_data = self.ops.bundling(permuted_vectors)
-        
-        return Hypervector(
-            vector_id=f"temporal_sequence_{len(vectors)}",
-            vector_type=VectorType.COMPOSITE,
-            dimensions=vectors[0].dimensions,
-            data=sequence_data,
-            sparsity=0.0,
-            metadata={
-                'binding_type': 'temporal',
-                'sequence_length': len(vectors),
-                'source_vectors': [v.vector_id for v in vectors]
-            }
-        )
-    
-    def bind_multi_omics(self,
-                        genomic: Optional[Hypervector] = None,
-                        transcriptomic: Optional[Hypervector] = None,
-                        epigenetic: Optional[Hypervector] = None,
-                        proteomic: Optional[Hypervector] = None,
-                        phenotypic: Optional[Hypervector] = None,
-                        weights: Optional[Dict[str, float]] = None) -> Hypervector:
-        """
-        Create integrated multi-omics representation
-        
-        Args:
-            genomic: Genomic hypervector
-            transcriptomic: Transcriptomic hypervector
-            epigenetic: Epigenetic hypervector
-            proteomic: Proteomic hypervector
-            phenotypic: Phenotypic hypervector
-            weights: Optional weights for each modality
-            
-        Returns:
-            Integrated multi-omics hypervector
-        """
-        # Collect available modalities
-        modalities = {}
-        if genomic is not None:
-            modalities['genomic'] = genomic
-        if transcriptomic is not None:
-            modalities['transcriptomic'] = transcriptomic
-        if epigenetic is not None:
-            modalities['epigenetic'] = epigenetic
-        if proteomic is not None:
-            modalities['proteomic'] = proteomic
-        if phenotypic is not None:
-            modalities['phenotypic'] = phenotypic
-        
-        if not modalities:
-            raise ValueError("At least one modality must be provided")
-        
-        # Default weights if not provided
-        if weights is None:
-            weights = {name: 1.0 for name in modalities.keys()}
-        
-        # Normalize weights
-        total_weight = sum(weights.get(name, 1.0) for name in modalities.keys())
-        normalized_weights = {name: weights.get(name, 1.0) / total_weight 
-                            for name in modalities.keys()}
-        
-        # Create bound representation
-        if len(modalities) == 1:
-            # Single modality
-            name, vector = list(modalities.items())[0]
-            return vector
-        
-        # Multi-modal binding
         bound_vectors = []
-        modality_weights = []
         
-        for name, vector in modalities.items():
-            bound_vectors.append(vector.data)
-            modality_weights.append(normalized_weights[name])
+        for i, v in enumerate(vectors):
+            pos = start_position + i
+            bound = self.bind_with_position(v, pos)
+            bound_vectors.append(bound)
         
-        # Bundle with weights
-        integrated_data = self.ops.bundling(bound_vectors, modality_weights)
-        
-        return Hypervector(
-            vector_id=f"multiomics_{len(modalities)}",
-            vector_type=VectorType.COMPOSITE,
-            dimensions=list(modalities.values())[0].dimensions,
-            data=integrated_data,
-            sparsity=0.0,
-            metadata={
-                'binding_type': 'multi_omics',
-                'modalities': list(modalities.keys()),
-                'weights': normalized_weights,
-                'source_vectors': [v.vector_id for v in modalities.values()]
-            }
-        )
+        # Bundle all position-bound vectors
+        return self.bundle(bound_vectors)
     
-    def unbind(self, 
-               bound_vector: Hypervector, 
-               binding_vector: Hypervector,
-               binding_type: str = 'circular') -> Hypervector:
-        """
-        Unbind a hypervector (approximate inverse operation)
+    def _get_position_vector(self, position: int) -> torch.Tensor:
+        """Get or create position encoding vector"""
+        if position in self._position_vectors:
+            return self._position_vectors[position]
         
-        Args:
-            bound_vector: The bound hypervector
-            binding_vector: The vector that was used for binding
-            binding_type: Type of binding used ('circular' or 'element_wise')
-            
-        Returns:
-            Approximately unbound hypervector
-        """
-        if binding_type == 'circular':
-            # For circular convolution, unbind using correlation
-            # This is approximate and may have noise
-            unbound_data = self.ops.circular_convolution(
-                bound_vector.data,
-                binding_vector.data[::-1]  # Reverse for correlation
-            )
-        elif binding_type == 'element_wise':
-            # For element-wise, divide (with protection against division by zero)
-            safe_binding = binding_vector.data.copy()
-            safe_binding[safe_binding == 0] = 1e-10
-            unbound_data = bound_vector.data / safe_binding
-        else:
-            raise ValueError(f"Unknown binding type: {binding_type}")
+        # Create position vector using sinusoidal encoding
+        pos_vector = self._sinusoidal_position_encoding(position)
         
-        return Hypervector(
-            vector_id=f"{bound_vector.vector_id}_unbound",
-            vector_type=bound_vector.vector_type,
-            dimensions=bound_vector.dimensions,
-            data=unbound_data,
-            sparsity=0.0,
-            metadata={
-                'operation': 'unbind',
-                'binding_type': binding_type,
-                'source_vector': bound_vector.vector_id
-            }
-        )
+        # Cache for reuse
+        self._position_vectors[position] = pos_vector
+        
+        return pos_vector
     
-    def create_role_filler(self,
-                          role_vector: Hypervector,
-                          filler_vector: Hypervector) -> Hypervector:
-        """
-        Create role-filler binding for structured representations
+    def _sinusoidal_position_encoding(self, position: int) -> torch.Tensor:
+        """Create sinusoidal position encoding"""
+        encoding = torch.zeros(self.dimension)
         
-        Args:
-            role_vector: Role/slot hypervector
-            filler_vector: Filler/value hypervector
+        for i in range(0, self.dimension, 2):
+            # Different frequencies for each dimension
+            freq = 1.0 / (10000 ** (i / self.dimension))
             
-        Returns:
-            Role-filler bound hypervector
-        """
-        # Use circular convolution for role-filler binding
-        bound_data = self.ops.circular_convolution(
-            role_vector.data,
-            filler_vector.data
-        )
+            encoding[i] = np.sin(position * freq)
+            if i + 1 < self.dimension:
+                encoding[i + 1] = np.cos(position * freq)
         
-        return Hypervector(
-            vector_id=f"{role_vector.vector_id}_filled_{filler_vector.vector_id}",
-            vector_type=VectorType.COMPOSITE,
-            dimensions=role_vector.dimensions,
-            data=bound_data,
-            sparsity=0.0,
-            metadata={
-                'binding_type': 'role_filler',
-                'role': role_vector.vector_id,
-                'filler': filler_vector.vector_id
-            }
-        )
-    
-    def create_graph_binding(self,
-                           node_vectors: Dict[str, Hypervector],
-                           edges: List[Tuple[str, str, float]]) -> Hypervector:
-        """
-        Create graph-based binding for network structures
-        
-        Args:
-            node_vectors: Dictionary of node_id -> hypervector
-            edges: List of (source_id, target_id, weight) tuples
-            
-        Returns:
-            Graph-bound hypervector
-        """
-        if not node_vectors:
-            raise ValueError("Cannot create graph from empty nodes")
-        
-        # Initialize with first node
-        graph_vector = np.zeros_like(list(node_vectors.values())[0].data)
-        
-        # Add weighted edges
-        for source_id, target_id, weight in edges:
-            if source_id not in node_vectors or target_id not in node_vectors:
-                logger.warning(f"Edge {source_id}->{target_id} references unknown node")
-                continue
-            
-            # Bind source and target
-            edge_binding = self.ops.circular_convolution(
-                node_vectors[source_id].data,
-                node_vectors[target_id].data
-            )
-            
-            # Add weighted edge to graph
-            graph_vector += weight * edge_binding
-        
-        # Add node information
-        node_bundle = self.ops.bundling([v.data for v in node_vectors.values()])
-        graph_vector = self.ops.bundling([graph_vector, node_bundle], [0.7, 0.3])
-        
-        return Hypervector(
-            vector_id=f"graph_{len(node_vectors)}nodes_{len(edges)}edges",
-            vector_type=VectorType.COMPOSITE,
-            dimensions=list(node_vectors.values())[0].dimensions,
-            data=graph_vector,
-            sparsity=0.0,
-            metadata={
-                'binding_type': 'graph',
-                'node_count': len(node_vectors),
-                'edge_count': len(edges),
-                'node_ids': list(node_vectors.keys())
-            }
-        )
+        return encoding
 
 
-class SimilaritySearch:
-    """Efficient similarity search in hypervector space"""
+class CrossModalBinder(HypervectorBinder):
+    """
+    Specialized binder for cross-modal binding
     
-    def __init__(self):
-        """Initialize similarity search"""
-        self.ops = HypervectorOperations()
-        self.index = {}  # Simple dictionary index for now
-        logger.info("Initialized SimilaritySearch")
+    Used for combining different types of omics data
+    """
     
-    def add_vector(self, vector: Hypervector):
-        """Add vector to search index"""
-        self.index[vector.vector_id] = vector
+    def __init__(self, dimension: int = 10000):
+        """Initialize cross-modal binder"""
+        super().__init__(dimension)
+        self.modality_signatures = {}
     
-    def find_similar(self, 
-                    query_vector: Hypervector,
-                    k: int = 10,
-                    metric: str = 'cosine',
-                    min_similarity: float = 0.0) -> List[Tuple[str, float]]:
+    def bind_modalities(self, modality_vectors: Dict[str, torch.Tensor],
+                       preserve_individual: bool = True) -> Dict[str, torch.Tensor]:
         """
-        Find k most similar vectors to query
+        Bind multiple modalities together
         
         Args:
-            query_vector: Query hypervector
-            k: Number of results to return
-            metric: Similarity metric
-            min_similarity: Minimum similarity threshold
+            modality_vectors: Dict mapping modality names to hypervectors
+            preserve_individual: Whether to preserve individual modality access
             
         Returns:
-            List of (vector_id, similarity) tuples
-        """
-        similarities = []
-        
-        for vec_id, vec in self.index.items():
-            if vec_id == query_vector.vector_id:
-                continue
-            
-            sim = self.ops.similarity(query_vector.data, vec.data, metric)
-            if sim >= min_similarity:
-                similarities.append((vec_id, sim))
-        
-        # Sort by similarity (descending)
-        similarities.sort(key=lambda x: x[1], reverse=True)
-        
-        return similarities[:k]
-    
-    def find_similar_batch(self,
-                          query_vectors: List[Hypervector],
-                          k: int = 10,
-                          metric: str = 'cosine') -> Dict[str, List[Tuple[str, float]]]:
-        """
-        Find similar vectors for multiple queries
-        
-        Args:
-            query_vectors: List of query hypervectors
-            k: Number of results per query
-            metric: Similarity metric
-            
-        Returns:
-            Dictionary mapping query vector_id to similar vectors
+            Dict containing bound vectors
         """
         results = {}
         
-        for query in query_vectors:
-            results[query.vector_id] = self.find_similar(query, k, metric)
+        # Create modality signatures if needed
+        for modality in modality_vectors:
+            if modality not in self.modality_signatures:
+                self._create_modality_signature(modality)
+        
+        # Bind each modality with its signature
+        signed_vectors = {}
+        for modality, vector in modality_vectors.items():
+            signature = self.modality_signatures[modality]
+            signed = self.bind([vector, signature], BindingType.MULTIPLY)
+            signed_vectors[modality] = signed
+            
+            if preserve_individual:
+                results[f"{modality}_signed"] = signed
+        
+        # Create combined representation
+        combined = self.bundle(list(signed_vectors.values()))
+        results["combined"] = combined
+        
+        # Create pairwise combinations
+        modalities = list(modality_vectors.keys())
+        for i in range(len(modalities)):
+            for j in range(i + 1, len(modalities)):
+                m1, m2 = modalities[i], modalities[j]
+                pair_name = f"{m1}_{m2}"
+                results[pair_name] = self.bind(
+                    [signed_vectors[m1], signed_vectors[m2]],
+                    BindingType.CIRCULAR
+                )
         
         return results
+    
+    def _create_modality_signature(self, modality: str):
+        """Create unique signature for a modality"""
+        # Use hash of modality name as seed
+        seed = int(hashlib.md5(modality.encode()).hexdigest()[:8], 16)
+        torch.manual_seed(seed)
+        
+        # Create random hypervector as signature
+        signature = torch.randn(self.dimension)
+        signature = signature / torch.norm(signature)
+        
+        self.modality_signatures[modality] = signature
+
+
+# Convenience functions
+def circular_bind(vectors: List[torch.Tensor]) -> torch.Tensor:
+    """Convenience function for circular binding"""
+    if not vectors:
+        raise ValueError("No vectors provided")
+    
+    binder = HypervectorBinder(vectors[0].shape[-1])
+    return binder.bind(vectors, BindingType.CIRCULAR)
+
+
+def protect_vector(vector: torch.Tensor, key: torch.Tensor) -> torch.Tensor:
+    """Convenience function for vector protection"""
+    binder = HypervectorBinder(vector.shape[-1])
+    return binder.protect(vector, key)
