@@ -1,0 +1,44 @@
+# Include documentation
+include README.md
+include LICENSE
+include CHANGELOG.md
+
+# Include configuration files
+recursive-include genomevault/config *.yaml *.yml *.json
+
+# Include data files
+recursive-include genomevault/data *.txt *.csv *.json
+
+# Include type hints
+recursive-include genomevault *.pyi
+
+# Include tests
+recursive-include tests *.py *.yaml *.json
+
+# Include requirements
+include requirements*.txt
+
+# Include setup files
+include setup.py
+include pyproject.toml
+
+# Exclude compiled files
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude __pycache__
+
+# Exclude temporary files
+global-exclude *.swp
+global-exclude *~
+global-exclude .DS_Store
+
+# Exclude version control
+prune .git
+prune .github
+
+# Exclude development files
+exclude .gitignore
+exclude .editorconfig
+exclude tox.ini
+exclude .coverage
+exclude .pytest_cache

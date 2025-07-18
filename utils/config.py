@@ -1,296 +1,379 @@
 """
-Central configuration management for GenomeVault 3.0.
-Handles environment variables, HSM integration, and centralized settings.
+GenomeVault Configuration Management
+
+This module provides centralized configuration management for all GenomeVault components,
+including environment-specific settings, secrets management, and runtime configuration.
 """
+
 import os
 import json
+import yaml
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Dict, Any, Optional, Union
 from dataclasses import dataclass, field
 from enum import Enum
+import logging
+from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+import base64
+
+logger = logging.getLogger(__name__)
 
 
-class CompressionTier(Enum):
-    """Compression tier options for hypervector storage."""
-    MINI = "mini"  # ~5,000 most-studied SNPs (~25 KB)
-    CLINICAL = "clinical"  # ACMG + PharmGKB variants (~120k) (~300 KB)
-    FULL_HDC = "full_hdc"  # 10,000-D vectors per modality (100-200 KB)
+class Environment(Enum):
+    """Deployment environment types"""
+    DEVELOPMENT = "development"
+    STAGING = "staging"
+    PRODUCTION = "production"
+    TEST = "test"
 
 
-class NodeClass(Enum):
-    """Node hardware classification for dual-axis model."""
-    LIGHT = 1  # Consumer hardware (e.g., Mac mini)
-    FULL = 4   # Standard servers (e.g., 1U rack server)
-    ARCHIVE = 8  # High-performance storage systems
-
-
-@dataclass
-class SecurityConfig:
-    """Security-related configuration."""
-    encryption_algorithm: str = "AES-256-GCM"
-    key_derivation_function: str = "HKDF-SHA256"
-    post_quantum_algorithm: str = "CRYSTALS-Kyber"
-    zk_proof_system: str = "PLONK"
-    differential_privacy_epsilon: float = 1.0
-    differential_privacy_delta: float = 1e-6
-    hsm_enabled: bool = field(default_factory=lambda: os.getenv('HSM_ENABLED', 'false').lower() == 'true')
-    hsm_serial: Optional[str] = field(default_factory=lambda: os.getenv('HSM_SERIAL'))
+class SecurityLevel(Enum):
+    """Security levels for different data types"""
+    PUBLIC = 0
+    INTERNAL = 1
+    CONFIDENTIAL = 2
+    SECRET = 3
 
 
 @dataclass
-class ProcessingConfig:
-    """Local processing configuration."""
-    bwa_path: str = field(default_factory=lambda: os.getenv('BWA_PATH', '/usr/bin/bwa'))
-    gatk_jar: str = field(default_factory=lambda: os.getenv('GATK_JAR', '/opt/gatk/gatk.jar'))
-    star_path: str = field(default_factory=lambda: os.getenv('STAR_PATH', '/usr/bin/STAR'))
-    kallisto_path: str = field(default_factory=lambda: os.getenv('KALLISTO_PATH', '/usr/bin/kallisto'))
-    max_threads: int = field(default_factory=lambda: int(os.getenv('MAX_THREADS', '8')))
-    memory_limit_gb: int = field(default_factory=lambda: int(os.getenv('MEMORY_LIMIT_GB', '16')))
-    temp_dir: Path = field(default_factory=lambda: Path(os.getenv('TEMP_DIR', '/tmp/genomevault')))
-    container_runtime: str = field(default_factory=lambda: os.getenv('CONTAINER_RUNTIME', 'docker'))
+class CryptoConfig:
+    """Cryptographic configuration parameters"""
+    # Encryption
+    aes_key_size: int = 256
+    rsa_key_size: int = 4096
+    
+    # Zero-knowledge proofs
+    zk_security_parameter: int = 128
+    plonk_curve: str = "BLS12-381"
+    
+    # Post-quantum
+    pq_algorithm: str = "CRYSTALS-Kyber"
+    pq_security_level: int = 3
+    
+    # Hypervectors
+    hypervector_dimensions: int = 10000
+    projection_type: str = "sparse_random"
+    
+    # PIR
+    pir_server_count: int = 5
+    pir_threshold: int = 3
+    pir_failure_probability: float = 1e-4
 
 
 @dataclass
-class HypervectorConfig:
-    """Hypervector engine configuration."""
-    base_dimensions: int = 10000
-    mid_dimensions: int = 15000
-    high_dimensions: int = 20000
-    compression_tier: CompressionTier = CompressionTier.CLINICAL
-    projection_version: str = "v3.0"
-    enable_simd: bool = True
-    sparsity_threshold: float = 0.1
-
-
-@dataclass
-class PIRConfig:
-    """Private Information Retrieval configuration."""
-    num_servers: int = 5
-    min_honest_servers: int = 2
-    server_honesty_generic: float = 0.95
-    server_honesty_hipaa: float = 0.98
-    target_failure_probability: float = 1e-4
-    query_timeout_seconds: int = 30
-    enable_caching: bool = True
-    cache_ttl_seconds: int = 3600
-
-
-@dataclass
-class BlockchainConfig:
-    """Blockchain and governance configuration."""
-    consensus_algorithm: str = "Tendermint"
-    block_time_seconds: int = 3
-    transactions_per_second: int = 3000
-    node_class: NodeClass = NodeClass.LIGHT
-    is_trusted_signatory: bool = False
-    stake_amount: int = 0
-    slashing_percentage: float = 0.25
-    hipaa_verification: Dict[str, Optional[str]] = field(default_factory=lambda: {
-        'npi': os.getenv('HIPAA_NPI'),
-        'baa_hash': os.getenv('HIPAA_BAA_HASH'),
-        'risk_analysis_hash': os.getenv('HIPAA_RISK_ANALYSIS_HASH'),
-        'hsm_serial': os.getenv('HSM_SERIAL')
-    })
+class PrivacyConfig:
+    """Privacy configuration parameters"""
+    # Differential privacy
+    epsilon: float = 1.0
+    delta: float = 1e-6
+    noise_mechanism: str = "gaussian"
+    
+    # Privacy budget
+    max_queries_per_user: int = 1000
+    budget_refresh_days: int = 30
+    
+    # Federated learning
+    min_participants: int = 10
+    dropout_rate: float = 0.3
+    secure_aggregation: bool = True
 
 
 @dataclass
 class NetworkConfig:
-    """Network and API configuration."""
-    api_host: str = field(default_factory=lambda: os.getenv('API_HOST', '0.0.0.0'))
-    api_port: int = field(default_factory=lambda: int(os.getenv('API_PORT', '8000')))
-    enable_ssl: bool = field(default_factory=lambda: os.getenv('ENABLE_SSL', 'true').lower() == 'true')
-    ssl_cert_path: Optional[Path] = field(default_factory=lambda: Path(os.getenv('SSL_CERT_PATH')) if os.getenv('SSL_CERT_PATH') else None)
-    ssl_key_path: Optional[Path] = field(default_factory=lambda: Path(os.getenv('SSL_KEY_PATH')) if os.getenv('SSL_KEY_PATH') else None)
-    rate_limit_per_minute: int = 60
-    max_request_size_mb: int = 100
+    """Network configuration parameters"""
+    # API endpoints
+    api_host: str = "0.0.0.0"
+    api_port: int = 8080
+    
+    # Blockchain
+    chain_id: str = "genomevault-mainnet"
+    consensus_algorithm: str = "tendermint"
+    block_time_seconds: int = 5
+    
+    # PIR network
+    pir_servers: list = field(default_factory=list)
+    pir_timeout_seconds: int = 30
+    
+    # Node configuration
+    node_class: str = "light"  # light, full, archive
+    signatory_status: bool = False
+    
+    # HIPAA fast-track
+    hipaa_verified: bool = False
+    npi_number: Optional[str] = None
+
+
+@dataclass
+class StorageConfig:
+    """Storage configuration parameters"""
+    # Local storage
+    data_dir: Path = Path.home() / ".genomevault"
+    temp_dir: Path = Path("/tmp/genomevault")
+    
+    # Database
+    db_type: str = "sqlite"  # sqlite, postgresql, mongodb
+    db_path: Optional[str] = None
+    
+    # Compression
+    compression_tier: str = "clinical"  # mini, clinical, full
+    compression_algorithm: str = "zstd"
+    
+    # Retention
+    raw_data_retention_days: int = 7
+    processed_data_retention_days: int = 365
+
+
+@dataclass
+class ProcessingConfig:
+    """Data processing configuration"""
+    # Resources
+    max_cores: int = 4
+    max_memory_gb: int = 16
+    gpu_acceleration: bool = False
+    
+    # Pipelines
+    genomics_pipeline: str = "bwa-gatk"
+    transcriptomics_pipeline: str = "star-deseq2"
+    epigenomics_pipeline: str = "bismark"
+    
+    # Quality control
+    min_quality_score: int = 30
+    min_coverage: int = 30
+    max_error_rate: float = 0.01
 
 
 class Config:
-    """Central configuration management for GenomeVault."""
+    """Main configuration manager for GenomeVault"""
     
-    def __init__(self, config_path: Optional[Path] = None):
+    def __init__(self, config_file: Optional[str] = None, environment: Optional[str] = None):
         """
-        Initialize configuration from environment and optional config file.
+        Initialize configuration manager
         
         Args:
-            config_path: Optional path to JSON configuration file
+            config_file: Path to configuration file
+            environment: Deployment environment
         """
-        self.security = SecurityConfig()
-        self.processing = ProcessingConfig()
-        self.hypervector = HypervectorConfig()
-        self.pir = PIRConfig()
-        self.blockchain = BlockchainConfig()
+        self.environment = Environment(environment or os.getenv("GENOMEVAULT_ENV", "development"))
+        self.config_file = config_file or self._default_config_file()
+        
+        # Initialize subsystem configs
+        self.crypto = CryptoConfig()
+        self.privacy = PrivacyConfig()
         self.network = NetworkConfig()
+        self.storage = StorageConfig()
+        self.processing = ProcessingConfig()
         
-        # Load from config file if provided
-        if config_path and config_path.exists():
-            self._load_from_file(config_path)
+        # Load configuration
+        self._load_config()
+        self._load_environment_overrides()
+        self._validate_config()
         
-        # Override with environment variables
-        self._load_from_env()
-        
-        # Validate configuration
-        self._validate()
-        
-        # Create necessary directories
-        self._setup_directories()
+        # Initialize secrets manager
+        self._init_secrets_manager()
     
-    def _load_from_file(self, config_path: Path):
-        """Load configuration from JSON file."""
-        with open(config_path, 'r') as f:
-            data = json.load(f)
+    def _default_config_file(self) -> Path:
+        """Get default configuration file path"""
+        config_dir = Path.home() / ".genomevault" / "config"
+        config_dir.mkdir(parents=True, exist_ok=True)
+        return config_dir / f"{self.environment.value}.yaml"
+    
+    def _load_config(self):
+        """Load configuration from file"""
+        if not self.config_file or not Path(self.config_file).exists():
+            logger.info(f"No config file found at {self.config_file}, using defaults")
+            return
+        
+        try:
+            with open(self.config_file, 'r') as f:
+                if self.config_file.endswith('.yaml') or self.config_file.endswith('.yml'):
+                    data = yaml.safe_load(f)
+                else:
+                    data = json.load(f)
             
-        # Update dataclass instances with loaded data
-        for section_name, section_data in data.items():
-            if hasattr(self, section_name) and isinstance(section_data, dict):
-                section = getattr(self, section_name)
-                for key, value in section_data.items():
-                    if hasattr(section, key):
-                        setattr(section, key, value)
+            # Update configuration objects
+            self._update_config_object(self.crypto, data.get('crypto', {}))
+            self._update_config_object(self.privacy, data.get('privacy', {}))
+            self._update_config_object(self.network, data.get('network', {}))
+            self._update_config_object(self.storage, data.get('storage', {}))
+            self._update_config_object(self.processing, data.get('processing', {}))
+            
+            logger.info(f"Loaded configuration from {self.config_file}")
+        except Exception as e:
+            logger.error(f"Failed to load configuration: {e}")
+            raise
     
-    def _load_from_env(self):
-        """Override configuration with environment variables."""
-        # Environment variables take precedence over file configuration
-        # This is handled by the field default_factory in dataclasses
-        pass
+    def _update_config_object(self, obj: Any, data: Dict[str, Any]):
+        """Update dataclass object with dictionary data"""
+        for key, value in data.items():
+            if hasattr(obj, key):
+                # Handle Path objects
+                if key.endswith('_dir') or key.endswith('_path'):
+                    value = Path(value)
+                setattr(obj, key, value)
     
-    def _validate(self):
-        """Validate configuration settings."""
-        # Validate security settings
-        assert self.security.differential_privacy_epsilon > 0, "Differential privacy epsilon must be positive"
-        assert 0 < self.security.differential_privacy_delta < 1, "Differential privacy delta must be between 0 and 1"
+    def _load_environment_overrides(self):
+        """Load environment variable overrides"""
+        # Crypto overrides
+        if zk_param := os.getenv("GENOMEVAULT_ZK_SECURITY"):
+            self.crypto.zk_security_parameter = int(zk_param)
         
-        # Validate processing settings
-        assert self.processing.max_threads > 0, "Max threads must be positive"
-        assert self.processing.memory_limit_gb > 0, "Memory limit must be positive"
+        # Privacy overrides
+        if epsilon := os.getenv("GENOMEVAULT_DP_EPSILON"):
+            self.privacy.epsilon = float(epsilon)
         
-        # Validate hypervector settings
-        assert self.hypervector.base_dimensions > 0, "Base dimensions must be positive"
-        assert 0 <= self.hypervector.sparsity_threshold <= 1, "Sparsity threshold must be between 0 and 1"
+        # Network overrides
+        if api_port := os.getenv("GENOMEVAULT_API_PORT"):
+            self.network.api_port = int(api_port)
         
-        # Validate PIR settings
-        assert self.pir.num_servers >= self.pir.min_honest_servers, "Number of servers must be >= minimum honest servers"
-        assert 0 < self.pir.server_honesty_generic <= 1, "Server honesty probability must be between 0 and 1"
-        assert 0 < self.pir.server_honesty_hipaa <= 1, "HIPAA server honesty probability must be between 0 and 1"
+        # Storage overrides
+        if data_dir := os.getenv("GENOMEVAULT_DATA_DIR"):
+            self.storage.data_dir = Path(data_dir)
         
-        # Validate blockchain settings
-        assert self.blockchain.block_time_seconds > 0, "Block time must be positive"
-        assert 0 <= self.blockchain.slashing_percentage <= 1, "Slashing percentage must be between 0 and 1"
-        
-        # Validate network settings
-        assert 0 < self.network.api_port < 65536, "API port must be valid"
-        assert self.network.rate_limit_per_minute > 0, "Rate limit must be positive"
+        # Processing overrides
+        if max_cores := os.getenv("GENOMEVAULT_MAX_CORES"):
+            self.processing.max_cores = int(max_cores)
     
-    def _setup_directories(self):
-        """Create necessary directories."""
-        self.processing.temp_dir.mkdir(parents=True, exist_ok=True)
-    
-    def get_voting_power(self) -> int:
-        """
-        Calculate node voting power based on dual-axis model.
+    def _validate_config(self):
+        """Validate configuration parameters"""
+        # Validate crypto parameters
+        assert self.crypto.aes_key_size in [128, 192, 256], "Invalid AES key size"
+        assert self.crypto.rsa_key_size >= 2048, "RSA key size too small"
+        assert self.crypto.hypervector_dimensions >= 1000, "Hypervector dimensions too small"
         
-        Returns:
-            Total voting power (w = c + s)
-        """
-        c = self.blockchain.node_class.value
-        s = 10 if self.blockchain.is_trusted_signatory else 0
+        # Validate privacy parameters
+        assert 0 < self.privacy.epsilon <= 10, "Invalid epsilon value"
+        assert 0 < self.privacy.delta < 1, "Invalid delta value"
+        
+        # Validate network parameters
+        assert 1 <= self.network.api_port <= 65535, "Invalid API port"
+        assert len(self.network.pir_servers) >= self.crypto.pir_threshold if self.network.pir_servers else True
+        
+        # Validate storage parameters
+        assert self.storage.compression_tier in ["mini", "clinical", "full"], "Invalid compression tier"
+        
+        logger.info("Configuration validation passed")
+    
+    def _init_secrets_manager(self):
+        """Initialize secrets management"""
+        self._master_key = self._derive_master_key()
+        self._cipher = Fernet(self._master_key)
+    
+    def _derive_master_key(self) -> bytes:
+        """Derive master key from environment or hardware"""
+        # In production, this should use HSM or secure key management
+        password = os.getenv("GENOMEVAULT_MASTER_PASSWORD", "development-password").encode()
+        salt = b'genomevault-salt'  # In production, use random salt
+        
+        kdf = PBKDF2HMAC(
+            algorithm=hashes.SHA256(),
+            length=32,
+            salt=salt,
+            iterations=100000,
+        )
+        return base64.urlsafe_b64encode(kdf.derive(password))
+    
+    def encrypt_secret(self, secret: str) -> str:
+        """Encrypt a secret value"""
+        return self._cipher.encrypt(secret.encode()).decode()
+    
+    def decrypt_secret(self, encrypted: str) -> str:
+        """Decrypt a secret value"""
+        return self._cipher.decrypt(encrypted.encode()).decode()
+    
+    def get_compression_settings(self) -> Dict[str, Any]:
+        """Get compression settings based on tier"""
+        tiers = {
+            "mini": {
+                "features": 5000,
+                "size_kb": 25,
+                "description": "Most-studied SNPs only"
+            },
+            "clinical": {
+                "features": 120000,
+                "size_kb": 300,
+                "description": "ACMG + PharmGKB variants"
+            },
+            "full": {
+                "features": "all",
+                "size_kb": 200,  # per modality
+                "description": "Full HDC vectors"
+            }
+        }
+        return tiers.get(self.storage.compression_tier, tiers["clinical"])
+    
+    def get_node_voting_power(self) -> int:
+        """Calculate node voting power based on dual-axis model"""
+        class_weights = {"light": 1, "full": 4, "archive": 8}
+        c = class_weights.get(self.network.node_class, 1)
+        s = 10 if self.network.signatory_status else 0
         return c + s
     
     def get_block_rewards(self) -> int:
-        """
-        Calculate block rewards based on node configuration.
-        
-        Returns:
-            Credits per block
-        """
-        c = self.blockchain.node_class.value
-        ts_bonus = 2 if self.blockchain.is_trusted_signatory else 0
+        """Calculate block reward credits"""
+        class_weights = {"light": 1, "full": 4, "archive": 8}
+        c = class_weights.get(self.network.node_class, 1)
+        ts_bonus = 2 if self.network.signatory_status else 0
         return c + ts_bonus
     
-    def calculate_pir_failure_probability(self, k: int, use_hipaa: bool = False) -> float:
-        """
-        Calculate PIR privacy breach probability.
+    def get_pir_failure_probability(self) -> float:
+        """Calculate PIR privacy failure probability"""
+        if not self.network.pir_servers:
+            return 1.0
         
-        Args:
-            k: Number of required honest servers
-            use_hipaa: Whether to use HIPAA server honesty probability
-            
-        Returns:
-            Privacy breach probability P_fail(k,q) = (1-q)^k
-        """
-        q = self.pir.server_honesty_hipaa if use_hipaa else self.pir.server_honesty_generic
-        return (1 - q) ** k
+        # P_fail(k,q) = (1-q)^k
+        q = 0.98 if self.network.hipaa_verified else 0.95
+        k = len([s for s in self.network.pir_servers if s.get("trusted", False)])
+        return (1 - q) ** k if k > 0 else 1.0
     
-    def get_min_honest_servers(self, target_failure_prob: Optional[float] = None) -> int:
-        """
-        Calculate minimum required honest servers for target failure probability.
+    def save(self, path: Optional[str] = None):
+        """Save current configuration to file"""
+        path = path or self.config_file
         
-        Args:
-            target_failure_prob: Target failure probability (uses config default if None)
-            
-        Returns:
-            Minimum number of required honest servers
-        """
-        import math
-        
-        if target_failure_prob is None:
-            target_failure_prob = self.pir.target_failure_probability
-        
-        q = self.pir.server_honesty_hipaa  # Use higher honesty for calculation
-        k_min = math.ceil(math.log(target_failure_prob) / math.log(1 - q))
-        return k_min
-    
-    def get_compression_size(self, modalities: list[str]) -> int:
-        """
-        Calculate total client storage based on compression tier and modalities.
-        
-        Args:
-            modalities: List of data modalities (e.g., ['genomics', 'transcriptomics'])
-            
-        Returns:
-            Total storage in KB
-        """
-        tier_sizes = {
-            CompressionTier.MINI: 25,  # KB
-            CompressionTier.CLINICAL: 300,  # KB
-            CompressionTier.FULL_HDC: 150  # KB per modality (average)
+        config_data = {
+            "crypto": self.crypto.__dict__,
+            "privacy": self.privacy.__dict__,
+            "network": self.network.__dict__,
+            "storage": {k: str(v) if isinstance(v, Path) else v 
+                       for k, v in self.storage.__dict__.items()},
+            "processing": self.processing.__dict__
         }
         
-        if self.hypervector.compression_tier == CompressionTier.FULL_HDC:
-            return tier_sizes[self.hypervector.compression_tier] * len(modalities)
-        else:
-            return tier_sizes[self.hypervector.compression_tier]
+        with open(path, 'w') as f:
+            if path.endswith('.yaml') or path.endswith('.yml'):
+                yaml.dump(config_data, f, default_flow_style=False)
+            else:
+                json.dump(config_data, f, indent=2)
+        
+        logger.info(f"Saved configuration to {path}")
     
     def to_dict(self) -> Dict[str, Any]:
-        """Convert configuration to dictionary."""
+        """Convert configuration to dictionary"""
         return {
-            'security': self.security.__dict__,
-            'processing': {k: str(v) if isinstance(v, Path) else v for k, v in self.processing.__dict__.items()},
-            'hypervector': {k: v.value if isinstance(v, Enum) else v for k, v in self.hypervector.__dict__.items()},
-            'pir': self.pir.__dict__,
-            'blockchain': {k: v.value if isinstance(v, Enum) else v for k, v in self.blockchain.__dict__.items()},
-            'network': {k: str(v) if isinstance(v, Path) else v for k, v in self.network.__dict__.items()}
+            "environment": self.environment.value,
+            "crypto": self.crypto.__dict__,
+            "privacy": self.privacy.__dict__,
+            "network": self.network.__dict__,
+            "storage": self.storage.__dict__,
+            "processing": self.processing.__dict__
         }
-    
-    def save(self, config_path: Path):
-        """Save configuration to JSON file."""
-        with open(config_path, 'w') as f:
-            json.dump(self.to_dict(), f, indent=2)
 
 
-# Global configuration instance
-config = Config()
+# Singleton instance
+_config: Optional[Config] = None
 
 
-# Example usage and calculations
-if __name__ == "__main__":
-    # Print current configuration
-    print("=== GenomeVault Configuration ===")
-    print(f"Voting Power: {config.get_voting_power()}")
-    print(f"Block Rewards: {config.get_block_rewards()} credits/block")
-    print(f"PIR Failure Probability (k=2): {config.calculate_pir_failure_probability(2):.2e}")
-    print(f"Min Honest Servers for target failure: {config.get_min_honest_servers()}")
-    print(f"Storage for genomics + transcriptomics: {config.get_compression_size(['genomics', 'transcriptomics'])} KB")
-    
-    # Save configuration
-    config.save(Path("genomevault_config.json"))
+def get_config() -> Config:
+    """Get global configuration instance"""
+    global _config
+    if _config is None:
+        _config = Config()
+    return _config
+
+
+def init_config(config_file: Optional[str] = None, environment: Optional[str] = None):
+    """Initialize global configuration"""
+    global _config
+    _config = Config(config_file, environment)
+    return _config

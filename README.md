@@ -1,123 +1,123 @@
 # GenomeVault 3.0
 
-GenomeVault 3.0 is a privacy-first multi-omics intelligence platform that enables population-scale genomic research without centralized data repositories. By combining hyperdimensional computing, zero-knowledge cryptography, and federated AI, our platform achieves what was previously thought impossible: enabling secure genomic analysis while maintaining absolute privacy.
+A revolutionary privacy-preserving genomic data platform that enables secure analysis and research while maintaining complete individual data sovereignty.
 
-## Core Architecture
+## Overview
+
+GenomeVault 3.0 solves the fundamental tension between advancing precision medicine and protecting individual genetic privacy by combining:
+- Hyperdimensional computing for secure data representation
+- Zero-knowledge cryptography for verifiable computations
+- Information-theoretic PIR for private queries
+- Federated AI for distributed learning
+- Blockchain governance with dual-axis node model
+
+## Architecture
 
 ```
-genomevault/  
-├── local_processing/      # Multi-omics collection & local preprocessing  
-├── hypervector_transform/ # HDC encoding & similarity-preserving mappings  
-├── zk_proofs/            # Zero-knowledge proof generation & verification  
-├── pir/                  # Private Information Retrieval network components  
-├── blockchain/           # Smart contracts & governance layer  
-├── api/                  # Core network API endpoints  
-├── advanced_analysis/    # Research modules & AI integration  
+genomevault/
+├── local_processing/      # Multi-omics collection & local preprocessing
+├── hypervector_transform/ # HDC encoding & similarity-preserving mappings
+├── zk_proofs/            # Zero-knowledge proof generation & verification
+├── pir/                  # Private Information Retrieval network components
+├── blockchain/           # Smart contracts & governance layer
+├── api/                  # Core network API endpoints
+├── advanced_analysis/    # Research modules & AI integration
 └── utils/                # Shared utilities
 ```
 
 ## Key Features
 
-- **Complete Data Sovereignty**: Your genomic data never leaves your device in raw form
-- **Hypervector Encoding**: 10,000x compression while preserving biological relationships
-- **Zero-Knowledge Proofs**: Verify analytical results without revealing genetic information
-- **Distributed Reference**: N-server PIR architecture ensures query privacy
-- **Blockchain Governance**: Dual-axis node model enables democratic protocol evolution
+- **Complete Privacy**: Mathematical guarantees ensure genomic data never leaves user control
+- **Continuous Updates**: Automatic reanalysis as scientific knowledge evolves
+- **Multi-omics Support**: Integrated analysis of genomics, transcriptomics, epigenomics, proteomics
+- **Clinical Integration**: FHIR-compatible with major EHR systems
+- **Scalable Architecture**: Supports population-scale analyses
+- **Post-quantum Security**: Future-proof cryptographic protections
 
-## Technical Specifications
+## Quick Start
 
-### Compression Tiers
-- **Mini tier**: ~5,000 most-studied SNPs (~25 KB)
-- **Clinical tier**: ACMG + PharmGKB variants (~120k) (~300 KB)
-- **Full HDC tier**: 10,000-D vectors per modality (100-200 KB)
+### Prerequisites
+- Rust 1.70+ 
+- Python 3.9+
+- Docker 20.10+
+- Node.js 18+
 
-### Performance Metrics
-- Processing time: Full genome analysis in under 10 minutes on consumer hardware
-- Proof generation: Zero-knowledge proofs in under 1 minute with GPU acceleration
-- Network footprint: Less than 60KB of data leaving your device
-- Storage requirements: Under 5GB for complete genome analysis
-- Security level: 256-bit post-quantum protection
+### Installation
 
-### PIR Network
-- Privacy breach probability: P_fail(k,q) = (1-q)^k
-- Server honesty: q = 0.98 for HIPAA TS, 0.95 for generic
-- Typical latency: 210-350ms based on configuration
+```bash
+# Clone the repository
+git clone https://github.com/genomevault/genomevault-3.0.git
+cd genomevault-3.0
 
-### Dual-Axis Node Model
-- Node-class axis (resources):
-  - Light nodes (c=1): Consumer hardware
-  - Full nodes (c=4): Standard servers
-  - Archive nodes (c=8): High-performance systems
-- Signatory status axis (trust):
-  - Non-signer (s=0)
-  - Trusted Signatory (s=10)
-- Total voting power: w = c + s
+# Install dependencies
+./scripts/install-deps.sh
+
+# Build the project
+cargo build --release
+
+# Run tests
+cargo test
+```
+
+### Basic Usage
+
+```python
+from genomevault import Client
+
+# Initialize client
+client = Client()
+
+# Process genomic data locally
+profile = client.process_genome("path/to/genome.vcf")
+
+# Generate privacy-preserving hypervector
+vector = client.encode_hypervector(profile)
+
+# Create zero-knowledge proof
+proof = client.prove_variant_presence("rs1234567")
+
+# Query reference data privately
+result = client.pir_query("gene_function", "BRCA1")
+```
 
 ## Development Roadmap
 
-### Phase 1: Core Platform & Local Processing (Q1 2025)
-- Configuration, logging, and basic utilities
-- Local multi-omics ingestion and preprocessing
+### Phase 1: Core Platform (Q1 2025) ✓
+- [x] Project structure and documentation
+- [ ] Configuration and logging utilities
+- [ ] Local multi-omics processing engine
+- [ ] Container orchestration
 
-### Phase 2: Hypervector Encoding & Compression (Q2 2025)
-- Hierarchical hyperdimensional encoding
-- Multi-tier compression implementation
+### Phase 2: Hypervector Encoding (Q2 2025)
+- [ ] Hierarchical HDC implementation
+- [ ] Multi-tier compression
+- [ ] Cross-modal binding
 
-### Phase 3: Zero-Knowledge Proofs & Cryptography (Q2-Q3 2025)
-- PLONK templates for variant presence, PRS, pathway activation
-- Post-quantum readiness with lattice-based primitives
+### Phase 3: Zero-Knowledge Proofs (Q2-Q3 2025)
+- [ ] PLONK circuit templates
+- [ ] GPU-accelerated proving
+- [ ] Post-quantum readiness
 
-### Phase 4: Private Information Retrieval & Reference Graph (Q3 2025)
-- Information-theoretic PIR queries
-- Distributed pangenome graph
+### Phase 4: PIR Network (Q3 2025)
+- [ ] Information-theoretic PIR
+- [ ] Distributed reference graph
+- [ ] Credit system integration
 
 ### Phase 5: Blockchain & Governance (Q3-Q4 2025)
-- Immutable proof ledger
-- DAO governance and credit system
+- [ ] Dual-axis consensus
+- [ ] DAO governance contracts
+- [ ] HIPAA fast-track
 
-### Phase 6: Core API & Integration (Q4 2025)
-- REST/gRPC/GraphQL endpoints
-- SDK development
+## Contributing
 
-### Phase 7: Security, Compliance & Validation (Q1 2026)
-- Formal verification
-- HIPAA/GDPR compliance
-
-### Phase 8: UI/UX & Research Services (Q2 2026)
-- Web client and research workbench
-- Federated learning coordinator
-
-### Phase 9: Scaling & Optimization (H2 2026)
-- Population-scale deployment
-- Global shard network
-
-## Getting Started
-
-### Prerequisites
-- Python 3.8+
-- Docker/Singularity for containerized processing
-- Hardware Security Module (HSM) for HIPAA fast-track (optional)
-
-### Installation
-```bash
-# Clone the repository
-git clone https://github.com/genomevault/genomevault.git
-cd genomevault
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run tests
-python -m pytest
-
-# Start local processing engine
-python -m genomevault.local_processing
-```
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the Apache License 2.0 - see [LICENSE](LICENSE) for details.
 
 ## Contact
 
-For more information, visit [genomevault.com](https://genomevault.com) or contact us at contact@genomevault.com
+- Website: https://genomevault.io
+- Email: contact@genomevault.com
+- Discord: https://discord.gg/genomevault
