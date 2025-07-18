@@ -1,5 +1,10 @@
 # GenomeVault 3.0
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/downloads/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/yourusername/GenomeVault/graphs/commit-activity)
+
 A revolutionary platform that enables individuals to analyze their genetic data and participate in medical research while maintaining complete privacy and control.
 
 ## Overview

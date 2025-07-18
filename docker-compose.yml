@@ -6,7 +6,7 @@ services:
     build:
       context: ./local_processing/containers/sequencing
       dockerfile: Dockerfile
-    image: genomevault/sequencing:latest
+    image: GenomeVault/sequencing:latest
     volumes:
       - ./data/input:/data/input:ro
       - ./data/output:/data/output
@@ -23,7 +23,7 @@ services:
     build:
       context: ./local_processing/containers/transcriptomics
       dockerfile: Dockerfile
-    image: genomevault/transcriptomics:latest
+    image: GenomeVault/transcriptomics:latest
     volumes:
       - ./data/input:/data/input:ro
       - ./data/output:/data/output
@@ -40,7 +40,7 @@ services:
     build:
       context: ./local_processing/containers/epigenetics
       dockerfile: Dockerfile
-    image: genomevault/epigenetics:latest
+    image: GenomeVault/epigenetics:latest
     volumes:
       - ./data/input:/data/input:ro
       - ./data/output:/data/output
@@ -57,7 +57,7 @@ services:
     build:
       context: ./local_processing/containers/proteomics
       dockerfile: Dockerfile
-    image: genomevault/proteomics:latest
+    image: GenomeVault/proteomics:latest
     volumes:
       - ./data/input:/data/input:ro
       - ./data/output:/data/output
@@ -75,7 +75,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: genomevault/api:latest
+    image: GenomeVault/api:latest
     ports:
       - "8000:8000"
     environment:
@@ -92,7 +92,7 @@ services:
   # Supporting services
   redis:
     image: redis:7-alpine
-    command: redis-server --requirepass ${REDIS_PASSWORD:-genomevault}
+    command: redis-server --requirepass ${REDIS_PASSWORD:-GenomeVault}
     volumes:
       - redis_data:/data
 
@@ -112,7 +112,7 @@ services:
     build:
       context: ./pir/server
       dockerfile: Dockerfile
-    image: genomevault/pir-server:latest
+    image: GenomeVault/pir-server:latest
     ports:
       - "9001:9001"
     environment:
@@ -152,4 +152,4 @@ volumes:
 
 networks:
   default:
-    name: genomevault_network
+    name: GenomeVault_network
