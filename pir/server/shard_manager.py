@@ -1,233 +1,524 @@
 """
-PIR Server Implementation
+Shard manager for distributed PIR database.
+Handles data distribution, updates, and integrity verification.
 """
-
-import asyncio
+import numpy as np
+from typing import Dict, List, Optional, Tuple, Any
+from dataclasses import dataclass, field
+from pathlib import Path
 import hashlib
 import json
-from typing import Dict, List, Optional, Tuple, Any
-import numpy as np
-from dataclasses import dataclass
-import logging
-from pathlib import Path
+import time
+import shutil
+from concurrent.futures import ThreadPoolExecutor
+import threading
 
-from core.constants import PIR_THRESHOLD
-from core.exceptions import PIRError
-
-logger = logging.getLogger(__name__)
+from utils.config import config
+from utils.logging import logger, performance_logger
 
 
 @dataclass
-class ShardConfig:
-    """Configuration for a PIR shard server"""
-    server_id: int
-    total_shards: int
-    data_path: Path
-    is_trusted_signatory: bool = False
-    signatory_weight: int = 0
+class ShardMetadata:
+    """Metadata for a database shard."""
+    shard_id: str
+    shard_index: int
+    data_type: str
+    version: str
+    created_timestamp: float
+    size_bytes: int
+    item_count: int
+    checksum: str
+    genomic_regions: Optional[List[Dict]] = None
+    populations: Optional[List[str]] = None
+    
+    def to_dict(self) -> Dict:
+        return {
+            'id': self.shard_id,
+            'index': self.shard_index,
+            'data_type': self.data_type,
+            'version': self.version,
+            'created': self.created_timestamp,
+            'size': self.size_bytes,
+            'items': self.item_count,
+            'checksum': self.checksum,
+            'regions': self.genomic_regions,
+            'populations': self.populations
+        }
 
 
-class PIRServer:
+@dataclass 
+class ShardDistribution:
+    """Distribution strategy for shards across servers."""
+    strategy: str  # 'replicated', 'striped', 'hybrid'
+    replication_factor: int
+    server_assignments: Dict[str, List[str]] = field(default_factory=dict)
+    
+    def assign_shard(self, shard_id: str, server_ids: List[str]):
+        """Assign shard to servers."""
+        self.server_assignments[shard_id] = server_ids
+    
+    def get_servers_for_shard(self, shard_id: str) -> List[str]:
+        """Get servers hosting a shard."""
+        return self.server_assignments.get(shard_id, [])
+
+
+class ShardManager:
     """
-    Server for Private Information Retrieval
+    Manages database sharding for PIR system.
+    Handles creation, distribution, and maintenance of data shards.
     """
     
-    def __init__(self, config: ShardConfig):
-        self.config = config
-        self.database = {}
-        self.query_cache = {}
-        self._load_database()
-    
-    def _load_database(self):
-        """Load the reference genome database shard"""
-        logger.info(f"Loading database shard {self.config.server_id}")
-        
-        # In production, this would load actual reference genome data
-        # For now, we'll simulate with deterministic random data
-        np.random.seed(self.config.server_id)
-        
-        # Simulate reference genome shards (e.g., 1000 chunks of 1KB each)
-        self.database_size = 1000
-        self.chunk_size = 1024  # 1KB per chunk
-        
-        for i in range(self.database_size):
-            # Generate deterministic data based on server ID and chunk index
-            chunk_seed = f"{self.config.server_id}:{i}".encode()
-            chunk_hash = hashlib.sha256(chunk_seed).digest()
-            self.database[i] = chunk_hash * (self.chunk_size // 32)
-    
-    async def handle_query(self, request: Dict[str, Any]) -> Dict[str, Any]:
+    def __init__(self, data_directory: Path, num_shards: int = 10):
         """
-        Handle a PIR query from a client
+        Initialize shard manager.
         
         Args:
-            request: Query request containing:
-                - query_id: Unique query identifier
-                - shard_id: Which shard this query is for
-                - query: The actual query vector (hex encoded)
-                - threshold: Required threshold for reconstruction
-                
+            data_directory: Base directory for shard storage
+            num_shards: Number of shards to create
+        """
+        self.data_directory = Path(data_directory)
+        self.num_shards = num_shards
+        
+        # Create directory if needed
+        self.data_directory.mkdir(parents=True, exist_ok=True)
+        
+        # Shard metadata
+        self.shards: Dict[str, ShardMetadata] = {}
+        self.shard_distribution = ShardDistribution(
+            strategy='hybrid',
+            replication_factor=3
+        )
+        
+        # Thread pool for parallel operations
+        self.executor = ThreadPoolExecutor(max_workers=4)
+        
+        # Lock for thread safety
+        self.lock = threading.Lock()
+        
+        # Load existing shards
+        self._load_shard_metadata()
+        
+        logger.info(f"ShardManager initialized with {len(self.shards)} shards")
+    
+    def _load_shard_metadata(self):
+        """Load shard metadata from manifest."""
+        manifest_path = self.data_directory / "shard_manifest.json"
+        
+        if manifest_path.exists():
+            with open(manifest_path, 'r') as f:
+                manifest = json.load(f)
+            
+            for shard_data in manifest.get('shards', []):
+                metadata = ShardMetadata(
+                    shard_id=shard_data['id'],
+                    shard_index=shard_data['index'],
+                    data_type=shard_data['data_type'],
+                    version=shard_data['version'],
+                    created_timestamp=shard_data['created'],
+                    size_bytes=shard_data['size'],
+                    item_count=shard_data['items'],
+                    checksum=shard_data['checksum'],
+                    genomic_regions=shard_data.get('regions'),
+                    populations=shard_data.get('populations')
+                )
+                self.shards[metadata.shard_id] = metadata
+            
+            # Load distribution
+            if 'distribution' in manifest:
+                dist = manifest['distribution']
+                self.shard_distribution = ShardDistribution(
+                    strategy=dist['strategy'],
+                    replication_factor=dist['replication_factor'],
+                    server_assignments=dist.get('assignments', {})
+                )
+    
+    def _save_shard_metadata(self):
+        """Save shard metadata to manifest."""
+        manifest = {
+            'version': '1.0',
+            'created': time.time(),
+            'shards': [
+                {
+                    **shard.to_dict(),
+                    'filename': f"shard_{shard.shard_index:04d}.dat"
+                }
+                for shard in self.shards.values()
+            ],
+            'distribution': {
+                'strategy': self.shard_distribution.strategy,
+                'replication_factor': self.shard_distribution.replication_factor,
+                'assignments': self.shard_distribution.server_assignments
+            }
+        }
+        
+        manifest_path = self.data_directory / "shard_manifest.json"
+        with open(manifest_path, 'w') as f:
+            json.dump(manifest, f, indent=2)
+    
+    @performance_logger.log_operation("create_shards")
+    def create_shards_from_data(self, data_source: Path, 
+                              data_type: str = 'genomic') -> List[str]:
+        """
+        Create shards from source data.
+        
+        Args:
+            data_source: Path to source data
+            data_type: Type of data being sharded
+            
         Returns:
-            Response containing the computed result
+            List of created shard IDs
+        """
+        logger.info(f"Creating {self.num_shards} shards from {data_source}")
+        
+        # Read source data
+        with open(data_source, 'rb') as f:
+            data = f.read()
+        
+        total_size = len(data)
+        shard_size = total_size // self.num_shards
+        
+        created_shards = []
+        
+        # Create shards in parallel
+        futures = []
+        for i in range(self.num_shards):
+            start_idx = i * shard_size
+            end_idx = start_idx + shard_size if i < self.num_shards - 1 else total_size
+            
+            shard_data = data[start_idx:end_idx]
+            
+            future = self.executor.submit(
+                self._create_single_shard,
+                shard_index=i,
+                shard_data=shard_data,
+                data_type=data_type
+            )
+            futures.append(future)
+        
+        # Wait for all shards to be created
+        for future in futures:
+            shard_id = future.result()
+            if shard_id:
+                created_shards.append(shard_id)
+        
+        # Save metadata
+        with self.lock:
+            self._save_shard_metadata()
+        
+        logger.info(f"Created {len(created_shards)} shards")
+        return created_shards
+    
+    def _create_single_shard(self, shard_index: int, 
+                           shard_data: bytes,
+                           data_type: str) -> Optional[str]:
+        """
+        Create a single shard.
+        
+        Args:
+            shard_index: Index of the shard
+            shard_data: Data for the shard
+            data_type: Type of data
+            
+        Returns:
+            Shard ID if successful
         """
         try:
-            # Extract request parameters
-            query_id = request["query_id"]
-            shard_id = request["shard_id"]
-            query_hex = request["query"]
-            threshold = request.get("threshold", 2)
+            # Generate shard ID
+            shard_id = f"{data_type}_{shard_index:04d}_{int(time.time())}"
             
-            # Validate shard_id matches our server
-            if shard_id != self.config.server_id:
-                raise PIRError(f"Wrong shard: expected {self.config.server_id}, got {shard_id}")
+            # Calculate checksum
+            checksum = hashlib.sha256(shard_data).hexdigest()
             
-            # Decode query vector
-            query_bytes = bytes.fromhex(query_hex)
-            query_vector = np.frombuffer(query_bytes, dtype=np.uint8)
+            # Determine item count based on data type
+            if data_type == 'genomic':
+                item_size = 100
+            elif data_type == 'annotation':
+                item_size = 50
+            else:
+                item_size = 200
             
-            # Validate query size
-            if len(query_vector) != self.database_size:
-                raise PIRError(f"Query size mismatch: {len(query_vector)} != {self.database_size}")
+            item_count = len(shard_data) // item_size
             
-            # Compute PIR response
-            response_data = await self._compute_pir_response(query_vector)
+            # Write shard data
+            shard_path = self.data_directory / f"shard_{shard_index:04d}.dat"
+            with open(shard_path, 'wb') as f:
+                f.write(shard_data)
             
-            # Generate proof if we're a trusted signatory
-            proof = None
-            if self.config.is_trusted_signatory:
-                proof = self._generate_proof(query_id, response_data)
+            # Create metadata
+            metadata = ShardMetadata(
+                shard_id=shard_id,
+                shard_index=shard_index,
+                data_type=data_type,
+                version='1.0',
+                created_timestamp=time.time(),
+                size_bytes=len(shard_data),
+                item_count=item_count,
+                checksum=checksum
+            )
             
-            # Cache the query for potential auditing
-            self.query_cache[query_id] = {
-                "timestamp": asyncio.get_event_loop().time(),
-                "query_hash": hashlib.sha256(query_bytes).hexdigest(),
-                "response_hash": hashlib.sha256(response_data).hexdigest()
-            }
+            # Store metadata
+            with self.lock:
+                self.shards[shard_id] = metadata
             
-            return {
-                "query_id": query_id,
-                "shard_id": self.config.server_id,
-                "response": response_data.hex(),
-                "proof": proof.hex() if proof else "",
-                "is_trusted_signatory": self.config.is_trusted_signatory
-            }
+            logger.info(f"Created shard {shard_id} with {item_count} items")
+            return shard_id
             
         except Exception as e:
-            logger.error(f"Query handling failed: {str(e)}")
-            raise PIRError(f"Query processing failed: {str(e)}")
+            logger.error(f"Error creating shard {shard_index}: {e}")
+            return None
     
-    async def _compute_pir_response(self, query_vector: np.ndarray) -> bytes:
+    def distribute_shards(self, server_list: List[str]) -> ShardDistribution:
         """
-        Compute the PIR response using the query vector
+        Distribute shards across servers.
         
-        In standard PIR, this computes the dot product of the query
-        vector with the database
+        Args:
+            server_list: List of available server IDs
+            
+        Returns:
+            Distribution strategy
         """
-        # Initialize result
-        result = np.zeros(self.chunk_size, dtype=np.uint8)
+        if len(server_list) < self.shard_distribution.replication_factor:
+            raise ValueError(
+                f"Insufficient servers: {len(server_list)} < {self.shard_distribution.replication_factor}"
+            )
         
-        # For each database entry where query bit is 1
-        for i in range(self.database_size):
-            if query_vector[i] == 1:
-                # XOR the data chunk into the result
-                chunk_data = np.frombuffer(self.database[i], dtype=np.uint8)
-                result ^= chunk_data
+        # Clear existing assignments
+        self.shard_distribution.server_assignments.clear()
         
-        return result.tobytes()
+        # Distribute shards
+        for shard_id in self.shards:
+            # Select servers for this shard
+            if self.shard_distribution.strategy == 'replicated':
+                # All servers get all shards
+                assigned_servers = server_list[:self.shard_distribution.replication_factor]
+            
+            elif self.shard_distribution.strategy == 'striped':
+                # Round-robin distribution
+                shard_idx = list(self.shards.keys()).index(shard_id)
+                start_idx = shard_idx % len(server_list)
+                assigned_servers = []
+                for i in range(self.shard_distribution.replication_factor):
+                    server_idx = (start_idx + i) % len(server_list)
+                    assigned_servers.append(server_list[server_idx])
+            
+            else:  # hybrid
+                # Mix of replication and striping
+                # First 2 replicas on TS servers, additional on LN
+                ts_servers = [s for s in server_list if s.startswith('ts')]
+                ln_servers = [s for s in server_list if s.startswith('ln')]
+                
+                assigned_servers = ts_servers[:2]
+                if len(assigned_servers) < self.shard_distribution.replication_factor:
+                    needed = self.shard_distribution.replication_factor - len(assigned_servers)
+                    assigned_servers.extend(ln_servers[:needed])
+            
+            self.shard_distribution.assign_shard(shard_id, assigned_servers)
+        
+        # Save distribution
+        with self.lock:
+            self._save_shard_metadata()
+        
+        logger.info(f"Distributed {len(self.shards)} shards across {len(server_list)} servers")
+        return self.shard_distribution
     
-    def _generate_proof(self, query_id: str, response_data: bytes) -> bytes:
+    def verify_shard_integrity(self, shard_id: str) -> bool:
         """
-        Generate a proof of correct computation for trusted signatories
+        Verify integrity of a shard.
+        
+        Args:
+            shard_id: Shard to verify
+            
+        Returns:
+            True if integrity check passes
         """
-        # Create proof data
-        proof_content = {
-            "server_id": self.config.server_id,
-            "query_id": query_id,
-            "response_hash": hashlib.sha256(response_data).hexdigest(),
-            "signatory_weight": self.config.signatory_weight,
-            "timestamp": asyncio.get_event_loop().time()
-        }
+        if shard_id not in self.shards:
+            logger.error(f"Unknown shard: {shard_id}")
+            return False
         
-        # In production, this would use actual cryptographic signatures
-        proof_json = json.dumps(proof_content, sort_keys=True)
-        proof_hash = hashlib.sha256(proof_json.encode()).digest()
+        metadata = self.shards[shard_id]
+        shard_path = self.data_directory / f"shard_{metadata.shard_index:04d}.dat"
         
-        return proof_hash
+        if not shard_path.exists():
+            logger.error(f"Shard file missing: {shard_path}")
+            return False
+        
+        # Calculate checksum
+        with open(shard_path, 'rb') as f:
+            data = f.read()
+            checksum = hashlib.sha256(data).hexdigest()
+        
+        if checksum != metadata.checksum:
+            logger.error(f"Shard {shard_id} checksum mismatch")
+            return False
+        
+        return True
     
-    async def handle_batch_query(self, requests: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Handle multiple queries in parallel"""
-        tasks = []
-        for request in requests:
-            task = self.handle_query(request)
-            tasks.append(task)
+    def update_shard(self, shard_id: str, new_data: bytes) -> bool:
+        """
+        Update a shard with new data.
         
-        responses = await asyncio.gather(*tasks, return_exceptions=True)
+        Args:
+            shard_id: Shard to update
+            new_data: New data for the shard
+            
+        Returns:
+            Success status
+        """
+        if shard_id not in self.shards:
+            logger.error(f"Unknown shard: {shard_id}")
+            return False
         
-        # Filter out failed queries
-        valid_responses = []
-        for resp in responses:
-            if isinstance(resp, dict):
-                valid_responses.append(resp)
-            else:
-                logger.error(f"Batch query failed: {resp}")
+        metadata = self.shards[shard_id]
+        shard_path = self.data_directory / f"shard_{metadata.shard_index:04d}.dat"
         
-        return valid_responses
+        # Backup existing shard
+        backup_path = shard_path.with_suffix('.bak')
+        shutil.copy2(shard_path, backup_path)
+        
+        try:
+            # Write new data
+            with open(shard_path, 'wb') as f:
+                f.write(new_data)
+            
+            # Update metadata
+            with self.lock:
+                metadata.checksum = hashlib.sha256(new_data).hexdigest()
+                metadata.size_bytes = len(new_data)
+                metadata.version = f"{float(metadata.version) + 0.1:.1f}"
+                
+                # Recalculate item count
+                if metadata.data_type == 'genomic':
+                    item_size = 100
+                elif metadata.data_type == 'annotation':
+                    item_size = 50
+                else:
+                    item_size = 200
+                
+                metadata.item_count = len(new_data) // item_size
+                
+                # Save metadata
+                self._save_shard_metadata()
+            
+            # Remove backup
+            backup_path.unlink()
+            
+            logger.info(f"Updated shard {shard_id} to version {metadata.version}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Error updating shard {shard_id}: {e}")
+            
+            # Restore backup
+            if backup_path.exists():
+                shutil.copy2(backup_path, shard_path)
+                backup_path.unlink()
+            
+            return False
     
-    def get_statistics(self) -> Dict[str, Any]:
-        """Get server statistics"""
+    def get_shard_statistics(self) -> Dict[str, Any]:
+        """
+        Get statistics about shards.
+        
+        Returns:
+            Shard statistics
+        """
+        total_size = sum(s.size_bytes for s in self.shards.values())
+        total_items = sum(s.item_count for s in self.shards.values())
+        
+        by_type = {}
+        for shard in self.shards.values():
+            if shard.data_type not in by_type:
+                by_type[shard.data_type] = {
+                    'count': 0,
+                    'size': 0,
+                    'items': 0
+                }
+            by_type[shard.data_type]['count'] += 1
+            by_type[shard.data_type]['size'] += shard.size_bytes
+            by_type[shard.data_type]['items'] += shard.item_count
+        
         return {
-            "server_id": self.config.server_id,
-            "total_shards": self.config.total_shards,
-            "database_size": self.database_size,
-            "chunk_size": self.chunk_size,
-            "total_queries": len(self.query_cache),
-            "is_trusted_signatory": self.config.is_trusted_signatory,
-            "signatory_weight": self.config.signatory_weight
+            'total_shards': len(self.shards),
+            'total_size_bytes': total_size,
+            'total_items': total_items,
+            'by_type': by_type,
+            'distribution': {
+                'strategy': self.shard_distribution.strategy,
+                'replication_factor': self.shard_distribution.replication_factor,
+                'servers_used': len(set(
+                    server 
+                    for servers in self.shard_distribution.server_assignments.values()
+                    for server in servers
+                ))
+            }
         }
     
-    async def audit_query(self, query_id: str) -> Optional[Dict[str, Any]]:
+    def optimize_distribution(self, server_stats: Dict[str, Dict]) -> ShardDistribution:
         """
-        Audit a previous query for verification
+        Optimize shard distribution based on server performance.
+        
+        Args:
+            server_stats: Performance statistics for each server
+            
+        Returns:
+            Optimized distribution
         """
-        if query_id in self.query_cache:
-            return self.query_cache[query_id]
-        return None
+        # Sort servers by performance (lower latency is better)
+        sorted_servers = sorted(
+            server_stats.items(),
+            key=lambda x: x[1].get('avg_latency_ms', float('inf'))
+        )
+        
+        # Rebalance shards
+        new_distribution = ShardDistribution(
+            strategy='optimized',
+            replication_factor=self.shard_distribution.replication_factor
+        )
+        
+        # Assign most accessed shards to fastest servers
+        # This is a simplified optimization
+        for i, (shard_id, metadata) in enumerate(self.shards.items()):
+            # Use round-robin with bias towards faster servers
+            assigned_servers = []
+            for j in range(self.shard_distribution.replication_factor):
+                server_idx = (i + j) % len(sorted_servers)
+                assigned_servers.append(sorted_servers[server_idx][0])
+            
+            new_distribution.assign_shard(shard_id, assigned_servers)
+        
+        logger.info("Optimized shard distribution based on server performance")
+        return new_distribution
+    
+    def cleanup(self):
+        """Cleanup resources."""
+        self.executor.shutdown(wait=True)
 
 
-class ThresholdPIRServer(PIRServer):
-    """
-    Enhanced PIR server with threshold encryption support
-    """
+# Example usage
+if __name__ == "__main__":
+    import tempfile
     
-    def __init__(self, config: ShardConfig, threshold_key_share: Optional[bytes] = None):
-        super().__init__(config)
-        self.threshold_key_share = threshold_key_share
+    # Create temporary directory for testing
+    with tempfile.TemporaryDirectory() as temp_dir:
+        manager = ShardManager(Path(temp_dir), num_shards=5)
         
-    async def handle_query(self, request: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Handle threshold PIR query with additional encryption
-        """
-        # Get base response
-        response = await super().handle_query(request)
+        # Create test data
+        test_data = b"A" * 100000  # 100KB of test data
+        test_file = Path(temp_dir) / "test_data.bin"
+        test_file.write_bytes(test_data)
         
-        # If we have a threshold key share, add encrypted layer
-        if self.threshold_key_share:
-            response_data = bytes.fromhex(response["response"])
-            encrypted_response = self._threshold_encrypt(response_data)
-            response["response"] = encrypted_response.hex()
-            response["threshold_encrypted"] = True
+        # Create shards
+        shard_ids = manager.create_shards_from_data(test_file, data_type='genomic')
+        print(f"Created {len(shard_ids)} shards")
         
-        return response
-    
-    def _threshold_encrypt(self, data: bytes) -> bytes:
-        """
-        Apply threshold encryption to the response
-        """
-        # In production, this would use actual threshold cryptography
-        # For now, we'll XOR with the key share
-        key_stream = hashlib.sha256(self.threshold_key_share).digest()
-        key_stream = key_stream * (len(data) // 32 + 1)
-        key_stream = key_stream[:len(data)]
+        # Distribute shards
+        servers = ['ts1', 'ts2', 'ln1', 'ln2', 'ln3']
+        distribution = manager.distribute_shards(servers)
         
-        encrypted = bytes(a ^ b for a, b in zip(data, key_stream))
-        return encrypted
+        # Show distribution
+        for shard_id, servers in distribution.server_assignments.items():
+            print(f"Shard {shard_id} -> {servers}")
+        
+        # Get statistics
+        stats = manager.get_shard_statistics()
+        print(f"\nStatistics: {json.dumps(stats, indent=2)}")

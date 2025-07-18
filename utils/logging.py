@@ -35,6 +35,7 @@ class LogEvent(Enum):
     SYSTEM_START = "system.start"
     SYSTEM_STOP = "system.stop"
     SYSTEM_ERROR = "system.error"
+    SYSTEM_METRIC = "system.metric"
     
     # Processing events
     PROCESSING_START = "processing.start"
@@ -60,6 +61,10 @@ class LogEvent(Enum):
     NETWORK_PIR_QUERY = "network.pir.query"
     NETWORK_PIR_RESPONSE = "network.pir.response"
     NETWORK_CONNECTION = "network.connection"
+    
+    # HIPAA events
+    HIPAA_VERIFICATION = "hipaa.verification"
+    HIPAA_REVOCATION = "hipaa.revocation"
 
 
 class PrivacyFilter(logging.Filter):
@@ -185,6 +190,23 @@ class AuditLogger:
             'resource': resource,
             'action': action,
             'result': result,
+            'metadata': metadata or {},
+            'timestamp': datetime.utcnow().isoformat()
+        })
+    
+    def log_event(self, event_type: str, actor: str, action: str,
+                  resource: str, metadata: Optional[Dict[str, Any]] = None):
+        """Log generic audit event"""
+        event_value = LogEvent.SECURITY_AUDIT.value
+        if 'hipaa' in event_type.lower():
+            event_value = LogEvent.HIPAA_VERIFICATION.value
+        
+        self.logger.info(f"audit.{event_type}", extra={
+            'event': event_value,
+            'event_type': event_type,
+            'actor': self._hash_if_needed(actor) if 'user' in actor else actor,
+            'action': action,
+            'resource': resource,
             'metadata': metadata or {},
             'timestamp': datetime.utcnow().isoformat()
         })
@@ -395,3 +417,7 @@ def log_genomic_operation(logger: GenomeVaultLogger, operation: str,
         privacy_budget_used=privacy_budget,
         metadata=metadata
     )
+
+
+# Create global audit logger instance
+audit_logger = get_logger('genomevault.audit').audit

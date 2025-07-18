@@ -52,4 +52,4 @@ echo
 echo "=== Push Complete ==="
 echo "Your code is now on GitHub!"
 echo
-echo "View your repository at: https://github.com/Roh-codeur/genomevault"
+echo "View your repository at: https://github.com/rohanvinaik/GenomeVault"

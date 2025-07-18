@@ -1,353 +1,502 @@
 """
-Tiered compression for hypervector representations
+GenomeVault Compression System - Multi-tier implementation
+
+Implements the three-tier compression system as specified:
+- Mini tier: ~25KB - 5,000 most-studied SNPs
+- Clinical tier: ~300KB - ACMG + PharmGKB variants (~120k)
+- Full HDC tier: 100-200KB per modality - 10,000-D vectors
 """
 
-import torch
 import numpy as np
-from typing import Dict, List, Optional, Tuple, Union
-from dataclasses import dataclass
 import json
-import lzma
-import pickle
+import gzip
+from typing import Dict, List, Optional, Union, Any
+from dataclasses import dataclass, field
+from enum import Enum
+import hashlib
+from pathlib import Path
 
-from core.constants import CompressionTier, OmicsType
-from core.exceptions import CompressionError
+from ..utils import get_logger, get_config
+from ..core.constants import CompressionTier, OmicsType
+
+logger = get_logger(__name__)
+config = get_config()
 
 
 @dataclass
-class CompressedHypervector:
-    """Compressed hypervector representation"""
+class CompressionProfile:
+    """Compression profile for a specific tier"""
     tier: CompressionTier
-    omics_type: OmicsType
-    compressed_data: bytes
-    metadata: Dict[str, any]
-    original_dimension: int
-    compressed_size: int
-    
-    def save(self, path):
-        """Save compressed data to file"""
-        with open(path, 'wb') as f:
-            pickle.dump(self, f)
-    
-    @classmethod
-    def load(cls, path):
-        """Load compressed data from file"""
-        with open(path, 'rb') as f:
-            return pickle.load(f)
+    max_size_kb: int
+    feature_count: int
+    description: str
+    omics_types: List[OmicsType] = field(default_factory=list)
 
 
-class TieredCompressor:
+@dataclass 
+class CompressedData:
+    """Compressed genomic data package"""
+    sample_id: str
+    tier: CompressionTier
+    data: bytes
+    size_bytes: int
+    checksum: str
+    metadata: Dict[str, Any]
+    omics_included: List[OmicsType]
+    
+    def verify_checksum(self) -> bool:
+        """Verify data integrity"""
+        calculated = hashlib.sha256(self.data).hexdigest()
+        return calculated == self.checksum
+
+
+class CompressionEngine:
     """
-    Implements hierarchical compression for genomic hypervectors
+    Multi-tier compression engine for genomic data.
+    Implements the specification's storage requirements.
     """
     
-    def __init__(self, tier: CompressionTier = CompressionTier.CLINICAL):
-        self.tier = tier
-        self.compression_configs = self._get_compression_configs()
-        
-    def _get_compression_configs(self) -> Dict[CompressionTier, Dict]:
-        """Get compression parameters for each tier"""
-        return {
-            CompressionTier.MINI: {
-                "target_size": 25 * 1024,  # 25KB
-                "num_components": 5000,     # Top 5000 SNPs
-                "compression_ratio": 0.95,
-                "use_quantization": True,
-                "bits_per_value": 4
-            },
-            CompressionTier.CLINICAL: {
-                "target_size": 300 * 1024,  # 300KB
-                "num_components": 120000,   # ACMG + PharmGKB variants
-                "compression_ratio": 0.85,
-                "use_quantization": True,
-                "bits_per_value": 8
-            },
-            CompressionTier.FULL: {
-                "target_size": 200 * 1024,  # 200KB per modality
-                "num_components": -1,       # Keep all components
-                "compression_ratio": 0.7,
-                "use_quantization": False,
-                "bits_per_value": 16
-            }
+    # Compression profiles as per specification
+    COMPRESSION_PROFILES = {
+        CompressionTier.MINI: CompressionProfile(
+            tier=CompressionTier.MINI,
+            max_size_kb=25,
+            feature_count=5000,
+            description="Most-studied SNPs only",
+            omics_types=[OmicsType.GENOMIC]
+        ),
+        CompressionTier.CLINICAL: CompressionProfile(
+            tier=CompressionTier.CLINICAL,
+            max_size_kb=300,
+            feature_count=120000,
+            description="ACMG + PharmGKB variants",
+            omics_types=[OmicsType.GENOMIC, OmicsType.PHENOTYPIC]
+        ),
+        CompressionTier.FULL: CompressionProfile(
+            tier=CompressionTier.FULL,
+            max_size_kb=200,  # per modality
+            feature_count=10000,  # hypervector dimensions
+            description="Full HDC vectors per modality",
+            omics_types=[
+                OmicsType.GENOMIC,
+                OmicsType.TRANSCRIPTOMIC,
+                OmicsType.EPIGENETIC,
+                OmicsType.PROTEOMIC,
+                OmicsType.PHENOTYPIC
+            ]
+        )
+    }
+    
+    def __init__(self):
+        """Initialize compression engine"""
+        self.variant_databases = self._load_variant_databases()
+        logger.info("Compression engine initialized")
+    
+    def _load_variant_databases(self) -> Dict[str, List[str]]:
+        """Load reference variant databases for compression tiers"""
+        # In production, these would be loaded from actual databases
+        databases = {
+            "most_studied_snps": [],  # Top 5,000 SNPs
+            "acmg_variants": [],      # ACMG secondary findings
+            "pharmgkb_variants": []   # PharmGKB pharmacogenomic variants
         }
+        
+        # Placeholder: Generate example variant IDs
+        databases["most_studied_snps"] = [
+            f"rs{i}" for i in range(1, 5001)
+        ]
+        
+        return databases
     
-    def compress(self, data: Union[torch.Tensor, Dict], 
-                omics_type: OmicsType) -> CompressedHypervector:
+    def compress(self, data: Dict[str, Any], tier: CompressionTier,
+                sample_id: str) -> CompressedData:
         """
-        Compress hypervector data according to tier
+        Compress multi-omics data according to specified tier.
         
         Args:
-            data: Hypervector tensor or dict of processing results
-            omics_type: Type of omics data
+            data: Multi-omics data dictionary
+            tier: Compression tier to use
+            sample_id: Sample identifier
             
         Returns:
-            Compressed representation
+            Compressed data package
         """
-        config = self.compression_configs[self.tier]
+        profile = self.COMPRESSION_PROFILES[tier]
+        logger.info(f"Compressing data for {sample_id} using {tier.value} tier")
         
-        # Extract hypervector if dict
-        if isinstance(data, dict):
-            hypervector = data.get("hypervector")
-            metadata = data
-        else:
-            hypervector = data
-            metadata = {}
-        
-        if hypervector is None:
-            raise CompressionError("No hypervector found in data")
-        
-        # Apply tier-specific compression
-        if self.tier == CompressionTier.MINI:
-            compressed = self._compress_mini(hypervector, config)
-        elif self.tier == CompressionTier.CLINICAL:
-            compressed = self._compress_clinical(hypervector, config, omics_type)
+        # Select compression method based on tier
+        if tier == CompressionTier.MINI:
+            compressed_dict = self._compress_mini_tier(data)
+        elif tier == CompressionTier.CLINICAL:
+            compressed_dict = self._compress_clinical_tier(data)
         else:  # FULL
-            compressed = self._compress_full(hypervector, config)
+            compressed_dict = self._compress_full_tier(data)
         
-        # Apply additional lossless compression
-        final_compressed = lzma.compress(compressed, preset=6)
+        # Convert to binary format
+        json_str = json.dumps(compressed_dict, separators=(',', ':'))
+        compressed_bytes = gzip.compress(json_str.encode('utf-8'))
         
-        return CompressedHypervector(
-            tier=self.tier,
-            omics_type=omics_type,
-            compressed_data=final_compressed,
-            metadata=metadata,
-            original_dimension=len(hypervector),
-            compressed_size=len(final_compressed)
+        # Verify size constraints
+        size_kb = len(compressed_bytes) / 1024
+        max_size = profile.max_size_kb
+        
+        # For full tier, multiply by number of modalities
+        if tier == CompressionTier.FULL:
+            modalities_included = len([k for k in data.keys() 
+                                     if k in ['genomic', 'transcriptomic', 
+                                            'epigenetic', 'proteomic']])
+            max_size = profile.max_size_kb * modalities_included
+        
+        if size_kb > max_size:
+            logger.warning(f"Compressed size {size_kb:.1f}KB exceeds target {max_size}KB")
+        
+        # Create compressed data package
+        compressed_data = CompressedData(
+            sample_id=sample_id,
+            tier=tier,
+            data=compressed_bytes,
+            size_bytes=len(compressed_bytes),
+            checksum=hashlib.sha256(compressed_bytes).hexdigest(),
+            metadata={
+                'compression_version': '1.0',
+                'profile': profile.description,
+                'features_included': len(compressed_dict.get('features', []))
+            },
+            omics_included=[o for o in OmicsType if o.value in data]
         )
+        
+        logger.info(f"Compression complete: {size_kb:.1f}KB ({tier.value} tier)")
+        return compressed_data
     
-    def decompress(self, compressed: CompressedHypervector) -> torch.Tensor:
+    def _compress_mini_tier(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Decompress a hypervector
+        Mini tier compression: ~25KB with 5,000 most-studied SNPs.
         """
-        # Decompress lzma
-        decompressed = lzma.decompress(compressed.compressed_data)
-        
-        # Apply tier-specific decompression
-        config = self.compression_configs[compressed.tier]
-        
-        if compressed.tier == CompressionTier.MINI:
-            hypervector = self._decompress_mini(decompressed, compressed, config)
-        elif compressed.tier == CompressionTier.CLINICAL:
-            hypervector = self._decompress_clinical(decompressed, compressed, config)
-        else:  # FULL
-            hypervector = self._decompress_full(decompressed, compressed, config)
-        
-        return hypervector
-    
-    def _compress_mini(self, hypervector: torch.Tensor, config: Dict) -> bytes:
-        """
-        Mini tier compression - keep only most important components
-        """
-        # Get top k components by magnitude
-        k = config["num_components"]
-        topk_values, topk_indices = torch.topk(torch.abs(hypervector), k)
-        
-        # Get signs of top k components
-        signs = torch.sign(hypervector[topk_indices])
-        
-        # Quantize values
-        if config["use_quantization"]:
-            quantized_values = self._quantize(topk_values, config["bits_per_value"])
-        else:
-            quantized_values = topk_values
-        
-        # Pack data efficiently
-        data = {
-            "indices": topk_indices.numpy().astype(np.uint16),
-            "values": quantized_values.numpy(),
-            "signs": signs.numpy().astype(np.int8)
+        compressed = {
+            'tier': CompressionTier.MINI.value,
+            'features': []
         }
         
-        return pickle.dumps(data)
-    
-    def _decompress_mini(self, data: bytes, compressed: CompressedHypervector, 
-                        config: Dict) -> torch.Tensor:
-        """Decompress mini tier data"""
-        unpacked = pickle.loads(data)
+        # Extract genomic variants only
+        if 'genomic' in data and 'variants' in data['genomic']:
+            variants = data['genomic']['variants']
+            
+            # Filter to most studied SNPs
+            for variant in variants:
+                if variant.get('rsid') in self.variant_databases['most_studied_snps']:
+                    compressed['features'].append({
+                        'id': variant['rsid'],
+                        'gt': variant.get('genotype', '0/0'),  # Compact genotype
+                        'af': round(variant.get('allele_frequency', 0), 3)
+                    })
+                
+                if len(compressed['features']) >= 5000:
+                    break
         
-        # Reconstruct sparse hypervector
-        hypervector = torch.zeros(compressed.original_dimension)
-        
-        indices = torch.from_numpy(unpacked["indices"])
-        values = torch.from_numpy(unpacked["values"])
-        signs = torch.from_numpy(unpacked["signs"])
-        
-        if config["use_quantization"]:
-            values = self._dequantize(values, config["bits_per_value"])
-        
-        hypervector[indices] = values * signs
-        
-        return hypervector
-    
-    def _compress_clinical(self, hypervector: torch.Tensor, config: Dict,
-                          omics_type: OmicsType) -> bytes:
-        """
-        Clinical tier compression - keep clinically relevant variants
-        """
-        # Get clinical variant indices based on omics type
-        clinical_indices = self._get_clinical_indices(omics_type)
-        
-        # Extract clinical components
-        clinical_values = hypervector[clinical_indices]
-        
-        # Apply transform coding for better compression
-        transformed = self._dct_transform(clinical_values)
-        
-        # Quantize
-        if config["use_quantization"]:
-            quantized = self._quantize(transformed, config["bits_per_value"])
-        else:
-            quantized = transformed
-        
-        data = {
-            "clinical_indices": clinical_indices.numpy(),
-            "transformed_values": quantized.numpy(),
-            "transform_type": "dct"
+        # Add minimal metadata
+        compressed['meta'] = {
+            'ref': 'GRCh38',
+            'date': data.get('metadata', {}).get('date', ''),
+            'n_vars': len(compressed['features'])
         }
         
-        return pickle.dumps(data)
+        return compressed
     
-    def _decompress_clinical(self, data: bytes, compressed: CompressedHypervector,
-                           config: Dict) -> torch.Tensor:
-        """Decompress clinical tier data"""
-        unpacked = pickle.loads(data)
-        
-        # Reconstruct hypervector
-        hypervector = torch.zeros(compressed.original_dimension)
-        
-        clinical_indices = torch.from_numpy(unpacked["clinical_indices"])
-        transformed_values = torch.from_numpy(unpacked["transformed_values"])
-        
-        if config["use_quantization"]:
-            transformed_values = self._dequantize(transformed_values, config["bits_per_value"])
-        
-        # Inverse transform
-        clinical_values = self._idct_transform(transformed_values)
-        
-        hypervector[clinical_indices] = clinical_values
-        
-        return hypervector
-    
-    def _compress_full(self, hypervector: torch.Tensor, config: Dict) -> bytes:
+    def _compress_clinical_tier(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Full tier compression - preserve maximum information
+        Clinical tier compression: ~300KB with ACMG + PharmGKB variants.
         """
-        # Apply PCA for dimensionality reduction
-        reduced = self._pca_compress(hypervector, config["compression_ratio"])
-        
-        # Use float16 for storage efficiency
-        reduced_f16 = reduced.numpy().astype(np.float16)
-        
-        data = {
-            "reduced_vector": reduced_f16,
-            "compression_method": "pca",
-            "compression_ratio": config["compression_ratio"]
+        compressed = {
+            'tier': CompressionTier.CLINICAL.value,
+            'genomic': {},
+            'phenotypic': {}
         }
         
-        return pickle.dumps(data)
+        # Include ACMG and PharmGKB variants
+        if 'genomic' in data and 'variants' in data['genomic']:
+            clinical_variants = []
+            
+            for variant in data['genomic']['variants']:
+                # Check if variant is clinically relevant
+                is_acmg = self._is_acmg_variant(variant)
+                is_pharmgkb = self._is_pharmgkb_variant(variant)
+                
+                if is_acmg or is_pharmgkb:
+                    clinical_variants.append({
+                        'chr': variant['chromosome'],
+                        'pos': variant['position'],
+                        'ref': variant['reference'],
+                        'alt': variant['alternate'],
+                        'gt': variant.get('genotype', '0/0'),
+                        'qual': round(variant.get('quality', 0), 1),
+                        'ann': {
+                            'acmg': is_acmg,
+                            'pgkb': is_pharmgkb,
+                            'gene': variant.get('gene', ''),
+                            'impact': variant.get('impact', '')
+                        }
+                    })
+            
+            compressed['genomic']['variants'] = clinical_variants[:120000]
+        
+        # Include key phenotypic data
+        if 'phenotypic' in data:
+            compressed['phenotypic'] = {
+                'conditions': data['phenotypic'].get('conditions', []),
+                'medications': data['phenotypic'].get('medications', []),
+                'labs': self._compress_lab_values(
+                    data['phenotypic'].get('lab_results', {})
+                )
+            }
+        
+        # Metadata
+        compressed['meta'] = {
+            'ref': 'GRCh38',
+            'date': data.get('metadata', {}).get('date', ''),
+            'n_vars': len(compressed['genomic'].get('variants', [])),
+            'clinical_version': 'ACMG-v3.0,PharmGKB-2024'
+        }
+        
+        return compressed
     
-    def _decompress_full(self, data: bytes, compressed: CompressedHypervector,
-                        config: Dict) -> torch.Tensor:
-        """Decompress full tier data"""
-        unpacked = pickle.loads(data)
+    def _compress_full_tier(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Full tier compression: 100-200KB per modality using HDC vectors.
+        """
+        compressed = {
+            'tier': CompressionTier.FULL.value,
+            'modalities': {}
+        }
         
-        reduced_vector = torch.from_numpy(unpacked["reduced_vector"].astype(np.float32))
+        # Process each modality into hypervectors
+        for modality in ['genomic', 'transcriptomic', 'epigenetic', 'proteomic']:
+            if modality in data:
+                # In practice, this would use the actual hypervector encoder
+                # For now, simulate with compressed representation
+                compressed['modalities'][modality] = {
+                    'hypervector': self._create_mock_hypervector(
+                        data[modality], 10000  # 10,000-D as specified
+                    ),
+                    'stats': self._extract_modality_stats(data[modality])
+                }
         
-        # For full decompression, we'd need the PCA components
-        # For now, return padded version
-        if len(reduced_vector) < compressed.original_dimension:
-            hypervector = torch.zeros(compressed.original_dimension)
-            hypervector[:len(reduced_vector)] = reduced_vector
-        else:
-            hypervector = reduced_vector
+        # Add integrated multi-omics features
+        if len(compressed['modalities']) > 1:
+            compressed['integrated'] = {
+                'cross_modal_binding': self._compute_cross_modal_features(
+                    compressed['modalities']
+                )
+            }
         
-        return hypervector
+        # Metadata
+        compressed['meta'] = {
+            'ref': 'GRCh38',
+            'date': data.get('metadata', {}).get('date', ''),
+            'modalities_included': list(compressed['modalities'].keys()),
+            'hypervector_dim': 10000,
+            'compression_version': 'HDC-v1.0'
+        }
+        
+        return compressed
     
-    def _quantize(self, values: torch.Tensor, bits: int) -> torch.Tensor:
-        """Quantize values to specified bit depth"""
-        # Normalize to [0, 1]
-        min_val = values.min()
-        max_val = values.max()
-        normalized = (values - min_val) / (max_val - min_val + 1e-8)
-        
-        # Quantize
-        levels = 2 ** bits - 1
-        quantized = torch.round(normalized * levels)
-        
-        # Store scale factors
-        self._quant_params = {"min": min_val, "max": max_val, "bits": bits}
-        
-        return quantized
+    def _is_acmg_variant(self, variant: Dict[str, Any]) -> bool:
+        """Check if variant is in ACMG secondary findings list"""
+        # Simplified check - in production would use actual ACMG database
+        acmg_genes = [
+            'BRCA1', 'BRCA2', 'MLH1', 'MSH2', 'MSH6', 'PMS2',
+            'APC', 'MUTYH', 'VHL', 'MEN1', 'RET', 'PTEN',
+            'TP53', 'STK11', 'LDLR', 'APOB', 'PCSK9'
+        ]
+        return variant.get('gene', '') in acmg_genes
     
-    def _dequantize(self, quantized: torch.Tensor, bits: int) -> torch.Tensor:
-        """Dequantize values"""
-        levels = 2 ** bits - 1
-        normalized = quantized / levels
-        
-        # Denormalize using stored parameters
-        if hasattr(self, '_quant_params'):
-            min_val = self._quant_params["min"]
-            max_val = self._quant_params["max"]
-            values = normalized * (max_val - min_val) + min_val
-        else:
-            values = normalized
-        
-        return values
+    def _is_pharmgkb_variant(self, variant: Dict[str, Any]) -> bool:
+        """Check if variant is pharmacogenomically relevant"""
+        # Simplified check - in production would use PharmGKB database
+        pgx_genes = [
+            'CYP2C19', 'CYP2D6', 'CYP2C9', 'CYP3A4', 'CYP3A5',
+            'VKORC1', 'TPMT', 'NUDT15', 'DPYD', 'UGT1A1',
+            'SLCO1B1', 'CYP4F2', 'HLA-B', 'HLA-A'
+        ]
+        return variant.get('gene', '') in pgx_genes
     
-    def _dct_transform(self, values: torch.Tensor) -> torch.Tensor:
-        """Apply Discrete Cosine Transform"""
-        # Simple DCT implementation
-        n = len(values)
-        dct_matrix = torch.zeros(n, n)
+    def _compress_lab_values(self, lab_results: Dict[str, Any]) -> Dict[str, Any]:
+        """Compress laboratory values for clinical tier"""
+        compressed_labs = {}
         
-        for i in range(n):
-            for j in range(n):
-                if i == 0:
-                    dct_matrix[i, j] = 1.0 / np.sqrt(n)
-                else:
-                    dct_matrix[i, j] = np.sqrt(2.0/n) * np.cos(np.pi * i * (j + 0.5) / n)
+        # Key labs for clinical use
+        important_labs = [
+            'glucose', 'hba1c', 'cholesterol_total', 'ldl', 'hdl',
+            'triglycerides', 'creatinine', 'egfr', 'ast', 'alt',
+            'tsh', 'hemoglobin', 'wbc', 'platelets'
+        ]
         
-        return torch.matmul(dct_matrix, values)
+        for lab in important_labs:
+            if lab in lab_results:
+                value = lab_results[lab]
+                compressed_labs[lab] = {
+                    'v': round(value.get('value', 0), 2),
+                    'u': value.get('unit', ''),
+                    'd': value.get('date', '')[:10] if 'date' in value else ''
+                }
+        
+        return compressed_labs
     
-    def _idct_transform(self, transformed: torch.Tensor) -> torch.Tensor:
-        """Apply Inverse Discrete Cosine Transform"""
-        # Use transpose of DCT matrix for inverse
-        n = len(transformed)
-        dct_matrix = torch.zeros(n, n)
+    def _create_mock_hypervector(self, modality_data: Dict[str, Any],
+                                dimensions: int) -> str:
+        """
+        Create mock hypervector representation.
+        In production, this would use the actual hypervector encoder.
+        """
+        # Simulate by creating a hash-based compact representation
+        data_str = json.dumps(modality_data, sort_keys=True)
+        base_hash = hashlib.sha256(data_str.encode()).digest()
         
-        for i in range(n):
-            for j in range(n):
-                if i == 0:
-                    dct_matrix[i, j] = 1.0 / np.sqrt(n)
-                else:
-                    dct_matrix[i, j] = np.sqrt(2.0/n) * np.cos(np.pi * i * (j + 0.5) / n)
+        # Expand to create pseudo-hypervector (compressed representation)
+        # In practice, this would be the actual HDC encoding
+        expanded = hashlib.pbkdf2_hmac('sha256', base_hash, b'genomevault', 
+                                      iterations=100, dklen=dimensions // 8)
         
-        return torch.matmul(dct_matrix.T, transformed)
+        # Convert to base64 for compact string representation
+        import base64
+        return base64.b64encode(expanded).decode('ascii')
     
-    def _pca_compress(self, hypervector: torch.Tensor, ratio: float) -> torch.Tensor:
-        """Apply PCA compression"""
-        # For single vector, just truncate
-        # In practice, would use actual PCA across population
-        target_dim = int(len(hypervector) * ratio)
-        return hypervector[:target_dim]
+    def _extract_modality_stats(self, modality_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Extract key statistics from modality data"""
+        stats = {}
+        
+        if 'variants' in modality_data:
+            stats['variant_count'] = len(modality_data['variants'])
+        
+        if 'expression_matrix' in modality_data:
+            expr = modality_data['expression_matrix']
+            if isinstance(expr, dict):
+                stats['genes_measured'] = len(expr)
+        
+        if 'methylation_levels' in modality_data:
+            stats['cpg_sites'] = len(modality_data['methylation_levels'])
+        
+        if 'protein_abundances' in modality_data:
+            stats['proteins_measured'] = len(modality_data['protein_abundances'])
+        
+        return stats
     
-    def _get_clinical_indices(self, omics_type: OmicsType) -> torch.Tensor:
-        """Get indices of clinically relevant components"""
-        # In practice, these would be loaded from clinical databases
-        # For now, return deterministic indices based on omics type
+    def _compute_cross_modal_features(self, modalities: Dict[str, Any]) -> Dict[str, Any]:
+        """Compute cross-modal binding features for multi-omics integration"""
+        # Placeholder for cross-modal analysis
+        # In production, would compute actual biological relationships
+        return {
+            'modality_pairs': list(modalities.keys()),
+            'binding_strength': 0.85,  # Mock correlation
+            'integration_method': 'circular_convolution'
+        }
+    
+    def decompress(self, compressed: CompressedData) -> Dict[str, Any]:
+        """
+        Decompress data package back to usable format.
         
-        if omics_type == OmicsType.GENOMIC:
-            # ACMG genes and pharmacogenomic variants
-            num_clinical = 120000
-        elif omics_type == OmicsType.TRANSCRIPTOMIC:
-            # Disease-associated transcripts
-            num_clinical = 50000
-        else:
-            num_clinical = 30000
+        Args:
+            compressed: Compressed data package
+            
+        Returns:
+            Decompressed data dictionary
+        """
+        # Verify integrity
+        if not compressed.verify_checksum():
+            raise ValueError("Compressed data integrity check failed")
         
-        # Generate deterministic clinical indices
-        torch.manual_seed(hash(omics_type.value))
-        indices = torch.randperm(10000)[:num_clinical]
+        # Decompress
+        json_str = gzip.decompress(compressed.data).decode('utf-8')
+        data = json.loads(json_str)
         
-        return indices
+        # Add decompression metadata
+        data['_decompression_info'] = {
+            'sample_id': compressed.sample_id,
+            'tier': compressed.tier.value,
+            'original_size_bytes': compressed.size_bytes,
+            'omics_included': [o.value for o in compressed.omics_included]
+        }
+        
+        return data
+    
+    def calculate_storage_requirements(self, tiers: List[CompressionTier],
+                                     modalities: List[OmicsType]) -> Dict[str, Any]:
+        """
+        Calculate storage requirements for given tiers and modalities.
+        
+        Args:
+            tiers: List of compression tiers to use
+            modalities: List of omics types to include
+            
+        Returns:
+            Storage requirement details
+        """
+        total_size_kb = 0
+        breakdown = {}
+        
+        for tier in tiers:
+            profile = self.COMPRESSION_PROFILES[tier]
+            
+            if tier == CompressionTier.FULL:
+                # Full tier is per-modality
+                modality_count = len([m for m in modalities 
+                                    if m in profile.omics_types])
+                size_kb = profile.max_size_kb * modality_count
+            else:
+                size_kb = profile.max_size_kb
+            
+            breakdown[tier.value] = {
+                'size_kb': size_kb,
+                'features': profile.feature_count,
+                'description': profile.description
+            }
+            
+            total_size_kb += size_kb
+        
+        return {
+            'total_size_kb': total_size_kb,
+            'total_size_mb': total_size_kb / 1024,
+            'breakdown': breakdown,
+            'formula': 'S_client = ∑modalities Size_tier'
+        }
+
+
+# Example usage
+if __name__ == "__main__":
+    # Initialize compression engine
+    engine = CompressionEngine()
+    
+    # Example: Calculate storage for different configurations
+    print("Storage Requirements Examples:")
+    print("=" * 50)
+    
+    # Example 1: Mini genomics only
+    req1 = engine.calculate_storage_requirements(
+        [CompressionTier.MINI], 
+        [OmicsType.GENOMIC]
+    )
+    print(f"Mini genomics only: {req1['total_size_kb']} KB")
+    
+    # Example 2: Clinical pharmacogenomics
+    req2 = engine.calculate_storage_requirements(
+        [CompressionTier.CLINICAL],
+        [OmicsType.GENOMIC, OmicsType.PHENOTYPIC]
+    )
+    print(f"Clinical tier: {req2['total_size_kb']} KB")
+    
+    # Example 3: Mini + Clinical (as specified in docs)
+    req3 = engine.calculate_storage_requirements(
+        [CompressionTier.MINI, CompressionTier.CLINICAL],
+        [OmicsType.GENOMIC, OmicsType.PHENOTYPIC]
+    )
+    print(f"Mini + Clinical: {req3['total_size_kb']} KB")
+    
+    # Example 4: Full multi-omics
+    req4 = engine.calculate_storage_requirements(
+        [CompressionTier.FULL],
+        [OmicsType.GENOMIC, OmicsType.TRANSCRIPTOMIC, 
+         OmicsType.EPIGENETIC, OmicsType.PROTEOMIC]
+    )
+    print(f"Full multi-omics (4 modalities): {req4['total_size_kb']} KB")
+    
+    print("\nDetailed breakdown:")
+    print(json.dumps(req4, indent=2))
