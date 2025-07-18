@@ -1,0 +1,250 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: genomevault
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+      evaluation_interval: 15s
+      external_labels:
+        cluster: 'genomevault-prod'
+        
+    # Alerting configuration
+    alerting:
+      alertmanagers:
+      - static_configs:
+        - targets:
+          - alertmanager:9093
+          
+    # Load rules
+    rule_files:
+      - '/etc/prometheus/rules/*.yml'
+      
+    # Scrape configurations
+    scrape_configs:
+    # GenomeVault API metrics
+    - job_name: 'genomevault-api'
+      kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names:
+          - genomevault
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        action: keep
+        regex: genomevault
+      - source_labels: [__meta_kubernetes_pod_label_component]
+        action: keep
+        regex: api
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+        action: keep
+        regex: true
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+        action: replace
+        target_label: __metrics_path__
+        regex: (.+)
+      - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+        action: replace
+        regex: ([^:]+)(?::\d+)?;(\d+)
+        replacement: $1:$2
+        target_label: __address__
+      - action: labelmap
+        regex: __meta_kubernetes_pod_label_(.+)
+      - source_labels: [__meta_kubernetes_namespace]
+        action: replace
+        target_label: kubernetes_namespace
+      - source_labels: [__meta_kubernetes_pod_name]
+        action: replace
+        target_label: kubernetes_pod_name
+        
+    # GenomeVault Blockchain metrics
+    - job_name: 'genomevault-blockchain'
+      kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names:
+          - genomevault
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        action: keep
+        regex: genomevault
+      - source_labels: [__meta_kubernetes_pod_label_component]
+        action: keep
+        regex: blockchain
+      - source_labels: [__address__]
+        action: replace
+        regex: ([^:]+)(?::\d+)?
+        replacement: $1:26660
+        target_label: __address__
+        
+    # GenomeVault PIR Server metrics
+    - job_name: 'genomevault-pir'
+      kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names:
+          - genomevault
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        action: keep
+        regex: genomevault
+      - source_labels: [__meta_kubernetes_pod_label_component]
+        action: keep
+        regex: pir-server
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_port]
+        action: replace
+        regex: (.+)
+        target_label: __address__
+        replacement: ${1}:9090
+        
+    # Kubernetes cluster monitoring
+    - job_name: 'kubernetes-apiservers'
+      kubernetes_sd_configs:
+      - role: endpoints
+      scheme: https
+      tls_config:
+        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+        action: keep
+        regex: default;kubernetes;https
+        
+    # Node metrics
+    - job_name: 'kubernetes-nodes'
+      kubernetes_sd_configs:
+      - role: node
+      scheme: https
+      tls_config:
+        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      relabel_configs:
+      - action: labelmap
+        regex: __meta_kubernetes_node_label_(.+)
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-rules
+  namespace: genomevault
+data:
+  genomevault-alerts.yml: |
+    groups:
+    - name: genomevault.rules
+      interval: 30s
+      rules:
+      # API alerts
+      - alert: APIHighErrorRate
+        expr: |
+          (
+            sum(rate(genomevault_processing_errors_total[5m])) by (operation)
+            /
+            sum(rate(genomevault_processing_duration_seconds_count[5m])) by (operation)
+          ) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High error rate in GenomeVault API"
+          description: "{{ $labels.operation }} has error rate of {{ $value | humanizePercentage }}"
+          
+      - alert: APIHighLatency
+        expr: |
+          histogram_quantile(0.99, 
+            sum(rate(genomevault_processing_duration_seconds_bucket[5m])) by (operation, le)
+          ) > 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High latency in GenomeVault API"
+          description: "{{ $labels.operation }} p99 latency is {{ $value }}s"
+          
+      # PIR alerts
+      - alert: PIRPrivacyFailureRisk
+        expr: genomevault_pir_privacy_failure_probability > 0.001
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PIR privacy failure risk too high"
+          description: "Privacy failure probability is {{ $value }}, exceeds threshold of 0.001"
+          
+      - alert: PIRServerDown
+        expr: up{job="genomevault-pir"} == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PIR server is down"
+          description: "PIR server {{ $labels.instance }} has been down for more than 5 minutes"
+          
+      # Blockchain alerts
+      - alert: BlockchainOutOfSync
+        expr: |
+          max(genomevault_blockchain_height) - min(genomevault_blockchain_height) > 10
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Blockchain nodes out of sync"
+          description: "Height difference between nodes is {{ $value }} blocks"
+          
+      - alert: BlockProductionSlow
+        expr: |
+          rate(genomevault_block_production_seconds_sum[5m]) 
+          / 
+          rate(genomevault_block_production_seconds_count[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Block production is slow"
+          description: "Average block production time is {{ $value }}s"
+          
+      # Privacy alerts
+      - alert: PrivacyBudgetExhausted
+        expr: genomevault_privacy_budget_consumed > 0.9
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Privacy budget nearly exhausted"
+          description: "User {{ $labels.user_id }} has consumed {{ $value | humanizePercentage }} of privacy budget"
+          
+      - alert: PrivacyViolationAttempt
+        expr: increase(genomevault_privacy_violations_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Privacy violation attempt detected"
+          description: "{{ $value }} privacy violation attempts of type {{ $labels.violation_type }}"
+          
+      # Resource alerts
+      - alert: HighMemoryUsage
+        expr: |
+          (
+            container_memory_working_set_bytes{namespace="genomevault"}
+            /
+            container_spec_memory_limit_bytes{namespace="genomevault"}
+          ) > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage"
+          description: "Pod {{ $labels.pod }} memory usage is {{ $value | humanizePercentage }}"
+          
+      - alert: HighCPUUsage
+        expr: |
+          rate(container_cpu_usage_seconds_total{namespace="genomevault"}[5m]) > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage"
+          description: "Pod {{ $labels.pod }} CPU usage is {{ $value | humanizePercentage }}"

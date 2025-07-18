@@ -1,423 +1,344 @@
 """
-GenomeVault Logging System
+Enhanced logging module with privacy-aware filtering and audit capabilities.
 
-Provides standardized logging with privacy-aware features, structured logging,
-and integration with monitoring systems.
+This module provides:
+- Structured logging with automatic sensitive data redaction
+- Audit trail logging for compliance
+- Performance tracking
+- Error reporting with context
 """
 
+import structlog
 import logging
 import json
-import sys
-import traceback
-from datetime import datetime
-from pathlib import Path
-from typing import Dict, Any, Optional, Union, List
-from enum import Enum
 import hashlib
-import re
-from contextlib import contextmanager
+import os
+from datetime import datetime
+from typing import Any, Dict, Optional, Set, List
 from functools import wraps
-import threading
-import queue
+import traceback
+from contextlib import contextmanager
 
-
-class PrivacyLevel(Enum):
-    """Privacy levels for log redaction"""
-    PUBLIC = 0      # No redaction needed
-    INTERNAL = 1    # Redact in production logs
-    SENSITIVE = 2   # Always redact, hash if needed
-    SECRET = 3      # Never log, even hashed
-
-
-class LogEvent(Enum):
-    """Standardized log events for monitoring"""
-    # System events
-    SYSTEM_START = "system.start"
-    SYSTEM_STOP = "system.stop"
-    SYSTEM_ERROR = "system.error"
-    SYSTEM_METRIC = "system.metric"
-    
-    # Processing events
-    PROCESSING_START = "processing.start"
-    PROCESSING_COMPLETE = "processing.complete"
-    PROCESSING_ERROR = "processing.error"
-    
-    # Privacy events
-    PRIVACY_QUERY = "privacy.query"
-    PRIVACY_VIOLATION = "privacy.violation"
-    PRIVACY_BUDGET_EXCEEDED = "privacy.budget_exceeded"
-    
-    # Security events
-    SECURITY_AUTH_SUCCESS = "security.auth.success"
-    SECURITY_AUTH_FAILURE = "security.auth.failure"
-    SECURITY_AUDIT = "security.audit"
-    
-    # Blockchain events
-    BLOCKCHAIN_TRANSACTION = "blockchain.transaction"
-    BLOCKCHAIN_BLOCK = "blockchain.block"
-    BLOCKCHAIN_CONSENSUS = "blockchain.consensus"
-    
-    # Network events
-    NETWORK_PIR_QUERY = "network.pir.query"
-    NETWORK_PIR_RESPONSE = "network.pir.response"
-    NETWORK_CONNECTION = "network.connection"
-    
-    # HIPAA events
-    HIPAA_VERIFICATION = "hipaa.verification"
-    HIPAA_REVOCATION = "hipaa.revocation"
-
-
-class PrivacyFilter(logging.Filter):
-    """Filter to redact sensitive information from logs"""
-    
-    # Patterns to redact
-    PATTERNS = [
-        (r'\b(?:\d{4}[-\s]?){3}\d{4}\b', '[CREDIT_CARD]'),  # Credit cards
-        (r'\b\d{3}-\d{2}-\d{4}\b', '[SSN]'),                # SSN
-        (r'\b[A-Z]{2}\d{8}\b', '[ID]'),                     # ID numbers
-        (r'chr\d+:\d+-\d+', '[GENOMIC_REGION]'),            # Genomic regions
-        (r'rs\d+', '[SNP_ID]'),                             # SNP IDs
-        (r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}', '[EMAIL]'),  # Emails
-        (r'\b(?:\d{1,3}\.){3}\d{1,3}\b', '[IP]'),          # IP addresses
-    ]
-    
-    def __init__(self, privacy_mode: bool = True):
-        super().__init__()
-        self.privacy_mode = privacy_mode
-    
-    def filter(self, record: logging.LogRecord) -> bool:
-        """Filter and redact log records"""
-        if self.privacy_mode and hasattr(record, 'msg'):
-            record.msg = self._redact_message(str(record.msg))
-            if hasattr(record, 'args') and record.args:
-                record.args = tuple(self._redact_message(str(arg)) for arg in record.args)
-        return True
-    
-    def _redact_message(self, message: str) -> str:
-        """Redact sensitive patterns from message"""
-        for pattern, replacement in self.PATTERNS:
-            message = re.sub(pattern, replacement, message)
-        return message
-
-
-class StructuredFormatter(logging.Formatter):
-    """JSON structured log formatter"""
-    
-    def format(self, record: logging.LogRecord) -> str:
-        """Format log record as JSON"""
-        log_data = {
-            'timestamp': datetime.utcnow().isoformat(),
-            'level': record.levelname,
-            'logger': record.name,
-            'message': record.getMessage(),
-            'module': record.module,
-            'function': record.funcName,
-            'line': record.lineno,
-        }
-        
-        # Add extra fields
-        for key, value in record.__dict__.items():
-            if key not in ['name', 'msg', 'args', 'created', 'filename',
-                          'funcName', 'levelname', 'levelno', 'lineno',
-                          'module', 'msecs', 'pathname', 'process',
-                          'processName', 'relativeCreated', 'thread',
-                          'threadName', 'exc_info', 'exc_text', 'stack_info']:
-                log_data[key] = value
-        
-        # Add exception info if present
-        if record.exc_info:
-            log_data['exception'] = self.formatException(record.exc_info)
-        
-        return json.dumps(log_data)
-
-
-class MetricsLogger:
-    """Logger for metrics and performance data"""
-    
-    def __init__(self, logger: logging.Logger):
-        self.logger = logger
-        self._metrics_queue = queue.Queue()
-        self._metrics_thread = threading.Thread(target=self._process_metrics, daemon=True)
-        self._metrics_thread.start()
-    
-    def log_metric(self, name: str, value: Union[int, float], 
-                   tags: Optional[Dict[str, str]] = None):
-        """Log a metric value"""
-        self._metrics_queue.put({
-            'timestamp': datetime.utcnow(),
-            'name': name,
-            'value': value,
-            'tags': tags or {}
-        })
-    
-    def _process_metrics(self):
-        """Process metrics queue"""
-        batch = []
-        while True:
-            try:
-                metric = self._metrics_queue.get(timeout=1)
-                batch.append(metric)
-                
-                # Batch metrics for efficiency
-                if len(batch) >= 100 or self._metrics_queue.empty():
-                    self._send_metrics_batch(batch)
-                    batch = []
-            except queue.Empty:
-                if batch:
-                    self._send_metrics_batch(batch)
-                    batch = []
-    
-    def _send_metrics_batch(self, batch: List[Dict[str, Any]]):
-        """Send batch of metrics"""
-        self.logger.info("metrics.batch", extra={
-            'metrics': batch,
-            'event': LogEvent.SYSTEM_METRIC.value
-        })
-
+# Configure basic logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 
 class AuditLogger:
-    """Specialized logger for audit trails"""
+    """Specialized logger for audit trail events"""
     
-    def __init__(self, logger: logging.Logger):
-        self.logger = logger
-    
-    def log_access(self, user_id: str, resource: str, action: str, 
-                   result: str, metadata: Optional[Dict[str, Any]] = None):
-        """Log data access for audit trail"""
-        self.logger.info("audit.access", extra={
-            'event': LogEvent.SECURITY_AUDIT.value,
-            'user_id': self._hash_if_needed(user_id),
-            'resource': resource,
-            'action': action,
-            'result': result,
-            'metadata': metadata or {},
-            'timestamp': datetime.utcnow().isoformat()
-        })
-    
-    def log_event(self, event_type: str, actor: str, action: str,
-                  resource: str, metadata: Optional[Dict[str, Any]] = None):
-        """Log generic audit event"""
-        event_value = LogEvent.SECURITY_AUDIT.value
-        if 'hipaa' in event_type.lower():
-            event_value = LogEvent.HIPAA_VERIFICATION.value
+    def __init__(self, audit_file: str = "genomevault_audit.log"):
+        self.audit_file = audit_file
+        self.logger = structlog.get_logger("audit")
         
-        self.logger.info(f"audit.{event_type}", extra={
-            'event': event_value,
-            'event_type': event_type,
-            'actor': self._hash_if_needed(actor) if 'user' in actor else actor,
-            'action': action,
-            'resource': resource,
-            'metadata': metadata or {},
-            'timestamp': datetime.utcnow().isoformat()
-        })
-    
-    def log_computation(self, user_id: str, operation: str, 
-                       privacy_budget_used: float, metadata: Optional[Dict[str, Any]] = None):
-        """Log privacy-sensitive computation"""
-        self.logger.info("audit.computation", extra={
-            'event': LogEvent.PRIVACY_QUERY.value,
-            'user_id': self._hash_if_needed(user_id),
-            'operation': operation,
-            'privacy_budget_used': privacy_budget_used,
-            'metadata': metadata or {},
-            'timestamp': datetime.utcnow().isoformat()
-        })
-    
-    def _hash_if_needed(self, value: str) -> str:
-        """Hash sensitive values for audit logs"""
-        # In production, always hash user IDs
-        return hashlib.sha256(value.encode()).hexdigest()[:16]
+    def log_authentication(self, user_id: str, method: str, success: bool, 
+                         ip_address: Optional[str] = None):
+        """Log authentication attempts"""
+        event = {
+            "event_type": "authentication",
+            "user_id": user_id,
+            "method": method,
+            "success": success,
+            "ip_address": ip_address,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        self._write_audit_log(event)
+        
+    def log_data_access(self, user_id: str, resource_type: str, resource_id: str,
+                       action: str, success: bool, reason: Optional[str] = None):
+        """Log data access attempts"""
+        event = {
+            "event_type": "data_access",
+            "user_id": user_id,
+            "resource_type": resource_type,
+            "resource_id": resource_id,
+            "action": action,
+            "success": success,
+            "reason": reason,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        self._write_audit_log(event)
+        
+    def log_consent_change(self, user_id: str, consent_type: str, 
+                          old_value: Any, new_value: Any):
+        """Log consent changes for GDPR compliance"""
+        event = {
+            "event_type": "consent_change",
+            "user_id": user_id,
+            "consent_type": consent_type,
+            "old_value": old_value,
+            "new_value": new_value,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        self._write_audit_log(event)
+        
+    def log_governance_action(self, actor_id: str, action: str, 
+                            target: Optional[str] = None, 
+                            details: Optional[Dict[str, Any]] = None):
+        """Log governance-related actions"""
+        event = {
+            "event_type": "governance",
+            "actor_id": actor_id,
+            "action": action,
+            "target": target,
+            "details": details,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        self._write_audit_log(event)
+        
+    def log_privacy_event(self, user_id: str, event_type: str, 
+                         epsilon_consumed: float, remaining_budget: float):
+        """Log privacy budget consumption"""
+        event = {
+            "event_type": "privacy_budget",
+            "user_id": user_id,
+            "privacy_event_type": event_type,
+            "epsilon_consumed": epsilon_consumed,
+            "remaining_budget": remaining_budget,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        self._write_audit_log(event)
+        
+    def log_cryptographic_operation(self, operation: str, key_id: Optional[str] = None,
+                                   success: bool = True, details: Optional[Dict] = None):
+        """Log cryptographic operations for security audit"""
+        event = {
+            "event_type": "crypto_operation",
+            "operation": operation,
+            "key_id": key_id,
+            "success": success,
+            "details": details,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        self._write_audit_log(event)
+        
+    def _write_audit_log(self, event: Dict[str, Any]):
+        """Write event to audit log file"""
+        # Add event hash for integrity
+        event_str = json.dumps(event, sort_keys=True)
+        event['integrity_hash'] = hashlib.sha256(event_str.encode()).hexdigest()
+        
+        # Write to file
+        with open(self.audit_file, 'a') as f:
+            f.write(json.dumps(event) + '\n')
+            
+        # Also log to structured logger
+        self.logger.info("audit_event", **event)
 
 
-class GenomeVaultLogger:
-    """Main logger class for GenomeVault"""
+class PerformanceLogger:
+    """Logger for performance metrics and profiling"""
     
-    def __init__(self, name: str, config: Optional[Dict[str, Any]] = None):
-        """
-        Initialize GenomeVault logger
+    def __init__(self):
+        self.logger = structlog.get_logger("performance")
         
-        Args:
-            name: Logger name
-            config: Logger configuration
-        """
-        self.logger = logging.getLogger(name)
-        self.config = config or {}
-        
-        # Set up logging
-        self._setup_handlers()
-        self._setup_filters()
-        
-        # Initialize specialized loggers
-        self.metrics = MetricsLogger(self.logger)
-        self.audit = AuditLogger(self.logger)
-    
-    def _setup_handlers(self):
-        """Set up log handlers"""
-        # Console handler
-        console_handler = logging.StreamHandler(sys.stdout)
-        console_handler.setLevel(
-            getattr(logging, self.config.get('console_level', 'INFO'))
-        )
-        
-        # File handler
-        log_dir = Path(self.config.get('log_dir', Path.home() / '.genomevault' / 'logs'))
-        log_dir.mkdir(parents=True, exist_ok=True)
-        
-        file_handler = logging.FileHandler(
-            log_dir / f"{self.logger.name.replace('.', '_')}.log"
-        )
-        file_handler.setLevel(
-            getattr(logging, self.config.get('file_level', 'DEBUG'))
-        )
-        
-        # Set formatters
-        if self.config.get('structured_logs', True):
-            formatter = StructuredFormatter()
-        else:
-            formatter = logging.Formatter(
-                '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-            )
-        
-        console_handler.setFormatter(formatter)
-        file_handler.setFormatter(formatter)
-        
-        # Add handlers
-        self.logger.addHandler(console_handler)
-        self.logger.addHandler(file_handler)
-        
-        # Set overall level
-        self.logger.setLevel(
-            getattr(logging, self.config.get('level', 'INFO'))
-        )
-    
-    def _setup_filters(self):
-        """Set up log filters"""
-        # Add privacy filter
-        privacy_filter = PrivacyFilter(
-            privacy_mode=self.config.get('privacy_mode', True)
-        )
-        for handler in self.logger.handlers:
-            handler.addFilter(privacy_filter)
-    
     @contextmanager
-    def operation_context(self, operation: str, **kwargs):
-        """Context manager for operation logging"""
-        start_time = datetime.utcnow()
-        operation_id = hashlib.md5(
-            f"{operation}{start_time}".encode()
-        ).hexdigest()[:8]
-        
-        self.logger.info(f"Operation started: {operation}", extra={
-            'operation': operation,
-            'operation_id': operation_id,
-            'event': LogEvent.PROCESSING_START.value,
-            **kwargs
-        })
+    def track_operation(self, operation_name: str, metadata: Optional[Dict] = None):
+        """Context manager to track operation performance"""
+        import time
+        start_time = time.time()
         
         try:
-            yield operation_id
-            
-            duration = (datetime.utcnow() - start_time).total_seconds()
-            self.logger.info(f"Operation completed: {operation}", extra={
-                'operation': operation,
-                'operation_id': operation_id,
-                'duration_seconds': duration,
-                'event': LogEvent.PROCESSING_COMPLETE.value,
-                'status': 'success',
-                **kwargs
-            })
-            
-            # Log metrics
-            self.metrics.log_metric(
-                f"operation.duration.{operation}",
-                duration,
-                tags={'status': 'success'}
+            yield
+            duration = time.time() - start_time
+            self.logger.info(
+                "operation_completed",
+                operation=operation_name,
+                duration_seconds=duration,
+                metadata=metadata,
+                success=True
             )
-            
         except Exception as e:
-            duration = (datetime.utcnow() - start_time).total_seconds()
-            self.logger.error(f"Operation failed: {operation}", extra={
-                'operation': operation,
-                'operation_id': operation_id,
-                'duration_seconds': duration,
-                'event': LogEvent.PROCESSING_ERROR.value,
-                'status': 'error',
-                'error': str(e),
-                'error_type': type(e).__name__,
-                **kwargs
-            }, exc_info=True)
-            
-            # Log metrics
-            self.metrics.log_metric(
-                f"operation.duration.{operation}",
-                duration,
-                tags={'status': 'error', 'error_type': type(e).__name__}
+            duration = time.time() - start_time
+            self.logger.error(
+                "operation_failed",
+                operation=operation_name,
+                duration_seconds=duration,
+                metadata=metadata,
+                error_type=type(e).__name__,
+                error_message=str(e),
+                success=False
             )
-            
             raise
-    
-    def log_event(self, event: LogEvent, message: str, **kwargs):
-        """Log a standardized event"""
-        self.logger.info(message, extra={
-            'event': event.value,
-            'timestamp': datetime.utcnow().isoformat(),
-            **kwargs
-        })
-    
-    def __getattr__(self, name):
-        """Delegate to underlying logger"""
-        return getattr(self.logger, name)
-
-
-# Global logger registry
-_loggers: Dict[str, GenomeVaultLogger] = {}
-
-
-def get_logger(name: str, config: Optional[Dict[str, Any]] = None) -> GenomeVaultLogger:
-    """Get or create a GenomeVault logger"""
-    if name not in _loggers:
-        _loggers[name] = GenomeVaultLogger(name, config)
-    return _loggers[name]
-
-
-def configure_logging(config: Dict[str, Any]):
-    """Configure global logging settings"""
-    # Set root logger level
-    logging.root.setLevel(
-        getattr(logging, config.get('root_level', 'WARNING'))
-    )
-    
-    # Configure library loggers
-    for lib_name, lib_level in config.get('library_levels', {}).items():
-        logging.getLogger(lib_name).setLevel(
-            getattr(logging, lib_level)
+            
+    def log_resource_usage(self, component: str, cpu_percent: float, 
+                          memory_mb: float, disk_io_mb: float):
+        """Log resource usage metrics"""
+        self.logger.info(
+            "resource_usage",
+            component=component,
+            cpu_percent=cpu_percent,
+            memory_mb=memory_mb,
+            disk_io_mb=disk_io_mb,
+            timestamp=datetime.utcnow().isoformat()
         )
 
 
-def log_operation(operation: str):
-    """Decorator for automatic operation logging"""
+class SecurityLogger:
+    """Logger for security-related events"""
+    
+    def __init__(self):
+        self.logger = structlog.get_logger("security")
+        
+    def log_intrusion_attempt(self, source_ip: str, attack_type: str, 
+                            target: str, blocked: bool):
+        """Log potential intrusion attempts"""
+        self.logger.warning(
+            "intrusion_attempt",
+            source_ip=source_ip,
+            attack_type=attack_type,
+            target=target,
+            blocked=blocked,
+            timestamp=datetime.utcnow().isoformat()
+        )
+        
+    def log_encryption_event(self, operation: str, algorithm: str, 
+                           key_length: int, success: bool):
+        """Log encryption/decryption events"""
+        self.logger.info(
+            "encryption_event",
+            operation=operation,
+            algorithm=algorithm,
+            key_length=key_length,
+            success=success,
+            timestamp=datetime.utcnow().isoformat()
+        )
+        
+    def log_access_violation(self, user_id: str, resource: str, 
+                           required_permission: str, user_permissions: List[str]):
+        """Log access control violations"""
+        self.logger.warning(
+            "access_violation",
+            user_id=user_id,
+            resource=resource,
+            required_permission=required_permission,
+            user_permissions=user_permissions,
+            timestamp=datetime.utcnow().isoformat()
+        )
+
+
+def get_logger(name: str) -> structlog.BoundLogger:
+    """Get a configured logger instance"""
+    
+    # Configure processors
+    processors = [
+        structlog.stdlib.filter_by_level,
+        structlog.stdlib.add_logger_name,
+        structlog.stdlib.add_log_level,
+        structlog.stdlib.PositionalArgumentsFormatter(),
+        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.processors.StackInfoRenderer(),
+        structlog.processors.format_exc_info,
+        structlog.processors.UnicodeDecoder(),
+        add_service_context,
+        filter_sensitive_data,
+        structlog.processors.JSONRenderer()
+    ]
+    
+    structlog.configure(
+        processors=processors,
+        context_class=dict,
+        logger_factory=structlog.stdlib.LoggerFactory(),
+        cache_logger_on_first_use=True,
+    )
+    
+    return structlog.get_logger(name)
+
+
+def add_service_context(logger, log_method, event_dict):
+    """Add service context to all log entries"""
+    event_dict['service'] = 'genomevault'
+    event_dict['version'] = '3.0.0'
+    event_dict['environment'] = os.getenv('ENVIRONMENT', 'development')
+    return event_dict
+
+
+def filter_sensitive_data(logger, log_method, event_dict):
+    """Filter sensitive data from logs"""
+    
+    # List of sensitive field patterns
+    sensitive_patterns = {
+        'password', 'token', 'key', 'secret', 'credential',
+        'genome', 'variant', 'hypervector', 'witness',
+        'proof', 'private', 'ssn', 'dob', 'address',
+        'email', 'phone', 'patient', 'sample'
+    }
+    
+    def should_redact(key: str) -> bool:
+        """Check if a key should be redacted"""
+        key_lower = key.lower()
+        return any(pattern in key_lower for pattern in sensitive_patterns)
+    
+    def redact_value(value: Any) -> Any:
+        """Redact sensitive values"""
+        if isinstance(value, dict):
+            return {k: redact_value(v) if not should_redact(k) else '[REDACTED]' 
+                   for k, v in value.items()}
+        elif isinstance(value, list):
+            return [redact_value(item) for item in value]
+        elif isinstance(value, str) and len(value) > 100:
+            # Redact long strings that might be data
+            return f'[REDACTED - {len(value)} chars]'
+        return value
+    
+    # Apply redaction
+    cleaned_dict = {}
+    for key, value in event_dict.items():
+        if should_redact(key):
+            cleaned_dict[key] = '[REDACTED]'
+        else:
+            cleaned_dict[key] = redact_value(value)
+            
+    return cleaned_dict
+
+
+def log_function_call(logger_name: Optional[str] = None):
+    """Decorator to log function calls with arguments and results"""
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            logger = get_logger(func.__module__)
-            with logger.operation_context(operation, function=func.__name__):
-                return func(*args, **kwargs)
+            logger = get_logger(logger_name or func.__module__)
+            
+            # Log function entry
+            logger.debug(
+                "function_called",
+                function=func.__name__,
+                args_count=len(args),
+                kwargs_keys=list(kwargs.keys())
+            )
+            
+            try:
+                result = func(*args, **kwargs)
+                
+                # Log function exit
+                logger.debug(
+                    "function_completed",
+                    function=func.__name__,
+                    has_result=result is not None
+                )
+                
+                return result
+                
+            except Exception as e:
+                # Log function error
+                logger.error(
+                    "function_error",
+                    function=func.__name__,
+                    error_type=type(e).__name__,
+                    error_message=str(e),
+                    traceback=traceback.format_exc()
+                )
+                raise
+                
         return wrapper
     return decorator
 
 
-# Convenience function for privacy-aware logging
-def log_genomic_operation(logger: GenomeVaultLogger, operation: str, 
-                         user_id: str, privacy_budget: float = 0.0,
-                         **metadata):
-    """Log a genomic operation with privacy considerations"""
-    logger.audit.log_computation(
-        user_id=user_id,
-        operation=operation,
-        privacy_budget_used=privacy_budget,
-        metadata=metadata
-    )
+# Global logger instances
+audit_logger = AuditLogger()
+performance_logger = PerformanceLogger()
+security_logger = SecurityLogger()
 
-
-# Create global audit logger instance
-audit_logger = get_logger('genomevault.audit').audit
+# Main logger
+logger = get_logger(__name__)
