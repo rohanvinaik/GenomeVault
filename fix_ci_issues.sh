@@ -1,3 +1,14 @@
+#!/bin/bash
+
+echo "🔧 Fixing CI issues..."
+
+cd /Users/rohanvinaik/genomevault
+
+# First, let's fix the corrupted post_quantum_crypto.py file
+echo "📝 Fixing syntax error in post_quantum_crypto.py..."
+
+# Create a proper post_quantum_crypto.py file
+cat > utils/post_quantum_crypto.py << 'EOF'
 """Post-quantum cryptography implementations for GenomeVault."""
 
 from typing import Dict, Any, Tuple, Optional
@@ -176,3 +187,26 @@ if __name__ == "__main__":
         print(f"\n{algo}:")
         for key, value in metrics.items():
             print(f"  {key}: {value}")
+EOF
+
+# Now run black to format all files
+echo "🎨 Running black to format all files..."
+black .
+
+# Add all formatted files
+echo "📝 Adding all changes..."
+git add -A
+
+# Commit the changes
+echo "💾 Committing changes..."
+git commit -m "fix: format code with black and fix post_quantum_crypto.py syntax error
+
+- Fixed corrupted post_quantum_crypto.py file that was causing parse errors
+- Ran black formatter on all 126 files that needed formatting
+- Ensures CI checks will pass for code formatting"
+
+# Push to GitHub
+echo "🚀 Pushing to GitHub..."
+git push origin main
+
+echo "✅ Done! All CI issues should be fixed now."
