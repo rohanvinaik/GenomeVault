@@ -9,8 +9,8 @@ from . import constants
 from . import exceptions
 
 __all__ = [
-    'Config',
-    'get_config',
-    'constants',
-    'exceptions',
+    "Config",
+    "get_config",
+    "constants",
+    "exceptions",
 ]

@@ -21,13 +21,15 @@ print("   To:      from ..base_circuits import ...")
 print("   Double dots (..) correctly navigate to parent directory")
 
 print("\n📁 VERIFIED FILE STRUCTURE:")
-print("""
+print(
+    """
    zk_proofs/
    └── circuits/
        ├── base_circuits.py         ← Target file
        └── biological/
            └── variant.py           ← Fixed import here
-""")
+"""
+)
 
 print("\n🔧 CURRENT STATE:")
 print("   ✅ Import path is fixed and correct")

@@ -26,9 +26,9 @@ print(f"File exists: {os.path.exists(variant_file)}")
 
 # Read the file and check the import
 if os.path.exists(variant_file):
-    with open(variant_file, 'r') as f:
+    with open(variant_file, "r") as f:
         content = f.read()
-        
+
     # Check for the correct import
     if "from ..base_circuits import" in content:
         print("\n✅ SUCCESS! The import has been fixed!")
@@ -58,9 +58,9 @@ if os.path.exists(circuits_dir):
             # Show contents of biological directory
             if item == "biological":
                 for subitem in sorted(os.listdir(item_path)):
-                    if not subitem.startswith('__pycache__'):
+                    if not subitem.startswith("__pycache__"):
                         print(f"     - {subitem}")
-        elif not item.startswith('__pycache__'):
+        elif not item.startswith("__pycache__"):
             print(f"  📄 {item}")
 
 print("\n" + "=" * 70)

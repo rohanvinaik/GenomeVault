@@ -33,15 +33,15 @@ except ImportError:
     MethylationSite = None
 
 __all__ = [
-    'SequencingProcessor',
-    'DifferentialStorage',
-    'GenomicProfile',
-    'Variant',
-    'QualityMetrics',
+    "SequencingProcessor",
+    "DifferentialStorage",
+    "GenomicProfile",
+    "Variant",
+    "QualityMetrics",
 ]
 
 if TranscriptomicsProcessor:
-    __all__.extend(['TranscriptomicsProcessor', 'ExpressionProfile', 'GeneExpression'])
-    
+    __all__.extend(["TranscriptomicsProcessor", "ExpressionProfile", "GeneExpression"])
+
 if EpigeneticsProcessor:
-    __all__.extend(['EpigeneticsProcessor', 'MethylationProfile', 'MethylationSite'])
+    __all__.extend(["EpigeneticsProcessor", "MethylationProfile", "MethylationSite"])

@@ -6,5 +6,5 @@ Pir Package
 from . import client
 
 __all__ = [
-    'client',
+    "client",
 ]

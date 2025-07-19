@@ -13,31 +13,31 @@ print("GENOMEVAULT DEVELOPMENT TEST SUITE")
 print("Without requiring external dependencies")
 print("=" * 80)
 
+
 class ImportAnalyzer(ast.NodeVisitor):
     """Analyze imports in Python files"""
-    
+
     def __init__(self):
         self.imports = []
         self.from_imports = []
-        
+
     def visit_Import(self, node):
         for alias in node.names:
             self.imports.append(alias.name)
         self.generic_visit(node)
-        
+
     def visit_ImportFrom(self, node):
-        module = node.module or ''
+        module = node.module or ""
         level = node.level
-        self.from_imports.append({
-            'module': module,
-            'level': level,
-            'names': [alias.name for alias in node.names]
-        })
+        self.from_imports.append(
+            {"module": module, "level": level, "names": [alias.name for alias in node.names]}
+        )
         self.generic_visit(node)
+
 
 def analyze_file(filepath):
     """Analyze imports in a Python file"""
-    with open(filepath, 'r') as f:
+    with open(filepath, "r") as f:
         try:
             tree = ast.parse(f.read())
             analyzer = ImportAnalyzer()
@@ -45,6 +45,7 @@ def analyze_file(filepath):
             return analyzer
         except:
             return None
+
 
 # Test 1: Verify the import fix
 print("\n1. TESTING IMPORT PATH FIX")
@@ -57,12 +58,12 @@ if variant_file.exists():
         # Look for the base_circuits import
         base_circuits_import = None
         for imp in analyzer.from_imports:
-            if 'base_circuits' in imp['module']:
+            if "base_circuits" in imp["module"]:
                 base_circuits_import = imp
                 break
-                
+
         if base_circuits_import:
-            if base_circuits_import['level'] == 2:  # .. means level 2
+            if base_circuits_import["level"] == 2:  # .. means level 2
                 print("✅ PASS: Correct import 'from ..base_circuits import'")
             else:
                 print("❌ FAIL: Incorrect import level")
@@ -77,14 +78,14 @@ print("-" * 40)
 
 required_dirs = [
     "core",
-    "utils", 
+    "utils",
     "zk_proofs",
     "zk_proofs/circuits",
     "zk_proofs/circuits/biological",
     "hypervector_transform",
     "local_processing",
     "api",
-    "blockchain"
+    "blockchain",
 ]
 
 all_exist = True
@@ -112,13 +113,13 @@ for init_file in init_files:
     # Skip test directories
     if "test" in str(init_file) or "__pycache__" in str(init_file):
         continue
-        
+
     analyzer = analyze_file(init_file)
     if analyzer:
         # Check if __init__.py imports from parent package
         parent_package = init_file.parent.name
         for imp in analyzer.from_imports:
-            if imp['level'] == 0 and parent_package in imp['module']:
+            if imp["level"] == 0 and parent_package in imp["module"]:
                 circular_risk.append(str(init_file))
 
 if circular_risk:
@@ -139,29 +140,33 @@ relative_import_issues = []
 for py_file in py_files:
     if "__pycache__" in str(py_file) or "test" in str(py_file):
         continue
-        
+
     analyzer = analyze_file(py_file)
     if analyzer:
         for imp in analyzer.from_imports:
-            if imp['level'] > 0:  # Relative import
+            if imp["level"] > 0:  # Relative import
                 # Calculate where the import should resolve to
                 current_dir = py_file.parent
                 target_dir = current_dir
-                
-                for _ in range(imp['level']):
+
+                for _ in range(imp["level"]):
                     target_dir = target_dir.parent
-                    
-                if imp['module']:
-                    target_path = target_dir / imp['module'].replace('.', '/')
-                    
+
+                if imp["module"]:
+                    target_path = target_dir / imp["module"].replace(".", "/")
+
                     # Check if target exists as file or package
-                    if not (target_path.with_suffix('.py').exists() or 
-                           (target_path / '__init__.py').exists()):
-                        relative_import_issues.append({
-                            'file': str(py_file),
-                            'import': f"from {'.' * imp['level']}{imp['module']} import ...",
-                            'target': str(target_path)
-                        })
+                    if not (
+                        target_path.with_suffix(".py").exists()
+                        or (target_path / "__init__.py").exists()
+                    ):
+                        relative_import_issues.append(
+                            {
+                                "file": str(py_file),
+                                "import": f"from {'.' * imp['level']}{imp['module']} import ...",
+                                "target": str(target_path),
+                            }
+                        )
 
 if relative_import_issues:
     print("❌ Found problematic relative imports:")

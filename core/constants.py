@@ -7,6 +7,7 @@ from enum import Enum, IntEnum
 
 class NodeType(str, Enum):
     """Node hardware classes"""
+
     LIGHT = "light"
     FULL = "full"
     ARCHIVE = "archive"
@@ -14,6 +15,7 @@ class NodeType(str, Enum):
 
 class NodeClassWeight(IntEnum):
     """Hardware class weights (c values)"""
+
     LIGHT = 1
     FULL = 4
     ARCHIVE = 8
@@ -21,12 +23,14 @@ class NodeClassWeight(IntEnum):
 
 class SignatoryWeight(IntEnum):
     """Trust signatory weight (s values)"""
+
     NON_SIGNER = 0
     TRUSTED_SIGNATORY = 10
 
 
 class CompressionTier(str, Enum):
     """Data compression tiers"""
+
     MINI = "mini"  # ~25KB - 5,000 most-studied SNPs
     CLINICAL = "clinical"  # ~300KB - ACMG + PharmGKB variants
     FULL = "full"  # 100-200KB per modality
@@ -39,9 +43,11 @@ HYPERVECTOR_DIMENSIONS = {
     "high": 20000,
 }
 
+
 # Biological data types
 class OmicsType(str, Enum):
     """Multi-omics data types"""
+
     GENOMIC = "genomic"
     TRANSCRIPTOMIC = "transcriptomic"
     EPIGENETIC = "epigenetic"

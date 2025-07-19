@@ -33,12 +33,15 @@ for desc, patterns in sensitive_patterns:
     for pattern in patterns:
         result = subprocess.run(
             ["grep", "-r", pattern, ".", "--include=*.py", "--include=*.yaml", "--include=*.json"],
-            capture_output=True, text=True
+            capture_output=True,
+            text=True,
         )
-        if result.stdout and not all(x in result.stdout for x in ["example", "test", "dummy", "placeholder"]):
+        if result.stdout and not all(
+            x in result.stdout for x in ["example", "test", "dummy", "placeholder"]
+        ):
             found = True
             break
-    
+
     if found:
         warnings.append(f"Potential {desc} found - review before pushing")
     else:
@@ -63,14 +66,14 @@ required_entries = [
 ]
 
 if gitignore_path.exists():
-    with open(gitignore_path, 'r') as f:
+    with open(gitignore_path, "r") as f:
         gitignore_content = f.read()
-    
+
     missing = []
     for entry in required_entries:
         if entry not in gitignore_content:
             missing.append(entry)
-    
+
     if missing:
         warnings.append(f".gitignore missing entries: {', '.join(missing[:3])}...")
     else:
@@ -101,7 +104,7 @@ print("-" * 40)
 
 large_files = []
 for path in Path(".").rglob("*"):
-    if path.is_file() and not any(part.startswith('.') for part in path.parts):
+    if path.is_file() and not any(part.startswith(".") for part in path.parts):
         try:
             size_mb = path.stat().st_size / (1024 * 1024)
             if size_mb > 10:  # Files larger than 10MB
@@ -110,7 +113,9 @@ for path in Path(".").rglob("*"):
             pass
 
 if large_files:
-    warnings.append(f"Large files found: {', '.join([f'{f[0]} ({f[1]})' for f in large_files[:3]])}")
+    warnings.append(
+        f"Large files found: {', '.join([f'{f[0]} ({f[1]})' for f in large_files[:3]])}"
+    )
 else:
     successes.append("No large files detected")
 
@@ -121,11 +126,12 @@ print("-" * 40)
 # Check for print debugging statements
 debug_prints = subprocess.run(
     ["grep", "-r", "print(", ".", "--include=*.py", "--exclude-dir=tests"],
-    capture_output=True, text=True
+    capture_output=True,
+    text=True,
 )
 if debug_prints.stdout:
     # Count occurrences
-    count = len(debug_prints.stdout.strip().split('\n'))
+    count = len(debug_prints.stdout.strip().split("\n"))
     if count > 50:  # Arbitrary threshold
         warnings.append(f"Many print statements found ({count}) - consider using logging")
     else:
@@ -137,10 +143,11 @@ print("-" * 40)
 
 todos = subprocess.run(
     ["grep", "-r", "-E", "TODO|FIXME|XXX|HACK", ".", "--include=*.py"],
-    capture_output=True, text=True
+    capture_output=True,
+    text=True,
 )
 if todos.stdout:
-    count = len(todos.stdout.strip().split('\n'))
+    count = len(todos.stdout.strip().split("\n"))
     warnings.append(f"Found {count} TODO/FIXME comments - consider addressing or documenting")
 else:
     successes.append("No TODO/FIXME comments found")
@@ -152,7 +159,7 @@ print("-" * 40)
 # Check the specific fix we made
 variant_file = Path("zk_proofs/circuits/biological/variant.py")
 if variant_file.exists():
-    with open(variant_file, 'r') as f:
+    with open(variant_file, "r") as f:
         content = f.read()
     if "from ..base_circuits import" in content:
         successes.append("✅ variant.py import fix is in place")
@@ -197,7 +204,7 @@ print("-" * 40)
 recommendations = [
     "Create a comprehensive README.md with:",
     "  - Project description and goals",
-    "  - Installation instructions", 
+    "  - Installation instructions",
     "  - Usage examples",
     "  - Architecture overview",
     "  - Contributing guidelines",
@@ -212,7 +219,7 @@ recommendations = [
     "",
     "Review any TODO/FIXME comments",
     "",
-    "Ensure no sensitive data is committed"
+    "Ensure no sensitive data is committed",
 ]
 
 for rec in recommendations:

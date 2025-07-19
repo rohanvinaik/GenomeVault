@@ -9,6 +9,6 @@ from . import app
 from . import main
 
 __all__ = [
-    'app',
-    'main',
+    "app",
+    "main",
 ]

@@ -16,9 +16,9 @@ from .prover import Prover as ZKProver
 from . import verifier
 
 __all__ = [
-    'circuit_manager',
-    'post_quantum',
-    'prover',
-    'verifier',
-    'ZKProver',
+    "circuit_manager",
+    "post_quantum",
+    "prover",
+    "verifier",
+    "ZKProver",
 ]

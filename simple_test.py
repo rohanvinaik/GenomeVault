@@ -9,39 +9,45 @@ import os
 # Add the project root to Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+
 def test_basic_imports():
     """Test basic imports work"""
     print("Testing basic imports...")
-    
+
     try:
         # Test core config
         from core.config import Config, get_config
+
         print("✅ core.config imported successfully")
-        
+
         # Test creating config
         config = get_config()
         print(f"✅ Config created: node_type={config.node_type}")
-        
+
         # Test exceptions
         from core.exceptions import GenomeVaultError, BindingError
+
         print("✅ core.exceptions imported successfully")
-        
+
         # Test utils
         from utils import get_logger, AESGCMCipher, secure_hash
+
         print("✅ utils imported successfully")
-        
+
         return True
-        
+
     except Exception as e:
         print(f"❌ Import failed: {e}")
         import traceback
+
         traceback.print_exc()
         return False
+
 
 def test_module_imports():
     """Test module imports"""
     print("\nTesting module imports...")
-    
+
     modules = [
         "local_processing.sequencing",
         "local_processing.transcriptomics",
@@ -49,27 +55,28 @@ def test_module_imports():
         "hypervector_transform.encoding",
         "zk_proofs.prover",
     ]
-    
+
     success = True
     for module in modules:
         try:
-            parts = module.split('.')
+            parts = module.split(".")
             exec(f"from {parts[0]} import {parts[1]}")
             print(f"✅ {module} imported successfully")
         except Exception as e:
             print(f"❌ {module} failed: {e}")
             success = False
-    
+
     return success
+
 
 if __name__ == "__main__":
     print("=" * 50)
     print("GenomeVault Import Test")
     print("=" * 50)
-    
+
     basic_ok = test_basic_imports()
     modules_ok = test_module_imports()
-    
+
     if basic_ok and modules_ok:
         print("\n✅ All imports successful!")
         sys.exit(0)

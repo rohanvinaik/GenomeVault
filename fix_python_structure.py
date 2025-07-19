@@ -5,13 +5,13 @@ import os
 from pathlib import Path
 
 # Ensure we're in the right directory
-os.chdir('/Users/rohanvinaik/genomevault')
+os.chdir("/Users/rohanvinaik/genomevault")
 
 # Create __init__.py files for all directories that need them
 dirs_needing_init = [
     ".",  # Root genomevault package
     "local_processing",
-    "hypervector_transform", 
+    "hypervector_transform",
     "zk_proofs",
     "zk_proofs/circuits",
     "pir",
@@ -44,7 +44,7 @@ __all__ = ["__version__", "__author__", "__email__"]
         else:
             # Sub-package init
             content = f'"""{dir_path.replace("/", ".")} package."""\n\n__all__ = []\n'
-        
+
         init_file.parent.mkdir(parents=True, exist_ok=True)
         init_file.write_text(content)
         print(f"Created {init_file}")

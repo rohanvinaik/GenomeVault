@@ -9,6 +9,6 @@ from . import multi_omics
 from . import variant
 
 __all__ = [
-    'multi_omics',
-    'variant',
+    "multi_omics",
+    "variant",
 ]

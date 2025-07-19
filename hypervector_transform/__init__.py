@@ -21,16 +21,16 @@ from .encoding import (
 
 __all__ = [
     # Binding
-    'BindingType',
-    'HypervectorBinder',
-    'PositionalBinder', 
-    'CrossModalBinder',
-    'circular_bind',
-    'protect_vector',
+    "BindingType",
+    "HypervectorBinder",
+    "PositionalBinder",
+    "CrossModalBinder",
+    "circular_bind",
+    "protect_vector",
     # Encoding
-    'ProjectionType',
-    'HypervectorConfig',
-    'HypervectorEncoder',
-    'create_encoder',
-    'encode_genomic_data',
+    "ProjectionType",
+    "HypervectorConfig",
+    "HypervectorEncoder",
+    "create_encoder",
+    "encode_genomic_data",
 ]

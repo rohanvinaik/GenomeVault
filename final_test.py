@@ -11,14 +11,15 @@ print("=" * 70)
 print("\n1. Testing the fixed import...")
 try:
     from zk_proofs.circuits.biological.variant import VariantPresenceCircuit
+
     print("✅ SUCCESS: Import works!")
-    
+
     # Create instance
     circuit = VariantPresenceCircuit(merkle_depth=20)
     print(f"✅ Created circuit: {circuit.name}")
     print(f"   - Constraints: {circuit.num_constraints}")
     print(f"   - Merkle depth: {circuit.merkle_depth}")
-    
+
 except Exception as e:
     print(f"❌ FAILED: {type(e).__name__}: {e}")
     sys.exit(1)
@@ -27,65 +28,65 @@ except Exception as e:
 print("\n2. Testing DiabetesRiskCircuit...")
 try:
     from zk_proofs.circuits.biological.variant import DiabetesRiskCircuit
-    
+
     # Create circuit
     diabetes_circuit = DiabetesRiskCircuit()
     print(f"✅ Created diabetes circuit: {diabetes_circuit.name}")
     print(f"   - Constraints: {diabetes_circuit.num_constraints}")
-    
+
     # Test with sample data
     public_inputs = {
-        'glucose_threshold': 126.0,  # mg/dL
-        'risk_threshold': 0.7,       # PRS threshold
-        'result_commitment': '0x' + '0' * 64  # dummy commitment
+        "glucose_threshold": 126.0,  # mg/dL
+        "risk_threshold": 0.7,  # PRS threshold
+        "result_commitment": "0x" + "0" * 64,  # dummy commitment
     }
-    
+
     private_inputs = {
-        'glucose_reading': 140.0,
-        'risk_score': 0.8,
-        'witness_randomness': '0x' + '1' * 64
+        "glucose_reading": 140.0,
+        "risk_score": 0.8,
+        "witness_randomness": "0x" + "1" * 64,
     }
-    
+
     diabetes_circuit.setup(public_inputs, private_inputs)
     print("✅ Setup completed successfully")
-    
+
 except Exception as e:
     print(f"❌ FAILED: {type(e).__name__}: {e}")
 
 # Test 3: Verify base_circuits components
 print("\n3. Testing base circuit components...")
 try:
-    from zk_proofs.circuits.base_circuits import (
-        FieldElement, BaseCircuit, MerkleTreeCircuit
-    )
-    
+    from zk_proofs.circuits.base_circuits import FieldElement, BaseCircuit, MerkleTreeCircuit
+
     # Test FieldElement
     fe1 = FieldElement(100)
     fe2 = FieldElement(200)
     fe3 = fe1 + fe2
     print(f"✅ FieldElement math: {fe1.value} + {fe2.value} = {fe3.value}")
-    
+
     # Test MerkleTreeCircuit
     merkle = MerkleTreeCircuit(tree_depth=10)
     print(f"✅ MerkleTreeCircuit created with depth {merkle.tree_depth}")
-    
+
 except Exception as e:
     print(f"❌ FAILED: {type(e).__name__}: {e}")
 
 # Test 4: Run pytest
 print("\n4. Running pytest...")
 import subprocess
+
 result = subprocess.run(
     [sys.executable, "-m", "pytest", "test_simple.py", "-v", "--tb=short"],
     capture_output=True,
-    text=True
+    text=True,
 )
 
 if result.returncode == 0:
     print("✅ Pytest passed!")
     # Count passed tests
     import re
-    passed = len(re.findall(r'PASSED', result.stdout))
+
+    passed = len(re.findall(r"PASSED", result.stdout))
     print(f"   - Tests passed: {passed}")
 else:
     print("❌ Pytest failed")

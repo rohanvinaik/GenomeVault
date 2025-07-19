@@ -20,7 +20,8 @@ print("   - Changed import to: from ..base_circuits import ...")
 print("   - This correctly imports from the parent circuits/ directory")
 
 print("\n📁 FILE STRUCTURE:")
-print("""
+print(
+    """
    zk_proofs/
    └── circuits/
        ├── base_circuits.py         ← The file we need to import
@@ -28,7 +29,8 @@ print("""
            ├── __init__.py
            ├── variant.py           ← Fixed import here
            └── multi_omics.py       ← Already had correct import
-""")
+"""
+)
 
 print("\n🎯 VERIFICATION:")
 print("   ✅ Import path has been corrected")

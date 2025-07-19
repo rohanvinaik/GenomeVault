@@ -17,24 +17,19 @@ INSTALL_REQUIRES = [
     "pandas>=1.3.0",
     "scipy>=1.7.0",
     "scikit-learn>=1.0.0",
-    
     # Bioinformatics
     "biopython>=1.79",
     "pysam>=0.17.0",
-    
     # Cryptography
     "cryptography>=36.0.0",
     "pynacl>=1.5.0",
-    
     # Configuration and utilities
     "pyyaml>=6.0",
     "click>=8.0",
-    
     # Web/API (for future API module)
     "fastapi>=0.85.0",
     "uvicorn>=0.18.0",
     "httpx>=0.23.0",
-    
     # Blockchain (for future blockchain module)
     "web3>=5.31.0",
     "eth-account>=0.5.9",

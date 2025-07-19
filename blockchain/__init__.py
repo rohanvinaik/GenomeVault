@@ -9,6 +9,6 @@ from . import governance
 from . import node
 
 __all__ = [
-    'governance',
-    'node',
+    "governance",
+    "node",
 ]

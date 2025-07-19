@@ -22,19 +22,20 @@ import structlog
 
 # Configure basic logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
+
 
 class AuditLogger:
     """Specialized logger for audit trail events"""
-    
+
     def __init__(self, audit_file: str = "genomevault_audit.log"):
         self.audit_file = audit_file
         self.logger = structlog.get_logger("audit")
-        
-    def log_authentication(self, user_id: str, method: str, success: bool, 
-                         ip_address: Optional[str] = None):
+
+    def log_authentication(
+        self, user_id: str, method: str, success: bool, ip_address: Optional[str] = None
+    ):
         """Log authentication attempts"""
         event = {
             "event_type": "authentication",
@@ -42,12 +43,19 @@ class AuditLogger:
             "method": method,
             "success": success,
             "ip_address": ip_address,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.utcnow().isoformat(),
         }
         self._write_audit_log(event)
-        
-    def log_data_access(self, user_id: str, resource_type: str, resource_id: str,
-                       action: str, success: bool, reason: Optional[str] = None):
+
+    def log_data_access(
+        self,
+        user_id: str,
+        resource_type: str,
+        resource_id: str,
+        action: str,
+        success: bool,
+        reason: Optional[str] = None,
+    ):
         """Log data access attempts"""
         event = {
             "event_type": "data_access",
@@ -57,12 +65,11 @@ class AuditLogger:
             "action": action,
             "success": success,
             "reason": reason,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.utcnow().isoformat(),
         }
         self._write_audit_log(event)
-        
-    def log_consent_change(self, user_id: str, consent_type: str, 
-                          old_value: Any, new_value: Any):
+
+    def log_consent_change(self, user_id: str, consent_type: str, old_value: Any, new_value: Any):
         """Log consent changes for GDPR compliance"""
         event = {
             "event_type": "consent_change",
@@ -70,13 +77,17 @@ class AuditLogger:
             "consent_type": consent_type,
             "old_value": old_value,
             "new_value": new_value,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.utcnow().isoformat(),
         }
         self._write_audit_log(event)
-        
-    def log_governance_action(self, actor_id: str, action: str, 
-                            target: Optional[str] = None, 
-                            details: Optional[Dict[str, Any]] = None):
+
+    def log_governance_action(
+        self,
+        actor_id: str,
+        action: str,
+        target: Optional[str] = None,
+        details: Optional[Dict[str, Any]] = None,
+    ):
         """Log governance-related actions"""
         event = {
             "event_type": "governance",
@@ -84,12 +95,13 @@ class AuditLogger:
             "action": action,
             "target": target,
             "details": details,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.utcnow().isoformat(),
         }
         self._write_audit_log(event)
-        
-    def log_privacy_event(self, user_id: str, event_type: str, 
-                         epsilon_consumed: float, remaining_budget: float):
+
+    def log_privacy_event(
+        self, user_id: str, event_type: str, epsilon_consumed: float, remaining_budget: float
+    ):
         """Log privacy budget consumption"""
         event = {
             "event_type": "privacy_budget",
@@ -97,12 +109,17 @@ class AuditLogger:
             "privacy_event_type": event_type,
             "epsilon_consumed": epsilon_consumed,
             "remaining_budget": remaining_budget,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.utcnow().isoformat(),
         }
         self._write_audit_log(event)
-        
-    def log_cryptographic_operation(self, operation: str, key_id: Optional[str] = None,
-                                   success: bool = True, details: Optional[Dict] = None):
+
+    def log_cryptographic_operation(
+        self,
+        operation: str,
+        key_id: Optional[str] = None,
+        success: bool = True,
+        details: Optional[Dict] = None,
+    ):
         """Log cryptographic operations for security audit"""
         event = {
             "event_type": "crypto_operation",
@@ -110,12 +127,18 @@ class AuditLogger:
             "key_id": key_id,
             "success": success,
             "details": details,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.utcnow().isoformat(),
         }
         self._write_audit_log(event)
-        
-    def log_event(self, event_type: str, actor: str, action: str, 
-                  resource: str, metadata: Optional[Dict] = None):
+
+    def log_event(
+        self,
+        event_type: str,
+        actor: str,
+        action: str,
+        resource: str,
+        metadata: Optional[Dict] = None,
+    ):
         """Generic event logging method"""
         event = {
             "event_type": event_type,
@@ -123,36 +146,37 @@ class AuditLogger:
             "action": action,
             "resource": resource,
             "metadata": metadata,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.utcnow().isoformat(),
         }
         self._write_audit_log(event)
-        
+
     def _write_audit_log(self, event: Dict[str, Any]):
         """Write event to audit log file"""
         # Add event hash for integrity
         event_str = json.dumps(event, sort_keys=True)
-        event['integrity_hash'] = hashlib.sha256(event_str.encode()).hexdigest()
-        
+        event["integrity_hash"] = hashlib.sha256(event_str.encode()).hexdigest()
+
         # Write to file
-        with open(self.audit_file, 'a') as f:
-            f.write(json.dumps(event) + '\n')
-            
+        with open(self.audit_file, "a") as f:
+            f.write(json.dumps(event) + "\n")
+
         # Also log to structured logger
         self.logger.info("audit_event", **event)
 
 
 class PerformanceLogger:
     """Logger for performance metrics and profiling"""
-    
+
     def __init__(self):
         self.logger = structlog.get_logger("performance")
-        
+
     @contextmanager
     def track_operation(self, operation_name: str, metadata: Optional[Dict] = None):
         """Context manager to track operation performance"""
         import time
+
         start_time = time.time()
-        
+
         try:
             yield
             duration = time.time() - start_time
@@ -161,7 +185,7 @@ class PerformanceLogger:
                 operation=operation_name,
                 duration_seconds=duration,
                 metadata=metadata,
-                success=True
+                success=True,
             )
         except Exception as e:
             duration = time.time() - start_time
@@ -172,12 +196,13 @@ class PerformanceLogger:
                 metadata=metadata,
                 error_type=type(e).__name__,
                 error_message=str(e),
-                success=False
+                success=False,
             )
             raise
-            
-    def log_resource_usage(self, component: str, cpu_percent: float, 
-                          memory_mb: float, disk_io_mb: float):
+
+    def log_resource_usage(
+        self, component: str, cpu_percent: float, memory_mb: float, disk_io_mb: float
+    ):
         """Log resource usage metrics"""
         self.logger.info(
             "resource_usage",
@@ -185,28 +210,30 @@ class PerformanceLogger:
             cpu_percent=cpu_percent,
             memory_mb=memory_mb,
             disk_io_mb=disk_io_mb,
-            timestamp=datetime.utcnow().isoformat()
+            timestamp=datetime.utcnow().isoformat(),
         )
-        
+
     def log_operation(self, operation_name: str):
         """Decorator to log operations - compatibility wrapper"""
+
         def decorator(func):
             @wraps(func)
             def wrapper(*args, **kwargs):
                 with self.track_operation(operation_name):
                     return func(*args, **kwargs)
+
             return wrapper
+
         return decorator
 
 
 class SecurityLogger:
     """Logger for security-related events"""
-    
+
     def __init__(self):
         self.logger = structlog.get_logger("security")
-        
-    def log_intrusion_attempt(self, source_ip: str, attack_type: str, 
-                            target: str, blocked: bool):
+
+    def log_intrusion_attempt(self, source_ip: str, attack_type: str, target: str, blocked: bool):
         """Log potential intrusion attempts"""
         self.logger.warning(
             "intrusion_attempt",
@@ -214,11 +241,10 @@ class SecurityLogger:
             attack_type=attack_type,
             target=target,
             blocked=blocked,
-            timestamp=datetime.utcnow().isoformat()
+            timestamp=datetime.utcnow().isoformat(),
         )
-        
-    def log_encryption_event(self, operation: str, algorithm: str, 
-                           key_length: int, success: bool):
+
+    def log_encryption_event(self, operation: str, algorithm: str, key_length: int, success: bool):
         """Log encryption/decryption events"""
         self.logger.info(
             "encryption_event",
@@ -226,11 +252,12 @@ class SecurityLogger:
             algorithm=algorithm,
             key_length=key_length,
             success=success,
-            timestamp=datetime.utcnow().isoformat()
+            timestamp=datetime.utcnow().isoformat(),
         )
-        
-    def log_access_violation(self, user_id: str, resource: str, 
-                           required_permission: str, user_permissions: List[str]):
+
+    def log_access_violation(
+        self, user_id: str, resource: str, required_permission: str, user_permissions: List[str]
+    ):
         """Log access control violations"""
         self.logger.warning(
             "access_violation",
@@ -238,13 +265,13 @@ class SecurityLogger:
             resource=resource,
             required_permission=required_permission,
             user_permissions=user_permissions,
-            timestamp=datetime.utcnow().isoformat()
+            timestamp=datetime.utcnow().isoformat(),
         )
 
 
 def get_logger(name: str) -> structlog.BoundLogger:
     """Get a configured logger instance"""
-    
+
     # Configure processors
     processors = [
         structlog.stdlib.filter_by_level,
@@ -257,93 +284,108 @@ def get_logger(name: str) -> structlog.BoundLogger:
         structlog.processors.UnicodeDecoder(),
         add_service_context,
         filter_sensitive_data,
-        structlog.processors.JSONRenderer()
+        structlog.processors.JSONRenderer(),
     ]
-    
+
     structlog.configure(
         processors=processors,
         context_class=dict,
         logger_factory=structlog.stdlib.LoggerFactory(),
         cache_logger_on_first_use=True,
     )
-    
+
     return structlog.get_logger(name)
 
 
 def add_service_context(logger, log_method, event_dict):
     """Add service context to all log entries"""
-    event_dict['service'] = 'genomevault'
-    event_dict['version'] = '3.0.0'
-    event_dict['environment'] = os.getenv('ENVIRONMENT', 'development')
+    event_dict["service"] = "genomevault"
+    event_dict["version"] = "3.0.0"
+    event_dict["environment"] = os.getenv("ENVIRONMENT", "development")
     return event_dict
 
 
 def filter_sensitive_data(logger, log_method, event_dict):
     """Filter sensitive data from logs"""
-    
+
     # List of sensitive field patterns
     sensitive_patterns = {
-        'password', 'token', 'key', 'secret', 'credential',
-        'genome', 'variant', 'hypervector', 'witness',
-        'proof', 'private', 'ssn', 'dob', 'address',
-        'email', 'phone', 'patient', 'sample'
+        "password",
+        "token",
+        "key",
+        "secret",
+        "credential",
+        "genome",
+        "variant",
+        "hypervector",
+        "witness",
+        "proof",
+        "private",
+        "ssn",
+        "dob",
+        "address",
+        "email",
+        "phone",
+        "patient",
+        "sample",
     }
-    
+
     def should_redact(key: str) -> bool:
         """Check if a key should be redacted"""
         key_lower = key.lower()
         return any(pattern in key_lower for pattern in sensitive_patterns)
-    
+
     def redact_value(value: Any) -> Any:
         """Redact sensitive values"""
         if isinstance(value, dict):
-            return {k: redact_value(v) if not should_redact(k) else '[REDACTED]' 
-                   for k, v in value.items()}
+            return {
+                k: redact_value(v) if not should_redact(k) else "[REDACTED]"
+                for k, v in value.items()
+            }
         elif isinstance(value, list):
             return [redact_value(item) for item in value]
         elif isinstance(value, str) and len(value) > 100:
             # Redact long strings that might be data
-            return f'[REDACTED - {len(value)} chars]'
+            return f"[REDACTED - {len(value)} chars]"
         return value
-    
+
     # Apply redaction
     cleaned_dict = {}
     for key, value in event_dict.items():
         if should_redact(key):
-            cleaned_dict[key] = '[REDACTED]'
+            cleaned_dict[key] = "[REDACTED]"
         else:
             cleaned_dict[key] = redact_value(value)
-            
+
     return cleaned_dict
 
 
 def log_function_call(logger_name: Optional[str] = None):
     """Decorator to log function calls with arguments and results"""
+
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
             logger = get_logger(logger_name or func.__module__)
-            
+
             # Log function entry
             logger.debug(
                 "function_called",
                 function=func.__name__,
                 args_count=len(args),
-                kwargs_keys=list(kwargs.keys())
+                kwargs_keys=list(kwargs.keys()),
             )
-            
+
             try:
                 result = func(*args, **kwargs)
-                
+
                 # Log function exit
                 logger.debug(
-                    "function_completed",
-                    function=func.__name__,
-                    has_result=result is not None
+                    "function_completed", function=func.__name__, has_result=result is not None
                 )
-                
+
                 return result
-                
+
             except Exception as e:
                 # Log function error
                 logger.error(
@@ -351,11 +393,12 @@ def log_function_call(logger_name: Optional[str] = None):
                     function=func.__name__,
                     error_type=type(e).__name__,
                     error_message=str(e),
-                    traceback=traceback.format_exc()
+                    traceback=traceback.format_exc(),
                 )
                 raise
-                
+
         return wrapper
+
     return decorator
 
 
@@ -372,26 +415,23 @@ def log_genomic_operation(operation_name: str):
 def configure_logging(log_level: str = "INFO", log_file: Optional[str] = None):
     """Configure logging settings"""
     level = getattr(logging, log_level.upper(), logging.INFO)
-    
+
     if log_file:
         logging.basicConfig(
             level=level,
-            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-            handlers=[
-                logging.FileHandler(log_file),
-                logging.StreamHandler()
-            ]
+            format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            handlers=[logging.FileHandler(log_file), logging.StreamHandler()],
         )
     else:
         logging.basicConfig(
-            level=level,
-            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+            level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
         )
 
 
 # Dummy classes for compatibility
 class LogEvent:
     """Event types for logging"""
+
     AUTHENTICATION = "authentication"
     DATA_ACCESS = "data_access"
     CONSENT_CHANGE = "consent_change"
@@ -402,6 +442,7 @@ class LogEvent:
 
 class PrivacyLevel:
     """Privacy levels for data"""
+
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -410,18 +451,19 @@ class PrivacyLevel:
 
 class GenomeVaultLogger:
     """Main logger class for GenomeVault - compatibility wrapper"""
+
     def __init__(self, name: str):
         self.logger = get_logger(name)
-        
+
     def info(self, message: str, **kwargs):
         self.logger.info(message, **kwargs)
-        
+
     def debug(self, message: str, **kwargs):
         self.logger.debug(message, **kwargs)
-        
+
     def warning(self, message: str, **kwargs):
         self.logger.warning(message, **kwargs)
-        
+
     def error(self, message: str, **kwargs):
         self.logger.error(message, **kwargs)
 
