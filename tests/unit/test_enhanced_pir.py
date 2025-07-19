@@ -8,19 +8,19 @@ import json
 import struct
 import tempfile
 from pathlib import Path
-from unittest.mock import AsyncMock, Mock, patch
+from unittest.mock import AsyncMock
+from unittest.mock import Mock
+from unittest.mock import patch
 
 import numpy as np
 import pytest
 
 from genomevault.pir.client import PIRClient
-from genomevault.pir.server.enhanced_pir_server import (
-    EnhancedPIRServer,
-    GenomicRegion,
-    OptimizedPIRDatabase,
-    ShardMetadata,
-    TrustedSignatoryServer,
-)
+from genomevault.pir.server.enhanced_pir_server import EnhancedPIRServer
+from genomevault.pir.server.enhanced_pir_server import GenomicRegion
+from genomevault.pir.server.enhanced_pir_server import OptimizedPIRDatabase
+from genomevault.pir.server.enhanced_pir_server import ShardMetadata
+from genomevault.pir.server.enhanced_pir_server import TrustedSignatoryServer
 
 
 class TestOptimizedPIRDatabase:

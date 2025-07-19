@@ -6,37 +6,33 @@ import gzip
 import json
 import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import MagicMock
+from unittest.mock import Mock
+from unittest.mock import patch
 
 import numpy as np
 import pandas as pd
 import pytest
 
-from genomevault.local_processing.epigenetics import (
-    ChromatinAccessibilityProcessor,
-    ChromatinPeak,
-    EpigeneticDataType,
-    EpigeneticProfile,
-    MethylationContext,
-    MethylationProcessor,
-    MethylationSite,
-    create_epigenetic_processor,
-)
-from genomevault.local_processing.proteomics import (
-    ModificationType,
-    Peptide,
-    ProteinMeasurement,
-    ProteomicsProcessor,
-    ProteomicsProfile,
-    QuantificationMethod,
-)
-from genomevault.local_processing.transcriptomics import (
-    ExpressionProfile,
-    NormalizationMethod,
-    TranscriptExpression,
-    TranscriptomicsConfig,
-    TranscriptomicsProcessor,
-)
+from genomevault.local_processing.epigenetics import ChromatinAccessibilityProcessor
+from genomevault.local_processing.epigenetics import ChromatinPeak
+from genomevault.local_processing.epigenetics import EpigeneticDataType
+from genomevault.local_processing.epigenetics import EpigeneticProfile
+from genomevault.local_processing.epigenetics import MethylationContext
+from genomevault.local_processing.epigenetics import MethylationProcessor
+from genomevault.local_processing.epigenetics import MethylationSite
+from genomevault.local_processing.epigenetics import create_epigenetic_processor
+from genomevault.local_processing.proteomics import ModificationType
+from genomevault.local_processing.proteomics import Peptide
+from genomevault.local_processing.proteomics import ProteinMeasurement
+from genomevault.local_processing.proteomics import ProteomicsProcessor
+from genomevault.local_processing.proteomics import ProteomicsProfile
+from genomevault.local_processing.proteomics import QuantificationMethod
+from genomevault.local_processing.transcriptomics import ExpressionProfile
+from genomevault.local_processing.transcriptomics import NormalizationMethod
+from genomevault.local_processing.transcriptomics import TranscriptExpression
+from genomevault.local_processing.transcriptomics import TranscriptomicsConfig
+from genomevault.local_processing.transcriptomics import TranscriptomicsProcessor
 
 
 class TestTranscriptomicsProcessor:
