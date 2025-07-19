@@ -3,17 +3,17 @@ Test HIPAA Fast-Track Verification System
 """
 
 import asyncio
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import pytest
 
-from genomevault.blockchain.hipaa import CMSNPIRegistry
-from genomevault.blockchain.hipaa import HIPAACredentials
-from genomevault.blockchain.hipaa import HIPAAVerifier
-from genomevault.blockchain.hipaa import VerificationStatus
-from genomevault.blockchain.hipaa.models import NPIRecord
-from genomevault.blockchain.hipaa.models import NPIType
+from genomevault.blockchain.hipaa import (
+    CMSNPIRegistry,
+    HIPAACredentials,
+    HIPAAVerifier,
+    VerificationStatus,
+)
+from genomevault.blockchain.hipaa.models import NPIRecord, NPIType
 from genomevault.core.exceptions import VerificationError
 
 
