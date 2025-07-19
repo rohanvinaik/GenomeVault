@@ -106,7 +106,7 @@ setup(
         "cryptography",
         "zero-knowledge-proofs",
         "federated-learning",
-        "blockchain",
+        "genomevault.blockchain",
         "multi-omics",
         "precision-medicine",
     ],

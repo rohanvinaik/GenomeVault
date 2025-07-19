@@ -6,9 +6,9 @@ import numpy as np
 import pytest
 import torch
 
-from core.constants import HYPERVECTOR_DIMENSIONS
-from hypervector.encoding.genomic import GenomicEncoder
-from hypervector.operations.binding import BindingOperation, HypervectorBinder, MultiModalBinder
+from genomevault.core.constants import HYPERVECTOR_DIMENSIONS
+from genomevault.hypervector.encoding.genomic import GenomicEncoder
+from genomevault.hypervector.operations.binding import BindingOperation, HypervectorBinder, MultiModalBinder
 
 
 class TestGenomicEncoder:

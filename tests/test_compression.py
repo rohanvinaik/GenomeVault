@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 import numpy as np
 import pytest
 
-from local_processing.compression import (
+from genomevault.local_processing.compression import (
     CompressionTier,
     HDCCompressor,
     SNPCompressor,

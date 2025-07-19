@@ -10,7 +10,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from utils.config import (
+from genomevault.utils.config import (
     BlockchainConfig,
     CompressionTier,
     Config,

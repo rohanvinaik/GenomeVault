@@ -8,8 +8,8 @@ from typing import Dict
 import numpy as np
 import torch
 
-from core.constants import OmicsType
-from hypervector_transform.binding import (
+from genomevault.core.constants import OmicsType
+from genomevault.hypervector_transform.binding import (
     BindingType,
     CrossModalBinder,
     HypervectorBinder,
@@ -17,15 +17,15 @@ from hypervector_transform.binding import (
     circular_bind,
     protect_vector,
 )
-from hypervector_transform.encoding import (
+from genomevault.hypervector_transform.encoding import (
     HypervectorConfig,
     HypervectorEncoder,
     ProjectionType,
     create_encoder,
     encode_genomic_data,
 )
-from hypervector_transform.holographic import HolographicEncoder, encode_variant, query_hologram
-from hypervector_transform.mapping import (
+from genomevault.hypervector_transform.holographic import HolographicEncoder, encode_variant, query_hologram
+from genomevault.hypervector_transform.mapping import (
     BiologicalSimilarityMapper,
     ManifoldPreservingMapper,
     SimilarityPreservingMapper,

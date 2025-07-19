@@ -203,3 +203,7 @@ scratch/
 
 # Typescript log files
 typescript
+
+# Legacy debug scripts
+legacy/
+!legacy/.gitkeep

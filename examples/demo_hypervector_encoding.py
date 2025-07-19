@@ -11,8 +11,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
-from core.constants import OmicsType
-from hypervector_transform.binding import (
+from genomevault.core.constants import OmicsType
+from genomevault.hypervector_transform.binding import (
     BindingType,
     CrossModalBinder,
     HypervectorBinder,
@@ -20,10 +20,10 @@ from hypervector_transform.binding import (
 )
 
 # GenomeVault imports
-from hypervector_transform.encoding import HypervectorEncoder, create_encoder
-from hypervector_transform.holographic import HolographicEncoder
-from hypervector_transform.mapping import BiologicalSimilarityMapper, ManifoldPreservingMapper
-from utils.logging import setup_logging
+from genomevault.hypervector_transform.encoding import HypervectorEncoder, create_encoder
+from genomevault.hypervector_transform.holographic import HolographicEncoder
+from genomevault.hypervector_transform.mapping import BiologicalSimilarityMapper, ManifoldPreservingMapper
+from genomevault.utils.logging import setup_logging
 
 
 def demonstrate_basic_encoding():

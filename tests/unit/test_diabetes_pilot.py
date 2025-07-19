@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from clinical.diabetes_pilot.risk_calculator import (
+from genomevault.clinical.diabetes_pilot.risk_calculator import (
     DiabetesRiskCalculator,
     RiskAssessment,
     generate_zkp_alert,

@@ -9,17 +9,17 @@ from pathlib import Path
 
 import torch
 
-from core.constants import OmicsType
-from hypervector_transform.binding import CrossModalBinder
+from genomevault.core.constants import OmicsType
+from genomevault.hypervector_transform.binding import CrossModalBinder
 
 # Phase 2: Hypervector Encoding
-from hypervector_transform.encoding import create_encoder
-from hypervector_transform.holographic import HolographicEncoder
-from local_processing.compression import CompressionTier, TieredCompressor
+from genomevault.hypervector_transform.encoding import create_encoder
+from genomevault.hypervector_transform.holographic import HolographicEncoder
+from genomevault.local_processing.compression import CompressionTier, TieredCompressor
 
 # Phase 1: Local Processing
-from local_processing.sequencing import SequencingProcessor
-from utils.logging import get_logger, setup_logging
+from genomevault.local_processing.sequencing import SequencingProcessor
+from genomevault.utils.logging import get_logger, setup_logging
 
 logger = get_logger(__name__)
 

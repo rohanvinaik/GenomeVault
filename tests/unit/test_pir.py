@@ -8,9 +8,9 @@ from unittest.mock import Mock, patch
 import numpy as np
 import pytest
 
-from core.exceptions import PIRError
-from pir.client.query_builder import PIRClient, PIRQuery
-from pir.server.shard_manager import PIRServer, ShardConfig
+from genomevault.core.exceptions import PIRError
+from genomevault.pir.client.query_builder import PIRClient, PIRQuery
+from genomevault.pir.server.shard_manager import PIRServer, ShardConfig
 
 
 class TestPIRClient:

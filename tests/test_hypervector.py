@@ -2,10 +2,10 @@
 import numpy as np
 import pytest
 
-from hypervector_transform.binding import BindingOperations
-from hypervector_transform.encoding import HypervectorEncoder
-from hypervector_transform.holographic import HolographicRepresentation
-from hypervector_transform.mapping import SimilarityPreservingMapper
+from genomevault.hypervector_transform.binding import BindingOperations
+from genomevault.hypervector_transform.encoding import HypervectorEncoder
+from genomevault.hypervector_transform.holographic import HolographicRepresentation
+from genomevault.hypervector_transform.mapping import SimilarityPreservingMapper
 
 
 class TestHypervectorEngine:
