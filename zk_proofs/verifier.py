@@ -9,7 +9,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from utils.config import config
+from utils.config import get_config
+config = get_config()
 from utils.logging import audit_logger, logger, performance_logger
 
 from .prover import Circuit, CircuitLibrary, Proof

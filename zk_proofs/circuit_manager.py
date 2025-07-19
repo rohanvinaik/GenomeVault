@@ -11,7 +11,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from utils.config import config
+from utils.config import get_config
+config = get_config()
 from utils.logging import logger, performance_logger
 
 from .circuits.base_circuits import BaseCircuit

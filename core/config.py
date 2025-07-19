@@ -6,7 +6,8 @@ import os
 from functools import lru_cache
 from typing import Any, Dict, Optional
 
-from pydantic import BaseSettings, Field, validator
+from pydantic import Field, field_validator
+from pydantic_settings import BaseSettings
 
 
 class Config(BaseSettings):
@@ -24,8 +25,8 @@ class Config(BaseSettings):
     
     # Security Configuration
     redis_password: str = Field("genomevault", env="REDIS_PASSWORD")
-    jwt_secret: str = Field(..., env="JWT_SECRET")
-    encryption_key: str = Field(..., env="ENCRYPTION_KEY")
+    jwt_secret: str = Field("test_secret", env="JWT_SECRET")
+    encryption_key: str = Field("test_key", env="ENCRYPTION_KEY")
     
     # HIPAA Configuration
     npi_number: Optional[str] = Field(None, env="NPI_NUMBER")
@@ -63,17 +64,18 @@ class Config(BaseSettings):
     enable_pharmacogenomics: bool = Field(False, env="ENABLE_PHARMACOGENOMICS")
     enable_trial_matching: bool = Field(False, env="ENABLE_TRIAL_MATCHING")
     
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8"
+    }
     
-    @validator("node_type")
+    @field_validator("node_type")
     def validate_node_type(cls, v):
         if v not in ["light", "full", "archive"]:
             raise ValueError("node_type must be one of: light, full, archive")
         return v
     
-    @validator("compression_tier")
+    @field_validator("compression_tier")
     def validate_compression_tier(cls, v):
         if v not in ["mini", "clinical", "full"]:
             raise ValueError("compression_tier must be one of: mini, clinical, full")

@@ -1,47 +1,14 @@
 """
-GenomeVault Blockchain Package
-
-This package implements the blockchain layer including:
-- Consensus mechanisms
-- Smart contracts
-- Governance (DAO)
-- HIPAA fast-track verification
-- Node management
+Blockchain Package
 """
 
-from .governance import CommitteeType, GovernanceSystem, HIPAAOracle, ProposalStatus, ProposalType
-from .node import BlockchainNode, NodeType
+# Too many exports in governance, import module directly
+from . import governance
 
-# Import HIPAA components if available
-try:
-    from .hipaa import HIPAACredentials, HIPAAVerifier, NPIRegistry, VerificationStatus
-    from .hipaa.integration import HIPAAGovernanceIntegration, HIPAANodeIntegration
-    HIPAA_AVAILABLE = True
-except ImportError:
-    HIPAA_AVAILABLE = False
+# Too many exports in node, import module directly
+from . import node
 
 __all__ = [
-    # Node management
-    'BlockchainNode',
-    'NodeType',
-    
-    # Governance
-    'GovernanceSystem',
-    'ProposalType',
-    'ProposalStatus',
-    'CommitteeType',
-    'HIPAAOracle',
+    'governance',
+    'node',
 ]
-
-# Add HIPAA exports if available
-if HIPAA_AVAILABLE:
-    __all__.extend([
-        'HIPAAVerifier',
-        'HIPAACredentials',
-        'VerificationStatus',
-        'NPIRegistry',
-        'HIPAANodeIntegration',
-        'HIPAAGovernanceIntegration'
-    ])
-
-__version__ = '0.1.0'

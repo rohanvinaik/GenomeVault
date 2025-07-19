@@ -1,15 +1,16 @@
 """
-GenomeVault Core Module
-
-This module contains the core configuration and shared components
-used throughout the GenomeVault system.
+Core Package
 """
 
-__version__ = "3.0.0"
-__author__ = "GenomeVault Team"
+from .config import Config, get_config
 
-from .config import Config
-from .constants import *
-from .exceptions import *
+# Import modules directly
+from . import constants
+from . import exceptions
 
-__all__ = ["Config", "GenomeVaultError", "ValidationError", "PrivacyError"]
+__all__ = [
+    'Config',
+    'get_config',
+    'constants',
+    'exceptions',
+]

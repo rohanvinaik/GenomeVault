@@ -13,7 +13,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
-from utils.config import config
+from utils.config import get_config
+config = get_config()
 from utils.logging import audit_logger, logger
 
 # Create FastAPI app

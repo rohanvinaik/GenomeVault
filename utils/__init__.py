@@ -4,73 +4,41 @@ GenomeVault Utilities Package
 Core utilities for configuration, logging, and encryption.
 """
 
-from .config import (
-    Config,
-    CryptoConfig,
-    Environment,
-    NetworkConfig,
-    PrivacyConfig,
-    ProcessingConfig,
-    SecurityLevel,
-    StorageConfig,
-    get_config,
-    init_config,
-)
+# Import only what's actually needed and used
+from .config import Config, get_config
+
 from .encryption import (
     AESGCMCipher,
-    ChaCha20Poly1305,
-    EncryptionManager,
-    KeyDerivation,
-    RSAEncryption,
-    SecureRandom,
-    ThresholdCrypto,
-    ThresholdShare,
     generate_secure_key,
     secure_hash,
 )
+
 from .logging import (
-    GenomeVaultLogger,
-    LogEvent,
-    PrivacyLevel,
-    configure_logging,
     get_logger,
-    log_genomic_operation,
-    log_operation,
+    audit_logger,
+    performance_logger,
+    security_logger,
 )
+
+# Don't import modules that have heavy dependencies unless needed
+# from . import backup  # Has boto3 dependency
+# from . import monitoring  # May have other dependencies
 
 __all__ = [
     # Config
     'Config',
     'get_config',
-    'init_config',
-    'Environment',
-    'SecurityLevel',
-    'CryptoConfig',
-    'PrivacyConfig',
-    'NetworkConfig',
-    'StorageConfig',
-    'ProcessingConfig',
     
     # Logging
     'get_logger',
-    'configure_logging',
-    'log_operation',
-    'log_genomic_operation',
-    'LogEvent',
-    'PrivacyLevel',
-    'GenomeVaultLogger',
+    'audit_logger',
+    'performance_logger',
+    'security_logger',
     
     # Encryption
     'AESGCMCipher',
-    'ChaCha20Poly1305',
-    'RSAEncryption',
-    'ThresholdCrypto',
-    'ThresholdShare',
-    'KeyDerivation',
-    'SecureRandom',
-    'EncryptionManager',
     'generate_secure_key',
-    'secure_hash'
+    'secure_hash',
 ]
 
 # Version info

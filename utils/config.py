@@ -14,7 +14,14 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-import yaml
+try:
+    import yaml
+    HAS_YAML = True
+except ImportError:
+    HAS_YAML = False
+    yaml = None
+
+# These are REQUIRED - not optional!
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
@@ -178,7 +185,9 @@ class Config:
         """Get default configuration file path"""
         config_dir = Path.home() / ".genomevault" / "config"
         config_dir.mkdir(parents=True, exist_ok=True)
-        return config_dir / f"{self.environment.value}.yaml"
+        # Use JSON format if YAML not available
+        extension = ".yaml" if HAS_YAML else ".json"
+        return config_dir / f"{self.environment.value}{extension}"
     
     def _load_config(self):
         """Load configuration from file"""
@@ -188,8 +197,12 @@ class Config:
         
         try:
             with open(self.config_file, 'r') as f:
-                if self.config_file.endswith('.yaml') or self.config_file.endswith('.yml'):
-                    data = yaml.safe_load(f)
+                if (self.config_file.endswith('.yaml') or self.config_file.endswith('.yml')):
+                    if HAS_YAML:
+                        data = yaml.safe_load(f)
+                    else:
+                        logger.warning("YAML support not available. Install PyYAML to use YAML configs.")
+                        return
                 else:
                     data = json.load(f)
             
@@ -343,7 +356,11 @@ class Config:
         
         with open(path, 'w') as f:
             if path.endswith('.yaml') or path.endswith('.yml'):
-                yaml.dump(config_data, f, default_flow_style=False)
+                if HAS_YAML:
+                    yaml.dump(config_data, f, default_flow_style=False)
+                else:
+                    # Fall back to JSON if YAML not available
+                    json.dump(config_data, f, indent=2)
             else:
                 json.dump(config_data, f, indent=2)
         

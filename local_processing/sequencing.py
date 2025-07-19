@@ -21,8 +21,8 @@ import pysam
 from Bio import SeqIO
 from Bio.Seq import Seq
 
-from ..utils import AESGCMCipher, get_config, get_logger, secure_hash
-from ..utils.logging import log_operation
+from utils import AESGCMCipher, get_config, get_logger, secure_hash
+from utils.logging import log_operation
 
 logger = get_logger(__name__)
 config = get_config()

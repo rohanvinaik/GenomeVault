@@ -13,7 +13,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from web3 import Web3
 
-from utils.config import NodeClass, config
+from core.constants import NodeClassWeight as NodeClass
 from utils.logging import audit_logger, logger, performance_logger
 
 

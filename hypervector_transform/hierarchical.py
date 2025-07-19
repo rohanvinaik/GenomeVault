@@ -15,9 +15,9 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import numpy as np
 import torch
 
-from ..core.config import get_config
-from ..core.constants import HYPERVECTOR_DIMENSIONS, OmicsType
-from ..utils.logging import get_logger
+from core.config import get_config
+from core.constants import HYPERVECTOR_DIMENSIONS, OmicsType
+from utils.logging import get_logger
 
 logger = get_logger(__name__)
 config = get_config()

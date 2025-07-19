@@ -1,84 +1,47 @@
 """
 GenomeVault Local Processing Package
-
-Provides local multi-omics data processing capabilities including:
-- Genomic sequencing data (WGS/WES)
-- Transcriptomics (RNA-seq)
-- Epigenetics (methylation, chromatin accessibility)
-- Proteomics (mass spectrometry)
-- Clinical phenotypes (EHR, FHIR)
 """
 
-from .epigenetics import (
-    ChromatinAccessibilityProcessor,
-    ChromatinPeak,
-    EpigeneticProfile,
-    MethylationProcessor,
-    MethylationSite,
-    create_epigenetic_processor,
-)
-from .phenotypes import (
-    ClinicalMeasurement,
-    Diagnosis,
-    FamilyHistory,
-    Medication,
-    PhenotypeCategory,
-    PhenotypeProcessor,
-    PhenotypeProfile,
-)
-from .proteomics import Peptide, ProteinMeasurement, ProteomicsProcessor, ProteomicsProfile
 from .sequencing import (
+    SequencingProcessor,
     DifferentialStorage,
     GenomicProfile,
-    QualityMetrics,
-    SequencingProcessor,
     Variant,
-)
-from .transcriptomics import (
-    BatchEffectResult,
-    ExpressionProfile,
-    TranscriptExpression,
-    TranscriptomicsProcessor,
+    QualityMetrics,
 )
 
+try:
+    from .transcriptomics import (
+        TranscriptomicsProcessor,
+        ExpressionProfile,
+        GeneExpression,
+    )
+except ImportError:
+    TranscriptomicsProcessor = None
+    ExpressionProfile = None
+    GeneExpression = None
+
+try:
+    from .epigenetics import (
+        EpigeneticsProcessor,
+        MethylationProfile,
+        MethylationSite,
+    )
+except ImportError:
+    EpigeneticsProcessor = None
+    MethylationProfile = None
+    MethylationSite = None
+
 __all__ = [
-    # Sequencing
     'SequencingProcessor',
     'DifferentialStorage',
     'GenomicProfile',
     'Variant',
     'QualityMetrics',
-    
-    # Transcriptomics
-    'TranscriptomicsProcessor',
-    'ExpressionProfile',
-    'TranscriptExpression',
-    'BatchEffectResult',
-    
-    # Epigenetics
-    'MethylationProcessor',
-    'ChromatinAccessibilityProcessor',
-    'EpigeneticProfile',
-    'MethylationSite',
-    'ChromatinPeak',
-    'create_epigenetic_processor',
-    
-    # Proteomics
-    'ProteomicsProcessor',
-    'ProteomicsProfile',
-    'ProteinMeasurement',
-    'Peptide',
-    
-    # Phenotypes
-    'PhenotypeProcessor',
-    'PhenotypeProfile',
-    'ClinicalMeasurement',
-    'Diagnosis',
-    'Medication',
-    'FamilyHistory',
-    'PhenotypeCategory'
 ]
 
-# Version info
-__version__ = '1.0.0'
-__author__ = 'GenomeVault Team'
+if TranscriptomicsProcessor:
+    __all__.extend(['TranscriptomicsProcessor', 'ExpressionProfile', 'GeneExpression'])
+    
+if EpigeneticsProcessor:
+    __all__.extend(['EpigeneticsProcessor', 'MethylationProfile', 'MethylationSite'])

@@ -13,8 +13,8 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Union
 
-from ..utils import get_config, get_logger, secure_hash
-from ..utils.logging import log_operation
+from utils import get_config, get_logger, secure_hash
+from utils.logging import log_operation
 
 logger = get_logger(__name__)
 config = get_config()

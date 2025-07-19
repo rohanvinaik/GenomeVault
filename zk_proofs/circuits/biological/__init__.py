@@ -1,39 +1,14 @@
 """
-Biological zero-knowledge proof circuits.
-
-Specialized circuits for genomic privacy including variant verification,
-risk scores, clinical assessments, and multi-omics integration.
+Biological Package
 """
 
-from .multi_omics import (
-    ClinicalTrialEligibilityCircuit,
-    GenotypePhenotypeAssociationCircuit,
-    MultiOmicsCorrelationCircuit,
-    RareVariantBurdenCircuit,
-    create_multi_omics_proof_suite,
-)
-from .variant import (
-    DiabetesRiskCircuit,
-    PathwayEnrichmentCircuit,
-    PharmacogenomicCircuit,
-    PolygenenicRiskScoreCircuit,
-    VariantPresenceCircuit,
-    create_hypervector_proof,
-)
+# Too many exports in multi_omics, import module directly
+from . import multi_omics
+
+# Too many exports in variant, import module directly
+from . import variant
 
 __all__ = [
-    # Variant circuits
-    'VariantPresenceCircuit',
-    'PolygenenicRiskScoreCircuit',
-    'DiabetesRiskCircuit',
-    'PharmacogenomicCircuit',
-    'PathwayEnrichmentCircuit',
-    'create_hypervector_proof',
-    
-    # Multi-omics circuits
-    'MultiOmicsCorrelationCircuit',
-    'GenotypePhenotypeAssociationCircuit',
-    'ClinicalTrialEligibilityCircuit',
-    'RareVariantBurdenCircuit',
-    'create_multi_omics_proof_suite'
+    'multi_omics',
+    'variant',
 ]

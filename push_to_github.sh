@@ -1,55 +1,46 @@
 #!/bin/bash
+# GitHub Push Commands for GenomeVault
 
-# GenomeVault GitHub Push Script
-# This script stages all changes and pushes to GitHub
-
-echo "=== GenomeVault GitHub Push ==="
-echo
-
-# Navigate to project directory
-cd /Users/rohanvinaik/genomevault
-
-# Check current status
-echo "Current git status:"
-git status
-echo
-
-# Add all new files
-echo "Adding all files..."
-git add .
-
-# Show what will be committed
-echo "Files to be committed:"
-git status --short
-echo
-
-# Commit with a descriptive message
-echo "Creating commit..."
-git commit -m "Implement GenomeVault 3.0 core architecture
-
-- Add comprehensive configuration system with dual-axis node model
-- Implement local processing with differential storage
-- Create hypervector encoding with 10,000x compression
-- Add zero-knowledge proof system with PLONK circuits
-- Implement information-theoretic PIR with optimal server selection
-- Create blockchain node with Tendermint BFT consensus
-- Add FastAPI-based network API
-- Include example usage demonstrating complete workflow
-
-Key features:
-- Compression tiers: Mini (25KB), Clinical (300KB), Full HDC (100-200KB)
-- Privacy guarantees: PIR P_fail = (1-q)^k, DP ε=1.0
-- Dual-axis voting: w = c + s (hardware + trust)
-- HIPAA fast-track for healthcare providers
-- Post-quantum ready cryptography"
-
-# Push to GitHub
-echo
-echo "Pushing to GitHub..."
-git push origin main
-
-echo
-echo "=== Push Complete ==="
-echo "Your code is now on GitHub!"
-echo
-echo "View your repository at: https://github.com/rohanvinaik/GenomeVault"
+echo "📦 GenomeVault - GitHub Push Commands"
+echo "===================================="
+echo ""
+echo "1️⃣  First, initialize git repository (if not already done):"
+echo "   git init"
+echo ""
+echo "2️⃣  Add all files to staging:"
+echo "   git add ."
+echo ""
+echo "3️⃣  Create your initial commit:"
+echo "   git commit -m \"Initial commit: GenomeVault 3.0 - Privacy-preserving genomics platform\""
+echo ""
+echo "4️⃣  Create a new repository on GitHub:"
+echo "   - Go to https://github.com/new"
+echo "   - Name it: genomevault"
+echo "   - Choose Private or Public"
+echo "   - DON'T initialize with README (you already have one)"
+echo ""
+echo "5️⃣  Link your local repo to GitHub (replace YOUR_USERNAME):"
+echo "   git remote add origin https://github.com/YOUR_USERNAME/genomevault.git"
+echo ""
+echo "6️⃣  Push to GitHub:"
+echo "   git branch -M main"
+echo "   git push -u origin main"
+echo ""
+echo "📝 Complete command sequence:"
+echo "----------------------------"
+echo ""
+echo "git init"
+echo "git add ."
+echo "git commit -m \"Initial commit: GenomeVault 3.0 - Privacy-preserving genomics platform\""
+echo "git remote add origin https://github.com/YOUR_USERNAME/genomevault.git"
+echo "git branch -M main"
+echo "git push -u origin main"
+echo ""
+echo "🔐 If you're using SSH instead of HTTPS:"
+echo "   git remote add origin git@github.com:YOUR_USERNAME/genomevault.git"
+echo ""
+echo "✅ After pushing, consider:"
+echo "   - Adding a description to your GitHub repo"
+echo "   - Setting topics: genomics, privacy, zero-knowledge-proofs, blockchain"
+echo "   - Enabling Issues and Discussions"
+echo "   - Setting up branch protection rules"

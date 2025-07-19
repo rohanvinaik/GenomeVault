@@ -22,9 +22,9 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-from ..core.config import get_config
-from ..core.exceptions import ProcessingError, ValidationError
-from ..utils.logging import get_logger
+from core.config import get_config
+from core.exceptions import ProcessingError, ValidationError
+from utils.logging import get_logger
 
 logger = get_logger(__name__)
 config = get_config()

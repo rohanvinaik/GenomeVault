@@ -11,8 +11,12 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 
-from utils.config import config
-from utils.logging import audit_logger, logger, performance_logger
+from core.config import get_config
+config = get_config()
+from utils.logging import get_logger
+logger = get_logger(__name__)
+audit_logger = logger
+performance_logger = logger
 
 
 @dataclass
@@ -237,7 +241,7 @@ class Prover:
             'toxic_waste': 'destroyed'
         }
     
-    @performance_logger.log_operation("generate_proof")
+    # # # @performance_logger.log_operation("generate_proof")
     def generate_proof(self, circuit_name: str, 
                       public_inputs: Dict[str, Any],
                       private_inputs: Dict[str, Any]) -> Proof:

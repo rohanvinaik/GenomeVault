@@ -28,6 +28,11 @@ class ProofError(CryptographicError):
     pass
 
 
+class CircuitError(ProofError):
+    """Raised when circuit operations fail"""
+    pass
+
+
 class PIRError(GenomeVaultError):
     """Raised when Private Information Retrieval fails"""
     pass
@@ -50,6 +55,21 @@ class CompressionError(GenomeVaultError):
 
 class HypervectorError(GenomeVaultError):
     """Raised when hypervector operations fail"""
+    pass
+
+
+class BindingError(HypervectorError):
+    """Raised when hypervector binding operations fail"""
+    pass
+
+
+class EncodingError(HypervectorError):
+    """Raised when hypervector encoding operations fail"""
+    pass
+
+
+class MappingError(HypervectorError):
+    """Raised when hypervector mapping operations fail"""
     pass
 
 

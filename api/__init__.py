@@ -1,48 +1,14 @@
 """
-GenomeVault API Package
-
-Core network API implementation using FastAPI.
-Provides endpoints for:
-- Network topology discovery
-- Credit management
-- Audit challenges
-- Processing pipelines
-- Hypervector operations
-- Zero-knowledge proofs
+Api Package
 """
 
-from .app import app, get_app_instance
-from .main import (
-    AuditChallengeRequest,
-    AuditChallengeResponse,
-    CreditRedeemRequest,
-    CreditRedeemResponse,
-    TopologyRequest,
-    TopologyResponse,
-)
-from .routers.credit import router as credit_router
+# Too many exports in app, import module directly
+from . import app
 
-# Import routers
-from .routers.topology import router as topology_router
+# Too many exports in main, import module directly
+from . import main
 
 __all__ = [
-    # Application
     'app',
-    'get_app_instance',
-    
-    # Request/Response models
-    'TopologyRequest',
-    'TopologyResponse',
-    'CreditRedeemRequest',
-    'CreditRedeemResponse',
-    'AuditChallengeRequest',
-    'AuditChallengeResponse',
-    
-    # Routers
-    'topology_router',
-    'credit_router'
+    'main',
 ]
-
-# Version info
-__version__ = '1.0.0'
-__author__ = 'GenomeVault Team'

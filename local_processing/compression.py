@@ -17,8 +17,8 @@ from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 
-from ..core.constants import CompressionTier, OmicsType
-from ..utils import get_config, get_logger
+from core.constants import CompressionTier, OmicsType
+from utils import get_config, get_logger
 
 logger = get_logger(__name__)
 config = get_config()

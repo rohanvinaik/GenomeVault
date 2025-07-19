@@ -14,7 +14,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
-from utils.config import config
+from utils.config import get_config
+config = get_config()
 from utils.logging import audit_logger, logger, performance_logger
 
 

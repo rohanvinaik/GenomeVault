@@ -13,7 +13,8 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 import aiohttp
 import numpy as np
 
-from utils.config import config
+from utils.config import get_config
+config = get_config()
 from utils.logging import logger, performance_logger
 
 from ..client import PIRClient, PIRServer

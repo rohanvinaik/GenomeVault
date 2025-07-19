@@ -1,16 +1,45 @@
 """
-HIPAA Fast-Track Verification System
-
-This module implements the streamlined verification pathway for healthcare providers
-to become Trusted Signatories in the GenomeVault network.
+Hipaa Package
 """
 
-from .models import HIPAACredentials, VerificationStatus
-from .verifier import HIPAAVerifier, NPIRegistry
+# Too many exports in integration, import module directly
+from . import integration
+
+from .models import (
+    EXPIRED,
+    FAILED,
+    HIPAACredentials,
+    INDIVIDUAL,
+    NPIRecord,
+    NPIType,
+    ORGANIZATION,
+    PENDING,
+    REVOKED,
+    VERIFIED,
+    VerificationRecord,
+    VerificationStatus,
+    is_active,
+    to_chain_data,
+)
+
+# Too many exports in verifier, import module directly
+from . import verifier
 
 __all__ = [
-    'HIPAAVerifier',
-    'NPIRegistry', 
+    'integration',
+    'EXPIRED',
+    'FAILED',
     'HIPAACredentials',
-    'VerificationStatus'
+    'INDIVIDUAL',
+    'NPIRecord',
+    'NPIType',
+    'ORGANIZATION',
+    'PENDING',
+    'REVOKED',
+    'VERIFIED',
+    'VerificationRecord',
+    'VerificationStatus',
+    'is_active',
+    'to_chain_data',
+    'verifier',
 ]

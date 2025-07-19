@@ -114,6 +114,19 @@ class AuditLogger:
         }
         self._write_audit_log(event)
         
+    def log_event(self, event_type: str, actor: str, action: str, 
+                  resource: str, metadata: Optional[Dict] = None):
+        """Generic event logging method"""
+        event = {
+            "event_type": event_type,
+            "actor": actor,
+            "action": action,
+            "resource": resource,
+            "metadata": metadata,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        self._write_audit_log(event)
+        
     def _write_audit_log(self, event: Dict[str, Any]):
         """Write event to audit log file"""
         # Add event hash for integrity
@@ -174,6 +187,16 @@ class PerformanceLogger:
             disk_io_mb=disk_io_mb,
             timestamp=datetime.utcnow().isoformat()
         )
+        
+    def log_operation(self, operation_name: str):
+        """Decorator to log operations - compatibility wrapper"""
+        def decorator(func):
+            @wraps(func)
+            def wrapper(*args, **kwargs):
+                with self.track_operation(operation_name):
+                    return func(*args, **kwargs)
+            return wrapper
+        return decorator
 
 
 class SecurityLogger:
@@ -334,6 +357,73 @@ def log_function_call(logger_name: Optional[str] = None):
                 
         return wrapper
     return decorator
+
+
+def log_operation(operation_name: str):
+    """Decorator to log operations - compatibility function"""
+    return log_function_call(operation_name)
+
+
+def log_genomic_operation(operation_name: str):
+    """Decorator to log genomic operations - compatibility function"""
+    return log_function_call(operation_name)
+
+
+def configure_logging(log_level: str = "INFO", log_file: Optional[str] = None):
+    """Configure logging settings"""
+    level = getattr(logging, log_level.upper(), logging.INFO)
+    
+    if log_file:
+        logging.basicConfig(
+            level=level,
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            handlers=[
+                logging.FileHandler(log_file),
+                logging.StreamHandler()
+            ]
+        )
+    else:
+        logging.basicConfig(
+            level=level,
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        )
+
+
+# Dummy classes for compatibility
+class LogEvent:
+    """Event types for logging"""
+    AUTHENTICATION = "authentication"
+    DATA_ACCESS = "data_access"
+    CONSENT_CHANGE = "consent_change"
+    GOVERNANCE = "governance"
+    PRIVACY_BUDGET = "privacy_budget"
+    CRYPTO_OPERATION = "crypto_operation"
+
+
+class PrivacyLevel:
+    """Privacy levels for data"""
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+    CRITICAL = "critical"
+
+
+class GenomeVaultLogger:
+    """Main logger class for GenomeVault - compatibility wrapper"""
+    def __init__(self, name: str):
+        self.logger = get_logger(name)
+        
+    def info(self, message: str, **kwargs):
+        self.logger.info(message, **kwargs)
+        
+    def debug(self, message: str, **kwargs):
+        self.logger.debug(message, **kwargs)
+        
+    def warning(self, message: str, **kwargs):
+        self.logger.warning(message, **kwargs)
+        
+    def error(self, message: str, **kwargs):
+        self.logger.error(message, **kwargs)
 
 
 # Global logger instances

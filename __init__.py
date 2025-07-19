@@ -10,37 +10,12 @@ __version__ = '3.0.0'
 __author__ = 'GenomeVault Team'
 __license__ = 'Apache License 2.0'
 
-from .local_processing import (
-    MethylationProcessor,
-    PhenotypeProcessor,
-    ProteomicsProcessor,
-    SequencingProcessor,
-    TranscriptomicsProcessor,
-)
-
-# Import main components
-from .utils import configure_logging, get_config, get_logger, init_config
-
-# Main client interface (to be implemented)
-# from .client import GenomeVaultClient
+# Avoid circular imports by not importing submodules at package level
+# Users should import directly from submodules:
+# from genomevault.local_processing import SequencingProcessor
+# from genomevault.core.config import get_config
 
 __all__ = [
-    # Configuration
-    'get_config',
-    'init_config',
-    
-    # Logging
-    'get_logger',
-    'configure_logging',
-    
-    # Processors
-    'SequencingProcessor',
-    'TranscriptomicsProcessor',
-    'MethylationProcessor',
-    'ProteomicsProcessor',
-    'PhenotypeProcessor',
-    
-    # Version info
     '__version__',
     '__author__',
     '__license__'
@@ -72,6 +47,9 @@ def _print_welcome():
     if hasattr(sys, 'ps1'):  # Interactive mode
         print(f"GenomeVault {__version__} - Privacy-Preserving Genomic Intelligence")
         print("Documentation: https://docs.genomevault.io")
-        print("Quick start: from genomevault import get_config, SequencingProcessor")
+        print("Quick start: from genomevault.core.config import get_config")
 
-_print_welcome()
+# Don't run welcome in non-interactive mode to avoid test issues
+import sys
+if hasattr(sys, 'ps1'):
+    _print_welcome()

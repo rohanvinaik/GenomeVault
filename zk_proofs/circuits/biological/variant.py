@@ -17,7 +17,7 @@ from core.exceptions import CircuitError
 from hypervector_transform.encoding import HypervectorEncoder
 from utils.logging import get_logger
 
-from .base_circuits import (
+from ..base_circuits import (
     BaseCircuit,
     ComparisonCircuit,
     FieldElement,
