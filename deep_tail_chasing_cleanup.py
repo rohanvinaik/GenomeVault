@@ -4,11 +4,11 @@ Deep tail-chasing cleanup script
 Recursively finds all import mismatches and fixes them
 """
 
-import os
 import ast
+import os
 import re
 from pathlib import Path
-from typing import Set, Dict, List, Tuple
+from typing import Dict, List, Set, Tuple
 
 
 class TailChasingDetector:

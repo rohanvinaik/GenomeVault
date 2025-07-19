@@ -56,7 +56,7 @@ except Exception as e:
 # Test 3: Verify base_circuits components
 print("\n3. Testing base circuit components...")
 try:
-    from zk_proofs.circuits.base_circuits import FieldElement, BaseCircuit, MerkleTreeCircuit
+    from zk_proofs.circuits.base_circuits import BaseCircuit, FieldElement, MerkleTreeCircuit
 
     # Test FieldElement
     fe1 = FieldElement(100)

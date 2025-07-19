@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Final comprehensive test for GenomeVault imports and basic functionality"""
 
-import sys
 import subprocess
+import sys
 
 
 def test_everything():
@@ -16,9 +16,10 @@ def test_everything():
     # Test 1: Basic imports
     print("\n1️⃣ Testing basic imports...")
     try:
-        from core.config import Config as CoreConfig, get_config as core_get_config
-        from core.exceptions import GenomeVaultError, EncodingError, BindingError
-        from core.constants import NodeClassWeight, CompressionTier
+        from core.config import Config as CoreConfig
+        from core.config import get_config as core_get_config
+        from core.constants import CompressionTier, NodeClassWeight
+        from core.exceptions import BindingError, EncodingError, GenomeVaultError
 
         print("✅ Core imports successful")
         results.append(("Core imports", True, None))
@@ -29,9 +30,10 @@ def test_everything():
     # Test 2: Utils imports
     print("\n2️⃣ Testing utils imports...")
     try:
-        from utils.config import Config as UtilsConfig, get_config
-        from utils.logging import get_logger
+        from utils.config import Config as UtilsConfig
+        from utils.config import get_config
         from utils.encryption import AESGCMCipher, secure_hash
+        from utils.logging import get_logger
 
         # Test config structure
         config = get_config()
@@ -70,9 +72,10 @@ def test_everything():
     # Test 4: Hypervector
     print("\n4️⃣ Testing hypervector functionality...")
     try:
-        from hypervector_transform.encoding import HypervectorEncoder, HypervectorConfig
-        from hypervector_transform.binding import circular_bind, HypervectorBinder
         import torch
+
+        from hypervector_transform.binding import HypervectorBinder, circular_bind
+        from hypervector_transform.encoding import HypervectorConfig, HypervectorEncoder
 
         # Create encoder
         hv_config = HypervectorConfig(dimension=1000)

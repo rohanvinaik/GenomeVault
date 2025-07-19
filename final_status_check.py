@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Final status check of GenomeVault imports"""
 
+import os
 import subprocess
 import sys
-import os
 
 
 def run_command(cmd, description):

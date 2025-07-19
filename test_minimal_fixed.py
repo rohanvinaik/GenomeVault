@@ -5,13 +5,14 @@
 def test_basic_imports():
     """Test that basic imports work"""
     # Core imports
-    from core.config import Config, get_config as core_get_config
+    from core.config import Config
+    from core.config import get_config as core_get_config
     from core.exceptions import GenomeVaultError
+    from utils.config import get_config
+    from utils.encryption import AESGCMCipher, secure_hash
 
     # Utils imports
     from utils.logging import get_logger
-    from utils.encryption import AESGCMCipher, secure_hash
-    from utils.config import get_config
 
     # Get instances
     config = get_config()  # This has the full structure
@@ -32,9 +33,10 @@ def test_basic_imports():
 
 def test_hypervector():
     """Test hypervector functionality"""
-    from hypervector_transform.encoding import HypervectorEncoder, HypervectorConfig
-    from hypervector_transform.binding import circular_bind
     import torch
+
+    from hypervector_transform.binding import circular_bind
+    from hypervector_transform.encoding import HypervectorConfig, HypervectorEncoder
 
     # Create encoder with proper config
     hv_config = HypervectorConfig(dimension=1000)

@@ -2,11 +2,9 @@
 Api Package
 """
 
-# Too many exports in app, import module directly
-from . import app
-
 # Too many exports in main, import module directly
-from . import main
+# Too many exports in app, import module directly
+from . import app, main
 
 __all__ = [
     "app",

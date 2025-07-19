@@ -33,8 +33,8 @@ def test_imports():
 
         # Test other critical imports
         print("  📦 Testing other module imports...")
-        from local_processing import SequencingEngine, TranscriptomicsProcessor
         from hypervector_transform import HypervectorEncoder
+        from local_processing import SequencingEngine, TranscriptomicsProcessor
         from zk_proofs import VariantProver
 
         print("  ✅ All modules imported successfully!")

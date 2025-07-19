@@ -20,8 +20,8 @@ try:
     print("✅ Sequencing module imported")
 
     print("\nTesting hypervector imports...")
-    from hypervector_transform.encoding import HypervectorEncoder
     from hypervector_transform.binding import HypervectorBinder
+    from hypervector_transform.encoding import HypervectorEncoder
 
     print("✅ Hypervector modules imported")
 

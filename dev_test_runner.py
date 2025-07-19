@@ -3,9 +3,9 @@
 Development test runner - tests code structure without requiring all dependencies
 """
 
+import ast
 import os
 import sys
-import ast
 from pathlib import Path
 
 print("=" * 80)

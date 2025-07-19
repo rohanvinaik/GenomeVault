@@ -4,8 +4,8 @@ Comprehensive cleanup script to fix all __init__.py files
 to match actual module contents, breaking the hallucination cascade
 """
 
-import os
 import ast
+import os
 import re
 from pathlib import Path
 

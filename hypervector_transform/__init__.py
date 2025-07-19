@@ -4,17 +4,16 @@ GenomeVault Hypervector Transform Package
 
 from .binding import (
     BindingType,
+    CrossModalBinder,
     HypervectorBinder,
     PositionalBinder,
-    CrossModalBinder,
     circular_bind,
     protect_vector,
 )
-
 from .encoding import (
-    ProjectionType,
     HypervectorConfig,
     HypervectorEncoder,
+    ProjectionType,
     create_encoder,
     encode_genomic_data,
 )

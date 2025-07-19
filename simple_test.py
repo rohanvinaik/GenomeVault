@@ -3,8 +3,8 @@
 Simple test to verify GenomeVault imports
 """
 
-import sys
 import os
+import sys
 
 # Add the project root to Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -25,12 +25,12 @@ def test_basic_imports():
         print(f"✅ Config created: node_type={config.node_type}")
 
         # Test exceptions
-        from core.exceptions import GenomeVaultError, BindingError
+        from core.exceptions import BindingError, GenomeVaultError
 
         print("✅ core.exceptions imported successfully")
 
         # Test utils
-        from utils import get_logger, AESGCMCipher, secure_hash
+        from utils import AESGCMCipher, get_logger, secure_hash
 
         print("✅ utils imported successfully")
 

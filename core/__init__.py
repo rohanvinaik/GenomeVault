@@ -2,11 +2,9 @@
 Core Package
 """
 
-from .config import Config, get_config
-
 # Import modules directly
-from . import constants
-from . import exceptions
+from . import constants, exceptions
+from .config import Config, get_config
 
 __all__ = [
     "Config",

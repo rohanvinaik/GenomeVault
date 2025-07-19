@@ -27,11 +27,11 @@ except Exception as e:
 print("\n2. Testing all biological circuit imports...")
 try:
     from zk_proofs.circuits.biological.variant import (
-        VariantPresenceCircuit,
-        PolygenenicRiskScoreCircuit,
         DiabetesRiskCircuit,
-        PharmacogenomicCircuit,
         PathwayEnrichmentCircuit,
+        PharmacogenomicCircuit,
+        PolygenenicRiskScoreCircuit,
+        VariantPresenceCircuit,
     )
 
     print("✅ All variant circuits imported successfully!")
@@ -56,9 +56,9 @@ except Exception as e:
 print("\n3. Testing multi-omics circuit imports...")
 try:
     from zk_proofs.circuits.biological.multi_omics import (
-        MultiOmicsCorrelationCircuit,
-        GenotypePhenotypeAssociationCircuit,
         ClinicalTrialEligibilityCircuit,
+        GenotypePhenotypeAssociationCircuit,
+        MultiOmicsCorrelationCircuit,
         RareVariantBurdenCircuit,
     )
 
@@ -83,10 +83,10 @@ print("\n4. Testing base circuits import...")
 try:
     from zk_proofs.circuits.base_circuits import (
         BaseCircuit,
+        ComparisonCircuit,
         FieldElement,
         MerkleTreeCircuit,
         RangeProofCircuit,
-        ComparisonCircuit,
     )
 
     print("✅ Base circuits imported successfully!")

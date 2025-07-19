@@ -3,18 +3,18 @@ GenomeVault Local Processing Package
 """
 
 from .sequencing import (
-    SequencingProcessor,
     DifferentialStorage,
     GenomicProfile,
-    Variant,
     QualityMetrics,
+    SequencingProcessor,
+    Variant,
 )
 
 try:
     from .transcriptomics import (
-        TranscriptomicsProcessor,
         ExpressionProfile,
         GeneExpression,
+        TranscriptomicsProcessor,
     )
 except ImportError:
     TranscriptomicsProcessor = None
