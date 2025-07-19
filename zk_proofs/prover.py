@@ -4,14 +4,15 @@ Implements specialized circuits for genomic privacy.
 """
 import hashlib
 import json
-from typing import Dict, List, Optional, Tuple, Union, Any
+import time
 from dataclasses import dataclass
 from pathlib import Path
-import time
+from typing import Any, Dict, List, Optional, Tuple, Union
+
 import numpy as np
 
 from utils.config import config
-from utils.logging import logger, audit_logger, performance_logger
+from utils.logging import audit_logger, logger, performance_logger
 
 
 @dataclass

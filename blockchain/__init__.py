@@ -9,27 +9,13 @@ This package implements the blockchain layer including:
 - Node management
 """
 
+from .governance import CommitteeType, GovernanceSystem, HIPAAOracle, ProposalStatus, ProposalType
 from .node import BlockchainNode, NodeType
-from .governance import (
-    GovernanceSystem,
-    ProposalType,
-    ProposalStatus,
-    CommitteeType,
-    HIPAAOracle
-)
 
 # Import HIPAA components if available
 try:
-    from .hipaa import (
-        HIPAAVerifier,
-        HIPAACredentials,
-        VerificationStatus,
-        NPIRegistry
-    )
-    from .hipaa.integration import (
-        HIPAANodeIntegration,
-        HIPAAGovernanceIntegration
-    )
+    from .hipaa import HIPAACredentials, HIPAAVerifier, NPIRegistry, VerificationStatus
+    from .hipaa.integration import HIPAAGovernanceIntegration, HIPAANodeIntegration
     HIPAA_AVAILABLE = True
 except ImportError:
     HIPAA_AVAILABLE = False

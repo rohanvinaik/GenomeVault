@@ -1,15 +1,16 @@
 """Basic smoke test to verify test infrastructure is working"""
 import pytest
 
+
 def test_pytest_is_working():
     """Verify pytest is installed and working"""
     assert True
 
 def test_imports_work():
     """Verify basic imports work"""
-    import numpy as np
     import cryptography
     import fastapi
+    import numpy as np
     assert True
 
 @pytest.mark.unit

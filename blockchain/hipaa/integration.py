@@ -5,16 +5,16 @@ Integrates HIPAA fast-track verification with the blockchain node system.
 """
 
 import asyncio
-from typing import Dict, Any, Optional
 from datetime import datetime, timedelta
+from typing import Any, Dict, Optional
 
-from .verifier import HIPAAVerifier, CMSNPIRegistry
-from .models import HIPAACredentials, VerificationRecord
-from ..node import BlockchainNode
-from ..governance import GovernanceSystem
-from ...utils import get_logger
 from ...core.constants import NodeType, SignatoryWeight
 from ...core.exceptions import VerificationError
+from ...utils import get_logger
+from ..governance import GovernanceSystem
+from ..node import BlockchainNode
+from .models import HIPAACredentials, VerificationRecord
+from .verifier import CMSNPIRegistry, HIPAAVerifier
 
 logger = get_logger(__name__)
 
@@ -180,7 +180,7 @@ class HIPAAGovernanceIntegration:
     def create_hipaa_committee(governance: GovernanceSystem):
         """Create a special HIPAA providers committee"""
         from ..governance import Committee, CommitteeType
-        
+
         # Add HIPAA committee type (would extend enum in production)
         hipaa_committee = Committee(
             committee_type=CommitteeType.SCIENTIFIC_ADVISORY,  # Reuse for now

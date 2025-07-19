@@ -2,10 +2,11 @@
 Topology API endpoints
 """
 
-from fastapi import APIRouter, HTTPException, Depends
-from typing import Dict, List, Optional
-from pydantic import BaseModel
 import asyncio
+from typing import Dict, List, Optional
+
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 
 from core.config import get_config
 from core.exceptions import NetworkError

@@ -5,21 +5,24 @@ This script demonstrates the key features of the hypervector encoding module,
 showing how genomic data is transformed into privacy-preserving representations.
 """
 
-import torch
-import numpy as np
-import matplotlib.pyplot as plt
 from typing import Dict, List
+
+import matplotlib.pyplot as plt
+import numpy as np
+import torch
+
+from core.constants import OmicsType
+from hypervector_transform.binding import (
+    BindingType,
+    CrossModalBinder,
+    HypervectorBinder,
+    PositionalBinder,
+)
 
 # GenomeVault imports
 from hypervector_transform.encoding import HypervectorEncoder, create_encoder
-from hypervector_transform.binding import (
-    HypervectorBinder, BindingType, PositionalBinder, CrossModalBinder
-)
 from hypervector_transform.holographic import HolographicEncoder
-from hypervector_transform.mapping import (
-    BiologicalSimilarityMapper, ManifoldPreservingMapper
-)
-from core.constants import OmicsType
+from hypervector_transform.mapping import BiologicalSimilarityMapper, ManifoldPreservingMapper
 from utils.logging import setup_logging
 
 
@@ -382,8 +385,8 @@ def demonstrate_compression_tiers():
     """Demonstrate tiered compression for different use cases"""
     print("\n=== Tiered Compression System ===")
     
-    from local_processing.compression import TieredCompressor, CompressionTier
-    
+    from local_processing.compression import CompressionTier, TieredCompressor
+
     # Create test hypervector
     dimension = 10000
     hypervector = torch.randn(dimension)

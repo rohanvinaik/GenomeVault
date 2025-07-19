@@ -3,15 +3,15 @@ Base node implementation for GenomeVault blockchain
 """
 
 import asyncio
-import json
-from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Any
-from dataclasses import dataclass
-import time
 import hashlib
+import json
+import time
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from typing import Any, Dict, List, Optional
 
 from core.config import get_config
-from core.constants import NodeType, NodeClassWeight, SignatoryWeight, BLOCK_TIME_SECONDS
+from core.constants import BLOCK_TIME_SECONDS, NodeClassWeight, NodeType, SignatoryWeight
 
 
 @dataclass

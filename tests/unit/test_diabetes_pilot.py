@@ -1,12 +1,15 @@
 # tests/unit/test_diabetes_pilot.py
 """Test suite for the diabetes risk pilot implementation"""
-import pytest
 from unittest.mock import Mock, patch
+
+import pytest
+
 from clinical.diabetes_pilot.risk_calculator import (
     DiabetesRiskCalculator,
     RiskAssessment,
-    generate_zkp_alert
+    generate_zkp_alert,
 )
+
 
 class TestDiabetesPilot:
     """Test the diabetes risk calculator and ZKP alert system"""

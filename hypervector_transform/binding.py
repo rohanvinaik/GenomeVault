@@ -5,10 +5,11 @@ This module implements various binding operations that combine hypervectors
 while preserving their mathematical properties and biological relationships.
 """
 
-import torch
-import numpy as np
-from typing import List, Dict, Tuple, Optional, Union
 from enum import Enum
+from typing import Dict, List, Optional, Tuple, Union
+
+import numpy as np
+import torch
 
 from core.exceptions import BindingError
 from utils.logging import get_logger

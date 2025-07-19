@@ -5,8 +5,8 @@ This module implements the streamlined verification pathway for healthcare provi
 to become Trusted Signatories in the GenomeVault network.
 """
 
-from .verifier import HIPAAVerifier, NPIRegistry
 from .models import HIPAACredentials, VerificationStatus
+from .verifier import HIPAAVerifier, NPIRegistry
 
 __all__ = [
     'HIPAAVerifier',

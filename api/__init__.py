@@ -13,17 +13,17 @@ Provides endpoints for:
 
 from .app import app, get_app_instance
 from .main import (
-    TopologyRequest,
-    TopologyResponse,
+    AuditChallengeRequest,
+    AuditChallengeResponse,
     CreditRedeemRequest,
     CreditRedeemResponse,
-    AuditChallengeRequest,
-    AuditChallengeResponse
+    TopologyRequest,
+    TopologyResponse,
 )
+from .routers.credit import router as credit_router
 
 # Import routers
 from .routers.topology import router as topology_router
-from .routers.credit import router as credit_router
 
 __all__ = [
     # Application

@@ -2,13 +2,13 @@
 Test suite for hypervector operations
 """
 
+import numpy as np
 import pytest
 import torch
-import numpy as np
 
-from hypervector.encoding.genomic import GenomicEncoder
-from hypervector.operations.binding import HypervectorBinder, MultiModalBinder, BindingOperation
 from core.constants import HYPERVECTOR_DIMENSIONS
+from hypervector.encoding.genomic import GenomicEncoder
+from hypervector.operations.binding import BindingOperation, HypervectorBinder, MultiModalBinder
 
 
 class TestGenomicEncoder:

@@ -8,18 +8,19 @@ Handles mass spectrometry proteomics data including:
 - Label-free and labeled quantification
 """
 
+import gzip
+import json
+import logging
+import re
+from collections import defaultdict
+from dataclasses import dataclass, field
+from datetime import datetime
+from enum import Enum
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Union, Any, Set
-from dataclasses import dataclass, field
-from enum import Enum
-import json
-import gzip
-import logging
-from datetime import datetime
-from collections import defaultdict
-import re
 
 from ..core.config import get_config
 from ..core.exceptions import ProcessingError, ValidationError

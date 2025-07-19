@@ -10,21 +10,16 @@ __version__ = '3.0.0'
 __author__ = 'GenomeVault Team'
 __license__ = 'Apache License 2.0'
 
-# Import main components
-from .utils import (
-    get_config,
-    init_config,
-    get_logger,
-    configure_logging
-)
-
 from .local_processing import (
+    MethylationProcessor,
+    PhenotypeProcessor,
+    ProteomicsProcessor,
     SequencingProcessor,
     TranscriptomicsProcessor,
-    MethylationProcessor,
-    ProteomicsProcessor,
-    PhenotypeProcessor
 )
+
+# Import main components
+from .utils import configure_logging, get_config, get_logger, init_config
 
 # Main client interface (to be implemented)
 # from .client import GenomeVaultClient

@@ -5,15 +5,17 @@ This module implements holographic reduced representations (HRR) for
 encoding complex structured information in hypervectors.
 """
 
-import torch
-import numpy as np
-from typing import Dict, List, Tuple, Optional, Any
 from dataclasses import dataclass
+from typing import Any, Dict, List, Optional, Tuple
 
-from .encoding import HypervectorEncoder
-from .binding import HypervectorBinder, BindingType
+import numpy as np
+import torch
+
 from core.exceptions import EncodingError
 from utils.logging import get_logger
+
+from .binding import BindingType, HypervectorBinder
+from .encoding import HypervectorEncoder
 
 logger = get_logger(__name__)
 

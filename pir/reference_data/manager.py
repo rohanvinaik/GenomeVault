@@ -2,15 +2,16 @@
 Reference data manager for PIR system.
 Handles pangenome graphs, annotations, and population-specific data.
 """
-import numpy as np
-from typing import Dict, List, Optional, Tuple, Any, Set
-from dataclasses import dataclass, field
-from pathlib import Path
-import json
-import hashlib
-import time
 import gzip
+import hashlib
+import json
+import time
+from dataclasses import dataclass, field
 from enum import Enum
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Set, Tuple
+
+import numpy as np
 
 from utils.logging import logger, performance_logger
 
@@ -481,7 +482,7 @@ class ReferenceDataManager:
 # Example usage
 if __name__ == "__main__":
     import tempfile
-    
+
     # Create temporary directory for testing
     with tempfile.TemporaryDirectory() as temp_dir:
         manager = ReferenceDataManager(Path(temp_dir))

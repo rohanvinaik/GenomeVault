@@ -5,17 +5,25 @@ This module implements specialized circuits for genomic privacy,
 including variant verification, PRS calculation, and clinical assessments.
 """
 
-import torch
-import numpy as np
-from typing import List, Dict, Tuple, Optional, Any, Union
-from dataclasses import dataclass
 import hashlib
+from dataclasses import dataclass
+from typing import Any, Dict, List, Optional, Tuple, Union
 
-from .base_circuits import BaseCircuit, FieldElement, MerkleTreeCircuit, RangeProofCircuit, ComparisonCircuit
-from hypervector_transform.encoding import HypervectorEncoder
+import numpy as np
+import torch
+
 from core.constants import OmicsType
 from core.exceptions import CircuitError
+from hypervector_transform.encoding import HypervectorEncoder
 from utils.logging import get_logger
+
+from .base_circuits import (
+    BaseCircuit,
+    ComparisonCircuit,
+    FieldElement,
+    MerkleTreeCircuit,
+    RangeProofCircuit,
+)
 
 logger = get_logger(__name__)
 

@@ -8,18 +8,19 @@ Handles epigenetic data including:
 - Positional encoding for genomic context
 """
 
+import gzip
+import json
+import logging
+from collections import defaultdict
+from dataclasses import dataclass, field
+from datetime import datetime
+from enum import Enum
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple, Union
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Union, Any
-from dataclasses import dataclass, field
-from enum import Enum
-import json
-import gzip
-import logging
-from datetime import datetime
 from scipy import stats
-from collections import defaultdict
 
 from ..core.config import get_config
 from ..core.exceptions import ProcessingError, ValidationError

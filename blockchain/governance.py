@@ -8,17 +8,17 @@ Implements the DAO governance framework with:
 - HIPAA oracle for fast-track verification
 """
 
-from typing import Dict, List, Optional, Tuple, Any, Set
-from dataclasses import dataclass, field
-from enum import Enum
-from datetime import datetime, timedelta
 import hashlib
 import json
 from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
+from datetime import datetime, timedelta
+from enum import Enum
+from typing import Any, Dict, List, Optional, Set, Tuple
 
+from ..core.constants import NodeType, SignatoryWeight
 from ..utils import get_logger
 from ..utils.logging import audit_logger
-from ..core.constants import NodeType, SignatoryWeight
 
 logger = get_logger(__name__)
 
@@ -868,7 +868,7 @@ class HIPAAOracle:
 # Example usage
 if __name__ == "__main__":
     import asyncio
-    
+
     # Initialize governance system
     governance = GovernanceSystem()
     

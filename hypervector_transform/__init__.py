@@ -8,49 +8,46 @@ Implements hierarchical hyperdimensional computing for genomic data:
 - Privacy-preserving binding operations
 """
 
-from .encoding import (
-    HypervectorEncoder,
-    DomainProjection,
-    EncodingConfig,
-    create_random_projection,
-    encode_features
-)
-
 from .binding import (
+    BindingType,
+    HypervectorBinder,
     bind_vectors,
-    unbind_vectors,
     bundle_vectors,
-    permute_vector,
     circular_convolution,
     cross_modal_binding,
-    HypervectorBinder,
-    BindingType
+    permute_vector,
+    unbind_vectors,
 )
-
+from .encoding import (
+    DomainProjection,
+    EncodingConfig,
+    HypervectorEncoder,
+    create_random_projection,
+    encode_features,
+)
 from .holographic import (
     HolographicEncoder,
+    calculate_capacity,
     create_holographic_memory,
-    store_pattern,
     retrieve_pattern,
-    calculate_capacity
+    store_pattern,
 )
-
 from .mapping import (
-    SimilarityMapper,
     DistanceMetric,
+    SimilarityMapper,
+    create_isometric_mapping,
     map_to_similarity_space,
     preserve_distances,
-    create_isometric_mapping
 )
 
 # Import hierarchical components if available
 try:
     from .hierarchical import (
-        HierarchicalEncoder,
         CompressionProfile,
+        HierarchicalEncoder,
         ResolutionLevel,
+        compress_hypervector,
         encode_hierarchical,
-        compress_hypervector
     )
     HIERARCHICAL_AVAILABLE = True
 except ImportError:

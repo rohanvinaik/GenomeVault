@@ -8,16 +8,17 @@ This module provides:
 - Error reporting with context
 """
 
-import structlog
-import logging
-import json
 import hashlib
+import json
+import logging
 import os
-from datetime import datetime
-from typing import Any, Dict, Optional, Set, List
-from functools import wraps
 import traceback
 from contextlib import contextmanager
+from datetime import datetime
+from functools import wraps
+from typing import Any, Dict, List, Optional, Set
+
+import structlog
 
 # Configure basic logging
 logging.basicConfig(

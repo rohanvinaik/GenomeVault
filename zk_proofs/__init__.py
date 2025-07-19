@@ -6,51 +6,52 @@ for genomic data, with support for variant verification, PRS calculation,
 clinical assessments, and multi-omics integration.
 """
 
-# Core components
-from .prover import Prover, Proof, Circuit, CircuitLibrary
-from .verifier import Verifier, VerificationResult
 from .circuit_manager import CircuitManager, CircuitMetadata
 
 # Base circuits
 from .circuits.base_circuits import (
+    AggregatorCircuit,
     BaseCircuit,
+    ComparisonCircuit,
     FieldElement,
+    HashPreimageCircuit,
     MerkleTreeCircuit,
     RangeProofCircuit,
-    ComparisonCircuit,
-    HashPreimageCircuit,
-    AggregatorCircuit
-)
-
-# Biological circuits
-from .circuits.biological.variant import (
-    VariantPresenceCircuit,
-    PolygenenicRiskScoreCircuit,
-    DiabetesRiskCircuit,
-    PharmacogenomicCircuit,
-    PathwayEnrichmentCircuit,
-    create_hypervector_proof
 )
 
 # Multi-omics circuits
 from .circuits.biological.multi_omics import (
-    MultiOmicsCorrelationCircuit,
-    GenotypePhenotypeAssociationCircuit,
     ClinicalTrialEligibilityCircuit,
+    GenotypePhenotypeAssociationCircuit,
+    MultiOmicsCorrelationCircuit,
     RareVariantBurdenCircuit,
-    create_multi_omics_proof_suite
+    create_multi_omics_proof_suite,
+)
+
+# Biological circuits
+from .circuits.biological.variant import (
+    DiabetesRiskCircuit,
+    PathwayEnrichmentCircuit,
+    PharmacogenomicCircuit,
+    PolygenenicRiskScoreCircuit,
+    VariantPresenceCircuit,
+    create_hypervector_proof,
 )
 
 # Post-quantum support
 from .post_quantum import (
-    PostQuantumProver,
-    STARKProver,
     LatticeProver,
-    PostQuantumTransition,
     PostQuantumParameters,
+    PostQuantumProver,
+    PostQuantumTransition,
+    STARKProver,
+    benchmark_pq_performance,
     estimate_pq_proof_size,
-    benchmark_pq_performance
 )
+
+# Core components
+from .prover import Circuit, CircuitLibrary, Proof, Prover
+from .verifier import VerificationResult, Verifier
 
 __all__ = [
     # Core

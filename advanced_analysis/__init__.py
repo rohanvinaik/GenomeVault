@@ -15,11 +15,7 @@ from .federated_learning.coordinator import FederatedCoordinator
 
 # TDA components (when implemented)
 try:
-    from .tda.persistence import (
-        PersistenceDiagram,
-        compute_persistence,
-        plot_persistence_diagram
-    )
+    from .tda.persistence import PersistenceDiagram, compute_persistence, plot_persistence_diagram
     TDA_AVAILABLE = True
 except ImportError:
     TDA_AVAILABLE = False

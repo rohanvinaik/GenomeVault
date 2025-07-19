@@ -2,16 +2,23 @@
 Unit tests for configuration system.
 Tests dual-axis voting model, compression tiers, and PIR calculations.
 """
-import pytest
-import numpy as np
-from pathlib import Path
-import tempfile
 import json
+import tempfile
+from pathlib import Path
+
+import numpy as np
+import pytest
 
 from utils.config import (
-    Config, CompressionTier, NodeClass,
-    SecurityConfig, ProcessingConfig, HypervectorConfig,
-    PIRConfig, BlockchainConfig, NetworkConfig
+    BlockchainConfig,
+    CompressionTier,
+    Config,
+    HypervectorConfig,
+    NetworkConfig,
+    NodeClass,
+    PIRConfig,
+    ProcessingConfig,
+    SecurityConfig,
 )
 
 

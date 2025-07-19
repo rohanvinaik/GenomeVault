@@ -1,27 +1,40 @@
 """
 Comprehensive test suite for multi-omics processors.
 """
-import pytest
+import gzip
+import json
+import tempfile
+from pathlib import Path
+from unittest.mock import MagicMock, Mock, patch
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
-import tempfile
-import json
-from unittest.mock import Mock, patch, MagicMock
-import gzip
+import pytest
 
-from genomevault.local_processing.transcriptomics import (
-    TranscriptomicsProcessor, TranscriptomicsConfig, NormalizationMethod,
-    TranscriptExpression, ExpressionProfile
-)
 from genomevault.local_processing.epigenetics import (
-    MethylationProcessor, ChromatinAccessibilityProcessor,
-    EpigeneticDataType, MethylationContext, MethylationSite,
-    ChromatinPeak, EpigeneticProfile, create_epigenetic_processor
+    ChromatinAccessibilityProcessor,
+    ChromatinPeak,
+    EpigeneticDataType,
+    EpigeneticProfile,
+    MethylationContext,
+    MethylationProcessor,
+    MethylationSite,
+    create_epigenetic_processor,
 )
 from genomevault.local_processing.proteomics import (
-    ProteomicsProcessor, QuantificationMethod, ModificationType,
-    Peptide, ProteinMeasurement, ProteomicsProfile
+    ModificationType,
+    Peptide,
+    ProteinMeasurement,
+    ProteomicsProcessor,
+    ProteomicsProfile,
+    QuantificationMethod,
+)
+from genomevault.local_processing.transcriptomics import (
+    ExpressionProfile,
+    NormalizationMethod,
+    TranscriptExpression,
+    TranscriptomicsConfig,
+    TranscriptomicsProcessor,
 )
 
 

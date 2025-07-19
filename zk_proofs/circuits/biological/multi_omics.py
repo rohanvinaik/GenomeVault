@@ -5,13 +5,15 @@ This module implements circuits that integrate multiple omics data types
 while preserving privacy.
 """
 import hashlib
-import numpy as np
-from typing import Dict, List, Tuple, Optional, Any
 from dataclasses import dataclass
+from typing import Any, Dict, List, Optional, Tuple
 
-from ..base_circuits import BaseCircuit, FieldElement, ComparisonCircuit, RangeProofCircuit
-from ...prover import Circuit
+import numpy as np
+
 from utils.logging import logger
+
+from ...prover import Circuit
+from ..base_circuits import BaseCircuit, ComparisonCircuit, FieldElement, RangeProofCircuit
 
 
 class MultiOmicsCorrelationCircuit(BaseCircuit):

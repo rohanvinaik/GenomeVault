@@ -2,18 +2,19 @@
 Blockchain node implementation with dual-axis voting model.
 Implements Tendermint BFT consensus with weighted voting.
 """
-from typing import Dict, List, Optional, Tuple, Any
+import asyncio
+import hashlib
+import json
+import time
 from dataclasses import dataclass
 from enum import Enum
-import hashlib
-import time
-import json
 from pathlib import Path
-import asyncio
+from typing import Any, Dict, List, Optional, Tuple
+
 from web3 import Web3
 
-from utils.config import config, NodeClass
-from utils.logging import logger, audit_logger, performance_logger
+from utils.config import NodeClass, config
+from utils.logging import audit_logger, logger, performance_logger
 
 
 @dataclass

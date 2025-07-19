@@ -5,10 +5,11 @@ This module provides transition mechanisms to post-quantum secure
 proving systems including STARKs and lattice-based proofs.
 """
 import hashlib
-import numpy as np
-from typing import Dict, List, Optional, Tuple, Any
-from dataclasses import dataclass
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
 
 from utils.logging import logger
 
@@ -442,7 +443,7 @@ class LatticeProver(PostQuantumProver):
     def _serialize_proof(self, proof_data: Dict) -> bytes:
         """Serialize proof to bytes."""
         import json
-        
+
         # Convert numpy arrays to lists for JSON serialization
         def convert_arrays(obj):
             if isinstance(obj, np.ndarray):
@@ -601,7 +602,7 @@ def benchmark_pq_performance(num_constraints: int = 10000) -> Dict[str, Any]:
         Performance metrics
     """
     import time
-    
+
     # Create test statement and witness
     statement = {
         'public_input': list(range(10)),

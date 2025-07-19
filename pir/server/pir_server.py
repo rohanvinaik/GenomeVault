@@ -2,19 +2,20 @@
 PIR server implementation with information-theoretic security.
 Handles private queries over distributed genomic reference data.
 """
-import numpy as np
-from typing import Dict, List, Optional, Any, Tuple
-from dataclasses import dataclass
-import hashlib
-import time
 import asyncio
-from concurrent.futures import ProcessPoolExecutor
+import hashlib
 import mmap
 import os
+import time
+from concurrent.futures import ProcessPoolExecutor
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
 
 from utils.config import config
-from utils.logging import logger, performance_logger, audit_logger
+from utils.logging import audit_logger, logger, performance_logger
 
 
 @dataclass

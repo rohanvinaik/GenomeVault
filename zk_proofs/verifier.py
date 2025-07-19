@@ -5,13 +5,14 @@ Implements PLONK verification for genomic privacy proofs.
 import hashlib
 import json
 import time
-from typing import Dict, List, Optional, Tuple, Any
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
 
 from utils.config import config
-from utils.logging import logger, audit_logger, performance_logger
-from .prover import Proof, Circuit, CircuitLibrary
+from utils.logging import audit_logger, logger, performance_logger
+
+from .prover import Circuit, CircuitLibrary, Proof
 
 
 @dataclass
@@ -477,8 +478,9 @@ class Verifier:
 # Example usage
 if __name__ == "__main__":
     import numpy as np
+
     from .prover import Prover
-    
+
     # Initialize prover and verifier
     prover = Prover()
     verifier = Verifier()

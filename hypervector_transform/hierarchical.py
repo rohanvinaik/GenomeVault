@@ -7,15 +7,16 @@ Implements the multi-resolution hypervector system as specified:
 - High-level vectors: 20,000 dimensions
 """
 
-import torch
-import numpy as np
-from typing import Dict, List, Optional, Tuple, Union, Any
+import hashlib
 from dataclasses import dataclass
 from enum import Enum
-import hashlib
+from typing import Any, Dict, List, Optional, Tuple, Union
+
+import numpy as np
+import torch
 
 from ..core.config import get_config
-from ..core.constants import OmicsType, HYPERVECTOR_DIMENSIONS
+from ..core.constants import HYPERVECTOR_DIMENSIONS, OmicsType
 from ..utils.logging import get_logger
 
 logger = get_logger(__name__)

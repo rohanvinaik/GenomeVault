@@ -9,15 +9,16 @@ This module provides comprehensive monitoring capabilities including:
 - Privacy-preserving logging
 """
 
-import prometheus_client
-from prometheus_client import Counter, Histogram, Gauge, Summary
-import logging
-from typing import Dict, Any, Optional, List
-import time
-from functools import wraps
-from datetime import datetime
 import json
+import logging
+import time
+from datetime import datetime
+from functools import wraps
+from typing import Any, Dict, List, Optional
+
+import prometheus_client
 import structlog
+from prometheus_client import Counter, Gauge, Histogram, Summary
 
 # Initialize structured logger
 logger = structlog.get_logger(__name__)

@@ -3,26 +3,34 @@ Unit tests for hypervector encoding module
 """
 
 import unittest
-import torch
-import numpy as np
 from typing import Dict
 
-from hypervector_transform.encoding import (
-    HypervectorEncoder, HypervectorConfig, ProjectionType,
-    create_encoder, encode_genomic_data
-)
-from hypervector_transform.binding import (
-    HypervectorBinder, BindingType, PositionalBinder, CrossModalBinder,
-    circular_bind, protect_vector
-)
-from hypervector_transform.holographic import (
-    HolographicEncoder, encode_variant, query_hologram
-)
-from hypervector_transform.mapping import (
-    SimilarityPreservingMapper, BiologicalSimilarityMapper,
-    ManifoldPreservingMapper, preserve_similarities
-)
+import numpy as np
+import torch
+
 from core.constants import OmicsType
+from hypervector_transform.binding import (
+    BindingType,
+    CrossModalBinder,
+    HypervectorBinder,
+    PositionalBinder,
+    circular_bind,
+    protect_vector,
+)
+from hypervector_transform.encoding import (
+    HypervectorConfig,
+    HypervectorEncoder,
+    ProjectionType,
+    create_encoder,
+    encode_genomic_data,
+)
+from hypervector_transform.holographic import HolographicEncoder, encode_variant, query_hologram
+from hypervector_transform.mapping import (
+    BiologicalSimilarityMapper,
+    ManifoldPreservingMapper,
+    SimilarityPreservingMapper,
+    preserve_similarities,
+)
 
 
 class TestHypervectorEncoder(unittest.TestCase):

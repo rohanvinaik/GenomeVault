@@ -3,9 +3,10 @@ Core configuration management for GenomeVault
 """
 
 import os
-from typing import Optional, Dict, Any
-from pydantic import BaseSettings, Field, validator
 from functools import lru_cache
+from typing import Any, Dict, Optional
+
+from pydantic import BaseSettings, Field, validator
 
 
 class Config(BaseSettings):

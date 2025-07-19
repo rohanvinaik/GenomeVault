@@ -7,16 +7,16 @@ privacy-preserving genomic data processing pipeline.
 """
 
 import os
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 # Import GenomeVault components
 from genomevault import (
-    init_config,
-    get_logger,
+    PhenotypeProcessor,
     SequencingProcessor,
     TranscriptomicsProcessor,
-    PhenotypeProcessor
+    get_logger,
+    init_config,
 )
 from genomevault.local_processing import DifferentialStorage
 from genomevault.utils import get_config
@@ -71,7 +71,7 @@ def process_genomic_data_example():
     """
     
     # For demo purposes, create mock data
-    from genomevault.local_processing.sequencing import GenomicProfile, Variant, QualityMetrics
+    from genomevault.local_processing.sequencing import GenomicProfile, QualityMetrics, Variant
     
     mock_variants = [
         Variant(
@@ -213,7 +213,7 @@ def demonstrate_privacy_features():
     
     # 3. Encryption
     from genomevault.utils import AESGCMCipher, ThresholdCrypto
-    
+
     # Demonstrate encryption
     key = AESGCMCipher.generate_key()
     plaintext = b"Sensitive genomic data"

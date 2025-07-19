@@ -7,17 +7,18 @@ Implements the three-tier compression system as specified:
 - Full HDC tier: 100-200KB per modality - 10,000-D vectors
 """
 
-import numpy as np
-import json
 import gzip
-from typing import Dict, List, Optional, Union, Any
+import hashlib
+import json
 from dataclasses import dataclass, field
 from enum import Enum
-import hashlib
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
 
-from ..utils import get_logger, get_config
+import numpy as np
+
 from ..core.constants import CompressionTier, OmicsType
+from ..utils import get_config, get_logger
 
 logger = get_logger(__name__)
 config = get_config()

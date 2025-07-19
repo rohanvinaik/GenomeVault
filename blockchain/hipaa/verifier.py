@@ -6,20 +6,15 @@ Core verification logic for HIPAA fast-track system.
 
 import hashlib
 import json
-import aiohttp
-from datetime import datetime, timedelta
-from typing import Dict, Any, Optional, Tuple, List
 from abc import ABC, abstractmethod
+from datetime import datetime, timedelta
+from typing import Any, Dict, List, Optional, Tuple
 
-from .models import (
-    HIPAACredentials, 
-    VerificationRecord, 
-    VerificationStatus,
-    NPIRecord,
-    NPIType
-)
-from ...utils import get_logger, audit_logger
+import aiohttp
+
 from ...core.exceptions import VerificationError
+from ...utils import audit_logger, get_logger
+from .models import HIPAACredentials, NPIRecord, NPIType, VerificationRecord, VerificationStatus
 
 logger = get_logger(__name__)
 

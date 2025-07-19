@@ -5,12 +5,13 @@ This module implements the core hypervector encoding functionality that transfor
 processed multi-omics data into high-dimensional, privacy-preserving representations.
 """
 
-import torch
-import numpy as np
-from typing import Dict, List, Optional, Tuple, Union
-from dataclasses import dataclass
 import hashlib
+from dataclasses import dataclass
 from enum import Enum
+from typing import Dict, List, Optional, Tuple, Union
+
+import numpy as np
+import torch
 
 from core.config import get_config
 from core.constants import OmicsType

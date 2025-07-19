@@ -6,49 +6,27 @@ without revealing what data is being accessed.
 """
 
 # Client components
-from .client import (
-    PIRClient,
-    PIRServer,
-    PIRQuery,
-    PIRResponse
-)
-
-from .client.query_builder import (
-    PIRQueryBuilder,
-    GenomicQuery,
-    QueryResult,
-    QueryType
-)
-
-# Server components
-from .server.pir_server import (
-    PIRServer as PIRServerInstance,
-    TrustedSignatoryServer,
-    DatabaseShard
-)
-
-from .server.shard_manager import (
-    ShardManager,
-    ShardMetadata,
-    ShardDistribution
-)
+from .client import PIRClient, PIRQuery, PIRResponse, PIRServer
+from .client.query_builder import GenomicQuery, PIRQueryBuilder, QueryResult, QueryType
 
 # Network components
-from .network.coordinator import (
-    PIRNetworkCoordinator,
-    NetworkTopology,
-    ServerHealth
-)
+from .network.coordinator import NetworkTopology, PIRNetworkCoordinator, ServerHealth
 
 # Reference data components
 from .reference_data.manager import (
-    ReferenceDataManager,
     GenomicRegion,
-    PangenomeNode,
     PangenomeEdge,
+    PangenomeNode,
+    ReferenceDataManager,
+    ReferenceDataType,
     VariantAnnotation,
-    ReferenceDataType
 )
+
+# Server components
+from .server.pir_server import DatabaseShard
+from .server.pir_server import PIRServer as PIRServerInstance
+from .server.pir_server import TrustedSignatoryServer
+from .server.shard_manager import ShardDistribution, ShardManager, ShardMetadata
 
 __all__ = [
     # Client

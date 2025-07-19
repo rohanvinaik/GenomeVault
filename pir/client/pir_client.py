@@ -3,13 +3,14 @@ PIR Client implementation for private genomic queries
 """
 
 import asyncio
-import numpy as np
-from typing import List, Dict, Any, Optional, Tuple
-import aiohttp
 import json
 from dataclasses import dataclass
+from typing import Any, Dict, List, Optional, Tuple
 
-from core.constants import MIN_PIR_SERVERS, PIR_THRESHOLD, PIR_QUERY_TIMEOUT_MS
+import aiohttp
+import numpy as np
+
+from core.constants import MIN_PIR_SERVERS, PIR_QUERY_TIMEOUT_MS, PIR_THRESHOLD
 from core.exceptions import PIRError
 
 

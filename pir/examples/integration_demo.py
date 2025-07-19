@@ -5,17 +5,25 @@ Demonstrates the complete workflow for privacy-preserving genomic data retrieval
 """
 import asyncio
 import json
+import tempfile
 import time
 from pathlib import Path
-import tempfile
 from typing import Dict, List
 
 from pir import (
-    PIRClient, PIRServer, PIRNetworkCoordinator,
-    PIRServerInstance, TrustedSignatoryServer,
-    ShardManager, ReferenceDataManager,
-    PIRQueryBuilder, QueryType, GenomicQuery,
-    GenomicRegion, PangenomeNode, VariantAnnotation
+    GenomicQuery,
+    GenomicRegion,
+    PangenomeNode,
+    PIRClient,
+    PIRNetworkCoordinator,
+    PIRQueryBuilder,
+    PIRServer,
+    PIRServerInstance,
+    QueryType,
+    ReferenceDataManager,
+    ShardManager,
+    TrustedSignatoryServer,
+    VariantAnnotation,
 )
 from utils.logging import logger
 

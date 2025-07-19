@@ -1,10 +1,12 @@
 # tests/test_hypervector.py
-import pytest
 import numpy as np
-from hypervector_transform.encoding import HypervectorEncoder
+import pytest
+
 from hypervector_transform.binding import BindingOperations
+from hypervector_transform.encoding import HypervectorEncoder
 from hypervector_transform.holographic import HolographicRepresentation
 from hypervector_transform.mapping import SimilarityPreservingMapper
+
 
 class TestHypervectorEngine:
     """Test suite for hyperdimensional computing operations"""

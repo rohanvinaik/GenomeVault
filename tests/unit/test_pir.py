@@ -2,14 +2,15 @@
 Test suite for PIR implementation
 """
 
-import pytest
 import asyncio
-import numpy as np
 from unittest.mock import Mock, patch
 
+import numpy as np
+import pytest
+
+from core.exceptions import PIRError
 from pir.client.query_builder import PIRClient, PIRQuery
 from pir.server.shard_manager import PIRServer, ShardConfig
-from core.exceptions import PIRError
 
 
 class TestPIRClient:
@@ -64,7 +65,7 @@ class TestPIRClient:
         """Test data reconstruction from responses"""
         # Create mock responses
         from pir.server.shard_manager import PIRResponse
-        
+
         # Original data
         original_data = b"secret genomic data"
         

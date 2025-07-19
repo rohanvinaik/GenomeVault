@@ -5,20 +5,21 @@ This example demonstrates the complete flow from raw genomic data
 to privacy-preserving hypervector representation.
 """
 
-import torch
 from pathlib import Path
 
-# Phase 1: Local Processing
-from local_processing.sequencing import SequencingProcessor
-from local_processing.compression import TieredCompressor, CompressionTier
+import torch
+
+from core.constants import OmicsType
+from hypervector_transform.binding import CrossModalBinder
 
 # Phase 2: Hypervector Encoding
 from hypervector_transform.encoding import create_encoder
-from hypervector_transform.binding import CrossModalBinder
 from hypervector_transform.holographic import HolographicEncoder
+from local_processing.compression import CompressionTier, TieredCompressor
 
-from core.constants import OmicsType
-from utils.logging import setup_logging, get_logger
+# Phase 1: Local Processing
+from local_processing.sequencing import SequencingProcessor
+from utils.logging import get_logger, setup_logging
 
 logger = get_logger(__name__)
 

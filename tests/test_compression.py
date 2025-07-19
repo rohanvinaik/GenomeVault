@@ -1,13 +1,16 @@
 # tests/test_compression.py
-import pytest
-import numpy as np
 from unittest.mock import Mock, patch
+
+import numpy as np
+import pytest
+
 from local_processing.compression import (
     CompressionTier,
-    SNPCompressor,
     HDCCompressor,
-    TieredCompressor
+    SNPCompressor,
+    TieredCompressor,
 )
+
 
 class TestCompressionTiers:
     """Test suite for multi-tier compression framework"""

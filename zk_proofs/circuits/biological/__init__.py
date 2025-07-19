@@ -5,21 +5,20 @@ Specialized circuits for genomic privacy including variant verification,
 risk scores, clinical assessments, and multi-omics integration.
 """
 
-from .variant import (
-    VariantPresenceCircuit,
-    PolygenenicRiskScoreCircuit,
-    DiabetesRiskCircuit,
-    PharmacogenomicCircuit,
-    PathwayEnrichmentCircuit,
-    create_hypervector_proof
-)
-
 from .multi_omics import (
-    MultiOmicsCorrelationCircuit,
-    GenotypePhenotypeAssociationCircuit,
     ClinicalTrialEligibilityCircuit,
+    GenotypePhenotypeAssociationCircuit,
+    MultiOmicsCorrelationCircuit,
     RareVariantBurdenCircuit,
-    create_multi_omics_proof_suite
+    create_multi_omics_proof_suite,
+)
+from .variant import (
+    DiabetesRiskCircuit,
+    PathwayEnrichmentCircuit,
+    PharmacogenomicCircuit,
+    PolygenenicRiskScoreCircuit,
+    VariantPresenceCircuit,
+    create_hypervector_proof,
 )
 
 __all__ = [

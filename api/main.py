@@ -8,19 +8,20 @@ Implements the main API endpoints as specified in the System Breakdown:
 - Client-facing endpoints for pipelines, vectors, and proofs
 """
 
-from fastapi import FastAPI, HTTPException, Depends, Security, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
-from typing import Dict, List, Optional, Any
-from datetime import datetime
 import hashlib
 import json
+from datetime import datetime
+from typing import Any, Dict, List, Optional
 
-from ..core.config import get_config
-from ..core.constants import NodeType, CREDITS_PER_BLOCK_BASE, CREDITS_SIGNATORY_BONUS
+from fastapi import Depends, FastAPI, HTTPException, Security, status
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from pydantic import BaseModel, Field
+
 from ..blockchain.node import BlockchainNode, NodeInfo
-from ..utils.logging import get_logger, audit_logger
+from ..core.config import get_config
+from ..core.constants import CREDITS_PER_BLOCK_BASE, CREDITS_SIGNATORY_BONUS, NodeType
+from ..utils.logging import audit_logger, get_logger
 
 logger = get_logger(__name__)
 config = get_config()

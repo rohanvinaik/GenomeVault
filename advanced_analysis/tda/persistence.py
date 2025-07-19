@@ -2,16 +2,17 @@
 Topological Data Analysis for genomic structure analysis
 """
 
+from dataclasses import dataclass
+from typing import Dict, List, Optional, Set, Tuple
+
+import networkx as nx
 import numpy as np
 import torch
-from typing import List, Dict, Tuple, Optional, Set
-from dataclasses import dataclass
-from scipy.spatial import distance_matrix
 from scipy.sparse import csr_matrix
 from scipy.sparse.csgraph import connected_components
-import networkx as nx
+from scipy.spatial import distance_matrix
 
-from core.constants import PERSISTENCE_THRESHOLD, MAX_HOMOLOGY_DIMENSION
+from core.constants import MAX_HOMOLOGY_DIMENSION, PERSISTENCE_THRESHOLD
 
 
 @dataclass

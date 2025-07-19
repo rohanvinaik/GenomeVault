@@ -4,19 +4,21 @@ Example usage of GenomeVault 3.0 integrated system.
 Demonstrates the complete workflow from data processing to proof generation.
 """
 import asyncio
-import numpy as np
-from pathlib import Path
 import json
 import time
+from pathlib import Path
+
+import numpy as np
+
+from blockchain.node import BlockchainNode
+from hypervector_transform.encoding import HypervectorBinder, HypervectorEncoder
+from local_processing.sequencing import SequencingProcessor, Variant
+from pir.client import PIRClient, PIRServer
 
 # Import GenomeVault components
-from utils.config import config, CompressionTier, NodeClass
-from utils.logging import logger, audit_logger
-from local_processing.sequencing import SequencingProcessor, Variant
-from hypervector_transform.encoding import HypervectorEncoder, HypervectorBinder
+from utils.config import CompressionTier, NodeClass, config
+from utils.logging import audit_logger, logger
 from zk_proofs.prover import Prover
-from pir.client import PIRClient, PIRServer
-from blockchain.node import BlockchainNode
 
 
 async def demonstrate_genomevault():

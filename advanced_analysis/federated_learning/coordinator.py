@@ -2,18 +2,19 @@
 Federated Learning Coordinator for privacy-preserving multi-institutional research.
 Implements secure aggregation with differential privacy.
 """
-import numpy as np
-from typing import Dict, List, Optional, Tuple, Any, Callable
-from dataclasses import dataclass
-import hashlib
-import time
 import asyncio
-from concurrent.futures import ThreadPoolExecutor
+import hashlib
 import json
+import time
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional, Tuple
+
+import numpy as np
 
 from utils.config import config
-from utils.logging import logger, audit_logger, performance_logger
+from utils.logging import audit_logger, logger, performance_logger
 
 
 @dataclass

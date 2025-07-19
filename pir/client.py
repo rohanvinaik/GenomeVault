@@ -2,15 +2,16 @@
 PIR client: build and decode queries with information-theoretic privacy.
 Implements multi-server PIR with optimal communication complexity.
 """
-import numpy as np
-from typing import List, Dict, Tuple, Optional, Any
-from dataclasses import dataclass
-import hashlib
-import time
 import asyncio
-import aiohttp
-from concurrent.futures import ThreadPoolExecutor
+import hashlib
 import json
+import time
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass
+from typing import Any, Dict, List, Optional, Tuple
+
+import aiohttp
+import numpy as np
 
 from utils.config import config
 from utils.logging import logger, performance_logger
@@ -559,7 +560,7 @@ class PIRClient:
 # Example usage
 if __name__ == "__main__":
     import asyncio
-    
+
     # Example server configuration
     servers = [
         # Light nodes (non-TS)

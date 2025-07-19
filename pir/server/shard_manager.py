@@ -2,16 +2,17 @@
 Shard manager for distributed PIR database.
 Handles data distribution, updates, and integrity verification.
 """
-import numpy as np
-from typing import Dict, List, Optional, Tuple, Any
-from dataclasses import dataclass, field
-from pathlib import Path
 import hashlib
 import json
-import time
 import shutil
-from concurrent.futures import ThreadPoolExecutor
 import threading
+import time
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
 
 from utils.config import config
 from utils.logging import logger, performance_logger
@@ -497,7 +498,7 @@ class ShardManager:
 # Example usage
 if __name__ == "__main__":
     import tempfile
-    
+
     # Create temporary directory for testing
     with tempfile.TemporaryDirectory() as temp_dir:
         manager = ShardManager(Path(temp_dir), num_shards=5)

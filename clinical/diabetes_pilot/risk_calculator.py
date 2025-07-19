@@ -7,17 +7,18 @@ Implements the diabetes risk assessment system with:
 - HIPAA-compliant data handling
 """
 
-import numpy as np
-import torch
-from typing import Dict, List, Optional, Tuple, Any
-from dataclasses import dataclass
-from datetime import datetime
 import hashlib
 import json
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Any, Dict, List, Optional, Tuple
 
-from ...utils import get_logger, get_config
-from ...zk_proofs.prover import Prover
+import numpy as np
+import torch
+
 from ...core.constants import GLUCOSE_THRESHOLD_MG_DL, HBA1C_THRESHOLD_PERCENT
+from ...utils import get_config, get_logger
+from ...zk_proofs.prover import Prover
 
 logger = get_logger(__name__)
 config = get_config()
@@ -501,7 +502,7 @@ class ClinicalIntegration:
 # Example usage and testing
 if __name__ == "__main__":
     from datetime import timedelta
-    
+
     # Initialize calculator
     calculator = DiabetesRiskCalculator()
     

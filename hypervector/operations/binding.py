@@ -2,10 +2,11 @@
 Hypervector binding operations for multi-modal data integration
 """
 
-import torch
-import numpy as np
-from typing import List, Dict, Optional, Tuple, Union
 from enum import Enum
+from typing import Dict, List, Optional, Tuple, Union
+
+import numpy as np
+import torch
 
 from core.constants import HYPERVECTOR_DIMENSIONS
 

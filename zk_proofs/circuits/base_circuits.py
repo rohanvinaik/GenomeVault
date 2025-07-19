@@ -5,11 +5,12 @@ This module provides the foundational circuit building blocks
 for genomic privacy-preserving proofs using PLONK.
 """
 
-import numpy as np
-from typing import List, Dict, Tuple, Optional, Any
-from dataclasses import dataclass
-from abc import ABC, abstractmethod
 import hashlib
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
 
 from core.exceptions import CircuitError
 from utils.logging import get_logger

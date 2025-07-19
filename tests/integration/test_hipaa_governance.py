@@ -2,24 +2,21 @@
 Integration tests for HIPAA Fast-Track with Governance
 """
 
-import pytest
 import asyncio
 from datetime import datetime, timedelta
 
-from genomevault.blockchain.hipaa import (
-    HIPAAVerifier,
-    HIPAACredentials,
-    CMSNPIRegistry
-)
-from genomevault.blockchain.hipaa.integration import (
-    HIPAANodeIntegration,
-    HIPAAGovernanceIntegration
-)
+import pytest
+
 from genomevault.blockchain.governance import (
+    CommitteeType,
     GovernanceSystem,
-    ProposalType,
     ProposalStatus,
-    CommitteeType
+    ProposalType,
+)
+from genomevault.blockchain.hipaa import CMSNPIRegistry, HIPAACredentials, HIPAAVerifier
+from genomevault.blockchain.hipaa.integration import (
+    HIPAAGovernanceIntegration,
+    HIPAANodeIntegration,
 )
 from genomevault.blockchain.node import NodeType
 from genomevault.core.constants import SignatoryWeight

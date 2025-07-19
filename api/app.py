@@ -2,18 +2,19 @@
 API entrypoint using FastAPI.
 Implements core GenomeVault network endpoints.
 """
-from fastapi import FastAPI, HTTPException, Depends, Header, Request
+import hashlib
+import json
+import time
+from datetime import datetime
+from typing import Any, Dict, List, Optional
+
+from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
-from typing import List, Dict, Optional, Any
-import time
-import hashlib
-import json
-from datetime import datetime
 
 from utils.config import config
-from utils.logging import logger, audit_logger
+from utils.logging import audit_logger, logger
 
 # Create FastAPI app
 app = FastAPI(
@@ -469,7 +470,7 @@ async def shutdown_event():
 
 if __name__ == "__main__":
     import uvicorn
-    
+
     # Run the API server
     uvicorn.run(
         app,

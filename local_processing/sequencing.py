@@ -5,22 +5,23 @@ Handles genomic sequencing data processing including alignment, variant calling,
 and reference-based differential storage.
 """
 
+import gzip
+import hashlib
+import json
 import os
 import subprocess
 import tempfile
-import gzip
-import json
-from pathlib import Path
-from typing import Dict, List, Tuple, Optional, Any, Set
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from dataclasses import dataclass, field
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
-import hashlib
-import pysam
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Set, Tuple
+
 import numpy as np
+import pysam
 from Bio import SeqIO
 from Bio.Seq import Seq
 
-from ..utils import get_logger, get_config, AESGCMCipher, secure_hash
+from ..utils import AESGCMCipher, get_config, get_logger, secure_hash
 from ..utils.logging import log_operation
 
 logger = get_logger(__name__)

@@ -1,8 +1,9 @@
 """
 Test to verify the test infrastructure is working correctly
 """
-import pytest
 from pathlib import Path
+
+import pytest
 
 
 def test_test_infrastructure():

@@ -5,11 +5,12 @@ This module implements various mappings that preserve biological relationships
 while transforming data into the hyperdimensional space.
 """
 
-import torch
-import numpy as np
-from typing import Dict, List, Tuple, Optional, Callable
-from sklearn.metrics.pairwise import cosine_similarity
 from dataclasses import dataclass
+from typing import Callable, Dict, List, Optional, Tuple
+
+import numpy as np
+import torch
+from sklearn.metrics.pairwise import cosine_similarity
 
 from core.constants import OmicsType
 from core.exceptions import MappingError

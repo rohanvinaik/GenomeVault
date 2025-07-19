@@ -5,15 +5,15 @@ Handles clinical and phenotypic data processing including EHR integration,
 FHIR data parsing, and phenotype standardization.
 """
 
-import json
 import datetime
-from pathlib import Path
-from typing import Dict, List, Optional, Any, Union, Set
+import json
+import re
 from dataclasses import dataclass, field
 from enum import Enum
-import re
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Set, Union
 
-from ..utils import get_logger, get_config, secure_hash
+from ..utils import get_config, get_logger, secure_hash
 from ..utils.logging import log_operation
 
 logger = get_logger(__name__)

@@ -7,20 +7,16 @@ Demonstrates the complete HIPAA verification and governance integration flow.
 import asyncio
 from datetime import datetime, timedelta
 
-from genomevault.blockchain.hipaa import (
-    HIPAAVerifier, 
-    HIPAACredentials,
-    CMSNPIRegistry
-)
-from genomevault.blockchain.hipaa.integration import (
-    HIPAANodeIntegration,
-    HIPAAGovernanceIntegration
-)
 from genomevault.blockchain.governance import (
+    CommitteeType,
     GovernanceSystem,
-    ProposalType,
     ProposalStatus,
-    CommitteeType
+    ProposalType,
+)
+from genomevault.blockchain.hipaa import CMSNPIRegistry, HIPAACredentials, HIPAAVerifier
+from genomevault.blockchain.hipaa.integration import (
+    HIPAAGovernanceIntegration,
+    HIPAANodeIntegration,
 )
 from genomevault.blockchain.node import NodeType
 from genomevault.utils import get_logger

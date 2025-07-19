@@ -4,29 +4,30 @@ Circuit manager for Zero-Knowledge proof system.
 Handles circuit selection, optimization, and management for 
 genomic privacy-preserving proofs.
 """
+import hashlib
 import json
-from typing import Dict, List, Optional, Tuple, Any
+import time
 from dataclasses import dataclass, field
 from pathlib import Path
-import hashlib
-import time
+from typing import Any, Dict, List, Optional, Tuple
 
-from .circuits.base_circuits import BaseCircuit
-from .circuits.biological.variant import (
-    VariantPresenceCircuit,
-    PolygenenicRiskScoreCircuit,
-    DiabetesRiskCircuit,
-    PharmacogenomicCircuit,
-    PathwayEnrichmentCircuit
-)
-from .circuits.biological.multi_omics import (
-    MultiOmicsCorrelationCircuit,
-    GenotypePhenotypeAssociationCircuit,
-    ClinicalTrialEligibilityCircuit,
-    RareVariantBurdenCircuit
-)
 from utils.config import config
 from utils.logging import logger, performance_logger
+
+from .circuits.base_circuits import BaseCircuit
+from .circuits.biological.multi_omics import (
+    ClinicalTrialEligibilityCircuit,
+    GenotypePhenotypeAssociationCircuit,
+    MultiOmicsCorrelationCircuit,
+    RareVariantBurdenCircuit,
+)
+from .circuits.biological.variant import (
+    DiabetesRiskCircuit,
+    PathwayEnrichmentCircuit,
+    PharmacogenomicCircuit,
+    PolygenenicRiskScoreCircuit,
+    VariantPresenceCircuit,
+)
 
 
 @dataclass

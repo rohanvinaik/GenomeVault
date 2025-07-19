@@ -5,15 +5,19 @@ This example demonstrates the complete workflow for generating and
 verifying privacy-preserving proofs for genomic analyses.
 """
 import hashlib
-import numpy as np
 import time
-from typing import Dict, Any
+from typing import Any, Dict
 
-from zk_proofs import (
-    Prover, Verifier, CircuitManager,
-    PostQuantumTransition, benchmark_pq_performance
-)
+import numpy as np
+
 from utils.logging import logger
+from zk_proofs import (
+    CircuitManager,
+    PostQuantumTransition,
+    Prover,
+    Verifier,
+    benchmark_pq_performance,
+)
 
 
 def demonstrate_variant_presence():
