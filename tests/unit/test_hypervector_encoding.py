@@ -24,7 +24,11 @@ from genomevault.hypervector_transform.encoding import (
     create_encoder,
     encode_genomic_data,
 )
-from genomevault.hypervector_transform.holographic import HolographicEncoder, encode_variant, query_hologram
+from genomevault.hypervector_transform.holographic import (
+    HolographicEncoder,
+    encode_variant,
+    query_hologram,
+)
 from genomevault.hypervector_transform.mapping import (
     BiologicalSimilarityMapper,
     ManifoldPreservingMapper,

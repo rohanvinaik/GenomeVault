@@ -8,7 +8,11 @@ import torch
 
 from genomevault.core.constants import HYPERVECTOR_DIMENSIONS
 from genomevault.hypervector.encoding.genomic import GenomicEncoder
-from genomevault.hypervector.operations.binding import BindingOperation, HypervectorBinder, MultiModalBinder
+from genomevault.hypervector.operations.binding import (
+    BindingOperation,
+    HypervectorBinder,
+    MultiModalBinder,
+)
 
 
 class TestGenomicEncoder:
