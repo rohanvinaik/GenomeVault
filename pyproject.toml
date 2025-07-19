@@ -88,30 +88,70 @@ ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 minversion = "7.0"
-addopts = "-ra -q --strict-markers"
-testpaths = [
-    "tests",
-]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = """
+    --strict-markers
+    --tb=short
+    --cov=genomevault
+    --cov-branch
+    --cov-report=term-missing:skip-covered
+    --cov-report=html
+    --cov-report=xml
+    --cov-fail-under=80
+    --maxfail=3
+    -ra
+"""
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "integration: marks tests as integration tests",
     "unit: marks tests as unit tests",
+    "security: marks security-related tests",
+    "performance: marks performance benchmarks"
 ]
 
 [tool.coverage.run]
 source = ["genomevault"]
+branch = true
+parallel = true
 omit = [
     "*/tests/*",
-    "*/test_*.py",
-    "*/__init__.py",
+    "*/migrations/*",
+    "*/__pycache__/*",
+    "*/venv/*",
+    "*/.venv/*"
 ]
 
 [tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = false
 exclude_lines = [
     "pragma: no cover",
     "def __repr__",
-    "if self.debug:",
+    "if TYPE_CHECKING:",
     "raise AssertionError",
     "raise NotImplementedError",
     "if __name__ == .__main__.:",
+    "pass",
+    "@abstract"
 ]
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.pylint.messages_control]
+disable = [
+    "C0111",  # missing-docstring
+    "C0103",  # invalid-name
+    "R0903",  # too-few-public-methods
+    "R0913",  # too-many-arguments
+    "W0212",  # protected-access
+]
+
+[tool.bandit]
+exclude_dirs = ["tests", "venv", ".venv"]
+severity = "medium"
+confidence = "medium"

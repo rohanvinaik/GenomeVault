@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: genomevault_test
+      POSTGRES_USER: genomevault
+      POSTGRES_PASSWORD: genomevault_test
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U genomevault"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  test-api:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
+    environment:
+      - GENOMEVAULT_ENV=test
+      - DATABASE_URL=postgresql://genomevault:genomevault_test@postgres:5432/genomevault_test
+      - REDIS_URL=redis://redis:6379/0
+    ports:
+      - "8001:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./tests:/app/tests
+      - ./coverage:/app/coverage
+
+volumes:
+  postgres_test_data:

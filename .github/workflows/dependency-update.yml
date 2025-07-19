@@ -1,0 +1,39 @@
+name: Dependency Update
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'  # Weekly on Mondays
+  workflow_dispatch:
+
+jobs:
+  update-dependencies:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install pip-tools
+      run: |
+        pip install pip-tools
+    
+    - name: Update requirements
+      run: |
+        pip-compile --upgrade requirements.in -o requirements.txt
+        pip-compile --upgrade requirements-dev.in -o requirements-dev.txt
+    
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v4
+      with:
+        commit-message: 'chore: update dependencies'
+        title: 'Automated dependency updates'
+        body: |
+          This PR updates the project dependencies to their latest versions.
+          
+          Please review the changes and ensure all tests pass before merging.
+        branch: update-dependencies
+        delete-branch: true
