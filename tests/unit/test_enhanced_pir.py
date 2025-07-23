@@ -42,7 +42,7 @@ class TestOptimizedPIRDatabase:
         with open(data_path, "wb") as f:
             # Write 10 test items
             for i in range(10):
-                data = f"item_{i}".encode() * 10  # Make it longer
+                data = "item_{i}".encode() * 10  # Make it longer
                 f.write(struct.pack(">H", len(data)))  # Size
                 f.write(data)
 
@@ -56,7 +56,7 @@ class TestOptimizedPIRDatabase:
                 f.write(struct.pack(">I", offset))  # data offset
 
                 # Calculate next offset
-                item_size = len(f"item_{i}".encode() * 10) + 2  # +2 for size header
+                item_size = len("item_{i}".encode() * 10) + 2  # +2 for size header
                 offset += item_size
 
         return ShardMetadata(
@@ -97,8 +97,8 @@ class TestOptimizedPIRDatabase:
         """Test caching behavior."""
         # Simulate cache updates
         for i in range(20):
-            key = f"test_key_{i}"
-            data = f"test_data_{i}".encode()
+            key = "test_key_{i}"
+            data = "test_data_{i}".encode()
             database._update_cache(key, data)
 
         # Check cache stats
@@ -250,7 +250,7 @@ class TestEnhancedPIRServer:
         # Process a few queries first
         for i in range(5):
             query = {
-                "query_id": f"query_{i}",
+                "query_id": "query_{i}",
                 "client_id": "client_123",
                 "query_vectors": [np.zeros(100, dtype=np.uint8)],
                 "query_type": "genomic",
@@ -330,14 +330,14 @@ class TestPIRIntegration:
         # Create multiple servers
         servers = []
         for i in range(3):
-            server_dir = tmp_path / f"server_{i}"
+            server_dir = tmp_path / "server_{i}"
             server_dir.mkdir()
 
             # Create manifest
             manifest = {
                 "shards": [
                     {
-                        "id": f"shard_{i}",
+                        "id": "shard_{i}",
                         "data_file": "data.dat",
                         "index_file": "data.idx",
                         "size": 1000,
@@ -357,7 +357,7 @@ class TestPIRIntegration:
             (server_dir / "data.idx").touch()
 
             server = EnhancedPIRServer(
-                server_id=f"server_{i}",
+                server_id="server_{i}",
                 data_directory=server_dir,
                 is_trusted_signatory=(i == 0),  # First server is TS
             )
@@ -370,7 +370,7 @@ class TestPIRIntegration:
         responses = []
         for i, server in enumerate(servers):
             query = {
-                "query_id": f"distributed_query_{i}",
+                "query_id": "distributed_query_{i}",
                 "client_id": "client_456",
                 "query_vectors": [query_vectors[i]],
                 "query_type": "genomic",
@@ -454,7 +454,7 @@ class TestPIRPerformance:
             vector = np.random.binomial(1, 0.001, size).astype(np.uint8)
 
             query = {
-                "query_id": f"perf_{size}",
+                "query_id": "perf_{size}",
                 "client_id": "perf_client",
                 "query_vectors": [vector],
                 "query_type": "genomic",
@@ -482,7 +482,7 @@ class TestPIRPerformance:
         for i in range(batch_size):
             vector = np.random.binomial(1, 0.001, 1000).astype(np.uint8)
             query = {
-                "query_id": f"batch_{i}",
+                "query_id": "batch_{i}",
                 "client_id": "batch_client",
                 "query_vectors": [vector],
                 "query_type": "genomic",

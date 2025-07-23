@@ -140,7 +140,7 @@ class BlockchainNode:
         self.contracts = {}
 
         logger.info(
-            f"Node {node_id} initialized with voting power {self.voting_power}",
+            "Node {node_id} initialized with voting power {self.voting_power}",
             extra={"privacy_safe": True},
         )
 
@@ -195,20 +195,20 @@ class BlockchainNode:
             )
 
             logger.info(
-                f"Node {self.node_id} verified as Trusted Signatory", extra={"privacy_safe": True}
+                "Node {self.node_id} verified as Trusted Signatory", extra={"privacy_safe": True}
             )
 
             return True
 
         except Exception as e:
-            logger.error(f"HIPAA verification failed: {e}")
+            logger.error("HIPAA verification failed: {e}")
             return False
 
     def add_peer(self, peer_info: NodeInfo):
         """Add peer to network."""
         self.peers[peer_info.node_id] = peer_info
         logger.info(
-            f"Added peer {peer_info.node_id} with voting power {peer_info.voting_power}",
+            "Added peer {peer_info.node_id} with voting power {peer_info.voting_power}",
             extra={"privacy_safe": True},
         )
 
@@ -276,7 +276,7 @@ class BlockchainNode:
             state_root=state_root,
         )
 
-        logger.info(f"Proposed block at height {block.height}", extra={"privacy_safe": True})
+        logger.info("Proposed block at height {block.height}", extra={"privacy_safe": True})
 
         return block
 
@@ -350,7 +350,7 @@ class BlockchainNode:
 
     def _sign_vote(self, block: Block, vote_type: str) -> str:
         """Sign vote (placeholder)."""
-        vote_data = f"{self.node_id}:{block.calculate_hash()}:{vote_type}"
+        vote_data = "{self.node_id}:{block.calculate_hash()}:{vote_type}"
         return hashlib.sha256(vote_data.encode()).hexdigest()
 
     def process_votes(self, votes: List[Dict], required_power: int) -> bool:
@@ -410,7 +410,7 @@ class BlockchainNode:
             metadata={"block_hash": block.calculate_hash(), "tx_count": len(block.transactions)},
         )
 
-        logger.info(f"Committed block at height {block.height}", extra={"privacy_safe": True})
+        logger.info("Committed block at height {block.height}", extra={"privacy_safe": True})
 
     async def _execute_transaction(self, tx: Dict):
         """Execute transaction and update state."""
@@ -426,12 +426,12 @@ class BlockchainNode:
     async def _record_proof(self, proof_data: Dict):
         """Record proof in state."""
         proof_key = proof_data["proof_key"]
-        self.state[f"proof:{proof_key}"] = proof_data
+        self.state["proof:{proof_key}"] = proof_data
 
     async def _transfer_credits(self, from_addr: str, to_addr: str, amount: int):
         """Transfer credits between addresses."""
-        from_key = f"credits:{from_addr}"
-        to_key = f"credits:{to_addr}"
+        from_key = "credits:{from_addr}"
+        to_key = "credits:{to_addr}"
 
         # Check balance
         from_balance = self.state.get(from_key, 0)
@@ -441,7 +441,7 @@ class BlockchainNode:
 
     async def _update_stake(self, node_id: str, amount: int):
         """Update node stake."""
-        stake_key = f"stake:{node_id}"
+        stake_key = "stake:{node_id}"
         self.state[stake_key] = amount
 
     def _award_block_rewards(self, proposer: str):
@@ -451,11 +451,11 @@ class BlockchainNode:
             self.credits += rewards
 
             # Update state
-            credit_key = f"credits:{self.node_id}"
+            credit_key = "credits:{self.node_id}"
             self.state[credit_key] = self.state.get(credit_key, 0) + rewards
 
             logger.info(
-                f"Awarded {rewards} credits for block production", extra={"privacy_safe": True}
+                "Awarded {rewards} credits for block production", extra={"privacy_safe": True}
             )
 
     async def handle_audit_challenge(self, challenger: str, target: str, epoch: int) -> Dict:
@@ -471,7 +471,7 @@ class BlockchainNode:
             Challenge result
         """
         # Verify challenger has standing
-        challenger_stake = self.state.get(f"stake:{challenger}", 0)
+        challenger_stake = self.state.get("stake:{challenger}", 0)
         if challenger_stake < 100:  # Minimum stake to challenge
             return {"success": False, "reason": "Insufficient stake"}
 
@@ -486,7 +486,7 @@ class BlockchainNode:
             await self._slash_stake(target, 0.25)  # 25% slash
 
             # Reward challenger
-            reward = int(self.state.get(f"stake:{target}", 0) * 0.1)
+            reward = int(self.state.get("stake:{target}", 0) * 0.1)
             await self._transfer_credits("system", challenger, reward)
 
         result = {"success": True, "valid": is_valid, "epoch": epoch, "timestamp": time.time()}
@@ -505,7 +505,7 @@ class BlockchainNode:
 
     async def _slash_stake(self, node_id: str, percentage: float):
         """Slash node stake."""
-        stake_key = f"stake:{node_id}"
+        stake_key = "stake:{node_id}"
         current_stake = self.state.get(stake_key, 0)
 
         slash_amount = int(current_stake * percentage)
@@ -526,7 +526,7 @@ class BlockchainNode:
         """Get node information."""
         return NodeInfo(
             node_id=self.node_id,
-            address=f"node_{self.node_id}",
+            address="node_{self.node_id}",
             node_class=self.node_class,
             is_trusted_signatory=self.is_trusted_signatory,
             voting_power=self.voting_power,
@@ -542,7 +542,7 @@ class BlockchainNode:
             "chain_length": len(self.chain),
             "mempool_size": len(self.mempool),
             "voting_power": self.voting_power,
-            "node_type": f"{self.node_class.name} {'TS' if self.is_trusted_signatory else 'NS'}",
+            "node_type": "{self.node_class.name} {'TS' if self.is_trusted_signatory else 'NS'}",
             "credits": self.credits,
             "stake": self.stake_amount,
             "peers": len(self.peers),
@@ -569,7 +569,7 @@ class BlockchainNode:
         # Add to mempool
         self.mempool.append(tx)
 
-        logger.info(f"Transaction {tx_hash[:8]} added to mempool", extra={"privacy_safe": True})
+        logger.info("Transaction {tx_hash[:8]} added to mempool", extra={"privacy_safe": True})
 
         return tx_hash
 
@@ -581,8 +581,8 @@ if __name__ == "__main__":
         node_id="gp_clinic_001", node_class=NodeClass.LIGHT, is_trusted_signatory=False
     )
 
-    print(f"Light Node Initial Voting Power: {light_ts_node.voting_power}")
-    print(f"Light Node Block Rewards: {light_ts_node._calculate_block_rewards()}")
+    print("Light Node Initial Voting Power: {light_ts_node.voting_power}")
+    print("Light Node Block Rewards: {light_ts_node._calculate_block_rewards()}")
 
     # Verify HIPAA credentials
     asyncio.run(
@@ -594,31 +594,31 @@ if __name__ == "__main__":
         )
     )
 
-    print(f"Light TS Node Voting Power: {light_ts_node.voting_power}")
-    print(f"Light TS Node Block Rewards: {light_ts_node._calculate_block_rewards()}")
+    print("Light TS Node Voting Power: {light_ts_node.voting_power}")
+    print("Light TS Node Block Rewards: {light_ts_node._calculate_block_rewards()}")
 
     # Example 2: Full node without TS
     full_node = BlockchainNode(
         node_id="university_node_001", node_class=NodeClass.FULL, is_trusted_signatory=False
     )
 
-    print(f"\nFull Node Voting Power: {full_node.voting_power}")
-    print(f"Full Node Block Rewards: {full_node._calculate_block_rewards()}")
+    print("\nFull Node Voting Power: {full_node.voting_power}")
+    print("Full Node Block Rewards: {full_node._calculate_block_rewards()}")
 
     # Example 3: Archive node
     archive_node = BlockchainNode(
         node_id="research_archive_001", node_class=NodeClass.ARCHIVE, is_trusted_signatory=False
     )
 
-    print(f"\nArchive Node Voting Power: {archive_node.voting_power}")
-    print(f"Archive Node Block Rewards: {archive_node._calculate_block_rewards()}")
+    print("\nArchive Node Voting Power: {archive_node.voting_power}")
+    print("Archive Node Block Rewards: {archive_node._calculate_block_rewards()}")
 
     # Add peers
     light_ts_node.add_peer(full_node.get_node_info())
     light_ts_node.add_peer(archive_node.get_node_info())
 
     # Check BFT safety
-    print(f"\nBFT Safety Check: {light_ts_node.check_bft_safety()}")
+    print("\nBFT Safety Check: {light_ts_node.check_bft_safety()}")
 
     # Submit transaction
     tx_hash = light_ts_node.submit_transaction(
@@ -634,15 +634,15 @@ if __name__ == "__main__":
         }
     )
 
-    print(f"\nSubmitted transaction: {tx_hash[:16]}...")
+    print("\nSubmitted transaction: {tx_hash[:16]}...")
 
     # Get chain info
-    print(f"\nChain Info: {json.dumps(light_ts_node.get_chain_info(), indent=2)}")
+    print("\nChain Info: {json.dumps(light_ts_node.get_chain_info(), indent=2)}")
 
     # Calculate network statistics
     print("\n=== Network Statistics ===")
-    print(f"Light TS (GP clinic): w=11, credits/block=3")
-    print(f"Full non-TS (University): w=4, credits/block=4")
-    print(f"Archive non-TS (Research): w=8, credits/block=8")
-    print(f"\nTotal Network Voting Power: {11 + 4 + 8} = 23")
-    print(f"Honest Power Needed for BFT: >11")
+    print("Light TS (GP clinic): w=11, credits/block=3")
+    print("Full non-TS (University): w=4, credits/block=4")
+    print("Archive non-TS (Research): w=8, credits/block=8")
+    print("\nTotal Network Voting Power: {11 + 4 + 8} = 23")
+    print("Honest Power Needed for BFT: >11")

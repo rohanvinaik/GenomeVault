@@ -164,7 +164,7 @@ async def get_network_topology(request: TopologyRequest, user_id: str = Depends(
 
     Returns nearest light nodes (LN) and trusted signatories (TS).
     """
-    logger.info(f"Topology request from {request.node_id}", extra={"privacy_safe": True})
+    logger.info("Topology request from {request.node_id}", extra={"privacy_safe": True})
 
     # Get all nodes
     light_nodes = []
@@ -196,7 +196,7 @@ async def redeem_credits(request: CreditVaultRequest, user_id: str = Depends(ver
     Burns credits and processes payment/service delivery.
     """
     logger.info(
-        f"Credit redemption: {request.creditsBurned} credits for invoice {request.invoiceId}",
+        "Credit redemption: {request.creditsBurned} credits for invoice {request.invoiceId}",
         extra={"privacy_safe": True},
     )
 
@@ -238,7 +238,7 @@ async def create_audit_challenge(
     Validates node behavior and handles slashing if needed.
     """
     logger.info(
-        f"Audit challenge from {request.challenger} to {request.target}",
+        "Audit challenge from {request.challenger} to {request.target}",
         extra={"privacy_safe": True},
     )
 
@@ -275,19 +275,19 @@ async def create_processing_pipeline(
 
     Initiates local processing for specified omics type.
     """
-    logger.info(f"Pipeline request: {request.pipeline_type}", extra={"privacy_safe": True})
+    logger.info("Pipeline request: {request.pipeline_type}", extra={"privacy_safe": True})
 
     # Validate pipeline type
     valid_types = ["genomic", "transcriptomic", "epigenetic", "proteomic", "phenotypic"]
     if request.pipeline_type not in valid_types:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Invalid pipeline type. Must be one of: {valid_types}",
+            detail="Invalid pipeline type. Must be one of: {valid_types}",
         )
 
     # Create job
     job_id = hashlib.sha256(
-        f"{user_id}:{request.pipeline_type}:{datetime.now().isoformat()}".encode()
+        "{user_id}:{request.pipeline_type}:{datetime.now().isoformat()}".encode()
     ).hexdigest()[:16]
 
     # Estimate processing time
@@ -330,7 +330,7 @@ async def perform_vector_operation(request: VectorRequest, user_id: str = Depend
 
     Supports encoding, binding, and similarity operations.
     """
-    logger.info(f"Vector operation: {request.operation}", extra={"privacy_safe": True})
+    logger.info("Vector operation: {request.operation}", extra={"privacy_safe": True})
 
     if request.operation == "encode":
         # Encode data to hypervector
@@ -374,7 +374,7 @@ async def perform_vector_operation(request: VectorRequest, user_id: str = Depend
     else:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Unknown operation: {request.operation}",
+            detail="Unknown operation: {request.operation}",
         )
 
     response = VectorResponse(result=result, metadata=metadata)
@@ -389,7 +389,7 @@ async def generate_proof(request: ProofRequest, user_id: str = Depends(verify_to
 
     Creates privacy-preserving proofs for various circuits.
     """
-    logger.info(f"Proof generation request: {request.circuit_name}", extra={"privacy_safe": True})
+    logger.info("Proof generation request: {request.circuit_name}", extra={"privacy_safe": True})
 
     # Validate circuit
     valid_circuits = [
@@ -404,12 +404,12 @@ async def generate_proof(request: ProofRequest, user_id: str = Depends(verify_to
     if request.circuit_name not in valid_circuits:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Invalid circuit. Must be one of: {valid_circuits}",
+            detail="Invalid circuit. Must be one of: {valid_circuits}",
         )
 
     # Generate proof (simplified)
     proof_id = hashlib.sha256(
-        f"{user_id}:{request.circuit_name}:{datetime.now().isoformat()}".encode()
+        "{user_id}:{request.circuit_name}:{datetime.now().isoformat()}".encode()
     ).hexdigest()[:16]
 
     # Mock proof data
@@ -490,7 +490,7 @@ def _process_credit_redemption(user_id: str, invoice_id: str, amount: int) -> st
     """Process credit redemption transaction."""
     # In production, would submit to blockchain
     tx_id = hashlib.sha256(
-        f"{user_id}:{invoice_id}:{amount}:{datetime.now().isoformat()}".encode()
+        "{user_id}:{invoice_id}:{amount}:{datetime.now().isoformat()}".encode()
     ).hexdigest()
     return tx_id
 
@@ -498,7 +498,7 @@ def _process_credit_redemption(user_id: str, invoice_id: str, amount: int) -> st
 def _queue_pipeline_job(job_id: str, request: PipelineRequest):
     """Queue processing pipeline job."""
     # In production, would add to job queue
-    logger.info(f"Job {job_id} queued for processing", extra={"privacy_safe": True})
+    logger.info("Job {job_id} queued for processing", extra={"privacy_safe": True})
 
 
 def _encode_to_hypervector(data: Dict[str, Any], domain: str) -> Any:

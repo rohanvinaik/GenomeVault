@@ -22,7 +22,7 @@ def test_basic_imports():
 
         # Test creating config
         config = get_config()
-        print(f"✅ Config created: node_type={config.node_type}")
+        print("✅ Config created: node_type={config.node_type}")
 
         # Test exceptions
         from core.exceptions import BindingError, GenomeVaultError
@@ -37,7 +37,7 @@ def test_basic_imports():
         return True
 
     except Exception as e:
-        print(f"❌ Import failed: {e}")
+        print("❌ Import failed: {e}")
         import traceback
 
         traceback.print_exc()
@@ -60,10 +60,10 @@ def test_module_imports():
     for module in modules:
         try:
             parts = module.split(".")
-            exec(f"from {parts[0]} import {parts[1]}")
-            print(f"✅ {module} imported successfully")
+            exec("from {parts[0]} import {parts[1]}")
+            print("✅ {module} imported successfully")
         except Exception as e:
-            print(f"❌ {module} failed: {e}")
+            print("❌ {module} failed: {e}")
             success = False
 
     return success

@@ -102,7 +102,7 @@ class GenomicEncoder:
             return variant_vec
 
         except Exception as e:
-            raise HypervectorError(f"Failed to encode variant: {str(e)}")
+            raise HypervectorError("Failed to encode variant: {str(e)}")
 
     def encode_genome(self, variants: List[Dict]) -> torch.Tensor:
         """
@@ -158,7 +158,7 @@ class GenomicEncoder:
         chr_num = chromosome.replace("chr", "").replace("X", "23").replace("Y", "24")
         try:
             chr_idx = int(chr_num)
-        except:
+        except Exception:
             chr_idx = 25  # For mitochondrial or other
 
         # Generate deterministic vector based on chromosome

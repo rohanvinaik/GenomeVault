@@ -76,7 +76,7 @@ class Variant:
 
     def get_id(self) -> str:
         """Get unique variant identifier"""
-        return f"{self.chromosome}:{self.position}:{self.reference}>{self.alternate}"
+        return "{self.chromosome}:{self.position}:{self.reference}>{self.alternate}"
 
 
 @dataclass
@@ -141,7 +141,7 @@ class SequencingProcessor:
         """Get default reference genome path"""
         ref_dir = config.storage.data_dir / "references"
         ref_dir.mkdir(parents=True, exist_ok=True)
-        return ref_dir / f"{self.DEFAULT_REFERENCE}.fa"
+        return ref_dir / "{self.DEFAULT_REFERENCE}.fa"
 
     def _validate_tools(self):
         """Validate required tools are installed"""
@@ -160,7 +160,7 @@ class SequencingProcessor:
                 missing_tools.append(name)
 
         if missing_tools:
-            logger.warning(f"Missing tools: {', '.join(missing_tools)}")
+            logger.warning("Missing tools: {', '.join(missing_tools)}")
             logger.warning("Some processing features may be unavailable")
 
     @log_operation("process_sequencing_data")
@@ -175,17 +175,17 @@ class SequencingProcessor:
         Returns:
             GenomicProfile with variants and quality metrics
         """
-        logger.info(f"Processing sequencing data for sample {sample_id}")
+        logger.info("Processing sequencing data for sample {sample_id}")
 
         # Validate input
         if not input_path.exists():
-            raise FileNotFoundError(f"Input file not found: {input_path}")
+            raise FileNotFoundError("Input file not found: {input_path}")
 
         if input_path.suffix not in self.SUPPORTED_FORMATS:
-            raise ValueError(f"Unsupported file format: {input_path.suffix}")
+            raise ValueError("Unsupported file format: {input_path.suffix}")
 
         # Create working directory
-        work_dir = self.temp_dir / f"seq_{sample_id}_{os.getpid()}"
+        work_dir = self.temp_dir / "seq_{sample_id}_{os.getpid()}"
         work_dir.mkdir(parents=True, exist_ok=True)
 
         try:
@@ -233,7 +233,7 @@ class SequencingProcessor:
                 },
             )
 
-            logger.info(f"Processing complete. Found {len(profile.variants)} variants")
+            logger.info("Processing complete. Found {len(profile.variants)} variants")
             return profile
 
         finally:
@@ -326,7 +326,7 @@ class SequencingProcessor:
 
             _, stderr = bwa_process.communicate()
             if bwa_process.returncode != 0:
-                raise RuntimeError(f"BWA alignment failed: {stderr.decode()}")
+                raise RuntimeError("BWA alignment failed: {stderr.decode()}")
 
         # Convert SAM to sorted BAM
         logger.info("Converting to sorted BAM...")
@@ -542,8 +542,8 @@ class DifferentialStorage:
 
             # Compress chunk
             compressed_chunk = {
-                "start_pos": f"{chunk[0].chromosome}:{chunk[0].position}",
-                "end_pos": f"{chunk[-1].chromosome}:{chunk[-1].position}",
+                "start_pos": "{chunk[0].chromosome}:{chunk[0].position}",
+                "end_pos": "{chunk[-1].chromosome}:{chunk[-1].position}",
                 "variant_count": len(chunk),
                 "variants": [self._compress_variant(v) for v in chunk],
             }

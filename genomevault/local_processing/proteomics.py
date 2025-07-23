@@ -257,7 +257,7 @@ class ProteomicsProcessor:
         Returns:
             ProteomicsProfile with protein measurements
         """
-        logger.info(f"Processing proteomics data for {sample_id}")
+        logger.info("Processing proteomics data for {sample_id}")
 
         try:
             # Load data based on format
@@ -266,7 +266,7 @@ class ProteomicsProcessor:
             elif input_format == "mzml":
                 protein_data, peptide_data = self._process_mzml(input_path)
             else:
-                raise ValidationError(f"Unsupported format: {input_format}")
+                raise ValidationError("Unsupported format: {input_format}")
 
             # Create protein measurements
             proteins = self._create_protein_measurements(protein_data, peptide_data)
@@ -297,16 +297,16 @@ class ProteomicsProcessor:
                 },
             )
 
-            logger.info(f"Successfully processed {len(normalized_proteins)} proteins")
+            logger.info("Successfully processed {len(normalized_proteins)} proteins")
             return profile
 
         except Exception as e:
-            logger.error(f"Error processing proteomics data: {str(e)}")
-            raise ProcessingError(f"Failed to process proteomics data: {str(e)}")
+            logger.error("Error processing proteomics data: {str(e)}")
+            raise ProcessingError("Failed to process proteomics data: {str(e)}")
 
     def _load_maxquant_output(self, input_path: Path) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """Load MaxQuant output files"""
-        logger.info(f"Loading MaxQuant output from {input_path}")
+        logger.info("Loading MaxQuant output from {input_path}")
 
         # In production, would load proteinGroups.txt and peptides.txt
         # Generate mock data for demonstration
@@ -315,18 +315,18 @@ class ProteomicsProcessor:
         # Mock protein data
         n_proteins = 2000
         protein_ids = list(self.protein_sequences.keys()) + [
-            f"PROT{i:04d}_HUMAN" for i in range(n_proteins - len(self.protein_sequences))
+            "PROT{i:04d}_HUMAN" for i in range(n_proteins - len(self.protein_sequences))
         ]
 
         protein_data = pd.DataFrame(
             {
                 "Protein IDs": protein_ids[:n_proteins],
                 "Gene names": [
-                    self.protein_sequences.get(pid, {}).get("gene_name", f"GENE{i}")
+                    self.protein_sequences.get(pid, {}).get("gene_name", "GENE{i}")
                     for i, pid in enumerate(protein_ids[:n_proteins])
                 ],
                 "Protein names": [
-                    self.protein_sequences.get(pid, {}).get("description", f"Protein {i}")
+                    self.protein_sequences.get(pid, {}).get("description", "Protein {i}")
                     for i, pid in enumerate(protein_ids[:n_proteins])
                 ],
                 "Peptides": np.random.poisson(10, n_proteins),
@@ -357,7 +357,7 @@ class ProteomicsProcessor:
 
     def _process_mzml(self, input_path: Path) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """Process mzML mass spectrometry data"""
-        logger.info(f"Processing mzML file {input_path}")
+        logger.info("Processing mzML file {input_path}")
         # In production, would use pyteomics or similar to parse mzML
         # For now, return mock data
         return self._load_maxquant_output(input_path)
@@ -470,7 +470,7 @@ class ProteomicsProcessor:
             threshold_score = filtered[n_targets - n_decoys].confidence_score
             filtered = [p for p in filtered if p.confidence_score >= threshold_score]
 
-        logger.info(f"Filtered to {len(filtered)} proteins at {self.fdr_threshold} FDR")
+        logger.info("Filtered to {len(filtered)} proteins at {self.fdr_threshold} FDR")
         return filtered
 
     def _normalize_abundances(
@@ -648,7 +648,7 @@ class ProteomicsProcessor:
         # Sort by p-value
         results_df.sort_values("p_value", inplace=True)
 
-        logger.info(f"Found {results_df['significant'].sum()} differentially expressed proteins")
+        logger.info("Found {results_df['significant'].sum()} differentially expressed proteins")
 
         return results_df
 
@@ -656,7 +656,7 @@ class ProteomicsProcessor:
         self, profile: ProteomicsProfile, output_path: Path, format: str = "tsv"
     ) -> None:
         """Export proteomics results to file"""
-        logger.info(f"Exporting proteomics results to {output_path}")
+        logger.info("Exporting proteomics results to {output_path}")
 
         df = profile.to_dataframe()
 
@@ -667,6 +667,6 @@ class ProteomicsProcessor:
         elif format == "json":
             df.to_json(output_path, orient="records", indent=2)
         else:
-            raise ValidationError(f"Unsupported export format: {format}")
+            raise ValidationError("Unsupported export format: {format}")
 
-        logger.info(f"Successfully exported {len(df)} proteins")
+        logger.info("Successfully exported {len(df)} proteins")

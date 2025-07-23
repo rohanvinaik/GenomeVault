@@ -27,7 +27,7 @@ class PersistencePair:
     @property
     def persistence(self) -> float:
         """Lifetime of the topological feature"""
-        return self.death - self.birth if self.death != float("inf") else float("inf")
+        return self.death - self.birth if self.death != float("in") else float("inf")
 
     @property
     def midpoint(self) -> float:

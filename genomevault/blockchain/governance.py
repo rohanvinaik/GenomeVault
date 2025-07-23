@@ -145,12 +145,12 @@ class Committee:
     def add_member(self, address: str):
         """Add committee member"""
         self.members.add(address)
-        logger.info(f"Added {address} to {self.committee_type.value} committee")
+        logger.info("Added {address} to {self.committee_type.value} committee")
 
     def remove_member(self, address: str):
         """Remove committee member"""
         self.members.discard(address)
-        logger.info(f"Removed {address} from {self.committee_type.value} committee")
+        logger.info("Removed {address} from {self.committee_type.value} committee")
 
 
 class VotingMechanism(ABC):
@@ -210,14 +210,14 @@ class DelegatedVoting:
         self.delegations[delegator] = delegate
         self._update_delegation_chains()
 
-        logger.info(f"{delegator} delegated to {delegate}")
+        logger.info("{delegator} delegated to {delegate}")
 
     def revoke_delegation(self, delegator: str):
         """Revoke delegation"""
         if delegator in self.delegations:
             del self.delegations[delegator]
             self._update_delegation_chains()
-            logger.info(f"{delegator} revoked delegation")
+            logger.info("{delegator} revoked delegation")
 
     def get_final_delegate(self, voter: str) -> str:
         """Get final delegate after following chain"""
@@ -368,12 +368,12 @@ class GovernanceSystem:
         proposer_power = self._get_voting_power(proposer)
         if proposer_power < self.proposal_threshold:
             raise ValueError(
-                f"Insufficient voting power: {proposer_power} < {self.proposal_threshold}"
+                "Insufficient voting power: {proposer_power} < {self.proposal_threshold}"
             )
 
         # Generate proposal ID
         proposal_id = hashlib.sha256(
-            f"{proposer}:{title}:{datetime.now().isoformat()}".encode()
+            "{proposer}:{title}:{datetime.now().isoformat()}".encode()
         ).hexdigest()[:16]
 
         # Set requirements based on proposal type
@@ -412,7 +412,7 @@ class GovernanceSystem:
             metadata={"proposal_type": proposal_type.value, "title": title},
         )
 
-        logger.info(f"Proposal {proposal_id} created by {proposer}")
+        logger.info("Proposal {proposal_id} created by {proposer}")
 
         return proposal
 
@@ -481,7 +481,7 @@ class GovernanceSystem:
         # Check if proposal outcome is determined
         self._check_proposal_outcome(proposal)
 
-        logger.info(f"Vote cast on {proposal_id}: {choice} with weight {vote_weight}")
+        logger.info("Vote cast on {proposal_id}: {choice} with weight {vote_weight}")
 
         return vote_record
 
@@ -546,10 +546,10 @@ class GovernanceSystem:
         if datetime.now() > proposal.voting_end:
             if proposal.has_quorum(self.total_voting_power) and proposal.has_passed():
                 proposal.status = ProposalStatus.PASSED
-                logger.info(f"Proposal {proposal.proposal_id} passed")
+                logger.info("Proposal {proposal.proposal_id} passed")
             else:
                 proposal.status = ProposalStatus.REJECTED
-                logger.info(f"Proposal {proposal.proposal_id} rejected")
+                logger.info("Proposal {proposal.proposal_id} rejected")
 
     def _calculate_total_voting_power(self) -> float:
         """Calculate total voting power in the system"""
@@ -596,7 +596,7 @@ class GovernanceSystem:
             metadata={"proposal_type": proposal.proposal_type.value, "result": result},
         )
 
-        logger.info(f"Proposal {proposal_id} executed")
+        logger.info("Proposal {proposal_id} executed")
 
         return result
 
@@ -622,7 +622,7 @@ class GovernanceSystem:
         new_value = proposal.execution_data.get("new_value")
 
         # In production, would update on-chain parameters
-        logger.info(f"Parameter {parameter} changed to {new_value}")
+        logger.info("Parameter {parameter} changed to {new_value}")
 
         return {"status": "success", "parameter": parameter, "new_value": new_value}
 
@@ -635,7 +635,7 @@ class GovernanceSystem:
         certification_level = proposal.execution_data.get("certification_level")
 
         # In production, would update algorithm registry
-        logger.info(f"Algorithm {algorithm_id} certified at level {certification_level}")
+        logger.info("Algorithm {algorithm_id} certified at level {certification_level}")
 
         return {
             "status": "success",
@@ -652,7 +652,7 @@ class GovernanceSystem:
         amount = proposal.execution_data.get("amount")
 
         # In production, would transfer funds
-        logger.info(f"Treasury allocation: {amount} to {recipient}")
+        logger.info("Treasury allocation: {amount} to {recipient}")
 
         return {"status": "success", "recipient": recipient, "amount": amount}
 
@@ -762,7 +762,7 @@ class HIPAAOracle:
             Tuple of (is_valid, verification_details)
         """
         # Check cache
-        cache_key = f"{npi}:{baa_hash}:{risk_analysis_hash}:{hsm_serial}"
+        cache_key = "{npi}:{baa_hash}:{risk_analysis_hash}:{hsm_serial}"
         if cache_key in self.verification_cache:
             return self.verification_cache[cache_key], self.verified_providers.get(npi, {})
 
@@ -805,7 +805,7 @@ class HIPAAOracle:
             metadata={"hsm_serial": hsm_serial, "success": True},
         )
 
-        logger.info(f"HIPAA provider {npi} verified as trusted signatory")
+        logger.info("HIPAA provider {npi} verified as trusted signatory")
 
         return True, verification
 
@@ -847,7 +847,7 @@ class HIPAAOracle:
 
             # Clear cache
             for key in list(self.verification_cache.keys()):
-                if key.startswith(f"{npi}:"):
+                if key.startswith("{npi}:"):
                     del self.verification_cache[key]
 
             audit_logger.log_event(
@@ -858,7 +858,7 @@ class HIPAAOracle:
                 metadata={"reason": reason},
             )
 
-            logger.info(f"HIPAA verification revoked for {npi}: {reason}")
+            logger.info("HIPAA verification revoked for {npi}: {reason}")
 
 
 # Example usage
@@ -882,7 +882,7 @@ if __name__ == "__main__":
         description="Increase the PIR query timeout from 30s to 45s to improve reliability",
         execution_data={"parameter": "pir_query_timeout_seconds", "old_value": 30, "new_value": 45},
     )
-    print(f"Proposal created: {proposal.proposal_id}")
+    print("Proposal created: {proposal.proposal_id}")
 
     # Simulate moving to active status
     proposal.status = ProposalStatus.ACTIVE
@@ -895,10 +895,10 @@ if __name__ == "__main__":
 
     # Check proposal status
     details = governance.get_proposal_details(proposal.proposal_id)
-    print(f"\nProposal details:")
-    print(f"  Yes votes: {details['votes']['yes']}")
-    print(f"  No votes: {details['votes']['no']}")
-    print(f"  Approval rate: {details['requirements']['current_approval']:.2%}")
+    print("\nProposal details:")
+    print("  Yes votes: {details['votes']['yes']}")
+    print("  No votes: {details['votes']['no']}")
+    print("  Approval rate: {details['requirements']['current_approval']:.2%}")
 
     # Test HIPAA Oracle
     print("\n\nTesting HIPAA Oracle...")
@@ -915,9 +915,9 @@ if __name__ == "__main__":
         )
     )
 
-    print(f"Verification result: {result}")
+    print("Verification result: {result}")
     if result:
-        print(f"Provider details: {details}")
+        print("Provider details: {details}")
 
     # Test delegation
     print("\n\nTesting delegation system...")
@@ -925,11 +925,11 @@ if __name__ == "__main__":
     delegation.delegate("user_3", "user_4")
     delegation.delegate("user_4", "expert_1")
 
-    print(f"Final delegate for user_3: {delegation.get_final_delegate('user_3')}")
+    print("Final delegate for user_3: {delegation.get_final_delegate('user_3')}")
 
     # Test circular delegation prevention
     try:
         delegation.delegate("expert_1", "user_3")
         print("ERROR: Circular delegation allowed!")
     except ValueError as e:
-        print(f"Correctly prevented circular delegation: {e}")
+        print("Correctly prevented circular delegation: {e}")

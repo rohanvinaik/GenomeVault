@@ -181,7 +181,7 @@ async def get_topology(request: TopologyRequest, api_key: str = Depends(verify_a
         )
 
     except Exception as e:
-        logger.error(f"Topology request failed: {e}")
+        logger.error("Topology request failed: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -200,7 +200,7 @@ async def redeem_credits(request: CreditRedeemRequest, api_key: str = Depends(ve
             raise HTTPException(status_code=400, detail="Insufficient credits")
 
         # Process redemption
-        tx_id = hashlib.sha256(f"{request.invoiceId}:{time.time()}".encode()).hexdigest()[:16]
+        tx_id = hashlib.sha256("{request.invoiceId}:{time.time()}".encode()).hexdigest()[:16]
 
         # Update ledger
         credit_ledger[user_id] = user_credits - request.creditsBurned
@@ -224,7 +224,7 @@ async def redeem_credits(request: CreditRedeemRequest, api_key: str = Depends(ve
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Credit redemption failed: {e}")
+        logger.error("Credit redemption failed: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -239,7 +239,7 @@ async def create_audit_challenge(
     try:
         # Generate challenge ID
         challenge_id = hashlib.sha256(
-            f"{request.challenger}:{request.target}:{request.epoch}".encode()
+            "{request.challenger}:{request.target}:{request.epoch}".encode()
         ).hexdigest()[:16]
 
         # In production, would verify challenge and process slashing
@@ -270,7 +270,7 @@ async def create_audit_challenge(
         )
 
     except Exception as e:
-        logger.error(f"Audit challenge failed: {e}")
+        logger.error("Audit challenge failed: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -282,11 +282,11 @@ async def submit_proof(request: ProofSubmissionRequest, api_key: str = Depends(v
     try:
         # Generate proof ID
         proof_id = hashlib.sha256(
-            f"{request.circuit_type}:{request.proof_data[:32]}:{time.time()}".encode()
+            "{request.circuit_type}:{request.proof_data[:32]}:{time.time()}".encode()
         ).hexdigest()[:16]
 
         # In production, would submit to blockchain
-        tx_hash = hashlib.sha256(f"tx:{proof_id}".encode()).hexdigest()
+        tx_hash = hashlib.sha256("tx:{proof_id}".encode()).hexdigest()
 
         # Audit log
         audit_logger.log_event(
@@ -302,7 +302,7 @@ async def submit_proof(request: ProofSubmissionRequest, api_key: str = Depends(v
         )
 
     except Exception as e:
-        logger.error(f"Proof submission failed: {e}")
+        logger.error("Proof submission failed: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -328,7 +328,7 @@ async def get_node_statistics(api_key: str = Depends(verify_api_key)):
         return JSONResponse(content=stats)
 
     except Exception as e:
-        logger.error(f"Failed to get node statistics: {e}")
+        logger.error("Failed to get node statistics: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -361,14 +361,14 @@ async def get_pir_configuration(api_key: str = Depends(verify_api_key)):
         return JSONResponse(content=config_data)
 
     except Exception as e:
-        logger.error(f"Failed to get PIR configuration: {e}")
+        logger.error("Failed to get PIR configuration: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     """Global exception handler."""
-    logger.error(f"Unhandled exception: {exc}", exc_info=True)
+    logger.error("Unhandled exception: {exc}", exc_info=True)
     return JSONResponse(status_code=500, content={"detail": "Internal server error"})
 
 

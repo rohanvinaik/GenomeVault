@@ -36,7 +36,7 @@ class PIRClient:
         self.session: Optional[aiohttp.ClientSession] = None
 
         if len(server_urls) < MIN_PIR_SERVERS:
-            raise PIRError(f"Need at least {MIN_PIR_SERVERS} servers, got {len(server_urls)}")
+            raise PIRError("Need at least {MIN_PIR_SERVERS} servers, got {len(server_urls)}")
 
     async def __aenter__(self):
         self.session = aiohttp.ClientSession()
@@ -75,7 +75,7 @@ class PIRClient:
 
         if len(valid_responses) < self.threshold:
             raise PIRError(
-                f"Insufficient responses: got {len(valid_responses)}, need {self.threshold}"
+                "Insufficient responses: got {len(valid_responses)}, need {self.threshold}"
             )
 
         # Reconstruct data from responses
@@ -96,7 +96,7 @@ class PIRClient:
 
         # Encode position obliviously
         # This is simplified - real implementation would use homomorphic encryption
-        idx = hash(f"{chromosome}:{position}") % len(query_vector)
+        idx = hash("{chromosome}:{position}") % len(query_vector)
         query_vector[idx] = 1.0
 
         # Add noise for privacy
@@ -121,16 +121,16 @@ class PIRClient:
         try:
             timeout = aiohttp.ClientTimeout(total=PIR_QUERY_TIMEOUT_MS / 1000)
             async with self.session.post(
-                f"{server_url}/query", json=query_data, timeout=timeout
+                "{server_url}/query", json=query_data, timeout=timeout
             ) as response:
                 if response.status == 200:
                     return await response.json()
                 else:
-                    raise PIRError(f"Server returned status {response.status}")
+                    raise PIRError("Server returned status {response.status}")
         except asyncio.TimeoutError:
-            raise PIRError(f"Query timeout for server {server_url}")
+            raise PIRError("Query timeout for server {server_url}")
         except Exception as e:
-            raise PIRError(f"Query failed for server {server_url}: {str(e)}")
+            raise PIRError("Query failed for server {server_url}: {str(e)}")
 
     def _reconstruct_data(self, responses: List[Dict[str, Any]], query: PIRQuery) -> bytes:
         """
@@ -176,7 +176,7 @@ class PIRClient:
         statuses = []
         for server_url in self.server_urls:
             try:
-                async with self.session.get(f"{server_url}/status") as response:
+                async with self.session.get("{server_url}/status") as response:
                     if response.status == 200:
                         status = await response.json()
                         status["url"] = server_url
@@ -187,7 +187,7 @@ class PIRClient:
                             {
                                 "url": server_url,
                                 "online": False,
-                                "error": f"Status code {response.status}",
+                                "error": "Status code {response.status}",
                             }
                         )
             except Exception as e:

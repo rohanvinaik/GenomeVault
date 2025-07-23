@@ -58,7 +58,7 @@ class FieldElement:
         return self.value == other
 
     def __repr__(self):
-        return f"FieldElement({self.value})"
+        return "FieldElement({self.value})"
 
 
 class BaseCircuit(ABC):
@@ -153,7 +153,7 @@ class MerkleTreeCircuit(BaseCircuit):
     def _hash_pair(self, left: FieldElement, right: FieldElement) -> FieldElement:
         """Hash two field elements (simplified for demo)"""
         # In production, would use Poseidon hash
-        data = f"{left.value}:{right.value}".encode()
+        data = "{left.value}:{right.value}".encode()
         hash_val = int(hashlib.sha256(data).hexdigest(), 16)
         return FieldElement(hash_val)
 
@@ -311,7 +311,7 @@ class AggregatorCircuit(BaseCircuit):
     def _commit(self, value: FieldElement, randomness: FieldElement) -> FieldElement:
         """Create Pedersen commitment (simplified)"""
         # In production, use proper Pedersen commitment
-        data = f"{value.value}:{randomness.value}".encode()
+        data = "{value.value}:{randomness.value}".encode()
         hash_val = int(hashlib.sha256(data).hexdigest(), 16)
         return FieldElement(hash_val)
 
@@ -319,7 +319,7 @@ class AggregatorCircuit(BaseCircuit):
 # Helper functions for circuit construction
 def create_wire_assignment(num_wires: int) -> Dict[str, int]:
     """Create wire assignment mapping"""
-    return {f"w_{i}": i for i in range(num_wires)}
+    return {"w_{i}": i for i in range(num_wires)}
 
 
 def evaluate_constraint(constraint: Dict, wire_values: Dict[int, FieldElement]) -> FieldElement:

@@ -14,7 +14,7 @@ try:
 
     print("✓ genomevault package exists")
 except Exception as e:
-    print(f"✗ genomevault package error: {e}")
+    print("✗ genomevault package error: {e}")
 
 # Test 2: Core config
 print("\n2. Testing core.config...")
@@ -23,7 +23,7 @@ try:
 
     print("✓ core.config imports work")
 except Exception as e:
-    print(f"✗ core.config error: {e}")
+    print("✗ core.config error: {e}")
 
 # Test 3: Utils
 print("\n3. Testing utils...")
@@ -32,14 +32,14 @@ try:
 
     print("✓ utils.logging works")
 except Exception as e:
-    print(f"✗ utils.logging error: {e}")
+    print("✗ utils.logging error: {e}")
 
 try:
     from utils.encryption import AESGCMCipher
 
     print("✓ utils.encryption works")
 except Exception as e:
-    print(f"✗ utils.encryption error: {e}")
+    print("✗ utils.encryption error: {e}")
 
 # Test 4: Hypervector - step by step
 print("\n4. Testing hypervector_transform step by step...")
@@ -50,7 +50,7 @@ try:
 
     print("✓ hypervector_transform package imports")
 except Exception as e:
-    print(f"✗ hypervector_transform package error: {e}")
+    print("✗ hypervector_transform package error: {e}")
     traceback.print_exc()
 
 # 4b: Can we import from binding directly?
@@ -59,7 +59,7 @@ try:
 
     print("✓ circular_bind imports from binding.py")
 except Exception as e:
-    print(f"✗ binding.py error: {e}")
+    print("✗ binding.py error: {e}")
 
 # 4c: What about the __init__.py imports?
 try:
@@ -67,7 +67,7 @@ try:
 
     print("✓ circular_bind imports from __init__.py")
 except Exception as e:
-    print(f"✗ __init__.py re-export error: {e}")
+    print("✗ __init__.py re-export error: {e}")
 
 # 4d: Check encoding
 try:
@@ -75,7 +75,7 @@ try:
 
     print("✓ HypervectorEncoder imports correctly")
 except Exception as e:
-    print(f"✗ encoding.py error: {e}")
+    print("✗ encoding.py error: {e}")
     traceback.print_exc()
 
 # Test 5: The specific import that was failing
@@ -85,7 +85,7 @@ try:
 
     print("✓ HypervectorEncoder imports from package")
 except Exception as e:
-    print(f"✗ Package-level import error: {e}")
+    print("✗ Package-level import error: {e}")
 
 print("\n" + "=" * 50)
 print("Diagnostic complete!")

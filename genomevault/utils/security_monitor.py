@@ -104,7 +104,7 @@ class SecurityMonitor:
             security_logger.log_intrusion_attempt(
                 source_ip="internal",
                 attack_type="data_exfiltration_attempt",
-                target=f"{data_type}:{operation}",
+                target="{data_type}:{operation}",
                 blocked=False,
             )
 
@@ -131,7 +131,7 @@ class SecurityMonitor:
 
         if severity >= 0.8:
             # Immediate response for critical violations
-            await self._block_user(user_id, f"Critical privacy violation: {violation_type}")
+            await self._block_user(user_id, "Critical privacy violation: {violation_type}")
 
         await self._trigger_alert(
             "privacy_violation",
@@ -154,7 +154,7 @@ class SecurityMonitor:
             security_logger.log_intrusion_attempt(
                 source_ip="internal",
                 attack_type="deprecated_crypto_usage",
-                target=f"{operation}:{algorithm}",
+                target="{operation}:{algorithm}",
                 blocked=False,
             )
 

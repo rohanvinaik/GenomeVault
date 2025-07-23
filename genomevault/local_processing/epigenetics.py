@@ -235,7 +235,7 @@ class MethylationProcessor:
         Returns:
             EpigeneticProfile with methylation data
         """
-        logger.info(f"Processing methylation data for {sample_id}")
+        logger.info("Processing methylation data for {sample_id}")
 
         try:
             # Load methylation data based on format
@@ -244,7 +244,7 @@ class MethylationProcessor:
             elif data_format == "bedgraph":
                 methylation_data = self._load_bedgraph(input_path)
             else:
-                raise ValidationError(f"Unsupported format: {data_format}")
+                raise ValidationError("Unsupported format: {data_format}")
 
             # Filter by context and coverage
             filtered_data = self._filter_methylation_data(methylation_data, context)
@@ -273,16 +273,16 @@ class MethylationProcessor:
                 },
             )
 
-            logger.info(f"Successfully processed {len(normalized_sites)} methylation sites")
+            logger.info("Successfully processed {len(normalized_sites)} methylation sites")
             return profile
 
         except Exception as e:
-            logger.error(f"Error processing methylation data: {str(e)}")
-            raise ProcessingError(f"Failed to process methylation data: {str(e)}")
+            logger.error("Error processing methylation data: {str(e)}")
+            raise ProcessingError("Failed to process methylation data: {str(e)}")
 
     def _load_bismark_output(self, file_path: Path) -> pd.DataFrame:
         """Load Bismark methylation extractor output"""
-        logger.info(f"Loading Bismark output from {file_path}")
+        logger.info("Loading Bismark output from {file_path}")
 
         # Mock data for demonstration
         # In production, would parse actual Bismark output
@@ -308,7 +308,7 @@ class MethylationProcessor:
 
     def _load_bedgraph(self, file_path: Path) -> pd.DataFrame:
         """Load BedGraph format methylation data"""
-        logger.info(f"Loading BedGraph from {file_path}")
+        logger.info("Loading BedGraph from {file_path}")
 
         # In production, would parse actual BedGraph file
         # For now, generate mock data
@@ -323,7 +323,7 @@ class MethylationProcessor:
         if context != MethylationContext.ALL:
             filtered = filtered[filtered["context"] == context.value]
 
-        logger.info(f"Filtered to {len(filtered)} sites with coverage >= {self.min_coverage}")
+        logger.info("Filtered to {len(filtered)} sites with coverage >= {self.min_coverage}")
         return filtered
 
     def _annotate_methylation_sites(self, data: pd.DataFrame) -> List[MethylationSite]:
@@ -544,7 +544,7 @@ class MethylationProcessor:
         # Sort by p-value
         results_df.sort_values("p_value", inplace=True)
 
-        logger.info(f"Found {results_df['significant'].sum()} differentially methylated sites")
+        logger.info("Found {results_df['significant'].sum()} differentially methylated sites")
 
         return results_df
 
@@ -600,7 +600,7 @@ class ChromatinAccessibilityProcessor:
         Returns:
             EpigeneticProfile with chromatin accessibility data
         """
-        logger.info(f"Processing ATAC-seq data for {sample_id}")
+        logger.info("Processing ATAC-seq data for {sample_id}")
 
         try:
             # Detect input type
@@ -636,16 +636,16 @@ class ChromatinAccessibilityProcessor:
                 },
             )
 
-            logger.info(f"Successfully processed {len(annotated_peaks)} chromatin peaks")
+            logger.info("Successfully processed {len(annotated_peaks)} chromatin peaks")
             return profile
 
         except Exception as e:
-            logger.error(f"Error processing ATAC-seq data: {str(e)}")
-            raise ProcessingError(f"Failed to process ATAC-seq data: {str(e)}")
+            logger.error("Error processing ATAC-seq data: {str(e)}")
+            raise ProcessingError("Failed to process ATAC-seq data: {str(e)}")
 
     def _load_peak_file(self, file_path: Path, format: str) -> pd.DataFrame:
         """Load peak file"""
-        logger.info(f"Loading peaks from {file_path}")
+        logger.info("Loading peaks from {file_path}")
 
         if format == "narrowPeak":
             # Standard ENCODE narrowPeak format
@@ -887,7 +887,7 @@ class ChromatinAccessibilityProcessor:
         # Sort by p-value
         results_df.sort_values("p_value", inplace=True)
 
-        logger.info(f"Found {results_df['significant'].sum()} differential peaks")
+        logger.info("Found {results_df['significant'].sum()} differential peaks")
 
         return results_df
 
@@ -910,4 +910,4 @@ def create_epigenetic_processor(
     elif data_type == EpigeneticDataType.CHROMATIN_ACCESSIBILITY:
         return ChromatinAccessibilityProcessor(**kwargs)
     else:
-        raise ValidationError(f"Unsupported epigenetic data type: {data_type}")
+        raise ValidationError("Unsupported epigenetic data type: {data_type}")

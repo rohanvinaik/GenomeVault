@@ -78,7 +78,7 @@ class TestHypervectorEngine:
         # Should preserve similarity within tolerance
         assert (
             abs(orig_sim - hyper_sim) < 0.1
-        ), f"Similarity not preserved: {orig_sim:.3f} vs {hyper_sim:.3f}"
+        ), "Similarity not preserved: {orig_sim:.3f} vs {hyper_sim:.3f}"
 
     def test_binding_operations(self, encoder_10k, sample_genomic_features):
         """Test hypervector binding operations"""
@@ -123,7 +123,7 @@ class TestHypervectorEngine:
         for modality, original in modalities.items():
             recovered = holographic.recover_modality(holo_vec, modality)
             similarity = np.corrcoef(original, recovered)[0, 1]
-            assert similarity > 0.7, f"Failed to recover {modality}"
+            assert similarity > 0.7, "Failed to recover {modality}"
 
     def test_privacy_preservation(self, encoder_10k):
         """Test computational infeasibility of reconstruction"""
@@ -207,4 +207,4 @@ class TestHypervectorEngine:
         elapsed = time.time() - start
 
         avg_time_ms = (elapsed / 100) * 1000
-        assert avg_time_ms < 50, f"Encoding too slow: {avg_time_ms:.1f}ms (target <50ms)"
+        assert avg_time_ms < 50, "Encoding too slow: {avg_time_ms:.1f}ms (target <50ms)"

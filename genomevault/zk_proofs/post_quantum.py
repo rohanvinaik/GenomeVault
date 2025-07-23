@@ -107,7 +107,7 @@ class STARKProver(PostQuantumProver):
         # Serialize proof
         proof_bytes = self._serialize_proof(proof_data)
 
-        logger.info(f"STARK proof generated, size: {len(proof_bytes)} bytes")
+        logger.info("STARK proof generated, size: {len(proof_bytes)} bytes")
 
         return proof_bytes
 
@@ -146,7 +146,7 @@ class STARKProver(PostQuantumProver):
             return True
 
         except Exception as e:
-            logger.error(f"STARK verification failed: {e}")
+            logger.error("STARK verification failed: {e}")
             return False
 
     def get_security_level(self) -> int:
@@ -201,7 +201,7 @@ class STARKProver(PostQuantumProver):
     def _generate_challenges(self, commitment: str, statement: Dict[str, Any]) -> List[int]:
         """Generate verification challenges via Fiat-Shamir."""
         # Hash commitment and statement to get challenges
-        challenge_seed = hashlib.blake2b(f"{commitment}:{statement}".encode()).digest()
+        challenge_seed = hashlib.blake2b("{commitment}:{statement}".encode()).digest()
 
         # Generate deterministic challenges
         rng = np.random.RandomState(int.from_bytes(challenge_seed[:4], "big"))
@@ -254,7 +254,7 @@ class STARKProver(PostQuantumProver):
         # Simplified - return dummy path
         path = []
         for i in range(10):  # Tree depth
-            sibling = hashlib.blake2b(f"sibling_{index}_{i}".encode()).hexdigest()
+            sibling = hashlib.blake2b("sibling_{index}_{i}".encode()).hexdigest()
             path.append(sibling)
         return path
 
@@ -354,7 +354,7 @@ class LatticeProver(PostQuantumProver):
             )
 
         except Exception as e:
-            logger.error(f"Lattice verification failed: {e}")
+            logger.error("Lattice verification failed: {e}")
             return False
 
     def get_security_level(self) -> int:
@@ -371,7 +371,7 @@ class LatticeProver(PostQuantumProver):
 
     def _hash_to_challenge(self, commitment: Dict, statement: Dict[str, Any]) -> np.ndarray:
         """Hash commitment and statement to challenge."""
-        data = f"{commitment}:{statement}".encode()
+        data = "{commitment}:{statement}".encode()
         hash_bytes = hashlib.sha3_256(data).digest()
 
         # Convert to polynomial coefficients
@@ -392,7 +392,7 @@ class LatticeProver(PostQuantumProver):
         # Simplified response computation
         # In production, would compute z = r + c*s for Ring-LWE
 
-        response_value = hashlib.sha3_256(f"{witness}:{challenge.tobytes()}".encode()).hexdigest()
+        response_value = hashlib.sha3_256("{witness}:{challenge.tobytes()}".encode()).hexdigest()
 
         return {"value": response_value, "norm_bound": 1000}  # Rejection sampling bound
 
@@ -468,7 +468,7 @@ class PostQuantumTransition:
             proofs["stark"] = self.stark_prover.generate_proof(statement, witness)
             proofs["lattice"] = self.lattice_prover.generate_proof(statement, witness)
 
-        logger.info(f"Generated hybrid proofs for {circuit_name}")
+        logger.info("Generated hybrid proofs for {circuit_name}")
 
         return proofs
 
@@ -518,9 +518,9 @@ class PostQuantumTransition:
         valid_algorithms = ["STARK", "Lattice", "Both"]
 
         if algorithm not in valid_algorithms:
-            raise ValueError(f"Algorithm must be one of {valid_algorithms}")
+            raise ValueError("Algorithm must be one of {valid_algorithms}")
 
-        logger.info(f"Set post-quantum algorithm preference: {algorithm}")
+        logger.info("Set post-quantum algorithm preference: {algorithm}")
 
 
 # Utility functions for post-quantum proofs
@@ -550,7 +550,7 @@ def estimate_pq_proof_size(algorithm: str, constraint_count: int) -> int:
         return int(base_size + per_constraint)
 
     else:
-        raise ValueError(f"Unknown algorithm: {algorithm}")
+        raise ValueError("Unknown algorithm: {algorithm}")
 
 
 def benchmark_pq_performance(num_constraints: int = 10000) -> Dict[str, Any]:

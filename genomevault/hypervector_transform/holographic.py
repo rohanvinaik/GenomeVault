@@ -49,7 +49,7 @@ class HolographicEncoder:
         self.binder = HypervectorBinder(dimension)
         self._role_vectors = {}
 
-        logger.info(f"Initialized HolographicEncoder with {dimension}D vectors")
+        logger.info("Initialized HolographicEncoder with {dimension}D vectors")
 
     def encode_structure(
         self, structure: Dict[str, Any], recursive: bool = True
@@ -76,7 +76,7 @@ class HolographicEncoder:
                 # Recursively encode nested structure
                 nested = self.encode_structure(filler, recursive=True)
                 filler_vector = nested.root
-                components[f"{role}_nested"] = nested
+                components["{role}_nested"] = nested
             elif isinstance(filler, (list, tuple)):
                 # Encode sequence
                 filler_vector = self._encode_sequence(filler)
@@ -141,7 +141,7 @@ class HolographicEncoder:
         Returns:
             Holographic representation of variant
         """
-        structure = {"chr": chromosome, "pos": position, "ref": ref, "alt": alt}
+        structure = {"chr": chromosome, "pos": position, "re": ref, "alt": alt}
 
         if annotations:
             structure["annotations"] = annotations

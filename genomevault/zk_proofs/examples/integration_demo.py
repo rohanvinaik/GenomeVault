@@ -30,10 +30,10 @@ def demonstrate_variant_presence():
     verifier = Verifier()
 
     # Define the variant we want to prove exists
-    variant = {"chr": "chr7", "pos": 117559590, "ref": "A", "alt": "G"}
+    variant = {"chr": "chr7", "pos": 117559590, "re": "A", "alt": "G"}
 
     # Create variant hash (public)
-    variant_str = f"{variant['chr']}:{variant['pos']}:{variant['ref']}:{variant['alt']}"
+    variant_str = "{variant['chr']}:{variant['pos']}:{variant['re']}:{variant['alt']}"
     variant_hash = hashlib.sha256(variant_str.encode()).hexdigest()
 
     # Generate proof
@@ -47,21 +47,21 @@ def demonstrate_variant_presence():
         private_inputs={
             "variant_data": variant,
             "merkle_proof": {
-                "path": [hashlib.sha256(f"node_{i}".encode()).hexdigest() for i in range(20)],
+                "path": [hashlib.sha256("node_{i}".encode()).hexdigest() for i in range(20)],
                 "indices": [i % 2 for i in range(20)],
             },
             "witness_randomness": np.random.bytes(32).hex(),
         },
     )
 
-    print(f"Proof generated: {proof.proof_id}")
-    print(f"Proof size: {len(proof.proof_data)} bytes")
+    print("Proof generated: {proof.proof_id}")
+    print("Proof size: {len(proof.proof_data)} bytes")
 
     # Verify proof
     result = verifier.verify_proof(proof)
 
-    print(f"Verification result: {'VALID' if result.is_valid else 'INVALID'}")
-    print(f"Verification time: {result.verification_time*1000:.1f}ms")
+    print("Verification result: {'VALID' if result.is_valid else 'INVALID'}")
+    print("Verification time: {result.verification_time*1000:.1f}ms")
 
     return proof, result
 
@@ -82,12 +82,12 @@ def demonstrate_diabetes_risk_assessment():
     actual_glucose = 145  # Above threshold
     actual_risk_score = 0.83  # Above threshold
 
-    print(f"Clinical thresholds (public):")
-    print(f"  - Glucose: >{glucose_threshold} mg/dL")
-    print(f"  - Genetic risk: >{risk_threshold}")
-    print(f"\nPatient values (private - not revealed):")
-    print(f"  - Actual glucose: {actual_glucose} mg/dL")
-    print(f"  - Actual risk score: {actual_risk_score}")
+    print("Clinical thresholds (public):")
+    print("  - Glucose: >{glucose_threshold} mg/dL")
+    print("  - Genetic risk: >{risk_threshold}")
+    print("\nPatient values (private - not revealed):")
+    print("  - Actual glucose: {actual_glucose} mg/dL")
+    print("  - Actual risk score: {actual_risk_score}")
 
     # Generate proof that BOTH conditions are met
     proof = prover.generate_proof(
@@ -104,14 +104,14 @@ def demonstrate_diabetes_risk_assessment():
         },
     )
 
-    print(f"\nProof generated: {proof.proof_id}")
-    print(f"Proof size: {len(proof.proof_data)} bytes")
+    print("\nProof generated: {proof.proof_id}")
+    print("Proof size: {len(proof.proof_data)} bytes")
 
     # Verify proof
     result = verifier.verify_proof(proof)
 
-    print(f"Verification result: {'VALID' if result.is_valid else 'INVALID'}")
-    print(f"Verification time: {result.verification_time*1000:.1f}ms")
+    print("Verification result: {'VALID' if result.is_valid else 'INVALID'}")
+    print("Verification time: {result.verification_time*1000:.1f}ms")
 
     if result.is_valid:
         print("\n✓ Alert triggered: Patient meets both glucose AND genetic risk criteria")
@@ -138,18 +138,18 @@ def demonstrate_polygenic_risk_score():
     # Calculate actual score
     actual_score = sum(v * w for v, w in zip(variants, weights))
 
-    print(f"PRS Model:")
-    print(f"  - Variants: {num_variants}")
-    print(f"  - Score range: [-1.0, 1.0]")
-    print(f"  - Actual score (private): {actual_score:.3f}")
+    print("PRS Model:")
+    print("  - Variants: {num_variants}")
+    print("  - Score range: [-1.0, 1.0]")
+    print("  - Actual score (private): {actual_score:.3f}")
 
     # Generate proof
     proof = prover.generate_proof(
         circuit_name="polygenic_risk_score",
         public_inputs={
-            "prs_model": hashlib.sha256(f"T2D_PRS_v2.0_{num_variants}".encode()).hexdigest(),
+            "prs_model": hashlib.sha256("T2D_PRS_v2.0_{num_variants}".encode()).hexdigest(),
             "score_range": {"min": -1.0, "max": 1.0},
-            "result_commitment": hashlib.sha256(f"score:{actual_score}".encode()).hexdigest(),
+            "result_commitment": hashlib.sha256("score:{actual_score}".encode()).hexdigest(),
             "genome_commitment": hashlib.sha256(b"user_genome").hexdigest(),
         },
         private_inputs={
@@ -160,14 +160,14 @@ def demonstrate_polygenic_risk_score():
         },
     )
 
-    print(f"\nProof generated: {proof.proof_id}")
-    print(f"Proof size: {len(proof.proof_data)} bytes")
+    print("\nProof generated: {proof.proof_id}")
+    print("Proof size: {len(proof.proof_data)} bytes")
 
     # Verify proof
     result = verifier.verify_proof(proof)
 
-    print(f"Verification result: {'VALID' if result.is_valid else 'INVALID'}")
-    print(f"Verification time: {result.verification_time*1000:.1f}ms")
+    print("Verification result: {'VALID' if result.is_valid else 'INVALID'}")
+    print("Verification time: {result.verification_time*1000:.1f}ms")
 
     return proof, result
 
@@ -196,9 +196,9 @@ def demonstrate_pharmacogenomics():
     # Predicted response category
     response_category = 0  # Poor metabolizer
 
-    print(f"Medication: {medication} (ID: {medication_id})")
-    print(f"Response prediction (public): Poor metabolizer")
-    print(f"Star alleles (private - not revealed)")
+    print("Medication: {medication} (ID: {medication_id})")
+    print("Response prediction (public): Poor metabolizer")
+    print("Star alleles (private - not revealed)")
 
     # Generate proof
     proof = prover.generate_proof(
@@ -219,14 +219,14 @@ def demonstrate_pharmacogenomics():
         },
     )
 
-    print(f"\nProof generated: {proof.proof_id}")
-    print(f"Proof size: {len(proof.proof_data)} bytes")
+    print("\nProof generated: {proof.proof_id}")
+    print("Proof size: {len(proof.proof_data)} bytes")
 
     # Verify proof
     result = verifier.verify_proof(proof)
 
-    print(f"Verification result: {'VALID' if result.is_valid else 'INVALID'}")
-    print(f"Verification time: {result.verification_time*1000:.1f}ms")
+    print("Verification result: {'VALID' if result.is_valid else 'INVALID'}")
+    print("Verification time: {result.verification_time*1000:.1f}ms")
 
     if result.is_valid:
         print("\n✓ Pharmacogenomic prediction verified")
@@ -244,7 +244,7 @@ def demonstrate_circuit_optimization():
 
     # List available circuits
     circuits = manager.list_circuits()
-    print(f"Available circuits: {len(circuits)}")
+    print("Available circuits: {len(circuits)}")
 
     # Select optimal circuit for different scenarios
     scenarios = [
@@ -255,15 +255,15 @@ def demonstrate_circuit_optimization():
 
     for scenario in scenarios:
         optimal = manager.select_optimal_circuit(scenario["analysis_type"], scenario["data"])
-        print(f"\nScenario: {scenario['analysis_type']}")
-        print(f"  Data: {scenario['data']}")
-        print(f"  Selected circuit: {optimal}")
+        print("\nScenario: {scenario['analysis_type']}")
+        print("  Data: {scenario['data']}")
+        print("  Selected circuit: {optimal}")
 
         # Get metadata
         metadata = manager.get_circuit_metadata(optimal)
-        print(f"  Constraints: {metadata.constraint_count}")
-        print(f"  Proof size: {metadata.proof_size_bytes} bytes")
-        print(f"  Verification time: {metadata.verification_time_ms}ms")
+        print("  Constraints: {metadata.constraint_count}")
+        print("  Proof size: {metadata.proof_size_bytes} bytes")
+        print("  Verification time: {metadata.verification_time_ms}ms")
 
 
 def demonstrate_post_quantum_transition():
@@ -275,11 +275,11 @@ def demonstrate_post_quantum_transition():
 
     # Get transition status
     status = pq_transition.get_transition_status()
-    print(f"Transition status:")
-    print(f"  Classical active: {status['classical_active']}")
-    print(f"  Post-quantum active: {status['post_quantum_active']}")
-    print(f"  STARK ready: {status['stark_ready']}")
-    print(f"  Lattice ready: {status['lattice_ready']}")
+    print("Transition status:")
+    print("  Classical active: {status['classical_active']}")
+    print("  Post-quantum active: {status['post_quantum_active']}")
+    print("  STARK ready: {status['stark_ready']}")
+    print("  Lattice ready: {status['lattice_ready']}")
 
     # Generate hybrid proofs
     statement = {"public_value": 42, "constraint_count": 5000}
@@ -295,26 +295,26 @@ def demonstrate_post_quantum_transition():
 
     generation_time = time.time() - start
 
-    print(f"Generation time: {generation_time:.2f}s")
-    print(f"Proof types generated: {list(proofs.keys())}")
+    print("Generation time: {generation_time:.2f}s")
+    print("Proof types generated: {list(proofs.keys())}")
 
     # Verify proofs
     print("\nVerifying proofs...")
     results = pq_transition.verify_hybrid_proof(proofs, statement)
 
     for proof_type, is_valid in results.items():
-        print(f"  {proof_type}: {'VALID' if is_valid else 'INVALID'}")
+        print("  {proof_type}: {'VALID' if is_valid else 'INVALID'}")
 
     # Benchmark post-quantum performance
     print("\nBenchmarking post-quantum algorithms...")
     benchmark_results = benchmark_pq_performance(num_constraints=10000)
 
     for algorithm, metrics in benchmark_results.items():
-        print(f"\n{algorithm}:")
-        print(f"  Generation time: {metrics['generation_time']:.3f}s")
-        print(f"  Verification time: {metrics['verification_time']:.3f}s")
-        print(f"  Proof size: {metrics['proof_size']} bytes")
-        print(f"  Valid: {metrics['valid']}")
+        print("\n{algorithm}:")
+        print("  Generation time: {metrics['generation_time']:.3f}s")
+        print("  Verification time: {metrics['verification_time']:.3f}s")
+        print("  Proof size: {metrics['proof_size']} bytes")
+        print("  Valid: {metrics['valid']}")
 
 
 def demonstrate_batch_operations():
@@ -330,9 +330,9 @@ def demonstrate_batch_operations():
 
     # Add variant proofs
     for i in range(3):
-        variant = {"chr": f"chr{i+1}", "pos": 1000000 + i * 1000, "ref": "A", "alt": "G"}
+        variant = {"chr": "chr{i+1}", "pos": 1000000 + i * 1000, "re": "A", "alt": "G"}
 
-        variant_str = f"{variant['chr']}:{variant['pos']}:{variant['ref']}:{variant['alt']}"
+        variant_str = "{variant['chr']}:{variant['pos']}:{variant['re']}:{variant['alt']}"
 
         batch_requests.append(
             {
@@ -346,7 +346,7 @@ def demonstrate_batch_operations():
                     "variant_data": variant,
                     "merkle_proof": {
                         "path": [
-                            hashlib.sha256(f"batch_{i}_{j}".encode()).hexdigest() for j in range(20)
+                            hashlib.sha256("batch_{i}_{j}".encode()).hexdigest() for j in range(20)
                         ],
                         "indices": [j % 2 for j in range(20)],
                     },
@@ -356,14 +356,14 @@ def demonstrate_batch_operations():
         )
 
     # Generate batch proofs
-    print(f"Generating {len(batch_requests)} proofs in batch...")
+    print("Generating {len(batch_requests)} proofs in batch...")
     start = time.time()
 
     proofs = prover.batch_prove(batch_requests)
 
     batch_time = time.time() - start
-    print(f"Batch generation time: {batch_time:.2f}s")
-    print(f"Average per proof: {batch_time/len(proofs):.3f}s")
+    print("Batch generation time: {batch_time:.2f}s")
+    print("Average per proof: {batch_time/len(proofs):.3f}s")
 
     # Verify batch
     print("\nVerifying batch...")
@@ -372,11 +372,11 @@ def demonstrate_batch_operations():
     results = verifier.batch_verify(proofs)
 
     verify_time = time.time() - start
-    print(f"Batch verification time: {verify_time:.2f}s")
+    print("Batch verification time: {verify_time:.2f}s")
 
     # Summary
     valid_count = sum(1 for r in results if r.is_valid)
-    print(f"\nBatch results: {valid_count}/{len(results)} valid")
+    print("\nBatch results: {valid_count}/{len(results)} valid")
 
 
 def main():
@@ -403,7 +403,7 @@ def main():
         print("All demonstrations completed successfully!")
 
     except Exception as e:
-        logger.error(f"Demonstration failed: {e}")
+        logger.error("Demonstration failed: {e}")
         raise
 
 

@@ -124,7 +124,7 @@ class OptimizedPIRDatabase:
         # Thread pool for I/O operations
         self.io_pool = ThreadPoolExecutor(max_workers=4)
 
-        logger.info(f"Initialized PIR database at {base_path}")
+        logger.info("Initialized PIR database at {base_path}")
 
     async def load_shard_index(self, shard: ShardMetadata) -> Dict[str, int]:
         """
@@ -155,8 +155,8 @@ class OptimizedPIRDatabase:
             position = struct.unpack(">I", index_data[offset + 1 : offset + 5])[0]
             data_offset = struct.unpack(">I", index_data[offset + 5 : offset + 9])[0]
 
-            chr_name = f"chr{chr_byte}" if chr_byte < 23 else ("chrX" if chr_byte == 23 else "chrY")
-            key = f"{chr_name}:{position}"
+            chr_name = "chr{chr_byte}" if chr_byte < 23 else ("chrX" if chr_byte == 23 else "chrY")
+            key = "{chr_name}:{position}"
             index[key] = data_offset
 
             offset += 9
@@ -183,7 +183,7 @@ class OptimizedPIRDatabase:
             Item data or None if not found
         """
         # Check cache first
-        cache_key = f"{shard.shard_id}:{position_key}"
+        cache_key = "{shard.shard_id}:{position_key}"
         if cache_key in self.cache:
             self.cache_stats["hits"] += 1
             return self.cache[cache_key]
@@ -299,7 +299,7 @@ class EnhancedPIRServer:
         self.rate_limiter = self._init_rate_limiter()
 
         logger.info(
-            f"Enhanced PIR server {server_id} initialized",
+            "Enhanced PIR server {server_id} initialized",
             extra={
                 "server_type": "TS" if is_trusted_signatory else "LN",
                 "shards": len(self.shards),
@@ -337,7 +337,7 @@ class EnhancedPIRServer:
             if self._verify_shard_integrity(shard):
                 shards[shard.shard_id] = shard
             else:
-                logger.error(f"Shard {shard.shard_id} integrity check failed")
+                logger.error("Shard {shard.shard_id} integrity check failed")
 
         return shards
 
@@ -346,12 +346,12 @@ class EnhancedPIRServer:
         shards = {}
 
         # Create one shard per chromosome for better locality
-        chromosomes = [f"chr{i}" for i in range(1, 23)] + ["chrX", "chrY"]
+        chromosomes = ["chr{i}" for i in range(1, 23)] + ["chrX", "chrY"]
 
         for chr_name in chromosomes:
-            shard_id = f"genomic_{chr_name}"
-            data_file = f"{shard_id}.dat"
-            index_file = f"{shard_id}.idx"
+            shard_id = "genomic_{chr_name}"
+            data_file = "{shard_id}.dat"
+            index_file = "{shard_id}.idx"
 
             # Create empty files if they don't exist
             data_path = self.data_directory / data_file
@@ -437,12 +437,12 @@ class EnhancedPIRServer:
                 raise ValidationError("Query size exceeds maximum")
 
         except (KeyError, ValueError) as e:
-            logger.error(f"Invalid query format: {e}")
+            logger.error("Invalid query format: {e}")
             return {"error": "Invalid query format", "query_id": query_data.get("query_id")}
 
         # Log query (privacy-safe)
         logger.info(
-            f"Processing PIR query {query_id}",
+            "Processing PIR query {query_id}",
             extra={
                 "query_type": query_type,
                 "vector_count": len(query_vectors),
@@ -459,7 +459,7 @@ class EnhancedPIRServer:
             elif query_type == "graph":
                 results = await self._process_graph_query(query_vectors, parameters)
             else:
-                raise ValidationError(f"Unknown query type: {query_type}")
+                raise ValidationError("Unknown query type: {query_type}")
 
             # Calculate metrics
             processing_time_ms = (time.time() - start_time) * 1000
@@ -478,7 +478,7 @@ class EnhancedPIRServer:
             return response
 
         except Exception as e:
-            logger.error(f"Error processing query {query_id}: {e}")
+            logger.error("Error processing query {query_id}: {e}")
             return {"error": str(e), "query_id": query_id, "server_id": self.server_id}
 
     async def _process_genomic_query(
@@ -638,7 +638,7 @@ class EnhancedPIRServer:
             return result
 
         except Exception as e:
-            logger.error(f"Error processing shard {shard.shard_id}: {e}")
+            logger.error("Error processing shard {shard.shard_id}: {e}")
             return None
 
     def _update_metrics(self, processing_time_ms: float, result_count: int):
@@ -696,7 +696,7 @@ class EnhancedPIRServer:
 
     async def shutdown(self):
         """Graceful shutdown."""
-        logger.info(f"Shutting down PIR server {self.server_id}")
+        logger.info("Shutting down PIR server {self.server_id}")
 
         # Close database
         self.database.close()
@@ -706,11 +706,11 @@ class EnhancedPIRServer:
         self.thread_pool.shutdown(wait=True)
 
         # Save metrics
-        metrics_path = self.data_directory / f"server_{self.server_id}_metrics.json"
+        metrics_path = self.data_directory / "server_{self.server_id}_metrics.json"
         with open(metrics_path, "w") as f:
             json.dump(self.metrics, f, indent=2)
 
-        logger.info(f"PIR server {self.server_id} shutdown complete")
+        logger.info("PIR server {self.server_id} shutdown complete")
 
 
 # Example usage and testing
@@ -741,11 +741,11 @@ async def main():
 
     # Process query
     response = await server.process_query(query)
-    print(f"Query processed in {response.get('processing_time_ms', 0):.2f}ms")
+    print("Query processed in {response.get('processing_time_ms', 0):.2f}ms")
 
     # Get server status
     status = await server.get_server_status()
-    print(f"Server status: {json.dumps(status, indent=2)}")
+    print("Server status: {json.dumps(status, indent=2)}")
 
     # Shutdown
     await server.shutdown()

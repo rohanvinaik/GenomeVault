@@ -16,13 +16,13 @@ project_root = os.path.dirname(os.path.abspath(__file__))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-print(f"\nProject root: {project_root}")
-print(f"Python path includes project: {project_root in sys.path}")
+print("\nProject root: {project_root}")
+print("Python path includes project: {project_root in sys.path}")
 
 # Check the file that was fixed
 variant_file = os.path.join(project_root, "zk_proofs", "circuits", "biological", "variant.py")
-print(f"\nChecking fixed file: {variant_file}")
-print(f"File exists: {os.path.exists(variant_file)}")
+print("\nChecking fixed file: {variant_file}")
+print("File exists: {os.path.exists(variant_file)}")
 
 # Read the file and check the import
 if os.path.exists(variant_file):
@@ -43,9 +43,9 @@ if os.path.exists(variant_file):
 
 # Check the base_circuits.py file exists
 base_circuits_file = os.path.join(project_root, "zk_proofs", "circuits", "base_circuits.py")
-print(f"\nChecking base_circuits.py location:")
-print(f"Expected at: {base_circuits_file}")
-print(f"File exists: {os.path.exists(base_circuits_file)}")
+print("\nChecking base_circuits.py location:")
+print("Expected at: {base_circuits_file}")
+print("File exists: {os.path.exists(base_circuits_file)}")
 
 # Show the directory structure
 print("\nDirectory structure:")
@@ -54,14 +54,14 @@ if os.path.exists(circuits_dir):
     for item in sorted(os.listdir(circuits_dir)):
         item_path = os.path.join(circuits_dir, item)
         if os.path.isdir(item_path):
-            print(f"  📁 {item}/")
+            print("  📁 {item}/")
             # Show contents of biological directory
             if item == "biological":
                 for subitem in sorted(os.listdir(item_path)):
                     if not subitem.startswith("__pycache__"):
-                        print(f"     - {subitem}")
+                        print("     - {subitem}")
         elif not item.startswith("__pycache__"):
-            print(f"  📄 {item}")
+            print("  📄 {item}")
 
 print("\n" + "=" * 70)
 print("SUMMARY")

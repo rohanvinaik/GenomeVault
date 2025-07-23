@@ -46,7 +46,7 @@ class HypervectorBinder:
         self.dimension = dimension
         self._permutation_cache = {}
 
-        logger.info(f"Initialized HypervectorBinder for {dimension}D vectors")
+        logger.info("Initialized HypervectorBinder for {dimension}D vectors")
 
     def bind(
         self,
@@ -72,7 +72,7 @@ class HypervectorBinder:
         for i, v in enumerate(vectors):
             if v.shape[-1] != self.dimension:
                 raise BindingError(
-                    f"Vector {i} has dimension {v.shape[-1]}, expected {self.dimension}"
+                    "Vector {i} has dimension {v.shape[-1]}, expected {self.dimension}"
                 )
 
         # Apply weights if provided
@@ -93,9 +93,9 @@ class HypervectorBinder:
         elif binding_type == BindingType.FOURIER:
             result = self._fourier_bind(vectors)
         else:
-            raise BindingError(f"Unknown binding type: {binding_type}")
+            raise BindingError("Unknown binding type: {binding_type}")
 
-        logger.debug(f"Bound {len(vectors)} vectors using {binding_type.value}")
+        logger.debug("Bound {len(vectors)} vectors using {binding_type.value}")
         return result
 
     def unbind(
@@ -124,7 +124,7 @@ class HypervectorBinder:
         elif binding_type == BindingType.XOR:
             return self._xor_unbind(bound_vector, known_vectors)
         else:
-            raise BindingError(f"Unbinding not implemented for {binding_type}")
+            raise BindingError("Unbinding not implemented for {binding_type}")
 
     def _multiply_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
         """Element-wise multiplication binding"""
@@ -433,7 +433,7 @@ class CrossModalBinder(HypervectorBinder):
             signed_vectors[modality] = signed
 
             if preserve_individual:
-                results[f"{modality}_signed"] = signed
+                results["{modality}_signed"] = signed
 
         # Create combined representation
         combined = self.bundle(list(signed_vectors.values()))
@@ -444,7 +444,7 @@ class CrossModalBinder(HypervectorBinder):
         for i in range(len(modalities)):
             for j in range(i + 1, len(modalities)):
                 m1, m2 = modalities[i], modalities[j]
-                pair_name = f"{m1}_{m2}"
+                pair_name = "{m1}_{m2}"
                 results[pair_name] = self.bind(
                     [signed_vectors[m1], signed_vectors[m2]], BindingType.CIRCULAR
                 )

@@ -116,7 +116,7 @@ class PIRNetworkCoordinator:
         self.health_monitor_task = asyncio.create_task(self.monitor_health())
         self.topology_update_task = asyncio.create_task(self.update_topology())
 
-        logger.info(f"Network coordinator started with {len(self.topology.servers)} servers")
+        logger.info("Network coordinator started with {len(self.topology.servers)} servers")
 
     async def stop(self):
         """Stop network coordinator services."""
@@ -201,7 +201,7 @@ class PIRNetworkCoordinator:
                 error_count=0,
             )
 
-        logger.info(f"Discovered {len(self.topology.servers)} servers")
+        logger.info("Discovered {len(self.topology.servers)} servers")
 
     async def monitor_health(self):
         """Monitor server health in background."""
@@ -219,7 +219,7 @@ class PIRNetworkCoordinator:
                 # Log summary
                 healthy_count = sum(1 for h in self.topology.server_health.values() if h.is_healthy)
                 logger.info(
-                    f"Health check complete: {healthy_count}/{len(self.topology.servers)} healthy"
+                    "Health check complete: {healthy_count}/{len(self.topology.servers)} healthy"
                 )
 
                 # Wait before next check
@@ -228,7 +228,7 @@ class PIRNetworkCoordinator:
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error(f"Error in health monitor: {e}")
+                logger.error("Error in health monitor: {e}")
                 await asyncio.sleep(10)  # Wait before retry
 
     async def check_server_health(self, server: PIRServer) -> bool:
@@ -246,7 +246,7 @@ class PIRNetworkCoordinator:
 
             # Send health check request
             async with self.session.get(
-                f"{server.endpoint}/health",
+                "{server.endpoint}/health",
                 timeout=aiohttp.ClientTimeout(total=self.health_check_timeout),
             ) as response:
                 if response.status == 200:
@@ -269,7 +269,7 @@ class PIRNetworkCoordinator:
                     health.last_check = time.time()
                     health.error_count += 1
 
-                    logger.warning(f"Server {server.server_id} returned status {response.status}")
+                    logger.warning("Server {server.server_id} returned status {response.status}")
                     return False
 
         except Exception as e:
@@ -279,7 +279,7 @@ class PIRNetworkCoordinator:
             health.last_check = time.time()
             health.error_count += 1
 
-            logger.error(f"Health check failed for {server.server_id}: {e}")
+            logger.error("Health check failed for {server.server_id}: {e}")
             return False
 
     async def update_topology(self):
@@ -301,8 +301,8 @@ class PIRNetworkCoordinator:
                 # In production, would re-discover servers
                 # For now, just log status
                 logger.debug(
-                    f"Topology: {len(self.topology.servers)} servers, "
-                    f"{len(self.routing_cache)} cached routes"
+                    "Topology: {len(self.topology.servers)} servers, "
+                    "{len(self.routing_cache)} cached routes"
                 )
 
                 # Wait before next update
@@ -311,7 +311,7 @@ class PIRNetworkCoordinator:
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error(f"Error updating topology: {e}")
+                logger.error("Error updating topology: {e}")
                 await asyncio.sleep(10)
 
     def select_optimal_servers(
@@ -347,7 +347,7 @@ class PIRNetworkCoordinator:
 
         # Check if we have enough TS servers
         if len(ts_servers) < require_ts:
-            logger.warning(f"Insufficient TS servers: {len(ts_servers)} < {require_ts}")
+            logger.warning("Insufficient TS servers: {len(ts_servers)} < {require_ts}")
             return []
 
         # Sort servers by reliability score
@@ -494,7 +494,7 @@ class PIRNetworkCoordinator:
                 (c for c in config_info["configurations"] if c["name"] == config_name), None
             )
             if not config:
-                raise ValueError(f"Configuration '{config_name}' not found")
+                raise ValueError("Configuration '{config_name}' not found")
         else:
             # Use optimal configuration
             config = config_info["optimal"]
@@ -507,7 +507,7 @@ class PIRNetworkCoordinator:
         # Create client
         client = PIRClient(servers, database_size)
 
-        logger.info(f"Created PIR client with configuration '{config['name']}'")
+        logger.info("Created PIR client with configuration '{config['name']}'")
 
         return client
 
@@ -590,7 +590,7 @@ class PIRNetworkCoordinator:
         Args:
             server_id: Failed server ID
         """
-        logger.warning(f"Handling failure of server {server_id}")
+        logger.warning("Handling failure of server {server_id}")
 
         # Mark as unhealthy
         if server_id in self.topology.server_health:
@@ -607,7 +607,7 @@ class PIRNetworkCoordinator:
             del self.cache_timestamps[key]
 
         # Log impact
-        logger.info(f"Removed {len(keys_to_remove)} cached routes involving {server_id}")
+        logger.info("Removed {len(keys_to_remove)} cached routes involving {server_id}")
 
 
 # Example usage
@@ -632,7 +632,7 @@ if __name__ == "__main__":
 
         # Create PIR client
         client = await coordinator.create_pir_client(database_size=1000000)
-        print(f"\nCreated client with {len(client.servers)} servers")
+        print("\nCreated client with {len(client.servers)} servers")
 
         # Cleanup
         await coordinator.stop()

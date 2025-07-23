@@ -60,7 +60,7 @@ class MultiOmicsPipeline:
                 )
                 tasks.append((omics_type, task))
             else:
-                logger.warning(f"No processor for omics type: {omics_type}")
+                logger.warning("No processor for omics type: {omics_type}")
 
         # Wait for all processing to complete
         for omics_type, task in tasks:
@@ -68,7 +68,7 @@ class MultiOmicsPipeline:
                 result = await task
                 results[omics_type.value] = result
             except Exception as e:
-                logger.error(f"Failed to process {omics_type}: {str(e)}")
+                logger.error("Failed to process {omics_type}: {str(e)}")
                 results[omics_type.value] = {"status": "failed", "error": str(e)}
 
         # Generate combined metadata
@@ -86,7 +86,7 @@ class MultiOmicsPipeline:
         self, omics_type: OmicsType, input_path: Path, output_dir: Path
     ) -> Dict[str, Any]:
         """Process a single omics data type"""
-        logger.info(f"Processing {omics_type.value} data from {input_path}")
+        logger.info("Processing {omics_type.value} data from {input_path}")
 
         # Create output subdirectory
         omics_output_dir = output_dir / omics_type.value
@@ -100,7 +100,7 @@ class MultiOmicsPipeline:
         compressed_data = self.compressor.compress(processed_data, omics_type)
 
         # Save compressed data
-        compressed_path = omics_output_dir / f"{omics_type.value}_compressed.hv"
+        compressed_path = omics_output_dir / "{omics_type.value}_compressed.hv"
         compressed_data.save(compressed_path)
 
         return {

@@ -68,7 +68,7 @@ async def setup_pir_network(data_dir: Path) -> Dict:
         ref_manager.add_variant_annotation(annotation)
 
     ref_manager.save_reference_data()
-    print(f"Created reference data with {len(ref_manager.nodes)} nodes")
+    print("Created reference data with {len(ref_manager.nodes)} nodes")
 
     # 2. Create shards from reference data
     print("\n=== Creating Database Shards ===")
@@ -84,7 +84,7 @@ async def setup_pir_network(data_dir: Path) -> Dict:
 
     # Create shards
     shard_ids = shard_manager.create_shards_from_data(temp_data_file, data_type="genomic")
-    print(f"Created {len(shard_ids)} shards")
+    print("Created {len(shard_ids)} shards")
 
     # 3. Set up PIR servers
     print("\n=== Starting PIR Servers ===")
@@ -93,8 +93,8 @@ async def setup_pir_network(data_dir: Path) -> Dict:
 
     # Create light node servers
     for i in range(3):
-        server_id = f"ln{i+1}"
-        server_dir = data_dir / f"server_{server_id}"
+        server_id = "ln{i+1}"
+        server_dir = data_dir / "server_{server_id}"
         server_dir.mkdir(exist_ok=True)
 
         # Copy shard data
@@ -110,7 +110,7 @@ async def setup_pir_network(data_dir: Path) -> Dict:
         servers.append(
             PIRServer(
                 server_id=server_id,
-                endpoint=f"http://localhost:800{i}",
+                endpoint="http://localhost:800{i}",
                 region="us-east" if i == 0 else ("eu-west" if i == 1 else "asia-pac"),
                 is_trusted_signatory=False,
                 honesty_probability=0.95,
@@ -120,8 +120,8 @@ async def setup_pir_network(data_dir: Path) -> Dict:
 
     # Create trusted signatory servers
     for i in range(2):
-        server_id = f"ts{i+1}"
-        server_dir = data_dir / f"server_{server_id}"
+        server_id = "ts{i+1}"
+        server_dir = data_dir / "server_{server_id}"
         server_dir.mkdir(exist_ok=True)
 
         # Copy shard data
@@ -142,7 +142,7 @@ async def setup_pir_network(data_dir: Path) -> Dict:
         servers.append(
             PIRServer(
                 server_id=server_id,
-                endpoint=f"http://localhost:801{i}",
+                endpoint="http://localhost:801{i}",
                 region="us-west" if i == 0 else "us-central",
                 is_trusted_signatory=True,
                 honesty_probability=0.98,
@@ -154,7 +154,7 @@ async def setup_pir_network(data_dir: Path) -> Dict:
     server_list = [s.server_id for s in servers]
     distribution = shard_manager.distribute_shards(server_list)
 
-    print(f"Started {len(servers)} PIR servers (3 LN + 2 TS)")
+    print("Started {len(servers)} PIR servers (3 LN + 2 TS)")
 
     # 4. Create index mapping
     index_mapping = create_index_mapping(ref_manager)
@@ -185,7 +185,7 @@ def create_index_mapping(ref_manager: ReferenceDataManager) -> Dict:
     for key, annotation in ref_manager.variant_annotations.items():
         index_mapping["variants"][key] = idx
 
-        pos_key = f"{annotation.chromosome}:{annotation.position}"
+        pos_key = "{annotation.chromosome}:{annotation.position}"
         if pos_key not in index_mapping["positions"]:
             index_mapping["positions"][pos_key] = []
         index_mapping["positions"][pos_key].append(idx)
@@ -204,9 +204,9 @@ async def demonstrate_pir_queries(network_info: Dict):
 
     # Show optimal configuration
     optimal_config = pir_client.get_optimal_server_configuration()
-    print(f"Optimal configuration: {optimal_config['optimal']['name']}")
-    print(f"Privacy failure probability: {optimal_config['optimal']['failure_probability']:.2e}")
-    print(f"Expected latency: {optimal_config['optimal']['latency_ms']:.0f}ms")
+    print("Optimal configuration: {optimal_config['optimal']['name']}")
+    print("Privacy failure probability: {optimal_config['optimal']['failure_probability']:.2e}")
+    print("Expected latency: {optimal_config['optimal']['latency_ms']:.0f}ms")
 
     # 2. Create query builder
     builder = PIRQueryBuilder(pir_client, network_info["index_mapping"])
@@ -218,21 +218,21 @@ async def demonstrate_pir_queries(network_info: Dict):
     )
 
     # Simulate query execution (in real system would actually query servers)
-    print(f"Looking up variant: chr1:1000500:A>G")
+    print("Looking up variant: chr1:1000500:A>G")
     print("Query preserves privacy - servers don't know which variant is being accessed")
 
     # 4. Execute region scan
     print("\n=== Region Scan Query ===")
     region_query = builder.build_region_query(chromosome="chr1", start=1000000, end=1005000)
 
-    print(f"Scanning region: chr1:1000000-1005000")
+    print("Scanning region: chr1:1000000-1005000")
     print("Multiple PIR queries executed in parallel")
 
     # 5. Execute gene query
     print("\n=== Gene Annotation Query ===")
     gene_query = builder.build_gene_query("GENE1")
 
-    print(f"Querying gene: GENE1")
+    print("Querying gene: GENE1")
     print("Retrieves all variants in gene region with privacy")
 
     # 6. Population frequency query
@@ -245,12 +245,12 @@ async def demonstrate_pir_queries(network_info: Dict):
 
     pop_query = builder.build_population_frequency_query(variants, "EUR")
 
-    print(f"Querying frequencies for {len(variants)} variants in EUR population")
+    print("Querying frequencies for {len(variants)} variants in EUR population")
     print("Each variant queried privately")
 
     # Show statistics
     stats = builder.get_query_statistics()
-    print(f"\nQuery Statistics: {json.dumps(stats, indent=2)}")
+    print("\nQuery Statistics: {json.dumps(stats, indent=2)}")
 
     # Cleanup
     await pir_client.close()
@@ -267,29 +267,29 @@ async def demonstrate_network_coordination():
 
     # Get network statistics
     net_stats = coordinator.get_network_statistics()
-    print(f"Network Statistics:")
-    print(f"  Total servers: {net_stats['total_servers']}")
-    print(f"  Healthy servers: {net_stats['healthy_servers']}")
+    print("Network Statistics:")
+    print("  Total servers: {net_stats['total_servers']}")
+    print("  Healthy servers: {net_stats['healthy_servers']}")
     print(
-        f"  TS servers: {net_stats['ts_servers']['total']} (healthy: {net_stats['ts_servers']['healthy']})"
+        "  TS servers: {net_stats['ts_servers']['total']} (healthy: {net_stats['ts_servers']['healthy']})"
     )
     print(
-        f"  LN servers: {net_stats['ln_servers']['total']} (healthy: {net_stats['ln_servers']['healthy']})"
+        "  LN servers: {net_stats['ln_servers']['total']} (healthy: {net_stats['ln_servers']['healthy']})"
     )
 
     # Get optimal configuration
     config = coordinator.get_server_configuration(target_failure_prob=1e-4, max_latency_ms=300)
 
-    print(f"\nAvailable Configurations:")
+    print("\nAvailable Configurations:")
     for conf in config["configurations"]:
         print(
-            f"  {conf['name']}: {conf['total_servers']} servers, "
-            f"P_fail={conf['failure_probability']:.2e}, "
-            f"latency={conf['latency_ms']:.0f}ms"
+            "  {conf['name']}: {conf['total_servers']} servers, "
+            "P_fail={conf['failure_probability']:.2e}, "
+            "latency={conf['latency_ms']:.0f}ms"
         )
 
     if config["optimal"]:
-        print(f"\nOptimal: {config['optimal']['name']}")
+        print("\nOptimal: {config['optimal']['name']}")
 
     await coordinator.stop()
 
@@ -324,7 +324,7 @@ def demonstrate_privacy_calculations():
 
     for k, q, desc in configs:
         p_fail = client.calculate_privacy_failure_probability(k, q)
-        print(f"  {desc}: P_fail = {p_fail:.2e}")
+        print("  {desc}: P_fail = {p_fail:.2e}")
 
     # Minimum servers needed
     print("\nMinimum servers for target privacy:")
@@ -333,9 +333,9 @@ def demonstrate_privacy_calculations():
     for target in targets:
         min_ts = client.calculate_min_servers_needed(target, 0.98)
         min_generic = client.calculate_min_servers_needed(target, 0.95)
-        print(f"  Target P_fail ≤ {target:.0e}:")
-        print(f"    HIPAA TS (q=0.98): {min_ts} servers")
-        print(f"    Generic (q=0.95): {min_generic} servers")
+        print("  Target P_fail ≤ {target:.0e}:")
+        print("    HIPAA TS (q=0.98): {min_ts} servers")
+        print("    Generic (q=0.95): {min_generic} servers")
 
 
 async def main():
@@ -367,9 +367,9 @@ async def main():
         for server_id, server in network_info["server_instances"].items():
             stats = server.get_server_statistics()
             print(
-                f"{server_id}: {stats['server_type']}, "
-                f"{stats['shards']} shards, "
-                f"{stats['total_queries']} queries"
+                "{server_id}: {stats['server_type']}, "
+                "{stats['shards']} shards, "
+                "{stats['total_queries']} queries"
             )
 
         # Cleanup

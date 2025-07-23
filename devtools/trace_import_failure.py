@@ -18,7 +18,7 @@ try:
 
     print("✅ zk_proofs/__init__.py imported")
 except Exception as e:
-    print(f"❌ zk_proofs/__init__.py failed: {e}")
+    print("❌ zk_proofs/__init__.py failed: {e}")
     traceback.print_exc()
     print("\nThis is likely where cryptography is first imported")
 
@@ -33,7 +33,7 @@ try:
             print("✅ No direct 'cryptography' import in zk_proofs/__init__.py")
             print("   Import chain must be indirect...")
 except Exception as e:
-    print(f"Could not read file: {e}")
+    print("Could not read file: {e}")
 
 # Let's check the utils module since that's likely imported
 print("\n3. Testing utils imports...")
@@ -42,7 +42,7 @@ try:
 
     print("✅ utils/__init__.py imported")
 except Exception as e:
-    print(f"❌ utils/__init__.py failed: {e}")
+    print("❌ utils/__init__.py failed: {e}")
 
 # Check core module
 print("\n4. Testing core imports...")
@@ -51,7 +51,7 @@ try:
 
     print("✅ core/__init__.py imported")
 except Exception as e:
-    print(f"❌ core/__init__.py failed: {e}")
+    print("❌ core/__init__.py failed: {e}")
 
 print("\n5. Looking for the cryptography import...")
 import os
@@ -72,14 +72,14 @@ def find_cryptography_imports(directory):
                         content = f.read()
                         if "from cryptography" in content or "import cryptography" in content:
                             files_with_crypto.append(filepath)
-                except:
+                except Exception:
                     pass
     return files_with_crypto
 
 
 crypto_files = find_cryptography_imports(".")
-print(f"\nFiles importing cryptography:")
+print("\nFiles importing cryptography:")
 for f in crypto_files[:10]:  # Show first 10
-    print(f"  - {f}")
+    print("  - {f}")
 
 print("\n" + "=" * 70)

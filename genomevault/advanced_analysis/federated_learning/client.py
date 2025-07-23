@@ -63,7 +63,7 @@ class FederatedLearningClient:
         self.training_history = []
 
         logger.info(
-            f"FederatedLearningClient {client_id} initialized", extra={"privacy_safe": True}
+            "FederatedLearningClient {client_id} initialized", extra={"privacy_safe": True}
         )
 
     def load_local_data(self, privacy_filter: bool = True) -> LocalDataset:
@@ -98,7 +98,7 @@ class FederatedLearningClient:
         self.local_dataset = LocalDataset(features=features, labels=labels, metadata=metadata)
 
         logger.info(
-            f"Loaded {self.local_dataset.num_samples} samples", extra={"privacy_safe": True}
+            "Loaded {self.local_dataset.num_samples} samples", extra={"privacy_safe": True}
         )
 
         return self.local_dataset
@@ -156,7 +156,7 @@ class FederatedLearningClient:
             # Convert to feature dict
             feature_dict = {
                 "variants": [
-                    {"genotype": f"{int(g)}/0", "position": i}
+                    {"genotype": "{int(g)}/0", "position": i}
                     for i, g in enumerate(sample)
                     if g > 0
                 ]
@@ -281,7 +281,7 @@ class FederatedLearningClient:
         self.training_history.append(results)
 
         logger.info(
-            f"Local training complete: loss={losses[-1]:.4f}, accuracy={accuracies[-1]:.4f}",
+            "Local training complete: loss={losses[-1]:.4f}, accuracy={accuracies[-1]:.4f}",
             extra={"privacy_safe": True},
         )
 
@@ -318,7 +318,7 @@ class FederatedLearningClient:
         noise = np.random.normal(0, sigma, size=model_update.shape)
         private_update = model_update + noise
 
-        logger.info(f"Applied DP with ε={epsilon}, δ={delta}", extra={"privacy_safe": True})
+        logger.info("Applied DP with ε={epsilon}, δ={delta}", extra={"privacy_safe": True})
 
         return private_update
 
@@ -367,7 +367,7 @@ class FederatedLearningClient:
 
         try:
             auc = roc_auc_score(y_val, probs)
-        except:
+        except Exception:
             auc = 0.5
 
         # Loss
@@ -425,7 +425,7 @@ class FederatedLearningClient:
         with open(path, "wb") as f:
             pickle.dump(state, f)
 
-        logger.info(f"Saved client state to {path}", extra={"privacy_safe": True})
+        logger.info("Saved client state to {path}", extra={"privacy_safe": True})
 
     def load_state(self, path: Path):
         """Load client state."""
@@ -435,7 +435,7 @@ class FederatedLearningClient:
         self.current_model = state["current_model"]
         self.training_history = state["training_history"]
 
-        logger.info(f"Loaded client state from {path}", extra={"privacy_safe": True})
+        logger.info("Loaded client state from {path}", extra={"privacy_safe": True})
 
 
 # Specialized clients for different use cases
@@ -455,7 +455,7 @@ class HospitalFLClient(FederatedLearningClient):
             hospital_id: Hospital identifier
             ehr_integration: Whether to integrate with EHR
         """
-        super().__init__(client_id=f"hospital_{hospital_id}", use_hypervectors=True)
+        super().__init__(client_id="hospital_{hospital_id}", use_hypervectors=True)
 
         self.ehr_integration = ehr_integration
         self.compliance_checks = {"hipaa": True, "consent_required": True, "deidentification": True}
@@ -502,7 +502,7 @@ class ResearchFLClient(FederatedLearningClient):
             institution_id: Institution identifier
             compute_resources: Available compute ("cpu" or "gpu")
         """
-        super().__init__(client_id=f"research_{institution_id}", use_hypervectors=True)
+        super().__init__(client_id="research_{institution_id}", use_hypervectors=True)
 
         self.compute_resources = compute_resources
         self.advanced_features = {
@@ -539,20 +539,20 @@ if __name__ == "__main__":
 
     # Load data
     dataset = client.load_local_data()
-    print(f"Loaded {dataset.num_samples} samples")
+    print("Loaded {dataset.num_samples} samples")
 
     # Train on global model
     global_model = np.random.randn(10001) * 0.01  # Initial model
     results = client.train_local_model(global_model, num_epochs=3)
 
     print(
-        f"Training complete: loss={results['final_loss']:.4f}, accuracy={results['final_accuracy']:.4f}"
+        "Training complete: loss={results['final_loss']:.4f}, accuracy={results['final_accuracy']:.4f}"
     )
 
     # Apply differential privacy
     private_update = client.apply_differential_privacy(results["model_update"], epsilon=1.0)
     print(
-        f"Update norm: original={np.linalg.norm(results['model_update']):.4f}, private={np.linalg.norm(private_update):.4f}"
+        "Update norm: original={np.linalg.norm(results['model_update']):.4f}, private={np.linalg.norm(private_update):.4f}"
     )
 
     # Example 2: Hospital client
@@ -562,7 +562,7 @@ if __name__ == "__main__":
     if hospital_client.verify_compliance():
         print("✓ Compliance verified")
         dataset = hospital_client.load_local_data()
-        print(f"Hospital data: {dataset.num_samples} patients")
+        print("Hospital data: {dataset.num_samples} patients")
 
     # Example 3: Research client
     print("\n=== Research FL Client Example ===")
@@ -574,8 +574,8 @@ if __name__ == "__main__":
 
     # Run pathway analysis
     pathway_results = research_client.run_pathway_analysis(results["model_update"])
-    print(f"Pathway analysis: {pathway_results['enriched_pathways']}")
+    print("Pathway analysis: {pathway_results['enriched_pathways']}")
 
     # Get model explanation
     explanation = research_client.get_model_explanation(research_client.current_model, top_k=10)
-    print(f"Top feature importance: {explanation['top_features'][0]['importance']:.4f}")
+    print("Top feature importance: {explanation['top_features'][0]['importance']:.4f}")

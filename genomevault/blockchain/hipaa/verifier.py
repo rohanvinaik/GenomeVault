@@ -86,7 +86,7 @@ class CMSNPIRegistry(NPIRegistry):
             return record
 
         except Exception as e:
-            logger.error(f"Error looking up NPI {npi}: {e}")
+            logger.error("Error looking up NPI {npi}: {e}")
             return None
 
     async def validate_npi(self, npi: str) -> bool:
@@ -136,9 +136,9 @@ class CMSNPIRegistry(NPIRegistry):
             return NPIRecord(
                 npi=npi,
                 npi_type=NPIType.INDIVIDUAL,
-                name=f"Dr. Test Provider {npi[-4:]}",
+                name="Dr. Test Provider {npi[-4:]}",
                 first_name="Test",
-                last_name=f"Provider {npi[-4:]}",
+                last_name="Provider {npi[-4:]}",
                 credential="MD",
                 primary_taxonomy="207Q00000X",  # Family Medicine
                 is_active=True,
@@ -148,9 +148,9 @@ class CMSNPIRegistry(NPIRegistry):
             return NPIRecord(
                 npi=npi,
                 npi_type=NPIType.ORGANIZATION,
-                name=f"Test Medical Center {npi[-4:]}",
-                organization_name=f"Test Medical Center {npi[-4:]}",
-                ein=f"12-34567{npi[-2:]}",
+                name="Test Medical Center {npi[-4:]}",
+                organization_name="Test Medical Center {npi[-4:]}",
+                ein="12-34567{npi[-2:]}",
                 primary_taxonomy="282N00000X",  # General Acute Care Hospital
                 is_active=True,
             )
@@ -160,7 +160,7 @@ class CMSNPIRegistry(NPIRegistry):
                 return NPIRecord(
                     npi=npi,
                     npi_type=NPIType.INDIVIDUAL,
-                    name=f"Inactive Provider {npi[-4:]}",
+                    name="Inactive Provider {npi[-4:]}",
                     is_active=False,
                     deactivation_date=datetime.now() - timedelta(days=30),
                 )
@@ -210,7 +210,7 @@ class HIPAAVerifier:
         if credentials.npi in self.verification_records:
             record = self.verification_records[credentials.npi]
             if record.is_active():
-                raise VerificationError(f"NPI {credentials.npi} already verified")
+                raise VerificationError("NPI {credentials.npi} already verified")
 
         # Store pending verification
         self.pending_verifications[verification_id] = credentials
@@ -227,7 +227,7 @@ class HIPAAVerifier:
             },
         )
 
-        logger.info(f"HIPAA verification submitted: {verification_id}")
+        logger.info("HIPAA verification submitted: {verification_id}")
 
         return verification_id
 
@@ -242,7 +242,7 @@ class HIPAAVerifier:
             Verification record with results
         """
         if verification_id not in self.pending_verifications:
-            raise VerificationError(f"Verification {verification_id} not found")
+            raise VerificationError("Verification {verification_id} not found")
 
         credentials = self.pending_verifications[verification_id]
 
@@ -295,7 +295,7 @@ class HIPAAVerifier:
                 },
             )
 
-            logger.info(f"HIPAA verification successful for NPI {credentials.npi}")
+            logger.info("HIPAA verification successful for NPI {credentials.npi}")
 
             return record
 
@@ -318,7 +318,7 @@ class HIPAAVerifier:
                 metadata={"verification_id": verification_id, "error": str(e)},
             )
 
-            logger.warning(f"HIPAA verification failed for NPI {credentials.npi}: {e}")
+            logger.warning("HIPAA verification failed for NPI {credentials.npi}: {e}")
 
             # Clean up pending
             del self.pending_verifications[verification_id]
@@ -369,13 +369,13 @@ class HIPAAVerifier:
             metadata={"reason": reason},
         )
 
-        logger.info(f"HIPAA verification revoked for NPI {npi}: {reason}")
+        logger.info("HIPAA verification revoked for NPI {npi}: {reason}")
 
         return True
 
     def _generate_verification_id(self, credentials: HIPAACredentials) -> str:
         """Generate unique verification ID"""
-        data = f"{credentials.npi}:{credentials.baa_hash}:{datetime.now().isoformat()}"
+        data = "{credentials.npi}:{credentials.baa_hash}:{datetime.now().isoformat()}"
         return hashlib.sha256(data.encode()).hexdigest()[:16]
 
     def _validate_credentials(self, credentials: HIPAACredentials):
@@ -426,7 +426,7 @@ class HIPAAVerifier:
                 record.status = VerificationStatus.EXPIRED
                 expired_count += 1
 
-                logger.info(f"Expired HIPAA verification for NPI {npi}")
+                logger.info("Expired HIPAA verification for NPI {npi}")
 
         return expired_count
 
@@ -453,23 +453,23 @@ if __name__ == "__main__":
 
             print("Submitting HIPAA verification...")
             verification_id = await verifier.submit_verification(credentials)
-            print(f"Verification ID: {verification_id}")
+            print("Verification ID: {verification_id}")
 
             print("\nProcessing verification...")
             try:
                 record = await verifier.process_verification(verification_id)
-                print(f"Verification successful!")
-                print(f"  Status: {record.status.value}")
-                print(f"  Signatory weight: {record.signatory_weight}")
-                print(f"  Honesty probability: {record.honesty_probability}")
-                print(f"  Expires: {record.expires_at}")
+                print("Verification successful!")
+                print("  Status: {record.status.value}")
+                print("  Signatory weight: {record.signatory_weight}")
+                print("  Honesty probability: {record.honesty_probability}")
+                print("  Expires: {record.expires_at}")
 
                 # Check status
                 status = verifier.get_verification_status(credentials.npi)
-                print(f"\nVerification active: {status.is_active()}")
+                print("\nVerification active: {status.is_active()}")
 
             except VerificationError as e:
-                print(f"Verification failed: {e}")
+                print("Verification failed: {e}")
 
             # Test invalid NPI
             print("\n\nTesting invalid NPI...")
@@ -484,7 +484,7 @@ if __name__ == "__main__":
                 bad_id = await verifier.submit_verification(bad_credentials)
                 await verifier.process_verification(bad_id)
             except VerificationError as e:
-                print(f"Correctly rejected: {e}")
+                print("Correctly rejected: {e}")
 
     # Run test
     asyncio.run(test_hipaa_verification())

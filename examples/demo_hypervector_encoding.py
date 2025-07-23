@@ -50,13 +50,13 @@ def demonstrate_basic_encoding():
     hypervector = encoder.encode(genomic_features, OmicsType.GENOMIC)
 
     print(
-        f"Input features: {len(genomic_features['variants']['snps'])} SNPs, "
-        f"{len(genomic_features['variants']['indels'])} indels, "
-        f"{len(genomic_features['variants']['cnvs'])} CNVs"
+        "Input features: {len(genomic_features['variants']['snps'])} SNPs, "
+        "{len(genomic_features['variants']['indels'])} indels, "
+        "{len(genomic_features['variants']['cnvs'])} CNVs"
     )
-    print(f"Encoded hypervector dimension: {hypervector.shape[0]}")
-    print(f"Hypervector sparsity: {(hypervector == 0).float().mean():.2%}")
-    print(f"Compression ratio: {125 * 8 / (hypervector.shape[0] * 4):.2f}:1")
+    print("Encoded hypervector dimension: {hypervector.shape[0]}")
+    print("Hypervector sparsity: {(hypervector == 0).float().mean():.2%}")
+    print("Compression ratio: {125 * 8 / (hypervector.shape[0] * 4):.2f}:1")
 
     # Demonstrate similarity preservation
     # Create a similar genomic profile
@@ -75,8 +75,8 @@ def demonstrate_basic_encoding():
     sim_similar = encoder.similarity(hypervector, similar_hv)
     sim_different = encoder.similarity(hypervector, different_hv)
 
-    print(f"\nSimilarity with 95% overlap: {sim_similar:.3f}")
-    print(f"Similarity with 0% overlap: {sim_different:.3f}")
+    print("\nSimilarity with 95% overlap: {sim_similar:.3f}")
+    print("Similarity with 0% overlap: {sim_different:.3f}")
 
 
 def demonstrate_binding_operations():
@@ -102,9 +102,9 @@ def demonstrate_binding_operations():
     # Bind with experimental condition
     full_bound = binder.bind([gene_expr_bound, condition_hv], BindingType.CIRCULAR)
 
-    print(f"Original gene vector norm: {torch.norm(gene_hv):.3f}")
-    print(f"Gene+expression bound vector norm: {torch.norm(gene_expr_bound):.3f}")
-    print(f"Full bound vector norm: {torch.norm(full_bound):.3f}")
+    print("Original gene vector norm: {torch.norm(gene_hv):.3f}")
+    print("Gene+expression bound vector norm: {torch.norm(gene_expr_bound):.3f}")
+    print("Full bound vector norm: {torch.norm(full_bound):.3f}")
 
     # Demonstrate unbinding (recovery)
     recovered_gene = binder.unbind(gene_expr_bound, [expression_hv], BindingType.CIRCULAR)
@@ -112,19 +112,19 @@ def demonstrate_binding_operations():
         gene_hv.unsqueeze(0), recovered_gene.unsqueeze(0)
     ).item()
 
-    print(f"\nRecovery similarity after unbinding: {recovery_similarity:.3f}")
+    print("\nRecovery similarity after unbinding: {recovery_similarity:.3f}")
 
     # Demonstrate bundling (superposition)
     genes = [torch.randn(dimension) for _ in range(5)]
     gene_set = binder.bundle(genes, normalize=True)
 
-    print(f"\nBundled 5 genes into single vector")
-    print(f"Each gene's contribution to bundle:")
+    print("\nBundled 5 genes into single vector")
+    print("Each gene's contribution to bundle:")
     for i, gene in enumerate(genes):
         contrib = torch.nn.functional.cosine_similarity(
             gene_set.unsqueeze(0), gene.unsqueeze(0)
         ).item()
-        print(f"  Gene {i}: {contrib:.3f}")
+        print("  Gene {i}: {contrib:.3f}")
 
 
 def demonstrate_positional_encoding():
@@ -147,8 +147,8 @@ def demonstrate_positional_encoding():
     # Bind with positions
     sequence_bound = pos_binder.bind_sequence(features, start_position=1000)
 
-    print(f"Encoded sequence of {sequence_length} elements")
-    print(f"Sequence hypervector dimension: {sequence_bound.shape[0]}")
+    print("Encoded sequence of {sequence_length} elements")
+    print("Sequence hypervector dimension: {sequence_bound.shape[0]}")
 
     # Show that different positions create different bindings
     pos_100 = pos_binder.bind_with_position(features[0], 100)
@@ -158,7 +158,7 @@ def demonstrate_positional_encoding():
         pos_100.unsqueeze(0), pos_200.unsqueeze(0)
     ).item()
 
-    print(f"Same feature at different positions similarity: {position_similarity:.3f}")
+    print("Same feature at different positions similarity: {position_similarity:.3f}")
 
 
 def demonstrate_holographic_encoding():
@@ -214,21 +214,21 @@ def demonstrate_holographic_encoding():
         variant1.unsqueeze(0), variant4.unsqueeze(0)
     ).item()
 
-    print(f"Variant similarities:")
-    print(f"  Adjacent positions (same gene): {sim_adjacent:.3f}")
-    print(f"  Same gene, different position: {sim_same_gene:.3f}")
-    print(f"  Different gene: {sim_diff_gene:.3f}")
+    print("Variant similarities:")
+    print("  Adjacent positions (same gene): {sim_adjacent:.3f}")
+    print("  Same gene, different position: {sim_same_gene:.3f}")
+    print("  Different gene: {sim_diff_gene:.3f}")
 
     # Create memory trace of multiple variants
     variants = [
-        {"chr": "chr1", "pos": 1000, "ref": "A", "alt": "G"},
-        {"chr": "chr1", "pos": 2000, "ref": "C", "alt": "T"},
-        {"chr": "chr2", "pos": 3000, "ref": "G", "alt": "A"},
+        {"chr": "chr1", "pos": 1000, "re": "A", "alt": "G"},
+        {"chr": "chr1", "pos": 2000, "re": "C", "alt": "T"},
+        {"chr": "chr2", "pos": 3000, "re": "G", "alt": "A"},
     ]
 
     memory = holo_encoder.create_memory_trace(variants)
-    print(f"\nCreated memory trace of {len(variants)} variants")
-    print(f"Memory trace dimension: {memory.shape[0]}")
+    print("\nCreated memory trace of {len(variants)} variants")
+    print("Memory trace dimension: {memory.shape[0]}")
 
 
 def demonstrate_cross_modal_binding():
@@ -261,19 +261,19 @@ def demonstrate_cross_modal_binding():
 
     bound_modalities = cross_binder.bind_modalities(modality_data)
 
-    print(f"Created cross-modal bindings:")
+    print("Created cross-modal bindings:")
     for key in bound_modalities:
-        print(f"  {key}: dimension {bound_modalities[key].shape[0]}")
+        print("  {key}: dimension {bound_modalities[key].shape[0]}")
 
     # Show that combined representation preserves information from all modalities
     combined = bound_modalities["combined"]
 
-    print(f"\nContribution of each modality to combined representation:")
+    print("\nContribution of each modality to combined representation:")
     for modality, hv in modality_data.items():
         contrib = torch.nn.functional.cosine_similarity(
             combined.unsqueeze(0), hv.unsqueeze(0)
         ).item()
-        print(f"  {modality}: {contrib:.3f}")
+        print("  {modality}: {contrib:.3f}")
 
 
 def demonstrate_similarity_preservation():
@@ -297,8 +297,8 @@ def demonstrate_similarity_preservation():
     # Transform data
     transformed = mapper.fit_transform(data)
 
-    print(f"Original data: {data.shape}")
-    print(f"Transformed data: {transformed.shape}")
+    print("Original data: {data.shape}")
+    print("Transformed data: {transformed.shape}")
 
     # Check that clusters remain separated
     cluster1_transformed = transformed[: n_samples // 2]
@@ -312,9 +312,9 @@ def demonstrate_similarity_preservation():
         cluster1_transformed.mean(dim=0).unsqueeze(0), cluster2_transformed.mean(dim=0).unsqueeze(0)
     ).item()
 
-    print(f"\nWithin-cluster similarity: {within_cluster_sim:.3f}")
-    print(f"Between-cluster similarity: {between_cluster_sim:.3f}")
-    print(f"Separation maintained: {within_cluster_sim > between_cluster_sim}")
+    print("\nWithin-cluster similarity: {within_cluster_sim:.3f}")
+    print("Between-cluster similarity: {between_cluster_sim:.3f}")
+    print("Separation maintained: {within_cluster_sim > between_cluster_sim}")
 
 
 def demonstrate_privacy_guarantees():
@@ -336,17 +336,17 @@ def demonstrate_privacy_guarantees():
     # Encode to hypervector
     hypervector = encoder.encode(sensitive_data, OmicsType.GENOMIC)
 
-    print(f"Original data contains:")
-    print(f"  - {len(sensitive_data['variants']['snps'])} SNPs")
-    print(f"  - {len(sensitive_data['variants']['pathogenic'])} pathogenic variants")
-    print(f"\nEncoded to {dimension}D hypervector")
+    print("Original data contains:")
+    print("  - {len(sensitive_data['variants']['snps'])} SNPs")
+    print("  - {len(sensitive_data['variants']['pathogenic'])} pathogenic variants")
+    print("\nEncoded to {dimension}D hypervector")
 
     # Demonstrate irreversibility
     # Try to recover information from hypervector
     print("\nAttempting to recover original data...")
 
     # Random projection is not invertible when D >> d
-    print(f"Projection: {1000}D -> {dimension}D (not invertible)")
+    print("Projection: {1000}D -> {dimension}D (not invertible)")
 
     # Show that similar inputs create distinguishable outputs
     modified_data = sensitive_data.copy()
@@ -355,7 +355,7 @@ def demonstrate_privacy_guarantees():
     modified_hv = encoder.encode(modified_data, OmicsType.GENOMIC)
 
     similarity = encoder.similarity(hypervector, modified_hv)
-    print(f"\nSingle SNP difference creates {1-similarity:.4f} change in hypervector")
+    print("\nSingle SNP difference creates {1-similarity:.4f} change in hypervector")
     print("This demonstrates sensitivity while maintaining privacy")
 
 
@@ -376,10 +376,10 @@ def demonstrate_compression_tiers():
 
         compressed = compressor.compress({"hypervector": hypervector}, OmicsType.GENOMIC)
 
-        print(f"\n{tier.value} tier:")
-        print(f"  Original size: {hypervector.numel() * 4:,} bytes")
-        print(f"  Compressed size: {compressed.compressed_size:,} bytes")
-        print(f"  Compression ratio: {hypervector.numel() * 4 / compressed.compressed_size:.1f}:1")
+        print("\n{tier.value} tier:")
+        print("  Original size: {hypervector.numel() * 4:,} bytes")
+        print("  Compressed size: {compressed.compressed_size:,} bytes")
+        print("  Compression ratio: {hypervector.numel() * 4 / compressed.compressed_size:.1f}:1")
 
         # Test decompression
         decompressed = compressor.decompress(compressed)
@@ -389,7 +389,7 @@ def demonstrate_compression_tiers():
             hypervector.unsqueeze(0), decompressed.unsqueeze(0)
         ).item()
 
-        print(f"  Reconstruction similarity: {reconstruction_sim:.3f}")
+        print("  Reconstruction similarity: {reconstruction_sim:.3f}")
 
 
 def visualize_hypervector_properties():
@@ -413,18 +413,18 @@ def visualize_hypervector_properties():
     mean_sim = off_diag.mean().item()
     std_sim = off_diag.std().item()
 
-    print(f"\nRandom hypervector statistics ({dimension}D):")
-    print(f"  Self-similarity: {self_sim:.3f}")
-    print(f"  Mean pairwise similarity: {mean_sim:.3f} ± {std_sim:.3f}")
-    print(f"  Min similarity: {off_diag.min().item():.3f}")
-    print(f"  Max similarity: {off_diag.max().item():.3f}")
+    print("\nRandom hypervector statistics ({dimension}D):")
+    print("  Self-similarity: {self_sim:.3f}")
+    print("  Mean pairwise similarity: {mean_sim:.3f} ± {std_sim:.3f}")
+    print("  Min similarity: {off_diag.min().item():.3f}")
+    print("  Max similarity: {off_diag.max().item():.3f}")
 
     # Concentration of measure
-    print(f"\nConcentration of measure:")
+    print("\nConcentration of measure:")
     print(
-        f"  99% of similarities in range: [{mean_sim - 3*std_sim:.3f}, {mean_sim + 3*std_sim:.3f}]"
+        "  99% of similarities in range: [{mean_sim - 3*std_sim:.3f}, {mean_sim + 3*std_sim:.3f}]"
     )
-    print(f"  This demonstrates the 'blessing of dimensionality' for privacy")
+    print("  This demonstrates the 'blessing of dimensionality' for privacy")
 
 
 def main():

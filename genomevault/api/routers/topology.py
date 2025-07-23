@@ -123,7 +123,7 @@ async def get_network_topology(request: TopologyRequest):
         if len(selected_ts) < request.required_signatories:
             raise HTTPException(
                 status_code=503,
-                detail=f"Insufficient trusted signatories: {len(selected_ts)} < {request.required_signatories}",
+                detail="Insufficient trusted signatories: {len(selected_ts)} < {request.required_signatories}",
             )
 
         # Calculate network health
@@ -161,7 +161,7 @@ async def list_all_nodes():
 async def get_node_info(node_id: str):
     """Get information about a specific node"""
     if node_id not in NETWORK_NODES:
-        raise HTTPException(status_code=404, detail=f"Node {node_id} not found")
+        raise HTTPException(status_code=404, detail="Node {node_id} not found")
 
     return NETWORK_NODES[node_id]
 
@@ -170,7 +170,7 @@ async def get_node_info(node_id: str):
 async def ping_node(node_id: str):
     """Ping a node to check availability and latency"""
     if node_id not in NETWORK_NODES:
-        raise HTTPException(status_code=404, detail=f"Node {node_id} not found")
+        raise HTTPException(status_code=404, detail="Node {node_id} not found")
 
     # Simulate ping
     import random

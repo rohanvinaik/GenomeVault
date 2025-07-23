@@ -102,7 +102,7 @@ class PIRQueryBuilder:
         elif query.query_type == QueryType.POPULATION_FREQUENCY:
             result = await self._execute_population_frequency(query)
         else:
-            raise ValueError(f"Unsupported query type: {query.query_type}")
+            raise ValueError("Unsupported query type: {query.query_type}")
 
         # Cache result
         self._add_to_cache(cache_key, result)
@@ -122,9 +122,9 @@ class PIRQueryBuilder:
         alt_allele = query.parameters.get("alt_allele", "")
 
         # Build variant key
-        var_key = f"{chromosome}:{position}"
+        var_key = "{chromosome}:{position}"
         if ref_allele and alt_allele:
-            var_key += f":{ref_allele}:{alt_allele}"
+            var_key += ":{ref_allele}:{alt_allele}"
 
         # Get database index
         if var_key not in self.index_mapping["variants"]:
@@ -172,7 +172,7 @@ class PIRQueryBuilder:
         # Find all indices in region
         indices = []
         for pos in range(start_pos, end_pos + 1):
-            var_key = f"{chromosome}:{pos}"
+            var_key = "{chromosome}:{pos}"
             if var_key in self.index_mapping["positions"]:
                 indices.extend(self.index_mapping["positions"][var_key])
 
@@ -283,7 +283,7 @@ class PIRQueryBuilder:
 
             if result.data and "population_frequencies" in result.data:
                 pop_freq = result.data["population_frequencies"].get(population, 0.0)
-                var_key = f"{variant['chromosome']}:{variant['position']}"
+                var_key = "{variant['chromosome']}:{variant['position']}"
                 frequencies[var_key] = pop_freq
 
         computation_time = (time.time() - start_time) * 1000
@@ -451,17 +451,17 @@ if __name__ == "__main__":
         query_type=QueryType.VARIANT_LOOKUP,
         parameters={"chromosome": "chr1", "position": 100000, "ref_allele": "A", "alt_allele": "G"},
     )
-    print(f"Variant Query: {var_query.parameters}")
+    print("Variant Query: {var_query.parameters}")
 
     # Region scan
     region_query = GenomicQuery(
         query_type=QueryType.REGION_SCAN,
         parameters={"chromosome": "chr1", "start": 100000, "end": 100500},
     )
-    print(f"Region Query: {region_query.parameters}")
+    print("Region Query: {region_query.parameters}")
 
     # Gene annotation
     gene_query = GenomicQuery(
         query_type=QueryType.GENE_ANNOTATION, parameters={"gene_symbol": "BRCA1"}
     )
-    print(f"Gene Query: {gene_query.parameters}")
+    print("Gene Query: {gene_query.parameters}")

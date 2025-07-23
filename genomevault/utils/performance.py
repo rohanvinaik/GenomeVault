@@ -32,7 +32,7 @@ TORCH_AVAILABLE = torch.cuda.is_available()
 if CUDA_AVAILABLE:
     logger.info("CUDA acceleration available")
 if TORCH_AVAILABLE:
-    logger.info(f"PyTorch GPU available: {torch.cuda.get_device_name(0)}")
+    logger.info("PyTorch GPU available: {torch.cuda.get_device_name(0)}")
 
 
 class HypervectorAccelerator:
@@ -47,7 +47,7 @@ class HypervectorAccelerator:
                 self.backend = "torch"
             elif CUDA_AVAILABLE:
                 self.backend = "cupy"
-            logger.info(f"Using GPU acceleration with {self.backend}")
+            logger.info("Using GPU acceleration with {self.backend}")
         else:
             self.backend = "numpy"
             logger.info("Using CPU with SIMD optimizations")
@@ -264,7 +264,7 @@ class ParallelProcessor:
         pool = self.process_pool if use_processes else self.thread_pool
 
         with performance_logger.track_operation(
-            f"parallel_map_{func.__name__}", {"n_items": len(items), "n_workers": self.n_workers}
+            "parallel_map_{func.__name__}", {"n_items": len(items), "n_workers": self.n_workers}
         ):
             results = list(pool.map(func, items))
 

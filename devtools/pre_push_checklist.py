@@ -43,9 +43,9 @@ for desc, patterns in sensitive_patterns:
             break
 
     if found:
-        warnings.append(f"Potential {desc} found - review before pushing")
+        warnings.append("Potential {desc} found - review before pushing")
     else:
-        successes.append(f"No hardcoded {desc} found")
+        successes.append("No hardcoded {desc} found")
 
 # 2. Check for proper .gitignore
 print("\n2. CHECKING .gitignore...")
@@ -75,7 +75,7 @@ if gitignore_path.exists():
             missing.append(entry)
 
     if missing:
-        warnings.append(f".gitignore missing entries: {', '.join(missing[:3])}...")
+        warnings.append(".gitignore missing entries: {', '.join(missing[:3])}...")
     else:
         successes.append(".gitignore has all required entries")
 else:
@@ -94,9 +94,9 @@ required_docs = {
 
 for doc, desc in required_docs.items():
     if Path(doc).exists():
-        successes.append(f"{doc} exists ({desc})")
+        successes.append("{doc} exists ({desc})")
     else:
-        warnings.append(f"{doc} is missing ({desc})")
+        warnings.append("{doc} is missing ({desc})")
 
 # 4. Check for large files
 print("\n4. CHECKING FOR LARGE FILES...")
@@ -108,13 +108,13 @@ for path in Path(".").rglob("*"):
         try:
             size_mb = path.stat().st_size / (1024 * 1024)
             if size_mb > 10:  # Files larger than 10MB
-                large_files.append((str(path), f"{size_mb:.1f}MB"))
-        except:
+                large_files.append((str(path), "{size_mb:.1f}MB"))
+        except Exception:
             pass
 
 if large_files:
     warnings.append(
-        f"Large files found: {', '.join([f'{f[0]} ({f[1]})' for f in large_files[:3]])}"
+        "Large files found: {', '.join(['{f[0]} ({f[1]})' for f in large_files[:3]])}"
     )
 else:
     successes.append("No large files detected")
@@ -133,7 +133,7 @@ if debug_prints.stdout:
     # Count occurrences
     count = len(debug_prints.stdout.strip().split("\n"))
     if count > 50:  # Arbitrary threshold
-        warnings.append(f"Many print statements found ({count}) - consider using logging")
+        warnings.append("Many print statements found ({count}) - consider using logging")
     else:
         successes.append("Reasonable number of print statements")
 
@@ -148,7 +148,7 @@ todos = subprocess.run(
 )
 if todos.stdout:
     count = len(todos.stdout.strip().split("\n"))
-    warnings.append(f"Found {count} TODO/FIXME comments - consider addressing or documenting")
+    warnings.append("Found {count} TODO/FIXME comments - consider addressing or documenting")
 else:
     successes.append("No TODO/FIXME comments found")
 
@@ -174,7 +174,7 @@ test_dirs = list(Path(".").glob("test*"))
 test_files = list(Path(".").rglob("test_*.py"))
 
 if test_dirs or test_files:
-    successes.append(f"Found {len(test_dirs)} test directories and {len(test_files)} test files")
+    successes.append("Found {len(test_dirs)} test directories and {len(test_files)} test files")
 else:
     warnings.append("No test files found - consider adding tests")
 
@@ -183,19 +183,19 @@ print("\n" + "=" * 80)
 print("📊 PRE-PUSH SUMMARY")
 print("=" * 80)
 
-print(f"\n✅ GOOD ({len(successes)} items):")
+print("\n✅ GOOD ({len(successes)} items):")
 for item in successes:
-    print(f"   • {item}")
+    print("   • {item}")
 
 if warnings:
-    print(f"\n⚠️  WARNINGS ({len(warnings)} items):")
+    print("\n⚠️  WARNINGS ({len(warnings)} items):")
     for item in warnings:
-        print(f"   • {item}")
+        print("   • {item}")
 
 if issues:
-    print(f"\n❌ ISSUES ({len(issues)} items):")
+    print("\n❌ ISSUES ({len(issues)} items):")
     for item in issues:
-        print(f"   • {item}")
+        print("   • {item}")
 
 # 10. Recommendations
 print("\n📝 RECOMMENDATIONS BEFORE PUSHING:")

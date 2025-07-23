@@ -105,7 +105,7 @@ class CompressionEngine:
         }
 
         # Placeholder: Generate example variant IDs
-        databases["most_studied_snps"] = [f"rs{i}" for i in range(1, 5001)]
+        databases["most_studied_snps"] = ["rs{i}" for i in range(1, 5001)]
 
         return databases
 
@@ -124,7 +124,7 @@ class CompressionEngine:
             Compressed data package
         """
         profile = self.COMPRESSION_PROFILES[tier]
-        logger.info(f"Compressing data for {sample_id} using {tier.value} tier")
+        logger.info("Compressing data for {sample_id} using {tier.value} tier")
 
         # Select compression method based on tier
         if tier == CompressionTier.MINI:
@@ -154,7 +154,7 @@ class CompressionEngine:
             max_size = profile.max_size_kb * modalities_included
 
         if size_kb > max_size:
-            logger.warning(f"Compressed size {size_kb:.1f}KB exceeds target {max_size}KB")
+            logger.warning("Compressed size {size_kb:.1f}KB exceeds target {max_size}KB")
 
         # Create compressed data package
         compressed_data = CompressedData(
@@ -171,7 +171,7 @@ class CompressionEngine:
             omics_included=[o for o in OmicsType if o.value in data],
         )
 
-        logger.info(f"Compression complete: {size_kb:.1f}KB ({tier.value} tier)")
+        logger.info("Compression complete: {size_kb:.1f}KB ({tier.value} tier)")
         return compressed_data
 
     def _compress_mini_tier(self, data: Dict[str, Any]) -> Dict[str, Any]:
@@ -191,7 +191,7 @@ class CompressionEngine:
                         {
                             "id": variant["rsid"],
                             "gt": variant.get("genotype", "0/0"),  # Compact genotype
-                            "af": round(variant.get("allele_frequency", 0), 3),
+                            "a": round(variant.get("allele_frequency", 0), 3),
                         }
                     )
 
@@ -200,7 +200,7 @@ class CompressionEngine:
 
         # Add minimal metadata
         compressed["meta"] = {
-            "ref": "GRCh38",
+            "re": "GRCh38",
             "date": data.get("metadata", {}).get("date", ""),
             "n_vars": len(compressed["features"]),
         }
@@ -227,7 +227,7 @@ class CompressionEngine:
                         {
                             "chr": variant["chromosome"],
                             "pos": variant["position"],
-                            "ref": variant["reference"],
+                            "re": variant["reference"],
                             "alt": variant["alternate"],
                             "gt": variant.get("genotype", "0/0"),
                             "qual": round(variant.get("quality", 0), 1),
@@ -252,7 +252,7 @@ class CompressionEngine:
 
         # Metadata
         compressed["meta"] = {
-            "ref": "GRCh38",
+            "re": "GRCh38",
             "date": data.get("metadata", {}).get("date", ""),
             "n_vars": len(compressed["genomic"].get("variants", [])),
             "clinical_version": "ACMG-v3.0,PharmGKB-2024",
@@ -286,7 +286,7 @@ class CompressionEngine:
 
         # Metadata
         compressed["meta"] = {
-            "ref": "GRCh38",
+            "re": "GRCh38",
             "date": data.get("metadata", {}).get("date", ""),
             "modalities_included": list(compressed["modalities"].keys()),
             "hypervector_dim": 10000,
@@ -504,26 +504,26 @@ if __name__ == "__main__":
 
     # Example 1: Mini genomics only
     req1 = engine.calculate_storage_requirements([CompressionTier.MINI], [OmicsType.GENOMIC])
-    print(f"Mini genomics only: {req1['total_size_kb']} KB")
+    print("Mini genomics only: {req1['total_size_kb']} KB")
 
     # Example 2: Clinical pharmacogenomics
     req2 = engine.calculate_storage_requirements(
         [CompressionTier.CLINICAL], [OmicsType.GENOMIC, OmicsType.PHENOTYPIC]
     )
-    print(f"Clinical tier: {req2['total_size_kb']} KB")
+    print("Clinical tier: {req2['total_size_kb']} KB")
 
     # Example 3: Mini + Clinical (as specified in docs)
     req3 = engine.calculate_storage_requirements(
         [CompressionTier.MINI, CompressionTier.CLINICAL], [OmicsType.GENOMIC, OmicsType.PHENOTYPIC]
     )
-    print(f"Mini + Clinical: {req3['total_size_kb']} KB")
+    print("Mini + Clinical: {req3['total_size_kb']} KB")
 
     # Example 4: Full multi-omics
     req4 = engine.calculate_storage_requirements(
         [CompressionTier.FULL],
         [OmicsType.GENOMIC, OmicsType.TRANSCRIPTOMIC, OmicsType.EPIGENETIC, OmicsType.PROTEOMIC],
     )
-    print(f"Full multi-omics (4 modalities): {req4['total_size_kb']} KB")
+    print("Full multi-omics (4 modalities): {req4['total_size_kb']} KB")
 
     print("\nDetailed breakdown:")
     print(json.dumps(req4, indent=2))

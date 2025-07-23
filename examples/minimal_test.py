@@ -25,7 +25,7 @@ try:
 
     # Test creating instances
     config = get_config()
-    print(f"✅ Config created: node_type={config.node_type}")
+    print("✅ Config created: node_type={config.node_type}")
 
     logger = get_logger(__name__)
     print("✅ Logger created")
@@ -33,7 +33,7 @@ try:
     print("\n✅ All imports successful!")
 
 except Exception as e:
-    print(f"\n❌ Error: {e}")
+    print("\n❌ Error: {e}")
     import traceback
 
     traceback.print_exc()

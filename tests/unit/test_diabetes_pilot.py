@@ -74,7 +74,7 @@ class TestDiabetesPilot:
         # Generate ZKP alert
         with patch("clinical.diabetes_pilot.risk_calculator.generate_proof") as mock_proof:
             mock_proof.return_value = {
-                "proof": b"mock_proof_data",
+                "proo": b"mock_proof_data",
                 "size": 384,
                 "verification_time_ms": 23,
             }
@@ -126,7 +126,7 @@ class TestDiabetesPilot:
         """Verify proof size meets specification (<384 bytes)"""
         with patch("clinical.diabetes_pilot.risk_calculator.generate_proof") as mock_proof:
             mock_proof.return_value = {
-                "proof": b"a" * 384,  # Exactly 384 bytes
+                "proo": b"a" * 384,  # Exactly 384 bytes
                 "size": 384,
                 "verification_time_ms": 20,
             }
@@ -141,7 +141,7 @@ class TestDiabetesPilot:
         """Verify proof verification time meets specification (<25ms)"""
         with patch("clinical.diabetes_pilot.risk_calculator.generate_proof") as mock_proof:
             mock_proof.return_value = {
-                "proof": b"mock_proof",
+                "proo": b"mock_proof",
                 "size": 384,
                 "verification_time_ms": 24.5,
             }

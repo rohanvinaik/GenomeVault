@@ -77,7 +77,7 @@ class PIRServer:
         self.total_computation_time = 0
 
         logger.info(
-            f"PIR server {server_id} initialized",
+            "PIR server {server_id} initialized",
             extra={
                 "server_type": "TS" if is_trusted_signatory else "LN",
                 "shards": len(self.shards),
@@ -114,7 +114,7 @@ class PIRServer:
             if shard.verify_integrity():
                 shards[shard.shard_id] = shard
             else:
-                logger.error(f"Shard {shard.shard_id} integrity check failed")
+                logger.error("Shard {shard.shard_id} integrity check failed")
 
         return shards
 
@@ -159,7 +159,7 @@ class PIRServer:
 
         # Validate query
         if shard_id not in self.shards:
-            logger.error(f"Unknown shard: {shard_id}")
+            logger.error("Unknown shard: {shard_id}")
             return {"error": "Unknown shard", "query_id": query_id}
 
         # Audit log (privacy-safe)
@@ -196,14 +196,14 @@ class PIRServer:
             }
 
             logger.info(
-                f"PIR query {query_id} processed in {computation_time:.1f}ms",
+                "PIR query {query_id} processed in {computation_time:.1f}ms",
                 extra={"privacy_safe": True},
             )
 
             return response
 
         except Exception as e:
-            logger.error(f"Error processing PIR query: {e}")
+            logger.error("Error processing PIR query: {e}")
             return {"error": str(e), "query_id": query_id}
 
     async def _compute_dot_product(
@@ -341,7 +341,7 @@ class PIRServer:
             Success status
         """
         if shard_id not in self.shards:
-            logger.error(f"Unknown shard: {shard_id}")
+            logger.error("Unknown shard: {shard_id}")
             return False
 
         # Close existing memory map
@@ -355,10 +355,10 @@ class PIRServer:
 
         # Verify integrity
         if not self.shards[shard_id].verify_integrity():
-            logger.error(f"New shard data integrity check failed")
+            logger.error("New shard data integrity check failed")
             return False
 
-        logger.info(f"Shard {shard_id} updated successfully")
+        logger.info("Shard {shard_id} updated successfully")
         return True
 
     def shutdown(self):
@@ -370,7 +370,7 @@ class PIRServer:
         # Shutdown process pool
         self.process_pool.shutdown(wait=True)
 
-        logger.info(f"PIR server {self.server_id} shutdown complete")
+        logger.info("PIR server {self.server_id} shutdown complete")
 
 
 class TrustedSignatoryServer(PIRServer):
@@ -411,14 +411,14 @@ class TrustedSignatoryServer(PIRServer):
         self._setup_enhanced_audit()
 
         logger.info(
-            f"Trusted Signatory server {server_id} initialized",
+            "Trusted Signatory server {server_id} initialized",
             extra={"npi": npi, "hsm": hsm_serial},
         )
 
     def _initialize_hsm(self):
         """Initialize hardware security module."""
         # In production, would interface with actual HSM
-        logger.info(f"HSM {self.hsm_serial} initialized")
+        logger.info("HSM {self.hsm_serial} initialized")
 
     def _setup_enhanced_audit(self):
         """Setup enhanced HIPAA-compliant audit logging."""

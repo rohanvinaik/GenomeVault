@@ -129,7 +129,7 @@ class Verifier:
                     proof_id=proof.proof_id,
                     circuit_name=proof.circuit_name,
                     verification_time=time.time() - start_time,
-                    error_message=f"Unknown circuit: {proof.circuit_name}",
+                    error_message="Unknown circuit: {proof.circuit_name}",
                 )
 
             vk = self.verification_keys[proof.circuit_name]
@@ -156,17 +156,17 @@ class Verifier:
             audit_logger.log_event(
                 event_type="proof_verification",
                 actor="verifier",
-                action=f"verify_{proof.circuit_name}_proof",
+                action="verify_{proof.circuit_name}_proof",
                 resource=proof.proof_id,
                 metadata={"is_valid": is_valid, "verification_time": verification_time},
             )
 
-            logger.info(f"Proof verification completed: {is_valid}", extra={"privacy_safe": True})
+            logger.info("Proof verification completed: {is_valid}", extra={"privacy_safe": True})
 
             return result
 
         except Exception as e:
-            logger.error(f"Proof verification failed: {e}")
+            logger.error("Proof verification failed: {e}")
             return VerificationResult(
                 is_valid=False,
                 proof_id=proof.proof_id,
@@ -202,7 +202,7 @@ class Verifier:
 
             # Allow some tolerance
             if abs(actual_size - expected_size) > 50:
-                logger.warning(f"Unexpected proof size: {actual_size} vs {expected_size}")
+                logger.warning("Unexpected proof size: {actual_size} vs {expected_size}")
 
         return True
 
@@ -252,7 +252,7 @@ class Verifier:
             return True
 
         except Exception as e:
-            logger.error(f"Variant proof verification error: {e}")
+            logger.error("Variant proof verification error: {e}")
             return False
 
     def _verify_prs_proof(self, proof: Proof) -> bool:
@@ -287,7 +287,7 @@ class Verifier:
             return True
 
         except Exception as e:
-            logger.error(f"PRS proof verification error: {e}")
+            logger.error("PRS proof verification error: {e}")
             return False
 
     def _verify_diabetes_proof(self, proof: Proof) -> bool:
@@ -327,7 +327,7 @@ class Verifier:
             return True
 
         except Exception as e:
-            logger.error(f"Diabetes proof verification error: {e}")
+            logger.error("Diabetes proof verification error: {e}")
             return False
 
     def _verify_ancestry_proof(self, proof: Proof) -> bool:
@@ -343,7 +343,7 @@ class Verifier:
             return True
 
         except Exception as e:
-            logger.error(f"Ancestry proof verification error: {e}")
+            logger.error("Ancestry proof verification error: {e}")
             return False
 
     def _verify_pharmacogenomic_proof(self, proof: Proof) -> bool:
@@ -364,7 +364,7 @@ class Verifier:
             return True
 
         except Exception as e:
-            logger.error(f"Pharmacogenomic proof verification error: {e}")
+            logger.error("Pharmacogenomic proof verification error: {e}")
             return False
 
     def _verify_pathway_proof(self, proof: Proof) -> bool:
@@ -380,7 +380,7 @@ class Verifier:
             return True
 
         except Exception as e:
-            logger.error(f"Pathway proof verification error: {e}")
+            logger.error("Pathway proof verification error: {e}")
             return False
 
     def _verify_generic_proof(self, proof: Proof, vk: Dict) -> bool:
@@ -389,7 +389,7 @@ class Verifier:
             # Basic validation passed, simulate verification
             return True
         except Exception as e:
-            logger.error(f"Generic proof verification error: {e}")
+            logger.error("Generic proof verification error: {e}")
             return False
 
     def batch_verify(self, proofs: List[Proof]) -> List[VerificationResult]:
@@ -411,7 +411,7 @@ class Verifier:
         # Log batch verification summary
         valid_count = sum(1 for r in results if r.is_valid)
         logger.info(
-            f"Batch verification: {valid_count}/{len(proofs)} valid", extra={"privacy_safe": True}
+            "Batch verification: {valid_count}/{len(proofs)} valid", extra={"privacy_safe": True}
         )
 
         return results
@@ -456,7 +456,7 @@ class Verifier:
                     proof_id=recursive_proof.proof_id,
                     circuit_name=recursive_proof.circuit_name,
                     verification_time=result.verification_time,
-                    error_message=f"Proof hash mismatch at index {i}",
+                    error_message="Proof hash mismatch at index {i}",
                 )
 
         return result
@@ -525,11 +525,11 @@ if __name__ == "__main__":
         },
     )
 
-    print(f"Generated proof: {proof.proof_id}")
+    print("Generated proof: {proof.proof_id}")
 
     # Verify the proof
     result = verifier.verify_proof(proof)
 
-    print(f"\nVerification result: {result.is_valid}")
-    print(f"Verification time: {result.verification_time*1000:.1f}ms")
-    print(f"Expected time: {verifier.get_verification_time_estimate('diabetes_risk_alert')}ms")
+    print("\nVerification result: {result.is_valid}")
+    print("Verification time: {result.verification_time*1000:.1f}ms")
+    print("Expected time: {verifier.get_verification_time_estimate('diabetes_risk_alert')}ms")

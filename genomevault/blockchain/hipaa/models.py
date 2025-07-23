@@ -137,6 +137,6 @@ class NPIRecord:
 
     def __str__(self) -> str:
         if self.npi_type == NPIType.ORGANIZATION:
-            return f"{self.organization_name} (NPI: {self.npi})"
+            return "{self.organization_name} (NPI: {self.npi})"
         else:
-            return f"{self.first_name} {self.last_name}, {self.credential} (NPI: {self.npi})"
+            return "{self.first_name} {self.last_name}, {self.credential} (NPI: {self.npi})"
