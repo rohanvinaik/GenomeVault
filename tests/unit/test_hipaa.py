@@ -65,7 +65,7 @@ class TestNPIValidation:
         ]
 
         for npi in valid_npis:
-            assert registry._validate_npi_format(npi), f"NPI {npi} should be valid"
+            assert registry._validate_npi_format(npi), "NPI {npi} should be valid"
 
     def test_invalid_npi_luhn_check(self):
         """Test invalid NPIs fail Luhn check"""
@@ -79,7 +79,7 @@ class TestNPIValidation:
         ]
 
         for npi in invalid_npis:
-            assert not registry._validate_npi_format(npi), f"NPI {npi} should be invalid"
+            assert not registry._validate_npi_format(npi), "NPI {npi} should be invalid"
 
     def test_npi_format_validation(self):
         """Test NPI format validation"""

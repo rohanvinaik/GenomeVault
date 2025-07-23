@@ -57,7 +57,7 @@ class SimilarityPreservingMapper:
         self.mapping_matrix = None
         self._initialize_mapping()
 
-        logger.info(f"Initialized mapper: {input_dim}D -> {output_dim}D")
+        logger.info("Initialized mapper: {input_dim}D -> {output_dim}D")
 
     def _initialize_mapping(self):
         """Initialize the mapping matrix"""
@@ -161,7 +161,7 @@ class SimilarityPreservingMapper:
                 self._orthogonalize_mapping()
 
             if iteration % 100 == 0:
-                logger.debug(f"Iteration {iteration}, Loss: {loss.item():.4f}")
+                logger.debug("Iteration {iteration}, Loss: {loss.item():.4f}")
 
     def _angle_preservation_loss(
         self, original: torch.Tensor, transformed: torch.Tensor
@@ -384,7 +384,7 @@ class ManifoldPreservingMapper:
         self.n_neighbors = n_neighbors
         self.embedding = None
 
-        logger.info(f"Initialized ManifoldPreservingMapper: {input_dim}D -> {output_dim}D")
+        logger.info("Initialized ManifoldPreservingMapper: {input_dim}D -> {output_dim}D")
 
     def fit_transform(self, data: torch.Tensor) -> torch.Tensor:
         """
@@ -457,7 +457,7 @@ class ManifoldPreservingMapper:
 
             if iteration % 100 == 0:
                 logger.debug(
-                    f"Manifold optimization iteration {iteration}, Loss: {loss.item():.4f}"
+                    "Manifold optimization iteration {iteration}, Loss: {loss.item():.4f}"
                 )
 
 

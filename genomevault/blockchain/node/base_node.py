@@ -123,7 +123,7 @@ class BaseNode(ABC):
         # Simplified selection based on voting power
         # In production, use proper BFT consensus
         current_slot = int(time.time() / BLOCK_TIME_SECONDS)
-        selection_hash = hashlib.sha256(f"{current_slot}:{self.voting_power}".encode()).hexdigest()
+        selection_hash = hashlib.sha256("{current_slot}:{self.voting_power}".encode()).hexdigest()
         selection_value = int(selection_hash[:8], 16)
 
         # Probability proportional to voting power
@@ -140,7 +140,7 @@ class BaseNode(ABC):
 
     def _valid_proof(self, block: Block, nonce: int) -> bool:
         """Check if proof is valid"""
-        guess = f"{block.index}{block.timestamp}{block.transactions}{block.previous_hash}{nonce}"
+        guess = "{block.index}{block.timestamp}{block.transactions}{block.previous_hash}{nonce}"
         guess_hash = hashlib.sha256(guess.encode()).hexdigest()
         return guess_hash[:4] == "0000"  # Require 4 leading zeros
 

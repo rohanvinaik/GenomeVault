@@ -70,12 +70,12 @@ class HIPAANodeIntegration:
             # Update governance voting power
             self._update_governance_power(node)
 
-            logger.info(f"Registered HIPAA provider {credentials.npi} as trusted node")
+            logger.info("Registered HIPAA provider {credentials.npi} as trusted node")
 
             return node
 
         except VerificationError as e:
-            logger.error(f"Failed to register provider {credentials.npi}: {e}")
+            logger.error("Failed to register provider {credentials.npi}: {e}")
             raise
 
     def _create_trusted_node(
@@ -87,7 +87,7 @@ class HIPAANodeIntegration:
 
         # Create node with enhanced properties
         node = BlockchainNode(
-            node_id=f"hipaa_{record.credentials.npi}",
+            node_id="hipaa_{record.credentials.npi}",
             node_type=node_class,
             signatory_status=SignatoryWeight.TRUSTED_SIGNATORY,
             metadata={
@@ -111,7 +111,7 @@ class HIPAANodeIntegration:
         # For now, update local governance system
         self.governance.total_voting_power += node.voting_power
 
-        logger.info(f"Updated governance voting power: +{node.voting_power}")
+        logger.info("Updated governance voting power: +{node.voting_power}")
 
     async def revoke_provider_node(self, npi: str, reason: str) -> bool:
         """
@@ -138,7 +138,7 @@ class HIPAANodeIntegration:
             # Remove from registry
             del self.node_registry[npi]
 
-            logger.info(f"Revoked node status for NPI {npi}")
+            logger.info("Revoked node status for NPI {npi}")
 
         return True
 
@@ -260,14 +260,14 @@ if __name__ == "__main__":
             print("Registering HIPAA provider as node...")
             try:
                 node = await integration.register_provider_node(credentials, node_config)
-                print(f"Node registered successfully!")
-                print(f"  Node ID: {node.node_id}")
-                print(f"  Voting power: {node.voting_power}")
-                print(f"  Node class: {node.node_type.name}")
-                print(f"  Signatory weight: {node.signatory_status.value}")
+                print("Node registered successfully!")
+                print("  Node ID: {node.node_id}")
+                print("  Voting power: {node.voting_power}")
+                print("  Node class: {node.node_type.name}")
+                print("  Signatory weight: {node.signatory_status.value}")
 
                 # Check governance impact
-                print(f"\nGovernance total voting power: {governance.total_voting_power}")
+                print("\nGovernance total voting power: {governance.total_voting_power}")
 
                 # Test committee setup
                 HIPAAGovernanceIntegration.create_hipaa_committee(governance)
@@ -276,7 +276,7 @@ if __name__ == "__main__":
                 print("\nHIPAA governance integration complete!")
 
             except VerificationError as e:
-                print(f"Registration failed: {e}")
+                print("Registration failed: {e}")
 
     # Run test
     asyncio.run(test_hipaa_integration())

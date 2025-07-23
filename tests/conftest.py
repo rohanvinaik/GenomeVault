@@ -41,7 +41,7 @@ def sample_vcf_data():
                 "chrom": "1",
                 "pos": 14370,
                 "id": "rs6054257",
-                "ref": "G",
+                "re": "G",
                 "alt": "A",
                 "qual": 29,
                 "filter": "PASS",
@@ -53,7 +53,7 @@ def sample_vcf_data():
                 "chrom": "2",
                 "pos": 17330,
                 "id": "rs1234567",
-                "ref": "T",
+                "re": "T",
                 "alt": "C",
                 "qual": 99,
                 "filter": "PASS",
@@ -150,8 +150,8 @@ def zk_test_vectors():
                 "commitment_root": "0x" + "e" * 64,
             },
             "private_inputs": {
-                "variant_data": {"chr": "1", "pos": 14370, "ref": "G", "alt": "A"},
-                "merkle_proof": ["0x" + "f" * 64] * 20,
+                "variant_data": {"chr": "1", "pos": 14370, "re": "G", "alt": "A"},
+                "merkle_proo": ["0x" + "f" * 64] * 20,
                 "witness_randomness": np.random.bytes(32).hex(),
             },
             "expected_proof_size": 384,
@@ -193,9 +193,9 @@ def performance_benchmark():
 
         def assert_performance(self, name: str, max_ms: float):
             if name not in self.results:
-                pytest.fail(f"No benchmark results for {name}")
+                pytest.fail("No benchmark results for {name}")
             actual_ms = self.results[name]["elapsed_ms"]
-            assert actual_ms <= max_ms, f"{name} took {actual_ms:.1f}ms, expected <= {max_ms}ms"
+            assert actual_ms <= max_ms, "{name} took {actual_ms:.1f}ms, expected <= {max_ms}ms"
 
     return PerformanceBenchmark()
 

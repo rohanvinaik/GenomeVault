@@ -40,7 +40,7 @@ def setup_genomevault():
     config.privacy.epsilon = 1.0
     config.privacy.delta = 1e-6
 
-    logger.info(f"GenomeVault initialized with {config.processing.max_cores} cores")
+    logger.info("GenomeVault initialized with {config.processing.max_cores} cores")
     return config
 
 
@@ -65,9 +65,9 @@ def process_genomic_data_example():
     storage = DifferentialStorage()
     compressed = storage.compress_profile(profile)
     
-    logger.info(f"Found {len(profile.variants)} variants")
-    logger.info(f"Average coverage: {profile.quality_metrics.coverage_mean:.1f}x")
-    logger.info(f"Compression achieved: {len(compressed['chunks'])} chunks")
+    logger.info("Found {len(profile.variants)} variants")
+    logger.info("Average coverage: {profile.quality_metrics.coverage_mean:.1f}x")
+    logger.info("Compression achieved: {len(compressed['chunks'])} chunks")
     """
 
     # For demo purposes, create mock data
@@ -106,8 +106,8 @@ def process_genomic_data_example():
     storage = DifferentialStorage()
     compressed = storage.compress_profile(mock_profile)
 
-    logger.info(f"Mock genomic profile created with {len(mock_profile.variants)} variants")
-    logger.info(f"Compressed to {len(compressed['chunks'])} chunks")
+    logger.info("Mock genomic profile created with {len(mock_profile.variants)} variants")
+    logger.info("Compressed to {len(compressed['chunks'])} chunks")
 
     return mock_profile
 
@@ -171,14 +171,14 @@ def process_clinical_data_example():
         input_data=fhir_bundle, sample_id="patient_001", data_format="fhir"
     )
 
-    logger.info(f"Processed clinical data for {phenotype_profile.sample_id}")
-    logger.info(f"Age: {phenotype_profile.demographics.get('age')} years")
-    logger.info(f"Measurements: {len(phenotype_profile.measurements)}")
-    logger.info(f"Active conditions: {len(phenotype_profile.get_active_conditions())}")
+    logger.info("Processed clinical data for {phenotype_profile.sample_id}")
+    logger.info("Age: {phenotype_profile.demographics.get('age')} years")
+    logger.info("Measurements: {len(phenotype_profile.measurements)}")
+    logger.info("Active conditions: {len(phenotype_profile.get_active_conditions())}")
 
     # Calculate risk factors
     risk_factors = phenotype_profile.calculate_risk_factors()
-    logger.info(f"Risk factors: {risk_factors}")
+    logger.info("Risk factors: {risk_factors}")
 
     return phenotype_profile
 
@@ -193,7 +193,7 @@ def demonstrate_privacy_features():
     logger.info("1. All processing happens locally - no raw data leaves device")
 
     # 2. Differential privacy
-    logger.info(f"2. Differential privacy enabled (ε={config.privacy.epsilon})")
+    logger.info("2. Differential privacy enabled (ε={config.privacy.epsilon})")
 
     # 3. Encryption
     from genomevault.utils import AESGCMCipher, ThresholdCrypto
@@ -202,13 +202,13 @@ def demonstrate_privacy_features():
     key = AESGCMCipher.generate_key()
     plaintext = b"Sensitive genomic data"
     ciphertext, nonce, tag = AESGCMCipher.encrypt(plaintext, key)
-    logger.info(f"3. Data encrypted with AES-256-GCM (ciphertext: {len(ciphertext)} bytes)")
+    logger.info("3. Data encrypted with AES-256-GCM (ciphertext: {len(ciphertext)} bytes)")
 
     # Demonstrate threshold secret sharing
     secret = b"master_secret_key_123456789012"  # 30 bytes
     shares = ThresholdCrypto.split_secret(secret, threshold=3, total_shares=5)
     logger.info(
-        f"4. Secret split into {len(shares)} shares (need {shares[0].threshold} to reconstruct)"
+        "4. Secret split into {len(shares)} shares (need {shares[0].threshold} to reconstruct)"
     )
 
     # 4. Zero-knowledge proofs (placeholder)
@@ -217,7 +217,7 @@ def demonstrate_privacy_features():
     # 5. PIR privacy
     logger.info("6. Private Information Retrieval ensures query privacy")
     pir_failure_prob = config.get_pir_failure_probability()
-    logger.info(f"   PIR privacy failure probability: {pir_failure_prob:.2e}")
+    logger.info("   PIR privacy failure probability: {pir_failure_prob:.2e}")
 
 
 def main():
@@ -249,7 +249,7 @@ def main():
         print("\nFor more examples, see the documentation at https://docs.genomevault.io")
 
     except Exception as e:
-        logger.error(f"Error in demonstration: {e}")
+        logger.error("Error in demonstration: {e}")
         raise
 
 

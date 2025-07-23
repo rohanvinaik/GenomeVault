@@ -207,3 +207,37 @@ typescript
 # Legacy debug scripts
 legacy/
 !legacy/.gitkeep
+
+# Development and debugging scripts
+*.sh
+!setup.sh
+!install.sh
+.tailchasing.yml
+TailChasingFixer/
+*_fixes.py
+*_analysis.py
+tailchasing_*
+
+# Push and sync scripts
+push_*.sh
+sync_*.sh
+backup_*.sh
+check_*.sh
+diagnose_*.sh
+fix_*.sh
+force_*.sh
+safe_*.sh
+manual_*.sh
+github_*.sh
+commit_*.sh
+create_*.sh
+verify_*.sh
+
+# Temporary files
+PUSH_*.md
+flake8_remaining_issues.txt
+tailchasing_suggestions.md
+
+# Clinical validation temp files  
+clinical_validation/circuits/base_zk.py
+clinical_validation/zk_backends/

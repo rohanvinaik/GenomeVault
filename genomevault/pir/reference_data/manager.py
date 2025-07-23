@@ -37,7 +37,7 @@ class GenomicRegion:
     end: int
 
     def __str__(self):
-        return f"{self.chromosome}:{self.start}-{self.end}"
+        return "{self.chromosome}:{self.start}-{self.end}"
 
     def overlaps(self, other: "GenomicRegion") -> bool:
         """Check if regions overlap."""
@@ -156,7 +156,7 @@ class ReferenceDataManager:
         # Load existing data
         self._load_reference_data()
 
-        logger.info(f"ReferenceDataManager initialized with {len(self.nodes)} nodes")
+        logger.info("ReferenceDataManager initialized with {len(self.nodes)} nodes")
 
     def _load_reference_data(self):
         """Load reference data from disk."""
@@ -255,7 +255,7 @@ class ReferenceDataManager:
 
     def add_variant_annotation(self, annotation: VariantAnnotation):
         """Add variant annotation."""
-        key = f"{annotation.chromosome}:{annotation.position}:{annotation.ref_allele}:{annotation.alt_allele}"
+        key = "{annotation.chromosome}:{annotation.position}:{annotation.ref_allele}:{annotation.alt_allele}"
         self.variant_annotations[key] = annotation
         self.metadata["total_variants"] += 1
 
@@ -301,7 +301,7 @@ class ReferenceDataManager:
         self, chromosome: str, position: int, ref_allele: str, alt_allele: str
     ) -> Optional[VariantAnnotation]:
         """Get annotation for a specific variant."""
-        key = f"{chromosome}:{position}:{ref_allele}:{alt_allele}"
+        key = "{chromosome}:{position}:{ref_allele}:{alt_allele}"
         return self.variant_annotations.get(key)
 
     def prepare_for_pir(self, data_type: ReferenceDataType) -> List[bytes]:
@@ -332,7 +332,7 @@ class ReferenceDataManager:
             for item in pop_data:
                 items.append(json.dumps(item).encode())
 
-        logger.info(f"Prepared {len(items)} items of type {data_type.value} for PIR")
+        logger.info("Prepared {len(items)} items of type {data_type.value} for PIR")
         return items
 
     def _aggregate_population_data(self) -> List[Dict]:
@@ -389,7 +389,7 @@ class ReferenceDataManager:
 
         # Index by position
         for i, node in enumerate(nodes):
-            pos_key = f"{node.chromosome}:{node.position}"
+            pos_key = "{node.chromosome}:{node.position}"
             if pos_key not in index["positions"]:
                 index["positions"][pos_key] = []
             index["positions"][pos_key].append(i)
@@ -532,15 +532,15 @@ if __name__ == "__main__":
         # Query a region
         region = GenomicRegion("chr1", 1000000, 1010000)
         nodes = manager.get_nodes_in_region(region)
-        print(f"Found {len(nodes)} nodes in {region}")
+        print("Found {len(nodes)} nodes in {region}")
 
         # Prepare for PIR
         pir_data = manager.prepare_for_pir(ReferenceDataType.PANGENOME_GRAPH)
-        print(f"Prepared {len(pir_data)} items for PIR")
+        print("Prepared {len(pir_data)} items for PIR")
 
         # Get statistics
         stats = manager.get_statistics()
-        print(f"\nStatistics: {json.dumps(stats, indent=2)}")
+        print("\nStatistics: {json.dumps(stats, indent=2)}")
 
         # Save data
         manager.save_reference_data()

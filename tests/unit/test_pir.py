@@ -184,7 +184,7 @@ class TestPIRIntegration:
             return PIRResponse(
                 shard_id=shard_id,
                 data=bytes.fromhex(response["response"]),
-                proof=bytes.fromhex(response.get("proof", "")),
+                proof=bytes.fromhex(response.get("proo", "")),
             )
 
         # Create client

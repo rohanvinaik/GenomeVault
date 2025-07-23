@@ -300,7 +300,7 @@ class PhenotypeProcessor:
         Returns:
             PhenotypeProfile with structured phenotypic data
         """
-        logger.info(f"Processing phenotypic data for sample {sample_id}")
+        logger.info("Processing phenotypic data for sample {sample_id}")
 
         # Load data if path provided
         if isinstance(input_data, Path):
@@ -308,7 +308,7 @@ class PhenotypeProcessor:
                 if input_data.suffix == ".json":
                     input_data = json.load(f)
                 else:
-                    raise ValueError(f"Unsupported file format: {input_data.suffix}")
+                    raise ValueError("Unsupported file format: {input_data.suffix}")
 
         # Process based on format
         if data_format.lower() == "fhir":
@@ -325,10 +325,10 @@ class PhenotypeProcessor:
         profile = self._calculate_derived_values(profile)
 
         logger.info(
-            f"Phenotype processing complete. "
-            f"{len(profile.measurements)} measurements, "
-            f"{len(profile.diagnoses)} diagnoses, "
-            f"{len(profile.medications)} medications"
+            "Phenotype processing complete. "
+            "{len(profile.measurements)} measurements, "
+            "{len(profile.diagnoses)} diagnoses, "
+            "{len(profile.medications)} medications"
         )
 
         return profile
@@ -568,7 +568,7 @@ class PhenotypeProcessor:
                 dose_rate = dosage_info["doseAndRate"][0]
                 if "doseQuantity" in dose_rate:
                     dose_qty = dose_rate["doseQuantity"]
-                    med.dose = f"{dose_qty.get('value')} {dose_qty.get('unit')}"
+                    med.dose = "{dose_qty.get('value')} {dose_qty.get('unit')}"
 
             if "route" in dosage_info:
                 route_coding = dosage_info["route"].get("coding", [])
@@ -704,7 +704,7 @@ class PhenotypeProcessor:
 
             # Add BMI measurement
             bmi_measurement = ClinicalMeasurement(
-                measurement_id=f"derived_bmi_{secure_hash(f'{height}{weight}'.encode())[:8]}",
+                measurement_id="derived_bmi_{secure_hash('{height}{weight}'.encode())[:8]}",
                 measurement_type="BMI",
                 value=round(bmi, 1),
                 unit="kg/m2",
@@ -784,7 +784,7 @@ class PhenotypeProcessor:
                 merged.family_history.extend(profile.family_history)
 
             else:
-                raise ValueError(f"Unknown merge strategy: {merge_strategy}")
+                raise ValueError("Unknown merge strategy: {merge_strategy}")
 
         # Update metadata
         merged.metadata["merged_from"] = [p.sample_id for p in profiles]

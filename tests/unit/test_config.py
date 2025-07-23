@@ -58,7 +58,7 @@ class TestConfig:
             voting_power = config.get_voting_power()
             assert (
                 voting_power == expected_power
-            ), f"Node {node_class.name} TS={is_ts} should have power {expected_power}, got {voting_power}"
+            ), "Node {node_class.name} TS={is_ts} should have power {expected_power}, got {voting_power}"
 
     def test_block_rewards_calculation(self):
         """Test block rewards calculation."""
@@ -81,7 +81,7 @@ class TestConfig:
             rewards = config.get_block_rewards()
             assert (
                 rewards == expected_rewards
-            ), f"Node {node_class.name} TS={is_ts} should get {expected_rewards} credits, got {rewards}"
+            ), "Node {node_class.name} TS={is_ts} should get {expected_rewards} credits, got {rewards}"
 
     def test_pir_failure_probability(self):
         """Test PIR privacy breach probability calculations."""
@@ -100,7 +100,7 @@ class TestConfig:
             prob = config.calculate_pir_failure_probability(k, use_hipaa)
             assert (
                 abs(prob - expected_prob) < 1e-10
-            ), f"P_fail({k}, hipaa={use_hipaa}) should be {expected_prob}, got {prob}"
+            ), "P_fail({k}, hipaa={use_hipaa}) should be {expected_prob}, got {prob}"
 
     def test_min_honest_servers_calculation(self):
         """Test minimum honest servers calculation."""
@@ -117,7 +117,7 @@ class TestConfig:
             min_servers = config.get_min_honest_servers(target_prob)
             assert (
                 min_servers == expected_min
-            ), f"Min servers for P_fail≤{target_prob} should be {expected_min}, got {min_servers}"
+            ), "Min servers for P_fail≤{target_prob} should be {expected_min}, got {min_servers}"
 
     def test_compression_tier_sizes(self):
         """Test compression tier storage calculations."""
@@ -138,7 +138,7 @@ class TestConfig:
             size = config.get_compression_size(modalities)
             assert (
                 size == expected_size
-            ), f"{tier.value} with {modalities} should be {expected_size}KB, got {size}KB"
+            ), "{tier.value} with {modalities} should be {expected_size}KB, got {size}KB"
 
     def test_config_validation(self):
         """Test configuration validation."""

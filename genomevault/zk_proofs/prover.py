@@ -293,12 +293,12 @@ class Prover:
         audit_logger.log_event(
             event_type="proof_generation",
             actor="prover",
-            action=f"generate_{circuit_name}_proof",
+            action="generate_{circuit_name}_proof",
             resource=proof_id,
             metadata={"generation_time": generation_time, "proof_size": len(proof_data)},
         )
 
-        logger.info(f"Proof generated for {circuit_name}", extra={"privacy_safe": True})
+        logger.info("Proof generated for {circuit_name}", extra={"privacy_safe": True})
 
         return proof
 
@@ -314,7 +314,7 @@ class Prover:
         }
 
         if circuit_name not in circuit_map:
-            raise ValueError(f"Unknown circuit: {circuit_name}")
+            raise ValueError("Unknown circuit: {circuit_name}")
 
         return circuit_map[circuit_name]
 
@@ -323,12 +323,12 @@ class Prover:
         # Check public inputs
         for required_input in circuit.public_inputs:
             if required_input not in public_inputs:
-                raise ValueError(f"Missing public input: {required_input}")
+                raise ValueError("Missing public input: {required_input}")
 
         # Check private inputs
         for required_input in circuit.private_inputs:
             if required_input not in private_inputs:
-                raise ValueError(f"Missing private input: {required_input}")
+                raise ValueError("Missing private input: {required_input}")
 
     def _generate_proof_id(self, circuit_name: str, public_inputs: Dict) -> str:
         """Generate unique proof ID."""
@@ -364,7 +364,7 @@ class Prover:
         """Simulate variant presence proof."""
         # Verify variant is in commitment
         variant_data = private_inputs["variant_data"]
-        variant_str = f"{variant_data['chr']}:{variant_data['pos']}:{variant_data['ref']}:{variant_data['alt']}"
+        variant_str = "{variant_data['chr']}:{variant_data['pos']}:{variant_data['re']}:{variant_data['alt']}"
         variant_hash = hashlib.sha256(variant_str.encode()).hexdigest()
 
         # Check hash matches public input
@@ -420,7 +420,7 @@ class Prover:
             "pi_b": np.random.bytes(96).hex(),
             "pi_c": np.random.bytes(48).hex(),
             "condition_commitment": hashlib.sha256(
-                f"{condition}:{private_inputs['witness_randomness']}".encode()
+                "{condition}:{private_inputs['witness_randomness']}".encode()
             ).hexdigest(),
             "range_proofs": [np.random.bytes(32).hex() for _ in range(4)],
         }
@@ -462,7 +462,7 @@ class Prover:
                 )
                 proofs.append(proof)
             except Exception as e:
-                logger.error(f"Batch proof generation failed: {e}")
+                logger.error("Batch proof generation failed: {e}")
                 # Continue with other proofs
 
         return proofs
@@ -480,7 +480,7 @@ class Prover:
         # Validate all proofs are valid
         for proof in proofs:
             if not self._validate_proof_format(proof):
-                raise ValueError(f"Invalid proof: {proof.proof_id}")
+                raise ValueError("Invalid proof: {proof.proof_id}")
 
         # Create recursive circuit
         public_inputs = {
@@ -543,14 +543,14 @@ if __name__ == "__main__":
             "commitment_root": hashlib.sha256(b"genome_root").hexdigest(),
         },
         private_inputs={
-            "variant_data": {"chr": "chr1", "pos": 12345, "ref": "A", "alt": "G"},
-            "merkle_proof": ["hash1", "hash2", "hash3"],
+            "variant_data": {"chr": "chr1", "pos": 12345, "re": "A", "alt": "G"},
+            "merkle_proo": ["hash1", "hash2", "hash3"],
             "witness_randomness": np.random.bytes(32).hex(),
         },
     )
 
-    print(f"Variant proof generated: {variant_proof.proof_id}")
-    print(f"Proof size: {len(variant_proof.proof_data)} bytes")
+    print("Variant proof generated: {variant_proof.proof_id}")
+    print("Proof size: {len(variant_proof.proof_data)} bytes")
 
     # Example 2: Diabetes risk alert proof
     diabetes_proof = prover.generate_proof(
@@ -567,6 +567,6 @@ if __name__ == "__main__":
         },
     )
 
-    print(f"\nDiabetes risk proof generated: {diabetes_proof.proof_id}")
-    print(f"Proof size: {len(diabetes_proof.proof_data)} bytes")
-    print(f"Verification time: {diabetes_proof.metadata['generation_time_seconds']*1000:.1f}ms")
+    print("\nDiabetes risk proof generated: {diabetes_proof.proof_id}")
+    print("Proof size: {len(diabetes_proof.proof_data)} bytes")
+    print("Verification time: {diabetes_proof.metadata['generation_time_seconds']*1000:.1f}ms")

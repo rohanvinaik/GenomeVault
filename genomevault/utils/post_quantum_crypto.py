@@ -131,9 +131,9 @@ def benchmark_post_quantum_crypto() -> Dict[str, Any]:
 
     results = {
         "kyber": {
-            "keygen_time": f"{keygen_time:.4f}s",
-            "encrypt_time": f"{encrypt_time:.4f}s",
-            "decrypt_time": f"{decrypt_time:.4f}s",
+            "keygen_time": "{keygen_time:.4f}s",
+            "encrypt_time": "{encrypt_time:.4f}s",
+            "decrypt_time": "{decrypt_time:.4f}s",
             "ciphertext_size": len(encrypted.to_bytes()),
             "success": decrypted == plaintext,
         }
@@ -155,7 +155,7 @@ if __name__ == "__main__":
 
     # Encrypt
     encrypted = crypto.encrypt(genomic_data, recipient_keypair.public_key)
-    print(f"Encrypted size: {len(encrypted.to_bytes())} bytes")
+    print("Encrypted size: {len(encrypted.to_bytes())} bytes")
 
     # Decrypt
     decrypted = crypto.decrypt(encrypted, recipient_keypair.private_key)
@@ -167,6 +167,6 @@ if __name__ == "__main__":
     results = benchmark_post_quantum_crypto()
 
     for algo, metrics in results.items():
-        print(f"\n{algo}:")
+        print("\n{algo}:")
         for key, value in metrics.items():
-            print(f"  {key}: {value}")
+            print("  {key}: {value}")

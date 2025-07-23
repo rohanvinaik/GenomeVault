@@ -46,7 +46,7 @@ class HypervectorBinder:
             Bound hypervector
         """
         if vec1.shape != vec2.shape:
-            raise ValueError(f"Vector shapes must match: {vec1.shape} != {vec2.shape}")
+            raise ValueError("Vector shapes must match: {vec1.shape} != {vec2.shape}")
 
         if operation == BindingOperation.CIRCULAR_CONVOLUTION:
             return self._circular_convolution(vec1, vec2)
@@ -57,7 +57,7 @@ class HypervectorBinder:
         elif operation == BindingOperation.PERMUTATION:
             return self._permutation_binding(vec1, vec2)
         else:
-            raise ValueError(f"Unknown binding operation: {operation}")
+            raise ValueError("Unknown binding operation: {operation}")
 
     def _circular_convolution(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
         """
@@ -132,7 +132,7 @@ class HypervectorBinder:
             # Inverse is division (multiplication by reciprocal)
             return bound_vec / (known_vec + 1e-8)  # Add small epsilon to avoid division by zero
         else:
-            raise ValueError(f"Unbinding not supported for {operation}")
+            raise ValueError("Unbinding not supported for {operation}")
 
     def _circular_correlation(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
         """
@@ -220,7 +220,7 @@ class MultiModalBinder:
 
         for modality, data_vec in modality_data.items():
             if modality not in self.modality_keys:
-                raise ValueError(f"Unknown modality: {modality}")
+                raise ValueError("Unknown modality: {modality}")
 
             # Bind modality data with its key
             modality_key = self.modality_keys[modality]
@@ -236,7 +236,7 @@ class MultiModalBinder:
         Extract a specific modality from an integrated vector
         """
         if modality not in self.modality_keys:
-            raise ValueError(f"Unknown modality: {modality}")
+            raise ValueError("Unknown modality: {modality}")
 
         # Unbind with the modality key
         modality_key = self.modality_keys[modality]

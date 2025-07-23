@@ -81,7 +81,7 @@ class AESGCMCipher:
             Tuple of (ciphertext, nonce, tag)
         """
         if len(key) != cls.KEY_SIZE:
-            raise ValueError(f"Key must be {cls.KEY_SIZE} bytes")
+            raise ValueError("Key must be {cls.KEY_SIZE} bytes")
 
         nonce = os.urandom(cls.NONCE_SIZE)
 
@@ -93,7 +93,7 @@ class AESGCMCipher:
 
         ciphertext = encryptor.update(plaintext) + encryptor.finalize()
 
-        logger.debug(f"Encrypted {len(plaintext)} bytes")
+        logger.debug("Encrypted {len(plaintext)} bytes")
         return ciphertext, nonce, encryptor.tag
 
     @classmethod
@@ -119,7 +119,7 @@ class AESGCMCipher:
             Decrypted plaintext
         """
         if len(key) != cls.KEY_SIZE:
-            raise ValueError(f"Key must be {cls.KEY_SIZE} bytes")
+            raise ValueError("Key must be {cls.KEY_SIZE} bytes")
 
         cipher = Cipher(algorithms.AES(key), modes.GCM(nonce, tag), backend=default_backend())
         decryptor = cipher.decryptor()
@@ -129,7 +129,7 @@ class AESGCMCipher:
 
         plaintext = decryptor.update(ciphertext) + decryptor.finalize()
 
-        logger.debug(f"Decrypted {len(ciphertext)} bytes")
+        logger.debug("Decrypted {len(ciphertext)} bytes")
         return plaintext
 
     @classmethod
@@ -146,7 +146,7 @@ class AESGCMCipher:
             f.write(tag)
             f.write(ciphertext)
 
-        logger.info(f"Encrypted file {input_path} to {output_path}")
+        logger.info("Encrypted file {input_path} to {output_path}")
 
     @classmethod
     def decrypt_file(cls, input_path: Path, output_path: Path, key: bytes):
@@ -161,7 +161,7 @@ class AESGCMCipher:
         with open(output_path, "wb") as f:
             f.write(plaintext)
 
-        logger.info(f"Decrypted file {input_path} to {output_path}")
+        logger.info("Decrypted file {input_path} to {output_path}")
 
 
 class ChaCha20Poly1305:
@@ -285,7 +285,7 @@ class ThresholdCrypto:
             )
             shares.append(share)
 
-        logger.info(f"Split secret into {total_shares} shares (threshold={threshold})")
+        logger.info("Split secret into {total_shares} shares (threshold={threshold})")
         return shares
 
     @classmethod
@@ -304,7 +304,7 @@ class ThresholdCrypto:
 
         threshold = shares[0].threshold
         if len(shares) < threshold:
-            raise ValueError(f"Need at least {threshold} shares")
+            raise ValueError("Need at least {threshold} shares")
 
         # Verify and parse shares
         points = []
@@ -312,7 +312,7 @@ class ThresholdCrypto:
             # Verify checksum
             expected_checksum = hashlib.sha256(share.share_value).hexdigest()[:8]
             if not constant_time.bytes_eq(share.checksum.encode(), expected_checksum.encode()):
-                raise ValueError(f"Invalid checksum for share {share.share_id}")
+                raise ValueError("Invalid checksum for share {share.share_id}")
 
             # Parse share data
             share_data = json.loads(share.share_value.decode())
@@ -325,7 +325,7 @@ class ThresholdCrypto:
         byte_length = (secret_int.bit_length() + 7) // 8
         secret = secret_int.to_bytes(byte_length, "big")
 
-        logger.info(f"Reconstructed secret from {len(shares)} shares")
+        logger.info("Reconstructed secret from {len(shares)} shares")
         return secret
 
     @classmethod
@@ -420,7 +420,7 @@ class HomomorphicHelper:
         """Prepare integer for homomorphic encryption"""
         # Ensure value fits in specified bits
         if value >= 2**bit_length:
-            raise ValueError(f"Value too large for {bit_length} bits")
+            raise ValueError("Value too large for {bit_length} bits")
 
         # Convert to bytes with padding
         return value.to_bytes(bit_length // 8, "little")
@@ -449,7 +449,7 @@ class EncryptionManager:
         elif algorithm == "ChaCha20-Poly1305":
             key_material = ChaCha20Poly1305.generate_key()
         else:
-            raise ValueError(f"Unsupported algorithm: {algorithm}")
+            raise ValueError("Unsupported algorithm: {algorithm}")
 
         key = EncryptionKey(
             key_id=key_id,
@@ -462,13 +462,13 @@ class EncryptionManager:
         self._keys[key_id] = key
         self._save_keys()
 
-        logger.info(f"Generated new {algorithm} key: {key_id}")
+        logger.info("Generated new {algorithm} key: {key_id}")
         return key
 
     def encrypt_data(self, data: bytes, key_id: str) -> Dict[str, Any]:
         """Encrypt data using specified key"""
         if key_id not in self._keys:
-            raise ValueError(f"Key not found: {key_id}")
+            raise ValueError("Key not found: {key_id}")
 
         key = self._keys[key_id]
 
@@ -489,13 +489,13 @@ class EncryptionManager:
                 "algorithm": key.algorithm,
             }
         else:
-            raise ValueError(f"Unsupported algorithm: {key.algorithm}")
+            raise ValueError("Unsupported algorithm: {key.algorithm}")
 
     def decrypt_data(self, encrypted_data: Dict[str, Any]) -> bytes:
         """Decrypt data"""
         key_id = encrypted_data["key_id"]
         if key_id not in self._keys:
-            raise ValueError(f"Key not found: {key_id}")
+            raise ValueError("Key not found: {key_id}")
 
         key = self._keys[key_id]
 
@@ -508,7 +508,7 @@ class EncryptionManager:
             ciphertext = base64.b64decode(encrypted_data["ciphertext"])
             return ChaCha20Poly1305.decrypt(ciphertext, key.key_material)
         else:
-            raise ValueError(f"Unsupported algorithm: {key.algorithm}")
+            raise ValueError("Unsupported algorithm: {key.algorithm}")
 
     def _load_keys(self):
         """Load keys from storage"""
@@ -533,7 +533,7 @@ def generate_secure_key(algorithm: str = "AES-GCM") -> bytes:
     elif algorithm == "ChaCha20-Poly1305":
         return ChaCha20Poly1305.generate_key()
     else:
-        raise ValueError(f"Unsupported algorithm: {algorithm}")
+        raise ValueError("Unsupported algorithm: {algorithm}")
 
 
 def secure_hash(data: bytes, algorithm: str = "SHA256") -> str:
@@ -545,4 +545,4 @@ def secure_hash(data: bytes, algorithm: str = "SHA256") -> str:
     elif algorithm == "BLAKE2b":
         return hashlib.blake2b(data).hexdigest()
     else:
-        raise ValueError(f"Unsupported hash algorithm: {algorithm}")
+        raise ValueError("Unsupported hash algorithm: {algorithm}")

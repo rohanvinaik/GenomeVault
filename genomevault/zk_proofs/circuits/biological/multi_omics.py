@@ -137,7 +137,7 @@ class MultiOmicsCorrelationCircuit(BaseCircuit):
         self, correlation: FieldElement, randomness: FieldElement
     ) -> FieldElement:
         """Create commitment to correlation value."""
-        data = f"CORRELATION:{self.modality_1}:{self.modality_2}:{correlation.value}:{randomness.value}"
+        data = "CORRELATION:{self.modality_1}:{self.modality_2}:{correlation.value}:{randomness.value}"
         hash_val = hashlib.sha256(data.encode()).hexdigest()
         return FieldElement(int(hash_val, 16))
 
@@ -255,7 +255,7 @@ class GenotypePhenotypeAssociationCircuit(BaseCircuit):
 
     def _commit_p_value(self, p_value: FieldElement, randomness: FieldElement) -> FieldElement:
         """Commit to p-value."""
-        data = f"PVALUE:{p_value.value}:{randomness.value}".encode()
+        data = "PVALUE:{p_value.value}:{randomness.value}".encode()
         hash_val = hashlib.sha256(data).hexdigest()
         return FieldElement(int(hash_val, 16))
 
@@ -354,7 +354,7 @@ class ClinicalTrialEligibilityCircuit(BaseCircuit):
 
     def _hash_criteria(self) -> FieldElement:
         """Hash the eligibility criteria."""
-        criteria_str = f"{self.trial_id.value}:genomic:clinical:demographic"
+        criteria_str = "{self.trial_id.value}:genomic:clinical:demographic"
         hash_val = hashlib.sha256(criteria_str.encode()).hexdigest()
         return FieldElement(int(hash_val, 16))
 
@@ -432,7 +432,7 @@ class RareVariantBurdenCircuit(BaseCircuit):
     def _commit_variants(self, randomness: FieldElement) -> FieldElement:
         """Commit to variant list."""
         variant_str = ":".join(str(v.get("id", "")) for v in self.variants[:10])
-        data = f"VARIANTS:{variant_str}:{randomness.value}".encode()
+        data = "VARIANTS:{variant_str}:{randomness.value}".encode()
         hash_val = hashlib.sha256(data).hexdigest()
         return FieldElement(int(hash_val, 16))
 

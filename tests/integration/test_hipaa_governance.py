@@ -50,7 +50,7 @@ class TestHIPAANodeIntegration:
             node = await integration.register_provider_node(credentials, node_config)
 
             # Verify node properties
-            assert node.node_id == f"hipaa_{credentials.npi}"
+            assert node.node_id == "hipaa_{credentials.npi}"
             assert node.node_type == NodeType.FULL
             assert node.signatory_status == SignatoryWeight.TRUSTED_SIGNATORY
             assert node.voting_power == 14  # Full (4) + TS (10)
@@ -86,7 +86,7 @@ class TestHIPAANodeIntegration:
                     npi=npi,
                     baa_hash="a" * 64,
                     risk_analysis_hash="b" * 64,
-                    hsm_serial=f"HSM-{npi[-6:]}",
+                    hsm_serial="HSM-{npi[-6:]}",
                 )
 
                 node = await integration.register_provider_node(
@@ -145,7 +145,7 @@ class TestHIPAANodeIntegration:
                     npi=npi,
                     baa_hash="a" * 64,
                     risk_analysis_hash="b" * 64,
-                    hsm_serial=f"HSM-{npi[-6:]}",
+                    hsm_serial="HSM-{npi[-6:]}",
                 )
 
                 await integration.register_provider_node(
@@ -350,7 +350,7 @@ class TestEndToEndFlow:
             for i in range(5):
                 governance.vote(
                     proposal_id=proposal.proposal_id,
-                    voter=f"supporter_{i}",
+                    voter="supporter_{i}",
                     choice="yes",
                     voting_power=50,
                 )

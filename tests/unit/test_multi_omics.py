@@ -97,7 +97,7 @@ class TestTranscriptomicsProcessor:
         # Create mock expression data
         raw_data = pd.DataFrame(
             {
-                "gene_id": [f"ENSG{i:08d}" for i in range(100)],
+                "gene_id": ["ENSG{i:08d}" for i in range(100)],
                 "raw_count": np.random.poisson(100, 100),
             }
         )
@@ -117,7 +117,7 @@ class TestTranscriptomicsProcessor:
         expr_file = tmp_path / "expression.tsv"
         expr_data = pd.DataFrame(
             {
-                "gene_id": [f"ENSG{i:08d}" for i in range(50)],
+                "gene_id": ["ENSG{i:08d}" for i in range(50)],
                 "raw_count": np.random.poisson(100, 50),
             }
         )
@@ -146,9 +146,9 @@ class TestTranscriptomicsProcessor:
                     # Add batch-specific bias
                     bias = 100 if batch == "A" else 200
                     expr = TranscriptExpression(
-                        transcript_id=f"ENST{j:08d}",
-                        gene_id=f"ENSG{j:08d}",
-                        gene_name=f"GENE{j}",
+                        transcript_id="ENST{j:08d}",
+                        gene_id="ENSG{j:08d}",
+                        gene_name="GENE{j}",
                         raw_count=np.random.poisson(bias),
                         normalized_value=float(np.random.poisson(bias)),
                         length=1000,
@@ -156,7 +156,7 @@ class TestTranscriptomicsProcessor:
                     expressions.append(expr)
 
                 profile = ExpressionProfile(
-                    sample_id=f"sample_{batch}_{i}",
+                    sample_id="sample_{batch}_{i}",
                     expressions=expressions,
                     normalization_method=NormalizationMethod.TPM,
                     quality_metrics={},
@@ -182,9 +182,9 @@ class TestTranscriptomicsProcessor:
         for i in range(3):
             expressions = [
                 TranscriptExpression(
-                    transcript_id=f"ENST{j:08d}",
-                    gene_id=f"ENSG{j:08d}",
-                    gene_name=f"GENE{j}",
+                    transcript_id="ENST{j:08d}",
+                    gene_id="ENSG{j:08d}",
+                    gene_name="GENE{j}",
                     raw_count=np.random.poisson(10),
                     normalized_value=float(np.random.poisson(10)),
                     length=1000,
@@ -192,7 +192,7 @@ class TestTranscriptomicsProcessor:
                 for j in range(50)
             ]
             profile = ExpressionProfile(
-                sample_id=f"control_{i}",
+                sample_id="control_{i}",
                 expressions=expressions,
                 normalization_method=NormalizationMethod.TPM,
                 quality_metrics={},
@@ -203,9 +203,9 @@ class TestTranscriptomicsProcessor:
         for i in range(3):
             expressions = [
                 TranscriptExpression(
-                    transcript_id=f"ENST{j:08d}",
-                    gene_id=f"ENSG{j:08d}",
-                    gene_name=f"GENE{j}",
+                    transcript_id="ENST{j:08d}",
+                    gene_id="ENSG{j:08d}",
+                    gene_name="GENE{j}",
                     raw_count=np.random.poisson(100 if j < 10 else 10),
                     normalized_value=float(np.random.poisson(100 if j < 10 else 10)),
                     length=1000,
@@ -213,7 +213,7 @@ class TestTranscriptomicsProcessor:
                 for j in range(50)
             ]
             profile = ExpressionProfile(
-                sample_id=f"treatment_{i}",
+                sample_id="treatment_{i}",
                 expressions=expressions,
                 normalization_method=NormalizationMethod.TPM,
                 quality_metrics={},
@@ -259,7 +259,7 @@ class TestEpigeneticsProcessors:
         with open(meth_file, "w") as f:
             f.write("chr\tpos\tstrand\tmethylated\tunmethylated\tcontext\n")
             for i in range(100):
-                f.write(f"chr1\t{i*1000}\t+\t15\t5\tCG\n")
+                f.write("chr1\t{i*1000}\t+\t15\t5\tCG\n")
 
         # Process
         profile = methylation_processor.process(
@@ -283,7 +283,7 @@ class TestEpigeneticsProcessors:
         with open(peak_file, "w") as f:
             for i in range(50):
                 # chr start end name score strand signal pvalue qvalue peak
-                f.write(f"chr1\t{i*10000}\t{i*10000+500}\tpeak{i}\t100\t.\t10.5\t1e-5\t1e-3\t250\n")
+                f.write("chr1\t{i*10000}\t{i*10000+500}\tpeak{i}\t100\t.\t10.5\t1e-5\t1e-3\t250\n")
 
         # Process
         profile = chromatin_processor.process(peak_file, "sample001", peak_format="narrowPeak")
@@ -317,7 +317,7 @@ class TestEpigeneticsProcessors:
                 for j in range(100)
             ]
             profile = EpigeneticProfile(
-                sample_id=f"control_{i}",
+                sample_id="control_{i}",
                 data_type=EpigeneticDataType.METHYLATION,
                 methylation_sites=sites,
             )
@@ -336,7 +336,7 @@ class TestEpigeneticsProcessors:
                 for j in range(100)
             ]
             profile = EpigeneticProfile(
-                sample_id=f"treatment_{i}",
+                sample_id="treatment_{i}",
                 data_type=EpigeneticDataType.METHYLATION,
                 methylation_sites=sites,
             )
@@ -425,9 +425,9 @@ class TestProteomicsProcessor:
         proteins = []
         for i in range(100):
             protein = ProteinMeasurement(
-                protein_id=f"PROT{i:04d}",
-                gene_name=f"GENE{i}",
-                description=f"Protein {i}",
+                protein_id="PROT{i:04d}",
+                gene_name="GENE{i}",
+                description="Protein {i}",
                 sequence_coverage=50.0,
                 num_peptides=5,
                 num_unique_peptides=4,
@@ -449,9 +449,9 @@ class TestProteomicsProcessor:
         # Create proteins with varying abundances
         proteins = [
             ProteinMeasurement(
-                protein_id=f"PROT{i:04d}",
-                gene_name=f"GENE{i}",
-                description=f"Protein {i}",
+                protein_id="PROT{i:04d}",
+                gene_name="GENE{i}",
+                description="Protein {i}",
                 sequence_coverage=50.0,
                 num_peptides=5,
                 num_unique_peptides=4,
@@ -481,9 +481,9 @@ class TestProteomicsProcessor:
         for i in range(3):
             proteins1 = [
                 ProteinMeasurement(
-                    protein_id=f"PROT{j:04d}",
-                    gene_name=f"GENE{j}",
-                    description=f"Protein {j}",
+                    protein_id="PROT{j:04d}",
+                    gene_name="GENE{j}",
+                    description="Protein {j}",
                     sequence_coverage=50.0,
                     num_peptides=5,
                     num_unique_peptides=4,
@@ -495,9 +495,9 @@ class TestProteomicsProcessor:
 
             proteins2 = [
                 ProteinMeasurement(
-                    protein_id=f"PROT{j:04d}",
-                    gene_name=f"GENE{j}",
-                    description=f"Protein {j}",
+                    protein_id="PROT{j:04d}",
+                    gene_name="GENE{j}",
+                    description="Protein {j}",
                     sequence_coverage=50.0,
                     num_peptides=5,
                     num_unique_peptides=4,
@@ -508,14 +508,14 @@ class TestProteomicsProcessor:
             ]
 
             profile1 = ProteomicsProfile(
-                sample_id=f"control_{i}",
+                sample_id="control_{i}",
                 proteins=proteins1,
                 quantification_method=QuantificationMethod.LABEL_FREE,
                 quality_metrics={},
             )
 
             profile2 = ProteomicsProfile(
-                sample_id=f"treatment_{i}",
+                sample_id="treatment_{i}",
                 proteins=proteins2,
                 quantification_method=QuantificationMethod.LABEL_FREE,
                 quality_metrics={},
@@ -556,9 +556,9 @@ class TestProteomicsProcessor:
         # Create profile with diverse proteins
         proteins = [
             ProteinMeasurement(
-                protein_id=f"PROT{i:04d}",
-                gene_name=f"GENE{i}",
-                description=f"Protein {i}",
+                protein_id="PROT{i:04d}",
+                gene_name="GENE{i}",
+                description="Protein {i}",
                 sequence_coverage=50.0,
                 num_peptides=5,
                 num_unique_peptides=4,
@@ -621,7 +621,7 @@ class TestIntegration:
         expr_file = tmp_path / "expression.tsv"
         expr_data = pd.DataFrame(
             {
-                "gene_id": [f"ENSG{i:08d}" for i in range(100)],
+                "gene_id": ["ENSG{i:08d}" for i in range(100)],
                 "raw_count": np.random.poisson(100, 100),
             }
         )
@@ -637,7 +637,7 @@ class TestIntegration:
         with open(meth_file, "w") as f:
             f.write("chr\tpos\tstrand\tmethylated\tunmethylated\tcontext\n")
             for i in range(100):
-                f.write(f"chr1\t{i*10000}\t+\t15\t5\tCG\n")
+                f.write("chr1\t{i*10000}\t+\t15\t5\tCG\n")
 
         meth_profile = meth_processor.process(meth_file, sample_id)
 
@@ -648,8 +648,8 @@ class TestIntegration:
         # Mock protein data
         prot_data = pd.DataFrame(
             {
-                "Protein IDs": [f"PROT{i:04d}" for i in range(50)],
-                "Gene names": [f"GENE{i}" for i in range(50)],
+                "Protein IDs": ["PROT{i:04d}" for i in range(50)],
+                "Gene names": ["GENE{i}" for i in range(50)],
                 "Intensity": np.random.lognormal(20, 2, 50),
             }
         )

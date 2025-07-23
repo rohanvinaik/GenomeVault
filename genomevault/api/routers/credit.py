@@ -96,7 +96,7 @@ async def vault_credits(request: VaultRequest, address: str = "0x123..."):  # Wo
     # Check sufficient balance
     if balance.balance < request.amount:
         raise HTTPException(
-            status_code=400, detail=f"Insufficient balance: {balance.balance} < {request.amount}"
+            status_code=400, detail="Insufficient balance: {balance.balance} < {request.amount}"
         )
 
     # Calculate bonus rate based on duration
@@ -172,7 +172,7 @@ async def redeem_vaulted_credits(request: RedeemRequest, address: str = "0x123..
         else:
             raise HTTPException(
                 status_code=400,
-                detail=f"Vault not matured. Matures at block {vault.maturity_block}",
+                detail="Vault not matured. Matures at block {vault.maturity_block}",
             )
 
     # Update balances
@@ -227,7 +227,7 @@ async def transfer_credits(
 
     if from_balance.balance < amount:
         raise HTTPException(
-            status_code=400, detail=f"Insufficient balance: {from_balance.balance} < {amount}"
+            status_code=400, detail="Insufficient balance: {from_balance.balance} < {amount}"
         )
 
     # Execute transfer

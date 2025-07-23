@@ -272,7 +272,7 @@ class BackupManager:
         """Generate unique backup ID"""
         timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
         random_suffix = os.urandom(4).hex()
-        return f"{backup_type}_{timestamp}_{random_suffix}"
+        return "{backup_type}_{timestamp}_{random_suffix}"
 
     def _encrypt_backup(self, data: bytes) -> bytes:
         """Encrypt backup data"""
@@ -309,7 +309,7 @@ class BackupManager:
 
     def _save_local_backup(self, backup_id: str, backup_package: Dict[str, Any]) -> str:
         """Save backup to local storage"""
-        backup_path = os.path.join(self.backup_dir, f"{backup_id}.backup")
+        backup_path = os.path.join(self.backup_dir, "{backup_id}.backup")
 
         with open(backup_path, "w") as f:
             json.dump(backup_package, f)
@@ -319,7 +319,7 @@ class BackupManager:
     def _load_backup(self, backup_id: str) -> Dict[str, Any]:
         """Load backup from storage"""
         # Try local storage first
-        local_path = os.path.join(self.backup_dir, f"{backup_id}.backup")
+        local_path = os.path.join(self.backup_dir, "{backup_id}.backup")
         if os.path.exists(local_path):
             with open(local_path, "r") as f:
                 return json.load(f)
@@ -327,11 +327,11 @@ class BackupManager:
         # Try S3 if configured
         if self.s3_client:
             response = self.s3_client.get_object(
-                Bucket=self.s3_bucket, Key=f"backups/{backup_id}.backup"
+                Bucket=self.s3_bucket, Key="backups/{backup_id}.backup"
             )
             return json.loads(response["Body"].read())
 
-        raise FileNotFoundError(f"Backup {backup_id} not found")
+        raise FileNotFoundError("Backup {backup_id} not found")
 
     def _replicate_to_s3(self, backup_id: str, backup_package: Dict[str, Any]):
         """Replicate backup to S3"""
@@ -341,7 +341,7 @@ class BackupManager:
         try:
             self.s3_client.put_object(
                 Bucket=self.s3_bucket,
-                Key=f"backups/{backup_id}.backup",
+                Key="backups/{backup_id}.backup",
                 Body=json.dumps(backup_package),
                 ServerSideEncryption="AES256",
             )
@@ -354,7 +354,7 @@ class BackupManager:
     def _remove_backup(self, backup_id: str):
         """Remove a backup"""
         # Remove from local storage
-        local_path = os.path.join(self.backup_dir, f"{backup_id}.backup")
+        local_path = os.path.join(self.backup_dir, "{backup_id}.backup")
         if os.path.exists(local_path):
             os.remove(local_path)
 
@@ -362,7 +362,7 @@ class BackupManager:
         if self.s3_client:
             try:
                 self.s3_client.delete_object(
-                    Bucket=self.s3_bucket, Key=f"backups/{backup_id}.backup"
+                    Bucket=self.s3_bucket, Key="backups/{backup_id}.backup"
                 )
             except Exception as e:
                 logger.error("s3_deletion_failed", backup_id=backup_id, error=str(e))
@@ -415,7 +415,7 @@ class DisasterRecoveryOrchestrator:
 
     def create_recovery_point(self, name: str, components: List[str]) -> str:
         """Create a coordinated recovery point across multiple components"""
-        recovery_point_id = f"rp_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}"
+        recovery_point_id = "rp_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}"
         recovery_data = {}
 
         try:
@@ -451,7 +451,7 @@ class DisasterRecoveryOrchestrator:
     def restore_recovery_point(self, recovery_point_id: str) -> Dict[str, Any]:
         """Restore system state from a recovery point"""
         if recovery_point_id not in self.recovery_points:
-            raise ValueError(f"Recovery point {recovery_point_id} not found")
+            raise ValueError("Recovery point {recovery_point_id} not found")
 
         recovery_info = self.recovery_points[recovery_point_id]
 

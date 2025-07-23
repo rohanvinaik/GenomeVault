@@ -72,7 +72,7 @@ class HypervectorEncoder:
         # Multi-resolution dimensions
         self.resolution_dims = {"base": 10000, "mid": 15000, "high": 20000}
 
-        logger.info(f"Initialized HypervectorEncoder with {self.config.dimension}D vectors")
+        logger.info("Initialized HypervectorEncoder with {self.config.dimension}D vectors")
 
     def encode(
         self,
@@ -100,7 +100,7 @@ class HypervectorEncoder:
             if isinstance(features, np.ndarray):
                 features = torch.from_numpy(features).float()
             elif not isinstance(features, torch.Tensor):
-                raise EncodingError(f"Unsupported feature type: {type(features)}")
+                raise EncodingError("Unsupported feature type: {type(features)}")
 
             # Get appropriate dimension
             dimension = self.resolution_dims.get(resolution, self.config.dimension)
@@ -118,13 +118,13 @@ class HypervectorEncoder:
             if self.config.quantize:
                 hypervector = self._quantize(hypervector)
 
-            logger.debug(f"Encoded {omics_type.value} features to {dimension}D hypervector")
+            logger.debug("Encoded {omics_type.value} features to {dimension}D hypervector")
 
             return hypervector
 
         except Exception as e:
-            logger.error(f"Encoding error: {str(e)}")
-            raise EncodingError(f"Failed to encode features: {str(e)}")
+            logger.error("Encoding error: {str(e)}")
+            raise EncodingError("Failed to encode features: {str(e)}")
 
     def encode_multiresolution(
         self, features: Union[np.ndarray, torch.Tensor, Dict], omics_type: OmicsType
@@ -202,7 +202,7 @@ class HypervectorEncoder:
     ) -> torch.Tensor:
         """Get or create projection matrix for given dimensions"""
         # Create cache key
-        cache_key = f"{omics_type.value}_{input_dim}_{output_dim}"
+        cache_key = "{omics_type.value}_{input_dim}_{output_dim}"
 
         if cache_key in self._projection_cache:
             return self._projection_cache[cache_key]
@@ -215,7 +215,7 @@ class HypervectorEncoder:
         elif self.config.projection_type == ProjectionType.ORTHOGONAL:
             matrix = self._create_orthogonal_projection(input_dim, output_dim)
         else:
-            raise EncodingError(f"Unsupported projection type: {self.config.projection_type}")
+            raise EncodingError("Unsupported projection type: {self.config.projection_type}")
 
         # Cache the matrix
         self._projection_cache[cache_key] = matrix
@@ -317,7 +317,7 @@ class HypervectorEncoder:
             # For binary hypervectors
             return (torch.sign(hv1) == torch.sign(hv2)).float().mean().item()
         else:
-            raise ValueError(f"Unknown similarity metric: {metric}")
+            raise ValueError("Unknown similarity metric: {metric}")
 
     def get_projection_stats(self) -> Dict:
         """Get statistics about cached projections"""

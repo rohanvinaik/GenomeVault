@@ -346,7 +346,7 @@ def filter_sensitive_data(logger, log_method, event_dict):
             return [redact_value(item) for item in value]
         elif isinstance(value, str) and len(value) > 100:
             # Redact long strings that might be data
-            return f"[REDACTED - {len(value)} chars]"
+            return "[REDACTED - {len(value)} chars]"
         return value
 
     # Apply redaction

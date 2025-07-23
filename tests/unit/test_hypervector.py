@@ -49,9 +49,9 @@ class TestGenomicEncoder:
     def test_genome_encoding(self, encoder):
         """Test encoding multiple variants"""
         variants = [
-            {"chromosome": "chr1", "position": 12345, "ref": "A", "alt": "G", "type": "SNP"},
-            {"chromosome": "chr2", "position": 67890, "ref": "C", "alt": "T", "type": "SNP"},
-            {"chromosome": "chr3", "position": 11111, "ref": "G", "alt": "A", "type": "SNP"},
+            {"chromosome": "chr1", "position": 12345, "re": "A", "alt": "G", "type": "SNP"},
+            {"chromosome": "chr2", "position": 67890, "re": "C", "alt": "T", "type": "SNP"},
+            {"chromosome": "chr3", "position": 11111, "re": "G", "alt": "A", "type": "SNP"},
         ]
 
         genome_vec = encoder.encode_genome(variants)

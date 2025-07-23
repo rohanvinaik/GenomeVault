@@ -89,13 +89,13 @@ class PIRClient:
         self.session = None
 
         logger.info(
-            f"PIRClient initialized with {len(servers)} servers", extra={"privacy_safe": True}
+            "PIRClient initialized with {len(servers)} servers", extra={"privacy_safe": True}
         )
 
     def _validate_servers(self):
         """Validate server configuration meets security requirements."""
         if len(self.servers) < self.min_servers:
-            raise ValueError(f"Insufficient servers: {len(self.servers)} < {self.min_servers}")
+            raise ValueError("Insufficient servers: {len(self.servers)} < {self.min_servers}")
 
         # Calculate privacy guarantee
         ts_servers = [s for s in self.servers if s.is_trusted_signatory]
@@ -112,7 +112,7 @@ class PIRClient:
 
         if failure_prob > config.pir.target_failure_probability:
             logger.warning(
-                f"Privacy failure probability {failure_prob:.2e} exceeds target {config.pir.target_failure_probability:.2e}",
+                "Privacy failure probability {failure_prob:.2e} exceeds target {config.pir.target_failure_probability:.2e}",
                 extra={"privacy_safe": True},
             )
 
@@ -156,10 +156,10 @@ class PIRClient:
             PIR query object
         """
         if target_index >= self.database_size:
-            raise ValueError(f"Index {target_index} out of bounds")
+            raise ValueError("Index {target_index} out of bounds")
 
         # Generate query ID
-        query_id = hashlib.sha256(f"{target_index}:{time.time()}".encode()).hexdigest()[:16]
+        query_id = hashlib.sha256("{target_index}:{time.time()}".encode()).hexdigest()[:16]
 
         # Create unit vector for target
         e_j = np.zeros(self.database_size)
@@ -176,7 +176,7 @@ class PIRClient:
             metadata={"database_size": self.database_size, "num_servers": len(self.servers)},
         )
 
-        logger.info(f"PIR query created for index {target_index}", extra={"privacy_safe": True})
+        logger.info("PIR query created for index {target_index}", extra={"privacy_safe": True})
 
         return query
 
@@ -244,13 +244,13 @@ class PIRClient:
 
         if len(valid_responses) < self.min_servers:
             raise RuntimeError(
-                f"Insufficient responses: {len(valid_responses)} < {self.min_servers}"
+                "Insufficient responses: {len(valid_responses)} < {self.min_servers}"
             )
 
         # Reconstruct data
         result = self._reconstruct_data(valid_responses)
 
-        logger.info(f"PIR query {query.query_id} completed", extra={"privacy_safe": True})
+        logger.info("PIR query {query.query_id} completed", extra={"privacy_safe": True})
 
         return result
 
@@ -280,12 +280,12 @@ class PIRClient:
             start_time = time.time()
 
             async with self.session.post(
-                f"{server.endpoint}/pir/query",
+                "{server.endpoint}/pir/query",
                 json=request_data,
                 timeout=aiohttp.ClientTimeout(total=config.pir.query_timeout_seconds),
             ) as response:
                 if response.status != 200:
-                    logger.error(f"PIR query failed on {server.server_id}: {response.status}")
+                    logger.error("PIR query failed on {server.server_id}: {response.status}")
                     return None
 
                 result = await response.json()
@@ -304,7 +304,7 @@ class PIRClient:
             return pir_response
 
         except Exception as e:
-            logger.error(f"Error querying server {server.server_id}: {e}")
+            logger.error("Error querying server {server.server_id}: {e}")
             return None
 
     def _reconstruct_data(self, responses: List[PIRResponse]) -> Any:
@@ -576,14 +576,14 @@ if __name__ == "__main__":
 
     # Calculate privacy guarantees
     print("\nPrivacy Guarantees:")
-    print(f"2 TS servers: P_fail = {client.calculate_privacy_failure_probability(2, 0.98):.2e}")
-    print(f"3 TS servers: P_fail = {client.calculate_privacy_failure_probability(3, 0.98):.2e}")
+    print("2 TS servers: P_fail = {client.calculate_privacy_failure_probability(2, 0.98):.2e}")
+    print("3 TS servers: P_fail = {client.calculate_privacy_failure_probability(3, 0.98):.2e}")
 
     # Estimate communication cost
     cost = client.estimate_communication_cost(num_queries=10)
     print("\nCommunication Cost (10 queries):")
-    print(f"Total: {cost['total_bytes'] / 1024:.2f} KB")
-    print(f"Latency: {cost['estimated_latency_ms']:.0f} ms")
+    print("Total: {cost['total_bytes'] / 1024:.2f} KB")
+    print("Latency: {cost['estimated_latency_ms']:.0f} ms")
 
     # Example query (would be async in practice)
     async def example_query():

@@ -161,7 +161,7 @@ class CircuitManager:
             Circuit instance
         """
         if circuit_name not in self.circuits:
-            raise ValueError(f"Unknown circuit: {circuit_name}")
+            raise ValueError("Unknown circuit: {circuit_name}")
 
         metadata = self.circuits[circuit_name]
 
@@ -194,7 +194,7 @@ class CircuitManager:
     def get_circuit_metadata(self, circuit_name: str) -> CircuitMetadata:
         """Get metadata for a circuit."""
         if circuit_name not in self.circuits:
-            raise ValueError(f"Unknown circuit: {circuit_name}")
+            raise ValueError("Unknown circuit: {circuit_name}")
 
         return self.circuits[circuit_name]
 
@@ -249,7 +249,7 @@ class CircuitManager:
         if self._needs_optimization(base_circuit, data_characteristics):
             base_circuit = self._optimize_circuit_selection(base_circuit, data_characteristics)
 
-        logger.info(f"Selected circuit: {base_circuit} for {analysis_type}")
+        logger.info("Selected circuit: {base_circuit} for {analysis_type}")
 
         return base_circuit
 
@@ -275,7 +275,7 @@ class CircuitManager:
     ) -> str:
         """Optimize circuit selection based on constraints."""
         # Cache key for optimization
-        cache_key = f"{base_circuit}:{json.dumps(data_characteristics, sort_keys=True)}"
+        cache_key = "{base_circuit}:{json.dumps(data_characteristics, sort_keys=True)}"
 
         if cache_key in self.optimization_cache:
             return self.optimization_cache[cache_key]
@@ -366,7 +366,7 @@ class CircuitManager:
                 elif target_time < 30:
                     optimized_params["permutations"] = 500
 
-        logger.info(f"Optimized parameters for {circuit_name}: {optimized_params}")
+        logger.info("Optimized parameters for {circuit_name}: {optimized_params}")
 
         return optimized_params
 
@@ -441,12 +441,12 @@ class CircuitManager:
         # Check public inputs
         for required in expected_inputs["public"]:
             if required not in public_inputs:
-                errors.append(f"Missing public input: {required}")
+                errors.append("Missing public input: {required}")
 
         # Check private inputs
         for required in expected_inputs["private"]:
             if required not in private_inputs:
-                errors.append(f"Missing private input: {required}")
+                errors.append("Missing private input: {required}")
 
         # Circuit-specific validation
         if circuit_name == "diabetes_risk_alert":
@@ -477,7 +477,7 @@ class CircuitManager:
         expected = {
             "variant_presence": {
                 "public": ["variant_hash", "reference_hash", "commitment_root"],
-                "private": ["variant_data", "merkle_proof", "witness_randomness"],
+                "private": ["variant_data", "merkle_proo", "witness_randomness"],
             },
             "polygenic_risk_score": {
                 "public": ["prs_model", "score_range", "result_commitment", "genome_commitment"],
@@ -618,10 +618,10 @@ class CircuitManager:
                     "commitment_root": hashlib.sha256(b"test_root").hexdigest(),
                 },
                 "private_inputs": {
-                    "variant_data": {"chr": "chr1", "pos": 12345, "ref": "A", "alt": "G"},
+                    "variant_data": {"chr": "chr1", "pos": 12345, "re": "A", "alt": "G"},
                     "merkle_proof": {
                         "path": [
-                            hashlib.sha256(f"node_{i}".encode()).hexdigest() for i in range(20)
+                            hashlib.sha256("node_{i}".encode()).hexdigest() for i in range(20)
                         ],
                         "indices": [i % 2 for i in range(20)],
                     },

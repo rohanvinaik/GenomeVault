@@ -28,6 +28,7 @@ GenomeVault 3.0 solves the fundamental tension between advancing precision medic
 5. **HIPAA Fast-Track** - Automated verification for healthcare providers
 6. **Core API** - All network endpoints implemented with FastAPI
 7. **Blockchain Governance** - DAO with committee structure and dual-axis voting
+8. **Clinical Validation** - Comprehensive validation using real patient data (NHANES, Pima) with privacy preservation
 
 ### 🚧 In Progress
 
@@ -49,6 +50,7 @@ genomevault/
 ├── api/                  # Core network API endpoints
 ├── clinical/             # Clinical applications (diabetes pilot)
 ├── advanced_analysis/    # Research modules & AI integration
+├── clinical_validation/  # Clinical validation with real patient data
 ├── examples/             # Usage examples and demos
 ├── tests/                # Comprehensive test suite
 └── utils/                # Shared utilities and configuration
@@ -125,6 +127,25 @@ proof = circuit_manager.prove_variant_presence(
 is_valid = circuit_manager.verify_proof(proof)
 ```
 
+### Clinical Validation
+
+```python
+from clinical_validation import ClinicalValidator, NHANESDataSource
+
+# Initialize validator
+validator = ClinicalValidator()
+
+# Add clinical data sources
+validator.add_data_source(NHANESDataSource())
+
+# Run validation with privacy-preserving proofs
+results = validator.run_full_clinical_validation()
+
+# Results show clinical accuracy while maintaining privacy
+print(f"Components tested: {results['components_tested']}")
+print(f"ZK proofs generated: {results['zk_proof_metrics']}")
+```
+
 ### HIPAA Provider Registration
 
 ```python
@@ -174,6 +195,7 @@ pytest --cov=genomevault
 
 - [HIPAA Fast-Track Guide](docs/HIPAA_FASTTRACK.md)
 - [Implementation Status](IMPLEMENTATION_STATUS.md)
+- [Clinical Validation](clinical_validation/README.md)
 - [API Reference](docs/api/)
 - [Architecture Overview](docs/architecture/)
 

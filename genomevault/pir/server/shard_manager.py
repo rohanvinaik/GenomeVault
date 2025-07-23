@@ -101,7 +101,7 @@ class ShardManager:
         # Load existing shards
         self._load_shard_metadata()
 
-        logger.info(f"ShardManager initialized with {len(self.shards)} shards")
+        logger.info("ShardManager initialized with {len(self.shards)} shards")
 
     def _load_shard_metadata(self):
         """Load shard metadata from manifest."""
@@ -141,7 +141,7 @@ class ShardManager:
             "version": "1.0",
             "created": time.time(),
             "shards": [
-                {**shard.to_dict(), "filename": f"shard_{shard.shard_index:04d}.dat"}
+                {**shard.to_dict(), "filename": "shard_{shard.shard_index:04d}.dat"}
                 for shard in self.shards.values()
             ],
             "distribution": {
@@ -167,7 +167,7 @@ class ShardManager:
         Returns:
             List of created shard IDs
         """
-        logger.info(f"Creating {self.num_shards} shards from {data_source}")
+        logger.info("Creating {self.num_shards} shards from {data_source}")
 
         # Read source data
         with open(data_source, "rb") as f:
@@ -201,7 +201,7 @@ class ShardManager:
         with self.lock:
             self._save_shard_metadata()
 
-        logger.info(f"Created {len(created_shards)} shards")
+        logger.info("Created {len(created_shards)} shards")
         return created_shards
 
     def _create_single_shard(
@@ -220,7 +220,7 @@ class ShardManager:
         """
         try:
             # Generate shard ID
-            shard_id = f"{data_type}_{shard_index:04d}_{int(time.time())}"
+            shard_id = "{data_type}_{shard_index:04d}_{int(time.time())}"
 
             # Calculate checksum
             checksum = hashlib.sha256(shard_data).hexdigest()
@@ -236,7 +236,7 @@ class ShardManager:
             item_count = len(shard_data) // item_size
 
             # Write shard data
-            shard_path = self.data_directory / f"shard_{shard_index:04d}.dat"
+            shard_path = self.data_directory / "shard_{shard_index:04d}.dat"
             with open(shard_path, "wb") as f:
                 f.write(shard_data)
 
@@ -256,11 +256,11 @@ class ShardManager:
             with self.lock:
                 self.shards[shard_id] = metadata
 
-            logger.info(f"Created shard {shard_id} with {item_count} items")
+            logger.info("Created shard {shard_id} with {item_count} items")
             return shard_id
 
         except Exception as e:
-            logger.error(f"Error creating shard {shard_index}: {e}")
+            logger.error("Error creating shard {shard_index}: {e}")
             return None
 
     def distribute_shards(self, server_list: List[str]) -> ShardDistribution:
@@ -275,7 +275,7 @@ class ShardManager:
         """
         if len(server_list) < self.shard_distribution.replication_factor:
             raise ValueError(
-                f"Insufficient servers: {len(server_list)} < {self.shard_distribution.replication_factor}"
+                "Insufficient servers: {len(server_list)} < {self.shard_distribution.replication_factor}"
             )
 
         # Clear existing assignments
@@ -314,7 +314,7 @@ class ShardManager:
         with self.lock:
             self._save_shard_metadata()
 
-        logger.info(f"Distributed {len(self.shards)} shards across {len(server_list)} servers")
+        logger.info("Distributed {len(self.shards)} shards across {len(server_list)} servers")
         return self.shard_distribution
 
     def verify_shard_integrity(self, shard_id: str) -> bool:
@@ -328,14 +328,14 @@ class ShardManager:
             True if integrity check passes
         """
         if shard_id not in self.shards:
-            logger.error(f"Unknown shard: {shard_id}")
+            logger.error("Unknown shard: {shard_id}")
             return False
 
         metadata = self.shards[shard_id]
-        shard_path = self.data_directory / f"shard_{metadata.shard_index:04d}.dat"
+        shard_path = self.data_directory / "shard_{metadata.shard_index:04d}.dat"
 
         if not shard_path.exists():
-            logger.error(f"Shard file missing: {shard_path}")
+            logger.error("Shard file missing: {shard_path}")
             return False
 
         # Calculate checksum
@@ -344,7 +344,7 @@ class ShardManager:
             checksum = hashlib.sha256(data).hexdigest()
 
         if checksum != metadata.checksum:
-            logger.error(f"Shard {shard_id} checksum mismatch")
+            logger.error("Shard {shard_id} checksum mismatch")
             return False
 
         return True
@@ -361,11 +361,11 @@ class ShardManager:
             Success status
         """
         if shard_id not in self.shards:
-            logger.error(f"Unknown shard: {shard_id}")
+            logger.error("Unknown shard: {shard_id}")
             return False
 
         metadata = self.shards[shard_id]
-        shard_path = self.data_directory / f"shard_{metadata.shard_index:04d}.dat"
+        shard_path = self.data_directory / "shard_{metadata.shard_index:04d}.dat"
 
         # Backup existing shard
         backup_path = shard_path.with_suffix(".bak")
@@ -380,7 +380,7 @@ class ShardManager:
             with self.lock:
                 metadata.checksum = hashlib.sha256(new_data).hexdigest()
                 metadata.size_bytes = len(new_data)
-                metadata.version = f"{float(metadata.version) + 0.1:.1f}"
+                metadata.version = "{float(metadata.version) + 0.1:.1f}"
 
                 # Recalculate item count
                 if metadata.data_type == "genomic":
@@ -398,11 +398,11 @@ class ShardManager:
             # Remove backup
             backup_path.unlink()
 
-            logger.info(f"Updated shard {shard_id} to version {metadata.version}")
+            logger.info("Updated shard {shard_id} to version {metadata.version}")
             return True
 
         except Exception as e:
-            logger.error(f"Error updating shard {shard_id}: {e}")
+            logger.error("Error updating shard {shard_id}: {e}")
 
             # Restore backup
             if backup_path.exists():
@@ -501,7 +501,7 @@ if __name__ == "__main__":
 
         # Create shards
         shard_ids = manager.create_shards_from_data(test_file, data_type="genomic")
-        print(f"Created {len(shard_ids)} shards")
+        print("Created {len(shard_ids)} shards")
 
         # Distribute shards
         servers = ["ts1", "ts2", "ln1", "ln2", "ln3"]
@@ -509,8 +509,8 @@ if __name__ == "__main__":
 
         # Show distribution
         for shard_id, servers in distribution.server_assignments.items():
-            print(f"Shard {shard_id} -> {servers}")
+            print("Shard {shard_id} -> {servers}")
 
         # Get statistics
         stats = manager.get_shard_statistics()
-        print(f"\nStatistics: {json.dumps(stats, indent=2)}")
+        print("\nStatistics: {json.dumps(stats, indent=2)}")

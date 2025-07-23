@@ -20,12 +20,12 @@ class TestCompressionTiers:
         """Generate realistic SNP test data"""
         # Mini tier: ~5,000 most-studied SNPs
         mini_snps = {
-            f"rs{i}": np.random.choice(["AA", "AT", "TT"], p=[0.25, 0.5, 0.25]) for i in range(5000)
+            "rs{i}": np.random.choice(["AA", "AT", "TT"], p=[0.25, 0.5, 0.25]) for i in range(5000)
         }
 
         # Clinical tier: ACMG + PharmGKB variants (~120k)
         clinical_snps = {
-            f"rs{i}": np.random.choice(
+            "rs{i}": np.random.choice(
                 ["AA", "AT", "TT", "GG", "GC", "CC"], p=[0.15, 0.25, 0.15, 0.15, 0.20, 0.10]
             )
             for i in range(120000)
@@ -49,7 +49,7 @@ class TestCompressionTiers:
 
         # Verify size is within expected range (allowing 10% variance)
         size_kb = len(compressed) / 1024
-        assert 22.5 <= size_kb <= 27.5, f"Mini tier size {size_kb}KB outside expected 25KB ±10%"
+        assert 22.5 <= size_kb <= 27.5, "Mini tier size {size_kb}KB outside expected 25KB ±10%"
 
         # Verify lossless compression
         decompressed = compressor.decompress(compressed)
@@ -62,7 +62,7 @@ class TestCompressionTiers:
 
         # Verify size is within expected range
         size_kb = len(compressed) / 1024
-        assert 270 <= size_kb <= 330, f"Clinical tier size {size_kb}KB outside expected 300KB ±10%"
+        assert 270 <= size_kb <= 330, "Clinical tier size {size_kb}KB outside expected 300KB ±10%"
 
         # Verify key ACMG variants preserved
         decompressed = compressor.decompress(compressed)
@@ -78,12 +78,12 @@ class TestCompressionTiers:
 
             assert (
                 100 <= size_kb <= 200
-            ), f"HDC {level} compression {size_kb}KB outside 100-200KB range"
+            ), "HDC {level} compression {size_kb}KB outside 100-200KB range"
 
             # Test reconstruction error is minimal
             decompressed = compressor.decompress(compressed)
             mse = np.mean((vector - decompressed) ** 2)
-            assert mse < 1e-6, f"Reconstruction error too high: {mse}"
+            assert mse < 1e-6, "Reconstruction error too high: {mse}"
 
     def test_combined_storage_calculation(self, sample_snp_data, sample_hypervector):
         """Verify S_client = ∑modalities Size_tier formula"""
@@ -100,7 +100,7 @@ class TestCompressionTiers:
 
         assert (
             abs(total_size - expected) < expected * 0.1
-        ), f"Combined size {total_size}KB differs from expected {expected}KB"
+        ), "Combined size {total_size}KB differs from expected {expected}KB"
 
     @pytest.mark.parametrize(
         "tier,expected_features,expected_size",

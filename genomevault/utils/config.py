@@ -195,12 +195,12 @@ class Config:
         config_dir.mkdir(parents=True, exist_ok=True)
         # Use JSON format if YAML not available
         extension = ".yaml" if HAS_YAML else ".json"
-        return config_dir / f"{self.environment.value}{extension}"
+        return config_dir / "{self.environment.value}{extension}"
 
     def _load_config(self):
         """Load configuration from file"""
         if not self.config_file or not Path(self.config_file).exists():
-            logger.info(f"No config file found at {self.config_file}, using defaults")
+            logger.info("No config file found at {self.config_file}, using defaults")
             return
 
         try:
@@ -223,9 +223,9 @@ class Config:
             self._update_config_object(self.storage, data.get("storage", {}))
             self._update_config_object(self.processing, data.get("processing", {}))
 
-            logger.info(f"Loaded configuration from {self.config_file}")
+            logger.info("Loaded configuration from {self.config_file}")
         except Exception as e:
-            logger.error(f"Failed to load configuration: {e}")
+            logger.error("Failed to load configuration: {e}")
             raise
 
     def _update_config_object(self, obj: Any, data: Dict[str, Any]):
@@ -379,7 +379,7 @@ class Config:
             else:
                 json.dump(config_data, f, indent=2)
 
-        logger.info(f"Saved configuration to {path}")
+        logger.info("Saved configuration to {path}")
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert configuration to dictionary"""

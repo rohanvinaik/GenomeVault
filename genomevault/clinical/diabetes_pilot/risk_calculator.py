@@ -120,7 +120,7 @@ class DiabetesRiskCalculator:
         weights_sum = 0.0
 
         # Create variant lookup
-        variant_lookup = {f"{v['chromosome']}:{v['position']}": v for v in variants}
+        variant_lookup = {"{v['chromosome']}:{v['position']}": v for v in variants}
 
         # Calculate weighted risk score
         for risk_var in self.RISK_VARIANTS:
@@ -175,7 +175,7 @@ class DiabetesRiskCalculator:
         )
 
         logger.info(
-            f"Calculated PRS: {prs:.3f} (category: {profile.get_risk_category()})",
+            "Calculated PRS: {prs:.3f} (category: {profile.get_risk_category()})",
             extra={"privacy_safe": True},
         )
 
@@ -223,7 +223,7 @@ class DiabetesRiskCalculator:
             "glucose_threshold": GLUCOSE_THRESHOLD_MG_DL,
             "risk_threshold": risk_threshold,
             "result_commitment": hashlib.sha256(
-                f"{alert_triggered}:{datetime.now().isoformat()}".encode()
+                "{alert_triggered}:{datetime.now().isoformat()}".encode()
             ).hexdigest(),
         }
 
@@ -255,7 +255,7 @@ class DiabetesRiskCalculator:
         )
 
         logger.info(
-            f"Risk alert created: triggered={alert_triggered}", extra={"privacy_safe": True}
+            "Risk alert created: triggered={alert_triggered}", extra={"privacy_safe": True}
         )
 
         return alert
@@ -290,12 +290,12 @@ class DiabetesRiskCalculator:
             verification_time = (time.time() - start) * 1000
 
             if verification_time > 25:
-                logger.warning(f"Verification took {verification_time:.1f}ms")
+                logger.warning("Verification took {verification_time:.1f}ms")
 
             return True
 
         except Exception as e:
-            logger.error(f"Alert verification failed: {e}")
+            logger.error("Alert verification failed: {e}")
             return False
 
     def monitor_continuous_risk(
@@ -538,9 +538,9 @@ if __name__ == "__main__":
     # Calculate genetic risk
     print("Calculating genetic risk...")
     genetic_profile = calculator.calculate_genetic_risk(variants)
-    print(f"PRS Score: {genetic_profile.prs_score:.3f}")
-    print(f"Risk Category: {genetic_profile.get_risk_category()}")
-    print(f"Confidence Interval: {genetic_profile.confidence_interval}")
+    print("PRS Score: {genetic_profile.prs_score:.3f}")
+    print("Risk Category: {genetic_profile.get_risk_category()}")
+    print("Confidence Interval: {genetic_profile.confidence_interval}")
 
     # Example glucose reading
     glucose = GlucoseReading(
@@ -550,20 +550,20 @@ if __name__ == "__main__":
     # Create risk alert
     print("\nCreating risk alert...")
     alert = calculator.create_risk_alert(genetic_profile, glucose)
-    print(f"Alert Triggered: {alert.alert_triggered}")
-    print(f"Proof ID: {alert.proof_id}")
-    print(f"Proof Size: {alert.metadata['proof_size_bytes']} bytes")
-    print(f"Verification Time: {alert.metadata['verification_time_ms']:.1f} ms")
+    print("Alert Triggered: {alert.alert_triggered}")
+    print("Proof ID: {alert.proof_id}")
+    print("Proof Size: {alert.metadata['proof_size_bytes']} bytes")
+    print("Verification Time: {alert.metadata['verification_time_ms']:.1f} ms")
 
     # Verify alert
     public_inputs = {
         "glucose_threshold": GLUCOSE_THRESHOLD_MG_DL,
         "risk_threshold": 0.75,
-        "result_commitment": hashlib.sha256(f"{alert.alert_triggered}".encode()).hexdigest(),
+        "result_commitment": hashlib.sha256("{alert.alert_triggered}".encode()).hexdigest(),
     }
 
     is_valid = calculator.verify_alert(alert, public_inputs)
-    print(f"\nProof Verification: {'PASSED' if is_valid else 'FAILED'}")
+    print("\nProof Verification: {'PASSED' if is_valid else 'FAILED'}")
 
     # Test continuous monitoring
     print("\nTesting continuous monitoring...")
@@ -575,9 +575,9 @@ if __name__ == "__main__":
     ]
 
     monitoring = calculator.monitor_continuous_risk(genetic_profile, glucose_history)
-    print(f"Risk Level: {monitoring['risk_level']}")
-    print(f"Trend: {monitoring['trend']}")
-    print(f"Recommendations: {monitoring['recommendations']}")
+    print("Risk Level: {monitoring['risk_level']}")
+    print("Trend: {monitoring['trend']}")
+    print("Recommendations: {monitoring['recommendations']}")
 
     # Test clinical integration
     print("\nTesting clinical integration...")
@@ -604,4 +604,4 @@ if __name__ == "__main__":
     }
 
     clinical_result = clinical.process_clinical_data(patient_data)
-    print(f"Clinical Assessment: {json.dumps(clinical_result, indent=2, default=str)}")
+    print("Clinical Assessment: {json.dumps(clinical_result, indent=2, default=str)}")

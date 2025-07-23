@@ -96,11 +96,11 @@ class VariantPresenceCircuit(BaseCircuit):
     def _compute_variant_leaf(self) -> FieldElement:
         """Compute Merkle tree leaf for variant"""
         variant_str = (
-            f"{self.variant_data['chr']}:"
-            f"{self.variant_data['pos']}:"
-            f"{self.variant_data['ref']}:"
-            f"{self.variant_data['alt']}:"
-            f"{self.variant_data.get('genotype', '0/1')}"
+            "{self.variant_data['chr']}:"
+            "{self.variant_data['pos']}:"
+            "{self.variant_data['ref']}:"
+            "{self.variant_data['alt']}:"
+            "{self.variant_data.get('genotype', '0/1')}"
         )
         leaf_hash = hashlib.sha256(variant_str.encode()).hexdigest()
         return FieldElement(int(leaf_hash, 16))
@@ -108,10 +108,10 @@ class VariantPresenceCircuit(BaseCircuit):
     def _hash_variant(self, variant_data: Dict) -> FieldElement:
         """Hash variant data"""
         variant_str = (
-            f"{variant_data['chr']}:"
-            f"{variant_data['pos']}:"
-            f"{variant_data['ref']}:"
-            f"{variant_data['alt']}"
+            "{variant_data['chr']}:"
+            "{variant_data['pos']}:"
+            "{variant_data['ref']}:"
+            "{variant_data['alt']}"
         )
         hash_val = hashlib.sha256(variant_str.encode()).hexdigest()
         return FieldElement(int(hash_val, 16))
@@ -212,7 +212,7 @@ class PolygenenicRiskScoreCircuit(BaseCircuit):
 
     def _commit_score(self, score: FieldElement, randomness: FieldElement) -> FieldElement:
         """Create commitment to PRS score"""
-        data = f"PRS:{score.value}:{randomness.value}".encode()
+        data = "PRS:{score.value}:{randomness.value}".encode()
         hash_val = hashlib.sha256(data).hexdigest()
         return FieldElement(int(hash_val, 16))
 
@@ -293,7 +293,7 @@ class DiabetesRiskCircuit(BaseCircuit):
 
     def _commit_result(self, result: FieldElement, randomness: FieldElement) -> FieldElement:
         """Commit to boolean result"""
-        data = f"DIABETES_RISK:{result.value}:{randomness.value}".encode()
+        data = "DIABETES_RISK:{result.value}:{randomness.value}".encode()
         hash_val = hashlib.sha256(data).hexdigest()
         return FieldElement(int(hash_val, 16))
 
@@ -400,8 +400,8 @@ class PharmacogenomicCircuit(BaseCircuit):
 
     def _commit_genotypes(self, genotypes: List[Dict], randomness: FieldElement) -> FieldElement:
         """Create commitment to genotypes"""
-        genotype_str = ":".join(f"{g['variant']}={g['genotype']}" for g in genotypes)
-        data = f"GENOTYPES:{genotype_str}:{randomness.value}".encode()
+        genotype_str = ":".join("{g['variant']}={g['genotype']}" for g in genotypes)
+        data = "GENOTYPES:{genotype_str}:{randomness.value}".encode()
         hash_val = hashlib.sha256(data).hexdigest()
         return FieldElement(int(hash_val, 16))
 
@@ -519,7 +519,7 @@ class PathwayEnrichmentCircuit(BaseCircuit):
         p_value = FieldElement((exceed_count + 1) * 1000 // (len(permutation_scores) + 1))
 
         # Create commitment
-        data = f"PVALUE:{p_value.value}:{randomness.value}".encode()
+        data = "PVALUE:{p_value.value}:{randomness.value}".encode()
         hash_val = hashlib.sha256(data).hexdigest()
         return FieldElement(int(hash_val, 16))
 
@@ -545,7 +545,7 @@ def create_hypervector_proof(
         return {
             "circuit": "hypervector_similarity",
             "similarity_commitment": hashlib.sha256(
-                f"{hypervector.sum().item()}".encode()
+                "{hypervector.sum().item()}".encode()
             ).hexdigest(),
             "dimension": hypervector.shape[0],
         }
@@ -554,11 +554,11 @@ def create_hypervector_proof(
         return {
             "circuit": "hypervector_range",
             "norm_commitment": hashlib.sha256(
-                f"{torch.norm(hypervector).item()}".encode()
+                "{torch.norm(hypervector).item()}".encode()
             ).hexdigest(),
             "sparsity_commitment": hashlib.sha256(
-                f"{(hypervector == 0).float().mean().item()}".encode()
+                "{(hypervector == 0).float().mean().item()}".encode()
             ).hexdigest(),
         }
     else:
-        raise ValueError(f"Unknown proof type: {proof_type}")
+        raise ValueError("Unknown proof type: {proof_type}")

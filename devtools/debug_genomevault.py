@@ -20,10 +20,10 @@ class GenomeVaultDebugger:
         print("🐍 Checking Python version...")
         version = sys.version_info
         if version.major == 3 and version.minor >= 8:
-            print(f"  ✅ Python {version.major}.{version.minor}.{version.micro} is compatible")
+            print("  ✅ Python {version.major}.{version.minor}.{version.micro} is compatible")
             return True
         else:
-            self.issues.append(f"Python {version.major}.{version.minor} is too old. Need 3.8+")
+            self.issues.append("Python {version.major}.{version.minor} is too old. Need 3.8+")
             return False
 
     def check_pydantic(self):
@@ -33,7 +33,7 @@ class GenomeVaultDebugger:
             import pydantic
 
             version = pydantic.VERSION
-            print(f"  ✅ Pydantic {version} is installed")
+            print("  ✅ Pydantic {version} is installed")
 
             # Check if pydantic-settings is installed
             try:
@@ -61,7 +61,7 @@ class GenomeVaultDebugger:
             self.fixed.append("Pydantic upgraded to v2 with pydantic-settings")
             return True
         except subprocess.CalledProcessError as e:
-            print(f"  ❌ Failed to fix Pydantic: {e}")
+            print("  ❌ Failed to fix Pydantic: {e}")
             return False
 
     def check_imports(self):
@@ -82,13 +82,13 @@ class GenomeVaultDebugger:
         for module in modules_to_check:
             try:
                 __import__(module)
-                print(f"  ✅ {module}")
+                print("  ✅ {module}")
             except ImportError as e:
-                print(f"  ❌ {module}: {e}")
+                print("  ❌ {module}: {e}")
                 failed_imports.append((module, str(e)))
 
         if failed_imports:
-            self.issues.append(f"Failed to import {len(failed_imports)} modules")
+            self.issues.append("Failed to import {len(failed_imports)} modules")
             return False
         return True
 
@@ -112,7 +112,7 @@ class GenomeVaultDebugger:
                         missing.append(pkg_name)
 
             if missing:
-                self.issues.append(f"Missing packages: {', '.join(missing)}")
+                self.issues.append("Missing packages: {', '.join(missing)}")
                 return False
 
             print("  ✅ All requirements satisfied")
@@ -140,7 +140,7 @@ class GenomeVaultDebugger:
                 self.issues.append("Tests failed")
                 return False
         except subprocess.CalledProcessError as e:
-            self.issues.append(f"Failed to run tests: {e}")
+            self.issues.append("Failed to run tests: {e}")
             return False
 
     def run_diagnostics(self):
@@ -178,13 +178,13 @@ class GenomeVaultDebugger:
         if self.fixed:
             print("✅ Fixed issues:")
             for fix in self.fixed:
-                print(f"  - {fix}")
+                print("  - {fix}")
             print()
 
         if self.issues:
             print("❌ Remaining issues:")
             for issue in self.issues:
-                print(f"  - {issue}")
+                print("  - {issue}")
             print()
             print("🔧 To fix remaining issues, run:")
             print("  pip install -r requirements.txt")

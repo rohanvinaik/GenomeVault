@@ -52,7 +52,7 @@ class HierarchicalHypervector:
         elif level == "high":
             return self.high
         else:
-            raise ValueError(f"Unknown level: {level}")
+            raise ValueError("Unknown level: {level}")
 
 
 class HolographicRepresentation:
@@ -333,7 +333,7 @@ class HierarchicalEncoder:
             },
         )
 
-        logger.debug(f"Encoded {omics_type.value} data into hierarchical hypervector")
+        logger.debug("Encoded {omics_type.value} data into hierarchical hypervector")
 
         return hierarchical_hv
 
@@ -413,7 +413,7 @@ class HierarchicalEncoder:
                 # Cross-modal binding with attention
                 bound = self._cross_modal_binding(v1, v2)
             else:
-                raise ValueError(f"Unknown binding operation: {operation}")
+                raise ValueError("Unknown binding operation: {operation}")
 
             # Normalize
             bound_vectors[level] = bound / (torch.norm(bound) + 1e-8)
@@ -577,10 +577,10 @@ if __name__ == "__main__":
         ProjectionDomain.PHARMACOGENOMICS,
     ]:
         hv = encoder.encode_hierarchical(genomic_data, OmicsType.GENOMIC, domain)
-        print(f"\n{domain.value} domain:")
-        print(f"  Base dimensions: {hv.base.shape}")
-        print(f"  Mid dimensions: {hv.mid.shape}")
-        print(f"  High dimensions: {hv.high.shape}")
+        print("\n{domain.value} domain:")
+        print("  Base dimensions: {hv.base.shape}")
+        print("  Mid dimensions: {hv.mid.shape}")
+        print("  High dimensions: {hv.high.shape}")
 
     # Test binding operations
     print("\nTesting binding operations:")
@@ -592,18 +592,18 @@ if __name__ == "__main__":
     bound_circular = encoder.bind_hypervectors(hv1, hv2, "circular")
     bound_cross_modal = encoder.bind_hypervectors(hv1, hv2, "cross_modal")
 
-    print(f"Circular binding metadata: {bound_circular.metadata}")
-    print(f"Cross-modal binding metadata: {bound_cross_modal.metadata}")
+    print("Circular binding metadata: {bound_circular.metadata}")
+    print("Cross-modal binding metadata: {bound_cross_modal.metadata}")
 
     # Test similarity
     similarity = encoder.similarity_multiresolution(hv1, hv1)
-    print(f"\nSelf-similarity: {similarity:.4f}")
+    print("\nSelf-similarity: {similarity:.4f}")
 
     similarity_cross = encoder.similarity_multiresolution(hv1, hv2)
-    print(f"Cross-omics similarity: {similarity_cross:.4f}")
+    print("Cross-omics similarity: {similarity_cross:.4f}")
 
     # Test compression
     print("\nTesting compression to tiers:")
     for tier in ["mini", "clinical", "full"]:
         compressed = encoder.compress_to_tier(hv1, tier)
-        print(f"{tier} tier size: {compressed.shape}")
+        print("{tier} tier size: {compressed.shape}")

@@ -15,7 +15,7 @@ print("=" * 70)
 project_root = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, project_root)
 
-print(f"\nProject root: {project_root}")
+print("\nProject root: {project_root}")
 
 # Instead of importing through the package hierarchy,
 # let's directly check if the file can be imported with correct paths
@@ -23,7 +23,7 @@ print(f"\nProject root: {project_root}")
 print("\n1. Checking if the biological variant.py file exists...")
 variant_file = os.path.join(project_root, "zk_proofs", "circuits", "biological", "variant.py")
 if os.path.exists(variant_file):
-    print(f"✅ File exists: {variant_file}")
+    print("✅ File exists: {variant_file}")
 
     # Read and check the import
     with open(variant_file, "r") as f:
@@ -34,14 +34,14 @@ if os.path.exists(variant_file):
     else:
         print("❌ Incorrect import path")
 else:
-    print(f"❌ File not found: {variant_file}")
+    print("❌ File not found: {variant_file}")
 
 print("\n2. Checking if base_circuits.py exists...")
 base_circuits_file = os.path.join(project_root, "zk_proofs", "circuits", "base_circuits.py")
 if os.path.exists(base_circuits_file):
-    print(f"✅ File exists: {base_circuits_file}")
+    print("✅ File exists: {base_circuits_file}")
 else:
-    print(f"❌ File not found: {base_circuits_file}")
+    print("❌ File not found: {base_circuits_file}")
 
 print("\n3. Creating a minimal import test...")
 # Create a temporary test that bypasses the dependency chain
@@ -62,7 +62,7 @@ try:
     print("- Where base_circuits.py is located")
     print("✅ The import path fix is CORRECT!")
 except Exception as e:
-    print(f"Error: {e}")
+    print("Error: {e}")
 """
 
 print("\n4. Import path analysis:")
