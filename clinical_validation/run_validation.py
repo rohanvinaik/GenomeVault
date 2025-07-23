@@ -4,18 +4,19 @@ Run clinical validation with REAL GenomeVault components
 """
 import sys
 import os
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import logging
 from clinical_validation import ClinicalValidator, NHANESDataSource, PimaDataSource
+
 
 def main():
     """Run full clinical validation"""
 
     # Set up logging
     logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     )
 
     print("🧬 GenomeVault Clinical Validation")
@@ -41,9 +42,9 @@ def main():
     print(f"Data sources processed: {len(results['data_sources'])}")
 
     # Show ZK proof performance
-    if results['zk_proof_metrics']:
+    if results["zk_proof_metrics"]:
         print("\n🔐 Zero-Knowledge Proof Performance:")
-        for source, metrics in results['zk_proof_metrics'].items():
+        for source, metrics in results["zk_proof_metrics"].items():
             print(f"  {source}:")
             print(f"    - Generation time: {metrics['avg_generation_time_ms']:.1f} ms")
             print(f"    - Verification time: {metrics['avg_verification_time_ms']:.1f} ms")
@@ -52,6 +53,7 @@ def main():
     print("\n📄 Full report saved to: genomevault_clinical_validation_report.md")
 
     return results
+
 
 if __name__ == "__main__":
     main()

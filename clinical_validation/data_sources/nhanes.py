@@ -4,6 +4,7 @@ from typing import Optional
 from pathlib import Path
 from .base import DataSourceBase
 
+
 class NHANESDataSource(DataSourceBase):
     """NHANES data - no registration required"""
 
@@ -24,7 +25,7 @@ class NHANESDataSource(DataSourceBase):
             try:
                 hba1c_url = f"{self.BASE_URL}/{self.cycle}/GHB_J.XPT"
                 hba1c_df = pd.read_sas(hba1c_url)
-                self._data = self._data.merge(hba1c_df, on='SEQN', how='left')
+                self._data = self._data.merge(hba1c_df, on="SEQN", how="left")
             except:
                 self.logger.warning("Could not load HbA1c data")
 
@@ -32,12 +33,12 @@ class NHANESDataSource(DataSourceBase):
             try:
                 diabetes_url = f"{self.BASE_URL}/{self.cycle}/DIQ_J.XPT"
                 diabetes_df = pd.read_sas(diabetes_url)
-                self._data = self._data.merge(diabetes_df, on='SEQN', how='left')
+                self._data = self._data.merge(diabetes_df, on="SEQN", how="left")
             except:
                 self.logger.warning("Could not load diabetes questionnaire")
 
-            self._metadata['loaded_at'] = datetime.now()
-            self._metadata['n_records'] = len(self._data)
+            self._metadata["loaded_at"] = datetime.now()
+            self._metadata["n_records"] = len(self._data)
 
             return self._data
 
@@ -47,24 +48,24 @@ class NHANESDataSource(DataSourceBase):
             return self._data
 
     def get_glucose_column(self) -> Optional[str]:
-        return 'LBXGLU' if 'LBXGLU' in self._data.columns else None
+        return "LBXGLU" if "LBXGLU" in self._data.columns else None
 
     def get_hba1c_column(self) -> Optional[str]:
-        return 'LBXGH' if 'LBXGH' in self._data.columns else None
+        return "LBXGH" if "LBXGH" in self._data.columns else None
 
     def get_outcome_column(self) -> Optional[str]:
-        return 'DIQ010' if 'DIQ010' in self._data.columns else None
+        return "DIQ010" if "DIQ010" in self._data.columns else None
 
     def clean_data(self) -> pd.DataFrame:
         """Clean NHANES data"""
         df = self._data.copy()
 
         # Clean glucose
-        if 'LBXGLU' in df.columns:
-            df.loc[(df['LBXGLU'] < 20) | (df['LBXGLU'] > 600), 'LBXGLU'] = np.nan
+        if "LBXGLU" in df.columns:
+            df.loc[(df["LBXGLU"] < 20) | (df["LBXGLU"] > 600), "LBXGLU"] = np.nan
 
         # Clean HbA1c
-        if 'LBXGH' in df.columns:
-            df.loc[(df['LBXGH'] < 3) | (df['LBXGH'] > 20), 'LBXGH'] = np.nan
+        if "LBXGH" in df.columns:
+            df.loc[(df["LBXGH"] < 3) | (df["LBXGH"] > 20), "LBXGH"] = np.nan
 
         return df

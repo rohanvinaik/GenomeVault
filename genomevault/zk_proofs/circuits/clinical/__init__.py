@@ -8,8 +8,4 @@ from clinical_validation.circuits import DiabetesRiskCircuit, ClinicalBiomarkerC
 from clinical_validation.proofs import ProofData
 
 # Maintain backward compatibility
-__all__ = [
-    'DiabetesRiskCircuit',
-    'ClinicalBiomarkerCircuit', 
-    'ProofData'
-]
+__all__ = ["DiabetesRiskCircuit", "ClinicalBiomarkerCircuit", "ProofData"]

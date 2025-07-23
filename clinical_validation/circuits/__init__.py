@@ -9,10 +9,10 @@ from .biomarkers import ClinicalBiomarkerCircuit
 from .factory import CircuitFactory, create_circuit
 
 __all__ = [
-    'BaseCircuit',
-    'Circuit',
-    'DiabetesRiskCircuit', 
-    'ClinicalBiomarkerCircuit',
-    'CircuitFactory',
-    'create_circuit'
+    "BaseCircuit",
+    "Circuit",
+    "DiabetesRiskCircuit",
+    "ClinicalBiomarkerCircuit",
+    "CircuitFactory",
+    "create_circuit",
 ]

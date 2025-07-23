@@ -4,17 +4,14 @@ import pandas as pd
 import logging
 from datetime import datetime
 
+
 class DataSourceBase(ABC):
     """Base class for clinical data sources"""
 
     def __init__(self):
         self.logger = logging.getLogger(self.__class__.__name__)
         self._data = None
-        self._metadata = {
-            'source_name': self.__class__.__name__,
-            'loaded_at': None,
-            'n_records': 0
-        }
+        self._metadata = {"source_name": self.__class__.__name__, "loaded_at": None, "n_records": 0}
 
     @abstractmethod
     def load_data(self) -> pd.DataFrame:
@@ -42,10 +39,10 @@ class DataSourceBase(ABC):
             return {}
 
         return {
-            'n_records': len(self._data),
-            'columns': list(self._data.columns),
-            'missing_percentages': {
+            "n_records": len(self._data),
+            "columns": list(self._data.columns),
+            "missing_percentages": {
                 col: (self._data[col].isna().sum() / len(self._data) * 100)
                 for col in self._data.columns
-            }
+            },
         }
