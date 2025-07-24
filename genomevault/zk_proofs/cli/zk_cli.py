@@ -29,7 +29,7 @@ def load_json_file(filepath: str) -> Dict[str, Any]:
     try:
         with open(filepath, "r") as f:
             return json.load(f)
-    except Exception as e:
+    except Exception:
         print(f"Error loading {filepath}: {e}")
         sys.exit(1)
 
@@ -39,7 +39,7 @@ def save_json_file(data: Dict[str, Any], filepath: str):
     try:
         with open(filepath, "w") as f:
             json.dump(data, f, indent=2)
-    except Exception as e:
+    except Exception:
         print(f"Error saving {filepath}: {e}")
         sys.exit(1)
 

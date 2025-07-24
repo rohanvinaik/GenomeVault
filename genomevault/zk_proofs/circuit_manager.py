@@ -23,6 +23,15 @@ from .circuits.biological.multi_omics import (
     RareVariantBurdenCircuit,
 )
 from .circuits.biological.variant import (
+    =,
+    __name__,
+    from,
+    genomevault.utils.logging,
+    get_logger,
+    import,
+    logger,
+)
+
     DiabetesRiskCircuit,
     PathwayEnrichmentCircuit,
     PharmacogenomicCircuit,
@@ -247,7 +256,7 @@ class CircuitManager:
         if self._needs_optimization(base_circuit, data_characteristics):
             base_circuit = self._optimize_circuit_selection(base_circuit, data_characteristics)
 
-        logger.info("Selected circuit: {base_circuit} for {analysis_type}")
+        logger.info(f"Selected circuit: {base_circuit} for {analysis_type}")
 
         return base_circuit
 
@@ -364,7 +373,7 @@ class CircuitManager:
                 elif target_time < 30:
                     optimized_params["permutations"] = 500
 
-        logger.info("Optimized parameters for {circuit_name}: {optimized_params}")
+        logger.info(f"Optimized parameters for {circuit_name}: {optimized_params}")
 
         return optimized_params
 

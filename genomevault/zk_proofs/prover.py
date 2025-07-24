@@ -7,6 +7,7 @@ import hashlib
 import json
 import time
 from dataclasses import dataclass
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 
@@ -302,7 +303,7 @@ class Prover:
             },
         )
 
-        logger.info("Proof generated for {circuit_name}", extra={"privacy_safe": True})
+        logger.info(f"Proof generated for {circuit_name}", extra={"privacy_safe": True})
 
         return proof
 
@@ -466,7 +467,7 @@ class Prover:
                 )
                 proofs.append(proof)
             except Exception as _:
-                logger.error("Batch proof generation failed: {e}")
+                logger.error(f"Batch proof generation failed: {e}")
                 # Continue with other proofs
 
         return proofs

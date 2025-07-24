@@ -13,6 +13,15 @@ import numpy as np
 
 from genomevault.utils.logging import logger
 from genomevault.zk_proofs import (
+    =,
+    __name__,
+    from,
+    genomevault.utils.logging,
+    get_logger,
+    import,
+    logger,
+)
+
     CircuitManager,
     PostQuantumTransition,
     Prover,
@@ -405,8 +414,8 @@ def main():
         print("\n" + "=" * 60)
         print("All demonstrations completed successfully!")
 
-    except Exception as e:
-        logger.error("Demonstration failed: {e}")
+    except Exception:
+        logger.error(f"Demonstration failed: {e}")
         raise
 
 

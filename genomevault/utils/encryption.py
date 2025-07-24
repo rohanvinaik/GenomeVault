@@ -12,6 +12,7 @@ import os
 import secrets
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
 
 import nacl.secret
 import nacl.utils
@@ -90,7 +91,7 @@ class AESGCMCipher:
 
         ciphertext = encryptor.update(plaintext) + encryptor.finalize()
 
-        logger.debug("Encrypted {len(plaintext)} bytes")
+        logger.debug(f"Encrypted {len(plaintext)} bytes")
         return ciphertext, nonce, encryptor.tag
 
     @classmethod
@@ -126,7 +127,7 @@ class AESGCMCipher:
 
         plaintext = decryptor.update(ciphertext) + decryptor.finalize()
 
-        logger.debug("Decrypted {len(ciphertext)} bytes")
+        logger.debug(f"Decrypted {len(ciphertext)} bytes")
         return plaintext
 
     @classmethod
@@ -143,7 +144,7 @@ class AESGCMCipher:
             f.write(tag)
             f.write(ciphertext)
 
-        logger.info("Encrypted file {input_path} to {output_path}")
+        logger.info(f"Encrypted file {input_path} to {output_path}")
 
     @classmethod
     def decrypt_file(cls, input_path: Path, output_path: Path, key: bytes):
@@ -158,7 +159,7 @@ class AESGCMCipher:
         with open(output_path, "wb") as f:
             f.write(plaintext)
 
-        logger.info("Decrypted file {input_path} to {output_path}")
+        logger.info(f"Decrypted file {input_path} to {output_path}")
 
 
 class ChaCha20Poly1305:
@@ -286,7 +287,7 @@ class ThresholdCrypto:
             )
             shares.append(share)
 
-        logger.info("Split secret into {total_shares} shares (threshold={threshold})")
+        logger.info(f"Split secret into {total_shares} shares (threshold={threshold})")
         return shares
 
     @classmethod
@@ -326,7 +327,7 @@ class ThresholdCrypto:
         byte_length = (secret_int.bit_length() + 7) // 8
         secret = secret_int.to_bytes(byte_length, "big")
 
-        logger.info("Reconstructed secret from {len(shares)} shares")
+        logger.info(f"Reconstructed secret from {len(shares)} shares")
         return secret
 
     @classmethod
@@ -463,7 +464,7 @@ class EncryptionManager:
         self._keys[key_id] = key
         self._save_keys()
 
-        logger.info("Generated new {algorithm} key: {key_id}")
+        logger.info(f"Generated new {algorithm} key: {key_id}")
         return key
 
     def encrypt_data(self, data: bytes, key_id: str) -> Dict[str, Any]:

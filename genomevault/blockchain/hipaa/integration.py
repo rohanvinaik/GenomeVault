@@ -8,6 +8,8 @@ import asyncio
 from datetime import datetime, timedelta
 from typing import Any, Dict, Optional
 
+from genomevault.utils.logging import get_logger
+
 from ...core.constants import NodeType, SignatoryWeight
 from ...core.exceptions import VerificationError
 from ...utils import get_logger
@@ -15,6 +17,8 @@ from ..governance import GovernanceSystem
 from ..node import BlockchainNode
 from .models import HIPAACredentials, VerificationRecord
 from .verifier import CMSNPIRegistry, HIPAAVerifier
+
+logger = get_logger(__name__)
 
 _ = get_logger(__name__)
 
@@ -70,12 +74,12 @@ class HIPAANodeIntegration:
             # Update governance voting power
             self._update_governance_power(node)
 
-            logger.info("Registered HIPAA provider {credentials.npi} as trusted node")
+            logger.info(f"Registered HIPAA provider {credentials.npi} as trusted node")
 
             return node
 
         except VerificationError as _:
-            logger.error("Failed to register provider {credentials.npi}: {e}")
+            logger.error(f"Failed to register provider {credentials.npi}: {e}")
             raise
 
     def _create_trusted_node(
@@ -111,7 +115,7 @@ class HIPAANodeIntegration:
         # For now, update local governance system
         self.governance.total_voting_power += node.voting_power
 
-        logger.info("Updated governance voting power: +{node.voting_power}")
+        logger.info(f"Updated governance voting power: +{node.voting_power}")
 
     async def revoke_provider_node(self, npi: str, reason: str) -> bool:
         """
@@ -138,7 +142,7 @@ class HIPAANodeIntegration:
             # Remove from registry
             del self.node_registry[npi]
 
-            logger.info("Revoked node status for NPI {npi}")
+            logger.info(f"Revoked node status for NPI {npi}")
 
         return True
 

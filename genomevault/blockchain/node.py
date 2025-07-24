@@ -9,9 +9,12 @@ import json
 import time
 from dataclasses import dataclass
 from enum import Enum
+from typing import Dict, List, Tuple
 
 from genomevault.core.constants import NodeClassWeight as NodeClass
-from genomevault.utils.logging import audit_logger, logger, performance_logger
+from genomevault.utils.logging import audit_logger, get_logger, logger, performance_logger
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -201,7 +204,7 @@ class BlockchainNode:
             return True
 
         except Exception as _:
-            logger.error("HIPAA verification failed: {e}")
+            logger.error(f"HIPAA verification failed: {e}")
             return False
 
     def add_peer(self, peer_info: NodeInfo):
@@ -276,7 +279,7 @@ class BlockchainNode:
             state_root=state_root,
         )
 
-        logger.info("Proposed block at height {block.height}", extra={"privacy_safe": True})
+        logger.info(f"Proposed block at height {block.height}", extra={"privacy_safe": True})
 
         return block
 
@@ -413,7 +416,7 @@ class BlockchainNode:
             },
         )
 
-        logger.info("Committed block at height {block.height}", extra={"privacy_safe": True})
+        logger.info(f"Committed block at height {block.height}", extra={"privacy_safe": True})
 
     async def _execute_transaction(self, tx: Dict):
         """Execute transaction and update state."""
@@ -578,7 +581,7 @@ class BlockchainNode:
         # Add to mempool
         self.mempool.append(tx)
 
-        logger.info("Transaction {tx_hash[:8]} added to mempool", extra={"privacy_safe": True})
+        logger.info(f"Transaction {tx_hash[:8]} added to mempool", extra={"privacy_safe": True})
 
         return tx_hash
 

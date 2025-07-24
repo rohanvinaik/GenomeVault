@@ -14,7 +14,9 @@ import numpy as np
 
 from genomevault.hypervector_transform.encoding import HypervectorEncoder
 from genomevault.utils.config import config
-from genomevault.utils.logging import logger, performance_logger
+from genomevault.utils.logging import get_logger, logger, performance_logger
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -321,7 +323,7 @@ class FederatedLearningClient:
         noise = np.random.normal(0, sigma, size=model_update.shape)
         private_update = model_update + noise
 
-        logger.info("Applied DP with ε={epsilon}, δ={delta}", extra={"privacy_safe": True})
+        logger.info(f"Applied DP with ε={epsilon}, δ={delta}", extra={"privacy_safe": True})
 
         return private_update
 
@@ -428,7 +430,7 @@ class FederatedLearningClient:
         with open(path, "wb") as f:
             pickle.dump(state, f)
 
-        logger.info("Saved client state to {path}", extra={"privacy_safe": True})
+        logger.info(f"Saved client state to {path}", extra={"privacy_safe": True})
 
     def load_state(self, path: Path):
         """Load client state."""
@@ -438,7 +440,7 @@ class FederatedLearningClient:
         self.current_model = state["current_model"]
         self.training_history = state["training_history"]
 
-        logger.info("Loaded client state from {path}", extra={"privacy_safe": True})
+        logger.info(f"Loaded client state from {path}", extra={"privacy_safe": True})
 
 
 # Specialized clients for different use cases

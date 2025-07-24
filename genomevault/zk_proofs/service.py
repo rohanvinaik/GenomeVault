@@ -5,10 +5,12 @@ import uuid
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from genomevault.utils.logging import logger
+from genomevault.utils.logging import get_logger, logger
 from genomevault.zk_proofs.circuits import PRSProofCircuit
 from genomevault.zk_proofs.prover import ZKProver
 from genomevault.zk_proofs.verifier import ZKVerifier
+
+logger = get_logger(__name__)
 
 
 class ProofRequest:

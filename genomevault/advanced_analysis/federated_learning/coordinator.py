@@ -15,7 +15,9 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 import numpy as np
 
 from genomevault.utils.config import config
-from genomevault.utils.logging import audit_logger, logger, performance_logger
+from genomevault.utils.logging import audit_logger, get_logger, logger, performance_logger
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -302,7 +304,7 @@ class FederatedLearningCoordinator:
             Whether registration was successful
         """
         if participant_id in self.participants:
-            logger.warning("Participant {participant_id} already registered")
+            logger.warning(f"Participant {participant_id} already registered")
             return False
 
         self.participants[participant_id] = {
@@ -321,7 +323,7 @@ class FederatedLearningCoordinator:
             metadata=metadata,
         )
 
-        logger.info("Participant {participant_id} registered", extra={"privacy_safe": True})
+        logger.info(f"Participant {participant_id} registered", extra={"privacy_safe": True})
 
         return True
 
@@ -405,18 +407,18 @@ class FederatedLearningCoordinator:
         """
         # Validate participant
         if contribution.participant_id not in self.participants:
-            logger.error("Unknown participant: {contribution.participant_id}")
+            logger.error(f"Unknown participant: {contribution.participant_id}")
             return False
 
         # Validate round
         if contribution.round_id >= len(self.rounds_history):
-            logger.error("Invalid round: {contribution.round_id}")
+            logger.error(f"Invalid round: {contribution.round_id}")
             return False
 
         current_round = self.rounds_history[contribution.round_id]
 
         if contribution.participant_id not in current_round.selected_participants:
-            logger.error("Participant not selected for round {contribution.round_id}")
+            logger.error(f"Participant not selected for round {contribution.round_id}")
             return False
 
         # Apply differential privacy if not already done
@@ -529,7 +531,7 @@ class FederatedLearningCoordinator:
         current_round = self.rounds_history[round_id]
 
         if current_round.aggregated_update is None:
-            logger.error("No aggregated update for round {round_id}")
+            logger.error(f"No aggregated update for round {round_id}")
             return False
 
         # Apply update with learning rate
@@ -540,7 +542,7 @@ class FederatedLearningCoordinator:
         for participant_id in current_round.selected_participants:
             self.participants[participant_id]["rounds_participated"] += 1
 
-        logger.info("Updated global model with round {round_id}", extra={"privacy_safe": True})
+        logger.info(f"Updated global model with round {round_id}", extra={"privacy_safe": True})
 
         return True
 
@@ -566,7 +568,7 @@ class FederatedLearningCoordinator:
         """
         metrics = test_function(self.global_model)
 
-        logger.info("Model evaluation: {metrics}", extra={"privacy_safe": True})
+        logger.info(f"Model evaluation: {metrics}", extra={"privacy_safe": True})
 
         return metrics
 
@@ -590,7 +592,7 @@ class FederatedLearningCoordinator:
         with open(path, "w") as f:
             json.dump(checkpoint, f, indent=2)
 
-        logger.info("Saved checkpoint to {path}", extra={"privacy_safe": True})
+        logger.info(f"Saved checkpoint to {path}", extra={"privacy_safe": True})
 
     def load_checkpoint(self, path: Path):
         """Load model checkpoint."""
@@ -600,7 +602,7 @@ class FederatedLearningCoordinator:
         self.global_model = np.array(checkpoint["global_model"])
         self.current_round = checkpoint["current_round"]
 
-        logger.info("Loaded checkpoint from {path}", extra={"privacy_safe": True})
+        logger.info(f"Loaded checkpoint from {path}", extra={"privacy_safe": True})
 
 
 # Specialized FL coordinators for genomic applications

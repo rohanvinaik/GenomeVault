@@ -171,7 +171,7 @@ async def get_network_topology(request: TopologyRequest, user_id: str = Depends(
 
     Returns nearest light nodes (LN) and trusted signatories (TS).
     """
-    logger.info("Topology request from {request.node_id}", extra={"privacy_safe": True})
+    logger.info(f"Topology request from {request.node_id}", extra={"privacy_safe": True})
 
     # Get all nodes
     light_nodes = []
@@ -285,7 +285,7 @@ async def create_processing_pipeline(
 
     Initiates local processing for specified omics type.
     """
-    logger.info("Pipeline request: {request.pipeline_type}", extra={"privacy_safe": True})
+    logger.info(f"Pipeline request: {request.pipeline_type}", extra={"privacy_safe": True})
 
     # Validate pipeline type
     valid_types = ["genomic", "transcriptomic", "epigenetic", "proteomic", "phenotypic"]
@@ -340,7 +340,7 @@ async def perform_vector_operation(request: VectorRequest, user_id: str = Depend
 
     Supports encoding, binding, and similarity operations.
     """
-    logger.info("Vector operation: {request.operation}", extra={"privacy_safe": True})
+    logger.info(f"Vector operation: {request.operation}", extra={"privacy_safe": True})
 
     if request.operation == "encode":
         # Encode data to hypervector
@@ -406,7 +406,7 @@ async def generate_proof(request: ProofRequest, user_id: str = Depends(verify_to
 
     Creates privacy-preserving proofs for various circuits.
     """
-    logger.info("Proof generation request: {request.circuit_name}", extra={"privacy_safe": True})
+    logger.info(f"Proof generation request: {request.circuit_name}", extra={"privacy_safe": True})
 
     # Validate circuit
     valid_circuits = [
@@ -519,7 +519,7 @@ def _process_credit_redemption(user_id: str, invoice_id: str, amount: int) -> st
 def _queue_pipeline_job(job_id: str, request: PipelineRequest):
     """Queue processing pipeline job."""
     # In production, would add to job queue
-    logger.info("Job {job_id} queued for processing", extra={"privacy_safe": True})
+    logger.info(f"Job {job_id} queued for processing", extra={"privacy_safe": True})
 
 
 def _encode_to_hypervector(data: Dict[str, Any], domain: str) -> Any:

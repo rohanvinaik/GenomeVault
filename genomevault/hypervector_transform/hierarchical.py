@@ -9,6 +9,7 @@ Implements the multi-resolution hypervector system as specified:
 
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 import torch
@@ -331,7 +332,7 @@ class HierarchicalEncoder:
             },
         )
 
-        logger.debug("Encoded {omics_type.value} data into hierarchical hypervector")
+        logger.debug(f"Encoded {omics_type.value} data into hierarchical hypervector")
 
         return hierarchical_hv
 

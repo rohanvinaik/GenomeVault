@@ -13,12 +13,15 @@ import jsonschema
 import numpy as np
 from aiohttp import web
 
-from genomevault.utils.logging import audit_logger, logger
+from genomevault.utils.logging import audit_logger, get_logger, logger
 from genomevault.version import PIR_PROTOCOL_VERSION
 
 from .pir_server import PIRServer
 
 # Load schemas
+
+logger = get_logger(__name__)
+
 with open("schemas/pir_query.json", "r") as f:
     QUERY_SCHEMA = json.load(f)
 
@@ -114,8 +117,8 @@ class PIRHandler:
 
             return web.json_response(response)
 
-        except Exception as e:
-            logger.error(f"Error handling PIR query: {str(e)}")
+        except Exception:
+        logger.error(f"Error handling PIR query: {str(e)}")
             return self._error_response("INTERNAL_ERROR", "Query processing failed", 500)
 
     def _ensure_fixed_size(self, data: Any) -> bytes:

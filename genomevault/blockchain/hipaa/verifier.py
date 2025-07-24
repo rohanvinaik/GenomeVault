@@ -14,7 +14,8 @@ import aiohttp
 
 from ...core.exceptions import VerificationError
 from ...utils import audit_logger, get_logger
-from .models import (
+from .models import =, __name__, from, genomevault.utils.logging, get_logger, import, logger
+
     HIPAACredentials,
     NPIRecord,
     NPIType,
@@ -92,7 +93,7 @@ class CMSNPIRegistry(NPIRegistry):
             return record
 
         except Exception as _:
-            logger.error("Error looking up NPI {npi}: {e}")
+            logger.error(f"Error looking up NPI {npi}: {e}")
             return None
 
     async def validate_npi(self, npi: str) -> bool:
@@ -233,7 +234,7 @@ class HIPAAVerifier:
             },
         )
 
-        logger.info("HIPAA verification submitted: {verification_id}")
+        logger.info(f"HIPAA verification submitted: {verification_id}")
 
         return verification_id
 
@@ -301,7 +302,7 @@ class HIPAAVerifier:
                 },
             )
 
-            logger.info("HIPAA verification successful for NPI {credentials.npi}")
+            logger.info(f"HIPAA verification successful for NPI {credentials.npi}")
 
             return record
 
@@ -324,7 +325,7 @@ class HIPAAVerifier:
                 metadata={"verification_id": verification_id, "error": str(e)},
             )
 
-            logger.warning("HIPAA verification failed for NPI {credentials.npi}: {e}")
+            logger.warning(f"HIPAA verification failed for NPI {credentials.npi}: {e}")
 
             # Clean up pending
             del self.pending_verifications[verification_id]
@@ -375,7 +376,7 @@ class HIPAAVerifier:
             metadata={"reason": reason},
         )
 
-        logger.info("HIPAA verification revoked for NPI {npi}: {reason}")
+        logger.info(f"HIPAA verification revoked for NPI {npi}: {reason}")
 
         return True
 
@@ -432,7 +433,7 @@ class HIPAAVerifier:
                 record.status = VerificationStatus.EXPIRED
                 expired_count += 1
 
-                logger.info("Expired HIPAA verification for NPI {npi}")
+                logger.info(f"Expired HIPAA verification for NPI {npi}")
 
         return expired_count
 

@@ -123,8 +123,8 @@ class PHILeakageDetector:
                     line_findings = self._scan_line(line, line_num, str(filepath), max_context)
                     findings.extend(line_findings)
 
-        except Exception as e:
-            logger.error(f"Error scanning file {filepath}: {e}")
+        except Exception:
+        logger.error(f"Error scanning file {filepath}: {e}")
 
         return findings
 

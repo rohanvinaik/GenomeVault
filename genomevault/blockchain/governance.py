@@ -143,12 +143,12 @@ class Committee:
     def add_member(self, address: str):
         """Add committee member"""
         self.members.add(address)
-        logger.info("Added {address} to {self.committee_type.value} committee")
+        logger.info(f"Added {address} to {self.committee_type.value} committee")
 
     def remove_member(self, address: str):
         """Remove committee member"""
         self.members.discard(address)
-        logger.info("Removed {address} from {self.committee_type.value} committee")
+        logger.info(f"Removed {address} from {self.committee_type.value} committee")
 
 
 class VotingMechanism(ABC):
@@ -208,14 +208,14 @@ class DelegatedVoting:
         self.delegations[delegator] = delegate
         self._update_delegation_chains()
 
-        logger.info("{delegator} delegated to {delegate}")
+        logger.info(f"{delegator} delegated to {delegate}")
 
     def revoke_delegation(self, delegator: str):
         """Revoke delegation"""
         if delegator in self.delegations:
             del self.delegations[delegator]
             self._update_delegation_chains()
-            logger.info("{delegator} revoked delegation")
+            logger.info(f"{delegator} revoked delegation")
 
     def get_final_delegate(self, voter: str) -> str:
         """Get final delegate after following chain"""
@@ -413,7 +413,7 @@ class GovernanceSystem:
             metadata={"proposal_type": proposal_type.value, "title": title},
         )
 
-        logger.info("Proposal {proposal_id} created by {proposer}")
+        logger.info(f"Proposal {proposal_id} created by {proposer}")
 
         return proposal
 
@@ -486,7 +486,7 @@ class GovernanceSystem:
         # Check if proposal outcome is determined
         self._check_proposal_outcome(current_proposal)
 
-        logger.info("Vote cast on {proposal_id}: {choice} with weight {vote_weight}")
+        logger.info(f"Vote cast on {proposal_id}: {choice} with weight {vote_weight}")
 
         return vote_record
 
@@ -557,10 +557,10 @@ class GovernanceSystem:
         if datetime.now() > proposal.voting_end:
             if proposal.has_quorum(self.total_voting_power) and proposal.has_passed():
                 proposal.status = ProposalStatus.PASSED
-                logger.info("Proposal {proposal.proposal_id} passed")
+                logger.info(f"Proposal {proposal.proposal_id} passed")
             else:
                 proposal.status = ProposalStatus.REJECTED
-                logger.info("Proposal {proposal.proposal_id} rejected")
+                logger.info(f"Proposal {proposal.proposal_id} rejected")
 
     def _calculate_total_voting_power(self) -> float:
         """Calculate total voting power in the system"""
@@ -607,7 +607,7 @@ class GovernanceSystem:
             metadata={"proposal_type": proposal.proposal_type.value, "result": result},
         )
 
-        logger.info("Proposal {proposal_id} executed")
+        logger.info(f"Proposal {proposal_id} executed")
 
         return result
 
@@ -633,7 +633,7 @@ class GovernanceSystem:
         _ = proposal.execution_data.get("new_value")
 
         # In production, would update on-chain parameters
-        logger.info("Parameter {parameter} changed to {new_value}")
+        logger.info(f"Parameter {parameter} changed to {new_value}")
 
         return {"status": "success", "parameter": parameter, "new_value": new_value}
 
@@ -646,7 +646,7 @@ class GovernanceSystem:
         _ = proposal.execution_data.get("certification_level")
 
         # In production, would update algorithm registry
-        logger.info("Algorithm {algorithm_id} certified at level {certification_level}")
+        logger.info(f"Algorithm {algorithm_id} certified at level {certification_level}")
 
         return {
             "status": "success",
@@ -663,7 +663,7 @@ class GovernanceSystem:
         _ = proposal.execution_data.get("amount")
 
         # In production, would transfer funds
-        logger.info("Treasury allocation: {amount} to {recipient}")
+        logger.info(f"Treasury allocation: {amount} to {recipient}")
 
         return {"status": "success", "recipient": recipient, "amount": amount}
 
@@ -816,7 +816,7 @@ class HIPAAOracle:
             metadata={"hsm_serial": hsm_serial, "success": True},
         )
 
-        logger.info("HIPAA provider {npi} verified as trusted signatory")
+        logger.info(f"HIPAA provider {npi} verified as trusted signatory")
 
         return True, verification
 
@@ -869,7 +869,7 @@ class HIPAAOracle:
                 metadata={"reason": reason},
             )
 
-            logger.info("HIPAA verification revoked for {npi}: {reason}")
+            logger.info(f"HIPAA verification revoked for {npi}: {reason}")
 
 
 # Example usage

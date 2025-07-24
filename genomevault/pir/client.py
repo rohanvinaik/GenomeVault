@@ -16,8 +16,9 @@ import numpy as np
 from genomevault.utils.config import get_config
 
 config = get_config()
-from genomevault.utils.logging import logger, performance_logger
+from genomevault.utils.logging import get_logger, logger, performance_logger
 
+logger = get_logger(__name__)
 
 @dataclass
 class PIRServer:
@@ -179,7 +180,7 @@ class PIRClient:
             },
         )
 
-        logger.info("PIR query created for index {target_index}", extra={"privacy_safe": True})
+        logger.info(f"PIR query created for index {target_index}", extra={"privacy_safe": True})
 
         return query
 
@@ -253,7 +254,7 @@ class PIRClient:
         # Reconstruct data
         result = self._reconstruct_data(valid_responses)
 
-        logger.info("PIR query {query.query_id} completed", extra={"privacy_safe": True})
+        logger.info(f"PIR query {query.query_id} completed", extra={"privacy_safe": True})
 
         return result
 
@@ -288,7 +289,7 @@ class PIRClient:
                 timeout=aiohttp.ClientTimeout(total=config.pir.query_timeout_seconds),
             ) as response:
                 if response.status != 200:
-                    logger.error("PIR query failed on {server.server_id}: {response.status}")
+                    logger.error(f"PIR query failed on {server.server_id}: {response.status}")
                     return None
 
                 result = await response.json()
@@ -306,8 +307,8 @@ class PIRClient:
 
             return pir_response
 
-        except Exception as e:
-            logger.error("Error querying server {server.server_id}: {e}")
+        except Exception:
+        logger.error(f"Error querying server {server.server_id}: {e}")
             return None
 
     def _reconstruct_data(self, responses: List[PIRResponse]) -> Any:

@@ -433,5 +433,5 @@ if __name__ == "__main__":
         recovered_data = pir.process_responses_with_verification(query, responses)
         print(f"\n  Successfully recovered data despite Byzantine server!")
         print(f"  Data size: {len(recovered_data)} bytes")
-    except SecurityError as e:
+    except SecurityError:
         print(f"\n  Security error: {e}")

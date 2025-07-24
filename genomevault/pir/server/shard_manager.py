@@ -18,8 +18,9 @@ import numpy as np
 from genomevault.utils.config import get_config
 
 config = get_config()
-from genomevault.utils.logging import logger, performance_logger
+from genomevault.utils.logging import get_logger, logger, performance_logger
 
+logger = get_logger(__name__)
 
 @dataclass
 class ShardMetadata:
@@ -101,7 +102,7 @@ class ShardManager:
         # Load existing shards
         self._load_shard_metadata()
 
-        logger.info("ShardManager initialized with {len(self.shards)} shards")
+        logger.info(f"ShardManager initialized with {len(self.shards)} shards")
 
     def _load_shard_metadata(self):
         """Load shard metadata from manifest."""
@@ -167,7 +168,7 @@ class ShardManager:
         Returns:
             List of created shard IDs
         """
-        logger.info("Creating {self.num_shards} shards from {data_source}")
+        logger.info(f"Creating {self.num_shards} shards from {data_source}")
 
         # Read source data
         with open(data_source, "rb") as f:
@@ -204,7 +205,7 @@ class ShardManager:
         with self.lock:
             self._save_shard_metadata()
 
-        logger.info("Created {len(created_shards)} shards")
+        logger.info(f"Created {len(created_shards)} shards")
         return created_shards
 
     def _create_single_shard(
@@ -259,11 +260,11 @@ class ShardManager:
             with self.lock:
                 self.shards[shard_id] = metadata
 
-            logger.info("Created shard {shard_id} with {item_count} items")
+            logger.info(f"Created shard {shard_id} with {item_count} items")
             return shard_id
 
-        except Exception as e:
-            logger.error("Error creating shard {shard_index}: {e}")
+        except Exception:
+        logger.error(f"Error creating shard {shard_index}: {e}")
             return None
 
     def distribute_shards(self, server_list: List[str]) -> ShardDistribution:
@@ -317,7 +318,7 @@ class ShardManager:
         with self.lock:
             self._save_shard_metadata()
 
-        logger.info("Distributed {len(self.shards)} shards across {len(server_list)} servers")
+        logger.info(f"Distributed {len(self.shards)} shards across {len(server_list)} servers")
         return self.shard_distribution
 
     def verify_shard_integrity(self, shard_id: str) -> bool:
@@ -331,14 +332,14 @@ class ShardManager:
             True if integrity check passes
         """
         if shard_id not in self.shards:
-            logger.error("Unknown shard: {shard_id}")
+            logger.error(f"Unknown shard: {shard_id}")
             return False
 
         metadata = self.shards[shard_id]
         shard_path = self.data_directory / "shard_{metadata.shard_index:04d}.dat"
 
         if not shard_path.exists():
-            logger.error("Shard file missing: {shard_path}")
+            logger.error(f"Shard file missing: {shard_path}")
             return False
 
         # Calculate checksum
@@ -347,7 +348,7 @@ class ShardManager:
             checksum = hashlib.sha256(data).hexdigest()
 
         if checksum != metadata.checksum:
-            logger.error("Shard {shard_id} checksum mismatch")
+            logger.error(f"Shard {shard_id} checksum mismatch")
             return False
 
         return True
@@ -364,7 +365,7 @@ class ShardManager:
             Success status
         """
         if shard_id not in self.shards:
-            logger.error("Unknown shard: {shard_id}")
+            logger.error(f"Unknown shard: {shard_id}")
             return False
 
         metadata = self.shards[shard_id]
@@ -401,11 +402,11 @@ class ShardManager:
             # Remove backup
             backup_path.unlink()
 
-            logger.info("Updated shard {shard_id} to version {metadata.version}")
+            logger.info(f"Updated shard {shard_id} to version {metadata.version}")
             return True
 
-        except Exception as e:
-            logger.error("Error updating shard {shard_id}: {e}")
+        except Exception:
+        logger.error(f"Error updating shard {shard_id}: {e}")
 
             # Restore backup
             if backup_path.exists():

@@ -11,6 +11,7 @@ import subprocess
 import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 import pysam
@@ -154,7 +155,7 @@ class SequencingProcessor:
                 missing_tools.append(name)
 
         if missing_tools:
-            logger.warning("Missing tools: {', '.join(missing_tools)}")
+            logger.warning(f"Missing tools: {', '.join(missing_tools)}")
             logger.warning("Some processing features may be unavailable")
 
     @log_operation("process_sequencing_data")
@@ -169,7 +170,7 @@ class SequencingProcessor:
         Returns:
             GenomicProfile with variants and quality metrics
         """
-        logger.info("Processing sequencing data for sample {sample_id}")
+        logger.info(f"Processing sequencing data for sample {sample_id}")
 
         # Validate input
         if not input_path.exists():
@@ -227,7 +228,7 @@ class SequencingProcessor:
                 },
             )
 
-            logger.info("Processing complete. Found {len(profile.variants)} variants")
+            logger.info(f"Processing complete. Found {len(profile.variants)} variants")
             return profile
 
         finally:

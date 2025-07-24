@@ -110,8 +110,8 @@ class HypervectorRegistry:
 
             logger.info(f"Loaded registry with {len(self.versions)} versions")
 
-        except Exception as e:
-            logger.error(f"Failed to load registry: {e}")
+        except Exception:
+        logger.error(f"Failed to load registry: {e}")
             self._initialize_registry()
 
     def _save_registry(self):
@@ -139,8 +139,8 @@ class HypervectorRegistry:
             if backup_path and backup_path.exists():
                 backup_path.unlink()
 
-        except Exception as e:
-            logger.error(f"Failed to save registry: {e}")
+        except Exception:
+        logger.error(f"Failed to save registry: {e}")
             # Restore backup
             if backup_path and backup_path.exists():
                 backup_path.rename(self.registry_path)

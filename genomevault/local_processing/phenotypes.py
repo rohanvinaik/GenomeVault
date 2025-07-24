@@ -11,6 +11,7 @@ import re
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
 
 from genomevault.utils import get_config, get_logger, secure_hash
 from genomevault.utils.logging import log_operation
@@ -302,7 +303,7 @@ class PhenotypeProcessor:
         Returns:
             PhenotypeProfile with structured phenotypic data
         """
-        logger.info("Processing phenotypic data for sample {sample_id}")
+        logger.info(f"Processing phenotypic data for sample {sample_id}")
 
         # Load data if path provided
         if isinstance(input_data, Path):

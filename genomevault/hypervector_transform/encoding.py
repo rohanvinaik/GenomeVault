@@ -7,6 +7,7 @@ processed multi-omics data into high-dimensional, privacy-preserving representat
 
 from dataclasses import dataclass
 from enum import Enum
+from typing import Dict, Optional, Union
 
 import numpy as np
 import torch
@@ -70,7 +71,7 @@ class HypervectorEncoder:
         # Multi-resolution dimensions
         self.resolution_dims = {"base": 10000, "mid": 15000, "high": 20000}
 
-        logger.info("Initialized HypervectorEncoder with {self.config.dimension}D vectors")
+        logger.info(f"Initialized HypervectorEncoder with {self.config.dimension}D vectors")
 
     def encode(
         self,
@@ -116,12 +117,12 @@ class HypervectorEncoder:
             if self.config.quantize:
                 hypervector = self._quantize(hypervector)
 
-            logger.debug("Encoded {omics_type.value} features to {dimension}D hypervector")
+            logger.debug(f"Encoded {omics_type.value} features to {dimension}D hypervector")
 
             return hypervector
 
-        except Exception as e:
-            logger.error("Encoding error: {str(e)}")
+        except Exception:
+        logger.error(f"Encoding error: {str(e)}")
             raise EncodingError("Failed to encode features: {str(e)}")
 
     def encode_multiresolution(

@@ -12,6 +12,7 @@ This module provides comprehensive monitoring capabilities including:
 import time
 from datetime import datetime
 from functools import wraps
+from typing import Any, Dict, Optional
 
 import prometheus_client
 import structlog

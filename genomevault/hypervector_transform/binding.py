@@ -7,6 +7,7 @@ while preserving their mathematical properties and biological relationships.
 
 import hashlib
 from enum import Enum
+from typing import Dict, List, Optional
 
 import numpy as np
 import torch
@@ -45,7 +46,7 @@ class HypervectorBinder:
         self.dimension = dimension
         self._permutation_cache = {}
 
-        logger.info("Initialized HypervectorBinder for {dimension}D vectors")
+        logger.info(f"Initialized HypervectorBinder for {dimension}D vectors")
 
     def bind(
         self,
@@ -94,7 +95,7 @@ class HypervectorBinder:
         else:
             raise BindingError("Unknown binding type: {binding_type}")
 
-        logger.debug("Bound {len(vectors)} vectors using {binding_type.value}")
+        logger.debug(f"Bound {len(vectors)} vectors using {binding_type.value}")
         return result
 
     def unbind(

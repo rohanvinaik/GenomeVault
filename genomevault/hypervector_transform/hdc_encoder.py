@@ -184,8 +184,8 @@ class HypervectorEncoder:
 
             return hypervector
 
-        except Exception as e:
-            logger.error(f"Encoding error: {str(e)}")
+        except Exception:
+        logger.error(f"Encoding error: {str(e)}")
             raise
 
     def encode_multiresolution(

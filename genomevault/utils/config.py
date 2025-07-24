@@ -12,6 +12,7 @@ import os
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
+from typing import Any, Dict, Optional
 
 try:
     import yaml
@@ -199,7 +200,7 @@ class Config:
     def _load_config(self):
         """Load configuration from file"""
         if not self.config_file or not Path(self.config_file).exists():
-            logger.info("No config file found at {self.config_file}, using defaults")
+            logger.info(f"No config file found at {self.config_file}, using defaults")
             return
 
         try:
@@ -222,9 +223,9 @@ class Config:
             self._update_config_object(self.storage, data.get("storage", {}))
             self._update_config_object(self.processing, data.get("processing", {}))
 
-            logger.info("Loaded configuration from {self.config_file}")
+            logger.info(f"Loaded configuration from {self.config_file}")
         except Exception as e:
-            logger.error("Failed to load configuration: {e}")
+            logger.error(f"Failed to load configuration: {e}")
             raise
 
     def _update_config_object(self, obj: Any, data: Dict[str, Any]):
@@ -382,7 +383,7 @@ class Config:
             else:
                 json.dump(config_data, f, indent=2)
 
-        logger.info("Saved configuration to {path}")
+        logger.info(f"Saved configuration to {path}")
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert configuration to dictionary"""

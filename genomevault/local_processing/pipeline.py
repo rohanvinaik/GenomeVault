@@ -6,6 +6,7 @@ import asyncio
 import json
 import logging
 from pathlib import Path
+from typing import Any, Dict
 
 from genomevault.core.constants import CompressionTier, OmicsType
 
@@ -58,15 +59,15 @@ class MultiOmicsPipeline:
                 )
                 tasks.append((omics_type, task))
             else:
-                logger.warning("No processor for omics type: {omics_type}")
+                logger.warning(f"No processor for omics type: {omics_type}")
 
         # Wait for all processing to complete
         for omics_type, task in tasks:
             try:
                 result = await task
                 results[omics_type.value] = result
-            except Exception as e:
-                logger.error("Failed to process {omics_type}: {str(e)}")
+            except Exception:
+        logger.error(f"Failed to process {omics_type}: {str(e)}")
                 results[omics_type.value] = {"status": "failed", "error": str(e)}
 
         # Generate combined metadata
@@ -84,7 +85,7 @@ class MultiOmicsPipeline:
         self, omics_type: OmicsType, input_path: Path, output_dir: Path
     ) -> Dict[str, Any]:
         """Process a single omics data type"""
-        logger.info("Processing {omics_type.value} data from {input_path}")
+        logger.info(f"Processing {omics_type.value} data from {input_path}")
 
         # Create output subdirectory
         omics_output_dir = output_dir / omics_type.value

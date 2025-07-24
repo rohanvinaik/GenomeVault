@@ -11,8 +11,10 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
-from genomevault.utils.logging import logger
+from genomevault.utils.logging import get_logger, logger
 from genomevault.version import PIR_PROTOCOL_VERSION
+
+logger = get_logger(__name__)
 
 
 @dataclass

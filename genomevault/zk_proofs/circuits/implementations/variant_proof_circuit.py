@@ -8,11 +8,17 @@ variant presence without revealing the variant position.
 import hashlib
 
 from .constraint_system import (
+    Any,
     ConstraintSystem,
+    Dict,
     FieldElement,
+    List,
     Variable,
     create_merkle_proof,
+    from,
+    import,
     poseidon_hash,
+    typing,
 )
 
 

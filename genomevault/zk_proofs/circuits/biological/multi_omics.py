@@ -11,10 +11,16 @@ import numpy as np
 
 from ...prover import Circuit
 from ..base_circuits import (
+    Any,
     BaseCircuit,
     ComparisonCircuit,
+    Dict,
     FieldElement,
+    List,
     RangeProofCircuit,
+    from,
+    import,
+    typing,
 )
 
 

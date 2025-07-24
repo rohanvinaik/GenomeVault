@@ -102,7 +102,7 @@ def get_encoder(version: Optional[str] = None) -> HypervectorEncoder:
     """Get encoder instance with specified version"""
     try:
         return registry.get_encoder(version)
-    except Exception as e:
+    except Exception:
         logger.error(f"Failed to get encoder: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -165,7 +165,7 @@ async def encode_genome(
 
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         logger.error(f"Encoding error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -233,7 +233,7 @@ async def encode_multimodal(
             },
         )
 
-    except Exception as e:
+    except Exception:
         logger.error(f"Multi-modal encoding error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -295,7 +295,7 @@ async def decode_vector(request: DecodeRequest):
 
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         logger.error(f"Decoding error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -346,7 +346,7 @@ async def compute_similarity(request: SimilarityRequest):
 
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         logger.error(f"Similarity computation error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -366,7 +366,7 @@ async def get_version_info():
             encoder_version=HDC_ENCODER_VERSION,
         )
 
-    except Exception as e:
+    except Exception:
         logger.error(f"Version info error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -401,7 +401,7 @@ async def register_new_version(
 
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         logger.error(f"Version registration error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -441,7 +441,7 @@ async def encode_genomic_file(
 
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         logger.error(f"File encoding error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -484,7 +484,7 @@ async def get_performance_metrics():
             projection_type=encoder.config.projection_type.value,
         )
 
-    except Exception as e:
+    except Exception:
         logger.error(f"Performance metrics error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 

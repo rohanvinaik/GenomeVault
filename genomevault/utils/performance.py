@@ -11,6 +11,7 @@ This module provides:
 import multiprocessing as mp
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from functools import lru_cache
+from typing import Callable, Dict, List, Optional, Union
 
 import cupy as cp  # GPU arrays
 import numba
@@ -30,7 +31,7 @@ TORCH_AVAILABLE = torch.cuda.is_available()
 if CUDA_AVAILABLE:
     logger.info("CUDA acceleration available")
 if TORCH_AVAILABLE:
-    logger.info("PyTorch GPU available: {torch.cuda.get_device_name(0)}")
+    logger.info(f"PyTorch GPU available: {torch.cuda.get_device_name(0)}")
 
 
 class HypervectorAccelerator:
@@ -45,7 +46,7 @@ class HypervectorAccelerator:
                 self.backend = "torch"
             elif CUDA_AVAILABLE:
                 self.backend = "cupy"
-            logger.info("Using GPU acceleration with {self.backend}")
+            logger.info(f"Using GPU acceleration with {self.backend}")
         else:
             self.backend = "numpy"
             logger.info("Using CPU with SIMD optimizations")

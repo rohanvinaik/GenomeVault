@@ -15,9 +15,12 @@ from pydantic import BaseModel, Field
 from genomevault.utils.config import get_config
 
 _ = get_config()
-from genomevault.utils.logging import audit_logger, logger
+from genomevault.utils.logging import audit_logger, get_logger, logger
 
 # Create FastAPI app
+
+logger = get_logger(__name__)
+
 _ = FastAPI(
     title="GenomeVault API",
     description="Privacy-preserving genomic analysis platform",
@@ -185,7 +188,7 @@ async def get_topology(request: TopologyRequest, api_key: _ = Depends(verify_api
         )
 
     except Exception as _:
-        logger.error("Topology request failed: {e}")
+        logger.error(f"Topology request failed: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -228,7 +231,7 @@ async def redeem_credits(request: CreditRedeemRequest, api_key: _ = Depends(veri
     except HTTPException:
         raise
     except Exception as _:
-        logger.error("Credit redemption failed: {e}")
+        logger.error(f"Credit redemption failed: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -278,7 +281,7 @@ async def create_audit_challenge(
         )
 
     except Exception as _:
-        logger.error("Audit challenge failed: {e}")
+        logger.error(f"Audit challenge failed: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -316,7 +319,7 @@ async def submit_proof(request: ProofSubmissionRequest, api_key: _ = Depends(ver
         )
 
     except Exception as _:
-        logger.error("Proof submission failed: {e}")
+        logger.error(f"Proof submission failed: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -342,7 +345,7 @@ async def get_node_statistics(api_key: _ = Depends(verify_api_key)):
         return JSONResponse(content=stats)
 
     except Exception as _:
-        logger.error("Failed to get node statistics: {e}")
+        logger.error(f"Failed to get node statistics: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -375,14 +378,14 @@ async def get_pir_configuration(api_key: _ = Depends(verify_api_key)):
         return JSONResponse(content=config_data)
 
     except Exception as _:
-        logger.error("Failed to get PIR configuration: {e}")
+        logger.error(f"Failed to get PIR configuration: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     """Global exception handler."""
-    logger.error("Unhandled exception: {exc}", exc_info=True)
+    logger.error(f"Unhandled exception: {exc}", exc_info=True)
     return JSONResponse(status_code=500, content={"detail": "Internal server error"})
 
 

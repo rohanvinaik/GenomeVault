@@ -6,6 +6,7 @@ encoding complex structured information in hypervectors.
 """
 
 from dataclasses import dataclass
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 import torch
@@ -47,7 +48,7 @@ class HolographicEncoder:
         self.binder = HypervectorBinder(dimension)
         self._role_vectors = {}
 
-        logger.info("Initialized HolographicEncoder with {dimension}D vectors")
+        logger.info(f"Initialized HolographicEncoder with {dimension}D vectors")
 
     def encode_structure(
         self, structure: Dict[str, Any], recursive: bool = True

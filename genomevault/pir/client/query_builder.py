@@ -11,10 +11,12 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 
-from genomevault.utils.logging import logger
+from genomevault.utils.logging import get_logger, logger
 
 from ..client import PIRClient, PIRQuery
 from ..reference_data.manager import GenomicRegion, ReferenceDataType
+
+logger = get_logger(__name__)
 
 
 class QueryType(Enum):

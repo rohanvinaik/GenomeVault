@@ -124,7 +124,7 @@ class OptimizedPIRDatabase:
         # Thread pool for I/O operations
         self.io_pool = ThreadPoolExecutor(max_workers=4)
 
-        logger.info("Initialized PIR database at {base_path}")
+        logger.info(f"Initialized PIR database at {base_path}")
 
     async def load_shard_index(self, shard: ShardMetadata) -> Dict[str, int]:
         """
@@ -337,7 +337,7 @@ class EnhancedPIRServer:
             if self._verify_shard_integrity(shard):
                 shards[shard.shard_id] = shard
             else:
-                logger.error("Shard {shard.shard_id} integrity check failed")
+                logger.error(f"Shard {shard.shard_id} integrity check failed")
 
         return shards
 
@@ -437,7 +437,7 @@ class EnhancedPIRServer:
                 raise ValidationError("Query size exceeds maximum")
 
         except (KeyError, ValueError) as e:
-            logger.error("Invalid query format: {e}")
+            logger.error(f"Invalid query format: {e}")
             return {
                 "error": "Invalid query format",
                 "query_id": query_data.get("query_id"),
@@ -480,8 +480,8 @@ class EnhancedPIRServer:
 
             return response
 
-        except Exception as e:
-            logger.error("Error processing query {query_id}: {e}")
+        except Exception:
+        logger.error(f"Error processing query {query_id}: {e}")
             return {"error": str(e), "query_id": query_id, "server_id": self.server_id}
 
     async def _process_genomic_query(
@@ -640,8 +640,8 @@ class EnhancedPIRServer:
 
             return result
 
-        except Exception as e:
-            logger.error("Error processing shard {shard.shard_id}: {e}")
+        except Exception:
+        logger.error(f"Error processing shard {shard.shard_id}: {e}")
             return None
 
     def _update_metrics(self, processing_time_ms: float, result_count: int):
@@ -699,7 +699,7 @@ class EnhancedPIRServer:
 
     async def shutdown(self):
         """Graceful shutdown."""
-        logger.info("Shutting down PIR server {self.server_id}")
+        logger.info(f"Shutting down PIR server {self.server_id}")
 
         # Close database
         self.database.close()
@@ -713,7 +713,7 @@ class EnhancedPIRServer:
         with open(metrics_path, "w") as f:
             json.dump(self.metrics, f, indent=2)
 
-        logger.info("PIR server {self.server_id} shutdown complete")
+        logger.info(f"PIR server {self.server_id} shutdown complete")
 
 
 # Example usage and testing

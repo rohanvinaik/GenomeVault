@@ -11,6 +11,7 @@ import gzip
 import hashlib
 import json
 from dataclasses import dataclass, field
+from typing import Any, Dict, List
 
 from genomevault.core.constants import CompressionTier, OmicsType
 from genomevault.utils import get_config, get_logger
@@ -119,7 +120,7 @@ class CompressionEngine:
             Compressed data package
         """
         profile = self.COMPRESSION_PROFILES[tier]
-        logger.info("Compressing data for {sample_id} using {tier.value} tier")
+        logger.info(f"Compressing data for {sample_id} using {tier.value} tier")
 
         # Select compression method based on tier
         if tier == CompressionTier.MINI:
@@ -149,7 +150,7 @@ class CompressionEngine:
             max_size = profile.max_size_kb * modalities_included
 
         if size_kb > max_size:
-            logger.warning("Compressed size {size_kb:.1f}KB exceeds target {max_size}KB")
+            logger.warning(f"Compressed size {size_kb:.1f}KB exceeds target {max_size}KB")
 
         # Create compressed data package
         compressed_data = CompressedData(
@@ -166,7 +167,7 @@ class CompressionEngine:
             omics_included=[o for o in OmicsType if o.value in data],
         )
 
-        logger.info("Compression complete: {size_kb:.1f}KB ({tier.value} tier)")
+        logger.info(f"Compression complete: {size_kb:.1f}KB ({tier.value} tier)")
         return compressed_data
 
     def _compress_mini_tier(self, data: Dict[str, Any]) -> Dict[str, Any]:

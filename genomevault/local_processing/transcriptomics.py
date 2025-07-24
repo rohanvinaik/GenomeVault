@@ -12,6 +12,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -171,7 +172,7 @@ class TranscriptomicsProcessor:
         Returns:
             ExpressionProfile with quantified expression
         """
-        logger.info("Processing RNA-seq data for {sample_id}")
+        logger.info(f"Processing RNA-seq data for {sample_id}")
 
         try:
             # Detect input type
@@ -213,11 +214,11 @@ class TranscriptomicsProcessor:
                 },
             )
 
-            logger.info("Successfully processed {len(expressions)} transcripts")
+            logger.info(f"Successfully processed {len(expressions)} transcripts")
             return profile
 
         except Exception as _:
-            logger.error("Error processing RNA-seq data: {str(e)}")
+            logger.error(f"Error processing RNA-seq data: {str(e)}")
             raise ProcessingError("Failed to process RNA-seq data: {str(e)}")
 
     def _process_fastq(
@@ -244,7 +245,7 @@ class TranscriptomicsProcessor:
 
     def _load_expression_matrix(self, file_path: Path) -> pd.DataFrame:
         """Load expression matrix from file"""
-        logger.info("Loading expression matrix from {file_path}")
+        logger.info(f"Loading expression matrix from {file_path}")
 
         if file_path.suffix == ".csv":
             _ = pd.read_csv(file_path, index_col=0)
@@ -265,7 +266,7 @@ class TranscriptomicsProcessor:
         self, raw_data: pd.DataFrame, method: NormalizationMethod
     ) -> pd.DataFrame:
         """Normalize expression values"""
-        logger.info("Normalizing expression using {method.value}")
+        logger.info(f"Normalizing expression using {method.value}")
 
         _ = raw_data.copy()
 
@@ -305,7 +306,7 @@ class TranscriptomicsProcessor:
 
         else:
             # Default to CPM for other methods
-            logger.warning("Method {method.value} not fully implemented, using CPM")
+            logger.warning(f"Method {method.value} not fully implemented, using CPM")
             total_reads = raw_data["raw_count"].sum()
             normalized["normalized_value"] = (normalized["raw_count"] * 1e6) / total_reads
             normalized["length"] = 1000
@@ -378,7 +379,7 @@ class TranscriptomicsProcessor:
         Returns:
             Batch-corrected profiles
         """
-        logger.info("Performing batch effect correction using {method}")
+        logger.info(f"Performing batch effect correction using {method}")
 
         if len(profiles) != len(batch_labels):
             raise ValidationError("Number of profiles must match batch labels")
@@ -450,7 +451,7 @@ class TranscriptomicsProcessor:
             )
             corrected_profiles.append(corrected_profile)
 
-        logger.info("Batch correction complete for {len(profiles)} samples")
+        logger.info(f"Batch correction complete for {len(profiles)} samples")
         return corrected_profiles
 
     def differential_expression(
@@ -472,7 +473,7 @@ class TranscriptomicsProcessor:
         Returns:
             DataFrame with differential expression results
         """
-        logger.info("Performing differential expression analysis using {method}")
+        logger.info(f"Performing differential expression analysis using {method}")
 
         # Create expression matrices
         _ = set()
@@ -557,7 +558,7 @@ class TranscriptomicsProcessor:
         self, profile: ExpressionProfile, output_path: Path, format: _ = "tsv"
     ) -> None:
         """Export expression profile to file"""
-        logger.info("Exporting expression profile to {output_path}")
+        logger.info(f"Exporting expression profile to {output_path}")
 
         _ = profile.to_dataframe()
 
@@ -570,4 +571,4 @@ class TranscriptomicsProcessor:
         else:
             raise ValidationError("Unsupported export format: {format}")
 
-        logger.info("Successfully exported {len(df)} transcripts")
+        logger.info(f"Successfully exported {len(df)} transcripts")

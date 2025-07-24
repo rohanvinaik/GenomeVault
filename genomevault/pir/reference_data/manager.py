@@ -14,7 +14,9 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 
 import numpy as np
 
-from genomevault.utils.logging import logger, performance_logger
+from genomevault.utils.logging import get_logger, logger, performance_logger
+
+logger = get_logger(__name__)
 
 
 class ReferenceDataType(Enum):
@@ -156,7 +158,7 @@ class ReferenceDataManager:
         # Load existing data
         self._load_reference_data()
 
-        logger.info("ReferenceDataManager initialized with {len(self.nodes)} nodes")
+        logger.info(f"ReferenceDataManager initialized with {len(self.nodes)} nodes")
 
     def _load_reference_data(self):
         """Load reference data from disk."""
@@ -332,7 +334,7 @@ class ReferenceDataManager:
             for item in pop_data:
                 items.append(json.dumps(item).encode())
 
-        logger.info("Prepared {len(items)} items of type {data_type.value} for PIR")
+        logger.info(f"Prepared {len(items)} items of type {data_type.value} for PIR")
         return items
 
     def _aggregate_population_data(self) -> List[Dict]:

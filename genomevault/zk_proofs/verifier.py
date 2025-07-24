@@ -7,11 +7,14 @@ import hashlib
 import json
 import time
 from dataclasses import dataclass
+from typing import Any, Dict, List, Optional
 
 from genomevault.utils.config import get_config
 
 _ = get_config()
-from genomevault.utils.logging import audit_logger, logger, performance_logger
+from genomevault.utils.logging import audit_logger, get_logger, logger, performance_logger
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -157,12 +160,12 @@ class Verifier:
                 metadata={"is_valid": is_valid, "verification_time": verification_time},
             )
 
-            logger.info("Proof verification completed: {is_valid}", extra={"privacy_safe": True})
+            logger.info(f"Proof verification completed: {is_valid}", extra={"privacy_safe": True})
 
             return result
 
         except Exception as _:
-            logger.error("Proof verification failed: {e}")
+            logger.error(f"Proof verification failed: {e}")
             return VerificationResult(
                 is_valid=False,
                 proof_id=proof.proof_id,
@@ -198,7 +201,7 @@ class Verifier:
 
             # Allow some tolerance
             if abs(actual_size - expected_size) > 50:
-                logger.warning("Unexpected proof size: {actual_size} vs {expected_size}")
+                logger.warning(f"Unexpected proof size: {actual_size} vs {expected_size}")
 
         return True
 
@@ -248,7 +251,7 @@ class Verifier:
             return True
 
         except Exception as _:
-            logger.error("Variant proof verification error: {e}")
+            logger.error(f"Variant proof verification error: {e}")
             return False
 
     def _verify_prs_proof(self, proof: Proof) -> bool:
@@ -288,7 +291,7 @@ class Verifier:
             return True
 
         except Exception as _:
-            logger.error("PRS proof verification error: {e}")
+            logger.error(f"PRS proof verification error: {e}")
             return False
 
     def _verify_diabetes_proof(self, proof: Proof) -> bool:
@@ -332,7 +335,7 @@ class Verifier:
             return True
 
         except Exception as _:
-            logger.error("Diabetes proof verification error: {e}")
+            logger.error(f"Diabetes proof verification error: {e}")
             return False
 
     def _verify_ancestry_proof(self, proof: Proof) -> bool:
@@ -348,7 +351,7 @@ class Verifier:
             return True
 
         except Exception as _:
-            logger.error("Ancestry proof verification error: {e}")
+            logger.error(f"Ancestry proof verification error: {e}")
             return False
 
     def _verify_pharmacogenomic_proof(self, proof: Proof) -> bool:
@@ -369,7 +372,7 @@ class Verifier:
             return True
 
         except Exception as _:
-            logger.error("Pharmacogenomic proof verification error: {e}")
+            logger.error(f"Pharmacogenomic proof verification error: {e}")
             return False
 
     def _verify_pathway_proof(self, proof: Proof) -> bool:
@@ -385,7 +388,7 @@ class Verifier:
             return True
 
         except Exception as _:
-            logger.error("Pathway proof verification error: {e}")
+            logger.error(f"Pathway proof verification error: {e}")
             return False
 
     def _verify_generic_proof(self, proof: Proof, vk: Dict) -> bool:
@@ -394,7 +397,7 @@ class Verifier:
             # Basic validation passed, simulate verification
             return True
         except Exception as _:
-            logger.error("Generic proof verification error: {e}")
+            logger.error(f"Generic proof verification error: {e}")
             return False
 
     def batch_verify(self, proofs: List[Proof]) -> List[VerificationResult]:

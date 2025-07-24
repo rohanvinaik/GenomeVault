@@ -18,7 +18,9 @@ import numpy as np
 from genomevault.utils.config import get_config
 
 config = get_config()
-from genomevault.utils.logging import audit_logger, logger, performance_logger
+from genomevault.utils.logging import audit_logger, get_logger, logger, performance_logger
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -114,7 +116,7 @@ class PIRServer:
             if shard.verify_integrity():
                 shards[shard.shard_id] = shard
             else:
-                logger.error("Shard {shard.shard_id} integrity check failed")
+                logger.error(f"Shard {shard.shard_id} integrity check failed")
 
         return shards
 
@@ -159,7 +161,7 @@ class PIRServer:
 
         # Validate query
         if shard_id not in self.shards:
-            logger.error("Unknown shard: {shard_id}")
+            logger.error(f"Unknown shard: {shard_id}")
             return {"error": "Unknown shard", "query_id": query_id}
 
         # Audit log (privacy-safe)
@@ -203,7 +205,7 @@ class PIRServer:
             return response
 
         except Exception as e:
-            logger.error("Error processing PIR query: {e}")
+            logger.error(f"Error processing PIR query: {e}")
             return {"error": str(e), "query_id": query_id}
 
     async def _compute_dot_product(
@@ -341,7 +343,7 @@ class PIRServer:
             Success status
         """
         if shard_id not in self.shards:
-            logger.error("Unknown shard: {shard_id}")
+            logger.error(f"Unknown shard: {shard_id}")
             return False
 
         # Close existing memory map
@@ -358,7 +360,7 @@ class PIRServer:
             logger.error("New shard data integrity check failed")
             return False
 
-        logger.info("Shard {shard_id} updated successfully")
+        logger.info(f"Shard {shard_id} updated successfully")
         return True
 
     def shutdown(self):
@@ -370,7 +372,7 @@ class PIRServer:
         # Shutdown process pool
         self.process_pool.shutdown(wait=True)
 
-        logger.info("PIR server {self.server_id} shutdown complete")
+        logger.info(f"PIR server {self.server_id} shutdown complete")
 
 
 class TrustedSignatoryServer(PIRServer):
@@ -418,7 +420,7 @@ class TrustedSignatoryServer(PIRServer):
     def _initialize_hsm(self):
         """Initialize hardware security module."""
         # In production, would interface with actual HSM
-        logger.info("HSM {self.hsm_serial} initialized")
+        logger.info(f"HSM {self.hsm_serial} initialized")
 
     def _setup_enhanced_audit(self):
         """Setup enhanced HIPAA-compliant audit logging."""

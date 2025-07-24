@@ -8,13 +8,14 @@ import json
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 import aiohttp
 from geopy.distance import geodesic
 
-from genomevault.utils.logging import audit_logger, logger
+from genomevault.utils.logging import audit_logger, get_logger, logger
 
+logger = get_logger(__name__)
 
 class ServerType(Enum):
     """PIR server types."""
@@ -253,8 +254,8 @@ class PIRCoordinator:
                 await asyncio.sleep(self.health_check_interval)
             except asyncio.CancelledError:
                 break
-            except Exception as e:
-                logger.error(f"Health monitor error: {e}")
+            except Exception:
+        logger.error(f"Health monitor error: {e}")
                 await asyncio.sleep(5)
 
     async def _check_all_servers_health(self):

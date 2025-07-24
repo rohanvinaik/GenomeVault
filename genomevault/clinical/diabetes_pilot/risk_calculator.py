@@ -291,12 +291,12 @@ class DiabetesRiskCalculator:
             verification_time = (time.time() - start) * 1000
 
             if verification_time > 25:
-                logger.warning("Verification took {verification_time:.1f}ms")
+                logger.warning(f"Verification took {verification_time:.1f}ms")
 
             return True
 
         except Exception as e:
-            logger.error("Alert verification failed: {e}")
+            logger.error(f"Alert verification failed: {e}")
             return False
 
     def monitor_continuous_risk(

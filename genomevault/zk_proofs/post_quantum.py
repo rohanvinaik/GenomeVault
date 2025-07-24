@@ -8,10 +8,13 @@ proving systems including STARKs and lattice-based proofs.
 import hashlib
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 
-from genomevault.utils.logging import logger
+from genomevault.utils.logging import get_logger, logger
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -111,7 +114,7 @@ class STARKProver(PostQuantumProver):
         # Serialize proof
         _ = self._serialize_proof(proof_data)
 
-        logger.info("STARK proof generated, size: {len(proof_bytes)} bytes")
+        logger.info(f"STARK proof generated, size: {len(proof_bytes)} bytes")
 
         return proof_bytes
 
@@ -150,7 +153,7 @@ class STARKProver(PostQuantumProver):
             return True
 
         except Exception as _:
-            logger.error("STARK verification failed: {e}")
+            logger.error(f"STARK verification failed: {e}")
             return False
 
     def get_security_level(self) -> int:
@@ -366,7 +369,7 @@ class LatticeProver(PostQuantumProver):
             )
 
         except Exception as _:
-            logger.error("Lattice verification failed: {e}")
+            logger.error(f"Lattice verification failed: {e}")
             return False
 
     def get_security_level(self) -> int:
@@ -480,7 +483,7 @@ class PostQuantumTransition:
             proofs["stark"] = self.stark_prover.generate_proof(statement, witness)
             proofs["lattice"] = self.lattice_prover.generate_proof(statement, witness)
 
-        logger.info("Generated hybrid proofs for {circuit_name}")
+        logger.info(f"Generated hybrid proofs for {circuit_name}")
 
         return proofs
 
@@ -532,7 +535,7 @@ class PostQuantumTransition:
         if algorithm not in valid_algorithms:
             raise ValueError("Algorithm must be one of {valid_algorithms}")
 
-        logger.info("Set post-quantum algorithm preference: {algorithm}")
+        logger.info(f"Set post-quantum algorithm preference: {algorithm}")
 
 
 # Utility functions for post-quantum proofs
