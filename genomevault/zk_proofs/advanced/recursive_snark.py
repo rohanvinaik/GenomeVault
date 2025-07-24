@@ -60,10 +60,10 @@ class RecursiveSNARKProver:
         self.accumulator_state = self._initialize_accumulator()
         self.circuit_cache = {}
         self.use_real_backend = use_real_backend
-        
+
         # Initialize ZK backend
         self.backend = get_backend(use_real=use_real_backend)
-        
+
         logger.info(f"RecursiveSNARKProver initialized with max depth {max_recursion_depth}")
         logger.info(f"Using {'real gnark' if use_real_backend else 'simulated'} backend")
 
@@ -310,9 +310,7 @@ class RecursiveSNARKProver:
             # Use real gnark backend for proof generation
             with metrics.time_operation("recursive_proof_generation"):
                 proof_data = self.backend.generate_proof(
-                    "recursive_verifier",
-                    public_inputs,
-                    private_inputs
+                    "recursive_verifier", public_inputs, private_inputs
                 )
             return proof_data
         else:
@@ -474,7 +472,7 @@ class RecursiveSNARKProver:
                 return self.backend.verify_proof(
                     "recursive_verifier",
                     recursive_proof.aggregation_proof,
-                    recursive_proof.public_aggregate
+                    recursive_proof.public_aggregate,
                 )
         else:
             # Simulate verification
