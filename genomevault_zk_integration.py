@@ -8,31 +8,21 @@ import hashlib
 import json
 import logging
 import time
-from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
-from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 
 # Import from existing GenomeVault structure
 from genomevault.zk_proofs.enhanced_zk_circuits import (
-    BaseCircuit,
-    CircuitConstraint,
     CircuitType,
-    DiabetesRiskAlertCircuit,
-    FieldElement,
-    MerkleInclusionCircuit,
-    PolygeneticRiskScoreCircuit,
-    PoseidonHash,
     ProofData,
-    VariantVerificationCircuit,
     ZKProver,
     ZKVerifier,
 )
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level = logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -43,8 +33,8 @@ class ZKProofRequest:
     circuit_type: CircuitType
     public_inputs: Dict[str, Any]
     private_inputs: Dict[str, Any]
-    circuit_params: Dict[str, Any] = field(default_factory=dict)
-    priority: int = 1  # 1=low, 5=high
+    circuit_params: Dict[str, Any] = field(default_factory = dict)
+    priority: int = 1  # 1 = low, 5 = high
     timeout_seconds: int = 30
 
 
@@ -88,12 +78,10 @@ class ZKProofService:
 
         try:
             prover = ZKProver()
-            proof = prover.generate_proof(
-                request.circuit_type,
+            proof = prover.generate_proof(request.circuit_type,
                 request.public_inputs,
                 request.private_inputs,
-                **request.circuit_params,
-            )
+                **request.circuit_params,)
 
             generation_time = time.time() - start_time
 
@@ -103,28 +91,22 @@ class ZKProofService:
             verification_time = time.time() - verify_start
 
             if not is_valid:
-                return ZKProofResult(
-                    success=False,
-                    error_message="Proof verification failed",
-                    generation_time=generation_time,
-                    verification_time=verification_time,
-                )
+                return ZKProofResult(success = False,
+                    error_message = "Proof verification failed",
+                    generation_time = generation_time,
+                    verification_time = verification_time,)
 
             # Update metrics
             self.metrics["total_proofs"] += 1
 
-            return ZKProofResult(
-                success=True,
-                proof=proof,
-                generation_time=generation_time,
-                verification_time=verification_time,
-            )
+            return ZKProofResult(success = True,
+                proof = proof,
+                generation_time = generation_time,
+                verification_time = verification_time,)
 
         except Exception as e:
             generation_time = time.time() - start_time
-            return ZKProofResult(
-                success=False, error_message=str(e), generation_time=generation_time
-            )
+            return ZKProofResult(success = False, error_message = str(e), generation_time = generation_time)
 
     def get_metrics(self) -> Dict[str, Any]:
         """Get service metrics"""
@@ -137,18 +119,14 @@ class GenomeVaultZKIntegration:
     def __init__(self, proof_service: ZKProofService):
         self.proof_service = proof_service
 
-    async def prove_variant_presence(
-        self,
+    async def prove_variant_presence(self,
         variant_data: Dict[str, Any],
         merkle_proof: Dict[str, Any],
-        commitment_root: str,
-    ) -> ZKProofResult:
+        commitment_root: str,) -> ZKProofResult:
         """Prove presence of a variant without revealing position"""
 
         # Prepare inputs
-        variant_hash = hashlib.sha256(
-            f"{variant_data['chr']}:{variant_data['pos']}:{variant_data['ref']}:{variant_data['alt']}".encode()
-        ).hexdigest()
+        variant_hash = hashlib.sha256(f"{variant_data['chr']}:{variant_data['pos']}:{variant_data['ref']}:{variant_data['alt']}".encode()).hexdigest()
 
         public_inputs = {
             "variant_hash": variant_hash,
@@ -162,18 +140,14 @@ class GenomeVaultZKIntegration:
             "witness_randomness": "0x" + np.random.bytes(32).hex(),
         }
 
-        request = ZKProofRequest(
-            circuit_type=CircuitType.VARIANT_VERIFICATION,
-            public_inputs=public_inputs,
-            private_inputs=private_inputs,
-            circuit_params={"merkle_depth": 20},
-        )
+        request = ZKProofRequest(circuit_type = CircuitType.VARIANT_VERIFICATION,
+            public_inputs = public_inputs,
+            private_inputs = private_inputs,
+            circuit_params = {"merkle_depth": 20},)
 
         return await self.proof_service.generate_proof(request)
 
-    async def prove_polygenic_risk_score(
-        self, variants: List[int], weights: List[float], score_range: Dict[str, float]
-    ) -> ZKProofResult:
+    async def prove_polygenic_risk_score(self, variants: List[int], weights: List[float], score_range: Dict[str, float]) -> ZKProofResult:
         """Prove PRS calculation without revealing individual variants"""
 
         # Scale weights to avoid decimals in circuit
@@ -191,22 +165,18 @@ class GenomeVaultZKIntegration:
             "witness_randomness": "0x" + np.random.bytes(32).hex(),
         }
 
-        request = ZKProofRequest(
-            circuit_type=CircuitType.POLYGENIC_RISK_SCORE,
-            public_inputs=public_inputs,
-            private_inputs=private_inputs,
-            circuit_params={"max_variants": 1000},
-        )
+        request = ZKProofRequest(circuit_type = CircuitType.POLYGENIC_RISK_SCORE,
+            public_inputs = public_inputs,
+            private_inputs = private_inputs,
+            circuit_params = {"max_variants": 1000},)
 
         return await self.proof_service.generate_proof(request)
 
-    async def prove_diabetes_risk_alert(
-        self,
+    async def prove_diabetes_risk_alert(self,
         glucose_reading: float,
         risk_score: float,
         glucose_threshold: float,
-        risk_threshold: float,
-    ) -> ZKProofResult:
+        risk_threshold: float,) -> ZKProofResult:
         """Prove diabetes risk condition without revealing actual values"""
 
         public_inputs = {
@@ -221,12 +191,10 @@ class GenomeVaultZKIntegration:
             "witness_randomness": "0x" + np.random.bytes(32).hex(),
         }
 
-        request = ZKProofRequest(
-            circuit_type=CircuitType.DIABETES_RISK_ALERT,
-            public_inputs=public_inputs,
-            private_inputs=private_inputs,
-            priority=5,  # High priority for medical alerts
-        )
+        request = ZKProofRequest(circuit_type = CircuitType.DIABETES_RISK_ALERT,
+            public_inputs = public_inputs,
+            private_inputs = private_inputs,
+            priority = 5,  # High priority for medical alerts)
 
         return await self.proof_service.generate_proof(request)
 
@@ -265,7 +233,7 @@ async def run_diabetes_pilot_demo():
     """Demonstrate the diabetes risk assessment pilot"""
 
     # Initialize system
-    zk_system = GenomeVaultZKSystem(max_workers=2)
+    zk_system = GenomeVaultZKSystem(max_workers = 2)
     await zk_system.start()
 
     try:
@@ -282,9 +250,7 @@ async def run_diabetes_pilot_demo():
         print(f"Risk threshold: {risk_threshold}")
 
         # Generate ZK proof
-        result = await zk_system.zk_integration.prove_diabetes_risk_alert(
-            glucose_reading, risk_score, glucose_threshold, risk_threshold
-        )
+        result = await zk_system.zk_integration.prove_diabetes_risk_alert(glucose_reading, risk_score, glucose_threshold, risk_threshold)
 
         if result.success:
             print(f"\n✅ ZK Proof Generated Successfully!")
@@ -300,7 +266,7 @@ async def run_diabetes_pilot_demo():
         # Show system metrics
         print(f"\n=== System Metrics ===")
         health = await zk_system.health_check()
-        print(json.dumps(health, indent=2))
+        print(json.dumps(health, indent = 2))
 
     finally:
         await zk_system.stop()

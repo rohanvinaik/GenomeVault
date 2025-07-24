@@ -1,13 +1,12 @@
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List
 
 """
 Hypervector binding operations for multi-modal data integration
 """
 
 from enum import Enum
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List
 
-import numpy as np
 import torch
 
 from genomevault.core.constants import HYPERVECTOR_DIMENSIONS
@@ -28,6 +27,7 @@ class HypervectorBinder:
     """
 
     def __init__(self, dimension: int = HYPERVECTOR_DIMENSIONS["base"]):
+        """Magic method implementation."""
         self.dimension = dimension
 
     def bind(
@@ -48,7 +48,9 @@ class HypervectorBinder:
             Bound hypervector
         """
         if vec1.shape != vec2.shape:
-            raise ValueError("Vector shapes must match: {vec1.shape} != {vec2.shape}") from e
+            raise ValueError(
+                "Vector shapes must match: {vec1.shape} != {vec2.shape}"
+            ) from e
         if operation == BindingOperation.CIRCULAR_CONVOLUTION:
             return self._circular_convolution(vec1, vec2)
         if operation == BindingOperation.XOR:
@@ -59,7 +61,10 @@ class HypervectorBinder:
             return self._permutation_binding(vec1, vec2)
         else:
             raise ValueError("Unknown binding operation: {operation}") from e
-    def _circular_convolution(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
+
+    def _circular_convolution(
+        self, vec1: torch.Tensor, vec2: torch.Tensor
+    ) -> torch.Tensor:
         """
         Bind using circular convolution (preserves algebraic properties)
         """
@@ -94,7 +99,9 @@ class HypervectorBinder:
         bound = vec1 * vec2
         return bound / torch.norm(bound)
 
-    def _permutation_binding(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
+    def _permutation_binding(
+        self, vec1: torch.Tensor, vec2: torch.Tensor
+    ) -> torch.Tensor:
         """
         Bind using permutation of one vector
         """
@@ -130,10 +137,15 @@ class HypervectorBinder:
             return self._xor_binding(bound_vec, known_vec)
         if operation == BindingOperation.MULTIPLY:
             # Inverse is division (multiplication by reciprocal)
-            return bound_vec / (known_vec + 1e-8)  # Add small epsilon to avoid division by zero
+            return bound_vec / (
+                known_vec + 1e-8
+            )  # Add small epsilon to avoid division by zero
         else:
             raise ValueError("Unbinding not supported for {operation}") from e
-    def _circular_correlation(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
+
+    def _circular_correlation(
+        self, vec1: torch.Tensor, vec2: torch.Tensor
+    ) -> torch.Tensor:
         """
         Circular correlation (inverse of circular convolution)
         """
@@ -181,6 +193,8 @@ class MultiModalBinder:
     """
     Specialized binder for multi-omics data integration
     """
+
+    """Magic method implementation."""
 
     def __init__(self, dimension: int = HYPERVECTOR_DIMENSIONS["base"]):
         self.dimension = dimension
@@ -234,7 +248,9 @@ class MultiModalBinder:
         integrated = torch.stack(bound_modalities).sum(dim=0)
         return integrated / torch.norm(integrated)
 
-    def extract_modality(self, integrated_vec: torch.Tensor, modality: str) -> torch.Tensor:
+    def extract_modality(
+        self, integrated_vec: torch.Tensor, modality: str
+    ) -> torch.Tensor:
         """
         Extract a specific modality from an integrated vector
         """

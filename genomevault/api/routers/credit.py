@@ -1,20 +1,18 @@
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 """
 Credit system API endpoints
 """
-import time
 
 
 import uuid
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from genomevault.core.config import get_config
-from genomevault.core.exceptions import BlockchainError
 
 router = APIRouter()
 config = get_config()
@@ -34,16 +32,16 @@ class CreditBalance(BaseModel):
 class VaultRequest(BaseModel):
     """Request to vault credits"""
 
-    amount: int = Field(..., gt=0, description="Amount of credits to vault")
-    duration_blocks: int = Field(..., gt=0, description="Vaulting duration in blocks")
-    beneficiary: Optional[str] = Field(None, description="Address to receive bonus credits")
+    amount: int = Field(..., gt = 0, description = "Amount of credits to vault")
+    duration_blocks: int = Field(..., gt = 0, description = "Vaulting duration in blocks")
+    beneficiary: Optional[str] = Field(None, description = "Address to receive bonus credits")
 
 
 class RedeemRequest(BaseModel):
     """Request to redeem vaulted credits"""
 
-    vault_id: str = Field(..., description="ID of the vault to redeem")
-    early_withdrawal: bool = Field(False, description="Whether to withdraw early (with penalty)")
+    vault_id: str = Field(..., description = "ID of the vault to redeem")
+    early_withdrawal: bool = Field(False, description = "Whether to withdraw early (with penalty)")
 
 
 class VaultInfo(BaseModel):
@@ -68,24 +66,22 @@ VAULTS: Dict[str, VaultInfo] = {}
 def get_or_create_balance(address: str) -> CreditBalance:
     """Get or create credit balance for an address"""
     if address not in CREDIT_LEDGER:
-        CREDIT_LEDGER[address] = CreditBalance(
-            address=address,
-            balance=100,  # Initial credits
-            pending=0,
-            total_earned=100,
-            total_spent=0,
-            last_block=0,
-        )
+        CREDIT_LEDGER[address] = CreditBalance(address = address,
+            balance = 100,  # Initial credits
+            pending = 0,
+            total_earned = 100,
+            total_spent = 0,
+            last_block = 0,)
     return CREDIT_LEDGER[address]
 
 
-@router.get("/balance/{address}", response_model=CreditBalance)
+@router.get("/balance/{address}", response_model = CreditBalance)
 async def get_credit_balance(address: str):
     """Get credit balance for an address"""
     return get_or_create_balance(address)
 
 
-@router.post("/vault", response_model=VaultInfo)
+@router.post("/vault", response_model = VaultInfo)
 async def vault_credits(request: VaultRequest, address: str = "0x123..."):  # Would come from auth
     """
     Vault credits for a duration to earn bonus
@@ -99,10 +95,8 @@ async def vault_credits(request: VaultRequest, address: str = "0x123..."):  # Wo
 
     # Check sufficient balance
     if balance.balance < request.amount:
-        raise HTTPException(
-            status_code=400,
-            detail="Insufficient balance: {balance.balance} < {request.amount}",
-        )
+        raise HTTPException(status_code = 400,
+            detail = "Insufficient balance: {balance.balance} < {request.amount}",)
 
     # Calculate bonus rate based on duration
     if request.duration_blocks >= 100000:
@@ -118,17 +112,15 @@ async def vault_credits(request: VaultRequest, address: str = "0x123..."):  # Wo
     vault_id = str(uuid.uuid4())
     current_block = 1000000  # Simulated current block
 
-    vault = VaultInfo(
-        vault_id=vault_id,
-        owner=address,
-        amount=request.amount,
-        duration_blocks=request.duration_blocks,
-        created_block=current_block,
-        maturity_block=current_block + request.duration_blocks,
-        bonus_rate=bonus_rate,
-        status="active",
-        beneficiary=request.beneficiary,
-    )
+    vault = VaultInfo(vault_id = vault_id,
+        owner = address,
+        amount = request.amount,
+        duration_blocks = request.duration_blocks,
+        created_block = current_block,
+        maturity_block = current_block + request.duration_blocks,
+        bonus_rate = bonus_rate,
+        status = "active",
+        beneficiary = request.beneficiary,)
 
     # Update balances
     balance.balance -= request.amount
@@ -139,7 +131,7 @@ async def vault_credits(request: VaultRequest, address: str = "0x123..."):  # Wo
     return vault
 
 
-@router.post("/redeem", response_model=Dict[str, any])
+@router.post("/redeem", response_model = Dict[str, any])
 async def redeem_vaulted_credits(request: RedeemRequest, address: str = "0x123..."):
     """
     Redeem vaulted credits
@@ -147,17 +139,17 @@ async def redeem_vaulted_credits(request: RedeemRequest, address: str = "0x123..
     If redeemed early, a 10% penalty is applied
     """
     if request.vault_id not in VAULTS:
-        raise HTTPException(status_code=404, detail="Vault not found")
+        raise HTTPException(status_code = 404, detail = "Vault not found")
 
     vault = VAULTS[request.vault_id]
 
     # Verify ownership
     if vault.owner != address:
-        raise HTTPException(status_code=403, detail="Not vault owner")
+        raise HTTPException(status_code = 403, detail = "Not vault owner")
 
     # Check if already redeemed
     if vault.status == "redeemed":
-        raise HTTPException(status_code=400, detail="Vault already redeemed")
+        raise HTTPException(status_code = 400, detail = "Vault already redeemed")
 
     current_block = 1000100  # Simulated current block
     balance = get_or_create_balance(address)
@@ -175,10 +167,8 @@ async def redeem_vaulted_credits(request: RedeemRequest, address: str = "0x123..
             penalty = vault.amount - redemption_amount
             vault.status = "redeemed"
         else:
-            raise HTTPException(
-                status_code=400,
-                detail="Vault not matured. Matures at block {vault.maturity_block}",
-            )
+            raise HTTPException(status_code = 400,
+                detail = "Vault not matured. Matures at block {vault.maturity_block}",)
 
     # Update balances
     balance.balance += redemption_amount
@@ -218,23 +208,19 @@ async def list_vaults(address: str, status: Optional[str] = None):
 
 
 @router.post("/transfer")
-async def transfer_credits(
-    to_address: str,
-    amount: int = Field(..., gt=0),
-    from_address: str = "0x123...",  # Would come from auth
-):
+async def transfer_credits(to_address: str,
+    amount: int = Field(..., gt = 0),
+    from_address: str = "0x123...",  # Would come from auth):
     """Transfer credits between addresses"""
     if from_address == to_address:
-        raise HTTPException(status_code=400, detail="Cannot transfer to self")
+        raise HTTPException(status_code = 400, detail = "Cannot transfer to self")
 
     from_balance = get_or_create_balance(from_address)
     to_balance = get_or_create_balance(to_address)
 
     if from_balance.balance < amount:
-        raise HTTPException(
-            status_code=400,
-            detail="Insufficient balance: {from_balance.balance} < {amount}",
-        )
+        raise HTTPException(status_code = 400,
+            detail = "Insufficient balance: {from_balance.balance} < {amount}",)
 
     # Execute transfer
     from_balance.balance -= amount
@@ -253,15 +239,13 @@ async def transfer_credits(
 
 
 @router.get("/earnings/estimate")
-async def estimate_earnings(
-    node_type: str = "light", is_signatory: bool = False, blocks: int = 1000
-):
+async def estimate_earnings(node_type: str = "light", is_signatory: bool = False, blocks: int = 1000):
     """Estimate credit earnings for a node configuration"""
     # Base credits per block
     base_credits = {"light": 1, "full": 4, "archive": 8}
 
     if node_type not in base_credits:
-        raise HTTPException(status_code=400, detail="Invalid node type")
+        raise HTTPException(status_code = 400, detail = "Invalid node type")
 
     credits_per_block = base_credits[node_type]
     if is_signatory:

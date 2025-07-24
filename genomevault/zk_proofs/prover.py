@@ -74,145 +74,133 @@ class CircuitLibrary:
     @staticmethod
     def variant_presence_circuit() -> Circuit:
         """Circuit for proving variant presence without revealing position."""
-        return Circuit(
-            name="variant_presence",
-            circuit_type="genomic",
-            constraints=5000,
-            public_inputs=[
+        return Circuit(name = "variant_presence",
+            circuit_type = "genomic",
+            constraints = 5000,
+            public_inputs = [
                 "variant_hash",  # Hash of variant details
                 "reference_hash",  # Hash of reference genome version
                 "commitment_root",  # Merkle root of genome commitment
             ],
-            private_inputs=[
+            private_inputs = [
                 "variant_data",  # Actual variant (chr, pos, ref, alt)
                 "merkle_proof",  # Proof of inclusion
                 "witness_randomness",  # Randomness for ZK
             ],
-            parameters={
+            parameters = {
                 "hash_function": "sha256",
                 "merkle_depth": 20,
                 "field_size": 254,  # BLS12-381 scalar field
-            },
-        )
+            },)
 
     @staticmethod
     def polygenic_risk_score_circuit() -> Circuit:
         """Circuit for computing PRS without revealing individual variants."""
-        return Circuit(
-            name="polygenic_risk_score",
-            circuit_type="genomic",
-            constraints=20000,
-            public_inputs=[
+        return Circuit(name = "polygenic_risk_score",
+            circuit_type = "genomic",
+            constraints = 20000,
+            public_inputs = [
                 "prs_model",  # Hash of PRS model
                 "score_range",  # Valid score range
                 "result_commitment",  # Commitment to calculated score
                 "genome_commitment",  # Merkle root of genome
             ],
-            private_inputs=[
+            private_inputs = [
                 "variants",  # User's variants
                 "weights",  # PRS model weights
                 "merkle_proofs",  # Proofs for each variant
                 "witness_randomness",
             ],
-            parameters={
+            parameters = {
                 "max_variants": 1000,
                 "precision_bits": 16,
                 "differential_privacy_epsilon": 1.0,
-            },
-        )
+            },)
 
     @staticmethod
     def ancestry_composition_circuit() -> Circuit:
         """Circuit for proving ancestry proportions."""
-        return Circuit(
-            name="ancestry_composition",
-            circuit_type="genomic",
-            constraints=15000,
-            public_inputs=[
+        return Circuit(name = "ancestry_composition",
+            circuit_type = "genomic",
+            constraints = 15000,
+            public_inputs = [
                 "ancestry_model",  # Reference panel hash
                 "composition_hash",  # Hash of composition
                 "threshold",  # Minimum proportion threshold
             ],
-            private_inputs=[
+            private_inputs = [
                 "genome_segments",  # Chromosome segments
                 "ancestry_assignments",  # Per-segment ancestry
                 "witness_randomness",
             ],
-            parameters={
+            parameters = {
                 "num_populations": 26,
                 "segment_size": 1000000,  # 1Mb segments
                 "confidence_threshold": 0.95,
-            },
-        )
+            },)
 
     @staticmethod
     def pharmacogenomic_circuit() -> Circuit:
         """Circuit for medication response prediction."""
-        return Circuit(
-            name="pharmacogenomic",
-            circuit_type="clinical",
-            constraints=10000,
-            public_inputs=[
+        return Circuit(name = "pharmacogenomic",
+            circuit_type = "clinical",
+            constraints = 10000,
+            public_inputs = [
                 "medication_id",  # Medication identifier
                 "response_category",  # Response category (poor, normal, rapid)
                 "model_version",  # PharmGKB model version
             ],
-            private_inputs=[
+            private_inputs = [
                 "star_alleles",  # CYP gene star alleles
                 "variant_genotypes",  # Relevant variant genotypes
                 "activity_scores",  # Computed activity scores
                 "witness_randomness",
             ],
-            parameters={
+            parameters = {
                 "genes": ["CYP2C19", "CYP2D6", "CYP2C9", "VKORC1", "TPMT"],
                 "max_star_alleles": 50,
-            },
-        )
+            },)
 
     @staticmethod
     def pathway_enrichment_circuit() -> Circuit:
         """Circuit for pathway analysis without revealing expression."""
-        return Circuit(
-            name="pathway_enrichment",
-            circuit_type="transcriptomic",
-            constraints=25000,
-            public_inputs=[
+        return Circuit(name = "pathway_enrichment",
+            circuit_type = "transcriptomic",
+            constraints = 25000,
+            public_inputs = [
                 "pathway_id",  # Pathway being tested
                 "enrichment_score",  # Calculated score
                 "significance",  # P-value commitment
             ],
-            private_inputs=[
+            private_inputs = [
                 "expression_values",  # Gene expression values
                 "gene_sets",  # Pathway gene sets
                 "permutation_seeds",  # For significance testing
                 "witness_randomness",
             ],
-            parameters={"max_genes": 20000, "permutations": 1000, "method": "GSEA"},
-        )
+            parameters = {"max_genes": 20000, "permutations": 1000, "method": "GSEA"},)
 
     @staticmethod
     def diabetes_risk_circuit() -> Circuit:
         """Circuit for diabetes risk assessment (pilot implementation)."""
-        return Circuit(
-            name="diabetes_risk_alert",
-            circuit_type="clinical",
-            constraints=15000,
-            public_inputs=[
+        return Circuit(name = "diabetes_risk_alert",
+            circuit_type = "clinical",
+            constraints = 15000,
+            public_inputs = [
                 "glucose_threshold",  # G_threshold
                 "risk_threshold",  # R_threshold
                 "result_commitment",  # Commitment to alert status
             ],
-            private_inputs=[
+            private_inputs = [
                 "glucose_reading",  # Actual glucose value (G)
                 "risk_score",  # PRS with DP noise (R)
                 "witness_randomness",
             ],
-            parameters={
+            parameters = {
                 "condition": "(G > G_threshold) AND (R > R_threshold)",
                 "proof_size_bytes": 384,
                 "verification_time_ms": 25,
-            },
-        )
+            },)
 
 
 class Prover:
@@ -231,7 +219,7 @@ class Prover:
         self.circuit_library = circuit_library or CircuitLibrary()
         self.trusted_setup = self._load_trusted_setup()
 
-        logger.info("Prover initialized", extra={"privacy_safe": True})
+        logger.info("Prover initialized", extra = {"privacy_safe": True})
 
     def _load_trusted_setup(self) -> Dict:
         """Load trusted setup parameters."""
@@ -243,12 +231,10 @@ class Prover:
         }
 
     # # # @performance_logger.log_operation("generate_proof")
-    def generate_proof(
-        self,
+    def generate_proof(self,
         circuit_name: str,
         public_inputs: Dict[str, Any],
-        private_inputs: Dict[str, Any],
-    ) -> Proof:
+        private_inputs: Dict[str, Any],) -> Proof:
         """
         Generate zero-knowledge proof.
 
@@ -278,33 +264,29 @@ class Prover:
         _ = time.time() - start_time
 
         # Create proof object
-        proof = Proof(
-            proof_id = f"proof_{uuid.uuid4().hex[:8]}"proof_id,
-            circuit_name=circuit_name,
+        proof = Proof(proof_id = f"proof_{uuid.uuid4().hex[:8]}"proof_id,
+            circuit_name = circuit_name,
             proof_data = {}proof_data,
-            public_inputs=public_inputs,
-            timestamp=time.time(),
-            metadata={
+            public_inputs = public_inputs,
+            timestamp = time.time(),
+            metadata = {
                 "generation_time_seconds": generation_time,
                 "circuit_constraints": circuit.constraints,
                 "proof_system": "PLONK",
                 "curve": "BLS12-381",
-            },
-        )
+            },)
 
         # Audit log
-        audit_logger.log_event(
-            event_type="proof_generation",
-            actor="prover",
-            action="generate_{circuit_name}_proof",
-            resource=proof_id,
-            metadata={
+        audit_logger.log_event(event_type = "proof_generation",
+            actor = "prover",
+            action = "generate_{circuit_name}_proof",
+            resource = proof_id,
+            metadata = {
                 "generation_time": generation_time,
                 "proof_size": len(proof_data),
-            },
-        )
+            },)
 
-        logger.info("Proof generated for {circuit_name}", extra={"privacy_safe": True})
+        logger.info("Proof generated for {circuit_name}", extra = {"privacy_safe": True})
 
         return proof
 
@@ -342,12 +324,10 @@ class Prover:
             "nonce": np.random.bytes(16).hex(),
         }
 
-        data_str = json.dumps(data, sort_keys=True)
+        data_str = json.dumps(data, sort_keys = True)
         return hashlib.sha256(data_str.encode()).hexdigest()[:16]
 
-    def _simulate_proof_generation(
-        self, circuit: Circuit, public_inputs: Dict, private_inputs: Dict
-    ) -> bytes:
+    def _simulate_proof_generation(self, circuit: Circuit, public_inputs: Dict, private_inputs: Dict) -> bytes:
         """
         Simulate PLONK proof generation.
         In production, would use actual proving system.
@@ -420,9 +400,7 @@ class Prover:
             "pi_a": np.random.bytes(48).hex(),
             "pi_b": np.random.bytes(96).hex(),
             "pi_c": np.random.bytes(48).hex(),
-            "condition_commitment": hashlib.sha256(
-                "{condition}:{private_inputs['witness_randomness']}".encode()
-            ).hexdigest(),
+            "condition_commitment": hashlib.sha256("{condition}:{private_inputs['witness_randomness']}".encode()).hexdigest(),
             "range_proofs": [np.random.bytes(32).hex() for _ in range(4)],
         }
 
@@ -456,11 +434,9 @@ class Prover:
 
         for request in proof_requests:
             try:
-                _ = self.generate_proof(
-                    circuit_name=request["circuit_name"],
-                    public_inputs=request["public_inputs"],
-                    private_inputs=request["private_inputs"],
-                )
+                _ = self.generate_proof(circuit_name = request["circuit_name"],
+                    public_inputs = request["public_inputs"],
+                    private_inputs = request["private_inputs"],)
                 proofs.append(proof)
             except Exception as _:
                 logger.error("Batch proof generation failed: {e}")
@@ -494,37 +470,29 @@ class Prover:
         }
 
         # Generate recursive proof
-        _ = self.generate_proof(
-            circuit_name="recursive_aggregation",
-            public_inputs=public_inputs,
-            private_inputs=private_inputs,
-        )
+        _ = self.generate_proof(circuit_name = "recursive_aggregation",
+            public_inputs = public_inputs,
+            private_inputs = private_inputs,)
 
         return recursive_proof
 
     def _validate_proof_format(self, proof: Proof) -> bool:
         """Validate proof format."""
-        return (
-            proof.proof_data is not None
+        return (proof.proof_data is not None
             and len(proof.proof_data) > 0
             and proof.circuit_name
-            and proof.public_inputs
-        )
+            and proof.public_inputs)
 
     def _hash_proof(self, proof: Proof) -> str:
         """Calculate hash of proof."""
-        _ = json.dumps(
-            {
+        _ = json.dumps({
                 "circuit": proof.circuit_name,
                 "public_inputs": proof.public_inputs,
-                "proof_data": (
-                    proof.proof_data.hex()
+                "proof_data": (proof.proof_data.hex()
                     if isinstance(proof.proof_data, bytes)
-                    else str(proof.proof_data)
-                ),
+                    else str(proof.proof_data)),
             },
-            sort_keys=True,
-        )
+            sort_keys = True,)
 
         return hashlib.sha256(proof_str.encode()).hexdigest()
 
@@ -535,37 +503,33 @@ if __name__ == "__main__":
     _ = Prover()
 
     # Example 1: Variant presence proof
-    _ = prover.generate_proof(
-        circuit_name="variant_presence",
-        public_inputs={
+    _ = prover.generate_proof(circuit_name = "variant_presence",
+        public_inputs = {
             "variant_hash": hashlib.sha256(b"chr1:12345:A:G").hexdigest(),
             "reference_hash": hashlib.sha256(b"GRCh38").hexdigest(),
             "commitment_root": hashlib.sha256(b"genome_root").hexdigest(),
         },
-        private_inputs={
+        private_inputs = {
             "variant_data": {"chr": "chr1", "pos": 12345, "re": "A", "alt": "G"},
             "merkle_proo": ["hash1", "hash2", "hash3"],
             "witness_randomness": np.random.bytes(32).hex(),
-        },
-    )
+        },)
 
     print("Variant proof generated: {variant_proof.proof_id}")
     print("Proof size: {len(variant_proof.proof_data)} bytes")
 
     # Example 2: Diabetes risk alert proof
-    _ = prover.generate_proof(
-        circuit_name="diabetes_risk_alert",
-        public_inputs={
+    _ = prover.generate_proof(circuit_name = "diabetes_risk_alert",
+        public_inputs = {
             "glucose_threshold": 126,  # mg/dL
             "risk_threshold": 0.75,  # PRS threshold
             "result_commitment": hashlib.sha256(b"alert_status").hexdigest(),
         },
-        private_inputs={
+        private_inputs = {
             "glucose_reading": 140,  # Actual glucose (private)
             "risk_score": 0.82,  # Actual PRS (private)
             "witness_randomness": np.random.bytes(32).hex(),
-        },
-    )
+        },)
 
     print("\nDiabetes risk proof generated: {diabetes_proof.proof_id}")
     print("Proof size: {len(diabetes_proof.proof_data)} bytes")

@@ -9,7 +9,6 @@ Handles epigenetic data including:
 - Histone modifications (ChIP-seq)
 - Positional encoding for genomic context
 """
-import time
 
 
 from collections import defaultdict
@@ -273,10 +272,12 @@ class MethylationProcessor:
                 },
             )
 
-            logger.info("Successfully processed {len(normalized_sites)} methylation sites")
+            logger.info(
+                "Successfully processed {len(normalized_sites)} methylation sites"
+            )
             return profile
 
-        except Exception as _:
+        except Exception:
             logger.error("Error processing methylation data: {str(e)}")
             raise ProcessingError("Failed to process methylation data: {str(e)}")
 
@@ -297,7 +298,9 @@ class MethylationProcessor:
             "strand": np.random.choice(["+", "-"], n_sites),
             "methylated": np.random.binomial(20, 0.7, n_sites),
             "unmethylated": np.random.binomial(20, 0.3, n_sites),
-            "context": np.random.choice(["CG", "CHG", "CHH"], n_sites, p=[0.8, 0.15, 0.05]),
+            "context": np.random.choice(
+                ["CG", "CHG", "CHH"], n_sites, p=[0.8, 0.15, 0.05]
+            ),
         }
 
         df = pd.DataFrame(data)
@@ -323,7 +326,9 @@ class MethylationProcessor:
         if context != MethylationContext.ALL:
             _ = filtered[filtered["context"] == context.value]
 
-        logger.info("Filtered to {len(filtered)} sites with coverage >= {self.min_coverage}")
+        logger.info(
+            "Filtered to {len(filtered)} sites with coverage >= {self.min_coverage}"
+        )
         return filtered
 
     def _annotate_methylation_sites(self, data: pd.DataFrame) -> List[MethylationSite]:
@@ -366,7 +371,9 @@ class MethylationProcessor:
 
         return None, "intergenic"
 
-    def _calculate_methylation_metrics(self, sites: List[MethylationSite]) -> Dict[str, Any]:
+    def _calculate_methylation_metrics(
+        self, sites: List[MethylationSite]
+    ) -> Dict[str, Any]:
         """Calculate quality control metrics for methylation data"""
         if not sites:
             return {}
@@ -404,7 +411,9 @@ class MethylationProcessor:
 
         return metrics
 
-    def _normalize_methylation(self, sites: List[MethylationSite]) -> List[MethylationSite]:
+    def _normalize_methylation(
+        self, sites: List[MethylationSite]
+    ) -> List[MethylationSite]:
         """Perform beta-mixture quantile normalization"""
         if not sites:
             return sites
@@ -544,7 +553,9 @@ class MethylationProcessor:
         # Sort by p-value
         results_df.sort_values("p_value", inplace=True)
 
-        logger.info("Found {results_df['significant'].sum()} differentially methylated sites")
+        logger.info(
+            "Found {results_df['significant'].sum()} differentially methylated sites"
+        )
 
         return results_df
 
@@ -639,7 +650,7 @@ class ChromatinAccessibilityProcessor:
             logger.info("Successfully processed {len(annotated_peaks)} chromatin peaks")
             return profile
 
-        except Exception as _:
+        except Exception:
             logger.error("Error processing ATAC-seq data: {str(e)}")
             raise ProcessingError("Failed to process ATAC-seq data: {str(e)}")
 
@@ -861,7 +872,9 @@ class ChromatinAccessibilityProcessor:
                         "mean_enrichment_group1": mean1,
                         "mean_enrichment_group2": mean2,
                         "fold_change": fold_change,
-                        "log2_fold_change": (np.log2(fold_change) if fold_change > 0 else 0),
+                        "log2_fold_change": (
+                            np.log2(fold_change) if fold_change > 0 else 0
+                        ),
                         "p_value": p_value,
                     }
                 )

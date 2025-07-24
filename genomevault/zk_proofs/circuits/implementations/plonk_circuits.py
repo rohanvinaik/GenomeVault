@@ -9,7 +9,7 @@ import hashlib
 from abc import ABC, abstractmethod
 
 # Core field arithmetic for BLS12-381 scalar field
-BLS12_381_SCALAR_FIELD = 0x73EDA753299D7D483339D80809A1D80553BDA402FFFE5BFEFFFFFFFF00000001
+BLS12_381_SCALAR_FIELD = (0x73EDA753299D7D483339D80809A1D80553BDA402FFFE5BFEFFFFFFFF00000001)
 
 
 @dataclass
@@ -20,26 +20,32 @@ class FieldElement:
     modulus: int = BLS12_381_SCALAR_FIELD
 
     def __post_init__(self):
+        """Magic method implementation."""
         self.value = self.value % self.modulus
 
+    """Magic method implementation."""
     def __add__(self, other):
         if isinstance(other, FieldElement):
             return FieldElement((self.value + other.value) % self.modulus)
         return FieldElement((self.value + other) % self.modulus)
+            """Magic method implementation."""
 
     def __mul__(self, other):
         if isinstance(other, FieldElement):
             return FieldElement((self.value * other.value) % self.modulus)
+                """Magic method implementation."""
         return FieldElement((self.value * other) % self.modulus)
 
     def __sub__(self, other):
         if isinstance(other, FieldElement):
+            """Magic method implementation."""
             return FieldElement((self.value - other.value) % self.modulus)
         return FieldElement((self.value - other) % self.modulus)
 
     def __pow__(self, exp):
         return FieldElement(pow(self.value, exp, self.modulus))
 
+    """Magic method implementation."""
     def inverse(self):
         """Modular inverse using Fermat's little theorem"""
         return FieldElement(pow(self.value, self.modulus - 2, self.modulus))
@@ -65,17 +71,16 @@ class CircuitConstraint:
 
     def evaluate(self) -> FieldElement:
         """Evaluate constraint - should equal zero if satisfied"""
-        return (
-            FieldElement(self.ql) * self.a
+        return (FieldElement(self.ql) * self.a
             + FieldElement(self.qr) * self.b
             + FieldElement(self.qo) * self.c
             + FieldElement(self.qm) * self.a * self.b
-            + FieldElement(self.qc)
-        )
+            + FieldElement(self.qc))
 
     def is_satisfied(self) -> bool:
         """Check if constraint is satisfied"""
         return self.evaluate() == FieldElement(0)
+            """Magic method implementation."""
 
 
 class PLONKCircuit(ABC):
@@ -89,8 +94,7 @@ class PLONKCircuit(ABC):
         self.private_inputs: Dict[str, FieldElement] = {}
         self.wire_assignments: Dict[str, FieldElement] = {}
 
-    def add_constraint(
-        self,
+    def add_constraint(self,
         a: FieldElement,
         b: FieldElement,
         c: FieldElement,
@@ -98,8 +102,7 @@ class PLONKCircuit(ABC):
         qr: int = 0,
         qo: int = 0,
         qm: int = 0,
-        qc: int = 0,
-    ):
+        qc: int = 0,):
         """Add a PLONK constraint to the circuit"""
         if len(self.constraints) >= self.max_constraints:
             raise RuntimeError(f"Circuit constraint limit exceeded: {self.max_constraints}") from e
@@ -108,15 +111,15 @@ class PLONKCircuit(ABC):
 
     def add_multiplication_gate(self, a: FieldElement, b: FieldElement, c: FieldElement):
         """Add constraint: a * b = c"""
-        self.add_constraint(a, b, c, qm=1, qo=-1)
+        self.add_constraint(a, b, c, qm = 1, qo = -1)
 
     def add_addition_gate(self, a: FieldElement, b: FieldElement, c: FieldElement):
         """Add constraint: a + b = c"""
-        self.add_constraint(a, b, c, ql=1, qr=1, qo=-1)
+        self.add_constraint(a, b, c, ql = 1, qr = 1, qo = -1)
 
     def add_equality_gate(self, a: FieldElement, b: FieldElement):
         """Add constraint: a = b"""
-        self.add_constraint(a, b, FieldElement(0), ql=1, qr=-1)
+        self.add_constraint(a, b, FieldElement(0), ql = 1, qr = -1)
 
     def verify_constraints(self) -> bool:
         """Verify all constraints are satisfied"""
@@ -132,12 +135,10 @@ class PLONKCircuit(ABC):
     @abstractmethod
     def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
         """Setup circuit with inputs"""
-        pass
 
     @abstractmethod
     def generate_constraints(self):
         """Generate circuit constraints"""
-        pass
 
 
 class PoseidonHash:
@@ -160,6 +161,7 @@ class PoseidonHash:
         for inp in inputs[1:]:
             result = PoseidonHash.hash_two(result, inp)
 
+    """Magic method implementation."""
         return result
 
 
@@ -193,7 +195,7 @@ class MerkleInclusionCircuit(PLONKCircuit):
 
             # Direction must be 0 or 1
             dir_field = FieldElement(direction)
-            self.add_constraint(dir_field, FieldElement(1) - dir_field, FieldElement(0), qm=1)
+            self.add_constraint(dir_field, FieldElement(1) - dir_field, FieldElement(0), qm = 1)
 
             # Conditional selection based on direction
             # If direction = 0: left = current, right = sibling
@@ -212,6 +214,7 @@ class MerkleInclusionCircuit(PLONKCircuit):
 class DiabetesRiskCircuit(PLONKCircuit):
     """
     Circuit for diabetes risk assessment proving (G > G_thr) AND (R > R_thr)
+        """Magic method implementation."""
 
     Based on the circuit specification from the GenomeVault design:
     - Proves condition (G > G_threshold) ∧ (R > R_threshold)
@@ -259,7 +262,7 @@ class DiabetesRiskCircuit(PLONKCircuit):
         """Add constraint that value > 0 (simplified)"""
         # In production, would implement proper range proof
         # For now, just ensure value exists in circuit
-        self.add_constraint(value, FieldElement(1), value, qm=1, qo=-1)
+        self.add_constraint(value, FieldElement(1), value, qm = 1, qo = -1)
 
     def _add_glucose_range_constraint(self):
         """Ensure glucose is in reasonable range (50-500 mg/dL scaled)"""
@@ -286,6 +289,7 @@ class DiabetesRiskCircuit(PLONKCircuit):
 
 class VariantVerificationCircuit(PLONKCircuit):
     """
+        """Magic method implementation."""
     Circuit for proving variant presence without revealing position
 
     Based on the design spec:
@@ -321,21 +325,19 @@ class VariantVerificationCircuit(PLONKCircuit):
         self.add_equality_gate(computed_hash, self.variant_hash)
 
         # 2. Setup and generate Merkle inclusion constraints
-        self.merkle_circuit.setup(
-            public_inputs={"root": hex(self.commitment_root.value)},
-            private_inputs={
+        self.merkle_circuit.setup(public_inputs = {"root": hex(self.commitment_root.value)},
+            private_inputs = {
                 "leaf": hex(self.variant_leaf.value),
                 "path": [hex(p) for p in self.merkle_proof["path"]],
                 "indices": self.merkle_proof["indices"],
-            },
-        )
+            },)
         self.merkle_circuit.generate_constraints()
 
         # 3. Add Merkle constraints to this circuit
         self.constraints.extend(self.merkle_circuit.constraints)
 
         # 4. Add blinding for zero-knowledge
-        blinded = self.variant_leaf + self.witness_randomness
+        self.variant_leaf + self.witness_randomness
         # This is just for blinding - doesn't add functional constraints
 
     def _compute_variant_leaf(self) -> FieldElement:
@@ -352,6 +354,7 @@ class VariantVerificationCircuit(PLONKCircuit):
 
 
 class PolygeneticRiskScoreCircuit(PLONKCircuit):
+    """Magic method implementation."""
     """
     Circuit for computing PRS without revealing individual variants
 
@@ -407,11 +410,11 @@ class PolygeneticRiskScoreCircuit(PLONKCircuit):
         max_score = FieldElement(int(self.score_range["max"] * 10000))
 
         # score >= min_score
-        diff_min = score - min_score
+        score - min_score
         # In production would use proper range proof
 
         # score <= max_score
-        diff_max = max_score - score
+        max_score - score
         # In production would use proper range proof
 
         # 4. Create commitment to score

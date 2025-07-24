@@ -3,10 +3,7 @@ Comprehensive test suite for multi-omics processors.
 """
 
 import gzip
-import json
-import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock, Mock, patch
 
 import numpy as np
 import pandas as pd
@@ -24,7 +21,6 @@ from genomevault.local_processing.epigenetics import (
 )
 from genomevault.local_processing.proteomics import (
     ModificationType,
-    Peptide,
     ProteinMeasurement,
     ProteomicsProcessor,
     ProteomicsProfile,
@@ -45,16 +41,14 @@ class TestTranscriptomicsProcessor:
     @pytest.fixture
     def processor(self, tmp_path):
         """Create processor instance."""
-        config = TranscriptomicsConfig(
-            reference_transcriptome=str(tmp_path / "ref.fa"),
-            star_index=str(tmp_path / "star"),
-            kallisto_index=str(tmp_path / "kallisto.idx"),
-            gtf_annotation=str(tmp_path / "genes.gtf"),
-            max_threads=2,
-        )
+        config = TranscriptomicsConfig(reference_transcriptome = str(tmp_path / "ref.fa"),
+            star_index = str(tmp_path / "star"),
+            kallisto_index = str(tmp_path / "kallisto.idx"),
+            gtf_annotation = str(tmp_path / "genes.gtf"),
+            max_threads = 2,)
 
         # Create dummy files
-        Path(config.star_index).mkdir(exist_ok=True)
+        Path(config.star_index).mkdir(exist_ok = True)
         Path(config.kallisto_index).touch()
 
         return TranscriptomicsProcessor(config)
@@ -82,9 +76,7 @@ class TestTranscriptomicsProcessor:
 
     def test_quality_control(self, processor, mock_fastq_files):
         """Test QC on FASTQ files."""
-        qc_results = processor._run_quality_control(
-            mock_fastq_files, Path(processor.config.star_index).parent
-        )
+        qc_results = processor._run_quality_control(mock_fastq_files, Path(processor.config.star_index).parent)
 
         assert "total_reads" in qc_results
         assert "mean_quality" in qc_results
@@ -95,12 +87,10 @@ class TestTranscriptomicsProcessor:
     def test_normalization_methods(self, processor):
         """Test different normalization methods."""
         # Create mock expression data
-        raw_data = pd.DataFrame(
-            {
+        raw_data = pd.DataFrame({
                 "gene_id": ["ENSG{i:08d}" for i in range(100)],
                 "raw_count": np.random.poisson(100, 100),
-            }
-        )
+            })
 
         # Test TPM normalization
         tpm_result = processor._normalize_expression(raw_data, NormalizationMethod.TPM)
@@ -115,21 +105,17 @@ class TestTranscriptomicsProcessor:
         """Test creating expression profile."""
         # Create mock expression matrix
         expr_file = tmp_path / "expression.tsv"
-        expr_data = pd.DataFrame(
-            {
+        expr_data = pd.DataFrame({
                 "gene_id": ["ENSG{i:08d}" for i in range(50)],
                 "raw_count": np.random.poisson(100, 50),
-            }
-        )
-        expr_data.to_csv(expr_file, sep="\t", index=False)
+            })
+        expr_data.to_csv(expr_file, sep = "\t", index = False)
 
         # Process
-        profile = processor.process(
-            expr_file,
+        profile = processor.process(expr_file,
             "sample001",
-            paired_end=False,
-            normalization=NormalizationMethod.TPM,
-        )
+            paired_end = False,
+            normalization = NormalizationMethod.TPM,)
 
         assert isinstance(profile, ExpressionProfile)
         assert profile.sample_id == "sample001"
@@ -148,22 +134,18 @@ class TestTranscriptomicsProcessor:
                 for j in range(100):
                     # Add batch-specific bias
                     bias = 100 if batch == "A" else 200
-                    expr = TranscriptExpression(
-                        transcript_id="ENST{j:08d}",
-                        gene_id="ENSG{j:08d}",
-                        gene_name="GENE{j}",
-                        raw_count=np.random.poisson(bias),
-                        normalized_value=float(np.random.poisson(bias)),
-                        length=1000,
-                    )
+                    expr = TranscriptExpression(transcript_id = "ENST{j:08d}",
+                        gene_id = "ENSG{j:08d}",
+                        gene_name = "GENE{j}",
+                        raw_count = np.random.poisson(bias),
+                        normalized_value = float(np.random.poisson(bias)),
+                        length = 1000,)
                     expressions.append(expr)
 
-                profile = ExpressionProfile(
-                    sample_id="sample_{batch}_{i}",
-                    expressions=expressions,
-                    normalization_method=NormalizationMethod.TPM,
-                    quality_metrics={},
-                )
+                profile = ExpressionProfile(sample_id = "sample_{batch}_{i}",
+                    expressions = expressions,
+                    normalization_method = NormalizationMethod.TPM,
+                    quality_metrics = {},)
                 profiles.append(profile)
                 batch_labels.append(batch)
 
@@ -184,43 +166,35 @@ class TestTranscriptomicsProcessor:
         # Group 1: Low expression
         for i in range(3):
             expressions = [
-                TranscriptExpression(
-                    transcript_id="ENST{j:08d}",
-                    gene_id="ENSG{j:08d}",
-                    gene_name="GENE{j}",
-                    raw_count=np.random.poisson(10),
-                    normalized_value=float(np.random.poisson(10)),
-                    length=1000,
-                )
+                TranscriptExpression(transcript_id = "ENST{j:08d}",
+                    gene_id = "ENSG{j:08d}",
+                    gene_name = "GENE{j}",
+                    raw_count = np.random.poisson(10),
+                    normalized_value = float(np.random.poisson(10)),
+                    length = 1000,)
                 for j in range(50)
             ]
-            profile = ExpressionProfile(
-                sample_id="control_{i}",
-                expressions=expressions,
-                normalization_method=NormalizationMethod.TPM,
-                quality_metrics={},
-            )
+            profile = ExpressionProfile(sample_id = "control_{i}",
+                expressions = expressions,
+                normalization_method = NormalizationMethod.TPM,
+                quality_metrics = {},)
             group1_profiles.append(profile)
 
         # Group 2: High expression for some genes
         for i in range(3):
             expressions = [
-                TranscriptExpression(
-                    transcript_id="ENST{j:08d}",
-                    gene_id="ENSG{j:08d}",
-                    gene_name="GENE{j}",
-                    raw_count=np.random.poisson(100 if j < 10 else 10),
-                    normalized_value=float(np.random.poisson(100 if j < 10 else 10)),
-                    length=1000,
-                )
+                TranscriptExpression(transcript_id = "ENST{j:08d}",
+                    gene_id = "ENSG{j:08d}",
+                    gene_name = "GENE{j}",
+                    raw_count = np.random.poisson(100 if j < 10 else 10),
+                    normalized_value = float(np.random.poisson(100 if j < 10 else 10)),
+                    length = 1000,)
                 for j in range(50)
             ]
-            profile = ExpressionProfile(
-                sample_id="treatment_{i}",
-                expressions=expressions,
-                normalization_method=NormalizationMethod.TPM,
-                quality_metrics={},
-            )
+            profile = ExpressionProfile(sample_id = "treatment_{i}",
+                expressions = expressions,
+                normalization_method = NormalizationMethod.TPM,
+                quality_metrics = {},)
             group2_profiles.append(profile)
 
         # Perform differential expression
@@ -240,18 +214,14 @@ class TestEpigeneticsProcessors:
     @pytest.fixture
     def methylation_processor(self, tmp_path):
         """Create methylation processor."""
-        return MethylationProcessor(
-            reference_genome=tmp_path / "ref.fa",
-            annotation_file=tmp_path / "genes.gtf",
-            min_coverage=5,
-        )
+        return MethylationProcessor(reference_genome = tmp_path / "ref.fa",
+            annotation_file = tmp_path / "genes.gtf",
+            min_coverage = 5,)
 
     @pytest.fixture
     def chromatin_processor(self, tmp_path):
         """Create chromatin accessibility processor."""
-        return ChromatinAccessibilityProcessor(
-            reference_genome=tmp_path / "ref.fa", annotation_file=tmp_path / "genes.gtf"
-        )
+        return ChromatinAccessibilityProcessor(reference_genome = tmp_path / "ref.fa", annotation_file = tmp_path / "genes.gtf")
 
     def test_methylation_processing(self, methylation_processor, tmp_path):
         """Test methylation data processing."""
@@ -265,9 +235,7 @@ class TestEpigeneticsProcessors:
                 f.write("chr1\t{i*1000}\t+\t15\t5\tCG\n")
 
         # Process
-        profile = methylation_processor.process(
-            meth_file, "sample001", data_format="bismark", context=MethylationContext.CG
-        )
+        profile = methylation_processor.process(meth_file, "sample001", data_format = "bismark", context = MethylationContext.CG)
 
         assert isinstance(profile, EpigeneticProfile)
         assert profile.data_type == EpigeneticDataType.METHYLATION
@@ -289,7 +257,7 @@ class TestEpigeneticsProcessors:
                 f.write("chr1\t{i*10000}\t{i*10000+500}\tpeak{i}\t100\t.\t10.5\t1e-5\t1e-3\t250\n")
 
         # Process
-        profile = chromatin_processor.process(peak_file, "sample001", peak_format="narrowPeak")
+        profile = chromatin_processor.process(peak_file, "sample001", peak_format = "narrowPeak")
 
         assert isinstance(profile, EpigeneticProfile)
         assert profile.data_type == EpigeneticDataType.CHROMATIN_ACCESSIBILITY
@@ -310,45 +278,35 @@ class TestEpigeneticsProcessors:
         # Group 1: Low methylation
         for i in range(3):
             sites = [
-                MethylationSite(
-                    chromosome="chr1",
-                    position=j * 1000,
-                    context=MethylationContext.CG,
-                    methylation_level=0.2 + np.random.normal(0, 0.05),
-                    coverage=20,
-                )
+                MethylationSite(chromosome = "chr1",
+                    position = j * 1000,
+                    context = MethylationContext.CG,
+                    methylation_level = 0.2 + np.random.normal(0, 0.05),
+                    coverage = 20,)
                 for j in range(100)
             ]
-            profile = EpigeneticProfile(
-                sample_id="control_{i}",
-                data_type=EpigeneticDataType.METHYLATION,
-                methylation_sites=sites,
-            )
+            profile = EpigeneticProfile(sample_id = "control_{i}",
+                data_type = EpigeneticDataType.METHYLATION,
+                methylation_sites = sites,)
             group1_profiles.append(profile)
 
         # Group 2: High methylation
         for i in range(3):
             sites = [
-                MethylationSite(
-                    chromosome="chr1",
-                    position=j * 1000,
-                    context=MethylationContext.CG,
-                    methylation_level=0.8 + np.random.normal(0, 0.05),
-                    coverage=20,
-                )
+                MethylationSite(chromosome = "chr1",
+                    position = j * 1000,
+                    context = MethylationContext.CG,
+                    methylation_level = 0.8 + np.random.normal(0, 0.05),
+                    coverage = 20,)
                 for j in range(100)
             ]
-            profile = EpigeneticProfile(
-                sample_id="treatment_{i}",
-                data_type=EpigeneticDataType.METHYLATION,
-                methylation_sites=sites,
-            )
+            profile = EpigeneticProfile(sample_id = "treatment_{i}",
+                data_type = EpigeneticDataType.METHYLATION,
+                methylation_sites = sites,)
             group2_profiles.append(profile)
 
         # Perform differential methylation
-        dm_results = methylation_processor.differential_methylation(
-            group1_profiles, group2_profiles
-        )
+        dm_results = methylation_processor.differential_methylation(group1_profiles, group2_profiles)
 
         assert isinstance(dm_results, pd.DataFrame)
         assert "methylation_difference" in dm_results.columns
@@ -357,14 +315,12 @@ class TestEpigeneticsProcessors:
     def test_epigenetic_processor_factory(self):
         """Test processor factory function."""
         # Test methylation processor creation
-        meth_proc = create_epigenetic_processor(EpigeneticDataType.METHYLATION, min_coverage=10)
+        meth_proc = create_epigenetic_processor(EpigeneticDataType.METHYLATION, min_coverage = 10)
         assert isinstance(meth_proc, MethylationProcessor)
         assert meth_proc.min_coverage == 10
 
         # Test chromatin processor creation
-        chrom_proc = create_epigenetic_processor(
-            EpigeneticDataType.CHROMATIN_ACCESSIBILITY, peak_caller="macs2"
-        )
+        chrom_proc = create_epigenetic_processor(EpigeneticDataType.CHROMATIN_ACCESSIBILITY, peak_caller = "macs2")
         assert isinstance(chrom_proc, ChromatinAccessibilityProcessor)
         assert chrom_proc.peak_caller == "macs2"
 
@@ -375,17 +331,14 @@ class TestProteomicsProcessor:
     @pytest.fixture
     def processor(self, tmp_path):
         """Create proteomics processor."""
-        return ProteomicsProcessor(
-            protein_database=tmp_path / "proteins.fasta",
-            min_peptides=2,
-            fdr_threshold=0.01,
-        )
+        return ProteomicsProcessor(protein_database = tmp_path / "proteins.fasta",
+            min_peptides = 2,
+            fdr_threshold = 0.01,)
 
     def test_protein_measurement_creation(self, processor):
         """Test creating protein measurements."""
         # Create mock protein data
-        protein_data = pd.DataFrame(
-            {
+        protein_data = pd.DataFrame({
                 "Protein IDs": ["P53_HUMAN", "BRCA1_HUMAN"],
                 "Gene names": ["TP53", "BRCA1"],
                 "Protein names": ["Tumor protein p53", "Breast cancer type 1"],
@@ -395,12 +348,10 @@ class TestProteomicsProcessor:
                 "Intensity": [1e8, 2e8],
                 "Score": [250, 380],
                 "PEP": [1e-5, 1e-7],
-            }
-        )
+            })
 
         # Create mock peptide data
-        peptide_data = pd.DataFrame(
-            {
+        peptide_data = pd.DataFrame({
                 "Sequence": ["PEPTIDE1", "PEPTIDE2", "PEPTIDE3"],
                 "Proteins": ["P53_HUMAN", "P53_HUMAN", "BRCA1_HUMAN"],
                 "Charge": [2, 3, 2],
@@ -409,8 +360,7 @@ class TestProteomicsProcessor:
                 "Intensity": [1e6, 2e6, 1.5e6],
                 "Score": [50, 75, 60],
                 "Modifications": ["", "Phospho (STY)", "Acetyl (K)"],
-            }
-        )
+            })
 
         # Create measurements
         proteins = processor._create_protein_measurements(protein_data, peptide_data)
@@ -429,17 +379,15 @@ class TestProteomicsProcessor:
         # Create proteins with varying confidence
         proteins = []
         for i in range(100):
-            protein = ProteinMeasurement(
-                protein_id="PROT{i:04d}",
-                gene_name="GENE{i}",
-                description="Protein {i}",
-                sequence_coverage=50.0,
-                num_peptides=5,
-                num_unique_peptides=4,
-                abundance=1e6 * (i + 1),
-                normalized_abundance=1e6 * (i + 1),
-                confidence_score=1.0 - (i * 0.01),  # Decreasing confidence
-            )
+            protein = ProteinMeasurement(protein_id = "PROT{i:04d}",
+                gene_name = "GENE{i}",
+                description = "Protein {i}",
+                sequence_coverage = 50.0,
+                num_peptides = 5,
+                num_unique_peptides = 4,
+                abundance = 1e6 * (i + 1),
+                normalized_abundance = 1e6 * (i + 1),
+                confidence_score = 1.0 - (i * 0.01),  # Decreasing confidence)
             proteins.append(protein)
 
         # Apply FDR filter
@@ -453,16 +401,14 @@ class TestProteomicsProcessor:
         """Test protein abundance normalization."""
         # Create proteins with varying abundances
         proteins = [
-            ProteinMeasurement(
-                protein_id="PROT{i:04d}",
-                gene_name="GENE{i}",
-                description="Protein {i}",
-                sequence_coverage=50.0,
-                num_peptides=5,
-                num_unique_peptides=4,
-                abundance=float(np.random.lognormal(20, 2)),
-                normalized_abundance=0.0,
-            )
+            ProteinMeasurement(protein_id = "PROT{i:04d}",
+                gene_name = "GENE{i}",
+                description = "Protein {i}",
+                sequence_coverage = 50.0,
+                num_peptides = 5,
+                num_unique_peptides = 4,
+                abundance = float(np.random.lognormal(20, 2)),
+                normalized_abundance = 0.0,)
             for i in range(50)
         ]
 
@@ -472,9 +418,11 @@ class TestProteomicsProcessor:
         # Check normalization worked
         assert all(p.normalized_abundance > 0 for p in normalized)
         # Check relative ordering preserved
-        sorted_original = sorted(proteins, key=lambda p: p.abundance)
-        sorted_normalized = sorted(normalized, key=lambda p: p.normalized_abundance)
-        assert [p.protein_id for p in sorted_original] == [p.protein_id for p in sorted_normalized]
+        sorted_original = sorted(proteins, key = lambda p: p.abundance)
+        sorted_normalized = sorted(normalized, key = lambda p: p.normalized_abundance)
+        assert [p.protein_id for p in sorted_original] == [
+            p.protein_id for p in sorted_normalized
+        ]
 
     def test_differential_expression(self, processor):
         """Test differential protein expression."""
@@ -485,46 +433,38 @@ class TestProteomicsProcessor:
         # Shared proteins with different abundances
         for i in range(3):
             proteins1 = [
-                ProteinMeasurement(
-                    protein_id="PROT{j:04d}",
-                    gene_name="GENE{j}",
-                    description="Protein {j}",
-                    sequence_coverage=50.0,
-                    num_peptides=5,
-                    num_unique_peptides=4,
-                    abundance=1e6,
-                    normalized_abundance=1e6 if j >= 10 else 1e5,  # Low for first 10
-                )
+                ProteinMeasurement(protein_id = "PROT{j:04d}",
+                    gene_name = "GENE{j}",
+                    description = "Protein {j}",
+                    sequence_coverage = 50.0,
+                    num_peptides = 5,
+                    num_unique_peptides = 4,
+                    abundance = 1e6,
+                    normalized_abundance = 1e6 if j >= 10 else 1e5,  # Low for first 10)
                 for j in range(20)
             ]
 
             proteins2 = [
-                ProteinMeasurement(
-                    protein_id="PROT{j:04d}",
-                    gene_name="GENE{j}",
-                    description="Protein {j}",
-                    sequence_coverage=50.0,
-                    num_peptides=5,
-                    num_unique_peptides=4,
-                    abundance=1e6,
-                    normalized_abundance=1e7 if j < 10 else 1e6,  # High for first 10
-                )
+                ProteinMeasurement(protein_id = "PROT{j:04d}",
+                    gene_name = "GENE{j}",
+                    description = "Protein {j}",
+                    sequence_coverage = 50.0,
+                    num_peptides = 5,
+                    num_unique_peptides = 4,
+                    abundance = 1e6,
+                    normalized_abundance = 1e7 if j < 10 else 1e6,  # High for first 10)
                 for j in range(20)
             ]
 
-            profile1 = ProteomicsProfile(
-                sample_id="control_{i}",
-                proteins=proteins1,
-                quantification_method=QuantificationMethod.LABEL_FREE,
-                quality_metrics={},
-            )
+            profile1 = ProteomicsProfile(sample_id = "control_{i}",
+                proteins = proteins1,
+                quantification_method = QuantificationMethod.LABEL_FREE,
+                quality_metrics = {},)
 
-            profile2 = ProteomicsProfile(
-                sample_id="treatment_{i}",
-                proteins=proteins2,
-                quantification_method=QuantificationMethod.LABEL_FREE,
-                quality_metrics={},
-            )
+            profile2 = ProteomicsProfile(sample_id = "treatment_{i}",
+                proteins = proteins2,
+                quantification_method = QuantificationMethod.LABEL_FREE,
+                quality_metrics = {},)
 
             group1.append(profile1)
             group2.append(profile2)
@@ -560,29 +500,25 @@ class TestProteomicsProcessor:
         """Test ProteomicsProfile utility methods."""
         # Create profile with diverse proteins
         proteins = [
-            ProteinMeasurement(
-                protein_id="PROT{i:04d}",
-                gene_name="GENE{i}",
-                description="Protein {i}",
-                sequence_coverage=50.0,
-                num_peptides=5,
-                num_unique_peptides=4,
-                abundance=1e6 * (i + 1),
-                normalized_abundance=1e6 * (i + 1),
-                modifications={
+            ProteinMeasurement(protein_id = "PROT{i:04d}",
+                gene_name = "GENE{i}",
+                description = "Protein {i}",
+                sequence_coverage = 50.0,
+                num_peptides = 5,
+                num_unique_peptides = 4,
+                abundance = 1e6 * (i + 1),
+                normalized_abundance = 1e6 * (i + 1),
+                modifications = {
                     ModificationType.PHOSPHORYLATION: 2 if i < 5 else 0,
                     ModificationType.ACETYLATION: 1 if i % 2 == 0 else 0,
-                },
-            )
+                },)
             for i in range(20)
         ]
 
-        profile = ProteomicsProfile(
-            sample_id="test_sample",
-            proteins=proteins,
-            quantification_method=QuantificationMethod.LABEL_FREE,
-            quality_metrics={},
-        )
+        profile = ProteomicsProfile(sample_id = "test_sample",
+            proteins = proteins,
+            quantification_method = QuantificationMethod.LABEL_FREE,
+            quality_metrics = {},)
 
         # Test filtering by abundance
         high_abundance = profile.filter_by_abundance(5e6)
@@ -614,23 +550,19 @@ class TestIntegration:
         sample_id = "patient_001"
 
         # Process transcriptomics
-        trans_config = TranscriptomicsConfig(
-            reference_transcriptome=str(tmp_path / "ref.fa"),
-            star_index=str(tmp_path / "star"),
-            kallisto_index=str(tmp_path / "kallisto.idx"),
-            gtf_annotation=str(tmp_path / "genes.gtf"),
-        )
+        trans_config = TranscriptomicsConfig(reference_transcriptome = str(tmp_path / "ref.fa"),
+            star_index = str(tmp_path / "star"),
+            kallisto_index = str(tmp_path / "kallisto.idx"),
+            gtf_annotation = str(tmp_path / "genes.gtf"),)
         trans_processor = TranscriptomicsProcessor(trans_config)
 
         # Create mock expression data
         expr_file = tmp_path / "expression.tsv"
-        expr_data = pd.DataFrame(
-            {
+        expr_data = pd.DataFrame({
                 "gene_id": ["ENSG{i:08d}" for i in range(100)],
                 "raw_count": np.random.poisson(100, 100),
-            }
-        )
-        expr_data.to_csv(expr_file, sep="\t", index=False)
+            })
+        expr_data.to_csv(expr_file, sep = "\t", index = False)
 
         trans_profile = trans_processor.process(expr_file, sample_id)
 
@@ -647,18 +579,16 @@ class TestIntegration:
         meth_profile = meth_processor.process(meth_file, sample_id)
 
         # Process proteomics
-        prot_processor = ProteomicsProcessor()
+        ProteomicsProcessor()
         prot_file = tmp_path / "proteins.txt"
 
         # Mock protein data
-        prot_data = pd.DataFrame(
-            {
+        prot_data = pd.DataFrame({
                 "Protein IDs": ["PROT{i:04d}" for i in range(50)],
                 "Gene names": ["GENE{i}" for i in range(50)],
                 "Intensity": np.random.lognormal(20, 2, 50),
-            }
-        )
-        prot_data.to_csv(prot_file, sep="\t", index=False)
+            })
+        prot_data.to_csv(prot_file, sep = "\t", index = False)
 
         # Verify all profiles created successfully
         assert trans_profile.sample_id == sample_id
@@ -669,14 +599,10 @@ class TestIntegration:
     def test_error_handling(self, tmp_path):
         """Test error handling in processors."""
         # Test invalid file format
-        trans_processor = TranscriptomicsProcessor(
-            TranscriptomicsConfig(
-                reference_transcriptome="dummy",
-                star_index="dummy",
-                kallisto_index="dummy",
-                gtf_annotation="dummy",
-            )
-        )
+        trans_processor = TranscriptomicsProcessor(TranscriptomicsConfig(reference_transcriptome = "dummy",
+                star_index = "dummy",
+                kallisto_index = "dummy",
+                gtf_annotation = "dummy",))
 
         with pytest.raises(Exception):
             trans_processor.process(tmp_path / "nonexistent.file", "sample001")
@@ -685,9 +611,7 @@ class TestIntegration:
         expr_data = pd.DataFrame({"gene_id": ["GENE1"], "raw_count": [100]})
 
         with pytest.raises(Exception):
-            trans_processor._normalize_expression(
-                expr_data, "INVALID_METHOD"  # This should cause an error
-            )
+            trans_processor._normalize_expression(expr_data, "INVALID_METHOD"  # This should cause an error)
 
 
 if __name__ == "__main__":

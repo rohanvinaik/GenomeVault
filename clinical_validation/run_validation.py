@@ -23,7 +23,7 @@ def main():
 
     print("🧬 GenomeVault Clinical Validation")
     print("Using REAL Zero-Knowledge Proofs and Privacy-Preserving Components")
-    print("=" * 70)
+    print(" = " * 70)
 
     # Create validator with actual GenomeVault components
     validator = ClinicalValidator()
@@ -38,7 +38,7 @@ def main():
     results = validator.run_full_clinical_validation()
 
     # Summary
-    print("\n" + "=" * 70)
+    print("\n" + " = " * 70)
     print("✅ VALIDATION COMPLETE")
     print(f"Components tested: {', '.join(results['components_tested'])}")
     print(f"Data sources processed: {len(results['data_sources'])}")
@@ -49,7 +49,9 @@ def main():
         for source, metrics in results["zk_proof_metrics"].items():
             print(f"  {source}:")
             print(f"    - Generation time: {metrics['avg_generation_time_ms']:.1f} ms")
-            print(f"    - Verification time: {metrics['avg_verification_time_ms']:.1f} ms")
+            print(
+                f"    - Verification time: {metrics['avg_verification_time_ms']:.1f} ms"
+            )
             print(f"    - Proof size: {metrics['avg_proof_size_bytes']:.0f} bytes")
 
     print("\n📄 Full report saved to: genomevault_clinical_validation_report.md")

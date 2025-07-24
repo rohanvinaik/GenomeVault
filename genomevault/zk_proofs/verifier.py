@@ -159,11 +159,13 @@ class Verifier:
                 metadata={"is_valid": is_valid, "verification_time": verification_time},
             )
 
-            logger.info("Proof verification completed: {is_valid}", extra={"privacy_safe": True})
+            logger.info(
+                "Proof verification completed: {is_valid}", extra={"privacy_safe": True}
+            )
 
             return result
 
-        except Exception as _:
+        except Exception:
             logger.error("Proof verification failed: {e}")
             return VerificationResult(
                 is_valid=False,
@@ -200,7 +202,9 @@ class Verifier:
 
             # Allow some tolerance
             if abs(actual_size - expected_size) > 50:
-                logger.warning("Unexpected proof size: {actual_size} vs {expected_size}")
+                logger.warning(
+                    "Unexpected proof size: {actual_size} vs {expected_size}"
+                )
 
         return True
 
@@ -249,7 +253,7 @@ class Verifier:
             # e(pi_a, vk_a) * e(pi_b, vk_b) * e(pi_c, vk_c) = 1
             return True
 
-        except Exception as _:
+        except Exception:
             logger.error("Variant proof verification error: {e}")
             return False
 
@@ -289,7 +293,7 @@ class Verifier:
             # Simulate verification
             return True
 
-        except Exception as _:
+        except Exception:
             logger.error("PRS proof verification error: {e}")
             return False
 
@@ -333,7 +337,7 @@ class Verifier:
             # This proves (G > G_threshold) AND (R > R_threshold) without revealing G or R
             return True
 
-        except Exception as _:
+        except Exception:
             logger.error("Diabetes proof verification error: {e}")
             return False
 
@@ -349,7 +353,7 @@ class Verifier:
             # Simulate verification
             return True
 
-        except Exception as _:
+        except Exception:
             logger.error("Ancestry proof verification error: {e}")
             return False
 
@@ -370,7 +374,7 @@ class Verifier:
             # Simulate verification
             return True
 
-        except Exception as _:
+        except Exception:
             logger.error("Pharmacogenomic proof verification error: {e}")
             return False
 
@@ -386,7 +390,7 @@ class Verifier:
             # Simulate verification
             return True
 
-        except Exception as _:
+        except Exception:
             logger.error("Pathway proof verification error: {e}")
             return False
 
@@ -395,7 +399,7 @@ class Verifier:
         try:
             # Basic validation passed, simulate verification
             return True
-        except Exception as _:
+        except Exception:
             logger.error("Generic proof verification error: {e}")
             return False
 
@@ -540,4 +544,6 @@ if __name__ == "__main__":
 
     print("\nVerification result: {result.is_valid}")
     print("Verification time: {result.verification_time*1000:.1f}ms")
-    print("Expected time: {verifier.get_verification_time_estimate('diabetes_risk_alert')}ms")
+    print(
+        "Expected time: {verifier.get_verification_time_estimate('diabetes_risk_alert')}ms"
+    )

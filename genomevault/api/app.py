@@ -186,13 +186,15 @@ async def get_topology(request: TopologyRequest, api_key: _ = Depends(verify_api
             optimal_configuration=optimal_config,
         )
 
-    except Exception as _:
+    except Exception:
         logger.error("Topology request failed: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.post("/credit/vault/redeem", response_model=CreditRedeemResponse)
-async def redeem_credits(request: CreditRedeemRequest, api_key: _ = Depends(verify_api_key)):
+async def redeem_credits(
+    request: CreditRedeemRequest, api_key: _ = Depends(verify_api_key)
+):
     """
     Redeem credits from vault.
     Burns credits for network services.
@@ -206,7 +208,9 @@ async def redeem_credits(request: CreditRedeemRequest, api_key: _ = Depends(veri
             raise HTTPException(status_code=400, detail="Insufficient credits")
 
         # Process redemption
-        _ = hashlib.sha256("{request.invoiceId}:{time.time()}".encode()).hexdigest()[:16]
+        _ = hashlib.sha256("{request.invoiceId}:{time.time()}".encode()).hexdigest()[
+            :16
+        ]
 
         # Update ledger
         credit_ledger[user_id] = user_credits - request.creditsBurned
@@ -229,7 +233,7 @@ async def redeem_credits(request: CreditRedeemRequest, api_key: _ = Depends(veri
 
     except HTTPException:
         raise
-    except Exception as _:
+    except Exception:
         logger.error("Credit redemption failed: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
@@ -279,13 +283,15 @@ async def create_audit_challenge(
             timestamp=time.time(),
         )
 
-    except Exception as _:
+    except Exception:
         logger.error("Audit challenge failed: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.post("/proof/submit", response_model=ProofSubmissionResponse)
-async def submit_proof(request: ProofSubmissionRequest, api_key: _ = Depends(verify_api_key)):
+async def submit_proof(
+    request: ProofSubmissionRequest, api_key: _ = Depends(verify_api_key)
+):
     """
     Submit zero-knowledge proof for recording on blockchain.
     """
@@ -317,7 +323,7 @@ async def submit_proof(request: ProofSubmissionRequest, api_key: _ = Depends(ver
             timestamp=time.time(),
         )
 
-    except Exception as _:
+    except Exception:
         logger.error("Proof submission failed: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
@@ -330,20 +336,30 @@ async def get_node_statistics(api_key: _ = Depends(verify_api_key)):
         _ = {
             "total_nodes": len(node_registry),
             "trusted_signatories": sum(
-                1 for n in node_registry.values() if n.get("is_trusted_signatory", False)
+                1
+                for n in node_registry.values()
+                if n.get("is_trusted_signatory", False)
             ),
-            "total_voting_power": sum(n.get("voting_power", 0) for n in node_registry.values()),
+            "total_voting_power": sum(
+                n.get("voting_power", 0) for n in node_registry.values()
+            ),
             "node_distribution": {
-                "light": sum(1 for n in node_registry.values() if n.get("class") == "light"),
-                "full": sum(1 for n in node_registry.values() if n.get("class") == "full"),
-                "archive": sum(1 for n in node_registry.values() if n.get("class") == "archive"),
+                "light": sum(
+                    1 for n in node_registry.values() if n.get("class") == "light"
+                ),
+                "full": sum(
+                    1 for n in node_registry.values() if n.get("class") == "full"
+                ),
+                "archive": sum(
+                    1 for n in node_registry.values() if n.get("class") == "archive"
+                ),
             },
             "network_health": "healthy",
         }
 
         return JSONResponse(content=stats)
 
-    except Exception as _:
+    except Exception:
         logger.error("Failed to get node statistics: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
@@ -376,7 +392,7 @@ async def get_pir_configuration(api_key: _ = Depends(verify_api_key)):
 
         return JSONResponse(content=config_data)
 
-    except Exception as _:
+    except Exception:
         logger.error("Failed to get PIR configuration: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 

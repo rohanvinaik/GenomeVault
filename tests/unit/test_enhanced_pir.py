@@ -3,17 +3,12 @@ Comprehensive tests for enhanced PIR implementation.
 """
 
 import asyncio
-import hashlib
 import json
 import struct
-import tempfile
-from pathlib import Path
-from unittest.mock import AsyncMock, Mock, patch
 
 import numpy as np
 import pytest
 
-from genomevault.pir.client import PIRClient
 from genomevault.pir.server.enhanced_pir_server import (
     EnhancedPIRServer,
     GenomicRegion,
@@ -29,7 +24,7 @@ class TestOptimizedPIRDatabase:
     @pytest.fixture
     def database(self, tmp_path):
         """Create test database instance."""
-        return OptimizedPIRDatabase(tmp_path, cache_size_mb=10)
+        return OptimizedPIRDatabase(tmp_path, cache_size_mb = 10)
 
     @pytest.fixture
     def test_shard(self, tmp_path):
@@ -59,17 +54,15 @@ class TestOptimizedPIRDatabase:
                 item_size = len("item_{i}".encode() * 10) + 2  # +2 for size header
                 offset += item_size
 
-        return ShardMetadata(
-            shard_id="test_shard",
-            data_path=data_path,
-            index_path=index_path,
-            size=data_path.stat().st_size,
-            item_count=10,
-            data_type="genomic",
-            version="1.0",
-            checksum="",
-            chromosome_ranges={"chr1": (0, 10000000)},
-        )
+        return ShardMetadata(shard_id = "test_shard",
+            data_path = data_path,
+            index_path = index_path,
+            size = data_path.stat().st_size,
+            item_count = 10,
+            data_type = "genomic",
+            version = "1.0",
+            checksum = "",
+            chromosome_ranges = {"chr1": (0, 10000000)},)
 
     @pytest.mark.asyncio
     async def test_load_shard_index(self, database, test_shard):
@@ -140,22 +133,18 @@ class TestEnhancedPIRServer:
         (tmp_path / "chr1.dat").touch()
         (tmp_path / "chr1.idx").touch()
 
-        server = EnhancedPIRServer(
-            server_id="test_server",
-            data_directory=tmp_path,
-            is_trusted_signatory=False,
-            enable_preprocessing=True,
-            cache_size_mb=100,
-        )
+        server = EnhancedPIRServer(server_id = "test_server",
+            data_directory = tmp_path,
+            is_trusted_signatory = False,
+            enable_preprocessing = True,
+            cache_size_mb = 100,)
 
         yield server
         await server.shutdown()
 
     def test_server_initialization(self, tmp_path):
         """Test server initialization."""
-        server = EnhancedPIRServer(
-            server_id="test_001", data_directory=tmp_path, is_trusted_signatory=True
-        )
+        server = EnhancedPIRServer(server_id = "test_001", data_directory = tmp_path, is_trusted_signatory = True)
 
         assert server.server_id == "test_001"
         assert server.is_trusted_signatory
@@ -167,7 +156,9 @@ class TestEnhancedPIRServer:
         query = {
             "query_id": "test_query_001",
             "client_id": "client_123",
-            "query_vectors": [np.zeros(1000, dtype=np.uint8)],  # All zeros for simplicity
+            "query_vectors": [
+                np.zeros(1000, dtype = np.uint8)
+            ],  # All zeros for simplicity
             "query_type": "genomic",
             "parameters": {"regions": [{"chromosome": "chr1", "position": 1000000}]},
         }
@@ -219,10 +210,10 @@ class TestEnhancedPIRServer:
         }
 
         # Process first query
-        response1 = await server.process_query(query1)
+        await server.process_query(query1)
 
         # Process second query (should hit cache)
-        response2 = await server.process_query(query2)
+        await server.process_query(query2)
 
         # Check that preprocessing was used
         assert server.metrics["preprocessing_hits"] > 0
@@ -231,14 +222,12 @@ class TestEnhancedPIRServer:
     async def test_shard_selection(self, server):
         """Test shard selection based on query parameters."""
         # Query with specific regions
-        shards = server._select_target_shards(
-            {
+        shards = server._select_target_shards({
                 "regions": [
                     {"chromosome": "chr1", "position": 1000000},
                     {"chromosome": "chr2", "position": 5000000},
                 ]
-            }
-        )
+            })
 
         # Should select chr1 shard
         assert len(shards) >= 1
@@ -252,7 +241,7 @@ class TestEnhancedPIRServer:
             query = {
                 "query_id": "query_{i}",
                 "client_id": "client_123",
-                "query_vectors": [np.zeros(100, dtype=np.uint8)],
+                "query_vectors": [np.zeros(100, dtype = np.uint8)],
                 "query_type": "genomic",
                 "parameters": {},
             }
@@ -275,15 +264,13 @@ class TestGenomicRegion:
 
     def test_serialization(self):
         """Test genomic region serialization."""
-        region = GenomicRegion(
-            chromosome="chr1",
-            start=1000000,
-            end=1001000,
-            reference_allele="A",
-            alternate_alleles=["T", "G"],
-            population_frequencies={"AFR": 0.1, "EUR": 0.05},
-            annotations={"gene": "BRCA1", "impact": "HIGH"},
-        )
+        region = GenomicRegion(chromosome = "chr1",
+            start = 1000000,
+            end = 1001000,
+            reference_allele = "A",
+            alternate_alleles = ["T", "G"],
+            population_frequencies = {"AFR": 0.1, "EUR": 0.05},
+            annotations = {"gene": "BRCA1", "impact": "HIGH"},)
 
         # Serialize
         data = region.to_bytes()
@@ -303,14 +290,12 @@ class TestTrustedSignatoryServer:
 
     def test_hipaa_verification(self, tmp_path):
         """Test HIPAA compliance verification."""
-        server = TrustedSignatoryServer(
-            server_id="ts_001",
-            data_directory=tmp_path,
-            npi="1234567890",
-            baa_hash="a" * 64,
-            risk_analysis_hash="b" * 64,
-            hsm_serial="HSM123456",
-        )
+        server = TrustedSignatoryServer(server_id = "ts_001",
+            data_directory = tmp_path,
+            npi = "1234567890",
+            baa_hash = "a" * 64,
+            risk_analysis_hash = "b" * 64,
+            hsm_serial = "HSM123456",)
 
         compliance = server.verify_hipaa_compliance()
 
@@ -356,15 +341,15 @@ class TestPIRIntegration:
             (server_dir / "data.dat").touch()
             (server_dir / "data.idx").touch()
 
-            server = EnhancedPIRServer(
-                server_id="server_{i}",
-                data_directory=server_dir,
-                is_trusted_signatory=(i == 0),  # First server is TS
-            )
+            server = EnhancedPIRServer(server_id = "server_{i}",
+                data_directory = server_dir,
+                is_trusted_signatory = (i == 0),  # First server is TS)
             servers.append(server)
 
         # Simulate client creating distributed query
-        query_vectors = [np.random.binomial(1, 0.001, 100).astype(np.uint8) for _ in range(3)]
+        query_vectors = [
+            np.random.binomial(1, 0.001, 100).astype(np.uint8) for _ in range(3)
+        ]
 
         # Each server processes its part
         responses = []
@@ -395,13 +380,13 @@ class TestPIRIntegration:
     @pytest.mark.asyncio
     async def test_privacy_preservation(self, tmp_path):
         """Test that server learns nothing from queries."""
-        server = EnhancedPIRServer(server_id="privacy_test", data_directory=tmp_path)
+        server = EnhancedPIRServer(server_id = "privacy_test", data_directory = tmp_path)
 
         # Create two different queries that should look identical to server
-        vector1 = np.zeros(1000, dtype=np.uint8)
+        vector1 = np.zeros(1000, dtype = np.uint8)
         vector1[100] = 1  # Select position 100
 
-        vector2 = np.zeros(1000, dtype=np.uint8)
+        vector2 = np.zeros(1000, dtype = np.uint8)
         vector2[500] = 1  # Select position 500
 
         query1 = {
@@ -439,12 +424,10 @@ class TestPIRPerformance:
     @pytest.mark.asyncio
     async def test_query_performance(self, tmp_path):
         """Test query processing performance."""
-        server = EnhancedPIRServer(
-            server_id="perf_test",
-            data_directory=tmp_path,
-            enable_preprocessing=True,
-            cache_size_mb=256,
-        )
+        server = EnhancedPIRServer(server_id = "perf_test",
+            data_directory = tmp_path,
+            enable_preprocessing = True,
+            cache_size_mb = 256,)
 
         # Generate varying query sizes
         query_sizes = [100, 1000, 10000]
@@ -473,7 +456,7 @@ class TestPIRPerformance:
     @pytest.mark.asyncio
     async def test_batch_processing(self, tmp_path):
         """Test batch query processing."""
-        server = EnhancedPIRServer(server_id="batch_test", data_directory=tmp_path)
+        server = EnhancedPIRServer(server_id = "batch_test", data_directory = tmp_path)
 
         # Create batch of queries
         batch_size = 10

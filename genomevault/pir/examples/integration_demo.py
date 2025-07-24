@@ -1,4 +1,4 @@
-from typing import Dict, List, Set
+from typing import Dict
 
 """
 PIR system integration example.
@@ -7,28 +7,22 @@ Demonstrates the complete workflow for privacy-preserving genomic data retrieval
 """
 
 import asyncio
-import json
 import tempfile
-import time
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict
 
 from genomevault.pir import (
-    GenomicQuery,
-    GenomicRegion,
     PangenomeNode,
     PIRClient,
     PIRNetworkCoordinator,
     PIRQueryBuilder,
     PIRServer,
     PIRServerInstance,
-    QueryType,
     ReferenceDataManager,
     ShardManager,
     TrustedSignatoryServer,
     VariantAnnotation,
 )
-from genomevault.utils.logging import logger
 
 
 async def setup_pir_network(data_dir: Path) -> Dict:
@@ -85,7 +79,9 @@ async def setup_pir_network(data_dir: Path) -> Dict:
     temp_data_file.write_bytes(combined_data)
 
     # Create shards
-    shard_ids = shard_manager.create_shards_from_data(temp_data_file, data_type="genomic")
+    shard_ids = shard_manager.create_shards_from_data(
+        temp_data_file, data_type="genomic"
+    )
     print("Created {len(shard_ids)} shards")
 
     # 3. Set up PIR servers
@@ -154,7 +150,7 @@ async def setup_pir_network(data_dir: Path) -> Dict:
 
     # Distribute shards across servers
     server_list = [s.server_id for s in servers]
-    distribution = shard_manager.distribute_shards(server_list)
+    shard_manager.distribute_shards(server_list)
 
     print("Started {len(servers)} PIR servers (3 LN + 2 TS)")
 
@@ -205,9 +201,11 @@ async def demonstrate_pir_queries(network_info: Dict):
     pir_client = PIRClient(network_info["servers"], network_info["database_size"])
 
     # Show optimal configuration
-    optimal_config = pir_client.get_optimal_server_configuration()
+    pir_client.get_optimal_server_configuration()
     print("Optimal configuration: {optimal_config['optimal']['name']}")
-    print("Privacy failure probability: {optimal_config['optimal']['failure_probability']:.2e}")
+    print(
+        "Privacy failure probability: {optimal_config['optimal']['failure_probability']:.2e}"
+    )
     print("Expected latency: {optimal_config['optimal']['latency_ms']:.0f}ms")
 
     # 2. Create query builder
@@ -221,18 +219,22 @@ async def demonstrate_pir_queries(network_info: Dict):
 
     # Simulate query execution (in real system would actually query servers)
     print("Looking up variant: chr1:1000500:A>G")
-    print("Query preserves privacy - servers don't know which variant is being accessed")
+    print(
+        "Query preserves privacy - servers don't know which variant is being accessed"
+    )
 
     # 4. Execute region scan
     print("\n=== Region Scan Query ===")
-    region_query = builder.build_region_query(chromosome="chr1", start=1000000, end=1005000)
+    region_query = builder.build_region_query(
+        chromosome="chr1", start=1000000, end=1005000
+    )
 
     print("Scanning region: chr1:1000000-1005000")
     print("Multiple PIR queries executed in parallel")
 
     # 5. Execute gene query
     print("\n=== Gene Annotation Query ===")
-    gene_query = builder.build_gene_query("GENE1")
+    builder.build_gene_query("GENE1")
 
     print("Querying gene: GENE1")
     print("Retrieves all variants in gene region with privacy")
@@ -245,14 +247,14 @@ async def demonstrate_pir_queries(network_info: Dict):
         {"chromosome": "chr1", "position": 1002000},
     ]
 
-    pop_query = builder.build_population_frequency_query(variants, "EUR")
+    builder.build_population_frequency_query(variants, "EUR")
 
     print("Querying frequencies for {len(variants)} variants in EUR population")
     print("Each variant queried privately")
 
     # Show statistics
-    stats = builder.get_query_statistics()
-    print("\nQuery Statistics: {json.dumps(stats, indent=2)}")
+    builder.get_query_statistics()
+    print("\nQuery Statistics: {json.dumps(stats, indent = 2)}")
 
     # Cleanup
     await pir_client.close()
@@ -268,7 +270,7 @@ async def demonstrate_network_coordination():
     await coordinator.start()
 
     # Get network statistics
-    net_stats = coordinator.get_network_statistics()
+    coordinator.get_network_statistics()
     print("Network Statistics:")
     print("  Total servers: {net_stats['total_servers']}")
     print("  Healthy servers: {net_stats['healthy_servers']}")
@@ -280,14 +282,16 @@ async def demonstrate_network_coordination():
     )
 
     # Get optimal configuration
-    config = coordinator.get_server_configuration(target_failure_prob=1e-4, max_latency_ms=300)
+    config = coordinator.get_server_configuration(
+        target_failure_prob=1e-4, max_latency_ms=300
+    )
 
     print("\nAvailable Configurations:")
     for conf in config["configurations"]:
         print(
             "  {conf['name']}: {conf['total_servers']} servers, "
-            "P_fail={conf['failure_probability']:.2e}, "
-            "latency={conf['latency_ms']:.0f}ms"
+            "P_fail = {conf['failure_probability']:.2e}, "
+            "latency = {conf['latency_ms']:.0f}ms"
         )
 
     if config["optimal"]:
@@ -310,7 +314,7 @@ def demonstrate_privacy_calculations():
 
     client = PIRClient(servers, 1000000)
 
-    print("Privacy Failure Probability P_fail(k,q) = (1-q)^k")
+    print("Privacy Failure Probability P_fail(k, q) = (1-q)^k")
     print("  k = number of honest servers required")
     print("  q = server honesty probability")
 
@@ -325,7 +329,7 @@ def demonstrate_privacy_calculations():
     ]
 
     for k, q, desc in configs:
-        p_fail = client.calculate_privacy_failure_probability(k, q)
+        client.calculate_privacy_failure_probability(k, q)
         print("  {desc}: P_fail = {p_fail:.2e}")
 
     # Minimum servers needed
@@ -333,20 +337,20 @@ def demonstrate_privacy_calculations():
     targets = [1e-4, 1e-5, 1e-6]
 
     for target in targets:
-        min_ts = client.calculate_min_servers_needed(target, 0.98)
-        min_generic = client.calculate_min_servers_needed(target, 0.95)
+        client.calculate_min_servers_needed(target, 0.98)
+        client.calculate_min_servers_needed(target, 0.95)
         print("  Target P_fail ≤ {target:.0e}:")
-        print("    HIPAA TS (q=0.98): {min_ts} servers")
-        print("    Generic (q=0.95): {min_generic} servers")
+        print("    HIPAA TS (q = 0.98): {min_ts} servers")
+        print("    Generic (q = 0.95): {min_generic} servers")
 
 
 async def main():
     """Run complete PIR demonstration."""
 
-    print("=" * 60)
+    print(" = " * 60)
     print("GenomeVault PIR System Demonstration")
     print("Information-Theoretic Private Information Retrieval")
-    print("=" * 60)
+    print(" = " * 60)
 
     # Create temporary directory for demo
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -367,7 +371,7 @@ async def main():
         # Show server statistics
         print("\n=== Server Statistics ===")
         for server_id, server in network_info["server_instances"].items():
-            stats = server.get_server_statistics()
+            server.get_server_statistics()
             print(
                 "{server_id}: {stats['server_type']}, "
                 "{stats['shards']} shards, "
@@ -378,9 +382,9 @@ async def main():
         for server in network_info["server_instances"].values():
             server.shutdown()
 
-    print("\n" + "=" * 60)
+    print("\n" + " = " * 60)
     print("PIR demonstration completed successfully!")
-    print("=" * 60)
+    print(" = " * 60)
 
 
 if __name__ == "__main__":

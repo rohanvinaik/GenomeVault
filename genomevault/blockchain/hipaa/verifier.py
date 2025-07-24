@@ -1,18 +1,17 @@
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 """
 HIPAA Verifier Implementation
 
 Core verification logic for HIPAA fast-track system.
 """
-import time
 
 
 import hashlib
 import json
 from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import aiohttp
 
@@ -35,12 +34,10 @@ class NPIRegistry(ABC):
     @abstractmethod
     async def lookup_npi(self, npi: str) -> Optional[NPIRecord]:
         """Look up an NPI in the registry"""
-        pass
 
     @abstractmethod
     async def validate_npi(self, npi: str) -> bool:
         """Validate if an NPI exists and is active"""
-        pass
 
 
 class CMSNPIRegistry(NPIRegistry):
@@ -95,7 +92,7 @@ class CMSNPIRegistry(NPIRegistry):
 
             return record
 
-        except Exception as _:
+        except Exception:
             logger.error("Error looking up NPI {npi}: {e}")
             return None
 
@@ -232,7 +229,9 @@ class HIPAAVerifier:
             resource=verification_id,
             metadata={
                 "hsm_serial": credentials.hsm_serial,
-                "npi_type": (credentials.npi_type.value if credentials.npi_type else None),
+                "npi_type": (
+                    credentials.npi_type.value if credentials.npi_type else None
+                ),
             },
         )
 
@@ -280,7 +279,8 @@ class HIPAAVerifier:
                     "type": npi_record.npi_type.value,
                     "taxonomy": npi_record.primary_taxonomy,
                 },
-                expires_at=datetime.now() + timedelta(days=self.verification_expiry_days),
+                expires_at=datetime.now()
+                + timedelta(days=self.verification_expiry_days),
             )
 
             # Store verification
@@ -304,7 +304,7 @@ class HIPAAVerifier:
 
             return record
 
-        except VerificationError as _:
+        except VerificationError:
             # Create failed record
             _ = VerificationRecord(
                 credentials=credentials,
@@ -397,6 +397,7 @@ class HIPAAVerifier:
             raise VerificationError("Invalid risk analysis hash") from e
         if not credentials.hsm_serial:
             raise VerificationError("Missing HSM serial") from e
+
     def _generate_signature(self, credentials: HIPAACredentials) -> str:
         """Generate verification signature"""
         _ = json.dumps(
@@ -467,10 +468,10 @@ if __name__ == "__main__":
                 print("  Expires: {record.expires_at}")
 
                 # Check status
-                status = verifier.get_verification_status(credentials.npi)
+                verifier.get_verification_status(credentials.npi)
                 print("\nVerification active: {status.is_active()}")
 
-            except VerificationError as _:
+            except VerificationError:
                 print("Verification failed: {e}")
 
             # Test invalid NPI
@@ -485,7 +486,7 @@ if __name__ == "__main__":
             try:
                 bad_id = await verifier.submit_verification(bad_credentials)
                 await verifier.process_verification(bad_id)
-            except VerificationError as _:
+            except VerificationError:
                 print("Correctly rejected: {e}")
 
     # Run test

@@ -5,7 +5,6 @@ import pytest
 from genomevault.hypervector_transform.binding import BindingOperations
 from genomevault.hypervector_transform.encoding import HypervectorEncoder
 from genomevault.hypervector_transform.holographic import HolographicRepresentation
-from genomevault.hypervector_transform.mapping import SimilarityPreservingMapper
 
 
 class TestHypervectorEngine:
@@ -13,17 +12,17 @@ class TestHypervectorEngine:
 
     @pytest.fixture
     def encoder_10k(self):
-        """10,000-dimensional base encoder"""
+        """10, 000-dimensional base encoder"""
         return HypervectorEncoder(dimensions=10000, resolution="base")
 
     @pytest.fixture
     def encoder_15k(self):
-        """15,000-dimensional mid-level encoder"""
+        """15, 000-dimensional mid-level encoder"""
         return HypervectorEncoder(dimensions=15000, resolution="mid")
 
     @pytest.fixture
     def encoder_20k(self):
-        """20,000-dimensional high-level encoder"""
+        """20, 000-dimensional high-level encoder"""
         return HypervectorEncoder(dimensions=20000, resolution="high")
 
     @pytest.fixture
@@ -60,7 +59,7 @@ class TestHypervectorEngine:
         assert base_info < mid_info < high_info
 
     def test_similarity_preservation(self, encoder_10k, sample_genomic_features):
-        """Verify similarity preservation property: E[cos(y1,y2)] = cos(x1,x2)"""
+        """Verify similarity preservation property: E[cos(y1, y2)] = cos(x1, x2)"""
         # Create two similar feature vectors
         features1 = sample_genomic_features["variants"]
         features2 = features1 + np.random.randn(1000) * 0.1  # Small perturbation
@@ -98,7 +97,9 @@ class TestHypervectorEngine:
 
         # Verify binding is reversible
         unbound = binding.unbind(bound_elem, expr_vec)
-        similarity = np.dot(unbound, var_vec) / (np.linalg.norm(unbound) * np.linalg.norm(var_vec))
+        similarity = np.dot(unbound, var_vec) / (
+            np.linalg.norm(unbound) * np.linalg.norm(var_vec)
+        )
         assert similarity > 0.8, "Binding should be approximately reversible"
 
     def test_holographic_representation(self, encoder_10k, sample_genomic_features):
@@ -141,7 +142,7 @@ class TestHypervectorEngine:
         assert abs(similarity) < 0.1, "Reconstruction should fail without key"
 
     @pytest.mark.parametrize(
-        "dimensions,expected_memory_kb",
+        "dimensions, expected_memory_kb",
         [
             (10000, 78),  # 10k * 8 bytes / 1024
             (15000, 117),  # 15k * 8 bytes / 1024
@@ -165,11 +166,14 @@ class TestHypervectorEngine:
 
         # Encode all modalities
         vectors = {
-            key: encoder_10k.encode(features) for key, features in sample_genomic_features.items()
+            key: encoder_10k.encode(features)
+            for key, features in sample_genomic_features.items()
         }
 
         # Perform hierarchical binding
-        genomic_clinical = binding.element_wise_bind(vectors["variants"], vectors["clinical"])
+        genomic_clinical = binding.element_wise_bind(
+            vectors["variants"], vectors["clinical"]
+        )
         expression_methylation = binding.circular_convolution(
             vectors["expression"], vectors["methylation"]
         )

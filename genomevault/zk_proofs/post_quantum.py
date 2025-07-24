@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional
 
 """
 Post-quantum cryptography support for Zero-Knowledge proofs.
@@ -31,19 +31,18 @@ class PostQuantumProver(ABC):
     """Abstract base class for post-quantum provers."""
 
     @abstractmethod
-    def generate_proof(self, statement: Dict[str, Any], witness: Dict[str, Any]) -> bytes:
+    def generate_proof(
+        self, statement: Dict[str, Any], witness: Dict[str, Any]
+    ) -> bytes:
         """Generate a post-quantum secure proof."""
-        pass
 
     @abstractmethod
     def verify_proof(self, proof: bytes, statement: Dict[str, Any]) -> bool:
         """Verify a post-quantum secure proof."""
-        pass
 
     @abstractmethod
     def get_security_level(self) -> int:
         """Get the post-quantum security level in bits."""
-        pass
 
 
 class STARKProver(PostQuantumProver):
@@ -73,7 +72,9 @@ class STARKProver(PostQuantumProver):
             extra={"security_level": self.params.security_level},
         )
 
-    def generate_proof(self, statement: Dict[str, Any], witness: Dict[str, Any]) -> bytes:
+    def generate_proof(
+        self, statement: Dict[str, Any], witness: Dict[str, Any]
+    ) -> bytes:
         """
         Generate a STARK proof.
 
@@ -151,7 +152,7 @@ class STARKProver(PostQuantumProver):
 
             return True
 
-        except Exception as _:
+        except Exception:
             logger.error("STARK verification failed: {e}")
             return False
 
@@ -204,7 +205,9 @@ class STARKProver(PostQuantumProver):
         root = hashlib.blake2b(b"".join(leaves)).hexdigest()
         return root
 
-    def _generate_challenges(self, commitment: str, statement: Dict[str, Any]) -> List[int]:
+    def _generate_challenges(
+        self, commitment: str, statement: Dict[str, Any]
+    ) -> List[int]:
         """Generate verification challenges via Fiat-Shamir."""
         # Hash commitment and statement to get challenges
         _ = hashlib.blake2b("{commitment}:{statement}".encode()).digest()
@@ -328,7 +331,9 @@ class LatticeProver(PostQuantumProver):
             extra={"security_level": self.params.security_level},
         )
 
-    def generate_proof(self, statement: Dict[str, Any], witness: Dict[str, Any]) -> bytes:
+    def generate_proof(
+        self, statement: Dict[str, Any], witness: Dict[str, Any]
+    ) -> bytes:
         """Generate lattice-based ZK proof."""
         # Simulate lattice-based proof
         # In production, would use actual Ring-LWE implementation
@@ -367,7 +372,7 @@ class LatticeProver(PostQuantumProver):
                 proof_data["commitment"], proof_data["response"], challenge, statement
             )
 
-        except Exception as _:
+        except Exception:
             logger.error("Lattice verification failed: {e}")
             return False
 
@@ -383,7 +388,9 @@ class LatticeProver(PostQuantumProver):
 
         return {"value": commitment_value, "timestamp": np.random.randint(0, 2**32)}
 
-    def _hash_to_challenge(self, commitment: Dict, statement: Dict[str, Any]) -> np.ndarray:
+    def _hash_to_challenge(
+        self, commitment: Dict, statement: Dict[str, Any]
+    ) -> np.ndarray:
         """Hash commitment and statement to challenge."""
         data = "{commitment}:{statement}".encode()
         _ = hashlib.sha3_256(data).digest()
@@ -506,10 +513,14 @@ class PostQuantumTransition:
             results["classical"] = True  # Placeholder
 
         if "stark" in proofs:
-            results["stark"] = self.stark_prover.verify_proof(proofs["stark"], statement)
+            results["stark"] = self.stark_prover.verify_proof(
+                proofs["stark"], statement
+            )
 
         if "lattice" in proofs:
-            results["lattice"] = self.lattice_prover.verify_proof(proofs["lattice"], statement)
+            results["lattice"] = self.lattice_prover.verify_proof(
+                proofs["lattice"], statement
+            )
 
         return results
 
@@ -564,6 +575,8 @@ def estimate_pq_proof_size(algorithm: str, constraint_count: int) -> int:
 
     else:
         raise ValueError("Unknown algorithm: {algorithm}") from e
+
+
 def benchmark_pq_performance(num_constraints: _ = 10000) -> Dict[str, Any]:
     """
     Benchmark post-quantum proof performance.

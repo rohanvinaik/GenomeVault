@@ -10,8 +10,6 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import logging
 
-import numpy as np
-
 # Configure logging
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -23,12 +21,12 @@ logger = logging.getLogger(__name__)
 def test_clinical_validation():
     """Test clinical validation module"""
     print("🧪 Testing GenomeVault Clinical Validation Module")
-    print("=" * 60)
+    print(" = " * 60)
 
     # Test 1: Import modules
     print("\n1️⃣ Testing module imports...")
     try:
-        from clinical_validation import ClinicalValidator, ProofData, ZKProver
+        from clinical_validation import ClinicalValidator, ZKProver
         from clinical_validation.clinical_circuits import DiabetesRiskCircuit
 
         print("✅ All modules imported successfully")
@@ -71,7 +69,9 @@ def test_clinical_validation():
         proof = prover.generate_proof(circuit, private_inputs, public_inputs)
         print(f"✅ Proof generated successfully")
         print(f"   - Public output: {proof.public_output}")
-        print(f"   - Proof size: {len(proof.proof_bytes) if proof.proof_bytes else 0} bytes")
+        print(
+            f"   - Proof size: {len(proof.proof_bytes) if proof.proof_bytes else 0} bytes"
+        )
 
         # Verify proof
         is_valid = prover.verify_proof(proof)
@@ -133,7 +133,9 @@ def test_clinical_validation():
         hypervector_results = validator.validate_with_hypervectors(sample_data)
         print(f"✅ Hypervector encoding tested")
         print(f"   - Patients encoded: {hypervector_results['n_encoded']}")
-        print(f"   - Using real encoding: {hypervector_results.get('using_real_encoding', False)}")
+        print(
+            f"   - Using real encoding: {hypervector_results.get('using_real_encoding', False)}"
+        )
 
         # Test PIR queries
         test_variants = ["rs7903146", "rs1801282"]
@@ -149,7 +151,7 @@ def test_clinical_validation():
         traceback.print_exc()
         return False
 
-    print("\n" + "=" * 60)
+    print("\n" + " = " * 60)
     print("✅ All tests completed successfully!")
     return True
 

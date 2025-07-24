@@ -3,21 +3,20 @@
 Trace the exact import failure point
 """
 
-import sys
 import traceback
 
-print("=" * 70)
+print(" = " * 70)
 print("TRACING IMPORT FAILURE")
-print("=" * 70)
+print(" = " * 70)
 
 # First, let's see if we can import our __init__ files
 print("\n1. Testing __init__.py imports...")
 
 try:
-    import zk_proofs
+    pass
 
     print("✅ zk_proofs/__init__.py imported")
-except Exception as e:
+except Exception:
     print("❌ zk_proofs/__init__.py failed: {e}")
     traceback.print_exc()
     print("\nThis is likely where cryptography is first imported")
@@ -32,25 +31,25 @@ try:
         else:
             print("✅ No direct 'cryptography' import in zk_proofs/__init__.py")
             print("   Import chain must be indirect...")
-except Exception as e:
+except Exception:
     print("Could not read file: {e}")
 
 # Let's check the utils module since that's likely imported
 print("\n3. Testing utils imports...")
 try:
-    import utils
+    pass
 
     print("✅ utils/__init__.py imported")
-except Exception as e:
+except Exception:
     print("❌ utils/__init__.py failed: {e}")
 
 # Check core module
 print("\n4. Testing core imports...")
 try:
-    import core
+    pass
 
     print("✅ core/__init__.py imported")
-except Exception as e:
+except Exception:
     print("❌ core/__init__.py failed: {e}")
 
 print("\n5. Looking for the cryptography import...")
@@ -70,7 +69,10 @@ def find_cryptography_imports(directory):
                 try:
                     with open(filepath, "r") as f:
                         content = f.read()
-                        if "from cryptography" in content or "import cryptography" in content:
+                        if (
+                            "from cryptography" in content
+                            or "import cryptography" in content
+                        ):
                             files_with_crypto.append(filepath)
                 except Exception:
                     pass
@@ -82,4 +84,4 @@ print("\nFiles importing cryptography:")
 for f in crypto_files[:10]:  # Show first 10
     print("  - {f}")
 
-print("\n" + "=" * 70)
+print("\n" + " = " * 70)

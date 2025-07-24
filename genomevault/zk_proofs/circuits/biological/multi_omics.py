@@ -14,9 +14,7 @@ import numpy as np
 from ...prover import Circuit
 from ..base_circuits import (
     BaseCircuit,
-    ComparisonCircuit,
     FieldElement,
-    RangeProofCircuit,
 )
 
 
@@ -38,20 +36,17 @@ class MultiOmicsCorrelationCircuit(BaseCircuit):
     """
 
     def __init__(self, max_dimensions: int = 1000):
+        """Magic method implementation."""
         super().__init__("multi_omics_correlation", 30000)
         self.max_dimensions = max_dimensions
 
     def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
         """Setup multi-omics correlation circuit."""
         # Public inputs
-        self.correlation_commitment = FieldElement(
-            int(public_inputs["correlation_coefficient"], 16)
-        )
+        self.correlation_commitment = FieldElement(int(public_inputs["correlation_coefficient"], 16))
         self.modality_1 = public_inputs["modality_1"]
         self.modality_2 = public_inputs["modality_2"]
-        self.significance_threshold = FieldElement(
-            int(public_inputs["significance_threshold"] * 10000)
-        )
+        self.significance_threshold = FieldElement(int(public_inputs["significance_threshold"] * 10000))
 
         # Private inputs
         self.data_1 = self._process_hypervector(private_inputs["data_1"])
@@ -66,13 +61,11 @@ class MultiOmicsCorrelationCircuit(BaseCircuit):
 
         # 2. Create commitment to correlation
         correlation_commit = self._commit_correlation(correlation, self.witness_randomness)
-        self.add_constraint(
-            correlation_commit,
+        self.add_constraint(correlation_commit,
             self.correlation_commitment,
             FieldElement(0),
-            ql=1,
-            qr=-1,
-        )
+            ql = 1,
+            qr = -1,)
 
         # 3. Calculate significance (simplified t-test)
         t_statistic = self._calculate_t_statistic(correlation, self.sample_size)
@@ -92,9 +85,7 @@ class MultiOmicsCorrelationCircuit(BaseCircuit):
         # Scale and convert to field elements
         return [FieldElement(int(v * 10000)) for v in values]
 
-    def _calculate_correlation(
-        self, data_1: List[FieldElement], data_2: List[FieldElement]
-    ) -> FieldElement:
+    def _calculate_correlation(self, data_1: List[FieldElement], data_2: List[FieldElement]) -> FieldElement:
         """Calculate Pearson correlation coefficient."""
         n = len(data_1)
 
@@ -135,18 +126,14 @@ class MultiOmicsCorrelationCircuit(BaseCircuit):
         """Add constraint for statistical significance."""
         # Simplified: just check t-statistic is above threshold
         # In production, would map to proper p-value
-        threshold = FieldElement(196)  # ~1.96 for p=0.05, scaled
+        threshold = FieldElement(196)  # ~1.96 for p = 0.05, scaled
 
-        diff = t_statistic - threshold
+        t_statistic - threshold
         # Add range proof that diff > 0
 
-    def _commit_correlation(
-        self, correlation: FieldElement, randomness: FieldElement
-    ) -> FieldElement:
+    def _commit_correlation(self, correlation: FieldElement, randomness: FieldElement) -> FieldElement:
         """Create commitment to correlation value."""
-        data = (
-            "CORRELATION:{self.modality_1}:{self.modality_2}:{correlation.value}:{randomness.value}"
-        )
+        data = "CORRELATION:{self.modality_1}:{self.modality_2}:{correlation.value}:{randomness.value}"
         hash_val = hashlib.sha256(data.encode()).hexdigest()
         return FieldElement(int(hash_val, 16))
 
@@ -168,6 +155,7 @@ class GenotypePhenotypeAssociationCircuit(BaseCircuit):
     - witness_randomness: ZK randomness
     """
 
+    """Magic method implementation."""
     def __init__(self, max_samples: int = 10000):
         super().__init__("genotype_phenotype_association", 40000)
         self.max_samples = max_samples
@@ -182,7 +170,9 @@ class GenotypePhenotypeAssociationCircuit(BaseCircuit):
 
         # Private inputs
         self.genotypes = [FieldElement(g) for g in private_inputs["genotypes"]]
-        self.phenotypes = [FieldElement(int(p * 100)) for p in private_inputs["phenotypes"]]
+        self.phenotypes = [
+            FieldElement(int(p * 100)) for p in private_inputs["phenotypes"]
+        ]
         self.covariates = private_inputs.get("covariates", [])
         self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
 
@@ -196,13 +186,13 @@ class GenotypePhenotypeAssociationCircuit(BaseCircuit):
         beta = self._calculate_association(self.genotypes[:100], self.phenotypes[:100])
 
         # 3. Verify association strength
-        self.add_constraint(beta, self.association_strength, FieldElement(0), ql=1, qr=-1)
+        self.add_constraint(beta, self.association_strength, FieldElement(0), ql = 1, qr = -1)
 
         # 4. Calculate and commit p-value
         p_value = self._calculate_p_value(beta, len(self.genotypes))
         p_commit = self._commit_p_value(p_value, self.witness_randomness)
 
-        self.add_constraint(p_commit, self.p_value_commitment, FieldElement(0), ql=1, qr=-1)
+        self.add_constraint(p_commit, self.p_value_commitment, FieldElement(0), ql = 1, qr = -1)
 
     def _add_genotype_validation(self, genotype: FieldElement):
         """Validate genotype is 0, 1, or 2."""
@@ -213,11 +203,9 @@ class GenotypePhenotypeAssociationCircuit(BaseCircuit):
         temp = genotype * g_minus_1
         result = temp * g_minus_2
 
-        self.add_constraint(result, FieldElement(0), FieldElement(0), ql=1)
+        self.add_constraint(result, FieldElement(0), FieldElement(0), ql = 1)
 
-    def _calculate_association(
-        self, genotypes: List[FieldElement], phenotypes: List[FieldElement]
-    ) -> FieldElement:
+    def _calculate_association(self, genotypes: List[FieldElement], phenotypes: List[FieldElement]) -> FieldElement:
         """Calculate association coefficient (simplified)."""
         # Simple correlation as proxy for association
         n = len(genotypes)
@@ -244,7 +232,7 @@ class GenotypePhenotypeAssociationCircuit(BaseCircuit):
             cov_sum = cov_sum + (g_diff * p_diff)
             var_sum = var_sum + (g_diff * g_diff)
 
-        # Beta = cov(G,P) / var(G)
+        # Beta = cov(G, P) / var(G)
         # Simplified to avoid division in circuit
         return cov_sum
 
@@ -284,6 +272,7 @@ class ClinicalTrialEligibilityCircuit(BaseCircuit):
     - demographic_features: Age, sex, etc.
     - witness_randomness: ZK randomness
     """
+        """Magic method implementation."""
 
     def __init__(self):
         super().__init__("clinical_trial_eligibility", 20000)
@@ -316,11 +305,11 @@ class ClinicalTrialEligibilityCircuit(BaseCircuit):
         total_eligible = genomic_eligible * clinical_eligible * demographic_eligible
 
         # 5. Verify result matches public input
-        self.add_constraint(total_eligible, self.eligibility_result, FieldElement(0), ql=1, qr=-1)
+        self.add_constraint(total_eligible, self.eligibility_result, FieldElement(0), ql = 1, qr = -1)
 
         # 6. Verify criteria hash
         computed_hash = self._hash_criteria()
-        self.add_constraint(computed_hash, self.criteria_hash, FieldElement(0), ql=1, qr=-1)
+        self.add_constraint(computed_hash, self.criteria_hash, FieldElement(0), ql = 1, qr = -1)
 
     def _check_genomic_criteria(self) -> FieldElement:
         """Check if genomic features meet criteria."""
@@ -382,6 +371,7 @@ class RareVariantBurdenCircuit(BaseCircuit):
     - allele_frequencies: Population frequencies
     - functional_scores: CADD/REVEL scores
     - witness_randomness: ZK randomness
+        """Magic method implementation."""
     """
 
     def __init__(self, max_variants_per_gene: int = 100):
@@ -401,7 +391,8 @@ class RareVariantBurdenCircuit(BaseCircuit):
             FieldElement(int(af * 10000)) for af in private_inputs["allele_frequencies"]
         ]
         self.functional_scores = [
-            FieldElement(int(score * 100)) for score in private_inputs["functional_scores"]
+            FieldElement(int(score * 100))
+            for score in private_inputs["functional_scores"]
         ]
         self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
 
@@ -410,13 +401,9 @@ class RareVariantBurdenCircuit(BaseCircuit):
         # 1. Filter variants by MAF
         burden = FieldElement(0)
 
-        for i, (variant, af, func_score) in enumerate(
-            zip(
-                self.variants[: self.max_variants],
+        for i, (variant, af, func_score) in enumerate(zip(self.variants[: self.max_variants],
                 self.allele_frequencies[: self.max_variants],
-                self.functional_scores[: self.max_variants],
-            )
-        ):
+                self.functional_scores[: self.max_variants],)):
             # Check if rare (AF < threshold)
             is_rare = self._check_rare_variant(af, self.maf_threshold)
 
@@ -427,10 +414,10 @@ class RareVariantBurdenCircuit(BaseCircuit):
             burden = burden + weighted_contribution
 
         # 2. Verify burden score
-        self.add_constraint(burden, self.burden_score, FieldElement(0), ql=1, qr=-1)
+        self.add_constraint(burden, self.burden_score, FieldElement(0), ql = 1, qr = -1)
 
         # 3. Create commitment to hide individual variants
-        variant_commit = self._commit_variants(self.witness_randomness)
+        self._commit_variants(self.witness_randomness)
 
     def _check_rare_variant(self, af: FieldElement, threshold: FieldElement) -> FieldElement:
         """Check if variant is rare (simplified)."""
@@ -464,58 +451,50 @@ def create_multi_omics_proof_suite(omics_data: Dict[str, Any], analysis_type: st
 
         # Genomic risk
         if "genomics" in omics_data:
-            prs_circuit = Circuit(
-                name="integrated_prs",
-                circuit_type="genomic",
-                constraints=20000,
-                public_inputs=["risk_model", "risk_score", "confidence"],
-                private_inputs=["variants", "weights", "quality_scores"],
-                parameters={"max_variants": 5000},
-            )
+            prs_circuit = Circuit(name = "integrated_prs",
+                circuit_type = "genomic",
+                constraints = 20000,
+                public_inputs = ["risk_model", "risk_score", "confidence"],
+                private_inputs = ["variants", "weights", "quality_scores"],
+                parameters = {"max_variants": 5000},)
             circuits.append(prs_circuit)
 
         # Transcriptomic risk
         if "transcriptomics" in omics_data:
-            expression_circuit = Circuit(
-                name="expression_signature",
-                circuit_type="transcriptomic",
-                constraints=30000,
-                public_inputs=["signature_id", "match_score", "p_value"],
-                private_inputs=[
+            expression_circuit = Circuit(name = "expression_signature",
+                circuit_type = "transcriptomic",
+                constraints = 30000,
+                public_inputs = ["signature_id", "match_score", "p_value"],
+                private_inputs = [
                     "expression_values",
                     "signature_genes",
                     "normalization",
                 ],
-                parameters={"signature_size": 100},
-            )
+                parameters = {"signature_size": 100},)
             circuits.append(expression_circuit)
 
         # Integrated risk
-        integration_circuit = Circuit(
-            name="integrated_risk_score",
-            circuit_type="multi_omics",
-            constraints=50000,
-            public_inputs=["total_risk", "confidence_interval", "model_version"],
-            private_inputs=["layer_scores", "layer_weights", "correlations"],
-            parameters={"num_layers": len(omics_data)},
-        )
+        integration_circuit = Circuit(name = "integrated_risk_score",
+            circuit_type = "multi_omics",
+            constraints = 50000,
+            public_inputs = ["total_risk", "confidence_interval", "model_version"],
+            private_inputs = ["layer_scores", "layer_weights", "correlations"],
+            parameters = {"num_layers": len(omics_data)},)
         circuits.append(integration_circuit)
 
     elif analysis_type == "biomarker_discovery":
         # Create circuits for biomarker discovery
 
-        correlation_circuit = Circuit(
-            name="omics_correlation",
-            circuit_type="multi_omics",
-            constraints=40000,
-            public_inputs=[
+        correlation_circuit = Circuit(name = "omics_correlation",
+            circuit_type = "multi_omics",
+            constraints = 40000,
+            public_inputs = [
                 "correlation_matrix_hash",
                 "significant_pairs",
                 "fdr_threshold",
             ],
-            private_inputs=["layer_data", "sample_ids", "batch_effects"],
-            parameters={"max_features": 1000, "correction_method": "BH"},
-        )
+            private_inputs = ["layer_data", "sample_ids", "batch_effects"],
+            parameters = {"max_features": 1000, "correction_method": "BH"},)
         circuits.append(correlation_circuit)
 
     return circuits

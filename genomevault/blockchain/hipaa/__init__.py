@@ -1,9 +1,6 @@
-"""
-Hipaa Package
-"""
+"""HIPAA compliance and verification package."""
 
-# Too many exports in verifier, import module directly
-# Too many exports in integration, import module directly
+# Import modules directly for clean namespace
 from . import integration, verifier
 from .models import (
     EXPIRED,
@@ -24,6 +21,7 @@ from .models import (
 
 __all__ = [
     "integration",
+    "verifier",
     "EXPIRED",
     "FAILED",
     "HIPAACredentials",
@@ -38,5 +36,4 @@ __all__ = [
     "VerificationStatus",
     "is_active",
     "to_chain_data",
-    "verifier",
 ]

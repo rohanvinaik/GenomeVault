@@ -1,91 +1,45 @@
-.PHONY: help test coverage lint format security clean docker-up docker-down install dev-install
+.PHONY: format check fix lint test install-dev help quality tailchasing
 
 help:
-	@echo "GenomeVault Development Commands:"
-	@echo "  make install     - Install production dependencies"
-	@echo "  make dev-install - Install development dependencies"
-	@echo "  make test        - Run all tests"
-	@echo "  make coverage    - Run tests with coverage report"
-	@echo "  make lint        - Run all linters"
-	@echo "  make format      - Format code automatically"
-	@echo "  make security    - Run security checks"
-	@echo "  make clean       - Clean up generated files"
-	@echo "  make docker-up   - Start docker test services"
-	@echo "  make docker-down - Stop docker test services"
-
-install:
-	pip install -r requirements.txt
-
-dev-install:
-	pip install -r requirements.txt
-	pip install -r requirements-dev.txt
-	pre-commit install
-
-test:
-	pytest tests/ -v
-
-test-unit:
-	pytest tests/unit/ -v -m "not integration"
-
-test-integration:
-	pytest tests/integration/ -v -m integration
-
-coverage:
-	pytest tests/ --cov=genomevault --cov-report=html --cov-report=term-missing
-	@echo "Coverage report generated in htmlcov/"
-	@echo "Open htmlcov/index.html in your browser to view detailed coverage"
-
-lint:
-	@echo "Running Black..."
-	black --check .
-	@echo "Running isort..."
-	isort --check-only .
-	@echo "Running Flake8..."
-	flake8 .
-	@echo "Running mypy..."
-	mypy genomevault --ignore-missing-imports
-	@echo "Running pylint..."
-	pylint genomevault --fail-under=8.0 || true
+	@echo "GenomeVault Development Commands"
+	@echo "================================"
+	@echo "format      - Format code with Black and isort"
+	@echo "check       - Check code quality without fixing"
+	@echo "fix         - Auto-fix common code issues"
+	@echo "lint        - Run comprehensive linting"
+	@echo "test        - Run test suite"
+	@echo "install-dev - Install development dependencies"
+	@echo "quality     - Run full quality analysis"
+	@echo "tailchasing - Check for LLM anti-patterns"
 
 format:
-	@echo "Formatting with Black..."
-	black .
-	@echo "Sorting imports with isort..."
-	isort .
+	python -m black .
+	python -m isort .
 
-security:
-	@echo "Running Bandit security scan..."
-	bandit -r genomevault/ -f json -o security-report.json
-	@echo "Running Safety check..."
-	safety check --json --output safety-report.json || true
-	@echo "Security reports generated: security-report.json, safety-report.json"
+check:
+	python -m black --check .
+	python -m isort --check-only .
+	python -m flake8 .
 
-clean:
-	find . -type d -name __pycache__ -exec rm -rf {} +
-	find . -type f -name "*.pyc" -delete
-	find . -type f -name "*.pyo" -delete
-	find . -type f -name "*.coverage" -delete
-	find . -type d -name "*.egg-info" -exec rm -rf {} +
-	rm -rf .coverage htmlcov/ .pytest_cache/ .mypy_cache/
-	rm -rf build/ dist/
-	rm -f security-report.json safety-report.json
+fix:
+	python -m autoflake --remove-unused-variables --remove-all-unused-imports --in-place --recursive .
+	python -m black .
+	python -m isort .
 
-docker-up:
-	docker-compose -f docker-compose.test.yml up -d
-	@echo "Waiting for services to be ready..."
-	@sleep 5
+lint:
+	python -m pylint genomevault/ clinical_validation/ --exit-zero
 
-docker-down:
-	docker-compose -f docker-compose.test.yml down -v
+test:
+	python -m pytest tests/ -v
 
-docker-logs:
-	docker-compose -f docker-compose.test.yml logs -f
+install-dev:
+	pip install black isort flake8 pylint autoflake pre-commit pytest
 
-# Development workflow commands
-dev-test: docker-up test docker-down
+quality:
+	python comprehensive_code_quality_fixer.py
 
-dev-coverage: docker-up coverage docker-down
+tailchasing:
+	python -m tailchasing . --show-suggestions
 
-# CI simulation
-ci: format lint security test
-	@echo "All CI checks passed!"
+report:
+	python final_code_quality_report.py

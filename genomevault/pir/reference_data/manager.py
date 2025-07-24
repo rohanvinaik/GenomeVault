@@ -6,7 +6,6 @@ Handles pangenome graphs, annotations, and population-specific data.
 """
 
 import gzip
-import hashlib
 import json
 import time
 from dataclasses import dataclass, field
@@ -14,9 +13,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
-import numpy as np
-
-from genomevault.utils.logging import logger, performance_logger
+from genomevault.utils.logging import logger
 
 
 class ReferenceDataType(Enum):
@@ -39,6 +36,7 @@ class GenomicRegion:
     end: int
 
     def __str__(self):
+        """Magic method implementation."""
         return "{self.chromosome}:{self.start}-{self.end}"
 
     def overlaps(self, other: "GenomicRegion") -> bool:
@@ -468,7 +466,9 @@ class ReferenceDataManager:
         for pop, node_ids in self.population_nodes.items():
             pop_stats[pop] = {
                 "nodes": len(node_ids),
-                "percentage": (len(node_ids) / len(self.nodes) * 100 if self.nodes else 0),
+                "percentage": (
+                    len(node_ids) / len(self.nodes) * 100 if self.nodes else 0
+                ),
             }
 
         # Chromosome distribution
@@ -542,7 +542,7 @@ if __name__ == "__main__":
 
         # Get statistics
         stats = manager.get_statistics()
-        print("\nStatistics: {json.dumps(stats, indent=2)}")
+        print("\nStatistics: {json.dumps(stats, indent = 2)}")
 
         # Save data
         manager.save_reference_data()

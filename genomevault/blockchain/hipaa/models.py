@@ -5,7 +5,6 @@ HIPAA Verification Models
 
 Data models for HIPAA fast-track verification system.
 """
-import time
 
 
 from dataclasses import dataclass
@@ -57,6 +56,8 @@ class HIPAACredentials:
 
         if not self.hsm_serial:
             raise ValueError("HSM serial number is required") from e
+
+
 @dataclass
 class VerificationRecord:
     """Record of HIPAA verification"""
@@ -137,6 +138,7 @@ class NPIRecord:
     reactivation_date: Optional[datetime] = None
 
     def __str__(self) -> str:
+        """Magic method implementation."""
         if self.npi_type == NPIType.ORGANIZATION:
             return "{self.organization_name} (NPI: {self.npi})"
         else:

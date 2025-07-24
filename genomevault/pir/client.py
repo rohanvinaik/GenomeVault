@@ -70,67 +70,68 @@ class PIRClient:
     Implements Chor et al. PIR scheme with enhanced security.
     """
 
-    def __init__(self, servers: List[PIRServer], database_size: int):
-        """
-        Initialize PIR client.
+    # DUPLICATE: Merged with to_dict
+    # def __init__(self, servers: List[PIRServer], database_size: int):
+    # """
+    # Initialize PIR client.
 
-        Args:
-            servers: List of available PIR servers
-            database_size: Size of the database being queried
-        """
-        self.servers = servers
-        self.database_size = database_size
-        self.min_servers = config.pir.min_honest_servers
+    # Args:
+    # servers: List of available PIR servers
+    # database_size: Size of the database being queried
+    # """
+    # self.servers = servers
+    # self.database_size = database_size
+    # self.min_servers = config.pir.min_honest_servers
 
-        # Validate server configuration
-        self._validate_servers()
+    # # Validate server configuration
+    # self._validate_servers()
 
-        # Initialize connection pool
-        self.session = None
+    # # Initialize connection pool
+    # self.session = None
 
-        logger.info(
-            "PIRClient initialized with {len(servers)} servers",
-            extra={"privacy_safe": True},
-        )
+    # logger.info(# "PIRClient initialized with {len(servers)} servers",
+    # extra = {"privacy_safe": True},
+    # )
 
-    def _validate_servers(self):
-        """Validate server configuration meets security requirements."""
-        if len(self.servers) < self.min_servers:
-            raise ValueError("Insufficient servers: {len(self.servers)} < {self.min_servers}")
+    # DUPLICATE: Merged with to_dict
+    # def _validate_servers(self):
+    # """Validate server configuration meets security requirements."""
+    # if len(self.servers) < self.min_servers:
+    # raise ValueError("Insufficient servers: {len(self.servers)} < {self.min_servers}")
 
-        # Calculate privacy guarantee
-        ts_servers = [s for s in self.servers if s.is_trusted_signatory]
-        if len(ts_servers) >= self.min_servers:
-            # Use HIPAA TS probability
-            failure_prob = self.calculate_privacy_failure_probability(
-                len(ts_servers), config.pir.server_honesty_hipaa
-            )
-        else:
-            # Use generic probability
-            failure_prob = self.calculate_privacy_failure_probability(
-                len(self.servers), config.pir.server_honesty_generic
-            )
+    # # Calculate privacy guarantee
+    # ts_servers = [s for s in self.servers if s.is_trusted_signatory]
+    # if len(ts_servers) >= self.min_servers:
+    # # Use HIPAA TS probability
+    # failure_prob = self.calculate_privacy_failure_probability(# len(ts_servers), config.pir.server_honesty_hipaa
+    # )
+    # else:
+    # # Use generic probability
+    # failure_prob = self.calculate_privacy_failure_probability(# len(self.servers), config.pir.server_honesty_generic
+    # )
 
-        if failure_prob > config.pir.target_failure_probability:
-            logger.warning(
-                "Privacy failure probability {failure_prob:.2e} exceeds target {config.pir.target_failure_probability:.2e}",
-                extra={"privacy_safe": True},
-            )
+    # if failure_prob > config.pir.target_failure_probability:
+    # logger.warning(# "Privacy failure probability {failure_prob:.2e} exceeds target {config.pir.target_failure_probability:.2e}",
+    # extra = {"privacy_safe": True},
+    # )
 
-    def calculate_privacy_failure_probability(self, k: int, q: float) -> float:
-        """
-        Calculate privacy breach probability P_fail(k,q) = (1-q)^k.
+    # DUPLICATE: Merged with to_dict
+    # def calculate_privacy_failure_probability(self, k: int, q: float) -> float:
+    # """
+    # Calculate privacy breach probability P_fail(k, q) = (1-q)^k.
 
-        Args:
-            k: Number of honest servers
-            q: Server honesty probability
+    # Args:
+    # k: Number of honest servers
+    # q: Server honesty probability
 
-        Returns:
-            Privacy failure probability
-        """
-        return (1 - q) ** k
+    # Returns:
+    # Privacy failure probability
+    # """
+    # return (1 - q) ** k
 
-    def calculate_min_servers_needed(self, target_failure: float, honesty_prob: float) -> int:
+    def calculate_min_servers_needed(
+        self, target_failure: float, honesty_prob: float
+    ) -> int:
         """
         Calculate minimum servers needed for target failure probability.
 
@@ -159,7 +160,9 @@ class PIRClient:
         if target_index >= self.database_size:
             raise ValueError("Index {target_index} out of bounds") from e
         # Generate query ID
-        query_id = hashlib.sha256("{target_index}:{time.time()}".encode()).hexdigest()[:16]
+        query_id = hashlib.sha256("{target_index}:{time.time()}".encode()).hexdigest()[
+            :16
+        ]
 
         # Create unit vector for target
         e_j = np.zeros(self.database_size)
@@ -179,11 +182,15 @@ class PIRClient:
             },
         )
 
-        logger.info("PIR query created for index {target_index}", extra={"privacy_safe": True})
+        logger.info(
+            "PIR query created for index {target_index}", extra={"privacy_safe": True}
+        )
 
         return query
 
-    def _generate_query_vectors(self, target_vector: np.ndarray) -> Dict[str, np.ndarray]:
+    def _generate_query_vectors(
+        self, target_vector: np.ndarray
+    ) -> Dict[str, np.ndarray]:
         """
         Generate random query vectors that sum to target vector.
 
@@ -253,11 +260,15 @@ class PIRClient:
         # Reconstruct data
         result = self._reconstruct_data(valid_responses)
 
-        logger.info("PIR query {query.query_id} completed", extra={"privacy_safe": True})
+        logger.info(
+            "PIR query {query.query_id} completed", extra={"privacy_safe": True}
+        )
 
         return result
 
-    async def _query_server(self, server: PIRServer, query: PIRQuery) -> Optional[PIRResponse]:
+    async def _query_server(
+        self, server: PIRServer, query: PIRQuery
+    ) -> Optional[PIRResponse]:
         """
         Query individual PIR server.
 
@@ -288,7 +299,9 @@ class PIRClient:
                 timeout=aiohttp.ClientTimeout(total=config.pir.query_timeout_seconds),
             ) as response:
                 if response.status != 200:
-                    logger.error("PIR query failed on {server.server_id}: {response.status}")
+                    logger.error(
+                        "PIR query failed on {server.server_id}: {response.status}"
+                    )
                     return None
 
                 result = await response.json()
@@ -306,7 +319,7 @@ class PIRClient:
 
             return pir_response
 
-        except Exception as e:
+        except Exception:
             logger.error("Error querying server {server.server_id}: {e}")
             return None
 
@@ -329,7 +342,9 @@ class PIRClient:
         # The result is the desired database item
         return result
 
-    def decode_response(self, response_data: np.ndarray, data_type: str = "genomic") -> Any:
+    def decode_response(
+        self, response_data: np.ndarray, data_type: str = "genomic"
+    ) -> Any:
         """
         Decode PIR response based on data type.
 
@@ -531,7 +546,9 @@ class PIRClient:
 
         # Find optimal based on latency while meeting security requirement
         valid_configs = [
-            c for c in configs if c["failure_probability"] <= config.pir.target_failure_probability
+            c
+            for c in configs
+            if c["failure_probability"] <= config.pir.target_failure_probability
         ]
 
         if valid_configs:
@@ -579,8 +596,12 @@ if __name__ == "__main__":
 
     # Calculate privacy guarantees
     print("\nPrivacy Guarantees:")
-    print("2 TS servers: P_fail = {client.calculate_privacy_failure_probability(2, 0.98):.2e}")
-    print("3 TS servers: P_fail = {client.calculate_privacy_failure_probability(3, 0.98):.2e}")
+    print(
+        "2 TS servers: P_fail = {client.calculate_privacy_failure_probability(2, 0.98):.2e}"
+    )
+    print(
+        "3 TS servers: P_fail = {client.calculate_privacy_failure_probability(3, 0.98):.2e}"
+    )
 
     # Estimate communication cost
     cost = client.estimate_communication_cost(num_queries=10)

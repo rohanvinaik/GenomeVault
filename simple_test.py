@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Simple test script to validate the refactored implementation"""
 
-import os
 import sys
 
 sys.path.insert(0, "/Users/rohanvinaik/genomevault")
@@ -13,8 +12,6 @@ def test_imports():
         from clinical_validation.circuits import DiabetesRiskCircuit
 
         print("✓ DiabetesRiskCircuit import successful")
-
-        from clinical_validation.proofs import CircuitType
 
         print("✓ CircuitType import successful")
 

@@ -16,27 +16,25 @@ def test_basic_imports():
 
     try:
         # Test core config
-        from core.config import Config, get_config
+        from core.config import get_config
 
         print("✅ core.config imported successfully")
 
         # Test creating config
-        config = get_config()
-        print("✅ Config created: node_type={config.node_type}")
+        get_config()
+        print("✅ Config created: node_type = {config.node_type}")
 
         # Test exceptions
-        from core.exceptions import BindingError, GenomeVaultError
 
         print("✅ core.exceptions imported successfully")
 
         # Test utils
-        from utils import AESGCMCipher, get_logger, secure_hash
 
         print("✅ utils imported successfully")
 
         return True
 
-    except Exception as e:
+    except Exception:
         print("❌ Import failed: {e}")
         import traceback
 
@@ -59,10 +57,10 @@ def test_module_imports():
     success = True
     for module in modules:
         try:
-            parts = module.split(".")
+            module.split(".")
             exec("from {parts[0]} import {parts[1]}")
             print("✅ {module} imported successfully")
-        except Exception as e:
+        except Exception:
             print("❌ {module} failed: {e}")
             success = False
 
@@ -70,9 +68,9 @@ def test_module_imports():
 
 
 if __name__ == "__main__":
-    print("=" * 50)
+    print(" = " * 50)
     print("GenomeVault Import Test")
-    print("=" * 50)
+    print(" = " * 50)
 
     basic_ok = test_basic_imports()
     modules_ok = test_module_imports()

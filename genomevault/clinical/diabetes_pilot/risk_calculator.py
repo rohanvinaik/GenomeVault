@@ -10,15 +10,13 @@ Implements the diabetes risk assessment system with:
 """
 
 import hashlib
-import json
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
-import torch
 
-from ...core.constants import GLUCOSE_THRESHOLD_MG_DL, HBA1C_THRESHOLD_PERCENT
+from ...core.constants import GLUCOSE_THRESHOLD_MG_DL
 from ...utils import get_config, get_logger
 from ...zk_proofs.prover import Prover
 
@@ -104,9 +102,7 @@ class DiabetesRiskCalculator:
         self.differential_privacy_epsilon = 1.0
         logger.info("Diabetes risk calculator initialized")
 
-    def calculate_genetic_risk(
-        self, variants: List[Dict[str, Any]], add_dp_noise: bool = True
-    ) -> GeneticRiskProfile:
+    def calculate_genetic_risk(self, variants: List[Dict[str, Any]], add_dp_noise: bool = True) -> GeneticRiskProfile:
         """
         Calculate polygenic risk score for diabetes.
 
@@ -134,13 +130,11 @@ class DiabetesRiskCalculator:
                 risk_score += risk_contribution
                 weights_sum += 1
 
-                matched_variants.append(
-                    {
+                matched_variants.append({
                         "rsid": risk_var["rsid"],
                         "gene": risk_var["gene"],
                         "contribution": risk_contribution,
-                    }
-                )
+                    })
 
         # Normalize to 0-1 scale
         # Using logistic function to map log-odds to probability
@@ -153,12 +147,12 @@ class DiabetesRiskCalculator:
         # Add differential privacy noise
         dp_noise = 0.0
         if add_dp_noise:
-            # Calibrated Laplace noise for bounded [0,1] output
+            # Calibrated Laplace noise for bounded [0, 1] output
             sensitivity = 1.0 / len(self.RISK_VARIANTS)
             scale = sensitivity / self.differential_privacy_epsilon
             dp_noise = np.random.laplace(0, scale)
 
-            # Ensure PRS stays in [0,1]
+            # Ensure PRS stays in [0, 1]
             prs = np.clip(prs + dp_noise, 0, 1)
 
         # Calculate confidence interval
@@ -167,37 +161,29 @@ class DiabetesRiskCalculator:
         ci_lower = max(0, prs - 1.96 * std_error)
         ci_upper = min(1, prs + 1.96 * std_error)
 
-        profile = GeneticRiskProfile(
-            prs_score=prs,
-            risk_variants=matched_variants,
-            confidence_interval=(ci_lower, ci_upper),
-            ancestry_adjusted=False,  # Simplified
-            calculation_date=datetime.now(),
-            dp_noise_added=dp_noise,
-        )
+        profile = GeneticRiskProfile(prs_score = prs,
+            risk_variants = matched_variants,
+            confidence_interval = (ci_lower, ci_upper),
+            ancestry_adjusted = False,  # Simplified
+            calculation_date = datetime.now(),
+            dp_noise_added = dp_noise,)
 
-        logger.info(
-            "Calculated PRS: {prs:.3f} (category: {profile.get_risk_category()})",
-            extra={"privacy_safe": True},
-        )
+        logger.info("Calculated PRS: {prs:.3f} (category: {profile.get_risk_category()})",
+            extra = {"privacy_safe": True},)
 
         return profile
 
-    def _has_risk_allele(
-        self, variant_lookup: Dict[str, Dict], risk_variant: Dict[str, Any]
-    ) -> bool:
+    def _has_risk_allele(self, variant_lookup: Dict[str, Dict], risk_variant: Dict[str, Any]) -> bool:
         """Check if user has risk allele (simplified)"""
         # In practice, would look up by actual genomic coordinates
         # For now, simulate with probability based on population frequency
         # Real implementation would check actual genotype
         return np.random.random() < 0.3  # 30% frequency placeholder
 
-    def create_risk_alert(
-        self,
+    def create_risk_alert(self,
         genetic_profile: GeneticRiskProfile,
         glucose_reading: GlucoseReading,
-        risk_threshold: float = 0.75,
-    ) -> DiabetesRiskAlert:
+        risk_threshold: float = 0.75,) -> DiabetesRiskAlert:
         """
         Create privacy-preserving risk alert using ZK proof.
 
@@ -224,9 +210,7 @@ class DiabetesRiskCalculator:
         public_inputs = {
             "glucose_threshold": GLUCOSE_THRESHOLD_MG_DL,
             "risk_threshold": risk_threshold,
-            "result_commitment": hashlib.sha256(
-                "{alert_triggered}:{datetime.now().isoformat()}".encode()
-            ).hexdigest(),
+            "result_commitment": hashlib.sha256("{alert_triggered}:{datetime.now().isoformat()}".encode()).hexdigest(),
         }
 
         private_inputs = {
@@ -236,30 +220,25 @@ class DiabetesRiskCalculator:
         }
 
         # Generate proof
-        proof = self.prover.generate_proof(
-            circuit_name="diabetes_risk_alert",
-            public_inputs=public_inputs,
-            private_inputs=private_inputs,
-        )
+        proof = self.prover.generate_proof(circuit_name = "diabetes_risk_alert",
+            public_inputs = public_inputs,
+            private_inputs = private_inputs,)
 
         # Create alert
-        alert = DiabetesRiskAlert(
-            alert_triggered=alert_triggered,
-            proof=proof.proof_data,
-            proof_id=proof.proof_id,
-            timestamp=datetime.now(),
-            metadata={
+        alert = DiabetesRiskAlert(alert_triggered = alert_triggered,
+            proof = proof.proof_data,
+            proof_id = proof.proof_id,
+            timestamp = datetime.now(),
+            metadata = {
                 "proof_size_bytes": len(proof.proof_data),
-                "verification_time_ms": proof.metadata.get("generation_time_seconds", 0) * 1000,
+                "verification_time_ms": proof.metadata.get("generation_time_seconds", 0)
+                * 1000,
                 "glucose_type": glucose_reading.measurement_type,
                 "risk_category": genetic_profile.get_risk_category(),
-            },
-        )
+            },)
 
-        logger.info(
-            "Risk alert created: triggered={alert_triggered}",
-            extra={"privacy_safe": True},
-        )
+        logger.info("Risk alert created: triggered = {alert_triggered}",
+            extra = {"privacy_safe": True},)
 
         return alert
 
@@ -297,16 +276,14 @@ class DiabetesRiskCalculator:
 
             return True
 
-        except Exception as e:
+        except Exception:
             logger.error("Alert verification failed: {e}")
             return False
 
-    def monitor_continuous_risk(
-        self,
+    def monitor_continuous_risk(self,
         genetic_profile: GeneticRiskProfile,
         glucose_readings: List[GlucoseReading],
-        window_days: int = 7,
-    ) -> Dict[str, Any]:
+        window_days: int = 7,) -> Dict[str, Any]:
         """
         Monitor continuous diabetes risk over time window.
 
@@ -319,7 +296,7 @@ class DiabetesRiskCalculator:
             Risk monitoring summary
         """
         # Filter readings within window
-        cutoff_date = datetime.now() - timedelta(days=window_days)
+        cutoff_date = datetime.now() - timedelta(days = window_days)
         recent_readings = [r for r in glucose_readings if r.timestamp >= cutoff_date]
 
         if not recent_readings:
@@ -340,7 +317,7 @@ class DiabetesRiskCalculator:
             # Simple linear regression for trend
             x = np.arange(len(glucose_values))
             slope, _ = np.polyfit(x, glucose_values, 1)
-            trend = "increasing" if slope > 1 else "decreasing" if slope < -1 else "stable"
+            trend = ("increasing" if slope > 1 else "decreasing" if slope < -1 else "stable")
         else:
             trend = "unknown"
 
@@ -378,28 +355,22 @@ class DiabetesRiskCalculator:
         recommendations = []
 
         if risk_level == "high":
-            recommendations.extend(
-                [
+            recommendations.extend([
                     "Consider scheduling an appointment with your healthcare provider",
                     "Monitor glucose levels more frequently",
                     "Review dietary habits with a nutritionist",
-                ]
-            )
+                ])
         elif risk_level == "moderate":
-            recommendations.extend(
-                [
+            recommendations.extend([
                     "Continue regular glucose monitoring",
                     "Maintain healthy lifestyle habits",
                     "Consider preventive measures discussion with provider",
-                ]
-            )
+                ])
         else:
-            recommendations.extend(
-                [
+            recommendations.extend([
                     "Maintain current monitoring schedule",
                     "Continue healthy lifestyle choices",
-                ]
-            )
+                ])
 
         if trend == "increasing":
             recommendations.append("Glucose trend is increasing - consider lifestyle adjustments")
@@ -439,15 +410,13 @@ class ClinicalIntegration:
         genetic_profile = self.calculator.calculate_genetic_risk(genetic_variants)
 
         # Get latest glucose reading
-        latest_glucose = max(glucose_readings, key=lambda r: r.timestamp)
+        latest_glucose = max(glucose_readings, key = lambda r: r.timestamp)
 
         # Create risk alert
         alert = self.calculator.create_risk_alert(genetic_profile, latest_glucose)
 
         # Continuous monitoring
-        monitoring_summary = self.calculator.monitor_continuous_risk(
-            genetic_profile, glucose_readings
-        )
+        monitoring_summary = self.calculator.monitor_continuous_risk(genetic_profile, glucose_readings)
 
         # Prepare HIPAA-compliant response
         response = {
@@ -464,14 +433,12 @@ class ClinicalIntegration:
         }
 
         # Audit log (privacy-safe)
-        logger.info(
-            "Clinical diabetes assessment completed",
-            extra={
+        logger.info("Clinical diabetes assessment completed",
+            extra = {
                 "privacy_safe": True,
                 "alert_triggered": alert.alert_triggered,
                 "risk_level": monitoring_summary["risk_level"],
-            },
-        )
+            },)
 
         return response
 
@@ -483,15 +450,13 @@ class ClinicalIntegration:
         if "observations" in patient_data:
             for obs in patient_data["observations"]:
                 if obs.get("category") == "genetic":
-                    variants.append(
-                        {
+                    variants.append({
                             "chromosome": obs.get("chromosome", ""),
                             "position": obs.get("position", 0),
                             "reference": obs.get("reference_allele", ""),
                             "alternate": obs.get("alternate_allele", ""),
                             "genotype": obs.get("genotype", "0/0"),
-                        }
-                    )
+                        })
 
         return variants
 
@@ -503,14 +468,10 @@ class ClinicalIntegration:
         if "observations" in patient_data:
             for obs in patient_data["observations"]:
                 if obs.get("code") in ["glucose", "blood_glucose", "2339-0"]:
-                    reading = GlucoseReading(
-                        value=obs.get("value", 0),
-                        measurement_type=obs.get("measurement_type", "random"),
-                        timestamp=datetime.fromisoformat(
-                            obs.get("timestamp", datetime.now().isoformat())
-                        ),
-                        device_id=obs.get("device_id"),
-                    )
+                    reading = GlucoseReading(value = obs.get("value", 0),
+                        measurement_type = obs.get("measurement_type", "random"),
+                        timestamp = datetime.fromisoformat(obs.get("timestamp", datetime.now().isoformat())),
+                        device_id = obs.get("device_id"),)
                     readings.append(reading)
 
         return readings
@@ -549,11 +510,9 @@ if __name__ == "__main__":
     print("Confidence Interval: {genetic_profile.confidence_interval}")
 
     # Example glucose reading
-    glucose = GlucoseReading(
-        value=140,
-        measurement_type="fasting",
-        timestamp=datetime.now(),  # Above threshold
-    )
+    glucose = GlucoseReading(value = 140,
+        measurement_type = "fasting",
+        timestamp = datetime.now(),  # Above threshold)
 
     # Create risk alert
     print("\nCreating risk alert...")
@@ -576,9 +535,9 @@ if __name__ == "__main__":
     # Test continuous monitoring
     print("\nTesting continuous monitoring...")
     glucose_history = [
-        GlucoseReading(120, "fasting", datetime.now() - timedelta(days=6)),
-        GlucoseReading(135, "fasting", datetime.now() - timedelta(days=4)),
-        GlucoseReading(128, "fasting", datetime.now() - timedelta(days=2)),
+        GlucoseReading(120, "fasting", datetime.now() - timedelta(days = 6)),
+        GlucoseReading(135, "fasting", datetime.now() - timedelta(days = 4)),
+        GlucoseReading(128, "fasting", datetime.now() - timedelta(days = 2)),
         GlucoseReading(140, "fasting", datetime.now()),
     ]
 
@@ -612,4 +571,4 @@ if __name__ == "__main__":
     }
 
     clinical_result = clinical.process_clinical_data(patient_data)
-    print("Clinical Assessment: {json.dumps(clinical_result, indent=2, default=str)}")
+    print("Clinical Assessment: {json.dumps(clinical_result, indent = 2, default = str)}")

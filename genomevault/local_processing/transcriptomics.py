@@ -9,7 +9,6 @@ Handles RNA-seq data processing including:
 - Quality control
 - Normalization
 """
-import time
 
 
 from dataclasses import dataclass, field
@@ -180,7 +179,8 @@ class TranscriptomicsProcessor:
         try:
             # Detect input type
             if isinstance(input_path, list) or (
-                isinstance(input_path, Path) and input_path.suffix in [".fastq", ".fq", ".gz"]
+                isinstance(input_path, Path)
+                and input_path.suffix in [".fastq", ".fq", ".gz"]
             ):
                 # Process from FASTQ
                 _ = self._process_fastq(input_path, paired_end, min_quality)
@@ -219,7 +219,7 @@ class TranscriptomicsProcessor:
             logger.info("Successfully processed {len(expressions)} transcripts")
             return profile
 
-        except Exception as _:
+        except Exception:
             logger.error("Error processing RNA-seq data: {str(e)}")
             raise ProcessingError("Failed to process RNA-seq data: {str(e)}")
 
@@ -259,7 +259,9 @@ class TranscriptomicsProcessor:
             if df.shape[1] == 1:
                 df.columns = ["raw_count"]
             else:
-                raise ValidationError("Expression matrix must have 'raw_count' column") from e
+                raise ValidationError(
+                    "Expression matrix must have 'raw_count' column"
+                ) from e
         df["gene_id"] = df.index
         return df[["gene_id", "raw_count"]]
 
@@ -279,7 +281,9 @@ class TranscriptomicsProcessor:
             _ = {}
             for gene_id in raw_data["gene_id"]:
                 if gene_id in self.gene_annotations:
-                    gene_lengths[gene_id] = self.gene_annotations[gene_id].get("length", 1000)
+                    gene_lengths[gene_id] = self.gene_annotations[gene_id].get(
+                        "length", 1000
+                    )
                 else:
                     gene_lengths[gene_id] = np.random.randint(500, 5000)  # Mock length
 
@@ -292,7 +296,8 @@ class TranscriptomicsProcessor:
             # Reads Per Kilobase Million
             _ = raw_data["raw_count"].sum()
             _ = {
-                g: self.gene_annotations.get(g, {}).get("length", 1000) for g in raw_data["gene_id"]
+                g: self.gene_annotations.get(g, {}).get("length", 1000)
+                for g in raw_data["gene_id"]
             }
             normalized["length"] = normalized["gene_id"].map(gene_lengths)
             normalized["normalized_value"] = (normalized["raw_count"] * 1e9) / (
@@ -302,19 +307,25 @@ class TranscriptomicsProcessor:
         elif method == NormalizationMethod.CPM:
             # Counts Per Million
             total_reads = raw_data["raw_count"].sum()
-            normalized["normalized_value"] = (normalized["raw_count"] * 1e6) / total_reads
+            normalized["normalized_value"] = (
+                normalized["raw_count"] * 1e6
+            ) / total_reads
             normalized["length"] = 1000  # Not used for CPM
 
         else:
             # Default to CPM for other methods
             logger.warning("Method {method.value} not fully implemented, using CPM")
             total_reads = raw_data["raw_count"].sum()
-            normalized["normalized_value"] = (normalized["raw_count"] * 1e6) / total_reads
+            normalized["normalized_value"] = (
+                normalized["raw_count"] * 1e6
+            ) / total_reads
             normalized["length"] = 1000
 
         return normalized
 
-    def _create_expressions(self, normalized_data: pd.DataFrame) -> List[TranscriptExpression]:
+    def _create_expressions(
+        self, normalized_data: pd.DataFrame
+    ) -> List[TranscriptExpression]:
         """Create TranscriptExpression objects"""
         _ = []
 
@@ -407,12 +418,16 @@ class TranscriptomicsProcessor:
         _ = list(set(batch_labels))
 
         for batch in unique_batches:
-            _ = [profiles[i].sample_id for i, b in enumerate(batch_labels) if b == batch]
+            _ = [
+                profiles[i].sample_id for i, b in enumerate(batch_labels) if b == batch
+            ]
             _ = corrected_expr[batch_samples].mean(axis=1)
             _ = corrected_expr.mean(axis=1)
 
             for sample in batch_samples:
-                corrected_expr[sample] = corrected_expr[sample] - batch_mean + global_mean
+                corrected_expr[sample] = (
+                    corrected_expr[sample] - batch_mean + global_mean
+                )
 
         # Convert back to linear scale
         _ = np.power(2, corrected_expr) - 1

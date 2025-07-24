@@ -12,8 +12,6 @@ import hashlib
 from .constraint_system import (
     ConstraintSystem,
     FieldElement,
-    Variable,
-    create_merkle_proof,
     poseidon_hash,
 )
 
@@ -35,11 +33,14 @@ class VariantProofCircuit:
     """
 
     def __init__(self, merkle_depth: int = 20):
+        """Magic method implementation."""
         self.merkle_depth = merkle_depth
         self.cs = ConstraintSystem()
         self.setup_complete = False
 
-    def setup_circuit(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
+    def setup_circuit(
+        self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
+    ):
         """Setup the circuit with actual inputs"""
 
         # Public input variables
@@ -48,7 +49,9 @@ class VariantProofCircuit:
         self.commitment_root_var = self.cs.add_public_input("commitment_root")
 
         # Assign public input values
-        self.cs.assign(self.variant_hash_var, FieldElement(int(public_inputs["variant_hash"], 16)))
+        self.cs.assign(
+            self.variant_hash_var, FieldElement(int(public_inputs["variant_hash"], 16))
+        )
         self.cs.assign(
             self.reference_hash_var,
             FieldElement(int(public_inputs["reference_hash"], 16)),
@@ -77,10 +80,16 @@ class VariantProofCircuit:
 
         # Assign private input values
         variant_data = private_inputs["variant_data"]
-        self.cs.assign(self.variant_chr, FieldElement(self._encode_chromosome(variant_data["chr"])))
+        self.cs.assign(
+            self.variant_chr, FieldElement(self._encode_chromosome(variant_data["chr"]))
+        )
         self.cs.assign(self.variant_pos, FieldElement(variant_data["pos"]))
-        self.cs.assign(self.variant_ref, FieldElement(self._encode_base(variant_data["ref"])))
-        self.cs.assign(self.variant_alt, FieldElement(self._encode_base(variant_data["alt"])))
+        self.cs.assign(
+            self.variant_ref, FieldElement(self._encode_base(variant_data["ref"]))
+        )
+        self.cs.assign(
+            self.variant_alt, FieldElement(self._encode_base(variant_data["alt"]))
+        )
         self.cs.assign(
             self.witness_randomness,
             FieldElement(int(private_inputs["witness_randomness"], 16)),
@@ -92,7 +101,9 @@ class VariantProofCircuit:
 
         for i, (path_hash, index) in enumerate(zip(merkle_path, merkle_indices)):
             if i < len(self.merkle_path_vars):
-                self.cs.assign(self.merkle_path_vars[i], FieldElement(int(path_hash, 16)))
+                self.cs.assign(
+                    self.merkle_path_vars[i], FieldElement(int(path_hash, 16))
+                )
                 self.cs.assign(self.merkle_indices_vars[i], FieldElement(index))
 
         self.setup_complete = True
@@ -100,7 +111,9 @@ class VariantProofCircuit:
     def generate_constraints(self):
         """Generate all circuit constraints"""
         if not self.setup_complete:
-            raise RuntimeError("Circuit must be setup before generating constraints") from e
+            raise RuntimeError(
+                "Circuit must be setup before generating constraints"
+            ) from e
         # 1. Verify variant hash
         self._constrain_variant_hash()
 
@@ -199,13 +212,14 @@ class VariantProofCircuit:
         pos_val = self.cs.get_assignment(self.variant_pos)
         if not 1 <= pos_val.value <= 300_000_000:  # Max human chromosome length
             raise ValueError(f"Invalid position: {pos_val.value}") from e
-        # Base encoding should be valid (A=1, C=2, G=3, T=4)
+        # Base encoding should be valid (A = 1, C = 2, G = 3, T = 4)
         ref_val = self.cs.get_assignment(self.variant_ref)
         if not 1 <= ref_val.value <= 4:
             raise ValueError(f"Invalid reference base: {ref_val.value}") from e
         alt_val = self.cs.get_assignment(self.variant_alt)
         if not 1 <= alt_val.value <= 4:
             raise ValueError(f"Invalid alternate base: {alt_val.value}") from e
+
     def _add_zero_knowledge_randomness(self):
         """Add randomness to achieve zero-knowledge"""
 
@@ -277,16 +291,16 @@ def create_variant_proof_example():
     variant_data = {"chr": "chr1", "pos": 12345, "ref": "A", "alt": "G"}
 
     # Create variant hash
-    variant_str = (
-        f"{variant_data['chr']}:{variant_data['pos']}:{variant_data['ref']}:{variant_data['alt']}"
-    )
+    variant_str = f"{variant_data['chr']}:{variant_data['pos']}:{variant_data['ref']}:{variant_data['alt']}"
     variant_hash = hashlib.sha256(variant_str.encode()).hexdigest()
 
     # Mock reference hash
     reference_hash = hashlib.sha256(b"GRCh38").hexdigest()
 
     # Mock Merkle proof (in practice, would be real)
-    merkle_path = [hashlib.sha256(f"sibling_{i}".encode()).hexdigest() for i in range(20)]
+    merkle_path = [
+        hashlib.sha256(f"sibling_{i}".encode()).hexdigest() for i in range(20)
+    ]
     merkle_indices = [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
 
     # Mock commitment root
@@ -323,7 +337,7 @@ if __name__ == "__main__":
     circuit = create_variant_proof_example()
 
     print("Variant Proof Circuit Test")
-    print("=" * 40)
+    print(" = " * 40)
 
     info = circuit.get_circuit_info()
     for key, value in info.items():

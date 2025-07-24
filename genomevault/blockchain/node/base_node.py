@@ -4,7 +4,6 @@ from typing import Any, Dict, List, Optional
 Base node implementation for GenomeVault blockchain
 """
 
-import asyncio
 import hashlib
 import json
 import time
@@ -41,6 +40,7 @@ class BaseNode(ABC):
     """
 
     def __init__(self, node_type: NodeType, is_signatory: bool = False):
+        """Magic method implementation."""
         self.node_type = node_type
         self.is_signatory = is_signatory
         self.config = get_config()
@@ -48,7 +48,9 @@ class BaseNode(ABC):
         # Calculate voting power: w = c + s
         self.hardware_weight = self._get_hardware_weight()
         self.signatory_weight = (
-            SignatoryWeight.TRUSTED_SIGNATORY if is_signatory else SignatoryWeight.NON_SIGNER
+            SignatoryWeight.TRUSTED_SIGNATORY
+            if is_signatory
+            else SignatoryWeight.NON_SIGNER
         )
         self.voting_power = self.hardware_weight + self.signatory_weight
 
@@ -73,17 +75,14 @@ class BaseNode(ABC):
     @abstractmethod
     def _get_storage_limit(self) -> int:
         """Get storage limit in bytes based on node type"""
-        pass
 
     @abstractmethod
     async def sync_chain(self):
         """Sync blockchain with network"""
-        pass
 
     @abstractmethod
     async def validate_transaction(self, transaction: Dict[str, Any]) -> bool:
         """Validate a transaction based on node capabilities"""
-        pass
 
     def calculate_credits_per_block(self) -> int:
         """
@@ -107,8 +106,12 @@ class BaseNode(ABC):
         block = Block(
             index=len(self.chain),
             timestamp=time.time(),
-            transactions=self.pending_transactions[:100],  # Limit transactions per block
-            proof_hashes=[tx.get("proof_hash", "") for tx in self.pending_transactions[:100]],
+            transactions=self.pending_transactions[
+                :100
+            ],  # Limit transactions per block
+            proof_hashes=[
+                tx.get("proof_hash", "") for tx in self.pending_transactions[:100]
+            ],
             previous_hash=self.chain[-1].hash if self.chain else "0",
             nonce=0,
             hash="",
@@ -124,8 +127,10 @@ class BaseNode(ABC):
         """Determine if this node should produce the next block"""
         # Simplified selection based on voting power
         # In production, use proper BFT consensus
-        current_slot = int(time.time() / BLOCK_TIME_SECONDS)
-        selection_hash = hashlib.sha256("{current_slot}:{self.voting_power}".encode()).hexdigest()
+        int(time.time() / BLOCK_TIME_SECONDS)
+        selection_hash = hashlib.sha256(
+            "{current_slot}:{self.voting_power}".encode()
+        ).hexdigest()
         selection_value = int(selection_hash[:8], 16)
 
         # Probability proportional to voting power

@@ -7,7 +7,6 @@ import shutil
 import tempfile
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict
 from unittest.mock import Mock
 
 import numpy as np
@@ -45,7 +44,7 @@ def sample_vcf_data():
                 "alt": "A",
                 "qual": 29,
                 "filter": "PASS",
-                "info": "NS=3;DP=14;AF=0.5",
+                "info": "NS = 3;DP = 14;AF = 0.5",
                 "format": "GT:GQ:DP",
                 "sample": "0/1:48:14",
             },
@@ -57,7 +56,7 @@ def sample_vcf_data():
                 "alt": "C",
                 "qual": 99,
                 "filter": "PASS",
-                "info": "NS=3;DP=20;AF=0.75",
+                "info": "NS = 3;DP = 20;AF = 0.75",
                 "format": "GT:GQ:DP",
                 "sample": "1/1:99:20",
             },
@@ -183,6 +182,7 @@ def performance_benchmark():
 
     class PerformanceBenchmark:
         def __init__(self):
+            """Magic method implementation."""
             self.results = {}
 
         def measure(self, name: str, func, *args, **kwargs):
@@ -201,7 +201,9 @@ def performance_benchmark():
             if name not in self.results:
                 pytest.fail("No benchmark results for {name}")
             actual_ms = self.results[name]["elapsed_ms"]
-            assert actual_ms <= max_ms, "{name} took {actual_ms:.1f}ms, expected <= {max_ms}ms"
+            assert (
+                actual_ms <= max_ms
+            ), "{name} took {actual_ms:.1f}ms, expected <= {max_ms}ms"
 
     return PerformanceBenchmark()
 
@@ -233,7 +235,9 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "slow: marks test as slow")
     config.addinivalue_line("markers", "integration: marks test as integration test")
     config.addinivalue_line("markers", "security: marks test as security-related")
-    config.addinivalue_line("markers", "performance: marks test as performance benchmark")
+    config.addinivalue_line(
+        "markers", "performance: marks test as performance benchmark"
+    )
 
 
 def pytest_collection_modifyitems(config, items):

@@ -3,7 +3,6 @@ Comprehensive test for the refactored clinical circuits.
 Validates that the new implementation works correctly.
 """
 
-import os
 import sys
 
 # Add the genomevault path for imports
@@ -66,7 +65,9 @@ def test_biomarker_circuit():
     print("\nTesting Biomarker Circuit...")
 
     # Create circuit using factory
-    circuit = create_circuit(CircuitType.BIOMARKER_THRESHOLD, biomarker_name="cholesterol")
+    circuit = create_circuit(
+        CircuitType.BIOMARKER_THRESHOLD, biomarker_name="cholesterol"
+    )
 
     # Setup
     circuit.setup({"value_range": (0, 500)})
@@ -76,7 +77,7 @@ def test_biomarker_circuit():
     bio_witness = circuit.generate_witness(
         {"value": 240}, {"threshold": 200, "comparison": "greater"}
     )
-    print(f"✓ Witness generated: result={bio_witness['result']}")
+    print(f"✓ Witness generated: result = {bio_witness['result']}")
 
     # Generate proof
     bio_proof = circuit.prove(bio_witness, {"threshold": 200, "comparison": "greater"})
@@ -160,9 +161,9 @@ def test_error_handling():
 
 def main():
     """Run all tests"""
-    print("=" * 60)
+    print(" = " * 60)
     print("REFACTORED CLINICAL CIRCUITS COMPREHENSIVE TEST")
-    print("=" * 60)
+    print(" = " * 60)
 
     tests = [
         ("Diabetes Circuit", test_diabetes_circuit),
@@ -181,9 +182,9 @@ def main():
             print(f"\n{test_name}: ERROR - {e}")
             results.append((test_name, False))
 
-    print("\n" + "=" * 60)
+    print("\n" + " = " * 60)
     print("TEST SUMMARY")
-    print("=" * 60)
+    print(" = " * 60)
 
     all_passed = True
     for test_name, result in results:

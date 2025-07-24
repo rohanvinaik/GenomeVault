@@ -1,10 +1,10 @@
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List
 
 """
 Hypervector encoding for genomic data
 """
 
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List
 
 import numpy as np
 import torch
@@ -19,6 +19,7 @@ class GenomicEncoder:
     """
 
     def __init__(self, dimension: int = HYPERVECTOR_DIMENSIONS["base"]):
+        """Magic method implementation."""
         self.dimension = dimension
         self.base_vectors = self._init_base_vectors()
 
@@ -50,7 +51,8 @@ class GenomicEncoder:
         """Generate position encoding vector using sinusoidal encoding"""
         position = torch.arange(self.dimension).float()
         div_term = torch.exp(
-            torch.arange(0, self.dimension, 2).float() * -(np.log(10000.0) / self.dimension)
+            torch.arange(0, self.dimension, 2).float()
+            * -(np.log(10000.0) / self.dimension)
         )
 
         pos_encoding = torch.zeros(self.dimension)
@@ -108,7 +110,7 @@ class GenomicEncoder:
 
             return variant_vec
 
-        except Exception as e:
+        except Exception:
             raise HypervectorError("Failed to encode variant: {str(e)}")
 
     def encode_genome(self, variants: List[Dict]) -> torch.Tensor:

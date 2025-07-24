@@ -3,13 +3,12 @@
 Pre-GitHub Push Checklist for GenomeVault
 """
 
-import os
 import subprocess
 from pathlib import Path
 
-print("=" * 80)
+print(" = " * 80)
 print("🚀 GENOMEVAULT PRE-GITHUB PUSH CHECKLIST")
-print("=" * 80)
+print(" = " * 80)
 
 # Results tracking
 issues = []
@@ -37,9 +36,9 @@ for desc, patterns in sensitive_patterns:
                 "-r",
                 pattern,
                 ".",
-                "--include=*.py",
-                "--include=*.yaml",
-                "--include=*.json",
+                "--include = *.py",
+                "--include = *.yaml",
+                "--include = *.json",
             ],
             capture_output=True,
             text=True,
@@ -121,7 +120,9 @@ for path in Path(".").rglob("*"):
             pass
 
 if large_files:
-    warnings.append("Large files found: {', '.join(['{f[0]} ({f[1]})' for f in large_files[:3]])}")
+    warnings.append(
+        "Large files found: {', '.join(['{f[0]} ({f[1]})' for f in large_files[:3]])}"
+    )
 else:
     successes.append("No large files detected")
 
@@ -131,7 +132,7 @@ print("-" * 40)
 
 # Check for print debugging statements
 debug_prints = subprocess.run(
-    ["grep", "-r", "print(", ".", "--include=*.py", "--exclude-dir=tests"],
+    ["grep", "-r", "print(", ".", "--include = *.py", "--exclude-dir = tests"],
     capture_output=True,
     text=True,
 )
@@ -139,7 +140,9 @@ if debug_prints.stdout:
     # Count occurrences
     count = len(debug_prints.stdout.strip().split("\n"))
     if count > 50:  # Arbitrary threshold
-        warnings.append("Many print statements found ({count}) - consider using logging")
+        warnings.append(
+            "Many print statements found ({count}) - consider using logging"
+        )
     else:
         successes.append("Reasonable number of print statements")
 
@@ -148,13 +151,15 @@ print("\n6. CHECKING FOR TODO/FIXME COMMENTS...")
 print("-" * 40)
 
 todos = subprocess.run(
-    ["grep", "-r", "-E", "TODO|FIXME|XXX|HACK", ".", "--include=*.py"],
+    ["grep", "-r", "-E", "TODO|FIXME|XXX|HACK", ".", "--include = *.py"],
     capture_output=True,
     text=True,
 )
 if todos.stdout:
     count = len(todos.stdout.strip().split("\n"))
-    warnings.append("Found {count} TODO/FIXME comments - consider addressing or documenting")
+    warnings.append(
+        "Found {count} TODO/FIXME comments - consider addressing or documenting"
+    )
 else:
     successes.append("No TODO/FIXME comments found")
 
@@ -180,14 +185,16 @@ test_dirs = list(Path(".").glob("test*"))
 test_files = list(Path(".").rglob("test_*.py"))
 
 if test_dirs or test_files:
-    successes.append("Found {len(test_dirs)} test directories and {len(test_files)} test files")
+    successes.append(
+        "Found {len(test_dirs)} test directories and {len(test_files)} test files"
+    )
 else:
     warnings.append("No test files found - consider adding tests")
 
 # 9. Final summary
-print("\n" + "=" * 80)
+print("\n" + " = " * 80)
 print("📊 PRE-PUSH SUMMARY")
-print("=" * 80)
+print(" = " * 80)
 
 print("\n✅ GOOD ({len(successes)} items):")
 for item in successes:
@@ -231,8 +238,8 @@ recommendations = [
 for rec in recommendations:
     print(rec)
 
-print("\n" + "=" * 80)
+print("\n" + " = " * 80)
 print("✨ Overall: The codebase structure looks good!")
 print("   Main import issue has been fixed.")
 print("   Address warnings above for a professional repository.")
-print("=" * 80)
+print(" = " * 80)

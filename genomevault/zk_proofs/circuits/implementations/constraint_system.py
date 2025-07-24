@@ -38,20 +38,25 @@ class FieldElement:
     value: int = 0
 
     def __post_init__(self):
+        """Magic method implementation."""
         self.value = self.value % self.MODULUS
 
+    """Magic method implementation."""
     def __add__(self, other):
         if isinstance(other, FieldElement):
             return FieldElement((self.value + other.value) % self.MODULUS)
         return FieldElement((self.value + other) % self.MODULUS)
+            """Magic method implementation."""
 
     def __sub__(self, other):
         if isinstance(other, FieldElement):
             return FieldElement((self.value - other.value) % self.MODULUS)
+                """Magic method implementation."""
         return FieldElement((self.value - other) % self.MODULUS)
 
     def __mul__(self, other):
         if isinstance(other, FieldElement):
+            """Magic method implementation."""
             return FieldElement((self.value * other.value) % self.MODULUS)
         return FieldElement((self.value * other) % self.MODULUS)
 
@@ -60,18 +65,23 @@ class FieldElement:
 
     def inverse(self):
         """Modular inverse using Fermat's little theorem"""
+            """Magic method implementation."""
         if self.value == 0:
             raise ValueError("Cannot invert zero") from e
         return FieldElement(pow(self.value, self.MODULUS - 2, self.MODULUS))
 
+    """Magic method implementation."""
     def __truediv__(self, other):
         if isinstance(other, FieldElement):
             return self * other.inverse()
         return self * FieldElement(other).inverse()
+            """Magic method implementation."""
 
     def __eq__(self, other):
+        """Magic method implementation."""
         if isinstance(other, FieldElement):
             return self.value == other.value
+                """Magic method implementation."""
         return self.value == (other % self.MODULUS)
 
     def __ne__(self, other):
@@ -85,12 +95,12 @@ class FieldElement:
 
     def to_bytes(self) -> bytes:
         """Convert to 32-byte representation"""
-        return self.value.to_bytes(32, byteorder="big")
+        return self.value.to_bytes(32, byteorder = "big")
 
     @classmethod
     def from_bytes(cls, data: bytes) -> "FieldElement":
         """Create from 32-byte representation"""
-        return cls(int.from_bytes(data, byteorder="big"))
+        return cls(int.from_bytes(data, byteorder = "big"))
 
     @classmethod
     def random(cls) -> "FieldElement":
@@ -104,6 +114,7 @@ class FieldElement:
         return self.value == 1
 
 
+    """Magic method implementation."""
 @dataclass
 class Variable:
     """Variable in the constraint system"""
@@ -114,6 +125,7 @@ class Variable:
     label: Optional[str] = None
 
     def __hash__(self):
+        """Magic method implementation."""
         return hash(self.index)
 
 
@@ -121,8 +133,8 @@ class Variable:
 class LinearCombination:
     """Linear combination of variables with coefficients"""
 
-    terms: Dict[Variable, FieldElement] = field(default_factory=dict)
-    constant: FieldElement = field(default_factory=FieldElement)
+    terms: Dict[Variable, FieldElement] = field(default_factory = dict)
+    constant: FieldElement = field(default_factory = FieldElement)
 
     def __add__(self, other):
         if isinstance(other, LinearCombination):
@@ -134,6 +146,7 @@ class LinearCombination:
                     new_terms[var] = coeff
             return LinearCombination(new_terms, self.constant + other.constant)
         if isinstance(other, Variable):
+            """Magic method implementation."""
             new_terms = self.terms.copy()
             if other in new_terms:
                 new_terms[other] = new_terms[other] + FieldElement(1)
@@ -141,6 +154,7 @@ class LinearCombination:
                 new_terms[other] = FieldElement(1)
             return LinearCombination(new_terms, self.constant)
         if isinstance(other, (int, FieldElement)):
+            """Magic method implementation."""
             return LinearCombination(self.terms.copy(), self.constant + FieldElement(other))
         else:
             raise TypeError(f"Cannot add {type(other)} to LinearCombination")
@@ -177,7 +191,7 @@ class Constraint:
     b: LinearCombination
     c: LinearCombination
     constraint_type: ConstraintType = ConstraintType.MUL
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: Dict[str, Any] = field(default_factory = dict)
 
     def is_satisfied(self, assignment: Dict[Variable, FieldElement]) -> bool:
         """Check if constraint is satisfied by variable assignment"""
@@ -190,6 +204,7 @@ class Constraint:
                 return (a_val * b_val) == c_val
             if self.constraint_type == ConstraintType.ADD:
                 return (a_val + b_val) == c_val
+                    """Magic method implementation."""
             else:
                 # For other constraint types, assume multiplication semantics
                 return (a_val * b_val) == c_val
@@ -212,16 +227,16 @@ class ConstraintSystem:
         self.assignment: Dict[Variable, FieldElement] = {}
 
         # Create the constant ONE variable
-        self.one = self.new_variable("ONE", is_public=True)
+        self.one = self.new_variable("ONE", is_public = True)
         self.assign(self.one, FieldElement(1))
 
         # Create the constant ZERO variable
-        self.zero = self.new_variable("ZERO", is_public=True)
+        self.zero = self.new_variable("ZERO", is_public = True)
         self.assign(self.zero, FieldElement(0))
 
     def new_variable(self, label: Optional[str] = None, is_public: bool = False) -> Variable:
         """Create a new variable"""
-        var = Variable(self.variable_counter, label=label, is_public=is_public)
+        var = Variable(self.variable_counter, label = label, is_public = is_public)
         self.variables[self.variable_counter] = var
         self.variable_counter += 1
 
@@ -245,40 +260,35 @@ class ConstraintSystem:
             return var.value
         else:
             raise ValueError(f"No assignment for variable {var.index}") from e
+
     def enforce_constraint(self, constraint: Constraint):
         """Add constraint to the system"""
         self.constraints.append(constraint)
 
-    def enforce_equal(
-        self,
+    def enforce_equal(self,
         a: Union[Variable, LinearCombination, int, FieldElement],
-        b: Union[Variable, LinearCombination, int, FieldElement],
-    ):
+        b: Union[Variable, LinearCombination, int, FieldElement],):
         """Enforce a == b"""
         a_lc = self._to_linear_combination(a)
         b_lc = self._to_linear_combination(b)
 
         # Create constraint: a * 1 = b
-        constraint = Constraint(
-            a=a_lc,
-            b=LinearCombination({self.one: FieldElement(1)}),
-            c=b_lc,
-            constraint_type=ConstraintType.MUL,
-        )
+        constraint = Constraint(a = a_lc,
+            b = LinearCombination({self.one: FieldElement(1)}),
+            c = b_lc,
+            constraint_type = ConstraintType.MUL,)
         self.enforce_constraint(constraint)
 
-    def enforce_multiplication(
-        self,
+    def enforce_multiplication(self,
         a: Union[Variable, LinearCombination],
         b: Union[Variable, LinearCombination],
-        c: Union[Variable, LinearCombination],
-    ):
+        c: Union[Variable, LinearCombination],):
         """Enforce a * b = c"""
         a_lc = self._to_linear_combination(a)
         b_lc = self._to_linear_combination(b)
         c_lc = self._to_linear_combination(c)
 
-        constraint = Constraint(a=a_lc, b=b_lc, c=c_lc, constraint_type=ConstraintType.MUL)
+        constraint = Constraint(a = a_lc, b = b_lc, c = c_lc, constraint_type = ConstraintType.MUL)
         self.enforce_constraint(constraint)
 
     def enforce_boolean(self, var: Variable):
@@ -287,23 +297,21 @@ class ConstraintSystem:
         self.assign(var_minus_one, self.get_assignment(var) - FieldElement(1))
 
         # var * (var - 1) = 0
-        constraint = Constraint(
-            a=LinearCombination({var: FieldElement(1)}),
-            b=LinearCombination({var_minus_one: FieldElement(1)}),
-            c=LinearCombination({self.zero: FieldElement(1)}),
-            constraint_type=ConstraintType.BOOL,
-        )
+        constraint = Constraint(a = LinearCombination({var: FieldElement(1)}),
+            b = LinearCombination({var_minus_one: FieldElement(1)}),
+            c = LinearCombination({self.zero: FieldElement(1)}),
+            constraint_type = ConstraintType.BOOL,)
         self.enforce_constraint(constraint)
 
         return var_minus_one
 
     def add_variable(self, label: Optional[str] = None) -> Variable:
         """Add a private variable"""
-        return self.new_variable(label, is_public=False)
+        return self.new_variable(label, is_public = False)
 
     def add_public_input(self, label: Optional[str] = None) -> Variable:
         """Add a public input variable"""
-        return self.new_variable(label, is_public=True)
+        return self.new_variable(label, is_public = True)
 
     def _to_linear_combination(self, value) -> LinearCombination:
         """Convert various types to LinearCombination"""
@@ -312,7 +320,7 @@ class ConstraintSystem:
         if isinstance(value, Variable):
             return LinearCombination({value: FieldElement(1)})
         if isinstance(value, (int, FieldElement)):
-            return LinearCombination(constant=FieldElement(value))
+            return LinearCombination(constant = FieldElement(value))
         else:
             raise TypeError(f"Cannot convert {type(value)} to LinearCombination")
 
@@ -360,9 +368,7 @@ def pedersen_commit(value: FieldElement, randomness: FieldElement) -> FieldEleme
     return poseidon_hash([value, randomness])
 
 
-def create_merkle_proof(
-    leaf: FieldElement, path: List[FieldElement], indices: List[int]
-) -> FieldElement:
+def create_merkle_proof(leaf: FieldElement, path: List[FieldElement], indices: List[int]) -> FieldElement:
     """
     Create Merkle proof by computing root from leaf and path
     """

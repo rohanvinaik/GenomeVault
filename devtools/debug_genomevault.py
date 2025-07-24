@@ -3,7 +3,6 @@
 Debug script for GenomeVault - identifies and helps fix common issues
 """
 
-import os
 import subprocess
 import sys
 from pathlib import Path
@@ -11,6 +10,7 @@ from pathlib import Path
 
 class GenomeVaultDebugger:
     def __init__(self):
+        """Magic method implementation."""
         self.root_dir = Path(__file__).parent
         self.issues = []
         self.fixed = []
@@ -20,10 +20,14 @@ class GenomeVaultDebugger:
         print("🐍 Checking Python version...")
         version = sys.version_info
         if version.major == 3 and version.minor >= 8:
-            print("  ✅ Python {version.major}.{version.minor}.{version.micro} is compatible")
+            print(
+                "  ✅ Python {version.major}.{version.minor}.{version.micro} is compatible"
+            )
             return True
         else:
-            self.issues.append("Python {version.major}.{version.minor} is too old. Need 3.8+")
+            self.issues.append(
+                "Python {version.major}.{version.minor} is too old. Need 3.8+"
+            )
             return False
 
     def check_pydantic(self):
@@ -32,12 +36,12 @@ class GenomeVaultDebugger:
         try:
             import pydantic
 
-            version = pydantic.VERSION
+            pydantic.VERSION
             print("  ✅ Pydantic {version} is installed")
 
             # Check if pydantic-settings is installed
             try:
-                import pydantic_settings
+                pass
 
                 print("  ✅ pydantic-settings is installed")
                 return True
@@ -59,12 +63,12 @@ class GenomeVaultDebugger:
                     "pip",
                     "install",
                     "--upgrade",
-                    "pydantic>=2.0.0",
+                    "pydantic >= 2.0.0",
                 ],
                 check=True,
             )
             subprocess.run(
-                [sys.executable, "-m", "pip", "install", "pydantic-settings>=2.0.0"],
+                [sys.executable, "-m", "pip", "install", "pydantic-settings >= 2.0.0"],
                 check=True,
             )
             self.fixed.append("Pydantic upgraded to v2 with pydantic-settings")
@@ -114,7 +118,7 @@ class GenomeVaultDebugger:
                 req = req.strip()
                 if req and not req.startswith("#"):
                     # Extract package name
-                    pkg_name = req.split(">=")[0].split("==")[0].strip()
+                    pkg_name = req.split(" >= ")[0].split(" == ")[0].strip()
                     try:
                         __import__(pkg_name.replace("-", "_"))
                     except ImportError:
@@ -154,9 +158,9 @@ class GenomeVaultDebugger:
 
     def run_diagnostics(self):
         """Run all diagnostics"""
-        print("=" * 60)
+        print(" = " * 60)
         print("🔍 GenomeVault Diagnostic Tool")
-        print("=" * 60)
+        print(" = " * 60)
         print()
 
         # Run checks
@@ -180,9 +184,9 @@ class GenomeVaultDebugger:
 
         # Summary
         print()
-        print("=" * 60)
+        print(" = " * 60)
         print("📊 Summary")
-        print("=" * 60)
+        print(" = " * 60)
 
         if self.fixed:
             print("✅ Fixed issues:")

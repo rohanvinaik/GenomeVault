@@ -10,9 +10,9 @@ try:
     print("✅ SUCCESS: VariantPresenceCircuit imported")
     circuit = VariantPresenceCircuit()
     print("✅ Circuit created: {circuit.name}")
-except ImportError as e:
+except ImportError:
     print("❌ IMPORT ERROR: {e}")
-except Exception as e:
+except Exception:
     print("❌ ERROR: {type(e).__name__}: {e}")
 
 # Test 2: Check what the error was about

@@ -3,9 +3,9 @@
 
 import sys
 
-print("=" * 70)
+print(" = " * 70)
 print("FINAL VERIFICATION TEST - VARIANT CIRCUIT IMPORT FIX")
-print("=" * 70)
+print(" = " * 70)
 
 # Test 1: Import the problematic module
 print("\n1. Testing the fixed import...")
@@ -20,7 +20,7 @@ try:
     print("   - Constraints: {circuit.num_constraints}")
     print("   - Merkle depth: {circuit.merkle_depth}")
 
-except Exception as e:
+except Exception:
     print("❌ FAILED: {type(e).__name__}: {e}")
     sys.exit(1)
 
@@ -50,14 +50,13 @@ try:
     diabetes_circuit.setup(public_inputs, private_inputs)
     print("✅ Setup completed successfully")
 
-except Exception as e:
+except Exception:
     print("❌ FAILED: {type(e).__name__}: {e}")
 
 # Test 3: Verify base_circuits components
 print("\n3. Testing base circuit components...")
 try:
     from zk_proofs.circuits.base_circuits import (
-        BaseCircuit,
         FieldElement,
         MerkleTreeCircuit,
     )
@@ -72,7 +71,7 @@ try:
     merkle = MerkleTreeCircuit(tree_depth=10)
     print("✅ MerkleTreeCircuit created with depth {merkle.tree_depth}")
 
-except Exception as e:
+except Exception:
     print("❌ FAILED: {type(e).__name__}: {e}")
 
 # Test 4: Run pytest
@@ -80,7 +79,7 @@ print("\n4. Running pytest...")
 import subprocess
 
 result = subprocess.run(
-    [sys.executable, "-m", "pytest", "test_simple.py", "-v", "--tb=short"],
+    [sys.executable, "-m", "pytest", "test_simple.py", "-v", "--tb = short"],
     capture_output=True,
     text=True,
 )
@@ -98,9 +97,9 @@ else:
     print("STDERR:", result.stderr[-500:])
 
 # Summary
-print("\n" + "=" * 70)
+print("\n" + " = " * 70)
 print("SUMMARY")
-print("=" * 70)
+print(" = " * 70)
 print("The import fix has been successfully applied!")
 print("Changed: 'from .base_circuits import ...' → 'from ..base_circuits import ...'")
 print("This correctly imports from the parent circuits/ directory.")

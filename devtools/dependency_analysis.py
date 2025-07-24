@@ -3,9 +3,9 @@
 Analysis of Import Dependencies in GenomeVault
 """
 
-print("=" * 80)
+print(" = " * 80)
 print("GENOMEVAULT DEPENDENCY ANALYSIS")
-print("=" * 80)
+print(" = " * 80)
 
 print("\n1. YAML (PyYAML)")
 print("-" * 40)
@@ -66,9 +66,9 @@ print("Reason: Core AI/ML functionality")
 print("Impact if missing: CRITICAL - No hypervector encoding")
 print("❌ Would need to be installed")
 
-print("\n" + "=" * 80)
+print("\n" + " = " * 80)
 print("CONCLUSION")
-print("=" * 80)
+print(" = " * 80)
 print("\n❌ I was WRONG to make these imports optional!")
 print("\nOnly YAML is truly optional - the rest are REQUIRED for core functionality:")
 print("- Cryptography is essential for security")

@@ -13,60 +13,60 @@ long_description = (this_directory / "README.md").read_text()
 # Core dependencies
 INSTALL_REQUIRES = [
     # Core scientific computing
-    "numpy>=1.21.0",
-    "pandas>=1.3.0",
-    "scipy>=1.7.0",
-    "scikit-learn>=1.0.0",
+    "numpy >= 1.21.0",
+    "pandas >= 1.3.0",
+    "scipy >= 1.7.0",
+    "scikit-learn >= 1.0.0",
     # Bioinformatics
-    "biopython>=1.79",
-    "pysam>=0.17.0",
+    "biopython >= 1.79",
+    "pysam >= 0.17.0",
     # Cryptography
-    "cryptography>=36.0.0",
-    "pynacl>=1.5.0",
+    "cryptography >= 36.0.0",
+    "pynacl >= 1.5.0",
     # Configuration and utilities
-    "pyyaml>=6.0",
-    "click>=8.0",
+    "pyyaml >= 6.0",
+    "click >= 8.0",
     # Web/API (for future API module)
-    "fastapi>=0.85.0",
-    "uvicorn>=0.18.0",
-    "httpx>=0.23.0",
+    "fastapi >= 0.85.0",
+    "uvicorn >= 0.18.0",
+    "httpx >= 0.23.0",
     # Blockchain (for future blockchain module)
-    "web3>=5.31.0",
-    "eth-account>=0.5.9",
+    "web3 >= 5.31.0",
+    "eth-account >= 0.5.9",
 ]
 
 # Optional dependencies for specific features
 EXTRAS_REQUIRE = {
     "dev": [
-        "pytest>=7.0.0",
-        "pytest-cov>=3.0.0",
-        "pytest-asyncio>=0.18.0",
-        "black>=22.0.0",
-        "flake8>=4.0.0",
-        "mypy>=0.950",
-        "sphinx>=4.5.0",
-        "sphinx-rtd-theme>=1.0.0",
+        "pytest >= 7.0.0",
+        "pytest-cov >= 3.0.0",
+        "pytest-asyncio >= 0.18.0",
+        "black >= 22.0.0",
+        "flake8 >= 4.0.0",
+        "mypy >= 0.950",
+        "sphinx >= 4.5.0",
+        "sphinx-rtd-theme >= 1.0.0",
     ],
     "gpu": [
-        "cupy>=10.0.0",  # For GPU acceleration
-        "tensorflow>=2.9.0",  # For deep learning features
+        "cupy >= 10.0.0",  # For GPU acceleration
+        "tensorflow >= 2.9.0",  # For deep learning features
     ],
     "distributed": [
-        "ray>=2.0.0",  # For distributed computing
-        "dask>=2022.5.0",  # Alternative distributed computing
+        "ray >= 2.0.0",  # For distributed computing
+        "dask >= 2022.5.0",  # Alternative distributed computing
     ],
     "visualization": [
-        "matplotlib>=3.5.0",
-        "seaborn>=0.11.0",
-        "plotly>=5.8.0",
+        "matplotlib >= 3.5.0",
+        "seaborn >= 0.11.0",
+        "plotly >= 5.8.0",
     ],
 }
 
 # Entry points for command-line interface
 ENTRY_POINTS = {
     "console_scripts": [
-        "genomevault=genomevault.cli:main",
-        "gv=genomevault.cli:main",  # Short alias
+        "genomevault = genomevault.cli:main",
+        "gv = genomevault.cli:main",  # Short alias
     ],
 }
 
@@ -110,7 +110,7 @@ setup(
         "multi-omics",
         "precision-medicine",
     ],
-    python_requires=">=3.9",
+    python_requires=" >= 3.9",
     install_requires=INSTALL_REQUIRES,
     extras_require=EXTRAS_REQUIRE,
     entry_points=ENTRY_POINTS,

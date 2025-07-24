@@ -3,14 +3,13 @@
 
 import os
 import subprocess
-import sys
 
 
 def run_command(cmd, description):
     """Run a command and report results"""
-    print("\n{'='*60}")
+    print("\n{' = '*60}")
     print("🔍 {description}")
-    print("{'='*60}")
+    print("{' = '*60}")
 
     result = subprocess.run(
         cmd,
@@ -30,30 +29,32 @@ def run_command(cmd, description):
 def main():
     """Check the final status"""
     print("🚀 GenomeVault Final Status Check")
-    print("=" * 60)
+    print(" = " * 60)
 
     # Change to project directory
     os.chdir("/Users/rohanvinaik/genomevault")
 
     # Test 1: Basic pytest
     success1 = run_command(
-        "python3 -m pytest tests/test_simple.py -v --tb=short",
+        "python3 -m pytest tests/test_simple.py -v --tb = short",
         "Running basic pytest tests",
     )
 
     # Test 2: Import diagnostic
-    success2 = run_command("python3 diagnose_imports.py", "Running import diagnostic")
+    run_command("python3 diagnose_imports.py", "Running import diagnostic")
 
     # Test 3: Comprehensive test
-    success3 = run_command("python3 test_all_imports_final.py", "Running comprehensive import test")
+    run_command(
+        "python3 test_all_imports_final.py", "Running comprehensive import test"
+    )
 
-    print("\n" + "=" * 60)
+    print("\n" + " = " * 60)
     print("📊 SUMMARY:")
-    print("=" * 60)
+    print(" = " * 60)
     print("✅ Basic pytest: {'PASSED' if success1 else 'FAILED'}")
     print("✅ Import diagnostic: {'PASSED' if success2 else 'FAILED'}")
     print("✅ Comprehensive test: {'PASSED' if success3 else 'FAILED'}")
-    print("=" * 60)
+    print(" = " * 60)
 
     if success1:
         print("\n🎉 SUCCESS! The basic tests are passing.")

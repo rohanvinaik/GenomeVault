@@ -2,7 +2,6 @@
 Unit tests for the refactored clinical circuits.
 """
 
-import os
 import sys
 import unittest
 

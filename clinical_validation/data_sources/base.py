@@ -1,7 +1,6 @@
 import logging
 from abc import ABC, abstractmethod
-from datetime import datetime
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, Optional
 
 import pandas as pd
 
@@ -10,6 +9,7 @@ class DataSourceBase(ABC):
     """Base class for clinical data sources"""
 
     def __init__(self):
+        """Magic method implementation."""
         self.logger = logging.getLogger(self.__class__.__name__)
         self._data = None
         self._metadata = {
@@ -21,22 +21,18 @@ class DataSourceBase(ABC):
     @abstractmethod
     def load_data(self) -> pd.DataFrame:
         """Load data from source"""
-        pass
 
     @abstractmethod
     def get_glucose_column(self) -> Optional[str]:
         """Return glucose column name"""
-        pass
 
     @abstractmethod
     def get_hba1c_column(self) -> Optional[str]:
         """Return HbA1c column name"""
-        pass
 
     @abstractmethod
     def get_outcome_column(self) -> Optional[str]:
         """Return outcome column name"""
-        pass
 
     def get_summary_stats(self) -> Dict:
         """Get summary statistics"""

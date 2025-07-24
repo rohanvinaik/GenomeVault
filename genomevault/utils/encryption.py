@@ -6,7 +6,6 @@ GenomeVault Encryption Utilities
 Provides cryptographic primitives and utilities for secure data handling,
 including AES-GCM encryption, homomorphic encryption support, and threshold cryptography.
 """
-import time
 
 
 import base64
@@ -85,7 +84,9 @@ class AESGCMCipher:
             raise ValueError("Key must be {cls.KEY_SIZE} bytes") from e
         nonce = os.urandom(cls.NONCE_SIZE)
 
-        cipher = Cipher(algorithms.AES(key), modes.GCM(nonce), backend=default_backend())
+        cipher = Cipher(
+            algorithms.AES(key), modes.GCM(nonce), backend=default_backend()
+        )
         encryptor = cipher.encryptor()
 
         if associated_data:
@@ -120,7 +121,9 @@ class AESGCMCipher:
         """
         if len(key) != cls.KEY_SIZE:
             raise ValueError("Key must be {cls.KEY_SIZE} bytes") from e
-        cipher = Cipher(algorithms.AES(key), modes.GCM(nonce, tag), backend=default_backend())
+        cipher = Cipher(
+            algorithms.AES(key), modes.GCM(nonce, tag), backend=default_backend()
+        )
         decryptor = cipher.decryptor()
 
         if associated_data:
@@ -210,7 +213,9 @@ class RSAEncryption:
     @classmethod
     def encrypt(cls, plaintext: bytes, public_key_pem: bytes) -> bytes:
         """Encrypt using RSA-OAEP"""
-        public_key = serialization.load_pem_public_key(public_key_pem, backend=default_backend())
+        public_key = serialization.load_pem_public_key(
+            public_key_pem, backend=default_backend()
+        )
 
         ciphertext = public_key.encrypt(
             plaintext,
@@ -246,7 +251,9 @@ class ThresholdCrypto:
     PRIME = 2**256 - 189  # Large prime for GF(p)
 
     @classmethod
-    def split_secret(cls, secret: bytes, threshold: int, total_shares: int) -> List[ThresholdShare]:
+    def split_secret(
+        cls, secret: bytes, threshold: int, total_shares: int
+    ) -> List[ThresholdShare]:
         """
         Split secret into shares using Shamir's Secret Sharing
 
@@ -286,7 +293,7 @@ class ThresholdCrypto:
             )
             shares.append(share)
 
-        logger.info("Split secret into {total_shares} shares (threshold={threshold})")
+        logger.info("Split secret into {total_shares} shares (threshold = {threshold})")
         return shares
 
     @classmethod
@@ -310,7 +317,9 @@ class ThresholdCrypto:
         for share in shares[:threshold]:
             # Verify checksum
             expected_checksum = hashlib.sha256(share.share_value).hexdigest()[:8]
-            if not constant_time.bytes_eq(share.checksum.encode(), expected_checksum.encode()):
+            if not constant_time.bytes_eq(
+                share.checksum.encode(), expected_checksum.encode()
+            ):
                 raise ValueError("Invalid checksum for share {share.share_id}") from e
             # Parse share data
             share_data = json.loads(share.share_value.decode())
@@ -374,7 +383,9 @@ class KeyDerivation:
         return kdf.derive(password.encode())
 
     @classmethod
-    def derive_key_hkdf(cls, input_key: bytes, info: bytes, key_length: int = 32) -> bytes:
+    def derive_key_hkdf(
+        cls, input_key: bytes, info: bytes, key_length: int = 32
+    ) -> bytes:
         """Derive key using HKDF"""
         hkdf = HKDF(
             algorithm=hashes.SHA256(),
@@ -485,6 +496,7 @@ class EncryptionManager:
             }
         else:
             raise ValueError("Unsupported algorithm: {key.algorithm}") from e
+
     def decrypt_data(self, encrypted_data: Dict[str, Any]) -> bytes:
         """Decrypt data"""
         key_id = encrypted_data["key_id"]
@@ -502,6 +514,7 @@ class EncryptionManager:
             return ChaCha20Poly1305.decrypt(ciphertext, key.key_material)
         else:
             raise ValueError("Unsupported algorithm: {key.algorithm}") from e
+
     def _load_keys(self):
         """Load keys from storage"""
         # In production, keys should be stored in HSM or secure key storage
@@ -509,7 +522,9 @@ class EncryptionManager:
         key_file = self.key_store_path / "keys.json"
         if key_file.exists():
             # This would be encrypted in production
-            logger.warning("Loading keys from unencrypted storage - use HSM in production")
+            logger.warning(
+                "Loading keys from unencrypted storage - use HSM in production"
+            )
 
     def _save_keys(self):
         """Save keys to storage"""
@@ -526,6 +541,8 @@ def generate_secure_key(algorithm: str = "AES-GCM") -> bytes:
         return ChaCha20Poly1305.generate_key()
     else:
         raise ValueError("Unsupported algorithm: {algorithm}") from e
+
+
 def secure_hash(data: bytes, algorithm: str = "SHA256") -> str:
     """Compute secure hash of data"""
     if algorithm == "SHA256":

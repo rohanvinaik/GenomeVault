@@ -1,4 +1,4 @@
-from typing import Callable, Dict, Mapping, Optional
+from typing import Callable, Dict, Optional
 
 """
 Similarity-preserving mappings for hypervector transformations
@@ -38,7 +38,9 @@ class SimilarityPreservingMapper:
     transforming data into hyperdimensional space.
     """
 
-    def __init__(self, input_dim: int, output_dim: int, config: Optional[MappingConfig] = None):
+    def __init__(
+        self, input_dim: int, output_dim: int, config: Optional[MappingConfig] = None
+    ):
         """
         Initialize the mapper
 
@@ -117,7 +119,9 @@ class SimilarityPreservingMapper:
 
     def _optimize_mapping(self, data: torch.Tensor, target_similarities: torch.Tensor):
         """Optimize mapping matrix to preserve similarities"""
-        optimizer = torch.optim.Adam([self.mapping_matrix], lr=self.config.learning_rate)
+        optimizer = torch.optim.Adam(
+            [self.mapping_matrix], lr=self.config.learning_rate
+        )
 
         for iteration in range(self.config.num_iterations):
             # Transform data
@@ -131,7 +135,9 @@ class SimilarityPreservingMapper:
 
             if self.config.preserve_distances:
                 # Distance preservation loss
-                distance_loss = torch.mean((transformed_similarities - target_similarities) ** 2)
+                distance_loss = torch.mean(
+                    (transformed_similarities - target_similarities) ** 2
+                )
                 loss += distance_loss
 
             if self.config.preserve_angles:
@@ -289,7 +295,9 @@ class BiologicalSimilarityMapper(SimilarityPreservingMapper):
         Returns:
             Similarity score
         """
-        sim_func = self.similarity_functions.get(similarity_type, self._default_similarity)
+        sim_func = self.similarity_functions.get(
+            similarity_type, self._default_similarity
+        )
         return sim_func(data1, data2)
 
     def _variant_similarity(self, v1: torch.Tensor, v2: torch.Tensor) -> float:
@@ -363,7 +371,9 @@ class BiologicalSimilarityMapper(SimilarityPreservingMapper):
 
     def _default_similarity(self, d1: torch.Tensor, d2: torch.Tensor) -> float:
         """Default similarity using cosine similarity"""
-        return torch.nn.functional.cosine_similarity(d1.view(1, -1), d2.view(1, -1)).item()
+        return torch.nn.functional.cosine_similarity(
+            d1.view(1, -1), d2.view(1, -1)
+        ).item()
 
 
 class ManifoldPreservingMapper:
@@ -385,7 +395,9 @@ class ManifoldPreservingMapper:
         self.n_neighbors = n_neighbors
         self.embedding = None
 
-        logger.info(f"Initialized ManifoldPreservingMapper: {input_dim}D -> {output_dim}D")
+        logger.info(
+            f"Initialized ManifoldPreservingMapper: {input_dim}D -> {output_dim}D"
+        )
 
     def fit_transform(self, data: torch.Tensor) -> torch.Tensor:
         """
@@ -401,7 +413,9 @@ class ManifoldPreservingMapper:
 
         # Compute k-nearest neighbor graph
         distances = torch.cdist(data, data)
-        _, neighbors = torch.topk(distances, k=self.n_neighbors + 1, largest=False, dim=1)
+        _, neighbors = torch.topk(
+            distances, k=self.n_neighbors + 1, largest=False, dim=1
+        )
 
         # Initialize random embedding
         self.embedding = torch.randn(n_samples, self.output_dim)
@@ -461,7 +475,8 @@ class ManifoldPreservingMapper:
 
             if iteration % 100 == 0:
                 logger.debug(
-                    f"Manifold optimization iteration {iteration}, " f"Loss: {loss.item():.4f}"
+                    f"Manifold optimization iteration {iteration}, "
+                    f"Loss: {loss.item():.4f}"
                 )
 
 

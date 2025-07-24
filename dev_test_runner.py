@@ -4,20 +4,19 @@ Development test runner - tests code structure without requiring all dependencie
 """
 
 import ast
-import os
-import sys
 from pathlib import Path
 
-print("=" * 80)
+print(" = " * 80)
 print("GENOMEVAULT DEVELOPMENT TEST SUITE")
 print("Without requiring external dependencies")
-print("=" * 80)
+print(" = " * 80)
 
 
 class ImportAnalyzer(ast.NodeVisitor):
     """Analyze imports in Python files"""
 
     def __init__(self):
+        """Magic method implementation."""
         self.imports = []
         self.from_imports = []
 
@@ -183,9 +182,9 @@ else:
     print("✅ All relative imports appear to resolve correctly")
 
 # Summary
-print("\n" + "=" * 80)
+print("\n" + " = " * 80)
 print("SUMMARY")
-print("=" * 80)
+print(" = " * 80)
 print("\n✅ The import path fix in variant.py is CORRECT")
 print("✅ The project structure is properly organized")
 print("\nCurrent state:")

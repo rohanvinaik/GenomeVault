@@ -1,5 +1,3 @@
-from typing import Any, Dict, List
-
 """
 Integration example for GenomeVault Zero-Knowledge Proof System.
 
@@ -9,7 +7,6 @@ verifying privacy-preserving proofs for genomic analyses.
 
 import hashlib
 import time
-from typing import Any, Dict
 
 import numpy as np
 
@@ -49,7 +46,9 @@ def demonstrate_variant_presence():
         private_inputs={
             "variant_data": variant,
             "merkle_proof": {
-                "path": [hashlib.sha256("node_{i}".encode()).hexdigest() for i in range(20)],
+                "path": [
+                    hashlib.sha256("node_{i}".encode()).hexdigest() for i in range(20)
+                ],
                 "indices": [i % 2 for i in range(20)],
             },
             "witness_randomness": np.random.bytes(32).hex(),
@@ -116,7 +115,9 @@ def demonstrate_diabetes_risk_assessment():
     print("Verification time: {result.verification_time*1000:.1f}ms")
 
     if result.is_valid:
-        print("\n✓ Alert triggered: Patient meets both glucose AND genetic risk criteria")
+        print(
+            "\n✓ Alert triggered: Patient meets both glucose AND genetic risk criteria"
+        )
         print("  (Without revealing actual values)")
 
     return proof, result
@@ -138,7 +139,7 @@ def demonstrate_polygenic_risk_score():
     weights = np.random.normal(0, 0.1, size=num_variants).tolist()
 
     # Calculate actual score
-    actual_score = sum(v * w for v, w in zip(variants, weights))
+    sum(v * w for v, w in zip(variants, weights))
 
     print("PRS Model:")
     print("  - Variants: {num_variants}")
@@ -149,9 +150,13 @@ def demonstrate_polygenic_risk_score():
     proof = prover.generate_proof(
         circuit_name="polygenic_risk_score",
         public_inputs={
-            "prs_model": hashlib.sha256("T2D_PRS_v2.0_{num_variants}".encode()).hexdigest(),
+            "prs_model": hashlib.sha256(
+                "T2D_PRS_v2.0_{num_variants}".encode()
+            ).hexdigest(),
             "score_range": {"min": -1.0, "max": 1.0},
-            "result_commitment": hashlib.sha256("score:{actual_score}".encode()).hexdigest(),
+            "result_commitment": hashlib.sha256(
+                "score:{actual_score}".encode()
+            ).hexdigest(),
             "genome_commitment": hashlib.sha256(b"user_genome").hexdigest(),
         },
         private_inputs={
@@ -183,7 +188,6 @@ def demonstrate_pharmacogenomics():
     verifier = Verifier()
 
     # Medication being evaluated
-    medication = "warfarin"
     medication_id = 114  # RxNorm CUI
 
     # Patient's star alleles (private)
@@ -245,7 +249,7 @@ def demonstrate_circuit_optimization():
     manager = CircuitManager()
 
     # List available circuits
-    circuits = manager.list_circuits()
+    manager.list_circuits()
     print("Available circuits: {len(circuits)}")
 
     # Select optimal circuit for different scenarios
@@ -259,13 +263,15 @@ def demonstrate_circuit_optimization():
     ]
 
     for scenario in scenarios:
-        optimal = manager.select_optimal_circuit(scenario["analysis_type"], scenario["data"])
+        optimal = manager.select_optimal_circuit(
+            scenario["analysis_type"], scenario["data"]
+        )
         print("\nScenario: {scenario['analysis_type']}")
         print("  Data: {scenario['data']}")
         print("  Selected circuit: {optimal}")
 
         # Get metadata
-        metadata = manager.get_circuit_metadata(optimal)
+        manager.get_circuit_metadata(optimal)
         print("  Constraints: {metadata.constraint_count}")
         print("  Proof size: {metadata.proof_size_bytes} bytes")
         print("  Verification time: {metadata.verification_time_ms}ms")
@@ -279,7 +285,7 @@ def demonstrate_post_quantum_transition():
     pq_transition = PostQuantumTransition()
 
     # Get transition status
-    status = pq_transition.get_transition_status()
+    pq_transition.get_transition_status()
     print("Transition status:")
     print("  Classical active: {status['classical_active']}")
     print("  Post-quantum active: {status['post_quantum_active']}")
@@ -298,7 +304,7 @@ def demonstrate_post_quantum_transition():
         circuit_name="test_circuit", statement=statement, witness=witness
     )
 
-    generation_time = time.time() - start
+    time.time() - start
 
     print("Generation time: {generation_time:.2f}s")
     print("Proof types generated: {list(proofs.keys())}")
@@ -337,7 +343,9 @@ def demonstrate_batch_operations():
     for i in range(3):
         variant = {"chr": "chr{i+1}", "pos": 1000000 + i * 1000, "re": "A", "alt": "G"}
 
-        variant_str = "{variant['chr']}:{variant['pos']}:{variant['re']}:{variant['alt']}"
+        variant_str = (
+            "{variant['chr']}:{variant['pos']}:{variant['re']}:{variant['alt']}"
+        )
 
         batch_requests.append(
             {
@@ -351,7 +359,8 @@ def demonstrate_batch_operations():
                     "variant_data": variant,
                     "merkle_proof": {
                         "path": [
-                            hashlib.sha256("batch_{i}_{j}".encode()).hexdigest() for j in range(20)
+                            hashlib.sha256("batch_{i}_{j}".encode()).hexdigest()
+                            for j in range(20)
                         ],
                         "indices": [j % 2 for j in range(20)],
                     },
@@ -366,7 +375,7 @@ def demonstrate_batch_operations():
 
     proofs = prover.batch_prove(batch_requests)
 
-    batch_time = time.time() - start
+    time.time() - start
     print("Batch generation time: {batch_time:.2f}s")
     print("Average per proof: {batch_time/len(proofs):.3f}s")
 
@@ -376,20 +385,20 @@ def demonstrate_batch_operations():
 
     results = verifier.batch_verify(proofs)
 
-    verify_time = time.time() - start
+    time.time() - start
     print("Batch verification time: {verify_time:.2f}s")
 
     # Summary
-    valid_count = sum(1 for r in results if r.is_valid)
+    sum(1 for r in results if r.is_valid)
     print("\nBatch results: {valid_count}/{len(results)} valid")
 
 
 def main():
     """Run all demonstrations."""
-    print("=" * 60)
+    print(" = " * 60)
     print("GenomeVault Zero-Knowledge Proof System")
     print("Integration Examples")
-    print("=" * 60)
+    print(" = " * 60)
 
     # Run demonstrations
     try:
@@ -404,10 +413,10 @@ def main():
         demonstrate_post_quantum_transition()
         demonstrate_batch_operations()
 
-        print("\n" + "=" * 60)
+        print("\n" + " = " * 60)
         print("All demonstrations completed successfully!")
 
-    except Exception as e:
+    except Exception:
         logger.error("Demonstration failed: {e}")
         raise
 

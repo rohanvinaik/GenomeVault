@@ -14,7 +14,9 @@ def run_black_fix():
         genomevault_dir = Path("/Users/rohanvinaik/genomevault")
 
         # Run black on the entire directory
-        result = subprocess.run(["black", "."], cwd=genomevault_dir, capture_output=True, text=True)
+        result = subprocess.run(
+            ["black", "."], cwd=genomevault_dir, capture_output=True, text=True
+        )
 
         if result.returncode == 0:
             print("✅ Black formatting completed successfully!")

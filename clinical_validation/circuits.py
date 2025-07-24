@@ -8,7 +8,7 @@ import json
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional, Protocol, runtime_checkable
+from typing import Any, Dict, Protocol, runtime_checkable
 
 import numpy as np
 
@@ -40,7 +40,7 @@ class CircuitConfig:
     version: str = "1.0.0"
     constraints: int = 1000
     proof_size: int = 256
-    supported_parameters: Dict[str, Any] = field(default_factory=dict)
+    supported_parameters: Dict[str, Any] = field(default_factory = dict)
     security_level: int = 128  # bits
 
     def to_dict(self) -> Dict[str, Any]:
@@ -63,7 +63,7 @@ class ProofData:
     proof_bytes: bytes
     verification_key: bytes
     circuit_type: CircuitType
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: Dict[str, Any] = field(default_factory = dict)
 
     def __post_init__(self):
         """Validate proof data"""
@@ -84,19 +84,17 @@ class ProofData:
             "circuit_type": self.circuit_type.value,
             "metadata": self.metadata,
         }
-        return json.dumps(data, sort_keys=True).encode()
+        return json.dumps(data, sort_keys = True).encode()
 
     @classmethod
     def deserialize(cls, data: bytes) -> "ProofData":
         """Deserialize proof from bytes"""
         obj = json.loads(data.decode())
-        return cls(
-            public_output=obj["public_output"],
-            proof_bytes=bytes.fromhex(obj["proof_bytes"]),
-            verification_key=bytes.fromhex(obj["verification_key"]),
-            circuit_type=CircuitType(obj["circuit_type"]),
-            metadata=obj.get("metadata", {}),
-        )
+        return cls(public_output = obj["public_output"],
+            proof_bytes = bytes.fromhex(obj["proof_bytes"]),
+            verification_key = bytes.fromhex(obj["verification_key"]),
+            circuit_type = CircuitType(obj["circuit_type"]),
+            metadata = obj.get("metadata", {}),)
 
     def verify_integrity(self) -> bool:
         """Verify proof integrity"""
@@ -133,6 +131,7 @@ class BaseCircuit(ABC):
     """Enhanced base class for ZK circuits with common functionality"""
 
     def __init__(self, config: CircuitConfig):
+        """Magic method implementation."""
         self.config = config
         self._setup_complete = False
         self._verification_keys: Dict[str, bytes] = {}
@@ -152,12 +151,10 @@ class BaseCircuit(ABC):
     @abstractmethod
     def generate_witness(self, private_inputs: Dict, public_inputs: Dict) -> Dict:
         """Generate witness for proof - must be implemented by subclasses"""
-        pass
 
     @abstractmethod
     def prove(self, witness: Dict, public_inputs: Dict) -> ProofData:
         """Generate proof - must be implemented by subclasses"""
-        pass
 
     def verify(self, proof: ProofData, public_inputs: Dict) -> bool:
         """Common verification logic"""
@@ -179,24 +176,22 @@ class BaseCircuit(ABC):
     @abstractmethod
     def _verify_proof_specific(self, proof: ProofData, public_inputs: Dict) -> bool:
         """Circuit-specific verification logic"""
-        pass
 
     def _generate_verification_key(self) -> bytes:
         """Generate verification key for the circuit"""
         # In production, this would be from trusted setup
-        key_data = f"{self.config.name}:{self.config.version}:{self.config.security_level}"
+        key_data = (f"{self.config.name}:{self.config.version}:{self.config.security_level}")
         return hashlib.sha256(key_data.encode()).digest() + np.random.bytes(32)
 
     def _hash_inputs(self, inputs: Dict[str, Any]) -> str:
         """Hash public inputs for verification"""
         # Sort keys for deterministic hashing
-        sorted_data = json.dumps(inputs, sort_keys=True)
+        sorted_data = json.dumps(inputs, sort_keys = True)
         return hashlib.sha256(sorted_data.encode()).hexdigest()
 
     def _add_proof_metadata(self, proof: ProofData, public_inputs: Dict, witness: Dict) -> None:
         """Add standard metadata to proof"""
-        proof.metadata.update(
-            {
+        proof.metadata.update({
                 "circuit": self.config.name,
                 "version": self.config.version,
                 "timestamp": np.datetime64("now").astype(str),
@@ -204,8 +199,7 @@ class BaseCircuit(ABC):
                 "proof_hash": hashlib.sha256(proof.proof_bytes).hexdigest(),
                 "constraints": self.config.constraints,
                 "security_level": self.config.security_level,
-            }
-        )
+            })
 
 
 class DiabetesRiskCircuit(BaseCircuit):
@@ -214,19 +208,18 @@ class DiabetesRiskCircuit(BaseCircuit):
     Proves clinical values exceed thresholds without revealing actual values.
     """
 
+    """Magic method implementation."""
     def __init__(self):
-        config = CircuitConfig(
-            name="DiabetesRiskCircuit",
-            version="2.0.0",
-            constraints=15000,
-            proof_size=384,
-            supported_parameters={
+        config = CircuitConfig(name = "DiabetesRiskCircuit",
+            version = "2.0.0",
+            constraints = 15000,
+            proof_size = 384,
+            supported_parameters = {
                 "glucose_range": tuple,
                 "hba1c_range": tuple,
                 "risk_score_range": tuple,
                 "risk_factors_threshold": int,
-            },
-        )
+            },)
         super().__init__(config)
 
         # Default ranges
@@ -257,9 +250,7 @@ class DiabetesRiskCircuit(BaseCircuit):
 
         return result
 
-    def generate_witness(
-        self, private_inputs: Dict[str, float], public_inputs: Dict[str, float]
-    ) -> Dict[str, Any]:
+    def generate_witness(self, private_inputs: Dict[str, float], public_inputs: Dict[str, float]) -> Dict[str, Any]:
         """Generate witness with enhanced validation"""
         # Validate inputs are within ranges
         glucose = private_inputs.get("glucose", 100.0)
@@ -289,7 +280,7 @@ class DiabetesRiskCircuit(BaseCircuit):
         is_high_risk = risk_factors >= self.risk_factors_threshold
 
         # Enhanced witness with noise for differential privacy
-        noise_factor = np.random.normal(0, 0.001, size=3)
+        noise_factor = np.random.normal(0, 0.001, size = 3)
 
         return {
             "private_values": {
@@ -320,9 +311,7 @@ class DiabetesRiskCircuit(BaseCircuit):
         confidence = witness["result"]["confidence"]
 
         # Create proof with detailed output
-        public_output = (
-            f"RISK_LEVEL:{'HIGH' if is_high_risk else 'NORMAL'}:CONFIDENCE:{confidence:.2f}"
-        )
+        public_output = f"RISK_LEVEL:{'HIGH' if is_high_risk else 'NORMAL'}:CONFIDENCE:{confidence:.2f}"
 
         # Generate proof bytes (in production, use actual ZK proof system)
         proof_data = {
@@ -335,12 +324,10 @@ class DiabetesRiskCircuit(BaseCircuit):
         proof_bytes += np.random.bytes(self.config.proof_size - 32)
 
         # Create proof object
-        proof = ProofData(
-            public_output=public_output,
-            proof_bytes=proof_bytes,
-            verification_key=self._generate_verification_key(),
-            circuit_type=CircuitType.DIABETES_RISK,
-        )
+        proof = ProofData(public_output = public_output,
+            proof_bytes = proof_bytes,
+            verification_key = self._generate_verification_key(),
+            circuit_type = CircuitType.DIABETES_RISK,)
 
         # Add metadata
         self._add_proof_metadata(proof, public_inputs, witness)
@@ -379,19 +366,18 @@ class ClinicalBiomarkerCircuit(BaseCircuit):
     Generic circuit for clinical biomarker threshold proofs.
     Supports multiple comparison types and multi-threshold checks.
     """
+        """Magic method implementation."""
 
     def __init__(self, biomarker_name: str = "generic"):
-        config = CircuitConfig(
-            name=f"ClinicalBiomarker_{biomarker_name}_Circuit",
-            version="2.0.0",
-            constraints=5000,
-            proof_size=256,
-            supported_parameters={
+        config = CircuitConfig(name = f"ClinicalBiomarker_{biomarker_name}_Circuit",
+            version = "2.0.0",
+            constraints = 5000,
+            proof_size = 256,
+            supported_parameters = {
                 "value_range": tuple,
                 "comparison_types": list,
                 "precision": float,
-            },
-        )
+            },)
         super().__init__(config)
 
         self.biomarker_name = biomarker_name
@@ -412,7 +398,9 @@ class ClinicalBiomarkerCircuit(BaseCircuit):
         if "precision" in params:
             self.precision = params["precision"]
         if "comparison_types" in params:
-            self.supported_comparisons = [ComparisonType(ct) for ct in params["comparison_types"]]
+            self.supported_comparisons = [
+                ComparisonType(ct) for ct in params["comparison_types"]
+            ]
 
         result["biomarker_config"] = {
             "name": self.biomarker_name,
@@ -423,9 +411,7 @@ class ClinicalBiomarkerCircuit(BaseCircuit):
 
         return result
 
-    def generate_witness(
-        self, private_inputs: Dict[str, float], public_inputs: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    def generate_witness(self, private_inputs: Dict[str, float], public_inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Generate witness for biomarker comparison"""
         value = private_inputs.get("value", 0.0)
 
@@ -450,7 +436,8 @@ class ClinicalBiomarkerCircuit(BaseCircuit):
             result = False
 
         # Support for range comparisons
-        if comparison_type == ComparisonType.RANGE and "threshold_high" in public_inputs:
+        if (comparison_type == ComparisonType.RANGE
+            and "threshold_high" in public_inputs):
             threshold_high = public_inputs["threshold_high"]
             result = threshold <= value <= threshold_high
 
@@ -479,20 +466,16 @@ class ClinicalBiomarkerCircuit(BaseCircuit):
         status = "EXCEEDS" if result else "NORMAL"
         confidence = min(0.99, margin / abs(witness["public_threshold"] + 0.01))
 
-        public_output = (
-            f"{self.biomarker_name}:{status}:MARGIN:{margin:.3f}:CONFIDENCE:{confidence:.2f}"
-        )
+        public_output = f"{self.biomarker_name}:{status}:MARGIN:{margin:.3f}:CONFIDENCE:{confidence:.2f}"
 
         # Generate proof
         proof_bytes = hashlib.sha256(str(witness).encode()).digest()
         proof_bytes += np.random.bytes(self.config.proof_size - 32)
 
-        proof = ProofData(
-            public_output=public_output,
-            proof_bytes=proof_bytes,
-            verification_key=self._generate_verification_key(),
-            circuit_type=CircuitType.BIOMARKER_THRESHOLD,
-        )
+        proof = ProofData(public_output = public_output,
+            proof_bytes = proof_bytes,
+            verification_key = self._generate_verification_key(),
+            circuit_type = CircuitType.BIOMARKER_THRESHOLD,)
 
         self._add_proof_metadata(proof, public_inputs, witness)
         proof.metadata["biomarker"] = self.biomarker_name
@@ -515,7 +498,7 @@ class ClinicalBiomarkerCircuit(BaseCircuit):
 
         # Verify numeric values
         try:
-            margin = float(parts[3])
+            float(parts[3])
             confidence = float(parts[5])
             if not 0 <= confidence <= 1:
                 return False
@@ -573,17 +556,13 @@ if __name__ == "__main__":
     print(f"Proof valid: {is_valid}")
 
     # Test biomarker circuit
-    print("\n" + "=" * 50 + "\n")
+    print("\n" + " = " * 50 + "\n")
 
     cholesterol_circuit = ClinicalBiomarkerCircuit("cholesterol")
     cholesterol_circuit.setup({"value_range": (0, 500)})
 
-    bio_witness = cholesterol_circuit.generate_witness(
-        {"value": 240}, {"threshold": 200, "comparison": "greater"}
-    )
+    bio_witness = cholesterol_circuit.generate_witness({"value": 240}, {"threshold": 200, "comparison": "greater"})
 
     bio_proof = cholesterol_circuit.prove(bio_witness, {"threshold": 200, "comparison": "greater"})
     print(f"Biomarker proof: {bio_proof.public_output}")
-    print(
-        f"Biomarker proof valid: {cholesterol_circuit.verify(bio_proof, {'threshold': 200, 'comparison': 'greater'})}"
-    )
+    print(f"Biomarker proof valid: {cholesterol_circuit.verify(bio_proof, {'threshold': 200, 'comparison': 'greater'})}")

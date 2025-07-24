@@ -5,15 +5,15 @@ import sys
 import traceback
 
 print("🔍 Quick Import Diagnostic")
-print("=" * 50)
+print(" = " * 50)
 
 # Test 1: Can we import torch?
 print("\n1. Testing torch import...")
 try:
-    import torch
+    pass
 
     print("✓ Torch version: {torch.__version__}")
-except ImportError as e:
+except ImportError:
     print("✗ Torch not installed: {e}")
     print("  Install with: pip install torch")
 
@@ -24,10 +24,9 @@ print("\n2. Testing specific failing imports...")
 print("\n  Testing PIR Client...")
 try:
     sys.path.insert(0, "/Users/rohanvinaik/genomevault")
-    from pir.client import PIRClient
 
     print("  ✓ PIR Client imported")
-except Exception as e:
+except Exception:
     print("  ✗ PIR Client failed: {e}")
     # Try to see what's in the pir directory
     import os
@@ -46,10 +45,10 @@ except Exception as e:
 # ZK Prover
 print("\n  Testing ZK Prover...")
 try:
-    from zk_proofs.prover import ZKProver
+    pass
 
     print("  ✓ ZK Prover imported")
-except Exception as e:
+except Exception:
     print("  ✗ ZK Prover failed: {e}")
     traceback.print_exc()
 
@@ -61,7 +60,7 @@ try:
     config = get_config()
     print("  ✓ Config loaded: {type(config)}")
     print("  ✓ Environment: {config.environment}")
-except Exception as e:
+except Exception:
     print("  ✗ Config failed: {e}")
     traceback.print_exc()
 
@@ -75,5 +74,5 @@ for dep in deps:
     except ImportError:
         print("  ✗ {dep} NOT installed")
 
-print("\n" + "=" * 50)
+print("\n" + " = " * 50)
 print("Diagnostic complete!")

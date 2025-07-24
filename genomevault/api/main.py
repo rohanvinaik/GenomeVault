@@ -9,10 +9,6 @@ Implements the main API endpoints as specified in the System Breakdown:
 - Audit and challenge handling
 - Client-facing endpoints for pipelines, vectors, and proofs
 """
-from pydantic import BaseModel, validator
-import time
-
-
 import hashlib
 import json
 from datetime import datetime
@@ -21,12 +17,11 @@ from typing import Any, Dict, List, Optional
 from fastapi import Depends, FastAPI, HTTPException, Security, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from pydantic import BaseModel
 
 from ..genomevault.blockchain.node import BlockchainNode, NodeInfo
 from ..genomevault.core.config import get_config
 from ..genomevault.core.constants import (
-    CREDITS_PER_BLOCK_BASE,
-    CREDITS_SIGNATORY_BONUS,
     NodeType,
 )
 from ..genomevault.utils.logging import audit_logger, get_logger
@@ -170,7 +165,9 @@ async def verify_token(
 
 
 @app.post("/topology", response_model=TopologyResponse)
-async def get_network_topology(request: TopologyRequest, user_id: str = Depends(verify_token)):
+async def get_network_topology(
+    request: TopologyRequest, user_id: str = Depends(verify_token)
+):
     """
     Get network topology information for optimal PIR server selection.
 
@@ -201,7 +198,9 @@ async def get_network_topology(request: TopologyRequest, user_id: str = Depends(
 
 
 @app.post("/credit/vault/redeem", response_model=CreditVaultResponse)
-async def redeem_credits(request: CreditVaultRequest, user_id: str = Depends(verify_token)):
+async def redeem_credits(
+    request: CreditVaultRequest, user_id: str = Depends(verify_token)
+):
     """
     Redeem credits from vault for services.
 
@@ -221,7 +220,9 @@ async def redeem_credits(request: CreditVaultRequest, user_id: str = Depends(ver
         )
 
     # Process redemption
-    tx_id = _process_credit_redemption(user_id, request.invoiceId, request.creditsBurned)
+    tx_id = _process_credit_redemption(
+        user_id, request.invoiceId, request.creditsBurned
+    )
 
     # Get remaining balance
     remaining = user_credits - request.creditsBurned
@@ -238,7 +239,9 @@ async def redeem_credits(request: CreditVaultRequest, user_id: str = Depends(ver
         },
     )
 
-    response = CreditVaultResponse(success=True, transactionId=tx_id, remainingCredits=remaining)
+    response = CreditVaultResponse(
+        success=True, transactionId=tx_id, remainingCredits=remaining
+    )
 
     return response
 
@@ -290,7 +293,9 @@ async def create_processing_pipeline(
 
     Initiates local processing for specified omics type.
     """
-    logger.info("Pipeline request: {request.pipeline_type}", extra={"privacy_safe": True})
+    logger.info(
+        "Pipeline request: {request.pipeline_type}", extra={"privacy_safe": True}
+    )
 
     # Validate pipeline type
     valid_types = ["genomic", "transcriptomic", "epigenetic", "proteomic", "phenotypic"]
@@ -339,7 +344,9 @@ async def get_pipeline_status(job_id: str, user_id: str = Depends(verify_token))
 
 
 @app.post("/vectors", response_model=VectorResponse)
-async def perform_vector_operation(request: VectorRequest, user_id: str = Depends(verify_token)):
+async def perform_vector_operation(
+    request: VectorRequest, user_id: str = Depends(verify_token)
+):
     """
     Perform hypervector operations.
 
@@ -411,7 +418,9 @@ async def generate_proof(request: ProofRequest, user_id: str = Depends(verify_to
 
     Creates privacy-preserving proofs for various circuits.
     """
-    logger.info("Proof generation request: {request.circuit_name}", extra={"privacy_safe": True})
+    logger.info(
+        "Proof generation request: {request.circuit_name}", extra={"privacy_safe": True}
+    )
 
     # Validate circuit
     valid_circuits = [

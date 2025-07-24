@@ -5,7 +5,6 @@ HIPAA Integration for Blockchain Governance
 
 Integrates HIPAA fast-track verification with the blockchain node system.
 """
-import time
 
 
 import asyncio
@@ -45,9 +44,7 @@ class HIPAANodeIntegration:
 
         logger.info("HIPAA node integration initialized")
 
-    async def register_provider_node(
-        self, credentials: HIPAACredentials, node_config: Dict[str, Any]
-    ) -> BlockchainNode:
+    async def register_provider_node(self, credentials: HIPAACredentials, node_config: Dict[str, Any]) -> BlockchainNode:
         """
         Register a healthcare provider as a blockchain node.
 
@@ -78,34 +75,30 @@ class HIPAANodeIntegration:
 
             return node
 
-        except VerificationError as _:
+        except VerificationError:
             logger.error("Failed to register provider {credentials.npi}: {e}")
             raise
 
-    def _create_trusted_node(
-        self, record: VerificationRecord, config: Dict[str, Any]
-    ) -> BlockchainNode:
+    def _create_trusted_node(self, record: VerificationRecord, config: Dict[str, Any]) -> BlockchainNode:
         """Create a blockchain node with trusted signatory status"""
         # Determine node class from config
         _ = config.get("node_class", NodeType.LIGHT)
 
         # Create node with enhanced properties
-        node = BlockchainNode(
-            node_id="hipaa_{record.credentials.npi}",
-            node_type=node_class,
-            signatory_status=SignatoryWeight.TRUSTED_SIGNATORY,
-            metadata={
+        node = BlockchainNode(node_id = "hipaa_{record.credentials.npi}",
+            node_type = node_class,
+            signatory_status = SignatoryWeight.TRUSTED_SIGNATORY,
+            metadata = {
                 "npi": record.credentials.npi,
                 "provider_name": record.cms_data.get("name", ""),
                 "hsm_serial": record.credentials.hsm_serial,
                 "verified_at": record.verified_at.isoformat(),
                 "expires_at": (record.expires_at.isoformat() if record.expires_at else None),
                 "honesty_probability": record.honesty_probability,
-            },
-        )
+            },)
 
         # Calculate voting power (c + s)
-        node.voting_power = node.get_class_weight() + SignatoryWeight.TRUSTED_SIGNATORY.value
+        node.voting_power = (node.get_class_weight() + SignatoryWeight.TRUSTED_SIGNATORY.value)
 
         return node
 
@@ -188,19 +181,17 @@ class HIPAAGovernanceIntegration:
         from ..governance import Committee, CommitteeType
 
         # Add HIPAA committee type (would extend enum in production)
-        _ = Committee(
-            committee_type=CommitteeType.SCIENTIFIC_ADVISORY,  # Reuse for now
-            members=set(),
-            chair=None,
-            term_end=datetime.now() + timedelta(days=365),
-            responsibilities=[
+        _ = Committee(committee_type = CommitteeType.SCIENTIFIC_ADVISORY,  # Reuse for now
+            members = set(),
+            chair = None,
+            term_end = datetime.now() + timedelta(days = 365),
+            responsibilities = [
                 "Clinical data governance",
                 "HIPAA compliance oversight",
                 "Healthcare integration standards",
                 "Patient privacy protection",
             ],
-            voting_weight_multiplier=1.5,  # Enhanced weight for healthcare decisions
-        )
+            voting_weight_multiplier = 1.5,  # Enhanced weight for healthcare decisions)
 
         governance.committees[CommitteeType.SCIENTIFIC_ADVISORY] = hipaa_committee
 
@@ -240,20 +231,18 @@ if __name__ == "__main__":
 
         # Initialize components
         async with CMSNPIRegistry() as registry:
-            _ = HIPAAVerifier(npi_registry=registry)
+            _ = HIPAAVerifier(npi_registry = registry)
             _ = GovernanceSystem()
 
             # Create integration
             _ = HIPAANodeIntegration(verifier, governance)
 
             # Test provider registration
-            _ = HIPAACredentials(
-                npi="1234567893",
-                baa_hash="a" * 64,
-                risk_analysis_hash="b" * 64,
-                hsm_serial="HSM-12345",
-                provider_name="Test Medical Center",
-            )
+            _ = HIPAACredentials(npi = "1234567893",
+                baa_hash = "a" * 64,
+                risk_analysis_hash = "b" * 64,
+                hsm_serial = "HSM-12345",
+                provider_name = "Test Medical Center",)
 
             _ = {
                 "node_class": NodeType.FULL,  # Full node (1U server)
@@ -279,7 +268,7 @@ if __name__ == "__main__":
 
                 print("\nHIPAA governance integration complete!")
 
-            except VerificationError as _:
+            except VerificationError:
                 print("Registration failed: {e}")
 
     # Run test

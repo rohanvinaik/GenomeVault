@@ -6,15 +6,11 @@ This example demonstrates the core functionality of GenomeVault's
 privacy-preserving genomic data processing pipeline.
 """
 
-import os
-from datetime import datetime
-from pathlib import Path
 
 # Import GenomeVault components
 from genomevault import (
     PhenotypeProcessor,
     SequencingProcessor,
-    TranscriptomicsProcessor,
     get_logger,
     init_config,
 )
@@ -49,22 +45,20 @@ def process_genomic_data_example():
     logger.info("\n=== Genomic Data Processing Example ===")
 
     # Initialize processor
-    processor = SequencingProcessor()
+    SequencingProcessor()
 
     # Simulate processing (in real use, provide actual FASTQ file)
     logger.info("Processing genomic data...")
 
     # Example of what the processing would look like:
     """
-    profile = processor.process(
-        input_path=Path("sample.fastq.gz"),
-        sample_id="patient_001"
-    )
-    
+    profile = processor.process(input_path = Path("sample.fastq.gz"),
+        sample_id = "patient_001")
+
     # Compress using differential storage
     storage = DifferentialStorage()
     compressed = storage.compress_profile(profile)
-    
+
     logger.info("Found {len(profile.variants)} variants")
     logger.info("Average coverage: {profile.quality_metrics.coverage_mean:.1f}x")
     logger.info("Compression achieved: {len(compressed['chunks'])} chunks")
@@ -102,15 +96,19 @@ def process_genomic_data_example():
         sample_id="patient_001",
         reference_genome="GRCh38",
         variants=mock_variants,
-        quality_metrics=QualityMetrics(total_reads=1000000, coverage_mean=30.0, coverage_std=5.0),
+        quality_metrics=QualityMetrics(
+            total_reads=1000000, coverage_mean=30.0, coverage_std=5.0
+        ),
         processing_metadata={"demo": True},
     )
 
     # Demonstrate differential storage
     storage = DifferentialStorage()
-    compressed = storage.compress_profile(mock_profile)
+    storage.compress_profile(mock_profile)
 
-    logger.info("Mock genomic profile created with {len(mock_profile.variants)} variants")
+    logger.info(
+        "Mock genomic profile created with {len(mock_profile.variants)} variants"
+    )
     logger.info("Compressed to {len(compressed['chunks'])} chunks")
 
     return mock_profile
@@ -185,7 +183,7 @@ def process_clinical_data_example():
     logger.info("Active conditions: {len(phenotype_profile.get_active_conditions())}")
 
     # Calculate risk factors
-    risk_factors = phenotype_profile.calculate_risk_factors()
+    phenotype_profile.calculate_risk_factors()
     logger.info("Risk factors: {risk_factors}")
 
     return phenotype_profile
@@ -201,7 +199,7 @@ def demonstrate_privacy_features():
     logger.info("1. All processing happens locally - no raw data leaves device")
 
     # 2. Differential privacy
-    logger.info("2. Differential privacy enabled (ε={config.privacy.epsilon})")
+    logger.info("2. Differential privacy enabled (ε = {config.privacy.epsilon})")
 
     # 3. Encryption
     from genomevault.utils import AESGCMCipher, ThresholdCrypto
@@ -210,7 +208,9 @@ def demonstrate_privacy_features():
     key = AESGCMCipher.generate_key()
     plaintext = b"Sensitive genomic data"
     ciphertext, nonce, tag = AESGCMCipher.encrypt(plaintext, key)
-    logger.info("3. Data encrypted with AES-256-GCM (ciphertext: {len(ciphertext)} bytes)")
+    logger.info(
+        "3. Data encrypted with AES-256-GCM (ciphertext: {len(ciphertext)} bytes)"
+    )
 
     # Demonstrate threshold secret sharing
     secret = b"master_secret_key_123456789012"  # 30 bytes
@@ -224,25 +224,25 @@ def demonstrate_privacy_features():
 
     # 5. PIR privacy
     logger.info("6. Private Information Retrieval ensures query privacy")
-    pir_failure_prob = config.get_pir_failure_probability()
+    config.get_pir_failure_probability()
     logger.info("   PIR privacy failure probability: {pir_failure_prob:.2e}")
 
 
 def main():
     """Main demonstration function"""
-    print("\n" + "=" * 60)
+    print("\n" + " = " * 60)
     print("GenomeVault 3.0 - Privacy-Preserving Genomics Platform")
-    print("=" * 60)
+    print(" = " * 60)
 
     try:
         # Setup
-        config = setup_genomevault()
+        setup_genomevault()
 
         # Demonstrate genomic processing
-        genomic_profile = process_genomic_data_example()
+        process_genomic_data_example()
 
         # Demonstrate clinical data processing
-        phenotype_profile = process_clinical_data_example()
+        process_clinical_data_example()
 
         # Demonstrate privacy features
         demonstrate_privacy_features()
@@ -254,9 +254,11 @@ def main():
         logger.info("✓ Encryption and secret sharing initialized")
         logger.info("✓ Ready for secure genomic analysis")
 
-        print("\nFor more examples, see the documentation at https://docs.genomevault.io")
+        print(
+            "\nFor more examples, see the documentation at https://docs.genomevault.io"
+        )
 
-    except Exception as e:
+    except Exception:
         logger.error("Error in demonstration: {e}")
         raise
 

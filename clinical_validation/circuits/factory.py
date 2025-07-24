@@ -3,7 +3,7 @@ Circuit Factory for creating circuit instances.
 Provides a centralized way to create and manage circuit types.
 """
 
-from typing import Any, Dict, Type
+from typing import Dict, Type
 
 from ..proofs.models import CircuitType
 from .base import BaseCircuit

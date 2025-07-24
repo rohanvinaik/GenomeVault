@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set
 
 """
 PIR network coordinator for managing distributed servers.
@@ -6,12 +6,11 @@ Handles server discovery, health monitoring, and query routing.
 """
 
 import asyncio
-import heapq
 import json
 import time
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set
 
 import aiohttp
 import numpy as np
@@ -19,10 +18,9 @@ import numpy as np
 from genomevault.utils.config import get_config
 
 config = get_config()
-from genomevault.utils.logging import logger, performance_logger
+from genomevault.utils.logging import logger
 
 from ..client import PIRClient, PIRServer
-from ..server.pir_server import PIRServer as PIRServerInstance
 
 
 @dataclass
@@ -52,11 +50,11 @@ class ServerHealth:
 class NetworkTopology:
     """PIR network topology information."""
 
-    servers: Dict[str, PIRServer] = field(default_factory=dict)
-    server_health: Dict[str, ServerHealth] = field(default_factory=dict)
-    server_regions: Dict[str, Set[str]] = field(default_factory=lambda: defaultdict(set))
-    ts_servers: Set[str] = field(default_factory=set)
-    ln_servers: Set[str] = field(default_factory=set)
+    servers: Dict[str, PIRServer] = field(default_factory = dict)
+    server_health: Dict[str, ServerHealth] = field(default_factory = dict)
+    server_regions: Dict[str, Set[str]] = field(default_factory = lambda: defaultdict(set))
+    ts_servers: Set[str] = field(default_factory = set)
+    ln_servers: Set[str] = field(default_factory = set)
 
     def add_server(self, server: PIRServer):
         """Add server to topology."""
@@ -181,27 +179,23 @@ class PIRNetworkCoordinator:
         ]
 
         for config in server_configs:
-            server = PIRServer(
-                server_id=config["id"],
-                endpoint=config["endpoint"],
-                region=config["region"],
-                is_trusted_signatory=config["is_ts"],
-                honesty_probability=config["honesty"],
-                latency_ms=0,  # Will be measured
-            )
+            server = PIRServer(server_id = config["id"],
+                endpoint = config["endpoint"],
+                region = config["region"],
+                is_trusted_signatory = config["is_ts"],
+                honesty_probability = config["honesty"],
+                latency_ms = 0,  # Will be measured)
 
             self.topology.add_server(server)
 
             # Initialize health metrics
-            self.topology.server_health[server.server_id] = ServerHealth(
-                server_id=server.server_id,
-                is_healthy=True,
-                last_check=time.time(),
-                latency_ms=0,
-                success_rate=1.0,
-                query_count=0,
-                error_count=0,
-            )
+            self.topology.server_health[server.server_id] = ServerHealth(server_id = server.server_id,
+                is_healthy = True,
+                last_check = time.time(),
+                latency_ms = 0,
+                success_rate = 1.0,
+                query_count = 0,
+                error_count = 0,)
 
         logger.info("Discovered {len(self.topology.servers)} servers")
 
@@ -216,20 +210,18 @@ class PIRNetworkCoordinator:
                     tasks.append(task)
 
                 # Wait for all health checks
-                await asyncio.gather(*tasks, return_exceptions=True)
+                await asyncio.gather(*tasks, return_exceptions = True)
 
                 # Log summary
-                healthy_count = sum(1 for h in self.topology.server_health.values() if h.is_healthy)
-                logger.info(
-                    "Health check complete: {healthy_count}/{len(self.topology.servers)} healthy"
-                )
+                sum(1 for h in self.topology.server_health.values() if h.is_healthy)
+                logger.info("Health check complete: {healthy_count}/{len(self.topology.servers)} healthy")
 
                 # Wait before next check
                 await asyncio.sleep(self.health_check_interval)
 
             except asyncio.CancelledError:
                 break
-            except Exception as e:
+            except Exception:
                 logger.error("Error in health monitor: {e}")
                 await asyncio.sleep(10)  # Wait before retry
 
@@ -247,10 +239,8 @@ class PIRNetworkCoordinator:
             start_time = time.time()
 
             # Send health check request
-            async with self.session.get(
-                "{server.endpoint}/health",
-                timeout=aiohttp.ClientTimeout(total=self.health_check_timeout),
-            ) as response:
+            async with self.session.get("{server.endpoint}/health",
+                timeout = aiohttp.ClientTimeout(total = self.health_check_timeout),) as response:
                 if response.status == 200:
                     latency_ms = (time.time() - start_time) * 1000
 
@@ -274,7 +264,7 @@ class PIRNetworkCoordinator:
                     logger.warning("Server {server.server_id} returned status {response.status}")
                     return False
 
-        except Exception as e:
+        except Exception:
             # Mark as unhealthy
             health = self.topology.server_health[server.server_id]
             health.is_healthy = False
@@ -302,26 +292,22 @@ class PIRNetworkCoordinator:
 
                 # In production, would re-discover servers
                 # For now, just log status
-                logger.debug(
-                    "Topology: {len(self.topology.servers)} servers, "
-                    "{len(self.routing_cache)} cached routes"
-                )
+                logger.debug("Topology: {len(self.topology.servers)} servers, "
+                    "{len(self.routing_cache)} cached routes")
 
                 # Wait before next update
                 await asyncio.sleep(60)  # Update every minute
 
             except asyncio.CancelledError:
                 break
-            except Exception as e:
+            except Exception:
                 logger.error("Error updating topology: {e}")
                 await asyncio.sleep(10)
 
-    def select_optimal_servers(
-        self,
+    def select_optimal_servers(self,
         num_servers: int,
         require_ts: int = 0,
-        exclude_servers: Optional[Set[str]] = None,
-    ) -> List[PIRServer]:
+        exclude_servers: Optional[Set[str]] = None,) -> List[PIRServer]:
         """
         Select optimal servers for a PIR query.
 
@@ -340,10 +326,8 @@ class PIRNetworkCoordinator:
         healthy_servers = [
             server
             for server_id, server in self.topology.servers.items()
-            if (
-                self.topology.server_health[server_id].is_healthy
-                and server_id not in exclude_servers
-            )
+            if (self.topology.server_health[server_id].is_healthy
+                and server_id not in exclude_servers)
         ]
 
         # Separate TS and LN servers
@@ -360,8 +344,8 @@ class PIRNetworkCoordinator:
             health = self.topology.server_health[server.server_id]
             return -health.reliability_score  # Negative for max heap
 
-        ts_servers.sort(key=server_score)
-        ln_servers.sort(key=server_score)
+        ts_servers.sort(key = server_score)
+        ln_servers.sort(key = server_score)
 
         # Select servers
         selected = []
@@ -383,9 +367,7 @@ class PIRNetworkCoordinator:
 
         return selected[:num_servers]
 
-    def get_server_configuration(
-        self, target_failure_prob: float = 1e-4, max_latency_ms: Optional[float] = None
-    ) -> Dict[str, Any]:
+    def get_server_configuration(self, target_failure_prob: float = 1e-4, max_latency_ms: Optional[float] = None) -> Dict[str, Any]:
         """
         Get optimal server configuration for target privacy level.
 
@@ -399,55 +381,49 @@ class PIRNetworkCoordinator:
         configurations = []
 
         # Configuration 1: 3 LN + 2 TS (5 servers total)
-        servers_3ln_2ts = self.select_optimal_servers(5, require_ts=2)
+        servers_3ln_2ts = self.select_optimal_servers(5, require_ts = 2)
         if len(servers_3ln_2ts) == 5:
             latency = sum(s.latency_ms for s in servers_3ln_2ts)
             failure_prob = (1 - 0.98) ** 2  # 2 TS servers
 
-            configurations.append(
-                {
+            configurations.append({
                     "name": "3 LN + 2 TS",
                     "servers": [s.server_id for s in servers_3ln_2ts],
                     "total_servers": 5,
                     "ts_count": 2,
                     "latency_ms": latency,
                     "failure_probability": failure_prob,
-                }
-            )
+                })
 
         # Configuration 2: 1 LN + 2 TS (3 servers total)
-        servers_1ln_2ts = self.select_optimal_servers(3, require_ts=2)
+        servers_1ln_2ts = self.select_optimal_servers(3, require_ts = 2)
         if len(servers_1ln_2ts) == 3:
             latency = sum(s.latency_ms for s in servers_1ln_2ts)
             failure_prob = (1 - 0.98) ** 2  # 2 TS servers
 
-            configurations.append(
-                {
+            configurations.append({
                     "name": "1 LN + 2 TS",
                     "servers": [s.server_id for s in servers_1ln_2ts],
                     "total_servers": 3,
                     "ts_count": 2,
                     "latency_ms": latency,
                     "failure_probability": failure_prob,
-                }
-            )
+                })
 
         # Configuration 3: 3 TS (3 servers total)
-        servers_3ts = self.select_optimal_servers(3, require_ts=3)
+        servers_3ts = self.select_optimal_servers(3, require_ts = 3)
         if len(servers_3ts) == 3:
             latency = sum(s.latency_ms for s in servers_3ts)
             failure_prob = (1 - 0.98) ** 3  # 3 TS servers
 
-            configurations.append(
-                {
+            configurations.append({
                     "name": "3 TS",
                     "servers": [s.server_id for s in servers_3ts],
                     "total_servers": 3,
                     "ts_count": 3,
                     "latency_ms": latency,
                     "failure_probability": failure_prob,
-                }
-            )
+                })
 
         # Filter by requirements
         valid_configs = [
@@ -455,11 +431,13 @@ class PIRNetworkCoordinator:
         ]
 
         if max_latency_ms:
-            valid_configs = [c for c in valid_configs if c["latency_ms"] <= max_latency_ms]
+            valid_configs = [
+                c for c in valid_configs if c["latency_ms"] <= max_latency_ms
+            ]
 
         # Select optimal (minimize latency)
         if valid_configs:
-            optimal = min(valid_configs, key=lambda c: c["latency_ms"])
+            optimal = min(valid_configs, key = lambda c: c["latency_ms"])
         else:
             optimal = None
 
@@ -469,17 +447,13 @@ class PIRNetworkCoordinator:
             "optimal": optimal,
             "network_status": {
                 "total_servers": len(self.topology.servers),
-                "healthy_servers": sum(
-                    1 for h in self.topology.server_health.values() if h.is_healthy
-                ),
+                "healthy_servers": sum(1 for h in self.topology.server_health.values() if h.is_healthy),
                 "ts_servers": len(self.topology.ts_servers),
                 "ln_servers": len(self.topology.ln_servers),
             },
         }
 
-    async def create_pir_client(
-        self, database_size: int, config_name: Optional[str] = None
-    ) -> PIRClient:
+    async def create_pir_client(self, database_size: int, config_name: Optional[str] = None) -> PIRClient:
         """
         Create PIR client with optimal server configuration.
 
@@ -495,10 +469,8 @@ class PIRNetworkCoordinator:
 
         if config_name:
             # Find specific configuration
-            config = next(
-                (c for c in config_info["configurations"] if c["name"] == config_name),
-                None,
-            )
+            config = next((c for c in config_info["configurations"] if c["name"] == config_name),
+                None,)
             if not config:
                 raise ValueError("Configuration '{config_name}' not found") from e
         else:
@@ -527,13 +499,13 @@ class PIRNetworkCoordinator:
         total_queries = sum(h.query_count for h in self.topology.server_health.values())
         total_errors = sum(h.error_count for h in self.topology.server_health.values())
 
-        avg_latency = (
-            np.mean(
-                [h.latency_ms for h in self.topology.server_health.values() if h.latency_ms > 0]
-            )
+        avg_latency = (np.mean([
+                    h.latency_ms
+                    for h in self.topology.server_health.values()
+                    if h.latency_ms > 0
+                ])
             if self.topology.server_health
-            else 0
-        )
+            else 0)
 
         # Per-region statistics
         region_stats = {}
@@ -548,9 +520,7 @@ class PIRNetworkCoordinator:
                 region_stats[region] = {
                     "server_count": len(server_ids),
                     "healthy_count": sum(1 for s in region_servers if s.is_healthy),
-                    "avg_latency_ms": np.mean(
-                        [s.latency_ms for s in region_servers if s.latency_ms > 0]
-                    ),
+                    "avg_latency_ms": np.mean([s.latency_ms for s in region_servers if s.latency_ms > 0]),
                     "total_queries": sum(s.query_count for s in region_servers),
                 }
 
@@ -559,30 +529,22 @@ class PIRNetworkCoordinator:
             "healthy_servers": sum(1 for h in self.topology.server_health.values() if h.is_healthy),
             "ts_servers": {
                 "total": len(self.topology.ts_servers),
-                "healthy": sum(
-                    1
+                "healthy": sum(1
                     for sid in self.topology.ts_servers
-                    if self.topology.server_health.get(
-                        sid, ServerHealth(sid, False, 0, 0, 0, 0, 0)
-                    ).is_healthy
-                ),
+                    if self.topology.server_health.get(sid, ServerHealth(sid, False, 0, 0, 0, 0, 0)).is_healthy),
             },
             "ln_servers": {
                 "total": len(self.topology.ln_servers),
-                "healthy": sum(
-                    1
+                "healthy": sum(1
                     for sid in self.topology.ln_servers
-                    if self.topology.server_health.get(
-                        sid, ServerHealth(sid, False, 0, 0, 0, 0, 0)
-                    ).is_healthy
-                ),
+                    if self.topology.server_health.get(sid, ServerHealth(sid, False, 0, 0, 0, 0, 0)).is_healthy),
             },
             "queries": {
                 "total": total_queries,
                 "errors": total_errors,
-                "success_rate": (
-                    (total_queries - total_errors) / total_queries if total_queries > 0 else 1.0
-                ),
+                "success_rate": ((total_queries - total_errors) / total_queries
+                    if total_queries > 0
+                    else 1.0),
             },
             "performance": {
                 "avg_latency_ms": avg_latency,
@@ -631,15 +593,15 @@ if __name__ == "__main__":
         # Get network statistics
         stats = coordinator.get_network_statistics()
         print("Network Statistics:")
-        print(json.dumps(stats, indent=2))
+        print(json.dumps(stats, indent = 2))
 
         # Get optimal configuration
-        config = coordinator.get_server_configuration(target_failure_prob=1e-4)
+        config = coordinator.get_server_configuration(target_failure_prob = 1e-4)
         print("\nOptimal Configuration:")
-        print(json.dumps(config["optimal"], indent=2))
+        print(json.dumps(config["optimal"], indent = 2))
 
         # Create PIR client
-        client = await coordinator.create_pir_client(database_size=1000000)
+        client = await coordinator.create_pir_client(database_size = 1000000)
         print("\nCreated client with {len(client.servers)} servers")
 
         # Cleanup

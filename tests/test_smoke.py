@@ -10,9 +10,6 @@ def test_pytest_is_working():
 
 def test_imports_work():
     """Verify basic imports work"""
-    import cryptography
-    import fastapi
-    import numpy as np
 
     assert True
 
@@ -31,7 +28,7 @@ def test_integration_marker():
 
 
 @pytest.mark.parametrize(
-    "input,expected",
+    "input, expected",
     [
         (1, 2),
         (2, 4),

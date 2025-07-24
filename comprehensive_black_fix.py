@@ -107,7 +107,9 @@ def main():
     genomevault_dir = Path("/Users/rohanvinaik/genomevault")
 
     try:
-        result = subprocess.run(["black", "."], capture_output=True, text=True, cwd=genomevault_dir)
+        result = subprocess.run(
+            ["black", "."], capture_output=True, text=True, cwd=genomevault_dir
+        )
 
         if result.returncode == 0:
             print("✅ Formatted entire codebase successfully!")
@@ -120,7 +122,9 @@ def main():
     except Exception as e:
         print(f"❌ Error formatting codebase: {e}")
 
-    print("\n❌ Could not fix all formatting issues. Manual intervention may be needed.")
+    print(
+        "\n❌ Could not fix all formatting issues. Manual intervention may be needed."
+    )
     return False
 
 

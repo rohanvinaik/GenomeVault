@@ -20,6 +20,7 @@ class DiabetesRiskCircuit(BaseCircuit):
     """
 
     def __init__(self):
+        """Magic method implementation."""
         config = CircuitConfig(
             name="DiabetesRiskCircuit",
             version="2.0.0",
@@ -77,7 +78,9 @@ class DiabetesRiskCircuit(BaseCircuit):
 
         risk_score = private_inputs.get("genetic_risk_score", 0.0)
         if not self.risk_score_range[0] <= risk_score <= self.risk_score_range[1]:
-            raise ValueError(f"Risk score {risk_score} out of range {self.risk_score_range}")
+            raise ValueError(
+                f"Risk score {risk_score} out of range {self.risk_score_range}"
+            )
 
         # Extract thresholds
         glucose_threshold = public_inputs.get("glucose_threshold", 126.0)
@@ -116,7 +119,9 @@ class DiabetesRiskCircuit(BaseCircuit):
             "noise_factor": noise_factor.tolist(),
         }
 
-    def prove(self, witness: Dict[str, Any], public_inputs: Dict[str, float]) -> ProofData:
+    def prove(
+        self, witness: Dict[str, Any], public_inputs: Dict[str, float]
+    ) -> ProofData:
         """Generate proof with enhanced security"""
         if not self._setup_complete:
             raise RuntimeError("Circuit setup not complete")
@@ -125,9 +130,7 @@ class DiabetesRiskCircuit(BaseCircuit):
         confidence = witness["result"]["confidence"]
 
         # Create proof with detailed output
-        public_output = (
-            f"RISK_LEVEL:{'HIGH' if is_high_risk else 'NORMAL'}:CONFIDENCE:{confidence:.2f}"
-        )
+        public_output = f"RISK_LEVEL:{'HIGH' if is_high_risk else 'NORMAL'}:CONFIDENCE:{confidence:.2f}"
 
         # Generate proof bytes (in production, use actual ZK proof system)
         proof_data = {

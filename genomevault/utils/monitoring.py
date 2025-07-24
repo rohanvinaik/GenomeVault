@@ -26,6 +26,7 @@ class MetricsCollector:
     """Centralized metrics collection for GenomeVault"""
 
     def __init__(self):
+        """Magic method implementation."""
         # Processing metrics
         self.processing_duration = Histogram(
             "genomevault_processing_duration_seconds",
@@ -137,7 +138,9 @@ class MetricsCollector:
         )
 
         # System health metrics
-        self.system_uptime = Gauge("genomevault_system_uptime_seconds", "System uptime in seconds")
+        self.system_uptime = Gauge(
+            "genomevault_system_uptime_seconds", "System uptime in seconds"
+        )
 
         self.active_connections = Gauge(
             "genomevault_active_connections",
@@ -226,7 +229,9 @@ class MetricsCollector:
         def decorator(func):
             @wraps(func)
             def wrapper(*args, **kwargs):
-                with self.proof_generation_time.labels(circuit_type=circuit_type).time():
+                with self.proof_generation_time.labels(
+                    circuit_type=circuit_type
+                ).time():
                     proof = func(*args, **kwargs)
 
                 # Track proof size
@@ -254,11 +259,13 @@ class MetricsCollector:
         if "server_type" in config:
             self.pir_server_honesty.labels(server_type=config["server_type"]).set(q)
 
-    def update_node_metrics(self, node_class: str, signatory_status: str, voting_power: int):
+    def update_node_metrics(
+        self, node_class: str, signatory_status: str, voting_power: int
+    ):
         """Update blockchain node metrics"""
-        self.node_voting_power.labels(node_class=node_class, signatory_status=signatory_status).set(
-            voting_power
-        )
+        self.node_voting_power.labels(
+            node_class=node_class, signatory_status=signatory_status
+        ).set(voting_power)
 
     def update_storage_metrics(self, tier: str, size_bytes: int):
         """Update storage tier usage metrics"""
@@ -291,7 +298,9 @@ class MetricsCollector:
         """Get a summary of current metrics"""
         return {
             "uptime_seconds": time.time() - self._start_time,
-            "total_hypervector_operations": sum(self.hypervector_operations._metrics.values()),
+            "total_hypervector_operations": sum(
+                self.hypervector_operations._metrics.values()
+            ),
             "current_pir_privacy_failure_prob": self.pir_privacy_failure_prob._value.get(),
             "timestamp": datetime.utcnow().isoformat(),
         }
@@ -299,6 +308,8 @@ class MetricsCollector:
 
 class PrivacyAwareLogger:
     """Structured logging with privacy-aware filtering"""
+
+    """Magic method implementation."""
 
     def __init__(self, service_name: str):
         self.service_name = service_name
@@ -362,7 +373,8 @@ class PrivacyAwareLogger:
                     redacted[key] = redact_dict(value)
                 elif isinstance(value, list) and value and isinstance(value[0], dict):
                     redacted[key] = [
-                        redact_dict(item) if isinstance(item, dict) else item for item in value
+                        redact_dict(item) if isinstance(item, dict) else item
+                        for item in value
                     ]
                 else:
                     redacted[key] = value
@@ -372,9 +384,13 @@ class PrivacyAwareLogger:
 
     def log_audit_event(self, event_type: str, details: Dict[str, Any]):
         """Log security audit events"""
-        self.logger.info("audit_event", event_type=event_type, details=details, audit=True)
+        self.logger.info(
+            "audit_event", event_type=event_type, details=details, audit=True
+        )
 
-    def log_access_attempt(self, user_id: str, resource: str, action: str, success: bool):
+    def log_access_attempt(
+        self, user_id: str, resource: str, action: str, success: bool
+    ):
         """Log access attempts for audit trail"""
         self.logger.info(
             "access_attempt",
@@ -385,7 +401,9 @@ class PrivacyAwareLogger:
             audit=True,
         )
 
-    def log_privacy_event(self, event_type: str, epsilon_consumed: float, remaining_budget: float):
+    def log_privacy_event(
+        self, event_type: str, epsilon_consumed: float, remaining_budget: float
+    ):
         """Log privacy budget consumption events"""
         self.logger.info(
             "privacy_event",

@@ -3,22 +3,15 @@ Unit tests for configuration system.
 Tests dual-axis voting model, compression tiers, and PIR calculations.
 """
 
-import json
 import tempfile
 from pathlib import Path
 
-import numpy as np
 import pytest
 
 from genomevault.utils.config import (
-    BlockchainConfig,
     CompressionTier,
     Config,
-    HypervectorConfig,
-    NetworkConfig,
     NodeClass,
-    PIRConfig,
-    ProcessingConfig,
     SecurityConfig,
 )
 
@@ -58,7 +51,7 @@ class TestConfig:
             voting_power = config.get_voting_power()
             assert (
                 voting_power == expected_power
-            ), "Node {node_class.name} TS={is_ts} should have power {expected_power}, got {voting_power}"
+            ), "Node {node_class.name} TS = {is_ts} should have power {expected_power}, got {voting_power}"
 
     def test_block_rewards_calculation(self):
         """Test block rewards calculation."""
@@ -81,7 +74,7 @@ class TestConfig:
             rewards = config.get_block_rewards()
             assert (
                 rewards == expected_rewards
-            ), "Node {node_class.name} TS={is_ts} should get {expected_rewards} credits, got {rewards}"
+            ), "Node {node_class.name} TS = {is_ts} should get {expected_rewards} credits, got {rewards}"
 
     def test_pir_failure_probability(self):
         """Test PIR privacy breach probability calculations."""
@@ -100,7 +93,7 @@ class TestConfig:
             prob = config.calculate_pir_failure_probability(k, use_hipaa)
             assert (
                 abs(prob - expected_prob) < 1e-10
-            ), "P_fail({k}, hipaa={use_hipaa}) should be {expected_prob}, got {prob}"
+            ), "P_fail({k}, hipaa = {use_hipaa}) should be {expected_prob}, got {prob}"
 
     def test_min_honest_servers_calculation(self):
         """Test minimum honest servers calculation."""
@@ -108,7 +101,7 @@ class TestConfig:
 
         # Test different target failure probabilities
         test_cases = [
-            (1e-4, 2),  # For 10^-4 with HIPAA servers (q=0.98)
+            (1e-4, 2),  # For 10^-4 with HIPAA servers (q = 0.98)
             (1e-6, 3),  # For 10^-6 with HIPAA servers
             (1e-8, 4),  # For 10^-8 with HIPAA servers
         ]

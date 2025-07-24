@@ -7,9 +7,9 @@ without requiring external dependencies
 import os
 import sys
 
-print("=" * 70)
+print(" = " * 70)
 print("FINAL TEST: Verifying Import Path Fix")
-print("=" * 70)
+print(" = " * 70)
 
 # Add the project root to Python path
 project_root = os.path.dirname(os.path.abspath(__file__))
@@ -20,7 +20,9 @@ print("\nProject root: {project_root}")
 print("Python path includes project: {project_root in sys.path}")
 
 # Check the file that was fixed
-variant_file = os.path.join(project_root, "zk_proofs", "circuits", "biological", "variant.py")
+variant_file = os.path.join(
+    project_root, "zk_proofs", "circuits", "biological", "variant.py"
+)
 print("\nChecking fixed file: {variant_file}")
 print("File exists: {os.path.exists(variant_file)}")
 
@@ -42,7 +44,9 @@ if os.path.exists(variant_file):
         print("\n❓ WARNING: Could not find the base_circuits import")
 
 # Check the base_circuits.py file exists
-base_circuits_file = os.path.join(project_root, "zk_proofs", "circuits", "base_circuits.py")
+base_circuits_file = os.path.join(
+    project_root, "zk_proofs", "circuits", "base_circuits.py"
+)
 print("\nChecking base_circuits.py location:")
 print("Expected at: {base_circuits_file}")
 print("File exists: {os.path.exists(base_circuits_file)}")
@@ -63,9 +67,9 @@ if os.path.exists(circuits_dir):
         elif not item.startswith("__pycache__"):
             print("  📄 {item}")
 
-print("\n" + "=" * 70)
+print("\n" + " = " * 70)
 print("SUMMARY")
-print("=" * 70)
+print(" = " * 70)
 print("The import fix has been applied successfully!")
 print("Changed: 'from .base_circuits import ...' → 'from ..base_circuits import ...'")
 print("\nThis fix allows the biological circuits to correctly import from")

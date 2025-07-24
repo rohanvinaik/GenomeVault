@@ -98,7 +98,9 @@ class BlockchainNode:
     Implements dual-axis voting model.
     """
 
-    def __init__(self, node_id: str, node_class: NodeClass, is_trusted_signatory: _ = False):
+    def __init__(
+        self, node_id: str, node_class: NodeClass, is_trusted_signatory: _ = False
+    ):
         """
         Initialize blockchain node.
 
@@ -202,7 +204,7 @@ class BlockchainNode:
 
             return True
 
-        except Exception as _:
+        except Exception:
             logger.error("HIPAA verification failed: {e}")
             return False
 
@@ -278,7 +280,9 @@ class BlockchainNode:
             state_root=state_root,
         )
 
-        logger.info("Proposed block at height {block.height}", extra={"privacy_safe": True})
+        logger.info(
+            "Proposed block at height {block.height}", extra={"privacy_safe": True}
+        )
 
         return block
 
@@ -415,7 +419,9 @@ class BlockchainNode:
             },
         )
 
-        logger.info("Committed block at height {block.height}", extra={"privacy_safe": True})
+        logger.info(
+            "Committed block at height {block.height}", extra={"privacy_safe": True}
+        )
 
     async def _execute_transaction(self, tx: Dict):
         """Execute transaction and update state."""
@@ -430,7 +436,7 @@ class BlockchainNode:
 
     async def _record_proof(self, proof_data: Dict):
         """Record proof in state."""
-        proof_key = proof_data["proof_key"]
+        proof_data["proof_key"]
         self.state["proof:{proof_key}"] = proof_data
 
     async def _transfer_credits(self, from_addr: str, to_addr: str, amount: int):
@@ -464,7 +470,9 @@ class BlockchainNode:
                 extra={"privacy_safe": True},
             )
 
-    async def handle_audit_challenge(self, challenger: str, target: str, epoch: int) -> Dict:
+    async def handle_audit_challenge(
+        self, challenger: str, target: str, epoch: int
+    ) -> Dict:
         """
         Handle audit challenge.
 
@@ -580,7 +588,9 @@ class BlockchainNode:
         # Add to mempool
         self.mempool.append(tx)
 
-        logger.info("Transaction {tx_hash[:8]} added to mempool", extra={"privacy_safe": True})
+        logger.info(
+            "Transaction {tx_hash[:8]} added to mempool", extra={"privacy_safe": True}
+        )
 
         return tx_hash
 
@@ -652,12 +662,12 @@ if __name__ == "__main__":
     print("\nSubmitted transaction: {tx_hash[:16]}...")
 
     # Get chain info
-    print("\nChain Info: {json.dumps(light_ts_node.get_chain_info(), indent=2)}")
+    print("\nChain Info: {json.dumps(light_ts_node.get_chain_info(), indent = 2)}")
 
     # Calculate network statistics
     print("\n=== Network Statistics ===")
-    print("Light TS (GP clinic): w=11, credits/block=3")
-    print("Full non-TS (University): w=4, credits/block=4")
-    print("Archive non-TS (Research): w=8, credits/block=8")
+    print("Light TS (GP clinic): w = 11, credits/block = 3")
+    print("Full non-TS (University): w = 4, credits/block = 4")
+    print("Archive non-TS (Research): w = 8, credits/block = 8")
     print("\nTotal Network Voting Power: {11 + 4 + 8} = 23")
     print("Honest Power Needed for BFT: >11")

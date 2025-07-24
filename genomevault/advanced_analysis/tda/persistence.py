@@ -1,17 +1,14 @@
-from typing import Dict, List, Optional, Set, Tuple, Union
+from typing import Dict, List, Optional, Tuple
 
 """
 Topological Data Analysis for genomic structure analysis
 """
 
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import networkx as nx
 import numpy as np
-import torch
-from scipy.sparse import csr_matrix
-from scipy.sparse.csgraph import connected_components
 from scipy.spatial import distance_matrix
 
 from genomevault.core.constants import MAX_HOMOLOGY_DIMENSION, PERSISTENCE_THRESHOLD
@@ -64,11 +61,10 @@ class TopologicalAnalyzer:
     """
 
     def __init__(self, max_dimension: int = MAX_HOMOLOGY_DIMENSION):
+        """Magic method implementation."""
         self.max_dimension = max_dimension
 
-    def compute_persistence_diagram(
-        self, data: np.ndarray, max_scale: float = None
-    ) -> Dict[int, PersistenceDiagram]:
+    def compute_persistence_diagram(self, data: np.ndarray, max_scale: float = None) -> Dict[int, PersistenceDiagram]:
         """
         Compute persistence diagrams for genomic data
 
@@ -96,9 +92,7 @@ class TopologicalAnalyzer:
 
         return persistence_diagrams
 
-    def _build_vietoris_rips(
-        self, distances: np.ndarray, max_scale: float
-    ) -> List[Tuple[float, List[int]]]:
+    def _build_vietoris_rips(self, distances: np.ndarray, max_scale: float) -> List[Tuple[float, List[int]]]:
         """Build Vietoris-Rips filtration from distance matrix"""
         n = distances.shape[0]
         filtration = []
@@ -124,13 +118,11 @@ class TopologicalAnalyzer:
                             filtration.append((max_edge, [i, j, k]))
 
         # Sort by filtration value
-        filtration.sort(key=lambda x: x[0])
+        filtration.sort(key = lambda x: x[0])
 
         return filtration
 
-    def _compute_homology_persistence(
-        self, filtration: List[Tuple[float, List[int]]], dimension: int
-    ) -> PersistenceDiagram:
+    def _compute_homology_persistence(self, filtration: List[Tuple[float, List[int]]], dimension: int) -> PersistenceDiagram:
         """Compute persistent homology in given dimension"""
         pairs = []
 
@@ -146,9 +138,7 @@ class TopologicalAnalyzer:
 
         return PersistenceDiagram(pairs, dimension)
 
-    def _compute_0d_persistence(
-        self, filtration: List[Tuple[float, List[int]]]
-    ) -> List[PersistencePair]:
+    def _compute_0d_persistence(self, filtration: List[Tuple[float, List[int]]]) -> List[PersistencePair]:
         """Compute 0-dimensional persistence (connected components)"""
         pairs = []
         union_find = UnionFind()
@@ -191,9 +181,7 @@ class TopologicalAnalyzer:
 
         return pairs
 
-    def _compute_1d_persistence(
-        self, filtration: List[Tuple[float, List[int]]]
-    ) -> List[PersistencePair]:
+    def _compute_1d_persistence(self, filtration: List[Tuple[float, List[int]]]) -> List[PersistencePair]:
         """Compute 1-dimensional persistence (loops)"""
         # Simplified implementation - would use boundary matrices in practice
         pairs = []
@@ -210,16 +198,16 @@ class TopologicalAnalyzer:
             if G.has_node(u) and G.has_node(v):
                 # Check if edge creates a cycle
                 if not nx.has_path(G, u, v):
-                    G.add_edge(u, v, weight=val)
+                    G.add_edge(u, v, weight = val)
                 else:
                     # Cycle formed - record birth
                     cycle = nx.shortest_path(G, u, v)
                     cycle_key = tuple(sorted(cycle + [u]))
                     if cycle_key not in loop_births:
                         loop_births[cycle_key] = val
-                    G.add_edge(u, v, weight=val)
+                    G.add_edge(u, v, weight = val)
             else:
-                G.add_edge(u, v, weight=val)
+                G.add_edge(u, v, weight = val)
 
         # Triangles kill loops
         for i, j, k, val in triangles:
@@ -236,16 +224,12 @@ class TopologicalAnalyzer:
 
         return pairs
 
-    def _compute_2d_persistence(
-        self, filtration: List[Tuple[float, List[int]]]
-    ) -> List[PersistencePair]:
+    def _compute_2d_persistence(self, filtration: List[Tuple[float, List[int]]]) -> List[PersistencePair]:
         """Compute 2-dimensional persistence (voids)"""
         # Placeholder for 2D persistence
         return []
 
-    def compute_bottleneck_distance(
-        self, diagram1: PersistenceDiagram, diagram2: PersistenceDiagram
-    ) -> float:
+    def compute_bottleneck_distance(self, diagram1: PersistenceDiagram, diagram2: PersistenceDiagram) -> float:
         """Compute bottleneck distance between two persistence diagrams"""
         arr1 = diagram1.to_array()
         arr2 = diagram2.to_array()
@@ -276,11 +260,9 @@ class TopologicalAnalyzer:
             for j in range(n2):
                 cost_matrix[i, j] = arr2[j, 1] - arr2[j, 0]
 
-        return np.min(np.max(cost_matrix, axis=1))
+        return np.min(np.max(cost_matrix, axis = 1))
 
-    def compute_persistence_landscape(
-        self, diagram: PersistenceDiagram, resolution: int = 100
-    ) -> np.ndarray:
+    def compute_persistence_landscape(self, diagram: PersistenceDiagram, resolution: int = 100) -> np.ndarray:
         """Compute persistence landscape from diagram"""
         if not diagram.pairs:
             return np.zeros((1, resolution))
@@ -308,7 +290,7 @@ class TopologicalAnalyzer:
         # Stack and sort
         if landscapes:
             landscapes = np.vstack(landscapes)
-            landscapes = -np.sort(-landscapes, axis=0)  # Sort descending
+            landscapes = -np.sort(-landscapes, axis = 0)  # Sort descending
         else:
             landscapes = np.zeros((1, resolution))
 
@@ -318,6 +300,7 @@ class TopologicalAnalyzer:
 class UnionFind:
     """Union-Find data structure for connected components"""
 
+    """Magic method implementation."""
     def __init__(self):
         self.parent = {}
         self.rank = {}
@@ -355,13 +338,12 @@ class StructuralSignatureAnalyzer:
     """
     Analyzes topological signatures of DNA structures
     """
+        """Magic method implementation."""
 
     def __init__(self):
         self.analyzer = TopologicalAnalyzer()
 
-    def compute_dna_structural_signature(
-        self, contact_matrix: np.ndarray, threshold: float = 0.1
-    ) -> Dict[str, any]:
+    def compute_dna_structural_signature(self, contact_matrix: np.ndarray, threshold: float = 0.1) -> Dict[str, any]:
         """
         Compute topological signature from DNA contact matrix
 
@@ -381,21 +363,21 @@ class StructuralSignatureAnalyzer:
 
         # Extract topological features
         features = {
-            "num_loops": len(
-                [p for p in persistence_diagrams[1].pairs if p.persistence > PERSISTENCE_THRESHOLD]
-            ),
-            "num_domains": len(
-                [p for p in persistence_diagrams[0].pairs if p.persistence > PERSISTENCE_THRESHOLD]
-            ),
-            "max_loop_persistence": max(
-                [p.persistence for p in persistence_diagrams[1].pairs], default=0
-            ),
-            "total_persistence": sum(
-                p.persistence
+            "num_loops": len([
+                    p
+                    for p in persistence_diagrams[1].pairs
+                    if p.persistence > PERSISTENCE_THRESHOLD
+                ]),
+            "num_domains": len([
+                    p
+                    for p in persistence_diagrams[0].pairs
+                    if p.persistence > PERSISTENCE_THRESHOLD
+                ]),
+            "max_loop_persistence": max([p.persistence for p in persistence_diagrams[1].pairs], default = 0),
+            "total_persistence": sum(p.persistence
                 for d in persistence_diagrams.values()
                 for p in d.pairs
-                if p.death != float("inf")
-            ),
+                if p.death != float("inf")),
         }
 
         return {

@@ -4,9 +4,6 @@ Example usage of GenomeVault 3.0 integrated system.
 Demonstrates the complete workflow from data processing to proof generation.
 """
 import asyncio
-import json
-import time
-from pathlib import Path
 
 import numpy as np
 
@@ -20,7 +17,6 @@ from genomevault.pir.client import PIRClient, PIRServer
 
 # Import GenomeVault components
 from genomevault.utils.config import CompressionTier, NodeClass, config
-from genomevault.utils.logging import audit_logger, logger
 from genomevault.zk_proofs.prover import Prover
 
 
@@ -48,7 +44,7 @@ async def demonstrate_genomevault():
 
     # Calculate differential storage
     processor = SequencingProcessor()
-    diff_storage = processor.compute_differential_storage(variants)
+    processor.compute_differential_storage(variants)
     print("   Variants found: {len(variants)}")
     print("   Storage hash: {diff_storage['storage_hash'][:16]}...")
 
@@ -73,11 +69,13 @@ async def demonstrate_genomevault():
 
     print("   Genomic hypervector shape: {genomic_hv.shape}")
     print("   Clinical hypervector shape: {clinical_hv.shape}")
-    print("   Compression achieved: {config.get_compression_size(['genomics', 'clinical'])} KB")
+    print(
+        "   Compression achieved: {config.get_compression_size(['genomics', 'clinical'])} KB"
+    )
 
     # Cross-modal binding
     binder = HypervectorBinder()
-    bound_hv = binder.circular_convolution(genomic_hv, clinical_hv)
+    binder.circular_convolution(genomic_hv, clinical_hv)
     print("   Cross-modal binding complete")
 
     # Step 4: Zero-Knowledge Proof Generation
@@ -102,7 +100,9 @@ async def demonstrate_genomevault():
 
     print("   Proof ID: {diabetes_proof.proof_id}")
     print("   Proof size: {len(diabetes_proof.proof_data)} bytes")
-    print("   Generation time: {diabetes_proof.metadata['generation_time_seconds']*1000:.1f}ms")
+    print(
+        "   Generation time: {diabetes_proof.metadata['generation_time_seconds']*1000:.1f}ms"
+    )
 
     # Step 5: PIR Query (simulated)
     print("\n5. Private Information Retrieval")
@@ -118,10 +118,12 @@ async def demonstrate_genomevault():
     pir_client = PIRClient(servers[:4], database_size=1000000)
 
     # Show optimal configuration
-    optimal_config = pir_client.get_optimal_server_configuration()
+    pir_client.get_optimal_server_configuration()
     print("   Optimal PIR config: {optimal_config['optimal']['name']}")
     print("   Expected latency: {optimal_config['optimal']['latency_ms']}ms")
-    print("   Privacy guarantee: P_fail = {optimal_config['optimal']['failure_probability']:.2e}")
+    print(
+        "   Privacy guarantee: P_fail = {optimal_config['optimal']['failure_probability']:.2e}"
+    )
 
     # Step 6: Blockchain Integration
     print("\n6. Blockchain Node Setup")
@@ -203,15 +205,15 @@ def demonstrate_privacy_calculations():
 
     # PIR privacy calculations
     print("\nPIR Privacy Breach Probability:")
-    print("P_fail(k,q) = (1-q)^k")
-    print("\nFor HIPAA TS servers (q=0.98):")
+    print("P_fail(k, q) = (1-q)^k")
+    print("\nFor HIPAA TS servers (q = 0.98):")
     for k in range(1, 5):
-        p_fail = (1 - 0.98) ** k
+        (1 - 0.98) ** k
         print("  {k} servers: P_fail = {p_fail:.2e}")
 
-    print("\nFor generic servers (q=0.95):")
+    print("\nFor generic servers (q = 0.95):")
     for k in range(1, 6):
-        p_fail = (1 - 0.95) ** k
+        (1 - 0.95) ** k
         print("  {k} servers: P_fail = {p_fail:.2e}")
 
     # Minimum servers calculation
@@ -221,8 +223,8 @@ def demonstrate_privacy_calculations():
 
     import math
 
-    k_min_hipaa = math.ceil(math.log(target_failure) / math.log(1 - q_hipaa))
-    k_min_generic = math.ceil(math.log(target_failure) / math.log(1 - q_generic))
+    math.ceil(math.log(target_failure) / math.log(1 - q_hipaa))
+    math.ceil(math.log(target_failure) / math.log(1 - q_generic))
 
     print("\nMinimum servers for P_fail ≤ {target_failure}:")
     print("  HIPAA TS: {k_min_hipaa} servers")

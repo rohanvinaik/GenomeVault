@@ -5,7 +5,6 @@ Demonstrates the complete HIPAA verification and governance integration flow.
 """
 
 import asyncio
-from datetime import datetime, timedelta
 
 from genomevault.blockchain.governance import (
     CommitteeType,
@@ -35,13 +34,13 @@ async def demonstrate_hipaa_fasttrack():
     4. Special committee participation
     """
 
-    print("=" * 80)
+    print(" = " * 80)
     print("GenomeVault HIPAA Fast-Track Demonstration")
-    print("=" * 80)
+    print(" = " * 80)
 
     # Initialize components
     async with CMSNPIRegistry() as registry:
-        verifier = HIPAAVerifier(npi_registry=registry)
+        verifier = HIPAAVerifier(npi_registry = registry)
         governance = GovernanceSystem()
         integration = HIPAANodeIntegration(verifier, governance)
 
@@ -81,13 +80,11 @@ async def demonstrate_hipaa_fasttrack():
             print("  NPI: {provider['npi']}")
             print("  Type: {provider['description']}")
 
-            credentials = HIPAACredentials(
-                npi=provider["npi"],
-                baa_hash="a" * 64,  # Simulated BAA hash
-                risk_analysis_hash="b" * 64,  # Simulated risk analysis
-                hsm_serial="HSM-{provider['npi'][-6:]}",
-                provider_name=provider["name"],
-            )
+            credentials = HIPAACredentials(npi = provider["npi"],
+                baa_hash = "a" * 64,  # Simulated BAA hash
+                risk_analysis_hash = "b" * 64,  # Simulated risk analysis
+                hsm_serial = "HSM-{provider['npi'][-6:]}",
+                provider_name = provider["name"],)
 
             node_config = {
                 "node_class": provider["node_class"],
@@ -106,7 +103,7 @@ async def demonstrate_hipaa_fasttrack():
                 # Add to HIPAA committee
                 governance.committees[CommitteeType.SCIENTIFIC_ADVISORY].add_member(node.node_id)
 
-            except Exception as e:
+            except Exception:
                 print("  ✗ Registration failed: {e}")
 
         print("\n\nTotal governance voting power: {governance.total_voting_power}")
@@ -120,27 +117,25 @@ async def demonstrate_hipaa_fasttrack():
 
             print("\n{registered_nodes[0][0]['name']} creating clinical data proposal...")
 
-            proposal = governance.create_proposal(
-                proposer=proposer_node.node_id,
-                proposal_type=ProposalType.PROTOCOL_UPDATE,
-                title="Standardize Clinical Data Format for Diabetes Pilot",
-                description="""
+            proposal = governance.create_proposal(proposer = proposer_node.node_id,
+                proposal_type = ProposalType.PROTOCOL_UPDATE,
+                title = "Standardize Clinical Data Format for Diabetes Pilot",
+                description = """
                 Proposal to standardize the clinical data format for the diabetes
                 risk management pilot program. This will ensure interoperability
                 between different healthcare providers and improve patient outcomes.
-                
+
                 Key changes:
                 - Adopt FHIR R4 for all clinical data exchange
                 - Require LOINC codes for lab results
                 - Implement real-time glucose monitoring integration
                 - Add HbA1c trending requirements
                 """,
-                execution_data={
+                execution_data = {
                     "standard": "FHIR_R4",
                     "required_codes": ["LOINC", "SNOMED-CT"],
                     "pilot_duration_days": 180,
-                },
-            )
+                },)
 
             print("  ✓ Proposal created: {proposal.proposal_id}")
             print("  Voting period: {proposal.voting_period.days} days")
@@ -153,24 +148,21 @@ async def demonstrate_hipaa_fasttrack():
 
             # Healthcare providers vote
             for provider, node in registered_nodes:
-                choice = (
-                    "yes"
+                choice = ("yes"
                     if "Hospital" in provider["name"] or "Lab" in provider["name"]
-                    else "abstain"
-                )
+                    else "abstain")
 
-                vote = governance.vote(
-                    proposal_id=proposal.proposal_id,
-                    voter=node.node_id,
-                    choice=choice,
-                    voting_power=node.voting_power,
-                )
+                vote = governance.vote(proposal_id = proposal.proposal_id,
+                    voter = node.node_id,
+                    choice = choice,
+                    voting_power = node.voting_power,)
 
                 print("\n{provider['name']} voted: {choice}")
                 print("  Vote weight: {vote.vote_weight}")
 
                 # Show enhanced weight for committee members
-                if governance._get_committee_multiplier(node.node_id, proposal.proposal_type) > 1:
+                if (governance._get_committee_multiplier(node.node_id, proposal.proposal_type)
+                    > 1):
                     print("  ✓ Committee bonus applied!")
 
             # Add some non-HIPAA votes for comparison
@@ -179,19 +171,17 @@ async def demonstrate_hipaa_fasttrack():
                 voter_id = "regular_node_{i}"
                 choice = "yes" if i < 2 else "no"
 
-                vote = governance.vote(
-                    proposal_id=proposal.proposal_id,
-                    voter=voter_id,
-                    choice=choice,
-                    voting_power=50,  # Lower voting power
-                )
+                vote = governance.vote(proposal_id = proposal.proposal_id,
+                    voter = voter_id,
+                    choice = choice,
+                    voting_power = 50,  # Lower voting power)
 
                 print("Regular Node {i} voted: {choice} (weight: {vote.vote_weight})")
 
             # Check results
             print("\n\nProposal Results:")
             print("-" * 40)
-            details = governance.get_proposal_details(proposal.proposal_id)
+            governance.get_proposal_details(proposal.proposal_id)
 
             print("Total votes cast: {details['vote_count']}")
             print("Yes votes: {details['votes']['yes']:.1f}")
@@ -205,9 +195,7 @@ async def demonstrate_hipaa_fasttrack():
             print("-" * 40)
             print("\nHIPAA-Verified Nodes (Trusted Signatories):")
             for provider, node in registered_nodes:
-                print(
-                    "  {provider['name']:30} | Class: {node.node_type.name:7} | Power: {node.voting_power:3}"
-                )
+                print("  {provider['name']:30} | Class: {node.node_type.name:7} | Power: {node.voting_power:3}")
 
             print("\nRegular Nodes (Non-signatories):")
             print("  {'Regular Light Node':30} | Class: {'LIGHT':7} | Power: {1:3}")
@@ -218,8 +206,7 @@ async def demonstrate_hipaa_fasttrack():
 
         print("\n\n4. BENEFITS SUMMARY")
         print("-" * 40)
-        print(
-            """
+        print("""
 The HIPAA Fast-Track system provides:
 
 1. STREAMLINED ONBOARDING
@@ -241,15 +228,14 @@ The HIPAA Fast-Track system provides:
    - Higher honesty probability (0.98 vs 0.95)
    - Annual verification renewal
    - Automated compliance tracking
-        """
-        )
+        """)
 
         # Cleanup demonstration
         print("\n\n5. VERIFICATION MANAGEMENT")
         print("-" * 40)
 
         print("\nRefreshing verifications...")
-        refresh_results = await integration.refresh_verifications()
+        await integration.refresh_verifications()
         print("  Active nodes: {refresh_results['active_nodes']}")
         print("  Expired verifications: {refresh_results['expired_verifications']}")
         print("  Revoked nodes: {refresh_results['revoked_nodes']}")
@@ -259,28 +245,24 @@ The HIPAA Fast-Track system provides:
             test_npi = registered_nodes[-1][0]["npi"]
             print("\nDemonstrating revocation for NPI {test_npi}...")
 
-            success = await integration.revoke_provider_node(
-                npi=test_npi, reason="Demonstration of revocation process"
-            )
+            success = await integration.revoke_provider_node(npi = test_npi, reason = "Demonstration of revocation process")
 
             if success:
                 print("  ✓ Verification revoked")
                 print("  ✓ Node removed from network")
                 print("  ✓ Voting power updated")
 
-        print("\n" + "=" * 80)
+        print("\n" + " = " * 80)
         print("HIPAA Fast-Track Demonstration Complete!")
-        print("=" * 80)
+        print(" = " * 80)
 
 
 if __name__ == "__main__":
     # Configure logging
     import logging
 
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    )
+    logging.basicConfig(level = logging.INFO,
+        format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s",)
 
     # Run demonstration
     asyncio.run(demonstrate_hipaa_fasttrack())

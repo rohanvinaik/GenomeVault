@@ -60,9 +60,11 @@ def process_and_encode_genome(vcf_path: str):
     # Tier compression
     print("\nPhase 2b: Tiered compression...")
     compressor = TieredCompressor(CompressionTier.CLINICAL)
-    compressed = compressor.compress({"hypervector": genomic_hv, **genomic_data}, OmicsType.GENOMIC)
+    compressed = compressor.compress(
+        {"hypervector": genomic_hv, **genomic_data}, OmicsType.GENOMIC
+    )
 
-    print("  - Clinical tier size: {compressed.compressed_size:,} bytes")
+    print("  - Clinical tier size: {compressed.compressed_size:, } bytes")
     print("  - Total compression: {original_size / compressed.compressed_size:.1f}:1")
 
     return genomic_hv, compressed, genomic_data
@@ -93,7 +95,7 @@ def demonstrate_variant_encoding(genomic_data: dict):
         print("  - Holographic dimension: {variant_hv.shape[0]}")
 
         # Query for chromosome
-        chr_recovered = holo_encoder.query(variant_hv, "chr")
+        holo_encoder.query(variant_hv, "chr")
         print("  - Can query components without exposing raw data")
 
     return variant_hv if genomic_data["variants"]["snps"] else None
@@ -199,7 +201,9 @@ def main():
                     {"chr": "chr1", "pos": 200, "re": "C", "alt": "T", "quality": 40},
                     {"chr": "chr2", "pos": 300, "re": "G", "alt": "A", "quality": 35},
                 ],
-                "indels": [{"chr": "chr3", "pos": 400, "re": "AT", "alt": "A", "quality": 25}],
+                "indels": [
+                    {"chr": "chr3", "pos": 400, "re": "AT", "alt": "A", "quality": 25}
+                ],
                 "cnvs": [],
             },
             "quality_metrics": {
@@ -230,16 +234,16 @@ def main():
             "\nPhase 1: Simulated processing of {genomic_data['summary']['total_variants']} variants"
         )
         print("Phase 2: Encoded to {genomic_hv.shape[0]}D hypervector")
-        print("Compressed to {compressed.compressed_size:,} bytes")
+        print("Compressed to {compressed.compressed_size:, } bytes")
 
     else:
         # Process real VCF file
         genomic_hv, compressed, genomic_data = process_and_encode_genome(vcf_path)
 
     # Demonstrate additional features
-    variant_hv = demonstrate_variant_encoding(genomic_data)
+    demonstrate_variant_encoding(genomic_data)
     demonstrate_privacy_preservation(genomic_hv)
-    combined_hv = simulate_multi_omics_integration()
+    simulate_multi_omics_integration()
 
     print("\n=== Integration Complete ===")
     print("\nKey Points:")

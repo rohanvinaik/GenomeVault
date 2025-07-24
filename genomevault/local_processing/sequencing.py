@@ -97,7 +97,9 @@ class GenomicProfile:
             "sample_id": self.sample_id,
             "reference": self.reference_genome,
             "variant_count": len(self.variants),
-            "variant_hashes": [secure_hash(v.get_id().encode()) for v in self.variants[:100]],
+            "variant_hashes": [
+                secure_hash(v.get_id().encode()) for v in self.variants[:100]
+            ],
         }
         return secure_hash(json.dumps(data, sort_keys=True).encode())
 
@@ -453,11 +455,15 @@ class SequencingProcessor:
                 sample_fields = parts[9].split(":")
 
                 gt_idx = format_fields.index("GT") if "GT" in format_fields else 0
-                genotype = sample_fields[gt_idx] if gt_idx < len(sample_fields) else "0/0"
+                genotype = (
+                    sample_fields[gt_idx] if gt_idx < len(sample_fields) else "0/0"
+                )
 
                 dp_idx = format_fields.index("DP") if "DP" in format_fields else -1
                 depth = (
-                    int(sample_fields[dp_idx]) if dp_idx >= 0 and dp_idx < len(sample_fields) else 0
+                    int(sample_fields[dp_idx])
+                    if dp_idx >= 0 and dp_idx < len(sample_fields)
+                    else 0
                 )
 
                 # Create variant
@@ -527,7 +533,9 @@ class DifferentialStorage:
             Compressed representation
         """
         # Sort variants by position
-        sorted_variants = sorted(profile.variants, key=lambda v: (v.chromosome, v.position))
+        sorted_variants = sorted(
+            profile.variants, key=lambda v: (v.chromosome, v.position)
+        )
 
         # Chunk variants
         chunks = []

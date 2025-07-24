@@ -4,9 +4,9 @@ from typing import Any, Dict, List
 GenomeVault Compression System - Multi-tier implementation
 
 Implements the three-tier compression system as specified:
-- Mini tier: ~25KB - 5,000 most-studied SNPs
+- Mini tier: ~25KB - 5, 000 most-studied SNPs
 - Clinical tier: ~300KB - ACMG + PharmGKB variants (~120k)
-- Full HDC tier: 100-200KB per modality - 10,000-D vectors
+- Full HDC tier: 100-200KB per modality - 10, 000-D vectors
 """
 
 import gzip
@@ -29,7 +29,7 @@ class CompressionProfile:
     max_size_kb: int
     feature_count: int
     description: str
-    omics_types: List[OmicsType] = field(default_factory=list)
+    omics_types: List[OmicsType] = field(default_factory = list)
 
 
 @dataclass
@@ -58,33 +58,27 @@ class CompressionEngine:
 
     # Compression profiles as per specification
     COMPRESSION_PROFILES = {
-        CompressionTier.MINI: CompressionProfile(
-            tier=CompressionTier.MINI,
-            max_size_kb=25,
-            feature_count=5000,
-            description="Most-studied SNPs only",
-            omics_types=[OmicsType.GENOMIC],
-        ),
-        CompressionTier.CLINICAL: CompressionProfile(
-            tier=CompressionTier.CLINICAL,
-            max_size_kb=300,
-            feature_count=120000,
-            description="ACMG + PharmGKB variants",
-            omics_types=[OmicsType.GENOMIC, OmicsType.PHENOTYPIC],
-        ),
-        CompressionTier.FULL: CompressionProfile(
-            tier=CompressionTier.FULL,
-            max_size_kb=200,  # per modality
-            feature_count=10000,  # hypervector dimensions
-            description="Full HDC vectors per modality",
-            omics_types=[
+        CompressionTier.MINI: CompressionProfile(tier = CompressionTier.MINI,
+            max_size_kb = 25,
+            feature_count = 5000,
+            description = "Most-studied SNPs only",
+            omics_types = [OmicsType.GENOMIC],),
+        CompressionTier.CLINICAL: CompressionProfile(tier = CompressionTier.CLINICAL,
+            max_size_kb = 300,
+            feature_count = 120000,
+            description = "ACMG + PharmGKB variants",
+            omics_types = [OmicsType.GENOMIC, OmicsType.PHENOTYPIC],),
+        CompressionTier.FULL: CompressionProfile(tier = CompressionTier.FULL,
+            max_size_kb = 200,  # per modality
+            feature_count = 10000,  # hypervector dimensions
+            description = "Full HDC vectors per modality",
+            omics_types = [
                 OmicsType.GENOMIC,
                 OmicsType.TRANSCRIPTOMIC,
                 OmicsType.EPIGENETIC,
                 OmicsType.PROTEOMIC,
                 OmicsType.PHENOTYPIC,
-            ],
-        ),
+            ],),
     }
 
     def __init__(self):
@@ -96,7 +90,7 @@ class CompressionEngine:
         """Load reference variant databases for compression tiers"""
         # In production, these would be loaded from actual databases
         databases = {
-            "most_studied_snps": [],  # Top 5,000 SNPs
+            "most_studied_snps": [],  # Top 5, 000 SNPs
             "acmg_variants": [],  # ACMG secondary findings
             "pharmgkb_variants": [],  # PharmGKB pharmacogenomic variants
         }
@@ -106,9 +100,7 @@ class CompressionEngine:
 
         return databases
 
-    def compress(
-        self, data: Dict[str, Any], tier: CompressionTier, sample_id: str
-    ) -> CompressedData:
+    def compress(self, data: Dict[str, Any], tier: CompressionTier, sample_id: str) -> CompressedData:
         """
         Compress multi-omics data according to specified tier.
 
@@ -132,7 +124,7 @@ class CompressionEngine:
             compressed_dict = self._compress_full_tier(data)
 
         # Convert to binary format
-        json_str = json.dumps(compressed_dict, separators=(",", ":"))
+        json_str = json.dumps(compressed_dict, separators = (", ", ":"))
         compressed_bytes = gzip.compress(json_str.encode("utf-8"))
 
         # Verify size constraints
@@ -141,39 +133,35 @@ class CompressionEngine:
 
         # For full tier, multiply by number of modalities
         if tier == CompressionTier.FULL:
-            modalities_included = len(
-                [
+            modalities_included = len([
                     k
                     for k in data.keys()
                     if k in ["genomic", "transcriptomic", "epigenetic", "proteomic"]
-                ]
-            )
+                ])
             max_size = profile.max_size_kb * modalities_included
 
         if size_kb > max_size:
             logger.warning("Compressed size {size_kb:.1f}KB exceeds target {max_size}KB")
 
         # Create compressed data package
-        compressed_data = CompressedData(
-            sample_id=sample_id,
-            tier=tier,
-            data=compressed_bytes,
-            size_bytes=len(compressed_bytes),
-            checksum=hashlib.sha256(compressed_bytes).hexdigest(),
-            metadata={
+        compressed_data = CompressedData(sample_id = sample_id,
+            tier = tier,
+            data = compressed_bytes,
+            size_bytes = len(compressed_bytes),
+            checksum = hashlib.sha256(compressed_bytes).hexdigest(),
+            metadata = {
                 "compression_version": "1.0",
                 "profile": profile.description,
                 "features_included": len(compressed_dict.get("features", [])),
             },
-            omics_included=[o for o in OmicsType if o.value in data],
-        )
+            omics_included = [o for o in OmicsType if o.value in data],)
 
         logger.info("Compression complete: {size_kb:.1f}KB ({tier.value} tier)")
         return compressed_data
 
     def _compress_mini_tier(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Mini tier compression: ~25KB with 5,000 most-studied SNPs.
+        Mini tier compression: ~25KB with 5, 000 most-studied SNPs.
         """
         compressed = {"tier": CompressionTier.MINI.value, "features": []}
 
@@ -184,13 +172,11 @@ class CompressionEngine:
             # Filter to most studied SNPs
             for variant in variants:
                 if variant.get("rsid") in self.variant_databases["most_studied_snps"]:
-                    compressed["features"].append(
-                        {
+                    compressed["features"].append({
                             "id": variant["rsid"],
                             "gt": variant.get("genotype", "0/0"),  # Compact genotype
                             "a": round(variant.get("allele_frequency", 0), 3),
-                        }
-                    )
+                        })
 
                 if len(compressed["features"]) >= 5000:
                     break
@@ -224,8 +210,7 @@ class CompressionEngine:
                 is_pharmgkb = self._is_pharmgkb_variant(variant)
 
                 if is_acmg or is_pharmgkb:
-                    clinical_variants.append(
-                        {
+                    clinical_variants.append({
                             "chr": variant["chromosome"],
                             "pos": variant["position"],
                             "re": variant["reference"],
@@ -238,8 +223,7 @@ class CompressionEngine:
                                 "gene": variant.get("gene", ""),
                                 "impact": variant.get("impact", ""),
                             },
-                        }
-                    )
+                        })
 
             compressed["genomic"]["variants"] = clinical_variants[:120000]
 
@@ -256,7 +240,7 @@ class CompressionEngine:
             "re": "GRCh38",
             "date": data.get("metadata", {}).get("date", ""),
             "n_vars": len(compressed["genomic"].get("variants", [])),
-            "clinical_version": "ACMG-v3.0,PharmGKB-2024",
+            "clinical_version": "ACMG-v3.0, PharmGKB-2024",
         }
 
         return compressed
@@ -273,9 +257,7 @@ class CompressionEngine:
                 # In practice, this would use the actual hypervector encoder
                 # For now, simulate with compressed representation
                 compressed["modalities"][modality] = {
-                    "hypervector": self._create_mock_hypervector(
-                        data[modality], 10000  # 10,000-D as specified
-                    ),
+                    "hypervector": self._create_mock_hypervector(data[modality], 10000  # 10, 000-D as specified),
                     "stats": self._extract_modality_stats(data[modality]),
                 }
 
@@ -380,14 +362,12 @@ class CompressionEngine:
         In production, this would use the actual hypervector encoder.
         """
         # Simulate by creating a hash-based compact representation
-        data_str = json.dumps(modality_data, sort_keys=True)
+        data_str = json.dumps(modality_data, sort_keys = True)
         base_hash = hashlib.sha256(data_str.encode()).digest()
 
         # Expand to create pseudo-hypervector (compressed representation)
         # In practice, this would be the actual HDC encoding
-        expanded = hashlib.pbkdf2_hmac(
-            "sha256", base_hash, b"genomevault", iterations=100, dklen=dimensions // 8
-        )
+        expanded = hashlib.pbkdf2_hmac("sha256", base_hash, b"genomevault", iterations = 100, dklen = dimensions // 8)
 
         # Convert to base64 for compact string representation
         import base64
@@ -451,9 +431,7 @@ class CompressionEngine:
 
         return data
 
-    def calculate_storage_requirements(
-        self, tiers: List[CompressionTier], modalities: List[OmicsType]
-    ) -> Dict[str, Any]:
+    def calculate_storage_requirements(self, tiers: List[CompressionTier], modalities: List[OmicsType]) -> Dict[str, Any]:
         """
         Calculate storage requirements for given tiers and modalities.
 
@@ -500,36 +478,30 @@ if __name__ == "__main__":
 
     # Example: Calculate storage for different configurations
     print("Storage Requirements Examples:")
-    print("=" * 50)
+    print(" = " * 50)
 
     # Example 1: Mini genomics only
     req1 = engine.calculate_storage_requirements([CompressionTier.MINI], [OmicsType.GENOMIC])
     print("Mini genomics only: {req1['total_size_kb']} KB")
 
     # Example 2: Clinical pharmacogenomics
-    req2 = engine.calculate_storage_requirements(
-        [CompressionTier.CLINICAL], [OmicsType.GENOMIC, OmicsType.PHENOTYPIC]
-    )
+    req2 = engine.calculate_storage_requirements([CompressionTier.CLINICAL], [OmicsType.GENOMIC, OmicsType.PHENOTYPIC])
     print("Clinical tier: {req2['total_size_kb']} KB")
 
     # Example 3: Mini + Clinical (as specified in docs)
-    req3 = engine.calculate_storage_requirements(
-        [CompressionTier.MINI, CompressionTier.CLINICAL],
-        [OmicsType.GENOMIC, OmicsType.PHENOTYPIC],
-    )
+    req3 = engine.calculate_storage_requirements([CompressionTier.MINI, CompressionTier.CLINICAL],
+        [OmicsType.GENOMIC, OmicsType.PHENOTYPIC],)
     print("Mini + Clinical: {req3['total_size_kb']} KB")
 
     # Example 4: Full multi-omics
-    req4 = engine.calculate_storage_requirements(
-        [CompressionTier.FULL],
+    req4 = engine.calculate_storage_requirements([CompressionTier.FULL],
         [
             OmicsType.GENOMIC,
             OmicsType.TRANSCRIPTOMIC,
             OmicsType.EPIGENETIC,
             OmicsType.PROTEOMIC,
-        ],
-    )
+        ],)
     print("Full multi-omics (4 modalities): {req4['total_size_kb']} KB")
 
     print("\nDetailed breakdown:")
-    print(json.dumps(req4, indent=2))
+    print(json.dumps(req4, indent = 2))

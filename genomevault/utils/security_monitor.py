@@ -9,7 +9,6 @@ This module provides:
 - Security event correlation
 - Automated response to security threats
 """
-import time
 
 
 import json
@@ -38,21 +37,19 @@ class SecurityMonitor:
         self.blocked_ips = set()
 
         # Anomaly detection model
-        self.anomaly_detector = IsolationForest(contamination=0.01, random_state=42)
+        self.anomaly_detector = IsolationForest(contamination = 0.01, random_state = 42)
         self.is_trained = False
 
         # Alert callbacks
         self.alert_callbacks = []
 
-    async def monitor_access(
-        self,
+    async def monitor_access(self,
         user_id: str,
         resource: str,
         action: str,
         success: bool,
         ip_address: str,
-        metadata: Optional[Dict] = None,
-    ):
+        metadata: Optional[Dict] = None,):
         """Monitor access attempts for security threats"""
 
         # Record access attempt
@@ -68,12 +65,10 @@ class SecurityMonitor:
 
         # Check if IP is blocked
         if ip_address in self.blocked_ips:
-            security_logger.log_intrusion_attempt(
-                source_ip=ip_address,
-                attack_type="blocked_ip_access",
-                target=resource,
-                blocked=True,
-            )
+            security_logger.log_intrusion_attempt(source_ip = ip_address,
+                attack_type = "blocked_ip_access",
+                target = resource,
+                blocked = True,)
             return False
 
         # Track failed attempts
@@ -105,26 +100,20 @@ class SecurityMonitor:
 
         # Check for unusual data volume
         if volume > self._get_volume_threshold(data_type):
-            security_logger.log_intrusion_attempt(
-                source_ip="internal",
-                attack_type="data_exfiltration_attempt",
-                target="{data_type}:{operation}",
-                blocked=False,
-            )
+            security_logger.log_intrusion_attempt(source_ip = "internal",
+                attack_type = "data_exfiltration_attempt",
+                target = "{data_type}:{operation}",
+                blocked = False,)
 
-            await self._trigger_alert(
-                "data_exfiltration_risk",
+            await self._trigger_alert("data_exfiltration_risk",
                 {
                     "user_id": user_id,
                     "data_type": data_type,
                     "volume": volume,
                     "operation": operation,
-                },
-            )
+                },)
 
-    async def monitor_privacy_violations(
-        self, violation_type: str, user_id: str, details: Dict[str, Any]
-    ):
+    async def monitor_privacy_violations(self, violation_type: str, user_id: str, details: Dict[str, Any]):
         """Monitor and respond to privacy violations"""
 
         # Log violation
@@ -137,43 +126,33 @@ class SecurityMonitor:
             # Immediate response for critical violations
             await self._block_user(user_id, "Critical privacy violation: {violation_type}")
 
-        await self._trigger_alert(
-            "privacy_violation",
+        await self._trigger_alert("privacy_violation",
             {
                 "violation_type": violation_type,
                 "user_id": user_id,
                 "severity": severity,
                 "details": details,
-            },
-        )
+            },)
 
-    async def monitor_cryptographic_operations(
-        self, operation: str, key_id: Optional[str] = None, algorithm: str = None
-    ):
+    async def monitor_cryptographic_operations(self, operation: str, key_id: Optional[str] = None, algorithm: str = None):
         """Monitor cryptographic operations for suspicious activity"""
 
         # Check for deprecated algorithms
         deprecated_algorithms = {"MD5", "SHA1", "DES", "3DES"}
         if algorithm and algorithm.upper() in deprecated_algorithms:
-            security_logger.log_intrusion_attempt(
-                source_ip="internal",
-                attack_type="deprecated_crypto_usage",
-                target="{operation}:{algorithm}",
-                blocked=False,
-            )
+            security_logger.log_intrusion_attempt(source_ip = "internal",
+                attack_type = "deprecated_crypto_usage",
+                target = "{operation}:{algorithm}",
+                blocked = False,)
 
-            await self._trigger_alert(
-                "deprecated_crypto",
-                {"operation": operation, "algorithm": algorithm, "key_id": key_id},
-            )
+            await self._trigger_alert("deprecated_crypto",
+                {"operation": operation, "algorithm": algorithm, "key_id": key_id},)
 
     async def _detect_anomaly(self, user_id: str, access_event: Dict) -> bool:
         """Detect anomalous access patterns using ML"""
 
         # Extract features from access history
-        features = self._extract_access_features(
-            self.access_patterns[user_id][-100:]  # Last 100 events
-        )
+        features = self._extract_access_features(self.access_patterns[user_id][-100:]  # Last 100 events)
 
         # Predict anomaly
         anomaly_score = self.anomaly_detector.decision_function([features])[0]
@@ -182,12 +161,10 @@ class SecurityMonitor:
         is_anomaly = anomaly_score < -self.threat_threshold
 
         if is_anomaly:
-            logger.warning(
-                "anomaly_detected",
-                user_id=user_id,
-                anomaly_score=anomaly_score,
-                access_event=access_event,
-            )
+            logger.warning("anomaly_detected",
+                user_id = user_id,
+                anomaly_score = anomaly_score,
+                access_event = access_event,)
 
         return is_anomaly
 
@@ -211,10 +188,10 @@ class SecurityMonitor:
                 self.anomaly_detector.fit(X)
                 self.is_trained = True
 
-                logger.info("anomaly_detector_trained", training_samples=len(all_features))
+                logger.info("anomaly_detector_trained", training_samples = len(all_features))
 
         except Exception as e:
-            logger.error("anomaly_detector_training_failed", error=str(e))
+            logger.error("anomaly_detector_training_failed", error = str(e))
 
     def _extract_access_features(self, events: List[Dict]) -> List[float]:
         """Extract features from access event sequence"""
@@ -225,7 +202,8 @@ class SecurityMonitor:
         # Time-based features
         timestamps = [e["timestamp"] for e in events]
         time_deltas = [
-            (timestamps[i + 1] - timestamps[i]).total_seconds() for i in range(len(timestamps) - 1)
+            (timestamps[i + 1] - timestamps[i]).total_seconds()
+            for i in range(len(timestamps) - 1)
         ]
 
         # Access pattern features
@@ -258,23 +236,19 @@ class SecurityMonitor:
         self.blocked_ips.add(ip_address)
 
         # Log intrusion
-        security_logger.log_intrusion_attempt(
-            source_ip=ip_address,
-            attack_type="brute_force",
-            target=resource,
-            blocked=True,
-        )
+        security_logger.log_intrusion_attempt(source_ip = ip_address,
+            attack_type = "brute_force",
+            target = resource,
+            blocked = True,)
 
         # Trigger alert
-        await self._trigger_alert(
-            "brute_force_attack",
+        await self._trigger_alert("brute_force_attack",
             {
                 "ip_address": ip_address,
                 "user_id": user_id,
                 "resource": resource,
                 "failed_attempts": self.failed_attempts[ip_address],
-            },
-        )
+            },)
 
         # Reset counter
         self.failed_attempts[ip_address] = 0
@@ -282,21 +256,17 @@ class SecurityMonitor:
     async def _handle_anomaly(self, user_id: str, access_event: Dict):
         """Handle detected anomaly"""
 
-        security_logger.log_intrusion_attempt(
-            source_ip=access_event.get("ip_address", "unknown"),
-            attack_type="anomalous_access_pattern",
-            target=access_event["resource"],
-            blocked=False,
-        )
+        security_logger.log_intrusion_attempt(source_ip = access_event.get("ip_address", "unknown"),
+            attack_type = "anomalous_access_pattern",
+            target = access_event["resource"],
+            blocked = False,)
 
-        await self._trigger_alert(
-            "anomalous_access", {"user_id": user_id, "access_event": access_event}
-        )
+        await self._trigger_alert("anomalous_access", {"user_id": user_id, "access_event": access_event})
 
     async def _block_user(self, user_id: str, reason: str):
         """Block a user account"""
 
-        logger.warning("user_blocked", user_id=user_id, reason=reason)
+        logger.warning("user_blocked", user_id = user_id, reason = reason)
 
         # This would integrate with the authentication system
         # to actually block the user
@@ -312,14 +282,14 @@ class SecurityMonitor:
         }
 
         # Log alert
-        logger.warning("security_alert", alert_type=alert_type, **details)
+        logger.warning("security_alert", alert_type = alert_type, **details)
 
         # Execute callbacks
         for callback in self.alert_callbacks:
             try:
                 await callback(alert)
             except Exception as e:
-                logger.error("alert_callback_failed", callback=callback.__name__, error=str(e))
+                logger.error("alert_callback_failed", callback = callback.__name__, error = str(e))
 
     def _get_volume_threshold(self, data_type: str) -> int:
         """Get volume threshold for data type"""
@@ -399,32 +369,27 @@ class ComplianceMonitor:
 
             unnecessary_access = set(data_fields) - set(necessary_fields)
             if unnecessary_access:
-                await self._record_violation(
-                    "hipaa_minimum_necessary",
+                await self._record_violation("hipaa_minimum_necessary",
                     {
                         "operation": operation,
                         "unnecessary_fields": list(unnecessary_access),
                         "user_id": context.get("user_id"),
-                    },
-                )
+                    },)
                 return False
 
         # Audit trail requirement
         if operation in ["data_access", "data_modification", "data_deletion"]:
             if not context.get("audit_logged"):
-                await self._record_violation(
-                    "hipaa_audit_trail_missing",
-                    {"operation": operation, "context": context},
-                )
+                await self._record_violation("hipaa_audit_trail_missing",
+                    {"operation": operation, "context": context},)
                 return False
 
         # Encryption requirement
         if operation == "data_transmission":
-            if not context.get("encrypted") or context.get("encryption_algorithm") == "none":
-                await self._record_violation(
-                    "hipaa_encryption_missing",
-                    {"operation": operation, "context": context},
-                )
+            if (not context.get("encrypted")
+                or context.get("encryption_algorithm") == "none"):
+                await self._record_violation("hipaa_encryption_missing",
+                    {"operation": operation, "context": context},)
                 return False
 
         return True
@@ -435,38 +400,32 @@ class ComplianceMonitor:
         # Consent verification
         if operation in ["data_collection", "data_processing"]:
             if not context.get("consent_verified"):
-                await self._record_violation(
-                    "gdpr_consent_missing",
+                await self._record_violation("gdpr_consent_missing",
                     {
                         "operation": operation,
                         "user_id": context.get("user_id"),
                         "data_type": context.get("data_type"),
-                    },
-                )
+                    },)
                 return False
 
         # Right to erasure
         if operation == "deletion_request":
             if context.get("deletion_blocked"):
-                await self._record_violation(
-                    "gdpr_right_to_erasure_blocked",
+                await self._record_violation("gdpr_right_to_erasure_blocked",
                     {
                         "user_id": context.get("user_id"),
                         "reason": context.get("block_reason"),
-                    },
-                )
+                    },)
                 return False
 
         # Data portability
         if operation == "export_request":
             if not context.get("machine_readable_format"):
-                await self._record_violation(
-                    "gdpr_portability_format",
+                await self._record_violation("gdpr_portability_format",
                     {
                         "user_id": context.get("user_id"),
                         "format": context.get("export_format"),
-                    },
-                )
+                    },)
                 return False
 
         return True
@@ -483,20 +442,16 @@ class ComplianceMonitor:
         self.violations.append(violation)
 
         # Log to audit system
-        audit_logger.log_data_access(
-            user_id="system",
-            resource_type="compliance",
-            resource_id=violation_type,
-            action="violation_recorded",
-            success=True,
-            reason=json.dumps(details),
-        )
+        audit_logger.log_data_access(user_id = "system",
+            resource_type = "compliance",
+            resource_id = violation_type,
+            action = "violation_recorded",
+            success = True,
+            reason = json.dumps(details),)
 
-        logger.warning("compliance_violation", violation_type=violation_type, **details)
+        logger.warning("compliance_violation", violation_type = violation_type, **details)
 
-    def get_compliance_report(
-        self, start_date: Optional[datetime] = None, end_date: Optional[datetime] = None
-    ) -> Dict[str, Any]:
+    def get_compliance_report(self, start_date: Optional[datetime] = None, end_date: Optional[datetime] = None) -> Dict[str, Any]:
         """Generate compliance report"""
 
         # Filter violations by date
@@ -520,7 +475,9 @@ class ComplianceMonitor:
                 "end": end_date.isoformat() if end_date else None,
             },
             "total_violations": len(filtered_violations),
-            "violations_by_type": {vtype: len(violations) for vtype, violations in by_type.items()},
+            "violations_by_type": {
+                vtype: len(violations) for vtype, violations in by_type.items()
+            },
             "violations": filtered_violations,
             "generated_at": datetime.utcnow().isoformat(),
         }

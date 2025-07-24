@@ -9,7 +9,6 @@ Implements the DAO governance framework with:
 - Proposal management
 - HIPAA oracle for fast-track verification
 """
-import time
 
 
 import hashlib
@@ -85,7 +84,7 @@ class Proposal:
     status: ProposalStatus
 
     # Voting data
-    votes: List[VoteRecord] = field(default_factory=list)
+    votes: List[VoteRecord] = field(default_factory = list)
     yes_votes: float = 0.0
     no_votes: float = 0.0
     abstain_votes: _ = 0.0
@@ -161,12 +160,10 @@ class VotingMechanism(ABC):
     @abstractmethod
     def calculate_vote_weight(self, voting_power: int, choice: str) -> float:
         """Calculate vote weight based on mechanism"""
-        pass
 
     @abstractmethod
     def get_cost(self, voting_power: int, choice: str) -> int:
         """Get cost of vote (for quadratic voting)"""
-        pass
 
 
 class SimpleVoting(VotingMechanism):
@@ -277,81 +274,71 @@ class GovernanceSystem:
 
         # Voting parameters
         self.proposal_threshold = 100  # Min voting power to create proposal
-        self.voting_period = timedelta(days=7)
-        self.execution_delay = timedelta(days=2)
+        self.voting_period = timedelta(days = 7)
+        self.execution_delay = timedelta(days = 2)
 
         logger.info("Governance system initialized")
 
     def _initialize_committees(self):
         """Initialize governance committees"""
         # Scientific Advisory Board
-        self.committees[CommitteeType.SCIENTIFIC_ADVISORY] = Committee(
-            committee_type=CommitteeType.SCIENTIFIC_ADVISORY,
-            members=set(),
-            chair=None,
-            term_end=datetime.now() + timedelta(days=365),
-            responsibilities=[
+        self.committees[CommitteeType.SCIENTIFIC_ADVISORY] = Committee(committee_type = CommitteeType.SCIENTIFIC_ADVISORY,
+            members = set(),
+            chair = None,
+            term_end = datetime.now() + timedelta(days = 365),
+            responsibilities = [
                 "Algorithm validation",
                 "Reference standard updates",
                 "Research protocol approval",
                 "Scientific integrity oversight",
             ],
-            voting_weight_multiplier=1.5,
-        )
+            voting_weight_multiplier = 1.5,)
 
         # Ethics Committee
-        self.committees[CommitteeType.ETHICS] = Committee(
-            committee_type=CommitteeType.ETHICS,
-            members=set(),
-            chair=None,
-            term_end=datetime.now() + timedelta(days=365),
-            responsibilities=[
+        self.committees[CommitteeType.ETHICS] = Committee(committee_type = CommitteeType.ETHICS,
+            members = set(),
+            chair = None,
+            term_end = datetime.now() + timedelta(days = 365),
+            responsibilities = [
                 "Privacy protection policies",
                 "Consent framework updates",
                 "Ethical research guidelines",
                 "Vulnerable population protections",
             ],
-            voting_weight_multiplier=1.3,
-        )
+            voting_weight_multiplier = 1.3,)
 
         # Security Council
-        self.committees[CommitteeType.SECURITY] = Committee(
-            committee_type=CommitteeType.SECURITY,
-            members=set(),
-            chair=None,
-            term_end=datetime.now() + timedelta(days=180),
-            responsibilities=[
+        self.committees[CommitteeType.SECURITY] = Committee(committee_type = CommitteeType.SECURITY,
+            members = set(),
+            chair = None,
+            term_end = datetime.now() + timedelta(days = 180),
+            responsibilities = [
                 "Threat monitoring",
                 "Incident response",
                 "Security parameter updates",
                 "Emergency actions",
             ],
-            voting_weight_multiplier=2.0,  # Higher for emergency actions
-        )
+            voting_weight_multiplier = 2.0,  # Higher for emergency actions)
 
         # User Representatives
-        self.committees[CommitteeType.USER_REPRESENTATIVES] = Committee(
-            committee_type=CommitteeType.USER_REPRESENTATIVES,
-            members=set(),
-            chair=None,
-            term_end=datetime.now() + timedelta(days=365),
-            responsibilities=[
+        self.committees[CommitteeType.USER_REPRESENTATIVES] = Committee(committee_type = CommitteeType.USER_REPRESENTATIVES,
+            members = set(),
+            chair = None,
+            term_end = datetime.now() + timedelta(days = 365),
+            responsibilities = [
                 "User experience feedback",
                 "Community concerns",
                 "Accessibility requirements",
                 "User education initiatives",
             ],
-            voting_weight_multiplier=1.0,
-        )
+            voting_weight_multiplier = 1.0,)
 
-    def create_proposal(
-        self,
+    def create_proposal(self,
         proposer: str,
         proposal_type: ProposalType,
         title: str,
         description: str,
-        execution_data: Optional[Dict[str, Any]] = None,
-    ) -> Proposal:
+        execution_data: Optional[Dict[str, Any]] = None,) -> Proposal:
         """
         Create a new governance proposal.
 
@@ -368,13 +355,9 @@ class GovernanceSystem:
         # Check proposer has sufficient voting power
         proposer_power = self._get_voting_power(proposer)
         if proposer_power < self.proposal_threshold:
-            raise ValueError(
-                "Insufficient voting power: {proposer_power} < {self.proposal_threshold}"
-            ) from e
+            raise ValueError("Insufficient voting power: {proposer_power} < {self.proposal_threshold}") from e
         # Generate proposal ID
-        _ = hashlib.sha256("{proposer}:{title}:{datetime.now().isoformat()}".encode()).hexdigest()[
-            :16
-        ]
+        _ = hashlib.sha256("{proposer}:{title}:{datetime.now().isoformat()}".encode()).hexdigest()[:16]
 
         # Set requirements based on proposal type
         if proposal_type in [
@@ -388,44 +371,38 @@ class GovernanceSystem:
             _ = 0.1  # 10% quorum
 
         # Create proposal
-        proposal = Proposal(
-            proposal_id=proposal_id,
-            proposal_type=proposal_type,
-            title=title,
-            description=description,
-            proposer=proposer,
-            created_at=datetime.now(),
-            voting_start=datetime.now() + timedelta(days=1),  # 1 day delay
-            voting_end=datetime.now() + self.voting_period + timedelta(days=1),
-            execution_delay=self.execution_delay,
-            status=ProposalStatus.DRAFT,
-            approval_threshold=approval_threshold,
-            quorum_required=quorum_required,
-            execution_data=execution_data,
-        )
+        proposal = Proposal(proposal_id = proposal_id,
+            proposal_type = proposal_type,
+            title = title,
+            description = description,
+            proposer = proposer,
+            created_at = datetime.now(),
+            voting_start = datetime.now() + timedelta(days = 1),  # 1 day delay
+            voting_end = datetime.now() + self.voting_period + timedelta(days = 1),
+            execution_delay = self.execution_delay,
+            status = ProposalStatus.DRAFT,
+            approval_threshold = approval_threshold,
+            quorum_required = quorum_required,
+            execution_data = execution_data,)
 
         self.proposals[proposal_id] = proposal
 
         # Audit log
-        audit_logger.log_event(
-            event_type="governance_proposal",
-            actor=proposer,
-            action="create_proposal",
-            resource=proposal_id,
-            metadata={"proposal_type": proposal_type.value, "title": title},
-        )
+        audit_logger.log_event(event_type = "governance_proposal",
+            actor = proposer,
+            action = "create_proposal",
+            resource = proposal_id,
+            metadata = {"proposal_type": proposal_type.value, "title": title},)
 
         logger.info("Proposal {proposal_id} created by {proposer}")
 
         return proposal
 
-    def vote(
-        self,
+    def vote(self,
         proposal_id: str,
         voter: str,
         choice: str,
-        voting_power: Optional[int] = None,
-    ) -> VoteRecord:
+        voting_power: Optional[int] = None,) -> VoteRecord:
         """
         Cast a vote on a proposal.
 
@@ -470,14 +447,12 @@ class GovernanceSystem:
         vote_weight *= multiplier
 
         # Create vote record
-        _ = VoteRecord(
-            voter_id=final_voter,
-            voting_power=voting_power,
-            vote_weight=vote_weight,
-            choice=choice,
-            timestamp=datetime.now(),
-            delegate_from=delegate_from,
-        )
+        _ = VoteRecord(voter_id = final_voter,
+            voting_power = voting_power,
+            vote_weight = vote_weight,
+            choice = choice,
+            timestamp = datetime.now(),
+            delegate_from = delegate_from,)
 
         # Add vote to proposal
         proposal.add_vote(vote_record)
@@ -521,9 +496,7 @@ class GovernanceSystem:
 
         return multiplier
 
-    def _is_committee_relevant(
-        self, committee_type: CommitteeType, proposal_type: ProposalType
-    ) -> bool:
+    def _is_committee_relevant(self, committee_type: CommitteeType, proposal_type: ProposalType) -> bool:
         """Check if committee is relevant to proposal type"""
         _ = {
             CommitteeType.SCIENTIFIC_ADVISORY: [
@@ -595,13 +568,11 @@ class GovernanceSystem:
         proposal.execution_timestamp = datetime.now()
 
         # Audit log
-        audit_logger.log_event(
-            event_type="governance_execution",
-            actor="governance_system",
-            action="execute_proposal",
-            resource=proposal_id,
-            metadata={"proposal_type": proposal.proposal_type.value, "result": result},
-        )
+        audit_logger.log_event(event_type = "governance_execution",
+            actor = "governance_system",
+            action = "execute_proposal",
+            resource = proposal_id,
+            metadata = {"proposal_type": proposal.proposal_type.value, "result": result},)
 
         logger.info("Proposal {proposal_id} executed")
 
@@ -694,11 +665,9 @@ class GovernanceSystem:
         _ = []
 
         for proposal in self.proposals.values():
-            if proposal.status == ProposalStatus.ACTIVE or (
-                proposal.status == ProposalStatus.DRAFT
+            if proposal.status == ProposalStatus.ACTIVE or (proposal.status == ProposalStatus.DRAFT
                 and now >= proposal.voting_start
-                and now <= proposal.voting_end
-            ):
+                and now <= proposal.voting_end):
 
                 # Update status if needed
                 if proposal.status == ProposalStatus.DRAFT:
@@ -752,9 +721,7 @@ class HIPAAOracle:
 
         logger.info("HIPAA oracle initialized")
 
-    async def verify_provider(
-        self, npi: str, baa_hash: str, risk_analysis_hash: str, hsm_serial: str
-    ) -> Tuple[bool, Dict[str, Any]]:
+    async def verify_provider(self, npi: str, baa_hash: str, risk_analysis_hash: str, hsm_serial: str) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify healthcare provider for trusted signatory status.
 
@@ -803,13 +770,11 @@ class HIPAAOracle:
         self.verification_cache[cache_key] = True
 
         # Audit log
-        audit_logger.log_event(
-            event_type="hipaa_verification",
-            actor="hipaa_oracle",
-            action="verify_provider",
-            resource=npi,
-            metadata={"hsm_serial": hsm_serial, "success": True},
-        )
+        audit_logger.log_event(event_type = "hipaa_verification",
+            actor = "hipaa_oracle",
+            action = "verify_provider",
+            resource = npi,
+            metadata = {"hsm_serial": hsm_serial, "success": True},)
 
         logger.info("HIPAA provider {npi} verified as trusted signatory")
 
@@ -856,13 +821,11 @@ class HIPAAOracle:
                 if key.startswith("{npi}:"):
                     del self.verification_cache[key]
 
-            audit_logger.log_event(
-                event_type="hipaa_revocation",
-                actor="hipaa_oracle",
-                action="revoke_verification",
-                resource=npi,
-                metadata={"reason": reason},
-            )
+            audit_logger.log_event(event_type = "hipaa_revocation",
+                actor = "hipaa_oracle",
+                action = "revoke_verification",
+                resource = npi,
+                metadata = {"reason": reason},)
 
             logger.info("HIPAA verification revoked for {npi}: {reason}")
 
@@ -881,17 +844,15 @@ if __name__ == "__main__":
 
     # Create a proposal
     print("Creating governance proposal...")
-    _ = governance.create_proposal(
-        proposer="user_with_power",
-        proposal_type=ProposalType.PARAMETER_CHANGE,
-        title="Increase PIR query timeout",
-        description="Increase the PIR query timeout from 30s to 45s to improve reliability",
-        execution_data={
+    _ = governance.create_proposal(proposer = "user_with_power",
+        proposal_type = ProposalType.PARAMETER_CHANGE,
+        title = "Increase PIR query timeout",
+        description = "Increase the PIR query timeout from 30s to 45s to improve reliability",
+        execution_data = {
             "parameter": "pir_query_timeout_seconds",
             "old_value": 30,
             "new_value": 45,
-        },
-    )
+        },)
     print("Proposal created: {proposal.proposal_id}")
 
     # Simulate moving to active status
@@ -899,9 +860,9 @@ if __name__ == "__main__":
 
     # Cast some votes
     print("\nCasting votes...")
-    governance.vote(proposal.proposal_id, "user_1", "yes", voting_power=100)
-    governance.vote(proposal.proposal_id, "user_2", "no", voting_power=50)
-    governance.vote(proposal.proposal_id, "scientist_1", "yes", voting_power=200)
+    governance.vote(proposal.proposal_id, "user_1", "yes", voting_power = 100)
+    governance.vote(proposal.proposal_id, "user_2", "no", voting_power = 50)
+    governance.vote(proposal.proposal_id, "scientist_1", "yes", voting_power = 200)
 
     # Check proposal status
     details = governance.get_proposal_details(proposal.proposal_id)
@@ -916,14 +877,10 @@ if __name__ == "__main__":
 
     # Test valid NPI
     _ = "1234567893"  # Valid format with correct check digit
-    result, _ = asyncio.run(
-        oracle.verify_provider(
-            npi=npi,
-            baa_hash="baa_hash_example",
-            risk_analysis_hash="risk_hash_example",
-            hsm_serial="HSM123456",
-        )
-    )
+    result, _ = asyncio.run(oracle.verify_provider(npi = npi,
+            baa_hash = "baa_hash_example",
+            risk_analysis_hash = "risk_hash_example",
+            hsm_serial = "HSM123456",))
 
     print("Verification result: {result}")
     if result:
@@ -941,5 +898,5 @@ if __name__ == "__main__":
     try:
         delegation.delegate("expert_1", "user_3")
         print("ERROR: Circular delegation allowed!")
-    except ValueError as _:
+    except ValueError:
         print("Correctly prevented circular delegation: {e}")

@@ -2,7 +2,6 @@
 Test suite for PIR implementation
 """
 
-import asyncio
 from unittest.mock import Mock, patch
 
 import numpy as np
@@ -204,7 +203,7 @@ class TestPIRIntegration:
             assert len(result) == 1024  # chunk_size
 
             # Verify it's the correct data (from server's database)
-            expected = servers[0].database[42]
+            servers[0].database[42]
             # Due to XOR operations, need to verify differently
             # For now, just check we got something
             assert result is not None

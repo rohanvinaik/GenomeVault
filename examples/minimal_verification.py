@@ -7,9 +7,9 @@ This avoids importing the full dependency chain
 import os
 import sys
 
-print("=" * 70)
+print(" = " * 70)
 print("MINIMAL IMPORT PATH VERIFICATION")
-print("=" * 70)
+print(" = " * 70)
 
 # Add project root to path
 project_root = os.path.dirname(os.path.abspath(__file__))
@@ -21,7 +21,9 @@ print("\nProject root: {project_root}")
 # let's directly check if the file can be imported with correct paths
 
 print("\n1. Checking if the biological variant.py file exists...")
-variant_file = os.path.join(project_root, "zk_proofs", "circuits", "biological", "variant.py")
+variant_file = os.path.join(
+    project_root, "zk_proofs", "circuits", "biological", "variant.py"
+)
 if os.path.exists(variant_file):
     print("✅ File exists: {variant_file}")
 
@@ -37,7 +39,9 @@ else:
     print("❌ File not found: {variant_file}")
 
 print("\n2. Checking if base_circuits.py exists...")
-base_circuits_file = os.path.join(project_root, "zk_proofs", "circuits", "base_circuits.py")
+base_circuits_file = os.path.join(
+    project_root, "zk_proofs", "circuits", "base_circuits.py"
+)
 if os.path.exists(base_circuits_file):
     print("✅ File exists: {base_circuits_file}")
 else:
@@ -72,9 +76,9 @@ print("   '..' navigates up from biological/ to circuits/")
 print("   base_circuits.py location: zk_proofs/circuits/")
 print("   ✅ Path resolution is correct!")
 
-print("\n" + "=" * 70)
+print("\n" + " = " * 70)
 print("CONCLUSION")
-print("=" * 70)
+print(" = " * 70)
 print("\nThe import path fix IS working correctly:")
 print("1. Changed from: from .base_circuits import ...")
 print("2. Changed to:   from ..base_circuits import ...")

@@ -77,7 +77,9 @@ class HypervectorBinder:
         # Apply weights if provided
         if weights is not None:
             if len(weights) != len(vectors):
-                raise BindingError("Number of weights must match number of vectors") from e
+                raise BindingError(
+                    "Number of weights must match number of vectors"
+                ) from e
             vectors = [v * w for v, w in zip(vectors, weights)]
 
         # Perform binding based on type
@@ -123,6 +125,7 @@ class HypervectorBinder:
             return self._xor_unbind(bound_vector, known_vectors)
         else:
             raise BindingError("Unbinding not implemented for {binding_type}") from e
+
     def _multiply_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
         """Element-wise multiplication binding"""
         result = vectors[0].clone()
@@ -258,7 +261,9 @@ class HypervectorBinder:
         inv_perm[perm] = torch.arange(self.dimension)
         return inv_perm
 
-    def bundle(self, vectors: List[torch.Tensor], normalize: bool = True) -> torch.Tensor:
+    def bundle(
+        self, vectors: List[torch.Tensor], normalize: bool = True
+    ) -> torch.Tensor:
         """
         Bundle vectors using superposition (addition)
 
@@ -340,7 +345,9 @@ class PositionalBinder(HypervectorBinder):
         pos_vector = self._get_position_vector(position)
         return self.bind([vector, pos_vector], BindingType.CIRCULAR)
 
-    def bind_sequence(self, vectors: List[torch.Tensor], start_position: int = 0) -> torch.Tensor:
+    def bind_sequence(
+        self, vectors: List[torch.Tensor], start_position: int = 0
+    ) -> torch.Tensor:
         """
         Bind a sequence of vectors with their positions
 

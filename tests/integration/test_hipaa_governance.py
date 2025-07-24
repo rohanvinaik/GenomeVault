@@ -2,7 +2,6 @@
 Integration tests for HIPAA Fast-Track with Governance
 """
 
-import asyncio
 from datetime import datetime, timedelta
 
 import pytest
@@ -20,7 +19,6 @@ from genomevault.blockchain.hipaa.integration import (
 )
 from genomevault.blockchain.node import NodeType
 from genomevault.core.constants import SignatoryWeight
-from genomevault.core.exceptions import VerificationError
 
 
 @pytest.mark.asyncio
@@ -121,7 +119,9 @@ class TestHIPAANodeIntegration:
             initial_power = governance.total_voting_power
 
             # Revoke
-            success = await integration.revoke_provider_node(credentials.npi, "Test revocation")
+            success = await integration.revoke_provider_node(
+                credentials.npi, "Test revocation"
+            )
 
             assert success
             assert integration.get_provider_node(credentials.npi) is None
@@ -217,7 +217,9 @@ class TestHIPAAGovernance:
             )
 
             # Add to committee
-            governance.committees[CommitteeType.SCIENTIFIC_ADVISORY].add_member(node.node_id)
+            governance.committees[CommitteeType.SCIENTIFIC_ADVISORY].add_member(
+                node.node_id
+            )
 
             # Create proposal
             proposal = governance.create_proposal(
@@ -287,7 +289,9 @@ class TestHIPAAGovernance:
         import math
 
         assert hipaa_vote.vote_weight == pytest.approx(math.sqrt(hipaa_voting_power))
-        assert regular_vote.vote_weight == pytest.approx(math.sqrt(regular_voting_power))
+        assert regular_vote.vote_weight == pytest.approx(
+            math.sqrt(regular_voting_power)
+        )
 
 
 @pytest.mark.asyncio
@@ -328,7 +332,9 @@ class TestEndToEndFlow:
             assert node.voting_power == 18  # Archive (8) + TS (10)
 
             # Step 2: Join committee
-            governance.committees[CommitteeType.SCIENTIFIC_ADVISORY].add_member(node.node_id)
+            governance.committees[CommitteeType.SCIENTIFIC_ADVISORY].add_member(
+                node.node_id
+            )
 
             # Step 3: Create clinical proposal
             proposal = governance.create_proposal(

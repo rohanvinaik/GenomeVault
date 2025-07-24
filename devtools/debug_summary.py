@@ -3,9 +3,9 @@
 Final Debug Summary - GenomeVault Import Issue Resolution
 """
 
-print("=" * 80)
+print(" = " * 80)
 print("GENOMEVAULT DEBUG SESSION - FINAL SUMMARY")
-print("=" * 80)
+print(" = " * 80)
 
 print("\n📋 ORIGINAL ISSUE:")
 print("   Error: No module named 'zk_proofs.circuits.biological.base_circuits'")
@@ -67,4 +67,4 @@ print("   The import issue has been successfully resolved!")
 print("   The code structure is correct and will function properly")
 print("   once the required dependencies are installed.")
 
-print("\n" + "=" * 80)
+print("\n" + " = " * 80)

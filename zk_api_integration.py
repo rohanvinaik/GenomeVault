@@ -3,8 +3,6 @@ GenomeVault ZK Proof API Integration
 Provides REST API endpoints and service integration for the ZK proof system.
 """
 
-import asyncio
-import json
 import uuid
 from datetime import datetime
 from typing import Any, Dict, List, Optional
@@ -16,10 +14,7 @@ from pydantic import BaseModel, Field
 
 # Import our ZK system
 from genomevault_zk_integration import (
-    CircuitType,
     GenomeVaultZKSystem,
-    ZKProofRequest,
-    ZKProofResult,
 )
 
 
@@ -33,7 +28,7 @@ class VariantData(BaseModel):
 
 class MerkleProof(BaseModel):
     path: List[str] = Field(..., description="Merkle path hashes")
-    indices: List[int] = Field(..., description="Path directions (0=left, 1=right)")
+    indices: List[int] = Field(..., description="Path directions (0 = left, 1 = right)")
 
 
 class VariantProofRequest(BaseModel):
@@ -43,7 +38,7 @@ class VariantProofRequest(BaseModel):
 
 
 class PRSProofRequest(BaseModel):
-    variants: List[int] = Field(..., description="Genotype values (0,1,2)")
+    variants: List[int] = Field(..., description="Genotype values (0, 1, 2)")
     weights: List[float] = Field(..., description="PRS weights")
     score_range: Dict[str, float] = Field(..., description="Valid score range")
 
@@ -173,7 +168,9 @@ async def generate_variant_proof(
             return ProofResponse(success=False, error_message=result.error_message)
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Proof generation failed: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Proof generation failed: {str(e)}"
+        )
 
 
 @app.post("/proofs/prs", response_model=ProofResponse)
@@ -207,7 +204,9 @@ async def generate_prs_proof(
             return ProofResponse(success=False, error_message=result.error_message)
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"PRS proof generation failed: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"PRS proof generation failed: {str(e)}"
+        )
 
 
 @app.post("/proofs/diabetes-risk", response_model=ProofResponse)
@@ -242,7 +241,9 @@ async def generate_diabetes_risk_proof(
             return ProofResponse(success=False, error_message=result.error_message)
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Diabetes risk proof failed: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Diabetes risk proof failed: {str(e)}"
+        )
 
 
 @app.get("/circuits")
@@ -253,21 +254,21 @@ async def list_available_circuits():
             {
                 "type": "variant_verification",
                 "description": "Prove variant presence without revealing position",
-                "constraints": "~5,000",
+                "constraints": "~5, 000",
                 "proof_size": "192 bytes",
                 "verification_time": "<10ms",
             },
             {
                 "type": "polygenic_risk_score",
                 "description": "Prove PRS calculation without revealing variants",
-                "constraints": "~20,000",
+                "constraints": "~20, 000",
                 "proof_size": "384 bytes",
                 "verification_time": "<25ms",
             },
             {
                 "type": "diabetes_risk_alert",
                 "description": "Prove risk condition without revealing values",
-                "constraints": "~15,000",
+                "constraints": "~15, 000",
                 "proof_size": "384 bytes",
                 "verification_time": "<25ms",
             },

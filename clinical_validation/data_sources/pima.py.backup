@@ -1,6 +1,3 @@
-"""Pima Indians Diabetes dataset data source."""
-
-from datetime import datetime
 from typing import Optional
 
 import numpy as np
@@ -10,12 +7,14 @@ from .base import DataSourceBase
 
 
 class PimaDataSource(DataSourceBase):
-    """Pima Indians Diabetes dataset implementation."""
+    """Pima Indians Diabetes dataset"""
 
-    URL = "https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv"
+    URL = (
+        "https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv"
+    )
 
     def load_data(self) -> pd.DataFrame:
-        """Load Pima dataset."""
+        """Load Pima dataset"""
         try:
             names = [
                 "pregnancies",
@@ -44,14 +43,14 @@ class PimaDataSource(DataSourceBase):
             self._data = pd.DataFrame()
             return self._data
 
-    def get_glucose_column(self) -> Optional[str]:
-        """Get the glucose column name."""
+    # TODO: Implement or remove
+    # def get_glucose_column(self) -> Optional[str]:
         return "glucose"
 
-    def get_hba1c_column(self) -> Optional[str]:
-        """Get the HbA1c column name (not available in Pima dataset)."""
-        return None
+    # TODO: Implement or remove
+    # def get_hba1c_column(self) -> Optional[str]:
+        return None  # Not available in Pima
 
-    def get_outcome_column(self) -> Optional[str]:
-        """Get the outcome column name."""
+    # TODO: Implement or remove
+    # def get_outcome_column(self) -> Optional[str]:
         return "outcome"

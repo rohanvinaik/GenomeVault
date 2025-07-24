@@ -1,5 +1,4 @@
 # tests/test_compression.py
-from unittest.mock import Mock, patch
 
 import numpy as np
 import pytest
@@ -18,9 +17,10 @@ class TestCompressionTiers:
     @pytest.fixture
     def sample_snp_data(self):
         """Generate realistic SNP test data"""
-        # Mini tier: ~5,000 most-studied SNPs
+        # Mini tier: ~5, 000 most-studied SNPs
         mini_snps = {
-            "rs{i}": np.random.choice(["AA", "AT", "TT"], p=[0.25, 0.5, 0.25]) for i in range(5000)
+            "rs{i}": np.random.choice(["AA", "AT", "TT"], p=[0.25, 0.5, 0.25])
+            for i in range(5000)
         }
 
         # Clinical tier: ACMG + PharmGKB variants (~120k)
@@ -50,7 +50,9 @@ class TestCompressionTiers:
 
         # Verify size is within expected range (allowing 10% variance)
         size_kb = len(compressed) / 1024
-        assert 22.5 <= size_kb <= 27.5, "Mini tier size {size_kb}KB outside expected 25KB ±10%"
+        assert (
+            22.5 <= size_kb <= 27.5
+        ), "Mini tier size {size_kb}KB outside expected 25KB ±10%"
 
         # Verify lossless compression
         decompressed = compressor.decompress(compressed)
@@ -63,7 +65,9 @@ class TestCompressionTiers:
 
         # Verify size is within expected range
         size_kb = len(compressed) / 1024
-        assert 270 <= size_kb <= 330, "Clinical tier size {size_kb}KB outside expected 300KB ±10%"
+        assert (
+            270 <= size_kb <= 330
+        ), "Clinical tier size {size_kb}KB outside expected 300KB ±10%"
 
         # Verify key ACMG variants preserved
         decompressed = compressor.decompress(compressed)
@@ -104,7 +108,7 @@ class TestCompressionTiers:
         ), "Combined size {total_size}KB differs from expected {expected}KB"
 
     @pytest.mark.parametrize(
-        "tier,expected_features,expected_size",
+        "tier, expected_features, expected_size",
         [
             (CompressionTier.MINI, 5000, 25),
             (CompressionTier.CLINICAL, 120000, 300),
@@ -114,13 +118,15 @@ class TestCompressionTiers:
     def test_tier_specifications(self, tier, expected_features, expected_size):
         """Parameterized test for all tier specifications"""
         compressor = (
-            SNPCompressor(tier=tier) if tier != CompressionTier.FULL_HDC else HDCCompressor()
+            SNPCompressor(tier=tier)
+            if tier != CompressionTier.FULL_HDC
+            else HDCCompressor()
         )
 
         # Verify tier metadata
-        assert compressor.get_feature_count() == expected_features or str(expected_features) in str(
-            compressor.get_feature_description()
-        )
+        assert compressor.get_feature_count() == expected_features or str(
+            expected_features
+        ) in str(compressor.get_feature_description())
         assert abs(compressor.estimate_size() - expected_size) < expected_size * 0.15
 
     def test_compression_determinism(self, sample_snp_data):

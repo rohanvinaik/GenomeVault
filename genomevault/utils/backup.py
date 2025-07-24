@@ -33,6 +33,7 @@ class BackupManager:
     """Manages encrypted backups and disaster recovery"""
 
     def __init__(self, config: Dict[str, Any]):
+        """Magic method implementation."""
         self.config = config
         self.backup_dir = config.get("backup_dir", "/var/genomevault/backups")
         self.s3_bucket = config.get("s3_bucket")
@@ -111,8 +112,10 @@ class BackupManager:
 
             return backup_id
 
-        except Exception as _:
-            logger.error("backup_creation_failed", backup_type=backup_type, error=str(e))
+        except Exception:
+            logger.error(
+                "backup_creation_failed", backup_type=backup_type, error=str(e)
+            )
             raise
 
     def restore_backup(self, backup_id: str) -> Dict[str, Any]:
@@ -150,7 +153,7 @@ class BackupManager:
 
             return data
 
-        except Exception as _:
+        except Exception:
             logger.error("backup_restoration_failed", backup_id=backup_id, error=str(e))
             raise
 
@@ -204,8 +207,10 @@ class BackupManager:
 
             return is_valid
 
-        except Exception as _:
-            logger.error("backup_verification_failed", backup_id=backup_id, error=str(e))
+        except Exception:
+            logger.error(
+                "backup_verification_failed", backup_id=backup_id, error=str(e)
+            )
             return False
 
     def cleanup_old_backups(self):
@@ -250,7 +255,7 @@ class BackupManager:
                     backup_type=backup_type,
                 )
 
-            except Exception as _:
+            except Exception:
                 logger.error(
                     "scheduled_backup_failed",
                     backup_type=backup_config.get("backup_type"),
@@ -271,7 +276,7 @@ class BackupManager:
     def _generate_backup_id(self, backup_type: str) -> str:
         """Generate unique backup ID"""
         _ = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
-        random_suffix = os.urandom(4).hex()
+        os.urandom(4).hex()
         return "{backup_type}_{timestamp}_{random_suffix}"
 
     def _encrypt_backup(self, data: bytes) -> bytes:
@@ -330,10 +335,13 @@ class BackupManager:
 
         # Try S3 if configured
         if self.s3_client:
-            _ = self.s3_client.get_object(Bucket=self.s3_bucket, Key="backups/{backup_id}.backup")
+            _ = self.s3_client.get_object(
+                Bucket=self.s3_bucket, Key="backups/{backup_id}.backup"
+            )
             return json.loads(response["Body"].read())
 
         raise FileNotFoundError("Backup {backup_id} not found") from e
+
     def _replicate_to_s3(self, backup_id: str, backup_package: Dict[str, Any]):
         """Replicate backup to S3"""
         if not self.s3_client:
@@ -347,9 +355,11 @@ class BackupManager:
                 ServerSideEncryption="AES256",
             )
 
-            logger.info("backup_replicated_to_s3", backup_id=backup_id, bucket=self.s3_bucket)
+            logger.info(
+                "backup_replicated_to_s3", backup_id=backup_id, bucket=self.s3_bucket
+            )
 
-        except Exception as _:
+        except Exception:
             logger.error("s3_replication_failed", backup_id=backup_id, error=str(e))
 
     def _remove_backup(self, backup_id: str):
@@ -365,7 +375,7 @@ class BackupManager:
                 self.s3_client.delete_object(
                     Bucket=self.s3_bucket, Key="backups/{backup_id}.backup"
                 )
-            except Exception as _:
+            except Exception:
                 logger.error("s3_deletion_failed", backup_id=backup_id, error=str(e))
 
         # Remove from metadata
@@ -410,6 +420,8 @@ class BackupManager:
 class DisasterRecoveryOrchestrator:
     """Orchestrates disaster recovery procedures"""
 
+    """Magic method implementation."""
+
     def __init__(self, backup_manager: BackupManager):
         self.backup_manager = backup_manager
         self.recovery_points = {}
@@ -445,7 +457,7 @@ class DisasterRecoveryOrchestrator:
 
             return recovery_point_id
 
-        except Exception as _:
+        except Exception:
             logger.error("recovery_point_creation_failed", name=name, error=str(e))
             raise
 
@@ -473,7 +485,7 @@ class DisasterRecoveryOrchestrator:
 
             return results
 
-        except Exception as _:
+        except Exception:
             logger.error(
                 "recovery_point_restoration_failed",
                 recovery_point_id=recovery_point_id,

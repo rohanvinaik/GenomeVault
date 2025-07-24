@@ -13,6 +13,7 @@ class ProofVerifier:
     """Unified verifier for all proof types"""
 
     def __init__(self):
+        """Magic method implementation."""
         self.logger = logging.getLogger(__name__)
 
     def verify(
@@ -48,7 +49,9 @@ class ProofVerifier:
                 self.logger.error("Circuit-specific validation failed")
                 return False
 
-            self.logger.info(f"Proof verification successful for {proof.circuit_type.value}")
+            self.logger.info(
+                f"Proof verification successful for {proof.circuit_type.value}"
+            )
             return True
 
         except Exception as e:
@@ -71,7 +74,9 @@ class ProofVerifier:
 
         return True
 
-    def _validate_circuit_specific(self, proof: ProofData, public_inputs: Dict[str, Any]) -> bool:
+    def _validate_circuit_specific(
+        self, proof: ProofData, public_inputs: Dict[str, Any]
+    ) -> bool:
         """Circuit-specific validation logic"""
 
         if proof.circuit_type == CircuitType.DIABETES_RISK:
@@ -82,7 +87,9 @@ class ProofVerifier:
             self.logger.warning(f"Unknown circuit type: {proof.circuit_type}")
             return False
 
-    def _validate_diabetes_proof(self, proof: ProofData, public_inputs: Dict[str, Any]) -> bool:
+    def _validate_diabetes_proof(
+        self, proof: ProofData, public_inputs: Dict[str, Any]
+    ) -> bool:
         """Validate diabetes risk proof"""
         # Verify output format
         if not proof.public_output.startswith("RISK_LEVEL:"):
@@ -106,7 +113,9 @@ class ProofVerifier:
 
         return True
 
-    def _validate_biomarker_proof(self, proof: ProofData, public_inputs: Dict[str, Any]) -> bool:
+    def _validate_biomarker_proof(
+        self, proof: ProofData, public_inputs: Dict[str, Any]
+    ) -> bool:
         """Validate biomarker threshold proof"""
         parts = proof.public_output.split(":")
         if len(parts) < 6:
@@ -117,7 +126,7 @@ class ProofVerifier:
 
         # Verify numeric values
         try:
-            margin = float(parts[3])
+            float(parts[3])
             confidence = float(parts[5])
             if not 0 <= confidence <= 1:
                 return False

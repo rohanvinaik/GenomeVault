@@ -3,11 +3,8 @@
 Script to fix common flake8 issues in the GenomeVault codebase.
 """
 
-import os
 import re
-import sys
 from pathlib import Path
-from typing import List, Set, Tuple
 
 
 def fix_f_string_without_placeholders(content: str) -> str:
@@ -100,7 +97,7 @@ def fix_file(file_path: Path) -> bool:
                 f.write(content)
             return True
         return False
-    except Exception as e:
+    except Exception:
         print("Error processing {file_path}: {e}")
         return False
 
@@ -117,7 +114,9 @@ def main():
     # Exclude virtual environments and other directories
     exclude_dirs = {".venv", "venv", "__pycache__", ".git", "build", "dist", ".eggs"}
     python_files = [
-        f for f in python_files if not any(excluded in f.parts for excluded in exclude_dirs)
+        f
+        for f in python_files
+        if not any(excluded in f.parts for excluded in exclude_dirs)
     ]
 
     print("Found {len(python_files)} Python files to process")

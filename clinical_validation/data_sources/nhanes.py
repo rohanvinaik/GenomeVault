@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import Optional
 
 import numpy as np
@@ -13,6 +12,7 @@ class NHANESDataSource(DataSourceBase):
     BASE_URL = "https://wwwn.cdc.gov/Nchs/Nhanes"
 
     def __init__(self, cycle: str = "2017-2018"):
+        """Magic method implementation."""
         super().__init__()
         self.cycle = cycle
 

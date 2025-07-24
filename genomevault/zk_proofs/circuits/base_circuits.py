@@ -21,9 +21,7 @@ class FieldElement:
     """Element in the PLONK field (BLS12-381 scalar field)"""
 
     value: int
-    modulus: int = (
-        0x73EDA753299D7D483339D80809A1D80553BDA402FFFE5BFEFFFFFFFF00000001  # BLS12-381 scalar field
-    )
+    modulus: int = (0x73EDA753299D7D483339D80809A1D80553BDA402FFFE5BFEFFFFFFFF00000001  # BLS12-381 scalar field)
 
     def __post_init__(self):
         self.value = self.value % self.modulus
@@ -73,15 +71,12 @@ class BaseCircuit(ABC):
     @abstractmethod
     def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
         """Setup circuit with inputs"""
-        pass
 
     @abstractmethod
     def generate_constraints(self):
         """Generate circuit constraints"""
-        pass
 
-    def add_constraint(
-        self,
+    def add_constraint(self,
         a: FieldElement,
         b: FieldElement,
         c: FieldElement,
@@ -89,8 +84,7 @@ class BaseCircuit(ABC):
         qr: int = 0,
         qo: int = 0,
         qm: int = 0,
-        qc: int = 0,
-    ):
+        qc: int = 0,):
         """
         Add PLONK constraint: ql*a + qr*b + qo*c + qm*a*b + qc = 0
         """
@@ -108,15 +102,15 @@ class BaseCircuit(ABC):
 
     def add_multiplication_gate(self, a: FieldElement, b: FieldElement, c: FieldElement):
         """Add constraint: a * b = c"""
-        self.add_constraint(a, b, c, qm=1, qo=-1)
+        self.add_constraint(a, b, c, qm = 1, qo = -1)
 
     def add_addition_gate(self, a: FieldElement, b: FieldElement, c: FieldElement):
         """Add constraint: a + b = c"""
-        self.add_constraint(a, b, c, ql=1, qr=1, qo=-1)
+        self.add_constraint(a, b, c, ql = 1, qr = 1, qo = -1)
 
     def add_constant_gate(self, a: FieldElement, constant: int):
         """Add constraint: a = constant"""
-        self.add_constraint(a, FieldElement(0), FieldElement(0), ql=1, qc=-constant)
+        self.add_constraint(a, FieldElement(0), FieldElement(0), ql = 1, qc = -constant)
 
 
 class MerkleTreeCircuit(BaseCircuit):
@@ -150,12 +144,12 @@ class MerkleTreeCircuit(BaseCircuit):
             parent = self._hash_pair(left, right)
 
             # Add constraint for hash computation
-            self.add_constraint(left, right, parent, qm=1, qo=-1)
+            self.add_constraint(left, right, parent, qm = 1, qo = -1)
 
             current = parent
 
         # Final constraint: computed root equals public root
-        self.add_constraint(current, self.root, FieldElement(0), ql=1, qr=-1)
+        self.add_constraint(current, self.root, FieldElement(0), ql = 1, qr = -1)
 
     def _hash_pair(self, left: FieldElement, right: FieldElement) -> FieldElement:
         """Hash two field elements (simplified for demo)"""
@@ -185,7 +179,7 @@ class RangeProofCircuit(BaseCircuit):
         for i, bit in enumerate(self.value_bits):
             bit_elem = FieldElement(bit)
             # bit * (1 - bit) = 0
-            self.add_constraint(bit_elem, FieldElement(1) - bit_elem, FieldElement(0), qm=1)
+            self.add_constraint(bit_elem, FieldElement(1) - bit_elem, FieldElement(0), qm = 1)
 
         # Reconstruct value from bits
         reconstructed = FieldElement(0)
@@ -193,7 +187,7 @@ class RangeProofCircuit(BaseCircuit):
             reconstructed = reconstructed + FieldElement(bit * (2**i))
 
         # Constraint: reconstructed value equals input
-        self.add_constraint(reconstructed, self.value, FieldElement(0), ql=1, qr=-1)
+        self.add_constraint(reconstructed, self.value, FieldElement(0), ql = 1, qr = -1)
 
         # Constraint: value >= min
         diff_min = self.value - self.min_val
@@ -210,7 +204,6 @@ class RangeProofCircuit(BaseCircuit):
     def _add_non_negative_constraint(self, value: FieldElement):
         """Add constraint that value is non-negative"""
         # Simplified: in production would use proper range proof
-        pass
 
 
 class ComparisonCircuit(BaseCircuit):
@@ -243,13 +236,13 @@ class ComparisonCircuit(BaseCircuit):
             # Prove a == b
             diff = self.a - self.b
             # Constraint: diff = 0
-            self.add_constraint(diff, FieldElement(0), FieldElement(0), ql=1)
+            self.add_constraint(diff, FieldElement(0), FieldElement(0), ql = 1)
 
     def _prove_positive(self, value: FieldElement):
         """Prove value > 0 (simplified)"""
         # In production, would use proper range proof
         # For now, just add a placeholder constraint
-        self.add_constraint(value, FieldElement(1), value, qm=1, qo=-1)
+        self.add_constraint(value, FieldElement(1), value, qm = 1, qo = -1)
 
 
 class HashPreimageCircuit(BaseCircuit):
@@ -274,7 +267,7 @@ class HashPreimageCircuit(BaseCircuit):
         computed_hash = self._hash_elements(preimage_elements)
 
         # Constraint: computed hash equals public hash
-        self.add_constraint(computed_hash, self.hash_output, FieldElement(0), ql=1, qr=-1)
+        self.add_constraint(computed_hash, self.hash_output, FieldElement(0), ql = 1, qr = -1)
 
     def _hash_elements(self, elements: List[FieldElement]) -> FieldElement:
         """Hash field elements (simplified)"""
@@ -308,12 +301,10 @@ class AggregatorCircuit(BaseCircuit):
         commitment = self._commit(total, self.randomness)
 
         # Constraint: commitment matches public commitment
-        self.add_constraint(commitment, self.sum_commitment, FieldElement(0), ql=1, qr=-1)
+        self.add_constraint(commitment, self.sum_commitment, FieldElement(0), ql = 1, qr = -1)
 
         # Constraint: count is correct
-        self.add_constraint(
-            FieldElement(len(self.values)), self.count, FieldElement(0), ql=1, qr=-1
-        )
+        self.add_constraint(FieldElement(len(self.values)), self.count, FieldElement(0), ql = 1, qr = -1)
 
     def _commit(self, value: FieldElement, randomness: FieldElement) -> FieldElement:
         """Create Pedersen commitment (simplified)"""
@@ -324,32 +315,34 @@ class AggregatorCircuit(BaseCircuit):
 
 
 # Helper functions for circuit construction
-def create_wire_assignment(num_wires: int) -> Dict[str, int]:
-    """Create wire assignment mapping"""
-    return {"w_{i}": i for i in range(num_wires)}
+# DUPLICATE: Merged with __post_init__
+# def create_wire_assignment(num_wires: int) -> Dict[str, int]:
+# """Create wire assignment mapping"""
+# return {"w_{i}": i for i in range(num_wires)}
 
 
-def evaluate_constraint(constraint: Dict, wire_values: Dict[int, FieldElement]) -> FieldElement:
-    """Evaluate a PLONK constraint"""
-    a = wire_values.get(constraint["a"], FieldElement(0))
-    b = wire_values.get(constraint["b"], FieldElement(0))
-    c = wire_values.get(constraint["c"], FieldElement(0))
+# DUPLICATE: Merged with create_wire_assignment
+# def evaluate_constraint(constraint: Dict, wire_values: Dict[int, FieldElement]) -> FieldElement:
+# """Evaluate a PLONK constraint"""
+# a = wire_values.get(constraint["a"], FieldElement(0))
+# b = wire_values.get(constraint["b"], FieldElement(0))
+# c = wire_values.get(constraint["c"], FieldElement(0))
 
-    result = (
-        constraint["ql"] * a
-        + constraint["qr"] * b
-        + constraint["qo"] * c
-        + constraint["qm"] * a * b
-        + constraint["qc"]
-    )
+# result = (# constraint["ql"] * a
+# + constraint["qr"] * b
+# + constraint["qo"] * c
+# + constraint["qm"] * a * b
+# + constraint["qc"]
+#)
 
-    return result
+# return result
 
 
-def verify_constraints(circuit: BaseCircuit, wire_values: Dict[int, FieldElement]) -> bool:
-    """Verify all constraints are satisfied"""
-    for constraint in circuit.constraints:
-        result = evaluate_constraint(constraint, wire_values)
-        if result.value != 0:
-            return False
-    return True
+# DUPLICATE: Merged with create_wire_assignment
+# def verify_constraints(circuit: BaseCircuit, wire_values: Dict[int, FieldElement]) -> bool:
+# """Verify all constraints are satisfied"""
+# for constraint in circuit.constraints:
+# result = evaluate_constraint(constraint, wire_values)
+# if result.value != 0:
+# return False
+# return True
