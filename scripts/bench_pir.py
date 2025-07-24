@@ -10,20 +10,20 @@ import os
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Any, Dict, List
 
 import numpy as np
 import psutil
 from tabulate import tabulate
 
-from genomevault.pir.it_pir_protocol import PIRProtocol, PIRParameters, BatchPIRProtocol
-from genomevault.pir.server.enhanced_pir_server import EnhancedPIRServer, ServerConfig
+from genomevault.pir.it_pir_protocol import BatchPIRProtocol, PIRParameters, PIRProtocol
 from genomevault.pir.network.coordinator import (
     PIRCoordinator,
     ServerInfo,
-    ServerType,
     ServerSelectionCriteria,
+    ServerType,
 )
+from genomevault.pir.server.enhanced_pir_server import EnhancedPIRServer, ServerConfig
 
 
 class PIRBenchmark:

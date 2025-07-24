@@ -3,14 +3,16 @@ Test suite for Information-Theoretic PIR Protocol.
 Includes unit tests, adversarial tests, and performance benchmarks.
 """
 
-import time
 import secrets
-import numpy as np
-import pytest
-from hypothesis import given, strategies as st, settings
+import time
 from typing import List, Tuple
 
-from genomevault.pir.it_pir_protocol import PIRProtocol, PIRParameters, BatchPIRProtocol
+import numpy as np
+import pytest
+from hypothesis import given, settings
+from hypothesis import strategies as st
+
+from genomevault.pir.it_pir_protocol import BatchPIRProtocol, PIRParameters, PIRProtocol
 
 
 class TestPIRProtocol:

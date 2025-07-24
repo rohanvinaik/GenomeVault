@@ -10,15 +10,15 @@ from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 
-from genomevault.pir.it_pir_protocol import PIRProtocol, PIRParameters, BatchPIRProtocol
-from genomevault.pir.server.enhanced_pir_server import EnhancedPIRServer, ServerConfig
+from genomevault.pir.client.query_builder import GenomicQuery, PIRQueryBuilder, QueryType
+from genomevault.pir.it_pir_protocol import BatchPIRProtocol, PIRParameters, PIRProtocol
 from genomevault.pir.network.coordinator import (
     PIRCoordinator,
     ServerInfo,
-    ServerType,
     ServerSelectionCriteria,
+    ServerType,
 )
-from genomevault.pir.client.query_builder import PIRQueryBuilder, QueryType, GenomicQuery
+from genomevault.pir.server.enhanced_pir_server import EnhancedPIRServer, ServerConfig
 from genomevault.utils.logging import logger
 
 

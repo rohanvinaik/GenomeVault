@@ -7,7 +7,7 @@ import hashlib
 import secrets
 import time
 from dataclasses import dataclass
-from typing import List, Tuple, Optional, Dict, Any
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 

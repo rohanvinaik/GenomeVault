@@ -13,7 +13,7 @@ from typing import Dict, List, Optional, Set, Tuple
 import aiohttp
 from geopy.distance import geodesic
 
-from genomevault.utils.logging import logger, audit_logger
+from genomevault.utils.logging import audit_logger, logger
 
 
 class ServerType(Enum):
