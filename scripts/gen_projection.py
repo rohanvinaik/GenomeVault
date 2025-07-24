@@ -11,7 +11,13 @@ import numpy as np
 from typing import List, Tuple
 import time
 
-from genomevault.utils.logging import logger
+# Simple logger fallback for when genomevault package isn't installed
+try:
+    from genomevault.utils.logging import logger
+except ImportError:
+    import logging
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    logger = logging.getLogger(__name__)
 
 
 class ProjectionGenerator:
