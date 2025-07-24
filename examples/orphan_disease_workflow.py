@@ -6,17 +6,19 @@ This example demonstrates how GenomeVault enables privacy-preserving
 research for rare diseases, using Rett Syndrome as an example.
 """
 
-import numpy as np
 import hashlib
 import time
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
+import numpy as np
+
+from genomevault.clinical.diabetes_pilot.risk_calculator import SecureRiskCalculator
 
 # Import GenomeVault modules
 from genomevault.hypervector_transform.advanced_compression import AdvancedHierarchicalCompressor
-from genomevault.zk_proofs.prover import Prover
-from genomevault.zk_proofs.advanced.recursive_snark import RecursiveSNARKProver
 from genomevault.pir.advanced.it_pir import InformationTheoreticPIR
-from genomevault.clinical.diabetes_pilot.risk_calculator import SecureRiskCalculator
+from genomevault.zk_proofs.advanced.recursive_snark import RecursiveSNARKProver
+from genomevault.zk_proofs.prover import Prover
 
 
 class OrphanDiseaseResearchDemo:

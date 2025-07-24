@@ -1,19 +1,20 @@
 """Advanced implementation integration tests."""
 
-import sys
 import os
+import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
-import time
-import numpy as np
 import hashlib
+import time
 
-from genomevault.zk_proofs.advanced.recursive_snark import RecursiveSNARKProver
-from genomevault.zk_proofs.advanced.stark_prover import STARKProver, PostQuantumVerifier
-from genomevault.zk_proofs.advanced.catalytic_proof import CatalyticProofEngine
-from genomevault.pir.advanced.it_pir import InformationTheoreticPIR
+import numpy as np
+
 from genomevault.hypervector_transform.advanced_compression import AdvancedHierarchicalCompressor
+from genomevault.pir.advanced.it_pir import InformationTheoreticPIR
+from genomevault.zk_proofs.advanced.catalytic_proof import CatalyticProofEngine
+from genomevault.zk_proofs.advanced.recursive_snark import RecursiveSNARKProver
+from genomevault.zk_proofs.advanced.stark_prover import PostQuantumVerifier, STARKProver
 from genomevault.zk_proofs.prover import Prover
 
 

@@ -7,7 +7,8 @@ import hashlib
 import json
 import time
 from dataclasses import dataclass
-from typing import Dict, Any, Optional, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
+
 import numpy as np
 
 from genomevault.utils.logging import get_logger

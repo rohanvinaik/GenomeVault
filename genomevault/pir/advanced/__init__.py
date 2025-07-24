@@ -1,7 +1,7 @@
 """Advanced PIR implementations including Information-Theoretic PIR."""
 
-from .it_pir import InformationTheoreticPIR, PIRQuery, PIRResponse
 from .graph_pir import GraphBasedPIR, PangenomeGraph
+from .it_pir import InformationTheoreticPIR, PIRQuery, PIRResponse
 
 __all__ = [
     "InformationTheoreticPIR",
