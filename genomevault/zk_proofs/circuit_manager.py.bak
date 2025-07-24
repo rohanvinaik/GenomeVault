@@ -23,7 +23,7 @@ from .circuits.biological.multi_omics import (
     RareVariantBurdenCircuit,
 )
 from .circuits.biological.variant import VariantProofCircuit
-from .circuits.biological.diabetes import (
+
     DiabetesRiskCircuit,
     PathwayEnrichmentCircuit,
     PharmacogenomicCircuit,

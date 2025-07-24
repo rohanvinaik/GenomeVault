@@ -481,7 +481,7 @@ class EnhancedPIRServer:
             return response
 
         except Exception:
-            logger.error(f"Error processing query {query_id}: {e}")
+        logger.error(f"Error processing query {query_id}: {e}")
             return {"error": str(e), "query_id": query_id, "server_id": self.server_id}
 
     async def _process_genomic_query(
@@ -641,7 +641,7 @@ class EnhancedPIRServer:
             return result
 
         except Exception:
-            logger.error(f"Error processing shard {shard.shard_id}: {e}")
+        logger.error(f"Error processing shard {shard.shard_id}: {e}")
             return None
 
     def _update_metrics(self, processing_time_ms: float, result_count: int):

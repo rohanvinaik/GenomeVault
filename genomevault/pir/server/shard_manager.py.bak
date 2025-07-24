@@ -22,7 +22,6 @@ from genomevault.utils.logging import get_logger, logger, performance_logger
 
 logger = get_logger(__name__)
 
-
 @dataclass
 class ShardMetadata:
     """Metadata for a database shard."""
@@ -265,7 +264,7 @@ class ShardManager:
             return shard_id
 
         except Exception:
-            logger.error(f"Error creating shard {shard_index}: {e}")
+        logger.error(f"Error creating shard {shard_index}: {e}")
             return None
 
     def distribute_shards(self, server_list: List[str]) -> ShardDistribution:
@@ -407,7 +406,7 @@ class ShardManager:
             return True
 
         except Exception:
-            logger.error(f"Error updating shard {shard_id}: {e}")
+        logger.error(f"Error updating shard {shard_id}: {e}")
 
             # Restore backup
             if backup_path.exists():

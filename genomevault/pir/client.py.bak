@@ -20,7 +20,6 @@ from genomevault.utils.logging import get_logger, logger, performance_logger
 
 logger = get_logger(__name__)
 
-
 @dataclass
 class PIRServer:
     """PIR server information."""
@@ -309,7 +308,7 @@ class PIRClient:
             return pir_response
 
         except Exception:
-            logger.error(f"Error querying server {server.server_id}: {e}")
+        logger.error(f"Error querying server {server.server_id}: {e}")
             return None
 
     def _reconstruct_data(self, responses: List[PIRResponse]) -> Any:

@@ -316,7 +316,7 @@ class SecurityMonitor:
             try:
                 await callback(alert)
             except Exception as e:
-                logger.error("alert_callback_failed", callback=callback.__name__, error=str(e))
+        logger.error("alert_callback_failed", callback=callback.__name__, error=str(e))
 
     def _get_volume_threshold(self, data_type: str) -> int:
         """Get volume threshold for data type"""

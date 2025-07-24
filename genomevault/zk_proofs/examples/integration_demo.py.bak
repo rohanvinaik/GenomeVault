@@ -12,10 +12,6 @@ from typing import Any, Dict
 import numpy as np
 
 from genomevault.utils.logging import logger
-
-logger = get_logger(__name__)
-
-from genomevault.zk_proofs import (
     CircuitManager,
     PostQuantumTransition,
     Prover,

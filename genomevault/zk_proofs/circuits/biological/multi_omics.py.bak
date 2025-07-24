@@ -18,6 +18,7 @@ from ..base_circuits import (
     FieldElement,
     List,
     RangeProofCircuit,
+    typing,
 )
 
 

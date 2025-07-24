@@ -124,7 +124,7 @@ class PHILeakageDetector:
                     findings.extend(line_findings)
 
         except Exception:
-            logger.error(f"Error scanning file {filepath}: {e}")
+        logger.error(f"Error scanning file {filepath}: {e}")
 
         return findings
 

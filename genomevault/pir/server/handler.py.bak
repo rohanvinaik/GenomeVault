@@ -118,7 +118,7 @@ class PIRHandler:
             return web.json_response(response)
 
         except Exception as e:
-            logger.error(f"Error handling PIR query: {str(e)}")
+        logger.error(f"Error handling PIR query: {str(e)}")
             return self._error_response("INTERNAL_ERROR", "Query processing failed", 500)
 
     def _ensure_fixed_size(self, data: Any) -> bytes:

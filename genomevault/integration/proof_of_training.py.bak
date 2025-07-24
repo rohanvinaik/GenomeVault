@@ -285,7 +285,7 @@ class ProofOfTrainingIntegration:
             return attestation_id
 
         except Exception:
-            logger.error(f"Failed to submit attestation: {e}")
+        logger.error(f"Failed to submit attestation: {e}")
             return None
 
     def start_model_monitoring(
@@ -505,7 +505,7 @@ class ProofOfTrainingIntegration:
             return hypervector
 
         except Exception:
-            logger.error(f"Failed to extract hypervector: {e}")
+        logger.error(f"Failed to extract hypervector: {e}")
             return None
 
     def _init_blockchain(self):
@@ -527,7 +527,7 @@ class ProofOfTrainingIntegration:
             logger.info(f"Blockchain connection established: {contract_address}")
 
         except Exception:
-            logger.error(f"Failed to initialize blockchain: {e}")
+        logger.error(f"Failed to initialize blockchain: {e}")
             self.attestation_contract = None
 
 

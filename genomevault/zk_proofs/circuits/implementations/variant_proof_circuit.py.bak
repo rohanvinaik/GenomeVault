@@ -15,6 +15,7 @@ from .constraint_system import (
     List,
     Variable,
     create_merkle_proof,
+    import,
     poseidon_hash,
     typing,
 )
