@@ -16,13 +16,6 @@ config = get_config()
 from genomevault.utils.logging import logger, performance_logger
 
 from .circuits.base_circuits import BaseCircuit
-from .circuits.biological.multi_omics import (
-    ClinicalTrialEligibilityCircuit,
-    GenotypePhenotypeAssociationCircuit,
-    MultiOmicsCorrelationCircuit,
-    RareVariantBurdenCircuit,
-)
-from .circuits.biological.variant import VariantProofCircuit
 from .circuits.biological.diabetes import (
     DiabetesRiskCircuit,
     PathwayEnrichmentCircuit,
@@ -30,6 +23,13 @@ from .circuits.biological.diabetes import (
     PolygenenicRiskScoreCircuit,
     VariantPresenceCircuit,
 )
+from .circuits.biological.multi_omics import (
+    ClinicalTrialEligibilityCircuit,
+    GenotypePhenotypeAssociationCircuit,
+    MultiOmicsCorrelationCircuit,
+    RareVariantBurdenCircuit,
+)
+from .circuits.biological.variant import VariantProofCircuit
 
 
 @dataclass

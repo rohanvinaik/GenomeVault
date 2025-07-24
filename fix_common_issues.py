@@ -5,7 +5,7 @@ Fix common linting issues in GenomeVault
 import os
 import re
 import subprocess
-from typing import List, Set, Dict
+from typing import Dict, List, Set
 
 
 def get_python_files(directory: str = ".") -> List[str]:
