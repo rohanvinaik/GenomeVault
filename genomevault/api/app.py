@@ -15,6 +15,7 @@ from pydantic import BaseModel, Field
 from genomevault.utils.config import get_config
 
 _ = get_config()
+from genomevault.hypervector.error_handling import router as hdc_router
 from genomevault.utils.logging import audit_logger, get_logger, logger
 
 # Create FastAPI app
@@ -35,6 +36,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include HDC error handling router
+app.include_router(hdc_router, prefix="/api")
 
 
 # Request/Response Models

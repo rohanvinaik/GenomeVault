@@ -131,3 +131,24 @@ ERROR_MESSAGES = {
     "UNAUTHORIZED": "Unauthorized access attempt",
     "HIPAA_COMPLIANCE_REQUIRED": "HIPAA compliance verification required",
 }
+
+# HDC Error Handling Configuration
+HDC_ERROR_CONFIG = {
+    "dimension_caps": {
+        "mini": 50000,
+        "clinical": 100000,
+        "research": 150000,
+        "full": 200000
+    },
+    "default_epsilon": 0.01,
+    "default_delta_exp": 15,
+    "ecc_enabled_default": True,
+    "ecc_parity_g": 3,
+    "max_repeats": 100,
+    "presets": {
+        "fast": {"epsilon": 0.02, "delta_exp": 10, "ecc": False},
+        "balanced": {"epsilon": 0.01, "delta_exp": 15, "ecc": True},
+        "high_accuracy": {"epsilon": 0.005, "delta_exp": 20, "ecc": True},
+        "clinical_standard": {"epsilon": 0.001, "delta_exp": 25, "ecc": True}
+    }
+}
