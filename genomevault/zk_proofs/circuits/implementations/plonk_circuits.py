@@ -1,3 +1,5 @@
+from typing import Any, Dict, List
+
 """
 PLONK Circuit Implementations for GenomeVault 3.0
 Implements the actual zero-knowledge proof circuits for genomic privacy.
@@ -100,8 +102,7 @@ class PLONKCircuit(ABC):
     ):
         """Add a PLONK constraint to the circuit"""
         if len(self.constraints) >= self.max_constraints:
-            raise RuntimeError(f"Circuit constraint limit exceeded: {self.max_constraints}")
-
+            raise RuntimeError(f"Circuit constraint limit exceeded: {self.max_constraints}") from e
         constraint = CircuitConstraint(a, b, c, ql, qr, qo, qm, qc)
         self.constraints.append(constraint)
 
@@ -379,8 +380,7 @@ class PolygeneticRiskScoreCircuit(PLONKCircuit):
         self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
 
         if len(self.variants) != len(self.weights):
-            raise ValueError("Variants and weights must have same length")
-
+            raise ValueError("Variants and weights must have same length") from e
         if len(self.variants) > self.max_variants:
             raise ValueError(f"Too many variants: {len(self.variants)} > {self.max_variants}")
 

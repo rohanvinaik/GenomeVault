@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional
+
 """
 Holographic representation for distributed information encoding
 
@@ -245,10 +247,10 @@ class HolographicEncoder:
         if isinstance(value, (int, float)):
             # Encode numeric value
             return self._encode_numeric(value)
-        elif isinstance(value, str):
+        if isinstance(value, str):
             # Encode string
             return self._encode_string(value)
-        elif isinstance(value, bool):
+        if isinstance(value, bool):
             # Encode boolean
             return self._encode_boolean(value)
         else:

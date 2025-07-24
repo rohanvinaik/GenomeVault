@@ -1,3 +1,5 @@
+from typing import Dict, List, Optional, Tuple
+
 """
 Hypervector encoding for genomic data
 """

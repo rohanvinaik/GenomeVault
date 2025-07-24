@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional
+
 """
 GenomeVault Core API Implementation
 
@@ -7,6 +9,9 @@ Implements the main API endpoints as specified in the System Breakdown:
 - Audit and challenge handling
 - Client-facing endpoints for pipelines, vectors, and proofs
 """
+from pydantic import BaseModel, validator
+import time
+
 
 import hashlib
 import json

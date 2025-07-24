@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional
+
 """
 Zero-knowledge proof verification system.
 Implements PLONK verification for genomic privacy proofs.
@@ -210,15 +212,15 @@ class Verifier:
         # Circuit-specific verification
         if proof.circuit_name == "variant_presence":
             return self._verify_variant_proof(proof)
-        elif proof.circuit_name == "polygenic_risk_score":
+        if proof.circuit_name == "polygenic_risk_score":
             return self._verify_prs_proof(proof)
-        elif proof.circuit_name == "diabetes_risk_alert":
+        if proof.circuit_name == "diabetes_risk_alert":
             return self._verify_diabetes_proof(proof)
-        elif proof.circuit_name == "ancestry_composition":
+        if proof.circuit_name == "ancestry_composition":
             return self._verify_ancestry_proof(proof)
-        elif proof.circuit_name == "pharmacogenomic":
+        if proof.circuit_name == "pharmacogenomic":
             return self._verify_pharmacogenomic_proof(proof)
-        elif proof.circuit_name == "pathway_enrichment":
+        if proof.circuit_name == "pathway_enrichment":
             return self._verify_pathway_proof(proof)
         else:
             # Generic verification
@@ -308,10 +310,10 @@ class Verifier:
             _ = proof.public_inputs["glucose_threshold"]
             _ = proof.public_inputs["risk_threshold"]
 
-            if not (0 < g_threshold < 500):  # Reasonable glucose range
+            if not 0 < g_threshold < 500:  # Reasonable glucose range
                 return False
 
-            if not (0 <= r_threshold <= 1):  # Risk score should be probability
+            if not 0 <= r_threshold <= 1:  # Risk score should be probability
                 return False
 
             # Verify proof structure

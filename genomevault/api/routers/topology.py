@@ -1,3 +1,5 @@
+from typing import Dict, List, Optional
+
 """
 Topology API endpoints
 """

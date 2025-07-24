@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional
+
 """
 GenomeVault Sequencing Data Processing
 
@@ -173,11 +175,9 @@ class SequencingProcessor:
 
         # Validate input
         if not input_path.exists():
-            raise FileNotFoundError("Input file not found: {input_path}")
-
+            raise FileNotFoundError("Input file not found: {input_path}") from e
         if input_path.suffix not in self.SUPPORTED_FORMATS:
-            raise ValueError("Unsupported file format: {input_path.suffix}")
-
+            raise ValueError("Unsupported file format: {input_path.suffix}") from e
         # Create working directory
         work_dir = self.temp_dir / "seq_{sample_id}_{os.getpid()}"
         work_dir.mkdir(parents=True, exist_ok=True)
@@ -297,7 +297,7 @@ class SequencingProcessor:
         output_bam = work_dir / "aligned.bam"
 
         # Check if reference is indexed
-        if not (self.reference_path.with_suffix(".fa.bwt")).exists():
+        if not self.reference_path.with_suffix(".fa.bwt").exists():
             logger.info("Indexing reference genome...")
             subprocess.run(["bwa", "index", str(self.reference_path)], check=True)
 
@@ -500,9 +500,9 @@ class SequencingProcessor:
         """Determine variant type"""
         if len(ref) == 1 and len(alt) == 1:
             return "SNP"
-        elif len(ref) > len(alt):
+        if len(ref) > len(alt):
             return "DELETION"
-        elif len(ref) < len(alt):
+        if len(ref) < len(alt):
             return "INSERTION"
         else:
             return "COMPLEX"

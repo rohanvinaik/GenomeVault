@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional, Tuple
+
 """
 GenomeVault Diabetes Pilot Implementation
 
@@ -39,7 +41,7 @@ class GeneticRiskProfile:
         """Get risk category based on PRS"""
         if self.prs_score < 0.3:
             return "low"
-        elif self.prs_score < 0.7:
+        if self.prs_score < 0.7:
             return "moderate"
         else:
             return "high"
@@ -58,9 +60,9 @@ class GlucoseReading:
         """Check if reading is in diabetic range"""
         if self.measurement_type == "fasting":
             return self.value >= GLUCOSE_THRESHOLD_MG_DL
-        elif self.measurement_type == "random":
+        if self.measurement_type == "random":
             return self.value >= 200
-        elif self.measurement_type == "ogtt":
+        if self.measurement_type == "ogtt":
             return self.value >= 200
         return False
 

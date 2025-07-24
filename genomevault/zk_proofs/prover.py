@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional
+
 """
 Zero-knowledge proof generation using PLONK templates.
 Implements specialized circuits for genomic privacy.
@@ -277,9 +279,9 @@ class Prover:
 
         # Create proof object
         proof = Proof(
-            proof_id=proof_id,
+            proof_id = f"proof_{uuid.uuid4().hex[:8]}"proof_id,
             circuit_name=circuit_name,
-            proof_data=proof_data,
+            proof_data = {}proof_data,
             public_inputs=public_inputs,
             timestamp=time.time(),
             metadata={
@@ -318,8 +320,7 @@ class Prover:
         }
 
         if circuit_name not in circuit_map:
-            raise ValueError("Unknown circuit: {circuit_name}")
-
+            raise ValueError("Unknown circuit: {circuit_name}") from e
         return circuit_map[circuit_name]
 
     def _validate_inputs(self, circuit: Circuit, public_inputs: Dict, private_inputs: Dict):
@@ -327,13 +328,11 @@ class Prover:
         # Check public inputs
         for required_input in circuit.public_inputs:
             if required_input not in public_inputs:
-                raise ValueError("Missing public input: {required_input}")
-
+                raise ValueError("Missing public input: {required_input}") from e
         # Check private inputs
         for required_input in circuit.private_inputs:
             if required_input not in private_inputs:
-                raise ValueError("Missing private input: {required_input}")
-
+                raise ValueError("Missing private input: {required_input}") from e
     def _generate_proof_id(self, circuit_name: str, public_inputs: Dict) -> str:
         """Generate unique proof ID."""
         _ = {
@@ -356,9 +355,9 @@ class Prover:
         # Simulate computation based on circuit type
         if circuit.name == "variant_presence":
             return self._simulate_variant_proof(public_inputs, private_inputs)
-        elif circuit.name == "polygenic_risk_score":
+        if circuit.name == "polygenic_risk_score":
             return self._simulate_prs_proof(public_inputs, private_inputs)
-        elif circuit.name == "diabetes_risk_alert":
+        if circuit.name == "diabetes_risk_alert":
             return self._simulate_diabetes_proof(public_inputs, private_inputs)
         else:
             # Generic simulation
@@ -373,8 +372,7 @@ class Prover:
 
         # Check hash matches public input
         if variant_hash != public_inputs["variant_hash"]:
-            raise ValueError("Variant hash mismatch")
-
+            raise ValueError("Variant hash mismatch") from e
         # Generate mock proof (192 bytes)
         _ = {
             "pi_a": np.random.bytes(48).hex(),
@@ -394,9 +392,8 @@ class Prover:
 
         # Check score is in valid range
         score_range = public_inputs["score_range"]
-        if not (score_range["min"] <= score <= score_range["max"]):
-            raise ValueError("Score out of range")
-
+        if not score_range["min"] <= score <= score_range["max"]:
+            raise ValueError("Score out of range") from e
         # Generate mock proof (384 bytes)
         _ = {
             "pi_a": np.random.bytes(48).hex(),
@@ -484,8 +481,7 @@ class Prover:
         # Validate all proofs are valid
         for proof in proofs:
             if not self._validate_proof_format(proof):
-                raise ValueError("Invalid proof: {proof.proof_id}")
-
+                raise ValueError("Invalid proof: {proof.proof_id}") from e
         # Create recursive circuit
         _ = {
             "proof_hashes": [self._hash_proof(p) for p in proofs],

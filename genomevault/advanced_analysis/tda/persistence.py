@@ -1,3 +1,5 @@
+from typing import Dict, List, Optional, Set, Tuple, Union
+
 """
 Topological Data Analysis for genomic structure analysis
 """

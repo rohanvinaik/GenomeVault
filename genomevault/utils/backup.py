@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional
+
 """
 Backup and disaster recovery module for GenomeVault.
 
@@ -126,8 +128,7 @@ class BackupManager:
             # Verify integrity
             data_hash = hashlib.sha256(compressed_data).hexdigest()
             if data_hash != backup_package["data_hash"]:
-                raise ValueError("Backup integrity check failed")
-
+                raise ValueError("Backup integrity check failed") from e
             # Decompress data
             data_json = gzip.decompress(compressed_data).decode()
             _ = json.loads(data_json)
@@ -332,8 +333,7 @@ class BackupManager:
             _ = self.s3_client.get_object(Bucket=self.s3_bucket, Key="backups/{backup_id}.backup")
             return json.loads(response["Body"].read())
 
-        raise FileNotFoundError("Backup {backup_id} not found")
-
+        raise FileNotFoundError("Backup {backup_id} not found") from e
     def _replicate_to_s3(self, backup_id: str, backup_package: Dict[str, Any]):
         """Replicate backup to S3"""
         if not self.s3_client:
@@ -452,8 +452,7 @@ class DisasterRecoveryOrchestrator:
     def restore_recovery_point(self, recovery_point_id: str) -> Dict[str, Any]:
         """Restore system state from a recovery point"""
         if recovery_point_id not in self.recovery_points:
-            raise ValueError("Recovery point {recovery_point_id} not found")
-
+            raise ValueError("Recovery point {recovery_point_id} not found") from e
         _ = self.recovery_points[recovery_point_id]
 
         try:

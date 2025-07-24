@@ -1,3 +1,5 @@
+from typing import Any, Dict, Tuple
+
 """Post-quantum cryptography implementations for GenomeVault."""
 
 import os

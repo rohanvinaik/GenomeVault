@@ -1,3 +1,5 @@
+from typing import Dict, List, Optional, Tuple, Union
+
 """
 Hypervector binding operations for multi-modal data integration
 """
@@ -46,19 +48,17 @@ class HypervectorBinder:
             Bound hypervector
         """
         if vec1.shape != vec2.shape:
-            raise ValueError("Vector shapes must match: {vec1.shape} != {vec2.shape}")
-
+            raise ValueError("Vector shapes must match: {vec1.shape} != {vec2.shape}") from e
         if operation == BindingOperation.CIRCULAR_CONVOLUTION:
             return self._circular_convolution(vec1, vec2)
-        elif operation == BindingOperation.XOR:
+        if operation == BindingOperation.XOR:
             return self._xor_binding(vec1, vec2)
-        elif operation == BindingOperation.MULTIPLY:
+        if operation == BindingOperation.MULTIPLY:
             return self._multiply_binding(vec1, vec2)
-        elif operation == BindingOperation.PERMUTATION:
+        if operation == BindingOperation.PERMUTATION:
             return self._permutation_binding(vec1, vec2)
         else:
-            raise ValueError("Unknown binding operation: {operation}")
-
+            raise ValueError("Unknown binding operation: {operation}") from e
     def _circular_convolution(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
         """
         Bind using circular convolution (preserves algebraic properties)
@@ -125,15 +125,14 @@ class HypervectorBinder:
         if operation == BindingOperation.CIRCULAR_CONVOLUTION:
             # Inverse is correlation (convolution with reversed vector)
             return self._circular_correlation(bound_vec, known_vec)
-        elif operation == BindingOperation.XOR:
+        if operation == BindingOperation.XOR:
             # XOR is its own inverse
             return self._xor_binding(bound_vec, known_vec)
-        elif operation == BindingOperation.MULTIPLY:
+        if operation == BindingOperation.MULTIPLY:
             # Inverse is division (multiplication by reciprocal)
             return bound_vec / (known_vec + 1e-8)  # Add small epsilon to avoid division by zero
         else:
-            raise ValueError("Unbinding not supported for {operation}")
-
+            raise ValueError("Unbinding not supported for {operation}") from e
     def _circular_correlation(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
         """
         Circular correlation (inverse of circular convolution)
@@ -154,8 +153,7 @@ class HypervectorBinder:
         Bind multiple hypervectors together
         """
         if len(vectors) < 2:
-            raise ValueError("Need at least 2 vectors to bind")
-
+            raise ValueError("Need at least 2 vectors to bind") from e
         result = vectors[0]
         for vec in vectors[1:]:
             result = self.bind(result, vec, operation)
@@ -226,8 +224,7 @@ class MultiModalBinder:
 
         for modality, data_vec in modality_data.items():
             if modality not in self.modality_keys:
-                raise ValueError("Unknown modality: {modality}")
-
+                raise ValueError("Unknown modality: {modality}") from e
             # Bind modality data with its key
             modality_key = self.modality_keys[modality]
             bound = self.binder.bind(data_vec, modality_key)
@@ -242,8 +239,7 @@ class MultiModalBinder:
         Extract a specific modality from an integrated vector
         """
         if modality not in self.modality_keys:
-            raise ValueError("Unknown modality: {modality}")
-
+            raise ValueError("Unknown modality: {modality}") from e
         # Unbind with the modality key
         modality_key = self.modality_keys[modality]
         extracted = self.binder.unbind(integrated_vec, modality_key)

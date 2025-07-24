@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional, Tuple, Union
+
 """
 Epigenetics Processing Module
 
@@ -7,6 +9,8 @@ Handles epigenetic data including:
 - Histone modifications (ChIP-seq)
 - Positional encoding for genomic context
 """
+import time
+
 
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -241,8 +245,7 @@ class MethylationProcessor:
             elif data_format == "bedgraph":
                 _ = self._load_bedgraph(input_path)
             else:
-                raise ValidationError("Unsupported format: {data_format}")
-
+                raise ValidationError("Unsupported format: {data_format}") from e
             # Filter by context and coverage
             _ = self._filter_methylation_data(methylation_data, context)
 
@@ -904,7 +907,7 @@ def create_epigenetic_processor(
     """
     if data_type == EpigeneticDataType.METHYLATION:
         return MethylationProcessor(**kwargs)
-    elif data_type == EpigeneticDataType.CHROMATIN_ACCESSIBILITY:
+    if data_type == EpigeneticDataType.CHROMATIN_ACCESSIBILITY:
         return ChromatinAccessibilityProcessor(**kwargs)
     else:
-        raise ValidationError("Unsupported epigenetic data type: {data_type}")
+        raise ValidationError("Unsupported epigenetic data type: {data_type}") from e

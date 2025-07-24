@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional, Tuple
+
 """
 Shard manager for distributed PIR database.
 Handles data distribution, updates, and integrity verification.

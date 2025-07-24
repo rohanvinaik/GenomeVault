@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional, Set, Tuple
+
 """
 PIR network coordinator for managing distributed servers.
 Handles server discovery, health monitoring, and query routing.
@@ -498,13 +500,12 @@ class PIRNetworkCoordinator:
                 None,
             )
             if not config:
-                raise ValueError("Configuration '{config_name}' not found")
+                raise ValueError("Configuration '{config_name}' not found") from e
         else:
             # Use optimal configuration
             config = config_info["optimal"]
             if not config:
-                raise RuntimeError("No valid configuration available")
-
+                raise RuntimeError("No valid configuration available") from e
         # Get server objects
         servers = [self.topology.servers[server_id] for server_id in config["servers"]]
 

@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional, Set, Tuple
+
 """
 Enhanced PIR server implementation with full information-theoretic security.
 Handles real genomic reference data with optimized query processing.
@@ -429,13 +431,11 @@ class EnhancedPIRServer:
 
             # Rate limiting
             if not self._check_rate_limit(client_id):
-                raise SecurityError("Rate limit exceeded")
-
+                raise SecurityError("Rate limit exceeded") from e
             # Validate query size
             query_size = sum(len(str(v)) for v in query_vectors)
             if query_size > self.max_query_size:
-                raise ValidationError("Query size exceeds maximum")
-
+                raise ValidationError("Query size exceeds maximum") from e
         except (KeyError, ValueError) as e:
             logger.error("Invalid query format: {e}")
             return {
@@ -462,8 +462,7 @@ class EnhancedPIRServer:
             elif query_type == "graph":
                 results = await self._process_graph_query(query_vectors, parameters)
             else:
-                raise ValidationError("Unknown query type: {query_type}")
-
+                raise ValidationError("Unknown query type: {query_type}") from e
             # Calculate metrics
             processing_time_ms = (time.time() - start_time) * 1000
             self._update_metrics(processing_time_ms, len(results))

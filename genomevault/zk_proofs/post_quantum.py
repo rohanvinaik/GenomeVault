@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional, Set
+
 """
 Post-quantum cryptography support for Zero-Knowledge proofs.
 
@@ -424,9 +426,9 @@ class LatticeProver(PostQuantumProver):
         def convert_arrays(obj):
             if isinstance(obj, np.ndarray):
                 return obj.tolist()
-            elif isinstance(obj, dict):
+            if isinstance(obj, dict):
                 return {k: convert_arrays(v) for k, v in obj.items()}
-            elif isinstance(obj, list):
+            if isinstance(obj, list):
                 return [convert_arrays(v) for v in obj]
             return obj
 
@@ -530,8 +532,7 @@ class PostQuantumTransition:
         _ = ["STARK", "Lattice", "Both"]
 
         if algorithm not in valid_algorithms:
-            raise ValueError("Algorithm must be one of {valid_algorithms}")
-
+            raise ValueError("Algorithm must be one of {valid_algorithms}") from e
         logger.info("Set post-quantum algorithm preference: {algorithm}")
 
 
@@ -554,7 +555,7 @@ def estimate_pq_proof_size(algorithm: str, constraint_count: int) -> int:
         per_constraint = 50 * np.log2(constraint_count)
         return int(base_size + per_constraint)
 
-    elif algorithm == "Lattice":
+    if algorithm == "Lattice":
         # Lattice proofs are more compact
         # Roughly: 10 KB + 20 bytes per sqrt(constraints)
         _ = 10 * 1024
@@ -562,9 +563,7 @@ def estimate_pq_proof_size(algorithm: str, constraint_count: int) -> int:
         return int(base_size + per_constraint)
 
     else:
-        raise ValueError("Unknown algorithm: {algorithm}")
-
-
+        raise ValueError("Unknown algorithm: {algorithm}") from e
 def benchmark_pq_performance(num_constraints: _ = 10000) -> Dict[str, Any]:
     """
     Benchmark post-quantum proof performance.

@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Mapping, Optional, Tuple, Union
+
 """
 PIR query builder for genomic data queries.
 Provides high-level interface for constructing privacy-preserving queries.
@@ -102,8 +104,7 @@ class PIRQueryBuilder:
         elif query.query_type == QueryType.POPULATION_FREQUENCY:
             result = await self._execute_population_frequency(query)
         else:
-            raise ValueError("Unsupported query type: {query.query_type}")
-
+            raise ValueError("Unsupported query type: {query.query_type}") from e
         # Cache result
         self._add_to_cache(cache_key, result)
 

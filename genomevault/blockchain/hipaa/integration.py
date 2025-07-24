@@ -1,8 +1,12 @@
+from typing import Any, Dict, Optional
+
 """
 HIPAA Integration for Blockchain Governance
 
 Integrates HIPAA fast-track verification with the blockchain node system.
 """
+import time
+
 
 import asyncio
 from datetime import datetime, timedelta

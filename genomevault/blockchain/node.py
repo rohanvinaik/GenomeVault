@@ -1,3 +1,5 @@
+from typing import Dict, List, Tuple
+
 """
 Blockchain node implementation with dual-axis voting model.
 Implements Tendermint BFT consensus with weighted voting.

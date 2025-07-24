@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional
+
 """
 PIR client: build and decode queries with information-theoretic privacy.
 Implements multi-server PIR with optimal communication complexity.
@@ -155,8 +157,7 @@ class PIRClient:
             PIR query object
         """
         if target_index >= self.database_size:
-            raise ValueError("Index {target_index} out of bounds")
-
+            raise ValueError("Index {target_index} out of bounds") from e
         # Generate query ID
         query_id = hashlib.sha256("{target_index}:{time.time()}".encode()).hexdigest()[:16]
 
@@ -341,9 +342,9 @@ class PIRClient:
         """
         if data_type == "genomic":
             return self._decode_genomic_data(response_data)
-        elif data_type == "reference":
+        if data_type == "reference":
             return self._decode_reference_data(response_data)
-        elif data_type == "annotation":
+        if data_type == "annotation":
             return self._decode_annotation_data(response_data)
         else:
             # Generic decoding

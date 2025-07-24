@@ -1,8 +1,12 @@
+from typing import Any, Dict, Optional
+
 """
 HIPAA Verification Models
 
 Data models for HIPAA fast-track verification system.
 """
+import time
+
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -44,8 +48,7 @@ class HIPAACredentials:
     def __post_init__(self):
         """Validate credentials format"""
         if not self.npi or len(self.npi) != 10 or not self.npi.isdigit():
-            raise ValueError("NPI must be 10 digits")
-
+            raise ValueError("NPI must be 10 digits") from e
         if not self.baa_hash or len(self.baa_hash) != 64:
             raise ValueError("BAA hash must be 64 characters (SHA256)")
 
@@ -53,9 +56,7 @@ class HIPAACredentials:
             raise ValueError("Risk analysis hash must be 64 characters (SHA256)")
 
         if not self.hsm_serial:
-            raise ValueError("HSM serial number is required")
-
-
+            raise ValueError("HSM serial number is required") from e
 @dataclass
 class VerificationRecord:
     """Record of HIPAA verification"""

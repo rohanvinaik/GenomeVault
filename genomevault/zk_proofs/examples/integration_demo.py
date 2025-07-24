@@ -1,3 +1,5 @@
+from typing import Any, Dict, List
+
 """
 Integration example for GenomeVault Zero-Knowledge Proof System.
 

@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional, Tuple
+
 """
 Circuit manager for Zero-Knowledge proof system.
 
@@ -159,14 +161,13 @@ class CircuitManager:
             Circuit instance
         """
         if circuit_name not in self.circuits:
-            raise ValueError("Unknown circuit: {circuit_name}")
-
+            raise ValueError("Unknown circuit: {circuit_name}") from e
         metadata = self.circuits[circuit_name]
 
         # Create circuit instance with parameters
         if circuit_name == "variant_presence":
             return metadata.circuit_class(merkle_depth=metadata.parameters.get("merkle_depth", 20))
-        elif circuit_name == "polygenic_risk_score":
+        if circuit_name == "polygenic_risk_score":
             return metadata.circuit_class(
                 max_variants=metadata.parameters.get("max_variants", 1000)
             )
@@ -176,13 +177,13 @@ class CircuitManager:
             )
         elif circuit_name == "pathway_enrichment":
             return metadata.circuit_class(max_genes=metadata.parameters.get("max_genes", 20000))
-        elif circuit_name == "multi_omics_correlation":
+        if circuit_name == "multi_omics_correlation":
             return metadata.circuit_class(
                 max_dimensions=metadata.parameters.get("max_dimensions", 1000)
             )
         elif circuit_name == "genotype_phenotype":
             return metadata.circuit_class(max_samples=metadata.parameters.get("max_samples", 10000))
-        elif circuit_name == "rare_variant_burden":
+        if circuit_name == "rare_variant_burden":
             return metadata.circuit_class(
                 max_variants_per_gene=metadata.parameters.get("max_variants_per_gene", 100)
             )
@@ -192,8 +193,7 @@ class CircuitManager:
     def get_circuit_metadata(self, circuit_name: str) -> CircuitMetadata:
         """Get metadata for a circuit."""
         if circuit_name not in self.circuits:
-            raise ValueError("Unknown circuit: {circuit_name}")
-
+            raise ValueError("Unknown circuit: {circuit_name}") from e
         return self.circuits[circuit_name]
 
     def list_circuits(self) -> List[Dict[str, Any]]:
@@ -454,13 +454,13 @@ class CircuitManager:
             # Validate glucose threshold
             if "glucose_threshold" in public_inputs:
                 threshold = public_inputs["glucose_threshold"]
-                if not (50 <= threshold <= 300):
+                if not 50 <= threshold <= 300:
                     errors.append("Glucose threshold out of valid range (50-300)")
 
             # Validate risk threshold
             if "risk_threshold" in public_inputs:
                 threshold = public_inputs["risk_threshold"]
-                if not (0 <= threshold <= 1):
+                if not 0 <= threshold <= 1:
                     errors.append("Risk threshold must be between 0 and 1")
 
         elif circuit_name == "polygenic_risk_score":

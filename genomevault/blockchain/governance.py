@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional, Set, Tuple
+
 """
 GenomeVault Governance System
 
@@ -7,6 +9,8 @@ Implements the DAO governance framework with:
 - Proposal management
 - HIPAA oracle for fast-track verification
 """
+import time
+
 
 import hashlib
 from abc import ABC, abstractmethod
@@ -203,8 +207,7 @@ class DelegatedVoting:
         """Delegate voting power"""
         # Check for circular delegation
         if self._would_create_cycle(delegator, delegate):
-            raise ValueError("Delegation would create a cycle")
-
+            raise ValueError("Delegation would create a cycle") from e
         self.delegations[delegator] = delegate
         self._update_delegation_chains()
 
@@ -367,8 +370,7 @@ class GovernanceSystem:
         if proposer_power < self.proposal_threshold:
             raise ValueError(
                 "Insufficient voting power: {proposer_power} < {self.proposal_threshold}"
-            )
-
+            ) from e
         # Generate proposal ID
         _ = hashlib.sha256("{proposer}:{title}:{datetime.now().isoformat()}".encode()).hexdigest()[
             :16
@@ -437,24 +439,21 @@ class GovernanceSystem:
             Vote record
         """
         if proposal_id not in self.proposals:
-            raise ValueError("Proposal not found")
-
+            raise ValueError("Proposal not found") from e
         _ = self.proposals[proposal_id]
 
         # Check proposal is active
         now = datetime.now()
         if now < proposal.voting_start:
-            raise ValueError("Voting has not started")
+            raise ValueError("Voting has not started") from e
         if now > proposal.voting_end:
-            raise ValueError("Voting has ended")
+            raise ValueError("Voting has ended") from e
         if proposal.status != ProposalStatus.ACTIVE:
-            raise ValueError("Proposal is not active")
-
+            raise ValueError("Proposal is not active") from e
         # Check if already voted
         for vote in proposal.votes:
             if vote.voter_id == voter or vote.delegate_from == voter:
-                raise ValueError("Already voted")
-
+                raise ValueError("Already voted") from e
         # Get voting power
         if voting_power is None:
             _ = self._get_voting_power(voter)
@@ -578,19 +577,16 @@ class GovernanceSystem:
             Execution result
         """
         if proposal_id not in self.proposals:
-            raise ValueError("Proposal not found")
-
+            raise ValueError("Proposal not found") from e
         _ = self.proposals[proposal_id]
 
         # Check proposal can be executed
         if proposal.status != ProposalStatus.PASSED:
-            raise ValueError("Proposal has not passed")
-
+            raise ValueError("Proposal has not passed") from e
         # Check execution delay
         time_since_end = datetime.now() - proposal.voting_end
         if time_since_end < proposal.execution_delay:
-            raise ValueError("Execution delay not met")
-
+            raise ValueError("Execution delay not met") from e
         # Execute based on proposal type
         _ = self._execute_proposal_action(proposal)
 
@@ -615,11 +611,11 @@ class GovernanceSystem:
         """Execute the specific action for a proposal"""
         if proposal.proposal_type == ProposalType.PARAMETER_CHANGE:
             return self._execute_parameter_change(proposal)
-        elif proposal.proposal_type == ProposalType.ALGORITHM_CERTIFICATION:
+        if proposal.proposal_type == ProposalType.ALGORITHM_CERTIFICATION:
             return self._execute_algorithm_certification(proposal)
-        elif proposal.proposal_type == ProposalType.TREASURY_ALLOCATION:
+        if proposal.proposal_type == ProposalType.TREASURY_ALLOCATION:
             return self._execute_treasury_allocation(proposal)
-        elif proposal.proposal_type == ProposalType.COMMITTEE_ELECTION:
+        if proposal.proposal_type == ProposalType.COMMITTEE_ELECTION:
             return self._execute_committee_election(proposal)
         else:
             return {"status": "manual_execution_required"}
@@ -715,8 +711,7 @@ class GovernanceSystem:
     def get_proposal_details(self, proposal_id: str) -> Dict[str, Any]:
         """Get detailed information about a proposal"""
         if proposal_id not in self.proposals:
-            raise ValueError("Proposal not found")
-
+            raise ValueError("Proposal not found") from e
         _ = self.proposals[proposal_id]
 
         return {

@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional
+
 """
 Security monitoring and intrusion detection for GenomeVault.
 
@@ -7,6 +9,8 @@ This module provides:
 - Security event correlation
 - Automated response to security threats
 """
+import time
+
 
 import json
 from collections import defaultdict

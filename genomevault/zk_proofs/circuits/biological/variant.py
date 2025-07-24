@@ -1,3 +1,5 @@
+from typing import Any, Dict, List
+
 """
 Biological zero-knowledge proof circuits
 
@@ -381,9 +383,9 @@ class PharmacogenomicCircuit(BaseCircuit):
         # For now, return a placeholder based on assumptions
         if total_activity.value < 5000:  # < 50 (scaled by 100)
             return FieldElement(0)
-        elif total_activity.value < 15000:  # < 150
+        if total_activity.value < 15000:  # < 150
             return FieldElement(1)
-        elif total_activity.value < 20000:  # < 200
+        if total_activity.value < 20000:  # < 200
             return FieldElement(2)
         else:
             return FieldElement(3)
@@ -564,4 +566,4 @@ def create_hypervector_proof(
             ).hexdigest(),
         }
     else:
-        raise ValueError("Unknown proof type: {proof_type}")
+        raise ValueError("Unknown proof type: {proof_type}") from e

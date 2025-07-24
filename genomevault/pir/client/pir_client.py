@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional, Tuple
+
 """
 PIR Client implementation for private genomic queries
 """
@@ -114,8 +116,7 @@ class PIRClient:
     async def _query_server(self, server_url: str, query: PIRQuery) -> Dict[str, Any]:
         """Query a single PIR server"""
         if not self.session:
-            raise PIRError("Session not initialized")
-
+            raise PIRError("Session not initialized") from e
         query_data = {
             "vector": query.query_vector.tolist(),
             "nonce": query.nonce.hex(),
@@ -130,9 +131,9 @@ class PIRClient:
                 if response.status == 200:
                     return await response.json()
                 else:
-                    raise PIRError("Server returned status {response.status}")
+                    raise PIRError("Server returned status {response.status}") from e
         except asyncio.TimeoutError:
-            raise PIRError("Query timeout for server {server_url}")
+            raise PIRError("Query timeout for server {server_url}") from e
         except Exception as e:
             raise PIRError("Query failed for server {server_url}: {str(e)}")
 
@@ -175,8 +176,7 @@ class PIRClient:
     async def get_server_status(self) -> List[Dict[str, Any]]:
         """Get status of all PIR servers"""
         if not self.session:
-            raise PIRError("Session not initialized")
-
+            raise PIRError("Session not initialized") from e
         statuses = []
         for server_url in self.server_urls:
             try:

@@ -1,3 +1,5 @@
+from typing import Callable, Dict, Mapping, Optional
+
 """
 Similarity-preserving mappings for hypervector transformations
 

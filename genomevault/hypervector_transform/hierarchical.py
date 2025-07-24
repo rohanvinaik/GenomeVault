@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional, Union
+
 """
 Enhanced Hypervector Transformation with Hierarchical Encoding
 
@@ -45,14 +47,12 @@ class HierarchicalHypervector:
         """Get hypervector at specified resolution level"""
         if level == "base":
             return self.base
-        elif level == "mid":
+        if level == "mid":
             return self.mid
-        elif level == "high":
+        if level == "high":
             return self.high
         else:
-            raise ValueError("Unknown level: {level}")
-
-
+            raise ValueError("Unknown level: {level}") from e
 class HolographicRepresentation:
     """
     Holographic reduced representation for distributed storage
@@ -411,8 +411,7 @@ class HierarchicalEncoder:
                 # Cross-modal binding with attention
                 bound = self._cross_modal_binding(v1, v2)
             else:
-                raise ValueError("Unknown binding operation: {operation}")
-
+                raise ValueError("Unknown binding operation: {operation}") from e
             # Normalize
             bound_vectors[level] = bound / (torch.norm(bound) + 1e-8)
 

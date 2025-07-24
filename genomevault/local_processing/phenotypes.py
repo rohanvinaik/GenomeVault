@@ -1,9 +1,13 @@
+from typing import Any, Dict, List, Optional, Union
+
 """
 GenomeVault Phenotypes Processing
 
 Handles clinical and phenotypic data processing including EHR integration,
 FHIR data parsing, and phenotype standardization.
 """
+import time
+
 
 import datetime
 import json
@@ -310,8 +314,7 @@ class PhenotypeProcessor:
                 if input_data.suffix == ".json":
                     input_data = json.load(f)
                 else:
-                    raise ValueError("Unsupported file format: {input_data.suffix}")
-
+                    raise ValueError("Unsupported file format: {input_data.suffix}") from e
         # Process based on format
         if data_format.lower() == "fhir":
             profile = self._process_fhir_data(input_data, sample_id)
@@ -742,8 +745,7 @@ class PhenotypeProcessor:
             Merged phenotype profile
         """
         if not profiles:
-            raise ValueError("No profiles to merge")
-
+            raise ValueError("No profiles to merge") from e
         if len(profiles) == 1:
             return profiles[0]
 
@@ -789,8 +791,7 @@ class PhenotypeProcessor:
                 merged.family_history.extend(profile.family_history)
 
             else:
-                raise ValueError("Unknown merge strategy: {merge_strategy}")
-
+                raise ValueError("Unknown merge strategy: {merge_strategy}") from e
         # Update metadata
         merged.metadata["merged_from"] = [p.sample_id for p in profiles]
         merged.metadata["merge_strategy"] = merge_strategy

@@ -1,3 +1,5 @@
+from typing import Any, Callable, Dict, List, Optional, Tuple
+
 """
 Federated Learning Client for secure model training participation.
 Implements local training with privacy guarantees.

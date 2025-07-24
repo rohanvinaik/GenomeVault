@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional
+
 """
 Base node implementation for GenomeVault blockchain
 """

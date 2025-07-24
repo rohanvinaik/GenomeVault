@@ -1,105 +1,110 @@
 """
-Core configuration management for GenomeVault
+GenomeVault Core Configuration
 """
-
+import os
 from functools import lru_cache
+from typing import Optional
 
-from pydantic import Field, field_validator
-from pydantic_settings import BaseSettings
+from pydantic import BaseSettings, Field, validator
 
 
-class Config(BaseSettings):
-    """Central configuration for GenomeVault system"""
-
-    # Node Configuration
-    node_type: str = Field("light", env="NODE_TYPE")
-    signatory_status: bool = Field(False, env="SIGNATORY_STATUS")
-    node_class_weight: int = Field(1, env="NODE_CLASS_WEIGHT")
-
-    # Network Configuration
-    pir_servers: str = Field("localhost:9001,localhost:9002,localhost:9003", env="PIR_SERVERS")
-    blockchain_rpc: str = Field("http://localhost:8545", env="BLOCKCHAIN_RPC")
-    ipfs_api: str = Field("http://localhost:5001", env="IPFS_API")
-
-    # Security Configuration
-    redis_password: str = Field("genomevault", env="REDIS_PASSWORD")
-    jwt_secret: str = Field("test_secret", env="JWT_SECRET")
-    encryption_key: str = Field("test_key", env="ENCRYPTION_KEY")
-
-    # HIPAA Configuration
-    npi_number: Optional[str] = Field(None, env="NPI_NUMBER")
-    baa_hash: Optional[str] = Field(None, env="BAA_HASH")
-    risk_analysis_hash: Optional[str] = Field(None, env="RISK_ANALYSIS_HASH")
-    hsm_serial: Optional[str] = Field(None, env="HSM_SERIAL")
-
+class GenomeVaultConfig(BaseSettings):
+    """Core configuration for GenomeVault."""
+    
     # API Configuration
-    api_host: str = Field("0.0.0.0", env="API_HOST")
-    api_port: int = Field(8000, env="API_PORT")
-    api_workers: int = Field(4, env="API_WORKERS")
-
-    # Processing Configuration
-    max_genome_size: str = Field("3GB", env="MAX_GENOME_SIZE")
-    compression_tier: str = Field("clinical", env="COMPRESSION_TIER")
-    enable_gpu: bool = Field(False, env="ENABLE_GPU")
-
-    # Hypervector dimensions
-    hypervector_dim: int = 10000
-    mini_tier_size: int = 25 * 1024  # 25KB
-    clinical_tier_size: int = 300 * 1024  # 300KB
-    full_tier_size: int = 200 * 1024  # 200KB per modality
-
-    # ZK Proof Configuration
-    proof_size: int = 384  # bytes
-    verification_time: int = 25  # milliseconds
-    post_quantum_security_level: int = 256  # bits
-
+    api_host: str = Field(default="127.0.0.1", description="API host")
+    api_port: int = Field(default=8000, description="API port")
+    api_prefix: str = Field(default="/api/v1", description="API prefix")
+    
+    # Security
+    secret_key: str = Field(default="", description="Secret key for JWT")
+    allowed_hosts: str = Field(default="*", description="Allowed hosts")
+    cors_origins: str = Field(default="*", description="CORS origins")
+    
+    # Database
+    database_url: Optional[str] = Field(default=None, description="Database URL")
+    redis_url: Optional[str] = Field(default=None, description="Redis URL")
+    
+    # Blockchain
+    node_type: str = Field(default="light", description="Node type")
+    blockchain_network: str = Field(default="testnet", description="Blockchain network")
+    consensus_algorithm: str = Field(default="tendermint", description="Consensus algorithm")
+    
     # PIR Configuration
-    pir_privacy_threshold: float = 0.98
-    pir_latency_target: int = 350  # milliseconds
-
-    # Clinical Features
-    enable_diabetes_pilot: bool = Field(False, env="ENABLE_DIABETES_PILOT")
-    enable_pharmacogenomics: bool = Field(False, env="ENABLE_PHARMACOGENOMICS")
-    enable_trial_matching: bool = Field(False, env="ENABLE_TRIAL_MATCHING")
-
-    model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
-
-    @field_validator("node_type")
+    pir_server_count: int = Field(default=5, description="Number of PIR servers")
+    pir_privacy_threshold: float = Field(default=0.98, description="PIR privacy threshold")
+    
+    # ZK Proofs
+    zk_circuit_path: str = Field(default="./circuits", description="ZK circuit path")
+    proof_timeout: int = Field(default=300, description="Proof timeout in seconds")
+    
+    # Hypervector
+    hypervector_dimensions: int = Field(default=10000, description="Hypervector dimensions")
+    compression_tier: str = Field(default="clinical", description="Compression tier")
+    
+    # Local Processing
+    processing_threads: int = Field(default=4, description="Processing threads")
+    temp_dir: str = Field(default="/tmp/genomevault", description="Temporary directory")
+    
+    # Monitoring
+    enable_monitoring: bool = Field(default=True, description="Enable monitoring")
+    log_level: str = Field(default="INFO", description="Log level")
+    
+    # HIPAA
+    hipaa_compliance: bool = Field(default=True, description="HIPAA compliance mode")
+    encryption_at_rest: bool = Field(default=True, description="Encryption at rest")
+    
+    @validator('node_type')
+    @classmethod
     def validate_node_type(cls, v):
-        if v not in ["light", "full", "archive"]:
-            raise ValueError("node_type must be one of: light, full, archive")
+        """Validate node type."""
+        allowed = ['light', 'full', 'archive']
+        if v not in allowed:
+            raise ValueError(f'Node type must be one of {allowed}')
         return v
-
-    @field_validator("compression_tier")
+    
+    @validator('compression_tier') 
+    @classmethod
     def validate_compression_tier(cls, v):
-        if v not in ["mini", "clinical", "full"]:
-            raise ValueError("compression_tier must be one of: mini, clinical, full")
+        """Validate compression tier."""
+        allowed = ['mini', 'clinical', 'full']
+        if v not in allowed:
+            raise ValueError(f'Compression tier must be one of {allowed}')
         return v
-
-    @property
-    def total_voting_power(self) -> int:
-        """Calculate total voting power: w = c + s"""
-        signatory_weight = 10 if self.signatory_status else 0
-        return self.node_class_weight + signatory_weight
-
-    @property
-    def credits_per_block(self) -> int:
-        """Calculate credits earned per block"""
-        base_credits = self.node_class_weight
-        signatory_bonus = 2 if self.signatory_status else 0
-        return base_credits + signatory_bonus
-
-    @property
-    def pir_server_list(self) -> list[str]:
-        """Parse PIR servers into a list"""
-        return [s.strip() for s in self.pir_servers.split(",")]
-
-    def is_hipaa_compliant(self) -> bool:
-        """Check if all HIPAA requirements are met"""
-        return all([self.npi_number, self.baa_hash, self.risk_analysis_hash, self.hsm_serial])
+    
+    class Config:
+        env_prefix = "GENOMEVAULT_"
+        env_file = ".env"
+        env_file_encoding = "utf-8"
 
 
 @lru_cache()
-def get_config() -> Config:
-    """Get cached configuration instance"""
-    return Config()
+def get_config() -> GenomeVaultConfig:
+    """Get cached configuration instance."""
+    return GenomeVaultConfig()
+
+
+# Global config instance
+config = get_config()
+
+# Environment-specific settings
+ENVIRONMENTS = {
+    'development': {
+        'debug': True,
+        'log_level': 'DEBUG',
+    },
+    'production': {
+        'debug': False,
+        'log_level': 'INFO',
+    },
+    'testing': {
+        'debug': True,
+        'log_level': 'DEBUG',
+    }
+}
+
+def get_environment_config(env: str = None):
+    """Get environment-specific configuration."""
+    if env is None:
+        env = os.getenv('GENOMEVAULT_ENVIRONMENT', 'development')
+    return ENVIRONMENTS.get(env, ENVIRONMENTS['development'])

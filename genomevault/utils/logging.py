@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional
+
 """
 Enhanced logging module with privacy-aware filtering and audit capabilities.
 
@@ -351,7 +353,7 @@ def filter_sensitive_data(logger, log_method, event_dict):
             }
         elif isinstance(value, list):
             return [redact_value(item) for item in value]
-        elif isinstance(value, str) and len(value) > 100:
+        if isinstance(value, str) and len(value) > 100:
             # Redact long strings that might be data
             return "[REDACTED - {len(value)} chars]"
         return value
@@ -484,3 +486,10 @@ _ = SecurityLogger()
 
 # Main logger
 _ = get_logger(__name__)
+
+
+# Additional logger exports for compatibility
+audit_logger = get_logger("audit")
+logger = get_logger("main")
+
+__all__ = ['get_logger', 'setup_logging', 'audit_logger', 'logger']

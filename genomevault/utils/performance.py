@@ -1,3 +1,5 @@
+from typing import Callable, Dict, List, Optional, Union
+
 """
 Performance optimization utilities for GenomeVault.
 
@@ -73,7 +75,7 @@ class HypervectorAccelerator:
 
             return int((v1 != v2).sum().cpu())
 
-        elif self.backend == "cupy":
+        if self.backend == "cupy":
             if not isinstance(v1, cp.ndarray):
                 v1 = cp.asarray(v1)
             if not isinstance(v2, cp.ndarray):
@@ -113,7 +115,7 @@ class HypervectorAccelerator:
             cos_sim = torch.nn.functional.cosine_similarity(v1.unsqueeze(0), v2.unsqueeze(0))
             return float(cos_sim.cpu())
 
-        elif self.backend == "cupy":
+        if self.backend == "cupy":
             if not isinstance(v1, cp.ndarray):
                 v1 = cp.asarray(v1, dtype=cp.float32)
             if not isinstance(v2, cp.ndarray):
@@ -139,7 +141,7 @@ class HypervectorAccelerator:
             distances = (batch != query_t).sum(dim=1)
             return distances.cpu().numpy()
 
-        elif self.backend == "cupy":
+        if self.backend == "cupy":
             # Stack vectors
             batch = cp.stack([cp.asarray(v) for v in vectors])
             query_cp = cp.asarray(query)
@@ -182,7 +184,7 @@ class HypervectorAccelerator:
 
             return result.cpu().numpy()
 
-        elif self.backend == "cupy" and CUDA_AVAILABLE:
+        if self.backend == "cupy" and CUDA_AVAILABLE:
             # CUDA kernel implementation
             v1_gpu = cuda.to_device(v1.astype(np.float32))
             v2_gpu = cuda.to_device(v2.astype(np.float32))
@@ -230,11 +232,10 @@ class MemoryEfficientStorage:
         if chunk_idx < len(self.chunks):
             chunk = self._decompress_chunk(self.chunks[chunk_idx])
             return chunk[vector_idx]
-        elif index - len(self.chunks) * self.chunk_size < len(self.current_chunk):
+        if index - len(self.chunks) * self.chunk_size < len(self.current_chunk):
             return self.current_chunk[vector_idx]
         else:
-            raise IndexError("Vector index out of range")
-
+            raise IndexError("Vector index out of range") from e
     def _compress_chunk(self, vectors: List[np.ndarray]) -> bytes:
         """Compress a chunk of vectors"""
         # Stack vectors and compress

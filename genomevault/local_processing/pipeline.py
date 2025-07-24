@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 """
 Multi-omics processing pipeline orchestrator
 """

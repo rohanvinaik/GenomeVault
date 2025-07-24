@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional, Union
+
 """
 Transcriptomics Processing Module
 
@@ -7,6 +9,8 @@ Handles RNA-seq data processing including:
 - Quality control
 - Normalization
 """
+import time
+
 
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -188,8 +192,7 @@ class TranscriptomicsProcessor:
                 # Process from expression matrix
                 _ = self._load_expression_matrix(input_path)
             else:
-                raise ValidationError("Unsupported input format: {input_path}")
-
+                raise ValidationError("Unsupported input format: {input_path}") from e
             # Normalize expression
             _ = self._normalize_expression(expression_data, normalization)
 
@@ -256,8 +259,7 @@ class TranscriptomicsProcessor:
             if df.shape[1] == 1:
                 df.columns = ["raw_count"]
             else:
-                raise ValidationError("Expression matrix must have 'raw_count' column")
-
+                raise ValidationError("Expression matrix must have 'raw_count' column") from e
         df["gene_id"] = df.index
         return df[["gene_id", "raw_count"]]
 
@@ -381,8 +383,7 @@ class TranscriptomicsProcessor:
         logger.info("Performing batch effect correction using {method}")
 
         if len(profiles) != len(batch_labels):
-            raise ValidationError("Number of profiles must match batch labels")
-
+            raise ValidationError("Number of profiles must match batch labels") from e
         # Create expression matrix
         _ = set()
         for profile in profiles:
@@ -531,8 +532,7 @@ class TranscriptomicsProcessor:
                 )
 
         else:
-            raise NotImplementedError("Method {method} not implemented")
-
+            raise NotImplementedError("Method {method} not implemented") from e
         # Create results DataFrame
         _ = pd.DataFrame(results)
 
@@ -568,6 +568,5 @@ class TranscriptomicsProcessor:
         elif format == "json":
             df.to_json(output_path, orient="records", indent=2)
         else:
-            raise ValidationError("Unsupported export format: {format}")
-
+            raise ValidationError("Unsupported export format: {format}") from e
         logger.info("Successfully exported {len(df)} transcripts")

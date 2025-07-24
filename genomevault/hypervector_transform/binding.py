@@ -1,3 +1,5 @@
+from typing import Dict, List, Optional
+
 """
 Binding operations for hyperdimensional computing
 
@@ -65,19 +67,17 @@ class HypervectorBinder:
             Bound hypervector
         """
         if not vectors:
-            raise BindingError("No vectors provided for binding")
-
+            raise BindingError("No vectors provided for binding") from e
         # Validate dimensions
         for i, v in enumerate(vectors):
             if v.shape[-1] != self.dimension:
                 raise BindingError(
                     "Vector {i} has dimension {v.shape[-1]}, expected {self.dimension}"
-                )
-
+                ) from e
         # Apply weights if provided
         if weights is not None:
             if len(weights) != len(vectors):
-                raise BindingError("Number of weights must match number of vectors")
+                raise BindingError("Number of weights must match number of vectors") from e
             vectors = [v * w for v, w in zip(vectors, weights)]
 
         # Perform binding based on type
@@ -92,8 +92,7 @@ class HypervectorBinder:
         elif binding_type == BindingType.FOURIER:
             result = self._fourier_bind(vectors)
         else:
-            raise BindingError("Unknown binding type: {binding_type}")
-
+            raise BindingError("Unknown binding type: {binding_type}") from e
         logger.debug("Bound {len(vectors)} vectors using {binding_type.value}")
         return result
 
@@ -116,15 +115,14 @@ class HypervectorBinder:
         """
         if binding_type == BindingType.MULTIPLY:
             return self._multiply_unbind(bound_vector, known_vectors)
-        elif binding_type == BindingType.CIRCULAR:
+        if binding_type == BindingType.CIRCULAR:
             return self._circular_unbind(bound_vector, known_vectors)
-        elif binding_type == BindingType.PERMUTATION:
+        if binding_type == BindingType.PERMUTATION:
             return self._permutation_unbind(bound_vector, known_vectors)
-        elif binding_type == BindingType.XOR:
+        if binding_type == BindingType.XOR:
             return self._xor_unbind(bound_vector, known_vectors)
         else:
-            raise BindingError("Unbinding not implemented for {binding_type}")
-
+            raise BindingError("Unbinding not implemented for {binding_type}") from e
     def _multiply_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
         """Element-wise multiplication binding"""
         result = vectors[0].clone()
@@ -272,8 +270,7 @@ class HypervectorBinder:
             Bundled hypervector
         """
         if not vectors:
-            raise BindingError("No vectors provided for bundling")
-
+            raise BindingError("No vectors provided for bundling") from e
         # Simple addition
         result = torch.stack(vectors).sum(dim=0)
 
@@ -469,8 +466,7 @@ class CrossModalBinder(HypervectorBinder):
 def circular_bind(vectors: List[torch.Tensor]) -> torch.Tensor:
     """Convenience function for circular binding"""
     if not vectors:
-        raise ValueError("No vectors provided")
-
+        raise ValueError("No vectors provided") from e
     binder = HypervectorBinder(vectors[0].shape[-1])
     return binder.bind(vectors, BindingType.CIRCULAR)
 

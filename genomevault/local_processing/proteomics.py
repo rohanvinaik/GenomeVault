@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional, Set, Tuple
+
 """
 Proteomics Processing Module
 
@@ -7,6 +9,8 @@ Handles mass spectrometry proteomics data including:
 - Peptide spectrum matching
 - Label-free and labeled quantification
 """
+import time
+
 
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -261,8 +265,7 @@ class ProteomicsProcessor:
             elif input_format == "mzml":
                 protein_data, _ = self._process_mzml(input_path)
             else:
-                raise ValidationError("Unsupported format: {input_format}")
-
+                raise ValidationError("Unsupported format: {input_format}") from e
             # Create protein measurements
             _ = self._create_protein_measurements(protein_data, peptide_data)
 
@@ -660,6 +663,5 @@ class ProteomicsProcessor:
         elif format == "json":
             df.to_json(output_path, orient="records", indent=2)
         else:
-            raise ValidationError("Unsupported export format: {format}")
-
+            raise ValidationError("Unsupported export format: {format}") from e
         logger.info("Successfully exported {len(df)} proteins")

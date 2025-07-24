@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional, Union
+
 """
 Core constraint system for ZK proofs
 
@@ -59,7 +61,7 @@ class FieldElement:
     def inverse(self):
         """Modular inverse using Fermat's little theorem"""
         if self.value == 0:
-            raise ValueError("Cannot invert zero")
+            raise ValueError("Cannot invert zero") from e
         return FieldElement(pow(self.value, self.MODULUS - 2, self.MODULUS))
 
     def __truediv__(self, other):
@@ -131,14 +133,14 @@ class LinearCombination:
                 else:
                     new_terms[var] = coeff
             return LinearCombination(new_terms, self.constant + other.constant)
-        elif isinstance(other, Variable):
+        if isinstance(other, Variable):
             new_terms = self.terms.copy()
             if other in new_terms:
                 new_terms[other] = new_terms[other] + FieldElement(1)
             else:
                 new_terms[other] = FieldElement(1)
             return LinearCombination(new_terms, self.constant)
-        elif isinstance(other, (int, FieldElement)):
+        if isinstance(other, (int, FieldElement)):
             return LinearCombination(self.terms.copy(), self.constant + FieldElement(other))
         else:
             raise TypeError(f"Cannot add {type(other)} to LinearCombination")
@@ -163,7 +165,7 @@ class LinearCombination:
             elif var.value is not None:
                 result = result + (coeff * var.value)
             else:
-                raise ValueError(f"No value for variable {var.index}")
+                raise ValueError(f"No value for variable {var.index}") from e
         return result
 
 
@@ -186,7 +188,7 @@ class Constraint:
 
             if self.constraint_type == ConstraintType.MUL:
                 return (a_val * b_val) == c_val
-            elif self.constraint_type == ConstraintType.ADD:
+            if self.constraint_type == ConstraintType.ADD:
                 return (a_val + b_val) == c_val
             else:
                 # For other constraint types, assume multiplication semantics
@@ -239,11 +241,10 @@ class ConstraintSystem:
         """Get assigned value for variable"""
         if var in self.assignment:
             return self.assignment[var]
-        elif var.value is not None:
+        if var.value is not None:
             return var.value
         else:
-            raise ValueError(f"No assignment for variable {var.index}")
-
+            raise ValueError(f"No assignment for variable {var.index}") from e
     def enforce_constraint(self, constraint: Constraint):
         """Add constraint to the system"""
         self.constraints.append(constraint)
@@ -308,9 +309,9 @@ class ConstraintSystem:
         """Convert various types to LinearCombination"""
         if isinstance(value, LinearCombination):
             return value
-        elif isinstance(value, Variable):
+        if isinstance(value, Variable):
             return LinearCombination({value: FieldElement(1)})
-        elif isinstance(value, (int, FieldElement)):
+        if isinstance(value, (int, FieldElement)):
             return LinearCombination(constant=FieldElement(value))
         else:
             raise TypeError(f"Cannot convert {type(value)} to LinearCombination")

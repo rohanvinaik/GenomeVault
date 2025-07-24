@@ -1,8 +1,12 @@
+from typing import Any, Dict, List, Optional, Tuple
+
 """
 HIPAA Verifier Implementation
 
 Core verification logic for HIPAA fast-track system.
 """
+import time
+
 
 import hashlib
 import json
@@ -216,8 +220,7 @@ class HIPAAVerifier:
         if credentials.npi in self.verification_records:
             record = self.verification_records[credentials.npi]
             if record.is_active():
-                raise VerificationError("NPI {credentials.npi} already verified")
-
+                raise VerificationError("NPI {credentials.npi} already verified") from e
         # Store pending verification
         self.pending_verifications[verification_id] = credentials
 
@@ -248,23 +251,19 @@ class HIPAAVerifier:
             Verification record with results
         """
         if verification_id not in self.pending_verifications:
-            raise VerificationError("Verification {verification_id} not found")
-
+            raise VerificationError("Verification {verification_id} not found") from e
         _ = self.pending_verifications[verification_id]
 
         try:
             # Step 1: Validate NPI format
             if not self.npi_registry._validate_npi_format(credentials.npi):
-                raise VerificationError("Invalid NPI format")
-
+                raise VerificationError("Invalid NPI format") from e
             # Step 2: Check CMS registry
             npi_record = await self.npi_registry.lookup_npi(credentials.npi)
             if not npi_record:
-                raise VerificationError("NPI not found in CMS registry")
-
+                raise VerificationError("NPI not found in CMS registry") from e
             if not npi_record.is_active:
-                raise VerificationError("NPI is not active")
-
+                raise VerificationError("NPI is not active") from e
             # Step 3: Validate credentials
             self._validate_credentials(credentials)
 
@@ -393,14 +392,11 @@ class HIPAAVerifier:
 
         # For now, basic validation
         if len(credentials.baa_hash) != 64:
-            raise VerificationError("Invalid BAA hash")
-
+            raise VerificationError("Invalid BAA hash") from e
         if len(credentials.risk_analysis_hash) != 64:
-            raise VerificationError("Invalid risk analysis hash")
-
+            raise VerificationError("Invalid risk analysis hash") from e
         if not credentials.hsm_serial:
-            raise VerificationError("Missing HSM serial")
-
+            raise VerificationError("Missing HSM serial") from e
     def _generate_signature(self, credentials: HIPAACredentials) -> str:
         """Generate verification signature"""
         _ = json.dumps(

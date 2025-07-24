@@ -1,3 +1,5 @@
+from typing import Any, Callable, Dict, List, Optional, Tuple
+
 """
 Federated Learning Coordinator for privacy-preserving multi-institutional research.
 Implements secure aggregation with differential privacy.
@@ -451,8 +453,7 @@ class FederatedLearningCoordinator:
             Aggregated model update
         """
         if round_id >= len(self.rounds_history):
-            raise ValueError("Invalid round: {round_id}")
-
+            raise ValueError("Invalid round: {round_id}") from e
         current_round = self.rounds_history[round_id]
 
         # Extract updates and sample counts
@@ -483,8 +484,7 @@ class FederatedLearningCoordinator:
             )
 
         else:
-            raise ValueError("Unknown aggregation strategy: {self.aggregation_strategy}")
-
+            raise ValueError("Unknown aggregation strategy: {self.aggregation_strategy}") from e
         # Update round record
         current_round.aggregated_update = aggregated
         current_round.end_time = time.time()

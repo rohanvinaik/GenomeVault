@@ -1,3 +1,5 @@
+from typing import Any, Dict, List
+
 """
 Variant Proof Circuit Implementation
 
@@ -98,8 +100,7 @@ class VariantProofCircuit:
     def generate_constraints(self):
         """Generate all circuit constraints"""
         if not self.setup_complete:
-            raise RuntimeError("Circuit must be setup before generating constraints")
-
+            raise RuntimeError("Circuit must be setup before generating constraints") from e
         # 1. Verify variant hash
         self._constrain_variant_hash()
 
@@ -192,23 +193,19 @@ class VariantProofCircuit:
 
         # Chromosome should be 1-23, X(24), Y(25), MT(26)
         chr_val = self.cs.get_assignment(self.variant_chr)
-        if not (1 <= chr_val.value <= 26):
-            raise ValueError(f"Invalid chromosome: {chr_val.value}")
-
+        if not 1 <= chr_val.value <= 26:
+            raise ValueError(f"Invalid chromosome: {chr_val.value}") from e
         # Position should be positive and reasonable
         pos_val = self.cs.get_assignment(self.variant_pos)
-        if not (1 <= pos_val.value <= 300_000_000):  # Max human chromosome length
-            raise ValueError(f"Invalid position: {pos_val.value}")
-
+        if not 1 <= pos_val.value <= 300_000_000:  # Max human chromosome length
+            raise ValueError(f"Invalid position: {pos_val.value}") from e
         # Base encoding should be valid (A=1, C=2, G=3, T=4)
         ref_val = self.cs.get_assignment(self.variant_ref)
-        if not (1 <= ref_val.value <= 4):
-            raise ValueError(f"Invalid reference base: {ref_val.value}")
-
+        if not 1 <= ref_val.value <= 4:
+            raise ValueError(f"Invalid reference base: {ref_val.value}") from e
         alt_val = self.cs.get_assignment(self.variant_alt)
-        if not (1 <= alt_val.value <= 4):
-            raise ValueError(f"Invalid alternate base: {alt_val.value}")
-
+        if not 1 <= alt_val.value <= 4:
+            raise ValueError(f"Invalid alternate base: {alt_val.value}") from e
     def _add_zero_knowledge_randomness(self):
         """Add randomness to achieve zero-knowledge"""
 
@@ -233,9 +230,9 @@ class VariantProofCircuit:
 
         if chr_str == "X":
             return 24
-        elif chr_str == "Y":
+        if chr_str == "Y":
             return 25
-        elif chr_str == "MT" or chr_str == "M":
+        if chr_str == "MT" or chr_str == "M":
             return 26
         else:
             return int(chr_str)

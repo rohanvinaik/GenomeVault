@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional
+
 """
 API entrypoint using FastAPI.
 Implements core GenomeVault network endpoints.

@@ -1,3 +1,5 @@
+from typing import Any, Dict, List
+
 """
 Multi-omics integration circuits for zero-knowledge proofs.
 
@@ -255,7 +257,7 @@ class GenotypePhenotypeAssociationCircuit(BaseCircuit):
         # Map to p-value scale (simplified)
         if beta_abs.value > 1000:
             return FieldElement(1)  # p < 0.001
-        elif beta_abs.value > 500:
+        if beta_abs.value > 500:
             return FieldElement(10)  # p < 0.01
         else:
             return FieldElement(50)  # p < 0.05

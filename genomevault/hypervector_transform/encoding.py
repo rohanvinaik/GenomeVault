@@ -1,3 +1,5 @@
+from typing import Dict, Optional, Set, Union
+
 """
 Hierarchical Hyperdimensional Computing (HDC) Encoder for genomic data
 
@@ -170,7 +172,7 @@ class HypervectorEncoder:
             # Convert to tensor
             return torch.tensor(features, dtype=torch.float32)
 
-        elif omics_type == OmicsType.TRANSCRIPTOMIC:
+        if omics_type == OmicsType.TRANSCRIPTOMIC:
             # Extract expression features
             if "expression_matrix" in data:
                 expr = data["expression_matrix"]
@@ -179,12 +181,12 @@ class HypervectorEncoder:
                 else:
                     return torch.tensor(expr, dtype=torch.float32)
 
-        elif omics_type == OmicsType.EPIGENOMIC:
+        if omics_type == OmicsType.EPIGENOMIC:
             # Extract methylation features
             if "methylation_levels" in data:
                 return torch.tensor(data["methylation_levels"], dtype=torch.float32)
 
-        elif omics_type == OmicsType.PROTEOMIC:
+        if omics_type == OmicsType.PROTEOMIC:
             # Extract protein abundances
             if "protein_abundances" in data:
                 return torch.tensor(data["protein_abundances"], dtype=torch.float32)
@@ -217,8 +219,7 @@ class HypervectorEncoder:
         elif self.config.projection_type == ProjectionType.ORTHOGONAL:
             matrix = self._create_orthogonal_projection(input_dim, output_dim)
         else:
-            raise EncodingError("Unsupported projection type: {self.config.projection_type}")
-
+            raise EncodingError("Unsupported projection type: {self.config.projection_type}") from e
         # Cache the matrix
         self._projection_cache[cache_key] = matrix
 
@@ -313,14 +314,13 @@ class HypervectorEncoder:
         """
         if metric == "cosine":
             return torch.nn.functional.cosine_similarity(hv1.view(1, -1), hv2.view(1, -1)).item()
-        elif metric == "euclidean":
+        if metric == "euclidean":
             return -torch.dist(hv1, hv2, p=2).item()
-        elif metric == "hamming":
+        if metric == "hamming":
             # For binary hypervectors
             return (torch.sign(hv1) == torch.sign(hv2)).float().mean().item()
         else:
-            raise ValueError("Unknown similarity metric: {metric}")
-
+            raise ValueError("Unknown similarity metric: {metric}") from e
     def get_projection_stats(self) -> Dict:
         """Get statistics about cached projections"""
         stats = {

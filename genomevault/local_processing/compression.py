@@ -1,3 +1,5 @@
+from typing import Any, Dict, List
+
 """
 GenomeVault Compression System - Multi-tier implementation
 
@@ -434,8 +436,7 @@ class CompressionEngine:
         """
         # Verify integrity
         if not compressed.verify_checksum():
-            raise ValueError("Compressed data integrity check failed")
-
+            raise ValueError("Compressed data integrity check failed") from e
         # Decompress
         json_str = gzip.decompress(compressed.data).decode("utf-8")
         data = json.loads(json_str)

@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional, Set, Tuple
+
 """
 Reference data manager for PIR system.
 Handles pangenome graphs, annotations, and population-specific data.

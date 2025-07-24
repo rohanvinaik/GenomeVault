@@ -1,9 +1,13 @@
+from typing import Any, Dict, List, Optional, Tuple
+
 """
 GenomeVault Encryption Utilities
 
 Provides cryptographic primitives and utilities for secure data handling,
 including AES-GCM encryption, homomorphic encryption support, and threshold cryptography.
 """
+import time
+
 
 import base64
 import hashlib
@@ -78,8 +82,7 @@ class AESGCMCipher:
             Tuple of (ciphertext, nonce, tag)
         """
         if len(key) != cls.KEY_SIZE:
-            raise ValueError("Key must be {cls.KEY_SIZE} bytes")
-
+            raise ValueError("Key must be {cls.KEY_SIZE} bytes") from e
         nonce = os.urandom(cls.NONCE_SIZE)
 
         cipher = Cipher(algorithms.AES(key), modes.GCM(nonce), backend=default_backend())
@@ -116,8 +119,7 @@ class AESGCMCipher:
             Decrypted plaintext
         """
         if len(key) != cls.KEY_SIZE:
-            raise ValueError("Key must be {cls.KEY_SIZE} bytes")
-
+            raise ValueError("Key must be {cls.KEY_SIZE} bytes") from e
         cipher = Cipher(algorithms.AES(key), modes.GCM(nonce, tag), backend=default_backend())
         decryptor = cipher.decryptor()
 
@@ -257,13 +259,11 @@ class ThresholdCrypto:
             List of threshold shares
         """
         if threshold > total_shares:
-            raise ValueError("Threshold cannot exceed total shares")
-
+            raise ValueError("Threshold cannot exceed total shares") from e
         # Convert secret to integer
         secret_int = int.from_bytes(secret, "big")
         if secret_int >= cls.PRIME:
-            raise ValueError("Secret too large for field")
-
+            raise ValueError("Secret too large for field") from e
         # Generate random coefficients for polynomial
         coefficients = [secret_int]
         for _ in range(threshold - 1):
@@ -301,20 +301,17 @@ class ThresholdCrypto:
             Reconstructed secret
         """
         if not shares:
-            raise ValueError("No shares provided")
-
+            raise ValueError("No shares provided") from e
         threshold = shares[0].threshold
         if len(shares) < threshold:
-            raise ValueError("Need at least {threshold} shares")
-
+            raise ValueError("Need at least {threshold} shares") from e
         # Verify and parse shares
         points = []
         for share in shares[:threshold]:
             # Verify checksum
             expected_checksum = hashlib.sha256(share.share_value).hexdigest()[:8]
             if not constant_time.bytes_eq(share.checksum.encode(), expected_checksum.encode()):
-                raise ValueError("Invalid checksum for share {share.share_id}")
-
+                raise ValueError("Invalid checksum for share {share.share_id}") from e
             # Parse share data
             share_data = json.loads(share.share_value.decode())
             points.append((share_data["x"], share_data["y"]))
@@ -421,8 +418,7 @@ class HomomorphicHelper:
         """Prepare integer for homomorphic encryption"""
         # Ensure value fits in specified bits
         if value >= 2**bit_length:
-            raise ValueError("Value too large for {bit_length} bits")
-
+            raise ValueError("Value too large for {bit_length} bits") from e
         # Convert to bytes with padding
         return value.to_bytes(bit_length // 8, "little")
 
@@ -450,8 +446,7 @@ class EncryptionManager:
         elif algorithm == "ChaCha20-Poly1305":
             key_material = ChaCha20Poly1305.generate_key()
         else:
-            raise ValueError("Unsupported algorithm: {algorithm}")
-
+            raise ValueError("Unsupported algorithm: {algorithm}") from e
         key = EncryptionKey(
             key_id=key_id,
             key_material=key_material,
@@ -469,8 +464,7 @@ class EncryptionManager:
     def encrypt_data(self, data: bytes, key_id: str) -> Dict[str, Any]:
         """Encrypt data using specified key"""
         if key_id not in self._keys:
-            raise ValueError("Key not found: {key_id}")
-
+            raise ValueError("Key not found: {key_id}") from e
         key = self._keys[key_id]
 
         if key.algorithm == "AES-GCM":
@@ -490,14 +484,12 @@ class EncryptionManager:
                 "algorithm": key.algorithm,
             }
         else:
-            raise ValueError("Unsupported algorithm: {key.algorithm}")
-
+            raise ValueError("Unsupported algorithm: {key.algorithm}") from e
     def decrypt_data(self, encrypted_data: Dict[str, Any]) -> bytes:
         """Decrypt data"""
         key_id = encrypted_data["key_id"]
         if key_id not in self._keys:
-            raise ValueError("Key not found: {key_id}")
-
+            raise ValueError("Key not found: {key_id}") from e
         key = self._keys[key_id]
 
         if key.algorithm == "AES-GCM":
@@ -505,12 +497,11 @@ class EncryptionManager:
             nonce = base64.b64decode(encrypted_data["nonce"])
             tag = base64.b64decode(encrypted_data["tag"])
             return AESGCMCipher.decrypt(ciphertext, key.key_material, nonce, tag)
-        elif key.algorithm == "ChaCha20-Poly1305":
+        if key.algorithm == "ChaCha20-Poly1305":
             ciphertext = base64.b64decode(encrypted_data["ciphertext"])
             return ChaCha20Poly1305.decrypt(ciphertext, key.key_material)
         else:
-            raise ValueError("Unsupported algorithm: {key.algorithm}")
-
+            raise ValueError("Unsupported algorithm: {key.algorithm}") from e
     def _load_keys(self):
         """Load keys from storage"""
         # In production, keys should be stored in HSM or secure key storage
@@ -531,19 +522,17 @@ def generate_secure_key(algorithm: str = "AES-GCM") -> bytes:
     """Generate a secure encryption key"""
     if algorithm == "AES-GCM":
         return AESGCMCipher.generate_key()
-    elif algorithm == "ChaCha20-Poly1305":
+    if algorithm == "ChaCha20-Poly1305":
         return ChaCha20Poly1305.generate_key()
     else:
-        raise ValueError("Unsupported algorithm: {algorithm}")
-
-
+        raise ValueError("Unsupported algorithm: {algorithm}") from e
 def secure_hash(data: bytes, algorithm: str = "SHA256") -> str:
     """Compute secure hash of data"""
     if algorithm == "SHA256":
         return hashlib.sha256(data).hexdigest()
-    elif algorithm == "SHA3-256":
+    if algorithm == "SHA3-256":
         return hashlib.sha3_256(data).hexdigest()
-    elif algorithm == "BLAKE2b":
+    if algorithm == "BLAKE2b":
         return hashlib.blake2b(data).hexdigest()
     else:
-        raise ValueError("Unsupported hash algorithm: {algorithm}")
+        raise ValueError("Unsupported hash algorithm: {algorithm}") from e
