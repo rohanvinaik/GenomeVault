@@ -1,4 +1,4 @@
-# Recording the Accuracy Dial Demo GIF
+# Recording the Efficiency-Accuracy Trade-off Demo GIF
 
 ## Quick Steps to Create the Demo GIF
 
@@ -16,7 +16,9 @@ python3 -m http.server 8080
 4. Select just the browser window showing the demo
 5. Record these actions:
    - Move slider from 50% to 99% slowly
-   - Show privacy level changing from "Maximum" to "Low"
+   - Show compute cost changing from "Very Low" to "High"
+   - Show iterations needed changing from "3-5x" to "1x"
+   - Note the privacy indicator stays constant
    - Click "Run Privacy-Preserving Query"
    - Show the loading animation
    - Display query results
@@ -58,11 +60,14 @@ assets/demo/accuracy-dial.gif
 For consistency, follow this script when recording:
 
 1. **Start** - Show the demo at 85% accuracy
-2. **Slide to 50%** - Show "Maximum" privacy, ~150ms query time
-3. **Slide to 99%** - Show "Low" privacy, ~300ms query time  
-4. **Click Query Button** - Show loading spinner
-5. **Show Results** - Display JSON response
-6. **Slide back to 85%** - Return to default
+2. **Slide to 50%** - Show "Very Low" compute cost, "3-5x" iterations needed
+3. **Highlight privacy box** - Emphasize that privacy remains constant
+4. **Slide to 99%** - Show "High" compute cost, "1x" iteration  
+5. **Click Query Button** - Show loading spinner
+6. **Show Results** - Display JSON response
+7. **Slide back to 85%** - Return to default
+
+Key message: "Start fast with low accuracy, refine as needed - privacy always protected!"
 
 Total duration: ~10-15 seconds
 

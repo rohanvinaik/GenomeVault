@@ -109,7 +109,7 @@ Inspired by the convergence of:
 
 GenomeVault demonstrates how these technologies can create a secure, automated genomic data ecosystem that benefits everyone while protecting individual privacy.
 
-## 🎚️ Try It Live: Privacy vs. Accuracy Trade-off Demo
+## 🎚️ Try It Live: Efficiency vs. Accuracy Trade-off Demo
 
 <div align="center">
 <img src="https://github.com/yourusername/genomevault/assets/demo/accuracy-dial.gif" alt="GenomeVault Accuracy Dial Demo" width="600">
@@ -117,13 +117,13 @@ GenomeVault demonstrates how these technologies can create a secure, automated g
 
 **[▶️ Launch Interactive Demo](examples/webdial/) | [📦 View Source](examples/webdial/index.html)**
 
-Our interactive web demo lets you experience the privacy vs. accuracy trade-off in real-time:
+Our interactive web demo lets you experience the efficiency vs. accuracy trade-off in real-time:
 - 🎚️ **Adjust the accuracy slider** from 50% to 99%
-- 📊 **See privacy level change** dynamically
-- ⚡ **Watch query performance** adapt
-- 🔍 **Run actual queries** against the GenomeVault API
+- ⚡ **See computational cost change** dynamically
+- 🔄 **Understand iterative refinement** - lower accuracy = faster, but can be re-run
+- 🔐 **Privacy remains constant** - always cryptographically protected
 
-Perfect for understanding how differential privacy and hyperdimensional computing work together!
+The key insight: You can start with fast, lower-accuracy queries and iteratively refine by running multiple times to achieve any desired accuracy level!
 
 ## 🔬 What It Does
 

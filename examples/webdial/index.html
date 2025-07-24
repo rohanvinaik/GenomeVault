@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GenomeVault Accuracy Dial Demo</title>
+    <title>GenomeVault Efficiency-Accuracy Trade-off Demo</title>
     <style>
         * {
             margin: 0;
@@ -221,8 +221,8 @@
 </head>
 <body>
     <div class="container">
-        <h1>GenomeVault Accuracy Dial</h1>
-        <p class="subtitle">Adjust privacy vs. accuracy trade-offs in real-time</p>
+        <h1>GenomeVault Efficiency Dial</h1>
+        <p class="subtitle">Adjust computational efficiency vs. accuracy trade-offs</p>
 
         <div class="dial-container">
             <div class="dial-label">
@@ -234,17 +234,21 @@
 
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-value" id="privacyLevel">High</div>
-                <div class="stat-label">Privacy Level</div>
+                <div class="stat-value" id="computeCost">Low</div>
+                <div class="stat-label">Compute Cost</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="queryTime">~250ms</div>
                 <div class="stat-label">Query Time</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" id="dataPoints">10K</div>
-                <div class="stat-label">Data Points</div>
+                <div class="stat-value" id="iterations">1-2x</div>
+                <div class="stat-label">Iterations Needed</div>
             </div>
+        </div>
+
+        <div class="info-box" style="background: rgba(76, 175, 80, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 0.9em; line-height: 1.6;">
+            <strong>🔐 Privacy Note:</strong> Your genomic data remains cryptographically protected at ALL accuracy levels. The trade-off is between computational efficiency and accuracy - not privacy. Lower accuracy = faster queries that can be iteratively refined.
         </div>
 
         <button class="query-button" id="queryButton" onclick="runQuery()">
@@ -269,27 +273,27 @@
         // Update stats based on accuracy slider
         const slider = document.getElementById('accuracySlider');
         const accuracyValue = document.getElementById('accuracyValue');
-        const privacyLevel = document.getElementById('privacyLevel');
+        const computeCost = document.getElementById('computeCost');
         const queryTime = document.getElementById('queryTime');
-        const dataPoints = document.getElementById('dataPoints');
+        const iterations = document.getElementById('iterations');
 
         slider.addEventListener('input', (e) => {
             const accuracy = e.target.value;
             accuracyValue.textContent = `${accuracy}%`;
             
-            // Update privacy level
+            // Update compute cost
             if (accuracy < 70) {
-                privacyLevel.textContent = 'Maximum';
-                privacyLevel.style.color = '#4CAF50';
+                computeCost.textContent = 'Very Low';
+                computeCost.style.color = '#4CAF50';
             } else if (accuracy < 85) {
-                privacyLevel.textContent = 'High';
-                privacyLevel.style.color = '#8BC34A';
+                computeCost.textContent = 'Low';
+                computeCost.style.color = '#8BC34A';
             } else if (accuracy < 95) {
-                privacyLevel.textContent = 'Medium';
-                privacyLevel.style.color = '#FFC107';
+                computeCost.textContent = 'Medium';
+                computeCost.style.color = '#FFC107';
             } else {
-                privacyLevel.textContent = 'Low';
-                privacyLevel.style.color = '#FF9800';
+                computeCost.textContent = 'High';
+                computeCost.style.color = '#FF9800';
             }
             
             // Update estimated query time
@@ -298,11 +302,16 @@
             const estimatedTime = Math.round(baseTime * timeMultiplier);
             queryTime.textContent = `~${estimatedTime}ms`;
             
-            // Update data points
-            const basePoints = 5000;
-            const pointsMultiplier = 1 + (accuracy - 50) * 0.05;
-            const estimatedPoints = Math.round(basePoints * pointsMultiplier / 1000);
-            dataPoints.textContent = `${estimatedPoints}K`;
+            // Update iterations needed for convergence
+            if (accuracy < 60) {
+                iterations.textContent = '3-5x';
+            } else if (accuracy < 80) {
+                iterations.textContent = '2-3x';
+            } else if (accuracy < 90) {
+                iterations.textContent = '1-2x';
+            } else {
+                iterations.textContent = '1x';
+            }
         });
 
         async function estimateBudget(accuracy) {
