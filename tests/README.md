@@ -10,13 +10,26 @@ tests/
 ├── fixtures/            # Test data files
 │   └── sample_variants.json
 ├── unit/               # Unit tests for individual components
-│   ├── test_compression.py
-│   ├── test_hypervector.py
+│   ├── test_zk_*.py    # ZK-related unit tests
+│   ├── test_pir_*.py   # PIR-related unit tests  
+│   ├── test_hdc_*.py   # HDC-related unit tests
 │   └── ...
 ├── integration/        # Integration tests
 │   └── test_hipaa_governance.py
-├── performance/        # Performance benchmarks
-└── security/          # Security-focused tests
+├── e2e/               # End-to-end tests
+│   ├── test_pir_e2e.py
+│   └── test_zk_e2e.py
+├── property/          # Property-based tests (Hypothesis)
+│   ├── test_hdc_properties.py
+│   └── test_zk_properties.py
+├── adversarial/       # Adversarial/security tests
+│   ├── test_hdc_adversarial.py
+│   ├── test_pir_adversarial.py
+│   └── test_zk_adversarial.py
+├── pir/               # PIR-specific tests
+│   └── test_pir_protocol.py
+└── zk/                # ZK-specific tests
+    └── test_zk_property_circuits.py
 ```
 
 ## Running Tests
@@ -30,7 +43,19 @@ make test
 # Run with coverage
 make coverage
 
-# Run specific test categories
+# Run lane-specific tests
+make test-zk      # Run all ZK tests
+make test-pir     # Run all PIR tests
+make test-hdc     # Run all HDC tests
+
+# Run test categories
+make test-unit
+make test-integration
+make test-e2e
+make test-property
+make test-adversarial
+
+# Run specific test categories (alternative)
 ./run-tests.sh unit
 ./run-tests.sh integration
 ./run-tests.sh security
@@ -94,9 +119,29 @@ pytest tests/ -x
 
 ### Test Naming Convention
 
+#### Lane-Specific Naming
+All test files should be prefixed with their lane identifier:
+- **ZK tests**: `test_zk_*.py`
+- **PIR tests**: `test_pir_*.py`
+- **HDC tests**: `test_hdc_*.py`
+
+#### Function Naming
 ```python
 def test_<component>_<action>_<expected_result>():
     """Test description"""
+    pass
+```
+
+Example:
+```python
+# In test_pir_protocol.py
+def test_pir_query_generation_constant_time():
+    """Test that PIR query generation runs in constant time"""
+    pass
+
+# In test_hdc_encoding.py  
+def test_hdc_encode_variant_preserves_similarity():
+    """Test that HDC encoding preserves variant similarity"""
     pass
 ```
 

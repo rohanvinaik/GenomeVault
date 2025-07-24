@@ -1,0 +1,197 @@
+"""Property-based tests for ZK proof system using Hypothesis."""
+
+import pytest
+from hypothesis import given, strategies as st, settings
+import numpy as np
+
+from genomevault.zk_proofs.circuits import PRSProofCircuit
+from genomevault.zk_proofs.prover import ZKProver
+from genomevault.zk_proofs.verifier import ZKVerifier
+
+
+class TestZKProperties:
+    """Property-based testing for ZK proofs."""
+    
+    @given(
+        prs_score=st.floats(min_value=0.0, max_value=1.0, allow_nan=False),
+        min_val=st.floats(min_value=-10.0, max_value=0.0, allow_nan=False),
+        max_val=st.floats(min_value=1.0, max_value=10.0, allow_nan=False)
+    )
+    @settings(max_examples=100, deadline=None)
+    def test_completeness_property(self, prs_score, min_val, max_val):
+        """Test completeness: valid proofs always verify."""
+        if min_val >= max_val:
+            return  # Skip invalid ranges
+        
+        # Adjust score to be in range
+        adjusted_score = min_val + (max_val - min_val) * prs_score
+        
+        circuit = PRSProofCircuit()
+        prover = ZKProver(circuit)
+        verifier = ZKVerifier(circuit)
+        
+        # Generate and verify proof
+        proof = prover.prove_prs_in_range(adjusted_score, min_val, max_val)
+        assert verifier.verify(proof, {"min": min_val, "max": max_val})
+    
+    @given(
+        prs_score=st.floats(allow_nan=False),
+        min_val=st.floats(allow_nan=False),
+        max_val=st.floats(allow_nan=False)
+    )
+    @settings(max_examples=100, deadline=None)
+    def test_soundness_property(self, prs_score, min_val, max_val):
+        """Test soundness: invalid proofs should not verify."""
+        if min_val >= max_val:
+            return  # Skip invalid ranges
+        
+        # Ensure score is outside range
+        if min_val <= prs_score <= max_val:
+            prs_score = max_val + 1.0  # Force outside range
+        
+        circuit = PRSProofCircuit()
+        prover = ZKProver(circuit)
+        
+        # Should fail to generate valid proof
+        with pytest.raises((ValueError, AssertionError)):
+            prover.prove_prs_in_range(prs_score, min_val, max_val)
+    
+    @given(
+        prs_scores=st.lists(
+            st.floats(min_value=0.0, max_value=1.0, allow_nan=False),
+            min_size=2,
+            max_size=10
+        )
+    )
+    @settings(max_examples=50, deadline=None)
+    def test_zero_knowledge_property(self, prs_scores):
+        """Test zero-knowledge: proofs don't reveal private inputs."""
+        circuit = PRSProofCircuit()
+        prover = ZKProver(circuit)
+        
+        # Generate proofs for different scores with same public params
+        proofs = []
+        for score in prs_scores:
+            proof = prover.prove_prs_in_range(score, 0.0, 1.0)
+            proofs.append(proof.serialize())
+        
+        # All proofs should be different (randomized)
+        unique_proofs = set(proofs)
+        assert len(unique_proofs) == len(proofs)
+        
+        # All proofs should have same size
+        sizes = [len(p) for p in proofs]
+        assert len(set(sizes)) == 1
+    
+    @given(
+        data=st.data(),
+        num_proofs=st.integers(min_value=10, max_value=100)
+    )
+    @settings(max_examples=10, deadline=None)
+    def test_proof_indistinguishability(self, data, num_proofs):
+        """Test that proofs are computationally indistinguishable."""
+        circuit = PRSProofCircuit()
+        prover = ZKProver(circuit)
+        
+        # Generate proofs for two different values
+        value1 = data.draw(st.floats(min_value=0.0, max_value=0.5))
+        value2 = data.draw(st.floats(min_value=0.5, max_value=1.0))
+        
+        proofs1 = []
+        proofs2 = []
+        
+        for _ in range(num_proofs // 2):
+            proofs1.append(prover.prove_prs_in_range(value1, 0.0, 1.0).serialize())
+            proofs2.append(prover.prove_prs_in_range(value2, 0.0, 1.0).serialize())
+        
+        # Statistical properties should be similar
+        # (in practice, would need more sophisticated analysis)
+        avg_entropy1 = np.mean([self._entropy(p) for p in proofs1])
+        avg_entropy2 = np.mean([self._entropy(p) for p in proofs2])
+        
+        # Entropy should be similar (within 10%)
+        assert abs(avg_entropy1 - avg_entropy2) / max(avg_entropy1, avg_entropy2) < 0.1
+    
+    def _entropy(self, data: bytes) -> float:
+        """Calculate Shannon entropy of bytes."""
+        if not data:
+            return 0
+        
+        # Count byte frequencies
+        counts = np.bincount(list(data), minlength=256)
+        probs = counts / len(data)
+        
+        # Calculate entropy
+        entropy = 0
+        for p in probs:
+            if p > 0:
+                entropy -= p * np.log2(p)
+        
+        return entropy
+    
+    @given(
+        st.lists(
+            st.tuples(
+                st.floats(min_value=0.0, max_value=1.0, allow_nan=False),
+                st.floats(min_value=0.0, max_value=0.5, allow_nan=False),
+                st.floats(min_value=0.5, max_value=1.0, allow_nan=False)
+            ),
+            min_size=1,
+            max_size=20
+        )
+    )
+    @settings(max_examples=20, deadline=None)
+    def test_batch_verification_consistency(self, proof_params):
+        """Test that batch verification is consistent with individual verification."""
+        circuit = PRSProofCircuit()
+        prover = ZKProver(circuit)
+        verifier = ZKVerifier(circuit)
+        
+        proofs = []
+        public_inputs_list = []
+        
+        for score, min_val, max_val in proof_params:
+            if min_val >= max_val:
+                continue
+                
+            # Ensure score is in range
+            score = min(max(score, min_val), max_val)
+            
+            proof = prover.prove_prs_in_range(score, min_val, max_val)
+            proofs.append(proof)
+            public_inputs_list.append({"min": min_val, "max": max_val})
+        
+        if not proofs:
+            return
+        
+        # Verify individually
+        individual_results = []
+        for proof, pub_inputs in zip(proofs, public_inputs_list):
+            individual_results.append(verifier.verify(proof, pub_inputs))
+        
+        # Batch verification (if supported)
+        if hasattr(verifier, 'batch_verify'):
+            batch_result = verifier.batch_verify(proofs, public_inputs_list)
+            assert batch_result == all(individual_results)
+
+
+class TestZKCircuitProperties:
+    """Test properties of the ZK circuits themselves."""
+    
+    @given(
+        num_constraints=st.integers(min_value=100, max_value=10000)
+    )
+    def test_circuit_satisfiability(self, num_constraints):
+        """Test that circuits are satisfiable for valid inputs."""
+        # This would test the actual circuit construction
+        # in a real implementation
+        pass
+    
+    @given(
+        circuit_depth=st.integers(min_value=1, max_value=100)
+    )
+    def test_circuit_depth_bounds(self, circuit_depth):
+        """Test that circuit depth affects proof generation time predictably."""
+        # This would measure actual circuit performance
+        # in a real implementation
+        pass

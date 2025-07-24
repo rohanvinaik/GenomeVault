@@ -1,0 +1,169 @@
+# .github/workflows/benchmarks.yml
+name: Performance Benchmarks
+
+on:
+  schedule:
+    # Run benchmarks daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:  # Allow manual trigger
+  push:
+    branches: [ main ]
+    paths:
+      - 'genomevault/**'
+      - 'scripts/bench*.py'
+      - 'benchmarks/**'
+
+env:
+  PYTHON_VERSION: '3.10'
+
+jobs:
+  benchmark:
+    name: Run Performance Benchmarks
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        lane: ['hdc', 'pir', 'zk']
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+    
+    - name: Run ${{ matrix.lane }} benchmarks
+      run: |
+        python scripts/bench.py --lane ${{ matrix.lane }} --output benchmarks
+      continue-on-error: true
+    
+    - name: Upload benchmark results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: benchmark-${{ matrix.lane }}-${{ github.run_number }}
+        path: benchmarks/${{ matrix.lane }}/*.json
+        retention-days: 90
+
+  generate-report:
+    name: Generate Performance Report
+    runs-on: ubuntu-latest
+    needs: benchmark
+    if: always()
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+        pip install matplotlib seaborn
+    
+    - name: Download all benchmark artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: benchmarks-artifacts
+        pattern: benchmark-*
+    
+    - name: Organize benchmark results
+      run: |
+        mkdir -p benchmarks/{hdc,pir,zk}
+        find benchmarks-artifacts -name "*.json" -exec sh -c '
+          for file do
+            lane=$(echo "$file" | grep -oE "(hdc|pir|zk)")
+            if [ ! -z "$lane" ]; then
+              cp "$file" "benchmarks/$lane/"
+            fi
+          done
+        ' sh {} +
+    
+    - name: Generate performance report
+      run: |
+        python scripts/generate_perf_report.py --input benchmarks --output docs/perf
+    
+    - name: Upload performance report
+      uses: actions/upload-artifact@v4
+      with:
+        name: performance-report-${{ github.run_number }}
+        path: |
+          docs/perf/*.html
+          docs/perf/*.png
+          docs/perf/*.json
+        retention-days: 90
+    
+    - name: Comment PR with performance summary
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const summaryPath = 'docs/perf/performance_summary.json';
+          
+          if (fs.existsSync(summaryPath)) {
+            const summary = JSON.parse(fs.readFileSync(summaryPath, 'utf8'));
+            
+            let comment = '## 📊 Performance Benchmark Results\n\n';
+            
+            if (summary.lanes.hdc && summary.lanes.hdc.summary) {
+              const hdc = summary.lanes.hdc.summary;
+              comment += '### HDC (Hyperdimensional Computing)\n';
+              comment += `- **Encoding Speed**: ${hdc.encoding_ops_per_sec || 0} ops/sec\n`;
+              comment += `- **Memory Usage**: ${hdc.memory_kb || 0} KB\n`;
+              comment += `- **Compression Ratio**: ${hdc.compression_ratio || 0}x\n\n`;
+            }
+            
+            comment += 'Full performance report available in build artifacts.';
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+          }
+
+  security-check:
+    name: Security Configuration Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    
+    - name: Run security checks
+      run: |
+        python scripts/security_check.py --project-dir .
+      continue-on-error: true
+    
+    - name: Upload security check results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: security-check-${{ github.run_number }}
+        path: security_report.json
+        retention-days: 30

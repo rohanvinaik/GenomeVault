@@ -1,4 +1,4 @@
-# tests/test_hypervector.py
+# tests/test_hdc_hypervector.py
 import numpy as np
 import pytest
 

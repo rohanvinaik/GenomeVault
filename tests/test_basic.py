@@ -35,7 +35,7 @@ def test_pir_query():
     assert all(len(q) == 100 for q in queries)
 
 
-def test_hypervector_encoding():
+def test_hdc_hypervector_encoding():
     """Test hypervector encoding."""
     from hypervector_transform.encoding import encode_features
 
