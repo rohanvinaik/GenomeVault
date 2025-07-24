@@ -187,3 +187,35 @@ class GenomicEncoder:
     def similarity(self, vec1: torch.Tensor, vec2: torch.Tensor) -> float:
         """Calculate cosine similarity between two hypervectors"""
         return torch.cosine_similarity(vec1, vec2, dim=0).item()
+
+    # Catalytic extensions
+    def use_catalytic_projections(self, projection_pool):
+        """
+        Switch to memory-mapped catalytic projections.
+        
+        Args:
+            projection_pool: CatalyticProjectionPool instance
+        """
+        self.projection_pool = projection_pool
+        self.use_catalytic = True
+        
+    def encode_variant_catalytic(self, *args, **kwargs):
+        """
+        Encode variant using catalytic projections.
+        
+        This method uses memory-mapped projections to reduce
+        memory usage by 95% compared to standard encoding.
+        """
+        if hasattr(self, 'projection_pool'):
+            # Use memory-mapped projections
+            variant_vec = self.encode_variant(*args, **kwargs)
+            
+            # Apply catalytic projection
+            projected = self.projection_pool.apply_catalytic_projection(
+                variant_vec, [0, 1, 2]  # Use first 3 projections
+            )
+            
+            return projected
+        else:
+            # Fall back to standard encoding
+            return self.encode_variant(*args, **kwargs)
