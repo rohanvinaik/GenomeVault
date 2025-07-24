@@ -8,9 +8,6 @@ Handles epigenetic data including:
 - Positional encoding for genomic context
 """
 
-import gzip
-import json
-import logging
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -26,26 +23,26 @@ from genomevault.core.config import get_config
 from genomevault.core.exceptions import ProcessingError, ValidationError
 from genomevault.utils.logging import get_logger
 
-logger = get_logger(__name__)
+_ = get_logger(__name__)
 config = get_config()
 
 
 class EpigeneticDataType(Enum):
     """Types of epigenetic data"""
 
-    METHYLATION = "methylation"
-    CHROMATIN_ACCESSIBILITY = "chromatin_accessibility"
-    HISTONE_MARKS = "histone_marks"
-    THREE_D_INTERACTIONS = "3d_interactions"
+    _ = "methylation"
+    _ = "chromatin_accessibility"
+    _ = "histone_marks"
+    _ = "3d_interactions"
 
 
 class MethylationContext(Enum):
     """DNA methylation contexts"""
 
-    CG = "CG"  # CpG context
-    CHG = "CHG"  # CHG context (H = A, C, or T)
-    CHH = "CHH"  # CHH context
-    ALL = "ALL"  # All contexts
+    _ = "CG"  # CpG context
+    _ = "CHG"  # CHG context (H = A, C, or T)
+    _ = "CHH"  # CHH context
+    _ = "ALL"  # All contexts
 
 
 @dataclass
@@ -145,19 +142,19 @@ class EpigeneticProfile:
         if not sites:
             return None
 
-        weighted_sum = sum(site.methylation_level * site.coverage for site in sites)
-        total_coverage = sum(site.coverage for site in sites)
+        _ = sum(site.methylation_level * site.coverage for site in sites)
+        _ = sum(site.coverage for site in sites)
 
         return weighted_sum / total_coverage if total_coverage > 0 else None
 
     def to_dataframe(self) -> pd.DataFrame:
         """Convert to pandas DataFrame"""
         if self.methylation_sites:
-            data = [site.to_dict() for site in self.methylation_sites]
+            _ = [site.to_dict() for site in self.methylation_sites]
         elif self.chromatin_peaks:
-            data = [peak.to_dict() for peak in self.chromatin_peaks]
+            _ = [peak.to_dict() for peak in self.chromatin_peaks]
         else:
-            data = []
+            _ = []
 
         return pd.DataFrame(data)
 
@@ -170,7 +167,7 @@ class MethylationProcessor:
         reference_genome: Optional[Path] = None,
         annotation_file: Optional[Path] = None,
         min_coverage: int = 5,
-        max_threads: int = 4,
+        max_threads: _ = 4,
     ):
         """
         Initialize methylation processor
@@ -220,8 +217,8 @@ class MethylationProcessor:
         self,
         input_path: Path,
         sample_id: str,
-        data_format: str = "bismark",
-        context: MethylationContext = MethylationContext.CG,
+        data_format: _ = "bismark",
+        context: _ = MethylationContext.CG,
     ) -> EpigeneticProfile:
         """
         Process methylation data
@@ -240,26 +237,26 @@ class MethylationProcessor:
         try:
             # Load methylation data based on format
             if data_format == "bismark":
-                methylation_data = self._load_bismark_output(input_path)
+                _ = self._load_bismark_output(input_path)
             elif data_format == "bedgraph":
-                methylation_data = self._load_bedgraph(input_path)
+                _ = self._load_bedgraph(input_path)
             else:
                 raise ValidationError("Unsupported format: {data_format}")
 
             # Filter by context and coverage
-            filtered_data = self._filter_methylation_data(methylation_data, context)
+            _ = self._filter_methylation_data(methylation_data, context)
 
             # Annotate with genomic regions
-            annotated_sites = self._annotate_methylation_sites(filtered_data)
+            _ = self._annotate_methylation_sites(filtered_data)
 
             # Calculate quality metrics
-            quality_metrics = self._calculate_methylation_metrics(annotated_sites)
+            _ = self._calculate_methylation_metrics(annotated_sites)
 
             # Perform quantile normalization
-            normalized_sites = self._normalize_methylation(annotated_sites)
+            _ = self._normalize_methylation(annotated_sites)
 
             # Create profile
-            profile = EpigeneticProfile(
+            _ = EpigeneticProfile(
                 sample_id=sample_id,
                 data_type=EpigeneticDataType.METHYLATION,
                 methylation_sites=normalized_sites,
@@ -276,7 +273,7 @@ class MethylationProcessor:
             logger.info("Successfully processed {len(normalized_sites)} methylation sites")
             return profile
 
-        except Exception as e:
+        except Exception as _:
             logger.error("Error processing methylation data: {str(e)}")
             raise ProcessingError("Failed to process methylation data: {str(e)}")
 
@@ -288,10 +285,10 @@ class MethylationProcessor:
         # In production, would parse actual Bismark output
         np.random.seed(42)
 
-        n_sites = 10000
-        chromosomes = ["chr" + str(i) for i in range(1, 23)] + ["chrX", "chrY"]
+        _ = 10000
+        _ = ["chr" + str(i) for i in range(1, 23)] + ["chrX", "chrY"]
 
-        data = {
+        _ = {
             "chromosome": np.random.choice(chromosomes, n_sites),
             "position": np.random.randint(1, 250000000, n_sites),
             "strand": np.random.choice(["+", "-"], n_sites),
@@ -318,23 +315,23 @@ class MethylationProcessor:
         self, data: pd.DataFrame, context: MethylationContext
     ) -> pd.DataFrame:
         """Filter methylation data by context and coverage"""
-        filtered = data[data["coverage"] >= self.min_coverage].copy()
+        _ = data[data["coverage"] >= self.min_coverage].copy()
 
         if context != MethylationContext.ALL:
-            filtered = filtered[filtered["context"] == context.value]
+            _ = filtered[filtered["context"] == context.value]
 
         logger.info("Filtered to {len(filtered)} sites with coverage >= {self.min_coverage}")
         return filtered
 
     def _annotate_methylation_sites(self, data: pd.DataFrame) -> List[MethylationSite]:
         """Annotate methylation sites with genomic regions"""
-        sites = []
+        _ = []
 
         for _, row in data.iterrows():
             # Find nearest gene and region type
-            gene_id, region_type = self._find_genomic_region(row["chromosome"], row["position"])
+            gene_id, _ = self._find_genomic_region(row["chromosome"], row["position"])
 
-            site = MethylationSite(
+            _ = MethylationSite(
                 chromosome=row["chromosome"],
                 position=int(row["position"]),
                 context=MethylationContext(row["context"]),
@@ -371,11 +368,11 @@ class MethylationProcessor:
         if not sites:
             return {}
 
-        methylation_levels = [s.methylation_level for s in sites]
-        coverages = [s.coverage for s in sites]
+        _ = [s.methylation_level for s in sites]
+        _ = [s.coverage for s in sites]
 
         # Calculate global methylation statistics
-        metrics = {
+        _ = {
             "total_sites": len(sites),
             "mean_methylation": float(np.mean(methylation_levels)),
             "median_methylation": float(np.median(methylation_levels)),
@@ -390,13 +387,13 @@ class MethylationProcessor:
         }
 
         # Count by context
-        context_counts = defaultdict(int)
+        _ = defaultdict(int)
         for site in sites:
             context_counts[site.context.value] += 1
         metrics["sites_by_context"] = dict(context_counts)
 
         # Count by region
-        region_counts = defaultdict(int)
+        _ = defaultdict(int)
         for site in sites:
             if site.region_type:
                 region_counts[site.region_type] += 1
@@ -410,7 +407,7 @@ class MethylationProcessor:
             return sites
 
         # Extract methylation levels
-        methylation_values = np.array([s.methylation_level for s in sites])
+        _ = np.array([s.methylation_level for s in sites])
 
         # Apply beta-mixture model (simplified)
         # In production, would use proper beta-mixture modeling
@@ -422,18 +419,18 @@ class MethylationProcessor:
         ranks[sorted_indices] = np.arange(len(methylation_values))
 
         # Calculate quantiles
-        quantiles = (ranks + 0.5) / len(ranks)
+        _ = (ranks + 0.5) / len(ranks)
 
         # Map to beta distribution quantiles
         from scipy.stats import beta
 
         a, b = 2, 5  # Beta distribution parameters
-        normalized_values = beta.ppf(quantiles, a, b)
+        _ = beta.ppf(quantiles, a, b)
 
         # Create normalized sites
-        normalized_sites = []
+        _ = []
         for i, site in enumerate(sites):
-            normalized_site = MethylationSite(
+            _ = MethylationSite(
                 chromosome=site.chromosome,
                 position=site.position,
                 context=site.context,
@@ -453,7 +450,7 @@ class MethylationProcessor:
         group1_profiles: List[EpigeneticProfile],
         group2_profiles: List[EpigeneticProfile],
         min_difference: float = 0.2,
-        fdr_threshold: float = 0.05,
+        fdr_threshold: _ = 0.05,
     ) -> pd.DataFrame:
         """
         Identify differentially methylated regions
@@ -470,23 +467,23 @@ class MethylationProcessor:
         logger.info("Performing differential methylation analysis")
 
         # Collect all sites
-        all_sites = set()
+        _ = set()
         for profile in group1_profiles + group2_profiles:
             if profile.methylation_sites:
                 for site in profile.methylation_sites:
                     all_sites.add((site.chromosome, site.position))
 
-        results = []
+        _ = []
 
         for chr_pos in all_sites:
-            chr, pos = chr_pos
+            chr, _ = chr_pos
 
             # Get methylation values for each group
-            group1_values = []
-            group2_values = []
+            _ = []
+            _ = []
 
             for profile in group1_profiles:
-                sites = [
+                _ = [
                     s
                     for s in profile.methylation_sites
                     if s.chromosome == chr and s.position == pos
@@ -495,7 +492,7 @@ class MethylationProcessor:
                     group1_values.append(sites[0].methylation_level)
 
             for profile in group2_profiles:
-                sites = [
+                _ = [
                     s
                     for s in profile.methylation_sites
                     if s.chromosome == chr and s.position == pos
@@ -505,11 +502,11 @@ class MethylationProcessor:
 
             if len(group1_values) >= 2 and len(group2_values) >= 2:
                 # Perform t-test
-                t_stat, p_value = stats.ttest_ind(group1_values, group2_values)
+                t_stat, _ = stats.ttest_ind(group1_values, group2_values)
 
-                mean1 = np.mean(group1_values)
+                _ = np.mean(group1_values)
                 mean2 = np.mean(group2_values)
-                diff = mean2 - mean1
+                _ = mean2 - mean1
 
                 results.append(
                     {
@@ -528,7 +525,7 @@ class MethylationProcessor:
             return pd.DataFrame()
 
         # Create results DataFrame
-        results_df = pd.DataFrame(results)
+        _ = pd.DataFrame(results)
 
         # Multiple testing correction
         from statsmodels.stats.multitest import multipletests
@@ -556,8 +553,8 @@ class ChromatinAccessibilityProcessor:
         self,
         reference_genome: Optional[Path] = None,
         annotation_file: Optional[Path] = None,
-        peak_caller: str = "macs2",
-        max_threads: int = 4,
+        peak_caller: _ = "macs2",
+        max_threads: _ = 4,
     ):
         """
         Initialize chromatin accessibility processor
@@ -585,8 +582,8 @@ class ChromatinAccessibilityProcessor:
         self,
         input_path: Union[Path, List[Path]],
         sample_id: str,
-        paired_end: bool = True,
-        peak_format: str = "narrowPeak",
+        paired_end: _ = True,
+        peak_format: _ = "narrowPeak",
     ) -> EpigeneticProfile:
         """
         Process ATAC-seq data
@@ -610,19 +607,19 @@ class ChromatinAccessibilityProcessor:
                 ".bed",
             ]:
                 # Load pre-called peaks
-                peaks = self._load_peak_file(input_path, peak_format)
+                _ = self._load_peak_file(input_path, peak_format)
             else:
                 # Process from FASTQ (mock implementation)
-                peaks = self._process_fastq_to_peaks(input_path, paired_end)
+                _ = self._process_fastq_to_peaks(input_path, paired_end)
 
             # Annotate peaks with nearest genes
-            annotated_peaks = self._annotate_peaks(peaks)
+            _ = self._annotate_peaks(peaks)
 
             # Calculate quality metrics
-            quality_metrics = self._calculate_peak_metrics(annotated_peaks)
+            _ = self._calculate_peak_metrics(annotated_peaks)
 
             # Create profile
-            profile = EpigeneticProfile(
+            _ = EpigeneticProfile(
                 sample_id=sample_id,
                 data_type=EpigeneticDataType.CHROMATIN_ACCESSIBILITY,
                 chromatin_peaks=annotated_peaks,
@@ -639,7 +636,7 @@ class ChromatinAccessibilityProcessor:
             logger.info("Successfully processed {len(annotated_peaks)} chromatin peaks")
             return profile
 
-        except Exception as e:
+        except Exception as _:
             logger.error("Error processing ATAC-seq data: {str(e)}")
             raise ProcessingError("Failed to process ATAC-seq data: {str(e)}")
 
@@ -649,7 +646,7 @@ class ChromatinAccessibilityProcessor:
 
         if format == "narrowPeak":
             # Standard ENCODE narrowPeak format
-            columns = [
+            _ = [
                 "chr",
                 "start",
                 "end",
@@ -666,7 +663,7 @@ class ChromatinAccessibilityProcessor:
             df["fold_enrichment"] = df["signal_value"]
         else:
             # Generate mock peaks for demonstration
-            df = self._generate_mock_peaks()
+            _ = self._generate_mock_peaks()
 
         return df
 
@@ -681,14 +678,14 @@ class ChromatinAccessibilityProcessor:
         """Generate mock peak data for demonstration"""
         np.random.seed(42)
 
-        n_peaks = 5000
-        chromosomes = ["chr" + str(i) for i in range(1, 23)] + ["chrX"]
+        _ = 5000
+        _ = ["chr" + str(i) for i in range(1, 23)] + ["chrX"]
 
-        data = []
+        _ = []
         for i in range(n_peaks):
-            chr = np.random.choice(chromosomes)
-            start = np.random.randint(1000000, 200000000)
-            length = np.random.randint(200, 2000)
+            _ = np.random.choice(chromosomes)
+            _ = np.random.randint(1000000, 200000000)
+            _ = np.random.randint(200, 2000)
 
             data.append(
                 {
@@ -707,13 +704,13 @@ class ChromatinAccessibilityProcessor:
 
     def _annotate_peaks(self, peaks_df: pd.DataFrame) -> List[ChromatinPeak]:
         """Annotate peaks with nearest genes"""
-        peaks = []
+        _ = []
 
         for _, row in peaks_df.iterrows():
             # Find nearest gene
-            nearest_gene, distance = self._find_nearest_gene(row["chr"], row["summit"])
+            nearest_gene, _ = self._find_nearest_gene(row["chr"], row["summit"])
 
-            peak = ChromatinPeak(
+            _ = ChromatinPeak(
                 chromosome=row["chr"],
                 start=int(row["start"]),
                 end=int(row["end"]),
@@ -733,8 +730,8 @@ class ChromatinAccessibilityProcessor:
         self, chromosome: str, position: int
     ) -> Tuple[Optional[str], Optional[int]]:
         """Find nearest gene and distance to TSS"""
-        min_distance = float("inf")
-        nearest_gene = None
+        _ = float("inf")
+        _ = None
 
         for gene_id, info in self.gene_annotations.items():
             if info["chr"] != chromosome:
@@ -742,11 +739,11 @@ class ChromatinAccessibilityProcessor:
 
             # Calculate distance to TSS (assuming + strand)
             tss = info["start"]
-            distance = abs(position - tss)
+            _ = abs(position - tss)
 
             if distance < min_distance:
-                min_distance = distance
-                nearest_gene = gene_id
+                _ = distance
+                _ = gene_id
 
         return nearest_gene, int(min_distance) if nearest_gene else None
 
@@ -755,11 +752,11 @@ class ChromatinAccessibilityProcessor:
         if not peaks:
             return {}
 
-        scores = [p.score for p in peaks]
-        enrichments = [p.fold_enrichment for p in peaks]
-        distances = [p.distance_to_tss for p in peaks if p.distance_to_tss is not None]
+        _ = [p.score for p in peaks]
+        _ = [p.fold_enrichment for p in peaks]
+        _ = [p.distance_to_tss for p in peaks if p.distance_to_tss is not None]
 
-        metrics = {
+        _ = {
             "total_peaks": len(peaks),
             "mean_score": float(np.mean(scores)),
             "median_score": float(np.median(scores)),
@@ -773,7 +770,7 @@ class ChromatinAccessibilityProcessor:
         }
 
         # Peak distribution by chromosome
-        chr_counts = defaultdict(int)
+        _ = defaultdict(int)
         for peak in peaks:
             chr_counts[peak.chromosome] += 1
         metrics["peaks_by_chromosome"] = dict(chr_counts)
@@ -785,7 +782,7 @@ class ChromatinAccessibilityProcessor:
         group1_profiles: List[EpigeneticProfile],
         group2_profiles: List[EpigeneticProfile],
         min_fold_change: float = 2.0,
-        fdr_threshold: float = 0.05,
+        fdr_threshold: _ = 0.05,
     ) -> pd.DataFrame:
         """
         Find differential chromatin accessibility
@@ -805,24 +802,24 @@ class ChromatinAccessibilityProcessor:
         # In production, would use DiffBind or similar tools
 
         # Collect all peak regions
-        all_regions = set()
+        _ = set()
         for profile in group1_profiles + group2_profiles:
             if profile.chromatin_peaks:
                 for peak in profile.chromatin_peaks:
                     all_regions.add((peak.chromosome, peak.start, peak.end))
 
-        results = []
+        _ = []
 
         # For each region, compare enrichment between groups
         for region in all_regions:
-            chr, start, end = region
+            chr, start, _ = region
 
             # Get enrichment values for each group
-            group1_enrichments = []
-            group2_enrichments = []
+            _ = []
+            _ = []
 
             for profile in group1_profiles:
-                peaks = [
+                _ = [
                     p
                     for p in profile.chromatin_peaks
                     if p.chromosome == chr and p.start <= start <= p.end
@@ -831,7 +828,7 @@ class ChromatinAccessibilityProcessor:
                     group1_enrichments.append(peaks[0].fold_enrichment)
 
             for profile in group2_profiles:
-                peaks = [
+                _ = [
                     p
                     for p in profile.chromatin_peaks
                     if p.chromosome == chr and p.start <= start <= p.end
@@ -841,17 +838,17 @@ class ChromatinAccessibilityProcessor:
 
             if group1_enrichments and group2_enrichments:
                 # Calculate statistics
-                mean1 = np.mean(group1_enrichments)
+                _ = np.mean(group1_enrichments)
                 mean2 = np.mean(group2_enrichments)
-                fold_change = mean2 / mean1 if mean1 > 0 else 0
+                _ = mean2 / mean1 if mean1 > 0 else 0
 
                 # Simplified p-value calculation
                 if len(group1_enrichments) >= 2 and len(group2_enrichments) >= 2:
-                    _, p_value = stats.ttest_ind(
+                    _, _ = stats.ttest_ind(
                         np.log2(group1_enrichments + 1), np.log2(group2_enrichments + 1)
                     )
                 else:
-                    p_value = 1.0
+                    _ = 1.0
 
                 results.append(
                     {
@@ -871,7 +868,7 @@ class ChromatinAccessibilityProcessor:
             return pd.DataFrame()
 
         # Create results DataFrame
-        results_df = pd.DataFrame(results)
+        _ = pd.DataFrame(results)
 
         # Multiple testing correction
         from statsmodels.stats.multitest import multipletests

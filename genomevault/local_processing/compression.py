@@ -11,11 +11,6 @@ import gzip
 import hashlib
 import json
 from dataclasses import dataclass, field
-from enum import Enum
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
-
-import numpy as np
 
 from genomevault.core.constants import CompressionTier, OmicsType
 from genomevault.utils import get_config, get_logger

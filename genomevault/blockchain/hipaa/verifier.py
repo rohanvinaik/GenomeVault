@@ -22,7 +22,7 @@ from .models import (
     VerificationStatus,
 )
 
-logger = get_logger(__name__)
+_ = get_logger(__name__)
 
 
 class NPIRegistry(ABC):
@@ -84,14 +84,14 @@ class CMSNPIRegistry(NPIRegistry):
         try:
             # In production, make actual API call
             # For now, simulate based on NPI patterns
-            record = await self._simulate_npi_lookup(npi)
+            _ = await self._simulate_npi_lookup(npi)
 
             if record:
                 self._cache[npi] = record
 
             return record
 
-        except Exception as e:
+        except Exception as _:
             logger.error("Error looking up NPI {npi}: {e}")
             return None
 
@@ -118,7 +118,7 @@ class CMSNPIRegistry(NPIRegistry):
             return False
 
         # Luhn algorithm
-        total = 0
+        _ = 0
         for i, digit in enumerate(npi[:-1]):
             d = int(digit)
             if i % 2 == 0:  # Double every other digit
@@ -210,7 +210,7 @@ class HIPAAVerifier:
             Verification ID for tracking
         """
         # Generate verification ID
-        verification_id = self._generate_verification_id(credentials)
+        _ = self._generate_verification_id(credentials)
 
         # Check if already verified
         if credentials.npi in self.verification_records:
@@ -250,7 +250,7 @@ class HIPAAVerifier:
         if verification_id not in self.pending_verifications:
             raise VerificationError("Verification {verification_id} not found")
 
-        credentials = self.pending_verifications[verification_id]
+        _ = self.pending_verifications[verification_id]
 
         try:
             # Step 1: Validate NPI format
@@ -269,7 +269,7 @@ class HIPAAVerifier:
             self._validate_credentials(credentials)
 
             # Step 4: Create verification record
-            record = VerificationRecord(
+            _ = VerificationRecord(
                 credentials=credentials,
                 status=VerificationStatus.VERIFIED,
                 verified_at=datetime.now(),
@@ -305,9 +305,9 @@ class HIPAAVerifier:
 
             return record
 
-        except VerificationError as e:
+        except VerificationError as _:
             # Create failed record
-            record = VerificationRecord(
+            _ = VerificationRecord(
                 credentials=credentials,
                 status=VerificationStatus.FAILED,
                 verified_at=datetime.now(),
@@ -403,7 +403,7 @@ class HIPAAVerifier:
 
     def _generate_signature(self, credentials: HIPAACredentials) -> str:
         """Generate verification signature"""
-        data = json.dumps(
+        _ = json.dumps(
             {
                 "npi": credentials.npi,
                 "baa_hash": credentials.baa_hash,
@@ -418,7 +418,7 @@ class HIPAAVerifier:
 
     def get_active_verifications(self) -> List[Tuple[str, VerificationRecord]]:
         """Get all active verifications"""
-        active = []
+        _ = []
         for npi, record in self.verification_records.items():
             if record.is_active():
                 active.append((npi, record))
@@ -426,7 +426,7 @@ class HIPAAVerifier:
 
     def cleanup_expired(self) -> int:
         """Clean up expired verifications"""
-        expired_count = 0
+        _ = 0
         for npi, record in list(self.verification_records.items()):
             if record.expires_at and datetime.now() > record.expires_at:
                 record.status = VerificationStatus.EXPIRED
@@ -446,10 +446,10 @@ if __name__ == "__main__":
 
         # Initialize verifier with CMS registry
         async with CMSNPIRegistry() as registry:
-            verifier = HIPAAVerifier(npi_registry=registry)
+            _ = HIPAAVerifier(npi_registry=registry)
 
             # Test credentials
-            credentials = HIPAACredentials(
+            _ = HIPAACredentials(
                 npi="1234567893",  # Valid NPI with correct check digit
                 baa_hash="a" * 64,  # SHA256 hash
                 risk_analysis_hash="b" * 64,  # SHA256 hash
@@ -463,7 +463,7 @@ if __name__ == "__main__":
 
             print("\nProcessing verification...")
             try:
-                record = await verifier.process_verification(verification_id)
+                _ = await verifier.process_verification(verification_id)
                 print("Verification successful!")
                 print("  Status: {record.status.value}")
                 print("  Signatory weight: {record.signatory_weight}")
@@ -474,12 +474,12 @@ if __name__ == "__main__":
                 status = verifier.get_verification_status(credentials.npi)
                 print("\nVerification active: {status.is_active()}")
 
-            except VerificationError as e:
+            except VerificationError as _:
                 print("Verification failed: {e}")
 
             # Test invalid NPI
             print("\n\nTesting invalid NPI...")
-            bad_credentials = HIPAACredentials(
+            _ = HIPAACredentials(
                 npi="1234567890",  # Invalid check digit
                 baa_hash="c" * 64,
                 risk_analysis_hash="d" * 64,
@@ -489,7 +489,7 @@ if __name__ == "__main__":
             try:
                 bad_id = await verifier.submit_verification(bad_credentials)
                 await verifier.process_verification(bad_id)
-            except VerificationError as e:
+            except VerificationError as _:
                 print("Correctly rejected: {e}")
 
     # Run test

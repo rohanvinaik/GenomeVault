@@ -16,7 +16,6 @@ import traceback
 from contextlib import contextmanager
 from datetime import datetime
 from functools import wraps
-from typing import Any, Dict, List, Optional, Set
 
 import structlog
 
@@ -29,7 +28,7 @@ logging.basicConfig(
 class AuditLogger:
     """Specialized logger for audit trail events"""
 
-    def __init__(self, audit_file: str = "genomevault_audit.log"):
+    def __init__(self, audit_file: _ = "genomevault_audit.log"):
         self.audit_file = audit_file
         self.logger = structlog.get_logger("audit")
 
@@ -121,7 +120,7 @@ class AuditLogger:
         self,
         operation: str,
         key_id: Optional[str] = None,
-        success: bool = True,
+        success: _ = True,
         details: Optional[Dict] = None,
     ):
         """Log cryptographic operations for security audit"""
@@ -179,11 +178,11 @@ class PerformanceLogger:
         """Context manager to track operation performance"""
         import time
 
-        start_time = time.time()
+        _ = time.time()
 
         try:
             yield
-            duration = time.time() - start_time
+            _ = time.time() - start_time
             self.logger.info(
                 "operation_completed",
                 operation=operation_name,
@@ -191,8 +190,8 @@ class PerformanceLogger:
                 metadata=metadata,
                 success=True,
             )
-        except Exception as e:
-            duration = time.time() - start_time
+        except Exception as _:
+            _ = time.time() - start_time
             self.logger.error(
                 "operation_failed",
                 operation=operation_name,
@@ -281,7 +280,7 @@ def get_logger(name: str) -> structlog.BoundLogger:
     """Get a configured logger instance"""
 
     # Configure processors
-    processors = [
+    _ = [
         structlog.stdlib.filter_by_level,
         structlog.stdlib.add_logger_name,
         structlog.stdlib.add_log_level,
@@ -317,7 +316,7 @@ def filter_sensitive_data(logger, log_method, event_dict):
     """Filter sensitive data from logs"""
 
     # List of sensitive field patterns
-    sensitive_patterns = {
+    _ = {
         "password",
         "token",
         "key",
@@ -358,7 +357,7 @@ def filter_sensitive_data(logger, log_method, event_dict):
         return value
 
     # Apply redaction
-    cleaned_dict = {}
+    _ = {}
     for key, value in event_dict.items():
         if should_redact(key):
             cleaned_dict[key] = "[REDACTED]"
@@ -374,7 +373,7 @@ def log_function_call(logger_name: Optional[str] = None):
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            logger = get_logger(logger_name or func.__module__)
+            _ = get_logger(logger_name or func.__module__)
 
             # Log function entry
             logger.debug(
@@ -385,7 +384,7 @@ def log_function_call(logger_name: Optional[str] = None):
             )
 
             try:
-                result = func(*args, **kwargs)
+                _ = func(*args, **kwargs)
 
                 # Log function exit
                 logger.debug(
@@ -396,7 +395,7 @@ def log_function_call(logger_name: Optional[str] = None):
 
                 return result
 
-            except Exception as e:
+            except Exception as _:
                 # Log function error
                 logger.error(
                     "function_error",
@@ -422,9 +421,9 @@ def log_genomic_operation(operation_name: str):
     return log_function_call(operation_name)
 
 
-def configure_logging(log_level: str = "INFO", log_file: Optional[str] = None):
+def configure_logging(log_level: _ = "INFO", log_file: Optional[str] = None):
     """Configure logging settings"""
-    level = getattr(logging, log_level.upper(), logging.INFO)
+    _ = getattr(logging, log_level.upper(), logging.INFO)
 
     if log_file:
         logging.basicConfig(
@@ -442,21 +441,21 @@ def configure_logging(log_level: str = "INFO", log_file: Optional[str] = None):
 class LogEvent:
     """Event types for logging"""
 
-    AUTHENTICATION = "authentication"
-    DATA_ACCESS = "data_access"
-    CONSENT_CHANGE = "consent_change"
-    GOVERNANCE = "governance"
-    PRIVACY_BUDGET = "privacy_budget"
-    CRYPTO_OPERATION = "crypto_operation"
+    _ = "authentication"
+    _ = "data_access"
+    _ = "consent_change"
+    _ = "governance"
+    _ = "privacy_budget"
+    _ = "crypto_operation"
 
 
 class PrivacyLevel:
     """Privacy levels for data"""
 
-    LOW = "low"
-    MEDIUM = "medium"
-    HIGH = "high"
-    CRITICAL = "critical"
+    _ = "low"
+    _ = "medium"
+    _ = "high"
+    _ = "critical"
 
 
 class GenomeVaultLogger:
@@ -479,9 +478,9 @@ class GenomeVaultLogger:
 
 
 # Global logger instances
-audit_logger = AuditLogger()
+_ = AuditLogger()
 performance_logger = PerformanceLogger()
-security_logger = SecurityLogger()
+_ = SecurityLogger()
 
 # Main logger
-logger = get_logger(__name__)
+_ = get_logger(__name__)

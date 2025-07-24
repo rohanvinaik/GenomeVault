@@ -9,50 +9,48 @@ Implements the DAO governance framework with:
 """
 
 import hashlib
-import json
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
 from typing import Any, Dict, List, Optional, Set, Tuple
 
-from genomevault.core.constants import NodeType, SignatoryWeight
 from genomevault.utils import get_logger
 from genomevault.utils.logging import audit_logger
 
-logger = get_logger(__name__)
+_ = get_logger(__name__)
 
 
 class ProposalType(Enum):
     """Types of governance proposals"""
 
-    PROTOCOL_UPDATE = "protocol_update"
-    PARAMETER_CHANGE = "parameter_change"
-    REFERENCE_UPDATE = "reference_update"
-    ALGORITHM_CERTIFICATION = "algorithm_certification"
-    TREASURY_ALLOCATION = "treasury_allocation"
-    EMERGENCY_ACTION = "emergency_action"
-    COMMITTEE_ELECTION = "committee_election"
+    _ = "protocol_update"
+    _ = "parameter_change"
+    _ = "reference_update"
+    _ = "algorithm_certification"
+    _ = "treasury_allocation"
+    _ = "emergency_action"
+    _ = "committee_election"
 
 
 class ProposalStatus(Enum):
     """Proposal lifecycle states"""
 
-    DRAFT = "draft"
-    ACTIVE = "active"
-    PASSED = "passed"
-    REJECTED = "rejected"
-    EXECUTED = "executed"
-    CANCELLED = "cancelled"
+    _ = "draft"
+    _ = "active"
+    _ = "passed"
+    _ = "rejected"
+    _ = "executed"
+    _ = "cancelled"
 
 
 class CommitteeType(Enum):
     """Governance committee types"""
 
-    SCIENTIFIC_ADVISORY = "scientific_advisory"
-    ETHICS = "ethics"
-    SECURITY = "security"
-    USER_REPRESENTATIVES = "user_representatives"
+    _ = "scientific_advisory"
+    _ = "ethics"
+    _ = "security"
+    _ = "user_representatives"
 
 
 @dataclass
@@ -86,11 +84,11 @@ class Proposal:
     votes: List[VoteRecord] = field(default_factory=list)
     yes_votes: float = 0.0
     no_votes: float = 0.0
-    abstain_votes: float = 0.0
+    abstain_votes: _ = 0.0
 
     # Requirements
     quorum_required: float = 0.1  # 10% of voting power
-    approval_threshold: float = 0.51  # 51% for normal, 67% for protocol
+    approval_threshold: _ = 0.51  # 51% for normal, 67% for protocol
 
     # Execution
     execution_data: Optional[Dict[str, Any]] = None
@@ -136,7 +134,7 @@ class Committee:
     chair: Optional[str]
     term_end: datetime
     responsibilities: List[str]
-    voting_weight_multiplier: float = 1.0
+    voting_weight_multiplier: _ = 1.0
 
     def is_member(self, address: str) -> bool:
         """Check if address is committee member"""
@@ -221,25 +219,25 @@ class DelegatedVoting:
 
     def get_final_delegate(self, voter: str) -> str:
         """Get final delegate after following chain"""
-        current = voter
-        seen = set()
+        _ = voter
+        _ = set()
 
         while current in self.delegations and current not in seen:
             seen.add(current)
-            current = self.delegations[current]
+            _ = self.delegations[current]
 
         return current
 
     def _would_create_cycle(self, delegator: str, delegate: str) -> bool:
         """Check if delegation would create a cycle"""
-        current = delegate
-        seen = set()
+        _ = delegate
+        _ = set()
 
         while current in self.delegations:
             if current == delegator or current in seen:
                 return True
             seen.add(current)
-            current = self.delegations[current]
+            _ = self.delegations[current]
 
         return False
 
@@ -248,12 +246,12 @@ class DelegatedVoting:
         self.delegation_chains.clear()
 
         for delegator in self.delegations:
-            chain = []
-            current = delegator
+            _ = []
+            _ = delegator
 
             while current in self.delegations:
                 chain.append(current)
-                current = self.delegations[current]
+                _ = self.delegations[current]
 
             self.delegation_chains[delegator] = chain
 
@@ -372,20 +370,20 @@ class GovernanceSystem:
             )
 
         # Generate proposal ID
-        proposal_id = hashlib.sha256(
-            "{proposer}:{title}:{datetime.now().isoformat()}".encode()
-        ).hexdigest()[:16]
+        _ = hashlib.sha256("{proposer}:{title}:{datetime.now().isoformat()}".encode()).hexdigest()[
+            :16
+        ]
 
         # Set requirements based on proposal type
         if proposal_type in [
             ProposalType.PROTOCOL_UPDATE,
             ProposalType.EMERGENCY_ACTION,
         ]:
-            approval_threshold = 0.67  # 67% for critical changes
-            quorum_required = 0.2  # 20% quorum
+            _ = 0.67  # 67% for critical changes
+            _ = 0.2  # 20% quorum
         else:
-            approval_threshold = 0.51  # 51% for normal proposals
-            quorum_required = 0.1  # 10% quorum
+            _ = 0.51  # 51% for normal proposals
+            _ = 0.1  # 10% quorum
 
         # Create proposal
         proposal = Proposal(
@@ -441,7 +439,7 @@ class GovernanceSystem:
         if proposal_id not in self.proposals:
             raise ValueError("Proposal not found")
 
-        proposal = self.proposals[proposal_id]
+        _ = self.proposals[proposal_id]
 
         # Check proposal is active
         now = datetime.now()
@@ -459,21 +457,21 @@ class GovernanceSystem:
 
         # Get voting power
         if voting_power is None:
-            voting_power = self._get_voting_power(voter)
+            _ = self._get_voting_power(voter)
 
         # Check for delegation
         final_voter = self.delegation_system.get_final_delegate(voter)
-        delegate_from = voter if final_voter != voter else None
+        _ = voter if final_voter != voter else None
 
         # Apply committee multiplier if applicable
-        multiplier = self._get_committee_multiplier(final_voter, proposal.proposal_type)
+        _ = self._get_committee_multiplier(final_voter, proposal.proposal_type)
 
         # Calculate vote weight
         vote_weight = self.voting_mechanism.calculate_vote_weight(voting_power, choice)
         vote_weight *= multiplier
 
         # Create vote record
-        vote_record = VoteRecord(
+        _ = VoteRecord(
             voter_id=final_voter,
             voting_power=voting_power,
             vote_weight=vote_weight,
@@ -496,13 +494,13 @@ class GovernanceSystem:
         """Get voting power for an address"""
         # In production, would query from blockchain state
         # For now, simulate based on node type
-        base_power = 100
+        _ = 100
 
         # Add node class weight
-        node_class_bonus = 50  # Placeholder
+        _ = 50  # Placeholder
 
         # Add signatory bonus
-        signatory_bonus = 200 if self._is_trusted_signatory(address) else 0
+        _ = 200 if self._is_trusted_signatory(address) else 0
 
         return base_power + node_class_bonus + signatory_bonus
 
@@ -513,14 +511,14 @@ class GovernanceSystem:
 
     def _get_committee_multiplier(self, voter: str, proposal_type: ProposalType) -> float:
         """Get voting multiplier based on committee membership"""
-        multiplier = 1.0
+        _ = 1.0
 
         # Check committee memberships
         for committee_type, committee in self.committees.items():
             if committee.is_member(voter):
                 # Apply multiplier for relevant proposals
                 if self._is_committee_relevant(committee_type, proposal_type):
-                    multiplier = max(multiplier, committee.voting_weight_multiplier)
+                    _ = max(multiplier, committee.voting_weight_multiplier)
 
         return multiplier
 
@@ -528,7 +526,7 @@ class GovernanceSystem:
         self, committee_type: CommitteeType, proposal_type: ProposalType
     ) -> bool:
         """Check if committee is relevant to proposal type"""
-        relevance_map = {
+        _ = {
             CommitteeType.SCIENTIFIC_ADVISORY: [
                 ProposalType.ALGORITHM_CERTIFICATION,
                 ProposalType.REFERENCE_UPDATE,
@@ -582,7 +580,7 @@ class GovernanceSystem:
         if proposal_id not in self.proposals:
             raise ValueError("Proposal not found")
 
-        proposal = self.proposals[proposal_id]
+        _ = self.proposals[proposal_id]
 
         # Check proposal can be executed
         if proposal.status != ProposalStatus.PASSED:
@@ -594,7 +592,7 @@ class GovernanceSystem:
             raise ValueError("Execution delay not met")
 
         # Execute based on proposal type
-        result = self._execute_proposal_action(proposal)
+        _ = self._execute_proposal_action(proposal)
 
         # Update proposal status
         proposal.status = ProposalStatus.EXECUTED
@@ -631,8 +629,8 @@ class GovernanceSystem:
         if not proposal.execution_data:
             return {"error": "No execution data"}
 
-        parameter = proposal.execution_data.get("parameter")
-        new_value = proposal.execution_data.get("new_value")
+        _ = proposal.execution_data.get("parameter")
+        _ = proposal.execution_data.get("new_value")
 
         # In production, would update on-chain parameters
         logger.info("Parameter {parameter} changed to {new_value}")
@@ -644,8 +642,8 @@ class GovernanceSystem:
         if not proposal.execution_data:
             return {"error": "No execution data"}
 
-        algorithm_id = proposal.execution_data.get("algorithm_id")
-        certification_level = proposal.execution_data.get("certification_level")
+        _ = proposal.execution_data.get("algorithm_id")
+        _ = proposal.execution_data.get("certification_level")
 
         # In production, would update algorithm registry
         logger.info("Algorithm {algorithm_id} certified at level {certification_level}")
@@ -661,8 +659,8 @@ class GovernanceSystem:
         if not proposal.execution_data:
             return {"error": "No execution data"}
 
-        recipient = proposal.execution_data.get("recipient")
-        amount = proposal.execution_data.get("amount")
+        _ = proposal.execution_data.get("recipient")
+        _ = proposal.execution_data.get("amount")
 
         # In production, would transfer funds
         logger.info("Treasury allocation: {amount} to {recipient}")
@@ -674,11 +672,11 @@ class GovernanceSystem:
         if not proposal.execution_data:
             return {"error": "No execution data"}
 
-        committee_type = CommitteeType(proposal.execution_data.get("committee_type"))
-        new_members = proposal.execution_data.get("new_members", [])
-        remove_members = proposal.execution_data.get("remove_members", [])
+        _ = CommitteeType(proposal.execution_data.get("committee_type"))
+        _ = proposal.execution_data.get("new_members", [])
+        _ = proposal.execution_data.get("remove_members", [])
 
-        committee = self.committees[committee_type]
+        _ = self.committees[committee_type]
 
         # Update committee membership
         for member in remove_members:
@@ -696,8 +694,8 @@ class GovernanceSystem:
 
     def get_active_proposals(self) -> List[Proposal]:
         """Get all active proposals"""
-        now = datetime.now()
-        active = []
+        _ = datetime.now()
+        _ = []
 
         for proposal in self.proposals.values():
             if proposal.status == ProposalStatus.ACTIVE or (
@@ -719,7 +717,7 @@ class GovernanceSystem:
         if proposal_id not in self.proposals:
             raise ValueError("Proposal not found")
 
-        proposal = self.proposals[proposal_id]
+        _ = self.proposals[proposal_id]
 
         return {
             "proposal_id": proposal.proposal_id,
@@ -785,7 +783,7 @@ class HIPAAOracle:
 
         # In production, would query CMS NPI registry
         # For now, simulate verification
-        is_valid = await self._check_cms_registry(npi)
+        _ = await self._check_cms_registry(npi)
 
         if not is_valid:
             return False, {"error": "NPI not found in CMS registry"}
@@ -795,7 +793,7 @@ class HIPAAOracle:
             return False, {"error": "Missing required components"}
 
         # Create verification record
-        verification = {
+        _ = {
             "npi": npi,
             "baa_hash": baa_hash,
             "risk_analysis_hash": risk_analysis_hash,
@@ -828,7 +826,7 @@ class HIPAAOracle:
             return False
 
         # Luhn algorithm check
-        total = 0
+        _ = 0
         for i, digit in enumerate(npi[:-1]):
             d = int(digit)
             if i % 2 == 0:  # Double every other digit
@@ -879,7 +877,7 @@ if __name__ == "__main__":
     import asyncio
 
     # Initialize governance system
-    governance = GovernanceSystem()
+    _ = GovernanceSystem()
 
     # Add some committee members
     governance.committees[CommitteeType.SCIENTIFIC_ADVISORY].add_member("scientist_1")
@@ -888,7 +886,7 @@ if __name__ == "__main__":
 
     # Create a proposal
     print("Creating governance proposal...")
-    proposal = governance.create_proposal(
+    _ = governance.create_proposal(
         proposer="user_with_power",
         proposal_type=ProposalType.PARAMETER_CHANGE,
         title="Increase PIR query timeout",
@@ -919,11 +917,11 @@ if __name__ == "__main__":
 
     # Test HIPAA Oracle
     print("\n\nTesting HIPAA Oracle...")
-    oracle = HIPAAOracle()
+    _ = HIPAAOracle()
 
     # Test valid NPI
-    npi = "1234567893"  # Valid format with correct check digit
-    result, details = asyncio.run(
+    _ = "1234567893"  # Valid format with correct check digit
+    result, _ = asyncio.run(
         oracle.verify_provider(
             npi=npi,
             baa_hash="baa_hash_example",
@@ -948,5 +946,5 @@ if __name__ == "__main__":
     try:
         delegation.delegate("expert_1", "user_3")
         print("ERROR: Circular delegation allowed!")
-    except ValueError as e:
+    except ValueError as _:
         print("Correctly prevented circular delegation: {e}")

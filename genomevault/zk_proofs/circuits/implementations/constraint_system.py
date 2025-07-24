@@ -6,10 +6,8 @@ for PLONK-style arithmetic circuits.
 """
 
 import hashlib
-import struct
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 

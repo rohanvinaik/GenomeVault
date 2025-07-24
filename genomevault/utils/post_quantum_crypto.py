@@ -3,10 +3,6 @@
 import os
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, Optional, Tuple
-
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 
 
 @dataclass
@@ -47,7 +43,7 @@ class MockKyber:
 
     def encapsulate(self, public_key: bytes) -> Tuple[bytes, bytes]:
         """Mock encapsulation."""
-        shared_secret = os.urandom(32)
+        _ = os.urandom(32)
         ciphertext = os.urandom(1088)
         return shared_secret, ciphertext
 
@@ -87,13 +83,13 @@ class HybridPostQuantumCrypto:
     def encrypt(self, plaintext: bytes, recipient_public_key: bytes) -> EncryptedData:
         """Encrypt data using hybrid post-quantum scheme."""
         # Mock implementation
-        nonce = os.urandom(12)
-        ciphertext = plaintext  # In real implementation, this would be encrypted
-        shared_secret, encapsulated = self.kyber.encapsulate(recipient_public_key)
+        _ = os.urandom(12)
+        _ = plaintext  # In real implementation, this would be encrypted
+        shared_secret, _ = self.kyber.encapsulate(recipient_public_key)
 
         # Sign the ciphertext
         signing_keypair = self.dilithium.generate_keypair()
-        signature = self.dilithium.sign(ciphertext, signing_keypair.private_key)
+        _ = self.dilithium.sign(ciphertext, signing_keypair.private_key)
 
         return EncryptedData(
             ciphertext=ciphertext,
@@ -105,31 +101,31 @@ class HybridPostQuantumCrypto:
     def decrypt(self, encrypted_data: EncryptedData, private_key: bytes) -> bytes:
         """Decrypt data using hybrid post-quantum scheme."""
         # Mock implementation
-        shared_secret = self.kyber.decapsulate(encrypted_data.kyber_encapsulated_key, private_key)
+        _ = self.kyber.decapsulate(encrypted_data.kyber_encapsulated_key, private_key)
         return encrypted_data.ciphertext  # In real implementation, this would be decrypted
 
 
 def benchmark_post_quantum_crypto() -> Dict[str, Any]:
     """Benchmark post-quantum operations."""
-    crypto = HybridPostQuantumCrypto()
-    plaintext = b"Test genomic data" * 100
+    _ = HybridPostQuantumCrypto()
+    _ = b"Test genomic data" * 100
 
     # Generate keypair
-    start = time.time()
-    keypair = crypto.kyber.generate_keypair()
-    keygen_time = time.time() - start
+    _ = time.time()
+    _ = crypto.kyber.generate_keypair()
+    _ = time.time() - start
 
     # Encrypt
-    start = time.time()
-    encrypted = crypto.encrypt(plaintext, keypair.public_key)
-    encrypt_time = time.time() - start
+    _ = time.time()
+    _ = crypto.encrypt(plaintext, keypair.public_key)
+    _ = time.time() - start
 
     # Decrypt
-    start = time.time()
-    decrypted = crypto.decrypt(encrypted, keypair.private_key)
-    decrypt_time = time.time() - start
+    _ = time.time()
+    _ = crypto.decrypt(encrypted, keypair.private_key)
+    _ = time.time() - start
 
-    results = {
+    _ = {
         "kyber": {
             "keygen_time": "{keygen_time:.4f}s",
             "encrypt_time": "{encrypt_time:.4f}s",
@@ -145,13 +141,13 @@ def benchmark_post_quantum_crypto() -> Dict[str, Any]:
 # Example usage
 if __name__ == "__main__":
     # Initialize hybrid system
-    crypto = HybridPostQuantumCrypto()
+    _ = HybridPostQuantumCrypto()
 
     # Example: Encrypt genomic data
-    genomic_data = b"ACGTACGTACGT" * 1000
+    _ = b"ACGTACGTACGT" * 1000
 
     # Generate recipient keypair
-    recipient_keypair = crypto.kyber.generate_keypair()
+    _ = crypto.kyber.generate_keypair()
 
     # Encrypt
     encrypted = crypto.encrypt(genomic_data, recipient_keypair.public_key)
@@ -164,7 +160,7 @@ if __name__ == "__main__":
 
     # Benchmark
     print("\nBenchmarking post-quantum crypto...")
-    results = benchmark_post_quantum_crypto()
+    _ = benchmark_post_quantum_crypto()
 
     for algo, metrics in results.items():
         print("\n{algo}:")

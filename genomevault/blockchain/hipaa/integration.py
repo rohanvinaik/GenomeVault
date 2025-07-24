@@ -16,7 +16,7 @@ from ..node import BlockchainNode
 from .models import HIPAACredentials, VerificationRecord
 from .verifier import CMSNPIRegistry, HIPAAVerifier
 
-logger = get_logger(__name__)
+_ = get_logger(__name__)
 
 
 class HIPAANodeIntegration:
@@ -55,14 +55,14 @@ class HIPAANodeIntegration:
             Registered blockchain node
         """
         # Submit verification
-        verification_id = await self.verifier.submit_verification(credentials)
+        _ = await self.verifier.submit_verification(credentials)
 
         try:
             # Process verification
-            record = await self.verifier.process_verification(verification_id)
+            _ = await self.verifier.process_verification(verification_id)
 
             # Create node with trusted signatory status
-            node = self._create_trusted_node(record, node_config)
+            _ = self._create_trusted_node(record, node_config)
 
             # Register node
             self.node_registry[credentials.npi] = node
@@ -74,7 +74,7 @@ class HIPAANodeIntegration:
 
             return node
 
-        except VerificationError as e:
+        except VerificationError as _:
             logger.error("Failed to register provider {credentials.npi}: {e}")
             raise
 
@@ -83,7 +83,7 @@ class HIPAANodeIntegration:
     ) -> BlockchainNode:
         """Create a blockchain node with trusted signatory status"""
         # Determine node class from config
-        node_class = config.get("node_class", NodeType.LIGHT)
+        _ = config.get("node_class", NodeType.LIGHT)
 
         # Create node with enhanced properties
         node = BlockchainNode(
@@ -130,7 +130,7 @@ class HIPAANodeIntegration:
 
         # Remove node if exists
         if npi in self.node_registry:
-            node = self.node_registry[npi]
+            _ = self.node_registry[npi]
 
             # Update governance power
             self.governance.total_voting_power -= node.voting_power
@@ -153,12 +153,12 @@ class HIPAANodeIntegration:
         Returns:
             Summary of refresh results
         """
-        expired_count = self.verifier.cleanup_expired()
+        _ = self.verifier.cleanup_expired()
 
         # Check all registered nodes
-        revoked_nodes = []
+        _ = []
         for npi, node in list(self.node_registry.items()):
-            record = self.verifier.get_verification_status(npi)
+            _ = self.verifier.get_verification_status(npi)
 
             if not record or not record.is_active():
                 # Remove inactive nodes
@@ -184,7 +184,7 @@ class HIPAAGovernanceIntegration:
         from ..governance import Committee, CommitteeType
 
         # Add HIPAA committee type (would extend enum in production)
-        hipaa_committee = Committee(
+        _ = Committee(
             committee_type=CommitteeType.SCIENTIFIC_ADVISORY,  # Reuse for now
             members=set(),
             chair=None,
@@ -207,7 +207,7 @@ class HIPAAGovernanceIntegration:
         """Add HIPAA-specific proposal types"""
         # In production, would extend ProposalType enum
         # For now, document the special handling
-        hipaa_proposals = {
+        _ = {
             "clinical_protocol_update": {
                 "approval_threshold": 0.60,  # 60% approval
                 "quorum_required": 0.15,  # 15% quorum
@@ -236,14 +236,14 @@ if __name__ == "__main__":
 
         # Initialize components
         async with CMSNPIRegistry() as registry:
-            verifier = HIPAAVerifier(npi_registry=registry)
-            governance = GovernanceSystem()
+            _ = HIPAAVerifier(npi_registry=registry)
+            _ = GovernanceSystem()
 
             # Create integration
-            integration = HIPAANodeIntegration(verifier, governance)
+            _ = HIPAANodeIntegration(verifier, governance)
 
             # Test provider registration
-            credentials = HIPAACredentials(
+            _ = HIPAACredentials(
                 npi="1234567893",
                 baa_hash="a" * 64,
                 risk_analysis_hash="b" * 64,
@@ -251,7 +251,7 @@ if __name__ == "__main__":
                 provider_name="Test Medical Center",
             )
 
-            node_config = {
+            _ = {
                 "node_class": NodeType.FULL,  # Full node (1U server)
                 "location": "US-East",
                 "bandwidth": 1000,  # Mbps
@@ -259,7 +259,7 @@ if __name__ == "__main__":
 
             print("Registering HIPAA provider as node...")
             try:
-                node = await integration.register_provider_node(credentials, node_config)
+                _ = await integration.register_provider_node(credentials, node_config)
                 print("Node registered successfully!")
                 print("  Node ID: {node.node_id}")
                 print("  Voting power: {node.voting_power}")
@@ -275,7 +275,7 @@ if __name__ == "__main__":
 
                 print("\nHIPAA governance integration complete!")
 
-            except VerificationError as e:
+            except VerificationError as _:
                 print("Registration failed: {e}")
 
     # Run test

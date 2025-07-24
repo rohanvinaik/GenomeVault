@@ -6,10 +6,8 @@ import asyncio
 import json
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Optional
 
 from genomevault.core.constants import CompressionTier, OmicsType
-from genomevault.core.exceptions import ProcessingError, ValidationError
 
 from .compression import TieredCompressor
 from .validators import validate_genomic_data, validate_transcriptomic_data

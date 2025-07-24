@@ -16,7 +16,6 @@ from typing import Any, Dict, List, Optional
 from fastapi import Depends, FastAPI, HTTPException, Security, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from pydantic import BaseModel, Field
 
 from ..genomevault.blockchain.node import BlockchainNode, NodeInfo
 from ..genomevault.core.config import get_config

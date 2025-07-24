@@ -6,14 +6,10 @@ while transforming data into the hyperdimensional space.
 """
 
 from dataclasses import dataclass
-from typing import Callable, Dict, List, Optional, Tuple
 
-import numpy as np
 import torch
-from sklearn.metrics.pairwise import cosine_similarity
 
 from genomevault.core.constants import OmicsType
-from genomevault.core.exceptions import MappingError
 from genomevault.utils.logging import get_logger
 
 logger = get_logger(__name__)

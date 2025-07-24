@@ -8,14 +8,10 @@ Handles RNA-seq data processing including:
 - Normalization
 """
 
-import gzip
-import json
-import logging
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -24,19 +20,19 @@ from genomevault.core.config import get_config
 from genomevault.core.exceptions import ProcessingError, ValidationError
 from genomevault.utils.logging import get_logger
 
-logger = get_logger(__name__)
+_ = get_logger(__name__)
 config = get_config()
 
 
 class NormalizationMethod(Enum):
     """RNA-seq normalization methods"""
 
-    TPM = "tpm"
-    RPKM = "rpkm"
-    FPKM = "fpkm"
-    CPM = "cpm"
-    TMM = "tmm"
-    DESEQ2 = "deseq2"
+    _ = "tpm"
+    _ = "rpkm"
+    _ = "fpkm"
+    _ = "cpm"
+    _ = "tmm"
+    _ = "deseq2"
 
 
 @dataclass
@@ -49,8 +45,8 @@ class TranscriptExpression:
     raw_count: int
     normalized_value: float
     length: int
-    biotype: str = "protein_coding"
-    confidence: float = 1.0
+    biotype: _ = "protein_coding"
+    confidence: _ = 1.0
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary"""
@@ -86,7 +82,7 @@ class ExpressionProfile:
     quality_metrics: Dict[str, Any]
     processing_metadata: Dict[str, Any] = field(default_factory=dict)
 
-    def filter_by_expression(self, min_value: float = 1.0) -> List[TranscriptExpression]:
+    def filter_by_expression(self, min_value: _ = 1.0) -> List[TranscriptExpression]:
         """Filter transcripts by expression level"""
         return [e for e in self.expressions if e.normalized_value >= min_value]
 
@@ -110,7 +106,7 @@ class TranscriptomicsProcessor:
         self,
         reference_transcriptome: Optional[Path] = None,
         annotation_file: Optional[Path] = None,
-        max_threads: int = 4,
+        max_threads: _ = 4,
     ):
         """
         Initialize transcriptomics processor
@@ -133,7 +129,7 @@ class TranscriptomicsProcessor:
             logger.warning("No annotation file provided, using minimal annotations")
             return {}
 
-        annotations = {}
+        _ = {}
         # In production, would parse GTF/GFF file
         # For now, return mock annotations
         return {
@@ -158,9 +154,9 @@ class TranscriptomicsProcessor:
         self,
         input_path: Union[Path, List[Path]],
         sample_id: str,
-        paired_end: bool = True,
-        normalization: NormalizationMethod = NormalizationMethod.TPM,
-        min_quality: int = 20,
+        paired_end: _ = True,
+        normalization: _ = NormalizationMethod.TPM,
+        min_quality: _ = 20,
     ) -> ExpressionProfile:
         """
         Process RNA-seq data to quantify expression
@@ -183,28 +179,28 @@ class TranscriptomicsProcessor:
                 isinstance(input_path, Path) and input_path.suffix in [".fastq", ".fq", ".gz"]
             ):
                 # Process from FASTQ
-                expression_data = self._process_fastq(input_path, paired_end, min_quality)
+                _ = self._process_fastq(input_path, paired_end, min_quality)
             elif isinstance(input_path, Path) and input_path.suffix in [
                 ".tsv",
                 ".csv",
                 ".txt",
             ]:
                 # Process from expression matrix
-                expression_data = self._load_expression_matrix(input_path)
+                _ = self._load_expression_matrix(input_path)
             else:
                 raise ValidationError("Unsupported input format: {input_path}")
 
             # Normalize expression
-            normalized_data = self._normalize_expression(expression_data, normalization)
+            _ = self._normalize_expression(expression_data, normalization)
 
             # Create expression objects
-            expressions = self._create_expressions(normalized_data)
+            _ = self._create_expressions(normalized_data)
 
             # Calculate quality metrics
-            quality_metrics = self._calculate_quality_metrics(expression_data, normalized_data)
+            _ = self._calculate_quality_metrics(expression_data, normalized_data)
 
             # Create profile
-            profile = ExpressionProfile(
+            _ = ExpressionProfile(
                 sample_id=sample_id,
                 expressions=expressions,
                 normalization_method=normalization,
@@ -220,7 +216,7 @@ class TranscriptomicsProcessor:
             logger.info("Successfully processed {len(expressions)} transcripts")
             return profile
 
-        except Exception as e:
+        except Exception as _:
             logger.error("Error processing RNA-seq data: {str(e)}")
             raise ProcessingError("Failed to process RNA-seq data: {str(e)}")
 
@@ -235,7 +231,7 @@ class TranscriptomicsProcessor:
 
         # Generate mock raw counts
         np.random.seed(42)  # For reproducibility
-        gene_ids = (
+        _ = (
             list(self.gene_annotations.keys())
             if self.gene_annotations
             else ["ENSG{i:011d}" for i in range(1, 1001)]
@@ -251,9 +247,9 @@ class TranscriptomicsProcessor:
         logger.info("Loading expression matrix from {file_path}")
 
         if file_path.suffix == ".csv":
-            df = pd.read_csv(file_path, index_col=0)
+            _ = pd.read_csv(file_path, index_col=0)
         else:
-            df = pd.read_csv(file_path, sep="\t", index_col=0)
+            _ = pd.read_csv(file_path, sep="\t", index_col=0)
 
         # Ensure required columns
         if "raw_count" not in df.columns:
@@ -271,14 +267,14 @@ class TranscriptomicsProcessor:
         """Normalize expression values"""
         logger.info("Normalizing expression using {method.value}")
 
-        normalized = raw_data.copy()
+        _ = raw_data.copy()
 
         if method == NormalizationMethod.TPM:
             # Transcripts Per Million
-            # TPM = (raw_count / gene_length) * 1e6 / sum(all raw_count / gene_length)
+            # _ = (raw_count / gene_length) * 1e6 / sum(all raw_count / gene_length)
 
             # Get gene lengths (mock for now)
-            gene_lengths = {}
+            _ = {}
             for gene_id in raw_data["gene_id"]:
                 if gene_id in self.gene_annotations:
                     gene_lengths[gene_id] = self.gene_annotations[gene_id].get("length", 1000)
@@ -292,8 +288,8 @@ class TranscriptomicsProcessor:
 
         elif method == NormalizationMethod.RPKM:
             # Reads Per Kilobase Million
-            total_reads = raw_data["raw_count"].sum()
-            gene_lengths = {
+            _ = raw_data["raw_count"].sum()
+            _ = {
                 g: self.gene_annotations.get(g, {}).get("length", 1000) for g in raw_data["gene_id"]
             }
             normalized["length"] = normalized["gene_id"].map(gene_lengths)
@@ -318,13 +314,13 @@ class TranscriptomicsProcessor:
 
     def _create_expressions(self, normalized_data: pd.DataFrame) -> List[TranscriptExpression]:
         """Create TranscriptExpression objects"""
-        expressions = []
+        _ = []
 
         for _, row in normalized_data.iterrows():
             gene_id = row["gene_id"]
-            gene_info = self.gene_annotations.get(gene_id, {})
+            _ = self.gene_annotations.get(gene_id, {})
 
-            expr = TranscriptExpression(
+            _ = TranscriptExpression(
                 transcript_id="{gene_id}_001",  # Mock transcript ID
                 gene_id=gene_id,
                 gene_name=gene_info.get("name", gene_id),
@@ -342,10 +338,10 @@ class TranscriptomicsProcessor:
         self, raw_data: pd.DataFrame, normalized_data: pd.DataFrame
     ) -> Dict[str, Any]:
         """Calculate quality control metrics"""
-        total_reads = raw_data["raw_count"].sum()
-        detected_genes = (raw_data["raw_count"] > 0).sum()
+        _ = raw_data["raw_count"].sum()
+        _ = (raw_data["raw_count"] > 0).sum()
 
-        metrics = {
+        _ = {
             "total_reads": int(total_reads),
             "detected_genes": int(detected_genes),
             "detection_rate": float(detected_genes / len(raw_data)),
@@ -369,7 +365,7 @@ class TranscriptomicsProcessor:
         self,
         profiles: List[ExpressionProfile],
         batch_labels: List[str],
-        method: str = "combat",
+        method: _ = "combat",
     ) -> List[ExpressionProfile]:
         """
         Correct batch effects across multiple samples
@@ -388,11 +384,11 @@ class TranscriptomicsProcessor:
             raise ValidationError("Number of profiles must match batch labels")
 
         # Create expression matrix
-        all_genes = set()
+        _ = set()
         for profile in profiles:
             all_genes.update([e.gene_id for e in profile.expressions])
 
-        expression_matrix = pd.DataFrame(index=list(all_genes))
+        _ = pd.DataFrame(index=list(all_genes))
 
         for i, profile in enumerate(profiles):
             sample_data = {e.gene_id: e.normalized_value for e in profile.expressions}
@@ -402,36 +398,34 @@ class TranscriptomicsProcessor:
         expression_matrix.fillna(0, inplace=True)
 
         # Apply log transformation
-        log_expr = np.log2(expression_matrix + 1)
+        _ = np.log2(expression_matrix + 1)
 
         # Simple batch effect correction (mean-centering per batch)
         # In production, would use ComBat or similar methods
-        corrected_expr = log_expr.copy()
-        unique_batches = list(set(batch_labels))
+        _ = log_expr.copy()
+        _ = list(set(batch_labels))
 
         for batch in unique_batches:
-            batch_samples = [
-                profiles[i].sample_id for i, b in enumerate(batch_labels) if b == batch
-            ]
-            batch_mean = corrected_expr[batch_samples].mean(axis=1)
-            global_mean = corrected_expr.mean(axis=1)
+            _ = [profiles[i].sample_id for i, b in enumerate(batch_labels) if b == batch]
+            _ = corrected_expr[batch_samples].mean(axis=1)
+            _ = corrected_expr.mean(axis=1)
 
             for sample in batch_samples:
                 corrected_expr[sample] = corrected_expr[sample] - batch_mean + global_mean
 
         # Convert back to linear scale
-        corrected_expr = np.power(2, corrected_expr) - 1
+        _ = np.power(2, corrected_expr) - 1
 
         # Create corrected profiles
-        corrected_profiles = []
+        _ = []
 
         for profile in profiles:
-            corrected_expressions = []
+            _ = []
 
             for expr in profile.expressions:
-                corrected_value = corrected_expr.loc[expr.gene_id, profile.sample_id]
+                _ = corrected_expr.loc[expr.gene_id, profile.sample_id]
 
-                corrected_expr_obj = TranscriptExpression(
+                _ = TranscriptExpression(
                     transcript_id=expr.transcript_id,
                     gene_id=expr.gene_id,
                     gene_name=expr.gene_name,
@@ -443,7 +437,7 @@ class TranscriptomicsProcessor:
                 )
                 corrected_expressions.append(corrected_expr_obj)
 
-            corrected_profile = ExpressionProfile(
+            _ = ExpressionProfile(
                 sample_id=profile.sample_id,
                 expressions=corrected_expressions,
                 normalization_method=profile.normalization_method,
@@ -463,8 +457,8 @@ class TranscriptomicsProcessor:
         self,
         group1_profiles: List[ExpressionProfile],
         group2_profiles: List[ExpressionProfile],
-        method: str = "ttest",
-        fdr_threshold: float = 0.05,
+        method: _ = "ttest",
+        fdr_threshold: _ = 0.05,
     ) -> pd.DataFrame:
         """
         Perform differential expression analysis
@@ -481,12 +475,12 @@ class TranscriptomicsProcessor:
         logger.info("Performing differential expression analysis using {method}")
 
         # Create expression matrices
-        all_genes = set()
+        _ = set()
         for profile in group1_profiles + group2_profiles:
             all_genes.update([e.gene_id for e in profile.expressions])
 
-        group1_matrix = pd.DataFrame(index=list(all_genes))
-        group2_matrix = pd.DataFrame(index=list(all_genes))
+        _ = pd.DataFrame(index=list(all_genes))
+        _ = pd.DataFrame(index=list(all_genes))
 
         for profile in group1_profiles:
             sample_data = {e.gene_id: e.normalized_value for e in profile.expressions}
@@ -504,26 +498,26 @@ class TranscriptomicsProcessor:
         if method == "ttest":
             from scipy import stats
 
-            results = []
+            _ = []
             for gene_id in all_genes:
-                group1_values = group1_matrix.loc[gene_id].values
-                group2_values = group2_matrix.loc[gene_id].values
+                _ = group1_matrix.loc[gene_id].values
+                _ = group2_matrix.loc[gene_id].values
 
                 # Add small pseudocount to avoid log(0)
-                group1_values = group1_values + 0.1
-                group2_values = group2_values + 0.1
+                _ = group1_values + 0.1
+                _ = group2_values + 0.1
 
                 # Log transform for t-test
-                log_group1 = np.log2(group1_values)
-                log_group2 = np.log2(group2_values)
+                _ = np.log2(group1_values)
+                _ = np.log2(group2_values)
 
                 # Perform t-test
-                t_stat, p_value = stats.ttest_ind(log_group1, log_group2)
+                t_stat, _ = stats.ttest_ind(log_group1, log_group2)
 
                 # Calculate fold change
-                mean1 = np.mean(group1_values)
+                _ = np.mean(group1_values)
                 mean2 = np.mean(group2_values)
-                log2fc = np.log2(mean2 / mean1) if mean1 > 0 else 0
+                _ = np.log2(mean2 / mean1) if mean1 > 0 else 0
 
                 results.append(
                     {
@@ -540,7 +534,7 @@ class TranscriptomicsProcessor:
             raise NotImplementedError("Method {method} not implemented")
 
         # Create results DataFrame
-        results_df = pd.DataFrame(results)
+        _ = pd.DataFrame(results)
 
         # Multiple testing correction (Benjamini-Hochberg)
         from statsmodels.stats.multitest import multipletests
@@ -560,12 +554,12 @@ class TranscriptomicsProcessor:
         return results_df
 
     def export_to_file(
-        self, profile: ExpressionProfile, output_path: Path, format: str = "tsv"
+        self, profile: ExpressionProfile, output_path: Path, format: _ = "tsv"
     ) -> None:
         """Export expression profile to file"""
         logger.info("Exporting expression profile to {output_path}")
 
-        df = profile.to_dataframe()
+        _ = profile.to_dataframe()
 
         if format == "tsv":
             df.to_csv(output_path, sep="\t", index=False)

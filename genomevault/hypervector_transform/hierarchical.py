@@ -7,10 +7,8 @@ Implements the multi-resolution hypervector system as specified:
 - High-level vectors: 20,000 dimensions
 """
 
-import hashlib
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch

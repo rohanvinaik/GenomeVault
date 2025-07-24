@@ -4,15 +4,7 @@ Implements the actual zero-knowledge proof circuits for genomic privacy.
 """
 
 import hashlib
-import json
-import struct
-import time
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
-from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple, Union
-
-import numpy as np
 
 # Core field arithmetic for BLS12-381 scalar field
 BLS12_381_SCALAR_FIELD = 0x73EDA753299D7D483339D80809A1D80553BDA402FFFE5BFEFFFFFFFF00000001

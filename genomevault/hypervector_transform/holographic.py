@@ -6,12 +6,10 @@ encoding complex structured information in hypervectors.
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import torch
 
-from genomevault.core.exceptions import EncodingError
 from genomevault.utils.logging import get_logger
 
 from .binding import BindingType, HypervectorBinder

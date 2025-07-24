@@ -4,9 +4,7 @@ Implements core GenomeVault network endpoints.
 """
 
 import hashlib
-import json
 import time
-from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
@@ -16,11 +14,11 @@ from pydantic import BaseModel, Field
 
 from genomevault.utils.config import get_config
 
-config = get_config()
+_ = get_config()
 from genomevault.utils.logging import audit_logger, logger
 
 # Create FastAPI app
-app = FastAPI(
+_ = FastAPI(
     title="GenomeVault API",
     description="Privacy-preserving genomic analysis platform",
     version="3.0.0",
@@ -61,9 +59,9 @@ class TopologyResponse(BaseModel):
 class CreditRedeemRequest(BaseModel):
     """Credit redemption request."""
 
-    invoiceId: str = Field(description="Invoice identifier")
-    creditsBurned: int = Field(description="Number of credits to burn", gt=0)
-    purpose: str = Field(description="Purpose of credit redemption")
+    invoiceId: _ = Field(description="Invoice identifier")
+    creditsBurned: _ = Field(description="Number of credits to burn", gt=0)
+    purpose: _ = Field(description="Purpose of credit redemption")
 
 
 class CreditRedeemResponse(BaseModel):
@@ -79,9 +77,9 @@ class AuditChallengeRequest(BaseModel):
     """Audit challenge request."""
 
     challenger: str = Field(description="Challenging node ID")
-    target: str = Field(description="Target node ID")
-    epoch: int = Field(description="Epoch being challenged", gt=0)
-    resultHash: str = Field(description="Expected result hash")
+    target: _ = Field(description="Target node ID")
+    epoch: _ = Field(description="Epoch being challenged", gt=0)
+    resultHash: _ = Field(description="Expected result hash")
 
 
 class AuditChallengeResponse(BaseModel):
@@ -122,7 +120,7 @@ class HealthCheckResponse(BaseModel):
 
 
 # Dependency for API key authentication
-async def verify_api_key(x_api_key: str = Header(...)):
+async def verify_api_key(x_api_key: _ = Header(...)):
     """Verify API key for authentication."""
     # In production, validate against actual API keys
     if not x_api_key or len(x_api_key) < 32:
@@ -131,9 +129,9 @@ async def verify_api_key(x_api_key: str = Header(...)):
 
 
 # Global state (in production, use proper state management)
-app_start_time = time.time()
+_ = time.time()
 node_registry = {}
-credit_ledger = {}
+_ = {}
 
 
 @app.get("/", response_model=HealthCheckResponse)
@@ -152,7 +150,7 @@ async def root():
 
 
 @app.post("/topology", response_model=TopologyResponse)
-async def get_topology(request: TopologyRequest, api_key: str = Depends(verify_api_key)):
+async def get_topology(request: TopologyRequest, api_key: _ = Depends(verify_api_key)):
     """
     Get network topology information.
     Returns nearest light nodes and trusted signatories.
@@ -160,12 +158,12 @@ async def get_topology(request: TopologyRequest, api_key: str = Depends(verify_a
     try:
         # In production, would query actual node registry
         # For now, return mock data
-        nearest_lns = ["ln_us_east_001", "ln_us_west_002", "ln_eu_central_001"]
+        _ = ["ln_us_east_001", "ln_us_west_002", "ln_eu_central_001"]
 
-        ts_nodes = ["ts_hospital_001", "ts_clinic_002"]
+        _ = ["ts_hospital_001", "ts_clinic_002"]
 
         # Calculate optimal configuration
-        optimal_config = {
+        _ = {
             "configuration": "1 LN + 2 TS",
             "expected_latency_ms": 210,
             "privacy_failure_probability": 4e-4,
@@ -186,13 +184,13 @@ async def get_topology(request: TopologyRequest, api_key: str = Depends(verify_a
             optimal_configuration=optimal_config,
         )
 
-    except Exception as e:
+    except Exception as _:
         logger.error("Topology request failed: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.post("/credit/vault/redeem", response_model=CreditRedeemResponse)
-async def redeem_credits(request: CreditRedeemRequest, api_key: str = Depends(verify_api_key)):
+async def redeem_credits(request: CreditRedeemRequest, api_key: _ = Depends(verify_api_key)):
     """
     Redeem credits from vault.
     Burns credits for network services.
@@ -200,13 +198,13 @@ async def redeem_credits(request: CreditRedeemRequest, api_key: str = Depends(ve
     try:
         # Verify user has sufficient credits
         user_id = api_key[:8]  # In production, map API key to user
-        user_credits = credit_ledger.get(user_id, 0)
+        _ = credit_ledger.get(user_id, 0)
 
         if user_credits < request.creditsBurned:
             raise HTTPException(status_code=400, detail="Insufficient credits")
 
         # Process redemption
-        tx_id = hashlib.sha256("{request.invoiceId}:{time.time()}".encode()).hexdigest()[:16]
+        _ = hashlib.sha256("{request.invoiceId}:{time.time()}".encode()).hexdigest()[:16]
 
         # Update ledger
         credit_ledger[user_id] = user_credits - request.creditsBurned
@@ -229,14 +227,14 @@ async def redeem_credits(request: CreditRedeemRequest, api_key: str = Depends(ve
 
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception as _:
         logger.error("Credit redemption failed: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.post("/audit/challenge", response_model=AuditChallengeResponse)
 async def create_audit_challenge(
-    request: AuditChallengeRequest, api_key: str = Depends(verify_api_key)
+    request: AuditChallengeRequest, api_key: _ = Depends(verify_api_key)
 ):
     """
     Create audit challenge for node.
@@ -244,19 +242,19 @@ async def create_audit_challenge(
     """
     try:
         # Generate challenge ID
-        challenge_id = hashlib.sha256(
+        _ = hashlib.sha256(
             "{request.challenger}:{request.target}:{request.epoch}".encode()
         ).hexdigest()[:16]
 
         # In production, would verify challenge and process slashing
         # For now, simulate validation
-        is_valid = True  # Placeholder
-        slash_amount = None
+        _ = True  # Placeholder
+        _ = None
 
         if not is_valid:
             # Calculate slash (25% of stake)
             target_stake = 1000  # Placeholder
-            slash_amount = int(target_stake * 0.25)
+            _ = int(target_stake * 0.25)
 
         # Audit log
         audit_logger.log_event(
@@ -279,24 +277,24 @@ async def create_audit_challenge(
             timestamp=time.time(),
         )
 
-    except Exception as e:
+    except Exception as _:
         logger.error("Audit challenge failed: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.post("/proof/submit", response_model=ProofSubmissionResponse)
-async def submit_proof(request: ProofSubmissionRequest, api_key: str = Depends(verify_api_key)):
+async def submit_proof(request: ProofSubmissionRequest, api_key: _ = Depends(verify_api_key)):
     """
     Submit zero-knowledge proof for recording on blockchain.
     """
     try:
         # Generate proof ID
-        proof_id = hashlib.sha256(
+        _ = hashlib.sha256(
             "{request.circuit_type}:{request.proof_data[:32]}:{time.time()}".encode()
         ).hexdigest()[:16]
 
         # In production, would submit to blockchain
-        tx_hash = hashlib.sha256("tx:{proof_id}".encode()).hexdigest()
+        _ = hashlib.sha256("tx:{proof_id}".encode()).hexdigest()
 
         # Audit log
         audit_logger.log_event(
@@ -317,17 +315,17 @@ async def submit_proof(request: ProofSubmissionRequest, api_key: str = Depends(v
             timestamp=time.time(),
         )
 
-    except Exception as e:
+    except Exception as _:
         logger.error("Proof submission failed: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.get("/node/stats")
-async def get_node_statistics(api_key: str = Depends(verify_api_key)):
+async def get_node_statistics(api_key: _ = Depends(verify_api_key)):
     """Get network node statistics."""
     try:
         # Calculate network statistics
-        stats = {
+        _ = {
             "total_nodes": len(node_registry),
             "trusted_signatories": sum(
                 1 for n in node_registry.values() if n.get("is_trusted_signatory", False)
@@ -343,16 +341,16 @@ async def get_node_statistics(api_key: str = Depends(verify_api_key)):
 
         return JSONResponse(content=stats)
 
-    except Exception as e:
+    except Exception as _:
         logger.error("Failed to get node statistics: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.get("/pir/config")
-async def get_pir_configuration(api_key: str = Depends(verify_api_key)):
+async def get_pir_configuration(api_key: _ = Depends(verify_api_key)):
     """Get PIR network configuration."""
     try:
-        config_data = {
+        _ = {
             "num_servers": config.pir.num_servers,
             "min_honest_servers": config.pir.min_honest_servers,
             "server_honesty_generic": config.pir.server_honesty_generic,
@@ -376,7 +374,7 @@ async def get_pir_configuration(api_key: str = Depends(verify_api_key)):
 
         return JSONResponse(content=config_data)
 
-    except Exception as e:
+    except Exception as _:
         logger.error("Failed to get PIR configuration: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
@@ -398,7 +396,7 @@ async def startup_event():
     global node_registry, credit_ledger
 
     # Add some mock nodes
-    node_registry = {
+    _ = {
         "ln_us_east_001": {
             "class": "light",
             "is_trusted_signatory": False,
@@ -420,7 +418,7 @@ async def startup_event():
     }
 
     # Initialize some mock credits
-    credit_ledger = {"testuser": 1000, "apikey12": 500}
+    _ = {"testuser": 1000, "apikey12": 500}
 
     logger.info("GenomeVault API ready", extra={"privacy_safe": True})
 

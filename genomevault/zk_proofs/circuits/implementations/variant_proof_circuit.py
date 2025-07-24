@@ -6,7 +6,6 @@ variant presence without revealing the variant position.
 """
 
 import hashlib
-from typing import Any, Dict, List, Optional
 
 from .constraint_system import (
     ConstraintSystem,

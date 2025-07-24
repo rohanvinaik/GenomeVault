@@ -7,15 +7,11 @@ import hashlib
 import json
 import time
 from dataclasses import dataclass
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
 
 from genomevault.utils.config import get_config
 
-config = get_config()
+_ = get_config()
 from genomevault.utils.logging import audit_logger, logger, performance_logger
-
-from .prover import Circuit, CircuitLibrary, Proof
 
 
 @dataclass
@@ -109,7 +105,7 @@ class Verifier:
         Returns:
             Verification result
         """
-        start_time = time.time()
+        _ = time.time()
 
         try:
             # Validate proof format
@@ -132,15 +128,15 @@ class Verifier:
                     error_message="Unknown circuit: {proof.circuit_name}",
                 )
 
-            vk = self.verification_keys[proof.circuit_name]
+            _ = self.verification_keys[proof.circuit_name]
 
             # Perform circuit-specific verification
-            is_valid = self._verify_circuit_proof(proof, vk)
+            _ = self._verify_circuit_proof(proof, vk)
 
-            verification_time = time.time() - start_time
+            _ = time.time() - start_time
 
             # Create result
-            result = VerificationResult(
+            _ = VerificationResult(
                 is_valid=is_valid,
                 proof_id=proof.proof_id,
                 circuit_name=proof.circuit_name,
@@ -165,7 +161,7 @@ class Verifier:
 
             return result
 
-        except Exception as e:
+        except Exception as _:
             logger.error("Proof verification failed: {e}")
             return VerificationResult(
                 is_valid=False,
@@ -187,7 +183,7 @@ class Verifier:
             return False
 
         # Check proof size matches expected size for circuit
-        expected_sizes = {
+        _ = {
             "variant_presence": 192,
             "polygenic_risk_score": 384,
             "ancestry_composition": 256,
@@ -197,8 +193,8 @@ class Verifier:
         }
 
         if proof.circuit_name in expected_sizes:
-            expected_size = expected_sizes[proof.circuit_name]
-            actual_size = len(proof.proof_data)
+            _ = expected_sizes[proof.circuit_name]
+            _ = len(proof.proof_data)
 
             # Allow some tolerance
             if abs(actual_size - expected_size) > 50:
@@ -251,7 +247,7 @@ class Verifier:
             # e(pi_a, vk_a) * e(pi_b, vk_b) * e(pi_c, vk_c) = 1
             return True
 
-        except Exception as e:
+        except Exception as _:
             logger.error("Variant proof verification error: {e}")
             return False
 
@@ -259,7 +255,7 @@ class Verifier:
         """Verify polygenic risk score proof."""
         try:
             # Verify public inputs
-            required_inputs = [
+            _ = [
                 "prs_model",
                 "score_range",
                 "result_commitment",
@@ -270,7 +266,7 @@ class Verifier:
                     return False
 
             # Check score is in valid range
-            score_range = proof.public_inputs["score_range"]
+            _ = proof.public_inputs["score_range"]
             if (
                 not isinstance(score_range, dict)
                 or "min" not in score_range
@@ -291,7 +287,7 @@ class Verifier:
             # Simulate verification
             return True
 
-        except Exception as e:
+        except Exception as _:
             logger.error("PRS proof verification error: {e}")
             return False
 
@@ -299,7 +295,7 @@ class Verifier:
         """Verify diabetes risk alert proof."""
         try:
             # Verify public inputs
-            required_inputs = [
+            _ = [
                 "glucose_threshold",
                 "risk_threshold",
                 "result_commitment",
@@ -309,8 +305,8 @@ class Verifier:
                     return False
 
             # Verify thresholds are reasonable
-            g_threshold = proof.public_inputs["glucose_threshold"]
-            r_threshold = proof.public_inputs["risk_threshold"]
+            _ = proof.public_inputs["glucose_threshold"]
+            _ = proof.public_inputs["risk_threshold"]
 
             if not (0 < g_threshold < 500):  # Reasonable glucose range
                 return False
@@ -335,7 +331,7 @@ class Verifier:
             # This proves (G > G_threshold) AND (R > R_threshold) without revealing G or R
             return True
 
-        except Exception as e:
+        except Exception as _:
             logger.error("Diabetes proof verification error: {e}")
             return False
 
@@ -351,7 +347,7 @@ class Verifier:
             # Simulate verification
             return True
 
-        except Exception as e:
+        except Exception as _:
             logger.error("Ancestry proof verification error: {e}")
             return False
 
@@ -372,7 +368,7 @@ class Verifier:
             # Simulate verification
             return True
 
-        except Exception as e:
+        except Exception as _:
             logger.error("Pharmacogenomic proof verification error: {e}")
             return False
 
@@ -388,7 +384,7 @@ class Verifier:
             # Simulate verification
             return True
 
-        except Exception as e:
+        except Exception as _:
             logger.error("Pathway proof verification error: {e}")
             return False
 
@@ -397,7 +393,7 @@ class Verifier:
         try:
             # Basic validation passed, simulate verification
             return True
-        except Exception as e:
+        except Exception as _:
             logger.error("Generic proof verification error: {e}")
             return False
 
@@ -411,14 +407,14 @@ class Verifier:
         Returns:
             List of verification results
         """
-        results = []
+        _ = []
 
         for proof in proofs:
             result = self.verify_proof(proof)
             results.append(result)
 
         # Log batch verification summary
-        valid_count = sum(1 for r in results if r.is_valid)
+        _ = sum(1 for r in results if r.is_valid)
         logger.info(
             "Batch verification: {valid_count}/{len(proofs)} valid",
             extra={"privacy_safe": True},
@@ -440,13 +436,13 @@ class Verifier:
             Verification result
         """
         # First verify the recursive proof itself
-        result = self.verify_proof(recursive_proof)
+        _ = self.verify_proof(recursive_proof)
 
         if not result.is_valid:
             return result
 
         # Verify that public inputs match original proofs
-        proof_hashes = recursive_proof.public_inputs.get("proof_hashes", [])
+        _ = recursive_proof.public_inputs.get("proof_hashes", [])
 
         if len(proof_hashes) != len(original_proofs):
             return VerificationResult(
@@ -473,7 +469,7 @@ class Verifier:
 
     def _hash_proof(self, proof: Proof) -> str:
         """Calculate hash of proof."""
-        proof_str = json.dumps(
+        _ = json.dumps(
             {
                 "circuit": proof.circuit_name,
                 "public_inputs": proof.public_inputs,
@@ -498,7 +494,7 @@ class Verifier:
         Returns:
             Estimated verification time in milliseconds
         """
-        estimates = {
+        _ = {
             "variant_presence": 10,  # <10ms
             "polygenic_risk_score": 25,  # <25ms
             "ancestry_composition": 15,  # 15ms
@@ -517,11 +513,11 @@ if __name__ == "__main__":
     from .prover import Prover
 
     # Initialize prover and verifier
-    prover = Prover()
-    verifier = Verifier()
+    _ = Prover()
+    _ = Verifier()
 
     # Generate a proof
-    proof = prover.generate_proof(
+    _ = prover.generate_proof(
         circuit_name="diabetes_risk_alert",
         public_inputs={
             "glucose_threshold": 126,
@@ -538,7 +534,7 @@ if __name__ == "__main__":
     print("Generated proof: {proof.proof_id}")
 
     # Verify the proof
-    result = verifier.verify_proof(proof)
+    _ = verifier.verify_proof(proof)
 
     print("\nVerification result: {result.is_valid}")
     print("Verification time: {result.verification_time*1000:.1f}ms")

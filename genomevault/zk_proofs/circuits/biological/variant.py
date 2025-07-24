@@ -6,15 +6,9 @@ including variant verification, PRS calculation, and clinical assessments.
 """
 
 import hashlib
-from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple, Union
 
-import numpy as np
 import torch
 
-from genomevault.core.constants import OmicsType
-from genomevault.core.exceptions import CircuitError
-from genomevault.hypervector_transform.encoding import HypervectorEncoder
 from genomevault.utils.logging import get_logger
 
 from ..base_circuits import (

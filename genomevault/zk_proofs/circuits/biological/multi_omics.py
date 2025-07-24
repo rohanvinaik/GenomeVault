@@ -6,12 +6,8 @@ while preserving privacy.
 """
 
 import hashlib
-from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
-
-from genomevault.utils.logging import logger
 
 from ...prover import Circuit
 from ..base_circuits import (

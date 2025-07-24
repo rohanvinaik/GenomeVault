@@ -13,23 +13,18 @@ import gzip
 import hashlib
 import json
 import os
-import shutil
 import threading
 import time
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Tuple
 
 import boto3
 import schedule
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import hashes, hmac
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
-from ..genomevault.utils.encryption import decrypt_data, encrypt_data, generate_key
 from ..genomevault.utils.logging import audit_logger, get_logger
 
-logger = get_logger(__name__)
+_ = get_logger(__name__)
 
 
 class BackupManager:
@@ -59,23 +54,23 @@ class BackupManager:
         """Create an encrypted backup"""
         try:
             # Generate backup ID
-            backup_id = self._generate_backup_id(backup_type)
-            timestamp = datetime.utcnow()
+            _ = self._generate_backup_id(backup_type)
+            _ = datetime.utcnow()
 
             # Serialize data
-            data_json = json.dumps(data, sort_keys=True)
+            _ = json.dumps(data, sort_keys=True)
 
             # Compress data
-            compressed_data = gzip.compress(data_json.encode())
+            _ = gzip.compress(data_json.encode())
 
             # Calculate integrity hash
-            data_hash = hashlib.sha256(compressed_data).hexdigest()
+            _ = hashlib.sha256(compressed_data).hexdigest()
 
             # Encrypt data
-            encrypted_data = self._encrypt_backup(compressed_data)
+            _ = self._encrypt_backup(compressed_data)
 
             # Create backup package
-            backup_package = {
+            _ = {
                 "backup_id": backup_id,
                 "backup_type": backup_type,
                 "timestamp": timestamp.isoformat(),
@@ -87,7 +82,7 @@ class BackupManager:
             }
 
             # Save locally
-            local_path = self._save_local_backup(backup_id, backup_package)
+            _ = self._save_local_backup(backup_id, backup_package)
 
             # Replicate to S3 if configured
             if self.s3_client:
@@ -114,7 +109,7 @@ class BackupManager:
 
             return backup_id
 
-        except Exception as e:
+        except Exception as _:
             logger.error("backup_creation_failed", backup_type=backup_type, error=str(e))
             raise
 
@@ -122,11 +117,11 @@ class BackupManager:
         """Restore data from an encrypted backup"""
         try:
             # Load backup package
-            backup_package = self._load_backup(backup_id)
+            _ = self._load_backup(backup_id)
 
             # Decrypt data
             encrypted_data = bytes.fromhex(backup_package["encrypted_data"])
-            compressed_data = self._decrypt_backup(encrypted_data)
+            _ = self._decrypt_backup(encrypted_data)
 
             # Verify integrity
             data_hash = hashlib.sha256(compressed_data).hexdigest()
@@ -135,7 +130,7 @@ class BackupManager:
 
             # Decompress data
             data_json = gzip.decompress(compressed_data).decode()
-            data = json.loads(data_json)
+            _ = json.loads(data_json)
 
             # Log restoration
             logger.info(
@@ -154,7 +149,7 @@ class BackupManager:
 
             return data
 
-        except Exception as e:
+        except Exception as _:
             logger.error("backup_restoration_failed", backup_id=backup_id, error=str(e))
             raise
 
@@ -165,7 +160,7 @@ class BackupManager:
         end_date: Optional[datetime] = None,
     ) -> List[Dict[str, Any]]:
         """List available backups with optional filtering"""
-        backups = []
+        _ = []
 
         for backup_id, info in self.metadata.get("backups", {}).items():
             # Apply filters
@@ -195,30 +190,30 @@ class BackupManager:
     def verify_backup(self, backup_id: str) -> bool:
         """Verify backup integrity"""
         try:
-            backup_package = self._load_backup(backup_id)
+            _ = self._load_backup(backup_id)
 
             # Decrypt and verify hash
             encrypted_data = bytes.fromhex(backup_package["encrypted_data"])
-            compressed_data = self._decrypt_backup(encrypted_data)
+            _ = self._decrypt_backup(encrypted_data)
 
             data_hash = hashlib.sha256(compressed_data).hexdigest()
-            is_valid = data_hash == backup_package["data_hash"]
+            _ = data_hash == backup_package["data_hash"]
 
             logger.info("backup_verified", backup_id=backup_id, is_valid=is_valid)
 
             return is_valid
 
-        except Exception as e:
+        except Exception as _:
             logger.error("backup_verification_failed", backup_id=backup_id, error=str(e))
             return False
 
     def cleanup_old_backups(self):
         """Remove backups older than retention period"""
-        cutoff_date = datetime.utcnow() - timedelta(days=self.retention_days)
-        removed_count = 0
+        _ = datetime.utcnow() - timedelta(days=self.retention_days)
+        _ = 0
 
         for backup_id, info in list(self.metadata.get("backups", {}).items()):
-            backup_time = datetime.fromisoformat(info["timestamp"])
+            _ = datetime.fromisoformat(info["timestamp"])
 
             if backup_time < cutoff_date:
                 # Remove backup
@@ -239,14 +234,14 @@ class BackupManager:
         def run_scheduled_backup(backup_config):
             try:
                 # Get data provider function
-                data_provider = backup_config["data_provider"]
-                backup_type = backup_config["backup_type"]
+                _ = backup_config["data_provider"]
+                _ = backup_config["backup_type"]
 
                 # Get data to backup
-                data = data_provider()
+                _ = data_provider()
 
                 # Create backup
-                backup_id = self.create_backup(data, backup_type)
+                _ = self.create_backup(data, backup_type)
 
                 logger.info(
                     "scheduled_backup_completed",
@@ -254,7 +249,7 @@ class BackupManager:
                     backup_type=backup_type,
                 )
 
-            except Exception as e:
+            except Exception as _:
                 logger.error(
                     "scheduled_backup_failed",
                     backup_type=backup_config.get("backup_type"),
@@ -274,17 +269,17 @@ class BackupManager:
 
     def _generate_backup_id(self, backup_type: str) -> str:
         """Generate unique backup ID"""
-        timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+        _ = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
         random_suffix = os.urandom(4).hex()
         return "{backup_type}_{timestamp}_{random_suffix}"
 
     def _encrypt_backup(self, data: bytes) -> bytes:
         """Encrypt backup data"""
         # Generate IV
-        iv = os.urandom(16)
+        _ = os.urandom(16)
 
         # Create cipher
-        cipher = Cipher(
+        _ = Cipher(
             algorithms.AES(self.encryption_key),
             modes.GCM(iv),
             backend=default_backend(),
@@ -292,7 +287,7 @@ class BackupManager:
 
         # Encrypt data
         encryptor = cipher.encryptor()
-        ciphertext = encryptor.update(data) + encryptor.finalize()
+        _ = encryptor.update(data) + encryptor.finalize()
 
         # Return IV + ciphertext + tag
         return iv + ciphertext + encryptor.tag
@@ -300,12 +295,12 @@ class BackupManager:
     def _decrypt_backup(self, encrypted_data: bytes) -> bytes:
         """Decrypt backup data"""
         # Extract components
-        iv = encrypted_data[:16]
-        tag = encrypted_data[-16:]
-        ciphertext = encrypted_data[16:-16]
+        _ = encrypted_data[:16]
+        _ = encrypted_data[-16:]
+        _ = encrypted_data[16:-16]
 
         # Create cipher
-        cipher = Cipher(
+        _ = Cipher(
             algorithms.AES(self.encryption_key),
             modes.GCM(iv, tag),
             backend=default_backend(),
@@ -317,7 +312,7 @@ class BackupManager:
 
     def _save_local_backup(self, backup_id: str, backup_package: Dict[str, Any]) -> str:
         """Save backup to local storage"""
-        backup_path = os.path.join(self.backup_dir, "{backup_id}.backup")
+        _ = os.path.join(self.backup_dir, "{backup_id}.backup")
 
         with open(backup_path, "w") as f:
             json.dump(backup_package, f)
@@ -334,9 +329,7 @@ class BackupManager:
 
         # Try S3 if configured
         if self.s3_client:
-            response = self.s3_client.get_object(
-                Bucket=self.s3_bucket, Key="backups/{backup_id}.backup"
-            )
+            _ = self.s3_client.get_object(Bucket=self.s3_bucket, Key="backups/{backup_id}.backup")
             return json.loads(response["Body"].read())
 
         raise FileNotFoundError("Backup {backup_id} not found")
@@ -356,7 +349,7 @@ class BackupManager:
 
             logger.info("backup_replicated_to_s3", backup_id=backup_id, bucket=self.s3_bucket)
 
-        except Exception as e:
+        except Exception as _:
             logger.error("s3_replication_failed", backup_id=backup_id, error=str(e))
 
     def _remove_backup(self, backup_id: str):
@@ -372,7 +365,7 @@ class BackupManager:
                 self.s3_client.delete_object(
                     Bucket=self.s3_bucket, Key="backups/{backup_id}.backup"
                 )
-            except Exception as e:
+            except Exception as _:
                 logger.error("s3_deletion_failed", backup_id=backup_id, error=str(e))
 
         # Remove from metadata
@@ -423,8 +416,8 @@ class DisasterRecoveryOrchestrator:
 
     def create_recovery_point(self, name: str, components: List[str]) -> str:
         """Create a coordinated recovery point across multiple components"""
-        recovery_point_id = "rp_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}"
-        recovery_data = {}
+        _ = "rp_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}"
+        _ = {}
 
         try:
             # Collect data from all components
@@ -433,7 +426,7 @@ class DisasterRecoveryOrchestrator:
                 recovery_data[component] = data
 
             # Create unified backup
-            backup_id = self.backup_manager.create_backup(recovery_data, "recovery_point")
+            _ = self.backup_manager.create_backup(recovery_data, "recovery_point")
 
             # Store recovery point info
             self.recovery_points[recovery_point_id] = {
@@ -452,7 +445,7 @@ class DisasterRecoveryOrchestrator:
 
             return recovery_point_id
 
-        except Exception as e:
+        except Exception as _:
             logger.error("recovery_point_creation_failed", name=name, error=str(e))
             raise
 
@@ -461,14 +454,14 @@ class DisasterRecoveryOrchestrator:
         if recovery_point_id not in self.recovery_points:
             raise ValueError("Recovery point {recovery_point_id} not found")
 
-        recovery_info = self.recovery_points[recovery_point_id]
+        _ = self.recovery_points[recovery_point_id]
 
         try:
             # Restore backup
-            recovery_data = self.backup_manager.restore_backup(recovery_info["backup_id"])
+            _ = self.backup_manager.restore_backup(recovery_info["backup_id"])
 
             # Restore each component
-            results = {}
+            _ = {}
             for component, data in recovery_data.items():
                 success = self._restore_component_data(component, data)
                 results[component] = success
@@ -481,7 +474,7 @@ class DisasterRecoveryOrchestrator:
 
             return results
 
-        except Exception as e:
+        except Exception as _:
             logger.error(
                 "recovery_point_restoration_failed",
                 recovery_point_id=recovery_point_id,

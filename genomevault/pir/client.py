@@ -7,9 +7,7 @@ import asyncio
 import hashlib
 import json
 import time
-from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
 
 import aiohttp
 import numpy as np

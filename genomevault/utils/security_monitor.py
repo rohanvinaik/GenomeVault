@@ -8,11 +8,8 @@ This module provides:
 - Automated response to security threats
 """
 
-import asyncio
 import json
 from collections import defaultdict
-from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Set
 
 import numpy as np
 from sklearn.ensemble import IsolationForest

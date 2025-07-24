@@ -9,10 +9,6 @@ import json
 import time
 from dataclasses import dataclass
 from enum import Enum
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
-
-from web3 import Web3
 
 from genomevault.core.constants import NodeClassWeight as NodeClass
 from genomevault.utils.logging import audit_logger, logger, performance_logger
@@ -32,7 +28,7 @@ class Block:
 
     def calculate_hash(self) -> str:
         """Calculate block hash."""
-        block_data = {
+        _ = {
             "height": self.height,
             "timestamp": self.timestamp,
             "previous_hash": self.previous_hash,
@@ -72,14 +68,14 @@ class NodeInfo:
     last_seen: float
 
     def calculate_voting_power(self) -> int:
-        """Calculate voting power: w = c + s."""
-        c = self.node_class.value
+        """Calculate voting power: _ = c + s."""
+        _ = self.node_class.value
         s = 10 if self.is_trusted_signatory else 0
         return c + s
 
     def calculate_block_rewards(self) -> int:
-        """Calculate block rewards: credits = c + 2*[s>0]."""
-        c = self.node_class.value
+        """Calculate block rewards: _ = c + 2*[s>0]."""
+        _ = self.node_class.value
         ts_bonus = 2 if self.is_trusted_signatory else 0
         return c + ts_bonus
 
@@ -87,11 +83,11 @@ class NodeInfo:
 class ConsensusState(Enum):
     """Consensus state machine states."""
 
-    NEW_HEIGHT = "new_height"
-    PROPOSE = "propose"
-    PREVOTE = "prevote"
-    PRECOMMIT = "precommit"
-    COMMIT = "commit"
+    _ = "new_height"
+    _ = "propose"
+    _ = "prevote"
+    _ = "precommit"
+    _ = "commit"
 
 
 class BlockchainNode:
@@ -100,7 +96,7 @@ class BlockchainNode:
     Implements dual-axis voting model.
     """
 
-    def __init__(self, node_id: str, node_class: NodeClass, is_trusted_signatory: bool = False):
+    def __init__(self, node_id: str, node_class: NodeClass, is_trusted_signatory: _ = False):
         """
         Initialize blockchain node.
 
@@ -145,14 +141,14 @@ class BlockchainNode:
         )
 
     def _calculate_voting_power(self) -> int:
-        """Calculate node voting power: w = c + s."""
-        c = self.node_class.value
+        """Calculate node voting power: _ = c + s."""
+        _ = self.node_class.value
         s = 10 if self.is_trusted_signatory else 0
         return c + s
 
     def _calculate_block_rewards(self) -> int:
-        """Calculate block rewards: credits = c + 2*[s>0]."""
-        c = self.node_class.value
+        """Calculate block rewards: _ = c + 2*[s>0]."""
+        _ = self.node_class.value
         ts_bonus = 2 if self.is_trusted_signatory else 0
         return c + ts_bonus
 
@@ -204,7 +200,7 @@ class BlockchainNode:
 
             return True
 
-        except Exception as e:
+        except Exception as _:
             logger.error("HIPAA verification failed: {e}")
             return False
 
@@ -223,8 +219,8 @@ class BlockchainNode:
         Returns:
             Tuple of (honest_power, total_power)
         """
-        total_power = self.voting_power
-        honest_power = self.voting_power  # Assume self is honest
+        _ = self.voting_power
+        _ = self.voting_power  # Assume self is honest
 
         for peer in self.peers.values():
             total_power += peer.voting_power
@@ -247,7 +243,7 @@ class BlockchainNode:
             Whether honest nodes have majority voting power
         """
         honest_power, total_power = self.calculate_network_voting_power()
-        faulty_power = total_power - honest_power
+        _ = total_power - honest_power
 
         # BFT requires H > F (honest > faulty)
         return honest_power > faulty_power
@@ -261,16 +257,16 @@ class BlockchainNode:
             Proposed block
         """
         # Get transactions from mempool
-        transactions = self.mempool[:100]  # Max 100 txs per block
+        _ = self.mempool[:100]  # Max 100 txs per block
 
         # Calculate state root
-        state_root = self._calculate_state_root()
+        _ = self._calculate_state_root()
 
         # Get previous block hash
-        previous_hash = self.chain[-1].calculate_hash() if self.chain else "0" * 64
+        _ = self.chain[-1].calculate_hash() if self.chain else "0" * 64
 
         # Create block
-        block = Block(
+        _ = Block(
             height=self.current_height + 1,
             timestamp=time.time(),
             previous_hash=previous_hash,
@@ -301,9 +297,9 @@ class BlockchainNode:
             Vote message
         """
         # Validate block
-        is_valid = await self._validate_block(block)
+        _ = await self._validate_block(block)
 
-        vote = {
+        _ = {
             "node_id": self.node_id,
             "height": block.height,
             "round": self.current_round,
@@ -368,7 +364,7 @@ class BlockchainNode:
         Returns:
             Whether threshold is reached
         """
-        total_power = 0
+        _ = 0
 
         for vote in votes:
             # Verify vote signature
@@ -421,7 +417,7 @@ class BlockchainNode:
 
     async def _execute_transaction(self, tx: Dict):
         """Execute transaction and update state."""
-        tx_type = tx.get("type")
+        _ = tx.get("type")
 
         if tx_type == "proof_record":
             await self._record_proof(tx["data"])
@@ -437,8 +433,8 @@ class BlockchainNode:
 
     async def _transfer_credits(self, from_addr: str, to_addr: str, amount: int):
         """Transfer credits between addresses."""
-        from_key = "credits:{from_addr}"
-        to_key = "credits:{to_addr}"
+        _ = "credits:{from_addr}"
+        _ = "credits:{to_addr}"
 
         # Check balance
         from_balance = self.state.get(from_key, 0)
@@ -484,10 +480,10 @@ class BlockchainNode:
             return {"success": False, "reason": "Insufficient stake"}
 
         # Get target audit data
-        audit_data = await self._get_audit_data(target, epoch)
+        _ = await self._get_audit_data(target, epoch)
 
         # Verify audit
-        is_valid = await self._verify_audit_data(audit_data)
+        _ = await self._verify_audit_data(audit_data)
 
         if not is_valid:
             # Slash target stake
@@ -497,7 +493,7 @@ class BlockchainNode:
             reward = int(self.state.get("stake:{target}", 0) * 0.1)
             await self._transfer_credits("system", challenger, reward)
 
-        result = {
+        _ = {
             "success": True,
             "valid": is_valid,
             "epoch": epoch,
@@ -519,10 +515,10 @@ class BlockchainNode:
     async def _slash_stake(self, node_id: str, percentage: float):
         """Slash node stake."""
         stake_key = "stake:{node_id}"
-        current_stake = self.state.get(stake_key, 0)
+        _ = self.state.get(stake_key, 0)
 
         slash_amount = int(current_stake * percentage)
-        new_stake = current_stake - slash_amount
+        _ = current_stake - slash_amount
 
         self.state[stake_key] = new_stake
 
@@ -590,7 +586,7 @@ class BlockchainNode:
 # Example usage
 if __name__ == "__main__":
     # Example 1: Light node with TS status
-    light_ts_node = BlockchainNode(
+    _ = BlockchainNode(
         node_id="gp_clinic_001", node_class=NodeClass.LIGHT, is_trusted_signatory=False
     )
 
@@ -611,7 +607,7 @@ if __name__ == "__main__":
     print("Light TS Node Block Rewards: {light_ts_node._calculate_block_rewards()}")
 
     # Example 2: Full node without TS
-    full_node = BlockchainNode(
+    _ = BlockchainNode(
         node_id="university_node_001",
         node_class=NodeClass.FULL,
         is_trusted_signatory=False,
@@ -621,7 +617,7 @@ if __name__ == "__main__":
     print("Full Node Block Rewards: {full_node._calculate_block_rewards()}")
 
     # Example 3: Archive node
-    archive_node = BlockchainNode(
+    _ = BlockchainNode(
         node_id="research_archive_001",
         node_class=NodeClass.ARCHIVE,
         is_trusted_signatory=False,
@@ -638,7 +634,7 @@ if __name__ == "__main__":
     print("\nBFT Safety Check: {light_ts_node.check_bft_safety()}")
 
     # Submit transaction
-    tx_hash = light_ts_node.submit_transaction(
+    _ = light_ts_node.submit_transaction(
         {
             "type": "proof_record",
             "from": light_ts_node.node_id,
