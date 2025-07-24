@@ -46,10 +46,18 @@ jobs:
         pip install -r requirements.txt
         pip install -r requirements-dev.txt
     
+    - name: Create benchmark directory
+      run: mkdir -p benchmarks/${{ matrix.lane }}
+    
     - name: Run ${{ matrix.lane }} benchmarks
       run: |
         python scripts/bench.py --lane ${{ matrix.lane }} --output benchmarks
       continue-on-error: true
+    
+    - name: List benchmark results
+      run: |
+        echo "Contents of benchmarks/${{ matrix.lane }}:"
+        ls -la benchmarks/${{ matrix.lane }}/ || echo "No files found"
     
     - name: Upload benchmark results
       uses: actions/upload-artifact@v4
@@ -58,6 +66,7 @@ jobs:
         name: benchmark-${{ matrix.lane }}-${{ github.run_number }}
         path: benchmarks/${{ matrix.lane }}/*.json
         retention-days: 90
+        if-no-files-found: warn
 
   generate-report:
     name: Generate Performance Report
@@ -80,27 +89,49 @@ jobs:
         pip install -r requirements-dev.txt
         pip install matplotlib seaborn
     
+    - name: Create directories
+      run: |
+        mkdir -p benchmarks/{hdc,pir,zk}
+        mkdir -p docs/perf
+    
     - name: Download all benchmark artifacts
       uses: actions/download-artifact@v4
       with:
         path: benchmarks-artifacts
         pattern: benchmark-*
+      continue-on-error: true
+    
+    - name: Check downloaded artifacts
+      run: |
+        echo "Contents of benchmarks-artifacts:"
+        ls -la benchmarks-artifacts/ || echo "No artifacts directory"
+        find benchmarks-artifacts -type f -name "*.json" || echo "No JSON files found"
     
     - name: Organize benchmark results
       run: |
-        mkdir -p benchmarks/{hdc,pir,zk}
-        find benchmarks-artifacts -name "*.json" -exec sh -c '
-          for file do
-            lane=$(echo "$file" | grep -oE "(hdc|pir|zk)")
-            if [ ! -z "$lane" ]; then
-              cp "$file" "benchmarks/$lane/"
-            fi
-          done
-        ' sh {} +
+        if [ -d "benchmarks-artifacts" ]; then
+          find benchmarks-artifacts -name "*.json" -exec sh -c '
+            for file do
+              lane=$(echo "$file" | grep -oE "(hdc|pir|zk)")
+              if [ ! -z "$lane" ]; then
+                cp "$file" "benchmarks/$lane/"
+              fi
+            done
+          ' sh {} +
+        else
+          echo "No artifacts to organize"
+        fi
     
     - name: Generate performance report
       run: |
-        python scripts/generate_perf_report.py --input benchmarks --output docs/perf
+        # Create a minimal report even if no benchmarks ran
+        if [ -z "$(find benchmarks -name '*.json' 2>/dev/null)" ]; then
+          echo "No benchmark results found, creating placeholder report"
+          mkdir -p docs/perf
+          echo '{"status": "No benchmarks available yet"}' > docs/perf/performance_summary.json
+        else
+          python scripts/generate_perf_report.py --input benchmarks --output docs/perf
+        fi
     
     - name: Upload performance report
       uses: actions/upload-artifact@v4
@@ -111,6 +142,7 @@ jobs:
           docs/perf/*.png
           docs/perf/*.json
         retention-days: 90
+        if-no-files-found: warn
     
     - name: Comment PR with performance summary
       if: github.event_name == 'pull_request'
