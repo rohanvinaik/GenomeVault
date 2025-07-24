@@ -1,0 +1,41 @@
+{
+  "format": "vcf-4.3",
+  "reference": "GRCh38",
+  "date": "2025-01-01",
+  "source": "GenomeVault-Test",
+  "samples": [
+    {
+      "id": "TEST001",
+      "variants": [
+        {
+          "chr": "1", 
+          "pos": 14370, 
+          "ref": "G", 
+          "alt": "A", 
+          "rsid": "rs6054257",
+          "qual": 29,
+          "filter": "PASS"
+        },
+        {
+          "chr": "2", 
+          "pos": 17330, 
+          "ref": "T", 
+          "alt": "C", 
+          "rsid": "rs1234567",
+          "qual": 99,
+          "filter": "PASS"
+        },
+        {
+          "chr": "10",
+          "pos": 114758349,
+          "ref": "C",
+          "alt": "T",
+          "rsid": "rs7903146",
+          "qual": 99,
+          "filter": "PASS",
+          "info": "T2D_risk_variant"
+        }
+      ]
+    }
+  ]
+}

@@ -1,12 +1,8 @@
-# Byte-compiled / optimized / DLL files
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
-
-# C extensions
 *.so
-
-# Distribution / packaging
 .Python
 build/
 develop-eggs/
@@ -20,7 +16,6 @@ parts/
 sdist/
 var/
 wheels/
-pip-wheel-metadata/
 share/python-wheels/
 *.egg-info/
 .installed.cfg
@@ -48,9 +43,7 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
-test-results.xml
-pytest_cache/
-.benchmarks/
+cover/
 
 # Translations
 *.mo
@@ -73,6 +66,7 @@ instance/
 docs/_build/
 
 # PyBuilder
+.pybuilder/
 target/
 
 # Jupyter Notebook
@@ -87,6 +81,12 @@ ipython_config.py
 
 # pipenv
 Pipfile.lock
+
+# poetry
+poetry.lock
+
+# pdm
+.pdm.toml
 
 # PEP 582
 __pypackages__/
@@ -125,119 +125,44 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# IDEs
-.idea/
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# IDE
 .vscode/
+.idea/
 *.swp
 *.swo
 *~
-.project
-.pydevproject
 
-# OS files
+# OS
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
 # GenomeVault specific
-data/
-logs/
-keys/
-*.pem
-*.pub
-*.key
-*.crt
-
-# Docker
-docker-compose.override.yml
-
-# Blockchain
-node_modules/
-truffle-config.js
-migrations/
-test/
-
-# IPFS
-.ipfs/
-
-# Temporary files
+*.log
 *.tmp
-*.temp
-*.bak
+temp/
+tmp/
+.benchmarks/
+test_output*.log
+clinical_validation/temp/
 
-# Sensitive configuration
-config/production.yml
-config/secrets.yml
+# Cleanup scripts (remove after use)
+cleanup_for_github.py
+cleanup_auto.py
+preview_cleanup.py
 
-# Test data
-test_data/
-fixtures/
-
-# Security reports
-security-report.json
-safety-report.json
-bandit-report.json
-
-# Cache
-.cache/
-redis_data/
-ipfs_data/
-
-# Database
-*.db
-postgres_data/
-
-# Compiled contracts
-blockchain/contracts/build/
-blockchain/contracts/artifacts/
-
-# Coverage reports
-coverage/
-.nyc_output/
-
-# Benchmarks
-benchmarks/results/
-
-# Local development
-.local/
-scratch/
-
-# Typescript log files
-typescript
-
-# Legacy debug scripts
-legacy/
-!legacy/.gitkeep
-
-# Development and debugging scripts
-*.sh
-!setup.sh
-!install.sh
-.tailchasing.yml
-TailChasingFixer/
-*_fixes.py
-*_analysis.py
-tailchasing_*
-
-# Push and sync scripts
-push_*.sh
-sync_*.sh
-backup_*.sh
-check_*.sh
-diagnose_*.sh
-fix_*.sh
-force_*.sh
-safe_*.sh
-manual_*.sh
-github_*.sh
-commit_*.sh
-create_*.sh
-verify_*.sh
-
-# Temporary files
-PUSH_*.md
-flake8_remaining_issues.txt
-tailchasing_suggestions.md
-
-# Clinical validation temp files  
-clinical_validation/circuits/base_zk.py
-clinical_validation/zk_backends/
+# Cryptographic keys (security)
+*.key
+*.pem
+*.crt
+secrets/
