@@ -5,15 +5,15 @@ Implementation based on the Circuit Spec Draft (A) from project knowledge.
 This is the minimum ZK artifact to power the MVP-VPQ (Variant Population Query).
 """
 
-from typing import Dict, List, Any, Optional
 import hashlib
+from typing import Any, Dict, List, Optional
 
 from genomevault.zk_proofs.circuits.implementations.constraint_system import (
     ConstraintSystem,
     FieldElement,
+    LinearCombination,
     Variable,
     poseidon_hash,
-    LinearCombination,
 )
 
 

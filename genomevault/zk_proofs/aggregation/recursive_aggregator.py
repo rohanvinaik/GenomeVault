@@ -6,23 +6,23 @@ Stage 4 implementation: Recursion / Aggregation & Performance Bench
 - Benchmarks: proof size, verify time, aggregation time vs N
 """
 
-import time
-import json
 import hashlib
+import json
+import time
 from dataclasses import dataclass
-from typing import List, Dict, Any, Optional, Tuple
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
+from genomevault.utils.metrics import MetricsCollector
 from genomevault.zk_proofs.circuits.implementations.constraint_system import (
     ConstraintSystem,
     FieldElement,
     Variable,
     poseidon_hash,
 )
-from genomevault.utils.metrics import MetricsCollector
 
 
 @dataclass

@@ -7,17 +7,19 @@ Stage 3 implementation: Verification & Property Tests
 - Fuzz for malformed public inputs
 """
 
-import pytest
-from hypothesis import given, strategies as st, assume, settings
-from hypothesis.stateful import RuleBasedStateMachine, rule, initialize
 import hashlib
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
+import pytest
+from hypothesis import assume, given, settings
+from hypothesis import strategies as st
+from hypothesis.stateful import RuleBasedStateMachine, initialize, rule
 
 from genomevault.zk_proofs.circuits.implementations.constraint_system import FieldElement
-from genomevault.zk_proofs.circuits.implementations.variant_proof_circuit import VariantProofCircuit
 from genomevault.zk_proofs.circuits.implementations.variant_frequency_circuit import (
     VariantFrequencyCircuit,
 )
+from genomevault.zk_proofs.circuits.implementations.variant_proof_circuit import VariantProofCircuit
 
 
 # Custom strategies for genomic data

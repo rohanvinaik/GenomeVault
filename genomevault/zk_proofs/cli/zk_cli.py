@@ -11,7 +11,7 @@ import json
 import sys
 import time
 from pathlib import Path
-from typing import Dict, Any
+from typing import Any, Dict
 
 from genomevault.zk_proofs import Prover, Verifier
 from genomevault.zk_proofs.circuits.implementations.variant_frequency_circuit import (
