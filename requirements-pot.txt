@@ -1,0 +1,69 @@
+# Additional requirements for GenomeVault Proof-of-Training features
+
+# Zero-Knowledge Proof Libraries
+py-ecc>=6.0.0           # Elliptic curve cryptography for ZK proofs
+pysnark>=0.1.0          # Python SNARK library (optional, for advanced features)
+
+# Machine Learning Visualization
+umap-learn>=0.5.0       # UMAP for semantic space visualization
+scikit-learn>=1.0.0     # For t-SNE and other ML utilities
+seaborn>=0.12.0         # Advanced plotting for drift analysis
+
+# Differential Privacy
+diffprivlib>=0.6.0      # IBM differential privacy library
+opacus>=1.3.0           # PyTorch differential privacy (if using PyTorch)
+
+# Blockchain Integration (optional)
+web3>=6.0.0             # Ethereum blockchain interaction
+eth-account>=0.8.0      # Ethereum account management
+py-solc-x>=1.1.0        # Solidity compiler (for contract deployment)
+
+# Multi-Modal Data Processing
+pandas>=1.5.0           # Data manipulation
+scipy>=1.9.0            # Scientific computing
+
+# Performance and Monitoring
+prometheus-client>=0.15.0  # Metrics export for monitoring
+grafana-api>=1.0.0         # Grafana dashboard integration (optional)
+
+# Federated Learning (optional)
+# Note: Install based on your FL framework choice
+# flower>=1.3.0         # Flower federated learning framework
+# syft>=0.8.0           # PySyft for secure federated learning
+
+# Storage and Serialization
+pyarrow>=10.0.0         # Efficient data serialization
+lz4>=4.0.0              # Fast compression for snapshots
+
+# Clinical Validation
+lifelines>=0.27.0       # Survival analysis for clinical studies
+statsmodels>=0.13.0     # Statistical modeling
+
+# Development and Testing
+pytest-asyncio>=0.20.0  # Async testing support
+hypothesis>=6.60.0      # Property-based testing
+mypy>=1.0.0            # Type checking
+
+# Documentation
+mkdocs>=1.4.0          # Documentation generation
+mkdocs-material>=9.0.0  # Material theme for docs
+mkdocstrings>=0.20.0   # Auto-generate docs from docstrings
+
+# CLI enhancements
+rich>=13.0.0           # Rich terminal output
+typer>=0.7.0           # Modern CLI framework
+
+# Cryptography
+cryptography>=39.0.0    # Cryptographic primitives
+pynacl>=1.5.0          # Networking and cryptography library
+
+# Optional: GPU acceleration for ZK proofs
+# cupy>=11.0.0          # GPU arrays (requires CUDA)
+# pycuda>=2022.2        # CUDA programming
+
+# Optional: Advanced ZK backends
+# libsnark-python       # libsnark bindings (build from source)
+# bellman-python        # Bellman (Zcash) bindings (build from source)
+
+# Note: Core GenomeVault dependencies (numpy, torch/tensorflow, etc.) 
+# are assumed to be already installed

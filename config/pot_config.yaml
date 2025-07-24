@@ -1,0 +1,213 @@
+# Configuration template for GenomeVault Proof-of-Training
+
+# Basic Configuration
+storage:
+  base_path: "./genomevault_pot"
+  snapshots_dir: "snapshots"
+  proofs_dir: "proofs"
+  monitoring_dir: "monitoring"
+
+# Training Configuration
+training:
+  snapshot_frequency: 50  # Take snapshot every N epochs
+  capture_gradients: true
+  capture_io_samples: true
+  io_sample_buffer_size: 1000
+  compression: "zlib"  # Options: "zlib", "none"
+
+# Privacy Configuration
+privacy:
+  default_epsilon: 1.0
+  default_delta: 1.0e-5
+  composition_method: "advanced"  # Options: "basic", "advanced"
+  composition_slack: 1.0e-5
+  mechanisms:
+    gradient_clipping:
+      enabled: true
+      clip_norm: 1.0
+    noise_addition:
+      training: "gaussian"
+      inference: "laplace"
+  global_budgets:
+    daily_epsilon: 10.0
+    weekly_epsilon: 50.0
+    monthly_epsilon: 150.0
+
+# Blockchain Configuration
+blockchain:
+  enabled: false  # Set to true to enable on-chain attestation
+  network: "ethereum"  # Options: "ethereum", "polygon", "private"
+  contract_address: "0x0000000000000000000000000000000000000000"
+  chain_id: 1
+  owner_address: "0x0000000000000000000000000000000000000000"
+  authorized_verifiers:
+    - "0x0000000000000000000000000000000000000001"
+    - "0x0000000000000000000000000000000000000002"
+  gas_limit: 3000000
+  confirmation_blocks: 3
+
+# Clinical Validation Configuration
+clinical:
+  institution_id: "your_institution"
+  validation_levels:
+    - "research"
+    - "clinical_trial"
+    - "clinical_decision_support"
+  performance_thresholds:
+    oncology:
+      sensitivity: 0.95
+      specificity: 0.90
+      auc: 0.92
+    cardiology:
+      sensitivity: 0.90
+      specificity: 0.85
+      auc: 0.88
+    rare_disease:
+      sensitivity: 0.85
+      specificity: 0.95
+      auc: 0.90
+  safety_thresholds:
+    false_positive_rate: 0.10
+    false_negative_rate: 0.05
+    uncertainty_calibration: 0.85
+    out_of_distribution_detection: 0.90
+
+# Monitoring Configuration
+monitoring:
+  window_size: 1000
+  performance_window_size: 100
+  drift_check_frequency: 100
+  alert_cooldown_seconds: 3600
+  drift_thresholds:
+    covariate: 0.10
+    prediction: 0.15
+    performance: 0.05
+    semantic: 0.20
+  severity_thresholds:
+    low: 0.10
+    medium: 0.25
+    high: 0.50
+    critical: 0.75
+  retraining_triggers:
+    performance_drop: 0.10
+    sustained_drift_hours: 24
+    critical_alerts: 3
+
+# Multi-Modal Configuration
+multimodal:
+  enabled: false
+  modalities:
+    - genomic
+    - transcriptomic
+    - proteomic
+  correlation_thresholds:
+    genomic_transcriptomic: 0.70
+    transcriptomic_proteomic: 0.60
+    genomic_proteomic: 0.50
+  alignment_requirements:
+    min_correlation: 0.50
+    min_mutual_information: 0.30
+    max_attention_variance: 0.20
+
+# Federated Learning Configuration
+federated:
+  enabled: false
+  aggregation_method: "FedAvg"  # Options: "FedAvg", "FedProx", "FedMA"
+  min_clients_per_round: 3
+  client_fraction: 0.5
+  local_epochs: 5
+  aggregation_weights: "uniform"  # Options: "uniform", "data_size", "performance"
+  secure_aggregation: true
+  differential_privacy_per_round: 0.1
+
+# ZK Proof Configuration
+zk_proofs:
+  backend: "groth16"  # Options: "groth16", "plonk", "stark"
+  curve: "bls12_381"
+  max_constraints: 1000000
+  proof_compression: true
+  recursive_proofs: false
+  trusted_setup_path: "./trusted_setup"
+
+# Hypervector Configuration
+hypervector:
+  dimension: 10000
+  encoding_method: "random_projection"
+  similarity_metric: "cosine"
+  drift_detection:
+    enabled: true
+    threshold: 0.15
+    window_size: 5
+
+# Logging Configuration
+logging:
+  level: "INFO"  # Options: "DEBUG", "INFO", "WARNING", "ERROR"
+  file: "./logs/genomevault_pot.log"
+  max_file_size: "100MB"
+  backup_count: 5
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# API Configuration
+api:
+  enabled: true
+  host: "0.0.0.0"
+  port: 8080
+  cors_origins: ["http://localhost:3000"]
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 60
+  authentication:
+    enabled: true
+    method: "jwt"  # Options: "jwt", "api_key", "oauth2"
+
+# Storage Backend Configuration
+storage_backend:
+  type: "local"  # Options: "local", "s3", "ipfs", "azure"
+  local:
+    path: "./pot_storage"
+  s3:
+    bucket: "genomevault-pot"
+    region: "us-east-1"
+    encryption: "AES256"
+  ipfs:
+    host: "localhost"
+    port: 5001
+    gateway: "https://ipfs.io"
+
+# Performance Optimization
+performance:
+  parallel_proof_generation: true
+  num_workers: 4
+  cache_enabled: true
+  cache_size_mb: 1000
+  batch_verification: true
+  batch_size: 10
+
+# Security Configuration
+security:
+  encryption:
+    algorithm: "AES-256-GCM"
+    key_derivation: "PBKDF2"
+    iterations: 100000
+  secure_communication:
+    tls_enabled: true
+    min_tls_version: "1.2"
+  access_control:
+    enabled: true
+    rbac_enabled: true
+    audit_logging: true
+
+# Compliance Configuration
+compliance:
+  standards:
+    - "HIPAA"
+    - "GDPR"
+    - "FDA_21CFR11"
+  data_retention:
+    training_snapshots_days: 365
+    proofs_days: 2555  # 7 years
+    monitoring_data_days: 90
+  audit_trail:
+    enabled: true
+    immutable_storage: true
+    hash_algorithm: "SHA256"
