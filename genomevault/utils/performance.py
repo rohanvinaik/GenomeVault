@@ -189,12 +189,12 @@ class HypervectorAccelerator:
             # Use CuPy FFT for circular convolution
             v1_cp = cp.asarray(v1.astype(np.float32))
             v2_cp = cp.asarray(v2.astype(np.float32))
-            
+
             # FFT method using CuPy
             fft1 = cp.fft.fft(v1_cp)
             fft2 = cp.fft.fft(v2_cp)
             result = cp.fft.ifft(fft1 * fft2).real
-            
+
             return cp.asnumpy(result)
 
         else:
@@ -372,16 +372,16 @@ resource_monitor = ResourceMonitor()
 @contextlib.contextmanager
 def with_gpu(exit: bool = False) -> Generator[None, None, None]:
     """Context manager for GPU operations with proper cleanup.
-    
+
     This fixes the CuPy slice-kernel warning by ensuring proper synchronization
     and cleanup of GPU resources.
-    
+
     Args:
         exit: If True, performs full device reset on exit (use sparingly)
-        
+
     Yields:
         None
-        
+
     Example:
         with with_gpu():
             # GPU operations here
@@ -393,22 +393,22 @@ def with_gpu(exit: bool = False) -> Generator[None, None, None]:
         if CUDA_AVAILABLE:
             try:
                 # Synchronize CUDA device to ensure all kernels complete
-                if 'cp' in globals():
+                if "cp" in globals():
                     cp.cuda.Device().synchronize()
-                    
+
                 # If exit is True, perform full device reset
                 if exit:
                     cp.cuda.runtime.deviceReset()
                     logger.debug("GPU device reset completed")
             except Exception as e:
                 logger.warning(f"GPU cleanup warning: {e}")
-        
+
         if TORCH_AVAILABLE:
             try:
                 # Synchronize PyTorch CUDA if available
                 if torch.cuda.is_available():
                     torch.cuda.synchronize()
-                    
+
                     # Clear cache if exit is True
                     if exit:
                         torch.cuda.empty_cache()
