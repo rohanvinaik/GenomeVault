@@ -155,11 +155,7 @@ class OptimizedPIRDatabase:
             position = struct.unpack(">I", index_data[offset + 1 : offset + 5])[0]
             data_offset = struct.unpack(">I", index_data[offset + 5 : offset + 9])[0]
 
-            chr_name = (
-                "chr{chr_byte}"
-                if chr_byte < 23
-                else ("chrX" if chr_byte == 23 else "chrY")
-            )
+            chr_name = "chr{chr_byte}" if chr_byte < 23 else ("chrX" if chr_byte == 23 else "chrY")
             key = "{chr_name}:{position}"
             index[key] = data_offset
 
@@ -172,14 +168,10 @@ class OptimizedPIRDatabase:
         """Get or create memory map for shard data."""
         if shard.shard_id not in self.memory_maps:
             with open(shard.data_path, "rb") as f:
-                self.memory_maps[shard.shard_id] = mmap.mmap(
-                    f.fileno(), 0, access=mmap.ACCESS_READ
-                )
+                self.memory_maps[shard.shard_id] = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
         return self.memory_maps[shard.shard_id]
 
-    async def query_item(
-        self, shard: ShardMetadata, position_key: str
-    ) -> Optional[bytes]:
+    async def query_item(self, shard: ShardMetadata, position_key: str) -> Optional[bytes]:
         """
         Query a specific item from the database.
 
@@ -288,9 +280,7 @@ class EnhancedPIRServer:
         self.shards = self._load_enhanced_shards()
 
         # Processing pools
-        self.process_pool = ProcessPoolExecutor(
-            max_workers=config.get("pir.server_workers", 4)
-        )
+        self.process_pool = ProcessPoolExecutor(max_workers=config.get("pir.server_workers", 4))
         self.thread_pool = ThreadPoolExecutor(max_workers=8)
 
         # Query preprocessing cache
@@ -394,9 +384,7 @@ class EnhancedPIRServer:
 
         # In production, verify checksum
         # For now, just check files exist and are non-empty
-        return (
-            shard.data_path.stat().st_size > 0 and shard.index_path.stat().st_size > 0
-        )
+        return shard.data_path.stat().st_size > 0 and shard.index_path.stat().st_size > 0
 
     def _init_rate_limiter(self) -> Dict[str, List[float]]:
         """Initialize rate limiting for security."""
@@ -409,9 +397,7 @@ class EnhancedPIRServer:
         max_requests = 100  # Max requests per window
 
         # Clean old entries
-        self.rate_limiter[client_id] = [
-            t for t in self.rate_limiter[client_id] if now - t < window
-        ]
+        self.rate_limiter[client_id] = [t for t in self.rate_limiter[client_id] if now - t < window]
 
         # Check limit
         if len(self.rate_limiter[client_id]) >= max_requests:
@@ -472,9 +458,7 @@ class EnhancedPIRServer:
             if query_type == "genomic":
                 results = await self._process_genomic_query(query_vectors, parameters)
             elif query_type == "annotation":
-                results = await self._process_annotation_query(
-                    query_vectors, parameters
-                )
+                results = await self._process_annotation_query(query_vectors, parameters)
             elif query_type == "graph":
                 results = await self._process_graph_query(query_vectors, parameters)
             else:
@@ -575,9 +559,7 @@ class EnhancedPIRServer:
                         target_shards.append(shard)
         else:
             # Use all genomic shards
-            target_shards = [
-                s for s in self.shards.values() if s.data_type == "genomic"
-            ]
+            target_shards = [s for s in self.shards.values() if s.data_type == "genomic"]
 
         return target_shards
 
@@ -670,9 +652,7 @@ class EnhancedPIRServer:
         # Update average (simple moving average)
         n = self.metrics["total_queries"]
         current_avg = self.metrics["average_query_time_ms"]
-        self.metrics["average_query_time_ms"] = (
-            current_avg * (n - 1) + processing_time_ms
-        ) / n
+        self.metrics["average_query_time_ms"] = (current_avg * (n - 1) + processing_time_ms) / n
 
     async def get_server_status(self) -> Dict[str, Any]:
         """Get comprehensive server status."""
@@ -752,9 +732,7 @@ async def main():
     query = {
         "query_id": "test_001",
         "client_id": "client_123",
-        "query_vectors": [
-            np.random.binomial(1, 0.001, 10000).astype(np.uint8) for _ in range(5)
-        ],
+        "query_vectors": [np.random.binomial(1, 0.001, 10000).astype(np.uint8) for _ in range(5)],
         "query_type": "genomic",
         "parameters": {
             "regions": [

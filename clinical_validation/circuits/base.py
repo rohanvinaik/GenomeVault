@@ -50,9 +50,7 @@ class BaseCircuit(ABC):
             if param in self.config.supported_parameters:
                 expected_type = self.config.supported_parameters[param]
                 if not isinstance(value, expected_type):
-                    raise TypeError(
-                        f"Parameter {param} must be of type {expected_type}"
-                    )
+                    raise TypeError(f"Parameter {param} must be of type {expected_type}")
 
         self._setup_complete = True
         return self.config.to_dict()
@@ -92,9 +90,7 @@ class BaseCircuit(ABC):
     def _generate_verification_key(self) -> bytes:
         """Generate verification key for the circuit"""
         # In production, this would be from trusted setup
-        key_data = (
-            f"{self.config.name}:{self.config.version}:{self.config.security_level}"
-        )
+        key_data = f"{self.config.name}:{self.config.version}:{self.config.security_level}"
         return hashlib.sha256(key_data.encode()).digest() + np.random.bytes(32)
 
     def _hash_inputs(self, inputs: Dict[str, Any]) -> str:
@@ -103,9 +99,7 @@ class BaseCircuit(ABC):
         sorted_data = json.dumps(inputs, sort_keys=True)
         return hashlib.sha256(sorted_data.encode()).hexdigest()
 
-    def _add_proof_metadata(
-        self, proof: ProofData, public_inputs: Dict, witness: Dict
-    ) -> None:
+    def _add_proof_metadata(self, proof: ProofData, public_inputs: Dict, witness: Dict) -> None:
         """Add standard metadata to proof"""
         proof.metadata.update(
             {

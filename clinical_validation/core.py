@@ -33,9 +33,7 @@ class ClinicalValidator:
         self.logger = logging.getLogger(__name__)
 
         # Initialize REAL GenomeVault components
-        self.hypervector_encoder = HypervectorEncoder(
-            dimensions=self.config.hypervector_dimensions
-        )
+        self.hypervector_encoder = HypervectorEncoder(dimensions=self.config.hypervector_dimensions)
         self.zk_prover = ZKProver()
         self.pir_client = PIRClient(self.config.pir_servers)
 
@@ -125,9 +123,7 @@ class ClinicalValidator:
                     "patient_id": idx,
                     "hypervector_dim": len(hypervector),
                     "sparsity": np.count_nonzero(hypervector) / len(hypervector),
-                    "compression_ratio": self._calculate_compression_ratio(
-                        features, hypervector
-                    ),
+                    "compression_ratio": self._calculate_compression_ratio(features, hypervector),
                 }
             )
 
@@ -176,9 +172,7 @@ class ClinicalValidator:
         """
         Run complete clinical validation using ALL GenomeVault components
         """
-        self.logger.info(
-            "🏥 Starting GenomeVault Clinical Validation with REAL Components"
-        )
+        self.logger.info("🏥 Starting GenomeVault Clinical Validation with REAL Components")
         self.logger.info("=" * 60)
 
         validation_results = {
@@ -209,9 +203,7 @@ class ClinicalValidator:
                 # 1. Test Hypervector Encoding
                 self.logger.info("Testing hypervector encoding...")
                 hypervector_results = self.validate_with_hypervectors(data)
-                validation_results["hypervector_metrics"][
-                    source_name
-                ] = hypervector_results
+                validation_results["hypervector_metrics"][source_name] = hypervector_results
                 validation_results["components_tested"].append("hypervector_encoding")
 
                 # 2. Test ZK Proofs on sample patients
@@ -226,9 +218,7 @@ class ClinicalValidator:
                     clinical_data = {
                         "glucose": row.get(source.get_glucose_column(), 100),
                         "hba1c": row.get(source.get_hba1c_column(), 5.5),
-                        "genetic_risk_score": np.random.normal(
-                            0, 1
-                        ),  # Simulated for now
+                        "genetic_risk_score": np.random.normal(0, 1),  # Simulated for now
                     }
 
                     # Generate REAL ZK proof
@@ -244,9 +234,7 @@ class ClinicalValidator:
                     "avg_verification_time_ms": np.mean(
                         [r["verification_time_ms"] for r in zk_results]
                     ),
-                    "avg_proof_size_bytes": np.mean(
-                        [r["proof_size_bytes"] for r in zk_results]
-                    ),
+                    "avg_proof_size_bytes": np.mean([r["proof_size_bytes"] for r in zk_results]),
                     "all_proofs_valid": all(r["is_valid"] for r in zk_results),
                 }
                 validation_results["components_tested"].append("zk_proofs")
@@ -264,12 +252,8 @@ class ClinicalValidator:
 
                 # 4. Clinical algorithm performance
                 self.logger.info("Validating clinical algorithms...")
-                clinical_metrics = self._validate_clinical_algorithms(
-                    source, data, zk_results
-                )
-                validation_results["clinical_performance"][
-                    source_name
-                ] = clinical_metrics
+                clinical_metrics = self._validate_clinical_algorithms(source, data, zk_results)
+                validation_results["clinical_performance"][source_name] = clinical_metrics
 
                 # Store source summary
                 validation_results["data_sources"][source_name] = {
@@ -339,9 +323,7 @@ class ClinicalValidator:
             },
         }
 
-    def _calculate_compression_ratio(
-        self, features: Dict, hypervector: np.ndarray
-    ) -> float:
+    def _calculate_compression_ratio(self, features: Dict, hypervector: np.ndarray) -> float:
         """Calculate compression ratio for hypervector encoding"""
         # Original size (assuming float32 for each feature)
         original_size = len(features) * 4  # 4 bytes per float32

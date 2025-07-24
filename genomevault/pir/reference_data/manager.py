@@ -466,9 +466,7 @@ class ReferenceDataManager:
         for pop, node_ids in self.population_nodes.items():
             pop_stats[pop] = {
                 "nodes": len(node_ids),
-                "percentage": (
-                    len(node_ids) / len(self.nodes) * 100 if self.nodes else 0
-                ),
+                "percentage": (len(node_ids) / len(self.nodes) * 100 if self.nodes else 0),
             }
 
         # Chromosome distribution

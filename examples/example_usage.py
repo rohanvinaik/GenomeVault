@@ -73,9 +73,7 @@ async def demonstrate_genomevault():
 
     print("   Genomic hypervector shape: {genomic_hv.shape}")
     print("   Clinical hypervector shape: {clinical_hv.shape}")
-    print(
-        "   Compression achieved: {config.get_compression_size(['genomics', 'clinical'])} KB"
-    )
+    print("   Compression achieved: {config.get_compression_size(['genomics', 'clinical'])} KB")
 
     # Cross-modal binding
     binder = HypervectorBinder()
@@ -104,9 +102,7 @@ async def demonstrate_genomevault():
 
     print("   Proof ID: {diabetes_proof.proof_id}")
     print("   Proof size: {len(diabetes_proof.proof_data)} bytes")
-    print(
-        "   Generation time: {diabetes_proof.metadata['generation_time_seconds']*1000:.1f}ms"
-    )
+    print("   Generation time: {diabetes_proof.metadata['generation_time_seconds']*1000:.1f}ms")
 
     # Step 5: PIR Query (simulated)
     print("\n5. Private Information Retrieval")
@@ -125,9 +121,7 @@ async def demonstrate_genomevault():
     optimal_config = pir_client.get_optimal_server_configuration()
     print("   Optimal PIR config: {optimal_config['optimal']['name']}")
     print("   Expected latency: {optimal_config['optimal']['latency_ms']}ms")
-    print(
-        "   Privacy guarantee: P_fail = {optimal_config['optimal']['failure_probability']:.2e}"
-    )
+    print("   Privacy guarantee: P_fail = {optimal_config['optimal']['failure_probability']:.2e}")
 
     # Step 6: Blockchain Integration
     print("\n6. Blockchain Node Setup")

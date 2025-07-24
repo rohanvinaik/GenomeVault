@@ -25,9 +25,7 @@ class ProofData:
         data = {
             "public_output": self.public_output,
             "proof_bytes": self.proof_bytes.hex() if self.proof_bytes else None,
-            "verification_key": (
-                self.verification_key.hex() if self.verification_key else None
-            ),
+            "verification_key": (self.verification_key.hex() if self.verification_key else None),
             "metadata": self.metadata,
         }
         return json.dumps(data).encode()
@@ -90,9 +88,7 @@ class ZKProver:
                     real_proof = self.real_prover.generate_proof(
                         circuit_name="diabetes_risk_alert",
                         public_inputs={
-                            "glucose_threshold": public_inputs.get(
-                                "glucose_threshold", 126
-                            ),
+                            "glucose_threshold": public_inputs.get("glucose_threshold", 126),
                             "risk_threshold": public_inputs.get("risk_threshold", 0.5),
                             "result_commitment": hashlib.sha256(b"result").hexdigest(),
                         },
@@ -112,9 +108,7 @@ class ZKProver:
                     g_threshold = public_inputs.get("glucose_threshold", 126)
                     r_threshold = public_inputs.get("risk_threshold", 0.5)
 
-                    is_high_risk = (glucose > g_threshold) and (
-                        risk_score > r_threshold
-                    )
+                    is_high_risk = (glucose > g_threshold) and (risk_score > r_threshold)
                     proof.public_output = "HIGH_RISK" if is_high_risk else "NORMAL"
 
                     proof.proof_bytes = real_proof.proof_data

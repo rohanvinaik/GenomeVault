@@ -248,8 +248,7 @@ class DiabetesRiskCalculator:
             timestamp=datetime.now(),
             metadata={
                 "proof_size_bytes": len(proof.proof_data),
-                "verification_time_ms": proof.metadata.get("generation_time_seconds", 0)
-                * 1000,
+                "verification_time_ms": proof.metadata.get("generation_time_seconds", 0) * 1000,
                 "glucose_type": glucose_reading.measurement_type,
                 "risk_category": genetic_profile.get_risk_category(),
             },
@@ -262,9 +261,7 @@ class DiabetesRiskCalculator:
 
         return alert
 
-    def verify_alert(
-        self, alert: DiabetesRiskAlert, public_inputs: Dict[str, Any]
-    ) -> bool:
+    def verify_alert(self, alert: DiabetesRiskAlert, public_inputs: Dict[str, Any]) -> bool:
         """
         Verify diabetes risk alert proof.
 
@@ -341,9 +338,7 @@ class DiabetesRiskCalculator:
             # Simple linear regression for trend
             x = np.arange(len(glucose_values))
             slope, _ = np.polyfit(x, glucose_values, 1)
-            trend = (
-                "increasing" if slope > 1 else "decreasing" if slope < -1 else "stable"
-            )
+            trend = "increasing" if slope > 1 else "decreasing" if slope < -1 else "stable"
         else:
             trend = "unknown"
 
@@ -405,9 +400,7 @@ class DiabetesRiskCalculator:
             )
 
         if trend == "increasing":
-            recommendations.append(
-                "Glucose trend is increasing - consider lifestyle adjustments"
-            )
+            recommendations.append("Glucose trend is increasing - consider lifestyle adjustments")
 
         return recommendations
 
@@ -480,9 +473,7 @@ class ClinicalIntegration:
 
         return response
 
-    def _extract_genetic_variants(
-        self, patient_data: Dict[str, Any]
-    ) -> List[Dict[str, Any]]:
+    def _extract_genetic_variants(self, patient_data: Dict[str, Any]) -> List[Dict[str, Any]]:
         """Extract genetic variants from patient data"""
         variants = []
 
@@ -502,9 +493,7 @@ class ClinicalIntegration:
 
         return variants
 
-    def _extract_glucose_readings(
-        self, patient_data: Dict[str, Any]
-    ) -> List[GlucoseReading]:
+    def _extract_glucose_readings(self, patient_data: Dict[str, Any]) -> List[GlucoseReading]:
         """Extract glucose readings from patient data"""
         readings = []
 
@@ -576,9 +565,7 @@ if __name__ == "__main__":
     public_inputs = {
         "glucose_threshold": GLUCOSE_THRESHOLD_MG_DL,
         "risk_threshold": 0.75,
-        "result_commitment": hashlib.sha256(
-            "{alert.alert_triggered}".encode()
-        ).hexdigest(),
+        "result_commitment": hashlib.sha256("{alert.alert_triggered}".encode()).hexdigest(),
     }
 
     is_valid = calculator.verify_alert(alert, public_inputs)

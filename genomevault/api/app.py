@@ -152,9 +152,7 @@ async def root():
 
 
 @app.post("/topology", response_model=TopologyResponse)
-async def get_topology(
-    request: TopologyRequest, api_key: str = Depends(verify_api_key)
-):
+async def get_topology(request: TopologyRequest, api_key: str = Depends(verify_api_key)):
     """
     Get network topology information.
     Returns nearest light nodes and trusted signatories.
@@ -194,9 +192,7 @@ async def get_topology(
 
 
 @app.post("/credit/vault/redeem", response_model=CreditRedeemResponse)
-async def redeem_credits(
-    request: CreditRedeemRequest, api_key: str = Depends(verify_api_key)
-):
+async def redeem_credits(request: CreditRedeemRequest, api_key: str = Depends(verify_api_key)):
     """
     Redeem credits from vault.
     Burns credits for network services.
@@ -210,9 +206,7 @@ async def redeem_credits(
             raise HTTPException(status_code=400, detail="Insufficient credits")
 
         # Process redemption
-        tx_id = hashlib.sha256(
-            "{request.invoiceId}:{time.time()}".encode()
-        ).hexdigest()[:16]
+        tx_id = hashlib.sha256("{request.invoiceId}:{time.time()}".encode()).hexdigest()[:16]
 
         # Update ledger
         credit_ledger[user_id] = user_credits - request.creditsBurned
@@ -291,9 +285,7 @@ async def create_audit_challenge(
 
 
 @app.post("/proof/submit", response_model=ProofSubmissionResponse)
-async def submit_proof(
-    request: ProofSubmissionRequest, api_key: str = Depends(verify_api_key)
-):
+async def submit_proof(request: ProofSubmissionRequest, api_key: str = Depends(verify_api_key)):
     """
     Submit zero-knowledge proof for recording on blockchain.
     """
@@ -338,23 +330,13 @@ async def get_node_statistics(api_key: str = Depends(verify_api_key)):
         stats = {
             "total_nodes": len(node_registry),
             "trusted_signatories": sum(
-                1
-                for n in node_registry.values()
-                if n.get("is_trusted_signatory", False)
+                1 for n in node_registry.values() if n.get("is_trusted_signatory", False)
             ),
-            "total_voting_power": sum(
-                n.get("voting_power", 0) for n in node_registry.values()
-            ),
+            "total_voting_power": sum(n.get("voting_power", 0) for n in node_registry.values()),
             "node_distribution": {
-                "light": sum(
-                    1 for n in node_registry.values() if n.get("class") == "light"
-                ),
-                "full": sum(
-                    1 for n in node_registry.values() if n.get("class") == "full"
-                ),
-                "archive": sum(
-                    1 for n in node_registry.values() if n.get("class") == "archive"
-                ),
+                "light": sum(1 for n in node_registry.values() if n.get("class") == "light"),
+                "full": sum(1 for n in node_registry.values() if n.get("class") == "full"),
+                "archive": sum(1 for n in node_registry.values() if n.get("class") == "archive"),
             },
             "network_health": "healthy",
         }

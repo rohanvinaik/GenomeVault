@@ -96,9 +96,7 @@ class PIRClient:
     def _validate_servers(self):
         """Validate server configuration meets security requirements."""
         if len(self.servers) < self.min_servers:
-            raise ValueError(
-                "Insufficient servers: {len(self.servers)} < {self.min_servers}"
-            )
+            raise ValueError("Insufficient servers: {len(self.servers)} < {self.min_servers}")
 
         # Calculate privacy guarantee
         ts_servers = [s for s in self.servers if s.is_trusted_signatory]
@@ -132,9 +130,7 @@ class PIRClient:
         """
         return (1 - q) ** k
 
-    def calculate_min_servers_needed(
-        self, target_failure: float, honesty_prob: float
-    ) -> int:
+    def calculate_min_servers_needed(self, target_failure: float, honesty_prob: float) -> int:
         """
         Calculate minimum servers needed for target failure probability.
 
@@ -164,9 +160,7 @@ class PIRClient:
             raise ValueError("Index {target_index} out of bounds")
 
         # Generate query ID
-        query_id = hashlib.sha256("{target_index}:{time.time()}".encode()).hexdigest()[
-            :16
-        ]
+        query_id = hashlib.sha256("{target_index}:{time.time()}".encode()).hexdigest()[:16]
 
         # Create unit vector for target
         e_j = np.zeros(self.database_size)
@@ -186,15 +180,11 @@ class PIRClient:
             },
         )
 
-        logger.info(
-            "PIR query created for index {target_index}", extra={"privacy_safe": True}
-        )
+        logger.info("PIR query created for index {target_index}", extra={"privacy_safe": True})
 
         return query
 
-    def _generate_query_vectors(
-        self, target_vector: np.ndarray
-    ) -> Dict[str, np.ndarray]:
+    def _generate_query_vectors(self, target_vector: np.ndarray) -> Dict[str, np.ndarray]:
         """
         Generate random query vectors that sum to target vector.
 
@@ -264,15 +254,11 @@ class PIRClient:
         # Reconstruct data
         result = self._reconstruct_data(valid_responses)
 
-        logger.info(
-            "PIR query {query.query_id} completed", extra={"privacy_safe": True}
-        )
+        logger.info("PIR query {query.query_id} completed", extra={"privacy_safe": True})
 
         return result
 
-    async def _query_server(
-        self, server: PIRServer, query: PIRQuery
-    ) -> Optional[PIRResponse]:
+    async def _query_server(self, server: PIRServer, query: PIRQuery) -> Optional[PIRResponse]:
         """
         Query individual PIR server.
 
@@ -303,9 +289,7 @@ class PIRClient:
                 timeout=aiohttp.ClientTimeout(total=config.pir.query_timeout_seconds),
             ) as response:
                 if response.status != 200:
-                    logger.error(
-                        "PIR query failed on {server.server_id}: {response.status}"
-                    )
+                    logger.error("PIR query failed on {server.server_id}: {response.status}")
                     return None
 
                 result = await response.json()
@@ -346,9 +330,7 @@ class PIRClient:
         # The result is the desired database item
         return result
 
-    def decode_response(
-        self, response_data: np.ndarray, data_type: str = "genomic"
-    ) -> Any:
+    def decode_response(self, response_data: np.ndarray, data_type: str = "genomic") -> Any:
         """
         Decode PIR response based on data type.
 
@@ -550,9 +532,7 @@ class PIRClient:
 
         # Find optimal based on latency while meeting security requirement
         valid_configs = [
-            c
-            for c in configs
-            if c["failure_probability"] <= config.pir.target_failure_probability
+            c for c in configs if c["failure_probability"] <= config.pir.target_failure_probability
         ]
 
         if valid_configs:
@@ -600,12 +580,8 @@ if __name__ == "__main__":
 
     # Calculate privacy guarantees
     print("\nPrivacy Guarantees:")
-    print(
-        "2 TS servers: P_fail = {client.calculate_privacy_failure_probability(2, 0.98):.2e}"
-    )
-    print(
-        "3 TS servers: P_fail = {client.calculate_privacy_failure_probability(3, 0.98):.2e}"
-    )
+    print("2 TS servers: P_fail = {client.calculate_privacy_failure_probability(2, 0.98):.2e}")
+    print("3 TS servers: P_fail = {client.calculate_privacy_failure_probability(3, 0.98):.2e}")
 
     # Estimate communication cost
     cost = client.estimate_communication_cost(num_queries=10)

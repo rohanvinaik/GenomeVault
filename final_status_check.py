@@ -45,9 +45,7 @@ def main():
     success2 = run_command("python3 diagnose_imports.py", "Running import diagnostic")
 
     # Test 3: Comprehensive test
-    success3 = run_command(
-        "python3 test_all_imports_final.py", "Running comprehensive import test"
-    )
+    success3 = run_command("python3 test_all_imports_final.py", "Running comprehensive import test")
 
     print("\n" + "=" * 60)
     print("📊 SUMMARY:")

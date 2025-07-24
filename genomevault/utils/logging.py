@@ -69,9 +69,7 @@ class AuditLogger:
         }
         self._write_audit_log(event)
 
-    def log_consent_change(
-        self, user_id: str, consent_type: str, old_value: Any, new_value: Any
-    ):
+    def log_consent_change(self, user_id: str, consent_type: str, old_value: Any, new_value: Any):
         """Log consent changes for GDPR compliance"""
         event = {
             "event_type": "consent_change",
@@ -239,9 +237,7 @@ class SecurityLogger:
     def __init__(self):
         self.logger = structlog.get_logger("security")
 
-    def log_intrusion_attempt(
-        self, source_ip: str, attack_type: str, target: str, blocked: bool
-    ):
+    def log_intrusion_attempt(self, source_ip: str, attack_type: str, target: str, blocked: bool):
         """Log potential intrusion attempts"""
         self.logger.warning(
             "intrusion_attempt",
@@ -252,9 +248,7 @@ class SecurityLogger:
             timestamp=datetime.utcnow().isoformat(),
         )
 
-    def log_encryption_event(
-        self, operation: str, algorithm: str, key_length: int, success: bool
-    ):
+    def log_encryption_event(self, operation: str, algorithm: str, key_length: int, success: bool):
         """Log encryption/decryption events"""
         self.logger.info(
             "encryption_event",

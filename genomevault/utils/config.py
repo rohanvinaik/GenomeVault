@@ -163,9 +163,7 @@ class ProcessingConfig:
 class Config:
     """Main configuration manager for GenomeVault"""
 
-    def __init__(
-        self, config_file: Optional[str] = None, environment: Optional[str] = None
-    ):
+    def __init__(self, config_file: Optional[str] = None, environment: Optional[str] = None):
         """
         Initialize configuration manager
 
@@ -173,9 +171,7 @@ class Config:
             config_file: Path to configuration file
             environment: Deployment environment
         """
-        self.environment = Environment(
-            environment or os.getenv("GENOMEVAULT_ENV", "development")
-        )
+        self.environment = Environment(environment or os.getenv("GENOMEVAULT_ENV", "development"))
         self.config_file = config_file or self._default_config_file()
 
         # Initialize subsystem configs
@@ -209,9 +205,7 @@ class Config:
 
         try:
             with open(self.config_file, "r") as f:
-                if self.config_file.endswith(".yaml") or self.config_file.endswith(
-                    ".yml"
-                ):
+                if self.config_file.endswith(".yaml") or self.config_file.endswith(".yml"):
                     if HAS_YAML:
                         data = yaml.safe_load(f)
                     else:
@@ -270,9 +264,7 @@ class Config:
         # Validate crypto parameters
         assert self.crypto.aes_key_size in [128, 192, 256], "Invalid AES key size"
         assert self.crypto.rsa_key_size >= 2048, "RSA key size too small"
-        assert (
-            self.crypto.hypervector_dimensions >= 1000
-        ), "Hypervector dimensions too small"
+        assert self.crypto.hypervector_dimensions >= 1000, "Hypervector dimensions too small"
 
         # Validate privacy parameters
         assert 0 < self.privacy.epsilon <= 10, "Invalid epsilon value"
@@ -303,9 +295,7 @@ class Config:
     def _derive_master_key(self) -> bytes:
         """Derive master key from environment or hardware"""
         # In production, this should use HSM or secure key management
-        password = os.getenv(
-            "GENOMEVAULT_MASTER_PASSWORD", "development-password"
-        ).encode()
+        password = os.getenv("GENOMEVAULT_MASTER_PASSWORD", "development-password").encode()
         salt = b"genomevault-salt"  # In production, use random salt
 
         kdf = PBKDF2HMAC(
@@ -378,8 +368,7 @@ class Config:
             "privacy": self.privacy.__dict__,
             "network": self.network.__dict__,
             "storage": {
-                k: str(v) if isinstance(v, Path) else v
-                for k, v in self.storage.__dict__.items()
+                k: str(v) if isinstance(v, Path) else v for k, v in self.storage.__dict__.items()
             },
             "processing": self.processing.__dict__,
         }

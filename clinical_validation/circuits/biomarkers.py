@@ -49,9 +49,7 @@ class ClinicalBiomarkerCircuit(BaseCircuit):
         if "precision" in params:
             self.precision = params["precision"]
         if "comparison_types" in params:
-            self.supported_comparisons = [
-                ComparisonType(ct) for ct in params["comparison_types"]
-            ]
+            self.supported_comparisons = [ComparisonType(ct) for ct in params["comparison_types"]]
 
         result["biomarker_config"] = {
             "name": self.biomarker_name,
@@ -89,10 +87,7 @@ class ClinicalBiomarkerCircuit(BaseCircuit):
             result = False
 
         # Support for range comparisons
-        if (
-            comparison_type == ComparisonType.RANGE
-            and "threshold_high" in public_inputs
-        ):
+        if comparison_type == ComparisonType.RANGE and "threshold_high" in public_inputs:
             threshold_high = public_inputs["threshold_high"]
             result = threshold <= value <= threshold_high
 
@@ -109,9 +104,7 @@ class ClinicalBiomarkerCircuit(BaseCircuit):
             "noise": noise,
         }
 
-    def prove(
-        self, witness: Dict[str, Any], public_inputs: Dict[str, float]
-    ) -> ProofData:
+    def prove(self, witness: Dict[str, Any], public_inputs: Dict[str, float]) -> ProofData:
         """Generate proof for biomarker threshold"""
         if not self._setup_complete:
             raise RuntimeError("Circuit setup not complete")
@@ -123,7 +116,9 @@ class ClinicalBiomarkerCircuit(BaseCircuit):
         status = "EXCEEDS" if result else "NORMAL"
         confidence = min(0.99, margin / abs(witness["public_threshold"] + 0.01))
 
-        public_output = f"{self.biomarker_name}:{status}:MARGIN:{margin:.3f}:CONFIDENCE:{confidence:.2f}"
+        public_output = (
+            f"{self.biomarker_name}:{status}:MARGIN:{margin:.3f}:CONFIDENCE:{confidence:.2f}"
+        )
 
         # Generate proof
         proof_bytes = hashlib.sha256(str(witness).encode()).digest()

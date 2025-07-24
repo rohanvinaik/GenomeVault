@@ -95,17 +95,13 @@ class HIPAANodeIntegration:
                 "provider_name": record.cms_data.get("name", ""),
                 "hsm_serial": record.credentials.hsm_serial,
                 "verified_at": record.verified_at.isoformat(),
-                "expires_at": (
-                    record.expires_at.isoformat() if record.expires_at else None
-                ),
+                "expires_at": (record.expires_at.isoformat() if record.expires_at else None),
                 "honesty_probability": record.honesty_probability,
             },
         )
 
         # Calculate voting power (c + s)
-        node.voting_power = (
-            node.get_class_weight() + SignatoryWeight.TRUSTED_SIGNATORY.value
-        )
+        node.voting_power = node.get_class_weight() + SignatoryWeight.TRUSTED_SIGNATORY.value
 
         return node
 
@@ -263,9 +259,7 @@ if __name__ == "__main__":
 
             print("Registering HIPAA provider as node...")
             try:
-                node = await integration.register_provider_node(
-                    credentials, node_config
-                )
+                node = await integration.register_provider_node(credentials, node_config)
                 print("Node registered successfully!")
                 print("  Node ID: {node.node_id}")
                 print("  Voting power: {node.voting_power}")
@@ -273,9 +267,7 @@ if __name__ == "__main__":
                 print("  Signatory weight: {node.signatory_status.value}")
 
                 # Check governance impact
-                print(
-                    "\nGovernance total voting power: {governance.total_voting_power}"
-                )
+                print("\nGovernance total voting power: {governance.total_voting_power}")
 
                 # Test committee setup
                 HIPAAGovernanceIntegration.create_hipaa_committee(governance)

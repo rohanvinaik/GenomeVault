@@ -59,9 +59,7 @@ class HypervectorBinder:
         else:
             raise ValueError("Unknown binding operation: {operation}")
 
-    def _circular_convolution(
-        self, vec1: torch.Tensor, vec2: torch.Tensor
-    ) -> torch.Tensor:
+    def _circular_convolution(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
         """
         Bind using circular convolution (preserves algebraic properties)
         """
@@ -96,9 +94,7 @@ class HypervectorBinder:
         bound = vec1 * vec2
         return bound / torch.norm(bound)
 
-    def _permutation_binding(
-        self, vec1: torch.Tensor, vec2: torch.Tensor
-    ) -> torch.Tensor:
+    def _permutation_binding(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
         """
         Bind using permutation of one vector
         """
@@ -134,15 +130,11 @@ class HypervectorBinder:
             return self._xor_binding(bound_vec, known_vec)
         elif operation == BindingOperation.MULTIPLY:
             # Inverse is division (multiplication by reciprocal)
-            return bound_vec / (
-                known_vec + 1e-8
-            )  # Add small epsilon to avoid division by zero
+            return bound_vec / (known_vec + 1e-8)  # Add small epsilon to avoid division by zero
         else:
             raise ValueError("Unbinding not supported for {operation}")
 
-    def _circular_correlation(
-        self, vec1: torch.Tensor, vec2: torch.Tensor
-    ) -> torch.Tensor:
+    def _circular_correlation(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
         """
         Circular correlation (inverse of circular convolution)
         """
@@ -245,9 +237,7 @@ class MultiModalBinder:
         integrated = torch.stack(bound_modalities).sum(dim=0)
         return integrated / torch.norm(integrated)
 
-    def extract_modality(
-        self, integrated_vec: torch.Tensor, modality: str
-    ) -> torch.Tensor:
+    def extract_modality(self, integrated_vec: torch.Tensor, modality: str) -> torch.Tensor:
         """
         Extract a specific modality from an integrated vector
         """

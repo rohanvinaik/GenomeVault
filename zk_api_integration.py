@@ -172,9 +172,7 @@ async def generate_variant_proof(
             return ProofResponse(success=False, error_message=result.error_message)
 
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Proof generation failed: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Proof generation failed: {str(e)}")
 
 
 @app.post("/proofs/prs", response_model=ProofResponse)
@@ -208,9 +206,7 @@ async def generate_prs_proof(
             return ProofResponse(success=False, error_message=result.error_message)
 
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"PRS proof generation failed: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"PRS proof generation failed: {str(e)}")
 
 
 @app.post("/proofs/diabetes-risk", response_model=ProofResponse)
@@ -245,9 +241,7 @@ async def generate_diabetes_risk_proof(
             return ProofResponse(success=False, error_message=result.error_message)
 
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Diabetes risk proof failed: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Diabetes risk proof failed: {str(e)}")
 
 
 @app.get("/circuits")

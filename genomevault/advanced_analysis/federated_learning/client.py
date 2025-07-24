@@ -99,9 +99,7 @@ class FederatedLearningClient:
         if self.use_hypervectors:
             features = self._encode_features(features)
 
-        self.local_dataset = LocalDataset(
-            features=features, labels=labels, metadata=metadata
-        )
+        self.local_dataset = LocalDataset(features=features, labels=labels, metadata=metadata)
 
         logger.info(
             "Loaded {self.local_dataset.num_samples} samples",
@@ -149,10 +147,7 @@ class FederatedLearningClient:
         filtered_features = features[:, common_variants]
 
         # Add small noise to continuous features
-        if (
-            filtered_features.dtype == np.float32
-            or filtered_features.dtype == np.float64
-        ):
+        if filtered_features.dtype == np.float32 or filtered_features.dtype == np.float64:
             noise = np.random.laplace(0, 0.1, size=filtered_features.shape)
             filtered_features += noise
 
@@ -166,9 +161,7 @@ class FederatedLearningClient:
             # Convert to feature dict
             feature_dict = {
                 "variants": [
-                    {"genotype": "{int(g)}/0", "position": i}
-                    for i, g in enumerate(sample)
-                    if g > 0
+                    {"genotype": "{int(g)}/0", "position": i} for i, g in enumerate(sample) if g > 0
                 ]
             }
 
@@ -243,8 +236,7 @@ class FederatedLearningClient:
 
                 # Binary cross-entropy loss
                 loss = -np.mean(
-                    y_batch * np.log(probs + 1e-8)
-                    + (1 - y_batch) * np.log(1 - probs + 1e-8)
+                    y_batch * np.log(probs + 1e-8) + (1 - y_batch) * np.log(1 - probs + 1e-8)
                 )
                 epoch_loss += loss * len(batch_indices)
 
@@ -329,9 +321,7 @@ class FederatedLearningClient:
         noise = np.random.normal(0, sigma, size=model_update.shape)
         private_update = model_update + noise
 
-        logger.info(
-            "Applied DP with ε={epsilon}, δ={delta}", extra={"privacy_safe": True}
-        )
+        logger.info("Applied DP with ε={epsilon}, δ={delta}", extra={"privacy_safe": True})
 
         return private_update
 
@@ -384,17 +374,13 @@ class FederatedLearningClient:
             auc = 0.5
 
         # Loss
-        loss = -np.mean(
-            y_val * np.log(probs + 1e-8) + (1 - y_val) * np.log(1 - probs + 1e-8)
-        )
+        loss = -np.mean(y_val * np.log(probs + 1e-8) + (1 - y_val) * np.log(1 - probs + 1e-8))
 
         metrics = {"accuracy": accuracy, "auc": auc, "loss": loss, "num_samples": n_val}
 
         return metrics
 
-    def get_model_explanation(
-        self, model_params: np.ndarray, top_k: int = 20
-    ) -> Dict[str, Any]:
+    def get_model_explanation(self, model_params: np.ndarray, top_k: int = 20) -> Dict[str, Any]:
         """
         Get interpretable explanation of model.
 
@@ -436,9 +422,7 @@ class FederatedLearningClient:
             "client_id": self.client_id,
             "current_model": self.current_model,
             "training_history": self.training_history,
-            "dataset_metadata": (
-                self.local_dataset.metadata if self.local_dataset else None
-            ),
+            "dataset_metadata": (self.local_dataset.metadata if self.local_dataset else None),
         }
 
         with open(path, "wb") as f:
@@ -577,9 +561,7 @@ if __name__ == "__main__":
     )
 
     # Apply differential privacy
-    private_update = client.apply_differential_privacy(
-        results["model_update"], epsilon=1.0
-    )
+    private_update = client.apply_differential_privacy(results["model_update"], epsilon=1.0)
     print(
         "Update norm: original={np.linalg.norm(results['model_update']):.4f}, private={np.linalg.norm(private_update):.4f}"
     )
@@ -606,7 +588,5 @@ if __name__ == "__main__":
     print("Pathway analysis: {pathway_results['enriched_pathways']}")
 
     # Get model explanation
-    explanation = research_client.get_model_explanation(
-        research_client.current_model, top_k=10
-    )
+    explanation = research_client.get_model_explanation(research_client.current_model, top_k=10)
     print("Top feature importance: {explanation['top_features'][0]['importance']:.4f}")

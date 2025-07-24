@@ -115,9 +115,7 @@ class BackupManager:
             return backup_id
 
         except Exception as e:
-            logger.error(
-                "backup_creation_failed", backup_type=backup_type, error=str(e)
-            )
+            logger.error("backup_creation_failed", backup_type=backup_type, error=str(e))
             raise
 
     def restore_backup(self, backup_id: str) -> Dict[str, Any]:
@@ -211,9 +209,7 @@ class BackupManager:
             return is_valid
 
         except Exception as e:
-            logger.error(
-                "backup_verification_failed", backup_id=backup_id, error=str(e)
-            )
+            logger.error("backup_verification_failed", backup_id=backup_id, error=str(e))
             return False
 
     def cleanup_old_backups(self):
@@ -358,9 +354,7 @@ class BackupManager:
                 ServerSideEncryption="AES256",
             )
 
-            logger.info(
-                "backup_replicated_to_s3", backup_id=backup_id, bucket=self.s3_bucket
-            )
+            logger.info("backup_replicated_to_s3", backup_id=backup_id, bucket=self.s3_bucket)
 
         except Exception as e:
             logger.error("s3_replication_failed", backup_id=backup_id, error=str(e))
@@ -439,9 +433,7 @@ class DisasterRecoveryOrchestrator:
                 recovery_data[component] = data
 
             # Create unified backup
-            backup_id = self.backup_manager.create_backup(
-                recovery_data, "recovery_point"
-            )
+            backup_id = self.backup_manager.create_backup(recovery_data, "recovery_point")
 
             # Store recovery point info
             self.recovery_points[recovery_point_id] = {
@@ -473,9 +465,7 @@ class DisasterRecoveryOrchestrator:
 
         try:
             # Restore backup
-            recovery_data = self.backup_manager.restore_backup(
-                recovery_info["backup_id"]
-            )
+            recovery_data = self.backup_manager.restore_backup(recovery_info["backup_id"])
 
             # Restore each component
             results = {}

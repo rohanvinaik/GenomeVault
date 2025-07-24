@@ -141,9 +141,7 @@ class LinearCombination:
                 new_terms[other] = FieldElement(1)
             return LinearCombination(new_terms, self.constant)
         elif isinstance(other, (int, FieldElement)):
-            return LinearCombination(
-                self.terms.copy(), self.constant + FieldElement(other)
-            )
+            return LinearCombination(self.terms.copy(), self.constant + FieldElement(other))
         else:
             raise TypeError(f"Cannot add {type(other)} to LinearCombination")
 
@@ -221,9 +219,7 @@ class ConstraintSystem:
         self.zero = self.new_variable("ZERO", is_public=True)
         self.assign(self.zero, FieldElement(0))
 
-    def new_variable(
-        self, label: Optional[str] = None, is_public: bool = False
-    ) -> Variable:
+    def new_variable(self, label: Optional[str] = None, is_public: bool = False) -> Variable:
         """Create a new variable"""
         var = Variable(self.variable_counter, label=label, is_public=is_public)
         self.variables[self.variable_counter] = var
@@ -283,9 +279,7 @@ class ConstraintSystem:
         b_lc = self._to_linear_combination(b)
         c_lc = self._to_linear_combination(c)
 
-        constraint = Constraint(
-            a=a_lc, b=b_lc, c=c_lc, constraint_type=ConstraintType.MUL
-        )
+        constraint = Constraint(a=a_lc, b=b_lc, c=c_lc, constraint_type=ConstraintType.MUL)
         self.enforce_constraint(constraint)
 
     def enforce_boolean(self, var: Variable):

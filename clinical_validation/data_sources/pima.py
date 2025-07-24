@@ -7,7 +7,9 @@ from .base import DataSourceBase
 class PimaDataSource(DataSourceBase):
     """Pima Indians Diabetes dataset"""
 
-    URL = "https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv"
+    URL = (
+        "https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv"
+    )
 
     def load_data(self) -> pd.DataFrame:
         """Load Pima dataset"""

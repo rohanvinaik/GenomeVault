@@ -161,9 +161,7 @@ class Verifier:
                 metadata={"is_valid": is_valid, "verification_time": verification_time},
             )
 
-            logger.info(
-                "Proof verification completed: {is_valid}", extra={"privacy_safe": True}
-            )
+            logger.info("Proof verification completed: {is_valid}", extra={"privacy_safe": True})
 
             return result
 
@@ -204,9 +202,7 @@ class Verifier:
 
             # Allow some tolerance
             if abs(actual_size - expected_size) > 50:
-                logger.warning(
-                    "Unexpected proof size: {actual_size} vs {expected_size}"
-                )
+                logger.warning("Unexpected proof size: {actual_size} vs {expected_size}")
 
         return True
 
@@ -546,6 +542,4 @@ if __name__ == "__main__":
 
     print("\nVerification result: {result.is_valid}")
     print("Verification time: {result.verification_time*1000:.1f}ms")
-    print(
-        "Expected time: {verifier.get_verification_time_estimate('diabetes_risk_alert')}ms"
-    )
+    print("Expected time: {verifier.get_verification_time_estimate('diabetes_risk_alert')}ms")

@@ -30,9 +30,7 @@ class PostQuantumProver(ABC):
     """Abstract base class for post-quantum provers."""
 
     @abstractmethod
-    def generate_proof(
-        self, statement: Dict[str, Any], witness: Dict[str, Any]
-    ) -> bytes:
+    def generate_proof(self, statement: Dict[str, Any], witness: Dict[str, Any]) -> bytes:
         """Generate a post-quantum secure proof."""
         pass
 
@@ -74,9 +72,7 @@ class STARKProver(PostQuantumProver):
             extra={"security_level": self.params.security_level},
         )
 
-    def generate_proof(
-        self, statement: Dict[str, Any], witness: Dict[str, Any]
-    ) -> bytes:
+    def generate_proof(self, statement: Dict[str, Any], witness: Dict[str, Any]) -> bytes:
         """
         Generate a STARK proof.
 
@@ -207,9 +203,7 @@ class STARKProver(PostQuantumProver):
         root = hashlib.blake2b(b"".join(leaves)).hexdigest()
         return root
 
-    def _generate_challenges(
-        self, commitment: str, statement: Dict[str, Any]
-    ) -> List[int]:
+    def _generate_challenges(self, commitment: str, statement: Dict[str, Any]) -> List[int]:
         """Generate verification challenges via Fiat-Shamir."""
         # Hash commitment and statement to get challenges
         challenge_seed = hashlib.blake2b("{commitment}:{statement}".encode()).digest()
@@ -333,9 +327,7 @@ class LatticeProver(PostQuantumProver):
             extra={"security_level": self.params.security_level},
         )
 
-    def generate_proof(
-        self, statement: Dict[str, Any], witness: Dict[str, Any]
-    ) -> bytes:
+    def generate_proof(self, statement: Dict[str, Any], witness: Dict[str, Any]) -> bytes:
         """Generate lattice-based ZK proof."""
         # Simulate lattice-based proof
         # In production, would use actual Ring-LWE implementation
@@ -390,9 +382,7 @@ class LatticeProver(PostQuantumProver):
 
         return {"value": commitment_value, "timestamp": np.random.randint(0, 2**32)}
 
-    def _hash_to_challenge(
-        self, commitment: Dict, statement: Dict[str, Any]
-    ) -> np.ndarray:
+    def _hash_to_challenge(self, commitment: Dict, statement: Dict[str, Any]) -> np.ndarray:
         """Hash commitment and statement to challenge."""
         data = "{commitment}:{statement}".encode()
         hash_bytes = hashlib.sha3_256(data).digest()
@@ -415,9 +405,7 @@ class LatticeProver(PostQuantumProver):
         # Simplified response computation
         # In production, would compute z = r + c*s for Ring-LWE
 
-        response_value = hashlib.sha3_256(
-            "{witness}:{challenge.tobytes()}".encode()
-        ).hexdigest()
+        response_value = hashlib.sha3_256("{witness}:{challenge.tobytes()}".encode()).hexdigest()
 
         return {"value": response_value, "norm_bound": 1000}  # Rejection sampling bound
 
@@ -517,14 +505,10 @@ class PostQuantumTransition:
             results["classical"] = True  # Placeholder
 
         if "stark" in proofs:
-            results["stark"] = self.stark_prover.verify_proof(
-                proofs["stark"], statement
-            )
+            results["stark"] = self.stark_prover.verify_proof(proofs["stark"], statement)
 
         if "lattice" in proofs:
-            results["lattice"] = self.lattice_prover.verify_proof(
-                proofs["lattice"], statement
-            )
+            results["lattice"] = self.lattice_prover.verify_proof(proofs["lattice"], statement)
 
         return results
 

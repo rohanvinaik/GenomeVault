@@ -117,9 +117,7 @@ def main():
     # Exclude virtual environments and other directories
     exclude_dirs = {".venv", "venv", "__pycache__", ".git", "build", "dist", ".eggs"}
     python_files = [
-        f
-        for f in python_files
-        if not any(excluded in f.parts for excluded in exclude_dirs)
+        f for f in python_files if not any(excluded in f.parts for excluded in exclude_dirs)
     ]
 
     print("Found {len(python_files)} Python files to process")

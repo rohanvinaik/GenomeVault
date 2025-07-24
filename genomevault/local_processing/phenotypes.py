@@ -53,15 +53,9 @@ class ClinicalMeasurement:
             return self.abnormal_flag.upper() in ["H", "L", "A", "ABNORMAL"]
 
         if self.reference_range and isinstance(self.value, (int, float)):
-            if (
-                "low" in self.reference_range
-                and self.value < self.reference_range["low"]
-            ):
+            if "low" in self.reference_range and self.value < self.reference_range["low"]:
                 return True
-            if (
-                "high" in self.reference_range
-                and self.value > self.reference_range["high"]
-            ):
+            if "high" in self.reference_range and self.value > self.reference_range["high"]:
                 return True
 
         return False
@@ -246,10 +240,7 @@ class PhenotypeProfile:
         high_risk_conditions = {"cancer", "heart disease", "diabetes", "stroke"}
         family_risk = 0.0
         for history in self.family_history:
-            if any(
-                condition in history.condition.lower()
-                for condition in high_risk_conditions
-            ):
+            if any(condition in history.condition.lower() for condition in high_risk_conditions):
                 if history.relationship in ["mother", "father"]:
                     family_risk += 0.3
                 elif history.relationship == "sibling":
@@ -345,9 +336,7 @@ class PhenotypeProcessor:
 
         return profile
 
-    def _process_fhir_data(
-        self, fhir_bundle: Dict[str, Any], sample_id: str
-    ) -> PhenotypeProfile:
+    def _process_fhir_data(self, fhir_bundle: Dict[str, Any], sample_id: str) -> PhenotypeProfile:
         """Process FHIR bundle data"""
         demographics = {}
         measurements = []
@@ -463,9 +452,7 @@ class PhenotypeProcessor:
 
         # Create measurement
         measurement = ClinicalMeasurement(
-            measurement_id=observation.get(
-                "id", secure_hash(str(observation).encode())[:8]
-            ),
+            measurement_id=observation.get("id", secure_hash(str(observation).encode())[:8]),
             measurement_type=code_info.get("display", code_info.get("code")),
             value=value,
             unit=unit,
@@ -517,9 +504,7 @@ class PhenotypeProcessor:
             date_diagnosed=date_diagnosed,
             status=(
                 "active"
-                if condition.get("clinicalStatus", {})
-                .get("coding", [{}])[0]
-                .get("code")
+                if condition.get("clinicalStatus", {}).get("coding", [{}])[0].get("code")
                 == "active"
                 else "resolved"
             ),
@@ -540,9 +525,7 @@ class PhenotypeProcessor:
 
         return diagnosis
 
-    def _extract_fhir_medication(
-        self, medication: Dict[str, Any]
-    ) -> Optional[Medication]:
+    def _extract_fhir_medication(self, medication: Dict[str, Any]) -> Optional[Medication]:
         """Extract medication from FHIR MedicationStatement"""
         # Get medication code
         med_codeable = medication.get("medicationCodeableConcept", {})
@@ -569,9 +552,7 @@ class PhenotypeProcessor:
 
         # Create medication
         med = Medication(
-            medication_id=medication.get(
-                "id", secure_hash(str(medication).encode())[:8]
-            ),
+            medication_id=medication.get("id", secure_hash(str(medication).encode())[:8]),
             name=code_info.get("display", code_info.get("code")),
             start_date=start_date,
             end_date=end_date,
@@ -609,9 +590,7 @@ class PhenotypeProcessor:
 
         return med
 
-    def _extract_fhir_family_history(
-        self, history: Dict[str, Any]
-    ) -> List[FamilyHistory]:
+    def _extract_fhir_family_history(self, history: Dict[str, Any]) -> List[FamilyHistory]:
         """Extract family history from FHIR FamilyMemberHistory"""
         family_history = []
 
@@ -620,9 +599,7 @@ class PhenotypeProcessor:
         if not relationship_coding:
             return family_history
 
-        relationship = relationship_coding[0].get(
-            "display", relationship_coding[0].get("code")
-        )
+        relationship = relationship_coding[0].get("display", relationship_coding[0].get("code"))
 
         # Get conditions
         for condition in history.get("condition", []):
@@ -630,9 +607,7 @@ class PhenotypeProcessor:
             if not condition_coding:
                 continue
 
-            condition_name = condition_coding[0].get(
-                "display", condition_coding[0].get("code")
-            )
+            condition_name = condition_coding[0].get("display", condition_coding[0].get("code"))
 
             # Get age at onset
             age_at_onset = None
@@ -673,21 +648,15 @@ class PhenotypeProcessor:
             metadata={"source": "csv"},
         )
 
-    def _process_custom_data(
-        self, custom_data: Dict[str, Any], sample_id: str
-    ) -> PhenotypeProfile:
+    def _process_custom_data(self, custom_data: Dict[str, Any], sample_id: str) -> PhenotypeProfile:
         """Process custom format data"""
         return PhenotypeProfile(
             sample_id=sample_id,
             demographics=custom_data.get("demographics", {}),
-            measurements=[
-                ClinicalMeasurement(**m) for m in custom_data.get("measurements", [])
-            ],
+            measurements=[ClinicalMeasurement(**m) for m in custom_data.get("measurements", [])],
             diagnoses=[Diagnosis(**d) for d in custom_data.get("diagnoses", [])],
             medications=[Medication(**m) for m in custom_data.get("medications", [])],
-            family_history=[
-                FamilyHistory(**f) for f in custom_data.get("family_history", [])
-            ],
+            family_history=[FamilyHistory(**f) for f in custom_data.get("family_history", [])],
             lifestyle_factors=custom_data.get("lifestyle_factors", {}),
             environmental_exposures=custom_data.get("environmental_exposures", {}),
             metadata={"source": "custom"},
@@ -697,14 +666,9 @@ class PhenotypeProcessor:
         """Standardize medical codes"""
         # Add LOINC codes to measurements
         for measurement in profile.measurements:
-            if (
-                not measurement.code
-                and measurement.measurement_type.lower() in self.LOINC_CODES
-            ):
+            if not measurement.code and measurement.measurement_type.lower() in self.LOINC_CODES:
                 measurement.code_system = "http://loinc.org"
-                measurement.code = self.LOINC_CODES[
-                    measurement.measurement_type.lower()
-                ]
+                measurement.code = self.LOINC_CODES[measurement.measurement_type.lower()]
 
         # Categorize diagnoses by ICD-10 patterns
         for diagnosis in profile.diagnoses:
@@ -724,23 +688,15 @@ class PhenotypeProcessor:
         weight = None
 
         for measurement in profile.measurements:
-            if (
-                measurement.measurement_type.lower() == "height"
-                and measurement.unit
-                in [
-                    "cm",
-                    "centimeter",
-                ]
-            ):
+            if measurement.measurement_type.lower() == "height" and measurement.unit in [
+                "cm",
+                "centimeter",
+            ]:
                 height = measurement.value
-            elif (
-                measurement.measurement_type.lower() == "weight"
-                and measurement.unit
-                in [
-                    "kg",
-                    "kilogram",
-                ]
-            ):
+            elif measurement.measurement_type.lower() == "weight" and measurement.unit in [
+                "kg",
+                "kilogram",
+            ]:
                 weight = measurement.value
 
         if (
@@ -802,9 +758,7 @@ class PhenotypeProcessor:
                 for measurement in profile.measurements:
                     existing = measurement_dict.get(measurement.measurement_type)
                     if not existing or (
-                        measurement.date
-                        and existing.date
-                        and measurement.date > existing.date
+                        measurement.date and existing.date and measurement.date > existing.date
                     ):
                         measurement_dict[measurement.measurement_type] = measurement
                 merged.measurements = list(measurement_dict.values())
@@ -812,20 +766,12 @@ class PhenotypeProcessor:
                 # Union of diagnoses and medications
                 diagnosis_ids = {d.diagnosis_id for d in merged.diagnoses}
                 merged.diagnoses.extend(
-                    [
-                        d
-                        for d in profile.diagnoses
-                        if d.diagnosis_id not in diagnosis_ids
-                    ]
+                    [d for d in profile.diagnoses if d.diagnosis_id not in diagnosis_ids]
                 )
 
                 medication_ids = {m.medication_id for m in merged.medications}
                 merged.medications.extend(
-                    [
-                        m
-                        for m in profile.medications
-                        if m.medication_id not in medication_ids
-                    ]
+                    [m for m in profile.medications if m.medication_id not in medication_ids]
                 )
 
                 # Merge family history
@@ -833,9 +779,7 @@ class PhenotypeProcessor:
 
                 # Update demographics with non-empty values
                 for key, value in profile.demographics.items():
-                    if value and (
-                        key not in merged.demographics or not merged.demographics[key]
-                    ):
+                    if value and (key not in merged.demographics or not merged.demographics[key]):
                         merged.demographics[key] = value
 
             elif merge_strategy == "union":

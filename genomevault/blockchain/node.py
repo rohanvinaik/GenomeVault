@@ -100,9 +100,7 @@ class BlockchainNode:
     Implements dual-axis voting model.
     """
 
-    def __init__(
-        self, node_id: str, node_class: NodeClass, is_trusted_signatory: bool = False
-    ):
+    def __init__(self, node_id: str, node_class: NodeClass, is_trusted_signatory: bool = False):
         """
         Initialize blockchain node.
 
@@ -282,9 +280,7 @@ class BlockchainNode:
             state_root=state_root,
         )
 
-        logger.info(
-            "Proposed block at height {block.height}", extra={"privacy_safe": True}
-        )
+        logger.info("Proposed block at height {block.height}", extra={"privacy_safe": True})
 
         return block
 
@@ -421,9 +417,7 @@ class BlockchainNode:
             },
         )
 
-        logger.info(
-            "Committed block at height {block.height}", extra={"privacy_safe": True}
-        )
+        logger.info("Committed block at height {block.height}", extra={"privacy_safe": True})
 
     async def _execute_transaction(self, tx: Dict):
         """Execute transaction and update state."""
@@ -472,9 +466,7 @@ class BlockchainNode:
                 extra={"privacy_safe": True},
             )
 
-    async def handle_audit_challenge(
-        self, challenger: str, target: str, epoch: int
-    ) -> Dict:
+    async def handle_audit_challenge(self, challenger: str, target: str, epoch: int) -> Dict:
         """
         Handle audit challenge.
 
@@ -590,9 +582,7 @@ class BlockchainNode:
         # Add to mempool
         self.mempool.append(tx)
 
-        logger.info(
-            "Transaction {tx_hash[:8]} added to mempool", extra={"privacy_safe": True}
-        )
+        logger.info("Transaction {tx_hash[:8]} added to mempool", extra={"privacy_safe": True})
 
         return tx_hash
 

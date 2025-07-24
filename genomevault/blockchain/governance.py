@@ -511,9 +511,7 @@ class GovernanceSystem:
         # In production, would check on-chain status
         return address.startswith("ts_")
 
-    def _get_committee_multiplier(
-        self, voter: str, proposal_type: ProposalType
-    ) -> float:
+    def _get_committee_multiplier(self, voter: str, proposal_type: ProposalType) -> float:
         """Get voting multiplier based on committee membership"""
         multiplier = 1.0
 
@@ -779,9 +777,7 @@ class HIPAAOracle:
         # Check cache
         cache_key = "{npi}:{baa_hash}:{risk_analysis_hash}:{hsm_serial}"
         if cache_key in self.verification_cache:
-            return self.verification_cache[cache_key], self.verified_providers.get(
-                npi, {}
-            )
+            return self.verification_cache[cache_key], self.verified_providers.get(npi, {})
 
         # Verify NPI format
         if not self._validate_npi_format(npi):

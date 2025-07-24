@@ -72,9 +72,7 @@ class HypervectorEncoder:
         # Multi-resolution dimensions
         self.resolution_dims = {"base": 10000, "mid": 15000, "high": 20000}
 
-        logger.info(
-            "Initialized HypervectorEncoder with {self.config.dimension}D vectors"
-        )
+        logger.info("Initialized HypervectorEncoder with {self.config.dimension}D vectors")
 
     def encode(
         self,
@@ -108,9 +106,7 @@ class HypervectorEncoder:
             dimension = self.resolution_dims.get(resolution, self.config.dimension)
 
             # Get or create projection matrix
-            projection_matrix = self._get_projection_matrix(
-                len(features), dimension, omics_type
-            )
+            projection_matrix = self._get_projection_matrix(len(features), dimension, omics_type)
 
             # Project to hypervector space
             hypervector = self._project(features, projection_matrix)
@@ -122,9 +118,7 @@ class HypervectorEncoder:
             if self.config.quantize:
                 hypervector = self._quantize(hypervector)
 
-            logger.debug(
-                "Encoded {omics_type.value} features to {dimension}D hypervector"
-            )
+            logger.debug("Encoded {omics_type.value} features to {dimension}D hypervector")
 
             return hypervector
 
@@ -148,9 +142,7 @@ class HypervectorEncoder:
         multiresolution_vectors = {}
 
         for resolution in ["base", "mid", "high"]:
-            multiresolution_vectors[resolution] = self.encode(
-                features, omics_type, resolution
-            )
+            multiresolution_vectors[resolution] = self.encode(features, omics_type, resolution)
 
         return multiresolution_vectors
 
@@ -227,26 +219,20 @@ class HypervectorEncoder:
         elif self.config.projection_type == ProjectionType.ORTHOGONAL:
             matrix = self._create_orthogonal_projection(input_dim, output_dim)
         else:
-            raise EncodingError(
-                "Unsupported projection type: {self.config.projection_type}"
-            )
+            raise EncodingError("Unsupported projection type: {self.config.projection_type}")
 
         # Cache the matrix
         self._projection_cache[cache_key] = matrix
 
         return matrix
 
-    def _create_gaussian_projection(
-        self, input_dim: int, output_dim: int
-    ) -> torch.Tensor:
+    def _create_gaussian_projection(self, input_dim: int, output_dim: int) -> torch.Tensor:
         """Create random Gaussian projection matrix"""
         # Standard random projection
         matrix = torch.randn(output_dim, input_dim) / np.sqrt(input_dim)
         return matrix
 
-    def _create_sparse_projection(
-        self, input_dim: int, output_dim: int
-    ) -> torch.Tensor:
+    def _create_sparse_projection(self, input_dim: int, output_dim: int) -> torch.Tensor:
         """Create sparse random projection matrix"""
         matrix = torch.zeros(output_dim, input_dim)
 
@@ -268,9 +254,7 @@ class HypervectorEncoder:
 
         return matrix
 
-    def _create_orthogonal_projection(
-        self, input_dim: int, output_dim: int
-    ) -> torch.Tensor:
+    def _create_orthogonal_projection(self, input_dim: int, output_dim: int) -> torch.Tensor:
         """Create orthogonal projection matrix using QR decomposition"""
         # For orthogonal projection, we need output_dim <= input_dim
         if output_dim > input_dim:
@@ -283,9 +267,7 @@ class HypervectorEncoder:
             q, _ = torch.qr(base_matrix)
             return q
 
-    def _project(
-        self, features: torch.Tensor, projection_matrix: torch.Tensor
-    ) -> torch.Tensor:
+    def _project(self, features: torch.Tensor, projection_matrix: torch.Tensor) -> torch.Tensor:
         """Project features using the projection matrix"""
         # Handle batch dimension if present
         if features.dim() > 1:
@@ -319,9 +301,7 @@ class HypervectorEncoder:
         # Scale back
         return 2 * quantized / (levels - 1) - 1
 
-    def similarity(
-        self, hv1: torch.Tensor, hv2: torch.Tensor, metric: str = "cosine"
-    ) -> float:
+    def similarity(self, hv1: torch.Tensor, hv2: torch.Tensor, metric: str = "cosine") -> float:
         """
         Compute similarity between two hypervectors
 
@@ -334,9 +314,7 @@ class HypervectorEncoder:
             Similarity score
         """
         if metric == "cosine":
-            return torch.nn.functional.cosine_similarity(
-                hv1.view(1, -1), hv2.view(1, -1)
-            ).item()
+            return torch.nn.functional.cosine_similarity(hv1.view(1, -1), hv2.view(1, -1)).item()
         elif metric == "euclidean":
             return -torch.dist(hv1, hv2, p=2).item()
         elif metric == "hamming":
@@ -352,8 +330,7 @@ class HypervectorEncoder:
             "cache_keys": list(self._projection_cache.keys()),
             "total_parameters": sum(m.numel() for m in self._projection_cache.values()),
             "memory_mb": sum(
-                m.element_size() * m.numel() / 1024**2
-                for m in self._projection_cache.values()
+                m.element_size() * m.numel() / 1024**2 for m in self._projection_cache.values()
             ),
         }
         return stats

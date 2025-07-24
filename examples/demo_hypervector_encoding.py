@@ -114,9 +114,7 @@ def demonstrate_binding_operations():
     print("Full bound vector norm: {torch.norm(full_bound):.3f}")
 
     # Demonstrate unbinding (recovery)
-    recovered_gene = binder.unbind(
-        gene_expr_bound, [expression_hv], BindingType.CIRCULAR
-    )
+    recovered_gene = binder.unbind(gene_expr_bound, [expression_hv], BindingType.CIRCULAR)
     recovery_similarity = torch.nn.functional.cosine_similarity(
         gene_hv.unsqueeze(0), recovered_gene.unsqueeze(0)
     ).item()
@@ -310,12 +308,8 @@ def demonstrate_similarity_preservation():
     n_features = 50
 
     # Create two clusters of samples
-    cluster1 = torch.randn(n_samples // 2, n_features) + torch.tensor(
-        [2.0] * n_features
-    )
-    cluster2 = torch.randn(n_samples // 2, n_features) - torch.tensor(
-        [2.0] * n_features
-    )
+    cluster1 = torch.randn(n_samples // 2, n_features) + torch.tensor([2.0] * n_features)
+    cluster2 = torch.randn(n_samples // 2, n_features) - torch.tensor([2.0] * n_features)
 
     data = torch.cat([cluster1, cluster2], dim=0)
     labels = torch.cat([torch.zeros(n_samples // 2), torch.ones(n_samples // 2)])
@@ -405,16 +399,12 @@ def demonstrate_compression_tiers():
     for tier in [CompressionTier.MINI, CompressionTier.CLINICAL, CompressionTier.FULL]:
         compressor = TieredCompressor(tier)
 
-        compressed = compressor.compress(
-            {"hypervector": hypervector}, OmicsType.GENOMIC
-        )
+        compressed = compressor.compress({"hypervector": hypervector}, OmicsType.GENOMIC)
 
         print("\n{tier.value} tier:")
         print("  Original size: {hypervector.numel() * 4:,} bytes")
         print("  Compressed size: {compressed.compressed_size:,} bytes")
-        print(
-            "  Compression ratio: {hypervector.numel() * 4 / compressed.compressed_size:.1f}:1"
-        )
+        print("  Compression ratio: {hypervector.numel() * 4 / compressed.compressed_size:.1f}:1")
 
         # Test decompression
         decompressed = compressor.decompress(compressed)

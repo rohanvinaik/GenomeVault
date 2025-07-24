@@ -15,9 +15,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import numpy as np
 
 # Core field arithmetic for BLS12-381 scalar field
-BLS12_381_SCALAR_FIELD = (
-    0x73EDA753299D7D483339D80809A1D80553BDA402FFFE5BFEFFFFFFFF00000001
-)
+BLS12_381_SCALAR_FIELD = 0x73EDA753299D7D483339D80809A1D80553BDA402FFFE5BFEFFFFFFFF00000001
 
 
 @dataclass
@@ -110,16 +108,12 @@ class PLONKCircuit(ABC):
     ):
         """Add a PLONK constraint to the circuit"""
         if len(self.constraints) >= self.max_constraints:
-            raise RuntimeError(
-                f"Circuit constraint limit exceeded: {self.max_constraints}"
-            )
+            raise RuntimeError(f"Circuit constraint limit exceeded: {self.max_constraints}")
 
         constraint = CircuitConstraint(a, b, c, ql, qr, qo, qm, qc)
         self.constraints.append(constraint)
 
-    def add_multiplication_gate(
-        self, a: FieldElement, b: FieldElement, c: FieldElement
-    ):
+    def add_multiplication_gate(self, a: FieldElement, b: FieldElement, c: FieldElement):
         """Add constraint: a * b = c"""
         self.add_constraint(a, b, c, qm=1, qo=-1)
 
@@ -194,9 +188,7 @@ class MerkleInclusionCircuit(PLONKCircuit):
         self.indices = private_inputs["indices"]  # 0 for left, 1 for right
 
         if len(self.path) != self.tree_depth:
-            raise ValueError(
-                f"Path length {len(self.path)} != tree depth {self.tree_depth}"
-            )
+            raise ValueError(f"Path length {len(self.path)} != tree depth {self.tree_depth}")
 
     def generate_constraints(self):
         """Generate Merkle tree inclusion constraints"""
@@ -208,9 +200,7 @@ class MerkleInclusionCircuit(PLONKCircuit):
 
             # Direction must be 0 or 1
             dir_field = FieldElement(direction)
-            self.add_constraint(
-                dir_field, FieldElement(1) - dir_field, FieldElement(0), qm=1
-            )
+            self.add_constraint(dir_field, FieldElement(1) - dir_field, FieldElement(0), qm=1)
 
             # Conditional selection based on direction
             # If direction = 0: left = current, right = sibling
@@ -242,22 +232,14 @@ class DiabetesRiskCircuit(PLONKCircuit):
     def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
         """Setup diabetes risk circuit"""
         # Public inputs (scaled to avoid decimals)
-        self.glucose_threshold = FieldElement(
-            int(public_inputs["glucose_threshold"] * 100)
-        )
+        self.glucose_threshold = FieldElement(int(public_inputs["glucose_threshold"] * 100))
         self.risk_threshold = FieldElement(int(public_inputs["risk_threshold"] * 1000))
-        self.result_commitment = FieldElement(
-            int(public_inputs["result_commitment"], 16)
-        )
+        self.result_commitment = FieldElement(int(public_inputs["result_commitment"], 16))
 
         # Private inputs (scaled)
-        self.glucose_reading = FieldElement(
-            int(private_inputs["glucose_reading"] * 100)
-        )
+        self.glucose_reading = FieldElement(int(private_inputs["glucose_reading"] * 100))
         self.risk_score = FieldElement(int(private_inputs["risk_score"] * 1000))
-        self.witness_randomness = FieldElement(
-            int(private_inputs["witness_randomness"], 16)
-        )
+        self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
 
     def generate_constraints(self):
         """Generate diabetes risk assessment constraints"""
@@ -334,9 +316,7 @@ class VariantVerificationCircuit(PLONKCircuit):
         # Private inputs
         self.variant_data = private_inputs["variant_data"]
         self.merkle_proof = private_inputs["merkle_proof"]
-        self.witness_randomness = FieldElement(
-            int(private_inputs["witness_randomness"], 16)
-        )
+        self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
 
         # Compute variant leaf hash
         self.variant_leaf = self._compute_variant_leaf()
@@ -369,9 +349,7 @@ class VariantVerificationCircuit(PLONKCircuit):
         """Compute Merkle leaf for variant"""
         var_str = f"{self.variant_data['chr']}:{self.variant_data['pos']}:{self.variant_data['ref']}:{self.variant_data['alt']}"
         hash_bytes = hashlib.sha256(var_str.encode()).digest()
-        return FieldElement(
-            int.from_bytes(hash_bytes[:31], "big")
-        )  # Ensure < field size
+        return FieldElement(int.from_bytes(hash_bytes[:31], "big"))  # Ensure < field size
 
     def _hash_variant_data(self, variant_data: Dict) -> FieldElement:
         """Hash variant data into field element"""
@@ -399,26 +377,20 @@ class PolygeneticRiskScoreCircuit(PLONKCircuit):
         # Public inputs
         self.prs_model_hash = FieldElement(int(public_inputs["prs_model"], 16))
         self.score_range = public_inputs["score_range"]
-        self.result_commitment = FieldElement(
-            int(public_inputs["result_commitment"], 16)
-        )
+        self.result_commitment = FieldElement(int(public_inputs["result_commitment"], 16))
 
         # Private inputs - scale to avoid decimals
         self.variants = [FieldElement(int(v)) for v in private_inputs["variants"]]
         self.weights = [
             FieldElement(int(w * 10000)) for w in private_inputs["weights"]
         ]  # Scale by 10000
-        self.witness_randomness = FieldElement(
-            int(private_inputs["witness_randomness"], 16)
-        )
+        self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
 
         if len(self.variants) != len(self.weights):
             raise ValueError("Variants and weights must have same length")
 
         if len(self.variants) > self.max_variants:
-            raise ValueError(
-                f"Too many variants: {len(self.variants)} > {self.max_variants}"
-            )
+            raise ValueError(f"Too many variants: {len(self.variants)} > {self.max_variants}")
 
     def generate_constraints(self):
         """Generate PRS calculation constraints"""
@@ -473,9 +445,7 @@ class PolygeneticRiskScoreCircuit(PLONKCircuit):
         self.add_multiplication_gate(temp1, g_minus_2, result)
         self.add_equality_gate(result, FieldElement(0))
 
-    def _commit_score(
-        self, score: FieldElement, randomness: FieldElement
-    ) -> FieldElement:
+    def _commit_score(self, score: FieldElement, randomness: FieldElement) -> FieldElement:
         """Create Pedersen-style commitment to score"""
         # Simplified commitment: hash(score || randomness)
         return PoseidonHash.hash_two(score, randomness)

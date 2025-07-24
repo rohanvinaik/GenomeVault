@@ -112,9 +112,7 @@ class HypervectorAccelerator:
             if not isinstance(v2, torch.Tensor):
                 v2 = torch.from_numpy(v2).float().to(self.device)
 
-            cos_sim = torch.nn.functional.cosine_similarity(
-                v1.unsqueeze(0), v2.unsqueeze(0)
-            )
+            cos_sim = torch.nn.functional.cosine_similarity(v1.unsqueeze(0), v2.unsqueeze(0))
             return float(cos_sim.cpu())
 
         elif self.backend == "cupy":
@@ -129,13 +127,9 @@ class HypervectorAccelerator:
             return float(dot / (norm1 * norm2))
 
         else:
-            return self._cosine_similarity_cpu(
-                v1.astype(np.float32), v2.astype(np.float32)
-            )
+            return self._cosine_similarity_cpu(v1.astype(np.float32), v2.astype(np.float32))
 
-    def batch_hamming_distance(
-        self, vectors: List[np.ndarray], query: np.ndarray
-    ) -> np.ndarray:
+    def batch_hamming_distance(self, vectors: List[np.ndarray], query: np.ndarray) -> np.ndarray:
         """Compute Hamming distances for batch of vectors"""
 
         if self.backend == "torch":
@@ -264,9 +258,7 @@ class ParallelProcessor:
         self.thread_pool = ThreadPoolExecutor(max_workers=self.n_workers)
         self.process_pool = ProcessPoolExecutor(max_workers=self.n_workers)
 
-    def parallel_map(
-        self, func: Callable, items: List, use_processes: bool = False
-    ) -> List:
+    def parallel_map(self, func: Callable, items: List, use_processes: bool = False) -> List:
         """Apply function to items in parallel"""
 
         pool = self.process_pool if use_processes else self.thread_pool
@@ -281,9 +273,7 @@ class ParallelProcessor:
 
     @staticmethod
     @numba.jit(nopython=True, parallel=True)
-    def _parallel_variant_processing(
-        variants: np.ndarray, reference: np.ndarray
-    ) -> np.ndarray:
+    def _parallel_variant_processing(variants: np.ndarray, reference: np.ndarray) -> np.ndarray:
         """Process variants in parallel using Numba"""
         n_variants = len(variants)
         results = np.zeros(n_variants, dtype=np.int32)
@@ -298,9 +288,7 @@ class ParallelProcessor:
 
         return results
 
-    def process_variants_batch(
-        self, variants: np.ndarray, reference: np.ndarray
-    ) -> np.ndarray:
+    def process_variants_batch(self, variants: np.ndarray, reference: np.ndarray) -> np.ndarray:
         """Process batch of variants with parallel acceleration"""
         return self._parallel_variant_processing(variants, reference)
 
@@ -317,9 +305,7 @@ class CacheOptimizer:
         self.max_size = max_size
 
     @lru_cache(maxsize=1000)
-    def cached_hypervector_operation(
-        self, v1_hash: int, v2_hash: int, operation: str
-    ) -> float:
+    def cached_hypervector_operation(self, v1_hash: int, v2_hash: int, operation: str) -> float:
         """Cache results of expensive hypervector operations"""
         # This would be called with actual computation
         pass
@@ -333,9 +319,7 @@ class CacheOptimizer:
         # Align to cache line boundaries (typically 64 bytes)
         if vectors.itemsize * vectors.shape[1] % 64 != 0:
             # Pad to align
-            pad_size = (
-                64 - (vectors.itemsize * vectors.shape[1] % 64)
-            ) // vectors.itemsize
+            pad_size = (64 - (vectors.itemsize * vectors.shape[1] % 64)) // vectors.itemsize
             vectors = np.pad(vectors, ((0, 0), (0, pad_size)), mode="constant")
 
         return vectors

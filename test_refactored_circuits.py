@@ -66,9 +66,7 @@ def test_biomarker_circuit():
     print("\nTesting Biomarker Circuit...")
 
     # Create circuit using factory
-    circuit = create_circuit(
-        CircuitType.BIOMARKER_THRESHOLD, biomarker_name="cholesterol"
-    )
+    circuit = create_circuit(CircuitType.BIOMARKER_THRESHOLD, biomarker_name="cholesterol")
 
     # Setup
     circuit.setup({"value_range": (0, 500)})
