@@ -13,8 +13,11 @@ import numpy as np
 
 from genomevault.utils.logging import get_logger
 from genomevault.zk_proofs.prover import Proof
+from genomevault.zk_proofs.backends.gnark_backend import get_backend
+from genomevault.utils.metrics import get_metrics
 
 logger = get_logger(__name__)
+metrics = get_metrics()
 
 
 @dataclass
@@ -45,18 +48,24 @@ class RecursiveSNARKProver:
     Achieves O(D log D) circuit overhead for verifying D proofs.
     """
 
-    def __init__(self, max_recursion_depth: int = 10):
+    def __init__(self, max_recursion_depth: int = 10, use_real_backend: bool = True):
         """
         Initialize recursive SNARK prover.
 
         Args:
             max_recursion_depth: Maximum nesting depth for recursive proofs
+            use_real_backend: Whether to use real gnark backend or simulation
         """
         self.max_recursion_depth = max_recursion_depth
         self.accumulator_state = self._initialize_accumulator()
         self.circuit_cache = {}
-
+        self.use_real_backend = use_real_backend
+        
+        # Initialize ZK backend
+        self.backend = get_backend(use_real=use_real_backend)
+        
         logger.info(f"RecursiveSNARKProver initialized with max depth {max_recursion_depth}")
+        logger.info(f"Using {'real gnark' if use_real_backend else 'simulated'} backend")
 
     def _initialize_accumulator(self) -> Dict[str, Any]:
         """Initialize cryptographic accumulator for proof aggregation."""
@@ -297,26 +306,34 @@ class RecursiveSNARKProver:
         self, circuit: Dict[str, Any], public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
     ) -> bytes:
         """Generate proof for recursive verification circuit."""
-        # Simulate recursive SNARK generation
-        # In production, would use actual recursive SNARK system
+        if self.use_real_backend:
+            # Use real gnark backend for proof generation
+            with metrics.time_operation("recursive_proof_generation"):
+                proof_data = self.backend.generate_proof(
+                    "recursive_verifier",
+                    public_inputs,
+                    private_inputs
+                )
+            return proof_data
+        else:
+            # Fallback to simulation
+            proof_components = {
+                "pi": np.random.bytes(192).hex(),  # Main proof
+                "recursive_commitment": np.random.bytes(32).hex(),
+                "accumulator_update": np.random.bytes(32).hex(),
+                "circuit_digest": hashlib.sha256(
+                    json.dumps(circuit, sort_keys=True).encode()
+                ).hexdigest(),
+            }
 
-        proof_components = {
-            "pi": np.random.bytes(192).hex(),  # Main proof
-            "recursive_commitment": np.random.bytes(32).hex(),
-            "accumulator_update": np.random.bytes(32).hex(),
-            "circuit_digest": hashlib.sha256(
-                json.dumps(circuit, sort_keys=True).encode()
-            ).hexdigest(),
-        }
+            # Optimize proof size using compression
+            proof_data = json.dumps(proof_components).encode()
 
-        # Optimize proof size using compression
-        proof_data = json.dumps(proof_components).encode()
+            # Target size: ~384 bytes for recursive proofs
+            if len(proof_data) > 384:
+                proof_data = proof_data[:384]
 
-        # Target size: ~384 bytes for recursive proofs
-        if len(proof_data) > 384:
-            proof_data = proof_data[:384]
-
-        return proof_data
+            return proof_data
 
     def _accumulator_add(self, acc_value: bytes, proof: Proof) -> Tuple[bytes, bytes]:
         """Add proof to cryptographic accumulator."""
@@ -446,25 +463,32 @@ class RecursiveSNARKProver:
         Returns:
             True if proof is valid
         """
-        # In production, would perform actual SNARK verification
-        # For now, simulate verification
-
         logger.info(
             f"Verifying recursive proof {recursive_proof.proof_id} "
             f"aggregating {recursive_proof.proof_count} proofs"
         )
 
-        # Verification is O(1) for accumulator-based proofs
-        if recursive_proof.metadata.get("uses_accumulator", False):
-            verification_time = 0.025  # 25ms constant
+        if self.use_real_backend:
+            # Use real backend for verification
+            with metrics.time_operation("recursive_proof_verification"):
+                return self.backend.verify_proof(
+                    "recursive_verifier",
+                    recursive_proof.aggregation_proof,
+                    recursive_proof.public_aggregate
+                )
         else:
-            # O(log n) for tree-based
-            verification_time = 0.025 + 0.005 * recursive_proof.metadata.get("tree_depth", 1)
+            # Simulate verification
+            # Verification is O(1) for accumulator-based proofs
+            if recursive_proof.metadata.get("uses_accumulator", False):
+                verification_time = 0.025  # 25ms constant
+            else:
+                # O(log n) for tree-based
+                verification_time = 0.025 + 0.005 * recursive_proof.metadata.get("tree_depth", 1)
 
-        # Simulate verification time
-        time.sleep(verification_time)
+            # Simulate verification time
+            time.sleep(verification_time)
 
-        return True
+            return True
 
 
 # Example usage
