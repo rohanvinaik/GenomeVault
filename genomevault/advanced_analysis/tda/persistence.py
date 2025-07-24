@@ -242,37 +242,37 @@ class TopologicalAnalyzer:
     ) -> List[PersistencePair]:
         """
         Compute 2-dimensional persistence (voids) for genomic structural analysis.
-        
+
         Args:
             filtration: Sorted list of simplices with their filtration values
-            
+
         Returns:
             List of 2D persistence pairs representing topological voids
         """
         pairs = []
-        
+
         # Extract tetrahedra (3-simplices) and triangles (2-simplices)
         triangles = [(val, s) for val, s in filtration if len(s) == 3]
         tetrahedra = [(val, s) for val, s in filtration if len(s) == 4]
-        
+
         # Track 2D voids (cavities)
         void_births = {}
-        
+
         # Triangles can create 2D voids
         for val, triangle in triangles:
             triangle_key = tuple(sorted(triangle))
-            
+
             # Check if triangle is boundary of a void
             # In a simplified model, isolated triangles create voids
             neighboring_triangles = self._find_neighboring_triangles(triangle, triangles)
-            
+
             if len(neighboring_triangles) < 3:  # Not fully surrounded
                 void_births[triangle_key] = val
-        
+
         # Tetrahedra can fill voids
         for val, tetrahedron in tetrahedra:
             tetrahedron_faces = self._get_tetrahedron_faces(tetrahedron)
-            
+
             # Check if tetrahedron fills any existing void
             for face in tetrahedron_faces:
                 face_key = tuple(sorted(face))
@@ -281,25 +281,27 @@ class TopologicalAnalyzer:
                     pairs.append(PersistencePair(birth_time, val, 2, list(face)))
                     del void_births[face_key]
                     break
-        
+
         # Remaining voids have infinite persistence
         for triangle_key, birth_time in void_births.items():
-            pairs.append(PersistencePair(birth_time, float('inf'), 2, list(triangle_key)))
-        
+            pairs.append(PersistencePair(birth_time, float("inf"), 2, list(triangle_key)))
+
         return pairs
-    
-    def _find_neighboring_triangles(self, triangle: List[int], all_triangles: List[Tuple[float, List[int]]]) -> List[List[int]]:
+
+    def _find_neighboring_triangles(
+        self, triangle: List[int], all_triangles: List[Tuple[float, List[int]]]
+    ) -> List[List[int]]:
         """Find triangles that share an edge with the given triangle"""
         neighbors = []
         triangle_set = set(triangle)
-        
+
         for _, other_triangle in all_triangles:
             other_set = set(other_triangle)
             if len(triangle_set.intersection(other_set)) >= 2:  # Share at least an edge
                 neighbors.append(other_triangle)
-        
+
         return neighbors
-    
+
     def _get_tetrahedron_faces(self, tetrahedron: List[int]) -> List[List[int]]:
         """Get the four triangular faces of a tetrahedron"""
         faces = []
