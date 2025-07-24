@@ -42,7 +42,7 @@ __version__ = "1.0.0"
 
 def get_version_info() -> Dict[str, Any]:
     """Get comprehensive version information for all components.
-    
+
     Returns:
         Dict containing all version information
     """
@@ -76,28 +76,28 @@ def get_version_info() -> Dict[str, Any]:
 
 def check_compatibility(component: str, version: str) -> bool:
     """Check if a component version is compatible.
-    
+
     Args:
         component: Component name
         version: Version to check
-        
+
     Returns:
         True if compatible, False otherwise
     """
     if component == "pir_protocol":
         return version in PIR_COMPATIBILITY
-    
+
     if component in COMPONENT_VERSIONS:
         # Simple string comparison for now
         # Could implement semantic versioning in the future
         return version == COMPONENT_VERSIONS[component]
-    
+
     return False
 
 
 def format_version_string() -> str:
     """Format a human-readable version string.
-    
+
     Returns:
         Formatted version string
     """
