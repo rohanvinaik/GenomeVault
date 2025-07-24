@@ -121,9 +121,9 @@ class HypervectorEncoder:
 
             return hypervector
 
-        except Exception:
-        logger.error(f"Encoding error: {str(e)}")
-            raise EncodingError("Failed to encode features: {str(e)}")
+        except Exception as e:
+            logger.error(f"Encoding error: {str(e)}")
+            raise EncodingError(f"Failed to encode features: {str(e)}")
 
     def encode_multiresolution(
         self, features: Union[np.ndarray, torch.Tensor, Dict], omics_type: OmicsType

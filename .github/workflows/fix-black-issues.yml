@@ -1,0 +1,66 @@
+name: Fix Black Issues
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - fix-black-issues
+
+jobs:
+  fix-black:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install Black
+      run: pip install black
+    
+    - name: Fix f-string issues
+      run: |
+        # Fix missing f-string prefixes
+        find genomevault -name "*.py" -type f -exec sed -i 's/logger\.error("\([^"]*{[^}]\+}[^"]*\)")/logger.error(f"\1")/g' {} +
+        find genomevault -name "*.py" -type f -exec sed -i "s/logger\.error('\([^']*{[^}]\+}[^']*\)')/logger.error(f'\1')/g" {} +
+    
+    - name: Fix specific file issues
+      run: |
+        # Fix genomevault/blockchain/hipaa/verifier.py
+        if [ -f "genomevault/blockchain/hipaa/verifier.py" ]; then
+          sed -i '17s/.*/from .models import HIPAAVerificationRecord/' genomevault/blockchain/hipaa/verifier.py
+        fi
+        
+        # Fix trailing commas in from statements
+        find genomevault -name "*.py" -type f -exec sed -i 's/from typing import \(.*\),$/from typing import \1/g' {} +
+        
+        # Fix trailing commas after equals
+        find genomevault -name "*.py" -type f -exec sed -i 's/= *,/=/g' {} +
+        
+        # Fix structured logging in security_monitor.py
+        if [ -f "genomevault/utils/security_monitor.py" ]; then
+          sed -i '214s/.*/        logger.error(f"anomaly_detector_training_failed: {str(e)}")/' genomevault/utils/security_monitor.py
+        fi
+    
+    - name: Run Black check
+      run: black --check .
+      continue-on-error: true
+    
+    - name: Run Black format
+      run: black .
+    
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v5
+      with:
+        commit-message: "Fix Black formatting issues"
+        title: "Fix Black formatting issues"
+        body: |
+          This PR fixes Black formatting issues:
+          - Fixed missing f-string prefixes in logger statements
+          - Fixed malformed import statements
+          - Fixed trailing commas in type imports
+          - Fixed syntax errors preventing Black from formatting
+        branch: auto-fix-black-issues
