@@ -15,6 +15,7 @@ from pydantic import BaseModel, Field
 from genomevault.utils.config import get_config
 
 config = get_config()
+from genomevault.api.routers.tuned_query import router as tuned_query_router
 from genomevault.hypervector.error_handling import router as hdc_router
 from genomevault.utils.logging import audit_logger, get_logger
 
@@ -39,6 +40,9 @@ app.add_middleware(
 
 # Include HDC error handling router
 app.include_router(hdc_router, prefix="/api")
+
+# Include tuned query router
+app.include_router(tuned_query_router, prefix="/api")
 
 
 # Request/Response Models

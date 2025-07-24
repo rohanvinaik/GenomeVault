@@ -22,10 +22,17 @@ from genomevault.core.exceptions import PIRError
 class PIRQuery:
     """Represents a PIR query"""
 
-    position: int
-    length: int
-    query_vector: np.ndarray
-    nonce: bytes
+    indices: List[int]  # Database indices to query
+    seed: Optional[int] = None  # Seed for deterministic masking
+    metadata: Dict[str, Any] = None  # Additional query metadata
+    query_vector: Optional[np.ndarray] = None  # Encoded query vector
+    nonce: Optional[bytes] = None  # Query nonce
+
+    def __post_init__(self):
+        if self.metadata is None:
+            self.metadata = {}
+        if self.nonce is None:
+            self.nonce = np.random.bytes(32)
 
 
 class PIRClient:
@@ -34,13 +41,14 @@ class PIRClient:
     Queries multiple servers without revealing the queried position
     """
 
-    def __init__(self, server_urls: List[str], threshold: int = 2):
+    def __init__(self, server_urls: List[str], database_size: int, threshold: int = 2):
         self.server_urls = server_urls
+        self.database_size = database_size
         self.threshold = threshold
         self.session: Optional[aiohttp.ClientSession] = None
 
         if len(server_urls) < MIN_PIR_SERVERS:
-            raise PIRError("Need at least {MIN_PIR_SERVERS} servers, got {len(server_urls)}")
+            raise PIRError(f"Need at least {MIN_PIR_SERVERS} servers, got {len(server_urls)}")
 
     async def __aenter__(self):
         self.session = aiohttp.ClientSession()
@@ -207,3 +215,172 @@ class PIRClient:
         honesty_prob = PIR_THRESHOLD
         privacy_failure_prob = (1 - honesty_prob) ** num_honest_servers
         return privacy_failure_prob
+
+    def create_query(self, db_index: int, seed: Optional[int] = None) -> PIRQuery:
+        """
+        Create a PIR query for a database index with optional seed
+
+        Args:
+            db_index: Database index to query
+            seed: Optional seed for deterministic query generation
+
+        Returns:
+            PIRQuery object
+        """
+        # Use seed for deterministic randomness if provided
+        if seed is not None:
+            rng = np.random.RandomState(seed)
+        else:
+            rng = np.random
+
+        # Create query vector
+        query_vector = np.zeros(self.database_size, dtype=np.float32)
+
+        # Set the target index
+        query_vector[db_index] = 1.0
+
+        # Add obfuscation noise
+        noise_indices = rng.choice(
+            self.database_size, size=min(10, self.database_size // 100), replace=False
+        )
+        query_vector[noise_indices] = rng.random(len(noise_indices)) * 0.1
+
+        # Generate nonce
+        nonce = rng.bytes(32) if seed is not None else np.random.bytes(32)
+
+        return PIRQuery(
+            indices=[db_index],
+            seed=seed,
+            query_vector=query_vector,
+            nonce=nonce,
+            metadata={"target_index": db_index},
+        )
+
+    async def execute_query(self, query: PIRQuery) -> Any:
+        """
+        Execute a PIR query across servers
+
+        Args:
+            query: PIRQuery to execute
+
+        Returns:
+            Reconstructed data from servers
+        """
+        if not query.query_vector:
+            raise PIRError("Query vector not initialized")
+
+        # Query all servers in parallel
+        tasks = []
+        for server_url in self.server_urls:
+            task = self._query_server_v2(server_url, query)
+            tasks.append(task)
+
+        # Collect responses
+        responses = await asyncio.gather(*tasks, return_exceptions=True)
+
+        # Filter out failed responses
+        valid_responses = [r for r in responses if not isinstance(r, Exception)]
+
+        if len(valid_responses) < self.threshold:
+            raise PIRError(
+                f"Insufficient responses: got {len(valid_responses)}, need {self.threshold}"
+            )
+
+        # Reconstruct data from responses
+        result = self._reconstruct_data_v2(valid_responses, query)
+
+        return result
+
+    async def _query_server_v2(self, server_url: str, query: PIRQuery) -> Dict[str, Any]:
+        """Query a single PIR server with enhanced query format"""
+        if not self.session:
+            raise PIRError("Session not initialized")
+
+        query_data = {
+            "indices": query.indices,
+            "vector": query.query_vector.tolist(),
+            "nonce": query.nonce.hex(),
+            "metadata": query.metadata,
+        }
+
+        try:
+            timeout = aiohttp.ClientTimeout(total=PIR_QUERY_TIMEOUT_MS / 1000)
+            async with self.session.post(
+                f"{server_url}/query", json=query_data, timeout=timeout
+            ) as response:
+                if response.status == 200:
+                    return await response.json()
+                else:
+                    raise PIRError(f"Server returned status {response.status}")
+        except asyncio.TimeoutError:
+            raise PIRError(f"Query timeout for server {server_url}")
+        except Exception as e:
+            raise PIRError(f"Query failed for server {server_url}: {str(e)}")
+
+    def _reconstruct_data_v2(self, responses: List[Dict[str, Any]], query: PIRQuery) -> Any:
+        """
+        Reconstruct data from PIR responses (enhanced version)
+        """
+        # Extract response data
+        response_data = []
+        for response in responses:
+            if "data" in response:
+                response_data.append(response["data"])
+            elif "response" in response:
+                response_data.append(response["response"])
+
+        if not response_data:
+            raise PIRError("No valid data in responses")
+
+        # For single index queries, return the first valid response
+        # In production, would use proper secret sharing reconstruction
+        return response_data[0]
+
+    async def batch_query(self, indices: List[int]) -> List[Any]:
+        """
+        Execute batch queries for multiple indices
+
+        Args:
+            indices: List of database indices to query
+
+        Returns:
+            List of results for each index
+        """
+        # Create queries for all indices
+        queries = [self.create_query(idx) for idx in indices]
+
+        # Execute all queries
+        tasks = [self.execute_query(query) for query in queries]
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        # Handle exceptions
+        final_results = []
+        for i, result in enumerate(results):
+            if isinstance(result, Exception):
+                raise PIRError(f"Query for index {indices[i]} failed: {str(result)}")
+            final_results.append(result)
+
+        return final_results
+
+    def decode_response(self, response_data: Any, response_type: str = "genomic") -> Any:
+        """
+        Decode response data based on type
+
+        Args:
+            response_data: Raw response data
+            response_type: Type of response (genomic, variant, etc.)
+
+        Returns:
+            Decoded data
+        """
+        if response_type == "genomic":
+            # Decode genomic data
+            if isinstance(response_data, dict):
+                return response_data
+            elif isinstance(response_data, (bytes, bytearray)):
+                return json.loads(response_data.decode())
+            else:
+                return response_data
+        else:
+            # Default decoding
+            return response_data
