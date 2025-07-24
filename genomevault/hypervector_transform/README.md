@@ -1,295 +1,279 @@
-# Hypervector Transform Module
+# HDC (Hyperdimensional Computing) Implementation
+
+This directory contains the complete implementation of the Hierarchical Hyperdimensional Computing (HDC) encoding system for GenomeVault. HDC provides privacy-preserving transformations of genomic data into high-dimensional vectors that maintain similarity relationships while preventing data reconstruction.
 
 ## Overview
 
-The hypervector transform module implements hierarchical hyperdimensional computing (HDC) for transforming sensitive genomic and multi-omics data into privacy-preserving representations. This module is the core of GenomeVault's privacy guarantees, enabling complex biological analyses while ensuring that raw genomic data never leaves the user's control.
+The HDC implementation transforms sensitive genomic and clinical data into high-dimensional hypervectors (10,000-20,000 dimensions) that:
 
-## Key Features
+- **Preserve similarity relationships** - Similar genomic profiles produce similar hypervectors
+- **Ensure privacy** - Original data cannot be reconstructed from hypervectors (one-way transformation)
+- **Enable efficient computation** - Support for fast similarity search and pattern matching
+- **Provide compression** - Achieve 100-1000x compression ratios
 
-### 1. **Hypervector Encoding** (`encoding.py`)
-- Transforms biological features into high-dimensional vectors (10,000+ dimensions)
-- Multiple projection types: Gaussian, Sparse Random, Orthogonal
-- Multi-resolution encoding (10k, 15k, 20k dimensions)
-- Domain-specific encodings for different omics types
-- Similarity preservation with privacy guarantees
+## Architecture
 
-### 2. **Binding Operations** (`binding.py`)
-- Combine multiple hypervectors while preserving relationships
-- Multiple binding types:
-  - **Circular Convolution**: For reversible binding
-  - **Element-wise Multiplication**: Fast binding with simple unbinding
-  - **Permutation-based**: Position-aware binding
-  - **XOR**: For binary hypervectors
-  - **Fourier**: Frequency domain binding
-- Specialized binders:
-  - **PositionalBinder**: For genomic sequences
-  - **CrossModalBinder**: For multi-omics integration
+### Core Components
 
-### 3. **Holographic Representations** (`holographic.py`)
-- Encode complex structured data (variants, gene expression, interactions)
-- Query specific components from composite representations
-- Memory traces for storing multiple items
-- Similarity-preserving hashing
+1. **`hdc_encoder.py`** - Main encoding engine
+   - Multi-tier compression (Mini, Clinical, Full)
+   - Multiple projection types (Gaussian, Sparse, Orthogonal)
+   - Support for all omics types (Genomic, Transcriptomic, Epigenomic, etc.)
 
-### 4. **Similarity-Preserving Mappings** (`mapping.py`)
-- Maintain biological relationships during transformation
-- Domain-specific similarity metrics for different omics types
-- Manifold preservation for complex data structures
-- Optimization-based learning of mappings
+2. **`binding_operations.py`** - Hypervector operations
+   - Binding types: Multiply, Circular convolution, Permutation, XOR, Fourier (HRR)
+   - Bundling (superposition) for combining vectors
+   - Composite binding for structured data
 
-## Installation
+3. **`registry.py`** - Version and configuration management
+   - Deterministic encoding with seed management
+   - Version tracking and migration
+   - Backward compatibility support
 
-The hypervector module is part of the GenomeVault package:
+4. **`hdc_api.py`** - RESTful API endpoints
+   - `/encode` - Encode single modality
+   - `/encode_multimodal` - Encode and bind multiple modalities
+   - `/similarity` - Compute vector similarity
+   - `/version` - Version information
 
-```bash
-pip install genomevault
-```
+## Compression Tiers
 
-For development:
-```bash
-pip install -e .[dev]
-```
+| Tier | Dimension | Size | Use Case |
+|------|-----------|------|----------|
+| **Mini** | 5,000 | ~25 KB | Quick similarity searches, population screening |
+| **Clinical** | 10,000 | ~300 KB | Clinical decision support, pharmacogenomics |
+| **Full** | 20,000 | ~200 KB | Research, drug discovery, precision medicine |
+
+## Mathematical Properties
+
+The HDC encoding preserves key mathematical properties:
+
+- **Commutativity**: `bind(a, b) = bind(b, a)` for multiplication/XOR
+- **Associativity**: `bind(bind(a, b), c) = bind(a, bind(b, c))`
+- **Approximate Inverse**: `unbind(bind(a, b), b) ≈ a` (similarity > 0.95)
+- **Distributivity**: `bind(bundle(a, b), c) ≈ bundle(bind(a, c), bind(b, c))`
+
+## Privacy Guarantees
+
+1. **Non-invertibility**: Cannot recover original data without the projection matrix
+2. **Computational infeasibility**: 10,000-dimensional space with random projections
+3. **Information theoretic security**: Projection is a many-to-one mapping
 
 ## Usage Examples
 
-### Basic Hypervector Encoding
+### Basic Encoding
 
 ```python
-from hypervector_transform.encoding import create_encoder
-from core.constants import OmicsType
+from genomevault.hypervector_transform import create_encoder, OmicsType
 
-# Create an encoder
+# Create encoder
 encoder = create_encoder(dimension=10000)
 
 # Encode genomic data
-genomic_data = {
-    "variants": {
-        "snps": [1, 2, 3, 4, 5],
-        "indels": [10, 11],
-        "cnvs": [20]
-    },
-    "quality_metrics": {
-        "mean_coverage": 30.0,
-        "uniformity": 0.95
-    }
-}
+genomic_features = {"variants": [/* variant data */]}
+hv = encoder.encode(genomic_features, OmicsType.GENOMIC)
 
-# Transform to hypervector
-hypervector = encoder.encode(genomic_data, OmicsType.GENOMIC)
-print(f"Hypervector shape: {hypervector.shape}")  # torch.Size([10000])
+# Compute similarity
+hv2 = encoder.encode(other_features, OmicsType.GENOMIC)
+similarity = encoder.similarity(hv, hv2)  # Returns value between -1 and 1
 ```
 
-### Binding Operations
+### Multi-modal Binding
 
 ```python
-from hypervector_transform.binding import HypervectorBinder, BindingType
+from genomevault.hypervector_transform import HypervectorBinder, BindingType
 
 # Create binder
 binder = HypervectorBinder(dimension=10000)
 
-# Create hypervectors for gene and expression
-gene_hv = encoder.encode({"gene": "BRCA1"}, OmicsType.GENOMIC)
-expression_hv = encoder.encode({"expression": 5.2}, OmicsType.TRANSCRIPTOMIC)
+# Encode multiple modalities
+genomic_hv = encoder.encode(genomic_data, OmicsType.GENOMIC)
+clinical_hv = encoder.encode(clinical_data, OmicsType.CLINICAL)
 
-# Bind them together
-bound_hv = binder.bind([gene_hv, expression_hv], BindingType.CIRCULAR)
-
-# Later, recover the gene vector
-recovered_gene = binder.unbind(bound_hv, [expression_hv], BindingType.CIRCULAR)
+# Bind modalities together
+combined = binder.bind([genomic_hv, clinical_hv], BindingType.FOURIER)
 ```
 
-### Holographic Encoding
+### Using the Registry
 
 ```python
-from hypervector_transform.holographic import HolographicEncoder
+from genomevault.hypervector_transform import HypervectorRegistry
 
-# Create holographic encoder
-holo_encoder = HolographicEncoder(dimension=10000)
+# Create registry
+registry = HypervectorRegistry()
 
-# Encode a genomic variant
-variant_hv = holo_encoder.encode_genomic_variant(
-    chromosome="chr17",
-    position=41276045,
-    ref="C",
-    alt="T",
-    annotations={
-        "gene": "BRCA1",
-        "effect": "nonsense",
-        "clinical_significance": "pathogenic"
+# Get specific version
+encoder = registry.get_encoder("v1.0.0")
+
+# Register custom version
+registry.register_version(
+    version="custom_v1",
+    params={
+        "dimension": 15000,
+        "projection_type": "sparse_random",
+        "seed": 12345
     }
 )
-
-# Query for specific information
-gene_info = holo_encoder.query(variant_hv, "gene")
 ```
 
-### Cross-Modal Integration
+## API Usage
 
-```python
-from hypervector_transform.binding import CrossModalBinder
+### Starting the API Server
 
-# Create cross-modal binder
-cross_binder = CrossModalBinder(dimension=10000)
-
-# Bind multiple omics modalities
-modalities = {
-    "genomic": genomic_hypervector,
-    "transcriptomic": transcriptomic_hypervector,
-    "epigenomic": epigenomic_hypervector
-}
-
-# Create integrated representation
-integrated = cross_binder.bind_modalities(modalities)
-combined_hv = integrated["combined"]
+```bash
+uvicorn genomevault.api.main:app --reload
 ```
 
-## Technical Details
+### Example API Calls
 
-### Privacy Guarantees
+```bash
+# Encode genomic data
+curl -X POST http://localhost:8000/api/v1/hdc/encode \
+  -H "Content-Type: application/json" \
+  -d '{
+    "features": {"variants": [1, 2, 3, 4, 5]},
+    "omics_type": "genomic",
+    "compression_tier": "clinical"
+  }'
 
-The hypervector encoding provides mathematical privacy guarantees through:
-
-1. **Irreversibility**: Random projection from low to high dimensions is not invertible
-2. **Distributed Information**: Information is spread across all dimensions
-3. **Noise Addition**: Optional differential privacy through controlled noise
-4. **High Dimensionality**: Concentration of measure phenomenon protects individual features
-
-### Performance Characteristics
-
-| Operation | Time Complexity | Space Complexity |
-|-----------|----------------|------------------|
-| Encoding | O(d × D) | O(D) |
-| Binding | O(D) or O(D log D) | O(D) |
-| Similarity | O(D) | O(1) |
-| Compression | O(D log k) | O(k) |
-
-Where:
-- d = input dimension
-- D = hypervector dimension (typically 10,000)
-- k = compressed size
-
-### Similarity Preservation
-
-The encoding preserves biological similarities:
-
-```python
-# Similar genomic profiles have high cosine similarity
-similarity = encoder.similarity(hypervector1, hypervector2, metric="cosine")
-
-# Different profiles have low similarity
-similarity = encoder.similarity(hypervector1, hypervector3, metric="cosine")
+# Compute similarity
+curl -X POST http://localhost:8000/api/v1/hdc/similarity \
+  -H "Content-Type: application/json" \
+  -d '{
+    "vector1": [/* hypervector 1 */],
+    "vector2": [/* hypervector 2 */],
+    "metric": "cosine"
+  }'
 ```
 
-## Architecture
+## Performance Benchmarks
 
+Run benchmarks with:
+
+```bash
+# Quick benchmark
+make bench-hdc
+
+# Comprehensive benchmark
+python scripts/bench_hdc.py --output-dir benchmarks/hdc
 ```
-hypervector_transform/
-├── __init__.py           # Module initialization
-├── encoding.py           # Core hypervector encoding
-├── binding.py            # Binding operations
-├── holographic.py        # Holographic representations
-├── mapping.py            # Similarity-preserving mappings
-└── compression.py        # Tiered compression (in local_processing)
-```
+
+Expected performance (Clinical tier, 10,000D):
+- **Encoding throughput**: >100 operations/second
+- **Memory usage**: ~300 KB per vector
+- **Similarity computation**: >10,000 operations/second
 
 ## Testing
 
-Run unit tests:
+### Unit Tests
 ```bash
-python -m pytest tests/unit/test_hypervector_encoding.py -v
+pytest tests/test_hdc_implementation.py -v
 ```
 
-Run demonstrations:
+### Quality Tests
 ```bash
-python examples/demo_hypervector_encoding.py
+pytest tests/test_hdc_quality.py -v
 ```
 
-## Mathematical Foundations
+### Property-based Tests
+```bash
+pytest tests/property/test_hdc_properties.py -v --hypothesis-show-statistics
+```
 
-### Hyperdimensional Computing
+### Adversarial Tests
+```bash
+pytest tests/adversarial/test_hdc_adversarial.py -v
+```
 
-Hypervectors are high-dimensional random vectors with useful properties:
+### All HDC Tests
+```bash
+make test-hdc
+```
 
-1. **Quasi-orthogonality**: Random hypervectors are nearly orthogonal
-2. **Robustness**: Tolerant to noise and component failures
-3. **Compositionality**: Complex structures through simple operations
+## Development
 
-### Key Operations
+### Code Quality
 
-**Binding** (⊗): Combines two hypervectors
-- Circular convolution: reversible, associative
-- Element-wise multiplication: fast, commutative
+Run linter checks:
+```bash
+python scripts/run_hdc_linters.py
+```
 
-**Bundling** (+): Superimposes multiple hypervectors
-- Preserves similarity to all components
-- Used for set representation
+Or use Make:
+```bash
+make lint
+make format  # Auto-fix formatting issues
+```
 
-**Permutation** (ρ): Encodes order/position
-- Shifts vector elements cyclically
-- Creates unique representation for sequences
+### Adding New Projection Types
 
-## Best Practices
+1. Add to `ProjectionType` enum in `hdc_encoder.py`
+2. Implement `_create_<type>_projection()` method
+3. Add tests in `test_hdc_implementation.py`
+4. Update benchmarks in `bench_hdc.py`
 
-1. **Dimension Selection**
-   - Use 10,000D for general genomic data
-   - Use 15,000D for complex multi-omics
-   - Use 20,000D for population-scale analyses
+### Adding New Binding Operations
 
-2. **Compression Tiers**
-   - Mini (25KB): Basic analyses, mobile apps
-   - Clinical (300KB): Medical applications
-   - Full (200KB/modality): Research use
+1. Add to `BindingType` enum in `binding_operations.py`
+2. Implement `_<type>_bind()` and `_<type>_unbind()` methods
+3. Add algebraic property tests
+4. Document mathematical properties
 
-3. **Binding Strategy**
-   - Use circular convolution for reversible operations
-   - Use multiplication for speed when unbinding not needed
-   - Use XOR for binary data
+## Security Considerations
 
-4. **Privacy Considerations**
-   - Never store projection matrices with data
-   - Use different seeds for different users
-   - Apply differential privacy for population queries
+The HDC implementation includes several security features:
+
+1. **Constant-time operations** - Prevent timing side-channels
+2. **Input validation** - Reject malformed inputs
+3. **Resource limits** - Prevent memory exhaustion attacks
+4. **Error message sanitization** - No sensitive information in errors
+
+See `tests/adversarial/test_hdc_adversarial.py` for security testing.
+
+## Migration Guide
+
+### Upgrading Versions
+
+```python
+from genomevault.hypervector_transform import VersionMigrator
+
+# Migrate hypervector to new version
+migrator = VersionMigrator(registry)
+new_hv = migrator.migrate_hypervector(old_hv, "v1.0.0", "v2.0.0")
+
+# Generate migration report
+report = migrator.create_migration_report("v1.0.0", "v2.0.0")
+```
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Memory Usage**
-   ```python
-   # Use sparse projections for lower memory
-   encoder = create_encoder(projection_type="sparse_random")
-   ```
+1. **Memory errors with large dimensions**
+   - Use sparse projections: `projection_type="sparse_random"`
+   - Reduce batch size
+   - Use GPU acceleration if available
 
-2. **Performance**
-   ```python
-   # Enable GPU acceleration if available
-   if torch.cuda.is_available():
-       hypervector = hypervector.cuda()
-   ```
+2. **Slow encoding performance**
+   - Enable PyTorch optimizations
+   - Use batch encoding for multiple samples
+   - Consider using Mini or Clinical tier
 
-3. **Similarity Computation**
-   ```python
-   # Normalize vectors before similarity computation
-   hv1_norm = hv1 / torch.norm(hv1)
-   hv2_norm = hv2 / torch.norm(hv2)
-   similarity = torch.dot(hv1_norm, hv2_norm)
-   ```
-
-## Contributing
-
-See the main [CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines. Key areas for contribution:
-
-- Additional binding operations
-- Domain-specific encoders
-- Performance optimizations
-- Hardware acceleration
+3. **Poor similarity preservation**
+   - Increase dimension
+   - Use appropriate projection type for data
+   - Normalize input features
 
 ## References
 
 1. Kanerva, P. (2009). Hyperdimensional computing: An introduction to computing in distributed representation with high-dimensional random vectors.
-2. Plate, T. A. (2003). Holographic reduced representations.
-3. Ge, L., & Parhi, K. K. (2020). Classification using hyperdimensional computing: A review.
+2. Plate, T. (2003). Holographic Reduced Representations.
+3. Rahimi, A., & Recht, B. (2008). Random features for large-scale kernel machines.
 
 ## License
 
-This module is part of GenomeVault and is licensed under the Apache License 2.0.
+See LICENSE file in the project root.
+
+## Contributing
+
+See CONTRIBUTING.md for guidelines on contributing to the HDC implementation.

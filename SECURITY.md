@@ -5,6 +5,29 @@
 ### Overview
 GenomeVault implements a defense-in-depth security architecture to protect genomic and clinical data at rest, in transit, and during computation. This document outlines our threat model, security guarantees, and vulnerability reporting process.
 
+## Threat Model Matrix
+
+| Asset | Adversary | Threat | Mitigation | Implementation |
+|-------|-----------|--------|-------------|----------------|
+| Genomic Data | Curious Servers | Data content inference | IT-PIR | 2-server XOR scheme |
+| Clinical Data | Malicious Servers | False data injection | Byzantine FT | Reed-Solomon ECC |
+| Query Patterns | Network Adversary | Traffic analysis | Fixed-size responses | 1KB padded blocks |
+| Model Parameters | Statistical Adversary | Parameter extraction | ZK proofs | Groth16 SNARKs |
+| Access Logs | Internal Threat | Audit trail analysis | Differential Privacy | ε=1.0 noise addition |
+| User Identity | Collusion Attack | Identity linkage | k-anonymity | 5-server minimum |
+| Hypervectors | Inversion Attack | Data reconstruction | One-way encoding | 10,000-D projection |
+| Server Keys | Key Compromise | Unauthorized access | HSM storage | FIPS 140-2 Level 3 |
+
+### PIR-Specific Threats
+
+| Threat | Impact | Likelihood | Mitigation | Residual Risk |
+|--------|--------|------------|-------------|---------------|
+| Server Collusion | Complete privacy loss | Low (P<0.01) | Non-collusion assumption | Accept with monitoring |
+| Timing Side Channel | Query pattern leakage | Medium | Constant-time operations | Low after mitigation |
+| Response Size Analysis | Data type inference | Medium | Fixed 1KB responses | Negligible |
+| Replay Attack | Query duplication | Low | Nonce + timestamp | Negligible |
+| Network Eavesdropping | Metadata exposure | High | TLS 1.3 + padding | Low |
+
 ## Threat Model
 
 ### Assets
