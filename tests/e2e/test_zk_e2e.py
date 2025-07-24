@@ -1,13 +1,14 @@
 """End-to-end tests for ZK proof system integration."""
 
-import pytest
 import asyncio
 import json
 from pathlib import Path
 
-from genomevault.zk_proofs.service import ZKProofService
-from genomevault.clinical.prs_calculator import PRSCalculator
+import pytest
+
 from genomevault.api.models import ProofRequest, ProofResponse
+from genomevault.clinical.prs_calculator import PRSCalculator
+from genomevault.zk_proofs.service import ZKProofService
 
 
 class TestZKEndToEnd:

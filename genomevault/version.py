@@ -5,8 +5,7 @@ protocols, and seeds used throughout the GenomeVault system.
 """
 
 from datetime import datetime
-from typing import Dict, Any
-
+from typing import Any, Dict
 
 # Protocol Versions
 PIR_PROTOCOL_VERSION = "PIR-IT-1.0"

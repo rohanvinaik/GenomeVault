@@ -1,7 +1,7 @@
 """Adversarial tests for ZK proof system security."""
 
-import pytest
 import numpy as np
+import pytest
 
 from genomevault.zk_proofs.circuits import PRSProofCircuit
 from genomevault.zk_proofs.prover import ZKProver

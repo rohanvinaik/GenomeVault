@@ -34,8 +34,8 @@ class PRSProofCircuit(BaseCircuit):
     def serialize_proof(self, proof: Any) -> bytes:
         """Serialize proof to bytes."""
         # In production, this would properly serialize the proof
-        import json
         import hashlib
+        import json
 
         # Create deterministic but randomized proof
         proof_data = json.dumps(proof, sort_keys=True)

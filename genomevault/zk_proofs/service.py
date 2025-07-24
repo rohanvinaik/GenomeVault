@@ -3,12 +3,12 @@
 import asyncio
 import uuid
 from datetime import datetime
-from typing import Dict, Any, Optional, List
+from typing import Any, Dict, List, Optional
 
+from genomevault.utils.logging import logger
+from genomevault.zk_proofs.circuits import PRSProofCircuit
 from genomevault.zk_proofs.prover import ZKProver
 from genomevault.zk_proofs.verifier import ZKVerifier
-from genomevault.zk_proofs.circuits import PRSProofCircuit
-from genomevault.utils.logging import logger
 
 
 class ProofRequest:

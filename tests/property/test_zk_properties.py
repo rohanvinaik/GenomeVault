@@ -1,8 +1,9 @@
 """Property-based tests for ZK proof system using Hypothesis."""
 
-import pytest
-from hypothesis import given, strategies as st, settings
 import numpy as np
+import pytest
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 from genomevault.zk_proofs.circuits import PRSProofCircuit
 from genomevault.zk_proofs.prover import ZKProver
