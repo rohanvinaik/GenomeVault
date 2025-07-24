@@ -37,6 +37,7 @@ registry = HypervectorRegistry()
 
 class EncodingRequest(BaseModel):
     """Request model for encoding genomic data"""
+
     features: Dict[str, Any] = Field(..., description="Feature dictionary or array")
     omics_type: str = Field(..., description="Type of omics data")
     compression_tier: Optional[str] = Field("full", description="Compression tier")
@@ -45,6 +46,7 @@ class EncodingRequest(BaseModel):
 
 class EncodingResponse(BaseModel):
     """Response model for encoded data"""
+
     vector: List[float] = Field(..., description="Encoded hypervector")
     dimension: int = Field(..., description="Vector dimension")
     version: str = Field(..., description="Encoding version used")
@@ -54,6 +56,7 @@ class EncodingResponse(BaseModel):
 
 class MultiModalEncodingRequest(BaseModel):
     """Request for encoding multiple modalities"""
+
     modalities: Dict[str, Dict[str, Any]] = Field(..., description="Dict of modality data")
     compression_tier: Optional[str] = Field("full", description="Compression tier")
     binding_type: Optional[str] = Field("fourier", description="Binding type for cross-modal")
@@ -61,6 +64,7 @@ class MultiModalEncodingRequest(BaseModel):
 
 class SimilarityRequest(BaseModel):
     """Request for computing similarity between vectors"""
+
     vector1: List[float] = Field(..., description="First hypervector")
     vector2: List[float] = Field(..., description="Second hypervector")
     metric: Optional[str] = Field("cosine", description="Similarity metric")
@@ -68,6 +72,7 @@ class SimilarityRequest(BaseModel):
 
 class DecodeRequest(BaseModel):
     """Request for decoding/querying a hypervector"""
+
     vector: List[float] = Field(..., description="Hypervector to decode")
     query_type: str = Field(..., description="Type of query")
     role: Optional[str] = Field(None, description="Role to query for composite vectors")
@@ -75,6 +80,7 @@ class DecodeRequest(BaseModel):
 
 class VersionInfo(BaseModel):
     """Version information response"""
+
     current_version: str
     available_versions: List[Dict[str, Any]]
     hdc_seed: str
@@ -83,6 +89,7 @@ class VersionInfo(BaseModel):
 
 class PerformanceMetrics(BaseModel):
     """Performance metrics response"""
+
     average_encoding_time_ms: float
     encodings_per_second: float
     test_feature_size: int
@@ -102,27 +109,26 @@ def get_encoder(version: Optional[str] = None) -> HypervectorEncoder:
 
 @router.post("/encode", response_model=EncodingResponse)
 async def encode_genome(
-    request: EncodingRequest,
-    encoder: HypervectorEncoder = Depends(get_encoder)
+    request: EncodingRequest, encoder: HypervectorEncoder = Depends(get_encoder)
 ) -> EncodingResponse:
     """
     Encode genomic data into a hypervector
-    
+
     This endpoint accepts various types of genomic data and returns
     a privacy-preserving hyperdimensional vector representation.
     """
     try:
         start_time = datetime.now().timestamp()
-        
+
         # Parse omics type
         try:
             omics_type = OmicsType(request.omics_type)
         except ValueError:
             raise HTTPException(
                 status_code=400,
-                detail=f"Invalid omics type: {request.omics_type}. Valid types: {[t.value for t in OmicsType]}"
+                detail=f"Invalid omics type: {request.omics_type}. Valid types: {[t.value for t in OmicsType]}",
             )
-        
+
         # Parse compression tier if provided
         compression_tier = None
         if request.compression_tier:
@@ -130,38 +136,33 @@ async def encode_genome(
                 compression_tier = CompressionTier(request.compression_tier)
             except ValueError:
                 raise HTTPException(
-                    status_code=400,
-                    detail=f"Invalid compression tier: {request.compression_tier}"
+                    status_code=400, detail=f"Invalid compression tier: {request.compression_tier}"
                 )
-        
+
         # Encode the data
-        hypervector = encoder.encode(
-            request.features,
-            omics_type,
-            compression_tier
-        )
-        
+        hypervector = encoder.encode(request.features, omics_type, compression_tier)
+
         # Calculate encoding time
         encoding_time_ms = (datetime.now().timestamp() - start_time) * 1000
-        
+
         # Get encoding metrics
         metrics = encoder.get_encoding_metrics(start_time, hypervector)
-        
+
         # Prepare response
         return EncodingResponse(
             vector=hypervector.tolist(),
             dimension=hypervector.shape[0],
-            version=getattr(encoder, 'version', 'unknown'),
+            version=getattr(encoder, "version", "unknown"),
             encoding_time_ms=encoding_time_ms,
             metadata={
                 "omics_type": omics_type.value,
                 "compression_tier": compression_tier.value if compression_tier else "default",
-                "fingerprint": getattr(encoder, 'fingerprint', 'unknown'),
+                "fingerprint": getattr(encoder, "fingerprint", "unknown"),
                 "sparsity": metrics.sparsity,
-                "compression_ratio": metrics.compression_ratio
-            }
+                "compression_ratio": metrics.compression_ratio,
+            },
         )
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -171,25 +172,24 @@ async def encode_genome(
 
 @router.post("/encode_multimodal", response_model=EncodingResponse)
 async def encode_multimodal(
-    request: MultiModalEncodingRequest,
-    encoder: HypervectorEncoder = Depends(get_encoder)
+    request: MultiModalEncodingRequest, encoder: HypervectorEncoder = Depends(get_encoder)
 ) -> EncodingResponse:
     """
     Encode multiple modalities and bind them together
-    
+
     This creates a cross-modal representation that captures
     relationships between different types of biological data.
     """
     try:
         start_time = datetime.now().timestamp()
-        
+
         # Parse compression tier and binding type
         compression_tier = CompressionTier(request.compression_tier)
         binding_type = BindingType(request.binding_type)
-        
+
         # Create binder
         binder = HypervectorBinder(encoder.config.dimension)
-        
+
         # Encode each modality
         encoded_modalities = {}
         for modality_name, modality_data in request.modalities.items():
@@ -204,38 +204,35 @@ async def encode_multimodal(
                 omics_type = OmicsType.PROTEOMIC
             else:
                 omics_type = OmicsType.CLINICAL
-            
+
             # Encode
             encoded = encoder.encode(modality_data, omics_type, compression_tier)
             encoded_modalities[modality_name] = encoded
-        
+
         # Bind modalities together
         if len(encoded_modalities) == 1:
             # Single modality, return as is
             combined = list(encoded_modalities.values())[0]
         else:
             # Multi-modal binding
-            combined = binder.bind(
-                list(encoded_modalities.values()),
-                binding_type
-            )
-        
+            combined = binder.bind(list(encoded_modalities.values()), binding_type)
+
         # Calculate encoding time
         encoding_time_ms = (datetime.now().timestamp() - start_time) * 1000
-        
+
         return EncodingResponse(
             vector=combined.tolist(),
             dimension=combined.shape[0],
-            version=getattr(encoder, 'version', 'unknown'),
+            version=getattr(encoder, "version", "unknown"),
             encoding_time_ms=encoding_time_ms,
             metadata={
                 "modalities": list(request.modalities.keys()),
                 "binding_type": binding_type.value,
                 "compression_tier": compression_tier.value,
-                "num_modalities": len(encoded_modalities)
-            }
+                "num_modalities": len(encoded_modalities),
+            },
         )
-        
+
     except Exception as e:
         logger.error(f"Multi-modal encoding error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -245,24 +242,21 @@ async def encode_multimodal(
 async def decode_vector(request: DecodeRequest):
     """
     Decode or query a hypervector
-    
+
     Note: Full reconstruction is computationally infeasible by design.
     This endpoint provides approximate querying capabilities.
     """
     try:
         # Convert to tensor
         vector = torch.tensor(request.vector)
-        
+
         # Validate vector
         if not torch.isfinite(vector).all():
-            raise HTTPException(
-                status_code=400,
-                detail="Vector contains invalid values (inf/nan)"
-            )
-        
+            raise HTTPException(status_code=400, detail="Vector contains invalid values (inf/nan)")
+
         # Get encoder for decoding operations
         encoder = registry.get_encoder()
-        
+
         if request.query_type == "non_invertible_proof":
             # Demonstrate non-invertibility
             return {
@@ -272,9 +266,9 @@ async def decode_vector(request: DecodeRequest):
                     "Cannot recover original data from hypervector alone"
                 ),
                 "security_guarantee": "Computationally infeasible reconstruction",
-                "privacy_preservation": "Original genomic data cannot be recovered"
+                "privacy_preservation": "Original genomic data cannot be recovered",
             }
-        
+
         elif request.query_type == "vector_stats":
             # Return statistical information about the vector
             return {
@@ -284,24 +278,21 @@ async def decode_vector(request: DecodeRequest):
                 "min": float(vector.min()),
                 "max": float(vector.max()),
                 "sparsity": float((vector == 0).float().mean()),
-                "norm": float(torch.norm(vector))
+                "norm": float(torch.norm(vector)),
             }
-        
+
         elif request.query_type == "composite_query" and request.role:
             # Query composite vector for a role
             # This requires the role vector which should be stored
             return {
                 "message": "Composite querying requires role vectors",
                 "note": "Implementation depends on stored role-filler mappings",
-                "role_requested": request.role
+                "role_requested": request.role,
             }
-        
+
         else:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Unknown query type: {request.query_type}"
-            )
-            
+            raise HTTPException(status_code=400, detail=f"Unknown query type: {request.query_type}")
+
     except HTTPException:
         raise
     except Exception as e:
@@ -313,38 +304,35 @@ async def decode_vector(request: DecodeRequest):
 async def compute_similarity(request: SimilarityRequest):
     """
     Compute similarity between two hypervectors
-    
+
     This preserves the similarity relationships from the original space.
     """
     try:
         # Convert to tensors
         v1 = torch.tensor(request.vector1)
         v2 = torch.tensor(request.vector2)
-        
+
         # Validate dimensions match
         if v1.shape != v2.shape:
             raise HTTPException(
                 status_code=400,
-                detail=f"Vectors must have the same dimension: {v1.shape} != {v2.shape}"
+                detail=f"Vectors must have the same dimension: {v1.shape} != {v2.shape}",
             )
-        
+
         # Validate vectors
         if not (torch.isfinite(v1).all() and torch.isfinite(v2).all()):
-            raise HTTPException(
-                status_code=400,
-                detail="Vectors contain invalid values (inf/nan)"
-            )
-        
+            raise HTTPException(status_code=400, detail="Vectors contain invalid values (inf/nan)")
+
         # Get encoder for similarity computation
         encoder = registry.get_encoder()
-        
+
         # Compute similarity
         similarity = encoder.similarity(v1, v2, request.metric)
-        
+
         # Additional metrics
         euclidean_distance = torch.dist(v1, v2, p=2).item()
         manhattan_distance = torch.dist(v1, v2, p=1).item()
-        
+
         return {
             "similarity": float(similarity),
             "metric": request.metric,
@@ -352,10 +340,10 @@ async def compute_similarity(request: SimilarityRequest):
             "additional_metrics": {
                 "euclidean_distance": euclidean_distance,
                 "manhattan_distance": manhattan_distance,
-                "dot_product": float(torch.dot(v1, v2))
-            }
+                "dot_product": float(torch.dot(v1, v2)),
+            },
         }
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -368,16 +356,16 @@ async def get_version_info():
     """Get HDC encoding version information"""
     try:
         from genomevault.version import HDC_ENCODER_VERSION, HDC_SEED
-        
+
         versions = registry.list_versions()
-        
+
         return VersionInfo(
             current_version=registry.current_version,
             available_versions=versions,
             hdc_seed=HDC_SEED,
-            encoder_version=HDC_ENCODER_VERSION
+            encoder_version=HDC_ENCODER_VERSION,
         )
-        
+
     except Exception as e:
         logger.error(f"Version info error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -389,7 +377,7 @@ async def register_new_version(
     dimension: int,
     projection_type: str,
     description: Optional[str] = None,
-    sparsity: Optional[float] = 0.1
+    sparsity: Optional[float] = 0.1,
 ):
     """Register a new encoding version"""
     try:
@@ -398,28 +386,19 @@ async def register_new_version(
             ProjectionType(projection_type)
         except ValueError:
             raise HTTPException(
-                status_code=400,
-                detail=f"Invalid projection type: {projection_type}"
+                status_code=400, detail=f"Invalid projection type: {projection_type}"
             )
-        
-        params = {
-            "dimension": dimension,
-            "projection_type": projection_type,
-            "sparsity": sparsity
-        }
-        
+
+        params = {"dimension": dimension, "projection_type": projection_type, "sparsity": sparsity}
+
         registry.register_version(
             version=version,
             params=params,
-            description=description or f"Registered via API at {datetime.now()}"
+            description=description or f"Registered via API at {datetime.now()}",
         )
-        
-        return {
-            "message": "Version registered successfully",
-            "version": version,
-            "params": params
-        }
-        
+
+        return {"message": "Version registered successfully", "version": version, "params": params}
+
     except HTTPException:
         raise
     except Exception as e:
@@ -429,13 +408,11 @@ async def register_new_version(
 
 @router.post("/encode_file")
 async def encode_genomic_file(
-    file: UploadFile = File(...),
-    omics_type: str = "genomic",
-    compression_tier: str = "full"
+    file: UploadFile = File(...), omics_type: str = "genomic", compression_tier: str = "full"
 ):
     """
     Encode a genomic data file directly
-    
+
     Supports various file formats (VCF, BAM, FASTQ, etc.)
     This is a placeholder for full implementation.
     """
@@ -443,16 +420,15 @@ async def encode_genomic_file(
         # Validate file size (max 100MB)
         max_size = 100 * 1024 * 1024  # 100MB
         content = await file.read()
-        
+
         if len(content) > max_size:
             raise HTTPException(
-                status_code=413,
-                detail=f"File too large. Maximum size: {max_size/1024/1024}MB"
+                status_code=413, detail=f"File too large. Maximum size: {max_size/1024/1024}MB"
             )
-        
+
         # This is a placeholder - actual implementation would
         # parse the file and extract features based on file type
-        
+
         return {
             "message": "File encoding endpoint (placeholder)",
             "filename": file.filename,
@@ -460,9 +436,9 @@ async def encode_genomic_file(
             "omics_type": omics_type,
             "compression_tier": compression_tier,
             "note": "Full implementation requires file parsing modules",
-            "supported_formats": ["VCF", "BAM", "FASTQ", "CSV", "TSV"]
+            "supported_formats": ["VCF", "BAM", "FASTQ", "CSV", "TSV"],
         }
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -476,38 +452,38 @@ async def get_performance_metrics():
     try:
         # Get encoder
         encoder = registry.get_encoder()
-        
+
         # Generate test data
         test_features = torch.randn(1000)
-        
+
         # Measure encoding performance
         import time
 
         # Warm-up
         for _ in range(10):
             _ = encoder.encode(test_features, OmicsType.GENOMIC)
-        
+
         # Time multiple encodings
         num_trials = 100
         start = time.time()
-        
+
         for _ in range(num_trials):
             _ = encoder.encode(test_features, OmicsType.GENOMIC)
-        
+
         elapsed = time.time() - start
         avg_time_ms = (elapsed / num_trials) * 1000
-        
+
         # Calculate throughput
         encodings_per_second = num_trials / elapsed
-        
+
         return PerformanceMetrics(
             average_encoding_time_ms=avg_time_ms,
             encodings_per_second=encodings_per_second,
             test_feature_size=1000,
             output_dimension=encoder.config.dimension,
-            projection_type=encoder.config.projection_type.value
+            projection_type=encoder.config.projection_type.value,
         )
-        
+
     except Exception as e:
         logger.error(f"Performance metrics error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -519,24 +495,18 @@ async def health_check():
     try:
         # Test encoder creation
         encoder = registry.get_encoder()
-        
+
         # Test encoding
-        test_vector = encoder.encode(
-            {"test": [1, 2, 3]}, 
-            OmicsType.GENOMIC
-        )
-        
+        test_vector = encoder.encode({"test": [1, 2, 3]}, OmicsType.GENOMIC)
+
         return {
             "status": "healthy",
             "registry_versions": len(registry.versions),
             "current_version": registry.current_version,
-            "test_encoding_dimension": test_vector.shape[0]
+            "test_encoding_dimension": test_vector.shape[0],
         }
     except Exception as e:
-        return {
-            "status": "unhealthy",
-            "error": str(e)
-        }
+        return {"status": "unhealthy", "error": str(e)}
 
 
 # Include router in main app

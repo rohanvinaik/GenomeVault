@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 
 class BindingType(Enum):
     """Types of binding operations"""
+
     MULTIPLY = "multiply"  # Element-wise multiplication
     CIRCULAR = "circular"  # Circular convolution
     PERMUTATION = "permutation"  # Permutation-based binding
@@ -47,11 +48,11 @@ class HypervectorBinder:
         self.dimension = dimension
         self._permutation_cache = {}
         self._key_cache = {}
-        
+
         if seed is not None:
             torch.manual_seed(seed)
             np.random.seed(seed)
-        
+
         logger.info(f"Initialized HypervectorBinder for {dimension}D vectors")
 
     def bind(
@@ -73,20 +74,20 @@ class HypervectorBinder:
         """
         if not vectors:
             raise ValueError("No vectors provided for binding")
-        
+
         # Validate dimensions
         for i, v in enumerate(vectors):
             if v.shape[-1] != self.dimension:
                 raise ValueError(
                     f"Vector {i} has dimension {v.shape[-1]}, expected {self.dimension}"
                 )
-        
+
         # Apply weights if provided
         if weights is not None:
             if len(weights) != len(vectors):
                 raise ValueError("Number of weights must match number of vectors")
             vectors = [v * w for v, w in zip(vectors, weights)]
-        
+
         # Perform binding based on type
         if binding_type == BindingType.MULTIPLY:
             result = self._multiply_bind(vectors)
@@ -102,7 +103,7 @@ class HypervectorBinder:
             result = self.bundle(vectors)
         else:
             raise ValueError(f"Unknown binding type: {binding_type}")
-        
+
         logger.debug(f"Bound {len(vectors)} vectors using {binding_type.value}")
         return result
 
@@ -157,14 +158,14 @@ class HypervectorBinder:
         """Circular convolution binding"""
         if len(vectors) == 1:
             return vectors[0]
-        
+
         # Start with first vector
         result = vectors[0]
-        
+
         # Bind remaining vectors using circular convolution
         for v in vectors[1:]:
             result = self._circular_convolve(result, v)
-        
+
         return result
 
     def _circular_convolve(self, x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
@@ -181,25 +182,25 @@ class HypervectorBinder:
     ) -> torch.Tensor:
         """Unbind using circular correlation (inverse of convolution)"""
         result = bound_vector
-        
+
         for v in known_vectors:
             # Circular correlation is convolution with reversed vector
             v_reversed = torch.cat([v[:1], v[1:].flip(0)])
             result = self._circular_convolve(result, v_reversed)
-        
+
         return result
 
     def _permutation_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
         """Permutation-based binding"""
         result = torch.zeros_like(vectors[0])
-        
+
         for i, v in enumerate(vectors):
             # Get permutation for this position
             perm = self._get_permutation(i)
-            
+
             # Apply permutation and add
             result += v[perm]
-        
+
         return result / len(vectors)
 
     def _permutation_unbind(
@@ -208,28 +209,28 @@ class HypervectorBinder:
         """Unbind using inverse permutations"""
         # Subtract contributions of known vectors
         result = bound_vector * (len(known_vectors) + 1)
-        
+
         for i, v in enumerate(known_vectors):
             perm = self._get_permutation(i)
             result -= v[perm]
-        
+
         # Apply inverse permutation for unknown position
         unknown_pos = len(known_vectors)
         inv_perm = self._get_inverse_permutation(unknown_pos)
-        
+
         return result[inv_perm]
 
     def _xor_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
         """XOR binding for binary vectors"""
         # Convert to binary
         binary_vectors = [(v > 0).float() for v in vectors]
-        
+
         # XOR all vectors
         result = binary_vectors[0]
         for v in binary_vectors[1:]:
             # XOR operation for floating point representation
             result = (result + v) % 2
-        
+
         # Convert back to {-1, +1}
         return result * 2 - 1
 
@@ -246,21 +247,21 @@ class HypervectorBinder:
         """
         if len(vectors) == 1:
             return vectors[0]
-        
+
         # Transform to frequency domain
         result_freq = torch.fft.fft(vectors[0])
-        
+
         # Multiply in frequency domain (convolution in time domain)
         for v in vectors[1:]:
             v_freq = torch.fft.fft(v)
             result_freq = result_freq * v_freq
-        
+
         # Transform back to time domain
         result = torch.fft.ifft(result_freq).real
-        
+
         # Normalize to maintain magnitude
         result = result / torch.norm(result) * torch.norm(vectors[0])
-        
+
         return result
 
     def _fourier_unbind(
@@ -272,30 +273,30 @@ class HypervectorBinder:
         """
         # Transform bound vector to frequency domain
         result_freq = torch.fft.fft(bound_vector)
-        
+
         # Divide by known vectors in frequency domain
         for v in known_vectors:
             v_freq = torch.fft.fft(v)
             # Add small epsilon to avoid division by zero
             result_freq = result_freq / (v_freq + 1e-8)
-        
+
         # Transform back to time domain
         result = torch.fft.ifft(result_freq).real
-        
+
         # Normalize
         result = result / torch.norm(result) * torch.norm(bound_vector)
-        
+
         return result
 
     def _get_permutation(self, position: int) -> torch.Tensor:
         """Get deterministic permutation for a position"""
         if position in self._permutation_cache:
             return self._permutation_cache[position]
-        
+
         # Create deterministic permutation based on position
         torch.manual_seed(42 + position)  # Fixed seed + position
         perm = torch.randperm(self.dimension)
-        
+
         self._permutation_cache[position] = perm
         return perm
 
@@ -319,14 +320,14 @@ class HypervectorBinder:
         """
         if not vectors:
             raise ValueError("No vectors provided for bundling")
-        
+
         # Simple addition
         result = torch.stack(vectors).sum(dim=0)
-        
+
         # Normalize if requested
         if normalize:
             result = result / torch.norm(result)
-        
+
         return result
 
     def protect(self, vector: torch.Tensor, key: torch.Tensor) -> torch.Tensor:
@@ -358,7 +359,7 @@ class HypervectorBinder:
     def create_composite_binding(
         self,
         role_filler_pairs: List[Tuple[torch.Tensor, torch.Tensor]],
-        binding_type: BindingType = BindingType.FOURIER
+        binding_type: BindingType = BindingType.FOURIER,
     ) -> torch.Tensor:
         """
         Create a composite binding of role-filler pairs
@@ -372,12 +373,12 @@ class HypervectorBinder:
             Composite hypervector
         """
         bound_pairs = []
-        
+
         for role, filler in role_filler_pairs:
             # Bind each role with its filler
             bound = self.bind([role, filler], binding_type)
             bound_pairs.append(bound)
-        
+
         # Bundle all bound pairs
         return self.bundle(bound_pairs)
 
@@ -385,7 +386,7 @@ class HypervectorBinder:
         self,
         composite: torch.Tensor,
         role: torch.Tensor,
-        binding_type: BindingType = BindingType.FOURIER
+        binding_type: BindingType = BindingType.FOURIER,
     ) -> torch.Tensor:
         """
         Query a composite binding for a specific role
@@ -404,7 +405,7 @@ class HypervectorBinder:
     def compute_binding_capacity(self, num_items: int) -> float:
         """
         Compute the theoretical binding capacity
-        
+
         Args:
             num_items: Number of items to bind
 
@@ -419,7 +420,7 @@ class HypervectorBinder:
     def test_binding_properties(self, num_samples: int = 100) -> Dict[str, float]:
         """
         Test mathematical properties of binding operations
-        
+
         Args:
             num_samples: Number of samples to test
 
@@ -427,50 +428,47 @@ class HypervectorBinder:
             Dictionary of property test results
         """
         results = {}
-        
+
         # Generate random test vectors
         torch.manual_seed(42)
-        test_vectors = [
-            torch.randn(self.dimension) for _ in range(3)
-        ]
-        
+        test_vectors = [torch.randn(self.dimension) for _ in range(3)]
+
         # Normalize test vectors
         test_vectors = [v / torch.norm(v) for v in test_vectors]
         a, b, c = test_vectors
-        
+
         # Test commutativity: a * b = b * a
         ab = self.bind([a, b], BindingType.MULTIPLY)
         ba = self.bind([b, a], BindingType.MULTIPLY)
         results["multiply_commutative"] = torch.allclose(ab, ba, atol=1e-5)
-        
+
         # Test associativity: (a * b) * c = a * (b * c)
         ab_c = self.bind([ab, c], BindingType.MULTIPLY)
         bc = self.bind([b, c], BindingType.MULTIPLY)
         a_bc = self.bind([a, bc], BindingType.MULTIPLY)
         results["multiply_associative"] = torch.allclose(ab_c, a_bc, atol=1e-5)
-        
+
         # Test approximate inverse: unbind(bind(a, b), b) ≈ a
         bound = self.bind([a, b], BindingType.CIRCULAR)
         recovered = self.unbind(bound, [b], BindingType.CIRCULAR)
         similarity = F.cosine_similarity(a.unsqueeze(0), recovered.unsqueeze(0)).item()
         results["circular_inverse_quality"] = similarity
-        
+
         # Test distributivity of bundling: (a + b) * c = a*c + b*c
         a_plus_b = self.bundle([a, b])
         left = self.bind([a_plus_b, c], BindingType.MULTIPLY)
         ac = self.bind([a, c], BindingType.MULTIPLY)
         bc = self.bind([b, c], BindingType.MULTIPLY)
         right = self.bundle([ac, bc])
-        results["distributive"] = F.cosine_similarity(
-            left.unsqueeze(0), right.unsqueeze(0)
-        ).item()
-        
+        results["distributive"] = F.cosine_similarity(left.unsqueeze(0), right.unsqueeze(0)).item()
+
         return results
 
 
 # Legacy class names for backward compatibility
 class BindingOperations(HypervectorBinder):
     """Legacy class name for backward compatibility"""
+
     pass
 
 
@@ -479,7 +477,7 @@ def circular_bind(vectors: List[torch.Tensor]) -> torch.Tensor:
     """Convenience function for circular binding"""
     if not vectors:
         raise ValueError("No vectors provided")
-    
+
     binder = HypervectorBinder(vectors[0].shape[-1])
     return binder.bind(vectors, BindingType.CIRCULAR)
 
@@ -488,7 +486,7 @@ def fourier_bind(vectors: List[torch.Tensor]) -> torch.Tensor:
     """Convenience function for Fourier-based HRR binding"""
     if not vectors:
         raise ValueError("No vectors provided")
-    
+
     binder = HypervectorBinder(vectors[0].shape[-1])
     return binder.bind(vectors, BindingType.FOURIER)
 

@@ -30,6 +30,7 @@ logger = logging.getLogger(__name__)
 
 class OmicsType(Enum):
     """Types of omics data"""
+
     GENOMIC = "genomic"
     TRANSCRIPTOMIC = "transcriptomic"
     EPIGENOMIC = "epigenomic"
@@ -39,6 +40,7 @@ class OmicsType(Enum):
 
 class ProjectionType(Enum):
     """Types of projection matrices for different use cases"""
+
     RANDOM_GAUSSIAN = "random_gaussian"
     SPARSE_RANDOM = "sparse_random"
     LEARNED = "learned"
@@ -47,6 +49,7 @@ class ProjectionType(Enum):
 
 class CompressionTier(Enum):
     """Compression tiers for different use cases"""
+
     MINI = "mini"  # ~5,000 SNPs, ~25KB
     CLINICAL = "clinical"  # ACMG + PharmGKB variants (~120k), ~300KB
     FULL = "full"  # Full HDC 10,000-20,000D vectors, 100-200KB
@@ -55,6 +58,7 @@ class CompressionTier(Enum):
 @dataclass
 class HypervectorConfig:
     """Configuration for hypervector encoding"""
+
     dimension: int = 10000
     projection_type: ProjectionType = ProjectionType.SPARSE_RANDOM
     sparsity: float = 0.1  # For sparse projections
@@ -68,6 +72,7 @@ class HypervectorConfig:
 @dataclass
 class EncodingMetrics:
     """Metrics for encoding performance"""
+
     encoding_time_ms: float
     memory_usage_kb: float
     dimension: int
@@ -91,46 +96,46 @@ class HypervectorEncoder:
             config: Encoding configuration, uses defaults if None
         """
         self.config = config or HypervectorConfig()
-        
+
         # Set random seed for reproducibility
         if self.config.seed is not None:
             torch.manual_seed(self.config.seed)
             np.random.seed(self.config.seed)
-        
+
         # Cache for projection matrices
         self._projection_cache = {}
-        
+
         # Multi-resolution dimensions based on tier
         self.tier_configs = {
             CompressionTier.MINI: {
                 "dimension": 5000,
                 "features": "most_studied_snps",
-                "size_kb": 25
+                "size_kb": 25,
             },
             CompressionTier.CLINICAL: {
                 "dimension": 10000,
                 "features": "acmg_pharmgkb_variants",
-                "size_kb": 300
+                "size_kb": 300,
             },
             CompressionTier.FULL: {
                 "dimension": self.config.dimension,
                 "features": "all",
-                "size_kb": 200  # Due to compression
-            }
+                "size_kb": 200,  # Due to compression
+            },
         }
-        
+
         # Set encoder metadata
         self.version = "v1.0.0"
         self.fingerprint = self._generate_fingerprint()
         self.dimension = self.config.dimension
-        
+
         logger.info(f"Initialized HypervectorEncoder with {self.config.dimension}D vectors")
 
     def encode(
         self,
         features: Union[np.ndarray, torch.Tensor, Dict],
         omics_type: OmicsType,
-        tier: Optional[CompressionTier] = None
+        tier: Optional[CompressionTier] = None,
     ) -> torch.Tensor:
         """
         Encode features into a hypervector
@@ -146,47 +151,45 @@ class HypervectorEncoder:
         try:
             # Use tier from config if not specified
             tier = tier or self.config.compression_tier
-            
+
             # Extract features if dict
             if isinstance(features, dict):
                 features = self._extract_features(features, omics_type)
-            
+
             # Convert to tensor
             if isinstance(features, np.ndarray):
                 features = torch.from_numpy(features).float()
             elif not isinstance(features, torch.Tensor):
                 raise ValueError(f"Unsupported feature type: {type(features)}")
-            
+
             # Get appropriate dimension for tier
             dimension = self.tier_configs[tier]["dimension"]
-            
+
             # Get or create projection matrix
             projection_matrix = self._get_projection_matrix(
                 len(features), dimension, omics_type, tier
             )
-            
+
             # Project to hypervector space
             hypervector = self._project(features, projection_matrix)
-            
+
             # Apply post-processing
             if self.config.normalize:
                 hypervector = self._normalize(hypervector)
-            
+
             if self.config.quantize:
                 hypervector = self._quantize(hypervector)
-            
+
             logger.debug(f"Encoded {omics_type.value} features to {dimension}D hypervector")
-            
+
             return hypervector
-            
+
         except Exception as e:
             logger.error(f"Encoding error: {str(e)}")
             raise
 
     def encode_multiresolution(
-        self,
-        features: Union[np.ndarray, torch.Tensor, Dict],
-        omics_type: OmicsType
+        self, features: Union[np.ndarray, torch.Tensor, Dict], omics_type: OmicsType
     ) -> Dict[str, torch.Tensor]:
         """
         Encode features at multiple resolution levels
@@ -199,10 +202,10 @@ class HypervectorEncoder:
             Dictionary mapping tiers to hypervectors
         """
         multiresolution_vectors = {}
-        
+
         for tier in CompressionTier:
             multiresolution_vectors[tier.value] = self.encode(features, omics_type, tier)
-        
+
         return multiresolution_vectors
 
     def _extract_features(self, data: Dict, omics_type: OmicsType) -> torch.Tensor:
@@ -211,24 +214,22 @@ class HypervectorEncoder:
             # Extract variant features
             variants = data.get("variants", {})
             features = []
-            
+
             # Add variant counts by type
             for var_type in ["snps", "indels", "cnvs"]:
                 if var_type in variants:
                     features.append(len(variants[var_type]))
-            
+
             # Add quality metrics
             if "quality_metrics" in data:
                 qm = data["quality_metrics"]
-                features.extend([
-                    qm.get("mean_coverage", 0),
-                    qm.get("uniformity", 0),
-                    qm.get("gc_content", 0)
-                ])
-            
+                features.extend(
+                    [qm.get("mean_coverage", 0), qm.get("uniformity", 0), qm.get("gc_content", 0)]
+                )
+
             # Convert to tensor
             return torch.tensor(features, dtype=torch.float32)
-            
+
         elif omics_type == OmicsType.TRANSCRIPTOMIC:
             # Extract expression features
             if "expression_matrix" in data:
@@ -237,17 +238,17 @@ class HypervectorEncoder:
                     return torch.from_numpy(expr.values.flatten()).float()
                 else:
                     return torch.tensor(expr, dtype=torch.float32)
-                    
+
         elif omics_type == OmicsType.EPIGENOMIC:
             # Extract methylation features
             if "methylation_levels" in data:
                 return torch.tensor(data["methylation_levels"], dtype=torch.float32)
-                
+
         elif omics_type == OmicsType.PROTEOMIC:
             # Extract protein abundances
             if "protein_abundances" in data:
                 return torch.tensor(data["protein_abundances"], dtype=torch.float32)
-                
+
         elif omics_type == OmicsType.CLINICAL:
             # Extract clinical features
             features = []
@@ -256,11 +257,9 @@ class HypervectorEncoder:
                     features.append(value)
                 elif isinstance(value, str):
                     # Hash categorical values
-                    features.append(
-                        int(hashlib.md5(value.encode()).hexdigest()[:8], 16) % 1000
-                    )
+                    features.append(int(hashlib.md5(value.encode()).hexdigest()[:8], 16) % 1000)
             return torch.tensor(features, dtype=torch.float32)
-        
+
         # Default: flatten all numeric values
         features = []
         for key, value in data.items():
@@ -268,23 +267,19 @@ class HypervectorEncoder:
                 features.append(value)
             elif isinstance(value, (list, np.ndarray)):
                 features.extend(np.array(value).flatten())
-        
+
         return torch.tensor(features, dtype=torch.float32)
 
     def _get_projection_matrix(
-        self,
-        input_dim: int,
-        output_dim: int,
-        omics_type: OmicsType,
-        tier: CompressionTier
+        self, input_dim: int, output_dim: int, omics_type: OmicsType, tier: CompressionTier
     ) -> torch.Tensor:
         """Get or create projection matrix for given dimensions"""
         # Create cache key
         cache_key = f"{omics_type.value}_{input_dim}_{output_dim}_{tier.value}"
-        
+
         if cache_key in self._projection_cache:
             return self._projection_cache[cache_key]
-        
+
         # Create new projection matrix
         if self.config.projection_type == ProjectionType.RANDOM_GAUSSIAN:
             matrix = self._create_gaussian_projection(input_dim, output_dim)
@@ -294,10 +289,10 @@ class HypervectorEncoder:
             matrix = self._create_orthogonal_projection(input_dim, output_dim)
         else:
             raise ValueError(f"Unsupported projection type: {self.config.projection_type}")
-        
+
         # Cache the matrix
         self._projection_cache[cache_key] = matrix
-        
+
         return matrix
 
     def _create_gaussian_projection(self, input_dim: int, output_dim: int) -> torch.Tensor:
@@ -309,23 +304,23 @@ class HypervectorEncoder:
     def _create_sparse_projection(self, input_dim: int, output_dim: int) -> torch.Tensor:
         """Create sparse random projection matrix"""
         matrix = torch.zeros(output_dim, input_dim)
-        
+
         # Sparse random projection (Achlioptas, 2003)
         s = 1.0 / np.sqrt(self.config.sparsity * input_dim)
-        
+
         for i in range(output_dim):
             # Number of non-zero entries
             nnz = int(input_dim * self.config.sparsity)
-            
+
             # Random positions
             indices = torch.randperm(input_dim)[:nnz]
-            
+
             # Random values from {-s, +s}
             values = torch.bernoulli(torch.ones(nnz) * 0.5) * 2 - 1
             values *= s
-            
+
             matrix[i, indices] = values
-        
+
         return matrix
 
     def _create_orthogonal_projection(self, input_dim: int, output_dim: int) -> torch.Tensor:
@@ -348,7 +343,7 @@ class HypervectorEncoder:
             # Flatten all but batch dimension
             batch_size = features.shape[0]
             features = features.view(batch_size, -1)
-            
+
             # Batch matrix multiplication
             hypervectors = torch.matmul(features, projection_matrix.T)
             return hypervectors
@@ -367,11 +362,11 @@ class HypervectorEncoder:
         min_val = hypervector.min()
         max_val = hypervector.max()
         normalized = 2 * (hypervector - min_val) / (max_val - min_val + 1e-8) - 1
-        
+
         # Quantize
-        levels = 2 ** self.config.quantization_bits
+        levels = 2**self.config.quantization_bits
         quantized = torch.round((normalized + 1) * (levels - 1) / 2)
-        
+
         # Scale back
         return 2 * quantized / (levels - 1) - 1
 
@@ -388,9 +383,7 @@ class HypervectorEncoder:
             Similarity score
         """
         if metric == "cosine":
-            return torch.nn.functional.cosine_similarity(
-                hv1.view(1, -1), hv2.view(1, -1)
-            ).item()
+            return torch.nn.functional.cosine_similarity(hv1.view(1, -1), hv2.view(1, -1)).item()
         elif metric == "euclidean":
             return -torch.dist(hv1, hv2, p=2).item()
         elif metric == "hamming":
@@ -403,21 +396,21 @@ class HypervectorEncoder:
         """Calculate encoding metrics"""
         encoding_time_ms = (datetime.now().timestamp() - start_time) * 1000
         memory_usage_kb = hypervector.element_size() * hypervector.nelement() / 1024
-        
+
         # Calculate sparsity
         sparsity = (hypervector == 0).float().mean().item()
-        
+
         # Compression ratio (compared to float32 representation)
         original_size = hypervector.nelement() * 4  # float32
         compressed_size = hypervector.element_size() * hypervector.nelement()
         compression_ratio = original_size / compressed_size
-        
+
         return EncodingMetrics(
             encoding_time_ms=encoding_time_ms,
             memory_usage_kb=memory_usage_kb,
             dimension=hypervector.shape[-1],
             sparsity=sparsity,
-            compression_ratio=compression_ratio
+            compression_ratio=compression_ratio,
         )
 
     def get_projection_stats(self) -> Dict:
@@ -434,13 +427,16 @@ class HypervectorEncoder:
 
     def _generate_fingerprint(self) -> str:
         """Generate fingerprint for this encoder configuration"""
-        config_str = json.dumps({
-            "dimension": self.config.dimension,
-            "projection_type": self.config.projection_type.value,
-            "sparsity": self.config.sparsity,
-            "seed": self.config.seed
-        }, sort_keys=True)
-        
+        config_str = json.dumps(
+            {
+                "dimension": self.config.dimension,
+                "projection_type": self.config.projection_type.value,
+                "sparsity": self.config.sparsity,
+                "seed": self.config.seed,
+            },
+            sort_keys=True,
+        )
+
         return hashlib.sha256(config_str.encode()).hexdigest()[:16]
 
 
@@ -449,14 +445,14 @@ def create_encoder(
     dimension: int = 10000,
     projection_type: str = "sparse_random",
     compression_tier: str = "full",
-    **kwargs
+    **kwargs,
 ) -> HypervectorEncoder:
     """Create a hypervector encoder with specified configuration"""
     config = HypervectorConfig(
         dimension=dimension,
         projection_type=ProjectionType(projection_type),
         compression_tier=CompressionTier(compression_tier),
-        **kwargs
+        **kwargs,
     )
     return HypervectorEncoder(config)
 

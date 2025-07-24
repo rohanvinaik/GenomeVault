@@ -243,34 +243,39 @@ class HDCBenchmark:
 
         # Run the dedicated HDC benchmark script
         script_path = Path(__file__).parent / "bench_hdc.py"
-        
+
         if script_path.exists():
             # Run the comprehensive HDC benchmark
             logger.info("Running comprehensive HDC benchmarks...")
             try:
                 result = subprocess.run(
-                    [sys.executable, str(script_path), "--output-dir", str(self.harness.output_dir)],
+                    [
+                        sys.executable,
+                        str(script_path),
+                        "--output-dir",
+                        str(self.harness.output_dir),
+                    ],
                     capture_output=True,
                     text=True,
-                    check=True
+                    check=True,
                 )
-                
+
                 # Log output
                 if result.stdout:
                     logger.info(f"HDC benchmark output:\n{result.stdout}")
                 if result.stderr:
                     logger.warning(f"HDC benchmark warnings:\n{result.stderr}")
-                
+
                 # Load the latest results
                 latest_results = self._load_latest_hdc_results()
                 if latest_results:
                     self.harness.add_result("hdc_comprehensive", latest_results)
-                
+
             except subprocess.CalledProcessError as e:
                 logger.error(f"HDC benchmark failed: {e}")
                 logger.error(f"stdout: {e.stdout}")
                 logger.error(f"stderr: {e.stderr}")
-                
+
                 # Fall back to basic benchmarks
                 await self._run_basic_hdc_benchmarks()
         else:
@@ -285,12 +290,12 @@ class HDCBenchmark:
             json_files = list(self.harness.output_dir.glob("*.json"))
             if not json_files:
                 return None
-            
+
             latest_file = max(json_files, key=lambda f: f.stat().st_mtime)
-            
-            with open(latest_file, 'r') as f:
+
+            with open(latest_file, "r") as f:
                 data = json.load(f)
-            
+
             # Extract summary metrics
             if "summary" in data:
                 return data["summary"]
@@ -298,9 +303,9 @@ class HDCBenchmark:
                 return {
                     "source": str(latest_file.name),
                     "timestamp": data.get("timestamp", "unknown"),
-                    "benchmarks_completed": len(data.get("benchmarks", {}))
+                    "benchmarks_completed": len(data.get("benchmarks", {})),
                 }
-        
+
         except Exception as e:
             logger.error(f"Failed to load HDC results: {e}")
             return None
@@ -308,44 +313,45 @@ class HDCBenchmark:
     async def _run_basic_hdc_benchmarks(self):
         """Run basic HDC benchmarks as fallback."""
         logger.info("Running basic HDC benchmarks...")
-        
+
         try:
-            from genomevault.hypervector_transform.hdc_encoder import create_encoder, OmicsType
             import time
-            
+
+            from genomevault.hypervector_transform.hdc_encoder import OmicsType, create_encoder
+
             # Basic encoding benchmark
             encoder = create_encoder(dimension=10000)
             features = np.random.randn(1000)
-            
+
             # Warm-up
             for _ in range(10):
                 _ = encoder.encode(features, OmicsType.GENOMIC)
-            
+
             # Benchmark
             start_time = time.time()
             num_trials = 100
-            
+
             for _ in range(num_trials):
                 _ = encoder.encode(features, OmicsType.GENOMIC)
-            
+
             elapsed = time.time() - start_time
-            
+
             results = {
                 "encoding_time_ms": (elapsed / num_trials) * 1000,
                 "dimension": 10000,
                 "throughput_ops_per_sec": num_trials / elapsed,
-                "feature_size": 1000
+                "feature_size": 1000,
             }
-            
+
             self.harness.add_result("hdc_basic", results)
-            
+
         except ImportError as e:
             logger.error(f"Failed to import HDC modules: {e}")
             # Add minimal results
             results = {
                 "error": "HDC modules not available",
                 "encoding_time_ms": -1,
-                "dimension": 10000
+                "dimension": 10000,
             }
             self.harness.add_result("hdc_basic", results)
 

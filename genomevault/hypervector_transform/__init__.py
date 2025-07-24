@@ -41,20 +41,17 @@ __all__ = [
     "HypervectorConfig",
     "create_encoder",
     "encode_genomic_data",
-    
     # Enums
     "CompressionTier",
     "ProjectionType",
     "OmicsType",
     "BindingType",
-    
     # Binding operations
     "HypervectorBinder",
     "BindingOperations",
     "circular_bind",
     "fourier_bind",
     "protect_vector",
-    
     # Registry
     "HypervectorRegistry",
     "VersionMigrator",
