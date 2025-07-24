@@ -12,9 +12,9 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 
 from genomevault.utils.logging import get_logger
-from genomevault.zk_proofs.prover import Proof
-from genomevault.zk_proofs.backends.gnark_backend import get_backend
 from genomevault.utils.metrics import get_metrics
+from genomevault.zk_proofs.backends.gnark_backend import get_backend
+from genomevault.zk_proofs.prover import Proof
 
 logger = get_logger(__name__)
 metrics = get_metrics()

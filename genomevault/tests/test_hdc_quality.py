@@ -5,10 +5,11 @@ Quantifies the quality loss from hyperdimensional computing compression
 to ensure clinical validity.
 """
 
-import pytest
-import numpy as np
-from typing import List, Dict, Tuple
 import itertools
+from typing import Dict, List, Tuple
+
+import numpy as np
+import pytest
 
 from genomevault.hypervector_transform.encoding import HypervectorEncoder
 from genomevault.hypervector_transform.registry import HypervectorRegistry

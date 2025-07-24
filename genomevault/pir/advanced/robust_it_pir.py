@@ -8,11 +8,12 @@ privacy guarantees.
 
 import hashlib
 import hmac
-import time
-import numpy as np
-from typing import List, Tuple, Optional, Dict, Any
-from dataclasses import dataclass
 import logging
+import time
+from dataclasses import dataclass
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
 
 from genomevault.pir.advanced.it_pir import InformationTheoreticPIR, PIRQuery
 from genomevault.utils.metrics import get_metrics

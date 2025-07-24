@@ -6,14 +6,14 @@ and verifying SNARK proofs. It handles circuit compilation, proof generation,
 and verification with actual cryptographic guarantees.
 """
 
-import subprocess
 import json
-import time
-import tempfile
-import shutil
-from pathlib import Path
-from typing import Dict, Any, Optional, Tuple
 import logging
+import shutil
+import subprocess
+import tempfile
+import time
+from pathlib import Path
+from typing import Any, Dict, Optional, Tuple
 
 from genomevault.utils.metrics import MetricsCollector
 

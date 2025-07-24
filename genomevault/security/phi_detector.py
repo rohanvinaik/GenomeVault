@@ -5,13 +5,13 @@ This module provides tools to scan logs, outputs, and code for potential
 PHI leakage patterns to ensure HIPAA compliance.
 """
 
-import re
-import json
 import hashlib
-from pathlib import Path
-from typing import List, Dict, Any, Optional, Pattern
-from datetime import datetime
+import json
 import logging
+import re
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Pattern
 
 logger = logging.getLogger(__name__)
 

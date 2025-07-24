@@ -8,23 +8,24 @@ Tracks claimed metrics like proof size, verification time, compression ratios.
 
 import argparse
 import json
-import time
 import os
 import sys
-from pathlib import Path
+import time
 from datetime import datetime
-from typing import Dict, List, Any, Optional
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
 import numpy as np
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from genomevault.zk_proofs.prover import Prover
-from genomevault.zk_proofs.advanced.recursive_snark import RecursiveSNARKProver
-from genomevault.pir.advanced.it_pir import InformationTheoreticPIR
 from genomevault.hypervector_transform.encoder import HypervectorEncoder
 from genomevault.hypervector_transform.hierarchical import HierarchicalEncoder
+from genomevault.pir.advanced.it_pir import InformationTheoreticPIR
+from genomevault.zk_proofs.advanced.recursive_snark import RecursiveSNARKProver
+from genomevault.zk_proofs.prover import Prover
 
 
 class BenchmarkResult:

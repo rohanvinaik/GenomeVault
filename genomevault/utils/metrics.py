@@ -6,12 +6,12 @@ benchmarking, and system health tracking.
 """
 
 import json
+import threading
 import time
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Any, Optional
-import threading
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 

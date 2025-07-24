@@ -4,13 +4,14 @@ Hypervector Registry for encoding version management.
 Manages hypervector encoding versions for reproducibility and compatibility.
 """
 
-import json
 import hashlib
-from pathlib import Path
-from datetime import datetime
-from typing import Dict, Any, Optional, List
-import numpy as np
+import json
 import logging
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+import numpy as np
 
 from genomevault.hypervector_transform.encoding import HypervectorEncoder
 
