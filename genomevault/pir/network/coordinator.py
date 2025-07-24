@@ -1,649 +1,485 @@
 """
-PIR network coordinator for managing distributed servers.
-Handles server discovery, health monitoring, and query routing.
+PIR Coordinator for server discovery, health monitoring, and compliance.
+Manages geographic diversity and bandwidth optimization.
 """
 
 import asyncio
-import heapq
 import json
 import time
-from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Set, Tuple
+from enum import Enum
+from typing import Dict, List, Optional, Set, Tuple
 
 import aiohttp
-import numpy as np
+from geopy.distance import geodesic
 
-from genomevault.utils.config import get_config
+from genomevault.utils.logging import logger, audit_logger
 
-config = get_config()
-from genomevault.utils.logging import logger, performance_logger
 
-from ..client import PIRClient, PIRServer
-from ..server.pir_server import PIRServer as PIRServerInstance
+class ServerType(Enum):
+    """PIR server types."""
+
+    TRUSTED_SIGNATORY = "TS"  # HIPAA compliant, 0.98 honesty probability
+    LIGHT_NODE = "LN"  # Generic node, 0.95 honesty probability
 
 
 @dataclass
-class ServerHealth:
-    """Server health metrics."""
+class ServerInfo:
+    """PIR server information."""
 
     server_id: str
-    is_healthy: bool
-    last_check: float
-    latency_ms: float
-    success_rate: float
-    query_count: int
-    error_count: int
-
-    @property
-    def reliability_score(self) -> float:
-        """Calculate server reliability score."""
-        if self.query_count == 0:
-            return 0.5  # Default for new servers
-
-        # Combine success rate and latency
-        latency_factor = 1.0 / (1.0 + self.latency_ms / 100)  # Lower latency is better
-        return self.success_rate * latency_factor
+    server_type: ServerType
+    endpoint: str
+    location: Tuple[float, float]  # (latitude, longitude)
+    region: str  # Geographic region
+    capabilities: Set[str] = field(default_factory=set)
+    health_score: float = 1.0  # 0-1 health score
+    last_health_check: float = 0
+    response_time_ms: float = 0
+    success_rate: float = 1.0
 
 
 @dataclass
-class NetworkTopology:
-    """PIR network topology information."""
+class ServerSelectionCriteria:
+    """Criteria for server selection."""
 
-    servers: Dict[str, PIRServer] = field(default_factory=dict)
-    server_health: Dict[str, ServerHealth] = field(default_factory=dict)
-    server_regions: Dict[str, Set[str]] = field(default_factory=lambda: defaultdict(set))
-    ts_servers: Set[str] = field(default_factory=set)
-    ln_servers: Set[str] = field(default_factory=set)
-
-    def add_server(self, server: PIRServer):
-        """Add server to topology."""
-        self.servers[server.server_id] = server
-        self.server_regions[server.region].add(server.server_id)
-
-        if server.is_trusted_signatory:
-            self.ts_servers.add(server.server_id)
-        else:
-            self.ln_servers.add(server.server_id)
-
-    def remove_server(self, server_id: str):
-        """Remove server from topology."""
-        if server_id in self.servers:
-            server = self.servers[server_id]
-            self.server_regions[server.region].discard(server_id)
-            self.ts_servers.discard(server_id)
-            self.ln_servers.discard(server_id)
-            del self.servers[server_id]
-
-            if server_id in self.server_health:
-                del self.server_health[server_id]
+    min_servers: int = 2
+    max_servers: int = 5
+    require_geographic_diversity: bool = True
+    min_distance_km: float = 1000
+    prefer_trusted_signatories: bool = True
+    max_latency_ms: float = 500
+    min_health_score: float = 0.8
 
 
-class PIRNetworkCoordinator:
+class PIRCoordinator:
     """
-    Coordinates PIR network operations.
-    Manages server discovery, health monitoring, and optimal routing.
+    Coordinates PIR server selection and health monitoring.
+
+    Responsibilities:
+    - Server discovery and registration
+    - Health monitoring and failover
+    - Geographic diversity enforcement
+    - Bandwidth optimization
+    - Regulatory compliance management
     """
 
     def __init__(self):
-        """Initialize network coordinator."""
-        self.topology = NetworkTopology()
-        self.session: Optional[aiohttp.ClientSession] = None
+        self.servers: Dict[str, ServerInfo] = {}
+        self.active_queries: Dict[str, List[str]] = {}  # query_id -> server_ids
 
-        # Health check configuration
-        self.health_check_interval = config.pir.health_check_interval_seconds
-        self.health_check_timeout = config.pir.health_check_timeout_seconds
+        # Configuration
+        self.health_check_interval = 30  # seconds
+        self.min_healthy_servers = 5
 
-        # Background tasks
-        self.health_monitor_task: Optional[asyncio.Task] = None
-        self.topology_update_task: Optional[asyncio.Task] = None
-
-        # Query routing cache
-        self.routing_cache: Dict[str, List[str]] = {}
-        self.cache_ttl = 300  # 5 minutes
-        self.cache_timestamps: Dict[str, float] = {}
-
-        logger.info("PIR Network Coordinator initialized")
-
-    async def start(self):
-        """Start network coordinator services."""
-        self.session = aiohttp.ClientSession()
-
-        # Discover initial servers
-        await self.discover_servers()
+        # Compliance regions
+        self.compliance_regions = {
+            "US": {"HIPAA", "CCPA"},
+            "EU": {"GDPR"},
+            "CA": {"PIPEDA"},
+            "UK": {"DPA"},
+        }
 
         # Start background tasks
-        self.health_monitor_task = asyncio.create_task(self.monitor_health())
-        self.topology_update_task = asyncio.create_task(self.update_topology())
+        self._health_check_task = None
 
-        logger.info("Network coordinator started with {len(self.topology.servers)} servers")
+    async def start(self):
+        """Start coordinator background tasks."""
+        self._health_check_task = asyncio.create_task(self._health_monitor_loop())
+        logger.info("PIR Coordinator started")
 
     async def stop(self):
-        """Stop network coordinator services."""
-        # Cancel background tasks
-        if self.health_monitor_task:
-            self.health_monitor_task.cancel()
-
-        if self.topology_update_task:
-            self.topology_update_task.cancel()
-
-        # Close session
-        if self.session:
-            await self.session.close()
-
-        logger.info("Network coordinator stopped")
-
-    async def discover_servers(self):
-        """Discover available PIR servers."""
-        # In production, would use service discovery (e.g., Consul, etcd)
-        # For now, use configuration
-
-        server_configs = [
-            # Light nodes
-            {
-                "id": "ln1",
-                "endpoint": "http://ln1.genomevault.com",
-                "region": "us-east",
-                "is_ts": False,
-                "honesty": 0.95,
-            },
-            {
-                "id": "ln2",
-                "endpoint": "http://ln2.genomevault.com",
-                "region": "eu-west",
-                "is_ts": False,
-                "honesty": 0.95,
-            },
-            {
-                "id": "ln3",
-                "endpoint": "http://ln3.genomevault.com",
-                "region": "asia-pac",
-                "is_ts": False,
-                "honesty": 0.95,
-            },
-            # Trusted signatories
-            {
-                "id": "ts1",
-                "endpoint": "http://ts1.genomevault.com",
-                "region": "us-west",
-                "is_ts": True,
-                "honesty": 0.98,
-            },
-            {
-                "id": "ts2",
-                "endpoint": "http://ts2.genomevault.com",
-                "region": "us-central",
-                "is_ts": True,
-                "honesty": 0.98,
-            },
-        ]
-
-        for config in server_configs:
-            server = PIRServer(
-                server_id=config["id"],
-                endpoint=config["endpoint"],
-                region=config["region"],
-                is_trusted_signatory=config["is_ts"],
-                honesty_probability=config["honesty"],
-                latency_ms=0,  # Will be measured
-            )
-
-            self.topology.add_server(server)
-
-            # Initialize health metrics
-            self.topology.server_health[server.server_id] = ServerHealth(
-                server_id=server.server_id,
-                is_healthy=True,
-                last_check=time.time(),
-                latency_ms=0,
-                success_rate=1.0,
-                query_count=0,
-                error_count=0,
-            )
-
-        logger.info("Discovered {len(self.topology.servers)} servers")
-
-    async def monitor_health(self):
-        """Monitor server health in background."""
-        while True:
+        """Stop coordinator."""
+        if self._health_check_task:
+            self._health_check_task.cancel()
             try:
-                # Check health of all servers
-                tasks = []
-                for server_id, server in self.topology.servers.items():
-                    task = self.check_server_health(server)
-                    tasks.append(task)
-
-                # Wait for all health checks
-                await asyncio.gather(*tasks, return_exceptions=True)
-
-                # Log summary
-                healthy_count = sum(1 for h in self.topology.server_health.values() if h.is_healthy)
-                logger.info(
-                    "Health check complete: {healthy_count}/{len(self.topology.servers)} healthy"
-                )
-
-                # Wait before next check
-                await asyncio.sleep(self.health_check_interval)
-
+                await self._health_check_task
             except asyncio.CancelledError:
-                break
-            except Exception as e:
-                logger.error("Error in health monitor: {e}")
-                await asyncio.sleep(10)  # Wait before retry
+                pass
 
-    async def check_server_health(self, server: PIRServer) -> bool:
+    def register_server(self, server_info: ServerInfo):
         """
-        Check health of a single server.
+        Register a new PIR server.
 
         Args:
-            server: Server to check
-
-        Returns:
-            True if healthy
+            server_info: Server information
         """
-        try:
-            start_time = time.time()
+        self.servers[server_info.server_id] = server_info
+        logger.info(f"Registered server {server_info.server_id} ({server_info.server_type.value})")
 
-            # Send health check request
-            async with self.session.get(
-                "{server.endpoint}/health",
-                timeout=aiohttp.ClientTimeout(total=self.health_check_timeout),
-            ) as response:
-                if response.status == 200:
-                    latency_ms = (time.time() - start_time) * 1000
+        # Audit log
+        audit_logger.log_event(
+            event_type="server_registered",
+            actor="coordinator",
+            action="register",
+            resource=server_info.server_id,
+            metadata={
+                "server_type": server_info.server_type.value,
+                "location": server_info.region,
+                "endpoint": server_info.endpoint,
+            },
+        )
 
-                    # Update health metrics
-                    health = self.topology.server_health[server.server_id]
-                    health.is_healthy = True
-                    health.last_check = time.time()
-                    health.latency_ms = latency_ms
-
-                    # Update server latency
-                    server.latency_ms = latency_ms
-
-                    return True
-                else:
-                    # Mark as unhealthy
-                    health = self.topology.server_health[server.server_id]
-                    health.is_healthy = False
-                    health.last_check = time.time()
-                    health.error_count += 1
-
-                    logger.warning("Server {server.server_id} returned status {response.status}")
-                    return False
-
-        except Exception as e:
-            # Mark as unhealthy
-            health = self.topology.server_health[server.server_id]
-            health.is_healthy = False
-            health.last_check = time.time()
-            health.error_count += 1
-
-            logger.error("Health check failed for {server.server_id}: {e}")
-            return False
-
-    async def update_topology(self):
-        """Update network topology periodically."""
-        while True:
-            try:
-                # Clear expired routing cache
-                current_time = time.time()
-                expired_keys = [
-                    key
-                    for key, timestamp in self.cache_timestamps.items()
-                    if current_time - timestamp > self.cache_ttl
-                ]
-
-                for key in expired_keys:
-                    del self.routing_cache[key]
-                    del self.cache_timestamps[key]
-
-                # In production, would re-discover servers
-                # For now, just log status
-                logger.debug(
-                    "Topology: {len(self.topology.servers)} servers, "
-                    "{len(self.routing_cache)} cached routes"
-                )
-
-                # Wait before next update
-                await asyncio.sleep(60)  # Update every minute
-
-            except asyncio.CancelledError:
-                break
-            except Exception as e:
-                logger.error("Error updating topology: {e}")
-                await asyncio.sleep(10)
-
-    def select_optimal_servers(
-        self,
-        num_servers: int,
-        require_ts: int = 0,
-        exclude_servers: Optional[Set[str]] = None,
-    ) -> List[PIRServer]:
+    async def select_servers(
+        self, criteria: ServerSelectionCriteria, user_region: Optional[str] = None
+    ) -> List[ServerInfo]:
         """
-        Select optimal servers for a PIR query.
+        Select optimal servers based on criteria.
 
         Args:
-            num_servers: Total number of servers needed
-            require_ts: Minimum number of TS servers required
-            exclude_servers: Servers to exclude from selection
+            criteria: Selection criteria
+            user_region: User's geographic region for compliance
 
         Returns:
             List of selected servers
         """
-        if exclude_servers is None:
-            exclude_servers = set()
-
-        # Get healthy servers
+        # Filter healthy servers
         healthy_servers = [
-            server
-            for server_id, server in self.topology.servers.items()
-            if (
-                self.topology.server_health[server_id].is_healthy
-                and server_id not in exclude_servers
-            )
+            s
+            for s in self.servers.values()
+            if s.health_score >= criteria.min_health_score
+            and s.response_time_ms <= criteria.max_latency_ms
         ]
 
-        # Separate TS and LN servers
-        ts_servers = [s for s in healthy_servers if s.is_trusted_signatory]
-        ln_servers = [s for s in healthy_servers if not s.is_trusted_signatory]
+        if len(healthy_servers) < criteria.min_servers:
+            raise ValueError(
+                f"Insufficient healthy servers: {len(healthy_servers)} < {criteria.min_servers}"
+            )
 
-        # Check if we have enough TS servers
-        if len(ts_servers) < require_ts:
-            logger.warning("Insufficient TS servers: {len(ts_servers)} < {require_ts}")
-            return []
+        # Apply compliance filtering if needed
+        if user_region:
+            healthy_servers = self._filter_compliant_servers(healthy_servers, user_region)
 
-        # Sort servers by reliability score
-        def server_score(server):
-            health = self.topology.server_health[server.server_id]
-            return -health.reliability_score  # Negative for max heap
+        # Sort by preference
+        scored_servers = []
+        for server in healthy_servers:
+            score = self._calculate_server_score(server, criteria)
+            scored_servers.append((score, server))
 
-        ts_servers.sort(key=server_score)
-        ln_servers.sort(key=server_score)
+        scored_servers.sort(reverse=True, key=lambda x: x[0])
 
-        # Select servers
+        # Select servers with geographic diversity
         selected = []
+        for score, server in scored_servers:
+            if len(selected) >= criteria.max_servers:
+                break
 
-        # Add required TS servers
-        selected.extend(ts_servers[:require_ts])
+            # Check geographic diversity
+            if criteria.require_geographic_diversity and selected:
+                if not self._check_geographic_diversity(server, selected, criteria.min_distance_km):
+                    continue
 
-        # Add remaining servers (prefer LN for cost efficiency)
-        remaining_needed = num_servers - len(selected)
+            selected.append(server)
 
-        # Add LN servers first
-        ln_to_add = min(remaining_needed, len(ln_servers))
-        selected.extend(ln_servers[:ln_to_add])
+            if len(selected) >= criteria.min_servers:
+                # Check if we have minimum diversity
+                if not criteria.require_geographic_diversity or self._has_sufficient_diversity(
+                    selected
+                ):
+                    break
 
-        # If still need more, add additional TS servers
-        if len(selected) < num_servers:
-            additional_ts = min(num_servers - len(selected), len(ts_servers) - require_ts)
-            selected.extend(ts_servers[require_ts : require_ts + additional_ts])
+        if len(selected) < criteria.min_servers:
+            raise ValueError(
+                f"Could not select {criteria.min_servers} servers with required diversity"
+            )
 
-        return selected[:num_servers]
+        logger.info(f"Selected {len(selected)} servers: {[s.server_id for s in selected]}")
+        return selected
 
-    def get_server_configuration(
-        self, target_failure_prob: float = 1e-4, max_latency_ms: Optional[float] = None
-    ) -> Dict[str, Any]:
+    def _calculate_server_score(
+        self, server: ServerInfo, criteria: ServerSelectionCriteria
+    ) -> float:
+        """Calculate server selection score."""
+        score = 0.0
+
+        # Health score (0-40 points)
+        score += server.health_score * 40
+
+        # Response time (0-30 points)
+        latency_score = max(0, 1 - (server.response_time_ms / criteria.max_latency_ms))
+        score += latency_score * 30
+
+        # Success rate (0-20 points)
+        score += server.success_rate * 20
+
+        # Server type preference (0-10 points)
+        if (
+            criteria.prefer_trusted_signatories
+            and server.server_type == ServerType.TRUSTED_SIGNATORY
+        ):
+            score += 10
+
+        return score
+
+    def _check_geographic_diversity(
+        self, candidate: ServerInfo, selected: List[ServerInfo], min_distance_km: float
+    ) -> bool:
+        """Check if candidate provides geographic diversity."""
+        for server in selected:
+            distance = geodesic(candidate.location, server.location).kilometers
+            if distance < min_distance_km:
+                return False
+        return True
+
+    def _has_sufficient_diversity(self, servers: List[ServerInfo]) -> bool:
+        """Check if selected servers have sufficient diversity."""
+        regions = set(s.region for s in servers)
+        return len(regions) >= 2
+
+    def _filter_compliant_servers(
+        self, servers: List[ServerInfo], user_region: str
+    ) -> List[ServerInfo]:
+        """Filter servers based on compliance requirements."""
+        required_compliance = self.compliance_regions.get(user_region, set())
+
+        compliant_servers = []
+        for server in servers:
+            # Check if server meets compliance requirements
+            if server.server_type == ServerType.TRUSTED_SIGNATORY:
+                # TS servers are HIPAA compliant
+                if "HIPAA" in required_compliance:
+                    compliant_servers.append(server)
+            elif not required_compliance:
+                # No specific compliance needed
+                compliant_servers.append(server)
+
+        return compliant_servers
+
+    async def _health_monitor_loop(self):
+        """Background task for health monitoring."""
+        while True:
+            try:
+                await self._check_all_servers_health()
+                await asyncio.sleep(self.health_check_interval)
+            except asyncio.CancelledError:
+                break
+            except Exception as e:
+                logger.error(f"Health monitor error: {e}")
+                await asyncio.sleep(5)
+
+    async def _check_all_servers_health(self):
+        """Check health of all registered servers."""
+        tasks = []
+        for server in self.servers.values():
+            tasks.append(self._check_server_health(server))
+
+        await asyncio.gather(*tasks, return_exceptions=True)
+
+        # Check if we have minimum healthy servers
+        healthy_count = sum(1 for s in self.servers.values() if s.health_score > 0.5)
+        if healthy_count < self.min_healthy_servers:
+            logger.warning(
+                f"Low healthy server count: {healthy_count} < {self.min_healthy_servers}"
+            )
+
+    async def _check_server_health(self, server: ServerInfo):
+        """Check health of individual server."""
+        try:
+            start_time = time.time()
+
+            async with aiohttp.ClientSession() as session:
+                async with session.get(
+                    f"{server.endpoint}/health", timeout=aiohttp.ClientTimeout(total=5)
+                ) as response:
+                    if response.status == 200:
+                        health_data = await response.json()
+
+                        # Update server info
+                        server.response_time_ms = (time.time() - start_time) * 1000
+                        server.last_health_check = time.time()
+
+                        # Calculate health score
+                        if health_data.get("status") == "healthy":
+                            server.health_score = 1.0
+                        else:
+                            server.health_score = 0.5
+
+                        # Update success rate (simple moving average)
+                        server.success_rate = 0.95 * server.success_rate + 0.05 * 1.0
+
+                    else:
+                        server.health_score *= 0.8  # Degrade score
+                        server.success_rate = 0.95 * server.success_rate + 0.05 * 0.0
+
+        except Exception as e:
+            logger.warning(f"Health check failed for {server.server_id}: {e}")
+            server.health_score *= 0.7
+            server.success_rate = 0.95 * server.success_rate + 0.05 * 0.0
+
+    async def execute_query(
+        self, query_id: str, query_vectors: List[Dict], selected_servers: List[ServerInfo]
+    ) -> List[Dict]:
         """
-        Get optimal server configuration for target privacy level.
+        Execute PIR query across selected servers.
 
         Args:
-            target_failure_prob: Target failure probability
-            max_latency_ms: Maximum acceptable latency
+            query_id: Unique query identifier
+            query_vectors: Query vectors for each server
+            selected_servers: Selected servers
 
         Returns:
-            Optimal configuration
+            List of server responses
         """
-        configurations = []
+        if len(query_vectors) != len(selected_servers):
+            raise ValueError("Number of query vectors must match number of servers")
 
-        # Configuration 1: 3 LN + 2 TS (5 servers total)
-        servers_3ln_2ts = self.select_optimal_servers(5, require_ts=2)
-        if len(servers_3ln_2ts) == 5:
-            latency = sum(s.latency_ms for s in servers_3ln_2ts)
-            failure_prob = (1 - 0.98) ** 2  # 2 TS servers
+        # Track active query
+        self.active_queries[query_id] = [s.server_id for s in selected_servers]
 
-            configurations.append(
-                {
-                    "name": "3 LN + 2 TS",
-                    "servers": [s.server_id for s in servers_3ln_2ts],
-                    "total_servers": 5,
-                    "ts_count": 2,
-                    "latency_ms": latency,
-                    "failure_probability": failure_prob,
-                }
-            )
+        try:
+            # Execute queries in parallel
+            tasks = []
+            for server, query_vector in zip(selected_servers, query_vectors):
+                task = self._execute_server_query(server, query_id, query_vector)
+                tasks.append(task)
 
-        # Configuration 2: 1 LN + 2 TS (3 servers total)
-        servers_1ln_2ts = self.select_optimal_servers(3, require_ts=2)
-        if len(servers_1ln_2ts) == 3:
-            latency = sum(s.latency_ms for s in servers_1ln_2ts)
-            failure_prob = (1 - 0.98) ** 2  # 2 TS servers
+            responses = await asyncio.gather(*tasks, return_exceptions=True)
 
-            configurations.append(
-                {
-                    "name": "1 LN + 2 TS",
-                    "servers": [s.server_id for s in servers_1ln_2ts],
-                    "total_servers": 3,
-                    "ts_count": 2,
-                    "latency_ms": latency,
-                    "failure_probability": failure_prob,
-                }
-            )
+            # Check for failures
+            valid_responses = []
+            failed_servers = []
 
-        # Configuration 3: 3 TS (3 servers total)
-        servers_3ts = self.select_optimal_servers(3, require_ts=3)
-        if len(servers_3ts) == 3:
-            latency = sum(s.latency_ms for s in servers_3ts)
-            failure_prob = (1 - 0.98) ** 3  # 3 TS servers
+            for i, response in enumerate(responses):
+                if isinstance(response, Exception):
+                    failed_servers.append(selected_servers[i].server_id)
+                    logger.error(f"Query failed on {selected_servers[i].server_id}: {response}")
+                else:
+                    valid_responses.append(response)
 
-            configurations.append(
-                {
-                    "name": "3 TS",
-                    "servers": [s.server_id for s in servers_3ts],
-                    "total_servers": 3,
-                    "ts_count": 3,
-                    "latency_ms": latency,
-                    "failure_probability": failure_prob,
-                }
-            )
+            if failed_servers:
+                # Handle failover
+                logger.warning(f"Query {query_id} failed on servers: {failed_servers}")
+                # Could implement automatic failover here
 
-        # Filter by requirements
-        valid_configs = [
-            c for c in configurations if c["failure_probability"] <= target_failure_prob
-        ]
+            return valid_responses
 
-        if max_latency_ms:
-            valid_configs = [c for c in valid_configs if c["latency_ms"] <= max_latency_ms]
+        finally:
+            # Clean up tracking
+            del self.active_queries[query_id]
 
-        # Select optimal (minimize latency)
-        if valid_configs:
-            optimal = min(valid_configs, key=lambda c: c["latency_ms"])
-        else:
-            optimal = None
+    async def _execute_server_query(
+        self, server: ServerInfo, query_id: str, query_data: Dict
+    ) -> Dict:
+        """Execute query on single server."""
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                f"{server.endpoint}/pir/query",
+                json={"query_id": query_id, **query_data},
+                timeout=aiohttp.ClientTimeout(total=10),
+            ) as response:
+                if response.status == 200:
+                    return await response.json()
+                else:
+                    error_text = await response.text()
+                    raise Exception(f"Server returned {response.status}: {error_text}")
 
-        return {
-            "configurations": configurations,
-            "valid_configurations": valid_configs,
-            "optimal": optimal,
-            "network_status": {
-                "total_servers": len(self.topology.servers),
-                "healthy_servers": sum(
-                    1 for h in self.topology.server_health.values() if h.is_healthy
-                ),
-                "ts_servers": len(self.topology.ts_servers),
-                "ln_servers": len(self.topology.ln_servers),
-            },
-        }
+    def get_coordinator_stats(self) -> Dict[str, Any]:
+        """Get coordinator statistics."""
+        healthy_servers = sum(1 for s in self.servers.values() if s.health_score > 0.8)
+        degraded_servers = sum(1 for s in self.servers.values() if 0.5 < s.health_score <= 0.8)
+        unhealthy_servers = sum(1 for s in self.servers.values() if s.health_score <= 0.5)
 
-    async def create_pir_client(
-        self, database_size: int, config_name: Optional[str] = None
-    ) -> PIRClient:
-        """
-        Create PIR client with optimal server configuration.
-
-        Args:
-            database_size: Size of database to query
-            config_name: Specific configuration to use
-
-        Returns:
-            Configured PIR client
-        """
-        # Get optimal configuration
-        config_info = self.get_server_configuration()
-
-        if config_name:
-            # Find specific configuration
-            config = next(
-                (c for c in config_info["configurations"] if c["name"] == config_name),
-                None,
-            )
-            if not config:
-                raise ValueError("Configuration '{config_name}' not found")
-        else:
-            # Use optimal configuration
-            config = config_info["optimal"]
-            if not config:
-                raise RuntimeError("No valid configuration available")
-
-        # Get server objects
-        servers = [self.topology.servers[server_id] for server_id in config["servers"]]
-
-        # Create client
-        client = PIRClient(servers, database_size)
-
-        logger.info("Created PIR client with configuration '{config['name']}'")
-
-        return client
-
-    def get_network_statistics(self) -> Dict[str, Any]:
-        """
-        Get network statistics.
-
-        Returns:
-            Network statistics
-        """
-        # Calculate aggregate statistics
-        total_queries = sum(h.query_count for h in self.topology.server_health.values())
-        total_errors = sum(h.error_count for h in self.topology.server_health.values())
+        ts_servers = sum(
+            1 for s in self.servers.values() if s.server_type == ServerType.TRUSTED_SIGNATORY
+        )
+        ln_servers = sum(1 for s in self.servers.values() if s.server_type == ServerType.LIGHT_NODE)
 
         avg_latency = (
-            np.mean(
-                [h.latency_ms for h in self.topology.server_health.values() if h.latency_ms > 0]
-            )
-            if self.topology.server_health
+            sum(s.response_time_ms for s in self.servers.values()) / len(self.servers)
+            if self.servers
             else 0
         )
 
-        # Per-region statistics
-        region_stats = {}
-        for region, server_ids in self.topology.server_regions.items():
-            region_servers = [
-                self.topology.server_health[sid]
-                for sid in server_ids
-                if sid in self.topology.server_health
-            ]
-
-            if region_servers:
-                region_stats[region] = {
-                    "server_count": len(server_ids),
-                    "healthy_count": sum(1 for s in region_servers if s.is_healthy),
-                    "avg_latency_ms": np.mean(
-                        [s.latency_ms for s in region_servers if s.latency_ms > 0]
-                    ),
-                    "total_queries": sum(s.query_count for s in region_servers),
-                }
-
         return {
-            "total_servers": len(self.topology.servers),
-            "healthy_servers": sum(1 for h in self.topology.server_health.values() if h.is_healthy),
-            "ts_servers": {
-                "total": len(self.topology.ts_servers),
-                "healthy": sum(
-                    1
-                    for sid in self.topology.ts_servers
-                    if self.topology.server_health.get(
-                        sid, ServerHealth(sid, False, 0, 0, 0, 0, 0)
-                    ).is_healthy
-                ),
-            },
-            "ln_servers": {
-                "total": len(self.topology.ln_servers),
-                "healthy": sum(
-                    1
-                    for sid in self.topology.ln_servers
-                    if self.topology.server_health.get(
-                        sid, ServerHealth(sid, False, 0, 0, 0, 0, 0)
-                    ).is_healthy
-                ),
-            },
-            "queries": {
-                "total": total_queries,
-                "errors": total_errors,
-                "success_rate": (
-                    (total_queries - total_errors) / total_queries if total_queries > 0 else 1.0
-                ),
-            },
-            "performance": {
-                "avg_latency_ms": avg_latency,
-                "cache_size": len(self.routing_cache),
-            },
-            "regions": region_stats,
+            "total_servers": len(self.servers),
+            "healthy_servers": healthy_servers,
+            "degraded_servers": degraded_servers,
+            "unhealthy_servers": unhealthy_servers,
+            "trusted_signatories": ts_servers,
+            "light_nodes": ln_servers,
+            "active_queries": len(self.active_queries),
+            "average_latency_ms": avg_latency,
+            "geographic_regions": len(set(s.region for s in self.servers.values())),
         }
-
-    async def handle_server_failure(self, server_id: str):
-        """
-        Handle server failure.
-
-        Args:
-            server_id: Failed server ID
-        """
-        logger.warning("Handling failure of server {server_id}")
-
-        # Mark as unhealthy
-        if server_id in self.topology.server_health:
-            self.topology.server_health[server_id].is_healthy = False
-            self.topology.server_health[server_id].error_count += 1
-
-        # Clear routing cache entries involving this server
-        keys_to_remove = [
-            key for key, servers in self.routing_cache.items() if server_id in servers
-        ]
-
-        for key in keys_to_remove:
-            del self.routing_cache[key]
-            del self.cache_timestamps[key]
-
-        # Log impact
-        logger.info("Removed {len(keys_to_remove)} cached routes involving {server_id}")
 
 
 # Example usage
 if __name__ == "__main__":
 
-    async def example():
+    async def demo():
         # Create coordinator
-        coordinator = PIRNetworkCoordinator()
-
-        # Start services
+        coordinator = PIRCoordinator()
         await coordinator.start()
 
-        # Get network statistics
-        stats = coordinator.get_network_statistics()
-        print("Network Statistics:")
+        # Register servers
+        servers = [
+            ServerInfo(
+                server_id="ts-us-east-1",
+                server_type=ServerType.TRUSTED_SIGNATORY,
+                endpoint="https://pir-ts-east.genomevault.org",
+                location=(40.7128, -74.0060),  # New York
+                region="US-EAST",
+                capabilities={"batch_query", "gpu_acceleration"},
+            ),
+            ServerInfo(
+                server_id="ts-eu-west-1",
+                server_type=ServerType.TRUSTED_SIGNATORY,
+                endpoint="https://pir-ts-eu.genomevault.org",
+                location=(51.5074, -0.1278),  # London
+                region="EU-WEST",
+                capabilities={"batch_query"},
+            ),
+            ServerInfo(
+                server_id="ln-asia-1",
+                server_type=ServerType.LIGHT_NODE,
+                endpoint="https://pir-ln-asia.genomevault.org",
+                location=(35.6762, 139.6503),  # Tokyo
+                region="ASIA-PACIFIC",
+                capabilities={"batch_query"},
+            ),
+            ServerInfo(
+                server_id="ln-us-west-1",
+                server_type=ServerType.LIGHT_NODE,
+                endpoint="https://pir-ln-west.genomevault.org",
+                location=(37.7749, -122.4194),  # San Francisco
+                region="US-WEST",
+                capabilities={"batch_query", "compression"},
+            ),
+            ServerInfo(
+                server_id="ts-us-central-1",
+                server_type=ServerType.TRUSTED_SIGNATORY,
+                endpoint="https://pir-ts-central.genomevault.org",
+                location=(41.8781, -87.6298),  # Chicago
+                region="US-CENTRAL",
+                capabilities={"batch_query", "gpu_acceleration"},
+            ),
+        ]
+
+        for server in servers:
+            coordinator.register_server(server)
+
+        # Select servers with criteria
+        criteria = ServerSelectionCriteria(
+            min_servers=3,
+            max_servers=5,
+            require_geographic_diversity=True,
+            min_distance_km=1000,
+            prefer_trusted_signatories=True,
+        )
+
+        selected = await coordinator.select_servers(criteria, user_region="US")
+
+        print("Selected servers:")
+        for server in selected:
+            print(f"  - {server.server_id} ({server.server_type.value}) in {server.region}")
+
+        # Show statistics
+        stats = coordinator.get_coordinator_stats()
+        print("\nCoordinator statistics:")
         print(json.dumps(stats, indent=2))
-
-        # Get optimal configuration
-        config = coordinator.get_server_configuration(target_failure_prob=1e-4)
-        print("\nOptimal Configuration:")
-        print(json.dumps(config["optimal"], indent=2))
-
-        # Create PIR client
-        client = await coordinator.create_pir_client(database_size=1000000)
-        print("\nCreated client with {len(client.servers)} servers")
 
         # Cleanup
         await coordinator.stop()
-        await client.close()
 
-    # Run example
-    # asyncio.run(example())
+    # Run demo
+    asyncio.run(demo())
