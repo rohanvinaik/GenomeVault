@@ -3,10 +3,10 @@ Verification logic for clinical proofs.
 Unified verifier for all circuit types.
 """
 
-from typing import Dict, Any, Optional
 import logging
+from typing import Any, Dict, Optional
 
-from .models import ProofData, CircuitType
+from .models import CircuitType, ProofData
 
 
 class ProofVerifier:

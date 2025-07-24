@@ -3,15 +3,16 @@ Base circuit implementation for all ZK circuits in GenomeVault.
 Single source of truth for circuit architecture.
 """
 
-from typing import Dict, Any, Protocol, runtime_checkable
-from abc import ABC, abstractmethod
-import numpy as np
 import hashlib
 import json
+from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
+from typing import Any, Dict, Protocol, runtime_checkable
 
-from ..proofs.models import ProofData, CircuitConfig
+import numpy as np
+
+from ..proofs.models import CircuitConfig, ProofData
 
 
 @runtime_checkable

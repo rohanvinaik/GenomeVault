@@ -3,13 +3,14 @@ Refactored clinical circuits module for GenomeVault.
 This consolidates the duplicate implementations and provides a clean architecture.
 """
 
-from typing import Dict, Any, List, Optional, Protocol, runtime_checkable
-from abc import ABC, abstractmethod
-import numpy as np
 import hashlib
+import json
+from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
-import json
+from typing import Any, Dict, List, Optional, Protocol, runtime_checkable
+
+import numpy as np
 
 
 class CircuitType(Enum):

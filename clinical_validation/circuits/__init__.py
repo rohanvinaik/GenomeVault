@@ -4,8 +4,8 @@ Consolidated and refactored circuit implementations.
 """
 
 from .base import BaseCircuit, Circuit
-from .diabetes import DiabetesRiskCircuit
 from .biomarkers import ClinicalBiomarkerCircuit
+from .diabetes import DiabetesRiskCircuit
 from .factory import CircuitFactory, create_circuit
 
 __all__ = [

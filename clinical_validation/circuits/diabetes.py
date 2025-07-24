@@ -3,13 +3,14 @@ Diabetes Risk Assessment Circuit.
 Optimized implementation for diabetes risk analysis with ZK proofs.
 """
 
-from typing import Dict, Any
-import numpy as np
 import hashlib
 import json
+from typing import Any, Dict
 
+import numpy as np
+
+from ..proofs.models import CircuitConfig, CircuitType, ProofData
 from .base import BaseCircuit
-from ..proofs.models import CircuitConfig, ProofData, CircuitType
 
 
 class DiabetesRiskCircuit(BaseCircuit):

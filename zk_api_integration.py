@@ -3,22 +3,23 @@ GenomeVault ZK Proof API Integration
 Provides REST API endpoints and service integration for the ZK proof system.
 """
 
-from fastapi import FastAPI, HTTPException, BackgroundTasks, Depends
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from pydantic import BaseModel, Field
-from typing import List, Dict, Any, Optional
 import asyncio
+import json
 import uuid
 from datetime import datetime
-import json
+from typing import Any, Dict, List, Optional
+
+from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from pydantic import BaseModel, Field
 
 # Import our ZK system
 from genomevault_zk_integration import (
+    CircuitType,
     GenomeVaultZKSystem,
     ZKProofRequest,
     ZKProofResult,
-    CircuitType,
 )
 
 

@@ -4,7 +4,7 @@ Provides backward compatibility links to the refactored clinical validation circ
 """
 
 # Import from the refactored clinical validation module
-from clinical_validation.circuits import DiabetesRiskCircuit, ClinicalBiomarkerCircuit
+from clinical_validation.circuits import ClinicalBiomarkerCircuit, DiabetesRiskCircuit
 from clinical_validation.proofs import ProofData
 
 # Maintain backward compatibility

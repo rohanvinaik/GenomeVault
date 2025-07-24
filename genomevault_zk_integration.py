@@ -8,24 +8,25 @@ import hashlib
 import json
 import logging
 import time
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple, Union
-from concurrent.futures import ThreadPoolExecutor
+
 import numpy as np
 
 # Import from existing GenomeVault structure
 from genomevault.zk_proofs.enhanced_zk_circuits import (
-    FieldElement,
-    CircuitType,
-    CircuitConstraint,
-    ProofData,
     BaseCircuit,
-    PoseidonHash,
-    MerkleInclusionCircuit,
-    VariantVerificationCircuit,
-    PolygeneticRiskScoreCircuit,
+    CircuitConstraint,
+    CircuitType,
     DiabetesRiskAlertCircuit,
+    FieldElement,
+    MerkleInclusionCircuit,
+    PolygeneticRiskScoreCircuit,
+    PoseidonHash,
+    ProofData,
+    VariantVerificationCircuit,
     ZKProver,
     ZKVerifier,
 )

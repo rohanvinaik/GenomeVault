@@ -3,15 +3,15 @@ Comprehensive test for the refactored clinical circuits.
 Validates that the new implementation works correctly.
 """
 
-import sys
 import os
+import sys
 
 # Add the genomevault path for imports
 sys.path.insert(0, "/Users/rohanvinaik/genomevault")
 
 from clinical_validation.circuits import (
-    DiabetesRiskCircuit,
     ClinicalBiomarkerCircuit,
+    DiabetesRiskCircuit,
     create_circuit,
 )
 from clinical_validation.proofs import CircuitType, verify_proof

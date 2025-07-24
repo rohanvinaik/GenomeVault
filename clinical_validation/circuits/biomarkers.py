@@ -3,12 +3,13 @@ Clinical Biomarker Circuits.
 Generic implementation for various biomarker threshold proofs.
 """
 
-from typing import Dict, Any
-import numpy as np
 import hashlib
+from typing import Any, Dict
 
+import numpy as np
+
+from ..proofs.models import CircuitConfig, CircuitType, ComparisonType, ProofData
 from .base import BaseCircuit
-from ..proofs.models import CircuitConfig, ProofData, CircuitType, ComparisonType
 
 
 class ClinicalBiomarkerCircuit(BaseCircuit):

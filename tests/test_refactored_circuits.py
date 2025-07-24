@@ -2,17 +2,17 @@
 Unit tests for the refactored clinical circuits.
 """
 
-import unittest
-import sys
 import os
+import sys
+import unittest
 
 # Add genomevault to path
 sys.path.insert(0, "/Users/rohanvinaik/genomevault")
 
 try:
     from clinical_validation.circuits import (
-        DiabetesRiskCircuit,
         ClinicalBiomarkerCircuit,
+        DiabetesRiskCircuit,
         create_circuit,
     )
     from clinical_validation.proofs import CircuitType, ProofData, verify_proof

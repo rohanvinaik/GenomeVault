@@ -2,7 +2,7 @@
 Proof models and verification logic.
 """
 
-from .models import ProofData, CircuitConfig, CircuitType, ComparisonType
+from .models import CircuitConfig, CircuitType, ComparisonType, ProofData
 from .verifier import ProofVerifier, verify_proof
 
 __all__ = [

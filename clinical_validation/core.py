@@ -2,24 +2,25 @@
 Core clinical validation that uses GenomeVault's actual ZK proof system
 """
 
-import sys
 import os
+import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import pandas as pd
-import numpy as np
-from typing import Dict, List, Optional, Tuple
 import logging
 from datetime import datetime
 from pathlib import Path
+from typing import Dict, List, Optional, Tuple
+
+import numpy as np
+import pandas as pd
 
 # Import ACTUAL GenomeVault components
 from hypervector_transform.encoding import HypervectorEncoder
-from zk_proofs.prover import ZKProver
-from zk_proofs.circuits import DiabetesRiskCircuit
 from pir.client import PIRClient
 from utils.config import Config
+from zk_proofs.circuits import DiabetesRiskCircuit
+from zk_proofs.prover import ZKProver
 
 
 class ClinicalValidator:

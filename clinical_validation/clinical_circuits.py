@@ -14,12 +14,12 @@ import warnings
 
 # Import from the new structure
 from .circuits import (
-    DiabetesRiskCircuit,
-    ClinicalBiomarkerCircuit,
     BaseCircuit,
+    ClinicalBiomarkerCircuit,
+    DiabetesRiskCircuit,
     create_circuit,
 )
-from .proofs import ProofData, CircuitType
+from .proofs import CircuitType, ProofData
 
 # Issue deprecation warning
 warnings.warn(

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Run TailChasingFixer analysis on GenomeVault."""
 
-import sys
 import os
+import sys
 
 # Add TailChasingFixer to path
 sys.path.insert(0, "/Users/rohanvinaik/Desktop/TailChasingFixer")

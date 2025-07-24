@@ -3,12 +3,13 @@
 Test script for clinical validation module
 Verifies that the module can work with both real and simulated components
 """
-import sys
 import os
+import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import logging
+
 import numpy as np
 
 # Configure logging
@@ -27,7 +28,7 @@ def test_clinical_validation():
     # Test 1: Import modules
     print("\n1️⃣ Testing module imports...")
     try:
-        from clinical_validation import ClinicalValidator, ZKProver, ProofData
+        from clinical_validation import ClinicalValidator, ProofData, ZKProver
         from clinical_validation.clinical_circuits import DiabetesRiskCircuit
 
         print("✅ All modules imported successfully")

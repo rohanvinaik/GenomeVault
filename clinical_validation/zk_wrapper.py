@@ -3,10 +3,11 @@ ZK Prover wrapper for clinical validation
 Provides simplified interface for clinical proofs
 """
 
-from typing import Dict, Any, Optional
 import hashlib
 import json
 import time
+from typing import Any, Dict, Optional
+
 import numpy as np
 
 

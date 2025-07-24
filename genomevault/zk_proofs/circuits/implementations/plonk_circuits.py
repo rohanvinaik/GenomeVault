@@ -5,8 +5,8 @@ Implements the actual zero-knowledge proof circuits for genomic privacy.
 
 import hashlib
 import json
-import time
 import struct
+import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum

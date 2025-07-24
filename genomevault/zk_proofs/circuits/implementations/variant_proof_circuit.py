@@ -12,8 +12,8 @@ from .constraint_system import (
     ConstraintSystem,
     FieldElement,
     Variable,
-    poseidon_hash,
     create_merkle_proof,
+    poseidon_hash,
 )
 
 

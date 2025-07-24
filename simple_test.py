@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Simple test script to validate the refactored implementation"""
 
-import sys
 import os
+import sys
 
 sys.path.insert(0, "/Users/rohanvinaik/genomevault")
 

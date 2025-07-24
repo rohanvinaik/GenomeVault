@@ -3,12 +3,12 @@ Circuit Factory for creating circuit instances.
 Provides a centralized way to create and manage circuit types.
 """
 
-from typing import Type, Dict, Any
+from typing import Any, Dict, Type
 
-from .base import BaseCircuit
-from .diabetes import DiabetesRiskCircuit
-from .biomarkers import ClinicalBiomarkerCircuit
 from ..proofs.models import CircuitType
+from .base import BaseCircuit
+from .biomarkers import ClinicalBiomarkerCircuit
+from .diabetes import DiabetesRiskCircuit
 
 
 class CircuitFactory:

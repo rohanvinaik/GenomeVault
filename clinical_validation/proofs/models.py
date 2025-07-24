@@ -3,11 +3,11 @@ Data models for proofs and circuit configurations.
 Single source of truth for proof-related data structures.
 """
 
-from typing import Dict, Any
-from dataclasses import dataclass, field
-from enum import Enum
 import hashlib
 import json
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any, Dict
 
 
 class CircuitType(Enum):

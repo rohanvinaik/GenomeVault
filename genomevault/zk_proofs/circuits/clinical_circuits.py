@@ -9,12 +9,12 @@ import warnings
 
 # Import from the new refactored location
 from clinical_validation.circuits import (
-    DiabetesRiskCircuit,
-    ClinicalBiomarkerCircuit,
     BaseCircuit,
+    ClinicalBiomarkerCircuit,
+    DiabetesRiskCircuit,
     create_circuit,
 )
-from clinical_validation.proofs import ProofData, CircuitType
+from clinical_validation.proofs import CircuitType, ProofData
 
 # Issue deprecation warning
 warnings.warn(
