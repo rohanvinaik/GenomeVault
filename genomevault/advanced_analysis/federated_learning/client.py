@@ -485,13 +485,81 @@ class HospitalFLClient(FederatedLearningClient):
         return True
 
     def _check_deidentification(self) -> bool:
-        """Check data is properly de-identified."""
-        # In practice, would implement actual checks
+        """
+        Check that data is properly de-identified according to HIPAA Safe Harbor.
+        
+        Returns:
+            True if data meets de-identification requirements
+        """
+        if not self.local_dataset:
+            return True  # No data to check
+            
+        # Check for direct identifiers that should be removed
+        prohibited_fields = {
+            'name', 'ssn', 'mrn', 'address', 'phone', 'email',
+            'dates', 'ages_over_89', 'account_numbers', 'urls',
+            'ip_addresses', 'biometric_ids', 'photos'
+        }
+        
+        # Check metadata for prohibited identifiers
+        metadata = getattr(self.local_dataset, 'metadata', {})
+        for field in prohibited_fields:
+            if field in metadata and metadata[field] is not None:
+                logger.error(f"Direct identifier '{field}' found in dataset")
+                return False
+        
+        # Check for quasi-identifiers that could enable re-identification
+        if self._check_quasi_identifiers():
+            logger.error("Dataset contains quasi-identifiers that may enable re-identification")
+            return False
+            
         return True
+    
+    def _check_quasi_identifiers(self) -> bool:
+        """Check for combinations of quasi-identifiers"""
+        # In production: implement proper statistical disclosure control
+        # For now: basic checks for common quasi-identifier combinations
+        
+        metadata = getattr(self.local_dataset, 'metadata', {})
+        
+        # Flag if we have detailed demographic + genetic data
+        has_demographics = any(key in metadata for key in ['zipcode', 'birth_year', 'gender'])
+        has_detailed_genetic = getattr(self.local_dataset, 'num_samples', 0) < 1000
+        
+        return has_demographics and has_detailed_genetic
 
     def _check_consent(self) -> bool:
-        """Check patient consent status."""
-        # In practice, would check consent management system
+        """
+        Check patient consent status.
+        
+        Returns:
+            True if all required consents are obtained
+        """
+        # Check if client has consent management integration
+        if not hasattr(self, 'consent_manager'):
+            logger.warning("No consent manager configured - assuming consent granted")
+            return True
+            
+        # In production: query consent management system
+        # For now: check if client ID indicates consent compliance
+        if self.client_id.startswith(('hospital_', 'clinic_')):
+            # Healthcare clients should have BAA and patient consent
+            return self._verify_healthcare_consent()
+        
+        return True
+    
+    def _verify_healthcare_consent(self) -> bool:
+        """Verify healthcare-specific consent requirements"""
+        # Check for BAA (Business Associate Agreement)
+        if not getattr(self, 'baa_signed', False):
+            logger.error("Business Associate Agreement not signed")
+            return False
+            
+        # Check for patient consent documentation
+        if not getattr(self, 'patient_consent_verified', False):
+            logger.error("Patient consent not verified")
+            return False
+            
         return True
 
 

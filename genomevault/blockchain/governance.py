@@ -18,7 +18,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 from genomevault.utils import get_logger
 from genomevault.utils.logging import audit_logger
 
-_ = get_logger(__name__)
+logger = get_logger(__name__)
 
 
 class ProposalType(Enum):
@@ -439,19 +439,19 @@ class GovernanceSystem:
         if proposal_id not in self.proposals:
             raise ValueError("Proposal not found")
 
-        _ = self.proposals[proposal_id]
+        current_proposal = self.proposals[proposal_id]
 
         # Check proposal is active
         now = datetime.now()
-        if now < proposal.voting_start:
+        if now < current_proposal.voting_start:
             raise ValueError("Voting has not started")
-        if now > proposal.voting_end:
+        if now > current_proposal.voting_end:
             raise ValueError("Voting has ended")
-        if proposal.status != ProposalStatus.ACTIVE:
+        if current_proposal.status != ProposalStatus.ACTIVE:
             raise ValueError("Proposal is not active")
 
         # Check if already voted
-        for vote in proposal.votes:
+        for vote in current_proposal.votes:
             if vote.voter_id == voter or vote.delegate_from == voter:
                 raise ValueError("Already voted")
 
@@ -464,7 +464,7 @@ class GovernanceSystem:
         _ = voter if final_voter != voter else None
 
         # Apply committee multiplier if applicable
-        _ = self._get_committee_multiplier(final_voter, proposal.proposal_type)
+        multiplier = self._get_committee_multiplier(final_voter, current_proposal.proposal_type)
 
         # Calculate vote weight
         vote_weight = self.voting_mechanism.calculate_vote_weight(voting_power, choice)
@@ -481,10 +481,10 @@ class GovernanceSystem:
         )
 
         # Add vote to proposal
-        proposal.add_vote(vote_record)
+        current_proposal.add_vote(vote_record)
 
         # Check if proposal outcome is determined
-        self._check_proposal_outcome(proposal)
+        self._check_proposal_outcome(current_proposal)
 
         logger.info("Vote cast on {proposal_id}: {choice} with weight {vote_weight}")
 
@@ -580,23 +580,23 @@ class GovernanceSystem:
         if proposal_id not in self.proposals:
             raise ValueError("Proposal not found")
 
-        _ = self.proposals[proposal_id]
+        current_proposal = self.proposals[proposal_id]
 
         # Check proposal can be executed
-        if proposal.status != ProposalStatus.PASSED:
+        if current_proposal.status != ProposalStatus.PASSED:
             raise ValueError("Proposal has not passed")
 
         # Check execution delay
-        time_since_end = datetime.now() - proposal.voting_end
-        if time_since_end < proposal.execution_delay:
+        time_since_end = datetime.now() - current_proposal.voting_end
+        if time_since_end < current_proposal.execution_delay:
             raise ValueError("Execution delay not met")
 
         # Execute based on proposal type
-        _ = self._execute_proposal_action(proposal)
+        result = self._execute_proposal_action(current_proposal)
 
         # Update proposal status
-        proposal.status = ProposalStatus.EXECUTED
-        proposal.execution_timestamp = datetime.now()
+        current_proposal.status = ProposalStatus.EXECUTED
+        current_proposal.execution_timestamp = datetime.now()
 
         # Audit log
         audit_logger.log_event(
@@ -717,7 +717,7 @@ class GovernanceSystem:
         if proposal_id not in self.proposals:
             raise ValueError("Proposal not found")
 
-        _ = self.proposals[proposal_id]
+        current_proposal = self.proposals[proposal_id]
 
         return {
             "proposal_id": proposal.proposal_id,

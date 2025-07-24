@@ -534,12 +534,34 @@ def check_hipaa_compliance(data_dict: Dict[str, Any], context: str = "general") 
 # =============================================================================
 
 # Create aliases for backward compatibility with existing code
-ancestry_composition_circuit = lambda **kwargs: create_circuit_template('ancestry_composition', **kwargs)
-diabetes_risk_circuit = lambda **kwargs: create_circuit_template('diabetes_risk', **kwargs)  
-pathway_enrichment_circuit = lambda **kwargs: create_circuit_template('pathway_enrichment', **kwargs)
-pharmacogenomic_circuit = lambda **kwargs: create_circuit_template('pharmacogenomic', **kwargs)
-polygenic_risk_score_circuit = lambda **kwargs: create_circuit_template('polygenic_risk_score', **kwargs)
-variant_presence_circuit = lambda **kwargs: create_circuit_template('variant_presence', **kwargs)
+def ancestry_composition_circuit(**kwargs):
+    """Backward compatibility alias"""
+    return create_circuit_template('ancestry_composition', **kwargs)
+
+
+def diabetes_risk_circuit(**kwargs):
+    """Backward compatibility alias"""
+    return create_circuit_template('diabetes_risk', **kwargs)
+
+
+def pathway_enrichment_circuit(**kwargs):
+    """Backward compatibility alias"""
+    return create_circuit_template('pathway_enrichment', **kwargs)
+
+
+def pharmacogenomic_circuit(**kwargs):
+    """Backward compatibility alias"""
+    return create_circuit_template('pharmacogenomic', **kwargs)
+
+
+def polygenic_risk_score_circuit(**kwargs):
+    """Backward compatibility alias"""
+    return create_circuit_template('polygenic_risk_score', **kwargs)
+
+
+def variant_presence_circuit(**kwargs):
+    """Backward compatibility alias"""
+    return create_circuit_template('variant_presence', **kwargs)
 
 # Legacy function aliases
 def root():
