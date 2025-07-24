@@ -8,14 +8,14 @@ consistent behavior.
 Created as part of the tail-chasing fixes initiative.
 """
 
-import logging
 import hashlib
-import json
-from typing import Any, Dict, List, Optional, Union
-from datetime import datetime, timedelta
 import hmac
-import secrets
+import json
+import logging
 import os
+import secrets
+from datetime import datetime, timedelta
+from typing import Any, Dict, List, Optional, Union
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -323,7 +323,11 @@ def create_circuit_template(circuit_type: str, **kwargs) -> Dict[str, Any]:
         },
         "diabetes_risk": {
             **base_template,
-            "public_inputs": ["glucose_threshold", "risk_threshold", "result_commitment"],
+            "public_inputs": [
+                "glucose_threshold",
+                "risk_threshold",
+                "result_commitment",
+            ],
             "private_inputs": ["glucose_reading", "genetic_risk_score"],
             "constraints": 15000,
             "proof_size_bytes": 384,
@@ -353,7 +357,9 @@ def create_circuit_template(circuit_type: str, **kwargs) -> Dict[str, Any]:
 # =============================================================================
 
 
-def create_hierarchical_encoder(config: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+def create_hierarchical_encoder(
+    config: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
     """
     Create hierarchical hypervector encoder configuration.
 
@@ -515,7 +521,13 @@ def check_hipaa_compliance(data_dict: Dict[str, Any], context: str = "general") 
                     compliance_results["compliant"] = False
 
     # Check for quasi-identifiers (combinations that enable re-identification)
-    quasi_identifiers = ["zipcode", "birth_year", "gender", "ethnicity", "diagnosis_codes"]
+    quasi_identifiers = [
+        "zipcode",
+        "birth_year",
+        "gender",
+        "ethnicity",
+        "diagnosis_codes",
+    ]
     present_quasi = [qi for qi in quasi_identifiers if qi in data_dict and data_dict[qi]]
 
     if len(present_quasi) >= 3:
