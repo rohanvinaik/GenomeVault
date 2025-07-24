@@ -19,7 +19,9 @@ class Config(BaseSettings):
     node_class_weight: int = Field(1, env="NODE_CLASS_WEIGHT")
 
     # Network Configuration
-    pir_servers: str = Field("localhost:9001,localhost:9002,localhost:9003", env="PIR_SERVERS")
+    pir_servers: str = Field(
+        "localhost:9001,localhost:9002,localhost:9003", env="PIR_SERVERS"
+    )
     blockchain_rpc: str = Field("http://localhost:8545", env="BLOCKCHAIN_RPC")
     ipfs_api: str = Field("http://localhost:5001", env="IPFS_API")
 
@@ -98,7 +100,9 @@ class Config(BaseSettings):
 
     def is_hipaa_compliant(self) -> bool:
         """Check if all HIPAA requirements are met"""
-        return all([self.npi_number, self.baa_hash, self.risk_analysis_hash, self.hsm_serial])
+        return all(
+            [self.npi_number, self.baa_hash, self.risk_analysis_hash, self.hsm_serial]
+        )
 
 
 @lru_cache()

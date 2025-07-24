@@ -127,10 +127,18 @@ class TestConfig:
         test_cases = [
             (CompressionTier.MINI, ["genomics"], 25),
             (CompressionTier.CLINICAL, ["genomics"], 300),
-            (CompressionTier.CLINICAL, ["genomics", "transcriptomics"], 300),  # Same for clinical
+            (
+                CompressionTier.CLINICAL,
+                ["genomics", "transcriptomics"],
+                300,
+            ),  # Same for clinical
             (CompressionTier.FULL_HDC, ["genomics"], 150),
             (CompressionTier.FULL_HDC, ["genomics", "transcriptomics"], 300),
-            (CompressionTier.FULL_HDC, ["genomics", "transcriptomics", "epigenetics"], 450),
+            (
+                CompressionTier.FULL_HDC,
+                ["genomics", "transcriptomics", "epigenetics"],
+                450,
+            ),
         ]
 
         for tier, modalities, expected_size in test_cases:

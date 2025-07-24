@@ -9,11 +9,11 @@ try:
 
     print("✅ SUCCESS: VariantPresenceCircuit imported")
     circuit = VariantPresenceCircuit()
-    print(f"✅ Circuit created: {circuit.name}")
+    print("✅ Circuit created: {circuit.name}")
 except ImportError as e:
-    print(f"❌ IMPORT ERROR: {e}")
+    print("❌ IMPORT ERROR: {e}")
 except Exception as e:
-    print(f"❌ ERROR: {type(e).__name__}: {e}")
+    print("❌ ERROR: {type(e).__name__}: {e}")
 
 # Test 2: Check what the error was about
 print("\nChecking base_circuits location...")
@@ -21,8 +21,8 @@ import os
 
 base_path = "/Users/rohanvinaik/genomevault/zk_proofs/circuits"
 files = os.listdir(base_path)
-print(f"Files in {base_path}:")
+print("Files in {base_path}:")
 for f in files:
-    print(f"  - {f}")
+    print("  - {f}")
 
 print("\nDONE!")

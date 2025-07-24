@@ -116,7 +116,9 @@ async def get_network_topology(request: TopologyRequest):
         signatory_nodes.sort(key=lambda x: x.latency or float("inf"))
 
         # Select nodes based on requirements
-        selected_lns = light_nodes[: max(3, request.max_nodes - request.required_signatories)]
+        selected_lns = light_nodes[
+            : max(3, request.max_nodes - request.required_signatories)
+        ]
         selected_ts = signatory_nodes[: request.required_signatories]
 
         # Validate we have enough nodes
@@ -149,10 +151,18 @@ async def list_all_nodes():
         "nodes": list(NETWORK_NODES.values()),
         "total": len(NETWORK_NODES),
         "summary": {
-            "light_nodes": sum(1 for n in NETWORK_NODES.values() if n.node_type == "light"),
-            "full_nodes": sum(1 for n in NETWORK_NODES.values() if n.node_type == "full"),
-            "archive_nodes": sum(1 for n in NETWORK_NODES.values() if n.node_type == "archive"),
-            "trusted_signatories": sum(1 for n in NETWORK_NODES.values() if n.is_signatory),
+            "light_nodes": sum(
+                1 for n in NETWORK_NODES.values() if n.node_type == "light"
+            ),
+            "full_nodes": sum(
+                1 for n in NETWORK_NODES.values() if n.node_type == "full"
+            ),
+            "archive_nodes": sum(
+                1 for n in NETWORK_NODES.values() if n.node_type == "archive"
+            ),
+            "trusted_signatories": sum(
+                1 for n in NETWORK_NODES.values() if n.is_signatory
+            ),
         },
     }
 

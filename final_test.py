@@ -16,12 +16,12 @@ try:
 
     # Create instance
     circuit = VariantPresenceCircuit(merkle_depth=20)
-    print(f"✅ Created circuit: {circuit.name}")
-    print(f"   - Constraints: {circuit.num_constraints}")
-    print(f"   - Merkle depth: {circuit.merkle_depth}")
+    print("✅ Created circuit: {circuit.name}")
+    print("   - Constraints: {circuit.num_constraints}")
+    print("   - Merkle depth: {circuit.merkle_depth}")
 
 except Exception as e:
-    print(f"❌ FAILED: {type(e).__name__}: {e}")
+    print("❌ FAILED: {type(e).__name__}: {e}")
     sys.exit(1)
 
 # Test 2: Test the diabetes circuit (from our use case)
@@ -31,8 +31,8 @@ try:
 
     # Create circuit
     diabetes_circuit = DiabetesRiskCircuit()
-    print(f"✅ Created diabetes circuit: {diabetes_circuit.name}")
-    print(f"   - Constraints: {diabetes_circuit.num_constraints}")
+    print("✅ Created diabetes circuit: {diabetes_circuit.name}")
+    print("   - Constraints: {diabetes_circuit.num_constraints}")
 
     # Test with sample data
     public_inputs = {
@@ -51,25 +51,29 @@ try:
     print("✅ Setup completed successfully")
 
 except Exception as e:
-    print(f"❌ FAILED: {type(e).__name__}: {e}")
+    print("❌ FAILED: {type(e).__name__}: {e}")
 
 # Test 3: Verify base_circuits components
 print("\n3. Testing base circuit components...")
 try:
-    from zk_proofs.circuits.base_circuits import BaseCircuit, FieldElement, MerkleTreeCircuit
+    from zk_proofs.circuits.base_circuits import (
+        BaseCircuit,
+        FieldElement,
+        MerkleTreeCircuit,
+    )
 
     # Test FieldElement
     fe1 = FieldElement(100)
     fe2 = FieldElement(200)
     fe3 = fe1 + fe2
-    print(f"✅ FieldElement math: {fe1.value} + {fe2.value} = {fe3.value}")
+    print("✅ FieldElement math: {fe1.value} + {fe2.value} = {fe3.value}")
 
     # Test MerkleTreeCircuit
     merkle = MerkleTreeCircuit(tree_depth=10)
-    print(f"✅ MerkleTreeCircuit created with depth {merkle.tree_depth}")
+    print("✅ MerkleTreeCircuit created with depth {merkle.tree_depth}")
 
 except Exception as e:
-    print(f"❌ FAILED: {type(e).__name__}: {e}")
+    print("❌ FAILED: {type(e).__name__}: {e}")
 
 # Test 4: Run pytest
 print("\n4. Running pytest...")
@@ -87,7 +91,7 @@ if result.returncode == 0:
     import re
 
     passed = len(re.findall(r"PASSED", result.stdout))
-    print(f"   - Tests passed: {passed}")
+    print("   - Tests passed: {passed}")
 else:
     print("❌ Pytest failed")
     print("STDOUT:", result.stdout[-500:])  # Last 500 chars

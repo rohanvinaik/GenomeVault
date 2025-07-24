@@ -52,7 +52,11 @@ class TestMetricsCollector:
         """Test PIR metrics update"""
         collector = MetricsCollector()
 
-        config = {"trusted_signatures": 2, "server_honesty_prob": 0.98, "server_type": "hipaa-ts"}
+        config = {
+            "trusted_signatures": 2,
+            "server_honesty_prob": 0.98,
+            "server_type": "hipaa-ts",
+        }
 
         collector.update_pir_metrics(config)
 
@@ -149,7 +153,10 @@ class TestLogging:
         """Test security logger"""
         # Log intrusion attempt
         security_logger.log_intrusion_attempt(
-            source_ip="192.168.1.100", attack_type="brute_force", target="/api/login", blocked=True
+            source_ip="192.168.1.100",
+            attack_type="brute_force",
+            target="/api/login",
+            blocked=True,
         )
 
         # Log encryption event
@@ -190,7 +197,11 @@ class TestBackupManager:
         manager = BackupManager(backup_config)
 
         # Create backup
-        original_data = {"key1": "value1", "key2": [1, 2, 3], "key3": {"nested": "data"}}
+        original_data = {
+            "key1": "value1",
+            "key2": [1, 2, 3],
+            "key3": {"nested": "data"},
+        }
 
         backup_id = manager.create_backup(original_data, "test")
 
@@ -309,7 +320,9 @@ class TestComplianceMonitor:
             "user_id": "doctor123",
         }
 
-        is_compliant = await compliance_monitor.check_hipaa_compliance("data_access", context)
+        is_compliant = await compliance_monitor.check_hipaa_compliance(
+            "data_access", context
+        )
 
         assert is_compliant is False  # Accessed unnecessary fields
 
@@ -317,9 +330,15 @@ class TestComplianceMonitor:
     async def test_gdpr_compliance(self, compliance_monitor):
         """Test GDPR compliance checking"""
         # Test consent verification
-        context = {"consent_verified": False, "user_id": "user123", "data_type": "genomic"}
+        context = {
+            "consent_verified": False,
+            "user_id": "user123",
+            "data_type": "genomic",
+        }
 
-        is_compliant = await compliance_monitor.check_gdpr_compliance("data_processing", context)
+        is_compliant = await compliance_monitor.check_gdpr_compliance(
+            "data_processing", context
+        )
 
         assert is_compliant is False  # No consent
 

@@ -69,7 +69,9 @@ class AuditLogger:
         }
         self._write_audit_log(event)
 
-    def log_consent_change(self, user_id: str, consent_type: str, old_value: Any, new_value: Any):
+    def log_consent_change(
+        self, user_id: str, consent_type: str, old_value: Any, new_value: Any
+    ):
         """Log consent changes for GDPR compliance"""
         event = {
             "event_type": "consent_change",
@@ -100,7 +102,11 @@ class AuditLogger:
         self._write_audit_log(event)
 
     def log_privacy_event(
-        self, user_id: str, event_type: str, epsilon_consumed: float, remaining_budget: float
+        self,
+        user_id: str,
+        event_type: str,
+        epsilon_consumed: float,
+        remaining_budget: float,
     ):
         """Log privacy budget consumption"""
         event = {
@@ -233,7 +239,9 @@ class SecurityLogger:
     def __init__(self):
         self.logger = structlog.get_logger("security")
 
-    def log_intrusion_attempt(self, source_ip: str, attack_type: str, target: str, blocked: bool):
+    def log_intrusion_attempt(
+        self, source_ip: str, attack_type: str, target: str, blocked: bool
+    ):
         """Log potential intrusion attempts"""
         self.logger.warning(
             "intrusion_attempt",
@@ -244,7 +252,9 @@ class SecurityLogger:
             timestamp=datetime.utcnow().isoformat(),
         )
 
-    def log_encryption_event(self, operation: str, algorithm: str, key_length: int, success: bool):
+    def log_encryption_event(
+        self, operation: str, algorithm: str, key_length: int, success: bool
+    ):
         """Log encryption/decryption events"""
         self.logger.info(
             "encryption_event",
@@ -256,7 +266,11 @@ class SecurityLogger:
         )
 
     def log_access_violation(
-        self, user_id: str, resource: str, required_permission: str, user_permissions: List[str]
+        self,
+        user_id: str,
+        resource: str,
+        required_permission: str,
+        user_permissions: List[str],
     ):
         """Log access control violations"""
         self.logger.warning(
@@ -381,7 +395,9 @@ def log_function_call(logger_name: Optional[str] = None):
 
                 # Log function exit
                 logger.debug(
-                    "function_completed", function=func.__name__, has_result=result is not None
+                    "function_completed",
+                    function=func.__name__,
+                    has_result=result is not None,
                 )
 
                 return result

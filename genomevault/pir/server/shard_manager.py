@@ -90,7 +90,9 @@ class ShardManager:
 
         # Shard metadata
         self.shards: Dict[str, ShardMetadata] = {}
-        self.shard_distribution = ShardDistribution(strategy="hybrid", replication_factor=3)
+        self.shard_distribution = ShardDistribution(
+            strategy="hybrid", replication_factor=3
+        )
 
         # Thread pool for parallel operations
         self.executor = ThreadPoolExecutor(max_workers=4)
@@ -156,7 +158,9 @@ class ShardManager:
             json.dump(manifest, f, indent=2)
 
     @performance_logger.log_operation("create_shards")
-    def create_shards_from_data(self, data_source: Path, data_type: str = "genomic") -> List[str]:
+    def create_shards_from_data(
+        self, data_source: Path, data_type: str = "genomic"
+    ) -> List[str]:
         """
         Create shards from source data.
 
@@ -187,7 +191,10 @@ class ShardManager:
             shard_data = data[start_idx:end_idx]
 
             future = self.executor.submit(
-                self._create_single_shard, shard_index=i, shard_data=shard_data, data_type=data_type
+                self._create_single_shard,
+                shard_index=i,
+                shard_data=shard_data,
+                data_type=data_type,
             )
             futures.append(future)
 
@@ -286,7 +293,9 @@ class ShardManager:
             # Select servers for this shard
             if self.shard_distribution.strategy == "replicated":
                 # All servers get all shards
-                assigned_servers = server_list[: self.shard_distribution.replication_factor]
+                assigned_servers = server_list[
+                    : self.shard_distribution.replication_factor
+                ]
 
             elif self.shard_distribution.strategy == "striped":
                 # Round-robin distribution
@@ -305,7 +314,9 @@ class ShardManager:
 
                 assigned_servers = ts_servers[:2]
                 if len(assigned_servers) < self.shard_distribution.replication_factor:
-                    needed = self.shard_distribution.replication_factor - len(assigned_servers)
+                    needed = self.shard_distribution.replication_factor - len(
+                        assigned_servers
+                    )
                     assigned_servers.extend(ln_servers[:needed])
 
             self.shard_distribution.assign_shard(shard_id, assigned_servers)
@@ -314,7 +325,9 @@ class ShardManager:
         with self.lock:
             self._save_shard_metadata()
 
-        logger.info("Distributed {len(self.shards)} shards across {len(server_list)} servers")
+        logger.info(
+            "Distributed {len(self.shards)} shards across {len(server_list)} servers"
+        )
         return self.shard_distribution
 
     def verify_shard_integrity(self, shard_id: str) -> bool:
@@ -464,7 +477,8 @@ class ShardManager:
 
         # Rebalance shards
         new_distribution = ShardDistribution(
-            strategy="optimized", replication_factor=self.shard_distribution.replication_factor
+            strategy="optimized",
+            replication_factor=self.shard_distribution.replication_factor,
         )
 
         # Assign most accessed shards to fastest servers

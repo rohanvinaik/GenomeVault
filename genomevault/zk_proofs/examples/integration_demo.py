@@ -47,7 +47,9 @@ def demonstrate_variant_presence():
         private_inputs={
             "variant_data": variant,
             "merkle_proof": {
-                "path": [hashlib.sha256("node_{i}".encode()).hexdigest() for i in range(20)],
+                "path": [
+                    hashlib.sha256("node_{i}".encode()).hexdigest() for i in range(20)
+                ],
                 "indices": [i % 2 for i in range(20)],
             },
             "witness_randomness": np.random.bytes(32).hex(),
@@ -114,7 +116,9 @@ def demonstrate_diabetes_risk_assessment():
     print("Verification time: {result.verification_time*1000:.1f}ms")
 
     if result.is_valid:
-        print("\n✓ Alert triggered: Patient meets both glucose AND genetic risk criteria")
+        print(
+            "\n✓ Alert triggered: Patient meets both glucose AND genetic risk criteria"
+        )
         print("  (Without revealing actual values)")
 
     return proof, result
@@ -147,9 +151,13 @@ def demonstrate_polygenic_risk_score():
     proof = prover.generate_proof(
         circuit_name="polygenic_risk_score",
         public_inputs={
-            "prs_model": hashlib.sha256("T2D_PRS_v2.0_{num_variants}".encode()).hexdigest(),
+            "prs_model": hashlib.sha256(
+                "T2D_PRS_v2.0_{num_variants}".encode()
+            ).hexdigest(),
             "score_range": {"min": -1.0, "max": 1.0},
-            "result_commitment": hashlib.sha256("score:{actual_score}".encode()).hexdigest(),
+            "result_commitment": hashlib.sha256(
+                "score:{actual_score}".encode()
+            ).hexdigest(),
             "genome_commitment": hashlib.sha256(b"user_genome").hexdigest(),
         },
         private_inputs={
@@ -250,11 +258,16 @@ def demonstrate_circuit_optimization():
     scenarios = [
         {"analysis_type": "variant_verification", "data": {"variant_count": 1}},
         {"analysis_type": "risk_score", "data": {"variant_count": 1000}},
-        {"analysis_type": "pathway_analysis", "data": {"expression": True, "gene_count": 20000}},
+        {
+            "analysis_type": "pathway_analysis",
+            "data": {"expression": True, "gene_count": 20000},
+        },
     ]
 
     for scenario in scenarios:
-        optimal = manager.select_optimal_circuit(scenario["analysis_type"], scenario["data"])
+        optimal = manager.select_optimal_circuit(
+            scenario["analysis_type"], scenario["data"]
+        )
         print("\nScenario: {scenario['analysis_type']}")
         print("  Data: {scenario['data']}")
         print("  Selected circuit: {optimal}")
@@ -332,7 +345,9 @@ def demonstrate_batch_operations():
     for i in range(3):
         variant = {"chr": "chr{i+1}", "pos": 1000000 + i * 1000, "re": "A", "alt": "G"}
 
-        variant_str = "{variant['chr']}:{variant['pos']}:{variant['re']}:{variant['alt']}"
+        variant_str = (
+            "{variant['chr']}:{variant['pos']}:{variant['re']}:{variant['alt']}"
+        )
 
         batch_requests.append(
             {
@@ -346,7 +361,8 @@ def demonstrate_batch_operations():
                     "variant_data": variant,
                     "merkle_proof": {
                         "path": [
-                            hashlib.sha256("batch_{i}_{j}".encode()).hexdigest() for j in range(20)
+                            hashlib.sha256("batch_{i}_{j}".encode()).hexdigest()
+                            for j in range(20)
                         ],
                         "indices": [j % 2 for j in range(20)],
                     },

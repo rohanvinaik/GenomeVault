@@ -32,14 +32,18 @@ class VaultRequest(BaseModel):
 
     amount: int = Field(..., gt=0, description="Amount of credits to vault")
     duration_blocks: int = Field(..., gt=0, description="Vaulting duration in blocks")
-    beneficiary: Optional[str] = Field(None, description="Address to receive bonus credits")
+    beneficiary: Optional[str] = Field(
+        None, description="Address to receive bonus credits"
+    )
 
 
 class RedeemRequest(BaseModel):
     """Request to redeem vaulted credits"""
 
     vault_id: str = Field(..., description="ID of the vault to redeem")
-    early_withdrawal: bool = Field(False, description="Whether to withdraw early (with penalty)")
+    early_withdrawal: bool = Field(
+        False, description="Whether to withdraw early (with penalty)"
+    )
 
 
 class VaultInfo(BaseModel):
@@ -82,7 +86,9 @@ async def get_credit_balance(address: str):
 
 
 @router.post("/vault", response_model=VaultInfo)
-async def vault_credits(request: VaultRequest, address: str = "0x123..."):  # Would come from auth
+async def vault_credits(
+    request: VaultRequest, address: str = "0x123..."
+):  # Would come from auth
     """
     Vault credits for a duration to earn bonus
 
@@ -96,7 +102,8 @@ async def vault_credits(request: VaultRequest, address: str = "0x123..."):  # Wo
     # Check sufficient balance
     if balance.balance < request.amount:
         raise HTTPException(
-            status_code=400, detail="Insufficient balance: {balance.balance} < {request.amount}"
+            status_code=400,
+            detail="Insufficient balance: {balance.balance} < {request.amount}",
         )
 
     # Calculate bonus rate based on duration
@@ -227,7 +234,8 @@ async def transfer_credits(
 
     if from_balance.balance < amount:
         raise HTTPException(
-            status_code=400, detail="Insufficient balance: {from_balance.balance} < {amount}"
+            status_code=400,
+            detail="Insufficient balance: {from_balance.balance} < {amount}",
         )
 
     # Execute transfer

@@ -11,7 +11,11 @@ class DataSourceBase(ABC):
     def __init__(self):
         self.logger = logging.getLogger(self.__class__.__name__)
         self._data = None
-        self._metadata = {"source_name": self.__class__.__name__, "loaded_at": None, "n_records": 0}
+        self._metadata = {
+            "source_name": self.__class__.__name__,
+            "loaded_at": None,
+            "n_records": 0,
+        }
 
     @abstractmethod
     def load_data(self) -> pd.DataFrame:

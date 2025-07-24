@@ -14,7 +14,12 @@ import numpy as np
 from genomevault.utils.logging import logger
 
 from ...prover import Circuit
-from ..base_circuits import BaseCircuit, ComparisonCircuit, FieldElement, RangeProofCircuit
+from ..base_circuits import (
+    BaseCircuit,
+    ComparisonCircuit,
+    FieldElement,
+    RangeProofCircuit,
+)
 
 
 class MultiOmicsCorrelationCircuit(BaseCircuit):
@@ -54,7 +59,9 @@ class MultiOmicsCorrelationCircuit(BaseCircuit):
         self.data_1 = self._process_hypervector(private_inputs["data_1"])
         self.data_2 = self._process_hypervector(private_inputs["data_2"])
         self.sample_size = FieldElement(private_inputs["sample_size"])
-        self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
+        self.witness_randomness = FieldElement(
+            int(private_inputs["witness_randomness"], 16)
+        )
 
     def generate_constraints(self):
         """Generate correlation proof constraints."""
@@ -62,9 +69,15 @@ class MultiOmicsCorrelationCircuit(BaseCircuit):
         correlation = self._calculate_correlation(self.data_1, self.data_2)
 
         # 2. Create commitment to correlation
-        correlation_commit = self._commit_correlation(correlation, self.witness_randomness)
+        correlation_commit = self._commit_correlation(
+            correlation, self.witness_randomness
+        )
         self.add_constraint(
-            correlation_commit, self.correlation_commitment, FieldElement(0), ql=1, qr=-1
+            correlation_commit,
+            self.correlation_commitment,
+            FieldElement(0),
+            ql=1,
+            qr=-1,
         )
 
         # 3. Calculate significance (simplified t-test)
@@ -118,7 +131,9 @@ class MultiOmicsCorrelationCircuit(BaseCircuit):
         # Simplified calculation
         return cov_sum  # In production, would properly normalize
 
-    def _calculate_t_statistic(self, correlation: FieldElement, n: FieldElement) -> FieldElement:
+    def _calculate_t_statistic(
+        self, correlation: FieldElement, n: FieldElement
+    ) -> FieldElement:
         """Calculate t-statistic for correlation significance."""
         # t = r * sqrt(n-2) / sqrt(1-r^2)
         # Simplified for circuit
@@ -167,15 +182,23 @@ class GenotypePhenotypeAssociationCircuit(BaseCircuit):
         """Setup G-P association circuit."""
         # Public inputs
         self.phenotype_id = FieldElement(public_inputs["phenotype_id"])
-        self.association_strength = FieldElement(int(public_inputs["association_strength"] * 1000))
-        self.p_value_commitment = FieldElement(int(public_inputs["p_value_commitment"], 16))
+        self.association_strength = FieldElement(
+            int(public_inputs["association_strength"] * 1000)
+        )
+        self.p_value_commitment = FieldElement(
+            int(public_inputs["p_value_commitment"], 16)
+        )
         self.study_size = FieldElement(public_inputs["study_size"])
 
         # Private inputs
         self.genotypes = [FieldElement(g) for g in private_inputs["genotypes"]]
-        self.phenotypes = [FieldElement(int(p * 100)) for p in private_inputs["phenotypes"]]
+        self.phenotypes = [
+            FieldElement(int(p * 100)) for p in private_inputs["phenotypes"]
+        ]
         self.covariates = private_inputs.get("covariates", [])
-        self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
+        self.witness_randomness = FieldElement(
+            int(private_inputs["witness_randomness"], 16)
+        )
 
     def generate_constraints(self):
         """Generate association test constraints."""
@@ -187,13 +210,17 @@ class GenotypePhenotypeAssociationCircuit(BaseCircuit):
         beta = self._calculate_association(self.genotypes[:100], self.phenotypes[:100])
 
         # 3. Verify association strength
-        self.add_constraint(beta, self.association_strength, FieldElement(0), ql=1, qr=-1)
+        self.add_constraint(
+            beta, self.association_strength, FieldElement(0), ql=1, qr=-1
+        )
 
         # 4. Calculate and commit p-value
         p_value = self._calculate_p_value(beta, len(self.genotypes))
         p_commit = self._commit_p_value(p_value, self.witness_randomness)
 
-        self.add_constraint(p_commit, self.p_value_commitment, FieldElement(0), ql=1, qr=-1)
+        self.add_constraint(
+            p_commit, self.p_value_commitment, FieldElement(0), ql=1, qr=-1
+        )
 
     def _add_genotype_validation(self, genotype: FieldElement):
         """Validate genotype is 0, 1, or 2."""
@@ -253,7 +280,9 @@ class GenotypePhenotypeAssociationCircuit(BaseCircuit):
         else:
             return FieldElement(50)  # p < 0.05
 
-    def _commit_p_value(self, p_value: FieldElement, randomness: FieldElement) -> FieldElement:
+    def _commit_p_value(
+        self, p_value: FieldElement, randomness: FieldElement
+    ) -> FieldElement:
         """Commit to p-value."""
         data = "PVALUE:{p_value.value}:{randomness.value}".encode()
         hash_val = hashlib.sha256(data).hexdigest()
@@ -283,14 +312,18 @@ class ClinicalTrialEligibilityCircuit(BaseCircuit):
         """Setup eligibility circuit."""
         # Public inputs
         self.trial_id = FieldElement(public_inputs["trial_id"])
-        self.eligibility_result = FieldElement(1 if public_inputs["eligibility_result"] else 0)
+        self.eligibility_result = FieldElement(
+            1 if public_inputs["eligibility_result"] else 0
+        )
         self.criteria_hash = FieldElement(int(public_inputs["criteria_hash"], 16))
 
         # Private inputs
         self.genomic_features = private_inputs["genomic_features"]
         self.clinical_features = private_inputs["clinical_features"]
         self.demographic_features = private_inputs["demographic_features"]
-        self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
+        self.witness_randomness = FieldElement(
+            int(private_inputs["witness_randomness"], 16)
+        )
 
     def generate_constraints(self):
         """Generate eligibility check constraints."""
@@ -307,11 +340,15 @@ class ClinicalTrialEligibilityCircuit(BaseCircuit):
         total_eligible = genomic_eligible * clinical_eligible * demographic_eligible
 
         # 5. Verify result matches public input
-        self.add_constraint(total_eligible, self.eligibility_result, FieldElement(0), ql=1, qr=-1)
+        self.add_constraint(
+            total_eligible, self.eligibility_result, FieldElement(0), ql=1, qr=-1
+        )
 
         # 6. Verify criteria hash
         computed_hash = self._hash_criteria()
-        self.add_constraint(computed_hash, self.criteria_hash, FieldElement(0), ql=1, qr=-1)
+        self.add_constraint(
+            computed_hash, self.criteria_hash, FieldElement(0), ql=1, qr=-1
+        )
 
     def _check_genomic_criteria(self) -> FieldElement:
         """Check if genomic features meet criteria."""
@@ -319,7 +356,9 @@ class ClinicalTrialEligibilityCircuit(BaseCircuit):
         required_mutation = self.genomic_features.get("required_mutation", {})
 
         if required_mutation:
-            has_mutation = FieldElement(1 if required_mutation.get("present", False) else 0)
+            has_mutation = FieldElement(
+                1 if required_mutation.get("present", False) else 0
+            )
             return has_mutation
 
         return FieldElement(1)  # No genomic criteria
@@ -384,7 +423,9 @@ class RareVariantBurdenCircuit(BaseCircuit):
         # Public inputs
         self.gene_id = FieldElement(public_inputs["gene_id"])
         self.burden_score = FieldElement(int(public_inputs["burden_score"] * 1000))
-        self.maf_threshold = FieldElement(int(public_inputs["max_allele_frequency"] * 10000))
+        self.maf_threshold = FieldElement(
+            int(public_inputs["max_allele_frequency"] * 10000)
+        )
 
         # Private inputs
         self.variants = private_inputs["variants"]
@@ -392,9 +433,12 @@ class RareVariantBurdenCircuit(BaseCircuit):
             FieldElement(int(af * 10000)) for af in private_inputs["allele_frequencies"]
         ]
         self.functional_scores = [
-            FieldElement(int(score * 100)) for score in private_inputs["functional_scores"]
+            FieldElement(int(score * 100))
+            for score in private_inputs["functional_scores"]
         ]
-        self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
+        self.witness_randomness = FieldElement(
+            int(private_inputs["witness_randomness"], 16)
+        )
 
     def generate_constraints(self):
         """Generate burden test constraints."""
@@ -423,7 +467,9 @@ class RareVariantBurdenCircuit(BaseCircuit):
         # 3. Create commitment to hide individual variants
         variant_commit = self._commit_variants(self.witness_randomness)
 
-    def _check_rare_variant(self, af: FieldElement, threshold: FieldElement) -> FieldElement:
+    def _check_rare_variant(
+        self, af: FieldElement, threshold: FieldElement
+    ) -> FieldElement:
         """Check if variant is rare (simplified)."""
         # In production, would use comparison circuit
         # For now, return 1 if we assume it's rare
@@ -437,7 +483,9 @@ class RareVariantBurdenCircuit(BaseCircuit):
         return FieldElement(int(hash_val, 16))
 
 
-def create_multi_omics_proof_suite(omics_data: Dict[str, Any], analysis_type: str) -> List[Circuit]:
+def create_multi_omics_proof_suite(
+    omics_data: Dict[str, Any], analysis_type: str
+) -> List[Circuit]:
     """
     Create a suite of proofs for multi-omics analysis.
 
@@ -472,7 +520,11 @@ def create_multi_omics_proof_suite(omics_data: Dict[str, Any], analysis_type: st
                 circuit_type="transcriptomic",
                 constraints=30000,
                 public_inputs=["signature_id", "match_score", "p_value"],
-                private_inputs=["expression_values", "signature_genes", "normalization"],
+                private_inputs=[
+                    "expression_values",
+                    "signature_genes",
+                    "normalization",
+                ],
                 parameters={"signature_size": 100},
             )
             circuits.append(expression_circuit)
@@ -495,7 +547,11 @@ def create_multi_omics_proof_suite(omics_data: Dict[str, Any], analysis_type: st
             name="omics_correlation",
             circuit_type="multi_omics",
             constraints=40000,
-            public_inputs=["correlation_matrix_hash", "significant_pairs", "fdr_threshold"],
+            public_inputs=[
+                "correlation_matrix_hash",
+                "significant_pairs",
+                "fdr_threshold",
+            ],
             private_inputs=["layer_data", "sample_ids", "batch_effects"],
             parameters={"max_features": 1000, "correction_method": "BH"},
         )

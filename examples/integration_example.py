@@ -60,7 +60,9 @@ def process_and_encode_genome(vcf_path: str):
     # Tier compression
     print("\nPhase 2b: Tiered compression...")
     compressor = TieredCompressor(CompressionTier.CLINICAL)
-    compressed = compressor.compress({"hypervector": genomic_hv, **genomic_data}, OmicsType.GENOMIC)
+    compressed = compressor.compress(
+        {"hypervector": genomic_hv, **genomic_data}, OmicsType.GENOMIC
+    )
 
     print("  - Clinical tier size: {compressed.compressed_size:,} bytes")
     print("  - Total compression: {original_size / compressed.compressed_size:.1f}:1")
@@ -199,7 +201,9 @@ def main():
                     {"chr": "chr1", "pos": 200, "re": "C", "alt": "T", "quality": 40},
                     {"chr": "chr2", "pos": 300, "re": "G", "alt": "A", "quality": 35},
                 ],
-                "indels": [{"chr": "chr3", "pos": 400, "re": "AT", "alt": "A", "quality": 25}],
+                "indels": [
+                    {"chr": "chr3", "pos": 400, "re": "AT", "alt": "A", "quality": 25}
+                ],
                 "cnvs": [],
             },
             "quality_metrics": {
@@ -208,7 +212,12 @@ def main():
                 "uniformity": 0.92,
                 "gc_content": 0.41,
             },
-            "summary": {"total_variants": 4, "snp_count": 3, "indel_count": 1, "cnv_count": 0},
+            "summary": {
+                "total_variants": 4,
+                "snp_count": 3,
+                "indel_count": 1,
+                "cnv_count": 0,
+            },
         }
 
         # Encode the mock data

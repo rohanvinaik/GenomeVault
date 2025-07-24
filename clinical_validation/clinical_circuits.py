@@ -13,7 +13,12 @@ Import from clinical_validation.circuits instead.
 import warnings
 
 # Import from the new structure
-from .circuits import DiabetesRiskCircuit, ClinicalBiomarkerCircuit, BaseCircuit, create_circuit
+from .circuits import (
+    DiabetesRiskCircuit,
+    ClinicalBiomarkerCircuit,
+    BaseCircuit,
+    create_circuit,
+)
 from .proofs import ProofData, CircuitType
 
 # Issue deprecation warning

@@ -11,7 +11,10 @@ from pathlib import Path
 import numpy as np
 
 from genomevault.blockchain.node import BlockchainNode
-from genomevault.hypervector_transform.encoding import HypervectorBinder, HypervectorEncoder
+from genomevault.hypervector_transform.encoding import (
+    HypervectorBinder,
+    HypervectorEncoder,
+)
 from genomevault.local_processing.sequencing import SequencingProcessor, Variant
 from genomevault.pir.client import PIRClient, PIRServer
 
@@ -60,13 +63,19 @@ async def demonstrate_genomevault():
 
     # Encode clinical features (simulated)
     clinical_features = {
-        "labs": {"glucose": 140, "hba1c": 7.2, "cholesterol": 200}  # mg/dL  # %  # mg/dL
+        "labs": {
+            "glucose": 140,
+            "hba1c": 7.2,
+            "cholesterol": 200,
+        }  # mg/dL  # %  # mg/dL
     }
     clinical_hv = encoder.encode_features(clinical_features, domain="clinical")
 
     print("   Genomic hypervector shape: {genomic_hv.shape}")
     print("   Clinical hypervector shape: {clinical_hv.shape}")
-    print("   Compression achieved: {config.get_compression_size(['genomics', 'clinical'])} KB")
+    print(
+        "   Compression achieved: {config.get_compression_size(['genomics', 'clinical'])} KB"
+    )
 
     # Cross-modal binding
     binder = HypervectorBinder()
@@ -95,7 +104,9 @@ async def demonstrate_genomevault():
 
     print("   Proof ID: {diabetes_proof.proof_id}")
     print("   Proof size: {len(diabetes_proof.proof_data)} bytes")
-    print("   Generation time: {diabetes_proof.metadata['generation_time_seconds']*1000:.1f}ms")
+    print(
+        "   Generation time: {diabetes_proof.metadata['generation_time_seconds']*1000:.1f}ms"
+    )
 
     # Step 5: PIR Query (simulated)
     print("\n5. Private Information Retrieval")
@@ -114,21 +125,28 @@ async def demonstrate_genomevault():
     optimal_config = pir_client.get_optimal_server_configuration()
     print("   Optimal PIR config: {optimal_config['optimal']['name']}")
     print("   Expected latency: {optimal_config['optimal']['latency_ms']}ms")
-    print("   Privacy guarantee: P_fail = {optimal_config['optimal']['failure_probability']:.2e}")
+    print(
+        "   Privacy guarantee: P_fail = {optimal_config['optimal']['failure_probability']:.2e}"
+    )
 
     # Step 6: Blockchain Integration
     print("\n6. Blockchain Node Setup")
 
     # Create a light node with HIPAA verification
     node = BlockchainNode(
-        node_id="clinic_node_001", node_class=NodeClass.LIGHT, is_trusted_signatory=False
+        node_id="clinic_node_001",
+        node_class=NodeClass.LIGHT,
+        is_trusted_signatory=False,
     )
 
     print("   Initial voting power: {node.voting_power}")
 
     # HIPAA fast-track verification
     await node.verify_hipaa_credentials(
-        npi="1234567890", baa_hash="baa_hash", risk_analysis_hash="risk_hash", hsm_serial="HSM12345"
+        npi="1234567890",
+        baa_hash="baa_hash",
+        risk_analysis_hash="risk_hash",
+        hsm_serial="HSM12345",
     )
 
     print("   Post-HIPAA voting power: {node.voting_power}")

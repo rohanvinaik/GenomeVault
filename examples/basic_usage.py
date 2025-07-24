@@ -71,7 +71,11 @@ def process_genomic_data_example():
     """
 
     # For demo purposes, create mock data
-    from genomevault.local_processing.sequencing import GenomicProfile, QualityMetrics, Variant
+    from genomevault.local_processing.sequencing import (
+        GenomicProfile,
+        QualityMetrics,
+        Variant,
+    )
 
     mock_variants = [
         Variant(
@@ -98,7 +102,9 @@ def process_genomic_data_example():
         sample_id="patient_001",
         reference_genome="GRCh38",
         variants=mock_variants,
-        quality_metrics=QualityMetrics(total_reads=1000000, coverage_mean=30.0, coverage_std=5.0),
+        quality_metrics=QualityMetrics(
+            total_reads=1000000, coverage_mean=30.0, coverage_std=5.0
+        ),
         processing_metadata={"demo": True},
     )
 
@@ -106,7 +112,9 @@ def process_genomic_data_example():
     storage = DifferentialStorage()
     compressed = storage.compress_profile(mock_profile)
 
-    logger.info("Mock genomic profile created with {len(mock_profile.variants)} variants")
+    logger.info(
+        "Mock genomic profile created with {len(mock_profile.variants)} variants"
+    )
     logger.info("Compressed to {len(compressed['chunks'])} chunks")
 
     return mock_profile
@@ -138,7 +146,11 @@ def process_clinical_data_example():
                     "id": "obs-001",
                     "code": {
                         "coding": [
-                            {"system": "http://loinc.org", "code": "2345-7", "display": "Glucose"}
+                            {
+                                "system": "http://loinc.org",
+                                "code": "2345-7",
+                                "display": "Glucose",
+                            }
                         ]
                     },
                     "valueQuantity": {"value": 126, "unit": "mg/dL"},
@@ -202,7 +214,9 @@ def demonstrate_privacy_features():
     key = AESGCMCipher.generate_key()
     plaintext = b"Sensitive genomic data"
     ciphertext, nonce, tag = AESGCMCipher.encrypt(plaintext, key)
-    logger.info("3. Data encrypted with AES-256-GCM (ciphertext: {len(ciphertext)} bytes)")
+    logger.info(
+        "3. Data encrypted with AES-256-GCM (ciphertext: {len(ciphertext)} bytes)"
+    )
 
     # Demonstrate threshold secret sharing
     secret = b"master_secret_key_123456789012"  # 30 bytes
@@ -246,7 +260,9 @@ def main():
         logger.info("✓ Encryption and secret sharing initialized")
         logger.info("✓ Ready for secure genomic analysis")
 
-        print("\nFor more examples, see the documentation at https://docs.genomevault.io")
+        print(
+            "\nFor more examples, see the documentation at https://docs.genomevault.io"
+        )
 
     except Exception as e:
         logger.error("Error in demonstration: {e}")

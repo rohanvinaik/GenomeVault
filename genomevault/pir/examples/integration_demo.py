@@ -83,7 +83,9 @@ async def setup_pir_network(data_dir: Path) -> Dict:
     temp_data_file.write_bytes(combined_data)
 
     # Create shards
-    shard_ids = shard_manager.create_shards_from_data(temp_data_file, data_type="genomic")
+    shard_ids = shard_manager.create_shards_from_data(
+        temp_data_file, data_type="genomic"
+    )
     print("Created {len(shard_ids)} shards")
 
     # 3. Set up PIR servers
@@ -205,7 +207,9 @@ async def demonstrate_pir_queries(network_info: Dict):
     # Show optimal configuration
     optimal_config = pir_client.get_optimal_server_configuration()
     print("Optimal configuration: {optimal_config['optimal']['name']}")
-    print("Privacy failure probability: {optimal_config['optimal']['failure_probability']:.2e}")
+    print(
+        "Privacy failure probability: {optimal_config['optimal']['failure_probability']:.2e}"
+    )
     print("Expected latency: {optimal_config['optimal']['latency_ms']:.0f}ms")
 
     # 2. Create query builder
@@ -219,11 +223,15 @@ async def demonstrate_pir_queries(network_info: Dict):
 
     # Simulate query execution (in real system would actually query servers)
     print("Looking up variant: chr1:1000500:A>G")
-    print("Query preserves privacy - servers don't know which variant is being accessed")
+    print(
+        "Query preserves privacy - servers don't know which variant is being accessed"
+    )
 
     # 4. Execute region scan
     print("\n=== Region Scan Query ===")
-    region_query = builder.build_region_query(chromosome="chr1", start=1000000, end=1005000)
+    region_query = builder.build_region_query(
+        chromosome="chr1", start=1000000, end=1005000
+    )
 
     print("Scanning region: chr1:1000000-1005000")
     print("Multiple PIR queries executed in parallel")
@@ -278,7 +286,9 @@ async def demonstrate_network_coordination():
     )
 
     # Get optimal configuration
-    config = coordinator.get_server_configuration(target_failure_prob=1e-4, max_latency_ms=300)
+    config = coordinator.get_server_configuration(
+        target_failure_prob=1e-4, max_latency_ms=300
+    )
 
     print("\nAvailable Configurations:")
     for conf in config["configurations"]:

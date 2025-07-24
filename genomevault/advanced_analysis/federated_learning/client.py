@@ -37,7 +37,10 @@ class FederatedLearningClient:
     """
 
     def __init__(
-        self, client_id: str, data_path: Optional[Path] = None, use_hypervectors: bool = True
+        self,
+        client_id: str,
+        data_path: Optional[Path] = None,
+        use_hypervectors: bool = True,
     ):
         """
         Initialize FL client.
@@ -63,7 +66,8 @@ class FederatedLearningClient:
         self.training_history = []
 
         logger.info(
-            "FederatedLearningClient {client_id} initialized", extra={"privacy_safe": True}
+            "FederatedLearningClient {client_id} initialized",
+            extra={"privacy_safe": True},
         )
 
     def load_local_data(self, privacy_filter: bool = True) -> LocalDataset:
@@ -95,10 +99,13 @@ class FederatedLearningClient:
         if self.use_hypervectors:
             features = self._encode_features(features)
 
-        self.local_dataset = LocalDataset(features=features, labels=labels, metadata=metadata)
+        self.local_dataset = LocalDataset(
+            features=features, labels=labels, metadata=metadata
+        )
 
         logger.info(
-            "Loaded {self.local_dataset.num_samples} samples", extra={"privacy_safe": True}
+            "Loaded {self.local_dataset.num_samples} samples",
+            extra={"privacy_safe": True},
         )
 
         return self.local_dataset
@@ -142,7 +149,10 @@ class FederatedLearningClient:
         filtered_features = features[:, common_variants]
 
         # Add small noise to continuous features
-        if filtered_features.dtype == np.float32 or filtered_features.dtype == np.float64:
+        if (
+            filtered_features.dtype == np.float32
+            or filtered_features.dtype == np.float64
+        ):
             noise = np.random.laplace(0, 0.1, size=filtered_features.shape)
             filtered_features += noise
 
@@ -233,7 +243,8 @@ class FederatedLearningClient:
 
                 # Binary cross-entropy loss
                 loss = -np.mean(
-                    y_batch * np.log(probs + 1e-8) + (1 - y_batch) * np.log(1 - probs + 1e-8)
+                    y_batch * np.log(probs + 1e-8)
+                    + (1 - y_batch) * np.log(1 - probs + 1e-8)
                 )
                 epoch_loss += loss * len(batch_indices)
 
@@ -318,7 +329,9 @@ class FederatedLearningClient:
         noise = np.random.normal(0, sigma, size=model_update.shape)
         private_update = model_update + noise
 
-        logger.info("Applied DP with ε={epsilon}, δ={delta}", extra={"privacy_safe": True})
+        logger.info(
+            "Applied DP with ε={epsilon}, δ={delta}", extra={"privacy_safe": True}
+        )
 
         return private_update
 
@@ -371,13 +384,17 @@ class FederatedLearningClient:
             auc = 0.5
 
         # Loss
-        loss = -np.mean(y_val * np.log(probs + 1e-8) + (1 - y_val) * np.log(1 - probs + 1e-8))
+        loss = -np.mean(
+            y_val * np.log(probs + 1e-8) + (1 - y_val) * np.log(1 - probs + 1e-8)
+        )
 
         metrics = {"accuracy": accuracy, "auc": auc, "loss": loss, "num_samples": n_val}
 
         return metrics
 
-    def get_model_explanation(self, model_params: np.ndarray, top_k: int = 20) -> Dict[str, Any]:
+    def get_model_explanation(
+        self, model_params: np.ndarray, top_k: int = 20
+    ) -> Dict[str, Any]:
         """
         Get interpretable explanation of model.
 
@@ -419,7 +436,9 @@ class FederatedLearningClient:
             "client_id": self.client_id,
             "current_model": self.current_model,
             "training_history": self.training_history,
-            "dataset_metadata": self.local_dataset.metadata if self.local_dataset else None,
+            "dataset_metadata": (
+                self.local_dataset.metadata if self.local_dataset else None
+            ),
         }
 
         with open(path, "wb") as f:
@@ -458,7 +477,11 @@ class HospitalFLClient(FederatedLearningClient):
         super().__init__(client_id="hospital_{hospital_id}", use_hypervectors=True)
 
         self.ehr_integration = ehr_integration
-        self.compliance_checks = {"hipaa": True, "consent_required": True, "deidentification": True}
+        self.compliance_checks = {
+            "hipaa": True,
+            "consent_required": True,
+            "deidentification": True,
+        }
 
     def verify_compliance(self) -> bool:
         """Verify all compliance requirements are met."""
@@ -520,7 +543,11 @@ class ResearchFLClient(FederatedLearningClient):
         # Map to pathways (simplified)
         pathway_results = {
             "significant_features": len(significant_features),
-            "enriched_pathways": ["Cell cycle regulation", "DNA repair", "Immune response"],
+            "enriched_pathways": [
+                "Cell cycle regulation",
+                "DNA repair",
+                "Immune response",
+            ],
             "pathway_scores": {
                 "Cell cycle regulation": 0.002,
                 "DNA repair": 0.015,
@@ -550,7 +577,9 @@ if __name__ == "__main__":
     )
 
     # Apply differential privacy
-    private_update = client.apply_differential_privacy(results["model_update"], epsilon=1.0)
+    private_update = client.apply_differential_privacy(
+        results["model_update"], epsilon=1.0
+    )
     print(
         "Update norm: original={np.linalg.norm(results['model_update']):.4f}, private={np.linalg.norm(private_update):.4f}"
     )
@@ -577,5 +606,7 @@ if __name__ == "__main__":
     print("Pathway analysis: {pathway_results['enriched_pathways']}")
 
     # Get model explanation
-    explanation = research_client.get_model_explanation(research_client.current_model, top_k=10)
+    explanation = research_client.get_model_explanation(
+        research_client.current_model, top_k=10
+    )
     print("Top feature importance: {explanation['top_features'][0]['importance']:.4f}")

@@ -42,7 +42,11 @@ class TestRefactoredCircuits(unittest.TestCase):
 
         # Generate witness
         private_inputs = {"glucose": 130, "hba1c": 7.0, "genetic_risk_score": 1.2}
-        public_inputs = {"glucose_threshold": 126, "hba1c_threshold": 6.5, "risk_threshold": 1.0}
+        public_inputs = {
+            "glucose_threshold": 126,
+            "hba1c_threshold": 6.5,
+            "risk_threshold": 1.0,
+        }
 
         witness = circuit.generate_witness(private_inputs, public_inputs)
         self.assertIn("result", witness)
@@ -83,7 +87,11 @@ class TestRefactoredCircuits(unittest.TestCase):
 
         # Create a proof
         private_inputs = {"glucose": 140, "hba1c": 8.0, "genetic_risk_score": 1.5}
-        public_inputs = {"glucose_threshold": 126, "hba1c_threshold": 6.5, "risk_threshold": 1.0}
+        public_inputs = {
+            "glucose_threshold": 126,
+            "hba1c_threshold": 6.5,
+            "risk_threshold": 1.0,
+        }
 
         witness = circuit.generate_witness(private_inputs, public_inputs)
         original_proof = circuit.prove(witness, public_inputs)
@@ -106,7 +114,11 @@ class TestRefactoredCircuits(unittest.TestCase):
         circuit.setup({})
 
         private_inputs = {"glucose": 100, "hba1c": 5.0, "genetic_risk_score": 0.5}
-        public_inputs = {"glucose_threshold": 126, "hba1c_threshold": 6.5, "risk_threshold": 1.0}
+        public_inputs = {
+            "glucose_threshold": 126,
+            "hba1c_threshold": 6.5,
+            "risk_threshold": 1.0,
+        }
 
         witness = circuit.generate_witness(private_inputs, public_inputs)
         proof = circuit.prove(witness, public_inputs)

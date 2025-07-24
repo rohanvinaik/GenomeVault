@@ -143,12 +143,18 @@ async def root():
         status="healthy",
         version="3.0.0",
         uptime_seconds=time.time() - app_start_time,
-        services={"pir": "operational", "blockchain": "operational", "proofs": "operational"},
+        services={
+            "pir": "operational",
+            "blockchain": "operational",
+            "proofs": "operational",
+        },
     )
 
 
 @app.post("/topology", response_model=TopologyResponse)
-async def get_topology(request: TopologyRequest, api_key: str = Depends(verify_api_key)):
+async def get_topology(
+    request: TopologyRequest, api_key: str = Depends(verify_api_key)
+):
     """
     Get network topology information.
     Returns nearest light nodes and trusted signatories.
@@ -177,7 +183,9 @@ async def get_topology(request: TopologyRequest, api_key: str = Depends(verify_a
         )
 
         return TopologyResponse(
-            nearestLNs=nearest_lns, tsNodes=ts_nodes, optimal_configuration=optimal_config
+            nearestLNs=nearest_lns,
+            tsNodes=ts_nodes,
+            optimal_configuration=optimal_config,
         )
 
     except Exception as e:
@@ -186,7 +194,9 @@ async def get_topology(request: TopologyRequest, api_key: str = Depends(verify_a
 
 
 @app.post("/credit/vault/redeem", response_model=CreditRedeemResponse)
-async def redeem_credits(request: CreditRedeemRequest, api_key: str = Depends(verify_api_key)):
+async def redeem_credits(
+    request: CreditRedeemRequest, api_key: str = Depends(verify_api_key)
+):
     """
     Redeem credits from vault.
     Burns credits for network services.
@@ -200,7 +210,9 @@ async def redeem_credits(request: CreditRedeemRequest, api_key: str = Depends(ve
             raise HTTPException(status_code=400, detail="Insufficient credits")
 
         # Process redemption
-        tx_id = hashlib.sha256("{request.invoiceId}:{time.time()}".encode()).hexdigest()[:16]
+        tx_id = hashlib.sha256(
+            "{request.invoiceId}:{time.time()}".encode()
+        ).hexdigest()[:16]
 
         # Update ledger
         credit_ledger[user_id] = user_credits - request.creditsBurned
@@ -258,7 +270,11 @@ async def create_audit_challenge(
             actor=request.challenger,
             action="challenge_node",
             resource=request.target,
-            metadata={"epoch": request.epoch, "valid": is_valid, "slash_amount": slash_amount},
+            metadata={
+                "epoch": request.epoch,
+                "valid": is_valid,
+                "slash_amount": slash_amount,
+            },
         )
 
         return AuditChallengeResponse(
@@ -275,7 +291,9 @@ async def create_audit_challenge(
 
 
 @app.post("/proof/submit", response_model=ProofSubmissionResponse)
-async def submit_proof(request: ProofSubmissionRequest, api_key: str = Depends(verify_api_key)):
+async def submit_proof(
+    request: ProofSubmissionRequest, api_key: str = Depends(verify_api_key)
+):
     """
     Submit zero-knowledge proof for recording on blockchain.
     """
@@ -294,11 +312,17 @@ async def submit_proof(request: ProofSubmissionRequest, api_key: str = Depends(v
             actor=api_key[:8] + "...",
             action="submit_proof",
             resource=proof_id,
-            metadata={"circuit_type": request.circuit_type, "public_inputs": request.public_inputs},
+            metadata={
+                "circuit_type": request.circuit_type,
+                "public_inputs": request.public_inputs,
+            },
         )
 
         return ProofSubmissionResponse(
-            proof_id=proof_id, transaction_hash=tx_hash, status="pending", timestamp=time.time()
+            proof_id=proof_id,
+            transaction_hash=tx_hash,
+            status="pending",
+            timestamp=time.time(),
         )
 
     except Exception as e:
@@ -314,13 +338,23 @@ async def get_node_statistics(api_key: str = Depends(verify_api_key)):
         stats = {
             "total_nodes": len(node_registry),
             "trusted_signatories": sum(
-                1 for n in node_registry.values() if n.get("is_trusted_signatory", False)
+                1
+                for n in node_registry.values()
+                if n.get("is_trusted_signatory", False)
             ),
-            "total_voting_power": sum(n.get("voting_power", 0) for n in node_registry.values()),
+            "total_voting_power": sum(
+                n.get("voting_power", 0) for n in node_registry.values()
+            ),
             "node_distribution": {
-                "light": sum(1 for n in node_registry.values() if n.get("class") == "light"),
-                "full": sum(1 for n in node_registry.values() if n.get("class") == "full"),
-                "archive": sum(1 for n in node_registry.values() if n.get("class") == "archive"),
+                "light": sum(
+                    1 for n in node_registry.values() if n.get("class") == "light"
+                ),
+                "full": sum(
+                    1 for n in node_registry.values() if n.get("class") == "full"
+                ),
+                "archive": sum(
+                    1 for n in node_registry.values() if n.get("class") == "archive"
+                ),
             },
             "network_health": "healthy",
         }
@@ -420,4 +454,9 @@ if __name__ == "__main__":
     import uvicorn
 
     # Run the API server
-    uvicorn.run(app, host=config.network.api_host, port=config.network.api_port, log_level="info")
+    uvicorn.run(
+        app,
+        host=config.network.api_host,
+        port=config.network.api_port,
+        log_level="info",
+    )

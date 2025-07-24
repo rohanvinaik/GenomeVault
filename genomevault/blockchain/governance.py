@@ -377,7 +377,10 @@ class GovernanceSystem:
         ).hexdigest()[:16]
 
         # Set requirements based on proposal type
-        if proposal_type in [ProposalType.PROTOCOL_UPDATE, ProposalType.EMERGENCY_ACTION]:
+        if proposal_type in [
+            ProposalType.PROTOCOL_UPDATE,
+            ProposalType.EMERGENCY_ACTION,
+        ]:
             approval_threshold = 0.67  # 67% for critical changes
             quorum_required = 0.2  # 20% quorum
         else:
@@ -417,7 +420,11 @@ class GovernanceSystem:
         return proposal
 
     def vote(
-        self, proposal_id: str, voter: str, choice: str, voting_power: Optional[int] = None
+        self,
+        proposal_id: str,
+        voter: str,
+        choice: str,
+        voting_power: Optional[int] = None,
     ) -> VoteRecord:
         """
         Cast a vote on a proposal.
@@ -504,7 +511,9 @@ class GovernanceSystem:
         # In production, would check on-chain status
         return address.startswith("ts_")
 
-    def _get_committee_multiplier(self, voter: str, proposal_type: ProposalType) -> float:
+    def _get_committee_multiplier(
+        self, voter: str, proposal_type: ProposalType
+    ) -> float:
         """Get voting multiplier based on committee membership"""
         multiplier = 1.0
 
@@ -527,8 +536,14 @@ class GovernanceSystem:
                 ProposalType.REFERENCE_UPDATE,
                 ProposalType.PROTOCOL_UPDATE,
             ],
-            CommitteeType.ETHICS: [ProposalType.PROTOCOL_UPDATE, ProposalType.PARAMETER_CHANGE],
-            CommitteeType.SECURITY: [ProposalType.EMERGENCY_ACTION, ProposalType.PROTOCOL_UPDATE],
+            CommitteeType.ETHICS: [
+                ProposalType.PROTOCOL_UPDATE,
+                ProposalType.PARAMETER_CHANGE,
+            ],
+            CommitteeType.SECURITY: [
+                ProposalType.EMERGENCY_ACTION,
+                ProposalType.PROTOCOL_UPDATE,
+            ],
             CommitteeType.USER_REPRESENTATIVES: [
                 ProposalType.PARAMETER_CHANGE,
                 ProposalType.TREASURY_ALLOCATION,
@@ -764,7 +779,9 @@ class HIPAAOracle:
         # Check cache
         cache_key = "{npi}:{baa_hash}:{risk_analysis_hash}:{hsm_serial}"
         if cache_key in self.verification_cache:
-            return self.verification_cache[cache_key], self.verified_providers.get(npi, {})
+            return self.verification_cache[cache_key], self.verified_providers.get(
+                npi, {}
+            )
 
         # Verify NPI format
         if not self._validate_npi_format(npi):
@@ -880,7 +897,11 @@ if __name__ == "__main__":
         proposal_type=ProposalType.PARAMETER_CHANGE,
         title="Increase PIR query timeout",
         description="Increase the PIR query timeout from 30s to 45s to improve reliability",
-        execution_data={"parameter": "pir_query_timeout_seconds", "old_value": 30, "new_value": 45},
+        execution_data={
+            "parameter": "pir_query_timeout_seconds",
+            "old_value": 30,
+            "new_value": 45,
+        },
     )
     print("Proposal created: {proposal.proposal_id}")
 

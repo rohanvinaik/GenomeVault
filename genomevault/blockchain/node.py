@@ -100,7 +100,9 @@ class BlockchainNode:
     Implements dual-axis voting model.
     """
 
-    def __init__(self, node_id: str, node_class: NodeClass, is_trusted_signatory: bool = False):
+    def __init__(
+        self, node_id: str, node_class: NodeClass, is_trusted_signatory: bool = False
+    ):
         """
         Initialize blockchain node.
 
@@ -191,11 +193,15 @@ class BlockchainNode:
                 actor=self.node_id,
                 action="verify_credentials",
                 resource=npi,
-                metadata={"hsm_serial": hsm_serial, "new_voting_power": self.voting_power},
+                metadata={
+                    "hsm_serial": hsm_serial,
+                    "new_voting_power": self.voting_power,
+                },
             )
 
             logger.info(
-                "Node {self.node_id} verified as Trusted Signatory", extra={"privacy_safe": True}
+                "Node {self.node_id} verified as Trusted Signatory",
+                extra={"privacy_safe": True},
             )
 
             return True
@@ -276,7 +282,9 @@ class BlockchainNode:
             state_root=state_root,
         )
 
-        logger.info("Proposed block at height {block.height}", extra={"privacy_safe": True})
+        logger.info(
+            "Proposed block at height {block.height}", extra={"privacy_safe": True}
+        )
 
         return block
 
@@ -407,10 +415,15 @@ class BlockchainNode:
             actor=self.node_id,
             action="commit_block",
             resource=str(block.height),
-            metadata={"block_hash": block.calculate_hash(), "tx_count": len(block.transactions)},
+            metadata={
+                "block_hash": block.calculate_hash(),
+                "tx_count": len(block.transactions),
+            },
         )
 
-        logger.info("Committed block at height {block.height}", extra={"privacy_safe": True})
+        logger.info(
+            "Committed block at height {block.height}", extra={"privacy_safe": True}
+        )
 
     async def _execute_transaction(self, tx: Dict):
         """Execute transaction and update state."""
@@ -455,10 +468,13 @@ class BlockchainNode:
             self.state[credit_key] = self.state.get(credit_key, 0) + rewards
 
             logger.info(
-                "Awarded {rewards} credits for block production", extra={"privacy_safe": True}
+                "Awarded {rewards} credits for block production",
+                extra={"privacy_safe": True},
             )
 
-    async def handle_audit_challenge(self, challenger: str, target: str, epoch: int) -> Dict:
+    async def handle_audit_challenge(
+        self, challenger: str, target: str, epoch: int
+    ) -> Dict:
         """
         Handle audit challenge.
 
@@ -489,7 +505,12 @@ class BlockchainNode:
             reward = int(self.state.get("stake:{target}", 0) * 0.1)
             await self._transfer_credits("system", challenger, reward)
 
-        result = {"success": True, "valid": is_valid, "epoch": epoch, "timestamp": time.time()}
+        result = {
+            "success": True,
+            "valid": is_valid,
+            "epoch": epoch,
+            "timestamp": time.time(),
+        }
 
         return result
 
@@ -569,7 +590,9 @@ class BlockchainNode:
         # Add to mempool
         self.mempool.append(tx)
 
-        logger.info("Transaction {tx_hash[:8]} added to mempool", extra={"privacy_safe": True})
+        logger.info(
+            "Transaction {tx_hash[:8]} added to mempool", extra={"privacy_safe": True}
+        )
 
         return tx_hash
 
@@ -599,7 +622,9 @@ if __name__ == "__main__":
 
     # Example 2: Full node without TS
     full_node = BlockchainNode(
-        node_id="university_node_001", node_class=NodeClass.FULL, is_trusted_signatory=False
+        node_id="university_node_001",
+        node_class=NodeClass.FULL,
+        is_trusted_signatory=False,
     )
 
     print("\nFull Node Voting Power: {full_node.voting_power}")
@@ -607,7 +632,9 @@ if __name__ == "__main__":
 
     # Example 3: Archive node
     archive_node = BlockchainNode(
-        node_id="research_archive_001", node_class=NodeClass.ARCHIVE, is_trusted_signatory=False
+        node_id="research_archive_001",
+        node_class=NodeClass.ARCHIVE,
+        is_trusted_signatory=False,
     )
 
     print("\nArchive Node Voting Power: {archive_node.voting_power}")

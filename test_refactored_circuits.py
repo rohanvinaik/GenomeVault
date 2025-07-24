@@ -25,7 +25,11 @@ def test_diabetes_circuit():
     circuit = DiabetesRiskCircuit()
 
     # Setup
-    setup_params = {"glucose_range": (70, 300), "hba1c_range": (4, 14), "risk_factors_threshold": 2}
+    setup_params = {
+        "glucose_range": (70, 300),
+        "hba1c_range": (4, 14),
+        "risk_factors_threshold": 2,
+    }
 
     config = circuit.setup(setup_params)
     print(f"✓ Circuit setup: {config['circuit_name']} v{config['version']}")
@@ -33,7 +37,11 @@ def test_diabetes_circuit():
     # Generate witness
     private_inputs = {"glucose": 130, "hba1c": 7.0, "genetic_risk_score": 1.2}
 
-    public_inputs = {"glucose_threshold": 126, "hba1c_threshold": 6.5, "risk_threshold": 1.0}
+    public_inputs = {
+        "glucose_threshold": 126,
+        "hba1c_threshold": 6.5,
+        "risk_threshold": 1.0,
+    }
 
     witness = circuit.generate_witness(private_inputs, public_inputs)
     print(f"✓ Witness generated: {witness['result']}")
@@ -58,7 +66,9 @@ def test_biomarker_circuit():
     print("\nTesting Biomarker Circuit...")
 
     # Create circuit using factory
-    circuit = create_circuit(CircuitType.BIOMARKER_THRESHOLD, biomarker_name="cholesterol")
+    circuit = create_circuit(
+        CircuitType.BIOMARKER_THRESHOLD, biomarker_name="cholesterol"
+    )
 
     # Setup
     circuit.setup({"value_range": (0, 500)})
@@ -93,7 +103,11 @@ def test_serialization():
     circuit.setup({})
 
     private_inputs = {"glucose": 140, "hba1c": 8.0, "genetic_risk_score": 1.5}
-    public_inputs = {"glucose_threshold": 126, "hba1c_threshold": 6.5, "risk_threshold": 1.0}
+    public_inputs = {
+        "glucose_threshold": 126,
+        "hba1c_threshold": 6.5,
+        "risk_threshold": 1.0,
+    }
 
     witness = circuit.generate_witness(private_inputs, public_inputs)
     original_proof = circuit.prove(witness, public_inputs)

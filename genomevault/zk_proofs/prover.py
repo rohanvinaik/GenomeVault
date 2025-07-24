@@ -244,7 +244,10 @@ class Prover:
 
     # # # @performance_logger.log_operation("generate_proof")
     def generate_proof(
-        self, circuit_name: str, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
+        self,
+        circuit_name: str,
+        public_inputs: Dict[str, Any],
+        private_inputs: Dict[str, Any],
     ) -> Proof:
         """
         Generate zero-knowledge proof.
@@ -270,7 +273,9 @@ class Prover:
         start_time = time.time()
 
         # In production, would call actual PLONK prover
-        proof_data = self._simulate_proof_generation(circuit, public_inputs, private_inputs)
+        proof_data = self._simulate_proof_generation(
+            circuit, public_inputs, private_inputs
+        )
 
         generation_time = time.time() - start_time
 
@@ -295,7 +300,10 @@ class Prover:
             actor="prover",
             action="generate_{circuit_name}_proof",
             resource=proof_id,
-            metadata={"generation_time": generation_time, "proof_size": len(proof_data)},
+            metadata={
+                "generation_time": generation_time,
+                "proof_size": len(proof_data),
+            },
         )
 
         logger.info("Proof generated for {circuit_name}", extra={"privacy_safe": True})
@@ -318,7 +326,9 @@ class Prover:
 
         return circuit_map[circuit_name]
 
-    def _validate_inputs(self, circuit: Circuit, public_inputs: Dict, private_inputs: Dict):
+    def _validate_inputs(
+        self, circuit: Circuit, public_inputs: Dict, private_inputs: Dict
+    ):
         """Validate inputs match circuit requirements."""
         # Check public inputs
         for required_input in circuit.public_inputs:
@@ -360,7 +370,9 @@ class Prover:
             # Generic simulation
             return self._simulate_generic_proof(circuit, public_inputs)
 
-    def _simulate_variant_proof(self, public_inputs: Dict, private_inputs: Dict) -> bytes:
+    def _simulate_variant_proof(
+        self, public_inputs: Dict, private_inputs: Dict
+    ) -> bytes:
         """Simulate variant presence proof."""
         # Verify variant is in commitment
         variant_data = private_inputs["variant_data"]
@@ -403,7 +415,9 @@ class Prover:
 
         return json.dumps(proof_data).encode()[:384]
 
-    def _simulate_diabetes_proof(self, public_inputs: Dict, private_inputs: Dict) -> bytes:
+    def _simulate_diabetes_proof(
+        self, public_inputs: Dict, private_inputs: Dict
+    ) -> bytes:
         """Simulate diabetes risk alert proof."""
         # Extract values
         g = private_inputs["glucose_reading"]
@@ -569,4 +583,6 @@ if __name__ == "__main__":
 
     print("\nDiabetes risk proof generated: {diabetes_proof.proof_id}")
     print("Proof size: {len(diabetes_proof.proof_data)} bytes")
-    print("Verification time: {diabetes_proof.metadata['generation_time_seconds']*1000:.1f}ms")
+    print(
+        "Verification time: {diabetes_proof.metadata['generation_time_seconds']*1000:.1f}ms"
+    )

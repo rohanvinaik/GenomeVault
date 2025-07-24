@@ -20,7 +20,11 @@ from pydantic import BaseModel, Field
 
 from ..genomevault.blockchain.node import BlockchainNode, NodeInfo
 from ..genomevault.core.config import get_config
-from ..genomevault.core.constants import CREDITS_PER_BLOCK_BASE, CREDITS_SIGNATORY_BONUS, NodeType
+from ..genomevault.core.constants import (
+    CREDITS_PER_BLOCK_BASE,
+    CREDITS_SIGNATORY_BONUS,
+    NodeType,
+)
 from ..genomevault.utils.logging import audit_logger, get_logger
 
 logger = get_logger(__name__)
@@ -28,7 +32,9 @@ config = get_config()
 
 # Initialize FastAPI app
 app = FastAPI(
-    title="GenomeVault API", description="Privacy-preserving genomic data platform", version="3.0.0"
+    title="GenomeVault API",
+    description="Privacy-preserving genomic data platform",
+    version="3.0.0",
 )
 
 # Security
@@ -147,7 +153,9 @@ class ProofResponse(BaseModel):
 
 
 # Dependency for authentication
-async def verify_token(credentials: HTTPAuthorizationCredentials = Security(security)) -> str:
+async def verify_token(
+    credentials: HTTPAuthorizationCredentials = Security(security),
+) -> str:
     """Verify JWT token and return user ID"""
     # In production, would verify actual JWT
     # For now, return mock user ID
@@ -158,7 +166,9 @@ async def verify_token(credentials: HTTPAuthorizationCredentials = Security(secu
 
 
 @app.post("/topology", response_model=TopologyResponse)
-async def get_network_topology(request: TopologyRequest, user_id: str = Depends(verify_token)):
+async def get_network_topology(
+    request: TopologyRequest, user_id: str = Depends(verify_token)
+):
     """
     Get network topology information for optimal PIR server selection.
 
@@ -189,7 +199,9 @@ async def get_network_topology(request: TopologyRequest, user_id: str = Depends(
 
 
 @app.post("/credit/vault/redeem", response_model=CreditVaultResponse)
-async def redeem_credits(request: CreditVaultRequest, user_id: str = Depends(verify_token)):
+async def redeem_credits(
+    request: CreditVaultRequest, user_id: str = Depends(verify_token)
+):
     """
     Redeem credits from vault for services.
 
@@ -209,7 +221,9 @@ async def redeem_credits(request: CreditVaultRequest, user_id: str = Depends(ver
         )
 
     # Process redemption
-    tx_id = _process_credit_redemption(user_id, request.invoiceId, request.creditsBurned)
+    tx_id = _process_credit_redemption(
+        user_id, request.invoiceId, request.creditsBurned
+    )
 
     # Get remaining balance
     remaining = user_credits - request.creditsBurned
@@ -220,10 +234,15 @@ async def redeem_credits(request: CreditVaultRequest, user_id: str = Depends(ver
         actor=user_id,
         action="redeem_credits",
         resource=request.invoiceId,
-        metadata={"credits_burned": request.creditsBurned, "remaining_credits": remaining},
+        metadata={
+            "credits_burned": request.creditsBurned,
+            "remaining_credits": remaining,
+        },
     )
 
-    response = CreditVaultResponse(success=True, transactionId=tx_id, remainingCredits=remaining)
+    response = CreditVaultResponse(
+        success=True, transactionId=tx_id, remainingCredits=remaining
+    )
 
     return response
 
@@ -275,7 +294,9 @@ async def create_processing_pipeline(
 
     Initiates local processing for specified omics type.
     """
-    logger.info("Pipeline request: {request.pipeline_type}", extra={"privacy_safe": True})
+    logger.info(
+        "Pipeline request: {request.pipeline_type}", extra={"privacy_safe": True}
+    )
 
     # Validate pipeline type
     valid_types = ["genomic", "transcriptomic", "epigenetic", "proteomic", "phenotypic"]
@@ -324,7 +345,9 @@ async def get_pipeline_status(job_id: str, user_id: str = Depends(verify_token))
 
 
 @app.post("/vectors", response_model=VectorResponse)
-async def perform_vector_operation(request: VectorRequest, user_id: str = Depends(verify_token)):
+async def perform_vector_operation(
+    request: VectorRequest, user_id: str = Depends(verify_token)
+):
     """
     Perform hypervector operations.
 
@@ -350,9 +373,14 @@ async def perform_vector_operation(request: VectorRequest, user_id: str = Depend
             )
 
         result = _bind_hypervectors(
-            request.data["vector1"], request.data["vector2"], request.data.get("method", "circular")
+            request.data["vector1"],
+            request.data["vector2"],
+            request.data.get("method", "circular"),
         )
-        metadata = {"operation": "bind", "method": request.data.get("method", "circular")}
+        metadata = {
+            "operation": "bind",
+            "method": request.data.get("method", "circular"),
+        }
 
     elif request.operation == "similarity":
         # Calculate similarity
@@ -363,7 +391,9 @@ async def perform_vector_operation(request: VectorRequest, user_id: str = Depend
             )
 
         result = _calculate_similarity(
-            request.data["vector1"], request.data["vector2"], request.data.get("metric", "cosine")
+            request.data["vector1"],
+            request.data["vector2"],
+            request.data.get("metric", "cosine"),
         )
         metadata = {
             "operation": "similarity",
@@ -389,7 +419,9 @@ async def generate_proof(request: ProofRequest, user_id: str = Depends(verify_to
 
     Creates privacy-preserving proofs for various circuits.
     """
-    logger.info("Proof generation request: {request.circuit_name}", extra={"privacy_safe": True})
+    logger.info(
+        "Proof generation request: {request.circuit_name}", extra={"privacy_safe": True}
+    )
 
     # Validate circuit
     valid_circuits = [
@@ -458,7 +490,11 @@ async def verify_proof(proof_id: str, user_id: str = Depends(verify_token)):
 @app.get("/health")
 async def health_check():
     """Health check endpoint."""
-    return {"status": "healthy", "version": "3.0.0", "timestamp": datetime.now().isoformat()}
+    return {
+        "status": "healthy",
+        "version": "3.0.0",
+        "timestamp": datetime.now().isoformat(),
+    }
 
 
 @app.get("/status")
@@ -538,10 +574,46 @@ async def startup_event():
 
     # Register some example nodes
     example_nodes = [
-        NodeInfo("ln1", "10.0.0.1", NodeType.LIGHT, False, 1, 100, 100, datetime.now().timestamp()),
-        NodeInfo("ln2", "10.0.0.2", NodeType.LIGHT, False, 1, 100, 100, datetime.now().timestamp()),
-        NodeInfo("ts1", "10.0.0.3", NodeType.FULL, True, 14, 1000, 300, datetime.now().timestamp()),
-        NodeInfo("ts2", "10.0.0.4", NodeType.FULL, True, 14, 1000, 300, datetime.now().timestamp()),
+        NodeInfo(
+            "ln1",
+            "10.0.0.1",
+            NodeType.LIGHT,
+            False,
+            1,
+            100,
+            100,
+            datetime.now().timestamp(),
+        ),
+        NodeInfo(
+            "ln2",
+            "10.0.0.2",
+            NodeType.LIGHT,
+            False,
+            1,
+            100,
+            100,
+            datetime.now().timestamp(),
+        ),
+        NodeInfo(
+            "ts1",
+            "10.0.0.3",
+            NodeType.FULL,
+            True,
+            14,
+            1000,
+            300,
+            datetime.now().timestamp(),
+        ),
+        NodeInfo(
+            "ts2",
+            "10.0.0.4",
+            NodeType.FULL,
+            True,
+            14,
+            1000,
+            300,
+            datetime.now().timestamp(),
+        ),
     ]
 
     for node in example_nodes:
@@ -563,4 +635,9 @@ async def shutdown_event():
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host=config.network.api_host, port=config.network.api_port, log_level="info")
+    uvicorn.run(
+        app,
+        host=config.network.api_host,
+        port=config.network.api_port,
+        log_level="info",
+    )

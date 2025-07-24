@@ -261,7 +261,9 @@ class HypervectorBinder:
         inv_perm[perm] = torch.arange(self.dimension)
         return inv_perm
 
-    def bundle(self, vectors: List[torch.Tensor], normalize: bool = True) -> torch.Tensor:
+    def bundle(
+        self, vectors: List[torch.Tensor], normalize: bool = True
+    ) -> torch.Tensor:
         """
         Bundle vectors using superposition (addition)
 
@@ -344,7 +346,9 @@ class PositionalBinder(HypervectorBinder):
         pos_vector = self._get_position_vector(position)
         return self.bind([vector, pos_vector], BindingType.CIRCULAR)
 
-    def bind_sequence(self, vectors: List[torch.Tensor], start_position: int = 0) -> torch.Tensor:
+    def bind_sequence(
+        self, vectors: List[torch.Tensor], start_position: int = 0
+    ) -> torch.Tensor:
         """
         Bind a sequence of vectors with their positions
 
@@ -406,7 +410,9 @@ class CrossModalBinder(HypervectorBinder):
         self.modality_signatures = {}
 
     def bind_modalities(
-        self, modality_vectors: Dict[str, torch.Tensor], preserve_individual: bool = True
+        self,
+        modality_vectors: Dict[str, torch.Tensor],
+        preserve_individual: bool = True,
     ) -> Dict[str, torch.Tensor]:
         """
         Bind multiple modalities together

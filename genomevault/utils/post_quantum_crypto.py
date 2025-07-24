@@ -105,8 +105,12 @@ class HybridPostQuantumCrypto:
     def decrypt(self, encrypted_data: EncryptedData, private_key: bytes) -> bytes:
         """Decrypt data using hybrid post-quantum scheme."""
         # Mock implementation
-        shared_secret = self.kyber.decapsulate(encrypted_data.kyber_encapsulated_key, private_key)
-        return encrypted_data.ciphertext  # In real implementation, this would be decrypted
+        shared_secret = self.kyber.decapsulate(
+            encrypted_data.kyber_encapsulated_key, private_key
+        )
+        return (
+            encrypted_data.ciphertext
+        )  # In real implementation, this would be decrypted
 
 
 def benchmark_post_quantum_crypto() -> Dict[str, Any]:

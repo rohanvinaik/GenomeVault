@@ -8,12 +8,16 @@ import sys
 
 def run_command(cmd, description):
     """Run a command and report results"""
-    print(f"\n{'='*60}")
-    print(f"🔍 {description}")
-    print(f"{'='*60}")
+    print("\n{'='*60}")
+    print("🔍 {description}")
+    print("{'='*60}")
 
     result = subprocess.run(
-        cmd, shell=True, capture_output=True, text=True, cwd="/Users/rohanvinaik/genomevault"
+        cmd,
+        shell=True,
+        capture_output=True,
+        text=True,
+        cwd="/Users/rohanvinaik/genomevault",
     )
 
     print(result.stdout)
@@ -33,21 +37,24 @@ def main():
 
     # Test 1: Basic pytest
     success1 = run_command(
-        "python3 -m pytest tests/test_simple.py -v --tb=short", "Running basic pytest tests"
+        "python3 -m pytest tests/test_simple.py -v --tb=short",
+        "Running basic pytest tests",
     )
 
     # Test 2: Import diagnostic
     success2 = run_command("python3 diagnose_imports.py", "Running import diagnostic")
 
     # Test 3: Comprehensive test
-    success3 = run_command("python3 test_all_imports_final.py", "Running comprehensive import test")
+    success3 = run_command(
+        "python3 test_all_imports_final.py", "Running comprehensive import test"
+    )
 
     print("\n" + "=" * 60)
     print("📊 SUMMARY:")
     print("=" * 60)
-    print(f"✅ Basic pytest: {'PASSED' if success1 else 'FAILED'}")
-    print(f"✅ Import diagnostic: {'PASSED' if success2 else 'FAILED'}")
-    print(f"✅ Comprehensive test: {'PASSED' if success3 else 'FAILED'}")
+    print("✅ Basic pytest: {'PASSED' if success1 else 'FAILED'}")
+    print("✅ Import diagnostic: {'PASSED' if success2 else 'FAILED'}")
+    print("✅ Comprehensive test: {'PASSED' if success3 else 'FAILED'}")
     print("=" * 60)
 
     if success1:

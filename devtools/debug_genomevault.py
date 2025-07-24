@@ -20,10 +20,14 @@ class GenomeVaultDebugger:
         print("🐍 Checking Python version...")
         version = sys.version_info
         if version.major == 3 and version.minor >= 8:
-            print("  ✅ Python {version.major}.{version.minor}.{version.micro} is compatible")
+            print(
+                "  ✅ Python {version.major}.{version.minor}.{version.micro} is compatible"
+            )
             return True
         else:
-            self.issues.append("Python {version.major}.{version.minor} is too old. Need 3.8+")
+            self.issues.append(
+                "Python {version.major}.{version.minor} is too old. Need 3.8+"
+            )
             return False
 
     def check_pydantic(self):
@@ -53,10 +57,19 @@ class GenomeVaultDebugger:
         print("🔧 Fixing Pydantic issues...")
         try:
             subprocess.run(
-                [sys.executable, "-m", "pip", "install", "--upgrade", "pydantic>=2.0.0"], check=True
+                [
+                    sys.executable,
+                    "-m",
+                    "pip",
+                    "install",
+                    "--upgrade",
+                    "pydantic>=2.0.0",
+                ],
+                check=True,
             )
             subprocess.run(
-                [sys.executable, "-m", "pip", "install", "pydantic-settings>=2.0.0"], check=True
+                [sys.executable, "-m", "pip", "install", "pydantic-settings>=2.0.0"],
+                check=True,
             )
             self.fixed.append("Pydantic upgraded to v2 with pydantic-settings")
             return True

@@ -48,7 +48,8 @@ class GenomicEncoder:
         """Generate position encoding vector using sinusoidal encoding"""
         position = torch.arange(self.dimension).float()
         div_term = torch.exp(
-            torch.arange(0, self.dimension, 2).float() * -(np.log(10000.0) / self.dimension)
+            torch.arange(0, self.dimension, 2).float()
+            * -(np.log(10000.0) / self.dimension)
         )
 
         pos_encoding = torch.zeros(self.dimension)
@@ -58,7 +59,12 @@ class GenomicEncoder:
         return pos_encoding
 
     def encode_variant(
-        self, chromosome: str, position: int, ref: str, alt: str, variant_type: str = "SNP"
+        self,
+        chromosome: str,
+        position: int,
+        ref: str,
+        alt: str,
+        variant_type: str = "SNP",
     ) -> torch.Tensor:
         """
         Encode a single genetic variant into a hypervector

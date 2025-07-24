@@ -98,7 +98,9 @@ class TestHypervectorEngine:
 
         # Verify binding is reversible
         unbound = binding.unbind(bound_elem, expr_vec)
-        similarity = np.dot(unbound, var_vec) / (np.linalg.norm(unbound) * np.linalg.norm(var_vec))
+        similarity = np.dot(unbound, var_vec) / (
+            np.linalg.norm(unbound) * np.linalg.norm(var_vec)
+        )
         assert similarity > 0.8, "Binding should be approximately reversible"
 
     def test_holographic_representation(self, encoder_10k, sample_genomic_features):
@@ -165,11 +167,14 @@ class TestHypervectorEngine:
 
         # Encode all modalities
         vectors = {
-            key: encoder_10k.encode(features) for key, features in sample_genomic_features.items()
+            key: encoder_10k.encode(features)
+            for key, features in sample_genomic_features.items()
         }
 
         # Perform hierarchical binding
-        genomic_clinical = binding.element_wise_bind(vectors["variants"], vectors["clinical"])
+        genomic_clinical = binding.element_wise_bind(
+            vectors["variants"], vectors["clinical"]
+        )
         expression_methylation = binding.circular_convolution(
             vectors["expression"], vectors["methylation"]
         )

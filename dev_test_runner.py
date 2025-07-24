@@ -30,7 +30,11 @@ class ImportAnalyzer(ast.NodeVisitor):
         module = node.module or ""
         level = node.level
         self.from_imports.append(
-            {"module": module, "level": level, "names": [alias.name for alias in node.names]}
+            {
+                "module": module,
+                "level": level,
+                "names": [alias.name for alias in node.names],
+            }
         )
         self.generic_visit(node)
 
@@ -43,7 +47,7 @@ def analyze_file(filepath):
             analyzer = ImportAnalyzer()
             analyzer.visit(tree)
             return analyzer
-        except:
+        except Exception:
             return None
 
 
@@ -91,9 +95,9 @@ required_dirs = [
 all_exist = True
 for dir_path in required_dirs:
     if Path(dir_path).exists():
-        print(f"✅ {dir_path}/")
+        print("✅ {dir_path}/")
     else:
-        print(f"❌ {dir_path}/ (missing)")
+        print("❌ {dir_path}/ (missing)")
         all_exist = False
 
 if all_exist:
@@ -125,7 +129,7 @@ for init_file in init_files:
 if circular_risk:
     print("⚠️  Potential circular import risks found:")
     for f in circular_risk:
-        print(f"   - {f}")
+        print("   - {f}")
 else:
     print("✅ No obvious circular import patterns detected")
 
@@ -163,7 +167,7 @@ for py_file in py_files:
                         relative_import_issues.append(
                             {
                                 "file": str(py_file),
-                                "import": f"from {'.' * imp['level']}{imp['module']} import ...",
+                                "import": "from {'.' * imp['level']}{imp['module']} import ...",
                                 "target": str(target_path),
                             }
                         )
@@ -171,9 +175,9 @@ for py_file in py_files:
 if relative_import_issues:
     print("❌ Found problematic relative imports:")
     for issue in relative_import_issues[:5]:  # Show first 5
-        print(f"   File: {issue['file']}")
-        print(f"   Import: {issue['import']}")
-        print(f"   Missing: {issue['target']}")
+        print("   File: {issue['file']}")
+        print("   Import: {issue['import']}")
+        print("   Missing: {issue['target']}")
         print()
 else:
     print("✅ All relative imports appear to resolve correctly")

@@ -60,13 +60,19 @@ def test_clinical_validation():
             "genetic_risk_score": 0.8,  # Above threshold
         }
 
-        public_inputs = {"glucose_threshold": 126, "hba1c_threshold": 6.5, "risk_threshold": 0.5}
+        public_inputs = {
+            "glucose_threshold": 126,
+            "hba1c_threshold": 6.5,
+            "risk_threshold": 0.5,
+        }
 
         # Generate proof
         proof = prover.generate_proof(circuit, private_inputs, public_inputs)
         print(f"✅ Proof generated successfully")
         print(f"   - Public output: {proof.public_output}")
-        print(f"   - Proof size: {len(proof.proof_bytes) if proof.proof_bytes else 0} bytes")
+        print(
+            f"   - Proof size: {len(proof.proof_bytes) if proof.proof_bytes else 0} bytes"
+        )
 
         # Verify proof
         is_valid = prover.verify_proof(proof)
@@ -128,7 +134,9 @@ def test_clinical_validation():
         hypervector_results = validator.validate_with_hypervectors(sample_data)
         print(f"✅ Hypervector encoding tested")
         print(f"   - Patients encoded: {hypervector_results['n_encoded']}")
-        print(f"   - Using real encoding: {hypervector_results.get('using_real_encoding', False)}")
+        print(
+            f"   - Using real encoding: {hypervector_results.get('using_real_encoding', False)}"
+        )
 
         # Test PIR queries
         test_variants = ["rs7903146", "rs1801282"]

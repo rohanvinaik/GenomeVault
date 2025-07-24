@@ -16,7 +16,8 @@ def main():
 
     # Set up logging
     logging.basicConfig(
-        level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
 
     print("🧬 GenomeVault Clinical Validation")
@@ -47,7 +48,9 @@ def main():
         for source, metrics in results["zk_proof_metrics"].items():
             print(f"  {source}:")
             print(f"    - Generation time: {metrics['avg_generation_time_ms']:.1f} ms")
-            print(f"    - Verification time: {metrics['avg_verification_time_ms']:.1f} ms")
+            print(
+                f"    - Verification time: {metrics['avg_verification_time_ms']:.1f} ms"
+            )
             print(f"    - Proof size: {metrics['avg_proof_size_bytes']:.0f} bytes")
 
     print("\n📄 Full report saved to: genomevault_clinical_validation_report.md")

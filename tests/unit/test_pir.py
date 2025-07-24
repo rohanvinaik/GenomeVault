@@ -19,7 +19,11 @@ class TestPIRClient:
     @pytest.fixture
     def client(self):
         """Create PIR client with mock servers"""
-        servers = ["http://localhost:9001", "http://localhost:9002", "http://localhost:9003"]
+        servers = [
+            "http://localhost:9001",
+            "http://localhost:9002",
+            "http://localhost:9003",
+        ]
         return PIRClient(servers, threshold=2)
 
     def test_query_generation(self, client):

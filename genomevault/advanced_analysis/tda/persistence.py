@@ -117,7 +117,9 @@ class TopologicalAnalyzer:
                 for j in range(i + 1, n):
                     for k in range(j + 1, n):
                         # Check if all edges exist
-                        max_edge = max(distances[i, j], distances[i, k], distances[j, k])
+                        max_edge = max(
+                            distances[i, j], distances[i, k], distances[j, k]
+                        )
                         if max_edge <= max_scale:
                             filtration.append((max_edge, [i, j, k]))
 
@@ -185,7 +187,9 @@ class TopologicalAnalyzer:
             remaining_roots.add(union_find.find(vertex))
 
         for root in remaining_roots:
-            pairs.append(PersistencePair(components_birth[root], float("inf"), 0, [root]))
+            pairs.append(
+                PersistencePair(components_birth[root], float("inf"), 0, [root])
+            )
 
         return pairs
 
@@ -263,7 +267,9 @@ class TopologicalAnalyzer:
 
         for i in range(n1):
             for j in range(n2):
-                cost_matrix[i, j] = max(abs(arr1[i, 0] - arr2[j, 0]), abs(arr1[i, 1] - arr2[j, 1]))
+                cost_matrix[i, j] = max(
+                    abs(arr1[i, 0] - arr2[j, 0]), abs(arr1[i, 1] - arr2[j, 1])
+                )
 
         # Add diagonal (deletion cost)
         for i in range(n1):
@@ -375,15 +381,25 @@ class StructuralSignatureAnalyzer:
         np.fill_diagonal(distance_matrix, 0)
 
         # Compute persistence diagrams
-        persistence_diagrams = self.analyzer.compute_persistence_diagram(distance_matrix)
+        persistence_diagrams = self.analyzer.compute_persistence_diagram(
+            distance_matrix
+        )
 
         # Extract topological features
         features = {
             "num_loops": len(
-                [p for p in persistence_diagrams[1].pairs if p.persistence > PERSISTENCE_THRESHOLD]
+                [
+                    p
+                    for p in persistence_diagrams[1].pairs
+                    if p.persistence > PERSISTENCE_THRESHOLD
+                ]
             ),
             "num_domains": len(
-                [p for p in persistence_diagrams[0].pairs if p.persistence > PERSISTENCE_THRESHOLD]
+                [
+                    p
+                    for p in persistence_diagrams[0].pairs
+                    if p.persistence > PERSISTENCE_THRESHOLD
+                ]
             ),
             "max_loop_persistence": max(
                 [p.persistence for p in persistence_diagrams[1].pairs], default=0
@@ -414,6 +430,8 @@ class StructuralSignatureAnalyzer:
 
         # Weighted average of distances
         weights = [1.0, 2.0, 1.0]  # Weight loops more heavily
-        weighted_distance = sum(w * d for w, d in zip(weights, distances)) / sum(weights)
+        weighted_distance = sum(w * d for w, d in zip(weights, distances)) / sum(
+            weights
+        )
 
         return weighted_distance

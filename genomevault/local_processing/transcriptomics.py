@@ -86,7 +86,9 @@ class ExpressionProfile:
     quality_metrics: Dict[str, Any]
     processing_metadata: Dict[str, Any] = field(default_factory=dict)
 
-    def filter_by_expression(self, min_value: float = 1.0) -> List[TranscriptExpression]:
+    def filter_by_expression(
+        self, min_value: float = 1.0
+    ) -> List[TranscriptExpression]:
         """Filter transcripts by expression level"""
         return [e for e in self.expressions if e.normalized_value >= min_value]
 
@@ -137,9 +139,21 @@ class TranscriptomicsProcessor:
         # In production, would parse GTF/GFF file
         # For now, return mock annotations
         return {
-            "ENSG00000000003": {"name": "TSPAN6", "biotype": "protein_coding", "length": 2500},
-            "ENSG00000000419": {"name": "DPM1", "biotype": "protein_coding", "length": 1800},
-            "ENSG00000000457": {"name": "SCYL3", "biotype": "protein_coding", "length": 3200},
+            "ENSG00000000003": {
+                "name": "TSPAN6",
+                "biotype": "protein_coding",
+                "length": 2500,
+            },
+            "ENSG00000000419": {
+                "name": "DPM1",
+                "biotype": "protein_coding",
+                "length": 1800,
+            },
+            "ENSG00000000457": {
+                "name": "SCYL3",
+                "biotype": "protein_coding",
+                "length": 3200,
+            },
         }
 
     def process(
@@ -168,11 +182,18 @@ class TranscriptomicsProcessor:
         try:
             # Detect input type
             if isinstance(input_path, list) or (
-                isinstance(input_path, Path) and input_path.suffix in [".fastq", ".fq", ".gz"]
+                isinstance(input_path, Path)
+                and input_path.suffix in [".fastq", ".fq", ".gz"]
             ):
                 # Process from FASTQ
-                expression_data = self._process_fastq(input_path, paired_end, min_quality)
-            elif isinstance(input_path, Path) and input_path.suffix in [".tsv", ".csv", ".txt"]:
+                expression_data = self._process_fastq(
+                    input_path, paired_end, min_quality
+                )
+            elif isinstance(input_path, Path) and input_path.suffix in [
+                ".tsv",
+                ".csv",
+                ".txt",
+            ]:
                 # Process from expression matrix
                 expression_data = self._load_expression_matrix(input_path)
             else:
@@ -185,7 +206,9 @@ class TranscriptomicsProcessor:
             expressions = self._create_expressions(normalized_data)
 
             # Calculate quality metrics
-            quality_metrics = self._calculate_quality_metrics(expression_data, normalized_data)
+            quality_metrics = self._calculate_quality_metrics(
+                expression_data, normalized_data
+            )
 
             # Create profile
             profile = ExpressionProfile(
@@ -265,7 +288,9 @@ class TranscriptomicsProcessor:
             gene_lengths = {}
             for gene_id in raw_data["gene_id"]:
                 if gene_id in self.gene_annotations:
-                    gene_lengths[gene_id] = self.gene_annotations[gene_id].get("length", 1000)
+                    gene_lengths[gene_id] = self.gene_annotations[gene_id].get(
+                        "length", 1000
+                    )
                 else:
                     gene_lengths[gene_id] = np.random.randint(500, 5000)  # Mock length
 
@@ -278,7 +303,8 @@ class TranscriptomicsProcessor:
             # Reads Per Kilobase Million
             total_reads = raw_data["raw_count"].sum()
             gene_lengths = {
-                g: self.gene_annotations.get(g, {}).get("length", 1000) for g in raw_data["gene_id"]
+                g: self.gene_annotations.get(g, {}).get("length", 1000)
+                for g in raw_data["gene_id"]
             }
             normalized["length"] = normalized["gene_id"].map(gene_lengths)
             normalized["normalized_value"] = (normalized["raw_count"] * 1e9) / (
@@ -288,19 +314,25 @@ class TranscriptomicsProcessor:
         elif method == NormalizationMethod.CPM:
             # Counts Per Million
             total_reads = raw_data["raw_count"].sum()
-            normalized["normalized_value"] = (normalized["raw_count"] * 1e6) / total_reads
+            normalized["normalized_value"] = (
+                normalized["raw_count"] * 1e6
+            ) / total_reads
             normalized["length"] = 1000  # Not used for CPM
 
         else:
             # Default to CPM for other methods
             logger.warning("Method {method.value} not fully implemented, using CPM")
             total_reads = raw_data["raw_count"].sum()
-            normalized["normalized_value"] = (normalized["raw_count"] * 1e6) / total_reads
+            normalized["normalized_value"] = (
+                normalized["raw_count"] * 1e6
+            ) / total_reads
             normalized["length"] = 1000
 
         return normalized
 
-    def _create_expressions(self, normalized_data: pd.DataFrame) -> List[TranscriptExpression]:
+    def _create_expressions(
+        self, normalized_data: pd.DataFrame
+    ) -> List[TranscriptExpression]:
         """Create TranscriptExpression objects"""
         expressions = []
 
@@ -350,7 +382,10 @@ class TranscriptomicsProcessor:
         return metrics
 
     def batch_effect_correction(
-        self, profiles: List[ExpressionProfile], batch_labels: List[str], method: str = "combat"
+        self,
+        profiles: List[ExpressionProfile],
+        batch_labels: List[str],
+        method: str = "combat",
     ) -> List[ExpressionProfile]:
         """
         Correct batch effects across multiple samples
@@ -398,7 +433,9 @@ class TranscriptomicsProcessor:
             global_mean = corrected_expr.mean(axis=1)
 
             for sample in batch_samples:
-                corrected_expr[sample] = corrected_expr[sample] - batch_mean + global_mean
+                corrected_expr[sample] = (
+                    corrected_expr[sample] - batch_mean + global_mean
+                )
 
         # Convert back to linear scale
         corrected_expr = np.power(2, corrected_expr) - 1

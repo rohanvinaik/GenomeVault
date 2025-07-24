@@ -276,7 +276,9 @@ class PIRQueryBuilder:
         total_queries = 0
 
         for variant in variant_list:
-            var_query = GenomicQuery(query_type=QueryType.VARIANT_LOOKUP, parameters=variant)
+            var_query = GenomicQuery(
+                query_type=QueryType.VARIANT_LOOKUP, parameters=variant
+            )
 
             result = await self._execute_variant_lookup(var_query)
             total_queries += result.pir_queries_used
@@ -332,7 +334,8 @@ class PIRQueryBuilder:
     def build_gene_query(self, gene_symbol: str) -> GenomicQuery:
         """Build a gene annotation query."""
         return GenomicQuery(
-            query_type=QueryType.GENE_ANNOTATION, parameters={"gene_symbol": gene_symbol}
+            query_type=QueryType.GENE_ANNOTATION,
+            parameters={"gene_symbol": gene_symbol},
         )
 
     def build_population_frequency_query(
@@ -376,7 +379,9 @@ class PIRQueryBuilder:
                 for variant in gene_result.data.get("variants", []):
                     clin_sig = variant.get("clinical_significance")
 
-                    if clin_sig and (not significance_filter or clin_sig == significance_filter):
+                    if clin_sig and (
+                        not significance_filter or clin_sig == significance_filter
+                    ):
                         all_clinical_variants.append(
                             {"gene": gene, "variant": variant, "significance": clin_sig}
                         )
@@ -386,7 +391,10 @@ class PIRQueryBuilder:
         return QueryResult(
             query=GenomicQuery(
                 query_type=QueryType.CLINICAL_SIGNIFICANCE,
-                parameters={"genes": gene_list, "significance_filter": significance_filter},
+                parameters={
+                    "genes": gene_list,
+                    "significance_filter": significance_filter,
+                },
             ),
             data=all_clinical_variants,
             metadata={
@@ -434,7 +442,11 @@ if __name__ == "__main__":
 
     # Example index mapping
     index_mapping = {
-        "variants": {"chr1:100000:A:G": 42, "chr1:100100:C:T": 43, "chr1:100200:G:A": 44},
+        "variants": {
+            "chr1:100000:A:G": 42,
+            "chr1:100100:C:T": 43,
+            "chr1:100200:G:A": 44,
+        },
         "positions": {"chr1:100000": [42], "chr1:100100": [43], "chr1:100200": [44]},
         "genes": {"BRCA1": {"chromosome": "chr17", "start": 43044295, "end": 43125483}},
     }
@@ -449,7 +461,12 @@ if __name__ == "__main__":
     # Variant lookup
     var_query = GenomicQuery(
         query_type=QueryType.VARIANT_LOOKUP,
-        parameters={"chromosome": "chr1", "position": 100000, "ref_allele": "A", "alt_allele": "G"},
+        parameters={
+            "chromosome": "chr1",
+            "position": 100000,
+            "ref_allele": "A",
+            "alt_allele": "G",
+        },
     )
     print("Variant Query: {var_query.parameters}")
 

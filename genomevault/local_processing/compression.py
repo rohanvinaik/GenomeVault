@@ -154,7 +154,9 @@ class CompressionEngine:
             max_size = profile.max_size_kb * modalities_included
 
         if size_kb > max_size:
-            logger.warning("Compressed size {size_kb:.1f}KB exceeds target {max_size}KB")
+            logger.warning(
+                "Compressed size {size_kb:.1f}KB exceeds target {max_size}KB"
+            )
 
         # Create compressed data package
         compressed_data = CompressedData(
@@ -211,7 +213,11 @@ class CompressionEngine:
         """
         Clinical tier compression: ~300KB with ACMG + PharmGKB variants.
         """
-        compressed = {"tier": CompressionTier.CLINICAL.value, "genomic": {}, "phenotypic": {}}
+        compressed = {
+            "tier": CompressionTier.CLINICAL.value,
+            "genomic": {},
+            "phenotypic": {},
+        }
 
         # Include ACMG and PharmGKB variants
         if "genomic" in data and "variants" in data["genomic"]:
@@ -247,7 +253,9 @@ class CompressionEngine:
             compressed["phenotypic"] = {
                 "conditions": data["phenotypic"].get("conditions", []),
                 "medications": data["phenotypic"].get("medications", []),
-                "labs": self._compress_lab_values(data["phenotypic"].get("lab_results", {})),
+                "labs": self._compress_lab_values(
+                    data["phenotypic"].get("lab_results", {})
+                ),
             }
 
         # Metadata
@@ -281,7 +289,9 @@ class CompressionEngine:
         # Add integrated multi-omics features
         if len(compressed["modalities"]) > 1:
             compressed["integrated"] = {
-                "cross_modal_binding": self._compute_cross_modal_features(compressed["modalities"])
+                "cross_modal_binding": self._compute_cross_modal_features(
+                    compressed["modalities"]
+                )
             }
 
         # Metadata
@@ -373,7 +383,9 @@ class CompressionEngine:
 
         return compressed_labs
 
-    def _create_mock_hypervector(self, modality_data: Dict[str, Any], dimensions: int) -> str:
+    def _create_mock_hypervector(
+        self, modality_data: Dict[str, Any], dimensions: int
+    ) -> str:
         """
         Create mock hypervector representation.
         In production, this would use the actual hypervector encoder.
@@ -413,7 +425,9 @@ class CompressionEngine:
 
         return stats
 
-    def _compute_cross_modal_features(self, modalities: Dict[str, Any]) -> Dict[str, Any]:
+    def _compute_cross_modal_features(
+        self, modalities: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Compute cross-modal binding features for multi-omics integration"""
         # Placeholder for cross-modal analysis
         # In production, would compute actual biological relationships
@@ -472,7 +486,9 @@ class CompressionEngine:
 
             if tier == CompressionTier.FULL:
                 # Full tier is per-modality
-                modality_count = len([m for m in modalities if m in profile.omics_types])
+                modality_count = len(
+                    [m for m in modalities if m in profile.omics_types]
+                )
                 size_kb = profile.max_size_kb * modality_count
             else:
                 size_kb = profile.max_size_kb
@@ -503,7 +519,9 @@ if __name__ == "__main__":
     print("=" * 50)
 
     # Example 1: Mini genomics only
-    req1 = engine.calculate_storage_requirements([CompressionTier.MINI], [OmicsType.GENOMIC])
+    req1 = engine.calculate_storage_requirements(
+        [CompressionTier.MINI], [OmicsType.GENOMIC]
+    )
     print("Mini genomics only: {req1['total_size_kb']} KB")
 
     # Example 2: Clinical pharmacogenomics
@@ -514,14 +532,20 @@ if __name__ == "__main__":
 
     # Example 3: Mini + Clinical (as specified in docs)
     req3 = engine.calculate_storage_requirements(
-        [CompressionTier.MINI, CompressionTier.CLINICAL], [OmicsType.GENOMIC, OmicsType.PHENOTYPIC]
+        [CompressionTier.MINI, CompressionTier.CLINICAL],
+        [OmicsType.GENOMIC, OmicsType.PHENOTYPIC],
     )
     print("Mini + Clinical: {req3['total_size_kb']} KB")
 
     # Example 4: Full multi-omics
     req4 = engine.calculate_storage_requirements(
         [CompressionTier.FULL],
-        [OmicsType.GENOMIC, OmicsType.TRANSCRIPTOMIC, OmicsType.EPIGENETIC, OmicsType.PROTEOMIC],
+        [
+            OmicsType.GENOMIC,
+            OmicsType.TRANSCRIPTOMIC,
+            OmicsType.EPIGENETIC,
+            OmicsType.PROTEOMIC,
+        ],
     )
     print("Full multi-omics (4 modalities): {req4['total_size_kb']} KB")
 

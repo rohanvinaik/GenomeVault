@@ -32,7 +32,15 @@ for desc, patterns in sensitive_patterns:
     found = False
     for pattern in patterns:
         result = subprocess.run(
-            ["grep", "-r", pattern, ".", "--include=*.py", "--include=*.yaml", "--include=*.json"],
+            [
+                "grep",
+                "-r",
+                pattern,
+                ".",
+                "--include=*.py",
+                "--include=*.yaml",
+                "--include=*.json",
+            ],
             capture_output=True,
             text=True,
         )
@@ -133,7 +141,9 @@ if debug_prints.stdout:
     # Count occurrences
     count = len(debug_prints.stdout.strip().split("\n"))
     if count > 50:  # Arbitrary threshold
-        warnings.append("Many print statements found ({count}) - consider using logging")
+        warnings.append(
+            "Many print statements found ({count}) - consider using logging"
+        )
     else:
         successes.append("Reasonable number of print statements")
 
@@ -148,7 +158,9 @@ todos = subprocess.run(
 )
 if todos.stdout:
     count = len(todos.stdout.strip().split("\n"))
-    warnings.append("Found {count} TODO/FIXME comments - consider addressing or documenting")
+    warnings.append(
+        "Found {count} TODO/FIXME comments - consider addressing or documenting"
+    )
 else:
     successes.append("No TODO/FIXME comments found")
 
@@ -174,7 +186,9 @@ test_dirs = list(Path(".").glob("test*"))
 test_files = list(Path(".").rglob("test_*.py"))
 
 if test_dirs or test_files:
-    successes.append("Found {len(test_dirs)} test directories and {len(test_files)} test files")
+    successes.append(
+        "Found {len(test_dirs)} test directories and {len(test_files)} test files"
+    )
 else:
     warnings.append("No test files found - consider adding tests")
 

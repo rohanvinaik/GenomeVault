@@ -10,7 +10,11 @@ from typing import Any, Dict, List, Optional, Tuple
 import aiohttp
 import numpy as np
 
-from genomevault.core.constants import MIN_PIR_SERVERS, PIR_QUERY_TIMEOUT_MS, PIR_THRESHOLD
+from genomevault.core.constants import (
+    MIN_PIR_SERVERS,
+    PIR_QUERY_TIMEOUT_MS,
+    PIR_THRESHOLD,
+)
 from genomevault.core.exceptions import PIRError
 
 
@@ -36,7 +40,9 @@ class PIRClient:
         self.session: Optional[aiohttp.ClientSession] = None
 
         if len(server_urls) < MIN_PIR_SERVERS:
-            raise PIRError("Need at least {MIN_PIR_SERVERS} servers, got {len(server_urls)}")
+            raise PIRError(
+                "Need at least {MIN_PIR_SERVERS} servers, got {len(server_urls)}"
+            )
 
     async def __aenter__(self):
         self.session = aiohttp.ClientSession()
@@ -46,7 +52,9 @@ class PIRClient:
         if self.session:
             await self.session.close()
 
-    async def query_position(self, chromosome: str, position: int, length: int = 1000) -> bytes:
+    async def query_position(
+        self, chromosome: str, position: int, length: int = 1000
+    ) -> bytes:
         """
         Query a genomic position privately
 
@@ -105,7 +113,9 @@ class PIRClient:
 
         nonce = np.random.bytes(32)
 
-        return PIRQuery(position=position, length=length, query_vector=query_vector, nonce=nonce)
+        return PIRQuery(
+            position=position, length=length, query_vector=query_vector, nonce=nonce
+        )
 
     async def _query_server(self, server_url: str, query: PIRQuery) -> Dict[str, Any]:
         """Query a single PIR server"""
@@ -132,7 +142,9 @@ class PIRClient:
         except Exception as e:
             raise PIRError("Query failed for server {server_url}: {str(e)}")
 
-    def _reconstruct_data(self, responses: List[Dict[str, Any]], query: PIRQuery) -> bytes:
+    def _reconstruct_data(
+        self, responses: List[Dict[str, Any]], query: PIRQuery
+    ) -> bytes:
         """
         Reconstruct data from PIR responses
         Uses threshold reconstruction

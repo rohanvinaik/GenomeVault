@@ -20,7 +20,9 @@ print("\nProject root: {project_root}")
 print("Python path includes project: {project_root in sys.path}")
 
 # Check the file that was fixed
-variant_file = os.path.join(project_root, "zk_proofs", "circuits", "biological", "variant.py")
+variant_file = os.path.join(
+    project_root, "zk_proofs", "circuits", "biological", "variant.py"
+)
 print("\nChecking fixed file: {variant_file}")
 print("File exists: {os.path.exists(variant_file)}")
 
@@ -42,7 +44,9 @@ if os.path.exists(variant_file):
         print("\n❓ WARNING: Could not find the base_circuits import")
 
 # Check the base_circuits.py file exists
-base_circuits_file = os.path.join(project_root, "zk_proofs", "circuits", "base_circuits.py")
+base_circuits_file = os.path.join(
+    project_root, "zk_proofs", "circuits", "base_circuits.py"
+)
 print("\nChecking base_circuits.py location:")
 print("Expected at: {base_circuits_file}")
 print("File exists: {os.path.exists(base_circuits_file)}")

@@ -69,7 +69,9 @@ class CircuitManager:
         self.optimization_cache = {}
         self.performance_stats = {}
 
-        logger.info("Circuit manager initialized", extra={"circuit_count": len(self.circuits)})
+        logger.info(
+            "Circuit manager initialized", extra={"circuit_count": len(self.circuits)}
+        )
 
     def _initialize_circuits(self) -> Dict[str, CircuitMetadata]:
         """Initialize available circuits with metadata."""
@@ -167,7 +169,9 @@ class CircuitManager:
 
         # Create circuit instance with parameters
         if circuit_name == "variant_presence":
-            return metadata.circuit_class(merkle_depth=metadata.parameters.get("merkle_depth", 20))
+            return metadata.circuit_class(
+                merkle_depth=metadata.parameters.get("merkle_depth", 20)
+            )
         elif circuit_name == "polygenic_risk_score":
             return metadata.circuit_class(
                 max_variants=metadata.parameters.get("max_variants", 1000)
@@ -177,16 +181,22 @@ class CircuitManager:
                 max_star_alleles=metadata.parameters.get("max_star_alleles", 50)
             )
         elif circuit_name == "pathway_enrichment":
-            return metadata.circuit_class(max_genes=metadata.parameters.get("max_genes", 20000))
+            return metadata.circuit_class(
+                max_genes=metadata.parameters.get("max_genes", 20000)
+            )
         elif circuit_name == "multi_omics_correlation":
             return metadata.circuit_class(
                 max_dimensions=metadata.parameters.get("max_dimensions", 1000)
             )
         elif circuit_name == "genotype_phenotype":
-            return metadata.circuit_class(max_samples=metadata.parameters.get("max_samples", 10000))
+            return metadata.circuit_class(
+                max_samples=metadata.parameters.get("max_samples", 10000)
+            )
         elif circuit_name == "rare_variant_burden":
             return metadata.circuit_class(
-                max_variants_per_gene=metadata.parameters.get("max_variants_per_gene", 100)
+                max_variants_per_gene=metadata.parameters.get(
+                    "max_variants_per_gene", 100
+                )
             )
         else:
             return metadata.circuit_class()
@@ -200,7 +210,10 @@ class CircuitManager:
 
     def list_circuits(self) -> List[Dict[str, Any]]:
         """List all available circuits with metadata."""
-        return [{"name": name, **metadata.to_dict()} for name, metadata in self.circuits.items()]
+        return [
+            {"name": name, **metadata.to_dict()}
+            for name, metadata in self.circuits.items()
+        ]
 
     def select_optimal_circuit(
         self, analysis_type: str, data_characteristics: Dict[str, Any]
@@ -247,13 +260,17 @@ class CircuitManager:
 
         # Check if optimization is needed
         if self._needs_optimization(base_circuit, data_characteristics):
-            base_circuit = self._optimize_circuit_selection(base_circuit, data_characteristics)
+            base_circuit = self._optimize_circuit_selection(
+                base_circuit, data_characteristics
+            )
 
         logger.info("Selected circuit: {base_circuit} for {analysis_type}")
 
         return base_circuit
 
-    def _needs_optimization(self, circuit_name: str, data_characteristics: Dict[str, Any]) -> bool:
+    def _needs_optimization(
+        self, circuit_name: str, data_characteristics: Dict[str, Any]
+    ) -> bool:
         """Check if circuit selection needs optimization."""
         metadata = self.circuits[circuit_name]
 
@@ -265,7 +282,10 @@ class CircuitManager:
 
         # Check performance requirements
         if "max_proof_time_ms" in data_characteristics:
-            if metadata.verification_time_ms > data_characteristics["max_proof_time_ms"]:
+            if (
+                metadata.verification_time_ms
+                > data_characteristics["max_proof_time_ms"]
+            ):
                 return True
 
         return False
@@ -370,7 +390,9 @@ class CircuitManager:
 
         return optimized_params
 
-    def estimate_proof_generation_time(self, circuit_name: str, data_size: Dict[str, int]) -> float:
+    def estimate_proof_generation_time(
+        self, circuit_name: str, data_size: Dict[str, int]
+    ) -> float:
         """
         Estimate proof generation time.
 
@@ -420,7 +442,10 @@ class CircuitManager:
         return stats
 
     def validate_circuit_inputs(
-        self, circuit_name: str, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
+        self,
+        circuit_name: str,
+        public_inputs: Dict[str, Any],
+        private_inputs: Dict[str, Any],
     ) -> Tuple[bool, List[str]]:
         """
         Validate inputs for a circuit.
@@ -480,8 +505,18 @@ class CircuitManager:
                 "private": ["variant_data", "merkle_proo", "witness_randomness"],
             },
             "polygenic_risk_score": {
-                "public": ["prs_model", "score_range", "result_commitment", "genome_commitment"],
-                "private": ["variants", "weights", "merkle_proofs", "witness_randomness"],
+                "public": [
+                    "prs_model",
+                    "score_range",
+                    "result_commitment",
+                    "genome_commitment",
+                ],
+                "private": [
+                    "variants",
+                    "weights",
+                    "merkle_proofs",
+                    "witness_randomness",
+                ],
             },
             "diabetes_risk_alert": {
                 "public": ["glucose_threshold", "risk_threshold", "result_commitment"],
@@ -521,7 +556,12 @@ class CircuitManager:
                     "p_value_commitment",
                     "study_size",
                 ],
-                "private": ["genotypes", "phenotypes", "covariates", "witness_randomness"],
+                "private": [
+                    "genotypes",
+                    "phenotypes",
+                    "covariates",
+                    "witness_randomness",
+                ],
             },
             "clinical_trial_eligibility": {
                 "public": ["trial_id", "eligibility_result", "criteria_hash"],
@@ -618,10 +658,16 @@ class CircuitManager:
                     "commitment_root": hashlib.sha256(b"test_root").hexdigest(),
                 },
                 "private_inputs": {
-                    "variant_data": {"chr": "chr1", "pos": 12345, "re": "A", "alt": "G"},
+                    "variant_data": {
+                        "chr": "chr1",
+                        "pos": 12345,
+                        "re": "A",
+                        "alt": "G",
+                    },
                     "merkle_proof": {
                         "path": [
-                            hashlib.sha256("node_{i}".encode()).hexdigest() for i in range(20)
+                            hashlib.sha256("node_{i}".encode()).hexdigest()
+                            for i in range(20)
                         ],
                         "indices": [i % 2 for i in range(20)],
                     },

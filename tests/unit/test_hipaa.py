@@ -23,7 +23,10 @@ class TestHIPAACredentials:
     def test_valid_credentials(self):
         """Test creation of valid credentials"""
         creds = HIPAACredentials(
-            npi="1234567893", baa_hash="a" * 64, risk_analysis_hash="b" * 64, hsm_serial="HSM-12345"
+            npi="1234567893",
+            baa_hash="a" * 64,
+            risk_analysis_hash="b" * 64,
+            hsm_serial="HSM-12345",
         )
         assert creds.npi == "1234567893"
         assert len(creds.baa_hash) == 64
@@ -177,7 +180,9 @@ class TestHIPAAVerifier:
             assert record.is_active()
 
             # Revoke verification
-            success = verifier.revoke_verification(credentials.npi, reason="Test revocation")
+            success = verifier.revoke_verification(
+                credentials.npi, reason="Test revocation"
+            )
             assert success
 
             # Check status
@@ -268,7 +273,10 @@ class TestVerificationRecord:
     def test_active_record(self):
         """Test active verification record"""
         creds = HIPAACredentials(
-            npi="1234567893", baa_hash="a" * 64, risk_analysis_hash="b" * 64, hsm_serial="HSM-12345"
+            npi="1234567893",
+            baa_hash="a" * 64,
+            risk_analysis_hash="b" * 64,
+            hsm_serial="HSM-12345",
         )
 
         record = VerificationRecord(
@@ -286,7 +294,10 @@ class TestVerificationRecord:
     def test_revoked_record(self):
         """Test revoked verification record"""
         creds = HIPAACredentials(
-            npi="1234567893", baa_hash="a" * 64, risk_analysis_hash="b" * 64, hsm_serial="HSM-12345"
+            npi="1234567893",
+            baa_hash="a" * 64,
+            risk_analysis_hash="b" * 64,
+            hsm_serial="HSM-12345",
         )
 
         record = VerificationRecord(
@@ -303,7 +314,10 @@ class TestVerificationRecord:
     def test_expired_record(self):
         """Test expired verification record"""
         creds = HIPAACredentials(
-            npi="1234567893", baa_hash="a" * 64, risk_analysis_hash="b" * 64, hsm_serial="HSM-12345"
+            npi="1234567893",
+            baa_hash="a" * 64,
+            risk_analysis_hash="b" * 64,
+            hsm_serial="HSM-12345",
         )
 
         record = VerificationRecord(
@@ -319,7 +333,10 @@ class TestVerificationRecord:
     def test_chain_data_serialization(self):
         """Test serialization for blockchain storage"""
         creds = HIPAACredentials(
-            npi="1234567893", baa_hash="a" * 64, risk_analysis_hash="b" * 64, hsm_serial="HSM-12345"
+            npi="1234567893",
+            baa_hash="a" * 64,
+            risk_analysis_hash="b" * 64,
+            hsm_serial="HSM-12345",
         )
 
         record = VerificationRecord(

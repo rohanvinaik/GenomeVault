@@ -9,10 +9,10 @@ import warnings
 
 # Import from the new refactored location
 from clinical_validation.circuits import (
-    DiabetesRiskCircuit, 
+    DiabetesRiskCircuit,
     ClinicalBiomarkerCircuit,
     BaseCircuit,
-    create_circuit
+    create_circuit,
 )
 from clinical_validation.proofs import ProofData, CircuitType
 
@@ -21,15 +21,15 @@ warnings.warn(
     "genomevault.zk_proofs.circuits.clinical_circuits is deprecated. "
     "Use clinical_validation.circuits instead.",
     DeprecationWarning,
-    stacklevel=2
+    stacklevel=2,
 )
 
 # Re-export for backward compatibility
 __all__ = [
-    'DiabetesRiskCircuit',
-    'ClinicalBiomarkerCircuit',
-    'BaseCircuit',
-    'ProofData',
-    'create_circuit',
-    'CircuitType'
+    "DiabetesRiskCircuit",
+    "ClinicalBiomarkerCircuit",
+    "BaseCircuit",
+    "ProofData",
+    "create_circuit",
+    "CircuitType",
 ]

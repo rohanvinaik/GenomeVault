@@ -20,7 +20,10 @@ from genomevault.hypervector_transform.binding import (
 )
 
 # GenomeVault imports
-from genomevault.hypervector_transform.encoding import HypervectorEncoder, create_encoder
+from genomevault.hypervector_transform.encoding import (
+    HypervectorEncoder,
+    create_encoder,
+)
 from genomevault.hypervector_transform.holographic import HolographicEncoder
 from genomevault.hypervector_transform.mapping import (
     BiologicalSimilarityMapper,
@@ -43,7 +46,11 @@ def demonstrate_basic_encoding():
             "indels": list(range(20)),  # 20 indels
             "cnvs": list(range(5)),  # 5 CNVs
         },
-        "quality_metrics": {"mean_coverage": 35.2, "uniformity": 0.92, "gc_content": 0.41},
+        "quality_metrics": {
+            "mean_coverage": 35.2,
+            "uniformity": 0.92,
+            "gc_content": 0.41,
+        },
     }
 
     # Encode the genomic data
@@ -107,7 +114,9 @@ def demonstrate_binding_operations():
     print("Full bound vector norm: {torch.norm(full_bound):.3f}")
 
     # Demonstrate unbinding (recovery)
-    recovered_gene = binder.unbind(gene_expr_bound, [expression_hv], BindingType.CIRCULAR)
+    recovered_gene = binder.unbind(
+        gene_expr_bound, [expression_hv], BindingType.CIRCULAR
+    )
     recovery_similarity = torch.nn.functional.cosine_similarity(
         gene_hv.unsqueeze(0), recovered_gene.unsqueeze(0)
     ).item()
@@ -174,7 +183,11 @@ def demonstrate_holographic_encoding():
         position=117559590,
         ref="G",
         alt="A",
-        annotations={"gene": "CFTR", "effect": "missense", "clinical_significance": "pathogenic"},
+        annotations={
+            "gene": "CFTR",
+            "effect": "missense",
+            "clinical_significance": "pathogenic",
+        },
     )
 
     variant2 = holo_encoder.encode_genomic_variant(
@@ -182,7 +195,11 @@ def demonstrate_holographic_encoding():
         position=117559591,  # Adjacent position
         ref="C",
         alt="T",
-        annotations={"gene": "CFTR", "effect": "synonymous", "clinical_significance": "benign"},
+        annotations={
+            "gene": "CFTR",
+            "effect": "synonymous",
+            "clinical_significance": "benign",
+        },
     )
 
     # Similar variant (same gene, different position)
@@ -191,7 +208,11 @@ def demonstrate_holographic_encoding():
         position=117560000,
         ref="A",
         alt="G",
-        annotations={"gene": "CFTR", "effect": "missense", "clinical_significance": "uncertain"},
+        annotations={
+            "gene": "CFTR",
+            "effect": "missense",
+            "clinical_significance": "uncertain",
+        },
     )
 
     # Different gene variant
@@ -200,7 +221,11 @@ def demonstrate_holographic_encoding():
         position=41276045,
         ref="C",
         alt="T",
-        annotations={"gene": "BRCA1", "effect": "nonsense", "clinical_significance": "pathogenic"},
+        annotations={
+            "gene": "BRCA1",
+            "effect": "nonsense",
+            "clinical_significance": "pathogenic",
+        },
     )
 
     # Compare similarities
@@ -285,8 +310,12 @@ def demonstrate_similarity_preservation():
     n_features = 50
 
     # Create two clusters of samples
-    cluster1 = torch.randn(n_samples // 2, n_features) + torch.tensor([2.0] * n_features)
-    cluster2 = torch.randn(n_samples // 2, n_features) - torch.tensor([2.0] * n_features)
+    cluster1 = torch.randn(n_samples // 2, n_features) + torch.tensor(
+        [2.0] * n_features
+    )
+    cluster2 = torch.randn(n_samples // 2, n_features) - torch.tensor(
+        [2.0] * n_features
+    )
 
     data = torch.cat([cluster1, cluster2], dim=0)
     labels = torch.cat([torch.zeros(n_samples // 2), torch.ones(n_samples // 2)])
@@ -305,11 +334,13 @@ def demonstrate_similarity_preservation():
     cluster2_transformed = transformed[n_samples // 2 :]
 
     within_cluster_sim = torch.nn.functional.cosine_similarity(
-        cluster1_transformed.mean(dim=0).unsqueeze(0), cluster1_transformed[0].unsqueeze(0)
+        cluster1_transformed.mean(dim=0).unsqueeze(0),
+        cluster1_transformed[0].unsqueeze(0),
     ).item()
 
     between_cluster_sim = torch.nn.functional.cosine_similarity(
-        cluster1_transformed.mean(dim=0).unsqueeze(0), cluster2_transformed.mean(dim=0).unsqueeze(0)
+        cluster1_transformed.mean(dim=0).unsqueeze(0),
+        cluster2_transformed.mean(dim=0).unsqueeze(0),
     ).item()
 
     print("\nWithin-cluster similarity: {within_cluster_sim:.3f}")
@@ -374,12 +405,16 @@ def demonstrate_compression_tiers():
     for tier in [CompressionTier.MINI, CompressionTier.CLINICAL, CompressionTier.FULL]:
         compressor = TieredCompressor(tier)
 
-        compressed = compressor.compress({"hypervector": hypervector}, OmicsType.GENOMIC)
+        compressed = compressor.compress(
+            {"hypervector": hypervector}, OmicsType.GENOMIC
+        )
 
         print("\n{tier.value} tier:")
         print("  Original size: {hypervector.numel() * 4:,} bytes")
         print("  Compressed size: {compressed.compressed_size:,} bytes")
-        print("  Compression ratio: {hypervector.numel() * 4 / compressed.compressed_size:.1f}:1")
+        print(
+            "  Compression ratio: {hypervector.numel() * 4 / compressed.compressed_size:.1f}:1"
+        )
 
         # Test decompression
         decompressed = compressor.decompress(compressed)

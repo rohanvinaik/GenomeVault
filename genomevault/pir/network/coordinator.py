@@ -52,7 +52,9 @@ class NetworkTopology:
 
     servers: Dict[str, PIRServer] = field(default_factory=dict)
     server_health: Dict[str, ServerHealth] = field(default_factory=dict)
-    server_regions: Dict[str, Set[str]] = field(default_factory=lambda: defaultdict(set))
+    server_regions: Dict[str, Set[str]] = field(
+        default_factory=lambda: defaultdict(set)
+    )
     ts_servers: Set[str] = field(default_factory=set)
     ln_servers: Set[str] = field(default_factory=set)
 
@@ -116,7 +118,9 @@ class PIRNetworkCoordinator:
         self.health_monitor_task = asyncio.create_task(self.monitor_health())
         self.topology_update_task = asyncio.create_task(self.update_topology())
 
-        logger.info("Network coordinator started with {len(self.topology.servers)} servers")
+        logger.info(
+            "Network coordinator started with {len(self.topology.servers)} servers"
+        )
 
     async def stop(self):
         """Stop network coordinator services."""
@@ -217,7 +221,9 @@ class PIRNetworkCoordinator:
                 await asyncio.gather(*tasks, return_exceptions=True)
 
                 # Log summary
-                healthy_count = sum(1 for h in self.topology.server_health.values() if h.is_healthy)
+                healthy_count = sum(
+                    1 for h in self.topology.server_health.values() if h.is_healthy
+                )
                 logger.info(
                     "Health check complete: {healthy_count}/{len(self.topology.servers)} healthy"
                 )
@@ -269,7 +275,9 @@ class PIRNetworkCoordinator:
                     health.last_check = time.time()
                     health.error_count += 1
 
-                    logger.warning("Server {server.server_id} returned status {response.status}")
+                    logger.warning(
+                        "Server {server.server_id} returned status {response.status}"
+                    )
                     return False
 
         except Exception as e:
@@ -315,7 +323,10 @@ class PIRNetworkCoordinator:
                 await asyncio.sleep(10)
 
     def select_optimal_servers(
-        self, num_servers: int, require_ts: int = 0, exclude_servers: Optional[Set[str]] = None
+        self,
+        num_servers: int,
+        require_ts: int = 0,
+        exclude_servers: Optional[Set[str]] = None,
     ) -> List[PIRServer]:
         """
         Select optimal servers for a PIR query.
@@ -373,7 +384,9 @@ class PIRNetworkCoordinator:
 
         # If still need more, add additional TS servers
         if len(selected) < num_servers:
-            additional_ts = min(num_servers - len(selected), len(ts_servers) - require_ts)
+            additional_ts = min(
+                num_servers - len(selected), len(ts_servers) - require_ts
+            )
             selected.extend(ts_servers[require_ts : require_ts + additional_ts])
 
         return selected[:num_servers]
@@ -450,7 +463,9 @@ class PIRNetworkCoordinator:
         ]
 
         if max_latency_ms:
-            valid_configs = [c for c in valid_configs if c["latency_ms"] <= max_latency_ms]
+            valid_configs = [
+                c for c in valid_configs if c["latency_ms"] <= max_latency_ms
+            ]
 
         # Select optimal (minimize latency)
         if valid_configs:
@@ -491,7 +506,8 @@ class PIRNetworkCoordinator:
         if config_name:
             # Find specific configuration
             config = next(
-                (c for c in config_info["configurations"] if c["name"] == config_name), None
+                (c for c in config_info["configurations"] if c["name"] == config_name),
+                None,
             )
             if not config:
                 raise ValueError("Configuration '{config_name}' not found")
@@ -524,7 +540,11 @@ class PIRNetworkCoordinator:
 
         avg_latency = (
             np.mean(
-                [h.latency_ms for h in self.topology.server_health.values() if h.latency_ms > 0]
+                [
+                    h.latency_ms
+                    for h in self.topology.server_health.values()
+                    if h.latency_ms > 0
+                ]
             )
             if self.topology.server_health
             else 0
@@ -551,7 +571,9 @@ class PIRNetworkCoordinator:
 
         return {
             "total_servers": len(self.topology.servers),
-            "healthy_servers": sum(1 for h in self.topology.server_health.values() if h.is_healthy),
+            "healthy_servers": sum(
+                1 for h in self.topology.server_health.values() if h.is_healthy
+            ),
             "ts_servers": {
                 "total": len(self.topology.ts_servers),
                 "healthy": sum(
@@ -576,10 +598,15 @@ class PIRNetworkCoordinator:
                 "total": total_queries,
                 "errors": total_errors,
                 "success_rate": (
-                    (total_queries - total_errors) / total_queries if total_queries > 0 else 1.0
+                    (total_queries - total_errors) / total_queries
+                    if total_queries > 0
+                    else 1.0
                 ),
             },
-            "performance": {"avg_latency_ms": avg_latency, "cache_size": len(self.routing_cache)},
+            "performance": {
+                "avg_latency_ms": avg_latency,
+                "cache_size": len(self.routing_cache),
+            },
             "regions": region_stats,
         }
 

@@ -161,7 +161,9 @@ class Verifier:
                 metadata={"is_valid": is_valid, "verification_time": verification_time},
             )
 
-            logger.info("Proof verification completed: {is_valid}", extra={"privacy_safe": True})
+            logger.info(
+                "Proof verification completed: {is_valid}", extra={"privacy_safe": True}
+            )
 
             return result
 
@@ -202,7 +204,9 @@ class Verifier:
 
             # Allow some tolerance
             if abs(actual_size - expected_size) > 50:
-                logger.warning("Unexpected proof size: {actual_size} vs {expected_size}")
+                logger.warning(
+                    "Unexpected proof size: {actual_size} vs {expected_size}"
+                )
 
         return True
 
@@ -259,7 +263,12 @@ class Verifier:
         """Verify polygenic risk score proof."""
         try:
             # Verify public inputs
-            required_inputs = ["prs_model", "score_range", "result_commitment", "genome_commitment"]
+            required_inputs = [
+                "prs_model",
+                "score_range",
+                "result_commitment",
+                "genome_commitment",
+            ]
             for input_name in required_inputs:
                 if input_name not in proof.public_inputs:
                     return False
@@ -294,7 +303,11 @@ class Verifier:
         """Verify diabetes risk alert proof."""
         try:
             # Verify public inputs
-            required_inputs = ["glucose_threshold", "risk_threshold", "result_commitment"]
+            required_inputs = [
+                "glucose_threshold",
+                "risk_threshold",
+                "result_commitment",
+            ]
             for input_name in required_inputs:
                 if input_name not in proof.public_inputs:
                     return False
@@ -411,7 +424,8 @@ class Verifier:
         # Log batch verification summary
         valid_count = sum(1 for r in results if r.is_valid)
         logger.info(
-            "Batch verification: {valid_count}/{len(proofs)} valid", extra={"privacy_safe": True}
+            "Batch verification: {valid_count}/{len(proofs)} valid",
+            extra={"privacy_safe": True},
         )
 
         return results
@@ -532,4 +546,6 @@ if __name__ == "__main__":
 
     print("\nVerification result: {result.is_valid}")
     print("Verification time: {result.verification_time*1000:.1f}ms")
-    print("Expected time: {verifier.get_verification_time_estimate('diabetes_risk_alert')}ms")
+    print(
+        "Expected time: {verifier.get_verification_time_estimate('diabetes_risk_alert')}ms"
+    )

@@ -46,13 +46,19 @@ class TestHypervectorEncoder(unittest.TestCase):
         self.test_features = torch.randn(100)
         self.test_data = {
             "variants": {"snps": [1, 2, 3], "indels": [4, 5], "cnvs": [6]},
-            "quality_metrics": {"mean_coverage": 30.5, "uniformity": 0.95, "gc_content": 0.45},
+            "quality_metrics": {
+                "mean_coverage": 30.5,
+                "uniformity": 0.95,
+                "gc_content": 0.45,
+            },
         }
 
     def test_encoder_initialization(self):
         """Test encoder initialization"""
         self.assertEqual(self.encoder.config.dimension, 10000)
-        self.assertEqual(self.encoder.config.projection_type, ProjectionType.SPARSE_RANDOM)
+        self.assertEqual(
+            self.encoder.config.projection_type, ProjectionType.SPARSE_RANDOM
+        )
         self.assertTrue(self.encoder.config.normalize)
 
     def test_basic_encoding(self):
@@ -64,7 +70,9 @@ class TestHypervectorEncoder(unittest.TestCase):
 
     def test_multiresolution_encoding(self):
         """Test multi-resolution encoding"""
-        multi_vectors = self.encoder.encode_multiresolution(self.test_features, OmicsType.GENOMIC)
+        multi_vectors = self.encoder.encode_multiresolution(
+            self.test_features, OmicsType.GENOMIC
+        )
 
         self.assertIn("base", multi_vectors)
         self.assertIn("mid", multi_vectors)
@@ -180,7 +188,9 @@ class TestHypervectorBinder(unittest.TestCase):
 
         # Bundle should have positive similarity with all components
         for v in [self.v1, self.v2, self.v3]:
-            sim = torch.nn.functional.cosine_similarity(bundle.unsqueeze(0), v.unsqueeze(0)).item()
+            sim = torch.nn.functional.cosine_similarity(
+                bundle.unsqueeze(0), v.unsqueeze(0)
+            ).item()
             self.assertGreater(sim, 0)
 
     def test_protection(self):
@@ -282,7 +292,11 @@ class TestHolographicEncoder(unittest.TestCase):
 
     def test_memory_trace(self):
         """Test creating memory traces"""
-        items = [{"id": 1, "value": "A"}, {"id": 2, "value": "B"}, {"id": 3, "value": "C"}]
+        items = [
+            {"id": 1, "value": "A"},
+            {"id": 2, "value": "B"},
+            {"id": 3, "value": "C"},
+        ]
 
         memory = self.encoder.create_memory_trace(items)
         self.assertEqual(memory.shape[0], self.dimension)
@@ -340,7 +354,9 @@ class TestSimilarityMapping(unittest.TestCase):
 
     def test_biological_mapper(self):
         """Test biological similarity mapper"""
-        mapper = BiologicalSimilarityMapper(self.input_dim, self.output_dim, OmicsType.GENOMIC)
+        mapper = BiologicalSimilarityMapper(
+            self.input_dim, self.output_dim, OmicsType.GENOMIC
+        )
 
         # Test variant similarity
         v1 = torch.rand(100)
