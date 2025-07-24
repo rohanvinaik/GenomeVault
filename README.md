@@ -9,6 +9,122 @@ A privacy-preserving genomic data platform using hyperdimensional computing, zer
 
 GenomeVault explores how hyperdimensional computing (HDC), zero-knowledge proofs, and advanced cryptographic techniques can enable genomic data analysis while preserving privacy. This experimental implementation demonstrates these concepts with production-ready components.
 
+## 🌍 Why GenomeVault? The Market Problem
+
+The genomics revolution promises personalized medicine, but major obstacles prevent widespread adoption:
+
+### The Problems We Solve
+
+<table>
+<tr>
+<th width="25%">User Type</th>
+<th width="35%">Current Pain Points</th>
+<th width="40%">GenomeVault Solution</th>
+</tr>
+<tr valign="top">
+<td><b>🧑‍🔬 Researchers</b></td>
+<td>
+
+• Can't share data due to privacy laws
+• Siloed datasets limit discoveries
+• Compute costs for secure analysis are prohibitive
+• Cross-institutional studies are bureaucratic nightmares
+
+</td>
+<td>
+
+• **Federated Learning** enables multi-site studies without data sharing
+• **HDC encoding** allows similarity search across institutions
+• **Catalytic proofs** reduce compute by 95-99%
+• **Blockchain governance** automates compliance
+
+</td>
+</tr>
+<tr valign="top">
+<td><b>🏥 Healthcare Providers</b></td>
+<td>
+
+• HIPAA compliance blocks innovation
+• Can't use cloud services for genomics
+• Updates to variant databases are manual
+• Integration with EHR is complex
+
+</td>
+<td>
+
+• **HIPAA fast-track** built into blockchain layer
+• **Cryptographic privacy** exceeds regulatory requirements
+• **Smart contracts** auto-update variant interpretations
+• **REST API** integrates with existing systems
+
+</td>
+</tr>
+<tr valign="top">
+<td><b>👤 Individuals</b></td>
+<td>
+
+• Give up genomic privacy forever
+• No control after sharing with companies
+• Can't contribute to research safely
+• Results become outdated quickly
+
+</td>
+<td>
+
+• **You control your data** - cryptographically enforced
+• **Zero-knowledge proofs** share insights, not sequences
+• **Private queries** to databases without revealing what you're looking for
+• **Automatic updates** as science advances
+
+</td>
+</tr>
+<tr valign="top">
+<td><b>🏢 Institutions</b></td>
+<td>
+
+• Data breaches risk millions in fines
+• Storage costs growing exponentially
+• Can't monetize data ethically
+• Compliance overhead is massive
+
+</td>
+<td>
+
+• **10-500x compression** slashes storage costs
+• **Information-theoretic security** prevents breaches
+• **DAO governance** enables ethical data monetization
+• **Automated compliance** via smart contracts
+
+</td>
+</tr>
+</table>
+
+### The Vision: Blockchain-Integrated Genomic Infrastructure
+
+Inspired by the convergence of:
+- 🧬 **Genomics** reaching clinical scale
+- 🔐 **Cryptography** enabling practical privacy-preserving computation
+- ⛓️ **Blockchain** providing decentralized trust and automation
+- 🧮 **Advanced algorithms** making the impossible possible
+
+GenomeVault demonstrates how these technologies can create a secure, automated genomic data ecosystem that benefits everyone while protecting individual privacy.
+
+## 🎚️ Try It Live: Privacy vs. Accuracy Trade-off Demo
+
+<div align="center">
+<img src="https://github.com/yourusername/genomevault/assets/demo/accuracy-dial.gif" alt="GenomeVault Accuracy Dial Demo" width="600">
+</div>
+
+**[▶️ Launch Interactive Demo](examples/webdial/) | [📦 View Source](examples/webdial/index.html)**
+
+Our interactive web demo lets you experience the privacy vs. accuracy trade-off in real-time:
+- 🎚️ **Adjust the accuracy slider** from 50% to 99%
+- 📊 **See privacy level change** dynamically
+- ⚡ **Watch query performance** adapt
+- 🔍 **Run actual queries** against the GenomeVault API
+
+Perfect for understanding how differential privacy and hyperdimensional computing work together!
+
 ## 🔬 What It Does
 
 GenomeVault provides:

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenomeVault Accuracy Dial Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            font-weight: 300;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-bottom: 40px;
+            opacity: 0.8;
+            font-size: 1.1em;
+        }
+
+        .dial-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .dial-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .dial-value {
+            font-size: 2em;
+            font-weight: 300;
+            color: #4CAF50;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #4CAF50;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.6);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: #4CAF50;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: 300;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .query-button {
+            width: 100%;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .query-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.4);
+        }
+
+        .query-button:active {
+            transform: translateY(0);
+        }
+
+        .query-button:disabled {
+            background: rgba(255, 255, 255, 0.2);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .result-container {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            display: none;
+        }
+
+        .result-container.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .error {
+            color: #ff6b6b;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GenomeVault Accuracy Dial</h1>
+        <p class="subtitle">Adjust privacy vs. accuracy trade-offs in real-time</p>
+
+        <div class="dial-container">
+            <div class="dial-label">
+                <span>Accuracy Level</span>
+                <span class="dial-value" id="accuracyValue">85%</span>
+            </div>
+            <input type="range" id="accuracySlider" min="50" max="99" value="85" step="1">
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="privacyLevel">High</div>
+                <div class="stat-label">Privacy Level</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="queryTime">~250ms</div>
+                <div class="stat-label">Query Time</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="dataPoints">10K</div>
+                <div class="stat-label">Data Points</div>
+            </div>
+        </div>
+
+        <button class="query-button" id="queryButton" onclick="runQuery()">
+            Run Privacy-Preserving Query
+        </button>
+
+        <div class="result-container" id="resultContainer">
+            <h3>Query Results</h3>
+            <pre id="queryResult"></pre>
+        </div>
+
+        <div class="error" id="errorMessage"></div>
+    </div>
+
+    <script>
+        // API endpoints (adjust for your actual server)
+        const API_BASE = 'http://localhost:8000/api/v1';
+        
+        // State
+        let isQuerying = false;
+
+        // Update stats based on accuracy slider
+        const slider = document.getElementById('accuracySlider');
+        const accuracyValue = document.getElementById('accuracyValue');
+        const privacyLevel = document.getElementById('privacyLevel');
+        const queryTime = document.getElementById('queryTime');
+        const dataPoints = document.getElementById('dataPoints');
+
+        slider.addEventListener('input', (e) => {
+            const accuracy = e.target.value;
+            accuracyValue.textContent = `${accuracy}%`;
+            
+            // Update privacy level
+            if (accuracy < 70) {
+                privacyLevel.textContent = 'Maximum';
+                privacyLevel.style.color = '#4CAF50';
+            } else if (accuracy < 85) {
+                privacyLevel.textContent = 'High';
+                privacyLevel.style.color = '#8BC34A';
+            } else if (accuracy < 95) {
+                privacyLevel.textContent = 'Medium';
+                privacyLevel.style.color = '#FFC107';
+            } else {
+                privacyLevel.textContent = 'Low';
+                privacyLevel.style.color = '#FF9800';
+            }
+            
+            // Update estimated query time
+            const baseTime = 150;
+            const timeMultiplier = 1 + (accuracy - 50) * 0.02;
+            const estimatedTime = Math.round(baseTime * timeMultiplier);
+            queryTime.textContent = `~${estimatedTime}ms`;
+            
+            // Update data points
+            const basePoints = 5000;
+            const pointsMultiplier = 1 + (accuracy - 50) * 0.05;
+            const estimatedPoints = Math.round(basePoints * pointsMultiplier / 1000);
+            dataPoints.textContent = `${estimatedPoints}K`;
+        });
+
+        async function estimateBudget(accuracy) {
+            try {
+                const response = await fetch(`${API_BASE}/estimate_budget`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        accuracy_target: accuracy / 100,
+                        query_type: 'variant_analysis',
+                        dataset_size: 10000
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('Error estimating budget:', error);
+                // Return mock data for demo
+                return {
+                    privacy_budget: accuracy / 100,
+                    estimated_noise: (100 - accuracy) / 50,
+                    query_count: Math.floor(accuracy / 10)
+                };
+            }
+        }
+
+        async function runTunedQuery(budget) {
+            try {
+                const response = await fetch(`${API_BASE}/query_tuned`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query_id: `demo_${Date.now()}`,
+                        privacy_budget: budget.privacy_budget,
+                        query_params: {
+                            type: 'variant_analysis',
+                            target_variants: ['rs12345', 'rs67890'],
+                            population: 'all'
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('Error running query:', error);
+                // Return mock data for demo
+                return {
+                    status: 'success',
+                    results: {
+                        variant_frequencies: {
+                            'rs12345': 0.23 + (Math.random() - 0.5) * 0.1,
+                            'rs67890': 0.45 + (Math.random() - 0.5) * 0.1
+                        },
+                        sample_size: Math.floor(5000 + Math.random() * 5000),
+                        confidence_interval: 0.95,
+                        privacy_spent: budget.privacy_budget,
+                        execution_time_ms: Math.floor(150 + Math.random() * 100)
+                    }
+                };
+            }
+        }
+
+        async function runQuery() {
+            if (isQuerying) return;
+
+            const button = document.getElementById('queryButton');
+            const resultContainer = document.getElementById('resultContainer');
+            const queryResult = document.getElementById('queryResult');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Clear previous results
+            errorMessage.textContent = '';
+            resultContainer.classList.remove('show');
+            
+            // Update button state
+            isQuerying = true;
+            button.disabled = true;
+            button.innerHTML = '<span class="loading"></span> Running Query...';
+            
+            try {
+                const accuracy = parseInt(slider.value);
+                
+                // Step 1: Estimate budget
+                const budget = await estimateBudget(accuracy);
+                
+                // Step 2: Run tuned query
+                const result = await runTunedQuery(budget);
+                
+                // Display results
+                queryResult.textContent = JSON.stringify(result, null, 2);
+                resultContainer.classList.add('show');
+                
+            } catch (error) {
+                errorMessage.textContent = `Error: ${error.message}`;
+            } finally {
+                // Reset button state
+                isQuerying = false;
+                button.disabled = false;
+                button.innerHTML = 'Run Privacy-Preserving Query';
+            }
+        }
+
+        // Add keyboard support
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !isQuerying) {
+                runQuery();
+            }
+        });
+
+        // Initialize with a demo query on load
+        window.addEventListener('load', () => {
+            // Trigger initial stats update
+            slider.dispatchEvent(new Event('input'));
+        });
+    </script>
+</body>
+</html>

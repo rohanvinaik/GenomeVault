@@ -15,16 +15,22 @@ from typing import Callable, Dict, List, Optional, Union
 
 import cupy as cp  # GPU arrays
 import numba
+from numba import prange
 import numpy as np
 import psutil
 import torch
+import contextlib
+from typing import Any, Generator
 
 from ..genomevault.utils.logging import get_logger, performance_logger
 
 logger = get_logger(__name__)
 
 # Check available acceleration
-CUDA_AVAILABLE = cuda.is_available()
+try:
+    CUDA_AVAILABLE = cp.cuda.is_available()
+except:
+    CUDA_AVAILABLE = False
 CPU_COUNT = mp.cpu_count()
 TORCH_AVAILABLE = torch.cuda.is_available()
 
@@ -157,15 +163,11 @@ class HypervectorAccelerator:
             return distances
 
     @staticmethod
-    @cuda.jit
     def _circular_convolution_kernel(a, b, result, n):
         """CUDA kernel for circular convolution"""
-        idx = cuda.grid(1)
-        if idx < n:
-            temp = 0.0
-            for j in range(n):
-                temp += a[j] * b[(idx - j) % n]
-            result[idx] = temp
+        # Note: This would require numba.cuda which is not imported
+        # For now, this is a placeholder that would be compiled with numba.cuda.jit
+        pass
 
     def circular_convolution(self, v1: np.ndarray, v2: np.ndarray) -> np.ndarray:
         """Perform circular convolution with acceleration"""
@@ -184,19 +186,16 @@ class HypervectorAccelerator:
             return result.cpu().numpy()
 
         elif self.backend == "cupy" and CUDA_AVAILABLE:
-            # CUDA kernel implementation
-            v1_gpu = cuda.to_device(v1.astype(np.float32))
-            v2_gpu = cuda.to_device(v2.astype(np.float32))
-            result_gpu = cuda.device_array(n, dtype=np.float32)
-
-            threads_per_block = 256
-            blocks_per_grid = (n + threads_per_block - 1) // threads_per_block
-
-            self._circular_convolution_kernel[blocks_per_grid, threads_per_block](
-                v1_gpu, v2_gpu, result_gpu, n
-            )
-
-            return result_gpu.copy_to_host()
+            # Use CuPy FFT for circular convolution
+            v1_cp = cp.asarray(v1.astype(np.float32))
+            v2_cp = cp.asarray(v2.astype(np.float32))
+            
+            # FFT method using CuPy
+            fft1 = cp.fft.fft(v1_cp)
+            fft2 = cp.fft.fft(v2_cp)
+            result = cp.fft.ifft(fft1 * fft2).real
+            
+            return cp.asnumpy(result)
 
         else:
             # NumPy FFT fallback
@@ -368,3 +367,51 @@ class ResourceMonitor:
 hypervector_accelerator = HypervectorAccelerator()
 parallel_processor = ParallelProcessor()
 resource_monitor = ResourceMonitor()
+
+
+@contextlib.contextmanager
+def with_gpu(exit: bool = False) -> Generator[None, None, None]:
+    """Context manager for GPU operations with proper cleanup.
+    
+    This fixes the CuPy slice-kernel warning by ensuring proper synchronization
+    and cleanup of GPU resources.
+    
+    Args:
+        exit: If True, performs full device reset on exit (use sparingly)
+        
+    Yields:
+        None
+        
+    Example:
+        with with_gpu():
+            # GPU operations here
+            result = cupy_array.sum()
+    """
+    try:
+        yield
+    finally:
+        if CUDA_AVAILABLE:
+            try:
+                # Synchronize CUDA device to ensure all kernels complete
+                if 'cp' in globals():
+                    cp.cuda.Device().synchronize()
+                    
+                # If exit is True, perform full device reset
+                if exit:
+                    cp.cuda.runtime.deviceReset()
+                    logger.debug("GPU device reset completed")
+            except Exception as e:
+                logger.warning(f"GPU cleanup warning: {e}")
+        
+        if TORCH_AVAILABLE:
+            try:
+                # Synchronize PyTorch CUDA if available
+                if torch.cuda.is_available():
+                    torch.cuda.synchronize()
+                    
+                    # Clear cache if exit is True
+                    if exit:
+                        torch.cuda.empty_cache()
+                        logger.debug("PyTorch GPU cache cleared")
+            except Exception as e:
+                logger.warning(f"PyTorch GPU cleanup warning: {e}")

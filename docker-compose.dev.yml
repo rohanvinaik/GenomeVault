@@ -1,0 +1,261 @@
+version: '3.8'
+
+services:
+  # FastAPI Main Service
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=development
+      - DATABASE_URL=postgresql://genome:vault@postgres:5432/genomevault
+      - REDIS_URL=redis://redis:6379
+      - PIR_SERVERS=http://pir-server-1:9001,http://pir-server-2:9002,http://pir-server-3:9003,http://pir-server-4:9004
+      - BLOCKCHAIN_URL=http://local-chain:8545
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./config:/app/config:ro
+      - ./genomevault:/app/genomevault:ro
+    depends_on:
+      - redis
+      - postgres
+      - pir-server-1
+      - pir-server-2
+      - pir-server-3
+      - pir-server-4
+      - local-chain
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # PIR Servers (1-4)
+  pir-server-1:
+    build:
+      context: .
+      dockerfile: Dockerfile.pir
+    ports:
+      - "9001:9001"
+    environment:
+      - PIR_SERVER_ID=1
+      - PIR_SERVER_PORT=9001
+      - PIR_DATABASE_PATH=/data/pir_db_1.bin
+      - PIR_REGION=us-east
+    volumes:
+      - pir_data_1:/data
+    restart: unless-stopped
+
+  pir-server-2:
+    build:
+      context: .
+      dockerfile: Dockerfile.pir
+    ports:
+      - "9002:9002"
+    environment:
+      - PIR_SERVER_ID=2
+      - PIR_SERVER_PORT=9002
+      - PIR_DATABASE_PATH=/data/pir_db_2.bin
+      - PIR_REGION=us-west
+    volumes:
+      - pir_data_2:/data
+    restart: unless-stopped
+
+  pir-server-3:
+    build:
+      context: .
+      dockerfile: Dockerfile.pir
+    ports:
+      - "9003:9003"
+    environment:
+      - PIR_SERVER_ID=3
+      - PIR_SERVER_PORT=9003
+      - PIR_DATABASE_PATH=/data/pir_db_3.bin
+      - PIR_REGION=eu-central
+    volumes:
+      - pir_data_3:/data
+    restart: unless-stopped
+
+  pir-server-4:
+    build:
+      context: .
+      dockerfile: Dockerfile.pir
+    ports:
+      - "9004:9004"
+    environment:
+      - PIR_SERVER_ID=4
+      - PIR_SERVER_PORT=9004
+      - PIR_DATABASE_PATH=/data/pir_db_4.bin
+      - PIR_REGION=ap-southeast
+    volumes:
+      - pir_data_4:/data
+    restart: unless-stopped
+
+  # Local Blockchain (Hardhat)
+  local-chain:
+    build:
+      context: ./blockchain
+      dockerfile: Dockerfile
+    ports:
+      - "8545:8545"
+    environment:
+      - MNEMONIC=test test test test test test test test test test test junk
+    command: ["npx", "hardhat", "node", "--hostname", "0.0.0.0"]
+    volumes:
+      - blockchain_data:/app/deployments
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8545"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Contract Deployment (runs once)
+  deploy-contracts:
+    build:
+      context: ./blockchain
+      dockerfile: Dockerfile
+    depends_on:
+      local-chain:
+        condition: service_healthy
+    environment:
+      - HARDHAT_NETWORK=localhost
+      - BLOCKCHAIN_URL=http://local-chain:8545
+    command: ["npx", "hardhat", "run", "scripts/deploy.ts", "--network", "localhost"]
+    volumes:
+      - blockchain_data:/app/deployments
+
+  # ZK API Service
+  zk-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.zk-api
+    ports:
+      - "8001:8001"
+    environment:
+      - ZK_CONFIG_PATH=/app/config/zk_config.yaml
+      - LOG_LEVEL=INFO
+      - MAX_WORKERS=4
+    volumes:
+      - ./config:/app/config:ro
+      - zk_cache:/app/cache
+    depends_on:
+      - redis
+      - postgres
+    restart: unless-stopped
+
+  # ZK Workers
+  zk-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.zk-worker
+    environment:
+      - ZK_CONFIG_PATH=/app/config/zk_config.yaml
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://genome:vault@postgres:5432/genomevault
+    volumes:
+      - ./config:/app/config:ro
+      - zk_cache:/app/cache
+    depends_on:
+      - redis
+      - postgres
+    deploy:
+      replicas: 2
+    restart: unless-stopped
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --maxmemory 2gb --maxmemory-policy allkeys-lru
+    restart: unless-stopped
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=genomevault
+      - POSTGRES_USER=genome
+      - POSTGRES_PASSWORD=vault
+      - POSTGRES_INIT_SCRIPTS=/docker-entrypoint-initdb.d
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U genome"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Prometheus Monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    restart: unless-stopped
+
+  # Grafana Dashboards
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=genomevault
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./config/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+  # Nginx Reverse Proxy (optional)
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./config/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - fastapi
+      - grafana
+    restart: unless-stopped
+
+volumes:
+  pir_data_1:
+  pir_data_2:
+  pir_data_3:
+  pir_data_4:
+  blockchain_data:
+  zk_cache:
+  redis_data:
+  postgres_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  default:
+    name: genomevault
+    driver: bridge
