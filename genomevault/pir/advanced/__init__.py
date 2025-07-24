@@ -5,7 +5,7 @@ from .graph_pir import GraphBasedPIR, PangenomeGraph
 
 __all__ = [
     "InformationTheoreticPIR",
-    "PIRQuery", 
+    "PIRQuery",
     "PIRResponse",
     "GraphBasedPIR",
     "PangenomeGraph",
