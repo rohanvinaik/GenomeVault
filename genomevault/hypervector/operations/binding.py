@@ -10,6 +10,8 @@ import torch
 
 from genomevault.core.constants import HYPERVECTOR_DIMENSIONS
 
+from .hamming_lut import HammingLUT
+
 
 class BindingOperation(Enum):
     """Types of binding operations"""
@@ -25,8 +27,9 @@ class HypervectorBinder:
     Implements binding operations for hyperdimensional computing
     """
 
-    def __init__(self, dimension: int = HYPERVECTOR_DIMENSIONS["base"]):
+    def __init__(self, dimension: int = HYPERVECTOR_DIMENSIONS["base"], use_gpu: bool = False):
         self.dimension = dimension
+        self.hamming_lut = HammingLUT(use_gpu=use_gpu)  # Initialize LUT calculator
 
     def bind(
         self,
@@ -264,3 +267,79 @@ class MultiModalBinder:
         similarity = torch.cosine_similarity(bound1, bound2, dim=0).item()
 
         return similarity
+
+    def hamming_similarity(
+        self, vec1: Union[torch.Tensor, np.ndarray], vec2: Union[torch.Tensor, np.ndarray]
+    ) -> float:
+        """
+        Compute Hamming-based similarity using optimized LUT.
+
+        Args:
+            vec1: First hypervector (binary or bipolar)
+            vec2: Second hypervector (binary or bipolar)
+
+        Returns:
+            float: Normalized Hamming similarity (0 to 1)
+        """
+        # Convert to numpy if needed
+        if isinstance(vec1, torch.Tensor):
+            vec1 = vec1.numpy()
+        if isinstance(vec2, torch.Tensor):
+            vec2 = vec2.numpy()
+
+        # Convert to binary representation
+        if vec1.dtype == np.float32 or vec1.dtype == np.float64:
+            vec1 = (vec1 > 0).astype(np.uint8)
+        if vec2.dtype == np.float32 or vec2.dtype == np.float64:
+            vec2 = (vec2 > 0).astype(np.uint8)
+
+        # Pack bits into uint64 for efficient processing
+        vec1_packed = np.packbits(vec1).view(np.uint64)
+        vec2_packed = np.packbits(vec2).view(np.uint64)
+
+        # Compute Hamming distance
+        distance = self.hamming_lut.distance(vec1_packed, vec2_packed)
+
+        # Normalize to similarity (0 to 1)
+        max_distance = len(vec1)
+        similarity = 1.0 - (distance / max_distance)
+
+        return similarity
+
+    def batch_hamming_similarity(
+        self, vecs1: Union[torch.Tensor, np.ndarray], vecs2: Union[torch.Tensor, np.ndarray]
+    ) -> np.ndarray:
+        """
+        Compute pairwise Hamming similarities for batches using optimized LUT.
+
+        Args:
+            vecs1: First batch of hypervectors (N x D)
+            vecs2: Second batch of hypervectors (M x D)
+
+        Returns:
+            np.ndarray: Pairwise similarities (N x M)
+        """
+        # Convert to numpy if needed
+        if isinstance(vecs1, torch.Tensor):
+            vecs1 = vecs1.numpy()
+        if isinstance(vecs2, torch.Tensor):
+            vecs2 = vecs2.numpy()
+
+        # Convert to binary representation
+        if vecs1.dtype == np.float32 or vecs1.dtype == np.float64:
+            vecs1 = (vecs1 > 0).astype(np.uint8)
+        if vecs2.dtype == np.float32 or vecs2.dtype == np.float64:
+            vecs2 = (vecs2 > 0).astype(np.uint8)
+
+        # Pack bits into uint64 for efficient processing
+        vecs1_packed = np.array([np.packbits(v).view(np.uint64) for v in vecs1])
+        vecs2_packed = np.array([np.packbits(v).view(np.uint64) for v in vecs2])
+
+        # Compute Hamming distances
+        distances = self.hamming_lut.distance_batch(vecs1_packed, vecs2_packed)
+
+        # Normalize to similarities
+        max_distance = vecs1.shape[1]
+        similarities = 1.0 - (distances / max_distance)
+
+        return similarities
