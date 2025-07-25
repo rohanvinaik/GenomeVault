@@ -1,5 +1,3 @@
-<div align="left">
-
 # 🧬 GenomeVault
 
 ### Privacy-Preserving Genomic Computing at Scale
@@ -11,11 +9,7 @@
 
 [🚀 Quick Start](#-quick-start) • [📖 Documentation](docs/) • [🎚️ Accuracy Dial](#-accuracy-dial-with-snp-panels) • [💻 API Reference](docs/api/) • [🤝 Contributing](CONTRIBUTING.md)
 
-</div>
-
 ---
-
-<div align="center">
 
 ## 🌟 What is GenomeVault?
 
@@ -31,11 +25,7 @@ Why? Because the current genomic data infrastructure is fundamentally broken:
 
 ### 🚨 The Four Crises of Genomic Data
 
-<table>
-<tr>
-<td width="50%">
-
-#### 1️⃣ **The Privacy Paradox**
+## 1️⃣ The Privacy Paradox
 
 **The Problem:**
 - Once you share your genome, it's exposed forever
@@ -54,10 +44,9 @@ Why? Because the current genomic data infrastructure is fundamentally broken:
 - ✅ **Zero-knowledge proofs** - Prove properties without revealing data
 - ✅ **Cryptographic guarantees** - Math, not promises
 
-</td>
-<td width="50%">
+---
 
-#### 2️⃣ **The Storage Explosion**
+## 2️⃣ The Storage Explosion
 
 **The Problem:**
 - A single genome: 3-5 GB uncompressed
@@ -77,12 +66,9 @@ Why? Because the current genomic data infrastructure is fundamentally broken:
 - ✅ **Hierarchical encoding** - zoom in when needed
 - ✅ **Catalytic computing** - process TB with MB of memory
 
-</td>
-</tr>
-<tr>
-<td width="50%">
+---
 
-#### 3️⃣ **The Silo Trap**
+## 3️⃣ The Silo Trap
 
 **The Problem:**
 - Valuable data locked in institutional silos
@@ -102,10 +88,9 @@ Why? Because the current genomic data infrastructure is fundamentally broken:
 - ✅ **Blockchain governance** - Automated compliance
 - ✅ **Information-theoretic PIR** - Query without revealing intent
 
-</td>
-<td width="50%">
+---
 
-#### 4️⃣ **The Update Problem**
+## 4️⃣ The Update Problem
 
 **The Problem:**
 - New disease variants discovered daily
@@ -125,15 +110,9 @@ Why? Because the current genomic data infrastructure is fundamentally broken:
 - ✅ **Continuous knowledge integration**
 - ✅ **Privacy-preserving alerts** when relevant
 
-</td>
-</tr>
-</table>
-
 ### 🔬 The Deeper Challenge: Structural and Functional Genomics
 
 But there's more. Traditional genomic databases treat DNA as mere text—a string of A, T, C, and G. This misses the entire point:
-
-<div align="center">
 
 | What We Store Today | What Actually Matters | What GenomeVault Enables |
 |---------------------|----------------------|-------------------------|
@@ -141,8 +120,6 @@ But there's more. Traditional genomic databases treat DNA as mere text—a strin
 | Static snapshots | Dynamic conformations | **Differential equations modeling DNA dynamics** |
 | Isolated variants | Regulatory networks | **Graph algorithms for interaction networks** |
 | Single data type | Multi-omics integration | **Hypervector binding across modalities** |
-
-</div>
 
 ### 💡 The Vision: A New Genomic Infrastructure
 
@@ -160,36 +137,14 @@ Imagine a world where:
 
 GenomeVault isn't just an incremental improvement—it's a paradigm shift:
 
-<table>
-<tr>
-<th>Traditional Genomics</th>
-<th>GenomeVault</th>
-</tr>
-<tr>
-<td>Store raw sequences</td>
-<td>Store privacy-preserving encodings</td>
-</tr>
-<tr>
-<td>Trust-based security</td>
-<td>Cryptographic guarantees</td>
-</tr>
-<tr>
-<td>Centralized databases</td>
-<td>Decentralized network</td>
-</tr>
-<tr>
-<td>Static analysis</td>
-<td>Continuous monitoring</td>
-</tr>
-<tr>
-<td>Data silos</td>
-<td>Federated ecosystem</td>
-</tr>
-<tr>
-<td>Sequence only</td>
-<td>Structure + dynamics + function</td>
-</tr>
-</table>
+| Traditional Genomics | GenomeVault |
+|---------------------|-------------|
+| Store raw sequences | Store privacy-preserving encodings |
+| Trust-based security | Cryptographic guarantees |
+| Centralized databases | Decentralized network |
+| Static analysis | Continuous monitoring |
+| Data silos | Federated ecosystem |
+| Sequence only | Structure + dynamics + function |
 
 ### 🌟 The Result: Genomics That Actually Works
 
@@ -203,8 +158,6 @@ With GenomeVault, we can finally realize the promise of genomic medicine:
 
 ## ✨ Key Features
 
-<div align="center">
-
 | Feature | Description | Status |
 |---------|-------------|--------|
 | 🧮 **Hyperdimensional Encoding** | Transform genomes into privacy-preserving vectors | ✅ Production |
@@ -215,8 +168,6 @@ With GenomeVault, we can finally realize the promise of genomic medicine:
 | 🧬 **Nanopore Streaming** | Real-time Oxford Nanopore analysis with signal detection | ✅ Beta |
 | 🎚️ **Accuracy Dial** | Tune precision vs. speed with SNP panels | ✅ Production |
 | 🔭 **Hierarchical Zoom** | Multi-resolution genomic queries | ✅ Production |
-
-</div>
 
 ## 🚀 Quick Start
 
@@ -296,8 +247,6 @@ The accuracy percentages refer to similarity preservation in the hypervector spa
 
 ## 📊 Performance at a Glance
 
-<div align="center">
-
 ### Storage Efficiency
 
 | Method | Size | Compression | Privacy | Use Case |
@@ -314,8 +263,6 @@ The accuracy percentages refer to similarity preservation in the hypervector spa
 | Similarity Search (1M genomes) | 10-30s | 10-50ms | **200-600x** |
 | Privacy-Preserving Query | Not Possible | 50-200ms | **∞** |
 | Nanopore Streaming (GPU) | 6GB RAM | 300MB RAM | **20x smaller** |
-
-</div>
 
 ## 📡 Comprehensive Method Comparisons
 
@@ -757,8 +704,6 @@ GenomeVault consists of several interconnected modules:
 
 We welcome contributions! See our [Contributing Guide](CONTRIBUTING.md) for details.
 
-<div align="center">
-
 ### Areas We Need Help
 
 | Area | Description | Difficulty |
@@ -769,8 +714,6 @@ We welcome contributions! See our [Contributing Guide](CONTRIBUTING.md) for deta
 | 🔒 **Security** | Formal verification, audits | Hard |
 | 🧪 **Testing** | Increase coverage, edge cases | Medium |
 | 🌍 **Integrations** | Connect with existing tools | Medium |
-
-</div>
 
 ## 📚 Citation
 
@@ -801,12 +744,8 @@ GenomeVault builds on groundbreaking research in:
 
 ---
 
-<div align="center">
-
 ### 🚀 Ready to join the genomic revolution?
 
 [**Get Started →**](docs/getting-started.md)
 
 [![Star on GitHub](https://img.shields.io/github/stars/rohanvinaik/GenomeVault.svg?style=social)](https://github.com/rohanvinaik/GenomeVault)
-
-</div>
