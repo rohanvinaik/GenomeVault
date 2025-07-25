@@ -6,36 +6,20 @@
 
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
-[![CI Status](https://img.shields.io/github/workflow/status/rohanvinaik/GenomeVault/CI)](https://github.com/rohanvinaik/GenomeVault/actions)
-[![Code Coverage](https://img.shields.io/codecov/c/github/rohanvinaik/GenomeVault)](https://codecov.io/gh/rohanvinaik/GenomeVault)
 
 **Analyze genomes. Preserve privacy. Enable discovery.**
 
-[🚀 Quick Start](#-quick-start) • [📖 Documentation](docs/) • [🎯 Demo](#-try-it-live-accuracy-dial-demo) • [💻 API Reference](docs/api/) • [🤝 Contributing](CONTRIBUTING.md)
+[🚀 Quick Start](#-quick-start) • [📖 Documentation](docs/) • [🎚️ Accuracy Dial](#-accuracy-dial-with-snp-panels) • [💻 API Reference](docs/api/) • [🤝 Contributing](CONTRIBUTING.md)
 
 </div>
 
 ---
 
 <div align="center">
-  <img src="https://github.com/rohanvinaik/GenomeVault/assets/demo/genomevault-banner.png" alt="GenomeVault Banner" width="100%">
-</div>
 
 ## 🌟 What is GenomeVault?
 
 GenomeVault is a revolutionary platform that transforms how genomic data is stored, shared, and analyzed. By combining cutting-edge cryptographic techniques with advanced algorithmic methods, we enable secure genomic computation at scale—without ever exposing raw genetic data.
-
-<div align="center">
-
-### 🎥 See It In Action
-
-<a href="https://www.youtube.com/watch?v=demo">
-  <img src="https://github.com/rohanvinaik/GenomeVault/assets/demo/video-thumbnail.png" alt="GenomeVault Demo Video" width="600">
-</a>
-
-*Click to watch a 3-minute overview of GenomeVault's capabilities*
-
-</div>
 
 ## 🎯 Why GenomeVault? The Genomic Data Crisis
 
@@ -253,45 +237,62 @@ docker pull genomevault/genomevault:latest
 ### Your First Privacy-Preserving Analysis
 
 ```python
-from genomevault import HypervectorEncoder, PrivacyPreservingQuery
+from genomevault.hypervector.encoding import HypervectorEncoder
+from genomevault.hypervector.encoding.genomic import GenomicEncoder
 
 # 1. Encode your genomic data
-encoder = HypervectorEncoder(dimension=10000)
-encoded_genome = encoder.encode_variants(vcf_file="sample.vcf")
+encoder = GenomicEncoder(dimension=10000, enable_snp_mode=True)
+encoded_genome = encoder.encode_genome_data(vcf_data)
 
-# 2. Perform similarity search without exposing data
-similar_genomes = PrivacyPreservingQuery.find_similar(
+# 2. Perform similarity search
+similar_genomes = encoder.find_similar(
     encoded_genome,
-    database="gnomad",
+    database_vectors,
     threshold=0.95
 )
 
-# 3. Generate zero-knowledge proof of ancestry
-proof = generate_ancestry_proof(
-    encoded_genome,
-    populations=["EUR", "AFR", "EAS"],
-    privacy_level="high"
+# 3. Generate zero-knowledge proof
+from genomevault.zk_proofs import generate_proof
+proof = generate_proof(
+    circuit_name="variant_presence",
+    public_inputs={"variant_hash": "..."},
+    private_inputs={"variant_data": {...}}
 )
 
 print(f"Found {len(similar_genomes)} similar genomes")
-print(f"Ancestry proof: {proof.summary}")
+print(f"Proof generated: {len(proof.proof_data)} bytes")
 # Your raw genomic data was never exposed! 🎉
 ```
 
-## 🎚️ Try It Live: Accuracy Dial Demo
+## 🎚️ Accuracy Dial with SNP Panels
 
-<div align="center">
-<img src="https://github.com/rohanvinaik/GenomeVault/assets/demo/accuracy-dial.gif" alt="GenomeVault Accuracy Dial Demo" width="700">
+GenomeVault features a unique accuracy dial that lets you tune the trade-off between computational efficiency and accuracy:
 
-**[▶️ Launch Interactive Demo](https://genomevault.org/demo) | [💻 Run Locally](examples/webdial/)**
+```python
+from genomevault.hypervector.encoding.genomic import GenomicEncoder, PanelGranularity
 
-Experience the power of tunable accuracy:
-- 🎚️ **Adjust accuracy** from 90% to 99.99%
-- ⚡ **See computational cost** change in real-time
-- 🧬 **SNP panels** automatically optimize
-- 🔐 **Privacy remains constant** - always protected
+# Create encoder with SNP panel support
+encoder = GenomicEncoder(
+    dimension=100000,
+    enable_snp_mode=True,
+    panel_granularity=PanelGranularity.CLINICAL  # 10M positions
+)
 
-</div>
+# Encode with single-nucleotide precision
+variants = [
+    {"chromosome": "chr1", "position": 123456, "ref": "A", "alt": "G"},
+    {"chromosome": "chr1", "position": 234567, "ref": "C", "alt": "T"}
+]
+encoded = encoder.encode_genome_with_panel(variants)
+```
+
+### Accuracy Levels:
+- **OFF (90-95%)**: No SNP panel, fastest encoding
+- **COMMON (95-98%)**: Common variants panel (100k positions)
+- **CLINICAL (98-99.5%)**: Clinical panel (10M positions)
+- **CUSTOM (99%+)**: Your own panel via BED/VCF file
+
+The accuracy percentages refer to similarity preservation in the hypervector space, not variant calling accuracy.
 
 ## 📊 Performance at a Glance
 
@@ -696,9 +697,12 @@ Experience the power of tunable accuracy:
 
 **📉 Lossy Compression**
 - Cannot reconstruct exact sequences
-- ~80-95% accuracy for most tasks
-- Not suitable for de novo assembly
-- Trade-off between size and precision
+- Similarity preservation varies by tier:
+  - Mini: ~80-90% similarity preserved
+  - Clinical: ~90-95% similarity preserved
+  - Full: ~95-98% similarity preserved
+- Not suitable for de novo assembly or variant calling
+- Best for similarity search and population studies
 
 **🧪 Research Status**
 - Limited real-world deployments
@@ -729,10 +733,6 @@ Experience the power of tunable accuracy:
 </table>
 
 ## 🏗️ Architecture Overview
-
-<div align="center">
-<img src="https://github.com/rohanvinaik/GenomeVault/assets/architecture-diagram.png" alt="GenomeVault Architecture" width="800">
-</div>
 
 GenomeVault consists of several interconnected modules:
 
@@ -799,8 +799,6 @@ GenomeVault builds on groundbreaking research in:
 - Topological Data Analysis (Carlsson et al.)
 - Catalytic Space Computing (Buhrman et al.)
 
-Special thanks to all [contributors](CONTRIBUTORS.md) who made this project possible.
-
 ---
 
 <div align="center">
@@ -810,7 +808,5 @@ Special thanks to all [contributors](CONTRIBUTORS.md) who made this project poss
 [**Get Started →**](docs/getting-started.md)
 
 [![Star on GitHub](https://img.shields.io/github/stars/rohanvinaik/GenomeVault.svg?style=social)](https://github.com/rohanvinaik/GenomeVault)
-[![Follow on Twitter](https://img.shields.io/twitter/follow/genomevault.svg?style=social)](https://twitter.com/genomevault)
-[![Join Discord](https://img.shields.io/discord/genomevault.svg)](https://discord.gg/genomevault)
 
 </div>
