@@ -552,7 +552,9 @@ class KANHDDemo:
 
                 elif demo_name == "performance_tuning":
                     if "tuning_results" in results:
-                        print(f"   ✅ Applied {len(results['tuning_results'])} tuning optimizations")
+                        print(
+                            f"   ✅ Applied {len(results['tuning_results'])} tuning optimizations"
+                        )
 
                 elif demo_name == "privacy_guarantees":
                     levels_tested = len([k for k in results.keys() if "error" not in results[k]])

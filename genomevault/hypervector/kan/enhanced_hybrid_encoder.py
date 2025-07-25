@@ -529,9 +529,9 @@ class EnhancedKANHybridEncoder(nn.Module):
         if "compression_strategy" in recommendations:
             old_strategy = self.compression_strategy
             self.compression_strategy = recommendations["compression_strategy"]
-            recommendations[
-                "applied_change"
-            ] = f"Changed from {old_strategy.value} to {self.compression_strategy.value}"
+            recommendations["applied_change"] = (
+                f"Changed from {old_strategy.value} to {self.compression_strategy.value}"
+            )
 
         return recommendations
 
