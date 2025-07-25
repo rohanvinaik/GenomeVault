@@ -365,9 +365,11 @@ class KANHDDemo:
             self.results["federated_learning"] = {
                 "participants": len(participants),
                 "rounds_completed": fed_stats["current_round"],
-                "convergence_achieved": fed_stats["convergence_history"][-1]
-                if fed_stats["convergence_history"]
-                else None,
+                "convergence_achieved": (
+                    fed_stats["convergence_history"][-1]
+                    if fed_stats["convergence_history"]
+                    else None
+                ),
                 "privacy_budgets": fed_stats["privacy_budgets"],
             }
 
