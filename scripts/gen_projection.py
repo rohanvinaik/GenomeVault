@@ -64,8 +64,12 @@ class ProjectionGenerator:
 
         return filepath
 
-    def generate_standard_projections(self) -> List[Tuple[int, Path]]:
-        """Generate projections for standard dimensions used in GenomeVault."""
+    def generate_standard_projections(self, max_dimension: int = None) -> List[Tuple[int, Path]]:
+        """Generate projections for standard dimensions used in GenomeVault.
+        
+        Args:
+            max_dimension: Maximum dimension to generate (for memory-constrained environments)
+        """
         standard_dimensions = [
             1000,  # Small test size
             10000,  # Base HDC dimension
@@ -74,6 +78,11 @@ class ProjectionGenerator:
             50000,  # Large-scale analysis
             100000,  # Maximum dimension
         ]
+        
+        # Filter dimensions based on max_dimension if provided
+        if max_dimension:
+            standard_dimensions = [d for d in standard_dimensions if d <= max_dimension]
+            logger.info(f"Limiting to dimensions <= {max_dimension} due to memory constraints")
 
         generated_files = []
 
@@ -163,6 +172,11 @@ def main():
         description="Generate cached projection matrices for GenomeVault"
     )
     parser.add_argument(
+        "--max-dim",
+        type=int,
+        help="Maximum dimension to generate (for memory-constrained environments)",
+    )
+    parser.add_argument(
         "--dim", type=int, help="Specific dimension to generate (default: all standard dimensions)"
     )
     parser.add_argument("--outfile", type=str, help="Output filename (only used with --dim)")
@@ -218,7 +232,7 @@ def main():
         logger.info("Generating standard projections...")
         start_time = time.time()
 
-        generated = generator.generate_standard_projections()
+        generated = generator.generate_standard_projections(max_dimension=args.max_dim)
 
         # Verify all
         logger.info("\nVerifying generated projections...")

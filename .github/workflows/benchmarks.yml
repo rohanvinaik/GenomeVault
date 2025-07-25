@@ -44,7 +44,7 @@ jobs:
     
     - name: Generate projection matrices
       run: |
-        python scripts/gen_projection.py --cache-dir .cache
+        python scripts/gen_projection.py --cache-dir .cache --max-dim 20000
     
     - name: Upload projection artifacts
       uses: actions/upload-artifact@v4
