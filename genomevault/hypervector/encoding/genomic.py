@@ -15,6 +15,7 @@ from genomevault.hypervector.positional import PositionalEncoder, SNPPanel
 
 class PanelGranularity(Enum):
     """SNP panel granularity settings"""
+
     OFF = "off"
     COMMON = "common"
     CLINICAL = "clinical"
@@ -27,28 +28,29 @@ class GenomicEncoder:
     Supports both genome-wide and SNP-level accuracy modes
     """
 
-    def __init__(self, dimension: int = HYPERVECTOR_DIMENSIONS["base"], 
-                 enable_snp_mode: bool = False,
-                 panel_granularity: PanelGranularity = PanelGranularity.OFF):
+    def __init__(
+        self,
+        dimension: int = HYPERVECTOR_DIMENSIONS["base"],
+        enable_snp_mode: bool = False,
+        panel_granularity: PanelGranularity = PanelGranularity.OFF,
+    ):
         self.dimension = dimension
         self.base_vectors = self._init_base_vectors()
         self.enable_snp_mode = enable_snp_mode
         self.panel_granularity = panel_granularity
-        
+
         # Initialize SNP mode components if enabled
         if enable_snp_mode:
             self.positional_encoder = PositionalEncoder(
-                dimension=dimension,
-                sparsity=0.01,
-                cache_size=10000
+                dimension=dimension, sparsity=0.01, cache_size=10000
             )
             self.snp_panel = SNPPanel(self.positional_encoder)
-            
+
         # Hierarchical zoom tiles
         self.zoom_levels = {
             0: {},  # Genome-wide HVs
             1: {},  # 1Mb window HVs
-            2: {}   # 1kb tile HVs
+            2: {},  # 1kb tile HVs
         }
 
     def _init_base_vectors(self) -> Dict[str, torch.Tensor]:
@@ -113,16 +115,16 @@ class GenomicEncoder:
         """
         try:
             # Determine if we should use panel encoding
-            use_panel = use_panel if use_panel is not None else (
-                self.enable_snp_mode and self.panel_granularity != PanelGranularity.OFF
+            use_panel = (
+                use_panel
+                if use_panel is not None
+                else (self.enable_snp_mode and self.panel_granularity != PanelGranularity.OFF)
             )
-            
-            if use_panel and hasattr(self, 'positional_encoder'):
+
+            if use_panel and hasattr(self, "positional_encoder"):
                 # Use SNP-level encoding with positional encoder
-                return self._encode_variant_with_panel(
-                    chromosome, position, ref, alt, variant_type
-                )
-            
+                return self._encode_variant_with_panel(chromosome, position, ref, alt, variant_type)
+
             # Standard encoding (original path)
             # Start with variant type vector
             variant_vec = self.base_vectors[variant_type].clone()
@@ -232,66 +234,63 @@ class GenomicEncoder:
     def similarity(self, vec1: torch.Tensor, vec2: torch.Tensor) -> float:
         """Calculate cosine similarity between two hypervectors"""
         return torch.cosine_similarity(vec1, vec2, dim=0).item()
-    
-    def _encode_variant_with_panel(self,
-                                   chromosome: str,
-                                   position: int,
-                                   ref: str,
-                                   alt: str,
-                                   variant_type: str) -> torch.Tensor:
+
+    def _encode_variant_with_panel(
+        self, chromosome: str, position: int, ref: str, alt: str, variant_type: str
+    ) -> torch.Tensor:
         """Encode variant using SNP panel for single-nucleotide accuracy"""
         # Get panel name based on granularity
         panel_name = self.panel_granularity.value
         if panel_name == "off":
             panel_name = "common"  # Default to common if somehow called
-            
+
         # Create position vector using positional encoder
         pos_vec = self.positional_encoder.make_position_vector(position)
-        
+
         # Create base vectors
         ref_vec = self._encode_base_sparse(ref)
         alt_vec = self._encode_base_sparse(alt)
-        
+
         # Bind position with alt allele
         variant_vec = self._bind(pos_vec, alt_vec)
-        
+
         # Add variant type information
         if variant_type in self.base_vectors:
             variant_vec = self._bundle(variant_vec, self.base_vectors[variant_type])
-            
+
         # Add chromosome information
         chr_vec = self._chromosome_vector(chromosome)
         variant_vec = self._bundle(variant_vec, chr_vec)
-        
+
         # Normalize
         variant_vec = variant_vec / torch.norm(variant_vec)
-        
+
         return variant_vec
-    
+
     def _encode_base_sparse(self, base: str) -> torch.Tensor:
         """Encode nucleotide base using sparse representation"""
-        base_seeds = {'A': 1000, 'T': 2000, 'G': 3000, 'C': 4000, 'N': 5000}
+        base_seeds = {"A": 1000, "T": 2000, "G": 3000, "C": 4000, "N": 5000}
         seed = base_seeds.get(base.upper(), 5000)
         return self.positional_encoder._create_sparse_vector(seed)
-    
-    def encode_genome_with_panel(self, 
-                                 variants: List[Dict],
-                                 panel_name: Optional[str] = None) -> torch.Tensor:
+
+    def encode_genome_with_panel(
+        self, variants: List[Dict], panel_name: Optional[str] = None
+    ) -> torch.Tensor:
         """
         Encode genome using SNP panel for improved accuracy
-        
+
         Args:
             variants: List of variant dictionaries
             panel_name: Specific panel to use (overrides default)
-            
+
         Returns:
             Panel-encoded genome hypervector
         """
         if not self.enable_snp_mode:
             raise HypervectorError("SNP mode not enabled")
-            
+
         panel_name = panel_name or self.panel_granularity.value
-        
+
         # Group variants by chromosome
         variants_by_chr = {}
         for var in variants:
@@ -299,15 +298,13 @@ class GenomicEncoder:
             if chr_name not in variants_by_chr:
                 variants_by_chr[chr_name] = {}
             variants_by_chr[chr_name][var["position"]] = var["alt"]
-            
+
         # Encode each chromosome with panel
         chr_vectors = []
         for chr_name, observed_bases in variants_by_chr.items():
-            chr_vec = self.snp_panel.encode_with_panel(
-                panel_name, chr_name, observed_bases
-            )
+            chr_vec = self.snp_panel.encode_with_panel(panel_name, chr_name, observed_bases)
             chr_vectors.append(chr_vec)
-            
+
         # Bundle chromosomes
         if chr_vectors:
             genome_vec = torch.stack(chr_vectors).sum(dim=0)
@@ -315,7 +312,7 @@ class GenomicEncoder:
             return genome_vec
         else:
             return torch.zeros(self.dimension)
-    
+
     # Hierarchical zoom methods
     def create_zoom_tiles(self, chromosome: str, variants: List[Dict]):
         """Create hierarchical zoom tiles for a chromosome"""
@@ -323,7 +320,7 @@ class GenomicEncoder:
         chr_variants = [v for v in variants if v["chromosome"] == chromosome]
         if chr_variants:
             self.zoom_levels[0][chromosome] = self.encode_genome(chr_variants)
-            
+
         # Level 1: 1Mb windows
         window_size = 1_000_000
         windows = {}
@@ -332,67 +329,69 @@ class GenomicEncoder:
             if window_idx not in windows:
                 windows[window_idx] = []
             windows[window_idx].append(var)
-            
+
         level1_key = f"{chromosome}_level1"
         self.zoom_levels[1][level1_key] = {}
         for window_idx, window_vars in windows.items():
             window_vec = self.encode_genome(window_vars)
             self.zoom_levels[1][level1_key][window_idx] = window_vec
-            
+
         # Level 2: 1kb tiles (created on demand)
-        
-    def get_zoom_vector(self, chromosome: str, start: int, end: int, level: int = 0) -> torch.Tensor:
+
+    def get_zoom_vector(
+        self, chromosome: str, start: int, end: int, level: int = 0
+    ) -> torch.Tensor:
         """Get zoom vector for specified region and level"""
         if level == 0:
             # Return full chromosome vector
             return self.zoom_levels[0].get(chromosome, torch.zeros(self.dimension))
-            
+
         elif level == 1:
             # Return 1Mb window vectors
             window_start = start // 1_000_000
             window_end = end // 1_000_000
             level1_key = f"{chromosome}_level1"
-            
+
             if level1_key not in self.zoom_levels[1]:
                 return torch.zeros(self.dimension)
-                
+
             # Bundle relevant windows
             window_vecs = []
             for window_idx in range(window_start, window_end + 1):
                 if window_idx in self.zoom_levels[1][level1_key]:
                     window_vecs.append(self.zoom_levels[1][level1_key][window_idx])
-                    
+
             if window_vecs:
                 bundled = torch.stack(window_vecs).sum(dim=0)
                 return bundled / torch.norm(bundled)
             else:
                 return torch.zeros(self.dimension)
-                
+
         elif level == 2:
             # Create 1kb tiles on demand
             tile_size = 1000
             tile_start = start // tile_size
             tile_end = end // tile_size
-            
+
             # This would fetch variants in range and encode
             # For now, return placeholder
             return torch.zeros(self.dimension)
-            
+
         else:
             raise ValueError(f"Invalid zoom level: {level}")
-    
+
     def set_panel_granularity(self, granularity: Union[str, PanelGranularity]):
         """Change the SNP panel granularity setting"""
         if isinstance(granularity, str):
             granularity = PanelGranularity(granularity)
         self.panel_granularity = granularity
-        
+
     def load_custom_panel(self, file_path: str, panel_name: str = "custom"):
         """Load a custom SNP panel from file"""
         if not self.enable_snp_mode:
             raise HypervectorError("SNP mode not enabled")
-            
-        file_type = 'vcf' if file_path.endswith('.vcf') else 'bed'
+
+        file_type = "vcf" if file_path.endswith(".vcf") else "bed"
         self.snp_panel.load_panel_from_file(panel_name, file_path, file_type)
         self.panel_granularity = PanelGranularity.CUSTOM
 

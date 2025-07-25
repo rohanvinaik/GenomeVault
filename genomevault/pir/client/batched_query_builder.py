@@ -275,114 +275,106 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
         """Execute a repeat query with its index"""
         result = await self._execute_single_repeat(pir_query)
         return (idx, result)
-    
-    async def execute_zoom_query(self,
-                                 chromosome: str,
-                                 start: int,
-                                 end: int,
-                                 zoom_level: int = 0) -> Dict[str, Any]:
+
+    async def execute_zoom_query(
+        self, chromosome: str, start: int, end: int, zoom_level: int = 0
+    ) -> Dict[str, Any]:
         """
         Execute hierarchical zoom query
-        
+
         Args:
             chromosome: Chromosome name
             start: Start position
-            end: End position  
+            end: End position
             zoom_level: 0=genome-wide, 1=1Mb windows, 2=1kb tiles
-            
+
         Returns:
             Dict with zoom results
         """
         results = {}
-        
+
         if zoom_level == 0:
             # Level 0: Genome-wide scan
             query = GenomicQuery(
                 query_type=QueryType.REGION_SCAN,
-                parameters={
-                    "chromosome": chromosome,
-                    "start": start,
-                    "end": end
-                }
+                parameters={"chromosome": chromosome, "start": start, "end": end},
             )
             result = await self.execute_query(query)
             results["level0"] = result
-            
+
         elif zoom_level == 1:
             # Level 1: 1Mb window queries
             window_size = 1_000_000
             window_start = start // window_size
             window_end = end // window_size
-            
+
             window_results = []
             for window_idx in range(window_start, window_end + 1):
                 w_start = window_idx * window_size
                 w_end = min((window_idx + 1) * window_size - 1, end)
-                
+
                 query = GenomicQuery(
                     query_type=QueryType.REGION_SCAN,
                     parameters={
                         "chromosome": chromosome,
                         "start": w_start,
                         "end": w_end,
-                        "window_idx": window_idx
-                    }
+                        "window_idx": window_idx,
+                    },
                 )
                 result = await self.execute_query(query)
                 window_results.append((window_idx, result))
-                
+
             results["level1"] = window_results
-            
+
         elif zoom_level == 2:
             # Level 2: 1kb tile queries (lazy fetching)
             tile_size = 1000
             tile_start = start // tile_size
             tile_end = end // tile_size
-            
+
             # Only fetch a subset of tiles to avoid overwhelming
             max_tiles = 100
             tile_results = []
-            
+
             for tile_idx in range(tile_start, min(tile_end + 1, tile_start + max_tiles)):
                 t_start = tile_idx * tile_size
                 t_end = min((tile_idx + 1) * tile_size - 1, end)
-                
+
                 query = GenomicQuery(
                     query_type=QueryType.REGION_SCAN,
                     parameters={
                         "chromosome": chromosome,
                         "start": t_start,
                         "end": t_end,
-                        "tile_idx": tile_idx
-                    }
+                        "tile_idx": tile_idx,
+                    },
                 )
                 result = await self.execute_query(query)
                 tile_results.append((tile_idx, result))
-                
+
             results["level2"] = tile_results
             results["tiles_fetched"] = len(tile_results)
             results["total_tiles"] = tile_end - tile_start + 1
-            
+
         return results
-    
-    async def execute_hierarchical_zoom(self,
-                                        chromosome: str,
-                                        region_start: int,
-                                        region_end: int,
-                                        budget: ErrorBudget) -> Dict[str, Any]:
+
+    async def execute_hierarchical_zoom(
+        self, chromosome: str, region_start: int, region_end: int, budget: ErrorBudget
+    ) -> Dict[str, Any]:
         """
         Execute hierarchical zoom with PIR aggregation
-        
+
         Returns combined proof for all zoom levels
         """
         # Level 0: Find hotspot windows
         level0_results = await self.execute_zoom_query(
             chromosome, region_start, region_end, zoom_level=0
         )
-        
+
         # Identify regions of interest from level 0
         hotspots = self._identify_hotspots(level0_results["level0"])
-        
+
         # Level 1: Fetch windows for hotspots
         level1_results = []
         for hotspot in hotspots:
@@ -390,39 +382,33 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
                 chromosome, hotspot["start"], hotspot["end"], zoom_level=1
             )
             level1_results.append(result)
-            
+
         # Aggregate proofs recursively
-        aggregated_proof = self._aggregate_zoom_proofs(
-            level0_results, level1_results, budget
-        )
-        
+        aggregated_proof = self._aggregate_zoom_proofs(level0_results, level1_results, budget)
+
         return {
             "chromosome": chromosome,
             "region": (region_start, region_end),
             "hotspots": hotspots,
             "level0_results": level0_results,
             "level1_results": level1_results,
-            "aggregated_proof": aggregated_proof
+            "aggregated_proof": aggregated_proof,
         }
-    
+
     def _identify_hotspots(self, level0_data: Any) -> List[Dict[str, int]]:
         """
         Identify regions of interest from level 0 scan
-        
+
         This would use the hypervector similarity to find
         regions with high variant density or specific patterns
         """
         # Placeholder implementation
         # In practice, would analyze the level0 hypervector
-        return [
-            {"start": 1000000, "end": 2000000},
-            {"start": 5000000, "end": 6000000}
-        ]
-    
-    def _aggregate_zoom_proofs(self,
-                               level0_results: Dict,
-                               level1_results: List[Dict],
-                               budget: ErrorBudget) -> Dict[str, Any]:
+        return [{"start": 1000000, "end": 2000000}, {"start": 5000000, "end": 6000000}]
+
+    def _aggregate_zoom_proofs(
+        self, level0_results: Dict, level1_results: List[Dict], budget: ErrorBudget
+    ) -> Dict[str, Any]:
         """
         Aggregate proofs from multiple zoom levels
         """
@@ -433,9 +419,9 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
             "budget": {
                 "dimension": budget.dimension,
                 "epsilon": budget.epsilon,
-                "delta_exp": budget.delta_exp
+                "delta_exp": budget.delta_exp,
             },
-            "timestamp": time.time()
+            "timestamp": time.time(),
         }
 
     def _aggregate_results(
