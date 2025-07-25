@@ -149,14 +149,14 @@ class BiologicalSignalDetector:
             if confidence > 0.5:
                 signal = BiologicalSignal(
                     signal_type=signal_type,
-                    genomic_position=genomic_positions[start]
-                    if genomic_positions is not None
-                    else start,
+                    genomic_position=(
+                        genomic_positions[start] if genomic_positions is not None else start
+                    ),
                     confidence=confidence,
                     variance_score=float(np.max(region_variance)),
-                    context=sequence_context[max(0, start - 5) : end + 5]
-                    if sequence_context
-                    else "",
+                    context=(
+                        sequence_context[max(0, start - 5) : end + 5] if sequence_context else ""
+                    ),
                     metadata={
                         "region_length": end - start,
                         "mean_variance": float(np.mean(region_variance)),
@@ -215,9 +215,11 @@ class BiologicalSignalDetector:
                 {
                     "dwell_mean": float(np.mean(dwell_times)),
                     "dwell_std": float(np.std(dwell_times)),
-                    "dwell_ratio": float(np.mean(dwell_times) / np.median(dwell_times))
-                    if np.median(dwell_times) > 0
-                    else 1.0,
+                    "dwell_ratio": (
+                        float(np.mean(dwell_times) / np.median(dwell_times))
+                        if np.median(dwell_times) > 0
+                        else 1.0
+                    ),
                 }
             )
 
@@ -225,9 +227,11 @@ class BiologicalSignalDetector:
         if sequence:
             features.update(
                 {
-                    "gc_content": (sequence.count("G") + sequence.count("C")) / len(sequence)
-                    if sequence
-                    else 0.5,
+                    "gc_content": (
+                        (sequence.count("G") + sequence.count("C")) / len(sequence)
+                        if sequence
+                        else 0.5
+                    ),
                     "has_cpg": 1.0 if "CG" in sequence else 0.0,
                     "has_gatc": 1.0 if "GATC" in sequence else 0.0,
                     "homopolymer_frac": self._homopolymer_fraction(sequence),
