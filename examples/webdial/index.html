@@ -221,15 +221,15 @@
 </head>
 <body>
     <div class="container">
-        <h1>GenomeVault Efficiency Dial</h1>
-        <p class="subtitle">Adjust computational efficiency vs. accuracy trade-offs</p>
+        <h1>GenomeVault Accuracy Dial</h1>
+        <p class="subtitle">Adjust genomic analysis accuracy vs. computational efficiency</p>
 
         <div class="dial-container">
             <div class="dial-label">
                 <span>Accuracy Level</span>
-                <span class="dial-value" id="accuracyValue">85%</span>
+                <span class="dial-value" id="accuracyValue">95.0%</span>
             </div>
-            <input type="range" id="accuracySlider" min="50" max="99" value="85" step="1">
+            <input type="range" id="accuracySlider" min="90" max="99.99" value="95" step="0.01">
         </div>
 
         <div class="stats-grid">
@@ -245,10 +245,14 @@
                 <div class="stat-value" id="iterations">1-2x</div>
                 <div class="stat-label">Iterations Needed</div>
             </div>
+            <div class="stat-card">
+                <div class="stat-value" id="snpPanel">Common</div>
+                <div class="stat-label">SNP Panel</div>
+            </div>
         </div>
 
         <div class="info-box" style="background: rgba(76, 175, 80, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 0.9em; line-height: 1.6;">
-            <strong>🔐 Privacy Note:</strong> Your genomic data remains cryptographically protected at ALL accuracy levels. The trade-off is between computational efficiency and accuracy - not privacy. Lower accuracy = faster queries that can be iteratively refined.
+            <strong>🔐 Privacy Note:</strong> Your genomic data remains cryptographically protected at ALL accuracy levels. The trade-off is between computational efficiency and accuracy - not privacy. Even at 90% accuracy (suitable for initial screening), results are clinically meaningful and can be iteratively refined.
         </div>
 
         <button class="query-button" id="queryButton" onclick="runQuery()">
@@ -276,41 +280,67 @@
         const computeCost = document.getElementById('computeCost');
         const queryTime = document.getElementById('queryTime');
         const iterations = document.getElementById('iterations');
+        const snpPanel = document.getElementById('snpPanel');
 
         slider.addEventListener('input', (e) => {
-            const accuracy = e.target.value;
-            accuracyValue.textContent = `${accuracy}%`;
+            const accuracy = parseFloat(e.target.value);
+            accuracyValue.textContent = `${accuracy.toFixed(1)}%`;
             
-            // Update compute cost
-            if (accuracy < 70) {
-                computeCost.textContent = 'Very Low';
-                computeCost.style.color = '#4CAF50';
-            } else if (accuracy < 85) {
+            // Update compute cost based on genomic accuracy requirements
+            if (accuracy < 92) {
                 computeCost.textContent = 'Low';
-                computeCost.style.color = '#8BC34A';
+                computeCost.style.color = '#4CAF50';
             } else if (accuracy < 95) {
                 computeCost.textContent = 'Medium';
-                computeCost.style.color = '#FFC107';
-            } else {
+                computeCost.style.color = '#8BC34A';
+            } else if (accuracy < 98) {
                 computeCost.textContent = 'High';
+                computeCost.style.color = '#FFC107';
+            } else if (accuracy < 99.5) {
+                computeCost.textContent = 'Very High';
                 computeCost.style.color = '#FF9800';
+            } else if (accuracy < 99.9) {
+                computeCost.textContent = 'Maximum';
+                computeCost.style.color = '#F44336';
+            } else {
+                computeCost.textContent = 'Extreme';
+                computeCost.style.color = '#D32F2F';
             }
             
-            // Update estimated query time
-            const baseTime = 150;
-            const timeMultiplier = 1 + (accuracy - 50) * 0.02;
+            // Update estimated query time for genomic analysis
+            const baseTime = 200;
+            // Exponential increase for higher accuracy
+            const timeMultiplier = Math.pow(1.5, (accuracy - 90) / 5);
             const estimatedTime = Math.round(baseTime * timeMultiplier);
             queryTime.textContent = `~${estimatedTime}ms`;
             
-            // Update iterations needed for convergence
-            if (accuracy < 60) {
-                iterations.textContent = '3-5x';
-            } else if (accuracy < 80) {
+            // Update iterations needed for genomic accuracy convergence
+            if (accuracy < 92) {
+                iterations.textContent = '3-4x';
+            } else if (accuracy < 95) {
                 iterations.textContent = '2-3x';
-            } else if (accuracy < 90) {
+            } else if (accuracy < 98) {
                 iterations.textContent = '1-2x';
             } else {
                 iterations.textContent = '1x';
+            }
+            
+            // Update SNP panel based on accuracy requirements
+            if (accuracy < 93) {
+                snpPanel.textContent = 'Off';
+                snpPanel.style.color = '#9E9E9E';
+            } else if (accuracy < 96) {
+                snpPanel.textContent = 'Common';
+                snpPanel.style.color = '#4CAF50';
+            } else if (accuracy < 99) {
+                snpPanel.textContent = 'Clinical';
+                snpPanel.style.color = '#2196F3';
+            } else if (accuracy < 99.9) {
+                snpPanel.textContent = 'Full dbSNP';
+                snpPanel.style.color = '#9C27B0';
+            } else {
+                snpPanel.textContent = 'Ultra-High';
+                snpPanel.style.color = '#E91E63';
             }
         });
 
@@ -324,7 +354,8 @@
                     body: JSON.stringify({
                         accuracy_target: accuracy / 100,
                         query_type: 'variant_analysis',
-                        dataset_size: 10000
+                        dataset_size: 10000,
+                        snp_panel: getSnpPanelForAccuracy(accuracy)
                     })
                 });
 
@@ -338,8 +369,10 @@
                 // Return mock data for demo
                 return {
                     privacy_budget: accuracy / 100,
-                    estimated_noise: (100 - accuracy) / 50,
-                    query_count: Math.floor(accuracy / 10)
+                    estimated_noise: (100 - accuracy) / 100,
+                    query_count: Math.ceil((accuracy - 90) / 3),
+                    snp_panel: getSnpPanelForAccuracy(accuracy),
+                    hypervector_dim: accuracy < 95 ? 10000 : (accuracy < 98 ? 50000 : 100000)
                 };
             }
         }
@@ -378,9 +411,11 @@
                             'rs67890': 0.45 + (Math.random() - 0.5) * 0.1
                         },
                         sample_size: Math.floor(5000 + Math.random() * 5000),
-                        confidence_interval: 0.95,
+                        confidence_interval: accuracy / 100,
                         privacy_spent: budget.privacy_budget,
-                        execution_time_ms: Math.floor(150 + Math.random() * 100)
+                        execution_time_ms: Math.floor(200 + Math.random() * 200),
+                        snp_panel_used: budget.snp_panel,
+                        hypervector_dimension: budget.hypervector_dim
                     }
                 };
             }
@@ -404,7 +439,7 @@
             button.innerHTML = '<span class="loading"></span> Running Query...';
             
             try {
-                const accuracy = parseInt(slider.value);
+                const accuracy = parseFloat(slider.value);
                 
                 // Step 1: Estimate budget
                 const budget = await estimateBudget(accuracy);
@@ -433,6 +468,15 @@
             }
         });
 
+        // Helper function to determine SNP panel from accuracy
+        function getSnpPanelForAccuracy(accuracy) {
+            if (accuracy < 93) return 'off';
+            if (accuracy < 96) return 'common';
+            if (accuracy < 99) return 'clinical';
+            if (accuracy < 99.9) return 'full';
+            return 'ultra';
+        }
+        
         // Initialize with a demo query on load
         window.addEventListener('load', () => {
             // Trigger initial stats update

@@ -1,4 +1,41 @@
-# GenomeVault
+### Single-Nucleotide Accuracy (SNP Dial)
+
+```python
+from genomevault.hypervector.encoding.genomic import GenomicEncoder, PanelGranularity
+
+# Create encoder with SNP panel support
+encoder = GenomicEncoder(
+    dimension=100000,
+    enable_snp_mode=True,
+    panel_granularity=PanelGranularity.CLINICAL  # 10M positions
+)
+
+# Encode with single-nucleotide precision
+variants = [
+    {"chromosome": "chr1", "position": 123456, "ref": "A", "alt": "G"},
+    {"chromosome": "chr1", "position": 234567, "ref": "C", "alt": "T"}
+]
+encoded = encoder.encode_genome_with_panel(variants)
+
+# Load custom panel from BED/VCF
+encoder.load_custom_panel("my_variants.bed", "custom_panel")
+```
+
+### Hierarchical Zoom Queries
+
+```python
+# Query with zoom levels for genomic regions
+from genomevault.api import query_with_zoom
+
+result = await query_with_zoom({
+    "chromosome": "chr1",
+    "start_position": 1000000,
+    "end_position": 5000000,
+    "auto_zoom": True,  # Automatically detect hotspots
+    "accuracy": 95.5
+})
+# Returns hierarchical results: genome-wide → 1Mb windows → 1kb tiles
+```# GenomeVault
 
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -109,7 +146,7 @@ Inspired by the convergence of:
 
 GenomeVault demonstrates how these technologies can create a secure, automated genomic data ecosystem that benefits everyone while protecting individual privacy.
 
-## 🎚️ Try It Live: Efficiency vs. Accuracy Trade-off Demo
+## 🎚️ Try It Live: Accuracy Dial Demo
 
 <div align="center">
 <img src="https://github.com/yourusername/genomevault/assets/demo/accuracy-dial.gif" alt="GenomeVault Accuracy Dial Demo" width="600">
@@ -117,13 +154,13 @@ GenomeVault demonstrates how these technologies can create a secure, automated g
 
 **[▶️ Launch Interactive Demo](examples/webdial/) | [📦 View Source](examples/webdial/index.html)**
 
-Our interactive web demo lets you experience the efficiency vs. accuracy trade-off in real-time:
-- 🎚️ **Adjust the accuracy slider** from 50% to 99%
-- ⚡ **See computational cost change** dynamically
-- 🔄 **Understand iterative refinement** - lower accuracy = faster, but can be re-run
+Our interactive web demo lets you experience the accuracy vs. computational efficiency trade-off in real-time:
+- 🎚️ **Adjust the accuracy slider** from 90% to 99.99% with 0.01% precision
+- ⚡ **See computational cost change** dynamically across 6 tiers
+- 🧬 **SNP panel selection** automatically adjusts based on accuracy needs
 - 🔐 **Privacy remains constant** - always cryptographically protected
 
-The key insight: You can start with fast, lower-accuracy queries and iteratively refine by running multiple times to achieve any desired accuracy level!
+The key insight: You can start with fast 90% accuracy queries (clinically meaningful for screening) and iteratively refine to reach diagnostic-grade 99.9%+ accuracy!
 
 ## 🔬 What It Does
 
@@ -162,6 +199,8 @@ GenomeVault provides:
 - ✅ Advanced binding operations (Multiply, XOR, Circular Convolution, Fourier/HRR)
 - ✅ Similarity computation with multiple metrics (cosine, Euclidean, Hamming)
 - ✅ Multi-modal data binding across 5+ omics types
+- ✅ **NEW: Single-nucleotide accuracy dial with SNP panels (Off/Common/Clinical/Custom)**
+- ✅ **NEW: Hierarchical zoom tiles for genomic region queries (3 levels)**
 - ✅ SNARK and STARK proof generation with recursive composition
 - ✅ Catalytic proof systems with 10-100x memory reduction
 - ✅ Information-theoretically secure PIR with Byzantine fault tolerance
@@ -321,6 +360,9 @@ genomevault/
 │   ├── binding_operations.py # Advanced vector binding
 │   ├── holographic.py      # HRR implementation
 │   └── registry.py         # Version management
+├── hypervector/            # Core hypervector operations
+│   ├── positional.py       # SNP positional encoding
+│   └── encoding/genomic.py # Genomic encoder with SNP dial
 ├── zk_proofs/              # Zero-knowledge proof systems
 │   ├── advanced/           # Catalytic & recursive proofs
 │   ├── circuits/           # Circuit implementations
