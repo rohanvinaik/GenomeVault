@@ -6,10 +6,11 @@ These cached projections significantly speed up encoder initialization.
 
 import argparse
 import os
-from pathlib import Path
-import numpy as np
-from typing import List, Tuple
 import time
+from pathlib import Path
+from typing import List, Tuple
+
+import numpy as np
 
 # Simple logger fallback for when genomevault package isn't installed
 try:
