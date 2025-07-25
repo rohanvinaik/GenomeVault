@@ -2,8 +2,8 @@
 Hypervector encoding for genomic data
 """
 
-from typing import Dict, List, Optional, Tuple, Union
 from enum import Enum
+from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -153,7 +153,7 @@ class GenomicEncoder:
 
             return variant_vec
 
-        except Exception as e:
+        except Exception:
             raise HypervectorError("Failed to encode variant: {str(e)}")
 
     def encode_genome(self, variants: List[Dict]) -> torch.Tensor:
@@ -248,7 +248,7 @@ class GenomicEncoder:
         pos_vec = self.positional_encoder.make_position_vector(position)
 
         # Create base vectors
-        ref_vec = self._encode_base_sparse(ref)
+        # ref_vec = self._encode_base_sparse(ref)  # Not used in panel mode
         alt_vec = self._encode_base_sparse(alt)
 
         # Bind position with alt allele
@@ -370,8 +370,8 @@ class GenomicEncoder:
         elif level == 2:
             # Create 1kb tiles on demand
             tile_size = 1000
-            tile_start = start // tile_size
-            tile_end = end // tile_size
+#             tile_start = start // tile_size
+#             tile_end = end // tile_size
 
             # This would fetch variants in range and encode
             # For now, return placeholder
