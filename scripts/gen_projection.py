@@ -66,7 +66,7 @@ class ProjectionGenerator:
 
     def generate_standard_projections(self, max_dimension: int = None) -> List[Tuple[int, Path]]:
         """Generate projections for standard dimensions used in GenomeVault.
-        
+
         Args:
             max_dimension: Maximum dimension to generate (for memory-constrained environments)
         """
@@ -78,7 +78,7 @@ class ProjectionGenerator:
             50000,  # Large-scale analysis
             100000,  # Maximum dimension
         ]
-        
+
         # Filter dimensions based on max_dimension if provided
         if max_dimension:
             standard_dimensions = [d for d in standard_dimensions if d <= max_dimension]
