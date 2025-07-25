@@ -18,6 +18,7 @@ config = get_config()
 from genomevault.api.routers.tuned_query import router as tuned_query_router
 from genomevault.api.routers.query_tuned import router as snp_query_router
 from genomevault.hypervector.error_handling import router as hdc_router
+from genomevault.nanopore.api import router as nanopore_router
 from genomevault.utils.logging import audit_logger, get_logger
 
 # Create FastAPI app
@@ -47,6 +48,9 @@ app.include_router(tuned_query_router, prefix="/api")
 
 # Include SNP-tuned query router
 app.include_router(snp_query_router, prefix="/api")
+
+# Include nanopore streaming router
+app.include_router(nanopore_router, prefix="/api")
 
 
 # Request/Response Models
