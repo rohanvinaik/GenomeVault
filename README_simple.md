@@ -23,7 +23,13 @@
 
 ## 🌟 What is GenomeVault?
 
-GenomeVault is a revolutionary platform that transforms how genomic data is stored, shared, and analyzed. By combining cutting-edge cryptographic techniques with advanced algorithmic methods, we enable secure genomic computation at scale—without ever exposing raw genetic data.
+GenomeVault is a cutting-edge platform that enables secure genomic data analysis without compromising privacy. Using advanced cryptographic techniques like hyperdimensional computing (HDC), zero-knowledge proofs, and federated learning, we make it possible to:
+
+- 🔐 **Analyze genomes without exposing raw data**
+- 🏥 **Enable multi-institutional research while maintaining HIPAA compliance**
+- 💾 **Compress genomic data by 100-500x while preserving analytical utility**
+- ⚡ **Process Oxford Nanopore data in real-time with biological signal detection**
+- 🌍 **Facilitate global genomic collaboration with cryptographic privacy guarantees**
 
 <div align="center">
 
@@ -37,185 +43,46 @@ GenomeVault is a revolutionary platform that transforms how genomic data is stor
 
 </div>
 
-## 🎯 Why GenomeVault? The Genomic Data Crisis
+## 🎯 Why GenomeVault?
 
-### The Promise and the Problem
-
-Genomics is on the verge of revolutionizing healthcare. With costs plummeting and accuracy soaring, we should be entering a golden age of personalized medicine. **But we're not.**
-
-Why? Because the current genomic data infrastructure is fundamentally broken:
-
-### 🚨 The Four Crises of Genomic Data
+The genomics revolution promises personalized medicine, but privacy concerns block progress. GenomeVault solves this:
 
 <table>
 <tr>
-<td width="50%">
+<td width="25%" align="center">
 
-#### 1️⃣ **The Privacy Paradox**
+### 🧑‍🔬 For Researchers
+**Problem**: Can't share data due to privacy laws
 
-**The Problem:**
-- Once you share your genome, it's exposed forever
-- Your genetic data reveals information about your entire family
-- Current "privacy" solutions just move trust from one company to another
-- Data breaches expose millions to genetic discrimination
-
-**Traditional "Solutions" That Don't Work:**
-- ❌ "Trust us" promises from companies
-- ❌ De-identification (easily reversed)
-- ❌ Access controls (insider threats)
-- ❌ Encryption at rest (useless when computing)
-
-**GenomeVault's Solution:**
-- ✅ **Hyperdimensional encoding** - Transform genomes into vectors that preserve similarity but prevent reconstruction
-- ✅ **Zero-knowledge proofs** - Prove properties without revealing data
-- ✅ **Cryptographic guarantees** - Math, not promises
+**Solution**: Federated learning enables multi-site studies without data sharing
 
 </td>
-<td width="50%">
+<td width="25%" align="center">
 
-#### 2️⃣ **The Storage Explosion**
+### 🏥 For Healthcare
+**Problem**: HIPAA blocks cloud innovation
 
-**The Problem:**
-- A single genome: 3-5 GB uncompressed
-- Associated data (reads, annotations): 100+ GB
-- Population-scale studies: Petabytes
-- Costs growing faster than Moore's Law
-
-**Traditional "Solutions" That Don't Scale:**
-- ❌ More hard drives (linear cost growth)
-- ❌ Cloud storage (privacy concerns)
-- ❌ Compression (loses critical information)
-- ❌ Reference-based storage (misses structural variants)
-
-**GenomeVault's Solution:**
-- ✅ **100-500x compression** via hypervectors
-- ✅ **Preserves analytical utility** while shrinking size
-- ✅ **Hierarchical encoding** - zoom in when needed
-- ✅ **Catalytic computing** - process TB with MB of memory
+**Solution**: Cryptographic privacy exceeds regulatory requirements
 
 </td>
-</tr>
-<tr>
-<td width="50%">
+<td width="25%" align="center">
 
-#### 3️⃣ **The Silo Trap**
+### 👤 For Individuals
+**Problem**: Give up privacy forever
 
-**The Problem:**
-- Valuable data locked in institutional silos
-- Legal/ethical barriers prevent sharing
-- Small datasets = poor statistical power
-- Rare disease research impossible
-
-**Traditional "Solutions" That Failed:**
-- ❌ Data use agreements (bureaucratic nightmare)
-- ❌ Centralized databases (single point of failure)
-- ❌ Manual data sharing (doesn't scale)
-- ❌ Synthetic data (loses critical patterns)
-
-**GenomeVault's Solution:**
-- ✅ **Federated learning** - Train models without moving data
-- ✅ **Multi-party computation** - Collaborative analysis
-- ✅ **Blockchain governance** - Automated compliance
-- ✅ **Information-theoretic PIR** - Query without revealing intent
+**Solution**: You control your data with zero-knowledge proofs
 
 </td>
-<td width="50%">
+<td width="25%" align="center">
 
-#### 4️⃣ **The Update Problem**
+### 🏢 For Institutions
+**Problem**: Storage costs exploding
 
-**The Problem:**
-- New disease variants discovered daily
-- Your genetic report becomes outdated immediately
-- No automatic updates when science advances
-- Static PDFs while knowledge explodes
-
-**Traditional "Solutions" That Stagnate:**
-- ❌ Annual re-analysis (expensive)
-- ❌ Email alerts (information overload)
-- ❌ Version control (fragmentation)
-- ❌ Manual literature review (impossible scale)
-
-**GenomeVault's Solution:**
-- ✅ **Smart contracts** for automatic monitoring
-- ✅ **Real-time nanopore streaming** analysis
-- ✅ **Continuous knowledge integration**
-- ✅ **Privacy-preserving alerts** when relevant
+**Solution**: 100-500x compression with privacy built-in
 
 </td>
 </tr>
 </table>
-
-### 🔬 The Deeper Challenge: Structural and Functional Genomics
-
-But there's more. Traditional genomic databases treat DNA as mere text—a string of A, T, C, and G. This misses the entire point:
-
-<div align="center">
-
-| What We Store Today | What Actually Matters | What GenomeVault Enables |
-|---------------------|----------------------|-------------------------|
-| Linear sequence (1D) | 3D chromatin structure | **Topological analysis of DNA architecture** |
-| Static snapshots | Dynamic conformations | **Differential equations modeling DNA dynamics** |
-| Isolated variants | Regulatory networks | **Graph algorithms for interaction networks** |
-| Single data type | Multi-omics integration | **Hypervector binding across modalities** |
-
-</div>
-
-### 💡 The Vision: A New Genomic Infrastructure
-
-Imagine a world where:
-
-- 🌍 **Global Collaboration** - Researchers worldwide can work together without sharing raw data
-- 🏥 **Instant Updates** - Your health insights automatically update as science advances
-- 🔒 **Absolute Privacy** - Your genome is analyzed without ever being exposed
-- ⚡ **Real-time Analysis** - Process nanopore data as it streams from the sequencer
-- 🧬 **True Understanding** - Capture not just sequence but structure, dynamics, and function
-
-**This is what GenomeVault makes possible.**
-
-### 🚀 Beyond Traditional Limits
-
-GenomeVault isn't just an incremental improvement—it's a paradigm shift:
-
-<table>
-<tr>
-<th>Traditional Genomics</th>
-<th>GenomeVault</th>
-</tr>
-<tr>
-<td>Store raw sequences</td>
-<td>Store privacy-preserving encodings</td>
-</tr>
-<tr>
-<td>Trust-based security</td>
-<td>Cryptographic guarantees</td>
-</tr>
-<tr>
-<td>Centralized databases</td>
-<td>Decentralized network</td>
-</tr>
-<tr>
-<td>Static analysis</td>
-<td>Continuous monitoring</td>
-</tr>
-<tr>
-<td>Data silos</td>
-<td>Federated ecosystem</td>
-</tr>
-<tr>
-<td>Sequence only</td>
-<td>Structure + dynamics + function</td>
-</tr>
-</table>
-
-### 🌟 The Result: Genomics That Actually Works
-
-With GenomeVault, we can finally realize the promise of genomic medicine:
-
-- **Rare Disease Diagnosis** - Pool data globally while maintaining privacy
-- **Precision Oncology** - Real-time tumor evolution tracking
-- **Population Health** - Understand disease at scale without compromising individuals
-- **Drug Discovery** - Find targets using structural dynamics, not just sequence
-- **Preventive Medicine** - Continuous risk monitoring with automatic alerts
 
 ## ✨ Key Features
 
@@ -384,8 +251,6 @@ GenomeVault builds on groundbreaking research in:
 - Zero-Knowledge Proofs (Groth, Ben-Sasson et al.)
 - Private Information Retrieval (Goldberg et al.)
 - Federated Learning (McMahan et al.)
-- Topological Data Analysis (Carlsson et al.)
-- Catalytic Space Computing (Buhrman et al.)
 
 Special thanks to all [contributors](CONTRIBUTORS.md) who made this project possible.
 
@@ -393,7 +258,7 @@ Special thanks to all [contributors](CONTRIBUTORS.md) who made this project poss
 
 <div align="center">
 
-### 🚀 Ready to join the genomic revolution?
+### 🚀 Ready to preserve privacy while advancing genomics?
 
 [**Get Started →**](docs/getting-started.md)
 
