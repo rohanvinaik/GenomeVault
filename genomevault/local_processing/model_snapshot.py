@@ -27,6 +27,8 @@ logger = get_logger(__name__)
 @dataclass
 class ModelSnapshot:
     """Represents a single model snapshot during training"""
+    """Represents a single model snapshot during training"""
+    """Represents a single model snapshot during training"""
 
     snapshot_id: str
     epoch: int
@@ -44,6 +46,8 @@ class ModelSnapshot:
 
 class ModelSnapshotLogger:
     """
+    """
+    """
     Logs model snapshots during training for proof-of-training.
 
     Captures:
@@ -53,7 +57,7 @@ class ModelSnapshotLogger:
     4. Sample input/output pairs
     """
 
-    def __init__(
+        def __init__(
         self,
         session_id: str,
         output_dir: str,
@@ -62,8 +66,10 @@ class ModelSnapshotLogger:
         capture_io: bool = True,
         compression: str = "zlib",
     ) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize snapshot logger.
 
         Args:
@@ -74,28 +80,28 @@ class ModelSnapshotLogger:
             capture_io: Whether to capture input/output samples
             compression: Compression method for snapshots
         """
-        self.session_id = session_id
-        self.output_dir = Path(output_dir) / session_id
-        self.output_dir.mkdir(parents=True, exist_ok=True)
+            self.session_id = session_id
+            self.output_dir = Path(output_dir) / session_id
+            self.output_dir.mkdir(parents=True, exist_ok=True)
 
-        self.snapshot_frequency = snapshot_frequency
-        self.capture_gradients = capture_gradients
-        self.capture_io = capture_io
-        self.compression = compression
+            self.snapshot_frequency = snapshot_frequency
+            self.capture_gradients = capture_gradients
+            self.capture_io = capture_io
+            self.compression = compression
 
-        self.snapshots: List[ModelSnapshot] = []
-        self.snapshot_hashes: List[str] = []
-        self.io_buffer: List[Tuple[str, str]] = []
+            self.snapshots: List[ModelSnapshot] = []
+            self.snapshot_hashes: List[str] = []
+            self.io_buffer: List[Tuple[str, str]] = []
 
         # Framework detection
-        self.framework = self._detect_framework()
+            self.framework = self._detect_framework()
 
         logger.info(
             f"Model snapshot logger initialized for session {session_id} "
             f"(framework: {self.framework})"
         )
 
-    def log_snapshot(
+            def log_snapshot(
         self,
         model: Any,
         epoch: int,
@@ -105,8 +111,10 @@ class ModelSnapshotLogger:
         gradients: Optional[Any] = None,
         force: bool = False,
     ) -> Optional[str]:
-           """TODO: Add docstring for log_snapshot"""
-     """
+        """TODO: Add docstring for log_snapshot"""
+        """TODO: Add docstring for log_snapshot"""
+            """TODO: Add docstring for log_snapshot"""
+    """
         Log a model snapshot if conditions are met.
 
         Args:
@@ -172,14 +180,14 @@ class ModelSnapshotLogger:
         )
 
         # Save snapshot
-        self._save_snapshot(snapshot, weights, hypervector)
+            self._save_snapshot(snapshot, weights, hypervector)
 
         # Update tracking
-        self.snapshots.append(snapshot)
-        self.snapshot_hashes.append(snapshot.model_hash)
+            self.snapshots.append(snapshot)
+            self.snapshot_hashes.append(snapshot.model_hash)
 
         # Clear IO buffer
-        self.io_buffer = []
+            self.io_buffer = []
 
         logger.info(
             f"Snapshot {snapshot_id} saved: " f"loss={loss:.4f}, model_hash={model_hash[:8]}..."
@@ -187,9 +195,11 @@ class ModelSnapshotLogger:
 
         return snapshot_id
 
-    def log_io_pair(self, input_data: Any, output_data: Any) -> None:
-           """TODO: Add docstring for log_io_pair"""
-     """
+            def log_io_pair(self, input_data: Any, output_data: Any) -> None:
+                """TODO: Add docstring for log_io_pair"""
+        """TODO: Add docstring for log_io_pair"""
+            """TODO: Add docstring for log_io_pair"""
+    """
         Log an input/output pair for training verification.
 
         Args:
@@ -203,15 +213,17 @@ class ModelSnapshotLogger:
         input_hash = self._hash_data(input_data)
         output_hash = self._hash_data(output_data)
 
-        self.io_buffer.append((input_hash, output_hash))
+            self.io_buffer.append((input_hash, output_hash))
 
         # Limit buffer size
         if len(self.io_buffer) > 1000:
-        self.io_buffer = self.io_buffer[-1000:]
+            self.io_buffer = self.io_buffer[-1000:]
 
-    def get_snapshot_merkle_root(self) -> str:
-           """TODO: Add docstring for get_snapshot_merkle_root"""
-     """
+            def get_snapshot_merkle_root(self) -> str:
+                """TODO: Add docstring for get_snapshot_merkle_root"""
+        """TODO: Add docstring for get_snapshot_merkle_root"""
+            """TODO: Add docstring for get_snapshot_merkle_root"""
+    """
         Compute Merkle root of all snapshots.
 
         Returns:
@@ -239,9 +251,11 @@ class ModelSnapshotLogger:
 
         return current_level[0]
 
-    def create_training_summary(self) -> Dict[str, Any]:
-           """TODO: Add docstring for create_training_summary"""
-     """
+                    def create_training_summary(self) -> Dict[str, Any]:
+                        """TODO: Add docstring for create_training_summary"""
+        """TODO: Add docstring for create_training_summary"""
+            """TODO: Add docstring for create_training_summary"""
+    """
         Create a summary of the training session.
 
         Returns:
@@ -298,9 +312,11 @@ class ModelSnapshotLogger:
 
         return summary
 
-    def export_for_proof(self) -> Dict[str, Any]:
-           """TODO: Add docstring for export_for_proof"""
-     """
+                def export_for_proof(self) -> Dict[str, Any]:
+                    """TODO: Add docstring for export_for_proof"""
+        """TODO: Add docstring for export_for_proof"""
+            """TODO: Add docstring for export_for_proof"""
+    """
         Export snapshot data for proof generation.
 
         Returns:
@@ -313,9 +329,11 @@ class ModelSnapshotLogger:
             "summary": self.create_training_summary(),
         }
 
-    def _detect_framework(self) -> str:
-           """TODO: Add docstring for _detect_framework"""
-     """Detect ML framework being used"""
+            def _detect_framework(self) -> str:
+                """TODO: Add docstring for _detect_framework"""
+        """TODO: Add docstring for _detect_framework"""
+            """TODO: Add docstring for _detect_framework"""
+    """Detect ML framework being used"""
         try:
             import torch
 
@@ -332,9 +350,11 @@ class ModelSnapshotLogger:
 
         return "unknown"
 
-    def _extract_weights(self, model: Any) -> Dict[str, np.ndarray]:
-           """TODO: Add docstring for _extract_weights"""
-     """Extract weights from model"""
+            def _extract_weights(self, model: Any) -> Dict[str, np.ndarray]:
+                """TODO: Add docstring for _extract_weights"""
+        """TODO: Add docstring for _extract_weights"""
+            """TODO: Add docstring for _extract_weights"""
+    """Extract weights from model"""
         weights = {}
 
         if self.framework == "pytorch":
@@ -349,9 +369,11 @@ class ModelSnapshotLogger:
 
         return weights
 
-    def _hash_weights(self, weights: Dict[str, np.ndarray]) -> str:
-           """TODO: Add docstring for _hash_weights"""
-     """Compute hash of model weights"""
+                    def _hash_weights(self, weights: Dict[str, np.ndarray]) -> str:
+                        """TODO: Add docstring for _hash_weights"""
+        """TODO: Add docstring for _hash_weights"""
+            """TODO: Add docstring for _hash_weights"""
+    """Compute hash of model weights"""
         # Sort keys for deterministic hashing
         sorted_keys = sorted(weights.keys())
 
@@ -362,9 +384,11 @@ class ModelSnapshotLogger:
 
         return hasher.hexdigest()
 
-    def _create_model_hypervector(self, weights: Dict[str, np.ndarray]) -> np.ndarray:
-           """TODO: Add docstring for _create_model_hypervector"""
-     """Create hypervector representation of model"""
+            def _create_model_hypervector(self, weights: Dict[str, np.ndarray]) -> np.ndarray:
+                """TODO: Add docstring for _create_model_hypervector"""
+        """TODO: Add docstring for _create_model_hypervector"""
+            """TODO: Add docstring for _create_model_hypervector"""
+    """Create hypervector representation of model"""
         # Flatten all weights
         all_weights = []
         for key in sorted(weights.keys()):
@@ -390,9 +414,11 @@ class ModelSnapshotLogger:
 
         return hypervector
 
-    def _compute_gradient_stats(self, gradients: Any) -> Dict[str, float]:
-           """TODO: Add docstring for _compute_gradient_stats"""
-     """Compute gradient statistics"""
+            def _compute_gradient_stats(self, gradients: Any) -> Dict[str, float]:
+                """TODO: Add docstring for _compute_gradient_stats"""
+        """TODO: Add docstring for _compute_gradient_stats"""
+            """TODO: Add docstring for _compute_gradient_stats"""
+    """Compute gradient statistics"""
         stats = {}
 
         if self.framework == "pytorch":
@@ -411,9 +437,11 @@ class ModelSnapshotLogger:
 
         return stats
 
-    def _compute_model_hash(self, model: Any, weight_hash: str) -> str:
-           """TODO: Add docstring for _compute_model_hash"""
-     """Compute hash including model architecture"""
+                def _compute_model_hash(self, model: Any, weight_hash: str) -> str:
+                    """TODO: Add docstring for _compute_model_hash"""
+        """TODO: Add docstring for _compute_model_hash"""
+            """TODO: Add docstring for _compute_model_hash"""
+    """Compute hash including model architecture"""
         model_info = {"weight_hash": weight_hash, "framework": self.framework}
 
         if self.framework == "pytorch":
@@ -426,9 +454,11 @@ class ModelSnapshotLogger:
         model_str = json.dumps(model_info, sort_keys=True)
         return hashlib.sha256(model_str.encode()).hexdigest()
 
-    def _hash_data(self, data: Any) -> str:
-           """TODO: Add docstring for _hash_data"""
-     """Hash arbitrary data"""
+            def _hash_data(self, data: Any) -> str:
+                """TODO: Add docstring for _hash_data"""
+        """TODO: Add docstring for _hash_data"""
+            """TODO: Add docstring for _hash_data"""
+    """Hash arbitrary data"""
         if isinstance(data, (np.ndarray, torch.Tensor)):
             return hashlib.sha256(data.cpu().numpy().tobytes()).hexdigest()[:16]
         elif isinstance(data, (list, tuple)):
@@ -437,11 +467,13 @@ class ModelSnapshotLogger:
         else:
             return hashlib.sha256(str(data).encode()).hexdigest()[:16]
 
-    def _save_snapshot(
+            def _save_snapshot(
         self, snapshot: ModelSnapshot, weights: Dict[str, np.ndarray], hypervector: np.ndarray
     ) -> None:
-           """TODO: Add docstring for _save_snapshot"""
-     """Save snapshot to disk"""
+        """TODO: Add docstring for _save_snapshot"""
+        """TODO: Add docstring for _save_snapshot"""
+            """TODO: Add docstring for _save_snapshot"""
+    """Save snapshot to disk"""
         snapshot_dir = self.output_dir / f"snapshot_{snapshot.snapshot_id}"
         snapshot_dir.mkdir(exist_ok=True)
 
@@ -470,11 +502,15 @@ class ModelSnapshotLogger:
 
 class SnapshotVerifier:
     """Verify model snapshots for proof generation"""
+    """Verify model snapshots for proof generation"""
+    """Verify model snapshots for proof generation"""
 
     @staticmethod
     def verify_snapshot_chain(snapshots: List[ModelSnapshot]) -> bool:
-           """TODO: Add docstring for verify_snapshot_chain"""
-     """Verify the integrity of a snapshot chain"""
+        """TODO: Add docstring for verify_snapshot_chain"""
+        """TODO: Add docstring for verify_snapshot_chain"""
+            """TODO: Add docstring for verify_snapshot_chain"""
+    """Verify the integrity of a snapshot chain"""
         if not snapshots:
             return True
 
@@ -504,9 +540,11 @@ class SnapshotVerifier:
         return True
 
     @staticmethod
-    def load_snapshot(snapshot_dir: str) -> Tuple[ModelSnapshot, Dict[str, np.ndarray], np.ndarray]:
-           """TODO: Add docstring for load_snapshot"""
-     """Load a snapshot from disk"""
+                def load_snapshot(snapshot_dir: str) -> Tuple[ModelSnapshot, Dict[str, np.ndarray], np.ndarray]:
+                    """TODO: Add docstring for load_snapshot"""
+        """TODO: Add docstring for load_snapshot"""
+            """TODO: Add docstring for load_snapshot"""
+    """Load a snapshot from disk"""
         snapshot_path = Path(snapshot_dir)
 
         # Load metadata

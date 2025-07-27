@@ -20,6 +20,8 @@ logger = get_logger(__name__)
 @dataclass
 class TrainingSnapshot:
     """Represents a snapshot of model state during training"""
+    """Represents a snapshot of model state during training"""
+    """Represents a snapshot of model state during training"""
 
     epoch: int
     model_hash: str
@@ -31,6 +33,8 @@ class TrainingSnapshot:
 
 class TrainingProofCircuit(BaseCircuit):
     """
+    """
+    """
     ZK Circuit for proving model training lineage and consistency.
 
     This circuit proves:
@@ -40,9 +44,11 @@ class TrainingProofCircuit(BaseCircuit):
     4. Input/output sequence integrity
     """
 
-    def __init__(self, max_snapshots: int = 100) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        def __init__(self, max_snapshots: int = 100) -> None:
+            """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize training proof circuit.
 
         Args:
@@ -51,14 +57,16 @@ class TrainingProofCircuit(BaseCircuit):
         # Number of constraints: snapshots * 5 (hash chain, loss, accuracy, gradient, timestamp)
         # + final model verification + IO sequence verification
         super().__init__("training_proof", max_snapshots * 5 + 10)
-        self.max_snapshots = max_snapshots
-        self.snapshot_hashes: List[str] = []
-        self.model_commit: str = ""
-        self.io_sequence_commit: str = ""
+            self.max_snapshots = max_snapshots
+            self.snapshot_hashes: List[str] = []
+            self.model_commit: str = ""
+            self.io_sequence_commit: str = ""
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
-           """TODO: Add docstring for setup"""
-     """
+            def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
+                """TODO: Add docstring for setup"""
+        """TODO: Add docstring for setup"""
+            """TODO: Add docstring for setup"""
+    """
         Setup circuit with training proof inputs.
 
         Public inputs:
@@ -72,44 +80,48 @@ class TrainingProofCircuit(BaseCircuit):
             - training_snapshots: Detailed snapshot data
         """
         # Public inputs
-        self.final_model_hash = FieldElement(int(public_inputs["final_model_hash"], 16))
-        self.training_start_time = FieldElement(public_inputs["training_metadata"]["start_time"])
-        self.training_end_time = FieldElement(public_inputs["training_metadata"]["end_time"])
-        self.declared_dataset_hash = FieldElement(
+            self.final_model_hash = FieldElement(int(public_inputs["final_model_hash"], 16))
+            self.training_start_time = FieldElement(public_inputs["training_metadata"]["start_time"])
+            self.training_end_time = FieldElement(public_inputs["training_metadata"]["end_time"])
+            self.declared_dataset_hash = FieldElement(
             int(public_inputs["training_metadata"]["dataset_hash"], 16)
         )
 
         # Private inputs
-        self.snapshot_hashes = private_inputs["snapshot_hashes"]
-        self.model_commit = private_inputs["model_commit"]
-        self.io_sequence_commit = private_inputs["io_sequence_commit"]
-        self.training_snapshots = [
+            self.snapshot_hashes = private_inputs["snapshot_hashes"]
+            self.model_commit = private_inputs["model_commit"]
+            self.io_sequence_commit = private_inputs["io_sequence_commit"]
+            self.training_snapshots = [
             TrainingSnapshot(**snapshot) for snapshot in private_inputs["training_snapshots"]
         ]
 
-    def generate_constraints(self) -> None:
-           """TODO: Add docstring for generate_constraints"""
-     """Generate circuit constraints for training proof"""
+            def generate_constraints(self) -> None:
+                """TODO: Add docstring for generate_constraints"""
+        """TODO: Add docstring for generate_constraints"""
+            """TODO: Add docstring for generate_constraints"""
+    """Generate circuit constraints for training proof"""
         logger.info("Generating training proof constraints")
 
         # 1. Constrain snapshot hash chain consistency
-        self.constrain_consistency_tree()
+                self.constrain_consistency_tree()
 
         # 2. Constrain model lineage evolution
-        self.constrain_model_lineage()
+                self.constrain_model_lineage()
 
         # 3. Constrain training dynamics (loss descent, etc.)
-        self.constrain_training_dynamics()
+                self.constrain_training_dynamics()
 
         # 4. Constrain final model linkage
-        self.constrain_final_model()
+                self.constrain_final_model()
 
         # 5. Constrain IO sequence integrity
-        self.constrain_io_sequence()
+                self.constrain_io_sequence()
 
-    def constrain_consistency_tree(self) -> None:
-           """TODO: Add docstring for constrain_consistency_tree"""
-     """Ensure snapshot hashes form a valid Merkle tree"""
+                def constrain_consistency_tree(self) -> None:
+                    """TODO: Add docstring for constrain_consistency_tree"""
+        """TODO: Add docstring for constrain_consistency_tree"""
+            """TODO: Add docstring for constrain_consistency_tree"""
+    """Ensure snapshot hashes form a valid Merkle tree"""
         # Build Merkle tree from snapshot hashes
         current_level = [FieldElement(int(h, 16)) for h in self.snapshot_hashes]
 
@@ -125,16 +137,18 @@ class TrainingProofCircuit(BaseCircuit):
                 next_level.append(parent)
 
                 # Add hash consistency constraint
-        self.add_constraint(left, right, parent, qm=1, qo=-1)
+                    self.add_constraint(left, right, parent, qm=1, qo=-1)
 
             current_level = next_level
 
         # Store Merkle root
-        self.snapshot_merkle_root = current_level[0]
+                    self.snapshot_merkle_root = current_level[0]
 
-    def constrain_model_lineage(self) -> None:
-           """TODO: Add docstring for constrain_model_lineage"""
-     """Ensure model evolved consistently through snapshots"""
+                    def constrain_model_lineage(self) -> None:
+                        """TODO: Add docstring for constrain_model_lineage"""
+        """TODO: Add docstring for constrain_model_lineage"""
+            """TODO: Add docstring for constrain_model_lineage"""
+    """Ensure model evolved consistently through snapshots"""
         for i in range(1, len(self.training_snapshots)):
             prev_snapshot = self.training_snapshots[i - 1]
             curr_snapshot = self.training_snapshots[i]
@@ -147,7 +161,7 @@ class TrainingProofCircuit(BaseCircuit):
             # Constraint: timestamps must increase
             # We prove time_diff > 0 by showing it has a multiplicative inverse
             time_diff_inv = time_diff.inverse()
-        self.add_constraint(time_diff, time_diff_inv, FieldElement(1), qm=1, qo=-1)
+            self.add_constraint(time_diff, time_diff_inv, FieldElement(1), qm=1, qo=-1)
 
             # Verify model hash linkage
             prev_hash = FieldElement(int(prev_snapshot.model_hash, 16))
@@ -159,11 +173,13 @@ class TrainingProofCircuit(BaseCircuit):
             expected_hash = self._hash_pair(prev_hash, gradient_factor)
 
             # Add linkage constraint
-        self.add_constraint(expected_hash, curr_hash, FieldElement(0), ql=1, qr=-1)
+            self.add_constraint(expected_hash, curr_hash, FieldElement(0), ql=1, qr=-1)
 
-    def constrain_training_dynamics(self) -> None:
-           """TODO: Add docstring for constrain_training_dynamics"""
-     """Ensure training followed expected dynamics (loss descent, etc.)"""
+            def constrain_training_dynamics(self) -> None:
+                """TODO: Add docstring for constrain_training_dynamics"""
+        """TODO: Add docstring for constrain_training_dynamics"""
+            """TODO: Add docstring for constrain_training_dynamics"""
+    """Ensure training followed expected dynamics (loss descent, etc.)"""
         for i in range(1, len(self.training_snapshots)):
             prev_snapshot = self.training_snapshots[i - 1]
             curr_snapshot = self.training_snapshots[i]
@@ -194,19 +210,21 @@ class TrainingProofCircuit(BaseCircuit):
                 # Verify positive_decrease > 0 by proving it has inverse
                 if positive_decrease.value > 0:
                     decrease_inv = positive_decrease.inverse()
-        self.add_constraint(
+                    self.add_constraint(
                         positive_decrease, decrease_inv, FieldElement(1), qm=1, qo=-1
                     )
 
-    def constrain_final_model(self) -> None:
-           """TODO: Add docstring for constrain_final_model"""
-     """Verify final model hash matches declared commitment"""
+                    def constrain_final_model(self) -> None:
+                        """TODO: Add docstring for constrain_final_model"""
+        """TODO: Add docstring for constrain_final_model"""
+            """TODO: Add docstring for constrain_final_model"""
+    """Verify final model hash matches declared commitment"""
         # Get the last snapshot's model hash
         if self.training_snapshots:
             final_snapshot_hash = FieldElement(int(self.training_snapshots[-1].model_hash, 16))
 
             # Verify it matches the public final model hash
-        self.add_constraint(
+            self.add_constraint(
                 final_snapshot_hash, self.final_model_hash, FieldElement(0), ql=1, qr=-1
             )
 
@@ -219,11 +237,13 @@ class TrainingProofCircuit(BaseCircuit):
         expected_commit = self._hash_pair(self.final_model_hash, model_commit_field)
 
         # Add commitment verification constraint
-        self.add_constraint(expected_commit, model_commit_field, FieldElement(0), ql=1, qr=-1)
+            self.add_constraint(expected_commit, model_commit_field, FieldElement(0), ql=1, qr=-1)
 
-    def constrain_io_sequence(self) -> None:
-           """TODO: Add docstring for constrain_io_sequence"""
-     """Verify integrity of input/output training sequence"""
+            def constrain_io_sequence(self) -> None:
+                """TODO: Add docstring for constrain_io_sequence"""
+        """TODO: Add docstring for constrain_io_sequence"""
+            """TODO: Add docstring for constrain_io_sequence"""
+    """Verify integrity of input/output training sequence"""
         io_commit_field = FieldElement(int(self.io_sequence_commit, 16))
 
         # The IO sequence commitment proves we trained on declared data
@@ -233,20 +253,24 @@ class TrainingProofCircuit(BaseCircuit):
         dataset_commit = self._hash_pair(self.declared_dataset_hash, io_commit_field)
 
         # Add IO sequence constraint
-        self.add_constraint(dataset_commit, io_commit_field, FieldElement(0), ql=1, qr=-1)
+                self.add_constraint(dataset_commit, io_commit_field, FieldElement(0), ql=1, qr=-1)
 
-    def _hash_pair(self, left: FieldElement, right: FieldElement) -> FieldElement:
-           """TODO: Add docstring for _hash_pair"""
-     """Hash two field elements together"""
+                def _hash_pair(self, left: FieldElement, right: FieldElement) -> FieldElement:
+                    """TODO: Add docstring for _hash_pair"""
+        """TODO: Add docstring for _hash_pair"""
+            """TODO: Add docstring for _hash_pair"""
+    """Hash two field elements together"""
         # In production, would use Poseidon hash for efficiency in ZK
         data = f"{left.value}:{right.value}".encode()
         hash_val = int(hashlib.sha256(data).hexdigest(), 16)
         return FieldElement(hash_val)
 
-    def generate_proof(self) -> Dict[str, Any]:
-           """TODO: Add docstring for generate_proof"""
-     """Generate the training proof"""
-        self.generate_constraints()
+                    def generate_proof(self) -> Dict[str, Any]:
+                        """TODO: Add docstring for generate_proof"""
+        """TODO: Add docstring for generate_proof"""
+            """TODO: Add docstring for generate_proof"""
+    """Generate the training proof"""
+                        self.generate_constraints()
 
         proof = {
             "circuit_type": "training_proof",
@@ -268,9 +292,11 @@ class TrainingProofCircuit(BaseCircuit):
         logger.info(f"Generated training proof with {len(self.constraints)} constraints")
         return proof
 
-    def verify_semantic_consistency(self, tolerance: float = 0.15) -> bool:
-           """TODO: Add docstring for verify_semantic_consistency"""
-     """
+                        def verify_semantic_consistency(self, tolerance: float = 0.15) -> bool:
+                            """TODO: Add docstring for verify_semantic_consistency"""
+        """TODO: Add docstring for verify_semantic_consistency"""
+            """TODO: Add docstring for verify_semantic_consistency"""
+    """
         Verify model maintained semantic consistency during training.
 
         Args:

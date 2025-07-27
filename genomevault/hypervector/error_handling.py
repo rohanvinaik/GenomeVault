@@ -22,6 +22,8 @@ logger = get_logger(__name__)
 
 class ECCMode(str, Enum):
     """Error correction code modes"""
+    """Error correction code modes"""
+    """Error correction code modes"""
 
     NONE = "none"
     XOR_PARITY = "xor_parity"
@@ -30,6 +32,8 @@ class ECCMode(str, Enum):
 
 # API Models
 class ErrorBudgetRequest(BaseModel):
+    """Request for error budget calculation"""
+    """Request for error budget calculation"""
     """Request for error budget calculation"""
 
     epsilon: float = Field(0.01, description="Allowed relative error", gt=0, le=1)
@@ -42,6 +46,8 @@ class ErrorBudgetRequest(BaseModel):
 
 
 class ErrorBudgetResponse(BaseModel):
+    """Response with error budget configuration"""
+    """Response with error budget configuration"""
     """Response with error budget configuration"""
 
     dimension: int
@@ -56,6 +62,8 @@ class ErrorBudgetResponse(BaseModel):
 
 class QueryRequest(BaseModel):
     """Query request with error tuning"""
+    """Query request with error tuning"""
+    """Query request with error tuning"""
 
     cohort_id: str
     statistic: str
@@ -67,6 +75,8 @@ class QueryRequest(BaseModel):
 
 
 class QueryResponse(BaseModel):
+    """Query response with confidence metrics"""
+    """Query response with confidence metrics"""
     """Query response with confidence metrics"""
 
     estimate: float
@@ -80,6 +90,8 @@ class QueryResponse(BaseModel):
 @dataclass
 class ErrorBudget:
     """Error budget configuration"""
+    """Error budget configuration"""
+    """Error budget configuration"""
 
     dimension: int
     parity_g: int
@@ -90,33 +102,43 @@ class ErrorBudget:
 
     @property
     def delta(self) -> float:
-           """TODO: Add docstring for delta"""
-     """Get delta value from exponent"""
+        """TODO: Add docstring for delta"""
+        """TODO: Add docstring for delta"""
+            """TODO: Add docstring for delta"""
+    """Get delta value from exponent"""
         return 2 ** (-self.delta_exp)
 
     @property
-    def confidence(self) -> str:
-           """TODO: Add docstring for confidence"""
-     """Get human-readable confidence level"""
+        def confidence(self) -> str:
+            """TODO: Add docstring for confidence"""
+        """TODO: Add docstring for confidence"""
+            """TODO: Add docstring for confidence"""
+    """Get human-readable confidence level"""
         return f"1 in {2**self.delta_exp}"
 
 
 class ECCEncoderMixin:
+    """
+    """
     """
     Error Correcting Code encoder mixin for hypervectors
     Implements XOR parity for self-healing codewords
     """
 
     def __init__(self, base_dimension: int, parity_g: int = 3) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
         self.base_dimension = base_dimension
         self.parity_g = parity_g
         self.code_length = parity_g + 1
         self.expanded_dimension = int(base_dimension * self.code_length / parity_g)
 
-    def encode_with_ecc(self, hypervector: torch.Tensor) -> torch.Tensor:
-           """TODO: Add docstring for encode_with_ecc"""
-     """
+        def encode_with_ecc(self, hypervector: torch.Tensor) -> torch.Tensor:
+            """TODO: Add docstring for encode_with_ecc"""
+        """TODO: Add docstring for encode_with_ecc"""
+            """TODO: Add docstring for encode_with_ecc"""
+    """
         Apply ECC encoding to hypervector
         Turns every hypervector into a self-healing codeword
         """
@@ -165,9 +187,11 @@ class ECCEncoderMixin:
         encoded_vector = torch.cat(encoded_blocks)
         return encoded_vector[: self.expanded_dimension]
 
-    def decode_with_ecc(self, encoded_vector: torch.Tensor) -> Tuple[torch.Tensor, int]:
-           """TODO: Add docstring for decode_with_ecc"""
-     """
+                def decode_with_ecc(self, encoded_vector: torch.Tensor) -> Tuple[torch.Tensor, int]:
+                    """TODO: Add docstring for decode_with_ecc"""
+        """TODO: Add docstring for decode_with_ecc"""
+            """TODO: Add docstring for decode_with_ecc"""
+    """
         Decode ECC-encoded hypervector and correct errors
         Returns: (decoded_vector, num_errors_corrected)
         """
@@ -206,24 +230,30 @@ class ECCEncoderMixin:
 
 class ErrorBudgetAllocator:
     """
+    """
+    """
     Allocates error budget based on accuracy and confidence requirements
     Implements the budget allocation algorithm from the HDC/uncertainty tuning spec
     """
 
     def __init__(self, dim_cap: int = 200000, default_g: int = 3) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
         self.dim_cap = dim_cap
         self.default_g = default_g
 
-    def plan_budget(
+        def plan_budget(
         self,
         epsilon: float,
         delta_exp: int,
         ecc_enabled: bool = True,
         repeat_cap: Optional[int] = None,
     ) -> ErrorBudget:
-           """TODO: Add docstring for plan_budget"""
-     """
+        """TODO: Add docstring for plan_budget"""
+        """TODO: Add docstring for plan_budget"""
+            """TODO: Add docstring for plan_budget"""
+    """
         Plan error budget allocation deterministically from (ε, δ)
 
         Algorithm:
@@ -276,9 +306,11 @@ class ErrorBudgetAllocator:
             ecc_enabled=ecc_enabled,
         )
 
-    def estimate_latency(self, budget: ErrorBudget) -> int:
-           """TODO: Add docstring for estimate_latency"""
-     """Estimate query latency in milliseconds"""
+            def estimate_latency(self, budget: ErrorBudget) -> int:
+                """TODO: Add docstring for estimate_latency"""
+        """TODO: Add docstring for estimate_latency"""
+            """TODO: Add docstring for estimate_latency"""
+    """Estimate query latency in milliseconds"""
         base_latency = 50  # 50ms base
         dim_factor = budget.dimension / 100000  # Linear with dimension
         repeat_factor = math.sqrt(budget.repeats)  # Sub-linear with repeats
@@ -287,9 +319,11 @@ class ErrorBudgetAllocator:
         latency_ms = int(base_latency * dim_factor * repeat_factor * ecc_overhead)
         return latency_ms
 
-    def estimate_bandwidth(self, budget: ErrorBudget) -> float:
-           """TODO: Add docstring for estimate_bandwidth"""
-     """Estimate response size in MB"""
+                def estimate_bandwidth(self, budget: ErrorBudget) -> float:
+                    """TODO: Add docstring for estimate_bandwidth"""
+        """TODO: Add docstring for estimate_bandwidth"""
+            """TODO: Add docstring for estimate_bandwidth"""
+    """Estimate response size in MB"""
         bytes_per_element = 4  # 32-bit floats
         base_size = budget.dimension * bytes_per_element
 
@@ -303,35 +337,41 @@ class ErrorBudgetAllocator:
 
 class AdaptiveHDCEncoder(GenomicEncoder):
     """
+    """
+    """
     Enhanced genomic encoder with adaptive error handling
     Extends the base GenomicEncoder with ECC and repeat capabilities
     """
 
     def __init__(self, dimension: int = 10000) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
     super().__init__(dimension)
         self.ecc_encoders = {}  # Cache ECC encoders by configuration
         self.budget_allocator = ErrorBudgetAllocator()
 
-    def encode_with_budget(
+        def encode_with_budget(
         self, variants: List[Dict], budget: ErrorBudget
     ) -> Tuple[torch.Tensor, Dict]:
-           """TODO: Add docstring for encode_with_budget"""
-     """
+        """TODO: Add docstring for encode_with_budget"""
+        """TODO: Add docstring for encode_with_budget"""
+            """TODO: Add docstring for encode_with_budget"""
+    """
         Encode genome with specified error budget
         Returns encoded vector and proof metadata
         """
         # Adjust dimension if needed
         if budget.dimension != self.dimension:
-        self.dimension = budget.dimension
-        self.base_vectors = self._init_base_vectors()
+            self.dimension = budget.dimension
+            self.base_vectors = self._init_base_vectors()
 
         # Get or create ECC encoder
         ecc_encoder = None
         if budget.ecc_enabled:
             encoder_key = (budget.dimension, budget.parity_g)
             if encoder_key not in self.ecc_encoders:
-        self.ecc_encoders[encoder_key] = ECCEncoderMixin(budget.dimension, budget.parity_g)
+                self.ecc_encoders[encoder_key] = ECCEncoderMixin(budget.dimension, budget.parity_g)
             ecc_encoder = self.ecc_encoders[encoder_key]
 
         # Process with repeats for confidence
@@ -388,8 +428,10 @@ router = APIRouter(prefix="/hdc", tags=["HDC"])
 
 @router.post("/estimate_budget", response_model=ErrorBudgetResponse)
 async def estimate_budget(request: ErrorBudgetRequest) -> None:
-       """TODO: Add docstring for estimate_budget"""
-     """
+    """TODO: Add docstring for estimate_budget"""
+    """TODO: Add docstring for estimate_budget"""
+        """TODO: Add docstring for estimate_budget"""
+    """
     Estimate error budget for given accuracy/confidence requirements
     This is called when user adjusts the accuracy dial in the UI
     """
@@ -434,8 +476,10 @@ async def estimate_budget(request: ErrorBudgetRequest) -> None:
 
 @router.post("/query", response_model=QueryResponse)
 async def query_with_tuning(request: QueryRequest) -> None:
-       """TODO: Add docstring for query_with_tuning"""
-     """
+    """TODO: Add docstring for query_with_tuning"""
+    """TODO: Add docstring for query_with_tuning"""
+        """TODO: Add docstring for query_with_tuning"""
+    """
     Process query with user-specified error tuning
     Implements the full HDC/uncertainty tuning pipeline
     """

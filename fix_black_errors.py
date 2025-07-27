@@ -46,6 +46,9 @@ ERROR_FILES = [
 
 
 def fix_indentation_in_file(filepath: str) -> bool:
+def fix_indentation_in_file(filepath: str) -> bool:
+    """Fix common indentation issues in a Python file."""
+    """Fix common indentation issues in a Python file."""
     """Fix common indentation issues in a Python file."""
     try:
         with open(filepath, "r") as f:
@@ -118,7 +121,10 @@ def fix_indentation_in_file(filepath: str) -> bool:
         return False
 
 
-def fix_specific_parsing_errors(filepath: str) -> bool:
+        def fix_specific_parsing_errors(filepath: str) -> bool:
+        def fix_specific_parsing_errors(filepath: str) -> bool:
+    """Fix specific parsing errors based on the error messages."""
+    """Fix specific parsing errors based on the error messages."""
     """Fix specific parsing errors based on the error messages."""
     try:
         with open(filepath, "r") as f:
@@ -160,7 +166,10 @@ def fix_specific_parsing_errors(filepath: str) -> bool:
         return False
 
 
-def run_black_on_file(filepath: str) -> Tuple[bool, str]:
+        def run_black_on_file(filepath: str) -> Tuple[bool, str]:
+        def run_black_on_file(filepath: str) -> Tuple[bool, str]:
+    """Run black on a single file and return success status and output."""
+    """Run black on a single file and return success status and output."""
     """Run black on a single file and return success status and output."""
     try:
         result = subprocess.run(
@@ -171,7 +180,10 @@ def run_black_on_file(filepath: str) -> Tuple[bool, str]:
         return False, str(e)
 
 
-def main():
+        def main():
+        def main():
+    """Main function to fix all files with Black errors."""
+    """Main function to fix all files with Black errors."""
     """Main function to fix all files with Black errors."""
     print("Starting to fix Black formatting errors...")
 

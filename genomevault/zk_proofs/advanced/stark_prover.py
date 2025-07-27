@@ -19,6 +19,8 @@ logger = get_logger(__name__)
 @dataclass
 class STARKProof:
     """Post-quantum STARK proof."""
+    """Post-quantum STARK proof."""
+    """Post-quantum STARK proof."""
 
     proof_id: str
     claim: Dict[str, Any]
@@ -30,14 +32,18 @@ class STARKProof:
 
     @property
     def security_level(self) -> int:
-           """TODO: Add docstring for security_level"""
-     """Post-quantum security level in bits."""
+        """TODO: Add docstring for security_level"""
+        """TODO: Add docstring for security_level"""
+            """TODO: Add docstring for security_level"""
+    """Post-quantum security level in bits."""
         return self.metadata.get("security_bits", 128)
 
     @property
-    def proof_size_kb(self) -> float:
-           """TODO: Add docstring for proof_size_kb"""
-     """Proof size in kilobytes."""
+        def proof_size_kb(self) -> float:
+            """TODO: Add docstring for proof_size_kb"""
+        """TODO: Add docstring for proof_size_kb"""
+            """TODO: Add docstring for proof_size_kb"""
+    """Proof size in kilobytes."""
         total_size = (
             len(json.dumps(self.fri_layers))
             + len(json.dumps(self.query_responses))
@@ -49,6 +55,8 @@ class STARKProof:
 
 class STARKProver:
     """
+    """
+    """
     Scalable Transparent ARgument of Knowledge prover.
     Provides post-quantum security for GenomeVault.
     """
@@ -59,8 +67,10 @@ class STARKProver:
         security_bits: int = 128,
         fri_folding_factor: int = 4,
     ) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize STARK prover.
 
         Args:
@@ -68,13 +78,13 @@ class STARKProver:
             security_bits: Target security level
             fri_folding_factor: FRI protocol folding factor
         """
-        self.field_size = field_size
-        self.security_bits = security_bits
-        self.fri_folding_factor = fri_folding_factor
+            self.field_size = field_size
+            self.security_bits = security_bits
+            self.fri_folding_factor = fri_folding_factor
 
         # Reed-Solomon parameters
-        self.rs_rate = 1 / 8  # 8x blowup factor
-        self.num_queries = self._compute_query_count()
+            self.rs_rate = 1 / 8  # 8x blowup factor
+            self.num_queries = self._compute_query_count()
 
         logger.info(
             f"STARKProver initialized: "
@@ -83,20 +93,24 @@ class STARKProver:
             f"queries={self.num_queries}"
         )
 
-    def _compute_query_count(self) -> int:
-           """TODO: Add docstring for _compute_query_count"""
-     """Compute number of queries needed for security level."""
+            def _compute_query_count(self) -> int:
+                """TODO: Add docstring for _compute_query_count"""
+        """TODO: Add docstring for _compute_query_count"""
+            """TODO: Add docstring for _compute_query_count"""
+    """Compute number of queries needed for security level."""
         # For 128-bit security with 8x blowup
         return max(40, self.security_bits // 3)
 
-    def generate_stark_proof(
+                def generate_stark_proof(
         self,
         computation_trace: np.ndarray,
         public_inputs: Dict[str, Any],
         constraints: List[Dict[str, Any]],
     ) -> STARKProof:
-           """TODO: Add docstring for generate_stark_proof"""
-     """
+        """TODO: Add docstring for generate_stark_proof"""
+        """TODO: Add docstring for generate_stark_proof"""
+            """TODO: Add docstring for generate_stark_proof"""
+    """
         Generate STARK proof for computation trace.
 
         Args:
@@ -156,9 +170,11 @@ class STARKProver:
 
         return proof
 
-    def _commit_to_trace(self, trace: np.ndarray) -> Tuple[str, Dict[str, Any]]:
-           """TODO: Add docstring for _commit_to_trace"""
-     """Commit to execution trace using Merkle tree."""
+            def _commit_to_trace(self, trace: np.ndarray) -> Tuple[str, Dict[str, Any]]:
+                """TODO: Add docstring for _commit_to_trace"""
+        """TODO: Add docstring for _commit_to_trace"""
+            """TODO: Add docstring for _commit_to_trace"""
+    """Commit to execution trace using Merkle tree."""
         # Reed-Solomon encode each column
         encoded_trace = []
 
@@ -179,11 +195,13 @@ class STARKProver:
 
         return commitment.hex(), merkle_tree
 
-    def _generate_constraint_polynomial(
+            def _generate_constraint_polynomial(
         self, trace: np.ndarray, constraints: List[Dict[str, Any]]
     ) -> np.ndarray:
-           """TODO: Add docstring for _generate_constraint_polynomial"""
-     """Generate polynomial that encodes constraint satisfaction."""
+        """TODO: Add docstring for _generate_constraint_polynomial"""
+        """TODO: Add docstring for _generate_constraint_polynomial"""
+            """TODO: Add docstring for _generate_constraint_polynomial"""
+    """Generate polynomial that encodes constraint satisfaction."""
         # Combine all constraints into single polynomial
         combined_poly = np.zeros(trace.shape[0] * 8)  # With blowup
 
@@ -204,11 +222,13 @@ class STARKProver:
 
         return combined_poly
 
-    def _fri_protocol(
+                def _fri_protocol(
         self, polynomial: np.ndarray, initial_commitment: str
     ) -> List[Dict[str, Any]]:
-           """TODO: Add docstring for _fri_protocol"""
-     """
+        """TODO: Add docstring for _fri_protocol"""
+        """TODO: Add docstring for _fri_protocol"""
+            """TODO: Add docstring for _fri_protocol"""
+    """
         Fast Reed-Solomon IOP of Proximity.
         Core of STARK's post-quantum security.
         """
@@ -246,7 +266,7 @@ class STARKProver:
 
         return fri_layers
 
-    def _generate_query_responses(
+                def _generate_query_responses(
         self,
         trace: np.ndarray,
         constraint_poly: np.ndarray,
@@ -254,8 +274,10 @@ class STARKProver:
         constraint_tree: Dict[str, Any],
         query_indices: List[int],
     ) -> List[Dict[str, Any]]:
-           """TODO: Add docstring for _generate_query_responses"""
-     """Generate responses to verifier queries."""
+        """TODO: Add docstring for _generate_query_responses"""
+        """TODO: Add docstring for _generate_query_responses"""
+            """TODO: Add docstring for _generate_query_responses"""
+    """Generate responses to verifier queries."""
         responses = []
 
         for idx in query_indices:
@@ -286,11 +308,13 @@ class STARKProver:
 
         return responses
 
-    def _generate_proof_of_work(
+                def _generate_proof_of_work(
         self, trace_commitment: str, constraint_commitment: str, public_inputs: Dict[str, Any]
     ) -> str:
-           """TODO: Add docstring for _generate_proof_of_work"""
-     """Generate proof of work for additional soundness."""
+        """TODO: Add docstring for _generate_proof_of_work"""
+        """TODO: Add docstring for _generate_proof_of_work"""
+            """TODO: Add docstring for _generate_proof_of_work"""
+    """Generate proof of work for additional soundness."""
         # Compute work threshold based on security parameter
         work_bits = min(24, self.security_bits // 8)
         threshold = 2 ** (256 - work_bits)
@@ -316,9 +340,11 @@ class STARKProver:
 
         return f"{nonce:016x}"
 
-    def _reed_solomon_encode(self, data: np.ndarray) -> np.ndarray:
-           """TODO: Add docstring for _reed_solomon_encode"""
-     """Reed-Solomon encode data with 8x blowup."""
+                def _reed_solomon_encode(self, data: np.ndarray) -> np.ndarray:
+                    """TODO: Add docstring for _reed_solomon_encode"""
+        """TODO: Add docstring for _reed_solomon_encode"""
+            """TODO: Add docstring for _reed_solomon_encode"""
+    """Reed-Solomon encode data with 8x blowup."""
         # Interpolate polynomial from data
         poly_coeffs = self._interpolate_polynomial(data)
 
@@ -330,9 +356,11 @@ class STARKProver:
 
         return encoded
 
-    def _build_merkle_tree(self, leaves: List[bytes]) -> Dict[str, Any]:
-           """TODO: Add docstring for _build_merkle_tree"""
-     """Build Merkle tree from leaves."""
+                    def _build_merkle_tree(self, leaves: List[bytes]) -> Dict[str, Any]:
+                        """TODO: Add docstring for _build_merkle_tree"""
+        """TODO: Add docstring for _build_merkle_tree"""
+            """TODO: Add docstring for _build_merkle_tree"""
+    """Build Merkle tree from leaves."""
         tree = {"leaves": leaves, "layers": [leaves]}
 
         current_layer = leaves
@@ -354,9 +382,11 @@ class STARKProver:
         tree["root"] = current_layer[0]
         return tree
 
-    def _get_merkle_path(self, tree: Dict[str, Any], index: int) -> List[bytes]:
-           """TODO: Add docstring for _get_merkle_path"""
-     """Get Merkle authentication path for leaf."""
+                    def _get_merkle_path(self, tree: Dict[str, Any], index: int) -> List[bytes]:
+                        """TODO: Add docstring for _get_merkle_path"""
+        """TODO: Add docstring for _get_merkle_path"""
+            """TODO: Add docstring for _get_merkle_path"""
+    """Get Merkle authentication path for leaf."""
         path = []
 
         for layer_idx in range(len(tree["layers"]) - 1):
@@ -372,16 +402,20 @@ class STARKProver:
 
         return path
 
-    def _interpolate_polynomial(self, points: np.ndarray) -> np.ndarray:
-           """TODO: Add docstring for _interpolate_polynomial"""
-     """Interpolate polynomial through points (simplified)."""
+                def _interpolate_polynomial(self, points: np.ndarray) -> np.ndarray:
+                    """TODO: Add docstring for _interpolate_polynomial"""
+        """TODO: Add docstring for _interpolate_polynomial"""
+            """TODO: Add docstring for _interpolate_polynomial"""
+    """Interpolate polynomial through points (simplified)."""
         # In practice, would use FFT-based interpolation
         # For now, return mock coefficients
         return np.random.randint(0, self.field_size, len(points))
 
-    def _evaluate_polynomial(self, coeffs: np.ndarray, domain: np.ndarray) -> np.ndarray:
-           """TODO: Add docstring for _evaluate_polynomial"""
-     """Evaluate polynomial on domain (simplified)."""
+                    def _evaluate_polynomial(self, coeffs: np.ndarray, domain: np.ndarray) -> np.ndarray:
+                        """TODO: Add docstring for _evaluate_polynomial"""
+        """TODO: Add docstring for _evaluate_polynomial"""
+            """TODO: Add docstring for _evaluate_polynomial"""
+    """Evaluate polynomial on domain (simplified)."""
         # In practice, would use FFT for efficiency
         evaluations = []
 
@@ -393,17 +427,21 @@ class STARKProver:
 
         return np.array(evaluations)
 
-    def _get_evaluation_domain(self, size: int) -> np.ndarray:
-           """TODO: Add docstring for _get_evaluation_domain"""
-     """Get evaluation domain of given size."""
+                def _get_evaluation_domain(self, size: int) -> np.ndarray:
+                    """TODO: Add docstring for _get_evaluation_domain"""
+        """TODO: Add docstring for _get_evaluation_domain"""
+            """TODO: Add docstring for _get_evaluation_domain"""
+    """Get evaluation domain of given size."""
         # In practice, would use roots of unity
         return np.arange(size) % self.field_size
 
-    def _fold_polynomial(
+                    def _fold_polynomial(
         self, poly: np.ndarray, challenge: bytes, folding_factor: int
     ) -> np.ndarray:
-           """TODO: Add docstring for _fold_polynomial"""
-     """Fold polynomial for FRI round."""
+        """TODO: Add docstring for _fold_polynomial"""
+        """TODO: Add docstring for _fold_polynomial"""
+            """TODO: Add docstring for _fold_polynomial"""
+    """Fold polynomial for FRI round."""
         challenge_int = int.from_bytes(challenge, "big") % self.field_size
 
         # Simple folding (in practice, more sophisticated)
@@ -419,26 +457,32 @@ class STARKProver:
 
         return folded
 
-    def _fiat_shamir_challenge(
+                    def _fiat_shamir_challenge(
         self, commitment: str, fri_layers: List[Dict[str, Any]], round_idx: int
     ) -> bytes:
-           """TODO: Add docstring for _fiat_shamir_challenge"""
-     """Generate challenge using Fiat-Shamir transform."""
+        """TODO: Add docstring for _fiat_shamir_challenge"""
+        """TODO: Add docstring for _fiat_shamir_challenge"""
+            """TODO: Add docstring for _fiat_shamir_challenge"""
+    """Generate challenge using Fiat-Shamir transform."""
         data = {"commitment": commitment, "fri_layers": fri_layers, "round": round_idx}
 
         return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).digest()
 
-    def _compute_fri_rounds(self) -> int:
-           """TODO: Add docstring for _compute_fri_rounds"""
-     """Compute number of FRI rounds needed."""
+        def _compute_fri_rounds(self) -> int:
+            """TODO: Add docstring for _compute_fri_rounds"""
+        """TODO: Add docstring for _compute_fri_rounds"""
+            """TODO: Add docstring for _compute_fri_rounds"""
+    """Compute number of FRI rounds needed."""
         # Based on security parameter and folding factor
         return max(5, self.security_bits // (self.fri_folding_factor * 8))
 
-    def _generate_query_indices(
+            def _generate_query_indices(
         self, trace_commitment: str, constraint_commitment: str
     ) -> List[int]:
-           """TODO: Add docstring for _generate_query_indices"""
-     """Generate random query indices."""
+        """TODO: Add docstring for _generate_query_indices"""
+        """TODO: Add docstring for _generate_query_indices"""
+            """TODO: Add docstring for _generate_query_indices"""
+    """Generate random query indices."""
         # Use Fiat-Shamir to generate pseudorandom indices
         seed = hashlib.sha256((trace_commitment + constraint_commitment).encode()).digest()
 
@@ -449,14 +493,18 @@ class STARKProver:
 
         return indices
 
-    def _combine_commitments(self, comm1: str, comm2: str) -> str:
-           """TODO: Add docstring for _combine_commitments"""
-     """Combine two commitments."""
+        def _combine_commitments(self, comm1: str, comm2: str) -> str:
+            """TODO: Add docstring for _combine_commitments"""
+        """TODO: Add docstring for _combine_commitments"""
+            """TODO: Add docstring for _combine_commitments"""
+    """Combine two commitments."""
         return hashlib.sha256((comm1 + comm2).encode()).hexdigest()
 
-    def _add_polynomials(self, p1: np.ndarray, p2: np.ndarray) -> np.ndarray:
-           """TODO: Add docstring for _add_polynomials"""
-     """Add two polynomials in field."""
+            def _add_polynomials(self, p1: np.ndarray, p2: np.ndarray) -> np.ndarray:
+                """TODO: Add docstring for _add_polynomials"""
+        """TODO: Add docstring for _add_polynomials"""
+            """TODO: Add docstring for _add_polynomials"""
+    """Add two polynomials in field."""
         result = np.zeros(max(len(p1), len(p2)), dtype=np.uint64)
 
         for i in range(len(p1)):
@@ -467,19 +515,23 @@ class STARKProver:
 
         return result
 
-    def _boundary_constraint_poly(
+            def _boundary_constraint_poly(
         self, trace: np.ndarray, register: int, step: int, value: int
     ) -> np.ndarray:
-           """TODO: Add docstring for _boundary_constraint_poly"""
-     """Generate polynomial for boundary constraint."""
+        """TODO: Add docstring for _boundary_constraint_poly"""
+        """TODO: Add docstring for _boundary_constraint_poly"""
+            """TODO: Add docstring for _boundary_constraint_poly"""
+    """Generate polynomial for boundary constraint."""
         # Constraint: trace[step, register] = value
         poly = np.zeros(trace.shape[0] * 8)
         poly[step] = (int(trace[step, register]) - value) % self.field_size
         return poly
 
-    def _transition_constraint_poly(self, trace: np.ndarray, expression: str) -> np.ndarray:
-           """TODO: Add docstring for _transition_constraint_poly"""
-     """Generate polynomial for transition constraint."""
+        def _transition_constraint_poly(self, trace: np.ndarray, expression: str) -> np.ndarray:
+            """TODO: Add docstring for _transition_constraint_poly"""
+        """TODO: Add docstring for _transition_constraint_poly"""
+            """TODO: Add docstring for _transition_constraint_poly"""
+    """Generate polynomial for transition constraint."""
         # Parse and evaluate constraint expression
         # Simplified - in practice would have full expression parser
         poly = np.zeros(trace.shape[0] * 8)
@@ -493,9 +545,11 @@ class STARKProver:
 
         return poly
 
-    def _generate_proof_id(self, public_inputs: Dict[str, Any]) -> str:
-           """TODO: Add docstring for _generate_proof_id"""
-     """Generate unique proof ID."""
+            def _generate_proof_id(self, public_inputs: Dict[str, Any]) -> str:
+                """TODO: Add docstring for _generate_proof_id"""
+        """TODO: Add docstring for _generate_proof_id"""
+            """TODO: Add docstring for _generate_proof_id"""
+    """Generate unique proof ID."""
         data = {
             "inputs": public_inputs,
             "timestamp": time.time(),
@@ -504,9 +558,11 @@ class STARKProver:
 
         return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[:16]
 
-    def _commit_to_evaluations(self, evaluations: np.ndarray) -> Tuple[bytes, Dict[str, Any]]:
-           """TODO: Add docstring for _commit_to_evaluations"""
-     """Commit to polynomial evaluations."""
+                def _commit_to_evaluations(self, evaluations: np.ndarray) -> Tuple[bytes, Dict[str, Any]]:
+                    """TODO: Add docstring for _commit_to_evaluations"""
+        """TODO: Add docstring for _commit_to_evaluations"""
+            """TODO: Add docstring for _commit_to_evaluations"""
+    """Commit to polynomial evaluations."""
         # Convert to bytes for hashing
         leaves = []
         for val in evaluations:
@@ -519,16 +575,22 @@ class STARKProver:
 
 class PostQuantumVerifier:
     """Verifier for post-quantum STARK proofs."""
+    """Verifier for post-quantum STARK proofs."""
+    """Verifier for post-quantum STARK proofs."""
 
     def __init__(self, field_size: int = 2**64 - 2**32 + 1) -> None:
-           """TODO: Add docstring for __init__"""
-     """Initialize verifier."""
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """Initialize verifier."""
         self.field_size = field_size
         logger.info("PostQuantumVerifier initialized")
 
-    def verify_stark(self, proof: STARKProof) -> bool:
-           """TODO: Add docstring for verify_stark"""
-     """
+        def verify_stark(self, proof: STARKProof) -> bool:
+            """TODO: Add docstring for verify_stark"""
+        """TODO: Add docstring for verify_stark"""
+            """TODO: Add docstring for verify_stark"""
+    """
         Verify STARK proof.
 
         Returns:
@@ -559,9 +621,11 @@ class PostQuantumVerifier:
             logger.error(f"STARK verification error: {e}")
             return False
 
-    def _verify_proof_of_work(self, proof: STARKProof) -> bool:
-           """TODO: Add docstring for _verify_proof_of_work"""
-     """Verify proof of work meets threshold."""
+            def _verify_proof_of_work(self, proof: STARKProof) -> bool:
+                """TODO: Add docstring for _verify_proof_of_work"""
+        """TODO: Add docstring for _verify_proof_of_work"""
+            """TODO: Add docstring for _verify_proof_of_work"""
+    """Verify proof of work meets threshold."""
         work_bits = min(24, proof.security_level // 8)
         threshold = 2 ** (256 - work_bits)
 
@@ -578,9 +642,11 @@ class PostQuantumVerifier:
         hash_value = hashlib.sha256(data.encode()).digest()
         return int.from_bytes(hash_value, "big") < threshold
 
-    def _verify_fri_layers(self, fri_layers: List[Dict[str, Any]]) -> bool:
-           """TODO: Add docstring for _verify_fri_layers"""
-     """Verify FRI protocol execution."""
+                def _verify_fri_layers(self, fri_layers: List[Dict[str, Any]]) -> bool:
+                    """TODO: Add docstring for _verify_fri_layers"""
+        """TODO: Add docstring for _verify_fri_layers"""
+            """TODO: Add docstring for _verify_fri_layers"""
+    """Verify FRI protocol execution."""
         # Check layer consistency
         prev_degree = None
 
@@ -601,11 +667,13 @@ class PostQuantumVerifier:
 
         return True
 
-    def _verify_query_responses(
+                    def _verify_query_responses(
         self, responses: List[Dict[str, Any]], commitment_root: str
     ) -> bool:
-           """TODO: Add docstring for _verify_query_responses"""
-     """Verify query responses against commitment."""
+        """TODO: Add docstring for _verify_query_responses"""
+        """TODO: Add docstring for _verify_query_responses"""
+            """TODO: Add docstring for _verify_query_responses"""
+    """Verify query responses against commitment."""
         # In practice, would verify Merkle paths and constraint evaluations
         # For now, simulate verification
 

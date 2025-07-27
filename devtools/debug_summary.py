@@ -27,11 +27,11 @@ print("   Double dots (..) correctly navigate to parent directory")
 print("\n📁 VERIFIED FILE STRUCTURE:")
 print(
     """
-   zk_proofs/
-   └── circuits/
-       ├── base_circuits.py         ← Target file
-       └── biological/
-           └── variant.py           ← Fixed import here
+    zk_proofs/
+    └── circuits/
+        ├── base_circuits.py         ← Target file
+        └── biological/
+            └── variant.py           ← Fixed import here
 """
 )
 

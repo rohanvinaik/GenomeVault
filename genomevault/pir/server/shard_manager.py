@@ -26,6 +26,8 @@ logger = get_logger(__name__)
 @dataclass
 class ShardMetadata:
     """Metadata for a database shard."""
+    """Metadata for a database shard."""
+    """Metadata for a database shard."""
 
     shard_id: str
     shard_index: int
@@ -39,6 +41,8 @@ class ShardMetadata:
     populations: Optional[List[str]] = None
 
     def to_dict(self) -> Dict:
+        """TODO: Add docstring for to_dict"""
+        """TODO: Add docstring for to_dict"""
             """TODO: Add docstring for to_dict"""
     return {
             "id": self.shard_id,
@@ -57,61 +61,73 @@ class ShardMetadata:
 @dataclass
 class ShardDistribution:
     """Distribution strategy for shards across servers."""
+    """Distribution strategy for shards across servers."""
+    """Distribution strategy for shards across servers."""
 
     strategy: str  # 'replicated', 'striped', 'hybrid'
     replication_factor: int
     server_assignments: Dict[str, List[str]] = field(default_factory=dict)
 
     def assign_shard(self, shard_id: str, server_ids: List[str]) -> None:
-           """TODO: Add docstring for assign_shard"""
-     """Assign shard to servers."""
+        """TODO: Add docstring for assign_shard"""
+        """TODO: Add docstring for assign_shard"""
+            """TODO: Add docstring for assign_shard"""
+    """Assign shard to servers."""
         self.server_assignments[shard_id] = server_ids
 
-    def get_servers_for_shard(self, shard_id: str) -> List[str]:
-           """TODO: Add docstring for get_servers_for_shard"""
-     """Get servers hosting a shard."""
+        def get_servers_for_shard(self, shard_id: str) -> List[str]:
+            """TODO: Add docstring for get_servers_for_shard"""
+        """TODO: Add docstring for get_servers_for_shard"""
+            """TODO: Add docstring for get_servers_for_shard"""
+    """Get servers hosting a shard."""
         return self.server_assignments.get(shard_id, [])
 
 
 class ShardManager:
+    """
+    """
     """
     Manages database sharding for PIR system.
     Handles creation, distribution, and maintenance of data shards.
     """
 
     def __init__(self, data_directory: Path, num_shards: int = 10) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize shard manager.
 
         Args:
             data_directory: Base directory for shard storage
             num_shards: Number of shards to create
         """
-        self.data_directory = Path(data_directory)
-        self.num_shards = num_shards
+            self.data_directory = Path(data_directory)
+            self.num_shards = num_shards
 
         # Create directory if needed
-        self.data_directory.mkdir(parents=True, exist_ok=True)
+            self.data_directory.mkdir(parents=True, exist_ok=True)
 
         # Shard metadata
-        self.shards: Dict[str, ShardMetadata] = {}
-        self.shard_distribution = ShardDistribution(strategy="hybrid", replication_factor=3)
+            self.shards: Dict[str, ShardMetadata] = {}
+            self.shard_distribution = ShardDistribution(strategy="hybrid", replication_factor=3)
 
         # Thread pool for parallel operations
-        self.executor = ThreadPoolExecutor(max_workers=4)
+            self.executor = ThreadPoolExecutor(max_workers=4)
 
         # Lock for thread safety
-        self.lock = threading.Lock()
+            self.lock = threading.Lock()
 
         # Load existing shards
-        self._load_shard_metadata()
+            self._load_shard_metadata()
 
         logger.info(f"ShardManager initialized with {len(self.shards)} shards")
 
-    def _load_shard_metadata(self) -> None:
-           """TODO: Add docstring for _load_shard_metadata"""
-     """Load shard metadata from manifest."""
+            def _load_shard_metadata(self) -> None:
+                """TODO: Add docstring for _load_shard_metadata"""
+        """TODO: Add docstring for _load_shard_metadata"""
+            """TODO: Add docstring for _load_shard_metadata"""
+    """Load shard metadata from manifest."""
         manifest_path = self.data_directory / "shard_manifest.json"
 
         if manifest_path.exists():
@@ -131,20 +147,22 @@ class ShardManager:
                     genomic_regions=shard_data.get("regions"),
                     populations=shard_data.get("populations"),
                 )
-        self.shards[metadata.shard_id] = metadata
+                self.shards[metadata.shard_id] = metadata
 
             # Load distribution
             if "distribution" in manifest:
                 dist = manifest["distribution"]
-        self.shard_distribution = ShardDistribution(
+                self.shard_distribution = ShardDistribution(
                     strategy=dist["strategy"],
                     replication_factor=dist["replication_factor"],
                     server_assignments=dist.get("assignments", {}),
                 )
 
-    def _save_shard_metadata(self) -> None:
-           """TODO: Add docstring for _save_shard_metadata"""
-     """Save shard metadata to manifest."""
+                def _save_shard_metadata(self) -> None:
+                    """TODO: Add docstring for _save_shard_metadata"""
+        """TODO: Add docstring for _save_shard_metadata"""
+            """TODO: Add docstring for _save_shard_metadata"""
+    """Save shard metadata to manifest."""
         manifest = {
             "version": "1.0",
             "created": time.time(),
@@ -164,9 +182,11 @@ class ShardManager:
             json.dump(manifest, f, indent=2)
 
     @performance_logger.log_operation("create_shards")
-    def create_shards_from_data(self, data_source: Path, data_type: str = "genomic") -> List[str]:
-           """TODO: Add docstring for create_shards_from_data"""
-     """
+            def create_shards_from_data(self, data_source: Path, data_type: str = "genomic") -> List[str]:
+                """TODO: Add docstring for create_shards_from_data"""
+        """TODO: Add docstring for create_shards_from_data"""
+            """TODO: Add docstring for create_shards_from_data"""
+    """
         Create shards from source data.
 
         Args:
@@ -196,7 +216,7 @@ class ShardManager:
             shard_data = data[start_idx:end_idx]
 
             future = self.executor.submit(
-        self._create_single_shard,
+            self._create_single_shard,
                 shard_index=i,
                 shard_data=shard_data,
                 data_type=data_type,
@@ -211,16 +231,18 @@ class ShardManager:
 
         # Save metadata
         with self.lock:
-        self._save_shard_metadata()
+            self._save_shard_metadata()
 
         logger.info(f"Created {len(created_shards)} shards")
         return created_shards
 
-    def _create_single_shard(
+            def _create_single_shard(
         self, shard_index: int, shard_data: bytes, data_type: str
     ) -> Optional[str]:
-           """TODO: Add docstring for _create_single_shard"""
-     """
+        """TODO: Add docstring for _create_single_shard"""
+        """TODO: Add docstring for _create_single_shard"""
+            """TODO: Add docstring for _create_single_shard"""
+    """
         Create a single shard.
 
         Args:
@@ -267,7 +289,7 @@ class ShardManager:
 
             # Store metadata
             with self.lock:
-        self.shards[shard_id] = metadata
+                self.shards[shard_id] = metadata
 
             logger.info(f"Created shard {shard_id} with {item_count} items")
             return shard_id
@@ -276,9 +298,11 @@ class ShardManager:
             logger.error(f"Error creating shard {shard_index}: {e}")
             return None
 
-    def distribute_shards(self, server_list: List[str]) -> ShardDistribution:
-           """TODO: Add docstring for distribute_shards"""
-     """
+            def distribute_shards(self, server_list: List[str]) -> ShardDistribution:
+                """TODO: Add docstring for distribute_shards"""
+        """TODO: Add docstring for distribute_shards"""
+            """TODO: Add docstring for distribute_shards"""
+    """
         Distribute shards across servers.
 
         Args:
@@ -293,7 +317,7 @@ class ShardManager:
             )
 
         # Clear existing assignments
-        self.shard_distribution.server_assignments.clear()
+            self.shard_distribution.server_assignments.clear()
 
         # Distribute shards
         for shard_id in self.shards:
@@ -322,18 +346,20 @@ class ShardManager:
                     needed = self.shard_distribution.replication_factor - len(assigned_servers)
                     assigned_servers.extend(ln_servers[:needed])
 
-        self.shard_distribution.assign_shard(shard_id, assigned_servers)
+                    self.shard_distribution.assign_shard(shard_id, assigned_servers)
 
         # Save distribution
         with self.lock:
-        self._save_shard_metadata()
+            self._save_shard_metadata()
 
         logger.info(f"Distributed {len(self.shards)} shards across {len(server_list)} servers")
         return self.shard_distribution
 
-    def verify_shard_integrity(self, shard_id: str) -> bool:
-           """TODO: Add docstring for verify_shard_integrity"""
-     """
+            def verify_shard_integrity(self, shard_id: str) -> bool:
+                """TODO: Add docstring for verify_shard_integrity"""
+        """TODO: Add docstring for verify_shard_integrity"""
+            """TODO: Add docstring for verify_shard_integrity"""
+    """
         Verify integrity of a shard.
 
         Args:
@@ -364,9 +390,11 @@ class ShardManager:
 
         return True
 
-    def update_shard(self, shard_id: str, new_data: bytes) -> bool:
-           """TODO: Add docstring for update_shard"""
-     """
+            def update_shard(self, shard_id: str, new_data: bytes) -> bool:
+                """TODO: Add docstring for update_shard"""
+        """TODO: Add docstring for update_shard"""
+            """TODO: Add docstring for update_shard"""
+    """
         Update a shard with new data.
 
         Args:
@@ -409,7 +437,7 @@ class ShardManager:
                 metadata.item_count = len(new_data) // item_size
 
                 # Save metadata
-        self._save_shard_metadata()
+                    self._save_shard_metadata()
 
             # Remove backup
             backup_path.unlink()
@@ -427,9 +455,11 @@ class ShardManager:
 
             return False
 
-    def get_shard_statistics(self) -> Dict[str, Any]:
-           """TODO: Add docstring for get_shard_statistics"""
-     """
+                def get_shard_statistics(self) -> Dict[str, Any]:
+                    """TODO: Add docstring for get_shard_statistics"""
+        """TODO: Add docstring for get_shard_statistics"""
+            """TODO: Add docstring for get_shard_statistics"""
+    """
         Get statistics about shards.
 
         Returns:
@@ -464,9 +494,11 @@ class ShardManager:
             },
         }
 
-    def optimize_distribution(self, server_stats: Dict[str, Dict]) -> ShardDistribution:
-           """TODO: Add docstring for optimize_distribution"""
-     """
+                def optimize_distribution(self, server_stats: Dict[str, Dict]) -> ShardDistribution:
+                    """TODO: Add docstring for optimize_distribution"""
+        """TODO: Add docstring for optimize_distribution"""
+            """TODO: Add docstring for optimize_distribution"""
+    """
         Optimize shard distribution based on server performance.
 
         Args:
@@ -500,10 +532,12 @@ class ShardManager:
         logger.info("Optimized shard distribution based on server performance")
         return new_distribution
 
-    def cleanup(self) -> None:
-           """TODO: Add docstring for cleanup"""
-     """Cleanup resources."""
-        self.executor.shutdown(wait=True)
+                def cleanup(self) -> None:
+                    """TODO: Add docstring for cleanup"""
+        """TODO: Add docstring for cleanup"""
+            """TODO: Add docstring for cleanup"""
+    """Cleanup resources."""
+                    self.executor.shutdown(wait=True)
 
 
 # Example usage

@@ -15,30 +15,40 @@ import torch
 
 class DependencyAnalyzer(ast.NodeVisitor):
     """Analyze Python files for import dependencies"""
+    """Analyze Python files for import dependencies"""
+    """Analyze Python files for import dependencies"""
 
     def __init__(self) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
         self.imports = set()
         self.from_imports = {}
         self.missing_imports = set()
 
-    def visit_Import(self, node) -> None:
+        def visit_Import(self, node) -> None:
+            """TODO: Add docstring for visit_Import"""
+        """TODO: Add docstring for visit_Import"""
             """TODO: Add docstring for visit_Import"""
     for alias in node.names:
         self.imports.add(alias.name)
 
-    def visit_ImportFrom(self, node) -> None:
+        def visit_ImportFrom(self, node) -> None:
+            """TODO: Add docstring for visit_ImportFrom"""
+        """TODO: Add docstring for visit_ImportFrom"""
             """TODO: Add docstring for visit_ImportFrom"""
     if node.module:
             module_parts = []
             for name in node.names:
                 module_parts.append((node.module, name.name))
-        self.from_imports[node.module] = module_parts
+                self.from_imports[node.module] = module_parts
 
 
-    def analyze_file(file_path: Path) -> Dict:
-       """TODO: Add docstring for analyze_file"""
-     """Analyze a Python file for dependencies and issues"""
+                def analyze_file(file_path: Path) -> Dict:
+                    """TODO: Add docstring for analyze_file"""
+        """TODO: Add docstring for analyze_file"""
+        """TODO: Add docstring for analyze_file"""
+    """Analyze a Python file for dependencies and issues"""
     issues = {
         "missing_imports": [],
         "syntax_errors": [],
@@ -80,9 +90,11 @@ class DependencyAnalyzer(ast.NodeVisitor):
     return issues
 
 
-    def find_experimental_modules(base_path: Path) -> List[Path]:
-       """TODO: Add docstring for find_experimental_modules"""
-     """Find all experimental and benchmark modules"""
+        def find_experimental_modules(base_path: Path) -> List[Path]:
+            """TODO: Add docstring for find_experimental_modules"""
+        """TODO: Add docstring for find_experimental_modules"""
+        """TODO: Add docstring for find_experimental_modules"""
+    """Find all experimental and benchmark modules"""
     modules = []
 
     # Key directories to check
@@ -106,9 +118,11 @@ class DependencyAnalyzer(ast.NodeVisitor):
     return modules
 
 
-    def fix_missing_dependencies(base_path: Path, missing_deps: Set[str]) -> None:
-       """TODO: Add docstring for fix_missing_dependencies"""
-     """Install missing dependencies"""
+                    def fix_missing_dependencies(base_path: Path, missing_deps: Set[str]) -> None:
+                        """TODO: Add docstring for fix_missing_dependencies"""
+        """TODO: Add docstring for fix_missing_dependencies"""
+        """TODO: Add docstring for fix_missing_dependencies"""
+    """Install missing dependencies"""
     print("\n📦 Installing missing dependencies...")
 
     # Map common import names to package names
@@ -142,9 +156,11 @@ class DependencyAnalyzer(ast.NodeVisitor):
         subprocess.check_call([sys.executable, "-m", "pip", "install"] + unique_packages)
 
 
-    def create_missing_init_files(base_path: Path) -> Dict[str, Any]:
-       """TODO: Add docstring for create_missing_init_files"""
-     """Create missing __init__.py files"""
+        def create_missing_init_files(base_path: Path) -> Dict[str, Any]:
+            """TODO: Add docstring for create_missing_init_files"""
+        """TODO: Add docstring for create_missing_init_files"""
+        """TODO: Add docstring for create_missing_init_files"""
+    """Create missing __init__.py files"""
     print("\n📝 Creating missing __init__.py files...")
 
     created = 0
@@ -165,9 +181,11 @@ class DependencyAnalyzer(ast.NodeVisitor):
     return created
 
 
-    def generate_fix_report(base_path: Path, all_issues: Dict[Path, Dict]) -> Path:
-       """TODO: Add docstring for generate_fix_report"""
-     """Generate a detailed report of issues and fixes"""
+            def generate_fix_report(base_path: Path, all_issues: Dict[Path, Dict]) -> Path:
+                """TODO: Add docstring for generate_fix_report"""
+        """TODO: Add docstring for generate_fix_report"""
+        """TODO: Add docstring for generate_fix_report"""
+    """Generate a detailed report of issues and fixes"""
     report_lines = [
         "# GenomeVault Experimental Modules Analysis Report",
         "=" * 60,
@@ -229,9 +247,11 @@ class DependencyAnalyzer(ast.NodeVisitor):
     return report_path
 
 
-    def main() -> None:
-       """TODO: Add docstring for main"""
-     """Main analysis and fix routine"""
+            def main() -> None:
+                """TODO: Add docstring for main"""
+        """TODO: Add docstring for main"""
+        """TODO: Add docstring for main"""
+    """Main analysis and fix routine"""
     print("🔍 GenomeVault Experimental Modules Analyzer & Fixer")
     print("=" * 60)
 
@@ -297,9 +317,11 @@ project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 os.environ['PYTHONPATH'] = str(project_root)
 
-    def run_benchmarks() -> None:
-       """TODO: Add docstring for run_benchmarks"""
-     """Run all benchmarks"""
+            def run_benchmarks() -> None:
+                """TODO: Add docstring for run_benchmarks"""
+        """TODO: Add docstring for run_benchmarks"""
+        """TODO: Add docstring for run_benchmarks"""
+    """Run all benchmarks"""
     print("Running benchmarks...")
 
     benchmark_dir = project_root / "benchmarks"
@@ -312,9 +334,11 @@ os.environ['PYTHONPATH'] = str(project_root)
                 except Exception as e:
                     print(f"Error in {bench_file.name}: {e}")
 
-    def run_experiments() -> None:
-       """TODO: Add docstring for run_experiments"""
-     """Run experimental modules"""
+                    def run_experiments() -> None:
+                        """TODO: Add docstring for run_experiments"""
+        """TODO: Add docstring for run_experiments"""
+        """TODO: Add docstring for run_experiments"""
+    """Run experimental modules"""
     print("\\nRunning experiments...")
 
     exp_dir = project_root / "experiments"

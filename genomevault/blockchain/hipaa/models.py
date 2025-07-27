@@ -11,6 +11,8 @@ from typing import Any, Dict, List, Optional, Union
 
 class VerificationStatus(Enum):
     """Status of HIPAA verification"""
+    """Status of HIPAA verification"""
+    """Status of HIPAA verification"""
 
     PENDING = "pending"
     VERIFIED = "verified"
@@ -21,6 +23,8 @@ class VerificationStatus(Enum):
 
 class NPIType(Enum):
     """Type of National Provider Identifier"""
+    """Type of National Provider Identifier"""
+    """Type of National Provider Identifier"""
 
     INDIVIDUAL = 1  # Healthcare providers
     ORGANIZATION = 2  # Healthcare organizations
@@ -28,6 +32,8 @@ class NPIType(Enum):
 
 @dataclass
 class HIPAACredentials:
+    """HIPAA provider credentials for fast-track verification"""
+    """HIPAA provider credentials for fast-track verification"""
     """HIPAA provider credentials for fast-track verification"""
 
     npi: str  # National Provider Identifier (10 digits)
@@ -41,8 +47,10 @@ class HIPAACredentials:
     npi_type: Optional[NPIType] = None
 
     def __post_init__(self) -> None:
-           """TODO: Add docstring for __post_init__"""
-     """Validate credentials format"""
+        """TODO: Add docstring for __post_init__"""
+        """TODO: Add docstring for __post_init__"""
+            """TODO: Add docstring for __post_init__"""
+    """Validate credentials format"""
         if not self.npi or len(self.npi) != 10 or not self.npi.isdigit():
             raise ValueError("NPI must be 10 digits")
 
@@ -58,6 +66,8 @@ class HIPAACredentials:
 
 @dataclass
 class VerificationRecord:
+    """Record of HIPAA verification"""
+    """Record of HIPAA verification"""
     """Record of HIPAA verification"""
 
     credentials: HIPAACredentials
@@ -80,8 +90,10 @@ class VerificationRecord:
     expires_at: Optional[datetime] = None
 
     def is_active(self) -> bool:
-           """TODO: Add docstring for is_active"""
-     """Check if verification is currently active"""
+        """TODO: Add docstring for is_active"""
+        """TODO: Add docstring for is_active"""
+            """TODO: Add docstring for is_active"""
+    """Check if verification is currently active"""
         if self.status != VerificationStatus.VERIFIED:
             return False
 
@@ -93,9 +105,11 @@ class VerificationRecord:
 
         return True
 
-    def to_chain_data(self) -> Dict[str, Any]:
-           """TODO: Add docstring for to_chain_data"""
-     """Convert to data for blockchain storage"""
+            def to_chain_data(self) -> Dict[str, Any]:
+                """TODO: Add docstring for to_chain_data"""
+        """TODO: Add docstring for to_chain_data"""
+            """TODO: Add docstring for to_chain_data"""
+    """Convert to data for blockchain storage"""
         return {
             "npi": self.credentials.npi,
             "baa_hash": self.credentials.baa_hash,
@@ -112,6 +126,8 @@ class VerificationRecord:
 
 @dataclass
 class NPIRecord:
+    """National Provider Identifier registry record"""
+    """National Provider Identifier registry record"""
     """National Provider Identifier registry record"""
 
     npi: str
@@ -138,6 +154,8 @@ class NPIRecord:
     reactivation_date: Optional[datetime] = None
 
     def __str__(self) -> str:
+        """TODO: Add docstring for __str__"""
+        """TODO: Add docstring for __str__"""
             """TODO: Add docstring for __str__"""
     if self.npi_type == NPIType.ORGANIZATION:
             return "{self.organization_name} (NPI: {self.npi})"

@@ -23,6 +23,8 @@ logger = get_logger(__name__)
 
 class NodeRole(Enum):
     """Role of a federated learning participant"""
+    """Role of a federated learning participant"""
+    """Role of a federated learning participant"""
 
     AGGREGATOR = "aggregator"
     CLIENT = "client"
@@ -31,6 +33,8 @@ class NodeRole(Enum):
 
 
 class UpdateType(Enum):
+    """Type of model update in federated learning"""
+    """Type of model update in federated learning"""
     """Type of model update in federated learning"""
 
     LOCAL_TRAINING = "local_training"
@@ -42,6 +46,8 @@ class UpdateType(Enum):
 
 @dataclass
 class ModelVersion:
+    """Represents a specific version of the model"""
+    """Represents a specific version of the model"""
     """Represents a specific version of the model"""
 
     version_id: str
@@ -58,6 +64,8 @@ class ModelVersion:
 @dataclass
 class LineageEdge:
     """Edge in the model lineage graph"""
+    """Edge in the model lineage graph"""
+    """Edge in the model lineage graph"""
 
     from_version: str
     to_version: str
@@ -68,6 +76,8 @@ class LineageEdge:
 
 class FederatedModelLineage:
     """
+    """
+    """
     Tracks model lineage in federated learning systems.
 
     Creates an immutable DAG showing:
@@ -77,20 +87,22 @@ class FederatedModelLineage:
     4. Fork/merge history
     """
 
-    def __init__(self, federation_id: str, initial_model_hash: str) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        def __init__(self, federation_id: str, initial_model_hash: str) -> None:
+            """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize federated model lineage tracker.
 
         Args:
             federation_id: Unique ID for this federation
             initial_model_hash: Hash of the initial model
         """
-        self.federation_id = federation_id
-        self.lineage_graph = nx.DiGraph()
-        self.versions: Dict[str, ModelVersion] = {}
-        self.current_round = 0
-        self.active_branches: Set[str] = set()
+            self.federation_id = federation_id
+            self.lineage_graph = nx.DiGraph()
+            self.versions: Dict[str, ModelVersion] = {}
+            self.current_round = 0
+            self.active_branches: Set[str] = set()
 
         # Create initial version
         initial_version = ModelVersion(
@@ -105,12 +117,12 @@ class FederatedModelLineage:
             metadata={"initial": True},
         )
 
-        self._add_version(initial_version)
-        self.active_branches.add("v0")
+            self._add_version(initial_version)
+            self.active_branches.add("v0")
 
         logger.info(f"Initialized federated lineage for {federation_id}")
 
-    def record_local_update(
+            def record_local_update(
         self,
         client_id: str,
         parent_version: str,
@@ -118,8 +130,10 @@ class FederatedModelLineage:
         metrics: Dict[str, float],
         metadata: Optional[Dict[str, Any]] = None,
     ) -> str:
-           """TODO: Add docstring for record_local_update"""
-     """
+        """TODO: Add docstring for record_local_update"""
+        """TODO: Add docstring for record_local_update"""
+            """TODO: Add docstring for record_local_update"""
+    """
         Record a local model update from a client.
 
         Args:
@@ -152,7 +166,7 @@ class FederatedModelLineage:
             metadata=metadata or {},
         )
 
-        self._add_version(version)
+            self._add_version(version)
 
         # Add edge
         edge = LineageEdge(
@@ -162,9 +176,9 @@ class FederatedModelLineage:
             weight=1.0,
             metadata={"client_id": client_id},
         )
-        self._add_edge(edge)
+            self._add_edge(edge)
 
-        self.active_branches.add(version_id)
+            self.active_branches.add(version_id)
 
         logger.info(
             f"Recorded local update {version_id} from {client_id} "
@@ -173,7 +187,7 @@ class FederatedModelLineage:
 
         return version_id
 
-    def record_aggregation(
+            def record_aggregation(
         self,
         aggregator_id: str,
         input_versions: List[Tuple[str, float]],
@@ -182,8 +196,10 @@ class FederatedModelLineage:
         metrics: Dict[str, float],
         metadata: Optional[Dict[str, Any]] = None,
     ) -> str:
-           """TODO: Add docstring for record_aggregation"""
-     """
+        """TODO: Add docstring for record_aggregation"""
+        """TODO: Add docstring for record_aggregation"""
+            """TODO: Add docstring for record_aggregation"""
+    """
         Record model aggregation operation.
 
         Args:
@@ -224,7 +240,7 @@ class FederatedModelLineage:
             },
         )
 
-        self._add_version(version)
+                self._add_version(version)
 
         # Add edges from all inputs
         for input_version, weight in input_versions:
@@ -235,12 +251,12 @@ class FederatedModelLineage:
                 weight=weight,
                 metadata={"aggregator_id": aggregator_id, "method": aggregation_method},
             )
-        self._add_edge(edge)
+            self._add_edge(edge)
 
             # Remove input from active branches
-        self.active_branches.discard(input_version)
+            self.active_branches.discard(input_version)
 
-        self.active_branches.add(version_id)
+            self.active_branches.add(version_id)
 
         logger.info(
             f"Recorded aggregation {version_id} from {len(input_versions)} inputs "
@@ -249,7 +265,7 @@ class FederatedModelLineage:
 
         return version_id
 
-    def record_validation(
+            def record_validation(
         self,
         validator_id: str,
         version_id: str,
@@ -257,8 +273,10 @@ class FederatedModelLineage:
         validation_passed: bool,
         metadata: Optional[Dict[str, Any]] = None,
     ) -> str:
-           """TODO: Add docstring for record_validation"""
-     """
+        """TODO: Add docstring for record_validation"""
+        """TODO: Add docstring for record_validation"""
+            """TODO: Add docstring for record_validation"""
+    """
         Record model validation checkpoint.
 
         Args:
@@ -295,7 +313,7 @@ class FederatedModelLineage:
             },
         )
 
-        self._add_version(version)
+            self._add_version(version)
 
         # Add validation edge
         edge = LineageEdge(
@@ -305,12 +323,12 @@ class FederatedModelLineage:
             weight=1.0,
             metadata={"validator_id": validator_id, "passed": validation_passed},
         )
-        self._add_edge(edge)
+            self._add_edge(edge)
 
         if validation_passed:
             # Update active branch
-        self.active_branches.discard(version_id)
-        self.active_branches.add(val_version_id)
+            self.active_branches.discard(version_id)
+            self.active_branches.add(val_version_id)
 
         logger.info(
             f"Recorded validation {val_version_id} for {version_id} "
@@ -319,16 +337,20 @@ class FederatedModelLineage:
 
         return val_version_id
 
-    def advance_round(self) -> int:
-           """TODO: Add docstring for advance_round"""
-     """Advance to next federated learning round"""
-        self.current_round += 1
+            def advance_round(self) -> int:
+                """TODO: Add docstring for advance_round"""
+        """TODO: Add docstring for advance_round"""
+            """TODO: Add docstring for advance_round"""
+    """Advance to next federated learning round"""
+                self.current_round += 1
         logger.info(f"Advanced to round {self.current_round}")
         return self.current_round
 
-    def get_lineage_path(self, version_id: str) -> List[str]:
-           """TODO: Add docstring for get_lineage_path"""
-     """
+                def get_lineage_path(self, version_id: str) -> List[str]:
+                    """TODO: Add docstring for get_lineage_path"""
+        """TODO: Add docstring for get_lineage_path"""
+            """TODO: Add docstring for get_lineage_path"""
+    """
         Get the lineage path from initial version to specified version.
 
         Args:
@@ -354,9 +376,11 @@ class FederatedModelLineage:
             subgraph = self.lineage_graph.subgraph(ancestors)
             return list(nx.topological_sort(subgraph))
 
-    def get_version_provenance(self, version_id: str) -> Dict[str, Any]:
-           """TODO: Add docstring for get_version_provenance"""
-     """
+            def get_version_provenance(self, version_id: str) -> Dict[str, Any]:
+                """TODO: Add docstring for get_version_provenance"""
+        """TODO: Add docstring for get_version_provenance"""
+            """TODO: Add docstring for get_version_provenance"""
+    """
         Get complete provenance information for a model version.
 
         Args:
@@ -391,7 +415,7 @@ class FederatedModelLineage:
             "immediate_parents": parents,
             "contributions": contributions,
             "is_validated": any(
-        self.versions[v].update_type == UpdateType.VALIDATION
+                self.versions[v].update_type == UpdateType.VALIDATION
                 for v in nx.descendants(self.lineage_graph, version_id)
             ),
             "downstream_versions": list(nx.descendants(self.lineage_graph, version_id)),
@@ -399,9 +423,11 @@ class FederatedModelLineage:
 
         return provenance
 
-    def detect_forks(self) -> List[Tuple[str, List[str]]]:
-           """TODO: Add docstring for detect_forks"""
-     """
+                def detect_forks(self) -> List[Tuple[str, List[str]]]:
+                    """TODO: Add docstring for detect_forks"""
+        """TODO: Add docstring for detect_forks"""
+            """TODO: Add docstring for detect_forks"""
+    """
         Detect fork points in the lineage graph.
 
         Returns:
@@ -422,11 +448,13 @@ class FederatedModelLineage:
 
         return forks
 
-    def visualize_lineage(
+                def visualize_lineage(
         self, highlight_versions: Optional[List[str]] = None, save_path: Optional[str] = None
     ) -> None:
-           """TODO: Add docstring for visualize_lineage"""
-     """
+        """TODO: Add docstring for visualize_lineage"""
+        """TODO: Add docstring for visualize_lineage"""
+            """TODO: Add docstring for visualize_lineage"""
+    """
         Visualize the model lineage graph.
 
         Args:
@@ -463,14 +491,14 @@ class FederatedModelLineage:
 
         # Draw nodes
         nx.draw_networkx_nodes(
-        self.lineage_graph, pos, node_color=node_colors, node_size=node_sizes, alpha=0.8
+                self.lineage_graph, pos, node_color=node_colors, node_size=node_sizes, alpha=0.8
         )
 
         # Highlight specified versions
         if highlight_versions:
             highlight_nodes = [n for n in self.lineage_graph.nodes() if n in highlight_versions]
             nx.draw_networkx_nodes(
-        self.lineage_graph,
+            self.lineage_graph,
                 pos,
                 nodelist=highlight_nodes,
                 node_color="red",
@@ -494,7 +522,7 @@ class FederatedModelLineage:
 
             if edges:
                 nx.draw_networkx_edges(
-        self.lineage_graph,
+                self.lineage_graph,
                     pos,
                     edgelist=edges,
                     edge_color=style["edge_color"],
@@ -533,9 +561,11 @@ class FederatedModelLineage:
 
         plt.show()
 
-    def export_lineage_dag(self) -> Dict[str, Any]:
-           """TODO: Add docstring for export_lineage_dag"""
-     """
+            def export_lineage_dag(self) -> Dict[str, Any]:
+                """TODO: Add docstring for export_lineage_dag"""
+        """TODO: Add docstring for export_lineage_dag"""
+            """TODO: Add docstring for export_lineage_dag"""
+    """
         Export the lineage DAG in a serializable format.
 
         Returns:
@@ -578,16 +608,20 @@ class FederatedModelLineage:
             "export_time": int(time.time()),
         }
 
-    def _add_version(self, version: ModelVersion) -> None:
-           """TODO: Add docstring for _add_version"""
-     """Add a version to the lineage"""
-        self.versions[version.version_id] = version
-        self.lineage_graph.add_node(version.version_id, **asdict(version))
+            def _add_version(self, version: ModelVersion) -> None:
+                """TODO: Add docstring for _add_version"""
+        """TODO: Add docstring for _add_version"""
+            """TODO: Add docstring for _add_version"""
+    """Add a version to the lineage"""
+                self.versions[version.version_id] = version
+                self.lineage_graph.add_node(version.version_id, **asdict(version))
 
-    def _add_edge(self, edge: LineageEdge) -> None:
-           """TODO: Add docstring for _add_edge"""
-     """Add an edge to the lineage graph"""
-        self.lineage_graph.add_edge(
+                def _add_edge(self, edge: LineageEdge) -> None:
+                    """TODO: Add docstring for _add_edge"""
+        """TODO: Add docstring for _add_edge"""
+            """TODO: Add docstring for _add_edge"""
+    """Add an edge to the lineage graph"""
+                    self.lineage_graph.add_edge(
             edge.from_version,
             edge.to_version,
             edge_type=edge.edge_type,
@@ -595,9 +629,11 @@ class FederatedModelLineage:
             metadata=edge.metadata,
         )
 
-    def compute_lineage_hash(self) -> str:
-           """TODO: Add docstring for compute_lineage_hash"""
-     """
+                    def compute_lineage_hash(self) -> str:
+                        """TODO: Add docstring for compute_lineage_hash"""
+        """TODO: Add docstring for compute_lineage_hash"""
+            """TODO: Add docstring for compute_lineage_hash"""
+    """
         Compute a hash of the entire lineage graph.
 
         Returns:

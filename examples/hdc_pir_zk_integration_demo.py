@@ -16,8 +16,10 @@ from genomevault.zk.proof import ProofGenerator
 
 
 async def main() -> None:
-       """TODO: Add docstring for main"""
-     """
+    """TODO: Add docstring for main"""
+    """TODO: Add docstring for main"""
+        """TODO: Add docstring for main"""
+    """
     Demonstrate the complete error-tuned query pipeline with real ZK proofs
     """
     print("=== HDC Error Tuning with Real ZK Proofs Demo ===\n")
@@ -191,8 +193,10 @@ async def main() -> None:
 
 
 async def benchmark_zk_performance() -> None:
-       """TODO: Add docstring for benchmark_zk_performance"""
-     """Benchmark ZK proof generation for different input sizes"""
+    """TODO: Add docstring for benchmark_zk_performance"""
+    """TODO: Add docstring for benchmark_zk_performance"""
+        """TODO: Add docstring for benchmark_zk_performance"""
+    """Benchmark ZK proof generation for different input sizes"""
     print("\n=== ZK Proof Performance Benchmark ===")
 
     circuit = MedianVerifierCircuit()
@@ -252,8 +256,10 @@ async def benchmark_zk_performance() -> None:
 
 
 def demonstrate_proof_structure() -> None:
-       """TODO: Add docstring for demonstrate_proof_structure"""
-     """Show the structure of a ZK median proof"""
+    """TODO: Add docstring for demonstrate_proof_structure"""
+    """TODO: Add docstring for demonstrate_proof_structure"""
+        """TODO: Add docstring for demonstrate_proof_structure"""
+    """Show the structure of a ZK median proof"""
     print("\n=== ZK Median Proof Structure ===")
 
     circuit = MedianVerifierCircuit()

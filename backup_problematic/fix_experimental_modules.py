@@ -16,8 +16,10 @@ import torch
 
 
 def check_and_install_dependencies() -> None:
-       """TODO: Add docstring for check_and_install_dependencies"""
-     """Check and install missing dependencies"""
+    """TODO: Add docstring for check_and_install_dependencies"""
+    """TODO: Add docstring for check_and_install_dependencies"""
+        """TODO: Add docstring for check_and_install_dependencies"""
+    """Check and install missing dependencies"""
     print("🔍 Checking dependencies...")
 
     # Required packages for benchmarking
@@ -49,9 +51,11 @@ def check_and_install_dependencies() -> None:
     return len(missing) == 0
 
 
-def fix_import_issues(genomevault_path) -> None:
-       """TODO: Add docstring for fix_import_issues"""
-     """Fix common import issues in experimental modules"""
+            def fix_import_issues(genomevault_path) -> None:
+                """TODO: Add docstring for fix_import_issues"""
+    """TODO: Add docstring for fix_import_issues"""
+        """TODO: Add docstring for fix_import_issues"""
+    """Fix common import issues in experimental modules"""
     print("\n🔧 Fixing import issues...")
 
     # Check if __init__.py files exist in all necessary directories
@@ -77,9 +81,11 @@ def fix_import_issues(genomevault_path) -> None:
             init_file.write_text('"""Package initialization"""\n')
 
 
-def create_run_benchmark_fixed(genomevault_path) -> Dict[str, Any]:
-       """TODO: Add docstring for create_run_benchmark_fixed"""
-     """Create a fixed benchmark runner script"""
+            def create_run_benchmark_fixed(genomevault_path) -> Dict[str, Any]:
+                """TODO: Add docstring for create_run_benchmark_fixed"""
+    """TODO: Add docstring for create_run_benchmark_fixed"""
+        """TODO: Add docstring for create_run_benchmark_fixed"""
+    """Create a fixed benchmark runner script"""
     print("\n📝 Creating fixed benchmark runner...")
 
     runner_content = '''#!/usr/bin/env python3
@@ -98,9 +104,11 @@ sys.path.insert(0, str(project_root))
 # Ensure we can import genomevault
 os.environ['PYTHONDONTWRITEBYTECODE'] = '1'
 
-def run_benchmark() -> None:
-       """TODO: Add docstring for run_benchmark"""
-     """Run the packed hypervector benchmark"""
+                def run_benchmark() -> None:
+                    """TODO: Add docstring for run_benchmark"""
+    """TODO: Add docstring for run_benchmark"""
+        """TODO: Add docstring for run_benchmark"""
+    """Run the packed hypervector benchmark"""
     try:
         # Import after path is set
         from benchmarks.benchmark_packed_hypervector import main
@@ -131,9 +139,11 @@ if __name__ == "__main__":
     return runner_path
 
 
-def setup_development_environment(genomevault_path) -> None:
-       """TODO: Add docstring for setup_development_environment"""
-     """Setup proper development environment"""
+    def setup_development_environment(genomevault_path) -> None:
+        """TODO: Add docstring for setup_development_environment"""
+    """TODO: Add docstring for setup_development_environment"""
+        """TODO: Add docstring for setup_development_environment"""
+    """Setup proper development environment"""
     print("\n🛠️ Setting up development environment...")
 
     # Create setup.cfg if it doesn't exist
@@ -168,9 +178,11 @@ dev =
         print(f"Created: {setup_cfg_path}")
 
 
-def create_benchmark_wrapper(genomevault_path) -> Dict[str, Any]:
-       """TODO: Add docstring for create_benchmark_wrapper"""
-     """Create a wrapper script that handles all setup"""
+    def create_benchmark_wrapper(genomevault_path) -> Dict[str, Any]:
+        """TODO: Add docstring for create_benchmark_wrapper"""
+    """TODO: Add docstring for create_benchmark_wrapper"""
+        """TODO: Add docstring for create_benchmark_wrapper"""
+    """Create a wrapper script that handles all setup"""
     print("\n🎯 Creating benchmark wrapper script...")
 
     wrapper_content = '''#!/usr/bin/env python3
@@ -183,9 +195,11 @@ import os
 import subprocess
 from pathlib import Path
 
-def setup_and_run() -> None:
-       """TODO: Add docstring for setup_and_run"""
-     """Setup environment and run benchmark"""
+        def setup_and_run() -> None:
+            """TODO: Add docstring for setup_and_run"""
+    """TODO: Add docstring for setup_and_run"""
+        """TODO: Add docstring for setup_and_run"""
+    """Setup environment and run benchmark"""
     project_root = Path(__file__).parent
 
     # Add to Python path
@@ -237,9 +251,11 @@ if __name__ == "__main__":
     return wrapper_path
 
 
-def main() -> None:
-       """TODO: Add docstring for main"""
-     """Main function to fix experimental modules"""
+    def main() -> None:
+        """TODO: Add docstring for main"""
+    """TODO: Add docstring for main"""
+        """TODO: Add docstring for main"""
+    """Main function to fix experimental modules"""
     print("🚀 GenomeVault Experimental Module Fixer")
     print("=" * 50)
 

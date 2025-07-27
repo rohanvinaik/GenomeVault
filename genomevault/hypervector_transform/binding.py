@@ -20,6 +20,8 @@ logger = get_logger(__name__)
 
 class BindingType(Enum):
     """Types of binding operations"""
+    """Types of binding operations"""
+    """Types of binding operations"""
 
     MULTIPLY = "multiply"  # Element-wise multiplication
     CIRCULAR = "circular"  # Circular convolution
@@ -30,6 +32,8 @@ class BindingType(Enum):
 
 class HypervectorBinder:
     """
+    """
+    """
     Implements binding operations for hyperdimensional computing
 
     Binding operations combine multiple hypervectors into a single vector
@@ -37,26 +41,30 @@ class HypervectorBinder:
     """
 
     def __init__(self, dimension: int = 10000) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize the binder
 
         Args:
             dimension: Expected dimension of hypervectors
         """
-        self.dimension = dimension
-        self._permutation_cache = {}
+            self.dimension = dimension
+            self._permutation_cache = {}
 
         logger.info(f"Initialized HypervectorBinder for {dimension}D vectors")
 
-    def bind(
+            def bind(
         self,
         vectors: List[torch.Tensor],
         binding_type: BindingType = BindingType.CIRCULAR,
         weights: Optional[List[float]] = None,
     ) -> torch.Tensor:
-           """TODO: Add docstring for bind"""
-     """
+        """TODO: Add docstring for bind"""
+        """TODO: Add docstring for bind"""
+            """TODO: Add docstring for bind"""
+    """
         Bind multiple hypervectors together
 
         Args:
@@ -100,14 +108,16 @@ class HypervectorBinder:
         logger.debug(f"Bound {len(vectors)} vectors using {binding_type.value}")
         return result
 
-    def unbind(
+            def unbind(
         self,
         bound_vector: torch.Tensor,
         known_vectors: List[torch.Tensor],
         binding_type: BindingType = BindingType.CIRCULAR,
     ) -> torch.Tensor:
-           """TODO: Add docstring for unbind"""
-     """
+        """TODO: Add docstring for unbind"""
+        """TODO: Add docstring for unbind"""
+            """TODO: Add docstring for unbind"""
+    """
         Unbind a vector given some known components
 
         Args:
@@ -129,28 +139,34 @@ class HypervectorBinder:
         else:
             raise BindingError("Unbinding not implemented for {binding_type}")
 
-    def _multiply_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
-           """TODO: Add docstring for _multiply_bind"""
-     """Element-wise multiplication binding"""
+            def _multiply_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
+                """TODO: Add docstring for _multiply_bind"""
+        """TODO: Add docstring for _multiply_bind"""
+            """TODO: Add docstring for _multiply_bind"""
+    """Element-wise multiplication binding"""
         result = vectors[0].clone()
         for v in vectors[1:]:
             result = result * v
         return result
 
-    def _multiply_unbind(
+            def _multiply_unbind(
         self, bound_vector: torch.Tensor, known_vectors: List[torch.Tensor]
     ) -> torch.Tensor:
-           """TODO: Add docstring for _multiply_unbind"""
-     """Unbind using element-wise division"""
+        """TODO: Add docstring for _multiply_unbind"""
+        """TODO: Add docstring for _multiply_unbind"""
+            """TODO: Add docstring for _multiply_unbind"""
+    """Unbind using element-wise division"""
         result = bound_vector.clone()
         for v in known_vectors:
             # Avoid division by zero
             result = result / (v + 1e-8)
         return result
 
-    def _circular_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
-           """TODO: Add docstring for _circular_bind"""
-     """Circular convolution binding"""
+            def _circular_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
+                """TODO: Add docstring for _circular_bind"""
+        """TODO: Add docstring for _circular_bind"""
+            """TODO: Add docstring for _circular_bind"""
+    """Circular convolution binding"""
         if len(vectors) == 1:
             return vectors[0]
 
@@ -163,9 +179,11 @@ class HypervectorBinder:
 
         return result
 
-    def _circular_convolve(self, x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
-           """TODO: Add docstring for _circular_convolve"""
-     """Perform circular convolution of two vectors"""
+            def _circular_convolve(self, x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
+                """TODO: Add docstring for _circular_convolve"""
+        """TODO: Add docstring for _circular_convolve"""
+            """TODO: Add docstring for _circular_convolve"""
+    """Perform circular convolution of two vectors"""
         # Use FFT for efficient circular convolution
         X = torch.fft.fft(x)
         Y = torch.fft.fft(y)
@@ -173,11 +191,13 @@ class HypervectorBinder:
         z = torch.fft.ifft(Z).real
         return z
 
-    def _circular_unbind(
+                def _circular_unbind(
         self, bound_vector: torch.Tensor, known_vectors: List[torch.Tensor]
     ) -> torch.Tensor:
-           """TODO: Add docstring for _circular_unbind"""
-     """Unbind using circular correlation (inverse of convolution)"""
+        """TODO: Add docstring for _circular_unbind"""
+        """TODO: Add docstring for _circular_unbind"""
+            """TODO: Add docstring for _circular_unbind"""
+    """Unbind using circular correlation (inverse of convolution)"""
         result = bound_vector
 
         for v in known_vectors:
@@ -187,9 +207,11 @@ class HypervectorBinder:
 
         return result
 
-    def _permutation_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
-           """TODO: Add docstring for _permutation_bind"""
-     """Permutation-based binding"""
+            def _permutation_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
+                """TODO: Add docstring for _permutation_bind"""
+        """TODO: Add docstring for _permutation_bind"""
+            """TODO: Add docstring for _permutation_bind"""
+    """Permutation-based binding"""
         result = torch.zeros_like(vectors[0])
 
         for i, v in enumerate(vectors):
@@ -201,11 +223,13 @@ class HypervectorBinder:
 
         return result / len(vectors)
 
-    def _permutation_unbind(
+            def _permutation_unbind(
         self, bound_vector: torch.Tensor, known_vectors: List[torch.Tensor]
     ) -> torch.Tensor:
-           """TODO: Add docstring for _permutation_unbind"""
-     """Unbind using inverse permutations"""
+        """TODO: Add docstring for _permutation_unbind"""
+        """TODO: Add docstring for _permutation_unbind"""
+            """TODO: Add docstring for _permutation_unbind"""
+    """Unbind using inverse permutations"""
         # Subtract contributions of known vectors
         result = bound_vector * len(known_vectors + 1)
 
@@ -220,9 +244,11 @@ class HypervectorBinder:
 
         return result[inv_perm]
 
-    def _xor_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
-           """TODO: Add docstring for _xor_bind"""
-     """XOR binding for binary vectors"""
+            def _xor_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
+                """TODO: Add docstring for _xor_bind"""
+        """TODO: Add docstring for _xor_bind"""
+            """TODO: Add docstring for _xor_bind"""
+    """XOR binding for binary vectors"""
         # Convert to binary
         binary_vectors = [torch.sign(v) > 0 for v in vectors]
 
@@ -234,16 +260,20 @@ class HypervectorBinder:
         # Convert back to {-1, +1}
         return result.float() * 2 - 1
 
-    def _xor_unbind(
+            def _xor_unbind(
         self, bound_vector: torch.Tensor, known_vectors: List[torch.Tensor]
     ) -> torch.Tensor:
-           """TODO: Add docstring for _xor_unbind"""
-     """XOR unbinding (XOR is its own inverse)"""
+        """TODO: Add docstring for _xor_unbind"""
+        """TODO: Add docstring for _xor_unbind"""
+            """TODO: Add docstring for _xor_unbind"""
+    """XOR unbinding (XOR is its own inverse)"""
         return self._xor_bind([bound_vector] + known_vectors)
 
-    def _fourier_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
-           """TODO: Add docstring for _fourier_bind"""
-     """Fourier domain binding"""
+        def _fourier_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
+            """TODO: Add docstring for _fourier_bind"""
+        """TODO: Add docstring for _fourier_bind"""
+            """TODO: Add docstring for _fourier_bind"""
+    """Fourier domain binding"""
         # Transform to frequency domain
         freq_vectors = [torch.fft.fft(v) for v in vectors]
 
@@ -255,9 +285,11 @@ class HypervectorBinder:
         # Transform back
         return torch.fft.ifft(result_freq).real
 
-    def _get_permutation(self, position: int) -> torch.Tensor:
-           """TODO: Add docstring for _get_permutation"""
-     """Get deterministic permutation for a position"""
+            def _get_permutation(self, position: int) -> torch.Tensor:
+                """TODO: Add docstring for _get_permutation"""
+        """TODO: Add docstring for _get_permutation"""
+            """TODO: Add docstring for _get_permutation"""
+    """Get deterministic permutation for a position"""
         if position in self._permutation_cache:
             return self._permutation_cache[position]
 
@@ -265,20 +297,24 @@ class HypervectorBinder:
         torch.manual_seed(42 + position)  # Fixed seed + position
         perm = torch.randperm(self.dimension)
 
-        self._permutation_cache[position] = perm
+            self._permutation_cache[position] = perm
         return perm
 
-    def _get_inverse_permutation(self, position: int) -> torch.Tensor:
-           """TODO: Add docstring for _get_inverse_permutation"""
-     """Get inverse of a permutation"""
+            def _get_inverse_permutation(self, position: int) -> torch.Tensor:
+                """TODO: Add docstring for _get_inverse_permutation"""
+        """TODO: Add docstring for _get_inverse_permutation"""
+            """TODO: Add docstring for _get_inverse_permutation"""
+    """Get inverse of a permutation"""
         perm = self._get_permutation(position)
         inv_perm = torch.zeros_like(perm)
         inv_perm[perm] = torch.arange(self.dimension)
         return inv_perm
 
-    def bundle(self, vectors: List[torch.Tensor], normalize: bool = True) -> torch.Tensor:
-           """TODO: Add docstring for bundle"""
-     """
+                def bundle(self, vectors: List[torch.Tensor], normalize: bool = True) -> torch.Tensor:
+                    """TODO: Add docstring for bundle"""
+        """TODO: Add docstring for bundle"""
+            """TODO: Add docstring for bundle"""
+    """
         Bundle vectors using superposition (addition)
 
         Args:
@@ -300,9 +336,11 @@ class HypervectorBinder:
 
         return result
 
-    def protect(self, vector: torch.Tensor, key: torch.Tensor) -> torch.Tensor:
-           """TODO: Add docstring for protect"""
-     """
+            def protect(self, vector: torch.Tensor, key: torch.Tensor) -> torch.Tensor:
+                """TODO: Add docstring for protect"""
+        """TODO: Add docstring for protect"""
+            """TODO: Add docstring for protect"""
+    """
         Protect a hypervector using a key vector
 
         Args:
@@ -314,9 +352,11 @@ class HypervectorBinder:
         """
         return self.bind([vector, key], BindingType.MULTIPLY)
 
-    def unprotect(self, protected: torch.Tensor, key: torch.Tensor) -> torch.Tensor:
-           """TODO: Add docstring for unprotect"""
-     """
+            def unprotect(self, protected: torch.Tensor, key: torch.Tensor) -> torch.Tensor:
+                """TODO: Add docstring for unprotect"""
+        """TODO: Add docstring for unprotect"""
+            """TODO: Add docstring for unprotect"""
+    """
         Unprotect a hypervector using the key
 
         Args:
@@ -331,14 +371,18 @@ class HypervectorBinder:
 
 class PositionalBinder(HypervectorBinder):
     """
+    """
+    """
     Specialized binder for position-aware binding
 
     Used for encoding sequential information like genomic positions
     """
 
     def __init__(self, dimension: int = 10000, max_positions: int = 1000000) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize positional binder
 
         Args:
@@ -346,12 +390,14 @@ class PositionalBinder(HypervectorBinder):
             max_positions: Maximum number of positions to support
         """
         super().__init__(dimension)
-        self.max_positions = max_positions
-        self._position_vectors = {}
+            self.max_positions = max_positions
+            self._position_vectors = {}
 
-    def bind_with_position(self, vector: torch.Tensor, position: int) -> torch.Tensor:
-           """TODO: Add docstring for bind_with_position"""
-     """
+            def bind_with_position(self, vector: torch.Tensor, position: int) -> torch.Tensor:
+                """TODO: Add docstring for bind_with_position"""
+        """TODO: Add docstring for bind_with_position"""
+            """TODO: Add docstring for bind_with_position"""
+    """
         Bind a vector with its position information
 
         Args:
@@ -364,9 +410,11 @@ class PositionalBinder(HypervectorBinder):
         pos_vector = self._get_position_vector(position)
         return self.bind([vector, pos_vector], BindingType.CIRCULAR)
 
-    def bind_sequence(self, vectors: List[torch.Tensor], start_position: int = 0) -> torch.Tensor:
-           """TODO: Add docstring for bind_sequence"""
-     """
+            def bind_sequence(self, vectors: List[torch.Tensor], start_position: int = 0) -> torch.Tensor:
+                """TODO: Add docstring for bind_sequence"""
+        """TODO: Add docstring for bind_sequence"""
+            """TODO: Add docstring for bind_sequence"""
+    """
         Bind a sequence of vectors with their positions
 
         Args:
@@ -386,9 +434,11 @@ class PositionalBinder(HypervectorBinder):
         # Bundle all position-bound vectors
         return self.bundle(bound_vectors)
 
-    def _get_position_vector(self, position: int) -> torch.Tensor:
-           """TODO: Add docstring for _get_position_vector"""
-     """Get or create position encoding vector"""
+            def _get_position_vector(self, position: int) -> torch.Tensor:
+                """TODO: Add docstring for _get_position_vector"""
+        """TODO: Add docstring for _get_position_vector"""
+            """TODO: Add docstring for _get_position_vector"""
+    """Get or create position encoding vector"""
         if position in self._position_vectors:
             return self._position_vectors[position]
 
@@ -396,13 +446,15 @@ class PositionalBinder(HypervectorBinder):
         pos_vector = self._sinusoidal_position_encoding(position)
 
         # Cache for reuse
-        self._position_vectors[position] = pos_vector
+            self._position_vectors[position] = pos_vector
 
         return pos_vector
 
-    def _sinusoidal_position_encoding(self, position: int) -> torch.Tensor:
-           """TODO: Add docstring for _sinusoidal_position_encoding"""
-     """Create sinusoidal position encoding"""
+            def _sinusoidal_position_encoding(self, position: int) -> torch.Tensor:
+                """TODO: Add docstring for _sinusoidal_position_encoding"""
+        """TODO: Add docstring for _sinusoidal_position_encoding"""
+            """TODO: Add docstring for _sinusoidal_position_encoding"""
+    """Create sinusoidal position encoding"""
         encoding = torch.zeros(self.dimension)
 
         for i in range(0, self.dimension, 2):
@@ -418,24 +470,30 @@ class PositionalBinder(HypervectorBinder):
 
 class CrossModalBinder(HypervectorBinder):
     """
+    """
+    """
     Specialized binder for cross-modal binding
 
     Used for combining different types of omics data
     """
 
     def __init__(self, dimension: int = 10000) -> None:
-           """TODO: Add docstring for __init__"""
-     """Initialize cross-modal binder"""
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """Initialize cross-modal binder"""
         super().__init__(dimension)
         self.modality_signatures = {}
 
-    def bind_modalities(
+        def bind_modalities(
         self,
         modality_vectors: Dict[str, torch.Tensor],
         preserve_individual: bool = True,
     ) -> Dict[str, torch.Tensor]:
-           """TODO: Add docstring for bind_modalities"""
-     """
+        """TODO: Add docstring for bind_modalities"""
+        """TODO: Add docstring for bind_modalities"""
+            """TODO: Add docstring for bind_modalities"""
+    """
         Bind multiple modalities together
 
         Args:
@@ -450,7 +508,7 @@ class CrossModalBinder(HypervectorBinder):
         # Create modality signatures if needed
         for modality in modality_vectors:
             if modality not in self.modality_signatures:
-        self._create_modality_signature(modality)
+                self._create_modality_signature(modality)
 
         # Bind each modality with its signature
         signed_vectors = {}
@@ -478,9 +536,11 @@ class CrossModalBinder(HypervectorBinder):
 
         return results
 
-    def _create_modality_signature(self, modality: str) -> None:
-           """TODO: Add docstring for _create_modality_signature"""
-     """Create unique signature for a modality"""
+                def _create_modality_signature(self, modality: str) -> None:
+                    """TODO: Add docstring for _create_modality_signature"""
+        """TODO: Add docstring for _create_modality_signature"""
+            """TODO: Add docstring for _create_modality_signature"""
+    """Create unique signature for a modality"""
         # Use hash of modality name as seed
         seed = int(hashlib.md5(modality.encode()).hexdigest()[:8], 16)
         torch.manual_seed(seed)
@@ -489,13 +549,15 @@ class CrossModalBinder(HypervectorBinder):
         signature = torch.randn(self.dimension)
         signature = signature / torch.norm(signature)
 
-        self.modality_signatures[modality] = signature
+                    self.modality_signatures[modality] = signature
 
 
 # Convenience functions
-    def circular_bind(vectors: List[torch.Tensor]) -> torch.Tensor:
-       """TODO: Add docstring for circular_bind"""
-     """Convenience function for circular binding"""
+                    def circular_bind(vectors: List[torch.Tensor]) -> torch.Tensor:
+                        """TODO: Add docstring for circular_bind"""
+        """TODO: Add docstring for circular_bind"""
+        """TODO: Add docstring for circular_bind"""
+    """Convenience function for circular binding"""
     if not vectors:
         raise ValueError("No vectors provided")
 
@@ -503,8 +565,10 @@ class CrossModalBinder(HypervectorBinder):
     return binder.bind(vectors, BindingType.CIRCULAR)
 
 
-    def protect_vector(vector: torch.Tensor, key: torch.Tensor) -> torch.Tensor:
-       """TODO: Add docstring for protect_vector"""
-     """Convenience function for vector protection"""
+        def protect_vector(vector: torch.Tensor, key: torch.Tensor) -> torch.Tensor:
+            """TODO: Add docstring for protect_vector"""
+        """TODO: Add docstring for protect_vector"""
+        """TODO: Add docstring for protect_vector"""
+    """Convenience function for vector protection"""
     binder = HypervectorBinder(vector.shape[-1])
     return binder.protect(vector, key)

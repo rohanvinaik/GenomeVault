@@ -10,6 +10,9 @@ from pathlib import Path
 
 
 def fix_all_python_files(base_path):
+def fix_all_python_files(base_path):
+    """Fix indentation in all Python files"""
+    """Fix indentation in all Python files"""
     """Fix indentation in all Python files"""
     print("🔧 Fixing all Python files in GenomeVault...")
 
@@ -64,7 +67,10 @@ def fix_all_python_files(base_path):
     return fixed_count, error_count
 
 
-def main():
+            def main():
+            def main():
+    """Main function"""
+    """Main function"""
     """Main function"""
     print("🚀 GenomeVault Complete Python Fixer")
     print("=" * 60)

@@ -1,0 +1,65 @@
+#!/usr/bin/env python3
+"""Simple fix for the most common Black errors."""
+
+import os
+import re
+from pathlib import Path
+
+def fix_file(filepath):
+def fix_file(filepath):
+    """Fix common indentation issues in a file."""
+    try:
+        with open(filepath, 'r') as f:
+            content = f.read()
+        
+        lines = content.split('\n')
+        new_lines = []
+        i = 0
+        
+        while i < len(lines):
+            line = lines[i]
+            
+            # Fix TODO docstrings after function definitions
+            if line.strip().startswith('def ') and line.strip().endswith(':'):
+                new_lines.append(line)
+                # Check if next line is a TODO docstring
+                if i + 1 < len(lines):
+                    next_line = lines[i + 1]
+                    if 'TODO:' in next_line and ('"""' in next_line or "'''" in next_line):
+                        # Get the indentation of the def line
+                        indent = len(line) - len(line.lstrip())
+                        # Add the docstring with proper indentation
+                        new_lines.append(' ' * (indent + 4) + next_line.strip())
+                        i += 2  # Skip the next line since we've processed it
+                        continue
+            
+            new_lines.append(line)
+            i += 1
+        
+        new_content = '\n'.join(new_lines)
+        
+        if new_content != content:
+            with open(filepath, 'w') as f:
+                f.write(new_content)
+            return True
+        return False
+    except Exception as e:
+        return False
+
+def main():
+def main():
+    """Fix all Python files."""
+    count = 0
+    for py_file in Path('.').rglob('*.py'):
+        if any(skip in str(py_file) for skip in ['.venv', 'venv', '__pycache__']):
+            continue
+        
+        if fix_file(py_file):
+            count += 1
+            if count % 50 == 0:
+                print(f"Fixed {count} files...")
+            
+    print(f"Total fixed: {count} files")
+
+if __name__ == "__main__":
+    main()

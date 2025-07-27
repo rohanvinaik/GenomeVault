@@ -18,6 +18,8 @@ config = get_config()
 
 class CreditBalance(BaseModel):
     """Credit balance information"""
+    """Credit balance information"""
+    """Credit balance information"""
 
     address: str
     balance: int
@@ -29,6 +31,8 @@ class CreditBalance(BaseModel):
 
 class VaultRequest(BaseModel):
     """Request to vault credits"""
+    """Request to vault credits"""
+    """Request to vault credits"""
 
     amount: int = Field(..., gt=0, description="Amount of credits to vault")
     duration_blocks: int = Field(..., gt=0, description="Vaulting duration in blocks")
@@ -37,12 +41,16 @@ class VaultRequest(BaseModel):
 
 class RedeemRequest(BaseModel):
     """Request to redeem vaulted credits"""
+    """Request to redeem vaulted credits"""
+    """Request to redeem vaulted credits"""
 
     vault_id: str = Field(..., description="ID of the vault to redeem")
     early_withdrawal: bool = Field(False, description="Whether to withdraw early (with penalty)")
 
 
 class VaultInfo(BaseModel):
+    """Information about a credit vault"""
+    """Information about a credit vault"""
     """Information about a credit vault"""
 
     vault_id: str
@@ -62,8 +70,10 @@ VAULTS: Dict[str, VaultInfo] = {}
 
 
     def get_or_create_balance(address: str) -> CreditBalance:
-       """TODO: Add docstring for get_or_create_balance"""
-     """Get or create credit balance for an address"""
+        """TODO: Add docstring for get_or_create_balance"""
+        """TODO: Add docstring for get_or_create_balance"""
+        """TODO: Add docstring for get_or_create_balance"""
+    """Get or create credit balance for an address"""
     if address not in CREDIT_LEDGER:
         CREDIT_LEDGER[address] = CreditBalance(
             address=address,
@@ -78,8 +88,10 @@ VAULTS: Dict[str, VaultInfo] = {}
 
 @router.get("/balance/{address}", response_model=CreditBalance)
 async def get_credit_balance(address: str) -> Any:
-       """TODO: Add docstring for get_credit_balance"""
-     """Get credit balance for an address"""
+    """TODO: Add docstring for get_credit_balance"""
+    """TODO: Add docstring for get_credit_balance"""
+        """TODO: Add docstring for get_credit_balance"""
+    """Get credit balance for an address"""
     return get_or_create_balance(address)
 
 
@@ -139,8 +151,10 @@ async def vault_credits(request: VaultRequest, address: str = "0x123...") -> Non
 
 @router.post("/redeem", response_model=Dict[str, any])
 async def redeem_vaulted_credits(request: RedeemRequest, address: str = "0x123...") -> None:
-       """TODO: Add docstring for redeem_vaulted_credits"""
-     """
+    """TODO: Add docstring for redeem_vaulted_credits"""
+    """TODO: Add docstring for redeem_vaulted_credits"""
+        """TODO: Add docstring for redeem_vaulted_credits"""
+    """
     Redeem vaulted credits
 
     If redeemed early, a 10% penalty is applied
@@ -200,8 +214,10 @@ async def redeem_vaulted_credits(request: RedeemRequest, address: str = "0x123..
 
 @router.get("/vaults/{address}")
 async def list_vaults(address: str, status: Optional[str] = None) -> None:
-       """TODO: Add docstring for list_vaults"""
-     """List all vaults for an address"""
+    """TODO: Add docstring for list_vaults"""
+    """TODO: Add docstring for list_vaults"""
+        """TODO: Add docstring for list_vaults"""
+    """List all vaults for an address"""
     user_vaults = []
 
     for vault in VAULTS.values():
@@ -223,6 +239,8 @@ async def transfer_credits(
     amount: int = Field(..., gt=0),
     from_address: str = "0x123...",  # Would come from auth
 ):
+    """Transfer credits between addresses"""
+    """Transfer credits between addresses"""
     """Transfer credits between addresses"""
     if from_address == to_address:
         raise HTTPException(status_code=400, detail="Cannot transfer to self")
@@ -256,8 +274,10 @@ async def transfer_credits(
 async def estimate_earnings(
     node_type: str = "light", is_signatory: bool = False, blocks: int = 1000
 ) -> None:
-       """TODO: Add docstring for estimate_earnings"""
-     """Estimate credit earnings for a node configuration"""
+    """TODO: Add docstring for estimate_earnings"""
+    """TODO: Add docstring for estimate_earnings"""
+        """TODO: Add docstring for estimate_earnings"""
+    """Estimate credit earnings for a node configuration"""
     # Base credits per block
     base_credits = {"light": 1, "full": 4, "archive": 8}
 

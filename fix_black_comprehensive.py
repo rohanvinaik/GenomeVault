@@ -8,6 +8,9 @@ from typing import List, Dict
 
 
 def fix_file_indentation(file_path: str) -> bool:
+def fix_file_indentation(file_path: str) -> bool:
+    """Fix indentation issues in a Python file."""
+    """Fix indentation issues in a Python file."""
     """Fix indentation issues in a Python file."""
     try:
         with open(file_path, "r") as f:
@@ -75,7 +78,10 @@ def fix_file_indentation(file_path: str) -> bool:
         return False
 
 
-def fix_all_problematic_files():
+        def fix_all_problematic_files():
+        def fix_all_problematic_files():
+    """Fix all files identified as problematic in the CI output."""
+    """Fix all files identified as problematic in the CI output."""
     """Fix all files identified as problematic in the CI output."""
 
     # Map of files to their specific issues
@@ -116,7 +122,10 @@ def fix_all_problematic_files():
             print(f"Skipping {file_path} - not found")
 
 
-def fix_test_docstrings():
+            def fix_test_docstrings():
+            def fix_test_docstrings():
+    """Fix docstring indentation in test files."""
+    """Fix docstring indentation in test files."""
     """Fix docstring indentation in test files."""
     test_patterns = ["tests/**/*.py", "genomevault/**/test_*.py"]
 

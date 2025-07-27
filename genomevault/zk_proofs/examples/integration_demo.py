@@ -24,8 +24,10 @@ logger = get_logger(__name__)
 
 
 def demonstrate_variant_presence() -> None:
-       """TODO: Add docstring for demonstrate_variant_presence"""
-     """Demonstrate proving variant presence without revealing location."""
+    """TODO: Add docstring for demonstrate_variant_presence"""
+    """TODO: Add docstring for demonstrate_variant_presence"""
+        """TODO: Add docstring for demonstrate_variant_presence"""
+    """Demonstrate proving variant presence without revealing location."""
     print("\n=== Variant Presence Proof ===")
 
     # Initialize components
@@ -69,9 +71,11 @@ def demonstrate_variant_presence() -> None:
     return proof, result
 
 
-def demonstrate_diabetes_risk_assessment() -> None:
-       """TODO: Add docstring for demonstrate_diabetes_risk_assessment"""
-     """Demonstrate diabetes risk assessment with privacy."""
+    def demonstrate_diabetes_risk_assessment() -> None:
+        """TODO: Add docstring for demonstrate_diabetes_risk_assessment"""
+    """TODO: Add docstring for demonstrate_diabetes_risk_assessment"""
+        """TODO: Add docstring for demonstrate_diabetes_risk_assessment"""
+    """Demonstrate diabetes risk assessment with privacy."""
     print("\n=== Diabetes Risk Assessment ===")
 
     # Initialize components
@@ -124,9 +128,11 @@ def demonstrate_diabetes_risk_assessment() -> None:
     return proof, result
 
 
-def demonstrate_polygenic_risk_score() -> None:
-       """TODO: Add docstring for demonstrate_polygenic_risk_score"""
-     """Demonstrate PRS calculation with privacy."""
+        def demonstrate_polygenic_risk_score() -> None:
+            """TODO: Add docstring for demonstrate_polygenic_risk_score"""
+    """TODO: Add docstring for demonstrate_polygenic_risk_score"""
+        """TODO: Add docstring for demonstrate_polygenic_risk_score"""
+    """Demonstrate PRS calculation with privacy."""
     print("\n=== Polygenic Risk Score Calculation ===")
 
     # Initialize components
@@ -177,9 +183,11 @@ def demonstrate_polygenic_risk_score() -> None:
     return proof, result
 
 
-def demonstrate_pharmacogenomics() -> None:
-       """TODO: Add docstring for demonstrate_pharmacogenomics"""
-     """Demonstrate pharmacogenomic analysis with privacy."""
+            def demonstrate_pharmacogenomics() -> None:
+                """TODO: Add docstring for demonstrate_pharmacogenomics"""
+    """TODO: Add docstring for demonstrate_pharmacogenomics"""
+        """TODO: Add docstring for demonstrate_pharmacogenomics"""
+    """Demonstrate pharmacogenomic analysis with privacy."""
     print("\n=== Pharmacogenomic Analysis ===")
 
     # Initialize components
@@ -241,9 +249,11 @@ def demonstrate_pharmacogenomics() -> None:
     return proof, result
 
 
-def demonstrate_circuit_optimization() -> None:
-       """TODO: Add docstring for demonstrate_circuit_optimization"""
-     """Demonstrate circuit selection and optimization."""
+        def demonstrate_circuit_optimization() -> None:
+            """TODO: Add docstring for demonstrate_circuit_optimization"""
+    """TODO: Add docstring for demonstrate_circuit_optimization"""
+        """TODO: Add docstring for demonstrate_circuit_optimization"""
+    """Demonstrate circuit selection and optimization."""
     print("\n=== Circuit Optimization ===")
 
     # Initialize circuit manager
@@ -276,9 +286,11 @@ def demonstrate_circuit_optimization() -> None:
         print("  Verification time: {metadata.verification_time_ms}ms")
 
 
-def demonstrate_post_quantum_transition() -> None:
-       """TODO: Add docstring for demonstrate_post_quantum_transition"""
-     """Demonstrate post-quantum proof generation."""
+        def demonstrate_post_quantum_transition() -> None:
+            """TODO: Add docstring for demonstrate_post_quantum_transition"""
+    """TODO: Add docstring for demonstrate_post_quantum_transition"""
+        """TODO: Add docstring for demonstrate_post_quantum_transition"""
+    """Demonstrate post-quantum proof generation."""
     print("\n=== Post-Quantum Transition ===")
 
     # Initialize transition manager
@@ -328,9 +340,11 @@ def demonstrate_post_quantum_transition() -> None:
         print("  Valid: {metrics['valid']}")
 
 
-def demonstrate_batch_operations() -> None:
-       """TODO: Add docstring for demonstrate_batch_operations"""
-     """Demonstrate batch proof generation and verification."""
+        def demonstrate_batch_operations() -> None:
+            """TODO: Add docstring for demonstrate_batch_operations"""
+    """TODO: Add docstring for demonstrate_batch_operations"""
+        """TODO: Add docstring for demonstrate_batch_operations"""
+    """Demonstrate batch proof generation and verification."""
     print("\n=== Batch Operations ===")
 
     # Initialize components
@@ -391,9 +405,11 @@ def demonstrate_batch_operations() -> None:
     print("\nBatch results: {valid_count}/{len(results)} valid")
 
 
-def main() -> None:
-       """TODO: Add docstring for main"""
-     """Run all demonstrations."""
+        def main() -> None:
+            """TODO: Add docstring for main"""
+    """TODO: Add docstring for main"""
+        """TODO: Add docstring for main"""
+    """Run all demonstrations."""
     print("=" * 60)
     print("GenomeVault Zero-Knowledge Proof System")
     print("Integration Examples")

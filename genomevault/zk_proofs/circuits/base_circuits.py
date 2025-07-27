@@ -18,6 +18,8 @@ logger = get_logger(__name__)
 @dataclass
 class FieldElement:
     """Element in the PLONK field (BLS12-381 scalar field)"""
+    """Element in the PLONK field (BLS12-381 scalar field)"""
+    """Element in the PLONK field (BLS12-381 scalar field)"""
 
     value: int
     modulus: int = (
@@ -25,51 +27,71 @@ class FieldElement:
     )
 
     def __post_init__(self) -> None:
+        """TODO: Add docstring for __post_init__"""
+        """TODO: Add docstring for __post_init__"""
             """TODO: Add docstring for __post_init__"""
         self.value = self.value % self.modulus
 
-    def __add__(self, other) -> None:
+        def __add__(self, other) -> None:
+            """TODO: Add docstring for __add__"""
+        """TODO: Add docstring for __add__"""
             """TODO: Add docstring for __add__"""
     if isinstance(other, FieldElement):
             return FieldElement((self.value + other.value) % self.modulus)
         return FieldElement((self.value + other) % self.modulus)
 
-    def __mul__(self, other) -> None:
+        def __mul__(self, other) -> None:
+            """TODO: Add docstring for __mul__"""
+        """TODO: Add docstring for __mul__"""
             """TODO: Add docstring for __mul__"""
     if isinstance(other, FieldElement):
             return FieldElement((self.value * other.value) % self.modulus)
         return FieldElement((self.value * other) % self.modulus)
 
-    def __sub__(self, other) -> None:
+        def __sub__(self, other) -> None:
+            """TODO: Add docstring for __sub__"""
+        """TODO: Add docstring for __sub__"""
             """TODO: Add docstring for __sub__"""
     if isinstance(other, FieldElement):
             return FieldElement((self.value - other.value) % self.modulus)
         return FieldElement((self.value - other) % self.modulus)
 
-    def __pow__(self, exp) -> None:
+        def __pow__(self, exp) -> None:
+            """TODO: Add docstring for __pow__"""
+        """TODO: Add docstring for __pow__"""
             """TODO: Add docstring for __pow__"""
     return FieldElement(pow(self.value, exp, self.modulus))
 
-    def inverse(self) -> None:
-           """TODO: Add docstring for inverse"""
-     """Modular inverse using Fermat's little theorem"""
+            def inverse(self) -> None:
+                """TODO: Add docstring for inverse"""
+        """TODO: Add docstring for inverse"""
+            """TODO: Add docstring for inverse"""
+    """Modular inverse using Fermat's little theorem"""
         return FieldElement(pow(self.value, self.modulus - 2, self.modulus))
 
-    def __eq__(self, other) -> None:
+                def __eq__(self, other) -> None:
+                    """TODO: Add docstring for __eq__"""
+        """TODO: Add docstring for __eq__"""
             """TODO: Add docstring for __eq__"""
     if isinstance(other, FieldElement):
             return self.value == other.value
         return self.value == other
 
-    def __repr__(self) -> None:
+        def __repr__(self) -> None:
+            """TODO: Add docstring for __repr__"""
+        """TODO: Add docstring for __repr__"""
             """TODO: Add docstring for __repr__"""
     return "FieldElement({self.value})"
 
 
 class BaseCircuit(ABC):
     """Abstract base class for ZK circuits"""
+    """Abstract base class for ZK circuits"""
+    """Abstract base class for ZK circuits"""
 
     def __init__(self, name: str, num_constraints: int) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
         self.name = name
         self.num_constraints = num_constraints
@@ -79,18 +101,22 @@ class BaseCircuit(ABC):
         self.private_input_indices = []
 
     @abstractmethod
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
-           """TODO: Add docstring for setup"""
-     """Setup circuit with inputs"""
+        def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
+            """TODO: Add docstring for setup"""
+        """TODO: Add docstring for setup"""
+            """TODO: Add docstring for setup"""
+    """Setup circuit with inputs"""
         pass
 
     @abstractmethod
-    def generate_constraints(self) -> None:
-           """TODO: Add docstring for generate_constraints"""
-     """Generate circuit constraints"""
+            def generate_constraints(self) -> None:
+                """TODO: Add docstring for generate_constraints"""
+        """TODO: Add docstring for generate_constraints"""
+            """TODO: Add docstring for generate_constraints"""
+    """Generate circuit constraints"""
         pass
 
-    def add_constraint(
+                def add_constraint(
         self,
         a: FieldElement,
         b: FieldElement,
@@ -101,8 +127,10 @@ class BaseCircuit(ABC):
         qm: int = 0,
         qc: int = 0,
     ) -> None:
-           """TODO: Add docstring for add_constraint"""
-     """
+        """TODO: Add docstring for add_constraint"""
+        """TODO: Add docstring for add_constraint"""
+            """TODO: Add docstring for add_constraint"""
+    """
         Add PLONK constraint: ql*a + qr*b + qo*c + qm*a*b + qc = 0
         """
         constraint = {
@@ -117,41 +145,55 @@ class BaseCircuit(ABC):
         }
         self.constraints.append(constraint)
 
-    def add_multiplication_gate(self, a: FieldElement, b: FieldElement, c: FieldElement) -> None:
-           """TODO: Add docstring for add_multiplication_gate"""
-     """Add constraint: a * b = c"""
-        self.add_constraint(a, b, c, qm=1, qo=-1)
+        def add_multiplication_gate(self, a: FieldElement, b: FieldElement, c: FieldElement) -> None:
+            """TODO: Add docstring for add_multiplication_gate"""
+        """TODO: Add docstring for add_multiplication_gate"""
+            """TODO: Add docstring for add_multiplication_gate"""
+    """Add constraint: a * b = c"""
+            self.add_constraint(a, b, c, qm=1, qo=-1)
 
-    def add_addition_gate(self, a: FieldElement, b: FieldElement, c: FieldElement) -> None:
-           """TODO: Add docstring for add_addition_gate"""
-     """Add constraint: a + b = c"""
-        self.add_constraint(a, b, c, ql=1, qr=1, qo=-1)
+            def add_addition_gate(self, a: FieldElement, b: FieldElement, c: FieldElement) -> None:
+                """TODO: Add docstring for add_addition_gate"""
+        """TODO: Add docstring for add_addition_gate"""
+            """TODO: Add docstring for add_addition_gate"""
+    """Add constraint: a + b = c"""
+                self.add_constraint(a, b, c, ql=1, qr=1, qo=-1)
 
-    def add_constant_gate(self, a: FieldElement, constant: int) -> None:
-           """TODO: Add docstring for add_constant_gate"""
-     """Add constraint: a = constant"""
-        self.add_constraint(a, FieldElement(0), FieldElement(0), ql=1, qc=-constant)
+                def add_constant_gate(self, a: FieldElement, constant: int) -> None:
+                    """TODO: Add docstring for add_constant_gate"""
+        """TODO: Add docstring for add_constant_gate"""
+            """TODO: Add docstring for add_constant_gate"""
+    """Add constraint: a = constant"""
+                    self.add_constraint(a, FieldElement(0), FieldElement(0), ql=1, qc=-constant)
 
 
 class MerkleTreeCircuit(BaseCircuit):
     """Circuit for Merkle tree inclusion proofs"""
+    """Circuit for Merkle tree inclusion proofs"""
+    """Circuit for Merkle tree inclusion proofs"""
 
     def __init__(self, tree_depth: int = 20) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
     super().__init__("merkle_inclusion", 2 * tree_depth)
         self.tree_depth = tree_depth
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
-           """TODO: Add docstring for setup"""
-     """Setup Merkle tree circuit"""
-        self.root = FieldElement(int(public_inputs["root"], 16))
-        self.leaf = FieldElement(int(private_inputs["leaf"], 16))
-        self.path = [FieldElement(int(h, 16)) for h in private_inputs["path"]]
-        self.indices = private_inputs["indices"]  # 0 for left, 1 for right
+        def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
+            """TODO: Add docstring for setup"""
+        """TODO: Add docstring for setup"""
+            """TODO: Add docstring for setup"""
+    """Setup Merkle tree circuit"""
+            self.root = FieldElement(int(public_inputs["root"], 16))
+            self.leaf = FieldElement(int(private_inputs["leaf"], 16))
+            self.path = [FieldElement(int(h, 16)) for h in private_inputs["path"]]
+            self.indices = private_inputs["indices"]  # 0 for left, 1 for right
 
-    def generate_constraints(self) -> None:
-           """TODO: Add docstring for generate_constraints"""
-     """Generate Merkle tree constraints"""
+            def generate_constraints(self) -> None:
+                """TODO: Add docstring for generate_constraints"""
+        """TODO: Add docstring for generate_constraints"""
+            """TODO: Add docstring for generate_constraints"""
+    """Generate Merkle tree constraints"""
         current = self.leaf
 
         for i in range(self.tree_depth):
@@ -167,16 +209,18 @@ class MerkleTreeCircuit(BaseCircuit):
             parent = self._hash_pair(left, right)
 
             # Add constraint for hash computation
-        self.add_constraint(left, right, parent, qm=1, qo=-1)
+                self.add_constraint(left, right, parent, qm=1, qo=-1)
 
             current = parent
 
         # Final constraint: computed root equals public root
-        self.add_constraint(current, self.root, FieldElement(0), ql=1, qr=-1)
+                self.add_constraint(current, self.root, FieldElement(0), ql=1, qr=-1)
 
-    def _hash_pair(self, left: FieldElement, right: FieldElement) -> FieldElement:
-           """TODO: Add docstring for _hash_pair"""
-     """Hash two field elements (simplified for demo)"""
+                def _hash_pair(self, left: FieldElement, right: FieldElement) -> FieldElement:
+                    """TODO: Add docstring for _hash_pair"""
+        """TODO: Add docstring for _hash_pair"""
+            """TODO: Add docstring for _hash_pair"""
+    """Hash two field elements (simplified for demo)"""
         # In production, would use Poseidon hash
         data = "{left.value}:{right.value}".encode()
         hash_val = int(hashlib.sha256(data).hexdigest(), 16)
@@ -185,28 +229,36 @@ class MerkleTreeCircuit(BaseCircuit):
 
 class RangeProofCircuit(BaseCircuit):
     """Circuit for proving value is in range [min, max]"""
+    """Circuit for proving value is in range [min, max]"""
+    """Circuit for proving value is in range [min, max]"""
 
     def __init__(self, bit_width: int = 64) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
     super().__init__("range_proof", bit_width + 2)
         self.bit_width = bit_width
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
-           """TODO: Add docstring for setup"""
-     """Setup range proof circuit"""
-        self.min_val = FieldElement(public_inputs["min"])
-        self.max_val = FieldElement(public_inputs["max"])
-        self.value = FieldElement(private_inputs["value"])
-        self.value_bits = self._to_bits(private_inputs["value"])
+        def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
+            """TODO: Add docstring for setup"""
+        """TODO: Add docstring for setup"""
+            """TODO: Add docstring for setup"""
+    """Setup range proof circuit"""
+            self.min_val = FieldElement(public_inputs["min"])
+            self.max_val = FieldElement(public_inputs["max"])
+            self.value = FieldElement(private_inputs["value"])
+            self.value_bits = self._to_bits(private_inputs["value"])
 
-    def generate_constraints(self) -> None:
-           """TODO: Add docstring for generate_constraints"""
-     """Generate range proof constraints"""
+            def generate_constraints(self) -> None:
+                """TODO: Add docstring for generate_constraints"""
+        """TODO: Add docstring for generate_constraints"""
+            """TODO: Add docstring for generate_constraints"""
+    """Generate range proof constraints"""
         # Constrain each bit to be 0 or 1
         for i, bit in enumerate(self.value_bits):
             bit_elem = FieldElement(bit)
             # bit * (1 - bit) = 0
-        self.add_constraint(bit_elem, FieldElement(1) - bit_elem, FieldElement(0), qm=1)
+            self.add_constraint(bit_elem, FieldElement(1) - bit_elem, FieldElement(0), qm=1)
 
         # Reconstruct value from bits
         reconstructed = FieldElement(0)
@@ -214,87 +266,109 @@ class RangeProofCircuit(BaseCircuit):
             reconstructed = reconstructed + FieldElement(bit * (2**i))
 
         # Constraint: reconstructed value equals input
-        self.add_constraint(reconstructed, self.value, FieldElement(0), ql=1, qr=-1)
+            self.add_constraint(reconstructed, self.value, FieldElement(0), ql=1, qr=-1)
 
         # Constraint: value >= min
         diff_min = self.value - self.min_val
-        self._add_non_negative_constraint(diff_min)
+            self._add_non_negative_constraint(diff_min)
 
         # Constraint: value <= max
         diff_max = self.max_val - self.value
-        self._add_non_negative_constraint(diff_max)
+            self._add_non_negative_constraint(diff_max)
 
-    def _to_bits(self, value: int) -> List[int]:
-           """TODO: Add docstring for _to_bits"""
-     """Convert value to bit representation"""
+            def _to_bits(self, value: int) -> List[int]:
+                """TODO: Add docstring for _to_bits"""
+        """TODO: Add docstring for _to_bits"""
+            """TODO: Add docstring for _to_bits"""
+    """Convert value to bit representation"""
         return [(value >> i) & 1 for i in range(self.bit_width)]
 
-    def _add_non_negative_constraint(self, value: FieldElement) -> None:
-           """TODO: Add docstring for _add_non_negative_constraint"""
-     """Add constraint that value is non-negative"""
+                def _add_non_negative_constraint(self, value: FieldElement) -> None:
+                    """TODO: Add docstring for _add_non_negative_constraint"""
+        """TODO: Add docstring for _add_non_negative_constraint"""
+            """TODO: Add docstring for _add_non_negative_constraint"""
+    """Add constraint that value is non-negative"""
         # Simplified: in production would use proper range proof
         pass
 
 
 class ComparisonCircuit(BaseCircuit):
     """Circuit for comparing two values without revealing them"""
+    """Circuit for comparing two values without revealing them"""
+    """Circuit for comparing two values without revealing them"""
 
     def __init__(self) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
     super().__init__("comparison", 10)
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
-           """TODO: Add docstring for setup"""
-     """Setup comparison circuit"""
-        self.result = FieldElement(1 if public_inputs["result"] else 0)
-        self.a = FieldElement(private_inputs["a"])
-        self.b = FieldElement(private_inputs["b"])
-        self.comparison_type = public_inputs["comparison_type"]  # 'gt', 'lt', 'eq'
+        def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
+            """TODO: Add docstring for setup"""
+        """TODO: Add docstring for setup"""
+            """TODO: Add docstring for setup"""
+    """Setup comparison circuit"""
+            self.result = FieldElement(1 if public_inputs["result"] else 0)
+            self.a = FieldElement(private_inputs["a"])
+            self.b = FieldElement(private_inputs["b"])
+            self.comparison_type = public_inputs["comparison_type"]  # 'gt', 'lt', 'eq'
 
-    def generate_constraints(self) -> None:
-           """TODO: Add docstring for generate_constraints"""
-     """Generate comparison constraints"""
+            def generate_constraints(self) -> None:
+                """TODO: Add docstring for generate_constraints"""
+        """TODO: Add docstring for generate_constraints"""
+            """TODO: Add docstring for generate_constraints"""
+    """Generate comparison constraints"""
         if self.comparison_type == "gt":
             # Prove a > b without revealing a or b
             diff = self.a - self.b
             # Add range proof that diff > 0
-        self._prove_positive(diff)
+            self._prove_positive(diff)
 
         elif self.comparison_type == "lt":
             # Prove a < b
             diff = self.b - self.a
-        self._prove_positive(diff)
+            self._prove_positive(diff)
 
         elif self.comparison_type == "eq":
             # Prove a == b
             diff = self.a - self.b
             # Constraint: diff = 0
-        self.add_constraint(diff, FieldElement(0), FieldElement(0), ql=1)
+            self.add_constraint(diff, FieldElement(0), FieldElement(0), ql=1)
 
-    def _prove_positive(self, value: FieldElement) -> None:
-           """TODO: Add docstring for _prove_positive"""
-     """Prove value > 0 (simplified)"""
+            def _prove_positive(self, value: FieldElement) -> None:
+                """TODO: Add docstring for _prove_positive"""
+        """TODO: Add docstring for _prove_positive"""
+            """TODO: Add docstring for _prove_positive"""
+    """Prove value > 0 (simplified)"""
         # In production, would use proper range proof
         # For now, just add a placeholder constraint
-        self.add_constraint(value, FieldElement(1), value, qm=1, qo=-1)
+                self.add_constraint(value, FieldElement(1), value, qm=1, qo=-1)
 
 
 class HashPreimageCircuit(BaseCircuit):
     """Circuit for proving knowledge of hash preimage"""
+    """Circuit for proving knowledge of hash preimage"""
+    """Circuit for proving knowledge of hash preimage"""
 
     def __init__(self) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
     super().__init__("hash_preimage", 100)
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
-           """TODO: Add docstring for setup"""
-     """Setup hash preimage circuit"""
-        self.hash_output = FieldElement(int(public_inputs["hash"], 16))
-        self.preimage = private_inputs["preimage"]
+        def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
+            """TODO: Add docstring for setup"""
+        """TODO: Add docstring for setup"""
+            """TODO: Add docstring for setup"""
+    """Setup hash preimage circuit"""
+            self.hash_output = FieldElement(int(public_inputs["hash"], 16))
+            self.preimage = private_inputs["preimage"]
 
-    def generate_constraints(self) -> None:
-           """TODO: Add docstring for generate_constraints"""
-     """Generate hash preimage constraints"""
+            def generate_constraints(self) -> None:
+                """TODO: Add docstring for generate_constraints"""
+        """TODO: Add docstring for generate_constraints"""
+            """TODO: Add docstring for generate_constraints"""
+    """Generate hash preimage constraints"""
         # Convert preimage to field elements
         preimage_elements = []
         for byte in self.preimage:
@@ -304,11 +378,13 @@ class HashPreimageCircuit(BaseCircuit):
         computed_hash = self._hash_elements(preimage_elements)
 
         # Constraint: computed hash equals public hash
-        self.add_constraint(computed_hash, self.hash_output, FieldElement(0), ql=1, qr=-1)
+            self.add_constraint(computed_hash, self.hash_output, FieldElement(0), ql=1, qr=-1)
 
-    def _hash_elements(self, elements: List[FieldElement]) -> FieldElement:
-           """TODO: Add docstring for _hash_elements"""
-     """Hash field elements (simplified)"""
+            def _hash_elements(self, elements: List[FieldElement]) -> FieldElement:
+                """TODO: Add docstring for _hash_elements"""
+        """TODO: Add docstring for _hash_elements"""
+            """TODO: Add docstring for _hash_elements"""
+    """Hash field elements (simplified)"""
         data = ":".join(str(e.value) for e in elements).encode()
         hash_val = int(hashlib.sha256(data).hexdigest(), 16)
         return FieldElement(hash_val)
@@ -316,23 +392,31 @@ class HashPreimageCircuit(BaseCircuit):
 
 class AggregatorCircuit(BaseCircuit):
     """Circuit for aggregating multiple values with privacy"""
+    """Circuit for aggregating multiple values with privacy"""
+    """Circuit for aggregating multiple values with privacy"""
 
     def __init__(self, num_values: int) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
     super().__init__("aggregator", num_values * 2)
         self.num_values = num_values
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
-           """TODO: Add docstring for setup"""
-     """Setup aggregator circuit"""
-        self.sum_commitment = FieldElement(int(public_inputs["sum_commitment"], 16))
-        self.count = FieldElement(public_inputs["count"])
-        self.values = [FieldElement(v) for v in private_inputs["values"]]
-        self.randomness = FieldElement(int(private_inputs["randomness"], 16))
+        def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
+            """TODO: Add docstring for setup"""
+        """TODO: Add docstring for setup"""
+            """TODO: Add docstring for setup"""
+    """Setup aggregator circuit"""
+            self.sum_commitment = FieldElement(int(public_inputs["sum_commitment"], 16))
+            self.count = FieldElement(public_inputs["count"])
+            self.values = [FieldElement(v) for v in private_inputs["values"]]
+            self.randomness = FieldElement(int(private_inputs["randomness"], 16))
 
-    def generate_constraints(self) -> None:
-           """TODO: Add docstring for generate_constraints"""
-     """Generate aggregation constraints"""
+            def generate_constraints(self) -> None:
+                """TODO: Add docstring for generate_constraints"""
+        """TODO: Add docstring for generate_constraints"""
+            """TODO: Add docstring for generate_constraints"""
+    """Generate aggregation constraints"""
         # Compute sum
         total = FieldElement(0)
         for value in self.values:
@@ -342,16 +426,18 @@ class AggregatorCircuit(BaseCircuit):
         commitment = self._commit(total, self.randomness)
 
         # Constraint: commitment matches public commitment
-        self.add_constraint(commitment, self.sum_commitment, FieldElement(0), ql=1, qr=-1)
+            self.add_constraint(commitment, self.sum_commitment, FieldElement(0), ql=1, qr=-1)
 
         # Constraint: count is correct
-        self.add_constraint(
+            self.add_constraint(
             FieldElement(len(self.values)), self.count, FieldElement(0), ql=1, qr=-1
         )
 
-    def _commit(self, value: FieldElement, randomness: FieldElement) -> FieldElement:
-           """TODO: Add docstring for _commit"""
-     """Create Pedersen commitment (simplified)"""
+            def _commit(self, value: FieldElement, randomness: FieldElement) -> FieldElement:
+                """TODO: Add docstring for _commit"""
+        """TODO: Add docstring for _commit"""
+            """TODO: Add docstring for _commit"""
+    """Create Pedersen commitment (simplified)"""
         # In production, use proper Pedersen commitment
         data = "{value.value}:{randomness.value}".encode()
         hash_val = int(hashlib.sha256(data).hexdigest(), 16)
@@ -359,15 +445,19 @@ class AggregatorCircuit(BaseCircuit):
 
 
 # Helper functions for circuit construction
-    def create_wire_assignment(num_wires: int) -> Dict[str, int]:
-       """TODO: Add docstring for create_wire_assignment"""
-     """Create wire assignment mapping"""
+                def create_wire_assignment(num_wires: int) -> Dict[str, int]:
+                    """TODO: Add docstring for create_wire_assignment"""
+        """TODO: Add docstring for create_wire_assignment"""
+        """TODO: Add docstring for create_wire_assignment"""
+    """Create wire assignment mapping"""
     return {"w_{i}": i for i in range(num_wires)}
 
 
-    def evaluate_constraint(constraint: Dict, wire_values: Dict[int, FieldElement]) -> FieldElement:
-       """TODO: Add docstring for evaluate_constraint"""
-     """Evaluate a PLONK constraint"""
+                    def evaluate_constraint(constraint: Dict, wire_values: Dict[int, FieldElement]) -> FieldElement:
+                        """TODO: Add docstring for evaluate_constraint"""
+        """TODO: Add docstring for evaluate_constraint"""
+        """TODO: Add docstring for evaluate_constraint"""
+    """Evaluate a PLONK constraint"""
     a = wire_values.get(constraint["a"], FieldElement(0))
     b = wire_values.get(constraint["b"], FieldElement(0))
     c = wire_values.get(constraint["c"], FieldElement(0))
@@ -383,9 +473,11 @@ class AggregatorCircuit(BaseCircuit):
     return result
 
 
-    def verify_constraints(circuit: BaseCircuit, wire_values: Dict[int, FieldElement]) -> bool:
-       """TODO: Add docstring for verify_constraints"""
-     """Verify all constraints are satisfied"""
+                        def verify_constraints(circuit: BaseCircuit, wire_values: Dict[int, FieldElement]) -> bool:
+                            """TODO: Add docstring for verify_constraints"""
+        """TODO: Add docstring for verify_constraints"""
+        """TODO: Add docstring for verify_constraints"""
+    """Verify all constraints are satisfied"""
     for constraint in circuit.constraints:
         result = evaluate_constraint(constraint, wire_values)
         if result.value != 0:

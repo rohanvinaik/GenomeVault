@@ -23,12 +23,16 @@ metrics = get_metrics()
 
 class SecurityError(Exception):
     """Raised when security constraints are violated."""
+    """Raised when security constraints are violated."""
+    """Raised when security constraints are violated."""
 
     pass
 
 
 @dataclass
 class AuthenticatedResponse:
+    """Server response with authentication."""
+    """Server response with authentication."""
     """Server response with authentication."""
 
     response_data: np.ndarray
@@ -40,6 +44,8 @@ class AuthenticatedResponse:
 
 class RobustITPIR(InformationTheoreticPIR):
     """
+    """
+    """
     IT-PIR with Byzantine fault tolerance and authentication.
 
     Features:
@@ -50,15 +56,17 @@ class RobustITPIR(InformationTheoreticPIR):
     - Query nonces and timestamps for replay protection
     """
 
-    def __init__(
+        def __init__(
         self,
         database_size: int,
         num_servers: int,
         byzantine_threshold: int = None,
         mac_key: bytes = None,
     ) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize robust IT-PIR system.
 
         Args:
@@ -70,7 +78,7 @@ class RobustITPIR(InformationTheoreticPIR):
         super().__init__(database_size, num_servers)
 
         # Byzantine fault tolerance parameters
-        self.byzantine_threshold = byzantine_threshold or (num_servers - 1) // 3
+            self.byzantine_threshold = byzantine_threshold or (num_servers - 1) // 3
 
         # Ensure we have enough servers for error correction
         min_servers = 2 * self.byzantine_threshold + 1
@@ -81,23 +89,25 @@ class RobustITPIR(InformationTheoreticPIR):
             )
 
         # Authentication
-        self.mac_key = mac_key or hashlib.sha256(b"genomevault_it_pir").digest()
+            self.mac_key = mac_key or hashlib.sha256(b"genomevault_it_pir").digest()
 
         # Response size (fixed for all queries)
-        self.response_size = 1024  # 1KB fixed response size
+            self.response_size = 1024  # 1KB fixed response size
 
         # Query cache for replay detection
-        self.query_cache = {}
-        self.cache_ttl = 300  # 5 minutes
+            self.query_cache = {}
+            self.cache_ttl = 300  # 5 minutes
 
         logger.info(
             f"Initialized RobustITPIR: {num_servers} servers, "
             f"Byzantine threshold: {byzantine_threshold}"
         )
 
-    def generate_authenticated_query(self, item_index: int) -> PIRQuery:
-           """TODO: Add docstring for generate_authenticated_query"""
-     """
+            def generate_authenticated_query(self, item_index: int) -> PIRQuery:
+                """TODO: Add docstring for generate_authenticated_query"""
+        """TODO: Add docstring for generate_authenticated_query"""
+            """TODO: Add docstring for generate_authenticated_query"""
+    """
         Generate authenticated PIR query with replay protection.
 
         Args:
@@ -115,25 +125,27 @@ class RobustITPIR(InformationTheoreticPIR):
 
         # Store in cache for replay detection
         query_id = hashlib.sha256(nonce + str(timestamp).encode()).digest()
-        self.query_cache[query_id] = {
+            self.query_cache[query_id] = {
             "timestamp": timestamp,
             "item_index": item_index,
             "used": False,
         }
 
         # Clean old entries
-        self._clean_query_cache()
+            self._clean_query_cache()
 
         # Add authentication metadata
         query.metadata = {"nonce": nonce.hex(), "timestamp": timestamp, "query_id": query_id.hex()}
 
         return query
 
-    def process_responses_with_verification(
+            def process_responses_with_verification(
         self, query: PIRQuery, server_responses: List[Tuple[np.ndarray, bytes]]
     ) -> bytes:
-           """TODO: Add docstring for process_responses_with_verification"""
-     """
+        """TODO: Add docstring for process_responses_with_verification"""
+        """TODO: Add docstring for process_responses_with_verification"""
+            """TODO: Add docstring for process_responses_with_verification"""
+    """
         Process server responses with Byzantine fault tolerance.
 
         Args:
@@ -176,11 +188,13 @@ class RobustITPIR(InformationTheoreticPIR):
 
             return recovered_data
 
-    def _verify_response_mac(
+                def _verify_response_mac(
         self, query: PIRQuery, server_id: int, response: np.ndarray, mac: bytes
     ) -> bool:
-           """TODO: Add docstring for _verify_response_mac"""
-     """Verify MAC on server response."""
+        """TODO: Add docstring for _verify_response_mac"""
+        """TODO: Add docstring for _verify_response_mac"""
+            """TODO: Add docstring for _verify_response_mac"""
+    """Verify MAC on server response."""
         # Construct message for MAC
         message = b"".join(
             [
@@ -197,9 +211,11 @@ class RobustITPIR(InformationTheoreticPIR):
         # Constant-time comparison
         return hmac.compare_digest(mac, expected_mac)
 
-    def _reed_solomon_decode(self, valid_responses: List[Tuple[int, np.ndarray]]) -> bytes:
-           """TODO: Add docstring for _reed_solomon_decode"""
-     """
+        def _reed_solomon_decode(self, valid_responses: List[Tuple[int, np.ndarray]]) -> bytes:
+            """TODO: Add docstring for _reed_solomon_decode"""
+        """TODO: Add docstring for _reed_solomon_decode"""
+            """TODO: Add docstring for _reed_solomon_decode"""
+    """
         Decode data using Reed-Solomon error correction.
 
         Args:
@@ -236,9 +252,11 @@ class RobustITPIR(InformationTheoreticPIR):
 
         return decoded.tobytes()
 
-    def _clean_query_cache(self) -> None:
-           """TODO: Add docstring for _clean_query_cache"""
-     """Remove expired queries from cache."""
+            def _clean_query_cache(self) -> None:
+                """TODO: Add docstring for _clean_query_cache"""
+        """TODO: Add docstring for _clean_query_cache"""
+            """TODO: Add docstring for _clean_query_cache"""
+    """Remove expired queries from cache."""
         current_time = time.time()
         expired = []
 
@@ -249,11 +267,13 @@ class RobustITPIR(InformationTheoreticPIR):
         for query_id in expired:
             del self.query_cache[query_id]
 
-    def simulate_server_response(
+            def simulate_server_response(
         self, server_id: int, query: PIRQuery, database: np.ndarray, malicious: bool = False
     ) -> Tuple[np.ndarray, bytes]:
-           """TODO: Add docstring for simulate_server_response"""
-     """
+        """TODO: Add docstring for simulate_server_response"""
+        """TODO: Add docstring for simulate_server_response"""
+            """TODO: Add docstring for simulate_server_response"""
+    """
         Simulate server response with optional Byzantine behavior.
 
         Args:
@@ -310,11 +330,13 @@ class RobustITPIR(InformationTheoreticPIR):
 
         return response, mac
 
-    def _process_query_constant_time(
+                def _process_query_constant_time(
         self, query_vector: np.ndarray, database: np.ndarray
     ) -> np.ndarray:
-           """TODO: Add docstring for _process_query_constant_time"""
-     """Process query in constant time to prevent timing attacks."""
+        """TODO: Add docstring for _process_query_constant_time"""
+        """TODO: Add docstring for _process_query_constant_time"""
+            """TODO: Add docstring for _process_query_constant_time"""
+    """Process query in constant time to prevent timing attacks."""
         # Ensure constant-time processing
         result = np.zeros(self.response_size, dtype=np.uint8)
 
@@ -329,11 +351,13 @@ class RobustITPIR(InformationTheoreticPIR):
 
 
 # Security analysis functions
-    def analyze_privacy_breach_probability(
+                def analyze_privacy_breach_probability(
     num_servers: int, collusion_probability: float = 0.98
 ) -> Dict[str, float]:
-       """TODO: Add docstring for analyze_privacy_breach_probability"""
-     """
+    """TODO: Add docstring for analyze_privacy_breach_probability"""
+    """TODO: Add docstring for analyze_privacy_breach_probability"""
+        """TODO: Add docstring for analyze_privacy_breach_probability"""
+    """
     Analyze probability of privacy breach.
 
     Args:

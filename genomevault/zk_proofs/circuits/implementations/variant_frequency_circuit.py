@@ -18,6 +18,8 @@ from genomevault.zk_proofs.circuits.implementations.constraint_system import (
 
 class VariantFrequencyCircuit:
     """
+    """
+    """
     Zero-knowledge circuit for proving variant frequency sum without revealing individual counts.
 
     Given a client query over SNP identifiers {s_1, ..., s_L} (L ≤ 32), the server returns:
@@ -25,73 +27,77 @@ class VariantFrequencyCircuit:
     2. A total sum S = Σ c_i
     3. Commitments to each per-SNP count (or Merkle paths)
     4. A ZK proof that:
-       - Each c_i is the value committed at position corresponding to SNP s_i
-       - All c_i are within allowed range (0 ≤ c_i ≤ C_max)
-       - The published aggregate S equals the sum of the disclosed counts
+        - Each c_i is the value committed at position corresponding to SNP s_i
+        - All c_i are within allowed range (0 ≤ c_i ≤ C_max)
+        - The published aggregate S equals the sum of the disclosed counts
 
     This proves correctness without revealing any other SNP counts.
     """
 
-    def __init__(self, max_snps: int = 32, merkle_depth: int = 20) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        def __init__(self, max_snps: int = 32, merkle_depth: int = 20) -> None:
+            """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize the variant frequency circuit.
 
         Args:
             max_snps: Maximum number of SNPs in a query (default 32)
             merkle_depth: Depth of the Merkle tree storing allele counts
         """
-        self.max_snps = max_snps
-        self.merkle_depth = merkle_depth
-        self.cs = ConstraintSystem()
-        self.setup_complete = False
+            self.max_snps = max_snps
+            self.merkle_depth = merkle_depth
+            self.cs = ConstraintSystem()
+            self.setup_complete = False
 
         # Configure constants
-        self.C_MAX = 10000  # Maximum plausible allele count (2N for diploid with N samples)
+            self.C_MAX = 10000  # Maximum plausible allele count (2N for diploid with N samples)
 
-    def setup_circuit(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
-           """TODO: Add docstring for setup_circuit"""
-     """Setup the circuit with actual inputs."""
+            def setup_circuit(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
+                """TODO: Add docstring for setup_circuit"""
+        """TODO: Add docstring for setup_circuit"""
+            """TODO: Add docstring for setup_circuit"""
+    """Setup the circuit with actual inputs."""
 
         # Public inputs
-        self.sum_var = self.cs.add_public_input("total_sum")
-        self.merkle_root_var = self.cs.add_public_input("merkle_root")
-        self.num_snps_var = self.cs.add_public_input("num_snps")
+                self.sum_var = self.cs.add_public_input("total_sum")
+                self.merkle_root_var = self.cs.add_public_input("merkle_root")
+                self.num_snps_var = self.cs.add_public_input("num_snps")
 
         # SNP identifiers (can be public or hashed)
-        self.snp_ids_vars = []
+                self.snp_ids_vars = []
         for i in range(self.max_snps):
             snp_var = self.cs.add_public_input(f"snp_id_{i}")
-        self.snp_ids_vars.append(snp_var)
+            self.snp_ids_vars.append(snp_var)
 
         # Assign public input values
-        self.cs.assign(self.sum_var, FieldElement(public_inputs["total_sum"]))
-        self.cs.assign(self.merkle_root_var, FieldElement(int(public_inputs["merkle_root"], 16)))
-        self.cs.assign(self.num_snps_var, FieldElement(public_inputs["num_snps"]))
+            self.cs.assign(self.sum_var, FieldElement(public_inputs["total_sum"]))
+            self.cs.assign(self.merkle_root_var, FieldElement(int(public_inputs["merkle_root"], 16)))
+            self.cs.assign(self.num_snps_var, FieldElement(public_inputs["num_snps"]))
 
         # Assign SNP IDs
         snp_ids = public_inputs.get("snp_ids", [])
         for i, snp_id in enumerate(snp_ids):
             if i < self.max_snps:
-        self.cs.assign(self.snp_ids_vars[i], FieldElement(snp_id))
+                self.cs.assign(self.snp_ids_vars[i], FieldElement(snp_id))
 
         # Private inputs - allele counts
-        self.count_vars = []
+                self.count_vars = []
         counts = private_inputs["allele_counts"]
 
         for i in range(self.max_snps):
             count_var = self.cs.add_variable(f"allele_count_{i}")
-        self.count_vars.append(count_var)
+            self.count_vars.append(count_var)
 
             # Assign count value (0 if beyond actual number of SNPs)
             if i < len(counts):
-        self.cs.assign(count_var, FieldElement(counts[i]))
+                self.cs.assign(count_var, FieldElement(counts[i]))
             else:
-        self.cs.assign(count_var, FieldElement(0))
+                self.cs.assign(count_var, FieldElement(0))
 
         # Merkle path variables for each SNP
-        self.merkle_paths = []
-        self.merkle_indices = []
+                self.merkle_paths = []
+                self.merkle_indices = []
 
         merkle_proofs = private_inputs.get("merkle_proofs", [])
 
@@ -109,50 +115,54 @@ class VariantFrequencyCircuit:
                 if snp_idx < len(merkle_proofs):
                     proof = merkle_proofs[snp_idx]
                     if depth < len(proof["path"]):
-        self.cs.assign(path_var, FieldElement(int(proof["path"][depth], 16)))
-        self.cs.assign(index_var, FieldElement(proof["indices"][depth]))
+                        self.cs.assign(path_var, FieldElement(int(proof["path"][depth], 16)))
+                        self.cs.assign(index_var, FieldElement(proof["indices"][depth]))
                     else:
-        self.cs.assign(path_var, FieldElement(0))
-        self.cs.assign(index_var, FieldElement(0))
+                        self.cs.assign(path_var, FieldElement(0))
+                        self.cs.assign(index_var, FieldElement(0))
                 else:
-        self.cs.assign(path_var, FieldElement(0))
-        self.cs.assign(index_var, FieldElement(0))
+                    self.cs.assign(path_var, FieldElement(0))
+                    self.cs.assign(index_var, FieldElement(0))
 
-        self.merkle_paths.append(path_vars)
-        self.merkle_indices.append(index_vars)
+                    self.merkle_paths.append(path_vars)
+                    self.merkle_indices.append(index_vars)
 
         # Randomness for zero-knowledge
-        self.randomness_var = self.cs.add_variable("zk_randomness")
-        self.cs.assign(
-        self.randomness_var, FieldElement(int(private_inputs.get("randomness", "0"), 16))
+                    self.randomness_var = self.cs.add_variable("zk_randomness")
+                    self.cs.assign(
+                    self.randomness_var, FieldElement(int(private_inputs.get("randomness", "0"), 16))
         )
 
-        self.setup_complete = True
+                    self.setup_complete = True
 
-    def generate_constraints(self) -> None:
-           """TODO: Add docstring for generate_constraints"""
-     """Generate all circuit constraints."""
+                    def generate_constraints(self) -> None:
+                        """TODO: Add docstring for generate_constraints"""
+        """TODO: Add docstring for generate_constraints"""
+            """TODO: Add docstring for generate_constraints"""
+    """Generate all circuit constraints."""
         if not self.setup_complete:
             raise RuntimeError("Circuit must be setup before generating constraints")
 
         # 1. Range constraints for allele counts
-        self._constrain_allele_count_ranges()
+            self._constrain_allele_count_ranges()
 
         # 2. Sum verification constraint
-        self._constrain_sum()
+            self._constrain_sum()
 
         # 3. Merkle inclusion proofs for each count
-        self._constrain_merkle_inclusions()
+            self._constrain_merkle_inclusions()
 
         # 4. Enforce that unused slots are zero
-        self._constrain_unused_slots()
+            self._constrain_unused_slots()
 
         # 5. Add zero-knowledge randomness
-        self._add_zk_randomness()
+            self._add_zk_randomness()
 
-    def _constrain_allele_count_ranges(self) -> None:
-           """TODO: Add docstring for _constrain_allele_count_ranges"""
-     """Constrain each allele count to be within valid range [0, C_MAX]."""
+            def _constrain_allele_count_ranges(self) -> None:
+                """TODO: Add docstring for _constrain_allele_count_ranges"""
+        """TODO: Add docstring for _constrain_allele_count_ranges"""
+            """TODO: Add docstring for _constrain_allele_count_ranges"""
+    """Constrain each allele count to be within valid range [0, C_MAX]."""
 
         for i, count_var in enumerate(self.count_vars):
             # For range constraint 0 ≤ c ≤ C_MAX, we need:
@@ -166,7 +176,7 @@ class VariantFrequencyCircuit:
             diff_var = self.cs.add_variable(f"range_diff_{i}")
             c_val = self.cs.get_assignment(count_var)
             diff_val = FieldElement(self.C_MAX) - c_val
-        self.cs.assign(diff_var, diff_val)
+                self.cs.assign(diff_var, diff_val)
 
             # In practice, would use range proof gadget
             # For now, we'll add a simplified constraint
@@ -175,13 +185,15 @@ class VariantFrequencyCircuit:
             # Constraint: c * (C_MAX - c) = c * diff
             # This at least ensures c and (C_MAX - c) are computed correctly
             product_var = self.cs.add_variable(f"range_product_{i}")
-        self.cs.assign(product_var, c_val * diff_val)
+                self.cs.assign(product_var, c_val * diff_val)
 
-        self.cs.enforce_multiplication(count_var, diff_var, product_var)
+                self.cs.enforce_multiplication(count_var, diff_var, product_var)
 
-    def _constrain_sum(self) -> None:
-           """TODO: Add docstring for _constrain_sum"""
-     """Constrain that the sum of counts equals the public sum."""
+                def _constrain_sum(self) -> None:
+                    """TODO: Add docstring for _constrain_sum"""
+        """TODO: Add docstring for _constrain_sum"""
+            """TODO: Add docstring for _constrain_sum"""
+    """Constrain that the sum of counts equals the public sum."""
 
         # Build running sum
         running_sum_vars = []
@@ -198,7 +210,7 @@ class VariantFrequencyCircuit:
                 prev_sum = running_sum
                 current_count = self.cs.get_assignment(self.count_vars[i])
                 running_sum = prev_sum + current_count
-        self.cs.assign(sum_var, running_sum)
+                self.cs.assign(sum_var, running_sum)
                 running_sum_vars.append(sum_var)
 
                 # Constraint: prev_sum + count_i = sum_i
@@ -207,15 +219,17 @@ class VariantFrequencyCircuit:
                 count_lc = LinearCombination({self.count_vars[i]: FieldElement(1)})
                 sum_lc = prev_lc + count_lc
 
-        self.cs.enforce_equal(sum_lc, sum_var)
+                self.cs.enforce_equal(sum_lc, sum_var)
 
         # Final constraint: last running sum equals public sum
         if running_sum_vars:
-        self.cs.enforce_equal(running_sum_vars[-1], self.sum_var)
+            self.cs.enforce_equal(running_sum_vars[-1], self.sum_var)
 
-    def _constrain_merkle_inclusions(self) -> None:
-           """TODO: Add docstring for _constrain_merkle_inclusions"""
-     """Verify Merkle inclusion proof for each allele count."""
+            def _constrain_merkle_inclusions(self) -> None:
+                """TODO: Add docstring for _constrain_merkle_inclusions"""
+        """TODO: Add docstring for _constrain_merkle_inclusions"""
+            """TODO: Add docstring for _constrain_merkle_inclusions"""
+    """Verify Merkle inclusion proof for each allele count."""
 
         num_snps = int(self.cs.get_assignment(self.num_snps_var).value)
 
@@ -228,7 +242,7 @@ class VariantFrequencyCircuit:
 
             # Compute leaf hash
             leaf_hash = poseidon_hash([snp_id, count])
-        self.cs.assign(leaf_var, leaf_hash)
+            self.cs.assign(leaf_var, leaf_hash)
 
             # Verify Merkle path
             current_hash = leaf_var
@@ -239,7 +253,7 @@ class VariantFrequencyCircuit:
                 index_var = self.merkle_indices[snp_idx][depth]
 
                 # Ensure index is boolean
-        self.cs.enforce_boolean(index_var)
+                self.cs.enforce_boolean(index_var)
 
                 # Create parent hash variable
                 parent_var = self.cs.add_variable(f"merkle_parent_{snp_idx}_{depth}")
@@ -257,26 +271,30 @@ class VariantFrequencyCircuit:
                 else:
                     parent_hash = poseidon_hash([sibling, current])
 
-        self.cs.assign(parent_var, parent_hash)
+                    self.cs.assign(parent_var, parent_hash)
                 current_hash = parent_var
 
             # After traversing the path, current_hash should equal the root
             # But only if this is an active SNP (index < num_snps)
             # For simplicity, we always verify but rely on zero counts for inactive slots
 
-    def _constrain_unused_slots(self) -> None:
-           """TODO: Add docstring for _constrain_unused_slots"""
-     """Ensure counts for SNPs beyond num_snps are zero."""
+                    def _constrain_unused_slots(self) -> None:
+                        """TODO: Add docstring for _constrain_unused_slots"""
+        """TODO: Add docstring for _constrain_unused_slots"""
+            """TODO: Add docstring for _constrain_unused_slots"""
+    """Ensure counts for SNPs beyond num_snps are zero."""
 
         num_snps = int(self.cs.get_assignment(self.num_snps_var).value)
 
         for i in range(num_snps, self.max_snps):
             # Constraint: count[i] = 0 for i >= num_snps
-        self.cs.enforce_equal(self.count_vars[i], self.cs.zero)
+            self.cs.enforce_equal(self.count_vars[i], self.cs.zero)
 
-    def _add_zk_randomness(self) -> None:
-           """TODO: Add docstring for _add_zk_randomness"""
-     """Add randomness to achieve zero-knowledge property."""
+            def _add_zk_randomness(self) -> None:
+                """TODO: Add docstring for _add_zk_randomness"""
+        """TODO: Add docstring for _add_zk_randomness"""
+            """TODO: Add docstring for _add_zk_randomness"""
+    """Add randomness to achieve zero-knowledge property."""
 
         # Create blinding factors
         r1 = self.cs.add_variable("blind_1")
@@ -284,40 +302,50 @@ class VariantFrequencyCircuit:
         r3 = self.cs.add_variable("blind_3")
 
         # Assign random values
-        self.cs.assign(r1, FieldElement.random())
-        self.cs.assign(r2, FieldElement.random())
-        self.cs.assign(r3, FieldElement.random())
+                self.cs.assign(r1, FieldElement.random())
+                self.cs.assign(r2, FieldElement.random())
+                self.cs.assign(r3, FieldElement.random())
 
         # Add constraint that depends on randomness but doesn't affect the main logic
         # r1 * r2 = r3 * randomness
         product_var = self.cs.add_variable("blind_product")
-        self.cs.assign(product_var, self.cs.get_assignment(r1) * self.cs.get_assignment(r2))
+                self.cs.assign(product_var, self.cs.get_assignment(r1) * self.cs.get_assignment(r2))
 
-        self.cs.enforce_multiplication(r1, r2, product_var)
+                self.cs.enforce_multiplication(r1, r2, product_var)
 
-    def get_constraint_system(self) -> ConstraintSystem:
-           """TODO: Add docstring for get_constraint_system"""
-     """Get the constraint system."""
+                def get_constraint_system(self) -> ConstraintSystem:
+                    """TODO: Add docstring for get_constraint_system"""
+        """TODO: Add docstring for get_constraint_system"""
+            """TODO: Add docstring for get_constraint_system"""
+    """Get the constraint system."""
         return self.cs
 
-    def get_public_inputs(self) -> List[FieldElement]:
-           """TODO: Add docstring for get_public_inputs"""
-     """Get public input values."""
+                    def get_public_inputs(self) -> List[FieldElement]:
+                        """TODO: Add docstring for get_public_inputs"""
+        """TODO: Add docstring for get_public_inputs"""
+            """TODO: Add docstring for get_public_inputs"""
+    """Get public input values."""
         return self.cs.get_public_inputs()
 
-    def get_witness(self) -> Dict[int, FieldElement]:
-           """TODO: Add docstring for get_witness"""
-     """Get witness (private inputs)."""
+                        def get_witness(self) -> Dict[int, FieldElement]:
+                            """TODO: Add docstring for get_witness"""
+        """TODO: Add docstring for get_witness"""
+            """TODO: Add docstring for get_witness"""
+    """Get witness (private inputs)."""
         return self.cs.get_witness()
 
-    def verify_constraints(self) -> bool:
-           """TODO: Add docstring for verify_constraints"""
-     """Verify all constraints are satisfied."""
+                            def verify_constraints(self) -> bool:
+                                """TODO: Add docstring for verify_constraints"""
+        """TODO: Add docstring for verify_constraints"""
+            """TODO: Add docstring for verify_constraints"""
+    """Verify all constraints are satisfied."""
         return self.cs.is_satisfied()
 
-    def get_circuit_info(self) -> Dict[str, Any]:
-           """TODO: Add docstring for get_circuit_info"""
-     """Get circuit information."""
+                                def get_circuit_info(self) -> Dict[str, Any]:
+                                    """TODO: Add docstring for get_circuit_info"""
+        """TODO: Add docstring for get_circuit_info"""
+            """TODO: Add docstring for get_circuit_info"""
+    """Get circuit information."""
         return {
             "name": "variant_frequency_sum",
             "num_constraints": self.cs.num_constraints(),
@@ -330,9 +358,11 @@ class VariantFrequencyCircuit:
         }
 
 
-    def create_example_frequency_proof() -> Dict[str, Any]:
-       """TODO: Add docstring for create_example_frequency_proof"""
-     """Example usage of the VariantFrequencyCircuit."""
+                                    def create_example_frequency_proof() -> Dict[str, Any]:
+                                        """TODO: Add docstring for create_example_frequency_proof"""
+        """TODO: Add docstring for create_example_frequency_proof"""
+        """TODO: Add docstring for create_example_frequency_proof"""
+    """Example usage of the VariantFrequencyCircuit."""
 
     # Example: Query for 5 SNPs
     snp_ids = [

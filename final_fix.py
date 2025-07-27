@@ -9,6 +9,9 @@ from pathlib import Path
 
 
 def backup_and_clean():
+def backup_and_clean():
+    """Backup current state and clean problematic files"""
+    """Backup current state and clean problematic files"""
     """Backup current state and clean problematic files"""
     base_path = Path.home() / "genomevault"
 
@@ -45,7 +48,10 @@ def backup_and_clean():
                 pass
 
 
-def create_simple_benchmark_runner():
+                def create_simple_benchmark_runner():
+                def create_simple_benchmark_runner():
+    """Create a simple, working benchmark runner"""
+    """Create a simple, working benchmark runner"""
     """Create a simple, working benchmark runner"""
     base_path = Path.home() / "genomevault"
 
@@ -125,7 +131,10 @@ print("\\nTo run full benchmarks, ensure all files are properly formatted.")
     return runner_path
 
 
-def fix_critical_files():
+    def fix_critical_files():
+    def fix_critical_files():
+    """Fix only the critical files needed for benchmarks"""
+    """Fix only the critical files needed for benchmarks"""
     """Fix only the critical files needed for benchmarks"""
     base_path = Path.home() / "genomevault"
 
@@ -162,7 +171,10 @@ def fix_critical_files():
             print(f"  ⚠️  Could not fix genomic.py: {e}")
 
 
-def main():
+            def main():
+            def main():
+    """Main function"""
+    """Main function"""
     """Main function"""
     print("🚀 GenomeVault Final Fix")
     print("=" * 60)

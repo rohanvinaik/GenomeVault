@@ -31,8 +31,10 @@ logger = get_logger(__name__)
 
 
 def setup_genomevault() -> None:
-       """TODO: Add docstring for setup_genomevault"""
-     """Initialize GenomeVault with basic configuration"""
+    """TODO: Add docstring for setup_genomevault"""
+    """TODO: Add docstring for setup_genomevault"""
+        """TODO: Add docstring for setup_genomevault"""
+    """Initialize GenomeVault with basic configuration"""
     logger.info("Setting up GenomeVault...")
 
     # Get configuration
@@ -42,9 +44,11 @@ def setup_genomevault() -> None:
     return config
 
 
-def process_genomic_data_example() -> None:
-       """TODO: Add docstring for process_genomic_data_example"""
-     """Example: Process genomic sequencing data"""
+    def process_genomic_data_example() -> None:
+        """TODO: Add docstring for process_genomic_data_example"""
+    """TODO: Add docstring for process_genomic_data_example"""
+        """TODO: Add docstring for process_genomic_data_example"""
+    """Example: Process genomic sequencing data"""
     logger.info("\n=== Genomic Data Processing Example ===")
 
     # Initialize processor
@@ -90,9 +94,11 @@ def process_genomic_data_example() -> None:
     return mock_profile
 
 
-def process_clinical_data_example() -> None:
-       """TODO: Add docstring for process_clinical_data_example"""
-     """Example: Process clinical/phenotype data"""
+        def process_clinical_data_example() -> None:
+            """TODO: Add docstring for process_clinical_data_example"""
+    """TODO: Add docstring for process_clinical_data_example"""
+        """TODO: Add docstring for process_clinical_data_example"""
+    """Example: Process clinical/phenotype data"""
     logger.info("\n=== Clinical Data Processing Example ===")
 
     # Initialize processor
@@ -166,9 +172,11 @@ def process_clinical_data_example() -> None:
     return phenotype_profile
 
 
-def demonstrate_privacy_features() -> None:
-       """TODO: Add docstring for demonstrate_privacy_features"""
-     """Demonstrate privacy-preserving features"""
+            def demonstrate_privacy_features() -> None:
+                """TODO: Add docstring for demonstrate_privacy_features"""
+    """TODO: Add docstring for demonstrate_privacy_features"""
+        """TODO: Add docstring for demonstrate_privacy_features"""
+    """Demonstrate privacy-preserving features"""
     logger.info("\n=== Privacy Features Demonstration ===")
 
     config = get_config()
@@ -203,9 +211,11 @@ def demonstrate_privacy_features() -> None:
     logger.info("6. Private Information Retrieval ensures query privacy")
 
 
-def main() -> None:
-       """TODO: Add docstring for main"""
-     """Main demonstration function"""
+        def main() -> None:
+            """TODO: Add docstring for main"""
+    """TODO: Add docstring for main"""
+        """TODO: Add docstring for main"""
+    """Main demonstration function"""
     print("\n" + "=" * 60)
     print("GenomeVault - Privacy-Preserving Genomics Platform")
     print("=" * 60)

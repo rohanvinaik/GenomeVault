@@ -39,8 +39,10 @@ __version__ = "1.0.0"
 
 
 def get_version_info() -> Dict[str, Any]:
-       """TODO: Add docstring for get_version_info"""
-     """Get comprehensive version information for all components.
+    """TODO: Add docstring for get_version_info"""
+    """TODO: Add docstring for get_version_info"""
+        """TODO: Add docstring for get_version_info"""
+    """Get comprehensive version information for all components.
 
     Returns:
         Dict containing all version information
@@ -73,9 +75,11 @@ def get_version_info() -> Dict[str, Any]:
     }
 
 
-def check_compatibility(component: str, version: str) -> bool:
-       """TODO: Add docstring for check_compatibility"""
-     """Check if a component version is compatible.
+        def check_compatibility(component: str, version: str) -> bool:
+            """TODO: Add docstring for check_compatibility"""
+    """TODO: Add docstring for check_compatibility"""
+        """TODO: Add docstring for check_compatibility"""
+    """Check if a component version is compatible.
 
     Args:
         component: Component name
@@ -95,9 +99,11 @@ def check_compatibility(component: str, version: str) -> bool:
     return False
 
 
-def format_version_string() -> str:
-       """TODO: Add docstring for format_version_string"""
-     """Format a human-readable version string.
+        def format_version_string() -> str:
+            """TODO: Add docstring for format_version_string"""
+    """TODO: Add docstring for format_version_string"""
+        """TODO: Add docstring for format_version_string"""
+    """Format a human-readable version string.
 
     Returns:
         Formatted version string

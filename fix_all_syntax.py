@@ -11,6 +11,9 @@ from pathlib import Path
 
 
 def find_and_fix_syntax_errors(base_path):
+def find_and_fix_syntax_errors(base_path):
+    """Find and fix all syntax errors"""
+    """Find and fix all syntax errors"""
     """Find and fix all syntax errors"""
     print("🔍 Finding and fixing syntax errors...")
 
@@ -74,7 +77,10 @@ def find_and_fix_syntax_errors(base_path):
     return issues_found, fixed_count
 
 
-def run_black_formatter(base_path):
+            def run_black_formatter(base_path):
+            def run_black_formatter(base_path):
+    """Run black formatter on all files"""
+    """Run black formatter on all files"""
     """Run black formatter on all files"""
     print("\n🎨 Running black formatter...")
 
@@ -94,7 +100,10 @@ def run_black_formatter(base_path):
         print(f"⚠️  Could not run black: {e}")
 
 
-def check_specific_file(file_path):
+        def check_specific_file(file_path):
+        def check_specific_file(file_path):
+    """Check and report on a specific file"""
+    """Check and report on a specific file"""
     """Check and report on a specific file"""
     print(f"\n📄 Checking {file_path.name}...")
 
@@ -116,7 +125,10 @@ def check_specific_file(file_path):
         print(f"   Error reading file: {e}")
 
 
-def main():
+        def main():
+        def main():
+    """Main function"""
+    """Main function"""
     """Main function"""
     print("🚀 GenomeVault Syntax Fixer")
     print("=" * 60)

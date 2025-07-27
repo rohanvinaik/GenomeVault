@@ -31,6 +31,8 @@ logger = get_logger(__name__)
 @dataclass
 class EncryptionKey:
     """Encryption key with metadata"""
+    """Encryption key with metadata"""
+    """Encryption key with metadata"""
 
     key_id: str
     key_material: bytes
@@ -43,6 +45,8 @@ class EncryptionKey:
 @dataclass
 class ThresholdShare:
     """Share for threshold cryptography"""
+    """Share for threshold cryptography"""
+    """Share for threshold cryptography"""
 
     share_id: int
     share_value: bytes
@@ -53,6 +57,8 @@ class ThresholdShare:
 
 class AESGCMCipher:
     """AES-GCM encryption/decryption with 256-bit keys"""
+    """AES-GCM encryption/decryption with 256-bit keys"""
+    """AES-GCM encryption/decryption with 256-bit keys"""
 
     KEY_SIZE = 32  # 256 bits
     NONCE_SIZE = 12  # 96 bits
@@ -60,16 +66,20 @@ class AESGCMCipher:
 
     @classmethod
     def generate_key(cls) -> bytes:
-           """TODO: Add docstring for generate_key"""
-     """Generate a new AES-256 key"""
+        """TODO: Add docstring for generate_key"""
+        """TODO: Add docstring for generate_key"""
+            """TODO: Add docstring for generate_key"""
+    """Generate a new AES-256 key"""
         return secrets.token_bytes(cls.KEY_SIZE)
 
     @classmethod
-    def encrypt(
+        def encrypt(
         cls, plaintext: bytes, key: bytes, associated_data: Optional[bytes] = None
     ) -> Tuple[bytes, bytes, bytes]:
-           """TODO: Add docstring for encrypt"""
-     """
+        """TODO: Add docstring for encrypt"""
+        """TODO: Add docstring for encrypt"""
+            """TODO: Add docstring for encrypt"""
+    """
         Encrypt data using AES-GCM
 
         Args:
@@ -97,7 +107,7 @@ class AESGCMCipher:
         return ciphertext, nonce, encryptor.tag
 
     @classmethod
-    def decrypt(
+            def decrypt(
         cls,
         ciphertext: bytes,
         key: bytes,
@@ -105,8 +115,10 @@ class AESGCMCipher:
         tag: bytes,
         associated_data: Optional[bytes] = None,
     ) -> bytes:
-           """TODO: Add docstring for decrypt"""
-     """
+        """TODO: Add docstring for decrypt"""
+        """TODO: Add docstring for decrypt"""
+            """TODO: Add docstring for decrypt"""
+    """
         Decrypt data using AES-GCM
 
         Args:
@@ -134,9 +146,11 @@ class AESGCMCipher:
         return plaintext
 
     @classmethod
-    def encrypt_file(cls, input_path: Path, output_path: Path, key: bytes) -> None:
-           """TODO: Add docstring for encrypt_file"""
-     """Encrypt a file"""
+            def encrypt_file(cls, input_path: Path, output_path: Path, key: bytes) -> None:
+                """TODO: Add docstring for encrypt_file"""
+        """TODO: Add docstring for encrypt_file"""
+            """TODO: Add docstring for encrypt_file"""
+    """Encrypt a file"""
         with open(input_path, "rb") as f:
             plaintext = f.read()
 
@@ -151,9 +165,11 @@ class AESGCMCipher:
         logger.info(f"Encrypted file {input_path} to {output_path}")
 
     @classmethod
-    def decrypt_file(cls, input_path: Path, output_path: Path, key: bytes) -> None:
-           """TODO: Add docstring for decrypt_file"""
-     """Decrypt a file"""
+            def decrypt_file(cls, input_path: Path, output_path: Path, key: bytes) -> None:
+                """TODO: Add docstring for decrypt_file"""
+        """TODO: Add docstring for decrypt_file"""
+            """TODO: Add docstring for decrypt_file"""
+    """Decrypt a file"""
         with open(input_path, "rb") as f:
             nonce = f.read(cls.NONCE_SIZE)
             tag = f.read(cls.TAG_SIZE)
@@ -169,35 +185,47 @@ class AESGCMCipher:
 
 class ChaCha20Poly1305:
     """ChaCha20-Poly1305 AEAD encryption"""
+    """ChaCha20-Poly1305 AEAD encryption"""
+    """ChaCha20-Poly1305 AEAD encryption"""
 
     @classmethod
     def generate_key(cls) -> bytes:
-           """TODO: Add docstring for generate_key"""
-     """Generate a new ChaCha20 key"""
+        """TODO: Add docstring for generate_key"""
+        """TODO: Add docstring for generate_key"""
+            """TODO: Add docstring for generate_key"""
+    """Generate a new ChaCha20 key"""
         return nacl.utils.random(nacl.secret.SecretBox.KEY_SIZE)
 
     @classmethod
-    def encrypt(cls, plaintext: bytes, key: bytes) -> bytes:
-           """TODO: Add docstring for encrypt"""
-     """Encrypt using ChaCha20-Poly1305"""
+        def encrypt(cls, plaintext: bytes, key: bytes) -> bytes:
+            """TODO: Add docstring for encrypt"""
+        """TODO: Add docstring for encrypt"""
+            """TODO: Add docstring for encrypt"""
+    """Encrypt using ChaCha20-Poly1305"""
         box = nacl.secret.SecretBox(key)
         return box.encrypt(plaintext)
 
     @classmethod
-    def decrypt(cls, ciphertext: bytes, key: bytes) -> bytes:
-           """TODO: Add docstring for decrypt"""
-     """Decrypt using ChaCha20-Poly1305"""
+            def decrypt(cls, ciphertext: bytes, key: bytes) -> bytes:
+                """TODO: Add docstring for decrypt"""
+        """TODO: Add docstring for decrypt"""
+            """TODO: Add docstring for decrypt"""
+    """Decrypt using ChaCha20-Poly1305"""
         box = nacl.secret.SecretBox(key)
         return box.decrypt(ciphertext)
 
 
 class RSAEncryption:
     """RSA encryption for key exchange"""
+    """RSA encryption for key exchange"""
+    """RSA encryption for key exchange"""
 
     @classmethod
     def generate_keypair(cls, key_size: int = 4096) -> Tuple[bytes, bytes]:
-           """TODO: Add docstring for generate_keypair"""
-     """Generate RSA keypair"""
+        """TODO: Add docstring for generate_keypair"""
+        """TODO: Add docstring for generate_keypair"""
+            """TODO: Add docstring for generate_keypair"""
+    """Generate RSA keypair"""
         private_key = rsa.generate_private_key(
             public_exponent=65537, key_size=key_size, backend=default_backend()
         )
@@ -216,9 +244,11 @@ class RSAEncryption:
         return private_pem, public_pem
 
     @classmethod
-    def encrypt(cls, plaintext: bytes, public_key_pem: bytes) -> bytes:
-           """TODO: Add docstring for encrypt"""
-     """Encrypt using RSA-OAEP"""
+        def encrypt(cls, plaintext: bytes, public_key_pem: bytes) -> bytes:
+            """TODO: Add docstring for encrypt"""
+        """TODO: Add docstring for encrypt"""
+            """TODO: Add docstring for encrypt"""
+    """Encrypt using RSA-OAEP"""
         public_key = serialization.load_pem_public_key(public_key_pem, backend=default_backend())
 
         ciphertext = public_key.encrypt(
@@ -232,9 +262,11 @@ class RSAEncryption:
         return ciphertext
 
     @classmethod
-    def decrypt(cls, ciphertext: bytes, private_key_pem: bytes) -> bytes:
-           """TODO: Add docstring for decrypt"""
-     """Decrypt using RSA-OAEP"""
+            def decrypt(cls, ciphertext: bytes, private_key_pem: bytes) -> bytes:
+                """TODO: Add docstring for decrypt"""
+        """TODO: Add docstring for decrypt"""
+            """TODO: Add docstring for decrypt"""
+    """Decrypt using RSA-OAEP"""
         private_key = serialization.load_pem_private_key(
             private_key_pem, password=None, backend=default_backend()
         )
@@ -252,13 +284,17 @@ class RSAEncryption:
 
 class ThresholdCrypto:
     """Shamir's Secret Sharing for threshold cryptography"""
+    """Shamir's Secret Sharing for threshold cryptography"""
+    """Shamir's Secret Sharing for threshold cryptography"""
 
     PRIME = 2**256 - 189  # Large prime for GF(p)
 
     @classmethod
     def split_secret(cls, secret: bytes, threshold: int, total_shares: int) -> List[ThresholdShare]:
-           """TODO: Add docstring for split_secret"""
-     """
+        """TODO: Add docstring for split_secret"""
+        """TODO: Add docstring for split_secret"""
+            """TODO: Add docstring for split_secret"""
+    """
         Split secret into shares using Shamir's Secret Sharing
 
         Args:
@@ -303,9 +339,11 @@ class ThresholdCrypto:
         return shares
 
     @classmethod
-    def reconstruct_secret(cls, shares: List[ThresholdShare]) -> bytes:
-           """TODO: Add docstring for reconstruct_secret"""
-     """
+            def reconstruct_secret(cls, shares: List[ThresholdShare]) -> bytes:
+                """TODO: Add docstring for reconstruct_secret"""
+        """TODO: Add docstring for reconstruct_secret"""
+            """TODO: Add docstring for reconstruct_secret"""
+    """
         Reconstruct secret from shares
 
         Args:
@@ -344,18 +382,22 @@ class ThresholdCrypto:
         return secret
 
     @classmethod
-    def _evaluate_polynomial(cls, coefficients: List[int], x: int) -> int:
-           """TODO: Add docstring for _evaluate_polynomial"""
-     """Evaluate polynomial at x in GF(p)"""
+                def _evaluate_polynomial(cls, coefficients: List[int], x: int) -> int:
+                    """TODO: Add docstring for _evaluate_polynomial"""
+        """TODO: Add docstring for _evaluate_polynomial"""
+            """TODO: Add docstring for _evaluate_polynomial"""
+    """Evaluate polynomial at x in GF(p)"""
         result = 0
         for i, coeff in enumerate(coefficients):
             result = (result + coeff * pow(x, i, cls.PRIME)) % cls.PRIME
         return result
 
     @classmethod
-    def _lagrange_interpolation(cls, points: List[Tuple[int, int]], x: int) -> int:
-           """TODO: Add docstring for _lagrange_interpolation"""
-     """Lagrange interpolation in GF(p)"""
+            def _lagrange_interpolation(cls, points: List[Tuple[int, int]], x: int) -> int:
+                """TODO: Add docstring for _lagrange_interpolation"""
+        """TODO: Add docstring for _lagrange_interpolation"""
+            """TODO: Add docstring for _lagrange_interpolation"""
+    """Lagrange interpolation in GF(p)"""
         result = 0
 
         for i, (xi, yi) in enumerate(points):
@@ -377,13 +419,17 @@ class ThresholdCrypto:
 
 class KeyDerivation:
     """Key derivation functions"""
+    """Key derivation functions"""
+    """Key derivation functions"""
 
     @classmethod
     def derive_key(
         cls, password: str, salt: bytes, key_length: int = 32, iterations: int = 100000
     ) -> bytes:
-           """TODO: Add docstring for derive_key"""
-     """Derive key from password using PBKDF2"""
+        """TODO: Add docstring for derive_key"""
+        """TODO: Add docstring for derive_key"""
+            """TODO: Add docstring for derive_key"""
+    """Derive key from password using PBKDF2"""
         kdf = PBKDF2HMAC(
             algorithm=hashes.SHA256(),
             length=key_length,
@@ -394,9 +440,11 @@ class KeyDerivation:
         return kdf.derive(password.encode())
 
     @classmethod
-    def derive_key_hkdf(cls, input_key: bytes, info: bytes, key_length: int = 32) -> bytes:
-           """TODO: Add docstring for derive_key_hkdf"""
-     """Derive key using HKDF"""
+        def derive_key_hkdf(cls, input_key: bytes, info: bytes, key_length: int = 32) -> bytes:
+            """TODO: Add docstring for derive_key_hkdf"""
+        """TODO: Add docstring for derive_key_hkdf"""
+            """TODO: Add docstring for derive_key_hkdf"""
+    """Derive key using HKDF"""
         hkdf = HKDF(
             algorithm=hashes.SHA256(),
             length=key_length,
@@ -409,39 +457,53 @@ class KeyDerivation:
 
 class SecureRandom:
     """Secure random number generation"""
+    """Secure random number generation"""
+    """Secure random number generation"""
 
     @classmethod
     def generate_nonce(cls, size: int = 12) -> bytes:
-           """TODO: Add docstring for generate_nonce"""
-     """Generate cryptographically secure nonce"""
+        """TODO: Add docstring for generate_nonce"""
+        """TODO: Add docstring for generate_nonce"""
+            """TODO: Add docstring for generate_nonce"""
+    """Generate cryptographically secure nonce"""
         return os.urandom(size)
 
     @classmethod
-    def generate_salt(cls, size: int = 16) -> bytes:
-           """TODO: Add docstring for generate_salt"""
-     """Generate salt for key derivation"""
+        def generate_salt(cls, size: int = 16) -> bytes:
+            """TODO: Add docstring for generate_salt"""
+        """TODO: Add docstring for generate_salt"""
+            """TODO: Add docstring for generate_salt"""
+    """Generate salt for key derivation"""
         return os.urandom(size)
 
     @classmethod
-    def generate_token(cls, size: int = 32) -> str:
-           """TODO: Add docstring for generate_token"""
-     """Generate secure random token"""
+            def generate_token(cls, size: int = 32) -> str:
+                """TODO: Add docstring for generate_token"""
+        """TODO: Add docstring for generate_token"""
+            """TODO: Add docstring for generate_token"""
+    """Generate secure random token"""
         return secrets.token_urlsafe(size)
 
     @classmethod
-    def secure_compare(cls, a: bytes, b: bytes) -> bool:
-           """TODO: Add docstring for secure_compare"""
-     """Constant-time comparison"""
+                def secure_compare(cls, a: bytes, b: bytes) -> bool:
+                    """TODO: Add docstring for secure_compare"""
+        """TODO: Add docstring for secure_compare"""
+            """TODO: Add docstring for secure_compare"""
+    """Constant-time comparison"""
         return constant_time.bytes_eq(a, b)
 
 
 class HomomorphicHelper:
     """Helper for homomorphic encryption operations"""
+    """Helper for homomorphic encryption operations"""
+    """Helper for homomorphic encryption operations"""
 
     @classmethod
     def prepare_for_homomorphic(cls, value: int, bit_length: int = 64) -> bytes:
-           """TODO: Add docstring for prepare_for_homomorphic"""
-     """Prepare integer for homomorphic encryption"""
+        """TODO: Add docstring for prepare_for_homomorphic"""
+        """TODO: Add docstring for prepare_for_homomorphic"""
+            """TODO: Add docstring for prepare_for_homomorphic"""
+    """Prepare integer for homomorphic encryption"""
         # Ensure value fits in specified bits
         if value >= 2**bit_length:
             raise ValueError("Value too large for {bit_length} bits")
@@ -450,27 +512,35 @@ class HomomorphicHelper:
         return value.to_bytes(bit_length // 8, "little")
 
     @classmethod
-    def extract_from_homomorphic(cls, encrypted_result: bytes) -> int:
-           """TODO: Add docstring for extract_from_homomorphic"""
-     """Extract integer from homomorphic result"""
+            def extract_from_homomorphic(cls, encrypted_result: bytes) -> int:
+                """TODO: Add docstring for extract_from_homomorphic"""
+        """TODO: Add docstring for extract_from_homomorphic"""
+            """TODO: Add docstring for extract_from_homomorphic"""
+    """Extract integer from homomorphic result"""
         # This is a placeholder - actual implementation depends on HE library
         return int.from_bytes(encrypted_result[:8], "little")
 
 
 class EncryptionManager:
     """Manages encryption keys and operations"""
+    """Manages encryption keys and operations"""
+    """Manages encryption keys and operations"""
 
     def __init__(self, key_store_path: Optional[Path] = None) -> None:
-           """TODO: Add docstring for __init__"""
-     """Initialize encryption manager"""
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """Initialize encryption manager"""
         self.key_store_path = key_store_path or Path.home() / ".genomevault" / "keys"
         self.key_store_path.mkdir(parents=True, exist_ok=True)
         self._keys: Dict[str, EncryptionKey] = {}
         self._load_keys()
 
-    def generate_key(self, key_id: str, algorithm: str = "AES-GCM") -> EncryptionKey:
-           """TODO: Add docstring for generate_key"""
-     """Generate and store new encryption key"""
+        def generate_key(self, key_id: str, algorithm: str = "AES-GCM") -> EncryptionKey:
+            """TODO: Add docstring for generate_key"""
+        """TODO: Add docstring for generate_key"""
+            """TODO: Add docstring for generate_key"""
+    """Generate and store new encryption key"""
         if algorithm == "AES-GCM":
             key_material = AESGCMCipher.generate_key()
         elif algorithm == "ChaCha20-Poly1305":
@@ -486,15 +556,17 @@ class EncryptionManager:
             metadata={},
         )
 
-        self._keys[key_id] = key
-        self._save_keys()
+            self._keys[key_id] = key
+            self._save_keys()
 
         logger.info(f"Generated new {algorithm} key: {key_id}")
         return key
 
-    def encrypt_data(self, data: bytes, key_id: str) -> Dict[str, Any]:
-           """TODO: Add docstring for encrypt_data"""
-     """Encrypt data using specified key"""
+            def encrypt_data(self, data: bytes, key_id: str) -> Dict[str, Any]:
+                """TODO: Add docstring for encrypt_data"""
+        """TODO: Add docstring for encrypt_data"""
+            """TODO: Add docstring for encrypt_data"""
+    """Encrypt data using specified key"""
         if key_id not in self._keys:
             raise ValueError("Key not found: {key_id}")
 
@@ -519,9 +591,11 @@ class EncryptionManager:
         else:
             raise ValueError("Unsupported algorithm: {key.algorithm}")
 
-    def decrypt_data(self, encrypted_data: Dict[str, Any]) -> bytes:
-           """TODO: Add docstring for decrypt_data"""
-     """Decrypt data"""
+            def decrypt_data(self, encrypted_data: Dict[str, Any]) -> bytes:
+                """TODO: Add docstring for decrypt_data"""
+        """TODO: Add docstring for decrypt_data"""
+            """TODO: Add docstring for decrypt_data"""
+    """Decrypt data"""
         key_id = encrypted_data["key_id"]
         if key_id not in self._keys:
             raise ValueError("Key not found: {key_id}")
@@ -539,9 +613,11 @@ class EncryptionManager:
         else:
             raise ValueError("Unsupported algorithm: {key.algorithm}")
 
-    def _load_keys(self) -> None:
-           """TODO: Add docstring for _load_keys"""
-     """Load keys from storage"""
+            def _load_keys(self) -> None:
+                """TODO: Add docstring for _load_keys"""
+        """TODO: Add docstring for _load_keys"""
+            """TODO: Add docstring for _load_keys"""
+    """Load keys from storage"""
         # In production, keys should be stored in HSM or secure key storage
         # This is a simplified implementation
         key_file = self.key_store_path / "keys.json"
@@ -549,17 +625,21 @@ class EncryptionManager:
             # This would be encrypted in production
             logger.warning("Loading keys from unencrypted storage - use HSM in production")
 
-    def _save_keys(self) -> None:
-           """TODO: Add docstring for _save_keys"""
-     """Save keys to storage"""
+            def _save_keys(self) -> None:
+                """TODO: Add docstring for _save_keys"""
+        """TODO: Add docstring for _save_keys"""
+            """TODO: Add docstring for _save_keys"""
+    """Save keys to storage"""
         # In production, keys should be stored in HSM or secure key storage
         logger.warning("Saving keys to unencrypted storage - use HSM in production")
 
 
 # Convenience functions
-    def generate_secure_key(algorithm: str = "AES-GCM") -> bytes:
-       """TODO: Add docstring for generate_secure_key"""
-     """Generate a secure encryption key"""
+                def generate_secure_key(algorithm: str = "AES-GCM") -> bytes:
+                    """TODO: Add docstring for generate_secure_key"""
+        """TODO: Add docstring for generate_secure_key"""
+        """TODO: Add docstring for generate_secure_key"""
+    """Generate a secure encryption key"""
     if algorithm == "AES-GCM":
         return AESGCMCipher.generate_key()
     elif algorithm == "ChaCha20-Poly1305":
@@ -568,9 +648,11 @@ class EncryptionManager:
         raise ValueError("Unsupported algorithm: {algorithm}")
 
 
-    def secure_hash(data: bytes, algorithm: str = "SHA256") -> str:
-       """TODO: Add docstring for secure_hash"""
-     """Compute secure hash of data"""
+        def secure_hash(data: bytes, algorithm: str = "SHA256") -> str:
+            """TODO: Add docstring for secure_hash"""
+        """TODO: Add docstring for secure_hash"""
+        """TODO: Add docstring for secure_hash"""
+    """Compute secure hash of data"""
     if algorithm == "SHA256":
         return hashlib.sha256(data).hexdigest()
     elif algorithm == "SHA3-256":

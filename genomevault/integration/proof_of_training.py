@@ -27,6 +27,8 @@ logger = get_logger(__name__)
 
 class ProofOfTrainingIntegration:
     """
+    """
+    """
     Main integration class for Proof-of-Training functionality in GenomeVault.
 
     Coordinates:
@@ -38,35 +40,37 @@ class ProofOfTrainingIntegration:
     6. Real-time monitoring
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        def __init__(self, config: Dict[str, Any]) -> None:
+            """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize PoT integration.
 
         Args:
             config: Configuration dictionary
         """
-        self.config = config
+            self.config = config
 
         # Component initialization
-        self.snapshot_loggers: Dict[str, ModelSnapshotLogger] = {}
-        self.privacy_auditors: Dict[str, DifferentialPrivacyAuditor] = {}
-        self.model_monitors: Dict[str, RealTimeModelMonitor] = {}
-        self.clinical_validators: Dict[str, ClinicalModelValidator] = {}
-        self.federated_lineages: Dict[str, FederatedModelLineage] = {}
+            self.snapshot_loggers: Dict[str, ModelSnapshotLogger] = {}
+            self.privacy_auditors: Dict[str, DifferentialPrivacyAuditor] = {}
+            self.model_monitors: Dict[str, RealTimeModelMonitor] = {}
+            self.clinical_validators: Dict[str, ClinicalModelValidator] = {}
+            self.federated_lineages: Dict[str, FederatedModelLineage] = {}
 
         # Blockchain connection
-        self.attestation_contract = None
+            self.attestation_contract = None
         if config.get("blockchain_enabled"):
-        self._init_blockchain()
+            self._init_blockchain()
 
         # Storage paths
-        self.storage_base = Path(config.get("storage_path", "./genomevault_pot"))
-        self.storage_base.mkdir(parents=True, exist_ok=True)
+            self.storage_base = Path(config.get("storage_path", "./genomevault_pot"))
+            self.storage_base.mkdir(parents=True, exist_ok=True)
 
         logger.info("Proof-of-Training integration initialized")
 
-    def start_training_session(
+            def start_training_session(
         self,
         session_id: str,
         model_type: str,
@@ -74,6 +78,8 @@ class ProofOfTrainingIntegration:
         privacy_budget: Tuple[float, float] = (1.0, 1e-5),
         is_federated: bool = False,
     ) -> Dict[str, Any]:
+        """
+        """
         """
         Start a new training session with PoT tracking.
 
@@ -91,7 +97,7 @@ class ProofOfTrainingIntegration:
 
         # Initialize snapshot logger
         snapshot_dir = self.storage_base / "snapshots" / session_id
-        self.snapshot_loggers[session_id] = ModelSnapshotLogger(
+            self.snapshot_loggers[session_id] = ModelSnapshotLogger(
             session_id=session_id,
             output_dir=str(snapshot_dir.parent),
             snapshot_frequency=self.config.get("snapshot_frequency", 50),
@@ -101,7 +107,7 @@ class ProofOfTrainingIntegration:
 
         # Initialize privacy auditor
         epsilon, delta = privacy_budget
-        self.privacy_auditors[session_id] = DifferentialPrivacyAuditor(
+            self.privacy_auditors[session_id] = DifferentialPrivacyAuditor(
             session_id=session_id, total_epsilon=epsilon, total_delta=delta
         )
 
@@ -111,7 +117,7 @@ class ProofOfTrainingIntegration:
                 f"{model_type}_{dataset_info.get('hash', 'unknown')}".encode()
             ).hexdigest()
 
-        self.federated_lineages[session_id] = FederatedModelLineage(
+            self.federated_lineages[session_id] = FederatedModelLineage(
                 federation_id=session_id, initial_model_hash=initial_model_hash
             )
 
@@ -124,7 +130,7 @@ class ProofOfTrainingIntegration:
             "status": "active",
         }
 
-    def log_training_step(
+            def log_training_step(
         self,
         session_id: str,
         model: Any,
@@ -136,8 +142,10 @@ class ProofOfTrainingIntegration:
         io_pair: Optional[Tuple[Any, Any]] = None,
         privacy_params: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
-           """TODO: Add docstring for log_training_step"""
-     """
+        """TODO: Add docstring for log_training_step"""
+        """TODO: Add docstring for log_training_step"""
+            """TODO: Add docstring for log_training_step"""
+    """
         Log a training step with all PoT components.
 
         Args:
@@ -194,11 +202,13 @@ class ProofOfTrainingIntegration:
 
         return result
 
-    def complete_training_session(
+                def complete_training_session(
         self, session_id: str, final_model: Any, final_metrics: Dict[str, float]
     ) -> Dict[str, Any]:
-           """TODO: Add docstring for complete_training_session"""
-     """
+        """TODO: Add docstring for complete_training_session"""
+        """TODO: Add docstring for complete_training_session"""
+            """TODO: Add docstring for complete_training_session"""
+    """
         Complete a training session and generate proof.
 
         Args:
@@ -251,11 +261,13 @@ class ProofOfTrainingIntegration:
 
         return completion_result
 
-    def submit_attestation(
+            def submit_attestation(
         self, session_id: str, proof: Dict[str, Any], submitter_address: str
     ) -> Optional[str]:
-           """TODO: Add docstring for submit_attestation"""
-     """
+        """TODO: Add docstring for submit_attestation"""
+        """TODO: Add docstring for submit_attestation"""
+            """TODO: Add docstring for submit_attestation"""
+    """
         Submit training attestation to blockchain.
 
         Args:
@@ -292,11 +304,13 @@ class ProofOfTrainingIntegration:
             logger.error(f"Failed to submit attestation: {e}")
             return None
 
-    def start_model_monitoring(
+            def start_model_monitoring(
         self, model_id: str, model: Any, training_summary: Dict[str, Any]
     ) -> RealTimeModelMonitor:
-           """TODO: Add docstring for start_model_monitoring"""
-     """
+        """TODO: Add docstring for start_model_monitoring"""
+        """TODO: Add docstring for start_model_monitoring"""
+            """TODO: Add docstring for start_model_monitoring"""
+    """
         Start real-time monitoring for a deployed model.
 
         Args:
@@ -322,12 +336,12 @@ class ProofOfTrainingIntegration:
             monitoring_config=self.config.get("monitoring_config", {}),
         )
 
-        self.model_monitors[model_id] = monitor
+            self.model_monitors[model_id] = monitor
 
         logger.info(f"Started monitoring for model {model_id}")
         return monitor
 
-    def validate_model_clinically(
+            def validate_model_clinically(
         self,
         model_id: str,
         model: Any,
@@ -335,8 +349,10 @@ class ProofOfTrainingIntegration:
         test_data: Any,
         validation_level: str = "clinical_trial",
     ) -> Dict[str, Any]:
-           """TODO: Add docstring for validate_model_clinically"""
-     """
+        """TODO: Add docstring for validate_model_clinically"""
+        """TODO: Add docstring for validate_model_clinically"""
+            """TODO: Add docstring for validate_model_clinically"""
+    """
         Perform clinical validation of a model.
 
         Args:
@@ -353,7 +369,7 @@ class ProofOfTrainingIntegration:
         validator_id = f"validator_{self.config.get('institution_id', 'default')}"
 
         if validator_id not in self.clinical_validators:
-        self.clinical_validators[validator_id] = ClinicalModelValidator(
+            self.clinical_validators[validator_id] = ClinicalModelValidator(
                 validator_id=validator_id
             )
 
@@ -388,11 +404,13 @@ class ProofOfTrainingIntegration:
             "limitations": validation_result.limitations,
         }
 
-    def _generate_training_proof(
+            def _generate_training_proof(
         self, session_id: str, proof_data: Dict[str, Any]
     ) -> Dict[str, Any]:
-           """TODO: Add docstring for _generate_training_proof"""
-     """Generate training proof from snapshot data"""
+        """TODO: Add docstring for _generate_training_proof"""
+        """TODO: Add docstring for _generate_training_proof"""
+            """TODO: Add docstring for _generate_training_proof"""
+    """Generate training proof from snapshot data"""
         # Determine if multi-modal
         is_multimodal = self.config.get("multimodal", False)
 
@@ -436,9 +454,11 @@ class ProofOfTrainingIntegration:
 
         return proof
 
-    def _analyze_semantic_evolution(self, session_id: str) -> Dict[str, Any]:
-           """TODO: Add docstring for _analyze_semantic_evolution"""
-     """Analyze semantic evolution of model during training"""
+            def _analyze_semantic_evolution(self, session_id: str) -> Dict[str, Any]:
+                """TODO: Add docstring for _analyze_semantic_evolution"""
+        """TODO: Add docstring for _analyze_semantic_evolution"""
+            """TODO: Add docstring for _analyze_semantic_evolution"""
+    """Analyze semantic evolution of model during training"""
         snapshot_logger = self.snapshot_loggers.get(session_id)
         if not snapshot_logger:
             return {}
@@ -480,9 +500,11 @@ class ProofOfTrainingIntegration:
             "anomaly_epochs": [labels[i] for i in anomalies] if anomalies else [],
         }
 
-    def _extract_model_hypervector(self, model: Any) -> Optional[Any]:
-           """TODO: Add docstring for _extract_model_hypervector"""
-     """Extract hypervector representation from model"""
+            def _extract_model_hypervector(self, model: Any) -> Optional[Any]:
+                """TODO: Add docstring for _extract_model_hypervector"""
+        """TODO: Add docstring for _extract_model_hypervector"""
+            """TODO: Add docstring for _extract_model_hypervector"""
+    """Extract hypervector representation from model"""
         # Simplified - in practice would use actual hypervector encoding
         import numpy as np
 
@@ -492,12 +514,12 @@ class ProofOfTrainingIntegration:
                 params = []
                 for p in model.parameters():
                     params.extend(p.detach().cpu().numpy().flatten()[:100])
-            elif hasattr(model, "get_weights"):  # TensorFlow
+        elif hasattr(model, "get_weights"):  # TensorFlow
                 weights = model.get_weights()
                 params = []
                 for w in weights[:10]:
                     params.extend(w.flatten()[:100])
-            else:
+        else:
                 return None
 
             # Create simple hypervector
@@ -517,14 +539,16 @@ class ProofOfTrainingIntegration:
             logger.error(f"Failed to extract hypervector: {e}")
             return None
 
-    def _init_blockchain(self) -> None:
-           """TODO: Add docstring for _init_blockchain"""
-     """Initialize blockchain connection"""
+            def _init_blockchain(self) -> None:
+                """TODO: Add docstring for _init_blockchain"""
+        """TODO: Add docstring for _init_blockchain"""
+            """TODO: Add docstring for _init_blockchain"""
+    """Initialize blockchain connection"""
         try:
             contract_address = self.config["blockchain"]["contract_address"]
             chain_id = self.config["blockchain"]["chain_id"]
 
-        self.attestation_contract = TrainingAttestationContract(
+            self.attestation_contract = TrainingAttestationContract(
                 contract_address=contract_address, chain_id=chain_id
             )
 
@@ -532,13 +556,13 @@ class ProofOfTrainingIntegration:
             owner = self.config["blockchain"]["owner_address"]
             verifiers = self.config["blockchain"]["authorized_verifiers"]
 
-        self.attestation_contract.initialize(owner, verifiers)
+            self.attestation_contract.initialize(owner, verifiers)
 
             logger.info(f"Blockchain connection established: {contract_address}")
 
         except Exception:
             logger.error(f"Failed to initialize blockchain: {e}")
-        self.attestation_contract = None
+            self.attestation_contract = None
 
 
 # Export main integration class

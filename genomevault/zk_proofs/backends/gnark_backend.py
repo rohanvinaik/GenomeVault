@@ -22,37 +22,43 @@ metrics = MetricsCollector()
 
 class GnarkBackend:
     """Real ZK proof generation using gnark via FFI."""
+    """Real ZK proof generation using gnark via FFI."""
+    """Real ZK proof generation using gnark via FFI."""
 
     def __init__(self, circuit_dir: str = "./circuits/compiled", gnark_path: Optional[str] = None) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize gnark backend.
 
         Args:
             circuit_dir: Directory containing compiled circuits
             gnark_path: Path to gnark binaries (auto-detect if None)
         """
-        self.circuit_dir = Path(circuit_dir)
-        self.circuit_dir.mkdir(parents=True, exist_ok=True)
+            self.circuit_dir = Path(circuit_dir)
+            self.circuit_dir.mkdir(parents=True, exist_ok=True)
 
         # Find gnark binaries
-        self.gnark_path = gnark_path or self._find_gnark_path()
-        self.prover_bin = Path(self.gnark_path) / "gnark-prover"
-        self.verifier_bin = Path(self.gnark_path) / "gnark-verifier"
-        self.compiler_bin = Path(self.gnark_path) / "gnark-compile"
+            self.gnark_path = gnark_path or self._find_gnark_path()
+            self.prover_bin = Path(self.gnark_path) / "gnark-prover"
+            self.verifier_bin = Path(self.gnark_path) / "gnark-verifier"
+            self.compiler_bin = Path(self.gnark_path) / "gnark-compile"
 
         # Verify binaries exist
-        self._verify_binaries()
+            self._verify_binaries()
 
         # Circuit cache
-        self.compiled_circuits = {}
+            self.compiled_circuits = {}
 
         # Compile standard circuits
-        self._compile_standard_circuits()
+            self._compile_standard_circuits()
 
-    def _find_gnark_path(self) -> str:
-           """TODO: Add docstring for _find_gnark_path"""
-     """Auto-detect gnark installation path."""
+            def _find_gnark_path(self) -> str:
+                """TODO: Add docstring for _find_gnark_path"""
+        """TODO: Add docstring for _find_gnark_path"""
+            """TODO: Add docstring for _find_gnark_path"""
+    """Auto-detect gnark installation path."""
         # Check common locations
         paths = [
             "./bin",
@@ -73,9 +79,11 @@ class GnarkBackend:
 
         raise RuntimeError("gnark binaries not found. Please install gnark or specify path.")
 
-    def _verify_binaries(self) -> None:
-           """TODO: Add docstring for _verify_binaries"""
-     """Verify required gnark binaries exist."""
+            def _verify_binaries(self) -> None:
+                """TODO: Add docstring for _verify_binaries"""
+        """TODO: Add docstring for _verify_binaries"""
+            """TODO: Add docstring for _verify_binaries"""
+    """Verify required gnark binaries exist."""
         required = [self.prover_bin, self.verifier_bin, self.compiler_bin]
 
         for binary in required:
@@ -95,9 +103,11 @@ class GnarkBackend:
         except subprocess.TimeoutExpired:
             raise RuntimeError("gnark-prover timed out during version check")
 
-    def _compile_standard_circuits(self) -> None:
-           """TODO: Add docstring for _compile_standard_circuits"""
-     """Compile standard genomic circuits."""
+            def _compile_standard_circuits(self) -> None:
+                """TODO: Add docstring for _compile_standard_circuits"""
+        """TODO: Add docstring for _compile_standard_circuits"""
+            """TODO: Add docstring for _compile_standard_circuits"""
+    """Compile standard genomic circuits."""
         standard_circuits = [
             "variant_proof",
             "polygenic_risk_score",
@@ -111,13 +121,15 @@ class GnarkBackend:
 
             if circuit_file.exists():
                 try:
-        self._compile_circuit(circuit_name)
+                    self._compile_circuit(circuit_name)
                 except Exception as e:
                     logger.warning(f"Failed to compile {circuit_name}: {e}")
 
-    def _compile_circuit(self, circuit_name: str) -> None:
-           """TODO: Add docstring for _compile_circuit"""
-     """Compile a gnark circuit."""
+                    def _compile_circuit(self, circuit_name: str) -> None:
+                        """TODO: Add docstring for _compile_circuit"""
+        """TODO: Add docstring for _compile_circuit"""
+            """TODO: Add docstring for _compile_circuit"""
+    """Compile a gnark circuit."""
         circuit_file = self.circuit_dir / f"{circuit_name}.go"
         output_file = self.circuit_dir / f"{circuit_name}.r1cs"
 
@@ -155,16 +167,18 @@ class GnarkBackend:
         logger.info(f"Compiled {circuit_name} in {compile_time:.2f}s")
 
         # Cache circuit info
-        self.compiled_circuits[circuit_name] = {
+            self.compiled_circuits[circuit_name] = {
             "r1cs_path": str(output_file),
             "compiled_at": time.time(),
         }
 
-    def generate_proof(
+            def generate_proof(
         self, circuit_name: str, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
     ) -> bytes:
-           """TODO: Add docstring for generate_proof"""
-     """
+        """TODO: Add docstring for generate_proof"""
+        """TODO: Add docstring for generate_proof"""
+            """TODO: Add docstring for generate_proof"""
+    """
         Generate real SNARK proof using gnark.
 
         Args:
@@ -177,7 +191,7 @@ class GnarkBackend:
         """
         # Ensure circuit is compiled
         if circuit_name not in self.compiled_circuits:
-        self._compile_circuit(circuit_name)
+            self._compile_circuit(circuit_name)
 
         circuit_info = self.compiled_circuits[circuit_name]
 
@@ -231,9 +245,11 @@ class GnarkBackend:
 
             return proof_data
 
-    def verify_proof(self, circuit_name: str, proof: bytes, public_inputs: Dict[str, Any]) -> bool:
-           """TODO: Add docstring for verify_proof"""
-     """
+                def verify_proof(self, circuit_name: str, proof: bytes, public_inputs: Dict[str, Any]) -> bool:
+                    """TODO: Add docstring for verify_proof"""
+        """TODO: Add docstring for verify_proof"""
+            """TODO: Add docstring for verify_proof"""
+    """
         Verify proof using gnark verifier.
 
         Args:
@@ -292,9 +308,11 @@ class GnarkBackend:
 
             return valid
 
-    def batch_verify(self, proofs: List[Tuple[str, bytes, Dict[str, Any]]]) -> List[bool]:
-           """TODO: Add docstring for batch_verify"""
-     """
+                def batch_verify(self, proofs: List[Tuple[str, bytes, Dict[str, Any]]]) -> List[bool]:
+                    """TODO: Add docstring for batch_verify"""
+        """TODO: Add docstring for batch_verify"""
+            """TODO: Add docstring for batch_verify"""
+    """
         Batch verify multiple proofs.
 
         Args:
@@ -320,11 +338,13 @@ class GnarkBackend:
 
         return results
 
-    def get_circuit_info(self, circuit_name: str) -> Dict[str, Any]:
-           """TODO: Add docstring for get_circuit_info"""
-     """Get information about a compiled circuit."""
+                def get_circuit_info(self, circuit_name: str) -> Dict[str, Any]:
+                    """TODO: Add docstring for get_circuit_info"""
+        """TODO: Add docstring for get_circuit_info"""
+            """TODO: Add docstring for get_circuit_info"""
+    """Get information about a compiled circuit."""
         if circuit_name not in self.compiled_circuits:
-        self._compile_circuit(circuit_name)
+            self._compile_circuit(circuit_name)
 
         info = self.compiled_circuits[circuit_name].copy()
 
@@ -338,18 +358,24 @@ class GnarkBackend:
 
 class SimulatedBackend:
     """Simulated backend for testing without gnark installation."""
+    """Simulated backend for testing without gnark installation."""
+    """Simulated backend for testing without gnark installation."""
 
     def __init__(self) -> None:
-           """TODO: Add docstring for __init__"""
-     """Initialize simulated backend."""
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """Initialize simulated backend."""
         logger.warning("Using simulated ZK backend - not cryptographically secure!")
         self.proof_counter = 0
 
-    def generate_proof(
+        def generate_proof(
         self, circuit_name: str, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
     ) -> bytes:
-           """TODO: Add docstring for generate_proof"""
-     """Generate simulated proof."""
+        """TODO: Add docstring for generate_proof"""
+        """TODO: Add docstring for generate_proof"""
+            """TODO: Add docstring for generate_proof"""
+    """Generate simulated proof."""
         import hashlib
 
         # Simulate proof generation time
@@ -370,9 +396,11 @@ class SimulatedBackend:
 
         return proof_data
 
-    def verify_proof(self, circuit_name: str, proof: bytes, public_inputs: Dict[str, Any]) -> bool:
-           """TODO: Add docstring for verify_proof"""
-     """Verify simulated proof."""
+        def verify_proof(self, circuit_name: str, proof: bytes, public_inputs: Dict[str, Any]) -> bool:
+            """TODO: Add docstring for verify_proof"""
+        """TODO: Add docstring for verify_proof"""
+            """TODO: Add docstring for verify_proof"""
+    """Verify simulated proof."""
         # Simulate verification time
         time.sleep(0.025)
 
@@ -382,9 +410,11 @@ class SimulatedBackend:
         return True
 
 
-    def get_backend(use_real: bool = True) -> Union[GnarkBackend, SimulatedBackend]:
-       """TODO: Add docstring for get_backend"""
-     """
+            def get_backend(use_real: bool = True) -> Union[GnarkBackend, SimulatedBackend]:
+                """TODO: Add docstring for get_backend"""
+        """TODO: Add docstring for get_backend"""
+        """TODO: Add docstring for get_backend"""
+    """
     Get appropriate backend based on availability.
 
     Args:

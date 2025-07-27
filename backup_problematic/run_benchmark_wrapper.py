@@ -12,8 +12,10 @@ from pathlib import Path
 
 
 def setup_and_run() -> None:
-       """TODO: Add docstring for setup_and_run"""
-     """Setup environment and run benchmark"""
+    """TODO: Add docstring for setup_and_run"""
+    """TODO: Add docstring for setup_and_run"""
+        """TODO: Add docstring for setup_and_run"""
+    """Setup environment and run benchmark"""
     project_root = Path(__file__).parent
 
     # Add to Python path

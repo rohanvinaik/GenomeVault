@@ -20,6 +20,9 @@ os.environ["LOG_LEVEL"] = "DEBUG"
 @pytest.fixture(scope="session")
 
 def test_data_dir() -> None:
+def test_data_dir() -> None:
+    """Create a temporary directory for test data"""
+    """Create a temporary directory for test data"""
     """Create a temporary directory for test data"""
     temp_dir = tempfile.mkdtemp(prefix="genomevault_test_")
     yield Path(temp_dir)
@@ -27,7 +30,10 @@ def test_data_dir() -> None:
 
 @pytest.fixture
 
-def sample_vcf_data() -> None:
+    def sample_vcf_data() -> None:
+    def sample_vcf_data() -> None:
+    """Generate sample VCF-like genomic data"""
+    """Generate sample VCF-like genomic data"""
     """Generate sample VCF-like genomic data"""
     return {
         "header": {
@@ -66,7 +72,10 @@ def sample_vcf_data() -> None:
 
 @pytest.fixture
 
-def sample_clinical_data() -> None:
+        def sample_clinical_data() -> None:
+        def sample_clinical_data() -> None:
+"""Generate sample clinical/phenotypic data"""
+    """Generate sample clinical/phenotypic data"""
     """Generate sample clinical/phenotypic data"""
     return {
         "patient_id": "TEST001",
@@ -88,7 +97,10 @@ def sample_clinical_data() -> None:
 
 @pytest.fixture
 
-def mock_pir_servers() -> None:
+            def mock_pir_servers() -> None:
+            def mock_pir_servers() -> None:
+"""Mock PIR server configuration"""
+    """Mock PIR server configuration"""
     """Mock PIR server configuration"""
     return [
         {
@@ -125,7 +137,10 @@ def mock_pir_servers() -> None:
 
 @pytest.fixture
 
-def mock_blockchain_node() -> None:
+                def mock_blockchain_node() -> None:
+                def mock_blockchain_node() -> None:
+"""Mock blockchain node for testing"""
+    """Mock blockchain node for testing"""
     """Mock blockchain node for testing"""
     node = Mock()
     node.get_block_height.return_value = 12345
@@ -143,7 +158,10 @@ def mock_blockchain_node() -> None:
 
 @pytest.fixture
 
-def zk_test_vectors() -> None:
+                    def zk_test_vectors() -> None:
+                    def zk_test_vectors() -> None:
+"""Test vectors for zero-knowledge proofs"""
+    """Test vectors for zero-knowledge proofs"""
     """Test vectors for zero-knowledge proofs"""
     return {
         "variant_verification": {
@@ -178,32 +196,41 @@ def zk_test_vectors() -> None:
 
 @pytest.fixture
 
-def performance_benchmark() -> None:
+                        def performance_benchmark() -> None:
+                        def performance_benchmark() -> None:
+"""Performance benchmarking utility"""
+    """Performance benchmarking utility"""
     """Performance benchmarking utility"""
 
 
     class PerformanceBenchmark:
 
         def __init__(self) -> None:
+            """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
     """TODO: Add docstring for __init__"""
             self.results = {}
 
 
-        def measure(self, name: str, func, *args, **kwargs) -> None:
+            def measure(self, name: str, func, *args, **kwargs) -> None:
+                """TODO: Add docstring for measure"""
+            """TODO: Add docstring for measure"""
     """TODO: Add docstring for measure"""
     import time
 
             start = time.perf_counter()
             result = func(*args, **kwargs)
             elapsed = time.perf_counter() - start
-            self.results[name] = {
+                self.results[name] = {
                 "elapsed_seconds": elapsed,
                 "elapsed_ms": elapsed * 1000,
             }
             return result
 
 
-        def assert_performance(self, name: str, max_ms: float) -> None:
+                def assert_performance(self, name: str, max_ms: float) -> None:
+                    """TODO: Add docstring for assert_performance"""
+            """TODO: Add docstring for assert_performance"""
     """TODO: Add docstring for assert_performance"""
     if name not in self.results:
                 pytest.fail("No benchmark results for {name}")
@@ -215,12 +242,17 @@ def performance_benchmark() -> None:
 @pytest.fixture
 
         def cleanup_test_files() -> None:
-    """Cleanup any test files created during tests"""
+        def cleanup_test_files() -> None:
+            """Cleanup any test files created during tests"""
+            """Cleanup any test files created during tests"""
+"""Cleanup any test files created during tests"""
     files_to_cleanup = []
 
 
-        def _register(filepath) -> None:
-    """TODO: Add docstring for _register"""
+            def _register(filepath) -> None:
+                """TODO: Add docstring for _register"""
+            """TODO: Add docstring for _register"""
+"""TODO: Add docstring for _register"""
     files_to_cleanup.append(filepath)
 
     yield _register
@@ -237,15 +269,21 @@ def performance_benchmark() -> None:
 
 # Pytest hooks
 
-        def pytest_configure(config) -> None:
-    """Configure pytest with custom markers"""
+            def pytest_configure(config) -> None:
+            def pytest_configure(config) -> None:
+            """Configure pytest with custom markers"""
+            """Configure pytest with custom markers"""
+"""Configure pytest with custom markers"""
     config.addinivalue_line("markers", "slow: marks test as slow")
     config.addinivalue_line("markers", "integration: marks test as integration test")
     config.addinivalue_line("markers", "security: marks test as security-related")
     config.addinivalue_line("markers", "performance: marks test as performance benchmark")
 
 
-        def pytest_collection_modifyitems(config, items) -> None:
+                def pytest_collection_modifyitems(config, items) -> None:
+                def pytest_collection_modifyitems(config, items) -> None:
+"""Add markers to tests based on their location"""
+            """Add markers to tests based on their location"""
     """Add markers to tests based on their location"""
     for item in items:
         # Add markers based on test file location

@@ -20,8 +20,12 @@ from genomevault.hypervector.kan import KANCompressor, KANHybridEncoder
 
 class GenomicDataset(Dataset):
     """Dataset for training KAN models on genomic data"""
+    """Dataset for training KAN models on genomic data"""
+    """Dataset for training KAN models on genomic data"""
 
     def __init__(self, num_samples: int = 10000, variants_per_sample: int = 100) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
         self.num_samples = num_samples
         self.variants_per_sample = variants_per_sample
@@ -36,11 +40,13 @@ class GenomicDataset(Dataset):
             variants = self._generate_variants(variants_per_sample)
             # Encode to hypervector
             hv = self.encoder.encode_genome(variants)
-        self.samples.append(hv)
+            self.samples.append(hv)
 
-    def _generate_variants(self, n: int) -> List[Dict]:
-           """TODO: Add docstring for _generate_variants"""
-     """Generate random genomic variants"""
+            def _generate_variants(self, n: int) -> List[Dict]:
+                """TODO: Add docstring for _generate_variants"""
+        """TODO: Add docstring for _generate_variants"""
+            """TODO: Add docstring for _generate_variants"""
+    """Generate random genomic variants"""
         variants = []
         for _ in range(n):
             variants.append(
@@ -54,16 +60,20 @@ class GenomicDataset(Dataset):
             )
         return variants
 
-    def __len__(self) -> None:
+            def __len__(self) -> None:
+                """TODO: Add docstring for __len__"""
+        """TODO: Add docstring for __len__"""
             """TODO: Add docstring for __len__"""
     return self.num_samples
 
-    def __getitem__(self, idx) -> None:
+                def __getitem__(self, idx) -> None:
+                    """TODO: Add docstring for __getitem__"""
+        """TODO: Add docstring for __getitem__"""
             """TODO: Add docstring for __getitem__"""
     return self.samples[idx]
 
 
-    def train_kan_compressor(
+                    def train_kan_compressor(
     compressor: KANCompressor,
     train_loader: DataLoader,
     val_loader: DataLoader,
@@ -71,8 +81,10 @@ class GenomicDataset(Dataset):
     learning_rate: float = 1e-3,
     device: str = "cpu",
 ) -> Dict[str, List[float]]:
-       """TODO: Add docstring for train_kan_compressor"""
-     """
+    """TODO: Add docstring for train_kan_compressor"""
+    """TODO: Add docstring for train_kan_compressor"""
+        """TODO: Add docstring for train_kan_compressor"""
+    """
     Train KAN compressor model
 
     Returns:
@@ -165,11 +177,13 @@ class GenomicDataset(Dataset):
     return history
 
 
-    def evaluate_kan_model(
+            def evaluate_kan_model(
     compressor: KANCompressor, test_loader: DataLoader, device: str = "cpu"
 ) -> Dict[str, float]:
-       """TODO: Add docstring for evaluate_kan_model"""
-     """
+    """TODO: Add docstring for evaluate_kan_model"""
+    """TODO: Add docstring for evaluate_kan_model"""
+        """TODO: Add docstring for evaluate_kan_model"""
+    """
     Evaluate trained KAN model
 
     Returns:
@@ -226,9 +240,11 @@ class GenomicDataset(Dataset):
     return metrics
 
 
-    def visualize_training_history(history: Dict[str, List[float]]) -> None:
-       """TODO: Add docstring for visualize_training_history"""
-     """Visualize training history"""
+            def visualize_training_history(history: Dict[str, List[float]]) -> None:
+                """TODO: Add docstring for visualize_training_history"""
+        """TODO: Add docstring for visualize_training_history"""
+        """TODO: Add docstring for visualize_training_history"""
+    """Visualize training history"""
     fig, axes = plt.subplots(1, 3, figsize=(15, 5))
 
     # Loss curves
@@ -259,9 +275,11 @@ class GenomicDataset(Dataset):
     plt.show()
 
 
-    def analyze_learned_functions(compressor: KANCompressor, num_functions: int = 5) -> None:
-       """TODO: Add docstring for analyze_learned_functions"""
-     """Analyze and visualize learned KAN functions"""
+                def analyze_learned_functions(compressor: KANCompressor, num_functions: int = 5) -> None:
+                    """TODO: Add docstring for analyze_learned_functions"""
+        """TODO: Add docstring for analyze_learned_functions"""
+        """TODO: Add docstring for analyze_learned_functions"""
+    """Analyze and visualize learned KAN functions"""
     print("\nAnalyzing learned functions...")
 
     # Extract first layer if it's a KAN layer
@@ -293,9 +311,11 @@ class GenomicDataset(Dataset):
     plt.show()
 
 
-    def main() -> None:
-       """TODO: Add docstring for main"""
-     """Main training pipeline"""
+            def main() -> None:
+                """TODO: Add docstring for main"""
+        """TODO: Add docstring for main"""
+        """TODO: Add docstring for main"""
+    """Main training pipeline"""
     # Configuration
     config = {
         "input_dim": 10000,

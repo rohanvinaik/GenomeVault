@@ -22,8 +22,12 @@ from genomevault.zk_proofs.prover import Prover
 
 class OrphanDiseaseResearchDemo:
     """Demonstrates privacy-preserving orphan disease research workflow."""
+    """Demonstrates privacy-preserving orphan disease research workflow."""
+    """Demonstrates privacy-preserving orphan disease research workflow."""
 
     def __init__(self, disease_name: str = "Rett Syndrome") -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
         self.disease_name = disease_name
         self.compressor = AdvancedHierarchicalCompressor()
@@ -44,9 +48,11 @@ class OrphanDiseaseResearchDemo:
         print(f"Participating sites: {len(self.research_sites)}")
         print("=" * 60)
 
-    def simulate_patient_data(self, num_patients: int = 50) -> List[Dict[str, Any]]:
-           """TODO: Add docstring for simulate_patient_data"""
-     """Simulate genomic and clinical data for rare disease patients."""
+        def simulate_patient_data(self, num_patients: int = 50) -> List[Dict[str, Any]]:
+            """TODO: Add docstring for simulate_patient_data"""
+        """TODO: Add docstring for simulate_patient_data"""
+            """TODO: Add docstring for simulate_patient_data"""
+    """Simulate genomic and clinical data for rare disease patients."""
         patients = []
 
         # Rett syndrome is caused by MECP2 mutations
@@ -84,9 +90,11 @@ class OrphanDiseaseResearchDemo:
 
         return patients
 
-    def create_privacy_preserving_cohort(self, patients: List[Dict]) -> Dict[str, Any]:
-           """TODO: Add docstring for create_privacy_preserving_cohort"""
-     """Convert patient data to privacy-preserving representations."""
+            def create_privacy_preserving_cohort(self, patients: List[Dict]) -> Dict[str, Any]:
+                """TODO: Add docstring for create_privacy_preserving_cohort"""
+        """TODO: Add docstring for create_privacy_preserving_cohort"""
+            """TODO: Add docstring for create_privacy_preserving_cohort"""
+    """Convert patient data to privacy-preserving representations."""
         print("\n1. Creating Privacy-Preserving Patient Representations")
         print("-" * 60)
 
@@ -125,9 +133,11 @@ class OrphanDiseaseResearchDemo:
 
         return cohort
 
-    def _generate_clinical_proof(self, patient: Dict) -> Any:
-           """TODO: Add docstring for _generate_clinical_proof"""
-     """Generate ZK proof of clinical criteria without revealing details."""
+            def _generate_clinical_proof(self, patient: Dict) -> Any:
+                """TODO: Add docstring for _generate_clinical_proof"""
+        """TODO: Add docstring for _generate_clinical_proof"""
+            """TODO: Add docstring for _generate_clinical_proof"""
+    """Generate ZK proof of clinical criteria without revealing details."""
         # Prove patient meets inclusion criteria
         inclusion_criteria = {
             "has_mecp2_mutation": patient["mutation"].startswith("p."),
@@ -145,9 +155,11 @@ class OrphanDiseaseResearchDemo:
             "proof": proof_data[:64],  # Shortened for demo
         }
 
-    def federated_biomarker_discovery(self, cohort: Dict) -> Dict[str, Any]:
-           """TODO: Add docstring for federated_biomarker_discovery"""
-     """Discover biomarkers across sites without sharing data."""
+                def federated_biomarker_discovery(self, cohort: Dict) -> Dict[str, Any]:
+                    """TODO: Add docstring for federated_biomarker_discovery"""
+        """TODO: Add docstring for federated_biomarker_discovery"""
+            """TODO: Add docstring for federated_biomarker_discovery"""
+    """Discover biomarkers across sites without sharing data."""
         print("\n2. Federated Biomarker Discovery")
         print("-" * 60)
 
@@ -219,9 +231,11 @@ class OrphanDiseaseResearchDemo:
             "total_patients": sum(s[0]["patient_count"] for s in site_contributions),
         }
 
-    def privacy_preserving_trial_matching(self, cohort: Dict, trial_criteria: Dict) -> List[str]:
-           """TODO: Add docstring for privacy_preserving_trial_matching"""
-     """Match patients to clinical trials without exposing their data."""
+                def privacy_preserving_trial_matching(self, cohort: Dict, trial_criteria: Dict) -> List[str]:
+                    """TODO: Add docstring for privacy_preserving_trial_matching"""
+        """TODO: Add docstring for privacy_preserving_trial_matching"""
+            """TODO: Add docstring for privacy_preserving_trial_matching"""
+    """Match patients to clinical trials without exposing their data."""
         print("\n3. Privacy-Preserving Clinical Trial Matching")
         print("-" * 60)
 
@@ -258,16 +272,20 @@ class OrphanDiseaseResearchDemo:
 
         return matched_patients
 
-    def _check_trial_eligibility(self, patient_data: Dict, criteria: Dict) -> bool:
-           """TODO: Add docstring for _check_trial_eligibility"""
-     """Check if patient meets trial criteria (simulated)."""
+                def _check_trial_eligibility(self, patient_data: Dict, criteria: Dict) -> bool:
+                    """TODO: Add docstring for _check_trial_eligibility"""
+        """TODO: Add docstring for _check_trial_eligibility"""
+            """TODO: Add docstring for _check_trial_eligibility"""
+    """Check if patient meets trial criteria (simulated)."""
         # In real implementation, this would use the compressed vector
         # to check criteria without accessing raw data
         return np.random.choice([True, False], p=[0.3, 0.7])
 
-    def generate_research_insights(self, discovery_results: Dict) -> None:
-           """TODO: Add docstring for generate_research_insights"""
-     """Generate actionable research insights."""
+                    def generate_research_insights(self, discovery_results: Dict) -> None:
+                        """TODO: Add docstring for generate_research_insights"""
+        """TODO: Add docstring for generate_research_insights"""
+            """TODO: Add docstring for generate_research_insights"""
+    """Generate actionable research insights."""
         print("\n4. Research Insights")
         print("-" * 60)
 
@@ -286,9 +304,11 @@ class OrphanDiseaseResearchDemo:
         print(f"  - Information-theoretic PIR: ✓")
         print(f"  - No raw data exposed: ✓")
 
-    def demonstrate_drug_development_acceleration(self) -> None:
-           """TODO: Add docstring for demonstrate_drug_development_acceleration"""
-     """Show how privacy-preserving collaboration accelerates drug development."""
+            def demonstrate_drug_development_acceleration(self) -> None:
+                """TODO: Add docstring for demonstrate_drug_development_acceleration"""
+        """TODO: Add docstring for demonstrate_drug_development_acceleration"""
+            """TODO: Add docstring for demonstrate_drug_development_acceleration"""
+    """Show how privacy-preserving collaboration accelerates drug development."""
         print("\n5. Accelerating Drug Development")
         print("-" * 60)
 
@@ -323,9 +343,11 @@ class OrphanDiseaseResearchDemo:
         print("✓ Privacy: 100% maintained")
 
 
-    def main() -> None:
-       """TODO: Add docstring for main"""
-     """Run the orphan disease research demonstration."""
+            def main() -> None:
+                """TODO: Add docstring for main"""
+        """TODO: Add docstring for main"""
+        """TODO: Add docstring for main"""
+    """Run the orphan disease research demonstration."""
     print("GenomeVault Orphan Disease Research Demonstration")
     print("================================================\n")
 

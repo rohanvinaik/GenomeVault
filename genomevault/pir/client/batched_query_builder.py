@@ -62,13 +62,13 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
     """
 
     def __init__(self, pir_client: PIRClient, index_mapping: Dict[str, Dict[str, int]]) -> None:
-            """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
     super().__init__(pir_client, index_mapping)
         self.batch_cache: Dict[str, BatchedQueryResult] = {}
         self.batch_cache_size = 50
 
     def build_repeat_batch(self, budget: ErrorBudget, query: GenomicQuery) -> BatchedQuery:
-           """TODO: Add docstring for build_repeat_batch"""
+        """TODO: Add docstring for build_repeat_batch"""
      """
         Build a batch of k queries with different seeds for median aggregation
 
@@ -107,7 +107,7 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
         )
 
     def _generate_repeat_seed(self, base_key: str, repeat_idx: int, dimension: int) -> int:
-           """TODO: Add docstring for _generate_repeat_seed"""
+        """TODO: Add docstring for _generate_repeat_seed"""
      """Generate deterministic seed for a repeat query"""
         seed_data = f"{base_key}:{repeat_idx}:{dimension}"
         seed_hash = hashlib.sha256(seed_data.encode()).digest()
@@ -133,7 +133,7 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
             )
 
     def _build_seeded_variant_query(self, params: Dict, seed: int) -> PIRQuery:
-           """TODO: Add docstring for _build_seeded_variant_query"""
+        """TODO: Add docstring for _build_seeded_variant_query"""
      """Build seeded variant lookup query"""
         # Get variant key
         var_key = f"{params['chromosome']}:{params['position']}"
@@ -150,7 +150,7 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
         return self.pir_client.create_query(db_index, seed=seed)
 
     def _build_seeded_region_query(self, params: Dict, seed: int) -> PIRQuery:
-           """TODO: Add docstring for _build_seeded_region_query"""
+        """TODO: Add docstring for _build_seeded_region_query"""
      """Build seeded region scan query"""
         # Find all indices in region
         indices = []
@@ -408,7 +408,7 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
         }
 
     def _identify_hotspots(self, level0_data: Any) -> List[Dict[str, int]]:
-           """TODO: Add docstring for _identify_hotspots"""
+        """TODO: Add docstring for _identify_hotspots"""
      """
         Identify regions of interest from level 0 scan
 
@@ -541,7 +541,7 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
         }
 
     def _add_to_batch_cache(self, key: str, result: BatchedQueryResult) -> None:
-           """TODO: Add docstring for _add_to_batch_cache"""
+        """TODO: Add docstring for _add_to_batch_cache"""
      """Add result to batch cache with LRU eviction"""
         if len(self.batch_cache) >= self.batch_cache_size:
             # Remove oldest entry
@@ -579,7 +579,7 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
         return result
 
     def get_batch_statistics(self) -> Dict[str, Any]:
-           """TODO: Add docstring for get_batch_statistics"""
+        """TODO: Add docstring for get_batch_statistics"""
      """Get statistics about batched queries"""
         stats = super().get_query_statistics()
 

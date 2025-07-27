@@ -15,22 +15,28 @@ import numpy as np
 
 class HDVariantSearch:
     def __init__(self, dimension=10000) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
         self.dimension = dimension
         self.setup_basis_vectors()
 
-    def setup_basis_vectors(self) -> None:
-           """TODO: Add docstring for setup_basis_vectors"""
-     """Initialize random basis vectors"""
+        def setup_basis_vectors(self) -> None:
+            """TODO: Add docstring for setup_basis_vectors"""
+        """TODO: Add docstring for setup_basis_vectors"""
+            """TODO: Add docstring for setup_basis_vectors"""
+    """Initialize random basis vectors"""
         np.random.seed(42)
-        self.chrom_basis = np.random.randint(0, 2, self.dimension)
-        self.pos_basis = np.random.randint(0, 2, self.dimension)
-        self.ref_basis = np.random.randint(0, 2, self.dimension)
-        self.alt_basis = np.random.randint(0, 2, self.dimension)
+            self.chrom_basis = np.random.randint(0, 2, self.dimension)
+            self.pos_basis = np.random.randint(0, 2, self.dimension)
+            self.ref_basis = np.random.randint(0, 2, self.dimension)
+            self.alt_basis = np.random.randint(0, 2, self.dimension)
 
-    def encode_variant(self, chrom, pos, ref, alt) -> None:
-           """TODO: Add docstring for encode_variant"""
-     """Encode a single variant"""
+            def encode_variant(self, chrom, pos, ref, alt) -> None:
+                """TODO: Add docstring for encode_variant"""
+        """TODO: Add docstring for encode_variant"""
+            """TODO: Add docstring for encode_variant"""
+    """Encode a single variant"""
         chrom_vec = np.roll(self.chrom_basis, hash(chrom) % self.dimension)
         pos_vec = np.roll(self.pos_basis, pos % self.dimension)
         ref_vec = np.roll(self.ref_basis, hash(ref) % self.dimension)
@@ -38,14 +44,18 @@ class HDVariantSearch:
 
         return chrom_vec ^ pos_vec ^ ref_vec ^ alt_vec
 
-    def hamming_similarity(self, vec1, vec2) -> None:
-           """TODO: Add docstring for hamming_similarity"""
-     """Calculate Hamming similarity between two vectors"""
+                def hamming_similarity(self, vec1, vec2) -> None:
+                    """TODO: Add docstring for hamming_similarity"""
+        """TODO: Add docstring for hamming_similarity"""
+            """TODO: Add docstring for hamming_similarity"""
+    """Calculate Hamming similarity between two vectors"""
         return np.sum(vec1 == vec2) / len(vec1)
 
-    def load_variants(self, filename) -> None:
-           """TODO: Add docstring for load_variants"""
-     """Load variants from file"""
+                    def load_variants(self, filename) -> None:
+                        """TODO: Add docstring for load_variants"""
+        """TODO: Add docstring for load_variants"""
+            """TODO: Add docstring for load_variants"""
+    """Load variants from file"""
         variants = []
 
         if not Path(filename).exists():
@@ -70,9 +80,11 @@ class HDVariantSearch:
 
         return variants
 
-    def search(self, query_variant, database_variants, top_k=5) -> None:
-           """TODO: Add docstring for search"""
-     """Search for similar variants"""
+                    def search(self, query_variant, database_variants, top_k=5) -> None:
+                        """TODO: Add docstring for search"""
+        """TODO: Add docstring for search"""
+            """TODO: Add docstring for search"""
+    """Search for similar variants"""
         print(
             f"\nSearching for variants similar to: {query_variant['chrom']}:{query_variant['pos']}:{query_variant['ref']}>{query_variant['alt']}"
         )
@@ -103,7 +115,9 @@ class HDVariantSearch:
         return similarities[:top_k]
 
 
-    def main() -> None:
+            def main() -> None:
+                """TODO: Add docstring for main"""
+        """TODO: Add docstring for main"""
         """TODO: Add docstring for main"""
     parser = argparse.ArgumentParser(description="Search for similar variants using HD encoding")
     parser.add_argument(

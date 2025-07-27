@@ -19,6 +19,8 @@ logger = get_logger(__name__)
 @dataclass
 class CompressedHierarchicalVector:
     """Compressed hierarchical hypervector with multiple levels."""
+    """Compressed hierarchical hypervector with multiple levels."""
+    """Compressed hierarchical hypervector with multiple levels."""
 
     vector_id: str
     base_vector: Optional[np.ndarray]  # 10,000-D: foundational features
@@ -28,17 +30,21 @@ class CompressedHierarchicalVector:
 
     @property
     def compression_ratio(self) -> float:
-           """TODO: Add docstring for compression_ratio"""
-     """Calculate compression ratio from base to current level."""
+        """TODO: Add docstring for compression_ratio"""
+        """TODO: Add docstring for compression_ratio"""
+            """TODO: Add docstring for compression_ratio"""
+    """Calculate compression ratio from base to current level."""
         if self.base_vector is not None:
             base_size = self.base_vector.nbytes
             current_size = self.get_active_vector().nbytes
             return base_size / current_size
         return 1.0
 
-    def get_active_vector(self) -> np.ndarray:
-           """TODO: Add docstring for get_active_vector"""
-     """Get highest level vector available."""
+            def get_active_vector(self) -> np.ndarray:
+                """TODO: Add docstring for get_active_vector"""
+        """TODO: Add docstring for get_active_vector"""
+            """TODO: Add docstring for get_active_vector"""
+    """Get highest level vector available."""
         if self.high_vector is not None:
             return self.high_vector
         elif self.mid_vector is not None:
@@ -49,9 +55,11 @@ class CompressedHierarchicalVector:
             raise ValueError("No vector data available")
 
     @property
-    def level(self) -> str:
-           """TODO: Add docstring for level"""
-     """Get current compression level."""
+            def level(self) -> str:
+                """TODO: Add docstring for level"""
+        """TODO: Add docstring for level"""
+            """TODO: Add docstring for level"""
+    """Get current compression level."""
         if self.high_vector is not None:
             return "high"
         elif self.mid_vector is not None:
@@ -63,6 +71,8 @@ class CompressedHierarchicalVector:
 
 
 class AdvancedHierarchicalCompressor:
+    """
+    """
     """
     Advanced hierarchical compression for GenomeVault hypervectors.
     Implements the three-tier system from specifications.
@@ -80,8 +90,10 @@ class AdvancedHierarchicalCompressor:
         high_dim: int = HIGH_DIM,
         sparsity_threshold: float = 0.01,
     ) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize hierarchical compressor.
 
         Args:
@@ -90,27 +102,29 @@ class AdvancedHierarchicalCompressor:
             high_dim: Dimension of high-level vectors
             sparsity_threshold: Threshold for sparse encoding
         """
-        self.base_dim = base_dim
-        self.mid_dim = mid_dim
-        self.high_dim = high_dim
-        self.sparsity_threshold = sparsity_threshold
+            self.base_dim = base_dim
+            self.mid_dim = mid_dim
+            self.high_dim = high_dim
+            self.sparsity_threshold = sparsity_threshold
 
         # Initialize projection matrices
-        self.base_to_mid_projection = self._init_projection_matrix(base_dim, mid_dim)
-        self.mid_to_high_projection = self._init_projection_matrix(mid_dim, high_dim)
+            self.base_to_mid_projection = self._init_projection_matrix(base_dim, mid_dim)
+            self.mid_to_high_projection = self._init_projection_matrix(mid_dim, high_dim)
 
         # Context vectors for semantic composition
-        self.modality_contexts = self._init_modality_contexts()
-        self.semantic_contexts = self._init_semantic_contexts()
+            self.modality_contexts = self._init_modality_contexts()
+            self.semantic_contexts = self._init_semantic_contexts()
 
         logger.info(
             f"AdvancedHierarchicalCompressor initialized: "
             f"{base_dim}D -> {mid_dim}D -> {high_dim}D"
         )
 
-    def _init_projection_matrix(self, in_dim: int, out_dim: int) -> np.ndarray:
-           """TODO: Add docstring for _init_projection_matrix"""
-     """Initialize random projection matrix preserving distances."""
+            def _init_projection_matrix(self, in_dim: int, out_dim: int) -> np.ndarray:
+                """TODO: Add docstring for _init_projection_matrix"""
+        """TODO: Add docstring for _init_projection_matrix"""
+            """TODO: Add docstring for _init_projection_matrix"""
+    """Initialize random projection matrix preserving distances."""
         # Use sparse random projection for efficiency
         # Johnson-Lindenstrauss: need O(log n / ε²) dimensions
 
@@ -128,9 +142,11 @@ class AdvancedHierarchicalCompressor:
 
         return matrix.astype(np.float32)
 
-    def _init_modality_contexts(self) -> Dict[str, np.ndarray]:
-           """TODO: Add docstring for _init_modality_contexts"""
-     """Initialize context vectors for different modalities."""
+                def _init_modality_contexts(self) -> Dict[str, np.ndarray]:
+                    """TODO: Add docstring for _init_modality_contexts"""
+        """TODO: Add docstring for _init_modality_contexts"""
+            """TODO: Add docstring for _init_modality_contexts"""
+    """Initialize context vectors for different modalities."""
         contexts = {
             "genomic": np.random.randn(self.mid_dim),
             "transcriptomic": np.random.randn(self.mid_dim),
@@ -146,9 +162,11 @@ class AdvancedHierarchicalCompressor:
 
         return contexts
 
-    def _init_semantic_contexts(self) -> Dict[str, np.ndarray]:
-           """TODO: Add docstring for _init_semantic_contexts"""
-     """Initialize context vectors for semantic concepts."""
+            def _init_semantic_contexts(self) -> Dict[str, np.ndarray]:
+                """TODO: Add docstring for _init_semantic_contexts"""
+        """TODO: Add docstring for _init_semantic_contexts"""
+            """TODO: Add docstring for _init_semantic_contexts"""
+    """Initialize context vectors for semantic concepts."""
         contexts = {
             "disease_risk": np.random.randn(self.high_dim),
             "drug_response": np.random.randn(self.high_dim),
@@ -164,17 +182,21 @@ class AdvancedHierarchicalCompressor:
 
         return contexts
 
-    def hierarchical_compression(
+            def hierarchical_compression(
         self,
         base_vector: np.ndarray,
         modality_context: str = "genomic",
         overall_model_context: str = "disease_risk",
     ) -> CompressedHierarchicalVector:
-           """TODO: Add docstring for hierarchical_compression"""
-     """
+        """TODO: Add docstring for hierarchical_compression"""
+        """TODO: Add docstring for hierarchical_compression"""
+            """TODO: Add docstring for hierarchical_compression"""
+    """
         Implement the hierarchical compression from the specification:
 
-    def hierarchical_compression(base_vector) -> None:
+            def hierarchical_compression(base_vector) -> None:
+                """TODO: Add docstring for hierarchical_compression"""
+        """TODO: Add docstring for hierarchical_compression"""
                 """TODO: Add docstring for hierarchical_compression"""
     mid_vector = semantic_composition(base_vector, modality_context)
             high_vector = semantic_composition(mid_vector, overall_model_context)
@@ -235,9 +257,11 @@ class AdvancedHierarchicalCompressor:
 
         return compressed
 
-    def semantic_composition(self, vector: np.ndarray, context: str, level: str) -> np.ndarray:
-           """TODO: Add docstring for semantic_composition"""
-     """
+            def semantic_composition(self, vector: np.ndarray, context: str, level: str) -> np.ndarray:
+                """TODO: Add docstring for semantic_composition"""
+        """TODO: Add docstring for semantic_composition"""
+            """TODO: Add docstring for semantic_composition"""
+    """
         Perform semantic composition of vector with context.
 
         Args:
@@ -284,9 +308,11 @@ class AdvancedHierarchicalCompressor:
 
         return composed
 
-    def _circular_convolution(self, vector: np.ndarray, context: np.ndarray) -> np.ndarray:
-           """TODO: Add docstring for _circular_convolution"""
-     """
+            def _circular_convolution(self, vector: np.ndarray, context: np.ndarray) -> np.ndarray:
+                """TODO: Add docstring for _circular_convolution"""
+        """TODO: Add docstring for _circular_convolution"""
+            """TODO: Add docstring for _circular_convolution"""
+    """
         Perform circular convolution for semantic binding.
         Preserves similarity relationships while integrating context.
         """
@@ -302,9 +328,11 @@ class AdvancedHierarchicalCompressor:
 
         return result
 
-    def _sparsify_vector(self, vector: np.ndarray) -> np.ndarray:
-           """TODO: Add docstring for _sparsify_vector"""
-     """
+                def _sparsify_vector(self, vector: np.ndarray) -> np.ndarray:
+                    """TODO: Add docstring for _sparsify_vector"""
+        """TODO: Add docstring for _sparsify_vector"""
+            """TODO: Add docstring for _sparsify_vector"""
+    """
         Apply sparsification to reduce storage and improve efficiency.
         """
         # Keep only values above threshold
@@ -319,18 +347,22 @@ class AdvancedHierarchicalCompressor:
 
         return sparse_vector
 
-    def _generate_vector_id(self, vector: np.ndarray) -> str:
-           """TODO: Add docstring for _generate_vector_id"""
-     """Generate unique ID for vector."""
+            def _generate_vector_id(self, vector: np.ndarray) -> str:
+                """TODO: Add docstring for _generate_vector_id"""
+        """TODO: Add docstring for _generate_vector_id"""
+            """TODO: Add docstring for _generate_vector_id"""
+    """Generate unique ID for vector."""
         # Use hash of vector content
         vector_bytes = vector.tobytes()
         return hashlib.sha256(vector_bytes).hexdigest()[:16]
 
-    def create_storage_optimized_vector(
+                def create_storage_optimized_vector(
         self, base_vector: np.ndarray, tier: str = "clinical"
     ) -> Dict[str, Any]:
-           """TODO: Add docstring for create_storage_optimized_vector"""
-     """
+        """TODO: Add docstring for create_storage_optimized_vector"""
+        """TODO: Add docstring for create_storage_optimized_vector"""
+            """TODO: Add docstring for create_storage_optimized_vector"""
+    """
         Create storage-optimized vector for specific tier.
 
         Implements the three tiers from specifications:
@@ -399,9 +431,11 @@ class AdvancedHierarchicalCompressor:
                 "metadata": compressed.compression_metadata,
             }
 
-    def _quantize_vector(self, vector: np.ndarray, bits: int) -> np.ndarray:
-           """TODO: Add docstring for _quantize_vector"""
-     """Quantize vector to specified bit depth."""
+            def _quantize_vector(self, vector: np.ndarray, bits: int) -> np.ndarray:
+                """TODO: Add docstring for _quantize_vector"""
+        """TODO: Add docstring for _quantize_vector"""
+            """TODO: Add docstring for _quantize_vector"""
+    """Quantize vector to specified bit depth."""
         # Normalize to [-1, 1]
         min_val = vector.min()
         max_val = vector.max()

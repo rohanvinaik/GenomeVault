@@ -29,6 +29,8 @@ from .kan_layer import KANLayer, LinearKAN
 
 class BiologicalFunction(Enum):
     """Types of biological functions that can be discovered"""
+    """Types of biological functions that can be discovered"""
+    """Types of biological functions that can be discovered"""
 
     EXPONENTIAL_DECAY = "exponential_decay"  # Drug metabolism, radioactive decay
     SIGMOIDAL = "sigmoidal"  # Dose-response curves
@@ -42,6 +44,8 @@ class BiologicalFunction(Enum):
 
 @dataclass
 class DiscoveredFunction:
+    """Represents a discovered biological function"""
+    """Represents a discovered biological function"""
     """Represents a discovered biological function"""
 
     function_type: BiologicalFunction
@@ -57,6 +61,8 @@ class DiscoveredFunction:
 @dataclass
 class PatternAnalysis:
     """Analysis of patterns in KAN functions"""
+    """Analysis of patterns in KAN functions"""
+    """Analysis of patterns in KAN functions"""
 
     monotonicity: str  # 'increasing', 'decreasing', 'mixed'
     concavity: str  # 'concave_up', 'concave_down', 'mixed'
@@ -68,6 +74,8 @@ class PatternAnalysis:
 
 class KANFunctionAnalyzer(nn.Module):
     """
+    """
+    """
     Analyzer for extracting interpretable patterns from KAN layer functions
 
     Implements the insight that KANs can "easily interact with human users"
@@ -75,6 +83,8 @@ class KANFunctionAnalyzer(nn.Module):
     """
 
     def __init__(self) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
     super().__init__()
 
@@ -93,9 +103,11 @@ class KANFunctionAnalyzer(nn.Module):
             BiologicalFunction.OSCILLATORY: "Represents damped oscillations in biological systems, population dynamics",
         }
 
-    def _initialize_function_templates(self) -> Dict[BiologicalFunction, Callable]:
-           """TODO: Add docstring for _initialize_function_templates"""
-     """Initialize function templates for pattern matching"""
+        def _initialize_function_templates(self) -> Dict[BiologicalFunction, Callable]:
+            """TODO: Add docstring for _initialize_function_templates"""
+        """TODO: Add docstring for _initialize_function_templates"""
+            """TODO: Add docstring for _initialize_function_templates"""
+    """Initialize function templates for pattern matching"""
         if not SCIPY_AVAILABLE:
             # Return simplified templates that don't require scipy
             return {
@@ -118,12 +130,14 @@ class KANFunctionAnalyzer(nn.Module):
             + e,
         }
 
-    def analyze_kan_layer(
+            def analyze_kan_layer(
         self,
         kan_layer: Union[LinearKAN, KANLayer],
         input_range: Tuple[float, float] = (-2.0, 2.0),
         num_points: int = 1000,
     ) -> Dict[str, Any]:
+        """
+        """
         """
         Comprehensive analysis of a KAN layer
 
@@ -164,9 +178,11 @@ class KANFunctionAnalyzer(nn.Module):
 
         return analysis_results
 
-    def _analyze_linear_kan(self, linear_kan: LinearKAN, x_values: torch.Tensor) -> Dict[str, Any]:
-           """TODO: Add docstring for _analyze_linear_kan"""
-     """Analyze Linear KAN layer functions"""
+            def _analyze_linear_kan(self, linear_kan: LinearKAN, x_values: torch.Tensor) -> Dict[str, Any]:
+                """TODO: Add docstring for _analyze_linear_kan"""
+        """TODO: Add docstring for _analyze_linear_kan"""
+            """TODO: Add docstring for _analyze_linear_kan"""
+    """Analyze Linear KAN layer functions"""
         results = {
             "discovered_functions": {},
             "pattern_analyses": {},
@@ -212,9 +228,11 @@ class KANFunctionAnalyzer(nn.Module):
 
         return results
 
-    def _analyze_full_kan(self, kan_layer: KANLayer, x_values: torch.Tensor) -> Dict[str, Any]:
-           """TODO: Add docstring for _analyze_full_kan"""
-     """Analyze full KAN layer with spline functions"""
+                        def _analyze_full_kan(self, kan_layer: KANLayer, x_values: torch.Tensor) -> Dict[str, Any]:
+                            """TODO: Add docstring for _analyze_full_kan"""
+        """TODO: Add docstring for _analyze_full_kan"""
+            """TODO: Add docstring for _analyze_full_kan"""
+    """Analyze full KAN layer with spline functions"""
         results = {
             "discovered_functions": {},
             "pattern_analyses": {},
@@ -252,11 +270,13 @@ class KANFunctionAnalyzer(nn.Module):
 
         return results
 
-    def _evaluate_piecewise_linear(
+                            def _evaluate_piecewise_linear(
         self, x: np.ndarray, breakpoints: np.ndarray, values: np.ndarray
     ) -> np.ndarray:
-           """TODO: Add docstring for _evaluate_piecewise_linear"""
-     """Evaluate piecewise linear function"""
+        """TODO: Add docstring for _evaluate_piecewise_linear"""
+        """TODO: Add docstring for _evaluate_piecewise_linear"""
+            """TODO: Add docstring for _evaluate_piecewise_linear"""
+    """Evaluate piecewise linear function"""
         y = np.zeros_like(x)
 
         for i in range(len(x)):
@@ -279,9 +299,11 @@ class KANFunctionAnalyzer(nn.Module):
 
         return y
 
-    def _discover_function_type(self, x: np.ndarray, y: np.ndarray) -> Optional[DiscoveredFunction]:
-           """TODO: Add docstring for _discover_function_type"""
-     """Discover the type of function by fitting templates"""
+                def _discover_function_type(self, x: np.ndarray, y: np.ndarray) -> Optional[DiscoveredFunction]:
+                    """TODO: Add docstring for _discover_function_type"""
+        """TODO: Add docstring for _discover_function_type"""
+            """TODO: Add docstring for _discover_function_type"""
+    """Discover the type of function by fitting templates"""
         best_fit = None
         best_r_squared = -np.inf
 
@@ -312,11 +334,13 @@ class KANFunctionAnalyzer(nn.Module):
 
         return None
 
-    def _fit_function_template(
+            def _fit_function_template(
         self, x: np.ndarray, y: np.ndarray, template: Callable, func_type: BiologicalFunction
     ) -> Optional[DiscoveredFunction]:
-           """TODO: Add docstring for _fit_function_template"""
-     """Fit a specific function template to data"""
+        """TODO: Add docstring for _fit_function_template"""
+        """TODO: Add docstring for _fit_function_template"""
+            """TODO: Add docstring for _fit_function_template"""
+    """Fit a specific function template to data"""
         try:
             if not SCIPY_AVAILABLE:
                 # Simplified fitting for basic functions
@@ -328,11 +352,13 @@ class KANFunctionAnalyzer(nn.Module):
         except Exception:
             return None
 
-    def _simple_fit(
+            def _simple_fit(
         self, x: np.ndarray, y: np.ndarray, template: Callable, func_type: BiologicalFunction
     ) -> Optional[DiscoveredFunction]:
-           """TODO: Add docstring for _simple_fit"""
-     """Simple fitting without scipy"""
+        """TODO: Add docstring for _simple_fit"""
+        """TODO: Add docstring for _simple_fit"""
+            """TODO: Add docstring for _simple_fit"""
+    """Simple fitting without scipy"""
 
         if func_type == BiologicalFunction.LINEAR:
             # Simple linear regression
@@ -360,11 +386,13 @@ class KANFunctionAnalyzer(nn.Module):
 
         return None
 
-    def _scipy_fit(
+            def _scipy_fit(
         self, x: np.ndarray, y: np.ndarray, template: Callable, func_type: BiologicalFunction
     ) -> Optional[DiscoveredFunction]:
-           """TODO: Add docstring for _scipy_fit"""
-     """Sophisticated fitting using scipy"""
+        """TODO: Add docstring for _scipy_fit"""
+        """TODO: Add docstring for _scipy_fit"""
+            """TODO: Add docstring for _scipy_fit"""
+    """Sophisticated fitting using scipy"""
         # Determine number of parameters
         import inspect
 
@@ -403,11 +431,13 @@ class KANFunctionAnalyzer(nn.Module):
             r_squared=r_squared,
         )
 
-    def _get_initial_params(
+        def _get_initial_params(
         self, func_type: BiologicalFunction, x: np.ndarray, y: np.ndarray, num_params: int
     ) -> List[float]:
-           """TODO: Add docstring for _get_initial_params"""
-     """Get initial parameter guesses based on function type"""
+        """TODO: Add docstring for _get_initial_params"""
+        """TODO: Add docstring for _get_initial_params"""
+            """TODO: Add docstring for _get_initial_params"""
+    """Get initial parameter guesses based on function type"""
         if func_type == BiologicalFunction.LINEAR:
             return [1.0, 0.0]
         elif func_type == BiologicalFunction.EXPONENTIAL_DECAY:
@@ -427,11 +457,13 @@ class KANFunctionAnalyzer(nn.Module):
         else:
             return [1.0] * num_params
 
-    def _create_symbolic_expression(
+            def _create_symbolic_expression(
         self, func_type: BiologicalFunction, parameters: Dict[str, float]
     ) -> str:
-           """TODO: Add docstring for _create_symbolic_expression"""
-     """Create symbolic expression for the discovered function"""
+        """TODO: Add docstring for _create_symbolic_expression"""
+        """TODO: Add docstring for _create_symbolic_expression"""
+            """TODO: Add docstring for _create_symbolic_expression"""
+    """Create symbolic expression for the discovered function"""
 
         # Format parameters with reasonable precision
         formatted_params = {k: f"{v:.4f}" for k, v in parameters.items()}
@@ -455,7 +487,7 @@ class KANFunctionAnalyzer(nn.Module):
         else:
             return "Unknown function type"
 
-    def _analyze_function_pattern(  # noqa: C901
+            def _analyze_function_pattern(  # noqa: C901
         self, x: np.ndarray, y: np.ndarray
     ) -> PatternAnalysis:  # noqa: C901
         """Analyze mathematical patterns in the function"""
@@ -526,11 +558,13 @@ class KANFunctionAnalyzer(nn.Module):
             dominant_frequency=dominant_frequency,
         )
 
-    def _generate_biological_insight(  # noqa: C901
+            def _generate_biological_insight(  # noqa: C901
         self, discovered: DiscoveredFunction, pattern: PatternAnalysis
     ) -> Optional[str]:
-           """TODO: Add docstring for _generate_biological_insight"""
-     """Generate biological insight from discovered function and pattern"""
+        """TODO: Add docstring for _generate_biological_insight"""
+        """TODO: Add docstring for _generate_biological_insight"""
+            """TODO: Add docstring for _generate_biological_insight"""
+    """Generate biological insight from discovered function and pattern"""
 
         insights = []
 
@@ -588,14 +622,18 @@ class KANFunctionAnalyzer(nn.Module):
 
         return "; ".join(insights) if insights else None
 
-    def _generate_symbolic_expression(self, discovered: DiscoveredFunction) -> Optional[str]:
-           """TODO: Add docstring for _generate_symbolic_expression"""
-     """Generate clean symbolic expression"""
+            def _generate_symbolic_expression(self, discovered: DiscoveredFunction) -> Optional[str]:
+                """TODO: Add docstring for _generate_symbolic_expression"""
+        """TODO: Add docstring for _generate_symbolic_expression"""
+            """TODO: Add docstring for _generate_symbolic_expression"""
+    """Generate clean symbolic expression"""
         return discovered.symbolic_expression
 
-    def _compute_interpretability_score(self, analysis_results: Dict[str, Any]) -> float:
-           """TODO: Add docstring for _compute_interpretability_score"""
-     """Compute overall interpretability score"""
+                def _compute_interpretability_score(self, analysis_results: Dict[str, Any]) -> float:
+                    """TODO: Add docstring for _compute_interpretability_score"""
+        """TODO: Add docstring for _compute_interpretability_score"""
+            """TODO: Add docstring for _compute_interpretability_score"""
+    """Compute overall interpretability score"""
 
         num_functions = len(analysis_results["discovered_functions"])
         if num_functions == 0:
@@ -620,9 +658,11 @@ class KANFunctionAnalyzer(nn.Module):
 
         return max(0.0, min(score, 1.0))
 
-    def generate_interpretability_report(self, analysis_results: Dict[str, Any]) -> str:
-           """TODO: Add docstring for generate_interpretability_report"""
-     """Generate human-readable interpretability report"""
+            def generate_interpretability_report(self, analysis_results: Dict[str, Any]) -> str:
+                """TODO: Add docstring for generate_interpretability_report"""
+        """TODO: Add docstring for generate_interpretability_report"""
+            """TODO: Add docstring for generate_interpretability_report"""
+    """Generate human-readable interpretability report"""
 
         report = []
         report.append("=== KAN Function Interpretability Report ===\n")
@@ -668,12 +708,16 @@ class KANFunctionAnalyzer(nn.Module):
 # Integration with existing KAN-HD system
 class InterpretableKANHybridEncoder(nn.Module):
     """
+    """
+    """
     KAN-HD Hybrid Encoder with built-in interpretability analysis
 
     Extends the existing hybrid encoder with scientific interpretability features.
     """
 
     def __init__(self, base_dim: int = 10000, compressed_dim: int = 100) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
     super().__init__()
 
@@ -688,22 +732,28 @@ class InterpretableKANHybridEncoder(nn.Module):
         # Store analysis results
         self.interpretability_cache = {}
 
-    def forward(self, *args, **kwargs) -> None:
-           """TODO: Add docstring for forward"""
-     """Forward pass with optional interpretability analysis"""
+        def forward(self, *args, **kwargs) -> None:
+            """TODO: Add docstring for forward"""
+        """TODO: Add docstring for forward"""
+            """TODO: Add docstring for forward"""
+    """Forward pass with optional interpretability analysis"""
         return self.hybrid_encoder(*args, **kwargs)
 
-    def encode_genomic_data(self, *args, **kwargs) -> None:
-           """TODO: Add docstring for encode_genomic_data"""
-     """Delegate to hybrid encoder"""
+            def encode_genomic_data(self, *args, **kwargs) -> None:
+                """TODO: Add docstring for encode_genomic_data"""
+        """TODO: Add docstring for encode_genomic_data"""
+            """TODO: Add docstring for encode_genomic_data"""
+    """Delegate to hybrid encoder"""
         return self.hybrid_encoder.encode_genomic_data(*args, **kwargs)
 
-    def encode_multimodal_data(self, *args, **kwargs) -> None:
-           """TODO: Add docstring for encode_multimodal_data"""
-     """Delegate to hybrid encoder"""
+                def encode_multimodal_data(self, *args, **kwargs) -> None:
+                    """TODO: Add docstring for encode_multimodal_data"""
+        """TODO: Add docstring for encode_multimodal_data"""
+            """TODO: Add docstring for encode_multimodal_data"""
+    """Delegate to hybrid encoder"""
         return self.hybrid_encoder.encode_multimodal_data(*args, **kwargs)
 
-    def analyze_interpretability(  # noqa: C901
+                    def analyze_interpretability(  # noqa: C901
         self, layer_name: Optional[str] = None
     ) -> Dict[str, Any]:  # noqa: C901
         """
@@ -756,17 +806,19 @@ class InterpretableKANHybridEncoder(nn.Module):
                             results[layer_key] = analysis
 
         # Cache results
-        self.interpretability_cache.update(results)
+                            self.interpretability_cache.update(results)
 
         return results
 
-    def generate_scientific_report(self) -> str:
-           """TODO: Add docstring for generate_scientific_report"""
-     """Generate comprehensive scientific interpretability report"""
+                            def generate_scientific_report(self) -> str:
+                                """TODO: Add docstring for generate_scientific_report"""
+        """TODO: Add docstring for generate_scientific_report"""
+            """TODO: Add docstring for generate_scientific_report"""
+    """Generate comprehensive scientific interpretability report"""
 
         # Ensure we have analysis results
         if not self.interpretability_cache:
-        self.analyze_interpretability()
+            self.analyze_interpretability()
 
         report = []
         report.append("=== GenomeVault KAN-HD Scientific Interpretability Report ===\n")
@@ -801,13 +853,15 @@ class InterpretableKANHybridEncoder(nn.Module):
 
         return "\n".join(report)
 
-    def export_discovered_functions(self, filepath: str) -> None:
-           """TODO: Add docstring for export_discovered_functions"""
-     """Export discovered functions to JSON for further analysis"""
+            def export_discovered_functions(self, filepath: str) -> None:
+                """TODO: Add docstring for export_discovered_functions"""
+        """TODO: Add docstring for export_discovered_functions"""
+            """TODO: Add docstring for export_discovered_functions"""
+    """Export discovered functions to JSON for further analysis"""
 
         # Ensure we have analysis results
         if not self.interpretability_cache:
-        self.analyze_interpretability()
+            self.analyze_interpretability()
 
         # Convert to serializable format
         export_data = {}

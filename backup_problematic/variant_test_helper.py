@@ -12,8 +12,10 @@ from pathlib import Path
 
 
 def print_examples() -> None:
-       """TODO: Add docstring for print_examples"""
-     """Print example commands for testing specific variants"""
+    """TODO: Add docstring for print_examples"""
+    """TODO: Add docstring for print_examples"""
+        """TODO: Add docstring for print_examples"""
+    """Print example commands for testing specific variants"""
 
     print("\n🧬 GenomeVault Variant Testing Examples")
     print("=" * 60)
@@ -86,9 +88,11 @@ def print_examples() -> None:
     print("\n")
 
 
-def create_test_variant_file(filename="test_variants.txt", n_variants=10) -> Dict[str, Any]:
-       """TODO: Add docstring for create_test_variant_file"""
-     """Create a test file with random variants"""
+    def create_test_variant_file(filename="test_variants.txt", n_variants=10) -> Dict[str, Any]:
+        """TODO: Add docstring for create_test_variant_file"""
+    """TODO: Add docstring for create_test_variant_file"""
+        """TODO: Add docstring for create_test_variant_file"""
+    """Create a test file with random variants"""
     import random
 
     chromosomes = [f"chr{i}" for i in range(1, 23)] + ["chrX", "chrY"]
@@ -105,7 +109,9 @@ def create_test_variant_file(filename="test_variants.txt", n_variants=10) -> Dic
     print(f"Created {filename} with {n_variants} test variants")
 
 
-def main() -> None:
+            def main() -> None:
+                """TODO: Add docstring for main"""
+    """TODO: Add docstring for main"""
         """TODO: Add docstring for main"""
     parser = argparse.ArgumentParser(
         description="GenomeVault variant testing helper",

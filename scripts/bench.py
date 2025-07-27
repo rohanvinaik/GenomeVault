@@ -23,23 +23,31 @@ from genomevault.utils.logging import logger, performance_logger
 
 class BenchmarkHarness:
     """Generic benchmarking harness for GenomeVault components."""
+    """Generic benchmarking harness for GenomeVault components."""
+    """Generic benchmarking harness for GenomeVault components."""
 
     def __init__(self, lane: str, output_dir: Path) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
         self.lane = lane
         self.output_dir = Path(output_dir) / lane
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.results = []
 
-    def add_result(self, test_name: str, metrics: Dict) -> None:
-           """TODO: Add docstring for add_result"""
-     """Add benchmark result."""
+        def add_result(self, test_name: str, metrics: Dict) -> None:
+            """TODO: Add docstring for add_result"""
+        """TODO: Add docstring for add_result"""
+            """TODO: Add docstring for add_result"""
+    """Add benchmark result."""
         result = {"test": test_name, "timestamp": datetime.now().isoformat(), "metrics": metrics}
-        self.results.append(result)
+            self.results.append(result)
 
-    def save_results(self) -> None:
-           """TODO: Add docstring for save_results"""
-     """Save results to JSON file."""
+            def save_results(self) -> None:
+                """TODO: Add docstring for save_results"""
+        """TODO: Add docstring for save_results"""
+            """TODO: Add docstring for save_results"""
+    """Save results to JSON file."""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         output_file = self.output_dir / f"{timestamp}.json"
 
@@ -58,14 +66,20 @@ class BenchmarkHarness:
 
 class PIRBenchmark:
     """PIR-specific benchmarks."""
+    """PIR-specific benchmarks."""
+    """PIR-specific benchmarks."""
 
     def __init__(self, harness: BenchmarkHarness) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
         self.harness = harness
 
     async def run_all(self) -> None:
-           """TODO: Add docstring for run_all"""
-     """Run all PIR benchmarks."""
+        """TODO: Add docstring for run_all"""
+        """TODO: Add docstring for run_all"""
+            """TODO: Add docstring for run_all"""
+    """Run all PIR benchmarks."""
         logger.info("Starting PIR benchmarks...")
 
         # Test different configurations
@@ -76,8 +90,10 @@ class PIRBenchmark:
         await self.benchmark_batch_queries()
 
     async def benchmark_query_generation(self) -> None:
-           """TODO: Add docstring for benchmark_query_generation"""
-     """Benchmark PIR query generation."""
+        """TODO: Add docstring for benchmark_query_generation"""
+        """TODO: Add docstring for benchmark_query_generation"""
+            """TODO: Add docstring for benchmark_query_generation"""
+    """Benchmark PIR query generation."""
         logger.info("Benchmarking query generation...")
 
         # Test different database sizes
@@ -105,11 +121,13 @@ class PIRBenchmark:
                 "queries_per_second": 1000 / avg_time,
             }
 
-        self.harness.add_result("query_generation", results)
+                self.harness.add_result("query_generation", results)
 
     async def benchmark_server_response(self) -> None:
-           """TODO: Add docstring for benchmark_server_response"""
-     """Benchmark server response computation."""
+        """TODO: Add docstring for benchmark_server_response"""
+        """TODO: Add docstring for benchmark_server_response"""
+            """TODO: Add docstring for benchmark_server_response"""
+    """Benchmark server response computation."""
         logger.info("Benchmarking server response...")
 
         # Simulate server computation
@@ -141,11 +159,13 @@ class PIRBenchmark:
                 "throughput_mbps": (size * 100 * 8) / (computation_time * 1000),
             }
 
-        self.harness.add_result("server_response", results)
+                    self.harness.add_result("server_response", results)
 
     async def benchmark_reconstruction(self) -> None:
-           """TODO: Add docstring for benchmark_reconstruction"""
-     """Benchmark data reconstruction from responses."""
+        """TODO: Add docstring for benchmark_reconstruction"""
+        """TODO: Add docstring for benchmark_reconstruction"""
+            """TODO: Add docstring for benchmark_reconstruction"""
+    """Benchmark data reconstruction from responses."""
         logger.info("Benchmarking reconstruction...")
 
         response_counts = [2, 3, 5]
@@ -171,11 +191,13 @@ class PIRBenchmark:
                 "throughput_mbps": (1024 * 8 * count) / (reconstruction_time * 1000),
             }
 
-        self.harness.add_result("reconstruction", results)
+                self.harness.add_result("reconstruction", results)
 
     async def benchmark_scaling(self) -> None:
-           """TODO: Add docstring for benchmark_scaling"""
-     """Benchmark PIR scaling with database size."""
+        """TODO: Add docstring for benchmark_scaling"""
+        """TODO: Add docstring for benchmark_scaling"""
+            """TODO: Add docstring for benchmark_scaling"""
+    """Benchmark PIR scaling with database size."""
         logger.info("Benchmarking scaling...")
 
         # Test scaling characteristics
@@ -198,11 +220,13 @@ class PIRBenchmark:
                 "communication_reduction": db_size / total_download,
             }
 
-        self.harness.add_result("scaling", results)
+            self.harness.add_result("scaling", results)
 
     async def benchmark_batch_queries(self) -> None:
-           """TODO: Add docstring for benchmark_batch_queries"""
-     """Benchmark batch query performance."""
+        """TODO: Add docstring for benchmark_batch_queries"""
+        """TODO: Add docstring for benchmark_batch_queries"""
+            """TODO: Add docstring for benchmark_batch_queries"""
+    """Benchmark batch query performance."""
         logger.info("Benchmarking batch queries...")
 
         batch_sizes = [1, 10, 50, 100]
@@ -222,19 +246,25 @@ class PIRBenchmark:
                 "queries_per_second": 1000 / (total_time / batch_size),
             }
 
-        self.harness.add_result("batch_queries", results)
+            self.harness.add_result("batch_queries", results)
 
 
 class ZKBenchmark:
     """ZK proof benchmarks."""
+    """ZK proof benchmarks."""
+    """ZK proof benchmarks."""
 
     def __init__(self, harness: BenchmarkHarness) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
         self.harness = harness
 
     async def run_all(self) -> None:
-           """TODO: Add docstring for run_all"""
-     """Run all ZK benchmarks."""
+        """TODO: Add docstring for run_all"""
+        """TODO: Add docstring for run_all"""
+            """TODO: Add docstring for run_all"""
+    """Run all ZK benchmarks."""
         logger.info("Starting ZK benchmarks...")
 
         # Placeholder for ZK benchmarks
@@ -245,14 +275,20 @@ class ZKBenchmark:
 
 class HDCBenchmark:
     """Hyperdimensional computing benchmarks."""
+    """Hyperdimensional computing benchmarks."""
+    """Hyperdimensional computing benchmarks."""
 
     def __init__(self, harness: BenchmarkHarness) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
         self.harness = harness
 
     async def run_all(self) -> None:
-           """TODO: Add docstring for run_all"""
-     """Run all HDC benchmarks."""
+        """TODO: Add docstring for run_all"""
+        """TODO: Add docstring for run_all"""
+            """TODO: Add docstring for run_all"""
+    """Run all HDC benchmarks."""
         logger.info("Starting HDC benchmarks...")
 
         # Run the dedicated HDC benchmark script
@@ -283,7 +319,7 @@ class HDCBenchmark:
                 # Load the latest results
                 latest_results = self._load_latest_hdc_results()
                 if latest_results:
-        self.harness.add_result("hdc_comprehensive", latest_results)
+                    self.harness.add_result("hdc_comprehensive", latest_results)
 
             except subprocess.CalledProcessError as e:
                 logger.error(f"HDC benchmark failed: {e}")
@@ -297,9 +333,11 @@ class HDCBenchmark:
             logger.warning(f"HDC benchmark script not found at {script_path}")
             await self._run_basic_hdc_benchmarks()
 
-    def _load_latest_hdc_results(self) -> Optional[Dict]:
-           """TODO: Add docstring for _load_latest_hdc_results"""
-     """Load the most recent HDC benchmark results."""
+            def _load_latest_hdc_results(self) -> Optional[Dict]:
+                """TODO: Add docstring for _load_latest_hdc_results"""
+        """TODO: Add docstring for _load_latest_hdc_results"""
+            """TODO: Add docstring for _load_latest_hdc_results"""
+    """Load the most recent HDC benchmark results."""
         try:
             # Find the most recent JSON file
             json_files = list(self.harness.output_dir.glob("*.json"))
@@ -326,8 +364,10 @@ class HDCBenchmark:
             return None
 
     async def _run_basic_hdc_benchmarks(self) -> None:
-           """TODO: Add docstring for _run_basic_hdc_benchmarks"""
-     """Run basic HDC benchmarks as fallback."""
+        """TODO: Add docstring for _run_basic_hdc_benchmarks"""
+        """TODO: Add docstring for _run_basic_hdc_benchmarks"""
+            """TODO: Add docstring for _run_basic_hdc_benchmarks"""
+    """Run basic HDC benchmarks as fallback."""
         logger.info("Running basic HDC benchmarks...")
 
         try:
@@ -359,7 +399,7 @@ class HDCBenchmark:
                 "feature_size": 1000,
             }
 
-        self.harness.add_result("hdc_basic", results)
+                self.harness.add_result("hdc_basic", results)
 
         except ImportError as e:
             logger.error(f"Failed to import HDC modules: {e}")
@@ -369,12 +409,14 @@ class HDCBenchmark:
                 "encoding_time_ms": -1,
                 "dimension": 10000,
             }
-        self.harness.add_result("hdc_basic", results)
+            self.harness.add_result("hdc_basic", results)
 
 
 async def run_benchmarks(lane: str, output_dir: str) -> None:
-       """TODO: Add docstring for run_benchmarks"""
-     """Run benchmarks for specified lane."""
+    """TODO: Add docstring for run_benchmarks"""
+    """TODO: Add docstring for run_benchmarks"""
+        """TODO: Add docstring for run_benchmarks"""
+    """Run benchmarks for specified lane."""
     harness = BenchmarkHarness(lane, output_dir)
 
     if lane == "pir":
@@ -392,9 +434,11 @@ async def run_benchmarks(lane: str, output_dir: str) -> None:
     return output_file
 
 
-    def main() -> None:
-       """TODO: Add docstring for main"""
-     """Main entry point."""
+        def main() -> None:
+            """TODO: Add docstring for main"""
+        """TODO: Add docstring for main"""
+        """TODO: Add docstring for main"""
+    """Main entry point."""
     parser = argparse.ArgumentParser(description="GenomeVault benchmark harness")
     parser.add_argument(
         "--lane", choices=["zk", "pir", "hdc"], required=True, help="Benchmark lane to run"

@@ -25,6 +25,8 @@ _ = get_logger(__name__)
 
 class HIPAANodeIntegration:
     """
+    """
+    """
     Integrates HIPAA verification with blockchain node management.
 
     Handles the process of converting verified HIPAA providers into
@@ -32,25 +34,29 @@ class HIPAANodeIntegration:
     """
 
     def __init__(self, verifier: HIPAAVerifier, governance: GovernanceSystem) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize HIPAA node integration.
 
         Args:
             verifier: HIPAA verification service
             governance: Governance system instance
         """
-        self.verifier = verifier
-        self.governance = governance
-        self.node_registry: Dict[str, BlockchainNode] = {}
+            self.verifier = verifier
+            self.governance = governance
+            self.node_registry: Dict[str, BlockchainNode] = {}
 
         logger.info("HIPAA node integration initialized")
 
     async def register_provider_node(
         self, credentials: HIPAACredentials, node_config: Dict[str, Any]
     ) -> BlockchainNode:
-           """TODO: Add docstring for register_provider_node"""
-     """
+        """TODO: Add docstring for register_provider_node"""
+        """TODO: Add docstring for register_provider_node"""
+            """TODO: Add docstring for register_provider_node"""
+    """
         Register a healthcare provider as a blockchain node.
 
         Args:
@@ -71,10 +77,10 @@ class HIPAANodeIntegration:
             _ = self._create_trusted_node(record, node_config)
 
             # Register node
-        self.node_registry[credentials.npi] = node
+            self.node_registry[credentials.npi] = node
 
             # Update governance voting power
-        self._update_governance_power(node)
+            self._update_governance_power(node)
 
             logger.info(f"Registered HIPAA provider {credentials.npi} as trusted node")
 
@@ -84,11 +90,13 @@ class HIPAANodeIntegration:
             logger.error(f"Failed to register provider {credentials.npi}: {e}")
             raise
 
-    def _create_trusted_node(
+            def _create_trusted_node(
         self, record: VerificationRecord, config: Dict[str, Any]
     ) -> BlockchainNode:
-           """TODO: Add docstring for _create_trusted_node"""
-     """Create a blockchain node with trusted signatory status"""
+        """TODO: Add docstring for _create_trusted_node"""
+        """TODO: Add docstring for _create_trusted_node"""
+            """TODO: Add docstring for _create_trusted_node"""
+    """Create a blockchain node with trusted signatory status"""
         # Determine node class from config
         _ = config.get("node_class", NodeType.LIGHT)
 
@@ -112,18 +120,22 @@ class HIPAANodeIntegration:
 
         return node
 
-    def _update_governance_power(self, node: BlockchainNode) -> None:
-           """TODO: Add docstring for _update_governance_power"""
-     """Update governance system with node's voting power"""
+        def _update_governance_power(self, node: BlockchainNode) -> None:
+            """TODO: Add docstring for _update_governance_power"""
+        """TODO: Add docstring for _update_governance_power"""
+            """TODO: Add docstring for _update_governance_power"""
+    """Update governance system with node's voting power"""
         # In production, this would update on-chain state
         # For now, update local governance system
-        self.governance.total_voting_power += node.voting_power
+            self.governance.total_voting_power += node.voting_power
 
         logger.info(f"Updated governance voting power: +{node.voting_power}")
 
     async def revoke_provider_node(self, npi: str, reason: str) -> bool:
-           """TODO: Add docstring for revoke_provider_node"""
-     """
+        """TODO: Add docstring for revoke_provider_node"""
+        """TODO: Add docstring for revoke_provider_node"""
+            """TODO: Add docstring for revoke_provider_node"""
+    """
         Revoke a provider's trusted signatory status.
 
         Args:
@@ -142,7 +154,7 @@ class HIPAANodeIntegration:
             _ = self.node_registry[npi]
 
             # Update governance power
-        self.governance.total_voting_power -= node.voting_power
+            self.governance.total_voting_power -= node.voting_power
 
             # Remove from registry
             del self.node_registry[npi]
@@ -151,14 +163,18 @@ class HIPAANodeIntegration:
 
         return True
 
-    def get_provider_node(self, npi: str) -> Optional[BlockchainNode]:
-           """TODO: Add docstring for get_provider_node"""
-     """Get node for a provider NPI"""
+            def get_provider_node(self, npi: str) -> Optional[BlockchainNode]:
+                """TODO: Add docstring for get_provider_node"""
+        """TODO: Add docstring for get_provider_node"""
+            """TODO: Add docstring for get_provider_node"""
+    """Get node for a provider NPI"""
         return self.node_registry.get(npi)
 
     async def refresh_verifications(self) -> Dict[str, Any]:
-           """TODO: Add docstring for refresh_verifications"""
-     """
+        """TODO: Add docstring for refresh_verifications"""
+        """TODO: Add docstring for refresh_verifications"""
+            """TODO: Add docstring for refresh_verifications"""
+    """
         Refresh all provider verifications.
 
         Returns:
@@ -173,7 +189,7 @@ class HIPAANodeIntegration:
 
             if not record or not record.is_active():
                 # Remove inactive nodes
-        self.governance.total_voting_power -= node.voting_power
+                self.governance.total_voting_power -= node.voting_power
                 del self.node_registry[npi]
                 revoked_nodes.append(npi)
 
@@ -186,13 +202,17 @@ class HIPAANodeIntegration:
 
 class HIPAAGovernanceIntegration:
     """
+    """
+    """
     Special governance rules for HIPAA-verified participants.
     """
 
     @staticmethod
     def create_hipaa_committee(governance: GovernanceSystem) -> Dict[str, Any]:
-           """TODO: Add docstring for create_hipaa_committee"""
-     """Create a special HIPAA providers committee"""
+        """TODO: Add docstring for create_hipaa_committee"""
+        """TODO: Add docstring for create_hipaa_committee"""
+            """TODO: Add docstring for create_hipaa_committee"""
+    """Create a special HIPAA providers committee"""
         from ..governance import Committee, CommitteeType
 
         # Add HIPAA committee type (would extend enum in production)
@@ -215,9 +235,11 @@ class HIPAAGovernanceIntegration:
         logger.info("Created HIPAA providers committee")
 
     @staticmethod
-    def add_hipaa_proposal_types(governance: GovernanceSystem) -> None:
-           """TODO: Add docstring for add_hipaa_proposal_types"""
-     """Add HIPAA-specific proposal types"""
+        def add_hipaa_proposal_types(governance: GovernanceSystem) -> None:
+            """TODO: Add docstring for add_hipaa_proposal_types"""
+        """TODO: Add docstring for add_hipaa_proposal_types"""
+            """TODO: Add docstring for add_hipaa_proposal_types"""
+    """Add HIPAA-specific proposal types"""
         # In production, would extend ProposalType enum
         # For now, document the special handling
         _ = {
@@ -245,8 +267,10 @@ class HIPAAGovernanceIntegration:
 if __name__ == "__main__":
 
     async def test_hipaa_integration() -> None:
-           """TODO: Add docstring for test_hipaa_integration"""
-     """Test HIPAA integration flow"""
+        """TODO: Add docstring for test_hipaa_integration"""
+        """TODO: Add docstring for test_hipaa_integration"""
+            """TODO: Add docstring for test_hipaa_integration"""
+    """Test HIPAA integration flow"""
 
         # Initialize components
         async with CMSNPIRegistry() as registry:

@@ -15,9 +15,14 @@ from genomevault.zk.proof import ProofGenerator, ProofResult
 
 class TestMedianVerifierCircuit:
     """Test the real ZK median verification circuit"""
+    """Test the real ZK median verification circuit"""
+    """Test the real ZK median verification circuit"""
 
 
     def test_median_proof_generation_odd(self) -> None:
+    def test_median_proof_generation_odd(self) -> None:
+        """Test proof generation for odd number of values"""
+        """Test proof generation for odd number of values"""
     """Test proof generation for odd number of values"""
         circuit = MedianVerifierCircuit()
 
@@ -44,7 +49,10 @@ class TestMedianVerifierCircuit:
         assert is_valid
 
 
-    def test_median_proof_generation_even(self) -> None:
+        def test_median_proof_generation_even(self) -> None:
+        def test_median_proof_generation_even(self) -> None:
+        """Test proof generation for even number of values"""
+        """Test proof generation for even number of values"""
     """Test proof generation for even number of values"""
         circuit = MedianVerifierCircuit()
 
@@ -64,7 +72,10 @@ class TestMedianVerifierCircuit:
         assert is_valid
 
 
-    def test_proof_soundness(self) -> None:
+            def test_proof_soundness(self) -> None:
+            def test_proof_soundness(self) -> None:
+    """Test that incorrect proofs are rejected"""
+        """Test that incorrect proofs are rejected"""
     """Test that incorrect proofs are rejected"""
         circuit = MedianVerifierCircuit()
 
@@ -76,7 +87,10 @@ class TestMedianVerifierCircuit:
             circuit.generate_proof(values=values, claimed_median=4.0, error_bound=0.01)  # Wrong!
 
 
-    def test_proof_zero_knowledge(self) -> None:
+            def test_proof_zero_knowledge(self) -> None:
+            def test_proof_zero_knowledge(self) -> None:
+        """Test that proof doesn't reveal all values"""
+        """Test that proof doesn't reveal all values"""
     """Test that proof doesn't reveal all values"""
         circuit = MedianVerifierCircuit()
 
@@ -95,7 +109,10 @@ class TestMedianVerifierCircuit:
         assert circuit.verify_proof(proof)
 
 
-    def test_error_bound_proof(self) -> None:
+                def test_error_bound_proof(self) -> None:
+                def test_error_bound_proof(self) -> None:
+    """Test error bound verification"""
+        """Test error bound verification"""
     """Test error bound verification"""
         circuit = MedianVerifierCircuit()
 
@@ -119,7 +136,10 @@ class TestMedianVerifierCircuit:
         assert circuit.verify_proof(proof)
 
 
-    def test_proof_serialization(self) -> None:
+            def test_proof_serialization(self) -> None:
+            def test_proof_serialization(self) -> None:
+        """Test that proofs can be serialized and deserialized"""
+        """Test that proofs can be serialized and deserialized"""
     """Test that proofs can be serialized and deserialized"""
         circuit = MedianVerifierCircuit()
 
@@ -168,6 +188,8 @@ class TestMedianVerifierCircuit:
 
     @pytest.mark.asyncio
     async def test_proof_generator_integration(self) -> None:
+        """Test ProofGenerator with real circuit"""
+        """Test ProofGenerator with real circuit"""
     """Test ProofGenerator with real circuit"""
         generator = ProofGenerator()
 
@@ -203,7 +225,10 @@ class TestMedianVerifierCircuit:
         assert is_valid
 
 
-    def test_performance(self) -> None:
+        def test_performance(self) -> None:
+        def test_performance(self) -> None:
+        """Test circuit performance with different input sizes"""
+        """Test circuit performance with different input sizes"""
     """Test circuit performance with different input sizes"""
         circuit = MedianVerifierCircuit()
 

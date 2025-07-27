@@ -18,11 +18,16 @@ logger = get_logger(__name__)
 
 class PositionalEncoder:
     """
+    """
+    """
     Memory-efficient positional encoding for genomic positions
     Uses sparse representations and hash-based seeds for 10M+ positions
     """
 
     def __init__(self, dimension: int = 100000, sparsity: float = 0.01, cache_size: int = 10000):
+    def __init__(self, dimension: int = 100000, sparsity: float = 0.01, cache_size: int = 10000):
+        """
+        """
     """
         Initialize positional encoder
 
@@ -31,16 +36,19 @@ class PositionalEncoder:
             sparsity: Sparsity level for position vectors (default 1%)
             cache_size: Number of position vectors to cache
         """
-        self.dimension = dimension
-        self.sparsity = sparsity
-        self.cache_size = cache_size
-        self._cache: Dict[int, torch.Tensor] = {}
+            self.dimension = dimension
+            self.sparsity = sparsity
+            self.cache_size = cache_size
+            self._cache: Dict[int, torch.Tensor] = {}
 
         # Pre-compute constants for efficiency
-        self.nnz = int(dimension * sparsity)  # Number of non-zero elements
+            self.nnz = int(dimension * sparsity)  # Number of non-zero elements
         logger.info(f"Initialized PositionalEncoder: {dimension}D, {self.nnz} non-zeros per vector")
 
-    def make_position_vector(self, position: int, seed: Optional[int] = None) -> torch.Tensor:
+            def make_position_vector(self, position: int, seed: Optional[int] = None) -> torch.Tensor:
+            def make_position_vector(self, position: int, seed: Optional[int] = None) -> torch.Tensor:
+        """
+        """
         """
         Generate orthogonal position vector using hash-based seed
 
@@ -67,13 +75,15 @@ class PositionalEncoder:
 
         # Cache if space available
         if len(self._cache) < self.cache_size:
-        self._cache[cache_key] = vec
+            self._cache[cache_key] = vec
 
         return vec
 
-    def make_position_vectors_batch(
+            def make_position_vectors_batch(
         self, positions: List[int], seed: Optional[int] = None
     ) -> torch.Tensor:
+        """
+        """
         """
         Generate batch of position vectors efficiently
 
@@ -91,9 +101,11 @@ class PositionalEncoder:
 
         return torch.stack(vectors)
 
-    def encode_snp_positions(
+            def encode_snp_positions(
         self, chromosome: str, positions: List[int], panel_name: str = "default"
     ) -> torch.Tensor:
+        """
+        """
         """
         Encode a set of SNP positions into a single panel hypervector
 
@@ -133,7 +145,10 @@ class PositionalEncoder:
         except Exception as e:
             raise HypervectorError(f"Failed to encode SNP positions: {str(e)}")
 
-    def _position_to_seed(self, position: int) -> int:
+            def _position_to_seed(self, position: int) -> int:
+            def _position_to_seed(self, position: int) -> int:
+        """Convert genomic position to deterministic seed"""
+        """Convert genomic position to deterministic seed"""
         """Convert genomic position to deterministic seed"""
         # Use SHA256 for good distribution
         pos_bytes = str(position).encode()
@@ -141,7 +156,10 @@ class PositionalEncoder:
         # Use first 4 bytes as seed
         return int.from_bytes(hash_bytes[:4], byteorder="big")
 
-    def _chromosome_to_seed(self, chromosome: str) -> int:
+                def _chromosome_to_seed(self, chromosome: str) -> int:
+                def _chromosome_to_seed(self, chromosome: str) -> int:
+        """Convert chromosome to deterministic seed"""
+        """Convert chromosome to deterministic seed"""
         """Convert chromosome to deterministic seed"""
         # Normalize chromosome name
         chr_norm = chromosome.lower().replace("chr", "")
@@ -179,7 +197,10 @@ class PositionalEncoder:
         chr_num = chr_map.get(chr_norm, 26)
         return chr_num * 1000000  # Space out chromosome seeds
 
-    def _create_sparse_vector(self, seed: int) -> torch.Tensor:
+                    def _create_sparse_vector(self, seed: int) -> torch.Tensor:
+                    def _create_sparse_vector(self, seed: int) -> torch.Tensor:
+        """Create sparse hypervector from seed"""
+        """Create sparse hypervector from seed"""
         """Create sparse hypervector from seed"""
         # Set random state
         rng = np.random.RandomState(seed)
@@ -197,7 +218,10 @@ class PositionalEncoder:
 
         return vec
 
-    def get_memory_usage(self) -> Dict[str, float]:
+                        def get_memory_usage(self) -> Dict[str, float]:
+                        def get_memory_usage(self) -> Dict[str, float]:
+        """Get memory usage statistics"""
+        """Get memory usage statistics"""
         """Get memory usage statistics"""
         cache_size_mb = sum(vec.element_size() * vec.numel() for vec in self._cache.values()) / (
             1024**2
@@ -212,34 +236,45 @@ class PositionalEncoder:
             "nnz_per_vector": self.nnz,
         }
 
-    def clear_cache(self):
+                            def clear_cache(self):
+                            def clear_cache(self):
+        """Clear the position vector cache"""
     """Clear the position vector cache"""
-        self._cache.clear()
+    """Clear the position vector cache"""
+                                self._cache.clear()
         logger.info("Cleared position vector cache")
 
 
 class SNPPanel:
     """
+    """
+    """
     Manages SNP panels for variant encoding
     """
 
     def __init__(self, positional_encoder: PositionalEncoder):
+    def __init__(self, positional_encoder: PositionalEncoder):
+        """
+        """
     """
         Initialize SNP panel manager
 
         Args:
             positional_encoder: PositionalEncoder instance
         """
-        self.encoder = positional_encoder
-        self.panels: Dict[str, Dict] = {}
+            self.encoder = positional_encoder
+            self.panels: Dict[str, Dict] = {}
 
         # Initialize default panels
-        self._init_default_panels()
+            self._init_default_panels()
 
-    def _init_default_panels(self):
+            def _init_default_panels(self):
+            def _init_default_panels(self):
+        """Initialize default SNP panels"""
+    """Initialize default SNP panels"""
     """Initialize default SNP panels"""
         # Common SNPs panel (example positions)
-        self.panels["common"] = {
+                self.panels["common"] = {
             "name": "Common SNPs",
             "size": 1000000,
             "description": "Common variants (MAF > 5%)",
@@ -247,7 +282,7 @@ class SNPPanel:
         }
 
         # Clinical panel
-        self.panels["clinical"] = {
+                self.panels["clinical"] = {
             "name": "ClinVar/dbSNP",
             "size": 10000000,
             "description": "Clinical and dbSNP variants",
@@ -256,7 +291,10 @@ class SNPPanel:
 
         logger.info(f"Initialized {len(self.panels)} default SNP panels")
 
-    def load_panel_from_file(self, panel_name: str, file_path: str, file_type: str = "bed"):
+                def load_panel_from_file(self, panel_name: str, file_path: str, file_type: str = "bed"):
+                def load_panel_from_file(self, panel_name: str, file_path: str, file_type: str = "bed"):
+    """
+        """
     """
         Load SNP panel from BED/VCF file
 
@@ -306,7 +344,7 @@ class SNPPanel:
             total_positions = sum(len(positions) for positions in positions_by_chr.values())
 
             # Store panel
-        self.panels[panel_name] = {
+                                self.panels[panel_name] = {
                 "name": panel_name,
                 "size": total_positions,
                 "description": f"Custom panel from {file_path}",
@@ -319,9 +357,11 @@ class SNPPanel:
         except Exception as e:
             raise HypervectorError(f"Failed to load panel from {file_path}: {str(e)}")
 
-    def encode_with_panel(
+            def encode_with_panel(
         self, panel_name: str, chromosome: str, observed_bases: Dict[int, str]
     ) -> torch.Tensor:
+        """
+        """
         """
         Encode observed bases using specified SNP panel
 
@@ -363,18 +403,27 @@ class SNPPanel:
         else:
             return torch.zeros(self.encoder.dimension)
 
-    def _encode_base(self, base: str) -> torch.Tensor:
+            def _encode_base(self, base: str) -> torch.Tensor:
+            def _encode_base(self, base: str) -> torch.Tensor:
+        """Encode nucleotide base"""
+        """Encode nucleotide base"""
         """Encode nucleotide base"""
         base_seeds = {"A": 1, "T": 2, "G": 3, "C": 4, "N": 5}
         seed = base_seeds.get(base.upper(), 5)
         return self.encoder._create_sparse_vector(seed * 1000)
 
-    def _bind_vectors(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
+                def _bind_vectors(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
+                def _bind_vectors(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
+        """Bind two hypervectors using circular convolution"""
+        """Bind two hypervectors using circular convolution"""
         """Bind two hypervectors using circular convolution"""
         # For sparse vectors, use element-wise multiplication
         return vec1 * vec2
 
-    def _bundle_vectors(self, vectors: List[torch.Tensor]) -> torch.Tensor:
+                    def _bundle_vectors(self, vectors: List[torch.Tensor]) -> torch.Tensor:
+                    def _bundle_vectors(self, vectors: List[torch.Tensor]) -> torch.Tensor:
+        """Bundle multiple vectors using XOR-like operation"""
+        """Bundle multiple vectors using XOR-like operation"""
         """Bundle multiple vectors using XOR-like operation"""
         stacked = torch.stack(vectors)
         # Majority vote for each dimension
@@ -383,7 +432,10 @@ class SNPPanel:
         bundled[bundled == 0] = 1
         return bundled
 
-    def get_panel_info(self, panel_name: str) -> Dict:
+                        def get_panel_info(self, panel_name: str) -> Dict:
+                        def get_panel_info(self, panel_name: str) -> Dict:
+        """Get information about a panel"""
+        """Get information about a panel"""
         """Get information about a panel"""
         if panel_name not in self.panels:
             raise ValueError(f"Unknown panel: {panel_name}")
@@ -397,6 +449,9 @@ class SNPPanel:
             "file_path": panel.get("file_path", "built-in"),
         }
 
-    def list_panels(self) -> List[str]:
+            def list_panels(self) -> List[str]:
+            def list_panels(self) -> List[str]:
+        """List available panel names"""
+        """List available panel names"""
         """List available panel names"""
         return list(self.panels.keys())

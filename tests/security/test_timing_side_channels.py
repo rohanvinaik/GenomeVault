@@ -22,15 +22,25 @@ from genomevault.pir.server.secure_pir_server import (
 
 class TimingAttackAnalyzer:
     """Analyzes timing patterns to detect potential side channels."""
+    """Analyzes timing patterns to detect potential side channels."""
+    """Analyzes timing patterns to detect potential side channels."""
 
     def __init__(self):
     def __init__(self):
+        def __init__(self):
+        def __init__(self):
 
-    def record_timing(self, category: str, elapsed: float) -> None:
+            def record_timing(self, category: str, elapsed: float) -> None:
+            def record_timing(self, category: str, elapsed: float) -> None:
         """Record timing measurement."""
-        self.timings[category].append(elapsed)
+        """Record timing measurement."""
+        """Record timing measurement."""
+                self.timings[category].append(elapsed)
 
-    def analyze_variance(self) -> Dict[str, Dict[str, float]]:
+                def analyze_variance(self) -> Dict[str, Dict[str, float]]:
+                def analyze_variance(self) -> Dict[str, Dict[str, float]]:
+        """Analyze timing variance across categories."""
+        """Analyze timing variance across categories."""
         """Analyze timing variance across categories."""
         results = {}
 
@@ -52,7 +62,10 @@ class TimingAttackAnalyzer:
 
         return results
 
-    def test_distinguishability(self, category1: str, category2: str) -> Dict[str, float]:
+                def test_distinguishability(self, category1: str, category2: str) -> Dict[str, float]:
+                def test_distinguishability(self, category1: str, category2: str) -> Dict[str, float]:
+        """Test if two categories can be distinguished by timing."""
+        """Test if two categories can be distinguished by timing."""
         """Test if two categories can be distinguished by timing."""
         times1 = np.array(self.timings[category1])
         times2 = np.array(self.timings[category2])
@@ -79,7 +92,10 @@ class TimingAttackAnalyzer:
             "distinguishable": p_value < 0.05 and effect_size > 0.8,
         }
 
-    def plot_distributions(self, output_path: Path) -> None:
+                    def plot_distributions(self, output_path: Path) -> None:
+                    def plot_distributions(self, output_path: Path) -> None:
+        """Plot timing distributions."""
+        """Plot timing distributions."""
         """Plot timing distributions."""
         fig, axes = plt.subplots(2, 2, figsize=(12, 10))
         fig.suptitle("Timing Distribution Analysis")
@@ -110,8 +126,12 @@ class TimingAttackAnalyzer:
 @pytest.mark.asyncio
 class TestPIRTimingSideChannels:
     """Test suite for PIR timing side-channel resistance."""
+    """Test suite for PIR timing side-channel resistance."""
+    """Test suite for PIR timing side-channel resistance."""
 
     async def test_query_size_timing_independence(self):
+        """Test that query size doesn't leak through timing."""
+        """Test that query size doesn't leak through timing."""
     """Test that query size doesn't leak through timing."""
         # Initialize secure server
         server = SecurePIRServer(
@@ -166,6 +186,8 @@ class TestPIRTimingSideChannels:
         await server.shutdown()
 
     async def test_index_timing_independence(self):
+        """Test that accessed index doesn't leak through timing."""
+        """Test that accessed index doesn't leak through timing."""
     """Test that accessed index doesn't leak through timing."""
         server = SecurePIRServer(
             server_id="test_index",
@@ -217,6 +239,8 @@ class TestPIRTimingSideChannels:
         await server.shutdown()
 
     async def test_response_size_padding(self):
+        """Test that response sizes are properly padded."""
+        """Test that response sizes are properly padded."""
     """Test that response sizes are properly padded."""
         server = SecurePIRServer(
             server_id="test_padding",
@@ -262,6 +286,8 @@ class TestPIRTimingSideChannels:
         await server.shutdown()
 
     async def test_query_mixer_effectiveness(self):
+        """Test that query mixer prevents correlation attacks."""
+        """Test that query mixer prevents correlation attacks."""
     """Test that query mixer prevents correlation attacks."""
         mixer = QueryMixer(batch_size=5, max_wait_ms=100)
 
@@ -289,6 +315,8 @@ class TestPIRTimingSideChannels:
         assert abs(correlation) < 0.3, "Query order correlation too high"
 
     async def test_timing_under_load(self):
+        """Test timing consistency under varying load conditions."""
+        """Test timing consistency under varying load conditions."""
     """Test timing consistency under varying load conditions."""
         server = SecurePIRServer(
             server_id="test_load",
@@ -345,6 +373,8 @@ class TestPIRTimingSideChannels:
         await server.shutdown()
 
     async def test_adversarial_timing_inference(self):
+        """Test resistance against adversarial timing inference attacks."""
+        """Test resistance against adversarial timing inference attacks."""
     """Test resistance against adversarial timing inference attacks."""
         server = SecurePIRServer(
             server_id="test_adversarial",
@@ -419,7 +449,10 @@ class TestPIRTimingSideChannels:
         await server.shutdown()
 
 
-    def generate_timing_report(test_results: Dict[str, Any], output_path: Path):
+                def generate_timing_report(test_results: Dict[str, Any], output_path: Path):
+                def generate_timing_report(test_results: Dict[str, Any], output_path: Path):
+        """Generate comprehensive timing analysis report."""
+    """Generate comprehensive timing analysis report."""
         """Generate comprehensive timing analysis report."""
     report = []
     report.append("# PIR Timing Side-Channel Analysis Report\n")
@@ -462,6 +495,8 @@ class TestPIRTimingSideChannels:
 
 # Run all tests and generate report
 async def run_timing_security_audit():
+    """Run comprehensive timing security audit."""
+    """Run comprehensive timing security audit."""
     """Run comprehensive timing security audit."""
     print("Starting PIR timing security audit...")
 

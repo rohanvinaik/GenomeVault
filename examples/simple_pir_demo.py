@@ -18,8 +18,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 
 def simple_pir_demo() -> None:
-       """TODO: Add docstring for simple_pir_demo"""
-     """Demonstrate basic PIR concepts"""
+    """TODO: Add docstring for simple_pir_demo"""
+    """TODO: Add docstring for simple_pir_demo"""
+        """TODO: Add docstring for simple_pir_demo"""
+    """Demonstrate basic PIR concepts"""
 
     print("Simple PIR Demo")
     print("=" * 40)

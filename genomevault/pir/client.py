@@ -24,6 +24,8 @@ logger = get_logger(__name__)
 @dataclass
 class PIRServer:
     """PIR server information."""
+    """PIR server information."""
+    """PIR server information."""
 
     server_id: str
     endpoint: str
@@ -33,6 +35,8 @@ class PIRServer:
     latency_ms: float
 
     def to_dict(self) -> Dict:
+        """TODO: Add docstring for to_dict"""
+        """TODO: Add docstring for to_dict"""
             """TODO: Add docstring for to_dict"""
     return {
             "server_id": self.server_id,
@@ -47,6 +51,8 @@ class PIRServer:
 @dataclass
 class PIRQuery:
     """PIR query structure."""
+    """PIR query structure."""
+    """PIR query structure."""
 
     query_id: str
     target_index: int
@@ -58,6 +64,8 @@ class PIRQuery:
 @dataclass
 class PIRResponse:
     """PIR response from server."""
+    """PIR response from server."""
+    """PIR response from server."""
 
     server_id: str
     query_id: str
@@ -68,37 +76,43 @@ class PIRResponse:
 
 class PIRClient:
     """
+    """
+    """
     Information-theoretic PIR client.
     Implements Chor et al. PIR scheme with enhanced security.
     """
 
     def __init__(self, servers: List[PIRServer], database_size: int) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize PIR client.
 
         Args:
             servers: List of available PIR servers
             database_size: Size of the database being queried
         """
-        self.servers = servers
-        self.database_size = database_size
-        self.min_servers = config.pir.min_honest_servers
+            self.servers = servers
+            self.database_size = database_size
+            self.min_servers = config.pir.min_honest_servers
 
         # Validate server configuration
-        self._validate_servers()
+            self._validate_servers()
 
         # Initialize connection pool
-        self.session = None
+            self.session = None
 
         logger.info(
             "PIRClient initialized with {len(servers)} servers",
             extra={"privacy_safe": True},
         )
 
-    def _validate_servers(self) -> None:
-           """TODO: Add docstring for _validate_servers"""
-     """Validate server configuration meets security requirements."""
+            def _validate_servers(self) -> None:
+                """TODO: Add docstring for _validate_servers"""
+        """TODO: Add docstring for _validate_servers"""
+            """TODO: Add docstring for _validate_servers"""
+    """Validate server configuration meets security requirements."""
         if len(self.servers) < self.min_servers:
             raise ValueError("Insufficient servers: {len(self.servers)} < {self.min_servers}")
 
@@ -121,9 +135,11 @@ class PIRClient:
                 extra={"privacy_safe": True},
             )
 
-    def calculate_privacy_failure_probability(self, k: int, q: float) -> float:
-           """TODO: Add docstring for calculate_privacy_failure_probability"""
-     """
+            def calculate_privacy_failure_probability(self, k: int, q: float) -> float:
+                """TODO: Add docstring for calculate_privacy_failure_probability"""
+        """TODO: Add docstring for calculate_privacy_failure_probability"""
+            """TODO: Add docstring for calculate_privacy_failure_probability"""
+    """
         Calculate privacy breach probability P_fail(k,q) = (1-q)^k.
 
         Args:
@@ -135,9 +151,11 @@ class PIRClient:
         """
         return (1 - q) ** k
 
-    def calculate_min_servers_needed(self, target_failure: float, honesty_prob: float) -> int:
-           """TODO: Add docstring for calculate_min_servers_needed"""
-     """
+            def calculate_min_servers_needed(self, target_failure: float, honesty_prob: float) -> int:
+                """TODO: Add docstring for calculate_min_servers_needed"""
+        """TODO: Add docstring for calculate_min_servers_needed"""
+            """TODO: Add docstring for calculate_min_servers_needed"""
+    """
         Calculate minimum servers needed for target failure probability.
 
         Args:
@@ -152,9 +170,11 @@ class PIRClient:
         return math.ceil(math.log(target_failure) / math.log(1 - honesty_prob))
 
     @performance_logger.log_operation("create_query")
-    def create_query(self, target_index: int) -> PIRQuery:
-           """TODO: Add docstring for create_query"""
-     """
+            def create_query(self, target_index: int) -> PIRQuery:
+                """TODO: Add docstring for create_query"""
+        """TODO: Add docstring for create_query"""
+            """TODO: Add docstring for create_query"""
+    """
         Create PIR query for retrieving item at target_index.
 
         Args:
@@ -191,9 +211,11 @@ class PIRClient:
 
         return query
 
-    def _generate_query_vectors(self, target_vector: np.ndarray) -> Dict[str, np.ndarray]:
-           """TODO: Add docstring for _generate_query_vectors"""
-     """
+            def _generate_query_vectors(self, target_vector: np.ndarray) -> Dict[str, np.ndarray]:
+                """TODO: Add docstring for _generate_query_vectors"""
+        """TODO: Add docstring for _generate_query_vectors"""
+            """TODO: Add docstring for _generate_query_vectors"""
+    """
         Generate random query vectors that sum to target vector.
 
         Args:
@@ -230,8 +252,10 @@ class PIRClient:
         return query_vectors
 
     async def execute_query(self, query: PIRQuery) -> Any:
-           """TODO: Add docstring for execute_query"""
-     """
+        """TODO: Add docstring for execute_query"""
+        """TODO: Add docstring for execute_query"""
+            """TODO: Add docstring for execute_query"""
+    """
         Execute PIR query across servers.
 
         Args:
@@ -241,7 +265,7 @@ class PIRClient:
             Retrieved data item
         """
         if not self.session:
-        self.session = aiohttp.ClientSession()
+            self.session = aiohttp.ClientSession()
 
         # Send queries to all servers in parallel
         tasks = []
@@ -268,8 +292,10 @@ class PIRClient:
         return result
 
     async def _query_server(self, server: PIRServer, query: PIRQuery) -> Optional[PIRResponse]:
-           """TODO: Add docstring for _query_server"""
-     """
+        """TODO: Add docstring for _query_server"""
+        """TODO: Add docstring for _query_server"""
+            """TODO: Add docstring for _query_server"""
+    """
         Query individual PIR server.
 
         Args:
@@ -321,9 +347,11 @@ class PIRClient:
             logger.error(f"Error querying server {server.server_id}: {e}")
             return None
 
-    def _reconstruct_data(self, responses: List[PIRResponse]) -> Any:
-           """TODO: Add docstring for _reconstruct_data"""
-     """
+            def _reconstruct_data(self, responses: List[PIRResponse]) -> Any:
+                """TODO: Add docstring for _reconstruct_data"""
+        """TODO: Add docstring for _reconstruct_data"""
+            """TODO: Add docstring for _reconstruct_data"""
+    """
         Reconstruct data from server responses.
 
         Args:
@@ -341,9 +369,11 @@ class PIRClient:
         # The result is the desired database item
         return result
 
-    def decode_response(self, response_data: np.ndarray, data_type: str = "genomic") -> Any:
-           """TODO: Add docstring for decode_response"""
-     """
+            def decode_response(self, response_data: np.ndarray, data_type: str = "genomic") -> Any:
+                """TODO: Add docstring for decode_response"""
+        """TODO: Add docstring for decode_response"""
+            """TODO: Add docstring for decode_response"""
+    """
         Decode PIR response based on data type.
 
         Args:
@@ -363,9 +393,11 @@ class PIRClient:
             # Generic decoding
             return response_data
 
-    def _decode_genomic_data(self, data: np.ndarray) -> Dict:
-           """TODO: Add docstring for _decode_genomic_data"""
-     """
+            def _decode_genomic_data(self, data: np.ndarray) -> Dict:
+                """TODO: Add docstring for _decode_genomic_data"""
+        """TODO: Add docstring for _decode_genomic_data"""
+            """TODO: Add docstring for _decode_genomic_data"""
+    """
         Decode genomic reference data.
 
         Args:
@@ -387,9 +419,11 @@ class PIRClient:
 
         return decoded
 
-    def _decode_reference_data(self, data: np.ndarray) -> Dict:
-           """TODO: Add docstring for _decode_reference_data"""
-     """Decode reference genome data."""
+                def _decode_reference_data(self, data: np.ndarray) -> Dict:
+                    """TODO: Add docstring for _decode_reference_data"""
+        """TODO: Add docstring for _decode_reference_data"""
+            """TODO: Add docstring for _decode_reference_data"""
+    """Decode reference genome data."""
         # Decode pangenome graph structure
         return {
             "nodes": self._extract_nodes(data),
@@ -397,9 +431,11 @@ class PIRClient:
             "paths": self._extract_paths(data),
         }
 
-    def _decode_annotation_data(self, data: np.ndarray) -> Dict:
-           """TODO: Add docstring for _decode_annotation_data"""
-     """Decode functional annotations."""
+                    def _decode_annotation_data(self, data: np.ndarray) -> Dict:
+                        """TODO: Add docstring for _decode_annotation_data"""
+        """TODO: Add docstring for _decode_annotation_data"""
+            """TODO: Add docstring for _decode_annotation_data"""
+    """Decode functional annotations."""
         # Decode variant annotations
         return {
             "gene_impact": self._extract_gene_impact(data),
@@ -407,45 +443,59 @@ class PIRClient:
             "population_frequencies": self._extract_frequencies(data),
         }
 
-    def _extract_nodes(self, data: np.ndarray) -> List[Dict]:
-           """TODO: Add docstring for _extract_nodes"""
-     """Extract graph nodes from data."""
+                        def _extract_nodes(self, data: np.ndarray) -> List[Dict]:
+                            """TODO: Add docstring for _extract_nodes"""
+        """TODO: Add docstring for _extract_nodes"""
+            """TODO: Add docstring for _extract_nodes"""
+    """Extract graph nodes from data."""
         # Placeholder implementation
         return []
 
-    def _extract_edges(self, data: np.ndarray) -> List[Dict]:
-           """TODO: Add docstring for _extract_edges"""
-     """Extract graph edges from data."""
+                            def _extract_edges(self, data: np.ndarray) -> List[Dict]:
+                                """TODO: Add docstring for _extract_edges"""
+        """TODO: Add docstring for _extract_edges"""
+            """TODO: Add docstring for _extract_edges"""
+    """Extract graph edges from data."""
         # Placeholder implementation
         return []
 
-    def _extract_paths(self, data: np.ndarray) -> List[Dict]:
-           """TODO: Add docstring for _extract_paths"""
-     """Extract reference paths from data."""
+                                def _extract_paths(self, data: np.ndarray) -> List[Dict]:
+                                    """TODO: Add docstring for _extract_paths"""
+        """TODO: Add docstring for _extract_paths"""
+            """TODO: Add docstring for _extract_paths"""
+    """Extract reference paths from data."""
         # Placeholder implementation
         return []
 
-    def _extract_gene_impact(self, data: np.ndarray) -> Dict:
-           """TODO: Add docstring for _extract_gene_impact"""
-     """Extract gene impact predictions."""
+                                    def _extract_gene_impact(self, data: np.ndarray) -> Dict:
+                                        """TODO: Add docstring for _extract_gene_impact"""
+        """TODO: Add docstring for _extract_gene_impact"""
+            """TODO: Add docstring for _extract_gene_impact"""
+    """Extract gene impact predictions."""
         # Placeholder implementation
         return {}
 
-    def _extract_conservation(self, data: np.ndarray) -> np.ndarray:
-           """TODO: Add docstring for _extract_conservation"""
-     """Extract conservation scores."""
+                                        def _extract_conservation(self, data: np.ndarray) -> np.ndarray:
+                                            """TODO: Add docstring for _extract_conservation"""
+        """TODO: Add docstring for _extract_conservation"""
+            """TODO: Add docstring for _extract_conservation"""
+    """Extract conservation scores."""
         # Placeholder implementation
         return np.array([])
 
-    def _extract_frequencies(self, data: np.ndarray) -> Dict:
-           """TODO: Add docstring for _extract_frequencies"""
-     """Extract population frequencies."""
+                                            def _extract_frequencies(self, data: np.ndarray) -> Dict:
+                                                """TODO: Add docstring for _extract_frequencies"""
+        """TODO: Add docstring for _extract_frequencies"""
+            """TODO: Add docstring for _extract_frequencies"""
+    """Extract population frequencies."""
         # Placeholder implementation
         return {}
 
     async def batch_query(self, indices: List[int]) -> List[Any]:
-           """TODO: Add docstring for batch_query"""
-     """
+        """TODO: Add docstring for batch_query"""
+        """TODO: Add docstring for batch_query"""
+            """TODO: Add docstring for batch_query"""
+    """
         Execute multiple PIR queries in batch.
 
         Args:
@@ -473,9 +523,11 @@ class PIRClient:
 
         return results
 
-    def estimate_communication_cost(self, num_queries: int = 1) -> Dict[str, float]:
-           """TODO: Add docstring for estimate_communication_cost"""
-     """
+                def estimate_communication_cost(self, num_queries: int = 1) -> Dict[str, float]:
+                    """TODO: Add docstring for estimate_communication_cost"""
+        """TODO: Add docstring for estimate_communication_cost"""
+            """TODO: Add docstring for estimate_communication_cost"""
+    """
         Estimate communication cost for PIR queries.
 
         Args:
@@ -507,9 +559,11 @@ class PIRClient:
             "queries": num_queries,
         }
 
-    def get_optimal_server_configuration(self) -> Dict[str, Any]:
-           """TODO: Add docstring for get_optimal_server_configuration"""
-     """
+            def get_optimal_server_configuration(self) -> Dict[str, Any]:
+                """TODO: Add docstring for get_optimal_server_configuration"""
+        """TODO: Add docstring for get_optimal_server_configuration"""
+            """TODO: Add docstring for get_optimal_server_configuration"""
+    """
         Calculate optimal server configuration for current setup.
 
         Returns:
@@ -573,8 +627,10 @@ class PIRClient:
         }
 
     async def close(self) -> None:
-           """TODO: Add docstring for close"""
-     """Close client connections."""
+        """TODO: Add docstring for close"""
+        """TODO: Add docstring for close"""
+            """TODO: Add docstring for close"""
+    """Close client connections."""
         if self.session:
             await self.session.close()
 
@@ -616,6 +672,8 @@ if __name__ == "__main__":
 
     # Example query (would be async in practice)
     async def example_query() -> None:
+        """TODO: Add docstring for example_query"""
+        """TODO: Add docstring for example_query"""
             """TODO: Add docstring for example_query"""
     query = client.create_query(target_index=42)
         # In practice, would execute: result = await client.execute_query(query)

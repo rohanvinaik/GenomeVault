@@ -8,6 +8,7 @@ from pathlib import Path
 
 
 def check_files():
+def check_files():
     base_path = Path.home() / "genomevault"
 
     print("Checking Python files for issues...")

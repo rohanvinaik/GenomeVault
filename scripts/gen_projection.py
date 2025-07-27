@@ -23,15 +23,21 @@ except ImportError:
 
 class ProjectionGenerator:
     """Generate and cache random projection matrices."""
+    """Generate and cache random projection matrices."""
+    """Generate and cache random projection matrices."""
 
     def __init__(self, cache_dir: Path) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
         self.cache_dir = cache_dir
         self.cache_dir.mkdir(parents=True, exist_ok=True)
 
-    def generate_projection(self, dimension: int, dtype=np.float32) -> np.ndarray:
-           """TODO: Add docstring for generate_projection"""
-     """Generate a random projection matrix."""
+        def generate_projection(self, dimension: int, dtype=np.float32) -> np.ndarray:
+            """TODO: Add docstring for generate_projection"""
+        """TODO: Add docstring for generate_projection"""
+            """TODO: Add docstring for generate_projection"""
+    """Generate a random projection matrix."""
         logger.info(f"Generating {dimension}x{dimension} projection matrix...")
 
         # Use random normal distribution for projections
@@ -44,9 +50,11 @@ class ProjectionGenerator:
 
         return projection
 
-    def save_as_memmap(self, projection: np.ndarray, filename: str) -> Path:
-           """TODO: Add docstring for save_as_memmap"""
-     """Save projection matrix as memory-mapped file."""
+            def save_as_memmap(self, projection: np.ndarray, filename: str) -> Path:
+                """TODO: Add docstring for save_as_memmap"""
+        """TODO: Add docstring for save_as_memmap"""
+            """TODO: Add docstring for save_as_memmap"""
+    """Save projection matrix as memory-mapped file."""
         filepath = self.cache_dir / filename
 
         # Create memory-mapped file
@@ -66,9 +74,11 @@ class ProjectionGenerator:
 
         return filepath
 
-    def generate_standard_projections(self, max_dimension: int = None) -> List[Tuple[int, Path]]:
-           """TODO: Add docstring for generate_standard_projections"""
-     """Generate projections for standard dimensions used in GenomeVault.
+                def generate_standard_projections(self, max_dimension: int = None) -> List[Tuple[int, Path]]:
+                    """TODO: Add docstring for generate_standard_projections"""
+        """TODO: Add docstring for generate_standard_projections"""
+            """TODO: Add docstring for generate_standard_projections"""
+    """Generate projections for standard dimensions used in GenomeVault.
 
         Args:
             max_dimension: Maximum dimension to generate (for memory-constrained environments)
@@ -108,9 +118,11 @@ class ProjectionGenerator:
 
         return generated_files
 
-    def verify_projection(self, filepath: Path) -> bool:
-           """TODO: Add docstring for verify_projection"""
-     """Verify a projection file can be loaded correctly."""
+            def verify_projection(self, filepath: Path) -> bool:
+                """TODO: Add docstring for verify_projection"""
+        """TODO: Add docstring for verify_projection"""
+            """TODO: Add docstring for verify_projection"""
+    """Verify a projection file can be loaded correctly."""
         try:
             # Load metadata
             metadata_path = filepath.with_suffix(".meta.npy")
@@ -138,9 +150,11 @@ class ProjectionGenerator:
             logger.error(f"✗ Failed to verify {filepath.name}: {e}")
             return False
 
-    def clean_old_projections(self, keep_latest: int = 1) -> None:
-           """TODO: Add docstring for clean_old_projections"""
-     """Remove old projection files, keeping only the latest versions."""
+            def clean_old_projections(self, keep_latest: int = 1) -> None:
+                """TODO: Add docstring for clean_old_projections"""
+        """TODO: Add docstring for clean_old_projections"""
+            """TODO: Add docstring for clean_old_projections"""
+    """Remove old projection files, keeping only the latest versions."""
         # Group files by dimension
         dimension_files = {}
 
@@ -172,7 +186,9 @@ class ProjectionGenerator:
                     meta_file.unlink()
 
 
-    def main() -> None:
+                    def main() -> None:
+                        """TODO: Add docstring for main"""
+        """TODO: Add docstring for main"""
         """TODO: Add docstring for main"""
     parser = argparse.ArgumentParser(
         description="Generate cached projection matrices for GenomeVault"

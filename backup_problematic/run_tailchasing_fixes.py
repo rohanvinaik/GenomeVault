@@ -12,8 +12,10 @@ from pathlib import Path
 
 
 def run_tailchasing_fixes() -> None:
-       """TODO: Add docstring for run_tailchasing_fixes"""
-     """Run TailChasingFixer with fix generation"""
+    """TODO: Add docstring for run_tailchasing_fixes"""
+    """TODO: Add docstring for run_tailchasing_fixes"""
+        """TODO: Add docstring for run_tailchasing_fixes"""
+    """Run TailChasingFixer with fix generation"""
     genomevault_path = Path.home() / "genomevault"
     os.chdir(genomevault_path)
 

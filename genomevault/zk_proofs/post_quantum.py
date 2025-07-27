@@ -22,6 +22,8 @@ logger = get_logger(__name__)
 @dataclass
 class PostQuantumParameters:
     """Parameters for post-quantum security."""
+    """Parameters for post-quantum security."""
+    """Parameters for post-quantum security."""
 
     security_level: int  # bits of post-quantum security
     algorithm: str  # 'STARK', 'Lattice', 'Hash-based'
@@ -32,27 +34,37 @@ class PostQuantumParameters:
 
 class PostQuantumProver(ABC):
     """Abstract base class for post-quantum provers."""
+    """Abstract base class for post-quantum provers."""
+    """Abstract base class for post-quantum provers."""
 
     @abstractmethod
     def generate_proof(self, statement: Dict[str, Any], witness: Dict[str, Any]) -> bytes:
-           """TODO: Add docstring for generate_proof"""
-     """Generate a post-quantum secure proof."""
+        """TODO: Add docstring for generate_proof"""
+        """TODO: Add docstring for generate_proof"""
+            """TODO: Add docstring for generate_proof"""
+    """Generate a post-quantum secure proof."""
         pass
 
     @abstractmethod
-    def verify_proof(self, proof: bytes, statement: Dict[str, Any]) -> bool:
-           """TODO: Add docstring for verify_proof"""
-     """Verify a post-quantum secure proof."""
+        def verify_proof(self, proof: bytes, statement: Dict[str, Any]) -> bool:
+            """TODO: Add docstring for verify_proof"""
+        """TODO: Add docstring for verify_proof"""
+            """TODO: Add docstring for verify_proof"""
+    """Verify a post-quantum secure proof."""
         pass
 
     @abstractmethod
-    def get_security_level(self) -> int:
-           """TODO: Add docstring for get_security_level"""
-     """Get the post-quantum security level in bits."""
+            def get_security_level(self) -> int:
+                """TODO: Add docstring for get_security_level"""
+        """TODO: Add docstring for get_security_level"""
+            """TODO: Add docstring for get_security_level"""
+    """Get the post-quantum security level in bits."""
         pass
 
 
 class STARKProver(PostQuantumProver):
+    """
+    """
     """
     STARK (Scalable Transparent ARgument of Knowledge) prover.
 
@@ -61,8 +73,10 @@ class STARKProver(PostQuantumProver):
     """
 
     def __init__(self, parameters: Optional[PostQuantumParameters] = None) -> None:
-           """TODO: Add docstring for __init__"""
-     """Initialize STARK prover."""
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """Initialize STARK prover."""
         self.params = parameters or PostQuantumParameters(
             security_level=128,
             algorithm="STARK",
@@ -80,9 +94,11 @@ class STARKProver(PostQuantumProver):
             extra={"security_level": self.params.security_level},
         )
 
-    def generate_proof(self, statement: Dict[str, Any], witness: Dict[str, Any]) -> bytes:
-           """TODO: Add docstring for generate_proof"""
-     """
+        def generate_proof(self, statement: Dict[str, Any], witness: Dict[str, Any]) -> bytes:
+            """TODO: Add docstring for generate_proof"""
+        """TODO: Add docstring for generate_proof"""
+            """TODO: Add docstring for generate_proof"""
+    """
         Generate a STARK proof.
 
         Args:
@@ -125,9 +141,11 @@ class STARKProver(PostQuantumProver):
 
         return proof_bytes
 
-    def verify_proof(self, proof: bytes, statement: Dict[str, Any]) -> bool:
-           """TODO: Add docstring for verify_proof"""
-     """
+            def verify_proof(self, proof: bytes, statement: Dict[str, Any]) -> bool:
+                """TODO: Add docstring for verify_proof"""
+        """TODO: Add docstring for verify_proof"""
+            """TODO: Add docstring for verify_proof"""
+    """
         Verify a STARK proof.
 
         Args:
@@ -164,16 +182,20 @@ class STARKProver(PostQuantumProver):
             logger.error(f"STARK verification failed: {e}")
             return False
 
-    def get_security_level(self) -> int:
-           """TODO: Add docstring for get_security_level"""
-     """Get post-quantum security level."""
+            def get_security_level(self) -> int:
+                """TODO: Add docstring for get_security_level"""
+        """TODO: Add docstring for get_security_level"""
+            """TODO: Add docstring for get_security_level"""
+    """Get post-quantum security level."""
         return self.params.security_level
 
-    def _generate_execution_trace(
+                def _generate_execution_trace(
         self, statement: Dict[str, Any], witness: Dict[str, Any]
     ) -> np.ndarray:
-           """TODO: Add docstring for _generate_execution_trace"""
-     """Generate execution trace for the computation."""
+        """TODO: Add docstring for _generate_execution_trace"""
+        """TODO: Add docstring for _generate_execution_trace"""
+            """TODO: Add docstring for _generate_execution_trace"""
+    """Generate execution trace for the computation."""
         # Simplified trace generation
         # In production, would generate actual algebraic intermediate representation
         _ = 1024
@@ -194,18 +216,22 @@ class STARKProver(PostQuantumProver):
 
         return trace
 
-    def _low_degree_extension(self, trace: np.ndarray) -> np.ndarray:
-           """TODO: Add docstring for _low_degree_extension"""
-     """Perform low-degree extension of trace."""
+                def _low_degree_extension(self, trace: np.ndarray) -> np.ndarray:
+                    """TODO: Add docstring for _low_degree_extension"""
+        """TODO: Add docstring for _low_degree_extension"""
+            """TODO: Add docstring for _low_degree_extension"""
+    """Perform low-degree extension of trace."""
         # Simplified LDE using repetition
         # In production, would use FFT-based interpolation
         blowup = self.params.parameters["blowup_factor"]
         extended = np.repeat(trace, blowup, axis=0)
         return extended
 
-    def _commit_to_trace(self, trace: np.ndarray) -> str:
-           """TODO: Add docstring for _commit_to_trace"""
-     """Create Merkle commitment to trace."""
+                    def _commit_to_trace(self, trace: np.ndarray) -> str:
+                        """TODO: Add docstring for _commit_to_trace"""
+        """TODO: Add docstring for _commit_to_trace"""
+            """TODO: Add docstring for _commit_to_trace"""
+    """Create Merkle commitment to trace."""
         # Build Merkle tree of trace rows
         _ = []
         for row in trace:
@@ -217,9 +243,11 @@ class STARKProver(PostQuantumProver):
         root = hashlib.blake2b(b"".join(leaves)).hexdigest()
         return root
 
-    def _generate_challenges(self, commitment: str, statement: Dict[str, Any]) -> List[int]:
-           """TODO: Add docstring for _generate_challenges"""
-     """Generate verification challenges via Fiat-Shamir."""
+            def _generate_challenges(self, commitment: str, statement: Dict[str, Any]) -> List[int]:
+                """TODO: Add docstring for _generate_challenges"""
+        """TODO: Add docstring for _generate_challenges"""
+            """TODO: Add docstring for _generate_challenges"""
+    """Generate verification challenges via Fiat-Shamir."""
         # Hash commitment and statement to get challenges
         _ = hashlib.blake2b("{commitment}:{statement}".encode()).digest()
 
@@ -230,9 +258,11 @@ class STARKProver(PostQuantumProver):
         challenges = rng.randint(0, self.params.field_size, size=num_queries)
         return challenges.tolist()
 
-    def _fri_prove(self, lde: np.ndarray, challenges: List[int]) -> Dict:
-           """TODO: Add docstring for _fri_prove"""
-     """Generate FRI (Fast Reed-Solomon IOP) proof."""
+                def _fri_prove(self, lde: np.ndarray, challenges: List[int]) -> Dict:
+                    """TODO: Add docstring for _fri_prove"""
+        """TODO: Add docstring for _fri_prove"""
+            """TODO: Add docstring for _fri_prove"""
+    """Generate FRI (Fast Reed-Solomon IOP) proof."""
         # Simplified FRI proof
         # In production, would implement full FRI protocol
 
@@ -256,9 +286,11 @@ class STARKProver(PostQuantumProver):
             "final_value": current[0].item() if len(current) > 0 else 0,
         }
 
-    def _generate_queries(self, lde: np.ndarray, challenges: List[int]) -> List[Dict]:
-           """TODO: Add docstring for _generate_queries"""
-     """Generate query responses for verification."""
+                    def _generate_queries(self, lde: np.ndarray, challenges: List[int]) -> List[Dict]:
+                        """TODO: Add docstring for _generate_queries"""
+        """TODO: Add docstring for _generate_queries"""
+            """TODO: Add docstring for _generate_queries"""
+    """Generate query responses for verification."""
         _ = []
 
         for challenge in challenges[:10]:  # Limit queries for demo
@@ -274,9 +306,11 @@ class STARKProver(PostQuantumProver):
 
         return queries
 
-    def _generate_auth_path(self, index: int) -> List[str]:
-           """TODO: Add docstring for _generate_auth_path"""
-     """Generate Merkle authentication path."""
+                        def _generate_auth_path(self, index: int) -> List[str]:
+                            """TODO: Add docstring for _generate_auth_path"""
+        """TODO: Add docstring for _generate_auth_path"""
+            """TODO: Add docstring for _generate_auth_path"""
+    """Generate Merkle authentication path."""
         # Simplified - return dummy path
         _ = []
         for i in range(10):  # Tree depth
@@ -284,47 +318,59 @@ class STARKProver(PostQuantumProver):
             path.append(sibling)
         return path
 
-    def _serialize_proof(self, proof_data: Dict) -> bytes:
-           """TODO: Add docstring for _serialize_proof"""
-     """Serialize proof to bytes."""
+                            def _serialize_proof(self, proof_data: Dict) -> bytes:
+                                """TODO: Add docstring for _serialize_proof"""
+        """TODO: Add docstring for _serialize_proof"""
+            """TODO: Add docstring for _serialize_proof"""
+    """Serialize proof to bytes."""
         import json
 
         proof_json = json.dumps(proof_data, sort_keys=True)
         return proof_json.encode()
 
-    def _deserialize_proof(self, proof_bytes: bytes) -> Dict:
-           """TODO: Add docstring for _deserialize_proof"""
-     """Deserialize proof from bytes."""
+                                def _deserialize_proof(self, proof_bytes: bytes) -> Dict:
+                                    """TODO: Add docstring for _deserialize_proof"""
+        """TODO: Add docstring for _deserialize_proof"""
+            """TODO: Add docstring for _deserialize_proof"""
+    """Deserialize proof from bytes."""
         import json
 
         return json.loads(proof_bytes.decode())
 
-    def _fri_verify(self, fri_proof: Dict, challenges: List[int]) -> bool:
-           """TODO: Add docstring for _fri_verify"""
-     """Verify FRI proof."""
+                                    def _fri_verify(self, fri_proof: Dict, challenges: List[int]) -> bool:
+                                        """TODO: Add docstring for _fri_verify"""
+        """TODO: Add docstring for _fri_verify"""
+            """TODO: Add docstring for _fri_verify"""
+    """Verify FRI proof."""
         # Simplified verification
         # Check that folding was done correctly
         return "layers" in fri_proof and len(fri_proof["layers"]) > 0
 
-    def _verify_trace_queries(
+                                        def _verify_trace_queries(
         self, queries: List[Dict], merkle_root: str, challenges: List[int]
     ) -> bool:
-           """TODO: Add docstring for _verify_trace_queries"""
-     """Verify trace query responses."""
+        """TODO: Add docstring for _verify_trace_queries"""
+        """TODO: Add docstring for _verify_trace_queries"""
+            """TODO: Add docstring for _verify_trace_queries"""
+    """Verify trace query responses."""
         # Simplified - check queries exist and have valid structure
         for query in queries:
             if "index" not in query or "value" not in query:
                 return False
         return True
 
-    def _verify_constraints(self, proof_data: Dict, statement: Dict[str, Any]) -> bool:
-           """TODO: Add docstring for _verify_constraints"""
-     """Verify that constraints are satisfied."""
+                def _verify_constraints(self, proof_data: Dict, statement: Dict[str, Any]) -> bool:
+                    """TODO: Add docstring for _verify_constraints"""
+        """TODO: Add docstring for _verify_constraints"""
+            """TODO: Add docstring for _verify_constraints"""
+    """Verify that constraints are satisfied."""
         # Simplified - would check actual constraint polynomials
         return True
 
 
 class LatticeProver(PostQuantumProver):
+    """
+    """
     """
     Lattice-based zero-knowledge prover.
 
@@ -332,8 +378,10 @@ class LatticeProver(PostQuantumProver):
     """
 
     def __init__(self, parameters: Optional[PostQuantumParameters] = None) -> None:
-           """TODO: Add docstring for __init__"""
-     """Initialize lattice-based prover."""
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """Initialize lattice-based prover."""
         self.params = parameters or PostQuantumParameters(
             security_level=128,
             algorithm="Lattice",
@@ -351,9 +399,11 @@ class LatticeProver(PostQuantumProver):
             extra={"security_level": self.params.security_level},
         )
 
-    def generate_proof(self, statement: Dict[str, Any], witness: Dict[str, Any]) -> bytes:
-           """TODO: Add docstring for generate_proof"""
-     """Generate lattice-based ZK proof."""
+        def generate_proof(self, statement: Dict[str, Any], witness: Dict[str, Any]) -> bytes:
+            """TODO: Add docstring for generate_proof"""
+        """TODO: Add docstring for generate_proof"""
+            """TODO: Add docstring for generate_proof"""
+    """Generate lattice-based ZK proof."""
         # Simulate lattice-based proof
         # In production, would use actual Ring-LWE implementation
 
@@ -378,9 +428,11 @@ class LatticeProver(PostQuantumProver):
 
         return self._serialize_proof(proof_data)
 
-    def verify_proof(self, proof: bytes, statement: Dict[str, Any]) -> bool:
-           """TODO: Add docstring for verify_proof"""
-     """Verify lattice-based proof."""
+            def verify_proof(self, proof: bytes, statement: Dict[str, Any]) -> bool:
+                """TODO: Add docstring for verify_proof"""
+        """TODO: Add docstring for verify_proof"""
+            """TODO: Add docstring for verify_proof"""
+    """Verify lattice-based proof."""
         try:
             _ = self._deserialize_proof(proof)
 
@@ -396,23 +448,29 @@ class LatticeProver(PostQuantumProver):
             logger.error(f"Lattice verification failed: {e}")
             return False
 
-    def get_security_level(self) -> int:
-           """TODO: Add docstring for get_security_level"""
-     """Get post-quantum security level."""
+            def get_security_level(self) -> int:
+                """TODO: Add docstring for get_security_level"""
+        """TODO: Add docstring for get_security_level"""
+            """TODO: Add docstring for get_security_level"""
+    """Get post-quantum security level."""
         return self.params.security_level
 
-    def _commit_witness(self, witness: Dict[str, Any]) -> Dict:
-           """TODO: Add docstring for _commit_witness"""
-     """Create commitment to witness using Ring-LWE."""
+                def _commit_witness(self, witness: Dict[str, Any]) -> Dict:
+                    """TODO: Add docstring for _commit_witness"""
+        """TODO: Add docstring for _commit_witness"""
+            """TODO: Add docstring for _commit_witness"""
+    """Create commitment to witness using Ring-LWE."""
         # Simplified commitment
         witness_bytes = str(witness).encode()
         _ = hashlib.sha3_256(witness_bytes).hexdigest()
 
         return {"value": commitment_value, "timestamp": np.random.randint(0, 2**32)}
 
-    def _hash_to_challenge(self, commitment: Dict, statement: Dict[str, Any]) -> np.ndarray:
-           """TODO: Add docstring for _hash_to_challenge"""
-     """Hash commitment and statement to challenge."""
+                    def _hash_to_challenge(self, commitment: Dict, statement: Dict[str, Any]) -> np.ndarray:
+                        """TODO: Add docstring for _hash_to_challenge"""
+        """TODO: Add docstring for _hash_to_challenge"""
+            """TODO: Add docstring for _hash_to_challenge"""
+    """Hash commitment and statement to challenge."""
         data = "{commitment}:{statement}".encode()
         _ = hashlib.sha3_256(data).digest()
 
@@ -429,9 +487,11 @@ class LatticeProver(PostQuantumProver):
 
         return np.array(coeffs)
 
-    def _compute_response(self, witness: Dict[str, Any], challenge: np.ndarray) -> Dict:
-           """TODO: Add docstring for _compute_response"""
-     """Compute proof response."""
+                def _compute_response(self, witness: Dict[str, Any], challenge: np.ndarray) -> Dict:
+                    """TODO: Add docstring for _compute_response"""
+        """TODO: Add docstring for _compute_response"""
+            """TODO: Add docstring for _compute_response"""
+    """Compute proof response."""
         # Simplified response computation
         # In production, would compute _ = r + c*s for Ring-LWE
 
@@ -439,22 +499,28 @@ class LatticeProver(PostQuantumProver):
 
         return {"value": response_value, "norm_bound": 1000}  # Rejection sampling bound
 
-    def _verify_response(
+                    def _verify_response(
         self, commitment: Dict, response: Dict, challenge: np.ndarray, statement: Dict
     ) -> bool:
-           """TODO: Add docstring for _verify_response"""
-     """Verify the response is valid."""
+        """TODO: Add docstring for _verify_response"""
+        """TODO: Add docstring for _verify_response"""
+            """TODO: Add docstring for _verify_response"""
+    """Verify the response is valid."""
         # Simplified verification
         # In production, would check Ring-LWE relation
         return "value" in response and "norm_bound" in response
 
-    def _serialize_proof(self, proof_data: Dict) -> bytes:
-           """TODO: Add docstring for _serialize_proof"""
-     """Serialize proof to bytes."""
+        def _serialize_proof(self, proof_data: Dict) -> bytes:
+            """TODO: Add docstring for _serialize_proof"""
+        """TODO: Add docstring for _serialize_proof"""
+            """TODO: Add docstring for _serialize_proof"""
+    """Serialize proof to bytes."""
         import json
 
         # Convert numpy arrays to lists for JSON serialization
-    def convert_arrays(obj) -> None:
+            def convert_arrays(obj) -> None:
+                """TODO: Add docstring for convert_arrays"""
+        """TODO: Add docstring for convert_arrays"""
                 """TODO: Add docstring for convert_arrays"""
     if isinstance(obj, np.ndarray):
                 return obj.tolist()
@@ -464,12 +530,14 @@ class LatticeProver(PostQuantumProver):
                 return [convert_arrays(v) for v in obj]
             return obj
 
-        proof_data = convert_arrays(proof_data)
+    proof_data = convert_arrays(proof_data)
         return json.dumps(proof_data).encode()
 
-    def _deserialize_proof(self, proof_bytes: bytes) -> Dict:
-           """TODO: Add docstring for _deserialize_proof"""
-     """Deserialize proof from bytes."""
+                def _deserialize_proof(self, proof_bytes: bytes) -> Dict:
+                    """TODO: Add docstring for _deserialize_proof"""
+        """TODO: Add docstring for _deserialize_proof"""
+            """TODO: Add docstring for _deserialize_proof"""
+    """Deserialize proof from bytes."""
         import json
 
         return json.loads(proof_bytes.decode())
@@ -477,12 +545,16 @@ class LatticeProver(PostQuantumProver):
 
 class PostQuantumTransition:
     """
+    """
+    """
     Manages transition from classical to post-quantum proof systems.
     """
 
     def __init__(self) -> None:
-           """TODO: Add docstring for __init__"""
-     """Initialize transition manager."""
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """Initialize transition manager."""
         self.classical_active = True
         self.post_quantum_active = True  # Run both in parallel during transition
         self.stark_prover = STARKProver()
@@ -490,11 +562,13 @@ class PostQuantumTransition:
 
         logger.info("Post-quantum transition manager initialized")
 
-    def generate_hybrid_proof(
+        def generate_hybrid_proof(
         self, circuit_name: str, statement: Dict[str, Any], witness: Dict[str, Any]
     ) -> Dict[str, bytes]:
-           """TODO: Add docstring for generate_hybrid_proof"""
-     """
+        """TODO: Add docstring for generate_hybrid_proof"""
+        """TODO: Add docstring for generate_hybrid_proof"""
+            """TODO: Add docstring for generate_hybrid_proof"""
+    """
         Generate both classical and post-quantum proofs.
 
         Args:
@@ -521,11 +595,13 @@ class PostQuantumTransition:
 
         return proofs
 
-    def verify_hybrid_proof(
+            def verify_hybrid_proof(
         self, proofs: Dict[str, bytes], statement: Dict[str, Any]
     ) -> Dict[str, bool]:
-           """TODO: Add docstring for verify_hybrid_proof"""
-     """
+        """TODO: Add docstring for verify_hybrid_proof"""
+        """TODO: Add docstring for verify_hybrid_proof"""
+            """TODO: Add docstring for verify_hybrid_proof"""
+    """
         Verify both classical and post-quantum proofs.
 
         Args:
@@ -549,9 +625,11 @@ class PostQuantumTransition:
 
         return results
 
-    def get_transition_status(self) -> Dict[str, Any]:
-           """TODO: Add docstring for get_transition_status"""
-     """Get current transition status."""
+            def get_transition_status(self) -> Dict[str, Any]:
+                """TODO: Add docstring for get_transition_status"""
+        """TODO: Add docstring for get_transition_status"""
+            """TODO: Add docstring for get_transition_status"""
+    """Get current transition status."""
         return {
             "classical_active": self.classical_active,
             "post_quantum_active": self.post_quantum_active,
@@ -564,9 +642,11 @@ class PostQuantumTransition:
             },
         }
 
-    def set_algorithm_preference(self, algorithm: str) -> None:
-           """TODO: Add docstring for set_algorithm_preference"""
-     """Set preferred post-quantum algorithm."""
+                def set_algorithm_preference(self, algorithm: str) -> None:
+                    """TODO: Add docstring for set_algorithm_preference"""
+        """TODO: Add docstring for set_algorithm_preference"""
+            """TODO: Add docstring for set_algorithm_preference"""
+    """Set preferred post-quantum algorithm."""
         _ = ["STARK", "Lattice", "Both"]
 
         if algorithm not in valid_algorithms:
@@ -576,9 +656,11 @@ class PostQuantumTransition:
 
 
 # Utility functions for post-quantum proofs
-    def estimate_pq_proof_size(algorithm: str, constraint_count: int) -> int:
-       """TODO: Add docstring for estimate_pq_proof_size"""
-     """
+            def estimate_pq_proof_size(algorithm: str, constraint_count: int) -> int:
+                """TODO: Add docstring for estimate_pq_proof_size"""
+        """TODO: Add docstring for estimate_pq_proof_size"""
+        """TODO: Add docstring for estimate_pq_proof_size"""
+    """
     Estimate post-quantum proof size.
 
     Args:
@@ -606,9 +688,11 @@ class PostQuantumTransition:
         raise ValueError("Unknown algorithm: {algorithm}")
 
 
-    def benchmark_pq_performance(num_constraints: _ = 10000) -> Dict[str, Any]:
-       """TODO: Add docstring for benchmark_pq_performance"""
-     """
+        def benchmark_pq_performance(num_constraints: _ = 10000) -> Dict[str, Any]:
+            """TODO: Add docstring for benchmark_pq_performance"""
+        """TODO: Add docstring for benchmark_pq_performance"""
+        """TODO: Add docstring for benchmark_pq_performance"""
+    """
     Benchmark post-quantum proof performance.
 
     Args:

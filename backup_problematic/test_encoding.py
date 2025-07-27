@@ -13,8 +13,10 @@ import numpy as np
 
 
 def parse_variant(variant_str) -> None:
-       """TODO: Add docstring for parse_variant"""
-     """Parse variant string format chr:pos:ref:alt"""
+    """TODO: Add docstring for parse_variant"""
+    """TODO: Add docstring for parse_variant"""
+        """TODO: Add docstring for parse_variant"""
+    """Parse variant string format chr:pos:ref:alt"""
     parts = variant_str.split(":")
     if len(parts) != 4:
         raise ValueError("Variant must be in format chr:pos:ref:alt")
@@ -22,9 +24,11 @@ def parse_variant(variant_str) -> None:
     return {"chromosome": parts[0], "position": int(parts[1]), "ref": parts[2], "alt": parts[3]}
 
 
-def encode_variant_hd(variant, dimension=10000) -> None:
-       """TODO: Add docstring for encode_variant_hd"""
-     """Encode a variant into hyperdimensional vector"""
+        def encode_variant_hd(variant, dimension=10000) -> None:
+            """TODO: Add docstring for encode_variant_hd"""
+    """TODO: Add docstring for encode_variant_hd"""
+        """TODO: Add docstring for encode_variant_hd"""
+    """Encode a variant into hyperdimensional vector"""
     print(
         f"\nEncoding variant: {variant['chromosome']}:{variant['position']}:{variant['ref']}>{variant['alt']}"
     )
@@ -49,9 +53,11 @@ def encode_variant_hd(variant, dimension=10000) -> None:
     return variant_vec
 
 
-def test_privacy(variant_vec, dimension=10000, attempts=10000) -> None:
-       """TODO: Add docstring for test_privacy"""
-     """Test if the encoding preserves privacy"""
+            def test_privacy(variant_vec, dimension=10000, attempts=10000) -> None:
+                """TODO: Add docstring for test_privacy"""
+    """TODO: Add docstring for test_privacy"""
+        """TODO: Add docstring for test_privacy"""
+    """Test if the encoding preserves privacy"""
     print(f"\nTesting privacy preservation with {attempts} reverse-engineering attempts...")
 
     # Try to reverse engineer the original variant
@@ -90,7 +96,9 @@ def test_privacy(variant_vec, dimension=10000, attempts=10000) -> None:
     return matches == 0
 
 
-def main() -> None:
+            def main() -> None:
+                """TODO: Add docstring for main"""
+    """TODO: Add docstring for main"""
         """TODO: Add docstring for main"""
     parser = argparse.ArgumentParser(description="Test HD encoding for genomic variants")
     parser.add_argument(

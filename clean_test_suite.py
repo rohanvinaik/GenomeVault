@@ -19,6 +19,7 @@ import isort
 
 class TestSuiteCleaner:
     def __init__(self, project_root: Path):
+    def __init__(self, project_root: Path):
         self.project_root = project_root
         self.test_dirs = [
             project_root / "tests",
@@ -28,7 +29,10 @@ class TestSuiteCleaner:
         self.issues_found = defaultdict(list)
         self.fixed_files = []
 
-    def find_python_files(self) -> List[Path]:
+        def find_python_files(self) -> List[Path]:
+        def find_python_files(self) -> List[Path]:
+        """Find all Python files in test and experiment directories."""
+        """Find all Python files in test and experiment directories."""
         """Find all Python files in test and experiment directories."""
         python_files = []
         for test_dir in self.test_dirs:
@@ -36,7 +40,10 @@ class TestSuiteCleaner:
                 python_files.extend(test_dir.rglob("*.py"))
         return python_files
 
-    def fix_indentation_errors(self, content: str, filepath: Path) -> str:
+                def fix_indentation_errors(self, content: str, filepath: Path) -> str:
+                def fix_indentation_errors(self, content: str, filepath: Path) -> str:
+        """Fix common indentation errors."""
+        """Fix common indentation errors."""
         """Fix common indentation errors."""
         lines = content.split("\n")
         fixed_lines = []
@@ -59,7 +66,7 @@ class TestSuiteCleaner:
             # Fix duplicate docstrings (common issue)
             if i > 0 and '"""' in line and '"""' in lines[i - 1]:
                 # Skip duplicate docstring
-        self.issues_found[filepath].append(f"Line {i+1}: Removed duplicate docstring")
+                self.issues_found[filepath].append(f"Line {i+1}: Removed duplicate docstring")
                 continue
 
             # Fix incorrect indentation for docstrings
@@ -72,7 +79,10 @@ class TestSuiteCleaner:
 
         return "\n".join(fixed_lines)
 
-    def fix_import_errors(self, content: str, filepath: Path) -> str:
+                def fix_import_errors(self, content: str, filepath: Path) -> str:
+                def fix_import_errors(self, content: str, filepath: Path) -> str:
+        """Fix common import errors."""
+        """Fix common import errors."""
         """Fix common import errors."""
         lines = content.split("\n")
         fixed_lines = []
@@ -112,11 +122,14 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
                         lines.insert(i, sys_path_fix)
                         break
                 content = "\n".join(lines)
-        self.issues_found[filepath].append("Added sys.path fix for imports")
+                        self.issues_found[filepath].append("Added sys.path fix for imports")
 
-        return content
+return content
 
-    def fix_syntax_errors(self, content: str, filepath: Path) -> str:
+                        def fix_syntax_errors(self, content: str, filepath: Path) -> str:
+                        def fix_syntax_errors(self, content: str, filepath: Path) -> str:
+    """Fix common syntax errors."""
+        """Fix common syntax errors."""
         """Fix common syntax errors."""
         # Fix duplicate function definitions (TODO comments issue)
         lines = content.split("\n")
@@ -136,14 +149,17 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
                     and lines[i + 1].strip().startswith('"""')
                 ):
                     # Skip the TODO line
-        self.issues_found[filepath].append(f"Line {i+1}: Removed TODO docstring")
+                    self.issues_found[filepath].append(f"Line {i+1}: Removed TODO docstring")
                     continue
 
             fixed_lines.append(line)
 
         return "\n".join(fixed_lines)
 
-    def run_autopep8(self, content: str, filepath: Path) -> str:
+                    def run_autopep8(self, content: str, filepath: Path) -> str:
+                    def run_autopep8(self, content: str, filepath: Path) -> str:
+        """Run autopep8 to fix PEP8 issues."""
+        """Run autopep8 to fix PEP8 issues."""
         """Run autopep8 to fix PEP8 issues."""
         try:
             fixed_content = autopep8.fix_code(
@@ -155,33 +171,42 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
                 },
             )
             if fixed_content != content:
-        self.issues_found[filepath].append("Applied autopep8 formatting")
+                self.issues_found[filepath].append("Applied autopep8 formatting")
             return fixed_content
         except Exception as e:
-        self.issues_found[filepath].append(f"autopep8 error: {str(e)}")
+            self.issues_found[filepath].append(f"autopep8 error: {str(e)}")
             return content
 
-    def run_isort(self, content: str, filepath: Path) -> str:
+            def run_isort(self, content: str, filepath: Path) -> str:
+            def run_isort(self, content: str, filepath: Path) -> str:
+        """Run isort to fix import ordering."""
+        """Run isort to fix import ordering."""
         """Run isort to fix import ordering."""
         try:
             fixed_content = isort.code(content, profile="black", line_length=100)
             if fixed_content != content:
-        self.issues_found[filepath].append("Applied isort import sorting")
+                self.issues_found[filepath].append("Applied isort import sorting")
             return fixed_content
         except Exception as e:
-        self.issues_found[filepath].append(f"isort error: {str(e)}")
+            self.issues_found[filepath].append(f"isort error: {str(e)}")
             return content
 
-    def validate_python_syntax(self, content: str, filepath: Path) -> bool:
+            def validate_python_syntax(self, content: str, filepath: Path) -> bool:
+            def validate_python_syntax(self, content: str, filepath: Path) -> bool:
+        """Validate Python syntax using ast."""
+        """Validate Python syntax using ast."""
         """Validate Python syntax using ast."""
         try:
             ast.parse(content)
             return True
         except SyntaxError as e:
-        self.issues_found[filepath].append(f"Syntax error: {e}")
+            self.issues_found[filepath].append(f"Syntax error: {e}")
             return False
 
-    def fix_file(self, filepath: Path) -> bool:
+            def fix_file(self, filepath: Path) -> bool:
+            def fix_file(self, filepath: Path) -> bool:
+        """Fix a single Python file."""
+        """Fix a single Python file."""
         """Fix a single Python file."""
         print(f"Processing: {filepath}")
 
@@ -211,7 +236,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
             if content != original_content:
                 with open(filepath, "w", encoding="utf-8") as f:
                     f.write(content)
-        self.fixed_files.append(filepath)
+                    self.fixed_files.append(filepath)
                 print(f"  ✅ Fixed {filepath}")
             else:
                 print(f"  ✓ No changes needed for {filepath}")
@@ -219,11 +244,14 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
             return True
 
         except Exception as e:
-        self.issues_found[filepath].append(f"Error processing file: {e}")
+            self.issues_found[filepath].append(f"Error processing file: {e}")
             print(f"  ❌ Error processing {filepath}: {e}")
             return False
 
-    def run_flake8(self, files: List[Path]) -> Dict[Path, List[str]]:
+            def run_flake8(self, files: List[Path]) -> Dict[Path, List[str]]:
+            def run_flake8(self, files: List[Path]) -> Dict[Path, List[str]]:
+        """Run flake8 on files and collect issues."""
+        """Run flake8 on files and collect issues."""
         """Run flake8 on files and collect issues."""
         flake8_issues = defaultdict(list)
 
@@ -241,7 +269,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
         return flake8_issues
 
-    def run_pylint(self, files: List[Path]) -> Dict[Path, List[str]]:
+                def run_pylint(self, files: List[Path]) -> Dict[Path, List[str]]:
+                def run_pylint(self, files: List[Path]) -> Dict[Path, List[str]]:
+        """Run pylint on files and collect issues."""
+        """Run pylint on files and collect issues."""
         """Run pylint on files and collect issues."""
         pylint_issues = defaultdict(list)
 
@@ -263,7 +294,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
         return pylint_issues
 
-    def generate_report(self, files: List[Path], flake8_issues: Dict, pylint_issues: Dict):
+                def generate_report(self, files: List[Path], flake8_issues: Dict, pylint_issues: Dict):
+                def generate_report(self, files: List[Path], flake8_issues: Dict, pylint_issues: Dict):
+        """Generate a comprehensive report."""
+"""Generate a comprehensive report."""
     """Generate a comprehensive report."""
         report_path = self.project_root / "test_suite_cleanup_report.md"
 
@@ -308,7 +342,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
         print(f"\n📄 Report generated: {report_path}")
 
-    def clean_all(self):
+                            def clean_all(self):
+                            def clean_all(self):
+        """Main cleaning process."""
+"""Main cleaning process."""
     """Main cleaning process."""
         print("🧹 Starting test suite cleanup...\n")
 
@@ -318,7 +355,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
         # Fix each file
         for filepath in python_files:
-        self.fix_file(filepath)
+            self.fix_file(filepath)
 
         print("\n🔍 Running linters...\n")
 
@@ -327,7 +364,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
         pylint_issues = self.run_pylint(python_files)
 
         # Generate report
-        self.generate_report(python_files, flake8_issues, pylint_issues)
+            self.generate_report(python_files, flake8_issues, pylint_issues)
 
         print("\n✅ Cleanup complete!")
         print(f"Fixed {len(self.fixed_files)} files")
@@ -335,7 +372,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
         print(f"Pylint issues remaining: {sum(len(issues) for issues in pylint_issues.values())}")
 
 
-    def main():
+            def main():
+            def main():
+        """Main entry point."""
+"""Main entry point."""
     """Main entry point."""
     # Check if we have the required tools
     required_tools = ["flake8", "pylint"]

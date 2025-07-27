@@ -23,6 +23,8 @@ logger = get_logger(__name__)
 @dataclass
 class ModelArchitecture:
     """Federated model architecture specification."""
+    """Federated model architecture specification."""
+    """Federated model architecture specification."""
 
     name: str
     model_type: str  # 'neural_network', 'gradient_boosting', 'linear'
@@ -32,6 +34,8 @@ class ModelArchitecture:
     hyperparameters: Dict[str, Any]
 
     def to_dict(self) -> Dict:
+        """TODO: Add docstring for to_dict"""
+        """TODO: Add docstring for to_dict"""
             """TODO: Add docstring for to_dict"""
     return {
             "name": self.name,
@@ -46,6 +50,8 @@ class ModelArchitecture:
 @dataclass
 class FederatedRound:
     """Single round of federated learning."""
+    """Single round of federated learning."""
+    """Single round of federated learning."""
 
     round_id: int
     selected_participants: List[str]
@@ -59,6 +65,8 @@ class FederatedRound:
 @dataclass
 class ParticipantContribution:
     """Contribution from a single participant."""
+    """Contribution from a single participant."""
+    """Contribution from a single participant."""
 
     participant_id: str
     round_id: int
@@ -71,25 +79,31 @@ class ParticipantContribution:
 
 class SecureAggregator:
     """
+    """
+    """
     Secure aggregation protocol for federated learning.
     Implements threshold secret sharing for privacy.
     """
 
     def __init__(self, threshold: int = 3, num_shares: int = 5) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize secure aggregator.
 
         Args:
             threshold: Minimum shares needed for reconstruction
             num_shares: Total number of shares to generate
         """
-        self.threshold = threshold
-        self.num_shares = num_shares
+            self.threshold = threshold
+            self.num_shares = num_shares
 
-    def generate_masks(self, num_participants: int, vector_size: int) -> Dict[str, np.ndarray]:
-           """TODO: Add docstring for generate_masks"""
-     """
+            def generate_masks(self, num_participants: int, vector_size: int) -> Dict[str, np.ndarray]:
+                """TODO: Add docstring for generate_masks"""
+        """TODO: Add docstring for generate_masks"""
+            """TODO: Add docstring for generate_masks"""
+    """
         Generate pairwise masks for secure aggregation.
 
         Args:
@@ -111,15 +125,17 @@ class SecureAggregator:
 
         return masks
 
-    def mask_update(
+                def mask_update(
         self,
         update: np.ndarray,
         participant_id: int,
         masks: Dict[str, np.ndarray],
         participant_ids: List[int],
     ) -> np.ndarray:
-           """TODO: Add docstring for mask_update"""
-     """
+        """TODO: Add docstring for mask_update"""
+        """TODO: Add docstring for mask_update"""
+            """TODO: Add docstring for mask_update"""
+    """
         Mask participant update for secure aggregation.
 
         Args:
@@ -142,11 +158,13 @@ class SecureAggregator:
 
         return masked
 
-    def aggregate_masked_updates(
+                    def aggregate_masked_updates(
         self, masked_updates: List[np.ndarray], num_samples: List[int]
     ) -> np.ndarray:
-           """TODO: Add docstring for aggregate_masked_updates"""
-     """
+        """TODO: Add docstring for aggregate_masked_updates"""
+        """TODO: Add docstring for aggregate_masked_updates"""
+            """TODO: Add docstring for aggregate_masked_updates"""
+    """
         Aggregate masked updates with weighted average.
 
         Args:
@@ -169,12 +187,16 @@ class SecureAggregator:
 
 class DifferentialPrivacyEngine:
     """
+    """
+    """
     Differential privacy mechanisms for federated learning.
     """
 
     def __init__(self, epsilon: float = 1.0, delta: float = 1e-6, clip_norm: float = 1.0) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize DP engine.
 
         Args:
@@ -182,13 +204,15 @@ class DifferentialPrivacyEngine:
             delta: Privacy parameter
             clip_norm: L2 norm bound for gradient clipping
         """
-        self.epsilon = epsilon
-        self.delta = delta
-        self.clip_norm = clip_norm
+            self.epsilon = epsilon
+            self.delta = delta
+            self.clip_norm = clip_norm
 
-    def clip_gradient(self, gradient: np.ndarray) -> Tuple[np.ndarray, float]:
-           """TODO: Add docstring for clip_gradient"""
-     """
+            def clip_gradient(self, gradient: np.ndarray) -> Tuple[np.ndarray, float]:
+                """TODO: Add docstring for clip_gradient"""
+        """TODO: Add docstring for clip_gradient"""
+            """TODO: Add docstring for clip_gradient"""
+    """
         Clip gradient to bounded L2 norm.
 
         Args:
@@ -208,9 +232,11 @@ class DifferentialPrivacyEngine:
 
         return clipped, scale
 
-    def add_noise(self, gradient: np.ndarray, num_samples: int) -> np.ndarray:
-           """TODO: Add docstring for add_noise"""
-     """
+            def add_noise(self, gradient: np.ndarray, num_samples: int) -> np.ndarray:
+                """TODO: Add docstring for add_noise"""
+        """TODO: Add docstring for add_noise"""
+            """TODO: Add docstring for add_noise"""
+    """
         Add calibrated Gaussian noise for differential privacy.
 
         Args:
@@ -233,9 +259,11 @@ class DifferentialPrivacyEngine:
 
         return noisy_gradient
 
-    def compute_privacy_spent(self, num_rounds: int) -> Tuple[float, float]:
-           """TODO: Add docstring for compute_privacy_spent"""
-     """
+            def compute_privacy_spent(self, num_rounds: int) -> Tuple[float, float]:
+                """TODO: Add docstring for compute_privacy_spent"""
+        """TODO: Add docstring for compute_privacy_spent"""
+            """TODO: Add docstring for compute_privacy_spent"""
+    """
         Compute total privacy budget spent.
 
         Args:
@@ -253,6 +281,8 @@ class DifferentialPrivacyEngine:
 
 class FederatedLearningCoordinator:
     """
+    """
+    """
     Main coordinator for federated learning across institutions.
     """
 
@@ -261,38 +291,42 @@ class FederatedLearningCoordinator:
         model_architecture: ModelArchitecture,
         aggregation_strategy: str = "weighted_average",
     ) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize federated learning coordinator.
 
         Args:
             model_architecture: Model architecture specification
             aggregation_strategy: Strategy for aggregating updates
         """
-        self.model_architecture = model_architecture
-        self.aggregation_strategy = aggregation_strategy
+            self.model_architecture = model_architecture
+            self.aggregation_strategy = aggregation_strategy
 
         # Components
-        self.secure_aggregator = SecureAggregator()
-        self.dp_engine = DifferentialPrivacyEngine(
+            self.secure_aggregator = SecureAggregator()
+            self.dp_engine = DifferentialPrivacyEngine(
             epsilon=config.security.differential_privacy_epsilon,
             delta=config.security.differential_privacy_delta,
         )
 
         # State
-        self.current_round = 0
-        self.global_model = self._initialize_model()
-        self.rounds_history: List[FederatedRound] = []
-        self.participants: Dict[str, Dict] = {}
+            self.current_round = 0
+            self.global_model = self._initialize_model()
+            self.rounds_history: List[FederatedRound] = []
+            self.participants: Dict[str, Dict] = {}
 
         logger.info(
             "FederatedLearningCoordinator initialized for {model_architecture.name}",
             extra={"privacy_safe": True},
         )
 
-    def _initialize_model(self) -> np.ndarray:
-           """TODO: Add docstring for _initialize_model"""
-     """Initialize global model parameters."""
+            def _initialize_model(self) -> np.ndarray:
+                """TODO: Add docstring for _initialize_model"""
+        """TODO: Add docstring for _initialize_model"""
+            """TODO: Add docstring for _initialize_model"""
+    """Initialize global model parameters."""
         # Calculate total parameters
         total_params = 0
         for layer in self.model_architecture.layers:
@@ -303,9 +337,11 @@ class FederatedLearningCoordinator:
         # Initialize with small random values
         return np.random.randn(total_params) * 0.01
 
-    def register_participant(self, participant_id: str, metadata: Dict[str, Any]) -> bool:
-           """TODO: Add docstring for register_participant"""
-     """
+                def register_participant(self, participant_id: str, metadata: Dict[str, Any]) -> bool:
+                    """TODO: Add docstring for register_participant"""
+        """TODO: Add docstring for register_participant"""
+            """TODO: Add docstring for register_participant"""
+    """
         Register a participant for federated learning.
 
         Args:
@@ -319,7 +355,7 @@ class FederatedLearningCoordinator:
             logger.warning(f"Participant {participant_id} already registered")
             return False
 
-        self.participants[participant_id] = {
+            self.participants[participant_id] = {
             "id": participant_id,
             "metadata": metadata,
             "rounds_participated": 0,
@@ -340,9 +376,11 @@ class FederatedLearningCoordinator:
         return True
 
     @performance_logger.log_operation("select_participants")
-    def select_participants(self, target_count: int) -> List[str]:
-           """TODO: Add docstring for select_participants"""
-     """
+            def select_participants(self, target_count: int) -> List[str]:
+                """TODO: Add docstring for select_participants"""
+        """TODO: Add docstring for select_participants"""
+            """TODO: Add docstring for select_participants"""
+    """
         Select participants for current round.
 
         Args:
@@ -369,8 +407,10 @@ class FederatedLearningCoordinator:
         return selected
 
     async def start_training_round(self, min_participants: int = 3) -> str:
-           """TODO: Add docstring for start_training_round"""
-     """
+        """TODO: Add docstring for start_training_round"""
+        """TODO: Add docstring for start_training_round"""
+            """TODO: Add docstring for start_training_round"""
+    """
         Start a new federated training round.
 
         Args:
@@ -387,7 +427,7 @@ class FederatedLearningCoordinator:
 
         # Create round
         round_id = self.current_round
-        self.current_round += 1
+            self.current_round += 1
 
         fed_round = FederatedRound(
             round_id=round_id,
@@ -396,11 +436,11 @@ class FederatedLearningCoordinator:
             start_time=time.time(),
         )
 
-        self.rounds_history.append(fed_round)
+            self.rounds_history.append(fed_round)
 
         # Notify participants (in production, would send actual model)
         for participant_id in selected:
-        self.participants[participant_id]["last_participation"] = round_id
+            self.participants[participant_id]["last_participation"] = round_id
 
         logger.info(
             "Started federated round {round_id} with {len(selected)} participants",
@@ -409,9 +449,11 @@ class FederatedLearningCoordinator:
 
         return "round_{round_id}"
 
-    def submit_update(self, contribution: ParticipantContribution) -> bool:
-           """TODO: Add docstring for submit_update"""
-     """
+            def submit_update(self, contribution: ParticipantContribution) -> bool:
+                """TODO: Add docstring for submit_update"""
+        """TODO: Add docstring for submit_update"""
+            """TODO: Add docstring for submit_update"""
+    """
         Submit model update from participant.
 
         Args:
@@ -454,11 +496,13 @@ class FederatedLearningCoordinator:
         return True
 
     @performance_logger.log_operation("aggregate_round")
-    def aggregate_round(
+            def aggregate_round(
         self, round_id: int, contributions: List[ParticipantContribution]
     ) -> np.ndarray:
-           """TODO: Add docstring for aggregate_round"""
-     """
+        """TODO: Add docstring for aggregate_round"""
+        """TODO: Add docstring for aggregate_round"""
+            """TODO: Add docstring for aggregate_round"""
+    """
         Aggregate contributions for a round.
 
         Args:
@@ -518,11 +562,13 @@ class FederatedLearningCoordinator:
 
         return aggregated
 
-    def _calculate_round_metrics(
+            def _calculate_round_metrics(
         self, contributions: List[ParticipantContribution]
     ) -> Dict[str, float]:
-           """TODO: Add docstring for _calculate_round_metrics"""
-     """Calculate metrics for round."""
+        """TODO: Add docstring for _calculate_round_metrics"""
+        """TODO: Add docstring for _calculate_round_metrics"""
+            """TODO: Add docstring for _calculate_round_metrics"""
+    """Calculate metrics for round."""
         metrics = {
             "num_participants": len(contributions),
             "total_samples": sum(c.num_samples for c in contributions),
@@ -532,9 +578,11 @@ class FederatedLearningCoordinator:
 
         return metrics
 
-    def update_global_model(self, round_id: int) -> bool:
-           """TODO: Add docstring for update_global_model"""
-     """
+        def update_global_model(self, round_id: int) -> bool:
+            """TODO: Add docstring for update_global_model"""
+        """TODO: Add docstring for update_global_model"""
+            """TODO: Add docstring for update_global_model"""
+    """
         Update global model with aggregated round update.
 
         Args:
@@ -554,19 +602,21 @@ class FederatedLearningCoordinator:
 
         # Apply update with learning rate
         learning_rate = self.model_architecture.hyperparameters.get("learning_rate", 0.01)
-        self.global_model += learning_rate * current_round.aggregated_update
+            self.global_model += learning_rate * current_round.aggregated_update
 
         # Update participant statistics
         for participant_id in current_round.selected_participants:
-        self.participants[participant_id]["rounds_participated"] += 1
+            self.participants[participant_id]["rounds_participated"] += 1
 
         logger.info(f"Updated global model with round {round_id}", extra={"privacy_safe": True})
 
         return True
 
-    def get_privacy_budget_spent(self) -> Tuple[float, float]:
-           """TODO: Add docstring for get_privacy_budget_spent"""
-     """
+            def get_privacy_budget_spent(self) -> Tuple[float, float]:
+                """TODO: Add docstring for get_privacy_budget_spent"""
+        """TODO: Add docstring for get_privacy_budget_spent"""
+            """TODO: Add docstring for get_privacy_budget_spent"""
+    """
         Get total privacy budget spent so far.
 
         Returns:
@@ -575,9 +625,11 @@ class FederatedLearningCoordinator:
         num_rounds = len([r for r in self.rounds_history if r.end_time is not None])
         return self.dp_engine.compute_privacy_spent(num_rounds)
 
-    def evaluate_model(self, test_function: Callable) -> Dict[str, float]:
-           """TODO: Add docstring for evaluate_model"""
-     """
+            def evaluate_model(self, test_function: Callable) -> Dict[str, float]:
+                """TODO: Add docstring for evaluate_model"""
+        """TODO: Add docstring for evaluate_model"""
+            """TODO: Add docstring for evaluate_model"""
+    """
         Evaluate current global model.
 
         Args:
@@ -592,9 +644,11 @@ class FederatedLearningCoordinator:
 
         return metrics
 
-    def save_checkpoint(self, path: Path) -> None:
-           """TODO: Add docstring for save_checkpoint"""
-     """Save model checkpoint."""
+            def save_checkpoint(self, path: Path) -> None:
+                """TODO: Add docstring for save_checkpoint"""
+        """TODO: Add docstring for save_checkpoint"""
+            """TODO: Add docstring for save_checkpoint"""
+    """Save model checkpoint."""
         checkpoint = {
             "model_architecture": self.model_architecture.to_dict(),
             "global_model": self.global_model.tolist(),
@@ -615,14 +669,16 @@ class FederatedLearningCoordinator:
 
         logger.info(f"Saved checkpoint to {path}", extra={"privacy_safe": True})
 
-    def load_checkpoint(self, path: Path) -> None:
-           """TODO: Add docstring for load_checkpoint"""
-     """Load model checkpoint."""
+            def load_checkpoint(self, path: Path) -> None:
+                """TODO: Add docstring for load_checkpoint"""
+        """TODO: Add docstring for load_checkpoint"""
+            """TODO: Add docstring for load_checkpoint"""
+    """Load model checkpoint."""
         with open(path, "r") as f:
             checkpoint = json.load(f)
 
-        self.global_model = np.array(checkpoint["global_model"])
-        self.current_round = checkpoint["current_round"]
+            self.global_model = np.array(checkpoint["global_model"])
+            self.current_round = checkpoint["current_round"]
 
         logger.info(f"Loaded checkpoint from {path}", extra={"privacy_safe": True})
 
@@ -632,12 +688,16 @@ class FederatedLearningCoordinator:
 
 class GenomicPRSFederatedLearning(FederatedLearningCoordinator):
     """
+    """
+    """
     Federated learning for Polygenic Risk Score models.
     """
 
     def __init__(self) -> None:
-           """TODO: Add docstring for __init__"""
-     """Initialize PRS federated learning."""
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """Initialize PRS federated learning."""
         # Define PRS model architecture
         prs_architecture = ModelArchitecture(
             name="federated_prs_model",
@@ -661,9 +721,11 @@ class GenomicPRSFederatedLearning(FederatedLearningCoordinator):
 
         super().__init__(prs_architecture, aggregation_strategy="secure_aggregation")
 
-    def preprocess_genomic_data(self, variants: np.ndarray) -> np.ndarray:
-           """TODO: Add docstring for preprocess_genomic_data"""
-     """
+        def preprocess_genomic_data(self, variants: np.ndarray) -> np.ndarray:
+            """TODO: Add docstring for preprocess_genomic_data"""
+        """TODO: Add docstring for preprocess_genomic_data"""
+            """TODO: Add docstring for preprocess_genomic_data"""
+    """
         Preprocess genomic variants for PRS calculation.
 
         Args:
@@ -689,12 +751,16 @@ class GenomicPRSFederatedLearning(FederatedLearningCoordinator):
 
 class PathwayAnalysisFederatedLearning(FederatedLearningCoordinator):
     """
+    """
+    """
     Federated learning for pathway enrichment analysis.
     """
 
     def __init__(self, num_pathways: int = 500) -> None:
-           """TODO: Add docstring for __init__"""
-     """Initialize pathway analysis FL."""
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """Initialize pathway analysis FL."""
         # Define pathway model architecture
         pathway_architecture = ModelArchitecture(
             name="federated_pathway_model",

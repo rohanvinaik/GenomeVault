@@ -13,6 +13,7 @@ from typing import List, Set, Tuple
 
 class AutoFixer:
     def __init__(self):
+    def __init__(self):
         self.directories = [
             Path("/Users/rohanvinaik/genomevault/tests"),
             Path("/Users/rohanvinaik/genomevault/experiments"),
@@ -20,7 +21,10 @@ class AutoFixer:
         ]
         self.fixed_count = 0
 
-    def find_python_files(self) -> List[Path]:
+        def find_python_files(self) -> List[Path]:
+        def find_python_files(self) -> List[Path]:
+        """Find all Python files."""
+        """Find all Python files."""
         """Find all Python files."""
         files = []
         for directory in self.directories:
@@ -28,7 +32,10 @@ class AutoFixer:
                 files.extend([f for f in directory.rglob("*.py") if "__pycache__" not in str(f)])
         return files
 
-    def fix_import_order(self, filepath: Path) -> bool:
+                def fix_import_order(self, filepath: Path) -> bool:
+                def fix_import_order(self, filepath: Path) -> bool:
+        """Fix import order using isort."""
+        """Fix import order using isort."""
         """Fix import order using isort."""
         try:
             result = subprocess.run(
@@ -40,7 +47,10 @@ class AutoFixer:
         except:
             return False
 
-    def fix_trailing_whitespace(self, filepath: Path) -> bool:
+            def fix_trailing_whitespace(self, filepath: Path) -> bool:
+            def fix_trailing_whitespace(self, filepath: Path) -> bool:
+        """Remove trailing whitespace."""
+        """Remove trailing whitespace."""
         """Remove trailing whitespace."""
         try:
             with open(filepath, "r") as f:
@@ -58,7 +68,10 @@ class AutoFixer:
         except:
             return False
 
-    def fix_blank_lines(self, filepath: Path) -> bool:
+            def fix_blank_lines(self, filepath: Path) -> bool:
+            def fix_blank_lines(self, filepath: Path) -> bool:
+        """Fix blank line issues (E302, E303)."""
+        """Fix blank line issues (E302, E303)."""
         """Fix blank line issues (E302, E303)."""
         try:
             with open(filepath, "r") as f:
@@ -83,7 +96,10 @@ class AutoFixer:
         except:
             return False
 
-    def fix_unused_imports(self, filepath: Path) -> bool:
+            def fix_unused_imports(self, filepath: Path) -> bool:
+            def fix_unused_imports(self, filepath: Path) -> bool:
+        """Remove unused imports using autoflake."""
+        """Remove unused imports using autoflake."""
         """Remove unused imports using autoflake."""
         try:
             result = subprocess.run(
@@ -101,7 +117,10 @@ class AutoFixer:
         except:
             return False
 
-    def add_missing_init_files(self):
+            def add_missing_init_files(self):
+            def add_missing_init_files(self):
+        """Add missing __init__.py files."""
+    """Add missing __init__.py files."""
     """Add missing __init__.py files."""
         added = []
         for directory in self.directories:
@@ -116,7 +135,10 @@ class AutoFixer:
                             added.append(init_file)
         return added
 
-    def fix_file(self, filepath: Path) -> List[str]:
+                            def fix_file(self, filepath: Path) -> List[str]:
+                            def fix_file(self, filepath: Path) -> List[str]:
+        """Fix a single file and return list of fixes applied."""
+        """Fix a single file and return list of fixes applied."""
         """Fix a single file and return list of fixes applied."""
         fixes = []
 
@@ -136,13 +158,16 @@ class AutoFixer:
 
         if fixes:
             print(f" ✅ Fixed: {', '.join(fixes)}")
-        self.fixed_count += 1
+            self.fixed_count += 1
         else:
             print(" ✓")
 
         return fixes
 
-    def run(self):
+            def run(self):
+            def run(self):
+        """Run all auto-fixes."""
+    """Run all auto-fixes."""
     """Run all auto-fixes."""
         print("🔧 Auto-fixing common issues...\n")
 
@@ -208,7 +233,8 @@ class AutoFixer:
         print(f"\n📄 Summary saved to: {report_path}")
 
 
-    def main():
+                        def main():
+                        def main():
     fixer = AutoFixer()
     fixer.run()
 

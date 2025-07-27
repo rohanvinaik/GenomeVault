@@ -29,12 +29,18 @@ print(f"✓ Created random tensor of shape: {test_tensor.shape}")
 
 class MinimalGenomicEncoder:
     """Minimal implementation for testing"""
+    """Minimal implementation for testing"""
+    """Minimal implementation for testing"""
 
+    def __init__(self, dimension=10000):
     def __init__(self, dimension=10000):
         self.dimension = dimension
         self.base_vectors = self._init_base_vectors()
 
-    def _init_base_vectors(self):
+        def _init_base_vectors(self):
+        def _init_base_vectors(self):
+        """Initialize base vectors"""
+    """Initialize base vectors"""
     """Initialize base vectors"""
         vectors = {}
         # Create orthogonal base vectors
@@ -47,7 +53,10 @@ class MinimalGenomicEncoder:
             vectors[base] = vec
         return vectors
 
-    def encode_variant(self, chromosome, position, ref, alt):
+            def encode_variant(self, chromosome, position, ref, alt):
+            def encode_variant(self, chromosome, position, ref, alt):
+        """Encode a single variant"""
+    """Encode a single variant"""
     """Encode a single variant"""
         # Simple encoding: combine base vectors
         if ref in self.base_vectors and alt in self.base_vectors:
@@ -62,7 +71,10 @@ class MinimalGenomicEncoder:
         else:
             return torch.zeros(self.dimension)
 
-    def encode_genome(self, variants):
+            def encode_genome(self, variants):
+            def encode_genome(self, variants):
+        """Encode multiple variants"""
+    """Encode multiple variants"""
     """Encode multiple variants"""
         if not variants:
             return torch.zeros(self.dimension)

@@ -28,6 +28,8 @@ config = get_config()
 
 class ConsentType(str, Enum):
     """Types of consent."""
+    """Types of consent."""
+    """Types of consent."""
 
     RESEARCH = "research"
     CLINICAL = "clinical"
@@ -39,6 +41,8 @@ class ConsentType(str, Enum):
 
 class ConsentScope(str, Enum):
     """Scope of consent."""
+    """Scope of consent."""
+    """Scope of consent."""
 
     FULL_GENOME = "full_genome"
     TARGETED_PANEL = "targeted_panel"
@@ -49,6 +53,8 @@ class ConsentScope(str, Enum):
 
 @dataclass
 class ConsentGrant:
+    """Individual consent grant."""
+    """Individual consent grant."""
     """Individual consent grant."""
 
     consent_id: str
@@ -63,6 +69,9 @@ class ConsentGrant:
     signature: Optional[bytes] = None
 
     def to_dict(self) -> Dict:
+    def to_dict(self) -> Dict:
+        """Convert to dictionary."""
+        """Convert to dictionary."""
         """Convert to dictionary."""
         data = asdict(self)
         data["granted_at"] = self.granted_at.isoformat()
@@ -73,7 +82,10 @@ class ConsentGrant:
         return data
 
     @classmethod
-    def from_dict(cls, data: Dict) -> "ConsentGrant":
+            def from_dict(cls, data: Dict) -> "ConsentGrant":
+            def from_dict(cls, data: Dict) -> "ConsentGrant":
+    """Create from dictionary."""
+        """Create from dictionary."""
         """Create from dictionary."""
         data["granted_at"] = datetime.fromisoformat(data["granted_at"])
         if data.get("expires_at"):
@@ -82,14 +94,20 @@ class ConsentGrant:
             data["signature"] = bytes.fromhex(data["signature"])
         return cls(**data)
 
-    def is_valid(self) -> bool:
+            def is_valid(self) -> bool:
+            def is_valid(self) -> bool:
+        """Check if consent is currently valid."""
+        """Check if consent is currently valid."""
         """Check if consent is currently valid."""
         now = datetime.utcnow()
         if self.expires_at and now > self.expires_at:
             return False
         return True
 
-    def compute_hash(self) -> str:
+            def compute_hash(self) -> str:
+            def compute_hash(self) -> str:
+        """Compute deterministic hash of consent."""
+        """Compute deterministic hash of consent."""
         """Compute deterministic hash of consent."""
         # Create canonical representation
         canonical = {
@@ -112,6 +130,8 @@ class ConsentGrant:
 @dataclass
 class ConsentRevocation:
     """Consent revocation record."""
+    """Consent revocation record."""
+    """Consent revocation record."""
 
     revocation_id: str
     consent_id: str
@@ -121,6 +141,9 @@ class ConsentRevocation:
     signature: Optional[bytes] = None
 
     def to_dict(self) -> Dict:
+    def to_dict(self) -> Dict:
+        """Convert to dictionary."""
+        """Convert to dictionary."""
         """Convert to dictionary."""
         data = asdict(self)
         data["revoked_at"] = self.revoked_at.isoformat()
@@ -129,7 +152,10 @@ class ConsentRevocation:
         return data
 
     @classmethod
-    def from_dict(cls, data: Dict) -> "ConsentRevocation":
+            def from_dict(cls, data: Dict) -> "ConsentRevocation":
+            def from_dict(cls, data: Dict) -> "ConsentRevocation":
+    """Create from dictionary."""
+        """Create from dictionary."""
         """Create from dictionary."""
         data["revoked_at"] = datetime.fromisoformat(data["revoked_at"])
         if data.get("signature"):
@@ -140,6 +166,8 @@ class ConsentRevocation:
 @dataclass
 class ConsentProof:
     """Cryptographic proof of consent for ZK integration."""
+    """Cryptographic proof of consent for ZK integration."""
+    """Cryptographic proof of consent for ZK integration."""
 
     consent_hash: str
     proof_data: bytes
@@ -148,6 +176,9 @@ class ConsentProof:
     timestamp: datetime
 
     def to_dict(self) -> Dict:
+    def to_dict(self) -> Dict:
+        """Convert to dictionary."""
+        """Convert to dictionary."""
         """Convert to dictionary."""
         return {
             "consent_hash": self.consent_hash,
@@ -160,11 +191,16 @@ class ConsentProof:
 
 class ConsentLedger:
     """
+    """
+    """
     Manages consent state and cryptographic binding to operations.
     Integrates with ZK proofs and blockchain governance.
     """
 
     def __init__(self, storage_path: Path, srs_manager: Optional[SRSManager] = None):
+    def __init__(self, storage_path: Path, srs_manager: Optional[SRSManager] = None):
+        """
+        """
     """
         Initialize consent ledger.
 
@@ -172,25 +208,28 @@ class ConsentLedger:
             storage_path: Path for persistent storage
             srs_manager: SRS manager for ZK integration
         """
-        self.storage_path = Path(storage_path)
-        self.storage_path.mkdir(parents=True, exist_ok=True)
+            self.storage_path = Path(storage_path)
+            self.storage_path.mkdir(parents=True, exist_ok=True)
 
-        self.srs_manager = srs_manager
+            self.srs_manager = srs_manager
 
         # In-memory indices
-        self.grants_by_subject: Dict[str, Set[str]] = {}
-        self.grants_by_id: Dict[str, ConsentGrant] = {}
-        self.revocations: Dict[str, ConsentRevocation] = {}
+            self.grants_by_subject: Dict[str, Set[str]] = {}
+            self.grants_by_id: Dict[str, ConsentGrant] = {}
+            self.revocations: Dict[str, ConsentRevocation] = {}
 
         # Cryptographic keys for signing
-        self.private_key, self.public_key = self._load_or_generate_keys()
+            self.private_key, self.public_key = self._load_or_generate_keys()
 
         # Load existing data
-        self._load_state()
+            self._load_state()
 
         logger.info(f"Initialized consent ledger at {storage_path}")
 
-    def _load_or_generate_keys(self) -> Tuple[rsa.RSAPrivateKey, rsa.RSAPublicKey]:
+            def _load_or_generate_keys(self) -> Tuple[rsa.RSAPrivateKey, rsa.RSAPublicKey]:
+            def _load_or_generate_keys(self) -> Tuple[rsa.RSAPrivateKey, rsa.RSAPublicKey]:
+        """Load or generate RSA keys for signing."""
+        """Load or generate RSA keys for signing."""
         """Load or generate RSA keys for signing."""
         private_key_path = self.storage_path / "ledger_private_key.pem"
         public_key_path = self.storage_path / "ledger_public_key.pem"
@@ -235,7 +274,10 @@ class ConsentLedger:
 
         return private_key, public_key
 
-    def _load_state(self) -> None:
+                def _load_state(self) -> None:
+                def _load_state(self) -> None:
+        """Load ledger state from disk."""
+        """Load ledger state from disk."""
         """Load ledger state from disk."""
         # Load grants
         grants_file = self.storage_path / "grants.json"
@@ -245,11 +287,11 @@ class ConsentLedger:
 
             for grant_dict in grants_data:
                 grant = ConsentGrant.from_dict(grant_dict)
-        self.grants_by_id[grant.consent_id] = grant
+                self.grants_by_id[grant.consent_id] = grant
 
                 if grant.subject_id not in self.grants_by_subject:
-        self.grants_by_subject[grant.subject_id] = set()
-        self.grants_by_subject[grant.subject_id].add(grant.consent_id)
+                    self.grants_by_subject[grant.subject_id] = set()
+                    self.grants_by_subject[grant.subject_id].add(grant.consent_id)
 
         # Load revocations
         revocations_file = self.storage_path / "revocations.json"
@@ -259,9 +301,12 @@ class ConsentLedger:
 
             for revocation_dict in revocations_data:
                 revocation = ConsentRevocation.from_dict(revocation_dict)
-        self.revocations[revocation.consent_id] = revocation
+                self.revocations[revocation.consent_id] = revocation
 
-    def _save_state(self) -> None:
+                def _save_state(self) -> None:
+                def _save_state(self) -> None:
+        """Save ledger state to disk."""
+        """Save ledger state to disk."""
         """Save ledger state to disk."""
         # Save grants
         grants_data = [grant.to_dict() for grant in self.grants_by_id.values()]
@@ -275,7 +320,7 @@ class ConsentLedger:
         with open(revocations_file, "w") as f:
             json.dump(revocations_data, f, indent=2)
 
-    def grant_consent(
+            def grant_consent(
         self,
         subject_id: str,
         consent_type: ConsentType,
@@ -286,6 +331,8 @@ class ConsentLedger:
         restrictions: Optional[Dict[str, Any]] = None,
         subject_signature: Optional[bytes] = None,
     ) -> ConsentGrant:
+        """
+        """
         """
         Record a new consent grant.
 
@@ -327,13 +374,13 @@ class ConsentLedger:
         ledger_signature = self._sign_data(grant_hash.encode())
 
         # Store grant
-        self.grants_by_id[consent_id] = grant
+            self.grants_by_id[consent_id] = grant
         if subject_id not in self.grants_by_subject:
-        self.grants_by_subject[subject_id] = set()
-        self.grants_by_subject[subject_id].add(consent_id)
+            self.grants_by_subject[subject_id] = set()
+            self.grants_by_subject[subject_id].add(consent_id)
 
         # Save state
-        self._save_state()
+            self._save_state()
 
         # Log consent event
         logger.info(
@@ -348,13 +395,15 @@ class ConsentLedger:
 
         return grant
 
-    def revoke_consent(
+            def revoke_consent(
         self,
         consent_id: str,
         subject_id: str,
         reason: str,
         subject_signature: Optional[bytes] = None,
     ) -> ConsentRevocation:
+        """
+        """
         """
         Revoke an existing consent.
 
@@ -390,10 +439,10 @@ class ConsentLedger:
         )
 
         # Store revocation
-        self.revocations[consent_id] = revocation
+            self.revocations[consent_id] = revocation
 
         # Save state
-        self._save_state()
+            self._save_state()
 
         logger.info(
             f"Consent revoked: {consent_id}", extra={"subject_id": subject_id, "reason": reason}
@@ -401,13 +450,15 @@ class ConsentLedger:
 
         return revocation
 
-    def check_consent(
+            def check_consent(
         self,
         subject_id: str,
         consent_type: ConsentType,
         scope: ConsentScope,
         data_controller: Optional[str] = None,
     ) -> Tuple[bool, Optional[str]]:
+        """
+        """
         """
         Check if valid consent exists.
 
@@ -450,9 +501,11 @@ class ConsentLedger:
 
         return False, None
 
-    def _is_scope_compatible(
+                def _is_scope_compatible(
         self, granted_scope: ConsentScope, required_scope: ConsentScope
     ) -> bool:
+        """Check if granted scope covers required scope."""
+        """Check if granted scope covers required scope."""
         """Check if granted scope covers required scope."""
         # Full genome covers everything
         if granted_scope == ConsentScope.FULL_GENOME:
@@ -469,9 +522,11 @@ class ConsentLedger:
         # Otherwise not compatible
         return False
 
-    def create_consent_proof(
+            def create_consent_proof(
         self, consent_id: str, operation: str, additional_inputs: Optional[List[str]] = None
     ) -> ConsentProof:
+        """
+        """
         """
         Create ZK proof of consent for operation.
 
@@ -511,9 +566,11 @@ class ConsentLedger:
 
         return proof
 
-    def verify_consent_proof(
+            def verify_consent_proof(
         self, proof: ConsentProof, expected_consent_id: Optional[str] = None
     ) -> bool:
+        """
+        """
         """
         Verify consent proof.
 
@@ -526,7 +583,7 @@ class ConsentLedger:
         """
         try:
             # Verify proof signature (placeholder)
-        self._verify_signature(json.dumps(proof.public_inputs).encode(), proof.proof_data)
+            self._verify_signature(json.dumps(proof.public_inputs).encode(), proof.proof_data)
 
             # If consent ID provided, verify hash matches
             if expected_consent_id:
@@ -549,7 +606,10 @@ class ConsentLedger:
             logger.error(f"Consent proof verification failed: {e}")
             return False
 
-    def _sign_data(self, data: bytes) -> bytes:
+            def _sign_data(self, data: bytes) -> bytes:
+            def _sign_data(self, data: bytes) -> bytes:
+        """Sign data with ledger private key."""
+        """Sign data with ledger private key."""
         """Sign data with ledger private key."""
         signature = self.private_key.sign(
             data,
@@ -558,18 +618,23 @@ class ConsentLedger:
         )
         return signature
 
-    def _verify_signature(self, data: bytes, signature: bytes) -> None:
+                def _verify_signature(self, data: bytes, signature: bytes) -> None:
+                def _verify_signature(self, data: bytes, signature: bytes) -> None:
         """Verify signature with ledger public key."""
-        self.public_key.verify(
+        """Verify signature with ledger public key."""
+        """Verify signature with ledger public key."""
+                    self.public_key.verify(
             signature,
             data,
             padding.PSS(mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH),
             hashes.SHA256(),
         )
 
-    def get_subject_consents(
+                    def get_subject_consents(
         self, subject_id: str, include_revoked: bool = False
     ) -> List[ConsentGrant]:
+        """
+        """
         """
         Get all consents for a subject.
 
@@ -593,9 +658,11 @@ class ConsentLedger:
 
         return consents
 
-    def export_audit_log(
+                def export_audit_log(
         self, start_date: Optional[datetime] = None, end_date: Optional[datetime] = None
     ) -> List[Dict[str, Any]]:
+        """
+        """
         """
         Export audit log of consent operations.
 
@@ -651,9 +718,11 @@ class ConsentLedger:
 
 
 # Integration with ZK proofs
-    def bind_consent_to_proof(
+                def bind_consent_to_proof(
     consent_ledger: ConsentLedger, consent_id: str, proof_public_inputs: List[str]
 ) -> List[str]:
+    """
+    """
     """
     Bind consent hash to ZK proof public inputs.
 
@@ -681,7 +750,10 @@ class ConsentLedger:
 
 
 # Example usage
-    def example_consent_workflow():
+        def example_consent_workflow():
+        def example_consent_workflow():
+        """Example consent management workflow."""
+"""Example consent management workflow."""
     """Example consent management workflow."""
     # Initialize ledger
     ledger = ConsentLedger(Path("/tmp/genomevault_consent"))

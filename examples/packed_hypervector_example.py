@@ -10,8 +10,10 @@ from genomevault.hypervector.encoding import PackedGenomicEncoder
 
 
 def main() -> None:
-       """TODO: Add docstring for main"""
-     """Demonstrate packed hypervector usage"""
+    """TODO: Add docstring for main"""
+    """TODO: Add docstring for main"""
+        """TODO: Add docstring for main"""
+    """Demonstrate packed hypervector usage"""
 
     print("Packed Hypervector Genomic Encoding Example")
     print("=" * 50)

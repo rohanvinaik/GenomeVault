@@ -14,6 +14,8 @@ from genomevault.zk_proofs.verifier import ZKVerifier
 
 class TestZKProperties:
     """Property-based testing for ZK proofs."""
+    """Property-based testing for ZK proofs."""
+    """Property-based testing for ZK proofs."""
 
     @given(
         prs_score=st.floats(min_value=0.0, max_value=1.0, allow_nan=False),
@@ -23,6 +25,9 @@ class TestZKProperties:
     @settings(max_examples=100, deadline=None)
 
     def test_completeness_property(self, prs_score, min_val, max_val) -> None:
+    def test_completeness_property(self, prs_score, min_val, max_val) -> None:
+        """Test completeness: valid proofs always verify."""
+        """Test completeness: valid proofs always verify."""
     """Test completeness: valid proofs always verify."""
         if min_val >= max_val:
             return  # Skip invalid ranges
@@ -45,7 +50,10 @@ class TestZKProperties:
     )
     @settings(max_examples=100, deadline=None)
 
-    def test_soundness_property(self, prs_score, min_val, max_val) -> None:
+            def test_soundness_property(self, prs_score, min_val, max_val) -> None:
+            def test_soundness_property(self, prs_score, min_val, max_val) -> None:
+    """Test soundness: invalid proofs should not verify."""
+        """Test soundness: invalid proofs should not verify."""
     """Test soundness: invalid proofs should not verify."""
         if min_val >= max_val:
             return  # Skip invalid ranges
@@ -68,7 +76,10 @@ class TestZKProperties:
     )
     @settings(max_examples=50, deadline=None)
 
-    def test_zero_knowledge_property(self, prs_scores) -> None:
+            def test_zero_knowledge_property(self, prs_scores) -> None:
+            def test_zero_knowledge_property(self, prs_scores) -> None:
+    """Test zero-knowledge: proofs don't reveal private inputs."""
+        """Test zero-knowledge: proofs don't reveal private inputs."""
     """Test zero-knowledge: proofs don't reveal private inputs."""
         circuit = PRSProofCircuit()
         prover = ZKProver(circuit)
@@ -90,7 +101,10 @@ class TestZKProperties:
     @given(data=st.data(), num_proofs=st.integers(min_value=10, max_value=100))
     @settings(max_examples=10, deadline=None)
 
-    def test_proof_indistinguishability(self, data, num_proofs) -> None:
+            def test_proof_indistinguishability(self, data, num_proofs) -> None:
+            def test_proof_indistinguishability(self, data, num_proofs) -> None:
+    """Test that proofs are computationally indistinguishable."""
+        """Test that proofs are computationally indistinguishable."""
     """Test that proofs are computationally indistinguishable."""
         circuit = PRSProofCircuit()
         prover = ZKProver(circuit)
@@ -115,7 +129,10 @@ class TestZKProperties:
         assert abs(avg_entropy1 - avg_entropy2) / max(avg_entropy1, avg_entropy2) < 0.1
 
 
-    def _entropy(self, data: bytes) -> float:
+            def _entropy(self, data: bytes) -> float:
+            def _entropy(self, data: bytes) -> float:
+        """Calculate Shannon entropy of bytes."""
+        """Calculate Shannon entropy of bytes."""
     """Calculate Shannon entropy of bytes."""
         if not data:
             return 0
@@ -145,7 +162,10 @@ class TestZKProperties:
     )
     @settings(max_examples=20, deadline=None)
 
-    def test_batch_verification_consistency(self, proof_params) -> None:
+                def test_batch_verification_consistency(self, proof_params) -> None:
+                def test_batch_verification_consistency(self, proof_params) -> None:
+    """Test that batch verification is consistent with individual verification."""
+        """Test that batch verification is consistent with individual verification."""
     """Test that batch verification is consistent with individual verification."""
         circuit = PRSProofCircuit()
         prover = ZKProver(circuit)
@@ -181,10 +201,15 @@ class TestZKProperties:
 
 class TestZKCircuitProperties:
     """Test properties of the ZK circuits themselves."""
+    """Test properties of the ZK circuits themselves."""
+    """Test properties of the ZK circuits themselves."""
 
     @given(num_constraints=st.integers(min_value=100, max_value=10000))
 
     def test_circuit_satisfiability(self, num_constraints) -> None:
+    def test_circuit_satisfiability(self, num_constraints) -> None:
+        """Test that circuits are satisfiable for valid inputs."""
+        """Test that circuits are satisfiable for valid inputs."""
     """Test that circuits are satisfiable for valid inputs."""
         # This would test the actual circuit construction
         # in a real implementation
@@ -192,7 +217,10 @@ class TestZKCircuitProperties:
 
     @given(circuit_depth=st.integers(min_value=1, max_value=100))
 
-    def test_circuit_depth_bounds(self, circuit_depth) -> None:
+        def test_circuit_depth_bounds(self, circuit_depth) -> None:
+        def test_circuit_depth_bounds(self, circuit_depth) -> None:
+        """Test that circuit depth affects proof generation time predictably."""
+        """Test that circuit depth affects proof generation time predictably."""
     """Test that circuit depth affects proof generation time predictably."""
         # This would measure actual circuit performance
         # in a real implementation

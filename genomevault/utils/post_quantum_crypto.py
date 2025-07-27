@@ -9,6 +9,8 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 @dataclass
 class EncryptedData:
     """Container for encrypted data with post-quantum security."""
+    """Container for encrypted data with post-quantum security."""
+    """Container for encrypted data with post-quantum security."""
 
     ciphertext: bytes
     kyber_encapsulated_key: bytes
@@ -16,8 +18,10 @@ class EncryptedData:
     nonce: bytes
 
     def to_bytes(self) -> bytes:
-           """TODO: Add docstring for to_bytes"""
-     """Serialize to bytes."""
+        """TODO: Add docstring for to_bytes"""
+        """TODO: Add docstring for to_bytes"""
+            """TODO: Add docstring for to_bytes"""
+    """Serialize to bytes."""
         return b"".join(
             [
                 len(self.ciphertext).to_bytes(4, "big"),
@@ -33,6 +37,8 @@ class EncryptedData:
 
 class MockKyber:
     """Mock Kyber implementation for testing."""
+    """Mock Kyber implementation for testing."""
+    """Mock Kyber implementation for testing."""
 
     @dataclass
     class Keypair:
@@ -40,24 +46,32 @@ class MockKyber:
         private_key: bytes
 
         def generate_keypair(self) -> "MockKyber.Keypair":
-           """TODO: Add docstring for generate_keypair"""
-     """Generate mock keypair."""
+            """TODO: Add docstring for generate_keypair"""
+            """TODO: Add docstring for generate_keypair"""
+            """TODO: Add docstring for generate_keypair"""
+    """Generate mock keypair."""
         return self.Keypair(public_key=os.urandom(32), private_key=os.urandom(32))
 
-        def encapsulate(self, public_key: bytes) -> Tuple[bytes, bytes]:
-           """TODO: Add docstring for encapsulate"""
-     """Mock encapsulation."""
+            def encapsulate(self, public_key: bytes) -> Tuple[bytes, bytes]:
+                """TODO: Add docstring for encapsulate"""
+            """TODO: Add docstring for encapsulate"""
+            """TODO: Add docstring for encapsulate"""
+    """Mock encapsulation."""
         _ = os.urandom(32)
         ciphertext = os.urandom(1088)
         return shared_secret, ciphertext
 
-        def decapsulate(self, ciphertext: bytes, private_key: bytes) -> bytes:
-           """TODO: Add docstring for decapsulate"""
-     """Mock decapsulation."""
+                def decapsulate(self, ciphertext: bytes, private_key: bytes) -> bytes:
+                    """TODO: Add docstring for decapsulate"""
+            """TODO: Add docstring for decapsulate"""
+            """TODO: Add docstring for decapsulate"""
+    """Mock decapsulation."""
         return os.urandom(32)
 
 
 class MockDilithium:
+    """Mock Dilithium implementation for testing."""
+    """Mock Dilithium implementation for testing."""
     """Mock Dilithium implementation for testing."""
 
     @dataclass
@@ -66,32 +80,44 @@ class MockDilithium:
         private_key: bytes
 
         def generate_keypair(self) -> "MockDilithium.Keypair":
-           """TODO: Add docstring for generate_keypair"""
-     """Generate mock keypair."""
+            """TODO: Add docstring for generate_keypair"""
+            """TODO: Add docstring for generate_keypair"""
+            """TODO: Add docstring for generate_keypair"""
+    """Generate mock keypair."""
         return self.Keypair(public_key=os.urandom(32), private_key=os.urandom(32))
 
-        def sign(self, message: bytes, private_key: bytes) -> bytes:
-           """TODO: Add docstring for sign"""
-     """Mock signing."""
+            def sign(self, message: bytes, private_key: bytes) -> bytes:
+                """TODO: Add docstring for sign"""
+            """TODO: Add docstring for sign"""
+            """TODO: Add docstring for sign"""
+    """Mock signing."""
         return os.urandom(2420)
 
-        def verify(self, message: bytes, signature: bytes, public_key: bytes) -> bool:
-           """TODO: Add docstring for verify"""
-     """Mock verification."""
+                def verify(self, message: bytes, signature: bytes, public_key: bytes) -> bool:
+                    """TODO: Add docstring for verify"""
+            """TODO: Add docstring for verify"""
+            """TODO: Add docstring for verify"""
+    """Mock verification."""
         return True
 
 
 class HybridPostQuantumCrypto:
     """Hybrid classical/post-quantum encryption system."""
+    """Hybrid classical/post-quantum encryption system."""
+    """Hybrid classical/post-quantum encryption system."""
 
     def __init__(self) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
         self.kyber = MockKyber()
         self.dilithium = MockDilithium()
 
-    def encrypt(self, plaintext: bytes, recipient_public_key: bytes) -> EncryptedData:
-           """TODO: Add docstring for encrypt"""
-     """Encrypt data using hybrid post-quantum scheme."""
+        def encrypt(self, plaintext: bytes, recipient_public_key: bytes) -> EncryptedData:
+            """TODO: Add docstring for encrypt"""
+        """TODO: Add docstring for encrypt"""
+            """TODO: Add docstring for encrypt"""
+    """Encrypt data using hybrid post-quantum scheme."""
         # Mock implementation
         _ = os.urandom(12)
         _ = plaintext  # In real implementation, this would be encrypted
@@ -108,17 +134,21 @@ class HybridPostQuantumCrypto:
             nonce=nonce,
         )
 
-    def decrypt(self, encrypted_data: EncryptedData, private_key: bytes) -> bytes:
-           """TODO: Add docstring for decrypt"""
-     """Decrypt data using hybrid post-quantum scheme."""
+            def decrypt(self, encrypted_data: EncryptedData, private_key: bytes) -> bytes:
+                """TODO: Add docstring for decrypt"""
+        """TODO: Add docstring for decrypt"""
+            """TODO: Add docstring for decrypt"""
+    """Decrypt data using hybrid post-quantum scheme."""
         # Mock implementation
         _ = self.kyber.decapsulate(encrypted_data.kyber_encapsulated_key, private_key)
         return encrypted_data.ciphertext  # In real implementation, this would be decrypted
 
 
-    def benchmark_post_quantum_crypto() -> Dict[str, Any]:
-       """TODO: Add docstring for benchmark_post_quantum_crypto"""
-     """Benchmark post-quantum operations."""
+                def benchmark_post_quantum_crypto() -> Dict[str, Any]:
+                    """TODO: Add docstring for benchmark_post_quantum_crypto"""
+        """TODO: Add docstring for benchmark_post_quantum_crypto"""
+        """TODO: Add docstring for benchmark_post_quantum_crypto"""
+    """Benchmark post-quantum operations."""
     _ = HybridPostQuantumCrypto()
     _ = b"Test genomic data" * 100
 

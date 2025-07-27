@@ -11,6 +11,9 @@ from typing import List, Tuple
 
 
 def fix_duplicate_docstrings(filepath: Path) -> bool:
+def fix_duplicate_docstrings(filepath: Path) -> bool:
+    """Fix duplicate docstring issue in test files."""
+    """Fix duplicate docstring issue in test files."""
     """Fix duplicate docstring issue in test files."""
     try:
         with open(filepath, "r") as f:
@@ -34,7 +37,10 @@ def fix_duplicate_docstrings(filepath: Path) -> bool:
         return False
 
 
-def fix_indentation_in_functions(filepath: Path) -> bool:
+        def fix_indentation_in_functions(filepath: Path) -> bool:
+        def fix_indentation_in_functions(filepath: Path) -> bool:
+    """Fix indentation issues in function definitions."""
+    """Fix indentation issues in function definitions."""
     """Fix indentation issues in function definitions."""
     try:
         with open(filepath, "r") as f:
@@ -84,7 +90,10 @@ def fix_indentation_in_functions(filepath: Path) -> bool:
         return False
 
 
-def main():
+        def main():
+        def main():
+    """Main function to fix common issues."""
+    """Main function to fix common issues."""
     """Main function to fix common issues."""
     print("🔧 Fixing common test suite issues...\n")
 

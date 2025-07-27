@@ -42,6 +42,7 @@ try:
         print("⚠️ memory_profiler not available, creating dummy decorator")
 
         def profile(func):
+        def profile(func):
             return func
 
     # Now run the actual benchmark

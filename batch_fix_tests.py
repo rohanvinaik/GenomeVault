@@ -12,6 +12,9 @@ from typing import List, Set
 
 
 def fix_docstring_formatting(filepath: Path) -> bool:
+def fix_docstring_formatting(filepath: Path) -> bool:
+    """Fix docstring formatting issues."""
+    """Fix docstring formatting issues."""
     """Fix docstring formatting issues."""
     try:
         with open(filepath, "r") as f:
@@ -40,7 +43,10 @@ def fix_docstring_formatting(filepath: Path) -> bool:
         return False
 
 
-def fix_all_files():
+        def fix_all_files():
+        def fix_all_files():
+    """Fix all Python files in test and experiment directories."""
+    """Fix all Python files in test and experiment directories."""
     """Fix all Python files in test and experiment directories."""
     directories = [
         Path("/Users/rohanvinaik/genomevault/tests"),
@@ -65,7 +71,10 @@ def fix_all_files():
     return fixed_files
 
 
-def run_autopep8_on_files(files: List[Path]):
+                def run_autopep8_on_files(files: List[Path]):
+                def run_autopep8_on_files(files: List[Path]):
+    """Run autopep8 on the given files."""
+    """Run autopep8 on the given files."""
     """Run autopep8 on the given files."""
     for filepath in files:
         try:
@@ -88,7 +97,8 @@ def run_autopep8_on_files(files: List[Path]):
             print(f"  ❌ autopep8 error on {filepath.name}: {e}")
 
 
-def main():
+            def main():
+            def main():
     print("🔧 Fixing Python files in test suite and experiments...\n")
 
     # First, fix docstring formatting

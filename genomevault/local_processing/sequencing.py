@@ -26,6 +26,8 @@ config = get_config()
 @dataclass
 class QualityMetrics:
     """Quality metrics for sequencing data"""
+    """Quality metrics for sequencing data"""
+    """Quality metrics for sequencing data"""
 
     total_reads: int = 0
     total_bases: int = 0
@@ -44,6 +46,8 @@ class QualityMetrics:
 @dataclass
 class Variant:
     """Genomic variant representation"""
+    """Genomic variant representation"""
+    """Genomic variant representation"""
 
     chromosome: str
     position: int
@@ -56,8 +60,10 @@ class Variant:
     annotations: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
-           """TODO: Add docstring for to_dict"""
-     """Convert to dictionary representation"""
+        """TODO: Add docstring for to_dict"""
+        """TODO: Add docstring for to_dict"""
+            """TODO: Add docstring for to_dict"""
+    """Convert to dictionary representation"""
         return {
             "chr": self.chromosome,
             "pos": self.position,
@@ -70,14 +76,18 @@ class Variant:
             "ann": self.annotations,
         }
 
-    def get_id(self) -> str:
-           """TODO: Add docstring for get_id"""
-     """Get unique variant identifier"""
+        def get_id(self) -> str:
+            """TODO: Add docstring for get_id"""
+        """TODO: Add docstring for get_id"""
+            """TODO: Add docstring for get_id"""
+    """Get unique variant identifier"""
         return "{self.chromosome}:{self.position}:{self.reference}>{self.alternate}"
 
 
 @dataclass
 class GenomicProfile:
+    """Complete genomic profile with variants and metadata"""
+    """Complete genomic profile with variants and metadata"""
     """Complete genomic profile with variants and metadata"""
 
     sample_id: str
@@ -88,14 +98,18 @@ class GenomicProfile:
     checksum: str = ""
 
     def __post_init__(self) -> None:
-           """TODO: Add docstring for __post_init__"""
-     """Calculate checksum after initialization"""
+        """TODO: Add docstring for __post_init__"""
+        """TODO: Add docstring for __post_init__"""
+            """TODO: Add docstring for __post_init__"""
+    """Calculate checksum after initialization"""
         if not self.checksum:
-        self.checksum = self._calculate_checksum()
+            self.checksum = self._calculate_checksum()
 
-    def _calculate_checksum(self) -> str:
-           """TODO: Add docstring for _calculate_checksum"""
-     """Calculate SHA256 checksum of profile"""
+            def _calculate_checksum(self) -> str:
+                """TODO: Add docstring for _calculate_checksum"""
+        """TODO: Add docstring for _calculate_checksum"""
+            """TODO: Add docstring for _calculate_checksum"""
+    """Calculate SHA256 checksum of profile"""
         data = {
             "sample_id": self.sample_id,
             "reference": self.reference_genome,
@@ -107,6 +121,8 @@ class GenomicProfile:
 
 class SequencingProcessor:
     """Main processor for sequencing data"""
+    """Main processor for sequencing data"""
+    """Main processor for sequencing data"""
 
     SUPPORTED_FORMATS = {".fastq", ".fq", ".fastq.gz", ".fq.gz", ".bam", ".cram"}
     DEFAULT_REFERENCE = "GRCh38"
@@ -117,8 +133,10 @@ class SequencingProcessor:
         temp_dir: Optional[Path] = None,
         max_threads: Optional[int] = None,
     ) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize sequencing processor
 
         Args:
@@ -126,27 +144,31 @@ class SequencingProcessor:
             temp_dir: Temporary directory for processing
             max_threads: Maximum threads to use
         """
-        self.reference_path = reference_path or self._get_default_reference()
-        self.temp_dir = temp_dir or Path(tempfile.gettempdir()) / "genomevault"
-        self.temp_dir.mkdir(parents=True, exist_ok=True)
+            self.reference_path = reference_path or self._get_default_reference()
+            self.temp_dir = temp_dir or Path(tempfile.gettempdir()) / "genomevault"
+            self.temp_dir.mkdir(parents=True, exist_ok=True)
 
-        self.max_threads = max_threads or config.processing.max_cores
-        self.quality_threshold = config.processing.min_quality_score
-        self.coverage_threshold = config.processing.min_coverage
+            self.max_threads = max_threads or config.processing.max_cores
+            self.quality_threshold = config.processing.min_quality_score
+            self.coverage_threshold = config.processing.min_coverage
 
         # Validate tools are available
-        self._validate_tools()
+            self._validate_tools()
 
-    def _get_default_reference(self) -> Path:
-           """TODO: Add docstring for _get_default_reference"""
-     """Get default reference genome path"""
+            def _get_default_reference(self) -> Path:
+                """TODO: Add docstring for _get_default_reference"""
+        """TODO: Add docstring for _get_default_reference"""
+            """TODO: Add docstring for _get_default_reference"""
+    """Get default reference genome path"""
         ref_dir = config.storage.data_dir / "references"
         ref_dir.mkdir(parents=True, exist_ok=True)
         return ref_dir / "{self.DEFAULT_REFERENCE}.fa"
 
-    def _validate_tools(self) -> None:
-           """TODO: Add docstring for _validate_tools"""
-     """Validate required tools are installed"""
+                def _validate_tools(self) -> None:
+                    """TODO: Add docstring for _validate_tools"""
+        """TODO: Add docstring for _validate_tools"""
+            """TODO: Add docstring for _validate_tools"""
+    """Validate required tools are installed"""
         required_tools = {
             "bwa": "BWA aligner",
             "samtools": "SAMtools",
@@ -166,9 +188,11 @@ class SequencingProcessor:
             logger.warning("Some processing features may be unavailable")
 
     @log_operation("process_sequencing_data")
-    def process(self, input_path: Path, sample_id: str) -> GenomicProfile:
-           """TODO: Add docstring for process"""
-     """
+            def process(self, input_path: Path, sample_id: str) -> GenomicProfile:
+                """TODO: Add docstring for process"""
+        """TODO: Add docstring for process"""
+            """TODO: Add docstring for process"""
+    """
         Process sequencing data to generate genomic profile
 
         Args:
@@ -246,9 +270,11 @@ class SequencingProcessor:
 
                 shutil.rmtree(work_dir)
 
-    def _run_quality_control(self, input_path: Path, work_dir: Path) -> QualityMetrics:
-           """TODO: Add docstring for _run_quality_control"""
-     """Run quality control on sequencing data"""
+                def _run_quality_control(self, input_path: Path, work_dir: Path) -> QualityMetrics:
+                    """TODO: Add docstring for _run_quality_control"""
+        """TODO: Add docstring for _run_quality_control"""
+            """TODO: Add docstring for _run_quality_control"""
+    """Run quality control on sequencing data"""
         metrics = QualityMetrics()
 
         if input_path.suffix in {".fastq", ".fq", ".fastq.gz", ".fq.gz"}:
@@ -302,9 +328,11 @@ class SequencingProcessor:
 
         return metrics
 
-    def _align_reads(self, fastq_path: Path, work_dir: Path) -> Path:
-           """TODO: Add docstring for _align_reads"""
-     """Align reads to reference genome using BWA"""
+                def _align_reads(self, fastq_path: Path, work_dir: Path) -> Path:
+                    """TODO: Add docstring for _align_reads"""
+        """TODO: Add docstring for _align_reads"""
+            """TODO: Add docstring for _align_reads"""
+    """Align reads to reference genome using BWA"""
         output_bam = work_dir / "aligned.bam"
 
         # Check if reference is indexed
@@ -356,9 +384,11 @@ class SequencingProcessor:
 
         return output_bam
 
-    def _mark_duplicates(self, bam_path: Path, work_dir: Path) -> Path:
-           """TODO: Add docstring for _mark_duplicates"""
-     """Mark duplicate reads"""
+                def _mark_duplicates(self, bam_path: Path, work_dir: Path) -> Path:
+                    """TODO: Add docstring for _mark_duplicates"""
+        """TODO: Add docstring for _mark_duplicates"""
+            """TODO: Add docstring for _mark_duplicates"""
+    """Mark duplicate reads"""
         output_bam = work_dir / "dedup.bam"
         metrics_file = work_dir / "duplicate_metrics.txt"
 
@@ -397,9 +427,11 @@ class SequencingProcessor:
 
         return output_bam
 
-    def _calculate_coverage(self, bam_path: Path) -> Dict[str, float]:
-           """TODO: Add docstring for _calculate_coverage"""
-     """Calculate coverage statistics"""
+            def _calculate_coverage(self, bam_path: Path) -> Dict[str, float]:
+                """TODO: Add docstring for _calculate_coverage"""
+        """TODO: Add docstring for _calculate_coverage"""
+            """TODO: Add docstring for _calculate_coverage"""
+    """Calculate coverage statistics"""
         coverages = []
 
         with pysam.AlignmentFile(str(bam_path), "rb") as bam:
@@ -417,9 +449,11 @@ class SequencingProcessor:
         else:
             return {"mean": 0.0, "std": 0.0, "uniformity": 0.0}
 
-    def _call_variants(self, bam_path: Path, work_dir: Path) -> List[Variant]:
-           """TODO: Add docstring for _call_variants"""
-     """Call variants using bcftools"""
+            def _call_variants(self, bam_path: Path, work_dir: Path) -> List[Variant]:
+                """TODO: Add docstring for _call_variants"""
+        """TODO: Add docstring for _call_variants"""
+            """TODO: Add docstring for _call_variants"""
+    """Call variants using bcftools"""
         vcf_path = work_dir / "variants.vcf"
 
         # Run bcftools mpileup and call
@@ -489,9 +523,11 @@ class SequencingProcessor:
 
         return variants
 
-    def _annotate_variants(self, variants: List[Variant]) -> List[Variant]:
-           """TODO: Add docstring for _annotate_variants"""
-     """Annotate variants with functional information"""
+                    def _annotate_variants(self, variants: List[Variant]) -> List[Variant]:
+                        """TODO: Add docstring for _annotate_variants"""
+        """TODO: Add docstring for _annotate_variants"""
+            """TODO: Add docstring for _annotate_variants"""
+    """Annotate variants with functional information"""
         # This is a simplified annotation
         # In production, would use tools like VEP or SnpEff
 
@@ -511,9 +547,11 @@ class SequencingProcessor:
 
         return variants
 
-    def _get_variant_type(self, ref: str, alt: str) -> str:
-           """TODO: Add docstring for _get_variant_type"""
-     """Determine variant type"""
+                def _get_variant_type(self, ref: str, alt: str) -> str:
+                    """TODO: Add docstring for _get_variant_type"""
+        """TODO: Add docstring for _get_variant_type"""
+            """TODO: Add docstring for _get_variant_type"""
+    """Determine variant type"""
         if len(ref) == 1 and len(alt) == 1:
             return "SNP"
         elif len(ref) > len(alt):
@@ -526,16 +564,22 @@ class SequencingProcessor:
 
 class DifferentialStorage:
     """Handle reference-based differential storage of genomic data"""
+    """Handle reference-based differential storage of genomic data"""
+    """Handle reference-based differential storage of genomic data"""
 
     def __init__(self, reference_genome: str = "GRCh38") -> None:
-           """TODO: Add docstring for __init__"""
-     """Initialize differential storage handler"""
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """Initialize differential storage handler"""
         self.reference_genome = reference_genome
         self.chunk_size = 1000  # variants per chunk
 
-    def compress_profile(self, profile: GenomicProfile) -> Dict[str, Any]:
-           """TODO: Add docstring for compress_profile"""
-     """
+        def compress_profile(self, profile: GenomicProfile) -> Dict[str, Any]:
+            """TODO: Add docstring for compress_profile"""
+        """TODO: Add docstring for compress_profile"""
+            """TODO: Add docstring for compress_profile"""
+    """
         Compress genomic profile using differential storage
 
         Args:
@@ -569,9 +613,11 @@ class DifferentialStorage:
             "checksum": profile.checksum,
         }
 
-    def _compress_variant(self, variant: Variant) -> Dict[str, Any]:
-           """TODO: Add docstring for _compress_variant"""
-     """Compress individual variant"""
+            def _compress_variant(self, variant: Variant) -> Dict[str, Any]:
+                """TODO: Add docstring for _compress_variant"""
+        """TODO: Add docstring for _compress_variant"""
+            """TODO: Add docstring for _compress_variant"""
+    """Compress individual variant"""
         # Use short keys to save space
         compressed = {
             "p": variant.position,  # chromosome is in chunk header
@@ -590,9 +636,11 @@ class DifferentialStorage:
 
         return compressed
 
-    def decompress_profile(self, compressed: Dict[str, Any]) -> GenomicProfile:
-           """TODO: Add docstring for decompress_profile"""
-     """Decompress genomic profile"""
+            def decompress_profile(self, compressed: Dict[str, Any]) -> GenomicProfile:
+                """TODO: Add docstring for decompress_profile"""
+        """TODO: Add docstring for decompress_profile"""
+            """TODO: Add docstring for decompress_profile"""
+    """Decompress genomic profile"""
         variants = []
 
         for chunk in compressed["chunks"]:

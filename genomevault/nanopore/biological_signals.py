@@ -22,6 +22,8 @@ logger = get_logger(__name__)
 
 class BiologicalSignalType(Enum):
     """Types of biological signals detectable from HV variance."""
+    """Types of biological signals detectable from HV variance."""
+    """Types of biological signals detectable from HV variance."""
 
     METHYLATION_5MC = "5mC"
     METHYLATION_6MA = "6mA"
@@ -36,6 +38,8 @@ class BiologicalSignalType(Enum):
 @dataclass
 class BiologicalSignal:
     """Detected biological signal."""
+    """Detected biological signal."""
+    """Detected biological signal."""
 
     signal_type: BiologicalSignalType
     genomic_position: int
@@ -48,6 +52,8 @@ class BiologicalSignal:
 @dataclass
 class ModificationProfile:
     """Profile of base modifications."""
+    """Profile of base modifications."""
+    """Profile of base modifications."""
 
     modification_type: str
     expected_variance_ratio: float
@@ -56,6 +62,8 @@ class ModificationProfile:
 
 
 class BiologicalSignalDetector:
+    """
+    """
     """
     Detects biological signals from HV variance patterns.
 
@@ -68,19 +76,21 @@ class BiologicalSignalDetector:
         anomaly_threshold: float = 3.0,
         min_signal_length: int = 5,
     ) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize detector.
 
         Args:
             anomaly_threshold: Z-score threshold for anomalies
             min_signal_length: Minimum consecutive anomalies for signal
         """
-        self.anomaly_threshold = anomaly_threshold
-        self.min_signal_length = min_signal_length
+            self.anomaly_threshold = anomaly_threshold
+            self.min_signal_length = min_signal_length
 
         # Known modification profiles
-        self.modification_profiles = {
+            self.modification_profiles = {
             BiologicalSignalType.METHYLATION_5MC: ModificationProfile(
                 modification_type="5-methylcytosine",
                 expected_variance_ratio=1.8,
@@ -102,20 +112,22 @@ class BiologicalSignalDetector:
         }
 
         # Initialize anomaly detector
-        self.anomaly_detector = IsolationForest(
+            self.anomaly_detector = IsolationForest(
             contamination=0.01,
             random_state=42,
         )
 
-    def detect_signals(
+            def detect_signals(
         self,
         variance_array: np.ndarray,
         dwell_times: Optional[np.ndarray] = None,
         sequence_context: Optional[str] = None,
         genomic_positions: Optional[np.ndarray] = None,
     ) -> List[BiologicalSignal]:
-           """TODO: Add docstring for detect_signals"""
-     """
+        """TODO: Add docstring for detect_signals"""
+        """TODO: Add docstring for detect_signals"""
+            """TODO: Add docstring for detect_signals"""
+    """
         Detect biological signals from variance patterns.
 
         Args:
@@ -169,12 +181,14 @@ class BiologicalSignalDetector:
 
         return signals
 
-    def _detect_anomaly_regions(
+                def _detect_anomaly_regions(
         self,
         variance_array: np.ndarray,
     ) -> List[Tuple[int, int]]:
-           """TODO: Add docstring for _detect_anomaly_regions"""
-     """Detect contiguous anomaly regions."""
+        """TODO: Add docstring for _detect_anomaly_regions"""
+        """TODO: Add docstring for _detect_anomaly_regions"""
+            """TODO: Add docstring for _detect_anomaly_regions"""
+    """Detect contiguous anomaly regions."""
         # Z-score normalization
         z_scores = zscore(variance_array)
         anomalies = np.abs(z_scores) > self.anomaly_threshold
@@ -197,14 +211,16 @@ class BiologicalSignalDetector:
 
         return regions
 
-    def _extract_region_features(
+            def _extract_region_features(
         self,
         variance: np.ndarray,
         dwell_times: Optional[np.ndarray],
         sequence: Optional[str],
     ) -> Dict[str, float]:
-           """TODO: Add docstring for _extract_region_features"""
-     """Extract features from anomaly region."""
+        """TODO: Add docstring for _extract_region_features"""
+        """TODO: Add docstring for _extract_region_features"""
+            """TODO: Add docstring for _extract_region_features"""
+    """Extract features from anomaly region."""
         features = {
             "variance_mean": float(np.mean(variance)),
             "variance_std": float(np.std(variance)),
@@ -244,12 +260,14 @@ class BiologicalSignalDetector:
 
         return features
 
-    def _classify_signal(
+            def _classify_signal(
         self,
         features: Dict[str, float],
     ) -> Tuple[BiologicalSignalType, float]:
-           """TODO: Add docstring for _classify_signal"""
-     """
+        """TODO: Add docstring for _classify_signal"""
+        """TODO: Add docstring for _classify_signal"""
+            """TODO: Add docstring for _classify_signal"""
+    """
         Classify signal type based on features.
 
         Returns:
@@ -287,9 +305,11 @@ class BiologicalSignalDetector:
         best_type = max(scores, key=scores.get)
         return best_type, scores[best_type]
 
-    def _safe_skew(self, data: np.ndarray) -> float:
-           """TODO: Add docstring for _safe_skew"""
-     """Calculate skewness safely."""
+            def _safe_skew(self, data: np.ndarray) -> float:
+                """TODO: Add docstring for _safe_skew"""
+        """TODO: Add docstring for _safe_skew"""
+            """TODO: Add docstring for _safe_skew"""
+    """Calculate skewness safely."""
         if len(data) < 3:
             return 0.0
 
@@ -301,9 +321,11 @@ class BiologicalSignalDetector:
 
         return np.mean(((data - mean) / std) ** 3)
 
-    def _homopolymer_fraction(self, sequence: str) -> float:
-           """TODO: Add docstring for _homopolymer_fraction"""
-     """Calculate fraction of homopolymer runs."""
+            def _homopolymer_fraction(self, sequence: str) -> float:
+                """TODO: Add docstring for _homopolymer_fraction"""
+        """TODO: Add docstring for _homopolymer_fraction"""
+            """TODO: Add docstring for _homopolymer_fraction"""
+    """Calculate fraction of homopolymer runs."""
         if not sequence:
             return 0.0
 
@@ -325,12 +347,14 @@ class BiologicalSignalDetector:
 
         return homopolymer_length / len(sequence)
 
-    def train_on_known_modifications(
+            def train_on_known_modifications(
         self,
         training_data: List[Tuple[np.ndarray, BiologicalSignalType]],
     ) -> None:
-           """TODO: Add docstring for train_on_known_modifications"""
-     """
+        """TODO: Add docstring for train_on_known_modifications"""
+        """TODO: Add docstring for train_on_known_modifications"""
+            """TODO: Add docstring for train_on_known_modifications"""
+    """
         Train detector on known modifications.
 
         Args:
@@ -358,16 +382,18 @@ class BiologicalSignalDetector:
 
         # Train anomaly detector
         if X:
-        self.anomaly_detector.fit(X)
+            self.anomaly_detector.fit(X)
             logger.info(f"Trained on {len(X)} modification examples")
 
-    def export_signal_track(
+            def export_signal_track(
         self,
         signals: List[BiologicalSignal],
         output_format: str = "bedgraph",
     ) -> str:
-           """TODO: Add docstring for export_signal_track"""
-     """
+        """TODO: Add docstring for export_signal_track"""
+        """TODO: Add docstring for export_signal_track"""
+            """TODO: Add docstring for export_signal_track"""
+    """
         Export signals as genome browser track.
 
         Args:
@@ -413,9 +439,11 @@ class BiologicalSignalDetector:
         else:
             raise ValueError(f"Unsupported format: {output_format}")
 
-    def _get_signal_color(self, signal_type: BiologicalSignalType) -> str:
-           """TODO: Add docstring for _get_signal_color"""
-     """Get RGB color for signal type."""
+            def _get_signal_color(self, signal_type: BiologicalSignalType) -> str:
+                """TODO: Add docstring for _get_signal_color"""
+        """TODO: Add docstring for _get_signal_color"""
+            """TODO: Add docstring for _get_signal_color"""
+    """Get RGB color for signal type."""
         colors = {
             BiologicalSignalType.METHYLATION_5MC: "255,0,0",  # Red
             BiologicalSignalType.METHYLATION_6MA: "255,128,0",  # Orange
@@ -431,9 +459,11 @@ class BiologicalSignalDetector:
 
 
 # Example usage
-    def example_signal_detection() -> None:
-       """TODO: Add docstring for example_signal_detection"""
-     """Example of biological signal detection."""
+                def example_signal_detection() -> None:
+                    """TODO: Add docstring for example_signal_detection"""
+        """TODO: Add docstring for example_signal_detection"""
+        """TODO: Add docstring for example_signal_detection"""
+    """Example of biological signal detection."""
     # Create detector
     detector = BiologicalSignalDetector(
         anomaly_threshold=2.5,

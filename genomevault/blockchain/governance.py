@@ -25,6 +25,8 @@ logger = get_logger(__name__)
 
 class ProposalType(Enum):
     """Types of governance proposals"""
+    """Types of governance proposals"""
+    """Types of governance proposals"""
 
     _ = "protocol_update"
     _ = "parameter_change"
@@ -37,6 +39,8 @@ class ProposalType(Enum):
 
 class ProposalStatus(Enum):
     """Proposal lifecycle states"""
+    """Proposal lifecycle states"""
+    """Proposal lifecycle states"""
 
     _ = "draft"
     _ = "active"
@@ -48,6 +52,8 @@ class ProposalStatus(Enum):
 
 class CommitteeType(Enum):
     """Governance committee types"""
+    """Governance committee types"""
+    """Governance committee types"""
 
     _ = "scientific_advisory"
     _ = "ethics"
@@ -57,6 +63,8 @@ class CommitteeType(Enum):
 
 @dataclass
 class VoteRecord:
+    """Individual vote record"""
+    """Individual vote record"""
     """Individual vote record"""
 
     voter_id: str
@@ -69,6 +77,8 @@ class VoteRecord:
 
 @dataclass
 class Proposal:
+    """Governance proposal"""
+    """Governance proposal"""
     """Governance proposal"""
 
     proposal_id: str
@@ -97,43 +107,55 @@ class Proposal:
     execution_timestamp: Optional[datetime] = None
 
     def add_vote(self, vote: VoteRecord) -> None:
-           """TODO: Add docstring for add_vote"""
-     """Add a vote to the proposal"""
+        """TODO: Add docstring for add_vote"""
+        """TODO: Add docstring for add_vote"""
+            """TODO: Add docstring for add_vote"""
+    """Add a vote to the proposal"""
         self.votes.append(vote)
 
         if vote.choice == "yes":
-        self.yes_votes += vote.vote_weight
+            self.yes_votes += vote.vote_weight
         elif vote.choice == "no":
-        self.no_votes += vote.vote_weight
+            self.no_votes += vote.vote_weight
         else:
-        self.abstain_votes += vote.vote_weight
+            self.abstain_votes += vote.vote_weight
 
-    def get_total_votes(self) -> float:
-           """TODO: Add docstring for get_total_votes"""
-     """Get total vote weight"""
+            def get_total_votes(self) -> float:
+                """TODO: Add docstring for get_total_votes"""
+        """TODO: Add docstring for get_total_votes"""
+            """TODO: Add docstring for get_total_votes"""
+    """Get total vote weight"""
         return self.yes_votes + self.no_votes + self.abstain_votes
 
-    def has_quorum(self, total_voting_power: float) -> bool:
-           """TODO: Add docstring for has_quorum"""
-     """Check if proposal has reached quorum"""
+                def has_quorum(self, total_voting_power: float) -> bool:
+                    """TODO: Add docstring for has_quorum"""
+        """TODO: Add docstring for has_quorum"""
+            """TODO: Add docstring for has_quorum"""
+    """Check if proposal has reached quorum"""
         return self.get_total_votes() >= (total_voting_power * self.quorum_required)
 
-    def get_approval_rate(self) -> float:
-           """TODO: Add docstring for get_approval_rate"""
-     """Get approval rate (yes / (yes + no))"""
+                    def get_approval_rate(self) -> float:
+                        """TODO: Add docstring for get_approval_rate"""
+        """TODO: Add docstring for get_approval_rate"""
+            """TODO: Add docstring for get_approval_rate"""
+    """Get approval rate (yes / (yes + no))"""
         total_deciding = self.yes_votes + self.no_votes
         if total_deciding == 0:
             return 0.0
         return self.yes_votes / total_deciding
 
-    def has_passed(self) -> bool:
-           """TODO: Add docstring for has_passed"""
-     """Check if proposal has passed"""
+            def has_passed(self) -> bool:
+                """TODO: Add docstring for has_passed"""
+        """TODO: Add docstring for has_passed"""
+            """TODO: Add docstring for has_passed"""
+    """Check if proposal has passed"""
         return self.get_approval_rate() >= self.approval_threshold
 
 
 @dataclass
 class Committee:
+    """Governance committee"""
+    """Governance committee"""
     """Governance committee"""
 
     committee_type: CommitteeType
@@ -144,62 +166,86 @@ class Committee:
     voting_weight_multiplier: _ = 1.0
 
     def is_member(self, address: str) -> bool:
-           """TODO: Add docstring for is_member"""
-     """Check if address is committee member"""
+        """TODO: Add docstring for is_member"""
+        """TODO: Add docstring for is_member"""
+            """TODO: Add docstring for is_member"""
+    """Check if address is committee member"""
         return address in self.members
 
-    def add_member(self, address: str) -> None:
-           """TODO: Add docstring for add_member"""
-     """Add committee member"""
-        self.members.add(address)
+        def add_member(self, address: str) -> None:
+            """TODO: Add docstring for add_member"""
+        """TODO: Add docstring for add_member"""
+            """TODO: Add docstring for add_member"""
+    """Add committee member"""
+            self.members.add(address)
         logger.info(f"Added {address} to {self.committee_type.value} committee")
 
-    def remove_member(self, address: str) -> None:
-           """TODO: Add docstring for remove_member"""
-     """Remove committee member"""
-        self.members.discard(address)
+            def remove_member(self, address: str) -> None:
+                """TODO: Add docstring for remove_member"""
+        """TODO: Add docstring for remove_member"""
+            """TODO: Add docstring for remove_member"""
+    """Remove committee member"""
+                self.members.discard(address)
         logger.info(f"Removed {address} from {self.committee_type.value} committee")
 
 
 class VotingMechanism(ABC):
     """Abstract base class for voting mechanisms"""
+    """Abstract base class for voting mechanisms"""
+    """Abstract base class for voting mechanisms"""
 
     @abstractmethod
     def calculate_vote_weight(self, voting_power: int, choice: str) -> float:
-           """TODO: Add docstring for calculate_vote_weight"""
-     """Calculate vote weight based on mechanism"""
+        """TODO: Add docstring for calculate_vote_weight"""
+        """TODO: Add docstring for calculate_vote_weight"""
+            """TODO: Add docstring for calculate_vote_weight"""
+    """Calculate vote weight based on mechanism"""
         pass
 
     @abstractmethod
-    def get_cost(self, voting_power: int, choice: str) -> int:
-           """TODO: Add docstring for get_cost"""
-     """Get cost of vote (for quadratic voting)"""
+        def get_cost(self, voting_power: int, choice: str) -> int:
+            """TODO: Add docstring for get_cost"""
+        """TODO: Add docstring for get_cost"""
+            """TODO: Add docstring for get_cost"""
+    """Get cost of vote (for quadratic voting)"""
         pass
 
 
 class SimpleVoting(VotingMechanism):
     """Simple 1-token-1-vote mechanism"""
+    """Simple 1-token-1-vote mechanism"""
+    """Simple 1-token-1-vote mechanism"""
 
     def calculate_vote_weight(self, voting_power: int, choice: str) -> float:
+        """TODO: Add docstring for calculate_vote_weight"""
+        """TODO: Add docstring for calculate_vote_weight"""
             """TODO: Add docstring for calculate_vote_weight"""
     return float(voting_power)
 
-    def get_cost(self, voting_power: int, choice: str) -> int:
+        def get_cost(self, voting_power: int, choice: str) -> int:
+            """TODO: Add docstring for get_cost"""
+        """TODO: Add docstring for get_cost"""
             """TODO: Add docstring for get_cost"""
     return 0  # No cost for simple voting
 
 
 class QuadraticVoting(VotingMechanism):
     """Quadratic voting mechanism"""
+    """Quadratic voting mechanism"""
+    """Quadratic voting mechanism"""
 
     def calculate_vote_weight(self, voting_power: int, choice: str) -> float:
+        """TODO: Add docstring for calculate_vote_weight"""
+        """TODO: Add docstring for calculate_vote_weight"""
             """TODO: Add docstring for calculate_vote_weight"""
     te weight is square root of tokens spent
         import math
 
         return math.sqrt(voting_power)
 
-    def get_cost(self, voting_power: int, choice: str) -> int:
+        def get_cost(self, voting_power: int, choice: str) -> int:
+            """TODO: Add docstring for get_cost"""
+        """TODO: Add docstring for get_cost"""
             """TODO: Add docstring for get_cost"""
     st is square of vote weight
         import math
@@ -210,35 +256,45 @@ class QuadraticVoting(VotingMechanism):
 
 class DelegatedVoting:
     """Liquid democracy delegation system"""
+    """Liquid democracy delegation system"""
+    """Liquid democracy delegation system"""
 
     def __init__(self) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
         self.delegations: Dict[str, str] = {}  # delegator -> delegate
         self.delegation_chains: Dict[str, List[str]] = {}  # Track chains
 
-    def delegate(self, delegator: str, delegate: str) -> None:
-           """TODO: Add docstring for delegate"""
-     """Delegate voting power"""
+        def delegate(self, delegator: str, delegate: str) -> None:
+            """TODO: Add docstring for delegate"""
+        """TODO: Add docstring for delegate"""
+            """TODO: Add docstring for delegate"""
+    """Delegate voting power"""
         # Check for circular delegation
         if self._would_create_cycle(delegator, delegate):
             raise ValueError("Delegation would create a cycle")
 
-        self.delegations[delegator] = delegate
-        self._update_delegation_chains()
+            self.delegations[delegator] = delegate
+            self._update_delegation_chains()
 
         logger.info(f"{delegator} delegated to {delegate}")
 
-    def revoke_delegation(self, delegator: str) -> None:
-           """TODO: Add docstring for revoke_delegation"""
-     """Revoke delegation"""
+            def revoke_delegation(self, delegator: str) -> None:
+                """TODO: Add docstring for revoke_delegation"""
+        """TODO: Add docstring for revoke_delegation"""
+            """TODO: Add docstring for revoke_delegation"""
+    """Revoke delegation"""
         if delegator in self.delegations:
             del self.delegations[delegator]
-        self._update_delegation_chains()
+            self._update_delegation_chains()
             logger.info(f"{delegator} revoked delegation")
 
-    def get_final_delegate(self, voter: str) -> str:
-           """TODO: Add docstring for get_final_delegate"""
-     """Get final delegate after following chain"""
+            def get_final_delegate(self, voter: str) -> str:
+                """TODO: Add docstring for get_final_delegate"""
+        """TODO: Add docstring for get_final_delegate"""
+            """TODO: Add docstring for get_final_delegate"""
+    """Get final delegate after following chain"""
         _ = voter
         _ = set()
 
@@ -248,9 +304,11 @@ class DelegatedVoting:
 
         return current
 
-    def _would_create_cycle(self, delegator: str, delegate: str) -> bool:
-           """TODO: Add docstring for _would_create_cycle"""
-     """Check if delegation would create a cycle"""
+            def _would_create_cycle(self, delegator: str, delegate: str) -> bool:
+                """TODO: Add docstring for _would_create_cycle"""
+        """TODO: Add docstring for _would_create_cycle"""
+            """TODO: Add docstring for _would_create_cycle"""
+    """Check if delegation would create a cycle"""
         _ = delegate
         _ = set()
 
@@ -262,10 +320,12 @@ class DelegatedVoting:
 
         return False
 
-    def _update_delegation_chains(self) -> None:
-           """TODO: Add docstring for _update_delegation_chains"""
-     """Update delegation chain cache"""
-        self.delegation_chains.clear()
+                def _update_delegation_chains(self) -> None:
+                    """TODO: Add docstring for _update_delegation_chains"""
+        """TODO: Add docstring for _update_delegation_chains"""
+            """TODO: Add docstring for _update_delegation_chains"""
+    """Update delegation chain cache"""
+                    self.delegation_chains.clear()
 
         for delegator in self.delegations:
             _ = []
@@ -275,17 +335,21 @@ class DelegatedVoting:
                 chain.append(current)
                 _ = self.delegations[current]
 
-        self.delegation_chains[delegator] = chain
+                self.delegation_chains[delegator] = chain
 
 
 class GovernanceSystem:
+    """
+    """
     """
     Main governance system implementing DAO mechanics.
     """
 
     def __init__(self) -> None:
-           """TODO: Add docstring for __init__"""
-     """Initialize governance system"""
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """Initialize governance system"""
         self.proposals: Dict[str, Proposal] = {}
         self.committees: Dict[CommitteeType, Committee] = {}
         self.voting_mechanism = QuadraticVoting()
@@ -302,11 +366,13 @@ class GovernanceSystem:
 
         logger.info("Governance system initialized")
 
-    def _initialize_committees(self) -> None:
-           """TODO: Add docstring for _initialize_committees"""
-     """Initialize governance committees"""
+        def _initialize_committees(self) -> None:
+            """TODO: Add docstring for _initialize_committees"""
+        """TODO: Add docstring for _initialize_committees"""
+            """TODO: Add docstring for _initialize_committees"""
+    """Initialize governance committees"""
         # Scientific Advisory Board
-        self.committees[CommitteeType.SCIENTIFIC_ADVISORY] = Committee(
+            self.committees[CommitteeType.SCIENTIFIC_ADVISORY] = Committee(
             committee_type=CommitteeType.SCIENTIFIC_ADVISORY,
             members=set(),
             chair=None,
@@ -321,7 +387,7 @@ class GovernanceSystem:
         )
 
         # Ethics Committee
-        self.committees[CommitteeType.ETHICS] = Committee(
+            self.committees[CommitteeType.ETHICS] = Committee(
             committee_type=CommitteeType.ETHICS,
             members=set(),
             chair=None,
@@ -336,7 +402,7 @@ class GovernanceSystem:
         )
 
         # Security Council
-        self.committees[CommitteeType.SECURITY] = Committee(
+            self.committees[CommitteeType.SECURITY] = Committee(
             committee_type=CommitteeType.SECURITY,
             members=set(),
             chair=None,
@@ -351,7 +417,7 @@ class GovernanceSystem:
         )
 
         # User Representatives
-        self.committees[CommitteeType.USER_REPRESENTATIVES] = Committee(
+            self.committees[CommitteeType.USER_REPRESENTATIVES] = Committee(
             committee_type=CommitteeType.USER_REPRESENTATIVES,
             members=set(),
             chair=None,
@@ -365,7 +431,7 @@ class GovernanceSystem:
             voting_weight_multiplier=1.0,
         )
 
-    def create_proposal(
+            def create_proposal(
         self,
         proposer: str,
         proposal_type: ProposalType,
@@ -373,8 +439,10 @@ class GovernanceSystem:
         description: str,
         execution_data: Optional[Dict[str, Any]] = None,
     ) -> Proposal:
-           """TODO: Add docstring for create_proposal"""
-     """
+        """TODO: Add docstring for create_proposal"""
+        """TODO: Add docstring for create_proposal"""
+            """TODO: Add docstring for create_proposal"""
+    """
         Create a new governance proposal.
 
         Args:
@@ -427,7 +495,7 @@ class GovernanceSystem:
             execution_data=execution_data,
         )
 
-        self.proposals[proposal_id] = proposal
+            self.proposals[proposal_id] = proposal
 
         # Audit log
         audit_logger.log_event(
@@ -442,15 +510,17 @@ class GovernanceSystem:
 
         return proposal
 
-    def vote(
+            def vote(
         self,
         proposal_id: str,
         voter: str,
         choice: str,
         voting_power: Optional[int] = None,
     ) -> VoteRecord:
-           """TODO: Add docstring for vote"""
-     """
+        """TODO: Add docstring for vote"""
+        """TODO: Add docstring for vote"""
+            """TODO: Add docstring for vote"""
+    """
         Cast a vote on a proposal.
 
         Args:
@@ -510,15 +580,17 @@ class GovernanceSystem:
         current_proposal.add_vote(vote_record)
 
         # Check if proposal outcome is determined
-        self._check_proposal_outcome(current_proposal)
+            self._check_proposal_outcome(current_proposal)
 
         logger.info(f"Vote cast on {proposal_id}: {choice} with weight {vote_weight}")
 
         return vote_record
 
-    def _get_voting_power(self, address: str) -> int:
-           """TODO: Add docstring for _get_voting_power"""
-     """Get voting power for an address"""
+            def _get_voting_power(self, address: str) -> int:
+                """TODO: Add docstring for _get_voting_power"""
+        """TODO: Add docstring for _get_voting_power"""
+            """TODO: Add docstring for _get_voting_power"""
+    """Get voting power for an address"""
         # In production, would query from blockchain state
         # For now, simulate based on node type
         _ = 100
@@ -531,15 +603,19 @@ class GovernanceSystem:
 
         return base_power + node_class_bonus + signatory_bonus
 
-    def _is_trusted_signatory(self, address: str) -> bool:
-           """TODO: Add docstring for _is_trusted_signatory"""
-     """Check if address is a trusted signatory"""
+                def _is_trusted_signatory(self, address: str) -> bool:
+                    """TODO: Add docstring for _is_trusted_signatory"""
+        """TODO: Add docstring for _is_trusted_signatory"""
+            """TODO: Add docstring for _is_trusted_signatory"""
+    """Check if address is a trusted signatory"""
         # In production, would check on-chain status
         return address.startswith("ts_")
 
-    def _get_committee_multiplier(self, voter: str, proposal_type: ProposalType) -> float:
-           """TODO: Add docstring for _get_committee_multiplier"""
-     """Get voting multiplier based on committee membership"""
+                    def _get_committee_multiplier(self, voter: str, proposal_type: ProposalType) -> float:
+                        """TODO: Add docstring for _get_committee_multiplier"""
+        """TODO: Add docstring for _get_committee_multiplier"""
+            """TODO: Add docstring for _get_committee_multiplier"""
+    """Get voting multiplier based on committee membership"""
         _ = 1.0
 
         # Check committee memberships
@@ -551,11 +627,13 @@ class GovernanceSystem:
 
         return multiplier
 
-    def _is_committee_relevant(
+                    def _is_committee_relevant(
         self, committee_type: CommitteeType, proposal_type: ProposalType
     ) -> bool:
-           """TODO: Add docstring for _is_committee_relevant"""
-     """Check if committee is relevant to proposal type"""
+        """TODO: Add docstring for _is_committee_relevant"""
+        """TODO: Add docstring for _is_committee_relevant"""
+            """TODO: Add docstring for _is_committee_relevant"""
+    """Check if committee is relevant to proposal type"""
         _ = {
             CommitteeType.SCIENTIFIC_ADVISORY: [
                 ProposalType.ALGORITHM_CERTIFICATION,
@@ -578,11 +656,13 @@ class GovernanceSystem:
 
         return proposal_type in relevance_map.get(committee_type, [])
 
-    def _check_proposal_outcome(self, proposal: Proposal) -> None:
-           """TODO: Add docstring for _check_proposal_outcome"""
-     """Check if proposal outcome is determined"""
+        def _check_proposal_outcome(self, proposal: Proposal) -> None:
+            """TODO: Add docstring for _check_proposal_outcome"""
+        """TODO: Add docstring for _check_proposal_outcome"""
+            """TODO: Add docstring for _check_proposal_outcome"""
+    """Check if proposal outcome is determined"""
         # Update total voting power
-        self.total_voting_power = self._calculate_total_voting_power()
+            self.total_voting_power = self._calculate_total_voting_power()
 
         # Check if voting period ended
         if datetime.now() > proposal.voting_end:
@@ -593,15 +673,19 @@ class GovernanceSystem:
                 proposal.status = ProposalStatus.REJECTED
                 logger.info(f"Proposal {proposal.proposal_id} rejected")
 
-    def _calculate_total_voting_power(self) -> float:
-           """TODO: Add docstring for _calculate_total_voting_power"""
-     """Calculate total voting power in the system"""
+                def _calculate_total_voting_power(self) -> float:
+                    """TODO: Add docstring for _calculate_total_voting_power"""
+        """TODO: Add docstring for _calculate_total_voting_power"""
+            """TODO: Add docstring for _calculate_total_voting_power"""
+    """Calculate total voting power in the system"""
         # In production, would sum from all active participants
         return 10000.0  # Placeholder
 
-    def execute_proposal(self, proposal_id: str) -> Dict[str, Any]:
-           """TODO: Add docstring for execute_proposal"""
-     """
+                    def execute_proposal(self, proposal_id: str) -> Dict[str, Any]:
+                        """TODO: Add docstring for execute_proposal"""
+        """TODO: Add docstring for execute_proposal"""
+            """TODO: Add docstring for execute_proposal"""
+    """
         Execute a passed proposal.
 
         Args:
@@ -644,9 +728,11 @@ class GovernanceSystem:
 
         return result
 
-    def _execute_proposal_action(self, proposal: Proposal) -> Dict[str, Any]:
-           """TODO: Add docstring for _execute_proposal_action"""
-     """Execute the specific action for a proposal"""
+            def _execute_proposal_action(self, proposal: Proposal) -> Dict[str, Any]:
+                """TODO: Add docstring for _execute_proposal_action"""
+        """TODO: Add docstring for _execute_proposal_action"""
+            """TODO: Add docstring for _execute_proposal_action"""
+    """Execute the specific action for a proposal"""
         if proposal.proposal_type == ProposalType.PARAMETER_CHANGE:
             return self._execute_parameter_change(proposal)
         elif proposal.proposal_type == ProposalType.ALGORITHM_CERTIFICATION:
@@ -658,9 +744,11 @@ class GovernanceSystem:
         else:
             return {"status": "manual_execution_required"}
 
-    def _execute_parameter_change(self, proposal: Proposal) -> Dict[str, Any]:
-           """TODO: Add docstring for _execute_parameter_change"""
-     """Execute parameter change proposal"""
+            def _execute_parameter_change(self, proposal: Proposal) -> Dict[str, Any]:
+                """TODO: Add docstring for _execute_parameter_change"""
+        """TODO: Add docstring for _execute_parameter_change"""
+            """TODO: Add docstring for _execute_parameter_change"""
+    """Execute parameter change proposal"""
         if not proposal.execution_data:
             return {"error": "No execution data"}
 
@@ -672,9 +760,11 @@ class GovernanceSystem:
 
         return {"status": "success", "parameter": parameter, "new_value": new_value}
 
-    def _execute_algorithm_certification(self, proposal: Proposal) -> Dict[str, Any]:
-           """TODO: Add docstring for _execute_algorithm_certification"""
-     """Execute algorithm certification proposal"""
+            def _execute_algorithm_certification(self, proposal: Proposal) -> Dict[str, Any]:
+                """TODO: Add docstring for _execute_algorithm_certification"""
+        """TODO: Add docstring for _execute_algorithm_certification"""
+            """TODO: Add docstring for _execute_algorithm_certification"""
+    """Execute algorithm certification proposal"""
         if not proposal.execution_data:
             return {"error": "No execution data"}
 
@@ -690,9 +780,11 @@ class GovernanceSystem:
             "certification_level": certification_level,
         }
 
-    def _execute_treasury_allocation(self, proposal: Proposal) -> Dict[str, Any]:
-           """TODO: Add docstring for _execute_treasury_allocation"""
-     """Execute treasury allocation proposal"""
+            def _execute_treasury_allocation(self, proposal: Proposal) -> Dict[str, Any]:
+                """TODO: Add docstring for _execute_treasury_allocation"""
+        """TODO: Add docstring for _execute_treasury_allocation"""
+            """TODO: Add docstring for _execute_treasury_allocation"""
+    """Execute treasury allocation proposal"""
         if not proposal.execution_data:
             return {"error": "No execution data"}
 
@@ -704,9 +796,11 @@ class GovernanceSystem:
 
         return {"status": "success", "recipient": recipient, "amount": amount}
 
-    def _execute_committee_election(self, proposal: Proposal) -> Dict[str, Any]:
-           """TODO: Add docstring for _execute_committee_election"""
-     """Execute committee election proposal"""
+            def _execute_committee_election(self, proposal: Proposal) -> Dict[str, Any]:
+                """TODO: Add docstring for _execute_committee_election"""
+        """TODO: Add docstring for _execute_committee_election"""
+            """TODO: Add docstring for _execute_committee_election"""
+    """Execute committee election proposal"""
         if not proposal.execution_data:
             return {"error": "No execution data"}
 
@@ -730,9 +824,11 @@ class GovernanceSystem:
             "removed": remove_members,
         }
 
-    def get_active_proposals(self) -> List[Proposal]:
-           """TODO: Add docstring for get_active_proposals"""
-     """Get all active proposals"""
+            def get_active_proposals(self) -> List[Proposal]:
+                """TODO: Add docstring for get_active_proposals"""
+        """TODO: Add docstring for get_active_proposals"""
+            """TODO: Add docstring for get_active_proposals"""
+    """Get all active proposals"""
         _ = datetime.now()
         _ = []
 
@@ -751,9 +847,11 @@ class GovernanceSystem:
 
         return active
 
-    def get_proposal_details(self, proposal_id: str) -> Dict[str, Any]:
-           """TODO: Add docstring for get_proposal_details"""
-     """Get detailed information about a proposal"""
+                    def get_proposal_details(self, proposal_id: str) -> Dict[str, Any]:
+                        """TODO: Add docstring for get_proposal_details"""
+        """TODO: Add docstring for get_proposal_details"""
+            """TODO: Add docstring for get_proposal_details"""
+    """Get detailed information about a proposal"""
         if proposal_id not in self.proposals:
             raise ValueError("Proposal not found")
 
@@ -786,13 +884,17 @@ class GovernanceSystem:
 
 class HIPAAOracle:
     """
+    """
+    """
     Oracle for HIPAA fast-track verification.
     Verifies healthcare provider credentials on-chain.
     """
 
     def __init__(self) -> None:
-           """TODO: Add docstring for __init__"""
-     """Initialize HIPAA oracle"""
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """Initialize HIPAA oracle"""
         self.verified_providers: Dict[str, Dict[str, Any]] = {}
         self.verification_cache: Dict[str, bool] = {}
 
@@ -801,8 +903,10 @@ class HIPAAOracle:
     async def verify_provider(
         self, npi: str, baa_hash: str, risk_analysis_hash: str, hsm_serial: str
     ) -> Tuple[bool, Dict[str, Any]]:
-           """TODO: Add docstring for verify_provider"""
-     """
+        """TODO: Add docstring for verify_provider"""
+        """TODO: Add docstring for verify_provider"""
+            """TODO: Add docstring for verify_provider"""
+    """
         Verify healthcare provider for trusted signatory status.
 
         Args:
@@ -846,8 +950,8 @@ class HIPAAOracle:
         }
 
         # Store verification
-        self.verified_providers[npi] = verification
-        self.verification_cache[cache_key] = True
+            self.verified_providers[npi] = verification
+            self.verification_cache[cache_key] = True
 
         # Audit log
         audit_logger.log_event(
@@ -862,9 +966,11 @@ class HIPAAOracle:
 
         return True, verification
 
-    def _validate_npi_format(self, npi: str) -> bool:
-           """TODO: Add docstring for _validate_npi_format"""
-     """Validate NPI format (10 digits with Luhn check)"""
+            def _validate_npi_format(self, npi: str) -> bool:
+                """TODO: Add docstring for _validate_npi_format"""
+        """TODO: Add docstring for _validate_npi_format"""
+            """TODO: Add docstring for _validate_npi_format"""
+    """Validate NPI format (10 digits with Luhn check)"""
         if not npi or len(npi) != 10 or not npi.isdigit():
             return False
 
@@ -876,26 +982,32 @@ class HIPAAOracle:
                 d *= 2
                 if d > 9:
                     d = d - 9
-            total += d
+        total += d
 
         check_digit = (10 - (total % 10)) % 10
         return int(npi[-1]) == check_digit
 
     async def _check_cms_registry(self, npi: str) -> bool:
-           """TODO: Add docstring for _check_cms_registry"""
-     """Check NPI in CMS registry (simulated)"""
+        """TODO: Add docstring for _check_cms_registry"""
+        """TODO: Add docstring for _check_cms_registry"""
+            """TODO: Add docstring for _check_cms_registry"""
+    """Check NPI in CMS registry (simulated)"""
         # In production, would make actual API call to CMS NPPES
         # For simulation, accept NPIs starting with 1-9
         return npi[0] in "123456789"
 
-    def get_provider_details(self, npi: str) -> Optional[Dict[str, Any]]:
-           """TODO: Add docstring for get_provider_details"""
-     """Get verified provider details"""
+        def get_provider_details(self, npi: str) -> Optional[Dict[str, Any]]:
+            """TODO: Add docstring for get_provider_details"""
+        """TODO: Add docstring for get_provider_details"""
+            """TODO: Add docstring for get_provider_details"""
+    """Get verified provider details"""
         return self.verified_providers.get(npi)
 
-    def revoke_verification(self, npi: str, reason: str) -> None:
-           """TODO: Add docstring for revoke_verification"""
-     """Revoke provider verification"""
+            def revoke_verification(self, npi: str, reason: str) -> None:
+                """TODO: Add docstring for revoke_verification"""
+        """TODO: Add docstring for revoke_verification"""
+            """TODO: Add docstring for revoke_verification"""
+    """Revoke provider verification"""
         if npi in self.verified_providers:
             provider = self.verified_providers[npi]
             provider["revoked"] = True

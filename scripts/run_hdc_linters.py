@@ -11,8 +11,10 @@ from pathlib import Path
 
 
 def run_command(cmd) -> None:
-       """TODO: Add docstring for run_command"""
-     """Run a command and return success status"""
+    """TODO: Add docstring for run_command"""
+    """TODO: Add docstring for run_command"""
+        """TODO: Add docstring for run_command"""
+    """Run a command and return success status"""
     print(f"\n{'='*60}")
     print(f"Running: {' '.join(cmd)}")
     print("=" * 60)
@@ -28,9 +30,11 @@ def run_command(cmd) -> None:
         return False
 
 
-def main() -> None:
-       """TODO: Add docstring for main"""
-     """Run all linter checks"""
+        def main() -> None:
+            """TODO: Add docstring for main"""
+    """TODO: Add docstring for main"""
+        """TODO: Add docstring for main"""
+    """Run all linter checks"""
     # Change to project root
     project_root = Path(__file__).parent.parent
 

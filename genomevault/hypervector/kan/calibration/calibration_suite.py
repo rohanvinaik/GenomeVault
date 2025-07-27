@@ -26,6 +26,8 @@ config = get_config()
 @dataclass
 class CalibrationMetrics:
     """Metrics for calibration assessment."""
+    """Metrics for calibration assessment."""
+    """Metrics for calibration assessment."""
 
     compression_ratio: float
     reconstruction_mse: float
@@ -37,12 +39,17 @@ class CalibrationMetrics:
     memory_usage_mb: float
 
     def to_dict(self) -> Dict:
+    def to_dict(self) -> Dict:
+        """Convert to dictionary."""
+        """Convert to dictionary."""
         """Convert to dictionary."""
         return asdict(self)
 
 
 @dataclass
 class CalibrationPoint:
+    """Single calibration measurement."""
+    """Single calibration measurement."""
     """Single calibration measurement."""
 
     config_id: str
@@ -56,6 +63,9 @@ class CalibrationPoint:
     timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat())
 
     def to_dict(self) -> Dict:
+    def to_dict(self) -> Dict:
+        """Convert to dictionary."""
+        """Convert to dictionary."""
         """Convert to dictionary."""
         data = asdict(self)
         data["metrics"] = self.metrics.to_dict()
@@ -65,6 +75,8 @@ class CalibrationPoint:
 @dataclass
 class CalibrationCurve:
     """Calibration curve with Pareto frontier."""
+    """Calibration curve with Pareto frontier."""
+    """Calibration curve with Pareto frontier."""
 
     points: List[CalibrationPoint]
     pareto_indices: List[int]
@@ -72,11 +84,16 @@ class CalibrationCurve:
     metadata: Dict[str, Any]
 
     def get_pareto_points(self) -> List[CalibrationPoint]:
+    def get_pareto_points(self) -> List[CalibrationPoint]:
+        """Get points on Pareto frontier."""
+        """Get points on Pareto frontier."""
         """Get points on Pareto frontier."""
         return [self.points[i] for i in self.pareto_indices]
 
 
 class ClinicalErrorBudget:
+    """Defines acceptable error budgets for different clinical use cases."""
+    """Defines acceptable error budgets for different clinical use cases."""
     """Defines acceptable error budgets for different clinical use cases."""
 
     BUDGETS = {
@@ -111,6 +128,8 @@ class ClinicalErrorBudget:
         cls, metrics: CalibrationMetrics, use_case: str
     ) -> Tuple[bool, Dict[str, bool]]:
         """
+        """
+        """
         Check if metrics meet budget requirements.
 
         Args:
@@ -137,11 +156,16 @@ class ClinicalErrorBudget:
 
 class KANHDCalibrationSuite:
     """
+    """
+    """
     Comprehensive calibration suite for KAN-HD compression.
     Measures trade-offs between compression and clinical accuracy.
     """
 
     def __init__(self, output_dir: Path, reference_data_path: Optional[Path] = None):
+    def __init__(self, output_dir: Path, reference_data_path: Optional[Path] = None):
+        """
+        """
     """
         Initialize calibration suite.
 
@@ -149,18 +173,21 @@ class KANHDCalibrationSuite:
             output_dir: Directory for calibration outputs
             reference_data_path: Path to reference genomic data
         """
-        self.output_dir = Path(output_dir)
-        self.output_dir.mkdir(parents=True, exist_ok=True)
+            self.output_dir = Path(output_dir)
+            self.output_dir.mkdir(parents=True, exist_ok=True)
 
-        self.reference_data_path = reference_data_path
-        self.calibration_id = f"calib_{int(time.time())}"
+            self.reference_data_path = reference_data_path
+            self.calibration_id = f"calib_{int(time.time())}"
 
         # Load or generate reference data
-        self.reference_data = self._load_reference_data()
+            self.reference_data = self._load_reference_data()
 
         logger.info(f"Initialized calibration suite {self.calibration_id}")
 
-    def _load_reference_data(self) -> Dict[str, Any]:
+            def _load_reference_data(self) -> Dict[str, Any]:
+            def _load_reference_data(self) -> Dict[str, Any]:
+        """Load reference genomic data for calibration."""
+        """Load reference genomic data for calibration."""
         """Load reference genomic data for calibration."""
         if self.reference_data_path and self.reference_data_path.exists():
             # Load actual reference data
@@ -170,7 +197,10 @@ class KANHDCalibrationSuite:
             # Generate synthetic reference data
             return self._generate_synthetic_reference()
 
-    def _generate_synthetic_reference(self) -> Dict[str, Any]:
+            def _generate_synthetic_reference(self) -> Dict[str, Any]:
+            def _generate_synthetic_reference(self) -> Dict[str, Any]:
+        """Generate synthetic genomic data for testing."""
+        """Generate synthetic genomic data for testing."""
         """Generate synthetic genomic data for testing."""
         np.random.seed(42)
 
@@ -204,13 +234,15 @@ class KANHDCalibrationSuite:
             },
         }
 
-    def run_calibration(
+            def run_calibration(
         self,
         compression_targets: List[float] = [10, 20, 50, 100, 200],
         hd_dimensions: List[int] = [10000, 50000, 100000],
         kan_degrees: List[int] = [3, 5, 7],
         n_repeats: int = 3,
     ) -> CalibrationCurve:
+        """
+        """
         """
         Run comprehensive calibration across parameter space.
 
@@ -295,16 +327,18 @@ class KANHDCalibrationSuite:
         )
 
         # Save results
-        self._save_calibration_results(curve)
+                        self._save_calibration_results(curve)
 
         # Generate plots
-        self._generate_calibration_plots(curve)
+                        self._generate_calibration_plots(curve)
 
         return curve
 
-    def _run_single_calibration(
+                        def _run_single_calibration(
         self, compression_target: float, hd_dimension: int, kan_spline_degree: int
     ) -> CalibrationMetrics:
+        """Run calibration for single configuration."""
+        """Run calibration for single configuration."""
         """Run calibration for single configuration."""
         start_time = time.time()
 
@@ -401,7 +435,10 @@ class KANHDCalibrationSuite:
             memory_usage_mb=memory_usage_mb,
         )
 
-    def _average_metrics(self, metrics_list: List[CalibrationMetrics]) -> CalibrationMetrics:
+            def _average_metrics(self, metrics_list: List[CalibrationMetrics]) -> CalibrationMetrics:
+            def _average_metrics(self, metrics_list: List[CalibrationMetrics]) -> CalibrationMetrics:
+        """Average metrics across multiple runs."""
+        """Average metrics across multiple runs."""
         """Average metrics across multiple runs."""
         if not metrics_list:
             raise ValueError("No metrics to average")
@@ -417,7 +454,10 @@ class KANHDCalibrationSuite:
 
         return CalibrationMetrics(**averaged)
 
-    def _compute_pareto_frontier(self, points: List[CalibrationPoint]) -> List[int]:
+            def _compute_pareto_frontier(self, points: List[CalibrationPoint]) -> List[int]:
+            def _compute_pareto_frontier(self, points: List[CalibrationPoint]) -> List[int]:
+        """
+        """
         """
         Compute Pareto frontier for compression vs accuracy trade-off.
 
@@ -449,7 +489,10 @@ class KANHDCalibrationSuite:
 
         return pareto_indices
 
-    def _fit_interpolation(self, points: List[CalibrationPoint]) -> Dict[str, Any]:
+                def _fit_interpolation(self, points: List[CalibrationPoint]) -> Dict[str, Any]:
+                def _fit_interpolation(self, points: List[CalibrationPoint]) -> Dict[str, Any]:
+        """Fit interpolation functions for calibration curves."""
+        """Fit interpolation functions for calibration curves."""
         """Fit interpolation functions for calibration curves."""
         from scipy.interpolate import interp1d
 
@@ -480,7 +523,10 @@ class KANHDCalibrationSuite:
 
         return interpolations
 
-    def _save_calibration_results(self, curve: CalibrationCurve) -> None:
+            def _save_calibration_results(self, curve: CalibrationCurve) -> None:
+            def _save_calibration_results(self, curve: CalibrationCurve) -> None:
+        """Save calibration results to disk."""
+        """Save calibration results to disk."""
         """Save calibration results to disk."""
         # Save raw data
         data = {
@@ -503,7 +549,10 @@ class KANHDCalibrationSuite:
 
         logger.info(f"Saved calibration results to {output_path}")
 
-    def _generate_calibration_plots(self, curve: CalibrationCurve) -> None:
+            def _generate_calibration_plots(self, curve: CalibrationCurve) -> None:
+            def _generate_calibration_plots(self, curve: CalibrationCurve) -> None:
+        """Generate calibration plots."""
+        """Generate calibration plots."""
         """Generate calibration plots."""
         # Create figure with subplots
         fig, axes = plt.subplots(2, 2, figsize=(12, 10))
@@ -585,9 +634,12 @@ class KANHDCalibrationSuite:
         logger.info(f"Saved calibration plot to {plot_path}")
 
         # Generate Pareto curve plot
-        self._generate_pareto_plot(curve)
+            self._generate_pareto_plot(curve)
 
-    def _generate_pareto_plot(self, curve: CalibrationCurve) -> None:
+            def _generate_pareto_plot(self, curve: CalibrationCurve) -> None:
+            def _generate_pareto_plot(self, curve: CalibrationCurve) -> None:
+        """Generate focused Pareto frontier plot."""
+        """Generate focused Pareto frontier plot."""
         """Generate focused Pareto frontier plot."""
         fig, ax = plt.subplots(figsize=(10, 8))
 
@@ -663,9 +715,11 @@ class KANHDCalibrationSuite:
 
         logger.info(f"Saved Pareto plot to {plot_path}")
 
-    def recommend_configuration(
+            def recommend_configuration(
         self, curve: CalibrationCurve, use_case: str, prefer_compression: float = 0.5
     ) -> CalibrationPoint:
+        """
+        """
         """
         Recommend configuration for specific use case.
 
@@ -720,7 +774,10 @@ class KANHDCalibrationSuite:
 
 
 # Example usage
-    def run_calibration_example():
+                def run_calibration_example():
+                def run_calibration_example():
+"""Example calibration run."""
+    """Example calibration run."""
     """Example calibration run."""
     # Initialize suite
     suite = KANHDCalibrationSuite(output_dir=Path("/tmp/genomevault_calibration"))

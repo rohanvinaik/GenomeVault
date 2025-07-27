@@ -22,29 +22,42 @@ from genomevault.local_processing.differential_privacy_audit import PrivacyMecha
 
 class MockModel:
     """Mock model for testing"""
+    """Mock model for testing"""
+    """Mock model for testing"""
 
 
     def __init__(self) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
     """TODO: Add docstring for __init__"""
         self.weights = {"layer1": np.random.randn(100, 50), "layer2": np.random.randn(50, 2)}
 
 
-    def parameters(self) -> None:
+        def parameters(self) -> None:
+            """TODO: Add docstring for parameters"""
+        """TODO: Add docstring for parameters"""
     """TODO: Add docstring for parameters"""
     return [self.weights["layer1"], self.weights["layer2"]]
 
 
-    def __str__(self) -> None:
+            def __str__(self) -> None:
+                """TODO: Add docstring for __str__"""
+        """TODO: Add docstring for __str__"""
     """TODO: Add docstring for __str__"""
     return "MockModel(layers=2)"
 
 
 class TestProofOfTrainingIntegration:
     """Test suite for PoT integration"""
+    """Test suite for PoT integration"""
+    """Test suite for PoT integration"""
 
     @pytest.fixture
 
     def temp_dir(self) -> None:
+    def temp_dir(self) -> None:
+        """Create temporary directory for test artifacts"""
+        """Create temporary directory for test artifacts"""
     """Create temporary directory for test artifacts"""
         temp_dir = tempfile.mkdtemp()
         yield temp_dir
@@ -52,7 +65,10 @@ class TestProofOfTrainingIntegration:
 
     @pytest.fixture
 
-    def pot_config(self, temp_dir) -> None:
+        def pot_config(self, temp_dir) -> None:
+        def pot_config(self, temp_dir) -> None:
+        """Create test configuration"""
+        """Create test configuration"""
     """Create test configuration"""
         return {
             "storage_path": temp_dir,
@@ -65,12 +81,18 @@ class TestProofOfTrainingIntegration:
 
     @pytest.fixture
 
-    def pot_integration(self, pot_config) -> None:
+            def pot_integration(self, pot_config) -> None:
+            def pot_integration(self, pot_config) -> None:
+    """Create PoT integration instance"""
+        """Create PoT integration instance"""
     """Create PoT integration instance"""
         return ProofOfTrainingIntegration(pot_config)
 
 
-    def test_training_session_lifecycle(self, pot_integration, temp_dir) -> None:
+                def test_training_session_lifecycle(self, pot_integration, temp_dir) -> None:
+                def test_training_session_lifecycle(self, pot_integration, temp_dir) -> None:
+    """Test complete training session lifecycle"""
+        """Test complete training session lifecycle"""
     """Test complete training session lifecycle"""
         # Start session
         session_id = "test_session_001"
@@ -135,7 +157,10 @@ class TestProofOfTrainingIntegration:
         assert "commitments" in proof
 
 
-    def test_multi_modal_training(self, pot_integration) -> None:
+                    def test_multi_modal_training(self, pot_integration) -> None:
+                    def test_multi_modal_training(self, pot_integration) -> None:
+        """Test multi-modal training support"""
+        """Test multi-modal training support"""
     """Test multi-modal training support"""
         pot_integration.config["multimodal"] = True
 
@@ -168,7 +193,10 @@ class TestProofOfTrainingIntegration:
         assert "proof" in result
 
 
-    def test_privacy_budget_tracking(self, pot_integration) -> None:
+            def test_privacy_budget_tracking(self, pot_integration) -> None:
+            def test_privacy_budget_tracking(self, pot_integration) -> None:
+        """Test privacy budget enforcement"""
+        """Test privacy budget enforcement"""
     """Test privacy budget enforcement"""
         session_id = "privacy_test"
 
@@ -208,7 +236,10 @@ class TestProofOfTrainingIntegration:
         assert privacy_exceeded, "Privacy budget should have been exceeded"
 
 
-    def test_clinical_validation(self, pot_integration) -> None:
+                def test_clinical_validation(self, pot_integration) -> None:
+                def test_clinical_validation(self, pot_integration) -> None:
+        """Test clinical validation functionality"""
+        """Test clinical validation functionality"""
     """Test clinical validation functionality"""
         model = MockModel()
         test_data = (np.random.randn(100, 100), np.random.randint(0, 2, 100))
@@ -227,7 +258,10 @@ class TestProofOfTrainingIntegration:
         assert "limitations" in result
 
 
-    def test_drift_monitoring(self, pot_integration) -> None:
+                    def test_drift_monitoring(self, pot_integration) -> None:
+                    def test_drift_monitoring(self, pot_integration) -> None:
+    """Test real-time drift monitoring"""
+        """Test real-time drift monitoring"""
     """Test real-time drift monitoring"""
         model = MockModel()
 
@@ -262,7 +296,10 @@ class TestProofOfTrainingIntegration:
         assert summary["total_predictions"] == 20
 
 
-    def test_federated_learning_support(self, pot_integration) -> None:
+                def test_federated_learning_support(self, pot_integration) -> None:
+                def test_federated_learning_support(self, pot_integration) -> None:
+        """Test federated learning lineage tracking"""
+        """Test federated learning lineage tracking"""
     """Test federated learning lineage tracking"""
         session_id = "federated_test"
 
@@ -306,7 +343,10 @@ class TestProofOfTrainingIntegration:
         assert len(path) >= 2
 
 
-    def test_proof_verification(self, pot_integration, temp_dir) -> None:
+                    def test_proof_verification(self, pot_integration, temp_dir) -> None:
+                    def test_proof_verification(self, pot_integration, temp_dir) -> None:
+    """Test proof verification process"""
+        """Test proof verification process"""
     """Test proof verification process"""
         # Create and complete a session
         session_id = "verify_test"
@@ -349,7 +389,10 @@ class TestProofOfTrainingIntegration:
         assert loaded_proof["constraints_satisfied"] == True
 
 
-    def test_semantic_drift_analysis(self, pot_integration, temp_dir) -> None:
+            def test_semantic_drift_analysis(self, pot_integration, temp_dir) -> None:
+            def test_semantic_drift_analysis(self, pot_integration, temp_dir) -> None:
+        """Test semantic drift analysis functionality"""
+        """Test semantic drift analysis functionality"""
     """Test semantic drift analysis functionality"""
         session_id = "semantic_test"
 
@@ -390,7 +433,10 @@ class TestProofOfTrainingIntegration:
             assert "anomalies_detected" in analysis
 
 
-    def test_error_handling(self, pot_integration) -> None:
+            def test_error_handling(self, pot_integration) -> None:
+            def test_error_handling(self, pot_integration) -> None:
+        """Test error handling in various scenarios"""
+        """Test error handling in various scenarios"""
     """Test error handling in various scenarios"""
 
         # Test invalid session ID
@@ -409,9 +455,14 @@ class TestProofOfTrainingIntegration:
 
 class TestEndToEndScenarios:
     """End-to-end integration scenarios"""
+    """End-to-end integration scenarios"""
+    """End-to-end integration scenarios"""
 
 
     def test_genomic_classifier_workflow(self) -> None:
+    def test_genomic_classifier_workflow(self) -> None:
+        """Test complete workflow for genomic classifier"""
+        """Test complete workflow for genomic classifier"""
     """Test complete workflow for genomic classifier"""
         config = {
             "storage_path": "./test_e2e_genomic",

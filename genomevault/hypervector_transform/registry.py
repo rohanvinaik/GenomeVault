@@ -21,6 +21,8 @@ logger = logging.getLogger(__name__)
 
 class HypervectorRegistry:
     """
+    """
+    """
     Manage hypervector encoding versions and parameters.
 
     Ensures reproducibility by tracking:
@@ -30,34 +32,38 @@ class HypervectorRegistry:
     - Compatibility mappings
     """
 
-    def __init__(self, registry_path: str = "./hypervector_registry.json") -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        def __init__(self, registry_path: str = "./hypervector_registry.json") -> None:
+            """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize registry.
 
         Args:
             registry_path: Path to registry file
         """
-        self.registry_path = Path(registry_path)
-        self.versions = {}
-        self.current_version = None
-        self.compatibility_map = {}
-        self.performance_metrics = {}
+            self.registry_path = Path(registry_path)
+            self.versions = {}
+            self.current_version = None
+            self.compatibility_map = {}
+            self.performance_metrics = {}
 
         # Load existing registry
         if self.registry_path.exists():
-        self._load_registry()
+            self._load_registry()
         else:
-        self._initialize_registry()
+            self._initialize_registry()
 
-    def _initialize_registry(self) -> None:
-           """TODO: Add docstring for _initialize_registry"""
-     """Initialize new registry with default versions matching spec."""
+            def _initialize_registry(self) -> None:
+                """TODO: Add docstring for _initialize_registry"""
+        """TODO: Add docstring for _initialize_registry"""
+            """TODO: Add docstring for _initialize_registry"""
+    """Initialize new registry with default versions matching spec."""
         # Default version for Stage 1
         default_version = "v1.0.0"
 
         # Production-ready configurations
-        self.versions = {
+                self.versions = {
             default_version: {
                 "params": {
                     "dimension": 10000,
@@ -93,32 +99,36 @@ class HypervectorRegistry:
             },
         }
 
-        self.current_version = default_version
-        self._save_registry()
+                self.current_version = default_version
+                self._save_registry()
 
         logger.info(f"Initialized hypervector registry with version {default_version}")
 
-    def _load_registry(self) -> None:
-           """TODO: Add docstring for _load_registry"""
-     """Load registry from file."""
+                def _load_registry(self) -> None:
+                    """TODO: Add docstring for _load_registry"""
+        """TODO: Add docstring for _load_registry"""
+            """TODO: Add docstring for _load_registry"""
+    """Load registry from file."""
         try:
             with open(self.registry_path, "r") as f:
                 data = json.load(f)
 
-        self.versions = data.get("versions", {})
-        self.current_version = data.get("current_version")
-        self.compatibility_map = data.get("compatibility_map", {})
-        self.performance_metrics = data.get("performance_metrics", {})
+                self.versions = data.get("versions", {})
+                self.current_version = data.get("current_version")
+                self.compatibility_map = data.get("compatibility_map", {})
+                self.performance_metrics = data.get("performance_metrics", {})
 
             logger.info(f"Loaded registry with {len(self.versions)} versions")
 
         except Exception:
             logger.error(f"Failed to load registry: {e}")
-        self._initialize_registry()
+            self._initialize_registry()
 
-    def _save_registry(self) -> None:
-           """TODO: Add docstring for _save_registry"""
-     """Save registry to file with backup."""
+            def _save_registry(self) -> None:
+                """TODO: Add docstring for _save_registry"""
+        """TODO: Add docstring for _save_registry"""
+            """TODO: Add docstring for _save_registry"""
+    """Save registry to file with backup."""
         data = {
             "versions": self.versions,
             "current_version": self.current_version,
@@ -131,7 +141,7 @@ class HypervectorRegistry:
         backup_path = None
         if self.registry_path.exists():
             backup_path = self.registry_path.with_suffix(".backup.json")
-        self.registry_path.rename(backup_path)
+            self.registry_path.rename(backup_path)
 
         try:
             # Write with pretty formatting
@@ -149,7 +159,7 @@ class HypervectorRegistry:
                 backup_path.rename(self.registry_path)
             raise
 
-    def register_version(
+                def register_version(
         self,
         version: str,
         params: Dict[str, Any],
@@ -157,8 +167,10 @@ class HypervectorRegistry:
         force: bool = False,
         performance_data: Optional[Dict[str, float]] = None,
     ) -> None:
-           """TODO: Add docstring for register_version"""
-     """
+        """TODO: Add docstring for register_version"""
+        """TODO: Add docstring for register_version"""
+            """TODO: Add docstring for register_version"""
+    """
         Register new encoding version.
 
         Args:
@@ -197,7 +209,7 @@ class HypervectorRegistry:
         elif params["dimension"] <= 20000:
             tier = "full"
 
-        self.versions[version] = {
+            self.versions[version] = {
             "params": params,
             "fingerprint": fingerprint,
             "created_at": datetime.now().isoformat(),
@@ -207,15 +219,17 @@ class HypervectorRegistry:
 
         # Add performance data if provided
         if performance_data:
-        self.performance_metrics[version] = performance_data
+            self.performance_metrics[version] = performance_data
 
-        self._save_registry()
+            self._save_registry()
 
         logger.info(f"Registered version {version} with fingerprint {fingerprint}")
 
-    def get_encoder(self, version: Optional[str] = None) -> HypervectorEncoder:
-           """TODO: Add docstring for get_encoder"""
-     """
+            def get_encoder(self, version: Optional[str] = None) -> HypervectorEncoder:
+                """TODO: Add docstring for get_encoder"""
+        """TODO: Add docstring for get_encoder"""
+            """TODO: Add docstring for get_encoder"""
+    """
         Get encoder with specific version parameters.
 
         Args:
@@ -252,27 +266,31 @@ class HypervectorRegistry:
 
         return encoder
 
-    def set_current_version(self, version: str) -> None:
-           """TODO: Add docstring for set_current_version"""
-     """Set current default version."""
+            def set_current_version(self, version: str) -> None:
+                """TODO: Add docstring for set_current_version"""
+        """TODO: Add docstring for set_current_version"""
+            """TODO: Add docstring for set_current_version"""
+    """Set current default version."""
         if version not in self.versions:
             raise ValueError(f"Unknown version: {version}")
 
         old_version = self.current_version
-        self.current_version = version
-        self._save_registry()
+            self.current_version = version
+            self._save_registry()
 
         logger.info(f"Changed current version from {old_version} to {version}")
 
-    def add_compatibility(
+            def add_compatibility(
         self,
         version1: str,
         version2: str,
         transform_function: Optional[str] = None,
         bidirectional: bool = True,
     ) -> None:
-           """TODO: Add docstring for add_compatibility"""
-     """
+        """TODO: Add docstring for add_compatibility"""
+        """TODO: Add docstring for add_compatibility"""
+            """TODO: Add docstring for add_compatibility"""
+    """
         Mark two versions as compatible.
 
         Args:
@@ -294,16 +312,18 @@ class HypervectorRegistry:
             "added_at": datetime.now().isoformat(),
         }
 
-        self.compatibility_map[key] = compatibility_info
+            self.compatibility_map[key] = compatibility_info
 
         if bidirectional:
-        self.compatibility_map[reverse_key] = compatibility_info
+            self.compatibility_map[reverse_key] = compatibility_info
 
-        self._save_registry()
+            self._save_registry()
 
-    def check_compatibility(self, version1: str, version2: str) -> Dict[str, Any]:
-           """TODO: Add docstring for check_compatibility"""
-     """
+            def check_compatibility(self, version1: str, version2: str) -> Dict[str, Any]:
+                """TODO: Add docstring for check_compatibility"""
+        """TODO: Add docstring for check_compatibility"""
+            """TODO: Add docstring for check_compatibility"""
+    """
         Check if two versions are compatible.
 
         Returns:
@@ -339,9 +359,11 @@ class HypervectorRegistry:
                 ),
             }
 
-    def _generate_fingerprint(self, params: Dict[str, Any]) -> str:
-           """TODO: Add docstring for _generate_fingerprint"""
-     """Generate unique fingerprint for parameters."""
+            def _generate_fingerprint(self, params: Dict[str, Any]) -> str:
+                """TODO: Add docstring for _generate_fingerprint"""
+        """TODO: Add docstring for _generate_fingerprint"""
+            """TODO: Add docstring for _generate_fingerprint"""
+    """Generate unique fingerprint for parameters."""
         # Create stable string representation
         param_str = json.dumps(
             {
@@ -356,9 +378,11 @@ class HypervectorRegistry:
         # Generate SHA256 hash
         return hashlib.sha256(param_str.encode()).hexdigest()[:16]
 
-    def list_versions(self) -> List[Dict[str, Any]]:
-           """TODO: Add docstring for list_versions"""
-     """List all registered versions with details."""
+                def list_versions(self) -> List[Dict[str, Any]]:
+                    """TODO: Add docstring for list_versions"""
+        """TODO: Add docstring for list_versions"""
+            """TODO: Add docstring for list_versions"""
+    """List all registered versions with details."""
         versions = []
 
         for version, info in self.versions.items():
@@ -381,9 +405,11 @@ class HypervectorRegistry:
 
         return sorted(versions, key=lambda x: x["created_at"], reverse=True)
 
-    def export_version(self, version: str, filepath: str) -> None:
-           """TODO: Add docstring for export_version"""
-     """Export version configuration for sharing."""
+                def export_version(self, version: str, filepath: str) -> None:
+                    """TODO: Add docstring for export_version"""
+        """TODO: Add docstring for export_version"""
+            """TODO: Add docstring for export_version"""
+    """Export version configuration for sharing."""
         if version not in self.versions:
             raise ValueError(f"Unknown version: {version}")
 
@@ -402,9 +428,11 @@ class HypervectorRegistry:
 
         logger.info(f"Exported version {version} to {filepath}")
 
-    def import_version(self, filepath: str, version: Optional[str] = None, force: bool = False) -> None:
-           """TODO: Add docstring for import_version"""
-     """Import version configuration from file."""
+            def import_version(self, filepath: str, version: Optional[str] = None, force: bool = False) -> None:
+                """TODO: Add docstring for import_version"""
+        """TODO: Add docstring for import_version"""
+            """TODO: Add docstring for import_version"""
+    """Import version configuration from file."""
         with open(filepath, "r") as f:
             data = json.load(f)
 
@@ -416,16 +444,18 @@ class HypervectorRegistry:
         if data.get("registry_version", "1.0") != "1.0":
             logger.warning(f"Registry version mismatch: {data.get('registry_version')} != 1.0")
 
-        self.register_version(
+            self.register_version(
             version=version,
             params=data["params"],
             description=data.get("description", f"Imported from {filepath}"),
             force=force,
         )
 
-    def get_version_info(self, version: str) -> Dict[str, Any]:
-           """TODO: Add docstring for get_version_info"""
-     """Get detailed information about a specific version."""
+            def get_version_info(self, version: str) -> Dict[str, Any]:
+                """TODO: Add docstring for get_version_info"""
+        """TODO: Add docstring for get_version_info"""
+            """TODO: Add docstring for get_version_info"""
+    """Get detailed information about a specific version."""
         if version not in self.versions:
             raise ValueError(f"Unknown version: {version}")
 
@@ -444,9 +474,11 @@ class HypervectorRegistry:
 
         return info
 
-    def benchmark_version(self, version: str, num_samples: int = 100) -> Dict[str, float]:
-           """TODO: Add docstring for benchmark_version"""
-     """Benchmark a specific version's performance."""
+                def benchmark_version(self, version: str, num_samples: int = 100) -> Dict[str, float]:
+                    """TODO: Add docstring for benchmark_version"""
+        """TODO: Add docstring for benchmark_version"""
+            """TODO: Add docstring for benchmark_version"""
+    """Benchmark a specific version's performance."""
         import time
 
         encoder = self.get_encoder(version)
@@ -472,38 +504,44 @@ class HypervectorRegistry:
         }
 
         # Store metrics
-        self.performance_metrics[version] = metrics
-        self._save_registry()
+            self.performance_metrics[version] = metrics
+            self._save_registry()
 
         return metrics
 
 
 class VersionMigrator:
     """
+    """
+    """
     Handle migrations between hypervector encoding versions.
     Implements Stage 1 requirement for version compatibility.
     """
 
     def __init__(self, registry: HypervectorRegistry) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize migrator.
 
         Args:
             registry: Hypervector registry
         """
-        self.registry = registry
-        self.migration_functions = {
+            self.registry = registry
+            self.migration_functions = {
             "dimension_reduction": self._migrate_dimension_reduction,
             "dimension_expansion": self._migrate_dimension_expansion,
             "projection_change": self._migrate_projection_change,
         }
 
-    def migrate_hypervector(
+            def migrate_hypervector(
         self, hv: torch.Tensor, from_version: str, to_version: str, preserve_norm: bool = True
     ) -> torch.Tensor:
-           """TODO: Add docstring for migrate_hypervector"""
-     """
+        """TODO: Add docstring for migrate_hypervector"""
+        """TODO: Add docstring for migrate_hypervector"""
+            """TODO: Add docstring for migrate_hypervector"""
+    """
         Migrate hypervector between versions.
 
         Args:
@@ -552,11 +590,13 @@ class VersionMigrator:
         logger.info(f"Migrated hypervector from {from_version} to {to_version}")
         return result
 
-    def _migrate_dimension_reduction(
+            def _migrate_dimension_reduction(
         self, hv: torch.Tensor, from_params: Dict[str, Any], to_params: Dict[str, Any]
     ) -> torch.Tensor:
-           """TODO: Add docstring for _migrate_dimension_reduction"""
-     """Reduce hypervector dimension using stable projection."""
+        """TODO: Add docstring for _migrate_dimension_reduction"""
+        """TODO: Add docstring for _migrate_dimension_reduction"""
+            """TODO: Add docstring for _migrate_dimension_reduction"""
+    """Reduce hypervector dimension using stable projection."""
         from_dim = from_params["dimension"]
         to_dim = to_params["dimension"]
 
@@ -572,11 +612,13 @@ class VersionMigrator:
 
         return reduced
 
-    def _migrate_dimension_expansion(
+        def _migrate_dimension_expansion(
         self, hv: torch.Tensor, from_params: Dict[str, Any], to_params: Dict[str, Any]
     ) -> torch.Tensor:
-           """TODO: Add docstring for _migrate_dimension_expansion"""
-     """Expand hypervector dimension with controlled padding."""
+        """TODO: Add docstring for _migrate_dimension_expansion"""
+        """TODO: Add docstring for _migrate_dimension_expansion"""
+            """TODO: Add docstring for _migrate_dimension_expansion"""
+    """Expand hypervector dimension with controlled padding."""
         from_dim = from_params["dimension"]
         to_dim = to_params["dimension"]
 
@@ -604,11 +646,13 @@ class VersionMigrator:
 
         return expanded
 
-    def _migrate_projection_change(
+            def _migrate_projection_change(
         self, hv: torch.Tensor, from_params: Dict[str, Any], to_params: Dict[str, Any]
     ) -> torch.Tensor:
-           """TODO: Add docstring for _migrate_projection_change"""
-     """
+        """TODO: Add docstring for _migrate_projection_change"""
+        """TODO: Add docstring for _migrate_projection_change"""
+            """TODO: Add docstring for _migrate_projection_change"""
+    """
         Change projection type (approximate).
         This is necessarily lossy as we cannot recover the original data.
         """
@@ -638,11 +682,13 @@ class VersionMigrator:
             logger.warning(f"Unknown projection type: {to_type}")
             return hv
 
-    def create_migration_report(
+            def create_migration_report(
         self, from_version: str, to_version: str, test_vectors: int = 100
     ) -> Dict[str, Any]:
-           """TODO: Add docstring for create_migration_report"""
-     """Create detailed migration report between versions."""
+        """TODO: Add docstring for create_migration_report"""
+        """TODO: Add docstring for create_migration_report"""
+            """TODO: Add docstring for create_migration_report"""
+    """Create detailed migration report between versions."""
         report = {
             "from_version": from_version,
             "to_version": to_version,

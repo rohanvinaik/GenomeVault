@@ -30,6 +30,8 @@ logger = get_logger(__name__)
 
 class VariantPresenceCircuit(BaseCircuit):
     """
+    """
+    """
     Circuit for proving presence of a genetic variant without revealing position
 
     Public inputs:
@@ -43,37 +45,43 @@ class VariantPresenceCircuit(BaseCircuit):
     - witness_randomness: Randomness for zero-knowledge
     """
 
-    def __init__(self, merkle_depth: int = 20) -> None:
+        def __init__(self, merkle_depth: int = 20) -> None:
+            """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
     super().__init__("variant_presence", 5000)
-        self.merkle_depth = merkle_depth
-        self.merkle_circuit = MerkleTreeCircuit(merkle_depth)
+            self.merkle_depth = merkle_depth
+            self.merkle_circuit = MerkleTreeCircuit(merkle_depth)
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
-           """TODO: Add docstring for setup"""
-     """Setup variant presence circuit"""
+            def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
+                """TODO: Add docstring for setup"""
+        """TODO: Add docstring for setup"""
+            """TODO: Add docstring for setup"""
+    """Setup variant presence circuit"""
         # Public inputs
-        self.variant_hash = FieldElement(int(public_inputs["variant_hash"], 16))
-        self.reference_hash = FieldElement(int(public_inputs["reference_hash"], 16))
-        self.commitment_root = FieldElement(int(public_inputs["commitment_root"], 16))
+                self.variant_hash = FieldElement(int(public_inputs["variant_hash"], 16))
+                self.reference_hash = FieldElement(int(public_inputs["reference_hash"], 16))
+                self.commitment_root = FieldElement(int(public_inputs["commitment_root"], 16))
 
         # Private inputs
-        self.variant_data = private_inputs["variant_data"]
-        self.merkle_proof = private_inputs["merkle_proof"]
-        self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
+                self.variant_data = private_inputs["variant_data"]
+                self.merkle_proof = private_inputs["merkle_proof"]
+                self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
 
         # Compute variant leaf
-        self.variant_leaf = self._compute_variant_leaf()
+                self.variant_leaf = self._compute_variant_leaf()
 
-    def generate_constraints(self) -> None:
-           """TODO: Add docstring for generate_constraints"""
-     """Generate variant presence constraints"""
+                def generate_constraints(self) -> None:
+                    """TODO: Add docstring for generate_constraints"""
+        """TODO: Add docstring for generate_constraints"""
+            """TODO: Add docstring for generate_constraints"""
+    """Generate variant presence constraints"""
         # 1. Verify variant hash matches computed hash
         computed_hash = self._hash_variant(self.variant_data)
-        self.add_constraint(computed_hash, self.variant_hash, FieldElement(0), ql=1, qr=-1)
+                    self.add_constraint(computed_hash, self.variant_hash, FieldElement(0), ql=1, qr=-1)
 
         # 2. Verify variant is in Merkle tree
-        self.merkle_circuit.setup(
+                    self.merkle_circuit.setup(
             public_inputs={"root": self.commitment_root.value},
             private_inputs={
                 "leaf": self.variant_leaf.value,
@@ -81,14 +89,14 @@ class VariantPresenceCircuit(BaseCircuit):
                 "indices": self.merkle_proof["indices"],
             },
         )
-        self.merkle_circuit.generate_constraints()
+                    self.merkle_circuit.generate_constraints()
 
         # Add Merkle constraints to this circuit
-        self.constraints.extend(self.merkle_circuit.constraints)
+                    self.constraints.extend(self.merkle_circuit.constraints)
 
         # 3. Add blinding factor for zero-knowledge
         blinded_variant = self.variant_leaf + self.witness_randomness
-        self.add_constraint(
+                    self.add_constraint(
             blinded_variant,
             blinded_variant,
             FieldElement(0),
@@ -96,9 +104,11 @@ class VariantPresenceCircuit(BaseCircuit):
             qr=-1,  # Identity constraint with blinding
         )
 
-    def _compute_variant_leaf(self) -> FieldElement:
-           """TODO: Add docstring for _compute_variant_leaf"""
-     """Compute Merkle tree leaf for variant"""
+                    def _compute_variant_leaf(self) -> FieldElement:
+                        """TODO: Add docstring for _compute_variant_leaf"""
+        """TODO: Add docstring for _compute_variant_leaf"""
+            """TODO: Add docstring for _compute_variant_leaf"""
+    """Compute Merkle tree leaf for variant"""
         variant_str = (
             "{self.variant_data['chr']}:"
             "{self.variant_data['pos']}:"
@@ -109,9 +119,11 @@ class VariantPresenceCircuit(BaseCircuit):
         leaf_hash = hashlib.sha256(variant_str.encode()).hexdigest()
         return FieldElement(int(leaf_hash, 16))
 
-    def _hash_variant(self, variant_data: Dict) -> FieldElement:
-           """TODO: Add docstring for _hash_variant"""
-     """Hash variant data"""
+                        def _hash_variant(self, variant_data: Dict) -> FieldElement:
+                            """TODO: Add docstring for _hash_variant"""
+        """TODO: Add docstring for _hash_variant"""
+            """TODO: Add docstring for _hash_variant"""
+    """Hash variant data"""
         variant_str = (
             "{variant_data['chr']}:"
             "{variant_data['pos']}:"
@@ -123,6 +135,8 @@ class VariantPresenceCircuit(BaseCircuit):
 
 
 class PolygenenicRiskScoreCircuit(BaseCircuit):
+    """
+    """
     """
     Circuit for computing Polygenic Risk Score without revealing variants
 
@@ -139,38 +153,44 @@ class PolygenenicRiskScoreCircuit(BaseCircuit):
     - witness_randomness: Randomness for zero-knowledge
     """
 
-    def __init__(self, max_variants: int = 1000) -> None:
+        def __init__(self, max_variants: int = 1000) -> None:
+            """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
     super().__init__("polygenic_risk_score", 20000)
-        self.max_variants = max_variants
-        self.range_circuit = RangeProofCircuit(bit_width=32)
+            self.max_variants = max_variants
+            self.range_circuit = RangeProofCircuit(bit_width=32)
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
-           """TODO: Add docstring for setup"""
-     """Setup PRS circuit"""
+            def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
+                """TODO: Add docstring for setup"""
+        """TODO: Add docstring for setup"""
+            """TODO: Add docstring for setup"""
+    """Setup PRS circuit"""
         # Public inputs
-        self.prs_model_hash = FieldElement(int(public_inputs["prs_model"], 16))
-        self.score_range = public_inputs["score_range"]
-        self.result_commitment = FieldElement(int(public_inputs["result_commitment"], 16))
-        self.genome_commitment = FieldElement(int(public_inputs["genome_commitment"], 16))
+                self.prs_model_hash = FieldElement(int(public_inputs["prs_model"], 16))
+                self.score_range = public_inputs["score_range"]
+                self.result_commitment = FieldElement(int(public_inputs["result_commitment"], 16))
+                self.genome_commitment = FieldElement(int(public_inputs["genome_commitment"], 16))
 
         # Private inputs
-        self.variants = [FieldElement(v) for v in private_inputs["variants"]]
-        self.weights = [
+                self.variants = [FieldElement(v) for v in private_inputs["variants"]]
+                self.weights = [
             FieldElement(int(w * 1000)) for w in private_inputs["weights"]
         ]  # Scale weights
-        self.merkle_proofs = private_inputs["merkle_proofs"]
-        self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
+                self.merkle_proofs = private_inputs["merkle_proofs"]
+                self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
 
         # Ensure we have matching variants and weights
         assert len(self.variants) == len(self.weights)
 
-    def generate_constraints(self) -> None:
-           """TODO: Add docstring for generate_constraints"""
-     """Generate PRS calculation constraints"""
+                def generate_constraints(self) -> None:
+                    """TODO: Add docstring for generate_constraints"""
+        """TODO: Add docstring for generate_constraints"""
+            """TODO: Add docstring for generate_constraints"""
+    """Generate PRS calculation constraints"""
         # 1. Verify each variant genotype is valid (0, 1, or 2)
         for i, variant in enumerate(self.variants):
-        self._add_genotype_constraint(variant)
+            self._add_genotype_constraint(variant)
 
         # 2. Calculate weighted sum
         score = FieldElement(0)
@@ -179,62 +199,70 @@ class PolygenenicRiskScoreCircuit(BaseCircuit):
             score = score + contribution
 
             # Add multiplication constraint
-        self.add_multiplication_gate(variant, weight, contribution)
+            self.add_multiplication_gate(variant, weight, contribution)
 
         # 3. Scale score back to normal range
         scaled_score = score * FieldElement(1000).inverse()  # Divide by 1000
 
         # 4. Verify score is in valid range
-        self.range_circuit.setup(
+            self.range_circuit.setup(
             public_inputs={
                 "min": int(self.score_range["min"] * 1000),
                 "max": int(self.score_range["max"] * 1000),
             },
             private_inputs={"value": score.value},
         )
-        self.range_circuit.generate_constraints()
-        self.constraints.extend(self.range_circuit.constraints)
+            self.range_circuit.generate_constraints()
+            self.constraints.extend(self.range_circuit.constraints)
 
         # 5. Create and verify commitment
         commitment = self._commit_score(scaled_score, self.witness_randomness)
-        self.add_constraint(commitment, self.result_commitment, FieldElement(0), ql=1, qr=-1)
+            self.add_constraint(commitment, self.result_commitment, FieldElement(0), ql=1, qr=-1)
 
         # 6. Verify PRS model hash
         model_hash = self._hash_prs_model(self.weights)
-        self.add_constraint(model_hash, self.prs_model_hash, FieldElement(0), ql=1, qr=-1)
+            self.add_constraint(model_hash, self.prs_model_hash, FieldElement(0), ql=1, qr=-1)
 
-    def _add_genotype_constraint(self, genotype: FieldElement) -> None:
-           """TODO: Add docstring for _add_genotype_constraint"""
-     """Constrain genotype to be 0, 1, or 2"""
+            def _add_genotype_constraint(self, genotype: FieldElement) -> None:
+                """TODO: Add docstring for _add_genotype_constraint"""
+        """TODO: Add docstring for _add_genotype_constraint"""
+            """TODO: Add docstring for _add_genotype_constraint"""
+    """Constrain genotype to be 0, 1, or 2"""
         # g * (g - 1) * (g - 2) = 0
         g_minus_1 = genotype - FieldElement(1)
         g_minus_2 = genotype - FieldElement(2)
 
         # First: g * (g - 1)
         temp = genotype * g_minus_1
-        self.add_multiplication_gate(genotype, g_minus_1, temp)
+                self.add_multiplication_gate(genotype, g_minus_1, temp)
 
         # Then: temp * (g - 2) = 0
         result = temp * g_minus_2
-        self.add_multiplication_gate(temp, g_minus_2, result)
-        self.add_constraint(result, FieldElement(0), FieldElement(0), ql=1)
+                self.add_multiplication_gate(temp, g_minus_2, result)
+                self.add_constraint(result, FieldElement(0), FieldElement(0), ql=1)
 
-    def _commit_score(self, score: FieldElement, randomness: FieldElement) -> FieldElement:
-           """TODO: Add docstring for _commit_score"""
-     """Create commitment to PRS score"""
+                def _commit_score(self, score: FieldElement, randomness: FieldElement) -> FieldElement:
+                    """TODO: Add docstring for _commit_score"""
+        """TODO: Add docstring for _commit_score"""
+            """TODO: Add docstring for _commit_score"""
+    """Create commitment to PRS score"""
         data = "PRS:{score.value}:{randomness.value}".encode()
         hash_val = hashlib.sha256(data).hexdigest()
         return FieldElement(int(hash_val, 16))
 
-    def _hash_prs_model(self, weights: List[FieldElement]) -> FieldElement:
-           """TODO: Add docstring for _hash_prs_model"""
-     """Hash PRS model weights"""
+                    def _hash_prs_model(self, weights: List[FieldElement]) -> FieldElement:
+                        """TODO: Add docstring for _hash_prs_model"""
+        """TODO: Add docstring for _hash_prs_model"""
+            """TODO: Add docstring for _hash_prs_model"""
+    """Hash PRS model weights"""
         weight_str = ":".join(str(w.value) for w in weights)
         hash_val = hashlib.sha256(weight_str.encode()).hexdigest()
         return FieldElement(int(hash_val, 16))
 
 
 class DiabetesRiskCircuit(BaseCircuit):
+    """
+    """
     """
     Circuit for diabetes risk assessment (clinical pilot)
 
@@ -251,32 +279,38 @@ class DiabetesRiskCircuit(BaseCircuit):
     - witness_randomness: Randomness for zero-knowledge
     """
 
-    def __init__(self) -> None:
+        def __init__(self) -> None:
+            """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
     super().__init__("diabetes_risk_alert", 15000)
-        self.glucose_comparison = ComparisonCircuit()
-        self.risk_comparison = ComparisonCircuit()
+            self.glucose_comparison = ComparisonCircuit()
+            self.risk_comparison = ComparisonCircuit()
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
-           """TODO: Add docstring for setup"""
-     """Setup diabetes risk circuit"""
+            def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
+                """TODO: Add docstring for setup"""
+        """TODO: Add docstring for setup"""
+            """TODO: Add docstring for setup"""
+    """Setup diabetes risk circuit"""
         # Public inputs
-        self.glucose_threshold = FieldElement(
+                self.glucose_threshold = FieldElement(
             int(public_inputs["glucose_threshold"] * 100)
         )  # Scale to avoid decimals
-        self.risk_threshold = FieldElement(int(public_inputs["risk_threshold"] * 1000))
-        self.result_commitment = FieldElement(int(public_inputs["result_commitment"], 16))
+                self.risk_threshold = FieldElement(int(public_inputs["risk_threshold"] * 1000))
+                self.result_commitment = FieldElement(int(public_inputs["result_commitment"], 16))
 
         # Private inputs
-        self.glucose_reading = FieldElement(int(private_inputs["glucose_reading"] * 100))
-        self.risk_score = FieldElement(int(private_inputs["risk_score"] * 1000))
-        self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
+                self.glucose_reading = FieldElement(int(private_inputs["glucose_reading"] * 100))
+                self.risk_score = FieldElement(int(private_inputs["risk_score"] * 1000))
+                self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
 
-    def generate_constraints(self) -> None:
-           """TODO: Add docstring for generate_constraints"""
-     """Generate diabetes risk assessment constraints"""
+                def generate_constraints(self) -> None:
+                    """TODO: Add docstring for generate_constraints"""
+        """TODO: Add docstring for generate_constraints"""
+            """TODO: Add docstring for generate_constraints"""
+    """Generate diabetes risk assessment constraints"""
         # 1. Prove G > G_threshold
-        self.glucose_comparison.setup(
+                    self.glucose_comparison.setup(
             public_inputs={
                 "result": True,
                 "comparison_type": "gt",
@@ -286,18 +320,18 @@ class DiabetesRiskCircuit(BaseCircuit):
                 "b": self.glucose_threshold.value,
             },
         )
-        self.glucose_comparison.generate_constraints()
+                    self.glucose_comparison.generate_constraints()
 
         # 2. Prove R > R_threshold
-        self.risk_comparison.setup(
+                    self.risk_comparison.setup(
             public_inputs={"result": True, "comparison_type": "gt"},
             private_inputs={"a": self.risk_score.value, "b": self.risk_threshold.value},
         )
-        self.risk_comparison.generate_constraints()
+                    self.risk_comparison.generate_constraints()
 
         # Add comparison constraints
-        self.constraints.extend(self.glucose_comparison.constraints)
-        self.constraints.extend(self.risk_comparison.constraints)
+                    self.constraints.extend(self.glucose_comparison.constraints)
+                    self.constraints.extend(self.risk_comparison.constraints)
 
         # 3. Compute AND of conditions
         # For simplicity, we know both are true if we got here
@@ -305,30 +339,36 @@ class DiabetesRiskCircuit(BaseCircuit):
 
         # 4. Create and verify commitment
         commitment = self._commit_result(condition_result, self.witness_randomness)
-        self.add_constraint(commitment, self.result_commitment, FieldElement(0), ql=1, qr=-1)
+                    self.add_constraint(commitment, self.result_commitment, FieldElement(0), ql=1, qr=-1)
 
         # 5. Add range constraints for glucose and risk score
-        self._add_glucose_range_constraint()
-        self._add_risk_range_constraint()
+                    self._add_glucose_range_constraint()
+                    self._add_risk_range_constraint()
 
-    def _commit_result(self, result: FieldElement, randomness: FieldElement) -> FieldElement:
-           """TODO: Add docstring for _commit_result"""
-     """Commit to boolean result"""
+                    def _commit_result(self, result: FieldElement, randomness: FieldElement) -> FieldElement:
+                        """TODO: Add docstring for _commit_result"""
+        """TODO: Add docstring for _commit_result"""
+            """TODO: Add docstring for _commit_result"""
+    """Commit to boolean result"""
         data = "DIABETES_RISK:{result.value}:{randomness.value}".encode()
         hash_val = hashlib.sha256(data).hexdigest()
         return FieldElement(int(hash_val, 16))
 
-    def _add_glucose_range_constraint(self) -> None:
-           """TODO: Add docstring for _add_glucose_range_constraint"""
-     """Ensure glucose is in reasonable range (50-500 mg/dL)"""
+                        def _add_glucose_range_constraint(self) -> None:
+                            """TODO: Add docstring for _add_glucose_range_constraint"""
+        """TODO: Add docstring for _add_glucose_range_constraint"""
+            """TODO: Add docstring for _add_glucose_range_constraint"""
+    """Ensure glucose is in reasonable range (50-500 mg/dL)"""
         # Simplified: just check it's positive and less than 50000 (500 * 100)
         max_glucose = FieldElement(50000)
         diff = max_glucose - self.glucose_reading
         # In production, would add proper range proof
 
-    def _add_risk_range_constraint(self) -> None:
-           """TODO: Add docstring for _add_risk_range_constraint"""
-     """Ensure risk score is in [0, 1] range"""
+                            def _add_risk_range_constraint(self) -> None:
+                                """TODO: Add docstring for _add_risk_range_constraint"""
+        """TODO: Add docstring for _add_risk_range_constraint"""
+            """TODO: Add docstring for _add_risk_range_constraint"""
+    """Ensure risk score is in [0, 1] range"""
         # Risk score is scaled by 1000, so check [0, 1000]
         max_risk = FieldElement(1000)
         diff = max_risk - self.risk_score
@@ -336,6 +376,8 @@ class DiabetesRiskCircuit(BaseCircuit):
 
 
 class PharmacogenomicCircuit(BaseCircuit):
+    """
+    """
     """
     Circuit for medication response prediction based on pharmacogenomics
 
@@ -351,31 +393,37 @@ class PharmacogenomicCircuit(BaseCircuit):
     - witness_randomness: Randomness for zero-knowledge
     """
 
-    def __init__(self, max_star_alleles: int = 50) -> None:
+        def __init__(self, max_star_alleles: int = 50) -> None:
+            """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
     super().__init__("pharmacogenomic", 10000)
-        self.max_star_alleles = max_star_alleles
-        self.genes = ["CYP2C19", "CYP2D6", "CYP2C9", "VKORC1", "TPMT"]
+            self.max_star_alleles = max_star_alleles
+            self.genes = ["CYP2C19", "CYP2D6", "CYP2C9", "VKORC1", "TPMT"]
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
-           """TODO: Add docstring for setup"""
-     """Setup pharmacogenomic circuit"""
+            def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
+                """TODO: Add docstring for setup"""
+        """TODO: Add docstring for setup"""
+            """TODO: Add docstring for setup"""
+    """Setup pharmacogenomic circuit"""
         # Public inputs
-        self.medication_id = FieldElement(public_inputs["medication_id"])
-        self.response_category = FieldElement(public_inputs["response_category"])
-        self.model_version = FieldElement(int(public_inputs["model_version"], 16))
+                self.medication_id = FieldElement(public_inputs["medication_id"])
+                self.response_category = FieldElement(public_inputs["response_category"])
+                self.model_version = FieldElement(int(public_inputs["model_version"], 16))
 
         # Private inputs
-        self.star_alleles = private_inputs["star_alleles"]
-        self.variant_genotypes = private_inputs["variant_genotypes"]
-        self.activity_scores = [
+                self.star_alleles = private_inputs["star_alleles"]
+                self.variant_genotypes = private_inputs["variant_genotypes"]
+                self.activity_scores = [
             FieldElement(int(s * 100)) for s in private_inputs["activity_scores"]
         ]
-        self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
+                self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
 
-    def generate_constraints(self) -> None:
-           """TODO: Add docstring for generate_constraints"""
-     """Generate pharmacogenomic prediction constraints"""
+                def generate_constraints(self) -> None:
+                    """TODO: Add docstring for generate_constraints"""
+        """TODO: Add docstring for generate_constraints"""
+            """TODO: Add docstring for generate_constraints"""
+    """Generate pharmacogenomic prediction constraints"""
         # 1. Compute total enzyme activity
         total_activity = FieldElement(0)
         for gene, activity in zip(self.genes, self.activity_scores):
@@ -386,22 +434,24 @@ class PharmacogenomicCircuit(BaseCircuit):
         predicted_category = self._activity_to_category(total_activity)
 
         # 3. Verify predicted category matches public input
-        self.add_constraint(
+            self.add_constraint(
             predicted_category, self.response_category, FieldElement(0), ql=1, qr=-1
         )
 
         # 4. Verify star alleles are valid
         for allele_data in self.star_alleles:
-        self._verify_star_allele(allele_data)
+            self._verify_star_allele(allele_data)
 
         # 5. Create commitment to hide actual genotypes
         genotype_commitment = self._commit_genotypes(
-        self.variant_genotypes, self.witness_randomness
+            self.variant_genotypes, self.witness_randomness
         )
 
-    def _activity_to_category(self, total_activity: FieldElement) -> FieldElement:
-           """TODO: Add docstring for _activity_to_category"""
-     """Map enzyme activity to response category"""
+            def _activity_to_category(self, total_activity: FieldElement) -> FieldElement:
+                """TODO: Add docstring for _activity_to_category"""
+        """TODO: Add docstring for _activity_to_category"""
+            """TODO: Add docstring for _activity_to_category"""
+    """Map enzyme activity to response category"""
         # Simplified mapping - in production would use circuit-friendly comparison
         # 0: Poor, 1: Normal, 2: Rapid, 3: Ultra-rapid
 
@@ -415,9 +465,11 @@ class PharmacogenomicCircuit(BaseCircuit):
         else:
             return FieldElement(3)
 
-    def _verify_star_allele(self, allele_data: Dict) -> None:
-           """TODO: Add docstring for _verify_star_allele"""
-     """Verify star allele is valid for the gene"""
+            def _verify_star_allele(self, allele_data: Dict) -> None:
+                """TODO: Add docstring for _verify_star_allele"""
+        """TODO: Add docstring for _verify_star_allele"""
+            """TODO: Add docstring for _verify_star_allele"""
+    """Verify star allele is valid for the gene"""
         # In production, would check against known star allele database
         # For now, just ensure it's properly formatted
         gene = allele_data["gene"]
@@ -426,9 +478,11 @@ class PharmacogenomicCircuit(BaseCircuit):
         # Add constraint that gene is one of known genes
         # Simplified for demo
 
-    def _commit_genotypes(self, genotypes: List[Dict], randomness: FieldElement) -> FieldElement:
-           """TODO: Add docstring for _commit_genotypes"""
-     """Create commitment to genotypes"""
+                def _commit_genotypes(self, genotypes: List[Dict], randomness: FieldElement) -> FieldElement:
+                    """TODO: Add docstring for _commit_genotypes"""
+        """TODO: Add docstring for _commit_genotypes"""
+            """TODO: Add docstring for _commit_genotypes"""
+    """Create commitment to genotypes"""
         genotype_str = ":".join("{g['variant']}={g['genotype']}" for g in genotypes)
         data = "GENOTYPES:{genotype_str}:{randomness.value}".encode()
         hash_val = hashlib.sha256(data).hexdigest()
@@ -436,6 +490,8 @@ class PharmacogenomicCircuit(BaseCircuit):
 
 
 class PathwayEnrichmentCircuit(BaseCircuit):
+    """
+    """
     """
     Circuit for pathway enrichment analysis without revealing expression
 
@@ -451,28 +507,34 @@ class PathwayEnrichmentCircuit(BaseCircuit):
     - witness_randomness: Randomness for zero-knowledge
     """
 
-    def __init__(self, max_genes: int = 20000) -> None:
+        def __init__(self, max_genes: int = 20000) -> None:
+            """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
     super().__init__("pathway_enrichment", 25000)
-        self.max_genes = max_genes
+            self.max_genes = max_genes
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
-           """TODO: Add docstring for setup"""
-     """Setup pathway enrichment circuit"""
+            def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
+                """TODO: Add docstring for setup"""
+        """TODO: Add docstring for setup"""
+            """TODO: Add docstring for setup"""
+    """Setup pathway enrichment circuit"""
         # Public inputs
-        self.pathway_id = FieldElement(public_inputs["pathway_id"])
-        self.enrichment_score = FieldElement(int(public_inputs["enrichment_score"] * 1000))
-        self.significance = FieldElement(int(public_inputs["significance"], 16))
+                self.pathway_id = FieldElement(public_inputs["pathway_id"])
+                self.enrichment_score = FieldElement(int(public_inputs["enrichment_score"] * 1000))
+                self.significance = FieldElement(int(public_inputs["significance"], 16))
 
         # Private inputs
-        self.expression_values = private_inputs["expression_values"]
-        self.gene_sets = private_inputs["gene_sets"]
-        self.permutation_seeds = private_inputs["permutation_seeds"]
-        self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
+                self.expression_values = private_inputs["expression_values"]
+                self.gene_sets = private_inputs["gene_sets"]
+                self.permutation_seeds = private_inputs["permutation_seeds"]
+                self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
 
-    def generate_constraints(self) -> None:
-           """TODO: Add docstring for generate_constraints"""
-     """Generate pathway enrichment constraints"""
+                def generate_constraints(self) -> None:
+                    """TODO: Add docstring for generate_constraints"""
+        """TODO: Add docstring for generate_constraints"""
+            """TODO: Add docstring for generate_constraints"""
+    """Generate pathway enrichment constraints"""
         # 1. Convert hypervector expressions to field elements
         expression_elements = self._hypervectors_to_field_elements(self.expression_values)
 
@@ -481,7 +543,7 @@ class PathwayEnrichmentCircuit(BaseCircuit):
         pathway_score = self._calculate_enrichment(expression_elements, pathway_genes)
 
         # 3. Verify enrichment score matches public input
-        self.add_constraint(pathway_score, self.enrichment_score, FieldElement(0), ql=1, qr=-1)
+                    self.add_constraint(pathway_score, self.enrichment_score, FieldElement(0), ql=1, qr=-1)
 
         # 4. Perform permutation test for significance
         permutation_scores = []
@@ -496,11 +558,13 @@ class PathwayEnrichmentCircuit(BaseCircuit):
             pathway_score, permutation_scores, self.witness_randomness
         )
 
-        self.add_constraint(p_value_commitment, self.significance, FieldElement(0), ql=1, qr=-1)
+                    self.add_constraint(p_value_commitment, self.significance, FieldElement(0), ql=1, qr=-1)
 
-    def _hypervectors_to_field_elements(self, hypervectors: torch.Tensor) -> List[FieldElement]:
-           """TODO: Add docstring for _hypervectors_to_field_elements"""
-     """Convert hypervector to field elements"""
+                    def _hypervectors_to_field_elements(self, hypervectors: torch.Tensor) -> List[FieldElement]:
+                        """TODO: Add docstring for _hypervectors_to_field_elements"""
+        """TODO: Add docstring for _hypervectors_to_field_elements"""
+            """TODO: Add docstring for _hypervectors_to_field_elements"""
+    """Convert hypervector to field elements"""
         # Take first few dimensions for efficiency
         if isinstance(hypervectors, torch.Tensor):
             values = hypervectors[:100].numpy()  # Use first 100 dimensions
@@ -509,45 +573,51 @@ class PathwayEnrichmentCircuit(BaseCircuit):
 
         return [FieldElement(int(v * 1000)) for v in values]
 
-    def _calculate_enrichment(
+            def _calculate_enrichment(
         self, expression: List[FieldElement], gene_indices: List[int]
     ) -> FieldElement:
-           """TODO: Add docstring for _calculate_enrichment"""
-     """Calculate enrichment score for gene set"""
+        """TODO: Add docstring for _calculate_enrichment"""
+        """TODO: Add docstring for _calculate_enrichment"""
+            """TODO: Add docstring for _calculate_enrichment"""
+    """Calculate enrichment score for gene set"""
         # Simplified: sum expression of genes in pathway
         pathway_sum = FieldElement(0)
         for idx in gene_indices[:20]:  # Limit for demo
             if idx < len(expression):
                 pathway_sum = pathway_sum + expression[idx]
 
-        # Normalize by pathway size
+    # Normalize by pathway size
         pathway_size = FieldElement(len(gene_indices))
         # Simplified division
         normalized_score = pathway_sum * FieldElement(1000) * pathway_size.inverse()
 
         return normalized_score
 
-    def _calculate_permuted_enrichment(
+                def _calculate_permuted_enrichment(
         self,
         expression: List[FieldElement],
         gene_indices: List[int],
         seed: FieldElement,
     ) -> FieldElement:
-           """TODO: Add docstring for _calculate_permuted_enrichment"""
-     """Calculate enrichment with permuted gene labels"""
+        """TODO: Add docstring for _calculate_permuted_enrichment"""
+        """TODO: Add docstring for _calculate_permuted_enrichment"""
+            """TODO: Add docstring for _calculate_permuted_enrichment"""
+    """Calculate enrichment with permuted gene labels"""
         # Simplified: just add noise based on seed
         base_score = self._calculate_enrichment(expression, gene_indices)
         noise = seed * FieldElement(100)  # Scale down seed
         return base_score + noise
 
-    def _commit_significance(
+        def _commit_significance(
         self,
         observed_score: FieldElement,
         permutation_scores: List[FieldElement],
         randomness: FieldElement,
     ) -> FieldElement:
-           """TODO: Add docstring for _commit_significance"""
-     """Create commitment to p-value"""
+        """TODO: Add docstring for _commit_significance"""
+        """TODO: Add docstring for _commit_significance"""
+            """TODO: Add docstring for _commit_significance"""
+    """Create commitment to p-value"""
         # Count how many permutation scores exceed observed
         exceed_count = 0
         for perm_score in permutation_scores:
@@ -564,11 +634,13 @@ class PathwayEnrichmentCircuit(BaseCircuit):
 
 
 # Helper function to create proof for hypervector data
-    def create_hypervector_proof(
+                def create_hypervector_proof(
     hypervector: torch.Tensor, proof_type: str, public_params: Dict[str, Any]
 ) -> Dict[str, Any]:
-       """TODO: Add docstring for create_hypervector_proof"""
-     """
+    """TODO: Add docstring for create_hypervector_proof"""
+    """TODO: Add docstring for create_hypervector_proof"""
+        """TODO: Add docstring for create_hypervector_proof"""
+    """
     Create ZK proof for hypervector-encoded data
 
     Args:

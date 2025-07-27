@@ -18,16 +18,24 @@ from genomevault.zk_proofs.circuits.prs_circuit import PRSCircuit
 
 class TestPIRIntegration:
     """Test PIR integration with other components."""
+    """Test PIR integration with other components."""
+    """Test PIR integration with other components."""
 
     @pytest.fixture
 
     def hdc_encoder(self) -> None:
+    def hdc_encoder(self) -> None:
+        """Create HDC encoder."""
+        """Create HDC encoder."""
     """Create HDC encoder."""
         return HyperdimensionalEncoder(dimension=10000)
 
     @pytest.fixture
 
-    def pir_client(self) -> None:
+        def pir_client(self) -> None:
+        def pir_client(self) -> None:
+        """Create PIR client with mock servers."""
+        """Create PIR client with mock servers."""
     """Create PIR client with mock servers."""
         servers = [
             PIRServer("ts1", "http://localhost:9001", "us", True, 0.98, 50),
@@ -38,7 +46,10 @@ class TestPIRIntegration:
 
     @pytest.fixture
 
-    def index_mapping(self) -> None:
+            def index_mapping(self) -> None:
+            def index_mapping(self) -> None:
+    """Create test index mapping."""
+        """Create test index mapping."""
     """Create test index mapping."""
         return {
             "variants": {
@@ -59,6 +70,8 @@ class TestPIRIntegration:
 
     @pytest.mark.asyncio
     async def test_hdc_encoded_pir_query(self, hdc_encoder, pir_client) -> None:
+        """Test PIR query with HDC-encoded data."""
+        """Test PIR query with HDC-encoded data."""
     """Test PIR query with HDC-encoded data."""
         # Encode genomic variant
         variant_data = {
@@ -94,6 +107,8 @@ class TestPIRIntegration:
 
     @pytest.mark.asyncio
     async def test_zk_proof_with_pir_query(self, pir_client) -> None:
+        """Test ZK proof generation for PIR query results."""
+        """Test ZK proof generation for PIR query results."""
     """Test ZK proof generation for PIR query results."""
         # Create PIR query
         query = pir_client.create_query(target_index=42)
@@ -126,6 +141,8 @@ class TestPIRIntegration:
 
     @pytest.mark.asyncio
     async def test_e2e_genomic_query_flow(self, pir_client, index_mapping, hdc_encoder) -> None:
+        """Test complete end-to-end genomic query flow."""
+        """Test complete end-to-end genomic query flow."""
     """Test complete end-to-end genomic query flow."""
         # Step 1: User wants to query for BRCA1 variants
         gene = "BRCA1"
@@ -195,6 +212,8 @@ class TestPIRIntegration:
 
     @pytest.mark.asyncio
     async def test_batch_pir_with_hdc(self, pir_client, hdc_encoder) -> None:
+        """Test batch PIR queries with HDC encoding."""
+        """Test batch PIR queries with HDC encoding."""
     """Test batch PIR queries with HDC encoding."""
         # Multiple variant positions to query
         positions = [100000, 200000, 300000, 400000, 500000]
@@ -223,6 +242,8 @@ class TestPIRIntegration:
 
     @pytest.mark.asyncio
     async def test_pir_query_caching(self, pir_client, index_mapping) -> None:
+        """Test PIR query result caching."""
+        """Test PIR query result caching."""
     """Test PIR query result caching."""
         query_builder = PIRQueryBuilder(pir_client, index_mapping)
 
@@ -254,7 +275,10 @@ class TestPIRIntegration:
         assert query_builder.cache[cache_key].data["allele_frequency"] == 0.05
 
 
-    def test_privacy_guarantees_calculation(self, pir_client) -> None:
+        def test_privacy_guarantees_calculation(self, pir_client) -> None:
+        def test_privacy_guarantees_calculation(self, pir_client) -> None:
+        """Test privacy guarantee calculations."""
+        """Test privacy guarantee calculations."""
     """Test privacy guarantee calculations."""
         # With 2 TS servers at 98% honesty
         p_fail = pir_client.calculate_privacy_failure_probability(k=2, q=0.98)
@@ -276,9 +300,13 @@ class TestPIRIntegration:
 
 class TestPIRSystemIntegration:
     """System-level integration tests."""
+    """System-level integration tests."""
+    """System-level integration tests."""
 
     @pytest.mark.asyncio
     async def test_multi_server_deployment(self) -> None:
+        """Test multi-server PIR deployment."""
+        """Test multi-server PIR deployment."""
     """Test multi-server PIR deployment."""
         # This would test actual server deployment
         # with Docker containers or local processes
@@ -286,6 +314,8 @@ class TestPIRSystemIntegration:
 
     @pytest.mark.asyncio
     async def test_failure_recovery(self) -> None:
+        """Test system recovery from server failures."""
+        """Test system recovery from server failures."""
     """Test system recovery from server failures."""
         # Test handling of server crashes
         # and automatic failover
@@ -293,6 +323,8 @@ class TestPIRSystemIntegration:
 
     @pytest.mark.asyncio
     async def test_performance_under_load(self) -> None:
+        """Test system performance under load."""
+        """Test system performance under load."""
     """Test system performance under load."""
         # Simulate concurrent queries
         # and measure throughput/latency
@@ -301,22 +333,22 @@ class TestPIRSystemIntegration:
 # Demo notebook content (would be in separate .ipynb file)
 DEMO_NOTEBOOK = """
 {
- "cells": [
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
+"cells": [
+{
+    "cell_type": "markdown",
+    "metadata": {},
+    "source": [
     "# GenomeVault PIR Integration Demo\\n",
     "\\n",
     "This notebook demonstrates the integration of PIR with HDC and ZK proofs."
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
+    ]
+},
+{
+    "cell_type": "code",
+    "execution_count": null,
+    "metadata": {},
+    "outputs": [],
+    "source": [
     "from genomevault.pir.client import PIRClient, PIRServer\\n",
     "from genomevault.pir.client.query_builder import PIRQueryBuilder\\n",
     "from genomevault.hypervector.encoder import HyperdimensionalEncoder\\n",
@@ -329,31 +361,31 @@ DEMO_NOTEBOOK = """
     "\\n",
     "client = PIRClient(servers, database_size=100000)\\n",
     "encoder = HyperdimensionalEncoder(dimension=10000)"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
+    ]
+},
+{
+    "cell_type": "code",
+    "execution_count": null,
+    "metadata": {},
+    "outputs": [],
+    "source": [
     "# Query for a specific variant\\n",
     "query = client.create_query(target_index=42)\\n",
     "print(f'Query ID: {query.query_id}')\\n",
     "print(f'Target index: {query.target_index}')\\n",
     "print(f'Number of servers: {len(query.query_vectors)}')"
-   ]
-  }
- ],
- "metadata": {
-  "kernelspec": {
-   "display_name": "Python 3",
-   "language": "python",
-   "name": "python3"
-  }
- },
- "nbformat": 4,
- "nbformat_minor": 4
+    ]
+}
+],
+"metadata": {
+"kernelspec": {
+    "display_name": "Python 3",
+    "language": "python",
+    "name": "python3"
+}
+},
+"nbformat": 4,
+"nbformat_minor": 4
 }
 """
 

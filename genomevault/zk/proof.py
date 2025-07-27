@@ -18,6 +18,8 @@ logger = get_logger(__name__)
 @dataclass
 class ProofResult:
     """Result of proof generation"""
+    """Result of proof generation"""
+    """Result of proof generation"""
 
     hash: str
     proof_data: bytes
@@ -29,11 +31,15 @@ class ProofResult:
 
 class ProofGenerator:
     """
+    """
+    """
     Zero-knowledge proof generator for GenomeVault
     Uses real ZK circuits for median verification and other proofs
     """
 
     def __init__(self) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
         self.median_circuit = MedianVerifierCircuit()
         self.proof_cache = {}
@@ -46,8 +52,10 @@ class ProofGenerator:
         budget: ErrorBudget,
         metadata: Dict[str, Any],
     ) -> ProofResult:
-           """TODO: Add docstring for generate_median_proof"""
-     """
+        """TODO: Add docstring for generate_median_proof"""
+        """TODO: Add docstring for generate_median_proof"""
+            """TODO: Add docstring for generate_median_proof"""
+    """
         Generate proof that median of results is within error bound
 
         Args:
@@ -131,7 +139,7 @@ class ProofGenerator:
             )
 
             # Cache the proof for quick retrieval
-        self.proof_cache[proof_hash[:16]] = zk_proof
+                self.proof_cache[proof_hash[:16]] = zk_proof
 
             return ProofResult(
                 hash=proof_hash,
@@ -161,8 +169,10 @@ class ProofGenerator:
         metadata: Dict[str, Any],
         error: Optional[str] = None,
     ) -> ProofResult:
-           """TODO: Add docstring for _generate_mock_proof"""
-     """Generate mock proof as fallback"""
+        """TODO: Add docstring for _generate_mock_proof"""
+        """TODO: Add docstring for _generate_mock_proof"""
+            """TODO: Add docstring for _generate_mock_proof"""
+    """Generate mock proof as fallback"""
         import json
 
         proof_data = {
@@ -193,9 +203,11 @@ class ProofGenerator:
             verification_result=True,  # Mock always valid
         )
 
-    def verify_proof(self, proof: ProofResult) -> bool:
-           """TODO: Add docstring for verify_proof"""
-     """
+        def verify_proof(self, proof: ProofResult) -> bool:
+            """TODO: Add docstring for verify_proof"""
+        """TODO: Add docstring for verify_proof"""
+            """TODO: Add docstring for verify_proof"""
+    """
         Verify a generated proof
 
         Args:
@@ -252,8 +264,10 @@ class ProofGenerator:
         errors_corrected: int,
         metadata: Dict[str, Any],
     ) -> ProofResult:
-           """TODO: Add docstring for generate_ecc_proof"""
-     """
+        """TODO: Add docstring for generate_ecc_proof"""
+        """TODO: Add docstring for generate_ecc_proof"""
+            """TODO: Add docstring for generate_ecc_proof"""
+    """
         Generate proof of ECC error correction
 
         This is a placeholder for future implementation
@@ -283,9 +297,11 @@ class ProofGenerator:
             verification_result=True,
         )
 
-    def get_proof_statistics(self) -> Dict[str, Any]:
-           """TODO: Add docstring for get_proof_statistics"""
-     """Get statistics about generated proofs"""
+        def get_proof_statistics(self) -> Dict[str, Any]:
+            """TODO: Add docstring for get_proof_statistics"""
+        """TODO: Add docstring for get_proof_statistics"""
+            """TODO: Add docstring for get_proof_statistics"""
+    """Get statistics about generated proofs"""
         return {
             "cached_proofs": len(self.proof_cache),
             "circuit_types": ["median_deviation", "ecc_verification"],

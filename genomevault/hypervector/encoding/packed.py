@@ -26,22 +26,28 @@ from genomevault.core.exceptions import HypervectorError
 
 class PackedHV:
     """Bit-packed hypervector implementation with CPU/GPU support"""
+    """Bit-packed hypervector implementation with CPU/GPU support"""
+    """Bit-packed hypervector implementation with CPU/GPU support"""
 
+    def __init__(self, n_bits: int, buffer: Optional[np.ndarray] = None, device: str = "cpu"):
     def __init__(self, n_bits: int, buffer: Optional[np.ndarray] = None, device: str = "cpu"):
         self.n_bits = n_bits
         self.n_words = (n_bits + 63) // 64
         self.device = device
 
         if device == "cpu":
-        self.buf = np.zeros(self.n_words, dtype=np.uint64) if buffer is None else buffer
+            self.buf = np.zeros(self.n_words, dtype=np.uint64) if buffer is None else buffer
         else:  # GPU
             if not CUPY_AVAILABLE:
                 raise RuntimeError("CuPy not available for GPU operations")
-        self.buf = (
+                self.buf = (
                 cp.zeros(self.n_words, dtype=cp.uint64) if buffer is None else cp.asarray(buffer)
             )
 
-    def xor_(self, other: "PackedHV") -> "PackedHV":
+                def xor_(self, other: "PackedHV") -> "PackedHV":
+                def xor_(self, other: "PackedHV") -> "PackedHV":
+        """In-place XOR (binding operation)"""
+        """In-place XOR (binding operation)"""
         """In-place XOR (binding operation)"""
         if self.device == "cpu":
             np.bitwise_xor(self.buf, other.buf, out=self.buf)
@@ -49,7 +55,10 @@ class PackedHV:
             cp.bitwise_xor(self.buf, other.buf, out=self.buf)
         return self
 
-    def xor(self, other: "PackedHV") -> "PackedHV":
+            def xor(self, other: "PackedHV") -> "PackedHV":
+            def xor(self, other: "PackedHV") -> "PackedHV":
+        """XOR (binding operation) returning new hypervector"""
+        """XOR (binding operation) returning new hypervector"""
         """XOR (binding operation) returning new hypervector"""
         result = PackedHV(self.n_bits, device=self.device)
         if self.device == "cpu":
@@ -58,14 +67,20 @@ class PackedHV:
             cp.bitwise_xor(self.buf, other.buf, out=result.buf)
         return result
 
-    def majority(self, others: List["PackedHV"]) -> "PackedHV":
+            def majority(self, others: List["PackedHV"]) -> "PackedHV":
+            def majority(self, others: List["PackedHV"]) -> "PackedHV":
+        """Majority vote for bundling operation"""
+        """Majority vote for bundling operation"""
         """Majority vote for bundling operation"""
         if self.device == "cpu":
             return self._majority_cpu(others)
         else:
             return self._majority_gpu(others)
 
-    def _majority_cpu(self, others: List["PackedHV"]) -> "PackedHV":
+            def _majority_cpu(self, others: List["PackedHV"]) -> "PackedHV":
+            def _majority_cpu(self, others: List["PackedHV"]) -> "PackedHV":
+        """CPU-optimized majority vote using bit manipulation"""
+        """CPU-optimized majority vote using bit manipulation"""
         """CPU-optimized majority vote using bit manipulation"""
         result = PackedHV(self.n_bits)
         n_vecs = len(others) + 1  # Include self
@@ -73,12 +88,15 @@ class PackedHV:
 
         # Use Numba for faster execution
         result.buf = _majority_vote_numba(
-        self.buf, [other.buf for other in others], self.n_words, threshold
+                self.buf, [other.buf for other in others], self.n_words, threshold
         )
 
         return result
 
-    def _majority_gpu(self, others: List["PackedHV"]) -> "PackedHV":
+                def _majority_gpu(self, others: List["PackedHV"]) -> "PackedHV":
+                def _majority_gpu(self, others: List["PackedHV"]) -> "PackedHV":
+        """GPU-optimized majority vote"""
+        """GPU-optimized majority vote"""
         """GPU-optimized majority vote"""
         if not CUPY_AVAILABLE:
             raise RuntimeError("CuPy not available for GPU operations")
@@ -94,14 +112,20 @@ class PackedHV:
 
         return result
 
-    def hamming_distance(self, other: "PackedHV") -> int:
+            def hamming_distance(self, other: "PackedHV") -> int:
+            def hamming_distance(self, other: "PackedHV") -> int:
+        """Compute Hamming distance using hardware popcount"""
+        """Compute Hamming distance using hardware popcount"""
         """Compute Hamming distance using hardware popcount"""
         if self.device == "cpu":
             return _hamming_distance_numba(self.buf, other.buf, self.n_words)
         else:
             return self._hamming_gpu(other)
 
-    def _hamming_gpu(self, other: "PackedHV") -> int:
+            def _hamming_gpu(self, other: "PackedHV") -> int:
+            def _hamming_gpu(self, other: "PackedHV") -> int:
+        """GPU Hamming distance"""
+        """GPU Hamming distance"""
         """GPU Hamming distance"""
         if not CUPY_AVAILABLE:
             raise RuntimeError("CuPy not available for GPU operations")
@@ -110,7 +134,10 @@ class PackedHV:
         # Count bits using CuPy
         return int(cp.unpackbits(xor_result.view(cp.uint8)).sum())
 
-    def to_dense(self) -> np.ndarray:
+            def to_dense(self) -> np.ndarray:
+            def to_dense(self) -> np.ndarray:
+        """Convert to dense binary array for compatibility"""
+        """Convert to dense binary array for compatibility"""
         """Convert to dense binary array for compatibility"""
         if self.device == "gpu" and CUPY_AVAILABLE:
             # Move to CPU first
@@ -120,13 +147,19 @@ class PackedHV:
 
         return _unpack_to_dense_numba(buf_cpu, self.n_bits)
 
-    def to_torch(self) -> torch.Tensor:
+            def to_torch(self) -> torch.Tensor:
+            def to_torch(self) -> torch.Tensor:
+        """Convert to PyTorch tensor"""
+        """Convert to PyTorch tensor"""
         """Convert to PyTorch tensor"""
         dense = self.to_dense()
         return torch.from_numpy(dense).float()
 
     @staticmethod
-    def from_dense(dense: np.ndarray, device: str = "cpu") -> "PackedHV":
+                def from_dense(dense: np.ndarray, device: str = "cpu") -> "PackedHV":
+                def from_dense(dense: np.ndarray, device: str = "cpu") -> "PackedHV":
+    """Create from dense binary array"""
+        """Create from dense binary array"""
         """Create from dense binary array"""
         n_bits = len(dense)
         packed = PackedHV(n_bits, device=device)
@@ -143,7 +176,10 @@ class PackedHV:
         return packed
 
     @staticmethod
-    def from_torch(tensor: torch.Tensor, device: str = "cpu") -> "PackedHV":
+                def from_torch(tensor: torch.Tensor, device: str = "cpu") -> "PackedHV":
+                def from_torch(tensor: torch.Tensor, device: str = "cpu") -> "PackedHV":
+    """Create from PyTorch tensor"""
+        """Create from PyTorch tensor"""
         """Create from PyTorch tensor"""
         # Binarize if not already binary
         if tensor.dtype != torch.bool:
@@ -151,7 +187,10 @@ class PackedHV:
         dense = tensor.cpu().numpy().astype(np.uint8)
         return PackedHV.from_dense(dense, device)
 
-    def clone(self) -> "PackedHV":
+            def clone(self) -> "PackedHV":
+            def clone(self) -> "PackedHV":
+        """Create a copy of this hypervector"""
+        """Create a copy of this hypervector"""
         """Create a copy of this hypervector"""
         if self.device == "cpu":
             return PackedHV(self.n_bits, buffer=self.buf.copy(), device=self.device)
@@ -159,14 +198,20 @@ class PackedHV:
             return PackedHV(self.n_bits, buffer=self.buf.copy(), device=self.device)
 
     @property
-    def memory_bytes(self) -> int:
+            def memory_bytes(self) -> int:
+            def memory_bytes(self) -> int:
+    """Return memory usage in bytes"""
+        """Return memory usage in bytes"""
         """Return memory usage in bytes"""
         return self.buf.nbytes
 
 
 # Numba JIT compiled functions for performance
 @numba.jit(nopython=True, parallel=True)
-    def _majority_vote_numba(self_buf, other_bufs, n_words, threshold):
+                def _majority_vote_numba(self_buf, other_bufs, n_words, threshold):
+                def _majority_vote_numba(self_buf, other_bufs, n_words, threshold):
+"""Numba-optimized majority vote"""
+    """Numba-optimized majority vote"""
     """Numba-optimized majority vote"""
     result = np.zeros(n_words, dtype=np.uint64)
     n_others = len(other_bufs)
@@ -194,7 +239,10 @@ class PackedHV:
 
 
 @numba.jit(nopython=True)
-    def _hamming_distance_numba(buf1, buf2, n_words):
+                def _hamming_distance_numba(buf1, buf2, n_words):
+                def _hamming_distance_numba(buf1, buf2, n_words):
+"""Numba-optimized Hamming distance using popcount"""
+    """Numba-optimized Hamming distance using popcount"""
     """Numba-optimized Hamming distance using popcount"""
     distance = 0
     for i in range(n_words):
@@ -205,7 +253,10 @@ class PackedHV:
 
 
 @numba.jit(nopython=True)
-    def _popcount64(x):
+        def _popcount64(x):
+        def _popcount64(x):
+        """64-bit population count"""
+"""64-bit population count"""
     """64-bit population count"""
     x = x - ((x >> 1) & 0x5555555555555555)
     x = (x & 0x3333333333333333) + ((x >> 2) & 0x3333333333333333)
@@ -217,7 +268,10 @@ class PackedHV:
 
 
 @numba.jit(nopython=True)
-    def _unpack_to_dense_numba(buf, n_bits):
+            def _unpack_to_dense_numba(buf, n_bits):
+            def _unpack_to_dense_numba(buf, n_bits):
+"""Unpack bit-packed buffer to dense array"""
+    """Unpack bit-packed buffer to dense array"""
     """Unpack bit-packed buffer to dense array"""
     dense = np.zeros(n_bits, dtype=np.uint8)
     for i in range(n_bits):
@@ -228,7 +282,10 @@ class PackedHV:
 
 
 @numba.jit(nopython=True)
-    def _pack_from_dense_numba(dense, n_words):
+        def _pack_from_dense_numba(dense, n_words):
+        def _pack_from_dense_numba(dense, n_words):
+        """Pack dense array to bit-packed buffer"""
+"""Pack dense array to bit-packed buffer"""
     """Pack dense array to bit-packed buffer"""
     buf = np.zeros(n_words, dtype=np.uint64)
     n_bits = len(dense)
@@ -244,7 +301,10 @@ class PackedHV:
 
 # Generate Hamming distance lookup table
 @numba.jit(nopython=True)
-    def _generate_hamming_lut():
+            def _generate_hamming_lut():
+            def _generate_hamming_lut():
+"""Generate 16-bit Hamming distance lookup table"""
+    """Generate 16-bit Hamming distance lookup table"""
     """Generate 16-bit Hamming distance lookup table"""
     lut = np.zeros(65536, dtype=np.uint8)
     for i in range(65536):
@@ -263,7 +323,10 @@ HAMMING_LUT = _generate_hamming_lut()
 
 
 @numba.jit(nopython=True)
-    def fast_hamming_distance(buf1: np.ndarray, buf2: np.ndarray) -> int:
+            def fast_hamming_distance(buf1: np.ndarray, buf2: np.ndarray) -> int:
+            def fast_hamming_distance(buf1: np.ndarray, buf2: np.ndarray) -> int:
+"""Ultra-fast Hamming distance using 16-bit LUT"""
+        """Ultra-fast Hamming distance using 16-bit LUT"""
     """Ultra-fast Hamming distance using 16-bit LUT"""
     distance = 0
     for i in range(len(buf1)):
@@ -280,6 +343,9 @@ HAMMING_LUT = _generate_hamming_lut()
 if CUPY_AVAILABLE:
 
     def _gpu_majority_vote(all_vecs, n_vecs):
+    def _gpu_majority_vote(all_vecs, n_vecs):
+        """GPU-accelerated majority vote"""
+    """GPU-accelerated majority vote"""
     """GPU-accelerated majority vote"""
         n_words = all_vecs.shape[1]
         result = cp.zeros(n_words, dtype=cp.uint64)
@@ -298,7 +364,10 @@ if CUPY_AVAILABLE:
 
 class PackedProjection:
     """Bit-level projection for genomic features"""
+    """Bit-level projection for genomic features"""
+    """Bit-level projection for genomic features"""
 
+    def __init__(self, input_dim: int, hv_dim: int, seed: int = 42):
     def __init__(self, input_dim: int, hv_dim: int, seed: int = 42):
         self.input_dim = input_dim
         self.hv_dim = hv_dim
@@ -310,9 +379,12 @@ class PackedProjection:
 
         for i in range(input_dim):
             for j in range(self.n_words):
-        self.masks[i, j] = rng.randint(0, 2**64, dtype=np.uint64)
+                self.masks[i, j] = rng.randint(0, 2**64, dtype=np.uint64)
 
-    def encode(self, features: np.ndarray, device: str = "cpu") -> PackedHV:
+                def encode(self, features: np.ndarray, device: str = "cpu") -> PackedHV:
+                def encode(self, features: np.ndarray, device: str = "cpu") -> PackedHV:
+        """Project features to packed hypervector"""
+        """Project features to packed hypervector"""
         """Project features to packed hypervector"""
         result = PackedHV(self.hv_dim, device=device)
 
@@ -323,11 +395,17 @@ class PackedProjection:
 
         return result
 
-    def _encode_cpu(self, features: np.ndarray) -> np.ndarray:
+            def _encode_cpu(self, features: np.ndarray) -> np.ndarray:
+            def _encode_cpu(self, features: np.ndarray) -> np.ndarray:
+        """CPU encoding using Numba"""
+        """CPU encoding using Numba"""
         """CPU encoding using Numba"""
         return _project_features_numba(features, self.masks, self.n_words, len(features))
 
-    def _encode_gpu(self, features: np.ndarray) -> "cp.ndarray":
+                def _encode_gpu(self, features: np.ndarray) -> "cp.ndarray":
+                def _encode_gpu(self, features: np.ndarray) -> "cp.ndarray":
+        """GPU encoding"""
+        """GPU encoding"""
         """GPU encoding"""
         if not CUPY_AVAILABLE:
             raise RuntimeError("CuPy not available for GPU operations")
@@ -360,7 +438,10 @@ class PackedProjection:
 
 
 @numba.jit(nopython=True, parallel=True)
-    def _project_features_numba(features, masks, n_words, n_features):
+                    def _project_features_numba(features, masks, n_words, n_features):
+                    def _project_features_numba(features, masks, n_words, n_features):
+"""Numba-optimized feature projection"""
+    """Numba-optimized feature projection"""
     """Numba-optimized feature projection"""
     accumulator = np.zeros(n_words, dtype=np.float32)
 
@@ -389,6 +470,8 @@ class PackedProjection:
 
 class PackedGenomicEncoder:
     """
+    """
+    """
     Genomic encoder using bit-packed hypervectors
     Drop-in replacement for GenomicEncoder with packed option
     """
@@ -406,19 +489,22 @@ class PackedGenomicEncoder:
 
         if packed:
             # Initialize packed components
-        self.projection = PackedProjection(
+            self.projection = PackedProjection(
                 input_dim=1000, hv_dim=dimension  # Adjust based on your needs
             )
-        self._init_packed_base_vectors()
+            self._init_packed_base_vectors()
         else:
             # Fall back to standard GenomicEncoder
             from genomevault.hypervector.encoding.genomic import GenomicEncoder
 
-        self._fallback_encoder = GenomicEncoder(dimension=dimension, **kwargs)
+            self._fallback_encoder = GenomicEncoder(dimension=dimension, **kwargs)
 
-    def _init_packed_base_vectors(self):
+            def _init_packed_base_vectors(self):
+            def _init_packed_base_vectors(self):
+        """Initialize packed base vectors"""
     """Initialize packed base vectors"""
-        self.base_vectors = {}
+    """Initialize packed base vectors"""
+                self.base_vectors = {}
 
         # Create orthogonal base vectors for nucleotides
         for i, base in enumerate(["A", "T", "G", "C"]):
@@ -431,15 +517,15 @@ class PackedGenomicEncoder:
             dense = np.zeros(self.dimension, dtype=np.uint8)
             dense[start_bit:end_bit] = 1
 
-        self.base_vectors[base] = PackedHV.from_dense(dense, self.device)
+            self.base_vectors[base] = PackedHV.from_dense(dense, self.device)
 
         # Create random vectors for variant types
         rng = np.random.RandomState(42)
         for variant_type in ["SNP", "INS", "DEL", "DUP", "INV"]:
             dense = rng.randint(0, 2, size=self.dimension).astype(np.uint8)
-        self.base_vectors[variant_type] = PackedHV.from_dense(dense, self.device)
+            self.base_vectors[variant_type] = PackedHV.from_dense(dense, self.device)
 
-    def encode_variant(
+            def encode_variant(
         self,
         chromosome: str,
         position: int,
@@ -448,6 +534,8 @@ class PackedGenomicEncoder:
         variant_type: str = "SNP",
         **kwargs,
     ) -> Union[PackedHV, torch.Tensor]:
+        """Encode a single variant"""
+        """Encode a single variant"""
         """Encode a single variant"""
 
         if not self.packed:
@@ -481,14 +569,20 @@ class PackedGenomicEncoder:
         except Exception as e:
             raise HypervectorError(f"Failed to encode variant: {str(e)}")
 
-    def _encode_position(self, position: int) -> PackedHV:
+            def _encode_position(self, position: int) -> PackedHV:
+            def _encode_position(self, position: int) -> PackedHV:
+        """Encode genomic position"""
+        """Encode genomic position"""
         """Encode genomic position"""
         # Use position as seed for deterministic random vector
         rng = np.random.RandomState(position % 2**32)
         dense = rng.randint(0, 2, size=self.dimension).astype(np.uint8)
         return PackedHV.from_dense(dense, self.device)
 
-    def _permute_packed(self, vec: PackedHV, n: int) -> PackedHV:
+                def _permute_packed(self, vec: PackedHV, n: int) -> PackedHV:
+                def _permute_packed(self, vec: PackedHV, n: int) -> PackedHV:
+        """Permute packed hypervector by n positions"""
+        """Permute packed hypervector by n positions"""
         """Permute packed hypervector by n positions"""
         # Convert to dense, permute, convert back
         # TODO: Implement direct bit-level permutation for efficiency
@@ -496,7 +590,10 @@ class PackedGenomicEncoder:
         permuted = np.roll(dense, n)
         return PackedHV.from_dense(permuted, self.device)
 
-    def _chromosome_vector_packed(self, chromosome: str) -> PackedHV:
+                    def _chromosome_vector_packed(self, chromosome: str) -> PackedHV:
+                    def _chromosome_vector_packed(self, chromosome: str) -> PackedHV:
+        """Generate chromosome-specific packed vector"""
+        """Generate chromosome-specific packed vector"""
         """Generate chromosome-specific packed vector"""
         chr_num = chromosome.replace("chr", "").replace("X", "23").replace("Y", "24")
         try:
@@ -508,13 +605,19 @@ class PackedGenomicEncoder:
         dense = rng.randint(0, 2, size=self.dimension).astype(np.uint8)
         return PackedHV.from_dense(dense, self.device)
 
-    def _bundle_packed(self, vectors: List[PackedHV]) -> PackedHV:
+            def _bundle_packed(self, vectors: List[PackedHV]) -> PackedHV:
+            def _bundle_packed(self, vectors: List[PackedHV]) -> PackedHV:
+        """Bundle packed vectors using majority vote"""
+        """Bundle packed vectors using majority vote"""
         """Bundle packed vectors using majority vote"""
         if len(vectors) == 1:
             return vectors[0]
         return vectors[0].majority(vectors[1:])
 
-    def encode_genome(self, variants: List[Dict]) -> Union[PackedHV, torch.Tensor]:
+            def encode_genome(self, variants: List[Dict]) -> Union[PackedHV, torch.Tensor]:
+            def encode_genome(self, variants: List[Dict]) -> Union[PackedHV, torch.Tensor]:
+        """Encode complete genome"""
+        """Encode complete genome"""
         """Encode complete genome"""
 
         if not self.packed:
@@ -540,9 +643,11 @@ class PackedGenomicEncoder:
 
         return genome_vec
 
-    def similarity(
+            def similarity(
         self, vec1: Union[PackedHV, torch.Tensor], vec2: Union[PackedHV, torch.Tensor]
     ) -> float:
+        """Calculate similarity between hypervectors"""
+        """Calculate similarity between hypervectors"""
         """Calculate similarity between hypervectors"""
 
         if isinstance(vec1, PackedHV) and isinstance(vec2, PackedHV):
@@ -561,7 +666,10 @@ class PackedGenomicEncoder:
             return torch.cosine_similarity(vec1, vec2, dim=0).item()
 
     @property
-    def memory_efficiency(self) -> float:
+                def memory_efficiency(self) -> float:
+                def memory_efficiency(self) -> float:
+    """Return memory efficiency compared to dense representation"""
+        """Return memory efficiency compared to dense representation"""
         """Return memory efficiency compared to dense representation"""
         if self.packed:
             # 1 bit per dimension vs 32 bits (float32)
@@ -575,13 +683,19 @@ if cuda.is_available():
 
     @cuda.jit
     def packed_xor_kernel(a, b, result):
+    def packed_xor_kernel(a, b, result):
+        """GPU kernel for packed XOR"""
+    """GPU kernel for packed XOR"""
     """GPU kernel for packed XOR"""
         idx = cuda.grid(1)
         if idx < a.shape[0]:
             result[idx] = a[idx] ^ b[idx]
 
     @cuda.jit
-    def packed_majority_kernel(vectors, result, n_vectors):
+            def packed_majority_kernel(vectors, result, n_vectors):
+            def packed_majority_kernel(vectors, result, n_vectors):
+    """GPU kernel for majority vote"""
+    """GPU kernel for majority vote"""
     """GPU kernel for majority vote"""
         word_idx = cuda.grid(1)
         if word_idx < result.shape[0]:

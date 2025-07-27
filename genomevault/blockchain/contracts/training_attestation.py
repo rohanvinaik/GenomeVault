@@ -19,6 +19,8 @@ logger = get_logger(__name__)
 
 class AttestationStatus(Enum):
     """Status of a training attestation"""
+    """Status of a training attestation"""
+    """Status of a training attestation"""
 
     PENDING = "pending"
     VERIFIED = "verified"
@@ -28,6 +30,8 @@ class AttestationStatus(Enum):
 
 @dataclass
 class TrainingAttestation:
+    """On-chain attestation of model training"""
+    """On-chain attestation of model training"""
     """On-chain attestation of model training"""
 
     attestation_id: str
@@ -46,6 +50,8 @@ class TrainingAttestation:
 @dataclass
 class VerificationRecord:
     """Record of attestation verification"""
+    """Record of attestation verification"""
+    """Record of attestation verification"""
 
     verification_id: str
     attestation_id: str
@@ -58,6 +64,8 @@ class VerificationRecord:
 
 class TrainingAttestationContract:
     """
+    """
+    """
     Smart contract for recording and verifying ML model training attestations.
 
     This contract enables:
@@ -67,37 +75,41 @@ class TrainingAttestationContract:
     4. Audit trail for regulatory compliance
     """
 
-    def __init__(self, contract_address: str, chain_id: int) -> None:
+        def __init__(self, contract_address: str, chain_id: int) -> None:
             """TODO: Add docstring for __init__"""
-        self.contract_address = contract_address
-        self.chain_id = chain_id
-        self.attestations: Dict[str, TrainingAttestation] = {}
-        self.verifications: Dict[str, List[VerificationRecord]] = {}
-        self.model_to_attestations: Dict[str, List[str]] = {}
-        self.pending_attestations: List[str] = []
-        self.dispute_threshold = 3  # Number of negative verifications to trigger dispute
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+            self.contract_address = contract_address
+            self.chain_id = chain_id
+            self.attestations: Dict[str, TrainingAttestation] = {}
+            self.verifications: Dict[str, List[VerificationRecord]] = {}
+            self.model_to_attestations: Dict[str, List[str]] = {}
+            self.pending_attestations: List[str] = []
+            self.dispute_threshold = 3  # Number of negative verifications to trigger dispute
 
         # Contract state
-        self.owner = None
-        self.authorized_verifiers: List[str] = []
-        self.paused = False
+            self.owner = None
+            self.authorized_verifiers: List[str] = []
+            self.paused = False
 
         logger.info(f"Training attestation contract deployed at {contract_address}")
 
-    def initialize(self, owner: str, initial_verifiers: List[str]) -> None:
-           """TODO: Add docstring for initialize"""
-     """Initialize contract with owner and initial verifiers"""
+            def initialize(self, owner: str, initial_verifiers: List[str]) -> None:
+                """TODO: Add docstring for initialize"""
+        """TODO: Add docstring for initialize"""
+            """TODO: Add docstring for initialize"""
+    """Initialize contract with owner and initial verifiers"""
         if self.owner is not None:
             raise Exception("Contract already initialized")
 
-        self.owner = owner
-        self.authorized_verifiers = initial_verifiers
+            self.owner = owner
+            self.authorized_verifiers = initial_verifiers
 
         logger.info(
             f"Contract initialized with owner {owner} and {len(initial_verifiers)} verifiers"
         )
 
-    def submit_attestation(
+            def submit_attestation(
         self,
         model_hash: str,
         dataset_hash: str,
@@ -108,8 +120,10 @@ class TrainingAttestationContract:
         submitter: str,
         metadata: Optional[Dict[str, Any]] = None,
     ) -> str:
-           """TODO: Add docstring for submit_attestation"""
-     """
+        """TODO: Add docstring for submit_attestation"""
+        """TODO: Add docstring for submit_attestation"""
+            """TODO: Add docstring for submit_attestation"""
+    """
         Submit a new training attestation to the blockchain.
 
         Args:
@@ -152,16 +166,16 @@ class TrainingAttestationContract:
         )
 
         # Store attestation
-        self.attestations[attestation_id] = attestation
-        self.pending_attestations.append(attestation_id)
+            self.attestations[attestation_id] = attestation
+            self.pending_attestations.append(attestation_id)
 
         # Index by model hash
         if model_hash not in self.model_to_attestations:
-        self.model_to_attestations[model_hash] = []
-        self.model_to_attestations[model_hash].append(attestation_id)
+            self.model_to_attestations[model_hash] = []
+            self.model_to_attestations[model_hash].append(attestation_id)
 
         # Emit event (in real blockchain, this would be an actual event)
-        self._emit_event(
+            self._emit_event(
             "AttestationSubmitted",
             {
                 "attestation_id": attestation_id,
@@ -175,7 +189,7 @@ class TrainingAttestationContract:
 
         return attestation_id
 
-    def verify_attestation(
+            def verify_attestation(
         self,
         attestation_id: str,
         verifier: str,
@@ -183,8 +197,10 @@ class TrainingAttestationContract:
         evidence_hash: str,
         notes: str = "",
     ) -> str:
-           """TODO: Add docstring for verify_attestation"""
-     """
+        """TODO: Add docstring for verify_attestation"""
+        """TODO: Add docstring for verify_attestation"""
+            """TODO: Add docstring for verify_attestation"""
+    """
         Submit verification for an attestation.
 
         Args:
@@ -226,14 +242,14 @@ class TrainingAttestationContract:
 
         # Store verification
         if attestation_id not in self.verifications:
-        self.verifications[attestation_id] = []
-        self.verifications[attestation_id].append(verification)
+            self.verifications[attestation_id] = []
+            self.verifications[attestation_id].append(verification)
 
         # Update attestation status based on verifications
-        self._update_attestation_status(attestation_id)
+            self._update_attestation_status(attestation_id)
 
         # Emit event
-        self._emit_event(
+            self._emit_event(
             "VerificationSubmitted",
             {
                 "verification_id": verification_id,
@@ -250,9 +266,11 @@ class TrainingAttestationContract:
 
         return verification_id
 
-    def get_attestation(self, attestation_id: str) -> Optional[Dict[str, Any]]:
-           """TODO: Add docstring for get_attestation"""
-     """Get attestation details"""
+            def get_attestation(self, attestation_id: str) -> Optional[Dict[str, Any]]:
+                """TODO: Add docstring for get_attestation"""
+        """TODO: Add docstring for get_attestation"""
+            """TODO: Add docstring for get_attestation"""
+    """Get attestation details"""
         if attestation_id not in self.attestations:
             return None
 
@@ -273,9 +291,11 @@ class TrainingAttestationContract:
 
         return result
 
-    def get_attestations_for_model(self, model_hash: str) -> List[Dict[str, Any]]:
-           """TODO: Add docstring for get_attestations_for_model"""
-     """Get all attestations for a specific model"""
+            def get_attestations_for_model(self, model_hash: str) -> List[Dict[str, Any]]:
+                """TODO: Add docstring for get_attestations_for_model"""
+        """TODO: Add docstring for get_attestations_for_model"""
+            """TODO: Add docstring for get_attestations_for_model"""
+    """Get all attestations for a specific model"""
         if model_hash not in self.model_to_attestations:
             return []
 
@@ -287,17 +307,21 @@ class TrainingAttestationContract:
 
         return attestations
 
-    def get_verifications(self, attestation_id: str) -> List[Dict[str, Any]]:
-           """TODO: Add docstring for get_verifications"""
-     """Get all verifications for an attestation"""
+                def get_verifications(self, attestation_id: str) -> List[Dict[str, Any]]:
+                    """TODO: Add docstring for get_verifications"""
+        """TODO: Add docstring for get_verifications"""
+            """TODO: Add docstring for get_verifications"""
+    """Get all verifications for an attestation"""
         if attestation_id not in self.verifications:
             return []
 
         return [asdict(v) for v in self.verifications[attestation_id]]
 
-    def dispute_attestation(self, attestation_id: str, disputer: str, evidence_hash: str) -> bool:
-           """TODO: Add docstring for dispute_attestation"""
-     """
+            def dispute_attestation(self, attestation_id: str, disputer: str, evidence_hash: str) -> bool:
+                """TODO: Add docstring for dispute_attestation"""
+        """TODO: Add docstring for dispute_attestation"""
+            """TODO: Add docstring for dispute_attestation"""
+    """
         Dispute an attestation.
 
         Args:
@@ -319,7 +343,7 @@ class TrainingAttestationContract:
         attestation.status = AttestationStatus.DISPUTED
 
         # Emit event
-        self._emit_event(
+            self._emit_event(
             "AttestationDisputed",
             {
                 "attestation_id": attestation_id,
@@ -333,67 +357,77 @@ class TrainingAttestationContract:
 
         return True
 
-    def add_verifier(self, verifier: str, added_by: str) -> bool:
-           """TODO: Add docstring for add_verifier"""
-     """Add a new authorized verifier (only owner)"""
+            def add_verifier(self, verifier: str, added_by: str) -> bool:
+                """TODO: Add docstring for add_verifier"""
+        """TODO: Add docstring for add_verifier"""
+            """TODO: Add docstring for add_verifier"""
+    """Add a new authorized verifier (only owner)"""
         if added_by != self.owner:
             raise Exception("Only owner can add verifiers")
 
         if verifier in self.authorized_verifiers:
             return False
 
-        self.authorized_verifiers.append(verifier)
+            self.authorized_verifiers.append(verifier)
 
-        self._emit_event(
+            self._emit_event(
             "VerifierAdded",
             {"verifier": verifier, "added_by": added_by, "timestamp": int(time.time())},
         )
 
         return True
 
-    def remove_verifier(self, verifier: str, removed_by: str) -> bool:
-           """TODO: Add docstring for remove_verifier"""
-     """Remove an authorized verifier (only owner)"""
+            def remove_verifier(self, verifier: str, removed_by: str) -> bool:
+                """TODO: Add docstring for remove_verifier"""
+        """TODO: Add docstring for remove_verifier"""
+            """TODO: Add docstring for remove_verifier"""
+    """Remove an authorized verifier (only owner)"""
         if removed_by != self.owner:
             raise Exception("Only owner can remove verifiers")
 
         if verifier not in self.authorized_verifiers:
             return False
 
-        self.authorized_verifiers.remove(verifier)
+            self.authorized_verifiers.remove(verifier)
 
-        self._emit_event(
+            self._emit_event(
             "VerifierRemoved",
             {"verifier": verifier, "removed_by": removed_by, "timestamp": int(time.time())},
         )
 
         return True
 
-    def pause_contract(self, paused_by: str) -> None:
-           """TODO: Add docstring for pause_contract"""
-     """Pause contract operations (only owner)"""
+            def pause_contract(self, paused_by: str) -> None:
+                """TODO: Add docstring for pause_contract"""
+        """TODO: Add docstring for pause_contract"""
+            """TODO: Add docstring for pause_contract"""
+    """Pause contract operations (only owner)"""
         if paused_by != self.owner:
             raise Exception("Only owner can pause contract")
 
-        self.paused = True
+            self.paused = True
 
-        self._emit_event("ContractPaused", {"paused_by": paused_by, "timestamp": int(time.time())})
+            self._emit_event("ContractPaused", {"paused_by": paused_by, "timestamp": int(time.time())})
 
-    def unpause_contract(self, unpaused_by: str) -> None:
-           """TODO: Add docstring for unpause_contract"""
-     """Unpause contract operations (only owner)"""
+            def unpause_contract(self, unpaused_by: str) -> None:
+                """TODO: Add docstring for unpause_contract"""
+        """TODO: Add docstring for unpause_contract"""
+            """TODO: Add docstring for unpause_contract"""
+    """Unpause contract operations (only owner)"""
         if unpaused_by != self.owner:
             raise Exception("Only owner can unpause contract")
 
-        self.paused = False
+            self.paused = False
 
-        self._emit_event(
+            self._emit_event(
             "ContractUnpaused", {"unpaused_by": unpaused_by, "timestamp": int(time.time())}
         )
 
-    def _update_attestation_status(self, attestation_id: str) -> None:
-           """TODO: Add docstring for _update_attestation_status"""
-     """Update attestation status based on verifications"""
+            def _update_attestation_status(self, attestation_id: str) -> None:
+                """TODO: Add docstring for _update_attestation_status"""
+        """TODO: Add docstring for _update_attestation_status"""
+            """TODO: Add docstring for _update_attestation_status"""
+    """Update attestation status based on verifications"""
         attestation = self.attestations[attestation_id]
         verifications = self.verifications.get(attestation_id, [])
 
@@ -406,7 +440,7 @@ class TrainingAttestationContract:
         # Check for dispute threshold
         if negative >= self.dispute_threshold:
             attestation.status = AttestationStatus.DISPUTED
-        self._emit_event(
+            self._emit_event(
                 "AttestationAutoDisputed",
                 {"attestation_id": attestation_id, "negative_verifications": negative},
             )
@@ -414,15 +448,17 @@ class TrainingAttestationContract:
         elif positive > negative and positive >= len(self.authorized_verifiers) // 2:
             attestation.status = AttestationStatus.VERIFIED
             if attestation_id in self.pending_attestations:
-        self.pending_attestations.remove(attestation_id)
-        self._emit_event(
+                self.pending_attestations.remove(attestation_id)
+                self._emit_event(
                 "AttestationVerified",
                 {"attestation_id": attestation_id, "positive_verifications": positive},
             )
 
-    def _emit_event(self, event_name: str, data: Dict[str, Any]) -> None:
-           """TODO: Add docstring for _emit_event"""
-     """Emit blockchain event (simulated)"""
+                def _emit_event(self, event_name: str, data: Dict[str, Any]) -> None:
+                    """TODO: Add docstring for _emit_event"""
+        """TODO: Add docstring for _emit_event"""
+            """TODO: Add docstring for _emit_event"""
+    """Emit blockchain event (simulated)"""
         event_data = {
             "event": event_name,
             "contract": self.contract_address,
@@ -435,9 +471,11 @@ class TrainingAttestationContract:
         # For now, just log it
         logger.debug(f"Event emitted: {json.dumps(event_data)}")
 
-    def get_contract_state(self) -> Dict[str, Any]:
-           """TODO: Add docstring for get_contract_state"""
-     """Get current contract state"""
+                    def get_contract_state(self) -> Dict[str, Any]:
+                        """TODO: Add docstring for get_contract_state"""
+        """TODO: Add docstring for get_contract_state"""
+            """TODO: Add docstring for get_contract_state"""
+    """Get current contract state"""
         return {
             "contract_address": self.contract_address,
             "chain_id": self.chain_id,
@@ -456,11 +494,13 @@ class TrainingAttestationContract:
         }
 
 
-    def create_attestation_hash(
+                        def create_attestation_hash(
     model_hash: str, dataset_hash: str, snapshot_merkle_root: str, metadata: Dict[str, Any]
 ) -> str:
-       """TODO: Add docstring for create_attestation_hash"""
-     """
+    """TODO: Add docstring for create_attestation_hash"""
+    """TODO: Add docstring for create_attestation_hash"""
+        """TODO: Add docstring for create_attestation_hash"""
+    """
     Create a deterministic hash for an attestation.
 
     Args:

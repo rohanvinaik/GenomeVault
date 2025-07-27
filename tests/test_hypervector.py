@@ -12,28 +12,42 @@ from genomevault.hypervector_transform.mapping import SimilarityPreservingMapper
 
 class TestHypervectorEngine:
     """Test suite for hyperdimensional computing operations"""
+    """Test suite for hyperdimensional computing operations"""
+    """Test suite for hyperdimensional computing operations"""
 
     @pytest.fixture
 
     def encoder_10k(self) -> None:
+    def encoder_10k(self) -> None:
+        """10,000-dimensional base encoder"""
+        """10,000-dimensional base encoder"""
     """10,000-dimensional base encoder"""
         return HypervectorEncoder(dimensions=10000, resolution="base")
 
     @pytest.fixture
 
-    def encoder_15k(self) -> None:
+        def encoder_15k(self) -> None:
+        def encoder_15k(self) -> None:
+        """15,000-dimensional mid-level encoder"""
+        """15,000-dimensional mid-level encoder"""
     """15,000-dimensional mid-level encoder"""
         return HypervectorEncoder(dimensions=15000, resolution="mid")
 
     @pytest.fixture
 
-    def encoder_20k(self) -> None:
+            def encoder_20k(self) -> None:
+            def encoder_20k(self) -> None:
+    """20,000-dimensional high-level encoder"""
+        """20,000-dimensional high-level encoder"""
     """20,000-dimensional high-level encoder"""
         return HypervectorEncoder(dimensions=20000, resolution="high")
 
     @pytest.fixture
 
-    def sample_genomic_features(self) -> None:
+                def sample_genomic_features(self) -> None:
+                def sample_genomic_features(self) -> None:
+    """Generate realistic genomic feature vectors"""
+        """Generate realistic genomic feature vectors"""
     """Generate realistic genomic feature vectors"""
         return {
             "variants": np.random.randn(1000),  # 1000 variant features
@@ -43,9 +57,11 @@ class TestHypervectorEngine:
         }
 
 
-    def test_multi_resolution_encoding(
+                    def test_multi_resolution_encoding(
         self, encoder_10k, encoder_15k, encoder_20k, sample_genomic_features
     ) -> None:
+        """Test hierarchical encoding at different resolutions"""
+        """Test hierarchical encoding at different resolutions"""
     """Test hierarchical encoding at different resolutions"""
         features = sample_genomic_features["variants"]
 
@@ -67,7 +83,10 @@ class TestHypervectorEngine:
         assert base_info < mid_info < high_info
 
 
-    def test_similarity_preservation(self, encoder_10k, sample_genomic_features) -> None:
+        def test_similarity_preservation(self, encoder_10k, sample_genomic_features) -> None:
+        def test_similarity_preservation(self, encoder_10k, sample_genomic_features) -> None:
+        """Verify similarity preservation property: E[cos(y1,y2)] = cos(x1,x2)"""
+        """Verify similarity preservation property: E[cos(y1,y2)] = cos(x1,x2)"""
     """Verify similarity preservation property: E[cos(y1,y2)] = cos(x1,x2)"""
         # Create two similar feature vectors
         features1 = sample_genomic_features["variants"]
@@ -89,7 +108,10 @@ class TestHypervectorEngine:
         ), "Similarity not preserved: {orig_sim:.3f} vs {hyper_sim:.3f}"
 
 
-    def test_binding_operations(self, encoder_10k, sample_genomic_features) -> None:
+            def test_binding_operations(self, encoder_10k, sample_genomic_features) -> None:
+            def test_binding_operations(self, encoder_10k, sample_genomic_features) -> None:
+    """Test hypervector binding operations"""
+        """Test hypervector binding operations"""
     """Test hypervector binding operations"""
         binding = BindingOperations()
 
@@ -111,7 +133,10 @@ class TestHypervectorEngine:
         assert similarity > 0.8, "Binding should be approximately reversible"
 
 
-    def test_holographic_representation(self, encoder_10k, sample_genomic_features) -> None:
+                def test_holographic_representation(self, encoder_10k, sample_genomic_features) -> None:
+                def test_holographic_representation(self, encoder_10k, sample_genomic_features) -> None:
+    """Test holographic distributed representation"""
+        """Test holographic distributed representation"""
     """Test holographic distributed representation"""
         holographic = HolographicRepresentation(dimensions=10000)
 
@@ -136,7 +161,10 @@ class TestHypervectorEngine:
             assert similarity > 0.7, "Failed to recover {modality}"
 
 
-    def test_privacy_preservation(self, encoder_10k) -> None:
+            def test_privacy_preservation(self, encoder_10k) -> None:
+            def test_privacy_preservation(self, encoder_10k) -> None:
+        """Test computational infeasibility of reconstruction"""
+        """Test computational infeasibility of reconstruction"""
     """Test computational infeasibility of reconstruction"""
         # Generate random features
         original = np.random.randn(1000)
@@ -160,7 +188,10 @@ class TestHypervectorEngine:
         ],
     )
 
-    def test_memory_footprint(self, dimensions, expected_memory_kb) -> None:
+                def test_memory_footprint(self, dimensions, expected_memory_kb) -> None:
+                def test_memory_footprint(self, dimensions, expected_memory_kb) -> None:
+    """Verify memory usage matches specifications"""
+        """Verify memory usage matches specifications"""
     """Verify memory usage matches specifications"""
         encoder = HypervectorEncoder(dimensions=dimensions)
         vector = encoder.encode(np.random.randn(1000))
@@ -172,7 +203,10 @@ class TestHypervectorEngine:
         assert abs(memory_kb - expected_memory_kb) < expected_memory_kb * 0.05
 
 
-    def test_cross_modal_binding(self, encoder_10k, sample_genomic_features) -> None:
+                    def test_cross_modal_binding(self, encoder_10k, sample_genomic_features) -> None:
+                    def test_cross_modal_binding(self, encoder_10k, sample_genomic_features) -> None:
+    """Test binding across different biological modalities"""
+        """Test binding across different biological modalities"""
     """Test binding across different biological modalities"""
         binding = BindingOperations()
 
@@ -196,7 +230,10 @@ class TestHypervectorEngine:
         assert np.abs(np.mean(final)) < 0.1  # Approximately zero-mean
 
 
-    def test_encoding_determinism(self, encoder_10k) -> None:
+                        def test_encoding_determinism(self, encoder_10k) -> None:
+                        def test_encoding_determinism(self, encoder_10k) -> None:
+    """Ensure encoding is deterministic for same input"""
+        """Ensure encoding is deterministic for same input"""
     """Ensure encoding is deterministic for same input"""
         features = np.random.randn(1000)
 
@@ -206,7 +243,10 @@ class TestHypervectorEngine:
         assert np.array_equal(vec1, vec2), "Encoding must be deterministic"
 
 
-    def test_performance_benchmark(self, encoder_10k, sample_genomic_features) -> None:
+                            def test_performance_benchmark(self, encoder_10k, sample_genomic_features) -> None:
+                            def test_performance_benchmark(self, encoder_10k, sample_genomic_features) -> None:
+    """Benchmark encoding performance"""
+        """Benchmark encoding performance"""
     """Benchmark encoding performance"""
         import time
 

@@ -24,8 +24,10 @@ from genomevault.zk_proofs.circuits.implementations.variant_proof_circuit import
 
 
 def load_json_file(filepath: str) -> Dict[str, Any]:
-       """TODO: Add docstring for load_json_file"""
-     """Load JSON data from file."""
+    """TODO: Add docstring for load_json_file"""
+    """TODO: Add docstring for load_json_file"""
+        """TODO: Add docstring for load_json_file"""
+    """Load JSON data from file."""
     try:
         with open(filepath, "r") as f:
             return json.load(f)
@@ -34,9 +36,11 @@ def load_json_file(filepath: str) -> Dict[str, Any]:
         sys.exit(1)
 
 
-def save_json_file(data: Dict[str, Any], filepath: str) -> None:
-       """TODO: Add docstring for save_json_file"""
-     """Save JSON data to file."""
+        def save_json_file(data: Dict[str, Any], filepath: str) -> None:
+            """TODO: Add docstring for save_json_file"""
+    """TODO: Add docstring for save_json_file"""
+        """TODO: Add docstring for save_json_file"""
+    """Save JSON data to file."""
     try:
         with open(filepath, "w") as f:
             json.dump(data, f, indent=2)
@@ -45,9 +49,11 @@ def save_json_file(data: Dict[str, Any], filepath: str) -> None:
         sys.exit(1)
 
 
-def cmd_prove(args) -> None:
-       """TODO: Add docstring for cmd_prove"""
-     """Generate a zero-knowledge proof."""
+        def cmd_prove(args) -> None:
+            """TODO: Add docstring for cmd_prove"""
+    """TODO: Add docstring for cmd_prove"""
+        """TODO: Add docstring for cmd_prove"""
+    """Generate a zero-knowledge proof."""
     print(f"Generating {args.circuit} proof...")
 
     # Load inputs
@@ -131,9 +137,11 @@ def cmd_prove(args) -> None:
     print(f"Proof size: ~384 bytes")
 
 
-def cmd_verify(args) -> None:
-       """TODO: Add docstring for cmd_verify"""
-     """Verify a zero-knowledge proof."""
+        def cmd_verify(args) -> None:
+            """TODO: Add docstring for cmd_verify"""
+    """TODO: Add docstring for cmd_verify"""
+        """TODO: Add docstring for cmd_verify"""
+    """Verify a zero-knowledge proof."""
     print(f"Verifying proof from {args.proof}...")
 
     # Load proof
@@ -188,9 +196,11 @@ def cmd_verify(args) -> None:
     sys.exit(0 if is_valid else 1)
 
 
-def cmd_demo(args) -> None:
-       """TODO: Add docstring for cmd_demo"""
-     """Run demonstration with example data."""
+            def cmd_demo(args) -> None:
+                """TODO: Add docstring for cmd_demo"""
+    """TODO: Add docstring for cmd_demo"""
+        """TODO: Add docstring for cmd_demo"""
+    """Run demonstration with example data."""
     print(f"Running {args.circuit} demonstration...")
 
     if args.circuit == "variant_presence":
@@ -252,9 +262,11 @@ def cmd_demo(args) -> None:
         )
 
 
-def cmd_info(args) -> None:
-       """TODO: Add docstring for cmd_info"""
-     """Display information about available circuits."""
+        def cmd_info(args) -> None:
+            """TODO: Add docstring for cmd_info"""
+    """TODO: Add docstring for cmd_info"""
+        """TODO: Add docstring for cmd_info"""
+    """Display information about available circuits."""
 
     circuits = {
         "variant_presence": {
@@ -320,25 +332,27 @@ def cmd_info(args) -> None:
             print(f"  Proof size: {info['proof_size']}, Verification: {info['verification_time']}")
 
 
-def main() -> None:
-       """TODO: Add docstring for main"""
-     """Main CLI entry point."""
+            def main() -> None:
+                """TODO: Add docstring for main"""
+    """TODO: Add docstring for main"""
+        """TODO: Add docstring for main"""
+    """Main CLI entry point."""
     parser = argparse.ArgumentParser(
         description="GenomeVault Zero-Knowledge Proof CLI",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Generate a variant presence proof
-  zk_prove --circuit variant_presence --public-input public.json --private-input private.json
+# Generate a variant presence proof
+zk_prove --circuit variant_presence --public-input public.json --private-input private.json
 
-  # Verify a proof
-  zk_verify --proof variant_proof.json
+# Verify a proof
+zk_verify --proof variant_proof.json
 
-  # Run demonstration
-  zk_demo --circuit variant_frequency --save-inputs
+# Run demonstration
+zk_demo --circuit variant_frequency --save-inputs
 
-  # Get circuit information
-  zk_info --circuit diabetes_risk
+# Get circuit information
+zk_info --circuit diabetes_risk
         """,
     )
 

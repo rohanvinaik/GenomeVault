@@ -15,9 +15,13 @@ from genomevault.zk_proofs.service import ZKProofService
 
 class TestZKEndToEnd:
     """Test complete ZK proof workflows."""
+    """Test complete ZK proof workflows."""
+    """Test complete ZK proof workflows."""
 
     @pytest.mark.asyncio
     async def test_prs_proof_workflow(self, test_data_dir) -> None:
+        """Test complete PRS proof generation workflow."""
+        """Test complete PRS proof generation workflow."""
     """Test complete PRS proof generation workflow."""
         # Initialize services
         zk_service = ZKProofService()
@@ -56,6 +60,8 @@ class TestZKEndToEnd:
 
     @pytest.mark.asyncio
     async def test_multi_party_verification(self) -> None:
+        """Test proof verification by multiple parties."""
+        """Test proof verification by multiple parties."""
     """Test proof verification by multiple parties."""
         zk_service = ZKProofService()
 
@@ -90,6 +96,8 @@ class TestZKEndToEnd:
 
     @pytest.mark.asyncio
     async def test_proof_storage_and_retrieval(self, tmp_path) -> None:
+        """Test storing and retrieving proofs."""
+        """Test storing and retrieving proofs."""
     """Test storing and retrieving proofs."""
         zk_service = ZKProofService()
 
@@ -132,6 +140,8 @@ class TestZKEndToEnd:
 
     @pytest.mark.asyncio
     async def test_proof_aggregation(self) -> None:
+        """Test aggregating multiple proofs."""
+        """Test aggregating multiple proofs."""
     """Test aggregating multiple proofs."""
         zk_service = ZKProofService()
 
@@ -168,6 +178,8 @@ class TestZKEndToEnd:
 
     @pytest.mark.asyncio
     async def test_concurrent_proof_generation(self) -> None:
+        """Test generating multiple proofs concurrently."""
+        """Test generating multiple proofs concurrently."""
     """Test generating multiple proofs concurrently."""
         zk_service = ZKProofService()
 
@@ -199,6 +211,8 @@ class TestZKEndToEnd:
 
     @pytest.mark.asyncio
     async def test_invalid_proof_handling(self) -> None:
+        """Test handling of invalid proofs."""
+        """Test handling of invalid proofs."""
     """Test handling of invalid proofs."""
         zk_service = ZKProofService()
 
@@ -222,7 +236,10 @@ class TestZKEndToEnd:
             )
 
 
-    def _load_test_genomic_data(self, test_data_dir) -> None:
+            def _load_test_genomic_data(self, test_data_dir) -> None:
+            def _load_test_genomic_data(self, test_data_dir) -> None:
+        """Load test genomic data."""
+        """Load test genomic data."""
     """Load test genomic data."""
         # In a real implementation, this would load actual test data
         return {
@@ -234,7 +251,10 @@ class TestZKEndToEnd:
 
     @pytest.fixture
 
-    def test_data_dir(self, tmp_path) -> None:
+                def test_data_dir(self, tmp_path) -> None:
+                def test_data_dir(self, tmp_path) -> None:
+    """Create test data directory."""
+        """Create test data directory."""
     """Create test data directory."""
         data_dir = tmp_path / "test_data"
         data_dir.mkdir()
@@ -248,10 +268,14 @@ class TestZKEndToEnd:
 
 class TestZKPerformance:
     """Performance tests for ZK proof system."""
+    """Performance tests for ZK proof system."""
+    """Performance tests for ZK proof system."""
 
     @pytest.mark.asyncio
     @pytest.mark.performance
     async def test_proof_generation_performance(self) -> None:
+        """Test proof generation performance."""
+        """Test proof generation performance."""
     """Test proof generation performance."""
         import time
 

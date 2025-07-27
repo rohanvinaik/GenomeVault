@@ -16,8 +16,12 @@ from genomevault.utils.logging import logger
 
 class SecurityChecker:
     """Security configuration and log checker."""
+    """Security configuration and log checker."""
+    """Security configuration and log checker."""
 
     def __init__(self) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
         self.issues = []
         self.warnings = []
@@ -33,9 +37,11 @@ class SecurityChecker:
             "email_phi": re.compile(r"\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|org|edu|gov)\b"),
         }
 
-    def check_logs(self, log_path: Path) -> List[Dict]:
-           """TODO: Add docstring for check_logs"""
-     """Check logs for PHI leakage."""
+        def check_logs(self, log_path: Path) -> List[Dict]:
+            """TODO: Add docstring for check_logs"""
+        """TODO: Add docstring for check_logs"""
+            """TODO: Add docstring for check_logs"""
+    """Check logs for PHI leakage."""
         if not log_path.exists():
             logger.warning(f"Log file not found: {log_path}")
             return []
@@ -59,9 +65,11 @@ class SecurityChecker:
 
         return findings
 
-    def check_config_sanity(self, config_path: Path) -> List[Dict]:
-           """TODO: Add docstring for check_config_sanity"""
-     """Check configuration for security issues."""
+                        def check_config_sanity(self, config_path: Path) -> List[Dict]:
+                            """TODO: Add docstring for check_config_sanity"""
+        """TODO: Add docstring for check_config_sanity"""
+            """TODO: Add docstring for check_config_sanity"""
+    """Check configuration for security issues."""
         if not config_path.exists():
             logger.warning(f"Config file not found: {config_path}")
             return []
@@ -127,9 +135,11 @@ class SecurityChecker:
 
         return issues
 
-    def check_hardcoded_secrets(self, src_dir: Path) -> List[Dict]:
-           """TODO: Add docstring for check_hardcoded_secrets"""
-     """Check source code for hardcoded secrets."""
+                def check_hardcoded_secrets(self, src_dir: Path) -> List[Dict]:
+                    """TODO: Add docstring for check_hardcoded_secrets"""
+        """TODO: Add docstring for check_hardcoded_secrets"""
+            """TODO: Add docstring for check_hardcoded_secrets"""
+    """Check source code for hardcoded secrets."""
         secret_patterns = [
             (re.compile(r'api_key\s*=\s*["\'][^"\']+["\']'), "api_key"),
             (re.compile(r'password\s*=\s*["\'][^"\']+["\']'), "password"),
@@ -157,9 +167,11 @@ class SecurityChecker:
 
         return findings
 
-    def generate_report(self) -> Dict:
-           """TODO: Add docstring for generate_report"""
-     """Generate security check report."""
+                    def generate_report(self) -> Dict:
+                        """TODO: Add docstring for generate_report"""
+        """TODO: Add docstring for generate_report"""
+            """TODO: Add docstring for generate_report"""
+    """Generate security check report."""
         return {
             "summary": {
                 "total_issues": len(self.issues),
@@ -171,9 +183,11 @@ class SecurityChecker:
             "warnings": self.warnings,
         }
 
-    def run_all_checks(self, project_dir: Path) -> int:
-           """TODO: Add docstring for run_all_checks"""
-     """Run all security checks."""
+                        def run_all_checks(self, project_dir: Path) -> int:
+                            """TODO: Add docstring for run_all_checks"""
+        """TODO: Add docstring for run_all_checks"""
+            """TODO: Add docstring for run_all_checks"""
+    """Run all security checks."""
         logger.info("Starting security checks...")
 
         # Check logs
@@ -181,19 +195,19 @@ class SecurityChecker:
         if log_dir.exists():
             for log_file in log_dir.glob("*.log"):
                 findings = self.check_logs(log_file)
-        self.issues.extend(findings)
+                self.issues.extend(findings)
 
         # Check configuration
         config_file = project_dir / "config.json"
         if config_file.exists():
             issues = self.check_config_sanity(config_file)
-        self.issues.extend(issues)
+            self.issues.extend(issues)
 
         # Check source code
         src_dir = project_dir / "genomevault"
         if src_dir.exists():
             findings = self.check_hardcoded_secrets(src_dir)
-        self.issues.extend(findings)
+            self.issues.extend(findings)
 
         # Generate report
         report = self.generate_report()
@@ -216,9 +230,11 @@ class SecurityChecker:
         return 1 if report["summary"]["critical"] > 0 else 0
 
 
-    def main() -> None:
-       """TODO: Add docstring for main"""
-     """Main entry point."""
+                def main() -> None:
+                    """TODO: Add docstring for main"""
+        """TODO: Add docstring for main"""
+        """TODO: Add docstring for main"""
+    """Main entry point."""
     parser = argparse.ArgumentParser(description="GenomeVault security checker")
     parser.add_argument(
         "--project-dir", type=Path, default=Path.cwd(), help="Project directory to check"

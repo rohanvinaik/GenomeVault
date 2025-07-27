@@ -23,6 +23,8 @@ metrics = get_metrics()
 @dataclass
 class RecursiveProof:
     """Recursive proof that aggregates multiple sub-proofs."""
+    """Recursive proof that aggregates multiple sub-proofs."""
+    """Recursive proof that aggregates multiple sub-proofs."""
 
     proof_id: str
     sub_proof_ids: List[str]
@@ -33,46 +35,56 @@ class RecursiveProof:
 
     @property
     def proof_count(self) -> int:
-           """TODO: Add docstring for proof_count"""
-     """Total number of proofs aggregated (including nested)."""
+        """TODO: Add docstring for proof_count"""
+        """TODO: Add docstring for proof_count"""
+            """TODO: Add docstring for proof_count"""
+    """Total number of proofs aggregated (including nested)."""
         return self.metadata.get("total_proof_count", len(self.sub_proof_ids))
 
     @property
-    def verification_complexity(self) -> str:
-           """TODO: Add docstring for verification_complexity"""
-     """Verification complexity class."""
+        def verification_complexity(self) -> str:
+            """TODO: Add docstring for verification_complexity"""
+        """TODO: Add docstring for verification_complexity"""
+            """TODO: Add docstring for verification_complexity"""
+    """Verification complexity class."""
         return "O(1)" if self.metadata.get("uses_accumulator", False) else "O(log n)"
 
 
 class RecursiveSNARKProver:
+    """
+    """
     """
     Implements recursive SNARK composition for GenomeVault.
     Achieves O(D log D) circuit overhead for verifying D proofs.
     """
 
     def __init__(self, max_recursion_depth: int = 10, use_real_backend: bool = True) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize recursive SNARK prover.
 
         Args:
             max_recursion_depth: Maximum nesting depth for recursive proofs
             use_real_backend: Whether to use real gnark backend or simulation
         """
-        self.max_recursion_depth = max_recursion_depth
-        self.accumulator_state = self._initialize_accumulator()
-        self.circuit_cache = {}
-        self.use_real_backend = use_real_backend
+            self.max_recursion_depth = max_recursion_depth
+            self.accumulator_state = self._initialize_accumulator()
+            self.circuit_cache = {}
+            self.use_real_backend = use_real_backend
 
         # Initialize ZK backend
-        self.backend = get_backend(use_real=use_real_backend)
+            self.backend = get_backend(use_real=use_real_backend)
 
         logger.info(f"RecursiveSNARKProver initialized with max depth {max_recursion_depth}")
         logger.info(f"Using {'real gnark' if use_real_backend else 'simulated'} backend")
 
-    def _initialize_accumulator(self) -> Dict[str, Any]:
-           """TODO: Add docstring for _initialize_accumulator"""
-     """Initialize cryptographic accumulator for proof aggregation."""
+            def _initialize_accumulator(self) -> Dict[str, Any]:
+                """TODO: Add docstring for _initialize_accumulator"""
+        """TODO: Add docstring for _initialize_accumulator"""
+            """TODO: Add docstring for _initialize_accumulator"""
+    """Initialize cryptographic accumulator for proof aggregation."""
         return {
             "accumulator_value": np.random.bytes(32),
             "witness_cache": {},
@@ -80,11 +92,13 @@ class RecursiveSNARKProver:
             "last_update": time.time(),
         }
 
-    def compose_proofs(
+                def compose_proofs(
         self, proofs: List[Proof], aggregation_strategy: str = "balanced_tree"
     ) -> RecursiveProof:
-           """TODO: Add docstring for compose_proofs"""
-     """
+        """TODO: Add docstring for compose_proofs"""
+        """TODO: Add docstring for compose_proofs"""
+            """TODO: Add docstring for compose_proofs"""
+    """
         Compose multiple proofs into a single recursive proof.
 
         Args:
@@ -113,9 +127,11 @@ class RecursiveSNARKProver:
         else:
             raise ValueError(f"Unknown aggregation strategy: {aggregation_strategy}")
 
-    def _balanced_tree_composition(self, proofs: List[Proof]) -> RecursiveProof:
-           """TODO: Add docstring for _balanced_tree_composition"""
-     """
+            def _balanced_tree_composition(self, proofs: List[Proof]) -> RecursiveProof:
+                """TODO: Add docstring for _balanced_tree_composition"""
+        """TODO: Add docstring for _balanced_tree_composition"""
+            """TODO: Add docstring for _balanced_tree_composition"""
+    """
         Compose proofs using balanced binary tree structure.
         Achieves O(log n) verification depth.
         """
@@ -167,9 +183,11 @@ class RecursiveSNARKProver:
             },
         )
 
-    def _accumulator_based_composition(self, proofs: List[Proof]) -> RecursiveProof:
-           """TODO: Add docstring for _accumulator_based_composition"""
-     """
+                def _accumulator_based_composition(self, proofs: List[Proof]) -> RecursiveProof:
+                    """TODO: Add docstring for _accumulator_based_composition"""
+        """TODO: Add docstring for _accumulator_based_composition"""
+            """TODO: Add docstring for _accumulator_based_composition"""
+    """
         Compose proofs using cryptographic accumulator.
         Achieves O(1) verification time.
         """
@@ -186,12 +204,12 @@ class RecursiveSNARKProver:
             witnesses.append(witness)
 
             # Cache witness for later verification
-        self.accumulator_state["witness_cache"][proof.proof_id] = witness
+            self.accumulator_state["witness_cache"][proof.proof_id] = witness
 
         # Update accumulator state
-        self.accumulator_state["accumulator_value"] = acc_value
-        self.accumulator_state["proof_count"] += len(proofs)
-        self.accumulator_state["last_update"] = time.time()
+            self.accumulator_state["accumulator_value"] = acc_value
+            self.accumulator_state["proof_count"] += len(proofs)
+            self.accumulator_state["last_update"] = time.time()
 
         # Generate accumulator proof
         acc_proof = self._generate_accumulator_proof(proofs, witnesses, acc_value)
@@ -212,9 +230,11 @@ class RecursiveSNARKProver:
             },
         )
 
-    def _sequential_composition(self, proofs: List[Proof]) -> RecursiveProof:
-           """TODO: Add docstring for _sequential_composition"""
-     """Simple sequential proof composition (for comparison/testing)."""
+            def _sequential_composition(self, proofs: List[Proof]) -> RecursiveProof:
+                """TODO: Add docstring for _sequential_composition"""
+        """TODO: Add docstring for _sequential_composition"""
+            """TODO: Add docstring for _sequential_composition"""
+    """Simple sequential proof composition (for comparison/testing)."""
         logger.info(f"Composing {len(proofs)} proofs using sequential strategy")
 
         # Start with first proof
@@ -241,9 +261,11 @@ class RecursiveSNARKProver:
             },
         )
 
-    def _compose_pair(self, left: Proof, right: Proof, level: int) -> Proof:
-           """TODO: Add docstring for _compose_pair"""
-     """
+            def _compose_pair(self, left: Proof, right: Proof, level: int) -> Proof:
+                """TODO: Add docstring for _compose_pair"""
+        """TODO: Add docstring for _compose_pair"""
+            """TODO: Add docstring for _compose_pair"""
+    """
         Compose two proofs into one using recursive SNARK.
 
         This implements the formula:
@@ -253,7 +275,7 @@ class RecursiveSNARKProver:
         circuit_key = f"{left.circuit_name}_{right.circuit_name}_{level}"
 
         if circuit_key not in self.circuit_cache:
-        self.circuit_cache[circuit_key] = self._create_verifier_circuit(
+            self.circuit_cache[circuit_key] = self._create_verifier_circuit(
                 left.circuit_name, right.circuit_name
             )
 
@@ -296,9 +318,11 @@ class RecursiveSNARKProver:
             },
         )
 
-    def _create_verifier_circuit(self, left_circuit: str, right_circuit: str) -> Dict[str, Any]:
-           """TODO: Add docstring for _create_verifier_circuit"""
-     """Create SNARK verifier circuit for proof pair."""
+            def _create_verifier_circuit(self, left_circuit: str, right_circuit: str) -> Dict[str, Any]:
+                """TODO: Add docstring for _create_verifier_circuit"""
+        """TODO: Add docstring for _create_verifier_circuit"""
+            """TODO: Add docstring for _create_verifier_circuit"""
+    """Create SNARK verifier circuit for proof pair."""
         # Circuit that verifies two proofs
         return {
             "name": f"verifier_{left_circuit}_{right_circuit}",
@@ -312,11 +336,13 @@ class RecursiveSNARKProver:
             "uses_lookups": True,  # Plonky2-style lookups
         }
 
-    def _generate_recursive_proof(
+                def _generate_recursive_proof(
         self, circuit: Dict[str, Any], public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
     ) -> bytes:
-           """TODO: Add docstring for _generate_recursive_proof"""
-     """Generate proof for recursive verification circuit."""
+        """TODO: Add docstring for _generate_recursive_proof"""
+        """TODO: Add docstring for _generate_recursive_proof"""
+            """TODO: Add docstring for _generate_recursive_proof"""
+    """Generate proof for recursive verification circuit."""
         if self.use_real_backend:
             # Use real gnark backend for proof generation
             with metrics.time_operation("recursive_proof_generation"):
@@ -344,9 +370,11 @@ class RecursiveSNARKProver:
 
             return proof_data
 
-    def _accumulator_add(self, acc_value: bytes, proof: Proof) -> Tuple[bytes, bytes]:
-           """TODO: Add docstring for _accumulator_add"""
-     """Add proof to cryptographic accumulator."""
+                def _accumulator_add(self, acc_value: bytes, proof: Proof) -> Tuple[bytes, bytes]:
+                    """TODO: Add docstring for _accumulator_add"""
+        """TODO: Add docstring for _accumulator_add"""
+            """TODO: Add docstring for _accumulator_add"""
+    """Add proof to cryptographic accumulator."""
         # Hash proof into accumulator
         proof_digest = self._hash_proof(proof).encode()
 
@@ -360,11 +388,13 @@ class RecursiveSNARKProver:
 
         return new_acc, witness
 
-    def _generate_accumulator_proof(
+                    def _generate_accumulator_proof(
         self, proofs: List[Proof], witnesses: List[bytes], final_acc: bytes
     ) -> bytes:
-           """TODO: Add docstring for _generate_accumulator_proof"""
-     """Generate proof of correct accumulator construction."""
+        """TODO: Add docstring for _generate_accumulator_proof"""
+        """TODO: Add docstring for _generate_accumulator_proof"""
+            """TODO: Add docstring for _generate_accumulator_proof"""
+    """Generate proof of correct accumulator construction."""
         # Prove that final_acc correctly accumulates all proofs
 
         proof_components = {
@@ -380,9 +410,11 @@ class RecursiveSNARKProver:
 
         return json.dumps(proof_components).encode()[:512]
 
-    def _aggregate_public_inputs(self, proofs: List[Proof]) -> Dict[str, Any]:
-           """TODO: Add docstring for _aggregate_public_inputs"""
-     """Aggregate public inputs from multiple proofs."""
+        def _aggregate_public_inputs(self, proofs: List[Proof]) -> Dict[str, Any]:
+            """TODO: Add docstring for _aggregate_public_inputs"""
+        """TODO: Add docstring for _aggregate_public_inputs"""
+            """TODO: Add docstring for _aggregate_public_inputs"""
+    """Aggregate public inputs from multiple proofs."""
         aggregate = {
             "proof_count": len(proofs),
             "circuit_types": list(set(p.circuit_name for p in proofs)),
@@ -402,11 +434,13 @@ class RecursiveSNARKProver:
 
         return aggregate
 
-    def _merge_public_inputs(
+            def _merge_public_inputs(
         self, left_public: Dict[str, Any], right_public: Dict[str, Any]
     ) -> Dict[str, Any]:
-           """TODO: Add docstring for _merge_public_inputs"""
-     """Merge public inputs from two proofs."""
+        """TODO: Add docstring for _merge_public_inputs"""
+        """TODO: Add docstring for _merge_public_inputs"""
+            """TODO: Add docstring for _merge_public_inputs"""
+    """Merge public inputs from two proofs."""
         merged = {"left": left_public, "right": right_public}
 
         # Special handling for certain input types
@@ -415,9 +449,11 @@ class RecursiveSNARKProver:
 
         return merged
 
-    def _compute_aggregate_vk(self, proofs: List[Proof]) -> str:
-           """TODO: Add docstring for _compute_aggregate_vk"""
-     """Compute aggregate verification key."""
+            def _compute_aggregate_vk(self, proofs: List[Proof]) -> str:
+                """TODO: Add docstring for _compute_aggregate_vk"""
+        """TODO: Add docstring for _compute_aggregate_vk"""
+            """TODO: Add docstring for _compute_aggregate_vk"""
+    """Compute aggregate verification key."""
         # In practice, would compute proper aggregate VK
         vk_components = [p.verification_key or p.proof_id for p in proofs]
 
@@ -425,14 +461,18 @@ class RecursiveSNARKProver:
 
         return aggregate_vk
 
-    def _combine_verification_keys(self, vk1: str, vk2: str) -> str:
-           """TODO: Add docstring for _combine_verification_keys"""
-     """Combine two verification keys."""
+                def _combine_verification_keys(self, vk1: str, vk2: str) -> str:
+                    """TODO: Add docstring for _combine_verification_keys"""
+        """TODO: Add docstring for _combine_verification_keys"""
+            """TODO: Add docstring for _combine_verification_keys"""
+    """Combine two verification keys."""
         return hashlib.sha256(f"{vk1}_{vk2}".encode()).hexdigest()
 
-    def _hash_proof(self, proof: Proof) -> str:
-           """TODO: Add docstring for _hash_proof"""
-     """Compute hash of proof for aggregation."""
+                    def _hash_proof(self, proof: Proof) -> str:
+                        """TODO: Add docstring for _hash_proof"""
+        """TODO: Add docstring for _hash_proof"""
+            """TODO: Add docstring for _hash_proof"""
+    """Compute hash of proof for aggregation."""
         proof_data = {
             "proof_id": proof.proof_id,
             "circuit_name": proof.circuit_name,
@@ -446,9 +486,11 @@ class RecursiveSNARKProver:
 
         return hashlib.sha256(json.dumps(proof_data, sort_keys=True).encode()).hexdigest()
 
-    def _generate_proof_id(self, proofs: List[Proof]) -> str:
-           """TODO: Add docstring for _generate_proof_id"""
-     """Generate ID for recursive proof."""
+                        def _generate_proof_id(self, proofs: List[Proof]) -> str:
+                            """TODO: Add docstring for _generate_proof_id"""
+        """TODO: Add docstring for _generate_proof_id"""
+            """TODO: Add docstring for _generate_proof_id"""
+    """Generate ID for recursive proof."""
         content = {
             "sub_proof_ids": sorted([p.proof_id for p in proofs]),
             "timestamp": time.time(),
@@ -457,9 +499,11 @@ class RecursiveSNARKProver:
 
         return hashlib.sha256(json.dumps(content, sort_keys=True).encode()).hexdigest()[:16]
 
-    def _wrap_single_proof(self, proof: Proof) -> RecursiveProof:
-           """TODO: Add docstring for _wrap_single_proof"""
-     """Wrap single proof as recursive proof."""
+                            def _wrap_single_proof(self, proof: Proof) -> RecursiveProof:
+                                """TODO: Add docstring for _wrap_single_proof"""
+        """TODO: Add docstring for _wrap_single_proof"""
+            """TODO: Add docstring for _wrap_single_proof"""
+    """Wrap single proof as recursive proof."""
         return RecursiveProof(
             proof_id=proof.proof_id,
             sub_proof_ids=[proof.proof_id],
@@ -474,9 +518,11 @@ class RecursiveSNARKProver:
             },
         )
 
-    def verify_recursive_proof(self, recursive_proof: RecursiveProof) -> bool:
-           """TODO: Add docstring for verify_recursive_proof"""
-     """
+                                def verify_recursive_proof(self, recursive_proof: RecursiveProof) -> bool:
+                                    """TODO: Add docstring for verify_recursive_proof"""
+        """TODO: Add docstring for verify_recursive_proof"""
+            """TODO: Add docstring for verify_recursive_proof"""
+    """
         Verify a recursive proof.
 
         Returns:

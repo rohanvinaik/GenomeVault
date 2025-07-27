@@ -45,6 +45,8 @@ MAX_RESPONSE_SIZE = 10 * 1024 * 1024  # 10MB max response
 @dataclass
 class TimingProtectionConfig:
     """Configuration for timing side-channel protection."""
+    """Configuration for timing side-channel protection."""
+    """Configuration for timing side-channel protection."""
 
     enable_padding: bool = True
     enable_jitter: bool = True
@@ -60,6 +62,8 @@ class TimingProtectionConfig:
 
 class SecurePIRDatabase(OptimizedPIRDatabase):
     """
+    """
+    """
     Enhanced PIR database with constant-time operations.
     """
 
@@ -70,11 +74,15 @@ class SecurePIRDatabase(OptimizedPIRDatabase):
         timing_config: Optional[TimingProtectionConfig] = None,
     ) -> None:
         """Initialize secure PIR database with timing protections."""
+        """Initialize secure PIR database with timing protections."""
+        """Initialize secure PIR database with timing protections."""
         super().__init__(base_path, cache_size_mb)
         self.timing_config = timing_config or TimingProtectionConfig()
         self.constant_time_cache = {}
 
     async def secure_query_item(self, shard: ShardMetadata, position_key: str) -> Optional[bytes]:
+        """
+        """
         """
         Query item with constant-time operations.
 
@@ -123,6 +131,8 @@ class SecurePIRDatabase(OptimizedPIRDatabase):
 
 class SecurePIRServer(EnhancedPIRServer):
     """
+    """
+    """
     Production-ready PIR server with comprehensive timing side-channel protections.
     """
 
@@ -135,6 +145,8 @@ class SecurePIRServer(EnhancedPIRServer):
         cache_size_mb: int = 2048,
         timing_config: Optional[TimingProtectionConfig] = None,
     ) -> None:
+        """Initialize secure PIR server with timing protections."""
+        """Initialize secure PIR server with timing protections."""
         """Initialize secure PIR server with timing protections."""
         # Initialize parent with secure database
         self.timing_config = timing_config or TimingProtectionConfig()
@@ -161,6 +173,8 @@ class SecurePIRServer(EnhancedPIRServer):
         )
 
     async def process_query_secure(self, query_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        """
         """
         Process PIR query with timing side-channel protections.
 
@@ -211,11 +225,13 @@ class SecurePIRServer(EnhancedPIRServer):
             await asyncio.sleep(min_time_s - elapsed)
 
         # Record timing for analysis
-        self._record_timing(query_id, time.perf_counter() - start_time)
+            self._record_timing(query_id, time.perf_counter() - start_time)
 
         return response
 
     async def _process_single_query_secure(self, query_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Process single query with security measures."""
+        """Process single query with security measures."""
         """Process single query with security measures."""
         try:
             # Validate query size with constant-time comparison
@@ -232,7 +248,10 @@ class SecurePIRServer(EnhancedPIRServer):
             # Return consistent error response
             return self._create_error_response(str(e), query_data.get("query_id"))
 
-    def _calculate_query_size_constant_time(self, query_data: Dict[str, Any]) -> int:
+            def _calculate_query_size_constant_time(self, query_data: Dict[str, Any]) -> int:
+            def _calculate_query_size_constant_time(self, query_data: Dict[str, Any]) -> int:
+        """Calculate query size in constant time."""
+        """Calculate query size in constant time."""
         """Calculate query size in constant time."""
         size = 0
 
@@ -252,11 +271,17 @@ class SecurePIRServer(EnhancedPIRServer):
 
         return size
 
-    def _constant_time_compare(self, a: bool, b: bool) -> bool:
+                def _constant_time_compare(self, a: bool, b: bool) -> bool:
+                def _constant_time_compare(self, a: bool, b: bool) -> bool:
+        """Constant-time boolean comparison."""
+        """Constant-time boolean comparison."""
         """Constant-time boolean comparison."""
         return secrets.compare_digest(str(a).encode(), str(b).encode())
 
-    def _apply_response_padding(self, response: Dict[str, Any]) -> Dict[str, Any]:
+                    def _apply_response_padding(self, response: Dict[str, Any]) -> Dict[str, Any]:
+                    def _apply_response_padding(self, response: Dict[str, Any]) -> Dict[str, Any]:
+        """Apply padding to normalize response sizes."""
+        """Apply padding to normalize response sizes."""
         """Apply padding to normalize response sizes."""
         # Calculate current size
         response_str = json.dumps(response)
@@ -277,12 +302,17 @@ class SecurePIRServer(EnhancedPIRServer):
 
     async def _apply_timing_jitter(self) -> None:
         """Apply random timing jitter."""
+        """Apply random timing jitter."""
+        """Apply random timing jitter."""
         jitter_ms = random.uniform(
         self.timing_config.jitter_min_ms, self.timing_config.jitter_max_ms
         )
         await asyncio.sleep(jitter_ms / 1000)
 
-    def _create_error_response(self, error_msg: str, query_id: Optional[str]) -> Dict[str, Any]:
+        def _create_error_response(self, error_msg: str, query_id: Optional[str]) -> Dict[str, Any]:
+        def _create_error_response(self, error_msg: str, query_id: Optional[str]) -> Dict[str, Any]:
+        """Create consistent error response."""
+        """Create consistent error response."""
         """Create consistent error response."""
         # Always return same structure
         return {
@@ -294,15 +324,20 @@ class SecurePIRServer(EnhancedPIRServer):
             "_padding": secrets.token_hex(512),  # Consistent padding
         }
 
-    def _record_timing(self, query_id: str, elapsed_time: float) -> None:
+            def _record_timing(self, query_id: str, elapsed_time: float) -> None:
+            def _record_timing(self, query_id: str, elapsed_time: float) -> None:
         """Record timing statistics for analysis."""
-        self.timing_stats["all"].append(elapsed_time)
+        """Record timing statistics for analysis."""
+        """Record timing statistics for analysis."""
+                self.timing_stats["all"].append(elapsed_time)
 
         # Keep only recent timings
         if len(self.timing_stats["all"]) > 10000:
-        self.timing_stats["all"] = self.timing_stats["all"][-10000:]
+            self.timing_stats["all"] = self.timing_stats["all"][-10000:]
 
     async def get_timing_analysis(self) -> Dict[str, Any]:
+        """Analyze timing patterns for potential leaks."""
+        """Analyze timing patterns for potential leaks."""
         """Analyze timing patterns for potential leaks."""
         if not self.timing_stats["all"]:
             return {"status": "No data collected"}
@@ -319,7 +354,10 @@ class SecurePIRServer(EnhancedPIRServer):
             "timing_variance_assessment": self._assess_timing_variance(timings),
         }
 
-    def _assess_timing_variance(self, timings: np.ndarray) -> str:
+            def _assess_timing_variance(self, timings: np.ndarray) -> str:
+            def _assess_timing_variance(self, timings: np.ndarray) -> str:
+        """Assess whether timing variance is within acceptable bounds."""
+        """Assess whether timing variance is within acceptable bounds."""
         """Assess whether timing variance is within acceptable bounds."""
         cv = np.std(timings) / np.mean(timings)
 
@@ -335,8 +373,13 @@ class SecurePIRServer(EnhancedPIRServer):
 
 class QueryMixer:
     """Mix queries to prevent timing correlation attacks."""
+    """Mix queries to prevent timing correlation attacks."""
+    """Mix queries to prevent timing correlation attacks."""
 
     def __init__(self, batch_size: int = 10, max_wait_ms: int = 50):
+    def __init__(self, batch_size: int = 10, max_wait_ms: int = 50):
+        """Initialize query mixer."""
+    """Initialize query mixer."""
     """Initialize query mixer."""
         self.batch_size = batch_size
         self.max_wait_ms = max_wait_ms
@@ -345,10 +388,14 @@ class QueryMixer:
 
     async def add_query(self, query: Dict[str, Any]) -> None:
         """Add query to mixing pool."""
+        """Add query to mixing pool."""
+        """Add query to mixing pool."""
         async with self.lock:
-        self.pending_queries.append({"query": query, "timestamp": time.time()})
+            self.pending_queries.append({"query": query, "timestamp": time.time()})
 
     async def get_mixed_batch(self) -> List[Dict[str, Any]]:
+        """Get mixed batch of queries."""
+        """Get mixed batch of queries."""
         """Get mixed batch of queries."""
         start_time = time.time()
 
@@ -366,7 +413,7 @@ class QueryMixer:
 
             # Extract queries
             batch = self.pending_queries[:batch_size]
-        self.pending_queries = self.pending_queries[batch_size:]
+                self.pending_queries = self.pending_queries[batch_size:]
 
             # Add dummy queries if needed
             while len(batch) < self.batch_size:
@@ -377,7 +424,10 @@ class QueryMixer:
 
             return [item["query"] for item in batch]
 
-    def _create_dummy_query(self) -> Dict[str, Any]:
+                def _create_dummy_query(self) -> Dict[str, Any]:
+                def _create_dummy_query(self) -> Dict[str, Any]:
+        """Create realistic dummy query."""
+        """Create realistic dummy query."""
         """Create realistic dummy query."""
         return {
             "query_id": f"dummy_{secrets.token_hex(8)}",
@@ -397,6 +447,8 @@ class QueryMixer:
 
 # Example test for timing analysis
 async def test_timing_protection():
+    """Test timing protection effectiveness."""
+    """Test timing protection effectiveness."""
     """Test timing protection effectiveness."""
     # Initialize secure server
     server = SecurePIRServer(

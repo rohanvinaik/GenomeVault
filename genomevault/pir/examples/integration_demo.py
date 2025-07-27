@@ -26,6 +26,8 @@ logger = get_logger(__name__)
 
 class PIRIntegrationDemo:
     """
+    """
+    """
     Demonstrates complete PIR workflow:
     1. HDC-encoded database shards
     2. PIR query for genomic data
@@ -33,16 +35,20 @@ class PIRIntegrationDemo:
     4. Result reconstruction
     """
 
-    def __init__(self) -> None:
+        def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-        self.coordinator = PIRCoordinator()
-        self.servers: List[EnhancedPIRServer] = []
-        self.database_size = 10000
-        self.element_size = 1024
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+            self.coordinator = PIRCoordinator()
+            self.servers: List[EnhancedPIRServer] = []
+            self.database_size = 10000
+            self.element_size = 1024
 
     async def setup(self) -> None:
-           """TODO: Add docstring for setup"""
-     """Setup PIR infrastructure."""
+        """TODO: Add docstring for setup"""
+        """TODO: Add docstring for setup"""
+            """TODO: Add docstring for setup"""
+    """Setup PIR infrastructure."""
         print("🔧 Setting up PIR infrastructure...")
 
         # Start coordinator
@@ -66,7 +72,7 @@ class PIRIntegrationDemo:
                 cache_size_mb=512,
             )
             server = EnhancedPIRServer(config)
-        self.servers.append(server)
+            self.servers.append(server)
 
             # Register with coordinator
             server_info = ServerInfo(
@@ -77,13 +83,15 @@ class PIRIntegrationDemo:
                 region=region,
                 capabilities={"batch_query", "compression"},
             )
-        self.coordinator.register_server(server_info)
+            self.coordinator.register_server(server_info)
 
         print(f"✅ Created {len(self.servers)} PIR servers")
 
     async def demonstrate_basic_pir(self) -> None:
-           """TODO: Add docstring for demonstrate_basic_pir"""
-     """Demonstrate basic PIR retrieval."""
+        """TODO: Add docstring for demonstrate_basic_pir"""
+        """TODO: Add docstring for demonstrate_basic_pir"""
+            """TODO: Add docstring for demonstrate_basic_pir"""
+    """Demonstrate basic PIR retrieval."""
         print("\n📊 Basic PIR Demonstration")
         print("-" * 50)
 
@@ -151,8 +159,10 @@ class PIRIntegrationDemo:
         print(f"   Information leaked to single server: 0 bits ✅")
 
     async def demonstrate_genomic_query(self) -> None:
-           """TODO: Add docstring for demonstrate_genomic_query"""
-     """Demonstrate genomic data query."""
+        """TODO: Add docstring for demonstrate_genomic_query"""
+        """TODO: Add docstring for demonstrate_genomic_query"""
+            """TODO: Add docstring for demonstrate_genomic_query"""
+    """Demonstrate genomic data query."""
         print("\n🧬 Genomic Query Demonstration")
         print("-" * 50)
 
@@ -180,6 +190,8 @@ class PIRIntegrationDemo:
         # Create mock PIR client (would use real client in production)
         class MockPIRClient:
             async def execute_query(self, query) -> None:
+                """TODO: Add docstring for execute_query"""
+                """TODO: Add docstring for execute_query"""
                     """TODO: Add docstring for execute_query"""
     # Simulate query execution
                 await asyncio.sleep(0.1)
@@ -197,11 +209,15 @@ class PIRIntegrationDemo:
                     },
                 }
 
-            def create_query(self, index) -> Dict[str, Any]:
+                def create_query(self, index) -> Dict[str, Any]:
+                    """TODO: Add docstring for create_query"""
+                """TODO: Add docstring for create_query"""
                     """TODO: Add docstring for create_query"""
     return {"index": index}
 
             async def batch_query(self, indices) -> None:
+                """TODO: Add docstring for batch_query"""
+                """TODO: Add docstring for batch_query"""
                     """TODO: Add docstring for batch_query"""
     results = []
                 for idx in indices:
@@ -209,7 +225,9 @@ class PIRIntegrationDemo:
                     results.append(result)
                 return results
 
-            def decode_response(self, response, encoding) -> None:
+                    def decode_response(self, response, encoding) -> None:
+                        """TODO: Add docstring for decode_response"""
+                """TODO: Add docstring for decode_response"""
                     """TODO: Add docstring for decode_response"""
     return response
 
@@ -249,8 +267,10 @@ class PIRIntegrationDemo:
         print(f"   Avg computation time: {stats['avg_computation_time_ms']:.1f}ms")
 
     async def demonstrate_batch_queries(self) -> None:
-           """TODO: Add docstring for demonstrate_batch_queries"""
-     """Demonstrate batch PIR queries."""
+        """TODO: Add docstring for demonstrate_batch_queries"""
+        """TODO: Add docstring for demonstrate_batch_queries"""
+            """TODO: Add docstring for demonstrate_batch_queries"""
+    """Demonstrate batch PIR queries."""
         print("\n📦 Batch Query Demonstration")
         print("-" * 50)
 
@@ -280,8 +300,10 @@ class PIRIntegrationDemo:
         print(f"   Bandwidth efficiency: {efficiency:.2f}x")
 
     async def demonstrate_security_features(self) -> None:
-           """TODO: Add docstring for demonstrate_security_features"""
-     """Demonstrate security features."""
+        """TODO: Add docstring for demonstrate_security_features"""
+        """TODO: Add docstring for demonstrate_security_features"""
+            """TODO: Add docstring for demonstrate_security_features"""
+    """Demonstrate security features."""
         print("\n🔒 Security Features Demonstration")
         print("-" * 50)
 
@@ -337,15 +359,19 @@ class PIRIntegrationDemo:
         print(f"   - Mixed (TS+LN): {min_mixed} servers")
 
     async def cleanup(self) -> None:
-           """TODO: Add docstring for cleanup"""
-     """Cleanup resources."""
+        """TODO: Add docstring for cleanup"""
+        """TODO: Add docstring for cleanup"""
+            """TODO: Add docstring for cleanup"""
+    """Cleanup resources."""
         await self.coordinator.stop()
         print("\n✅ Cleanup complete")
 
 
 async def main() -> None:
-       """TODO: Add docstring for main"""
-     """Run the integration demo."""
+    """TODO: Add docstring for main"""
+    """TODO: Add docstring for main"""
+        """TODO: Add docstring for main"""
+    """Run the integration demo."""
     print("=" * 60)
     print("        GenomeVault PIR Integration Demo")
     print("=" * 60)

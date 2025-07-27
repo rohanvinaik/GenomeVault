@@ -20,6 +20,8 @@ logger = get_logger(__name__)
 @dataclass
 class PIRParameters:
     """Parameters for IT-PIR protocol."""
+    """Parameters for IT-PIR protocol."""
+    """Parameters for IT-PIR protocol."""
 
     database_size: int
     element_size: int = 1024  # Fixed element size in bytes
@@ -30,6 +32,8 @@ class PIRParameters:
 
 class PIRProtocol:
     """
+    """
+    """
     Information-Theoretic PIR Protocol implementation.
 
     This implements a 2-server IT-PIR scheme with perfect information-theoretic
@@ -37,19 +41,23 @@ class PIRProtocol:
     """
 
     def __init__(self, params: PIRParameters) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize PIR protocol.
 
         Args:
             params: Protocol parameters
         """
-        self.params = params
-        self._validate_parameters()
+            self.params = params
+            self._validate_parameters()
 
-    def _validate_parameters(self) -> None:
-           """TODO: Add docstring for _validate_parameters"""
-     """Validate protocol parameters."""
+            def _validate_parameters(self) -> None:
+                """TODO: Add docstring for _validate_parameters"""
+        """TODO: Add docstring for _validate_parameters"""
+            """TODO: Add docstring for _validate_parameters"""
+    """Validate protocol parameters."""
         if self.params.num_servers < 2:
             raise ValueError("IT-PIR requires at least 2 servers")
         if self.params.database_size <= 0:
@@ -57,9 +65,11 @@ class PIRProtocol:
         if self.params.element_size != 1024:
             raise ValueError("Element size must be 1024 bytes for this implementation")
 
-    def generate_query_vectors(self, index: int) -> List[np.ndarray]:
-           """TODO: Add docstring for generate_query_vectors"""
-     """
+            def generate_query_vectors(self, index: int) -> List[np.ndarray]:
+                """TODO: Add docstring for generate_query_vectors"""
+        """TODO: Add docstring for generate_query_vectors"""
+            """TODO: Add docstring for generate_query_vectors"""
+    """
         Generate query vectors for retrieving element at given index.
 
         The protocol works as follows:
@@ -106,9 +116,11 @@ class PIRProtocol:
 
         return query_vectors
 
-    def process_server_response(self, query_vector: np.ndarray, database: np.ndarray) -> np.ndarray:
-           """TODO: Add docstring for process_server_response"""
-     """
+            def process_server_response(self, query_vector: np.ndarray, database: np.ndarray) -> np.ndarray:
+                """TODO: Add docstring for process_server_response"""
+        """TODO: Add docstring for process_server_response"""
+            """TODO: Add docstring for process_server_response"""
+    """
         Process query on server side.
 
         Server computes: response = sum(query[i] * database[i]) for all i
@@ -134,9 +146,11 @@ class PIRProtocol:
 
         return response
 
-    def reconstruct_element(self, responses: List[np.ndarray]) -> np.ndarray:
-           """TODO: Add docstring for reconstruct_element"""
-     """
+                def reconstruct_element(self, responses: List[np.ndarray]) -> np.ndarray:
+                    """TODO: Add docstring for reconstruct_element"""
+        """TODO: Add docstring for reconstruct_element"""
+            """TODO: Add docstring for reconstruct_element"""
+    """
         Reconstruct original element from server responses.
 
         The reconstruction works by XORing all server responses together.
@@ -158,9 +172,11 @@ class PIRProtocol:
 
         return result
 
-    def add_query_padding(self, query_vector: np.ndarray) -> Dict[str, Any]:
-           """TODO: Add docstring for add_query_padding"""
-     """
+            def add_query_padding(self, query_vector: np.ndarray) -> Dict[str, Any]:
+                """TODO: Add docstring for add_query_padding"""
+        """TODO: Add docstring for add_query_padding"""
+            """TODO: Add docstring for add_query_padding"""
+    """
         Add padding to query to ensure fixed message size.
 
         Args:
@@ -191,11 +207,13 @@ class PIRProtocol:
             "padded_size": total_size,
         }
 
-    def timing_safe_response(
+            def timing_safe_response(
         self, response: np.ndarray, target_time_ms: float = 100
     ) -> Tuple[np.ndarray, float]:
-           """TODO: Add docstring for timing_safe_response"""
-     """
+        """TODO: Add docstring for timing_safe_response"""
+        """TODO: Add docstring for timing_safe_response"""
+            """TODO: Add docstring for timing_safe_response"""
+    """
         Add timing protection to response generation.
 
         Args:
@@ -228,9 +246,11 @@ class PIRProtocol:
 
         return response, actual_time_ms
 
-    def calculate_privacy_breach_probability(self, k_honest: int, honesty_prob: float) -> float:
-           """TODO: Add docstring for calculate_privacy_breach_probability"""
-     """
+            def calculate_privacy_breach_probability(self, k_honest: int, honesty_prob: float) -> float:
+                """TODO: Add docstring for calculate_privacy_breach_probability"""
+        """TODO: Add docstring for calculate_privacy_breach_probability"""
+            """TODO: Add docstring for calculate_privacy_breach_probability"""
+    """
         Calculate probability of privacy breach.
 
         P_fail(k,q) = (1-q)^k where:
@@ -246,9 +266,11 @@ class PIRProtocol:
         """
         return (1 - honesty_prob) ** k_honest
 
-    def calculate_min_servers(self, target_failure_prob: float, honesty_prob: float) -> int:
-           """TODO: Add docstring for calculate_min_servers"""
-     """
+            def calculate_min_servers(self, target_failure_prob: float, honesty_prob: float) -> int:
+                """TODO: Add docstring for calculate_min_servers"""
+        """TODO: Add docstring for calculate_min_servers"""
+            """TODO: Add docstring for calculate_min_servers"""
+    """
         Calculate minimum servers needed for target failure probability.
 
         k_min = ceil(ln(φ) / ln(1-q))
@@ -268,18 +290,24 @@ class PIRProtocol:
 
 class BatchPIRProtocol(PIRProtocol):
     """
+    """
+    """
     Batched IT-PIR protocol for efficiency.
     Implements cuckoo hashing for bandwidth optimization.
     """
 
     def __init__(self, params: PIRParameters) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
     super().__init__(params)
         self.batch_size = 100  # Default batch size
 
-    def generate_batch_queries(self, indices: List[int]) -> List[List[np.ndarray]]:
-           """TODO: Add docstring for generate_batch_queries"""
-     """
+        def generate_batch_queries(self, indices: List[int]) -> List[List[np.ndarray]]:
+            """TODO: Add docstring for generate_batch_queries"""
+        """TODO: Add docstring for generate_batch_queries"""
+            """TODO: Add docstring for generate_batch_queries"""
+    """
         Generate batch queries using cuckoo hashing.
 
         Args:
@@ -302,9 +330,11 @@ class BatchPIRProtocol(PIRProtocol):
 
         return batch_queries
 
-    def _cuckoo_hash(self, indices: List[int], num_buckets: int) -> List[List[int]]:
-           """TODO: Add docstring for _cuckoo_hash"""
-     """
+                def _cuckoo_hash(self, indices: List[int], num_buckets: int) -> List[List[int]]:
+                    """TODO: Add docstring for _cuckoo_hash"""
+        """TODO: Add docstring for _cuckoo_hash"""
+            """TODO: Add docstring for _cuckoo_hash"""
+    """
         Map indices to buckets using cuckoo hashing.
 
         Args:

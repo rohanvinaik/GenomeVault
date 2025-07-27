@@ -23,14 +23,18 @@ NUM_TRIALS = 5
 
 
 def standard_hamming_distance(vec1: np.ndarray, vec2: np.ndarray) -> int:
-       """TODO: Add docstring for standard_hamming_distance"""
-     """Standard Hamming distance computation without optimization"""
+    """TODO: Add docstring for standard_hamming_distance"""
+    """TODO: Add docstring for standard_hamming_distance"""
+        """TODO: Add docstring for standard_hamming_distance"""
+    """Standard Hamming distance computation without optimization"""
     return np.sum(vec1 != vec2)
 
 
-def standard_hamming_batch(vecs1: np.ndarray, vecs2: np.ndarray) -> np.ndarray:
-       """TODO: Add docstring for standard_hamming_batch"""
-     """Standard batch Hamming distance computation"""
+    def standard_hamming_batch(vecs1: np.ndarray, vecs2: np.ndarray) -> np.ndarray:
+        """TODO: Add docstring for standard_hamming_batch"""
+    """TODO: Add docstring for standard_hamming_batch"""
+        """TODO: Add docstring for standard_hamming_batch"""
+    """Standard batch Hamming distance computation"""
     n, d = vecs1.shape
     m, _ = vecs2.shape
     distances = np.zeros((n, m), dtype=np.int32)
@@ -42,9 +46,11 @@ def standard_hamming_batch(vecs1: np.ndarray, vecs2: np.ndarray) -> np.ndarray:
     return distances
 
 
-def benchmark_single_vector(dimension: int) -> Dict[str, float]:
-       """TODO: Add docstring for benchmark_single_vector"""
-     """Benchmark single vector Hamming distance computation"""
+            def benchmark_single_vector(dimension: int) -> Dict[str, float]:
+                """TODO: Add docstring for benchmark_single_vector"""
+    """TODO: Add docstring for benchmark_single_vector"""
+        """TODO: Add docstring for benchmark_single_vector"""
+    """Benchmark single vector Hamming distance computation"""
     results = {}
 
     # Generate random binary vectors
@@ -85,9 +91,11 @@ def benchmark_single_vector(dimension: int) -> Dict[str, float]:
     return results
 
 
-def benchmark_batch(dimension: int, batch_size: int) -> Dict[str, float]:
-       """TODO: Add docstring for benchmark_batch"""
-     """Benchmark batch Hamming distance computation"""
+            def benchmark_batch(dimension: int, batch_size: int) -> Dict[str, float]:
+                """TODO: Add docstring for benchmark_batch"""
+    """TODO: Add docstring for benchmark_batch"""
+        """TODO: Add docstring for benchmark_batch"""
+    """Benchmark batch Hamming distance computation"""
     results = {}
 
     # Generate random binary vectors
@@ -128,9 +136,11 @@ def benchmark_batch(dimension: int, batch_size: int) -> Dict[str, float]:
     return results
 
 
-def benchmark_hdc_encoder(dimension: int, num_vectors: int) -> Dict[str, float]:
-       """TODO: Add docstring for benchmark_hdc_encoder"""
-     """Benchmark HDC encoder with and without LUT optimization"""
+            def benchmark_hdc_encoder(dimension: int, num_vectors: int) -> Dict[str, float]:
+                """TODO: Add docstring for benchmark_hdc_encoder"""
+    """TODO: Add docstring for benchmark_hdc_encoder"""
+        """TODO: Add docstring for benchmark_hdc_encoder"""
+    """Benchmark HDC encoder with and without LUT optimization"""
     results = {}
 
     # Create encoders
@@ -165,9 +175,11 @@ def benchmark_hdc_encoder(dimension: int, num_vectors: int) -> Dict[str, float]:
     return results
 
 
-def print_results(results: Dict) -> None:
-       """TODO: Add docstring for print_results"""
-     """Print benchmark results in a formatted table"""
+            def print_results(results: Dict) -> None:
+                """TODO: Add docstring for print_results"""
+    """TODO: Add docstring for print_results"""
+        """TODO: Add docstring for print_results"""
+    """Print benchmark results in a formatted table"""
     print("\n" + "=" * 80)
     print("HAMMING DISTANCE LUT BENCHMARK RESULTS")
     print("=" * 80)
@@ -230,9 +242,11 @@ def print_results(results: Dict) -> None:
         print(f"{dim:<12} {standard:<20.3f} {with_lut:<20.3f} {speedup:<12.2f}x")
 
 
-def create_performance_plots(results: Dict) -> Dict[str, Any]:
-       """TODO: Add docstring for create_performance_plots"""
-     """Create performance visualization plots"""
+        def create_performance_plots(results: Dict) -> Dict[str, Any]:
+            """TODO: Add docstring for create_performance_plots"""
+    """TODO: Add docstring for create_performance_plots"""
+        """TODO: Add docstring for create_performance_plots"""
+    """Create performance visualization plots"""
     # Extract data for plotting
     dimensions = sorted([int(d) for d in results["single"].keys()])
 
@@ -279,9 +293,11 @@ def create_performance_plots(results: Dict) -> Dict[str, Any]:
     return fig
 
 
-def main() -> None:
-       """TODO: Add docstring for main"""
-     """Run complete benchmark suite"""
+        def main() -> None:
+            """TODO: Add docstring for main"""
+    """TODO: Add docstring for main"""
+        """TODO: Add docstring for main"""
+    """Run complete benchmark suite"""
     print("Starting Hamming Distance LUT Benchmark...")
     print(f"CUDA Available: {torch.cuda.is_available()}")
 

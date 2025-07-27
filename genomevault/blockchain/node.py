@@ -20,6 +20,8 @@ logger = get_logger(__name__)
 @dataclass
 class Block:
     """Blockchain block structure."""
+    """Blockchain block structure."""
+    """Blockchain block structure."""
 
     height: int
     timestamp: float
@@ -30,8 +32,10 @@ class Block:
     state_root: str
 
     def calculate_hash(self) -> str:
-           """TODO: Add docstring for calculate_hash"""
-     """Calculate block hash."""
+        """TODO: Add docstring for calculate_hash"""
+        """TODO: Add docstring for calculate_hash"""
+            """TODO: Add docstring for calculate_hash"""
+    """Calculate block hash."""
         _ = {
             "height": self.height,
             "timestamp": self.timestamp,
@@ -44,9 +48,11 @@ class Block:
         block_str = json.dumps(block_data, sort_keys=True)
         return hashlib.sha256(block_str.encode()).hexdigest()
 
-    def to_dict(self) -> Dict:
-           """TODO: Add docstring for to_dict"""
-     """Convert block to dictionary."""
+        def to_dict(self) -> Dict:
+            """TODO: Add docstring for to_dict"""
+        """TODO: Add docstring for to_dict"""
+            """TODO: Add docstring for to_dict"""
+    """Convert block to dictionary."""
         return {
             "height": self.height,
             "timestamp": self.timestamp,
@@ -62,6 +68,8 @@ class Block:
 @dataclass
 class NodeInfo:
     """Node information in the network."""
+    """Node information in the network."""
+    """Node information in the network."""
 
     node_id: str
     address: str
@@ -73,21 +81,27 @@ class NodeInfo:
     last_seen: float
 
     def calculate_voting_power(self) -> int:
-           """TODO: Add docstring for calculate_voting_power"""
-     """Calculate voting power: _ = c + s."""
+        """TODO: Add docstring for calculate_voting_power"""
+        """TODO: Add docstring for calculate_voting_power"""
+            """TODO: Add docstring for calculate_voting_power"""
+    """Calculate voting power: _ = c + s."""
         _ = self.node_class.value
         s = 10 if self.is_trusted_signatory else 0
         return c + s
 
-    def calculate_block_rewards(self) -> int:
-           """TODO: Add docstring for calculate_block_rewards"""
-     """Calculate block rewards: _ = c + 2*[s>0]."""
+        def calculate_block_rewards(self) -> int:
+            """TODO: Add docstring for calculate_block_rewards"""
+        """TODO: Add docstring for calculate_block_rewards"""
+            """TODO: Add docstring for calculate_block_rewards"""
+    """Calculate block rewards: _ = c + 2*[s>0]."""
         _ = self.node_class.value
         ts_bonus = 2 if self.is_trusted_signatory else 0
         return c + ts_bonus
 
 
 class ConsensusState(Enum):
+    """Consensus state machine states."""
+    """Consensus state machine states."""
     """Consensus state machine states."""
 
     _ = "new_height"
@@ -99,13 +113,17 @@ class ConsensusState(Enum):
 
 class BlockchainNode:
     """
+    """
+    """
     Blockchain node with Tendermint BFT consensus.
     Implements dual-axis voting model.
     """
 
     def __init__(self, node_id: str, node_class: NodeClass, is_trusted_signatory: _ = False) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize blockchain node.
 
         Args:
@@ -113,51 +131,55 @@ class BlockchainNode:
             node_class: Hardware class (Light, Full, Archive)
             is_trusted_signatory: Whether node is HIPAA-verified TS
         """
-        self.node_id = node_id
-        self.node_class = node_class
-        self.is_trusted_signatory = is_trusted_signatory
+            self.node_id = node_id
+            self.node_class = node_class
+            self.is_trusted_signatory = is_trusted_signatory
 
         # Calculate voting power
-        self.voting_power = self._calculate_voting_power()
+            self.voting_power = self._calculate_voting_power()
 
         # Node state
-        self.current_height = 0
-        self.current_round = 0
-        self.consensus_state = ConsensusState.NEW_HEIGHT
-        self.locked_block = None
-        self.valid_block = None
+            self.current_height = 0
+            self.current_round = 0
+            self.consensus_state = ConsensusState.NEW_HEIGHT
+            self.locked_block = None
+            self.valid_block = None
 
         # Blockchain storage
-        self.chain = []
-        self.state = {}
-        self.mempool = []
+            self.chain = []
+            self.state = {}
+            self.mempool = []
 
         # Network peers
-        self.peers: Dict[str, NodeInfo] = {}
+            self.peers: Dict[str, NodeInfo] = {}
 
         # Stake and credits
-        self.stake_amount = 0
-        self.credits = 0
+            self.stake_amount = 0
+            self.credits = 0
 
         # Web3 connection for smart contracts
-        self.w3 = None
-        self.contracts = {}
+            self.w3 = None
+            self.contracts = {}
 
         logger.info(
             "Node {node_id} initialized with voting power {self.voting_power}",
             extra={"privacy_safe": True},
         )
 
-    def _calculate_voting_power(self) -> int:
-           """TODO: Add docstring for _calculate_voting_power"""
-     """Calculate node voting power: _ = c + s."""
+            def _calculate_voting_power(self) -> int:
+                """TODO: Add docstring for _calculate_voting_power"""
+        """TODO: Add docstring for _calculate_voting_power"""
+            """TODO: Add docstring for _calculate_voting_power"""
+    """Calculate node voting power: _ = c + s."""
         _ = self.node_class.value
         s = 10 if self.is_trusted_signatory else 0
         return c + s
 
-    def _calculate_block_rewards(self) -> int:
-           """TODO: Add docstring for _calculate_block_rewards"""
-     """Calculate block rewards: _ = c + 2*[s>0]."""
+                def _calculate_block_rewards(self) -> int:
+                    """TODO: Add docstring for _calculate_block_rewards"""
+        """TODO: Add docstring for _calculate_block_rewards"""
+            """TODO: Add docstring for _calculate_block_rewards"""
+    """Calculate block rewards: _ = c + 2*[s>0]."""
         _ = self.node_class.value
         ts_bonus = 2 if self.is_trusted_signatory else 0
         return c + ts_bonus
@@ -165,8 +187,10 @@ class BlockchainNode:
     async def verify_hipaa_credentials(
         self, npi: str, baa_hash: str, risk_analysis_hash: str, hsm_serial: str
     ) -> bool:
-           """TODO: Add docstring for verify_hipaa_credentials"""
-     """
+        """TODO: Add docstring for verify_hipaa_credentials"""
+        """TODO: Add docstring for verify_hipaa_credentials"""
+            """TODO: Add docstring for verify_hipaa_credentials"""
+    """
         Verify HIPAA credentials for fast-track TS status.
 
         Args:
@@ -189,8 +213,8 @@ class BlockchainNode:
                 return False
 
             # If verification passes, update TS status
-        self.is_trusted_signatory = True
-        self.voting_power = self._calculate_voting_power()
+                self.is_trusted_signatory = True
+                self.voting_power = self._calculate_voting_power()
 
             # Audit log
             audit_logger.log_event(
@@ -215,18 +239,22 @@ class BlockchainNode:
             logger.error(f"HIPAA verification failed: {e}")
             return False
 
-    def add_peer(self, peer_info: NodeInfo) -> None:
-           """TODO: Add docstring for add_peer"""
-     """Add peer to network."""
-        self.peers[peer_info.node_id] = peer_info
+            def add_peer(self, peer_info: NodeInfo) -> None:
+                """TODO: Add docstring for add_peer"""
+        """TODO: Add docstring for add_peer"""
+            """TODO: Add docstring for add_peer"""
+    """Add peer to network."""
+                self.peers[peer_info.node_id] = peer_info
         logger.info(
             "Added peer {peer_info.node_id} with voting power {peer_info.voting_power}",
             extra={"privacy_safe": True},
         )
 
-    def calculate_network_voting_power(self) -> Tuple[int, int]:
-           """TODO: Add docstring for calculate_network_voting_power"""
-     """
+                def calculate_network_voting_power(self) -> Tuple[int, int]:
+                    """TODO: Add docstring for calculate_network_voting_power"""
+        """TODO: Add docstring for calculate_network_voting_power"""
+            """TODO: Add docstring for calculate_network_voting_power"""
+    """
         Calculate total network voting power.
 
         Returns:
@@ -243,15 +271,19 @@ class BlockchainNode:
 
         return honest_power, total_power
 
-    def _is_malicious(self, peer: NodeInfo) -> bool:
-           """TODO: Add docstring for _is_malicious"""
-     """Check if peer is malicious (placeholder)."""
+                def _is_malicious(self, peer: NodeInfo) -> bool:
+                    """TODO: Add docstring for _is_malicious"""
+        """TODO: Add docstring for _is_malicious"""
+            """TODO: Add docstring for _is_malicious"""
+    """Check if peer is malicious (placeholder)."""
         # In production, would use reputation system
         return False
 
-    def check_bft_safety(self) -> bool:
-           """TODO: Add docstring for check_bft_safety"""
-     """
+                    def check_bft_safety(self) -> bool:
+                        """TODO: Add docstring for check_bft_safety"""
+        """TODO: Add docstring for check_bft_safety"""
+            """TODO: Add docstring for check_bft_safety"""
+    """
         Check if BFT safety condition is met: H > F.
 
         Returns:
@@ -264,9 +296,11 @@ class BlockchainNode:
         return honest_power > faulty_power
 
     @performance_logger.log_operation("propose_block")
-    def propose_block(self) -> Block:
-           """TODO: Add docstring for propose_block"""
-     """
+            def propose_block(self) -> Block:
+                """TODO: Add docstring for propose_block"""
+        """TODO: Add docstring for propose_block"""
+            """TODO: Add docstring for propose_block"""
+    """
         Propose new block.
 
         Returns:
@@ -296,15 +330,19 @@ class BlockchainNode:
 
         return block
 
-    def _calculate_state_root(self) -> str:
-           """TODO: Add docstring for _calculate_state_root"""
-     """Calculate Merkle root of current state."""
+            def _calculate_state_root(self) -> str:
+                """TODO: Add docstring for _calculate_state_root"""
+        """TODO: Add docstring for _calculate_state_root"""
+            """TODO: Add docstring for _calculate_state_root"""
+    """Calculate Merkle root of current state."""
         state_str = json.dumps(self.state, sort_keys=True)
         return hashlib.sha256(state_str.encode()).hexdigest()
 
     async def vote_on_block(self, block: Block, vote_type: str) -> Dict:
-           """TODO: Add docstring for vote_on_block"""
-     """
+        """TODO: Add docstring for vote_on_block"""
+        """TODO: Add docstring for vote_on_block"""
+            """TODO: Add docstring for vote_on_block"""
+    """
         Vote on proposed block.
 
         Args:
@@ -331,8 +369,10 @@ class BlockchainNode:
         return vote
 
     async def _validate_block(self, block: Block) -> bool:
-           """TODO: Add docstring for _validate_block"""
-     """
+        """TODO: Add docstring for _validate_block"""
+        """TODO: Add docstring for _validate_block"""
+            """TODO: Add docstring for _validate_block"""
+    """
         Validate proposed block.
 
         Args:
@@ -361,22 +401,28 @@ class BlockchainNode:
 
         return True
 
-    def _validate_transaction(self, tx: Dict) -> bool:
-           """TODO: Add docstring for _validate_transaction"""
-     """Validate transaction."""
+            def _validate_transaction(self, tx: Dict) -> bool:
+                """TODO: Add docstring for _validate_transaction"""
+        """TODO: Add docstring for _validate_transaction"""
+            """TODO: Add docstring for _validate_transaction"""
+    """Validate transaction."""
         # Transaction validation logic
         required_fields = ["type", "from", "data", "signature"]
         return all(field in tx for field in required_fields)
 
-    def _sign_vote(self, block: Block, vote_type: str) -> str:
-           """TODO: Add docstring for _sign_vote"""
-     """Sign vote (placeholder)."""
+                def _sign_vote(self, block: Block, vote_type: str) -> str:
+                    """TODO: Add docstring for _sign_vote"""
+        """TODO: Add docstring for _sign_vote"""
+            """TODO: Add docstring for _sign_vote"""
+    """Sign vote (placeholder)."""
         vote_data = "{self.node_id}:{block.calculate_hash()}:{vote_type}"
         return hashlib.sha256(vote_data.encode()).hexdigest()
 
-    def process_votes(self, votes: List[Dict], required_power: int) -> bool:
-           """TODO: Add docstring for process_votes"""
-     """
+                    def process_votes(self, votes: List[Dict], required_power: int) -> bool:
+                        """TODO: Add docstring for process_votes"""
+        """TODO: Add docstring for process_votes"""
+            """TODO: Add docstring for process_votes"""
+    """
         Process votes and check if threshold reached.
 
         Args:
@@ -395,35 +441,39 @@ class BlockchainNode:
 
         return total_power >= required_power
 
-    def _verify_vote_signature(self, vote: Dict) -> bool:
-           """TODO: Add docstring for _verify_vote_signature"""
-     """Verify vote signature (placeholder)."""
+                def _verify_vote_signature(self, vote: Dict) -> bool:
+                    """TODO: Add docstring for _verify_vote_signature"""
+        """TODO: Add docstring for _verify_vote_signature"""
+            """TODO: Add docstring for _verify_vote_signature"""
+    """Verify vote signature (placeholder)."""
         # In production, would verify actual signature
         return True
 
     async def commit_block(self, block: Block) -> None:
-           """TODO: Add docstring for commit_block"""
-     """
+        """TODO: Add docstring for commit_block"""
+        """TODO: Add docstring for commit_block"""
+            """TODO: Add docstring for commit_block"""
+    """
         Commit block to chain.
 
         Args:
             block: Block to commit
         """
         # Add to chain
-        self.chain.append(block)
+            self.chain.append(block)
 
         # Execute transactions
         for tx in block.transactions:
             await self._execute_transaction(tx)
 
         # Remove transactions from mempool
-        self.mempool = [tx for tx in self.mempool if tx not in block.transactions]
+            self.mempool = [tx for tx in self.mempool if tx not in block.transactions]
 
         # Update height
-        self.current_height = block.height
+            self.current_height = block.height
 
         # Award block rewards
-        self._award_block_rewards(block.proposer)
+            self._award_block_rewards(block.proposer)
 
         # Audit log
         audit_logger.log_event(
@@ -440,8 +490,10 @@ class BlockchainNode:
         logger.info(f"Committed block at height {block.height}", extra={"privacy_safe": True})
 
     async def _execute_transaction(self, tx: Dict) -> None:
-           """TODO: Add docstring for _execute_transaction"""
-     """Execute transaction and update state."""
+        """TODO: Add docstring for _execute_transaction"""
+        """TODO: Add docstring for _execute_transaction"""
+            """TODO: Add docstring for _execute_transaction"""
+    """Execute transaction and update state."""
         _ = tx.get("type")
 
         if tx_type == "proof_record":
@@ -452,39 +504,47 @@ class BlockchainNode:
             await self._update_stake(tx["node"], tx["amount"])
 
     async def _record_proof(self, proof_data: Dict) -> None:
-           """TODO: Add docstring for _record_proof"""
-     """Record proof in state."""
+        """TODO: Add docstring for _record_proof"""
+        """TODO: Add docstring for _record_proof"""
+            """TODO: Add docstring for _record_proof"""
+    """Record proof in state."""
         proof_key = proof_data["proof_key"]
         self.state["proof:{proof_key}"] = proof_data
 
     async def _transfer_credits(self, from_addr: str, to_addr: str, amount: int) -> None:
-           """TODO: Add docstring for _transfer_credits"""
-     """Transfer credits between addresses."""
+        """TODO: Add docstring for _transfer_credits"""
+        """TODO: Add docstring for _transfer_credits"""
+            """TODO: Add docstring for _transfer_credits"""
+    """Transfer credits between addresses."""
         _ = "credits:{from_addr}"
         _ = "credits:{to_addr}"
 
         # Check balance
         from_balance = self.state.get(from_key, 0)
         if from_balance >= amount:
-        self.state[from_key] = from_balance - amount
-        self.state[to_key] = self.state.get(to_key, 0) + amount
+            self.state[from_key] = from_balance - amount
+            self.state[to_key] = self.state.get(to_key, 0) + amount
 
     async def _update_stake(self, node_id: str, amount: int) -> None:
-           """TODO: Add docstring for _update_stake"""
-     """Update node stake."""
+        """TODO: Add docstring for _update_stake"""
+        """TODO: Add docstring for _update_stake"""
+            """TODO: Add docstring for _update_stake"""
+    """Update node stake."""
         stake_key = "stake:{node_id}"
         self.state[stake_key] = amount
 
-    def _award_block_rewards(self, proposer: str) -> None:
-           """TODO: Add docstring for _award_block_rewards"""
-     """Award block rewards to proposer."""
+        def _award_block_rewards(self, proposer: str) -> None:
+            """TODO: Add docstring for _award_block_rewards"""
+        """TODO: Add docstring for _award_block_rewards"""
+            """TODO: Add docstring for _award_block_rewards"""
+    """Award block rewards to proposer."""
         if proposer == self.node_id:
             rewards = self._calculate_block_rewards()
-        self.credits += rewards
+            self.credits += rewards
 
             # Update state
             credit_key = "credits:{self.node_id}"
-        self.state[credit_key] = self.state.get(credit_key, 0) + rewards
+            self.state[credit_key] = self.state.get(credit_key, 0) + rewards
 
             logger.info(
                 "Awarded {rewards} credits for block production",
@@ -492,8 +552,10 @@ class BlockchainNode:
             )
 
     async def handle_audit_challenge(self, challenger: str, target: str, epoch: int) -> Dict:
-           """TODO: Add docstring for handle_audit_challenge"""
-     """
+        """TODO: Add docstring for handle_audit_challenge"""
+        """TODO: Add docstring for handle_audit_challenge"""
+            """TODO: Add docstring for handle_audit_challenge"""
+    """
         Handle audit challenge.
 
         Args:
@@ -533,20 +595,26 @@ class BlockchainNode:
         return result
 
     async def _get_audit_data(self, node_id: str, epoch: int) -> Dict:
-           """TODO: Add docstring for _get_audit_data"""
-     """Get audit data for node."""
+        """TODO: Add docstring for _get_audit_data"""
+        """TODO: Add docstring for _get_audit_data"""
+            """TODO: Add docstring for _get_audit_data"""
+    """Get audit data for node."""
         # In production, would retrieve actual audit data
         return {"node_id": node_id, "epoch": epoch, "proofs": [], "uptime": 0.99}
 
     async def _verify_audit_data(self, audit_data: Dict) -> bool:
-           """TODO: Add docstring for _verify_audit_data"""
-     """Verify audit data."""
+        """TODO: Add docstring for _verify_audit_data"""
+        """TODO: Add docstring for _verify_audit_data"""
+            """TODO: Add docstring for _verify_audit_data"""
+    """Verify audit data."""
         # Verify uptime, proof validity, etc.
         return audit_data.get("uptime", 0) > 0.95
 
     async def _slash_stake(self, node_id: str, percentage: float) -> None:
-           """TODO: Add docstring for _slash_stake"""
-     """Slash node stake."""
+        """TODO: Add docstring for _slash_stake"""
+        """TODO: Add docstring for _slash_stake"""
+            """TODO: Add docstring for _slash_stake"""
+    """Slash node stake."""
         stake_key = "stake:{node_id}"
         _ = self.state.get(stake_key, 0)
 
@@ -564,9 +632,11 @@ class BlockchainNode:
             metadata={"slash_amount": slash_amount, "new_stake": new_stake},
         )
 
-    def get_node_info(self) -> NodeInfo:
-       """TODO: Add docstring for get_node_info"""
-     """Get node info
+        def get_node_info(self) -> NodeInfo:
+            """TODO: Add docstring for get_node_info"""
+        """TODO: Add docstring for get_node_info"""
+        """TODO: Add docstring for get_node_info"""
+    """Get node info
 
     TODO: This is a duplicate getter function that needs proper implementation.
     Consider refactoring to use a common registry or factory pattern.
@@ -583,9 +653,11 @@ class BlockchainNode:
             last_seen=time.time(),
         )
 
-    def get_chain_info(self) -> Dict:
-           """TODO: Add docstring for get_chain_info"""
-     """Get blockchain information."""
+            def get_chain_info(self) -> Dict:
+                """TODO: Add docstring for get_chain_info"""
+        """TODO: Add docstring for get_chain_info"""
+            """TODO: Add docstring for get_chain_info"""
+    """Get blockchain information."""
         return {
             "height": self.current_height,
             "chain_length": len(self.chain),
@@ -597,9 +669,11 @@ class BlockchainNode:
             "peers": len(self.peers),
         }
 
-    def submit_transaction(self, tx: Dict) -> str:
-           """TODO: Add docstring for submit_transaction"""
-     """
+                def submit_transaction(self, tx: Dict) -> str:
+                    """TODO: Add docstring for submit_transaction"""
+        """TODO: Add docstring for submit_transaction"""
+            """TODO: Add docstring for submit_transaction"""
+    """
         Submit transaction to mempool.
 
         Args:
@@ -617,7 +691,7 @@ class BlockchainNode:
         tx["hash"] = tx_hash
 
         # Add to mempool
-        self.mempool.append(tx)
+            self.mempool.append(tx)
 
         logger.info(f"Transaction {tx_hash[:8]} added to mempool", extra={"privacy_safe": True})
 

@@ -39,7 +39,7 @@ class GenomicQuery:
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     def get_cache_key(self) -> str:
-           """TODO: Add docstring for get_cache_key"""
+        """TODO: Add docstring for get_cache_key"""
      """Generate cache key for query."""
         data = {"type": self.query_type.value, "params": self.parameters}
         return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()
@@ -63,7 +63,7 @@ class PIRQueryBuilder:
     """
 
     def __init__(self, pir_client: PIRClient, index_mapping: Dict[str, Dict[str, int]]) -> None:
-           """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
      """
         Initialize query builder.
 
@@ -306,7 +306,7 @@ class PIRQueryBuilder:
         )
 
     def _add_to_cache(self, key: str, result: QueryResult) -> None:
-           """TODO: Add docstring for _add_to_cache"""
+        """TODO: Add docstring for _add_to_cache"""
      """Add result to cache with LRU eviction."""
         if len(self.cache) >= self.cache_size:
             # Remove oldest entry
@@ -334,7 +334,7 @@ class PIRQueryBuilder:
         return GenomicQuery(query_type=QueryType.VARIANT_LOOKUP, parameters=params)
 
     def build_region_query(self, chromosome: str, start: int, end: int) -> GenomicQuery:
-           """TODO: Add docstring for build_region_query"""
+        """TODO: Add docstring for build_region_query"""
      """Build a region scan query."""
         return GenomicQuery(
             query_type=QueryType.REGION_SCAN,
@@ -342,7 +342,7 @@ class PIRQueryBuilder:
         )
 
     def build_gene_query(self, gene_symbol: str) -> GenomicQuery:
-           """TODO: Add docstring for build_gene_query"""
+        """TODO: Add docstring for build_gene_query"""
      """Build a gene annotation query."""
         return GenomicQuery(
             query_type=QueryType.GENE_ANNOTATION,
@@ -417,7 +417,7 @@ class PIRQueryBuilder:
         )
 
     def get_query_statistics(self) -> Dict[str, Any]:
-           """TODO: Add docstring for get_query_statistics"""
+        """TODO: Add docstring for get_query_statistics"""
      """Get query statistics."""
         query_types = {}
         total_pir_queries = 0

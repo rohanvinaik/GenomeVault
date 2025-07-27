@@ -25,6 +25,8 @@ logger = get_logger(__name__)
 
 class GPUBindingKernel:
     """
+    """
+    """
     GPU kernel for nanopore event→HV binding.
 
     Uses fused kernels for efficient streaming processing
@@ -37,8 +39,10 @@ class GPUBindingKernel:
         max_batch_size: int = 10000,
         n_streams: int = 2,
     ) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize GPU kernel.
 
         Args:
@@ -49,26 +53,28 @@ class GPUBindingKernel:
         if not GPU_AVAILABLE:
             raise RuntimeError("CuPy not available - cannot use GPU kernels")
 
-        self.catalytic_space = catalytic_space
-        self.max_batch_size = max_batch_size
+            self.catalytic_space = catalytic_space
+            self.max_batch_size = max_batch_size
 
         # Initialize CUDA streams
-        self.streams = [cp.cuda.Stream() for _ in range(n_streams)]
-        self.current_stream = 0
+            self.streams = [cp.cuda.Stream() for _ in range(n_streams)]
+            self.current_stream = 0
 
         # Compile kernels
-        self._compile_kernels()
+            self._compile_kernels()
 
         # Allocate GPU buffers
-        self._allocate_buffers()
+            self._allocate_buffers()
 
         logger.info(f"GPU kernel initialized with {n_streams} streams")
 
-    def _compile_kernels(self) -> None:
-           """TODO: Add docstring for _compile_kernels"""
-     """Compile CUDA kernels."""
+            def _compile_kernels(self) -> None:
+                """TODO: Add docstring for _compile_kernels"""
+        """TODO: Add docstring for _compile_kernels"""
+            """TODO: Add docstring for _compile_kernels"""
+    """Compile CUDA kernels."""
         # Event to k-mer mapping kernel
-        self.event_to_kmer_kernel = cp.RawKernel(
+                self.event_to_kmer_kernel = cp.RawKernel(
             r"""
         extern "C" __global__
         void event_to_kmer(
@@ -107,7 +113,7 @@ class GPUBindingKernel:
         )
 
         # HV binding kernel
-        self.hv_bind_kernel = cp.RawKernel(
+                self.hv_bind_kernel = cp.RawKernel(
             r"""
         extern "C" __global__
         void hv_bind_positions(
@@ -166,7 +172,7 @@ class GPUBindingKernel:
         )
 
         # Variance accumulation kernel
-        self.variance_kernel = cp.RawKernel(
+                self.variance_kernel = cp.RawKernel(
             r"""
         extern "C" __global__
         void accumulate_variance(
@@ -195,25 +201,27 @@ class GPUBindingKernel:
             "accumulate_variance",
         )
 
-    def _allocate_buffers(self) -> None:
-           """TODO: Add docstring for _allocate_buffers"""
-     """Allocate GPU memory buffers."""
-        self.buffers = {}
+                def _allocate_buffers(self) -> None:
+                    """TODO: Add docstring for _allocate_buffers"""
+        """TODO: Add docstring for _allocate_buffers"""
+            """TODO: Add docstring for _allocate_buffers"""
+    """Allocate GPU memory buffers."""
+                    self.buffers = {}
 
         # Event processing buffers
-        self.buffers["events"] = cp.zeros((self.max_batch_size, 2), dtype=cp.float32)
-        self.buffers["kmer_indices"] = cp.zeros(self.max_batch_size, dtype=cp.int32)
-        self.buffers["probabilities"] = cp.zeros(self.max_batch_size, dtype=cp.float32)
-        self.buffers["positions"] = cp.zeros(self.max_batch_size, dtype=cp.int32)
-        self.buffers["variances"] = cp.zeros(self.max_batch_size, dtype=cp.float32)
+                    self.buffers["events"] = cp.zeros((self.max_batch_size, 2), dtype=cp.float32)
+                    self.buffers["kmer_indices"] = cp.zeros(self.max_batch_size, dtype=cp.int32)
+                    self.buffers["probabilities"] = cp.zeros(self.max_batch_size, dtype=cp.float32)
+                    self.buffers["positions"] = cp.zeros(self.max_batch_size, dtype=cp.int32)
+                    self.buffers["variances"] = cp.zeros(self.max_batch_size, dtype=cp.float32)
 
         # K-mer thresholds (simplified - would load from model)
-        self.buffers["kmer_thresholds"] = cp.linspace(-50, 50, 4096, dtype=cp.float32)
+                    self.buffers["kmer_thresholds"] = cp.linspace(-50, 50, 4096, dtype=cp.float32)
 
         # Variance statistics
-        self.buffers["running_mean"] = cp.zeros(1, dtype=cp.float32)
-        self.buffers["running_m2"] = cp.zeros(1, dtype=cp.float32)
-        self.buffers["count"] = cp.zeros(1, dtype=cp.int32)
+                    self.buffers["running_mean"] = cp.zeros(1, dtype=cp.float32)
+                    self.buffers["running_m2"] = cp.zeros(1, dtype=cp.float32)
+                    self.buffers["count"] = cp.zeros(1, dtype=cp.int32)
 
     async def process_events_async(
         self,
@@ -221,8 +229,10 @@ class GPUBindingKernel:
         start_position: int,
         hv_encoder,
     ) -> Tuple[np.ndarray, np.ndarray]:
-           """TODO: Add docstring for process_events_async"""
-     """
+        """TODO: Add docstring for process_events_async"""
+        """TODO: Add docstring for process_events_async"""
+            """TODO: Add docstring for process_events_async"""
+    """
         Process events on GPU asynchronously.
 
         Args:
@@ -238,7 +248,7 @@ class GPUBindingKernel:
 
         # Select stream
         stream = self.streams[self.current_stream]
-        self.current_stream = (self.current_stream + 1) % len(self.streams)
+            self.current_stream = (self.current_stream + 1) % len(self.streams)
 
         with stream:
             # Copy events to GPU
@@ -252,16 +262,16 @@ class GPUBindingKernel:
             threads = 256
             blocks = (n_events + threads - 1) // threads
 
-        self.event_to_kmer_kernel(
+            self.event_to_kmer_kernel(
                 (blocks,),
                 (threads,),
                 (
-        self.buffers["events"][:n_events],
+            self.buffers["events"][:n_events],
                     n_events,
-        self.buffers["kmer_thresholds"],
+            self.buffers["kmer_thresholds"],
                     len(self.buffers["kmer_thresholds"]),
-        self.buffers["kmer_indices"][:n_events],
-        self.buffers["probabilities"][:n_events],
+            self.buffers["kmer_indices"][:n_events],
+            self.buffers["probabilities"][:n_events],
                 ),
             )
 
@@ -272,33 +282,33 @@ class GPUBindingKernel:
             output_hv = cp.zeros(hv_dim, dtype=cp.float32)
 
             shared_mem_size = hv_dim * 4  # float32
-        self.hv_bind_kernel(
+            self.hv_bind_kernel(
                 (blocks,),
                 (threads,),
                 (
-        self.buffers["positions"][:n_events],
-        self.buffers["kmer_indices"][:n_events],
-        self.buffers["probabilities"][:n_events],
+            self.buffers["positions"][:n_events],
+            self.buffers["kmer_indices"][:n_events],
+            self.buffers["probabilities"][:n_events],
                     pos_table,
                     kmer_table,
                     n_events,
                     hv_dim,
                     output_hv,
-        self.buffers["variances"][:n_events],
+            self.buffers["variances"][:n_events],
                 ),
                 shared_mem=shared_mem_size,
             )
 
             # Step 4: Update variance statistics
-        self.variance_kernel(
+            self.variance_kernel(
                 (blocks,),
                 (threads,),
                 (
-        self.buffers["variances"][:n_events],
+            self.buffers["variances"][:n_events],
                     n_events,
-        self.buffers["running_mean"],
-        self.buffers["running_m2"],
-        self.buffers["count"],
+            self.buffers["running_mean"],
+            self.buffers["running_m2"],
+            self.buffers["count"],
                 ),
             )
 
@@ -319,8 +329,10 @@ class GPUBindingKernel:
         hv_encoder,
         stream,
     ) -> Tuple[cp.ndarray, cp.ndarray]:
-           """TODO: Add docstring for _load_encoding_tables_async"""
-     """
+        """TODO: Add docstring for _load_encoding_tables_async"""
+        """TODO: Add docstring for _load_encoding_tables_async"""
+            """TODO: Add docstring for _load_encoding_tables_async"""
+    """
         Load encoding tables from catalytic space.
 
         This simulates loading pre-computed tables from
@@ -342,9 +354,11 @@ class GPUBindingKernel:
 
         return pos_table, kmer_table
 
-    def get_memory_usage(self) -> Dict[str, float]:
-           """TODO: Add docstring for get_memory_usage"""
-     """Get GPU memory usage statistics."""
+            def get_memory_usage(self) -> Dict[str, float]:
+                """TODO: Add docstring for get_memory_usage"""
+        """TODO: Add docstring for get_memory_usage"""
+            """TODO: Add docstring for get_memory_usage"""
+    """Get GPU memory usage statistics."""
         stats = {}
 
         for name, buffer in self.buffers.items():
@@ -362,8 +376,10 @@ class GPUBindingKernel:
 
 # Example usage
 async def example_gpu_processing() -> None:
-       """TODO: Add docstring for example_gpu_processing"""
-     """Example of GPU-accelerated processing."""
+    """TODO: Add docstring for example_gpu_processing"""
+    """TODO: Add docstring for example_gpu_processing"""
+        """TODO: Add docstring for example_gpu_processing"""
+    """Example of GPU-accelerated processing."""
     if not GPU_AVAILABLE:
         print("GPU not available - install CuPy for GPU acceleration")
         return

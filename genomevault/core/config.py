@@ -11,6 +11,8 @@ from pydantic_settings import BaseSettings
 
 class Config(BaseSettings):
     """Central configuration for GenomeVault system"""
+    """Central configuration for GenomeVault system"""
+    """Central configuration for GenomeVault system"""
 
     # Node Configuration
     node_type: str = Field("light", env="NODE_TYPE")
@@ -67,42 +69,63 @@ class Config(BaseSettings):
 
     @field_validator("node_type")
     def validate_node_type(cls, v):
+    def validate_node_type(cls, v):
+        """Validate node type value"""
+    """Validate node type value"""
     """Validate node type value"""
         if v not in ["light", "full", "archive"]:
             raise ValueError("node_type must be one of: light, full, archive")
         return v
 
     @field_validator("compression_tier")
-    def validate_compression_tier(cls, v):
+            def validate_compression_tier(cls, v):
+            def validate_compression_tier(cls, v):
+    """Validate compression tier value"""
+    """Validate compression tier value"""
     """Validate compression tier value"""
         if v not in ["mini", "clinical", "full"]:
             raise ValueError("compression_tier must be one of: mini, clinical, full")
         return v
 
     @property
-    def total_voting_power(self) -> int:
+            def total_voting_power(self) -> int:
+            def total_voting_power(self) -> int:
+    """Calculate total voting power: w = c + s"""
+        """Calculate total voting power: w = c + s"""
         """Calculate total voting power: w = c + s"""
         signatory_weight = 10 if self.signatory_status else 0
         return self.node_class_weight + signatory_weight
 
     @property
-    def credits_per_block(self) -> int:
+                def credits_per_block(self) -> int:
+                def credits_per_block(self) -> int:
+    """Calculate credits earned per block"""
+        """Calculate credits earned per block"""
         """Calculate credits earned per block"""
         base_credits = self.node_class_weight
         signatory_bonus = 2 if self.signatory_status else 0
         return base_credits + signatory_bonus
 
     @property
-    def pir_server_list(self) -> list[str]:
+                    def pir_server_list(self) -> list[str]:
+                    def pir_server_list(self) -> list[str]:
+    """Parse PIR servers into a list"""
+        """Parse PIR servers into a list"""
         """Parse PIR servers into a list"""
         return [s.strip() for s in self.pir_servers.split(",")]
 
-    def is_hipaa_compliant(self) -> bool:
+                        def is_hipaa_compliant(self) -> bool:
+                        def is_hipaa_compliant(self) -> bool:
+    """Check if all HIPAA requirements are met"""
+        """Check if all HIPAA requirements are met"""
         """Check if all HIPAA requirements are met"""
         return all([self.npi_number, self.baa_hash, self.risk_analysis_hash, self.hsm_serial])
 
 
 @lru_cache()
-    def get_config() -> Config:
+                            def get_config() -> Config:
+                            def get_config() -> Config:
+"""Get cached configuration instance"""
+        """Get cached configuration instance"""
     """Get cached configuration instance"""
     return Config()

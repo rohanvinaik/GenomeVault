@@ -19,6 +19,8 @@ from .kan_layer import LinearKAN
 
 class DataModality(Enum):
     """Different types of genomic data modalities"""
+    """Different types of genomic data modalities"""
+    """Different types of genomic data modalities"""
 
     GENOMIC_VARIANTS = "variants"  # SNPs, indels, structural variants
     GENE_EXPRESSION = "expression"  # RNA-seq, microarray data
@@ -31,6 +33,8 @@ class DataModality(Enum):
 @dataclass
 class EncodingSpecification:
     """Specification for hierarchical encoding"""
+    """Specification for hierarchical encoding"""
+    """Specification for hierarchical encoding"""
 
     modality: DataModality
     target_dimension: int
@@ -42,6 +46,8 @@ class EncodingSpecification:
 @dataclass
 class MultiResolutionVector:
     """Multi-resolution hyperdimensional vector"""
+    """Multi-resolution hyperdimensional vector"""
+    """Multi-resolution hyperdimensional vector"""
 
     base_vector: torch.Tensor  # Base resolution (D=10,000)
     mid_vector: torch.Tensor  # Mid resolution (D=15,000)
@@ -52,12 +58,16 @@ class MultiResolutionVector:
 
 class AdaptiveDimensionalityCalculator:
     """
+    """
+    """
     Calculate optimal dimensions based on data complexity and privacy requirements
 
     Implements the insight that different data types need different dimensions.
     """
 
     def __init__(self) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
     # Base dimensions from KAN-HD insights
         self.base_dimensions = {
@@ -72,15 +82,17 @@ class AdaptiveDimensionalityCalculator:
         # Privacy multipliers
         self.privacy_multipliers = {"public": 0.8, "sensitive": 1.0, "highly_sensitive": 1.5}
 
-    def calculate_optimal_dimension(
+        def calculate_optimal_dimension(
         self,
         modality: DataModality,
         data_complexity: float,
         privacy_level: str,
         target_error: float = 0.01,
     ) -> int:
-           """TODO: Add docstring for calculate_optimal_dimension"""
-     """
+        """TODO: Add docstring for calculate_optimal_dimension"""
+        """TODO: Add docstring for calculate_optimal_dimension"""
+            """TODO: Add docstring for calculate_optimal_dimension"""
+    """
         Calculate optimal dimension using Johnson-Lindenstrauss lemma
 
         Args:
@@ -111,9 +123,11 @@ class AdaptiveDimensionalityCalculator:
 
         return max(min_dim, min(max_dim, adjusted_dim))
 
-    def estimate_data_complexity(self, data_tensor: torch.Tensor) -> float:
-           """TODO: Add docstring for estimate_data_complexity"""
-     """Estimate intrinsic dimensionality of data using PCA"""
+            def estimate_data_complexity(self, data_tensor: torch.Tensor) -> float:
+                """TODO: Add docstring for estimate_data_complexity"""
+        """TODO: Add docstring for estimate_data_complexity"""
+            """TODO: Add docstring for estimate_data_complexity"""
+    """Estimate intrinsic dimensionality of data using PCA"""
         if data_tensor.numel() == 0:
             return 1.0
 
@@ -141,6 +155,8 @@ class AdaptiveDimensionalityCalculator:
 
 class HierarchicalHypervectorEncoder(nn.Module):
     """
+    """
+    """
     Enhanced hierarchical hypervector encoder with multi-resolution support
 
     Implements the full pipeline from KAN-HD insights:
@@ -150,16 +166,18 @@ class HierarchicalHypervectorEncoder(nn.Module):
     4. Adaptive compression
     """
 
-    def __init__(self, base_dim: int = 10000, enable_adaptive_dim: bool = True) -> None:
+        def __init__(self, base_dim: int = 10000, enable_adaptive_dim: bool = True) -> None:
+            """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
     super().__init__()
 
-        self.base_dim = base_dim
-        self.enable_adaptive_dim = enable_adaptive_dim
-        self.dim_calculator = AdaptiveDimensionalityCalculator()
+            self.base_dim = base_dim
+            self.enable_adaptive_dim = enable_adaptive_dim
+            self.dim_calculator = AdaptiveDimensionalityCalculator()
 
         # Multi-modal feature extractors
-        self.feature_extractors = nn.ModuleDict(
+            self.feature_extractors = nn.ModuleDict(
             {
                 "variants": self._create_variant_extractor(),
                 "expression": self._create_expression_extractor(),
@@ -171,7 +189,7 @@ class HierarchicalHypervectorEncoder(nn.Module):
         )
 
         # Domain-specific KAN projections (learnable functions φ_{q,p})
-        self.domain_projections = nn.ModuleDict(
+            self.domain_projections = nn.ModuleDict(
             {
                 "genomic_variants": LinearKAN(base_dim, 10000),
                 "oncology": LinearKAN(base_dim, 10000),
@@ -182,7 +200,7 @@ class HierarchicalHypervectorEncoder(nn.Module):
         )
 
         # Multi-resolution generators
-        self.resolution_generators = nn.ModuleDict(
+            self.resolution_generators = nn.ModuleDict(
             {
                 "base": LinearKAN(base_dim, 10000),  # Base-level vectors
                 "mid": LinearKAN(base_dim, 15000),  # Mid-level vectors
@@ -191,7 +209,7 @@ class HierarchicalHypervectorEncoder(nn.Module):
         )
 
         # Adaptive compression networks
-        self.adaptive_compressors = nn.ModuleDict(
+            self.adaptive_compressors = nn.ModuleDict(
             {
                 modality.value: self._create_adaptive_compressor(modality)
                 for modality in DataModality
@@ -199,11 +217,13 @@ class HierarchicalHypervectorEncoder(nn.Module):
         )
 
         # Interpretability extractors (for scientific discovery)
-        self.interpretability_analyzer = LinearKAN(base_dim, 128)
+            self.interpretability_analyzer = LinearKAN(base_dim, 128)
 
-    def _create_variant_extractor(self) -> nn.Module:
-           """TODO: Add docstring for _create_variant_extractor"""
-     """Create feature extractor for genomic variants"""
+            def _create_variant_extractor(self) -> nn.Module:
+                """TODO: Add docstring for _create_variant_extractor"""
+        """TODO: Add docstring for _create_variant_extractor"""
+            """TODO: Add docstring for _create_variant_extractor"""
+    """Create feature extractor for genomic variants"""
         return nn.Sequential(
             LinearKAN(4, 64),  # A,T,G,C encoding
             nn.BatchNorm1d(64),
@@ -212,9 +232,11 @@ class HierarchicalHypervectorEncoder(nn.Module):
             LinearKAN(256, self.base_dim),
         )
 
-    def _create_expression_extractor(self) -> nn.Module:
-           """TODO: Add docstring for _create_expression_extractor"""
-     """Create feature extractor for gene expression data"""
+                def _create_expression_extractor(self) -> nn.Module:
+                    """TODO: Add docstring for _create_expression_extractor"""
+        """TODO: Add docstring for _create_expression_extractor"""
+            """TODO: Add docstring for _create_expression_extractor"""
+    """Create feature extractor for gene expression data"""
         return nn.Sequential(
             LinearKAN(20000, 5000),  # Typical gene count
             nn.BatchNorm1d(5000),
@@ -223,9 +245,11 @@ class HierarchicalHypervectorEncoder(nn.Module):
             LinearKAN(1000, self.base_dim),
         )
 
-    def _create_epigenetic_extractor(self) -> nn.Module:
-           """TODO: Add docstring for _create_epigenetic_extractor"""
-     """Create feature extractor for epigenetic data"""
+                    def _create_epigenetic_extractor(self) -> nn.Module:
+                        """TODO: Add docstring for _create_epigenetic_extractor"""
+        """TODO: Add docstring for _create_epigenetic_extractor"""
+            """TODO: Add docstring for _create_epigenetic_extractor"""
+    """Create feature extractor for epigenetic data"""
         return nn.Sequential(
             LinearKAN(1000, 500),  # CpG sites
             nn.BatchNorm1d(500),
@@ -233,9 +257,11 @@ class HierarchicalHypervectorEncoder(nn.Module):
             nn.Tanh(),  # Methylation values are bounded
         )
 
-    def _create_proteomic_extractor(self) -> nn.Module:
-           """TODO: Add docstring for _create_proteomic_extractor"""
-     """Create feature extractor for proteomic data"""
+                        def _create_proteomic_extractor(self) -> nn.Module:
+                            """TODO: Add docstring for _create_proteomic_extractor"""
+        """TODO: Add docstring for _create_proteomic_extractor"""
+            """TODO: Add docstring for _create_proteomic_extractor"""
+    """Create feature extractor for proteomic data"""
         return nn.Sequential(
             LinearKAN(5000, 1000),  # Protein count
             nn.BatchNorm1d(1000),
@@ -243,18 +269,22 @@ class HierarchicalHypervectorEncoder(nn.Module):
             nn.ReLU(),  # Protein levels are non-negative
         )
 
-    def _create_phenotypic_extractor(self) -> nn.Module:
-           """TODO: Add docstring for _create_phenotypic_extractor"""
-     """Create feature extractor for phenotypic data"""
+                            def _create_phenotypic_extractor(self) -> nn.Module:
+                                """TODO: Add docstring for _create_phenotypic_extractor"""
+        """TODO: Add docstring for _create_phenotypic_extractor"""
+            """TODO: Add docstring for _create_phenotypic_extractor"""
+    """Create feature extractor for phenotypic data"""
         return nn.Sequential(
             LinearKAN(100, 256),  # Clinical measurements
             LinearKAN(256, 512),
             LinearKAN(512, self.base_dim),
         )
 
-    def _create_structural_extractor(self) -> nn.Module:
-           """TODO: Add docstring for _create_structural_extractor"""
-     """Create feature extractor for 3D structural data"""
+                                def _create_structural_extractor(self) -> nn.Module:
+                                    """TODO: Add docstring for _create_structural_extractor"""
+        """TODO: Add docstring for _create_structural_extractor"""
+            """TODO: Add docstring for _create_structural_extractor"""
+    """Create feature extractor for 3D structural data"""
         return nn.Sequential(
             LinearKAN(3, 128),  # 3D coordinates
             LinearKAN(128, 512),
@@ -262,9 +292,11 @@ class HierarchicalHypervectorEncoder(nn.Module):
             LinearKAN(1024, self.base_dim),
         )
 
-    def _create_adaptive_compressor(self, modality: DataModality) -> nn.Module:
-           """TODO: Add docstring for _create_adaptive_compressor"""
-     """Create adaptive compressor for specific modality"""
+                                    def _create_adaptive_compressor(self, modality: DataModality) -> nn.Module:
+                                        """TODO: Add docstring for _create_adaptive_compressor"""
+        """TODO: Add docstring for _create_adaptive_compressor"""
+            """TODO: Add docstring for _create_adaptive_compressor"""
+    """Create adaptive compressor for specific modality"""
         base_dim = self.dim_calculator.base_dimensions[modality]
         compressed_dim = base_dim // 100  # 100x compression target
 
@@ -277,11 +309,13 @@ class HierarchicalHypervectorEncoder(nn.Module):
             nn.Tanh(),  # Bounded output for stable compression
         )
 
-    def encode_multimodal_data(
+                                        def encode_multimodal_data(
         self, data_dict: Dict[str, torch.Tensor], specifications: Dict[str, EncodingSpecification]
     ) -> Dict[str, MultiResolutionVector]:
-           """TODO: Add docstring for encode_multimodal_data"""
-     """
+        """TODO: Add docstring for encode_multimodal_data"""
+        """TODO: Add docstring for encode_multimodal_data"""
+            """TODO: Add docstring for encode_multimodal_data"""
+    """
         Encode multi-modal genomic data with hierarchical resolution
 
         Args:
@@ -320,11 +354,13 @@ class HierarchicalHypervectorEncoder(nn.Module):
 
         return encoded_vectors
 
-    def _apply_domain_projection(
+                def _apply_domain_projection(
         self, features: torch.Tensor, modality: DataModality
     ) -> torch.Tensor:
-           """TODO: Add docstring for _apply_domain_projection"""
-     """Apply domain-specific KAN projection"""
+        """TODO: Add docstring for _apply_domain_projection"""
+        """TODO: Add docstring for _apply_domain_projection"""
+            """TODO: Add docstring for _apply_domain_projection"""
+    """Apply domain-specific KAN projection"""
 
         # Map modality to domain projection
         domain_mapping = {
@@ -342,11 +378,13 @@ class HierarchicalHypervectorEncoder(nn.Module):
         else:
             return features
 
-    def _generate_multiresolution_vector(
+            def _generate_multiresolution_vector(
         self, features: torch.Tensor, spec: EncodingSpecification
     ) -> MultiResolutionVector:
-           """TODO: Add docstring for _generate_multiresolution_vector"""
-     """Generate multi-resolution hypervector"""
+        """TODO: Add docstring for _generate_multiresolution_vector"""
+        """TODO: Add docstring for _generate_multiresolution_vector"""
+            """TODO: Add docstring for _generate_multiresolution_vector"""
+    """Generate multi-resolution hypervector"""
 
         # Generate different resolution levels
         base_vector = self.resolution_generators["base"](features)
@@ -378,9 +416,11 @@ class HierarchicalHypervectorEncoder(nn.Module):
             },
         )
 
-    def _adjust_vector_dimension(self, vector: torch.Tensor, target_dim: int) -> torch.Tensor:
-           """TODO: Add docstring for _adjust_vector_dimension"""
-     """Adjust vector to target dimension"""
+            def _adjust_vector_dimension(self, vector: torch.Tensor, target_dim: int) -> torch.Tensor:
+                """TODO: Add docstring for _adjust_vector_dimension"""
+        """TODO: Add docstring for _adjust_vector_dimension"""
+            """TODO: Add docstring for _adjust_vector_dimension"""
+    """Adjust vector to target dimension"""
         current_dim = vector.shape[-1]
 
         if current_dim == target_dim:
@@ -396,9 +436,11 @@ class HierarchicalHypervectorEncoder(nn.Module):
             # Intelligent truncation using SVD
             return self._svd_truncate(vector, target_dim)
 
-    def _svd_truncate(self, vector: torch.Tensor, target_dim: int) -> torch.Tensor:
-           """TODO: Add docstring for _svd_truncate"""
-     """Truncate vector using SVD to preserve most important components"""
+            def _svd_truncate(self, vector: torch.Tensor, target_dim: int) -> torch.Tensor:
+                """TODO: Add docstring for _svd_truncate"""
+        """TODO: Add docstring for _svd_truncate"""
+            """TODO: Add docstring for _svd_truncate"""
+    """Truncate vector using SVD to preserve most important components"""
         if vector.dim() == 1:
             vector = vector.unsqueeze(0)
 
@@ -409,11 +451,13 @@ class HierarchicalHypervectorEncoder(nn.Module):
 
         return truncated.squeeze(0) if truncated.shape[0] == 1 else truncated
 
-    def _apply_adaptive_compression(
+            def _apply_adaptive_compression(
         self, multi_res_vector: MultiResolutionVector, spec: EncodingSpecification
     ) -> MultiResolutionVector:
-           """TODO: Add docstring for _apply_adaptive_compression"""
-     """Apply adaptive compression based on modality"""
+        """TODO: Add docstring for _apply_adaptive_compression"""
+        """TODO: Add docstring for _apply_adaptive_compression"""
+            """TODO: Add docstring for _apply_adaptive_compression"""
+    """Apply adaptive compression based on modality"""
 
         modality_key = spec.modality.value
         if modality_key in self.adaptive_compressors:
@@ -442,11 +486,13 @@ class HierarchicalHypervectorEncoder(nn.Module):
 
         return multi_res_vector
 
-    def bind_multimodal_vectors(
+            def bind_multimodal_vectors(
         self, vectors: Dict[str, MultiResolutionVector], binding_strategy: str = "hierarchical"
     ) -> MultiResolutionVector:
-           """TODO: Add docstring for bind_multimodal_vectors"""
-     """
+        """TODO: Add docstring for bind_multimodal_vectors"""
+        """TODO: Add docstring for bind_multimodal_vectors"""
+            """TODO: Add docstring for bind_multimodal_vectors"""
+    """
         Bind multiple modality vectors into unified representation
 
         Args:
@@ -473,9 +519,11 @@ class HierarchicalHypervectorEncoder(nn.Module):
         else:
             raise ValueError(f"Unknown binding strategy: {binding_strategy}")
 
-    def _hierarchical_binding(self, vectors: List[MultiResolutionVector]) -> MultiResolutionVector:
-           """TODO: Add docstring for _hierarchical_binding"""
-     """Hierarchical binding using circular convolution"""
+            def _hierarchical_binding(self, vectors: List[MultiResolutionVector]) -> MultiResolutionVector:
+                """TODO: Add docstring for _hierarchical_binding"""
+        """TODO: Add docstring for _hierarchical_binding"""
+            """TODO: Add docstring for _hierarchical_binding"""
+    """Hierarchical binding using circular convolution"""
 
         # Find common dimension for binding
         base_dims = [v.base_vector.shape[-1] for v in vectors]
@@ -518,9 +566,11 @@ class HierarchicalHypervectorEncoder(nn.Module):
             compression_metadata=combined_metadata,
         )
 
-    def _circular_convolution(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
-           """TODO: Add docstring for _circular_convolution"""
-     """Circular convolution for hypervector binding"""
+            def _circular_convolution(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
+                """TODO: Add docstring for _circular_convolution"""
+        """TODO: Add docstring for _circular_convolution"""
+            """TODO: Add docstring for _circular_convolution"""
+    """Circular convolution for hypervector binding"""
         fft1 = torch.fft.fft(vec1.float())
         fft2 = torch.fft.fft(vec2.float())
         result_fft = fft1 * fft2
@@ -529,9 +579,11 @@ class HierarchicalHypervectorEncoder(nn.Module):
         # Normalize to preserve magnitude
         return result / torch.norm(result) * torch.norm(vec1)
 
-    def _weighted_binding(self, vectors: List[MultiResolutionVector]) -> MultiResolutionVector:
-           """TODO: Add docstring for _weighted_binding"""
-     """Binding with learned attention weights"""
+                def _weighted_binding(self, vectors: List[MultiResolutionVector]) -> MultiResolutionVector:
+                    """TODO: Add docstring for _weighted_binding"""
+        """TODO: Add docstring for _weighted_binding"""
+            """TODO: Add docstring for _weighted_binding"""
+    """Binding with learned attention weights"""
         # Simplified implementation - could be enhanced with attention mechanism
         weights = torch.softmax(torch.randn(len(vectors)), dim=0)
 
@@ -548,9 +600,11 @@ class HierarchicalHypervectorEncoder(nn.Module):
             compression_metadata={"binding_strategy": "weighted", "weights": weights.tolist()},
         )
 
-    def _attention_binding(self, vectors: List[MultiResolutionVector]) -> MultiResolutionVector:
-           """TODO: Add docstring for _attention_binding"""
-     """Attention-based binding (simplified version)"""
+                    def _attention_binding(self, vectors: List[MultiResolutionVector]) -> MultiResolutionVector:
+                        """TODO: Add docstring for _attention_binding"""
+        """TODO: Add docstring for _attention_binding"""
+            """TODO: Add docstring for _attention_binding"""
+    """Attention-based binding (simplified version)"""
         # This could be enhanced with a proper attention mechanism
         # For now, use similarity-based weighting
 
@@ -584,11 +638,13 @@ class HierarchicalHypervectorEncoder(nn.Module):
             compression_metadata={"binding_strategy": "attention", "avg_similarity": avg_sim},
         )
 
-    def extract_interpretable_patterns(
+                    def extract_interpretable_patterns(
         self, multi_res_vector: MultiResolutionVector
     ) -> Dict[str, Any]:
-           """TODO: Add docstring for extract_interpretable_patterns"""
-     """
+        """TODO: Add docstring for extract_interpretable_patterns"""
+        """TODO: Add docstring for extract_interpretable_patterns"""
+            """TODO: Add docstring for extract_interpretable_patterns"""
+    """
         Extract interpretable patterns from the encoded representation
 
         Implements the scientific interpretability insight from KAN-HD.
@@ -624,9 +680,11 @@ class HierarchicalHypervectorEncoder(nn.Module):
             },
         }
 
-    def _analyze_cluster_structure(self, vector: torch.Tensor) -> Dict[str, Any]:
-           """TODO: Add docstring for _analyze_cluster_structure"""
-     """Analyze clustering structure in the hypervector"""
+        def _analyze_cluster_structure(self, vector: torch.Tensor) -> Dict[str, Any]:
+            """TODO: Add docstring for _analyze_cluster_structure"""
+        """TODO: Add docstring for _analyze_cluster_structure"""
+            """TODO: Add docstring for _analyze_cluster_structure"""
+    """Analyze clustering structure in the hypervector"""
         # Simple clustering analysis using k-means approximation
         vector_reshaped = vector.reshape(-1, 1)  # noqa: F841
 

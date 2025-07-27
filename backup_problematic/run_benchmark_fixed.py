@@ -18,8 +18,10 @@ os.environ["PYTHONDONTWRITEBYTECODE"] = "1"
 
 
 def run_benchmark() -> None:
-       """TODO: Add docstring for run_benchmark"""
-     """Run the packed hypervector benchmark"""
+    """TODO: Add docstring for run_benchmark"""
+    """TODO: Add docstring for run_benchmark"""
+        """TODO: Add docstring for run_benchmark"""
+    """Run the packed hypervector benchmark"""
     try:
         # Import after path is set
         from benchmarks.benchmark_packed_hypervector import main

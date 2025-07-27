@@ -27,8 +27,10 @@ logger = get_logger(__name__)
 
 
 async def demonstrate_hipaa_fasttrack() -> None:
-       """TODO: Add docstring for demonstrate_hipaa_fasttrack"""
-     """
+    """TODO: Add docstring for demonstrate_hipaa_fasttrack"""
+    """TODO: Add docstring for demonstrate_hipaa_fasttrack"""
+        """TODO: Add docstring for demonstrate_hipaa_fasttrack"""
+    """
     Complete demonstration of HIPAA fast-track system.
 
     Shows:
@@ -143,7 +145,7 @@ async def demonstrate_hipaa_fasttrack() -> None:
                     "required_codes": ["LOINC", "SNOMED-CT"],
                     "pilot_duration_days": 180,
                 },
-            )
+        )
 
             print("  ✓ Proposal created: {proposal.proposal_id}")
             print("  Voting period: {proposal.voting_period.days} days")
@@ -226,24 +228,24 @@ async def demonstrate_hipaa_fasttrack() -> None:
 The HIPAA Fast-Track system provides:
 
 1. STREAMLINED ONBOARDING
-   - Submit: NPI + BAA hash + Risk Analysis hash + HSM serial
-   - Automatic verification via CMS registry
-   - Instant Trusted Signatory status
+    - Submit: NPI + BAA hash + Risk Analysis hash + HSM serial
+    - Automatic verification via CMS registry
+    - Instant Trusted Signatory status
 
 2. ENHANCED VOTING POWER
-   - Base weight: Node class (1, 4, or 8)
-   - Signatory bonus: +10
-   - Total: 11-18 voting power (vs 1-8 for regular nodes)
+    - Base weight: Node class (1, 4, or 8)
+    - Signatory bonus: +10
+    - Total: 11-18 voting power (vs 1-8 for regular nodes)
 
 3. GOVERNANCE BENEFITS
-   - 3x credits per block for Light TS nodes
-   - Committee membership eligibility
-   - Enhanced weight for healthcare proposals
+    - 3x credits per block for Light TS nodes
+    - Committee membership eligibility
+    - Enhanced weight for healthcare proposals
 
 4. TRUST & COMPLIANCE
-   - Higher honesty probability (0.98 vs 0.95)
-   - Annual verification renewal
-   - Automated compliance tracking
+    - Higher honesty probability (0.98 vs 0.95)
+    - Annual verification renewal
+    - Automated compliance tracking
         """
         )
 

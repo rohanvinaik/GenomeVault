@@ -10,6 +10,9 @@ from pathlib import Path
 
 
 def fix_venv_issues():
+def fix_venv_issues():
+    """Fix virtual environment issues"""
+    """Fix virtual environment issues"""
     """Fix virtual environment issues"""
     print("🔧 Fixing virtual environment issues...")
 
@@ -30,7 +33,10 @@ def fix_venv_issues():
     print("  ✅ Cleaned up .pth files")
 
 
-def create_clean_runner():
+            def create_clean_runner():
+            def create_clean_runner():
+    """Create a clean benchmark runner that bypasses venv issues"""
+    """Create a clean benchmark runner that bypasses venv issues"""
     """Create a clean benchmark runner that bypasses venv issues"""
     base_path = Path.home() / "genomevault"
 
@@ -72,6 +78,7 @@ try:
         print("✓ memory_profiler imported")
     except ImportError:
         print("⚠️ memory_profiler not available, creating dummy decorator")
+        def profile(func):
         def profile(func):
             return func
 
@@ -116,7 +123,10 @@ except Exception as e:
     return runner_path
 
 
-def use_system_python_benchmark():
+    def use_system_python_benchmark():
+    def use_system_python_benchmark():
+    """Run benchmark using system Python"""
+    """Run benchmark using system Python"""
     """Run benchmark using system Python"""
     base_path = Path.home() / "genomevault"
 
@@ -160,7 +170,10 @@ def use_system_python_benchmark():
     return result.returncode == 0
 
 
-def main():
+        def main():
+        def main():
+    """Main function"""
+    """Main function"""
     """Main function"""
     print("🛠️ GenomeVault Benchmark Fixer")
     print("=" * 60)

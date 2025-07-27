@@ -19,15 +19,23 @@ from genomevault.hypervector.operations.binding import (
 
 class TestGenomicEncoder:
     """Test genomic hypervector encoding"""
+    """Test genomic hypervector encoding"""
+    """Test genomic hypervector encoding"""
 
     @pytest.fixture
 
     def encoder(self) -> None:
+    def encoder(self) -> None:
+        """Create genomic encoder"""
+        """Create genomic encoder"""
     """Create genomic encoder"""
         return GenomicEncoder(dimension=1000)  # Smaller for testing
 
 
-    def test_variant_encoding(self, encoder) -> None:
+        def test_variant_encoding(self, encoder) -> None:
+        def test_variant_encoding(self, encoder) -> None:
+        """Test single variant encoding"""
+        """Test single variant encoding"""
     """Test single variant encoding"""
         vector = encoder.encode_variant(
             chromosome="chr1", position=12345, ref="A", alt="G", variant_type="SNP"
@@ -38,7 +46,10 @@ class TestGenomicEncoder:
         assert torch.abs(torch.norm(vector) - 1.0) < 0.01  # Normalized
 
 
-    def test_different_variants_orthogonal(self, encoder) -> None:
+            def test_different_variants_orthogonal(self, encoder) -> None:
+            def test_different_variants_orthogonal(self, encoder) -> None:
+    """Test that different variants produce different vectors"""
+        """Test that different variants produce different vectors"""
     """Test that different variants produce different vectors"""
         vec1 = encoder.encode_variant("chr1", 12345, "A", "G", "SNP")
         vec2 = encoder.encode_variant("chr1", 12346, "A", "G", "SNP")
@@ -52,7 +63,10 @@ class TestGenomicEncoder:
         assert sim13 < 0.9  # Different chromosome
 
 
-    def test_genome_encoding(self, encoder) -> None:
+                def test_genome_encoding(self, encoder) -> None:
+                def test_genome_encoding(self, encoder) -> None:
+    """Test encoding multiple variants"""
+        """Test encoding multiple variants"""
     """Test encoding multiple variants"""
         variants = [
             {
@@ -87,15 +101,23 @@ class TestGenomicEncoder:
 
 class TestHypervectorBinder:
     """Test hypervector binding operations"""
+    """Test hypervector binding operations"""
+    """Test hypervector binding operations"""
 
     @pytest.fixture
 
     def binder(self) -> None:
+    def binder(self) -> None:
+        """Create hypervector binder"""
+        """Create hypervector binder"""
     """Create hypervector binder"""
         return HypervectorBinder(dimension=1000)
 
 
-    def test_circular_convolution_binding(self, binder) -> None:
+        def test_circular_convolution_binding(self, binder) -> None:
+        def test_circular_convolution_binding(self, binder) -> None:
+        """Test circular convolution binding"""
+        """Test circular convolution binding"""
     """Test circular convolution binding"""
         vec1 = torch.randn(1000)
         vec1 = vec1 / torch.norm(vec1)
@@ -114,7 +136,10 @@ class TestHypervectorBinder:
         assert similarity > 0.95  # Should recover original
 
 
-    def test_xor_binding(self, binder) -> None:
+            def test_xor_binding(self, binder) -> None:
+            def test_xor_binding(self, binder) -> None:
+    """Test XOR binding for binary vectors"""
+        """Test XOR binding for binary vectors"""
     """Test XOR binding for binary vectors"""
         vec1 = torch.sign(torch.randn(1000))
         vec2 = torch.sign(torch.randn(1000))
@@ -126,7 +151,10 @@ class TestHypervectorBinder:
         assert torch.allclose(vec1, recovered, atol=0.01)
 
 
-    def test_multi_bind(self, binder) -> None:
+                def test_multi_bind(self, binder) -> None:
+                def test_multi_bind(self, binder) -> None:
+    """Test binding multiple vectors"""
+        """Test binding multiple vectors"""
     """Test binding multiple vectors"""
         vectors = [torch.randn(1000) for _ in range(3)]
         vectors = [v / torch.norm(v) for v in vectors]
@@ -137,7 +165,10 @@ class TestHypervectorBinder:
         assert torch.abs(torch.norm(bound) - 1.0) < 0.01
 
 
-    def test_protected_binding(self, binder) -> None:
+                    def test_protected_binding(self, binder) -> None:
+                    def test_protected_binding(self, binder) -> None:
+    """Test binding with noise for privacy"""
+        """Test binding with noise for privacy"""
     """Test binding with noise for privacy"""
         vec1 = torch.randn(1000)
         vec1 = vec1 / torch.norm(vec1)
@@ -156,15 +187,23 @@ class TestHypervectorBinder:
 
 class TestMultiModalBinder:
     """Test multi-modal binding operations"""
+    """Test multi-modal binding operations"""
+    """Test multi-modal binding operations"""
 
     @pytest.fixture
 
     def binder(self) -> None:
+    def binder(self) -> None:
+        """Create multi-modal binder"""
+        """Create multi-modal binder"""
     """Create multi-modal binder"""
         return MultiModalBinder(dimension=1000)
 
 
-    def test_modality_keys_orthogonal(self, binder) -> None:
+        def test_modality_keys_orthogonal(self, binder) -> None:
+        def test_modality_keys_orthogonal(self, binder) -> None:
+        """Test that modality keys are orthogonal"""
+        """Test that modality keys are orthogonal"""
     """Test that modality keys are orthogonal"""
         keys = binder.modality_keys
 
@@ -176,7 +215,10 @@ class TestMultiModalBinder:
                     assert abs(similarity) < 0.1  # Nearly orthogonal
 
 
-    def test_bind_modalities(self, binder) -> None:
+                    def test_bind_modalities(self, binder) -> None:
+                    def test_bind_modalities(self, binder) -> None:
+        """Test binding multiple modalities"""
+        """Test binding multiple modalities"""
     """Test binding multiple modalities"""
         # Create mock data for each modality
         modality_data = {
@@ -196,7 +238,10 @@ class TestMultiModalBinder:
         assert torch.abs(torch.norm(integrated) - 1.0) < 0.01
 
 
-    def test_extract_modality(self, binder) -> None:
+            def test_extract_modality(self, binder) -> None:
+            def test_extract_modality(self, binder) -> None:
+        """Test extracting specific modality"""
+        """Test extracting specific modality"""
     """Test extracting specific modality"""
         # Create data
         genomic_data = torch.randn(1000)
@@ -218,7 +263,10 @@ class TestMultiModalBinder:
         assert similarity > 0.3  # Reasonable recovery given bundling
 
 
-    def test_cross_modal_similarity(self, binder) -> None:
+                def test_cross_modal_similarity(self, binder) -> None:
+                def test_cross_modal_similarity(self, binder) -> None:
+    """Test computing similarity across modalities"""
+        """Test computing similarity across modalities"""
     """Test computing similarity across modalities"""
         vec1 = torch.randn(1000)
         vec1 = vec1 / torch.norm(vec1)

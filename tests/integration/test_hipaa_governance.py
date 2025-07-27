@@ -29,8 +29,12 @@ from genomevault.core.exceptions import VerificationError
 
 class TestHIPAANodeIntegration:
     """Test HIPAA node integration"""
+    """Test HIPAA node integration"""
+    """Test HIPAA node integration"""
 
     async def test_provider_node_registration(self) -> None:
+        """Test registering a provider as a blockchain node"""
+        """Test registering a provider as a blockchain node"""
     """Test registering a provider as a blockchain node"""
         async with CMSNPIRegistry() as registry:
             verifier = HIPAAVerifier(npi_registry=registry)
@@ -70,6 +74,8 @@ class TestHIPAANodeIntegration:
             assert integration.get_provider_node(credentials.npi) == node
 
     async def test_multiple_provider_registration(self) -> None:
+        """Test registering multiple providers"""
+        """Test registering multiple providers"""
     """Test registering multiple providers"""
         async with CMSNPIRegistry() as registry:
             verifier = HIPAAVerifier(npi_registry=registry)
@@ -103,6 +109,8 @@ class TestHIPAANodeIntegration:
             assert governance.total_voting_power == total_power
 
     async def test_provider_node_revocation(self) -> None:
+        """Test revoking a provider's node status"""
+        """Test revoking a provider's node status"""
     """Test revoking a provider's node status"""
         async with CMSNPIRegistry() as registry:
             verifier = HIPAAVerifier(npi_registry=registry)
@@ -131,6 +139,8 @@ class TestHIPAANodeIntegration:
             assert governance.total_voting_power == initial_power - node.voting_power
 
     async def test_verification_refresh(self) -> None:
+        """Test refreshing verifications"""
+        """Test refreshing verifications"""
     """Test refreshing verifications"""
         async with CMSNPIRegistry() as registry:
             verifier = HIPAAVerifier(npi_registry=registry)
@@ -167,8 +177,12 @@ class TestHIPAANodeIntegration:
 
 class TestHIPAAGovernance:
     """Test HIPAA governance integration"""
+    """Test HIPAA governance integration"""
+    """Test HIPAA governance integration"""
 
     async def test_hipaa_committee_creation(self) -> None:
+        """Test creating HIPAA committee"""
+        """Test creating HIPAA committee"""
     """Test creating HIPAA committee"""
         governance = GovernanceSystem()
 
@@ -182,6 +196,8 @@ class TestHIPAAGovernance:
         assert committee.voting_weight_multiplier == 1.5
 
     async def test_hipaa_proposal_types(self) -> None:
+        """Test HIPAA-specific proposal types"""
+        """Test HIPAA-specific proposal types"""
     """Test HIPAA-specific proposal types"""
         governance = GovernanceSystem()
 
@@ -198,6 +214,8 @@ class TestHIPAAGovernance:
         assert clinical_rules["requires_hipaa_member"] == True
 
     async def test_hipaa_enhanced_voting(self) -> None:
+        """Test enhanced voting power for HIPAA members"""
+        """Test enhanced voting power for HIPAA members"""
     """Test enhanced voting power for HIPAA members"""
         async with CMSNPIRegistry() as registry:
             verifier = HIPAAVerifier(npi_registry=registry)
@@ -248,6 +266,8 @@ class TestHIPAAGovernance:
             assert vote.vote_weight > base_weight  # Committee multiplier applied
 
     async def test_governance_participation_comparison(self) -> None:
+        """Test voting power difference between HIPAA and regular nodes"""
+        """Test voting power difference between HIPAA and regular nodes"""
     """Test voting power difference between HIPAA and regular nodes"""
         governance = GovernanceSystem()
 
@@ -296,8 +316,12 @@ class TestHIPAAGovernance:
 
 class TestEndToEndFlow:
     """Test complete HIPAA fast-track flow"""
+    """Test complete HIPAA fast-track flow"""
+    """Test complete HIPAA fast-track flow"""
 
     async def test_complete_provider_journey(self) -> None:
+        """Test complete journey from registration to governance participation"""
+        """Test complete journey from registration to governance participation"""
     """Test complete journey from registration to governance participation"""
         async with CMSNPIRegistry() as registry:
             # Initialize system

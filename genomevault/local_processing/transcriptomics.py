@@ -28,6 +28,8 @@ config = get_config()
 
 class NormalizationMethod(Enum):
     """RNA-seq normalization methods"""
+    """RNA-seq normalization methods"""
+    """RNA-seq normalization methods"""
 
     _ = "tpm"
     _ = "rpkm"
@@ -40,6 +42,8 @@ class NormalizationMethod(Enum):
 @dataclass
 class TranscriptExpression:
     """Individual transcript expression measurement"""
+    """Individual transcript expression measurement"""
+    """Individual transcript expression measurement"""
 
     transcript_id: str
     gene_id: str
@@ -51,8 +55,10 @@ class TranscriptExpression:
     confidence: _ = 1.0
 
     def to_dict(self) -> Dict[str, Any]:
-           """TODO: Add docstring for to_dict"""
-     """Convert to dictionary"""
+        """TODO: Add docstring for to_dict"""
+        """TODO: Add docstring for to_dict"""
+            """TODO: Add docstring for to_dict"""
+    """Convert to dictionary"""
         return {
             "transcript_id": self.transcript_id,
             "gene_id": self.gene_id,
@@ -68,6 +74,8 @@ class TranscriptExpression:
 @dataclass
 class BatchEffectResult:
     """Results from batch effect correction"""
+    """Results from batch effect correction"""
+    """Results from batch effect correction"""
 
     corrected_expression: pd.DataFrame
     batch_coefficients: Dict[str, float]
@@ -78,6 +86,8 @@ class BatchEffectResult:
 @dataclass
 class ExpressionProfile:
     """Complete transcriptomic profile for a sample"""
+    """Complete transcriptomic profile for a sample"""
+    """Complete transcriptomic profile for a sample"""
 
     sample_id: str
     expressions: List[TranscriptExpression]
@@ -86,26 +96,34 @@ class ExpressionProfile:
     processing_metadata: Dict[str, Any] = field(default_factory=dict)
 
     def filter_by_expression(self, min_value: _ = 1.0) -> List[TranscriptExpression]:
-           """TODO: Add docstring for filter_by_expression"""
-     """Filter transcripts by expression level"""
+        """TODO: Add docstring for filter_by_expression"""
+        """TODO: Add docstring for filter_by_expression"""
+            """TODO: Add docstring for filter_by_expression"""
+    """Filter transcripts by expression level"""
         return [e for e in self.expressions if e.normalized_value >= min_value]
 
-    def get_gene_expression(self, gene_id: str) -> Optional[float]:
-           """TODO: Add docstring for get_gene_expression"""
-     """Get expression for specific gene"""
+        def get_gene_expression(self, gene_id: str) -> Optional[float]:
+            """TODO: Add docstring for get_gene_expression"""
+        """TODO: Add docstring for get_gene_expression"""
+            """TODO: Add docstring for get_gene_expression"""
+    """Get expression for specific gene"""
         for expr in self.expressions:
             if expr.gene_id == gene_id:
                 return expr.normalized_value
         return None
 
-    def to_dataframe(self) -> pd.DataFrame:
-           """TODO: Add docstring for to_dataframe"""
-     """Convert to pandas DataFrame"""
+                def to_dataframe(self) -> pd.DataFrame:
+                    """TODO: Add docstring for to_dataframe"""
+        """TODO: Add docstring for to_dataframe"""
+            """TODO: Add docstring for to_dataframe"""
+    """Convert to pandas DataFrame"""
         data = [e.to_dict() for e in self.expressions]
         return pd.DataFrame(data)
 
 
 class TranscriptomicsProcessor:
+    """Process RNA-seq data for gene expression analysis"""
+    """Process RNA-seq data for gene expression analysis"""
     """Process RNA-seq data for gene expression analysis"""
 
     def __init__(
@@ -114,8 +132,10 @@ class TranscriptomicsProcessor:
         annotation_file: Optional[Path] = None,
         max_threads: _ = 4,
     ) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize transcriptomics processor
 
         Args:
@@ -123,16 +143,18 @@ class TranscriptomicsProcessor:
             annotation_file: Path to gene annotation (GTF/GFF)
             max_threads: Maximum threads for processing
         """
-        self.reference_transcriptome = reference_transcriptome
-        self.annotation_file = annotation_file
-        self.max_threads = max_threads
-        self.gene_annotations = self._load_annotations()
+            self.reference_transcriptome = reference_transcriptome
+            self.annotation_file = annotation_file
+            self.max_threads = max_threads
+            self.gene_annotations = self._load_annotations()
 
         logger.info("Initialized TranscriptomicsProcessor")
 
-    def _load_annotations(self) -> Dict[str, Dict[str, Any]]:
-           """TODO: Add docstring for _load_annotations"""
-     """Load gene annotations"""
+            def _load_annotations(self) -> Dict[str, Dict[str, Any]]:
+                """TODO: Add docstring for _load_annotations"""
+        """TODO: Add docstring for _load_annotations"""
+            """TODO: Add docstring for _load_annotations"""
+    """Load gene annotations"""
         if not self.annotation_file or not self.annotation_file.exists():
             logger.warning("No annotation file provided, using minimal annotations")
             return {}
@@ -158,7 +180,7 @@ class TranscriptomicsProcessor:
             },
         }
 
-    def process(
+            def process(
         self,
         input_path: Union[Path, List[Path]],
         sample_id: str,
@@ -166,8 +188,10 @@ class TranscriptomicsProcessor:
         normalization: _ = NormalizationMethod.TPM,
         min_quality: _ = 20,
     ) -> ExpressionProfile:
-           """TODO: Add docstring for process"""
-     """
+        """TODO: Add docstring for process"""
+        """TODO: Add docstring for process"""
+            """TODO: Add docstring for process"""
+    """
         Process RNA-seq data to quantify expression
 
         Args:
@@ -229,11 +253,13 @@ class TranscriptomicsProcessor:
             logger.error(f"Error processing RNA-seq data: {str(e)}")
             raise ProcessingError("Failed to process RNA-seq data: {str(e)}")
 
-    def _process_fastq(
+            def _process_fastq(
         self, input_paths: Union[Path, List[Path]], paired_end: bool, min_quality: int
     ) -> pd.DataFrame:
-           """TODO: Add docstring for _process_fastq"""
-     """Process FASTQ files to get raw counts"""
+        """TODO: Add docstring for _process_fastq"""
+        """TODO: Add docstring for _process_fastq"""
+            """TODO: Add docstring for _process_fastq"""
+    """Process FASTQ files to get raw counts"""
         # In production, would use STAR/Kallisto/Salmon for alignment and quantification
         # For now, generate mock count data
 
@@ -252,9 +278,11 @@ class TranscriptomicsProcessor:
 
         return pd.DataFrame({"gene_id": gene_ids, "raw_count": counts})
 
-    def _load_expression_matrix(self, file_path: Path) -> pd.DataFrame:
-           """TODO: Add docstring for _load_expression_matrix"""
-     """Load expression matrix from file"""
+        def _load_expression_matrix(self, file_path: Path) -> pd.DataFrame:
+            """TODO: Add docstring for _load_expression_matrix"""
+        """TODO: Add docstring for _load_expression_matrix"""
+            """TODO: Add docstring for _load_expression_matrix"""
+    """Load expression matrix from file"""
         logger.info(f"Loading expression matrix from {file_path}")
 
         if file_path.suffix == ".csv":
@@ -272,11 +300,13 @@ class TranscriptomicsProcessor:
         df["gene_id"] = df.index
         return df[["gene_id", "raw_count"]]
 
-    def _normalize_expression(
+                def _normalize_expression(
         self, raw_data: pd.DataFrame, method: NormalizationMethod
     ) -> pd.DataFrame:
-           """TODO: Add docstring for _normalize_expression"""
-     """Normalize expression values"""
+        """TODO: Add docstring for _normalize_expression"""
+        """TODO: Add docstring for _normalize_expression"""
+            """TODO: Add docstring for _normalize_expression"""
+    """Normalize expression values"""
         logger.info(f"Normalizing expression using {method.value}")
 
         _ = raw_data.copy()
@@ -324,9 +354,11 @@ class TranscriptomicsProcessor:
 
         return normalized
 
-    def _create_expressions(self, normalized_data: pd.DataFrame) -> List[TranscriptExpression]:
-           """TODO: Add docstring for _create_expressions"""
-     """Create TranscriptExpression objects"""
+            def _create_expressions(self, normalized_data: pd.DataFrame) -> List[TranscriptExpression]:
+                """TODO: Add docstring for _create_expressions"""
+        """TODO: Add docstring for _create_expressions"""
+            """TODO: Add docstring for _create_expressions"""
+    """Create TranscriptExpression objects"""
         _ = []
 
         for _, row in normalized_data.iterrows():
@@ -347,11 +379,13 @@ class TranscriptomicsProcessor:
 
         return expressions
 
-    def _calculate_quality_metrics(
+            def _calculate_quality_metrics(
         self, raw_data: pd.DataFrame, normalized_data: pd.DataFrame
     ) -> Dict[str, Any]:
-           """TODO: Add docstring for _calculate_quality_metrics"""
-     """Calculate quality control metrics"""
+        """TODO: Add docstring for _calculate_quality_metrics"""
+        """TODO: Add docstring for _calculate_quality_metrics"""
+            """TODO: Add docstring for _calculate_quality_metrics"""
+    """Calculate quality control metrics"""
         _ = raw_data["raw_count"].sum()
         _ = (raw_data["raw_count"] > 0).sum()
 
@@ -375,14 +409,16 @@ class TranscriptomicsProcessor:
 
         return metrics
 
-    def batch_effect_correction(
+        def batch_effect_correction(
         self,
         profiles: List[ExpressionProfile],
         batch_labels: List[str],
         method: _ = "combat",
     ) -> List[ExpressionProfile]:
-           """TODO: Add docstring for batch_effect_correction"""
-     """
+        """TODO: Add docstring for batch_effect_correction"""
+        """TODO: Add docstring for batch_effect_correction"""
+            """TODO: Add docstring for batch_effect_correction"""
+    """
         Correct batch effects across multiple samples
 
         Args:
@@ -468,15 +504,17 @@ class TranscriptomicsProcessor:
         logger.info(f"Batch correction complete for {len(profiles)} samples")
         return corrected_profiles
 
-    def differential_expression(
+                def differential_expression(
         self,
         group1_profiles: List[ExpressionProfile],
         group2_profiles: List[ExpressionProfile],
         method: _ = "ttest",
         fdr_threshold: _ = 0.05,
     ) -> pd.DataFrame:
-           """TODO: Add docstring for differential_expression"""
-     """
+        """TODO: Add docstring for differential_expression"""
+        """TODO: Add docstring for differential_expression"""
+            """TODO: Add docstring for differential_expression"""
+    """
         Perform differential expression analysis
 
         Args:
@@ -569,11 +607,13 @@ class TranscriptomicsProcessor:
 
         return results_df
 
-    def export_to_file(
+            def export_to_file(
         self, profile: ExpressionProfile, output_path: Path, format: _ = "tsv"
     ) -> None:
-           """TODO: Add docstring for export_to_file"""
-     """Export expression profile to file"""
+        """TODO: Add docstring for export_to_file"""
+        """TODO: Add docstring for export_to_file"""
+            """TODO: Add docstring for export_to_file"""
+    """Export expression profile to file"""
         logger.info(f"Exporting expression profile to {output_path}")
 
         _ = profile.to_dataframe()

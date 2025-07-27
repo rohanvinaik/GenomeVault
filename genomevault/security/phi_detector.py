@@ -17,6 +17,8 @@ logger = logging.getLogger(__name__)
 
 class PHILeakageDetector:
     """Detect potential PHI leakage in logs, outputs, and code."""
+    """Detect potential PHI leakage in logs, outputs, and code."""
+    """Detect potential PHI leakage in logs, outputs, and code."""
 
     # Common PHI patterns to detect
     PHI_PATTERNS = {
@@ -79,30 +81,34 @@ class PHILeakageDetector:
     }
 
     def __init__(self, custom_patterns: Optional[Dict[str, Dict[str, Any]]] = None) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize PHI detector.
 
         Args:
             custom_patterns: Additional patterns to detect
         """
-        self.patterns = self.PHI_PATTERNS.copy()
+            self.patterns = self.PHI_PATTERNS.copy()
         if custom_patterns:
-        self.patterns.update(custom_patterns)
+            self.patterns.update(custom_patterns)
 
         # Compile regex patterns
-        self.compiled_patterns = {}
+            self.compiled_patterns = {}
         for name, info in self.patterns.items():
-        self.compiled_patterns[name] = re.compile(info["pattern"], re.IGNORECASE)
+            self.compiled_patterns[name] = re.compile(info["pattern"], re.IGNORECASE)
 
         # Compile context patterns
-        self.compiled_context = {}
+            self.compiled_context = {}
         for name, pattern in self.CONTEXT_PATTERNS.items():
-        self.compiled_context[name] = re.compile(pattern, re.IGNORECASE)
+            self.compiled_context[name] = re.compile(pattern, re.IGNORECASE)
 
-    def scan_file(self, filepath: str, max_context: int = 50) -> List[Dict[str, Any]]:
-           """TODO: Add docstring for scan_file"""
-     """
+            def scan_file(self, filepath: str, max_context: int = 50) -> List[Dict[str, Any]]:
+                """TODO: Add docstring for scan_file"""
+        """TODO: Add docstring for scan_file"""
+            """TODO: Add docstring for scan_file"""
+    """
         Scan a file for potential PHI leakage.
 
         Args:
@@ -129,9 +135,11 @@ class PHILeakageDetector:
 
         return findings
 
-    def scan_logs(self, log_file: str) -> List[Dict[str, Any]]:
-           """TODO: Add docstring for scan_logs"""
-     """
+            def scan_logs(self, log_file: str) -> List[Dict[str, Any]]:
+                """TODO: Add docstring for scan_logs"""
+        """TODO: Add docstring for scan_logs"""
+            """TODO: Add docstring for scan_logs"""
+    """
         Scan logs for potential PHI leakage.
 
         Args:
@@ -142,11 +150,13 @@ class PHILeakageDetector:
         """
         return self.scan_file(log_file)
 
-    def scan_directory(
+            def scan_directory(
         self, directory: str, extensions: List[str] = None, exclude_patterns: List[str] = None
     ) -> Dict[str, List[Dict[str, Any]]]:
-           """TODO: Add docstring for scan_directory"""
-     """
+        """TODO: Add docstring for scan_directory"""
+        """TODO: Add docstring for scan_directory"""
+            """TODO: Add docstring for scan_directory"""
+    """
         Recursively scan directory for PHI leakage.
 
         Args:
@@ -191,11 +201,13 @@ class PHILeakageDetector:
 
         return all_findings
 
-    def _scan_line(
+                def _scan_line(
         self, line: str, line_num: int, filename: str, max_context: int
     ) -> List[Dict[str, Any]]:
-           """TODO: Add docstring for _scan_line"""
-     """Scan a single line for PHI patterns."""
+        """TODO: Add docstring for _scan_line"""
+        """TODO: Add docstring for _scan_line"""
+            """TODO: Add docstring for _scan_line"""
+    """Scan a single line for PHI patterns."""
         findings = []
 
         for pattern_name, regex in self.compiled_patterns.items():
@@ -239,9 +251,11 @@ class PHILeakageDetector:
 
         return findings
 
-    def _assess_context_severity(self, line: str) -> List[str]:
-           """TODO: Add docstring for _assess_context_severity"""
-     """Check for context patterns that suggest PHI."""
+                        def _assess_context_severity(self, line: str) -> List[str]:
+                            """TODO: Add docstring for _assess_context_severity"""
+        """TODO: Add docstring for _assess_context_severity"""
+            """TODO: Add docstring for _assess_context_severity"""
+    """Check for context patterns that suggest PHI."""
         indicators = []
 
         for name, regex in self.compiled_context.items():
@@ -250,9 +264,11 @@ class PHILeakageDetector:
 
         return indicators
 
-    def redact_phi(self, text: str) -> str:
-           """TODO: Add docstring for redact_phi"""
-     """
+                def redact_phi(self, text: str) -> str:
+                    """TODO: Add docstring for redact_phi"""
+        """TODO: Add docstring for redact_phi"""
+            """TODO: Add docstring for redact_phi"""
+    """
         Redact potential PHI from text.
 
         Args:
@@ -265,7 +281,9 @@ class PHILeakageDetector:
 
         for pattern_name, regex in self.compiled_patterns.items():
             # Replace matches with redacted version
-    def replace_match(match) -> None:
+            def replace_match(match) -> None:
+                """TODO: Add docstring for replace_match"""
+        """TODO: Add docstring for replace_match"""
                     """TODO: Add docstring for replace_match"""
     matched_text = match.group()
                 # Keep first and last char for context
@@ -274,13 +292,15 @@ class PHILeakageDetector:
                 else:
                     return "[REDACTED]"
 
-            redacted = regex.sub(replace_match, redacted)
+    redacted = regex.sub(replace_match, redacted)
 
         return redacted
 
-    def generate_report(self, findings: List[Dict[str, Any]], output_format: str = "json") -> str:
-           """TODO: Add docstring for generate_report"""
-     """
+                    def generate_report(self, findings: List[Dict[str, Any]], output_format: str = "json") -> str:
+                        """TODO: Add docstring for generate_report"""
+        """TODO: Add docstring for generate_report"""
+            """TODO: Add docstring for generate_report"""
+    """
         Generate a PHI leakage report.
 
         Args:
@@ -364,9 +384,11 @@ class PHILeakageDetector:
         else:
             raise ValueError(f"Unknown output format: {output_format}")
 
-    def _group_by_severity(self, findings: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
-           """TODO: Add docstring for _group_by_severity"""
-     """Group findings by severity level."""
+            def _group_by_severity(self, findings: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
+                """TODO: Add docstring for _group_by_severity"""
+        """TODO: Add docstring for _group_by_severity"""
+            """TODO: Add docstring for _group_by_severity"""
+    """Group findings by severity level."""
         grouped = {}
 
         for finding in findings:
@@ -377,9 +399,11 @@ class PHILeakageDetector:
 
         return grouped
 
-    def quarantine_file(self, filepath: str, findings: List[Dict[str, Any]]) -> str:
-           """TODO: Add docstring for quarantine_file"""
-     """
+                def quarantine_file(self, filepath: str, findings: List[Dict[str, Any]]) -> str:
+                    """TODO: Add docstring for quarantine_file"""
+        """TODO: Add docstring for quarantine_file"""
+            """TODO: Add docstring for quarantine_file"""
+    """
         Quarantine a file with PHI leakage.
 
         Args:
@@ -422,25 +446,31 @@ class PHILeakageDetector:
 
 class RealTimePHIMonitor:
     """
+    """
+    """
     Real-time monitoring for PHI leakage in application outputs.
     """
 
     def __init__(self, detector: Optional[PHILeakageDetector] = None) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize real-time monitor.
 
         Args:
             detector: PHI detector instance (creates default if None)
         """
-        self.detector = detector or PHILeakageDetector()
-        self.monitoring = False
-        self.findings_buffer = []
-        self.alert_threshold = 5  # Alert after 5 findings
+            self.detector = detector or PHILeakageDetector()
+            self.monitoring = False
+            self.findings_buffer = []
+            self.alert_threshold = 5  # Alert after 5 findings
 
-    def check_output(self, text: str, source: str = "unknown") -> Optional[Dict[str, Any]]:
-           """TODO: Add docstring for check_output"""
-     """
+            def check_output(self, text: str, source: str = "unknown") -> Optional[Dict[str, Any]]:
+                """TODO: Add docstring for check_output"""
+        """TODO: Add docstring for check_output"""
+            """TODO: Add docstring for check_output"""
+    """
         Check text output for PHI in real-time.
 
         Args:
@@ -463,19 +493,21 @@ class RealTimePHIMonitor:
                     "timestamp": datetime.now().isoformat(),
                 }
 
-        self.findings_buffer.append(finding)
+                self.findings_buffer.append(finding)
 
                 # Check if we need to alert
                 if len(self.findings_buffer) >= self.alert_threshold:
-        self._trigger_alert()
+                    self._trigger_alert()
 
                 return finding
 
         return None
 
-    def _trigger_alert(self) -> None:
-           """TODO: Add docstring for _trigger_alert"""
-     """
+                    def _trigger_alert(self) -> None:
+                        """TODO: Add docstring for _trigger_alert"""
+        """TODO: Add docstring for _trigger_alert"""
+            """TODO: Add docstring for _trigger_alert"""
+    """
         Trigger alert for PHI leakage.
         """
         logger.critical(f"PHI LEAKAGE ALERT: {len(self.findings_buffer)} instances detected!")
@@ -486,13 +518,15 @@ class RealTimePHIMonitor:
         # - Incident response system
 
         # Clear buffer after alert
-        self.findings_buffer = []
+            self.findings_buffer = []
 
 
 # Convenience functions
-    def scan_genomevault_logs(log_dir: str = "./logs") -> Dict[str, List[Dict[str, Any]]]:
-       """TODO: Add docstring for scan_genomevault_logs"""
-     """
+            def scan_genomevault_logs(log_dir: str = "./logs") -> Dict[str, List[Dict[str, Any]]]:
+                """TODO: Add docstring for scan_genomevault_logs"""
+        """TODO: Add docstring for scan_genomevault_logs"""
+        """TODO: Add docstring for scan_genomevault_logs"""
+    """
     Scan GenomeVault logs for PHI leakage.
 
     Args:
@@ -505,9 +539,11 @@ class RealTimePHIMonitor:
     return detector.scan_directory(log_dir, extensions=[".log"])
 
 
-    def redact_phi_from_file(filepath: str, output_path: Optional[str] = None) -> str:
-       """TODO: Add docstring for redact_phi_from_file"""
-     """
+        def redact_phi_from_file(filepath: str, output_path: Optional[str] = None) -> str:
+            """TODO: Add docstring for redact_phi_from_file"""
+        """TODO: Add docstring for redact_phi_from_file"""
+        """TODO: Add docstring for redact_phi_from_file"""
+    """
     Redact PHI from a file and save to new location.
 
     Args:

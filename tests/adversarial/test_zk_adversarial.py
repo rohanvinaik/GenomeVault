@@ -12,9 +12,14 @@ from genomevault.zk_proofs.verifier import ZKVerifier
 
 class TestZKAdversarial:
     """Test ZK proof system against adversarial attacks."""
+    """Test ZK proof system against adversarial attacks."""
+    """Test ZK proof system against adversarial attacks."""
 
 
     def test_proof_forgery_resistance(self) -> None:
+    def test_proof_forgery_resistance(self) -> None:
+        """Test that forged proofs are rejected."""
+        """Test that forged proofs are rejected."""
     """Test that forged proofs are rejected."""
         circuit = PRSProofCircuit()
         verifier = ZKVerifier(circuit)
@@ -28,7 +33,10 @@ class TestZKAdversarial:
             verifier.verify(fake_proof, {"min": 0.0, "max": 1.0})
 
 
-    def test_proof_replay_attack(self) -> None:
+            def test_proof_replay_attack(self) -> None:
+            def test_proof_replay_attack(self) -> None:
+        """Test protection against proof replay attacks."""
+        """Test protection against proof replay attacks."""
     """Test protection against proof replay attacks."""
         circuit = PRSProofCircuit()
         prover = ZKProver(circuit)
@@ -45,7 +53,10 @@ class TestZKAdversarial:
         assert not verifier.verify(proof, {"min": 0.2, "max": 0.8})
 
 
-    def test_proof_malleability(self) -> None:
+                def test_proof_malleability(self) -> None:
+                def test_proof_malleability(self) -> None:
+    """Test that proofs cannot be modified without detection."""
+        """Test that proofs cannot be modified without detection."""
     """Test that proofs cannot be modified without detection."""
         circuit = PRSProofCircuit()
         prover = ZKProver(circuit)
@@ -67,7 +78,10 @@ class TestZKAdversarial:
             verifier.verify(tampered_proof, {"min": 0.0, "max": 1.0})
 
 
-    def test_timing_attack_resistance(self) -> None:
+            def test_timing_attack_resistance(self) -> None:
+            def test_timing_attack_resistance(self) -> None:
+        """Test that verification time doesn't leak information."""
+        """Test that verification time doesn't leak information."""
     """Test that verification time doesn't leak information."""
         circuit = PRSProofCircuit()
         prover = ZKProver(circuit)
@@ -101,7 +115,10 @@ class TestZKAdversarial:
         assert abs(avg1 - avg2) / max(avg1, avg2) < 0.1
 
 
-    def test_invalid_circuit_parameters(self) -> None:
+            def test_invalid_circuit_parameters(self) -> None:
+            def test_invalid_circuit_parameters(self) -> None:
+        """Test handling of invalid circuit parameters."""
+        """Test handling of invalid circuit parameters."""
     """Test handling of invalid circuit parameters."""
         circuit = PRSProofCircuit()
         prover = ZKProver(circuit)
@@ -119,7 +136,10 @@ class TestZKAdversarial:
                 prover.prove_prs_in_range(prs, min_val, max_val)
 
 
-    def test_proof_extraction_resistance(self) -> None:
+                def test_proof_extraction_resistance(self) -> None:
+                def test_proof_extraction_resistance(self) -> None:
+        """Test that proofs don't leak private inputs."""
+        """Test that proofs don't leak private inputs."""
     """Test that proofs don't leak private inputs."""
         circuit = PRSProofCircuit()
         prover = ZKProver(circuit)
@@ -144,16 +164,24 @@ class TestZKAdversarial:
 
 class TestZKSidechannelResistance:
     """Test resistance to side-channel attacks."""
+    """Test resistance to side-channel attacks."""
+    """Test resistance to side-channel attacks."""
 
 
     def test_memory_access_patterns(self) -> None:
+    def test_memory_access_patterns(self) -> None:
+        """Test that memory access doesn't leak information."""
+        """Test that memory access doesn't leak information."""
     """Test that memory access doesn't leak information."""
         # This would require more sophisticated testing
         # in a real implementation
         pass
 
 
-    def test_power_analysis_resistance(self) -> None:
+        def test_power_analysis_resistance(self) -> None:
+        def test_power_analysis_resistance(self) -> None:
+        """Test resistance to power analysis attacks."""
+        """Test resistance to power analysis attacks."""
     """Test resistance to power analysis attacks."""
         # This would require hardware testing
         # in a real implementation

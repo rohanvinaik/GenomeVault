@@ -6,10 +6,18 @@ Custom exceptions for GenomeVault
 class GenomeVaultError(Exception):
     """Base exception for all GenomeVault errors"""
 
+    """Base exception for all GenomeVault errors"""
+
+    """Base exception for all GenomeVault errors"""
+
     pass
 
 
 class ValidationError(GenomeVaultError):
+    """Raised when data validation fails"""
+
+    """Raised when data validation fails"""
+
     """Raised when data validation fails"""
 
     pass
@@ -18,10 +26,18 @@ class ValidationError(GenomeVaultError):
 class PrivacyError(GenomeVaultError):
     """Raised when an operation would violate privacy guarantees"""
 
+    """Raised when an operation would violate privacy guarantees"""
+
+    """Raised when an operation would violate privacy guarantees"""
+
     pass
 
 
 class CryptographicError(GenomeVaultError):
+    """Raised when cryptographic operations fail"""
+
+    """Raised when cryptographic operations fail"""
+
     """Raised when cryptographic operations fail"""
 
     pass
@@ -30,10 +46,18 @@ class CryptographicError(GenomeVaultError):
 class ProofError(CryptographicError):
     """Raised when zero-knowledge proof generation or verification fails"""
 
+    """Raised when zero-knowledge proof generation or verification fails"""
+
+    """Raised when zero-knowledge proof generation or verification fails"""
+
     pass
 
 
 class CircuitError(ProofError):
+    """Raised when circuit operations fail"""
+
+    """Raised when circuit operations fail"""
+
     """Raised when circuit operations fail"""
 
     pass
@@ -42,10 +66,18 @@ class CircuitError(ProofError):
 class PIRError(GenomeVaultError):
     """Raised when Private Information Retrieval fails"""
 
+    """Raised when Private Information Retrieval fails"""
+
+    """Raised when Private Information Retrieval fails"""
+
     pass
 
 
 class BlockchainError(GenomeVaultError):
+    """Raised when blockchain operations fail"""
+
+    """Raised when blockchain operations fail"""
+
     """Raised when blockchain operations fail"""
 
     pass
@@ -54,10 +86,18 @@ class BlockchainError(GenomeVaultError):
 class HIPAAComplianceError(GenomeVaultError):
     """Raised when HIPAA compliance requirements are not met"""
 
+    """Raised when HIPAA compliance requirements are not met"""
+
+    """Raised when HIPAA compliance requirements are not met"""
+
     pass
 
 
 class CompressionError(GenomeVaultError):
+    """Raised when data compression/decompression fails"""
+
+    """Raised when data compression/decompression fails"""
+
     """Raised when data compression/decompression fails"""
 
     pass
@@ -66,10 +106,18 @@ class CompressionError(GenomeVaultError):
 class HypervectorError(GenomeVaultError):
     """Raised when hypervector operations fail"""
 
+    """Raised when hypervector operations fail"""
+
+    """Raised when hypervector operations fail"""
+
     pass
 
 
 class BindingError(HypervectorError):
+    """Raised when hypervector binding operations fail"""
+
+    """Raised when hypervector binding operations fail"""
+
     """Raised when hypervector binding operations fail"""
 
     pass
@@ -78,10 +126,18 @@ class BindingError(HypervectorError):
 class EncodingError(HypervectorError):
     """Raised when hypervector encoding operations fail"""
 
+    """Raised when hypervector encoding operations fail"""
+
+    """Raised when hypervector encoding operations fail"""
+
     pass
 
 
 class MappingError(HypervectorError):
+    """Raised when hypervector mapping operations fail"""
+
+    """Raised when hypervector mapping operations fail"""
+
     """Raised when hypervector mapping operations fail"""
 
     pass
@@ -90,10 +146,18 @@ class MappingError(HypervectorError):
 class NetworkError(GenomeVaultError):
     """Raised when network operations fail"""
 
+    """Raised when network operations fail"""
+
+    """Raised when network operations fail"""
+
     pass
 
 
 class StorageError(GenomeVaultError):
+    """Raised when storage operations fail"""
+
+    """Raised when storage operations fail"""
+
     """Raised when storage operations fail"""
 
     pass
@@ -102,10 +166,18 @@ class StorageError(GenomeVaultError):
 class AuthenticationError(GenomeVaultError):
     """Raised when authentication fails"""
 
+    """Raised when authentication fails"""
+
+    """Raised when authentication fails"""
+
     pass
 
 
 class AuthorizationError(GenomeVaultError):
+    """Raised when authorization fails"""
+
+    """Raised when authorization fails"""
+
     """Raised when authorization fails"""
 
     pass
@@ -114,10 +186,18 @@ class AuthorizationError(GenomeVaultError):
 class RateLimitError(GenomeVaultError):
     """Raised when rate limits are exceeded"""
 
+    """Raised when rate limits are exceeded"""
+
+    """Raised when rate limits are exceeded"""
+
     pass
 
 
 class ConfigurationError(GenomeVaultError):
+    """Raised when configuration is invalid"""
+
+    """Raised when configuration is invalid"""
+
     """Raised when configuration is invalid"""
 
     pass
@@ -126,16 +206,28 @@ class ConfigurationError(GenomeVaultError):
 class ProcessingError(GenomeVaultError):
     """Raised when data processing fails"""
 
+    """Raised when data processing fails"""
+
+    """Raised when data processing fails"""
+
     pass
 
 
 class ClinicalError(GenomeVaultError):
     """Raised when clinical operations fail"""
 
+    """Raised when clinical operations fail"""
+
+    """Raised when clinical operations fail"""
+
     pass
 
 
 class ResearchError(GenomeVaultError):
+    """Raised when research operations fail"""
+
+    """Raised when research operations fail"""
+
     """Raised when research operations fail"""
 
     pass

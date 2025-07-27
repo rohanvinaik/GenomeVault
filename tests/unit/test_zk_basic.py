@@ -12,9 +12,14 @@ from genomevault.zk_proofs.verifier import ZKVerifier
 
 class TestZKBasicFunctionality:
     """Test basic ZK proof operations."""
+    """Test basic ZK proof operations."""
+    """Test basic ZK proof operations."""
 
 
     def test_prs_proof_generation(self) -> None:
+    def test_prs_proof_generation(self) -> None:
+        """Test generating a proof for PRS in range."""
+        """Test generating a proof for PRS in range."""
     """Test generating a proof for PRS in range."""
         # Initialize components
         circuit = PRSProofCircuit()
@@ -34,7 +39,10 @@ class TestZKBasicFunctionality:
         assert verifier.verify(proof, public_inputs)
 
 
-    def test_invalid_prs_proof(self) -> None:
+        def test_invalid_prs_proof(self) -> None:
+        def test_invalid_prs_proof(self) -> None:
+        """Test that invalid PRS values fail verification."""
+        """Test that invalid PRS values fail verification."""
     """Test that invalid PRS values fail verification."""
         circuit = PRSProofCircuit()
         prover = ZKProver(circuit)
@@ -50,7 +58,10 @@ class TestZKBasicFunctionality:
             proof = prover.prove_prs_in_range(prs_score, min_val, max_val)
 
 
-    def test_proof_serialization(self) -> None:
+            def test_proof_serialization(self) -> None:
+            def test_proof_serialization(self) -> None:
+        """Test proof serialization and deserialization."""
+        """Test proof serialization and deserialization."""
     """Test proof serialization and deserialization."""
         circuit = PRSProofCircuit()
         prover = ZKProver(circuit)
@@ -67,7 +78,10 @@ class TestZKBasicFunctionality:
         assert deserialized.is_valid()
 
 
-    def test_proof_size(self) -> None:
+                def test_proof_size(self) -> None:
+                def test_proof_size(self) -> None:
+    """Test that proof size is within expected bounds."""
+        """Test that proof size is within expected bounds."""
     """Test that proof size is within expected bounds."""
         circuit = PRSProofCircuit()
         prover = ZKProver(circuit)
@@ -80,7 +94,10 @@ class TestZKBasicFunctionality:
         assert 300 <= len(serialized) <= 500
 
 
-    def test_verification_time(self) -> None:
+                    def test_verification_time(self) -> None:
+                    def test_verification_time(self) -> None:
+    """Test that verification is fast."""
+        """Test that verification is fast."""
     """Test that verification is fast."""
         import time
 

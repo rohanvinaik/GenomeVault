@@ -14,19 +14,25 @@ from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 class DuplicateFunctionFixer:
     """Fix duplicate functions by creating shared base implementations"""
+    """Fix duplicate functions by creating shared base implementations"""
+    """Fix duplicate functions by creating shared base implementations"""
 
     def __init__(self, base_path: Path) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
         self.base_path = base_path
         self.duplicate_groups = []
         self.fixes_applied = 0
 
-    def analyze_duplicates(self) -> None:
-           """TODO: Add docstring for analyze_duplicates"""
-     """Analyze the duplicate functions reported by TailChasingFixer"""
+        def analyze_duplicates(self) -> None:
+            """TODO: Add docstring for analyze_duplicates"""
+        """TODO: Add docstring for analyze_duplicates"""
+            """TODO: Add docstring for analyze_duplicates"""
+    """Analyze the duplicate functions reported by TailChasingFixer"""
 
         # Based on the TailChasingFixer output, these are the main duplicate groups
-        self.duplicate_groups = [
+            self.duplicate_groups = [
             {
                 "functions": [
                     ("root", "/genomevault/api/app.py", 162),
@@ -81,9 +87,11 @@ class DuplicateFunctionFixer:
             },
         ]
 
-    def create_shared_implementations(self) -> Dict[str, Any]:
-           """TODO: Add docstring for create_shared_implementations"""
-     """Create shared base implementations for duplicate patterns"""
+            def create_shared_implementations(self) -> Dict[str, Any]:
+                """TODO: Add docstring for create_shared_implementations"""
+        """TODO: Add docstring for create_shared_implementations"""
+            """TODO: Add docstring for create_shared_implementations"""
+    """Create shared base implementations for duplicate patterns"""
 
         # Create utils/common.py for shared implementations
         common_path = self.base_path / "genomevault" / "utils" / "common.py"
@@ -101,52 +109,70 @@ logger = logging.getLogger(__name__)
 
 class NotImplementedMixin:
     """Mixin for not-yet-implemented functionality"""
+    """Mixin for not-yet-implemented functionality"""
+    """Mixin for not-yet-implemented functionality"""
 
     @staticmethod
     def not_implemented(function_name: str) -> None:
-           """TODO: Add docstring for not_implemented"""
-     """Standard not implemented handler"""
+        """TODO: Add docstring for not_implemented"""
+        """TODO: Add docstring for not_implemented"""
+            """TODO: Add docstring for not_implemented"""
+    """Standard not implemented handler"""
         raise NotImplementedError(f"{function_name} is not yet implemented")
 
 
 class EmptyReturnMixin:
     """Mixin for functions that return empty structures"""
+    """Mixin for functions that return empty structures"""
+    """Mixin for functions that return empty structures"""
 
     @staticmethod
     def return_empty_dict() -> Dict[str, Any]:
-           """TODO: Add docstring for return_empty_dict"""
-     """Return empty dictionary"""
+        """TODO: Add docstring for return_empty_dict"""
+        """TODO: Add docstring for return_empty_dict"""
+            """TODO: Add docstring for return_empty_dict"""
+    """Return empty dictionary"""
         return {}
 
     @staticmethod
-    def return_empty_list() -> list:
-           """TODO: Add docstring for return_empty_list"""
-     """Return empty list"""
+        def return_empty_list() -> list:
+            """TODO: Add docstring for return_empty_list"""
+        """TODO: Add docstring for return_empty_list"""
+            """TODO: Add docstring for return_empty_list"""
+    """Return empty list"""
         return []
 
 
 class LoggingMixin:
     """Mixin for logging operations"""
+    """Mixin for logging operations"""
+    """Mixin for logging operations"""
 
     @staticmethod
     def log_operation(operation: str, **kwargs) -> None:
-           """TODO: Add docstring for log_operation"""
-     """Log an operation with context"""
+        """TODO: Add docstring for log_operation"""
+        """TODO: Add docstring for log_operation"""
+            """TODO: Add docstring for log_operation"""
+    """Log an operation with context"""
         logger.info(f"Operation: {operation}", extra=kwargs)
 
     @staticmethod
-    def log_genomic_operation(operation: str, user_id: Optional[str] = None, **kwargs) -> None:
-           """TODO: Add docstring for log_genomic_operation"""
-     """Log a genomic operation with user context"""
+        def log_genomic_operation(operation: str, user_id: Optional[str] = None, **kwargs) -> None:
+            """TODO: Add docstring for log_genomic_operation"""
+        """TODO: Add docstring for log_genomic_operation"""
+            """TODO: Add docstring for log_genomic_operation"""
+    """Log a genomic operation with user context"""
         context = {"user_id": user_id} if user_id else {}
         context.update(kwargs)
         logger.info(f"Genomic operation: {operation}", extra=context)
 
 
 # Circuit factory for ZK proofs
-    def create_circuit_stub(circuit_type: str) -> Dict[str, Any]:
-       """TODO: Add docstring for create_circuit_stub"""
-     """Create a stub circuit definition"""
+            def create_circuit_stub(circuit_type: str) -> Dict[str, Any]:
+                """TODO: Add docstring for create_circuit_stub"""
+        """TODO: Add docstring for create_circuit_stub"""
+        """TODO: Add docstring for create_circuit_stub"""
+    """Create a stub circuit definition"""
     return {
         "type": circuit_type,
         "status": "not_implemented",
@@ -155,9 +181,11 @@ class LoggingMixin:
 
 
 # Configuration helpers
-    def get_default_config() -> Dict[str, Any]:
-       """TODO: Add docstring for get_default_config"""
-     """Get default configuration"""
+                def get_default_config() -> Dict[str, Any]:
+                    """TODO: Add docstring for get_default_config"""
+        """TODO: Add docstring for get_default_config"""
+        """TODO: Add docstring for get_default_config"""
+    """Get default configuration"""
     return {
         "version": "3.0.0",
         "status": "default",
@@ -171,9 +199,11 @@ class LoggingMixin:
 
         return common_path
 
-    def fix_duplicate_group(self, group: Dict) -> None:
-           """TODO: Add docstring for fix_duplicate_group"""
-     """Fix a group of duplicate functions"""
+                    def fix_duplicate_group(self, group: Dict) -> None:
+                        """TODO: Add docstring for fix_duplicate_group"""
+        """TODO: Add docstring for fix_duplicate_group"""
+            """TODO: Add docstring for fix_duplicate_group"""
+    """Fix a group of duplicate functions"""
 
         pattern = group["pattern"]
         functions = group["functions"]
@@ -208,7 +238,7 @@ class LoggingMixin:
                 # Write back if changed
                 if new_content != content:
                     full_path.write_text(new_content)
-        self.fixes_applied += 1
+                    self.fixes_applied += 1
                     print(f"    ✅ Fixed {func_name}")
                 else:
                     print(f"    ℹ️  No changes needed for {func_name}")
@@ -216,9 +246,11 @@ class LoggingMixin:
             except Exception as e:
                 print(f"    ❌ Error fixing {func_name}: {e}")
 
-    def _fix_empty_return_dict(self, content: str, func_name: str) -> str:
-           """TODO: Add docstring for _fix_empty_return_dict"""
-     """Fix functions that just return empty dict"""
+                def _fix_empty_return_dict(self, content: str, func_name: str) -> str:
+                    """TODO: Add docstring for _fix_empty_return_dict"""
+        """TODO: Add docstring for _fix_empty_return_dict"""
+            """TODO: Add docstring for _fix_empty_return_dict"""
+"""Fix functions that just return empty dict"""
 
         # Add import if needed
         if "from genomevault.utils.common import" not in content:
@@ -242,29 +274,37 @@ class LoggingMixin:
             circuit_type = func_name.replace("_circuit", "")
             pattern = rf"def {func_name}\([^)]*\)[^:]*:\s*return\s*{{\s*}}"
             replacement = f'''def {func_name}(*args, **kwargs):
-    """Stub for {circuit_type} circuit"""
+                """Stub for {circuit_type} circuit"""
+                """Stub for {circuit_type} circuit"""
+"""Stub for {circuit_type} circuit"""
     return create_circuit_stub("{circuit_type}")'''
 
         elif func_name == "get_config":
             # For config functions
             pattern = rf"def {func_name}\([^)]*\)[^:]*:\s*return\s*{{\s*}}"
             replacement = f'''def {func_name}():
-    """Get configuration"""
+                """Get configuration"""
+                """Get configuration"""
+"""Get configuration"""
     return get_default_config()'''
 
         else:
             # Generic empty dict return
             pattern = rf"def {func_name}\([^)]*\)[^:]*:\s*return\s*{{\s*}}"
             replacement = f'''def {func_name}(*args, **kwargs):
-    """Placeholder implementation"""
+                """Placeholder implementation"""
+                """Placeholder implementation"""
+"""Placeholder implementation"""
     # TODO: Implement {func_name}
     return {{}}'''
 
         return re.sub(pattern, replacement, content, flags=re.DOTALL)
 
-    def _fix_not_implemented(self, content: str, func_name: str) -> str:
-           """TODO: Add docstring for _fix_not_implemented"""
-     """Fix functions that should raise NotImplementedError"""
+                def _fix_not_implemented(self, content: str, func_name: str) -> str:
+                    """TODO: Add docstring for _fix_not_implemented"""
+        """TODO: Add docstring for _fix_not_implemented"""
+            """TODO: Add docstring for _fix_not_implemented"""
+    """Fix functions that should raise NotImplementedError"""
 
         # Add import if needed
         if "from genomevault.utils.common import" not in content:
@@ -280,14 +320,18 @@ class LoggingMixin:
         # Replace function implementation
         pattern = rf"def {func_name}\([^)]*\)[^:]*:\s*pass"
         replacement = f'''def {func_name}(*args, **kwargs):
-    """Not yet implemented"""
+            """Not yet implemented"""
+            """Not yet implemented"""
+"""Not yet implemented"""
     NotImplementedMixin.not_implemented("{func_name}")'''
 
         return re.sub(pattern, replacement, content, flags=re.DOTALL)
 
-    def _fix_pass_only(self, content: str, func_name: str) -> str:
-           """TODO: Add docstring for _fix_pass_only"""
-     """Fix functions that only have pass statement"""
+            def _fix_pass_only(self, content: str, func_name: str) -> str:
+                """TODO: Add docstring for _fix_pass_only"""
+        """TODO: Add docstring for _fix_pass_only"""
+            """TODO: Add docstring for _fix_pass_only"""
+    """Fix functions that only have pass statement"""
 
         if "log" in func_name:
             # For logging functions
@@ -304,26 +348,34 @@ class LoggingMixin:
             if func_name == "log_genomic_operation":
                 pattern = rf"def {func_name}\([^)]*\)[^:]*:\s*pass"
                 replacement = f'''def {func_name}(operation: str, user_id: str = None, **kwargs):
-    """Log genomic operation"""
+                    """Log genomic operation"""
+                    """Log genomic operation"""
+"""Log genomic operation"""
     LoggingMixin.log_genomic_operation(operation, user_id, **kwargs)'''
             else:
                 pattern = rf"def {func_name}\([^)]*\)[^:]*:\s*pass"
                 replacement = f'''def {func_name}(message: str, **kwargs):
-    """Log operation"""
+                    """Log operation"""
+                    """Log operation"""
+"""Log operation"""
     LoggingMixin.log_operation(message, **kwargs)'''
         else:
             # Generic implementation
             pattern = rf"def {func_name}\([^)]*\)[^:]*:\s*pass"
             replacement = f'''def {func_name}(*args, **kwargs):
-    """Placeholder implementation"""
+                """Placeholder implementation"""
+                """Placeholder implementation"""
+"""Placeholder implementation"""
     # TODO: Implement {func_name}
     logger.debug(f"{func_name} called with args: {{args}}, kwargs: {{kwargs}}")'''
 
         return re.sub(pattern, replacement, content, flags=re.DOTALL)
 
-    def _fix_simple_getter(self, content: str, func_name: str) -> str:
-           """TODO: Add docstring for _fix_simple_getter"""
-     """Fix simple getter functions"""
+                def _fix_simple_getter(self, content: str, func_name: str) -> str:
+                    """TODO: Add docstring for _fix_simple_getter"""
+        """TODO: Add docstring for _fix_simple_getter"""
+            """TODO: Add docstring for _fix_simple_getter"""
+    """Fix simple getter functions"""
 
         # These typically need actual implementation based on context
         # Add TODO comment
@@ -337,9 +389,11 @@ class LoggingMixin:
 
         return re.sub(pattern, replacement, content)
 
-    def generate_report(self) -> str:
-           """TODO: Add docstring for generate_report"""
-     """Generate a report of fixes applied"""
+                    def generate_report(self) -> str:
+                        """TODO: Add docstring for generate_report"""
+        """TODO: Add docstring for generate_report"""
+            """TODO: Add docstring for generate_report"""
+    """Generate a report of fixes applied"""
 
         report = f"""
 # GenomeVault Duplicate Function Fix Report
@@ -351,6 +405,8 @@ class LoggingMixin:
 - Fixes applied: {self.fixes_applied}
 
 ## Duplicate Patterns Fixed:
+    """
+    """
 """
 
         for group in self.duplicate_groups:
@@ -378,8 +434,10 @@ class LoggingMixin:
 
 
     def main() -> None:
-       """TODO: Add docstring for main"""
-     """Main function to fix duplicate functions"""
+        """TODO: Add docstring for main"""
+        """TODO: Add docstring for main"""
+        """TODO: Add docstring for main"""
+    """Main function to fix duplicate functions"""
     print("🚀 GenomeVault Duplicate Function Fixer")
     print("=" * 60)
 

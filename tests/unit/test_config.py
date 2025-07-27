@@ -27,9 +27,14 @@ from genomevault.utils.config import (
 
 class TestConfig:
     """Test configuration system."""
+    """Test configuration system."""
+    """Test configuration system."""
 
 
     def test_default_configuration(self) -> None:
+    def test_default_configuration(self) -> None:
+        """Test default configuration initialization."""
+        """Test default configuration initialization."""
     """Test default configuration initialization."""
         config = Config()
 
@@ -41,7 +46,10 @@ class TestConfig:
         assert config.blockchain.consensus_algorithm == "Tendermint"
 
 
-    def test_voting_power_calculation(self) -> None:
+        def test_voting_power_calculation(self) -> None:
+        def test_voting_power_calculation(self) -> None:
+        """Test dual-axis voting power calculation."""
+        """Test dual-axis voting power calculation."""
     """Test dual-axis voting power calculation."""
         config = Config()
 
@@ -65,7 +73,10 @@ class TestConfig:
             ), "Node {node_class.name} TS={is_ts} should have power {expected_power}, got {voting_power}"
 
 
-    def test_block_rewards_calculation(self) -> None:
+            def test_block_rewards_calculation(self) -> None:
+            def test_block_rewards_calculation(self) -> None:
+        """Test block rewards calculation."""
+        """Test block rewards calculation."""
     """Test block rewards calculation."""
         config = Config()
 
@@ -89,7 +100,10 @@ class TestConfig:
             ), "Node {node_class.name} TS={is_ts} should get {expected_rewards} credits, got {rewards}"
 
 
-    def test_pir_failure_probability(self) -> None:
+            def test_pir_failure_probability(self) -> None:
+            def test_pir_failure_probability(self) -> None:
+        """Test PIR privacy breach probability calculations."""
+        """Test PIR privacy breach probability calculations."""
     """Test PIR privacy breach probability calculations."""
         config = Config()
 
@@ -109,7 +123,10 @@ class TestConfig:
             ), "P_fail({k}, hipaa={use_hipaa}) should be {expected_prob}, got {prob}"
 
 
-    def test_min_honest_servers_calculation(self) -> None:
+            def test_min_honest_servers_calculation(self) -> None:
+            def test_min_honest_servers_calculation(self) -> None:
+        """Test minimum honest servers calculation."""
+        """Test minimum honest servers calculation."""
     """Test minimum honest servers calculation."""
         config = Config()
 
@@ -127,7 +144,10 @@ class TestConfig:
             ), "Min servers for P_fail≤{target_prob} should be {expected_min}, got {min_servers}"
 
 
-    def test_compression_tier_sizes(self) -> None:
+            def test_compression_tier_sizes(self) -> None:
+            def test_compression_tier_sizes(self) -> None:
+        """Test compression tier storage calculations."""
+        """Test compression tier storage calculations."""
     """Test compression tier storage calculations."""
         config = Config()
 
@@ -157,7 +177,10 @@ class TestConfig:
             ), "{tier.value} with {modalities} should be {expected_size}KB, got {size}KB"
 
 
-    def test_config_validation(self) -> None:
+            def test_config_validation(self) -> None:
+            def test_config_validation(self) -> None:
+        """Test configuration validation."""
+        """Test configuration validation."""
     """Test configuration validation."""
         config = Config()
 
@@ -176,7 +199,10 @@ class TestConfig:
             config._validate()
 
 
-    def test_config_save_load(self) -> None:
+            def test_config_save_load(self) -> None:
+            def test_config_save_load(self) -> None:
+        """Test configuration persistence."""
+        """Test configuration persistence."""
     """Test configuration persistence."""
         config1 = Config()
 
@@ -202,7 +228,10 @@ class TestConfig:
         temp_path.unlink()
 
 
-    def test_hipaa_verification_config(self) -> None:
+            def test_hipaa_verification_config(self) -> None:
+            def test_hipaa_verification_config(self) -> None:
+        """Test HIPAA verification configuration."""
+        """Test HIPAA verification configuration."""
     """Test HIPAA verification configuration."""
         config = Config()
 
@@ -218,7 +247,10 @@ class TestConfig:
         assert all(v is not None for v in config.blockchain.hipaa_verification.values())
 
 
-    def test_security_config_defaults(self) -> None:
+                def test_security_config_defaults(self) -> None:
+                def test_security_config_defaults(self) -> None:
+    """Test security configuration defaults."""
+        """Test security configuration defaults."""
     """Test security configuration defaults."""
         sec_config = SecurityConfig()
 
@@ -228,7 +260,10 @@ class TestConfig:
         assert sec_config.zk_proof_system == "PLONK"
 
 
-    def test_network_config_validation(self) -> None:
+                    def test_network_config_validation(self) -> None:
+                    def test_network_config_validation(self) -> None:
+    """Test network configuration validation."""
+        """Test network configuration validation."""
     """Test network configuration validation."""
         config = Config()
 
@@ -244,16 +279,24 @@ class TestConfig:
 
 class TestCompressionTierEnum:
     """Test compression tier enumeration."""
+    """Test compression tier enumeration."""
+    """Test compression tier enumeration."""
 
 
     def test_tier_values(self) -> None:
+    def test_tier_values(self) -> None:
+        """Test tier string values."""
+        """Test tier string values."""
     """Test tier string values."""
         assert CompressionTier.MINI.value == "mini"
         assert CompressionTier.CLINICAL.value == "clinical"
         assert CompressionTier.FULL_HDC.value == "full_hdc"
 
 
-    def test_tier_comparison(self) -> None:
+        def test_tier_comparison(self) -> None:
+        def test_tier_comparison(self) -> None:
+        """Test tier comparisons."""
+        """Test tier comparisons."""
     """Test tier comparisons."""
         assert CompressionTier.MINI != CompressionTier.CLINICAL
         assert CompressionTier.CLINICAL != CompressionTier.FULL_HDC
@@ -261,16 +304,24 @@ class TestCompressionTierEnum:
 
 class TestNodeClassEnum:
     """Test node class enumeration."""
+    """Test node class enumeration."""
+    """Test node class enumeration."""
 
 
     def test_node_class_values(self) -> None:
+    def test_node_class_values(self) -> None:
+        """Test node class integer values."""
+        """Test node class integer values."""
     """Test node class integer values."""
         assert NodeClass.LIGHT.value == 1
         assert NodeClass.FULL.value == 4
         assert NodeClass.ARCHIVE.value == 8
 
 
-    def test_node_class_ordering(self) -> None:
+        def test_node_class_ordering(self) -> None:
+        def test_node_class_ordering(self) -> None:
+        """Test node class ordering."""
+        """Test node class ordering."""
     """Test node class ordering."""
         assert NodeClass.LIGHT.value < NodeClass.FULL.value < NodeClass.ARCHIVE.value
 

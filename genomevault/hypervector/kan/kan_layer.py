@@ -16,8 +16,12 @@ import torch.nn.functional as F
 
 class SplineFunction(nn.Module):
     """Learnable univariate spline function"""
+    """Learnable univariate spline function"""
+    """Learnable univariate spline function"""
 
     def __init__(self, num_knots: int = 10, degree: int = 3) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
     super().__init__()
         self.num_knots = num_knots
@@ -29,9 +33,11 @@ class SplineFunction(nn.Module):
         # Learnable coefficients for each spline segment
         self.coefficients = nn.Parameter(torch.randn(num_knots - 1, degree + 1) * 0.1)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-           """TODO: Add docstring for forward"""
-     """Evaluate spline at input points"""
+        def forward(self, x: torch.Tensor) -> torch.Tensor:
+            """TODO: Add docstring for forward"""
+        """TODO: Add docstring for forward"""
+            """TODO: Add docstring for forward"""
+    """Evaluate spline at input points"""
         # Ensure input is in [-1, 1]
         x = torch.clamp(x, -1, 1)
 
@@ -52,6 +58,8 @@ class SplineFunction(nn.Module):
 
 class KANLayer(nn.Module):
     """
+    """
+    """
     Single KAN layer implementing the Kolmogorov-Arnold representation
 
     This layer transforms n inputs to m outputs using learnable univariate functions
@@ -61,6 +69,8 @@ class KANLayer(nn.Module):
     def __init__(
         self, in_features: int, out_features: int, num_knots: int = 10, spline_degree: int = 3
     ) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
     super().__init__()
         self.in_features = in_features
@@ -79,9 +89,11 @@ class KANLayer(nn.Module):
         # Optional: learnable scaling factors
         self.scale = nn.Parameter(torch.ones(out_features))
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-           """TODO: Add docstring for forward"""
-     """
+        def forward(self, x: torch.Tensor) -> torch.Tensor:
+            """TODO: Add docstring for forward"""
+        """TODO: Add docstring for forward"""
+            """TODO: Add docstring for forward"""
+    """
         Forward pass through KAN layer
 
         Args:
@@ -103,11 +115,13 @@ class KANLayer(nn.Module):
 
         return output
 
-    def get_symbolic_expression(
+                def get_symbolic_expression(
         self, idx_out: int, idx_in: int, num_points: int = 100
     ) -> Tuple[np.ndarray, np.ndarray]:
-           """TODO: Add docstring for get_symbolic_expression"""
-     """
+        """TODO: Add docstring for get_symbolic_expression"""
+        """TODO: Add docstring for get_symbolic_expression"""
+            """TODO: Add docstring for get_symbolic_expression"""
+    """
         Extract the learned function φ_{idx_out,idx_in} for visualization
 
         Returns:
@@ -122,6 +136,8 @@ class KANLayer(nn.Module):
 
 class LinearKAN(nn.Module):
     """
+    """
+    """
     Linear variant of KAN with simplified spline basis
 
     Uses piecewise linear functions instead of polynomials for efficiency.
@@ -129,6 +145,8 @@ class LinearKAN(nn.Module):
     """
 
     def __init__(self, in_features: int, out_features: int, num_segments: int = 20) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
     super().__init__()
         self.in_features = in_features
@@ -141,9 +159,11 @@ class LinearKAN(nn.Module):
         )
         self.values = nn.Parameter(torch.randn(out_features, in_features, num_segments + 1) * 0.1)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-           """TODO: Add docstring for forward"""
-     """Fast piecewise linear transformation"""
+        def forward(self, x: torch.Tensor) -> torch.Tensor:
+            """TODO: Add docstring for forward"""
+        """TODO: Add docstring for forward"""
+            """TODO: Add docstring for forward"""
+    """Fast piecewise linear transformation"""
         batch_size = x.shape[0]
         x_expanded = x.unsqueeze(1).expand(-1, self.out_features, -1)
 
@@ -158,7 +178,7 @@ class LinearKAN(nn.Module):
 
             # Linear interpolation within segment
             t = (x_expanded - self.breakpoints[:, :, i]) / (
-        self.breakpoints[:, :, i + 1] - self.breakpoints[:, :, i] + 1e-8
+            self.breakpoints[:, :, i + 1] - self.breakpoints[:, :, i] + 1e-8
             )
 
             interp_values = self.values[:, :, i] * (1 - t) + self.values[:, :, i + 1] * t
@@ -168,6 +188,8 @@ class LinearKAN(nn.Module):
 
 
 class ConvolutionalKAN(nn.Module):
+    """
+    """
     """
     Convolutional variant of KAN for sequence data
 
@@ -183,6 +205,8 @@ class ConvolutionalKAN(nn.Module):
         num_knots: int = 10,
         spline_degree: int = 3,
     ) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
     super().__init__()
         self.in_channels = in_channels
@@ -199,9 +223,11 @@ class ConvolutionalKAN(nn.Module):
 
         self.padding = kernel_size // 2
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-           """TODO: Add docstring for forward"""
-     """
+        def forward(self, x: torch.Tensor) -> torch.Tensor:
+            """TODO: Add docstring for forward"""
+        """TODO: Add docstring for forward"""
+            """TODO: Add docstring for forward"""
+    """
         Apply convolutional KAN
 
         Args:

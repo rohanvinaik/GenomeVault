@@ -18,6 +18,8 @@ from .kan_layer import KANLayer, LinearKAN
 
 class EncodingLevel(Enum):
     """Hierarchical encoding levels"""
+    """Hierarchical encoding levels"""
+    """Hierarchical encoding levels"""
 
     BASE = "base"  # 10,000D - Genomic variants
     MID = "mid"  # 15,000D - Expression data
@@ -27,6 +29,8 @@ class EncodingLevel(Enum):
 
 class KANHybridEncoder(nn.Module):
     """
+    """
+    """
     Hybrid encoder combining KAN compression with HD computing
 
     Architecture:
@@ -35,27 +39,29 @@ class KANHybridEncoder(nn.Module):
     3. Hierarchical binding: Combines multiple data modalities
     """
 
-    def __init__(self, base_dim: int = 10000, compressed_dim: int = 100, use_adaptive: bool = True) -> None:
+        def __init__(self, base_dim: int = 10000, compressed_dim: int = 100, use_adaptive: bool = True) -> None:
+            """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
     super().__init__()
 
         # Initialize base components
-        self.base_dim = base_dim
-        self.compressed_dim = compressed_dim
+            self.base_dim = base_dim
+            self.compressed_dim = compressed_dim
 
         # HD encoder for privacy
-        self.hd_encoder = GenomicEncoder(dimension=base_dim)
+            self.hd_encoder = GenomicEncoder(dimension=base_dim)
 
         # KAN compressor
         if use_adaptive:
-        self.kan_compressor = AdaptiveKANCompressor(input_dim=base_dim)
+            self.kan_compressor = AdaptiveKANCompressor(input_dim=base_dim)
         else:
-        self.kan_compressor = KANCompressor(
+            self.kan_compressor = KANCompressor(
                 input_dim=base_dim, compressed_dim=compressed_dim, num_layers=3
             )
 
         # Hierarchical projections for different data types
-        self.projections = nn.ModuleDict(
+            self.projections = nn.ModuleDict(
             {
                 "genomic": self._create_projection(base_dim, base_dim),
                 "expression": self._create_projection(base_dim, 15000),
@@ -64,11 +70,13 @@ class KANHybridEncoder(nn.Module):
         )
 
         # Privacy-preserving mixer
-        self.privacy_mixer = self._create_privacy_mixer()
+            self.privacy_mixer = self._create_privacy_mixer()
 
-    def _create_projection(self, in_dim: int, out_dim: int) -> nn.Module:
-           """TODO: Add docstring for _create_projection"""
-     """Create domain-specific projection using KAN"""
+            def _create_projection(self, in_dim: int, out_dim: int) -> nn.Module:
+                """TODO: Add docstring for _create_projection"""
+        """TODO: Add docstring for _create_projection"""
+            """TODO: Add docstring for _create_projection"""
+    """Create domain-specific projection using KAN"""
         return nn.Sequential(
             LinearKAN(in_dim, (in_dim + out_dim) // 2),
             nn.Tanh(),
@@ -76,9 +84,11 @@ class KANHybridEncoder(nn.Module):
             nn.Tanh(),
         )
 
-    def _create_privacy_mixer(self) -> nn.Module:
-           """TODO: Add docstring for _create_privacy_mixer"""
-     """Create privacy-preserving mixing network"""
+                def _create_privacy_mixer(self) -> nn.Module:
+                    """TODO: Add docstring for _create_privacy_mixer"""
+        """TODO: Add docstring for _create_privacy_mixer"""
+            """TODO: Add docstring for _create_privacy_mixer"""
+    """Create privacy-preserving mixing network"""
         return nn.Sequential(
             nn.Linear(self.compressed_dim, self.compressed_dim * 2),
             nn.GELU(),
@@ -87,9 +97,11 @@ class KANHybridEncoder(nn.Module):
             nn.Tanh(),
         )
 
-    def encode_genomic_data(self, variants: List[Dict], compress: bool = True) -> torch.Tensor:
-           """TODO: Add docstring for encode_genomic_data"""
-     """
+                    def encode_genomic_data(self, variants: List[Dict], compress: bool = True) -> torch.Tensor:
+                        """TODO: Add docstring for encode_genomic_data"""
+        """TODO: Add docstring for encode_genomic_data"""
+            """TODO: Add docstring for encode_genomic_data"""
+    """
         Encode genomic variants with optional compression
 
         Args:
@@ -110,25 +122,27 @@ class KANHybridEncoder(nn.Module):
 
         if hasattr(self.kan_compressor, "analyze_complexity"):
             compressed, level = self.kan_compressor.encode(hd_vector_batch)
-        self.last_compression_level = level
+            self.last_compression_level = level
         else:
             compressed = self.kan_compressor.encode(hd_vector_batch)
-        self.last_compression_level = "default"
+            self.last_compression_level = "default"
 
         # Apply privacy mixing
         private_compressed = self.privacy_mixer(compressed)
 
         return private_compressed.squeeze(0)
 
-    def encode_hierarchical(
+            def encode_hierarchical(
         self,
         genomic_data: Optional[List[Dict]] = None,
         expression_data: Optional[torch.Tensor] = None,
         epigenetic_data: Optional[torch.Tensor] = None,
         level: EncodingLevel = EncodingLevel.FULL,
     ) -> torch.Tensor:
-           """TODO: Add docstring for encode_hierarchical"""
-     """
+        """TODO: Add docstring for encode_hierarchical"""
+        """TODO: Add docstring for encode_hierarchical"""
+            """TODO: Add docstring for encode_hierarchical"""
+    """
         Hierarchical encoding of multi-modal genomic data
 
         Args:
@@ -155,7 +169,7 @@ class KANHybridEncoder(nn.Module):
 
             # Project to higher dimension
             expr_projected = self.projections["expression"](
-        self._pad_or_truncate(expr_compressed, self.base_dim).unsqueeze(0)
+            self._pad_or_truncate(expr_compressed, self.base_dim).unsqueeze(0)
             ).squeeze(0)
             encoded_components.append(expr_projected)
 
@@ -166,7 +180,7 @@ class KANHybridEncoder(nn.Module):
 
             # Project to highest dimension
             epi_projected = self.projections["epigenetic"](
-        self._pad_or_truncate(epi_compressed, self.base_dim).unsqueeze(0)
+            self._pad_or_truncate(epi_compressed, self.base_dim).unsqueeze(0)
             ).squeeze(0)
             encoded_components.append(epi_projected)
 
@@ -186,14 +200,18 @@ class KANHybridEncoder(nn.Module):
 
         return combined
 
-    def _bind_vectors(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
-           """TODO: Add docstring for _bind_vectors"""
-     """Bind two hypervectors using circular convolution"""
+            def _bind_vectors(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
+                """TODO: Add docstring for _bind_vectors"""
+        """TODO: Add docstring for _bind_vectors"""
+            """TODO: Add docstring for _bind_vectors"""
+    """Bind two hypervectors using circular convolution"""
         return torch.fft.irfft(torch.fft.rfft(vec1) * torch.fft.rfft(vec2))
 
-    def _pad_or_truncate(self, tensor: torch.Tensor, target_dim: int) -> torch.Tensor:
-           """TODO: Add docstring for _pad_or_truncate"""
-     """Pad or truncate tensor to target dimension"""
+                def _pad_or_truncate(self, tensor: torch.Tensor, target_dim: int) -> torch.Tensor:
+                    """TODO: Add docstring for _pad_or_truncate"""
+        """TODO: Add docstring for _pad_or_truncate"""
+            """TODO: Add docstring for _pad_or_truncate"""
+    """Pad or truncate tensor to target dimension"""
         current_dim = tensor.shape[-1]
 
         if current_dim == target_dim:
@@ -206,11 +224,13 @@ class KANHybridEncoder(nn.Module):
             # Truncate
             return tensor[:target_dim]
 
-    def decode_genomic_data(
+            def decode_genomic_data(
         self, compressed: torch.Tensor, level: Optional[str] = None
     ) -> torch.Tensor:
-           """TODO: Add docstring for decode_genomic_data"""
-     """
+        """TODO: Add docstring for decode_genomic_data"""
+        """TODO: Add docstring for decode_genomic_data"""
+            """TODO: Add docstring for decode_genomic_data"""
+    """
         Decode compressed representation back to hypervector
 
         Args:
@@ -229,11 +249,13 @@ class KANHybridEncoder(nn.Module):
 
         return reconstructed.squeeze(0)
 
-    def compute_privacy_guarantee(
+            def compute_privacy_guarantee(
         self, original: torch.Tensor, encoded: torch.Tensor
     ) -> Dict[str, float]:
-           """TODO: Add docstring for compute_privacy_guarantee"""
-     """
+        """TODO: Add docstring for compute_privacy_guarantee"""
+        """TODO: Add docstring for compute_privacy_guarantee"""
+            """TODO: Add docstring for compute_privacy_guarantee"""
+    """
         Compute privacy metrics for the encoding
 
         Returns:
@@ -280,9 +302,11 @@ class KANHybridEncoder(nn.Module):
             "privacy_score": reconstruction_difficulty * (1 - abs(correlation)),
         }
 
-    def _estimate_entropy(self, tensor: torch.Tensor) -> float:
-           """TODO: Add docstring for _estimate_entropy"""
-     """Estimate entropy of tensor using histogram method"""
+                def _estimate_entropy(self, tensor: torch.Tensor) -> float:
+                    """TODO: Add docstring for _estimate_entropy"""
+        """TODO: Add docstring for _estimate_entropy"""
+            """TODO: Add docstring for _estimate_entropy"""
+    """Estimate entropy of tensor using histogram method"""
         # Quantize to 256 levels
         quantized = torch.floor(
             (tensor - tensor.min()) / (tensor.max() - tensor.min() + 1e-8) * 255
@@ -297,9 +321,11 @@ class KANHybridEncoder(nn.Module):
 
         return entropy.item()
 
-    def save_compressed(self, compressed: torch.Tensor, metadata: Dict, filepath: str) -> None:
-           """TODO: Add docstring for save_compressed"""
-     """Save compressed representation with metadata"""
+                    def save_compressed(self, compressed: torch.Tensor, metadata: Dict, filepath: str) -> None:
+                        """TODO: Add docstring for save_compressed"""
+        """TODO: Add docstring for save_compressed"""
+            """TODO: Add docstring for save_compressed"""
+    """Save compressed representation with metadata"""
         torch.save(
             {
                 "compressed": compressed,
@@ -310,19 +336,23 @@ class KANHybridEncoder(nn.Module):
             filepath,
         )
 
-    def load_compressed(self, filepath: str) -> Tuple[torch.Tensor, Dict]:
-           """TODO: Add docstring for load_compressed"""
-     """Load compressed representation and metadata"""
+                        def load_compressed(self, filepath: str) -> Tuple[torch.Tensor, Dict]:
+                            """TODO: Add docstring for load_compressed"""
+        """TODO: Add docstring for load_compressed"""
+            """TODO: Add docstring for load_compressed"""
+    """Load compressed representation and metadata"""
         checkpoint = torch.load(filepath)
 
         # Restore model state if needed
         if "model_state" in checkpoint:
-        self.load_state_dict(checkpoint["model_state"])
+            self.load_state_dict(checkpoint["model_state"])
 
         return checkpoint["compressed"], checkpoint["metadata"]
 
 
 class StreamingKANHybridEncoder(KANHybridEncoder):
+    """
+    """
     """
     Streaming variant for processing large genomic datasets
 
@@ -338,11 +368,13 @@ class StreamingKANHybridEncoder(KANHybridEncoder):
         # Streaming aggregator
         self.aggregator = nn.Sequential(LinearKAN(compressed_dim * 2, compressed_dim), nn.Tanh())
 
-    def encode_genome_streaming(
+        def encode_genome_streaming(
         self, variant_iterator, progress_callback: Optional[callable] = None
     ) -> torch.Tensor:
-           """TODO: Add docstring for encode_genome_streaming"""
-     """
+        """TODO: Add docstring for encode_genome_streaming"""
+        """TODO: Add docstring for encode_genome_streaming"""
+            """TODO: Add docstring for encode_genome_streaming"""
+    """
         Encode genome data in streaming fashion
 
         Args:

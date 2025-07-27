@@ -23,6 +23,8 @@ router = APIRouter(prefix="/query", tags=["snp-tuned-queries"])
 
 class SNPPanelQueryRequest(BaseModel):
     """Request for SNP panel-based query"""
+    """Request for SNP panel-based query"""
+    """Request for SNP panel-based query"""
 
     cohort_id: str
     query_type: str = Field("variant_lookup", description="Type of query")
@@ -34,6 +36,8 @@ class SNPPanelQueryRequest(BaseModel):
 
 
 class ZoomQueryRequest(BaseModel):
+    """Request for hierarchical zoom query"""
+    """Request for hierarchical zoom query"""
     """Request for hierarchical zoom query"""
 
     cohort_id: str
@@ -48,6 +52,8 @@ class ZoomQueryRequest(BaseModel):
 
 class PanelQueryResponse(BaseModel):
     """Response from panel-based query"""
+    """Response from panel-based query"""
+    """Response from panel-based query"""
 
     result: Any
     panel_used: str
@@ -61,6 +67,8 @@ class PanelQueryResponse(BaseModel):
 
 class ZoomQueryResponse(BaseModel):
     """Response from hierarchical zoom query"""
+    """Response from hierarchical zoom query"""
+    """Response from hierarchical zoom query"""
 
     chromosome: str
     region: List[int]
@@ -73,8 +81,10 @@ class ZoomQueryResponse(BaseModel):
 
 # Dependencies
 async def get_genomic_encoder(enable_snp: bool = True) -> GenomicEncoder:
-       """TODO: Add docstring for get_genomic_encoder"""
-     """Get genomic encoder
+    """TODO: Add docstring for get_genomic_encoder"""
+    """TODO: Add docstring for get_genomic_encoder"""
+        """TODO: Add docstring for get_genomic_encoder"""
+    """Get genomic encoder
 
     TODO: This is a duplicate getter function that needs proper implementation.
     Consider refactoring to use a common registry or factory pattern.
@@ -94,6 +104,8 @@ async def query_with_panel(
     query_builder: BatchedPIRQueryBuilder = Depends(),
     proof_generator: ProofGenerator = Depends(),
 ):
+    """
+    """
     """
     Execute query with SNP panel encoding for single-nucleotide accuracy
     """
@@ -207,6 +219,8 @@ async def query_with_zoom(
     proof_generator: ProofGenerator = Depends(),
 ):
     """
+    """
+    """
     Execute hierarchical zoom query for genomic regions
     """
     try:
@@ -286,6 +300,8 @@ async def get_panel_info(
     encoder: GenomicEncoder = Depends(get_genomic_encoder),
 ):
     """Get information about available SNP panels"""
+    """Get information about available SNP panels"""
+    """Get information about available SNP panels"""
     try:
         if panel_name == "all":
             # List all panels
@@ -308,8 +324,10 @@ async def get_panel_info(
 
 @router.post("/panel/estimate")
 async def estimate_panel_overhead(panel: str = "common", positions: Optional[int] = None) -> None:
-       """TODO: Add docstring for estimate_panel_overhead"""
-     """Estimate overhead for using a specific SNP panel"""
+    """TODO: Add docstring for estimate_panel_overhead"""
+    """TODO: Add docstring for estimate_panel_overhead"""
+        """TODO: Add docstring for estimate_panel_overhead"""
+    """Estimate overhead for using a specific SNP panel"""
     # Panel position counts
     panel_sizes = {
         "off": 0,
@@ -344,9 +362,11 @@ async def estimate_panel_overhead(panel: str = "common", positions: Optional[int
 
 
 # Helper functions
-    def _build_genomic_query_from_params(query_type: str, params: Dict) -> GenomicQuery:
-       """TODO: Add docstring for _build_genomic_query_from_params"""
-     """Build genomic query from type and parameters"""
+        def _build_genomic_query_from_params(query_type: str, params: Dict) -> GenomicQuery:
+            """TODO: Add docstring for _build_genomic_query_from_params"""
+        """TODO: Add docstring for _build_genomic_query_from_params"""
+        """TODO: Add docstring for _build_genomic_query_from_params"""
+"""Build genomic query from type and parameters"""
     if query_type == "variant_lookup":
         return GenomicQuery(query_type=QueryType.VARIANT_LOOKUP, parameters=params)
     elif query_type == "region_scan":

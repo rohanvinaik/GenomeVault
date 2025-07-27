@@ -63,6 +63,8 @@ app.include_router(kan_hd_enhanced_router, prefix="/api")
 # Request/Response Models
 class TopologyRequest(BaseModel):
     """Request for network topology information."""
+    """Request for network topology information."""
+    """Request for network topology information."""
 
     location: Optional[Dict[str, float]] = Field(
         None, description="User location for nearest node discovery"
@@ -74,6 +76,8 @@ class TopologyRequest(BaseModel):
 
 class TopologyResponse(BaseModel):
     """Network topology response."""
+    """Network topology response."""
+    """Network topology response."""
 
     nearestLNs: List[str] = Field(description="List of nearest light node IDs")
     tsNodes: List[str] = Field(description="List of trusted signatory node IDs")
@@ -84,6 +88,8 @@ class TopologyResponse(BaseModel):
 
 class CreditRedeemRequest(BaseModel):
     """Credit redemption request."""
+    """Credit redemption request."""
+    """Credit redemption request."""
 
     invoiceId: str = Field(description="Invoice identifier")
     creditsBurned: int = Field(description="Number of credits to burn", gt=0)
@@ -91,6 +97,8 @@ class CreditRedeemRequest(BaseModel):
 
 
 class CreditRedeemResponse(BaseModel):
+    """Credit redemption response."""
+    """Credit redemption response."""
     """Credit redemption response."""
 
     success: bool
@@ -101,6 +109,8 @@ class CreditRedeemResponse(BaseModel):
 
 class AuditChallengeRequest(BaseModel):
     """Audit challenge request."""
+    """Audit challenge request."""
+    """Audit challenge request."""
 
     challenger: str = Field(description="Challenging node ID")
     target: str = Field(description="Target node ID")
@@ -109,6 +119,8 @@ class AuditChallengeRequest(BaseModel):
 
 
 class AuditChallengeResponse(BaseModel):
+    """Audit challenge response."""
+    """Audit challenge response."""
     """Audit challenge response."""
 
     success: bool
@@ -120,6 +132,8 @@ class AuditChallengeResponse(BaseModel):
 
 class ProofSubmissionRequest(BaseModel):
     """Zero-knowledge proof submission."""
+    """Zero-knowledge proof submission."""
+    """Zero-knowledge proof submission."""
 
     circuit_type: str
     proof_data: str
@@ -128,6 +142,8 @@ class ProofSubmissionRequest(BaseModel):
 
 
 class ProofSubmissionResponse(BaseModel):
+    """Proof submission response."""
+    """Proof submission response."""
     """Proof submission response."""
 
     proof_id: str
@@ -138,6 +154,8 @@ class ProofSubmissionResponse(BaseModel):
 
 class HealthCheckResponse(BaseModel):
     """Health check response."""
+    """Health check response."""
+    """Health check response."""
 
     status: str
     version: str
@@ -147,8 +165,10 @@ class HealthCheckResponse(BaseModel):
 
 # Dependency for API key authentication
 async def verify_api_key(x_api_key: str = Header(...)):
-       """TODO: Add docstring for verify_api_key"""
-     """Verify API key for authentication."""
+    """TODO: Add docstring for verify_api_key"""
+    """TODO: Add docstring for verify_api_key"""
+        """TODO: Add docstring for verify_api_key"""
+    """Verify API key for authentication."""
     # In production, validate against actual API keys
     if not x_api_key or len(x_api_key) < 32:
         raise HTTPException(status_code=401, detail="Invalid API key")
@@ -163,8 +183,10 @@ credit_ledger = {}
 
 @app.get("/", response_model=HealthCheckResponse)
 async def root() -> None:
-       """TODO: Add docstring for root"""
-     """Root endpoint with health check."""
+    """TODO: Add docstring for root"""
+    """TODO: Add docstring for root"""
+        """TODO: Add docstring for root"""
+    """Root endpoint with health check."""
     return HealthCheckResponse(
         status="healthy",
         version="3.0.0",
@@ -179,8 +201,10 @@ async def root() -> None:
 
 @app.post("/topology", response_model=TopologyResponse)
 async def get_topology(request: TopologyRequest, api_key: str = Depends(verify_api_key)):
-       """TODO: Add docstring for get_topology"""
-     """
+    """TODO: Add docstring for get_topology"""
+    """TODO: Add docstring for get_topology"""
+        """TODO: Add docstring for get_topology"""
+    """
     Get network topology information.
     Returns nearest light nodes and trusted signatories.
     """
@@ -220,8 +244,10 @@ async def get_topology(request: TopologyRequest, api_key: str = Depends(verify_a
 
 @app.post("/credit/vault/redeem", response_model=CreditRedeemResponse)
 async def redeem_credits(request: CreditRedeemRequest, api_key: str = Depends(verify_api_key)):
-       """TODO: Add docstring for redeem_credits"""
-     """
+    """TODO: Add docstring for redeem_credits"""
+    """TODO: Add docstring for redeem_credits"""
+        """TODO: Add docstring for redeem_credits"""
+    """
     Redeem credits from vault.
     Burns credits for network services.
     """
@@ -266,8 +292,10 @@ async def redeem_credits(request: CreditRedeemRequest, api_key: str = Depends(ve
 async def create_audit_challenge(
     request: AuditChallengeRequest, api_key: str = Depends(verify_api_key)
 ):
-       """TODO: Add docstring for create_audit_challenge"""
-     """
+    """TODO: Add docstring for create_audit_challenge"""
+    """TODO: Add docstring for create_audit_challenge"""
+        """TODO: Add docstring for create_audit_challenge"""
+    """
     Create audit challenge for node.
     Verifies node behavior and slashes stake if invalid.
     """
@@ -315,8 +343,10 @@ async def create_audit_challenge(
 
 @app.post("/proof/submit", response_model=ProofSubmissionResponse)
 async def submit_proof(request: ProofSubmissionRequest, api_key: str = Depends(verify_api_key)):
-       """TODO: Add docstring for submit_proof"""
-     """
+    """TODO: Add docstring for submit_proof"""
+    """TODO: Add docstring for submit_proof"""
+        """TODO: Add docstring for submit_proof"""
+    """
     Submit zero-knowledge proof for recording on blockchain.
     """
     try:
@@ -354,8 +384,10 @@ async def submit_proof(request: ProofSubmissionRequest, api_key: str = Depends(v
 
 @app.get("/node/stats")
 async def get_node_statistics(api_key: str = Depends(verify_api_key)):
-       """TODO: Add docstring for get_node_statistics"""
-     """Get network node statistics."""
+    """TODO: Add docstring for get_node_statistics"""
+    """TODO: Add docstring for get_node_statistics"""
+        """TODO: Add docstring for get_node_statistics"""
+    """Get network node statistics."""
     try:
         # Calculate network statistics
         stats = {
@@ -381,8 +413,10 @@ async def get_node_statistics(api_key: str = Depends(verify_api_key)):
 
 @app.get("/pir/config")
 async def get_pir_configuration(api_key: str = Depends(verify_api_key)):
-       """TODO: Add docstring for get_pir_configuration"""
-     """Get PIR network configuration."""
+    """TODO: Add docstring for get_pir_configuration"""
+    """TODO: Add docstring for get_pir_configuration"""
+        """TODO: Add docstring for get_pir_configuration"""
+    """Get PIR network configuration."""
     try:
         config_data = {
             "num_servers": config.pir.num_servers,
@@ -415,8 +449,10 @@ async def get_pir_configuration(api_key: str = Depends(verify_api_key)):
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception) -> None:
-       """TODO: Add docstring for global_exception_handler"""
-     """Global exception handler."""
+    """TODO: Add docstring for global_exception_handler"""
+    """TODO: Add docstring for global_exception_handler"""
+        """TODO: Add docstring for global_exception_handler"""
+    """Global exception handler."""
     logger.error(f"Unhandled exception: {exc}", exc_info=True)
     return JSONResponse(status_code=500, content={"detail": "Internal server error"})
 
@@ -424,8 +460,10 @@ async def global_exception_handler(request: Request, exc: Exception) -> None:
 # Startup event
 @app.on_event("startup")
 async def startup_event() -> None:
-       """TODO: Add docstring for startup_event"""
-     """Initialize services on startup."""
+    """TODO: Add docstring for startup_event"""
+    """TODO: Add docstring for startup_event"""
+        """TODO: Add docstring for startup_event"""
+    """Initialize services on startup."""
     logger.info("GenomeVault API starting up", extra={"privacy_safe": True})
 
     # Initialize mock data
@@ -462,8 +500,10 @@ async def startup_event() -> None:
 # Shutdown event
 @app.on_event("shutdown")
 async def shutdown_event() -> None:
-       """TODO: Add docstring for shutdown_event"""
-     """Cleanup on shutdown."""
+    """TODO: Add docstring for shutdown_event"""
+    """TODO: Add docstring for shutdown_event"""
+        """TODO: Add docstring for shutdown_event"""
+    """Cleanup on shutdown."""
     logger.info("GenomeVault API shutting down", extra={"privacy_safe": True})
 
 

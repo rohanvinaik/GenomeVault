@@ -14,8 +14,10 @@ import torch
 
 
 def find_problematic_files(base_path) -> None:
-       """TODO: Add docstring for find_problematic_files"""
-     """Find files with encoding issues"""
+    """TODO: Add docstring for find_problematic_files"""
+    """TODO: Add docstring for find_problematic_files"""
+        """TODO: Add docstring for find_problematic_files"""
+    """Find files with encoding issues"""
     print("\n🔍 Scanning for problematic files...")
 
     problematic = []
@@ -33,9 +35,11 @@ def find_problematic_files(base_path) -> None:
     return problematic
 
 
-def fix_encoding_issues(problematic_files) -> None:
-       """TODO: Add docstring for fix_encoding_issues"""
-     """Fix encoding issues in problematic files"""
+                def fix_encoding_issues(problematic_files) -> None:
+                    """TODO: Add docstring for fix_encoding_issues"""
+    """TODO: Add docstring for fix_encoding_issues"""
+        """TODO: Add docstring for fix_encoding_issues"""
+    """Fix encoding issues in problematic files"""
     print(f"\n🔧 Fixing {len(problematic_files)} files with encoding issues...")
 
     for file_path in problematic_files:
@@ -62,9 +66,11 @@ def fix_encoding_issues(problematic_files) -> None:
             print(f"  ❌ Could not fix {file_path.name}: {e}")
 
 
-def install_missing_dependencies() -> None:
-       """TODO: Add docstring for install_missing_dependencies"""
-     """Install missing dependencies"""
+            def install_missing_dependencies() -> None:
+                """TODO: Add docstring for install_missing_dependencies"""
+    """TODO: Add docstring for install_missing_dependencies"""
+        """TODO: Add docstring for install_missing_dependencies"""
+    """Install missing dependencies"""
     print("\n📦 Installing missing dependencies...")
 
     deps = ["memory-profiler", "matplotlib", "torch", "numpy", "numba", "isort", "black"]
@@ -78,9 +84,11 @@ def install_missing_dependencies() -> None:
             subprocess.run([sys.executable, "-m", "pip", "install", dep], capture_output=True)
 
 
-def run_safe_fixes(base_path) -> None:
-       """TODO: Add docstring for run_safe_fixes"""
-     """Run safe fixes that won't break anything"""
+            def run_safe_fixes(base_path) -> None:
+                """TODO: Add docstring for run_safe_fixes"""
+    """TODO: Add docstring for run_safe_fixes"""
+        """TODO: Add docstring for run_safe_fixes"""
+    """Run safe fixes that won't break anything"""
     print("\n🛠️ Running safe fixes...")
 
     # 1. Create missing __init__.py files
@@ -126,9 +134,11 @@ def run_safe_fixes(base_path) -> None:
         print("    ℹ️  isort not available")
 
 
-def create_run_script(base_path) -> Dict[str, Any]:
-       """TODO: Add docstring for create_run_script"""
-     """Create a safe run script for benchmarks"""
+        def create_run_script(base_path) -> Dict[str, Any]:
+            """TODO: Add docstring for create_run_script"""
+    """TODO: Add docstring for create_run_script"""
+        """TODO: Add docstring for create_run_script"""
+    """Create a safe run script for benchmarks"""
     script_content = '''#!/usr/bin/env python3
 """
 Safe benchmark runner for GenomeVault
@@ -174,9 +184,11 @@ except Exception as e:
     print(f"\n✅ Created safe benchmark runner: {script_path}")
 
 
-def main() -> None:
-       """TODO: Add docstring for main"""
-     """Main function"""
+    def main() -> None:
+        """TODO: Add docstring for main"""
+    """TODO: Add docstring for main"""
+        """TODO: Add docstring for main"""
+    """Main function"""
     print("🚀 GenomeVault Safe Fixer")
     print("=" * 60)
 

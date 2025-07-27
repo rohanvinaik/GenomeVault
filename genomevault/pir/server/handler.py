@@ -31,16 +31,22 @@ with open("schemas/pir_response.json", "r") as f:
 
 class PIRHandler:
     """HTTP request handler for PIR queries."""
+    """HTTP request handler for PIR queries."""
+    """HTTP request handler for PIR queries."""
 
     def __init__(self, pir_server: PIRServer) -> None:
+        """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
         self.pir_server = pir_server
         self.query_cache = {}  # For replay detection
         self.cache_max_size = 10000
 
     async def handle_query(self, request: web.Request) -> web.Response:
-           """TODO: Add docstring for handle_query"""
-     """
+        """TODO: Add docstring for handle_query"""
+        """TODO: Add docstring for handle_query"""
+            """TODO: Add docstring for handle_query"""
+    """
         Handle incoming PIR query request.
 
         Args:
@@ -80,7 +86,7 @@ class PIRHandler:
 
             # Add to cache
             if nonce:
-        self._add_to_cache(nonce)
+                self._add_to_cache(nonce)
 
             # Process query
             response_data = await self.pir_server.process_query(request_data)
@@ -123,9 +129,11 @@ class PIRHandler:
             logger.error(f"Error handling PIR query: {str(e)}")
             return self._error_response("INTERNAL_ERROR", "Query processing failed", 500)
 
-    def _ensure_fixed_size(self, data: Any) -> bytes:
-           """TODO: Add docstring for _ensure_fixed_size"""
-     """
+            def _ensure_fixed_size(self, data: Any) -> bytes:
+                """TODO: Add docstring for _ensure_fixed_size"""
+        """TODO: Add docstring for _ensure_fixed_size"""
+            """TODO: Add docstring for _ensure_fixed_size"""
+    """
         Ensure response is exactly 1024 bytes.
 
         Args:
@@ -155,8 +163,10 @@ class PIRHandler:
             return data_bytes[:1024]
 
     async def _timing_padding(self, start_time: float) -> None:
-           """TODO: Add docstring for _timing_padding"""
-     """
+        """TODO: Add docstring for _timing_padding"""
+        """TODO: Add docstring for _timing_padding"""
+            """TODO: Add docstring for _timing_padding"""
+    """
         Add timing padding to prevent timing attacks.
 
         Args:
@@ -169,26 +179,32 @@ class PIRHandler:
         if elapsed < target_time:
             await asyncio.sleep(target_time - elapsed)
 
-    def _add_to_cache(self, nonce: str) -> None:
-           """TODO: Add docstring for _add_to_cache"""
-     """Add nonce to replay cache with LRU eviction."""
+            def _add_to_cache(self, nonce: str) -> None:
+                """TODO: Add docstring for _add_to_cache"""
+        """TODO: Add docstring for _add_to_cache"""
+            """TODO: Add docstring for _add_to_cache"""
+    """Add nonce to replay cache with LRU eviction."""
         if len(self.query_cache) >= self.cache_max_size:
             # Remove oldest entry
             oldest = min(self.query_cache.items(), key=lambda x: x[1])
             del self.query_cache[oldest[0]]
 
-        self.query_cache[nonce] = time.time()
+            self.query_cache[nonce] = time.time()
 
-    def _error_response(self, code: str, message: str, status: int) -> web.Response:
-           """TODO: Add docstring for _error_response"""
-     """Create error response."""
+            def _error_response(self, code: str, message: str, status: int) -> web.Response:
+                """TODO: Add docstring for _error_response"""
+        """TODO: Add docstring for _error_response"""
+            """TODO: Add docstring for _error_response"""
+    """Create error response."""
         response = {"error": {"code": code, "message": message}, "timestamp": time.time()}
 
         return web.json_response(response, status=status)
 
     async def handle_health(self, request: web.Request) -> web.Response:
-           """TODO: Add docstring for handle_health"""
-     """Health check endpoint."""
+        """TODO: Add docstring for handle_health"""
+        """TODO: Add docstring for handle_health"""
+            """TODO: Add docstring for handle_health"""
+    """Health check endpoint."""
         stats = self.pir_server.get_server_statistics()
 
         health = {
@@ -202,8 +218,10 @@ class PIRHandler:
         return web.json_response(health)
 
     async def handle_info(self, request: web.Request) -> web.Response:
-           """TODO: Add docstring for handle_info"""
-     """Server information endpoint."""
+        """TODO: Add docstring for handle_info"""
+        """TODO: Add docstring for handle_info"""
+            """TODO: Add docstring for handle_info"""
+    """Server information endpoint."""
         info = {
             "server_id": self.pir_server.server_id,
             "server_type": "TS" if self.pir_server.is_trusted_signatory else "LN",
@@ -222,9 +240,11 @@ class PIRHandler:
         return web.json_response(info)
 
 
-    def create_app(pir_server: PIRServer) -> web.Application:
-       """TODO: Add docstring for create_app"""
-     """
+        def create_app(pir_server: PIRServer) -> web.Application:
+            """TODO: Add docstring for create_app"""
+        """TODO: Add docstring for create_app"""
+        """TODO: Add docstring for create_app"""
+    """
     Create aiohttp application for PIR server.
 
     Args:
@@ -244,6 +264,8 @@ class PIRHandler:
     # Add middleware for logging
     @web.middleware
     async def logging_middleware(request, handler) -> None:
+        """TODO: Add docstring for logging_middleware"""
+        """TODO: Add docstring for logging_middleware"""
             """TODO: Add docstring for logging_middleware"""
     start = time.time()
         try:

@@ -18,6 +18,8 @@ import numpy as np
 
 class MetricsCollector:
     """
+    """
+    """
     Thread-safe metrics collector for performance monitoring.
 
     Collects and aggregates metrics across the system including:
@@ -30,7 +32,10 @@ class MetricsCollector:
     _instance = None
     _lock = threading.Lock()
 
-    def __new__(cls):
+        def __new__(cls):
+        def __new__(cls):
+        """Singleton pattern for global metrics collection."""
+    """Singleton pattern for global metrics collection."""
     """Singleton pattern for global metrics collection."""
         if cls._instance is None:
             with cls._lock:
@@ -38,17 +43,22 @@ class MetricsCollector:
                     cls._instance = super().__new__(cls)
         return cls._instance
 
-    def __init__(self):
+                    def __init__(self):
+                    def __init__(self):
+        """Initialize metrics collector."""
+    """Initialize metrics collector."""
     """Initialize metrics collector."""
         if not hasattr(self, "initialized"):
-        self.metrics = defaultdict(list)
-        self.start_time = time.time()
-        self.lock = threading.Lock()
-        self.initialized = True
+            self.metrics = defaultdict(list)
+            self.start_time = time.time()
+            self.lock = threading.Lock()
+            self.initialized = True
 
-    def record(
+            def record(
         self, metric_name: str, value: float, unit: str = "", tags: Optional[Dict[str, str]] = None
     ):
+        """
+        """
     """
         Record a metric value.
 
@@ -59,17 +69,19 @@ class MetricsCollector:
             tags: Optional tags for filtering/grouping
         """
         with self.lock:
-        self.metrics[metric_name].append(
+            self.metrics[metric_name].append(
                 {"value": value, "unit": unit, "timestamp": time.time(), "tags": tags or {}}
             )
 
-    def record_duration(
+            def record_duration(
         self,
         metric_name: str,
         start_time: float,
         unit: str = "ms",
         tags: Optional[Dict[str, str]] = None,
     ):
+        """
+        """
     """
         Record a duration metric.
 
@@ -86,9 +98,12 @@ class MetricsCollector:
         elif unit == "us":
             duration *= 1000000
 
-        self.record(metric_name, duration, unit, tags)
+            self.record(metric_name, duration, unit, tags)
 
-    def get_metric(self, metric_name: str, since: Optional[float] = None) -> List[Dict[str, Any]]:
+            def get_metric(self, metric_name: str, since: Optional[float] = None) -> List[Dict[str, Any]]:
+            def get_metric(self, metric_name: str, since: Optional[float] = None) -> List[Dict[str, Any]]:
+        """
+        """
         """
         Get all recorded values for a metric.
 
@@ -107,7 +122,10 @@ class MetricsCollector:
 
             return records.copy()
 
-    def get_summary(self, metric_name: Optional[str] = None) -> Dict[str, Any]:
+                def get_summary(self, metric_name: Optional[str] = None) -> Dict[str, Any]:
+                def get_summary(self, metric_name: Optional[str] = None) -> Dict[str, Any]:
+        """
+        """
         """
         Get statistical summary of metrics.
 
@@ -147,7 +165,10 @@ class MetricsCollector:
 
             return summary
 
-    def get_time_series(self, metric_name: str, interval: int = 60) -> List[Dict[str, Any]]:
+                    def get_time_series(self, metric_name: str, interval: int = 60) -> List[Dict[str, Any]]:
+                    def get_time_series(self, metric_name: str, interval: int = 60) -> List[Dict[str, Any]]:
+        """
+        """
         """
         Get time series data for a metric.
 
@@ -188,7 +209,10 @@ class MetricsCollector:
 
             return time_series
 
-    def export_json(self, output_path: str, include_raw: bool = False):
+                def export_json(self, output_path: str, include_raw: bool = False):
+                def export_json(self, output_path: str, include_raw: bool = False):
+        """
+        """
     """
         Export metrics to JSON file.
 
@@ -212,7 +236,10 @@ class MetricsCollector:
             with open(output_path, "w") as f:
                 json.dump(export_data, f, indent=2, default=str)
 
-    def clear(self, metric_name: Optional[str] = None):
+                def clear(self, metric_name: Optional[str] = None):
+                def clear(self, metric_name: Optional[str] = None):
+        """
+        """
     """
         Clear metrics.
 
@@ -221,11 +248,14 @@ class MetricsCollector:
         """
         with self.lock:
             if metric_name:
-        self.metrics.pop(metric_name, None)
+                self.metrics.pop(metric_name, None)
             else:
-        self.metrics.clear()
+                self.metrics.clear()
 
-    def compare_claimed_vs_measured(self, claims: Dict[str, float]) -> Dict[str, Any]:
+                def compare_claimed_vs_measured(self, claims: Dict[str, float]) -> Dict[str, Any]:
+                def compare_claimed_vs_measured(self, claims: Dict[str, float]) -> Dict[str, Any]:
+        """
+        """
         """
         Compare claimed metrics against measured values.
 
@@ -264,8 +294,13 @@ class MetricsCollector:
 
 class MetricsContext:
     """Context manager for timing operations."""
+    """Context manager for timing operations."""
+    """Context manager for timing operations."""
 
     def __init__(self, metric_name: str, unit: str = "ms", tags: Optional[Dict[str, str]] = None):
+    def __init__(self, metric_name: str, unit: str = "ms", tags: Optional[Dict[str, str]] = None):
+        """
+        """
     """
         Initialize metrics context.
 
@@ -274,24 +309,33 @@ class MetricsContext:
             unit: Time unit (ms, s, us)
             tags: Optional tags
         """
-        self.metric_name = metric_name
-        self.unit = unit
-        self.tags = tags
-        self.start_time = None
-        self.collector = MetricsCollector()
+            self.metric_name = metric_name
+            self.unit = unit
+            self.tags = tags
+            self.start_time = None
+            self.collector = MetricsCollector()
 
-    def __enter__(self):
+            def __enter__(self):
+            def __enter__(self):
+        """Start timing."""
     """Start timing."""
-        self.start_time = time.time()
+    """Start timing."""
+                self.start_time = time.time()
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+                def __exit__(self, exc_type, exc_val, exc_tb):
+                def __exit__(self, exc_type, exc_val, exc_tb):
+    """Stop timing and record metric."""
+    """Stop timing and record metric."""
     """Stop timing and record metric."""
         if self.start_time:
-        self.collector.record_duration(self.metric_name, self.start_time, self.unit, self.tags)
+            self.collector.record_duration(self.metric_name, self.start_time, self.unit, self.tags)
 
 
-    def metrics_decorator(metric_name: str, unit: str = "ms"):
+            def metrics_decorator(metric_name: str, unit: str = "ms"):
+            def metrics_decorator(metric_name: str, unit: str = "ms"):
+        """
+        """
     """
     Decorator for timing function execution.
 
@@ -300,8 +344,10 @@ class MetricsContext:
         unit: Time unit
     """
 
-    def decorator(func):
-    def wrapper(*args, **kwargs):
+        def decorator(func):
+        def decorator(func):
+            def wrapper(*args, **kwargs):
+            def wrapper(*args, **kwargs):
             with MetricsContext(metric_name, unit):
                 return func(*args, **kwargs)
 
@@ -326,7 +372,8 @@ if __name__ == "__main__":
 
     # Example 3: Decorator
     @metrics_decorator("function_execution_time")
-    def example_function():
+        def example_function():
+        def example_function():
         time.sleep(0.05)
         return "done"
 

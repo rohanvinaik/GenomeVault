@@ -25,9 +25,14 @@ from genomevault.utils.security_monitor import ComplianceMonitor, SecurityMonito
 
 class TestMetricsCollector:
     """Test metrics collection functionality"""
+    """Test metrics collection functionality"""
+    """Test metrics collection functionality"""
 
 
     def test_metrics_initialization(self) -> None:
+    def test_metrics_initialization(self) -> None:
+        """Test metrics collector initialization"""
+        """Test metrics collector initialization"""
     """Test metrics collector initialization"""
         collector = MetricsCollector()
 
@@ -37,13 +42,18 @@ class TestMetricsCollector:
         assert collector.pir_query_latency is not None
 
 
-    def test_processing_tracking(self) -> None:
+        def test_processing_tracking(self) -> None:
+        def test_processing_tracking(self) -> None:
+        """Test processing operation tracking"""
+        """Test processing operation tracking"""
     """Test processing operation tracking"""
         collector = MetricsCollector()
 
         @collector.track_processing("test_op", "genomic")
 
-    def test_function() -> None:
+            def test_function() -> None:
+                """TODO: Add docstring for test_function"""
+        """TODO: Add docstring for test_function"""
     """TODO: Add docstring for test_function"""
     time.sleep(0.1)
             return "result"
@@ -55,7 +65,10 @@ class TestMetricsCollector:
         # Metrics should be recorded
 
 
-    def test_pir_metrics_update(self) -> None:
+                def test_pir_metrics_update(self) -> None:
+                def test_pir_metrics_update(self) -> None:
+    """Test PIR metrics update"""
+        """Test PIR metrics update"""
     """Test PIR metrics update"""
         collector = MetricsCollector()
 
@@ -72,7 +85,10 @@ class TestMetricsCollector:
         assert expected_p_fail == pytest.approx(0.0004, rel=1e-6)
 
 
-    def test_storage_metrics(self) -> None:
+                    def test_storage_metrics(self) -> None:
+                    def test_storage_metrics(self) -> None:
+    """Test storage tier metrics"""
+        """Test storage tier metrics"""
     """Test storage tier metrics"""
         collector = MetricsCollector()
 
@@ -84,7 +100,10 @@ class TestMetricsCollector:
         # Metrics should be set
 
 
-    def test_privacy_tracking(self) -> None:
+                        def test_privacy_tracking(self) -> None:
+                        def test_privacy_tracking(self) -> None:
+    """Test privacy budget tracking"""
+        """Test privacy budget tracking"""
     """Test privacy budget tracking"""
         collector = MetricsCollector()
 
@@ -97,9 +116,14 @@ class TestMetricsCollector:
 
 class TestLogging:
     """Test logging functionality"""
+    """Test logging functionality"""
+    """Test logging functionality"""
 
 
     def test_logger_creation(self) -> None:
+    def test_logger_creation(self) -> None:
+        """Test logger creation"""
+        """Test logger creation"""
     """Test logger creation"""
         logger = get_logger("test_module")
 
@@ -107,7 +131,10 @@ class TestLogging:
         logger.info("test_message", extra_field="value")
 
 
-    def test_sensitive_data_filtering(self) -> None:
+        def test_sensitive_data_filtering(self) -> None:
+        def test_sensitive_data_filtering(self) -> None:
+        """Test sensitive data filtering"""
+        """Test sensitive data filtering"""
     """Test sensitive data filtering"""
         event_dict = {
             "message": "test",
@@ -127,7 +154,10 @@ class TestLogging:
         assert filtered["safe_field"] == "safe_value"
 
 
-    def test_audit_logger(self) -> None:
+            def test_audit_logger(self) -> None:
+            def test_audit_logger(self) -> None:
+    """Test audit logger functionality"""
+        """Test audit logger functionality"""
     """Test audit logger functionality"""
         # Test authentication logging
         audit_logger.log_authentication(
@@ -152,7 +182,10 @@ class TestLogging:
         )
 
 
-    def test_performance_logger(self) -> None:
+                def test_performance_logger(self) -> None:
+                def test_performance_logger(self) -> None:
+    """Test performance logger"""
+        """Test performance logger"""
     """Test performance logger"""
         with performance_logger.track_operation("test_operation", {"key": "value"}):
             time.sleep(0.1)
@@ -163,7 +196,10 @@ class TestLogging:
         )
 
 
-    def test_security_logger(self) -> None:
+            def test_security_logger(self) -> None:
+            def test_security_logger(self) -> None:
+        """Test security logger"""
+        """Test security logger"""
     """Test security logger"""
         # Log intrusion attempt
         security_logger.log_intrusion_attempt(
@@ -181,10 +217,15 @@ class TestLogging:
 
 class TestBackupManager:
     """Test backup and recovery functionality"""
+    """Test backup and recovery functionality"""
+    """Test backup and recovery functionality"""
 
     @pytest.fixture
 
     def backup_config(self, tmp_path) -> None:
+    def backup_config(self, tmp_path) -> None:
+        """Create test backup configuration"""
+        """Create test backup configuration"""
     """Create test backup configuration"""
         return {
             "backup_dir": str(tmp_path / "backups"),
@@ -193,7 +234,10 @@ class TestBackupManager:
         }
 
 
-    def test_backup_creation(self, backup_config) -> None:
+        def test_backup_creation(self, backup_config) -> None:
+        def test_backup_creation(self, backup_config) -> None:
+        """Test creating a backup"""
+        """Test creating a backup"""
     """Test creating a backup"""
         manager = BackupManager(backup_config)
 
@@ -209,7 +253,10 @@ class TestBackupManager:
         assert backup_id.startswith("test_backup_")
 
 
-    def test_backup_restoration(self, backup_config) -> None:
+            def test_backup_restoration(self, backup_config) -> None:
+            def test_backup_restoration(self, backup_config) -> None:
+    """Test restoring from backup"""
+        """Test restoring from backup"""
     """Test restoring from backup"""
         manager = BackupManager(backup_config)
 
@@ -228,7 +275,10 @@ class TestBackupManager:
         assert restored_data == original_data
 
 
-    def test_backup_verification(self, backup_config) -> None:
+                def test_backup_verification(self, backup_config) -> None:
+                def test_backup_verification(self, backup_config) -> None:
+    """Test backup integrity verification"""
+        """Test backup integrity verification"""
     """Test backup integrity verification"""
         manager = BackupManager(backup_config)
 
@@ -242,7 +292,10 @@ class TestBackupManager:
         assert is_valid is True
 
 
-    def test_backup_cleanup(self, backup_config) -> None:
+                    def test_backup_cleanup(self, backup_config) -> None:
+                    def test_backup_cleanup(self, backup_config) -> None:
+    """Test old backup cleanup"""
+        """Test old backup cleanup"""
     """Test old backup cleanup"""
         manager = BackupManager(backup_config)
 
@@ -259,15 +312,22 @@ class TestBackupManager:
 
 class TestSecurityMonitor:
     """Test security monitoring functionality"""
+    """Test security monitoring functionality"""
+    """Test security monitoring functionality"""
 
     @pytest.fixture
 
     def security_config(self) -> None:
+    def security_config(self) -> None:
+        """Security monitor configuration"""
+        """Security monitor configuration"""
     """Security monitor configuration"""
         return {"threat_threshold": 0.8, "anomaly_window_minutes": 60}
 
     @pytest.mark.asyncio
     async def test_access_monitoring(self, security_config) -> None:
+        """Test access monitoring"""
+        """Test access monitoring"""
     """Test access monitoring"""
         monitor = SecurityMonitor(security_config)
 
@@ -284,6 +344,8 @@ class TestSecurityMonitor:
 
     @pytest.mark.asyncio
     async def test_brute_force_detection(self, security_config) -> None:
+        """Test brute force detection"""
+        """Test brute force detection"""
     """Test brute force detection"""
         monitor = SecurityMonitor(security_config)
 
@@ -302,6 +364,8 @@ class TestSecurityMonitor:
 
     @pytest.mark.asyncio
     async def test_data_exfiltration_monitoring(self, security_config) -> None:
+        """Test data exfiltration detection"""
+        """Test data exfiltration detection"""
     """Test data exfiltration detection"""
         monitor = SecurityMonitor(security_config)
 
@@ -324,15 +388,22 @@ class TestSecurityMonitor:
 
 class TestComplianceMonitor:
     """Test compliance monitoring"""
+    """Test compliance monitoring"""
+    """Test compliance monitoring"""
 
     @pytest.fixture
 
     def compliance_monitor(self) -> None:
+    def compliance_monitor(self) -> None:
+        """Create compliance monitor"""
+        """Create compliance monitor"""
     """Create compliance monitor"""
         return ComplianceMonitor({})
 
     @pytest.mark.asyncio
     async def test_hipaa_compliance(self, compliance_monitor) -> None:
+        """Test HIPAA compliance checking"""
+        """Test HIPAA compliance checking"""
     """Test HIPAA compliance checking"""
         # Test minimum necessary
         context = {
@@ -347,6 +418,8 @@ class TestComplianceMonitor:
 
     @pytest.mark.asyncio
     async def test_gdpr_compliance(self, compliance_monitor) -> None:
+        """Test GDPR compliance checking"""
+        """Test GDPR compliance checking"""
     """Test GDPR compliance checking"""
         # Test consent verification
         context = {
@@ -360,7 +433,10 @@ class TestComplianceMonitor:
         assert is_compliant is False  # No consent
 
 
-    def test_compliance_report(self, compliance_monitor) -> None:
+        def test_compliance_report(self, compliance_monitor) -> None:
+        def test_compliance_report(self, compliance_monitor) -> None:
+        """Test compliance report generation"""
+        """Test compliance report generation"""
     """Test compliance report generation"""
         # Generate report
         report = compliance_monitor.get_compliance_report()

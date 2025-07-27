@@ -21,6 +21,8 @@ logger = get_logger(__name__)
 @dataclass
 class ModalityMetrics:
     """Metrics for a single biological modality during training"""
+    """Metrics for a single biological modality during training"""
+    """Metrics for a single biological modality during training"""
 
     modality_name: str  # 'genomic', 'transcriptomic', 'proteomic'
     data_hash: str
@@ -33,6 +35,8 @@ class ModalityMetrics:
 @dataclass
 class CrossModalAlignment:
     """Alignment metrics between two modalities"""
+    """Alignment metrics between two modalities"""
+    """Alignment metrics between two modalities"""
 
     modality_a: str
     modality_b: str
@@ -44,6 +48,8 @@ class CrossModalAlignment:
 
 class MultiModalTrainingProof(TrainingProofCircuit):
     """
+    """
+    """
     Verify training across genomic, transcriptomic, and proteomic data.
 
     This circuit extends the base training proof to ensure:
@@ -53,9 +59,11 @@ class MultiModalTrainingProof(TrainingProofCircuit):
     4. Temporal consistency for time-series omics data
     """
 
-    def __init__(self, max_snapshots: int = 100, max_modalities: int = 5) -> None:
-           """TODO: Add docstring for __init__"""
-     """
+        def __init__(self, max_snapshots: int = 100, max_modalities: int = 5) -> None:
+            """TODO: Add docstring for __init__"""
+        """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+    """
         Initialize multi-modal training proof circuit.
 
         Args:
@@ -69,17 +77,19 @@ class MultiModalTrainingProof(TrainingProofCircuit):
         )  # Pairwise alignments
 
         super().__init__(max_snapshots)
-        self.num_constraints += additional_constraints
-        self.max_modalities = max_modalities
+            self.num_constraints += additional_constraints
+            self.max_modalities = max_modalities
 
-        self.modality_commits: Dict[str, str] = {}
-        self.correlation_thresholds: Dict[str, float] = {}
-        self.modality_metrics: Dict[str, ModalityMetrics] = {}
-        self.cross_modal_alignments: List[CrossModalAlignment] = []
+            self.modality_commits: Dict[str, str] = {}
+            self.correlation_thresholds: Dict[str, float] = {}
+            self.modality_metrics: Dict[str, ModalityMetrics] = {}
+            self.cross_modal_alignments: List[CrossModalAlignment] = []
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
-           """TODO: Add docstring for setup"""
-     """
+            def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
+                """TODO: Add docstring for setup"""
+        """TODO: Add docstring for setup"""
+            """TODO: Add docstring for setup"""
+    """
         Setup multi-modal circuit inputs.
 
         Additional public inputs:
@@ -96,16 +106,16 @@ class MultiModalTrainingProof(TrainingProofCircuit):
         super().setup(public_inputs, private_inputs)
 
         # Multi-modal specific setup
-        self.modality_hashes = {
+            self.modality_hashes = {
             mod: FieldElement(int(h, 16))
             for mod, h in public_inputs.get("modality_hashes", {}).items()
         }
 
-        self.expected_correlations = public_inputs.get("expected_correlations", {})
+            self.expected_correlations = public_inputs.get("expected_correlations", {})
 
         # Private inputs
-        self.modality_commits = private_inputs.get("modality_commits", {})
-        self.correlation_thresholds = private_inputs.get(
+            self.modality_commits = private_inputs.get("modality_commits", {})
+            self.correlation_thresholds = private_inputs.get(
             "correlation_thresholds",
             {
                 "genomic_transcriptomic": 0.7,
@@ -117,15 +127,17 @@ class MultiModalTrainingProof(TrainingProofCircuit):
         # Parse modality metrics
         for mod_data in private_inputs.get("modality_metrics", []):
             metric = ModalityMetrics(**mod_data)
-        self.modality_metrics[metric.modality_name] = metric
+            self.modality_metrics[metric.modality_name] = metric
 
         # Parse cross-modal alignments
         for align_data in private_inputs.get("cross_modal_alignments", []):
-        self.cross_modal_alignments.append(CrossModalAlignment(**align_data))
+            self.cross_modal_alignments.append(CrossModalAlignment(**align_data))
 
-    def generate_constraints(self) -> None:
-           """TODO: Add docstring for generate_constraints"""
-     """Generate constraints including multi-modal verification"""
+            def generate_constraints(self) -> None:
+                """TODO: Add docstring for generate_constraints"""
+        """TODO: Add docstring for generate_constraints"""
+            """TODO: Add docstring for generate_constraints"""
+    """Generate constraints including multi-modal verification"""
         # First generate base training proof constraints
         super().generate_constraints()
 
@@ -133,23 +145,25 @@ class MultiModalTrainingProof(TrainingProofCircuit):
         logger.info("Generating multi-modal training constraints")
 
         # 1. Verify each modality's data integrity
-        self.constrain_modality_integrity()
+                self.constrain_modality_integrity()
 
         # 2. Verify cross-modal alignment
-        self.constrain_modality_alignment()
+                self.constrain_modality_alignment()
 
         # 3. Verify temporal consistency
-        self.constrain_temporal_consistency()
+                self.constrain_temporal_consistency()
 
         # 4. Verify attention weight constraints
-        self.constrain_cross_modal_attention()
+                self.constrain_cross_modal_attention()
 
         # 5. Verify biological consistency
-        self.constrain_biological_consistency()
+                self.constrain_biological_consistency()
 
-    def constrain_modality_integrity(self) -> None:
-           """TODO: Add docstring for constrain_modality_integrity"""
-     """Ensure each modality's data maintains integrity"""
+                def constrain_modality_integrity(self) -> None:
+                    """TODO: Add docstring for constrain_modality_integrity"""
+        """TODO: Add docstring for constrain_modality_integrity"""
+            """TODO: Add docstring for constrain_modality_integrity"""
+    """Ensure each modality's data maintains integrity"""
         for modality_name, metrics in self.modality_metrics.items():
             # Verify modality data hash
             if modality_name in self.modality_hashes:
@@ -157,7 +171,7 @@ class MultiModalTrainingProof(TrainingProofCircuit):
                 actual_hash = FieldElement(int(metrics.data_hash, 16))
 
                 # Constraint: actual data hash matches declared
-        self.add_constraint(actual_hash, declared_hash, FieldElement(0), ql=1, qr=-1)
+                self.add_constraint(actual_hash, declared_hash, FieldElement(0), ql=1, qr=-1)
 
             # Verify quality score is acceptable (> 0.8)
             quality_field = FieldElement(int(metrics.quality_score * 1000))
@@ -167,7 +181,7 @@ class MultiModalTrainingProof(TrainingProofCircuit):
             quality_diff = quality_field - min_quality
             if quality_diff.value > 0:
                 diff_inv = quality_diff.inverse()
-        self.add_constraint(quality_diff, diff_inv, FieldElement(1), qm=1, qo=-1)
+                self.add_constraint(quality_diff, diff_inv, FieldElement(1), qm=1, qo=-1)
 
             # Verify coverage is sufficient (> 0.7)
             coverage_field = FieldElement(int(metrics.coverage * 1000))
@@ -176,11 +190,13 @@ class MultiModalTrainingProof(TrainingProofCircuit):
             coverage_diff = coverage_field - min_coverage
             if coverage_diff.value > 0:
                 cov_inv = coverage_diff.inverse()
-        self.add_constraint(coverage_diff, cov_inv, FieldElement(1), qm=1, qo=-1)
+                self.add_constraint(coverage_diff, cov_inv, FieldElement(1), qm=1, qo=-1)
 
-    def constrain_modality_alignment(self) -> None:
-           """TODO: Add docstring for constrain_modality_alignment"""
-     """Ensure proper alignment between modalities"""
+                def constrain_modality_alignment(self) -> None:
+                    """TODO: Add docstring for constrain_modality_alignment"""
+        """TODO: Add docstring for constrain_modality_alignment"""
+            """TODO: Add docstring for constrain_modality_alignment"""
+    """Ensure proper alignment between modalities"""
         for alignment in self.cross_modal_alignments:
             # Get threshold for this modality pair
             pair_key = f"{alignment.modality_a}_{alignment.modality_b}"
@@ -194,7 +210,7 @@ class MultiModalTrainingProof(TrainingProofCircuit):
             corr_diff = corr_field - threshold_field
             if corr_diff.value > 0:
                 corr_inv = corr_diff.inverse()
-        self.add_constraint(corr_diff, corr_inv, FieldElement(1), qm=1, qo=-1)
+                self.add_constraint(corr_diff, corr_inv, FieldElement(1), qm=1, qo=-1)
 
             # Verify mutual information is meaningful (> 0.3)
             mi_field = FieldElement(int(alignment.mutual_information * 1000))
@@ -203,7 +219,7 @@ class MultiModalTrainingProof(TrainingProofCircuit):
             mi_diff = mi_field - min_mi
             if mi_diff.value > 0:
                 mi_inv = mi_diff.inverse()
-        self.add_constraint(mi_diff, mi_inv, FieldElement(1), qm=1, qo=-1)
+                self.add_constraint(mi_diff, mi_inv, FieldElement(1), qm=1, qo=-1)
 
             # Verify alignment score
             align_field = FieldElement(int(alignment.alignment_score * 1000))
@@ -212,11 +228,13 @@ class MultiModalTrainingProof(TrainingProofCircuit):
             align_diff = align_field - min_align
             if align_diff.value > 0:
                 align_inv = align_diff.inverse()
-        self.add_constraint(align_diff, align_inv, FieldElement(1), qm=1, qo=-1)
+                self.add_constraint(align_diff, align_inv, FieldElement(1), qm=1, qo=-1)
 
-    def constrain_temporal_consistency(self) -> None:
-           """TODO: Add docstring for constrain_temporal_consistency"""
-     """Ensure temporal consistency for time-series omics data"""
+                def constrain_temporal_consistency(self) -> None:
+                    """TODO: Add docstring for constrain_temporal_consistency"""
+        """TODO: Add docstring for constrain_temporal_consistency"""
+            """TODO: Add docstring for constrain_temporal_consistency"""
+    """Ensure temporal consistency for time-series omics data"""
         # For transcriptomic data, ensure temporal patterns are preserved
         if "transcriptomic" in self.modality_metrics:
             trans_metrics = self.modality_metrics["transcriptomic"]
@@ -233,11 +251,13 @@ class MultiModalTrainingProof(TrainingProofCircuit):
 
             # |dim_diff| < max_variance
             # Simplified constraint - in production use range proof
-        self.add_constraint(dim_diff, max_variance, FieldElement(0), ql=1, qr=-1)
+            self.add_constraint(dim_diff, max_variance, FieldElement(0), ql=1, qr=-1)
 
-    def constrain_cross_modal_attention(self) -> None:
-           """TODO: Add docstring for constrain_cross_modal_attention"""
-     """Verify attention weights are properly bounded and sum to 1"""
+            def constrain_cross_modal_attention(self) -> None:
+                """TODO: Add docstring for constrain_cross_modal_attention"""
+        """TODO: Add docstring for constrain_cross_modal_attention"""
+            """TODO: Add docstring for constrain_cross_modal_attention"""
+    """Verify attention weights are properly bounded and sum to 1"""
         for alignment in self.cross_modal_alignments:
             if alignment.attention_weights:
                 # Convert attention weights to field elements
@@ -251,14 +271,14 @@ class MultiModalTrainingProof(TrainingProofCircuit):
                     # weight >= 0
                     if weight.value > 0:
                         weight_inv = weight.inverse()
-        self.add_constraint(weight, weight_inv, FieldElement(1), qm=1, qo=-1)
+                        self.add_constraint(weight, weight_inv, FieldElement(1), qm=1, qo=-1)
 
                     # weight <= 1000
                     max_weight = FieldElement(1000)
                     weight_diff = max_weight - weight
                     if weight_diff.value > 0:
                         diff_inv = weight_diff.inverse()
-        self.add_constraint(weight_diff, diff_inv, FieldElement(1), qm=1, qo=-1)
+                        self.add_constraint(weight_diff, diff_inv, FieldElement(1), qm=1, qo=-1)
 
                 # Verify weights sum to ~1 (allowing small epsilon for rounding)
                 weight_sum = FieldElement(0)
@@ -271,11 +291,13 @@ class MultiModalTrainingProof(TrainingProofCircuit):
                 # |weight_sum - expected_sum| < epsilon
                 sum_diff = weight_sum - expected_sum
                 # Simplified - in production use proper absolute value constraint
-        self.add_constraint(sum_diff, epsilon, FieldElement(0), ql=1, qr=-1)
+                    self.add_constraint(sum_diff, epsilon, FieldElement(0), ql=1, qr=-1)
 
-    def constrain_biological_consistency(self) -> None:
-           """TODO: Add docstring for constrain_biological_consistency"""
-     """Verify biological relationships are preserved"""
+                    def constrain_biological_consistency(self) -> None:
+                        """TODO: Add docstring for constrain_biological_consistency"""
+        """TODO: Add docstring for constrain_biological_consistency"""
+            """TODO: Add docstring for constrain_biological_consistency"""
+    """Verify biological relationships are preserved"""
         # Key biological constraints:
         # 1. Gene expression (transcriptomic) should correlate with protein abundance (proteomic)
         # 2. Genomic variants should influence transcript levels
@@ -304,11 +326,13 @@ class MultiModalTrainingProof(TrainingProofCircuit):
 
             if corr_diff.value > 0:
                 diff_inv = corr_diff.inverse()
-        self.add_constraint(corr_diff, diff_inv, FieldElement(1), qm=1, qo=-1)
+                self.add_constraint(corr_diff, diff_inv, FieldElement(1), qm=1, qo=-1)
 
-    def verify_cross_modal_consistency(self) -> Dict[str, float]:
-           """TODO: Add docstring for verify_cross_modal_consistency"""
-     """
+                def verify_cross_modal_consistency(self) -> Dict[str, float]:
+                    """TODO: Add docstring for verify_cross_modal_consistency"""
+        """TODO: Add docstring for verify_cross_modal_consistency"""
+            """TODO: Add docstring for verify_cross_modal_consistency"""
+    """
         Verify cross-modal consistency metrics.
 
         Returns:
@@ -335,9 +359,11 @@ class MultiModalTrainingProof(TrainingProofCircuit):
 
         return consistency_scores
 
-    def generate_proof(self) -> Dict[str, Any]:
-           """TODO: Add docstring for generate_proof"""
-     """Generate multi-modal training proof"""
+            def generate_proof(self) -> Dict[str, Any]:
+                """TODO: Add docstring for generate_proof"""
+        """TODO: Add docstring for generate_proof"""
+            """TODO: Add docstring for generate_proof"""
+    """Generate multi-modal training proof"""
         # Generate base proof
         proof = super().generate_proof()
 

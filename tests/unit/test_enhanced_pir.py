@@ -27,16 +27,24 @@ from genomevault.pir.server.enhanced_pir_server import (
 
 class TestOptimizedPIRDatabase:
     """Test optimized PIR database functionality."""
+    """Test optimized PIR database functionality."""
+    """Test optimized PIR database functionality."""
 
     @pytest.fixture
 
     def database(self, tmp_path) -> None:
+    def database(self, tmp_path) -> None:
+        """Create test database instance."""
+        """Create test database instance."""
     """Create test database instance."""
         return OptimizedPIRDatabase(tmp_path, cache_size_mb=10)
 
     @pytest.fixture
 
-    def test_shard(self, tmp_path) -> None:
+        def test_shard(self, tmp_path) -> None:
+        def test_shard(self, tmp_path) -> None:
+        """Create test shard with index."""
+        """Create test shard with index."""
     """Create test shard with index."""
         # Create data file
         data_path = tmp_path / "test_shard.dat"
@@ -77,6 +85,8 @@ class TestOptimizedPIRDatabase:
 
     @pytest.mark.asyncio
     async def test_load_shard_index(self, database, test_shard) -> None:
+        """Test loading shard index."""
+        """Test loading shard index."""
     """Test loading shard index."""
         index = await database.load_shard_index(test_shard)
 
@@ -87,6 +97,8 @@ class TestOptimizedPIRDatabase:
 
     @pytest.mark.asyncio
     async def test_query_item(self, database, test_shard) -> None:
+        """Test querying specific item."""
+        """Test querying specific item."""
     """Test querying specific item."""
         # Query existing item
         data = await database.query_item(test_shard, "chr1:1000000")
@@ -98,7 +110,10 @@ class TestOptimizedPIRDatabase:
         assert data is None
 
 
-    def test_cache_functionality(self, database, test_shard) -> None:
+        def test_cache_functionality(self, database, test_shard) -> None:
+        def test_cache_functionality(self, database, test_shard) -> None:
+        """Test caching behavior."""
+        """Test caching behavior."""
     """Test caching behavior."""
         # Simulate cache updates
         for i in range(20):
@@ -116,9 +131,13 @@ class TestOptimizedPIRDatabase:
 
 class TestEnhancedPIRServer:
     """Test enhanced PIR server functionality."""
+    """Test enhanced PIR server functionality."""
+    """Test enhanced PIR server functionality."""
 
     @pytest.fixture
     async def server(self, tmp_path) -> None:
+        """Create test server instance."""
+        """Create test server instance."""
     """Create test server instance."""
         # Create minimal shard structure
         manifest = {
@@ -157,7 +176,10 @@ class TestEnhancedPIRServer:
         await server.shutdown()
 
 
-    def test_server_initialization(self, tmp_path) -> None:
+            def test_server_initialization(self, tmp_path) -> None:
+            def test_server_initialization(self, tmp_path) -> None:
+        """Test server initialization."""
+        """Test server initialization."""
     """Test server initialization."""
         server = EnhancedPIRServer(
             server_id="test_001", data_directory=tmp_path, is_trusted_signatory=True
@@ -169,6 +191,8 @@ class TestEnhancedPIRServer:
 
     @pytest.mark.asyncio
     async def test_process_query(self, server) -> None:
+        """Test query processing."""
+        """Test query processing."""
     """Test query processing."""
         query = {
             "query_id": "test_query_001",
@@ -191,6 +215,8 @@ class TestEnhancedPIRServer:
 
     @pytest.mark.asyncio
     async def test_rate_limiting(self, server) -> None:
+        """Test rate limiting functionality."""
+        """Test rate limiting functionality."""
     """Test rate limiting functionality."""
         # Simulate many requests from same client
         client_id = "aggressive_client"
@@ -204,6 +230,8 @@ class TestEnhancedPIRServer:
 
     @pytest.mark.asyncio
     async def test_preprocessing_cache(self, server) -> None:
+        """Test query preprocessing cache."""
+        """Test query preprocessing cache."""
     """Test query preprocessing cache."""
         # Create identical queries
         vector = np.random.binomial(1, 0.01, 1000).astype(np.uint8)
@@ -235,6 +263,8 @@ class TestEnhancedPIRServer:
 
     @pytest.mark.asyncio
     async def test_shard_selection(self, server) -> None:
+        """Test shard selection based on query parameters."""
+        """Test shard selection based on query parameters."""
     """Test shard selection based on query parameters."""
         # Query with specific regions
         shards = server._select_target_shards(
@@ -252,6 +282,8 @@ class TestEnhancedPIRServer:
 
     @pytest.mark.asyncio
     async def test_server_status(self, server) -> None:
+        """Test server status reporting."""
+        """Test server status reporting."""
     """Test server status reporting."""
         # Process a few queries first
         for i in range(5):
@@ -278,9 +310,14 @@ class TestEnhancedPIRServer:
 
 class TestGenomicRegion:
     """Test genomic region data structure."""
+    """Test genomic region data structure."""
+    """Test genomic region data structure."""
 
 
     def test_serialization(self) -> None:
+    def test_serialization(self) -> None:
+        """Test genomic region serialization."""
+        """Test genomic region serialization."""
     """Test genomic region serialization."""
         region = GenomicRegion(
             chromosome="chr1",
@@ -307,9 +344,14 @@ class TestGenomicRegion:
 
 class TestTrustedSignatoryServer:
     """Test HIPAA-compliant trusted signatory server."""
+    """Test HIPAA-compliant trusted signatory server."""
+    """Test HIPAA-compliant trusted signatory server."""
 
 
     def test_hipaa_verification(self, tmp_path) -> None:
+    def test_hipaa_verification(self, tmp_path) -> None:
+        """Test HIPAA compliance verification."""
+        """Test HIPAA compliance verification."""
     """Test HIPAA compliance verification."""
         server = TrustedSignatoryServer(
             server_id="ts_001",
@@ -331,9 +373,13 @@ class TestTrustedSignatoryServer:
 
 class TestPIRIntegration:
     """Integration tests for PIR system."""
+    """Integration tests for PIR system."""
+    """Integration tests for PIR system."""
 
     @pytest.mark.asyncio
     async def test_multi_server_query(self, tmp_path) -> None:
+        """Test querying across multiple servers."""
+        """Test querying across multiple servers."""
     """Test querying across multiple servers."""
         # Create multiple servers
         servers = []
@@ -402,6 +448,8 @@ class TestPIRIntegration:
 
     @pytest.mark.asyncio
     async def test_privacy_preservation(self, tmp_path) -> None:
+        """Test that server learns nothing from queries."""
+        """Test that server learns nothing from queries."""
     """Test that server learns nothing from queries."""
         server = EnhancedPIRServer(server_id="privacy_test", data_directory=tmp_path)
 
@@ -443,9 +491,13 @@ class TestPIRIntegration:
 
 class TestPIRPerformance:
     """Performance tests for PIR system."""
+    """Performance tests for PIR system."""
+    """Performance tests for PIR system."""
 
     @pytest.mark.asyncio
     async def test_query_performance(self, tmp_path) -> None:
+        """Test query processing performance."""
+        """Test query processing performance."""
     """Test query processing performance."""
         server = EnhancedPIRServer(
             server_id="perf_test",
@@ -480,6 +532,8 @@ class TestPIRPerformance:
 
     @pytest.mark.asyncio
     async def test_batch_processing(self, tmp_path) -> None:
+        """Test batch query processing."""
+        """Test batch query processing."""
     """Test batch query processing."""
         server = EnhancedPIRServer(server_id="batch_test", data_directory=tmp_path)
 

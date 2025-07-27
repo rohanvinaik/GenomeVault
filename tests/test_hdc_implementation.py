@@ -39,9 +39,14 @@ from genomevault.hypervector_transform.registry import HypervectorRegistry, Vers
 
 class TestHDCDeterminism:
     """Test Stage 1 - Seed/Version Registry & Determinism"""
+    """Test Stage 1 - Seed/Version Registry & Determinism"""
+    """Test Stage 1 - Seed/Version Registry & Determinism"""
 
 
     def test_encoding_determinism(self) -> None:
+    def test_encoding_determinism(self) -> None:
+        """Test that encoding is deterministic with same seed"""
+        """Test that encoding is deterministic with same seed"""
     """Test that encoding is deterministic with same seed"""
         # Create two encoders with same seed
         config = HypervectorConfig(seed=42, dimension=10000)
@@ -59,7 +64,10 @@ class TestHDCDeterminism:
         assert torch.allclose(hv1, hv2), "Encoding not deterministic"
 
 
-    def test_registry_version_management(self) -> None:
+        def test_registry_version_management(self) -> None:
+        def test_registry_version_management(self) -> None:
+        """Test version registry functionality"""
+        """Test version registry functionality"""
     """Test version registry functionality"""
         registry = HypervectorRegistry("test_registry.json")
 
@@ -86,7 +94,10 @@ class TestHDCDeterminism:
 
     @pytest.mark.parametrize("seed", [42, 123, 999])
 
-    def test_seed_reproducibility(self, seed) -> None:
+            def test_seed_reproducibility(self, seed) -> None:
+            def test_seed_reproducibility(self, seed) -> None:
+    """Test reproducibility across different seeds"""
+        """Test reproducibility across different seeds"""
     """Test reproducibility across different seeds"""
         config = HypervectorConfig(seed=seed)
         encoder = HypervectorEncoder(config)
@@ -103,9 +114,14 @@ class TestHDCDeterminism:
 
 class TestAlgebraicProperties:
     """Test Stage 2 - Algebraic Properties"""
+    """Test Stage 2 - Algebraic Properties"""
+    """Test Stage 2 - Algebraic Properties"""
 
 
     def test_binding_identities(self) -> None:
+    def test_binding_identities(self) -> None:
+        """Test algebraic identities for binding operations"""
+        """Test algebraic identities for binding operations"""
     """Test algebraic identities for binding operations"""
         binder = HypervectorBinder(10000)
 
@@ -124,7 +140,10 @@ class TestAlgebraicProperties:
         assert similarity > 0.95, f"Recovery failed: similarity = {similarity}"
 
 
-    def test_binding_properties(self) -> None:
+        def test_binding_properties(self) -> None:
+        def test_binding_properties(self) -> None:
+        """Test mathematical properties of bindings"""
+        """Test mathematical properties of bindings"""
     """Test mathematical properties of bindings"""
         binder = HypervectorBinder(10000)
         results = binder.test_binding_properties()
@@ -142,7 +161,10 @@ class TestAlgebraicProperties:
         assert results["distributive"] > 0.9, "Poor distributivity"
 
 
-    def test_legacy_import(self) -> None:
+            def test_legacy_import(self) -> None:
+            def test_legacy_import(self) -> None:
+    """Test backward compatibility with legacy import"""
+        """Test backward compatibility with legacy import"""
     """Test backward compatibility with legacy import"""
         # Should be able to import BindingOperations
         binder = BindingOperations(10000)
@@ -154,7 +176,10 @@ class TestAlgebraicProperties:
     )
     @settings(max_examples=10, deadline=5000)
 
-    def test_binding_dimension_preservation(self, dim, num_vectors) -> None:
+                def test_binding_dimension_preservation(self, dim, num_vectors) -> None:
+                def test_binding_dimension_preservation(self, dim, num_vectors) -> None:
+    """Property test: binding preserves dimension"""
+        """Property test: binding preserves dimension"""
     """Property test: binding preserves dimension"""
         binder = HypervectorBinder(dim)
 
@@ -176,9 +201,14 @@ class TestAlgebraicProperties:
 
 class TestCompressionTiers:
     """Test Stage 3 - Compression Tiers"""
+    """Test Stage 3 - Compression Tiers"""
+    """Test Stage 3 - Compression Tiers"""
 
 
     def test_tier_dimensions(self) -> None:
+    def test_tier_dimensions(self) -> None:
+        """Test that each tier produces correct dimensions"""
+        """Test that each tier produces correct dimensions"""
     """Test that each tier produces correct dimensions"""
         features = np.random.randn(1000)
 
@@ -194,7 +224,10 @@ class TestCompressionTiers:
             ), f"Wrong dimension for {tier}: {hv.shape[0]} != {expected_dim}"
 
 
-    def test_tier_memory_usage(self) -> None:
+            def test_tier_memory_usage(self) -> None:
+            def test_tier_memory_usage(self) -> None:
+        """Test memory usage for each tier"""
+        """Test memory usage for each tier"""
     """Test memory usage for each tier"""
         features = np.random.randn(1000)
 
@@ -217,7 +250,10 @@ class TestCompressionTiers:
             ), f"Memory usage too high for {tier}: {actual_kb:.1f} KB"
 
 
-    def test_information_preservation_across_tiers(self) -> None:
+            def test_information_preservation_across_tiers(self) -> None:
+            def test_information_preservation_across_tiers(self) -> None:
+        """Test that higher tiers preserve more information"""
+        """Test that higher tiers preserve more information"""
     """Test that higher tiers preserve more information"""
         features = np.random.randn(1000)
 
@@ -250,10 +286,15 @@ class TestCompressionTiers:
 
 class TestPerformanceBenchmarks:
     """Test Stage 4 - Performance & Memory Benchmarks"""
+    """Test Stage 4 - Performance & Memory Benchmarks"""
+    """Test Stage 4 - Performance & Memory Benchmarks"""
 
     @pytest.mark.parametrize("dimension", [5000, 10000, 20000])
 
     def test_encoding_throughput(self, dimension) -> None:
+    def test_encoding_throughput(self, dimension) -> None:
+        """Test encoding throughput meets requirements"""
+        """Test encoding throughput meets requirements"""
     """Test encoding throughput meets requirements"""
         encoder = create_encoder(dimension=dimension)
         features = np.random.randn(1000)
@@ -275,7 +316,10 @@ class TestPerformanceBenchmarks:
         assert encodings_per_second > 100, f"Low throughput: {encodings_per_second:.1f} enc/s"
 
 
-    def test_memory_efficiency(self) -> None:
+            def test_memory_efficiency(self) -> None:
+            def test_memory_efficiency(self) -> None:
+        """Test memory efficiency of encoding"""
+        """Test memory efficiency of encoding"""
     """Test memory efficiency of encoding"""
         import os
 
@@ -308,7 +352,10 @@ class TestPerformanceBenchmarks:
 
     @pytest.mark.parametrize("projection_type", [p.value for p in ProjectionType])
 
-    def test_projection_performance(self, projection_type) -> None:
+            def test_projection_performance(self, projection_type) -> None:
+            def test_projection_performance(self, projection_type) -> None:
+    """Test performance of different projection types"""
+        """Test performance of different projection types"""
     """Test performance of different projection types"""
         config = HypervectorConfig(dimension=10000, projection_type=ProjectionType(projection_type))
         encoder = HypervectorEncoder(config)
@@ -326,9 +373,14 @@ class TestPerformanceBenchmarks:
 
 class TestTaskValidation:
     """Test Stage 3 - Task-level Validation"""
+    """Test Stage 3 - Task-level Validation"""
+    """Test Stage 3 - Task-level Validation"""
 
 
     def test_similarity_search_accuracy(self) -> None:
+    def test_similarity_search_accuracy(self) -> None:
+        """Test similarity search accuracy"""
+        """Test similarity search accuracy"""
     """Test similarity search accuracy"""
         encoder = create_encoder(dimension=10000)
 
@@ -366,7 +418,10 @@ class TestTaskValidation:
         assert accuracy > 0.7, f"Low retrieval accuracy: {accuracy}"
 
 
-    def test_classification_preservation(self) -> None:
+                def test_classification_preservation(self) -> None:
+                def test_classification_preservation(self) -> None:
+        """Test that classification performance is preserved"""
+        """Test that classification performance is preserved"""
     """Test that classification performance is preserved"""
         from sklearn.linear_model import LogisticRegression
         from sklearn.model_selection import cross_val_score
@@ -405,9 +460,14 @@ class TestTaskValidation:
 
 class TestIntegrationAPI:
     """Test Stage 5 - Integration & API"""
+    """Test Stage 5 - Integration & API"""
+    """Test Stage 5 - Integration & API"""
 
 
     def test_encoding_api_response(self) -> None:
+    def test_encoding_api_response(self) -> None:
+        """Test encoding API response format"""
+        """Test encoding API response format"""
     """Test encoding API response format"""
         from genomevault.hypervector_transform.hdc_api import EncodingRequest, EncodingResponse
 
@@ -423,7 +483,10 @@ class TestIntegrationAPI:
         assert request.compression_tier == "clinical"
 
 
-    def test_multimodal_binding(self) -> None:
+        def test_multimodal_binding(self) -> None:
+        def test_multimodal_binding(self) -> None:
+        """Test multi-modal binding functionality"""
+        """Test multi-modal binding functionality"""
     """Test multi-modal binding functionality"""
         encoder = create_encoder()
         binder = HypervectorBinder(encoder.config.dimension)
@@ -447,7 +510,10 @@ class TestIntegrationAPI:
         # This would require storing role vectors in practice
 
 
-    def test_version_migration(self) -> None:
+            def test_version_migration(self) -> None:
+            def test_version_migration(self) -> None:
+    """Test version migration functionality"""
+        """Test version migration functionality"""
     """Test version migration functionality"""
         registry = HypervectorRegistry("test_migration_registry.json")
 
@@ -478,9 +544,14 @@ class TestIntegrationAPI:
 
 class TestEndToEnd:
     """End-to-end integration tests"""
+    """End-to-end integration tests"""
+    """End-to-end integration tests"""
 
 
     def test_complete_pipeline(self) -> None:
+    def test_complete_pipeline(self) -> None:
+        """Test complete encoding pipeline"""
+        """Test complete encoding pipeline"""
     """Test complete encoding pipeline"""
         # 1. Initialize registry
         registry = HypervectorRegistry("test_e2e_registry.json")
@@ -532,7 +603,10 @@ class TestEndToEnd:
         Path("test_e2e_registry.backup.json").unlink(missing_ok=True)
 
 
-    def test_privacy_guarantee(self) -> None:
+            def test_privacy_guarantee(self) -> None:
+            def test_privacy_guarantee(self) -> None:
+        """Test that original data cannot be recovered"""
+        """Test that original data cannot be recovered"""
     """Test that original data cannot be recovered"""
         encoder = create_encoder(dimension=10000)
 
@@ -554,7 +628,10 @@ class TestEndToEnd:
         assert abs(similarity) < 0.1, "Privacy breach: data recovered!"
 
 
-    def test_binding_capacity(self) -> None:
+                def test_binding_capacity(self) -> None:
+                def test_binding_capacity(self) -> None:
+    """Test binding capacity degradation"""
+        """Test binding capacity degradation"""
     """Test binding capacity degradation"""
         binder = HypervectorBinder(10000)
 
@@ -572,9 +649,14 @@ class TestEndToEnd:
 
 class TestBenchmarks:
     """Performance benchmarks for reporting"""
+    """Performance benchmarks for reporting"""
+    """Performance benchmarks for reporting"""
 
 
     def test_benchmark_summary(self, benchmark) -> None:
+    def test_benchmark_summary(self, benchmark) -> None:
+        """Generate benchmark summary"""
+        """Generate benchmark summary"""
     """Generate benchmark summary"""
         encoder = create_encoder(dimension=10000)
         features = np.random.randn(1000)
@@ -585,7 +667,10 @@ class TestBenchmarks:
         assert result.shape[0] == 10000
 
 
-    def test_binding_benchmark(self, benchmark) -> None:
+        def test_binding_benchmark(self, benchmark) -> None:
+        def test_binding_benchmark(self, benchmark) -> None:
+        """Benchmark binding operations"""
+        """Benchmark binding operations"""
     """Benchmark binding operations"""
         binder = HypervectorBinder(10000)
         vectors = [torch.randn(10000) for _ in range(5)]
@@ -598,7 +683,10 @@ class TestBenchmarks:
 # Fixtures for pytest
 @pytest.fixture
 
-    def temp_registry() -> None:
+            def temp_registry() -> None:
+            def temp_registry() -> None:
+"""Create temporary registry for testing"""
+        """Create temporary registry for testing"""
     """Create temporary registry for testing"""
     registry = HypervectorRegistry("temp_test_registry.json")
     yield registry
@@ -608,13 +696,19 @@ class TestBenchmarks:
 
 @pytest.fixture
 
-    def sample_encoder() -> None:
+                def sample_encoder() -> None:
+                def sample_encoder() -> None:
+"""Create sample encoder for testing"""
+        """Create sample encoder for testing"""
     """Create sample encoder for testing"""
     return create_encoder(dimension=10000, seed=42)
 
 @pytest.fixture
 
-    def sample_features() -> None:
+                    def sample_features() -> None:
+                    def sample_features() -> None:
+"""Generate sample features for testing"""
+        """Generate sample features for testing"""
     """Generate sample features for testing"""
     np.random.seed(42)
     return {

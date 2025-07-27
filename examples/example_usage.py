@@ -25,8 +25,10 @@ from genomevault.zk_proofs.prover import Prover
 
 
 async def demonstrate_genomevault() -> None:
-       """TODO: Add docstring for demonstrate_genomevault"""
-     """Demonstrate complete GenomeVault workflow."""
+    """TODO: Add docstring for demonstrate_genomevault"""
+    """TODO: Add docstring for demonstrate_genomevault"""
+        """TODO: Add docstring for demonstrate_genomevault"""
+    """Demonstrate complete GenomeVault workflow."""
 
     print("=== GenomeVault 3.0 Demonstration ===\n")
 
@@ -199,8 +201,10 @@ async def demonstrate_genomevault() -> None:
 
 
 def demonstrate_privacy_calculations() -> None:
-       """TODO: Add docstring for demonstrate_privacy_calculations"""
-     """Demonstrate privacy guarantee calculations."""
+    """TODO: Add docstring for demonstrate_privacy_calculations"""
+    """TODO: Add docstring for demonstrate_privacy_calculations"""
+        """TODO: Add docstring for demonstrate_privacy_calculations"""
+    """Demonstrate privacy guarantee calculations."""
     print("\n=== Privacy Guarantee Calculations ===")
 
     # PIR privacy calculations
@@ -231,9 +235,11 @@ def demonstrate_privacy_calculations() -> None:
     print("  Generic: {k_min_generic} servers")
 
 
-def demonstrate_compression_tiers() -> None:
-       """TODO: Add docstring for demonstrate_compression_tiers"""
-     """Demonstrate compression tier calculations."""
+        def demonstrate_compression_tiers() -> None:
+            """TODO: Add docstring for demonstrate_compression_tiers"""
+    """TODO: Add docstring for demonstrate_compression_tiers"""
+        """TODO: Add docstring for demonstrate_compression_tiers"""
+    """Demonstrate compression tier calculations."""
     print("\n=== Compression Tier Analysis ===")
 
     modalities = ["genomics", "transcriptomics", "epigenetics", "proteomics"]
