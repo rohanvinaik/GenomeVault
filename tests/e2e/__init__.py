@@ -1,1 +1,1 @@
-"""Package initialization"""
+# End-to-end integration tests
