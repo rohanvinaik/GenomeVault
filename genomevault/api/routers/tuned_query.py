@@ -34,7 +34,7 @@ class TunedQueryRequest(BaseModel):
 
     cohort_id: str
     statistic: str
-    query_params: Dict[str, Any]
+    query_params: dict[str, Any]
     epsilon: float = Field(0.01, description="Allowed relative error", gt=0, le=1)
     delta_exp: int = Field(
         15, description="Target failure probability exponent (2^-delta_exp)", ge=5, le=30
@@ -42,7 +42,7 @@ class TunedQueryRequest(BaseModel):
     ecc_enabled: bool = Field(True, description="Enable error correcting codes")
     parity_g: int = Field(3, description="XOR(g) parity groups", ge=2, le=5)
     repeat_cap: str = Field("AUTO", description="Number of repeats or 'AUTO'")
-    session_id: Optional[str] = Field(None, description="WebSocket session ID for progress")
+    session_id: str | None = Field(None, description="WebSocket session ID for progress")
 
 
 class TunedQueryResponse(BaseModel):
@@ -52,8 +52,8 @@ class TunedQueryResponse(BaseModel):
     confidence_interval: str
     delta_achieved: str
     proof_uri: str
-    settings: Dict[str, Any]
-    performance_metrics: Dict[str, Any]
+    settings: dict[str, Any]
+    performance_metrics: dict[str, Any]
 
 
 class ProgressUpdate(BaseModel):
@@ -63,14 +63,14 @@ class ProgressUpdate(BaseModel):
     stage: str
     progress: float
     message: str
-    current_repeat: Optional[int] = None
-    total_repeats: Optional[int] = None
+    current_repeat: int | None = None
+    total_repeats: int | None = None
 
 
 # Global WebSocket manager for progress updates
 class WebSocketManager:
     def __init__(self):
-        self.active_connections: Dict[str, WebSocket] = {}
+        self.active_connections: dict[str, WebSocket] = {}
 
     async def connect(self, session_id: str, websocket: WebSocket):
         await websocket.accept()
@@ -86,7 +86,7 @@ class WebSocketManager:
         if session_id in self.active_connections:
             try:
                 await self.active_connections[session_id].send_json(update.dict())
-            except Exception as e:
+            except KeyError as e:
                 logger.error(f"Failed to send progress update: {e}")
                 self.disconnect(session_id)
 
@@ -260,7 +260,7 @@ async def query_with_tuning(
 
         return response
 
-    except Exception as e:
+    except (ValueError, DatabaseError, TypeError, KeyError) as e:
         logger.error(f"Tuned query failed: {e}")
         if request.session_id:
             await ws_manager.send_progress(
@@ -328,13 +328,13 @@ async def estimate_query_performance(
             },
         }
 
-    except Exception as e:
+    except (ValueError, TypeError) as e:
         logger.error(f"Estimation failed: {e}")
         raise HTTPException(500, f"Estimation failed: {str(e)}")
 
 
 # Helper functions
-def _build_genomic_query(params: Dict[str, Any]) -> GenomicQuery:
+def _build_genomic_query(params: dict[str, Any]) -> GenomicQuery:
     """Build genomic query from request parameters"""
     query_type = QueryType(params.get("type", "variant_lookup"))
 

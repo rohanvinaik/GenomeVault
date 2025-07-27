@@ -12,6 +12,10 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 
 from genomevault.utils.logging import get_logger
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 logger = get_logger(__name__)
 
@@ -23,10 +27,10 @@ class CatalyticProof:
     proof_id: str
     circuit_name: str
     proof_data: bytes
-    public_inputs: Dict[str, Any]
+    public_inputs: dict[str, Any]
     catalytic_fingerprint: str
     clean_space_used: int
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
 
     @property
     def space_efficiency(self) -> float:
@@ -92,7 +96,7 @@ class CatalyticSpace:
 
         return True
 
-    def get_usage_stats(self) -> Dict[str, Any]:
+    def get_usage_stats(self) -> dict[str, Any]:
         """Get usage statistics."""
         return {
             "size": self.size,
@@ -144,7 +148,7 @@ class CatalyticProofEngine:
         return bytearray(size)
 
     def generate_catalytic_proof(
-        self, circuit_name: str, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
+        self, circuit_name: str, public_inputs: dict[str, Any], private_inputs: dict[str, Any]
     ) -> CatalyticProof:
         """
         Generate proof using catalytic space.
@@ -207,8 +211,8 @@ class CatalyticProofEngine:
         return proof
 
     def _catalytic_variant_proof(
-        self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
-    ) -> Tuple[bytes, int]:
+        self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]
+    ) -> tuple[bytes, int]:
         """
         Generate variant presence proof using catalytic space.
 
@@ -265,8 +269,8 @@ class CatalyticProofEngine:
         return proof_data, clean_used
 
     def _catalytic_prs_proof(
-        self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
-    ) -> Tuple[bytes, int]:
+        self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]
+    ) -> tuple[bytes, int]:
         """
         Generate PRS proof using catalytic space.
 
@@ -322,8 +326,8 @@ class CatalyticProofEngine:
         return proof_data, clean_used
 
     def _catalytic_ancestry_proof(
-        self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
-    ) -> Tuple[bytes, int]:
+        self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]
+    ) -> tuple[bytes, int]:
         """
         Generate ancestry composition proof using catalytic space.
 
@@ -375,8 +379,8 @@ class CatalyticProofEngine:
         return proof_data, clean_used
 
     def _catalytic_pathway_proof(
-        self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
-    ) -> Tuple[bytes, int]:
+        self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]
+    ) -> tuple[bytes, int]:
         """
         Generate pathway enrichment proof using catalytic space.
 
@@ -459,7 +463,7 @@ class CatalyticProofEngine:
 
         return estimates.get(circuit_name, 10000)
 
-    def _generate_proof_id(self, circuit_name: str, public_inputs: Dict[str, Any]) -> str:
+    def _generate_proof_id(self, circuit_name: str, public_inputs: dict[str, Any]) -> str:
         """Generate unique proof ID."""
         data = {
             "circuit": circuit_name,
@@ -470,7 +474,7 @@ class CatalyticProofEngine:
 
         return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[:16]
 
-    def get_space_savings(self, circuit_name: str) -> Dict[str, Any]:
+    def get_space_savings(self, circuit_name: str) -> dict[str, Any]:
         """
         Calculate space savings compared to standard approach.
 
@@ -505,8 +509,8 @@ if __name__ == "__main__":
     )
 
     # Example 1: Variant presence with minimal clean space
-    print("Example 1: Catalytic Variant Presence Proof")
-    print("=" * 50)
+    logger.info("Example 1: Catalytic Variant Presence Proof")
+    logger.info("=" * 50)
 
     variant_proof = engine.generate_catalytic_proof(
         circuit_name="variant_presence",
@@ -522,19 +526,19 @@ if __name__ == "__main__":
         },
     )
 
-    print(f"Proof ID: {variant_proof.proof_id}")
-    print(f"Clean space used: {variant_proof.clean_space_used/1024:.1f} KB")
-    print(f"Space efficiency: {variant_proof.space_efficiency:.1f}x")
+    logger.info(f"Proof ID: {variant_proof.proof_id}")
+    logger.info(f"Clean space used: {variant_proof.clean_space_used/1024:.1f} KB")
+    logger.info(f"Space efficiency: {variant_proof.space_efficiency:.1f}x")
 
     savings = engine.get_space_savings("variant_presence")
-    print(f"\nSpace savings:")
-    print(f"  Standard approach: {savings['standard_approach_mb']:.1f} MB")
-    print(f"  Catalytic clean: {savings['catalytic_clean_mb']:.1f} MB")
-    print(f"  Reduction: {savings['clean_space_reduction']:.1f}%")
+    logger.info(f"\nSpace savings:")
+    logger.info(f"  Standard approach: {savings['standard_approach_mb']:.1f} MB")
+    logger.info(f"  Catalytic clean: {savings['catalytic_clean_mb']:.1f} MB")
+    logger.info(f"  Reduction: {savings['clean_space_reduction']:.1f}%")
 
     # Example 2: PRS calculation with weight storage
-    print("\n\nExample 2: Catalytic PRS Proof")
-    print("=" * 50)
+    logger.info("\n\nExample 2: Catalytic PRS Proof")
+    logger.info("=" * 50)
 
     num_variants = 10000
     prs_proof = engine.generate_catalytic_proof(
@@ -554,22 +558,22 @@ if __name__ == "__main__":
         },
     )
 
-    print(f"Proof ID: {prs_proof.proof_id}")
-    print(f"Clean space used: {prs_proof.clean_space_used/1024:.1f} KB")
-    print(f"Space efficiency: {prs_proof.space_efficiency:.1f}x")
-    print(f"Computation time: {prs_proof.metadata['computation_time']*1000:.1f} ms")
+    logger.info(f"Proof ID: {prs_proof.proof_id}")
+    logger.info(f"Clean space used: {prs_proof.clean_space_used/1024:.1f} KB")
+    logger.info(f"Space efficiency: {prs_proof.space_efficiency:.1f}x")
+    logger.info(f"Computation time: {prs_proof.metadata['computation_time']*1000:.1f} ms")
 
     savings = engine.get_space_savings("polygenic_risk_score")
-    print(f"\nSpace savings:")
-    print(f"  Standard approach: {savings['standard_approach_mb']:.1f} MB")
-    print(f"  Catalytic clean: {savings['catalytic_clean_mb']:.1f} MB")
-    print(f"  Reduction: {savings['clean_space_reduction']:.1f}%")
+    logger.info(f"\nSpace savings:")
+    logger.info(f"  Standard approach: {savings['standard_approach_mb']:.1f} MB")
+    logger.info(f"  Catalytic clean: {savings['catalytic_clean_mb']:.1f} MB")
+    logger.info(f"  Reduction: {savings['clean_space_reduction']:.1f}%")
 
     # Show catalytic space statistics
-    print(f"\nCatalytic space statistics:")
+    logger.info(f"\nCatalytic space statistics:")
     stats = engine.catalytic_space.get_usage_stats()
-    print(f"  Total size: {stats['size']/1024/1024:.1f} MB")
-    print(f"  Access count: {stats['access_count']}")
+    logger.info(f"  Total size: {stats['size']/1024/1024:.1f} MB")
+    logger.info(f"  Access count: {stats['access_count']}")
     print(
         f"  State preserved: {stats['fingerprint'] == engine.catalytic_space.initial_fingerprint}"
     )

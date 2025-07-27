@@ -34,7 +34,7 @@ class PIRSecurityConfig:
     timing_variance_target: float = 0.01  # < 1% timing variance
 
     @classmethod
-    def from_env(cls) -> "PIRSecurityConfig":
+    def from_env(cls) -> PIRSecurityConfig:
         """Load configuration from environment variables."""
         return cls(
             fixed_response_bytes=int(os.getenv("GV_PIR_FIXED_RESP_BYTES", "65536")),
@@ -53,8 +53,7 @@ class PIRSecurityConfig:
 class SupportsAnswer(Protocol):
     """Protocol for PIR backends."""
 
-    async def answer_query_async(self, payload: bytes) -> bytes:
-        ...
+    async def answer_query_async(self, payload: bytes) -> bytes: ...
 
 
 @dataclass
@@ -63,7 +62,7 @@ class QueryMetadata:
 
     query_id: str
     arrival_time: float
-    client_id: Optional[str] = None
+    client_id: str | None = None
     priority: int = 0
     decoy: bool = False
 
@@ -115,7 +114,7 @@ class TimingProtection:
     def __init__(self, config: PIRSecurityConfig):
         self.config = config
         self.timing_history: deque = deque(maxlen=1000)
-        self.baseline_timing: Optional[float] = None
+        self.baseline_timing: float | None = None
 
     async def add_calibrated_delay(self, actual_duration: float) -> None:
         """Add calibrated delay to achieve consistent timing."""
@@ -185,7 +184,7 @@ class QueryMixer:
             if len(self.query_pool) < self.window_size // 2:
                 await self._inject_decoy_queries()
 
-    async def get_mixed_query(self) -> Optional[Tuple[bytes, QueryMetadata]]:
+    async def get_mixed_query(self) -> tuple[bytes, QueryMetadata] | None:
         """Get a randomly selected query from pool."""
         async with self.lock:
             if not self.query_pool:
@@ -244,7 +243,7 @@ class PIRServerStats:
 class SecurePIRServer:
     """Enhanced PIR server with comprehensive timing protection."""
 
-    def __init__(self, backend: SupportsAnswer, config: Optional[PIRSecurityConfig] = None):
+    def __init__(self, backend: SupportsAnswer, config: PIRSecurityConfig | None = None):
         self.backend = backend
         self.config = config or PIRSecurityConfig.from_env()
 
@@ -254,7 +253,7 @@ class SecurePIRServer:
         self.constant_ops = ConstantTimeOperations()
 
         # Response cache for timing consistency
-        self.response_cache: Dict[str, Tuple[bytes, float]] = {}
+        self.response_cache: dict[str, tuple[bytes, float]] = {}
         self.cache_size_limit = 1000
 
         # Statistics
@@ -262,7 +261,7 @@ class SecurePIRServer:
 
         # Batch processing
         self.batch_queue: asyncio.Queue = asyncio.Queue()
-        self.batch_processor_task: Optional[asyncio.Task] = None
+        self.batch_processor_task: asyncio.Task | None = None
 
     async def start(self) -> None:
         """Start the PIR server background tasks."""
@@ -324,7 +323,7 @@ class SecurePIRServer:
 
         return response
 
-    def _check_cache_constant_time(self, query_id: str) -> Optional[bytes]:
+    def _check_cache_constant_time(self, query_id: str) -> bytes | None:
         """Check cache in constant time to prevent timing leaks."""
         # Always iterate through entire cache
         found_response = None
@@ -350,7 +349,7 @@ class SecurePIRServer:
         try:
             response = await self.backend.answer_query_async(payload)
             return response[: self.config.fixed_response_bytes]
-        except Exception as e:
+        except KeyError as e:
             # Return error response of same size
             error_msg = f"Error: {str(e)}"[:100]
             return error_msg.encode().ljust(self.config.fixed_response_bytes, b"\x00")
@@ -422,7 +421,7 @@ class SecurePIRServer:
                         timeout = max(0, deadline - time.time())
                         item = await asyncio.wait_for(self.batch_queue.get(), timeout=timeout)
                         batch.append(item)
-                    except asyncio.TimeoutError:
+                    except TimeoutError:
                         break
 
                 # Process batch if we have queries
@@ -436,7 +435,7 @@ class SecurePIRServer:
                 print(f"Batch processor error: {e}")
                 await asyncio.sleep(1)
 
-    async def _process_batch(self, batch: List[Tuple[bytes, asyncio.Future]]) -> None:
+    async def _process_batch(self, batch: list[tuple[bytes, asyncio.Future]]) -> None:
         """Process a batch of queries together."""
         # Shuffle to prevent order-based analysis
         random.shuffle(batch)
@@ -457,7 +456,7 @@ class SecurePIRServer:
             # Small random delay between responses
             await asyncio.sleep(random.uniform(0, 0.001))
 
-    def get_security_report(self) -> Dict[str, Any]:
+    def get_security_report(self) -> dict[str, Any]:
         """Generate comprehensive security report."""
         return {
             "timing_security": {
@@ -480,7 +479,7 @@ class SecurePIRServer:
             "recommendations": self._generate_security_recommendations(),
         }
 
-    def _generate_security_recommendations(self) -> List[str]:
+    def _generate_security_recommendations(self) -> list[str]:
         """Generate security recommendations based on current metrics."""
         recommendations = []
 

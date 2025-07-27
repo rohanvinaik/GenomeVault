@@ -12,6 +12,9 @@ import pytest
 from genomevault.hypervector.error_handling import ErrorBudget
 from genomevault.zk.circuits.median_verifier import MedianProof, MedianVerifierCircuit
 from genomevault.zk.proof import ProofGenerator, ProofResult
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class TestMedianVerifierCircuit:
@@ -240,9 +243,9 @@ class TestMedianVerifierCircuit:
             )
 
         # Print performance results
-        print("\nPerformance Results:")
-        print("N    | Gen Time | Verify Time | Proof Size")
-        print("-----|----------|-------------|------------")
+        logger.info("\nPerformance Results:")
+        logger.info("N    | Gen Time | Verify Time | Proof Size")
+        logger.info("-----|----------|-------------|------------")
         for r in results:
             print(
                 f"{r['n']:4} | {r['gen_time_ms']:7.1f}ms | {r['verify_time_ms']:10.1f}ms | {r['proof_size_bytes']:9} B"
@@ -259,35 +262,35 @@ if __name__ == "__main__":
     # Run basic tests
     test = TestMedianVerifierCircuit()
 
-    print("Testing odd number median proof...")
+    logger.info("Testing odd number median proof...")
     test.test_median_proof_generation_odd()
-    print("✓ Odd median proof test passed")
+    logger.info("✓ Odd median proof test passed")
 
-    print("\nTesting even number median proof...")
+    logger.info("\nTesting even number median proof...")
     test.test_median_proof_generation_even()
-    print("✓ Even median proof test passed")
+    logger.info("✓ Even median proof test passed")
 
-    print("\nTesting proof soundness...")
+    logger.info("\nTesting proof soundness...")
     test.test_proof_soundness()
-    print("✓ Soundness test passed")
+    logger.info("✓ Soundness test passed")
 
-    print("\nTesting zero-knowledge property...")
+    logger.info("\nTesting zero-knowledge property...")
     test.test_proof_zero_knowledge()
-    print("✓ Zero-knowledge test passed")
+    logger.info("✓ Zero-knowledge test passed")
 
-    print("\nTesting error bound proof...")
+    logger.info("\nTesting error bound proof...")
     test.test_error_bound_proof()
-    print("✓ Error bound test passed")
+    logger.info("✓ Error bound test passed")
 
-    print("\nTesting proof serialization...")
+    logger.info("\nTesting proof serialization...")
     test.test_proof_serialization()
-    print("✓ Serialization test passed")
+    logger.info("✓ Serialization test passed")
 
-    print("\nTesting ProofGenerator integration...")
+    logger.info("\nTesting ProofGenerator integration...")
     asyncio.run(test.test_proof_generator_integration())
-    print("✓ ProofGenerator integration test passed")
+    logger.info("✓ ProofGenerator integration test passed")
 
-    print("\nRunning performance tests...")
+    logger.info("\nRunning performance tests...")
     test.test_performance()
 
-    print("\n✅ All ZK circuit tests passed!")
+    logger.info("\n✅ All ZK circuit tests passed!")

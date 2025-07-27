@@ -484,7 +484,7 @@ def run_adversarial_tests():
                 method = getattr(test_instance, method_name)
                 method()
                 print("PASSED")
-            except Exception as e:
+            except (ValueError, TypeError) as e:
                 print(f"FAILED: {e}")
 
     print("\nAdversarial testing complete!")

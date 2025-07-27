@@ -26,9 +26,9 @@ class SNPPanelQueryRequest(BaseModel):
 
     cohort_id: str
     query_type: str = Field("variant_lookup", description="Type of query")
-    query_params: Dict[str, Any]
+    query_params: dict[str, Any]
     panel: str = Field("off", description="SNP panel granularity: off/common/clinical/custom")
-    custom_panel_path: Optional[str] = Field(None, description="Path to custom BED/VCF file")
+    custom_panel_path: str | None = Field(None, description="Path to custom BED/VCF file")
     epsilon: float = Field(0.01, description="Allowed relative error", gt=0, le=1)
     delta_exp: int = Field(15, description="Target failure probability exponent", ge=5, le=30)
 
@@ -63,12 +63,12 @@ class ZoomQueryResponse(BaseModel):
     """Response from hierarchical zoom query"""
 
     chromosome: str
-    region: List[int]
-    levels_fetched: List[int]
-    hotspots: List[Dict[str, int]]
+    region: list[int]
+    levels_fetched: list[int]
+    hotspots: list[dict[str, int]]
     aggregated_result: Any
     proof_uri: str
-    performance: Dict[str, float]
+    performance: dict[str, float]
 
 
 # Dependencies
@@ -188,7 +188,7 @@ async def query_with_panel(
             proof_uri=f"ipfs://Qm{proof.hash[:32]}...",
         )
 
-    except Exception as e:
+    except KeyError as e:
         logger.error(f"Panel query failed: {e}")
         raise HTTPException(500, f"Panel query failed: {str(e)}")
 
@@ -269,7 +269,7 @@ async def query_with_zoom(
             performance=performance,
         )
 
-    except Exception as e:
+    except (DatabaseError, KeyError) as e:
         logger.error(f"Zoom query failed: {e}")
         raise HTTPException(500, f"Zoom query failed: {str(e)}")
 
@@ -295,13 +295,13 @@ async def get_panel_info(
 
     except ValueError as e:
         raise HTTPException(404, str(e))
-    except Exception as e:
+    except KeyError as e:
         logger.error(f"Failed to get panel info: {e}")
         raise HTTPException(500, f"Failed to get panel info: {str(e)}")
 
 
 @router.post("/panel/estimate")
-async def estimate_panel_overhead(panel: str = "common", positions: Optional[int] = None):
+async def estimate_panel_overhead(panel: str = "common", positions: int | None = None):
     """Estimate overhead for using a specific SNP panel"""
     # Panel position counts
     panel_sizes = {
@@ -337,7 +337,7 @@ async def estimate_panel_overhead(panel: str = "common", positions: Optional[int
 
 
 # Helper functions
-def _build_genomic_query_from_params(query_type: str, params: Dict) -> GenomicQuery:
+def _build_genomic_query_from_params(query_type: str, params: dict) -> GenomicQuery:
     """Build genomic query from type and parameters"""
     if query_type == "variant_lookup":
         return GenomicQuery(query_type=QueryType.VARIANT_LOOKUP, parameters=params)

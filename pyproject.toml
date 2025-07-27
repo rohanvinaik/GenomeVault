@@ -1,157 +1,28 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
 
 [project]
 name = "genomevault"
-version = "3.0.0"
-description = "Privacy-preserving genomic data platform with zero-knowledge proofs"
+version = "0.1.0"
+description = "GenomeVault — privacy-preserving genomic compute (ZK/PIR/HDC)"
 readme = "README.md"
-requires-python = ">=3.9"
-license = {text = "Apache License 2.0"}
-authors = [
-    {name = "GenomeVault Team", email = "team@genomevault.io"},
-]
-maintainers = [
-    {name = "GenomeVault Team", email = "team@genomevault.io"},
-]
-keywords = [
-    "genomics",
-    "bioinformatics", 
-    "privacy",
-    "cryptography",
-    "zero-knowledge-proofs",
-    "federated-learning",
-    "blockchain",
-    "multi-omics",
-    "precision-medicine"
-]
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{ name = "Rohan Vinaik" }]
 classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Developers",
-    "Intended Audience :: Healthcare Industry",
-    "Intended Audience :: Science/Research",
-    "Topic :: Scientific/Engineering :: Bio-Informatics",
-    "Topic :: Security :: Cryptography",
-    "License :: OSI Approved :: Apache Software License",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Typing :: Typed",
 ]
+dependencies = []
 
-[project.urls]
-Homepage = "https://genomevault.io"
-Documentation = "https://docs.genomevault.io"
-Repository = "https://github.com/genomevault/genomevault"
-Issues = "https://github.com/genomevault/genomevault/issues"
-Changelog = "https://github.com/genomevault/genomevault/blob/main/CHANGELOG.md"
+[project.optional-dependencies]
+dev = ["ruff", "mypy", "pytest", "pytest-cov", "pyupgrade", "radon"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["genomevault"]
 
 [project.scripts]
 genomevault = "genomevault.cli:main"
 gv = "genomevault.cli:main"
-
-[tool.black]
-line-length = 100
-target-version = ['py39', 'py310', 'py311']
-include = '\.pyi?$'
-extend-exclude = '''
-/(
-  # directories
-  \.eggs
-  | \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | build
-  | dist
-)/
-'''
-
-[tool.isort]
-profile = "black"
-line_length = 100
-multi_line_output = 3
-include_trailing_comma = true
-force_grid_wrap = 0
-use_parentheses = true
-ensure_newline_before_comments = true
-
-[tool.mypy]
-python_version = "3.9"
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true
-ignore_missing_imports = true
-
-[tool.pytest.ini_options]
-minversion = "7.0"
-testpaths = ["tests"]
-python_files = "test_*.py"
-python_classes = "Test*"
-python_functions = "test_*"
-addopts = """
-    --strict-markers
-    --tb=short
-    --cov=genomevault
-    --cov-branch
-    --cov-report=term-missing:skip-covered
-    --cov-report=html
-    --cov-report=xml
-    --cov-fail-under=80
-    --maxfail=3
-    -ra
-"""
-markers = [
-    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
-    "integration: marks tests as integration tests",
-    "unit: marks tests as unit tests",
-    "security: marks security-related tests",
-    "performance: marks performance benchmarks"
-]
-
-[tool.coverage.run]
-source = ["genomevault"]
-branch = true
-parallel = true
-omit = [
-    "*/tests/*",
-    "*/migrations/*",
-    "*/__pycache__/*",
-    "*/venv/*",
-    "*/.venv/*"
-]
-
-[tool.coverage.report]
-precision = 2
-show_missing = true
-skip_covered = false
-exclude_lines = [
-    "pragma: no cover",
-    "def __repr__",
-    "if TYPE_CHECKING:",
-    "raise AssertionError",
-    "raise NotImplementedError",
-    "if __name__ == .__main__.:",
-    "pass",
-    "@abstract"
-]
-
-[tool.coverage.html]
-directory = "htmlcov"
-
-[tool.pylint.messages_control]
-disable = [
-    "C0111",  # missing-docstring
-    "C0103",  # invalid-name
-    "R0903",  # too-few-public-methods
-    "R0913",  # too-many-arguments
-    "W0212",  # protected-access
-]
-
-[tool.bandit]
-exclude_dirs = ["tests", "venv", ".venv"]
-severity = "medium"
-confidence = "medium"

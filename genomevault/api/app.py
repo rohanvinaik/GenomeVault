@@ -58,10 +58,10 @@ app.include_router(nanopore_router, prefix="/api")
 class TopologyRequest(BaseModel):
     """Request for network topology information."""
 
-    location: Optional[Dict[str, float]] = Field(
+    location: dict[str, float] | None = Field(
         None, description="User location for nearest node discovery"
     )
-    node_requirements: Optional[Dict[str, Any]] = Field(
+    node_requirements: dict[str, Any] | None = Field(
         None, description="Specific node requirements"
     )
 
@@ -69,9 +69,9 @@ class TopologyRequest(BaseModel):
 class TopologyResponse(BaseModel):
     """Network topology response."""
 
-    nearestLNs: List[str] = Field(description="List of nearest light node IDs")
-    tsNodes: List[str] = Field(description="List of trusted signatory node IDs")
-    optimal_configuration: Optional[Dict] = Field(
+    nearestLNs: list[str] = Field(description="List of nearest light node IDs")
+    tsNodes: list[str] = Field(description="List of trusted signatory node IDs")
+    optimal_configuration: dict | None = Field(
         None, description="Optimal node configuration for PIR"
     )
 
@@ -108,7 +108,7 @@ class AuditChallengeResponse(BaseModel):
     success: bool
     valid: bool
     challengeId: str
-    slashAmount: Optional[int] = None
+    slashAmount: int | None = None
     timestamp: float
 
 
@@ -117,8 +117,8 @@ class ProofSubmissionRequest(BaseModel):
 
     circuit_type: str
     proof_data: str
-    public_inputs: Dict[str, Any]
-    metadata: Optional[Dict] = None
+    public_inputs: dict[str, Any]
+    metadata: dict | None = None
 
 
 class ProofSubmissionResponse(BaseModel):
@@ -136,7 +136,7 @@ class HealthCheckResponse(BaseModel):
     status: str
     version: str
     uptime_seconds: float
-    services: Dict[str, str]
+    services: dict[str, str]
 
 
 # Dependency for API key authentication
@@ -204,7 +204,7 @@ async def get_topology(request: TopologyRequest, api_key: str = Depends(verify_a
             optimal_configuration=optimal_config,
         )
 
-    except Exception as e:
+    except KeyError as e:
         logger.error(f"Topology request failed: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
@@ -247,7 +247,7 @@ async def redeem_credits(request: CreditRedeemRequest, api_key: str = Depends(ve
 
     except HTTPException:
         raise
-    except Exception as e:
+    except KeyError as e:
         logger.error(f"Credit redemption failed: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
@@ -297,7 +297,7 @@ async def create_audit_challenge(
             timestamp=time.time(),
         )
 
-    except Exception as e:
+    except (ValueError, TypeError, KeyError) as e:
         logger.error(f"Audit challenge failed: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
@@ -335,7 +335,7 @@ async def submit_proof(request: ProofSubmissionRequest, api_key: str = Depends(v
             timestamp=time.time(),
         )
 
-    except Exception as e:
+    except KeyError as e:
         logger.error(f"Proof submission failed: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
@@ -394,7 +394,7 @@ async def get_pir_configuration(api_key: str = Depends(verify_api_key)):
 
         return JSONResponse(content=config_data)
 
-    except Exception as e:
+    except KeyError as e:
         logger.error(f"Failed to get PIR configuration: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 

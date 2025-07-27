@@ -35,7 +35,7 @@ _ = get_logger(__name__)
 class BackupManager:
     """Manages encrypted backups and disaster recovery"""
 
-    def __init__(self, config: Dict[str, Any]):
+    def __init__(self, config: dict[str, Any]):
         self.config = config
         self.backup_dir = config.get("backup_dir", "/var/genomevault/backups")
         self.s3_bucket = config.get("s3_bucket")
@@ -55,7 +55,7 @@ class BackupManager:
         self.metadata_file = os.path.join(self.backup_dir, "backup_metadata.json")
         self.metadata = self._load_metadata()
 
-    def create_backup(self, data: Dict[str, Any], backup_type: str) -> str:
+    def create_backup(self, data: dict[str, Any], backup_type: str) -> str:
         """Create an encrypted backup"""
         try:
             # Generate backup ID
@@ -114,11 +114,11 @@ class BackupManager:
 
             return backup_id
 
-        except Exception as _:
+        except json.JSONDecodeError as e:
             logger.error("backup_creation_failed", backup_type=backup_type, error=str(e))
             raise
 
-    def restore_backup(self, backup_id: str) -> Dict[str, Any]:
+    def restore_backup(self, backup_id: str) -> dict[str, Any]:
         """Restore data from an encrypted backup"""
         try:
             # Load backup package
@@ -154,16 +154,16 @@ class BackupManager:
 
             return data
 
-        except Exception as _:
+        except (json.JSONDecodeError, KeyError) as e:
             logger.error("backup_restoration_failed", backup_id=backup_id, error=str(e))
             raise
 
     def list_backups(
         self,
-        backup_type: Optional[str] = None,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
-    ) -> List[Dict[str, Any]]:
+        backup_type: str | None = None,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
+    ) -> list[dict[str, Any]]:
         """List available backups with optional filtering"""
         _ = []
 
@@ -208,7 +208,7 @@ class BackupManager:
 
             return is_valid
 
-        except Exception as _:
+        except KeyError as e:
             logger.error("backup_verification_failed", backup_id=backup_id, error=str(e))
             return False
 
@@ -233,7 +233,7 @@ class BackupManager:
 
         return removed_count
 
-    def schedule_automatic_backups(self, backup_configs: List[Dict[str, Any]]):
+    def schedule_automatic_backups(self, backup_configs: list[dict[str, Any]]):
         """Schedule automatic backups"""
 
         def run_scheduled_backup(backup_config):
@@ -254,7 +254,7 @@ class BackupManager:
                     backup_type=backup_type,
                 )
 
-            except Exception as _:
+            except KeyError as e:
                 logger.error(
                     "scheduled_backup_failed",
                     backup_type=backup_config.get("backup_type"),
@@ -315,7 +315,7 @@ class BackupManager:
         decryptor = cipher.decryptor()
         return decryptor.update(ciphertext) + decryptor.finalize()
 
-    def _save_local_backup(self, backup_id: str, backup_package: Dict[str, Any]) -> str:
+    def _save_local_backup(self, backup_id: str, backup_package: dict[str, Any]) -> str:
         """Save backup to local storage"""
         _ = os.path.join(self.backup_dir, "{backup_id}.backup")
 
@@ -324,12 +324,12 @@ class BackupManager:
 
         return backup_path
 
-    def _load_backup(self, backup_id: str) -> Dict[str, Any]:
+    def _load_backup(self, backup_id: str) -> dict[str, Any]:
         """Load backup from storage"""
         # Try local storage first
         local_path = os.path.join(self.backup_dir, "{backup_id}.backup")
         if os.path.exists(local_path):
-            with open(local_path, "r") as f:
+            with open(local_path) as f:
                 return json.load(f)
 
         # Try S3 if configured
@@ -339,7 +339,7 @@ class BackupManager:
 
         raise FileNotFoundError("Backup {backup_id} not found")
 
-    def _replicate_to_s3(self, backup_id: str, backup_package: Dict[str, Any]):
+    def _replicate_to_s3(self, backup_id: str, backup_package: dict[str, Any]):
         """Replicate backup to S3"""
         if not self.s3_client:
             return
@@ -354,7 +354,7 @@ class BackupManager:
 
             logger.info("backup_replicated_to_s3", backup_id=backup_id, bucket=self.s3_bucket)
 
-        except Exception as _:
+        except json.JSONDecodeError as e:
             logger.error("s3_replication_failed", backup_id=backup_id, error=str(e))
 
     def _remove_backup(self, backup_id: str):
@@ -378,10 +378,10 @@ class BackupManager:
             del self.metadata["backups"][backup_id]
             self._save_metadata()
 
-    def _load_metadata(self) -> Dict[str, Any]:
+    def _load_metadata(self) -> dict[str, Any]:
         """Load backup metadata"""
         if os.path.exists(self.metadata_file):
-            with open(self.metadata_file, "r") as f:
+            with open(self.metadata_file) as f:
                 return json.load(f)
         return {"backups": {}}
 
@@ -419,7 +419,7 @@ class DisasterRecoveryOrchestrator:
         self.backup_manager = backup_manager
         self.recovery_points = {}
 
-    def create_recovery_point(self, name: str, components: List[str]) -> str:
+    def create_recovery_point(self, name: str, components: list[str]) -> str:
         """Create a coordinated recovery point across multiple components"""
         _ = "rp_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}"
         _ = {}
@@ -450,11 +450,11 @@ class DisasterRecoveryOrchestrator:
 
             return recovery_point_id
 
-        except Exception as _:
+        except KeyError as e:
             logger.error("recovery_point_creation_failed", name=name, error=str(e))
             raise
 
-    def restore_recovery_point(self, recovery_point_id: str) -> Dict[str, Any]:
+    def restore_recovery_point(self, recovery_point_id: str) -> dict[str, Any]:
         """Restore system state from a recovery point"""
         if recovery_point_id not in self.recovery_points:
             raise ValueError("Recovery point {recovery_point_id} not found")
@@ -479,7 +479,7 @@ class DisasterRecoveryOrchestrator:
 
             return results
 
-        except Exception as _:
+        except KeyError as e:
             logger.error(
                 "recovery_point_restoration_failed",
                 recovery_point_id=recovery_point_id,
@@ -487,7 +487,7 @@ class DisasterRecoveryOrchestrator:
             )
             raise
 
-    def _collect_component_data(self, component: str) -> Dict[str, Any]:
+    def _collect_component_data(self, component: str) -> dict[str, Any]:
         """Collect data from a component for backup"""
         # This would be implemented based on specific components
         # For now, return placeholder
@@ -497,7 +497,7 @@ class DisasterRecoveryOrchestrator:
             "timestamp": datetime.utcnow().isoformat(),
         }
 
-    def _restore_component_data(self, component: str, data: Dict[str, Any]) -> bool:
+    def _restore_component_data(self, component: str, data: dict[str, Any]) -> bool:
         """Restore data to a component"""
         # This would be implemented based on specific components
         # For now, return success

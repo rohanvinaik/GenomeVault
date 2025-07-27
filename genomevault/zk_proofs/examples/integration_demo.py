@@ -5,6 +5,10 @@ This example demonstrates the complete workflow for generating and
 verifying privacy-preserving proofs for genomic analyses.
 """
 
+
+# Note: This example uses print() statements for demonstration purposes.
+# In production code, use proper logging instead.
+
 import hashlib
 import time
 from typing import Any, Dict
@@ -50,7 +54,7 @@ def demonstrate_variant_presence():
         private_inputs={
             "variant_data": variant,
             "merkle_proof": {
-                "path": [hashlib.sha256("node_{i}".encode()).hexdigest() for i in range(20)],
+                "path": [hashlib.sha256(b"node_{i}").hexdigest() for i in range(20)],
                 "indices": [i % 2 for i in range(20)],
             },
             "witness_randomness": np.random.bytes(32).hex(),
@@ -150,9 +154,9 @@ def demonstrate_polygenic_risk_score():
     proof = prover.generate_proof(
         circuit_name="polygenic_risk_score",
         public_inputs={
-            "prs_model": hashlib.sha256("T2D_PRS_v2.0_{num_variants}".encode()).hexdigest(),
+            "prs_model": hashlib.sha256(b"T2D_PRS_v2.0_{num_variants}").hexdigest(),
             "score_range": {"min": -1.0, "max": 1.0},
-            "result_commitment": hashlib.sha256("score:{actual_score}".encode()).hexdigest(),
+            "result_commitment": hashlib.sha256(b"score:{actual_score}").hexdigest(),
             "genome_commitment": hashlib.sha256(b"user_genome").hexdigest(),
         },
         private_inputs={
@@ -352,7 +356,7 @@ def demonstrate_batch_operations():
                     "variant_data": variant,
                     "merkle_proof": {
                         "path": [
-                            hashlib.sha256("batch_{i}_{j}".encode()).hexdigest() for j in range(20)
+                            hashlib.sha256(b"batch_{i}_{j}").hexdigest() for j in range(20)
                         ],
                         "indices": [j % 2 for j in range(20)],
                     },

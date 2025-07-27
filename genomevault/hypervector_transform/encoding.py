@@ -36,7 +36,7 @@ class HypervectorConfig:
     dimension: int = 10000
     projection_type: ProjectionType = ProjectionType.SPARSE_RANDOM
     sparsity: float = 0.1  # For sparse projections
-    seed: Optional[int] = None
+    seed: int | None = None
     normalize: bool = True
     quantize: bool = False
     quantization_bits: int = 8
@@ -50,7 +50,7 @@ class HypervectorEncoder:
     that preserve similarity relationships while providing privacy guarantees.
     """
 
-    def __init__(self, config: Optional[HypervectorConfig] = None):
+    def __init__(self, config: HypervectorConfig | None = None):
         """
         Initialize the hypervector encoder
 
@@ -75,7 +75,7 @@ class HypervectorEncoder:
 
     def encode(
         self,
-        features: Union[np.ndarray, torch.Tensor, Dict],
+        features: np.ndarray | torch.Tensor | dict,
         omics_type: OmicsType,
         resolution: str = "base",
     ) -> torch.Tensor:
@@ -126,8 +126,8 @@ class HypervectorEncoder:
             raise EncodingError(f"Failed to encode features: {str(e)}")
 
     def encode_multiresolution(
-        self, features: Union[np.ndarray, torch.Tensor, Dict], omics_type: OmicsType
-    ) -> Dict[str, torch.Tensor]:
+        self, features: np.ndarray | torch.Tensor | dict, omics_type: OmicsType
+    ) -> dict[str, torch.Tensor]:
         """
         Encode features at multiple resolution levels
 
@@ -145,7 +145,8 @@ class HypervectorEncoder:
 
         return multiresolution_vectors
 
-    def _extract_features(self, data: Dict, omics_type: OmicsType) -> torch.Tensor:
+    # TODO: Refactor this function to reduce complexity (current: 15)
+    def _extract_features(self, data: dict, omics_type: OmicsType) -> torch.Tensor:
         """Extract relevant features from processed data dictionary"""
         if omics_type == OmicsType.GENOMIC:
             # Extract variant features
@@ -322,7 +323,7 @@ class HypervectorEncoder:
         else:
             raise ValueError("Unknown similarity metric: {metric}")
 
-    def get_projection_stats(self) -> Dict:
+    def get_projection_stats(self) -> dict:
         """Get statistics about cached projections"""
         stats = {
             "num_cached_matrices": len(self._projection_cache),
@@ -346,7 +347,7 @@ def create_encoder(
     return HypervectorEncoder(config)
 
 
-def encode_genomic_data(genomic_data: Dict, dimension: int = 10000) -> torch.Tensor:
+def encode_genomic_data(genomic_data: dict, dimension: int = 10000) -> torch.Tensor:
     """Convenience function to encode genomic data"""
     encoder = create_encoder(dimension=dimension)
     return encoder.encode(genomic_data, OmicsType.GENOMIC)

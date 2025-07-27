@@ -11,7 +11,8 @@ import logging
 import re
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Pattern
+from typing import Any, Dict, List, Optional
+from re import Pattern
 
 logger = logging.getLogger(__name__)
 
@@ -79,7 +80,7 @@ class PHILeakageDetector:
         "genetic": r"\b(genetic|genomic|variant|mutation)\b",
     }
 
-    def __init__(self, custom_patterns: Optional[Dict[str, Dict[str, Any]]] = None):
+    def __init__(self, custom_patterns: dict[str, dict[str, Any]] | None = None):
         """
         Initialize PHI detector.
 
@@ -100,7 +101,7 @@ class PHILeakageDetector:
         for name, pattern in self.CONTEXT_PATTERNS.items():
             self.compiled_context[name] = re.compile(pattern, re.IGNORECASE)
 
-    def scan_file(self, filepath: str, max_context: int = 50) -> List[Dict[str, Any]]:
+    def scan_file(self, filepath: str, max_context: int = 50) -> list[dict[str, Any]]:
         """
         Scan a file for potential PHI leakage.
 
@@ -118,7 +119,7 @@ class PHILeakageDetector:
             raise FileNotFoundError(f"File not found: {filepath}")
 
         try:
-            with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+            with open(filepath, encoding="utf-8", errors="ignore") as f:
                 for line_num, line in enumerate(f, 1):
                     line_findings = self._scan_line(line, line_num, str(filepath), max_context)
                     findings.extend(line_findings)
@@ -128,7 +129,7 @@ class PHILeakageDetector:
 
         return findings
 
-    def scan_logs(self, log_file: str) -> List[Dict[str, Any]]:
+    def scan_logs(self, log_file: str) -> list[dict[str, Any]]:
         """
         Scan logs for potential PHI leakage.
 
@@ -141,8 +142,8 @@ class PHILeakageDetector:
         return self.scan_file(log_file)
 
     def scan_directory(
-        self, directory: str, extensions: List[str] = None, exclude_patterns: List[str] = None
-    ) -> Dict[str, List[Dict[str, Any]]]:
+        self, directory: str, extensions: list[str] = None, exclude_patterns: list[str] = None
+    ) -> dict[str, list[dict[str, Any]]]:
         """
         Recursively scan directory for PHI leakage.
 
@@ -190,7 +191,7 @@ class PHILeakageDetector:
 
     def _scan_line(
         self, line: str, line_num: int, filename: str, max_context: int
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Scan a single line for PHI patterns."""
         findings = []
 
@@ -235,7 +236,7 @@ class PHILeakageDetector:
 
         return findings
 
-    def _assess_context_severity(self, line: str) -> List[str]:
+    def _assess_context_severity(self, line: str) -> list[str]:
         """Check for context patterns that suggest PHI."""
         indicators = []
 
@@ -271,7 +272,7 @@ class PHILeakageDetector:
 
         return redacted
 
-    def generate_report(self, findings: List[Dict[str, Any]], output_format: str = "json") -> str:
+    def generate_report(self, findings: list[dict[str, Any]], output_format: str = "json") -> str:
         """
         Generate a PHI leakage report.
 
@@ -356,7 +357,7 @@ class PHILeakageDetector:
         else:
             raise ValueError(f"Unknown output format: {output_format}")
 
-    def _group_by_severity(self, findings: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
+    def _group_by_severity(self, findings: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
         """Group findings by severity level."""
         grouped = {}
 
@@ -368,7 +369,7 @@ class PHILeakageDetector:
 
         return grouped
 
-    def quarantine_file(self, filepath: str, findings: List[Dict[str, Any]]) -> str:
+    def quarantine_file(self, filepath: str, findings: list[dict[str, Any]]) -> str:
         """
         Quarantine a file with PHI leakage.
 
@@ -415,7 +416,7 @@ class RealTimePHIMonitor:
     Real-time monitoring for PHI leakage in application outputs.
     """
 
-    def __init__(self, detector: Optional[PHILeakageDetector] = None):
+    def __init__(self, detector: PHILeakageDetector | None = None):
         """
         Initialize real-time monitor.
 
@@ -427,7 +428,7 @@ class RealTimePHIMonitor:
         self.findings_buffer = []
         self.alert_threshold = 5  # Alert after 5 findings
 
-    def check_output(self, text: str, source: str = "unknown") -> Optional[Dict[str, Any]]:
+    def check_output(self, text: str, source: str = "unknown") -> dict[str, Any] | None:
         """
         Check text output for PHI in real-time.
 
@@ -477,7 +478,7 @@ class RealTimePHIMonitor:
 
 
 # Convenience functions
-def scan_genomevault_logs(log_dir: str = "./logs") -> Dict[str, List[Dict[str, Any]]]:
+def scan_genomevault_logs(log_dir: str = "./logs") -> dict[str, list[dict[str, Any]]]:
     """
     Scan GenomeVault logs for PHI leakage.
 
@@ -491,7 +492,7 @@ def scan_genomevault_logs(log_dir: str = "./logs") -> Dict[str, List[Dict[str, A
     return detector.scan_directory(log_dir, extensions=[".log"])
 
 
-def redact_phi_from_file(filepath: str, output_path: Optional[str] = None) -> str:
+def redact_phi_from_file(filepath: str, output_path: str | None = None) -> str:
     """
     Redact PHI from a file and save to new location.
 
@@ -504,7 +505,7 @@ def redact_phi_from_file(filepath: str, output_path: Optional[str] = None) -> st
     """
     detector = PHILeakageDetector()
 
-    with open(filepath, "r") as f:
+    with open(filepath) as f:
         content = f.read()
 
     redacted_content = detector.redact_phi(content)
@@ -531,26 +532,28 @@ if __name__ == "__main__":
     Contact: 555-123-4567
     """
 
-    print("Original text:")
-    print(test_text)
+    logger.info("Original text:")
+    logger.info(test_text)
 
-    print("\n" + "=" * 50 + "\n")
+    logger.info("\n" + "=" * 50 + "\n")
 
     # Scan for PHI
     findings = detector._scan_line(test_text, 1, "test.txt", 50)
 
-    print(f"Found {len(findings)} potential PHI instances:\n")
+    logger.info(f"Found {len(findings)} potential PHI instances:\n")
     for finding in findings:
-        print(f"- {finding['description']}: {finding['match']} (Severity: {finding['severity']})")
+        logger.info(
+            f"- {finding['description']}: {finding['match']} (Severity: {finding['severity']})"
+        )
 
-    print("\n" + "=" * 50 + "\n")
+    logger.info("\n" + "=" * 50 + "\n")
 
     # Redact PHI
     redacted = detector.redact_phi(test_text)
-    print("Redacted text:")
-    print(redacted)
+    logger.info("Redacted text:")
+    logger.info(redacted)
 
     # Generate report
-    print("\n" + "=" * 50 + "\n")
-    print("Markdown Report:")
-    print(detector.generate_report(findings, "markdown"))
+    logger.info("\n" + "=" * 50 + "\n")
+    logger.info("Markdown Report:")
+    logger.info(detector.generate_report(findings, "markdown"))

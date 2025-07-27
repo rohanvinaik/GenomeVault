@@ -22,11 +22,11 @@ from genomevault.core.exceptions import PIRError
 class PIRQuery:
     """Represents a PIR query"""
 
-    indices: List[int]  # Database indices to query
-    seed: Optional[int] = None  # Seed for deterministic masking
-    metadata: Dict[str, Any] = None  # Additional query metadata
-    query_vector: Optional[np.ndarray] = None  # Encoded query vector
-    nonce: Optional[bytes] = None  # Query nonce
+    indices: list[int]  # Database indices to query
+    seed: int | None = None  # Seed for deterministic masking
+    metadata: dict[str, Any] = None  # Additional query metadata
+    query_vector: np.ndarray | None = None  # Encoded query vector
+    nonce: bytes | None = None  # Query nonce
 
     def __post_init__(self):
         if self.metadata is None:
@@ -41,11 +41,11 @@ class PIRClient:
     Queries multiple servers without revealing the queried position
     """
 
-    def __init__(self, server_urls: List[str], database_size: int, threshold: int = 2):
+    def __init__(self, server_urls: list[str], database_size: int, threshold: int = 2):
         self.server_urls = server_urls
         self.database_size = database_size
         self.threshold = threshold
-        self.session: Optional[aiohttp.ClientSession] = None
+        self.session: aiohttp.ClientSession | None = None
 
         if len(server_urls) < MIN_PIR_SERVERS:
             raise PIRError(f"Need at least {MIN_PIR_SERVERS} servers, got {len(server_urls)}")
@@ -119,7 +119,7 @@ class PIRClient:
 
         return PIRQuery(position=position, length=length, query_vector=query_vector, nonce=nonce)
 
-    async def _query_server(self, server_url: str, query: PIRQuery) -> Dict[str, Any]:
+    async def _query_server(self, server_url: str, query: PIRQuery) -> dict[str, Any]:
         """Query a single PIR server"""
         if not self.session:
             raise PIRError("Session not initialized")
@@ -139,12 +139,12 @@ class PIRClient:
                     return await response.json()
                 else:
                     raise PIRError("Server returned status {response.status}")
-        except asyncio.TimeoutError:
+        except TimeoutError:
             raise PIRError("Query timeout for server {server_url}")
-        except Exception as e:
+        except (ConnectionError, TimeoutError, RequestException) as e:
             raise PIRError("Query failed for server {server_url}: {str(e)}")
 
-    def _reconstruct_data(self, responses: List[Dict[str, Any]], query: PIRQuery) -> bytes:
+    def _reconstruct_data(self, responses: list[dict[str, Any]], query: PIRQuery) -> bytes:
         """
         Reconstruct data from PIR responses
         Uses threshold reconstruction
@@ -180,7 +180,7 @@ class PIRClient:
 
         return result_bytes[start_byte:end_byte]
 
-    async def get_server_status(self) -> List[Dict[str, Any]]:
+    async def get_server_status(self) -> list[dict[str, Any]]:
         """Get status of all PIR servers"""
         if not self.session:
             raise PIRError("Session not initialized")
@@ -202,7 +202,7 @@ class PIRClient:
                                 "error": "Status code {response.status}",
                             }
                         )
-            except Exception as e:
+            except KeyError as e:
                 statuses.append({"url": server_url, "online": False, "error": str(e)})
 
         return statuses
@@ -216,7 +216,7 @@ class PIRClient:
         privacy_failure_prob = (1 - honesty_prob) ** num_honest_servers
         return privacy_failure_prob
 
-    def create_query(self, db_index: int, seed: Optional[int] = None) -> PIRQuery:
+    def create_query(self, db_index: int, seed: int | None = None) -> PIRQuery:
         """
         Create a PIR query for a database index with optional seed
 
@@ -291,7 +291,7 @@ class PIRClient:
 
         return result
 
-    async def _query_server_v2(self, server_url: str, query: PIRQuery) -> Dict[str, Any]:
+    async def _query_server_v2(self, server_url: str, query: PIRQuery) -> dict[str, Any]:
         """Query a single PIR server with enhanced query format"""
         if not self.session:
             raise PIRError("Session not initialized")
@@ -312,12 +312,12 @@ class PIRClient:
                     return await response.json()
                 else:
                     raise PIRError(f"Server returned status {response.status}")
-        except asyncio.TimeoutError:
+        except TimeoutError:
             raise PIRError(f"Query timeout for server {server_url}")
-        except Exception as e:
+        except (ConnectionError, TimeoutError, RequestException) as e:
             raise PIRError(f"Query failed for server {server_url}: {str(e)}")
 
-    def _reconstruct_data_v2(self, responses: List[Dict[str, Any]], query: PIRQuery) -> Any:
+    def _reconstruct_data_v2(self, responses: list[dict[str, Any]], query: PIRQuery) -> Any:
         """
         Reconstruct data from PIR responses (enhanced version)
         """
@@ -336,7 +336,7 @@ class PIRClient:
         # In production, would use proper secret sharing reconstruction
         return response_data[0]
 
-    async def batch_query(self, indices: List[int]) -> List[Any]:
+    async def batch_query(self, indices: list[int]) -> list[Any]:
         """
         Execute batch queries for multiple indices
 

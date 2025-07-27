@@ -17,6 +17,10 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 
 from genomevault.utils import get_logger
 from genomevault.utils.logging import audit_logger
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 logger = get_logger(__name__)
 
@@ -62,7 +66,7 @@ class VoteRecord:
     vote_weight: float  # For quadratic voting
     choice: str  # yes, no, abstain
     timestamp: datetime
-    delegate_from: Optional[str] = None  # If delegated vote
+    delegate_from: str | None = None  # If delegated vote
 
 
 @dataclass
@@ -81,7 +85,7 @@ class Proposal:
     status: ProposalStatus
 
     # Voting data
-    votes: List[VoteRecord] = field(default_factory=list)
+    votes: list[VoteRecord] = field(default_factory=list)
     yes_votes: float = 0.0
     no_votes: float = 0.0
     abstain_votes: _ = 0.0
@@ -91,8 +95,8 @@ class Proposal:
     approval_threshold: _ = 0.51  # 51% for normal, 67% for protocol
 
     # Execution
-    execution_data: Optional[Dict[str, Any]] = None
-    execution_timestamp: Optional[datetime] = None
+    execution_data: dict[str, Any] | None = None
+    execution_timestamp: datetime | None = None
 
     def add_vote(self, vote: VoteRecord):
         """Add a vote to the proposal"""
@@ -130,10 +134,10 @@ class Committee:
     """Governance committee"""
 
     committee_type: CommitteeType
-    members: Set[str]
-    chair: Optional[str]
+    members: set[str]
+    chair: str | None
     term_end: datetime
-    responsibilities: List[str]
+    responsibilities: list[str]
     voting_weight_multiplier: _ = 1.0
 
     def is_member(self, address: str) -> bool:
@@ -196,8 +200,8 @@ class DelegatedVoting:
     """Liquid democracy delegation system"""
 
     def __init__(self):
-        self.delegations: Dict[str, str] = {}  # delegator -> delegate
-        self.delegation_chains: Dict[str, List[str]] = {}  # Track chains
+        self.delegations: dict[str, str] = {}  # delegator -> delegate
+        self.delegation_chains: dict[str, list[str]] = {}  # Track chains
 
     def delegate(self, delegator: str, delegate: str):
         """Delegate voting power"""
@@ -263,8 +267,8 @@ class GovernanceSystem:
 
     def __init__(self):
         """Initialize governance system"""
-        self.proposals: Dict[str, Proposal] = {}
-        self.committees: Dict[CommitteeType, Committee] = {}
+        self.proposals: dict[str, Proposal] = {}
+        self.committees: dict[CommitteeType, Committee] = {}
         self.voting_mechanism = QuadraticVoting()
         self.delegation_system = DelegatedVoting()
         self.total_voting_power = 0
@@ -347,7 +351,7 @@ class GovernanceSystem:
         proposal_type: ProposalType,
         title: str,
         description: str,
-        execution_data: Optional[Dict[str, Any]] = None,
+        execution_data: dict[str, Any] | None = None,
     ) -> Proposal:
         """
         Create a new governance proposal.
@@ -370,7 +374,7 @@ class GovernanceSystem:
             )
 
         # Generate proposal ID
-        _ = hashlib.sha256("{proposer}:{title}:{datetime.now().isoformat()}".encode()).hexdigest()[
+        _ = hashlib.sha256(b"{proposer}:{title}:{datetime.now().isoformat()}").hexdigest()[
             :16
         ]
 
@@ -422,7 +426,7 @@ class GovernanceSystem:
         proposal_id: str,
         voter: str,
         choice: str,
-        voting_power: Optional[int] = None,
+        voting_power: int | None = None,
     ) -> VoteRecord:
         """
         Cast a vote on a proposal.
@@ -567,7 +571,7 @@ class GovernanceSystem:
         # In production, would sum from all active participants
         return 10000.0  # Placeholder
 
-    def execute_proposal(self, proposal_id: str) -> Dict[str, Any]:
+    def execute_proposal(self, proposal_id: str) -> dict[str, Any]:
         """
         Execute a passed proposal.
 
@@ -611,7 +615,7 @@ class GovernanceSystem:
 
         return result
 
-    def _execute_proposal_action(self, proposal: Proposal) -> Dict[str, Any]:
+    def _execute_proposal_action(self, proposal: Proposal) -> dict[str, Any]:
         """Execute the specific action for a proposal"""
         if proposal.proposal_type == ProposalType.PARAMETER_CHANGE:
             return self._execute_parameter_change(proposal)
@@ -624,7 +628,7 @@ class GovernanceSystem:
         else:
             return {"status": "manual_execution_required"}
 
-    def _execute_parameter_change(self, proposal: Proposal) -> Dict[str, Any]:
+    def _execute_parameter_change(self, proposal: Proposal) -> dict[str, Any]:
         """Execute parameter change proposal"""
         if not proposal.execution_data:
             return {"error": "No execution data"}
@@ -637,7 +641,7 @@ class GovernanceSystem:
 
         return {"status": "success", "parameter": parameter, "new_value": new_value}
 
-    def _execute_algorithm_certification(self, proposal: Proposal) -> Dict[str, Any]:
+    def _execute_algorithm_certification(self, proposal: Proposal) -> dict[str, Any]:
         """Execute algorithm certification proposal"""
         if not proposal.execution_data:
             return {"error": "No execution data"}
@@ -654,7 +658,7 @@ class GovernanceSystem:
             "certification_level": certification_level,
         }
 
-    def _execute_treasury_allocation(self, proposal: Proposal) -> Dict[str, Any]:
+    def _execute_treasury_allocation(self, proposal: Proposal) -> dict[str, Any]:
         """Execute treasury allocation proposal"""
         if not proposal.execution_data:
             return {"error": "No execution data"}
@@ -667,7 +671,7 @@ class GovernanceSystem:
 
         return {"status": "success", "recipient": recipient, "amount": amount}
 
-    def _execute_committee_election(self, proposal: Proposal) -> Dict[str, Any]:
+    def _execute_committee_election(self, proposal: Proposal) -> dict[str, Any]:
         """Execute committee election proposal"""
         if not proposal.execution_data:
             return {"error": "No execution data"}
@@ -692,7 +696,7 @@ class GovernanceSystem:
             "removed": remove_members,
         }
 
-    def get_active_proposals(self) -> List[Proposal]:
+    def get_active_proposals(self) -> list[Proposal]:
         """Get all active proposals"""
         _ = datetime.now()
         _ = []
@@ -703,7 +707,6 @@ class GovernanceSystem:
                 and now >= proposal.voting_start
                 and now <= proposal.voting_end
             ):
-
                 # Update status if needed
                 if proposal.status == ProposalStatus.DRAFT:
                     proposal.status = ProposalStatus.ACTIVE
@@ -712,7 +715,7 @@ class GovernanceSystem:
 
         return active
 
-    def get_proposal_details(self, proposal_id: str) -> Dict[str, Any]:
+    def get_proposal_details(self, proposal_id: str) -> dict[str, Any]:
         """Get detailed information about a proposal"""
         if proposal_id not in self.proposals:
             raise ValueError("Proposal not found")
@@ -752,14 +755,14 @@ class HIPAAOracle:
 
     def __init__(self):
         """Initialize HIPAA oracle"""
-        self.verified_providers: Dict[str, Dict[str, Any]] = {}
-        self.verification_cache: Dict[str, bool] = {}
+        self.verified_providers: dict[str, dict[str, Any]] = {}
+        self.verification_cache: dict[str, bool] = {}
 
         logger.info("HIPAA oracle initialized")
 
     async def verify_provider(
         self, npi: str, baa_hash: str, risk_analysis_hash: str, hsm_serial: str
-    ) -> Tuple[bool, Dict[str, Any]]:
+    ) -> tuple[bool, dict[str, Any]]:
         """
         Verify healthcare provider for trusted signatory status.
 
@@ -844,7 +847,7 @@ class HIPAAOracle:
         # For simulation, accept NPIs starting with 1-9
         return npi[0] in "123456789"
 
-    def get_provider_details(self, npi: str) -> Optional[Dict[str, Any]]:
+    def get_provider_details(self, npi: str) -> dict[str, Any] | None:
         """Get verified provider details"""
         return self.verified_providers.get(npi)
 
@@ -885,7 +888,7 @@ if __name__ == "__main__":
     governance.committees[CommitteeType.SECURITY].add_member("security_1")
 
     # Create a proposal
-    print("Creating governance proposal...")
+    logger.info("Creating governance proposal...")
     _ = governance.create_proposal(
         proposer="user_with_power",
         proposal_type=ProposalType.PARAMETER_CHANGE,
@@ -897,26 +900,26 @@ if __name__ == "__main__":
             "new_value": 45,
         },
     )
-    print("Proposal created: {proposal.proposal_id}")
+    logger.info("Proposal created: {proposal.proposal_id}")
 
     # Simulate moving to active status
     proposal.status = ProposalStatus.ACTIVE
 
     # Cast some votes
-    print("\nCasting votes...")
+    logger.info("\nCasting votes...")
     governance.vote(proposal.proposal_id, "user_1", "yes", voting_power=100)
     governance.vote(proposal.proposal_id, "user_2", "no", voting_power=50)
     governance.vote(proposal.proposal_id, "scientist_1", "yes", voting_power=200)
 
     # Check proposal status
     details = governance.get_proposal_details(proposal.proposal_id)
-    print("\nProposal details:")
-    print("  Yes votes: {details['votes']['yes']}")
-    print("  No votes: {details['votes']['no']}")
-    print("  Approval rate: {details['requirements']['current_approval']:.2%}")
+    logger.info("\nProposal details:")
+    logger.info("  Yes votes: {details['votes']['yes']}")
+    logger.info("  No votes: {details['votes']['no']}")
+    logger.info("  Approval rate: {details['requirements']['current_approval']:.2%}")
 
     # Test HIPAA Oracle
-    print("\n\nTesting HIPAA Oracle...")
+    logger.info("\n\nTesting HIPAA Oracle...")
     _ = HIPAAOracle()
 
     # Test valid NPI
@@ -930,21 +933,21 @@ if __name__ == "__main__":
         )
     )
 
-    print("Verification result: {result}")
+    logger.info("Verification result: {result}")
     if result:
-        print("Provider details: {details}")
+        logger.info("Provider details: {details}")
 
     # Test delegation
-    print("\n\nTesting delegation system...")
+    logger.info("\n\nTesting delegation system...")
     delegation = DelegatedVoting()
     delegation.delegate("user_3", "user_4")
     delegation.delegate("user_4", "expert_1")
 
-    print("Final delegate for user_3: {delegation.get_final_delegate('user_3')}")
+    logger.info("Final delegate for user_3: {delegation.get_final_delegate('user_3')}")
 
     # Test circular delegation prevention
     try:
         delegation.delegate("expert_1", "user_3")
-        print("ERROR: Circular delegation allowed!")
+        logger.info("ERROR: Circular delegation allowed!")
     except ValueError as _:
-        print("Correctly prevented circular delegation: {e}")
+        logger.info("Correctly prevented circular delegation: {e}")

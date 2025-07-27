@@ -129,7 +129,7 @@ class RobustITPIR(InformationTheoreticPIR):
         return query
 
     def process_responses_with_verification(
-        self, query: PIRQuery, server_responses: List[Tuple[np.ndarray, bytes]]
+        self, query: PIRQuery, server_responses: list[tuple[np.ndarray, bytes]]
     ) -> bytes:
         """
         Process server responses with Byzantine fault tolerance.
@@ -194,7 +194,7 @@ class RobustITPIR(InformationTheoreticPIR):
         # Constant-time comparison
         return hmac.compare_digest(mac, expected_mac)
 
-    def _reed_solomon_decode(self, valid_responses: List[Tuple[int, np.ndarray]]) -> bytes:
+    def _reed_solomon_decode(self, valid_responses: list[tuple[int, np.ndarray]]) -> bytes:
         """
         Decode data using Reed-Solomon error correction.
 
@@ -246,7 +246,7 @@ class RobustITPIR(InformationTheoreticPIR):
 
     def simulate_server_response(
         self, server_id: int, query: PIRQuery, database: np.ndarray, malicious: bool = False
-    ) -> Tuple[np.ndarray, bytes]:
+    ) -> tuple[np.ndarray, bytes]:
         """
         Simulate server response with optional Byzantine behavior.
 
@@ -324,7 +324,7 @@ class RobustITPIR(InformationTheoreticPIR):
 # Security analysis functions
 def analyze_privacy_breach_probability(
     num_servers: int, collusion_probability: float = 0.98
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """
     Analyze probability of privacy breach.
 
@@ -364,30 +364,30 @@ if __name__ == "__main__":
     # Example usage and security analysis
 
     # Analyze security for different configurations
-    print("IT-PIR Security Analysis")
-    print("=" * 50)
+    logger.info("IT-PIR Security Analysis")
+    logger.info("=" * 50)
 
     for num_servers in [2, 3, 5, 7]:
-        print(f"\nConfiguration: {num_servers} servers")
+        logger.info(f"\nConfiguration: {num_servers} servers")
 
         # HIPAA Trust Score nodes (q = 0.98)
         analysis = analyze_privacy_breach_probability(num_servers, 0.98)
-        print(f"  HIPAA TS nodes (q=0.98):")
-        print(f"    Privacy breach probability: {analysis['breach_probability']:.2e}")
+        logger.info(f"  HIPAA TS nodes (q=0.98):")
+        logger.info(f"    Privacy breach probability: {analysis['breach_probability']:.2e}")
 
         # Generic nodes (q = 0.95)
         analysis = analyze_privacy_breach_probability(num_servers, 0.95)
-        print(f"  Generic nodes (q=0.95):")
-        print(f"    Privacy breach probability: {analysis['breach_probability']:.2e}")
+        logger.info(f"  Generic nodes (q=0.95):")
+        logger.info(f"    Privacy breach probability: {analysis['breach_probability']:.2e}")
 
-    print("\nMinimum servers for privacy targets:")
+    logger.info("\nMinimum servers for privacy targets:")
     analysis = analyze_privacy_breach_probability(3, 0.98)
     for target, min_k in analysis["minimum_servers"].items():
-        print(f"  {target}: {min_k} servers")
+        logger.info(f"  {target}: {min_k} servers")
 
     # Test robust PIR with Byzantine servers
-    print("\n" + "=" * 50)
-    print("Testing Robust IT-PIR with Byzantine servers")
+    logger.info("\n" + "=" * 50)
+    logger.info("Testing Robust IT-PIR with Byzantine servers")
 
     # Setup
     database_size = 1000
@@ -424,14 +424,14 @@ if __name__ == "__main__":
         responses.append((response, mac))
 
         if is_malicious:
-            print(f"  Server {i}: Byzantine (sending corrupted response)")
+            logger.info(f"  Server {i}: Byzantine (sending corrupted response)")
         else:
-            print(f"  Server {i}: Honest")
+            logger.info(f"  Server {i}: Honest")
 
     # Process responses
     try:
         recovered_data = pir.process_responses_with_verification(query, responses)
-        print(f"\n  Successfully recovered data despite Byzantine server!")
-        print(f"  Data size: {len(recovered_data)} bytes")
+        logger.info(f"\n  Successfully recovered data despite Byzantine server!")
+        logger.info(f"  Data size: {len(recovered_data)} bytes")
     except SecurityError:
-        print(f"\n  Security error: {e}")
+        logger.info(f"\n  Security error: {e}")
