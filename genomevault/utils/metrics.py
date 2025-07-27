@@ -188,7 +188,7 @@ class MetricsCollector:
 
             return time_series
 
-    def export_json(self, output_path: str, include_raw: bool = False) -> None:
+    def export_json(self, output_path: str, include_raw: bool = False):
         """
         Export metrics to JSON file.
 

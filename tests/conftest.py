@@ -7,7 +7,7 @@ import shutil
 import tempfile
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional, Union
 from unittest.mock import Mock
 
 import numpy as np
@@ -17,17 +17,17 @@ import pytest
 os.environ["GENOMEVAULT_ENV"] = "test"
 os.environ["LOG_LEVEL"] = "DEBUG"
 
-
 @pytest.fixture(scope="session")
-def test_data_dir():
+
+def test_data_dir() -> None:
     """Create a temporary directory for test data"""
     temp_dir = tempfile.mkdtemp(prefix="genomevault_test_")
     yield Path(temp_dir)
     shutil.rmtree(temp_dir)
 
-
 @pytest.fixture
-def sample_vcf_data():
+
+def sample_vcf_data() -> None:
     """Generate sample VCF-like genomic data"""
     return {
         "header": {
@@ -64,9 +64,9 @@ def sample_vcf_data():
         ],
     }
 
-
 @pytest.fixture
-def sample_clinical_data():
+
+def sample_clinical_data() -> None:
     """Generate sample clinical/phenotypic data"""
     return {
         "patient_id": "TEST001",
@@ -86,9 +86,9 @@ def sample_clinical_data():
         "conditions": ["T2DM", "HTN"],
     }
 
-
 @pytest.fixture
-def mock_pir_servers():
+
+def mock_pir_servers() -> None:
     """Mock PIR server configuration"""
     return [
         {
@@ -123,9 +123,9 @@ def mock_pir_servers():
         },
     ]
 
-
 @pytest.fixture
-def mock_blockchain_node():
+
+def mock_blockchain_node() -> None:
     """Mock blockchain node for testing"""
     node = Mock()
     node.get_block_height.return_value = 12345
@@ -141,9 +141,9 @@ def mock_blockchain_node():
     }
     return node
 
-
 @pytest.fixture
-def zk_test_vectors():
+
+def zk_test_vectors() -> None:
     """Test vectors for zero-knowledge proofs"""
     return {
         "variant_verification": {
@@ -176,17 +176,22 @@ def zk_test_vectors():
         },
     }
 
-
 @pytest.fixture
-def performance_benchmark():
+
+def performance_benchmark() -> None:
     """Performance benchmarking utility"""
 
-    class PerformanceBenchmark:
-        def __init__(self):
-            self.results = {}
 
-        def measure(self, name: str, func, *args, **kwargs):
-            import time
+    class PerformanceBenchmark:
+
+        def __init__(self) -> None:
+    """TODO: Add docstring for __init__"""
+    self.results = {}
+
+
+        def measure(self, name: str, func, *args, **kwargs) -> None:
+    """TODO: Add docstring for measure"""
+    import time
 
             start = time.perf_counter()
             result = func(*args, **kwargs)
@@ -197,22 +202,26 @@ def performance_benchmark():
             }
             return result
 
-        def assert_performance(self, name: str, max_ms: float):
-            if name not in self.results:
+
+        def assert_performance(self, name: str, max_ms: float) -> None:
+    """TODO: Add docstring for assert_performance"""
+    if name not in self.results:
                 pytest.fail("No benchmark results for {name}")
             actual_ms = self.results[name]["elapsed_ms"]
             assert actual_ms <= max_ms, "{name} took {actual_ms:.1f}ms, expected <= {max_ms}ms"
 
     return PerformanceBenchmark()
 
-
 @pytest.fixture
-def cleanup_test_files():
+
+def cleanup_test_files() -> None:
     """Cleanup any test files created during tests"""
     files_to_cleanup = []
 
-    def _register(filepath):
-        files_to_cleanup.append(filepath)
+
+    def _register(filepath) -> None:
+    """TODO: Add docstring for _register"""
+    files_to_cleanup.append(filepath)
 
     yield _register
 
@@ -226,9 +235,9 @@ def cleanup_test_files():
         except Exception:
             pass
 
-
 # Pytest hooks
-def pytest_configure(config):
+
+def pytest_configure(config) -> None:
     """Configure pytest with custom markers"""
     config.addinivalue_line("markers", "slow: marks test as slow")
     config.addinivalue_line("markers", "integration: marks test as integration test")
@@ -236,7 +245,7 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "performance: marks test as performance benchmark")
 
 
-def pytest_collection_modifyitems(config, items):
+def pytest_collection_modifyitems(config, items) -> None:
     """Add markers to tests based on their location"""
     for item in items:
         # Add markers based on test file location

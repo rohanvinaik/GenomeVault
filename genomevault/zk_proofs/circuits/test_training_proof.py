@@ -1,6 +1,7 @@
 """
 Tests for Training Proof and Multi-Modal Training Proof circuits
 """
+from typing import Dict, List, Optional, Any, Union
 
 import hashlib
 import time
@@ -22,7 +23,8 @@ class TestTrainingProofCircuit:
 
     @pytest.fixture
     def sample_training_data(self) -> Dict[str, Any]:
-        """Generate sample training data for testing"""
+           """TODO: Add docstring for sample_training_data"""
+     """Generate sample training data for testing"""
         # Create mock training snapshots
         snapshots = []
         snapshot_hashes = []
@@ -77,8 +79,9 @@ class TestTrainingProofCircuit:
             },
         }
 
-    def test_training_proof_setup(self, sample_training_data):
-        """Test circuit setup with training data"""
+    def test_training_proof_setup(self, sample_training_data) -> None:
+           """TODO: Add docstring for test_training_proof_setup"""
+     """Test circuit setup with training data"""
         circuit = TrainingProofCircuit(max_snapshots=20)
 
         circuit.setup(sample_training_data["public_inputs"], sample_training_data["private_inputs"])
@@ -87,8 +90,9 @@ class TestTrainingProofCircuit:
         assert circuit.model_commit == sample_training_data["private_inputs"]["model_commit"]
         assert len(circuit.training_snapshots) == 10
 
-    def test_training_proof_generation(self, sample_training_data):
-        """Test proof generation"""
+    def test_training_proof_generation(self, sample_training_data) -> None:
+           """TODO: Add docstring for test_training_proof_generation"""
+     """Test proof generation"""
         circuit = TrainingProofCircuit(max_snapshots=20)
 
         circuit.setup(sample_training_data["public_inputs"], sample_training_data["private_inputs"])
@@ -100,8 +104,9 @@ class TestTrainingProofCircuit:
         assert proof["constraints_satisfied"] == True
         assert "snapshot_merkle_root" in proof["commitments"]
 
-    def test_semantic_consistency_verification(self, sample_training_data):
-        """Test semantic consistency checking"""
+    def test_semantic_consistency_verification(self, sample_training_data) -> None:
+           """TODO: Add docstring for test_semantic_consistency_verification"""
+     """Test semantic consistency checking"""
         circuit = TrainingProofCircuit(max_snapshots=20)
 
         circuit.setup(sample_training_data["public_inputs"], sample_training_data["private_inputs"])
@@ -110,8 +115,9 @@ class TestTrainingProofCircuit:
         consistent = circuit.verify_semantic_consistency(tolerance=0.15)
         assert consistent == True
 
-    def test_invalid_training_sequence(self):
-        """Test circuit with invalid training sequence (timestamps out of order)"""
+    def test_invalid_training_sequence(self) -> None:
+           """TODO: Add docstring for test_invalid_training_sequence"""
+     """Test circuit with invalid training sequence (timestamps out of order)"""
         circuit = TrainingProofCircuit(max_snapshots=10)
 
         # Create invalid snapshots with decreasing timestamps
@@ -157,7 +163,8 @@ class TestMultiModalTrainingProof:
 
     @pytest.fixture
     def multi_modal_data(self) -> Dict[str, Any]:
-        """Generate sample multi-modal training data"""
+           """TODO: Add docstring for multi_modal_data"""
+     """Generate sample multi-modal training data"""
         # Base training data
         base_time = int(time.time()) - 3600
         snapshots = []
@@ -270,8 +277,9 @@ class TestMultiModalTrainingProof:
             },
         }
 
-    def test_multi_modal_setup(self, multi_modal_data):
-        """Test multi-modal circuit setup"""
+    def test_multi_modal_setup(self, multi_modal_data) -> None:
+           """TODO: Add docstring for test_multi_modal_setup"""
+     """Test multi-modal circuit setup"""
         circuit = MultiModalTrainingProof(max_snapshots=10)
 
         circuit.setup(multi_modal_data["public_inputs"], multi_modal_data["private_inputs"])
@@ -282,8 +290,9 @@ class TestMultiModalTrainingProof:
         assert "transcriptomic" in circuit.modality_commits
         assert "proteomic" in circuit.modality_commits
 
-    def test_multi_modal_proof_generation(self, multi_modal_data):
-        """Test multi-modal proof generation"""
+    def test_multi_modal_proof_generation(self, multi_modal_data) -> None:
+           """TODO: Add docstring for test_multi_modal_proof_generation"""
+     """Test multi-modal proof generation"""
         circuit = MultiModalTrainingProof(max_snapshots=10)
 
         circuit.setup(multi_modal_data["public_inputs"], multi_modal_data["private_inputs"])
@@ -296,8 +305,9 @@ class TestMultiModalTrainingProof:
         assert "cross_modal_scores" in proof["multi_modal"]
         assert "genomic_transcriptomic" in proof["multi_modal"]["cross_modal_scores"]
 
-    def test_cross_modal_consistency(self, multi_modal_data):
-        """Test cross-modal consistency verification"""
+    def test_cross_modal_consistency(self, multi_modal_data) -> None:
+           """TODO: Add docstring for test_cross_modal_consistency"""
+     """Test cross-modal consistency verification"""
         circuit = MultiModalTrainingProof(max_snapshots=10)
 
         circuit.setup(multi_modal_data["public_inputs"], multi_modal_data["private_inputs"])
@@ -312,8 +322,9 @@ class TestMultiModalTrainingProof:
         for score in consistency_scores.values():
             assert 0 <= score <= 1
 
-    def test_invalid_correlation_threshold(self, multi_modal_data):
-        """Test with correlations below threshold"""
+    def test_invalid_correlation_threshold(self, multi_modal_data) -> None:
+           """TODO: Add docstring for test_invalid_correlation_threshold"""
+     """Test with correlations below threshold"""
         # Modify alignment to have low correlation
         multi_modal_data["private_inputs"]["cross_modal_alignments"][0]["correlation"] = 0.3
 
@@ -327,8 +338,9 @@ class TestMultiModalTrainingProof:
         # Score should reflect the low correlation
         assert scores["genomic_transcriptomic"] < 0.5
 
-    def test_attention_weight_validation(self, multi_modal_data):
-        """Test attention weight constraints"""
+    def test_attention_weight_validation(self, multi_modal_data) -> None:
+           """TODO: Add docstring for test_attention_weight_validation"""
+     """Test attention weight constraints"""
         # Create invalid attention weights that don't sum to 1
         multi_modal_data["private_inputs"]["cross_modal_alignments"][0]["attention_weights"] = [
             0.8,
@@ -343,8 +355,9 @@ class TestMultiModalTrainingProof:
         assert proof is not None
 
 
-def test_training_proof_end_to_end():
-    """End-to-end test of training proof generation and verification"""
+def test_training_proof_end_to_end() -> None:
+       """TODO: Add docstring for test_training_proof_end_to_end"""
+     """End-to-end test of training proof generation and verification"""
     # Create a simple training scenario
     circuit = TrainingProofCircuit(max_snapshots=5)
 
@@ -393,8 +406,9 @@ def test_training_proof_end_to_end():
     assert proof is not None
 
 
-def test_multi_modal_training_proof():
-    """Test multi-modal training proof with minimal setup"""
+def test_multi_modal_training_proof() -> None:
+       """TODO: Add docstring for test_multi_modal_training_proof"""
+     """Test multi-modal training proof with minimal setup"""
     modality_commits = {
         "genomic": hashlib.sha256(b"genomic_features").hexdigest(),
         "transcriptomic": hashlib.sha256(b"transcriptomic_features").hexdigest(),

@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 """End-to-end tests for ZK proof system integration."""
 
 import asyncio
@@ -15,8 +17,8 @@ class TestZKEndToEnd:
     """Test complete ZK proof workflows."""
 
     @pytest.mark.asyncio
-    async def test_prs_proof_workflow(self, test_data_dir):
-        """Test complete PRS proof generation workflow."""
+    async def test_prs_proof_workflow(self, test_data_dir) -> None:
+    """Test complete PRS proof generation workflow."""
         # Initialize services
         zk_service = ZKProofService()
         prs_calculator = PRSCalculator()
@@ -53,8 +55,8 @@ class TestZKEndToEnd:
         assert verification_result.proof_id == response.proof_id
 
     @pytest.mark.asyncio
-    async def test_multi_party_verification(self):
-        """Test proof verification by multiple parties."""
+    async def test_multi_party_verification(self) -> None:
+    """Test proof verification by multiple parties."""
         zk_service = ZKProofService()
 
         # Generate proof
@@ -87,8 +89,8 @@ class TestZKEndToEnd:
             assert result.proof_id == response.proof_id
 
     @pytest.mark.asyncio
-    async def test_proof_storage_and_retrieval(self, tmp_path):
-        """Test storing and retrieving proofs."""
+    async def test_proof_storage_and_retrieval(self, tmp_path) -> None:
+    """Test storing and retrieving proofs."""
         zk_service = ZKProofService()
 
         # Generate proof
@@ -129,8 +131,8 @@ class TestZKEndToEnd:
         assert verification_result.is_valid
 
     @pytest.mark.asyncio
-    async def test_proof_aggregation(self):
-        """Test aggregating multiple proofs."""
+    async def test_proof_aggregation(self) -> None:
+    """Test aggregating multiple proofs."""
         zk_service = ZKProofService()
 
         # Generate multiple proofs for different attributes
@@ -165,8 +167,8 @@ class TestZKEndToEnd:
             assert len(aggregated.sub_proofs) == len(proofs)
 
     @pytest.mark.asyncio
-    async def test_concurrent_proof_generation(self):
-        """Test generating multiple proofs concurrently."""
+    async def test_concurrent_proof_generation(self) -> None:
+    """Test generating multiple proofs concurrently."""
         zk_service = ZKProofService()
 
         # Create multiple proof requests
@@ -196,8 +198,8 @@ class TestZKEndToEnd:
             assert result.is_valid
 
     @pytest.mark.asyncio
-    async def test_invalid_proof_handling(self):
-        """Test handling of invalid proofs."""
+    async def test_invalid_proof_handling(self) -> None:
+    """Test handling of invalid proofs."""
         zk_service = ZKProofService()
 
         # Generate valid proof
@@ -219,8 +221,9 @@ class TestZKEndToEnd:
                 bytes(corrupted_proof), response.verification_key, request.public_inputs
             )
 
-    def _load_test_genomic_data(self, test_data_dir):
-        """Load test genomic data."""
+
+    def _load_test_genomic_data(self, test_data_dir) -> None:
+    """Load test genomic data."""
         # In a real implementation, this would load actual test data
         return {
             "variants": [
@@ -230,8 +233,9 @@ class TestZKEndToEnd:
         }
 
     @pytest.fixture
-    def test_data_dir(self, tmp_path):
-        """Create test data directory."""
+
+    def test_data_dir(self, tmp_path) -> None:
+    """Create test data directory."""
         data_dir = tmp_path / "test_data"
         data_dir.mkdir()
 
@@ -247,8 +251,8 @@ class TestZKPerformance:
 
     @pytest.mark.asyncio
     @pytest.mark.performance
-    async def test_proof_generation_performance(self):
-        """Test proof generation performance."""
+    async def test_proof_generation_performance(self) -> None:
+    """Test proof generation performance."""
         import time
 
         zk_service = ZKProofService()

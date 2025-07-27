@@ -1,9 +1,11 @@
+from typing import Any, Dict
+
 """
 Adversarial tests for PIR implementation.
 Tests malformed queries, timing attacks, and collusion scenarios.
 """
-
 import asyncio
+import json
 import time
 from unittest.mock import Mock, patch
 
@@ -21,20 +23,22 @@ class TestMalformedQueries:
     """Test server handling of malformed queries."""
 
     @pytest.fixture
-    def server(self):
-        """Create test server."""
+
+    def server(self) -> None:
+    """Create test server."""
         from pathlib import Path
 
         return ServerImpl("test_server", Path("/tmp/test_shards"))
 
     @pytest.fixture
-    def handler(self, server):
-        """Create request handler."""
+
+    def handler(self, server) -> None:
+    """Create request handler."""
         return PIRHandler(server)
 
     @pytest.mark.asyncio
-    async def test_invalid_query_vector_size(self, handler):
-        """Test query with wrong vector size."""
+    async def test_invalid_query_vector_size(self, handler) -> None:
+    """Test query with wrong vector size."""
         request = Mock()
         request.json = asyncio.coroutine(
             lambda: {
@@ -50,8 +54,8 @@ class TestMalformedQueries:
         assert response.status == 400
 
     @pytest.mark.asyncio
-    async def test_missing_required_fields(self, handler):
-        """Test query missing required fields."""
+    async def test_missing_required_fields(self, handler) -> None:
+    """Test query missing required fields."""
         request = Mock()
         request.json = asyncio.coroutine(
             lambda: {
@@ -65,8 +69,8 @@ class TestMalformedQueries:
         assert response.status == 400
 
     @pytest.mark.asyncio
-    async def test_invalid_protocol_version(self, handler):
-        """Test unsupported protocol version."""
+    async def test_invalid_protocol_version(self, handler) -> None:
+    """Test unsupported protocol version."""
         request = Mock()
         request.json = asyncio.coroutine(
             lambda: {
@@ -83,8 +87,8 @@ class TestMalformedQueries:
 
     @given(st.lists(st.integers(min_value=0, max_value=2), min_size=10, max_size=1000))
     @pytest.mark.asyncio
-    async def test_fuzz_query_vectors(self, handler, query_vector):
-        """Fuzz test with random query vectors."""
+    async def test_fuzz_query_vectors(self, handler, query_vector) -> None:
+    """Fuzz test with random query vectors."""
         request = Mock()
         request.json = asyncio.coroutine(
             lambda: {
@@ -108,8 +112,8 @@ class TestTimingAttacks:
     """Test timing attack mitigations."""
 
     @pytest.mark.asyncio
-    async def test_constant_response_time(self):
-        """Test that response times are constant."""
+    async def test_constant_response_time(self) -> None:
+    """Test that response times are constant."""
         servers = [
             PIRServer(f"server_{i}", f"http://localhost:900{i}", "region", False, 0.95, 50)
             for i in range(3)
@@ -118,8 +122,9 @@ class TestTimingAttacks:
         client = PIRClient(servers, database_size=10000)
 
         # Mock the server responses
-        async def mock_query_server(server, query):
-            # Simulate variable processing time
+        async def mock_query_server(server, query) -> None:
+    """TODO: Add docstring for mock_query_server"""
+    # Simulate variable processing time
             if query.target_index < 5000:
                 await asyncio.sleep(0.01)  # Fast
             else:
@@ -143,8 +148,8 @@ class TestTimingAttacks:
             assert variance < 0.01, "Response times vary too much"
 
     @pytest.mark.asyncio
-    async def test_random_delays_added(self):
-        """Test that random delays are added to queries."""
+    async def test_random_delays_added(self) -> None:
+    """Test that random delays are added to queries."""
         from genomevault.pir.server.handler import PIRHandler
 
         handler = PIRHandler(Mock())
@@ -164,8 +169,9 @@ class TestTimingAttacks:
 class TestCollusion:
     """Test collusion detection and prevention."""
 
-    def test_server_independence(self):
-        """Test that server responses are independent."""
+
+    def test_server_independence(self) -> None:
+    """Test that server responses are independent."""
         # Create client with 3 servers
         servers = [
             PIRServer(f"server_{i}", f"http://localhost:900{i}", "region", False, 0.95, 50)
@@ -194,8 +200,9 @@ class TestCollusion:
         expected[42] = 1
         assert np.array_equal(result, expected)
 
-    def test_collusion_detection_simulation(self):
-        """Simulate collusion between servers."""
+
+    def test_collusion_detection_simulation(self) -> None:
+    """Simulate collusion between servers."""
         # If 2 out of 3 servers collude
         server_queries = {
             "server_1": np.array([0, 1, 0, 1, 0]),
@@ -222,8 +229,8 @@ class TestReplayAttacks:
     """Test replay attack prevention."""
 
     @pytest.mark.asyncio
-    async def test_nonce_replay_detection(self):
-        """Test that replayed nonces are rejected."""
+    async def test_nonce_replay_detection(self) -> None:
+    """Test that replayed nonces are rejected."""
         from genomevault.pir.server.handler import PIRHandler
 
         server = Mock()
@@ -271,8 +278,9 @@ class TestReplayAttacks:
         body = await response2.json()
         assert body["error"]["code"] == "REPLAY_DETECTED"
 
-    def test_timestamp_validation(self):
-        """Test that old timestamps are rejected."""
+
+    def test_timestamp_validation(self) -> None:
+    """Test that old timestamps are rejected."""
         # This would be implemented in production
         # to prevent replay of old queries
         pass
@@ -281,8 +289,9 @@ class TestReplayAttacks:
 class TestPaddingAndSizing:
     """Test fixed-size response enforcement."""
 
-    def test_response_padding(self):
-        """Test that responses are padded to fixed size."""
+
+    def test_response_padding(self) -> None:
+    """Test that responses are padded to fixed size."""
         from genomevault.pir.server.handler import PIRHandler
 
         handler = PIRHandler(Mock())
@@ -305,8 +314,9 @@ class TestPaddingAndSizing:
         assert len(padded) == 1024
         assert padded == large_data[:1024]
 
-    def test_query_padding_enforcement(self):
-        """Test that queries enforce padding."""
+
+    def test_query_padding_enforcement(self) -> None:
+    """Test that queries enforce padding."""
         # Queries should also have consistent sizes
         # to prevent traffic analysis
         pass
@@ -316,8 +326,8 @@ class TestErrorInjection:
     """Test handling of injected errors."""
 
     @pytest.mark.asyncio
-    async def test_corrupted_responses(self):
-        """Test handling of corrupted server responses."""
+    async def test_corrupted_responses(self) -> None:
+    """Test handling of corrupted server responses."""
         client = PIRClient(
             [
                 PIRServer(f"s{i}", f"http://localhost:900{i}", "r", False, 0.95, 50)
@@ -327,8 +337,9 @@ class TestErrorInjection:
         )
 
         # Mock servers returning corrupted data
-        async def mock_query_with_corruption(server, query):
-            if server.server_id == "s2":
+        async def mock_query_with_corruption(server, query) -> None:
+    """TODO: Add docstring for mock_query_with_corruption"""
+    if server.server_id == "s2":
                 # Server 2 returns corrupted data
                 return Mock(response_vector=None)
             else:
@@ -344,12 +355,12 @@ class TestErrorInjection:
             except Exception:
                 pytest.fail("Failed to handle corrupted response")
 
-    def test_byzantine_server_behavior(self):
-        """Test Byzantine fault tolerance."""
+
+    def test_byzantine_server_behavior(self) -> None:
+    """Test Byzantine fault tolerance."""
         # Test that system tolerates malicious servers
         # that return intentionally wrong results
         pass
-
 
 if __name__ == "__main__":
     # Run specific adversarial test

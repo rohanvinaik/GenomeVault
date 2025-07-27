@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 """
 Test suite for PIR implementation
 """
@@ -17,8 +19,9 @@ class TestPIRClient:
     """Test PIR client functionality"""
 
     @pytest.fixture
-    def client(self):
-        """Create PIR client with mock servers"""
+
+    def client(self) -> None:
+    """Create PIR client with mock servers"""
         servers = [
             "http://localhost:9001",
             "http://localhost:9002",
@@ -26,8 +29,9 @@ class TestPIRClient:
         ]
         return PIRClient(servers, threshold=2)
 
-    def test_query_generation(self, client):
-        """Test PIR query generation"""
+
+    def test_query_generation(self, client) -> None:
+    """Test PIR query generation"""
         query = client._generate_query(index=42, database_size=1000)
 
         assert isinstance(query, PIRQuery)
@@ -45,8 +49,9 @@ class TestPIRClient:
         assert accumulated[42] == 1
         assert np.sum(accumulated) == 1
 
-    def test_privacy_guarantee_calculation(self, client):
-        """Test privacy guarantee calculations"""
+
+    def test_privacy_guarantee_calculation(self, client) -> None:
+    """Test privacy guarantee calculations"""
         # With 3 servers, 98% honest
         p_fail = client.calculate_privacy_guarantee(num_servers=3, honesty_rate=0.98)
         assert p_fail < 0.001  # Should be around 8e-6
@@ -55,14 +60,15 @@ class TestPIRClient:
         p_fail = client.calculate_privacy_guarantee(num_servers=2, honesty_rate=0.95)
         assert 0.001 < p_fail < 0.01  # Should be around 0.0025
 
-    def test_insufficient_servers(self):
-        """Test error with insufficient servers"""
+
+    def test_insufficient_servers(self) -> None:
+    """Test error with insufficient servers"""
         with pytest.raises(PIRError):
             PIRClient(["http://localhost:9001"], threshold=2)
 
     @pytest.mark.asyncio
-    async def test_reconstruction(self, client):
-        """Test data reconstruction from responses"""
+    async def test_reconstruction(self, client) -> None:
+    """Test data reconstruction from responses"""
         # Create mock responses
         from pir.server.shard_manager import PIRResponse
 
@@ -92,8 +98,9 @@ class TestPIRServer:
     """Test PIR server functionality"""
 
     @pytest.fixture
-    def server_config(self):
-        """Create server configuration"""
+
+    def server_config(self) -> None:
+    """Create server configuration"""
         return ShardConfig(
             server_id=0,
             total_shards=3,
@@ -103,13 +110,14 @@ class TestPIRServer:
         )
 
     @pytest.fixture
-    def server(self, server_config):
-        """Create PIR server"""
+
+    def server(self, server_config) -> None:
+    """Create PIR server"""
         return PIRServer(server_config)
 
     @pytest.mark.asyncio
-    async def test_query_handling(self, server):
-        """Test PIR query handling"""
+    async def test_query_handling(self, server) -> None:
+    """Test PIR query handling"""
         # Create query vector
         query_vector = np.zeros(server.database_size, dtype=np.uint8)
         query_vector[42] = 1  # Request item at index 42
@@ -133,8 +141,8 @@ class TestPIRServer:
         assert len(response_data) == server.chunk_size
 
     @pytest.mark.asyncio
-    async def test_wrong_shard_error(self, server):
-        """Test error when query is for wrong shard"""
+    async def test_wrong_shard_error(self, server) -> None:
+    """Test error when query is for wrong shard"""
         request = {
             "query_id": "test_query",
             "shard_id": 1,  # Wrong shard
@@ -145,8 +153,9 @@ class TestPIRServer:
         with pytest.raises(PIRError, match="Wrong shard"):
             await server.handle_query(request)
 
-    def test_statistics(self, server):
-        """Test server statistics"""
+
+    def test_statistics(self, server) -> None:
+    """Test server statistics"""
         stats = server.get_statistics()
 
         assert stats["server_id"] == 0
@@ -161,8 +170,8 @@ class TestPIRIntegration:
     """Integration tests for PIR system"""
 
     @pytest.mark.asyncio
-    async def test_full_pir_flow(self):
-        """Test complete PIR query flow"""
+    async def test_full_pir_flow(self) -> None:
+    """Test complete PIR query flow"""
         # Set up servers
         servers = []
         server_configs = [
@@ -173,8 +182,9 @@ class TestPIRIntegration:
             servers.append(PIRServer(config))
 
         # Mock HTTP client to use local servers
-        async def mock_query_server(server_url, shard_id, query):
-            response = await servers[shard_id].handle_query(
+        async def mock_query_server(server_url, shard_id, query) -> None:
+    """TODO: Add docstring for mock_query_server"""
+    response = await servers[shard_id].handle_query(
                 {
                     "query_id": query.query_id,
                     "shard_id": shard_id,
@@ -209,9 +219,8 @@ class TestPIRIntegration:
             # For now, just check we got something
             assert result is not None
 
-
 @pytest.mark.asyncio
-async def test_privacy_failure_scenario():
+async def test_privacy_failure_scenario() -> None:
     """Test scenario where privacy could fail"""
     # If all servers collude, they can determine the query
     servers = ["http://evil1", "http://evil2"]

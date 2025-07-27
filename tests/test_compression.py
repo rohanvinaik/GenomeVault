@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 # tests/test_compression.py
 from unittest.mock import Mock, patch
 
@@ -16,8 +18,9 @@ class TestCompressionTiers:
     """Test suite for multi-tier compression framework"""
 
     @pytest.fixture
-    def sample_snp_data(self):
-        """Generate realistic SNP test data"""
+
+    def sample_snp_data(self) -> None:
+    """Generate realistic SNP test data"""
         # Mini tier: ~5,000 most-studied SNPs
         mini_snps = {
             "rs{i}": np.random.choice(["AA", "AT", "TT"], p=[0.25, 0.5, 0.25]) for i in range(5000)
@@ -35,16 +38,18 @@ class TestCompressionTiers:
         return {"mini": mini_snps, "clinical": clinical_snps}
 
     @pytest.fixture
-    def sample_hypervector(self):
-        """Generate test hypervector data"""
+
+    def sample_hypervector(self) -> None:
+    """Generate test hypervector data"""
         return {
             "base": np.random.randn(10000),  # 10k dimensions
             "mid": np.random.randn(15000),  # 15k dimensions
             "high": np.random.randn(20000),  # 20k dimensions
         }
 
-    def test_mini_tier_compression_size(self, sample_snp_data):
-        """Verify mini tier achieves ~25KB compression"""
+
+    def test_mini_tier_compression_size(self, sample_snp_data) -> None:
+    """Verify mini tier achieves ~25KB compression"""
         compressor = SNPCompressor(tier=CompressionTier.MINI)
         compressed = compressor.compress(sample_snp_data["mini"])
 
@@ -56,8 +61,9 @@ class TestCompressionTiers:
         decompressed = compressor.decompress(compressed)
         assert decompressed == sample_snp_data["mini"]
 
-    def test_clinical_tier_compression_size(self, sample_snp_data):
-        """Verify clinical tier achieves ~300KB compression"""
+
+    def test_clinical_tier_compression_size(self, sample_snp_data) -> None:
+    """Verify clinical tier achieves ~300KB compression"""
         compressor = SNPCompressor(tier=CompressionTier.CLINICAL)
         compressed = compressor.compress(sample_snp_data["clinical"])
 
@@ -69,8 +75,9 @@ class TestCompressionTiers:
         decompressed = compressor.decompress(compressed)
         assert len(decompressed) >= 59  # ACMG minimum actionable genes
 
-    def test_hdc_compression_ratio(self, sample_hypervector):
-        """Test HDC compression achieves 100-200KB per modality"""
+
+    def test_hdc_compression_ratio(self, sample_hypervector) -> None:
+    """Test HDC compression achieves 100-200KB per modality"""
         compressor = HDCCompressor()
 
         for level, vector in sample_hypervector.items():
@@ -86,8 +93,9 @@ class TestCompressionTiers:
             mse = np.mean((vector - decompressed) ** 2)
             assert mse < 1e-6, "Reconstruction error too high: {mse}"
 
-    def test_combined_storage_calculation(self, sample_snp_data, sample_hypervector):
-        """Verify S_client = ∑modalities Size_tier formula"""
+
+    def test_combined_storage_calculation(self, sample_snp_data, sample_hypervector) -> None:
+    """Verify S_client = ∑modalities Size_tier formula"""
         tiered = TieredCompressor()
 
         # Add mini genomics + clinical pharmacogenomics
@@ -111,8 +119,9 @@ class TestCompressionTiers:
             (CompressionTier.FULL_HDC, "10k-20k dims", 150),
         ],
     )
-    def test_tier_specifications(self, tier, expected_features, expected_size):
-        """Parameterized test for all tier specifications"""
+
+    def test_tier_specifications(self, tier, expected_features, expected_size) -> None:
+    """Parameterized test for all tier specifications"""
         compressor = (
             SNPCompressor(tier=tier) if tier != CompressionTier.FULL_HDC else HDCCompressor()
         )
@@ -123,8 +132,9 @@ class TestCompressionTiers:
         )
         assert abs(compressor.estimate_size() - expected_size) < expected_size * 0.15
 
-    def test_compression_determinism(self, sample_snp_data):
-        """Ensure compression is deterministic for same input"""
+
+    def test_compression_determinism(self, sample_snp_data) -> None:
+    """Ensure compression is deterministic for same input"""
         compressor = SNPCompressor(tier=CompressionTier.MINI)
 
         compressed1 = compressor.compress(sample_snp_data["mini"])
@@ -132,13 +142,15 @@ class TestCompressionTiers:
 
         assert compressed1 == compressed2, "Compression not deterministic"
 
-    def test_invalid_tier_handling(self):
-        """Test error handling for invalid compression tiers"""
+
+    def test_invalid_tier_handling(self) -> None:
+    """Test error handling for invalid compression tiers"""
         with pytest.raises(ValueError, match="Invalid compression tier"):
             SNPCompressor(tier="INVALID_TIER")
 
-    def test_empty_data_compression(self):
-        """Test compression of empty datasets"""
+
+    def test_empty_data_compression(self) -> None:
+    """Test compression of empty datasets"""
         compressor = SNPCompressor(tier=CompressionTier.MINI)
         compressed = compressor.compress({})
 

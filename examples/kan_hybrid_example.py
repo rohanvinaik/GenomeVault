@@ -4,6 +4,7 @@ Example: Using KAN Hybrid Architecture with GenomeVault
 This example demonstrates how to integrate the KAN-HD hybrid architecture
 into your existing GenomeVault workflow for improved compression and privacy.
 """
+from typing import Dict, List, Optional, Any, Union
 
 import time
 from typing import Dict, List
@@ -18,7 +19,8 @@ from genomevault.hypervector.kan import KANCompressor, KANHybridEncoder, Streami
 
 
 def generate_example_variants(num_variants: int = 1000) -> List[Dict]:
-    """Generate example genomic variants for testing"""
+       """TODO: Add docstring for generate_example_variants"""
+     """Generate example genomic variants for testing"""
     variants = []
     chromosomes = [f"chr{i}" for i in range(1, 23)] + ["chrX", "chrY"]
 
@@ -40,8 +42,9 @@ def generate_example_variants(num_variants: int = 1000) -> List[Dict]:
     return variants
 
 
-def example_basic_usage():
-    """Basic usage example of KAN Hybrid Encoder"""
+def example_basic_usage() -> None:
+       """TODO: Add docstring for example_basic_usage"""
+     """Basic usage example of KAN Hybrid Encoder"""
     print("=== Basic KAN Hybrid Encoding Example ===\n")
 
     # Generate example data
@@ -76,8 +79,9 @@ def example_basic_usage():
     return encoder, compressed
 
 
-def example_hierarchical_encoding():
-    """Example of hierarchical multi-modal encoding"""
+def example_hierarchical_encoding() -> None:
+       """TODO: Add docstring for example_hierarchical_encoding"""
+     """Example of hierarchical multi-modal encoding"""
     print("\n=== Hierarchical Multi-Modal Encoding Example ===\n")
 
     # Generate multi-modal data
@@ -125,8 +129,9 @@ def example_hierarchical_encoding():
     return encoder, full_encoded
 
 
-def example_streaming_large_genome():
-    """Example of streaming encoding for large genomes"""
+def example_streaming_large_genome() -> None:
+       """TODO: Add docstring for example_streaming_large_genome"""
+     """Example of streaming encoding for large genomes"""
     print("\n=== Streaming Large Genome Encoding Example ===\n")
 
     # Initialize streaming encoder
@@ -137,8 +142,9 @@ def example_streaming_large_genome():
     # Simulate streaming variant data
     total_variants = 10000
 
-    def variant_generator():
-        """Simulate streaming variants from a file or database"""
+    def variant_generator() -> None:
+           """TODO: Add docstring for variant_generator"""
+     """Simulate streaming variants from a file or database"""
         for i in range(total_variants):
             yield {
                 "chromosome": f"chr{(i % 22) + 1}",
@@ -151,8 +157,9 @@ def example_streaming_large_genome():
     # Progress tracking
     variants_processed = 0
 
-    def progress_callback(count):
-        nonlocal variants_processed
+    def progress_callback(count) -> None:
+            """TODO: Add docstring for progress_callback"""
+    nonlocal variants_processed
         variants_processed = count
         if count % 1000 == 0:
             print(f"Processed {count}/{total_variants} variants...")
@@ -176,8 +183,9 @@ def example_streaming_large_genome():
     return encoder, compressed
 
 
-def example_compression_metrics():
-    """Example showing detailed compression metrics"""
+def example_compression_metrics() -> None:
+       """TODO: Add docstring for example_compression_metrics"""
+     """Example showing detailed compression metrics"""
     print("\n=== Compression Metrics Example ===\n")
 
     # Initialize compressor directly
@@ -214,8 +222,9 @@ def example_compression_metrics():
     return compressor, metrics
 
 
-def example_integration_with_existing_pipeline():
-    """Example showing integration with existing GenomeVault pipeline"""
+def example_integration_with_existing_pipeline() -> None:
+       """TODO: Add docstring for example_integration_with_existing_pipeline"""
+     """Example showing integration with existing GenomeVault pipeline"""
     print("\n=== Integration with Existing Pipeline Example ===\n")
 
     # Existing GenomeVault encoder
@@ -260,8 +269,9 @@ def example_integration_with_existing_pipeline():
     return traditional_encoder, kan_encoder
 
 
-def main():
-    """Run all examples"""
+def main() -> None:
+       """TODO: Add docstring for main"""
+     """Run all examples"""
     print("GenomeVault KAN Hybrid Architecture Examples")
     print("=" * 50)
 

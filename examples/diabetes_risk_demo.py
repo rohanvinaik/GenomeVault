@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 """
 Example: Diabetes Risk Assessment with GenomeVault ZK Proofs
 Demonstrates privacy-preserving medical risk evaluation.
@@ -8,7 +10,8 @@ import asyncio
 from genomevault_zk_integration import GenomeVaultZKSystem
 
 
-async def main():
+async def main() -> None:
+        """TODO: Add docstring for main"""
     # Initialize ZK system
     zk_system = GenomeVaultZKSystem(max_workers=2)
     await zk_system.start()

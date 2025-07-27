@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 #!/usr/bin/env python3
 """
 Run basic linter checks for HDC implementation
@@ -8,8 +10,9 @@ import sys
 from pathlib import Path
 
 
-def run_command(cmd):
-    """Run a command and return success status"""
+def run_command(cmd) -> None:
+       """TODO: Add docstring for run_command"""
+     """Run a command and return success status"""
     print(f"\n{'='*60}")
     print(f"Running: {' '.join(cmd)}")
     print("=" * 60)
@@ -25,8 +28,9 @@ def run_command(cmd):
         return False
 
 
-def main():
-    """Run all linter checks"""
+def main() -> None:
+       """TODO: Add docstring for main"""
+     """Run all linter checks"""
     # Change to project root
     project_root = Path(__file__).parent.parent
 

@@ -23,6 +23,14 @@ try:
 except ImportError:
     pd = None
 
+# Import our optimized Hamming LUT
+try:
+    from genomevault.hypervector.operations.hamming_lut import HammingLUT
+
+    HAMMING_LUT_AVAILABLE = True
+except ImportError:
+    HAMMING_LUT_AVAILABLE = False
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -129,6 +137,15 @@ class HypervectorEncoder:
         self.fingerprint = self._generate_fingerprint()
         self.dimension = self.config.dimension
 
+        # Initialize Hamming LUT if available
+        self.hamming_lut = None
+        if HAMMING_LUT_AVAILABLE:
+            try:
+                self.hamming_lut = HammingLUT(use_gpu=torch.cuda.is_available())
+                logger.info("Initialized with optimized Hamming LUT")
+            except Exception as e:
+                logger.warning(f"Failed to initialize Hamming LUT: {e}")
+
         logger.info(f"Initialized HypervectorEncoder with {self.config.dimension}D vectors")
 
     def encode(
@@ -185,7 +202,7 @@ class HypervectorEncoder:
             return hypervector
 
         except Exception as e:
-        logger.error(f"Encoding error: {str(e)}")
+            logger.error(f"Encoding error: {str(e)}")
             raise
 
     def encode_multiresolution(
@@ -387,10 +404,65 @@ class HypervectorEncoder:
         elif metric == "euclidean":
             return -torch.dist(hv1, hv2, p=2).item()
         elif metric == "hamming":
-            # For binary hypervectors
-            return (torch.sign(hv1) == torch.sign(hv2)).float().mean().item()
+            # Use optimized LUT if available
+            if self.hamming_lut is not None:
+                # Convert to binary
+                hv1_binary = (torch.sign(hv1) > 0).numpy().astype(np.uint8)
+                hv2_binary = (torch.sign(hv2) > 0).numpy().astype(np.uint8)
+
+                # Pack bits
+                hv1_packed = np.packbits(hv1_binary).view(np.uint64)
+                hv2_packed = np.packbits(hv2_binary).view(np.uint64)
+
+                # Compute distance and normalize to similarity
+                distance = self.hamming_lut.distance(hv1_packed, hv2_packed)
+                return 1.0 - (distance / len(hv1_binary))
+            else:
+                # Fallback to standard implementation
+                return (torch.sign(hv1) == torch.sign(hv2)).float().mean().item()
         else:
             raise ValueError(f"Unknown similarity metric: {metric}")
+
+    def batch_similarity(
+        self, hvs1: torch.Tensor, hvs2: torch.Tensor, metric: str = "hamming"
+    ) -> torch.Tensor:
+        """
+        Compute pairwise similarities between batches of hypervectors.
+
+        Args:
+            hvs1: First batch of hypervectors (N x D)
+            hvs2: Second batch of hypervectors (M x D)
+            metric: Similarity metric
+
+        Returns:
+            Similarity matrix (N x M)
+        """
+        if metric == "hamming" and self.hamming_lut is not None:
+            # Use optimized batch computation
+            hvs1_binary = (torch.sign(hvs1) > 0).numpy().astype(np.uint8)
+            hvs2_binary = (torch.sign(hvs2) > 0).numpy().astype(np.uint8)
+
+            # Pack bits for each vector
+            hvs1_packed = np.array([np.packbits(v).view(np.uint64) for v in hvs1_binary])
+            hvs2_packed = np.array([np.packbits(v).view(np.uint64) for v in hvs2_binary])
+
+            # Compute distances
+            distances = self.hamming_lut.distance_batch(hvs1_packed, hvs2_packed)
+
+            # Convert to similarities
+            similarities = 1.0 - (distances / hvs1.shape[1])
+            return torch.from_numpy(similarities).float()
+        else:
+            # Fallback to pairwise computation
+            n, d = hvs1.shape
+            m, _ = hvs2.shape
+            similarities = torch.zeros(n, m)
+
+            for i in range(n):
+                for j in range(m):
+                    similarities[i, j] = self.similarity(hvs1[i], hvs2[j], metric)
+
+            return similarities
 
     def get_encoding_metrics(self, start_time: float, hypervector: torch.Tensor) -> EncodingMetrics:
         """Calculate encoding metrics"""

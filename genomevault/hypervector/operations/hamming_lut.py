@@ -15,6 +15,7 @@ Performance targets:
 - 2-3× speedup on PULPv3 and FPGA fabric
 - >1.5× speedup on CPU/GPU platforms
 """
+from typing import Dict, List, Optional, Any, Union
 
 import functools
 import os
@@ -28,7 +29,8 @@ _POPCOUNT_LUT_16: Optional[np.ndarray] = None
 
 
 def generate_popcount_lut() -> np.ndarray:
-    """
+       """TODO: Add docstring for generate_popcount_lut"""
+     """
     Generate a 16-bit popcount lookup table.
 
     Returns:
@@ -46,8 +48,9 @@ def generate_popcount_lut() -> np.ndarray:
 
 
 @functools.lru_cache(maxsize=1)
-def get_cuda_popcount_lut():
-    """Get CUDA device memory copy of popcount LUT."""
+def get_cuda_popcount_lut() -> Any:
+       """TODO: Add docstring for get_cuda_popcount_lut"""
+     """Get CUDA device memory copy of popcount LUT."""
     lut = generate_popcount_lut()
     return cuda.to_device(lut)
 
@@ -55,7 +58,8 @@ def get_cuda_popcount_lut():
 # CPU-optimized implementations
 @jit(nopython=True, parallel=True, cache=True)
 def hamming_distance_cpu(vec1: np.ndarray, vec2: np.ndarray, lut: np.ndarray) -> int:
-    """
+       """TODO: Add docstring for hamming_distance_cpu"""
+     """
     Compute Hamming distance between two binary vectors using LUT.
 
     Args:
@@ -83,7 +87,8 @@ def hamming_distance_cpu(vec1: np.ndarray, vec2: np.ndarray, lut: np.ndarray) ->
 
 @jit(nopython=True, parallel=True, cache=True)
 def hamming_distance_batch_cpu(vecs1: np.ndarray, vecs2: np.ndarray, lut: np.ndarray) -> np.ndarray:
-    """
+       """TODO: Add docstring for hamming_distance_batch_cpu"""
+     """
     Compute pairwise Hamming distances for batches of vectors.
 
     Args:
@@ -117,8 +122,9 @@ def hamming_distance_batch_cpu(vecs1: np.ndarray, vecs2: np.ndarray, lut: np.nda
 
 # GPU-optimized implementations
 @cuda.jit
-def hamming_distance_kernel(vec1, vec2, lut, result):
-    """
+def hamming_distance_kernel(vec1, vec2, lut, result) -> None:
+       """TODO: Add docstring for hamming_distance_kernel"""
+     """
     CUDA kernel for computing Hamming distance using LUT.
 
     Args:
@@ -165,8 +171,9 @@ def hamming_distance_kernel(vec1, vec2, lut, result):
 
 
 @cuda.jit
-def hamming_distance_batch_kernel(vecs1, vecs2, lut, distances):
-    """
+def hamming_distance_batch_kernel(vecs1, vecs2, lut, distances) -> None:
+       """TODO: Add docstring for hamming_distance_batch_kernel"""
+     """
     CUDA kernel for batch Hamming distance computation.
 
     Each thread computes one distance value.
@@ -192,8 +199,9 @@ class HammingLUT:
     High-level interface for Hamming distance computation with LUT acceleration.
     """
 
-    def __init__(self, use_gpu: bool = False):
-        """
+    def __init__(self, use_gpu: bool = False) -> None:
+           """TODO: Add docstring for __init__"""
+     """
         Initialize Hamming LUT calculator.
 
         Args:
@@ -206,7 +214,8 @@ class HammingLUT:
             self.cuda_lut = get_cuda_popcount_lut()
 
     def distance(self, vec1: np.ndarray, vec2: np.ndarray) -> int:
-        """
+           """TODO: Add docstring for distance"""
+     """
         Compute Hamming distance between two binary vectors.
 
         Args:
@@ -242,7 +251,8 @@ class HammingLUT:
             return hamming_distance_cpu(vec1, vec2, self.lut)
 
     def distance_batch(self, vecs1: np.ndarray, vecs2: np.ndarray) -> np.ndarray:
-        """
+           """TODO: Add docstring for distance_batch"""
+     """
         Compute pairwise Hamming distances for batches of vectors.
 
         Args:
@@ -281,7 +291,8 @@ class HammingLUT:
 
 # PULP-specific implementation placeholder
 def generate_pulp_lut_code() -> str:
-    """
+       """TODO: Add docstring for generate_pulp_lut_code"""
+     """
     Generate PULP-specific C code for LUT implementation.
 
     Returns:
@@ -331,7 +342,8 @@ uint32_t hamming_distance_pulp(const uint64_t* vec1, const uint64_t* vec2, size_
 
 # FPGA-specific implementation placeholder
 def generate_fpga_verilog() -> str:
-    """
+       """TODO: Add docstring for generate_fpga_verilog"""
+     """
     Generate Verilog code for FPGA LUT implementation.
 
     Returns:
@@ -417,8 +429,9 @@ endmodule
 
 
 # Export convenience functions
-def export_platform_implementations(output_dir: str):
-    """
+def export_platform_implementations(output_dir: str) -> None:
+       """TODO: Add docstring for export_platform_implementations"""
+     """
     Export platform-specific implementations to files.
 
     Args:

@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 # tests/test_hdc_hypervector.py
 import numpy as np
 import pytest
@@ -12,23 +14,27 @@ class TestHypervectorEngine:
     """Test suite for hyperdimensional computing operations"""
 
     @pytest.fixture
-    def encoder_10k(self):
-        """10,000-dimensional base encoder"""
+
+    def encoder_10k(self) -> None:
+    """10,000-dimensional base encoder"""
         return HypervectorEncoder(dimensions=10000, resolution="base")
 
     @pytest.fixture
-    def encoder_15k(self):
-        """15,000-dimensional mid-level encoder"""
+
+    def encoder_15k(self) -> None:
+    """15,000-dimensional mid-level encoder"""
         return HypervectorEncoder(dimensions=15000, resolution="mid")
 
     @pytest.fixture
-    def encoder_20k(self):
-        """20,000-dimensional high-level encoder"""
+
+    def encoder_20k(self) -> None:
+    """20,000-dimensional high-level encoder"""
         return HypervectorEncoder(dimensions=20000, resolution="high")
 
     @pytest.fixture
-    def sample_genomic_features(self):
-        """Generate realistic genomic feature vectors"""
+
+    def sample_genomic_features(self) -> None:
+    """Generate realistic genomic feature vectors"""
         return {
             "variants": np.random.randn(1000),  # 1000 variant features
             "expression": np.random.randn(500),  # 500 gene expression values
@@ -36,10 +42,11 @@ class TestHypervectorEngine:
             "clinical": np.random.randint(0, 5, size=50),  # 50 clinical features
         }
 
+
     def test_multi_resolution_encoding(
         self, encoder_10k, encoder_15k, encoder_20k, sample_genomic_features
-    ):
-        """Test hierarchical encoding at different resolutions"""
+    ) -> None:
+    """Test hierarchical encoding at different resolutions"""
         features = sample_genomic_features["variants"]
 
         # Encode at each resolution
@@ -59,8 +66,9 @@ class TestHypervectorEngine:
 
         assert base_info < mid_info < high_info
 
-    def test_similarity_preservation(self, encoder_10k, sample_genomic_features):
-        """Verify similarity preservation property: E[cos(y1,y2)] = cos(x1,x2)"""
+
+    def test_similarity_preservation(self, encoder_10k, sample_genomic_features) -> None:
+    """Verify similarity preservation property: E[cos(y1,y2)] = cos(x1,x2)"""
         # Create two similar feature vectors
         features1 = sample_genomic_features["variants"]
         features2 = features1 + np.random.randn(1000) * 0.1  # Small perturbation
@@ -80,8 +88,9 @@ class TestHypervectorEngine:
             abs(orig_sim - hyper_sim) < 0.1
         ), "Similarity not preserved: {orig_sim:.3f} vs {hyper_sim:.3f}"
 
-    def test_binding_operations(self, encoder_10k, sample_genomic_features):
-        """Test hypervector binding operations"""
+
+    def test_binding_operations(self, encoder_10k, sample_genomic_features) -> None:
+    """Test hypervector binding operations"""
         binding = BindingOperations()
 
         # Encode different modalities
@@ -101,8 +110,9 @@ class TestHypervectorEngine:
         similarity = np.dot(unbound, var_vec) / (np.linalg.norm(unbound) * np.linalg.norm(var_vec))
         assert similarity > 0.8, "Binding should be approximately reversible"
 
-    def test_holographic_representation(self, encoder_10k, sample_genomic_features):
-        """Test holographic distributed representation"""
+
+    def test_holographic_representation(self, encoder_10k, sample_genomic_features) -> None:
+    """Test holographic distributed representation"""
         holographic = HolographicRepresentation(dimensions=10000)
 
         # Create multi-modal representation
@@ -125,8 +135,9 @@ class TestHypervectorEngine:
             similarity = np.corrcoef(original, recovered)[0, 1]
             assert similarity > 0.7, "Failed to recover {modality}"
 
-    def test_privacy_preservation(self, encoder_10k):
-        """Test computational infeasibility of reconstruction"""
+
+    def test_privacy_preservation(self, encoder_10k) -> None:
+    """Test computational infeasibility of reconstruction"""
         # Generate random features
         original = np.random.randn(1000)
         encoded = encoder_10k.encode(original)
@@ -148,8 +159,9 @@ class TestHypervectorEngine:
             (20000, 156),  # 20k * 8 bytes / 1024
         ],
     )
-    def test_memory_footprint(self, dimensions, expected_memory_kb):
-        """Verify memory usage matches specifications"""
+
+    def test_memory_footprint(self, dimensions, expected_memory_kb) -> None:
+    """Verify memory usage matches specifications"""
         encoder = HypervectorEncoder(dimensions=dimensions)
         vector = encoder.encode(np.random.randn(1000))
 
@@ -159,8 +171,9 @@ class TestHypervectorEngine:
         # Allow 5% variance for overhead
         assert abs(memory_kb - expected_memory_kb) < expected_memory_kb * 0.05
 
-    def test_cross_modal_binding(self, encoder_10k, sample_genomic_features):
-        """Test binding across different biological modalities"""
+
+    def test_cross_modal_binding(self, encoder_10k, sample_genomic_features) -> None:
+    """Test binding across different biological modalities"""
         binding = BindingOperations()
 
         # Encode all modalities
@@ -182,8 +195,9 @@ class TestHypervectorEngine:
         assert np.std(final) > 0.1  # Non-trivial variation
         assert np.abs(np.mean(final)) < 0.1  # Approximately zero-mean
 
-    def test_encoding_determinism(self, encoder_10k):
-        """Ensure encoding is deterministic for same input"""
+
+    def test_encoding_determinism(self, encoder_10k) -> None:
+    """Ensure encoding is deterministic for same input"""
         features = np.random.randn(1000)
 
         vec1 = encoder_10k.encode(features)
@@ -191,8 +205,9 @@ class TestHypervectorEngine:
 
         assert np.array_equal(vec1, vec2), "Encoding must be deterministic"
 
-    def test_performance_benchmark(self, encoder_10k, sample_genomic_features):
-        """Benchmark encoding performance"""
+
+    def test_performance_benchmark(self, encoder_10k, sample_genomic_features) -> None:
+    """Benchmark encoding performance"""
         import time
 
         features = sample_genomic_features["variants"]

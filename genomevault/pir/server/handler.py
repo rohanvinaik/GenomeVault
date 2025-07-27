@@ -2,6 +2,8 @@
 PIR server request handler with fixed-size responses and timing protection.
 Implements the server-side logic for IT-PIR protocol.
 """
+import logging
+from typing import Dict, List, Optional, Any, Union
 
 import asyncio
 import base64
@@ -32,13 +34,15 @@ with open("schemas/pir_response.json", "r") as f:
 class PIRHandler:
     """HTTP request handler for PIR queries."""
 
-    def __init__(self, pir_server: PIRServer):
-        self.pir_server = pir_server
+    def __init__(self, pir_server: PIRServer) -> None:
+            """TODO: Add docstring for __init__"""
+    self.pir_server = pir_server
         self.query_cache = {}  # For replay detection
         self.cache_max_size = 10000
 
     async def handle_query(self, request: web.Request) -> web.Response:
-        """
+           """TODO: Add docstring for handle_query"""
+     """
         Handle incoming PIR query request.
 
         Args:
@@ -122,7 +126,8 @@ class PIRHandler:
             return self._error_response("INTERNAL_ERROR", "Query processing failed", 500)
 
     def _ensure_fixed_size(self, data: Any) -> bytes:
-        """
+           """TODO: Add docstring for _ensure_fixed_size"""
+     """
         Ensure response is exactly 1024 bytes.
 
         Args:
@@ -151,8 +156,9 @@ class PIRHandler:
             # Truncate
             return data_bytes[:1024]
 
-    async def _timing_padding(self, start_time: float):
-        """
+    async def _timing_padding(self, start_time: float) -> None:
+           """TODO: Add docstring for _timing_padding"""
+     """
         Add timing padding to prevent timing attacks.
 
         Args:
@@ -165,8 +171,9 @@ class PIRHandler:
         if elapsed < target_time:
             await asyncio.sleep(target_time - elapsed)
 
-    def _add_to_cache(self, nonce: str):
-        """Add nonce to replay cache with LRU eviction."""
+    def _add_to_cache(self, nonce: str) -> None:
+           """TODO: Add docstring for _add_to_cache"""
+     """Add nonce to replay cache with LRU eviction."""
         if len(self.query_cache) >= self.cache_max_size:
             # Remove oldest entry
             oldest = min(self.query_cache.items(), key=lambda x: x[1])
@@ -175,13 +182,15 @@ class PIRHandler:
         self.query_cache[nonce] = time.time()
 
     def _error_response(self, code: str, message: str, status: int) -> web.Response:
-        """Create error response."""
+           """TODO: Add docstring for _error_response"""
+     """Create error response."""
         response = {"error": {"code": code, "message": message}, "timestamp": time.time()}
 
         return web.json_response(response, status=status)
 
     async def handle_health(self, request: web.Request) -> web.Response:
-        """Health check endpoint."""
+           """TODO: Add docstring for handle_health"""
+     """Health check endpoint."""
         stats = self.pir_server.get_server_statistics()
 
         health = {
@@ -195,7 +204,8 @@ class PIRHandler:
         return web.json_response(health)
 
     async def handle_info(self, request: web.Request) -> web.Response:
-        """Server information endpoint."""
+           """TODO: Add docstring for handle_info"""
+     """Server information endpoint."""
         info = {
             "server_id": self.pir_server.server_id,
             "server_type": "TS" if self.pir_server.is_trusted_signatory else "LN",
@@ -215,7 +225,8 @@ class PIRHandler:
 
 
 def create_app(pir_server: PIRServer) -> web.Application:
-    """
+       """TODO: Add docstring for create_app"""
+     """
     Create aiohttp application for PIR server.
 
     Args:
@@ -234,8 +245,9 @@ def create_app(pir_server: PIRServer) -> web.Application:
 
     # Add middleware for logging
     @web.middleware
-    async def logging_middleware(request, handler):
-        start = time.time()
+    async def logging_middleware(request, handler) -> None:
+            """TODO: Add docstring for logging_middleware"""
+    start = time.time()
         try:
             response = await handler(request)
             elapsed = (time.time() - start) * 1000

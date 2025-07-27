@@ -3,6 +3,7 @@ HIPAA Verifier Implementation
 
 Core verification logic for HIPAA fast-track system.
 """
+from typing import Dict, List, Optional, Any, Union
 
 import hashlib
 import json
@@ -30,12 +31,14 @@ class NPIRegistry(ABC):
 
     @abstractmethod
     async def lookup_npi(self, npi: str) -> Optional[NPIRecord]:
-        """Look up an NPI in the registry"""
+           """TODO: Add docstring for lookup_npi"""
+     """Look up an NPI in the registry"""
         pass
 
     @abstractmethod
     async def validate_npi(self, npi: str) -> bool:
-        """Validate if an NPI exists and is active"""
+           """TODO: Add docstring for validate_npi"""
+     """Validate if an NPI exists and is active"""
         pass
 
 
@@ -47,24 +50,28 @@ class CMSNPIRegistry(NPIRegistry):
     For development, it simulates the registry.
     """
 
-    def __init__(self, api_endpoint: Optional[str] = None):
-        """Initialize CMS registry client"""
+    def __init__(self, api_endpoint: Optional[str] = None) -> None:
+           """TODO: Add docstring for __init__"""
+     """Initialize CMS registry client"""
         self.api_endpoint = api_endpoint or "https://npiregistry.cms.hhs.gov/api"
         self._cache: Dict[str, NPIRecord] = {}
         self._session: Optional[aiohttp.ClientSession] = None
 
-    async def __aenter__(self):
-        """Async context manager entry"""
+    async def __aenter__(self) -> None:
+           """TODO: Add docstring for __aenter__"""
+     """Async context manager entry"""
         self._session = aiohttp.ClientSession()
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        """Async context manager exit"""
+    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
+           """TODO: Add docstring for __aexit__"""
+     """Async context manager exit"""
         if self._session:
             await self._session.close()
 
     async def lookup_npi(self, npi: str) -> Optional[NPIRecord]:
-        """
+           """TODO: Add docstring for lookup_npi"""
+     """
         Look up an NPI in the CMS registry.
 
         Args:
@@ -96,7 +103,8 @@ class CMSNPIRegistry(NPIRegistry):
             return None
 
     async def validate_npi(self, npi: str) -> bool:
-        """
+           """TODO: Add docstring for validate_npi"""
+     """
         Validate if an NPI exists and is active.
 
         Args:
@@ -109,7 +117,8 @@ class CMSNPIRegistry(NPIRegistry):
         return record is not None and record.is_active
 
     def _validate_npi_format(self, npi: str) -> bool:
-        """
+           """TODO: Add docstring for _validate_npi_format"""
+     """
         Validate NPI format using Luhn algorithm.
 
         NPIs are 10-digit numbers where the last digit is a check digit.
@@ -131,7 +140,8 @@ class CMSNPIRegistry(NPIRegistry):
         return int(npi[-1]) == check_digit
 
     async def _simulate_npi_lookup(self, npi: str) -> Optional[NPIRecord]:
-        """
+           """TODO: Add docstring for _simulate_npi_lookup"""
+     """
         Simulate NPI lookup for development.
 
         In production, this would make actual API calls to CMS.
@@ -181,8 +191,9 @@ class HIPAAVerifier:
     to become Trusted Signatories.
     """
 
-    def __init__(self, npi_registry: Optional[NPIRegistry] = None):
-        """
+    def __init__(self, npi_registry: Optional[NPIRegistry] = None) -> None:
+           """TODO: Add docstring for __init__"""
+     """
         Initialize HIPAA verifier.
 
         Args:
@@ -200,7 +211,8 @@ class HIPAAVerifier:
         logger.info("HIPAA Verifier initialized")
 
     async def submit_verification(self, credentials: HIPAACredentials) -> str:
-        """
+           """TODO: Add docstring for submit_verification"""
+     """
         Submit credentials for HIPAA fast-track verification.
 
         Args:
@@ -238,7 +250,8 @@ class HIPAAVerifier:
         return verification_id
 
     async def process_verification(self, verification_id: str) -> VerificationRecord:
-        """
+           """TODO: Add docstring for process_verification"""
+     """
         Process a pending HIPAA verification.
 
         Args:
@@ -332,7 +345,8 @@ class HIPAAVerifier:
             raise
 
     def get_verification_status(self, npi: str) -> Optional[VerificationRecord]:
-        """
+           """TODO: Add docstring for get_verification_status"""
+     """
         Get verification status for an NPI.
 
         Args:
@@ -344,7 +358,8 @@ class HIPAAVerifier:
         return self.verification_records.get(npi)
 
     def revoke_verification(self, npi: str, reason: str) -> bool:
-        """
+           """TODO: Add docstring for revoke_verification"""
+     """
         Revoke verification for a provider.
 
         Args:
@@ -380,12 +395,14 @@ class HIPAAVerifier:
         return True
 
     def _generate_verification_id(self, credentials: HIPAACredentials) -> str:
-        """Generate unique verification ID"""
+           """TODO: Add docstring for _generate_verification_id"""
+     """Generate unique verification ID"""
         data = f"{credentials.npi}:{credentials.baa_hash}:{datetime.now().isoformat()}"
         return hashlib.sha256(data.encode()).hexdigest()[:16]
 
-    def _validate_credentials(self, credentials: HIPAACredentials):
-        """Validate credential components"""
+    def _validate_credentials(self, credentials: HIPAACredentials) -> None:
+           """TODO: Add docstring for _validate_credentials"""
+     """Validate credential components"""
         # In production, would verify:
         # - BAA hash matches expected format/content
         # - Risk analysis hash is recent and valid
@@ -402,7 +419,8 @@ class HIPAAVerifier:
             raise VerificationError("Missing HSM serial")
 
     def _generate_signature(self, credentials: HIPAACredentials) -> str:
-        """Generate verification signature"""
+           """TODO: Add docstring for _generate_signature"""
+     """Generate verification signature"""
         data = json.dumps(
             {
                 "npi": credentials.npi,
@@ -417,7 +435,8 @@ class HIPAAVerifier:
         return hashlib.sha256(data.encode()).hexdigest()
 
     def get_active_verifications(self) -> List[Tuple[str, VerificationRecord]]:
-        """Get all active verifications"""
+           """TODO: Add docstring for get_active_verifications"""
+     """Get all active verifications"""
         active = []
         for npi, record in self.verification_records.items():
             if record.is_active():
@@ -425,7 +444,8 @@ class HIPAAVerifier:
         return active
 
     def cleanup_expired(self) -> int:
-        """Clean up expired verifications"""
+           """TODO: Add docstring for cleanup_expired"""
+     """Clean up expired verifications"""
         expired_count = 0
         for npi, record in list(self.verification_records.items()):
             if record.expires_at and datetime.now() > record.expires_at:
@@ -441,8 +461,9 @@ class HIPAAVerifier:
 if __name__ == "__main__":
     import asyncio
 
-    async def test_hipaa_verification():
-        """Test HIPAA verification flow"""
+    async def test_hipaa_verification() -> None:
+           """TODO: Add docstring for test_hipaa_verification"""
+     """Test HIPAA verification flow"""
 
         # Initialize verifier with CMS registry
         async with CMSNPIRegistry() as registry:

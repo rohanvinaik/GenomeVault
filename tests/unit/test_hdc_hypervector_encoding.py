@@ -1,9 +1,8 @@
 """
 Unit tests for hypervector encoding module
 """
-
 import unittest
-from typing import Dict
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 import torch
@@ -40,8 +39,9 @@ from genomevault.hypervector_transform.mapping import (
 class TestHypervectorEncoder(unittest.TestCase):
     """Test hypervector encoding functionality"""
 
-    def setUp(self):
-        """Set up test fixtures"""
+
+    def setUp(self) -> None:
+    """Set up test fixtures"""
         self.encoder = HypervectorEncoder()
         self.test_features = torch.randn(100)
         self.test_data = {
@@ -53,21 +53,24 @@ class TestHypervectorEncoder(unittest.TestCase):
             },
         }
 
-    def test_encoder_initialization(self):
-        """Test encoder initialization"""
+
+    def test_encoder_initialization(self) -> None:
+    """Test encoder initialization"""
         self.assertEqual(self.encoder.config.dimension, 10000)
         self.assertEqual(self.encoder.config.projection_type, ProjectionType.SPARSE_RANDOM)
         self.assertTrue(self.encoder.config.normalize)
 
-    def test_basic_encoding(self):
-        """Test basic encoding functionality"""
+
+    def test_basic_encoding(self) -> None:
+    """Test basic encoding functionality"""
         hypervector = self.encoder.encode(self.test_features, OmicsType.GENOMIC)
 
         self.assertEqual(hypervector.shape[0], 10000)
         self.assertAlmostEqual(torch.norm(hypervector).item(), 1.0, places=5)
 
-    def test_multiresolution_encoding(self):
-        """Test multi-resolution encoding"""
+
+    def test_multiresolution_encoding(self) -> None:
+    """Test multi-resolution encoding"""
         multi_vectors = self.encoder.encode_multiresolution(self.test_features, OmicsType.GENOMIC)
 
         self.assertIn("base", multi_vectors)
@@ -78,14 +81,16 @@ class TestHypervectorEncoder(unittest.TestCase):
         self.assertEqual(multi_vectors["mid"].shape[0], 15000)
         self.assertEqual(multi_vectors["high"].shape[0], 20000)
 
-    def test_dict_feature_extraction(self):
-        """Test feature extraction from dictionary"""
+
+    def test_dict_feature_extraction(self) -> None:
+    """Test feature extraction from dictionary"""
         hypervector = self.encoder.encode(self.test_data, OmicsType.GENOMIC)
 
         self.assertEqual(hypervector.shape[0], 10000)
 
-    def test_similarity_computation(self):
-        """Test similarity computation"""
+
+    def test_similarity_computation(self) -> None:
+    """Test similarity computation"""
         hv1 = self.encoder.encode(torch.randn(100), OmicsType.GENOMIC)
         hv2 = self.encoder.encode(torch.randn(100), OmicsType.GENOMIC)
 
@@ -98,8 +103,9 @@ class TestHypervectorEncoder(unittest.TestCase):
         hamming_sim = self.encoder.similarity(hv1, hv2, "hamming")
         self.assertTrue(0 <= hamming_sim <= 1)
 
-    def test_projection_types(self):
-        """Test different projection types"""
+
+    def test_projection_types(self) -> None:
+    """Test different projection types"""
         for proj_type in [
             ProjectionType.RANDOM_GAUSSIAN,
             ProjectionType.SPARSE_RANDOM,
@@ -111,8 +117,9 @@ class TestHypervectorEncoder(unittest.TestCase):
             hv = encoder.encode(self.test_features, OmicsType.GENOMIC)
             self.assertEqual(hv.shape[0], 10000)
 
-    def test_quantization(self):
-        """Test hypervector quantization"""
+
+    def test_quantization(self) -> None:
+    """Test hypervector quantization"""
         config = HypervectorConfig(quantize=True, quantization_bits=4)
         encoder = HypervectorEncoder(config)
 
@@ -126,16 +133,18 @@ class TestHypervectorEncoder(unittest.TestCase):
 class TestHypervectorBinder(unittest.TestCase):
     """Test hypervector binding operations"""
 
-    def setUp(self):
-        """Set up test fixtures"""
+
+    def setUp(self) -> None:
+    """Set up test fixtures"""
         self.dimension = 1000
         self.binder = HypervectorBinder(self.dimension)
         self.v1 = torch.randn(self.dimension)
         self.v2 = torch.randn(self.dimension)
         self.v3 = torch.randn(self.dimension)
 
-    def test_multiply_binding(self):
-        """Test element-wise multiplication binding"""
+
+    def test_multiply_binding(self) -> None:
+    """Test element-wise multiplication binding"""
         bound = self.binder.bind([self.v1, self.v2], BindingType.MULTIPLY)
         self.assertEqual(bound.shape[0], self.dimension)
 
@@ -146,8 +155,9 @@ class TestHypervectorBinder(unittest.TestCase):
         ).item()
         self.assertGreater(similarity, 0.9)
 
-    def test_circular_binding(self):
-        """Test circular convolution binding"""
+
+    def test_circular_binding(self) -> None:
+    """Test circular convolution binding"""
         bound = self.binder.bind([self.v1, self.v2], BindingType.CIRCULAR)
         self.assertEqual(bound.shape[0], self.dimension)
 
@@ -158,13 +168,15 @@ class TestHypervectorBinder(unittest.TestCase):
         ).item()
         self.assertGreater(similarity, 0.8)
 
-    def test_permutation_binding(self):
-        """Test permutation-based binding"""
+
+    def test_permutation_binding(self) -> None:
+    """Test permutation-based binding"""
         bound = self.binder.bind([self.v1, self.v2], BindingType.PERMUTATION)
         self.assertEqual(bound.shape[0], self.dimension)
 
-    def test_xor_binding(self):
-        """Test XOR binding for binary vectors"""
+
+    def test_xor_binding(self) -> None:
+    """Test XOR binding for binary vectors"""
         # Create binary vectors
         b1 = torch.sign(self.v1)
         b2 = torch.sign(self.v2)
@@ -177,8 +189,9 @@ class TestHypervectorBinder(unittest.TestCase):
         similarity = (b1 == recovered).float().mean().item()
         self.assertGreater(similarity, 0.9)
 
-    def test_bundling(self):
-        """Test bundling operation"""
+
+    def test_bundling(self) -> None:
+    """Test bundling operation"""
         bundle = self.binder.bundle([self.v1, self.v2, self.v3])
         self.assertEqual(bundle.shape[0], self.dimension)
 
@@ -187,8 +200,9 @@ class TestHypervectorBinder(unittest.TestCase):
             sim = torch.nn.functional.cosine_similarity(bundle.unsqueeze(0), v.unsqueeze(0)).item()
             self.assertGreater(sim, 0)
 
-    def test_protection(self):
-        """Test vector protection with key"""
+
+    def test_protection(self) -> None:
+    """Test vector protection with key"""
         key = torch.randn(self.dimension)
 
         protected = self.binder.protect(self.v1, key)
@@ -203,19 +217,22 @@ class TestHypervectorBinder(unittest.TestCase):
 class TestPositionalBinder(unittest.TestCase):
     """Test positional binding"""
 
-    def setUp(self):
-        """Set up test fixtures"""
+
+    def setUp(self) -> None:
+    """Set up test fixtures"""
         self.dimension = 1000
         self.binder = PositionalBinder(self.dimension)
         self.vectors = [torch.randn(self.dimension) for _ in range(5)]
 
-    def test_position_binding(self):
-        """Test binding with position"""
+
+    def test_position_binding(self) -> None:
+    """Test binding with position"""
         bound = self.binder.bind_with_position(self.vectors[0], 100)
         self.assertEqual(bound.shape[0], self.dimension)
 
-    def test_sequence_binding(self):
-        """Test sequence binding"""
+
+    def test_sequence_binding(self) -> None:
+    """Test sequence binding"""
         sequence_bound = self.binder.bind_sequence(self.vectors)
         self.assertEqual(sequence_bound.shape[0], self.dimension)
 
@@ -223,8 +240,9 @@ class TestPositionalBinder(unittest.TestCase):
 class TestCrossModalBinder(unittest.TestCase):
     """Test cross-modal binding"""
 
-    def setUp(self):
-        """Set up test fixtures"""
+
+    def setUp(self) -> None:
+    """Set up test fixtures"""
         self.dimension = 1000
         self.binder = CrossModalBinder(self.dimension)
         self.modalities = {
@@ -233,8 +251,9 @@ class TestCrossModalBinder(unittest.TestCase):
             "epigenomic": torch.randn(self.dimension),
         }
 
-    def test_modality_binding(self):
-        """Test binding multiple modalities"""
+
+    def test_modality_binding(self) -> None:
+    """Test binding multiple modalities"""
         results = self.binder.bind_modalities(self.modalities)
 
         # Check combined representation exists
@@ -250,13 +269,15 @@ class TestCrossModalBinder(unittest.TestCase):
 class TestHolographicEncoder(unittest.TestCase):
     """Test holographic encoding"""
 
-    def setUp(self):
-        """Set up test fixtures"""
+
+    def setUp(self) -> None:
+    """Set up test fixtures"""
         self.dimension = 1000
         self.encoder = HolographicEncoder(self.dimension)
 
-    def test_structure_encoding(self):
-        """Test encoding hierarchical structures"""
+
+    def test_structure_encoding(self) -> None:
+    """Test encoding hierarchical structures"""
         structure = {
             "gene": "BRCA1",
             "expression": 5.2,
@@ -268,8 +289,9 @@ class TestHolographicEncoder(unittest.TestCase):
         self.assertIn("gene", hologram.components)
         self.assertIn("conditions_nested", hologram.components)
 
-    def test_query(self):
-        """Test querying holographic representation"""
+
+    def test_query(self) -> None:
+    """Test querying holographic representation"""
         structure = {"a": torch.randn(self.dimension), "b": torch.randn(self.dimension)}
         hologram = self.encoder.encode_structure(structure)
 
@@ -277,15 +299,17 @@ class TestHolographicEncoder(unittest.TestCase):
         recovered_a = self.encoder.query(hologram.root, "a")
         self.assertEqual(recovered_a.shape[0], self.dimension)
 
-    def test_genomic_variant_encoding(self):
-        """Test encoding genomic variants"""
+
+    def test_genomic_variant_encoding(self) -> None:
+    """Test encoding genomic variants"""
         variant_hv = self.encoder.encode_genomic_variant(
             "chr1", 12345, "A", "G", {"effect": "missense"}
         )
         self.assertEqual(variant_hv.shape[0], self.dimension)
 
-    def test_memory_trace(self):
-        """Test creating memory traces"""
+
+    def test_memory_trace(self) -> None:
+    """Test creating memory traces"""
         items = [
             {"id": 1, "value": "A"},
             {"id": 2, "value": "B"},
@@ -295,8 +319,9 @@ class TestHolographicEncoder(unittest.TestCase):
         memory = self.encoder.create_memory_trace(items)
         self.assertEqual(memory.shape[0], self.dimension)
 
-    def test_similarity_preserving_hash(self):
-        """Test similarity-preserving hash"""
+
+    def test_similarity_preserving_hash(self) -> None:
+    """Test similarity-preserving hash"""
         v1 = torch.randn(self.dimension)
         v2 = v1 + torch.randn(self.dimension) * 0.1  # Similar vector
         v3 = torch.randn(self.dimension)  # Different vector
@@ -309,8 +334,10 @@ class TestHolographicEncoder(unittest.TestCase):
         self.assertEqual(len(hash1), 16)  # 64 bits = 16 hex chars
 
         # Count matching bits
-        def count_matching_bits(h1, h2):
-            b1 = bin(int(h1, 16))[2:].zfill(64)
+
+        def count_matching_bits(h1, h2) -> None:
+    """TODO: Add docstring for count_matching_bits"""
+    b1 = bin(int(h1, 16))[2:].zfill(64)
             b2 = bin(int(h2, 16))[2:].zfill(64)
             return sum(c1 == c2 for c1, c2 in zip(b1, b2))
 
@@ -324,15 +351,17 @@ class TestHolographicEncoder(unittest.TestCase):
 class TestSimilarityMapping(unittest.TestCase):
     """Test similarity-preserving mappings"""
 
-    def setUp(self):
-        """Set up test fixtures"""
+
+    def setUp(self) -> None:
+    """Set up test fixtures"""
         self.input_dim = 100
         self.output_dim = 1000
         self.n_samples = 50
         self.data = torch.randn(self.n_samples, self.input_dim)
 
-    def test_basic_mapping(self):
-        """Test basic similarity preservation"""
+
+    def test_basic_mapping(self) -> None:
+    """Test basic similarity preservation"""
         mapper = SimilarityPreservingMapper(self.input_dim, self.output_dim)
         transformed = mapper.fit_transform(self.data)
 
@@ -346,8 +375,9 @@ class TestSimilarityMapping(unittest.TestCase):
         sim_diff = torch.abs(orig_sim - trans_sim).mean().item()
         self.assertLess(sim_diff, 0.5)
 
-    def test_biological_mapper(self):
-        """Test biological similarity mapper"""
+
+    def test_biological_mapper(self) -> None:
+    """Test biological similarity mapper"""
         mapper = BiologicalSimilarityMapper(self.input_dim, self.output_dim, OmicsType.GENOMIC)
 
         # Test variant similarity
@@ -356,8 +386,9 @@ class TestSimilarityMapping(unittest.TestCase):
         sim = mapper.compute_biological_similarity(v1, v2, "variant")
         self.assertTrue(0 <= sim <= 1)
 
-    def test_manifold_mapper(self):
-        """Test manifold-preserving mapper"""
+
+    def test_manifold_mapper(self) -> None:
+    """Test manifold-preserving mapper"""
         # Create data with manifold structure
         t = torch.linspace(0, 4 * np.pi, self.n_samples)
         manifold_data = torch.stack([torch.sin(t), torch.cos(t), t / 10], dim=1)
@@ -377,7 +408,6 @@ class TestSimilarityMapping(unittest.TestCase):
         correlation = torch.corrcoef(torch.stack([orig_flat, embed_flat]))[0, 1].item()
 
         self.assertGreater(correlation, 0.5)
-
 
 if __name__ == "__main__":
     unittest.main()

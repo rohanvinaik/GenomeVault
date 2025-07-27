@@ -1,8 +1,11 @@
+from typing import Any, Dict
+
 #!/usr/bin/env python3
 """
 Example usage of GenomeVault 3.0 integrated system.
 Demonstrates the complete workflow from data processing to proof generation.
 """
+import logging
 import asyncio
 import json
 import time
@@ -24,8 +27,9 @@ from genomevault.utils.logging import audit_logger, logger
 from genomevault.zk_proofs.prover import Prover
 
 
-async def demonstrate_genomevault():
-    """Demonstrate complete GenomeVault workflow."""
+async def demonstrate_genomevault() -> None:
+       """TODO: Add docstring for demonstrate_genomevault"""
+     """Demonstrate complete GenomeVault workflow."""
 
     print("=== GenomeVault 3.0 Demonstration ===\n")
 
@@ -197,8 +201,9 @@ async def demonstrate_genomevault():
     print("BFT requirement: H > F (majority honest voting power)")
 
 
-def demonstrate_privacy_calculations():
-    """Demonstrate privacy guarantee calculations."""
+def demonstrate_privacy_calculations() -> None:
+       """TODO: Add docstring for demonstrate_privacy_calculations"""
+     """Demonstrate privacy guarantee calculations."""
     print("\n=== Privacy Guarantee Calculations ===")
 
     # PIR privacy calculations
@@ -229,8 +234,9 @@ def demonstrate_privacy_calculations():
     print("  Generic: {k_min_generic} servers")
 
 
-def demonstrate_compression_tiers():
-    """Demonstrate compression tier calculations."""
+def demonstrate_compression_tiers() -> None:
+       """TODO: Add docstring for demonstrate_compression_tiers"""
+     """Demonstrate compression tier calculations."""
     print("\n=== Compression Tier Analysis ===")
 
     modalities = ["genomics", "transcriptomics", "epigenetics", "proteomics"]

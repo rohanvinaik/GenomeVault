@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 """
 Property-based tests for HDC implementation using Hypothesis
 
@@ -24,25 +26,26 @@ from genomevault.hypervector_transform.hdc_encoder import (
 
 # Custom strategies for HDC components
 @st.composite
-def valid_dimensions(draw):
+
+def valid_dimensions(draw) -> None:
     """Generate valid hypervector dimensions"""
     return draw(st.sampled_from([1000, 2000, 5000, 10000, 15000, 20000]))
 
-
 @st.composite
-def projection_types(draw):
+
+def projection_types(draw) -> None:
     """Generate valid projection types"""
     return draw(st.sampled_from(list(ProjectionType)))
 
-
 @st.composite
-def compression_tiers(draw):
+
+def compression_tiers(draw) -> None:
     """Generate valid compression tiers"""
     return draw(st.sampled_from(list(CompressionTier)))
 
-
 @st.composite
-def feature_arrays(draw, min_size=10, max_size=10000):
+
+def feature_arrays(draw, min_size=10, max_size=10000) -> None:
     """Generate valid feature arrays"""
     size = draw(st.integers(min_value=min_size, max_value=max_size))
     return draw(
@@ -53,9 +56,9 @@ def feature_arrays(draw, min_size=10, max_size=10000):
         )
     )
 
-
 @st.composite
-def binding_compatible_vectors(draw, dimension):
+
+def binding_compatible_vectors(draw, dimension) -> None:
     """Generate vectors compatible for binding"""
     num_vectors = draw(st.integers(min_value=2, max_value=10))
     vectors = []
@@ -76,8 +79,9 @@ class TestHDCProperties:
 
     @given(dimension=valid_dimensions(), features=feature_arrays())
     @settings(max_examples=50, deadline=5000)
-    def test_encoding_preserves_dimension(self, dimension, features):
-        """Property: Encoding always produces vectors of specified dimension"""
+
+    def test_encoding_preserves_dimension(self, dimension, features) -> None:
+    """Property: Encoding always produces vectors of specified dimension"""
         encoder = HypervectorEncoder(HypervectorConfig(dimension=dimension))
 
         hv = encoder.encode(features, OmicsType.GENOMIC)
@@ -87,8 +91,9 @@ class TestHDCProperties:
 
     @given(features=feature_arrays(), seed=st.integers(min_value=0, max_value=2**32 - 1))
     @settings(max_examples=20)
-    def test_encoding_determinism_property(self, features, seed):
-        """Property: Same seed always produces same encoding"""
+
+    def test_encoding_determinism_property(self, features, seed) -> None:
+    """Property: Same seed always produces same encoding"""
         config = HypervectorConfig(seed=seed, dimension=10000)
 
         # Create two encoders with same seed
@@ -102,8 +107,9 @@ class TestHDCProperties:
 
     @given(dimension=valid_dimensions(), features1=feature_arrays(), features2=feature_arrays())
     @settings(max_examples=30)
-    def test_similarity_preservation_property(self, dimension, features1, features2):
-        """Property: Similar inputs produce similar hypervectors"""
+
+    def test_similarity_preservation_property(self, dimension, features1, features2) -> None:
+    """Property: Similar inputs produce similar hypervectors"""
         encoder = HypervectorEncoder(HypervectorConfig(dimension=dimension))
 
         # Calculate original similarity
@@ -133,8 +139,9 @@ class TestHDCProperties:
 
     @given(dimension=valid_dimensions(), projection_type=projection_types())
     @settings(max_examples=20)
-    def test_projection_matrix_properties(self, dimension, projection_type):
-        """Property: Projection matrices have correct properties"""
+
+    def test_projection_matrix_properties(self, dimension, projection_type) -> None:
+    """Property: Projection matrices have correct properties"""
         try:
             config = HypervectorConfig(dimension=dimension, projection_type=projection_type)
             encoder = HypervectorEncoder(config)
@@ -185,8 +192,9 @@ class TestBindingProperties:
         ),
     )
     @settings(max_examples=20, deadline=10000)
-    def test_binding_dimension_preservation(self, dimension, vectors):
-        """Property: Binding preserves hypervector dimension"""
+
+    def test_binding_dimension_preservation(self, dimension, vectors) -> None:
+    """Property: Binding preserves hypervector dimension"""
         # Use fixed dimension for this test
         dimension = 10000
         binder = HypervectorBinder(dimension)
@@ -205,8 +213,9 @@ class TestBindingProperties:
 
     @given(dimension=st.integers(min_value=1000, max_value=20000))
     @settings(max_examples=30)
-    def test_binding_inverse_property(self, dimension):
-        """Property: unbind(bind(a,b), b) ≈ a for all binding types"""
+
+    def test_binding_inverse_property(self, dimension) -> None:
+    """Property: unbind(bind(a,b), b) ≈ a for all binding types"""
         binder = HypervectorBinder(dimension)
 
         # Create normalized random vectors
@@ -237,8 +246,9 @@ class TestBindingProperties:
         num_vectors=st.integers(min_value=2, max_value=20),
     )
     @settings(max_examples=20)
-    def test_bundling_properties(self, dimension, num_vectors):
-        """Property: Bundling preserves information from all vectors"""
+
+    def test_bundling_properties(self, dimension, num_vectors) -> None:
+    """Property: Bundling preserves information from all vectors"""
         binder = HypervectorBinder(dimension)
 
         # Create random vectors
@@ -260,8 +270,9 @@ class TestBindingProperties:
 
     @given(dimension=st.integers(min_value=1000, max_value=5000))
     @settings(max_examples=20)
-    def test_binding_associativity(self, dimension):
-        """Property: (a * b) * c = a * (b * c) for associative operations"""
+
+    def test_binding_associativity(self, dimension) -> None:
+    """Property: (a * b) * c = a * (b * c) for associative operations"""
         binder = HypervectorBinder(dimension)
 
         # Create three random vectors
@@ -285,8 +296,9 @@ class TestCompressionProperties:
 
     @given(features=feature_arrays(), tier=compression_tiers())
     @settings(max_examples=30)
-    def test_compression_tier_dimensions(self, features, tier):
-        """Property: Each tier produces vectors of expected dimension"""
+
+    def test_compression_tier_dimensions(self, features, tier) -> None:
+    """Property: Each tier produces vectors of expected dimension"""
         encoder = HypervectorEncoder(HypervectorConfig(compression_tier=tier))
 
         hv = encoder.encode(features, OmicsType.GENOMIC, tier)
@@ -301,8 +313,9 @@ class TestCompressionProperties:
 
     @given(features=feature_arrays(min_size=100, max_size=5000))
     @settings(max_examples=20)
-    def test_information_hierarchy(self, features):
-        """Property: Higher tiers preserve more information"""
+
+    def test_information_hierarchy(self, features) -> None:
+    """Property: Higher tiers preserve more information"""
         # Create similar features with noise
         noise_level = 0.1
         features_noisy = features + np.random.randn(len(features)) * noise_level
@@ -331,8 +344,9 @@ class TestPrivacyProperties:
 
     @given(dimension=valid_dimensions(), features=feature_arrays())
     @settings(max_examples=20)
-    def test_non_invertibility(self, dimension, features):
-        """Property: Cannot recover original data from hypervector"""
+
+    def test_non_invertibility(self, dimension, features) -> None:
+    """Property: Cannot recover original data from hypervector"""
         encoder = HypervectorEncoder(HypervectorConfig(dimension=dimension))
 
         # Encode
@@ -349,8 +363,9 @@ class TestPrivacyProperties:
 
     @given(features1=feature_arrays(), features2=feature_arrays())
     @settings(max_examples=20)
-    def test_collision_resistance(self, features1, features2):
-        """Property: Different inputs produce different hypervectors"""
+
+    def test_collision_resistance(self, features1, features2) -> None:
+    """Property: Different inputs produce different hypervectors"""
         assume(not np.array_equal(features1, features2))  # Ensure inputs are different
 
         encoder = HypervectorEncoder(HypervectorConfig(dimension=10000))
@@ -365,15 +380,16 @@ class TestPrivacyProperties:
         similarity = encoder.similarity(hv1, hv2)
         assert similarity < 0.999
 
-
 # Performance property tests
+
 class TestPerformanceProperties:
     """Property-based tests for performance characteristics"""
 
     @given(batch_size=st.integers(min_value=1, max_value=100))
     @settings(max_examples=10, deadline=30000)
-    def test_batch_encoding_consistency(self, batch_size):
-        """Property: Batch encoding produces same results as individual encoding"""
+
+    def test_batch_encoding_consistency(self, batch_size) -> None:
+    """Property: Batch encoding produces same results as individual encoding"""
         encoder = HypervectorEncoder(HypervectorConfig(dimension=5000))
 
         # Create batch of features
@@ -396,8 +412,9 @@ class TestPerformanceProperties:
 
     @given(dimension=st.sampled_from([1000, 5000, 10000]))
     @settings(max_examples=5, deadline=10000)
-    def test_memory_scaling(self, dimension):
-        """Property: Memory usage scales linearly with dimension"""
+
+    def test_memory_scaling(self, dimension) -> None:
+    """Property: Memory usage scales linearly with dimension"""
         import gc
         import os
 
@@ -430,7 +447,6 @@ class TestPerformanceProperties:
 
         # Should be within 2x of expected (accounting for overhead)
         assert memory_per_vector < expected_kb * 2
-
 
 if __name__ == "__main__":
     # Run a quick test

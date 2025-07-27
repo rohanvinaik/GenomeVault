@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 """
 Integration tests for Proof-of-Training system
 
@@ -21,29 +23,37 @@ from genomevault.local_processing.differential_privacy_audit import PrivacyMecha
 class MockModel:
     """Mock model for testing"""
 
-    def __init__(self):
-        self.weights = {"layer1": np.random.randn(100, 50), "layer2": np.random.randn(50, 2)}
 
-    def parameters(self):
-        return [self.weights["layer1"], self.weights["layer2"]]
+    def __init__(self) -> None:
+    """TODO: Add docstring for __init__"""
+    self.weights = {"layer1": np.random.randn(100, 50), "layer2": np.random.randn(50, 2)}
 
-    def __str__(self):
-        return "MockModel(layers=2)"
+
+    def parameters(self) -> None:
+    """TODO: Add docstring for parameters"""
+    return [self.weights["layer1"], self.weights["layer2"]]
+
+
+    def __str__(self) -> None:
+    """TODO: Add docstring for __str__"""
+    return "MockModel(layers=2)"
 
 
 class TestProofOfTrainingIntegration:
     """Test suite for PoT integration"""
 
     @pytest.fixture
-    def temp_dir(self):
-        """Create temporary directory for test artifacts"""
+
+    def temp_dir(self) -> None:
+    """Create temporary directory for test artifacts"""
         temp_dir = tempfile.mkdtemp()
         yield temp_dir
         shutil.rmtree(temp_dir)
 
     @pytest.fixture
-    def pot_config(self, temp_dir):
-        """Create test configuration"""
+
+    def pot_config(self, temp_dir) -> None:
+    """Create test configuration"""
         return {
             "storage_path": temp_dir,
             "snapshot_frequency": 2,
@@ -54,12 +64,14 @@ class TestProofOfTrainingIntegration:
         }
 
     @pytest.fixture
-    def pot_integration(self, pot_config):
-        """Create PoT integration instance"""
+
+    def pot_integration(self, pot_config) -> None:
+    """Create PoT integration instance"""
         return ProofOfTrainingIntegration(pot_config)
 
-    def test_training_session_lifecycle(self, pot_integration, temp_dir):
-        """Test complete training session lifecycle"""
+
+    def test_training_session_lifecycle(self, pot_integration, temp_dir) -> None:
+    """Test complete training session lifecycle"""
         # Start session
         session_id = "test_session_001"
         session_info = pot_integration.start_training_session(
@@ -122,8 +134,9 @@ class TestProofOfTrainingIntegration:
         assert "public_inputs" in proof
         assert "commitments" in proof
 
-    def test_multi_modal_training(self, pot_integration):
-        """Test multi-modal training support"""
+
+    def test_multi_modal_training(self, pot_integration) -> None:
+    """Test multi-modal training support"""
         pot_integration.config["multimodal"] = True
 
         session_id = "multimodal_test"
@@ -154,8 +167,9 @@ class TestProofOfTrainingIntegration:
 
         assert "proof" in result
 
-    def test_privacy_budget_tracking(self, pot_integration):
-        """Test privacy budget enforcement"""
+
+    def test_privacy_budget_tracking(self, pot_integration) -> None:
+    """Test privacy budget enforcement"""
         session_id = "privacy_test"
 
         # Start with small budget
@@ -193,8 +207,9 @@ class TestProofOfTrainingIntegration:
 
         assert privacy_exceeded, "Privacy budget should have been exceeded"
 
-    def test_clinical_validation(self, pot_integration):
-        """Test clinical validation functionality"""
+
+    def test_clinical_validation(self, pot_integration) -> None:
+    """Test clinical validation functionality"""
         model = MockModel()
         test_data = (np.random.randn(100, 100), np.random.randint(0, 2, 100))
 
@@ -211,8 +226,9 @@ class TestProofOfTrainingIntegration:
         assert "metrics" in result
         assert "limitations" in result
 
-    def test_drift_monitoring(self, pot_integration):
-        """Test real-time drift monitoring"""
+
+    def test_drift_monitoring(self, pot_integration) -> None:
+    """Test real-time drift monitoring"""
         model = MockModel()
 
         # Start monitoring
@@ -245,8 +261,9 @@ class TestProofOfTrainingIntegration:
         assert "total_predictions" in summary
         assert summary["total_predictions"] == 20
 
-    def test_federated_learning_support(self, pot_integration):
-        """Test federated learning lineage tracking"""
+
+    def test_federated_learning_support(self, pot_integration) -> None:
+    """Test federated learning lineage tracking"""
         session_id = "federated_test"
 
         session_info = pot_integration.start_training_session(
@@ -288,8 +305,9 @@ class TestProofOfTrainingIntegration:
         path = lineage.get_lineage_path(agg_version)
         assert len(path) >= 2
 
-    def test_proof_verification(self, pot_integration, temp_dir):
-        """Test proof verification process"""
+
+    def test_proof_verification(self, pot_integration, temp_dir) -> None:
+    """Test proof verification process"""
         # Create and complete a session
         session_id = "verify_test"
         pot_integration.start_training_session(
@@ -330,8 +348,9 @@ class TestProofOfTrainingIntegration:
         assert loaded_proof["circuit_type"] == "training_proof"
         assert loaded_proof["constraints_satisfied"] == True
 
-    def test_semantic_drift_analysis(self, pot_integration, temp_dir):
-        """Test semantic drift analysis functionality"""
+
+    def test_semantic_drift_analysis(self, pot_integration, temp_dir) -> None:
+    """Test semantic drift analysis functionality"""
         session_id = "semantic_test"
 
         # Start session
@@ -370,8 +389,9 @@ class TestProofOfTrainingIntegration:
             assert "max_drift" in analysis
             assert "anomalies_detected" in analysis
 
-    def test_error_handling(self, pot_integration):
-        """Test error handling in various scenarios"""
+
+    def test_error_handling(self, pot_integration) -> None:
+    """Test error handling in various scenarios"""
 
         # Test invalid session ID
         with pytest.raises(KeyError):
@@ -385,13 +405,14 @@ class TestProofOfTrainingIntegration:
                 session_id="nonexistent", final_model=MockModel(), final_metrics={}
             )
 
-
 @pytest.mark.integration
+
 class TestEndToEndScenarios:
     """End-to-end integration scenarios"""
 
-    def test_genomic_classifier_workflow(self):
-        """Test complete workflow for genomic classifier"""
+
+    def test_genomic_classifier_workflow(self) -> None:
+    """Test complete workflow for genomic classifier"""
         config = {
             "storage_path": "./test_e2e_genomic",
             "snapshot_frequency": 10,
@@ -448,7 +469,6 @@ class TestEndToEndScenarios:
         assert result is not None
         assert val_result is not None
         assert monitor is not None
-
 
 if __name__ == "__main__":
     # Run tests

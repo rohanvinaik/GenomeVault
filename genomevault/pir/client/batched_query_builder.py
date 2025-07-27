@@ -2,6 +2,8 @@
 Batched PIR Query Builder for HDC Error-Tuned Queries
 Implements repeat-aware PIR batching with median aggregation for uncertainty tuning
 """
+import logging
+from typing import Dict, List, Optional, Any, Union
 
 import asyncio
 import hashlib
@@ -61,13 +63,15 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
     Integrates with HDC error budget system for uncertainty tuning
     """
 
-    def __init__(self, pir_client: PIRClient, index_mapping: Dict[str, Dict[str, int]]):
-        super().__init__(pir_client, index_mapping)
+    def __init__(self, pir_client: PIRClient, index_mapping: Dict[str, Dict[str, int]]) -> None:
+            """TODO: Add docstring for __init__"""
+    super().__init__(pir_client, index_mapping)
         self.batch_cache: Dict[str, BatchedQueryResult] = {}
         self.batch_cache_size = 50
 
     def build_repeat_batch(self, budget: ErrorBudget, query: GenomicQuery) -> BatchedQuery:
-        """
+           """TODO: Add docstring for build_repeat_batch"""
+     """
         Build a batch of k queries with different seeds for median aggregation
 
         Args:
@@ -105,7 +109,8 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
         )
 
     def _generate_repeat_seed(self, base_key: str, repeat_idx: int, dimension: int) -> int:
-        """Generate deterministic seed for a repeat query"""
+           """TODO: Add docstring for _generate_repeat_seed"""
+     """Generate deterministic seed for a repeat query"""
         seed_data = f"{base_key}:{repeat_idx}:{dimension}"
         seed_hash = hashlib.sha256(seed_data.encode()).digest()
         return int.from_bytes(seed_hash[:4], byteorder="big")
@@ -113,7 +118,8 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
     def _build_seeded_pir_query(
         self, base_query: GenomicQuery, seeded_params: Dict, seed: int
     ) -> PIRQuery:
-        """Build a PIR query with deterministic seeding"""
+           """TODO: Add docstring for _build_seeded_pir_query"""
+     """Build a PIR query with deterministic seeding"""
         # This depends on the query type
         if base_query.query_type == QueryType.VARIANT_LOOKUP:
             return self._build_seeded_variant_query(seeded_params, seed)
@@ -129,7 +135,8 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
             )
 
     def _build_seeded_variant_query(self, params: Dict, seed: int) -> PIRQuery:
-        """Build seeded variant lookup query"""
+           """TODO: Add docstring for _build_seeded_variant_query"""
+     """Build seeded variant lookup query"""
         # Get variant key
         var_key = f"{params['chromosome']}:{params['position']}"
         if "ref_allele" in params and "alt_allele" in params:
@@ -145,7 +152,8 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
         return self.pir_client.create_query(db_index, seed=seed)
 
     def _build_seeded_region_query(self, params: Dict, seed: int) -> PIRQuery:
-        """Build seeded region scan query"""
+           """TODO: Add docstring for _build_seeded_region_query"""
+     """Build seeded region scan query"""
         # Find all indices in region
         indices = []
         for pos in range(params["start"], params["end"] + 1):
@@ -164,7 +172,8 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
         )
 
     async def execute_batched_query(self, batched_query: BatchedQuery) -> BatchedQueryResult:
-        """
+           """TODO: Add docstring for execute_batched_query"""
+     """
         Execute a batch of repeat queries and aggregate results
 
         Args:
@@ -227,7 +236,8 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
     async def execute_streaming_batch(
         self, batched_query: BatchedQuery
     ) -> AsyncIterator[Tuple[int, Any]]:
-        """
+           """TODO: Add docstring for execute_streaming_batch"""
+     """
         Stream results as they complete for real-time progress updates
 
         Args:
@@ -258,7 +268,8 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
                 break
 
     async def _execute_single_repeat(self, pir_query: PIRQuery) -> Any:
-        """Execute a single repeat query"""
+           """TODO: Add docstring for _execute_single_repeat"""
+     """Execute a single repeat query"""
         if not pir_query.indices:
             return None
 
@@ -272,14 +283,16 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
         return decoded
 
     async def _execute_indexed_repeat(self, idx: int, pir_query: PIRQuery) -> Tuple[int, Any]:
-        """Execute a repeat query with its index"""
+           """TODO: Add docstring for _execute_indexed_repeat"""
+     """Execute a repeat query with its index"""
         result = await self._execute_single_repeat(pir_query)
         return (idx, result)
 
     async def execute_zoom_query(
         self, chromosome: str, start: int, end: int, zoom_level: int = 0
     ) -> Dict[str, Any]:
-        """
+           """TODO: Add docstring for execute_zoom_query"""
+     """
         Execute hierarchical zoom query
 
         Args:
@@ -362,7 +375,8 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
     async def execute_hierarchical_zoom(
         self, chromosome: str, region_start: int, region_end: int, budget: ErrorBudget
     ) -> Dict[str, Any]:
-        """
+           """TODO: Add docstring for execute_hierarchical_zoom"""
+     """
         Execute hierarchical zoom with PIR aggregation
 
         Returns combined proof for all zoom levels
@@ -396,7 +410,8 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
         }
 
     def _identify_hotspots(self, level0_data: Any) -> List[Dict[str, int]]:
-        """
+           """TODO: Add docstring for _identify_hotspots"""
+     """
         Identify regions of interest from level 0 scan
 
         This would use the hypervector similarity to find
@@ -409,7 +424,8 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
     def _aggregate_zoom_proofs(
         self, level0_results: Dict, level1_results: List[Dict], budget: ErrorBudget
     ) -> Dict[str, Any]:
-        """
+           """TODO: Add docstring for _aggregate_zoom_proofs"""
+     """
         Aggregate proofs from multiple zoom levels
         """
         # Placeholder for recursive proof aggregation
@@ -427,7 +443,8 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
     def _aggregate_results(
         self, results: List[Any], method: AggregationMethod
     ) -> Tuple[Any, float]:
-        """
+           """TODO: Add docstring for _aggregate_results"""
+     """
         Aggregate multiple query results using specified method
 
         Returns:
@@ -479,7 +496,8 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
     def _can_terminate_early(
         self, batched_query: BatchedQuery, accumulated_results: List[Any]
     ) -> bool:
-        """
+           """TODO: Add docstring for _can_terminate_early"""
+     """
         Check if we can terminate early based on accumulated results
 
         Early termination criteria:
@@ -509,7 +527,8 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
         aggregated_result: Any,
         median_error: float,
     ) -> Dict[str, Any]:
-        """Generate metadata for proof generation"""
+           """TODO: Add docstring for _generate_proof_metadata"""
+     """Generate metadata for proof generation"""
         return {
             "query_type": batched_query.base_query.query_type.value,
             "repeats_executed": len(results),
@@ -523,8 +542,9 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
             "timestamp": time.time(),
         }
 
-    def _add_to_batch_cache(self, key: str, result: BatchedQueryResult):
-        """Add result to batch cache with LRU eviction"""
+    def _add_to_batch_cache(self, key: str, result: BatchedQueryResult) -> None:
+           """TODO: Add docstring for _add_to_batch_cache"""
+     """Add result to batch cache with LRU eviction"""
         if len(self.batch_cache) >= self.batch_cache_size:
             # Remove oldest entry
             oldest_key = next(iter(self.batch_cache))
@@ -535,7 +555,8 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
     async def query_with_error_budget(
         self, query: GenomicQuery, budget: ErrorBudget
     ) -> BatchedQueryResult:
-        """
+           """TODO: Add docstring for query_with_error_budget"""
+     """
         High-level API: Execute query with specified error budget
 
         Args:
@@ -560,7 +581,8 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
         return result
 
     def get_batch_statistics(self) -> Dict[str, Any]:
-        """Get statistics about batched queries"""
+           """TODO: Add docstring for get_batch_statistics"""
+     """Get statistics about batched queries"""
         stats = super().get_query_statistics()
 
         # Add batch-specific stats

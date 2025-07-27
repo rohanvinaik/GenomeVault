@@ -4,6 +4,8 @@ Hierarchical Hyperdimensional Computing (HDC) Encoder for genomic data
 This module implements the core hypervector encoding functionality that transforms
 processed multi-omics data into high-dimensional, privacy-preserving representations.
 """
+import logging
+from typing import Dict, List, Optional, Any, Union
 
 from dataclasses import dataclass
 from enum import Enum
@@ -50,8 +52,9 @@ class HypervectorEncoder:
     that preserve similarity relationships while providing privacy guarantees.
     """
 
-    def __init__(self, config: Optional[HypervectorConfig] = None):
-        """
+    def __init__(self, config: Optional[HypervectorConfig] = None) -> None:
+           """TODO: Add docstring for __init__"""
+     """
         Initialize the hypervector encoder
 
         Args:
@@ -79,7 +82,8 @@ class HypervectorEncoder:
         omics_type: OmicsType,
         resolution: str = "base",
     ) -> torch.Tensor:
-        """
+           """TODO: Add docstring for encode"""
+     """
         Encode features into a hypervector
 
         Args:
@@ -128,7 +132,8 @@ class HypervectorEncoder:
     def encode_multiresolution(
         self, features: Union[np.ndarray, torch.Tensor, Dict], omics_type: OmicsType
     ) -> Dict[str, torch.Tensor]:
-        """
+           """TODO: Add docstring for encode_multiresolution"""
+     """
         Encode features at multiple resolution levels
 
         Args:
@@ -146,7 +151,8 @@ class HypervectorEncoder:
         return multiresolution_vectors
 
     def _extract_features(self, data: Dict, omics_type: OmicsType) -> torch.Tensor:
-        """Extract relevant features from processed data dictionary"""
+           """TODO: Add docstring for _extract_features"""
+     """Extract relevant features from processed data dictionary"""
         if omics_type == OmicsType.GENOMIC:
             # Extract variant features
             variants = data.get("variants", {})
@@ -203,7 +209,8 @@ class HypervectorEncoder:
     def _get_projection_matrix(
         self, input_dim: int, output_dim: int, omics_type: OmicsType
     ) -> torch.Tensor:
-        """Get or create projection matrix for given dimensions"""
+           """TODO: Add docstring for _get_projection_matrix"""
+     """Get or create projection matrix for given dimensions"""
         # Create cache key
         cache_key = "{omics_type.value}_{input_dim}_{output_dim}"
 
@@ -226,13 +233,15 @@ class HypervectorEncoder:
         return matrix
 
     def _create_gaussian_projection(self, input_dim: int, output_dim: int) -> torch.Tensor:
-        """Create random Gaussian projection matrix"""
+           """TODO: Add docstring for _create_gaussian_projection"""
+     """Create random Gaussian projection matrix"""
         # Standard random projection
         matrix = torch.randn(output_dim, input_dim) / np.sqrt(input_dim)
         return matrix
 
     def _create_sparse_projection(self, input_dim: int, output_dim: int) -> torch.Tensor:
-        """Create sparse random projection matrix"""
+           """TODO: Add docstring for _create_sparse_projection"""
+     """Create sparse random projection matrix"""
         matrix = torch.zeros(output_dim, input_dim)
 
         # Sparse random projection (Achlioptas, 2003)
@@ -254,7 +263,8 @@ class HypervectorEncoder:
         return matrix
 
     def _create_orthogonal_projection(self, input_dim: int, output_dim: int) -> torch.Tensor:
-        """Create orthogonal projection matrix using QR decomposition"""
+           """TODO: Add docstring for _create_orthogonal_projection"""
+     """Create orthogonal projection matrix using QR decomposition"""
         # For orthogonal projection, we need output_dim <= input_dim
         if output_dim > input_dim:
             # Use transpose for dimensionality expansion
@@ -267,7 +277,8 @@ class HypervectorEncoder:
             return q
 
     def _project(self, features: torch.Tensor, projection_matrix: torch.Tensor) -> torch.Tensor:
-        """Project features using the projection matrix"""
+           """TODO: Add docstring for _project"""
+     """Project features using the projection matrix"""
         # Handle batch dimension if present
         if features.dim() > 1:
             # Flatten all but batch dimension
@@ -282,12 +293,14 @@ class HypervectorEncoder:
             return torch.matmul(projection_matrix, features)
 
     def _normalize(self, hypervector: torch.Tensor) -> torch.Tensor:
-        """Normalize hypervector to unit length"""
+           """TODO: Add docstring for _normalize"""
+     """Normalize hypervector to unit length"""
         norm = torch.norm(hypervector, p=2, dim=-1, keepdim=True)
         return hypervector / (norm + 1e-8)
 
     def _quantize(self, hypervector: torch.Tensor) -> torch.Tensor:
-        """Quantize hypervector to specified bit depth"""
+           """TODO: Add docstring for _quantize"""
+     """Quantize hypervector to specified bit depth"""
         # Normalize to [-1, 1]
         min_val = hypervector.min()
         max_val = hypervector.max()
@@ -301,7 +314,8 @@ class HypervectorEncoder:
         return 2 * quantized / (levels - 1) - 1
 
     def similarity(self, hv1: torch.Tensor, hv2: torch.Tensor, metric: str = "cosine") -> float:
-        """
+           """TODO: Add docstring for similarity"""
+     """
         Compute similarity between two hypervectors
 
         Args:
@@ -323,7 +337,8 @@ class HypervectorEncoder:
             raise ValueError("Unknown similarity metric: {metric}")
 
     def get_projection_stats(self) -> Dict:
-        """Get statistics about cached projections"""
+           """TODO: Add docstring for get_projection_stats"""
+     """Get statistics about cached projections"""
         stats = {
             "num_cached_matrices": len(self._projection_cache),
             "cache_keys": list(self._projection_cache.keys()),
@@ -339,7 +354,8 @@ class HypervectorEncoder:
 def create_encoder(
     dimension: int = 10000, projection_type: str = "sparse_random", **kwargs
 ) -> HypervectorEncoder:
-    """Create a hypervector encoder with specified configuration"""
+       """TODO: Add docstring for create_encoder"""
+     """Create a hypervector encoder with specified configuration"""
     config = HypervectorConfig(
         dimension=dimension, projection_type=ProjectionType(projection_type), **kwargs
     )
@@ -347,7 +363,8 @@ def create_encoder(
 
 
 def encode_genomic_data(genomic_data: Dict, dimension: int = 10000) -> torch.Tensor:
-    """Convenience function to encode genomic data"""
+       """TODO: Add docstring for encode_genomic_data"""
+     """Convenience function to encode genomic data"""
     encoder = create_encoder(dimension=dimension)
     return encoder.encode(genomic_data, OmicsType.GENOMIC)
 

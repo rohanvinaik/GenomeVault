@@ -5,6 +5,7 @@ GenomeVault ZK Proof CLI Tool
 Command-line interface for generating and verifying zero-knowledge proofs.
 As specified in Stage 2 of the ZK implementation plan.
 """
+from typing import Dict, List, Optional, Any, Union
 
 import argparse
 import json
@@ -25,7 +26,8 @@ from genomevault.zk_proofs.circuits.implementations.variant_proof_circuit import
 
 
 def load_json_file(filepath: str) -> Dict[str, Any]:
-    """Load JSON data from file."""
+       """TODO: Add docstring for load_json_file"""
+     """Load JSON data from file."""
     try:
         with open(filepath, "r") as f:
             return json.load(f)
@@ -34,8 +36,9 @@ def load_json_file(filepath: str) -> Dict[str, Any]:
         sys.exit(1)
 
 
-def save_json_file(data: Dict[str, Any], filepath: str):
-    """Save JSON data to file."""
+def save_json_file(data: Dict[str, Any], filepath: str) -> None:
+       """TODO: Add docstring for save_json_file"""
+     """Save JSON data to file."""
     try:
         with open(filepath, "w") as f:
             json.dump(data, f, indent=2)
@@ -44,8 +47,9 @@ def save_json_file(data: Dict[str, Any], filepath: str):
         sys.exit(1)
 
 
-def cmd_prove(args):
-    """Generate a zero-knowledge proof."""
+def cmd_prove(args) -> None:
+       """TODO: Add docstring for cmd_prove"""
+     """Generate a zero-knowledge proof."""
     print(f"Generating {args.circuit} proof...")
 
     # Load inputs
@@ -129,8 +133,9 @@ def cmd_prove(args):
     print(f"Proof size: ~384 bytes")
 
 
-def cmd_verify(args):
-    """Verify a zero-knowledge proof."""
+def cmd_verify(args) -> None:
+       """TODO: Add docstring for cmd_verify"""
+     """Verify a zero-knowledge proof."""
     print(f"Verifying proof from {args.proof}...")
 
     # Load proof
@@ -185,8 +190,9 @@ def cmd_verify(args):
     sys.exit(0 if is_valid else 1)
 
 
-def cmd_demo(args):
-    """Run demonstration with example data."""
+def cmd_demo(args) -> None:
+       """TODO: Add docstring for cmd_demo"""
+     """Run demonstration with example data."""
     print(f"Running {args.circuit} demonstration...")
 
     if args.circuit == "variant_presence":
@@ -248,8 +254,9 @@ def cmd_demo(args):
         )
 
 
-def cmd_info(args):
-    """Display information about available circuits."""
+def cmd_info(args) -> None:
+       """TODO: Add docstring for cmd_info"""
+     """Display information about available circuits."""
 
     circuits = {
         "variant_presence": {
@@ -315,8 +322,9 @@ def cmd_info(args):
             print(f"  Proof size: {info['proof_size']}, Verification: {info['verification_time']}")
 
 
-def main():
-    """Main CLI entry point."""
+def main() -> None:
+       """TODO: Add docstring for main"""
+     """Main CLI entry point."""
     parser = argparse.ArgumentParser(
         description="GenomeVault Zero-Knowledge Proof CLI",
         formatter_class=argparse.RawDescriptionHelpFormatter,

@@ -2,6 +2,7 @@
 PIR Performance Benchmarking Script
 Measures latency, throughput, and resource usage for PIR operations.
 """
+from typing import Dict, List, Optional, Any, Union
 
 import argparse
 import asyncio
@@ -29,8 +30,9 @@ from genomevault.pir.server.enhanced_pir_server import EnhancedPIRServer, Server
 class PIRBenchmark:
     """PIR performance benchmarking suite."""
 
-    def __init__(self, output_dir: Path):
-        self.output_dir = output_dir
+    def __init__(self, output_dir: Path) -> None:
+            """TODO: Add docstring for __init__"""
+    self.output_dir = output_dir
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         self.results = {
@@ -40,7 +42,8 @@ class PIRBenchmark:
         }
 
     def _get_system_info(self) -> Dict[str, Any]:
-        """Get system information."""
+           """TODO: Add docstring for _get_system_info"""
+     """Get system information."""
         return {
             "cpu_count": psutil.cpu_count(),
             "cpu_freq_mhz": psutil.cpu_freq().current if psutil.cpu_freq() else None,
@@ -51,8 +54,9 @@ class PIRBenchmark:
 
     async def benchmark_query_generation(
         self, database_sizes: List[int], num_iterations: int = 100
-    ):
-        """Benchmark query vector generation."""
+    ) -> None:
+           """TODO: Add docstring for benchmark_query_generation"""
+     """Benchmark query vector generation."""
         print("\n=== Query Generation Benchmark ===")
         results = []
 
@@ -92,8 +96,9 @@ class PIRBenchmark:
         self.results["benchmarks"]["query_generation"] = results
         return results
 
-    async def benchmark_server_response(self, database_sizes: List[int], num_iterations: int = 10):
-        """Benchmark server response computation."""
+    async def benchmark_server_response(self, database_sizes: List[int], num_iterations: int = 10) -> None:
+           """TODO: Add docstring for benchmark_server_response"""
+     """Benchmark server response computation."""
         print("\n=== Server Response Benchmark ===")
         results = []
 
@@ -150,8 +155,9 @@ class PIRBenchmark:
         self.results["benchmarks"]["server_response"] = results
         return results
 
-    async def benchmark_end_to_end(self, database_sizes: List[int], num_servers: List[int]):
-        """Benchmark end-to-end PIR retrieval."""
+    async def benchmark_end_to_end(self, database_sizes: List[int], num_servers: List[int]) -> None:
+           """TODO: Add docstring for benchmark_end_to_end"""
+     """Benchmark end-to-end PIR retrieval."""
         print("\n=== End-to-End PIR Benchmark ===")
         results = []
 
@@ -215,8 +221,9 @@ class PIRBenchmark:
         self.results["benchmarks"]["end_to_end"] = results
         return results
 
-    async def benchmark_batch_pir(self, database_size: int, batch_sizes: List[int]):
-        """Benchmark batch PIR operations."""
+    async def benchmark_batch_pir(self, database_size: int, batch_sizes: List[int]) -> None:
+           """TODO: Add docstring for benchmark_batch_pir"""
+     """Benchmark batch PIR operations."""
         print("\n=== Batch PIR Benchmark ===")
         results = []
 
@@ -269,8 +276,9 @@ class PIRBenchmark:
         self.results["benchmarks"]["batch_pir"] = results
         return results
 
-    async def benchmark_enhanced_server(self, database_size: int, cache_sizes: List[int]):
-        """Benchmark enhanced PIR server with caching."""
+    async def benchmark_enhanced_server(self, database_size: int, cache_sizes: List[int]) -> None:
+           """TODO: Add docstring for benchmark_enhanced_server"""
+     """Benchmark enhanced PIR server with caching."""
         print("\n=== Enhanced Server Benchmark ===")
         results = []
 
@@ -354,8 +362,9 @@ class PIRBenchmark:
         self.results["benchmarks"]["enhanced_server"] = results
         return results
 
-    async def benchmark_network_latency(self, num_shards: List[int], rtt_ms: float = 70):
-        """Benchmark network latency impact."""
+    async def benchmark_network_latency(self, num_shards: List[int], rtt_ms: float = 70) -> None:
+           """TODO: Add docstring for benchmark_network_latency"""
+     """Benchmark network latency impact."""
         print("\n=== Network Latency Benchmark ===")
         results = []
 
@@ -393,8 +402,9 @@ class PIRBenchmark:
         self.results["benchmarks"]["network_latency"] = results
         return results
 
-    def save_results(self):
-        """Save benchmark results to file."""
+    def save_results(self) -> None:
+           """TODO: Add docstring for save_results"""
+     """Save benchmark results to file."""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = self.output_dir / f"pir_benchmark_{timestamp}.json"
 
@@ -406,8 +416,9 @@ class PIRBenchmark:
         # Also save summary
         self._save_summary()
 
-    def _save_summary(self):
-        """Save human-readable summary."""
+    def _save_summary(self) -> None:
+           """TODO: Add docstring for _save_summary"""
+     """Save human-readable summary."""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = self.output_dir / f"pir_benchmark_summary_{timestamp}.txt"
 
@@ -445,8 +456,9 @@ class PIRBenchmark:
                     f.write(table + "\n")
 
 
-async def main():
-    """Run PIR benchmarks."""
+async def main() -> None:
+       """TODO: Add docstring for main"""
+     """Run PIR benchmarks."""
     parser = argparse.ArgumentParser(description="PIR Performance Benchmarking")
     parser.add_argument(
         "--output", type=Path, default=Path("benchmarks/pir"), help="Output directory for results"

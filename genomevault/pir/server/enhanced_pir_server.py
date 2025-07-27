@@ -2,6 +2,8 @@
 Enhanced PIR server implementation with full information-theoretic security.
 Handles real genomic reference data with optimized query processing.
 """
+import logging
+from typing import Dict, List, Optional, Any, Union
 
 import asyncio
 import hashlib
@@ -25,6 +27,7 @@ from ...core.config import get_config
 from ...core.exceptions import SecurityError, ValidationError
 from ...utils.encryption import AESGCMEncryption
 from ...utils.logging import get_logger
+from genomevault.core.base_patterns import BaseService
 
 logger = get_logger(__name__)
 config = get_config()
@@ -46,7 +49,8 @@ class GenomicRegion:
     annotations: Dict[str, Any] = field(default_factory=dict)
 
     def to_bytes(self) -> bytes:
-        """Serialize to bytes for PIR storage."""
+           """TODO: Add docstring for to_bytes"""
+     """Serialize to bytes for PIR storage."""
         data = {
             "chr": self.chromosome,
             "start": self.start,
@@ -62,7 +66,8 @@ class GenomicRegion:
 
     @classmethod
     def from_bytes(cls, data: bytes) -> "GenomicRegion":
-        """Deserialize from bytes."""
+           """TODO: Add docstring for from_bytes"""
+     """Deserialize from bytes."""
         decompressed = lz4.frame.decompress(data)
         data_dict = json.loads(decompressed.decode("utf-8"))
         return cls(
@@ -94,7 +99,8 @@ class ShardMetadata:
     compression_ratio: float = 1.0
 
     def contains_region(self, chromosome: str, position: int) -> bool:
-        """Check if this shard contains a genomic position."""
+           """TODO: Add docstring for contains_region"""
+     """Check if this shard contains a genomic position."""
         if chromosome not in self.chromosome_ranges:
             return False
         start, end = self.chromosome_ranges[chromosome]
@@ -106,8 +112,9 @@ class OptimizedPIRDatabase:
     Optimized database for PIR queries with indexing and caching.
     """
 
-    def __init__(self, base_path: Path, cache_size_mb: int = 1024):
-        """
+    def __init__(self, base_path: Path, cache_size_mb: int = 1024) -> None:
+           """TODO: Add docstring for __init__"""
+     """
         Initialize optimized PIR database.
 
         Args:
@@ -127,7 +134,8 @@ class OptimizedPIRDatabase:
         logger.info(f"Initialized PIR database at {base_path}")
 
     async def load_shard_index(self, shard: ShardMetadata) -> Dict[str, int]:
-        """
+           """TODO: Add docstring for load_shard_index"""
+     """
         Load shard index for fast lookups.
 
         Args:
@@ -165,14 +173,16 @@ class OptimizedPIRDatabase:
         return index
 
     def get_memory_map(self, shard: ShardMetadata) -> mmap.mmap:
-        """Get or create memory map for shard data."""
+           """TODO: Add docstring for get_memory_map"""
+     """Get or create memory map for shard data."""
         if shard.shard_id not in self.memory_maps:
             with open(shard.data_path, "rb") as f:
                 self.memory_maps[shard.shard_id] = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
         return self.memory_maps[shard.shard_id]
 
     async def query_item(self, shard: ShardMetadata, position_key: str) -> Optional[bytes]:
-        """
+           """TODO: Add docstring for query_item"""
+     """
         Query a specific item from the database.
 
         Args:
@@ -214,8 +224,9 @@ class OptimizedPIRDatabase:
 
         return item_data
 
-    def _update_cache(self, key: str, data: bytes):
-        """Update LRU cache with size limit."""
+    def _update_cache(self, key: str, data: bytes) -> None:
+           """TODO: Add docstring for _update_cache"""
+     """Update LRU cache with size limit."""
         # Simple size-based eviction
         if len(self.cache) * 1000 > self.cache_size:  # Rough estimate
             # Remove oldest entries
@@ -226,7 +237,8 @@ class OptimizedPIRDatabase:
         self.cache[key] = data
 
     def get_cache_stats(self) -> Dict[str, Any]:
-        """Get cache performance statistics."""
+           """TODO: Add docstring for get_cache_stats"""
+     """Get cache performance statistics."""
         total = self.cache_stats["hits"] + self.cache_stats["misses"]
         hit_rate = self.cache_stats["hits"] / total if total > 0 else 0
 
@@ -238,8 +250,9 @@ class OptimizedPIRDatabase:
             "estimated_memory_mb": len(self.cache) * 1000 / (1024 * 1024),
         }
 
-    def close(self):
-        """Close all resources."""
+    def close(self) -> None:
+           """TODO: Add docstring for close"""
+     """Close all resources."""
         for mmap_file in self.memory_maps.values():
             mmap_file.close()
         self.io_pool.shutdown()
@@ -257,8 +270,9 @@ class EnhancedPIRServer:
         is_trusted_signatory: bool = False,
         enable_preprocessing: bool = True,
         cache_size_mb: int = 2048,
-    ):
-        """
+    ) -> None:
+           """TODO: Add docstring for __init__"""
+     """
         Initialize enhanced PIR server.
 
         Args:
@@ -309,7 +323,8 @@ class EnhancedPIRServer:
         )
 
     def _load_enhanced_shards(self) -> Dict[str, ShardMetadata]:
-        """Load enhanced shard metadata with genomic ranges."""
+           """TODO: Add docstring for _load_enhanced_shards"""
+     """Load enhanced shard metadata with genomic ranges."""
         shards = {}
         manifest_path = self.data_directory / "enhanced_manifest.json"
 
@@ -342,7 +357,8 @@ class EnhancedPIRServer:
         return shards
 
     def _create_default_shards(self) -> Dict[str, ShardMetadata]:
-        """Create default shard structure for genomic data."""
+           """TODO: Add docstring for _create_default_shards"""
+     """Create default shard structure for genomic data."""
         shards = {}
 
         # Create one shard per chromosome for better locality
@@ -378,7 +394,8 @@ class EnhancedPIRServer:
         return shards
 
     def _verify_shard_integrity(self, shard: ShardMetadata) -> bool:
-        """Verify shard data integrity."""
+           """TODO: Add docstring for _verify_shard_integrity"""
+     """Verify shard data integrity."""
         if not shard.data_path.exists() or not shard.index_path.exists():
             return False
 
@@ -387,11 +404,13 @@ class EnhancedPIRServer:
         return shard.data_path.stat().st_size > 0 and shard.index_path.stat().st_size > 0
 
     def _init_rate_limiter(self) -> Dict[str, List[float]]:
-        """Initialize rate limiting for security."""
+           """TODO: Add docstring for _init_rate_limiter"""
+     """Initialize rate limiting for security."""
         return defaultdict(list)
 
     def _check_rate_limit(self, client_id: str) -> bool:
-        """Check if client is within rate limits."""
+           """TODO: Add docstring for _check_rate_limit"""
+     """Check if client is within rate limits."""
         now = time.time()
         window = 60  # 1 minute window
         max_requests = 100  # Max requests per window
@@ -408,7 +427,8 @@ class EnhancedPIRServer:
         return True
 
     async def process_query(self, query_data: Dict[str, Any]) -> Dict[str, Any]:
-        """
+           """TODO: Add docstring for process_query"""
+     """
         Process enhanced PIR query with optimizations.
 
         Args:
@@ -487,7 +507,8 @@ class EnhancedPIRServer:
     async def _process_genomic_query(
         self, query_vectors: List[np.ndarray], parameters: Dict[str, Any]
     ) -> List[bytes]:
-        """
+           """TODO: Add docstring for _process_genomic_query"""
+     """
         Process genomic data query.
 
         Args:
@@ -531,7 +552,8 @@ class EnhancedPIRServer:
     async def _process_annotation_query(
         self, query_vectors: List[np.ndarray], parameters: Dict[str, Any]
     ) -> List[bytes]:
-        """Process annotation data query."""
+           """TODO: Add docstring for _process_annotation_query"""
+     """Process annotation data query."""
         # Similar to genomic query but for annotation data
         # Implementation would follow same pattern
         return await self._process_genomic_query(query_vectors, parameters)
@@ -539,13 +561,15 @@ class EnhancedPIRServer:
     async def _process_graph_query(
         self, query_vectors: List[np.ndarray], parameters: Dict[str, Any]
     ) -> List[bytes]:
-        """Process graph data query."""
+           """TODO: Add docstring for _process_graph_query"""
+     """Process graph data query."""
         # Process pangenome graph queries
         # Implementation would handle graph-specific operations
         return await self._process_genomic_query(query_vectors, parameters)
 
     def _select_target_shards(self, parameters: Dict[str, Any]) -> List[ShardMetadata]:
-        """Select shards based on query parameters."""
+           """TODO: Add docstring for _select_target_shards"""
+     """Select shards based on query parameters."""
         target_shards = []
 
         # Check if specific regions are requested
@@ -566,7 +590,8 @@ class EnhancedPIRServer:
     async def _compute_pir_result(
         self, query_vector: np.ndarray, shards: List[ShardMetadata]
     ) -> bytes:
-        """
+           """TODO: Add docstring for _compute_pir_result"""
+     """
         Compute PIR result across multiple shards.
 
         Args:
@@ -608,7 +633,8 @@ class EnhancedPIRServer:
     async def _process_shard_query(
         self, query_vector: np.ndarray, shard: ShardMetadata
     ) -> Optional[np.ndarray]:
-        """Process query on a single shard."""
+           """TODO: Add docstring for _process_shard_query"""
+     """Process query on a single shard."""
         try:
             # Get shard index
             index = await self.database.load_shard_index(shard)
@@ -644,8 +670,9 @@ class EnhancedPIRServer:
             logger.error(f"Error processing shard {shard.shard_id}: {e}")
             return None
 
-    def _update_metrics(self, processing_time_ms: float, result_count: int):
-        """Update server metrics."""
+    def _update_metrics(self, processing_time_ms: float, result_count: int) -> None:
+           """TODO: Add docstring for _update_metrics"""
+     """Update server metrics."""
         self.metrics["total_queries"] += 1
         self.metrics["total_bytes_served"] += result_count * 1000  # Estimate
 
@@ -655,7 +682,8 @@ class EnhancedPIRServer:
         self.metrics["average_query_time_ms"] = (current_avg * (n - 1) + processing_time_ms) / n
 
     async def get_server_status(self) -> Dict[str, Any]:
-        """Get comprehensive server status."""
+           """TODO: Add docstring for get_server_status"""
+     """Get comprehensive server status."""
         return {
             "server_id": self.server_id,
             "server_type": "TS" if self.is_trusted_signatory else "LN",
@@ -684,21 +712,24 @@ class EnhancedPIRServer:
         }
 
     def _count_shards_by_type(self) -> Dict[str, int]:
-        """Count shards by data type."""
+           """TODO: Add docstring for _count_shards_by_type"""
+     """Count shards by data type."""
         counts = defaultdict(int)
         for shard in self.shards.values():
             counts[shard.data_type] += 1
         return dict(counts)
 
     def _get_memory_usage(self) -> float:
-        """Get current memory usage in MB."""
+           """TODO: Add docstring for _get_memory_usage"""
+     """Get current memory usage in MB."""
         import psutil
 
         process = psutil.Process(os.getpid())
         return process.memory_info().rss / (1024 * 1024)
 
-    async def shutdown(self):
-        """Graceful shutdown."""
+    async def shutdown(self) -> None:
+           """TODO: Add docstring for shutdown"""
+     """Graceful shutdown."""
         logger.info(f"Shutting down PIR server {self.server_id}")
 
         # Close database
@@ -717,8 +748,9 @@ class EnhancedPIRServer:
 
 
 # Example usage and testing
-async def main():
-    """Example usage of enhanced PIR server."""
+async def main() -> None:
+       """TODO: Add docstring for main"""
+     """Example usage of enhanced PIR server."""
     # Initialize server
     server = EnhancedPIRServer(
         server_id="pir_server_001",

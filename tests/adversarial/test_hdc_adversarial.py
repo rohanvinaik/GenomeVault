@@ -4,8 +4,7 @@ Adversarial tests for HDC implementation
 Tests the robustness of HDC encoding against malicious or edge-case inputs
 designed to break the system or reveal sensitive information.
 """
-
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 import pytest
@@ -25,8 +24,9 @@ from genomevault.hypervector_transform.registry import HypervectorRegistry
 class TestAdversarialInputs:
     """Test HDC robustness against adversarial inputs"""
 
-    def test_extreme_values(self):
-        """Test encoding with extreme input values"""
+
+    def test_extreme_values(self) -> None:
+    """Test encoding with extreme input values"""
         encoder = HypervectorEncoder(HypervectorConfig(dimension=10000))
 
         # Test cases with extreme values
@@ -47,8 +47,9 @@ class TestAdversarialInputs:
             assert torch.isfinite(hv).all(), f"Non-finite values in test case {i}"
             assert not torch.isnan(hv).any(), f"NaN values in test case {i}"
 
-    def test_zero_and_constant_inputs(self):
-        """Test encoding with degenerate inputs"""
+
+    def test_zero_and_constant_inputs(self) -> None:
+    """Test encoding with degenerate inputs"""
         encoder = HypervectorEncoder(HypervectorConfig(dimension=10000))
 
         test_cases = [
@@ -73,8 +74,9 @@ class TestAdversarialInputs:
                 similarity = encoder.similarity(encoded_vectors[i], encoded_vectors[j])
                 assert similarity < 0.99, "Different inputs produced nearly identical outputs"
 
-    def test_adversarial_patterns(self):
-        """Test with patterns designed to exploit weaknesses"""
+
+    def test_adversarial_patterns(self) -> None:
+    """Test with patterns designed to exploit weaknesses"""
         encoder = HypervectorEncoder(HypervectorConfig(dimension=10000))
 
         # Adversarial patterns
@@ -98,8 +100,9 @@ class TestAdversarialInputs:
                 sparsity = (hv == 0).float().mean()
                 assert 0 < sparsity < 1  # Not all zeros or all non-zeros
 
-    def test_malicious_dict_inputs(self):
-        """Test with maliciously crafted dictionary inputs"""
+
+    def test_malicious_dict_inputs(self) -> None:
+    """Test with maliciously crafted dictionary inputs"""
         encoder = HypervectorEncoder(HypervectorConfig(dimension=10000))
 
         # Malicious dictionary inputs
@@ -131,8 +134,9 @@ class TestAdversarialInputs:
 class TestPrivacyAttacks:
     """Test resistance to privacy attacks"""
 
-    def test_membership_inference_attack(self):
-        """Test resistance to membership inference"""
+
+    def test_membership_inference_attack(self) -> None:
+    """Test resistance to membership inference"""
         encoder = HypervectorEncoder(HypervectorConfig(dimension=10000, seed=42))
 
         # Create training set
@@ -167,8 +171,9 @@ class TestPrivacyAttacks:
             abs(train_mean - test_mean) / train_mean < 0.1
         ), f"Membership inference possible: train={train_mean:.3f}, test={test_mean:.3f}"
 
-    def test_model_inversion_attack(self):
-        """Test resistance to model inversion attacks"""
+
+    def test_model_inversion_attack(self) -> None:
+    """Test resistance to model inversion attacks"""
         encoder = HypervectorEncoder(HypervectorConfig(dimension=10000))
 
         # Original sensitive data
@@ -210,8 +215,9 @@ class TestPrivacyAttacks:
             abs(recovery_correlation) < 0.3
         ), f"Model inversion attack successful: correlation={recovery_correlation:.3f}"
 
-    def test_dictionary_attack(self):
-        """Test resistance to dictionary attacks on encoded vectors"""
+
+    def test_dictionary_attack(self) -> None:
+    """Test resistance to dictionary attacks on encoded vectors"""
         encoder = HypervectorEncoder(HypervectorConfig(dimension=10000, seed=42))
 
         # Create dictionary of known genomic patterns
@@ -244,8 +250,9 @@ class TestPrivacyAttacks:
 class TestBindingAttacks:
     """Test binding operation security"""
 
-    def test_binding_extraction_attack(self):
-        """Test resistance to extracting components from bound vectors"""
+
+    def test_binding_extraction_attack(self) -> None:
+    """Test resistance to extracting components from bound vectors"""
         binder = HypervectorBinder(10000)
 
         # Create secret vectors
@@ -278,8 +285,9 @@ class TestBindingAttacks:
             max_similarity < 0.3
         ), f"Binding extraction attack successful: max_similarity={max_similarity:.3f}"
 
-    def test_composite_binding_attack(self):
-        """Test security of composite role-filler bindings"""
+
+    def test_composite_binding_attack(self) -> None:
+    """Test security of composite role-filler bindings"""
         binder = HypervectorBinder(10000)
 
         # Create sensitive role-filler pairs
@@ -313,8 +321,9 @@ class TestBindingAttacks:
 class TestSystematicVulnerabilities:
     """Test for systematic vulnerabilities in the implementation"""
 
-    def test_timing_side_channel(self):
-        """Test for timing side channels in encoding"""
+
+    def test_timing_side_channel(self) -> None:
+    """Test for timing side channels in encoding"""
         encoder = HypervectorEncoder(HypervectorConfig(dimension=10000))
 
         import time
@@ -349,8 +358,9 @@ class TestSystematicVulnerabilities:
             timing_variance < 0.01
         ), f"Timing varies with input pattern: CV²={timing_variance:.4f}"
 
-    def test_error_message_leakage(self):
-        """Test that error messages don't leak sensitive information"""
+
+    def test_error_message_leakage(self) -> None:
+    """Test that error messages don't leak sensitive information"""
         encoder = HypervectorEncoder(HypervectorConfig(dimension=10000))
 
         # Test various invalid inputs
@@ -378,8 +388,9 @@ class TestSystematicVulnerabilities:
             # Should not contain internal state
             assert "0x" not in msg.lower(), f"Error message contains memory addresses: {msg}"
 
-    def test_resource_exhaustion(self):
-        """Test resistance to resource exhaustion attacks"""
+
+    def test_resource_exhaustion(self) -> None:
+    """Test resistance to resource exhaustion attacks"""
         encoder = HypervectorEncoder(HypervectorConfig(dimension=10000))
 
         # Try to exhaust memory with large inputs
@@ -406,8 +417,9 @@ class TestSystematicVulnerabilities:
 class TestCryptographicProperties:
     """Test cryptographic-like properties of HDC encoding"""
 
-    def test_avalanche_effect(self):
-        """Test that small input changes cause large output changes"""
+
+    def test_avalanche_effect(self) -> None:
+    """Test that small input changes cause large output changes"""
         encoder = HypervectorEncoder(HypervectorConfig(dimension=10000, seed=42))
 
         # Original input
@@ -431,8 +443,9 @@ class TestCryptographicProperties:
                 changes > 0.3
             ), f"Insufficient avalanche effect for eps={eps}: only {changes:.2%} dims changed"
 
-    def test_collision_resistance_adversarial(self):
-        """Test collision resistance against adversarial inputs"""
+
+    def test_collision_resistance_adversarial(self) -> None:
+    """Test collision resistance against adversarial inputs"""
         encoder = HypervectorEncoder(HypervectorConfig(dimension=10000, seed=42))
 
         # Try to find collisions
@@ -458,7 +471,7 @@ class TestCryptographicProperties:
             encoded_set.add(hv_bytes)
 
 
-def run_adversarial_tests():
+def run_adversarial_tests() -> None:
     """Run all adversarial tests"""
     test_classes = [
         TestAdversarialInputs,
@@ -488,7 +501,6 @@ def run_adversarial_tests():
                 print(f"FAILED: {e}")
 
     print("\nAdversarial testing complete!")
-
 
 if __name__ == "__main__":
     run_adversarial_tests()

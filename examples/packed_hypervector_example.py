@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 """
 Example usage of packed hypervector encoding for genomic data
 """
@@ -7,8 +9,9 @@ import numpy as np
 from genomevault.hypervector.encoding import PackedGenomicEncoder
 
 
-def main():
-    """Demonstrate packed hypervector usage"""
+def main() -> None:
+       """TODO: Add docstring for main"""
+     """Demonstrate packed hypervector usage"""
 
     print("Packed Hypervector Genomic Encoding Example")
     print("=" * 50)

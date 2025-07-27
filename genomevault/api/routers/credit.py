@@ -1,6 +1,7 @@
 """
 Credit system API endpoints
 """
+from typing import Dict, List, Optional, Any, Union
 
 import uuid
 from datetime import datetime
@@ -11,6 +12,7 @@ from pydantic import BaseModel, Field
 
 from genomevault.core.config import get_config
 from genomevault.core.exceptions import BlockchainError
+from genomevault.core.base_patterns import BaseService
 
 router = APIRouter()
 config = get_config()
@@ -62,7 +64,8 @@ VAULTS: Dict[str, VaultInfo] = {}
 
 
 def get_or_create_balance(address: str) -> CreditBalance:
-    """Get or create credit balance for an address"""
+       """TODO: Add docstring for get_or_create_balance"""
+     """Get or create credit balance for an address"""
     if address not in CREDIT_LEDGER:
         CREDIT_LEDGER[address] = CreditBalance(
             address=address,
@@ -76,13 +79,14 @@ def get_or_create_balance(address: str) -> CreditBalance:
 
 
 @router.get("/balance/{address}", response_model=CreditBalance)
-async def get_credit_balance(address: str):
-    """Get credit balance for an address"""
+async def get_credit_balance(address: str) -> Any:
+       """TODO: Add docstring for get_credit_balance"""
+     """Get credit balance for an address"""
     return get_or_create_balance(address)
 
 
 @router.post("/vault", response_model=VaultInfo)
-async def vault_credits(request: VaultRequest, address: str = "0x123..."):  # Would come from auth
+async def vault_credits(request: VaultRequest, address: str = "0x123...") -> None:  # Would come from auth
     """
     Vault credits for a duration to earn bonus
 
@@ -136,8 +140,9 @@ async def vault_credits(request: VaultRequest, address: str = "0x123..."):  # Wo
 
 
 @router.post("/redeem", response_model=Dict[str, any])
-async def redeem_vaulted_credits(request: RedeemRequest, address: str = "0x123..."):
-    """
+async def redeem_vaulted_credits(request: RedeemRequest, address: str = "0x123...") -> None:
+       """TODO: Add docstring for redeem_vaulted_credits"""
+     """
     Redeem vaulted credits
 
     If redeemed early, a 10% penalty is applied
@@ -196,8 +201,9 @@ async def redeem_vaulted_credits(request: RedeemRequest, address: str = "0x123..
 
 
 @router.get("/vaults/{address}")
-async def list_vaults(address: str, status: Optional[str] = None):
-    """List all vaults for an address"""
+async def list_vaults(address: str, status: Optional[str] = None) -> None:
+       """TODO: Add docstring for list_vaults"""
+     """List all vaults for an address"""
     user_vaults = []
 
     for vault in VAULTS.values():
@@ -251,8 +257,9 @@ async def transfer_credits(
 @router.get("/earnings/estimate")
 async def estimate_earnings(
     node_type: str = "light", is_signatory: bool = False, blocks: int = 1000
-):
-    """Estimate credit earnings for a node configuration"""
+) -> None:
+       """TODO: Add docstring for estimate_earnings"""
+     """Estimate credit earnings for a node configuration"""
     # Base credits per block
     base_credits = {"light": 1, "full": 4, "archive": 8}
 

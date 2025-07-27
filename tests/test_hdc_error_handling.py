@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 """
 Test cases for HDC error handling with uncertainty tuning
 """
@@ -16,8 +18,9 @@ from genomevault.hypervector.error_handling import (
 class TestErrorBudgetAllocator:
     """Test error budget allocation"""
 
-    def test_basic_allocation(self):
-        """Test basic budget allocation"""
+
+    def test_basic_allocation(self) -> None:
+    """Test basic budget allocation"""
         allocator = ErrorBudgetAllocator()
         budget = allocator.plan_budget(epsilon=0.01, delta_exp=15)
 
@@ -26,8 +29,9 @@ class TestErrorBudgetAllocator:
         assert budget.epsilon == 0.01
         assert budget.delta_exp == 15
 
-    def test_ecc_impact(self):
-        """Test that ECC reduces required dimension"""
+
+    def test_ecc_impact(self) -> None:
+    """Test that ECC reduces required dimension"""
         allocator = ErrorBudgetAllocator()
 
         budget_with_ecc = allocator.plan_budget(epsilon=0.01, delta_exp=15, ecc_enabled=True)
@@ -36,8 +40,9 @@ class TestErrorBudgetAllocator:
         # ECC should allow smaller dimensions for same error
         assert budget_with_ecc.dimension <= budget_without_ecc.dimension
 
-    def test_dimension_capping(self):
-        """Test dimension capping with repeat compensation"""
+
+    def test_dimension_capping(self) -> None:
+    """Test dimension capping with repeat compensation"""
         allocator = ErrorBudgetAllocator(dim_cap=50000)
 
         # Request very high accuracy (would need huge dimension)
@@ -46,8 +51,9 @@ class TestErrorBudgetAllocator:
         assert budget.dimension == 50000  # Should be capped
         assert budget.repeats > 100  # Should compensate with more repeats
 
-    def test_latency_estimation(self):
-        """Test latency estimation"""
+
+    def test_latency_estimation(self) -> None:
+    """Test latency estimation"""
         allocator = ErrorBudgetAllocator()
         budget = allocator.plan_budget(epsilon=0.01, delta_exp=15)
 
@@ -55,8 +61,9 @@ class TestErrorBudgetAllocator:
         assert latency > 0
         assert latency < 5000  # Should be under 5 seconds
 
-    def test_bandwidth_estimation(self):
-        """Test bandwidth estimation"""
+
+    def test_bandwidth_estimation(self) -> None:
+    """Test bandwidth estimation"""
         allocator = ErrorBudgetAllocator()
         budget = allocator.plan_budget(epsilon=0.01, delta_exp=15)
 
@@ -68,8 +75,9 @@ class TestErrorBudgetAllocator:
 class TestECCEncoder:
     """Test error correcting code functionality"""
 
-    def test_encode_decode(self):
-        """Test basic encode/decode cycle"""
+
+    def test_encode_decode(self) -> None:
+    """Test basic encode/decode cycle"""
         encoder = ECCEncoderMixin(base_dimension=1000, parity_g=3)
 
         # Create test vector
@@ -88,8 +96,9 @@ class TestECCEncoder:
         similarity = torch.cosine_similarity(original, decoded, dim=0)
         assert similarity > 0.99
 
-    def test_error_correction(self):
-        """Test error detection capability"""
+
+    def test_error_correction(self) -> None:
+    """Test error detection capability"""
         encoder = ECCEncoderMixin(base_dimension=100, parity_g=3)
 
         original = torch.randn(100)
@@ -103,8 +112,9 @@ class TestECCEncoder:
         decoded, errors = encoder.decode_with_ecc(corrupted)
         assert errors > 0  # Should detect the error
 
-    def test_dimension_handling(self):
-        """Test handling of different dimensions"""
+
+    def test_dimension_handling(self) -> None:
+    """Test handling of different dimensions"""
         encoder = ECCEncoderMixin(base_dimension=123, parity_g=4)
 
         # Test with non-divisible dimension
@@ -120,8 +130,9 @@ class TestECCEncoder:
 class TestAdaptiveEncoder:
     """Test adaptive HDC encoder with error handling"""
 
-    def test_encode_with_budget(self):
-        """Test encoding with error budget"""
+
+    def test_encode_with_budget(self) -> None:
+    """Test encoding with error budget"""
         encoder = AdaptiveHDCEncoder(dimension=10000)
 
         # Create test variants
@@ -142,8 +153,9 @@ class TestAdaptiveEncoder:
         assert metadata["error_within_bound"]
         assert len(metadata["proofs"]) == budget.repeats
 
-    def test_median_aggregation(self):
-        """Test that median aggregation reduces variance"""
+
+    def test_median_aggregation(self) -> None:
+    """Test that median aggregation reduces variance"""
         encoder = AdaptiveHDCEncoder(dimension=1000)
 
         variants = [
@@ -166,8 +178,9 @@ class TestAdaptiveEncoder:
         # Multiple repeats should have lower error
         assert meta_multi["median_error"] < meta_single["median_error"]
 
-    def test_dimension_adaptation(self):
-        """Test dimension adaptation"""
+
+    def test_dimension_adaptation(self) -> None:
+    """Test dimension adaptation"""
         encoder = AdaptiveHDCEncoder(dimension=5000)
 
         variants = [
@@ -188,8 +201,9 @@ class TestAdaptiveEncoder:
 class TestErrorBudgetClass:
     """Test ErrorBudget dataclass"""
 
-    def test_properties(self):
-        """Test ErrorBudget properties"""
+
+    def test_properties(self) -> None:
+    """Test ErrorBudget properties"""
         budget = ErrorBudget(
             dimension=10000, parity_g=3, repeats=10, epsilon=0.01, delta_exp=20, ecc_enabled=True
         )
@@ -197,8 +211,9 @@ class TestErrorBudgetClass:
         assert budget.delta == 2**-20
         assert budget.confidence == "1 in 1048576"
 
-    def test_confidence_levels(self):
-        """Test different confidence levels"""
+
+    def test_confidence_levels(self) -> None:
+    """Test different confidence levels"""
         budgets = [
             ErrorBudget(10000, 3, 10, 0.01, 10, True),
             ErrorBudget(10000, 3, 10, 0.01, 15, True),
@@ -211,7 +226,6 @@ class TestErrorBudgetClass:
 
         assert confidences == expected
 
-
 @pytest.mark.parametrize(
     "epsilon,delta_exp,expected_dim_range",
     [
@@ -220,16 +234,17 @@ class TestErrorBudgetClass:
         (0.001, 20, (50000, 200000)),  # High accuracy
     ],
 )
-def test_dimension_scaling(epsilon, delta_exp, expected_dim_range):
+
+def test_dimension_scaling(epsilon, delta_exp, expected_dim_range) -> None:
     """Test dimension scaling with different parameters"""
     allocator = ErrorBudgetAllocator()
     budget = allocator.plan_budget(epsilon=epsilon, delta_exp=delta_exp)
 
     assert expected_dim_range[0] <= budget.dimension <= expected_dim_range[1]
 
-
 @pytest.mark.parametrize("parity_g", [2, 3, 4, 5])
-def test_ecc_parity_groups(parity_g):
+
+def test_ecc_parity_groups(parity_g) -> None:
     """Test different parity group sizes"""
     encoder = ECCEncoderMixin(base_dimension=1000, parity_g=parity_g)
 

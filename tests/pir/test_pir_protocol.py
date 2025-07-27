@@ -2,10 +2,9 @@
 Test suite for Information-Theoretic PIR Protocol.
 Includes unit tests, adversarial tests, and performance benchmarks.
 """
-
 import secrets
 import time
-from typing import List, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pytest
@@ -18,8 +17,9 @@ from genomevault.pir.it_pir_protocol import BatchPIRProtocol, PIRParameters, PIR
 class TestPIRProtocol:
     """Unit tests for PIR protocol."""
 
-    def setup_method(self):
-        """Setup test parameters."""
+
+    def setup_method(self) -> None:
+    """Setup test parameters."""
         self.params = PIRParameters(database_size=1000, element_size=1024, num_servers=2)
         self.protocol = PIRProtocol(self.params)
 
@@ -28,8 +28,9 @@ class TestPIRProtocol:
             0, 256, (self.params.database_size, self.params.element_size), dtype=np.uint8
         )
 
-    def test_parameter_validation(self):
-        """Test parameter validation."""
+
+    def test_parameter_validation(self) -> None:
+    """Test parameter validation."""
         # Test invalid server count
         with pytest.raises(ValueError, match="at least 2 servers"):
             PIRParameters(database_size=100, num_servers=1)
@@ -43,8 +44,9 @@ class TestPIRProtocol:
             params = PIRParameters(database_size=100, element_size=512)
             PIRProtocol(params)
 
-    def test_query_vector_generation(self):
-        """Test query vector generation correctness."""
+
+    def test_query_vector_generation(self) -> None:
+    """Test query vector generation correctness."""
         index = 42
         queries = self.protocol.generate_query_vectors(index)
 
@@ -66,8 +68,9 @@ class TestPIRProtocol:
         expected[index] = 1
         assert np.array_equal(sum_vec, expected)
 
-    def test_server_response_processing(self):
-        """Test server response computation."""
+
+    def test_server_response_processing(self) -> None:
+    """Test server response computation."""
         index = 42
         queries = self.protocol.generate_query_vectors(index)
 
@@ -83,8 +86,9 @@ class TestPIRProtocol:
         assert np.array_equal(reconstructed, self.database[index])
 
     @given(st.integers(min_value=0, max_value=999))
-    def test_retrieval_correctness(self, index: int):
-        """Property test: retrieval is always correct."""
+
+    def test_retrieval_correctness(self, index: int) -> None:
+    """Property test: retrieval is always correct."""
         queries = self.protocol.generate_query_vectors(index)
 
         responses = []
@@ -95,8 +99,9 @@ class TestPIRProtocol:
         reconstructed = self.protocol.reconstruct_element(responses)
         assert np.array_equal(reconstructed, self.database[index])
 
-    def test_query_padding(self):
-        """Test query padding for fixed size."""
+
+    def test_query_padding(self) -> None:
+    """Test query padding for fixed size."""
         index = 42
         query = self.protocol.generate_query_vectors(index)[0]
 
@@ -110,8 +115,9 @@ class TestPIRProtocol:
         # Check padding creates fixed size
         assert padded["padded_size"] % self.params.padding_size == 0
 
-    def test_timing_safe_response(self):
-        """Test timing-safe response generation."""
+
+    def test_timing_safe_response(self) -> None:
+    """Test timing-safe response generation."""
         response = np.random.randint(0, 256, 1024, dtype=np.uint8)
 
         # Test multiple responses have similar timing
@@ -127,8 +133,9 @@ class TestPIRProtocol:
         timing_variance = np.var(timings)
         assert timing_variance < 5.0  # Less than 5ms variance
 
-    def test_privacy_calculations(self):
-        """Test privacy breach probability calculations."""
+
+    def test_privacy_calculations(self) -> None:
+    """Test privacy breach probability calculations."""
         # Test with HIPAA TS nodes
         prob_ts = self.protocol.calculate_privacy_breach_probability(k_honest=2, honesty_prob=0.98)
         assert prob_ts == pytest.approx(0.0004, rel=1e-4)
@@ -148,16 +155,18 @@ class TestPIRProtocol:
 class TestAdversarialPIR:
     """Adversarial and side-channel tests."""
 
-    def setup_method(self):
-        """Setup test parameters."""
+
+    def setup_method(self) -> None:
+    """Setup test parameters."""
         self.params = PIRParameters(database_size=1000, element_size=1024, num_servers=2)
         self.protocol = PIRProtocol(self.params)
         self.database = np.random.randint(
             0, 256, (self.params.database_size, self.params.element_size), dtype=np.uint8
         )
 
-    def test_malformed_query_length(self):
-        """Test handling of malformed query vectors."""
+
+    def test_malformed_query_length(self) -> None:
+    """Test handling of malformed query vectors."""
         # Too short query
         short_query = np.random.randint(0, 2, 500, dtype=np.uint8)
         with pytest.raises(ValueError, match="size mismatch"):
@@ -168,8 +177,9 @@ class TestAdversarialPIR:
         with pytest.raises(ValueError, match="size mismatch"):
             self.protocol.process_server_response(long_query, self.database)
 
-    def test_timing_attack_mitigation(self):
-        """Test that timing doesn't leak information."""
+
+    def test_timing_attack_mitigation(self) -> None:
+    """Test that timing doesn't leak information."""
         # Create queries for different indices
         indices = [10, 100, 500, 900]
         timings_per_index = []
@@ -196,8 +206,9 @@ class TestAdversarialPIR:
         # Variance should be small (timing independent of index)
         assert timing_variance < 10.0  # Less than 10ms variance
 
-    def test_collusion_simulation(self):
-        """Test that colluding servers learn nothing."""
+
+    def test_collusion_simulation(self) -> None:
+    """Test that colluding servers learn nothing."""
         index = 42
         queries = self.protocol.generate_query_vectors(index)
 
@@ -221,8 +232,9 @@ class TestAdversarialPIR:
         assert len(consistent_indices) > self.params.database_size / 10
 
     @given(st.lists(st.integers(0, 1), min_size=1000, max_size=1000))
-    def test_fuzz_query_vectors(self, query_values: List[int]):
-        """Fuzz test with random query vectors."""
+
+    def test_fuzz_query_vectors(self, query_values: List[int]) -> None:
+    """Fuzz test with random query vectors."""
         query = np.array(query_values, dtype=np.uint8)
 
         # Should not crash
@@ -233,8 +245,9 @@ class TestAdversarialPIR:
             # Expected for invalid inputs
             pass
 
-    def test_replay_attack_protection(self):
-        """Test protection against replay attacks."""
+
+    def test_replay_attack_protection(self) -> None:
+    """Test protection against replay attacks."""
         # Generate query with nonce
         index = 42
         query = self.protocol.generate_query_vectors(index)[0]
@@ -255,16 +268,18 @@ class TestAdversarialPIR:
 class TestBatchPIR:
     """Tests for batched PIR operations."""
 
-    def setup_method(self):
-        """Setup test parameters."""
+
+    def setup_method(self) -> None:
+    """Setup test parameters."""
         self.params = PIRParameters(database_size=10000, element_size=1024, num_servers=2)
         self.protocol = BatchPIRProtocol(self.params)
         self.database = np.random.randint(
             0, 256, (self.params.database_size, self.params.element_size), dtype=np.uint8
         )
 
-    def test_batch_query_generation(self):
-        """Test batch query generation."""
+
+    def test_batch_query_generation(self) -> None:
+    """Test batch query generation."""
         indices = [10, 50, 100, 500, 1000]
         batch_queries = self.protocol.generate_batch_queries(indices)
 
@@ -272,8 +287,9 @@ class TestBatchPIR:
         assert len(batch_queries) > 0
         assert len(batch_queries) <= len(indices) * 3  # Cuckoo hashing bound
 
-    def test_cuckoo_hashing(self):
-        """Test cuckoo hashing for batch queries."""
+
+    def test_cuckoo_hashing(self) -> None:
+    """Test cuckoo hashing for batch queries."""
         indices = list(range(100))
         num_buckets = 300
 
@@ -291,8 +307,9 @@ class TestBatchPIR:
 class TestPIRPerformance:
     """Performance benchmarks for PIR protocol."""
 
-    def setup_method(self):
-        """Setup test parameters."""
+
+    def setup_method(self) -> None:
+    """Setup test parameters."""
         self.params = PIRParameters(database_size=100000, element_size=1024, num_servers=2)
         self.protocol = PIRProtocol(self.params)
         self.database = np.random.randint(
@@ -300,8 +317,9 @@ class TestPIRPerformance:
         )
 
     @pytest.mark.benchmark
-    def test_query_generation_performance(self):
-        """Benchmark query generation."""
+
+    def test_query_generation_performance(self) -> None:
+    """Benchmark query generation."""
         start_time = time.time()
 
         for _ in range(100):
@@ -315,8 +333,9 @@ class TestPIRPerformance:
         assert queries_per_second > 10  # Should generate >10 queries/sec
 
     @pytest.mark.benchmark
-    def test_server_response_performance(self):
-        """Benchmark server response computation."""
+
+    def test_server_response_performance(self) -> None:
+    """Benchmark server response computation."""
         index = 42
         query = self.protocol.generate_query_vectors(index)[0]
 
@@ -332,8 +351,9 @@ class TestPIRPerformance:
         print(f"Average latency: {elapsed/10*1000:.1f}ms")
 
     @pytest.mark.benchmark
-    def test_batch_performance(self):
-        """Benchmark batch query performance."""
+
+    def test_batch_performance(self) -> None:
+    """Benchmark batch query performance."""
         batch_protocol = BatchPIRProtocol(self.params)
         indices = list(range(100))
 
@@ -342,7 +362,6 @@ class TestPIRPerformance:
         elapsed = time.time() - start_time
 
         print(f"\nBatch query generation for 100 indices: {elapsed*1000:.1f}ms")
-
 
 if __name__ == "__main__":
     # Run tests

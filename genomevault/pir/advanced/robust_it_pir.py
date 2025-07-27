@@ -5,6 +5,7 @@ This module implements a Byzantine-resilient IT-PIR scheme that can tolerate
 malicious servers and network adversaries while maintaining information-theoretic
 privacy guarantees.
 """
+from typing import Dict, List, Optional, Any, Union
 
 import hashlib
 import hmac
@@ -57,8 +58,9 @@ class RobustITPIR(InformationTheoreticPIR):
         num_servers: int,
         byzantine_threshold: int = None,
         mac_key: bytes = None,
-    ):
-        """
+    ) -> None:
+           """TODO: Add docstring for __init__"""
+     """
         Initialize robust IT-PIR system.
 
         Args:
@@ -96,7 +98,8 @@ class RobustITPIR(InformationTheoreticPIR):
         )
 
     def generate_authenticated_query(self, item_index: int) -> PIRQuery:
-        """
+           """TODO: Add docstring for generate_authenticated_query"""
+     """
         Generate authenticated PIR query with replay protection.
 
         Args:
@@ -131,7 +134,8 @@ class RobustITPIR(InformationTheoreticPIR):
     def process_responses_with_verification(
         self, query: PIRQuery, server_responses: List[Tuple[np.ndarray, bytes]]
     ) -> bytes:
-        """
+           """TODO: Add docstring for process_responses_with_verification"""
+     """
         Process server responses with Byzantine fault tolerance.
 
         Args:
@@ -177,7 +181,8 @@ class RobustITPIR(InformationTheoreticPIR):
     def _verify_response_mac(
         self, query: PIRQuery, server_id: int, response: np.ndarray, mac: bytes
     ) -> bool:
-        """Verify MAC on server response."""
+           """TODO: Add docstring for _verify_response_mac"""
+     """Verify MAC on server response."""
         # Construct message for MAC
         message = b"".join(
             [
@@ -195,7 +200,8 @@ class RobustITPIR(InformationTheoreticPIR):
         return hmac.compare_digest(mac, expected_mac)
 
     def _reed_solomon_decode(self, valid_responses: List[Tuple[int, np.ndarray]]) -> bytes:
-        """
+           """TODO: Add docstring for _reed_solomon_decode"""
+     """
         Decode data using Reed-Solomon error correction.
 
         Args:
@@ -232,8 +238,9 @@ class RobustITPIR(InformationTheoreticPIR):
 
         return decoded.tobytes()
 
-    def _clean_query_cache(self):
-        """Remove expired queries from cache."""
+    def _clean_query_cache(self) -> None:
+           """TODO: Add docstring for _clean_query_cache"""
+     """Remove expired queries from cache."""
         current_time = time.time()
         expired = []
 
@@ -247,7 +254,8 @@ class RobustITPIR(InformationTheoreticPIR):
     def simulate_server_response(
         self, server_id: int, query: PIRQuery, database: np.ndarray, malicious: bool = False
     ) -> Tuple[np.ndarray, bytes]:
-        """
+           """TODO: Add docstring for simulate_server_response"""
+     """
         Simulate server response with optional Byzantine behavior.
 
         Args:
@@ -307,7 +315,8 @@ class RobustITPIR(InformationTheoreticPIR):
     def _process_query_constant_time(
         self, query_vector: np.ndarray, database: np.ndarray
     ) -> np.ndarray:
-        """Process query in constant time to prevent timing attacks."""
+           """TODO: Add docstring for _process_query_constant_time"""
+     """Process query in constant time to prevent timing attacks."""
         # Ensure constant-time processing
         result = np.zeros(self.response_size, dtype=np.uint8)
 
@@ -325,7 +334,8 @@ class RobustITPIR(InformationTheoreticPIR):
 def analyze_privacy_breach_probability(
     num_servers: int, collusion_probability: float = 0.98
 ) -> Dict[str, float]:
-    """
+       """TODO: Add docstring for analyze_privacy_breach_probability"""
+     """
     Analyze probability of privacy breach.
 
     Args:

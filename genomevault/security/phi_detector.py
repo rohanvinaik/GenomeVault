@@ -4,6 +4,7 @@ PHI (Protected Health Information) Leakage Detection.
 This module provides tools to scan logs, outputs, and code for potential
 PHI leakage patterns to ensure HIPAA compliance.
 """
+from typing import Dict, List, Optional, Any, Union
 
 import hashlib
 import json
@@ -79,8 +80,9 @@ class PHILeakageDetector:
         "genetic": r"\b(genetic|genomic|variant|mutation)\b",
     }
 
-    def __init__(self, custom_patterns: Optional[Dict[str, Dict[str, Any]]] = None):
-        """
+    def __init__(self, custom_patterns: Optional[Dict[str, Dict[str, Any]]] = None) -> None:
+           """TODO: Add docstring for __init__"""
+     """
         Initialize PHI detector.
 
         Args:
@@ -101,7 +103,8 @@ class PHILeakageDetector:
             self.compiled_context[name] = re.compile(pattern, re.IGNORECASE)
 
     def scan_file(self, filepath: str, max_context: int = 50) -> List[Dict[str, Any]]:
-        """
+           """TODO: Add docstring for scan_file"""
+     """
         Scan a file for potential PHI leakage.
 
         Args:
@@ -129,7 +132,8 @@ class PHILeakageDetector:
         return findings
 
     def scan_logs(self, log_file: str) -> List[Dict[str, Any]]:
-        """
+           """TODO: Add docstring for scan_logs"""
+     """
         Scan logs for potential PHI leakage.
 
         Args:
@@ -143,7 +147,8 @@ class PHILeakageDetector:
     def scan_directory(
         self, directory: str, extensions: List[str] = None, exclude_patterns: List[str] = None
     ) -> Dict[str, List[Dict[str, Any]]]:
-        """
+           """TODO: Add docstring for scan_directory"""
+     """
         Recursively scan directory for PHI leakage.
 
         Args:
@@ -191,7 +196,8 @@ class PHILeakageDetector:
     def _scan_line(
         self, line: str, line_num: int, filename: str, max_context: int
     ) -> List[Dict[str, Any]]:
-        """Scan a single line for PHI patterns."""
+           """TODO: Add docstring for _scan_line"""
+     """Scan a single line for PHI patterns."""
         findings = []
 
         for pattern_name, regex in self.compiled_patterns.items():
@@ -236,7 +242,8 @@ class PHILeakageDetector:
         return findings
 
     def _assess_context_severity(self, line: str) -> List[str]:
-        """Check for context patterns that suggest PHI."""
+           """TODO: Add docstring for _assess_context_severity"""
+     """Check for context patterns that suggest PHI."""
         indicators = []
 
         for name, regex in self.compiled_context.items():
@@ -246,7 +253,8 @@ class PHILeakageDetector:
         return indicators
 
     def redact_phi(self, text: str) -> str:
-        """
+           """TODO: Add docstring for redact_phi"""
+     """
         Redact potential PHI from text.
 
         Args:
@@ -259,8 +267,9 @@ class PHILeakageDetector:
 
         for pattern_name, regex in self.compiled_patterns.items():
             # Replace matches with redacted version
-            def replace_match(match):
-                matched_text = match.group()
+            def replace_match(match) -> None:
+                    """TODO: Add docstring for replace_match"""
+    matched_text = match.group()
                 # Keep first and last char for context
                 if len(matched_text) > 2:
                     return matched_text[0] + "[REDACTED]" + matched_text[-1]
@@ -272,7 +281,8 @@ class PHILeakageDetector:
         return redacted
 
     def generate_report(self, findings: List[Dict[str, Any]], output_format: str = "json") -> str:
-        """
+           """TODO: Add docstring for generate_report"""
+     """
         Generate a PHI leakage report.
 
         Args:
@@ -357,7 +367,8 @@ class PHILeakageDetector:
             raise ValueError(f"Unknown output format: {output_format}")
 
     def _group_by_severity(self, findings: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
-        """Group findings by severity level."""
+           """TODO: Add docstring for _group_by_severity"""
+     """Group findings by severity level."""
         grouped = {}
 
         for finding in findings:
@@ -369,7 +380,8 @@ class PHILeakageDetector:
         return grouped
 
     def quarantine_file(self, filepath: str, findings: List[Dict[str, Any]]) -> str:
-        """
+           """TODO: Add docstring for quarantine_file"""
+     """
         Quarantine a file with PHI leakage.
 
         Args:
@@ -415,8 +427,9 @@ class RealTimePHIMonitor:
     Real-time monitoring for PHI leakage in application outputs.
     """
 
-    def __init__(self, detector: Optional[PHILeakageDetector] = None):
-        """
+    def __init__(self, detector: Optional[PHILeakageDetector] = None) -> None:
+           """TODO: Add docstring for __init__"""
+     """
         Initialize real-time monitor.
 
         Args:
@@ -428,7 +441,8 @@ class RealTimePHIMonitor:
         self.alert_threshold = 5  # Alert after 5 findings
 
     def check_output(self, text: str, source: str = "unknown") -> Optional[Dict[str, Any]]:
-        """
+           """TODO: Add docstring for check_output"""
+     """
         Check text output for PHI in real-time.
 
         Args:
@@ -461,8 +475,9 @@ class RealTimePHIMonitor:
 
         return None
 
-    def _trigger_alert(self):
-        """
+    def _trigger_alert(self) -> None:
+           """TODO: Add docstring for _trigger_alert"""
+     """
         Trigger alert for PHI leakage.
         """
         logger.critical(f"PHI LEAKAGE ALERT: {len(self.findings_buffer)} instances detected!")
@@ -478,7 +493,8 @@ class RealTimePHIMonitor:
 
 # Convenience functions
 def scan_genomevault_logs(log_dir: str = "./logs") -> Dict[str, List[Dict[str, Any]]]:
-    """
+       """TODO: Add docstring for scan_genomevault_logs"""
+     """
     Scan GenomeVault logs for PHI leakage.
 
     Args:
@@ -492,7 +508,8 @@ def scan_genomevault_logs(log_dir: str = "./logs") -> Dict[str, List[Dict[str, A
 
 
 def redact_phi_from_file(filepath: str, output_path: Optional[str] = None) -> str:
-    """
+       """TODO: Add docstring for redact_phi_from_file"""
+     """
     Redact PHI from a file and save to new location.
 
     Args:

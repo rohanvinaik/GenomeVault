@@ -1,6 +1,7 @@
 """
 Hypervector binding operations for multi-modal data integration
 """
+from typing import Dict, List, Optional, Any, Union
 
 from enum import Enum
 from typing import Dict, List, Optional, Tuple, Union
@@ -27,8 +28,9 @@ class HypervectorBinder:
     Implements binding operations for hyperdimensional computing
     """
 
-    def __init__(self, dimension: int = HYPERVECTOR_DIMENSIONS["base"], use_gpu: bool = False):
-        self.dimension = dimension
+    def __init__(self, dimension: int = HYPERVECTOR_DIMENSIONS["base"], use_gpu: bool = False) -> None:
+            """TODO: Add docstring for __init__"""
+    self.dimension = dimension
         self.hamming_lut = HammingLUT(use_gpu=use_gpu)  # Initialize LUT calculator
 
     def bind(
@@ -37,7 +39,8 @@ class HypervectorBinder:
         vec2: torch.Tensor,
         operation: BindingOperation = BindingOperation.CIRCULAR_CONVOLUTION,
     ) -> torch.Tensor:
-        """
+           """TODO: Add docstring for bind"""
+     """
         Bind two hypervectors using specified operation
 
         Args:
@@ -63,7 +66,8 @@ class HypervectorBinder:
             raise ValueError("Unknown binding operation: {operation}")
 
     def _circular_convolution(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
-        """
+           """TODO: Add docstring for _circular_convolution"""
+     """
         Bind using circular convolution (preserves algebraic properties)
         """
         # Use FFT for efficient circular convolution
@@ -75,7 +79,8 @@ class HypervectorBinder:
         return bound / torch.norm(bound)
 
     def _xor_binding(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
-        """
+           """TODO: Add docstring for _xor_binding"""
+     """
         XOR binding for binary hypervectors
         """
         # Convert to binary
@@ -91,14 +96,16 @@ class HypervectorBinder:
         return bound
 
     def _multiply_binding(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
-        """
+           """TODO: Add docstring for _multiply_binding"""
+     """
         Element-wise multiplication binding
         """
         bound = vec1 * vec2
         return bound / torch.norm(bound)
 
     def _permutation_binding(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
-        """
+           """TODO: Add docstring for _permutation_binding"""
+     """
         Bind using permutation of one vector
         """
         # Create a deterministic permutation based on vec2
@@ -114,7 +121,8 @@ class HypervectorBinder:
         known_vec: torch.Tensor,
         operation: BindingOperation = BindingOperation.CIRCULAR_CONVOLUTION,
     ) -> torch.Tensor:
-        """
+           """TODO: Add docstring for unbind"""
+     """
         Unbind a hypervector given one of the bound components
 
         Args:
@@ -138,7 +146,8 @@ class HypervectorBinder:
             raise ValueError("Unbinding not supported for {operation}")
 
     def _circular_correlation(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
-        """
+           """TODO: Add docstring for _circular_correlation"""
+     """
         Circular correlation (inverse of circular convolution)
         """
         # Correlation is convolution with conjugate in frequency domain
@@ -153,7 +162,8 @@ class HypervectorBinder:
         vectors: List[torch.Tensor],
         operation: BindingOperation = BindingOperation.CIRCULAR_CONVOLUTION,
     ) -> torch.Tensor:
-        """
+           """TODO: Add docstring for multi_bind"""
+     """
         Bind multiple hypervectors together
         """
         if len(vectors) < 2:
@@ -168,7 +178,8 @@ class HypervectorBinder:
     def protect_binding(
         self, vec1: torch.Tensor, vec2: torch.Tensor, noise_level: float = 0.1
     ) -> torch.Tensor:
-        """
+           """TODO: Add docstring for protect_binding"""
+     """
         Bind with added noise for additional privacy
         """
         # Regular binding
@@ -187,13 +198,15 @@ class MultiModalBinder:
     Specialized binder for multi-omics data integration
     """
 
-    def __init__(self, dimension: int = HYPERVECTOR_DIMENSIONS["base"]):
-        self.dimension = dimension
+    def __init__(self, dimension: int = HYPERVECTOR_DIMENSIONS["base"]) -> None:
+            """TODO: Add docstring for __init__"""
+    self.dimension = dimension
         self.binder = HypervectorBinder(dimension)
         self.modality_keys = self._generate_modality_keys()
 
     def _generate_modality_keys(self) -> Dict[str, torch.Tensor]:
-        """Generate orthogonal keys for each modality"""
+           """TODO: Add docstring for _generate_modality_keys"""
+     """Generate orthogonal keys for each modality"""
         keys = {}
 
         # Create orthogonal vectors for each modality
@@ -216,7 +229,8 @@ class MultiModalBinder:
         return keys
 
     def bind_modalities(self, modality_data: Dict[str, torch.Tensor]) -> torch.Tensor:
-        """
+           """TODO: Add docstring for bind_modalities"""
+     """
         Bind multiple modalities with their respective keys
 
         Args:
@@ -241,7 +255,8 @@ class MultiModalBinder:
         return integrated / torch.norm(integrated)
 
     def extract_modality(self, integrated_vec: torch.Tensor, modality: str) -> torch.Tensor:
-        """
+           """TODO: Add docstring for extract_modality"""
+     """
         Extract a specific modality from an integrated vector
         """
         if modality not in self.modality_keys:
@@ -256,7 +271,8 @@ class MultiModalBinder:
     def cross_modal_similarity(
         self, vec1: torch.Tensor, modality1: str, vec2: torch.Tensor, modality2: str
     ) -> float:
-        """
+           """TODO: Add docstring for cross_modal_similarity"""
+     """
         Compute similarity between vectors from different modalities
         """
         # Bind each with its modality key
@@ -271,7 +287,8 @@ class MultiModalBinder:
     def hamming_similarity(
         self, vec1: Union[torch.Tensor, np.ndarray], vec2: Union[torch.Tensor, np.ndarray]
     ) -> float:
-        """
+           """TODO: Add docstring for hamming_similarity"""
+     """
         Compute Hamming-based similarity using optimized LUT.
 
         Args:
@@ -309,7 +326,8 @@ class MultiModalBinder:
     def batch_hamming_similarity(
         self, vecs1: Union[torch.Tensor, np.ndarray], vecs2: Union[torch.Tensor, np.ndarray]
     ) -> np.ndarray:
-        """
+           """TODO: Add docstring for batch_hamming_similarity"""
+     """
         Compute pairwise Hamming similarities for batches using optimized LUT.
 
         Args:

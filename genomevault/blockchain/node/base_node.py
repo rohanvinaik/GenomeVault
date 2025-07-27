@@ -1,6 +1,7 @@
 """
 Base node implementation for GenomeVault blockchain
 """
+from typing import Dict, List, Optional, Any, Union
 
 import asyncio
 import hashlib
@@ -38,8 +39,9 @@ class BaseNode(ABC):
     Implements core blockchain functionality
     """
 
-    def __init__(self, node_type: NodeType, is_signatory: bool = False):
-        self.node_type = node_type
+    def __init__(self, node_type: NodeType, is_signatory: bool = False) -> None:
+            """TODO: Add docstring for __init__"""
+    self.node_type = node_type
         self.is_signatory = is_signatory
         self.config = get_config()
 
@@ -60,7 +62,8 @@ class BaseNode(ABC):
         self.stored_proofs: Dict[str, bytes] = {}
 
     def _get_hardware_weight(self) -> int:
-        """Get hardware class weight based on node type"""
+           """TODO: Add docstring for _get_hardware_weight"""
+     """Get hardware class weight based on node type"""
         weight_map = {
             NodeType.LIGHT: NodeClassWeight.LIGHT,
             NodeType.FULL: NodeClassWeight.FULL,
@@ -70,21 +73,25 @@ class BaseNode(ABC):
 
     @abstractmethod
     def _get_storage_limit(self) -> int:
-        """Get storage limit in bytes based on node type"""
+           """TODO: Add docstring for _get_storage_limit"""
+     """Get storage limit in bytes based on node type"""
         pass
 
     @abstractmethod
-    async def sync_chain(self):
-        """Sync blockchain with network"""
+    async def sync_chain(self) -> None:
+           """TODO: Add docstring for sync_chain"""
+     """Sync blockchain with network"""
         pass
 
     @abstractmethod
     async def validate_transaction(self, transaction: Dict[str, Any]) -> bool:
-        """Validate a transaction based on node capabilities"""
+           """TODO: Add docstring for validate_transaction"""
+     """Validate a transaction based on node capabilities"""
         pass
 
     def calculate_credits_per_block(self) -> int:
-        """
+           """TODO: Add docstring for calculate_credits_per_block"""
+     """
         Calculate credits earned per block
         credits = c + 2 * [s > 0]
         """
@@ -93,7 +100,8 @@ class BaseNode(ABC):
         return base_credits + signatory_bonus
 
     async def create_block(self) -> Optional[Block]:
-        """Create a new block if this node is selected"""
+           """TODO: Add docstring for create_block"""
+     """Create a new block if this node is selected"""
         if not self.pending_transactions:
             return None
 
@@ -119,7 +127,8 @@ class BaseNode(ABC):
         return block
 
     def _is_block_producer(self) -> bool:
-        """Determine if this node should produce the next block"""
+           """TODO: Add docstring for _is_block_producer"""
+     """Determine if this node should produce the next block"""
         # Simplified selection based on voting power
         # In production, use proper BFT consensus
         current_slot = int(time.time() / BLOCK_TIME_SECONDS)
@@ -131,7 +140,8 @@ class BaseNode(ABC):
         return selection_value < threshold
 
     def _proof_of_work(self, block: Block) -> int:
-        """Simple proof of work for demonstration"""
+           """TODO: Add docstring for _proof_of_work"""
+     """Simple proof of work for demonstration"""
         nonce = 0
         while True:
             if self._valid_proof(block, nonce):
@@ -139,13 +149,15 @@ class BaseNode(ABC):
             nonce += 1
 
     def _valid_proof(self, block: Block, nonce: int) -> bool:
-        """Check if proof is valid"""
+           """TODO: Add docstring for _valid_proof"""
+     """Check if proof is valid"""
         guess = "{block.index}{block.timestamp}{block.transactions}{block.previous_hash}{nonce}"
         guess_hash = hashlib.sha256(guess.encode()).hexdigest()
         return guess_hash[:4] == "0000"  # Require 4 leading zeros
 
     def _calculate_hash(self, block: Block) -> str:
-        """Calculate block hash"""
+           """TODO: Add docstring for _calculate_hash"""
+     """Calculate block hash"""
         block_string = json.dumps(
             {
                 "index": block.index,
@@ -160,14 +172,16 @@ class BaseNode(ABC):
         return hashlib.sha256(block_string.encode()).hexdigest()
 
     async def add_transaction(self, transaction: Dict[str, Any]) -> bool:
-        """Add a transaction to pending pool"""
+           """TODO: Add docstring for add_transaction"""
+     """Add a transaction to pending pool"""
         if await self.validate_transaction(transaction):
             self.pending_transactions.append(transaction)
             return True
         return False
 
     def get_node_info(self) -> Dict[str, Any]:
-        """Get node information"""
+           """TODO: Add docstring for get_node_info"""
+     """Get node information"""
         return {
             "node_type": self.node_type.value,
             "is_signatory": self.is_signatory,

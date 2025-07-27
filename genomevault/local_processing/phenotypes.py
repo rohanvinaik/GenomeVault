@@ -4,6 +4,9 @@ GenomeVault Phenotypes Processing
 Handles clinical and phenotypic data processing including EHR integration,
 FHIR data parsing, and phenotype standardization.
 """
+from datetime import datetime
+import logging
+from typing import Dict, List, Optional, Any, Union
 
 import datetime
 import json
@@ -48,7 +51,8 @@ class ClinicalMeasurement:
     abnormal_flag: Optional[str] = None
 
     def is_abnormal(self) -> bool:
-        """Check if measurement is abnormal"""
+           """TODO: Add docstring for is_abnormal"""
+     """Check if measurement is abnormal"""
         if self.abnormal_flag:
             return self.abnormal_flag.upper() in ["H", "L", "A", "ABNORMAL"]
 
@@ -61,7 +65,8 @@ class ClinicalMeasurement:
         return False
 
     def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary"""
+           """TODO: Add docstring for to_dict"""
+     """Convert to dictionary"""
         return {
             "id": self.measurement_id,
             "type": self.measurement_type,
@@ -91,7 +96,8 @@ class Diagnosis:
     metadata: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary"""
+           """TODO: Add docstring for to_dict"""
+     """Convert to dictionary"""
         return {
             "id": self.diagnosis_id,
             "name": self.name,
@@ -122,7 +128,8 @@ class Medication:
 
     @property
     def is_active(self) -> bool:
-        """Check if medication is currently active"""
+           """TODO: Add docstring for is_active"""
+     """Check if medication is currently active"""
         if self.status != "active":
             return False
 
@@ -132,7 +139,8 @@ class Medication:
         return True
 
     def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary"""
+           """TODO: Add docstring for to_dict"""
+     """Convert to dictionary"""
         return {
             "id": self.medication_id,
             "name": self.name,
@@ -158,7 +166,8 @@ class FamilyHistory:
     outcome: Optional[str] = None
 
     def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary"""
+           """TODO: Add docstring for to_dict"""
+     """Convert to dictionary"""
         return {
             "relationship": self.relationship,
             "condition": self.condition,
@@ -182,7 +191,8 @@ class PhenotypeProfile:
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     def get_measurement_summary(self) -> Dict[str, Any]:
-        """Get summary of measurements by type"""
+           """TODO: Add docstring for get_measurement_summary"""
+     """Get summary of measurements by type"""
         summary = {}
         for measurement in self.measurements:
             if measurement.measurement_type not in summary:
@@ -198,15 +208,18 @@ class PhenotypeProfile:
         return summary
 
     def get_active_conditions(self) -> List[Diagnosis]:
-        """Get list of active diagnoses"""
+           """TODO: Add docstring for get_active_conditions"""
+     """Get list of active diagnoses"""
         return [d for d in self.diagnoses if d.status == "active"]
 
     def get_active_medications(self) -> List[Medication]:
-        """Get list of active medications"""
+           """TODO: Add docstring for get_active_medications"""
+     """Get list of active medications"""
         return [m for m in self.medications if m.is_active]
 
     def calculate_risk_factors(self) -> Dict[str, float]:
-        """Calculate basic risk factors from phenotype data"""
+           """TODO: Add docstring for calculate_risk_factors"""
+     """Calculate basic risk factors from phenotype data"""
         risk_factors = {}
 
         # Age risk
@@ -276,12 +289,14 @@ class PhenotypeProcessor:
         "asthma": r"^J45\.",
     }
 
-    def __init__(self):
-        """Initialize phenotype processor"""
+    def __init__(self) -> None:
+           """TODO: Add docstring for __init__"""
+     """Initialize phenotype processor"""
         self.terminology_mapper = self._load_terminology_mappings()
 
     def _load_terminology_mappings(self) -> Dict[str, Dict[str, str]]:
-        """Load terminology mappings"""
+           """TODO: Add docstring for _load_terminology_mappings"""
+     """Load terminology mappings"""
         # In production, would load from comprehensive terminology services
         return {"loinc": self.LOINC_CODES, "icd10_patterns": self.ICD10_PATTERNS}
 
@@ -292,7 +307,8 @@ class PhenotypeProcessor:
         sample_id: str,
         data_format: str = "fhir",
     ) -> PhenotypeProfile:
-        """
+           """TODO: Add docstring for process"""
+     """
         Process phenotypic data
 
         Args:
@@ -337,7 +353,8 @@ class PhenotypeProcessor:
         return profile
 
     def _process_fhir_data(self, fhir_bundle: Dict[str, Any], sample_id: str) -> PhenotypeProfile:
-        """Process FHIR bundle data"""
+           """TODO: Add docstring for _process_fhir_data"""
+     """Process FHIR bundle data"""
         demographics = {}
         measurements = []
         diagnoses = []
@@ -393,7 +410,8 @@ class PhenotypeProcessor:
         )
 
     def _extract_fhir_demographics(self, patient: Dict[str, Any]) -> Dict[str, Any]:
-        """Extract demographics from FHIR Patient resource"""
+           """TODO: Add docstring for _extract_fhir_demographics"""
+     """Extract demographics from FHIR Patient resource"""
         demographics = {}
 
         # Birth date and age
@@ -420,7 +438,8 @@ class PhenotypeProcessor:
     def _extract_fhir_observation(
         self, observation: Dict[str, Any]
     ) -> Optional[ClinicalMeasurement]:
-        """Extract measurement from FHIR Observation"""
+           """TODO: Add docstring for _extract_fhir_observation"""
+     """Extract measurement from FHIR Observation"""
         # Get observation code
         coding = observation.get("code", {}).get("coding", [])
         if not coding:
@@ -482,7 +501,8 @@ class PhenotypeProcessor:
         return measurement
 
     def _extract_fhir_condition(self, condition: Dict[str, Any]) -> Optional[Diagnosis]:
-        """Extract diagnosis from FHIR Condition"""
+           """TODO: Add docstring for _extract_fhir_condition"""
+     """Extract diagnosis from FHIR Condition"""
         # Get condition code
         coding = condition.get("code", {}).get("coding", [])
         if not coding:
@@ -526,7 +546,8 @@ class PhenotypeProcessor:
         return diagnosis
 
     def _extract_fhir_medication(self, medication: Dict[str, Any]) -> Optional[Medication]:
-        """Extract medication from FHIR MedicationStatement"""
+           """TODO: Add docstring for _extract_fhir_medication"""
+     """Extract medication from FHIR MedicationStatement"""
         # Get medication code
         med_codeable = medication.get("medicationCodeableConcept", {})
         coding = med_codeable.get("coding", [])
@@ -591,7 +612,8 @@ class PhenotypeProcessor:
         return med
 
     def _extract_fhir_family_history(self, history: Dict[str, Any]) -> List[FamilyHistory]:
-        """Extract family history from FHIR FamilyMemberHistory"""
+           """TODO: Add docstring for _extract_fhir_family_history"""
+     """Extract family history from FHIR FamilyMemberHistory"""
         family_history = []
 
         # Get relationship
@@ -633,7 +655,8 @@ class PhenotypeProcessor:
         return family_history
 
     def _process_csv_data(self, csv_data: Any, sample_id: str) -> PhenotypeProfile:
-        """Process CSV format data (placeholder)"""
+           """TODO: Add docstring for _process_csv_data"""
+     """Process CSV format data (placeholder)"""
         # This would be implemented based on specific CSV format
         logger.warning("CSV processing not fully implemented")
         return PhenotypeProfile(
@@ -649,7 +672,8 @@ class PhenotypeProcessor:
         )
 
     def _process_custom_data(self, custom_data: Dict[str, Any], sample_id: str) -> PhenotypeProfile:
-        """Process custom format data"""
+           """TODO: Add docstring for _process_custom_data"""
+     """Process custom format data"""
         return PhenotypeProfile(
             sample_id=sample_id,
             demographics=custom_data.get("demographics", {}),
@@ -663,7 +687,8 @@ class PhenotypeProcessor:
         )
 
     def _standardize_codes(self, profile: PhenotypeProfile) -> PhenotypeProfile:
-        """Standardize medical codes"""
+           """TODO: Add docstring for _standardize_codes"""
+     """Standardize medical codes"""
         # Add LOINC codes to measurements
         for measurement in profile.measurements:
             if not measurement.code and measurement.measurement_type.lower() in self.LOINC_CODES:
@@ -682,7 +707,8 @@ class PhenotypeProcessor:
         return profile
 
     def _calculate_derived_values(self, profile: PhenotypeProfile) -> PhenotypeProfile:
-        """Calculate derived values from measurements"""
+           """TODO: Add docstring for _calculate_derived_values"""
+     """Calculate derived values from measurements"""
         # Calculate BMI if height and weight available
         height = None
         weight = None
@@ -732,7 +758,8 @@ class PhenotypeProcessor:
     def merge_profiles(
         self, profiles: List[PhenotypeProfile], merge_strategy: str = "most_recent"
     ) -> PhenotypeProfile:
-        """
+           """TODO: Add docstring for merge_profiles"""
+     """
         Merge multiple phenotype profiles
 
         Args:

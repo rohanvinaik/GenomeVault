@@ -1,11 +1,10 @@
 """
 Test for Zero-Knowledge Median Verification Circuit
 """
-
 import asyncio
 import json
 import time
-from typing import List
+from typing import Any, Dict, List, Optional, Union
 
 import pytest
 
@@ -17,8 +16,9 @@ from genomevault.zk.proof import ProofGenerator, ProofResult
 class TestMedianVerifierCircuit:
     """Test the real ZK median verification circuit"""
 
-    def test_median_proof_generation_odd(self):
-        """Test proof generation for odd number of values"""
+
+    def test_median_proof_generation_odd(self) -> None:
+    """Test proof generation for odd number of values"""
         circuit = MedianVerifierCircuit()
 
         values = [1.2, 3.4, 2.1, 4.5, 3.8, 2.9, 3.5]
@@ -43,8 +43,9 @@ class TestMedianVerifierCircuit:
         is_valid = circuit.verify_proof(proof)
         assert is_valid
 
-    def test_median_proof_generation_even(self):
-        """Test proof generation for even number of values"""
+
+    def test_median_proof_generation_even(self) -> None:
+    """Test proof generation for even number of values"""
         circuit = MedianVerifierCircuit()
 
         values = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
@@ -62,8 +63,9 @@ class TestMedianVerifierCircuit:
         is_valid = circuit.verify_proof(proof)
         assert is_valid
 
-    def test_proof_soundness(self):
-        """Test that incorrect proofs are rejected"""
+
+    def test_proof_soundness(self) -> None:
+    """Test that incorrect proofs are rejected"""
         circuit = MedianVerifierCircuit()
 
         values = [1.0, 2.0, 3.0, 4.0, 5.0]
@@ -73,8 +75,9 @@ class TestMedianVerifierCircuit:
         with pytest.raises(ValueError, match="doesn't match actual"):
             circuit.generate_proof(values=values, claimed_median=4.0, error_bound=0.01)  # Wrong!
 
-    def test_proof_zero_knowledge(self):
-        """Test that proof doesn't reveal all values"""
+
+    def test_proof_zero_knowledge(self) -> None:
+    """Test that proof doesn't reveal all values"""
         circuit = MedianVerifierCircuit()
 
         # Use many values to test zero-knowledge property
@@ -91,8 +94,9 @@ class TestMedianVerifierCircuit:
         # But proof should still be valid
         assert circuit.verify_proof(proof)
 
-    def test_error_bound_proof(self):
-        """Test error bound verification"""
+
+    def test_error_bound_proof(self) -> None:
+    """Test error bound verification"""
         circuit = MedianVerifierCircuit()
 
         values = [1.0, 2.0, 3.0, 4.0, 5.0]
@@ -114,8 +118,9 @@ class TestMedianVerifierCircuit:
 
         assert circuit.verify_proof(proof)
 
-    def test_proof_serialization(self):
-        """Test that proofs can be serialized and deserialized"""
+
+    def test_proof_serialization(self) -> None:
+    """Test that proofs can be serialized and deserialized"""
         circuit = MedianVerifierCircuit()
 
         values = [1.5, 2.5, 3.5, 4.5, 5.5]
@@ -162,8 +167,8 @@ class TestMedianVerifierCircuit:
         assert circuit.verify_proof(reconstructed)
 
     @pytest.mark.asyncio
-    async def test_proof_generator_integration(self):
-        """Test ProofGenerator with real circuit"""
+    async def test_proof_generator_integration(self) -> None:
+    """Test ProofGenerator with real circuit"""
         generator = ProofGenerator()
 
         # Simulate query results
@@ -197,8 +202,9 @@ class TestMedianVerifierCircuit:
         is_valid = generator.verify_proof(proof_result)
         assert is_valid
 
-    def test_performance(self):
-        """Test circuit performance with different input sizes"""
+
+    def test_performance(self) -> None:
+    """Test circuit performance with different input sizes"""
         circuit = MedianVerifierCircuit()
 
         results = []
@@ -253,7 +259,6 @@ class TestMedianVerifierCircuit:
 
         # Verify time should be much less than generation time
         assert all(r["verify_time_ms"] < r["gen_time_ms"] for r in results)
-
 
 if __name__ == "__main__":
     # Run basic tests

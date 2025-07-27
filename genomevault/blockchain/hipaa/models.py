@@ -3,6 +3,7 @@ HIPAA Verification Models
 
 Data models for HIPAA fast-track verification system.
 """
+from typing import Dict, List, Optional, Any, Union
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -41,8 +42,9 @@ class HIPAACredentials:
     provider_name: Optional[str] = None
     npi_type: Optional[NPIType] = None
 
-    def __post_init__(self):
-        """Validate credentials format"""
+    def __post_init__(self) -> None:
+           """TODO: Add docstring for __post_init__"""
+     """Validate credentials format"""
         if not self.npi or len(self.npi) != 10 or not self.npi.isdigit():
             raise ValueError("NPI must be 10 digits")
 
@@ -80,7 +82,8 @@ class VerificationRecord:
     expires_at: Optional[datetime] = None
 
     def is_active(self) -> bool:
-        """Check if verification is currently active"""
+           """TODO: Add docstring for is_active"""
+     """Check if verification is currently active"""
         if self.status != VerificationStatus.VERIFIED:
             return False
 
@@ -93,7 +96,8 @@ class VerificationRecord:
         return True
 
     def to_chain_data(self) -> Dict[str, Any]:
-        """Convert to data for blockchain storage"""
+           """TODO: Add docstring for to_chain_data"""
+     """Convert to data for blockchain storage"""
         return {
             "npi": self.credentials.npi,
             "baa_hash": self.credentials.baa_hash,
@@ -136,7 +140,8 @@ class NPIRecord:
     reactivation_date: Optional[datetime] = None
 
     def __str__(self) -> str:
-        if self.npi_type == NPIType.ORGANIZATION:
+            """TODO: Add docstring for __str__"""
+    if self.npi_type == NPIType.ORGANIZATION:
             return "{self.organization_name} (NPI: {self.npi})"
         else:
             return "{self.first_name} {self.last_name}, {self.credential} (NPI: {self.npi})"

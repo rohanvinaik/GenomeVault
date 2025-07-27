@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 """
 Test for HDC Error Handling with PIR Batch Integration
 """
@@ -25,8 +27,9 @@ from genomevault.pir.client import (
 class TestBatchedPIRIntegration:
     """Test the integration between error budget and PIR batching"""
 
-    def test_error_budget_allocation(self):
-        """Test error budget allocation logic"""
+
+    def test_error_budget_allocation(self) -> None:
+    """Test error budget allocation logic"""
         allocator = ErrorBudgetAllocator(dim_cap=100000)
 
         # Test basic allocation
@@ -45,8 +48,9 @@ class TestBatchedPIRIntegration:
         # Without ECC, should need more dimension or repeats
         assert budget_no_ecc.dimension > budget.dimension or budget_no_ecc.repeats > budget.repeats
 
-    def test_ecc_encoder(self):
-        """Test ECC encoding and decoding"""
+
+    def test_ecc_encoder(self) -> None:
+    """Test ECC encoding and decoding"""
         encoder = ECCEncoderMixin(base_dimension=1000, parity_g=3)
 
         # Test with binary vector
@@ -70,8 +74,8 @@ class TestBatchedPIRIntegration:
         assert errors > 0  # Should detect error
 
     @pytest.mark.asyncio
-    async def test_batched_query_builder(self):
-        """Test batched PIR query builder"""
+    async def test_batched_query_builder(self) -> None:
+    """Test batched PIR query builder"""
         # Mock PIR client
         mock_client = Mock(spec=PIRClient)
         mock_client.create_query = Mock(
@@ -111,8 +115,8 @@ class TestBatchedPIRIntegration:
         assert len(set(seeds)) == len(seeds)  # All unique
 
     @pytest.mark.asyncio
-    async def test_streaming_execution(self):
-        """Test streaming batch execution"""
+    async def test_streaming_execution(self) -> None:
+    """Test streaming batch execution"""
         # Mock PIR client
         mock_client = Mock(spec=PIRClient)
         mock_client.execute_query = AsyncMock(
@@ -151,8 +155,9 @@ class TestBatchedPIRIntegration:
         median_val = np.median(values)
         assert abs(median_val - 42.0) < 0.5  # Should be close to true value
 
-    def test_adaptive_hdc_encoder(self):
-        """Test adaptive HDC encoder with error budget"""
+
+    def test_adaptive_hdc_encoder(self) -> None:
+    """Test adaptive HDC encoder with error budget"""
         encoder = AdaptiveHDCEncoder(dimension=10000)
 
         # Mock variants
@@ -178,16 +183,17 @@ class TestBatchedPIRIntegration:
             assert encoder.dimension == budget.dimension
 
     @pytest.mark.asyncio
-    async def test_early_termination(self):
-        """Test early termination when error is low"""
+    async def test_early_termination(self) -> None:
+    """Test early termination when error is low"""
         mock_client = Mock(spec=PIRClient)
 
         # First few results are very consistent
         result_values = [42.0, 42.01, 41.99, 42.0, 42.0, 50.0, 60.0, 70.0]
         call_count = 0
 
-        async def mock_execute(q):
-            nonlocal call_count
+        async def mock_execute(q) -> None:
+    """TODO: Add docstring for mock_execute"""
+    nonlocal call_count
             if call_count < len(result_values):
                 val = result_values[call_count]
                 call_count += 1
@@ -225,7 +231,6 @@ class TestBatchedPIRIntegration:
         # Should have terminated before all 10 repeats
         assert len(results) < 10
         assert len(results) >= 6  # At least 60% as per early termination logic
-
 
 if __name__ == "__main__":
     # Run basic tests

@@ -2,6 +2,9 @@
 """
 Final Debug Summary - GenomeVault Import Issue Resolution
 """
+import torch
+import numpy as np
+import logging
 
 print("=" * 80)
 print("GENOMEVAULT DEBUG SESSION - FINAL SUMMARY")

@@ -3,6 +3,8 @@
 CI benchmark runner that outputs CSV with separate timing columns.
 This script orchestrates all benchmarks and outputs timing data for Grafana.
 """
+import logging
+from typing import Dict, List, Optional, Any, Union
 
 import argparse
 import asyncio
@@ -24,13 +26,15 @@ from genomevault.utils.logging import logger
 class CIBenchmarkRunner:
     """Runs benchmarks and outputs CSV for CI/Grafana integration."""
 
-    def __init__(self, output_dir: Path):
-        self.output_dir = output_dir
+    def __init__(self, output_dir: Path) -> None:
+            """TODO: Add docstring for __init__"""
+    self.output_dir = output_dir
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.results = []
 
     async def run_all_benchmarks(self) -> Dict[str, float]:
-        """Run all benchmarks and collect timing data."""
+           """TODO: Add docstring for run_all_benchmarks"""
+     """Run all benchmarks and collect timing data."""
         timing_data = {}
 
         # Run encode benchmarks
@@ -51,7 +55,8 @@ class CIBenchmarkRunner:
         return timing_data
 
     async def _run_encode_benchmark(self) -> float:
-        """Run encoding benchmark and return average time in ms."""
+           """TODO: Add docstring for _run_encode_benchmark"""
+     """Run encoding benchmark and return average time in ms."""
         logger.info("Running encode benchmark...")
 
         try:
@@ -83,7 +88,8 @@ class CIBenchmarkRunner:
             return -1.0
 
     async def _run_pir_benchmark(self) -> float:
-        """Run PIR query benchmark and return average time in ms."""
+           """TODO: Add docstring for _run_pir_benchmark"""
+     """Run PIR query benchmark and return average time in ms."""
         logger.info("Running PIR benchmark...")
 
         try:
@@ -120,7 +126,8 @@ class CIBenchmarkRunner:
             return -1.0
 
     async def _run_proof_benchmark(self) -> float:
-        """Run proof generation benchmark and return average time in ms."""
+           """TODO: Add docstring for _run_proof_benchmark"""
+     """Run proof generation benchmark and return average time in ms."""
         logger.info("Running proof benchmark...")
 
         try:
@@ -150,8 +157,9 @@ class CIBenchmarkRunner:
             logger.error(f"Proof benchmark failed: {e}")
             return -1.0
 
-    def save_csv(self, timing_data: Dict[str, float], filename: str = "benchmark_results.csv"):
-        """Save timing data to CSV file for Grafana."""
+    def save_csv(self, timing_data: Dict[str, float], filename: str = "benchmark_results.csv") -> None:
+           """TODO: Add docstring for save_csv"""
+     """Save timing data to CSV file for Grafana."""
         csv_path = self.output_dir / filename
 
         # Check if file exists to determine if we need headers
@@ -173,8 +181,9 @@ class CIBenchmarkRunner:
         logger.info(f"CSV results saved to {csv_path}")
         return csv_path
 
-    def save_json(self, timing_data: Dict[str, float], filename: str = "benchmark_results.json"):
-        """Save timing data to JSON file for detailed analysis."""
+    def save_json(self, timing_data: Dict[str, float], filename: str = "benchmark_results.json") -> None:
+           """TODO: Add docstring for save_json"""
+     """Save timing data to JSON file for detailed analysis."""
         json_path = self.output_dir / filename
 
         # Create full result structure
@@ -211,8 +220,9 @@ class CIBenchmarkRunner:
         return json_path
 
 
-async def main():
-    """Main entry point."""
+async def main() -> None:
+       """TODO: Add docstring for main"""
+     """Main entry point."""
     parser = argparse.ArgumentParser(description="CI Benchmark Runner")
     parser.add_argument(
         "--output-dir", default="benchmarks/ci", help="Output directory for benchmark results"

@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 """
 Unit tests for configuration system.
 Tests dual-axis voting model, compression tiers, and PIR calculations.
@@ -26,8 +28,9 @@ from genomevault.utils.config import (
 class TestConfig:
     """Test configuration system."""
 
-    def test_default_configuration(self):
-        """Test default configuration initialization."""
+
+    def test_default_configuration(self) -> None:
+    """Test default configuration initialization."""
         config = Config()
 
         # Check defaults
@@ -37,8 +40,9 @@ class TestConfig:
         assert config.pir.num_servers == 5
         assert config.blockchain.consensus_algorithm == "Tendermint"
 
-    def test_voting_power_calculation(self):
-        """Test dual-axis voting power calculation."""
+
+    def test_voting_power_calculation(self) -> None:
+    """Test dual-axis voting power calculation."""
         config = Config()
 
         # Test different node configurations
@@ -60,8 +64,9 @@ class TestConfig:
                 voting_power == expected_power
             ), "Node {node_class.name} TS={is_ts} should have power {expected_power}, got {voting_power}"
 
-    def test_block_rewards_calculation(self):
-        """Test block rewards calculation."""
+
+    def test_block_rewards_calculation(self) -> None:
+    """Test block rewards calculation."""
         config = Config()
 
         # Test different node configurations
@@ -83,8 +88,9 @@ class TestConfig:
                 rewards == expected_rewards
             ), "Node {node_class.name} TS={is_ts} should get {expected_rewards} credits, got {rewards}"
 
-    def test_pir_failure_probability(self):
-        """Test PIR privacy breach probability calculations."""
+
+    def test_pir_failure_probability(self) -> None:
+    """Test PIR privacy breach probability calculations."""
         config = Config()
 
         # Test with different server configurations
@@ -102,8 +108,9 @@ class TestConfig:
                 abs(prob - expected_prob) < 1e-10
             ), "P_fail({k}, hipaa={use_hipaa}) should be {expected_prob}, got {prob}"
 
-    def test_min_honest_servers_calculation(self):
-        """Test minimum honest servers calculation."""
+
+    def test_min_honest_servers_calculation(self) -> None:
+    """Test minimum honest servers calculation."""
         config = Config()
 
         # Test different target failure probabilities
@@ -119,8 +126,9 @@ class TestConfig:
                 min_servers == expected_min
             ), "Min servers for P_fail≤{target_prob} should be {expected_min}, got {min_servers}"
 
-    def test_compression_tier_sizes(self):
-        """Test compression tier storage calculations."""
+
+    def test_compression_tier_sizes(self) -> None:
+    """Test compression tier storage calculations."""
         config = Config()
 
         # Test different tier and modality combinations
@@ -148,8 +156,9 @@ class TestConfig:
                 size == expected_size
             ), "{tier.value} with {modalities} should be {expected_size}KB, got {size}KB"
 
-    def test_config_validation(self):
-        """Test configuration validation."""
+
+    def test_config_validation(self) -> None:
+    """Test configuration validation."""
         config = Config()
 
         # Test invalid configurations
@@ -166,8 +175,9 @@ class TestConfig:
             config.pir.min_honest_servers = 2
             config._validate()
 
-    def test_config_save_load(self):
-        """Test configuration persistence."""
+
+    def test_config_save_load(self) -> None:
+    """Test configuration persistence."""
         config1 = Config()
 
         # Modify some values
@@ -191,8 +201,9 @@ class TestConfig:
         # Cleanup
         temp_path.unlink()
 
-    def test_hipaa_verification_config(self):
-        """Test HIPAA verification configuration."""
+
+    def test_hipaa_verification_config(self) -> None:
+    """Test HIPAA verification configuration."""
         config = Config()
 
         # Set HIPAA credentials
@@ -206,8 +217,9 @@ class TestConfig:
         # Check all fields present
         assert all(v is not None for v in config.blockchain.hipaa_verification.values())
 
-    def test_security_config_defaults(self):
-        """Test security configuration defaults."""
+
+    def test_security_config_defaults(self) -> None:
+    """Test security configuration defaults."""
         sec_config = SecurityConfig()
 
         assert sec_config.encryption_algorithm == "AES-256-GCM"
@@ -215,8 +227,9 @@ class TestConfig:
         assert sec_config.post_quantum_algorithm == "CRYSTALS-Kyber"
         assert sec_config.zk_proof_system == "PLONK"
 
-    def test_network_config_validation(self):
-        """Test network configuration validation."""
+
+    def test_network_config_validation(self) -> None:
+    """Test network configuration validation."""
         config = Config()
 
         # Valid port
@@ -232,14 +245,16 @@ class TestConfig:
 class TestCompressionTierEnum:
     """Test compression tier enumeration."""
 
-    def test_tier_values(self):
-        """Test tier string values."""
+
+    def test_tier_values(self) -> None:
+    """Test tier string values."""
         assert CompressionTier.MINI.value == "mini"
         assert CompressionTier.CLINICAL.value == "clinical"
         assert CompressionTier.FULL_HDC.value == "full_hdc"
 
-    def test_tier_comparison(self):
-        """Test tier comparisons."""
+
+    def test_tier_comparison(self) -> None:
+    """Test tier comparisons."""
         assert CompressionTier.MINI != CompressionTier.CLINICAL
         assert CompressionTier.CLINICAL != CompressionTier.FULL_HDC
 
@@ -247,16 +262,17 @@ class TestCompressionTierEnum:
 class TestNodeClassEnum:
     """Test node class enumeration."""
 
-    def test_node_class_values(self):
-        """Test node class integer values."""
+
+    def test_node_class_values(self) -> None:
+    """Test node class integer values."""
         assert NodeClass.LIGHT.value == 1
         assert NodeClass.FULL.value == 4
         assert NodeClass.ARCHIVE.value == 8
 
-    def test_node_class_ordering(self):
-        """Test node class ordering."""
-        assert NodeClass.LIGHT.value < NodeClass.FULL.value < NodeClass.ARCHIVE.value
 
+    def test_node_class_ordering(self) -> None:
+    """Test node class ordering."""
+        assert NodeClass.LIGHT.value < NodeClass.FULL.value < NodeClass.ARCHIVE.value
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

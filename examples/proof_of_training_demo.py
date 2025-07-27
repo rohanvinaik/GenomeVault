@@ -1,9 +1,12 @@
+from typing import Any, Dict
+
 """
 Example usage script for Proof-of-Training in GenomeVault
 
 This script demonstrates how to use the PoT features for training
 a privacy-preserving genomic model with full auditability.
 """
+import logging
 
 import json
 import time
@@ -22,32 +25,37 @@ from genomevault.local_processing.differential_privacy_audit import PrivacyMecha
 class DemoGenomicModel:
     """Demo model for genomic prediction"""
 
-    def __init__(self, input_dim: int = 1000, hidden_dim: int = 100, output_dim: int = 2):
-        # Simulate model parameters
+    def __init__(self, input_dim: int = 1000, hidden_dim: int = 100, output_dim: int = 2) -> None:
+            """TODO: Add docstring for __init__"""
+    # Simulate model parameters
         self.weights = {
             "layer1": np.random.randn(input_dim, hidden_dim) * 0.01,
             "layer2": np.random.randn(hidden_dim, output_dim) * 0.01,
         }
         self.input_dim = input_dim
 
-    def forward(self, x):
-        """Simple forward pass"""
+    def forward(self, x) -> None:
+           """TODO: Add docstring for forward"""
+     """Simple forward pass"""
         h = np.maximum(0, x @ self.weights["layer1"])  # ReLU
         return h @ self.weights["layer2"]
 
-    def parameters(self):
-        """Get model parameters"""
+    def parameters(self) -> None:
+           """TODO: Add docstring for parameters"""
+     """Get model parameters"""
         for key, value in self.weights.items():
             yield value
 
-    def update_weights(self, gradients, lr=0.01):
-        """Update weights with gradients"""
+    def update_weights(self, gradients, lr=0.01) -> None:
+           """TODO: Add docstring for update_weights"""
+     """Update weights with gradients"""
         for key in self.weights:
             self.weights[key] -= lr * gradients.get(key, 0)
 
 
-def generate_synthetic_genomic_data(n_samples: int = 1000, n_features: int = 1000):
-    """Generate synthetic genomic data for demo"""
+def generate_synthetic_genomic_data(n_samples: int = 1000, n_features: int = 1000) -> None:
+       """TODO: Add docstring for generate_synthetic_genomic_data"""
+     """Generate synthetic genomic data for demo"""
     # Simulate genomic features (SNPs, gene expression, etc.)
     X = np.random.randn(n_samples, n_features)
 
@@ -61,8 +69,9 @@ def generate_synthetic_genomic_data(n_samples: int = 1000, n_features: int = 100
     return X, y
 
 
-def train_with_proof_of_training():
-    """Demonstrate training with PoT enabled"""
+def train_with_proof_of_training() -> None:
+       """TODO: Add docstring for train_with_proof_of_training"""
+     """Demonstrate training with PoT enabled"""
 
     print("=== GenomeVault Proof-of-Training Demo ===\n")
 
@@ -281,8 +290,9 @@ def train_with_proof_of_training():
     return session_id, completion_result
 
 
-def verify_training_proof(session_id: str, proof_path: str):
-    """Demonstrate proof verification"""
+def verify_training_proof(session_id: str, proof_path: str) -> None:
+       """TODO: Add docstring for verify_training_proof"""
+     """Demonstrate proof verification"""
     print("\n=== Verifying Training Proof ===")
 
     # In practice, this would use the CLI tool or verification circuits

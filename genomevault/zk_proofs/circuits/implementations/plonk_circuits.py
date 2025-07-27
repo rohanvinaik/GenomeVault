@@ -2,6 +2,7 @@
 PLONK Circuit Implementations for GenomeVault 3.0
 Implements the actual zero-knowledge proof circuits for genomic privacy.
 """
+from typing import Dict, List, Optional, Any, Union
 
 import hashlib
 from abc import ABC, abstractmethod
@@ -18,33 +19,40 @@ class FieldElement:
     value: int
     modulus: int = BLS12_381_SCALAR_FIELD
 
-    def __post_init__(self):
-        self.value = self.value % self.modulus
+    def __post_init__(self) -> None:
+            """TODO: Add docstring for __post_init__"""
+    self.value = self.value % self.modulus
 
-    def __add__(self, other):
-        if isinstance(other, FieldElement):
+    def __add__(self, other) -> None:
+            """TODO: Add docstring for __add__"""
+    if isinstance(other, FieldElement):
             return FieldElement((self.value + other.value) % self.modulus)
         return FieldElement((self.value + other) % self.modulus)
 
-    def __mul__(self, other):
-        if isinstance(other, FieldElement):
+    def __mul__(self, other) -> None:
+            """TODO: Add docstring for __mul__"""
+    if isinstance(other, FieldElement):
             return FieldElement((self.value * other.value) % self.modulus)
         return FieldElement((self.value * other) % self.modulus)
 
-    def __sub__(self, other):
-        if isinstance(other, FieldElement):
+    def __sub__(self, other) -> None:
+            """TODO: Add docstring for __sub__"""
+    if isinstance(other, FieldElement):
             return FieldElement((self.value - other.value) % self.modulus)
         return FieldElement((self.value - other) % self.modulus)
 
-    def __pow__(self, exp):
-        return FieldElement(pow(self.value, exp, self.modulus))
+    def __pow__(self, exp) -> None:
+            """TODO: Add docstring for __pow__"""
+    return FieldElement(pow(self.value, exp, self.modulus))
 
-    def inverse(self):
-        """Modular inverse using Fermat's little theorem"""
+    def inverse(self) -> None:
+           """TODO: Add docstring for inverse"""
+     """Modular inverse using Fermat's little theorem"""
         return FieldElement(pow(self.value, self.modulus - 2, self.modulus))
 
-    def __eq__(self, other):
-        if isinstance(other, FieldElement):
+    def __eq__(self, other) -> None:
+            """TODO: Add docstring for __eq__"""
+    if isinstance(other, FieldElement):
             return self.value == other.value
         return self.value == other % self.modulus
 
@@ -63,7 +71,8 @@ class CircuitConstraint:
     qc: int = 0  # Constant selector
 
     def evaluate(self) -> FieldElement:
-        """Evaluate constraint - should equal zero if satisfied"""
+           """TODO: Add docstring for evaluate"""
+     """Evaluate constraint - should equal zero if satisfied"""
         return (
             FieldElement(self.ql) * self.a
             + FieldElement(self.qr) * self.b
@@ -73,15 +82,17 @@ class CircuitConstraint:
         )
 
     def is_satisfied(self) -> bool:
-        """Check if constraint is satisfied"""
+           """TODO: Add docstring for is_satisfied"""
+     """Check if constraint is satisfied"""
         return self.evaluate() == FieldElement(0)
 
 
 class PLONKCircuit(ABC):
     """Base class for PLONK circuits"""
 
-    def __init__(self, name: str, max_constraints: int = 10000):
-        self.name = name
+    def __init__(self, name: str, max_constraints: int = 10000) -> None:
+            """TODO: Add docstring for __init__"""
+    self.name = name
         self.max_constraints = max_constraints
         self.constraints: List[CircuitConstraint] = []
         self.public_inputs: Dict[str, FieldElement] = {}
@@ -98,45 +109,53 @@ class PLONKCircuit(ABC):
         qo: int = 0,
         qm: int = 0,
         qc: int = 0,
-    ):
-        """Add a PLONK constraint to the circuit"""
+    ) -> None:
+           """TODO: Add docstring for add_constraint"""
+     """Add a PLONK constraint to the circuit"""
         if len(self.constraints) >= self.max_constraints:
             raise RuntimeError(f"Circuit constraint limit exceeded: {self.max_constraints}")
 
         constraint = CircuitConstraint(a, b, c, ql, qr, qo, qm, qc)
         self.constraints.append(constraint)
 
-    def add_multiplication_gate(self, a: FieldElement, b: FieldElement, c: FieldElement):
-        """Add constraint: a * b = c"""
+    def add_multiplication_gate(self, a: FieldElement, b: FieldElement, c: FieldElement) -> None:
+           """TODO: Add docstring for add_multiplication_gate"""
+     """Add constraint: a * b = c"""
         self.add_constraint(a, b, c, qm=1, qo=-1)
 
-    def add_addition_gate(self, a: FieldElement, b: FieldElement, c: FieldElement):
-        """Add constraint: a + b = c"""
+    def add_addition_gate(self, a: FieldElement, b: FieldElement, c: FieldElement) -> None:
+           """TODO: Add docstring for add_addition_gate"""
+     """Add constraint: a + b = c"""
         self.add_constraint(a, b, c, ql=1, qr=1, qo=-1)
 
-    def add_equality_gate(self, a: FieldElement, b: FieldElement):
-        """Add constraint: a = b"""
+    def add_equality_gate(self, a: FieldElement, b: FieldElement) -> None:
+           """TODO: Add docstring for add_equality_gate"""
+     """Add constraint: a = b"""
         self.add_constraint(a, b, FieldElement(0), ql=1, qr=-1)
 
     def verify_constraints(self) -> bool:
-        """Verify all constraints are satisfied"""
+           """TODO: Add docstring for verify_constraints"""
+     """Verify all constraints are satisfied"""
         for constraint in self.constraints:
             if not constraint.is_satisfied():
                 return False
         return True
 
     def get_constraint_count(self) -> int:
-        """Get number of constraints in circuit"""
+           """TODO: Add docstring for get_constraint_count"""
+     """Get number of constraints in circuit"""
         return len(self.constraints)
 
     @abstractmethod
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
-        """Setup circuit with inputs"""
+    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
+           """TODO: Add docstring for setup"""
+     """Setup circuit with inputs"""
         pass
 
     @abstractmethod
-    def generate_constraints(self):
-        """Generate circuit constraints"""
+    def generate_constraints(self) -> None:
+           """TODO: Add docstring for generate_constraints"""
+     """Generate circuit constraints"""
         pass
 
 
@@ -145,14 +164,16 @@ class PoseidonHash:
 
     @staticmethod
     def hash_two(left: FieldElement, right: FieldElement) -> FieldElement:
-        """Hash two field elements (simplified implementation)"""
+           """TODO: Add docstring for hash_two"""
+     """Hash two field elements (simplified implementation)"""
         # In production, would use actual Poseidon round constants
         combined = (left.value * 31 + right.value * 37) % BLS12_381_SCALAR_FIELD
         return FieldElement(combined)
 
     @staticmethod
     def hash_many(inputs: List[FieldElement]) -> FieldElement:
-        """Hash multiple field elements"""
+           """TODO: Add docstring for hash_many"""
+     """Hash multiple field elements"""
         if not inputs:
             return FieldElement(0)
 
@@ -166,12 +187,14 @@ class PoseidonHash:
 class MerkleInclusionCircuit(PLONKCircuit):
     """Circuit for proving Merkle tree inclusion"""
 
-    def __init__(self, tree_depth: int = 20):
-        super().__init__("merkle_inclusion", tree_depth * 5)
+    def __init__(self, tree_depth: int = 20) -> None:
+            """TODO: Add docstring for __init__"""
+    super().__init__("merkle_inclusion", tree_depth * 5)
         self.tree_depth = tree_depth
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
-        """Setup Merkle inclusion circuit"""
+    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
+           """TODO: Add docstring for setup"""
+     """Setup Merkle inclusion circuit"""
         # Public inputs
         self.root = FieldElement(int(public_inputs["root"], 16))
 
@@ -183,8 +206,9 @@ class MerkleInclusionCircuit(PLONKCircuit):
         if len(self.path) != self.tree_depth:
             raise ValueError(f"Path length {len(self.path)} != tree depth {self.tree_depth}")
 
-    def generate_constraints(self):
-        """Generate Merkle tree inclusion constraints"""
+    def generate_constraints(self) -> None:
+           """TODO: Add docstring for generate_constraints"""
+     """Generate Merkle tree inclusion constraints"""
         current = self.leaf
 
         for i in range(self.tree_depth):
@@ -219,11 +243,13 @@ class DiabetesRiskCircuit(PLONKCircuit):
     - Generates ~384 byte proof with <25ms verification
     """
 
-    def __init__(self):
-        super().__init__("diabetes_risk_alert", 15000)
+    def __init__(self) -> None:
+            """TODO: Add docstring for __init__"""
+    super().__init__("diabetes_risk_alert", 15000)
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
-        """Setup diabetes risk circuit"""
+    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
+           """TODO: Add docstring for setup"""
+     """Setup diabetes risk circuit"""
         # Public inputs (scaled to avoid decimals)
         self.glucose_threshold = FieldElement(int(public_inputs["glucose_threshold"] * 100))
         self.risk_threshold = FieldElement(int(public_inputs["risk_threshold"] * 1000))
@@ -234,8 +260,9 @@ class DiabetesRiskCircuit(PLONKCircuit):
         self.risk_score = FieldElement(int(private_inputs["risk_score"] * 1000))
         self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
 
-    def generate_constraints(self):
-        """Generate diabetes risk assessment constraints"""
+    def generate_constraints(self) -> None:
+           """TODO: Add docstring for generate_constraints"""
+     """Generate diabetes risk assessment constraints"""
         # 1. Prove G > G_threshold
         glucose_diff = self.glucose_reading - self.glucose_threshold
         self._add_positive_constraint(glucose_diff)
@@ -255,14 +282,16 @@ class DiabetesRiskCircuit(PLONKCircuit):
         self._add_glucose_range_constraint()
         self._add_risk_range_constraint()
 
-    def _add_positive_constraint(self, value: FieldElement):
-        """Add constraint that value > 0 (simplified)"""
+    def _add_positive_constraint(self, value: FieldElement) -> None:
+           """TODO: Add docstring for _add_positive_constraint"""
+     """Add constraint that value > 0 (simplified)"""
         # In production, would implement proper range proof
         # For now, just ensure value exists in circuit
         self.add_constraint(value, FieldElement(1), value, qm=1, qo=-1)
 
-    def _add_glucose_range_constraint(self):
-        """Ensure glucose is in reasonable range (50-500 mg/dL scaled)"""
+    def _add_glucose_range_constraint(self) -> None:
+           """TODO: Add docstring for _add_glucose_range_constraint"""
+     """Ensure glucose is in reasonable range (50-500 mg/dL scaled)"""
         max_glucose = FieldElement(50000)  # 500 * 100
         min_glucose = FieldElement(5000)  # 50 * 100
 
@@ -272,8 +301,9 @@ class DiabetesRiskCircuit(PLONKCircuit):
         # glucose <= max_glucose
         self._add_positive_constraint(max_glucose - self.glucose_reading)
 
-    def _add_risk_range_constraint(self):
-        """Ensure risk score is in [0, 1] range (scaled to [0, 1000])"""
+    def _add_risk_range_constraint(self) -> None:
+           """TODO: Add docstring for _add_risk_range_constraint"""
+     """Ensure risk score is in [0, 1] range (scaled to [0, 1000])"""
         max_risk = FieldElement(1000)
         min_risk = FieldElement(0)
 
@@ -294,13 +324,15 @@ class VariantVerificationCircuit(PLONKCircuit):
     - ~192 byte proof with <10ms verification
     """
 
-    def __init__(self, merkle_depth: int = 20):
-        super().__init__("variant_verification", 5000)
+    def __init__(self, merkle_depth: int = 20) -> None:
+            """TODO: Add docstring for __init__"""
+    super().__init__("variant_verification", 5000)
         self.merkle_depth = merkle_depth
         self.merkle_circuit = MerkleInclusionCircuit(merkle_depth)
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
-        """Setup variant verification circuit"""
+    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
+           """TODO: Add docstring for setup"""
+     """Setup variant verification circuit"""
         # Public inputs
         self.variant_hash = FieldElement(int(public_inputs["variant_hash"], 16))
         self.reference_hash = FieldElement(int(public_inputs["reference_hash"], 16))
@@ -314,8 +346,9 @@ class VariantVerificationCircuit(PLONKCircuit):
         # Compute variant leaf hash
         self.variant_leaf = self._compute_variant_leaf()
 
-    def generate_constraints(self):
-        """Generate variant verification constraints"""
+    def generate_constraints(self) -> None:
+           """TODO: Add docstring for generate_constraints"""
+     """Generate variant verification constraints"""
         # 1. Verify variant hash matches computed hash
         computed_hash = self._hash_variant_data(self.variant_data)
         self.add_equality_gate(computed_hash, self.variant_hash)
@@ -339,13 +372,15 @@ class VariantVerificationCircuit(PLONKCircuit):
         # This is just for blinding - doesn't add functional constraints
 
     def _compute_variant_leaf(self) -> FieldElement:
-        """Compute Merkle leaf for variant"""
+           """TODO: Add docstring for _compute_variant_leaf"""
+     """Compute Merkle leaf for variant"""
         var_str = f"{self.variant_data['chr']}:{self.variant_data['pos']}:{self.variant_data['ref']}:{self.variant_data['alt']}"
         hash_bytes = hashlib.sha256(var_str.encode()).digest()
         return FieldElement(int.from_bytes(hash_bytes[:31], "big"))  # Ensure < field size
 
     def _hash_variant_data(self, variant_data: Dict) -> FieldElement:
-        """Hash variant data into field element"""
+           """TODO: Add docstring for _hash_variant_data"""
+     """Hash variant data into field element"""
         var_str = f"{variant_data['chr']}:{variant_data['pos']}:{variant_data['ref']}:{variant_data['alt']}"
         hash_bytes = hashlib.sha256(var_str.encode()).digest()
         return FieldElement(int.from_bytes(hash_bytes[:31], "big"))
@@ -361,12 +396,14 @@ class PolygeneticRiskScoreCircuit(PLONKCircuit):
     - ~384 byte proof with <25ms verification
     """
 
-    def __init__(self, max_variants: int = 1000):
-        super().__init__("polygenic_risk_score", 20000)
+    def __init__(self, max_variants: int = 1000) -> None:
+            """TODO: Add docstring for __init__"""
+    super().__init__("polygenic_risk_score", 20000)
         self.max_variants = max_variants
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
-        """Setup PRS circuit"""
+    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
+           """TODO: Add docstring for setup"""
+     """Setup PRS circuit"""
         # Public inputs
         self.prs_model_hash = FieldElement(int(public_inputs["prs_model"], 16))
         self.score_range = public_inputs["score_range"]
@@ -385,8 +422,9 @@ class PolygeneticRiskScoreCircuit(PLONKCircuit):
         if len(self.variants) > self.max_variants:
             raise ValueError(f"Too many variants: {len(self.variants)} > {self.max_variants}")
 
-    def generate_constraints(self):
-        """Generate PRS calculation constraints"""
+    def generate_constraints(self) -> None:
+           """TODO: Add docstring for generate_constraints"""
+     """Generate PRS calculation constraints"""
         # 1. Verify each variant genotype is valid (0, 1, or 2)
         for variant in self.variants:
             self._add_genotype_constraint(variant)
@@ -423,8 +461,9 @@ class PolygeneticRiskScoreCircuit(PLONKCircuit):
         model_hash = self._hash_prs_model()
         self.add_equality_gate(model_hash, self.prs_model_hash)
 
-    def _add_genotype_constraint(self, genotype: FieldElement):
-        """Constrain genotype to be 0, 1, or 2"""
+    def _add_genotype_constraint(self, genotype: FieldElement) -> None:
+           """TODO: Add docstring for _add_genotype_constraint"""
+     """Constrain genotype to be 0, 1, or 2"""
         # g * (g - 1) * (g - 2) = 0
         g_minus_1 = genotype - FieldElement(1)
         g_minus_2 = genotype - FieldElement(2)
@@ -439,10 +478,12 @@ class PolygeneticRiskScoreCircuit(PLONKCircuit):
         self.add_equality_gate(result, FieldElement(0))
 
     def _commit_score(self, score: FieldElement, randomness: FieldElement) -> FieldElement:
-        """Create Pedersen-style commitment to score"""
+           """TODO: Add docstring for _commit_score"""
+     """Create Pedersen-style commitment to score"""
         # Simplified commitment: hash(score || randomness)
         return PoseidonHash.hash_two(score, randomness)
 
     def _hash_prs_model(self) -> FieldElement:
-        """Hash PRS model weights"""
+           """TODO: Add docstring for _hash_prs_model"""
+     """Hash PRS model weights"""
         return PoseidonHash.hash_many(self.weights)

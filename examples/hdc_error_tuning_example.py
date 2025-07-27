@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 """
 Example usage of HDC error handling with uncertainty tuning
 """
@@ -13,8 +15,9 @@ from genomevault.hypervector.error_handling import (
 )
 
 
-async def main():
-    """Demonstrate HDC error handling capabilities"""
+async def main() -> None:
+       """TODO: Add docstring for main"""
+     """Demonstrate HDC error handling capabilities"""
     # 1. Basic error budget allocation
     print("=== Error Budget Allocation ===")
     allocator = ErrorBudgetAllocator()

@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 """
 Unit tests for the refactored clinical circuits.
 """
@@ -26,13 +28,15 @@ except ImportError as e:
 class TestRefactoredCircuits(unittest.TestCase):
     """Test suite for refactored clinical circuits"""
 
-    def setUp(self):
-        """Set up test fixtures"""
+
+    def setUp(self) -> None:
+    """Set up test fixtures"""
         if not IMPORTS_AVAILABLE:
             self.skipTest(f"Required imports not available: {IMPORT_ERROR}")
 
-    def test_diabetes_circuit_basic(self):
-        """Test basic diabetes circuit functionality"""
+
+    def test_diabetes_circuit_basic(self) -> None:
+    """Test basic diabetes circuit functionality"""
         # Create and setup circuit
         circuit = DiabetesRiskCircuit()
         config = circuit.setup({"risk_factors_threshold": 2})
@@ -61,8 +65,9 @@ class TestRefactoredCircuits(unittest.TestCase):
         is_valid = circuit.verify(proof, public_inputs)
         self.assertTrue(is_valid)
 
-    def test_biomarker_circuit_basic(self):
-        """Test basic biomarker circuit functionality"""
+
+    def test_biomarker_circuit_basic(self) -> None:
+    """Test basic biomarker circuit functionality"""
         # Create circuit using factory
         circuit = create_circuit(CircuitType.BIOMARKER_THRESHOLD, biomarker_name="test")
         circuit.setup({"value_range": (0, 500)})
@@ -80,8 +85,9 @@ class TestRefactoredCircuits(unittest.TestCase):
         is_valid = circuit.verify(proof, {"threshold": 200, "comparison": "greater"})
         self.assertTrue(is_valid)
 
-    def test_proof_serialization(self):
-        """Test proof serialization and deserialization"""
+
+    def test_proof_serialization(self) -> None:
+    """Test proof serialization and deserialization"""
         circuit = DiabetesRiskCircuit()
         circuit.setup({})
 
@@ -108,8 +114,9 @@ class TestRefactoredCircuits(unittest.TestCase):
         is_valid = circuit.verify(deserialized_proof, public_inputs)
         self.assertTrue(is_valid)
 
-    def test_unified_verifier(self):
-        """Test the unified verification function"""
+
+    def test_unified_verifier(self) -> None:
+    """Test the unified verification function"""
         circuit = DiabetesRiskCircuit()
         circuit.setup({})
 
@@ -127,8 +134,9 @@ class TestRefactoredCircuits(unittest.TestCase):
         is_valid = verify_proof(proof, public_inputs)
         self.assertTrue(is_valid)
 
-    def test_error_handling(self):
-        """Test error handling and validation"""
+
+    def test_error_handling(self) -> None:
+    """Test error handling and validation"""
         circuit = DiabetesRiskCircuit()
         circuit.setup({})
 
@@ -145,7 +153,6 @@ class TestRefactoredCircuits(unittest.TestCase):
 
         with self.assertRaises(RuntimeError):
             circuit2.prove(witness, {"threshold": 50})
-
 
 if __name__ == "__main__":
     unittest.main()

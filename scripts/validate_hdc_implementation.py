@@ -4,6 +4,7 @@ HDC Implementation Validation Script
 
 Validates that the HDC implementation meets all requirements from the specification.
 """
+from typing import Dict, List, Optional, Any, Union
 
 import json
 import sys
@@ -15,12 +16,14 @@ from typing import Any, Dict, List, Tuple
 class HDCImplementationValidator:
     """Validates HDC implementation against specification"""
 
-    def __init__(self):
-        self.project_root = Path(__file__).parent.parent
+    def __init__(self) -> None:
+            """TODO: Add docstring for __init__"""
+    self.project_root = Path(__file__).parent.parent
         self.results = {"timestamp": datetime.now().isoformat(), "stages": {}, "summary": {}}
 
     def validate_stage_0_scope(self) -> Tuple[bool, List[str]]:
-        """Validate Stage 0 - Scope & Targets"""
+           """TODO: Add docstring for validate_stage_0_scope"""
+     """Validate Stage 0 - Scope & Targets"""
         issues = []
 
         # Check for encoding specification
@@ -42,7 +45,8 @@ class HDCImplementationValidator:
         return len(issues) == 0, issues
 
     def validate_stage_1_registry(self) -> Tuple[bool, List[str]]:
-        """Validate Stage 1 - Seed/Version Registry & Determinism"""
+           """TODO: Add docstring for validate_stage_1_registry"""
+     """Validate Stage 1 - Seed/Version Registry & Determinism"""
         issues = []
 
         # Check registry module
@@ -77,7 +81,8 @@ class HDCImplementationValidator:
         return len(issues) == 0, issues
 
     def validate_stage_2_encoders(self) -> Tuple[bool, List[str]]:
-        """Validate Stage 2 - Prototype Encoders & Basic Tests"""
+           """TODO: Add docstring for validate_stage_2_encoders"""
+     """Validate Stage 2 - Prototype Encoders & Basic Tests"""
         issues = []
 
         # Check encoder implementation
@@ -132,7 +137,8 @@ class HDCImplementationValidator:
         return len(issues) == 0, issues
 
     def validate_stage_3_validation(self) -> Tuple[bool, List[str]]:
-        """Validate Stage 3 - Task-level Validation"""
+           """TODO: Add docstring for validate_stage_3_validation"""
+     """Validate Stage 3 - Task-level Validation"""
         issues = []
 
         # Check for quality tests
@@ -158,7 +164,8 @@ class HDCImplementationValidator:
         return len(issues) == 0, issues
 
     def validate_stage_4_benchmarks(self) -> Tuple[bool, List[str]]:
-        """Validate Stage 4 - Performance & Memory Benchmarks"""
+           """TODO: Add docstring for validate_stage_4_benchmarks"""
+     """Validate Stage 4 - Performance & Memory Benchmarks"""
         issues = []
 
         # Check benchmark scripts
@@ -190,7 +197,8 @@ class HDCImplementationValidator:
         return len(issues) == 0, issues
 
     def validate_stage_5_api(self) -> Tuple[bool, List[str]]:
-        """Validate Stage 5 - Integration & API"""
+           """TODO: Add docstring for validate_stage_5_api"""
+     """Validate Stage 5 - Integration & API"""
         issues = []
 
         # Check API implementation
@@ -220,7 +228,8 @@ class HDCImplementationValidator:
         return len(issues) == 0, issues
 
     def validate_stage_6_release(self) -> Tuple[bool, List[str]]:
-        """Validate Stage 6 - Release & Maintain"""
+           """TODO: Add docstring for validate_stage_6_release"""
+     """Validate Stage 6 - Release & Maintain"""
         issues = []
 
         # Check VERSION.md
@@ -239,7 +248,8 @@ class HDCImplementationValidator:
         return len(issues) == 0, issues
 
     def validate_cross_cutting(self) -> Tuple[bool, List[str]]:
-        """Validate cross-cutting requirements"""
+           """TODO: Add docstring for validate_cross_cutting"""
+     """Validate cross-cutting requirements"""
         issues = []
 
         # Check Makefile
@@ -268,7 +278,8 @@ class HDCImplementationValidator:
         return len(issues) == 0, issues
 
     def check_code_quality(self) -> Tuple[bool, List[str]]:
-        """Check code quality metrics"""
+           """TODO: Add docstring for check_code_quality"""
+     """Check code quality metrics"""
         issues = []
 
         # Check for docstrings
@@ -309,7 +320,8 @@ class HDCImplementationValidator:
         return len(issues) == 0, issues
 
     def generate_report(self) -> Dict[str, Any]:
-        """Generate comprehensive validation report"""
+           """TODO: Add docstring for generate_report"""
+     """Generate comprehensive validation report"""
         stages = [
             ("Stage 0: Scope & Targets", self.validate_stage_0_scope),
             ("Stage 1: Registry & Determinism", self.validate_stage_1_registry),
@@ -348,8 +360,9 @@ class HDCImplementationValidator:
 
         return self.results
 
-    def print_report(self, report: Dict[str, Any]):
-        """Print formatted validation report"""
+    def print_report(self, report: Dict[str, Any]) -> None:
+           """TODO: Add docstring for print_report"""
+     """Print formatted validation report"""
         print("\n" + "=" * 70)
         print("HDC IMPLEMENTATION VALIDATION REPORT")
         print("=" * 70)
@@ -391,16 +404,18 @@ class HDCImplementationValidator:
             print("Significant work needed. Review failed stages above.")
         print("=" * 70 + "\n")
 
-    def save_report(self, report: Dict[str, Any], output_file: str = "hdc_validation_report.json"):
-        """Save validation report to file"""
+    def save_report(self, report: Dict[str, Any], output_file: str = "hdc_validation_report.json") -> None:
+           """TODO: Add docstring for save_report"""
+     """Save validation report to file"""
         output_path = self.project_root / output_file
         with open(output_path, "w") as f:
             json.dump(report, f, indent=2)
         print(f"\nReport saved to: {output_path}")
 
 
-def main():
-    """Main validation entry point"""
+def main() -> None:
+       """TODO: Add docstring for main"""
+     """Main validation entry point"""
     validator = HDCImplementationValidator()
 
     print("Validating HDC implementation...")

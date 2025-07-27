@@ -2,6 +2,7 @@
 Complete HDC-PIR Integration with Real ZK Proofs
 Demonstrates the full pipeline with actual zero-knowledge proof generation
 """
+from typing import Dict, List, Optional, Any, Union
 
 import asyncio
 import json
@@ -16,8 +17,9 @@ from genomevault.zk.circuits.median_verifier import MedianVerifierCircuit
 from genomevault.zk.proof import ProofGenerator
 
 
-async def main():
-    """
+async def main() -> None:
+       """TODO: Add docstring for main"""
+     """
     Demonstrate the complete error-tuned query pipeline with real ZK proofs
     """
     print("=== HDC Error Tuning with Real ZK Proofs Demo ===\n")
@@ -190,8 +192,9 @@ async def main():
     return proof_result
 
 
-async def benchmark_zk_performance():
-    """Benchmark ZK proof generation for different input sizes"""
+async def benchmark_zk_performance() -> None:
+       """TODO: Add docstring for benchmark_zk_performance"""
+     """Benchmark ZK proof generation for different input sizes"""
     print("\n=== ZK Proof Performance Benchmark ===")
 
     circuit = MedianVerifierCircuit()
@@ -250,8 +253,9 @@ async def benchmark_zk_performance():
     print("- All proofs are cryptographically valid")
 
 
-def demonstrate_proof_structure():
-    """Show the structure of a ZK median proof"""
+def demonstrate_proof_structure() -> None:
+       """TODO: Add docstring for demonstrate_proof_structure"""
+     """Show the structure of a ZK median proof"""
     print("\n=== ZK Median Proof Structure ===")
 
     circuit = MedianVerifierCircuit()

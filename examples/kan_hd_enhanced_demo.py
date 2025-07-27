@@ -12,6 +12,7 @@ Features demonstrated:
 5. Real-time performance tuning
 6. Privacy-preserving transformations
 """
+from typing import Dict, List, Optional, Any, Union
 
 import asyncio
 import json
@@ -38,12 +39,13 @@ from genomevault.hypervector.kan import (
 class KANHDDemo:
     """Comprehensive demo of KAN-HD enhanced features"""
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """Initialize the KAN-HD demo"""
         self.results = {}
         print("🧬 KAN-HD Hybrid Enhancement Demo")
         print("=" * 50)
 
-    def demo_adaptive_compression(self):
+    def demo_adaptive_compression(self) -> None:
         """Demo 1: Adaptive compression strategies"""
         print("\n📊 Demo 1: Adaptive Compression Strategies")
         print("-" * 40)
@@ -110,7 +112,7 @@ class KANHDDemo:
         )
         print(f"\n🏆 Best strategy: {best_strategy}")
 
-    def demo_hierarchical_encoding(self):
+    def demo_hierarchical_encoding(self) -> None:
         """Demo 2: Hierarchical multi-modal encoding"""
         print("\n🏗️ Demo 2: Hierarchical Multi-Modal Encoding")
         print("-" * 45)
@@ -198,7 +200,7 @@ class KANHDDemo:
             print(f"   ❌ Error: {e}")
             self.results["hierarchical_encoding"] = {"error": str(e)}
 
-    def demo_scientific_interpretability(self):
+    def demo_scientific_interpretability(self) -> None:
         """Demo 3: Scientific interpretability analysis"""
         print("\n🔬 Demo 3: Scientific Interpretability Analysis")
         print("-" * 46)
@@ -270,7 +272,7 @@ class KANHDDemo:
             print(f"   ❌ Error: {e}")
             self.results["scientific_interpretability"] = {"error": str(e)}
 
-    def demo_federated_learning(self):
+    def demo_federated_learning(self) -> None:
         """Demo 4: Federated learning capabilities"""
         print("\n🌐 Demo 4: Federated Learning Capabilities")
         print("-" * 44)
@@ -377,7 +379,7 @@ class KANHDDemo:
             print(f"   ❌ Error: {e}")
             self.results["federated_learning"] = {"error": str(e)}
 
-    def demo_performance_tuning(self):
+    def demo_performance_tuning(self) -> None:
         """Demo 5: Real-time performance tuning"""
         print("\n⚡ Demo 5: Real-Time Performance Tuning")
         print("-" * 42)
@@ -422,7 +424,7 @@ class KANHDDemo:
             "performance_summary": performance_summary,
         }
 
-    def demo_privacy_guarantees(self):
+    def demo_privacy_guarantees(self) -> None:
         """Demo 6: Privacy guarantee computation"""
         print("\n🔒 Demo 6: Privacy Guarantee Computation")
         print("-" * 42)
@@ -478,7 +480,7 @@ class KANHDDemo:
         )
         print(f"\n🏆 Most secure level: {best_privacy}")
 
-    def run_full_demo(self):
+    def run_full_demo(self) -> None:
         """Run all demos"""
         print("🚀 Running comprehensive KAN-HD enhancement demo...")
 
@@ -504,7 +506,7 @@ class KANHDDemo:
         # Print summary
         self.print_summary()
 
-    def save_results(self):
+    def save_results(self) -> None:
         """Save demo results to file"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"/tmp/kan_hd_demo_results_{timestamp}.json"
@@ -516,7 +518,7 @@ class KANHDDemo:
         except Exception as e:
             print(f"❌ Failed to save results: {e}")
 
-    def print_summary(self):  # noqa: C901
+    def print_summary(self) -> None:  # noqa: C901
         """Print comprehensive demo summary"""
         print("\n" + "=" * 60)
         print("📋 KAN-HD Enhancement Demo Summary")

@@ -1,6 +1,7 @@
 """
 PIR Client implementation for private genomic queries
 """
+from typing import Dict, List, Optional, Any, Union
 
 import asyncio
 import json
@@ -28,8 +29,9 @@ class PIRQuery:
     query_vector: Optional[np.ndarray] = None  # Encoded query vector
     nonce: Optional[bytes] = None  # Query nonce
 
-    def __post_init__(self):
-        if self.metadata is None:
+    def __post_init__(self) -> None:
+            """TODO: Add docstring for __post_init__"""
+    if self.metadata is None:
             self.metadata = {}
         if self.nonce is None:
             self.nonce = np.random.bytes(32)
@@ -41,8 +43,9 @@ class PIRClient:
     Queries multiple servers without revealing the queried position
     """
 
-    def __init__(self, server_urls: List[str], database_size: int, threshold: int = 2):
-        self.server_urls = server_urls
+    def __init__(self, server_urls: List[str], database_size: int, threshold: int = 2) -> None:
+            """TODO: Add docstring for __init__"""
+    self.server_urls = server_urls
         self.database_size = database_size
         self.threshold = threshold
         self.session: Optional[aiohttp.ClientSession] = None
@@ -50,16 +53,19 @@ class PIRClient:
         if len(server_urls) < MIN_PIR_SERVERS:
             raise PIRError(f"Need at least {MIN_PIR_SERVERS} servers, got {len(server_urls)}")
 
-    async def __aenter__(self):
-        self.session = aiohttp.ClientSession()
+    async def __aenter__(self) -> None:
+            """TODO: Add docstring for __aenter__"""
+    self.session = aiohttp.ClientSession()
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        if self.session:
+    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
+            """TODO: Add docstring for __aexit__"""
+    if self.session:
             await self.session.close()
 
     async def query_position(self, chromosome: str, position: int, length: int = 1000) -> bytes:
-        """
+           """TODO: Add docstring for query_position"""
+     """
         Query a genomic position privately
 
         Args:
@@ -96,7 +102,8 @@ class PIRClient:
         return result
 
     def _create_query(self, chromosome: str, position: int, length: int) -> PIRQuery:
-        """
+           """TODO: Add docstring for _create_query"""
+     """
         Create an oblivious query vector
         """
         # Create selection vector
@@ -120,7 +127,8 @@ class PIRClient:
         return PIRQuery(position=position, length=length, query_vector=query_vector, nonce=nonce)
 
     async def _query_server(self, server_url: str, query: PIRQuery) -> Dict[str, Any]:
-        """Query a single PIR server"""
+           """TODO: Add docstring for _query_server"""
+     """Query a single PIR server"""
         if not self.session:
             raise PIRError("Session not initialized")
 
@@ -145,7 +153,8 @@ class PIRClient:
             raise PIRError("Query failed for server {server_url}: {str(e)}")
 
     def _reconstruct_data(self, responses: List[Dict[str, Any]], query: PIRQuery) -> bytes:
-        """
+           """TODO: Add docstring for _reconstruct_data"""
+     """
         Reconstruct data from PIR responses
         Uses threshold reconstruction
         """
@@ -181,7 +190,8 @@ class PIRClient:
         return result_bytes[start_byte:end_byte]
 
     async def get_server_status(self) -> List[Dict[str, Any]]:
-        """Get status of all PIR servers"""
+           """TODO: Add docstring for get_server_status"""
+     """Get status of all PIR servers"""
         if not self.session:
             raise PIRError("Session not initialized")
 
@@ -208,7 +218,8 @@ class PIRClient:
         return statuses
 
     def calculate_privacy_guarantee(self, num_honest_servers: int) -> float:
-        """
+           """TODO: Add docstring for calculate_privacy_guarantee"""
+     """
         Calculate privacy failure probability
         P_fail = (1 - q)^k where q is server honesty probability
         """
@@ -217,7 +228,8 @@ class PIRClient:
         return privacy_failure_prob
 
     def create_query(self, db_index: int, seed: Optional[int] = None) -> PIRQuery:
-        """
+           """TODO: Add docstring for create_query"""
+     """
         Create a PIR query for a database index with optional seed
 
         Args:
@@ -257,7 +269,8 @@ class PIRClient:
         )
 
     async def execute_query(self, query: PIRQuery) -> Any:
-        """
+           """TODO: Add docstring for execute_query"""
+     """
         Execute a PIR query across servers
 
         Args:
@@ -292,7 +305,8 @@ class PIRClient:
         return result
 
     async def _query_server_v2(self, server_url: str, query: PIRQuery) -> Dict[str, Any]:
-        """Query a single PIR server with enhanced query format"""
+           """TODO: Add docstring for _query_server_v2"""
+     """Query a single PIR server with enhanced query format"""
         if not self.session:
             raise PIRError("Session not initialized")
 
@@ -318,7 +332,8 @@ class PIRClient:
             raise PIRError(f"Query failed for server {server_url}: {str(e)}")
 
     def _reconstruct_data_v2(self, responses: List[Dict[str, Any]], query: PIRQuery) -> Any:
-        """
+           """TODO: Add docstring for _reconstruct_data_v2"""
+     """
         Reconstruct data from PIR responses (enhanced version)
         """
         # Extract response data
@@ -337,7 +352,8 @@ class PIRClient:
         return response_data[0]
 
     async def batch_query(self, indices: List[int]) -> List[Any]:
-        """
+           """TODO: Add docstring for batch_query"""
+     """
         Execute batch queries for multiple indices
 
         Args:
@@ -363,7 +379,8 @@ class PIRClient:
         return final_results
 
     def decode_response(self, response_data: Any, response_type: str = "genomic") -> Any:
-        """
+           """TODO: Add docstring for decode_response"""
+     """
         Decode response data based on type
 
         Args:

@@ -1,10 +1,3 @@
-"""Advanced implementation integration tests."""
-
-import os
-import sys
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-
 import hashlib
 import time
 
@@ -17,8 +10,15 @@ from genomevault.zk_proofs.advanced.recursive_snark import RecursiveSNARKProver
 from genomevault.zk_proofs.advanced.stark_prover import PostQuantumVerifier, STARKProver
 from genomevault.zk_proofs.prover import Prover
 
+"""Advanced implementation integration tests."""
 
-def test_recursive_snark():
+import os
+import sys
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+
+
+def test_recursive_snark() -> None:
     """Test recursive SNARK composition."""
     print("\n" + "=" * 60)
     print("Testing Recursive SNARK Composition")
@@ -72,7 +72,7 @@ def test_recursive_snark():
     return True
 
 
-def test_stark_post_quantum():
+def test_stark_post_quantum() -> None:
     """Test STARK post-quantum proofs."""
     print("\n" + "=" * 60)
     print("Testing Post-Quantum STARK Proofs")
@@ -129,7 +129,7 @@ def test_stark_post_quantum():
     return valid
 
 
-def test_catalytic_proof():
+def test_catalytic_proof() -> None:
     """Test catalytic proof engine."""
     print("\n" + "=" * 60)
     print("Testing Catalytic Proof Engine")
@@ -175,7 +175,7 @@ def test_catalytic_proof():
     return True
 
 
-def test_it_pir():
+def test_it_pir() -> None:
     """Test Information-Theoretic PIR."""
     print("\n" + "=" * 60)
     print("Testing Information-Theoretic PIR")
@@ -234,7 +234,7 @@ def test_it_pir():
     return matches
 
 
-def test_hierarchical_compression():
+def test_hierarchical_compression() -> None:
     """Test hierarchical hypervector compression."""
     print("\n" + "=" * 60)
     print("Testing Hierarchical Hypervector Compression")
@@ -271,7 +271,7 @@ def test_hierarchical_compression():
     return True
 
 
-def run_all_tests():
+def run_all_tests() -> None:
     """Run all advanced implementation tests."""
     print("\nGenomeVault Advanced Implementation Tests")
     print("=========================================")

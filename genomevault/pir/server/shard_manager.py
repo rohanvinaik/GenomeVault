@@ -2,6 +2,9 @@
 Shard manager for distributed PIR database.
 Handles data distribution, updates, and integrity verification.
 """
+from genomevault.utils.logging import get_logger, logger, performance_logger
+import logging
+from typing import Dict, List, Optional, Any, Union
 
 import hashlib
 import json
@@ -18,7 +21,6 @@ import numpy as np
 from genomevault.utils.config import get_config
 
 config = get_config()
-from genomevault.utils.logging import get_logger, logger, performance_logger
 
 logger = get_logger(__name__)
 
@@ -39,7 +41,8 @@ class ShardMetadata:
     populations: Optional[List[str]] = None
 
     def to_dict(self) -> Dict:
-        return {
+            """TODO: Add docstring for to_dict"""
+    return {
             "id": self.shard_id,
             "index": self.shard_index,
             "data_type": self.data_type,
@@ -61,12 +64,14 @@ class ShardDistribution:
     replication_factor: int
     server_assignments: Dict[str, List[str]] = field(default_factory=dict)
 
-    def assign_shard(self, shard_id: str, server_ids: List[str]):
-        """Assign shard to servers."""
+    def assign_shard(self, shard_id: str, server_ids: List[str]) -> None:
+           """TODO: Add docstring for assign_shard"""
+     """Assign shard to servers."""
         self.server_assignments[shard_id] = server_ids
 
     def get_servers_for_shard(self, shard_id: str) -> List[str]:
-        """Get servers hosting a shard."""
+           """TODO: Add docstring for get_servers_for_shard"""
+     """Get servers hosting a shard."""
         return self.server_assignments.get(shard_id, [])
 
 
@@ -76,8 +81,9 @@ class ShardManager:
     Handles creation, distribution, and maintenance of data shards.
     """
 
-    def __init__(self, data_directory: Path, num_shards: int = 10):
-        """
+    def __init__(self, data_directory: Path, num_shards: int = 10) -> None:
+           """TODO: Add docstring for __init__"""
+     """
         Initialize shard manager.
 
         Args:
@@ -105,8 +111,9 @@ class ShardManager:
 
         logger.info(f"ShardManager initialized with {len(self.shards)} shards")
 
-    def _load_shard_metadata(self):
-        """Load shard metadata from manifest."""
+    def _load_shard_metadata(self) -> None:
+           """TODO: Add docstring for _load_shard_metadata"""
+     """Load shard metadata from manifest."""
         manifest_path = self.data_directory / "shard_manifest.json"
 
         if manifest_path.exists():
@@ -137,8 +144,9 @@ class ShardManager:
                     server_assignments=dist.get("assignments", {}),
                 )
 
-    def _save_shard_metadata(self):
-        """Save shard metadata to manifest."""
+    def _save_shard_metadata(self) -> None:
+           """TODO: Add docstring for _save_shard_metadata"""
+     """Save shard metadata to manifest."""
         manifest = {
             "version": "1.0",
             "created": time.time(),
@@ -159,7 +167,8 @@ class ShardManager:
 
     @performance_logger.log_operation("create_shards")
     def create_shards_from_data(self, data_source: Path, data_type: str = "genomic") -> List[str]:
-        """
+           """TODO: Add docstring for create_shards_from_data"""
+     """
         Create shards from source data.
 
         Args:
@@ -212,7 +221,8 @@ class ShardManager:
     def _create_single_shard(
         self, shard_index: int, shard_data: bytes, data_type: str
     ) -> Optional[str]:
-        """
+           """TODO: Add docstring for _create_single_shard"""
+     """
         Create a single shard.
 
         Args:
@@ -269,7 +279,8 @@ class ShardManager:
             return None
 
     def distribute_shards(self, server_list: List[str]) -> ShardDistribution:
-        """
+           """TODO: Add docstring for distribute_shards"""
+     """
         Distribute shards across servers.
 
         Args:
@@ -323,7 +334,8 @@ class ShardManager:
         return self.shard_distribution
 
     def verify_shard_integrity(self, shard_id: str) -> bool:
-        """
+           """TODO: Add docstring for verify_shard_integrity"""
+     """
         Verify integrity of a shard.
 
         Args:
@@ -355,7 +367,8 @@ class ShardManager:
         return True
 
     def update_shard(self, shard_id: str, new_data: bytes) -> bool:
-        """
+           """TODO: Add docstring for update_shard"""
+     """
         Update a shard with new data.
 
         Args:
@@ -417,7 +430,8 @@ class ShardManager:
             return False
 
     def get_shard_statistics(self) -> Dict[str, Any]:
-        """
+           """TODO: Add docstring for get_shard_statistics"""
+     """
         Get statistics about shards.
 
         Returns:
@@ -453,7 +467,8 @@ class ShardManager:
         }
 
     def optimize_distribution(self, server_stats: Dict[str, Dict]) -> ShardDistribution:
-        """
+           """TODO: Add docstring for optimize_distribution"""
+     """
         Optimize shard distribution based on server performance.
 
         Args:
@@ -487,8 +502,9 @@ class ShardManager:
         logger.info("Optimized shard distribution based on server performance")
         return new_distribution
 
-    def cleanup(self):
-        """Cleanup resources."""
+    def cleanup(self) -> None:
+           """TODO: Add docstring for cleanup"""
+     """Cleanup resources."""
         self.executor.shutdown(wait=True)
 
 

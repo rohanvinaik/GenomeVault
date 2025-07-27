@@ -4,6 +4,7 @@ GenomeVault Configuration Management
 This module provides centralized configuration management for all GenomeVault components,
 including environment-specific settings, secrets management, and runtime configuration.
 """
+from typing import Dict, List, Optional, Any, Union
 
 import base64
 import json
@@ -163,8 +164,9 @@ class ProcessingConfig:
 class Config:
     """Main configuration manager for GenomeVault"""
 
-    def __init__(self, config_file: Optional[str] = None, environment: Optional[str] = None):
-        """
+    def __init__(self, config_file: Optional[str] = None, environment: Optional[str] = None) -> None:
+           """TODO: Add docstring for __init__"""
+     """
         Initialize configuration manager
 
         Args:
@@ -190,15 +192,17 @@ class Config:
         self._init_secrets_manager()
 
     def _default_config_file(self) -> Path:
-        """Get default configuration file path"""
+           """TODO: Add docstring for _default_config_file"""
+     """Get default configuration file path"""
         config_dir = Path.home() / ".genomevault" / "config"
         config_dir.mkdir(parents=True, exist_ok=True)
         # Use JSON format if YAML not available
         extension = ".yaml" if HAS_YAML else ".json"
         return config_dir / "{self.environment.value}{extension}"
 
-    def _load_config(self):
-        """Load configuration from file"""
+    def _load_config(self) -> None:
+           """TODO: Add docstring for _load_config"""
+     """Load configuration from file"""
         if not self.config_file or not Path(self.config_file).exists():
             logger.info(f"No config file found at {self.config_file}, using defaults")
             return
@@ -228,8 +232,9 @@ class Config:
             logger.error(f"Failed to load configuration: {e}")
             raise
 
-    def _update_config_object(self, obj: Any, data: Dict[str, Any]):
-        """Update dataclass object with dictionary data"""
+    def _update_config_object(self, obj: Any, data: Dict[str, Any]) -> None:
+           """TODO: Add docstring for _update_config_object"""
+     """Update dataclass object with dictionary data"""
         for key, value in data.items():
             if hasattr(obj, key):
                 # Handle Path objects
@@ -237,8 +242,9 @@ class Config:
                     value = Path(value)
                 setattr(obj, key, value)
 
-    def _load_environment_overrides(self):
-        """Load environment variable overrides"""
+    def _load_environment_overrides(self) -> None:
+           """TODO: Add docstring for _load_environment_overrides"""
+     """Load environment variable overrides"""
         # Crypto overrides
         if zk_param := os.getenv("GENOMEVAULT_ZK_SECURITY"):
             self.crypto.zk_security_parameter = int(zk_param)
@@ -259,8 +265,9 @@ class Config:
         if max_cores := os.getenv("GENOMEVAULT_MAX_CORES"):
             self.processing.max_cores = int(max_cores)
 
-    def _validate_config(self):
-        """Validate configuration parameters"""
+    def _validate_config(self) -> None:
+           """TODO: Add docstring for _validate_config"""
+     """Validate configuration parameters"""
         # Validate crypto parameters
         assert self.crypto.aes_key_size in [128, 192, 256], "Invalid AES key size"
         assert self.crypto.rsa_key_size >= 2048, "RSA key size too small"
@@ -287,13 +294,15 @@ class Config:
 
         logger.info("Configuration validation passed")
 
-    def _init_secrets_manager(self):
-        """Initialize secrets management"""
+    def _init_secrets_manager(self) -> None:
+           """TODO: Add docstring for _init_secrets_manager"""
+     """Initialize secrets management"""
         self._master_key = self._derive_master_key()
         self._cipher = Fernet(self._master_key)
 
     def _derive_master_key(self) -> bytes:
-        """Derive master key from environment or hardware"""
+           """TODO: Add docstring for _derive_master_key"""
+     """Derive master key from environment or hardware"""
         # In production, this should use HSM or secure key management
         password = os.getenv("GENOMEVAULT_MASTER_PASSWORD", "development-password").encode()
         salt = b"genomevault-salt"  # In production, use random salt
@@ -307,15 +316,18 @@ class Config:
         return base64.urlsafe_b64encode(kdf.derive(password))
 
     def encrypt_secret(self, secret: str) -> str:
-        """Encrypt a secret value"""
+           """TODO: Add docstring for encrypt_secret"""
+     """Encrypt a secret value"""
         return self._cipher.encrypt(secret.encode()).decode()
 
     def decrypt_secret(self, encrypted: str) -> str:
-        """Decrypt a secret value"""
+           """TODO: Add docstring for decrypt_secret"""
+     """Decrypt a secret value"""
         return self._cipher.decrypt(encrypted.encode()).decode()
 
     def get_compression_settings(self) -> Dict[str, Any]:
-        """Get compression settings based on tier"""
+           """TODO: Add docstring for get_compression_settings"""
+     """Get compression settings based on tier"""
         tiers = {
             "mini": {
                 "features": 5000,
@@ -336,21 +348,24 @@ class Config:
         return tiers.get(self.storage.compression_tier, tiers["clinical"])
 
     def get_node_voting_power(self) -> int:
-        """Calculate node voting power based on dual-axis model"""
+           """TODO: Add docstring for get_node_voting_power"""
+     """Calculate node voting power based on dual-axis model"""
         class_weights = {"light": 1, "full": 4, "archive": 8}
         c = class_weights.get(self.network.node_class, 1)
         s = 10 if self.network.signatory_status else 0
         return c + s
 
     def get_block_rewards(self) -> int:
-        """Calculate block reward credits"""
+           """TODO: Add docstring for get_block_rewards"""
+     """Calculate block reward credits"""
         class_weights = {"light": 1, "full": 4, "archive": 8}
         c = class_weights.get(self.network.node_class, 1)
         ts_bonus = 2 if self.network.signatory_status else 0
         return c + ts_bonus
 
     def get_pir_failure_probability(self) -> float:
-        """Calculate PIR privacy failure probability"""
+           """TODO: Add docstring for get_pir_failure_probability"""
+     """Calculate PIR privacy failure probability"""
         if not self.network.pir_servers:
             return 1.0
 
@@ -359,8 +374,9 @@ class Config:
         k = len([s for s in self.network.pir_servers if s.get("trusted", False)])
         return (1 - q) ** k if k > 0 else 1.0
 
-    def save(self, path: Optional[str] = None):
-        """Save current configuration to file"""
+    def save(self, path: Optional[str] = None) -> None:
+           """TODO: Add docstring for save"""
+     """Save current configuration to file"""
         path = path or self.config_file
 
         config_data = {
@@ -386,7 +402,8 @@ class Config:
         logger.info(f"Saved configuration to {path}")
 
     def to_dict(self) -> Dict[str, Any]:
-        """Convert configuration to dictionary"""
+           """TODO: Add docstring for to_dict"""
+     """Convert configuration to dictionary"""
         return {
             "environment": self.environment.value,
             "crypto": self.crypto.__dict__,
@@ -402,15 +419,17 @@ _config: Optional[Config] = None
 
 
 def get_config() -> Config:
-    """Get global configuration instance"""
+       """TODO: Add docstring for get_config"""
+     """Get global configuration instance"""
     global _config
     if _config is None:
         _config = Config()
     return _config
 
 
-def init_config(config_file: Optional[str] = None, environment: Optional[str] = None):
-    """Initialize global configuration"""
+def init_config(config_file: Optional[str] = None, environment: Optional[str] = None) -> None:
+       """TODO: Add docstring for init_config"""
+     """Initialize global configuration"""
     global _config
     _config = Config(config_file, environment)
     return _config

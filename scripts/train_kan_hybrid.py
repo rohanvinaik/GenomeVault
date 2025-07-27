@@ -4,6 +4,7 @@ Training script for KAN Hybrid Architecture
 This script demonstrates how to train the KAN models on genomic data
 to achieve optimal compression while maintaining reconstruction quality.
 """
+from typing import Dict, List, Optional, Any, Union
 
 from typing import Dict, List, Tuple
 
@@ -22,8 +23,9 @@ from genomevault.hypervector.kan import KANCompressor, KANHybridEncoder
 class GenomicDataset(Dataset):
     """Dataset for training KAN models on genomic data"""
 
-    def __init__(self, num_samples: int = 10000, variants_per_sample: int = 100):
-        self.num_samples = num_samples
+    def __init__(self, num_samples: int = 10000, variants_per_sample: int = 100) -> None:
+            """TODO: Add docstring for __init__"""
+    self.num_samples = num_samples
         self.variants_per_sample = variants_per_sample
 
         # Pre-generate hypervectors for training
@@ -39,7 +41,8 @@ class GenomicDataset(Dataset):
             self.samples.append(hv)
 
     def _generate_variants(self, n: int) -> List[Dict]:
-        """Generate random genomic variants"""
+           """TODO: Add docstring for _generate_variants"""
+     """Generate random genomic variants"""
         variants = []
         for _ in range(n):
             variants.append(
@@ -53,11 +56,13 @@ class GenomicDataset(Dataset):
             )
         return variants
 
-    def __len__(self):
-        return self.num_samples
+    def __len__(self) -> None:
+            """TODO: Add docstring for __len__"""
+    return self.num_samples
 
-    def __getitem__(self, idx):
-        return self.samples[idx]
+    def __getitem__(self, idx) -> None:
+            """TODO: Add docstring for __getitem__"""
+    return self.samples[idx]
 
 
 def train_kan_compressor(
@@ -68,7 +73,8 @@ def train_kan_compressor(
     learning_rate: float = 1e-3,
     device: str = "cpu",
 ) -> Dict[str, List[float]]:
-    """
+       """TODO: Add docstring for train_kan_compressor"""
+     """
     Train KAN compressor model
 
     Returns:
@@ -164,7 +170,8 @@ def train_kan_compressor(
 def evaluate_kan_model(
     compressor: KANCompressor, test_loader: DataLoader, device: str = "cpu"
 ) -> Dict[str, float]:
-    """
+       """TODO: Add docstring for evaluate_kan_model"""
+     """
     Evaluate trained KAN model
 
     Returns:
@@ -221,8 +228,9 @@ def evaluate_kan_model(
     return metrics
 
 
-def visualize_training_history(history: Dict[str, List[float]]):
-    """Visualize training history"""
+def visualize_training_history(history: Dict[str, List[float]]) -> None:
+       """TODO: Add docstring for visualize_training_history"""
+     """Visualize training history"""
     fig, axes = plt.subplots(1, 3, figsize=(15, 5))
 
     # Loss curves
@@ -253,8 +261,9 @@ def visualize_training_history(history: Dict[str, List[float]]):
     plt.show()
 
 
-def analyze_learned_functions(compressor: KANCompressor, num_functions: int = 5):
-    """Analyze and visualize learned KAN functions"""
+def analyze_learned_functions(compressor: KANCompressor, num_functions: int = 5) -> None:
+       """TODO: Add docstring for analyze_learned_functions"""
+     """Analyze and visualize learned KAN functions"""
     print("\nAnalyzing learned functions...")
 
     # Extract first layer if it's a KAN layer
@@ -286,8 +295,9 @@ def analyze_learned_functions(compressor: KANCompressor, num_functions: int = 5)
     plt.show()
 
 
-def main():
-    """Main training pipeline"""
+def main() -> None:
+       """TODO: Add docstring for main"""
+     """Main training pipeline"""
     # Configuration
     config = {
         "input_dim": 10000,

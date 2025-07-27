@@ -2,6 +2,8 @@
 Zero-Knowledge Proof Generation Module
 Uses real ZK circuits for proof generation and verification
 """
+import logging
+from typing import Dict, List, Optional, Any, Union
 
 import hashlib
 import time
@@ -33,8 +35,9 @@ class ProofGenerator:
     Uses real ZK circuits for median verification and other proofs
     """
 
-    def __init__(self):
-        self.median_circuit = MedianVerifierCircuit()
+    def __init__(self) -> None:
+            """TODO: Add docstring for __init__"""
+    self.median_circuit = MedianVerifierCircuit()
         self.proof_cache = {}
         logger.info("ProofGenerator initialized with real ZK circuits")
 
@@ -45,7 +48,8 @@ class ProofGenerator:
         budget: ErrorBudget,
         metadata: Dict[str, Any],
     ) -> ProofResult:
-        """
+           """TODO: Add docstring for generate_median_proof"""
+     """
         Generate proof that median of results is within error bound
 
         Args:
@@ -159,7 +163,8 @@ class ProofGenerator:
         metadata: Dict[str, Any],
         error: Optional[str] = None,
     ) -> ProofResult:
-        """Generate mock proof as fallback"""
+           """TODO: Add docstring for _generate_mock_proof"""
+     """Generate mock proof as fallback"""
         import json
 
         proof_data = {
@@ -191,7 +196,8 @@ class ProofGenerator:
         )
 
     def verify_proof(self, proof: ProofResult) -> bool:
-        """
+           """TODO: Add docstring for verify_proof"""
+     """
         Verify a generated proof
 
         Args:
@@ -248,7 +254,8 @@ class ProofGenerator:
         errors_corrected: int,
         metadata: Dict[str, Any],
     ) -> ProofResult:
-        """
+           """TODO: Add docstring for generate_ecc_proof"""
+     """
         Generate proof of ECC error correction
 
         This is a placeholder for future implementation
@@ -279,7 +286,8 @@ class ProofGenerator:
         )
 
     def get_proof_statistics(self) -> Dict[str, Any]:
-        """Get statistics about generated proofs"""
+           """TODO: Add docstring for get_proof_statistics"""
+     """Get statistics about generated proofs"""
         return {
             "cached_proofs": len(self.proof_cache),
             "circuit_types": ["median_deviation", "ecc_verification"],

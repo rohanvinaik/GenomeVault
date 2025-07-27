@@ -4,6 +4,7 @@ Variant Proof Circuit Implementation
 This implements the actual constraint generation for proving
 variant presence without revealing the variant position.
 """
+from typing import Dict, List, Optional, Any, Union
 
 import hashlib
 
@@ -36,13 +37,15 @@ class VariantProofCircuit:
     - witness_randomness: Randomness for zero-knowledge
     """
 
-    def __init__(self, merkle_depth: int = 20):
-        self.merkle_depth = merkle_depth
+    def __init__(self, merkle_depth: int = 20) -> None:
+            """TODO: Add docstring for __init__"""
+    self.merkle_depth = merkle_depth
         self.cs = ConstraintSystem()
         self.setup_complete = False
 
-    def setup_circuit(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
-        """Setup the circuit with actual inputs"""
+    def setup_circuit(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
+           """TODO: Add docstring for setup_circuit"""
+     """Setup the circuit with actual inputs"""
 
         # Public input variables
         self.variant_hash_var = self.cs.add_public_input("variant_hash")
@@ -99,8 +102,9 @@ class VariantProofCircuit:
 
         self.setup_complete = True
 
-    def generate_constraints(self):
-        """Generate all circuit constraints"""
+    def generate_constraints(self) -> None:
+           """TODO: Add docstring for generate_constraints"""
+     """Generate all circuit constraints"""
         if not self.setup_complete:
             raise RuntimeError("Circuit must be setup before generating constraints")
 
@@ -116,8 +120,9 @@ class VariantProofCircuit:
         # 4. Add randomness for zero-knowledge
         self._add_zero_knowledge_randomness()
 
-    def _constrain_variant_hash(self):
-        """Constrain that the variant hash is computed correctly"""
+    def _constrain_variant_hash(self) -> None:
+           """TODO: Add docstring for _constrain_variant_hash"""
+     """Constrain that the variant hash is computed correctly"""
 
         # Compute variant hash from components
         # In practice, would use circuit-friendly hash
@@ -137,8 +142,9 @@ class VariantProofCircuit:
         # Constrain computed hash equals public input
         self.cs.enforce_equal(computed_hash_var, self.variant_hash_var)
 
-    def _constrain_merkle_inclusion(self):
-        """Constrain Merkle tree inclusion proof"""
+    def _constrain_merkle_inclusion(self) -> None:
+           """TODO: Add docstring for _constrain_merkle_inclusion"""
+     """Constrain Merkle tree inclusion proof"""
 
         # Create variant leaf
         leaf_var = self.cs.add_variable("variant_leaf")
@@ -191,8 +197,9 @@ class VariantProofCircuit:
         # Final constraint: computed root equals public commitment root
         self.cs.enforce_equal(current_var, self.commitment_root_var)
 
-    def _constrain_ranges(self):
-        """Add range constraints for validity"""
+    def _constrain_ranges(self) -> None:
+           """TODO: Add docstring for _constrain_ranges"""
+     """Add range constraints for validity"""
 
         # Chromosome should be 1-23, X(24), Y(25), MT(26)
         chr_val = self.cs.get_assignment(self.variant_chr)
@@ -213,8 +220,9 @@ class VariantProofCircuit:
         if not (1 <= alt_val.value <= 4):
             raise ValueError(f"Invalid alternate base: {alt_val.value}")
 
-    def _add_zero_knowledge_randomness(self):
-        """Add randomness to achieve zero-knowledge"""
+    def _add_zero_knowledge_randomness(self) -> None:
+           """TODO: Add docstring for _add_zero_knowledge_randomness"""
+     """Add randomness to achieve zero-knowledge"""
 
         # Create additional random variables
         r1 = self.cs.add_variable("randomness_1")
@@ -231,7 +239,8 @@ class VariantProofCircuit:
         self.cs.enforce_multiplication(r1, r2, r3)
 
     def _encode_chromosome(self, chr_str: str) -> int:
-        """Encode chromosome string to integer"""
+           """TODO: Add docstring for _encode_chromosome"""
+     """Encode chromosome string to integer"""
         if chr_str.startswith("chr"):
             chr_str = chr_str[3:]
 
@@ -245,28 +254,34 @@ class VariantProofCircuit:
             return int(chr_str)
 
     def _encode_base(self, base: str) -> int:
-        """Encode DNA base to integer"""
+           """TODO: Add docstring for _encode_base"""
+     """Encode DNA base to integer"""
         base_map = {"A": 1, "C": 2, "G": 3, "T": 4}
         return base_map.get(base.upper(), 1)
 
     def get_constraint_system(self) -> ConstraintSystem:
-        """Get the constraint system"""
+           """TODO: Add docstring for get_constraint_system"""
+     """Get the constraint system"""
         return self.cs
 
     def get_public_inputs(self) -> List[FieldElement]:
-        """Get public input values"""
+           """TODO: Add docstring for get_public_inputs"""
+     """Get public input values"""
         return self.cs.get_public_inputs()
 
     def get_witness(self) -> Dict[int, FieldElement]:
-        """Get witness (private inputs)"""
+           """TODO: Add docstring for get_witness"""
+     """Get witness (private inputs)"""
         return self.cs.get_witness()
 
     def verify_constraints(self) -> bool:
-        """Verify all constraints are satisfied"""
+           """TODO: Add docstring for verify_constraints"""
+     """Verify all constraints are satisfied"""
         return self.cs.is_satisfied()
 
     def get_circuit_info(self) -> Dict[str, Any]:
-        """Get circuit information"""
+           """TODO: Add docstring for get_circuit_info"""
+     """Get circuit information"""
         return {
             "name": "variant_proof",
             "num_constraints": self.cs.num_constraints(),
@@ -277,8 +292,9 @@ class VariantProofCircuit:
         }
 
 
-def create_variant_proof_example():
-    """Example of how to use the VariantProofCircuit"""
+def create_variant_proof_example() -> Dict[str, Any]:
+       """TODO: Add docstring for create_variant_proof_example"""
+     """Example of how to use the VariantProofCircuit"""
 
     # Example variant: chr1:12345:A>G
     variant_data = {"chr": "chr1", "pos": 12345, "ref": "A", "alt": "G"}

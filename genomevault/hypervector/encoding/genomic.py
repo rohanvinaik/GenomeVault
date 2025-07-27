@@ -3,7 +3,7 @@ Hypervector encoding for genomic data
 """
 
 from enum import Enum
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -34,6 +34,7 @@ class GenomicEncoder:
         enable_snp_mode: bool = False,
         panel_granularity: PanelGranularity = PanelGranularity.OFF,
     ):
+        """Initialize genomic encoder"""
         self.dimension = dimension
         self.base_vectors = self._init_base_vectors()
         self.enable_snp_mode = enable_snp_mode
@@ -153,8 +154,8 @@ class GenomicEncoder:
 
             return variant_vec
 
-        except Exception:
-            raise HypervectorError("Failed to encode variant: {str(e)}")
+        except Exception as e:
+            raise HypervectorError(f"Failed to encode variant: {str(e)}")
 
     def encode_genome(self, variants: List[Dict]) -> torch.Tensor:
         """
@@ -314,7 +315,7 @@ class GenomicEncoder:
             return torch.zeros(self.dimension)
 
     # Hierarchical zoom methods
-    def create_zoom_tiles(self, chromosome: str, variants: List[Dict]):
+    def create_zoom_tiles(self, chromosome: str, variants: List[Dict]) -> Dict[str, Any]:
         """Create hierarchical zoom tiles for a chromosome"""
         # Level 0: Full chromosome
         chr_variants = [v for v in variants if v["chromosome"] == chromosome]
@@ -370,8 +371,8 @@ class GenomicEncoder:
         elif level == 2:
             # Create 1kb tiles on demand
             tile_size = 1000
-            #             tile_start = start // tile_size
-            #             tile_end = end // tile_size
+            # tile_start = start // tile_size
+            # tile_end = end // tile_size
 
             # This would fetch variants in range and encode
             # For now, return placeholder

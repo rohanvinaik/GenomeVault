@@ -4,6 +4,7 @@ HDC API endpoints for GenomeVault
 Provides RESTful API endpoints for encoding genomic data using
 Hierarchical Hyperdimensional Computing (HDC).
 """
+from typing import Dict, List, Optional, Any, Union
 
 import logging
 from datetime import datetime
@@ -99,7 +100,8 @@ class PerformanceMetrics(BaseModel):
 
 # Dependency to get encoder
 def get_encoder(version: Optional[str] = None) -> HypervectorEncoder:
-    """Get encoder instance with specified version"""
+       """TODO: Add docstring for get_encoder"""
+     """Get encoder instance with specified version"""
     try:
         return registry.get_encoder(version)
     except Exception:
@@ -111,7 +113,8 @@ def get_encoder(version: Optional[str] = None) -> HypervectorEncoder:
 async def encode_genome(
     request: EncodingRequest, encoder: HypervectorEncoder = Depends(get_encoder)
 ) -> EncodingResponse:
-    """
+       """TODO: Add docstring for encode_genome"""
+     """
     Encode genomic data into a hypervector
 
     This endpoint accepts various types of genomic data and returns
@@ -174,7 +177,8 @@ async def encode_genome(
 async def encode_multimodal(
     request: MultiModalEncodingRequest, encoder: HypervectorEncoder = Depends(get_encoder)
 ) -> EncodingResponse:
-    """
+       """TODO: Add docstring for encode_multimodal"""
+     """
     Encode multiple modalities and bind them together
 
     This creates a cross-modal representation that captures
@@ -239,8 +243,9 @@ async def encode_multimodal(
 
 
 @router.post("/decode")
-async def decode_vector(request: DecodeRequest):
-    """
+async def decode_vector(request: DecodeRequest) -> None:
+       """TODO: Add docstring for decode_vector"""
+     """
     Decode or query a hypervector
 
     Note: Full reconstruction is computationally infeasible by design.
@@ -301,8 +306,9 @@ async def decode_vector(request: DecodeRequest):
 
 
 @router.post("/similarity")
-async def compute_similarity(request: SimilarityRequest):
-    """
+async def compute_similarity(request: SimilarityRequest) -> None:
+       """TODO: Add docstring for compute_similarity"""
+     """
     Compute similarity between two hypervectors
 
     This preserves the similarity relationships from the original space.
@@ -352,8 +358,9 @@ async def compute_similarity(request: SimilarityRequest):
 
 
 @router.get("/version", response_model=VersionInfo)
-async def get_version_info():
-    """Get HDC encoding version information"""
+async def get_version_info() -> Any:
+       """TODO: Add docstring for get_version_info"""
+     """Get HDC encoding version information"""
     try:
         from genomevault.version import HDC_ENCODER_VERSION, HDC_SEED
 
@@ -378,8 +385,9 @@ async def register_new_version(
     projection_type: str,
     description: Optional[str] = None,
     sparsity: Optional[float] = 0.1,
-):
-    """Register a new encoding version"""
+) -> None:
+       """TODO: Add docstring for register_new_version"""
+     """Register a new encoding version"""
     try:
         # Validate projection type
         try:
@@ -447,8 +455,9 @@ async def encode_genomic_file(
 
 
 @router.get("/performance_metrics", response_model=PerformanceMetrics)
-async def get_performance_metrics():
-    """Get HDC encoding performance metrics"""
+async def get_performance_metrics() -> Any:
+       """TODO: Add docstring for get_performance_metrics"""
+     """Get HDC encoding performance metrics"""
     try:
         # Get encoder
         encoder = registry.get_encoder()
@@ -490,8 +499,9 @@ async def get_performance_metrics():
 
 
 @router.get("/health")
-async def health_check():
-    """Health check endpoint"""
+async def health_check() -> None:
+       """TODO: Add docstring for health_check"""
+     """Health check endpoint"""
     try:
         # Test encoder creation
         encoder = registry.get_encoder()
@@ -510,6 +520,7 @@ async def health_check():
 
 
 # Include router in main app
-def include_routes(app):
-    """Include HDC routes in the main FastAPI app"""
+def include_routes(app) -> None:
+       """TODO: Add docstring for include_routes"""
+     """Include HDC routes in the main FastAPI app"""
     app.include_router(router)

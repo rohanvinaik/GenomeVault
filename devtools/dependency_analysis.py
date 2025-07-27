@@ -2,6 +2,7 @@
 """
 Analysis of Import Dependencies in GenomeVault
 """
+import logging
 
 print("=" * 80)
 print("GENOMEVAULT DEPENDENCY ANALYSIS")

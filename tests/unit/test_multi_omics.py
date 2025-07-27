@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 """
 Comprehensive test suite for multi-omics processors.
 """
@@ -43,8 +45,9 @@ class TestTranscriptomicsProcessor:
     """Test transcriptomics processing functionality."""
 
     @pytest.fixture
-    def processor(self, tmp_path):
-        """Create processor instance."""
+
+    def processor(self, tmp_path) -> None:
+    """Create processor instance."""
         config = TranscriptomicsConfig(
             reference_transcriptome=str(tmp_path / "ref.fa"),
             star_index=str(tmp_path / "star"),
@@ -60,8 +63,9 @@ class TestTranscriptomicsProcessor:
         return TranscriptomicsProcessor(config)
 
     @pytest.fixture
-    def mock_fastq_files(self, tmp_path):
-        """Create mock FASTQ files."""
+
+    def mock_fastq_files(self, tmp_path) -> None:
+    """Create mock FASTQ files."""
         fastq1 = tmp_path / "sample_R1.fastq.gz"
         fastq2 = tmp_path / "sample_R2.fastq.gz"
 
@@ -75,13 +79,15 @@ class TestTranscriptomicsProcessor:
 
         return [str(fastq1), str(fastq2)]
 
-    def test_processor_initialization(self, processor):
-        """Test processor initialization."""
+
+    def test_processor_initialization(self, processor) -> None:
+    """Test processor initialization."""
         assert processor.config.max_threads == 2
         assert processor.config.normalization_method == "TPM"
 
-    def test_quality_control(self, processor, mock_fastq_files):
-        """Test QC on FASTQ files."""
+
+    def test_quality_control(self, processor, mock_fastq_files) -> None:
+    """Test QC on FASTQ files."""
         qc_results = processor._run_quality_control(
             mock_fastq_files, Path(processor.config.star_index).parent
         )
@@ -92,8 +98,9 @@ class TestTranscriptomicsProcessor:
         assert qc_results["total_reads"] > 0
         assert 0 <= qc_results["gc_content"] <= 1
 
-    def test_normalization_methods(self, processor):
-        """Test different normalization methods."""
+
+    def test_normalization_methods(self, processor) -> None:
+    """Test different normalization methods."""
         # Create mock expression data
         raw_data = pd.DataFrame(
             {
@@ -111,8 +118,9 @@ class TestTranscriptomicsProcessor:
         cpm_result = processor._normalize_expression(raw_data, NormalizationMethod.CPM)
         assert (cpm_result["normalized_value"] >= 0).all()
 
-    def test_expression_profile_creation(self, processor, tmp_path):
-        """Test creating expression profile."""
+
+    def test_expression_profile_creation(self, processor, tmp_path) -> None:
+    """Test creating expression profile."""
         # Create mock expression matrix
         expr_file = tmp_path / "expression.tsv"
         expr_data = pd.DataFrame(
@@ -136,8 +144,9 @@ class TestTranscriptomicsProcessor:
         assert len(profile.expressions) == 50
         assert profile.normalization_method == NormalizationMethod.TPM
 
-    def test_batch_correction(self, processor):
-        """Test batch effect correction."""
+
+    def test_batch_correction(self, processor) -> None:
+    """Test batch effect correction."""
         # Create mock profiles with batch effects
         profiles = []
         batch_labels = []
@@ -175,8 +184,9 @@ class TestTranscriptomicsProcessor:
         for profile in corrected:
             assert "batch_corrected" in profile.processing_metadata
 
-    def test_differential_expression(self, processor):
-        """Test differential expression analysis."""
+
+    def test_differential_expression(self, processor) -> None:
+    """Test differential expression analysis."""
         # Create two groups of profiles
         group1_profiles = []
         group2_profiles = []
@@ -238,8 +248,9 @@ class TestEpigeneticsProcessors:
     """Test epigenetics processing functionality."""
 
     @pytest.fixture
-    def methylation_processor(self, tmp_path):
-        """Create methylation processor."""
+
+    def methylation_processor(self, tmp_path) -> None:
+    """Create methylation processor."""
         return MethylationProcessor(
             reference_genome=tmp_path / "ref.fa",
             annotation_file=tmp_path / "genes.gtf",
@@ -247,14 +258,16 @@ class TestEpigeneticsProcessors:
         )
 
     @pytest.fixture
-    def chromatin_processor(self, tmp_path):
-        """Create chromatin accessibility processor."""
+
+    def chromatin_processor(self, tmp_path) -> None:
+    """Create chromatin accessibility processor."""
         return ChromatinAccessibilityProcessor(
             reference_genome=tmp_path / "ref.fa", annotation_file=tmp_path / "genes.gtf"
         )
 
-    def test_methylation_processing(self, methylation_processor, tmp_path):
-        """Test methylation data processing."""
+
+    def test_methylation_processing(self, methylation_processor, tmp_path) -> None:
+    """Test methylation data processing."""
         # Create mock methylation data file
         meth_file = tmp_path / "methylation.txt"
 
@@ -279,8 +292,9 @@ class TestEpigeneticsProcessors:
         assert 0 <= site.methylation_level <= 1
         assert site.coverage >= methylation_processor.min_coverage
 
-    def test_chromatin_peak_processing(self, chromatin_processor, tmp_path):
-        """Test chromatin accessibility processing."""
+
+    def test_chromatin_peak_processing(self, chromatin_processor, tmp_path) -> None:
+    """Test chromatin accessibility processing."""
         # Create mock peak file
         peak_file = tmp_path / "peaks.narrowPeak"
         with open(peak_file, "w") as f:
@@ -301,8 +315,9 @@ class TestEpigeneticsProcessors:
         assert peak.start < peak.end
         assert peak.score > 0
 
-    def test_differential_methylation(self, methylation_processor):
-        """Test differential methylation analysis."""
+
+    def test_differential_methylation(self, methylation_processor) -> None:
+    """Test differential methylation analysis."""
         # Create two groups of methylation profiles
         group1_profiles = []
         group2_profiles = []
@@ -354,8 +369,9 @@ class TestEpigeneticsProcessors:
         assert "methylation_difference" in dm_results.columns
         assert len(dm_results[dm_results["significant"]]) > 0
 
-    def test_epigenetic_processor_factory(self):
-        """Test processor factory function."""
+
+    def test_epigenetic_processor_factory(self) -> None:
+    """Test processor factory function."""
         # Test methylation processor creation
         meth_proc = create_epigenetic_processor(EpigeneticDataType.METHYLATION, min_coverage=10)
         assert isinstance(meth_proc, MethylationProcessor)
@@ -373,16 +389,18 @@ class TestProteomicsProcessor:
     """Test proteomics processing functionality."""
 
     @pytest.fixture
-    def processor(self, tmp_path):
-        """Create proteomics processor."""
+
+    def processor(self, tmp_path) -> None:
+    """Create proteomics processor."""
         return ProteomicsProcessor(
             protein_database=tmp_path / "proteins.fasta",
             min_peptides=2,
             fdr_threshold=0.01,
         )
 
-    def test_protein_measurement_creation(self, processor):
-        """Test creating protein measurements."""
+
+    def test_protein_measurement_creation(self, processor) -> None:
+    """Test creating protein measurements."""
         # Create mock protein data
         protein_data = pd.DataFrame(
             {
@@ -424,8 +442,9 @@ class TestProteomicsProcessor:
         assert p53.num_peptides == 10
         assert p53.sequence_coverage == 45.5
 
-    def test_fdr_filtering(self, processor):
-        """Test FDR filtering of proteins."""
+
+    def test_fdr_filtering(self, processor) -> None:
+    """Test FDR filtering of proteins."""
         # Create proteins with varying confidence
         proteins = []
         for i in range(100):
@@ -449,8 +468,9 @@ class TestProteomicsProcessor:
         assert len(filtered) < len(proteins)
         assert all(p.confidence_score > 0.9 for p in filtered[:10])
 
-    def test_abundance_normalization(self, processor):
-        """Test protein abundance normalization."""
+
+    def test_abundance_normalization(self, processor) -> None:
+    """Test protein abundance normalization."""
         # Create proteins with varying abundances
         proteins = [
             ProteinMeasurement(
@@ -476,8 +496,9 @@ class TestProteomicsProcessor:
         sorted_normalized = sorted(normalized, key=lambda p: p.normalized_abundance)
         assert [p.protein_id for p in sorted_original] == [p.protein_id for p in sorted_normalized]
 
-    def test_differential_expression(self, processor):
-        """Test differential protein expression."""
+
+    def test_differential_expression(self, processor) -> None:
+    """Test differential protein expression."""
         # Create two groups with different expression
         group1 = []
         group2 = []
@@ -541,8 +562,9 @@ class TestProteomicsProcessor:
         significant_proteins = de_results[de_results["significant"]]
         assert len(significant_proteins) > 0
 
-    def test_modification_parsing(self, processor):
-        """Test PTM parsing."""
+
+    def test_modification_parsing(self, processor) -> None:
+    """Test PTM parsing."""
         # Test various modification strings
         mods1 = processor._parse_modifications("Phospho (STY); Acetyl (K)")
         assert len(mods1) == 2
@@ -556,8 +578,9 @@ class TestProteomicsProcessor:
         mods3 = processor._parse_modifications("")
         assert len(mods3) == 0
 
-    def test_proteomics_profile_methods(self, processor):
-        """Test ProteomicsProfile utility methods."""
+
+    def test_proteomics_profile_methods(self, processor) -> None:
+    """Test ProteomicsProfile utility methods."""
         # Create profile with diverse proteins
         proteins = [
             ProteinMeasurement(
@@ -609,8 +632,9 @@ class TestProteomicsProcessor:
 class TestIntegration:
     """Integration tests for multi-omics processing."""
 
-    def test_multi_omics_processing_pipeline(self, tmp_path):
-        """Test processing multiple omics types for same sample."""
+
+    def test_multi_omics_processing_pipeline(self, tmp_path) -> None:
+    """Test processing multiple omics types for same sample."""
         sample_id = "patient_001"
 
         # Process transcriptomics
@@ -666,8 +690,9 @@ class TestIntegration:
         assert len(trans_profile.expressions) > 0
         assert len(meth_profile.methylation_sites) > 0
 
-    def test_error_handling(self, tmp_path):
-        """Test error handling in processors."""
+
+    def test_error_handling(self, tmp_path) -> None:
+    """Test error handling in processors."""
         # Test invalid file format
         trans_processor = TranscriptomicsProcessor(
             TranscriptomicsConfig(
@@ -688,7 +713,6 @@ class TestIntegration:
             trans_processor._normalize_expression(
                 expr_data, "INVALID_METHOD"  # This should cause an error
             )
-
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

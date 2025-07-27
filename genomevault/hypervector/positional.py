@@ -4,6 +4,7 @@ Implements sparse, memory-efficient position vectors for SNP-level granularity
 """
 
 import hashlib
+import logging
 from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np

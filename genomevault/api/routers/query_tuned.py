@@ -2,6 +2,8 @@
 API Router for SNP-tuned and Zoom Queries
 Extends the tuned query endpoint with panel granularity and hierarchical zoom
 """
+import logging
+from typing import Dict, List, Optional, Any, Union
 
 import asyncio
 import time
@@ -73,6 +75,12 @@ class ZoomQueryResponse(BaseModel):
 
 # Dependencies
 async def get_genomic_encoder(enable_snp: bool = True) -> GenomicEncoder:
+       """TODO: Add docstring for get_genomic_encoder"""
+     """Get genomic encoder
+
+    TODO: This is a duplicate getter function that needs proper implementation.
+    Consider refactoring to use a common registry or factory pattern.
+    """
     """Get genomic encoder with SNP mode support"""
     return GenomicEncoder(
         dimension=100000,  # 100k dimensions for SNP accuracy
@@ -301,8 +309,9 @@ async def get_panel_info(
 
 
 @router.post("/panel/estimate")
-async def estimate_panel_overhead(panel: str = "common", positions: Optional[int] = None):
-    """Estimate overhead for using a specific SNP panel"""
+async def estimate_panel_overhead(panel: str = "common", positions: Optional[int] = None) -> None:
+       """TODO: Add docstring for estimate_panel_overhead"""
+     """Estimate overhead for using a specific SNP panel"""
     # Panel position counts
     panel_sizes = {
         "off": 0,
@@ -338,7 +347,8 @@ async def estimate_panel_overhead(panel: str = "common", positions: Optional[int
 
 # Helper functions
 def _build_genomic_query_from_params(query_type: str, params: Dict) -> GenomicQuery:
-    """Build genomic query from type and parameters"""
+       """TODO: Add docstring for _build_genomic_query_from_params"""
+     """Build genomic query from type and parameters"""
     if query_type == "variant_lookup":
         return GenomicQuery(query_type=QueryType.VARIANT_LOOKUP, parameters=params)
     elif query_type == "region_scan":

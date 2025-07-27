@@ -4,6 +4,8 @@ Training Proof Circuit for Zero-Knowledge Machine Learning
 This module implements cryptographic proofs for verifying ML model training lineage
 without exposing model internals or training data.
 """
+import logging
+from typing import Dict, List, Optional, Any, Union
 
 import hashlib
 from dataclasses import dataclass
@@ -40,8 +42,9 @@ class TrainingProofCircuit(BaseCircuit):
     4. Input/output sequence integrity
     """
 
-    def __init__(self, max_snapshots: int = 100):
-        """
+    def __init__(self, max_snapshots: int = 100) -> None:
+           """TODO: Add docstring for __init__"""
+     """
         Initialize training proof circuit.
 
         Args:
@@ -55,8 +58,9 @@ class TrainingProofCircuit(BaseCircuit):
         self.model_commit: str = ""
         self.io_sequence_commit: str = ""
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
-        """
+    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
+           """TODO: Add docstring for setup"""
+     """
         Setup circuit with training proof inputs.
 
         Public inputs:
@@ -85,8 +89,9 @@ class TrainingProofCircuit(BaseCircuit):
             TrainingSnapshot(**snapshot) for snapshot in private_inputs["training_snapshots"]
         ]
 
-    def generate_constraints(self):
-        """Generate circuit constraints for training proof"""
+    def generate_constraints(self) -> None:
+           """TODO: Add docstring for generate_constraints"""
+     """Generate circuit constraints for training proof"""
         logger.info("Generating training proof constraints")
 
         # 1. Constrain snapshot hash chain consistency
@@ -104,8 +109,9 @@ class TrainingProofCircuit(BaseCircuit):
         # 5. Constrain IO sequence integrity
         self.constrain_io_sequence()
 
-    def constrain_consistency_tree(self):
-        """Ensure snapshot hashes form a valid Merkle tree"""
+    def constrain_consistency_tree(self) -> None:
+           """TODO: Add docstring for constrain_consistency_tree"""
+     """Ensure snapshot hashes form a valid Merkle tree"""
         # Build Merkle tree from snapshot hashes
         current_level = [FieldElement(int(h, 16)) for h in self.snapshot_hashes]
 
@@ -128,8 +134,9 @@ class TrainingProofCircuit(BaseCircuit):
         # Store Merkle root
         self.snapshot_merkle_root = current_level[0]
 
-    def constrain_model_lineage(self):
-        """Ensure model evolved consistently through snapshots"""
+    def constrain_model_lineage(self) -> None:
+           """TODO: Add docstring for constrain_model_lineage"""
+     """Ensure model evolved consistently through snapshots"""
         for i in range(1, len(self.training_snapshots)):
             prev_snapshot = self.training_snapshots[i - 1]
             curr_snapshot = self.training_snapshots[i]
@@ -156,8 +163,9 @@ class TrainingProofCircuit(BaseCircuit):
             # Add linkage constraint
             self.add_constraint(expected_hash, curr_hash, FieldElement(0), ql=1, qr=-1)
 
-    def constrain_training_dynamics(self):
-        """Ensure training followed expected dynamics (loss descent, etc.)"""
+    def constrain_training_dynamics(self) -> None:
+           """TODO: Add docstring for constrain_training_dynamics"""
+     """Ensure training followed expected dynamics (loss descent, etc.)"""
         for i in range(1, len(self.training_snapshots)):
             prev_snapshot = self.training_snapshots[i - 1]
             curr_snapshot = self.training_snapshots[i]
@@ -192,8 +200,9 @@ class TrainingProofCircuit(BaseCircuit):
                         positive_decrease, decrease_inv, FieldElement(1), qm=1, qo=-1
                     )
 
-    def constrain_final_model(self):
-        """Verify final model hash matches declared commitment"""
+    def constrain_final_model(self) -> None:
+           """TODO: Add docstring for constrain_final_model"""
+     """Verify final model hash matches declared commitment"""
         # Get the last snapshot's model hash
         if self.training_snapshots:
             final_snapshot_hash = FieldElement(int(self.training_snapshots[-1].model_hash, 16))
@@ -214,8 +223,9 @@ class TrainingProofCircuit(BaseCircuit):
         # Add commitment verification constraint
         self.add_constraint(expected_commit, model_commit_field, FieldElement(0), ql=1, qr=-1)
 
-    def constrain_io_sequence(self):
-        """Verify integrity of input/output training sequence"""
+    def constrain_io_sequence(self) -> None:
+           """TODO: Add docstring for constrain_io_sequence"""
+     """Verify integrity of input/output training sequence"""
         io_commit_field = FieldElement(int(self.io_sequence_commit, 16))
 
         # The IO sequence commitment proves we trained on declared data
@@ -228,14 +238,16 @@ class TrainingProofCircuit(BaseCircuit):
         self.add_constraint(dataset_commit, io_commit_field, FieldElement(0), ql=1, qr=-1)
 
     def _hash_pair(self, left: FieldElement, right: FieldElement) -> FieldElement:
-        """Hash two field elements together"""
+           """TODO: Add docstring for _hash_pair"""
+     """Hash two field elements together"""
         # In production, would use Poseidon hash for efficiency in ZK
         data = f"{left.value}:{right.value}".encode()
         hash_val = int(hashlib.sha256(data).hexdigest(), 16)
         return FieldElement(hash_val)
 
     def generate_proof(self) -> Dict[str, Any]:
-        """Generate the training proof"""
+           """TODO: Add docstring for generate_proof"""
+     """Generate the training proof"""
         self.generate_constraints()
 
         proof = {
@@ -259,7 +271,8 @@ class TrainingProofCircuit(BaseCircuit):
         return proof
 
     def verify_semantic_consistency(self, tolerance: float = 0.15) -> bool:
-        """
+           """TODO: Add docstring for verify_semantic_consistency"""
+     """
         Verify model maintained semantic consistency during training.
 
         Args:

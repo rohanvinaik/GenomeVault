@@ -4,6 +4,8 @@ GPU kernels for accelerated nanopore HV processing.
 Implements CuPy-based GPU kernels for streaming event binding
 with catalytic memory management.
 """
+import logging
+from typing import Dict, List, Optional, Any, Union
 
 import asyncio
 from typing import Dict, Optional, Tuple
@@ -36,8 +38,9 @@ class GPUBindingKernel:
         catalytic_space,
         max_batch_size: int = 10000,
         n_streams: int = 2,
-    ):
-        """
+    ) -> None:
+           """TODO: Add docstring for __init__"""
+     """
         Initialize GPU kernel.
 
         Args:
@@ -63,8 +66,9 @@ class GPUBindingKernel:
 
         logger.info(f"GPU kernel initialized with {n_streams} streams")
 
-    def _compile_kernels(self):
-        """Compile CUDA kernels."""
+    def _compile_kernels(self) -> None:
+           """TODO: Add docstring for _compile_kernels"""
+     """Compile CUDA kernels."""
         # Event to k-mer mapping kernel
         self.event_to_kmer_kernel = cp.RawKernel(
             r"""
@@ -193,8 +197,9 @@ class GPUBindingKernel:
             "accumulate_variance",
         )
 
-    def _allocate_buffers(self):
-        """Allocate GPU memory buffers."""
+    def _allocate_buffers(self) -> None:
+           """TODO: Add docstring for _allocate_buffers"""
+     """Allocate GPU memory buffers."""
         self.buffers = {}
 
         # Event processing buffers
@@ -218,7 +223,8 @@ class GPUBindingKernel:
         start_position: int,
         hv_encoder,
     ) -> Tuple[np.ndarray, np.ndarray]:
-        """
+           """TODO: Add docstring for process_events_async"""
+     """
         Process events on GPU asynchronously.
 
         Args:
@@ -315,7 +321,8 @@ class GPUBindingKernel:
         hv_encoder,
         stream,
     ) -> Tuple[cp.ndarray, cp.ndarray]:
-        """
+           """TODO: Add docstring for _load_encoding_tables_async"""
+     """
         Load encoding tables from catalytic space.
 
         This simulates loading pre-computed tables from
@@ -338,7 +345,8 @@ class GPUBindingKernel:
         return pos_table, kmer_table
 
     def get_memory_usage(self) -> Dict[str, float]:
-        """Get GPU memory usage statistics."""
+           """TODO: Add docstring for get_memory_usage"""
+     """Get GPU memory usage statistics."""
         stats = {}
 
         for name, buffer in self.buffers.items():
@@ -355,8 +363,9 @@ class GPUBindingKernel:
 
 
 # Example usage
-async def example_gpu_processing():
-    """Example of GPU-accelerated processing."""
+async def example_gpu_processing() -> None:
+       """TODO: Add docstring for example_gpu_processing"""
+     """Example of GPU-accelerated processing."""
     if not GPU_AVAILABLE:
         print("GPU not available - install CuPy for GPU acceleration")
         return

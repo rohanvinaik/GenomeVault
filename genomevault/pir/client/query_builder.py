@@ -2,6 +2,8 @@
 PIR query builder for genomic data queries.
 Provides high-level interface for constructing privacy-preserving queries.
 """
+import logging
+from typing import Dict, List, Optional, Any, Union
 
 import hashlib
 import json
@@ -13,8 +15,8 @@ import numpy as np
 
 from genomevault.utils.logging import get_logger, logger
 
-from ..client import PIRClient, PIRQuery
 from ..reference_data.manager import GenomicRegion, ReferenceDataType
+from .pir_client import PIRClient, PIRQuery
 
 logger = get_logger(__name__)
 
@@ -39,7 +41,8 @@ class GenomicQuery:
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     def get_cache_key(self) -> str:
-        """Generate cache key for query."""
+           """TODO: Add docstring for get_cache_key"""
+     """Generate cache key for query."""
         data = {"type": self.query_type.value, "params": self.parameters}
         return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()
 
@@ -61,8 +64,9 @@ class PIRQueryBuilder:
     Translates high-level queries to PIR operations.
     """
 
-    def __init__(self, pir_client: PIRClient, index_mapping: Dict[str, Dict[str, int]]):
-        """
+    def __init__(self, pir_client: PIRClient, index_mapping: Dict[str, Dict[str, int]]) -> None:
+           """TODO: Add docstring for __init__"""
+     """
         Initialize query builder.
 
         Args:
@@ -79,7 +83,8 @@ class PIRQueryBuilder:
         logger.info("PIRQueryBuilder initialized")
 
     async def execute_query(self, query: GenomicQuery) -> QueryResult:
-        """
+           """TODO: Add docstring for execute_query"""
+     """
         Execute a genomic query.
 
         Args:
@@ -112,7 +117,8 @@ class PIRQueryBuilder:
         return result
 
     async def _execute_variant_lookup(self, query: GenomicQuery) -> QueryResult:
-        """Execute variant lookup query."""
+           """TODO: Add docstring for _execute_variant_lookup"""
+     """Execute variant lookup query."""
         import time
 
         start_time = time.time()
@@ -161,7 +167,8 @@ class PIRQueryBuilder:
         )
 
     async def _execute_region_scan(self, query: GenomicQuery) -> QueryResult:
-        """Execute region scan query."""
+           """TODO: Add docstring for _execute_region_scan"""
+     """Execute region scan query."""
         import time
 
         start_time = time.time()
@@ -211,7 +218,8 @@ class PIRQueryBuilder:
         )
 
     async def _execute_gene_annotation(self, query: GenomicQuery) -> QueryResult:
-        """Execute gene annotation query."""
+           """TODO: Add docstring for _execute_gene_annotation"""
+     """Execute gene annotation query."""
         import time
 
         start_time = time.time()
@@ -264,7 +272,8 @@ class PIRQueryBuilder:
         )
 
     async def _execute_population_frequency(self, query: GenomicQuery) -> QueryResult:
-        """Execute population frequency query."""
+           """TODO: Add docstring for _execute_population_frequency"""
+     """Execute population frequency query."""
         import time
 
         start_time = time.time()
@@ -298,8 +307,9 @@ class PIRQueryBuilder:
             computation_time_ms=computation_time,
         )
 
-    def _add_to_cache(self, key: str, result: QueryResult):
-        """Add result to cache with LRU eviction."""
+    def _add_to_cache(self, key: str, result: QueryResult) -> None:
+           """TODO: Add docstring for _add_to_cache"""
+     """Add result to cache with LRU eviction."""
         if len(self.cache) >= self.cache_size:
             # Remove oldest entry
             oldest_key = next(iter(self.cache))
@@ -314,7 +324,8 @@ class PIRQueryBuilder:
         ref_allele: Optional[str] = None,
         alt_allele: Optional[str] = None,
     ) -> GenomicQuery:
-        """Build a variant lookup query."""
+           """TODO: Add docstring for build_variant_query"""
+     """Build a variant lookup query."""
         params = {"chromosome": chromosome, "position": position}
 
         if ref_allele:
@@ -325,14 +336,16 @@ class PIRQueryBuilder:
         return GenomicQuery(query_type=QueryType.VARIANT_LOOKUP, parameters=params)
 
     def build_region_query(self, chromosome: str, start: int, end: int) -> GenomicQuery:
-        """Build a region scan query."""
+           """TODO: Add docstring for build_region_query"""
+     """Build a region scan query."""
         return GenomicQuery(
             query_type=QueryType.REGION_SCAN,
             parameters={"chromosome": chromosome, "start": start, "end": end},
         )
 
     def build_gene_query(self, gene_symbol: str) -> GenomicQuery:
-        """Build a gene annotation query."""
+           """TODO: Add docstring for build_gene_query"""
+     """Build a gene annotation query."""
         return GenomicQuery(
             query_type=QueryType.GENE_ANNOTATION,
             parameters={"gene_symbol": gene_symbol},
@@ -341,7 +354,8 @@ class PIRQueryBuilder:
     def build_population_frequency_query(
         self, variants: List[Dict], population: str
     ) -> GenomicQuery:
-        """Build a population frequency query."""
+           """TODO: Add docstring for build_population_frequency_query"""
+     """Build a population frequency query."""
         return GenomicQuery(
             query_type=QueryType.POPULATION_FREQUENCY,
             parameters={"variants": variants, "population": population},
@@ -350,7 +364,8 @@ class PIRQueryBuilder:
     async def query_clinical_variants(
         self, gene_list: List[str], significance_filter: Optional[str] = None
     ) -> QueryResult:
-        """
+           """TODO: Add docstring for query_clinical_variants"""
+     """
         Query for clinically significant variants in genes.
 
         Args:
@@ -404,7 +419,8 @@ class PIRQueryBuilder:
         )
 
     def get_query_statistics(self) -> Dict[str, Any]:
-        """Get query statistics."""
+           """TODO: Add docstring for get_query_statistics"""
+     """Get query statistics."""
         query_types = {}
         total_pir_queries = 0
         total_computation_time = 0

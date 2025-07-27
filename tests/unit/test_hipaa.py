@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 """
 Test HIPAA Fast-Track Verification System
 """
@@ -20,8 +22,9 @@ from genomevault.core.exceptions import VerificationError
 class TestHIPAACredentials:
     """Test HIPAA credentials model"""
 
-    def test_valid_credentials(self):
-        """Test creation of valid credentials"""
+
+    def test_valid_credentials(self) -> None:
+    """Test creation of valid credentials"""
         creds = HIPAACredentials(
             npi="1234567893",
             baa_hash="a" * 64,
@@ -32,8 +35,9 @@ class TestHIPAACredentials:
         assert len(creds.baa_hash) == 64
         assert len(creds.risk_analysis_hash) == 64
 
-    def test_invalid_npi_format(self):
-        """Test invalid NPI format rejection"""
+
+    def test_invalid_npi_format(self) -> None:
+    """Test invalid NPI format rejection"""
         with pytest.raises(ValueError, match="NPI must be 10 digits"):
             HIPAACredentials(
                 npi="123",  # Too short
@@ -42,8 +46,9 @@ class TestHIPAACredentials:
                 hsm_serial="HSM-12345",
             )
 
-    def test_invalid_hash_format(self):
-        """Test invalid hash format rejection"""
+
+    def test_invalid_hash_format(self) -> None:
+    """Test invalid hash format rejection"""
         with pytest.raises(ValueError, match="BAA hash must be 64 characters"):
             HIPAACredentials(
                 npi="1234567893",
@@ -56,8 +61,9 @@ class TestHIPAACredentials:
 class TestNPIValidation:
     """Test NPI validation logic"""
 
-    def test_valid_npi_luhn_check(self):
-        """Test valid NPIs pass Luhn check"""
+
+    def test_valid_npi_luhn_check(self) -> None:
+    """Test valid NPIs pass Luhn check"""
         registry = CMSNPIRegistry()
 
         # Valid NPIs with correct check digits
@@ -70,8 +76,9 @@ class TestNPIValidation:
         for npi in valid_npis:
             assert registry._validate_npi_format(npi), "NPI {npi} should be valid"
 
-    def test_invalid_npi_luhn_check(self):
-        """Test invalid NPIs fail Luhn check"""
+
+    def test_invalid_npi_luhn_check(self) -> None:
+    """Test invalid NPIs fail Luhn check"""
         registry = CMSNPIRegistry()
 
         # Invalid NPIs with wrong check digits
@@ -84,8 +91,9 @@ class TestNPIValidation:
         for npi in invalid_npis:
             assert not registry._validate_npi_format(npi), "NPI {npi} should be invalid"
 
-    def test_npi_format_validation(self):
-        """Test NPI format validation"""
+
+    def test_npi_format_validation(self) -> None:
+    """Test NPI format validation"""
         registry = CMSNPIRegistry()
 
         # Various invalid formats
@@ -94,13 +102,13 @@ class TestNPIValidation:
         assert not registry._validate_npi_format("12345678901")  # Too long
         assert not registry._validate_npi_format("123456789a")  # Contains letter
 
-
 @pytest.mark.asyncio
+
 class TestHIPAAVerifier:
     """Test HIPAA verification system"""
 
-    async def test_successful_verification(self):
-        """Test successful provider verification"""
+    async def test_successful_verification(self) -> None:
+    """Test successful provider verification"""
         async with CMSNPIRegistry() as registry:
             verifier = HIPAAVerifier(npi_registry=registry)
 
@@ -123,8 +131,8 @@ class TestHIPAAVerifier:
             assert record.honesty_probability == 0.98
             assert record.is_active()
 
-    async def test_invalid_npi_verification(self):
-        """Test verification fails for invalid NPI"""
+    async def test_invalid_npi_verification(self) -> None:
+    """Test verification fails for invalid NPI"""
         async with CMSNPIRegistry() as registry:
             verifier = HIPAAVerifier(npi_registry=registry)
 
@@ -142,8 +150,8 @@ class TestHIPAAVerifier:
             with pytest.raises(VerificationError, match="Invalid NPI format"):
                 await verifier.process_verification(verification_id)
 
-    async def test_duplicate_verification(self):
-        """Test duplicate verification prevention"""
+    async def test_duplicate_verification(self) -> None:
+    """Test duplicate verification prevention"""
         async with CMSNPIRegistry() as registry:
             verifier = HIPAAVerifier(npi_registry=registry)
 
@@ -162,8 +170,8 @@ class TestHIPAAVerifier:
             with pytest.raises(VerificationError, match="already verified"):
                 await verifier.submit_verification(credentials)
 
-    async def test_verification_revocation(self):
-        """Test verification revocation"""
+    async def test_verification_revocation(self) -> None:
+    """Test verification revocation"""
         async with CMSNPIRegistry() as registry:
             verifier = HIPAAVerifier(npi_registry=registry)
 
@@ -189,8 +197,8 @@ class TestHIPAAVerifier:
             assert not updated_record.is_active()
             assert updated_record.revocation_reason == "Test revocation"
 
-    async def test_verification_expiry(self):
-        """Test verification expiry handling"""
+    async def test_verification_expiry(self) -> None:
+    """Test verification expiry handling"""
         async with CMSNPIRegistry() as registry:
             verifier = HIPAAVerifier(npi_registry=registry)
 
@@ -219,13 +227,13 @@ class TestHIPAAVerifier:
             updated_record = verifier.get_verification_status(credentials.npi)
             assert updated_record.status == VerificationStatus.EXPIRED
 
-
 @pytest.mark.asyncio
+
 class TestCMSRegistry:
     """Test CMS NPI registry integration"""
 
-    async def test_individual_provider_lookup(self):
-        """Test individual provider NPI lookup"""
+    async def test_individual_provider_lookup(self) -> None:
+    """Test individual provider NPI lookup"""
         async with CMSNPIRegistry() as registry:
             # Individual provider (starts with 1)
             record = await registry.lookup_npi("1234567893")
@@ -234,8 +242,8 @@ class TestCMSRegistry:
             assert record.is_active
             assert "Provider" in record.name
 
-    async def test_organization_lookup(self):
-        """Test organization NPI lookup"""
+    async def test_organization_lookup(self) -> None:
+    """Test organization NPI lookup"""
         async with CMSNPIRegistry() as registry:
             # Organization (starts with 2)
             record = await registry.lookup_npi("2468135790")
@@ -244,8 +252,8 @@ class TestCMSRegistry:
             assert record.is_active
             assert "Medical Center" in record.name
 
-    async def test_inactive_provider_lookup(self):
-        """Test inactive provider lookup"""
+    async def test_inactive_provider_lookup(self) -> None:
+    """Test inactive provider lookup"""
         async with CMSNPIRegistry() as registry:
             # Inactive provider (starts with 9)
             record = await registry.lookup_npi("9876543210")
@@ -253,8 +261,8 @@ class TestCMSRegistry:
             assert not record.is_active
             assert record.deactivation_date is not None
 
-    async def test_invalid_npi_lookup(self):
-        """Test invalid NPI lookup returns None"""
+    async def test_invalid_npi_lookup(self) -> None:
+    """Test invalid NPI lookup returns None"""
         async with CMSNPIRegistry() as registry:
             # Invalid format
             record = await registry.lookup_npi("1234567890")
@@ -268,8 +276,9 @@ class TestCMSRegistry:
 class TestVerificationRecord:
     """Test verification record model"""
 
-    def test_active_record(self):
-        """Test active verification record"""
+
+    def test_active_record(self) -> None:
+    """Test active verification record"""
         creds = HIPAACredentials(
             npi="1234567893",
             baa_hash="a" * 64,
@@ -289,8 +298,9 @@ class TestVerificationRecord:
         assert record.signatory_weight == 10
         assert record.honesty_probability == 0.98
 
-    def test_revoked_record(self):
-        """Test revoked verification record"""
+
+    def test_revoked_record(self) -> None:
+    """Test revoked verification record"""
         creds = HIPAACredentials(
             npi="1234567893",
             baa_hash="a" * 64,
@@ -309,8 +319,9 @@ class TestVerificationRecord:
 
         assert not record.is_active()
 
-    def test_expired_record(self):
-        """Test expired verification record"""
+
+    def test_expired_record(self) -> None:
+    """Test expired verification record"""
         creds = HIPAACredentials(
             npi="1234567893",
             baa_hash="a" * 64,
@@ -328,8 +339,9 @@ class TestVerificationRecord:
 
         assert not record.is_active()
 
-    def test_chain_data_serialization(self):
-        """Test serialization for blockchain storage"""
+
+    def test_chain_data_serialization(self) -> None:
+    """Test serialization for blockchain storage"""
         creds = HIPAACredentials(
             npi="1234567893",
             baa_hash="a" * 64,
@@ -352,7 +364,6 @@ class TestVerificationRecord:
         assert chain_data["honesty_probability"] == 0.98
         assert "verified_at" in chain_data
         assert "verifier_signature" in chain_data
-
 
 if __name__ == "__main__":
     # Run tests

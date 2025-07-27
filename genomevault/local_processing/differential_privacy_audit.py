@@ -4,6 +4,9 @@ Differential Privacy Audit Trail for Model Training
 This module implements privacy budget tracking and verification
 for differentially private model training in GenomeVault.
 """
+from dataclasses import dataclass
+import logging
+from typing import Dict, List, Optional, Any, Union
 
 import hashlib
 import json
@@ -68,8 +71,9 @@ class DifferentialPrivacyAuditor:
     4. Audit trail is cryptographically verifiable
     """
 
-    def __init__(self, session_id: str, total_epsilon: float, total_delta: float = 1e-5):
-        """
+    def __init__(self, session_id: str, total_epsilon: float, total_delta: float = 1e-5) -> None:
+           """TODO: Add docstring for __init__"""
+     """
         Initialize privacy auditor for a training session.
 
         Args:
@@ -111,7 +115,8 @@ class DifferentialPrivacyAuditor:
         operation: str,
         metadata: Optional[Dict[str, Any]] = None,
     ) -> Tuple[str, bool]:
-        """
+           """TODO: Add docstring for log_privacy_event"""
+     """
         Log a privacy-consuming event and check budget.
 
         Args:
@@ -183,7 +188,8 @@ class DifferentialPrivacyAuditor:
     def verify_gradient_clipping(
         self, gradients: np.ndarray, clip_norm: float, noise_scale: float
     ) -> Tuple[float, float]:
-        """
+           """TODO: Add docstring for verify_gradient_clipping"""
+     """
         Verify gradient clipping and compute privacy loss.
 
         Args:
@@ -234,7 +240,8 @@ class DifferentialPrivacyAuditor:
         noise_params: Dict[str, float],
         data_size: int,
     ) -> Tuple[float, float]:
-        """
+           """TODO: Add docstring for verify_noise_addition"""
+     """
         Verify noise addition and compute privacy loss.
 
         Args:
@@ -276,7 +283,8 @@ class DifferentialPrivacyAuditor:
         return epsilon, delta
 
     def _compose_privacy_loss(self, new_epsilon: float, new_delta: float) -> Tuple[float, float]:
-        """
+           """TODO: Add docstring for _compose_privacy_loss"""
+     """
         Compose privacy loss using appropriate composition theorem.
 
         Args:
@@ -311,18 +319,21 @@ class DifferentialPrivacyAuditor:
         return total_epsilon, total_delta
 
     def get_remaining_budget(self) -> Tuple[float, float]:
-        """Get remaining privacy budget"""
+           """TODO: Add docstring for get_remaining_budget"""
+     """Get remaining privacy budget"""
         remaining_epsilon = self.budget.total_epsilon - self.budget.consumed_epsilon
         remaining_delta = self.budget.total_delta - self.budget.consumed_delta
 
         return max(0, remaining_epsilon), max(0, remaining_delta)
 
     def get_mechanism_breakdown(self) -> Dict[str, float]:
-        """Get privacy consumption breakdown by mechanism"""
+           """TODO: Add docstring for get_mechanism_breakdown"""
+     """Get privacy consumption breakdown by mechanism"""
         return self.budget.mechanism_allocations.copy()
 
     def finalize_session(self) -> Dict[str, Any]:
-        """
+           """TODO: Add docstring for finalize_session"""
+     """
         Finalize the privacy audit session and generate report.
 
         Returns:
@@ -375,7 +386,8 @@ class DifferentialPrivacyAuditor:
         return report
 
     def export_audit_trail(self, include_metadata: bool = False) -> List[Dict[str, Any]]:
-        """
+           """TODO: Add docstring for export_audit_trail"""
+     """
         Export the complete audit trail.
 
         Args:
@@ -408,7 +420,8 @@ class DifferentialPrivacyAuditor:
         return trail
 
     def verify_audit_trail(self) -> bool:
-        """
+           """TODO: Add docstring for verify_audit_trail"""
+     """
         Verify the integrity of the audit trail.
 
         Returns:
@@ -451,7 +464,8 @@ class DifferentialPrivacyAuditor:
         return True
 
     def _hash_event(self, event: PrivacyEvent, previous_hash: str) -> str:
-        """Create hash of privacy event"""
+           """TODO: Add docstring for _hash_event"""
+     """Create hash of privacy event"""
         event_data = {
             "event_id": event.event_id,
             "timestamp": event.timestamp,
@@ -466,7 +480,8 @@ class DifferentialPrivacyAuditor:
         return hashlib.sha256(event_str.encode()).hexdigest()
 
     def _compute_audit_hash(self) -> str:
-        """Compute final hash of entire audit trail"""
+           """TODO: Add docstring for _compute_audit_hash"""
+     """Compute final hash of entire audit trail"""
         audit_data = {
             "session_id": self.session_id,
             "total_events": len(self.privacy_events),
@@ -484,8 +499,9 @@ class PrivacyAccountant:
     Global privacy accountant for managing multiple training sessions.
     """
 
-    def __init__(self):
-        self.sessions: Dict[str, DifferentialPrivacyAuditor] = {}
+    def __init__(self) -> None:
+            """TODO: Add docstring for __init__"""
+    self.sessions: Dict[str, DifferentialPrivacyAuditor] = {}
         self.global_budget = {
             "daily_epsilon": 10.0,
             "weekly_epsilon": 50.0,
@@ -496,7 +512,8 @@ class PrivacyAccountant:
     def create_session(
         self, session_id: str, epsilon_budget: float, delta_budget: float = 1e-5
     ) -> DifferentialPrivacyAuditor:
-        """Create a new privacy audit session"""
+           """TODO: Add docstring for create_session"""
+     """Create a new privacy audit session"""
         if session_id in self.sessions:
             raise ValueError(f"Session {session_id} already exists")
 
@@ -514,11 +531,13 @@ class PrivacyAccountant:
         return auditor
 
     def get_session(self, session_id: str) -> Optional[DifferentialPrivacyAuditor]:
-        """Get an existing session"""
+           """TODO: Add docstring for get_session"""
+     """Get an existing session"""
         return self.sessions.get(session_id)
 
     def finalize_session(self, session_id: str) -> Dict[str, Any]:
-        """Finalize a session and update global records"""
+           """TODO: Add docstring for finalize_session"""
+     """Finalize a session and update global records"""
         if session_id not in self.sessions:
             raise ValueError(f"Session {session_id} not found")
 
@@ -538,7 +557,8 @@ class PrivacyAccountant:
         return report
 
     def _get_period_consumption(self, period: str) -> float:
-        """Get epsilon consumption for a time period"""
+           """TODO: Add docstring for _get_period_consumption"""
+     """Get epsilon consumption for a time period"""
         current_time = time.time()
 
         if period == "daily":

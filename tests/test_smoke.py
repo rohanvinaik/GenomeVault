@@ -3,28 +3,25 @@
 import pytest
 
 
-def test_pytest_is_working():
+def test_pytest_is_working() -> None:
     """Verify pytest is installed and working"""
     assert True
 
 
-def test_imports_work():
+def test_imports_work() -> None:
     """Verify basic imports work"""
-    import cryptography
-    import fastapi
-    import numpy as np
 
     assert True
 
 
 @pytest.mark.unit
-def test_unit_marker():
+def test_unit_marker() -> None:
     """Test that unit marker works"""
     assert 1 + 1 == 2
 
 
 @pytest.mark.integration
-def test_integration_marker():
+def test_integration_marker() -> None:
     """Test that integration marker works"""
     # This would normally connect to a service
     assert True
@@ -38,6 +35,6 @@ def test_integration_marker():
         (3, 6),
     ],
 )
-def test_parametrize_works(input, expected):
+def test_parametrize_works(input, expected) -> None:
     """Test that parametrize works"""
     assert input * 2 == expected

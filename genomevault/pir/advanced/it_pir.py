@@ -2,6 +2,8 @@
 Information-Theoretic PIR implementation.
 Provides unconditional privacy guarantees without computational assumptions.
 """
+import logging
+from typing import Dict, List, Optional, Any, Union
 
 import hashlib
 import json
@@ -27,7 +29,8 @@ class PIRQuery:
     metadata: Dict[str, Any]
 
     def get_server_query(self, server_id: int) -> np.ndarray:
-        """Get query for specific server."""
+           """TODO: Add docstring for get_server_query"""
+     """Get query for specific server."""
         if server_id >= self.num_servers:
             raise ValueError(f"Invalid server ID: {server_id}")
         return self.server_queries[server_id]
@@ -44,7 +47,8 @@ class PIRResponse:
 
     @property
     def is_complete(self) -> bool:
-        """Check if all server responses received."""
+           """TODO: Add docstring for is_complete"""
+     """Check if all server responses received."""
         return all(r is not None for r in self.server_responses)
 
 
@@ -61,8 +65,9 @@ class InformationTheoreticPIR:
         num_servers: int = 3,
         threshold: int = 2,
         field_size: int = 2**32 - 5,  # Prime for finite field arithmetic
-    ):
-        """
+    ) -> None:
+           """TODO: Add docstring for __init__"""
+     """
         Initialize IT-PIR system.
 
         Args:
@@ -83,7 +88,8 @@ class InformationTheoreticPIR:
         )
 
     def generate_query(self, index: int, database_size: int, block_size: int = 1024) -> PIRQuery:
-        """
+           """TODO: Add docstring for generate_query"""
+     """
         Generate PIR queries for all servers.
 
         Args:
@@ -120,7 +126,8 @@ class InformationTheoreticPIR:
         return query
 
     def _split_vector_randomly(self, vector: np.ndarray) -> List[np.ndarray]:
-        """
+           """TODO: Add docstring for _split_vector_randomly"""
+     """
         Split vector into random shares that sum to original.
 
         This implements additive secret sharing in finite field.
@@ -154,7 +161,8 @@ class InformationTheoreticPIR:
     def process_server_query(
         self, server_id: int, query: PIRQuery, database: List[bytes]
     ) -> np.ndarray:
-        """
+           """TODO: Add docstring for process_server_query"""
+     """
         Process PIR query on server side.
 
         Args:
@@ -185,7 +193,8 @@ class InformationTheoreticPIR:
         return response
 
     def reconstruct_response(self, query: PIRQuery, server_responses: List[np.ndarray]) -> bytes:
-        """
+           """TODO: Add docstring for reconstruct_response"""
+     """
         Reconstruct data from server responses.
 
         Args:
@@ -211,7 +220,8 @@ class InformationTheoreticPIR:
         return reconstructed_bytes
 
     def _generate_query_id(self, index: int) -> str:
-        """Generate unique query ID."""
+           """TODO: Add docstring for _generate_query_id"""
+     """Generate unique query ID."""
         data = {"index": index, "timestamp": time.time(), "nonce": np.random.bytes(8).hex()}
 
         return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[:16]
@@ -219,7 +229,8 @@ class InformationTheoreticPIR:
     def create_multi_query(
         self, indices: List[int], database_size: int, block_size: int = 1024
     ) -> List[PIRQuery]:
-        """
+           """TODO: Add docstring for create_multi_query"""
+     """
         Create multiple PIR queries for batch retrieval.
 
         Uses query combination techniques to improve efficiency.
@@ -273,8 +284,9 @@ class RobustITPIR(InformationTheoreticPIR):
     Handles malicious servers that may return incorrect responses.
     """
 
-    def __init__(self, num_servers: int = 5, threshold: int = 2, byzantine_threshold: int = 1):
-        """
+    def __init__(self, num_servers: int = 5, threshold: int = 2, byzantine_threshold: int = 1) -> None:
+           """TODO: Add docstring for __init__"""
+     """
         Initialize robust IT-PIR.
 
         Args:
@@ -296,7 +308,8 @@ class RobustITPIR(InformationTheoreticPIR):
     def process_responses_with_verification(
         self, query: PIRQuery, server_responses: List[Tuple[np.ndarray, bytes]]
     ) -> bytes:
-        """
+           """TODO: Add docstring for process_responses_with_verification"""
+     """
         Process responses with Byzantine fault detection.
 
         Args:
@@ -324,14 +337,16 @@ class RobustITPIR(InformationTheoreticPIR):
     def _verify_response_proof(
         self, query: PIRQuery, server_id: int, response: np.ndarray, proof: bytes
     ) -> bool:
-        """Verify response authenticity (simplified)."""
+           """TODO: Add docstring for _verify_response_proof"""
+     """Verify response authenticity (simplified)."""
         # In practice, would use Merkle proofs or other authentication
         expected_hash = hashlib.sha256(response.tobytes() + query.query_id.encode()).digest()
 
         return proof == expected_hash
 
     def _reed_solomon_decode(self, responses: List[np.ndarray]) -> bytes:
-        """Decode using Reed-Solomon error correction."""
+           """TODO: Add docstring for _reed_solomon_decode"""
+     """Decode using Reed-Solomon error correction."""
         # Simplified - in practice use proper RS decoding
         # For now, use majority voting
 

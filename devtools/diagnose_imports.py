@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import logging
+
 """Quick test to identify the exact import issue"""
 
 import sys

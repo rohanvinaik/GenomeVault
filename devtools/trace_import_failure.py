@@ -1,3 +1,6 @@
+import os
+from typing import Any, Dict
+
 #!/usr/bin/env python3
 """
 Trace the exact import failure point
@@ -54,11 +57,11 @@ except Exception as e:
     print("❌ core/__init__.py failed: {e}")
 
 print("\n5. Looking for the cryptography import...")
-import os
 
 
-def find_cryptography_imports(directory):
-    """Find all files that import cryptography"""
+def find_cryptography_imports(directory) -> None:
+       """TODO: Add docstring for find_cryptography_imports"""
+     """Find all files that import cryptography"""
     files_with_crypto = []
     for root, dirs, files in os.walk(directory):
         # Skip __pycache__

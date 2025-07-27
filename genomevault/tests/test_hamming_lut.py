@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 """
 Unit tests for Hamming distance LUT optimization
 """
@@ -19,13 +21,15 @@ from genomevault.hypervector.operations.hamming_lut import (
 class TestHammingLUT(unittest.TestCase):
     """Test cases for Hamming LUT implementation"""
 
-    def setUp(self):
-        """Set up test fixtures"""
+    def setUp(self) -> None:
+           """TODO: Add docstring for setUp"""
+     """Set up test fixtures"""
         self.lut = generate_popcount_lut()
         self.hamming_cpu = HammingLUT(use_gpu=False)
 
-    def test_popcount_lut_generation(self):
-        """Test that the popcount LUT is generated correctly"""
+    def test_popcount_lut_generation(self) -> None:
+           """TODO: Add docstring for test_popcount_lut_generation"""
+     """Test that the popcount LUT is generated correctly"""
         # Check size
         self.assertEqual(len(self.lut), 65536)  # 2^16
 
@@ -37,8 +41,9 @@ class TestHammingLUT(unittest.TestCase):
         self.assertEqual(self.lut[255], 8)  # 0b0000000011111111
         self.assertEqual(self.lut[65535], 16)  # 0b1111111111111111
 
-    def test_hamming_distance_correctness(self):
-        """Test that Hamming distance computation is correct"""
+    def test_hamming_distance_correctness(self) -> None:
+           """TODO: Add docstring for test_hamming_distance_correctness"""
+     """Test that Hamming distance computation is correct"""
         # Test vectors
         vec1 = np.array([1, 0, 1, 0, 1, 0, 1, 0], dtype=np.uint8)
         vec2 = np.array([0, 1, 0, 1, 0, 1, 0, 1], dtype=np.uint8)
@@ -53,16 +58,18 @@ class TestHammingLUT(unittest.TestCase):
         # Should be completely different
         self.assertEqual(distance, 8)
 
-    def test_hamming_distance_identical(self):
-        """Test Hamming distance for identical vectors"""
+    def test_hamming_distance_identical(self) -> None:
+           """TODO: Add docstring for test_hamming_distance_identical"""
+     """Test Hamming distance for identical vectors"""
         vec = np.random.randint(0, 2, 1000, dtype=np.uint8)
         vec_packed = np.packbits(vec).view(np.uint64)
 
         distance = self.hamming_cpu.distance(vec_packed, vec_packed)
         self.assertEqual(distance, 0)
 
-    def test_hamming_distance_batch(self):
-        """Test batch Hamming distance computation"""
+    def test_hamming_distance_batch(self) -> None:
+           """TODO: Add docstring for test_hamming_distance_batch"""
+     """Test batch Hamming distance computation"""
         n, m, d = 10, 15, 1000
 
         # Generate random binary vectors
@@ -85,8 +92,9 @@ class TestHammingLUT(unittest.TestCase):
                 expected = np.sum(vecs1[i] != vecs2[j])
                 self.assertEqual(distances[i, j], expected)
 
-    def test_integration_with_binder(self):
-        """Test integration with HypervectorBinder"""
+    def test_integration_with_binder(self) -> None:
+           """TODO: Add docstring for test_integration_with_binder"""
+     """Test integration with HypervectorBinder"""
         binder = HypervectorBinder(dimension=10000, use_gpu=False)
 
         # Create test hypervectors
@@ -104,8 +112,9 @@ class TestHammingLUT(unittest.TestCase):
         similarity_same = binder.hamming_similarity(hv1, hv1)
         self.assertAlmostEqual(similarity_same, 1.0, places=4)
 
-    def test_batch_similarity(self):
-        """Test batch similarity computation"""
+    def test_batch_similarity(self) -> None:
+           """TODO: Add docstring for test_batch_similarity"""
+     """Test batch similarity computation"""
         binder = HypervectorBinder(dimension=5000, use_gpu=False)
 
         # Create batches
@@ -122,8 +131,9 @@ class TestHammingLUT(unittest.TestCase):
         self.assertTrue(np.all(similarities >= 0))
         self.assertTrue(np.all(similarities <= 1))
 
-    def test_performance_improvement(self):
-        """Basic performance test to ensure LUT is faster"""
+    def test_performance_improvement(self) -> None:
+           """TODO: Add docstring for test_performance_improvement"""
+     """Basic performance test to ensure LUT is faster"""
         import time
 
         # Large vectors
@@ -158,8 +168,9 @@ class TestHammingLUT(unittest.TestCase):
 class TestPlatformExports(unittest.TestCase):
     """Test platform-specific code generation"""
 
-    def test_pulp_code_generation(self):
-        """Test PULP C code generation"""
+    def test_pulp_code_generation(self) -> None:
+           """TODO: Add docstring for test_pulp_code_generation"""
+     """Test PULP C code generation"""
         from genomevault.hypervector.operations.hamming_lut import generate_pulp_lut_code
 
         code = generate_pulp_lut_code()
@@ -170,8 +181,9 @@ class TestPlatformExports(unittest.TestCase):
         self.assertIn("#pragma omp parallel", code)
         self.assertIn("65536", code)
 
-    def test_fpga_verilog_generation(self):
-        """Test FPGA Verilog generation"""
+    def test_fpga_verilog_generation(self) -> None:
+           """TODO: Add docstring for test_fpga_verilog_generation"""
+     """Test FPGA Verilog generation"""
         from genomevault.hypervector.operations.hamming_lut import generate_fpga_verilog
 
         verilog = generate_fpga_verilog()

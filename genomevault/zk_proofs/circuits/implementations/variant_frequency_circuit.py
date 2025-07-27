@@ -4,6 +4,7 @@ Variant Frequency (Allele Count) Sum Verification Circuit
 Implementation based on the Circuit Spec Draft (A) from project knowledge.
 This is the minimum ZK artifact to power the MVP-VPQ (Variant Population Query).
 """
+from typing import Dict, List, Optional, Any, Union
 
 import hashlib
 from typing import Any, Dict, List, Optional
@@ -33,8 +34,9 @@ class VariantFrequencyCircuit:
     This proves correctness without revealing any other SNP counts.
     """
 
-    def __init__(self, max_snps: int = 32, merkle_depth: int = 20):
-        """
+    def __init__(self, max_snps: int = 32, merkle_depth: int = 20) -> None:
+           """TODO: Add docstring for __init__"""
+     """
         Initialize the variant frequency circuit.
 
         Args:
@@ -49,8 +51,9 @@ class VariantFrequencyCircuit:
         # Configure constants
         self.C_MAX = 10000  # Maximum plausible allele count (2N for diploid with N samples)
 
-    def setup_circuit(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
-        """Setup the circuit with actual inputs."""
+    def setup_circuit(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
+           """TODO: Add docstring for setup_circuit"""
+     """Setup the circuit with actual inputs."""
 
         # Public inputs
         self.sum_var = self.cs.add_public_input("total_sum")
@@ -128,8 +131,9 @@ class VariantFrequencyCircuit:
 
         self.setup_complete = True
 
-    def generate_constraints(self):
-        """Generate all circuit constraints."""
+    def generate_constraints(self) -> None:
+           """TODO: Add docstring for generate_constraints"""
+     """Generate all circuit constraints."""
         if not self.setup_complete:
             raise RuntimeError("Circuit must be setup before generating constraints")
 
@@ -148,8 +152,9 @@ class VariantFrequencyCircuit:
         # 5. Add zero-knowledge randomness
         self._add_zk_randomness()
 
-    def _constrain_allele_count_ranges(self):
-        """Constrain each allele count to be within valid range [0, C_MAX]."""
+    def _constrain_allele_count_ranges(self) -> None:
+           """TODO: Add docstring for _constrain_allele_count_ranges"""
+     """Constrain each allele count to be within valid range [0, C_MAX]."""
 
         for i, count_var in enumerate(self.count_vars):
             # For range constraint 0 ≤ c ≤ C_MAX, we need:
@@ -176,8 +181,9 @@ class VariantFrequencyCircuit:
 
             self.cs.enforce_multiplication(count_var, diff_var, product_var)
 
-    def _constrain_sum(self):
-        """Constrain that the sum of counts equals the public sum."""
+    def _constrain_sum(self) -> None:
+           """TODO: Add docstring for _constrain_sum"""
+     """Constrain that the sum of counts equals the public sum."""
 
         # Build running sum
         running_sum_vars = []
@@ -209,8 +215,9 @@ class VariantFrequencyCircuit:
         if running_sum_vars:
             self.cs.enforce_equal(running_sum_vars[-1], self.sum_var)
 
-    def _constrain_merkle_inclusions(self):
-        """Verify Merkle inclusion proof for each allele count."""
+    def _constrain_merkle_inclusions(self) -> None:
+           """TODO: Add docstring for _constrain_merkle_inclusions"""
+     """Verify Merkle inclusion proof for each allele count."""
 
         num_snps = int(self.cs.get_assignment(self.num_snps_var).value)
 
@@ -259,8 +266,9 @@ class VariantFrequencyCircuit:
             # But only if this is an active SNP (index < num_snps)
             # For simplicity, we always verify but rely on zero counts for inactive slots
 
-    def _constrain_unused_slots(self):
-        """Ensure counts for SNPs beyond num_snps are zero."""
+    def _constrain_unused_slots(self) -> None:
+           """TODO: Add docstring for _constrain_unused_slots"""
+     """Ensure counts for SNPs beyond num_snps are zero."""
 
         num_snps = int(self.cs.get_assignment(self.num_snps_var).value)
 
@@ -268,8 +276,9 @@ class VariantFrequencyCircuit:
             # Constraint: count[i] = 0 for i >= num_snps
             self.cs.enforce_equal(self.count_vars[i], self.cs.zero)
 
-    def _add_zk_randomness(self):
-        """Add randomness to achieve zero-knowledge property."""
+    def _add_zk_randomness(self) -> None:
+           """TODO: Add docstring for _add_zk_randomness"""
+     """Add randomness to achieve zero-knowledge property."""
 
         # Create blinding factors
         r1 = self.cs.add_variable("blind_1")
@@ -289,23 +298,28 @@ class VariantFrequencyCircuit:
         self.cs.enforce_multiplication(r1, r2, product_var)
 
     def get_constraint_system(self) -> ConstraintSystem:
-        """Get the constraint system."""
+           """TODO: Add docstring for get_constraint_system"""
+     """Get the constraint system."""
         return self.cs
 
     def get_public_inputs(self) -> List[FieldElement]:
-        """Get public input values."""
+           """TODO: Add docstring for get_public_inputs"""
+     """Get public input values."""
         return self.cs.get_public_inputs()
 
     def get_witness(self) -> Dict[int, FieldElement]:
-        """Get witness (private inputs)."""
+           """TODO: Add docstring for get_witness"""
+     """Get witness (private inputs)."""
         return self.cs.get_witness()
 
     def verify_constraints(self) -> bool:
-        """Verify all constraints are satisfied."""
+           """TODO: Add docstring for verify_constraints"""
+     """Verify all constraints are satisfied."""
         return self.cs.is_satisfied()
 
     def get_circuit_info(self) -> Dict[str, Any]:
-        """Get circuit information."""
+           """TODO: Add docstring for get_circuit_info"""
+     """Get circuit information."""
         return {
             "name": "variant_frequency_sum",
             "num_constraints": self.cs.num_constraints(),
@@ -318,8 +332,9 @@ class VariantFrequencyCircuit:
         }
 
 
-def create_example_frequency_proof():
-    """Example usage of the VariantFrequencyCircuit."""
+def create_example_frequency_proof() -> Dict[str, Any]:
+       """TODO: Add docstring for create_example_frequency_proof"""
+     """Example usage of the VariantFrequencyCircuit."""
 
     # Example: Query for 5 SNPs
     snp_ids = [

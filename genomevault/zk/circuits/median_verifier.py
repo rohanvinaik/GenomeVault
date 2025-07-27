@@ -2,6 +2,8 @@
 Zero-Knowledge Circuit for Median Verification
 Implements a real ZK proof system for verifying median computation
 """
+import logging
+from typing import Dict, List, Optional, Any, Union
 
 import hashlib
 import json
@@ -52,8 +54,9 @@ class MedianVerifierCircuit:
     4. The median error is within the specified bound
     """
 
-    def __init__(self, security_param: int = 128):
-        """
+    def __init__(self, security_param: int = 128) -> None:
+           """TODO: Add docstring for __init__"""
+     """
         Initialize the circuit with security parameters
 
         Args:
@@ -69,7 +72,8 @@ class MedianVerifierCircuit:
         error_bound: float,
         expected_value: Optional[float] = None,
     ) -> MedianProof:
-        """
+           """TODO: Add docstring for generate_proof"""
+     """
         Generate a zero-knowledge proof that the median is correctly computed
 
         Args:
@@ -187,7 +191,8 @@ class MedianVerifierCircuit:
         )
 
     def verify_proof(self, proof: MedianProof) -> bool:
-        """
+           """TODO: Add docstring for verify_proof"""
+     """
         Verify a median computation proof
 
         Args:
@@ -267,13 +272,15 @@ class MedianVerifierCircuit:
             return False
 
     def _commit(self, value: float, randomness: bytes) -> bytes:
-        """Create a commitment to a value"""
+           """TODO: Add docstring for _commit"""
+     """Create a commitment to a value"""
         value_bytes = str(value).encode()
         commitment_input = value_bytes + randomness
         return self.hash_function(commitment_input).digest()
 
     def _commit_list(self, values: List[float], randomness: List[bytes]) -> bytes:
-        """Create a commitment to a list of values"""
+           """TODO: Add docstring for _commit_list"""
+     """Create a commitment to a list of values"""
         commitments = [self._commit(v, r) for v, r in zip(values, randomness)]
         combined = b"".join(commitments)
         return self.hash_function(combined).digest()
@@ -281,7 +288,8 @@ class MedianVerifierCircuit:
     def _generate_challenge(
         self, commitment: bytes, sorted_commitments: List[bytes], median: float, error_bound: float
     ) -> bytes:
-        """Generate Fiat-Shamir challenge"""
+           """TODO: Add docstring for _generate_challenge"""
+     """Generate Fiat-Shamir challenge"""
         challenge_input = (
             commitment
             + b"".join(sorted_commitments)
@@ -293,7 +301,8 @@ class MedianVerifierCircuit:
     def _generate_range_proofs(
         self, values: List[float], randomness: List[bytes]
     ) -> List[Dict[str, Any]]:
-        """
+           """TODO: Add docstring for _generate_range_proofs"""
+     """
         Generate range proofs that values are in reasonable range
         This is a simplified version - production would use bulletproofs
         """
@@ -324,7 +333,8 @@ class MedianVerifierCircuit:
         return range_proofs
 
     def _verify_range_proofs(self, range_proofs: List[Dict[str, Any]]) -> bool:
-        """Verify range proofs (simplified version)"""
+           """TODO: Add docstring for _verify_range_proofs"""
+     """Verify range proofs (simplified version)"""
         # In production, properly verify bulletproofs
         # For now, just check structure
         if not range_proofs:
@@ -337,7 +347,8 @@ class MedianVerifierCircuit:
         return True
 
     def _prove_error_bound(self, error: float, bound: float, challenge: bytes) -> Dict[str, Any]:
-        """Prove that error is within bound without revealing exact error"""
+           """TODO: Add docstring for _prove_error_bound"""
+     """Prove that error is within bound without revealing exact error"""
         # Create a commitment to the fact that error <= bound
         is_within_bound = error <= bound
 
@@ -359,8 +370,9 @@ class MedianVerifierCircuit:
 if __name__ == "__main__":
     import asyncio
 
-    async def test_median_circuit():
-        """Test the median verifier circuit"""
+    async def test_median_circuit() -> None:
+           """TODO: Add docstring for test_median_circuit"""
+     """Test the median verifier circuit"""
         circuit = MedianVerifierCircuit()
 
         # Test case 1: Odd number of values

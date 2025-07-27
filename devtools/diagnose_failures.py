@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import numpy as np
+
 """Quick diagnostic to see what's failing"""
 
 import sys

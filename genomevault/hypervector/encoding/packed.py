@@ -2,7 +2,7 @@
 Bit-packed hypervector implementation for memory-efficient genomic encoding
 """
 
-from typing import Dict, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union
 
 import numba
 import numpy as np
@@ -11,11 +11,13 @@ from numba import cuda
 
 try:
     import cupy as cp
-
     CUPY_AVAILABLE = True
 except ImportError:
     cp = None
     CUPY_AVAILABLE = False
+
+if TYPE_CHECKING:
+    import cupy as cp
 
 from genomevault.core.constants import HYPERVECTOR_DIMENSIONS
 from genomevault.core.exceptions import HypervectorError
@@ -275,7 +277,6 @@ def fast_hamming_distance(buf1: np.ndarray, buf2: np.ndarray) -> int:
 
 # GPU functions (if CuPy available)
 if CUPY_AVAILABLE:
-
     def _gpu_majority_vote(all_vecs, n_vecs):
         """GPU-accelerated majority vote"""
         n_words = all_vecs.shape[1]
@@ -324,7 +325,7 @@ class PackedProjection:
         """CPU encoding using Numba"""
         return _project_features_numba(features, self.masks, self.n_words, len(features))
 
-    def _encode_gpu(self, features: np.ndarray) -> cp.ndarray:
+    def _encode_gpu(self, features: np.ndarray) -> "cp.ndarray":
         """GPU encoding"""
         if not CUPY_AVAILABLE:
             raise RuntimeError("CuPy not available for GPU operations")
@@ -498,7 +499,7 @@ class PackedGenomicEncoder:
         chr_num = chromosome.replace("chr", "").replace("X", "23").replace("Y", "24")
         try:
             chr_idx = int(chr_num)
-        except:
+        except BaseException:
             chr_idx = 25
 
         rng = np.random.RandomState(chr_idx)

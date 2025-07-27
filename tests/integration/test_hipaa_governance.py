@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 """
 Integration tests for HIPAA Fast-Track with Governance
 """
@@ -24,11 +26,12 @@ from genomevault.core.exceptions import VerificationError
 
 
 @pytest.mark.asyncio
+
 class TestHIPAANodeIntegration:
     """Test HIPAA node integration"""
 
-    async def test_provider_node_registration(self):
-        """Test registering a provider as a blockchain node"""
+    async def test_provider_node_registration(self) -> None:
+    """Test registering a provider as a blockchain node"""
         async with CMSNPIRegistry() as registry:
             verifier = HIPAAVerifier(npi_registry=registry)
             governance = GovernanceSystem()
@@ -66,8 +69,8 @@ class TestHIPAANodeIntegration:
             # Verify registry
             assert integration.get_provider_node(credentials.npi) == node
 
-    async def test_multiple_provider_registration(self):
-        """Test registering multiple providers"""
+    async def test_multiple_provider_registration(self) -> None:
+    """Test registering multiple providers"""
         async with CMSNPIRegistry() as registry:
             verifier = HIPAAVerifier(npi_registry=registry)
             governance = GovernanceSystem()
@@ -99,8 +102,8 @@ class TestHIPAANodeIntegration:
             # Verify total governance power
             assert governance.total_voting_power == total_power
 
-    async def test_provider_node_revocation(self):
-        """Test revoking a provider's node status"""
+    async def test_provider_node_revocation(self) -> None:
+    """Test revoking a provider's node status"""
         async with CMSNPIRegistry() as registry:
             verifier = HIPAAVerifier(npi_registry=registry)
             governance = GovernanceSystem()
@@ -127,8 +130,8 @@ class TestHIPAANodeIntegration:
             assert integration.get_provider_node(credentials.npi) is None
             assert governance.total_voting_power == initial_power - node.voting_power
 
-    async def test_verification_refresh(self):
-        """Test refreshing verifications"""
+    async def test_verification_refresh(self) -> None:
+    """Test refreshing verifications"""
         async with CMSNPIRegistry() as registry:
             verifier = HIPAAVerifier(npi_registry=registry)
             governance = GovernanceSystem()
@@ -160,13 +163,13 @@ class TestHIPAANodeIntegration:
             assert results["active_nodes"] == 0
             assert len(integration.node_registry) == 0
 
-
 @pytest.mark.asyncio
+
 class TestHIPAAGovernance:
     """Test HIPAA governance integration"""
 
-    async def test_hipaa_committee_creation(self):
-        """Test creating HIPAA committee"""
+    async def test_hipaa_committee_creation(self) -> None:
+    """Test creating HIPAA committee"""
         governance = GovernanceSystem()
 
         # Create HIPAA committee
@@ -178,8 +181,8 @@ class TestHIPAAGovernance:
         assert "HIPAA compliance oversight" in committee.responsibilities
         assert committee.voting_weight_multiplier == 1.5
 
-    async def test_hipaa_proposal_types(self):
-        """Test HIPAA-specific proposal types"""
+    async def test_hipaa_proposal_types(self) -> None:
+    """Test HIPAA-specific proposal types"""
         governance = GovernanceSystem()
 
         # Add HIPAA proposal types
@@ -194,8 +197,8 @@ class TestHIPAAGovernance:
         assert clinical_rules["voting_period_days"] == 14
         assert clinical_rules["requires_hipaa_member"] == True
 
-    async def test_hipaa_enhanced_voting(self):
-        """Test enhanced voting power for HIPAA members"""
+    async def test_hipaa_enhanced_voting(self) -> None:
+    """Test enhanced voting power for HIPAA members"""
         async with CMSNPIRegistry() as registry:
             verifier = HIPAAVerifier(npi_registry=registry)
             governance = GovernanceSystem()
@@ -244,8 +247,8 @@ class TestHIPAAGovernance:
             )
             assert vote.vote_weight > base_weight  # Committee multiplier applied
 
-    async def test_governance_participation_comparison(self):
-        """Test voting power difference between HIPAA and regular nodes"""
+    async def test_governance_participation_comparison(self) -> None:
+    """Test voting power difference between HIPAA and regular nodes"""
         governance = GovernanceSystem()
 
         # Create proposal requiring votes
@@ -289,13 +292,13 @@ class TestHIPAAGovernance:
         assert hipaa_vote.vote_weight == pytest.approx(math.sqrt(hipaa_voting_power))
         assert regular_vote.vote_weight == pytest.approx(math.sqrt(regular_voting_power))
 
-
 @pytest.mark.asyncio
+
 class TestEndToEndFlow:
     """Test complete HIPAA fast-track flow"""
 
-    async def test_complete_provider_journey(self):
-        """Test complete journey from registration to governance participation"""
+    async def test_complete_provider_journey(self) -> None:
+    """Test complete journey from registration to governance participation"""
         async with CMSNPIRegistry() as registry:
             # Initialize system
             verifier = HIPAAVerifier(npi_registry=registry)
@@ -376,7 +379,6 @@ class TestEndToEndFlow:
             # Credits per block = c + 2 (for TS)
             expected_credits = 8 + 2  # Archive + TS bonus
             assert expected_credits == 10
-
 
 if __name__ == "__main__":
     # Run tests

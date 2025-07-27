@@ -2,6 +2,7 @@
 HDC Error Tuning with PIR Batching - Complete Example
 Demonstrates the full pipeline from accuracy dial to batched PIR queries
 """
+from typing import Dict, List, Optional, Any, Union
 
 import asyncio
 import time
@@ -19,8 +20,9 @@ from genomevault.pir.client import (
 )
 
 
-async def main():
-    """
+async def main() -> None:
+       """TODO: Add docstring for main"""
+     """
     Demonstrate the complete error-tuned query pipeline
     """
     print("=== HDC Error Tuning with PIR Batching Demo ===\n")
@@ -164,14 +166,16 @@ async def main():
 class MockPIRClient(PIRClient):
     """Mock PIR client for demonstration"""
 
-    def __init__(self, servers: List[str], database_size: int):
-        # Don't call super().__init__ to avoid real connection
+    def __init__(self, servers: List[str], database_size: int) -> None:
+            """TODO: Add docstring for __init__"""
+    # Don't call super().__init__ to avoid real connection
         self.server_urls = servers
         self.database_size = database_size
         self.threshold = 2
 
-    async def execute_query(self, query):
-        """Simulate PIR query execution"""
+    async def execute_query(self, query) -> None:
+           """TODO: Add docstring for execute_query"""
+     """Simulate PIR query execution"""
         # Simulate network delay
         await asyncio.sleep(0.01 + np.random.exponential(0.005))
 
@@ -187,24 +191,28 @@ class MockPIRClient(PIRClient):
             "consequence": "missense_variant",
         }
 
-    def create_query(self, db_index: int, seed: int = None):
-        """Create mock query"""
+    def create_query(self, db_index: int, seed: int = None) -> Dict[str, Any]:
+           """TODO: Add docstring for create_query"""
+     """Create mock query"""
         from genomevault.pir.client.pir_client import PIRQuery
 
         return PIRQuery(indices=[db_index], seed=seed, metadata={"mock": True})
 
-    def decode_response(self, response_data, response_type="genomic"):
-        """Decode mock response"""
+    def decode_response(self, response_data, response_type="genomic") -> None:
+           """TODO: Add docstring for decode_response"""
+     """Decode mock response"""
         return response_data
 
     def calculate_privacy_guarantee(self, num_servers: int) -> float:
-        """Calculate privacy guarantee"""
+           """TODO: Add docstring for calculate_privacy_guarantee"""
+     """Calculate privacy guarantee"""
         honesty_prob = 0.95
         return (1 - honesty_prob) ** num_servers
 
 
 def create_mock_index_mapping() -> Dict[str, Dict]:
-    """Create mock index mapping for demo"""
+       """TODO: Add docstring for create_mock_index_mapping"""
+     """Create mock index mapping for demo"""
     return {
         "variants": {
             "chr17:43106487:A:G": 8234567,  # BRCA1 variant
@@ -231,7 +239,8 @@ def create_mock_index_mapping() -> Dict[str, Dict]:
 
 
 def generate_mock_proof(metadata: Dict) -> str:
-    """Generate mock proof hash"""
+       """TODO: Add docstring for generate_mock_proof"""
+     """Generate mock proof hash"""
     import hashlib
 
     proof_str = str(metadata)

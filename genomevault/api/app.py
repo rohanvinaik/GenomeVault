@@ -2,6 +2,8 @@
 API entrypoint using FastAPI.
 Implements core GenomeVault network endpoints.
 """
+import logging
+from typing import Dict, List, Optional, Any, Union
 
 import hashlib
 import time
@@ -20,8 +22,10 @@ from genomevault.api.routers.query_tuned import router as snp_query_router
 from genomevault.api.routers.tuned_query import router as tuned_query_router
 from genomevault.hypervector.error_handling import router as hdc_router
 from genomevault.nanopore.api import router as nanopore_router
+from genomevault.utils.common import create_circuit_stub, get_default_config
 from genomevault.utils.config import get_config
 from genomevault.utils.logging import audit_logger, get_logger
+from genomevault.core.base_patterns import create_circuit, get_default_config
 
 # Create FastAPI app
 config = get_config()
@@ -145,7 +149,8 @@ class HealthCheckResponse(BaseModel):
 
 # Dependency for API key authentication
 async def verify_api_key(x_api_key: str = Header(...)):
-    """Verify API key for authentication."""
+       """TODO: Add docstring for verify_api_key"""
+     """Verify API key for authentication."""
     # In production, validate against actual API keys
     if not x_api_key or len(x_api_key) < 32:
         raise HTTPException(status_code=401, detail="Invalid API key")
@@ -159,8 +164,9 @@ credit_ledger = {}
 
 
 @app.get("/", response_model=HealthCheckResponse)
-async def root():
-    """Root endpoint with health check."""
+async def root() -> None:
+       """TODO: Add docstring for root"""
+     """Root endpoint with health check."""
     return HealthCheckResponse(
         status="healthy",
         version="3.0.0",
@@ -175,7 +181,8 @@ async def root():
 
 @app.post("/topology", response_model=TopologyResponse)
 async def get_topology(request: TopologyRequest, api_key: str = Depends(verify_api_key)):
-    """
+       """TODO: Add docstring for get_topology"""
+     """
     Get network topology information.
     Returns nearest light nodes and trusted signatories.
     """
@@ -215,7 +222,8 @@ async def get_topology(request: TopologyRequest, api_key: str = Depends(verify_a
 
 @app.post("/credit/vault/redeem", response_model=CreditRedeemResponse)
 async def redeem_credits(request: CreditRedeemRequest, api_key: str = Depends(verify_api_key)):
-    """
+       """TODO: Add docstring for redeem_credits"""
+     """
     Redeem credits from vault.
     Burns credits for network services.
     """
@@ -260,7 +268,8 @@ async def redeem_credits(request: CreditRedeemRequest, api_key: str = Depends(ve
 async def create_audit_challenge(
     request: AuditChallengeRequest, api_key: str = Depends(verify_api_key)
 ):
-    """
+       """TODO: Add docstring for create_audit_challenge"""
+     """
     Create audit challenge for node.
     Verifies node behavior and slashes stake if invalid.
     """
@@ -308,7 +317,8 @@ async def create_audit_challenge(
 
 @app.post("/proof/submit", response_model=ProofSubmissionResponse)
 async def submit_proof(request: ProofSubmissionRequest, api_key: str = Depends(verify_api_key)):
-    """
+       """TODO: Add docstring for submit_proof"""
+     """
     Submit zero-knowledge proof for recording on blockchain.
     """
     try:
@@ -346,7 +356,8 @@ async def submit_proof(request: ProofSubmissionRequest, api_key: str = Depends(v
 
 @app.get("/node/stats")
 async def get_node_statistics(api_key: str = Depends(verify_api_key)):
-    """Get network node statistics."""
+       """TODO: Add docstring for get_node_statistics"""
+     """Get network node statistics."""
     try:
         # Calculate network statistics
         stats = {
@@ -372,7 +383,8 @@ async def get_node_statistics(api_key: str = Depends(verify_api_key)):
 
 @app.get("/pir/config")
 async def get_pir_configuration(api_key: str = Depends(verify_api_key)):
-    """Get PIR network configuration."""
+       """TODO: Add docstring for get_pir_configuration"""
+     """Get PIR network configuration."""
     try:
         config_data = {
             "num_servers": config.pir.num_servers,
@@ -404,16 +416,18 @@ async def get_pir_configuration(api_key: str = Depends(verify_api_key)):
 
 
 @app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
-    """Global exception handler."""
+async def global_exception_handler(request: Request, exc: Exception) -> None:
+       """TODO: Add docstring for global_exception_handler"""
+     """Global exception handler."""
     logger.error(f"Unhandled exception: {exc}", exc_info=True)
     return JSONResponse(status_code=500, content={"detail": "Internal server error"})
 
 
 # Startup event
 @app.on_event("startup")
-async def startup_event():
-    """Initialize services on startup."""
+async def startup_event() -> None:
+       """TODO: Add docstring for startup_event"""
+     """Initialize services on startup."""
     logger.info("GenomeVault API starting up", extra={"privacy_safe": True})
 
     # Initialize mock data
@@ -449,8 +463,9 @@ async def startup_event():
 
 # Shutdown event
 @app.on_event("shutdown")
-async def shutdown_event():
-    """Cleanup on shutdown."""
+async def shutdown_event() -> None:
+       """TODO: Add docstring for shutdown_event"""
+     """Cleanup on shutdown."""
     logger.info("GenomeVault API shutting down", extra={"privacy_safe": True})
 
 

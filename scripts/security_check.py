@@ -3,6 +3,8 @@
 Security check script for GenomeVault.
 Verifies log redaction and configuration sanity.
 """
+import logging
+from typing import Dict, List, Optional, Any, Union
 
 import argparse
 import json
@@ -17,8 +19,9 @@ from genomevault.utils.logging import logger
 class SecurityChecker:
     """Security configuration and log checker."""
 
-    def __init__(self):
-        self.issues = []
+    def __init__(self) -> None:
+            """TODO: Add docstring for __init__"""
+    self.issues = []
         self.warnings = []
 
         # PHI patterns to detect
@@ -33,7 +36,8 @@ class SecurityChecker:
         }
 
     def check_logs(self, log_path: Path) -> List[Dict]:
-        """Check logs for PHI leakage."""
+           """TODO: Add docstring for check_logs"""
+     """Check logs for PHI leakage."""
         if not log_path.exists():
             logger.warning(f"Log file not found: {log_path}")
             return []
@@ -58,7 +62,8 @@ class SecurityChecker:
         return findings
 
     def check_config_sanity(self, config_path: Path) -> List[Dict]:
-        """Check configuration for security issues."""
+           """TODO: Add docstring for check_config_sanity"""
+     """Check configuration for security issues."""
         if not config_path.exists():
             logger.warning(f"Config file not found: {config_path}")
             return []
@@ -125,7 +130,8 @@ class SecurityChecker:
         return issues
 
     def check_hardcoded_secrets(self, src_dir: Path) -> List[Dict]:
-        """Check source code for hardcoded secrets."""
+           """TODO: Add docstring for check_hardcoded_secrets"""
+     """Check source code for hardcoded secrets."""
         secret_patterns = [
             (re.compile(r'api_key\s*=\s*["\'][^"\']+["\']'), "api_key"),
             (re.compile(r'password\s*=\s*["\'][^"\']+["\']'), "password"),
@@ -154,7 +160,8 @@ class SecurityChecker:
         return findings
 
     def generate_report(self) -> Dict:
-        """Generate security check report."""
+           """TODO: Add docstring for generate_report"""
+     """Generate security check report."""
         return {
             "summary": {
                 "total_issues": len(self.issues),
@@ -167,7 +174,8 @@ class SecurityChecker:
         }
 
     def run_all_checks(self, project_dir: Path) -> int:
-        """Run all security checks."""
+           """TODO: Add docstring for run_all_checks"""
+     """Run all security checks."""
         logger.info("Starting security checks...")
 
         # Check logs
@@ -210,8 +218,9 @@ class SecurityChecker:
         return 1 if report["summary"]["critical"] > 0 else 0
 
 
-def main():
-    """Main entry point."""
+def main() -> None:
+       """TODO: Add docstring for main"""
+     """Main entry point."""
     parser = argparse.ArgumentParser(description="GenomeVault security checker")
     parser.add_argument(
         "--project-dir", type=Path, default=Path.cwd(), help="Project directory to check"

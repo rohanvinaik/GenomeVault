@@ -3,6 +3,9 @@
 Minimal test to verify the import path fix works
 This avoids importing the full dependency chain
 """
+import torch
+import numpy as np
+import logging
 
 import os
 import sys

@@ -5,6 +5,7 @@ Stage 4 implementation: Recursion / Aggregation & Performance Bench
 - Recursive proof composition script aggregating N subproofs
 - Benchmarks: proof size, verify time, aggregation time vs N
 """
+from typing import Dict, List, Optional, Any, Union
 
 import hashlib
 import json
@@ -53,8 +54,9 @@ class RecursiveProofAggregator:
     This enables constant verification time regardless of the number of composed proofs.
     """
 
-    def __init__(self, max_aggregation_depth: int = 3):
-        """
+    def __init__(self, max_aggregation_depth: int = 3) -> None:
+           """TODO: Add docstring for __init__"""
+     """
         Initialize the recursive proof aggregator.
 
         Args:
@@ -64,7 +66,8 @@ class RecursiveProofAggregator:
         self.metrics = MetricsCollector()
 
     def aggregate_proofs(self, proofs: List[Proof]) -> AggregatedProof:
-        """
+           """TODO: Add docstring for aggregate_proofs"""
+     """
         Aggregate multiple proofs into a single proof.
 
         This implements the recursive composition strategy from the project spec:
@@ -103,7 +106,8 @@ class RecursiveProofAggregator:
         return aggregated_proof
 
     def _build_aggregation_tree(self, proofs: List[Proof]) -> Dict[str, Any]:
-        """Build a tree structure for recursive aggregation."""
+           """TODO: Add docstring for _build_aggregation_tree"""
+     """Build a tree structure for recursive aggregation."""
         # For N proofs, create a balanced binary tree
         # This gives O(log N) verification depth
 
@@ -127,7 +131,8 @@ class RecursiveProofAggregator:
         }
 
     def _create_aggregated_proof(self, tree: Dict[str, Any]) -> AggregatedProof:
-        """Create aggregated proof from tree structure."""
+           """TODO: Add docstring for _create_aggregated_proof"""
+     """Create aggregated proof from tree structure."""
         if tree["type"] == "leaf":
             # Base case: aggregate 1-2 proofs directly
             return self._aggregate_leaf_proofs(tree["proofs"])
@@ -174,7 +179,8 @@ class RecursiveProofAggregator:
         )
 
     def _aggregate_leaf_proofs(self, proofs: List[Proof]) -> AggregatedProof:
-        """Aggregate 1-2 proofs at leaf level."""
+           """TODO: Add docstring for _aggregate_leaf_proofs"""
+     """Aggregate 1-2 proofs at leaf level."""
         if len(proofs) == 1:
             return self._wrap_single_proof(proofs[0])
 
@@ -207,7 +213,8 @@ class RecursiveProofAggregator:
         )
 
     def _wrap_single_proof(self, proof: Proof) -> AggregatedProof:
-        """Wrap a single proof as an aggregated proof."""
+           """TODO: Add docstring for _wrap_single_proof"""
+     """Wrap a single proof as an aggregated proof."""
         return AggregatedProof(
             num_proofs=1,
             aggregated_data=proof.proof_data,
@@ -216,7 +223,8 @@ class RecursiveProofAggregator:
         )
 
     def _mock_create_proof(self, circuit: Any) -> bytes:
-        """Mock proof creation for testing."""
+           """TODO: Add docstring for _mock_create_proof"""
+     """Mock proof creation for testing."""
         # In practice, would call gnark backend
         # For now, create deterministic mock proof
 
@@ -232,7 +240,8 @@ class RecursiveProofAggregator:
         return proof_hash + b"\x00" * (384 - len(proof_hash))
 
     def verify_aggregated_proof(self, proof: AggregatedProof) -> bool:
-        """
+           """TODO: Add docstring for verify_aggregated_proof"""
+     """
         Verify an aggregated proof.
 
         This has constant verification time regardless of how many
@@ -264,12 +273,14 @@ class RecursiveVerifierCircuit:
     can verify other proofs.
     """
 
-    def __init__(self):
-        self.cs = ConstraintSystem()
+    def __init__(self) -> None:
+            """TODO: Add docstring for __init__"""
+    self.cs = ConstraintSystem()
         self.setup_complete = False
 
-    def setup_circuit(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
-        """Setup the verifier circuit."""
+    def setup_circuit(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
+           """TODO: Add docstring for setup_circuit"""
+     """Setup the verifier circuit."""
         # Public inputs
         self.left_aggregate_var = self.cs.add_public_input("left_aggregate")
         self.right_aggregate_var = self.cs.add_public_input("right_aggregate")
@@ -286,8 +297,9 @@ class RecursiveVerifierCircuit:
 
         self.setup_complete = True
 
-    def generate_constraints(self):
-        """Generate constraints for proof verification."""
+    def generate_constraints(self) -> None:
+           """TODO: Add docstring for generate_constraints"""
+     """Generate constraints for proof verification."""
         if not self.setup_complete:
             raise RuntimeError("Circuit must be setup first")
 
@@ -316,12 +328,14 @@ class RecursiveVerifierCircuit:
 class SimpleAggregationCircuit:
     """Simple circuit for aggregating 2 proofs."""
 
-    def __init__(self):
-        self.cs = ConstraintSystem()
+    def __init__(self) -> None:
+            """TODO: Add docstring for __init__"""
+    self.cs = ConstraintSystem()
         self.setup_complete = False
 
-    def setup_circuit(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
-        """Setup the aggregation circuit."""
+    def setup_circuit(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
+           """TODO: Add docstring for setup_circuit"""
+     """Setup the aggregation circuit."""
         self.num_proofs_var = self.cs.add_public_input("num_proofs")
         self.public_hash_var = self.cs.add_public_input("public_hash")
 
@@ -330,8 +344,9 @@ class SimpleAggregationCircuit:
 
         self.setup_complete = True
 
-    def generate_constraints(self):
-        """Generate aggregation constraints."""
+    def generate_constraints(self) -> None:
+           """TODO: Add docstring for generate_constraints"""
+     """Generate aggregation constraints."""
         if not self.setup_complete:
             raise RuntimeError("Circuit must be setup first")
 
@@ -341,7 +356,8 @@ class SimpleAggregationCircuit:
 
 
 def benchmark_recursive_aggregation(max_proofs: int = 128) -> Dict[str, Any]:
-    """
+       """TODO: Add docstring for benchmark_recursive_aggregation"""
+     """
     Benchmark recursive proof aggregation performance.
 
     Tests aggregation time and verification time for varying numbers of proofs.
@@ -403,8 +419,9 @@ def benchmark_recursive_aggregation(max_proofs: int = 128) -> Dict[str, Any]:
     return results
 
 
-def plot_aggregation_benchmarks(results: Dict[str, Any]):
-    """Plot benchmark results."""
+def plot_aggregation_benchmarks(results: Dict[str, Any]) -> None:
+       """TODO: Add docstring for plot_aggregation_benchmarks"""
+     """Plot benchmark results."""
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12, 10))
 
     batch_sizes = results["batch_sizes"]
@@ -452,8 +469,9 @@ def plot_aggregation_benchmarks(results: Dict[str, Any]):
     print(f"\nBenchmark plot saved to benchmarks/zk/recursive_aggregation_{timestamp}.png")
 
 
-def main():
-    """Run recursive aggregation demonstration and benchmarks."""
+def main() -> None:
+       """TODO: Add docstring for main"""
+     """Run recursive aggregation demonstration and benchmarks."""
     print("=" * 60)
     print("GenomeVault Recursive Proof Aggregation")
     print("=" * 60)

@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 """Unit tests for basic ZK proof functionality."""
 
 import numpy as np
@@ -11,8 +13,9 @@ from genomevault.zk_proofs.verifier import ZKVerifier
 class TestZKBasicFunctionality:
     """Test basic ZK proof operations."""
 
-    def test_prs_proof_generation(self):
-        """Test generating a proof for PRS in range."""
+
+    def test_prs_proof_generation(self) -> None:
+    """Test generating a proof for PRS in range."""
         # Initialize components
         circuit = PRSProofCircuit()
         prover = ZKProver(circuit)
@@ -30,8 +33,9 @@ class TestZKBasicFunctionality:
         public_inputs = {"min": min_val, "max": max_val}
         assert verifier.verify(proof, public_inputs)
 
-    def test_invalid_prs_proof(self):
-        """Test that invalid PRS values fail verification."""
+
+    def test_invalid_prs_proof(self) -> None:
+    """Test that invalid PRS values fail verification."""
         circuit = PRSProofCircuit()
         prover = ZKProver(circuit)
         verifier = ZKVerifier(circuit)
@@ -45,8 +49,9 @@ class TestZKBasicFunctionality:
         with pytest.raises(ValueError):
             proof = prover.prove_prs_in_range(prs_score, min_val, max_val)
 
-    def test_proof_serialization(self):
-        """Test proof serialization and deserialization."""
+
+    def test_proof_serialization(self) -> None:
+    """Test proof serialization and deserialization."""
         circuit = PRSProofCircuit()
         prover = ZKProver(circuit)
 
@@ -61,8 +66,9 @@ class TestZKBasicFunctionality:
         deserialized = circuit.deserialize_proof(serialized)
         assert deserialized.is_valid()
 
-    def test_proof_size(self):
-        """Test that proof size is within expected bounds."""
+
+    def test_proof_size(self) -> None:
+    """Test that proof size is within expected bounds."""
         circuit = PRSProofCircuit()
         prover = ZKProver(circuit)
 
@@ -73,8 +79,9 @@ class TestZKBasicFunctionality:
         serialized = proof.serialize()
         assert 300 <= len(serialized) <= 500
 
-    def test_verification_time(self):
-        """Test that verification is fast."""
+
+    def test_verification_time(self) -> None:
+    """Test that verification is fast."""
         import time
 
         circuit = PRSProofCircuit()

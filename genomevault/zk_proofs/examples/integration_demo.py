@@ -4,6 +4,15 @@ Integration example for GenomeVault Zero-Knowledge Proof System.
 This example demonstrates the complete workflow for generating and
 verifying privacy-preserving proofs for genomic analyses.
 """
+from genomevault.zk_proofs import (
+    CircuitManager,
+    PostQuantumTransition,
+    Prover,
+    Verifier,
+    benchmark_pq_performance,
+)
+import logging
+from typing import Dict, List, Optional, Any, Union
 
 import hashlib
 import time
@@ -15,17 +24,10 @@ from genomevault.utils.logging import logger
 
 logger = get_logger(__name__)
 
-from genomevault.zk_proofs import (
-    CircuitManager,
-    PostQuantumTransition,
-    Prover,
-    Verifier,
-    benchmark_pq_performance,
-)
 
-
-def demonstrate_variant_presence():
-    """Demonstrate proving variant presence without revealing location."""
+def demonstrate_variant_presence() -> None:
+       """TODO: Add docstring for demonstrate_variant_presence"""
+     """Demonstrate proving variant presence without revealing location."""
     print("\n=== Variant Presence Proof ===")
 
     # Initialize components
@@ -69,8 +71,9 @@ def demonstrate_variant_presence():
     return proof, result
 
 
-def demonstrate_diabetes_risk_assessment():
-    """Demonstrate diabetes risk assessment with privacy."""
+def demonstrate_diabetes_risk_assessment() -> None:
+       """TODO: Add docstring for demonstrate_diabetes_risk_assessment"""
+     """Demonstrate diabetes risk assessment with privacy."""
     print("\n=== Diabetes Risk Assessment ===")
 
     # Initialize components
@@ -123,8 +126,9 @@ def demonstrate_diabetes_risk_assessment():
     return proof, result
 
 
-def demonstrate_polygenic_risk_score():
-    """Demonstrate PRS calculation with privacy."""
+def demonstrate_polygenic_risk_score() -> None:
+       """TODO: Add docstring for demonstrate_polygenic_risk_score"""
+     """Demonstrate PRS calculation with privacy."""
     print("\n=== Polygenic Risk Score Calculation ===")
 
     # Initialize components
@@ -175,8 +179,9 @@ def demonstrate_polygenic_risk_score():
     return proof, result
 
 
-def demonstrate_pharmacogenomics():
-    """Demonstrate pharmacogenomic analysis with privacy."""
+def demonstrate_pharmacogenomics() -> None:
+       """TODO: Add docstring for demonstrate_pharmacogenomics"""
+     """Demonstrate pharmacogenomic analysis with privacy."""
     print("\n=== Pharmacogenomic Analysis ===")
 
     # Initialize components
@@ -238,8 +243,9 @@ def demonstrate_pharmacogenomics():
     return proof, result
 
 
-def demonstrate_circuit_optimization():
-    """Demonstrate circuit selection and optimization."""
+def demonstrate_circuit_optimization() -> None:
+       """TODO: Add docstring for demonstrate_circuit_optimization"""
+     """Demonstrate circuit selection and optimization."""
     print("\n=== Circuit Optimization ===")
 
     # Initialize circuit manager
@@ -272,8 +278,9 @@ def demonstrate_circuit_optimization():
         print("  Verification time: {metadata.verification_time_ms}ms")
 
 
-def demonstrate_post_quantum_transition():
-    """Demonstrate post-quantum proof generation."""
+def demonstrate_post_quantum_transition() -> None:
+       """TODO: Add docstring for demonstrate_post_quantum_transition"""
+     """Demonstrate post-quantum proof generation."""
     print("\n=== Post-Quantum Transition ===")
 
     # Initialize transition manager
@@ -323,8 +330,9 @@ def demonstrate_post_quantum_transition():
         print("  Valid: {metrics['valid']}")
 
 
-def demonstrate_batch_operations():
-    """Demonstrate batch proof generation and verification."""
+def demonstrate_batch_operations() -> None:
+       """TODO: Add docstring for demonstrate_batch_operations"""
+     """Demonstrate batch proof generation and verification."""
     print("\n=== Batch Operations ===")
 
     # Initialize components
@@ -385,8 +393,9 @@ def demonstrate_batch_operations():
     print("\nBatch results: {valid_count}/{len(results)} valid")
 
 
-def main():
-    """Run all demonstrations."""
+def main() -> None:
+       """TODO: Add docstring for main"""
+     """Run all demonstrations."""
     print("=" * 60)
     print("GenomeVault Zero-Knowledge Proof System")
     print("Integration Examples")

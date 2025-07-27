@@ -1,21 +1,21 @@
 """Minimal test to ensure pytest works."""
 
 
-def test_basic_math():
+def test_basic_math() -> None:
     """Test basic math operations."""
     assert 1 + 1 == 2
     assert 2 * 3 == 6
     assert 10 / 2 == 5
 
 
-def test_basic_string():
+def test_basic_string() -> None:
     """Test basic string operations."""
     assert "hello" + " world" == "hello world"
     assert "python".upper() == "PYTHON"
     assert len("genomevault") == 11
 
 
-def test_basic_list():
+def test_basic_list() -> None:
     """Test basic list operations."""
     lst = [1, 2, 3, 4, 5]
     assert len(lst) == 5

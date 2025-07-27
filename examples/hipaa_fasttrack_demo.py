@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 """
 HIPAA Fast-Track Example
 
@@ -24,8 +26,9 @@ from genomevault.utils import get_logger
 logger = get_logger(__name__)
 
 
-async def demonstrate_hipaa_fasttrack():
-    """
+async def demonstrate_hipaa_fasttrack() -> None:
+       """TODO: Add docstring for demonstrate_hipaa_fasttrack"""
+     """
     Complete demonstration of HIPAA fast-track system.
 
     Shows:

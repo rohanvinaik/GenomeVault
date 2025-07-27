@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 """Property-based tests for ZK proof system using Hypothesis."""
 
 import numpy as np
@@ -19,8 +21,9 @@ class TestZKProperties:
         max_val=st.floats(min_value=1.0, max_value=10.0, allow_nan=False),
     )
     @settings(max_examples=100, deadline=None)
-    def test_completeness_property(self, prs_score, min_val, max_val):
-        """Test completeness: valid proofs always verify."""
+
+    def test_completeness_property(self, prs_score, min_val, max_val) -> None:
+    """Test completeness: valid proofs always verify."""
         if min_val >= max_val:
             return  # Skip invalid ranges
 
@@ -41,8 +44,9 @@ class TestZKProperties:
         max_val=st.floats(allow_nan=False),
     )
     @settings(max_examples=100, deadline=None)
-    def test_soundness_property(self, prs_score, min_val, max_val):
-        """Test soundness: invalid proofs should not verify."""
+
+    def test_soundness_property(self, prs_score, min_val, max_val) -> None:
+    """Test soundness: invalid proofs should not verify."""
         if min_val >= max_val:
             return  # Skip invalid ranges
 
@@ -63,8 +67,9 @@ class TestZKProperties:
         )
     )
     @settings(max_examples=50, deadline=None)
-    def test_zero_knowledge_property(self, prs_scores):
-        """Test zero-knowledge: proofs don't reveal private inputs."""
+
+    def test_zero_knowledge_property(self, prs_scores) -> None:
+    """Test zero-knowledge: proofs don't reveal private inputs."""
         circuit = PRSProofCircuit()
         prover = ZKProver(circuit)
 
@@ -84,8 +89,9 @@ class TestZKProperties:
 
     @given(data=st.data(), num_proofs=st.integers(min_value=10, max_value=100))
     @settings(max_examples=10, deadline=None)
-    def test_proof_indistinguishability(self, data, num_proofs):
-        """Test that proofs are computationally indistinguishable."""
+
+    def test_proof_indistinguishability(self, data, num_proofs) -> None:
+    """Test that proofs are computationally indistinguishable."""
         circuit = PRSProofCircuit()
         prover = ZKProver(circuit)
 
@@ -108,8 +114,9 @@ class TestZKProperties:
         # Entropy should be similar (within 10%)
         assert abs(avg_entropy1 - avg_entropy2) / max(avg_entropy1, avg_entropy2) < 0.1
 
+
     def _entropy(self, data: bytes) -> float:
-        """Calculate Shannon entropy of bytes."""
+    """Calculate Shannon entropy of bytes."""
         if not data:
             return 0
 
@@ -137,8 +144,9 @@ class TestZKProperties:
         )
     )
     @settings(max_examples=20, deadline=None)
-    def test_batch_verification_consistency(self, proof_params):
-        """Test that batch verification is consistent with individual verification."""
+
+    def test_batch_verification_consistency(self, proof_params) -> None:
+    """Test that batch verification is consistent with individual verification."""
         circuit = PRSProofCircuit()
         prover = ZKProver(circuit)
         verifier = ZKVerifier(circuit)
@@ -175,15 +183,17 @@ class TestZKCircuitProperties:
     """Test properties of the ZK circuits themselves."""
 
     @given(num_constraints=st.integers(min_value=100, max_value=10000))
-    def test_circuit_satisfiability(self, num_constraints):
-        """Test that circuits are satisfiable for valid inputs."""
+
+    def test_circuit_satisfiability(self, num_constraints) -> None:
+    """Test that circuits are satisfiable for valid inputs."""
         # This would test the actual circuit construction
         # in a real implementation
         pass
 
     @given(circuit_depth=st.integers(min_value=1, max_value=100))
-    def test_circuit_depth_bounds(self, circuit_depth):
-        """Test that circuit depth affects proof generation time predictably."""
+
+    def test_circuit_depth_bounds(self, circuit_depth) -> None:
+    """Test that circuit depth affects proof generation time predictably."""
         # This would measure actual circuit performance
         # in a real implementation
         pass

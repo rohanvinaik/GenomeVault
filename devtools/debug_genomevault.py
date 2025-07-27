@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 #!/usr/bin/env python3
 """
 Debug script for GenomeVault - identifies and helps fix common issues
@@ -10,13 +12,15 @@ from pathlib import Path
 
 
 class GenomeVaultDebugger:
-    def __init__(self):
-        self.root_dir = Path(__file__).parent
+    def __init__(self) -> None:
+            """TODO: Add docstring for __init__"""
+    self.root_dir = Path(__file__).parent
         self.issues = []
         self.fixed = []
 
-    def check_python_version(self):
-        """Check if Python version is compatible"""
+    def check_python_version(self) -> None:
+           """TODO: Add docstring for check_python_version"""
+     """Check if Python version is compatible"""
         print("🐍 Checking Python version...")
         version = sys.version_info
         if version.major == 3 and version.minor >= 8:
@@ -26,8 +30,9 @@ class GenomeVaultDebugger:
             self.issues.append("Python {version.major}.{version.minor} is too old. Need 3.8+")
             return False
 
-    def check_pydantic(self):
-        """Check Pydantic installation and version"""
+    def check_pydantic(self) -> None:
+           """TODO: Add docstring for check_pydantic"""
+     """Check Pydantic installation and version"""
         print("📦 Checking Pydantic...")
         try:
             import pydantic
@@ -48,8 +53,9 @@ class GenomeVaultDebugger:
             self.issues.append("Pydantic is not installed")
             return False
 
-    def fix_pydantic(self):
-        """Fix Pydantic issues"""
+    def fix_pydantic(self) -> None:
+           """TODO: Add docstring for fix_pydantic"""
+     """Fix Pydantic issues"""
         print("🔧 Fixing Pydantic issues...")
         try:
             subprocess.run(
@@ -73,8 +79,9 @@ class GenomeVaultDebugger:
             print("  ❌ Failed to fix Pydantic: {e}")
             return False
 
-    def check_imports(self):
-        """Check if all GenomeVault modules can be imported"""
+    def check_imports(self) -> None:
+           """TODO: Add docstring for check_imports"""
+     """Check if all GenomeVault modules can be imported"""
         print("📦 Checking GenomeVault imports...")
 
         modules_to_check = [
@@ -101,8 +108,9 @@ class GenomeVaultDebugger:
             return False
         return True
 
-    def check_requirements(self):
-        """Check if all requirements are installed"""
+    def check_requirements(self) -> None:
+           """TODO: Add docstring for check_requirements"""
+     """Check if all requirements are installed"""
         print("📦 Checking requirements...")
 
         try:
@@ -131,8 +139,9 @@ class GenomeVaultDebugger:
             self.issues.append("requirements.txt not found")
             return False
 
-    def run_tests(self):
-        """Run basic tests"""
+    def run_tests(self) -> None:
+           """TODO: Add docstring for run_tests"""
+     """Run basic tests"""
         print("🧪 Running tests...")
         try:
             result = subprocess.run(
@@ -152,8 +161,9 @@ class GenomeVaultDebugger:
             self.issues.append("Failed to run tests: {e}")
             return False
 
-    def run_diagnostics(self):
-        """Run all diagnostics"""
+    def run_diagnostics(self) -> None:
+           """TODO: Add docstring for run_diagnostics"""
+     """Run all diagnostics"""
         print("=" * 60)
         print("🔍 GenomeVault Diagnostic Tool")
         print("=" * 60)
@@ -204,7 +214,8 @@ class GenomeVaultDebugger:
         return len(self.issues) == 0
 
 
-def main():
+def main() -> None:
+        """TODO: Add docstring for main"""
     debugger = GenomeVaultDebugger()
     success = debugger.run_diagnostics()
     sys.exit(0 if success else 1)

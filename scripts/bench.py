@@ -3,6 +3,8 @@
 Performance benchmarking harness for GenomeVault.
 Supports multiple lanes: ZK, PIR, HDC.
 """
+import logging
+from typing import Dict, List, Optional, Any, Union
 
 import argparse
 import asyncio
@@ -24,19 +26,22 @@ from genomevault.utils.logging import logger, performance_logger
 class BenchmarkHarness:
     """Generic benchmarking harness for GenomeVault components."""
 
-    def __init__(self, lane: str, output_dir: Path):
-        self.lane = lane
+    def __init__(self, lane: str, output_dir: Path) -> None:
+            """TODO: Add docstring for __init__"""
+    self.lane = lane
         self.output_dir = Path(output_dir) / lane
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.results = []
 
-    def add_result(self, test_name: str, metrics: Dict):
-        """Add benchmark result."""
+    def add_result(self, test_name: str, metrics: Dict) -> None:
+           """TODO: Add docstring for add_result"""
+     """Add benchmark result."""
         result = {"test": test_name, "timestamp": datetime.now().isoformat(), "metrics": metrics}
         self.results.append(result)
 
-    def save_results(self):
-        """Save results to JSON file."""
+    def save_results(self) -> None:
+           """TODO: Add docstring for save_results"""
+     """Save results to JSON file."""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         output_file = self.output_dir / f"{timestamp}.json"
 
@@ -56,11 +61,13 @@ class BenchmarkHarness:
 class PIRBenchmark:
     """PIR-specific benchmarks."""
 
-    def __init__(self, harness: BenchmarkHarness):
-        self.harness = harness
+    def __init__(self, harness: BenchmarkHarness) -> None:
+            """TODO: Add docstring for __init__"""
+    self.harness = harness
 
-    async def run_all(self):
-        """Run all PIR benchmarks."""
+    async def run_all(self) -> None:
+           """TODO: Add docstring for run_all"""
+     """Run all PIR benchmarks."""
         logger.info("Starting PIR benchmarks...")
 
         # Test different configurations
@@ -70,8 +77,9 @@ class PIRBenchmark:
         await self.benchmark_scaling()
         await self.benchmark_batch_queries()
 
-    async def benchmark_query_generation(self):
-        """Benchmark PIR query generation."""
+    async def benchmark_query_generation(self) -> None:
+           """TODO: Add docstring for benchmark_query_generation"""
+     """Benchmark PIR query generation."""
         logger.info("Benchmarking query generation...")
 
         # Test different database sizes
@@ -101,8 +109,9 @@ class PIRBenchmark:
 
         self.harness.add_result("query_generation", results)
 
-    async def benchmark_server_response(self):
-        """Benchmark server response computation."""
+    async def benchmark_server_response(self) -> None:
+           """TODO: Add docstring for benchmark_server_response"""
+     """Benchmark server response computation."""
         logger.info("Benchmarking server response...")
 
         # Simulate server computation
@@ -136,8 +145,9 @@ class PIRBenchmark:
 
         self.harness.add_result("server_response", results)
 
-    async def benchmark_reconstruction(self):
-        """Benchmark data reconstruction from responses."""
+    async def benchmark_reconstruction(self) -> None:
+           """TODO: Add docstring for benchmark_reconstruction"""
+     """Benchmark data reconstruction from responses."""
         logger.info("Benchmarking reconstruction...")
 
         response_counts = [2, 3, 5]
@@ -165,8 +175,9 @@ class PIRBenchmark:
 
         self.harness.add_result("reconstruction", results)
 
-    async def benchmark_scaling(self):
-        """Benchmark PIR scaling with database size."""
+    async def benchmark_scaling(self) -> None:
+           """TODO: Add docstring for benchmark_scaling"""
+     """Benchmark PIR scaling with database size."""
         logger.info("Benchmarking scaling...")
 
         # Test scaling characteristics
@@ -191,8 +202,9 @@ class PIRBenchmark:
 
         self.harness.add_result("scaling", results)
 
-    async def benchmark_batch_queries(self):
-        """Benchmark batch query performance."""
+    async def benchmark_batch_queries(self) -> None:
+           """TODO: Add docstring for benchmark_batch_queries"""
+     """Benchmark batch query performance."""
         logger.info("Benchmarking batch queries...")
 
         batch_sizes = [1, 10, 50, 100]
@@ -218,11 +230,13 @@ class PIRBenchmark:
 class ZKBenchmark:
     """ZK proof benchmarks."""
 
-    def __init__(self, harness: BenchmarkHarness):
-        self.harness = harness
+    def __init__(self, harness: BenchmarkHarness) -> None:
+            """TODO: Add docstring for __init__"""
+    self.harness = harness
 
-    async def run_all(self):
-        """Run all ZK benchmarks."""
+    async def run_all(self) -> None:
+           """TODO: Add docstring for run_all"""
+     """Run all ZK benchmarks."""
         logger.info("Starting ZK benchmarks...")
 
         # Placeholder for ZK benchmarks
@@ -234,11 +248,13 @@ class ZKBenchmark:
 class HDCBenchmark:
     """Hyperdimensional computing benchmarks."""
 
-    def __init__(self, harness: BenchmarkHarness):
-        self.harness = harness
+    def __init__(self, harness: BenchmarkHarness) -> None:
+            """TODO: Add docstring for __init__"""
+    self.harness = harness
 
-    async def run_all(self):
-        """Run all HDC benchmarks."""
+    async def run_all(self) -> None:
+           """TODO: Add docstring for run_all"""
+     """Run all HDC benchmarks."""
         logger.info("Starting HDC benchmarks...")
 
         # Run the dedicated HDC benchmark script
@@ -284,7 +300,8 @@ class HDCBenchmark:
             await self._run_basic_hdc_benchmarks()
 
     def _load_latest_hdc_results(self) -> Optional[Dict]:
-        """Load the most recent HDC benchmark results."""
+           """TODO: Add docstring for _load_latest_hdc_results"""
+     """Load the most recent HDC benchmark results."""
         try:
             # Find the most recent JSON file
             json_files = list(self.harness.output_dir.glob("*.json"))
@@ -310,8 +327,9 @@ class HDCBenchmark:
             logger.error(f"Failed to load HDC results: {e}")
             return None
 
-    async def _run_basic_hdc_benchmarks(self):
-        """Run basic HDC benchmarks as fallback."""
+    async def _run_basic_hdc_benchmarks(self) -> None:
+           """TODO: Add docstring for _run_basic_hdc_benchmarks"""
+     """Run basic HDC benchmarks as fallback."""
         logger.info("Running basic HDC benchmarks...")
 
         try:
@@ -356,8 +374,9 @@ class HDCBenchmark:
             self.harness.add_result("hdc_basic", results)
 
 
-async def run_benchmarks(lane: str, output_dir: str):
-    """Run benchmarks for specified lane."""
+async def run_benchmarks(lane: str, output_dir: str) -> None:
+       """TODO: Add docstring for run_benchmarks"""
+     """Run benchmarks for specified lane."""
     harness = BenchmarkHarness(lane, output_dir)
 
     if lane == "pir":
@@ -375,8 +394,9 @@ async def run_benchmarks(lane: str, output_dir: str):
     return output_file
 
 
-def main():
-    """Main entry point."""
+def main() -> None:
+       """TODO: Add docstring for main"""
+     """Main entry point."""
     parser = argparse.ArgumentParser(description="GenomeVault benchmark harness")
     parser.add_argument(
         "--lane", choices=["zk", "pir", "hdc"], required=True, help="Benchmark lane to run"

@@ -2,6 +2,9 @@
 GenomeVault 3.0 Setup Configuration
 """
 
+import numpy as np
+import json
+
 from pathlib import Path
 
 from setuptools import find_packages, setup

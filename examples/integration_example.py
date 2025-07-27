@@ -1,9 +1,12 @@
+from typing import Any, Dict
+
 """
 Integration example: Local Processing + Hypervector Encoding
 
 This example demonstrates the complete flow from raw genomic data
 to privacy-preserving hypervector representation.
 """
+import logging
 
 from pathlib import Path
 
@@ -24,8 +27,9 @@ from genomevault.utils.logging import get_logger, setup_logging
 logger = get_logger(__name__)
 
 
-def process_and_encode_genome(vcf_path: str):
-    """
+def process_and_encode_genome(vcf_path: str) -> None:
+       """TODO: Add docstring for process_and_encode_genome"""
+     """
     Complete pipeline from VCF to privacy-preserving hypervector
     """
     print("=== GenomeVault Integration Example ===\n")
@@ -68,8 +72,9 @@ def process_and_encode_genome(vcf_path: str):
     return genomic_hv, compressed, genomic_data
 
 
-def demonstrate_variant_encoding(genomic_data: dict):
-    """
+def demonstrate_variant_encoding(genomic_data: dict) -> None:
+       """TODO: Add docstring for demonstrate_variant_encoding"""
+     """
     Show holographic encoding of specific variants
     """
     print("\nHolographic Variant Encoding:")
@@ -99,8 +104,9 @@ def demonstrate_variant_encoding(genomic_data: dict):
     return variant_hv if genomic_data["variants"]["snps"] else None
 
 
-def demonstrate_privacy_preservation(genomic_hv: torch.Tensor):
-    """
+def demonstrate_privacy_preservation(genomic_hv: torch.Tensor) -> None:
+       """TODO: Add docstring for demonstrate_privacy_preservation"""
+     """
     Show privacy properties of hypervectors
     """
     print("\nPrivacy Demonstration:")
@@ -140,8 +146,9 @@ def demonstrate_privacy_preservation(genomic_hv: torch.Tensor):
     )
 
 
-def simulate_multi_omics_integration():
-    """
+def simulate_multi_omics_integration() -> None:
+       """TODO: Add docstring for simulate_multi_omics_integration"""
+     """
     Demonstrate multi-omics integration with privacy
     """
     print("\nMulti-Omics Integration:")
@@ -177,8 +184,9 @@ def simulate_multi_omics_integration():
     return combined
 
 
-def main():
-    """
+def main() -> None:
+       """TODO: Add docstring for main"""
+     """
     Run the complete integration example
     """
     setup_logging(level="INFO")
