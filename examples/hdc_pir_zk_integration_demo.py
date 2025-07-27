@@ -3,6 +3,10 @@ Complete HDC-PIR Integration with Real ZK Proofs
 Demonstrates the full pipeline with actual zero-knowledge proof generation
 """
 
+
+# Note: This example uses print() statements for demonstration purposes.
+# In production code, use proper logging instead.
+
 import asyncio
 import json
 import time

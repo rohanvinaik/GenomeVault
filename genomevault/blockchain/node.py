@@ -13,6 +13,10 @@ from typing import Dict, List, Tuple
 
 from genomevault.core.constants import NodeClassWeight as NodeClass
 from genomevault.utils.logging import audit_logger, get_logger, logger, performance_logger
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 logger = get_logger(__name__)
 
@@ -24,9 +28,9 @@ class Block:
     height: int
     timestamp: float
     previous_hash: str
-    transactions: List[Dict]
+    transactions: list[dict]
     proposer: str
-    signatures: List[Dict]
+    signatures: list[dict]
     state_root: str
 
     def calculate_hash(self) -> str:
@@ -43,7 +47,7 @@ class Block:
         block_str = json.dumps(block_data, sort_keys=True)
         return hashlib.sha256(block_str.encode()).hexdigest()
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         """Convert block to dictionary."""
         return {
             "height": self.height,
@@ -128,7 +132,7 @@ class BlockchainNode:
         self.mempool = []
 
         # Network peers
-        self.peers: Dict[str, NodeInfo] = {}
+        self.peers: dict[str, NodeInfo] = {}
 
         # Stake and credits
         self.stake_amount = 0
@@ -215,7 +219,7 @@ class BlockchainNode:
             extra={"privacy_safe": True},
         )
 
-    def calculate_network_voting_power(self) -> Tuple[int, int]:
+    def calculate_network_voting_power(self) -> tuple[int, int]:
         """
         Calculate total network voting power.
 
@@ -288,7 +292,7 @@ class BlockchainNode:
         state_str = json.dumps(self.state, sort_keys=True)
         return hashlib.sha256(state_str.encode()).hexdigest()
 
-    async def vote_on_block(self, block: Block, vote_type: str) -> Dict:
+    async def vote_on_block(self, block: Block, vote_type: str) -> dict:
         """
         Vote on proposed block.
 
@@ -345,7 +349,7 @@ class BlockchainNode:
 
         return True
 
-    def _validate_transaction(self, tx: Dict) -> bool:
+    def _validate_transaction(self, tx: dict) -> bool:
         """Validate transaction."""
         # Transaction validation logic
         required_fields = ["type", "from", "data", "signature"]
@@ -356,7 +360,7 @@ class BlockchainNode:
         vote_data = "{self.node_id}:{block.calculate_hash()}:{vote_type}"
         return hashlib.sha256(vote_data.encode()).hexdigest()
 
-    def process_votes(self, votes: List[Dict], required_power: int) -> bool:
+    def process_votes(self, votes: list[dict], required_power: int) -> bool:
         """
         Process votes and check if threshold reached.
 
@@ -376,7 +380,7 @@ class BlockchainNode:
 
         return total_power >= required_power
 
-    def _verify_vote_signature(self, vote: Dict) -> bool:
+    def _verify_vote_signature(self, vote: dict) -> bool:
         """Verify vote signature (placeholder)."""
         # In production, would verify actual signature
         return True
@@ -418,7 +422,7 @@ class BlockchainNode:
 
         logger.info(f"Committed block at height {block.height}", extra={"privacy_safe": True})
 
-    async def _execute_transaction(self, tx: Dict):
+    async def _execute_transaction(self, tx: dict):
         """Execute transaction and update state."""
         _ = tx.get("type")
 
@@ -429,7 +433,7 @@ class BlockchainNode:
         elif tx_type == "stake_update":
             await self._update_stake(tx["node"], tx["amount"])
 
-    async def _record_proof(self, proof_data: Dict):
+    async def _record_proof(self, proof_data: dict):
         """Record proof in state."""
         proof_key = proof_data["proof_key"]
         self.state["proof:{proof_key}"] = proof_data
@@ -465,7 +469,7 @@ class BlockchainNode:
                 extra={"privacy_safe": True},
             )
 
-    async def handle_audit_challenge(self, challenger: str, target: str, epoch: int) -> Dict:
+    async def handle_audit_challenge(self, challenger: str, target: str, epoch: int) -> dict:
         """
         Handle audit challenge.
 
@@ -505,12 +509,12 @@ class BlockchainNode:
 
         return result
 
-    async def _get_audit_data(self, node_id: str, epoch: int) -> Dict:
+    async def _get_audit_data(self, node_id: str, epoch: int) -> dict:
         """Get audit data for node."""
         # In production, would retrieve actual audit data
         return {"node_id": node_id, "epoch": epoch, "proofs": [], "uptime": 0.99}
 
-    async def _verify_audit_data(self, audit_data: Dict) -> bool:
+    async def _verify_audit_data(self, audit_data: dict) -> bool:
         """Verify audit data."""
         # Verify uptime, proof validity, etc.
         return audit_data.get("uptime", 0) > 0.95
@@ -547,7 +551,7 @@ class BlockchainNode:
             last_seen=time.time(),
         )
 
-    def get_chain_info(self) -> Dict:
+    def get_chain_info(self) -> dict:
         """Get blockchain information."""
         return {
             "height": self.current_height,
@@ -560,7 +564,7 @@ class BlockchainNode:
             "peers": len(self.peers),
         }
 
-    def submit_transaction(self, tx: Dict) -> str:
+    def submit_transaction(self, tx: dict) -> str:
         """
         Submit transaction to mempool.
 
@@ -593,8 +597,8 @@ if __name__ == "__main__":
         node_id="gp_clinic_001", node_class=NodeClass.LIGHT, is_trusted_signatory=False
     )
 
-    print("Light Node Initial Voting Power: {light_ts_node.voting_power}")
-    print("Light Node Block Rewards: {light_ts_node._calculate_block_rewards()}")
+    logger.info("Light Node Initial Voting Power: {light_ts_node.voting_power}")
+    logger.info("Light Node Block Rewards: {light_ts_node._calculate_block_rewards()}")
 
     # Verify HIPAA credentials
     asyncio.run(
@@ -606,8 +610,8 @@ if __name__ == "__main__":
         )
     )
 
-    print("Light TS Node Voting Power: {light_ts_node.voting_power}")
-    print("Light TS Node Block Rewards: {light_ts_node._calculate_block_rewards()}")
+    logger.info("Light TS Node Voting Power: {light_ts_node.voting_power}")
+    logger.info("Light TS Node Block Rewards: {light_ts_node._calculate_block_rewards()}")
 
     # Example 2: Full node without TS
     _ = BlockchainNode(
@@ -616,8 +620,8 @@ if __name__ == "__main__":
         is_trusted_signatory=False,
     )
 
-    print("\nFull Node Voting Power: {full_node.voting_power}")
-    print("Full Node Block Rewards: {full_node._calculate_block_rewards()}")
+    logger.info("\nFull Node Voting Power: {full_node.voting_power}")
+    logger.info("Full Node Block Rewards: {full_node._calculate_block_rewards()}")
 
     # Example 3: Archive node
     _ = BlockchainNode(
@@ -626,15 +630,15 @@ if __name__ == "__main__":
         is_trusted_signatory=False,
     )
 
-    print("\nArchive Node Voting Power: {archive_node.voting_power}")
-    print("Archive Node Block Rewards: {archive_node._calculate_block_rewards()}")
+    logger.info("\nArchive Node Voting Power: {archive_node.voting_power}")
+    logger.info("Archive Node Block Rewards: {archive_node._calculate_block_rewards()}")
 
     # Add peers
     light_ts_node.add_peer(full_node.get_node_info())
     light_ts_node.add_peer(archive_node.get_node_info())
 
     # Check BFT safety
-    print("\nBFT Safety Check: {light_ts_node.check_bft_safety()}")
+    logger.info("\nBFT Safety Check: {light_ts_node.check_bft_safety()}")
 
     # Submit transaction
     _ = light_ts_node.submit_transaction(
@@ -650,15 +654,15 @@ if __name__ == "__main__":
         }
     )
 
-    print("\nSubmitted transaction: {tx_hash[:16]}...")
+    logger.info("\nSubmitted transaction: {tx_hash[:16]}...")
 
     # Get chain info
-    print("\nChain Info: {json.dumps(light_ts_node.get_chain_info(), indent=2)}")
+    logger.info("\nChain Info: {json.dumps(light_ts_node.get_chain_info(), indent=2)}")
 
     # Calculate network statistics
-    print("\n=== Network Statistics ===")
-    print("Light TS (GP clinic): w=11, credits/block=3")
-    print("Full non-TS (University): w=4, credits/block=4")
-    print("Archive non-TS (Research): w=8, credits/block=8")
-    print("\nTotal Network Voting Power: {11 + 4 + 8} = 23")
-    print("Honest Power Needed for BFT: >11")
+    logger.info("\n=== Network Statistics ===")
+    logger.info("Light TS (GP clinic): w=11, credits/block=3")
+    logger.info("Full non-TS (University): w=4, credits/block=4")
+    logger.info("Archive non-TS (Research): w=8, credits/block=8")
+    logger.info("\nTotal Network Voting Power: {11 + 4 + 8} = 23")
+    logger.info("Honest Power Needed for BFT: >11")

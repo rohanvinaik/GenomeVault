@@ -35,13 +35,14 @@ def training_proof_cli():
 @click.option("--snapshot-dir", "-s", required=True, help="Directory containing model snapshots")
 @click.option("--output", "-o", help="Output file for verification report")
 @click.option("--verbose", "-v", is_flag=True, help="Verbose output")
-def verify_proof(proof_file: str, snapshot_dir: str, output: Optional[str], verbose: bool):
+# TODO: Refactor this function to reduce complexity
+def verify_proof(proof_file: str, snapshot_dir: str, output: str | None, verbose: bool):
     """Verify a training proof against model snapshots"""
 
     click.echo("🔍 Verifying training proof...")
 
     # Load proof
-    with open(proof_file, "r") as f:
+    with open(proof_file) as f:
         proof_data = json.load(f)
 
     # Load snapshots
@@ -57,7 +58,7 @@ def verify_proof(proof_file: str, snapshot_dir: str, output: Optional[str], verb
     # Verify snapshot chain
     snapshots = []
     for snap_file in snapshot_files:
-        with open(snap_file, "r") as f:
+        with open(snap_file) as f:
             snapshots.append(json.load(f))
 
     # Basic verification
@@ -209,7 +210,7 @@ def analyze_drift(snapshot_dir: str, output_dir: str, threshold: float):
             hypervector = np.load(hypervector_file)
             hypervectors.append(hypervector)
 
-            with open(metadata_file, "r") as f:
+            with open(metadata_file) as f:
                 metadata = json.load(f)
                 labels.append(f"Epoch {metadata['epoch']}")
 

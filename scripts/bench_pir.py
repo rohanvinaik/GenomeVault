@@ -39,7 +39,7 @@ class PIRBenchmark:
             "benchmarks": {},
         }
 
-    def _get_system_info(self) -> Dict[str, Any]:
+    def _get_system_info(self) -> dict[str, Any]:
         """Get system information."""
         return {
             "cpu_count": psutil.cpu_count(),
@@ -50,7 +50,7 @@ class PIRBenchmark:
         }
 
     async def benchmark_query_generation(
-        self, database_sizes: List[int], num_iterations: int = 100
+        self, database_sizes: list[int], num_iterations: int = 100
     ):
         """Benchmark query vector generation."""
         print("\n=== Query Generation Benchmark ===")
@@ -92,7 +92,7 @@ class PIRBenchmark:
         self.results["benchmarks"]["query_generation"] = results
         return results
 
-    async def benchmark_server_response(self, database_sizes: List[int], num_iterations: int = 10):
+    async def benchmark_server_response(self, database_sizes: list[int], num_iterations: int = 10):
         """Benchmark server response computation."""
         print("\n=== Server Response Benchmark ===")
         results = []
@@ -150,7 +150,7 @@ class PIRBenchmark:
         self.results["benchmarks"]["server_response"] = results
         return results
 
-    async def benchmark_end_to_end(self, database_sizes: List[int], num_servers: List[int]):
+    async def benchmark_end_to_end(self, database_sizes: list[int], num_servers: list[int]):
         """Benchmark end-to-end PIR retrieval."""
         print("\n=== End-to-End PIR Benchmark ===")
         results = []
@@ -215,7 +215,7 @@ class PIRBenchmark:
         self.results["benchmarks"]["end_to_end"] = results
         return results
 
-    async def benchmark_batch_pir(self, database_size: int, batch_sizes: List[int]):
+    async def benchmark_batch_pir(self, database_size: int, batch_sizes: list[int]):
         """Benchmark batch PIR operations."""
         print("\n=== Batch PIR Benchmark ===")
         results = []
@@ -269,7 +269,7 @@ class PIRBenchmark:
         self.results["benchmarks"]["batch_pir"] = results
         return results
 
-    async def benchmark_enhanced_server(self, database_size: int, cache_sizes: List[int]):
+    async def benchmark_enhanced_server(self, database_size: int, cache_sizes: list[int]):
         """Benchmark enhanced PIR server with caching."""
         print("\n=== Enhanced Server Benchmark ===")
         results = []
@@ -354,7 +354,7 @@ class PIRBenchmark:
         self.results["benchmarks"]["enhanced_server"] = results
         return results
 
-    async def benchmark_network_latency(self, num_shards: List[int], rtt_ms: float = 70):
+    async def benchmark_network_latency(self, num_shards: list[int], rtt_ms: float = 70):
         """Benchmark network latency impact."""
         print("\n=== Network Latency Benchmark ===")
         results = []

@@ -12,6 +12,10 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 
 from genomevault.utils.logging import get_logger
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 logger = get_logger(__name__)
 
@@ -21,10 +25,10 @@ class PIRQuery:
     """Information-theoretic PIR query."""
 
     query_id: str
-    server_queries: List[np.ndarray]  # One query per server
+    server_queries: list[np.ndarray]  # One query per server
     index: int  # Target index (private)
     num_servers: int
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
 
     def get_server_query(self, server_id: int) -> np.ndarray:
         """Get query for specific server."""
@@ -38,9 +42,9 @@ class PIRResponse:
     """Response from PIR servers."""
 
     response_id: str
-    server_responses: List[np.ndarray]
-    reconstructed_data: Optional[bytes] = None
-    metadata: Optional[Dict[str, Any]] = None
+    server_responses: list[np.ndarray]
+    reconstructed_data: bytes | None = None
+    metadata: dict[str, Any] | None = None
 
     @property
     def is_complete(self) -> bool:
@@ -119,7 +123,7 @@ class InformationTheoreticPIR:
 
         return query
 
-    def _split_vector_randomly(self, vector: np.ndarray) -> List[np.ndarray]:
+    def _split_vector_randomly(self, vector: np.ndarray) -> list[np.ndarray]:
         """
         Split vector into random shares that sum to original.
 
@@ -152,7 +156,7 @@ class InformationTheoreticPIR:
         return shares
 
     def process_server_query(
-        self, server_id: int, query: PIRQuery, database: List[bytes]
+        self, server_id: int, query: PIRQuery, database: list[bytes]
     ) -> np.ndarray:
         """
         Process PIR query on server side.
@@ -184,7 +188,7 @@ class InformationTheoreticPIR:
 
         return response
 
-    def reconstruct_response(self, query: PIRQuery, server_responses: List[np.ndarray]) -> bytes:
+    def reconstruct_response(self, query: PIRQuery, server_responses: list[np.ndarray]) -> bytes:
         """
         Reconstruct data from server responses.
 
@@ -217,8 +221,8 @@ class InformationTheoreticPIR:
         return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[:16]
 
     def create_multi_query(
-        self, indices: List[int], database_size: int, block_size: int = 1024
-    ) -> List[PIRQuery]:
+        self, indices: list[int], database_size: int, block_size: int = 1024
+    ) -> list[PIRQuery]:
         """
         Create multiple PIR queries for batch retrieval.
 
@@ -294,7 +298,7 @@ class RobustITPIR(InformationTheoreticPIR):
             )
 
     def process_responses_with_verification(
-        self, query: PIRQuery, server_responses: List[Tuple[np.ndarray, bytes]]
+        self, query: PIRQuery, server_responses: list[tuple[np.ndarray, bytes]]
     ) -> bytes:
         """
         Process responses with Byzantine fault detection.
@@ -330,7 +334,7 @@ class RobustITPIR(InformationTheoreticPIR):
 
         return proof == expected_hash
 
-    def _reed_solomon_decode(self, responses: List[np.ndarray]) -> bytes:
+    def _reed_solomon_decode(self, responses: list[np.ndarray]) -> bytes:
         """Decode using Reed-Solomon error correction."""
         # Simplified - in practice use proper RS decoding
         # For now, use majority voting
@@ -368,18 +372,18 @@ if __name__ == "__main__":
     # Client wants to retrieve index 42 privately
     target_index = 42
 
-    print(f"IT-PIR Example: Retrieving index {target_index}")
-    print(f"Database size: {database_size} blocks")
-    print(f"Servers: {pir.num_servers}, Threshold: {pir.threshold}")
-    print("=" * 60)
+    logger.info(f"IT-PIR Example: Retrieving index {target_index}")
+    logger.info(f"Database size: {database_size} blocks")
+    logger.info(f"Servers: {pir.num_servers}, Threshold: {pir.threshold}")
+    logger.info("=" * 60)
 
     # Generate PIR query
     start_time = time.time()
     query = pir.generate_query(target_index, database_size, block_size)
     query_time = time.time() - start_time
 
-    print(f"\nQuery generation time: {query_time*1000:.2f} ms")
-    print(f"Query size per server: {query.server_queries[0].nbytes / 1024:.2f} KB")
+    logger.info(f"\nQuery generation time: {query_time*1000:.2f} ms")
+    logger.info(f"Query size per server: {query.server_queries[0].nbytes / 1024:.2f} KB")
 
     # Each server processes its query
     server_responses = []
@@ -391,39 +395,39 @@ if __name__ == "__main__":
 
         server_responses.append(response)
 
-        print(f"\nServer {server_id} response time: {response_time*1000:.2f} ms")
-        print(f"Response size: {response.nbytes / 1024:.2f} KB")
+        logger.info(f"\nServer {server_id} response time: {response_time*1000:.2f} ms")
+        logger.info(f"Response size: {response.nbytes / 1024:.2f} KB")
 
     # Client reconstructs the data
     start_time = time.time()
     reconstructed = pir.reconstruct_response(query, server_responses)
     reconstruction_time = time.time() - start_time
 
-    print(f"\nReconstruction time: {reconstruction_time*1000:.2f} ms")
+    logger.info(f"\nReconstruction time: {reconstruction_time*1000:.2f} ms")
 
     # Verify correctness
     expected = databases[0][target_index]  # All servers have same data
     actual = reconstructed[: len(expected)]
 
-    print(f"\nRetrieved data matches: {actual == expected}")
+    logger.info(f"\nRetrieved data matches: {actual == expected}")
     print(f"Retrieved: {actual[:50]}...")  # First 50 bytes
 
     # Test batch queries
-    print("\n\nBatch Query Example:")
-    print("=" * 60)
+    logger.info("\n\nBatch Query Example:")
+    logger.info("=" * 60)
 
     batch_indices = [10, 42, 100, 200, 500]
     batch_queries = pir.create_multi_query(batch_indices, database_size, block_size)
 
-    print(f"Created {len(batch_queries)} queries for {len(batch_indices)} indices")
+    logger.info(f"Created {len(batch_queries)} queries for {len(batch_indices)} indices")
 
     # Test robust PIR
-    print("\n\nRobust IT-PIR Example (Byzantine tolerance):")
-    print("=" * 60)
+    logger.info("\n\nRobust IT-PIR Example (Byzantine tolerance):")
+    logger.info("=" * 60)
 
     robust_pir = RobustITPIR(num_servers=5, threshold=2, byzantine_threshold=1)
 
-    print(f"Servers: {robust_pir.num_servers}")
-    print(f"Privacy threshold: {robust_pir.threshold}")
-    print(f"Byzantine threshold: {robust_pir.byzantine_threshold}")
-    print("Can tolerate 1 malicious server while maintaining privacy")
+    logger.info(f"Servers: {robust_pir.num_servers}")
+    logger.info(f"Privacy threshold: {robust_pir.threshold}")
+    logger.info(f"Byzantine threshold: {robust_pir.byzantine_threshold}")
+    logger.info("Can tolerate 1 malicious server while maintaining privacy")

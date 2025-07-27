@@ -29,7 +29,7 @@ class CIBenchmarkRunner:
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.results = []
 
-    async def run_all_benchmarks(self) -> Dict[str, float]:
+    async def run_all_benchmarks(self) -> dict[str, float]:
         """Run all benchmarks and collect timing data."""
         timing_data = {}
 
@@ -78,7 +78,7 @@ class CIBenchmarkRunner:
             logger.info(f"Encode benchmark: {avg_ms:.2f} ms average")
             return avg_ms
 
-        except Exception as e:
+        except ImportError as e:
             logger.error(f"Encode benchmark failed: {e}")
             return -1.0
 
@@ -115,7 +115,14 @@ class CIBenchmarkRunner:
             logger.info(f"PIR benchmark: {avg_ms:.2f} ms average")
             return avg_ms
 
-        except Exception as e:
+        except (
+            RequestException,
+            TypeError,
+            ConnectionError,
+            TimeoutError,
+            KeyError,
+            ValueError,
+        ) as e:
             logger.error(f"PIR benchmark failed: {e}")
             return -1.0
 
@@ -150,7 +157,7 @@ class CIBenchmarkRunner:
             logger.error(f"Proof benchmark failed: {e}")
             return -1.0
 
-    def save_csv(self, timing_data: Dict[str, float], filename: str = "benchmark_results.csv"):
+    def save_csv(self, timing_data: dict[str, float], filename: str = "benchmark_results.csv"):
         """Save timing data to CSV file for Grafana."""
         csv_path = self.output_dir / filename
 
@@ -173,7 +180,7 @@ class CIBenchmarkRunner:
         logger.info(f"CSV results saved to {csv_path}")
         return csv_path
 
-    def save_json(self, timing_data: Dict[str, float], filename: str = "benchmark_results.json"):
+    def save_json(self, timing_data: dict[str, float], filename: str = "benchmark_results.json"):
         """Save timing data to JSON file for detailed analysis."""
         json_path = self.output_dir / filename
 
@@ -190,7 +197,7 @@ class CIBenchmarkRunner:
 
         # Load existing data if file exists
         if json_path.exists():
-            with open(json_path, "r") as f:
+            with open(json_path) as f:
                 existing_data = json.load(f)
                 if "history" not in existing_data:
                     existing_data = {"history": [existing_data]}

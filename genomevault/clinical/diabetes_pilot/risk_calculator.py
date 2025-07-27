@@ -19,6 +19,10 @@ import torch
 from ...core.constants import GLUCOSE_THRESHOLD_MG_DL, HBA1C_THRESHOLD_PERCENT
 from ...utils import get_config, get_logger
 from ...zk_proofs.prover import Prover
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 logger = get_logger(__name__)
 config = get_config()
@@ -29,8 +33,8 @@ class GeneticRiskProfile:
     """Genetic risk profile for diabetes"""
 
     prs_score: float  # Polygenic risk score (0-1)
-    risk_variants: List[Dict[str, Any]]
-    confidence_interval: Tuple[float, float]
+    risk_variants: list[dict[str, Any]]
+    confidence_interval: tuple[float, float]
     ancestry_adjusted: bool
     calculation_date: datetime
     dp_noise_added: float  # Differential privacy noise
@@ -52,7 +56,7 @@ class GlucoseReading:
     value: float  # mg/dL
     measurement_type: str  # "fasting", "random", "ogtt"
     timestamp: datetime
-    device_id: Optional[str] = None
+    device_id: str | None = None
 
     def is_diabetic_range(self) -> bool:
         """Check if reading is in diabetic range"""
@@ -70,10 +74,10 @@ class DiabetesRiskAlert:
     """Privacy-preserving diabetes risk alert"""
 
     alert_triggered: bool
-    proof: Optional[bytes] = None
-    proof_id: Optional[str] = None
-    timestamp: Optional[datetime] = None
-    metadata: Optional[Dict[str, Any]] = None
+    proof: bytes | None = None
+    proof_id: str | None = None
+    timestamp: datetime | None = None
+    metadata: dict[str, Any] | None = None
 
 
 class DiabetesRiskCalculator:
@@ -103,7 +107,7 @@ class DiabetesRiskCalculator:
         logger.info("Diabetes risk calculator initialized")
 
     def calculate_genetic_risk(
-        self, variants: List[Dict[str, Any]], add_dp_noise: bool = True
+        self, variants: list[dict[str, Any]], add_dp_noise: bool = True
     ) -> GeneticRiskProfile:
         """
         Calculate polygenic risk score for diabetes.
@@ -182,7 +186,7 @@ class DiabetesRiskCalculator:
         return profile
 
     def _has_risk_allele(
-        self, variant_lookup: Dict[str, Dict], risk_variant: Dict[str, Any]
+        self, variant_lookup: dict[str, dict], risk_variant: dict[str, Any]
     ) -> bool:
         """Check if user has risk allele (simplified)"""
         # In practice, would look up by actual genomic coordinates
@@ -223,7 +227,7 @@ class DiabetesRiskCalculator:
             "glucose_threshold": GLUCOSE_THRESHOLD_MG_DL,
             "risk_threshold": risk_threshold,
             "result_commitment": hashlib.sha256(
-                "{alert_triggered}:{datetime.now().isoformat()}".encode()
+                b"{alert_triggered}:{datetime.now().isoformat()}"
             ).hexdigest(),
         }
 
@@ -261,7 +265,7 @@ class DiabetesRiskCalculator:
 
         return alert
 
-    def verify_alert(self, alert: DiabetesRiskAlert, public_inputs: Dict[str, Any]) -> bool:
+    def verify_alert(self, alert: DiabetesRiskAlert, public_inputs: dict[str, Any]) -> bool:
         """
         Verify diabetes risk alert proof.
 
@@ -302,9 +306,9 @@ class DiabetesRiskCalculator:
     def monitor_continuous_risk(
         self,
         genetic_profile: GeneticRiskProfile,
-        glucose_readings: List[GlucoseReading],
+        glucose_readings: list[GlucoseReading],
         window_days: int = 7,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Monitor continuous diabetes risk over time window.
 
@@ -371,7 +375,7 @@ class DiabetesRiskCalculator:
 
         return summary
 
-    def _get_recommendations(self, risk_level: str, trend: str) -> List[str]:
+    def _get_recommendations(self, risk_level: str, trend: str) -> list[str]:
         """Get personalized recommendations based on risk"""
         recommendations = []
 
@@ -417,7 +421,7 @@ class ClinicalIntegration:
         self.fhir_enabled = config.enable_fhir
         logger.info("Clinical integration initialized")
 
-    def process_clinical_data(self, patient_data: Dict[str, Any]) -> Dict[str, Any]:
+    def process_clinical_data(self, patient_data: dict[str, Any]) -> dict[str, Any]:
         """
         Process clinical data for diabetes risk assessment.
 
@@ -473,7 +477,7 @@ class ClinicalIntegration:
 
         return response
 
-    def _extract_genetic_variants(self, patient_data: Dict[str, Any]) -> List[Dict[str, Any]]:
+    def _extract_genetic_variants(self, patient_data: dict[str, Any]) -> list[dict[str, Any]]:
         """Extract genetic variants from patient data"""
         variants = []
 
@@ -493,7 +497,7 @@ class ClinicalIntegration:
 
         return variants
 
-    def _extract_glucose_readings(self, patient_data: Dict[str, Any]) -> List[GlucoseReading]:
+    def _extract_glucose_readings(self, patient_data: dict[str, Any]) -> list[GlucoseReading]:
         """Extract glucose readings from patient data"""
         readings = []
 
@@ -540,11 +544,11 @@ if __name__ == "__main__":
     ]
 
     # Calculate genetic risk
-    print("Calculating genetic risk...")
+    logger.info("Calculating genetic risk...")
     genetic_profile = calculator.calculate_genetic_risk(variants)
-    print("PRS Score: {genetic_profile.prs_score:.3f}")
-    print("Risk Category: {genetic_profile.get_risk_category()}")
-    print("Confidence Interval: {genetic_profile.confidence_interval}")
+    logger.info("PRS Score: {genetic_profile.prs_score:.3f}")
+    logger.info("Risk Category: {genetic_profile.get_risk_category()}")
+    logger.info("Confidence Interval: {genetic_profile.confidence_interval}")
 
     # Example glucose reading
     glucose = GlucoseReading(
@@ -554,25 +558,25 @@ if __name__ == "__main__":
     )
 
     # Create risk alert
-    print("\nCreating risk alert...")
+    logger.info("\nCreating risk alert...")
     alert = calculator.create_risk_alert(genetic_profile, glucose)
-    print("Alert Triggered: {alert.alert_triggered}")
-    print("Proof ID: {alert.proof_id}")
-    print("Proof Size: {alert.metadata['proof_size_bytes']} bytes")
-    print("Verification Time: {alert.metadata['verification_time_ms']:.1f} ms")
+    logger.info("Alert Triggered: {alert.alert_triggered}")
+    logger.info("Proof ID: {alert.proof_id}")
+    logger.info("Proof Size: {alert.metadata['proof_size_bytes']} bytes")
+    logger.info("Verification Time: {alert.metadata['verification_time_ms']:.1f} ms")
 
     # Verify alert
     public_inputs = {
         "glucose_threshold": GLUCOSE_THRESHOLD_MG_DL,
         "risk_threshold": 0.75,
-        "result_commitment": hashlib.sha256("{alert.alert_triggered}".encode()).hexdigest(),
+        "result_commitment": hashlib.sha256(b"{alert.alert_triggered}").hexdigest(),
     }
 
     is_valid = calculator.verify_alert(alert, public_inputs)
-    print("\nProof Verification: {'PASSED' if is_valid else 'FAILED'}")
+    logger.info("\nProof Verification: {'PASSED' if is_valid else 'FAILED'}")
 
     # Test continuous monitoring
-    print("\nTesting continuous monitoring...")
+    logger.info("\nTesting continuous monitoring...")
     glucose_history = [
         GlucoseReading(120, "fasting", datetime.now() - timedelta(days=6)),
         GlucoseReading(135, "fasting", datetime.now() - timedelta(days=4)),
@@ -581,12 +585,12 @@ if __name__ == "__main__":
     ]
 
     monitoring = calculator.monitor_continuous_risk(genetic_profile, glucose_history)
-    print("Risk Level: {monitoring['risk_level']}")
-    print("Trend: {monitoring['trend']}")
-    print("Recommendations: {monitoring['recommendations']}")
+    logger.info("Risk Level: {monitoring['risk_level']}")
+    logger.info("Trend: {monitoring['trend']}")
+    logger.info("Recommendations: {monitoring['recommendations']}")
 
     # Test clinical integration
-    print("\nTesting clinical integration...")
+    logger.info("\nTesting clinical integration...")
     clinical = ClinicalIntegration()
 
     patient_data = {
@@ -610,4 +614,4 @@ if __name__ == "__main__":
     }
 
     clinical_result = clinical.process_clinical_data(patient_data)
-    print("Clinical Assessment: {json.dumps(clinical_result, indent=2, default=str)}")
+    logger.info("Clinical Assessment: {json.dumps(clinical_result, indent=2, default=str)}")

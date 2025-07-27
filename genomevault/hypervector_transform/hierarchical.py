@@ -17,6 +17,10 @@ import torch
 from genomevault.core.config import get_config
 from genomevault.core.constants import HYPERVECTOR_DIMENSIONS, OmicsType
 from genomevault.utils.logging import get_logger
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 logger = get_logger(__name__)
 config = get_config()
@@ -40,7 +44,7 @@ class HierarchicalHypervector:
     mid: torch.Tensor  # 15,000-D
     high: torch.Tensor  # 20,000-D
     domain: ProjectionDomain
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
 
     def get_level(self, level: str) -> torch.Tensor:
         """Get hypervector at specified resolution level"""
@@ -104,7 +108,7 @@ class HolographicRepresentation:
         # Project back from Fourier basis
         return torch.matmul(coefficients, self.fourier_basis)
 
-    def superpose(self, vectors: List[torch.Tensor]) -> torch.Tensor:
+    def superpose(self, vectors: list[torch.Tensor]) -> torch.Tensor:
         """Superpose multiple vectors holographically"""
         result = torch.zeros(self.dimension)
 
@@ -274,7 +278,7 @@ class HierarchicalEncoder:
 
     def encode_hierarchical(
         self,
-        features: Union[torch.Tensor, np.ndarray, Dict],
+        features: torch.Tensor | np.ndarray | dict,
         omics_type: OmicsType,
         domain: ProjectionDomain = ProjectionDomain.GENERAL,
     ) -> HierarchicalHypervector:
@@ -336,7 +340,7 @@ class HierarchicalEncoder:
 
         return hierarchical_hv
 
-    def _extract_features(self, data: Dict, omics_type: OmicsType) -> torch.Tensor:
+    def _extract_features(self, data: dict, omics_type: OmicsType) -> torch.Tensor:
         """Extract features from data dictionary"""
         features = []
 
@@ -467,7 +471,7 @@ class HierarchicalEncoder:
         self,
         hv1: HierarchicalHypervector,
         hv2: HierarchicalHypervector,
-        weights: Optional[Dict[str, float]] = None,
+        weights: dict[str, float] | None = None,
     ) -> float:
         """
         Compute similarity between hierarchical hypervectors across resolutions.
@@ -550,7 +554,7 @@ def create_hierarchical_encoder() -> HierarchicalEncoder:
 
 
 def encode_genomic_hierarchical(
-    genomic_data: Dict, domain: ProjectionDomain = ProjectionDomain.GENERAL
+    genomic_data: dict, domain: ProjectionDomain = ProjectionDomain.GENERAL
 ) -> HierarchicalHypervector:
     """Convenience function to encode genomic data hierarchically"""
     encoder = create_hierarchical_encoder()
@@ -571,7 +575,7 @@ if __name__ == "__main__":
     }
 
     # Encode with different domains
-    print("Encoding genomic data with different domain projections:")
+    logger.info("Encoding genomic data with different domain projections:")
 
     for domain in [
         ProjectionDomain.GENERAL,
@@ -579,13 +583,13 @@ if __name__ == "__main__":
         ProjectionDomain.PHARMACOGENOMICS,
     ]:
         hv = encoder.encode_hierarchical(genomic_data, OmicsType.GENOMIC, domain)
-        print("\n{domain.value} domain:")
-        print("  Base dimensions: {hv.base.shape}")
-        print("  Mid dimensions: {hv.mid.shape}")
-        print("  High dimensions: {hv.high.shape}")
+        logger.info("\n{domain.value} domain:")
+        logger.info("  Base dimensions: {hv.base.shape}")
+        logger.info("  Mid dimensions: {hv.mid.shape}")
+        logger.info("  High dimensions: {hv.high.shape}")
 
     # Test binding operations
-    print("\nTesting binding operations:")
+    logger.info("\nTesting binding operations:")
     hv1 = encoder.encode_hierarchical(genomic_data, OmicsType.GENOMIC)
     hv2 = encoder.encode_hierarchical(
         {"expression_matrix": {"BRCA1": 2.5, "TP53": 1.8}}, OmicsType.TRANSCRIPTOMIC
@@ -594,18 +598,18 @@ if __name__ == "__main__":
     bound_circular = encoder.bind_hypervectors(hv1, hv2, "circular")
     bound_cross_modal = encoder.bind_hypervectors(hv1, hv2, "cross_modal")
 
-    print("Circular binding metadata: {bound_circular.metadata}")
-    print("Cross-modal binding metadata: {bound_cross_modal.metadata}")
+    logger.info("Circular binding metadata: {bound_circular.metadata}")
+    logger.info("Cross-modal binding metadata: {bound_cross_modal.metadata}")
 
     # Test similarity
     similarity = encoder.similarity_multiresolution(hv1, hv1)
-    print("\nSelf-similarity: {similarity:.4f}")
+    logger.info("\nSelf-similarity: {similarity:.4f}")
 
     similarity_cross = encoder.similarity_multiresolution(hv1, hv2)
-    print("Cross-omics similarity: {similarity_cross:.4f}")
+    logger.info("Cross-omics similarity: {similarity_cross:.4f}")
 
     # Test compression
-    print("\nTesting compression to tiers:")
+    logger.info("\nTesting compression to tiers:")
     for tier in ["mini", "clinical", "full"]:
         compressed = encoder.compress_to_tier(hv1, tier)
-        print("{tier} tier size: {compressed.shape}")
+        logger.info("{tier} tier size: {compressed.shape}")

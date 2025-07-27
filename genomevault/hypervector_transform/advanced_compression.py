@@ -12,6 +12,10 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 
 from genomevault.utils.logging import get_logger
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 logger = get_logger(__name__)
 
@@ -21,10 +25,10 @@ class CompressedHierarchicalVector:
     """Compressed hierarchical hypervector with multiple levels."""
 
     vector_id: str
-    base_vector: Optional[np.ndarray]  # 10,000-D: foundational features
-    mid_vector: Optional[np.ndarray]  # 15,000-D: integrated modality
-    high_vector: Optional[np.ndarray]  # 20,000-D: semantic concepts
-    compression_metadata: Dict[str, Any]
+    base_vector: np.ndarray | None  # 10,000-D: foundational features
+    mid_vector: np.ndarray | None  # 15,000-D: integrated modality
+    high_vector: np.ndarray | None  # 20,000-D: semantic concepts
+    compression_metadata: dict[str, Any]
 
     @property
     def compression_ratio(self) -> float:
@@ -123,7 +127,7 @@ class AdvancedHierarchicalCompressor:
 
         return matrix.astype(np.float32)
 
-    def _init_modality_contexts(self) -> Dict[str, np.ndarray]:
+    def _init_modality_contexts(self) -> dict[str, np.ndarray]:
         """Initialize context vectors for different modalities."""
         contexts = {
             "genomic": np.random.randn(self.mid_dim),
@@ -140,7 +144,7 @@ class AdvancedHierarchicalCompressor:
 
         return contexts
 
-    def _init_semantic_contexts(self) -> Dict[str, np.ndarray]:
+    def _init_semantic_contexts(self) -> dict[str, np.ndarray]:
         """Initialize context vectors for semantic concepts."""
         contexts = {
             "disease_risk": np.random.randn(self.high_dim),
@@ -315,7 +319,7 @@ class AdvancedHierarchicalCompressor:
 
     def create_storage_optimized_vector(
         self, base_vector: np.ndarray, tier: str = "clinical"
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Create storage-optimized vector for specific tier.
 
@@ -413,52 +417,54 @@ if __name__ == "__main__":
     compressor = AdvancedHierarchicalCompressor()
 
     # Create example base vector with genomic features
-    print("Advanced Hierarchical Compression Example")
-    print("=" * 60)
+    logger.info("Advanced Hierarchical Compression Example")
+    logger.info("=" * 60)
 
     # Simulate genomic feature vector (sparse)
     base_features = np.random.randn(10000)
     base_features[np.random.choice(10000, 9000, replace=False)] = 0  # Make sparse
 
-    print(f"Base vector: {len(base_features)} dimensions")
-    print(f"Sparsity: {np.mean(base_features == 0):.2%}")
-    print(f"Size: {base_features.nbytes / 1024:.1f} KB")
+    logger.info(f"Base vector: {len(base_features)} dimensions")
+    logger.info(f"Sparsity: {np.mean(base_features == 0):.2%}")
+    logger.info(f"Size: {base_features.nbytes / 1024:.1f} KB")
 
     # Test hierarchical compression
-    print("\n\nHierarchical Compression:")
-    print("-" * 60)
+    logger.info("\n\nHierarchical Compression:")
+    logger.info("-" * 60)
 
     compressed = compressor.hierarchical_compression(
         base_features, modality_context="genomic", overall_model_context="disease_risk"
     )
 
-    print(f"Vector ID: {compressed.vector_id}")
-    print(f"Compression level: {compressed.level}")
-    print(f"Final dimensions: {len(compressed.high_vector)}")
-    print(f"Compression ratio: {compressed.compression_metadata['compression_ratio']:.2f}x")
-    print(f"Compression time: {compressed.compression_metadata['compression_time']*1000:.1f} ms")
-    print(f"Sparsity (high): {compressed.compression_metadata['sparsity']['high']:.2%}")
+    logger.info(f"Vector ID: {compressed.vector_id}")
+    logger.info(f"Compression level: {compressed.level}")
+    logger.info(f"Final dimensions: {len(compressed.high_vector)}")
+    logger.info(f"Compression ratio: {compressed.compression_metadata['compression_ratio']:.2f}x")
+    logger.info(
+        f"Compression time: {compressed.compression_metadata['compression_time']*1000:.1f} ms"
+    )
+    logger.info(f"Sparsity (high): {compressed.compression_metadata['sparsity']['high']:.2%}")
 
     # Test storage tiers
-    print("\n\nStorage Optimization Tiers:")
-    print("-" * 60)
+    logger.info("\n\nStorage Optimization Tiers:")
+    logger.info("-" * 60)
 
     for tier in ["mini", "clinical", "fullhdc"]:
         optimized = compressor.create_storage_optimized_vector(base_features, tier)
 
-        print(f"\n{tier.upper()} Tier:")
-        print(f"  Target use case: ", end="")
+        logger.info(f"\n{tier.upper()} Tier:")
+        logger.info(f"  Target use case: ", end="")
         if tier == "mini":
-            print("Mobile apps, quick lookups")
+            logger.info("Mobile apps, quick lookups")
         elif tier == "clinical":
-            print("Clinical decision support")
+            logger.info("Clinical decision support")
         else:
-            print("Full analysis, research")
+            logger.info("Full analysis, research")
 
-        print(f"  Actual size: {optimized['size_kb']:.1f} KB")
+        logger.info(f"  Actual size: {optimized['size_kb']:.1f} KB")
 
         if tier == "mini":
-            print(f"  Dimensions kept: {len(optimized['data'])}")
+            logger.info(f"  Dimensions kept: {len(optimized['data'])}")
         elif tier == "clinical":
-            print(f"  Non-zero values: {len(optimized['values'])}")
-            print(f"  Compression: {20000 / len(optimized['values']):.1f}x")
+            logger.info(f"  Non-zero values: {len(optimized['values'])}")
+            logger.info(f"  Compression: {20000 / len(optimized['values']):.1f}x")

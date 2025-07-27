@@ -55,10 +55,10 @@ class MethylationSite:
     methylation_level: float  # 0-1
     coverage: int
     strand: str = "+"
-    gene_id: Optional[str] = None
-    region_type: Optional[str] = None  # promoter, gene_body, intergenic
+    gene_id: str | None = None
+    region_type: str | None = None  # promoter, gene_body, intergenic
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary"""
         return {
             "chromosome": self.chromosome,
@@ -84,10 +84,10 @@ class ChromatinPeak:
     fold_enrichment: float
     p_value: float
     q_value: float
-    nearest_gene: Optional[str] = None
-    distance_to_tss: Optional[int] = None
+    nearest_gene: str | None = None
+    distance_to_tss: int | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary"""
         return {
             "chromosome": self.chromosome,
@@ -109,14 +109,14 @@ class EpigeneticProfile:
 
     sample_id: str
     data_type: EpigeneticDataType
-    methylation_sites: Optional[List[MethylationSite]] = None
-    chromatin_peaks: Optional[List[ChromatinPeak]] = None
-    quality_metrics: Dict[str, Any] = field(default_factory=dict)
-    processing_metadata: Dict[str, Any] = field(default_factory=dict)
+    methylation_sites: list[MethylationSite] | None = None
+    chromatin_peaks: list[ChromatinPeak] | None = None
+    quality_metrics: dict[str, Any] = field(default_factory=dict)
+    processing_metadata: dict[str, Any] = field(default_factory=dict)
 
     def get_methylation_by_region(
         self, chromosome: str, start: int, end: int
-    ) -> List[MethylationSite]:
+    ) -> list[MethylationSite]:
         """Get methylation sites in a specific region"""
         if not self.methylation_sites:
             return []
@@ -127,7 +127,7 @@ class EpigeneticProfile:
             if site.chromosome == chromosome and start <= site.position <= end
         ]
 
-    def get_peaks_by_gene(self, gene_id: str) -> List[ChromatinPeak]:
+    def get_peaks_by_gene(self, gene_id: str) -> list[ChromatinPeak]:
         """Get chromatin peaks near a specific gene"""
         if not self.chromatin_peaks:
             return []
@@ -136,7 +136,7 @@ class EpigeneticProfile:
 
     def calculate_regional_methylation(
         self, chromosome: str, start: int, end: int
-    ) -> Optional[float]:
+    ) -> float | None:
         """Calculate average methylation in a region"""
         sites = self.get_methylation_by_region(chromosome, start, end)
         if not sites:
@@ -164,8 +164,8 @@ class MethylationProcessor:
 
     def __init__(
         self,
-        reference_genome: Optional[Path] = None,
-        annotation_file: Optional[Path] = None,
+        reference_genome: Path | None = None,
+        annotation_file: Path | None = None,
         min_coverage: int = 5,
         max_threads: _ = 4,
     ):
@@ -186,7 +186,7 @@ class MethylationProcessor:
 
         logger.info("Initialized MethylationProcessor")
 
-    def _load_annotations(self) -> Dict[str, Dict[str, Any]]:
+    def _load_annotations(self) -> dict[str, dict[str, Any]]:
         """Load gene annotations for region assignment"""
         if not self.annotation_file or not self.annotation_file.exists():
             logger.warning("No annotation file provided")
@@ -323,7 +323,7 @@ class MethylationProcessor:
         logger.info(f"Filtered to {len(filtered)} sites with coverage >= {self.min_coverage}")
         return filtered
 
-    def _annotate_methylation_sites(self, data: pd.DataFrame) -> List[MethylationSite]:
+    def _annotate_methylation_sites(self, data: pd.DataFrame) -> list[MethylationSite]:
         """Annotate methylation sites with genomic regions"""
         _ = []
 
@@ -347,7 +347,7 @@ class MethylationProcessor:
 
     def _find_genomic_region(
         self, chromosome: str, position: int
-    ) -> Tuple[Optional[str], Optional[str]]:
+    ) -> tuple[str | None, str | None]:
         """Find gene and region type for a genomic position"""
         for gene_id, info in self.gene_annotations.items():
             if info["chr"] != chromosome:
@@ -363,7 +363,7 @@ class MethylationProcessor:
 
         return None, "intergenic"
 
-    def _calculate_methylation_metrics(self, sites: List[MethylationSite]) -> Dict[str, Any]:
+    def _calculate_methylation_metrics(self, sites: list[MethylationSite]) -> dict[str, Any]:
         """Calculate quality control metrics for methylation data"""
         if not sites:
             return {}
@@ -401,7 +401,7 @@ class MethylationProcessor:
 
         return metrics
 
-    def _normalize_methylation(self, sites: List[MethylationSite]) -> List[MethylationSite]:
+    def _normalize_methylation(self, sites: list[MethylationSite]) -> list[MethylationSite]:
         """Perform beta-mixture quantile normalization"""
         if not sites:
             return sites
@@ -447,8 +447,8 @@ class MethylationProcessor:
 
     def differential_methylation(
         self,
-        group1_profiles: List[EpigeneticProfile],
-        group2_profiles: List[EpigeneticProfile],
+        group1_profiles: list[EpigeneticProfile],
+        group2_profiles: list[EpigeneticProfile],
         min_difference: float = 0.2,
         fdr_threshold: _ = 0.05,
     ) -> pd.DataFrame:
@@ -551,8 +551,8 @@ class ChromatinAccessibilityProcessor:
 
     def __init__(
         self,
-        reference_genome: Optional[Path] = None,
-        annotation_file: Optional[Path] = None,
+        reference_genome: Path | None = None,
+        annotation_file: Path | None = None,
         peak_caller: _ = "macs2",
         max_threads: _ = 4,
     ):
@@ -573,14 +573,14 @@ class ChromatinAccessibilityProcessor:
 
         logger.info("Initialized ChromatinAccessibilityProcessor")
 
-    def _load_annotations(self) -> Dict[str, Dict[str, Any]]:
+    def _load_annotations(self) -> dict[str, dict[str, Any]]:
         """Load gene annotations"""
         # Reuse methylation processor's mock annotations
         return MethylationProcessor()._load_annotations()
 
     def process(
         self,
-        input_path: Union[Path, List[Path]],
+        input_path: Path | list[Path],
         sample_id: str,
         paired_end: _ = True,
         peak_format: _ = "narrowPeak",
@@ -668,7 +668,7 @@ class ChromatinAccessibilityProcessor:
         return df
 
     def _process_fastq_to_peaks(
-        self, input_paths: Union[Path, List[Path]], paired_end: bool
+        self, input_paths: Path | list[Path], paired_end: bool
     ) -> pd.DataFrame:
         """Process FASTQ files to peaks (mock implementation)"""
         logger.info("Processing FASTQ to peaks (mock implementation)")
@@ -702,7 +702,7 @@ class ChromatinAccessibilityProcessor:
 
         return pd.DataFrame(data)
 
-    def _annotate_peaks(self, peaks_df: pd.DataFrame) -> List[ChromatinPeak]:
+    def _annotate_peaks(self, peaks_df: pd.DataFrame) -> list[ChromatinPeak]:
         """Annotate peaks with nearest genes"""
         _ = []
 
@@ -728,7 +728,7 @@ class ChromatinAccessibilityProcessor:
 
     def _find_nearest_gene(
         self, chromosome: str, position: int
-    ) -> Tuple[Optional[str], Optional[int]]:
+    ) -> tuple[str | None, int | None]:
         """Find nearest gene and distance to TSS"""
         _ = float("inf")
         _ = None
@@ -747,7 +747,7 @@ class ChromatinAccessibilityProcessor:
 
         return nearest_gene, int(min_distance) if nearest_gene else None
 
-    def _calculate_peak_metrics(self, peaks: List[ChromatinPeak]) -> Dict[str, Any]:
+    def _calculate_peak_metrics(self, peaks: list[ChromatinPeak]) -> dict[str, Any]:
         """Calculate quality metrics for peaks"""
         if not peaks:
             return {}
@@ -777,10 +777,11 @@ class ChromatinAccessibilityProcessor:
 
         return metrics
 
+    # TODO: Refactor this function to reduce complexity
     def find_differential_peaks(
         self,
-        group1_profiles: List[EpigeneticProfile],
-        group2_profiles: List[EpigeneticProfile],
+        group1_profiles: list[EpigeneticProfile],
+        group2_profiles: list[EpigeneticProfile],
         min_fold_change: float = 2.0,
         fdr_threshold: _ = 0.05,
     ) -> pd.DataFrame:
@@ -891,7 +892,7 @@ class ChromatinAccessibilityProcessor:
 
 def create_epigenetic_processor(
     data_type: EpigeneticDataType, **kwargs
-) -> Union[MethylationProcessor, ChromatinAccessibilityProcessor]:
+) -> MethylationProcessor | ChromatinAccessibilityProcessor:
     """
     Factory function to create appropriate epigenetic processor
 

@@ -38,7 +38,7 @@ class ProofOfTrainingIntegration:
     6. Real-time monitoring
     """
 
-    def __init__(self, config: Dict[str, Any]):
+    def __init__(self, config: dict[str, Any]):
         """
         Initialize PoT integration.
 
@@ -48,11 +48,11 @@ class ProofOfTrainingIntegration:
         self.config = config
 
         # Component initialization
-        self.snapshot_loggers: Dict[str, ModelSnapshotLogger] = {}
-        self.privacy_auditors: Dict[str, DifferentialPrivacyAuditor] = {}
-        self.model_monitors: Dict[str, RealTimeModelMonitor] = {}
-        self.clinical_validators: Dict[str, ClinicalModelValidator] = {}
-        self.federated_lineages: Dict[str, FederatedModelLineage] = {}
+        self.snapshot_loggers: dict[str, ModelSnapshotLogger] = {}
+        self.privacy_auditors: dict[str, DifferentialPrivacyAuditor] = {}
+        self.model_monitors: dict[str, RealTimeModelMonitor] = {}
+        self.clinical_validators: dict[str, ClinicalModelValidator] = {}
+        self.federated_lineages: dict[str, FederatedModelLineage] = {}
 
         # Blockchain connection
         self.attestation_contract = None
@@ -69,10 +69,10 @@ class ProofOfTrainingIntegration:
         self,
         session_id: str,
         model_type: str,
-        dataset_info: Dict[str, Any],
-        privacy_budget: Tuple[float, float] = (1.0, 1e-5),
+        dataset_info: dict[str, Any],
+        privacy_budget: tuple[float, float] = (1.0, 1e-5),
         is_federated: bool = False,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Start a new training session with PoT tracking.
 
@@ -130,11 +130,11 @@ class ProofOfTrainingIntegration:
         epoch: int,
         step: int,
         loss: float,
-        metrics: Dict[str, float],
-        gradients: Optional[Any] = None,
-        io_pair: Optional[Tuple[Any, Any]] = None,
-        privacy_params: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+        metrics: dict[str, float],
+        gradients: Any | None = None,
+        io_pair: tuple[Any, Any] | None = None,
+        privacy_params: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """
         Log a training step with all PoT components.
 
@@ -193,8 +193,8 @@ class ProofOfTrainingIntegration:
         return result
 
     def complete_training_session(
-        self, session_id: str, final_model: Any, final_metrics: Dict[str, float]
-    ) -> Dict[str, Any]:
+        self, session_id: str, final_model: Any, final_metrics: dict[str, float]
+    ) -> dict[str, Any]:
         """
         Complete a training session and generate proof.
 
@@ -249,8 +249,8 @@ class ProofOfTrainingIntegration:
         return completion_result
 
     def submit_attestation(
-        self, session_id: str, proof: Dict[str, Any], submitter_address: str
-    ) -> Optional[str]:
+        self, session_id: str, proof: dict[str, Any], submitter_address: str
+    ) -> str | None:
         """
         Submit training attestation to blockchain.
 
@@ -284,12 +284,12 @@ class ProofOfTrainingIntegration:
             logger.info(f"Attestation {attestation_id} submitted for session {session_id}")
             return attestation_id
 
-        except Exception:
+        except (DatabaseError, json.JSONDecodeError, KeyError) as e:
             logger.error(f"Failed to submit attestation: {e}")
             return None
 
     def start_model_monitoring(
-        self, model_id: str, model: Any, training_summary: Dict[str, Any]
+        self, model_id: str, model: Any, training_summary: dict[str, Any]
     ) -> RealTimeModelMonitor:
         """
         Start real-time monitoring for a deployed model.
@@ -329,7 +329,7 @@ class ProofOfTrainingIntegration:
         clinical_domain: str,
         test_data: Any,
         validation_level: str = "clinical_trial",
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Perform clinical validation of a model.
 
@@ -383,8 +383,8 @@ class ProofOfTrainingIntegration:
         }
 
     def _generate_training_proof(
-        self, session_id: str, proof_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, session_id: str, proof_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Generate training proof from snapshot data"""
         # Determine if multi-modal
         is_multimodal = self.config.get("multimodal", False)
@@ -429,7 +429,7 @@ class ProofOfTrainingIntegration:
 
         return proof
 
-    def _analyze_semantic_evolution(self, session_id: str) -> Dict[str, Any]:
+    def _analyze_semantic_evolution(self, session_id: str) -> dict[str, Any]:
         """Analyze semantic evolution of model during training"""
         snapshot_logger = self.snapshot_loggers.get(session_id)
         if not snapshot_logger:
@@ -472,7 +472,7 @@ class ProofOfTrainingIntegration:
             "anomaly_epochs": [labels[i] for i in anomalies] if anomalies else [],
         }
 
-    def _extract_model_hypervector(self, model: Any) -> Optional[Any]:
+    def _extract_model_hypervector(self, model: Any) -> Any | None:
         """Extract hypervector representation from model"""
         # Simplified - in practice would use actual hypervector encoding
         import numpy as np
@@ -504,7 +504,7 @@ class ProofOfTrainingIntegration:
 
             return hypervector
 
-        except Exception:
+        except (ValueError, TypeError, KeyError) as e:
             logger.error(f"Failed to extract hypervector: {e}")
             return None
 
@@ -526,7 +526,7 @@ class ProofOfTrainingIntegration:
 
             logger.info(f"Blockchain connection established: {contract_address}")
 
-        except Exception:
+        except KeyError as e:
             logger.error(f"Failed to initialize blockchain: {e}")
             self.attestation_contract = None
 

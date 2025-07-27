@@ -6,68 +6,72 @@ without requiring external dependencies
 
 import os
 import sys
+import logging
 
-print("=" * 70)
-print("FINAL TEST: Verifying Import Path Fix")
-print("=" * 70)
+logger = logging.getLogger(__name__)
+
+
+logger.info("=" * 70)
+logger.info("FINAL TEST: Verifying Import Path Fix")
+logger.info("=" * 70)
 
 # Add the project root to Python path
 project_root = os.path.dirname(os.path.abspath(__file__))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-print("\nProject root: {project_root}")
-print("Python path includes project: {project_root in sys.path}")
+logger.info("\nProject root: {project_root}")
+logger.info("Python path includes project: {project_root in sys.path}")
 
 # Check the file that was fixed
 variant_file = os.path.join(project_root, "zk_proofs", "circuits", "biological", "variant.py")
-print("\nChecking fixed file: {variant_file}")
-print("File exists: {os.path.exists(variant_file)}")
+logger.info("\nChecking fixed file: {variant_file}")
+logger.info("File exists: {os.path.exists(variant_file)}")
 
 # Read the file and check the import
 if os.path.exists(variant_file):
-    with open(variant_file, "r") as f:
+    with open(variant_file) as f:
         content = f.read()
 
     # Check for the correct import
     if "from ..base_circuits import" in content:
-        print("\n✅ SUCCESS! The import has been fixed!")
-        print("   Found: from ..base_circuits import ...")
-        print("   This is the correct relative import path.")
+        logger.info("\n✅ SUCCESS! The import has been fixed!")
+        logger.info("   Found: from ..base_circuits import ...")
+        logger.info("   This is the correct relative import path.")
     elif "from .base_circuits import" in content:
-        print("\n❌ ERROR: The old import is still there!")
-        print("   Found: from .base_circuits import ...")
-        print("   This needs to be changed to: from ..base_circuits import ...")
+        logger.info("\n❌ ERROR: The old import is still there!")
+        logger.info("   Found: from .base_circuits import ...")
+        logger.info("   This needs to be changed to: from ..base_circuits import ...")
     else:
-        print("\n❓ WARNING: Could not find the base_circuits import")
+        logger.info("\n❓ WARNING: Could not find the base_circuits import")
 
 # Check the base_circuits.py file exists
 base_circuits_file = os.path.join(project_root, "zk_proofs", "circuits", "base_circuits.py")
-print("\nChecking base_circuits.py location:")
-print("Expected at: {base_circuits_file}")
-print("File exists: {os.path.exists(base_circuits_file)}")
+logger.info("\nChecking base_circuits.py location:")
+logger.info("Expected at: {base_circuits_file}")
+logger.info("File exists: {os.path.exists(base_circuits_file)}")
 
 # Show the directory structure
-print("\nDirectory structure:")
+logger.info("\nDirectory structure:")
 circuits_dir = os.path.join(project_root, "zk_proofs", "circuits")
 if os.path.exists(circuits_dir):
     for item in sorted(os.listdir(circuits_dir)):
         item_path = os.path.join(circuits_dir, item)
         if os.path.isdir(item_path):
-            print("  📁 {item}/")
+            logger.info("  📁 {item}/")
             # Show contents of biological directory
             if item == "biological":
                 for subitem in sorted(os.listdir(item_path)):
                     if not subitem.startswith("__pycache__"):
-                        print("     - {subitem}")
+                        logger.info("     - {subitem}")
         elif not item.startswith("__pycache__"):
-            print("  📄 {item}")
+            logger.info("  📄 {item}")
 
-print("\n" + "=" * 70)
-print("SUMMARY")
-print("=" * 70)
-print("The import fix has been applied successfully!")
-print("Changed: 'from .base_circuits import ...' → 'from ..base_circuits import ...'")
-print("\nThis fix allows the biological circuits to correctly import from")
-print("the parent circuits/ directory where base_circuits.py is located.")
-print("\n✅ The import path issue has been resolved!")
+logger.info("\n" + "=" * 70)
+logger.info("SUMMARY")
+logger.info("=" * 70)
+logger.info("The import fix has been applied successfully!")
+logger.info("Changed: 'from .base_circuits import ...' → 'from ..base_circuits import ...'")
+logger.info("\nThis fix allows the biological circuits to correctly import from")
+logger.info("the parent circuits/ directory where base_circuits.py is located.")
+logger.info("\n✅ The import path issue has been resolved!")
