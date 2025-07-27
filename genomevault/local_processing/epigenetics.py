@@ -8,8 +8,6 @@ Handles epigenetic data including:
 - Positional encoding for genomic context
 """
 import logging
-from typing import Dict, List, Optional, Any, Union
-
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime

@@ -5,14 +5,12 @@ Stage 4 implementation: Recursion / Aggregation & Performance Bench
 - Recursive proof composition script aggregating N subproofs
 - Benchmarks: proof size, verify time, aggregation time vs N
 """
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
 import json
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np

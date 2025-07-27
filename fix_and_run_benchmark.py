@@ -4,8 +4,8 @@ Fix virtual environment and run benchmark
 """
 
 import os
-import sys
 import subprocess
+import sys
 from pathlib import Path
 
 
@@ -19,7 +19,7 @@ def fix_venv_issues():
     # Remove problematic .pth files
     pth_files = [
         venv_path / "lib/python3.9/site-packages/__editable__.genomevault-3.0.0.pth",
-        venv_path / "lib/python3.9/site-packages/distutils-precedence.pth"
+        venv_path / "lib/python3.9/site-packages/distutils-precedence.pth",
     ]
 
     for pth_file in pth_files:
@@ -123,26 +123,25 @@ def use_system_python_benchmark():
     print("\n🐍 Using system Python to run benchmark...")
 
     # Deactivate venv if active
-    if 'VIRTUAL_ENV' in os.environ:
+    if "VIRTUAL_ENV" in os.environ:
         print("  Deactivating virtual environment...")
-        del os.environ['VIRTUAL_ENV']
+        del os.environ["VIRTUAL_ENV"]
         # Remove venv from PATH
-        path_parts = os.environ['PATH'].split(':')
-        os.environ['PATH'] = ':'.join([p for p in path_parts if 'venv' not in p])
+        path_parts = os.environ["PATH"].split(":")
+        os.environ["PATH"] = ":".join([p for p in path_parts if "venv" not in p])
 
     # Install required packages in user space if needed
     print("\n📦 Checking system packages...")
-    packages = ['numpy', 'torch', 'matplotlib', 'memory-profiler']
+    packages = ["numpy", "torch", "matplotlib", "memory-profiler"]
 
     for package in packages:
         try:
-            __import__(package.replace('-', '_'))
+            __import__(package.replace("-", "_"))
             print(f"  ✓ {package} available")
         except ImportError:
             print(f"  📥 Installing {package} in user space...")
             subprocess.run(
-                ['/usr/bin/python3', '-m', 'pip', 'install', '--user', package],
-                capture_output=True
+                ["/usr/bin/python3", "-m", "pip", "install", "--user", package], capture_output=True
             )
 
     # Run the clean benchmark
@@ -150,10 +149,7 @@ def use_system_python_benchmark():
     print(f"\n🚀 Running benchmark with clean runner...")
 
     result = subprocess.run(
-        ['/usr/bin/python3', str(runner)],
-        cwd=str(base_path),
-        capture_output=True,
-        text=True
+        ["/usr/bin/python3", str(runner)], cwd=str(base_path), capture_output=True, text=True
     )
 
     print(result.stdout)

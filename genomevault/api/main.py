@@ -7,29 +7,23 @@ Implements the main API endpoints as specified in the System Breakdown:
 - Audit and challenge handling
 - Client-facing endpoints for pipelines, vectors, and proofs
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
 import json
+import logging
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from fastapi import Depends, FastAPI, HTTPException, Security, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
+from genomevault.core.base_patterns import NotImplementedMixin
 from genomevault.utils.common import NotImplementedMixin
 
 from ..genomevault.blockchain.node import BlockchainNode, NodeInfo
 from ..genomevault.core.config import get_config
-from ..genomevault.core.constants import (
-    CREDITS_PER_BLOCK_BASE,
-    CREDITS_SIGNATORY_BONUS,
-    NodeType,
-)
+from ..genomevault.core.constants import CREDITS_PER_BLOCK_BASE, CREDITS_SIGNATORY_BONUS, NodeType
 from ..genomevault.utils.logging import audit_logger, get_logger
-from genomevault.core.base_patterns import NotImplementedMixin
 
 logger = get_logger(__name__)
 config = get_config()

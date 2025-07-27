@@ -5,8 +5,6 @@ This module provides a production-ready interface to gnark for generating
 and verifying SNARK proofs. It handles circuit compilation, proof generation,
 and verification with actual cryptographic guarantees.
 """
-from typing import Dict, List, Optional, Any, Union
-
 import json
 import logging
 import shutil

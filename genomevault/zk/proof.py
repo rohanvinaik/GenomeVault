@@ -2,13 +2,11 @@
 Zero-Knowledge Proof Generation Module
 Uses real ZK circuits for proof generation and verification
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
+import logging
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from genomevault.hypervector.error_handling import ErrorBudget
 from genomevault.utils.logging import get_logger

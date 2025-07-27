@@ -4,17 +4,14 @@ Clinical Model Validation Framework
 This module provides clinical validation and capability attestation
 for ML models used in GenomeVault, ensuring FDA/EMA compliance.
 """
-from dataclasses import dataclass
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
 import json
+import logging
 import time
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 import numpy as np
 

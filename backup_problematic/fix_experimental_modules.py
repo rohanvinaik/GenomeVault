@@ -4,15 +4,15 @@ from typing import Any, Dict
 """
 Fix GenomeVault experimental modules and missing dependencies
 """
-import torch
-import numpy as np
-
 import json
 import os
 import shutil
 import subprocess
 import sys
 from pathlib import Path
+
+import numpy as np
+import torch
 
 
 def check_and_install_dependencies() -> None:
@@ -104,14 +104,14 @@ def run_benchmark() -> None:
     try:
         # Import after path is set
         from benchmarks.benchmark_packed_hypervector import main
-        
+
         print("Starting benchmark...")
         main()
-        
+
     except ImportError as e:
         print(f"Import error: {e}")
         print("\\nTrying alternative import method...")
-        
+
         # Alternative: run as script
         benchmark_file = project_root / "benchmarks" / "benchmark_packed_hypervector.py"
         if benchmark_file.exists():
@@ -187,38 +187,38 @@ def setup_and_run() -> None:
        """TODO: Add docstring for setup_and_run"""
      """Setup environment and run benchmark"""
     project_root = Path(__file__).parent
-    
+
     # Add to Python path
     sys.path.insert(0, str(project_root))
     os.environ['PYTHONPATH'] = str(project_root) + os.pathsep + os.environ.get('PYTHONPATH', '')
-    
+
     # Check imports
     print("Checking imports...")
     try:
         import genomevault
         print("✓ genomevault package found")
-        
+
         from genomevault.hypervector.encoding import GenomicEncoder, PackedGenomicEncoder
         print("✓ Encoders imported successfully")
-        
+
         import memory_profiler
         print("✓ memory_profiler available")
-        
+
         import matplotlib
         print("✓ matplotlib available")
-        
+
     except ImportError as e:
         print(f"❌ Import error: {e}")
         print("\\nInstalling in development mode...")
         subprocess.check_call([sys.executable, "-m", "pip", "install", "-e", str(project_root)])
-    
+
     # Run the benchmark
     print("\\n" + "="*50)
     print("Running benchmark...")
     print("="*50 + "\\n")
-    
+
     benchmark_script = project_root / "benchmarks" / "benchmark_packed_hypervector.py"
-    
+
     # Execute the benchmark
     exec(open(benchmark_script).read(), {
         '__name__': '__main__',

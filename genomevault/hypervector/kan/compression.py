@@ -4,10 +4,8 @@ KAN Compression Module
 Implements the compression pipeline using Kolmogorov-Arnold Networks
 to achieve 100x compression while maintaining reconstructability.
 """
-from typing import Dict, List, Optional, Any, Union
-
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch

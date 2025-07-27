@@ -1,6 +1,8 @@
-from genomevault.hypervector.encoding import GenomicEncoder
-import numpy as np
 from typing import Any, Dict
+
+import numpy as np
+
+from genomevault.hypervector.encoding import GenomicEncoder
 
 #!/usr/bin/env python3
 """

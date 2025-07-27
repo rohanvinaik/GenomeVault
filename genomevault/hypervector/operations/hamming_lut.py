@@ -15,11 +15,9 @@ Performance targets:
 - 2-3× speedup on PULPv3 and FPGA fabric
 - >1.5× speedup on CPU/GPU platforms
 """
-from typing import Dict, List, Optional, Any, Union
-
 import functools
 import os
-from typing import Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 from numba import cuda, jit, prange

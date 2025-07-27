@@ -5,11 +5,9 @@ This module provides visualization tools for understanding model evolution
 during training using dimensionality reduction techniques.
 """
 import logging
-from typing import Dict, List, Optional, Any, Union
-
 import warnings
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np

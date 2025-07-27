@@ -2,14 +2,12 @@
 PIR server request handler with fixed-size responses and timing protection.
 Implements the server-side logic for IT-PIR protocol.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import asyncio
 import base64
 import json
+import logging
 import time
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import jsonschema
 import numpy as np

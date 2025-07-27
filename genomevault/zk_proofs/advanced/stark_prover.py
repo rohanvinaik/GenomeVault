@@ -2,14 +2,12 @@
 Post-quantum STARK implementation for quantum-resistant proofs.
 Provides 128-bit post-quantum security.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
 import json
+import logging
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 

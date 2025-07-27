@@ -2,11 +2,9 @@
 PIR query builder for genomic data queries.
 Provides high-level interface for constructing privacy-preserving queries.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
 import json
+import logging
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple, Union

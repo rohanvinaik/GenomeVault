@@ -2,15 +2,13 @@
 Federated Learning Client for secure model training participation.
 Implements local training with privacy guarantees.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
+import logging
 import pickle
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 

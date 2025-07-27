@@ -4,9 +4,9 @@ Fix all indentation issues in GenomeVault Python files automatically
 """
 
 import os
+import subprocess
 import sys
 from pathlib import Path
-import subprocess
 
 
 def fix_all_python_files(base_path):
@@ -27,28 +27,28 @@ def fix_all_python_files(base_path):
     # Find all Python files
     for py_file in base_path.rglob("*.py"):
         # Skip venv and cache
-        if 'venv' in str(py_file) or '__pycache__' in str(py_file):
+        if "venv" in str(py_file) or "__pycache__" in str(py_file):
             continue
 
         try:
             # Read file
-            with open(py_file, 'r', encoding='utf-8') as f:
+            with open(py_file, "r", encoding="utf-8") as f:
                 original = f.read()
 
             # Fix with autopep8
             fixed = autopep8.fix_code(
                 original,
                 options={
-                    'aggressive': 2,  # More aggressive fixing
-                    'max_line_length': 100,
-                    'indent_size': 4,
-                    'ignore': ['E501'],  # Ignore line too long
-                }
+                    "aggressive": 2,  # More aggressive fixing
+                    "max_line_length": 100,
+                    "indent_size": 4,
+                    "ignore": ["E501"],  # Ignore line too long
+                },
             )
 
             # Write back if changed
             if fixed != original:
-                with open(py_file, 'w', encoding='utf-8') as f:
+                with open(py_file, "w", encoding="utf-8") as f:
                     f.write(fixed)
                 fixed_count += 1
                 print(f"  ✅ Fixed {py_file.relative_to(base_path)}")
@@ -86,13 +86,13 @@ def main():
 
     # Try to run the benchmark
     env = os.environ.copy()
-    env['PYTHONPATH'] = str(base_path)
+    env["PYTHONPATH"] = str(base_path)
 
     result = subprocess.run(
         [sys.executable, "benchmarks/benchmark_packed_hypervector.py"],
         env=env,
         capture_output=True,
-        text=True
+        text=True,
     )
 
     if result.returncode == 0:
@@ -105,10 +105,7 @@ def main():
         # Try minimal benchmark as fallback
         print("\n🔄 Trying minimal benchmark...")
         result2 = subprocess.run(
-            [sys.executable, "minimal_benchmark.py"],
-            env=env,
-            capture_output=True,
-            text=True
+            [sys.executable, "minimal_benchmark.py"], env=env, capture_output=True, text=True
         )
 
         if result2.returncode == 0:

@@ -5,15 +5,13 @@ HDC Performance Benchmarking Script
 Comprehensive benchmarking for the HDC encoding implementation
 following Stage 4 requirements.
 """
-from typing import Dict, List, Optional, Any, Union
-
 import argparse
 import json
 import os
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Union
 
 import matplotlib.pyplot as plt
 import numpy as np

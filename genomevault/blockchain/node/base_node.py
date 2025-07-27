@@ -1,15 +1,13 @@
 """
 Base node implementation for GenomeVault blockchain
 """
-from typing import Dict, List, Optional, Any, Union
-
 import asyncio
 import hashlib
 import json
 import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from genomevault.core.config import get_config
 from genomevault.core.constants import (

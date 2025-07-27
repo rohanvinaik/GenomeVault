@@ -3,19 +3,17 @@
 CI benchmark runner that outputs CSV with separate timing columns.
 This script orchestrates all benchmarks and outputs timing data for Grafana.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import argparse
 import asyncio
 import csv
 import json
+import logging
 import subprocess
 import sys
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 

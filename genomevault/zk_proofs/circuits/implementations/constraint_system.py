@@ -4,8 +4,6 @@ Core constraint system for ZK proofs
 This module implements the fundamental constraint generation and solving
 for PLONK-style arithmetic circuits.
 """
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
 from dataclasses import dataclass, field
 from enum import Enum

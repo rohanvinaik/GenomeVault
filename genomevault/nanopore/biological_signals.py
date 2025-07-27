@@ -4,13 +4,11 @@ Biological signal detection from hypervector variance patterns.
 Detects methylation, structural variants, and other biological
 signals from nanopore HV instability patterns.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import json
+import logging
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 from scipy import signal as scipy_signal

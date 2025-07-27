@@ -4,15 +4,13 @@ FastAPI endpoints for nanopore streaming analysis.
 Provides REST API for real-time nanopore data processing
 with biological signal detection.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import asyncio
 import hashlib
 import json
+import logging
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 from fastapi import APIRouter, BackgroundTasks, Depends, File, HTTPException, Query, UploadFile

@@ -4,14 +4,12 @@ GenomeVault Phenotypes Processing
 Handles clinical and phenotypic data processing including EHR integration,
 FHIR data parsing, and phenotype standardization.
 """
-from datetime import datetime
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import datetime
 import json
+import logging
 import re
 from dataclasses import dataclass, field
+from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Simple benchmark runner that works"""
 
-import sys
 import os
+import sys
 from pathlib import Path
 
 # Setup paths
@@ -14,6 +14,7 @@ print("Testing basic imports...")
 
 try:
     import numpy as np
+
     print("✓ NumPy imported")
 except ImportError as e:
     print(f"✗ NumPy import failed: {e}")
@@ -21,6 +22,7 @@ except ImportError as e:
 
 try:
     import torch
+
     print("✓ PyTorch imported")
 except ImportError as e:
     print(f"✗ PyTorch import failed: {e}")
@@ -28,6 +30,7 @@ except ImportError as e:
 
 try:
     from genomevault.hypervector.encoding import GenomicEncoder, PackedGenomicEncoder
+
     print("✓ GenomeVault encoders imported")
 except ImportError as e:
     print(f"✗ GenomeVault import failed: {e}")
@@ -36,6 +39,7 @@ except ImportError as e:
     # Try direct import
     try:
         import genomevault
+
         print(f"GenomeVault found at: {genomevault.__file__}")
     except BaseException:
         print("GenomeVault package not found")
@@ -62,6 +66,7 @@ try:
 except Exception as e:
     print(f"\n❌ Error during test: {e}")
     import traceback
+
     traceback.print_exc()
 
 print("\nTo run full benchmarks, ensure all files are properly formatted.")

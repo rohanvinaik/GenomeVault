@@ -3,10 +3,8 @@
 This module provides centralized version management for all components,
 protocols, and seeds used throughout the GenomeVault system.
 """
-from typing import Dict, List, Optional, Any, Union
-
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional, Union
 
 # Protocol Versions
 PIR_PROTOCOL_VERSION = "PIR-IT-1.0"

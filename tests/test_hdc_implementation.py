@@ -25,10 +25,7 @@ from hypothesis import strategies as st
 from genomevault.hypervector_transform.binding_operations import (
     BindingOperations,  # Test legacy import
 )
-from genomevault.hypervector_transform.binding_operations import (
-    BindingType,
-    HypervectorBinder,
-)
+from genomevault.hypervector_transform.binding_operations import BindingType, HypervectorBinder
 from genomevault.hypervector_transform.hdc_encoder import (
     CompressionTier,
     HypervectorConfig,

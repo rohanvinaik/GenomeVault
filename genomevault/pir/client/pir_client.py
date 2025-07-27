@@ -1,21 +1,15 @@
 """
 PIR Client implementation for private genomic queries
 """
-from typing import Dict, List, Optional, Any, Union
-
 import asyncio
 import json
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import aiohttp
 import numpy as np
 
-from genomevault.core.constants import (
-    MIN_PIR_SERVERS,
-    PIR_QUERY_TIMEOUT_MS,
-    PIR_THRESHOLD,
-)
+from genomevault.core.constants import MIN_PIR_SERVERS, PIR_QUERY_TIMEOUT_MS, PIR_THRESHOLD
 from genomevault.core.exceptions import PIRError
 
 

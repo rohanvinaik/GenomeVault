@@ -2,15 +2,13 @@
 PIR Coordinator for server discovery, health monitoring, and compliance.
 Manages geographic diversity and bandwidth optimization.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import asyncio
 import json
+import logging
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 import aiohttp
 from geopy.distance import geodesic

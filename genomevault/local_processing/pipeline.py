@@ -1,13 +1,11 @@
 """
 Multi-omics processing pipeline orchestrator
 """
-from typing import Dict, List, Optional, Any, Union
-
 import asyncio
 import json
 import logging
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional, Union
 
 from genomevault.core.constants import CompressionTier, OmicsType
 

@@ -3,7 +3,7 @@ Core configuration management for GenomeVault
 """
 
 from functools import lru_cache
-from typing import Dict, List, Optional, Any, Union
+from typing import Any, Dict, List, Optional, Union
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings

@@ -4,14 +4,12 @@ Integration module for Proof-of-Training and ZKML features
 This module integrates PoT and ZKML capabilities into the existing
 GenomeVault infrastructure.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
 import json
+import logging
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from genomevault.advanced_analysis.federated_learning.model_lineage import FederatedModelLineage
 from genomevault.blockchain.contracts.training_attestation import TrainingAttestationContract

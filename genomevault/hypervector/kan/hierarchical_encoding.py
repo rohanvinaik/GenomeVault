@@ -4,8 +4,6 @@ Enhanced Hierarchical Hypervector Encoding
 Implements the multi-resolution hierarchical encoding system from the KAN-HD insights,
 with domain-specific projections and adaptive dimensionality.
 """
-from typing import Dict, List, Optional, Any, Union
-
 import math
 from dataclasses import dataclass
 from enum import Enum

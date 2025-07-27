@@ -4,8 +4,6 @@ Scientific Interpretability Module
 Implements scientific discovery capabilities from KAN-HD insights,
 extracting human-understandable patterns and formulas from learned functions.
 """
-from typing import Dict, List, Optional, Any, Union
-
 import json
 from dataclasses import dataclass
 from enum import Enum

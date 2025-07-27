@@ -4,8 +4,6 @@ GenomeVault Configuration Management
 This module provides centralized configuration management for all GenomeVault components,
 including environment-specific settings, secrets management, and runtime configuration.
 """
-from typing import Dict, List, Optional, Any, Union
-
 import base64
 import json
 import logging
@@ -13,7 +11,7 @@ import os
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional, Union
 
 try:
     import yaml

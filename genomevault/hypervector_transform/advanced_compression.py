@@ -2,14 +2,12 @@
 Enhanced hierarchical hypervector compression module.
 Implements the advanced compression from the project specifications.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
 import json
+import logging
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 

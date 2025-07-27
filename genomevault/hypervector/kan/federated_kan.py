@@ -4,8 +4,6 @@ Enhanced Federated KAN Implementation
 Implements collaborative machine learning with KANs without sharing raw genomic data.
 Based on the insight that KANs can reduce communication costs by 50% in federated settings.
 """
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
 import json
 from dataclasses import dataclass

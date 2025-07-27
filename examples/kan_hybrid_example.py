@@ -4,10 +4,8 @@ Example: Using KAN Hybrid Architecture with GenomeVault
 This example demonstrates how to integrate the KAN-HD hybrid architecture
 into your existing GenomeVault workflow for improved compression and privacy.
 """
-from typing import Dict, List, Optional, Any, Union
-
 import time
-from typing import Dict, List
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 import torch

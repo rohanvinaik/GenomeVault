@@ -4,12 +4,11 @@ Biological zero-knowledge proof circuits
 This module implements specialized circuits for genomic privacy,
 including variant verification, PRS calculation, and clinical assessments.
 """
-import numpy as np
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
+import logging
+from typing import Any, Dict, List, Optional, Union
 
+import numpy as np
 import torch
 
 from genomevault.utils.logging import get_logger

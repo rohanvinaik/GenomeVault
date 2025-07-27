@@ -4,12 +4,13 @@ Minimal working benchmark for GenomeVault
 This bypasses import issues and tests core functionality
 """
 
-import sys
 import os
+import sys
+import time
 from pathlib import Path
+
 import numpy as np
 import torch
-import time
 
 # Add project to path
 project_root = Path(__file__).parent
@@ -37,10 +38,10 @@ class MinimalGenomicEncoder:
         """Initialize base vectors"""
         vectors = {}
         # Create orthogonal base vectors
-        for i, base in enumerate(['A', 'T', 'G', 'C']):
+        for i, base in enumerate(["A", "T", "G", "C"]):
             vec = torch.zeros(self.dimension)
             # Sparse initialization
-            indices = torch.randperm(self.dimension)[:self.dimension // 4]
+            indices = torch.randperm(self.dimension)[: self.dimension // 4]
             vec[indices] = torch.randn(len(indices))
             vec = vec / torch.norm(vec)
             vectors[base] = vec
@@ -68,12 +69,7 @@ class MinimalGenomicEncoder:
 
         encoded_variants = []
         for var in variants:
-            vec = self.encode_variant(
-                var['chromosome'],
-                var['position'],
-                var['ref'],
-                var['alt']
-            )
+            vec = self.encode_variant(var["chromosome"], var["position"], var["ref"], var["alt"])
             encoded_variants.append(vec)
 
         # Bundle by summing
@@ -129,7 +125,7 @@ n_variants = 1000
 # Generate random variants
 print(f"Generating {n_variants} random variants...")
 chromosomes = [f"chr{i}" for i in range(1, 23)]
-bases = ['A', 'T', 'G', 'C']
+bases = ["A", "T", "G", "C"]
 random_variants = []
 
 for _ in range(n_variants):
@@ -138,12 +134,14 @@ for _ in range(n_variants):
     ref_idx = np.random.randint(4)
     alt_idx = (ref_idx + np.random.randint(1, 4)) % 4
 
-    random_variants.append({
-        "chromosome": chromosomes[chr_idx],
-        "position": position,
-        "ref": bases[ref_idx],
-        "alt": bases[alt_idx]
-    })
+    random_variants.append(
+        {
+            "chromosome": chromosomes[chr_idx],
+            "position": position,
+            "ref": bases[ref_idx],
+            "alt": bases[alt_idx],
+        }
+    )
 
 # Time encoding
 start_time = time.time()

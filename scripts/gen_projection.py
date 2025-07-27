@@ -3,13 +3,11 @@
 Generate pre-built projection memory maps for faster startup.
 These cached projections significantly speed up encoder initialization.
 """
-from typing import Dict, List, Optional, Any, Union
-
 import argparse
 import os
 import time
 from pathlib import Path
-from typing import List, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 

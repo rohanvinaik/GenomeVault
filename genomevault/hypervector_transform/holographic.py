@@ -5,10 +5,8 @@ This module implements holographic reduced representations (HRR) for
 encoding complex structured information in hypervectors.
 """
 import logging
-from typing import Dict, List, Optional, Any, Union
-
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 import torch

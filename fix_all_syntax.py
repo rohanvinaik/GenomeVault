@@ -3,11 +3,11 @@
 Automatically fix all Python syntax issues in GenomeVault
 """
 
+import ast
 import os
+import subprocess
 import sys
 from pathlib import Path
-import subprocess
-import ast
 
 
 def find_and_fix_syntax_errors(base_path):

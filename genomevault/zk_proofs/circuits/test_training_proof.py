@@ -1,11 +1,9 @@
 """
 Tests for Training Proof and Multi-Modal Training Proof circuits
 """
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
 import time
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Union
 
 import pytest
 

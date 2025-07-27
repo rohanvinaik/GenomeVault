@@ -2,16 +2,15 @@
 """
 Analyze and fix issues in GenomeVault experimental modules
 """
-import torch
-import numpy as np
-from typing import Dict, List, Optional, Any, Union
-
 import ast
 import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
+
+import numpy as np
+import torch
 
 
 class DependencyAnalyzer(ast.NodeVisitor):
@@ -302,7 +301,7 @@ def run_benchmarks() -> None:
        """TODO: Add docstring for run_benchmarks"""
      """Run all benchmarks"""
     print("Running benchmarks...")
-    
+
     benchmark_dir = project_root / "benchmarks"
     if benchmark_dir.exists():
         for bench_file in benchmark_dir.glob("*.py"):
@@ -317,7 +316,7 @@ def run_experiments() -> None:
        """TODO: Add docstring for run_experiments"""
      """Run experimental modules"""
     print("\\nRunning experiments...")
-    
+
     exp_dir = project_root / "experiments"
     if exp_dir.exists():
         for exp_file in exp_dir.glob("*.py"):
@@ -333,9 +332,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--benchmarks', action='store_true', help='Run benchmarks')
     parser.add_argument('--experiments', action='store_true', help='Run experiments')
-    
+
     args = parser.parse_args()
-    
+
     if args.benchmarks:
         run_benchmarks()
     elif args.experiments:

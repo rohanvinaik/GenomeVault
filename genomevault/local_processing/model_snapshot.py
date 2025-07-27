@@ -4,12 +4,9 @@ Model Snapshot Logging for Training Provenance
 This module captures and stores model snapshots during training,
 enabling cryptographic proof of training evolution.
 """
-from dataclasses import dataclass
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
 import json
+import logging
 import os
 import pickle
 import time

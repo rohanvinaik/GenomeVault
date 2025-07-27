@@ -4,8 +4,6 @@ Hierarchical Hyperdimensional Computing (HDC) Encoder for genomic data
 This module implements the core hypervector encoding functionality that transforms
 processed multi-omics data into high-dimensional, privacy-preserving representations.
 """
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
 import json
 import logging

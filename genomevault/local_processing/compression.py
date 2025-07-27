@@ -6,13 +6,11 @@ Implements the three-tier compression system as specified:
 - Clinical tier: ~300KB - ACMG + PharmGKB variants (~120k)
 - Full HDC tier: 100-200KB per modality - 10,000-D vectors
 """
-from typing import Dict, List, Optional, Any, Union
-
 import gzip
 import hashlib
 import json
 from dataclasses import dataclass, field
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Union
 
 from genomevault.core.constants import CompressionTier, OmicsType
 from genomevault.utils import get_config, get_logger

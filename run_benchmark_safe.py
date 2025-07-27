@@ -4,8 +4,8 @@ Safe benchmark runner for GenomeVault
 """
 
 import locale
-import sys
 import os
+import sys
 from pathlib import Path
 
 # Add project to path

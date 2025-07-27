@@ -2,25 +2,23 @@
 PIR server implementation with information-theoretic security.
 Handles private queries over distributed genomic reference data.
 """
-from genomevault.core.base_patterns import NotImplementedMixin
-from genomevault.utils.logging import audit_logger, get_logger, logger, performance_logger
-from genomevault.utils.common import NotImplementedMixin
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import asyncio
 import hashlib
+import logging
 import mmap
 import os
 import time
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 
+from genomevault.core.base_patterns import NotImplementedMixin
+from genomevault.utils.common import NotImplementedMixin
 from genomevault.utils.config import get_config
+from genomevault.utils.logging import audit_logger, get_logger, logger, performance_logger
 
 config = get_config()
 

@@ -6,9 +6,8 @@ Example usage script for Proof-of-Training in GenomeVault
 This script demonstrates how to use the PoT features for training
 a privacy-preserving genomic model with full auditability.
 """
-import logging
-
 import json
+import logging
 import time
 from pathlib import Path
 

@@ -3,12 +3,10 @@ HIPAA Verification Models
 
 Data models for HIPAA fast-track verification system.
 """
-from typing import Dict, List, Optional, Any, Union
-
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional, Union
 
 
 class VerificationStatus(Enum):

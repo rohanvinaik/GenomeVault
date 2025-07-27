@@ -28,7 +28,7 @@ def backup_and_clean():
         "analyze_and_fix_modules.py",
         "experiments/test_encoding.py",
         "experiments/variant_search.py",
-        "experiments/variant_test_helper.py"
+        "experiments/variant_test_helper.py",
     ]
 
     # Move problematic files to backup
@@ -140,22 +140,22 @@ def fix_critical_files():
             content = genomic_file.read_text()
 
             # Fix common issues
-            lines = content.split('\n')
+            lines = content.split("\n")
             fixed_lines = []
 
             for line in lines:
                 # Convert tabs to spaces
-                line = line.replace('\t', '    ')
+                line = line.replace("\t", "    ")
                 # Remove duplicate spaces in indentation
                 if line.strip():
                     indent = len(line) - len(line.lstrip())
-                    fixed_line = ' ' * indent + line.lstrip()
+                    fixed_line = " " * indent + line.lstrip()
                     fixed_lines.append(fixed_line)
                 else:
                     fixed_lines.append(line)
 
             # Write back
-            genomic_file.write_text('\n'.join(fixed_lines))
+            genomic_file.write_text("\n".join(fixed_lines))
             print("  ✅ Fixed genomic.py")
 
         except Exception as e:
@@ -194,4 +194,5 @@ def main():
 
 if __name__ == "__main__":
     import sys
+
     sys.exit(main())

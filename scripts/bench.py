@@ -3,18 +3,16 @@
 Performance benchmarking harness for GenomeVault.
 Supports multiple lanes: ZK, PIR, HDC.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import argparse
 import asyncio
 import json
+import logging
 import subprocess
 import sys
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 

@@ -131,7 +131,7 @@ async def demonstrate_hipaa_fasttrack() -> None:
                 Proposal to standardize the clinical data format for the diabetes
                 risk management pilot program. This will ensure interoperability
                 between different healthcare providers and improve patient outcomes.
-                
+
                 Key changes:
                 - Adopt FHIR R4 for all clinical data exchange
                 - Require LOINC codes for lab results

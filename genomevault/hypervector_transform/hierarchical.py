@@ -7,8 +7,6 @@ Implements the multi-resolution hypervector system as specified:
 - High-level vectors: 20,000 dimensions
 """
 import logging
-from typing import Dict, List, Optional, Any, Union
-
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
@@ -16,11 +14,11 @@ from typing import Any, Dict, List, Optional, Union
 import numpy as np
 import torch
 
+from genomevault.core.base_patterns import create_circuit, get_default_config
 from genomevault.core.config import get_config
 from genomevault.core.constants import HYPERVECTOR_DIMENSIONS, OmicsType
 from genomevault.utils.common import create_circuit_stub, get_default_config
 from genomevault.utils.logging import get_logger
-from genomevault.core.base_patterns import create_circuit, get_default_config
 
 logger = get_logger(__name__)
 config = get_config()

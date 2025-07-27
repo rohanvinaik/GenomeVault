@@ -4,13 +4,13 @@ from typing import Any, Dict
 """
 Safe comprehensive fixes for GenomeVault - handles encoding issues
 """
-import torch
-import numpy as np
-
 import os
 import subprocess
 import sys
 from pathlib import Path
+
+import numpy as np
+import torch
 
 
 def find_problematic_files(base_path) -> None:
@@ -155,7 +155,7 @@ try:
 except ImportError as e:
     print(f"Import error: {e}")
     print("\\nTrying direct execution...")
-    
+
     bench_file = project_root / "benchmarks" / "benchmark_packed_hypervector.py"
     if bench_file.exists():
         # Read and execute

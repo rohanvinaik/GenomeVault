@@ -5,11 +5,9 @@ Orphan Disease Research Workflow Example
 This example demonstrates how GenomeVault enables privacy-preserving
 research for rare diseases, using Rett Syndrome as an example.
 """
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
 import time
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 

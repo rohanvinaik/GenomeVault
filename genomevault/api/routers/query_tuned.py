@@ -2,12 +2,10 @@
 API Router for SNP-tuned and Zoom Queries
 Extends the tuned query endpoint with panel granularity and hierarchical zoom
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import asyncio
+import logging
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field

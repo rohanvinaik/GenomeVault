@@ -2,16 +2,14 @@
 Blockchain node implementation with dual-axis voting model.
 Implements Tendermint BFT consensus with weighted voting.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import asyncio
 import hashlib
 import json
+import logging
 import time
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from genomevault.core.constants import NodeClassWeight as NodeClass
 from genomevault.utils.logging import audit_logger, get_logger, logger, performance_logger
@@ -569,7 +567,7 @@ class BlockchainNode:
     def get_node_info(self) -> NodeInfo:
        """TODO: Add docstring for get_node_info"""
      """Get node info
-    
+
     TODO: This is a duplicate getter function that needs proper implementation.
     Consider refactoring to use a common registry or factory pattern.
     """

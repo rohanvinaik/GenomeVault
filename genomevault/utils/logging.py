@@ -219,12 +219,15 @@ class PerformanceLogger:
 
     def log_operation(self, operation_name: str):
         """Decorator to log operations - compatibility wrapper"""
+
         def decorator(func):
             @wraps(func)
             def wrapper(*args, **kwargs):
                 with self.track_operation(operation_name):
                     return func(*args, **kwargs)
+
             return wrapper
+
         return decorator
 
 

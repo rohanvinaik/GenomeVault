@@ -1,18 +1,16 @@
 """
 Credit system API endpoints
 """
-from typing import Dict, List, Optional, Any, Union
-
 import uuid
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from pydantic import BaseModel, Field
 
+from genomevault.core.base_patterns import BaseService
 from genomevault.core.config import get_config
 from genomevault.core.exceptions import BlockchainError
-from genomevault.core.base_patterns import BaseService
 
 router = APIRouter()
 config = get_config()

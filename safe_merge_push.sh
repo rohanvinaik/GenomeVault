@@ -31,7 +31,7 @@ git stash pop || {
     git diff --name-only --diff-filter=U
     echo ""
     echo "Opening merge tool to resolve conflicts..."
-    
+
     # Try to auto-merge where possible
     git status --porcelain | grep "^UU" | awk '{print $2}' | while read file; do
         echo "Attempting auto-merge for: $file"

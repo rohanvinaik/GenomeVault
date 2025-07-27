@@ -3,11 +3,9 @@ Enhanced KAN-HD API Router
 
 Integrates all KAN-HD hybrid enhancements into the FastAPI interface.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import asyncio
 import json
+import logging
 import time
 import uuid
 from datetime import datetime

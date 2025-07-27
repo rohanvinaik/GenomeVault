@@ -4,12 +4,10 @@ HDC API endpoints for GenomeVault
 Provides RESTful API endpoints for encoding genomic data using
 Hierarchical Hyperdimensional Computing (HDC).
 """
-from typing import Dict, List, Optional, Any, Union
-
 import logging
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 import torch

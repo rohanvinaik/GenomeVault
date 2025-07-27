@@ -1,10 +1,8 @@
 """
 Topological Data Analysis for genomic structure analysis
 """
-from typing import Dict, List, Optional, Any, Union
-
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 import networkx as nx
 import numpy as np

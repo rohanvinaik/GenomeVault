@@ -1,11 +1,10 @@
 """High-level ZK proof service API."""
 
-import logging
-from typing import Dict, List, Optional, Any, Union
 import asyncio
+import logging
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from genomevault.utils.logging import get_logger, logger
 from genomevault.zk_proofs.circuits import PRSProofCircuit

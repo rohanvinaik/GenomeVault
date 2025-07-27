@@ -8,7 +8,6 @@ This example demonstrates the core functionality of GenomeVault's
 privacy-preserving genomic data processing pipeline.
 """
 import logging
-
 import os
 from datetime import datetime
 from pathlib import Path
@@ -65,22 +64,18 @@ def process_genomic_data_example() -> None:
         input_path=Path("sample.fastq.gz"),
         sample_id="patient_001"
     )
-    
+
     # Compress using differential storage
     storage = DifferentialStorage()
     compressed = storage.compress_profile(profile)
-    
+
     logger.info("Found {len(profile.variants)} variants")
     logger.info("Average coverage: {profile.quality_metrics.coverage_mean:.1f}x")
     logger.info("Compression achieved: {len(compressed['chunks'])} chunks")
     """
 
     # For demo purposes, create mock data
-    from genomevault.local_processing.sequencing import (
-        GenomicProfile,
-        QualityMetrics,
-        Variant,
-    )
+    from genomevault.local_processing.sequencing import GenomicProfile, QualityMetrics, Variant
 
     mock_variants = [
         Variant(

@@ -1,8 +1,7 @@
 """ZK proof circuits for genomic applications."""
 
-from typing import Dict, List, Optional, Any, Union
 from datetime import datetime
-from typing import Any
+from typing import Any, Dict, List, Optional, Union
 
 from .base_circuits import BaseCircuit
 from .clinical_circuits import ClinicalCircuit

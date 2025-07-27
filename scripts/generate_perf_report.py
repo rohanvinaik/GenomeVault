@@ -5,13 +5,11 @@ Generate performance report from benchmark results
 Aggregates benchmark results and generates a comprehensive performance report
 with visualizations and analysis.
 """
-from typing import Dict, List, Optional, Any, Union
-
 import argparse
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -262,11 +260,11 @@ class PerformanceReportGenerator:
         body {{ font-family: Arial, sans-serif; margin: 20px; }}
         h1 {{ color: #333; }}
         h2 {{ color: #666; }}
-        .metric {{ 
-            display: inline-block; 
-            margin: 10px; 
-            padding: 15px; 
-            background: #f0f0f0; 
+        .metric {{
+            display: inline-block;
+            margin: 10px;
+            padding: 15px;
+            background: #f0f0f0;
             border-radius: 5px;
         }}
         .metric-value {{ font-size: 24px; font-weight: bold; color: #1f77b4; }}
@@ -278,7 +276,7 @@ class PerformanceReportGenerator:
 <body>
     <h1>GenomeVault Performance Report</h1>
     <p>Generated: {summary['generated_at']}</p>
-    
+
     <div class="lane-section">
         <h2>HDC (Hyperdimensional Computing)</h2>
 """
@@ -293,12 +291,12 @@ class PerformanceReportGenerator:
             <div class="metric-value">{hdc_summary.get('encoding_ops_per_sec', 0):.0f}</div>
             <div class="metric-label">Encodings/sec</div>
         </div>
-        
+
         <div class="metric">
             <div class="metric-value">{hdc_summary.get('memory_kb', 0):.0f} KB</div>
             <div class="metric-label">Memory per Vector</div>
         </div>
-        
+
         <div class="metric">
             <div class="metric-value">{hdc_summary.get('compression_ratio', 0):.1f}x</div>
             <div class="metric-label">Compression Ratio</div>
@@ -312,17 +310,17 @@ class PerformanceReportGenerator:
 
         html_content += """
     </div>
-    
+
     <div class="lane-section">
         <h2>PIR (Private Information Retrieval)</h2>
         <p>PIR benchmarks available - see detailed reports</p>
     </div>
-    
+
     <div class="lane-section">
         <h2>ZK (Zero-Knowledge Proofs)</h2>
         <p>ZK benchmarks available - see detailed reports</p>
     </div>
-    
+
 </body>
 </html>
 """

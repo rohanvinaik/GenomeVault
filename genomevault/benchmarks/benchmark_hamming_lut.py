@@ -6,10 +6,8 @@ This script compares the performance of:
 2. Optimized LUT-based Hamming distance
 3. GPU-accelerated LUT Hamming distance (if available)
 """
-from typing import Dict, List, Optional, Any, Union
-
 import time
-from typing import Dict, List
+from typing import Any, Dict, List, Optional, Union
 
 import matplotlib.pyplot as plt
 import numpy as np

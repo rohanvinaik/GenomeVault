@@ -2,14 +2,12 @@
 Zero-Knowledge Circuit for Median Verification
 Implements a real ZK proof system for verifying median computation
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
 import json
+import logging
 import secrets
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 from cryptography.hazmat.primitives import hashes

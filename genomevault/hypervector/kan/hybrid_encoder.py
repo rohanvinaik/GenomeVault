@@ -4,10 +4,8 @@ KAN-HD Hybrid Encoder
 Implements the hybrid architecture that combines KAN compression
 with hyperdimensional computing for privacy-preserving genomic storage.
 """
-from typing import Dict, List, Optional, Any, Union
-
 from enum import Enum
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch

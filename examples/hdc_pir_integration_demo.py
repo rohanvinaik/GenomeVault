@@ -2,22 +2,15 @@
 HDC Error Tuning with PIR Batching - Complete Example
 Demonstrates the full pipeline from accuracy dial to batched PIR queries
 """
-from typing import Dict, List, Optional, Any, Union
-
 import asyncio
 import time
-from typing import Dict, List
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 import torch
 
 from genomevault.hypervector.error_handling import ErrorBudgetAllocator
-from genomevault.pir.client import (
-    BatchedPIRQueryBuilder,
-    GenomicQuery,
-    PIRClient,
-    QueryType,
-)
+from genomevault.pir.client import BatchedPIRQueryBuilder, GenomicQuery, PIRClient, QueryType
 
 
 async def main() -> None:

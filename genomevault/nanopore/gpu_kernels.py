@@ -4,11 +4,9 @@ GPU kernels for accelerated nanopore HV processing.
 Implements CuPy-based GPU kernels for streaming event binding
 with catalytic memory management.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import asyncio
-from typing import Dict, Optional, Tuple
+import logging
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 

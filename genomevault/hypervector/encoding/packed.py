@@ -11,6 +11,7 @@ from numba import cuda
 
 try:
     import cupy as cp
+
     CUPY_AVAILABLE = True
 except ImportError:
     cp = None
@@ -277,6 +278,7 @@ def fast_hamming_distance(buf1: np.ndarray, buf2: np.ndarray) -> int:
 
 # GPU functions (if CuPy available)
 if CUPY_AVAILABLE:
+
     def _gpu_majority_vote(all_vecs, n_vecs):
         """GPU-accelerated majority vote"""
         n_words = all_vecs.shape[1]

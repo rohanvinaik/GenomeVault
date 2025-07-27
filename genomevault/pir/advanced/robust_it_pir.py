@@ -5,14 +5,12 @@ This module implements a Byzantine-resilient IT-PIR scheme that can tolerate
 malicious servers and network adversaries while maintaining information-theoretic
 privacy guarantees.
 """
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
 import hmac
 import logging
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 

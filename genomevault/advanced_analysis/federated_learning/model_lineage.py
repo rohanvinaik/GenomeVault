@@ -4,17 +4,14 @@ Federated Model Lineage Tracking for Distributed Training
 This module tracks model evolution across federated learning rounds,
 creating a verifiable DAG (Directed Acyclic Graph) of model updates.
 """
-from dataclasses import dataclass
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
 import json
+import logging
 import time
 from collections import defaultdict
 from dataclasses import asdict, dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 import matplotlib.pyplot as plt
 import networkx as nx

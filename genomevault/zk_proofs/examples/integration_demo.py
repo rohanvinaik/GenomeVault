@@ -4,6 +4,14 @@ Integration example for GenomeVault Zero-Knowledge Proof System.
 This example demonstrates the complete workflow for generating and
 verifying privacy-preserving proofs for genomic analyses.
 """
+import hashlib
+import logging
+import time
+from typing import Any, Dict, List, Optional, Union
+
+import numpy as np
+
+from genomevault.utils.logging import logger
 from genomevault.zk_proofs import (
     CircuitManager,
     PostQuantumTransition,
@@ -11,16 +19,6 @@ from genomevault.zk_proofs import (
     Verifier,
     benchmark_pq_performance,
 )
-import logging
-from typing import Dict, List, Optional, Any, Union
-
-import hashlib
-import time
-from typing import Any, Dict
-
-import numpy as np
-
-from genomevault.utils.logging import logger
 
 logger = get_logger(__name__)
 

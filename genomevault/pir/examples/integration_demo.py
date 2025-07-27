@@ -2,13 +2,11 @@
 PIR Integration Demo
 Demonstrates end-to-end PIR functionality with ZK and HDC integration.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import asyncio
 import json
+import logging
 import time
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 

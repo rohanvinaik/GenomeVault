@@ -6,9 +6,7 @@ f(x) = Σ_q Φ_q(Σ_p φ_{q,p}(x_p))
 
 Where each φ_{q,p} is a learnable univariate function (spline).
 """
-from typing import Dict, List, Optional, Any, Union
-
-from typing import List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch

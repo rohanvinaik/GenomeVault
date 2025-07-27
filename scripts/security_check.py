@@ -3,15 +3,13 @@
 Security check script for GenomeVault.
 Verifies log redaction and configuration sanity.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import argparse
 import json
+import logging
 import re
 import sys
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from genomevault.utils.logging import logger
 

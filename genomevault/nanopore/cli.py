@@ -4,13 +4,11 @@ CLI commands for nanopore streaming analysis.
 Provides command-line interface for processing nanopore data
 with biological signal detection.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import asyncio
 import json
+import logging
 from pathlib import Path
-from typing import Optional
+from typing import Any, Dict, List, Optional, Union
 
 import click
 import numpy as np

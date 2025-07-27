@@ -5,14 +5,12 @@ GenomeVault ZK Proof CLI Tool
 Command-line interface for generating and verifying zero-knowledge proofs.
 As specified in Stage 2 of the ZK implementation plan.
 """
-from typing import Dict, List, Optional, Any, Union
-
 import argparse
 import json
 import sys
 import time
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional, Union
 
 from genomevault.zk_proofs import Prover, Verifier
 from genomevault.zk_proofs.circuits.implementations.variant_frequency_circuit import (
@@ -332,13 +330,13 @@ def main() -> None:
 Examples:
   # Generate a variant presence proof
   zk_prove --circuit variant_presence --public-input public.json --private-input private.json
-  
+
   # Verify a proof
   zk_verify --proof variant_proof.json
-  
+
   # Run demonstration
   zk_demo --circuit variant_frequency --save-inputs
-  
+
   # Get circuit information
   zk_info --circuit diabetes_risk
         """,

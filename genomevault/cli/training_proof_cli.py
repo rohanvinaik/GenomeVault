@@ -4,13 +4,11 @@ CLI Tool for Training Proof Verification
 This module provides command-line tools for verifying ML model training proofs
 and attestations in GenomeVault.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
 import json
+import logging
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import click
 import matplotlib.pyplot as plt

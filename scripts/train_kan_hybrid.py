@@ -4,9 +4,7 @@ Training script for KAN Hybrid Architecture
 This script demonstrates how to train the KAN models on genomic data
 to achieve optimal compression while maintaining reconstruction quality.
 """
-from typing import Dict, List, Optional, Any, Union
-
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np

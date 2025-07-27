@@ -30,7 +30,7 @@ echo -e "\n💾 Committing..."
 git commit -m "feat: Implement tech audit security improvements (PIR-002, ZK-001, CAL-003, GOV-004)
 
 - Timing-resistant PIR server
-- ZK SRS management  
+- ZK SRS management
 - KAN-HD calibration suite
 - Consent ledger system
 - Security test suite

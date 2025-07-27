@@ -4,12 +4,10 @@ Training Proof Circuit for Zero-Knowledge Machine Learning
 This module implements cryptographic proofs for verifying ML model training lineage
 without exposing model internals or training data.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
+import logging
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 

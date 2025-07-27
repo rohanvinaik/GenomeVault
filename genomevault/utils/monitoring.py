@@ -9,12 +9,10 @@ This module provides comprehensive monitoring capabilities including:
 - Privacy-preserving logging
 """
 import logging
-from typing import Dict, List, Optional, Any, Union
-
 import time
 from datetime import datetime
 from functools import wraps
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import prometheus_client
 import structlog

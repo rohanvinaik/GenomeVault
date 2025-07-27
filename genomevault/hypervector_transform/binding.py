@@ -4,12 +4,10 @@ Binding operations for hyperdimensional computing
 This module implements various binding operations that combine hypervectors
 while preserving their mathematical properties and biological relationships.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
+import logging
 from enum import Enum
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 import torch

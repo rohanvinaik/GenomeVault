@@ -2,14 +2,12 @@
 Information-Theoretic PIR Protocol Implementation
 Implements 2-server IT-PIR with XOR-based scheme and security guarantees.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
+import logging
 import secrets
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 

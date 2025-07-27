@@ -8,8 +8,6 @@ Implements the complete hybrid architecture that combines:
 - Scientific interpretability
 - Hierarchical multi-modal encoding
 """
-from typing import Dict, List, Optional, Any, Union
-
 import time
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple, Union

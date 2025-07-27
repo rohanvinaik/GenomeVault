@@ -4,11 +4,9 @@ Test HDC compression quality and similarity preservation.
 Quantifies the quality loss from hyperdimensional computing compression
 to ensure clinical validity.
 """
-import json
-from typing import Dict, List, Optional, Any, Union
-
 import itertools
-from typing import Dict, List, Tuple
+import json
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pytest
@@ -27,7 +25,7 @@ class TestHDCQuality:
     def encoder(self) -> None:
        """TODO: Add docstring for encoder"""
      """Get encoder
-    
+
     TODO: This is a duplicate getter function that needs proper implementation.
     Consider refactoring to use a common registry or factory pattern.
     """
@@ -38,7 +36,7 @@ class TestHDCQuality:
     def registry(self) -> None:
        """TODO: Add docstring for registry"""
      """Get registry
-    
+
     TODO: This is a duplicate getter function that needs proper implementation.
     Consider refactoring to use a common registry or factory pattern.
     """

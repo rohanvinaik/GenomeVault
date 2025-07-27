@@ -4,13 +4,17 @@ Circuit manager for Zero-Knowledge proof system.
 Handles circuit selection, optimization, and management for
 genomic privacy-preserving proofs.
 """
-from .circuits.biological.variant import VariantProofCircuit
-from .circuits.biological.multi_omics import (
-    ClinicalTrialEligibilityCircuit,
-    GenotypePhenotypeAssociationCircuit,
-    MultiOmicsCorrelationCircuit,
-    RareVariantBurdenCircuit,
-)
+import hashlib
+import json
+import logging
+import time
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional, Tuple, Union
+
+from genomevault.utils.config import get_config
+from genomevault.utils.logging import logger, performance_logger
+
+from .circuits.base_circuits import BaseCircuit
 from .circuits.biological.diabetes import (
     DiabetesRiskCircuit,
     PathwayEnrichmentCircuit,
@@ -18,18 +22,13 @@ from .circuits.biological.diabetes import (
     PolygenenicRiskScoreCircuit,
     VariantPresenceCircuit,
 )
-from .circuits.base_circuits import BaseCircuit
-from genomevault.utils.logging import logger, performance_logger
-import json
-import logging
-from typing import Dict, List, Optional, Any, Union
-
-import hashlib
-import time
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
-
-from genomevault.utils.config import get_config
+from .circuits.biological.multi_omics import (
+    ClinicalTrialEligibilityCircuit,
+    GenotypePhenotypeAssociationCircuit,
+    MultiOmicsCorrelationCircuit,
+    RareVariantBurdenCircuit,
+)
+from .circuits.biological.variant import VariantProofCircuit
 
 config = get_config()
 

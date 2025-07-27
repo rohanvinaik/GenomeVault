@@ -2,12 +2,10 @@
 API entrypoint using FastAPI.
 Implements core GenomeVault network endpoints.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
+import logging
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -20,12 +18,12 @@ from genomevault.api.routers.kan_hd_enhanced import router as kan_hd_enhanced_ro
 # Import existing routers
 from genomevault.api.routers.query_tuned import router as snp_query_router
 from genomevault.api.routers.tuned_query import router as tuned_query_router
+from genomevault.core.base_patterns import create_circuit, get_default_config
 from genomevault.hypervector.error_handling import router as hdc_router
 from genomevault.nanopore.api import router as nanopore_router
 from genomevault.utils.common import create_circuit_stub, get_default_config
 from genomevault.utils.config import get_config
 from genomevault.utils.logging import audit_logger, get_logger
-from genomevault.core.base_patterns import create_circuit, get_default_config
 
 # Create FastAPI app
 config = get_config()

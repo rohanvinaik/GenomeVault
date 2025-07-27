@@ -2,17 +2,15 @@
 Reference data manager for PIR system.
 Handles pangenome graphs, annotations, and population-specific data.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import gzip
 import hashlib
 import json
+import logging
 import time
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 import numpy as np
 

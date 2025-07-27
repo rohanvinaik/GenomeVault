@@ -3,15 +3,13 @@
 Fix duplicate functions in GenomeVault codebase
 Based on TailChasingFixer analysis results
 """
-from typing import Dict, List, Optional, Any, Union
-
 import ast
 import hashlib
 import os
 import re
 import sys
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 
 class DuplicateFunctionFixer:
@@ -103,7 +101,7 @@ logger = logging.getLogger(__name__)
 
 class NotImplementedMixin:
     """Mixin for not-yet-implemented functionality"""
-    
+
     @staticmethod
     def not_implemented(function_name: str) -> None:
            """TODO: Add docstring for not_implemented"""
@@ -113,13 +111,13 @@ class NotImplementedMixin:
 
 class EmptyReturnMixin:
     """Mixin for functions that return empty structures"""
-    
+
     @staticmethod
     def return_empty_dict() -> Dict[str, Any]:
            """TODO: Add docstring for return_empty_dict"""
      """Return empty dictionary"""
         return {}
-    
+
     @staticmethod
     def return_empty_list() -> list:
            """TODO: Add docstring for return_empty_list"""
@@ -129,13 +127,13 @@ class EmptyReturnMixin:
 
 class LoggingMixin:
     """Mixin for logging operations"""
-    
+
     @staticmethod
     def log_operation(operation: str, **kwargs) -> None:
            """TODO: Add docstring for log_operation"""
      """Log an operation with context"""
         logger.info(f"Operation: {operation}", extra=kwargs)
-    
+
     @staticmethod
     def log_genomic_operation(operation: str, user_id: Optional[str] = None, **kwargs) -> None:
            """TODO: Add docstring for log_genomic_operation"""
@@ -332,7 +330,7 @@ def get_default_config() -> Dict[str, Any]:
         pattern = rf"(def {func_name}\([^)]*\)[^:]*:)"
         replacement = rf'''\1
     """Get {func_name.replace('get_', '').replace('_', ' ')}
-    
+
     TODO: This is a duplicate getter function that needs proper implementation.
     Consider refactoring to use a common registry or factory pattern.
     """'''

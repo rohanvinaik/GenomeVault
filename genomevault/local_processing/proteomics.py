@@ -9,14 +9,12 @@ Handles mass spectrometry proteomics data including:
 """
 import json
 import logging
-from typing import Dict, List, Optional, Any, Union
-
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 import numpy as np
 import pandas as pd

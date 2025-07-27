@@ -4,11 +4,9 @@ Streaming processor for nanopore sequencing data.
 Implements catalytic slice-wise processing of nanopore events
 with bounded memory usage.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import asyncio
 import hashlib
+import logging
 import time
 from dataclasses import dataclass
 from pathlib import Path

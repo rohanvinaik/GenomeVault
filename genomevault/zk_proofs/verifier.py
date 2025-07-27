@@ -2,17 +2,15 @@
 Zero-knowledge proof verification system.
 Implements PLONK verification for genomic privacy proofs.
 """
-from genomevault.utils.logging import audit_logger, get_logger, logger, performance_logger
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
 import json
+import logging
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from genomevault.utils.config import get_config
+from genomevault.utils.logging import audit_logger, get_logger, logger, performance_logger
 
 _ = get_config()
 

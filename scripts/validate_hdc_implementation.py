@@ -4,13 +4,11 @@ HDC Implementation Validation Script
 
 Validates that the HDC implementation meets all requirements from the specification.
 """
-from typing import Dict, List, Optional, Any, Union
-
 import json
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 
 class HDCImplementationValidator:

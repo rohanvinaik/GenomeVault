@@ -2,21 +2,19 @@
 PIR client: build and decode queries with information-theoretic privacy.
 Implements multi-server PIR with optimal communication complexity.
 """
-from genomevault.utils.logging import get_logger, logger, performance_logger
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import asyncio
 import hashlib
 import json
+import logging
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import aiohttp
 import numpy as np
 
 from genomevault.utils.config import get_config
+from genomevault.utils.logging import get_logger, logger, performance_logger
 
 config = get_config()
 

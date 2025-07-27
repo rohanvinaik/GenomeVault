@@ -2,15 +2,13 @@
 Batched PIR Query Builder for HDC Error-Tuned Queries
 Implements repeat-aware PIR batching with median aggregation for uncertainty tuning
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import asyncio
 import hashlib
+import logging
 import time
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, AsyncIterator, Dict, List, Optional, Tuple
+from typing import Any, AsyncIterator, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch

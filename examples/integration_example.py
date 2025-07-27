@@ -7,7 +7,6 @@ This example demonstrates the complete flow from raw genomic data
 to privacy-preserving hypervector representation.
 """
 import logging
-
 from pathlib import Path
 
 import torch

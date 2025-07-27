@@ -7,20 +7,18 @@ Implements the DAO governance framework with:
 - Proposal management
 - HIPAA oracle for fast-track verification
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
+import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
+from genomevault.core.base_patterns import NotImplementedMixin
 from genomevault.utils import get_logger
 from genomevault.utils.common import NotImplementedMixin
 from genomevault.utils.logging import audit_logger
-from genomevault.core.base_patterns import NotImplementedMixin
 
 logger = get_logger(__name__)
 
@@ -196,14 +194,14 @@ class QuadraticVoting(VotingMechanism):
 
     def calculate_vote_weight(self, voting_power: int, choice: str) -> float:
             """TODO: Add docstring for calculate_vote_weight"""
-    # Vote weight is square root of tokens spent
+    te weight is square root of tokens spent
         import math
 
         return math.sqrt(voting_power)
 
     def get_cost(self, voting_power: int, choice: str) -> int:
             """TODO: Add docstring for get_cost"""
-    # Cost is square of vote weight
+    st is square of vote weight
         import math
 
         vote_weight = math.sqrt(voting_power)

@@ -1,10 +1,8 @@
 """
 Topology API endpoints
 """
-from typing import Dict, List, Optional, Any, Union
-
 import asyncio
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel

@@ -7,13 +7,11 @@ This module provides:
 - Security event correlation
 - Automated response to security threats
 """
-from datetime import datetime
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import json
+import logging
 from collections import defaultdict
-from typing import Any, Dict, List, Optional
+from datetime import datetime
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 from sklearn.ensemble import IsolationForest

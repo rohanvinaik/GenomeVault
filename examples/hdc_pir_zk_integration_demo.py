@@ -2,12 +2,10 @@
 Complete HDC-PIR Integration with Real ZK Proofs
 Demonstrates the full pipeline with actual zero-knowledge proof generation
 """
-from typing import Dict, List, Optional, Any, Union
-
 import asyncio
 import json
 import time
-from typing import Dict, List
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 

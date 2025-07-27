@@ -194,18 +194,18 @@ logger = logging.getLogger(__name__)
 
 class BaseCircuit(ABC):
     """Base class for zero-knowledge proof circuits"""
-    
+
     def __init__(self, circuit_type: str) -> None:
             """TODO: Add docstring for __init__"""
     self.circuit_type = circuit_type
         self.logger = logging.getLogger(f"{__name__}.{circuit_type}")
-        
+
     @abstractmethod
     def build(self) -> Dict[str, Any]:
            """TODO: Add docstring for build"""
      """Build the circuit"""
         pass
-        
+
     def get_stub(self) -> Dict[str, Any]:
            """TODO: Add docstring for get_stub"""
      """Get stub implementation"""
@@ -218,11 +218,11 @@ class BaseCircuit(ABC):
 
 class BaseConfig(ABC):
     """Base configuration class"""
-    
+
     def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
     self._config = self._load_default_config()
-        
+
     def _load_default_config(self) -> Dict[str, Any]:
            """TODO: Add docstring for _load_default_config"""
      """Load default configuration"""
@@ -235,12 +235,12 @@ class BaseConfig(ABC):
                 "blockchain": True
             }
         }
-        
+
     def get(self, key: str, default: Any = None) -> Any:
            """TODO: Add docstring for get"""
      """Get configuration value"""
         return self._config.get(key, default)
-        
+
     def set(self, key: str, value: Any) -> None:
            """TODO: Add docstring for set"""
      """Set configuration value"""
@@ -249,29 +249,29 @@ class BaseConfig(ABC):
 
 class BaseService(ABC):
     """Base service class with common functionality"""
-    
+
     def __init__(self, name: str) -> None:
             """TODO: Add docstring for __init__"""
     self.name = name
         self.logger = logging.getLogger(f"{__name__}.{name}")
         self._initialized = False
-        
+
     def initialize(self) -> None:
            """TODO: Add docstring for initialize"""
      """Initialize the service"""
         if self._initialized:
             return
-            
+
         self.logger.info(f"Initializing {self.name} service")
         self._do_initialize()
         self._initialized = True
-        
+
     @abstractmethod
     def _do_initialize(self) -> None:
            """TODO: Add docstring for _do_initialize"""
      """Actual initialization logic"""
         pass
-        
+
     def log_operation(self, operation: str, **kwargs) -> None:
            """TODO: Add docstring for log_operation"""
      """Log an operation"""
@@ -280,7 +280,7 @@ class BaseService(ABC):
 
 class NotImplementedMixin:
     """Mixin for not-yet-implemented methods"""
-    
+
     @staticmethod
     def not_implemented(method_name: str) -> None:
            """TODO: Add docstring for not_implemented"""
@@ -296,7 +296,7 @@ def create_circuit(circuit_type: str) -> Dict[str, Any]:
         def build(self) -> None:
                 """TODO: Add docstring for build"""
     return self.get_stub()
-    
+
     circuit = CircuitStub(circuit_type)
     return circuit.get_stub()
 
@@ -645,12 +645,12 @@ from {import_path} import *
 
 class Test{module_name.title().replace("_", "")}:
     """Test cases for {module_name}"""
-    
+
     def test_placeholder(self) -> None:
            """TODO: Add docstring for test_placeholder"""
      """TODO: Add actual tests"""
         assert True, "Placeholder test"
-        
+
     # TODO: Add more test cases
 '''
 

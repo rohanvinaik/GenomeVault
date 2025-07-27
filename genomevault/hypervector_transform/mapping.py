@@ -5,10 +5,8 @@ This module implements various mappings that preserve biological relationships
 while transforming data into the hyperdimensional space.
 """
 import logging
-from typing import Dict, List, Optional, Any, Union
-
 from dataclasses import dataclass
-from typing import Dict, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import torch
 

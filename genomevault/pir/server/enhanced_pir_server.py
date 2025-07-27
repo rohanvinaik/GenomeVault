@@ -2,12 +2,10 @@
 Enhanced PIR server implementation with full information-theoretic security.
 Handles real genomic reference data with optimized query processing.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import asyncio
 import hashlib
 import json
+import logging
 import mmap
 import os
 import struct
@@ -16,18 +14,19 @@ from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 import aiofiles
 import lz4.frame
 import numpy as np
 import uvloop
 
+from genomevault.core.base_patterns import BaseService
+
 from ...core.config import get_config
 from ...core.exceptions import SecurityError, ValidationError
 from ...utils.encryption import AESGCMEncryption
 from ...utils.logging import get_logger
-from genomevault.core.base_patterns import BaseService
 
 logger = get_logger(__name__)
 config = get_config()

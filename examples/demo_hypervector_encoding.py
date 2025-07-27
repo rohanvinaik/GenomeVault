@@ -5,9 +5,7 @@ This script demonstrates the key features of the hypervector encoding module,
 showing how genomic data is transformed into privacy-preserving representations.
 """
 import logging
-from typing import Dict, List, Optional, Any, Union
-
-from typing import Dict, List
+from typing import Any, Dict, List, Optional, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -22,10 +20,7 @@ from genomevault.hypervector_transform.binding import (
 )
 
 # GenomeVault imports
-from genomevault.hypervector_transform.encoding import (
-    HypervectorEncoder,
-    create_encoder,
-)
+from genomevault.hypervector_transform.encoding import HypervectorEncoder, create_encoder
 from genomevault.hypervector_transform.holographic import HolographicEncoder
 from genomevault.hypervector_transform.mapping import (
     BiologicalSimilarityMapper,

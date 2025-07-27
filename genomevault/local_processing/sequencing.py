@@ -4,16 +4,14 @@ GenomeVault Sequencing Data Processing
 Handles genomic sequencing data processing including alignment, variant calling,
 and reference-based differential storage.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import gzip
 import json
+import logging
 import subprocess
 import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 import pysam

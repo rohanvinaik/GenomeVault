@@ -1,6 +1,7 @@
-from genomevault.local_processing import DifferentialStorage
-from genomevault.hypervector.encoding import GenomicEncoder
 from typing import Any, Dict
+
+from genomevault.hypervector.encoding import GenomicEncoder
+from genomevault.local_processing import DifferentialStorage
 
 #!/usr/bin/env python3
 """

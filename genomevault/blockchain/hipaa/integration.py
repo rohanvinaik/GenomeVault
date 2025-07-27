@@ -3,12 +3,10 @@ HIPAA Integration for Blockchain Governance
 
 Integrates HIPAA fast-track verification with the blockchain node system.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import asyncio
+import logging
 from datetime import datetime, timedelta
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from genomevault.utils.logging import get_logger
 

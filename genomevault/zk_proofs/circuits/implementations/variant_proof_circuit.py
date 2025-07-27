@@ -4,9 +4,8 @@ Variant Proof Circuit Implementation
 This implements the actual constraint generation for proving
 variant presence without revealing the variant position.
 """
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
+from typing import Any, Dict, List, Optional, Union
 
 from .constraint_system import (
     Any,

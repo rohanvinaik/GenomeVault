@@ -4,13 +4,11 @@ Base circuit implementations for zero-knowledge proofs
 This module provides the foundational circuit building blocks
 for genomic privacy-preserving proofs using PLONK.
 """
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
+import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Union
 
 from genomevault.utils.logging import get_logger
 

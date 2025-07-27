@@ -6,13 +6,11 @@ Implements the diabetes risk assessment system with:
 - Zero-knowledge proofs for privacy-preserving alerts
 - HIPAA-compliant data handling
 """
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
 import json
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch

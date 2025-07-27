@@ -2,21 +2,19 @@
 Zero-knowledge proof generation using PLONK templates.
 Implements specialized circuits for genomic privacy.
 """
-from genomevault.core.base_patterns import create_circuit, get_default_config
-from genomevault.utils.logging import get_logger
-from genomevault.utils.common import create_circuit_stub, get_default_config
-import logging
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
 import json
+import logging
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 
+from genomevault.core.base_patterns import create_circuit, get_default_config
 from genomevault.core.config import get_config
+from genomevault.utils.common import create_circuit_stub, get_default_config
+from genomevault.utils.logging import get_logger
 
 _ = get_config()
 

@@ -5,12 +5,10 @@ This module implements various binding operations that combine hypervectors
 while preserving their mathematical properties and biological relationships.
 Includes all operations specified in the HDC implementation plan.
 """
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
 import logging
 from enum import Enum
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch

@@ -3,25 +3,17 @@ HIPAA Verifier Implementation
 
 Core verification logic for HIPAA fast-track system.
 """
-from typing import Dict, List, Optional, Any, Union
-
 import hashlib
 import json
 from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import aiohttp
 
 from ...core.exceptions import VerificationError
 from ...utils import audit_logger, get_logger
-from .models import (
-    HIPAACredentials,
-    NPIRecord,
-    NPIType,
-    VerificationRecord,
-    VerificationStatus,
-)
+from .models import HIPAACredentials, NPIRecord, NPIType, VerificationRecord, VerificationStatus
 
 logger = get_logger(__name__)
 

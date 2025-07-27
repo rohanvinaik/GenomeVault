@@ -16,12 +16,7 @@ from genomevault.hypervector.error_handling import (
     ECCEncoderMixin,
     ErrorBudgetAllocator,
 )
-from genomevault.pir.client import (
-    BatchedPIRQueryBuilder,
-    GenomicQuery,
-    PIRClient,
-    QueryType,
-)
+from genomevault.pir.client import BatchedPIRQueryBuilder, GenomicQuery, PIRClient, QueryType
 
 
 class TestBatchedPIRIntegration:
