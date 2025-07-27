@@ -31,7 +31,7 @@ The accuracy dial has been updated to reflect realistic genomic analysis require
 
 **Hypervector Dimensions**:
 - 90-95%: 10,000 dimensions
-- 95-98%: 50,000 dimensions  
+- 95-98%: 50,000 dimensions
 - 98-99.9%: 100,000 dimensions
 - 99.9%+: 200,000 dimensions (ultra-high precision)
 

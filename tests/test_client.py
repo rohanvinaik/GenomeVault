@@ -5,14 +5,14 @@ Auto-generated test file
 
 import pytest
 
-from genomevault.pir.client import *
+from genomevault.pir.client import *  # noqa: F403
 
 
 class TestClient:
     """Test cases for client"""
-    """Test cases for client"""
-    """Test cases for client"""
 
+    """Test cases for client"""
+    """Test cases for client"""
 
     def test_placeholder(self):
         """TODO: Add actual tests"""

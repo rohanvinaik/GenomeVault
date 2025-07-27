@@ -41,8 +41,8 @@ migrator = VersionMigrator(registry)
 # Migrate a single hypervector
 old_hv = ...  # Your v1.0.0 hypervector
 new_hv = migrator.migrate_hypervector(
-    old_hv, 
-    from_version="v1.0.0", 
+    old_hv,
+    from_version="v1.0.0",
     to_version="v2.0.0"
 )
 ```
@@ -55,11 +55,11 @@ For large datasets:
 def migrate_dataset(vectors, from_version, to_version):
     migrator = VersionMigrator(registry)
     migrated = []
-    
+
     for hv in vectors:
         new_hv = migrator.migrate_hypervector(hv, from_version, to_version)
         migrated.append(new_hv)
-    
+
     return migrated
 ```
 
@@ -120,8 +120,8 @@ mini_hv = mini_encoder.encode(features, OmicsType.GENOMIC)
 
 # Migrate to clinical
 clinical_hv = migrator.migrate_hypervector(
-    mini_hv, 
-    from_version="mini_v1.0.0", 
+    mini_hv,
+    from_version="mini_v1.0.0",
     to_version="v1.0.0"  # Clinical tier
 )
 ```

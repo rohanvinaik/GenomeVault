@@ -27,7 +27,7 @@ Given a database D of n items, where each item is of size l bits:
 
 **Theorem**: The protocol provides perfect information-theoretic privacy against any single server.
 
-**Proof**: 
+**Proof**:
 - Each server sees only one query vector qᵢ
 - Since r is uniformly random, qᵢ is uniformly distributed
 - No information about j can be inferred from a single query vector

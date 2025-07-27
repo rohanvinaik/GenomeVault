@@ -11,7 +11,7 @@ tests/
 │   └── sample_variants.json
 ├── unit/               # Unit tests for individual components
 │   ├── test_zk_*.py    # ZK-related unit tests
-│   ├── test_pir_*.py   # PIR-related unit tests  
+│   ├── test_pir_*.py   # PIR-related unit tests
 │   ├── test_hdc_*.py   # HDC-related unit tests
 │   └── ...
 ├── integration/        # Integration tests
@@ -139,7 +139,7 @@ def test_pir_query_generation_constant_time():
     """Test that PIR query generation runs in constant time"""
     pass
 
-# In test_hdc_encoding.py  
+# In test_hdc_encoding.py
 def test_hdc_encode_variant_preserves_similarity():
     """Test that HDC encoding preserves variant similarity"""
     pass
@@ -161,8 +161,8 @@ def test_compression_mini_tier(sample_snp_data):
 def test_encoding_performance(performance_benchmark, sample_data):
     """Test encoding completes within 50ms"""
     result = performance_benchmark.measure(
-        'encoding', 
-        encoder.encode, 
+        'encoding',
+        encoder.encode,
         sample_data
     )
     performance_benchmark.assert_performance('encoding', 50)

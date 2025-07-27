@@ -148,11 +148,11 @@ class MyBiomarkerCircuit(BaseCircuit):
     def __init__(self):
         super().__init__()
         self.name = "MyBiomarkerCircuit"
-        
+
     def generate_witness(self, private_inputs, public_inputs):
         # Generate witness for your biomarker
         pass
-        
+
     def prove(self, witness, public_inputs):
         # Generate ZK proof
         pass
@@ -167,7 +167,7 @@ class MyDataSource(BaseDataSource):
     def load_data(self):
         # Load your clinical data
         pass
-        
+
     def get_glucose_column(self):
         return 'glucose_mg_dl'
 ```

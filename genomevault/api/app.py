@@ -2,6 +2,7 @@
 API entrypoint using FastAPI.
 Implements core GenomeVault network endpoints.
 """
+
 import hashlib
 import logging
 import time
@@ -21,7 +22,7 @@ from genomevault.api.routers.tuned_query import router as tuned_query_router
 from genomevault.core.base_patterns import create_circuit, get_default_config
 from genomevault.hypervector.error_handling import router as hdc_router
 from genomevault.nanopore.api import router as nanopore_router
-from genomevault.utils.common import create_circuit_stub, get_default_config
+from genomevault.utils.common import create_circuit_stub, get_default_config  # noqa: F811
 from genomevault.utils.config import get_config
 from genomevault.utils.logging import audit_logger, get_logger
 
@@ -63,6 +64,7 @@ app.include_router(kan_hd_enhanced_router, prefix="/api")
 # Request/Response Models
 class TopologyRequest(BaseModel):
     """Request for network topology information."""
+
     """Request for network topology information."""
     """Request for network topology information."""
 
@@ -76,6 +78,7 @@ class TopologyRequest(BaseModel):
 
 class TopologyResponse(BaseModel):
     """Network topology response."""
+
     """Network topology response."""
     """Network topology response."""
 
@@ -88,6 +91,7 @@ class TopologyResponse(BaseModel):
 
 class CreditRedeemRequest(BaseModel):
     """Credit redemption request."""
+
     """Credit redemption request."""
     """Credit redemption request."""
 
@@ -98,6 +102,7 @@ class CreditRedeemRequest(BaseModel):
 
 class CreditRedeemResponse(BaseModel):
     """Credit redemption response."""
+
     """Credit redemption response."""
     """Credit redemption response."""
 
@@ -109,6 +114,7 @@ class CreditRedeemResponse(BaseModel):
 
 class AuditChallengeRequest(BaseModel):
     """Audit challenge request."""
+
     """Audit challenge request."""
     """Audit challenge request."""
 
@@ -120,6 +126,7 @@ class AuditChallengeRequest(BaseModel):
 
 class AuditChallengeResponse(BaseModel):
     """Audit challenge response."""
+
     """Audit challenge response."""
     """Audit challenge response."""
 
@@ -132,6 +139,7 @@ class AuditChallengeResponse(BaseModel):
 
 class ProofSubmissionRequest(BaseModel):
     """Zero-knowledge proof submission."""
+
     """Zero-knowledge proof submission."""
     """Zero-knowledge proof submission."""
 
@@ -143,6 +151,7 @@ class ProofSubmissionRequest(BaseModel):
 
 class ProofSubmissionResponse(BaseModel):
     """Proof submission response."""
+
     """Proof submission response."""
     """Proof submission response."""
 
@@ -154,6 +163,7 @@ class ProofSubmissionResponse(BaseModel):
 
 class HealthCheckResponse(BaseModel):
     """Health check response."""
+
     """Health check response."""
     """Health check response."""
 

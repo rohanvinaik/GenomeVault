@@ -2,6 +2,7 @@
 Complete HDC-PIR Integration with Real ZK Proofs
 Demonstrates the full pipeline with actual zero-knowledge proof generation
 """
+
 import asyncio
 import json
 import time
@@ -100,7 +101,7 @@ async def main() -> None:
     print("\n6. Independent Proof Verification:")
 
     # Create new circuit instance for verification
-    verifier_circuit = MedianVerifierCircuit()
+    verifier_circuit = MedianVerifierCircuit()  # noqa: F841
 
     # Parse the proof data
     proof_dict = json.loads(proof_result.proof_data.decode())
@@ -137,7 +138,7 @@ async def main() -> None:
     # Time mock proof
     start = time.time()
     mock_proof = {"median": median, "error": median_error, "mock": True}
-    mock_hash = hash(str(mock_proof))
+    mock_hash = hash(str(mock_proof))  # noqa: F841
     mock_time = (time.time() - start) * 1000
 
     print(f"   - Mock proof time: {mock_time:.3f}ms")
@@ -153,7 +154,7 @@ async def main() -> None:
     try:
         # This should fail
         invalid_generator = ProofGenerator()
-        invalid_values = values.copy()
+        invalid_values = values.copy()  # noqa: F841
         invalid_median = median + 1.0  # Wrong!
 
         await invalid_generator.generate_median_proof(

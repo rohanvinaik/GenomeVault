@@ -70,7 +70,7 @@ Before pushing to GitHub:
 3. **Create initial commit message**:
    ```
    Initial commit: GenomeVault 3.0 - Privacy-preserving genomics platform
-   
+
    - Complete multi-omics processing pipeline
    - Hyperdimensional computing for privacy
    - Zero-knowledge proof circuits
@@ -80,7 +80,7 @@ Before pushing to GitHub:
 
 ## 🎯 Recommendation
 
-**The codebase is ready for GitHub!** 
+**The codebase is ready for GitHub!**
 
 The warnings are minor and typical for a project at this stage. The important structural issues (like the import bug) have been fixed.
 

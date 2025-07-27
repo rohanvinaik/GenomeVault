@@ -85,7 +85,7 @@ mkdir -p keys
 if [ ! -f .env ]; then
     echo "Creating .env file from template..."
     cp .env.example .env
-    
+
     # Update .env with node configuration
     if [[ "$OSTYPE" == "darwin"* ]]; then
         # macOS
@@ -98,7 +98,7 @@ if [ ! -f .env ]; then
         sed -i "s/SIGNATORY_STATUS=.*/SIGNATORY_STATUS=$SIGNATORY/" .env
         sed -i "s/NODE_CLASS_WEIGHT=.*/NODE_CLASS_WEIGHT=$NODE_CLASS_WEIGHT/" .env
     fi
-    
+
     echo ""
     echo "⚠️  IMPORTANT: Please edit .env file to set:"
     echo "   - JWT_SECRET"
@@ -151,7 +151,7 @@ if ! command -v docker &> /dev/null; then
     echo "   Please install Docker: https://docs.docker.com/get-docker/"
 else
     echo "✓ Docker found"
-    
+
     # Check if Docker daemon is running
     if ! docker info > /dev/null 2>&1; then
         echo "⚠️  Docker daemon is not running. Please start Docker."

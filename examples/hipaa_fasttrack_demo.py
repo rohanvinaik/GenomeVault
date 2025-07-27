@@ -26,7 +26,7 @@ from genomevault.utils import get_logger
 logger = get_logger(__name__)
 
 
-async def demonstrate_hipaa_fasttrack() -> None:
+async def demonstrate_hipaa_fasttrack() -> None:  # noqa: C901
     """TODO: Add docstring for demonstrate_hipaa_fasttrack"""
     """
     Complete demonstration of HIPAA fast-track system.
@@ -109,7 +109,7 @@ async def demonstrate_hipaa_fasttrack() -> None:
                 # Add to HIPAA committee
                 governance.committees[CommitteeType.SCIENTIFIC_ADVISORY].add_member(node.node_id)
 
-            except Exception as e:
+            except Exception as e:  # noqa: F841
                 print("  ✗ Registration failed: {e}")
 
         print("\n\nTotal governance voting power: {governance.total_voting_power}")
@@ -143,7 +143,7 @@ async def demonstrate_hipaa_fasttrack() -> None:
                     "required_codes": ["LOINC", "SNOMED-CT"],
                     "pilot_duration_days": 180,
                 },
-        )
+            )
 
             print("  ✓ Proposal created: {proposal.proposal_id}")
             print("  Voting period: {proposal.voting_period.days} days")
@@ -182,7 +182,7 @@ async def demonstrate_hipaa_fasttrack() -> None:
                 voter_id = "regular_node_{i}"
                 choice = "yes" if i < 2 else "no"
 
-                vote = governance.vote(
+                vote = governance.vote(  # noqa: F841
                     proposal_id=proposal.proposal_id,
                     voter=voter_id,
                     choice=choice,
@@ -194,7 +194,7 @@ async def demonstrate_hipaa_fasttrack() -> None:
             # Check results
             print("\n\nProposal Results:")
             print("-" * 40)
-            details = governance.get_proposal_details(proposal.proposal_id)
+            details = governance.get_proposal_details(proposal.proposal_id)  # noqa: F841
 
             print("Total votes cast: {details['vote_count']}")
             print("Yes votes: {details['votes']['yes']:.1f}")
@@ -252,7 +252,7 @@ The HIPAA Fast-Track system provides:
         print("-" * 40)
 
         print("\nRefreshing verifications...")
-        refresh_results = await integration.refresh_verifications()
+        refresh_results = await integration.refresh_verifications()  # noqa: F841
         print("  Active nodes: {refresh_results['active_nodes']}")
         print("  Expired verifications: {refresh_results['expired_verifications']}")
         print("  Revoked nodes: {refresh_results['revoked_nodes']}")

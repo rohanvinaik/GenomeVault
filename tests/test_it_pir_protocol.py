@@ -5,14 +5,14 @@ Auto-generated test file
 
 import pytest
 
-from genomevault.pir.it_pir_protocol import *
+from genomevault.pir.it_pir_protocol import *  # noqa: F403
 
 
 class TestItPirProtocol:
     """Test cases for it_pir_protocol"""
-    """Test cases for it_pir_protocol"""
-    """Test cases for it_pir_protocol"""
 
+    """Test cases for it_pir_protocol"""
+    """Test cases for it_pir_protocol"""
 
     def test_placeholder(self):
         """TODO: Add actual tests"""

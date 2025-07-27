@@ -15,7 +15,7 @@ The GenomeVault 3.0 codebase has been successfully implemented with all core com
   - PIR network performance monitoring
   - Privacy failure probability tracking
   - Storage tier usage metrics
-  
+
 - **`utils/logging.py`**: Privacy-aware structured logging
   - Automatic sensitive data redaction
   - Audit trail logging for compliance

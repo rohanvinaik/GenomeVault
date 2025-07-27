@@ -78,17 +78,17 @@ from genomevault.module import MyClass
 
 class TestMyClass:
     """Test suite for MyClass"""
-    
+
     @pytest.fixture
     def instance(self):
         """Create an instance for testing"""
         return MyClass()
-    
+
     def test_method_behavior(self, instance):
         """Test specific method behavior"""
         result = instance.method(input_data)
         assert result == expected_output
-    
+
     @pytest.mark.parametrize("input,expected", [
         (1, 2),
         (2, 4),
@@ -109,14 +109,14 @@ from genomevault.db import Database
 @pytest.mark.integration
 class TestDatabaseIntegration:
     """Integration tests for database operations"""
-    
+
     @pytest.fixture
     def db(self):
         """Create database connection"""
         db = Database(test_mode=True)
         yield db
         db.cleanup()
-    
+
     def test_data_persistence(self, db):
         """Test that data persists correctly"""
         db.save("key", "value")
@@ -135,13 +135,13 @@ def test_encoding_speed(benchmark):
     """Benchmark hypervector encoding"""
     encoder = HypervectorEncoder(dimensions=10000)
     data = np.random.randn(1000)
-    
+
     # Benchmark the encoding operation
     result = benchmark(encoder.encode, data)
-    
+
     # Assertions on the result
     assert result.shape == (10000,)
-    
+
     # Performance assertions
     assert benchmark.stats['mean'] < 0.05  # < 50ms average
 ```
@@ -217,10 +217,10 @@ def test_example():
     # Arrange
     data = prepare_test_data()
     instance = MyClass()
-    
+
     # Act
     result = instance.process(data)
-    
+
     # Assert
     assert result.status == 'success'
     assert len(result.items) == 3

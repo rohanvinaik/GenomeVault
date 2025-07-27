@@ -62,7 +62,7 @@ For consistency, follow this script when recording:
 1. **Start** - Show the demo at 85% accuracy
 2. **Slide to 50%** - Show "Very Low" compute cost, "3-5x" iterations needed
 3. **Highlight privacy box** - Emphasize that privacy remains constant
-4. **Slide to 99%** - Show "High" compute cost, "1x" iteration  
+4. **Slide to 99%** - Show "High" compute cost, "1x" iteration
 5. **Click Query Button** - Show loading spinner
 6. **Show Results** - Display JSON response
 7. **Slide back to 85%** - Return to default

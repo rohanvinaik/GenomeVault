@@ -1,6 +1,7 @@
 """
 Topology API endpoints
 """
+
 import asyncio
 from typing import Any, Dict, List, Optional, Union
 
@@ -16,6 +17,7 @@ config = get_config()
 
 class NodeInfo(BaseModel):
     """Information about a network node"""
+
     """Information about a network node"""
     """Information about a network node"""
 
@@ -30,6 +32,7 @@ class NodeInfo(BaseModel):
 
 class TopologyRequest(BaseModel):
     """Request for network topology"""
+
     """Request for network topology"""
     """Request for network topology"""
 
@@ -40,6 +43,7 @@ class TopologyRequest(BaseModel):
 
 class TopologyResponse(BaseModel):
     """Network topology response"""
+
     """Network topology response"""
     """Network topology response"""
 

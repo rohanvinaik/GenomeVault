@@ -79,7 +79,7 @@ for site in study.sites:
         timepoints=["baseline", "6mo", "12mo", "24mo"],
         include_genomics=True
     )
-    
+
     # Aggregate without revealing individual trajectories
     study.add_site_contribution(progression_proof)
 
@@ -253,7 +253,7 @@ for institution in consortium.members:
         key_mutations=["SMN1 deletion", "SMN2 copy number"],
         longitudinal_data=True
     )
-    
+
     consortium.add_member_proof(data_proof)
 
 # Design optimal vector using federated data
@@ -270,7 +270,7 @@ optimal_vector = consortium.optimize_therapy_design(
 
 **Challenge**: Only 43 known patients worldwide with a novel metabolic disorder
 
-**Solution**: 
+**Solution**:
 - Created global patient network using GenomeVault
 - Identified 17 additional undiagnosed patients through similarity matching
 - Discovered therapeutic target using federated analysis
@@ -351,24 +351,24 @@ class UltraRareVariantMatcher:
     def __init__(self):
         self.similarity_threshold = 0.95  # Higher for rare diseases
         self.min_feature_overlap = 0.8
-        
+
     def find_similar_patients(self, query_patient, global_network):
         # Use hierarchical search for efficiency
         candidates = []
-        
+
         # Level 1: Rough filtering using high-level vectors
         rough_matches = global_network.filter_by_similarity(
             query_patient.high_vector,
             threshold=0.7
         )
-        
+
         # Level 2: Refined matching using mid-level vectors
         for candidate in rough_matches:
             similarity = self.compute_multimodal_similarity(
                 query_patient.mid_vector,
                 candidate.mid_vector
             )
-            
+
             if similarity > self.similarity_threshold:
                 candidates.append({
                     'patient_id': candidate.anonymous_id,
@@ -377,7 +377,7 @@ class UltraRareVariantMatcher:
                         query_patient, candidate
                     )
                 })
-        
+
         return self.rank_by_clinical_relevance(candidates)
 ```
 
@@ -388,11 +388,11 @@ class FederatedSurvivalAnalysis:
     def __init__(self, disease, endpoints):
         self.disease = disease
         self.endpoints = endpoints
-        
+
     def run_analysis(self, participating_sites):
         # Each site computes local statistics
         site_contributions = []
-        
+
         for site in participating_sites:
             # Compute privacy-preserving survival curves
             local_stats = site.compute_survival_statistics(
@@ -400,26 +400,26 @@ class FederatedSurvivalAnalysis:
                 privacy_mechanism="differential_privacy",
                 epsilon=1.0
             )
-            
+
             # Generate proof of computation
             proof = site.prove_computation_correctness(
                 local_stats,
                 patient_count=site.patient_count,
                 censoring_pattern=site.censoring_pattern
             )
-            
+
             site_contributions.append((local_stats, proof))
-        
+
         # Aggregate using secure multiparty computation
         global_survival = self.secure_aggregation(site_contributions)
-        
+
         # Identify prognostic factors
         prognostic_factors = self.cox_regression_federated(
             survival_data=global_survival,
             covariates=['age', 'genotype', 'treatment'],
             privacy_budget=0.5
         )
-        
+
         return {
             'median_survival': global_survival.median,
             'survival_curve': global_survival.curve,

@@ -25,7 +25,7 @@ wait_for_service() {
     local url=$2
     local max_attempts=30
     local attempt=0
-    
+
     echo -n "Waiting for $service_name..."
     while [ $attempt -lt $max_attempts ]; do
         if curl -f -s $url > /dev/null 2>&1; then

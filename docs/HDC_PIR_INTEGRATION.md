@@ -41,7 +41,7 @@ User Specifies Accuracy → Budget Planning → Batch Creation → PIR Execution
 POST /api/query/estimate
 {
     "epsilon": 0.01,          # 1% error tolerance
-    "delta_exp": 20,          # 1 in 2^20 failure probability  
+    "delta_exp": 20,          # 1 in 2^20 failure probability
     "ecc_enabled": true,      # Enable error correction
     "parity_g": 3            # 3-block XOR parity
 }
@@ -60,7 +60,7 @@ Response:
 POST /api/query/tuned
 {
     "cohort_id": "heart_study_v2",
-    "statistic": "ldl_c_mean", 
+    "statistic": "ldl_c_mean",
     "query_params": {
         "type": "variant_lookup",
         "chromosome": "chr17",

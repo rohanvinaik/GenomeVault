@@ -158,7 +158,7 @@ private_count = dp.add_noise(true_count, epsilon=1.0)
 ### Replay Attacks
 - **Threat**: Reuse old queries or responses
 - **Mitigation**: Query nonces and timestamps
-- **Implementation**: 
+- **Implementation**:
   ```python
   query.nonce = random_bytes(16)
   query.timestamp = current_time()
@@ -260,8 +260,8 @@ Coming soon: Rewards for critical vulnerabilities
 
 ## Security Contact
 
-**Security Team Email**: security@genomevault.org  
-**Emergency Hotline**: +1-XXX-XXX-XXXX  
+**Security Team Email**: security@genomevault.org
+**Emergency Hotline**: +1-XXX-XXX-XXXX
 **PGP Fingerprint**: `1234 5678 90AB CDEF 1234 5678 90AB CDEF`
 
 ## Revision History

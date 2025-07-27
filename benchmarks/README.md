@@ -22,7 +22,7 @@ Run benchmarks for a specific lane:
 # HDC benchmarks
 make bench-hdc
 
-# PIR benchmarks  
+# PIR benchmarks
 make bench-pir
 
 # ZK benchmarks
@@ -111,7 +111,7 @@ To add benchmarks for a new component:
    class MyComponentBenchmark:
        def __init__(self, harness: BenchmarkHarness):
            self.harness = harness
-       
+
        async def run_all(self):
            # Run benchmarks
            results = {"metric": value}

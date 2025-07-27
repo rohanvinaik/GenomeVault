@@ -5,14 +5,14 @@ Auto-generated test file
 
 import pytest
 
-from genomevault.version import *
+from genomevault.version import *  # noqa: F403
 
 
 class TestVersion:
     """Test cases for version"""
-    """Test cases for version"""
-    """Test cases for version"""
 
+    """Test cases for version"""
+    """Test cases for version"""
 
     def test_placeholder(self):
         """TODO: Add actual tests"""

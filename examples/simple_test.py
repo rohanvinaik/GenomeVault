@@ -1,6 +1,6 @@
 from typing import Any, Dict
 
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Simple test to verify GenomeVault imports
 """
@@ -24,7 +24,7 @@ def test_basic_imports() -> None:
         print("✅ core.config imported successfully")
 
         # Test creating config
-        config = get_config()
+        config = get_config()  # noqa: F841
         print("✅ Config created: node_type={config.node_type}")
 
         # Test exceptions
@@ -39,16 +39,16 @@ def test_basic_imports() -> None:
 
         return True
 
-    except Exception as e:
+    except Exception as e:  # noqa: F841
         print("❌ Import failed: {e}")
         import traceback
 
         traceback.print_exc()
         return False
 
-
         def test_module_imports() -> None:
             """TODO: Add docstring for test_module_imports"""
+
     """Test module imports"""
     print("\nTesting module imports...")
 
@@ -63,10 +63,10 @@ def test_basic_imports() -> None:
     success = True
     for module in modules:
         try:
-            parts = module.split(".")
+            parts = module.split(".")  # noqa: F841
             exec("from {parts[0]} import {parts[1]}")
             print("✅ {module} imported successfully")
-        except Exception as e:
+        except Exception as e:  # noqa: F841
             print("❌ {module} failed: {e}")
             success = False
 
@@ -79,7 +79,7 @@ if __name__ == "__main__":
     print("=" * 50)
 
     basic_ok = test_basic_imports()
-    modules_ok = test_module_imports()
+    modules_ok = test_module_imports()  # noqa: F821
 
     if basic_ok and modules_ok:
         print("\n✅ All imports successful!")

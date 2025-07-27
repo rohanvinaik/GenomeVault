@@ -65,7 +65,7 @@ The dual-axis model gives HIPAA providers significant voting power:
 
 Compare to regular nodes:
 - Light: 1
-- Full: 4  
+- Full: 4
 - Archive: 8
 
 ## Block Rewards

@@ -132,7 +132,7 @@ echo -e "\n${YELLOW}🚀 Pushing to GitHub...${NC}"
 if git remote | grep -q "origin"; then
     BRANCH=$(git branch --show-current)
     echo -e "Pushing to origin/${BRANCH}..."
-    
+
     # Try to push
     if git push origin $BRANCH; then
         echo -e "${GREEN}✅ Successfully pushed to GitHub!${NC}"
