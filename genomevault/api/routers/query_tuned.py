@@ -344,7 +344,7 @@ async def estimate_panel_overhead(panel: str = "common", positions: Optional[int
 
 
 # Helper functions
-def _build_genomic_query_from_params(query_type: str, params: Dict) -> GenomicQuery:
+    def _build_genomic_query_from_params(query_type: str, params: Dict) -> GenomicQuery:
        """TODO: Add docstring for _build_genomic_query_from_params"""
      """Build genomic query from type and parameters"""
     if query_type == "variant_lookup":

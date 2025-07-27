@@ -58,7 +58,7 @@ class ProofOfTrainingIntegration:
         # Blockchain connection
         self.attestation_contract = None
         if config.get("blockchain_enabled"):
-            self._init_blockchain()
+        self._init_blockchain()
 
         # Storage paths
         self.storage_base = Path(config.get("storage_path", "./genomevault_pot"))
@@ -111,7 +111,7 @@ class ProofOfTrainingIntegration:
                 f"{model_type}_{dataset_info.get('hash', 'unknown')}".encode()
             ).hexdigest()
 
-            self.federated_lineages[session_id] = FederatedModelLineage(
+        self.federated_lineages[session_id] = FederatedModelLineage(
                 federation_id=session_id, initial_model_hash=initial_model_hash
             )
 
@@ -353,7 +353,7 @@ class ProofOfTrainingIntegration:
         validator_id = f"validator_{self.config.get('institution_id', 'default')}"
 
         if validator_id not in self.clinical_validators:
-            self.clinical_validators[validator_id] = ClinicalModelValidator(
+        self.clinical_validators[validator_id] = ClinicalModelValidator(
                 validator_id=validator_id
             )
 
@@ -524,7 +524,7 @@ class ProofOfTrainingIntegration:
             contract_address = self.config["blockchain"]["contract_address"]
             chain_id = self.config["blockchain"]["chain_id"]
 
-            self.attestation_contract = TrainingAttestationContract(
+        self.attestation_contract = TrainingAttestationContract(
                 contract_address=contract_address, chain_id=chain_id
             )
 
@@ -532,13 +532,13 @@ class ProofOfTrainingIntegration:
             owner = self.config["blockchain"]["owner_address"]
             verifiers = self.config["blockchain"]["authorized_verifiers"]
 
-            self.attestation_contract.initialize(owner, verifiers)
+        self.attestation_contract.initialize(owner, verifiers)
 
             logger.info(f"Blockchain connection established: {contract_address}")
 
         except Exception:
             logger.error(f"Failed to initialize blockchain: {e}")
-            self.attestation_contract = None
+        self.attestation_contract = None
 
 
 # Export main integration class

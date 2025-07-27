@@ -207,7 +207,7 @@ class ModelSnapshotLogger:
 
         # Limit buffer size
         if len(self.io_buffer) > 1000:
-            self.io_buffer = self.io_buffer[-1000:]
+        self.io_buffer = self.io_buffer[-1000:]
 
     def get_snapshot_merkle_root(self) -> str:
            """TODO: Add docstring for get_snapshot_merkle_root"""

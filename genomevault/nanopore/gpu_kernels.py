@@ -252,16 +252,16 @@ class GPUBindingKernel:
             threads = 256
             blocks = (n_events + threads - 1) // threads
 
-            self.event_to_kmer_kernel(
+        self.event_to_kmer_kernel(
                 (blocks,),
                 (threads,),
                 (
-                    self.buffers["events"][:n_events],
+        self.buffers["events"][:n_events],
                     n_events,
-                    self.buffers["kmer_thresholds"],
+        self.buffers["kmer_thresholds"],
                     len(self.buffers["kmer_thresholds"]),
-                    self.buffers["kmer_indices"][:n_events],
-                    self.buffers["probabilities"][:n_events],
+        self.buffers["kmer_indices"][:n_events],
+        self.buffers["probabilities"][:n_events],
                 ),
             )
 
@@ -272,33 +272,33 @@ class GPUBindingKernel:
             output_hv = cp.zeros(hv_dim, dtype=cp.float32)
 
             shared_mem_size = hv_dim * 4  # float32
-            self.hv_bind_kernel(
+        self.hv_bind_kernel(
                 (blocks,),
                 (threads,),
                 (
-                    self.buffers["positions"][:n_events],
-                    self.buffers["kmer_indices"][:n_events],
-                    self.buffers["probabilities"][:n_events],
+        self.buffers["positions"][:n_events],
+        self.buffers["kmer_indices"][:n_events],
+        self.buffers["probabilities"][:n_events],
                     pos_table,
                     kmer_table,
                     n_events,
                     hv_dim,
                     output_hv,
-                    self.buffers["variances"][:n_events],
+        self.buffers["variances"][:n_events],
                 ),
                 shared_mem=shared_mem_size,
             )
 
             # Step 4: Update variance statistics
-            self.variance_kernel(
+        self.variance_kernel(
                 (blocks,),
                 (threads,),
                 (
-                    self.buffers["variances"][:n_events],
+        self.buffers["variances"][:n_events],
                     n_events,
-                    self.buffers["running_mean"],
-                    self.buffers["running_m2"],
-                    self.buffers["count"],
+        self.buffers["running_mean"],
+        self.buffers["running_m2"],
+        self.buffers["count"],
                 ),
             )
 

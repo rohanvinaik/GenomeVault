@@ -46,9 +46,9 @@ class HypervectorRegistry:
 
         # Load existing registry
         if self.registry_path.exists():
-            self._load_registry()
+        self._load_registry()
         else:
-            self._initialize_registry()
+        self._initialize_registry()
 
     def _initialize_registry(self) -> None:
            """TODO: Add docstring for _initialize_registry"""
@@ -105,16 +105,16 @@ class HypervectorRegistry:
             with open(self.registry_path, "r") as f:
                 data = json.load(f)
 
-            self.versions = data.get("versions", {})
-            self.current_version = data.get("current_version")
-            self.compatibility_map = data.get("compatibility_map", {})
-            self.performance_metrics = data.get("performance_metrics", {})
+        self.versions = data.get("versions", {})
+        self.current_version = data.get("current_version")
+        self.compatibility_map = data.get("compatibility_map", {})
+        self.performance_metrics = data.get("performance_metrics", {})
 
             logger.info(f"Loaded registry with {len(self.versions)} versions")
 
         except Exception:
             logger.error(f"Failed to load registry: {e}")
-            self._initialize_registry()
+        self._initialize_registry()
 
     def _save_registry(self) -> None:
            """TODO: Add docstring for _save_registry"""
@@ -131,7 +131,7 @@ class HypervectorRegistry:
         backup_path = None
         if self.registry_path.exists():
             backup_path = self.registry_path.with_suffix(".backup.json")
-            self.registry_path.rename(backup_path)
+        self.registry_path.rename(backup_path)
 
         try:
             # Write with pretty formatting
@@ -207,7 +207,7 @@ class HypervectorRegistry:
 
         # Add performance data if provided
         if performance_data:
-            self.performance_metrics[version] = performance_data
+        self.performance_metrics[version] = performance_data
 
         self._save_registry()
 
@@ -297,7 +297,7 @@ class HypervectorRegistry:
         self.compatibility_map[key] = compatibility_info
 
         if bidirectional:
-            self.compatibility_map[reverse_key] = compatibility_info
+        self.compatibility_map[reverse_key] = compatibility_info
 
         self._save_registry()
 

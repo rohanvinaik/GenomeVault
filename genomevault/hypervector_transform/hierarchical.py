@@ -151,7 +151,7 @@ class HierarchicalEncoder:
         domains = list(ProjectionDomain)
 
         for domain in domains:
-            self.domain_projections[domain] = {}
+        self.domain_projections[domain] = {}
 
             # Create specialized projections for each level
             for level, dim in self.dimensions.items():
@@ -172,7 +172,7 @@ class HierarchicalEncoder:
                     # General purpose projection
                     projection = self._create_general_projection(dim)
 
-                self.domain_projections[domain][level] = projection
+        self.domain_projections[domain][level] = projection
 
     def _create_oncology_projection(self, dim: int) -> torch.nn.Module:
            """TODO: Add docstring for _create_oncology_projection"""
@@ -198,7 +198,7 @@ class HierarchicalEncoder:
         # Placeholder dimensions - would be determined by feature extractors
         return OncologyProjection(1000, dim)
 
-    def _create_rare_disease_projection(self, dim: int) -> torch.nn.Module:
+            def _create_rare_disease_projection(self, dim: int) -> torch.nn.Module:
            """TODO: Add docstring for _create_rare_disease_projection"""
      """Create projection for rare disease detection"""
 
@@ -211,7 +211,7 @@ class HierarchicalEncoder:
                 # Initialize with high sparsity
                 with torch.no_grad():
                     mask = torch.rand(output_dim, input_dim) < 0.1
-                    self.sparse_proj.weight.data *= mask.float()
+                self.sparse_proj.weight.data *= mask.float()
 
             def forward(self, x: torch.Tensor) -> torch.Tensor:
                     """TODO: Add docstring for forward"""
@@ -219,7 +219,7 @@ class HierarchicalEncoder:
 
         return RareDiseaseProjection(1000, dim)
 
-    def _create_population_projection(self, dim: int) -> torch.nn.Module:
+            def _create_population_projection(self, dim: int) -> torch.nn.Module:
            """TODO: Add docstring for _create_population_projection"""
      """Create projection for population genetics"""
 
@@ -243,7 +243,7 @@ class HierarchicalEncoder:
 
         return PopulationProjection(1000, dim)
 
-    def _create_pharmacogenomic_projection(self, dim: int) -> torch.nn.Module:
+            def _create_pharmacogenomic_projection(self, dim: int) -> torch.nn.Module:
            """TODO: Add docstring for _create_pharmacogenomic_projection"""
      """Create projection for pharmacogenomics"""
 
@@ -281,7 +281,7 @@ class HierarchicalEncoder:
 
         return PharmacogenomicProjection(1000, dim)
 
-    def _create_general_projection(self, dim: int) -> torch.nn.Module:
+            def _create_general_projection(self, dim: int) -> torch.nn.Module:
            """TODO: Add docstring for _create_general_projection"""
      """Create general purpose projection"""
 
@@ -297,7 +297,7 @@ class HierarchicalEncoder:
 
         return GeneralProjection(1000, dim)
 
-    def encode_hierarchical(
+            def encode_hierarchical(
         self,
         features: Union[torch.Tensor, np.ndarray, Dict],
         omics_type: OmicsType,
@@ -362,7 +362,7 @@ class HierarchicalEncoder:
 
         return hierarchical_hv
 
-    def _extract_features(self, data: Dict, omics_type: OmicsType) -> torch.Tensor:
+            def _extract_features(self, data: Dict, omics_type: OmicsType) -> torch.Tensor:
            """TODO: Add docstring for _extract_features"""
      """Extract features from data dictionary"""
         features = []
@@ -406,7 +406,7 @@ class HierarchicalEncoder:
 
         return torch.tensor(features, dtype=torch.float32)
 
-    def bind_hypervectors(
+            def bind_hypervectors(
         self,
         hv1: HierarchicalHypervector,
         hv2: HierarchicalHypervector,
@@ -460,7 +460,7 @@ class HierarchicalEncoder:
             },
         )
 
-    def _circular_convolution(self, v1: torch.Tensor, v2: torch.Tensor) -> torch.Tensor:
+            def _circular_convolution(self, v1: torch.Tensor, v2: torch.Tensor) -> torch.Tensor:
            """TODO: Add docstring for _circular_convolution"""
      """Perform circular convolution for position-aware binding"""
         # Use FFT for efficient circular convolution
@@ -475,7 +475,7 @@ class HierarchicalEncoder:
 
         return result
 
-    def _cross_modal_binding(self, v1: torch.Tensor, v2: torch.Tensor) -> torch.Tensor:
+            def _cross_modal_binding(self, v1: torch.Tensor, v2: torch.Tensor) -> torch.Tensor:
            """TODO: Add docstring for _cross_modal_binding"""
      """Cross-modal binding with attention mechanism"""
         # Simple attention-based binding
@@ -493,7 +493,7 @@ class HierarchicalEncoder:
 
         return bound
 
-    def similarity_multiresolution(
+            def similarity_multiresolution(
         self,
         hv1: HierarchicalHypervector,
         hv2: HierarchicalHypervector,
@@ -530,7 +530,7 @@ class HierarchicalEncoder:
 
         return total_sim
 
-    def compress_to_tier(self, hv: HierarchicalHypervector, tier: str = "clinical") -> torch.Tensor:
+            def compress_to_tier(self, hv: HierarchicalHypervector, tier: str = "clinical") -> torch.Tensor:
            """TODO: Add docstring for compress_to_tier"""
      """
         Compress hierarchical hypervector to specific storage tier.
@@ -554,15 +554,15 @@ class HierarchicalEncoder:
             # Use all levels with moderate quantization
             compressed = torch.cat(
                 [
-                    self._quantize_vector(hv.base, bits=8),
-                    self._quantize_vector(hv.mid, bits=6),
-                    self._quantize_vector(hv.high, bits=4),
+                self._quantize_vector(hv.base, bits=8),
+                self._quantize_vector(hv.mid, bits=6),
+                self._quantize_vector(hv.high, bits=4),
                 ]
             )
 
         return compressed
 
-    def _quantize_vector(self, vector: torch.Tensor, bits: int) -> torch.Tensor:
+            def _quantize_vector(self, vector: torch.Tensor, bits: int) -> torch.Tensor:
            """TODO: Add docstring for _quantize_vector"""
      """Quantize vector to specified bit depth"""
         # Normalize to [-1, 1]
@@ -577,13 +577,13 @@ class HierarchicalEncoder:
 
 
 # Convenience functions for the enhanced system
-def create_hierarchical_encoder() -> HierarchicalEncoder:
+            def create_hierarchical_encoder() -> HierarchicalEncoder:
        """TODO: Add docstring for create_hierarchical_encoder"""
      """Create a hierarchical encoder instance"""
     return HierarchicalEncoder()
 
 
-def encode_genomic_hierarchical(
+            def encode_genomic_hierarchical(
     genomic_data: Dict, domain: ProjectionDomain = ProjectionDomain.GENERAL
 ) -> HierarchicalHypervector:
        """TODO: Add docstring for encode_genomic_hierarchical"""

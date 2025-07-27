@@ -495,7 +495,7 @@ class BindingOperations(HypervectorBinder):
 
 
 # Convenience functions
-def circular_bind(vectors: List[torch.Tensor]) -> torch.Tensor:
+    def circular_bind(vectors: List[torch.Tensor]) -> torch.Tensor:
        """TODO: Add docstring for circular_bind"""
      """Convenience function for circular binding"""
     if not vectors:
@@ -505,7 +505,7 @@ def circular_bind(vectors: List[torch.Tensor]) -> torch.Tensor:
     return binder.bind(vectors, BindingType.CIRCULAR)
 
 
-def fourier_bind(vectors: List[torch.Tensor]) -> torch.Tensor:
+    def fourier_bind(vectors: List[torch.Tensor]) -> torch.Tensor:
        """TODO: Add docstring for fourier_bind"""
      """Convenience function for Fourier-based HRR binding"""
     if not vectors:
@@ -515,7 +515,7 @@ def fourier_bind(vectors: List[torch.Tensor]) -> torch.Tensor:
     return binder.bind(vectors, BindingType.FOURIER)
 
 
-def protect_vector(vector: torch.Tensor, key: torch.Tensor) -> torch.Tensor:
+    def protect_vector(vector: torch.Tensor, key: torch.Tensor) -> torch.Tensor:
        """TODO: Add docstring for protect_vector"""
      """Convenience function for vector protection"""
     binder = HypervectorBinder(vector.shape[-1])

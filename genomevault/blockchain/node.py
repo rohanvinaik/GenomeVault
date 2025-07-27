@@ -189,8 +189,8 @@ class BlockchainNode:
                 return False
 
             # If verification passes, update TS status
-            self.is_trusted_signatory = True
-            self.voting_power = self._calculate_voting_power()
+        self.is_trusted_signatory = True
+        self.voting_power = self._calculate_voting_power()
 
             # Audit log
             audit_logger.log_event(
@@ -466,8 +466,8 @@ class BlockchainNode:
         # Check balance
         from_balance = self.state.get(from_key, 0)
         if from_balance >= amount:
-            self.state[from_key] = from_balance - amount
-            self.state[to_key] = self.state.get(to_key, 0) + amount
+        self.state[from_key] = from_balance - amount
+        self.state[to_key] = self.state.get(to_key, 0) + amount
 
     async def _update_stake(self, node_id: str, amount: int) -> None:
            """TODO: Add docstring for _update_stake"""
@@ -480,11 +480,11 @@ class BlockchainNode:
      """Award block rewards to proposer."""
         if proposer == self.node_id:
             rewards = self._calculate_block_rewards()
-            self.credits += rewards
+        self.credits += rewards
 
             # Update state
             credit_key = "credits:{self.node_id}"
-            self.state[credit_key] = self.state.get(credit_key, 0) + rewards
+        self.state[credit_key] = self.state.get(credit_key, 0) + rewards
 
             logger.info(
                 "Awarded {rewards} credits for block production",

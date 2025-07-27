@@ -142,7 +142,7 @@ class KANHDCalibrationSuite:
     """
 
     def __init__(self, output_dir: Path, reference_data_path: Optional[Path] = None):
-        """
+    """
         Initialize calibration suite.
 
         Args:
@@ -720,7 +720,7 @@ class KANHDCalibrationSuite:
 
 
 # Example usage
-def run_calibration_example():
+    def run_calibration_example():
     """Example calibration run."""
     # Initialize suite
     suite = KANHDCalibrationSuite(output_dir=Path("/tmp/genomevault_calibration"))

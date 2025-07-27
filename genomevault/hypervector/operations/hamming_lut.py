@@ -209,7 +209,7 @@ class HammingLUT:
         self.use_gpu = use_gpu and cuda.is_available()
 
         if self.use_gpu:
-            self.cuda_lut = get_cuda_popcount_lut()
+        self.cuda_lut = get_cuda_popcount_lut()
 
     def distance(self, vec1: np.ndarray, vec2: np.ndarray) -> int:
            """TODO: Add docstring for distance"""
@@ -288,7 +288,7 @@ class HammingLUT:
 
 
 # PULP-specific implementation placeholder
-def generate_pulp_lut_code() -> str:
+    def generate_pulp_lut_code() -> str:
        """TODO: Add docstring for generate_pulp_lut_code"""
      """
     Generate PULP-specific C code for LUT implementation.
@@ -339,7 +339,7 @@ uint32_t hamming_distance_pulp(const uint64_t* vec1, const uint64_t* vec2, size_
 
 
 # FPGA-specific implementation placeholder
-def generate_fpga_verilog() -> str:
+    def generate_fpga_verilog() -> str:
        """TODO: Add docstring for generate_fpga_verilog"""
      """
     Generate Verilog code for FPGA LUT implementation.
@@ -427,7 +427,7 @@ endmodule
 
 
 # Export convenience functions
-def export_platform_implementations(output_dir: str) -> None:
+    def export_platform_implementations(output_dir: str) -> None:
        """TODO: Add docstring for export_platform_implementations"""
      """
     Export platform-specific implementations to files.

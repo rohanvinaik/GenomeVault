@@ -184,7 +184,7 @@ class KANHDDemo:
             print(f"   - Interpretability score: {patterns['interpretability_score']:.3f}")
             print(f"   - Estimated clusters: {patterns['cluster_structure']['estimated_clusters']}")
 
-            self.results["hierarchical_encoding"] = {
+        self.results["hierarchical_encoding"] = {
                 "modalities_encoded": len(encoded_vectors),
                 "bound_dimensions": {
                     "base": bound_vector.base_vector.shape[-1],
@@ -196,7 +196,7 @@ class KANHDDemo:
 
         except Exception as e:
             print(f"   ❌ Error: {e}")
-            self.results["hierarchical_encoding"] = {"error": str(e)}
+        self.results["hierarchical_encoding"] = {"error": str(e)}
 
     def demo_scientific_interpretability(self) -> None:
         """Demo 3: Scientific interpretability analysis"""
@@ -258,7 +258,7 @@ class KANHDDemo:
             )
             interpretable_encoder.export_discovered_functions(export_path)
 
-            self.results["scientific_interpretability"] = {
+        self.results["scientific_interpretability"] = {
                 "functions_analyzed": total_functions,
                 "interpretability_score": avg_interpretability,
                 "function_types": list(discovered_types),
@@ -268,7 +268,7 @@ class KANHDDemo:
 
         except Exception as e:
             print(f"   ❌ Error: {e}")
-            self.results["scientific_interpretability"] = {"error": str(e)}
+        self.results["scientific_interpretability"] = {"error": str(e)}
 
     def demo_federated_learning(self) -> None:
         """Demo 4: Federated learning capabilities"""
@@ -362,7 +362,7 @@ class KANHDDemo:
             print(f"   - Participants: {fed_stats['participants']}")
             print(f"   - Estimated rounds remaining: {fed_stats['estimated_rounds_remaining']}")
 
-            self.results["federated_learning"] = {
+        self.results["federated_learning"] = {
                 "participants": len(participants),
                 "rounds_completed": fed_stats["current_round"],
                 "convergence_achieved": (
@@ -375,7 +375,7 @@ class KANHDDemo:
 
         except Exception as e:
             print(f"   ❌ Error: {e}")
-            self.results["federated_learning"] = {"error": str(e)}
+        self.results["federated_learning"] = {"error": str(e)}
 
     def demo_performance_tuning(self) -> None:
         """Demo 5: Real-time performance tuning"""
@@ -484,12 +484,12 @@ class KANHDDemo:
 
         # Run all demos
         demos = [
-            self.demo_adaptive_compression,
-            self.demo_hierarchical_encoding,
-            self.demo_scientific_interpretability,
-            self.demo_federated_learning,
-            self.demo_performance_tuning,
-            self.demo_privacy_guarantees,
+        self.demo_adaptive_compression,
+        self.demo_hierarchical_encoding,
+        self.demo_scientific_interpretability,
+        self.demo_federated_learning,
+        self.demo_performance_tuning,
+        self.demo_privacy_guarantees,
         ]
 
         for demo in demos:

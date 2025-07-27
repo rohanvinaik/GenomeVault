@@ -59,7 +59,7 @@ class TestSuiteCleaner:
             # Fix duplicate docstrings (common issue)
             if i > 0 and '"""' in line and '"""' in lines[i - 1]:
                 # Skip duplicate docstring
-                self.issues_found[filepath].append(f"Line {i+1}: Removed duplicate docstring")
+        self.issues_found[filepath].append(f"Line {i+1}: Removed duplicate docstring")
                 continue
 
             # Fix incorrect indentation for docstrings
@@ -112,7 +112,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
                         lines.insert(i, sys_path_fix)
                         break
                 content = "\n".join(lines)
-                self.issues_found[filepath].append("Added sys.path fix for imports")
+        self.issues_found[filepath].append("Added sys.path fix for imports")
 
         return content
 
@@ -136,7 +136,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
                     and lines[i + 1].strip().startswith('"""')
                 ):
                     # Skip the TODO line
-                    self.issues_found[filepath].append(f"Line {i+1}: Removed TODO docstring")
+        self.issues_found[filepath].append(f"Line {i+1}: Removed TODO docstring")
                     continue
 
             fixed_lines.append(line)
@@ -155,10 +155,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
                 },
             )
             if fixed_content != content:
-                self.issues_found[filepath].append("Applied autopep8 formatting")
+        self.issues_found[filepath].append("Applied autopep8 formatting")
             return fixed_content
         except Exception as e:
-            self.issues_found[filepath].append(f"autopep8 error: {str(e)}")
+        self.issues_found[filepath].append(f"autopep8 error: {str(e)}")
             return content
 
     def run_isort(self, content: str, filepath: Path) -> str:
@@ -166,10 +166,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
         try:
             fixed_content = isort.code(content, profile="black", line_length=100)
             if fixed_content != content:
-                self.issues_found[filepath].append("Applied isort import sorting")
+        self.issues_found[filepath].append("Applied isort import sorting")
             return fixed_content
         except Exception as e:
-            self.issues_found[filepath].append(f"isort error: {str(e)}")
+        self.issues_found[filepath].append(f"isort error: {str(e)}")
             return content
 
     def validate_python_syntax(self, content: str, filepath: Path) -> bool:
@@ -178,7 +178,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
             ast.parse(content)
             return True
         except SyntaxError as e:
-            self.issues_found[filepath].append(f"Syntax error: {e}")
+        self.issues_found[filepath].append(f"Syntax error: {e}")
             return False
 
     def fix_file(self, filepath: Path) -> bool:
@@ -211,7 +211,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
             if content != original_content:
                 with open(filepath, "w", encoding="utf-8") as f:
                     f.write(content)
-                self.fixed_files.append(filepath)
+        self.fixed_files.append(filepath)
                 print(f"  ✅ Fixed {filepath}")
             else:
                 print(f"  ✓ No changes needed for {filepath}")
@@ -219,7 +219,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
             return True
 
         except Exception as e:
-            self.issues_found[filepath].append(f"Error processing file: {e}")
+        self.issues_found[filepath].append(f"Error processing file: {e}")
             print(f"  ❌ Error processing {filepath}: {e}")
             return False
 
@@ -264,7 +264,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
         return pylint_issues
 
     def generate_report(self, files: List[Path], flake8_issues: Dict, pylint_issues: Dict):
-        """Generate a comprehensive report."""
+    """Generate a comprehensive report."""
         report_path = self.project_root / "test_suite_cleanup_report.md"
 
         with open(report_path, "w") as f:
@@ -309,7 +309,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
         print(f"\n📄 Report generated: {report_path}")
 
     def clean_all(self):
-        """Main cleaning process."""
+    """Main cleaning process."""
         print("🧹 Starting test suite cleanup...\n")
 
         # Find all Python files
@@ -318,7 +318,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
         # Fix each file
         for filepath in python_files:
-            self.fix_file(filepath)
+        self.fix_file(filepath)
 
         print("\n🔍 Running linters...\n")
 
@@ -335,7 +335,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
         print(f"Pylint issues remaining: {sum(len(issues) for issues in pylint_issues.values())}")
 
 
-def main():
+    def main():
     """Main entry point."""
     # Check if we have the required tools
     required_tools = ["flake8", "pylint"]

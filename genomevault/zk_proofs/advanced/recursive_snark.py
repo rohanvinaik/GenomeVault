@@ -186,7 +186,7 @@ class RecursiveSNARKProver:
             witnesses.append(witness)
 
             # Cache witness for later verification
-            self.accumulator_state["witness_cache"][proof.proof_id] = witness
+        self.accumulator_state["witness_cache"][proof.proof_id] = witness
 
         # Update accumulator state
         self.accumulator_state["accumulator_value"] = acc_value
@@ -253,7 +253,7 @@ class RecursiveSNARKProver:
         circuit_key = f"{left.circuit_name}_{right.circuit_name}_{level}"
 
         if circuit_key not in self.circuit_cache:
-            self.circuit_cache[circuit_key] = self._create_verifier_circuit(
+        self.circuit_cache[circuit_key] = self._create_verifier_circuit(
                 left.circuit_name, right.circuit_name
             )
 

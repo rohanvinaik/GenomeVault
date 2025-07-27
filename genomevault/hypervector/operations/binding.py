@@ -28,7 +28,7 @@ class HypervectorBinder:
 
     def __init__(self, dimension: int = HYPERVECTOR_DIMENSIONS["base"], use_gpu: bool = False) -> None:
             """TODO: Add docstring for __init__"""
-    self.dimension = dimension
+        self.dimension = dimension
         self.hamming_lut = HammingLUT(use_gpu=use_gpu)  # Initialize LUT calculator
 
     def bind(
@@ -198,7 +198,7 @@ class MultiModalBinder:
 
     def __init__(self, dimension: int = HYPERVECTOR_DIMENSIONS["base"]) -> None:
             """TODO: Add docstring for __init__"""
-    self.dimension = dimension
+        self.dimension = dimension
         self.binder = HypervectorBinder(dimension)
         self.modality_keys = self._generate_modality_keys()
 

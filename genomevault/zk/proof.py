@@ -35,7 +35,7 @@ class ProofGenerator:
 
     def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-    self.median_circuit = MedianVerifierCircuit()
+        self.median_circuit = MedianVerifierCircuit()
         self.proof_cache = {}
         logger.info("ProofGenerator initialized with real ZK circuits")
 
@@ -131,7 +131,7 @@ class ProofGenerator:
             )
 
             # Cache the proof for quick retrieval
-            self.proof_cache[proof_hash[:16]] = zk_proof
+        self.proof_cache[proof_hash[:16]] = zk_proof
 
             return ProofResult(
                 hash=proof_hash,

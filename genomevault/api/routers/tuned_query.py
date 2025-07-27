@@ -67,7 +67,7 @@ class ProgressUpdate(BaseModel):
 class WebSocketManager:
     def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-    self.active_connections: Dict[str, WebSocket] = {}
+        self.active_connections: Dict[str, WebSocket] = {}
 
     async def connect(self, session_id: str, websocket: WebSocket) -> None:
             """TODO: Add docstring for connect"""
@@ -88,7 +88,7 @@ class WebSocketManager:
                 await self.active_connections[session_id].send_json(update.dict())
             except Exception as e:
                 logger.error(f"Failed to send progress update: {e}")
-                self.disconnect(session_id)
+        self.disconnect(session_id)
 
 
 ws_manager = WebSocketManager()
@@ -339,7 +339,7 @@ async def estimate_query_performance(
 
 
 # Helper functions
-def _build_genomic_query(params: Dict[str, Any]) -> GenomicQuery:
+    def _build_genomic_query(params: Dict[str, Any]) -> GenomicQuery:
        """TODO: Add docstring for _build_genomic_query"""
      """Build genomic query from request parameters"""
     query_type = QueryType(params.get("type", "variant_lookup"))
@@ -422,7 +422,7 @@ async def _execute_streaming_query(
     )
 
 
-def _estimate_theoretical_error(budget: ErrorBudget) -> float:
+    def _estimate_theoretical_error(budget: ErrorBudget) -> float:
        """TODO: Add docstring for _estimate_theoretical_error"""
      """Estimate theoretical error based on budget configuration"""
     import math

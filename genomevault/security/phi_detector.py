@@ -88,17 +88,17 @@ class PHILeakageDetector:
         """
         self.patterns = self.PHI_PATTERNS.copy()
         if custom_patterns:
-            self.patterns.update(custom_patterns)
+        self.patterns.update(custom_patterns)
 
         # Compile regex patterns
         self.compiled_patterns = {}
         for name, info in self.patterns.items():
-            self.compiled_patterns[name] = re.compile(info["pattern"], re.IGNORECASE)
+        self.compiled_patterns[name] = re.compile(info["pattern"], re.IGNORECASE)
 
         # Compile context patterns
         self.compiled_context = {}
         for name, pattern in self.CONTEXT_PATTERNS.items():
-            self.compiled_context[name] = re.compile(pattern, re.IGNORECASE)
+        self.compiled_context[name] = re.compile(pattern, re.IGNORECASE)
 
     def scan_file(self, filepath: str, max_context: int = 50) -> List[Dict[str, Any]]:
            """TODO: Add docstring for scan_file"""
@@ -265,7 +265,7 @@ class PHILeakageDetector:
 
         for pattern_name, regex in self.compiled_patterns.items():
             # Replace matches with redacted version
-            def replace_match(match) -> None:
+    def replace_match(match) -> None:
                     """TODO: Add docstring for replace_match"""
     matched_text = match.group()
                 # Keep first and last char for context
@@ -463,11 +463,11 @@ class RealTimePHIMonitor:
                     "timestamp": datetime.now().isoformat(),
                 }
 
-                self.findings_buffer.append(finding)
+        self.findings_buffer.append(finding)
 
                 # Check if we need to alert
                 if len(self.findings_buffer) >= self.alert_threshold:
-                    self._trigger_alert()
+        self._trigger_alert()
 
                 return finding
 
@@ -490,7 +490,7 @@ class RealTimePHIMonitor:
 
 
 # Convenience functions
-def scan_genomevault_logs(log_dir: str = "./logs") -> Dict[str, List[Dict[str, Any]]]:
+    def scan_genomevault_logs(log_dir: str = "./logs") -> Dict[str, List[Dict[str, Any]]]:
        """TODO: Add docstring for scan_genomevault_logs"""
      """
     Scan GenomeVault logs for PHI leakage.
@@ -505,7 +505,7 @@ def scan_genomevault_logs(log_dir: str = "./logs") -> Dict[str, List[Dict[str, A
     return detector.scan_directory(log_dir, extensions=[".log"])
 
 
-def redact_phi_from_file(filepath: str, output_path: Optional[str] = None) -> str:
+    def redact_phi_from_file(filepath: str, output_path: Optional[str] = None) -> str:
        """TODO: Add docstring for redact_phi_from_file"""
      """
     Redact PHI from a file and save to new location.

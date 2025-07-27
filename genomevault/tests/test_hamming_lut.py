@@ -90,7 +90,7 @@ class TestHammingLUT(unittest.TestCase):
         for i in range(min(3, n)):
             for j in range(min(3, m)):
                 expected = np.sum(vecs1[i] != vecs2[j])
-                self.assertEqual(distances[i, j], expected)
+        self.assertEqual(distances[i, j], expected)
 
     def test_integration_with_binder(self) -> None:
            """TODO: Add docstring for test_integration_with_binder"""

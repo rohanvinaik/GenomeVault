@@ -34,7 +34,7 @@ class GenomicEncoder:
         enable_snp_mode: bool = False,
         panel_granularity: PanelGranularity = PanelGranularity.OFF,
     ):
-        """Initialize genomic encoder"""
+    """Initialize genomic encoder"""
         self.dimension = dimension
         self.base_vectors = self._init_base_vectors()
         self.enable_snp_mode = enable_snp_mode
@@ -42,10 +42,10 @@ class GenomicEncoder:
 
         # Initialize SNP mode components if enabled
         if enable_snp_mode:
-            self.positional_encoder = PositionalEncoder(
+        self.positional_encoder = PositionalEncoder(
                 dimension=dimension, sparsity=0.01, cache_size=10000
             )
-            self.snp_panel = SNPPanel(self.positional_encoder)
+        self.snp_panel = SNPPanel(self.positional_encoder)
 
         # Hierarchical zoom tiles
         self.zoom_levels = {
@@ -320,7 +320,7 @@ class GenomicEncoder:
         # Level 0: Full chromosome
         chr_variants = [v for v in variants if v["chromosome"] == chromosome]
         if chr_variants:
-            self.zoom_levels[0][chromosome] = self.encode_genome(chr_variants)
+        self.zoom_levels[0][chromosome] = self.encode_genome(chr_variants)
 
         # Level 1: 1Mb windows
         window_size = 1_000_000
@@ -335,7 +335,7 @@ class GenomicEncoder:
         self.zoom_levels[1][level1_key] = {}
         for window_idx, window_vars in windows.items():
             window_vec = self.encode_genome(window_vars)
-            self.zoom_levels[1][level1_key][window_idx] = window_vec
+        self.zoom_levels[1][level1_key][window_idx] = window_vec
 
         # Level 2: 1kb tiles (created on demand)
 
@@ -382,13 +382,13 @@ class GenomicEncoder:
             raise ValueError(f"Invalid zoom level: {level}")
 
     def set_panel_granularity(self, granularity: Union[str, PanelGranularity]):
-        """Change the SNP panel granularity setting"""
+    """Change the SNP panel granularity setting"""
         if isinstance(granularity, str):
             granularity = PanelGranularity(granularity)
         self.panel_granularity = granularity
 
     def load_custom_panel(self, file_path: str, panel_name: str = "custom"):
-        """Load a custom SNP panel from file"""
+    """Load a custom SNP panel from file"""
         if not self.enable_snp_mode:
             raise HypervectorError("SNP mode not enabled")
 
@@ -398,7 +398,7 @@ class GenomicEncoder:
 
     # Catalytic extensions
     def use_catalytic_projections(self, projection_pool):
-        """
+    """
         Switch to memory-mapped catalytic projections.
 
         Args:
@@ -408,7 +408,7 @@ class GenomicEncoder:
         self.use_catalytic = True
 
     def encode_variant_catalytic(self, *args, **kwargs):
-        """
+    """
         Encode variant using catalytic projections.
 
         This method uses memory-mapped projections to reduce

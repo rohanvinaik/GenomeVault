@@ -353,7 +353,7 @@ class TestMultiModalTrainingProof:
         assert proof is not None
 
 
-def test_training_proof_end_to_end() -> None:
+    def test_training_proof_end_to_end() -> None:
        """TODO: Add docstring for test_training_proof_end_to_end"""
      """End-to-end test of training proof generation and verification"""
     # Create a simple training scenario
@@ -404,7 +404,7 @@ def test_training_proof_end_to_end() -> None:
     assert proof is not None
 
 
-def test_multi_modal_training_proof() -> None:
+    def test_multi_modal_training_proof() -> None:
        """TODO: Add docstring for test_multi_modal_training_proof"""
      """Test multi-modal training proof with minimal setup"""
     modality_commits = {

@@ -74,7 +74,7 @@ class MultiOmicsCorrelationCircuit(BaseCircuit):
         correlation_commit = self._commit_correlation(correlation, self.witness_randomness)
         self.add_constraint(
             correlation_commit,
-            self.correlation_commitment,
+        self.correlation_commitment,
             FieldElement(0),
             ql=1,
             qr=-1,
@@ -204,7 +204,7 @@ class GenotypePhenotypeAssociationCircuit(BaseCircuit):
      """Generate association test constraints."""
         # 1. Validate genotypes (0, 1, or 2)
         for genotype in self.genotypes[:100]:  # Limit for efficiency
-            self._add_genotype_validation(genotype)
+        self._add_genotype_validation(genotype)
 
         # 2. Calculate association (simplified linear model)
         beta = self._calculate_association(self.genotypes[:100], self.phenotypes[:100])
@@ -440,9 +440,9 @@ class RareVariantBurdenCircuit(BaseCircuit):
 
         for i, (variant, af, func_score) in enumerate(
             zip(
-                self.variants[: self.max_variants],
-                self.allele_frequencies[: self.max_variants],
-                self.functional_scores[: self.max_variants],
+        self.variants[: self.max_variants],
+        self.allele_frequencies[: self.max_variants],
+        self.functional_scores[: self.max_variants],
             )
         ):
             # Check if rare (AF < threshold)
@@ -476,7 +476,7 @@ class RareVariantBurdenCircuit(BaseCircuit):
         return FieldElement(int(hash_val, 16))
 
 
-def create_multi_omics_proof_suite(omics_data: Dict[str, Any], analysis_type: str) -> List[Circuit]:
+    def create_multi_omics_proof_suite(omics_data: Dict[str, Any], analysis_type: str) -> List[Circuit]:
        """TODO: Add docstring for create_multi_omics_proof_suite"""
      """
     Create a suite of proofs for multi-omics analysis.

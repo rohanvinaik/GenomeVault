@@ -557,7 +557,7 @@ class EncryptionManager:
 
 
 # Convenience functions
-def generate_secure_key(algorithm: str = "AES-GCM") -> bytes:
+    def generate_secure_key(algorithm: str = "AES-GCM") -> bytes:
        """TODO: Add docstring for generate_secure_key"""
      """Generate a secure encryption key"""
     if algorithm == "AES-GCM":
@@ -568,7 +568,7 @@ def generate_secure_key(algorithm: str = "AES-GCM") -> bytes:
         raise ValueError("Unsupported algorithm: {algorithm}")
 
 
-def secure_hash(data: bytes, algorithm: str = "SHA256") -> str:
+    def secure_hash(data: bytes, algorithm: str = "SHA256") -> str:
        """TODO: Add docstring for secure_hash"""
      """Compute secure hash of data"""
     if algorithm == "SHA256":

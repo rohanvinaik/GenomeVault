@@ -62,7 +62,7 @@ class VariantFrequencyCircuit:
         self.snp_ids_vars = []
         for i in range(self.max_snps):
             snp_var = self.cs.add_public_input(f"snp_id_{i}")
-            self.snp_ids_vars.append(snp_var)
+        self.snp_ids_vars.append(snp_var)
 
         # Assign public input values
         self.cs.assign(self.sum_var, FieldElement(public_inputs["total_sum"]))
@@ -73,7 +73,7 @@ class VariantFrequencyCircuit:
         snp_ids = public_inputs.get("snp_ids", [])
         for i, snp_id in enumerate(snp_ids):
             if i < self.max_snps:
-                self.cs.assign(self.snp_ids_vars[i], FieldElement(snp_id))
+        self.cs.assign(self.snp_ids_vars[i], FieldElement(snp_id))
 
         # Private inputs - allele counts
         self.count_vars = []
@@ -81,13 +81,13 @@ class VariantFrequencyCircuit:
 
         for i in range(self.max_snps):
             count_var = self.cs.add_variable(f"allele_count_{i}")
-            self.count_vars.append(count_var)
+        self.count_vars.append(count_var)
 
             # Assign count value (0 if beyond actual number of SNPs)
             if i < len(counts):
-                self.cs.assign(count_var, FieldElement(counts[i]))
+        self.cs.assign(count_var, FieldElement(counts[i]))
             else:
-                self.cs.assign(count_var, FieldElement(0))
+        self.cs.assign(count_var, FieldElement(0))
 
         # Merkle path variables for each SNP
         self.merkle_paths = []
@@ -109,22 +109,22 @@ class VariantFrequencyCircuit:
                 if snp_idx < len(merkle_proofs):
                     proof = merkle_proofs[snp_idx]
                     if depth < len(proof["path"]):
-                        self.cs.assign(path_var, FieldElement(int(proof["path"][depth], 16)))
-                        self.cs.assign(index_var, FieldElement(proof["indices"][depth]))
+        self.cs.assign(path_var, FieldElement(int(proof["path"][depth], 16)))
+        self.cs.assign(index_var, FieldElement(proof["indices"][depth]))
                     else:
-                        self.cs.assign(path_var, FieldElement(0))
-                        self.cs.assign(index_var, FieldElement(0))
+        self.cs.assign(path_var, FieldElement(0))
+        self.cs.assign(index_var, FieldElement(0))
                 else:
-                    self.cs.assign(path_var, FieldElement(0))
-                    self.cs.assign(index_var, FieldElement(0))
+        self.cs.assign(path_var, FieldElement(0))
+        self.cs.assign(index_var, FieldElement(0))
 
-            self.merkle_paths.append(path_vars)
-            self.merkle_indices.append(index_vars)
+        self.merkle_paths.append(path_vars)
+        self.merkle_indices.append(index_vars)
 
         # Randomness for zero-knowledge
         self.randomness_var = self.cs.add_variable("zk_randomness")
         self.cs.assign(
-            self.randomness_var, FieldElement(int(private_inputs.get("randomness", "0"), 16))
+        self.randomness_var, FieldElement(int(private_inputs.get("randomness", "0"), 16))
         )
 
         self.setup_complete = True
@@ -166,7 +166,7 @@ class VariantFrequencyCircuit:
             diff_var = self.cs.add_variable(f"range_diff_{i}")
             c_val = self.cs.get_assignment(count_var)
             diff_val = FieldElement(self.C_MAX) - c_val
-            self.cs.assign(diff_var, diff_val)
+        self.cs.assign(diff_var, diff_val)
 
             # In practice, would use range proof gadget
             # For now, we'll add a simplified constraint
@@ -175,9 +175,9 @@ class VariantFrequencyCircuit:
             # Constraint: c * (C_MAX - c) = c * diff
             # This at least ensures c and (C_MAX - c) are computed correctly
             product_var = self.cs.add_variable(f"range_product_{i}")
-            self.cs.assign(product_var, c_val * diff_val)
+        self.cs.assign(product_var, c_val * diff_val)
 
-            self.cs.enforce_multiplication(count_var, diff_var, product_var)
+        self.cs.enforce_multiplication(count_var, diff_var, product_var)
 
     def _constrain_sum(self) -> None:
            """TODO: Add docstring for _constrain_sum"""
@@ -198,7 +198,7 @@ class VariantFrequencyCircuit:
                 prev_sum = running_sum
                 current_count = self.cs.get_assignment(self.count_vars[i])
                 running_sum = prev_sum + current_count
-                self.cs.assign(sum_var, running_sum)
+        self.cs.assign(sum_var, running_sum)
                 running_sum_vars.append(sum_var)
 
                 # Constraint: prev_sum + count_i = sum_i
@@ -207,11 +207,11 @@ class VariantFrequencyCircuit:
                 count_lc = LinearCombination({self.count_vars[i]: FieldElement(1)})
                 sum_lc = prev_lc + count_lc
 
-                self.cs.enforce_equal(sum_lc, sum_var)
+        self.cs.enforce_equal(sum_lc, sum_var)
 
         # Final constraint: last running sum equals public sum
         if running_sum_vars:
-            self.cs.enforce_equal(running_sum_vars[-1], self.sum_var)
+        self.cs.enforce_equal(running_sum_vars[-1], self.sum_var)
 
     def _constrain_merkle_inclusions(self) -> None:
            """TODO: Add docstring for _constrain_merkle_inclusions"""
@@ -228,7 +228,7 @@ class VariantFrequencyCircuit:
 
             # Compute leaf hash
             leaf_hash = poseidon_hash([snp_id, count])
-            self.cs.assign(leaf_var, leaf_hash)
+        self.cs.assign(leaf_var, leaf_hash)
 
             # Verify Merkle path
             current_hash = leaf_var
@@ -239,7 +239,7 @@ class VariantFrequencyCircuit:
                 index_var = self.merkle_indices[snp_idx][depth]
 
                 # Ensure index is boolean
-                self.cs.enforce_boolean(index_var)
+        self.cs.enforce_boolean(index_var)
 
                 # Create parent hash variable
                 parent_var = self.cs.add_variable(f"merkle_parent_{snp_idx}_{depth}")
@@ -257,7 +257,7 @@ class VariantFrequencyCircuit:
                 else:
                     parent_hash = poseidon_hash([sibling, current])
 
-                self.cs.assign(parent_var, parent_hash)
+        self.cs.assign(parent_var, parent_hash)
                 current_hash = parent_var
 
             # After traversing the path, current_hash should equal the root
@@ -272,7 +272,7 @@ class VariantFrequencyCircuit:
 
         for i in range(num_snps, self.max_snps):
             # Constraint: count[i] = 0 for i >= num_snps
-            self.cs.enforce_equal(self.count_vars[i], self.cs.zero)
+        self.cs.enforce_equal(self.count_vars[i], self.cs.zero)
 
     def _add_zk_randomness(self) -> None:
            """TODO: Add docstring for _add_zk_randomness"""
@@ -330,7 +330,7 @@ class VariantFrequencyCircuit:
         }
 
 
-def create_example_frequency_proof() -> Dict[str, Any]:
+    def create_example_frequency_proof() -> Dict[str, Any]:
        """TODO: Add docstring for create_example_frequency_proof"""
      """Example usage of the VariantFrequencyCircuit."""
 

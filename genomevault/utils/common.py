@@ -49,7 +49,7 @@ class LoggingMixin:
 
 
 # Circuit factory for ZK proofs
-def create_circuit_stub(circuit_type: str) -> Dict[str, Any]:
+    def create_circuit_stub(circuit_type: str) -> Dict[str, Any]:
     """Create a stub circuit definition"""
     return {
         "type": circuit_type,
@@ -59,6 +59,6 @@ def create_circuit_stub(circuit_type: str) -> Dict[str, Any]:
 
 
 # Configuration helpers
-def get_default_config() -> Dict[str, Any]:
+    def get_default_config() -> Dict[str, Any]:
     """Get default configuration"""
     return {"version": "3.0.0", "status": "default", "features": {}}

@@ -701,7 +701,7 @@ class HDCBenchmark:
         print(f"\nPerformance badge: {badge_text}")
 
 
-def main() -> None:
+    def main() -> None:
        """TODO: Add docstring for main"""
      """Main benchmark entry point"""
     parser = argparse.ArgumentParser(description="HDC Performance Benchmarking")

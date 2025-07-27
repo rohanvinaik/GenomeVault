@@ -450,7 +450,7 @@ class CrossModalBinder(HypervectorBinder):
         # Create modality signatures if needed
         for modality in modality_vectors:
             if modality not in self.modality_signatures:
-                self._create_modality_signature(modality)
+        self._create_modality_signature(modality)
 
         # Bind each modality with its signature
         signed_vectors = {}
@@ -493,7 +493,7 @@ class CrossModalBinder(HypervectorBinder):
 
 
 # Convenience functions
-def circular_bind(vectors: List[torch.Tensor]) -> torch.Tensor:
+    def circular_bind(vectors: List[torch.Tensor]) -> torch.Tensor:
        """TODO: Add docstring for circular_bind"""
      """Convenience function for circular binding"""
     if not vectors:
@@ -503,7 +503,7 @@ def circular_bind(vectors: List[torch.Tensor]) -> torch.Tensor:
     return binder.bind(vectors, BindingType.CIRCULAR)
 
 
-def protect_vector(vector: torch.Tensor, key: torch.Tensor) -> torch.Tensor:
+    def protect_vector(vector: torch.Tensor, key: torch.Tensor) -> torch.Tensor:
        """TODO: Add docstring for protect_vector"""
      """Convenience function for vector protection"""
     binder = HypervectorBinder(vector.shape[-1])

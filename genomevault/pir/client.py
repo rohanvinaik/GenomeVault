@@ -241,7 +241,7 @@ class PIRClient:
             Retrieved data item
         """
         if not self.session:
-            self.session = aiohttp.ClientSession()
+        self.session = aiohttp.ClientSession()
 
         # Send queries to all servers in parallel
         tasks = []

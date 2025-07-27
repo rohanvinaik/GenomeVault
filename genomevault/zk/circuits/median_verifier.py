@@ -104,7 +104,7 @@ class MedianVerifierCircuit:
         # Step 2: Generate commitments to all values
         randomness = [secrets.token_bytes(32) for _ in range(n)]
         sorted_commitments = [
-            self._commit(val, rand) for val, rand in zip(sorted_values, randomness)
+        self._commit(val, rand) for val, rand in zip(sorted_values, randomness)
         ]
 
         # Step 3: Generate overall commitment

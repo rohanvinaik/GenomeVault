@@ -18,14 +18,14 @@ class DependencyAnalyzer(ast.NodeVisitor):
 
     def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-    self.imports = set()
+        self.imports = set()
         self.from_imports = {}
         self.missing_imports = set()
 
     def visit_Import(self, node) -> None:
             """TODO: Add docstring for visit_Import"""
     for alias in node.names:
-            self.imports.add(alias.name)
+        self.imports.add(alias.name)
 
     def visit_ImportFrom(self, node) -> None:
             """TODO: Add docstring for visit_ImportFrom"""
@@ -33,10 +33,10 @@ class DependencyAnalyzer(ast.NodeVisitor):
             module_parts = []
             for name in node.names:
                 module_parts.append((node.module, name.name))
-            self.from_imports[node.module] = module_parts
+        self.from_imports[node.module] = module_parts
 
 
-def analyze_file(file_path: Path) -> Dict:
+    def analyze_file(file_path: Path) -> Dict:
        """TODO: Add docstring for analyze_file"""
      """Analyze a Python file for dependencies and issues"""
     issues = {
@@ -80,7 +80,7 @@ def analyze_file(file_path: Path) -> Dict:
     return issues
 
 
-def find_experimental_modules(base_path: Path) -> List[Path]:
+    def find_experimental_modules(base_path: Path) -> List[Path]:
        """TODO: Add docstring for find_experimental_modules"""
      """Find all experimental and benchmark modules"""
     modules = []
@@ -106,7 +106,7 @@ def find_experimental_modules(base_path: Path) -> List[Path]:
     return modules
 
 
-def fix_missing_dependencies(base_path: Path, missing_deps: Set[str]) -> None:
+    def fix_missing_dependencies(base_path: Path, missing_deps: Set[str]) -> None:
        """TODO: Add docstring for fix_missing_dependencies"""
      """Install missing dependencies"""
     print("\n📦 Installing missing dependencies...")
@@ -142,7 +142,7 @@ def fix_missing_dependencies(base_path: Path, missing_deps: Set[str]) -> None:
         subprocess.check_call([sys.executable, "-m", "pip", "install"] + unique_packages)
 
 
-def create_missing_init_files(base_path: Path) -> Dict[str, Any]:
+    def create_missing_init_files(base_path: Path) -> Dict[str, Any]:
        """TODO: Add docstring for create_missing_init_files"""
      """Create missing __init__.py files"""
     print("\n📝 Creating missing __init__.py files...")
@@ -165,7 +165,7 @@ def create_missing_init_files(base_path: Path) -> Dict[str, Any]:
     return created
 
 
-def generate_fix_report(base_path: Path, all_issues: Dict[Path, Dict]) -> Path:
+    def generate_fix_report(base_path: Path, all_issues: Dict[Path, Dict]) -> Path:
        """TODO: Add docstring for generate_fix_report"""
      """Generate a detailed report of issues and fixes"""
     report_lines = [
@@ -229,7 +229,7 @@ def generate_fix_report(base_path: Path, all_issues: Dict[Path, Dict]) -> Path:
     return report_path
 
 
-def main() -> None:
+    def main() -> None:
        """TODO: Add docstring for main"""
      """Main analysis and fix routine"""
     print("🔍 GenomeVault Experimental Modules Analyzer & Fixer")
@@ -297,7 +297,7 @@ project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 os.environ['PYTHONPATH'] = str(project_root)
 
-def run_benchmarks() -> None:
+    def run_benchmarks() -> None:
        """TODO: Add docstring for run_benchmarks"""
      """Run all benchmarks"""
     print("Running benchmarks...")
@@ -312,7 +312,7 @@ def run_benchmarks() -> None:
                 except Exception as e:
                     print(f"Error in {bench_file.name}: {e}")
 
-def run_experiments() -> None:
+    def run_experiments() -> None:
        """TODO: Add docstring for run_experiments"""
      """Run experimental modules"""
     print("\\nRunning experiments...")

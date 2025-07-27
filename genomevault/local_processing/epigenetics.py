@@ -916,7 +916,7 @@ class ChromatinAccessibilityProcessor:
         return results_df
 
 
-def create_epigenetic_processor(
+    def create_epigenetic_processor(
     data_type: EpigeneticDataType, **kwargs
 ) -> Union[MethylationProcessor, ChromatinAccessibilityProcessor]:
        """TODO: Add docstring for create_epigenetic_processor"""

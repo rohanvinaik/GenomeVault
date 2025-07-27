@@ -86,7 +86,7 @@ class CMSNPIRegistry(NPIRegistry):
             record = await self._simulate_npi_lookup(npi)
 
             if record:
-                self._cache[npi] = record
+        self._cache[npi] = record
 
             return record
 
@@ -271,7 +271,7 @@ class HIPAAVerifier:
                 raise VerificationError("NPI is not active")
 
             # Step 3: Validate credentials
-            self._validate_credentials(credentials)
+        self._validate_credentials(credentials)
 
             # Step 4: Create verification record
             record = VerificationRecord(
@@ -290,7 +290,7 @@ class HIPAAVerifier:
             )
 
             # Store verification
-            self.verification_records[credentials.npi] = record
+        self.verification_records[credentials.npi] = record
             del self.pending_verifications[verification_id]
 
             # Audit log success

@@ -39,7 +39,7 @@ class BackupManager:
 
     def __init__(self, config: Dict[str, Any]) -> None:
             """TODO: Add docstring for __init__"""
-    self.config = config
+        self.config = config
         self.backup_dir = config.get("backup_dir", "/var/genomevault/backups")
         self.s3_bucket = config.get("s3_bucket")
         self.encryption_key = config.get("encryption_key")
@@ -47,9 +47,9 @@ class BackupManager:
 
         # Initialize S3 client if configured
         if self.s3_bucket:
-            self.s3_client = boto3.client("s3")
+        self.s3_client = boto3.client("s3")
         else:
-            self.s3_client = None
+        self.s3_client = None
 
         # Ensure backup directory exists
         os.makedirs(self.backup_dir, exist_ok=True)
@@ -95,10 +95,10 @@ class BackupManager:
 
             # Replicate to S3 if configured
             if self.s3_client:
-                self._replicate_to_s3(backup_id, backup_package)
+        self._replicate_to_s3(backup_id, backup_package)
 
             # Update metadata
-            self._update_metadata(backup_id, backup_type, timestamp, data_hash)
+        self._update_metadata(backup_id, backup_type, timestamp, data_hash)
 
             # Log backup creation
             logger.info(
@@ -230,7 +230,7 @@ class BackupManager:
 
             if backup_time < cutoff_date:
                 # Remove backup
-                self._remove_backup(backup_id)
+        self._remove_backup(backup_id)
                 removed_count += 1
 
         logger.info(
@@ -245,7 +245,7 @@ class BackupManager:
            """TODO: Add docstring for schedule_automatic_backups"""
      """Schedule automatic backups"""
 
-        def run_scheduled_backup(backup_config) -> None:
+    def run_scheduled_backup(backup_config) -> None:
                 """TODO: Add docstring for run_scheduled_backup"""
     try:
                 # Get data provider function
@@ -361,7 +361,7 @@ class BackupManager:
             return
 
         try:
-            self.s3_client.put_object(
+        self.s3_client.put_object(
                 Bucket=self.s3_bucket,
                 Key="backups/{backup_id}.backup",
                 Body=json.dumps(backup_package),
@@ -384,7 +384,7 @@ class BackupManager:
         # Remove from S3
         if self.s3_client:
             try:
-                self.s3_client.delete_object(
+        self.s3_client.delete_object(
                     Bucket=self.s3_bucket, Key="backups/{backup_id}.backup"
                 )
             except Exception as _:
@@ -393,7 +393,7 @@ class BackupManager:
         # Remove from metadata
         if backup_id in self.metadata.get("backups", {}):
             del self.metadata["backups"][backup_id]
-            self._save_metadata()
+        self._save_metadata()
 
     def _load_metadata(self) -> Dict[str, Any]:
            """TODO: Add docstring for _load_metadata"""
@@ -415,7 +415,7 @@ class BackupManager:
            """TODO: Add docstring for _update_metadata"""
      """Update backup metadata"""
         if "backups" not in self.metadata:
-            self.metadata["backups"] = {}
+        self.metadata["backups"] = {}
 
         self.metadata["backups"][backup_id] = {
             "backup_type": backup_type,
@@ -438,7 +438,7 @@ class DisasterRecoveryOrchestrator:
 
     def __init__(self, backup_manager: BackupManager) -> None:
             """TODO: Add docstring for __init__"""
-    self.backup_manager = backup_manager
+        self.backup_manager = backup_manager
         self.recovery_points = {}
 
     def create_recovery_point(self, name: str, components: List[str]) -> str:
@@ -457,7 +457,7 @@ class DisasterRecoveryOrchestrator:
             _ = self.backup_manager.create_backup(recovery_data, "recovery_point")
 
             # Store recovery point info
-            self.recovery_points[recovery_point_id] = {
+        self.recovery_points[recovery_point_id] = {
                 "name": name,
                 "backup_id": backup_id,
                 "components": components,

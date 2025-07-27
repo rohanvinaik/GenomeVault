@@ -235,7 +235,7 @@ class TestErrorBudgetClass:
     ],
 )
 
-def test_dimension_scaling(epsilon, delta_exp, expected_dim_range) -> None:
+    def test_dimension_scaling(epsilon, delta_exp, expected_dim_range) -> None:
     """Test dimension scaling with different parameters"""
     allocator = ErrorBudgetAllocator()
     budget = allocator.plan_budget(epsilon=epsilon, delta_exp=delta_exp)
@@ -244,7 +244,7 @@ def test_dimension_scaling(epsilon, delta_exp, expected_dim_range) -> None:
 
 @pytest.mark.parametrize("parity_g", [2, 3, 4, 5])
 
-def test_ecc_parity_groups(parity_g) -> None:
+    def test_ecc_parity_groups(parity_g) -> None:
     """Test different parity group sizes"""
     encoder = ECCEncoderMixin(base_dimension=1000, parity_g=parity_g)
 

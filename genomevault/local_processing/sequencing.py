@@ -91,7 +91,7 @@ class GenomicProfile:
            """TODO: Add docstring for __post_init__"""
      """Calculate checksum after initialization"""
         if not self.checksum:
-            self.checksum = self._calculate_checksum()
+        self.checksum = self._calculate_checksum()
 
     def _calculate_checksum(self) -> str:
            """TODO: Add docstring for _calculate_checksum"""

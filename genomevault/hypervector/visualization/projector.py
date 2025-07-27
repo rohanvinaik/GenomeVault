@@ -29,7 +29,7 @@ class ModelEvolutionVisualizer:
 
     def __init__(self, output_dir: str = "./visualizations") -> None:
             """TODO: Add docstring for __init__"""
-    self.output_dir = output_dir
+        self.output_dir = output_dir
         self.projections = {}
         self.drift_history = []
 
@@ -458,7 +458,7 @@ class ModelEvolutionVisualizer:
         plt.show()
 
 
-def create_semantic_debugging_report(
+    def create_semantic_debugging_report(
     visualizer: ModelEvolutionVisualizer,
     snapshot_vectors: List[np.ndarray],
     labels: List[str],

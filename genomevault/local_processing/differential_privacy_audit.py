@@ -361,7 +361,7 @@ class DifferentialPrivacyAuditor:
             "verification_chain": self.event_hashes[-10:],  # Last 10 hashes
             "summary": {
                 "avg_epsilon_per_event": (
-                    self.budget.consumed_epsilon / len(self.privacy_events)
+        self.budget.consumed_epsilon / len(self.privacy_events)
                     if self.privacy_events
                     else 0
                 ),
@@ -498,7 +498,7 @@ class PrivacyAccountant:
 
     def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-    self.sessions: Dict[str, DifferentialPrivacyAuditor] = {}
+        self.sessions: Dict[str, DifferentialPrivacyAuditor] = {}
         self.global_budget = {
             "daily_epsilon": 10.0,
             "weekly_epsilon": 50.0,

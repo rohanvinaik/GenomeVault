@@ -141,7 +141,7 @@ class HypervectorEncoder:
         self.hamming_lut = None
         if HAMMING_LUT_AVAILABLE:
             try:
-                self.hamming_lut = HammingLUT(use_gpu=torch.cuda.is_available())
+        self.hamming_lut = HammingLUT(use_gpu=torch.cuda.is_available())
                 logger.info("Initialized with optimized Hamming LUT")
             except Exception as e:
                 logger.warning(f"Failed to initialize Hamming LUT: {e}")
@@ -541,7 +541,7 @@ class HypervectorEncoder:
 
 
 # Convenience functions
-def create_encoder(
+    def create_encoder(
     dimension: int = 10000,
     projection_type: str = "sparse_random",
     compression_tier: str = "full",
@@ -558,7 +558,7 @@ def create_encoder(
     return HypervectorEncoder(config)
 
 
-def encode_genomic_data(genomic_data: Dict, dimension: int = 10000) -> torch.Tensor:
+    def encode_genomic_data(genomic_data: Dict, dimension: int = 10000) -> torch.Tensor:
        """TODO: Add docstring for encode_genomic_data"""
      """Convenience function to encode genomic data"""
     encoder = create_encoder(dimension=dimension)

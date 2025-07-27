@@ -616,7 +616,7 @@ class CircuitManager:
 
         # Record stats
         if circuit_name not in self.performance_stats:
-            self.performance_stats[circuit_name] = {
+        self.performance_stats[circuit_name] = {
                 "count": 0,
                 "total_time": 0,
                 "avg_setup_time": 0,

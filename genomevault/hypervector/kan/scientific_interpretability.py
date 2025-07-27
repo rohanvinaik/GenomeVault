@@ -766,7 +766,7 @@ class InterpretableKANHybridEncoder(nn.Module):
 
         # Ensure we have analysis results
         if not self.interpretability_cache:
-            self.analyze_interpretability()
+        self.analyze_interpretability()
 
         report = []
         report.append("=== GenomeVault KAN-HD Scientific Interpretability Report ===\n")
@@ -807,7 +807,7 @@ class InterpretableKANHybridEncoder(nn.Module):
 
         # Ensure we have analysis results
         if not self.interpretability_cache:
-            self.analyze_interpretability()
+        self.analyze_interpretability()
 
         # Convert to serializable format
         export_data = {}

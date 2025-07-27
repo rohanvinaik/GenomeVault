@@ -44,17 +44,17 @@ class HypervectorAccelerator:
 
     def __init__(self, use_gpu: bool = True) -> None:
             """TODO: Add docstring for __init__"""
-    self.use_gpu = use_gpu and (CUDA_AVAILABLE or TORCH_AVAILABLE)
+        self.use_gpu = use_gpu and (CUDA_AVAILABLE or TORCH_AVAILABLE)
 
         if self.use_gpu:
             if TORCH_AVAILABLE:
-                self.device = torch.device("cuda")
-                self.backend = "torch"
+        self.device = torch.device("cuda")
+        self.backend = "torch"
             elif CUDA_AVAILABLE:
-                self.backend = "cupy"
+        self.backend = "cupy"
             logger.info(f"Using GPU acceleration with {self.backend}")
         else:
-            self.backend = "numpy"
+        self.backend = "numpy"
             logger.info("Using CPU with SIMD optimizations")
 
     @staticmethod
@@ -214,7 +214,7 @@ class MemoryEfficientStorage:
 
     def __init__(self, dimension: int, dtype=np.uint8) -> None:
             """TODO: Add docstring for __init__"""
-    self.dimension = dimension
+        self.dimension = dimension
         self.dtype = dtype
         self.chunks = []
         self.chunk_size = 10000  # Vectors per chunk
@@ -226,8 +226,8 @@ class MemoryEfficientStorage:
         if len(self.current_chunk) >= self.chunk_size:
             # Compress and store chunk
             compressed = self._compress_chunk(self.current_chunk)
-            self.chunks.append(compressed)
-            self.current_chunk = []
+        self.chunks.append(compressed)
+        self.current_chunk = []
 
         self.current_chunk.append(vector)
 
@@ -265,7 +265,7 @@ class ParallelProcessor:
 
     def __init__(self, n_workers: Optional[int] = None) -> None:
             """TODO: Add docstring for __init__"""
-    self.n_workers = n_workers or CPU_COUNT
+        self.n_workers = n_workers or CPU_COUNT
         self.thread_pool = ThreadPoolExecutor(max_workers=self.n_workers)
         self.process_pool = ProcessPoolExecutor(max_workers=self.n_workers)
 
@@ -318,7 +318,7 @@ class CacheOptimizer:
 
     def __init__(self, max_size: int = 1000) -> None:
             """TODO: Add docstring for __init__"""
-    self.max_size = max_size
+        self.max_size = max_size
 
     @lru_cache(maxsize=1000)
     def cached_hypervector_operation(self, v1_hash: int, v2_hash: int, operation: str) -> float:
@@ -348,7 +348,7 @@ class ResourceMonitor:
 
     def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-    self.process = psutil.Process()
+        self.process = psutil.Process()
 
     def get_memory_usage(self) -> Dict[str, float]:
            """TODO: Add docstring for get_memory_usage"""
@@ -394,7 +394,7 @@ resource_monitor = ResourceMonitor()
 
 
 @contextlib.contextmanager
-def with_gpu(exit: bool = False) -> Generator[None, None, None]:
+    def with_gpu(exit: bool = False) -> Generator[None, None, None]:
        """TODO: Add docstring for with_gpu"""
      """Context manager for GPU operations with proper cleanup.
 

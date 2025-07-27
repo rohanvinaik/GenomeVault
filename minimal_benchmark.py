@@ -35,7 +35,7 @@ class MinimalGenomicEncoder:
         self.base_vectors = self._init_base_vectors()
 
     def _init_base_vectors(self):
-        """Initialize base vectors"""
+    """Initialize base vectors"""
         vectors = {}
         # Create orthogonal base vectors
         for i, base in enumerate(["A", "T", "G", "C"]):
@@ -48,7 +48,7 @@ class MinimalGenomicEncoder:
         return vectors
 
     def encode_variant(self, chromosome, position, ref, alt):
-        """Encode a single variant"""
+    """Encode a single variant"""
         # Simple encoding: combine base vectors
         if ref in self.base_vectors and alt in self.base_vectors:
             # Combine ref and alt with position info
@@ -63,7 +63,7 @@ class MinimalGenomicEncoder:
             return torch.zeros(self.dimension)
 
     def encode_genome(self, variants):
-        """Encode multiple variants"""
+    """Encode multiple variants"""
         if not variants:
             return torch.zeros(self.dimension)
 

@@ -33,11 +33,11 @@ class PackedHV:
         self.device = device
 
         if device == "cpu":
-            self.buf = np.zeros(self.n_words, dtype=np.uint64) if buffer is None else buffer
+        self.buf = np.zeros(self.n_words, dtype=np.uint64) if buffer is None else buffer
         else:  # GPU
             if not CUPY_AVAILABLE:
                 raise RuntimeError("CuPy not available for GPU operations")
-            self.buf = (
+        self.buf = (
                 cp.zeros(self.n_words, dtype=cp.uint64) if buffer is None else cp.asarray(buffer)
             )
 
@@ -73,7 +73,7 @@ class PackedHV:
 
         # Use Numba for faster execution
         result.buf = _majority_vote_numba(
-            self.buf, [other.buf for other in others], self.n_words, threshold
+        self.buf, [other.buf for other in others], self.n_words, threshold
         )
 
         return result
@@ -166,7 +166,7 @@ class PackedHV:
 
 # Numba JIT compiled functions for performance
 @numba.jit(nopython=True, parallel=True)
-def _majority_vote_numba(self_buf, other_bufs, n_words, threshold):
+    def _majority_vote_numba(self_buf, other_bufs, n_words, threshold):
     """Numba-optimized majority vote"""
     result = np.zeros(n_words, dtype=np.uint64)
     n_others = len(other_bufs)
@@ -194,7 +194,7 @@ def _majority_vote_numba(self_buf, other_bufs, n_words, threshold):
 
 
 @numba.jit(nopython=True)
-def _hamming_distance_numba(buf1, buf2, n_words):
+    def _hamming_distance_numba(buf1, buf2, n_words):
     """Numba-optimized Hamming distance using popcount"""
     distance = 0
     for i in range(n_words):
@@ -205,7 +205,7 @@ def _hamming_distance_numba(buf1, buf2, n_words):
 
 
 @numba.jit(nopython=True)
-def _popcount64(x):
+    def _popcount64(x):
     """64-bit population count"""
     x = x - ((x >> 1) & 0x5555555555555555)
     x = (x & 0x3333333333333333) + ((x >> 2) & 0x3333333333333333)
@@ -217,7 +217,7 @@ def _popcount64(x):
 
 
 @numba.jit(nopython=True)
-def _unpack_to_dense_numba(buf, n_bits):
+    def _unpack_to_dense_numba(buf, n_bits):
     """Unpack bit-packed buffer to dense array"""
     dense = np.zeros(n_bits, dtype=np.uint8)
     for i in range(n_bits):
@@ -228,7 +228,7 @@ def _unpack_to_dense_numba(buf, n_bits):
 
 
 @numba.jit(nopython=True)
-def _pack_from_dense_numba(dense, n_words):
+    def _pack_from_dense_numba(dense, n_words):
     """Pack dense array to bit-packed buffer"""
     buf = np.zeros(n_words, dtype=np.uint64)
     n_bits = len(dense)
@@ -244,7 +244,7 @@ def _pack_from_dense_numba(dense, n_words):
 
 # Generate Hamming distance lookup table
 @numba.jit(nopython=True)
-def _generate_hamming_lut():
+    def _generate_hamming_lut():
     """Generate 16-bit Hamming distance lookup table"""
     lut = np.zeros(65536, dtype=np.uint8)
     for i in range(65536):
@@ -263,7 +263,7 @@ HAMMING_LUT = _generate_hamming_lut()
 
 
 @numba.jit(nopython=True)
-def fast_hamming_distance(buf1: np.ndarray, buf2: np.ndarray) -> int:
+    def fast_hamming_distance(buf1: np.ndarray, buf2: np.ndarray) -> int:
     """Ultra-fast Hamming distance using 16-bit LUT"""
     distance = 0
     for i in range(len(buf1)):
@@ -280,7 +280,7 @@ def fast_hamming_distance(buf1: np.ndarray, buf2: np.ndarray) -> int:
 if CUPY_AVAILABLE:
 
     def _gpu_majority_vote(all_vecs, n_vecs):
-        """GPU-accelerated majority vote"""
+    """GPU-accelerated majority vote"""
         n_words = all_vecs.shape[1]
         result = cp.zeros(n_words, dtype=cp.uint64)
         threshold = n_vecs // 2
@@ -310,7 +310,7 @@ class PackedProjection:
 
         for i in range(input_dim):
             for j in range(self.n_words):
-                self.masks[i, j] = rng.randint(0, 2**64, dtype=np.uint64)
+        self.masks[i, j] = rng.randint(0, 2**64, dtype=np.uint64)
 
     def encode(self, features: np.ndarray, device: str = "cpu") -> PackedHV:
         """Project features to packed hypervector"""
@@ -360,7 +360,7 @@ class PackedProjection:
 
 
 @numba.jit(nopython=True, parallel=True)
-def _project_features_numba(features, masks, n_words, n_features):
+    def _project_features_numba(features, masks, n_words, n_features):
     """Numba-optimized feature projection"""
     accumulator = np.zeros(n_words, dtype=np.float32)
 
@@ -406,18 +406,18 @@ class PackedGenomicEncoder:
 
         if packed:
             # Initialize packed components
-            self.projection = PackedProjection(
+        self.projection = PackedProjection(
                 input_dim=1000, hv_dim=dimension  # Adjust based on your needs
             )
-            self._init_packed_base_vectors()
+        self._init_packed_base_vectors()
         else:
             # Fall back to standard GenomicEncoder
             from genomevault.hypervector.encoding.genomic import GenomicEncoder
 
-            self._fallback_encoder = GenomicEncoder(dimension=dimension, **kwargs)
+        self._fallback_encoder = GenomicEncoder(dimension=dimension, **kwargs)
 
     def _init_packed_base_vectors(self):
-        """Initialize packed base vectors"""
+    """Initialize packed base vectors"""
         self.base_vectors = {}
 
         # Create orthogonal base vectors for nucleotides
@@ -431,13 +431,13 @@ class PackedGenomicEncoder:
             dense = np.zeros(self.dimension, dtype=np.uint8)
             dense[start_bit:end_bit] = 1
 
-            self.base_vectors[base] = PackedHV.from_dense(dense, self.device)
+        self.base_vectors[base] = PackedHV.from_dense(dense, self.device)
 
         # Create random vectors for variant types
         rng = np.random.RandomState(42)
         for variant_type in ["SNP", "INS", "DEL", "DUP", "INV"]:
             dense = rng.randint(0, 2, size=self.dimension).astype(np.uint8)
-            self.base_vectors[variant_type] = PackedHV.from_dense(dense, self.device)
+        self.base_vectors[variant_type] = PackedHV.from_dense(dense, self.device)
 
     def encode_variant(
         self,
@@ -575,14 +575,14 @@ if cuda.is_available():
 
     @cuda.jit
     def packed_xor_kernel(a, b, result):
-        """GPU kernel for packed XOR"""
+    """GPU kernel for packed XOR"""
         idx = cuda.grid(1)
         if idx < a.shape[0]:
             result[idx] = a[idx] ^ b[idx]
 
     @cuda.jit
     def packed_majority_kernel(vectors, result, n_vectors):
-        """GPU kernel for majority vote"""
+    """GPU kernel for majority vote"""
         word_idx = cuda.grid(1)
         if word_idx < result.shape[0]:
             # Process one word across all vectors

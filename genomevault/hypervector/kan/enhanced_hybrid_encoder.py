@@ -115,13 +115,13 @@ class EnhancedKANHybridEncoder(nn.Module):
 
         # Federated learning components (optional)
         if enable_federated:
-            self.federated_coordinator = None  # Will be set when needed
-            self.federated_participant = None  # Will be set when needed
+        self.federated_coordinator = None  # Will be set when needed
+        self.federated_participant = None  # Will be set when needed
 
         # Interpretability components
         if enable_interpretability:
-            self.interpretability_extractor = LinearKAN(base_dim, 128)
-            self.pattern_analyzer = nn.Sequential(
+        self.interpretability_extractor = LinearKAN(base_dim, 128)
+        self.pattern_analyzer = nn.Sequential(
                 LinearKAN(base_dim, 256), nn.Tanh(), LinearKAN(256, 64), nn.Sigmoid()
             )
 
@@ -197,13 +197,13 @@ class EnhancedKANHybridEncoder(nn.Module):
         # Step 2: Apply adaptive compression based on strategy
         if self.compression_strategy == CompressionStrategy.ADAPTIVE:
             compressed, compression_level = self.adaptive_compressor.encode(hd_vector.unsqueeze(0))
-            self.last_compression_level = compression_level
+        self.last_compression_level = compression_level
             achieved_ratio = self._estimate_compression_ratio(hd_vector, compressed)
 
         elif self.compression_strategy == CompressionStrategy.FIXED:
             compressed = self.fixed_compressor.encode(hd_vector.unsqueeze(0))
             achieved_ratio = self.base_dim / self.compressed_dim
-            self.last_compression_level = "fixed"
+        self.last_compression_level = "fixed"
 
         elif self.compression_strategy == CompressionStrategy.OPTIMAL:
             # Try both compressors and select best
@@ -216,17 +216,17 @@ class EnhancedKANHybridEncoder(nn.Module):
 
             if adaptive_quality > fixed_quality:
                 compressed = adaptive_result
-                self.last_compression_level = level
+        self.last_compression_level = level
                 achieved_ratio = self._estimate_compression_ratio(hd_vector, compressed)
             else:
                 compressed = fixed_result
-                self.last_compression_level = "fixed"
+        self.last_compression_level = "fixed"
                 achieved_ratio = self.base_dim / self.compressed_dim
 
         else:  # FEDERATED
             # Use adaptive but with federated-optimized settings
             compressed, compression_level = self.adaptive_compressor.encode(hd_vector.unsqueeze(0))
-            self.last_compression_level = f"federated_{compression_level}"
+        self.last_compression_level = f"federated_{compression_level}"
             achieved_ratio = self._estimate_compression_ratio(hd_vector, compressed)
 
         compressed = compressed.squeeze(0)
@@ -367,7 +367,7 @@ class EnhancedKANHybridEncoder(nn.Module):
 
         # Update aggregated statistics
         if privacy_level not in self.compression_statistics:
-            self.compression_statistics[privacy_level] = {
+        self.compression_statistics[privacy_level] = {
                 "count": 0,
                 "avg_time": 0.0,
                 "avg_ratio": 0.0,
@@ -543,7 +543,7 @@ class EnhancedKANHybridEncoder(nn.Module):
         # Apply recommendations if provided
         if "compression_strategy" in recommendations:
             old_strategy = self.compression_strategy
-            self.compression_strategy = recommendations["compression_strategy"]
+        self.compression_strategy = recommendations["compression_strategy"]
             recommendations["applied_change"] = (
                 f"Changed from {old_strategy.value} to {self.compression_strategy.value}"
             )
@@ -569,12 +569,12 @@ class EnhancedKANHybridEncoder(nn.Module):
             raise RuntimeError("Federated learning not enabled in constructor")
 
         if is_coordinator:
-            self.federated_coordinator = FederatedKANCoordinator(
+        self.federated_coordinator = FederatedKANCoordinator(
                 base_dim=self.base_dim, compressed_dim=self.compressed_dim
             )
             return {"role": "coordinator", "status": "ready", "can_accept_participants": True}
         else:
-            self.federated_participant = FederatedKANParticipant(
+        self.federated_participant = FederatedKANParticipant(
                 participant_id=participant_id,
                 institution_type=institution_type,
                 base_dim=self.base_dim,

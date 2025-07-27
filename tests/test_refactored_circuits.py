@@ -32,7 +32,7 @@ class TestRefactoredCircuits(unittest.TestCase):
     def setUp(self) -> None:
     """Set up test fixtures"""
         if not IMPORTS_AVAILABLE:
-            self.skipTest(f"Required imports not available: {IMPORT_ERROR}")
+        self.skipTest(f"Required imports not available: {IMPORT_ERROR}")
 
 
     def test_diabetes_circuit_basic(self) -> None:

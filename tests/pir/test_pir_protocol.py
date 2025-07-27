@@ -170,12 +170,12 @@ class TestAdversarialPIR:
         # Too short query
         short_query = np.random.randint(0, 2, 500, dtype=np.uint8)
         with pytest.raises(ValueError, match="size mismatch"):
-            self.protocol.process_server_response(short_query, self.database)
+        self.protocol.process_server_response(short_query, self.database)
 
         # Too long query
         long_query = np.random.randint(0, 2, 2000, dtype=np.uint8)
         with pytest.raises(ValueError, match="size mismatch"):
-            self.protocol.process_server_response(long_query, self.database)
+        self.protocol.process_server_response(long_query, self.database)
 
 
     def test_timing_attack_mitigation(self) -> None:

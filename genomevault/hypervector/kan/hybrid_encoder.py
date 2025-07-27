@@ -48,9 +48,9 @@ class KANHybridEncoder(nn.Module):
 
         # KAN compressor
         if use_adaptive:
-            self.kan_compressor = AdaptiveKANCompressor(input_dim=base_dim)
+        self.kan_compressor = AdaptiveKANCompressor(input_dim=base_dim)
         else:
-            self.kan_compressor = KANCompressor(
+        self.kan_compressor = KANCompressor(
                 input_dim=base_dim, compressed_dim=compressed_dim, num_layers=3
             )
 
@@ -110,10 +110,10 @@ class KANHybridEncoder(nn.Module):
 
         if hasattr(self.kan_compressor, "analyze_complexity"):
             compressed, level = self.kan_compressor.encode(hd_vector_batch)
-            self.last_compression_level = level
+        self.last_compression_level = level
         else:
             compressed = self.kan_compressor.encode(hd_vector_batch)
-            self.last_compression_level = "default"
+        self.last_compression_level = "default"
 
         # Apply privacy mixing
         private_compressed = self.privacy_mixer(compressed)
@@ -155,7 +155,7 @@ class KANHybridEncoder(nn.Module):
 
             # Project to higher dimension
             expr_projected = self.projections["expression"](
-                self._pad_or_truncate(expr_compressed, self.base_dim).unsqueeze(0)
+        self._pad_or_truncate(expr_compressed, self.base_dim).unsqueeze(0)
             ).squeeze(0)
             encoded_components.append(expr_projected)
 
@@ -166,7 +166,7 @@ class KANHybridEncoder(nn.Module):
 
             # Project to highest dimension
             epi_projected = self.projections["epigenetic"](
-                self._pad_or_truncate(epi_compressed, self.base_dim).unsqueeze(0)
+        self._pad_or_truncate(epi_compressed, self.base_dim).unsqueeze(0)
             ).squeeze(0)
             encoded_components.append(epi_projected)
 
@@ -317,7 +317,7 @@ class KANHybridEncoder(nn.Module):
 
         # Restore model state if needed
         if "model_state" in checkpoint:
-            self.load_state_dict(checkpoint["model_state"])
+        self.load_state_dict(checkpoint["model_state"])
 
         return checkpoint["compressed"], checkpoint["metadata"]
 

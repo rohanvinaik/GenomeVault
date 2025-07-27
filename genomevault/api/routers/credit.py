@@ -61,7 +61,7 @@ CREDIT_LEDGER: Dict[str, CreditBalance] = {}
 VAULTS: Dict[str, VaultInfo] = {}
 
 
-def get_or_create_balance(address: str) -> CreditBalance:
+    def get_or_create_balance(address: str) -> CreditBalance:
        """TODO: Add docstring for get_or_create_balance"""
      """Get or create credit balance for an address"""
     if address not in CREDIT_LEDGER:

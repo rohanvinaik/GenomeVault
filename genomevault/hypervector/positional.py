@@ -23,7 +23,7 @@ class PositionalEncoder:
     """
 
     def __init__(self, dimension: int = 100000, sparsity: float = 0.01, cache_size: int = 10000):
-        """
+    """
         Initialize positional encoder
 
         Args:
@@ -67,7 +67,7 @@ class PositionalEncoder:
 
         # Cache if space available
         if len(self._cache) < self.cache_size:
-            self._cache[cache_key] = vec
+        self._cache[cache_key] = vec
 
         return vec
 
@@ -213,7 +213,7 @@ class PositionalEncoder:
         }
 
     def clear_cache(self):
-        """Clear the position vector cache"""
+    """Clear the position vector cache"""
         self._cache.clear()
         logger.info("Cleared position vector cache")
 
@@ -224,7 +224,7 @@ class SNPPanel:
     """
 
     def __init__(self, positional_encoder: PositionalEncoder):
-        """
+    """
         Initialize SNP panel manager
 
         Args:
@@ -237,7 +237,7 @@ class SNPPanel:
         self._init_default_panels()
 
     def _init_default_panels(self):
-        """Initialize default SNP panels"""
+    """Initialize default SNP panels"""
         # Common SNPs panel (example positions)
         self.panels["common"] = {
             "name": "Common SNPs",
@@ -257,7 +257,7 @@ class SNPPanel:
         logger.info(f"Initialized {len(self.panels)} default SNP panels")
 
     def load_panel_from_file(self, panel_name: str, file_path: str, file_type: str = "bed"):
-        """
+    """
         Load SNP panel from BED/VCF file
 
         Args:
@@ -306,7 +306,7 @@ class SNPPanel:
             total_positions = sum(len(positions) for positions in positions_by_chr.values())
 
             # Store panel
-            self.panels[panel_name] = {
+        self.panels[panel_name] = {
                 "name": panel_name,
                 "size": total_positions,
                 "description": f"Custom panel from {file_path}",

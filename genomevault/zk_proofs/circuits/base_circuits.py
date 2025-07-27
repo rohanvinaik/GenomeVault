@@ -26,7 +26,7 @@ class FieldElement:
 
     def __post_init__(self) -> None:
             """TODO: Add docstring for __post_init__"""
-    self.value = self.value % self.modulus
+        self.value = self.value % self.modulus
 
     def __add__(self, other) -> None:
             """TODO: Add docstring for __add__"""
@@ -71,7 +71,7 @@ class BaseCircuit(ABC):
 
     def __init__(self, name: str, num_constraints: int) -> None:
             """TODO: Add docstring for __init__"""
-    self.name = name
+        self.name = name
         self.num_constraints = num_constraints
         self.wires = {}  # Wire assignments
         self.constraints = []  # List of constraints
@@ -167,7 +167,7 @@ class MerkleTreeCircuit(BaseCircuit):
             parent = self._hash_pair(left, right)
 
             # Add constraint for hash computation
-            self.add_constraint(left, right, parent, qm=1, qo=-1)
+        self.add_constraint(left, right, parent, qm=1, qo=-1)
 
             current = parent
 
@@ -206,7 +206,7 @@ class RangeProofCircuit(BaseCircuit):
         for i, bit in enumerate(self.value_bits):
             bit_elem = FieldElement(bit)
             # bit * (1 - bit) = 0
-            self.add_constraint(bit_elem, FieldElement(1) - bit_elem, FieldElement(0), qm=1)
+        self.add_constraint(bit_elem, FieldElement(1) - bit_elem, FieldElement(0), qm=1)
 
         # Reconstruct value from bits
         reconstructed = FieldElement(0)
@@ -258,18 +258,18 @@ class ComparisonCircuit(BaseCircuit):
             # Prove a > b without revealing a or b
             diff = self.a - self.b
             # Add range proof that diff > 0
-            self._prove_positive(diff)
+        self._prove_positive(diff)
 
         elif self.comparison_type == "lt":
             # Prove a < b
             diff = self.b - self.a
-            self._prove_positive(diff)
+        self._prove_positive(diff)
 
         elif self.comparison_type == "eq":
             # Prove a == b
             diff = self.a - self.b
             # Constraint: diff = 0
-            self.add_constraint(diff, FieldElement(0), FieldElement(0), ql=1)
+        self.add_constraint(diff, FieldElement(0), FieldElement(0), ql=1)
 
     def _prove_positive(self, value: FieldElement) -> None:
            """TODO: Add docstring for _prove_positive"""
@@ -359,13 +359,13 @@ class AggregatorCircuit(BaseCircuit):
 
 
 # Helper functions for circuit construction
-def create_wire_assignment(num_wires: int) -> Dict[str, int]:
+    def create_wire_assignment(num_wires: int) -> Dict[str, int]:
        """TODO: Add docstring for create_wire_assignment"""
      """Create wire assignment mapping"""
     return {"w_{i}": i for i in range(num_wires)}
 
 
-def evaluate_constraint(constraint: Dict, wire_values: Dict[int, FieldElement]) -> FieldElement:
+    def evaluate_constraint(constraint: Dict, wire_values: Dict[int, FieldElement]) -> FieldElement:
        """TODO: Add docstring for evaluate_constraint"""
      """Evaluate a PLONK constraint"""
     a = wire_values.get(constraint["a"], FieldElement(0))
@@ -383,7 +383,7 @@ def evaluate_constraint(constraint: Dict, wire_values: Dict[int, FieldElement]) 
     return result
 
 
-def verify_constraints(circuit: BaseCircuit, wire_values: Dict[int, FieldElement]) -> bool:
+    def verify_constraints(circuit: BaseCircuit, wire_values: Dict[int, FieldElement]) -> bool:
        """TODO: Add docstring for verify_constraints"""
      """Verify all constraints are satisfied"""
     for constraint in circuit.constraints:

@@ -245,7 +245,7 @@ class HolographicEncoder:
             role_vector = torch.randn(self.dimension)
             role_vector = role_vector / torch.norm(role_vector)
 
-            self._role_vectors[role] = role_vector
+        self._role_vectors[role] = role_vector
 
         return self._role_vectors[role]
 
@@ -401,14 +401,14 @@ class HolographicEncoder:
 
 
 # Convenience functions
-def encode_variant(chrom: str, pos: int, ref: str, alt: str) -> torch.Tensor:
+    def encode_variant(chrom: str, pos: int, ref: str, alt: str) -> torch.Tensor:
        """TODO: Add docstring for encode_variant"""
      """Convenience function to encode a genomic variant"""
     encoder = HolographicEncoder()
     return encoder.encode_genomic_variant(chrom, pos, ref, alt)
 
 
-def query_hologram(hologram: torch.Tensor, role: str) -> torch.Tensor:
+    def query_hologram(hologram: torch.Tensor, role: str) -> torch.Tensor:
        """TODO: Add docstring for query_hologram"""
      """Convenience function to query a holographic representation"""
     encoder = HolographicEncoder(hologram.shape[-1])

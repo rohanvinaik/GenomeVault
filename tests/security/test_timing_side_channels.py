@@ -24,7 +24,7 @@ class TimingAttackAnalyzer:
     """Analyzes timing patterns to detect potential side channels."""
 
     def __init__(self):
-        self.timings: Dict[str, List[float]] = defaultdict(list)
+    def __init__(self):
 
     def record_timing(self, category: str, elapsed: float) -> None:
         """Record timing measurement."""
@@ -112,7 +112,7 @@ class TestPIRTimingSideChannels:
     """Test suite for PIR timing side-channel resistance."""
 
     async def test_query_size_timing_independence(self):
-        """Test that query size doesn't leak through timing."""
+    """Test that query size doesn't leak through timing."""
         # Initialize secure server
         server = SecurePIRServer(
             server_id="test_timing",
@@ -166,7 +166,7 @@ class TestPIRTimingSideChannels:
         await server.shutdown()
 
     async def test_index_timing_independence(self):
-        """Test that accessed index doesn't leak through timing."""
+    """Test that accessed index doesn't leak through timing."""
         server = SecurePIRServer(
             server_id="test_index",
             data_directory=Path("/tmp/pir_index_test"),
@@ -217,7 +217,7 @@ class TestPIRTimingSideChannels:
         await server.shutdown()
 
     async def test_response_size_padding(self):
-        """Test that response sizes are properly padded."""
+    """Test that response sizes are properly padded."""
         server = SecurePIRServer(
             server_id="test_padding",
             data_directory=Path("/tmp/pir_padding_test"),
@@ -262,7 +262,7 @@ class TestPIRTimingSideChannels:
         await server.shutdown()
 
     async def test_query_mixer_effectiveness(self):
-        """Test that query mixer prevents correlation attacks."""
+    """Test that query mixer prevents correlation attacks."""
         mixer = QueryMixer(batch_size=5, max_wait_ms=100)
 
         # Track order preservation
@@ -289,7 +289,7 @@ class TestPIRTimingSideChannels:
         assert abs(correlation) < 0.3, "Query order correlation too high"
 
     async def test_timing_under_load(self):
-        """Test timing consistency under varying load conditions."""
+    """Test timing consistency under varying load conditions."""
         server = SecurePIRServer(
             server_id="test_load",
             data_directory=Path("/tmp/pir_load_test"),
@@ -345,7 +345,7 @@ class TestPIRTimingSideChannels:
         await server.shutdown()
 
     async def test_adversarial_timing_inference(self):
-        """Test resistance against adversarial timing inference attacks."""
+    """Test resistance against adversarial timing inference attacks."""
         server = SecurePIRServer(
             server_id="test_adversarial",
             data_directory=Path("/tmp/pir_adversarial_test"),
@@ -419,8 +419,8 @@ class TestPIRTimingSideChannels:
         await server.shutdown()
 
 
-def generate_timing_report(test_results: Dict[str, Any], output_path: Path):
-    """Generate comprehensive timing analysis report."""
+    def generate_timing_report(test_results: Dict[str, Any], output_path: Path):
+        """Generate comprehensive timing analysis report."""
     report = []
     report.append("# PIR Timing Side-Channel Analysis Report\n")
     report.append(f"Generated: {time.strftime('%Y-%m-%d %H:%M:%S')}\n")

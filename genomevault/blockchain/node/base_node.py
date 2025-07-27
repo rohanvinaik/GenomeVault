@@ -39,7 +39,7 @@ class BaseNode(ABC):
 
     def __init__(self, node_type: NodeType, is_signatory: bool = False) -> None:
             """TODO: Add docstring for __init__"""
-    self.node_type = node_type
+        self.node_type = node_type
         self.is_signatory = is_signatory
         self.config = get_config()
 
@@ -173,7 +173,7 @@ class BaseNode(ABC):
            """TODO: Add docstring for add_transaction"""
      """Add a transaction to pending pool"""
         if await self.validate_transaction(transaction):
-            self.pending_transactions.append(transaction)
+        self.pending_transactions.append(transaction)
             return True
         return False
 

@@ -109,7 +109,7 @@ class ECCEncoderMixin:
 
     def __init__(self, base_dimension: int, parity_g: int = 3) -> None:
             """TODO: Add docstring for __init__"""
-    self.base_dimension = base_dimension
+        self.base_dimension = base_dimension
         self.parity_g = parity_g
         self.code_length = parity_g + 1
         self.expanded_dimension = int(base_dimension * self.code_length / parity_g)
@@ -212,7 +212,7 @@ class ErrorBudgetAllocator:
 
     def __init__(self, dim_cap: int = 200000, default_g: int = 3) -> None:
             """TODO: Add docstring for __init__"""
-    self.dim_cap = dim_cap
+        self.dim_cap = dim_cap
         self.default_g = default_g
 
     def plan_budget(
@@ -323,15 +323,15 @@ class AdaptiveHDCEncoder(GenomicEncoder):
         """
         # Adjust dimension if needed
         if budget.dimension != self.dimension:
-            self.dimension = budget.dimension
-            self.base_vectors = self._init_base_vectors()
+        self.dimension = budget.dimension
+        self.base_vectors = self._init_base_vectors()
 
         # Get or create ECC encoder
         ecc_encoder = None
         if budget.ecc_enabled:
             encoder_key = (budget.dimension, budget.parity_g)
             if encoder_key not in self.ecc_encoders:
-                self.ecc_encoders[encoder_key] = ECCEncoderMixin(budget.dimension, budget.parity_g)
+        self.ecc_encoders[encoder_key] = ECCEncoderMixin(budget.dimension, budget.parity_g)
             ecc_encoder = self.ecc_encoders[encoder_key]
 
         # Process with repeats for confidence

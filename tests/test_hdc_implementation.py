@@ -598,7 +598,7 @@ class TestBenchmarks:
 # Fixtures for pytest
 @pytest.fixture
 
-def temp_registry() -> None:
+    def temp_registry() -> None:
     """Create temporary registry for testing"""
     registry = HypervectorRegistry("temp_test_registry.json")
     yield registry
@@ -608,13 +608,13 @@ def temp_registry() -> None:
 
 @pytest.fixture
 
-def sample_encoder() -> None:
+    def sample_encoder() -> None:
     """Create sample encoder for testing"""
     return create_encoder(dimension=10000, seed=42)
 
 @pytest.fixture
 
-def sample_features() -> None:
+    def sample_features() -> None:
     """Generate sample features for testing"""
     np.random.seed(42)
     return {

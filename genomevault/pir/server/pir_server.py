@@ -142,7 +142,7 @@ class PIRServer:
             # Open file for memory mapping
             with open(shard.data_path, "rb") as f:
                 # Memory-map the file
-                self.mmap_files[shard_id] = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
+        self.mmap_files[shard_id] = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
 
         return self.mmap_files[shard_id]
 
@@ -192,8 +192,8 @@ class PIRServer:
             computation_time = (time.time() - start_time) * 1000
 
             # Update metrics
-            self.query_count += 1
-            self.total_computation_time += computation_time
+        self.query_count += 1
+        self.total_computation_time += computation_time
 
             # Return response
             response = {
@@ -328,7 +328,7 @@ class PIRServer:
             Server statistics
         """
         avg_computation_time = (
-            self.total_computation_time / self.query_count if self.query_count > 0 else 0
+        self.total_computation_time / self.query_count if self.query_count > 0 else 0
         )
 
         return {
@@ -360,7 +360,7 @@ class PIRServer:
 
         # Close existing memory map
         if shard_id in self.mmap_files:
-            self.mmap_files[shard_id].close()
+        self.mmap_files[shard_id].close()
             del self.mmap_files[shard_id]
 
         # Update shard info

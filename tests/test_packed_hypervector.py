@@ -213,7 +213,7 @@ class TestPerformance:
         encoder = PackedGenomicEncoder(dimension=10000)
 
 
-        def encode() -> None:
+    def encode() -> None:
     """TODO: Add docstring for encode"""
     return encoder.encode_genome(sample_variants * 100)  # 300 variants
 
@@ -234,7 +234,7 @@ class TestPerformance:
         hv2.buf = rng.randint(0, 2**64, size=hv2.n_words, dtype=np.uint64)
 
 
-        def compute_similarity() -> None:
+    def compute_similarity() -> None:
     """TODO: Add docstring for compute_similarity"""
     return hv1.hamming_distance(hv2)
 

@@ -174,7 +174,7 @@ class AdvancedHierarchicalCompressor:
      """
         Implement the hierarchical compression from the specification:
 
-        def hierarchical_compression(base_vector) -> None:
+    def hierarchical_compression(base_vector) -> None:
                 """TODO: Add docstring for hierarchical_compression"""
     mid_vector = semantic_composition(base_vector, modality_context)
             high_vector = semantic_composition(mid_vector, overall_model_context)

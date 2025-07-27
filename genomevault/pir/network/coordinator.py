@@ -68,7 +68,7 @@ class PIRCoordinator:
 
     def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-    self.servers: Dict[str, ServerInfo] = {}
+        self.servers: Dict[str, ServerInfo] = {}
         self.active_queries: Dict[str, List[str]] = {}  # query_id -> server_ids
 
         # Configuration
@@ -96,7 +96,7 @@ class PIRCoordinator:
            """TODO: Add docstring for stop"""
      """Stop coordinator."""
         if self._health_check_task:
-            self._health_check_task.cancel()
+        self._health_check_task.cancel()
             try:
                 await self._health_check_task
             except asyncio.CancelledError:

@@ -111,7 +111,7 @@ class GnarkBackend:
 
             if circuit_file.exists():
                 try:
-                    self._compile_circuit(circuit_name)
+        self._compile_circuit(circuit_name)
                 except Exception as e:
                     logger.warning(f"Failed to compile {circuit_name}: {e}")
 
@@ -177,7 +177,7 @@ class GnarkBackend:
         """
         # Ensure circuit is compiled
         if circuit_name not in self.compiled_circuits:
-            self._compile_circuit(circuit_name)
+        self._compile_circuit(circuit_name)
 
         circuit_info = self.compiled_circuits[circuit_name]
 
@@ -324,7 +324,7 @@ class GnarkBackend:
            """TODO: Add docstring for get_circuit_info"""
      """Get information about a compiled circuit."""
         if circuit_name not in self.compiled_circuits:
-            self._compile_circuit(circuit_name)
+        self._compile_circuit(circuit_name)
 
         info = self.compiled_circuits[circuit_name].copy()
 
@@ -382,7 +382,7 @@ class SimulatedBackend:
         return True
 
 
-def get_backend(use_real: bool = True) -> Union[GnarkBackend, SimulatedBackend]:
+    def get_backend(use_real: bool = True) -> Union[GnarkBackend, SimulatedBackend]:
        """TODO: Add docstring for get_backend"""
      """
     Get appropriate backend based on availability.

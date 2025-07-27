@@ -186,7 +186,7 @@ def performance_benchmark() -> None:
 
         def __init__(self) -> None:
     """TODO: Add docstring for __init__"""
-    self.results = {}
+            self.results = {}
 
 
         def measure(self, name: str, func, *args, **kwargs) -> None:
@@ -214,12 +214,12 @@ def performance_benchmark() -> None:
 
 @pytest.fixture
 
-def cleanup_test_files() -> None:
+        def cleanup_test_files() -> None:
     """Cleanup any test files created during tests"""
     files_to_cleanup = []
 
 
-    def _register(filepath) -> None:
+        def _register(filepath) -> None:
     """TODO: Add docstring for _register"""
     files_to_cleanup.append(filepath)
 
@@ -237,7 +237,7 @@ def cleanup_test_files() -> None:
 
 # Pytest hooks
 
-def pytest_configure(config) -> None:
+        def pytest_configure(config) -> None:
     """Configure pytest with custom markers"""
     config.addinivalue_line("markers", "slow: marks test as slow")
     config.addinivalue_line("markers", "integration: marks test as integration test")
@@ -245,7 +245,7 @@ def pytest_configure(config) -> None:
     config.addinivalue_line("markers", "performance: marks test as performance benchmark")
 
 
-def pytest_collection_modifyitems(config, items) -> None:
+        def pytest_collection_modifyitems(config, items) -> None:
     """Add markers to tests based on their location"""
     for item in items:
         # Add markers based on test file location

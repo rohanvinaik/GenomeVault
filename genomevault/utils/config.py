@@ -219,11 +219,11 @@ class Config:
                     data = json.load(f)
 
             # Update configuration objects
-            self._update_config_object(self.crypto, data.get("crypto", {}))
-            self._update_config_object(self.privacy, data.get("privacy", {}))
-            self._update_config_object(self.network, data.get("network", {}))
-            self._update_config_object(self.storage, data.get("storage", {}))
-            self._update_config_object(self.processing, data.get("processing", {}))
+        self._update_config_object(self.crypto, data.get("crypto", {}))
+        self._update_config_object(self.privacy, data.get("privacy", {}))
+        self._update_config_object(self.network, data.get("network", {}))
+        self._update_config_object(self.storage, data.get("storage", {}))
+        self._update_config_object(self.processing, data.get("processing", {}))
 
             logger.info(f"Loaded configuration from {self.config_file}")
         except Exception as e:
@@ -245,23 +245,23 @@ class Config:
      """Load environment variable overrides"""
         # Crypto overrides
         if zk_param := os.getenv("GENOMEVAULT_ZK_SECURITY"):
-            self.crypto.zk_security_parameter = int(zk_param)
+        self.crypto.zk_security_parameter = int(zk_param)
 
         # Privacy overrides
         if epsilon := os.getenv("GENOMEVAULT_DP_EPSILON"):
-            self.privacy.epsilon = float(epsilon)
+        self.privacy.epsilon = float(epsilon)
 
         # Network overrides
         if api_port := os.getenv("GENOMEVAULT_API_PORT"):
-            self.network.api_port = int(api_port)
+        self.network.api_port = int(api_port)
 
         # Storage overrides
         if data_dir := os.getenv("GENOMEVAULT_DATA_DIR"):
-            self.storage.data_dir = Path(data_dir)
+        self.storage.data_dir = Path(data_dir)
 
         # Processing overrides
         if max_cores := os.getenv("GENOMEVAULT_MAX_CORES"):
-            self.processing.max_cores = int(max_cores)
+        self.processing.max_cores = int(max_cores)
 
     def _validate_config(self) -> None:
            """TODO: Add docstring for _validate_config"""
@@ -416,7 +416,7 @@ class Config:
 _config: Optional[Config] = None
 
 
-def get_config() -> Config:
+    def get_config() -> Config:
        """TODO: Add docstring for get_config"""
      """Get global configuration instance"""
     global _config
@@ -425,7 +425,7 @@ def get_config() -> Config:
     return _config
 
 
-def init_config(config_file: Optional[str] = None, environment: Optional[str] = None) -> None:
+    def init_config(config_file: Optional[str] = None, environment: Optional[str] = None) -> None:
        """TODO: Add docstring for init_config"""
      """Initialize global configuration"""
     global _config

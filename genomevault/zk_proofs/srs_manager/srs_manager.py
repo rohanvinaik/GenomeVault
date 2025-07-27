@@ -79,7 +79,7 @@ class SRSManager:
     """
 
     def __init__(self, base_path: Path, auto_download: bool = True):
-        """
+    """
         Initialize SRS Manager.
 
         Args:
@@ -192,7 +192,7 @@ class SRSManager:
         if srs_id not in self.registry["srs"]:
             # Try to download from trusted sources
             if self.auto_download and srs_id in self.trusted_sources:
-                self._download_trusted_srs(srs_id)
+        self._download_trusted_srs(srs_id)
             else:
                 raise ValidationError(f"Unknown SRS: {srs_id}")
 
@@ -364,7 +364,7 @@ class GnarkDockerBuilder:
     """
 
     def __init__(self, workspace: Path):
-        """Initialize Docker builder."""
+    """Initialize Docker builder."""
         self.workspace = Path(workspace)
         self.docker_image = "genomevault/gnark-builder:v0.9.1"
 
@@ -424,7 +424,7 @@ go build -o circuit circuit.go
             f"{output_dir}:/output",
             "-w",
             "/work",
-            self.docker_image,
+        self.docker_image,
             "/work/build.sh",
         ]
 
@@ -467,7 +467,7 @@ go build -o circuit circuit.go
 
 
 # Example usage and tests
-def test_srs_manager():
+    def test_srs_manager():
     """Test SRS manager functionality."""
     # Initialize manager
     manager = SRSManager(Path("/tmp/genomevault_srs"), auto_download=True)

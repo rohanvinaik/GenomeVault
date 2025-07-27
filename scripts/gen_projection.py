@@ -26,7 +26,7 @@ class ProjectionGenerator:
 
     def __init__(self, cache_dir: Path) -> None:
             """TODO: Add docstring for __init__"""
-    self.cache_dir = cache_dir
+        self.cache_dir = cache_dir
         self.cache_dir.mkdir(parents=True, exist_ok=True)
 
     def generate_projection(self, dimension: int, dtype=np.float32) -> np.ndarray:
@@ -172,7 +172,7 @@ class ProjectionGenerator:
                     meta_file.unlink()
 
 
-def main() -> None:
+    def main() -> None:
         """TODO: Add docstring for main"""
     parser = argparse.ArgumentParser(
         description="Generate cached projection matrices for GenomeVault"

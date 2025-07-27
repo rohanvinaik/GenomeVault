@@ -63,11 +63,11 @@ class SimilarityPreservingMapper:
         if self.output_dim >= self.input_dim:
             # Random orthogonal mapping for expansion
             q, _ = torch.qr(torch.randn(self.output_dim, self.input_dim))
-            self.mapping_matrix = q
+        self.mapping_matrix = q
         else:
             # PCA-like mapping for reduction
-            self.mapping_matrix = torch.randn(self.output_dim, self.input_dim)
-            self.mapping_matrix /= torch.norm(self.mapping_matrix, dim=1, keepdim=True)
+        self.mapping_matrix = torch.randn(self.output_dim, self.input_dim)
+        self.mapping_matrix /= torch.norm(self.mapping_matrix, dim=1, keepdim=True)
 
     def fit(self, data: torch.Tensor, similarity_matrix: Optional[torch.Tensor] = None) -> None:
            """TODO: Add docstring for fit"""
@@ -162,7 +162,7 @@ class SimilarityPreservingMapper:
 
             # Orthogonalize if expanding dimensions
             if self.output_dim >= self.input_dim and iteration % 10 == 0:
-                self._orthogonalize_mapping()
+        self._orthogonalize_mapping()
 
             if iteration % 100 == 0:
                 logger.debug(f"Iteration {iteration}, Loss: {loss.item():.4f}")
@@ -491,7 +491,7 @@ class ManifoldPreservingMapper:
 
 
 # Convenience functions
-def create_biological_mapper(
+    def create_biological_mapper(
     input_dim: int, output_dim: int, omics_type: OmicsType
 ) -> BiologicalSimilarityMapper:
        """TODO: Add docstring for create_biological_mapper"""
@@ -499,7 +499,7 @@ def create_biological_mapper(
     return BiologicalSimilarityMapper(input_dim, output_dim, omics_type)
 
 
-def preserve_similarities(data: torch.Tensor, target_dim: int) -> torch.Tensor:
+    def preserve_similarities(data: torch.Tensor, target_dim: int) -> torch.Tensor:
        """TODO: Add docstring for preserve_similarities"""
      """Transform data while preserving similarities"""
     mapper = SimilarityPreservingMapper(data.shape[1], target_dim)

@@ -414,8 +414,8 @@ class ZKCircuitStateMachine(RuleBasedStateMachine):
     def add_variant(self, snp_id, count) -> None:
     """Add a variant with count."""
         if len(self.variants) < 10:
-            self.variants.append((snp_id, count))
-            self.total_count += count
+        self.variants.append((snp_id, count))
+        self.total_count += count
 
     @rule()
 
@@ -476,7 +476,7 @@ class ZKCircuitStateMachine(RuleBasedStateMachine):
 TestZKStateMachine = ZKCircuitStateMachine.TestCase
 
 
-def test_malformed_public_inputs() -> None:
+    def test_malformed_public_inputs() -> None:
     """Test circuit behavior with malformed public inputs."""
     circuit = VariantProofCircuit(merkle_depth=5)
 
@@ -509,7 +509,7 @@ def test_malformed_public_inputs() -> None:
 
 @pytest.mark.parametrize("constraint_count", [100, 1000, 5000])
 
-def test_circuit_performance_scaling(constraint_count) -> None:
+    def test_circuit_performance_scaling(constraint_count) -> None:
     """Test that circuit generation scales appropriately."""
     import time
 

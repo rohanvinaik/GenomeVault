@@ -358,7 +358,7 @@ class BiologicalSignalDetector:
 
         # Train anomaly detector
         if X:
-            self.anomaly_detector.fit(X)
+        self.anomaly_detector.fit(X)
             logger.info(f"Trained on {len(X)} modification examples")
 
     def export_signal_track(
@@ -431,7 +431,7 @@ class BiologicalSignalDetector:
 
 
 # Example usage
-def example_signal_detection() -> None:
+    def example_signal_detection() -> None:
        """TODO: Add docstring for example_signal_detection"""
      """Example of biological signal detection."""
     # Create detector

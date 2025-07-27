@@ -21,7 +21,7 @@ class PerformanceReportGenerator:
 
     def __init__(self, input_dir: Path, output_dir: Path) -> None:
             """TODO: Add docstring for __init__"""
-    self.input_dir = Path(input_dir)
+        self.input_dir = Path(input_dir)
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -110,15 +110,15 @@ class PerformanceReportGenerator:
 
         # 1. Throughput comparison plot
         if "encoding_throughput" in benchmarks:
-            self._plot_throughput_comparison(benchmarks["encoding_throughput"])
+        self._plot_throughput_comparison(benchmarks["encoding_throughput"])
 
         # 2. Memory usage by tier
         if "memory_usage" in benchmarks:
-            self._plot_memory_comparison(benchmarks["memory_usage"])
+        self._plot_memory_comparison(benchmarks["memory_usage"])
 
         # 3. Scalability plot
         if "scalability" in benchmarks:
-            self._plot_scalability(benchmarks["scalability"])
+        self._plot_scalability(benchmarks["scalability"])
 
     def _plot_throughput_comparison(self, throughput_data: Dict) -> None:
            """TODO: Add docstring for _plot_throughput_comparison"""
@@ -356,7 +356,7 @@ class PerformanceReportGenerator:
         return summary
 
 
-def main() -> None:
+    def main() -> None:
        """TODO: Add docstring for main"""
      """Main entry point"""
     parser = argparse.ArgumentParser(description="Generate performance report")

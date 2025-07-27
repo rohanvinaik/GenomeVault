@@ -152,10 +152,10 @@ class MetricsCollector:
            """TODO: Add docstring for track_processing"""
      """Decorator to track processing operations"""
 
-        def decorator(func) -> None:
+    def decorator(func) -> None:
                 """TODO: Add docstring for decorator"""
     @wraps(func)
-            def wrapper(*args, **kwargs) -> None:
+    def wrapper(*args, **kwargs) -> None:
                     """TODO: Add docstring for wrapper"""
     start_time = time.time()
                 try:
@@ -176,7 +176,7 @@ class MetricsCollector:
 
                 except Exception as e:
                     # Track error
-                    self.processing_errors.labels(
+        self.processing_errors.labels(
                         operation=operation,
                         data_type=data_type,
                         error_type=type(e).__name__,
@@ -201,15 +201,15 @@ class MetricsCollector:
            """TODO: Add docstring for track_hypervector_operation"""
      """Track hypervector operations"""
 
-        def decorator(func) -> None:
+    def decorator(func) -> None:
                 """TODO: Add docstring for decorator"""
     @wraps(func)
-            def wrapper(*args, **kwargs) -> None:
+    def wrapper(*args, **kwargs) -> None:
                     """TODO: Add docstring for wrapper"""
     start_time = time.time()
 
                 # Increment operation counter
-                self.hypervector_operations.labels(operation_type=operation_type).inc()
+        self.hypervector_operations.labels(operation_type=operation_type).inc()
 
                 result = func(*args, **kwargs)
 
@@ -230,17 +230,17 @@ class MetricsCollector:
            """TODO: Add docstring for track_proof_generation"""
      """Track zero-knowledge proof generation"""
 
-        def decorator(func) -> None:
+    def decorator(func) -> None:
                 """TODO: Add docstring for decorator"""
     @wraps(func)
-            def wrapper(*args, **kwargs) -> None:
+    def wrapper(*args, **kwargs) -> None:
                     """TODO: Add docstring for wrapper"""
     with self.proof_generation_time.labels(circuit_type=circuit_type).time():
                     proof = func(*args, **kwargs)
 
                 # Track proof size
                 if hasattr(proof, "size_bytes"):
-                    self.proof_size_bytes.labels(circuit_type=circuit_type).observe(
+        self.proof_size_bytes.labels(circuit_type=circuit_type).observe(
                         proof.size_bytes
                     )
 
@@ -262,7 +262,7 @@ class MetricsCollector:
 
         # Update server honesty scores
         if "server_type" in config:
-            self.pir_server_honesty.labels(server_type=config["server_type"]).set(q)
+        self.pir_server_honesty.labels(server_type=config["server_type"]).set(q)
 
     def update_node_metrics(self, node_class: str, signatory_status: str, voting_power: int) -> None:
            """TODO: Add docstring for update_node_metrics"""
@@ -319,7 +319,7 @@ class PrivacyAwareLogger:
 
     def __init__(self, service_name: str) -> None:
             """TODO: Add docstring for __init__"""
-    self.service_name = service_name
+        self.service_name = service_name
         self.logger = structlog.get_logger(service_name)
         self.configure_logging()
 
@@ -328,9 +328,9 @@ class PrivacyAwareLogger:
      """Configure structured logging with privacy filters"""
         structlog.configure(
             processors=[
-                self._add_timestamp,
-                self._add_service_info,
-                self._filter_sensitive_data,
+        self._add_timestamp,
+        self._add_service_info,
+        self._filter_sensitive_data,
                 structlog.stdlib.filter_by_level,
                 structlog.stdlib.add_logger_name,
                 structlog.stdlib.add_log_level,
@@ -375,7 +375,7 @@ class PrivacyAwareLogger:
         ]
 
         # Deep scan for sensitive keys
-        def redact_dict(d: Dict[str, Any]) -> Dict[str, Any]:
+    def redact_dict(d: Dict[str, Any]) -> Dict[str, Any]:
                 """TODO: Add docstring for redact_dict"""
     redacted = {}
             for key, value in d.items():

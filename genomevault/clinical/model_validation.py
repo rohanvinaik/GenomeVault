@@ -102,7 +102,7 @@ class ClinicalModelValidator:
 
     def __init__(self, validator_id: str) -> None:
             """TODO: Add docstring for __init__"""
-    self.validator_id = validator_id
+        self.validator_id = validator_id
         self.validation_results: Dict[str, ClinicalValidationResult] = {}
         self.attestations: Dict[str, ModelCapabilityAttestation] = {}
         self.test_datasets: Dict[ClinicalDomain, str] = {}

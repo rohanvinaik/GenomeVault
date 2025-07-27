@@ -349,7 +349,7 @@ class HypervectorEncoder:
 
 
 # Convenience functions
-def create_encoder(
+    def create_encoder(
     dimension: int = 10000, projection_type: str = "sparse_random", **kwargs
 ) -> HypervectorEncoder:
        """TODO: Add docstring for create_encoder"""
@@ -360,7 +360,7 @@ def create_encoder(
     return HypervectorEncoder(config)
 
 
-def encode_genomic_data(genomic_data: Dict, dimension: int = 10000) -> torch.Tensor:
+    def encode_genomic_data(genomic_data: Dict, dimension: int = 10000) -> torch.Tensor:
        """TODO: Add docstring for encode_genomic_data"""
      """Convenience function to encode genomic data"""
     encoder = create_encoder(dimension=dimension)

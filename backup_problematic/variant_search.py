@@ -16,7 +16,7 @@ import numpy as np
 class HDVariantSearch:
     def __init__(self, dimension=10000) -> None:
             """TODO: Add docstring for __init__"""
-    self.dimension = dimension
+        self.dimension = dimension
         self.setup_basis_vectors()
 
     def setup_basis_vectors(self) -> None:
@@ -103,7 +103,7 @@ class HDVariantSearch:
         return similarities[:top_k]
 
 
-def main() -> None:
+    def main() -> None:
         """TODO: Add docstring for main"""
     parser = argparse.ArgumentParser(description="Search for similar variants using HD encoding")
     parser.add_argument(

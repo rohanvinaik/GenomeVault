@@ -50,7 +50,7 @@ class StreamingStats:
     def __post_init__(self) -> None:
             """TODO: Add docstring for __post_init__"""
     if self.variance_peaks is None:
-            self.variance_peaks = []
+        self.variance_peaks = []
 
 
 class SliceReader:
@@ -62,7 +62,7 @@ class SliceReader:
         overlap: int = 1000,  # Event overlap between slices
     ) -> None:
             """TODO: Add docstring for __init__"""
-    self.slice_size = slice_size
+        self.slice_size = slice_size
         self.overlap = overlap
         self.current_read = None
         self.event_buffer = []
@@ -227,7 +227,7 @@ class NanoporeStreamProcessor:
             try:
                 from .gpu_kernels import GPUBindingKernel
 
-                self.gpu_kernel = GPUBindingKernel(self.catalytic_space)
+        self.gpu_kernel = GPUBindingKernel(self.catalytic_space)
                 logger.info("GPU acceleration enabled")
             except ImportError:
                 logger.warning("GPU kernel not available, using CPU")
@@ -259,14 +259,14 @@ class NanoporeStreamProcessor:
             hv_slice, variance = await self._process_slice(slice_data)
 
             # Update statistics
-            self.stats.total_events += len(slice_data.events)
-            self.stats.total_slices += 1
+        self.stats.total_events += len(slice_data.events)
+        self.stats.total_slices += 1
 
             # Check for anomalies
             anomalies = self._detect_anomalies(variance, anomaly_threshold)
 
             if anomalies:
-                self.stats.variance_peaks.extend(anomalies)
+        self.stats.variance_peaks.extend(anomalies)
 
             # Callback with results
             if output_callback:
@@ -325,7 +325,7 @@ class NanoporeStreamProcessor:
                 batch_hv, batch_var = await self.gpu_kernel.process_events_async(
                     batch_events,
                     slice_data.start_idx + i,
-                    self.hv_encoder,
+        self.hv_encoder,
                 )
             else:
                 # CPU fallback
@@ -394,7 +394,7 @@ class NanoporeStreamProcessor:
            """TODO: Add docstring for _update_variance_state"""
      """Update streaming variance statistics."""
         if read_id not in self.variance_state:
-            self.variance_state[read_id] = {
+        self.variance_state[read_id] = {
                 "n": 0,
                 "mean": 0.0,
                 "M2": 0.0,

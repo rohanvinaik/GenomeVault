@@ -23,7 +23,7 @@ class GenomicDataset(Dataset):
 
     def __init__(self, num_samples: int = 10000, variants_per_sample: int = 100) -> None:
             """TODO: Add docstring for __init__"""
-    self.num_samples = num_samples
+        self.num_samples = num_samples
         self.variants_per_sample = variants_per_sample
 
         # Pre-generate hypervectors for training
@@ -36,7 +36,7 @@ class GenomicDataset(Dataset):
             variants = self._generate_variants(variants_per_sample)
             # Encode to hypervector
             hv = self.encoder.encode_genome(variants)
-            self.samples.append(hv)
+        self.samples.append(hv)
 
     def _generate_variants(self, n: int) -> List[Dict]:
            """TODO: Add docstring for _generate_variants"""
@@ -63,7 +63,7 @@ class GenomicDataset(Dataset):
     return self.samples[idx]
 
 
-def train_kan_compressor(
+    def train_kan_compressor(
     compressor: KANCompressor,
     train_loader: DataLoader,
     val_loader: DataLoader,
@@ -165,7 +165,7 @@ def train_kan_compressor(
     return history
 
 
-def evaluate_kan_model(
+    def evaluate_kan_model(
     compressor: KANCompressor, test_loader: DataLoader, device: str = "cpu"
 ) -> Dict[str, float]:
        """TODO: Add docstring for evaluate_kan_model"""
@@ -226,7 +226,7 @@ def evaluate_kan_model(
     return metrics
 
 
-def visualize_training_history(history: Dict[str, List[float]]) -> None:
+    def visualize_training_history(history: Dict[str, List[float]]) -> None:
        """TODO: Add docstring for visualize_training_history"""
      """Visualize training history"""
     fig, axes = plt.subplots(1, 3, figsize=(15, 5))
@@ -259,7 +259,7 @@ def visualize_training_history(history: Dict[str, List[float]]) -> None:
     plt.show()
 
 
-def analyze_learned_functions(compressor: KANCompressor, num_functions: int = 5) -> None:
+    def analyze_learned_functions(compressor: KANCompressor, num_functions: int = 5) -> None:
        """TODO: Add docstring for analyze_learned_functions"""
      """Analyze and visualize learned KAN functions"""
     print("\nAnalyzing learned functions...")
@@ -293,7 +293,7 @@ def analyze_learned_functions(compressor: KANCompressor, num_functions: int = 5)
     plt.show()
 
 
-def main() -> None:
+    def main() -> None:
        """TODO: Add docstring for main"""
      """Main training pipeline"""
     # Configuration

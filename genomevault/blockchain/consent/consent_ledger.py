@@ -165,7 +165,7 @@ class ConsentLedger:
     """
 
     def __init__(self, storage_path: Path, srs_manager: Optional[SRSManager] = None):
-        """
+    """
         Initialize consent ledger.
 
         Args:
@@ -245,11 +245,11 @@ class ConsentLedger:
 
             for grant_dict in grants_data:
                 grant = ConsentGrant.from_dict(grant_dict)
-                self.grants_by_id[grant.consent_id] = grant
+        self.grants_by_id[grant.consent_id] = grant
 
                 if grant.subject_id not in self.grants_by_subject:
-                    self.grants_by_subject[grant.subject_id] = set()
-                self.grants_by_subject[grant.subject_id].add(grant.consent_id)
+        self.grants_by_subject[grant.subject_id] = set()
+        self.grants_by_subject[grant.subject_id].add(grant.consent_id)
 
         # Load revocations
         revocations_file = self.storage_path / "revocations.json"
@@ -259,7 +259,7 @@ class ConsentLedger:
 
             for revocation_dict in revocations_data:
                 revocation = ConsentRevocation.from_dict(revocation_dict)
-                self.revocations[revocation.consent_id] = revocation
+        self.revocations[revocation.consent_id] = revocation
 
     def _save_state(self) -> None:
         """Save ledger state to disk."""
@@ -329,7 +329,7 @@ class ConsentLedger:
         # Store grant
         self.grants_by_id[consent_id] = grant
         if subject_id not in self.grants_by_subject:
-            self.grants_by_subject[subject_id] = set()
+        self.grants_by_subject[subject_id] = set()
         self.grants_by_subject[subject_id].add(consent_id)
 
         # Save state
@@ -526,7 +526,7 @@ class ConsentLedger:
         """
         try:
             # Verify proof signature (placeholder)
-            self._verify_signature(json.dumps(proof.public_inputs).encode(), proof.proof_data)
+        self._verify_signature(json.dumps(proof.public_inputs).encode(), proof.proof_data)
 
             # If consent ID provided, verify hash matches
             if expected_consent_id:
@@ -651,7 +651,7 @@ class ConsentLedger:
 
 
 # Integration with ZK proofs
-def bind_consent_to_proof(
+    def bind_consent_to_proof(
     consent_ledger: ConsentLedger, consent_id: str, proof_public_inputs: List[str]
 ) -> List[str]:
     """
@@ -681,7 +681,7 @@ def bind_consent_to_proof(
 
 
 # Example usage
-def example_consent_workflow():
+    def example_consent_workflow():
     """Example consent management workflow."""
     # Initialize ledger
     ledger = ConsentLedger(Path("/tmp/genomevault_consent"))

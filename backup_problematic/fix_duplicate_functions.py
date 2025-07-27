@@ -17,7 +17,7 @@ class DuplicateFunctionFixer:
 
     def __init__(self, base_path: Path) -> None:
             """TODO: Add docstring for __init__"""
-    self.base_path = base_path
+        self.base_path = base_path
         self.duplicate_groups = []
         self.fixes_applied = 0
 
@@ -144,7 +144,7 @@ class LoggingMixin:
 
 
 # Circuit factory for ZK proofs
-def create_circuit_stub(circuit_type: str) -> Dict[str, Any]:
+    def create_circuit_stub(circuit_type: str) -> Dict[str, Any]:
        """TODO: Add docstring for create_circuit_stub"""
      """Create a stub circuit definition"""
     return {
@@ -155,7 +155,7 @@ def create_circuit_stub(circuit_type: str) -> Dict[str, Any]:
 
 
 # Configuration helpers
-def get_default_config() -> Dict[str, Any]:
+    def get_default_config() -> Dict[str, Any]:
        """TODO: Add docstring for get_default_config"""
      """Get default configuration"""
     return {
@@ -208,7 +208,7 @@ def get_default_config() -> Dict[str, Any]:
                 # Write back if changed
                 if new_content != content:
                     full_path.write_text(new_content)
-                    self.fixes_applied += 1
+        self.fixes_applied += 1
                     print(f"    ✅ Fixed {func_name}")
                 else:
                     print(f"    ℹ️  No changes needed for {func_name}")
@@ -377,7 +377,7 @@ def get_default_config() -> Dict[str, Any]:
         return report
 
 
-def main() -> None:
+    def main() -> None:
        """TODO: Add docstring for main"""
      """Main function to fix duplicate functions"""
     print("🚀 GenomeVault Duplicate Function Fixer")

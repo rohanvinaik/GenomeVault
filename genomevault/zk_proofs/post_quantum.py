@@ -454,7 +454,7 @@ class LatticeProver(PostQuantumProver):
         import json
 
         # Convert numpy arrays to lists for JSON serialization
-        def convert_arrays(obj) -> None:
+    def convert_arrays(obj) -> None:
                 """TODO: Add docstring for convert_arrays"""
     if isinstance(obj, np.ndarray):
                 return obj.tolist()
@@ -576,7 +576,7 @@ class PostQuantumTransition:
 
 
 # Utility functions for post-quantum proofs
-def estimate_pq_proof_size(algorithm: str, constraint_count: int) -> int:
+    def estimate_pq_proof_size(algorithm: str, constraint_count: int) -> int:
        """TODO: Add docstring for estimate_pq_proof_size"""
      """
     Estimate post-quantum proof size.
@@ -606,7 +606,7 @@ def estimate_pq_proof_size(algorithm: str, constraint_count: int) -> int:
         raise ValueError("Unknown algorithm: {algorithm}")
 
 
-def benchmark_pq_performance(num_constraints: _ = 10000) -> Dict[str, Any]:
+    def benchmark_pq_performance(num_constraints: _ = 10000) -> Dict[str, Any]:
        """TODO: Add docstring for benchmark_pq_performance"""
      """
     Benchmark post-quantum proof performance.

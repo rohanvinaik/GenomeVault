@@ -49,10 +49,10 @@ class DemoGenomicModel:
            """TODO: Add docstring for update_weights"""
      """Update weights with gradients"""
         for key in self.weights:
-            self.weights[key] -= lr * gradients.get(key, 0)
+        self.weights[key] -= lr * gradients.get(key, 0)
 
 
-def generate_synthetic_genomic_data(n_samples: int = 1000, n_features: int = 1000) -> None:
+    def generate_synthetic_genomic_data(n_samples: int = 1000, n_features: int = 1000) -> None:
        """TODO: Add docstring for generate_synthetic_genomic_data"""
      """Generate synthetic genomic data for demo"""
     # Simulate genomic features (SNPs, gene expression, etc.)
@@ -68,7 +68,7 @@ def generate_synthetic_genomic_data(n_samples: int = 1000, n_features: int = 100
     return X, y
 
 
-def train_with_proof_of_training() -> None:
+    def train_with_proof_of_training() -> None:
        """TODO: Add docstring for train_with_proof_of_training"""
      """Demonstrate training with PoT enabled"""
 
@@ -289,7 +289,7 @@ def train_with_proof_of_training() -> None:
     return session_id, completion_result
 
 
-def verify_training_proof(session_id: str, proof_path: str) -> None:
+    def verify_training_proof(session_id: str, proof_path: str) -> None:
        """TODO: Add docstring for verify_training_proof"""
      """Demonstrate proof verification"""
     print("\n=== Verifying Training Proof ===")

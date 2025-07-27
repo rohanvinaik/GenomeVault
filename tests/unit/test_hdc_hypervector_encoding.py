@@ -115,7 +115,7 @@ class TestHypervectorEncoder(unittest.TestCase):
             encoder = HypervectorEncoder(config)
 
             hv = encoder.encode(self.test_features, OmicsType.GENOMIC)
-            self.assertEqual(hv.shape[0], 10000)
+        self.assertEqual(hv.shape[0], 10000)
 
 
     def test_quantization(self) -> None:
@@ -151,7 +151,7 @@ class TestHypervectorBinder(unittest.TestCase):
         # Test unbinding
         recovered = self.binder.unbind(bound, [self.v2], BindingType.MULTIPLY)
         similarity = torch.nn.functional.cosine_similarity(
-            self.v1.unsqueeze(0), recovered.unsqueeze(0)
+        self.v1.unsqueeze(0), recovered.unsqueeze(0)
         ).item()
         self.assertGreater(similarity, 0.9)
 
@@ -164,7 +164,7 @@ class TestHypervectorBinder(unittest.TestCase):
         # Test unbinding
         recovered = self.binder.unbind(bound, [self.v2], BindingType.CIRCULAR)
         similarity = torch.nn.functional.cosine_similarity(
-            self.v1.unsqueeze(0), recovered.unsqueeze(0)
+        self.v1.unsqueeze(0), recovered.unsqueeze(0)
         ).item()
         self.assertGreater(similarity, 0.8)
 
@@ -198,7 +198,7 @@ class TestHypervectorBinder(unittest.TestCase):
         # Bundle should have positive similarity with all components
         for v in [self.v1, self.v2, self.v3]:
             sim = torch.nn.functional.cosine_similarity(bundle.unsqueeze(0), v.unsqueeze(0)).item()
-            self.assertGreater(sim, 0)
+        self.assertGreater(sim, 0)
 
 
     def test_protection(self) -> None:
@@ -209,7 +209,7 @@ class TestHypervectorBinder(unittest.TestCase):
         recovered = self.binder.unprotect(protected, key)
 
         similarity = torch.nn.functional.cosine_similarity(
-            self.v1.unsqueeze(0), recovered.unsqueeze(0)
+        self.v1.unsqueeze(0), recovered.unsqueeze(0)
         ).item()
         self.assertGreater(similarity, 0.9)
 
@@ -335,7 +335,7 @@ class TestHolographicEncoder(unittest.TestCase):
 
         # Count matching bits
 
-        def count_matching_bits(h1, h2) -> None:
+    def count_matching_bits(h1, h2) -> None:
     """TODO: Add docstring for count_matching_bits"""
     b1 = bin(int(h1, 16))[2:].zfill(64)
             b2 = bin(int(h2, 16))[2:].zfill(64)

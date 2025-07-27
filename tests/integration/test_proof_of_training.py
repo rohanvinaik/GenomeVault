@@ -26,7 +26,7 @@ class MockModel:
 
     def __init__(self) -> None:
     """TODO: Add docstring for __init__"""
-    self.weights = {"layer1": np.random.randn(100, 50), "layer2": np.random.randn(50, 2)}
+        self.weights = {"layer1": np.random.randn(100, 50), "layer2": np.random.randn(50, 2)}
 
 
     def parameters(self) -> None:

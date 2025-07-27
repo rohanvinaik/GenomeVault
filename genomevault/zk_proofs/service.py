@@ -21,7 +21,7 @@ class ProofRequest:
         self, proof_type: str, private_inputs: Dict[str, Any], public_inputs: Dict[str, Any]
     ) -> None:
             """TODO: Add docstring for __init__"""
-    self.proof_type = proof_type
+        self.proof_type = proof_type
         self.private_inputs = private_inputs
         self.public_inputs = public_inputs
 
@@ -31,7 +31,7 @@ class ProofResponse:
 
     def __init__(self, proof: bytes, proof_id: str, verification_key: str, generated_at: datetime) -> None:
             """TODO: Add docstring for __init__"""
-    self.proof = proof
+        self.proof = proof
         self.proof_id = proof_id
         self.verification_key = verification_key
         self.generated_at = generated_at
@@ -44,7 +44,7 @@ class VerificationResult:
         self, is_valid: bool, proof_id: Optional[str] = None, verifier_id: Optional[str] = None
     ) -> None:
             """TODO: Add docstring for __init__"""
-    self.is_valid = is_valid
+        self.is_valid = is_valid
         self.proof_id = proof_id
         self.verifier_id = verifier_id
 
@@ -54,7 +54,7 @@ class ZKProofService:
 
     def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-    self.circuits = {
+        self.circuits = {
             "prs_range": PRSProofCircuit(),
             "age_range": PRSProofCircuit(),  # Reuse for demo
             "variant_count": PRSProofCircuit(),  # Reuse for demo
@@ -64,8 +64,8 @@ class ZKProofService:
 
         # Initialize provers and verifiers for each circuit
         for name, circuit in self.circuits.items():
-            self.provers[name] = ZKProver(circuit)
-            self.verifiers[name] = ZKVerifier(circuit)
+        self.provers[name] = ZKProver(circuit)
+        self.verifiers[name] = ZKVerifier(circuit)
 
     async def generate_proof(self, request: ProofRequest) -> ProofResponse:
            """TODO: Add docstring for generate_proof"""

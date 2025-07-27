@@ -102,7 +102,7 @@ class AutoFixer:
             return False
 
     def add_missing_init_files(self):
-        """Add missing __init__.py files."""
+    """Add missing __init__.py files."""
         added = []
         for directory in self.directories:
             if directory.exists():
@@ -136,14 +136,14 @@ class AutoFixer:
 
         if fixes:
             print(f" ✅ Fixed: {', '.join(fixes)}")
-            self.fixed_count += 1
+        self.fixed_count += 1
         else:
             print(" ✓")
 
         return fixes
 
     def run(self):
-        """Run all auto-fixes."""
+    """Run all auto-fixes."""
         print("🔧 Auto-fixing common issues...\n")
 
         # Install required tools
@@ -208,7 +208,7 @@ class AutoFixer:
         print(f"\n📄 Summary saved to: {report_path}")
 
 
-def main():
+    def main():
     fixer = AutoFixer()
     fixer.run()
 

@@ -203,7 +203,7 @@ class MockPIRClient(PIRClient):
         return (1 - honesty_prob) ** num_servers
 
 
-def create_mock_index_mapping() -> Dict[str, Dict]:
+    def create_mock_index_mapping() -> Dict[str, Dict]:
        """TODO: Add docstring for create_mock_index_mapping"""
      """Create mock index mapping for demo"""
     return {
@@ -231,7 +231,7 @@ def create_mock_index_mapping() -> Dict[str, Dict]:
     }
 
 
-def generate_mock_proof(metadata: Dict) -> str:
+    def generate_mock_proof(metadata: Dict) -> str:
        """TODO: Add docstring for generate_mock_proof"""
      """Generate mock proof hash"""
     import hashlib

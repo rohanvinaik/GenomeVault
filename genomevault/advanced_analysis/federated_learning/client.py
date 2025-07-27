@@ -60,9 +60,9 @@ class FederatedLearningClient:
 
         # Components
         if use_hypervectors:
-            self.encoder = HypervectorEncoder()
+        self.encoder = HypervectorEncoder()
         else:
-            self.encoder = None
+        self.encoder = None
 
         # State
         self.current_model = None
@@ -201,7 +201,7 @@ class FederatedLearningClient:
             Training results including model update
         """
         if self.local_dataset is None:
-            self.load_local_data()
+        self.load_local_data()
 
         # Initialize with global model
         self.current_model = global_model.copy()
@@ -260,11 +260,11 @@ class FederatedLearningClient:
                 if len(self.current_model) == X.shape[1] + 1:
                     grad_bias = np.mean(grad_predictions)
                     # Update
-                    self.current_model[:-1] -= learning_rate * grad_weights
-                    self.current_model[-1] -= learning_rate * grad_bias
+        self.current_model[:-1] -= learning_rate * grad_weights
+        self.current_model[-1] -= learning_rate * grad_bias
                 else:
                     # Update
-                    self.current_model -= learning_rate * grad_weights
+        self.current_model -= learning_rate * grad_weights
 
             # Record metrics
             epoch_loss /= n_samples
@@ -350,7 +350,7 @@ class FederatedLearningClient:
             Validation metrics
         """
         if self.local_dataset is None:
-            self.load_local_data()
+        self.load_local_data()
 
         # Split data
         n_samples = self.local_dataset.num_samples

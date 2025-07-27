@@ -38,7 +38,7 @@ class VariantProofCircuit:
 
     def __init__(self, merkle_depth: int = 20) -> None:
             """TODO: Add docstring for __init__"""
-    self.merkle_depth = merkle_depth
+        self.merkle_depth = merkle_depth
         self.cs = ConstraintSystem()
         self.setup_complete = False
 
@@ -54,11 +54,11 @@ class VariantProofCircuit:
         # Assign public input values
         self.cs.assign(self.variant_hash_var, FieldElement(int(public_inputs["variant_hash"], 16)))
         self.cs.assign(
-            self.reference_hash_var,
+        self.reference_hash_var,
             FieldElement(int(public_inputs["reference_hash"], 16)),
         )
         self.cs.assign(
-            self.commitment_root_var,
+        self.commitment_root_var,
             FieldElement(int(public_inputs["commitment_root"], 16)),
         )
 
@@ -76,8 +76,8 @@ class VariantProofCircuit:
         for i in range(self.merkle_depth):
             path_var = self.cs.add_variable(f"merkle_path_{i}")
             index_var = self.cs.add_variable(f"merkle_index_{i}")
-            self.merkle_path_vars.append(path_var)
-            self.merkle_indices_vars.append(index_var)
+        self.merkle_path_vars.append(path_var)
+        self.merkle_indices_vars.append(index_var)
 
         # Assign private input values
         variant_data = private_inputs["variant_data"]
@@ -86,7 +86,7 @@ class VariantProofCircuit:
         self.cs.assign(self.variant_ref, FieldElement(self._encode_base(variant_data["ref"])))
         self.cs.assign(self.variant_alt, FieldElement(self._encode_base(variant_data["alt"])))
         self.cs.assign(
-            self.witness_randomness,
+        self.witness_randomness,
             FieldElement(int(private_inputs["witness_randomness"], 16)),
         )
 
@@ -96,8 +96,8 @@ class VariantProofCircuit:
 
         for i, (path_hash, index) in enumerate(zip(merkle_path, merkle_indices)):
             if i < len(self.merkle_path_vars):
-                self.cs.assign(self.merkle_path_vars[i], FieldElement(int(path_hash, 16)))
-                self.cs.assign(self.merkle_indices_vars[i], FieldElement(index))
+        self.cs.assign(self.merkle_path_vars[i], FieldElement(int(path_hash, 16)))
+        self.cs.assign(self.merkle_indices_vars[i], FieldElement(index))
 
         self.setup_complete = True
 
@@ -129,10 +129,10 @@ class VariantProofCircuit:
 
         # For demo: hash = poseidon(chr, pos, ref, alt)
         variant_components = [
-            self.cs.get_assignment(self.variant_chr),
-            self.cs.get_assignment(self.variant_pos),
-            self.cs.get_assignment(self.variant_ref),
-            self.cs.get_assignment(self.variant_alt),
+        self.cs.get_assignment(self.variant_chr),
+        self.cs.get_assignment(self.variant_pos),
+        self.cs.get_assignment(self.variant_ref),
+        self.cs.get_assignment(self.variant_alt),
         ]
 
         computed_hash = poseidon_hash(variant_components)
@@ -150,11 +150,11 @@ class VariantProofCircuit:
 
         # Leaf = hash(variant_components + randomness)
         leaf_components = [
-            self.cs.get_assignment(self.variant_chr),
-            self.cs.get_assignment(self.variant_pos),
-            self.cs.get_assignment(self.variant_ref),
-            self.cs.get_assignment(self.variant_alt),
-            self.cs.get_assignment(self.witness_randomness),
+        self.cs.get_assignment(self.variant_chr),
+        self.cs.get_assignment(self.variant_pos),
+        self.cs.get_assignment(self.variant_ref),
+        self.cs.get_assignment(self.variant_alt),
+        self.cs.get_assignment(self.witness_randomness),
         ]
 
         leaf_hash = poseidon_hash(leaf_components)
@@ -174,21 +174,21 @@ class VariantProofCircuit:
             index = self.cs.get_assignment(self.merkle_indices_vars[i])
 
             # Constrain index to be boolean
-            self.cs.enforce_boolean(self.merkle_indices_vars[i])
+        self.cs.enforce_boolean(self.merkle_indices_vars[i])
 
             # Select left and right based on index
             if index.value == 0:  # current is left child
-                self.cs.assign(left_var, self.cs.get_assignment(current_var))
-                self.cs.assign(right_var, sibling)
+        self.cs.assign(left_var, self.cs.get_assignment(current_var))
+        self.cs.assign(right_var, sibling)
             else:  # current is right child
-                self.cs.assign(left_var, sibling)
-                self.cs.assign(right_var, self.cs.get_assignment(current_var))
+        self.cs.assign(left_var, sibling)
+        self.cs.assign(right_var, self.cs.get_assignment(current_var))
 
             # Compute parent hash
             parent_hash = poseidon_hash(
                 [self.cs.get_assignment(left_var), self.cs.get_assignment(right_var)]
             )
-            self.cs.assign(parent_var, parent_hash)
+        self.cs.assign(parent_var, parent_hash)
 
             # Update current for next iteration
             current_var = parent_var
@@ -291,7 +291,7 @@ class VariantProofCircuit:
         }
 
 
-def create_variant_proof_example() -> Dict[str, Any]:
+    def create_variant_proof_example() -> Dict[str, Any]:
        """TODO: Add docstring for create_variant_proof_example"""
      """Example of how to use the VariantProofCircuit"""
 

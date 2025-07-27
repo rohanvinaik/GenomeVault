@@ -163,10 +163,10 @@ class RealTimeModelMonitor:
         # Update windows
         self.prediction_window.append(prediction)
         for feature, value in input_features.items():
-            self.feature_windows[feature].append(value)
+        self.feature_windows[feature].append(value)
 
         if ground_truth is not None:
-            self.performance_window.append(
+        self.performance_window.append(
                 {"prediction": prediction, "ground_truth": ground_truth, "timestamp": time.time()}
             )
 
@@ -178,9 +178,9 @@ class RealTimeModelMonitor:
         for drift_type, detector in self.drift_detectors.items():
             if self._should_check_drift(drift_type):
                 result = detector.detect_drift(
-                    self.prediction_window,
-                    self.feature_windows,
-                    self.performance_window,
+        self.prediction_window,
+        self.feature_windows,
+        self.performance_window,
                     model_internal_state,
                 )
 
@@ -189,8 +189,8 @@ class RealTimeModelMonitor:
                 if result["drift_detected"]:
                     alert = self._create_drift_alert(drift_type, result)
                     alerts.append(alert)
-                    self.alert_history.append(alert)
-                    self.state.drift_events.append(alert.event_id)
+        self.alert_history.append(alert)
+        self.state.drift_events.append(alert.event_id)
 
         # Update monitoring state
         self._update_state()
@@ -199,13 +199,13 @@ class RealTimeModelMonitor:
         if alerts:
             max_severity = max(alert.severity for alert in alerts)
             if max_severity in [DriftSeverity.HIGH, DriftSeverity.CRITICAL]:
-                self.state.alert_status = "critical"
+        self.state.alert_status = "critical"
             elif max_severity == DriftSeverity.MEDIUM:
-                self.state.alert_status = "warning"
+        self.state.alert_status = "warning"
             else:
-                self.state.alert_status = "minor"
+        self.state.alert_status = "minor"
         else:
-            self.state.alert_status = "normal"
+        self.state.alert_status = "normal"
 
         return {
             "model_id": self.model_id,
@@ -424,7 +424,7 @@ class RealTimeModelMonitor:
      """Update monitoring state with latest statistics"""
         # Update distribution statistics
         if self.feature_windows:
-            self.state.distribution_stats = {
+        self.state.distribution_stats = {
                 feature: {
                     "mean": float(np.mean(values)),
                     "std": float(np.std(values)),
@@ -450,8 +450,8 @@ class RealTimeModelMonitor:
                 )
                 accuracy = correct / len(predictions)
 
-                self.state.performance_metrics["accuracy"] = accuracy
-                self.state.performance_metrics["error_rate"] = 1 - accuracy
+        self.state.performance_metrics["accuracy"] = accuracy
+        self.state.performance_metrics["error_rate"] = 1 - accuracy
 
     def _get_drift_event(self, event_id: str) -> Optional[DriftEvent]:
            """TODO: Add docstring for _get_drift_event"""
@@ -531,7 +531,7 @@ class CovariateShiftDetector:
 
     def __init__(self, baseline_stats: Dict[str, Any]) -> None:
             """TODO: Add docstring for __init__"""
-    self.baseline_stats = baseline_stats
+        self.baseline_stats = baseline_stats
 
     def detect_drift(
         self,
@@ -587,7 +587,7 @@ class PredictionDriftDetector:
 
     def __init__(self, baseline_stats: Dict[str, Any]) -> None:
             """TODO: Add docstring for __init__"""
-    self.baseline_stats = baseline_stats
+        self.baseline_stats = baseline_stats
 
     def detect_drift(
         self,
@@ -643,7 +643,7 @@ class PerformanceDriftDetector:
 
     def __init__(self, baseline_stats: Dict[str, Any]) -> None:
             """TODO: Add docstring for __init__"""
-    self.baseline_stats = baseline_stats
+        self.baseline_stats = baseline_stats
         self.performance_buffer = deque(maxlen=1000)
 
     def detect_drift(
@@ -690,7 +690,7 @@ class SemanticDriftDetector:
 
     def __init__(self, baseline_stats: Dict[str, Any]) -> None:
             """TODO: Add docstring for __init__"""
-    self.baseline_stats = baseline_stats
+        self.baseline_stats = baseline_stats
         self.baseline_hypervector = baseline_stats.get("model_hypervector")
 
     def detect_drift(

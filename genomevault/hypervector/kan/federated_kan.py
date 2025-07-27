@@ -242,7 +242,7 @@ class FederatedKANCoordinator(nn.Module):
             for layer_name, new_weights in aggregated_weights.items():
                 if layer_name in self.global_model:
                     # Smart update: KAN layers update spline coefficients
-                    self._update_kan_layer(self.global_model[layer_name], new_weights)
+        self._update_kan_layer(self.global_model[layer_name], new_weights)
 
         # Compute convergence metric
         convergence_metric = self._compute_convergence()
@@ -272,7 +272,7 @@ class FederatedKANCoordinator(nn.Module):
             # For full KAN, update spline coefficients
             if hasattr(layer, "splines"):
                 # Reshape weights to match spline coefficient structure
-                self._update_spline_coefficients(layer.splines, new_weights)
+        self._update_spline_coefficients(layer.splines, new_weights)
 
     def _update_spline_coefficients(self, splines: nn.ModuleList, weights: torch.Tensor) -> None:
            """TODO: Add docstring for _update_spline_coefficients"""
@@ -405,7 +405,7 @@ class FederatedKANParticipant(nn.Module):
      """Update local model with global model state"""
         for name, module_info in model_state.items():
             if name in self.local_model:
-                self.local_model[name].load_state_dict(module_info["state_dict"])
+        self.local_model[name].load_state_dict(module_info["state_dict"])
 
     def train_local_round(
         self, genomic_data: List[Dict], num_epochs: int = 5, learning_rate: float = 0.001

@@ -125,7 +125,7 @@ class TrainingProofCircuit(BaseCircuit):
                 next_level.append(parent)
 
                 # Add hash consistency constraint
-                self.add_constraint(left, right, parent, qm=1, qo=-1)
+        self.add_constraint(left, right, parent, qm=1, qo=-1)
 
             current_level = next_level
 
@@ -147,7 +147,7 @@ class TrainingProofCircuit(BaseCircuit):
             # Constraint: timestamps must increase
             # We prove time_diff > 0 by showing it has a multiplicative inverse
             time_diff_inv = time_diff.inverse()
-            self.add_constraint(time_diff, time_diff_inv, FieldElement(1), qm=1, qo=-1)
+        self.add_constraint(time_diff, time_diff_inv, FieldElement(1), qm=1, qo=-1)
 
             # Verify model hash linkage
             prev_hash = FieldElement(int(prev_snapshot.model_hash, 16))
@@ -159,7 +159,7 @@ class TrainingProofCircuit(BaseCircuit):
             expected_hash = self._hash_pair(prev_hash, gradient_factor)
 
             # Add linkage constraint
-            self.add_constraint(expected_hash, curr_hash, FieldElement(0), ql=1, qr=-1)
+        self.add_constraint(expected_hash, curr_hash, FieldElement(0), ql=1, qr=-1)
 
     def constrain_training_dynamics(self) -> None:
            """TODO: Add docstring for constrain_training_dynamics"""
@@ -194,7 +194,7 @@ class TrainingProofCircuit(BaseCircuit):
                 # Verify positive_decrease > 0 by proving it has inverse
                 if positive_decrease.value > 0:
                     decrease_inv = positive_decrease.inverse()
-                    self.add_constraint(
+        self.add_constraint(
                         positive_decrease, decrease_inv, FieldElement(1), qm=1, qo=-1
                     )
 
@@ -206,7 +206,7 @@ class TrainingProofCircuit(BaseCircuit):
             final_snapshot_hash = FieldElement(int(self.training_snapshots[-1].model_hash, 16))
 
             # Verify it matches the public final model hash
-            self.add_constraint(
+        self.add_constraint(
                 final_snapshot_hash, self.final_model_hash, FieldElement(0), ql=1, qr=-1
             )
 

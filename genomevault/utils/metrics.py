@@ -31,7 +31,7 @@ class MetricsCollector:
     _lock = threading.Lock()
 
     def __new__(cls):
-        """Singleton pattern for global metrics collection."""
+    """Singleton pattern for global metrics collection."""
         if cls._instance is None:
             with cls._lock:
                 if cls._instance is None:
@@ -39,17 +39,17 @@ class MetricsCollector:
         return cls._instance
 
     def __init__(self):
-        """Initialize metrics collector."""
+    """Initialize metrics collector."""
         if not hasattr(self, "initialized"):
-            self.metrics = defaultdict(list)
-            self.start_time = time.time()
-            self.lock = threading.Lock()
-            self.initialized = True
+        self.metrics = defaultdict(list)
+        self.start_time = time.time()
+        self.lock = threading.Lock()
+        self.initialized = True
 
     def record(
         self, metric_name: str, value: float, unit: str = "", tags: Optional[Dict[str, str]] = None
     ):
-        """
+    """
         Record a metric value.
 
         Args:
@@ -59,7 +59,7 @@ class MetricsCollector:
             tags: Optional tags for filtering/grouping
         """
         with self.lock:
-            self.metrics[metric_name].append(
+        self.metrics[metric_name].append(
                 {"value": value, "unit": unit, "timestamp": time.time(), "tags": tags or {}}
             )
 
@@ -70,7 +70,7 @@ class MetricsCollector:
         unit: str = "ms",
         tags: Optional[Dict[str, str]] = None,
     ):
-        """
+    """
         Record a duration metric.
 
         Args:
@@ -189,7 +189,7 @@ class MetricsCollector:
             return time_series
 
     def export_json(self, output_path: str, include_raw: bool = False):
-        """
+    """
         Export metrics to JSON file.
 
         Args:
@@ -213,7 +213,7 @@ class MetricsCollector:
                 json.dump(export_data, f, indent=2, default=str)
 
     def clear(self, metric_name: Optional[str] = None):
-        """
+    """
         Clear metrics.
 
         Args:
@@ -221,9 +221,9 @@ class MetricsCollector:
         """
         with self.lock:
             if metric_name:
-                self.metrics.pop(metric_name, None)
+        self.metrics.pop(metric_name, None)
             else:
-                self.metrics.clear()
+        self.metrics.clear()
 
     def compare_claimed_vs_measured(self, claims: Dict[str, float]) -> Dict[str, Any]:
         """
@@ -266,7 +266,7 @@ class MetricsContext:
     """Context manager for timing operations."""
 
     def __init__(self, metric_name: str, unit: str = "ms", tags: Optional[Dict[str, str]] = None):
-        """
+    """
         Initialize metrics context.
 
         Args:
@@ -281,17 +281,17 @@ class MetricsContext:
         self.collector = MetricsCollector()
 
     def __enter__(self):
-        """Start timing."""
+    """Start timing."""
         self.start_time = time.time()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        """Stop timing and record metric."""
+    """Stop timing and record metric."""
         if self.start_time:
-            self.collector.record_duration(self.metric_name, self.start_time, self.unit, self.tags)
+        self.collector.record_duration(self.metric_name, self.start_time, self.unit, self.tags)
 
 
-def metrics_decorator(metric_name: str, unit: str = "ms"):
+    def metrics_decorator(metric_name: str, unit: str = "ms"):
     """
     Decorator for timing function execution.
 
@@ -301,7 +301,7 @@ def metrics_decorator(metric_name: str, unit: str = "ms"):
     """
 
     def decorator(func):
-        def wrapper(*args, **kwargs):
+    def wrapper(*args, **kwargs):
             with MetricsContext(metric_name, unit):
                 return func(*args, **kwargs)
 

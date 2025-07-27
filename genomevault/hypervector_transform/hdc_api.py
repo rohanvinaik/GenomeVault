@@ -97,7 +97,7 @@ class PerformanceMetrics(BaseModel):
 
 
 # Dependency to get encoder
-def get_encoder(version: Optional[str] = None) -> HypervectorEncoder:
+    def get_encoder(version: Optional[str] = None) -> HypervectorEncoder:
        """TODO: Add docstring for get_encoder"""
      """Get encoder instance with specified version"""
     try:
@@ -518,7 +518,7 @@ async def health_check() -> None:
 
 
 # Include router in main app
-def include_routes(app) -> None:
+    def include_routes(app) -> None:
        """TODO: Add docstring for include_routes"""
      """Include HDC routes in the main FastAPI app"""
     app.include_router(router)

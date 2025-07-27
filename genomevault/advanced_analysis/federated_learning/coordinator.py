@@ -400,7 +400,7 @@ class FederatedLearningCoordinator:
 
         # Notify participants (in production, would send actual model)
         for participant_id in selected:
-            self.participants[participant_id]["last_participation"] = round_id
+        self.participants[participant_id]["last_participation"] = round_id
 
         logger.info(
             "Started federated round {round_id} with {len(selected)} participants",
@@ -558,7 +558,7 @@ class FederatedLearningCoordinator:
 
         # Update participant statistics
         for participant_id in current_round.selected_participants:
-            self.participants[participant_id]["rounds_participated"] += 1
+        self.participants[participant_id]["rounds_participated"] += 1
 
         logger.info(f"Updated global model with round {round_id}", extra={"privacy_safe": True})
 

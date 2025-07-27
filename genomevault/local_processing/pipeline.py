@@ -22,7 +22,7 @@ class MultiOmicsPipeline:
 
     def __init__(self, compression_tier: CompressionTier = CompressionTier.CLINICAL) -> None:
             """TODO: Add docstring for __init__"""
-    self.compression_tier = compression_tier
+        self.compression_tier = compression_tier
         self.compressor = TieredCompressor(tier=compression_tier)
         self.processors = {}
         self._init_processors()
@@ -57,7 +57,7 @@ class MultiOmicsPipeline:
         for omics_type, input_path in input_data.items():
             if omics_type in self.processors:
                 task = asyncio.create_task(
-                    self._process_single_omics(omics_type, input_path, output_dir)
+        self._process_single_omics(omics_type, input_path, output_dir)
                 )
                 tasks.append((omics_type, task))
             else:

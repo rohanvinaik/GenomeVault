@@ -102,11 +102,11 @@ class Proposal:
         self.votes.append(vote)
 
         if vote.choice == "yes":
-            self.yes_votes += vote.vote_weight
+        self.yes_votes += vote.vote_weight
         elif vote.choice == "no":
-            self.no_votes += vote.vote_weight
+        self.no_votes += vote.vote_weight
         else:
-            self.abstain_votes += vote.vote_weight
+        self.abstain_votes += vote.vote_weight
 
     def get_total_votes(self) -> float:
            """TODO: Add docstring for get_total_votes"""
@@ -213,7 +213,7 @@ class DelegatedVoting:
 
     def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-    self.delegations: Dict[str, str] = {}  # delegator -> delegate
+        self.delegations: Dict[str, str] = {}  # delegator -> delegate
         self.delegation_chains: Dict[str, List[str]] = {}  # Track chains
 
     def delegate(self, delegator: str, delegate: str) -> None:
@@ -233,7 +233,7 @@ class DelegatedVoting:
      """Revoke delegation"""
         if delegator in self.delegations:
             del self.delegations[delegator]
-            self._update_delegation_chains()
+        self._update_delegation_chains()
             logger.info(f"{delegator} revoked delegation")
 
     def get_final_delegate(self, voter: str) -> str:
@@ -275,7 +275,7 @@ class DelegatedVoting:
                 chain.append(current)
                 _ = self.delegations[current]
 
-            self.delegation_chains[delegator] = chain
+        self.delegation_chains[delegator] = chain
 
 
 class GovernanceSystem:

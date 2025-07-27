@@ -35,7 +35,7 @@ class PIRIntegrationDemo:
 
     def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-    self.coordinator = PIRCoordinator()
+        self.coordinator = PIRCoordinator()
         self.servers: List[EnhancedPIRServer] = []
         self.database_size = 10000
         self.element_size = 1024
@@ -66,7 +66,7 @@ class PIRIntegrationDemo:
                 cache_size_mb=512,
             )
             server = EnhancedPIRServer(config)
-            self.servers.append(server)
+        self.servers.append(server)
 
             # Register with coordinator
             server_info = ServerInfo(
@@ -77,7 +77,7 @@ class PIRIntegrationDemo:
                 region=region,
                 capabilities={"batch_query", "compression"},
             )
-            self.coordinator.register_server(server_info)
+        self.coordinator.register_server(server_info)
 
         print(f"✅ Created {len(self.servers)} PIR servers")
 

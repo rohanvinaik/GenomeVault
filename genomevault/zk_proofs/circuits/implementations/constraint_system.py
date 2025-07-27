@@ -37,7 +37,7 @@ class FieldElement:
 
     def __post_init__(self) -> None:
             """TODO: Add docstring for __post_init__"""
-    self.value = self.value % self.MODULUS
+        self.value = self.value % self.MODULUS
 
     def __add__(self, other) -> None:
             """TODO: Add docstring for __add__"""
@@ -225,7 +225,7 @@ class ConstraintSystem:
 
     def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-    self.variables: Dict[int, Variable] = {}
+        self.variables: Dict[int, Variable] = {}
         self.constraints: List[Constraint] = []
         self.public_inputs: List[Variable] = []
         self.private_inputs: List[Variable] = []
@@ -248,7 +248,7 @@ class ConstraintSystem:
         self.variable_counter += 1
 
         if is_public:
-            self.public_inputs.append(var)
+        self.public_inputs.append(var)
 
         return var
 
@@ -377,7 +377,7 @@ class ConstraintSystem:
         return {var.index: self.get_assignment(var) for var in self.variables.values()}
 
 
-def poseidon_hash(inputs: List[FieldElement]) -> FieldElement:
+    def poseidon_hash(inputs: List[FieldElement]) -> FieldElement:
        """TODO: Add docstring for poseidon_hash"""
      """
     Simplified Poseidon hash implementation for demonstration
@@ -389,7 +389,7 @@ def poseidon_hash(inputs: List[FieldElement]) -> FieldElement:
     return FieldElement.from_bytes(hash_bytes)
 
 
-def pedersen_commit(value: FieldElement, randomness: FieldElement) -> FieldElement:
+    def pedersen_commit(value: FieldElement, randomness: FieldElement) -> FieldElement:
        """TODO: Add docstring for pedersen_commit"""
      """
     Simplified Pedersen commitment for demonstration
@@ -399,7 +399,7 @@ def pedersen_commit(value: FieldElement, randomness: FieldElement) -> FieldEleme
     return poseidon_hash([value, randomness])
 
 
-def create_merkle_proof(
+    def create_merkle_proof(
     leaf: FieldElement, path: List[FieldElement], indices: List[int]
 ) -> FieldElement:
        """TODO: Add docstring for create_merkle_proof"""

@@ -67,14 +67,14 @@ class Config(BaseSettings):
 
     @field_validator("node_type")
     def validate_node_type(cls, v):
-        """Validate node type value"""
+    """Validate node type value"""
         if v not in ["light", "full", "archive"]:
             raise ValueError("node_type must be one of: light, full, archive")
         return v
 
     @field_validator("compression_tier")
     def validate_compression_tier(cls, v):
-        """Validate compression tier value"""
+    """Validate compression tier value"""
         if v not in ["mini", "clinical", "full"]:
             raise ValueError("compression_tier must be one of: mini, clinical, full")
         return v
@@ -103,6 +103,6 @@ class Config(BaseSettings):
 
 
 @lru_cache()
-def get_config() -> Config:
+    def get_config() -> Config:
     """Get cached configuration instance"""
     return Config()

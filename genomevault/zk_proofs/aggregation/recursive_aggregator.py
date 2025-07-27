@@ -273,7 +273,7 @@ class RecursiveVerifierCircuit:
 
     def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-    self.cs = ConstraintSystem()
+        self.cs = ConstraintSystem()
         self.setup_complete = False
 
     def setup_circuit(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
@@ -308,8 +308,8 @@ class RecursiveVerifierCircuit:
         combined_var = self.cs.add_variable("combined_aggregate")
         combined_val = poseidon_hash(
             [
-                self.cs.get_assignment(self.left_aggregate_var),
-                self.cs.get_assignment(self.right_aggregate_var),
+        self.cs.get_assignment(self.left_aggregate_var),
+        self.cs.get_assignment(self.right_aggregate_var),
             ]
         )
         self.cs.assign(combined_var, combined_val)
@@ -317,10 +317,10 @@ class RecursiveVerifierCircuit:
         # Add some dummy constraints to simulate verification complexity
         for i in range(100):  # Simulate ~100 constraints for verification
             temp_var = self.cs.add_variable(f"verify_temp_{i}")
-            self.cs.assign(temp_var, FieldElement(i))
+        self.cs.assign(temp_var, FieldElement(i))
 
             # temp * 1 = temp (trivial constraint)
-            self.cs.enforce_equal(temp_var, temp_var)
+        self.cs.enforce_equal(temp_var, temp_var)
 
 
 class SimpleAggregationCircuit:
@@ -328,7 +328,7 @@ class SimpleAggregationCircuit:
 
     def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-    self.cs = ConstraintSystem()
+        self.cs = ConstraintSystem()
         self.setup_complete = False
 
     def setup_circuit(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
@@ -353,7 +353,7 @@ class SimpleAggregationCircuit:
         pass
 
 
-def benchmark_recursive_aggregation(max_proofs: int = 128) -> Dict[str, Any]:
+    def benchmark_recursive_aggregation(max_proofs: int = 128) -> Dict[str, Any]:
        """TODO: Add docstring for benchmark_recursive_aggregation"""
      """
     Benchmark recursive proof aggregation performance.
@@ -417,7 +417,7 @@ def benchmark_recursive_aggregation(max_proofs: int = 128) -> Dict[str, Any]:
     return results
 
 
-def plot_aggregation_benchmarks(results: Dict[str, Any]) -> None:
+    def plot_aggregation_benchmarks(results: Dict[str, Any]) -> None:
        """TODO: Add docstring for plot_aggregation_benchmarks"""
      """Plot benchmark results."""
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12, 10))
@@ -467,7 +467,7 @@ def plot_aggregation_benchmarks(results: Dict[str, Any]) -> None:
     print(f"\nBenchmark plot saved to benchmarks/zk/recursive_aggregation_{timestamp}.png")
 
 
-def main() -> None:
+    def main() -> None:
        """TODO: Add docstring for main"""
      """Run recursive aggregation demonstration and benchmarks."""
     print("=" * 60)

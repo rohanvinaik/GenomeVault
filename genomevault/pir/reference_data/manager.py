@@ -46,7 +46,7 @@ class GenomicRegion:
            """TODO: Add docstring for overlaps"""
      """Check if regions overlap."""
         return (
-            self.chromosome == other.chromosome
+        self.chromosome == other.chromosome
             and self.start < other.end
             and self.end > other.start
         )
@@ -173,14 +173,14 @@ class ReferenceDataManager:
         if graph_path.exists():
             with gzip.open(graph_path, "rt") as f:
                 graph_data = json.load(f)
-                self._load_graph_from_dict(graph_data)
+        self._load_graph_from_dict(graph_data)
 
         # Load annotations
         annotations_path = self.data_directory / "variant_annotations.json.gz"
         if annotations_path.exists():
             with gzip.open(annotations_path, "rt") as f:
                 annotations_data = json.load(f)
-                self._load_annotations_from_dict(annotations_data)
+        self._load_annotations_from_dict(annotations_data)
 
     def _load_graph_from_dict(self, data: Dict) -> None:
            """TODO: Add docstring for _load_graph_from_dict"""
@@ -195,7 +195,7 @@ class ReferenceDataManager:
                 populations=set(node_data.get("pop", [])),
                 frequency=node_data.get("freq", 0.0),
             )
-            self.add_node(node)
+        self.add_node(node)
 
         # Load edges
         for edge_data in data.get("edges", []):
@@ -205,11 +205,11 @@ class ReferenceDataManager:
                 support=edge_data.get("support", 1),
                 populations=set(edge_data.get("pop", [])),
             )
-            self.add_edge(edge)
+        self.add_edge(edge)
 
         # Update metadata
         if "metadata" in data:
-            self.metadata.update(data["metadata"])
+        self.metadata.update(data["metadata"])
 
     def _load_annotations_from_dict(self, data: Dict) -> None:
            """TODO: Add docstring for _load_annotations_from_dict"""
@@ -227,7 +227,7 @@ class ReferenceDataManager:
                 population_frequencies=ann_data.get("freq", {}),
                 clinical_significance=ann_data.get("clin"),
             )
-            self.variant_annotations[var_key] = annotation
+        self.variant_annotations[var_key] = annotation
 
     def add_node(self, node: PangenomeNode) -> None:
            """TODO: Add docstring for add_node"""
@@ -237,19 +237,19 @@ class ReferenceDataManager:
         # Update index
         key = (node.chromosome, node.position)
         if key not in self.node_index:
-            self.node_index[key] = []
+        self.node_index[key] = []
         self.node_index[key].append(node.node_id)
 
         # Update population index
         for pop in node.populations:
             if pop not in self.population_nodes:
-                self.population_nodes[pop] = set()
-            self.population_nodes[pop].add(node.node_id)
-            self.metadata["populations"].add(pop)
+        self.population_nodes[pop] = set()
+        self.population_nodes[pop].add(node.node_id)
+        self.metadata["populations"].add(pop)
 
         # Update region index
         if node.chromosome not in self.region_index:
-            self.region_index[node.chromosome] = []
+        self.region_index[node.chromosome] = []
         self.region_index[node.chromosome].append(node.position)
 
         self.metadata["total_nodes"] += 1
@@ -261,7 +261,7 @@ class ReferenceDataManager:
 
         # Update population tracking
         for pop in edge.populations:
-            self.metadata["populations"].add(pop)
+        self.metadata["populations"].add(pop)
 
         self.metadata["total_edges"] += 1
 

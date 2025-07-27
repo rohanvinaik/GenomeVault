@@ -69,7 +69,7 @@ class TopologicalAnalyzer:
 
     def __init__(self, max_dimension: int = MAX_HOMOLOGY_DIMENSION) -> None:
             """TODO: Add docstring for __init__"""
-    self.max_dimension = max_dimension
+        self.max_dimension = max_dimension
 
     def compute_persistence_diagram(
         self, data: np.ndarray, max_scale: float = None
@@ -401,21 +401,21 @@ class UnionFind:
 
     def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-    self.parent = {}
+        self.parent = {}
         self.rank = {}
 
     def add(self, x) -> None:
            """TODO: Add docstring for add"""
      """Add element to structure"""
         if x not in self.parent:
-            self.parent[x] = x
-            self.rank[x] = 0
+        self.parent[x] = x
+        self.rank[x] = 0
 
     def find(self, x) -> None:
            """TODO: Add docstring for find"""
      """Find root of element with path compression"""
         if self.parent[x] != x:
-            self.parent[x] = self.find(self.parent[x])
+        self.parent[x] = self.find(self.parent[x])
         return self.parent[x]
 
     def union(self, x, y) -> None:
@@ -428,12 +428,12 @@ class UnionFind:
             return
 
         if self.rank[root_x] < self.rank[root_y]:
-            self.parent[root_x] = root_y
+        self.parent[root_x] = root_y
         elif self.rank[root_x] > self.rank[root_y]:
-            self.parent[root_y] = root_x
+        self.parent[root_y] = root_x
         else:
-            self.parent[root_y] = root_x
-            self.rank[root_x] += 1
+        self.parent[root_y] = root_x
+        self.rank[root_x] += 1
 
 
 class StructuralSignatureAnalyzer:
@@ -443,7 +443,7 @@ class StructuralSignatureAnalyzer:
 
     def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-    self.analyzer = TopologicalAnalyzer()
+        self.analyzer = TopologicalAnalyzer()
 
     def compute_dna_structural_signature(
         self, contact_matrix: np.ndarray, threshold: float = 0.1

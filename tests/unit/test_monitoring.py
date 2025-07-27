@@ -43,7 +43,7 @@ class TestMetricsCollector:
 
         @collector.track_processing("test_op", "genomic")
 
-        def test_function() -> None:
+    def test_function() -> None:
     """TODO: Add docstring for test_function"""
     time.sleep(0.1)
             return "result"

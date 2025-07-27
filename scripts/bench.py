@@ -26,7 +26,7 @@ class BenchmarkHarness:
 
     def __init__(self, lane: str, output_dir: Path) -> None:
             """TODO: Add docstring for __init__"""
-    self.lane = lane
+        self.lane = lane
         self.output_dir = Path(output_dir) / lane
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.results = []
@@ -61,7 +61,7 @@ class PIRBenchmark:
 
     def __init__(self, harness: BenchmarkHarness) -> None:
             """TODO: Add docstring for __init__"""
-    self.harness = harness
+        self.harness = harness
 
     async def run_all(self) -> None:
            """TODO: Add docstring for run_all"""
@@ -230,7 +230,7 @@ class ZKBenchmark:
 
     def __init__(self, harness: BenchmarkHarness) -> None:
             """TODO: Add docstring for __init__"""
-    self.harness = harness
+        self.harness = harness
 
     async def run_all(self) -> None:
            """TODO: Add docstring for run_all"""
@@ -248,7 +248,7 @@ class HDCBenchmark:
 
     def __init__(self, harness: BenchmarkHarness) -> None:
             """TODO: Add docstring for __init__"""
-    self.harness = harness
+        self.harness = harness
 
     async def run_all(self) -> None:
            """TODO: Add docstring for run_all"""
@@ -283,7 +283,7 @@ class HDCBenchmark:
                 # Load the latest results
                 latest_results = self._load_latest_hdc_results()
                 if latest_results:
-                    self.harness.add_result("hdc_comprehensive", latest_results)
+        self.harness.add_result("hdc_comprehensive", latest_results)
 
             except subprocess.CalledProcessError as e:
                 logger.error(f"HDC benchmark failed: {e}")
@@ -359,7 +359,7 @@ class HDCBenchmark:
                 "feature_size": 1000,
             }
 
-            self.harness.add_result("hdc_basic", results)
+        self.harness.add_result("hdc_basic", results)
 
         except ImportError as e:
             logger.error(f"Failed to import HDC modules: {e}")
@@ -369,7 +369,7 @@ class HDCBenchmark:
                 "encoding_time_ms": -1,
                 "dimension": 10000,
             }
-            self.harness.add_result("hdc_basic", results)
+        self.harness.add_result("hdc_basic", results)
 
 
 async def run_benchmarks(lane: str, output_dir: str) -> None:
@@ -392,7 +392,7 @@ async def run_benchmarks(lane: str, output_dir: str) -> None:
     return output_file
 
 
-def main() -> None:
+    def main() -> None:
        """TODO: Add docstring for main"""
      """Main entry point."""
     parser = argparse.ArgumentParser(description="GenomeVault benchmark harness")

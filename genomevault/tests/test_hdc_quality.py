@@ -426,7 +426,7 @@ class TestHDCQuality:
         return results
 
 
-def run_hdc_quality_assessment() -> None:
+    def run_hdc_quality_assessment() -> None:
        """TODO: Add docstring for run_hdc_quality_assessment"""
      """Run comprehensive HDC quality assessment."""
     print("Running HDC Quality Assessment")

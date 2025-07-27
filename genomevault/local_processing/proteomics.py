@@ -329,11 +329,11 @@ class ProteomicsProcessor:
             {
                 "Protein IDs": protein_ids[:n_proteins],
                 "Gene names": [
-                    self.protein_sequences.get(pid, {}).get("gene_name", "GENE{i}")
+        self.protein_sequences.get(pid, {}).get("gene_name", "GENE{i}")
                     for i, pid in enumerate(protein_ids[:n_proteins])
                 ],
                 "Protein names": [
-                    self.protein_sequences.get(pid, {}).get("description", "Protein {i}")
+        self.protein_sequences.get(pid, {}).get("description", "Protein {i}")
                     for i, pid in enumerate(protein_ids[:n_proteins])
                 ],
                 "Peptides": np.random.poisson(10, n_proteins),

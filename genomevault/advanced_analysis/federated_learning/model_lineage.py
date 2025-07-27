@@ -235,10 +235,10 @@ class FederatedModelLineage:
                 weight=weight,
                 metadata={"aggregator_id": aggregator_id, "method": aggregation_method},
             )
-            self._add_edge(edge)
+        self._add_edge(edge)
 
             # Remove input from active branches
-            self.active_branches.discard(input_version)
+        self.active_branches.discard(input_version)
 
         self.active_branches.add(version_id)
 
@@ -309,8 +309,8 @@ class FederatedModelLineage:
 
         if validation_passed:
             # Update active branch
-            self.active_branches.discard(version_id)
-            self.active_branches.add(val_version_id)
+        self.active_branches.discard(version_id)
+        self.active_branches.add(val_version_id)
 
         logger.info(
             f"Recorded validation {val_version_id} for {version_id} "
@@ -391,7 +391,7 @@ class FederatedModelLineage:
             "immediate_parents": parents,
             "contributions": contributions,
             "is_validated": any(
-                self.versions[v].update_type == UpdateType.VALIDATION
+        self.versions[v].update_type == UpdateType.VALIDATION
                 for v in nx.descendants(self.lineage_graph, version_id)
             ),
             "downstream_versions": list(nx.descendants(self.lineage_graph, version_id)),
@@ -463,14 +463,14 @@ class FederatedModelLineage:
 
         # Draw nodes
         nx.draw_networkx_nodes(
-            self.lineage_graph, pos, node_color=node_colors, node_size=node_sizes, alpha=0.8
+        self.lineage_graph, pos, node_color=node_colors, node_size=node_sizes, alpha=0.8
         )
 
         # Highlight specified versions
         if highlight_versions:
             highlight_nodes = [n for n in self.lineage_graph.nodes() if n in highlight_versions]
             nx.draw_networkx_nodes(
-                self.lineage_graph,
+        self.lineage_graph,
                 pos,
                 nodelist=highlight_nodes,
                 node_color="red",
@@ -494,7 +494,7 @@ class FederatedModelLineage:
 
             if edges:
                 nx.draw_networkx_edges(
-                    self.lineage_graph,
+        self.lineage_graph,
                     pos,
                     edgelist=edges,
                     edge_color=style["edge_color"],

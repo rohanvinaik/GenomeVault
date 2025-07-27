@@ -329,7 +329,7 @@ class RobustITPIR(InformationTheoreticPIR):
 
 
 # Security analysis functions
-def analyze_privacy_breach_probability(
+    def analyze_privacy_breach_probability(
     num_servers: int, collusion_probability: float = 0.98
 ) -> Dict[str, float]:
        """TODO: Add docstring for analyze_privacy_breach_probability"""

@@ -511,14 +511,14 @@ async def get_status(user_id: str = Depends(verify_token)):
 # Helper functions
 
 
-def _get_user_credits(user_id: str) -> int:
+    def _get_user_credits(user_id: str) -> int:
        """TODO: Add docstring for _get_user_credits"""
      """Get user credit balance."""
     # In production, would query blockchain state
     return 1000  # Mock balance
 
 
-def _process_credit_redemption(user_id: str, invoice_id: str, amount: int) -> str:
+    def _process_credit_redemption(user_id: str, invoice_id: str, amount: int) -> str:
        """TODO: Add docstring for _process_credit_redemption"""
      """Process credit redemption transaction."""
     # In production, would submit to blockchain
@@ -528,28 +528,28 @@ def _process_credit_redemption(user_id: str, invoice_id: str, amount: int) -> st
     return tx_id
 
 
-def _queue_pipeline_job(job_id: str, request: PipelineRequest) -> None:
+    def _queue_pipeline_job(job_id: str, request: PipelineRequest) -> None:
        """TODO: Add docstring for _queue_pipeline_job"""
      """Queue processing pipeline job."""
     # In production, would add to job queue
     logger.info(f"Job {job_id} queued for processing", extra={"privacy_safe": True})
 
 
-def _encode_to_hypervector(data: Dict[str, Any], domain: str) -> Any:
+    def _encode_to_hypervector(data: Dict[str, Any], domain: str) -> Any:
        """TODO: Add docstring for _encode_to_hypervector"""
      """Encode data to hypervector."""
     # In production, would use actual hypervector encoder
     return {"base": [0.1] * 10000, "mid": [0.2] * 15000, "high": [0.3] * 20000}
 
 
-def _bind_hypervectors(v1: Any, v2: Any, method: str) -> Any:
+    def _bind_hypervectors(v1: Any, v2: Any, method: str) -> Any:
        """TODO: Add docstring for _bind_hypervectors"""
      """Bind two hypervectors."""
     # In production, would use actual binding operations
     return {"bound_vector": [0.5] * 10000, "binding_method": method}
 
 
-def _calculate_similarity(v1: Any, v2: Any, metric: str) -> float:
+    def _calculate_similarity(v1: Any, v2: Any, metric: str) -> float:
        """TODO: Add docstring for _calculate_similarity"""
      """Calculate hypervector similarity."""
     # In production, would use actual similarity calculation

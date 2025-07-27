@@ -278,7 +278,7 @@ class SecurePIRServer(EnhancedPIRServer):
     async def _apply_timing_jitter(self) -> None:
         """Apply random timing jitter."""
         jitter_ms = random.uniform(
-            self.timing_config.jitter_min_ms, self.timing_config.jitter_max_ms
+        self.timing_config.jitter_min_ms, self.timing_config.jitter_max_ms
         )
         await asyncio.sleep(jitter_ms / 1000)
 
@@ -300,7 +300,7 @@ class SecurePIRServer(EnhancedPIRServer):
 
         # Keep only recent timings
         if len(self.timing_stats["all"]) > 10000:
-            self.timing_stats["all"] = self.timing_stats["all"][-10000:]
+        self.timing_stats["all"] = self.timing_stats["all"][-10000:]
 
     async def get_timing_analysis(self) -> Dict[str, Any]:
         """Analyze timing patterns for potential leaks."""
@@ -337,7 +337,7 @@ class QueryMixer:
     """Mix queries to prevent timing correlation attacks."""
 
     def __init__(self, batch_size: int = 10, max_wait_ms: int = 50):
-        """Initialize query mixer."""
+    """Initialize query mixer."""
         self.batch_size = batch_size
         self.max_wait_ms = max_wait_ms
         self.pending_queries = []
@@ -346,7 +346,7 @@ class QueryMixer:
     async def add_query(self, query: Dict[str, Any]) -> None:
         """Add query to mixing pool."""
         async with self.lock:
-            self.pending_queries.append({"query": query, "timestamp": time.time()})
+        self.pending_queries.append({"query": query, "timestamp": time.time()})
 
     async def get_mixed_batch(self) -> List[Dict[str, Any]]:
         """Get mixed batch of queries."""
@@ -366,7 +366,7 @@ class QueryMixer:
 
             # Extract queries
             batch = self.pending_queries[:batch_size]
-            self.pending_queries = self.pending_queries[batch_size:]
+        self.pending_queries = self.pending_queries[batch_size:]
 
             # Add dummy queries if needed
             while len(batch) < self.batch_size:

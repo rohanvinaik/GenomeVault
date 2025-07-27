@@ -34,7 +34,7 @@ class PIRHandler:
 
     def __init__(self, pir_server: PIRServer) -> None:
             """TODO: Add docstring for __init__"""
-    self.pir_server = pir_server
+        self.pir_server = pir_server
         self.query_cache = {}  # For replay detection
         self.cache_max_size = 10000
 
@@ -80,7 +80,7 @@ class PIRHandler:
 
             # Add to cache
             if nonce:
-                self._add_to_cache(nonce)
+        self._add_to_cache(nonce)
 
             # Process query
             response_data = await self.pir_server.process_query(request_data)
@@ -222,7 +222,7 @@ class PIRHandler:
         return web.json_response(info)
 
 
-def create_app(pir_server: PIRServer) -> web.Application:
+    def create_app(pir_server: PIRServer) -> web.Application:
        """TODO: Add docstring for create_app"""
      """
     Create aiohttp application for PIR server.

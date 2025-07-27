@@ -71,10 +71,10 @@ class HIPAANodeIntegration:
             _ = self._create_trusted_node(record, node_config)
 
             # Register node
-            self.node_registry[credentials.npi] = node
+        self.node_registry[credentials.npi] = node
 
             # Update governance voting power
-            self._update_governance_power(node)
+        self._update_governance_power(node)
 
             logger.info(f"Registered HIPAA provider {credentials.npi} as trusted node")
 
@@ -142,7 +142,7 @@ class HIPAANodeIntegration:
             _ = self.node_registry[npi]
 
             # Update governance power
-            self.governance.total_voting_power -= node.voting_power
+        self.governance.total_voting_power -= node.voting_power
 
             # Remove from registry
             del self.node_registry[npi]
@@ -173,7 +173,7 @@ class HIPAANodeIntegration:
 
             if not record or not record.is_active():
                 # Remove inactive nodes
-                self.governance.total_voting_power -= node.voting_power
+        self.governance.total_voting_power -= node.voting_power
                 del self.node_registry[npi]
                 revoked_nodes.append(npi)
 

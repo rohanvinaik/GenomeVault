@@ -29,7 +29,7 @@ class LinterRunner:
         return files
 
     def run_flake8(self, files: List[Path]):
-        """Run flake8 linter."""
+    """Run flake8 linter."""
         print("Running flake8...")
         for filepath in files:
             try:
@@ -40,12 +40,12 @@ class LinterRunner:
                 )
                 if result.stdout:
                     issues = result.stdout.strip().split("\n")
-                    self.results["flake8"][filepath] = issues
+        self.results["flake8"][filepath] = issues
             except Exception as e:
-                self.results["flake8"][filepath] = [f"Error: {e}"]
+        self.results["flake8"][filepath] = [f"Error: {e}"]
 
     def run_pylint(self, files: List[Path]):
-        """Run pylint."""
+    """Run pylint."""
         print("Running pylint...")
         for filepath in files:
             try:
@@ -69,14 +69,14 @@ class LinterRunner:
                             ]
                         ]
                         if filtered:
-                            self.results["pylint"][filepath] = filtered
+        self.results["pylint"][filepath] = filtered
                     except json.JSONDecodeError:
                         pass
             except Exception as e:
-                self.results["pylint"][filepath] = [{"message": f"Error: {e}"}]
+        self.results["pylint"][filepath] = [{"message": f"Error: {e}"}]
 
     def run_mypy(self, files: List[Path]):
-        """Run mypy type checker."""
+    """Run mypy type checker."""
         print("Running mypy...")
         for filepath in files:
             try:
@@ -87,12 +87,12 @@ class LinterRunner:
                 )
                 if result.stdout:
                     issues = result.stdout.strip().split("\n")
-                    self.results["mypy"][filepath] = issues
+        self.results["mypy"][filepath] = issues
             except Exception as e:
-                self.results["mypy"][filepath] = [f"Error: {e}"]
+        self.results["mypy"][filepath] = [f"Error: {e}"]
 
     def generate_report(self):
-        """Generate a comprehensive report."""
+    """Generate a comprehensive report."""
         report_path = Path("/Users/rohanvinaik/genomevault/linting_report.md")
 
         with open(report_path, "w") as f:
@@ -153,7 +153,7 @@ class LinterRunner:
         print(f"\n📄 Report generated: {report_path}")
 
     def run(self):
-        """Run all linters and generate report."""
+    """Run all linters and generate report."""
         print("🔍 Running comprehensive linting...\n")
 
         # Find files
@@ -171,7 +171,7 @@ class LinterRunner:
         print("\n✅ Linting complete!")
 
 
-def main():
+    def main():
     """Main entry point."""
     # Ensure linters are installed
     required = ["flake8", "pylint", "mypy"]

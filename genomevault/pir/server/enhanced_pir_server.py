@@ -176,7 +176,7 @@ class OptimizedPIRDatabase:
      """Get or create memory map for shard data."""
         if shard.shard_id not in self.memory_maps:
             with open(shard.data_path, "rb") as f:
-                self.memory_maps[shard.shard_id] = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
+        self.memory_maps[shard.shard_id] = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
         return self.memory_maps[shard.shard_id]
 
     async def query_item(self, shard: ShardMetadata, position_key: str) -> Optional[bytes]:
@@ -194,7 +194,7 @@ class OptimizedPIRDatabase:
         # Check cache first
         cache_key = "{shard.shard_id}:{position_key}"
         if cache_key in self.cache:
-            self.cache_stats["hits"] += 1
+        self.cache_stats["hits"] += 1
             return self.cache[cache_key]
 
         self.cache_stats["misses"] += 1
@@ -485,7 +485,7 @@ class EnhancedPIRServer:
 
             # Calculate metrics
             processing_time_ms = (time.time() - start_time) * 1000
-            self._update_metrics(processing_time_ms, len(results))
+        self._update_metrics(processing_time_ms, len(results))
 
             # Build response
             response = {
@@ -529,7 +529,7 @@ class EnhancedPIRServer:
 
             if self.enable_preprocessing and vector_hash in self.preprocessing_cache:
                 results.append(self.preprocessing_cache[vector_hash])
-                self.metrics["preprocessing_hits"] += 1
+        self.metrics["preprocessing_hits"] += 1
                 continue
 
             # Compute PIR result
@@ -538,7 +538,7 @@ class EnhancedPIRServer:
 
             # Update preprocessing cache
             if self.enable_preprocessing:
-                self.preprocessing_cache[vector_hash] = result
+        self.preprocessing_cache[vector_hash] = result
                 # Limit cache size
                 if len(self.preprocessing_cache) > 10000:
                     # Remove oldest entries
@@ -696,7 +696,7 @@ class EnhancedPIRServer:
                 "total_queries": self.metrics["total_queries"],
                 "average_query_time_ms": self.metrics["average_query_time_ms"],
                 "preprocessing_hit_rate": (
-                    self.metrics["preprocessing_hits"] / self.metrics["total_queries"]
+        self.metrics["preprocessing_hits"] / self.metrics["total_queries"]
                     if self.metrics["total_queries"] > 0
                     else 0
                 ),

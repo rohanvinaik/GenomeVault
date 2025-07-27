@@ -19,7 +19,7 @@ class GenomeVaultComprehensiveFixer:
 
     def __init__(self, base_path: Path) -> None:
             """TODO: Add docstring for __init__"""
-    self.base_path = base_path
+        self.base_path = base_path
         self.fixes_applied = 0
         self.issues_fixed = []
 
@@ -99,7 +99,7 @@ class GenomeVaultComprehensiveFixer:
             for file_path, error in syntax_errors:
                 print(f"  ❌ {file_path}: {error}")
                 # Auto-fix common syntax errors
-                self._fix_file_syntax(file_path, error)
+        self._fix_file_syntax(file_path, error)
         else:
             print("  ✅ No syntax errors found")
 
@@ -132,7 +132,7 @@ class GenomeVaultComprehensiveFixer:
                 content = "\n".join(fixed_lines)
 
             file_path.write_text(content)
-            self.fixes_applied += 1
+        self.fixes_applied += 1
             print(f"    ✅ Fixed syntax in {file_path.name}")
         except Exception as e:
             print(f"    ❌ Could not fix {file_path.name}: {e}")
@@ -171,7 +171,7 @@ class GenomeVaultComprehensiveFixer:
             for file_path in files:
                 full_path = self.base_path / file_path
                 if full_path.exists():
-                    self._apply_duplicate_fix(full_path, pattern)
+        self._apply_duplicate_fix(full_path, pattern)
 
         print(f"  ✅ Fixed {self.fixes_applied} duplicate functions")
 
@@ -197,7 +197,7 @@ class BaseCircuit(ABC):
 
     def __init__(self, circuit_type: str) -> None:
             """TODO: Add docstring for __init__"""
-    self.circuit_type = circuit_type
+        self.circuit_type = circuit_type
         self.logger = logging.getLogger(f"{__name__}.{circuit_type}")
 
     @abstractmethod
@@ -221,7 +221,7 @@ class BaseConfig(ABC):
 
     def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-    self._config = self._load_default_config()
+        self._config = self._load_default_config()
 
     def _load_default_config(self) -> Dict[str, Any]:
            """TODO: Add docstring for _load_default_config"""
@@ -252,7 +252,7 @@ class BaseService(ABC):
 
     def __init__(self, name: str) -> None:
             """TODO: Add docstring for __init__"""
-    self.name = name
+        self.name = name
         self.logger = logging.getLogger(f"{__name__}.{name}")
         self._initialized = False
 
@@ -289,7 +289,7 @@ class NotImplementedMixin:
 
 
 # Factory functions
-def create_circuit(circuit_type: str) -> Dict[str, Any]:
+    def create_circuit(circuit_type: str) -> Dict[str, Any]:
        """TODO: Add docstring for create_circuit"""
      """Factory function to create circuit stubs"""
     class CircuitStub(BaseCircuit):
@@ -301,7 +301,7 @@ def create_circuit(circuit_type: str) -> Dict[str, Any]:
     return circuit.get_stub()
 
 
-def get_default_config() -> Dict[str, Any]:
+        def get_default_config() -> Dict[str, Any]:
        """TODO: Add docstring for get_default_config"""
      """Get default configuration"""
     config = BaseConfig()
@@ -312,7 +312,7 @@ def get_default_config() -> Dict[str, Any]:
         base_path.write_text(base_content)
         print(f"  ✅ Created base patterns at {base_path}")
 
-    def _apply_duplicate_fix(self, file_path: Path, pattern: str) -> None:
+        def _apply_duplicate_fix(self, file_path: Path, pattern: str) -> None:
            """TODO: Add docstring for _apply_duplicate_fix"""
      """Apply fix for duplicate pattern"""
         try:
@@ -341,12 +341,12 @@ def get_default_config() -> Dict[str, Any]:
 
             if modified:
                 file_path.write_text(content)
-                self.fixes_applied += 1
+            self.fixes_applied += 1
 
         except Exception as e:
             print(f"    ❌ Error fixing {file_path}: {e}")
 
-    def _get_import_for_pattern(self, pattern: str) -> Optional[str]:
+        def _get_import_for_pattern(self, pattern: str) -> Optional[str]:
            """TODO: Add docstring for _get_import_for_pattern"""
      """Get appropriate import for pattern"""
         imports = {
@@ -356,7 +356,7 @@ def get_default_config() -> Dict[str, Any]:
         }
         return imports.get(pattern)
 
-    def fix_missing_imports(self) -> None:
+        def fix_missing_imports(self) -> None:
            """TODO: Add docstring for fix_missing_imports"""
      """Fix missing import statements"""
         print("\n🔧 Fixing missing imports...")
@@ -380,7 +380,7 @@ def get_default_config() -> Dict[str, Any]:
 
         print(f"  ✅ Fixed imports in {fixed} files")
 
-    def _fix_file_imports(self, file_path: Path, imports_map: Dict[str, str]) -> bool:
+        def _fix_file_imports(self, file_path: Path, imports_map: Dict[str, str]) -> bool:
            """TODO: Add docstring for _fix_file_imports"""
      """Fix imports in a single file"""
         try:
@@ -424,7 +424,7 @@ def get_default_config() -> Dict[str, Any]:
 
         return False
 
-    def fix_placeholder_functions(self) -> None:
+        def fix_placeholder_functions(self) -> None:
            """TODO: Add docstring for fix_placeholder_functions"""
      """Fix placeholder functions with proper implementations"""
         print("\n🔧 Fixing placeholder functions...")
@@ -438,7 +438,7 @@ def get_default_config() -> Dict[str, Any]:
 
         print(f"  ✅ Fixed placeholders in {placeholder_count} files")
 
-    def _fix_placeholders_in_file(self, file_path: Path) -> bool:
+        def _fix_placeholders_in_file(self, file_path: Path) -> bool:
            """TODO: Add docstring for _fix_placeholders_in_file"""
      """Fix placeholder functions in a file"""
         try:
@@ -457,7 +457,7 @@ def get_default_config() -> Dict[str, Any]:
             modified = False
 
             # Replace pass-only functions
-            def replace_pass(match) -> None:
+        def replace_pass(match) -> None:
                     """TODO: Add docstring for replace_pass"""
     nonlocal modified
                 modified = True
@@ -470,7 +470,7 @@ def get_default_config() -> Dict[str, Any]:
             content = re.sub(pass_pattern, replace_pass, content)
 
             # Replace empty dict returns
-            def replace_empty_dict(match) -> None:
+        def replace_empty_dict(match) -> None:
                     """TODO: Add docstring for replace_empty_dict"""
     nonlocal modified
                 modified = True
@@ -507,7 +507,7 @@ def get_default_config() -> Dict[str, Any]:
 
         return False
 
-    def fix_circular_imports(self) -> None:
+        def fix_circular_imports(self) -> None:
            """TODO: Add docstring for fix_circular_imports"""
      """Fix circular import issues"""
         print("\n🔧 Fixing circular imports...")
@@ -526,14 +526,14 @@ def get_default_config() -> Dict[str, Any]:
 
         print(f"  ✅ Fixed {fixed} circular import patterns")
 
-    def _fix_circular_import(self, module1: str, module2: str) -> bool:
+        def _fix_circular_import(self, module1: str, module2: str) -> bool:
            """TODO: Add docstring for _fix_circular_import"""
      """Fix circular import between two modules"""
         # This is complex - for now just log it
         print(f"    ℹ️  Potential circular import between {module1} and {module2}")
         return False
 
-    def add_missing_type_hints(self) -> None:
+        def add_missing_type_hints(self) -> None:
            """TODO: Add docstring for add_missing_type_hints"""
      """Add missing type hints to functions"""
         print("\n🔧 Adding missing type hints...")
@@ -546,7 +546,7 @@ def get_default_config() -> Dict[str, Any]:
 
         print(f"  ✅ Added type hints to {type_hints_added} files")
 
-    def _add_type_hints_to_file(self, file_path: Path) -> bool:
+        def _add_type_hints_to_file(self, file_path: Path) -> bool:
            """TODO: Add docstring for _add_type_hints_to_file"""
      """Add type hints to a file"""
         try:
@@ -559,7 +559,7 @@ def get_default_config() -> Dict[str, Any]:
             # Simple pattern to find functions without return type hints
             pattern = r"def\s+(\w+)\s*\(([^)]*)\)\s*:"
 
-            def add_hints(match) -> None:
+        def add_hints(match) -> None:
                     """TODO: Add docstring for add_hints"""
     func_name = match.group(1)
                 params = match.group(2)
@@ -595,7 +595,7 @@ def get_default_config() -> Dict[str, Any]:
 
         return False
 
-    def fix_unused_variables(self) -> None:
+        def fix_unused_variables(self) -> None:
            """TODO: Add docstring for fix_unused_variables"""
      """Remove or use unused variables"""
         print("\n🔧 Fixing unused variables...")
@@ -604,7 +604,7 @@ def get_default_config() -> Dict[str, Any]:
         # For now, just report
         print("  ℹ️  Unused variable detection requires AST analysis")
 
-    def create_missing_tests(self) -> Dict[str, Any]:
+        def create_missing_tests(self) -> Dict[str, Any]:
            """TODO: Add docstring for create_missing_tests"""
      """Create missing test files"""
         print("\n🔧 Creating missing test files...")
@@ -627,7 +627,7 @@ def get_default_config() -> Dict[str, Any]:
 
         print(f"  ✅ Created {min(5, len(modules_without_tests))} test files")
 
-    def _create_test_file(self, module_file: Path) -> None:
+        def _create_test_file(self, module_file: Path) -> None:
            """TODO: Add docstring for _create_test_file"""
      """Create a basic test file for a module"""
         module_name = module_file.stem
@@ -684,7 +684,7 @@ class Test{module_name.title().replace("_", "")}:
             # Pattern for functions without docstrings
             pattern = r'def\s+(\w+)\s*\([^)]*\)[^:]*:\s*\n\s*(?!""")'
 
-            def add_docstring(match) -> None:
+    def add_docstring(match) -> None:
                     """TODO: Add docstring for add_docstring"""
     func_name = match.group(1)
                 indent = "    "  # Assume 4 spaces
@@ -789,7 +789,7 @@ class Test{module_name.title().replace("_", "")}:
         return report
 
 
-def main() -> None:
+    def main() -> None:
        """TODO: Add docstring for main"""
      """Main function to apply comprehensive fixes"""
     print("🚀 GenomeVault Comprehensive Fixer")

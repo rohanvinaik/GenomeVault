@@ -19,7 +19,7 @@ class FieldElement:
 
     def __post_init__(self) -> None:
             """TODO: Add docstring for __post_init__"""
-    self.value = self.value % self.modulus
+        self.value = self.value % self.modulus
 
     def __add__(self, other) -> None:
             """TODO: Add docstring for __add__"""
@@ -90,7 +90,7 @@ class PLONKCircuit(ABC):
 
     def __init__(self, name: str, max_constraints: int = 10000) -> None:
             """TODO: Add docstring for __init__"""
-    self.name = name
+        self.name = name
         self.max_constraints = max_constraints
         self.constraints: List[CircuitConstraint] = []
         self.public_inputs: Dict[str, FieldElement] = {}
@@ -215,7 +215,7 @@ class MerkleInclusionCircuit(PLONKCircuit):
 
             # Direction must be 0 or 1
             dir_field = FieldElement(direction)
-            self.add_constraint(dir_field, FieldElement(1) - dir_field, FieldElement(0), qm=1)
+        self.add_constraint(dir_field, FieldElement(1) - dir_field, FieldElement(0), qm=1)
 
             # Conditional selection based on direction
             # If direction = 0: left = current, right = sibling
@@ -425,18 +425,18 @@ class PolygeneticRiskScoreCircuit(PLONKCircuit):
      """Generate PRS calculation constraints"""
         # 1. Verify each variant genotype is valid (0, 1, or 2)
         for variant in self.variants:
-            self._add_genotype_constraint(variant)
+        self._add_genotype_constraint(variant)
 
         # 2. Calculate weighted sum
         score = FieldElement(0)
         for variant, weight in zip(self.variants, self.weights):
             # Multiply variant by weight
             contribution = FieldElement(0)
-            self.add_multiplication_gate(variant, weight, contribution)
+        self.add_multiplication_gate(variant, weight, contribution)
 
             # Add to running sum
             new_score = FieldElement(0)
-            self.add_addition_gate(score, contribution, new_score)
+        self.add_addition_gate(score, contribution, new_score)
             score = new_score
 
         # 3. Verify score is in valid range (scaled)

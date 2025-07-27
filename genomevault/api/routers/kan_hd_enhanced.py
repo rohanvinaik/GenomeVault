@@ -182,9 +182,9 @@ class EnhancedKANHDManager:
 
         if model_key not in self.models:
             if model_type == "enhanced":
-                self.models[model_key] = EnhancedKANHybridEncoder(**kwargs)
+        self.models[model_key] = EnhancedKANHybridEncoder(**kwargs)
             elif model_type == "interpretable":
-                self.models[model_key] = InterpretableKANHybridEncoder(**kwargs)
+        self.models[model_key] = InterpretableKANHybridEncoder(**kwargs)
             else:
                 raise ValueError(f"Unknown model type: {model_type}")
 
@@ -215,7 +215,7 @@ class EnhancedWebSocketManager:
 
     def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-    self.connections: Dict[str, WebSocket] = {}
+        self.connections: Dict[str, WebSocket] = {}
 
     async def connect(self, session_id: str, websocket: WebSocket) -> None:
             """TODO: Add docstring for connect"""
@@ -239,7 +239,7 @@ class EnhancedWebSocketManager:
                 await self.connections[session_id].send_json(update)
             except Exception as e:
                 logger.error(f"Failed to send enhanced WebSocket update: {e}")
-                self.disconnect(session_id)
+        self.disconnect(session_id)
 
 
 ws_manager = EnhancedWebSocketManager()
@@ -720,7 +720,7 @@ async def export_analysis_results(analysis_id: str, format: str) -> None:
 # ==================== HELPER FUNCTIONS ====================
 
 
-def _prepare_mock_data(query_params: Dict[str, Any], modalities: List[str]) -> Dict[str, Any]:
+    def _prepare_mock_data(query_params: Dict[str, Any], modalities: List[str]) -> Dict[str, Any]:
        """TODO: Add docstring for _prepare_mock_data"""
      """Prepare mock data for different modalities"""
     data = {}
@@ -809,7 +809,7 @@ async def _run_scientific_analysis_background(model: Any, session_id: Optional[s
         logger.error(f"Background scientific analysis failed: {e}")
 
 
-def _generate_performance_recommendations(performance_summary: Dict[str, Any]) -> List[str]:
+    def _generate_performance_recommendations(performance_summary: Dict[str, Any]) -> List[str]:
        """TODO: Add docstring for _generate_performance_recommendations"""
      """Generate performance optimization recommendations"""
     recommendations = []
@@ -829,7 +829,7 @@ def _generate_performance_recommendations(performance_summary: Dict[str, Any]) -
     return recommendations
 
 
-def _suggest_next_tuning_step(
+    def _suggest_next_tuning_step(
     performance_summary: Dict[str, Any], request: PerformanceTuningRequest
 ) -> Dict[str, Any]:
        """TODO: Add docstring for _suggest_next_tuning_step"""

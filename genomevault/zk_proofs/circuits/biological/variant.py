@@ -170,7 +170,7 @@ class PolygenenicRiskScoreCircuit(BaseCircuit):
      """Generate PRS calculation constraints"""
         # 1. Verify each variant genotype is valid (0, 1, or 2)
         for i, variant in enumerate(self.variants):
-            self._add_genotype_constraint(variant)
+        self._add_genotype_constraint(variant)
 
         # 2. Calculate weighted sum
         score = FieldElement(0)
@@ -179,7 +179,7 @@ class PolygenenicRiskScoreCircuit(BaseCircuit):
             score = score + contribution
 
             # Add multiplication constraint
-            self.add_multiplication_gate(variant, weight, contribution)
+        self.add_multiplication_gate(variant, weight, contribution)
 
         # 3. Scale score back to normal range
         scaled_score = score * FieldElement(1000).inverse()  # Divide by 1000
@@ -392,11 +392,11 @@ class PharmacogenomicCircuit(BaseCircuit):
 
         # 4. Verify star alleles are valid
         for allele_data in self.star_alleles:
-            self._verify_star_allele(allele_data)
+        self._verify_star_allele(allele_data)
 
         # 5. Create commitment to hide actual genotypes
         genotype_commitment = self._commit_genotypes(
-            self.variant_genotypes, self.witness_randomness
+        self.variant_genotypes, self.witness_randomness
         )
 
     def _activity_to_category(self, total_activity: FieldElement) -> FieldElement:
@@ -564,7 +564,7 @@ class PathwayEnrichmentCircuit(BaseCircuit):
 
 
 # Helper function to create proof for hypervector data
-def create_hypervector_proof(
+    def create_hypervector_proof(
     hypervector: torch.Tensor, proof_type: str, public_params: Dict[str, Any]
 ) -> Dict[str, Any]:
        """TODO: Add docstring for create_hypervector_proof"""

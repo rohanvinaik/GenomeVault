@@ -26,9 +26,9 @@ class PIRQuery:
     def __post_init__(self) -> None:
             """TODO: Add docstring for __post_init__"""
     if self.metadata is None:
-            self.metadata = {}
+        self.metadata = {}
         if self.nonce is None:
-            self.nonce = np.random.bytes(32)
+        self.nonce = np.random.bytes(32)
 
 
 class PIRClient:
@@ -39,7 +39,7 @@ class PIRClient:
 
     def __init__(self, server_urls: List[str], database_size: int, threshold: int = 2) -> None:
             """TODO: Add docstring for __init__"""
-    self.server_urls = server_urls
+        self.server_urls = server_urls
         self.database_size = database_size
         self.threshold = threshold
         self.session: Optional[aiohttp.ClientSession] = None
@@ -49,7 +49,7 @@ class PIRClient:
 
     async def __aenter__(self) -> None:
             """TODO: Add docstring for __aenter__"""
-    self.session = aiohttp.ClientSession()
+        self.session = aiohttp.ClientSession()
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
@@ -247,7 +247,7 @@ class PIRClient:
 
         # Add obfuscation noise
         noise_indices = rng.choice(
-            self.database_size, size=min(10, self.database_size // 100), replace=False
+        self.database_size, size=min(10, self.database_size // 100), replace=False
         )
         query_vector[noise_indices] = rng.random(len(noise_indices)) * 0.1
 

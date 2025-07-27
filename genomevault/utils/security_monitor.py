@@ -27,7 +27,7 @@ class SecurityMonitor:
 
     def __init__(self, config: Dict[str, Any]) -> None:
             """TODO: Add docstring for __init__"""
-    self.config = config
+        self.config = config
         self.threat_threshold = config.get("threat_threshold", 0.8)
         self.anomaly_window = config.get("anomaly_window_minutes", 60)
 
@@ -78,7 +78,7 @@ class SecurityMonitor:
 
         # Track failed attempts
         if not success:
-            self.failed_attempts[ip_address] += 1
+        self.failed_attempts[ip_address] += 1
 
             # Check for brute force
             if self.failed_attempts[ip_address] > 5:
@@ -176,7 +176,7 @@ class SecurityMonitor:
 
         # Extract features from access history
         features = self._extract_access_features(
-            self.access_patterns[user_id][-100:]  # Last 100 events
+        self.access_patterns[user_id][-100:]  # Last 100 events
         )
 
         # Predict anomaly
@@ -213,8 +213,8 @@ class SecurityMonitor:
             if len(all_features) > 100:
                 # Train model
                 X = np.array(all_features)
-                self.anomaly_detector.fit(X)
-                self.is_trained = True
+        self.anomaly_detector.fit(X)
+        self.is_trained = True
 
                 logger.info("anomaly_detector_trained", training_samples=len(all_features))
 
@@ -401,7 +401,7 @@ class ComplianceMonitor:
 
     def __init__(self, config: Dict[str, Any]) -> None:
             """TODO: Add docstring for __init__"""
-    self.config = config
+        self.config = config
         self.compliance_checks = []
         self.violations = []
 

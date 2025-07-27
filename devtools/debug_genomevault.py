@@ -14,7 +14,7 @@ from pathlib import Path
 class GenomeVaultDebugger:
     def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-    self.root_dir = Path(__file__).parent
+        self.root_dir = Path(__file__).parent
         self.issues = []
         self.fixed = []
 
@@ -27,7 +27,7 @@ class GenomeVaultDebugger:
             print("  ✅ Python {version.major}.{version.minor}.{version.micro} is compatible")
             return True
         else:
-            self.issues.append("Python {version.major}.{version.minor} is too old. Need 3.8+")
+        self.issues.append("Python {version.major}.{version.minor} is too old. Need 3.8+")
             return False
 
     def check_pydantic(self) -> None:
@@ -47,10 +47,10 @@ class GenomeVaultDebugger:
                 print("  ✅ pydantic-settings is installed")
                 return True
             except ImportError:
-                self.issues.append("pydantic-settings is not installed")
+        self.issues.append("pydantic-settings is not installed")
                 return False
         except ImportError:
-            self.issues.append("Pydantic is not installed")
+        self.issues.append("Pydantic is not installed")
             return False
 
     def fix_pydantic(self) -> None:
@@ -73,7 +73,7 @@ class GenomeVaultDebugger:
                 [sys.executable, "-m", "pip", "install", "pydantic-settings>=2.0.0"],
                 check=True,
             )
-            self.fixed.append("Pydantic upgraded to v2 with pydantic-settings")
+        self.fixed.append("Pydantic upgraded to v2 with pydantic-settings")
             return True
         except subprocess.CalledProcessError as e:
             print("  ❌ Failed to fix Pydantic: {e}")
@@ -104,7 +104,7 @@ class GenomeVaultDebugger:
                 failed_imports.append((module, str(e)))
 
         if failed_imports:
-            self.issues.append("Failed to import {len(failed_imports)} modules")
+        self.issues.append("Failed to import {len(failed_imports)} modules")
             return False
         return True
 
@@ -129,14 +129,14 @@ class GenomeVaultDebugger:
                         missing.append(pkg_name)
 
             if missing:
-                self.issues.append("Missing packages: {', '.join(missing)}")
+        self.issues.append("Missing packages: {', '.join(missing)}")
                 return False
 
             print("  ✅ All requirements satisfied")
             return True
 
         except FileNotFoundError:
-            self.issues.append("requirements.txt not found")
+        self.issues.append("requirements.txt not found")
             return False
 
     def run_tests(self) -> None:
@@ -155,10 +155,10 @@ class GenomeVaultDebugger:
             else:
                 print("  ❌ Tests failed:")
                 print(result.stdout)
-                self.issues.append("Tests failed")
+        self.issues.append("Tests failed")
                 return False
         except subprocess.CalledProcessError as e:
-            self.issues.append("Failed to run tests: {e}")
+        self.issues.append("Failed to run tests: {e}")
             return False
 
     def run_diagnostics(self) -> None:
@@ -175,7 +175,7 @@ class GenomeVaultDebugger:
 
         pydantic_ok = self.check_pydantic()
         if not pydantic_ok:
-            self.fix_pydantic()
+        self.fix_pydantic()
             pydantic_ok = self.check_pydantic()
         print()
 
@@ -186,7 +186,7 @@ class GenomeVaultDebugger:
         print()
 
         if not self.issues:
-            self.run_tests()
+        self.run_tests()
 
         # Summary
         print()
@@ -214,7 +214,7 @@ class GenomeVaultDebugger:
         return len(self.issues) == 0
 
 
-def main() -> None:
+    def main() -> None:
         """TODO: Add docstring for main"""
     debugger = GenomeVaultDebugger()
     success = debugger.run_diagnostics()

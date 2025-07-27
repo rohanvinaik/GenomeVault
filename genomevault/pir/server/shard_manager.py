@@ -131,12 +131,12 @@ class ShardManager:
                     genomic_regions=shard_data.get("regions"),
                     populations=shard_data.get("populations"),
                 )
-                self.shards[metadata.shard_id] = metadata
+        self.shards[metadata.shard_id] = metadata
 
             # Load distribution
             if "distribution" in manifest:
                 dist = manifest["distribution"]
-                self.shard_distribution = ShardDistribution(
+        self.shard_distribution = ShardDistribution(
                     strategy=dist["strategy"],
                     replication_factor=dist["replication_factor"],
                     server_assignments=dist.get("assignments", {}),
@@ -196,7 +196,7 @@ class ShardManager:
             shard_data = data[start_idx:end_idx]
 
             future = self.executor.submit(
-                self._create_single_shard,
+        self._create_single_shard,
                 shard_index=i,
                 shard_data=shard_data,
                 data_type=data_type,
@@ -211,7 +211,7 @@ class ShardManager:
 
         # Save metadata
         with self.lock:
-            self._save_shard_metadata()
+        self._save_shard_metadata()
 
         logger.info(f"Created {len(created_shards)} shards")
         return created_shards
@@ -267,7 +267,7 @@ class ShardManager:
 
             # Store metadata
             with self.lock:
-                self.shards[shard_id] = metadata
+        self.shards[shard_id] = metadata
 
             logger.info(f"Created shard {shard_id} with {item_count} items")
             return shard_id
@@ -322,11 +322,11 @@ class ShardManager:
                     needed = self.shard_distribution.replication_factor - len(assigned_servers)
                     assigned_servers.extend(ln_servers[:needed])
 
-            self.shard_distribution.assign_shard(shard_id, assigned_servers)
+        self.shard_distribution.assign_shard(shard_id, assigned_servers)
 
         # Save distribution
         with self.lock:
-            self._save_shard_metadata()
+        self._save_shard_metadata()
 
         logger.info(f"Distributed {len(self.shards)} shards across {len(server_list)} servers")
         return self.shard_distribution
@@ -409,7 +409,7 @@ class ShardManager:
                 metadata.item_count = len(new_data) // item_size
 
                 # Save metadata
-                self._save_shard_metadata()
+        self._save_shard_metadata()
 
             # Remove backup
             backup_path.unlink()

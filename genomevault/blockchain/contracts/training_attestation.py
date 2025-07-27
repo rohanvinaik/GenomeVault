@@ -69,7 +69,7 @@ class TrainingAttestationContract:
 
     def __init__(self, contract_address: str, chain_id: int) -> None:
             """TODO: Add docstring for __init__"""
-    self.contract_address = contract_address
+        self.contract_address = contract_address
         self.chain_id = chain_id
         self.attestations: Dict[str, TrainingAttestation] = {}
         self.verifications: Dict[str, List[VerificationRecord]] = {}
@@ -157,7 +157,7 @@ class TrainingAttestationContract:
 
         # Index by model hash
         if model_hash not in self.model_to_attestations:
-            self.model_to_attestations[model_hash] = []
+        self.model_to_attestations[model_hash] = []
         self.model_to_attestations[model_hash].append(attestation_id)
 
         # Emit event (in real blockchain, this would be an actual event)
@@ -226,7 +226,7 @@ class TrainingAttestationContract:
 
         # Store verification
         if attestation_id not in self.verifications:
-            self.verifications[attestation_id] = []
+        self.verifications[attestation_id] = []
         self.verifications[attestation_id].append(verification)
 
         # Update attestation status based on verifications
@@ -406,7 +406,7 @@ class TrainingAttestationContract:
         # Check for dispute threshold
         if negative >= self.dispute_threshold:
             attestation.status = AttestationStatus.DISPUTED
-            self._emit_event(
+        self._emit_event(
                 "AttestationAutoDisputed",
                 {"attestation_id": attestation_id, "negative_verifications": negative},
             )
@@ -414,8 +414,8 @@ class TrainingAttestationContract:
         elif positive > negative and positive >= len(self.authorized_verifiers) // 2:
             attestation.status = AttestationStatus.VERIFIED
             if attestation_id in self.pending_attestations:
-                self.pending_attestations.remove(attestation_id)
-            self._emit_event(
+        self.pending_attestations.remove(attestation_id)
+        self._emit_event(
                 "AttestationVerified",
                 {"attestation_id": attestation_id, "positive_verifications": positive},
             )
@@ -456,7 +456,7 @@ class TrainingAttestationContract:
         }
 
 
-def create_attestation_hash(
+    def create_attestation_hash(
     model_hash: str, dataset_hash: str, snapshot_merkle_root: str, metadata: Dict[str, Any]
 ) -> str:
        """TODO: Add docstring for create_attestation_hash"""

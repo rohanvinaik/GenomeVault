@@ -158,7 +158,7 @@ class LinearKAN(nn.Module):
 
             # Linear interpolation within segment
             t = (x_expanded - self.breakpoints[:, :, i]) / (
-                self.breakpoints[:, :, i + 1] - self.breakpoints[:, :, i] + 1e-8
+        self.breakpoints[:, :, i + 1] - self.breakpoints[:, :, i] + 1e-8
             )
 
             interp_values = self.values[:, :, i] * (1 - t) + self.values[:, :, i + 1] * t

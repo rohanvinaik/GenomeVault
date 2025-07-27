@@ -26,7 +26,7 @@ class CIBenchmarkRunner:
 
     def __init__(self, output_dir: Path) -> None:
             """TODO: Add docstring for __init__"""
-    self.output_dir = output_dir
+        self.output_dir = output_dir
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.results = []
 

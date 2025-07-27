@@ -14,7 +14,7 @@ class BaseCircuit(ABC):
 
     def __init__(self, circuit_type: str) -> None:
             """TODO: Add docstring for __init__"""
-    self.circuit_type = circuit_type
+        self.circuit_type = circuit_type
         self.logger = logging.getLogger(f"{__name__}.{circuit_type}")
 
     @abstractmethod
@@ -38,7 +38,7 @@ class BaseConfig(ABC):
 
     def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-    self._config = self._load_default_config()
+        self._config = self._load_default_config()
 
     def _load_default_config(self) -> Dict[str, Any]:
            """TODO: Add docstring for _load_default_config"""
@@ -69,7 +69,7 @@ class BaseService(ABC):
 
     def __init__(self, name: str) -> None:
             """TODO: Add docstring for __init__"""
-    self.name = name
+        self.name = name
         self.logger = logging.getLogger(f"{__name__}.{name}")
         self._initialized = False
 
@@ -106,7 +106,7 @@ class NotImplementedMixin:
 
 
 # Factory functions
-def create_circuit(circuit_type: str) -> Dict[str, Any]:
+    def create_circuit(circuit_type: str) -> Dict[str, Any]:
        """TODO: Add docstring for create_circuit"""
      """Factory function to create circuit stubs"""
     class CircuitStub(BaseCircuit):
@@ -118,7 +118,7 @@ def create_circuit(circuit_type: str) -> Dict[str, Any]:
     return circuit.get_stub()
 
 
-def get_default_config() -> Dict[str, Any]:
+        def get_default_config() -> Dict[str, Any]:
        """TODO: Add docstring for get_default_config"""
      """Get default configuration"""
     config = BaseConfig()

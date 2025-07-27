@@ -19,7 +19,7 @@ class SecurityChecker:
 
     def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-    self.issues = []
+        self.issues = []
         self.warnings = []
 
         # PHI patterns to detect
@@ -181,19 +181,19 @@ class SecurityChecker:
         if log_dir.exists():
             for log_file in log_dir.glob("*.log"):
                 findings = self.check_logs(log_file)
-                self.issues.extend(findings)
+        self.issues.extend(findings)
 
         # Check configuration
         config_file = project_dir / "config.json"
         if config_file.exists():
             issues = self.check_config_sanity(config_file)
-            self.issues.extend(issues)
+        self.issues.extend(issues)
 
         # Check source code
         src_dir = project_dir / "genomevault"
         if src_dir.exists():
             findings = self.check_hardcoded_secrets(src_dir)
-            self.issues.extend(findings)
+        self.issues.extend(findings)
 
         # Generate report
         report = self.generate_report()
@@ -216,7 +216,7 @@ class SecurityChecker:
         return 1 if report["summary"]["critical"] > 0 else 0
 
 
-def main() -> None:
+    def main() -> None:
        """TODO: Add docstring for main"""
      """Main entry point."""
     parser = argparse.ArgumentParser(description="GenomeVault security checker")

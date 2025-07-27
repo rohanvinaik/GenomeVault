@@ -471,7 +471,7 @@ class TestCryptographicProperties:
             encoded_set.add(hv_bytes)
 
 
-def run_adversarial_tests() -> None:
+    def run_adversarial_tests() -> None:
     """Run all adversarial tests"""
     test_classes = [
         TestAdversarialInputs,

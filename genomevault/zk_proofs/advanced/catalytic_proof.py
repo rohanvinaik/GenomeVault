@@ -91,7 +91,7 @@ class CatalyticSpace:
         if current_fingerprint != self.initial_fingerprint:
             logger.warning(f"Catalytic space modified: {self.modification_count} writes")
             # Restore initial state (simplified)
-            self.data = np.random.bytes(self.size)
+        self.data = np.random.bytes(self.size)
 
         self.access_count = 0
         self.modification_count = 0
@@ -238,7 +238,7 @@ class CatalyticProofEngine:
         # Store Merkle path in catalytic space
         for i, node in enumerate(merkle_proof):
             node_bytes = bytes.fromhex(node) if isinstance(node, str) else node
-            self.catalytic_space.write(path_cache_offset + i * 32, node_bytes)
+        self.catalytic_space.write(path_cache_offset + i * 32, node_bytes)
 
         # Compute variant hash in clean space
         variant_str = (
@@ -294,7 +294,7 @@ class CatalyticProofEngine:
         weight_offset = 0
         for i, weight in enumerate(weights):
             weight_bytes = int(weight * 10000).to_bytes(4, "big")
-            self.catalytic_space.write(weight_offset + i * 4, weight_bytes)
+        self.catalytic_space.write(weight_offset + i * 4, weight_bytes)
 
         # Compute PRS using streaming approach
         score_accumulator = 0
@@ -363,7 +363,7 @@ class CatalyticProofEngine:
             segment_data = genome_segments[i]
             segment_bytes = str(segment_data).encode()[:1024]
 
-            self.catalytic_space.write(
+        self.catalytic_space.write(
                 panel_offset + (i % 1000) * 1024, segment_bytes.ljust(1024, b"\0")
             )
 
@@ -410,7 +410,7 @@ class CatalyticProofEngine:
 
         for i, expr_val in enumerate(expression_values):
             expr_bytes = int(expr_val * 1000).to_bytes(4, "big")
-            self.catalytic_space.write(expr_offset + i * 4, expr_bytes)
+        self.catalytic_space.write(expr_offset + i * 4, expr_bytes)
 
         # Compute enrichment score
         pathway_expression = []

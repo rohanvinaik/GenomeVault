@@ -25,7 +25,7 @@ class OrphanDiseaseResearchDemo:
 
     def __init__(self, disease_name: str = "Rett Syndrome") -> None:
             """TODO: Add docstring for __init__"""
-    self.disease_name = disease_name
+        self.disease_name = disease_name
         self.compressor = AdvancedHierarchicalCompressor()
         self.prover = Prover()
         self.recursive_prover = RecursiveSNARKProver()
@@ -323,7 +323,7 @@ class OrphanDiseaseResearchDemo:
         print("✓ Privacy: 100% maintained")
 
 
-def main() -> None:
+    def main() -> None:
        """TODO: Add docstring for main"""
      """Run the orphan disease research demonstration."""
     print("GenomeVault Orphan Disease Research Demonstration")

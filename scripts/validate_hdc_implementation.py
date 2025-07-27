@@ -16,7 +16,7 @@ class HDCImplementationValidator:
 
     def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-    self.project_root = Path(__file__).parent.parent
+        self.project_root = Path(__file__).parent.parent
         self.results = {"timestamp": datetime.now().isoformat(), "stages": {}, "summary": {}}
 
     def validate_stage_0_scope(self) -> Tuple[bool, List[str]]:
@@ -85,7 +85,7 @@ class HDCImplementationValidator:
 
         # Check encoder implementation
         encoder_file = (
-            self.project_root / "genomevault" / "hypervector_transform" / "hdc_encoder.py"
+        self.project_root / "genomevault" / "hypervector_transform" / "hdc_encoder.py"
         )
         if not encoder_file.exists():
             issues.append("Missing hdc_encoder.py")
@@ -112,7 +112,7 @@ class HDCImplementationValidator:
 
         # Check binding operations
         binding_file = (
-            self.project_root / "genomevault" / "hypervector_transform" / "binding_operations.py"
+                self.project_root / "genomevault" / "hypervector_transform" / "binding_operations.py"
         )
         if not binding_file.exists():
             issues.append("Missing binding_operations.py")
@@ -337,7 +337,7 @@ class HDCImplementationValidator:
 
         for stage_name, validator_func in stages:
             passed, issues = validator_func()
-            self.results["stages"][stage_name] = {
+        self.results["stages"][stage_name] = {
                 "passed": passed,
                 "issues": issues,
                 "issue_count": len(issues),
@@ -411,7 +411,7 @@ class HDCImplementationValidator:
         print(f"\nReport saved to: {output_path}")
 
 
-def main() -> None:
+    def main() -> None:
        """TODO: Add docstring for main"""
      """Main validation entry point"""
     validator = HDCImplementationValidator()
