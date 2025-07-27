@@ -71,8 +71,6 @@ VAULTS: Dict[str, VaultInfo] = {}
 
     def get_or_create_balance(address: str) -> CreditBalance:
         """TODO: Add docstring for get_or_create_balance"""
-            """TODO: Add docstring for get_or_create_balance"""
-                """TODO: Add docstring for get_or_create_balance"""
     """Get or create credit balance for an address"""
     if address not in CREDIT_LEDGER:
         CREDIT_LEDGER[address] = CreditBalance(
@@ -89,8 +87,6 @@ VAULTS: Dict[str, VaultInfo] = {}
 @router.get("/balance/{address}", response_model=CreditBalance)
 async def get_credit_balance(address: str) -> Any:
     """TODO: Add docstring for get_credit_balance"""
-        """TODO: Add docstring for get_credit_balance"""
-            """TODO: Add docstring for get_credit_balance"""
     """Get credit balance for an address"""
     return get_or_create_balance(address)
 
@@ -152,8 +148,6 @@ async def vault_credits(request: VaultRequest, address: str = "0x123...") -> Non
 @router.post("/redeem", response_model=Dict[str, any])
 async def redeem_vaulted_credits(request: RedeemRequest, address: str = "0x123...") -> None:
     """TODO: Add docstring for redeem_vaulted_credits"""
-        """TODO: Add docstring for redeem_vaulted_credits"""
-            """TODO: Add docstring for redeem_vaulted_credits"""
     """
     Redeem vaulted credits
 
@@ -215,8 +209,6 @@ async def redeem_vaulted_credits(request: RedeemRequest, address: str = "0x123..
 @router.get("/vaults/{address}")
 async def list_vaults(address: str, status: Optional[str] = None) -> None:
     """TODO: Add docstring for list_vaults"""
-        """TODO: Add docstring for list_vaults"""
-            """TODO: Add docstring for list_vaults"""
     """List all vaults for an address"""
     user_vaults = []
 
@@ -274,9 +266,6 @@ async def transfer_credits(
 async def estimate_earnings(
     node_type: str = "light", is_signatory: bool = False, blocks: int = 1000
 ) -> None:
-    """TODO: Add docstring for estimate_earnings"""
-        """TODO: Add docstring for estimate_earnings"""
-            """TODO: Add docstring for estimate_earnings"""
     """Estimate credit earnings for a node configuration"""
     # Base credits per block
     base_credits = {"light": 1, "full": 4, "archive": 8}

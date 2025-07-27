@@ -48,8 +48,6 @@ class HIPAACredentials:
 
     def __post_init__(self) -> None:
         """TODO: Add docstring for __post_init__"""
-            """TODO: Add docstring for __post_init__"""
-                """TODO: Add docstring for __post_init__"""
     """Validate credentials format"""
         if not self.npi or len(self.npi) != 10 or not self.npi.isdigit():
             raise ValueError("NPI must be 10 digits")
@@ -91,8 +89,6 @@ class VerificationRecord:
 
     def is_active(self) -> bool:
         """TODO: Add docstring for is_active"""
-            """TODO: Add docstring for is_active"""
-                """TODO: Add docstring for is_active"""
     """Check if verification is currently active"""
         if self.status != VerificationStatus.VERIFIED:
             return False
@@ -107,8 +103,6 @@ class VerificationRecord:
 
             def to_chain_data(self) -> Dict[str, Any]:
                 """TODO: Add docstring for to_chain_data"""
-                    """TODO: Add docstring for to_chain_data"""
-                        """TODO: Add docstring for to_chain_data"""
     """Convert to data for blockchain storage"""
         return {
             "npi": self.credentials.npi,
@@ -155,8 +149,6 @@ class NPIRecord:
 
     def __str__(self) -> str:
         """TODO: Add docstring for __str__"""
-            """TODO: Add docstring for __str__"""
-                """TODO: Add docstring for __str__"""
     if self.npi_type == NPIType.ORGANIZATION:
             return "{self.organization_name} (NPI: {self.npi})"
         else:

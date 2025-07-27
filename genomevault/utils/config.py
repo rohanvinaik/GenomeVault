@@ -180,8 +180,6 @@ class Config:
 
     def __init__(self, config_file: Optional[str] = None, environment: Optional[str] = None) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     """
         Initialize configuration manager
 
@@ -209,8 +207,6 @@ class Config:
 
             def _default_config_file(self) -> Path:
                 """TODO: Add docstring for _default_config_file"""
-                    """TODO: Add docstring for _default_config_file"""
-                        """TODO: Add docstring for _default_config_file"""
     """Get default configuration file path"""
         config_dir = Path.home() / ".genomevault" / "config"
         config_dir.mkdir(parents=True, exist_ok=True)
@@ -220,8 +216,6 @@ class Config:
 
                 def _load_config(self) -> None:
                     """TODO: Add docstring for _load_config"""
-                        """TODO: Add docstring for _load_config"""
-                            """TODO: Add docstring for _load_config"""
     """Load configuration from file"""
         if not self.config_file or not Path(self.config_file).exists():
             logger.info(f"No config file found at {self.config_file}, using defaults")
@@ -254,8 +248,6 @@ class Config:
 
             def _update_config_object(self, obj: Any, data: Dict[str, Any]) -> None:
                 """TODO: Add docstring for _update_config_object"""
-                    """TODO: Add docstring for _update_config_object"""
-                        """TODO: Add docstring for _update_config_object"""
     """Update dataclass object with dictionary data"""
         for key, value in data.items():
             if hasattr(obj, key):
@@ -266,8 +258,6 @@ class Config:
 
                     def _load_environment_overrides(self) -> None:
                         """TODO: Add docstring for _load_environment_overrides"""
-                            """TODO: Add docstring for _load_environment_overrides"""
-                                """TODO: Add docstring for _load_environment_overrides"""
     """Load environment variable overrides"""
         # Crypto overrides
         if zk_param := os.getenv("GENOMEVAULT_ZK_SECURITY"):
@@ -291,8 +281,6 @@ class Config:
 
             def _validate_config(self) -> None:
                 """TODO: Add docstring for _validate_config"""
-                    """TODO: Add docstring for _validate_config"""
-                        """TODO: Add docstring for _validate_config"""
     """Validate configuration parameters"""
         # Validate crypto parameters
         assert self.crypto.aes_key_size in [128, 192, 256], "Invalid AES key size"
@@ -322,16 +310,12 @@ class Config:
 
                 def _init_secrets_manager(self) -> None:
                     """TODO: Add docstring for _init_secrets_manager"""
-                        """TODO: Add docstring for _init_secrets_manager"""
-                            """TODO: Add docstring for _init_secrets_manager"""
     """Initialize secrets management"""
                     self._master_key = self._derive_master_key()
                     self._cipher = Fernet(self._master_key)
 
                     def _derive_master_key(self) -> bytes:
                         """TODO: Add docstring for _derive_master_key"""
-                            """TODO: Add docstring for _derive_master_key"""
-                                """TODO: Add docstring for _derive_master_key"""
     """Derive master key from environment or hardware"""
         # In production, this should use HSM or secure key management
         password = os.getenv("GENOMEVAULT_MASTER_PASSWORD", "development-password").encode()
@@ -347,22 +331,16 @@ class Config:
 
                         def encrypt_secret(self, secret: str) -> str:
                             """TODO: Add docstring for encrypt_secret"""
-                                """TODO: Add docstring for encrypt_secret"""
-                                    """TODO: Add docstring for encrypt_secret"""
     """Encrypt a secret value"""
         return self._cipher.encrypt(secret.encode()).decode()
 
                             def decrypt_secret(self, encrypted: str) -> str:
                                 """TODO: Add docstring for decrypt_secret"""
-                                    """TODO: Add docstring for decrypt_secret"""
-                                        """TODO: Add docstring for decrypt_secret"""
     """Decrypt a secret value"""
         return self._cipher.decrypt(encrypted.encode()).decode()
 
                                 def get_compression_settings(self) -> Dict[str, Any]:
                                     """TODO: Add docstring for get_compression_settings"""
-                                        """TODO: Add docstring for get_compression_settings"""
-                                            """TODO: Add docstring for get_compression_settings"""
     """Get compression settings based on tier"""
         tiers = {
             "mini": {
@@ -385,8 +363,6 @@ class Config:
 
                                     def get_node_voting_power(self) -> int:
                                         """TODO: Add docstring for get_node_voting_power"""
-                                            """TODO: Add docstring for get_node_voting_power"""
-                                                """TODO: Add docstring for get_node_voting_power"""
     """Calculate node voting power based on dual-axis model"""
         class_weights = {"light": 1, "full": 4, "archive": 8}
         c = class_weights.get(self.network.node_class, 1)
@@ -395,8 +371,6 @@ class Config:
 
                                         def get_block_rewards(self) -> int:
                                             """TODO: Add docstring for get_block_rewards"""
-                                                """TODO: Add docstring for get_block_rewards"""
-                                                    """TODO: Add docstring for get_block_rewards"""
     """Calculate block reward credits"""
         class_weights = {"light": 1, "full": 4, "archive": 8}
         c = class_weights.get(self.network.node_class, 1)
@@ -405,8 +379,6 @@ class Config:
 
                                             def get_pir_failure_probability(self) -> float:
                                                 """TODO: Add docstring for get_pir_failure_probability"""
-                                                    """TODO: Add docstring for get_pir_failure_probability"""
-                                                        """TODO: Add docstring for get_pir_failure_probability"""
     """Calculate PIR privacy failure probability"""
         if not self.network.pir_servers:
             return 1.0
@@ -418,8 +390,6 @@ class Config:
 
             def save(self, path: Optional[str] = None) -> None:
                 """TODO: Add docstring for save"""
-                    """TODO: Add docstring for save"""
-                        """TODO: Add docstring for save"""
     """Save current configuration to file"""
         path = path or self.config_file
 
@@ -447,8 +417,6 @@ class Config:
 
                 def to_dict(self) -> Dict[str, Any]:
                     """TODO: Add docstring for to_dict"""
-                        """TODO: Add docstring for to_dict"""
-                            """TODO: Add docstring for to_dict"""
     """Convert configuration to dictionary"""
         return {
             "environment": self.environment.value,
@@ -466,8 +434,6 @@ _config: Optional[Config] = None
 
                     def get_config() -> Config:
                         """TODO: Add docstring for get_config"""
-                            """TODO: Add docstring for get_config"""
-                                """TODO: Add docstring for get_config"""
     """Get global configuration instance"""
     global _config
     if _config is None:
@@ -477,8 +443,6 @@ _config: Optional[Config] = None
 
         def init_config(config_file: Optional[str] = None, environment: Optional[str] = None) -> None:
             """TODO: Add docstring for init_config"""
-                """TODO: Add docstring for init_config"""
-                    """TODO: Add docstring for init_config"""
     """Initialize global configuration"""
     global _config
     _config = Config(config_file, environment)

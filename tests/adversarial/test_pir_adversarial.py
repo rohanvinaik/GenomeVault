@@ -144,8 +144,6 @@ class TestTimingAttacks:
         # Mock the server responses
         async def mock_query_server(server, query) -> None:
             """TODO: Add docstring for mock_query_server"""
-                """TODO: Add docstring for mock_query_server"""
-                    """TODO: Add docstring for mock_query_server"""
     # Simulate variable processing time
             if query.target_index < 5000:
                 await asyncio.sleep(0.01)  # Fast
@@ -390,8 +388,6 @@ class TestErrorInjection:
         # Mock servers returning corrupted data
         async def mock_query_with_corruption(server, query) -> None:
             """TODO: Add docstring for mock_query_with_corruption"""
-                """TODO: Add docstring for mock_query_with_corruption"""
-                    """TODO: Add docstring for mock_query_with_corruption"""
     if server.server_id == "s2":
                 # Server 2 returns corrupted data
                 return Mock(response_vector=None)

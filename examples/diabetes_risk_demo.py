@@ -12,8 +12,6 @@ from genomevault_zk_integration import GenomeVaultZKSystem
 
 async def main() -> None:
     """TODO: Add docstring for main"""
-        """TODO: Add docstring for main"""
-            """TODO: Add docstring for main"""
     # Initialize ZK system
     zk_system = GenomeVaultZKSystem(max_workers=2)
     await zk_system.start()

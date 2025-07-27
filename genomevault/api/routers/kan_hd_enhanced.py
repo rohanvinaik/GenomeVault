@@ -170,8 +170,6 @@ class EnhancedKANHDManager:
 
     def __init__(self) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     # Model instances
         self.models: Dict[str, Union[EnhancedKANHybridEncoder, InterpretableKANHybridEncoder]] = {}
 
@@ -190,9 +188,6 @@ class EnhancedKANHDManager:
         def get_or_create_model(
         self, model_type: str = "enhanced", **kwargs
     ) -> Union[EnhancedKANHybridEncoder, InterpretableKANHybridEncoder]:
-        """TODO: Add docstring for get_or_create_model"""
-            """TODO: Add docstring for get_or_create_model"""
-                """TODO: Add docstring for get_or_create_model"""
     """Get or create enhanced model instance"""
         model_key = f"{model_type}_{hash(str(kwargs))}"
 
@@ -209,9 +204,6 @@ class EnhancedKANHDManager:
                 def create_federation(
         self, federation_id: str, config: FederationConfig
     ) -> FederatedKANCoordinator:
-        """TODO: Add docstring for create_federation"""
-            """TODO: Add docstring for create_federation"""
-                """TODO: Add docstring for create_federation"""
     """Create enhanced federated coordinator"""
         if federation_id in self.federations:
             raise ValueError(f"Federation {federation_id} already exists")
@@ -235,14 +227,10 @@ class EnhancedWebSocketManager:
 
     def __init__(self) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.connections: Dict[str, WebSocket] = {}
 
     async def connect(self, session_id: str, websocket: WebSocket) -> None:
         """TODO: Add docstring for connect"""
-            """TODO: Add docstring for connect"""
-                """TODO: Add docstring for connect"""
     await websocket.accept()
         self.connections[session_id] = websocket
         kan_hd_manager.websockets[session_id] = websocket
@@ -250,8 +238,6 @@ class EnhancedWebSocketManager:
 
         def disconnect(self, session_id: str) -> None:
             """TODO: Add docstring for disconnect"""
-                """TODO: Add docstring for disconnect"""
-                    """TODO: Add docstring for disconnect"""
     if session_id in self.connections:
             del self.connections[session_id]
         if session_id in kan_hd_manager.websockets:
@@ -260,8 +246,6 @@ class EnhancedWebSocketManager:
 
     async def send_update(self, session_id: str, update: Dict[str, Any]) -> None:
         """TODO: Add docstring for send_update"""
-            """TODO: Add docstring for send_update"""
-                """TODO: Add docstring for send_update"""
     if session_id in self.connections:
             try:
                 await self.connections[session_id].send_json(update)
@@ -531,8 +515,6 @@ async def enhanced_kan_hd_query(  # noqa: C901
 @router.post("/analysis/scientific", response_model=Dict[str, Any])
 async def perform_scientific_analysis(request: ScientificAnalysisRequest) -> None:
     """TODO: Add docstring for perform_scientific_analysis"""
-        """TODO: Add docstring for perform_scientific_analysis"""
-            """TODO: Add docstring for perform_scientific_analysis"""
     """Perform comprehensive scientific interpretability analysis"""
     try:
         # Get interpretable model
@@ -607,8 +589,6 @@ async def perform_scientific_analysis(request: ScientificAnalysisRequest) -> Non
 @router.post("/tuning/performance", response_model=Dict[str, Any])
 async def tune_performance(request: PerformanceTuningRequest) -> None:
     """TODO: Add docstring for tune_performance"""
-        """TODO: Add docstring for tune_performance"""
-            """TODO: Add docstring for tune_performance"""
     """Perform automated performance tuning"""
     try:
         # Get enhanced model
@@ -653,8 +633,6 @@ async def tune_performance(request: PerformanceTuningRequest) -> None:
 @router.post("/federation/enhanced/create", response_model=Dict[str, Any])
 async def create_enhanced_federation(request: FederatedSetupRequest) -> Dict[str, Any]:
     """TODO: Add docstring for create_enhanced_federation"""
-        """TODO: Add docstring for create_enhanced_federation"""
-            """TODO: Add docstring for create_enhanced_federation"""
     """Create enhanced federated learning setup"""
     try:
         # Create enhanced federation configuration
@@ -697,8 +675,6 @@ async def create_enhanced_federation(request: FederatedSetupRequest) -> Dict[str
 @router.websocket("/ws/enhanced/{session_id}")
 async def enhanced_websocket_endpoint(websocket: WebSocket, session_id: str) -> None:
     """TODO: Add docstring for enhanced_websocket_endpoint"""
-        """TODO: Add docstring for enhanced_websocket_endpoint"""
-            """TODO: Add docstring for enhanced_websocket_endpoint"""
     """Enhanced WebSocket endpoint for real-time updates"""
     await ws_manager.connect(session_id, websocket)
     try:
@@ -729,8 +705,6 @@ async def enhanced_websocket_endpoint(websocket: WebSocket, session_id: str) -> 
 @router.get("/analysis/{analysis_id}/export/{format}")
 async def export_analysis_results(analysis_id: str, format: str) -> None:
     """TODO: Add docstring for export_analysis_results"""
-        """TODO: Add docstring for export_analysis_results"""
-            """TODO: Add docstring for export_analysis_results"""
     """Export scientific analysis results"""
     if analysis_id not in kan_hd_manager.analysis_cache:
         raise HTTPException(404, "Analysis not found")
@@ -760,8 +734,6 @@ async def export_analysis_results(analysis_id: str, format: str) -> None:
 
         def _prepare_mock_data(query_params: Dict[str, Any], modalities: List[str]) -> Dict[str, Any]:
             """TODO: Add docstring for _prepare_mock_data"""
-                """TODO: Add docstring for _prepare_mock_data"""
-                    """TODO: Add docstring for _prepare_mock_data"""
 """Prepare mock data for different modalities"""
     data = {}
 
@@ -789,9 +761,6 @@ async def export_analysis_results(analysis_id: str, format: str) -> None:
 async def _execute_enhanced_query_simulation(
     query_params: Dict[str, Any], compressed_data: torch.Tensor, budget: Any
 ) -> Dict[str, Any]:
-    """TODO: Add docstring for _execute_enhanced_query_simulation"""
-        """TODO: Add docstring for _execute_enhanced_query_simulation"""
-            """TODO: Add docstring for _execute_enhanced_query_simulation"""
     """Simulate enhanced query execution"""
 
     # Simulate processing time based on compression
@@ -820,8 +789,6 @@ async def _execute_enhanced_query_simulation(
 
 async def _run_scientific_analysis_background(model: Any, session_id: Optional[str]) -> None:
     """TODO: Add docstring for _run_scientific_analysis_background"""
-        """TODO: Add docstring for _run_scientific_analysis_background"""
-            """TODO: Add docstring for _run_scientific_analysis_background"""
     """Run detailed scientific analysis in background"""
     try:
         # Perform full interpretability analysis
@@ -855,8 +822,6 @@ async def _run_scientific_analysis_background(model: Any, session_id: Optional[s
 
         def _generate_performance_recommendations(performance_summary: Dict[str, Any]) -> List[str]:
             """TODO: Add docstring for _generate_performance_recommendations"""
-                """TODO: Add docstring for _generate_performance_recommendations"""
-                    """TODO: Add docstring for _generate_performance_recommendations"""
     """Generate performance optimization recommendations"""
     recommendations = []
 
@@ -878,9 +843,6 @@ async def _run_scientific_analysis_background(model: Any, session_id: Optional[s
         def _suggest_next_tuning_step(
     performance_summary: Dict[str, Any], request: PerformanceTuningRequest
 ) -> Dict[str, Any]:
-    """TODO: Add docstring for _suggest_next_tuning_step"""
-        """TODO: Add docstring for _suggest_next_tuning_step"""
-            """TODO: Add docstring for _suggest_next_tuning_step"""
     """Suggest next performance tuning step"""
 
     current_latency = performance_summary.get("recent_avg_encoding_time_ms", 0)
@@ -915,8 +877,6 @@ async def _run_scientific_analysis_background(model: Any, session_id: Optional[s
 @router.get("/system/enhanced/status")
 async def get_enhanced_system_status() -> Any:
     """TODO: Add docstring for get_enhanced_system_status"""
-        """TODO: Add docstring for get_enhanced_system_status"""
-            """TODO: Add docstring for get_enhanced_system_status"""
     """Get comprehensive enhanced system status"""
     return {
         "status": "operational",

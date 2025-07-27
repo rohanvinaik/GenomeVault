@@ -58,8 +58,6 @@ class MedianVerifierCircuit:
 
         def __init__(self, security_param: int = 128) -> None:
             """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
-                    """TODO: Add docstring for __init__"""
     """
         Initialize the circuit with security parameters
 
@@ -76,9 +74,6 @@ class MedianVerifierCircuit:
         error_bound: float,
         expected_value: Optional[float] = None,
     ) -> MedianProof:
-        """TODO: Add docstring for generate_proof"""
-            """TODO: Add docstring for generate_proof"""
-                """TODO: Add docstring for generate_proof"""
     """
         Generate a zero-knowledge proof that the median is correctly computed
 
@@ -198,8 +193,6 @@ class MedianVerifierCircuit:
 
             def verify_proof(self, proof: MedianProof) -> bool:
                 """TODO: Add docstring for verify_proof"""
-                    """TODO: Add docstring for verify_proof"""
-                        """TODO: Add docstring for verify_proof"""
     """
         Verify a median computation proof
 
@@ -281,8 +274,6 @@ class MedianVerifierCircuit:
 
             def _commit(self, value: float, randomness: bytes) -> bytes:
                 """TODO: Add docstring for _commit"""
-                    """TODO: Add docstring for _commit"""
-                        """TODO: Add docstring for _commit"""
     """Create a commitment to a value"""
         value_bytes = str(value).encode()
         commitment_input = value_bytes + randomness
@@ -290,8 +281,6 @@ class MedianVerifierCircuit:
 
                 def _commit_list(self, values: List[float], randomness: List[bytes]) -> bytes:
                     """TODO: Add docstring for _commit_list"""
-                        """TODO: Add docstring for _commit_list"""
-                            """TODO: Add docstring for _commit_list"""
     """Create a commitment to a list of values"""
         commitments = [self._commit(v, r) for v, r in zip(values, randomness)]
         combined = b"".join(commitments)
@@ -300,9 +289,6 @@ class MedianVerifierCircuit:
                     def _generate_challenge(
         self, commitment: bytes, sorted_commitments: List[bytes], median: float, error_bound: float
     ) -> bytes:
-        """TODO: Add docstring for _generate_challenge"""
-            """TODO: Add docstring for _generate_challenge"""
-                """TODO: Add docstring for _generate_challenge"""
     """Generate Fiat-Shamir challenge"""
         challenge_input = (
             commitment
@@ -315,9 +301,6 @@ class MedianVerifierCircuit:
         def _generate_range_proofs(
         self, values: List[float], randomness: List[bytes]
     ) -> List[Dict[str, Any]]:
-        """TODO: Add docstring for _generate_range_proofs"""
-            """TODO: Add docstring for _generate_range_proofs"""
-                """TODO: Add docstring for _generate_range_proofs"""
     """
         Generate range proofs that values are in reasonable range
         This is a simplified version - production would use bulletproofs
@@ -350,8 +333,6 @@ class MedianVerifierCircuit:
 
             def _verify_range_proofs(self, range_proofs: List[Dict[str, Any]]) -> bool:
                 """TODO: Add docstring for _verify_range_proofs"""
-                    """TODO: Add docstring for _verify_range_proofs"""
-                        """TODO: Add docstring for _verify_range_proofs"""
     """Verify range proofs (simplified version)"""
         # In production, properly verify bulletproofs
         # For now, just check structure
@@ -366,8 +347,6 @@ class MedianVerifierCircuit:
 
                 def _prove_error_bound(self, error: float, bound: float, challenge: bytes) -> Dict[str, Any]:
                     """TODO: Add docstring for _prove_error_bound"""
-                        """TODO: Add docstring for _prove_error_bound"""
-                            """TODO: Add docstring for _prove_error_bound"""
     """Prove that error is within bound without revealing exact error"""
         # Create a commitment to the fact that error <= bound
         is_within_bound = error <= bound
@@ -392,8 +371,6 @@ if __name__ == "__main__":
 
     async def test_median_circuit() -> None:
         """TODO: Add docstring for test_median_circuit"""
-            """TODO: Add docstring for test_median_circuit"""
-                """TODO: Add docstring for test_median_circuit"""
     """Test the median verifier circuit"""
         circuit = MedianVerifierCircuit()
 

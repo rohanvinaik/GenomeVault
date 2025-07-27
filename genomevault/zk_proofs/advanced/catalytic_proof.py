@@ -33,8 +33,6 @@ class CatalyticProof:
     @property
     def space_efficiency(self) -> float:
         """TODO: Add docstring for space_efficiency"""
-            """TODO: Add docstring for space_efficiency"""
-                """TODO: Add docstring for space_efficiency"""
     """Ratio of computation to clean space used."""
         total_computation = self.metadata.get("total_gates", 0)
         return total_computation / max(self.clean_space_used, 1)
@@ -47,8 +45,6 @@ class CatalyticSpace:
 
     def __init__(self, size: int) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     """
         Initialize catalytic space.
 
@@ -63,15 +59,11 @@ class CatalyticSpace:
 
             def _compute_fingerprint(self) -> str:
                 """TODO: Add docstring for _compute_fingerprint"""
-                    """TODO: Add docstring for _compute_fingerprint"""
-                        """TODO: Add docstring for _compute_fingerprint"""
     """Compute cryptographic fingerprint of current state."""
         return hashlib.sha256(self.data).hexdigest()
 
                 def read(self, offset: int, length: int) -> bytes:
                     """TODO: Add docstring for read"""
-                        """TODO: Add docstring for read"""
-                            """TODO: Add docstring for read"""
     """Read from catalytic space."""
         if offset + length > self.size:
             raise ValueError("Read exceeds catalytic space bounds")
@@ -81,8 +73,6 @@ class CatalyticSpace:
 
             def write(self, offset: int, data: bytes) -> None:
                 """TODO: Add docstring for write"""
-                    """TODO: Add docstring for write"""
-                        """TODO: Add docstring for write"""
     """Temporarily write to catalytic space."""
         if offset + len(data) > self.size:
             raise ValueError("Write exceeds catalytic space bounds")
@@ -92,8 +82,6 @@ class CatalyticSpace:
 
             def reset(self) -> bool:
                 """TODO: Add docstring for reset"""
-                    """TODO: Add docstring for reset"""
-                        """TODO: Add docstring for reset"""
     """
         Reset catalytic space to initial state.
 
@@ -116,8 +104,6 @@ class CatalyticSpace:
 
             def get_usage_stats(self) -> Dict[str, Any]:
                 """TODO: Add docstring for get_usage_stats"""
-                    """TODO: Add docstring for get_usage_stats"""
-                        """TODO: Add docstring for get_usage_stats"""
     """Get usage statistics."""
         return {
             "size": self.size,
@@ -141,9 +127,6 @@ class CatalyticProofEngine:
         clean_space_limit: int = 1024 * 1024,  # 1MB clean space
         catalytic_space_size: int = 100 * 1024 * 1024,  # 100MB catalytic
     ) -> None:
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     """
         Initialize catalytic proof engine.
 
@@ -171,17 +154,12 @@ class CatalyticProofEngine:
 
             def _allocate_clean_space(self, size: int) -> bytearray:
                 """TODO: Add docstring for _allocate_clean_space"""
-                    """TODO: Add docstring for _allocate_clean_space"""
-                        """TODO: Add docstring for _allocate_clean_space"""
     """Allocate clean working space."""
         return bytearray(size)
 
                 def generate_catalytic_proof(
         self, circuit_name: str, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
     ) -> CatalyticProof:
-        """TODO: Add docstring for generate_catalytic_proof"""
-            """TODO: Add docstring for generate_catalytic_proof"""
-                """TODO: Add docstring for generate_catalytic_proof"""
     """
         Generate proof using catalytic space.
 
@@ -245,9 +223,6 @@ class CatalyticProofEngine:
             def _catalytic_variant_proof(
         self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
     ) -> Tuple[bytes, int]:
-        """TODO: Add docstring for _catalytic_variant_proof"""
-            """TODO: Add docstring for _catalytic_variant_proof"""
-                """TODO: Add docstring for _catalytic_variant_proof"""
     """
         Generate variant presence proof using catalytic space.
 
@@ -306,9 +281,6 @@ class CatalyticProofEngine:
                 def _catalytic_prs_proof(
         self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
     ) -> Tuple[bytes, int]:
-        """TODO: Add docstring for _catalytic_prs_proof"""
-            """TODO: Add docstring for _catalytic_prs_proof"""
-                """TODO: Add docstring for _catalytic_prs_proof"""
     """
         Generate PRS proof using catalytic space.
 
@@ -366,9 +338,6 @@ class CatalyticProofEngine:
                 def _catalytic_ancestry_proof(
         self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
     ) -> Tuple[bytes, int]:
-        """TODO: Add docstring for _catalytic_ancestry_proof"""
-            """TODO: Add docstring for _catalytic_ancestry_proof"""
-                """TODO: Add docstring for _catalytic_ancestry_proof"""
     """
         Generate ancestry composition proof using catalytic space.
 
@@ -422,9 +391,6 @@ class CatalyticProofEngine:
                 def _catalytic_pathway_proof(
         self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
     ) -> Tuple[bytes, int]:
-        """TODO: Add docstring for _catalytic_pathway_proof"""
-            """TODO: Add docstring for _catalytic_pathway_proof"""
-                """TODO: Add docstring for _catalytic_pathway_proof"""
     """
         Generate pathway enrichment proof using catalytic space.
 
@@ -498,8 +464,6 @@ class CatalyticProofEngine:
 
                 def _estimate_circuit_gates(self, circuit_name: str) -> int:
                     """TODO: Add docstring for _estimate_circuit_gates"""
-                        """TODO: Add docstring for _estimate_circuit_gates"""
-                            """TODO: Add docstring for _estimate_circuit_gates"""
     """Estimate number of gates in circuit."""
         estimates = {
             "variant_presence": 5000,
@@ -512,8 +476,6 @@ class CatalyticProofEngine:
 
                     def _generate_proof_id(self, circuit_name: str, public_inputs: Dict[str, Any]) -> str:
                         """TODO: Add docstring for _generate_proof_id"""
-                            """TODO: Add docstring for _generate_proof_id"""
-                                """TODO: Add docstring for _generate_proof_id"""
     """Generate unique proof ID."""
         data = {
             "circuit": circuit_name,
@@ -526,8 +488,6 @@ class CatalyticProofEngine:
 
                         def get_space_savings(self, circuit_name: str) -> Dict[str, Any]:
                             """TODO: Add docstring for get_space_savings"""
-                                """TODO: Add docstring for get_space_savings"""
-                                    """TODO: Add docstring for get_space_savings"""
     """
         Calculate space savings compared to standard approach.
 

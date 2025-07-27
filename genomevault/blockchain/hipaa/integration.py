@@ -35,8 +35,6 @@ class HIPAANodeIntegration:
 
     def __init__(self, verifier: HIPAAVerifier, governance: GovernanceSystem) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     """
         Initialize HIPAA node integration.
 
@@ -53,9 +51,6 @@ class HIPAANodeIntegration:
     async def register_provider_node(
         self, credentials: HIPAACredentials, node_config: Dict[str, Any]
     ) -> BlockchainNode:
-        """TODO: Add docstring for register_provider_node"""
-            """TODO: Add docstring for register_provider_node"""
-                """TODO: Add docstring for register_provider_node"""
     """
         Register a healthcare provider as a blockchain node.
 
@@ -93,9 +88,6 @@ class HIPAANodeIntegration:
             def _create_trusted_node(
         self, record: VerificationRecord, config: Dict[str, Any]
     ) -> BlockchainNode:
-        """TODO: Add docstring for _create_trusted_node"""
-            """TODO: Add docstring for _create_trusted_node"""
-                """TODO: Add docstring for _create_trusted_node"""
     """Create a blockchain node with trusted signatory status"""
         # Determine node class from config
         _ = config.get("node_class", NodeType.LIGHT)
@@ -122,8 +114,6 @@ class HIPAANodeIntegration:
 
         def _update_governance_power(self, node: BlockchainNode) -> None:
             """TODO: Add docstring for _update_governance_power"""
-                """TODO: Add docstring for _update_governance_power"""
-                    """TODO: Add docstring for _update_governance_power"""
     """Update governance system with node's voting power"""
         # In production, this would update on-chain state
         # For now, update local governance system
@@ -133,8 +123,6 @@ class HIPAANodeIntegration:
 
     async def revoke_provider_node(self, npi: str, reason: str) -> bool:
         """TODO: Add docstring for revoke_provider_node"""
-            """TODO: Add docstring for revoke_provider_node"""
-                """TODO: Add docstring for revoke_provider_node"""
     """
         Revoke a provider's trusted signatory status.
 
@@ -165,15 +153,11 @@ class HIPAANodeIntegration:
 
             def get_provider_node(self, npi: str) -> Optional[BlockchainNode]:
                 """TODO: Add docstring for get_provider_node"""
-                    """TODO: Add docstring for get_provider_node"""
-                        """TODO: Add docstring for get_provider_node"""
     """Get node for a provider NPI"""
         return self.node_registry.get(npi)
 
     async def refresh_verifications(self) -> Dict[str, Any]:
         """TODO: Add docstring for refresh_verifications"""
-            """TODO: Add docstring for refresh_verifications"""
-                """TODO: Add docstring for refresh_verifications"""
     """
         Refresh all provider verifications.
 
@@ -210,8 +194,6 @@ class HIPAAGovernanceIntegration:
     @staticmethod
     def create_hipaa_committee(governance: GovernanceSystem) -> Dict[str, Any]:
         """TODO: Add docstring for create_hipaa_committee"""
-            """TODO: Add docstring for create_hipaa_committee"""
-                """TODO: Add docstring for create_hipaa_committee"""
     """Create a special HIPAA providers committee"""
         from ..governance import Committee, CommitteeType
 
@@ -237,8 +219,6 @@ class HIPAAGovernanceIntegration:
     @staticmethod
         def add_hipaa_proposal_types(governance: GovernanceSystem) -> None:
             """TODO: Add docstring for add_hipaa_proposal_types"""
-                """TODO: Add docstring for add_hipaa_proposal_types"""
-                    """TODO: Add docstring for add_hipaa_proposal_types"""
     """Add HIPAA-specific proposal types"""
         # In production, would extend ProposalType enum
         # For now, document the special handling
@@ -268,8 +248,6 @@ if __name__ == "__main__":
 
     async def test_hipaa_integration() -> None:
         """TODO: Add docstring for test_hipaa_integration"""
-            """TODO: Add docstring for test_hipaa_integration"""
-                """TODO: Add docstring for test_hipaa_integration"""
     """Test HIPAA integration flow"""
 
         # Initialize components

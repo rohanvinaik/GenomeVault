@@ -14,8 +14,6 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 def test_basic_imports() -> None:
     """TODO: Add docstring for test_basic_imports"""
-        """TODO: Add docstring for test_basic_imports"""
-            """TODO: Add docstring for test_basic_imports"""
     """Test basic imports work"""
     print("Testing basic imports...")
 
@@ -51,8 +49,6 @@ def test_basic_imports() -> None:
 
         def test_module_imports() -> None:
             """TODO: Add docstring for test_module_imports"""
-                """TODO: Add docstring for test_module_imports"""
-                    """TODO: Add docstring for test_module_imports"""
     """Test module imports"""
     print("\nTesting module imports...")
 

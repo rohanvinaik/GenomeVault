@@ -441,8 +441,6 @@ class ZKCircuitStateMachine(RuleBasedStateMachine):
 
     def __init__(self) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     super().__init__()
         self.variants = []
         self.total_count = 0

@@ -263,8 +263,6 @@ class TestPerformance:
 
         def encode() -> None:
             """TODO: Add docstring for encode"""
-                """TODO: Add docstring for encode"""
-                    """TODO: Add docstring for encode"""
     return encoder.encode_genome(sample_variants * 100)  # 300 variants
 
         result = benchmark(encode)
@@ -289,8 +287,6 @@ class TestPerformance:
 
                 def compute_similarity() -> None:
                     """TODO: Add docstring for compute_similarity"""
-                        """TODO: Add docstring for compute_similarity"""
-                            """TODO: Add docstring for compute_similarity"""
     return hv1.hamming_distance(hv2)
 
         result = benchmark(compute_similarity)

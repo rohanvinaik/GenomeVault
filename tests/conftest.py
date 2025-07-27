@@ -207,15 +207,11 @@ def test_data_dir() -> None:
 
         def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
-                    """TODO: Add docstring for __init__"""
             self.results = {}
 
 
             def measure(self, name: str, func, *args, **kwargs) -> None:
                 """TODO: Add docstring for measure"""
-                    """TODO: Add docstring for measure"""
-                        """TODO: Add docstring for measure"""
     import time
 
             start = time.perf_counter()
@@ -230,8 +226,6 @@ def test_data_dir() -> None:
 
                 def assert_performance(self, name: str, max_ms: float) -> None:
                     """TODO: Add docstring for assert_performance"""
-                        """TODO: Add docstring for assert_performance"""
-                            """TODO: Add docstring for assert_performance"""
     if name not in self.results:
                 pytest.fail("No benchmark results for {name}")
             actual_ms = self.results[name]["elapsed_ms"]
@@ -251,8 +245,6 @@ def test_data_dir() -> None:
 
             def _register(filepath) -> None:
                 """TODO: Add docstring for _register"""
-                    """TODO: Add docstring for _register"""
-                        """TODO: Add docstring for _register"""
     files_to_cleanup.append(filepath)
 
     yield _register

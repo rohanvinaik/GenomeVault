@@ -103,16 +103,12 @@ class ErrorBudget:
     @property
     def delta(self) -> float:
         """TODO: Add docstring for delta"""
-            """TODO: Add docstring for delta"""
-                """TODO: Add docstring for delta"""
     """Get delta value from exponent"""
         return 2 ** (-self.delta_exp)
 
     @property
         def confidence(self) -> str:
             """TODO: Add docstring for confidence"""
-                """TODO: Add docstring for confidence"""
-                    """TODO: Add docstring for confidence"""
     """Get human-readable confidence level"""
         return f"1 in {2**self.delta_exp}"
 
@@ -127,8 +123,6 @@ class ECCEncoderMixin:
 
     def __init__(self, base_dimension: int, parity_g: int = 3) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.base_dimension = base_dimension
         self.parity_g = parity_g
         self.code_length = parity_g + 1
@@ -136,8 +130,6 @@ class ECCEncoderMixin:
 
         def encode_with_ecc(self, hypervector: torch.Tensor) -> torch.Tensor:
             """TODO: Add docstring for encode_with_ecc"""
-                """TODO: Add docstring for encode_with_ecc"""
-                    """TODO: Add docstring for encode_with_ecc"""
     """
         Apply ECC encoding to hypervector
         Turns every hypervector into a self-healing codeword
@@ -189,8 +181,6 @@ class ECCEncoderMixin:
 
                 def decode_with_ecc(self, encoded_vector: torch.Tensor) -> Tuple[torch.Tensor, int]:
                     """TODO: Add docstring for decode_with_ecc"""
-                        """TODO: Add docstring for decode_with_ecc"""
-                            """TODO: Add docstring for decode_with_ecc"""
     """
         Decode ECC-encoded hypervector and correct errors
         Returns: (decoded_vector, num_errors_corrected)
@@ -238,8 +228,6 @@ class ErrorBudgetAllocator:
 
     def __init__(self, dim_cap: int = 200000, default_g: int = 3) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.dim_cap = dim_cap
         self.default_g = default_g
 
@@ -250,9 +238,6 @@ class ErrorBudgetAllocator:
         ecc_enabled: bool = True,
         repeat_cap: Optional[int] = None,
     ) -> ErrorBudget:
-        """TODO: Add docstring for plan_budget"""
-            """TODO: Add docstring for plan_budget"""
-                """TODO: Add docstring for plan_budget"""
     """
         Plan error budget allocation deterministically from (ε, δ)
 
@@ -308,8 +293,6 @@ class ErrorBudgetAllocator:
 
             def estimate_latency(self, budget: ErrorBudget) -> int:
                 """TODO: Add docstring for estimate_latency"""
-                    """TODO: Add docstring for estimate_latency"""
-                        """TODO: Add docstring for estimate_latency"""
     """Estimate query latency in milliseconds"""
         base_latency = 50  # 50ms base
         dim_factor = budget.dimension / 100000  # Linear with dimension
@@ -321,8 +304,6 @@ class ErrorBudgetAllocator:
 
                 def estimate_bandwidth(self, budget: ErrorBudget) -> float:
                     """TODO: Add docstring for estimate_bandwidth"""
-                        """TODO: Add docstring for estimate_bandwidth"""
-                            """TODO: Add docstring for estimate_bandwidth"""
     """Estimate response size in MB"""
         bytes_per_element = 4  # 32-bit floats
         base_size = budget.dimension * bytes_per_element
@@ -345,8 +326,6 @@ class AdaptiveHDCEncoder(GenomicEncoder):
 
     def __init__(self, dimension: int = 10000) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     super().__init__(dimension)
         self.ecc_encoders = {}  # Cache ECC encoders by configuration
         self.budget_allocator = ErrorBudgetAllocator()
@@ -354,9 +333,6 @@ class AdaptiveHDCEncoder(GenomicEncoder):
         def encode_with_budget(
         self, variants: List[Dict], budget: ErrorBudget
     ) -> Tuple[torch.Tensor, Dict]:
-        """TODO: Add docstring for encode_with_budget"""
-            """TODO: Add docstring for encode_with_budget"""
-                """TODO: Add docstring for encode_with_budget"""
     """
         Encode genome with specified error budget
         Returns encoded vector and proof metadata
@@ -429,8 +405,6 @@ router = APIRouter(prefix="/hdc", tags=["HDC"])
 @router.post("/estimate_budget", response_model=ErrorBudgetResponse)
 async def estimate_budget(request: ErrorBudgetRequest) -> None:
     """TODO: Add docstring for estimate_budget"""
-        """TODO: Add docstring for estimate_budget"""
-            """TODO: Add docstring for estimate_budget"""
     """
     Estimate error budget for given accuracy/confidence requirements
     This is called when user adjusts the accuracy dial in the UI
@@ -477,8 +451,6 @@ async def estimate_budget(request: ErrorBudgetRequest) -> None:
 @router.post("/query", response_model=QueryResponse)
 async def query_with_tuning(request: QueryRequest) -> None:
     """TODO: Add docstring for query_with_tuning"""
-        """TODO: Add docstring for query_with_tuning"""
-            """TODO: Add docstring for query_with_tuning"""
     """
     Process query with user-specified error tuning
     Implements the full HDC/uncertainty tuning pipeline

@@ -45,9 +45,6 @@ class KANCompressor(nn.Module):
         num_layers: int = 3,
         use_linear: bool = True,
     ) -> None:
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     super().__init__()
         self.input_dim = input_dim
         self.compressed_dim = compressed_dim
@@ -80,8 +77,6 @@ class KANCompressor(nn.Module):
 
                 def _get_layer_dimensions(self, input_dim: int, output_dim: int, num_layers: int) -> List[int]:
                     """TODO: Add docstring for _get_layer_dimensions"""
-                        """TODO: Add docstring for _get_layer_dimensions"""
-                            """TODO: Add docstring for _get_layer_dimensions"""
     """Calculate dimensions for each layer"""
         if num_layers == 1:
             return [input_dim, output_dim]
@@ -98,8 +93,6 @@ class KANCompressor(nn.Module):
 
             def encode(self, x: torch.Tensor) -> torch.Tensor:
                 """TODO: Add docstring for encode"""
-                    """TODO: Add docstring for encode"""
-                        """TODO: Add docstring for encode"""
     """
         Compress input data
 
@@ -122,8 +115,6 @@ class KANCompressor(nn.Module):
 
             def decode(self, z: torch.Tensor) -> torch.Tensor:
                 """TODO: Add docstring for decode"""
-                    """TODO: Add docstring for decode"""
-                        """TODO: Add docstring for decode"""
     """
         Decompress data
 
@@ -143,8 +134,6 @@ class KANCompressor(nn.Module):
 
             def quantize(self, z: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
                 """TODO: Add docstring for quantize"""
-                    """TODO: Add docstring for quantize"""
-                        """TODO: Add docstring for quantize"""
     """
         Quantize compressed representation for storage
 
@@ -162,15 +151,11 @@ class KANCompressor(nn.Module):
 
             def dequantize(self, quantized: torch.Tensor, scale: torch.Tensor) -> torch.Tensor:
                 """TODO: Add docstring for dequantize"""
-                    """TODO: Add docstring for dequantize"""
-                        """TODO: Add docstring for dequantize"""
     """Dequantize compressed representation"""
         return quantized.float() * scale
 
                 def compress_to_bytes(self, x: torch.Tensor) -> bytes:
                     """TODO: Add docstring for compress_to_bytes"""
-                        """TODO: Add docstring for compress_to_bytes"""
-                            """TODO: Add docstring for compress_to_bytes"""
     """
         Full compression pipeline to bytes
 
@@ -199,8 +184,6 @@ class KANCompressor(nn.Module):
 
             def decompress_from_bytes(self, data: bytes, batch_size: int = 1) -> torch.Tensor:
                 """TODO: Add docstring for decompress_from_bytes"""
-                    """TODO: Add docstring for decompress_from_bytes"""
-                        """TODO: Add docstring for decompress_from_bytes"""
     """
         Decompress from byte representation
 
@@ -231,8 +214,6 @@ class KANCompressor(nn.Module):
 
             def _normalize_input(self, x: torch.Tensor) -> torch.Tensor:
                 """TODO: Add docstring for _normalize_input"""
-                    """TODO: Add docstring for _normalize_input"""
-                        """TODO: Add docstring for _normalize_input"""
     """Normalize input data to [-1, 1] range"""
         # For genomic data, we might use specific normalization
         # For now, use simple min-max normalization
@@ -249,8 +230,6 @@ class KANCompressor(nn.Module):
 
                 def _denormalize_output(self, x: torch.Tensor) -> torch.Tensor:
                     """TODO: Add docstring for _denormalize_output"""
-                        """TODO: Add docstring for _denormalize_output"""
-                            """TODO: Add docstring for _denormalize_output"""
     """Denormalize output data"""
         if hasattr(self, "norm_min") and hasattr(self, "norm_max"):
             denormalized = (x + 1) / 2 * (self.norm_max - self.norm_min) + self.norm_min
@@ -260,9 +239,6 @@ class KANCompressor(nn.Module):
             def compute_metrics(
         self, original: torch.Tensor, compressed_bytes: bytes
     ) -> CompressionMetrics:
-        """TODO: Add docstring for compute_metrics"""
-            """TODO: Add docstring for compute_metrics"""
-                """TODO: Add docstring for compute_metrics"""
     """Compute compression metrics"""
         import time
 
@@ -305,8 +281,6 @@ class AdaptiveKANCompressor(KANCompressor):
 
     def __init__(self, input_dim: int = 10000) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     super().__init__(input_dim, compressed_dim=100)  # Default initialization
 
         # Create multiple compressors with different compression ratios
@@ -328,8 +302,6 @@ class AdaptiveKANCompressor(KANCompressor):
 
         def analyze_complexity(self, x: torch.Tensor) -> str:
             """TODO: Add docstring for analyze_complexity"""
-                """TODO: Add docstring for analyze_complexity"""
-                    """TODO: Add docstring for analyze_complexity"""
     """Determine the complexity level of input data"""
         with torch.no_grad():
             complexity_scores = self.complexity_analyzer(x)
@@ -340,8 +312,6 @@ class AdaptiveKANCompressor(KANCompressor):
 
             def encode(self, x: torch.Tensor) -> Tuple[torch.Tensor, str]:
                 """TODO: Add docstring for encode"""
-                    """TODO: Add docstring for encode"""
-                        """TODO: Add docstring for encode"""
     """
         Adaptively compress based on data complexity
 
@@ -359,7 +329,5 @@ class AdaptiveKANCompressor(KANCompressor):
 
             def decode(self, z: torch.Tensor, level: str) -> torch.Tensor:
                 """TODO: Add docstring for decode"""
-                    """TODO: Add docstring for decode"""
-                        """TODO: Add docstring for decode"""
     """Decode using the appropriate decompressor"""
         return self.compressors[level].decode(z)

@@ -22,9 +22,6 @@ class ProofRequest:
     def __init__(
         self, proof_type: str, private_inputs: Dict[str, Any], public_inputs: Dict[str, Any]
     ) -> None:
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.proof_type = proof_type
         self.private_inputs = private_inputs
         self.public_inputs = public_inputs
@@ -37,8 +34,6 @@ class ProofResponse:
 
     def __init__(self, proof: bytes, proof_id: str, verification_key: str, generated_at: datetime) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.proof = proof
         self.proof_id = proof_id
         self.verification_key = verification_key
@@ -53,9 +48,6 @@ class VerificationResult:
     def __init__(
         self, is_valid: bool, proof_id: Optional[str] = None, verifier_id: Optional[str] = None
     ) -> None:
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.is_valid = is_valid
         self.proof_id = proof_id
         self.verifier_id = verifier_id
@@ -68,8 +60,6 @@ class ZKProofService:
 
     def __init__(self) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.circuits = {
             "prs_range": PRSProofCircuit(),
             "age_range": PRSProofCircuit(),  # Reuse for demo
@@ -85,8 +75,6 @@ class ZKProofService:
 
     async def generate_proof(self, request: ProofRequest) -> ProofResponse:
         """TODO: Add docstring for generate_proof"""
-            """TODO: Add docstring for generate_proof"""
-                """TODO: Add docstring for generate_proof"""
     """Generate a ZK proof based on the request."""
         logger.info(f"Generating {request.proof_type} proof")
 
@@ -123,9 +111,6 @@ class ZKProofService:
         public_inputs: Dict[str, Any],
         verifier_id: Optional[str] = None,
     ) -> VerificationResult:
-        """TODO: Add docstring for verify_proof"""
-            """TODO: Add docstring for verify_proof"""
-                """TODO: Add docstring for verify_proof"""
     """Verify a ZK proof."""
         logger.info(f"Verifying proof{f' for {verifier_id}' if verifier_id else ''}")
 
@@ -152,8 +137,6 @@ class ZKProofService:
 
     async def _generate_prs_proof(self, prover: ZKProver, request: ProofRequest) -> Any:
         """TODO: Add docstring for _generate_prs_proof"""
-            """TODO: Add docstring for _generate_prs_proof"""
-                """TODO: Add docstring for _generate_prs_proof"""
     """Generate PRS range proof."""
         prs_score = request.private_inputs.get("prs_score")
         min_val = request.public_inputs.get("min", 0.0)
@@ -172,8 +155,6 @@ class ZKProofService:
 
     async def _generate_age_proof(self, prover: ZKProver, request: ProofRequest) -> Any:
         """TODO: Add docstring for _generate_age_proof"""
-            """TODO: Add docstring for _generate_age_proof"""
-                """TODO: Add docstring for _generate_age_proof"""
     """Generate age range proof."""
         # For demo, reuse PRS proof logic
         age = request.private_inputs.get("age")
@@ -193,8 +174,6 @@ class ZKProofService:
 
     async def _generate_variant_proof(self, prover: ZKProver, request: ProofRequest) -> Any:
         """TODO: Add docstring for _generate_variant_proof"""
-            """TODO: Add docstring for _generate_variant_proof"""
-                """TODO: Add docstring for _generate_variant_proof"""
     """Generate variant count proof."""
         # For demo, reuse PRS proof logic
         count = request.private_inputs.get("count", 0)
@@ -210,16 +189,12 @@ class ZKProofService:
 
         def _get_verification_key(self, proof_type: str) -> str:
             """TODO: Add docstring for _get_verification_key"""
-                """TODO: Add docstring for _get_verification_key"""
-                    """TODO: Add docstring for _get_verification_key"""
     """Get verification key for proof type."""
         # In production, these would be actual verification keys
         return f"vk_{proof_type}_v1"
 
             def _get_proof_type_from_key(self, verification_key: str) -> str:
                 """TODO: Add docstring for _get_proof_type_from_key"""
-                    """TODO: Add docstring for _get_proof_type_from_key"""
-                        """TODO: Add docstring for _get_proof_type_from_key"""
     """Extract proof type from verification key."""
         # Simple parsing for demo
         if verification_key.startswith("vk_"):
@@ -231,8 +206,6 @@ class ZKProofService:
 
     async def aggregate_proofs(self, proofs: List[ProofResponse]) -> Any:
         """TODO: Add docstring for aggregate_proofs"""
-            """TODO: Add docstring for aggregate_proofs"""
-                """TODO: Add docstring for aggregate_proofs"""
     """Aggregate multiple proofs (placeholder for future implementation)."""
         # This would implement proof aggregation/batching
         logger.info(f"Aggregating {len(proofs)} proofs")

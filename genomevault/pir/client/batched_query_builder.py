@@ -116,7 +116,6 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
     def _build_seeded_pir_query(
         self, base_query: GenomicQuery, seeded_params: Dict, seed: int
     ) -> PIRQuery:
-        """TODO: Add docstring for _build_seeded_pir_query"""
      """Build a PIR query with deterministic seeding"""
         # This depends on the query type
         if base_query.query_type == QueryType.VARIANT_LOOKUP:
@@ -234,7 +233,6 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
     async def execute_streaming_batch(
         self, batched_query: BatchedQuery
     ) -> AsyncIterator[Tuple[int, Any]]:
-        """TODO: Add docstring for execute_streaming_batch"""
      """
         Stream results as they complete for real-time progress updates
 
@@ -289,7 +287,6 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
     async def execute_zoom_query(
         self, chromosome: str, start: int, end: int, zoom_level: int = 0
     ) -> Dict[str, Any]:
-        """TODO: Add docstring for execute_zoom_query"""
      """
         Execute hierarchical zoom query
 
@@ -373,7 +370,6 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
     async def execute_hierarchical_zoom(
         self, chromosome: str, region_start: int, region_end: int, budget: ErrorBudget
     ) -> Dict[str, Any]:
-        """TODO: Add docstring for execute_hierarchical_zoom"""
      """
         Execute hierarchical zoom with PIR aggregation
 
@@ -422,7 +418,6 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
     def _aggregate_zoom_proofs(
         self, level0_results: Dict, level1_results: List[Dict], budget: ErrorBudget
     ) -> Dict[str, Any]:
-        """TODO: Add docstring for _aggregate_zoom_proofs"""
      """
         Aggregate proofs from multiple zoom levels
         """
@@ -441,7 +436,6 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
     def _aggregate_results(
         self, results: List[Any], method: AggregationMethod
     ) -> Tuple[Any, float]:
-        """TODO: Add docstring for _aggregate_results"""
      """
         Aggregate multiple query results using specified method
 
@@ -494,7 +488,6 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
     def _can_terminate_early(
         self, batched_query: BatchedQuery, accumulated_results: List[Any]
     ) -> bool:
-        """TODO: Add docstring for _can_terminate_early"""
      """
         Check if we can terminate early based on accumulated results
 
@@ -525,7 +518,6 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
         aggregated_result: Any,
         median_error: float,
     ) -> Dict[str, Any]:
-        """TODO: Add docstring for _generate_proof_metadata"""
      """Generate metadata for proof generation"""
         return {
             "query_type": batched_query.base_query.query_type.value,
@@ -553,7 +545,6 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
     async def query_with_error_budget(
         self, query: GenomicQuery, budget: ErrorBudget
     ) -> BatchedQueryResult:
-        """TODO: Add docstring for query_with_error_budget"""
      """
         High-level API: Execute query with specified error budget
 

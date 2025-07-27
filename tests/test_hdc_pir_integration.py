@@ -205,8 +205,6 @@ class TestBatchedPIRIntegration:
 
         async def mock_execute(q) -> None:
             """TODO: Add docstring for mock_execute"""
-                """TODO: Add docstring for mock_execute"""
-                    """TODO: Add docstring for mock_execute"""
     nonlocal call_count
             if call_count < len(result_values):
                 val = result_values[call_count]

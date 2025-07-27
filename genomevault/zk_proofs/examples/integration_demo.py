@@ -25,8 +25,6 @@ logger = get_logger(__name__)
 
 def demonstrate_variant_presence() -> None:
     """TODO: Add docstring for demonstrate_variant_presence"""
-        """TODO: Add docstring for demonstrate_variant_presence"""
-            """TODO: Add docstring for demonstrate_variant_presence"""
     """Demonstrate proving variant presence without revealing location."""
     print("\n=== Variant Presence Proof ===")
 
@@ -73,8 +71,6 @@ def demonstrate_variant_presence() -> None:
 
     def demonstrate_diabetes_risk_assessment() -> None:
         """TODO: Add docstring for demonstrate_diabetes_risk_assessment"""
-            """TODO: Add docstring for demonstrate_diabetes_risk_assessment"""
-                """TODO: Add docstring for demonstrate_diabetes_risk_assessment"""
     """Demonstrate diabetes risk assessment with privacy."""
     print("\n=== Diabetes Risk Assessment ===")
 
@@ -130,8 +126,6 @@ def demonstrate_variant_presence() -> None:
 
         def demonstrate_polygenic_risk_score() -> None:
             """TODO: Add docstring for demonstrate_polygenic_risk_score"""
-                """TODO: Add docstring for demonstrate_polygenic_risk_score"""
-                    """TODO: Add docstring for demonstrate_polygenic_risk_score"""
     """Demonstrate PRS calculation with privacy."""
     print("\n=== Polygenic Risk Score Calculation ===")
 
@@ -185,8 +179,6 @@ def demonstrate_variant_presence() -> None:
 
             def demonstrate_pharmacogenomics() -> None:
                 """TODO: Add docstring for demonstrate_pharmacogenomics"""
-                    """TODO: Add docstring for demonstrate_pharmacogenomics"""
-                        """TODO: Add docstring for demonstrate_pharmacogenomics"""
     """Demonstrate pharmacogenomic analysis with privacy."""
     print("\n=== Pharmacogenomic Analysis ===")
 
@@ -251,8 +243,6 @@ def demonstrate_variant_presence() -> None:
 
         def demonstrate_circuit_optimization() -> None:
             """TODO: Add docstring for demonstrate_circuit_optimization"""
-                """TODO: Add docstring for demonstrate_circuit_optimization"""
-                    """TODO: Add docstring for demonstrate_circuit_optimization"""
     """Demonstrate circuit selection and optimization."""
     print("\n=== Circuit Optimization ===")
 
@@ -288,8 +278,6 @@ def demonstrate_variant_presence() -> None:
 
         def demonstrate_post_quantum_transition() -> None:
             """TODO: Add docstring for demonstrate_post_quantum_transition"""
-                """TODO: Add docstring for demonstrate_post_quantum_transition"""
-                    """TODO: Add docstring for demonstrate_post_quantum_transition"""
     """Demonstrate post-quantum proof generation."""
     print("\n=== Post-Quantum Transition ===")
 
@@ -342,8 +330,6 @@ def demonstrate_variant_presence() -> None:
 
         def demonstrate_batch_operations() -> None:
             """TODO: Add docstring for demonstrate_batch_operations"""
-                """TODO: Add docstring for demonstrate_batch_operations"""
-                    """TODO: Add docstring for demonstrate_batch_operations"""
     """Demonstrate batch proof generation and verification."""
     print("\n=== Batch Operations ===")
 
@@ -407,8 +393,6 @@ def demonstrate_variant_presence() -> None:
 
         def main() -> None:
             """TODO: Add docstring for main"""
-                """TODO: Add docstring for main"""
-                    """TODO: Add docstring for main"""
     """Run all demonstrations."""
     print("=" * 60)
     print("GenomeVault Zero-Knowledge Proof System")

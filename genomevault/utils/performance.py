@@ -46,8 +46,6 @@ class HypervectorAccelerator:
 
     def __init__(self, use_gpu: bool = True) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.use_gpu = use_gpu and (CUDA_AVAILABLE or TORCH_AVAILABLE)
 
         if self.use_gpu:
@@ -65,8 +63,6 @@ class HypervectorAccelerator:
     @numba.jit(nopython=True, parallel=True, fastmath=True)
             def _hamming_distance_cpu(v1: np.ndarray, v2: np.ndarray) -> int:
                 """TODO: Add docstring for _hamming_distance_cpu"""
-                    """TODO: Add docstring for _hamming_distance_cpu"""
-                        """TODO: Add docstring for _hamming_distance_cpu"""
     """CPU-optimized Hamming distance using Numba"""
         distance = 0
         for i in prange(len(v1)):
@@ -77,9 +73,6 @@ class HypervectorAccelerator:
                 def hamming_distance(
         self, v1: Union[np.ndarray, torch.Tensor], v2: Union[np.ndarray, torch.Tensor]
     ) -> int:
-        """TODO: Add docstring for hamming_distance"""
-            """TODO: Add docstring for hamming_distance"""
-                """TODO: Add docstring for hamming_distance"""
     """Compute Hamming distance with hardware acceleration"""
 
         if self.backend == "torch":
@@ -105,8 +98,6 @@ class HypervectorAccelerator:
     @numba.jit(nopython=True, parallel=True, fastmath=True)
             def _cosine_similarity_cpu(v1: np.ndarray, v2: np.ndarray) -> float:
                 """TODO: Add docstring for _cosine_similarity_cpu"""
-                    """TODO: Add docstring for _cosine_similarity_cpu"""
-                        """TODO: Add docstring for _cosine_similarity_cpu"""
     """CPU-optimized cosine similarity"""
         dot_product = 0.0
         norm1 = 0.0
@@ -122,9 +113,6 @@ class HypervectorAccelerator:
             def cosine_similarity(
         self, v1: Union[np.ndarray, torch.Tensor], v2: Union[np.ndarray, torch.Tensor]
     ) -> float:
-        """TODO: Add docstring for cosine_similarity"""
-            """TODO: Add docstring for cosine_similarity"""
-                """TODO: Add docstring for cosine_similarity"""
     """Compute cosine similarity with hardware acceleration"""
 
         if self.backend == "torch":
@@ -152,8 +140,6 @@ class HypervectorAccelerator:
 
             def batch_hamming_distance(self, vectors: List[np.ndarray], query: np.ndarray) -> np.ndarray:
                 """TODO: Add docstring for batch_hamming_distance"""
-                    """TODO: Add docstring for batch_hamming_distance"""
-                        """TODO: Add docstring for batch_hamming_distance"""
     """Compute Hamming distances for batch of vectors"""
 
         if self.backend == "torch":
@@ -184,8 +170,6 @@ class HypervectorAccelerator:
     @staticmethod
                 def _circular_convolution_kernel(a, b, result, n) -> None:
                     """TODO: Add docstring for _circular_convolution_kernel"""
-                        """TODO: Add docstring for _circular_convolution_kernel"""
-                            """TODO: Add docstring for _circular_convolution_kernel"""
     """CUDA kernel for circular convolution"""
         # Note: This would require numba.cuda which is not imported
         # For now, this is a placeholder that would be compiled with numba.cuda.jit
@@ -193,8 +177,6 @@ class HypervectorAccelerator:
 
                     def circular_convolution(self, v1: np.ndarray, v2: np.ndarray) -> np.ndarray:
                         """TODO: Add docstring for circular_convolution"""
-                            """TODO: Add docstring for circular_convolution"""
-                                """TODO: Add docstring for circular_convolution"""
     """Perform circular convolution with acceleration"""
         n = len(v1)
 
@@ -234,8 +216,6 @@ class MemoryEfficientStorage:
 
     def __init__(self, dimension: int, dtype=np.uint8) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.dimension = dimension
         self.dtype = dtype
         self.chunks = []
@@ -244,8 +224,6 @@ class MemoryEfficientStorage:
 
         def add_vector(self, vector: np.ndarray) -> None:
             """TODO: Add docstring for add_vector"""
-                """TODO: Add docstring for add_vector"""
-                    """TODO: Add docstring for add_vector"""
     """Add vector to storage"""
         if len(self.current_chunk) >= self.chunk_size:
             # Compress and store chunk
@@ -257,8 +235,6 @@ class MemoryEfficientStorage:
 
             def get_vector(self, index: int) -> np.ndarray:
                 """TODO: Add docstring for get_vector"""
-                    """TODO: Add docstring for get_vector"""
-                        """TODO: Add docstring for get_vector"""
     """Retrieve vector by index"""
         chunk_idx = index // self.chunk_size
         vector_idx = index % self.chunk_size
@@ -273,8 +249,6 @@ class MemoryEfficientStorage:
 
             def _compress_chunk(self, vectors: List[np.ndarray]) -> bytes:
                 """TODO: Add docstring for _compress_chunk"""
-                    """TODO: Add docstring for _compress_chunk"""
-                        """TODO: Add docstring for _compress_chunk"""
     """Compress a chunk of vectors"""
         # Stack vectors and compress
         chunk_array = np.stack(vectors)
@@ -282,8 +256,6 @@ class MemoryEfficientStorage:
 
                 def _decompress_chunk(self, compressed: bytes) -> np.ndarray:
                     """TODO: Add docstring for _decompress_chunk"""
-                        """TODO: Add docstring for _decompress_chunk"""
-                            """TODO: Add docstring for _decompress_chunk"""
     """Decompress a chunk of vectors"""
         # Reconstruct array
         chunk_array = np.frombuffer(compressed, dtype=self.dtype)
@@ -297,16 +269,12 @@ class ParallelProcessor:
 
     def __init__(self, n_workers: Optional[int] = None) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.n_workers = n_workers or CPU_COUNT
         self.thread_pool = ThreadPoolExecutor(max_workers=self.n_workers)
         self.process_pool = ProcessPoolExecutor(max_workers=self.n_workers)
 
         def parallel_map(self, func: Callable, items: List, use_processes: bool = False) -> List:
             """TODO: Add docstring for parallel_map"""
-                """TODO: Add docstring for parallel_map"""
-                    """TODO: Add docstring for parallel_map"""
     """Apply function to items in parallel"""
 
         pool = self.process_pool if use_processes else self.thread_pool
@@ -323,8 +291,6 @@ class ParallelProcessor:
     @numba.jit(nopython=True, parallel=True)
             def _parallel_variant_processing(variants: np.ndarray, reference: np.ndarray) -> np.ndarray:
                 """TODO: Add docstring for _parallel_variant_processing"""
-                    """TODO: Add docstring for _parallel_variant_processing"""
-                        """TODO: Add docstring for _parallel_variant_processing"""
     """Process variants in parallel using Numba"""
         n_variants = len(variants)
         results = np.zeros(n_variants, dtype=np.int32)
@@ -341,15 +307,11 @@ class ParallelProcessor:
 
                     def process_variants_batch(self, variants: np.ndarray, reference: np.ndarray) -> np.ndarray:
                         """TODO: Add docstring for process_variants_batch"""
-                            """TODO: Add docstring for process_variants_batch"""
-                                """TODO: Add docstring for process_variants_batch"""
     """Process batch of variants with parallel acceleration"""
         return self._parallel_variant_processing(variants, reference)
 
                         def __del__(self) -> None:
                             """TODO: Add docstring for __del__"""
-                                """TODO: Add docstring for __del__"""
-                                    """TODO: Add docstring for __del__"""
     """Clean up thread pools"""
                             self.thread_pool.shutdown(wait=False)
                             self.process_pool.shutdown(wait=False)
@@ -362,23 +324,17 @@ class CacheOptimizer:
 
     def __init__(self, max_size: int = 1000) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.max_size = max_size
 
     @lru_cache(maxsize=1000)
         def cached_hypervector_operation(self, v1_hash: int, v2_hash: int, operation: str) -> float:
             """TODO: Add docstring for cached_hypervector_operation"""
-                """TODO: Add docstring for cached_hypervector_operation"""
-                    """TODO: Add docstring for cached_hypervector_operation"""
     """Cache results of expensive hypervector operations"""
         # This would be called with actual computation
         pass
 
             def optimize_memory_layout(self, vectors: np.ndarray) -> np.ndarray:
                 """TODO: Add docstring for optimize_memory_layout"""
-                    """TODO: Add docstring for optimize_memory_layout"""
-                        """TODO: Add docstring for optimize_memory_layout"""
     """Optimize memory layout for cache efficiency"""
         # Ensure C-contiguous layout for better cache performance
         if not vectors.flags["C_CONTIGUOUS"]:
@@ -400,14 +356,10 @@ class ResourceMonitor:
 
     def __init__(self) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.process = psutil.Process()
 
         def get_memory_usage(self) -> Dict[str, float]:
             """TODO: Add docstring for get_memory_usage"""
-                """TODO: Add docstring for get_memory_usage"""
-                    """TODO: Add docstring for get_memory_usage"""
     """Get current memory usage"""
         memory_info = self.process.memory_info()
         return {
@@ -418,15 +370,11 @@ class ResourceMonitor:
 
             def get_cpu_usage(self) -> float:
                 """TODO: Add docstring for get_cpu_usage"""
-                    """TODO: Add docstring for get_cpu_usage"""
-                        """TODO: Add docstring for get_cpu_usage"""
     """Get CPU usage percentage"""
         return self.process.cpu_percent(interval=0.1)
 
                 def optimize_for_available_memory(self, required_memory_gb: float) -> bool:
                     """TODO: Add docstring for optimize_for_available_memory"""
-                        """TODO: Add docstring for optimize_for_available_memory"""
-                            """TODO: Add docstring for optimize_for_available_memory"""
     """Check if operation can proceed with available memory"""
         available_memory = psutil.virtual_memory().available / (1024**3)
 
@@ -456,8 +404,6 @@ resource_monitor = ResourceMonitor()
 @contextlib.contextmanager
                     def with_gpu(exit: bool = False) -> Generator[None, None, None]:
                         """TODO: Add docstring for with_gpu"""
-                            """TODO: Add docstring for with_gpu"""
-                                """TODO: Add docstring for with_gpu"""
     """Context manager for GPU operations with proper cleanup.
 
     This fixes the CuPy slice-kernel warning by ensuring proper synchronization

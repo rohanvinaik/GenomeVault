@@ -21,16 +21,12 @@ class GenomeVaultComprehensiveFixer:
 
     def __init__(self, base_path: Path) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.base_path = base_path
         self.fixes_applied = 0
         self.issues_fixed = []
 
         def fix_all_issues(self) -> None:
             """TODO: Add docstring for fix_all_issues"""
-                """TODO: Add docstring for fix_all_issues"""
-                    """TODO: Add docstring for fix_all_issues"""
     """Apply fixes for all known issues"""
 
         print("🚀 Starting comprehensive GenomeVault fixes")
@@ -68,8 +64,6 @@ class GenomeVaultComprehensiveFixer:
 
             def fix_syntax_errors(self) -> None:
                 """TODO: Add docstring for fix_syntax_errors"""
-                    """TODO: Add docstring for fix_syntax_errors"""
-                        """TODO: Add docstring for fix_syntax_errors"""
     """Fix any remaining syntax errors"""
         print("\n🔧 Fixing syntax errors...")
 
@@ -113,8 +107,6 @@ class GenomeVaultComprehensiveFixer:
 
             def _fix_file_syntax(self, file_path: Path, error: SyntaxError) -> None:
                 """TODO: Add docstring for _fix_file_syntax"""
-                    """TODO: Add docstring for _fix_file_syntax"""
-                        """TODO: Add docstring for _fix_file_syntax"""
     """Fix syntax error in a specific file"""
         try:
             # Try to read with different encodings
@@ -149,8 +141,6 @@ class GenomeVaultComprehensiveFixer:
 
             def fix_duplicate_functions(self) -> None:
                 """TODO: Add docstring for fix_duplicate_functions"""
-                    """TODO: Add docstring for fix_duplicate_functions"""
-                        """TODO: Add docstring for fix_duplicate_functions"""
     """Fix duplicate function implementations"""
         print("\n🔧 Fixing duplicate functions...")
 
@@ -189,8 +179,6 @@ class GenomeVaultComprehensiveFixer:
 
                     def _create_base_classes(self) -> None:
                         """TODO: Add docstring for _create_base_classes"""
-                            """TODO: Add docstring for _create_base_classes"""
-                                """TODO: Add docstring for _create_base_classes"""
     """Create base classes for common patterns"""
         base_path = self.base_path / "genomevault" / "core" / "base_patterns.py"
 
@@ -213,23 +201,17 @@ class BaseCircuit(ABC):
 
     def __init__(self, circuit_type: str) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.circuit_type = circuit_type
         self.logger = logging.getLogger(f"{__name__}.{circuit_type}")
 
     @abstractmethod
         def build(self) -> Dict[str, Any]:
             """TODO: Add docstring for build"""
-                """TODO: Add docstring for build"""
-                    """TODO: Add docstring for build"""
     """Build the circuit"""
         pass
 
             def get_stub(self) -> Dict[str, Any]:
                 """TODO: Add docstring for get_stub"""
-                    """TODO: Add docstring for get_stub"""
-                        """TODO: Add docstring for get_stub"""
     """Get stub implementation"""
         return {
             "type": self.circuit_type,
@@ -245,14 +227,10 @@ class BaseConfig(ABC):
 
     def __init__(self) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self._config = self._load_default_config()
 
         def _load_default_config(self) -> Dict[str, Any]:
             """TODO: Add docstring for _load_default_config"""
-                """TODO: Add docstring for _load_default_config"""
-                    """TODO: Add docstring for _load_default_config"""
     """Load default configuration"""
         return {
             "version": "3.0.0",
@@ -266,15 +244,11 @@ class BaseConfig(ABC):
 
             def get(self, key: str, default: Any = None) -> Any:
                 """TODO: Add docstring for get"""
-                    """TODO: Add docstring for get"""
-                        """TODO: Add docstring for get"""
     """Get configuration value"""
         return self._config.get(key, default)
 
                 def set(self, key: str, value: Any) -> None:
                     """TODO: Add docstring for set"""
-                        """TODO: Add docstring for set"""
-                            """TODO: Add docstring for set"""
     """Set configuration value"""
                     self._config[key] = value
 
@@ -286,16 +260,12 @@ class BaseService(ABC):
 
     def __init__(self, name: str) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.name = name
         self.logger = logging.getLogger(f"{__name__}.{name}")
         self._initialized = False
 
         def initialize(self) -> None:
             """TODO: Add docstring for initialize"""
-                """TODO: Add docstring for initialize"""
-                    """TODO: Add docstring for initialize"""
     """Initialize the service"""
         if self._initialized:
             return
@@ -307,15 +277,11 @@ class BaseService(ABC):
     @abstractmethod
             def _do_initialize(self) -> None:
                 """TODO: Add docstring for _do_initialize"""
-                    """TODO: Add docstring for _do_initialize"""
-                        """TODO: Add docstring for _do_initialize"""
     """Actual initialization logic"""
         pass
 
                 def log_operation(self, operation: str, **kwargs) -> None:
                     """TODO: Add docstring for log_operation"""
-                        """TODO: Add docstring for log_operation"""
-                            """TODO: Add docstring for log_operation"""
     """Log an operation"""
                     self.logger.info(f"Operation: {operation}", extra=kwargs)
 
@@ -328,8 +294,6 @@ class NotImplementedMixin:
     @staticmethod
     def not_implemented(method_name: str) -> None:
         """TODO: Add docstring for not_implemented"""
-            """TODO: Add docstring for not_implemented"""
-                """TODO: Add docstring for not_implemented"""
     """Raise NotImplementedError with method name"""
         raise NotImplementedError(f"{method_name} is not yet implemented")
 
@@ -337,14 +301,10 @@ class NotImplementedMixin:
 # Factory functions
         def create_circuit(circuit_type: str) -> Dict[str, Any]:
             """TODO: Add docstring for create_circuit"""
-                """TODO: Add docstring for create_circuit"""
-                    """TODO: Add docstring for create_circuit"""
 """Factory function to create circuit stubs"""
     class CircuitStub(BaseCircuit):
         def build(self) -> None:
             """TODO: Add docstring for build"""
-                """TODO: Add docstring for build"""
-                    """TODO: Add docstring for build"""
     return self.get_stub()
 
     circuit = CircuitStub(circuit_type)
@@ -353,8 +313,6 @@ class NotImplementedMixin:
 
             def get_default_config() -> Dict[str, Any]:
                 """TODO: Add docstring for get_default_config"""
-                    """TODO: Add docstring for get_default_config"""
-                        """TODO: Add docstring for get_default_config"""
     """Get default configuration"""
     config = BaseConfig()
     return config._config
@@ -366,8 +324,6 @@ class NotImplementedMixin:
 
                 def _apply_duplicate_fix(self, file_path: Path, pattern: str) -> None:
                     """TODO: Add docstring for _apply_duplicate_fix"""
-                        """TODO: Add docstring for _apply_duplicate_fix"""
-                            """TODO: Add docstring for _apply_duplicate_fix"""
     """Apply fix for duplicate pattern"""
         try:
             try:
@@ -402,8 +358,6 @@ class NotImplementedMixin:
 
             def _get_import_for_pattern(self, pattern: str) -> Optional[str]:
                 """TODO: Add docstring for _get_import_for_pattern"""
-                    """TODO: Add docstring for _get_import_for_pattern"""
-                        """TODO: Add docstring for _get_import_for_pattern"""
 """Get appropriate import for pattern"""
         imports = {
             "empty_return_dict": "from genomevault.core.base_patterns import create_circuit, get_default_config",
@@ -414,8 +368,6 @@ class NotImplementedMixin:
 
                 def fix_missing_imports(self) -> None:
                     """TODO: Add docstring for fix_missing_imports"""
-                        """TODO: Add docstring for fix_missing_imports"""
-                            """TODO: Add docstring for fix_missing_imports"""
     """Fix missing import statements"""
         print("\n🔧 Fixing missing imports...")
 
@@ -440,8 +392,6 @@ class NotImplementedMixin:
 
                 def _fix_file_imports(self, file_path: Path, imports_map: Dict[str, str]) -> bool:
                     """TODO: Add docstring for _fix_file_imports"""
-                        """TODO: Add docstring for _fix_file_imports"""
-                            """TODO: Add docstring for _fix_file_imports"""
 """Fix imports in a single file"""
         try:
             # Handle encoding issues
@@ -486,8 +436,6 @@ class NotImplementedMixin:
 
             def fix_placeholder_functions(self) -> None:
                 """TODO: Add docstring for fix_placeholder_functions"""
-                    """TODO: Add docstring for fix_placeholder_functions"""
-                        """TODO: Add docstring for fix_placeholder_functions"""
 """Fix placeholder functions with proper implementations"""
         print("\n🔧 Fixing placeholder functions...")
 
@@ -502,8 +450,6 @@ class NotImplementedMixin:
 
                 def _fix_placeholders_in_file(self, file_path: Path) -> bool:
                     """TODO: Add docstring for _fix_placeholders_in_file"""
-                        """TODO: Add docstring for _fix_placeholders_in_file"""
-                            """TODO: Add docstring for _fix_placeholders_in_file"""
 """Fix placeholder functions in a file"""
         try:
             # Handle encoding issues
@@ -523,15 +469,11 @@ class NotImplementedMixin:
             # Replace pass-only functions
                 def replace_pass(match) -> None:
                     """TODO: Add docstring for replace_pass"""
-                        """TODO: Add docstring for replace_pass"""
-                            """TODO: Add docstring for replace_pass"""
 nonlocal modified
                 modified = True
                 func_name = match.group(1)
                 return f'''def {func_name}(*args, **kwargs):
                     """TODO: Implement {func_name}"""
-                        """TODO: Implement {func_name}"""
-                            """TODO: Implement {func_name}"""
     logger.debug(f"{func_name} called with args={{args}}, kwargs={{kwargs}}")
     raise NotImplementedError(f"{func_name} not yet implemented")'''
 
@@ -540,15 +482,11 @@ nonlocal modified
             # Replace empty dict returns
                     def replace_empty_dict(match) -> None:
                         """TODO: Add docstring for replace_empty_dict"""
-                            """TODO: Add docstring for replace_empty_dict"""
-                                """TODO: Add docstring for replace_empty_dict"""
     nonlocal modified
                 modified = True
                 func_name = match.group(1)
                 return f'''def {func_name}(*args, **kwargs):
                     """TODO: Implement {func_name}"""
-                        """TODO: Implement {func_name}"""
-                            """TODO: Implement {func_name}"""
     logger.warning(f"{func_name} returning empty dict - implementation needed")
     return {{}}'''
 
@@ -581,8 +519,6 @@ except Exception:
 
             def fix_circular_imports(self) -> None:
                 """TODO: Add docstring for fix_circular_imports"""
-                    """TODO: Add docstring for fix_circular_imports"""
-                        """TODO: Add docstring for fix_circular_imports"""
 """Fix circular import issues"""
         print("\n🔧 Fixing circular imports...")
 
@@ -602,8 +538,6 @@ except Exception:
 
                 def _fix_circular_import(self, module1: str, module2: str) -> bool:
                     """TODO: Add docstring for _fix_circular_import"""
-                        """TODO: Add docstring for _fix_circular_import"""
-                            """TODO: Add docstring for _fix_circular_import"""
 """Fix circular import between two modules"""
         # This is complex - for now just log it
         print(f"    ℹ️  Potential circular import between {module1} and {module2}")
@@ -611,8 +545,6 @@ except Exception:
 
                     def add_missing_type_hints(self) -> None:
                         """TODO: Add docstring for add_missing_type_hints"""
-                            """TODO: Add docstring for add_missing_type_hints"""
-                                """TODO: Add docstring for add_missing_type_hints"""
     """Add missing type hints to functions"""
         print("\n🔧 Adding missing type hints...")
 
@@ -626,8 +558,6 @@ except Exception:
 
                 def _add_type_hints_to_file(self, file_path: Path) -> bool:
                     """TODO: Add docstring for _add_type_hints_to_file"""
-                        """TODO: Add docstring for _add_type_hints_to_file"""
-                            """TODO: Add docstring for _add_type_hints_to_file"""
 """Add type hints to a file"""
         try:
             # Handle encoding issues
@@ -641,8 +571,6 @@ except Exception:
 
                 def add_hints(match) -> None:
                     """TODO: Add docstring for add_hints"""
-                        """TODO: Add docstring for add_hints"""
-                            """TODO: Add docstring for add_hints"""
 func_name = match.group(1)
                 params = match.group(2)
 
@@ -679,8 +607,6 @@ except Exception:
 
             def fix_unused_variables(self) -> None:
                 """TODO: Add docstring for fix_unused_variables"""
-                    """TODO: Add docstring for fix_unused_variables"""
-                        """TODO: Add docstring for fix_unused_variables"""
 """Remove or use unused variables"""
         print("\n🔧 Fixing unused variables...")
 
@@ -690,8 +616,6 @@ except Exception:
 
                 def create_missing_tests(self) -> Dict[str, Any]:
                     """TODO: Add docstring for create_missing_tests"""
-                        """TODO: Add docstring for create_missing_tests"""
-                            """TODO: Add docstring for create_missing_tests"""
     """Create missing test files"""
         print("\n🔧 Creating missing test files...")
 
@@ -715,8 +639,6 @@ except Exception:
 
                 def _create_test_file(self, module_file: Path) -> None:
                     """TODO: Add docstring for _create_test_file"""
-                        """TODO: Add docstring for _create_test_file"""
-                            """TODO: Add docstring for _create_test_file"""
 """Create a basic test file for a module"""
         module_name = module_file.stem
         module_path = module_file.relative_to(self.base_path).with_suffix("")
@@ -738,9 +660,6 @@ class Test{module_name.title().replace("_", "")}:
 
     def test_placeholder(self) -> None:
         """TODO: Add docstring for test_placeholder"""
-            """TODO: Add docstring for test_placeholder"""
-                """TODO: Add docstring for test_placeholder"""
-                    """TODO: Add actual tests"""
         assert True, "Placeholder test"
 
     # TODO: Add more test cases
@@ -752,8 +671,6 @@ class Test{module_name.title().replace("_", "")}:
 
         def fix_documentation_issues(self) -> None:
             """TODO: Add docstring for fix_documentation_issues"""
-                """TODO: Add docstring for fix_documentation_issues"""
-                    """TODO: Add docstring for fix_documentation_issues"""
 """Fix missing or incomplete docstrings"""
         print("\n🔧 Fixing documentation issues...")
 
@@ -767,8 +684,6 @@ class Test{module_name.title().replace("_", "")}:
 
                 def _fix_docstrings_in_file(self, file_path: Path) -> bool:
                     """TODO: Add docstring for _fix_docstrings_in_file"""
-                        """TODO: Add docstring for _fix_docstrings_in_file"""
-                            """TODO: Add docstring for _fix_docstrings_in_file"""
 """Add missing docstrings to functions"""
         try:
             # Handle encoding issues
@@ -782,8 +697,6 @@ class Test{module_name.title().replace("_", "")}:
 
                 def add_docstring(match) -> None:
                     """TODO: Add docstring for add_docstring"""
-                        """TODO: Add docstring for add_docstring"""
-                            """TODO: Add docstring for add_docstring"""
 func_name = match.group(1)
                 indent = "    "  # Assume 4 spaces
                 return (
@@ -803,8 +716,6 @@ except Exception:
 
             def optimize_imports(self) -> None:
                 """TODO: Add docstring for optimize_imports"""
-                    """TODO: Add docstring for optimize_imports"""
-                        """TODO: Add docstring for optimize_imports"""
     """Optimize and sort imports"""
         print("\n🔧 Optimizing imports...")
 
@@ -824,8 +735,6 @@ except Exception:
 
             def generate_final_report(self) -> str:
                 """TODO: Add docstring for generate_final_report"""
-                    """TODO: Add docstring for generate_final_report"""
-                        """TODO: Add docstring for generate_final_report"""
 """Generate final report of all fixes"""
         report = f"""
 # GenomeVault Comprehensive Fix Report
@@ -895,8 +804,6 @@ except Exception:
 
             def main() -> None:
                 """TODO: Add docstring for main"""
-                    """TODO: Add docstring for main"""
-                        """TODO: Add docstring for main"""
 """Main function to apply comprehensive fixes"""
     print("🚀 GenomeVault Comprehensive Fixer")
     print("=" * 60)

@@ -48,8 +48,6 @@ class CompressedData:
 
     def verify_checksum(self) -> bool:
         """TODO: Add docstring for verify_checksum"""
-            """TODO: Add docstring for verify_checksum"""
-                """TODO: Add docstring for verify_checksum"""
     """Verify data integrity"""
         calculated = hashlib.sha256(self.data).hexdigest()
         return calculated == self.checksum
@@ -96,16 +94,12 @@ class CompressionEngine:
 
     def __init__(self) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     """Initialize compression engine"""
         self.variant_databases = self._load_variant_databases()
         logger.info("Compression engine initialized")
 
         def _load_variant_databases(self) -> Dict[str, List[str]]:
             """TODO: Add docstring for _load_variant_databases"""
-                """TODO: Add docstring for _load_variant_databases"""
-                    """TODO: Add docstring for _load_variant_databases"""
     """Load reference variant databases for compression tiers"""
         # In production, these would be loaded from actual databases
         databases = {
@@ -122,9 +116,6 @@ class CompressionEngine:
             def compress(
         self, data: Dict[str, Any], tier: CompressionTier, sample_id: str
     ) -> CompressedData:
-        """TODO: Add docstring for compress"""
-            """TODO: Add docstring for compress"""
-                """TODO: Add docstring for compress"""
     """
         Compress multi-omics data according to specified tier.
 
@@ -189,8 +180,6 @@ class CompressionEngine:
 
             def _compress_mini_tier(self, data: Dict[str, Any]) -> Dict[str, Any]:
                 """TODO: Add docstring for _compress_mini_tier"""
-                    """TODO: Add docstring for _compress_mini_tier"""
-                        """TODO: Add docstring for _compress_mini_tier"""
     """
         Mini tier compression: ~25KB with 5,000 most-studied SNPs.
         """
@@ -225,8 +214,6 @@ class CompressionEngine:
 
                     def _compress_clinical_tier(self, data: Dict[str, Any]) -> Dict[str, Any]:
                         """TODO: Add docstring for _compress_clinical_tier"""
-                            """TODO: Add docstring for _compress_clinical_tier"""
-                                """TODO: Add docstring for _compress_clinical_tier"""
     """
         Clinical tier compression: ~300KB with ACMG + PharmGKB variants.
         """
@@ -285,8 +272,6 @@ class CompressionEngine:
 
             def _compress_full_tier(self, data: Dict[str, Any]) -> Dict[str, Any]:
                 """TODO: Add docstring for _compress_full_tier"""
-                    """TODO: Add docstring for _compress_full_tier"""
-                        """TODO: Add docstring for _compress_full_tier"""
     """
         Full tier compression: 100-200KB per modality using HDC vectors.
         """
@@ -323,8 +308,6 @@ class CompressionEngine:
 
             def _is_acmg_variant(self, variant: Dict[str, Any]) -> bool:
                 """TODO: Add docstring for _is_acmg_variant"""
-                    """TODO: Add docstring for _is_acmg_variant"""
-                        """TODO: Add docstring for _is_acmg_variant"""
     """Check if variant is in ACMG secondary findings list"""
         # Simplified check - in production would use actual ACMG database
         acmg_genes = [
@@ -350,8 +333,6 @@ class CompressionEngine:
 
                 def _is_pharmgkb_variant(self, variant: Dict[str, Any]) -> bool:
                     """TODO: Add docstring for _is_pharmgkb_variant"""
-                        """TODO: Add docstring for _is_pharmgkb_variant"""
-                            """TODO: Add docstring for _is_pharmgkb_variant"""
     """Check if variant is pharmacogenomically relevant"""
         # Simplified check - in production would use PharmGKB database
         pgx_genes = [
@@ -374,8 +355,6 @@ class CompressionEngine:
 
                     def _compress_lab_values(self, lab_results: Dict[str, Any]) -> Dict[str, Any]:
                         """TODO: Add docstring for _compress_lab_values"""
-                            """TODO: Add docstring for _compress_lab_values"""
-                                """TODO: Add docstring for _compress_lab_values"""
     """Compress laboratory values for clinical tier"""
         compressed_labs = {}
 
@@ -410,8 +389,6 @@ class CompressionEngine:
 
                 def _create_mock_hypervector(self, modality_data: Dict[str, Any], dimensions: int) -> str:
                     """TODO: Add docstring for _create_mock_hypervector"""
-                        """TODO: Add docstring for _create_mock_hypervector"""
-                            """TODO: Add docstring for _create_mock_hypervector"""
     """
         Create mock hypervector representation.
         In production, this would use the actual hypervector encoder.
@@ -433,8 +410,6 @@ class CompressionEngine:
 
                     def _extract_modality_stats(self, modality_data: Dict[str, Any]) -> Dict[str, Any]:
                         """TODO: Add docstring for _extract_modality_stats"""
-                            """TODO: Add docstring for _extract_modality_stats"""
-                                """TODO: Add docstring for _extract_modality_stats"""
     """Extract key statistics from modality data"""
         stats = {}
 
@@ -456,8 +431,6 @@ class CompressionEngine:
 
             def _compute_cross_modal_features(self, modalities: Dict[str, Any]) -> Dict[str, Any]:
                 """TODO: Add docstring for _compute_cross_modal_features"""
-                    """TODO: Add docstring for _compute_cross_modal_features"""
-                        """TODO: Add docstring for _compute_cross_modal_features"""
     """Compute cross-modal binding features for multi-omics integration"""
         # Placeholder for cross-modal analysis
         # In production, would compute actual biological relationships
@@ -469,8 +442,6 @@ class CompressionEngine:
 
                 def decompress(self, compressed: CompressedData) -> Dict[str, Any]:
                     """TODO: Add docstring for decompress"""
-                        """TODO: Add docstring for decompress"""
-                            """TODO: Add docstring for decompress"""
     """
         Decompress data package back to usable format.
 
@@ -501,9 +472,6 @@ class CompressionEngine:
             def calculate_storage_requirements(
         self, tiers: List[CompressionTier], modalities: List[OmicsType]
     ) -> Dict[str, Any]:
-        """TODO: Add docstring for calculate_storage_requirements"""
-            """TODO: Add docstring for calculate_storage_requirements"""
-                """TODO: Add docstring for calculate_storage_requirements"""
     """
         Calculate storage requirements for given tiers and modalities.
 

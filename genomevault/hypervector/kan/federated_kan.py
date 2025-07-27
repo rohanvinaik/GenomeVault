@@ -74,9 +74,6 @@ class FederatedKANCoordinator(nn.Module):
         compressed_dim: int = 100,
         federation_config: FederationConfig = None,
     ) -> None:
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     super().__init__()
 
         self.base_dim = base_dim
@@ -110,9 +107,6 @@ class FederatedKANCoordinator(nn.Module):
         def register_participant(
         self, participant_id: str, institution_type: str, data_characteristics: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """TODO: Add docstring for register_participant"""
-            """TODO: Add docstring for register_participant"""
-                """TODO: Add docstring for register_participant"""
     """
         Register a new participant in the federation
 
@@ -155,8 +149,6 @@ class FederatedKANCoordinator(nn.Module):
 
             def receive_update(self, update: FederatedUpdate) -> Dict[str, Any]:
                 """TODO: Add docstring for receive_update"""
-                    """TODO: Add docstring for receive_update"""
-                        """TODO: Add docstring for receive_update"""
     """
         Receive and validate update from participant
 
@@ -277,8 +269,6 @@ class FederatedKANCoordinator(nn.Module):
 
                     def _update_kan_layer(self, layer: nn.Module, new_weights: torch.Tensor) -> None:
                         """TODO: Add docstring for _update_kan_layer"""
-                            """TODO: Add docstring for _update_kan_layer"""
-                                """TODO: Add docstring for _update_kan_layer"""
     """Update KAN layer with new weights, preserving spline structure"""
         if isinstance(layer, LinearKAN):
             # For LinearKAN, update the values (spline function outputs)
@@ -292,8 +282,6 @@ class FederatedKANCoordinator(nn.Module):
 
                 def _update_spline_coefficients(self, splines: nn.ModuleList, weights: torch.Tensor) -> None:
                     """TODO: Add docstring for _update_spline_coefficients"""
-                        """TODO: Add docstring for _update_spline_coefficients"""
-                            """TODO: Add docstring for _update_spline_coefficients"""
     """Update spline coefficients in KAN layer"""
         weight_idx = 0
         for i, spline_row in enumerate(splines):
@@ -306,8 +294,6 @@ class FederatedKANCoordinator(nn.Module):
 
                     def _compute_convergence(self) -> float:
                         """TODO: Add docstring for _compute_convergence"""
-                            """TODO: Add docstring for _compute_convergence"""
-                                """TODO: Add docstring for _compute_convergence"""
     """Compute convergence metric based on model parameter changes"""
         if len(self.convergence_history) < 2:
             return float("inf")
@@ -318,8 +304,6 @@ class FederatedKANCoordinator(nn.Module):
 
             def _compute_noise_scale(self, layer_name: str) -> float:
                 """TODO: Add docstring for _compute_noise_scale"""
-                    """TODO: Add docstring for _compute_noise_scale"""
-                        """TODO: Add docstring for _compute_noise_scale"""
     """Compute noise scale for differential privacy"""
         # Calibrate noise based on privacy budget and sensitivity
         base_noise = 0.01  # Base noise level
@@ -335,8 +319,6 @@ class FederatedKANCoordinator(nn.Module):
 
             def _serialize_model_for_participant(self) -> Dict[str, Any]:
                 """TODO: Add docstring for _serialize_model_for_participant"""
-                    """TODO: Add docstring for _serialize_model_for_participant"""
-                        """TODO: Add docstring for _serialize_model_for_participant"""
     """Serialize model for transmission to participants"""
         model_dict = {}
         for name, module in self.global_model.items():
@@ -346,9 +328,6 @@ class FederatedKANCoordinator(nn.Module):
             def _compute_update_hash(
         self, model_updates: Dict[str, torch.Tensor], data_summary: Dict[str, Any]
     ) -> str:
-        """TODO: Add docstring for _compute_update_hash"""
-            """TODO: Add docstring for _compute_update_hash"""
-                """TODO: Add docstring for _compute_update_hash"""
     """Compute hash for update integrity verification"""
         # Serialize updates for hashing
         update_str = json.dumps(
@@ -360,8 +339,6 @@ class FederatedKANCoordinator(nn.Module):
 
         def get_federation_statistics(self) -> Dict[str, Any]:
             """TODO: Add docstring for get_federation_statistics"""
-                """TODO: Add docstring for get_federation_statistics"""
-                    """TODO: Add docstring for get_federation_statistics"""
     """Get current federation statistics"""
         return {
             "current_round": self.current_round,
@@ -376,8 +353,6 @@ class FederatedKANCoordinator(nn.Module):
 
             def _estimate_rounds_remaining(self) -> int:
                 """TODO: Add docstring for _estimate_rounds_remaining"""
-                    """TODO: Add docstring for _estimate_rounds_remaining"""
-                        """TODO: Add docstring for _estimate_rounds_remaining"""
     """Estimate rounds remaining based on convergence rate"""
         if len(self.convergence_history) < 3:
             return self.config.max_rounds - self.current_round
@@ -409,9 +384,6 @@ class FederatedKANParticipant(nn.Module):
         base_dim: int = 10000,
         compressed_dim: int = 100,
     ) -> None:
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     super().__init__()
 
         self.participant_id = participant_id
@@ -436,8 +408,6 @@ class FederatedKANParticipant(nn.Module):
 
         def update_global_model(self, model_state: Dict[str, Any]) -> None:
             """TODO: Add docstring for update_global_model"""
-                """TODO: Add docstring for update_global_model"""
-                    """TODO: Add docstring for update_global_model"""
     """Update local model with global model state"""
         for name, module_info in model_state.items():
             if name in self.local_model:
@@ -446,9 +416,6 @@ class FederatedKANParticipant(nn.Module):
                 def train_local_round(
         self, genomic_data: List[Dict], num_epochs: int = 5, learning_rate: float = 0.001
     ) -> FederatedUpdate:
-        """TODO: Add docstring for train_local_round"""
-            """TODO: Add docstring for train_local_round"""
-                """TODO: Add docstring for train_local_round"""
     """
         Train model on local genomic data for one federated round
 
@@ -528,8 +495,6 @@ class FederatedKANParticipant(nn.Module):
 
             def _compute_sparsity_loss(self) -> torch.Tensor:
                 """TODO: Add docstring for _compute_sparsity_loss"""
-                    """TODO: Add docstring for _compute_sparsity_loss"""
-                        """TODO: Add docstring for _compute_sparsity_loss"""
     """Compute sparsity regularization for interpretable KANs"""
         total_sparsity = torch.tensor(0.0)
 
@@ -542,8 +507,6 @@ class FederatedKANParticipant(nn.Module):
 
                 def _compute_data_summary(self, genomic_data: List[Dict]) -> Dict[str, Any]:
                     """TODO: Add docstring for _compute_data_summary"""
-                        """TODO: Add docstring for _compute_data_summary"""
-                            """TODO: Add docstring for _compute_data_summary"""
     """Compute non-sensitive data summary"""
         # Extract non-sensitive statistics
         total_variants = sum(len(variants) for variants in genomic_data)
@@ -566,9 +529,6 @@ class FederatedKANParticipant(nn.Module):
                 def _compute_privacy_cost(
         self, model_updates: Dict[str, torch.Tensor], data_size: int
     ) -> float:
-        """TODO: Add docstring for _compute_privacy_cost"""
-            """TODO: Add docstring for _compute_privacy_cost"""
-                """TODO: Add docstring for _compute_privacy_cost"""
     """Compute differential privacy cost of model updates"""
         # Simple privacy cost based on update magnitude and data size
         total_update_norm = sum(torch.norm(update).item() for update in model_updates.values())
@@ -581,9 +541,6 @@ class FederatedKANParticipant(nn.Module):
         def _compute_update_hash(
         self, model_updates: Dict[str, torch.Tensor], data_summary: Dict[str, Any]
     ) -> str:
-        """TODO: Add docstring for _compute_update_hash"""
-            """TODO: Add docstring for _compute_update_hash"""
-                """TODO: Add docstring for _compute_update_hash"""
     """Compute hash for update integrity"""
         update_str = json.dumps(
             {"model": {k: v.tolist() for k, v in model_updates.items()}, "summary": data_summary},

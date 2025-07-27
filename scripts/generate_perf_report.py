@@ -23,8 +23,6 @@ class PerformanceReportGenerator:
 
     def __init__(self, input_dir: Path, output_dir: Path) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.input_dir = Path(input_dir)
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -36,8 +34,6 @@ class PerformanceReportGenerator:
 
         def load_benchmark_data(self) -> Dict[str, List[Dict]]:
             """TODO: Add docstring for load_benchmark_data"""
-                """TODO: Add docstring for load_benchmark_data"""
-                    """TODO: Add docstring for load_benchmark_data"""
     """Load all benchmark JSON files"""
         data = {"hdc": [], "pir": [], "zk": []}
 
@@ -56,8 +52,6 @@ class PerformanceReportGenerator:
 
                         def analyze_hdc_performance(self, hdc_data: List[Dict]) -> Dict[str, Any]:
                             """TODO: Add docstring for analyze_hdc_performance"""
-                                """TODO: Add docstring for analyze_hdc_performance"""
-                                    """TODO: Add docstring for analyze_hdc_performance"""
     """Analyze HDC benchmark data"""
         if not hdc_data:
             return {}
@@ -105,8 +99,6 @@ class PerformanceReportGenerator:
 
                     def generate_hdc_plots(self, hdc_data: List[Dict]) -> None:
                         """TODO: Add docstring for generate_hdc_plots"""
-                            """TODO: Add docstring for generate_hdc_plots"""
-                                """TODO: Add docstring for generate_hdc_plots"""
     """Generate HDC performance plots"""
         if not hdc_data:
             return
@@ -132,8 +124,6 @@ class PerformanceReportGenerator:
 
             def _plot_throughput_comparison(self, throughput_data: Dict) -> None:
                 """TODO: Add docstring for _plot_throughput_comparison"""
-                    """TODO: Add docstring for _plot_throughput_comparison"""
-                        """TODO: Add docstring for _plot_throughput_comparison"""
     """Plot encoding throughput comparison"""
         data = throughput_data["data"]
 
@@ -168,8 +158,6 @@ class PerformanceReportGenerator:
 
             def _plot_memory_comparison(self, memory_data: Dict) -> None:
                 """TODO: Add docstring for _plot_memory_comparison"""
-                    """TODO: Add docstring for _plot_memory_comparison"""
-                        """TODO: Add docstring for _plot_memory_comparison"""
     """Plot memory usage comparison"""
         data = memory_data["data"]
 
@@ -217,8 +205,6 @@ class PerformanceReportGenerator:
 
             def _plot_scalability(self, scalability_data: Dict) -> None:
                 """TODO: Add docstring for _plot_scalability"""
-                    """TODO: Add docstring for _plot_scalability"""
-                        """TODO: Add docstring for _plot_scalability"""
     """Plot batch processing scalability"""
         data = scalability_data["data"]
 
@@ -246,8 +232,6 @@ class PerformanceReportGenerator:
 
             def generate_summary_report(self, all_data: Dict[str, List[Dict]]) -> Dict[str, Any]:
                 """TODO: Add docstring for generate_summary_report"""
-                    """TODO: Add docstring for generate_summary_report"""
-                        """TODO: Add docstring for generate_summary_report"""
     """Generate overall summary report"""
         report = {"generated_at": datetime.now().isoformat(), "lanes": {}}
 
@@ -268,8 +252,6 @@ class PerformanceReportGenerator:
 
             def generate_html_report(self, summary: Dict[str, Any]) -> None:
                 """TODO: Add docstring for generate_html_report"""
-                    """TODO: Add docstring for generate_html_report"""
-                        """TODO: Add docstring for generate_html_report"""
     """Generate HTML performance report"""
         html_content = f"""
 <!DOCTYPE html>
@@ -354,8 +336,6 @@ class PerformanceReportGenerator:
 
             def generate_report(self) -> None:
                 """TODO: Add docstring for generate_report"""
-                    """TODO: Add docstring for generate_report"""
-                        """TODO: Add docstring for generate_report"""
 """Generate complete performance report"""
         print("Loading benchmark data...")
         all_data = self.load_benchmark_data()
@@ -380,8 +360,6 @@ class PerformanceReportGenerator:
 
             def main() -> None:
                 """TODO: Add docstring for main"""
-                    """TODO: Add docstring for main"""
-                        """TODO: Add docstring for main"""
 """Main entry point"""
     parser = argparse.ArgumentParser(description="Generate performance report")
     parser.add_argument("--input", default="benchmarks", help="Input benchmark directory")

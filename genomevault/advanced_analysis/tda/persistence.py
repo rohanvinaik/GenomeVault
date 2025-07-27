@@ -31,16 +31,12 @@ class PersistencePair:
     @property
     def persistence(self) -> float:
         """TODO: Add docstring for persistence"""
-            """TODO: Add docstring for persistence"""
-                """TODO: Add docstring for persistence"""
     """Lifetime of the topological feature"""
         return self.death - self.birth if self.death != float("in") else float("inf")
 
     @property
         def midpoint(self) -> float:
             """TODO: Add docstring for midpoint"""
-                """TODO: Add docstring for midpoint"""
-                    """TODO: Add docstring for midpoint"""
     """Midpoint of the persistence interval"""
         if self.death == float("inf"):
             return self.birth
@@ -58,16 +54,12 @@ class PersistenceDiagram:
 
     def filter_by_persistence(self, threshold: float) -> "PersistenceDiagram":
         """TODO: Add docstring for filter_by_persistence"""
-            """TODO: Add docstring for filter_by_persistence"""
-                """TODO: Add docstring for filter_by_persistence"""
     """Filter pairs by persistence threshold"""
         filtered_pairs = [p for p in self.pairs if p.persistence >= threshold]
         return PersistenceDiagram(filtered_pairs, self.dimension)
 
         def to_array(self) -> np.ndarray:
             """TODO: Add docstring for to_array"""
-                """TODO: Add docstring for to_array"""
-                    """TODO: Add docstring for to_array"""
     """Convert to numpy array format"""
         if not self.pairs:
             return np.array([])
@@ -83,16 +75,11 @@ class TopologicalAnalyzer:
 
     def __init__(self, max_dimension: int = MAX_HOMOLOGY_DIMENSION) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.max_dimension = max_dimension
 
         def compute_persistence_diagram(
         self, data: np.ndarray, max_scale: float = None
     ) -> Dict[int, PersistenceDiagram]:
-        """TODO: Add docstring for compute_persistence_diagram"""
-            """TODO: Add docstring for compute_persistence_diagram"""
-                """TODO: Add docstring for compute_persistence_diagram"""
     """
         Compute persistence diagrams for genomic data
 
@@ -123,9 +110,6 @@ class TopologicalAnalyzer:
             def _build_vietoris_rips(
         self, distances: np.ndarray, max_scale: float
     ) -> List[Tuple[float, List[int]]]:
-        """TODO: Add docstring for _build_vietoris_rips"""
-            """TODO: Add docstring for _build_vietoris_rips"""
-                """TODO: Add docstring for _build_vietoris_rips"""
     """Build Vietoris-Rips filtration from distance matrix"""
         n = distances.shape[0]
         filtration = []
@@ -158,9 +142,6 @@ class TopologicalAnalyzer:
                             def _compute_homology_persistence(
         self, filtration: List[Tuple[float, List[int]]], dimension: int
     ) -> PersistenceDiagram:
-        """TODO: Add docstring for _compute_homology_persistence"""
-            """TODO: Add docstring for _compute_homology_persistence"""
-                """TODO: Add docstring for _compute_homology_persistence"""
     """Compute persistent homology in given dimension"""
         pairs = []
 
@@ -179,9 +160,6 @@ class TopologicalAnalyzer:
             def _compute_0d_persistence(
         self, filtration: List[Tuple[float, List[int]]]
     ) -> List[PersistencePair]:
-        """TODO: Add docstring for _compute_0d_persistence"""
-            """TODO: Add docstring for _compute_0d_persistence"""
-                """TODO: Add docstring for _compute_0d_persistence"""
     """Compute 0-dimensional persistence (connected components)"""
         pairs = []
         union_find = UnionFind()
@@ -227,9 +205,6 @@ class TopologicalAnalyzer:
             def _compute_1d_persistence(
         self, filtration: List[Tuple[float, List[int]]]
     ) -> List[PersistencePair]:
-        """TODO: Add docstring for _compute_1d_persistence"""
-            """TODO: Add docstring for _compute_1d_persistence"""
-                """TODO: Add docstring for _compute_1d_persistence"""
     """Compute 1-dimensional persistence (loops)"""
         # Simplified implementation - would use boundary matrices in practice
         pairs = []
@@ -275,9 +250,6 @@ class TopologicalAnalyzer:
             def _compute_2d_persistence(
         self, filtration: List[Tuple[float, List[int]]]
     ) -> List[PersistencePair]:
-        """TODO: Add docstring for _compute_2d_persistence"""
-            """TODO: Add docstring for _compute_2d_persistence"""
-                """TODO: Add docstring for _compute_2d_persistence"""
     """
         Compute 2-dimensional persistence (voids) for genomic structural analysis.
 
@@ -329,9 +301,6 @@ class TopologicalAnalyzer:
             def _find_neighboring_triangles(
         self, triangle: List[int], all_triangles: List[Tuple[float, List[int]]]
     ) -> List[List[int]]:
-        """TODO: Add docstring for _find_neighboring_triangles"""
-            """TODO: Add docstring for _find_neighboring_triangles"""
-                """TODO: Add docstring for _find_neighboring_triangles"""
     """Find triangles that share an edge with the given triangle"""
         neighbors = []
         triangle_set = set(triangle)
@@ -345,8 +314,6 @@ class TopologicalAnalyzer:
 
             def _get_tetrahedron_faces(self, tetrahedron: List[int]) -> List[List[int]]:
                 """TODO: Add docstring for _get_tetrahedron_faces"""
-                    """TODO: Add docstring for _get_tetrahedron_faces"""
-                        """TODO: Add docstring for _get_tetrahedron_faces"""
     """Get the four triangular faces of a tetrahedron"""
         faces = []
         for i in range(4):
@@ -357,9 +324,6 @@ class TopologicalAnalyzer:
             def compute_bottleneck_distance(
         self, diagram1: PersistenceDiagram, diagram2: PersistenceDiagram
     ) -> float:
-        """TODO: Add docstring for compute_bottleneck_distance"""
-            """TODO: Add docstring for compute_bottleneck_distance"""
-                """TODO: Add docstring for compute_bottleneck_distance"""
     """Compute bottleneck distance between two persistence diagrams"""
         arr1 = diagram1.to_array()
         arr2 = diagram2.to_array()
@@ -395,9 +359,6 @@ class TopologicalAnalyzer:
                 def compute_persistence_landscape(
         self, diagram: PersistenceDiagram, resolution: int = 100
     ) -> np.ndarray:
-        """TODO: Add docstring for compute_persistence_landscape"""
-            """TODO: Add docstring for compute_persistence_landscape"""
-                """TODO: Add docstring for compute_persistence_landscape"""
     """Compute persistence landscape from diagram"""
         if not diagram.pairs:
             return np.zeros((1, resolution))
@@ -439,15 +400,11 @@ class UnionFind:
 
     def __init__(self) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.parent = {}
         self.rank = {}
 
         def add(self, x) -> None:
             """TODO: Add docstring for add"""
-                """TODO: Add docstring for add"""
-                    """TODO: Add docstring for add"""
     """Add element to structure"""
         if x not in self.parent:
             self.parent[x] = x
@@ -455,8 +412,6 @@ class UnionFind:
 
             def find(self, x) -> None:
                 """TODO: Add docstring for find"""
-                    """TODO: Add docstring for find"""
-                        """TODO: Add docstring for find"""
     """Find root of element with path compression"""
         if self.parent[x] != x:
             self.parent[x] = self.find(self.parent[x])
@@ -464,8 +419,6 @@ class UnionFind:
 
             def union(self, x, y) -> None:
                 """TODO: Add docstring for union"""
-                    """TODO: Add docstring for union"""
-                        """TODO: Add docstring for union"""
     """Union two sets by rank"""
         root_x = self.find(x)
         root_y = self.find(y)
@@ -491,16 +444,11 @@ class StructuralSignatureAnalyzer:
 
     def __init__(self) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.analyzer = TopologicalAnalyzer()
 
         def compute_dna_structural_signature(
         self, contact_matrix: np.ndarray, threshold: float = 0.1
     ) -> Dict[str, any]:
-        """TODO: Add docstring for compute_dna_structural_signature"""
-            """TODO: Add docstring for compute_dna_structural_signature"""
-                """TODO: Add docstring for compute_dna_structural_signature"""
     """
         Compute topological signature from DNA contact matrix
 
@@ -545,8 +493,6 @@ class StructuralSignatureAnalyzer:
 
             def compare_structural_signatures(self, sig1: Dict, sig2: Dict) -> float:
                 """TODO: Add docstring for compare_structural_signatures"""
-                    """TODO: Add docstring for compare_structural_signatures"""
-                        """TODO: Add docstring for compare_structural_signatures"""
     """Compare two structural signatures"""
         # Compare persistence diagrams
         distances = []

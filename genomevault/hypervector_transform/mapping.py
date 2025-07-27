@@ -43,8 +43,6 @@ class SimilarityPreservingMapper:
 
     def __init__(self, input_dim: int, output_dim: int, config: Optional[MappingConfig] = None) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     """
         Initialize the mapper
 
@@ -65,8 +63,6 @@ class SimilarityPreservingMapper:
 
             def _initialize_mapping(self) -> None:
                 """TODO: Add docstring for _initialize_mapping"""
-                    """TODO: Add docstring for _initialize_mapping"""
-                        """TODO: Add docstring for _initialize_mapping"""
     """Initialize the mapping matrix"""
         if self.output_dim >= self.input_dim:
             # Random orthogonal mapping for expansion
@@ -79,8 +75,6 @@ class SimilarityPreservingMapper:
 
             def fit(self, data: torch.Tensor, similarity_matrix: Optional[torch.Tensor] = None) -> None:
                 """TODO: Add docstring for fit"""
-                    """TODO: Add docstring for fit"""
-                        """TODO: Add docstring for fit"""
     """
         Fit the mapping to preserve similarities in the data
 
@@ -97,8 +91,6 @@ class SimilarityPreservingMapper:
 
             def transform(self, data: torch.Tensor) -> torch.Tensor:
                 """TODO: Add docstring for transform"""
-                    """TODO: Add docstring for transform"""
-                        """TODO: Add docstring for transform"""
     """
         Transform data using the learned mapping
 
@@ -117,16 +109,12 @@ class SimilarityPreservingMapper:
 
             def fit_transform(self, data: torch.Tensor) -> torch.Tensor:
                 """TODO: Add docstring for fit_transform"""
-                    """TODO: Add docstring for fit_transform"""
-                        """TODO: Add docstring for fit_transform"""
     """Fit and transform in one step"""
                 self.fit(data)
         return self.transform(data)
 
                 def _compute_similarities(self, data: torch.Tensor) -> torch.Tensor:
                     """TODO: Add docstring for _compute_similarities"""
-                        """TODO: Add docstring for _compute_similarities"""
-                            """TODO: Add docstring for _compute_similarities"""
     """Compute pairwise similarity matrix"""
         # Normalize data
         normalized = data / torch.norm(data, dim=1, keepdim=True)
@@ -138,8 +126,6 @@ class SimilarityPreservingMapper:
 
                     def _optimize_mapping(self, data: torch.Tensor, target_similarities: torch.Tensor) -> None:
                         """TODO: Add docstring for _optimize_mapping"""
-                            """TODO: Add docstring for _optimize_mapping"""
-                                """TODO: Add docstring for _optimize_mapping"""
     """Optimize mapping matrix to preserve similarities"""
         optimizer = torch.optim.Adam([self.mapping_matrix], lr=self.config.learning_rate)
 
@@ -188,9 +174,6 @@ class SimilarityPreservingMapper:
                 def _angle_preservation_loss(
         self, original: torch.Tensor, transformed: torch.Tensor
     ) -> torch.Tensor:
-        """TODO: Add docstring for _angle_preservation_loss"""
-            """TODO: Add docstring for _angle_preservation_loss"""
-                """TODO: Add docstring for _angle_preservation_loss"""
     """Compute angle preservation loss"""
         # Sample random triplets
         n = original.shape[0]
@@ -214,8 +197,6 @@ class SimilarityPreservingMapper:
 
             def _compute_angle(self, v1: torch.Tensor, v2: torch.Tensor) -> torch.Tensor:
                 """TODO: Add docstring for _compute_angle"""
-                    """TODO: Add docstring for _compute_angle"""
-                        """TODO: Add docstring for _compute_angle"""
     """Compute angle between two vectors"""
         cos_angle = torch.dot(v1, v2) / (torch.norm(v1) * torch.norm(v2) + 1e-8)
         return torch.acos(torch.clamp(cos_angle, -1, 1))
@@ -223,9 +204,6 @@ class SimilarityPreservingMapper:
                 def _neighborhood_preservation_loss(
         self, original_sim: torch.Tensor, transformed_sim: torch.Tensor
     ) -> torch.Tensor:
-        """TODO: Add docstring for _neighborhood_preservation_loss"""
-            """TODO: Add docstring for _neighborhood_preservation_loss"""
-                """TODO: Add docstring for _neighborhood_preservation_loss"""
     """Compute neighborhood preservation loss"""
         n = original_sim.shape[0]
         k = self.config.neighborhood_size
@@ -254,8 +232,6 @@ class SimilarityPreservingMapper:
 
             def _orthogonalize_mapping(self) -> None:
                 """TODO: Add docstring for _orthogonalize_mapping"""
-                    """TODO: Add docstring for _orthogonalize_mapping"""
-                        """TODO: Add docstring for _orthogonalize_mapping"""
     """Orthogonalize the mapping matrix"""
         q, r = torch.qr(self.mapping_matrix.T)
                 self.mapping_matrix = q.T
@@ -275,9 +251,6 @@ class BiologicalSimilarityMapper(SimilarityPreservingMapper):
         omics_type: OmicsType,
         config: Optional[MappingConfig] = None,
     ) -> None:
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     """
         Initialize biological similarity mapper
 
@@ -293,8 +266,6 @@ class BiologicalSimilarityMapper(SimilarityPreservingMapper):
 
             def _get_similarity_functions(self) -> Dict[str, Callable]:
                 """TODO: Add docstring for _get_similarity_functions"""
-                    """TODO: Add docstring for _get_similarity_functions"""
-                        """TODO: Add docstring for _get_similarity_functions"""
     """Get omics-specific similarity functions"""
         if self.omics_type == OmicsType.GENOMIC:
             return {
@@ -322,9 +293,6 @@ class BiologicalSimilarityMapper(SimilarityPreservingMapper):
         data2: torch.Tensor,
         similarity_type: str = "default",
     ) -> float:
-        """TODO: Add docstring for compute_biological_similarity"""
-            """TODO: Add docstring for compute_biological_similarity"""
-                """TODO: Add docstring for compute_biological_similarity"""
     """
         Compute biological similarity between two data points
 
@@ -341,8 +309,6 @@ class BiologicalSimilarityMapper(SimilarityPreservingMapper):
 
             def _variant_similarity(self, v1: torch.Tensor, v2: torch.Tensor) -> float:
                 """TODO: Add docstring for _variant_similarity"""
-                    """TODO: Add docstring for _variant_similarity"""
-                        """TODO: Add docstring for _variant_similarity"""
     """Compute similarity between variant profiles"""
         # Consider shared variants and allele frequencies
         shared = torch.min(v1, v2).sum()
@@ -351,8 +317,6 @@ class BiologicalSimilarityMapper(SimilarityPreservingMapper):
 
                 def _haplotype_similarity(self, h1: torch.Tensor, h2: torch.Tensor) -> float:
                     """TODO: Add docstring for _haplotype_similarity"""
-                        """TODO: Add docstring for _haplotype_similarity"""
-                            """TODO: Add docstring for _haplotype_similarity"""
     """Compute haplotype similarity"""
         # Hamming distance normalized
         matches = (h1 == h2).float().mean()
@@ -360,8 +324,6 @@ class BiologicalSimilarityMapper(SimilarityPreservingMapper):
 
                     def _structural_similarity(self, s1: torch.Tensor, s2: torch.Tensor) -> float:
                         """TODO: Add docstring for _structural_similarity"""
-                            """TODO: Add docstring for _structural_similarity"""
-                                """TODO: Add docstring for _structural_similarity"""
     """Compute structural variant similarity"""
         # Overlap coefficient for structural variants
         overlap = torch.min(torch.abs(s1), torch.abs(s2)).sum()
@@ -370,8 +332,6 @@ class BiologicalSimilarityMapper(SimilarityPreservingMapper):
 
                         def _expression_similarity(self, e1: torch.Tensor, e2: torch.Tensor) -> float:
                             """TODO: Add docstring for _expression_similarity"""
-                                """TODO: Add docstring for _expression_similarity"""
-                                    """TODO: Add docstring for _expression_similarity"""
     """Compute gene expression similarity"""
         # Pearson correlation
         e1_centered = e1 - e1.mean()
@@ -384,8 +344,6 @@ class BiologicalSimilarityMapper(SimilarityPreservingMapper):
 
                             def _coexpression_similarity(self, c1: torch.Tensor, c2: torch.Tensor) -> float:
                                 """TODO: Add docstring for _coexpression_similarity"""
-                                    """TODO: Add docstring for _coexpression_similarity"""
-                                        """TODO: Add docstring for _coexpression_similarity"""
     """Compute co-expression pattern similarity"""
         # Use rank correlation for robustness
         rank1 = torch.argsort(torch.argsort(c1)).float()
@@ -395,8 +353,6 @@ class BiologicalSimilarityMapper(SimilarityPreservingMapper):
 
                                 def _pathway_similarity(self, p1: torch.Tensor, p2: torch.Tensor) -> float:
                                     """TODO: Add docstring for _pathway_similarity"""
-                                        """TODO: Add docstring for _pathway_similarity"""
-                                            """TODO: Add docstring for _pathway_similarity"""
     """Compute pathway activity similarity"""
         # Jaccard index for pathway membership
         active1 = p1 > 0.5
@@ -409,8 +365,6 @@ class BiologicalSimilarityMapper(SimilarityPreservingMapper):
 
                                     def _methylation_similarity(self, m1: torch.Tensor, m2: torch.Tensor) -> float:
                                         """TODO: Add docstring for _methylation_similarity"""
-                                            """TODO: Add docstring for _methylation_similarity"""
-                                                """TODO: Add docstring for _methylation_similarity"""
     """Compute methylation pattern similarity"""
         # Beta-value difference
         diff = torch.abs(m1 - m2)
@@ -419,8 +373,6 @@ class BiologicalSimilarityMapper(SimilarityPreservingMapper):
 
                                         def _chromatin_similarity(self, c1: torch.Tensor, c2: torch.Tensor) -> float:
                                             """TODO: Add docstring for _chromatin_similarity"""
-                                                """TODO: Add docstring for _chromatin_similarity"""
-                                                    """TODO: Add docstring for _chromatin_similarity"""
     """Compute chromatin accessibility similarity"""
         # Peak overlap
         threshold = 0.1
@@ -434,8 +386,6 @@ class BiologicalSimilarityMapper(SimilarityPreservingMapper):
 
                                             def _default_similarity(self, d1: torch.Tensor, d2: torch.Tensor) -> float:
                                                 """TODO: Add docstring for _default_similarity"""
-                                                    """TODO: Add docstring for _default_similarity"""
-                                                        """TODO: Add docstring for _default_similarity"""
     """Default similarity using cosine similarity"""
         return torch.nn.functional.cosine_similarity(d1.view(1, -1), d2.view(1, -1)).item()
 
@@ -449,8 +399,6 @@ class ManifoldPreservingMapper:
 
     def __init__(self, input_dim: int, output_dim: int, n_neighbors: int = 15) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     """
         Initialize manifold-preserving mapper
 
@@ -468,8 +416,6 @@ class ManifoldPreservingMapper:
 
             def fit_transform(self, data: torch.Tensor) -> torch.Tensor:
                 """TODO: Add docstring for fit_transform"""
-                    """TODO: Add docstring for fit_transform"""
-                        """TODO: Add docstring for fit_transform"""
     """
         Fit and transform data preserving manifold structure
 
@@ -500,9 +446,6 @@ class ManifoldPreservingMapper:
         neighbors: torch.Tensor,
         n_iterations: int = 500,
     ) -> None:
-        """TODO: Add docstring for _optimize_embedding"""
-            """TODO: Add docstring for _optimize_embedding"""
-                """TODO: Add docstring for _optimize_embedding"""
     """Optimize embedding to preserve local structure"""
         optimizer = torch.optim.Adam([self.embedding], lr=0.01)
 
@@ -554,17 +497,12 @@ class ManifoldPreservingMapper:
                 def create_biological_mapper(
     input_dim: int, output_dim: int, omics_type: OmicsType
 ) -> BiologicalSimilarityMapper:
-    """TODO: Add docstring for create_biological_mapper"""
-        """TODO: Add docstring for create_biological_mapper"""
-            """TODO: Add docstring for create_biological_mapper"""
     """Create a biological similarity mapper"""
     return BiologicalSimilarityMapper(input_dim, output_dim, omics_type)
 
 
     def preserve_similarities(data: torch.Tensor, target_dim: int) -> torch.Tensor:
         """TODO: Add docstring for preserve_similarities"""
-            """TODO: Add docstring for preserve_similarities"""
-                """TODO: Add docstring for preserve_similarities"""
     """Transform data while preserving similarities"""
     mapper = SimilarityPreservingMapper(data.shape[1], target_dim)
     return mapper.fit_transform(data)

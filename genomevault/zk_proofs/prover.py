@@ -38,8 +38,6 @@ class Circuit:
 
     def to_dict(self) -> Dict:
         """TODO: Add docstring for to_dict"""
-            """TODO: Add docstring for to_dict"""
-                """TODO: Add docstring for to_dict"""
     return {
             "name": self.name,
             "circuit_type": self.circuit_type,
@@ -66,8 +64,6 @@ class Proof:
 
     def to_dict(self) -> Dict:
         """TODO: Add docstring for to_dict"""
-            """TODO: Add docstring for to_dict"""
-                """TODO: Add docstring for to_dict"""
     return {
             "proof_id": self.proof_id,
             "circuit_name": self.circuit_name,
@@ -87,8 +83,6 @@ class CircuitLibrary:
     @staticmethod
     def variant_presence_circuit() -> Circuit:
         """TODO: Add docstring for variant_presence_circuit"""
-            """TODO: Add docstring for variant_presence_circuit"""
-                """TODO: Add docstring for variant_presence_circuit"""
     """Circuit for proving variant presence without revealing position."""
         return Circuit(
             name="variant_presence",
@@ -114,8 +108,6 @@ class CircuitLibrary:
     @staticmethod
         def polygenic_risk_score_circuit() -> Circuit:
             """TODO: Add docstring for polygenic_risk_score_circuit"""
-                """TODO: Add docstring for polygenic_risk_score_circuit"""
-                    """TODO: Add docstring for polygenic_risk_score_circuit"""
     """Circuit for computing PRS without revealing individual variants."""
         return Circuit(
             name="polygenic_risk_score",
@@ -143,8 +135,6 @@ class CircuitLibrary:
     @staticmethod
             def ancestry_composition_circuit() -> Circuit:
                 """TODO: Add docstring for ancestry_composition_circuit"""
-                    """TODO: Add docstring for ancestry_composition_circuit"""
-                        """TODO: Add docstring for ancestry_composition_circuit"""
     """Circuit for proving ancestry proportions."""
         return Circuit(
             name="ancestry_composition",
@@ -170,8 +160,6 @@ class CircuitLibrary:
     @staticmethod
                 def pharmacogenomic_circuit() -> Circuit:
                     """TODO: Add docstring for pharmacogenomic_circuit"""
-                        """TODO: Add docstring for pharmacogenomic_circuit"""
-                            """TODO: Add docstring for pharmacogenomic_circuit"""
     """Circuit for medication response prediction."""
         return Circuit(
             name="pharmacogenomic",
@@ -197,8 +185,6 @@ class CircuitLibrary:
     @staticmethod
                     def pathway_enrichment_circuit() -> Circuit:
                         """TODO: Add docstring for pathway_enrichment_circuit"""
-                            """TODO: Add docstring for pathway_enrichment_circuit"""
-                                """TODO: Add docstring for pathway_enrichment_circuit"""
     """Circuit for pathway analysis without revealing expression."""
         return Circuit(
             name="pathway_enrichment",
@@ -221,8 +207,6 @@ class CircuitLibrary:
     @staticmethod
                         def diabetes_risk_circuit() -> Circuit:
                             """TODO: Add docstring for diabetes_risk_circuit"""
-                                """TODO: Add docstring for diabetes_risk_circuit"""
-                                    """TODO: Add docstring for diabetes_risk_circuit"""
     """Circuit for diabetes risk assessment (pilot implementation)."""
         return Circuit(
             name="diabetes_risk_alert",
@@ -256,8 +240,6 @@ class Prover:
 
     def __init__(self, circuit_library: Optional[CircuitLibrary] = None) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     """
         Initialize prover with circuit library.
 
@@ -271,8 +253,6 @@ class Prover:
 
             def _load_trusted_setup(self) -> Dict:
                 """TODO: Add docstring for _load_trusted_setup"""
-                    """TODO: Add docstring for _load_trusted_setup"""
-                        """TODO: Add docstring for _load_trusted_setup"""
     """Load trusted setup parameters."""
         # In production, would load actual PLONK SRS
         return {
@@ -288,9 +268,6 @@ class Prover:
         public_inputs: Dict[str, Any],
         private_inputs: Dict[str, Any],
     ) -> Proof:
-        """TODO: Add docstring for generate_proof"""
-            """TODO: Add docstring for generate_proof"""
-                """TODO: Add docstring for generate_proof"""
     """
         Generate zero-knowledge proof.
 
@@ -352,8 +329,6 @@ class Prover:
 
             def _get_circuit(self, circuit_name: str) -> Circuit:
                 """TODO: Add docstring for _get_circuit"""
-                    """TODO: Add docstring for _get_circuit"""
-                        """TODO: Add docstring for _get_circuit"""
     """Get circuit definition by name."""
         _ = {
             "variant_presence": self.circuit_library.variant_presence_circuit(),
@@ -371,8 +346,6 @@ class Prover:
 
             def _validate_inputs(self, circuit: Circuit, public_inputs: Dict, private_inputs: Dict) -> None:
                 """TODO: Add docstring for _validate_inputs"""
-                    """TODO: Add docstring for _validate_inputs"""
-                        """TODO: Add docstring for _validate_inputs"""
     """Validate inputs match circuit requirements."""
         # Check public inputs
         for required_input in circuit.public_inputs:
@@ -386,8 +359,6 @@ class Prover:
 
                 def _generate_proof_id(self, circuit_name: str, public_inputs: Dict) -> str:
                     """TODO: Add docstring for _generate_proof_id"""
-                        """TODO: Add docstring for _generate_proof_id"""
-                            """TODO: Add docstring for _generate_proof_id"""
     """Generate unique proof ID."""
         _ = {
             "circuit": circuit_name,
@@ -402,9 +373,6 @@ class Prover:
                     def _simulate_proof_generation(
         self, circuit: Circuit, public_inputs: Dict, private_inputs: Dict
     ) -> bytes:
-        """TODO: Add docstring for _simulate_proof_generation"""
-            """TODO: Add docstring for _simulate_proof_generation"""
-                """TODO: Add docstring for _simulate_proof_generation"""
     """
         Simulate PLONK proof generation.
         In production, would use actual proving system.
@@ -422,8 +390,6 @@ class Prover:
 
             def _simulate_variant_proof(self, public_inputs: Dict, private_inputs: Dict) -> bytes:
                 """TODO: Add docstring for _simulate_variant_proof"""
-                    """TODO: Add docstring for _simulate_variant_proof"""
-                        """TODO: Add docstring for _simulate_variant_proof"""
     """Simulate variant presence proof."""
         # Verify variant is in commitment
         _ = private_inputs["variant_data"]
@@ -445,8 +411,6 @@ class Prover:
 
             def _simulate_prs_proof(self, public_inputs: Dict, private_inputs: Dict) -> bytes:
                 """TODO: Add docstring for _simulate_prs_proof"""
-                    """TODO: Add docstring for _simulate_prs_proof"""
-                        """TODO: Add docstring for _simulate_prs_proof"""
     """Simulate PRS calculation proof."""
         # Calculate score
         _ = private_inputs["variants"]
@@ -471,8 +435,6 @@ class Prover:
 
             def _simulate_diabetes_proof(self, public_inputs: Dict, private_inputs: Dict) -> bytes:
                 """TODO: Add docstring for _simulate_diabetes_proof"""
-                    """TODO: Add docstring for _simulate_diabetes_proof"""
-                        """TODO: Add docstring for _simulate_diabetes_proof"""
     """Simulate diabetes risk alert proof."""
         # Extract values
         _ = private_inputs["glucose_reading"]
@@ -498,8 +460,6 @@ class Prover:
 
                 def _simulate_generic_proof(self, circuit: Circuit, public_inputs: Dict) -> bytes:
                     """TODO: Add docstring for _simulate_generic_proof"""
-                        """TODO: Add docstring for _simulate_generic_proof"""
-                            """TODO: Add docstring for _simulate_generic_proof"""
     """Generic proof simulation."""
         # Size based on circuit constraints
         _ = min(800, 192 + circuit.constraints // 100)
@@ -515,8 +475,6 @@ class Prover:
 
                     def batch_prove(self, proof_requests: List[Dict]) -> List[Proof]:
                         """TODO: Add docstring for batch_prove"""
-                            """TODO: Add docstring for batch_prove"""
-                                """TODO: Add docstring for batch_prove"""
     """
         Generate multiple proofs in batch.
 
@@ -544,8 +502,6 @@ class Prover:
 
                 def generate_recursive_proof(self, proofs: List[Proof]) -> Proof:
                     """TODO: Add docstring for generate_recursive_proof"""
-                        """TODO: Add docstring for generate_recursive_proof"""
-                            """TODO: Add docstring for generate_recursive_proof"""
     """
         Generate recursive proof combining multiple proofs.
 
@@ -582,8 +538,6 @@ class Prover:
 
                 def _validate_proof_format(self, proof: Proof) -> bool:
                     """TODO: Add docstring for _validate_proof_format"""
-                        """TODO: Add docstring for _validate_proof_format"""
-                            """TODO: Add docstring for _validate_proof_format"""
     """Validate proof format."""
         return (
             proof.proof_data is not None
@@ -594,8 +548,6 @@ class Prover:
 
                     def _hash_proof(self, proof: Proof) -> str:
                         """TODO: Add docstring for _hash_proof"""
-                            """TODO: Add docstring for _hash_proof"""
-                                """TODO: Add docstring for _hash_proof"""
     """Calculate hash of proof."""
         _ = json.dumps(
             {

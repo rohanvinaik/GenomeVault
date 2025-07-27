@@ -42,8 +42,6 @@ class HypervectorBinder:
 
     def __init__(self, dimension: int = 10000, seed: Optional[int] = None) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     """
         Initialize the binder
 
@@ -67,9 +65,6 @@ class HypervectorBinder:
         binding_type: BindingType = BindingType.CIRCULAR,
         weights: Optional[List[float]] = None,
     ) -> torch.Tensor:
-        """TODO: Add docstring for bind"""
-            """TODO: Add docstring for bind"""
-                """TODO: Add docstring for bind"""
     """
         Bind multiple hypervectors together
 
@@ -122,9 +117,6 @@ class HypervectorBinder:
         known_vectors: List[torch.Tensor],
         binding_type: BindingType = BindingType.CIRCULAR,
     ) -> torch.Tensor:
-        """TODO: Add docstring for unbind"""
-            """TODO: Add docstring for unbind"""
-                """TODO: Add docstring for unbind"""
     """
         Unbind a vector given some known components
 
@@ -151,8 +143,6 @@ class HypervectorBinder:
 
             def _multiply_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
                 """TODO: Add docstring for _multiply_bind"""
-                    """TODO: Add docstring for _multiply_bind"""
-                        """TODO: Add docstring for _multiply_bind"""
     """Element-wise multiplication binding"""
         result = vectors[0].clone()
         for v in vectors[1:]:
@@ -162,9 +152,6 @@ class HypervectorBinder:
             def _multiply_unbind(
         self, bound_vector: torch.Tensor, known_vectors: List[torch.Tensor]
     ) -> torch.Tensor:
-        """TODO: Add docstring for _multiply_unbind"""
-            """TODO: Add docstring for _multiply_unbind"""
-                """TODO: Add docstring for _multiply_unbind"""
     """Unbind using element-wise division"""
         result = bound_vector.clone()
         for v in known_vectors:
@@ -174,8 +161,6 @@ class HypervectorBinder:
 
             def _circular_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
                 """TODO: Add docstring for _circular_bind"""
-                    """TODO: Add docstring for _circular_bind"""
-                        """TODO: Add docstring for _circular_bind"""
     """Circular convolution binding"""
         if len(vectors) == 1:
             return vectors[0]
@@ -191,8 +176,6 @@ class HypervectorBinder:
 
             def _circular_convolve(self, x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
                 """TODO: Add docstring for _circular_convolve"""
-                    """TODO: Add docstring for _circular_convolve"""
-                        """TODO: Add docstring for _circular_convolve"""
     """Perform circular convolution of two vectors"""
         # Use FFT for efficient circular convolution
         X = torch.fft.fft(x)
@@ -204,9 +187,6 @@ class HypervectorBinder:
                 def _circular_unbind(
         self, bound_vector: torch.Tensor, known_vectors: List[torch.Tensor]
     ) -> torch.Tensor:
-        """TODO: Add docstring for _circular_unbind"""
-            """TODO: Add docstring for _circular_unbind"""
-                """TODO: Add docstring for _circular_unbind"""
     """Unbind using circular correlation (inverse of convolution)"""
         result = bound_vector
 
@@ -219,8 +199,6 @@ class HypervectorBinder:
 
             def _permutation_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
                 """TODO: Add docstring for _permutation_bind"""
-                    """TODO: Add docstring for _permutation_bind"""
-                        """TODO: Add docstring for _permutation_bind"""
     """Permutation-based binding"""
         result = torch.zeros_like(vectors[0])
 
@@ -236,9 +214,6 @@ class HypervectorBinder:
             def _permutation_unbind(
         self, bound_vector: torch.Tensor, known_vectors: List[torch.Tensor]
     ) -> torch.Tensor:
-        """TODO: Add docstring for _permutation_unbind"""
-            """TODO: Add docstring for _permutation_unbind"""
-                """TODO: Add docstring for _permutation_unbind"""
     """Unbind using inverse permutations"""
         # Subtract contributions of known vectors
         result = bound_vector * (len(known_vectors) + 1)
@@ -255,8 +230,6 @@ class HypervectorBinder:
 
             def _xor_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
                 """TODO: Add docstring for _xor_bind"""
-                    """TODO: Add docstring for _xor_bind"""
-                        """TODO: Add docstring for _xor_bind"""
     """XOR binding for binary vectors"""
         # Convert to binary
         binary_vectors = [(v > 0).float() for v in vectors]
@@ -273,16 +246,11 @@ class HypervectorBinder:
             def _xor_unbind(
         self, bound_vector: torch.Tensor, known_vectors: List[torch.Tensor]
     ) -> torch.Tensor:
-        """TODO: Add docstring for _xor_unbind"""
-            """TODO: Add docstring for _xor_unbind"""
-                """TODO: Add docstring for _xor_unbind"""
     """XOR unbinding (XOR is its own inverse)"""
         return self._xor_bind([bound_vector] + known_vectors)
 
         def _fourier_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
             """TODO: Add docstring for _fourier_bind"""
-                """TODO: Add docstring for _fourier_bind"""
-                    """TODO: Add docstring for _fourier_bind"""
     """
         Fourier-based Holographic Reduced Representation (HRR) binding
         This is the most sophisticated binding operation
@@ -309,9 +277,6 @@ class HypervectorBinder:
             def _fourier_unbind(
         self, bound_vector: torch.Tensor, known_vectors: List[torch.Tensor]
     ) -> torch.Tensor:
-        """TODO: Add docstring for _fourier_unbind"""
-            """TODO: Add docstring for _fourier_unbind"""
-                """TODO: Add docstring for _fourier_unbind"""
     """
         Unbind using Fourier-based HRR
         Uses the approximate inverse in frequency domain
@@ -335,8 +300,6 @@ class HypervectorBinder:
 
             def _get_permutation(self, position: int) -> torch.Tensor:
                 """TODO: Add docstring for _get_permutation"""
-                    """TODO: Add docstring for _get_permutation"""
-                        """TODO: Add docstring for _get_permutation"""
     """Get deterministic permutation for a position"""
         if position in self._permutation_cache:
             return self._permutation_cache[position]
@@ -350,8 +313,6 @@ class HypervectorBinder:
 
             def _get_inverse_permutation(self, position: int) -> torch.Tensor:
                 """TODO: Add docstring for _get_inverse_permutation"""
-                    """TODO: Add docstring for _get_inverse_permutation"""
-                        """TODO: Add docstring for _get_inverse_permutation"""
     """Get inverse of a permutation"""
         perm = self._get_permutation(position)
         inv_perm = torch.zeros_like(perm)
@@ -360,8 +321,6 @@ class HypervectorBinder:
 
                 def bundle(self, vectors: List[torch.Tensor], normalize: bool = True) -> torch.Tensor:
                     """TODO: Add docstring for bundle"""
-                        """TODO: Add docstring for bundle"""
-                            """TODO: Add docstring for bundle"""
     """
         Bundle vectors using superposition (addition)
 
@@ -386,8 +345,6 @@ class HypervectorBinder:
 
             def protect(self, vector: torch.Tensor, key: torch.Tensor) -> torch.Tensor:
                 """TODO: Add docstring for protect"""
-                    """TODO: Add docstring for protect"""
-                        """TODO: Add docstring for protect"""
     """
         Protect a hypervector using a key vector
 
@@ -402,8 +359,6 @@ class HypervectorBinder:
 
             def unprotect(self, protected: torch.Tensor, key: torch.Tensor) -> torch.Tensor:
                 """TODO: Add docstring for unprotect"""
-                    """TODO: Add docstring for unprotect"""
-                        """TODO: Add docstring for unprotect"""
     """
         Unprotect a hypervector using the key
 
@@ -421,9 +376,6 @@ class HypervectorBinder:
         role_filler_pairs: List[Tuple[torch.Tensor, torch.Tensor]],
         binding_type: BindingType = BindingType.FOURIER,
     ) -> torch.Tensor:
-        """TODO: Add docstring for create_composite_binding"""
-            """TODO: Add docstring for create_composite_binding"""
-                """TODO: Add docstring for create_composite_binding"""
     """
         Create a composite binding of role-filler pairs
         This is useful for encoding structured information
@@ -451,9 +403,6 @@ class HypervectorBinder:
         role: torch.Tensor,
         binding_type: BindingType = BindingType.FOURIER,
     ) -> torch.Tensor:
-        """TODO: Add docstring for query_composite"""
-            """TODO: Add docstring for query_composite"""
-                """TODO: Add docstring for query_composite"""
     """
         Query a composite binding for a specific role
 
@@ -470,8 +419,6 @@ class HypervectorBinder:
 
             def compute_binding_capacity(self, num_items: int) -> float:
                 """TODO: Add docstring for compute_binding_capacity"""
-                    """TODO: Add docstring for compute_binding_capacity"""
-                        """TODO: Add docstring for compute_binding_capacity"""
     """
         Compute the theoretical binding capacity
 
@@ -488,8 +435,6 @@ class HypervectorBinder:
 
             def test_binding_properties(self, num_samples: int = 100) -> Dict[str, float]:
                 """TODO: Add docstring for test_binding_properties"""
-                    """TODO: Add docstring for test_binding_properties"""
-                        """TODO: Add docstring for test_binding_properties"""
     """
         Test mathematical properties of binding operations
 
@@ -549,8 +494,6 @@ class BindingOperations(HypervectorBinder):
 # Convenience functions
     def circular_bind(vectors: List[torch.Tensor]) -> torch.Tensor:
         """TODO: Add docstring for circular_bind"""
-            """TODO: Add docstring for circular_bind"""
-                """TODO: Add docstring for circular_bind"""
     """Convenience function for circular binding"""
     if not vectors:
         raise ValueError("No vectors provided")
@@ -561,8 +504,6 @@ class BindingOperations(HypervectorBinder):
 
         def fourier_bind(vectors: List[torch.Tensor]) -> torch.Tensor:
             """TODO: Add docstring for fourier_bind"""
-                """TODO: Add docstring for fourier_bind"""
-                    """TODO: Add docstring for fourier_bind"""
     """Convenience function for Fourier-based HRR binding"""
     if not vectors:
         raise ValueError("No vectors provided")
@@ -573,8 +514,6 @@ class BindingOperations(HypervectorBinder):
 
         def protect_vector(vector: torch.Tensor, key: torch.Tensor) -> torch.Tensor:
             """TODO: Add docstring for protect_vector"""
-                """TODO: Add docstring for protect_vector"""
-                    """TODO: Add docstring for protect_vector"""
     """Convenience function for vector protection"""
     binder = HypervectorBinder(vector.shape[-1])
     return binder.protect(vector, key)

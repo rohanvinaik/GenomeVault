@@ -16,15 +16,11 @@ import numpy as np
 class HDVariantSearch:
     def __init__(self, dimension=10000) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.dimension = dimension
         self.setup_basis_vectors()
 
         def setup_basis_vectors(self) -> None:
             """TODO: Add docstring for setup_basis_vectors"""
-                """TODO: Add docstring for setup_basis_vectors"""
-                    """TODO: Add docstring for setup_basis_vectors"""
     """Initialize random basis vectors"""
         np.random.seed(42)
             self.chrom_basis = np.random.randint(0, 2, self.dimension)
@@ -34,8 +30,6 @@ class HDVariantSearch:
 
             def encode_variant(self, chrom, pos, ref, alt) -> None:
                 """TODO: Add docstring for encode_variant"""
-                    """TODO: Add docstring for encode_variant"""
-                        """TODO: Add docstring for encode_variant"""
     """Encode a single variant"""
         chrom_vec = np.roll(self.chrom_basis, hash(chrom) % self.dimension)
         pos_vec = np.roll(self.pos_basis, pos % self.dimension)
@@ -46,15 +40,11 @@ class HDVariantSearch:
 
                 def hamming_similarity(self, vec1, vec2) -> None:
                     """TODO: Add docstring for hamming_similarity"""
-                        """TODO: Add docstring for hamming_similarity"""
-                            """TODO: Add docstring for hamming_similarity"""
     """Calculate Hamming similarity between two vectors"""
         return np.sum(vec1 == vec2) / len(vec1)
 
                     def load_variants(self, filename) -> None:
                         """TODO: Add docstring for load_variants"""
-                            """TODO: Add docstring for load_variants"""
-                                """TODO: Add docstring for load_variants"""
     """Load variants from file"""
         variants = []
 
@@ -82,8 +72,6 @@ class HDVariantSearch:
 
                     def search(self, query_variant, database_variants, top_k=5) -> None:
                         """TODO: Add docstring for search"""
-                            """TODO: Add docstring for search"""
-                                """TODO: Add docstring for search"""
     """Search for similar variants"""
         print(
             f"\nSearching for variants similar to: {query_variant['chrom']}:{query_variant['pos']}:{query_variant['ref']}>{query_variant['alt']}"
@@ -117,8 +105,6 @@ class HDVariantSearch:
 
             def main() -> None:
                 """TODO: Add docstring for main"""
-                    """TODO: Add docstring for main"""
-                        """TODO: Add docstring for main"""
     parser = argparse.ArgumentParser(description="Search for similar variants using HD encoding")
     parser.add_argument(
         "--query", type=str, required=True, help="Query variant in format chr:pos:ref:alt"

@@ -53,8 +53,6 @@ class StreamingStats:
 
     def __post_init__(self) -> None:
         """TODO: Add docstring for __post_init__"""
-            """TODO: Add docstring for __post_init__"""
-                """TODO: Add docstring for __post_init__"""
     if self.variance_peaks is None:
         self.variance_peaks = []
 
@@ -69,9 +67,6 @@ class SliceReader:
         slice_size: int = 50000,  # ~4MB per slice
         overlap: int = 1000,  # Event overlap between slices
     ) -> None:
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.slice_size = slice_size
         self.overlap = overlap
         self.current_read = None
@@ -82,9 +77,6 @@ class SliceReader:
         fast5_path: Union[str, Path],
         read_ids: Optional[List[str]] = None,
     ) -> AsyncIterator[NanoporeSlice]:
-        """TODO: Add docstring for read_fast5_slices"""
-            """TODO: Add docstring for read_fast5_slices"""
-                """TODO: Add docstring for read_fast5_slices"""
     """
         Stream slices from Fast5 file.
 
@@ -136,9 +128,6 @@ class SliceReader:
         stream_url: str,
         batch_size: int = 10,
     ) -> AsyncIterator[NanoporeSlice]:
-        """TODO: Add docstring for read_minknow_stream"""
-            """TODO: Add docstring for read_minknow_stream"""
-                """TODO: Add docstring for read_minknow_stream"""
     """
         Stream from MinKNOW in real-time.
 
@@ -166,8 +155,6 @@ class SliceReader:
 
         def _signal_to_events(self, raw_signal: np.ndarray, read) -> np.ndarray:
             """TODO: Add docstring for _signal_to_events"""
-                """TODO: Add docstring for _signal_to_events"""
-                    """TODO: Add docstring for _signal_to_events"""
     """
         Convert raw signal to events.
 
@@ -217,9 +204,6 @@ class NanoporeStreamProcessor:
         clean_space_mb: int = 1,
         enable_gpu: bool = True,
     ) -> None:
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     """
         Initialize stream processor.
 
@@ -258,9 +242,6 @@ class NanoporeStreamProcessor:
         output_callback=None,
         anomaly_threshold: float = 3.0,
     ) -> StreamingStats:
-        """TODO: Add docstring for process_fast5"""
-            """TODO: Add docstring for process_fast5"""
-                """TODO: Add docstring for process_fast5"""
     """
         Process Fast5 file with streaming pipeline.
 
@@ -320,9 +301,6 @@ class NanoporeStreamProcessor:
         self,
         slice_data: NanoporeSlice,
     ) -> Tuple[np.ndarray, np.ndarray]:
-        """TODO: Add docstring for _process_slice"""
-            """TODO: Add docstring for _process_slice"""
-                """TODO: Add docstring for _process_slice"""
     """
         Process single slice to HV with variance tracking.
 
@@ -375,9 +353,6 @@ class NanoporeStreamProcessor:
         events: np.ndarray,
         start_pos: int,
     ) -> Tuple[np.ndarray, np.ndarray]:
-        """TODO: Add docstring for _cpu_process_batch"""
-            """TODO: Add docstring for _cpu_process_batch"""
-                """TODO: Add docstring for _cpu_process_batch"""
     """CPU implementation of event processing."""
         hv_dim = self.hv_encoder.dimension
         batch_hv = np.zeros(hv_dim, dtype=np.float32)
@@ -418,8 +393,6 @@ class NanoporeStreamProcessor:
 
             def _update_variance_state(self, read_id: str, variances: np.ndarray) -> None:
                 """TODO: Add docstring for _update_variance_state"""
-                    """TODO: Add docstring for _update_variance_state"""
-                        """TODO: Add docstring for _update_variance_state"""
     """Update streaming variance statistics."""
         if read_id not in self.variance_state:
             self.variance_state[read_id] = {
@@ -443,9 +416,6 @@ class NanoporeStreamProcessor:
         variances: np.ndarray,
         threshold: float,
     ) -> List[Tuple[int, float]]:
-        """TODO: Add docstring for _detect_anomalies"""
-            """TODO: Add docstring for _detect_anomalies"""
-                """TODO: Add docstring for _detect_anomalies"""
     """Detect anomalous positions based on variance."""
         anomalies = []
 
@@ -467,9 +437,6 @@ class NanoporeStreamProcessor:
         slice_results: List[Dict],
         proof_type: str = "anomaly_detection",
     ) -> bytes:
-        """TODO: Add docstring for generate_streaming_proof"""
-            """TODO: Add docstring for generate_streaming_proof"""
-                """TODO: Add docstring for generate_streaming_proof"""
     """
         Generate zero-knowledge proof of streaming analysis.
 
@@ -521,8 +488,6 @@ class NanoporeStreamProcessor:
 # Example usage
 async def example_streaming_pipeline() -> None:
     """TODO: Add docstring for example_streaming_pipeline"""
-        """TODO: Add docstring for example_streaming_pipeline"""
-            """TODO: Add docstring for example_streaming_pipeline"""
     """Example of streaming nanopore processing."""
     from genomevault.hypervector.encoding import HypervectorEncoder
 
@@ -542,8 +507,6 @@ async def example_streaming_pipeline() -> None:
 
     async def collect_results(result) -> None:
         """TODO: Add docstring for collect_results"""
-            """TODO: Add docstring for collect_results"""
-                """TODO: Add docstring for collect_results"""
     results.append(result)
         if result["anomalies"]:
             print(f"Anomalies detected in slice {result['slice_id']}: {len(result['anomalies'])}")

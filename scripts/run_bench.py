@@ -28,16 +28,12 @@ class CIBenchmarkRunner:
 
     def __init__(self, output_dir: Path) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.output_dir = output_dir
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.results = []
 
     async def run_all_benchmarks(self) -> Dict[str, float]:
         """TODO: Add docstring for run_all_benchmarks"""
-            """TODO: Add docstring for run_all_benchmarks"""
-                """TODO: Add docstring for run_all_benchmarks"""
     """Run all benchmarks and collect timing data."""
         timing_data = {}
 
@@ -60,8 +56,6 @@ class CIBenchmarkRunner:
 
     async def _run_encode_benchmark(self) -> float:
         """TODO: Add docstring for _run_encode_benchmark"""
-            """TODO: Add docstring for _run_encode_benchmark"""
-                """TODO: Add docstring for _run_encode_benchmark"""
     """Run encoding benchmark and return average time in ms."""
         logger.info("Running encode benchmark...")
 
@@ -95,8 +89,6 @@ class CIBenchmarkRunner:
 
     async def _run_pir_benchmark(self) -> float:
         """TODO: Add docstring for _run_pir_benchmark"""
-            """TODO: Add docstring for _run_pir_benchmark"""
-                """TODO: Add docstring for _run_pir_benchmark"""
     """Run PIR query benchmark and return average time in ms."""
         logger.info("Running PIR benchmark...")
 
@@ -135,8 +127,6 @@ class CIBenchmarkRunner:
 
     async def _run_proof_benchmark(self) -> float:
         """TODO: Add docstring for _run_proof_benchmark"""
-            """TODO: Add docstring for _run_proof_benchmark"""
-                """TODO: Add docstring for _run_proof_benchmark"""
     """Run proof generation benchmark and return average time in ms."""
         logger.info("Running proof benchmark...")
 
@@ -169,8 +159,6 @@ class CIBenchmarkRunner:
 
             def save_csv(self, timing_data: Dict[str, float], filename: str = "benchmark_results.csv") -> None:
                 """TODO: Add docstring for save_csv"""
-                    """TODO: Add docstring for save_csv"""
-                        """TODO: Add docstring for save_csv"""
     """Save timing data to CSV file for Grafana."""
         csv_path = self.output_dir / filename
 
@@ -195,8 +183,6 @@ class CIBenchmarkRunner:
 
                 def save_json(self, timing_data: Dict[str, float], filename: str = "benchmark_results.json") -> None:
                     """TODO: Add docstring for save_json"""
-                        """TODO: Add docstring for save_json"""
-                            """TODO: Add docstring for save_json"""
     """Save timing data to JSON file for detailed analysis."""
         json_path = self.output_dir / filename
 
@@ -236,8 +222,6 @@ class CIBenchmarkRunner:
 
 async def main() -> None:
     """TODO: Add docstring for main"""
-        """TODO: Add docstring for main"""
-            """TODO: Add docstring for main"""
     """Main entry point."""
     parser = argparse.ArgumentParser(description="CI Benchmark Runner")
     parser.add_argument(

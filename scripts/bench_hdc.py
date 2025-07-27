@@ -37,8 +37,6 @@ class HDCBenchmark:
 
     def __init__(self, output_dir: str = "benchmarks/hdc") -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     """Initialize benchmark suite"""
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -54,8 +52,6 @@ class HDCBenchmark:
 
         def _get_system_info(self) -> Dict[str, Any]:
             """TODO: Add docstring for _get_system_info"""
-                """TODO: Add docstring for _get_system_info"""
-                    """TODO: Add docstring for _get_system_info"""
     """Get system information"""
         return {
             "cpu_count": psutil.cpu_count(),
@@ -69,8 +65,6 @@ class HDCBenchmark:
 
             def benchmark_encoding_throughput(self) -> Dict[str, Any]:
                 """TODO: Add docstring for benchmark_encoding_throughput"""
-                    """TODO: Add docstring for benchmark_encoding_throughput"""
-                        """TODO: Add docstring for benchmark_encoding_throughput"""
     """Benchmark encoding throughput across dimensions and tiers"""
         print("Benchmarking encoding throughput...")
 
@@ -113,8 +107,6 @@ class HDCBenchmark:
 
                     def benchmark_memory_usage(self) -> Dict[str, Any]:
                         """TODO: Add docstring for benchmark_memory_usage"""
-                            """TODO: Add docstring for benchmark_memory_usage"""
-                                """TODO: Add docstring for benchmark_memory_usage"""
     """Benchmark memory usage across tiers"""
         print("\nBenchmarking memory usage...")
 
@@ -156,8 +148,6 @@ class HDCBenchmark:
 
             def benchmark_binding_operations(self) -> Dict[str, Any]:
                 """TODO: Add docstring for benchmark_binding_operations"""
-                    """TODO: Add docstring for benchmark_binding_operations"""
-                        """TODO: Add docstring for benchmark_binding_operations"""
     """Benchmark different binding operations"""
         print("\nBenchmarking binding operations...")
 
@@ -205,8 +195,6 @@ class HDCBenchmark:
 
                 def benchmark_similarity_computation(self) -> Dict[str, Any]:
                     """TODO: Add docstring for benchmark_similarity_computation"""
-                        """TODO: Add docstring for benchmark_similarity_computation"""
-                            """TODO: Add docstring for benchmark_similarity_computation"""
     """Benchmark similarity computation"""
         print("\nBenchmarking similarity computation...")
 
@@ -252,8 +240,6 @@ class HDCBenchmark:
 
                     def benchmark_projection_types(self) -> Dict[str, Any]:
                         """TODO: Add docstring for benchmark_projection_types"""
-                            """TODO: Add docstring for benchmark_projection_types"""
-                                """TODO: Add docstring for benchmark_projection_types"""
     """Benchmark different projection types"""
         print("\nBenchmarking projection types...")
 
@@ -304,8 +290,6 @@ class HDCBenchmark:
 
                 def benchmark_scalability(self) -> Dict[str, Any]:
                     """TODO: Add docstring for benchmark_scalability"""
-                        """TODO: Add docstring for benchmark_scalability"""
-                            """TODO: Add docstring for benchmark_scalability"""
     """Benchmark scalability with batch processing"""
         print("\nBenchmarking batch scalability...")
 
@@ -355,8 +339,6 @@ class HDCBenchmark:
 
                 def benchmark_multimodal_encoding(self) -> Dict[str, Any]:
                     """TODO: Add docstring for benchmark_multimodal_encoding"""
-                        """TODO: Add docstring for benchmark_multimodal_encoding"""
-                            """TODO: Add docstring for benchmark_multimodal_encoding"""
     """Benchmark multi-modal encoding performance"""
         print("\nBenchmarking multi-modal encoding...")
 
@@ -425,8 +407,6 @@ class HDCBenchmark:
 
             def run_all_benchmarks(self) -> None:
                 """TODO: Add docstring for run_all_benchmarks"""
-                    """TODO: Add docstring for run_all_benchmarks"""
-                        """TODO: Add docstring for run_all_benchmarks"""
     """Run all benchmarks"""
         print("Starting HDC benchmarking suite...")
         print(f"Output directory: {self.output_dir}")
@@ -464,8 +444,6 @@ class HDCBenchmark:
 
             def _calculate_summary(self) -> Dict[str, Any]:
                 """TODO: Add docstring for _calculate_summary"""
-                    """TODO: Add docstring for _calculate_summary"""
-                        """TODO: Add docstring for _calculate_summary"""
     """Calculate summary metrics"""
         # Get reference throughput (10k dimension, 1000 features)
         throughput_data = self.results["benchmarks"]["encoding_throughput"]["data"]
@@ -487,8 +465,6 @@ class HDCBenchmark:
 
                 def generate_plots(self) -> None:
                     """TODO: Add docstring for generate_plots"""
-                        """TODO: Add docstring for generate_plots"""
-                            """TODO: Add docstring for generate_plots"""
     """Generate visualization plots"""
         print("\nGenerating visualization plots...")
 
@@ -520,8 +496,6 @@ class HDCBenchmark:
 
                     def _plot_throughput_by_dimension(self, plots_dir: Path) -> None:
                         """TODO: Add docstring for _plot_throughput_by_dimension"""
-                            """TODO: Add docstring for _plot_throughput_by_dimension"""
-                                """TODO: Add docstring for _plot_throughput_by_dimension"""
     """Plot encoding throughput by dimension"""
         data = self.results["benchmarks"]["encoding_throughput"]["data"]
 
@@ -554,8 +528,6 @@ class HDCBenchmark:
 
             def _plot_memory_by_tier(self, plots_dir: Path) -> None:
                 """TODO: Add docstring for _plot_memory_by_tier"""
-                    """TODO: Add docstring for _plot_memory_by_tier"""
-                        """TODO: Add docstring for _plot_memory_by_tier"""
     """Plot memory usage by compression tier"""
         data = self.results["benchmarks"]["memory_usage"]["data"]
 
@@ -586,8 +558,6 @@ class HDCBenchmark:
 
             def _plot_binding_comparison(self, plots_dir: Path) -> None:
                 """TODO: Add docstring for _plot_binding_comparison"""
-                    """TODO: Add docstring for _plot_binding_comparison"""
-                        """TODO: Add docstring for _plot_binding_comparison"""
     """Plot binding operation performance comparison"""
         data = self.results["benchmarks"]["binding_operations"]["data"]
 
@@ -623,8 +593,6 @@ class HDCBenchmark:
 
             def _plot_scalability(self, plots_dir: Path) -> None:
                 """TODO: Add docstring for _plot_scalability"""
-                    """TODO: Add docstring for _plot_scalability"""
-                        """TODO: Add docstring for _plot_scalability"""
     """Plot batch processing scalability"""
         data = self.results["benchmarks"]["scalability"]["data"]
 
@@ -667,8 +635,6 @@ class HDCBenchmark:
 
             def _plot_projection_comparison(self, plots_dir: Path) -> None:
                 """TODO: Add docstring for _plot_projection_comparison"""
-                    """TODO: Add docstring for _plot_projection_comparison"""
-                        """TODO: Add docstring for _plot_projection_comparison"""
     """Plot projection type performance comparison"""
         data = self.results["benchmarks"]["projection_types"]["data"]
 
@@ -707,8 +673,6 @@ class HDCBenchmark:
 
             def generate_performance_badge(self) -> None:
                 """TODO: Add docstring for generate_performance_badge"""
-                    """TODO: Add docstring for generate_performance_badge"""
-                        """TODO: Add docstring for generate_performance_badge"""
     """Generate performance badge for README"""
         summary = self.results.get("summary", {})
         ref_throughput = summary.get("reference_throughput_ops_per_sec", 0)
@@ -741,8 +705,6 @@ class HDCBenchmark:
 
             def main() -> None:
                 """TODO: Add docstring for main"""
-                    """TODO: Add docstring for main"""
-                        """TODO: Add docstring for main"""
     """Main benchmark entry point"""
     parser = argparse.ArgumentParser(description="HDC Performance Benchmarking")
     parser.add_argument("--output-dir", default="benchmarks/hdc", help="Output directory")

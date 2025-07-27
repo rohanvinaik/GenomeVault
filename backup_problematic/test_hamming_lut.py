@@ -13,8 +13,6 @@ from genomevault.hypervector.operations.binding import HypervectorBinder
 
 def test_lut_generation() -> None:
     """TODO: Add docstring for test_lut_generation"""
-        """TODO: Add docstring for test_lut_generation"""
-            """TODO: Add docstring for test_lut_generation"""
     """Test LUT generation"""
     print("Testing LUT generation...")
     lut = generate_popcount_lut()
@@ -30,8 +28,6 @@ def test_lut_generation() -> None:
 
     def test_hamming_distance() -> None:
         """TODO: Add docstring for test_hamming_distance"""
-            """TODO: Add docstring for test_hamming_distance"""
-                """TODO: Add docstring for test_hamming_distance"""
     """Test Hamming distance computation"""
     print("\nTesting Hamming distance computation...")
 
@@ -61,8 +57,6 @@ def test_lut_generation() -> None:
 
         def test_batch_computation() -> None:
             """TODO: Add docstring for test_batch_computation"""
-                """TODO: Add docstring for test_batch_computation"""
-                    """TODO: Add docstring for test_batch_computation"""
     """Test batch Hamming distance computation"""
     print("\nTesting batch Hamming distance...")
 
@@ -94,8 +88,6 @@ def test_lut_generation() -> None:
 
             def test_integration_with_binder() -> None:
                 """TODO: Add docstring for test_integration_with_binder"""
-                    """TODO: Add docstring for test_integration_with_binder"""
-                        """TODO: Add docstring for test_integration_with_binder"""
     """Test integration with HypervectorBinder"""
     print("\nTesting integration with HypervectorBinder...")
 
@@ -116,8 +108,6 @@ def test_lut_generation() -> None:
 
                 def test_performance_comparison() -> None:
                     """TODO: Add docstring for test_performance_comparison"""
-                        """TODO: Add docstring for test_performance_comparison"""
-                            """TODO: Add docstring for test_performance_comparison"""
     """Quick performance comparison"""
     print("\nQuick performance test (10000D vectors)...")
 
@@ -151,8 +141,6 @@ def test_lut_generation() -> None:
 
         def main() -> None:
             """TODO: Add docstring for main"""
-                """TODO: Add docstring for main"""
-                    """TODO: Add docstring for main"""
     """Run all tests"""
     print("=" * 60)
     print("HAMMING LUT IMPLEMENTATION TEST")

@@ -425,8 +425,6 @@ class TestHolographicEncoder(unittest.TestCase):
 
                             def count_matching_bits(h1, h2) -> None:
                                 """TODO: Add docstring for count_matching_bits"""
-                                    """TODO: Add docstring for count_matching_bits"""
-                                        """TODO: Add docstring for count_matching_bits"""
     b1 = bin(int(h1, 16))[2:].zfill(64)
             b2 = bin(int(h2, 16))[2:].zfill(64)
             return sum(c1 == c2 for c1, c2 in zip(b1, b2))

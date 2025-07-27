@@ -14,16 +14,12 @@ class PRSProofCircuit(BaseCircuit):
 
     def __init__(self) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     super().__init__()
         self.name = "prs_range_proof"
         self.proof_size = 384  # Groth16 proof size
 
         def prove_prs_in_range(self, prs: float, min_val: float, max_val: float) -> Any:
             """TODO: Add docstring for prove_prs_in_range"""
-                """TODO: Add docstring for prove_prs_in_range"""
-                    """TODO: Add docstring for prove_prs_in_range"""
     """Generate proof that PRS is in [min_val, max_val]."""
         # Validate inputs
         if not min_val <= prs <= max_val:
@@ -41,8 +37,6 @@ class PRSProofCircuit(BaseCircuit):
 
             def serialize_proof(self, proof: Any) -> bytes:
                 """TODO: Add docstring for serialize_proof"""
-                    """TODO: Add docstring for serialize_proof"""
-                        """TODO: Add docstring for serialize_proof"""
     """Serialize proof to bytes."""
         # In production, this would properly serialize the proof
         import hashlib
@@ -61,8 +55,6 @@ class PRSProofCircuit(BaseCircuit):
 
                 def deserialize_proof(self, data: bytes) -> Any:
                     """TODO: Add docstring for deserialize_proof"""
-                        """TODO: Add docstring for deserialize_proof"""
-                            """TODO: Add docstring for deserialize_proof"""
     """Deserialize proof from bytes."""
         if len(data) != self.proof_size:
             raise ValueError(f"Invalid proof size: {len(data)} != {self.proof_size}")
@@ -72,8 +64,6 @@ class PRSProofCircuit(BaseCircuit):
 
             def _create_mock_proof(self, data: dict) -> Any:
                 """TODO: Add docstring for _create_mock_proof"""
-                    """TODO: Add docstring for _create_mock_proof"""
-                        """TODO: Add docstring for _create_mock_proof"""
     """Create a mock proof object."""
         return {
             "circuit": self.name,

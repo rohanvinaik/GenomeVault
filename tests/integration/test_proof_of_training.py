@@ -28,22 +28,16 @@ class MockModel:
 
     def __init__(self) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.weights = {"layer1": np.random.randn(100, 50), "layer2": np.random.randn(50, 2)}
 
 
         def parameters(self) -> None:
             """TODO: Add docstring for parameters"""
-                """TODO: Add docstring for parameters"""
-                    """TODO: Add docstring for parameters"""
     return [self.weights["layer1"], self.weights["layer2"]]
 
 
             def __str__(self) -> None:
                 """TODO: Add docstring for __str__"""
-                    """TODO: Add docstring for __str__"""
-                        """TODO: Add docstring for __str__"""
     return "MockModel(layers=2)"
 
 

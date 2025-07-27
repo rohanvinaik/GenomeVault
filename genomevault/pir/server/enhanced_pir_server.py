@@ -51,8 +51,6 @@ class GenomicRegion:
 
     def to_bytes(self) -> bytes:
         """TODO: Add docstring for to_bytes"""
-            """TODO: Add docstring for to_bytes"""
-                """TODO: Add docstring for to_bytes"""
     """Serialize to bytes for PIR storage."""
         data = {
             "chr": self.chromosome,
@@ -70,8 +68,6 @@ class GenomicRegion:
     @classmethod
         def from_bytes(cls, data: bytes) -> "GenomicRegion":
             """TODO: Add docstring for from_bytes"""
-                """TODO: Add docstring for from_bytes"""
-                    """TODO: Add docstring for from_bytes"""
     """Deserialize from bytes."""
         decompressed = lz4.frame.decompress(data)
         data_dict = json.loads(decompressed.decode("utf-8"))
@@ -107,8 +103,6 @@ class ShardMetadata:
 
     def contains_region(self, chromosome: str, position: int) -> bool:
         """TODO: Add docstring for contains_region"""
-            """TODO: Add docstring for contains_region"""
-                """TODO: Add docstring for contains_region"""
     """Check if this shard contains a genomic position."""
         if chromosome not in self.chromosome_ranges:
             return False
@@ -125,8 +119,6 @@ class OptimizedPIRDatabase:
 
     def __init__(self, base_path: Path, cache_size_mb: int = 1024) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     """
         Initialize optimized PIR database.
 
@@ -148,8 +140,6 @@ class OptimizedPIRDatabase:
 
     async def load_shard_index(self, shard: ShardMetadata) -> Dict[str, int]:
         """TODO: Add docstring for load_shard_index"""
-            """TODO: Add docstring for load_shard_index"""
-                """TODO: Add docstring for load_shard_index"""
     """
         Load shard index for fast lookups.
 
@@ -189,8 +179,6 @@ class OptimizedPIRDatabase:
 
                 def get_memory_map(self, shard: ShardMetadata) -> mmap.mmap:
                     """TODO: Add docstring for get_memory_map"""
-                        """TODO: Add docstring for get_memory_map"""
-                            """TODO: Add docstring for get_memory_map"""
     """Get or create memory map for shard data."""
         if shard.shard_id not in self.memory_maps:
             with open(shard.data_path, "rb") as f:
@@ -199,8 +187,6 @@ class OptimizedPIRDatabase:
 
     async def query_item(self, shard: ShardMetadata, position_key: str) -> Optional[bytes]:
         """TODO: Add docstring for query_item"""
-            """TODO: Add docstring for query_item"""
-                """TODO: Add docstring for query_item"""
     """
         Query a specific item from the database.
 
@@ -245,8 +231,6 @@ class OptimizedPIRDatabase:
 
             def _update_cache(self, key: str, data: bytes) -> None:
                 """TODO: Add docstring for _update_cache"""
-                    """TODO: Add docstring for _update_cache"""
-                        """TODO: Add docstring for _update_cache"""
     """Update LRU cache with size limit."""
         # Simple size-based eviction
         if len(self.cache) * 1000 > self.cache_size:  # Rough estimate
@@ -259,8 +243,6 @@ class OptimizedPIRDatabase:
 
                 def get_cache_stats(self) -> Dict[str, Any]:
                     """TODO: Add docstring for get_cache_stats"""
-                        """TODO: Add docstring for get_cache_stats"""
-                            """TODO: Add docstring for get_cache_stats"""
     """Get cache performance statistics."""
         total = self.cache_stats["hits"] + self.cache_stats["misses"]
         hit_rate = self.cache_stats["hits"] / total if total > 0 else 0
@@ -275,8 +257,6 @@ class OptimizedPIRDatabase:
 
                     def close(self) -> None:
                         """TODO: Add docstring for close"""
-                            """TODO: Add docstring for close"""
-                                """TODO: Add docstring for close"""
     """Close all resources."""
         for mmap_file in self.memory_maps.values():
             mmap_file.close()
@@ -298,9 +278,6 @@ class EnhancedPIRServer:
         enable_preprocessing: bool = True,
         cache_size_mb: int = 2048,
     ) -> None:
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     """
         Initialize enhanced PIR server.
 
@@ -353,8 +330,6 @@ class EnhancedPIRServer:
 
             def _load_enhanced_shards(self) -> Dict[str, ShardMetadata]:
                 """TODO: Add docstring for _load_enhanced_shards"""
-                    """TODO: Add docstring for _load_enhanced_shards"""
-                        """TODO: Add docstring for _load_enhanced_shards"""
     """Load enhanced shard metadata with genomic ranges."""
         shards = {}
         manifest_path = self.data_directory / "enhanced_manifest.json"
@@ -389,8 +364,6 @@ class EnhancedPIRServer:
 
                 def _create_default_shards(self) -> Dict[str, ShardMetadata]:
                     """TODO: Add docstring for _create_default_shards"""
-                        """TODO: Add docstring for _create_default_shards"""
-                            """TODO: Add docstring for _create_default_shards"""
     """Create default shard structure for genomic data."""
         shards = {}
 
@@ -428,8 +401,6 @@ class EnhancedPIRServer:
 
                 def _verify_shard_integrity(self, shard: ShardMetadata) -> bool:
                     """TODO: Add docstring for _verify_shard_integrity"""
-                        """TODO: Add docstring for _verify_shard_integrity"""
-                            """TODO: Add docstring for _verify_shard_integrity"""
     """Verify shard data integrity."""
         if not shard.data_path.exists() or not shard.index_path.exists():
             return False
@@ -440,15 +411,11 @@ class EnhancedPIRServer:
 
             def _init_rate_limiter(self) -> Dict[str, List[float]]:
                 """TODO: Add docstring for _init_rate_limiter"""
-                    """TODO: Add docstring for _init_rate_limiter"""
-                        """TODO: Add docstring for _init_rate_limiter"""
     """Initialize rate limiting for security."""
         return defaultdict(list)
 
                 def _check_rate_limit(self, client_id: str) -> bool:
                     """TODO: Add docstring for _check_rate_limit"""
-                        """TODO: Add docstring for _check_rate_limit"""
-                            """TODO: Add docstring for _check_rate_limit"""
     """Check if client is within rate limits."""
         now = time.time()
         window = 60  # 1 minute window
@@ -467,8 +434,6 @@ class EnhancedPIRServer:
 
     async def process_query(self, query_data: Dict[str, Any]) -> Dict[str, Any]:
         """TODO: Add docstring for process_query"""
-            """TODO: Add docstring for process_query"""
-                """TODO: Add docstring for process_query"""
     """
         Process enhanced PIR query with optimizations.
 
@@ -548,9 +513,6 @@ class EnhancedPIRServer:
     async def _process_genomic_query(
         self, query_vectors: List[np.ndarray], parameters: Dict[str, Any]
     ) -> List[bytes]:
-        """TODO: Add docstring for _process_genomic_query"""
-            """TODO: Add docstring for _process_genomic_query"""
-                """TODO: Add docstring for _process_genomic_query"""
     """
         Process genomic data query.
 
@@ -595,9 +557,6 @@ class EnhancedPIRServer:
     async def _process_annotation_query(
         self, query_vectors: List[np.ndarray], parameters: Dict[str, Any]
     ) -> List[bytes]:
-        """TODO: Add docstring for _process_annotation_query"""
-            """TODO: Add docstring for _process_annotation_query"""
-                """TODO: Add docstring for _process_annotation_query"""
     """Process annotation data query."""
         # Similar to genomic query but for annotation data
         # Implementation would follow same pattern
@@ -606,9 +565,6 @@ class EnhancedPIRServer:
     async def _process_graph_query(
         self, query_vectors: List[np.ndarray], parameters: Dict[str, Any]
     ) -> List[bytes]:
-        """TODO: Add docstring for _process_graph_query"""
-            """TODO: Add docstring for _process_graph_query"""
-                """TODO: Add docstring for _process_graph_query"""
     """Process graph data query."""
         # Process pangenome graph queries
         # Implementation would handle graph-specific operations
@@ -616,8 +572,6 @@ class EnhancedPIRServer:
 
         def _select_target_shards(self, parameters: Dict[str, Any]) -> List[ShardMetadata]:
             """TODO: Add docstring for _select_target_shards"""
-                """TODO: Add docstring for _select_target_shards"""
-                    """TODO: Add docstring for _select_target_shards"""
     """Select shards based on query parameters."""
         target_shards = []
 
@@ -639,9 +593,6 @@ class EnhancedPIRServer:
     async def _compute_pir_result(
         self, query_vector: np.ndarray, shards: List[ShardMetadata]
     ) -> bytes:
-        """TODO: Add docstring for _compute_pir_result"""
-            """TODO: Add docstring for _compute_pir_result"""
-                """TODO: Add docstring for _compute_pir_result"""
     """
         Compute PIR result across multiple shards.
 
@@ -684,9 +635,6 @@ class EnhancedPIRServer:
     async def _process_shard_query(
         self, query_vector: np.ndarray, shard: ShardMetadata
     ) -> Optional[np.ndarray]:
-        """TODO: Add docstring for _process_shard_query"""
-            """TODO: Add docstring for _process_shard_query"""
-                """TODO: Add docstring for _process_shard_query"""
     """Process query on a single shard."""
         try:
             # Get shard index
@@ -725,8 +673,6 @@ class EnhancedPIRServer:
 
             def _update_metrics(self, processing_time_ms: float, result_count: int) -> None:
                 """TODO: Add docstring for _update_metrics"""
-                    """TODO: Add docstring for _update_metrics"""
-                        """TODO: Add docstring for _update_metrics"""
     """Update server metrics."""
                 self.metrics["total_queries"] += 1
                 self.metrics["total_bytes_served"] += result_count * 1000  # Estimate
@@ -738,8 +684,6 @@ class EnhancedPIRServer:
 
     async def get_server_status(self) -> Dict[str, Any]:
         """TODO: Add docstring for get_server_status"""
-            """TODO: Add docstring for get_server_status"""
-                """TODO: Add docstring for get_server_status"""
     """Get comprehensive server status."""
         return {
             "server_id": self.server_id,
@@ -770,8 +714,6 @@ class EnhancedPIRServer:
 
         def _count_shards_by_type(self) -> Dict[str, int]:
             """TODO: Add docstring for _count_shards_by_type"""
-                """TODO: Add docstring for _count_shards_by_type"""
-                    """TODO: Add docstring for _count_shards_by_type"""
     """Count shards by data type."""
         counts = defaultdict(int)
         for shard in self.shards.values():
@@ -780,8 +722,6 @@ class EnhancedPIRServer:
 
             def _get_memory_usage(self) -> float:
                 """TODO: Add docstring for _get_memory_usage"""
-                    """TODO: Add docstring for _get_memory_usage"""
-                        """TODO: Add docstring for _get_memory_usage"""
     """Get current memory usage in MB."""
         import psutil
 
@@ -790,8 +730,6 @@ class EnhancedPIRServer:
 
     async def shutdown(self) -> None:
         """TODO: Add docstring for shutdown"""
-            """TODO: Add docstring for shutdown"""
-                """TODO: Add docstring for shutdown"""
     """Graceful shutdown."""
         logger.info(f"Shutting down PIR server {self.server_id}")
 
@@ -813,8 +751,6 @@ class EnhancedPIRServer:
 # Example usage and testing
 async def main() -> None:
     """TODO: Add docstring for main"""
-        """TODO: Add docstring for main"""
-            """TODO: Add docstring for main"""
     """Example usage of enhanced PIR server."""
     # Initialize server
     server = EnhancedPIRServer(

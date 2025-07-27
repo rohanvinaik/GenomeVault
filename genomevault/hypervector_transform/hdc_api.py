@@ -113,8 +113,6 @@ class PerformanceMetrics(BaseModel):
 # Dependency to get encoder
     def get_encoder(version: Optional[str] = None) -> HypervectorEncoder:
         """TODO: Add docstring for get_encoder"""
-            """TODO: Add docstring for get_encoder"""
-                """TODO: Add docstring for get_encoder"""
     """Get encoder instance with specified version"""
     try:
         return registry.get_encoder(version)
@@ -127,9 +125,6 @@ class PerformanceMetrics(BaseModel):
 async def encode_genome(
     request: EncodingRequest, encoder: HypervectorEncoder = Depends(get_encoder)
 ) -> EncodingResponse:
-    """TODO: Add docstring for encode_genome"""
-        """TODO: Add docstring for encode_genome"""
-            """TODO: Add docstring for encode_genome"""
     """
     Encode genomic data into a hypervector
 
@@ -193,9 +188,6 @@ async def encode_genome(
 async def encode_multimodal(
     request: MultiModalEncodingRequest, encoder: HypervectorEncoder = Depends(get_encoder)
 ) -> EncodingResponse:
-    """TODO: Add docstring for encode_multimodal"""
-        """TODO: Add docstring for encode_multimodal"""
-            """TODO: Add docstring for encode_multimodal"""
     """
     Encode multiple modalities and bind them together
 
@@ -263,8 +255,6 @@ async def encode_multimodal(
 @router.post("/decode")
 async def decode_vector(request: DecodeRequest) -> None:
     """TODO: Add docstring for decode_vector"""
-        """TODO: Add docstring for decode_vector"""
-            """TODO: Add docstring for decode_vector"""
     """
     Decode or query a hypervector
 
@@ -328,8 +318,6 @@ async def decode_vector(request: DecodeRequest) -> None:
 @router.post("/similarity")
 async def compute_similarity(request: SimilarityRequest) -> None:
     """TODO: Add docstring for compute_similarity"""
-        """TODO: Add docstring for compute_similarity"""
-            """TODO: Add docstring for compute_similarity"""
     """
     Compute similarity between two hypervectors
 
@@ -382,8 +370,6 @@ async def compute_similarity(request: SimilarityRequest) -> None:
 @router.get("/version", response_model=VersionInfo)
 async def get_version_info() -> Any:
     """TODO: Add docstring for get_version_info"""
-        """TODO: Add docstring for get_version_info"""
-            """TODO: Add docstring for get_version_info"""
     """Get HDC encoding version information"""
     try:
         from genomevault.version import HDC_ENCODER_VERSION, HDC_SEED
@@ -410,9 +396,6 @@ async def register_new_version(
     description: Optional[str] = None,
     sparsity: Optional[float] = 0.1,
 ) -> None:
-    """TODO: Add docstring for register_new_version"""
-        """TODO: Add docstring for register_new_version"""
-            """TODO: Add docstring for register_new_version"""
     """Register a new encoding version"""
     try:
         # Validate projection type
@@ -485,8 +468,6 @@ async def encode_genomic_file(
 @router.get("/performance_metrics", response_model=PerformanceMetrics)
 async def get_performance_metrics() -> Any:
     """TODO: Add docstring for get_performance_metrics"""
-        """TODO: Add docstring for get_performance_metrics"""
-            """TODO: Add docstring for get_performance_metrics"""
     """Get HDC encoding performance metrics"""
     try:
         # Get encoder
@@ -531,8 +512,6 @@ async def get_performance_metrics() -> Any:
 @router.get("/health")
 async def health_check() -> None:
     """TODO: Add docstring for health_check"""
-        """TODO: Add docstring for health_check"""
-            """TODO: Add docstring for health_check"""
     """Health check endpoint"""
     try:
         # Test encoder creation
@@ -554,7 +533,5 @@ async def health_check() -> None:
 # Include router in main app
         def include_routes(app) -> None:
             """TODO: Add docstring for include_routes"""
-                """TODO: Add docstring for include_routes"""
-                    """TODO: Add docstring for include_routes"""
 """Include HDC routes in the main FastAPI app"""
     app.include_router(router)

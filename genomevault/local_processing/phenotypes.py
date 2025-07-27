@@ -54,8 +54,6 @@ class ClinicalMeasurement:
 
     def is_abnormal(self) -> bool:
         """TODO: Add docstring for is_abnormal"""
-            """TODO: Add docstring for is_abnormal"""
-                """TODO: Add docstring for is_abnormal"""
     """Check if measurement is abnormal"""
         if self.abnormal_flag:
             return self.abnormal_flag.upper() in ["H", "L", "A", "ABNORMAL"]
@@ -70,8 +68,6 @@ class ClinicalMeasurement:
 
                 def to_dict(self) -> Dict[str, Any]:
                     """TODO: Add docstring for to_dict"""
-                        """TODO: Add docstring for to_dict"""
-                            """TODO: Add docstring for to_dict"""
     """Convert to dictionary"""
         return {
             "id": self.measurement_id,
@@ -105,8 +101,6 @@ class Diagnosis:
 
     def to_dict(self) -> Dict[str, Any]:
         """TODO: Add docstring for to_dict"""
-            """TODO: Add docstring for to_dict"""
-                """TODO: Add docstring for to_dict"""
     """Convert to dictionary"""
         return {
             "id": self.diagnosis_id,
@@ -141,8 +135,6 @@ class Medication:
     @property
     def is_active(self) -> bool:
         """TODO: Add docstring for is_active"""
-            """TODO: Add docstring for is_active"""
-                """TODO: Add docstring for is_active"""
     """Check if medication is currently active"""
         if self.status != "active":
             return False
@@ -154,8 +146,6 @@ class Medication:
 
             def to_dict(self) -> Dict[str, Any]:
                 """TODO: Add docstring for to_dict"""
-                    """TODO: Add docstring for to_dict"""
-                        """TODO: Add docstring for to_dict"""
     """Convert to dictionary"""
         return {
             "id": self.medication_id,
@@ -185,8 +175,6 @@ class FamilyHistory:
 
     def to_dict(self) -> Dict[str, Any]:
         """TODO: Add docstring for to_dict"""
-            """TODO: Add docstring for to_dict"""
-                """TODO: Add docstring for to_dict"""
     """Convert to dictionary"""
         return {
             "relationship": self.relationship,
@@ -214,8 +202,6 @@ class PhenotypeProfile:
 
     def get_measurement_summary(self) -> Dict[str, Any]:
         """TODO: Add docstring for get_measurement_summary"""
-            """TODO: Add docstring for get_measurement_summary"""
-                """TODO: Add docstring for get_measurement_summary"""
     """Get summary of measurements by type"""
         summary = {}
         for measurement in self.measurements:
@@ -233,22 +219,16 @@ class PhenotypeProfile:
 
                 def get_active_conditions(self) -> List[Diagnosis]:
                     """TODO: Add docstring for get_active_conditions"""
-                        """TODO: Add docstring for get_active_conditions"""
-                            """TODO: Add docstring for get_active_conditions"""
     """Get list of active diagnoses"""
         return [d for d in self.diagnoses if d.status == "active"]
 
                     def get_active_medications(self) -> List[Medication]:
                         """TODO: Add docstring for get_active_medications"""
-                            """TODO: Add docstring for get_active_medications"""
-                                """TODO: Add docstring for get_active_medications"""
     """Get list of active medications"""
         return [m for m in self.medications if m.is_active]
 
                         def calculate_risk_factors(self) -> Dict[str, float]:
                             """TODO: Add docstring for calculate_risk_factors"""
-                                """TODO: Add docstring for calculate_risk_factors"""
-                                    """TODO: Add docstring for calculate_risk_factors"""
     """Calculate basic risk factors from phenotype data"""
         risk_factors = {}
 
@@ -323,15 +303,11 @@ class PhenotypeProcessor:
 
     def __init__(self) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     """Initialize phenotype processor"""
         self.terminology_mapper = self._load_terminology_mappings()
 
         def _load_terminology_mappings(self) -> Dict[str, Dict[str, str]]:
             """TODO: Add docstring for _load_terminology_mappings"""
-                """TODO: Add docstring for _load_terminology_mappings"""
-                    """TODO: Add docstring for _load_terminology_mappings"""
     """Load terminology mappings"""
         # In production, would load from comprehensive terminology services
         return {"loinc": self.LOINC_CODES, "icd10_patterns": self.ICD10_PATTERNS}
@@ -343,9 +319,6 @@ class PhenotypeProcessor:
         sample_id: str,
         data_format: str = "fhir",
     ) -> PhenotypeProfile:
-        """TODO: Add docstring for process"""
-            """TODO: Add docstring for process"""
-                """TODO: Add docstring for process"""
     """
         Process phenotypic data
 
@@ -392,8 +365,6 @@ class PhenotypeProcessor:
 
             def _process_fhir_data(self, fhir_bundle: Dict[str, Any], sample_id: str) -> PhenotypeProfile:
                 """TODO: Add docstring for _process_fhir_data"""
-                    """TODO: Add docstring for _process_fhir_data"""
-                        """TODO: Add docstring for _process_fhir_data"""
     """Process FHIR bundle data"""
         demographics = {}
         measurements = []
@@ -451,8 +422,6 @@ class PhenotypeProcessor:
 
                     def _extract_fhir_demographics(self, patient: Dict[str, Any]) -> Dict[str, Any]:
                         """TODO: Add docstring for _extract_fhir_demographics"""
-                            """TODO: Add docstring for _extract_fhir_demographics"""
-                                """TODO: Add docstring for _extract_fhir_demographics"""
     """Extract demographics from FHIR Patient resource"""
         demographics = {}
 
@@ -480,9 +449,6 @@ class PhenotypeProcessor:
                 def _extract_fhir_observation(
         self, observation: Dict[str, Any]
     ) -> Optional[ClinicalMeasurement]:
-        """TODO: Add docstring for _extract_fhir_observation"""
-            """TODO: Add docstring for _extract_fhir_observation"""
-                """TODO: Add docstring for _extract_fhir_observation"""
     """Extract measurement from FHIR Observation"""
         # Get observation code
         coding = observation.get("code", {}).get("coding", [])
@@ -546,8 +512,6 @@ class PhenotypeProcessor:
 
                 def _extract_fhir_condition(self, condition: Dict[str, Any]) -> Optional[Diagnosis]:
                     """TODO: Add docstring for _extract_fhir_condition"""
-                        """TODO: Add docstring for _extract_fhir_condition"""
-                            """TODO: Add docstring for _extract_fhir_condition"""
     """Extract diagnosis from FHIR Condition"""
         # Get condition code
         coding = condition.get("code", {}).get("coding", [])
@@ -593,8 +557,6 @@ class PhenotypeProcessor:
 
                 def _extract_fhir_medication(self, medication: Dict[str, Any]) -> Optional[Medication]:
                     """TODO: Add docstring for _extract_fhir_medication"""
-                        """TODO: Add docstring for _extract_fhir_medication"""
-                            """TODO: Add docstring for _extract_fhir_medication"""
     """Extract medication from FHIR MedicationStatement"""
         # Get medication code
         med_codeable = medication.get("medicationCodeableConcept", {})
@@ -661,8 +623,6 @@ class PhenotypeProcessor:
 
                 def _extract_fhir_family_history(self, history: Dict[str, Any]) -> List[FamilyHistory]:
                     """TODO: Add docstring for _extract_fhir_family_history"""
-                        """TODO: Add docstring for _extract_fhir_family_history"""
-                            """TODO: Add docstring for _extract_fhir_family_history"""
     """Extract family history from FHIR FamilyMemberHistory"""
         family_history = []
 
@@ -706,8 +666,6 @@ class PhenotypeProcessor:
 
                 def _process_csv_data(self, csv_data: Any, sample_id: str) -> PhenotypeProfile:
                     """TODO: Add docstring for _process_csv_data"""
-                        """TODO: Add docstring for _process_csv_data"""
-                            """TODO: Add docstring for _process_csv_data"""
     """Process CSV format data (placeholder)"""
         # This would be implemented based on specific CSV format
         logger.warning("CSV processing not fully implemented")
@@ -725,8 +683,6 @@ class PhenotypeProcessor:
 
                     def _process_custom_data(self, custom_data: Dict[str, Any], sample_id: str) -> PhenotypeProfile:
                         """TODO: Add docstring for _process_custom_data"""
-                            """TODO: Add docstring for _process_custom_data"""
-                                """TODO: Add docstring for _process_custom_data"""
     """Process custom format data"""
         return PhenotypeProfile(
             sample_id=sample_id,
@@ -742,8 +698,6 @@ class PhenotypeProcessor:
 
                         def _standardize_codes(self, profile: PhenotypeProfile) -> PhenotypeProfile:
                             """TODO: Add docstring for _standardize_codes"""
-                                """TODO: Add docstring for _standardize_codes"""
-                                    """TODO: Add docstring for _standardize_codes"""
     """Standardize medical codes"""
         # Add LOINC codes to measurements
         for measurement in profile.measurements:
@@ -764,8 +718,6 @@ class PhenotypeProcessor:
 
                         def _calculate_derived_values(self, profile: PhenotypeProfile) -> PhenotypeProfile:
                             """TODO: Add docstring for _calculate_derived_values"""
-                                """TODO: Add docstring for _calculate_derived_values"""
-                                    """TODO: Add docstring for _calculate_derived_values"""
     """Calculate derived values from measurements"""
         # Calculate BMI if height and weight available
         height = None
@@ -816,9 +768,6 @@ class PhenotypeProcessor:
             def merge_profiles(
         self, profiles: List[PhenotypeProfile], merge_strategy: str = "most_recent"
     ) -> PhenotypeProfile:
-        """TODO: Add docstring for merge_profiles"""
-            """TODO: Add docstring for merge_profiles"""
-                """TODO: Add docstring for merge_profiles"""
     """
         Merge multiple phenotype profiles
 

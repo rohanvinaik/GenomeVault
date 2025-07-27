@@ -76,9 +76,6 @@ class BiologicalSignalDetector:
         anomaly_threshold: float = 3.0,
         min_signal_length: int = 5,
     ) -> None:
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     """
         Initialize detector.
 
@@ -124,9 +121,6 @@ class BiologicalSignalDetector:
         sequence_context: Optional[str] = None,
         genomic_positions: Optional[np.ndarray] = None,
     ) -> List[BiologicalSignal]:
-        """TODO: Add docstring for detect_signals"""
-            """TODO: Add docstring for detect_signals"""
-                """TODO: Add docstring for detect_signals"""
     """
         Detect biological signals from variance patterns.
 
@@ -185,9 +179,6 @@ class BiologicalSignalDetector:
         self,
         variance_array: np.ndarray,
     ) -> List[Tuple[int, int]]:
-        """TODO: Add docstring for _detect_anomaly_regions"""
-            """TODO: Add docstring for _detect_anomaly_regions"""
-                """TODO: Add docstring for _detect_anomaly_regions"""
     """Detect contiguous anomaly regions."""
         # Z-score normalization
         z_scores = zscore(variance_array)
@@ -217,9 +208,6 @@ class BiologicalSignalDetector:
         dwell_times: Optional[np.ndarray],
         sequence: Optional[str],
     ) -> Dict[str, float]:
-        """TODO: Add docstring for _extract_region_features"""
-            """TODO: Add docstring for _extract_region_features"""
-                """TODO: Add docstring for _extract_region_features"""
     """Extract features from anomaly region."""
         features = {
             "variance_mean": float(np.mean(variance)),
@@ -264,9 +252,6 @@ class BiologicalSignalDetector:
         self,
         features: Dict[str, float],
     ) -> Tuple[BiologicalSignalType, float]:
-        """TODO: Add docstring for _classify_signal"""
-            """TODO: Add docstring for _classify_signal"""
-                """TODO: Add docstring for _classify_signal"""
     """
         Classify signal type based on features.
 
@@ -307,8 +292,6 @@ class BiologicalSignalDetector:
 
             def _safe_skew(self, data: np.ndarray) -> float:
                 """TODO: Add docstring for _safe_skew"""
-                    """TODO: Add docstring for _safe_skew"""
-                        """TODO: Add docstring for _safe_skew"""
     """Calculate skewness safely."""
         if len(data) < 3:
             return 0.0
@@ -323,8 +306,6 @@ class BiologicalSignalDetector:
 
             def _homopolymer_fraction(self, sequence: str) -> float:
                 """TODO: Add docstring for _homopolymer_fraction"""
-                    """TODO: Add docstring for _homopolymer_fraction"""
-                        """TODO: Add docstring for _homopolymer_fraction"""
     """Calculate fraction of homopolymer runs."""
         if not sequence:
             return 0.0
@@ -351,9 +332,6 @@ class BiologicalSignalDetector:
         self,
         training_data: List[Tuple[np.ndarray, BiologicalSignalType]],
     ) -> None:
-        """TODO: Add docstring for train_on_known_modifications"""
-            """TODO: Add docstring for train_on_known_modifications"""
-                """TODO: Add docstring for train_on_known_modifications"""
     """
         Train detector on known modifications.
 
@@ -390,9 +368,6 @@ class BiologicalSignalDetector:
         signals: List[BiologicalSignal],
         output_format: str = "bedgraph",
     ) -> str:
-        """TODO: Add docstring for export_signal_track"""
-            """TODO: Add docstring for export_signal_track"""
-                """TODO: Add docstring for export_signal_track"""
     """
         Export signals as genome browser track.
 
@@ -441,8 +416,6 @@ class BiologicalSignalDetector:
 
             def _get_signal_color(self, signal_type: BiologicalSignalType) -> str:
                 """TODO: Add docstring for _get_signal_color"""
-                    """TODO: Add docstring for _get_signal_color"""
-                        """TODO: Add docstring for _get_signal_color"""
     """Get RGB color for signal type."""
         colors = {
             BiologicalSignalType.METHYLATION_5MC: "255,0,0",  # Red
@@ -461,8 +434,6 @@ class BiologicalSignalDetector:
 # Example usage
                 def example_signal_detection() -> None:
                     """TODO: Add docstring for example_signal_detection"""
-                        """TODO: Add docstring for example_signal_detection"""
-                            """TODO: Add docstring for example_signal_detection"""
     """Example of biological signal detection."""
     # Create detector
     detector = BiologicalSignalDetector(

@@ -73,30 +73,22 @@ class ProgressUpdate(BaseModel):
 class WebSocketManager:
     def __init__(self) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.active_connections: Dict[str, WebSocket] = {}
 
     async def connect(self, session_id: str, websocket: WebSocket) -> None:
         """TODO: Add docstring for connect"""
-            """TODO: Add docstring for connect"""
-                """TODO: Add docstring for connect"""
     await websocket.accept()
         self.active_connections[session_id] = websocket
         logger.info(f"WebSocket connected: {session_id}")
 
         def disconnect(self, session_id: str) -> None:
             """TODO: Add docstring for disconnect"""
-                """TODO: Add docstring for disconnect"""
-                    """TODO: Add docstring for disconnect"""
     if session_id in self.active_connections:
             del self.active_connections[session_id]
             logger.info(f"WebSocket disconnected: {session_id}")
 
     async def send_progress(self, session_id: str, update: ProgressUpdate) -> None:
         """TODO: Add docstring for send_progress"""
-            """TODO: Add docstring for send_progress"""
-                """TODO: Add docstring for send_progress"""
     if session_id in self.active_connections:
             try:
                 await self.active_connections[session_id].send_json(update.dict())
@@ -111,8 +103,6 @@ ws_manager = WebSocketManager()
 # Dependencies
 async def get_pir_client() -> PIRClient:
     """TODO: Add docstring for get_pir_client"""
-        """TODO: Add docstring for get_pir_client"""
-            """TODO: Add docstring for get_pir_client"""
     """Get or create PIR client"""
     # In production, this would connect to actual PIR servers
     # For now, return a mock client
@@ -128,9 +118,6 @@ async def get_pir_client() -> PIRClient:
 async def get_query_builder(
     pir_client: PIRClient = Depends(get_pir_client),
 ) -> BatchedPIRQueryBuilder:
-    """TODO: Add docstring for get_query_builder"""
-        """TODO: Add docstring for get_query_builder"""
-            """TODO: Add docstring for get_query_builder"""
     """Get or create batched query builder"""
     # In production, would load actual index mapping
     index_mapping = {
@@ -155,8 +142,6 @@ async def get_query_builder(
 
 async def get_proof_generator() -> ProofGenerator:
     """TODO: Add docstring for get_proof_generator"""
-        """TODO: Add docstring for get_proof_generator"""
-            """TODO: Add docstring for get_proof_generator"""
     """Get or create proof generator"""
     # In production, would initialize with actual circuit
     from genomevault.zk.proof import ProofGenerator
@@ -303,8 +288,6 @@ async def query_with_tuning(
 @router.websocket("/progress/{session_id}")
 async def websocket_progress(websocket: WebSocket, session_id: str) -> None:
     """TODO: Add docstring for websocket_progress"""
-        """TODO: Add docstring for websocket_progress"""
-            """TODO: Add docstring for websocket_progress"""
     """WebSocket endpoint for real-time query progress updates"""
     await ws_manager.connect(session_id, websocket)
     try:
@@ -319,9 +302,6 @@ async def websocket_progress(websocket: WebSocket, session_id: str) -> None:
 async def estimate_query_performance(
     request: TunedQueryRequest,
 ) -> None:
-    """TODO: Add docstring for estimate_query_performance"""
-        """TODO: Add docstring for estimate_query_performance"""
-            """TODO: Add docstring for estimate_query_performance"""
     """
     Estimate performance metrics for a query without executing it
     Used by the UI to show real-time estimates as users adjust dials
@@ -367,8 +347,6 @@ async def estimate_query_performance(
 # Helper functions
         def _build_genomic_query(params: Dict[str, Any]) -> GenomicQuery:
             """TODO: Add docstring for _build_genomic_query"""
-                """TODO: Add docstring for _build_genomic_query"""
-                    """TODO: Add docstring for _build_genomic_query"""
 """Build genomic query from request parameters"""
     query_type = QueryType(params.get("type", "variant_lookup"))
 
@@ -406,9 +384,6 @@ async def _execute_streaming_query(
     budget: ErrorBudget,
     session_id: str,
 ) -> Any:
-    """TODO: Add docstring for _execute_streaming_query"""
-        """TODO: Add docstring for _execute_streaming_query"""
-            """TODO: Add docstring for _execute_streaming_query"""
     """Execute query with streaming progress updates"""
     # Build batch
     batched_query = query_builder.build_repeat_batch(budget, query)
@@ -454,8 +429,6 @@ async def _execute_streaming_query(
 
         def _estimate_theoretical_error(budget: ErrorBudget) -> float:
             """TODO: Add docstring for _estimate_theoretical_error"""
-                """TODO: Add docstring for _estimate_theoretical_error"""
-                    """TODO: Add docstring for _estimate_theoretical_error"""
     """Estimate theoretical error based on budget configuration"""
     import math
 

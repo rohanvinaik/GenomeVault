@@ -86,9 +86,7 @@ def test_test_infrastructure() -> None:
 
                             def sample_function(n) -> None:
                                 """TODO: Add docstring for sample_function"""
-                                    """TODO: Add docstring for sample_function"""
 
-                                        """TODO: Add docstring for sample_function"""
     return sum(range(n))
 
     result = performance_benchmark.measure("sum_calculation", sample_function, 1000)

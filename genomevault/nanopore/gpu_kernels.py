@@ -39,9 +39,6 @@ class GPUBindingKernel:
         max_batch_size: int = 10000,
         n_streams: int = 2,
     ) -> None:
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     """
         Initialize GPU kernel.
 
@@ -70,8 +67,6 @@ class GPUBindingKernel:
 
             def _compile_kernels(self) -> None:
                 """TODO: Add docstring for _compile_kernels"""
-                    """TODO: Add docstring for _compile_kernels"""
-                        """TODO: Add docstring for _compile_kernels"""
     """Compile CUDA kernels."""
         # Event to k-mer mapping kernel
                 self.event_to_kmer_kernel = cp.RawKernel(
@@ -203,8 +198,6 @@ class GPUBindingKernel:
 
                 def _allocate_buffers(self) -> None:
                     """TODO: Add docstring for _allocate_buffers"""
-                        """TODO: Add docstring for _allocate_buffers"""
-                            """TODO: Add docstring for _allocate_buffers"""
     """Allocate GPU memory buffers."""
                     self.buffers = {}
 
@@ -229,9 +222,6 @@ class GPUBindingKernel:
         start_position: int,
         hv_encoder,
     ) -> Tuple[np.ndarray, np.ndarray]:
-        """TODO: Add docstring for process_events_async"""
-            """TODO: Add docstring for process_events_async"""
-                """TODO: Add docstring for process_events_async"""
     """
         Process events on GPU asynchronously.
 
@@ -329,9 +319,6 @@ class GPUBindingKernel:
         hv_encoder,
         stream,
     ) -> Tuple[cp.ndarray, cp.ndarray]:
-        """TODO: Add docstring for _load_encoding_tables_async"""
-            """TODO: Add docstring for _load_encoding_tables_async"""
-                """TODO: Add docstring for _load_encoding_tables_async"""
     """
         Load encoding tables from catalytic space.
 
@@ -356,8 +343,6 @@ class GPUBindingKernel:
 
             def get_memory_usage(self) -> Dict[str, float]:
                 """TODO: Add docstring for get_memory_usage"""
-                    """TODO: Add docstring for get_memory_usage"""
-                        """TODO: Add docstring for get_memory_usage"""
     """Get GPU memory usage statistics."""
         stats = {}
 
@@ -377,8 +362,6 @@ class GPUBindingKernel:
 # Example usage
 async def example_gpu_processing() -> None:
     """TODO: Add docstring for example_gpu_processing"""
-        """TODO: Add docstring for example_gpu_processing"""
-            """TODO: Add docstring for example_gpu_processing"""
     """Example of GPU-accelerated processing."""
     if not GPU_AVAILABLE:
         print("GPU not available - install CuPy for GPU acceleration")

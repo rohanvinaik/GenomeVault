@@ -97,8 +97,6 @@ NETWORK_NODES = {
 @router.post("/", response_model=TopologyResponse)
 async def get_network_topology(request: TopologyRequest) -> Any:
     """TODO: Add docstring for get_network_topology"""
-        """TODO: Add docstring for get_network_topology"""
-            """TODO: Add docstring for get_network_topology"""
     """
     Get optimal network topology for PIR queries
 
@@ -153,8 +151,6 @@ async def get_network_topology(request: TopologyRequest) -> Any:
 @router.get("/nodes")
 async def list_all_nodes() -> None:
     """TODO: Add docstring for list_all_nodes"""
-        """TODO: Add docstring for list_all_nodes"""
-            """TODO: Add docstring for list_all_nodes"""
     """List all nodes in the network"""
     return {
         "nodes": list(NETWORK_NODES.values()),
@@ -171,8 +167,6 @@ async def list_all_nodes() -> None:
 @router.get("/node/{node_id}")
 async def get_node_info(node_id: str) -> Any:
     """TODO: Add docstring for get_node_info"""
-        """TODO: Add docstring for get_node_info"""
-            """TODO: Add docstring for get_node_info"""
     """Get information about a specific node"""
     if node_id not in NETWORK_NODES:
         raise HTTPException(status_code=404, detail="Node {node_id} not found")
@@ -183,8 +177,6 @@ async def get_node_info(node_id: str) -> Any:
 @router.post("/ping/{node_id}")
 async def ping_node(node_id: str) -> None:
     """TODO: Add docstring for ping_node"""
-        """TODO: Add docstring for ping_node"""
-            """TODO: Add docstring for ping_node"""
     """Ping a node to check availability and latency"""
     if node_id not in NETWORK_NODES:
         raise HTTPException(status_code=404, detail="Node {node_id} not found")

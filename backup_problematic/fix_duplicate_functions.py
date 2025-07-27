@@ -19,16 +19,12 @@ class DuplicateFunctionFixer:
 
     def __init__(self, base_path: Path) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.base_path = base_path
         self.duplicate_groups = []
         self.fixes_applied = 0
 
         def analyze_duplicates(self) -> None:
             """TODO: Add docstring for analyze_duplicates"""
-                """TODO: Add docstring for analyze_duplicates"""
-                    """TODO: Add docstring for analyze_duplicates"""
     """Analyze the duplicate functions reported by TailChasingFixer"""
 
         # Based on the TailChasingFixer output, these are the main duplicate groups
@@ -89,8 +85,6 @@ class DuplicateFunctionFixer:
 
             def create_shared_implementations(self) -> Dict[str, Any]:
                 """TODO: Add docstring for create_shared_implementations"""
-                    """TODO: Add docstring for create_shared_implementations"""
-                        """TODO: Add docstring for create_shared_implementations"""
     """Create shared base implementations for duplicate patterns"""
 
         # Create utils/common.py for shared implementations
@@ -115,8 +109,6 @@ class NotImplementedMixin:
     @staticmethod
     def not_implemented(function_name: str) -> None:
         """TODO: Add docstring for not_implemented"""
-            """TODO: Add docstring for not_implemented"""
-                """TODO: Add docstring for not_implemented"""
     """Standard not implemented handler"""
         raise NotImplementedError(f"{function_name} is not yet implemented")
 
@@ -129,16 +121,12 @@ class EmptyReturnMixin:
     @staticmethod
     def return_empty_dict() -> Dict[str, Any]:
         """TODO: Add docstring for return_empty_dict"""
-            """TODO: Add docstring for return_empty_dict"""
-                """TODO: Add docstring for return_empty_dict"""
     """Return empty dictionary"""
         return {}
 
     @staticmethod
         def return_empty_list() -> list:
             """TODO: Add docstring for return_empty_list"""
-                """TODO: Add docstring for return_empty_list"""
-                    """TODO: Add docstring for return_empty_list"""
     """Return empty list"""
         return []
 
@@ -151,16 +139,12 @@ class LoggingMixin:
     @staticmethod
     def log_operation(operation: str, **kwargs) -> None:
         """TODO: Add docstring for log_operation"""
-            """TODO: Add docstring for log_operation"""
-                """TODO: Add docstring for log_operation"""
     """Log an operation with context"""
         logger.info(f"Operation: {operation}", extra=kwargs)
 
     @staticmethod
         def log_genomic_operation(operation: str, user_id: Optional[str] = None, **kwargs) -> None:
             """TODO: Add docstring for log_genomic_operation"""
-                """TODO: Add docstring for log_genomic_operation"""
-                    """TODO: Add docstring for log_genomic_operation"""
     """Log a genomic operation with user context"""
         context = {"user_id": user_id} if user_id else {}
         context.update(kwargs)
@@ -170,8 +154,6 @@ class LoggingMixin:
 # Circuit factory for ZK proofs
             def create_circuit_stub(circuit_type: str) -> Dict[str, Any]:
                 """TODO: Add docstring for create_circuit_stub"""
-                    """TODO: Add docstring for create_circuit_stub"""
-                        """TODO: Add docstring for create_circuit_stub"""
     """Create a stub circuit definition"""
     return {
         "type": circuit_type,
@@ -183,8 +165,6 @@ class LoggingMixin:
 # Configuration helpers
                 def get_default_config() -> Dict[str, Any]:
                     """TODO: Add docstring for get_default_config"""
-                        """TODO: Add docstring for get_default_config"""
-                            """TODO: Add docstring for get_default_config"""
     """Get default configuration"""
     return {
         "version": "3.0.0",
@@ -201,8 +181,6 @@ class LoggingMixin:
 
                     def fix_duplicate_group(self, group: Dict) -> None:
                         """TODO: Add docstring for fix_duplicate_group"""
-                            """TODO: Add docstring for fix_duplicate_group"""
-                                """TODO: Add docstring for fix_duplicate_group"""
     """Fix a group of duplicate functions"""
 
         pattern = group["pattern"]
@@ -248,8 +226,6 @@ class LoggingMixin:
 
                 def _fix_empty_return_dict(self, content: str, func_name: str) -> str:
                     """TODO: Add docstring for _fix_empty_return_dict"""
-                        """TODO: Add docstring for _fix_empty_return_dict"""
-                            """TODO: Add docstring for _fix_empty_return_dict"""
 """Fix functions that just return empty dict"""
 
         # Add import if needed
@@ -302,8 +278,6 @@ class LoggingMixin:
 
                 def _fix_not_implemented(self, content: str, func_name: str) -> str:
                     """TODO: Add docstring for _fix_not_implemented"""
-                        """TODO: Add docstring for _fix_not_implemented"""
-                            """TODO: Add docstring for _fix_not_implemented"""
     """Fix functions that should raise NotImplementedError"""
 
         # Add import if needed
@@ -329,8 +303,6 @@ class LoggingMixin:
 
             def _fix_pass_only(self, content: str, func_name: str) -> str:
                 """TODO: Add docstring for _fix_pass_only"""
-                    """TODO: Add docstring for _fix_pass_only"""
-                        """TODO: Add docstring for _fix_pass_only"""
     """Fix functions that only have pass statement"""
 
         if "log" in func_name:
@@ -373,8 +345,6 @@ class LoggingMixin:
 
                 def _fix_simple_getter(self, content: str, func_name: str) -> str:
                     """TODO: Add docstring for _fix_simple_getter"""
-                        """TODO: Add docstring for _fix_simple_getter"""
-                            """TODO: Add docstring for _fix_simple_getter"""
     """Fix simple getter functions"""
 
         # These typically need actual implementation based on context
@@ -391,8 +361,6 @@ class LoggingMixin:
 
                     def generate_report(self) -> str:
                         """TODO: Add docstring for generate_report"""
-                            """TODO: Add docstring for generate_report"""
-                                """TODO: Add docstring for generate_report"""
     """Generate a report of fixes applied"""
 
         report = f"""
@@ -435,8 +403,6 @@ class LoggingMixin:
 
     def main() -> None:
         """TODO: Add docstring for main"""
-            """TODO: Add docstring for main"""
-                """TODO: Add docstring for main"""
     """Main function to fix duplicate functions"""
     print("🚀 GenomeVault Duplicate Function Fixer")
     print("=" * 60)

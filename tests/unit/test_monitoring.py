@@ -53,8 +53,6 @@ class TestMetricsCollector:
 
             def test_function() -> None:
                 """TODO: Add docstring for test_function"""
-                    """TODO: Add docstring for test_function"""
-                        """TODO: Add docstring for test_function"""
     time.sleep(0.1)
             return "result"
 

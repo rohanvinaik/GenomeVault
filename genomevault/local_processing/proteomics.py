@@ -74,8 +74,6 @@ class Peptide:
 
     def to_dict(self) -> Dict[str, Any]:
         """TODO: Add docstring for to_dict"""
-            """TODO: Add docstring for to_dict"""
-                """TODO: Add docstring for to_dict"""
     """Convert to dictionary"""
         return {
             "sequence": self.sequence,
@@ -112,8 +110,6 @@ class ProteinMeasurement:
 
     def to_dict(self) -> Dict[str, Any]:
         """TODO: Add docstring for to_dict"""
-            """TODO: Add docstring for to_dict"""
-                """TODO: Add docstring for to_dict"""
     """Convert to dictionary"""
         return {
             "protein_id": self.protein_id,
@@ -144,15 +140,11 @@ class ProteomicsProfile:
 
     def filter_by_abundance(self, min_abundance: float) -> List[ProteinMeasurement]:
         """TODO: Add docstring for filter_by_abundance"""
-            """TODO: Add docstring for filter_by_abundance"""
-                """TODO: Add docstring for filter_by_abundance"""
     """Filter proteins by abundance threshold"""
         return [p for p in self.proteins if p.normalized_abundance >= min_abundance]
 
         def get_protein_by_gene(self, gene_name: str) -> Optional[ProteinMeasurement]:
             """TODO: Add docstring for get_protein_by_gene"""
-                """TODO: Add docstring for get_protein_by_gene"""
-                    """TODO: Add docstring for get_protein_by_gene"""
     """Get protein measurement by gene name"""
         for protein in self.proteins:
             if protein.gene_name == gene_name:
@@ -161,8 +153,6 @@ class ProteomicsProfile:
 
                 def get_modified_proteins(self, modification: ModificationType) -> List[ProteinMeasurement]:
                     """TODO: Add docstring for get_modified_proteins"""
-                        """TODO: Add docstring for get_modified_proteins"""
-                            """TODO: Add docstring for get_modified_proteins"""
     """Get proteins with specific modification"""
         return [
             p
@@ -172,16 +162,12 @@ class ProteomicsProfile:
 
                     def to_dataframe(self) -> pd.DataFrame:
                         """TODO: Add docstring for to_dataframe"""
-                            """TODO: Add docstring for to_dataframe"""
-                                """TODO: Add docstring for to_dataframe"""
     """Convert to pandas DataFrame"""
         data = [p.to_dict() for p in self.proteins]
         return pd.DataFrame(data)
 
                         def calculate_pathway_enrichment(self, pathway_genes: Set[str]) -> Dict[str, float]:
                             """TODO: Add docstring for calculate_pathway_enrichment"""
-                                """TODO: Add docstring for calculate_pathway_enrichment"""
-                                    """TODO: Add docstring for calculate_pathway_enrichment"""
     """Calculate enrichment for a gene set/pathway"""
         detected_genes = {p.gene_name for p in self.proteins if p.normalized_abundance > 0}
         _ = detected_genes.intersection(pathway_genes)
@@ -208,9 +194,6 @@ class ProteomicsProcessor:
         fdr_threshold: _ = 0.01,
         max_threads: _ = 4,
     ) -> None:
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     """
         Initialize proteomics processor
 
@@ -233,8 +216,6 @@ class ProteomicsProcessor:
 
             def _load_protein_database(self) -> Dict[str, Dict[str, Any]]:
                 """TODO: Add docstring for _load_protein_database"""
-                    """TODO: Add docstring for _load_protein_database"""
-                        """TODO: Add docstring for _load_protein_database"""
     """Load protein sequences from FASTA database"""
         if not self.protein_database or not self.protein_database.exists():
             logger.warning("No protein database provided, using mock data")
@@ -264,8 +245,6 @@ class ProteomicsProcessor:
 
             def _load_modifications(self) -> Dict[ModificationType, float]:
                 """TODO: Add docstring for _load_modifications"""
-                    """TODO: Add docstring for _load_modifications"""
-                        """TODO: Add docstring for _load_modifications"""
     """Load modification mass shifts"""
         # Standard modification masses
         return {
@@ -284,9 +263,6 @@ class ProteomicsProcessor:
         input_format: _ = "maxquant",
         quantification_method: _ = QuantificationMethod.LABEL_FREE,
     ) -> ProteomicsProfile:
-        """TODO: Add docstring for process"""
-            """TODO: Add docstring for process"""
-                """TODO: Add docstring for process"""
     """
         Process proteomics data
 
@@ -346,8 +322,6 @@ class ProteomicsProcessor:
 
             def _load_maxquant_output(self, input_path: Path) -> Tuple[pd.DataFrame, pd.DataFrame]:
                 """TODO: Add docstring for _load_maxquant_output"""
-                    """TODO: Add docstring for _load_maxquant_output"""
-                        """TODO: Add docstring for _load_maxquant_output"""
     """Load MaxQuant output files"""
         logger.info(f"Loading MaxQuant output from {input_path}")
 
@@ -400,8 +374,6 @@ class ProteomicsProcessor:
 
                 def _process_mzml(self, input_path: Path) -> Tuple[pd.DataFrame, pd.DataFrame]:
                     """TODO: Add docstring for _process_mzml"""
-                        """TODO: Add docstring for _process_mzml"""
-                            """TODO: Add docstring for _process_mzml"""
     """Process mzML mass spectrometry data"""
         logger.info(f"Processing mzML file {input_path}")
         # In production, would use pyteomics or similar to parse mzML
@@ -410,8 +382,6 @@ class ProteomicsProcessor:
 
                     def _generate_random_peptide(self, length: _ = None) -> str:
                         """TODO: Add docstring for _generate_random_peptide"""
-                            """TODO: Add docstring for _generate_random_peptide"""
-                                """TODO: Add docstring for _generate_random_peptide"""
     """Generate random peptide sequence"""
         _ = "ACDEFGHIKLMNPQRSTVWY"
         if length is None:
@@ -420,8 +390,6 @@ class ProteomicsProcessor:
 
             def _generate_random_modifications(self) -> str:
                 """TODO: Add docstring for _generate_random_modifications"""
-                    """TODO: Add docstring for _generate_random_modifications"""
-                        """TODO: Add docstring for _generate_random_modifications"""
     """Generate random modification string"""
         if np.random.random() < 0.7:
             return ""  # No modifications
@@ -438,8 +406,6 @@ class ProteomicsProcessor:
 
             def _parse_modifications(self, mod_string: str) -> List[Tuple[int, ModificationType, float]]:
                 """TODO: Add docstring for _parse_modifications"""
-                    """TODO: Add docstring for _parse_modifications"""
-                        """TODO: Add docstring for _parse_modifications"""
     """Parse modification string into structured format"""
         if not mod_string:
             return []
@@ -458,9 +424,6 @@ class ProteomicsProcessor:
             def _create_protein_measurements(
         self, protein_data: pd.DataFrame, peptide_data: pd.DataFrame
     ) -> List[ProteinMeasurement]:
-        """TODO: Add docstring for _create_protein_measurements"""
-            """TODO: Add docstring for _create_protein_measurements"""
-                """TODO: Add docstring for _create_protein_measurements"""
     """Create protein measurements from data"""
         _ = []
 
@@ -514,8 +477,6 @@ class ProteomicsProcessor:
 
                     def _apply_fdr_filter(self, proteins: List[ProteinMeasurement]) -> List[ProteinMeasurement]:
                         """TODO: Add docstring for _apply_fdr_filter"""
-                            """TODO: Add docstring for _apply_fdr_filter"""
-                                """TODO: Add docstring for _apply_fdr_filter"""
     """Apply FDR filtering to proteins"""
         # Filter by minimum peptides
         _ = [p for p in proteins if p.num_peptides >= self.min_peptides]
@@ -537,9 +498,6 @@ class ProteomicsProcessor:
             def _normalize_abundances(
         self, proteins: List[ProteinMeasurement], method: QuantificationMethod
     ) -> List[ProteinMeasurement]:
-        """TODO: Add docstring for _normalize_abundances"""
-            """TODO: Add docstring for _normalize_abundances"""
-                """TODO: Add docstring for _normalize_abundances"""
     """Normalize protein abundances"""
         if not proteins:
             return proteins
@@ -572,9 +530,6 @@ class ProteomicsProcessor:
             def _calculate_quality_metrics(
         self, proteins: List[ProteinMeasurement], peptide_data: pd.DataFrame
     ) -> Dict[str, Any]:
-        """TODO: Add docstring for _calculate_quality_metrics"""
-            """TODO: Add docstring for _calculate_quality_metrics"""
-                """TODO: Add docstring for _calculate_quality_metrics"""
     """Calculate quality control metrics"""
         if not proteins:
             return {}
@@ -617,9 +572,6 @@ class ProteomicsProcessor:
         min_fold_change: float = 2.0,
         fdr_threshold: _ = 0.05,
     ) -> pd.DataFrame:
-        """TODO: Add docstring for differential_expression"""
-            """TODO: Add docstring for differential_expression"""
-                """TODO: Add docstring for differential_expression"""
     """
         Perform differential protein expression analysis
 
@@ -725,9 +677,6 @@ class ProteomicsProcessor:
             def export_results(
         self, profile: ProteomicsProfile, output_path: Path, format: _ = "tsv"
     ) -> None:
-        """TODO: Add docstring for export_results"""
-            """TODO: Add docstring for export_results"""
-                """TODO: Add docstring for export_results"""
     """Export proteomics results to file"""
         logger.info(f"Exporting proteomics results to {output_path}")
 

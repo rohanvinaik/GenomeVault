@@ -239,8 +239,6 @@ class TestDiabetesPilot:
 
         def calculate() -> None:
             """TODO: Add docstring for calculate"""
-                """TODO: Add docstring for calculate"""
-                    """TODO: Add docstring for calculate"""
     return risk_calculator.assess_combined_risk(
                 genetic_data=sample_genetic_data, clinical_data=sample_clinical_data
             )

@@ -219,8 +219,6 @@ class TestPIRIntegration:
         # Mock HTTP client to use local servers
         async def mock_query_server(server_url, shard_id, query) -> None:
             """TODO: Add docstring for mock_query_server"""
-                """TODO: Add docstring for mock_query_server"""
-                    """TODO: Add docstring for mock_query_server"""
     response = await servers[shard_id].handle_query(
                 {
                     "query_id": query.query_id,

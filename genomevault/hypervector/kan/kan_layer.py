@@ -21,8 +21,6 @@ class SplineFunction(nn.Module):
 
     def __init__(self, num_knots: int = 10, degree: int = 3) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     super().__init__()
         self.num_knots = num_knots
         self.degree = degree
@@ -35,8 +33,6 @@ class SplineFunction(nn.Module):
 
         def forward(self, x: torch.Tensor) -> torch.Tensor:
             """TODO: Add docstring for forward"""
-                """TODO: Add docstring for forward"""
-                    """TODO: Add docstring for forward"""
     """Evaluate spline at input points"""
         # Ensure input is in [-1, 1]
         x = torch.clamp(x, -1, 1)
@@ -69,9 +65,6 @@ class KANLayer(nn.Module):
     def __init__(
         self, in_features: int, out_features: int, num_knots: int = 10, spline_degree: int = 3
     ) -> None:
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     super().__init__()
         self.in_features = in_features
         self.out_features = out_features
@@ -91,8 +84,6 @@ class KANLayer(nn.Module):
 
         def forward(self, x: torch.Tensor) -> torch.Tensor:
             """TODO: Add docstring for forward"""
-                """TODO: Add docstring for forward"""
-                    """TODO: Add docstring for forward"""
     """
         Forward pass through KAN layer
 
@@ -118,9 +109,6 @@ class KANLayer(nn.Module):
                 def get_symbolic_expression(
         self, idx_out: int, idx_in: int, num_points: int = 100
     ) -> Tuple[np.ndarray, np.ndarray]:
-        """TODO: Add docstring for get_symbolic_expression"""
-            """TODO: Add docstring for get_symbolic_expression"""
-                """TODO: Add docstring for get_symbolic_expression"""
     """
         Extract the learned function φ_{idx_out,idx_in} for visualization
 
@@ -146,8 +134,6 @@ class LinearKAN(nn.Module):
 
     def __init__(self, in_features: int, out_features: int, num_segments: int = 20) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     super().__init__()
         self.in_features = in_features
         self.out_features = out_features
@@ -161,8 +147,6 @@ class LinearKAN(nn.Module):
 
         def forward(self, x: torch.Tensor) -> torch.Tensor:
             """TODO: Add docstring for forward"""
-                """TODO: Add docstring for forward"""
-                    """TODO: Add docstring for forward"""
     """Fast piecewise linear transformation"""
         batch_size = x.shape[0]
         x_expanded = x.unsqueeze(1).expand(-1, self.out_features, -1)
@@ -205,9 +189,6 @@ class ConvolutionalKAN(nn.Module):
         num_knots: int = 10,
         spline_degree: int = 3,
     ) -> None:
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
     super().__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -225,8 +206,6 @@ class ConvolutionalKAN(nn.Module):
 
         def forward(self, x: torch.Tensor) -> torch.Tensor:
             """TODO: Add docstring for forward"""
-                """TODO: Add docstring for forward"""
-                    """TODO: Add docstring for forward"""
     """
         Apply convolutional KAN
 

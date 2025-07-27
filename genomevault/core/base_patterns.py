@@ -16,23 +16,17 @@ class BaseCircuit(ABC):
 
     def __init__(self, circuit_type: str) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.circuit_type = circuit_type
         self.logger = logging.getLogger(f"{__name__}.{circuit_type}")
 
     @abstractmethod
         def build(self) -> Dict[str, Any]:
             """TODO: Add docstring for build"""
-                """TODO: Add docstring for build"""
-                    """TODO: Add docstring for build"""
     """Build the circuit"""
         pass
 
             def get_stub(self) -> Dict[str, Any]:
                 """TODO: Add docstring for get_stub"""
-                    """TODO: Add docstring for get_stub"""
-                        """TODO: Add docstring for get_stub"""
     """Get stub implementation"""
         return {
             "type": self.circuit_type,
@@ -48,14 +42,10 @@ class BaseConfig(ABC):
 
     def __init__(self) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self._config = self._load_default_config()
 
         def _load_default_config(self) -> Dict[str, Any]:
             """TODO: Add docstring for _load_default_config"""
-                """TODO: Add docstring for _load_default_config"""
-                    """TODO: Add docstring for _load_default_config"""
     """Load default configuration"""
         return {
             "version": "3.0.0",
@@ -69,15 +59,11 @@ class BaseConfig(ABC):
 
             def get(self, key: str, default: Any = None) -> Any:
                 """TODO: Add docstring for get"""
-                    """TODO: Add docstring for get"""
-                        """TODO: Add docstring for get"""
     """Get configuration value"""
         return self._config.get(key, default)
 
                 def set(self, key: str, value: Any) -> None:
                     """TODO: Add docstring for set"""
-                        """TODO: Add docstring for set"""
-                            """TODO: Add docstring for set"""
     """Set configuration value"""
                     self._config[key] = value
 
@@ -89,16 +75,12 @@ class BaseService(ABC):
 
     def __init__(self, name: str) -> None:
         """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-                """TODO: Add docstring for __init__"""
         self.name = name
         self.logger = logging.getLogger(f"{__name__}.{name}")
         self._initialized = False
 
         def initialize(self) -> None:
             """TODO: Add docstring for initialize"""
-                """TODO: Add docstring for initialize"""
-                    """TODO: Add docstring for initialize"""
     """Initialize the service"""
         if self._initialized:
             return
@@ -110,15 +92,11 @@ class BaseService(ABC):
     @abstractmethod
             def _do_initialize(self) -> None:
                 """TODO: Add docstring for _do_initialize"""
-                    """TODO: Add docstring for _do_initialize"""
-                        """TODO: Add docstring for _do_initialize"""
     """Actual initialization logic"""
         pass
 
                 def log_operation(self, operation: str, **kwargs) -> None:
                     """TODO: Add docstring for log_operation"""
-                        """TODO: Add docstring for log_operation"""
-                            """TODO: Add docstring for log_operation"""
     """Log an operation"""
                     self.logger.info(f"Operation: {operation}", extra=kwargs)
 
@@ -131,8 +109,6 @@ class NotImplementedMixin:
     @staticmethod
     def not_implemented(method_name: str) -> None:
         """TODO: Add docstring for not_implemented"""
-            """TODO: Add docstring for not_implemented"""
-                """TODO: Add docstring for not_implemented"""
     """Raise NotImplementedError with method name"""
         raise NotImplementedError(f"{method_name} is not yet implemented")
 
@@ -140,14 +116,10 @@ class NotImplementedMixin:
 # Factory functions
         def create_circuit(circuit_type: str) -> Dict[str, Any]:
             """TODO: Add docstring for create_circuit"""
-                """TODO: Add docstring for create_circuit"""
-                    """TODO: Add docstring for create_circuit"""
 """Factory function to create circuit stubs"""
     class CircuitStub(BaseCircuit):
         def build(self) -> None:
             """TODO: Add docstring for build"""
-                """TODO: Add docstring for build"""
-                    """TODO: Add docstring for build"""
     return self.get_stub()
 
     circuit = CircuitStub(circuit_type)
@@ -156,8 +128,6 @@ class NotImplementedMixin:
 
             def get_default_config() -> Dict[str, Any]:
                 """TODO: Add docstring for get_default_config"""
-                    """TODO: Add docstring for get_default_config"""
-                        """TODO: Add docstring for get_default_config"""
     """Get default configuration"""
     config = BaseConfig()
     return config._config

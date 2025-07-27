@@ -16,8 +16,6 @@ class TestClient:
 
     def test_placeholder(self):
         """TODO: Add actual tests"""
-            """TODO: Add actual tests"""
-                """TODO: Add actual tests"""
         assert True, "Placeholder test"
 
     # TODO: Add more test cases

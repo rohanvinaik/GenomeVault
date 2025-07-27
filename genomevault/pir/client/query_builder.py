@@ -322,7 +322,6 @@ class PIRQueryBuilder:
         ref_allele: Optional[str] = None,
         alt_allele: Optional[str] = None,
     ) -> GenomicQuery:
-        """TODO: Add docstring for build_variant_query"""
      """Build a variant lookup query."""
         params = {"chromosome": chromosome, "position": position}
 
@@ -352,7 +351,6 @@ class PIRQueryBuilder:
     def build_population_frequency_query(
         self, variants: List[Dict], population: str
     ) -> GenomicQuery:
-        """TODO: Add docstring for build_population_frequency_query"""
      """Build a population frequency query."""
         return GenomicQuery(
             query_type=QueryType.POPULATION_FREQUENCY,
@@ -362,7 +360,6 @@ class PIRQueryBuilder:
     async def query_clinical_variants(
         self, gene_list: List[str], significance_filter: Optional[str] = None
     ) -> QueryResult:
-        """TODO: Add docstring for query_clinical_variants"""
      """
         Query for clinically significant variants in genes.
 

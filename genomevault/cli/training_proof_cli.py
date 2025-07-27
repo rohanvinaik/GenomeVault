@@ -27,8 +27,6 @@ logger = get_logger(__name__)
 @click.group()
 def training_proof_cli() -> None:
     """TODO: Add docstring for training_proof_cli"""
-        """TODO: Add docstring for training_proof_cli"""
-            """TODO: Add docstring for training_proof_cli"""
     """GenomeVault Training Proof Verification CLI"""
     pass
 
@@ -40,8 +38,6 @@ def training_proof_cli() -> None:
 @click.option("--verbose", "-v", is_flag=True, help="Verbose output")
     def verify_proof(proof_file: str, snapshot_dir: str, output: Optional[str], verbose: bool) -> None:
         """TODO: Add docstring for verify_proof"""
-            """TODO: Add docstring for verify_proof"""
-                """TODO: Add docstring for verify_proof"""
     """Verify a training proof against model snapshots"""
 
     click.echo("🔍 Verifying training proof...")
@@ -186,8 +182,6 @@ def training_proof_cli() -> None:
 @click.option("--threshold", "-t", default=0.15, help="Drift detection threshold")
             def analyze_drift(snapshot_dir: str, output_dir: str, threshold: float) -> None:
                 """TODO: Add docstring for analyze_drift"""
-                    """TODO: Add docstring for analyze_drift"""
-                        """TODO: Add docstring for analyze_drift"""
     """Analyze semantic drift in model training"""
 
     click.echo("📈 Analyzing semantic drift...")
@@ -289,8 +283,6 @@ def training_proof_cli() -> None:
 @click.option("--verify", "-v", is_flag=True, help="Verify attestation on-chain")
         def check_attestation(contract_address: str, attestation_id: str, chain_id: int, verify: bool) -> None:
             """TODO: Add docstring for check_attestation"""
-                """TODO: Add docstring for check_attestation"""
-                    """TODO: Add docstring for check_attestation"""
     """Check training attestation on blockchain"""
 
     click.echo(f"🔗 Checking attestation {attestation_id}...")
@@ -350,8 +342,6 @@ def training_proof_cli() -> None:
 @click.option("--dataset-hash", "-h", required=True, help="Hash of training dataset")
         def generate_proof(session_id: str, proof_file: str, snapshot_dir: str, dataset_hash: str) -> None:
             """TODO: Add docstring for generate_proof"""
-                """TODO: Add docstring for generate_proof"""
-                    """TODO: Add docstring for generate_proof"""
     """Generate a training proof from snapshots"""
 
     click.echo("🔨 Generating training proof...")
@@ -409,8 +399,6 @@ def training_proof_cli() -> None:
 
         def compute_merkle_root(hashes: list) -> str:
             """TODO: Add docstring for compute_merkle_root"""
-                """TODO: Add docstring for compute_merkle_root"""
-                    """TODO: Add docstring for compute_merkle_root"""
     """Compute Merkle root of hashes"""
     if not hashes:
         return "0" * 64

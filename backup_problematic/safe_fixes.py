@@ -15,8 +15,6 @@ import torch
 
 def find_problematic_files(base_path) -> None:
     """TODO: Add docstring for find_problematic_files"""
-        """TODO: Add docstring for find_problematic_files"""
-            """TODO: Add docstring for find_problematic_files"""
     """Find files with encoding issues"""
     print("\n🔍 Scanning for problematic files...")
 
@@ -37,8 +35,6 @@ def find_problematic_files(base_path) -> None:
 
                 def fix_encoding_issues(problematic_files) -> None:
                     """TODO: Add docstring for fix_encoding_issues"""
-                        """TODO: Add docstring for fix_encoding_issues"""
-                            """TODO: Add docstring for fix_encoding_issues"""
     """Fix encoding issues in problematic files"""
     print(f"\n🔧 Fixing {len(problematic_files)} files with encoding issues...")
 
@@ -68,8 +64,6 @@ def find_problematic_files(base_path) -> None:
 
             def install_missing_dependencies() -> None:
                 """TODO: Add docstring for install_missing_dependencies"""
-                    """TODO: Add docstring for install_missing_dependencies"""
-                        """TODO: Add docstring for install_missing_dependencies"""
     """Install missing dependencies"""
     print("\n📦 Installing missing dependencies...")
 
@@ -86,8 +80,6 @@ def find_problematic_files(base_path) -> None:
 
             def run_safe_fixes(base_path) -> None:
                 """TODO: Add docstring for run_safe_fixes"""
-                    """TODO: Add docstring for run_safe_fixes"""
-                        """TODO: Add docstring for run_safe_fixes"""
     """Run safe fixes that won't break anything"""
     print("\n🛠️ Running safe fixes...")
 
@@ -136,8 +128,6 @@ def find_problematic_files(base_path) -> None:
 
         def create_run_script(base_path) -> Dict[str, Any]:
             """TODO: Add docstring for create_run_script"""
-                """TODO: Add docstring for create_run_script"""
-                    """TODO: Add docstring for create_run_script"""
     """Create a safe run script for benchmarks"""
     script_content = '''#!/usr/bin/env python3
 """
@@ -186,8 +176,6 @@ except Exception as e:
 
     def main() -> None:
         """TODO: Add docstring for main"""
-            """TODO: Add docstring for main"""
-                """TODO: Add docstring for main"""
     """Main function"""
     print("🚀 GenomeVault Safe Fixer")
     print("=" * 60)
