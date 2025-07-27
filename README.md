@@ -139,7 +139,24 @@ GenomeVault's Accuracy Dial precisely adjusts accuracy for different clinical ne
 
 ## 🚀 Quick Start
 
-### Installation
+#
+## Project Structure
+
+```
+genomevault/
+├── genomevault/        # Core package
+├── tests/              # Test suite
+├── docs/               # Documentation
+├── examples/           # Example code
+├── scripts/            # Utility scripts
+│   ├── benchmarks/     # Performance benchmarks
+│   ├── development/    # Development tools
+│   └── deployment/     # Deployment scripts
+├── docker/             # Docker configurations
+└── configs/            # Configuration files
+```
+
+## Installation
 
 ```bash
 # Clone the repository

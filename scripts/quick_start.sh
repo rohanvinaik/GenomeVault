@@ -43,7 +43,7 @@ wait_for_service() {
 # Start services
 echo ""
 echo "Starting GenomeVault services..."
-docker-compose -f docker-compose.dev.yml up -d
+docker-compose -f docker/docker-compose.dev.yml up -d
 
 # Wait for services to be ready
 echo ""
@@ -59,7 +59,7 @@ wait_for_service "Grafana" "http://localhost:3000" || true
 # Deploy smart contracts
 echo ""
 echo "Deploying smart contracts..."
-docker-compose -f docker-compose.dev.yml run --rm deploy-contracts
+docker-compose -f docker/docker-compose.dev.yml run --rm deploy-contracts
 
 # Show status
 echo ""
@@ -76,9 +76,9 @@ echo "  • Prometheus:      http://localhost:9090"
 echo "  • Grafana:         http://localhost:3000 (admin/genomevault)"
 echo ""
 echo "To view logs:"
-echo "  docker-compose -f docker-compose.dev.yml logs -f [service_name]"
+echo "  docker-compose -f docker/docker-compose.dev.yml logs -f [service_name]"
 echo ""
 echo "To stop all services:"
-echo "  docker-compose -f docker-compose.dev.yml down"
+echo "  docker-compose -f docker/docker-compose.dev.yml down"
 echo ""
 echo "Happy coding! 🚀"
