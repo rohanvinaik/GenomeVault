@@ -3,13 +3,19 @@
 Pre-GitHub Push Checklist for GenomeVault
 """
 
+import logging
 import os
 import subprocess
+import sys
 from pathlib import Path
 
-print("=" * 80)
-print("🚀 GENOMEVAULT PRE-GITHUB PUSH CHECKLIST")
-print("=" * 80)
+# Configure logging
+logging.basicConfig(level=logging.INFO, format="%(message)s", stream=sys.stdout)
+logger = logging.getLogger(__name__)
+
+logger.info("=" * 80)
+logger.info("🚀 GENOMEVAULT PRE-GITHUB PUSH CHECKLIST")
+logger.info("=" * 80)
 
 # Results tracking
 issues = []
@@ -17,8 +23,8 @@ warnings = []
 successes = []
 
 # 1. Check for sensitive information
-print("\n1. CHECKING FOR SENSITIVE INFORMATION...")
-print("-" * 40)
+logger.info("\n1. CHECKING FOR SENSITIVE INFORMATION...")
+logger.info("-" * 40)
 
 sensitive_patterns = [
     ("API keys", ["api_key", "apikey", "API_KEY"]),
@@ -51,13 +57,13 @@ for desc, patterns in sensitive_patterns:
             break
 
     if found:
-        warnings.append("Potential {desc} found - review before pushing")
+        warnings.append(f"Potential {desc} found - review before pushing")
     else:
-        successes.append("No hardcoded {desc} found")
+        successes.append(f"No hardcoded {desc} found")
 
 # 2. Check for proper .gitignore
-print("\n2. CHECKING .gitignore...")
-print("-" * 40)
+logger.info("\n2. CHECKING .gitignore...")
+logger.info("-" * 40)
 
 gitignore_path = Path(".gitignore")
 required_entries = [
@@ -83,15 +89,15 @@ if gitignore_path.exists():
             missing.append(entry)
 
     if missing:
-        warnings.append(".gitignore missing entries: {', '.join(missing[:3])}...")
+        warnings.append(f".gitignore missing entries: {', '.join(missing[:3])}...")
     else:
         successes.append(".gitignore has all required entries")
 else:
     issues.append(".gitignore file is missing!")
 
 # 3. Check documentation files
-print("\n3. CHECKING DOCUMENTATION...")
-print("-" * 40)
+logger.info("\n3. CHECKING DOCUMENTATION...")
+logger.info("-" * 40)
 
 required_docs = {
     "README.md": "Project overview",
@@ -102,13 +108,13 @@ required_docs = {
 
 for doc, desc in required_docs.items():
     if Path(doc).exists():
-        successes.append("{doc} exists ({desc})")
+        successes.append(f"{doc} exists ({desc})")
     else:
-        warnings.append("{doc} is missing ({desc})")
+        warnings.append(f"{doc} is missing ({desc})")
 
 # 4. Check for large files
-print("\n4. CHECKING FOR LARGE FILES...")
-print("-" * 40)
+logger.info("\n4. CHECKING FOR LARGE FILES...")
+logger.info("-" * 40)
 
 large_files = []
 for path in Path(".").rglob("*"):
@@ -116,18 +122,20 @@ for path in Path(".").rglob("*"):
         try:
             size_mb = path.stat().st_size / (1024 * 1024)
             if size_mb > 10:  # Files larger than 10MB
-                large_files.append((str(path), "{size_mb:.1f}MB"))
+                large_files.append((str(path), f"{size_mb:.1f}MB"))
         except Exception:
             pass
 
 if large_files:
-    warnings.append("Large files found: {', '.join(['{f[0]} ({f[1]})' for f in large_files[:3]])}")
+    warnings.append(
+        f"Large files found: {', '.join([f'{f[0]} ({f[1]})' for f in large_files[:3]])}"
+    )
 else:
     successes.append("No large files detected")
 
 # 5. Check Python code quality basics
-print("\n5. CHECKING CODE QUALITY...")
-print("-" * 40)
+logger.info("\n5. CHECKING CODE QUALITY...")
+logger.info("-" * 40)
 
 # Check for print debugging statements
 debug_prints = subprocess.run(
@@ -139,13 +147,13 @@ if debug_prints.stdout:
     # Count occurrences
     count = len(debug_prints.stdout.strip().split("\n"))
     if count > 50:  # Arbitrary threshold
-        warnings.append("Many print statements found ({count}) - consider using logging")
+        warnings.append(f"Many print statements found ({count}) - consider using logging")
     else:
         successes.append("Reasonable number of print statements")
 
 # 6. Check for TODO/FIXME comments
-print("\n6. CHECKING FOR TODO/FIXME COMMENTS...")
-print("-" * 40)
+logger.info("\n6. CHECKING FOR TODO/FIXME COMMENTS...")
+logger.info("-" * 40)
 
 todos = subprocess.run(
     ["grep", "-r", "-E", "TODO|FIXME|XXX|HACK", ".", "--include=*.py"],
@@ -154,13 +162,13 @@ todos = subprocess.run(
 )
 if todos.stdout:
     count = len(todos.stdout.strip().split("\n"))
-    warnings.append("Found {count} TODO/FIXME comments - consider addressing or documenting")
+    warnings.append(f"Found {count} TODO/FIXME comments - consider addressing or documenting")
 else:
     successes.append("No TODO/FIXME comments found")
 
 # 7. Check imports are fixed
-print("\n7. VERIFYING IMPORT FIXES...")
-print("-" * 40)
+logger.info("\n7. VERIFYING IMPORT FIXES...")
+logger.info("-" * 40)
 
 # Check the specific fix we made
 variant_file = Path("zk_proofs/circuits/biological/variant.py")
@@ -173,39 +181,39 @@ if variant_file.exists():
         issues.append("❌ variant.py import fix is missing!")
 
 # 8. Check for test files
-print("\n8. CHECKING TEST COVERAGE...")
-print("-" * 40)
+logger.info("\n8. CHECKING TEST COVERAGE...")
+logger.info("-" * 40)
 
 test_dirs = list(Path(".").glob("test*"))
 test_files = list(Path(".").rglob("test_*.py"))
 
 if test_dirs or test_files:
-    successes.append("Found {len(test_dirs)} test directories and {len(test_files)} test files")
+    successes.append(f"Found {len(test_dirs)} test directories and {len(test_files)} test files")
 else:
     warnings.append("No test files found - consider adding tests")
 
 # 9. Final summary
-print("\n" + "=" * 80)
-print("📊 PRE-PUSH SUMMARY")
-print("=" * 80)
+logger.info("\n" + "=" * 80)
+logger.info("📊 PRE-PUSH SUMMARY")
+logger.info("=" * 80)
 
-print("\n✅ GOOD ({len(successes)} items):")
+logger.info(f"\n✅ GOOD ({len(successes)} items):")
 for item in successes:
-    print("   • {item}")
+    logger.info(f"   • {item}")
 
 if warnings:
-    print("\n⚠️  WARNINGS ({len(warnings)} items):")
+    logger.info(f"\n⚠️  WARNINGS ({len(warnings)} items):")
     for item in warnings:
-        print("   • {item}")
+        logger.info(f"   • {item}")
 
 if issues:
-    print("\n❌ ISSUES ({len(issues)} items):")
+    logger.info(f"\n❌ ISSUES ({len(issues)} items):")
     for item in issues:
-        print("   • {item}")
+        logger.info(f"   • {item}")
 
 # 10. Recommendations
-print("\n📝 RECOMMENDATIONS BEFORE PUSHING:")
-print("-" * 40)
+logger.info("\n📝 RECOMMENDATIONS BEFORE PUSHING:")
+logger.info("-" * 40)
 
 recommendations = [
     "Create a comprehensive README.md with:",
@@ -229,10 +237,10 @@ recommendations = [
 ]
 
 for rec in recommendations:
-    print(rec)
+    logger.info(rec)
 
-print("\n" + "=" * 80)
-print("✨ Overall: The codebase structure looks good!")
-print("   Main import issue has been fixed.")
-print("   Address warnings above for a professional repository.")
-print("=" * 80)
+logger.info("\n" + "=" * 80)
+logger.info("✨ Overall: The codebase structure looks good!")
+logger.info("   Main import issue has been fixed.")
+logger.info("   Address warnings above for a professional repository.")
+logger.info("=" * 80)

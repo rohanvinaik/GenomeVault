@@ -199,7 +199,7 @@ class TestBindingProperties:
                 bound = binder.bind(torch_vectors, binding_type)
                 assert bound.shape[0] == dimension
                 assert torch.isfinite(bound).all()
-            except:
+            except (ValueError, NotImplementedError, Exception):
                 # Some binding types may not support multiple vectors
                 pass
 

@@ -498,7 +498,7 @@ class PackedGenomicEncoder:
         chr_num = chromosome.replace("chr", "").replace("X", "23").replace("Y", "24")
         try:
             chr_idx = int(chr_num)
-        except:
+        except (ValueError, Exception):
             chr_idx = 25
 
         rng = np.random.RandomState(chr_idx)

@@ -3,25 +3,32 @@
 Final Debug Summary - GenomeVault Import Issue Resolution
 """
 
-print("=" * 80)
-print("GENOMEVAULT DEBUG SESSION - FINAL SUMMARY")
-print("=" * 80)
+import logging
+import sys
 
-print("\n📋 ORIGINAL ISSUE:")
-print("   Error: No module named 'zk_proofs.circuits.biological.base_circuits'")
+# Configure logging
+logging.basicConfig(level=logging.INFO, format="%(message)s", stream=sys.stdout)
+logger = logging.getLogger(__name__)
 
-print("\n🔍 ROOT CAUSE IDENTIFIED:")
-print("   - variant.py had incorrect relative import: from .base_circuits import ...")
-print("   - Single dot (.) looks in current directory (biological/)")
-print("   - But base_circuits.py is in parent directory (circuits/)")
+logger.info("=" * 80)
+logger.info("GENOMEVAULT DEBUG SESSION - FINAL SUMMARY")
+logger.info("=" * 80)
 
-print("\n✅ FIX APPLIED:")
-print("   Changed: from .base_circuits import ...")
-print("   To:      from ..base_circuits import ...")
-print("   Double dots (..) correctly navigate to parent directory")
+logger.info("\n📋 ORIGINAL ISSUE:")
+logger.info("   Error: No module named 'zk_proofs.circuits.biological.base_circuits'")
 
-print("\n📁 VERIFIED FILE STRUCTURE:")
-print(
+logger.info("\n🔍 ROOT CAUSE IDENTIFIED:")
+logger.info("   - variant.py had incorrect relative import: from .base_circuits import ...")
+logger.info("   - Single dot (.) looks in current directory (biological/)")
+logger.info("   - But base_circuits.py is in parent directory (circuits/)")
+
+logger.info("\n✅ FIX APPLIED:")
+logger.info("   Changed: from .base_circuits import ...")
+logger.info("   To:      from ..base_circuits import ...")
+logger.info("   Double dots (..) correctly navigate to parent directory")
+
+logger.info("\n📁 VERIFIED FILE STRUCTURE:")
+logger.info(
     """
    zk_proofs/
    └── circuits/
@@ -31,40 +38,40 @@ print(
 """
 )
 
-print("\n🔧 CURRENT STATE:")
-print("   ✅ Import path is fixed and correct")
-print("   ✅ Will work once dependencies are installed")
-print("   ❌ Currently fails due to missing Python packages")
+logger.info("\n🔧 CURRENT STATE:")
+logger.info("   ✅ Import path is fixed and correct")
+logger.info("   ✅ Will work once dependencies are installed")
+logger.info("   ❌ Currently fails due to missing Python packages")
 
-print("\n📦 MISSING DEPENDENCIES:")
-print("   - cryptography (for encryption)")
-print("   - pydantic (for configuration)")
-print("   - structlog (for logging)")
-print("   - numpy, torch (for computations)")
-print("   - Others listed in requirements.txt")
+logger.info("\n📦 MISSING DEPENDENCIES:")
+logger.info("   - cryptography (for encryption)")
+logger.info("   - pydantic (for configuration)")
+logger.info("   - structlog (for logging)")
+logger.info("   - numpy, torch (for computations)")
+logger.info("   - Others listed in requirements.txt")
 
-print("\n💡 KEY LEARNINGS:")
-print("   1. Making dependencies 'optional' to pass tests is BAD practice")
-print("   2. Only make things optional if there's a legitimate fallback")
-print("   3. YAML → JSON fallback is legitimate")
-print("   4. Removing security/core features is NOT legitimate")
+logger.info("\n💡 KEY LEARNINGS:")
+logger.info("   1. Making dependencies 'optional' to pass tests is BAD practice")
+logger.info("   2. Only make things optional if there's a legitimate fallback")
+logger.info("   3. YAML → JSON fallback is legitimate")
+logger.info("   4. Removing security/core features is NOT legitimate")
 
-print("\n🚀 TO RUN THE FULL SYSTEM:")
-print("   ```bash")
-print("   # Create virtual environment")
-print("   python -m venv venv")
-print("   source venv/bin/activate  # On Windows: venv\\Scripts\\activate")
-print("   ")
-print("   # Install dependencies")
-print("   pip install -r requirements.txt")
-print("   ")
-print("   # Run tests")
-print("   pytest tests/")
-print("   ```")
+logger.info("\n🚀 TO RUN THE FULL SYSTEM:")
+logger.info("   ```bash")
+logger.info("   # Create virtual environment")
+logger.info("   python -m venv venv")
+logger.info("   source venv/bin/activate  # On Windows: venv\\Scripts\\activate")
+logger.info("   ")
+logger.info("   # Install dependencies")
+logger.info("   pip install -r requirements.txt")
+logger.info("   ")
+logger.info("   # Run tests")
+logger.info("   pytest tests/")
+logger.info("   ```")
 
-print("\n✨ CONCLUSION:")
-print("   The import issue has been successfully resolved!")
-print("   The code structure is correct and will function properly")
-print("   once the required dependencies are installed.")
+logger.info("\n✨ CONCLUSION:")
+logger.info("   The import issue has been successfully resolved!")
+logger.info("   The code structure is correct and will function properly")
+logger.info("   once the required dependencies are installed.")
 
-print("\n" + "=" * 80)
+logger.info("\n" + "=" * 80)

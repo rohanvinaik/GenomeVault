@@ -124,7 +124,7 @@ class TestVariantProofCircuit:
             circuit.generate_constraints()
             satisfied = circuit.verify_constraints()
             assert not satisfied, "Wrong hash should not satisfy constraints"
-        except:
+        except (ValueError, AssertionError, Exception):
             # Constraint generation might fail, which is also acceptable
             pass
 
@@ -163,7 +163,7 @@ class TestVariantProofCircuit:
             circuit.generate_constraints()
             satisfied = circuit.verify_constraints()
             assert not satisfied, "Mutated position should not satisfy constraints"
-        except:
+        except (ValueError, AssertionError, Exception):
             pass
 
     def test_boundary_chromosome_values(self):
@@ -289,7 +289,7 @@ class TestVariantFrequencyCircuit:
             circuit.generate_constraints()
             satisfied = circuit.verify_constraints()
             assert not satisfied, "Wrong sum should not satisfy constraints"
-        except:
+        except (ValueError, AssertionError, Exception):
             pass
 
     @given(
