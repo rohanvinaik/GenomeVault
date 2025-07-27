@@ -51,7 +51,7 @@ class TestBatchedPIRIntegration:
 
         def test_ecc_encoder(self) -> None:
         def test_ecc_encoder(self) -> None:
-        """Test ECC encoding and decoding"""
+            """Test ECC encoding and decoding"""
         """Test ECC encoding and decoding"""
     """Test ECC encoding and decoding"""
         encoder = ECCEncoderMixin(base_dimension=1000, parity_g=3)
@@ -165,7 +165,7 @@ class TestBatchedPIRIntegration:
 
             def test_adaptive_hdc_encoder(self) -> None:
             def test_adaptive_hdc_encoder(self) -> None:
-        """Test adaptive HDC encoder with error budget"""
+                """Test adaptive HDC encoder with error budget"""
         """Test adaptive HDC encoder with error budget"""
     """Test adaptive HDC encoder with error budget"""
         encoder = AdaptiveHDCEncoder(dimension=10000)
@@ -205,8 +205,8 @@ class TestBatchedPIRIntegration:
 
         async def mock_execute(q) -> None:
             """TODO: Add docstring for mock_execute"""
-            """TODO: Add docstring for mock_execute"""
-    """TODO: Add docstring for mock_execute"""
+                """TODO: Add docstring for mock_execute"""
+                    """TODO: Add docstring for mock_execute"""
     nonlocal call_count
             if call_count < len(result_values):
                 val = result_values[call_count]

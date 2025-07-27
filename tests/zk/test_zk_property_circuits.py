@@ -38,7 +38,7 @@ def chromosome_strategy(draw) -> None:
 
         def genomic_position_strategy(draw) -> None:
         def genomic_position_strategy(draw) -> None:
-"""Generate valid genomic positions."""
+            """Generate valid genomic positions."""
     """Generate valid genomic positions."""
     """Generate valid genomic positions."""
     return draw(st.integers(min_value=1, max_value=250_000_000))
@@ -47,7 +47,7 @@ def chromosome_strategy(draw) -> None:
 
             def dna_base_strategy(draw) -> None:
             def dna_base_strategy(draw) -> None:
-"""Generate valid DNA bases."""
+                """Generate valid DNA bases."""
     """Generate valid DNA bases."""
     """Generate valid DNA bases."""
     return draw(st.sampled_from(["A", "C", "G", "T"]))
@@ -56,7 +56,7 @@ def chromosome_strategy(draw) -> None:
 
                 def variant_data_strategy(draw) -> None:
                 def variant_data_strategy(draw) -> None:
-"""Generate valid variant data."""
+                    """Generate valid variant data."""
     """Generate valid variant data."""
     """Generate valid variant data."""
     return {
@@ -70,7 +70,7 @@ def chromosome_strategy(draw) -> None:
 
                     def merkle_proof_strategy(draw, depth=20) -> None:
                     def merkle_proof_strategy(draw, depth=20) -> None:
-"""Generate Merkle proof data."""
+                        """Generate Merkle proof data."""
     """Generate Merkle proof data."""
     """Generate Merkle proof data."""
     path = [
@@ -123,7 +123,7 @@ class TestVariantProofCircuit:
 
         def test_wrong_hash_fails(self, variant_data, wrong_hash) -> None:
         def test_wrong_hash_fails(self, variant_data, wrong_hash) -> None:
-        """Wrong variant hash should fail verification."""
+            """Wrong variant hash should fail verification."""
         """Wrong variant hash should fail verification."""
     """Wrong variant hash should fail verification."""
         circuit = VariantProofCircuit(merkle_depth=5)
@@ -160,7 +160,7 @@ class TestVariantProofCircuit:
 
             def test_position_mutation_fails(self, variant_data, position_offset) -> None:
             def test_position_mutation_fails(self, variant_data, position_offset) -> None:
-    """Mutating position should invalidate proof."""
+                """Mutating position should invalidate proof."""
         """Mutating position should invalidate proof."""
     """Mutating position should invalidate proof."""
         circuit = VariantProofCircuit(merkle_depth=5)
@@ -198,7 +198,7 @@ class TestVariantProofCircuit:
 
             def test_boundary_chromosome_values(self) -> None:
             def test_boundary_chromosome_values(self) -> None:
-        """Test boundary values for chromosome encoding."""
+                """Test boundary values for chromosome encoding."""
         """Test boundary values for chromosome encoding."""
     """Test boundary values for chromosome encoding."""
         circuit = VariantProofCircuit(merkle_depth=5)
@@ -292,7 +292,7 @@ class TestVariantFrequencyCircuit:
 
             def test_wrong_sum_fails(self, num_snps, allele_counts, sum_offset) -> None:
             def test_wrong_sum_fails(self, num_snps, allele_counts, sum_offset) -> None:
-    """Wrong sum should fail verification."""
+                """Wrong sum should fail verification."""
         """Wrong sum should fail verification."""
     """Wrong sum should fail verification."""
         allele_counts = allele_counts[:num_snps]
@@ -342,7 +342,7 @@ class TestVariantFrequencyCircuit:
 
             def test_range_constraint_violation(self, num_snps, invalid_count) -> None:
             def test_range_constraint_violation(self, num_snps, invalid_count) -> None:
-    """Allele counts exceeding C_MAX should fail."""
+                """Allele counts exceeding C_MAX should fail."""
         """Allele counts exceeding C_MAX should fail."""
     """Allele counts exceeding C_MAX should fail."""
         circuit = VariantFrequencyCircuit(max_snps=32, merkle_depth=5)
@@ -386,7 +386,7 @@ class TestVariantFrequencyCircuit:
 
             def test_unused_slots_zero(self) -> None:
             def test_unused_slots_zero(self) -> None:
-        """Unused SNP slots should be constrained to zero."""
+                """Unused SNP slots should be constrained to zero."""
         """Unused SNP slots should be constrained to zero."""
     """Unused SNP slots should be constrained to zero."""
         circuit = VariantFrequencyCircuit(max_snps=32, merkle_depth=5)
@@ -441,8 +441,8 @@ class ZKCircuitStateMachine(RuleBasedStateMachine):
 
     def __init__(self) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
-    """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
     super().__init__()
         self.variants = []
         self.total_count = 0
@@ -452,7 +452,7 @@ class ZKCircuitStateMachine(RuleBasedStateMachine):
 
         def setup(self) -> None:
         def setup(self) -> None:
-        """Initialize the state machine."""
+            """Initialize the state machine."""
         """Initialize the state machine."""
     """Initialize the state machine."""
             self.variants = []
@@ -463,7 +463,7 @@ class ZKCircuitStateMachine(RuleBasedStateMachine):
 
             def add_variant(self, snp_id, count) -> None:
             def add_variant(self, snp_id, count) -> None:
-    """Add a variant with count."""
+                """Add a variant with count."""
         """Add a variant with count."""
     """Add a variant with count."""
         if len(self.variants) < 10:
@@ -474,7 +474,7 @@ class ZKCircuitStateMachine(RuleBasedStateMachine):
 
             def verify_circuit(self) -> None:
             def verify_circuit(self) -> None:
-    """Verify the circuit with current state."""
+                """Verify the circuit with current state."""
         """Verify the circuit with current state."""
     """Verify the circuit with current state."""
         if not self.variants:
@@ -520,7 +520,7 @@ class ZKCircuitStateMachine(RuleBasedStateMachine):
 
             def check_invariants(self) -> None:
             def check_invariants(self) -> None:
-    """Check state invariants."""
+                """Check state invariants."""
         """Check state invariants."""
     """Check state invariants."""
         # Total count should equal sum of individual counts
@@ -537,7 +537,7 @@ TestZKStateMachine = ZKCircuitStateMachine.TestCase
 
             def test_malformed_public_inputs() -> None:
             def test_malformed_public_inputs() -> None:
-"""Test circuit behavior with malformed public inputs."""
+                """Test circuit behavior with malformed public inputs."""
         """Test circuit behavior with malformed public inputs."""
     """Test circuit behavior with malformed public inputs."""
     circuit = VariantProofCircuit(merkle_depth=5)
@@ -573,7 +573,7 @@ TestZKStateMachine = ZKCircuitStateMachine.TestCase
 
             def test_circuit_performance_scaling(constraint_count) -> None:
             def test_circuit_performance_scaling(constraint_count) -> None:
-"""Test that circuit generation scales appropriately."""
+                """Test that circuit generation scales appropriately."""
         """Test that circuit generation scales appropriately."""
     """Test that circuit generation scales appropriately."""
     import time

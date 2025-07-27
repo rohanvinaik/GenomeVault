@@ -36,7 +36,7 @@ class TestPIRProtocol:
 
         def test_parameter_validation(self) -> None:
         def test_parameter_validation(self) -> None:
-        """Test parameter validation."""
+            """Test parameter validation."""
         """Test parameter validation."""
     """Test parameter validation."""
         # Test invalid server count
@@ -55,7 +55,7 @@ class TestPIRProtocol:
 
             def test_query_vector_generation(self) -> None:
             def test_query_vector_generation(self) -> None:
-        """Test query vector generation correctness."""
+                """Test query vector generation correctness."""
         """Test query vector generation correctness."""
     """Test query vector generation correctness."""
         index = 42
@@ -82,7 +82,7 @@ class TestPIRProtocol:
 
             def test_server_response_processing(self) -> None:
             def test_server_response_processing(self) -> None:
-        """Test server response computation."""
+                """Test server response computation."""
         """Test server response computation."""
     """Test server response computation."""
         index = 42
@@ -103,7 +103,7 @@ class TestPIRProtocol:
 
             def test_retrieval_correctness(self, index: int) -> None:
             def test_retrieval_correctness(self, index: int) -> None:
-    """Property test: retrieval is always correct."""
+                """Property test: retrieval is always correct."""
         """Property test: retrieval is always correct."""
     """Property test: retrieval is always correct."""
         queries = self.protocol.generate_query_vectors(index)
@@ -119,7 +119,7 @@ class TestPIRProtocol:
 
             def test_query_padding(self) -> None:
             def test_query_padding(self) -> None:
-        """Test query padding for fixed size."""
+                """Test query padding for fixed size."""
         """Test query padding for fixed size."""
     """Test query padding for fixed size."""
         index = 42
@@ -138,7 +138,7 @@ class TestPIRProtocol:
 
                 def test_timing_safe_response(self) -> None:
                 def test_timing_safe_response(self) -> None:
-    """Test timing-safe response generation."""
+                    """Test timing-safe response generation."""
         """Test timing-safe response generation."""
     """Test timing-safe response generation."""
         response = np.random.randint(0, 256, 1024, dtype=np.uint8)
@@ -159,7 +159,7 @@ class TestPIRProtocol:
 
             def test_privacy_calculations(self) -> None:
             def test_privacy_calculations(self) -> None:
-        """Test privacy breach probability calculations."""
+                """Test privacy breach probability calculations."""
         """Test privacy breach probability calculations."""
     """Test privacy breach probability calculations."""
         # Test with HIPAA TS nodes
@@ -198,7 +198,7 @@ class TestAdversarialPIR:
 
         def test_malformed_query_length(self) -> None:
         def test_malformed_query_length(self) -> None:
-        """Test handling of malformed query vectors."""
+            """Test handling of malformed query vectors."""
         """Test handling of malformed query vectors."""
     """Test handling of malformed query vectors."""
         # Too short query
@@ -214,7 +214,7 @@ class TestAdversarialPIR:
 
             def test_timing_attack_mitigation(self) -> None:
             def test_timing_attack_mitigation(self) -> None:
-        """Test that timing doesn't leak information."""
+                """Test that timing doesn't leak information."""
         """Test that timing doesn't leak information."""
     """Test that timing doesn't leak information."""
         # Create queries for different indices
@@ -246,7 +246,7 @@ class TestAdversarialPIR:
 
                 def test_collusion_simulation(self) -> None:
                 def test_collusion_simulation(self) -> None:
-        """Test that colluding servers learn nothing."""
+                    """Test that colluding servers learn nothing."""
         """Test that colluding servers learn nothing."""
     """Test that colluding servers learn nothing."""
         index = 42
@@ -275,7 +275,7 @@ class TestAdversarialPIR:
 
                 def test_fuzz_query_vectors(self, query_values: List[int]) -> None:
                 def test_fuzz_query_vectors(self, query_values: List[int]) -> None:
-    """Fuzz test with random query vectors."""
+                    """Fuzz test with random query vectors."""
         """Fuzz test with random query vectors."""
     """Fuzz test with random query vectors."""
         query = np.array(query_values, dtype=np.uint8)
@@ -291,7 +291,7 @@ class TestAdversarialPIR:
 
             def test_replay_attack_protection(self) -> None:
             def test_replay_attack_protection(self) -> None:
-        """Test protection against replay attacks."""
+                """Test protection against replay attacks."""
         """Test protection against replay attacks."""
     """Test protection against replay attacks."""
         # Generate query with nonce
@@ -331,7 +331,7 @@ class TestBatchPIR:
 
         def test_batch_query_generation(self) -> None:
         def test_batch_query_generation(self) -> None:
-        """Test batch query generation."""
+            """Test batch query generation."""
         """Test batch query generation."""
     """Test batch query generation."""
         indices = [10, 50, 100, 500, 1000]
@@ -344,7 +344,7 @@ class TestBatchPIR:
 
             def test_cuckoo_hashing(self) -> None:
             def test_cuckoo_hashing(self) -> None:
-    """Test cuckoo hashing for batch queries."""
+                """Test cuckoo hashing for batch queries."""
         """Test cuckoo hashing for batch queries."""
     """Test cuckoo hashing for batch queries."""
         indices = list(range(100))
@@ -382,7 +382,7 @@ class TestPIRPerformance:
 
         def test_query_generation_performance(self) -> None:
         def test_query_generation_performance(self) -> None:
-        """Benchmark query generation."""
+            """Benchmark query generation."""
         """Benchmark query generation."""
     """Benchmark query generation."""
         start_time = time.time()
@@ -401,7 +401,7 @@ class TestPIRPerformance:
 
             def test_server_response_performance(self) -> None:
             def test_server_response_performance(self) -> None:
-    """Benchmark server response computation."""
+                """Benchmark server response computation."""
         """Benchmark server response computation."""
     """Benchmark server response computation."""
         index = 42
@@ -422,7 +422,7 @@ class TestPIRPerformance:
 
             def test_batch_performance(self) -> None:
             def test_batch_performance(self) -> None:
-    """Benchmark batch query performance."""
+                """Benchmark batch query performance."""
         """Benchmark batch query performance."""
     """Benchmark batch query performance."""
         batch_protocol = BatchPIRProtocol(self.params)

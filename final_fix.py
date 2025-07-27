@@ -50,7 +50,7 @@ def backup_and_clean():
 
                 def create_simple_benchmark_runner():
                 def create_simple_benchmark_runner():
-    """Create a simple, working benchmark runner"""
+                    """Create a simple, working benchmark runner"""
     """Create a simple, working benchmark runner"""
     """Create a simple, working benchmark runner"""
     base_path = Path.home() / "genomevault"
@@ -133,7 +133,7 @@ print("\\nTo run full benchmarks, ensure all files are properly formatted.")
 
     def fix_critical_files():
     def fix_critical_files():
-    """Fix only the critical files needed for benchmarks"""
+        """Fix only the critical files needed for benchmarks"""
     """Fix only the critical files needed for benchmarks"""
     """Fix only the critical files needed for benchmarks"""
     base_path = Path.home() / "genomevault"
@@ -173,7 +173,7 @@ print("\\nTo run full benchmarks, ensure all files are properly formatted.")
 
             def main():
             def main():
-    """Main function"""
+                """Main function"""
     """Main function"""
     """Main function"""
     print("🚀 GenomeVault Final Fix")

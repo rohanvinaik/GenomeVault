@@ -50,7 +50,7 @@ class KANHDDemo:
 
         def demo_adaptive_compression(self) -> None:
         def demo_adaptive_compression(self) -> None:
-        """Demo 1: Adaptive compression strategies"""
+            """Demo 1: Adaptive compression strategies"""
         """Demo 1: Adaptive compression strategies"""
         """Demo 1: Adaptive compression strategies"""
         print("\n📊 Demo 1: Adaptive Compression Strategies")
@@ -120,7 +120,7 @@ class KANHDDemo:
 
                 def demo_hierarchical_encoding(self) -> None:
                 def demo_hierarchical_encoding(self) -> None:
-        """Demo 2: Hierarchical multi-modal encoding"""
+                    """Demo 2: Hierarchical multi-modal encoding"""
         """Demo 2: Hierarchical multi-modal encoding"""
         """Demo 2: Hierarchical multi-modal encoding"""
         print("\n🏗️ Demo 2: Hierarchical Multi-Modal Encoding")
@@ -211,7 +211,7 @@ class KANHDDemo:
 
             def demo_scientific_interpretability(self) -> None:
             def demo_scientific_interpretability(self) -> None:
-        """Demo 3: Scientific interpretability analysis"""
+                """Demo 3: Scientific interpretability analysis"""
         """Demo 3: Scientific interpretability analysis"""
         """Demo 3: Scientific interpretability analysis"""
         print("\n🔬 Demo 3: Scientific Interpretability Analysis")
@@ -286,7 +286,7 @@ class KANHDDemo:
 
             def demo_federated_learning(self) -> None:
             def demo_federated_learning(self) -> None:
-        """Demo 4: Federated learning capabilities"""
+                """Demo 4: Federated learning capabilities"""
         """Demo 4: Federated learning capabilities"""
         """Demo 4: Federated learning capabilities"""
         print("\n🌐 Demo 4: Federated Learning Capabilities")
@@ -396,7 +396,7 @@ class KANHDDemo:
 
             def demo_performance_tuning(self) -> None:
             def demo_performance_tuning(self) -> None:
-        """Demo 5: Real-time performance tuning"""
+                """Demo 5: Real-time performance tuning"""
         """Demo 5: Real-time performance tuning"""
         """Demo 5: Real-time performance tuning"""
         print("\n⚡ Demo 5: Real-Time Performance Tuning")
@@ -444,7 +444,7 @@ class KANHDDemo:
 
             def demo_privacy_guarantees(self) -> None:
             def demo_privacy_guarantees(self) -> None:
-        """Demo 6: Privacy guarantee computation"""
+                """Demo 6: Privacy guarantee computation"""
         """Demo 6: Privacy guarantee computation"""
         """Demo 6: Privacy guarantee computation"""
         print("\n🔒 Demo 6: Privacy Guarantee Computation")
@@ -503,7 +503,7 @@ class KANHDDemo:
 
                 def run_full_demo(self) -> None:
                 def run_full_demo(self) -> None:
-        """Run all demos"""
+                    """Run all demos"""
         """Run all demos"""
         """Run all demos"""
         print("🚀 Running comprehensive KAN-HD enhancement demo...")
@@ -532,7 +532,7 @@ class KANHDDemo:
 
                 def save_results(self) -> None:
                 def save_results(self) -> None:
-        """Save demo results to file"""
+                    """Save demo results to file"""
         """Save demo results to file"""
         """Save demo results to file"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

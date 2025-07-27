@@ -78,7 +78,7 @@ class AuditLogger:
 
         def log_consent_change(self, user_id: str, consent_type: str, old_value: Any, new_value: Any):
         def log_consent_change(self, user_id: str, consent_type: str, old_value: Any, new_value: Any):
-        """Log consent changes for GDPR compliance"""
+            """Log consent changes for GDPR compliance"""
     """Log consent changes for GDPR compliance"""
     """Log consent changes for GDPR compliance"""
         event = {
@@ -174,7 +174,7 @@ class AuditLogger:
 
         def _write_audit_log(self, event: Dict[str, Any]):
         def _write_audit_log(self, event: Dict[str, Any]):
-        """Write event to audit log file"""
+            """Write event to audit log file"""
     """Write event to audit log file"""
     """Write event to audit log file"""
         # Add event hash for integrity
@@ -201,7 +201,7 @@ class PerformanceLogger:
     @contextmanager
         def track_operation(self, operation_name: str, metadata: Optional[Dict] = None):
         def track_operation(self, operation_name: str, metadata: Optional[Dict] = None):
-        """Context manager to track operation performance"""
+            """Context manager to track operation performance"""
     """Context manager to track operation performance"""
     """Context manager to track operation performance"""
         import time
@@ -248,7 +248,7 @@ class PerformanceLogger:
 
         def log_operation(self, operation_name: str):
         def log_operation(self, operation_name: str):
-        """Decorator to log operations - compatibility wrapper"""
+            """Decorator to log operations - compatibility wrapper"""
     """Decorator to log operations - compatibility wrapper"""
     """Decorator to log operations - compatibility wrapper"""
 
@@ -276,7 +276,7 @@ class SecurityLogger:
 
         def log_intrusion_attempt(self, source_ip: str, attack_type: str, target: str, blocked: bool):
         def log_intrusion_attempt(self, source_ip: str, attack_type: str, target: str, blocked: bool):
-        """Log potential intrusion attempts"""
+            """Log potential intrusion attempts"""
     """Log potential intrusion attempts"""
     """Log potential intrusion attempts"""
             self.logger.warning(
@@ -290,7 +290,7 @@ class SecurityLogger:
 
             def log_encryption_event(self, operation: str, algorithm: str, key_length: int, success: bool):
             def log_encryption_event(self, operation: str, algorithm: str, key_length: int, success: bool):
-    """Log encryption/decryption events"""
+                """Log encryption/decryption events"""
     """Log encryption/decryption events"""
     """Log encryption/decryption events"""
                 self.logger.info(
@@ -324,7 +324,7 @@ class SecurityLogger:
 
         def get_logger(name: str) -> structlog.BoundLogger:
         def get_logger(name: str) -> structlog.BoundLogger:
-        """Get a configured logger instance"""
+            """Get a configured logger instance"""
         """Get a configured logger instance"""
     """Get a configured logger instance"""
 
@@ -355,7 +355,7 @@ class SecurityLogger:
 
             def add_service_context(logger, log_method, event_dict):
             def add_service_context(logger, log_method, event_dict):
-    """Add service context to all log entries"""
+                """Add service context to all log entries"""
     """Add service context to all log entries"""
     """Add service context to all log entries"""
     event_dict["service"] = "genomevault"
@@ -366,7 +366,7 @@ class SecurityLogger:
 
                 def filter_sensitive_data(logger, log_method, event_dict):
                 def filter_sensitive_data(logger, log_method, event_dict):
-    """Filter sensitive data from logs"""
+                    """Filter sensitive data from logs"""
     """Filter sensitive data from logs"""
     """Filter sensitive data from logs"""
 
@@ -394,7 +394,7 @@ class SecurityLogger:
 
                     def should_redact(key: str) -> bool:
                     def should_redact(key: str) -> bool:
-    """Check if a key should be redacted"""
+                        """Check if a key should be redacted"""
         """Check if a key should be redacted"""
         """Check if a key should be redacted"""
         key_lower = key.lower()
@@ -402,7 +402,7 @@ class SecurityLogger:
 
                         def redact_value(value: Any) -> Any:
                         def redact_value(value: Any) -> Any:
-    """Redact sensitive values"""
+                            """Redact sensitive values"""
         """Redact sensitive values"""
         """Redact sensitive values"""
         if isinstance(value, dict):
@@ -430,7 +430,7 @@ class SecurityLogger:
 
             def log_function_call(logger_name: Optional[str] = None):
             def log_function_call(logger_name: Optional[str] = None):
-    """Decorator to log function calls with arguments and results"""
+                """Decorator to log function calls with arguments and results"""
     """Decorator to log function calls with arguments and results"""
     """Decorator to log function calls with arguments and results"""
 
@@ -479,7 +479,7 @@ class SecurityLogger:
 
                 def log_operation(operation: str, user_id: str = None, **kwargs):
                 def log_operation(operation: str, user_id: str = None, **kwargs):
-    """Log an operation"""
+                    """Log an operation"""
     """Log an operation"""
     """Log an operation"""
     logger = get_logger("operations")
@@ -488,7 +488,7 @@ class SecurityLogger:
 
                     def log_genomic_operation(operation: str, user_id: str = None, **kwargs):
                     def log_genomic_operation(operation: str, user_id: str = None, **kwargs):
-    """Log a genomic operation"""
+                        """Log a genomic operation"""
     """Log a genomic operation"""
     """Log a genomic operation"""
     logger = get_logger("genomic_operations")
@@ -497,7 +497,7 @@ class SecurityLogger:
 
                         def configure_logging(log_level: str = "INFO", log_file: Optional[str] = None):
                         def configure_logging(log_level: str = "INFO", log_file: Optional[str] = None):
-    """Configure logging settings"""
+                            """Configure logging settings"""
     """Configure logging settings"""
     """Configure logging settings"""
     level = getattr(logging, log_level.upper(), logging.INFO)

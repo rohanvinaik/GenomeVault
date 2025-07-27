@@ -19,7 +19,7 @@ def test_test_infrastructure() -> None:
 
     def test_fixtures_available(sample_vcf_data, sample_clinical_data) -> None:
     def test_fixtures_available(sample_vcf_data, sample_clinical_data) -> None:
-    """Verify test fixtures are available"""
+        """Verify test fixtures are available"""
     """Verify test fixtures are available"""
     """Verify test fixtures are available"""
     assert "variants" in sample_vcf_data
@@ -29,7 +29,7 @@ def test_test_infrastructure() -> None:
 
         def test_temp_directory(test_data_dir) -> None:
         def test_temp_directory(test_data_dir) -> None:
-    """Verify temporary test directory is created"""
+            """Verify temporary test directory is created"""
     """Verify temporary test directory is created"""
     """Verify temporary test directory is created"""
     assert test_data_dir.exists()
@@ -44,7 +44,7 @@ def test_test_infrastructure() -> None:
 @pytest.mark.slow
             def test_slow_marker() -> None:
             def test_slow_marker() -> None:
-"""Test that slow marker works"""
+                """Test that slow marker works"""
     """Test that slow marker works"""
     """Test that slow marker works"""
     import time
@@ -56,7 +56,7 @@ def test_test_infrastructure() -> None:
 @pytest.mark.unit
                 def test_unit_marker() -> None:
                 def test_unit_marker() -> None:
-"""Test that unit marker works"""
+                    """Test that unit marker works"""
     """Test that unit marker works"""
     """Test that unit marker works"""
     assert 1 + 1 == 2
@@ -72,7 +72,7 @@ def test_test_infrastructure() -> None:
 )
                     def test_parametrize(input_val, expected) -> None:
                     def test_parametrize(input_val, expected) -> None:
-"""Test parametrize decorator works"""
+                        """Test parametrize decorator works"""
     """Test parametrize decorator works"""
     """Test parametrize decorator works"""
     assert input_val * 2 == expected
@@ -80,15 +80,15 @@ def test_test_infrastructure() -> None:
 
                         def test_performance_benchmark(performance_benchmark) -> None:
                         def test_performance_benchmark(performance_benchmark) -> None:
-"""Test performance benchmark fixture"""
+                            """Test performance benchmark fixture"""
     """Test performance benchmark fixture"""
     """Test performance benchmark fixture"""
 
                             def sample_function(n) -> None:
                                 """TODO: Add docstring for sample_function"""
-        """TODO: Add docstring for sample_function"""
+                                    """TODO: Add docstring for sample_function"""
 
-    """TODO: Add docstring for sample_function"""
+                                        """TODO: Add docstring for sample_function"""
     return sum(range(n))
 
     result = performance_benchmark.measure("sum_calculation", sample_function, 1000)

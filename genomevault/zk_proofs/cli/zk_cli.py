@@ -25,8 +25,8 @@ from genomevault.zk_proofs.circuits.implementations.variant_proof_circuit import
 
 def load_json_file(filepath: str) -> Dict[str, Any]:
     """TODO: Add docstring for load_json_file"""
-    """TODO: Add docstring for load_json_file"""
         """TODO: Add docstring for load_json_file"""
+            """TODO: Add docstring for load_json_file"""
     """Load JSON data from file."""
     try:
         with open(filepath, "r") as f:
@@ -38,8 +38,8 @@ def load_json_file(filepath: str) -> Dict[str, Any]:
 
         def save_json_file(data: Dict[str, Any], filepath: str) -> None:
             """TODO: Add docstring for save_json_file"""
-    """TODO: Add docstring for save_json_file"""
-        """TODO: Add docstring for save_json_file"""
+                """TODO: Add docstring for save_json_file"""
+                    """TODO: Add docstring for save_json_file"""
     """Save JSON data to file."""
     try:
         with open(filepath, "w") as f:
@@ -51,8 +51,8 @@ def load_json_file(filepath: str) -> Dict[str, Any]:
 
         def cmd_prove(args) -> None:
             """TODO: Add docstring for cmd_prove"""
-    """TODO: Add docstring for cmd_prove"""
-        """TODO: Add docstring for cmd_prove"""
+                """TODO: Add docstring for cmd_prove"""
+                    """TODO: Add docstring for cmd_prove"""
     """Generate a zero-knowledge proof."""
     print(f"Generating {args.circuit} proof...")
 
@@ -139,8 +139,8 @@ def load_json_file(filepath: str) -> Dict[str, Any]:
 
         def cmd_verify(args) -> None:
             """TODO: Add docstring for cmd_verify"""
-    """TODO: Add docstring for cmd_verify"""
-        """TODO: Add docstring for cmd_verify"""
+                """TODO: Add docstring for cmd_verify"""
+                    """TODO: Add docstring for cmd_verify"""
     """Verify a zero-knowledge proof."""
     print(f"Verifying proof from {args.proof}...")
 
@@ -198,8 +198,8 @@ def load_json_file(filepath: str) -> Dict[str, Any]:
 
             def cmd_demo(args) -> None:
                 """TODO: Add docstring for cmd_demo"""
-    """TODO: Add docstring for cmd_demo"""
-        """TODO: Add docstring for cmd_demo"""
+                    """TODO: Add docstring for cmd_demo"""
+                        """TODO: Add docstring for cmd_demo"""
     """Run demonstration with example data."""
     print(f"Running {args.circuit} demonstration...")
 
@@ -264,8 +264,8 @@ def load_json_file(filepath: str) -> Dict[str, Any]:
 
         def cmd_info(args) -> None:
             """TODO: Add docstring for cmd_info"""
-    """TODO: Add docstring for cmd_info"""
-        """TODO: Add docstring for cmd_info"""
+                """TODO: Add docstring for cmd_info"""
+                    """TODO: Add docstring for cmd_info"""
     """Display information about available circuits."""
 
     circuits = {
@@ -334,8 +334,8 @@ def load_json_file(filepath: str) -> Dict[str, Any]:
 
             def main() -> None:
                 """TODO: Add docstring for main"""
-    """TODO: Add docstring for main"""
-        """TODO: Add docstring for main"""
+                    """TODO: Add docstring for main"""
+                        """TODO: Add docstring for main"""
     """Main CLI entry point."""
     parser = argparse.ArgumentParser(
         description="GenomeVault Zero-Knowledge Proof CLI",

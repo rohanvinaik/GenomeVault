@@ -43,8 +43,8 @@ class BaseNode(ABC):
 
     def __init__(self, node_type: NodeType, is_signatory: bool = False) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
         self.node_type = node_type
         self.is_signatory = is_signatory
         self.config = get_config()
@@ -67,8 +67,8 @@ class BaseNode(ABC):
 
         def _get_hardware_weight(self) -> int:
             """TODO: Add docstring for _get_hardware_weight"""
-        """TODO: Add docstring for _get_hardware_weight"""
-            """TODO: Add docstring for _get_hardware_weight"""
+                """TODO: Add docstring for _get_hardware_weight"""
+                    """TODO: Add docstring for _get_hardware_weight"""
     """Get hardware class weight based on node type"""
         weight_map = {
             NodeType.LIGHT: NodeClassWeight.LIGHT,
@@ -80,31 +80,31 @@ class BaseNode(ABC):
     @abstractmethod
             def _get_storage_limit(self) -> int:
                 """TODO: Add docstring for _get_storage_limit"""
-        """TODO: Add docstring for _get_storage_limit"""
-            """TODO: Add docstring for _get_storage_limit"""
+                    """TODO: Add docstring for _get_storage_limit"""
+                        """TODO: Add docstring for _get_storage_limit"""
     """Get storage limit in bytes based on node type"""
         pass
 
     @abstractmethod
     async def sync_chain(self) -> None:
         """TODO: Add docstring for sync_chain"""
-        """TODO: Add docstring for sync_chain"""
             """TODO: Add docstring for sync_chain"""
+                """TODO: Add docstring for sync_chain"""
     """Sync blockchain with network"""
         pass
 
     @abstractmethod
     async def validate_transaction(self, transaction: Dict[str, Any]) -> bool:
         """TODO: Add docstring for validate_transaction"""
-        """TODO: Add docstring for validate_transaction"""
             """TODO: Add docstring for validate_transaction"""
+                """TODO: Add docstring for validate_transaction"""
     """Validate a transaction based on node capabilities"""
         pass
 
         def calculate_credits_per_block(self) -> int:
             """TODO: Add docstring for calculate_credits_per_block"""
-        """TODO: Add docstring for calculate_credits_per_block"""
-            """TODO: Add docstring for calculate_credits_per_block"""
+                """TODO: Add docstring for calculate_credits_per_block"""
+                    """TODO: Add docstring for calculate_credits_per_block"""
     """
         Calculate credits earned per block
         credits = c + 2 * [s > 0]
@@ -115,8 +115,8 @@ class BaseNode(ABC):
 
     async def create_block(self) -> Optional[Block]:
         """TODO: Add docstring for create_block"""
-        """TODO: Add docstring for create_block"""
             """TODO: Add docstring for create_block"""
+                """TODO: Add docstring for create_block"""
     """Create a new block if this node is selected"""
         if not self.pending_transactions:
             return None
@@ -144,8 +144,8 @@ class BaseNode(ABC):
 
             def _is_block_producer(self) -> bool:
                 """TODO: Add docstring for _is_block_producer"""
-        """TODO: Add docstring for _is_block_producer"""
-            """TODO: Add docstring for _is_block_producer"""
+                    """TODO: Add docstring for _is_block_producer"""
+                        """TODO: Add docstring for _is_block_producer"""
     """Determine if this node should produce the next block"""
         # Simplified selection based on voting power
         # In production, use proper BFT consensus
@@ -159,8 +159,8 @@ class BaseNode(ABC):
 
                 def _proof_of_work(self, block: Block) -> int:
                     """TODO: Add docstring for _proof_of_work"""
-        """TODO: Add docstring for _proof_of_work"""
-            """TODO: Add docstring for _proof_of_work"""
+                        """TODO: Add docstring for _proof_of_work"""
+                            """TODO: Add docstring for _proof_of_work"""
     """Simple proof of work for demonstration"""
         nonce = 0
         while True:
@@ -170,8 +170,8 @@ class BaseNode(ABC):
 
                 def _valid_proof(self, block: Block, nonce: int) -> bool:
                     """TODO: Add docstring for _valid_proof"""
-        """TODO: Add docstring for _valid_proof"""
-            """TODO: Add docstring for _valid_proof"""
+                        """TODO: Add docstring for _valid_proof"""
+                            """TODO: Add docstring for _valid_proof"""
     """Check if proof is valid"""
         guess = "{block.index}{block.timestamp}{block.transactions}{block.previous_hash}{nonce}"
         guess_hash = hashlib.sha256(guess.encode()).hexdigest()
@@ -179,8 +179,8 @@ class BaseNode(ABC):
 
                     def _calculate_hash(self, block: Block) -> str:
                         """TODO: Add docstring for _calculate_hash"""
-        """TODO: Add docstring for _calculate_hash"""
-            """TODO: Add docstring for _calculate_hash"""
+                            """TODO: Add docstring for _calculate_hash"""
+                                """TODO: Add docstring for _calculate_hash"""
     """Calculate block hash"""
         block_string = json.dumps(
             {
@@ -197,8 +197,8 @@ class BaseNode(ABC):
 
     async def add_transaction(self, transaction: Dict[str, Any]) -> bool:
         """TODO: Add docstring for add_transaction"""
-        """TODO: Add docstring for add_transaction"""
             """TODO: Add docstring for add_transaction"""
+                """TODO: Add docstring for add_transaction"""
     """Add a transaction to pending pool"""
         if await self.validate_transaction(transaction):
             self.pending_transactions.append(transaction)
@@ -207,8 +207,8 @@ class BaseNode(ABC):
 
             def get_node_info(self) -> Dict[str, Any]:
                 """TODO: Add docstring for get_node_info"""
-        """TODO: Add docstring for get_node_info"""
-            """TODO: Add docstring for get_node_info"""
+                    """TODO: Add docstring for get_node_info"""
+                        """TODO: Add docstring for get_node_info"""
     """Get node information"""
         return {
             "node_type": self.node_type.value,

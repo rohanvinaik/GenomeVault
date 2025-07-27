@@ -28,8 +28,8 @@ logger = get_logger(__name__)
 
 async def demonstrate_hipaa_fasttrack() -> None:
     """TODO: Add docstring for demonstrate_hipaa_fasttrack"""
-    """TODO: Add docstring for demonstrate_hipaa_fasttrack"""
         """TODO: Add docstring for demonstrate_hipaa_fasttrack"""
+            """TODO: Add docstring for demonstrate_hipaa_fasttrack"""
     """
     Complete demonstration of HIPAA fast-track system.
 

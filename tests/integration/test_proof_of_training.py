@@ -28,22 +28,22 @@ class MockModel:
 
     def __init__(self) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
-    """TODO: Add docstring for __init__"""
+            """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
         self.weights = {"layer1": np.random.randn(100, 50), "layer2": np.random.randn(50, 2)}
 
 
         def parameters(self) -> None:
             """TODO: Add docstring for parameters"""
-        """TODO: Add docstring for parameters"""
-    """TODO: Add docstring for parameters"""
+                """TODO: Add docstring for parameters"""
+                    """TODO: Add docstring for parameters"""
     return [self.weights["layer1"], self.weights["layer2"]]
 
 
             def __str__(self) -> None:
                 """TODO: Add docstring for __str__"""
-        """TODO: Add docstring for __str__"""
-    """TODO: Add docstring for __str__"""
+                    """TODO: Add docstring for __str__"""
+                        """TODO: Add docstring for __str__"""
     return "MockModel(layers=2)"
 
 
@@ -67,7 +67,7 @@ class TestProofOfTrainingIntegration:
 
         def pot_config(self, temp_dir) -> None:
         def pot_config(self, temp_dir) -> None:
-        """Create test configuration"""
+            """Create test configuration"""
         """Create test configuration"""
     """Create test configuration"""
         return {
@@ -83,7 +83,7 @@ class TestProofOfTrainingIntegration:
 
             def pot_integration(self, pot_config) -> None:
             def pot_integration(self, pot_config) -> None:
-    """Create PoT integration instance"""
+                """Create PoT integration instance"""
         """Create PoT integration instance"""
     """Create PoT integration instance"""
         return ProofOfTrainingIntegration(pot_config)
@@ -91,7 +91,7 @@ class TestProofOfTrainingIntegration:
 
                 def test_training_session_lifecycle(self, pot_integration, temp_dir) -> None:
                 def test_training_session_lifecycle(self, pot_integration, temp_dir) -> None:
-    """Test complete training session lifecycle"""
+                    """Test complete training session lifecycle"""
         """Test complete training session lifecycle"""
     """Test complete training session lifecycle"""
         # Start session
@@ -159,7 +159,7 @@ class TestProofOfTrainingIntegration:
 
                     def test_multi_modal_training(self, pot_integration) -> None:
                     def test_multi_modal_training(self, pot_integration) -> None:
-        """Test multi-modal training support"""
+                        """Test multi-modal training support"""
         """Test multi-modal training support"""
     """Test multi-modal training support"""
         pot_integration.config["multimodal"] = True
@@ -195,7 +195,7 @@ class TestProofOfTrainingIntegration:
 
             def test_privacy_budget_tracking(self, pot_integration) -> None:
             def test_privacy_budget_tracking(self, pot_integration) -> None:
-        """Test privacy budget enforcement"""
+                """Test privacy budget enforcement"""
         """Test privacy budget enforcement"""
     """Test privacy budget enforcement"""
         session_id = "privacy_test"
@@ -238,7 +238,7 @@ class TestProofOfTrainingIntegration:
 
                 def test_clinical_validation(self, pot_integration) -> None:
                 def test_clinical_validation(self, pot_integration) -> None:
-        """Test clinical validation functionality"""
+                    """Test clinical validation functionality"""
         """Test clinical validation functionality"""
     """Test clinical validation functionality"""
         model = MockModel()
@@ -260,7 +260,7 @@ class TestProofOfTrainingIntegration:
 
                     def test_drift_monitoring(self, pot_integration) -> None:
                     def test_drift_monitoring(self, pot_integration) -> None:
-    """Test real-time drift monitoring"""
+                        """Test real-time drift monitoring"""
         """Test real-time drift monitoring"""
     """Test real-time drift monitoring"""
         model = MockModel()
@@ -298,7 +298,7 @@ class TestProofOfTrainingIntegration:
 
                 def test_federated_learning_support(self, pot_integration) -> None:
                 def test_federated_learning_support(self, pot_integration) -> None:
-        """Test federated learning lineage tracking"""
+                    """Test federated learning lineage tracking"""
         """Test federated learning lineage tracking"""
     """Test federated learning lineage tracking"""
         session_id = "federated_test"
@@ -345,7 +345,7 @@ class TestProofOfTrainingIntegration:
 
                     def test_proof_verification(self, pot_integration, temp_dir) -> None:
                     def test_proof_verification(self, pot_integration, temp_dir) -> None:
-    """Test proof verification process"""
+                        """Test proof verification process"""
         """Test proof verification process"""
     """Test proof verification process"""
         # Create and complete a session
@@ -391,7 +391,7 @@ class TestProofOfTrainingIntegration:
 
             def test_semantic_drift_analysis(self, pot_integration, temp_dir) -> None:
             def test_semantic_drift_analysis(self, pot_integration, temp_dir) -> None:
-        """Test semantic drift analysis functionality"""
+                """Test semantic drift analysis functionality"""
         """Test semantic drift analysis functionality"""
     """Test semantic drift analysis functionality"""
         session_id = "semantic_test"
@@ -435,7 +435,7 @@ class TestProofOfTrainingIntegration:
 
             def test_error_handling(self, pot_integration) -> None:
             def test_error_handling(self, pot_integration) -> None:
-        """Test error handling in various scenarios"""
+                """Test error handling in various scenarios"""
         """Test error handling in various scenarios"""
     """Test error handling in various scenarios"""
 

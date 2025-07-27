@@ -81,7 +81,7 @@ class PIRQueryBuilder:
         logger.info("PIRQueryBuilder initialized")
 
     async def execute_query(self, query: GenomicQuery) -> QueryResult:
-           """TODO: Add docstring for execute_query"""
+        """TODO: Add docstring for execute_query"""
      """
         Execute a genomic query.
 
@@ -115,7 +115,7 @@ class PIRQueryBuilder:
         return result
 
     async def _execute_variant_lookup(self, query: GenomicQuery) -> QueryResult:
-           """TODO: Add docstring for _execute_variant_lookup"""
+        """TODO: Add docstring for _execute_variant_lookup"""
      """Execute variant lookup query."""
         import time
 
@@ -165,7 +165,7 @@ class PIRQueryBuilder:
         )
 
     async def _execute_region_scan(self, query: GenomicQuery) -> QueryResult:
-           """TODO: Add docstring for _execute_region_scan"""
+        """TODO: Add docstring for _execute_region_scan"""
      """Execute region scan query."""
         import time
 
@@ -216,7 +216,7 @@ class PIRQueryBuilder:
         )
 
     async def _execute_gene_annotation(self, query: GenomicQuery) -> QueryResult:
-           """TODO: Add docstring for _execute_gene_annotation"""
+        """TODO: Add docstring for _execute_gene_annotation"""
      """Execute gene annotation query."""
         import time
 
@@ -270,7 +270,7 @@ class PIRQueryBuilder:
         )
 
     async def _execute_population_frequency(self, query: GenomicQuery) -> QueryResult:
-           """TODO: Add docstring for _execute_population_frequency"""
+        """TODO: Add docstring for _execute_population_frequency"""
      """Execute population frequency query."""
         import time
 
@@ -322,7 +322,7 @@ class PIRQueryBuilder:
         ref_allele: Optional[str] = None,
         alt_allele: Optional[str] = None,
     ) -> GenomicQuery:
-           """TODO: Add docstring for build_variant_query"""
+        """TODO: Add docstring for build_variant_query"""
      """Build a variant lookup query."""
         params = {"chromosome": chromosome, "position": position}
 
@@ -352,7 +352,7 @@ class PIRQueryBuilder:
     def build_population_frequency_query(
         self, variants: List[Dict], population: str
     ) -> GenomicQuery:
-           """TODO: Add docstring for build_population_frequency_query"""
+        """TODO: Add docstring for build_population_frequency_query"""
      """Build a population frequency query."""
         return GenomicQuery(
             query_type=QueryType.POPULATION_FREQUENCY,
@@ -362,7 +362,7 @@ class PIRQueryBuilder:
     async def query_clinical_variants(
         self, gene_list: List[str], significance_filter: Optional[str] = None
     ) -> QueryResult:
-           """TODO: Add docstring for query_clinical_variants"""
+        """TODO: Add docstring for query_clinical_variants"""
      """
         Query for clinically significant variants in genes.
 

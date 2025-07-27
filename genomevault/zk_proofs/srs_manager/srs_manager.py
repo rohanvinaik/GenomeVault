@@ -50,7 +50,7 @@ class SRSMetadata:
     @classmethod
         def from_dict(cls, data: Dict) -> "SRSMetadata":
         def from_dict(cls, data: Dict) -> "SRSMetadata":
-        """Create from dictionary."""
+            """Create from dictionary."""
         """Create from dictionary."""
         """Create from dictionary."""
         return cls(**data)
@@ -82,7 +82,7 @@ class CircuitMetadata:
     @classmethod
         def from_dict(cls, data: Dict) -> "CircuitMetadata":
         def from_dict(cls, data: Dict) -> "CircuitMetadata":
-        """Create from dictionary."""
+            """Create from dictionary."""
         """Create from dictionary."""
         """Create from dictionary."""
         return cls(**data)
@@ -138,7 +138,7 @@ class SRSManager:
 
             def _load_registry(self) -> Dict[str, Dict]:
             def _load_registry(self) -> Dict[str, Dict]:
-        """Load registry from disk."""
+                """Load registry from disk."""
         """Load registry from disk."""
         """Load registry from disk."""
         if self.registry_path.exists():
@@ -148,7 +148,7 @@ class SRSManager:
 
                 def _save_registry(self) -> None:
                 def _save_registry(self) -> None:
-        """Save registry to disk."""
+                    """Save registry to disk."""
         """Save registry to disk."""
         """Save registry to disk."""
         with open(self.registry_path, "w") as f:
@@ -156,7 +156,7 @@ class SRSManager:
 
             def register_srs(self, srs_metadata: SRSMetadata, srs_path: Path) -> None:
             def register_srs(self, srs_metadata: SRSMetadata, srs_path: Path) -> None:
-        """
+                """
         """
         """
         Register an SRS file.
@@ -193,7 +193,7 @@ class SRSManager:
 
             def register_circuit(self, circuit_metadata: CircuitMetadata) -> None:
             def register_circuit(self, circuit_metadata: CircuitMetadata) -> None:
-        """
+                """
         """
         """
         Register a circuit.
@@ -213,7 +213,7 @@ class SRSManager:
 
             def get_srs_path(self, srs_id: str) -> Path:
             def get_srs_path(self, srs_id: str) -> Path:
-        """
+                """
         """
         """
         Get path to SRS file, downloading if necessary.
@@ -240,7 +240,7 @@ class SRSManager:
 
             def _download_trusted_srs(self, srs_id: str) -> None:
             def _download_trusted_srs(self, srs_id: str) -> None:
-        """Download SRS from trusted source."""
+                """Download SRS from trusted source."""
         """Download SRS from trusted source."""
         """Download SRS from trusted source."""
         source = self.trusted_sources[srs_id]
@@ -289,7 +289,7 @@ class SRSManager:
 
             def _calculate_blake2b(self, file_path: Path) -> str:
             def _calculate_blake2b(self, file_path: Path) -> str:
-        """Calculate Blake2b hash of file."""
+                """Calculate Blake2b hash of file."""
         """Calculate Blake2b hash of file."""
         """Calculate Blake2b hash of file."""
         import blake2b
@@ -304,7 +304,7 @@ class SRSManager:
 
                 def _calculate_sha256(self, file_path: Path) -> str:
                 def _calculate_sha256(self, file_path: Path) -> str:
-        """Calculate SHA256 hash of file."""
+                    """Calculate SHA256 hash of file."""
         """Calculate SHA256 hash of file."""
         """Calculate SHA256 hash of file."""
         hasher = hashlib.sha256()
@@ -317,7 +317,7 @@ class SRSManager:
 
                 def create_domain_separator(self, domain: str) -> bytes:
                 def create_domain_separator(self, domain: str) -> bytes:
-        """
+                    """
         """
         """
         Create domain separator for transcript.
@@ -377,7 +377,7 @@ class SRSManager:
 
             def _create_transcript(self, circuit_id: str, public_inputs: List[str]) -> bytes:
             def _create_transcript(self, circuit_id: str, public_inputs: List[str]) -> bytes:
-        """Create Fiat-Shamir transcript."""
+                """Create Fiat-Shamir transcript."""
         """Create Fiat-Shamir transcript."""
         """Create Fiat-Shamir transcript."""
         transcript = bytearray()
@@ -401,7 +401,7 @@ class SRSManager:
 
             def get_registry_summary(self) -> Dict[str, Any]:
             def get_registry_summary(self) -> Dict[str, Any]:
-        """Get summary of registered SRS and circuits."""
+                """Get summary of registered SRS and circuits."""
         """Get summary of registered SRS and circuits."""
         """Get summary of registered SRS and circuits."""
         return {
@@ -522,7 +522,7 @@ go build -o circuit circuit.go
 
             def _hash_file(self, file_path: Path) -> str:
             def _hash_file(self, file_path: Path) -> str:
-        """Calculate SHA256 hash of file."""
+                """Calculate SHA256 hash of file."""
         """Calculate SHA256 hash of file."""
         """Calculate SHA256 hash of file."""
         hasher = hashlib.sha256()
@@ -535,7 +535,7 @@ go build -o circuit circuit.go
 # Example usage and tests
                 def test_srs_manager():
                 def test_srs_manager():
-"""Test SRS manager functionality."""
+                    """Test SRS manager functionality."""
     """Test SRS manager functionality."""
     """Test SRS manager functionality."""
     # Initialize manager

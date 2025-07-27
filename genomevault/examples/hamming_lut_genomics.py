@@ -23,8 +23,8 @@ from genomevault.hypervector_transform.hdc_encoder import (
 
 def simulate_variant_data(num_samples: int, num_variants: int) -> np.ndarray:
     """TODO: Add docstring for simulate_variant_data"""
-    """TODO: Add docstring for simulate_variant_data"""
         """TODO: Add docstring for simulate_variant_data"""
+            """TODO: Add docstring for simulate_variant_data"""
     """Simulate binary variant data (0/1 for absence/presence)"""
     # In real scenarios, this would come from VCF processing
     return np.random.binomial(1, 0.1, size=(num_samples, num_variants))
@@ -34,8 +34,8 @@ def simulate_variant_data(num_samples: int, num_variants: int) -> np.ndarray:
     variant_matrix: np.ndarray, dimension: int = 10000
 ) -> torch.Tensor:
     """TODO: Add docstring for encode_variants_to_hypervectors"""
-    """TODO: Add docstring for encode_variants_to_hypervectors"""
         """TODO: Add docstring for encode_variants_to_hypervectors"""
+            """TODO: Add docstring for encode_variants_to_hypervectors"""
     """Encode variant matrix to hypervectors"""
     config = HypervectorConfig(dimension=dimension)
     encoder = HypervectorEncoder(config)
@@ -51,8 +51,8 @@ def simulate_variant_data(num_samples: int, num_variants: int) -> np.ndarray:
 
         def find_similar_genomes(query_idx: int, hypervectors: torch.Tensor, top_k: int = 5) -> list:
             """TODO: Add docstring for find_similar_genomes"""
-    """TODO: Add docstring for find_similar_genomes"""
-        """TODO: Add docstring for find_similar_genomes"""
+                """TODO: Add docstring for find_similar_genomes"""
+                    """TODO: Add docstring for find_similar_genomes"""
     """Find the most similar genomes to a query using optimized Hamming distance"""
     binder = HypervectorBinder(use_gpu=torch.cuda.is_available())
 
@@ -74,8 +74,8 @@ def simulate_variant_data(num_samples: int, num_variants: int) -> np.ndarray:
 
             def batch_clustering_demo(hypervectors: torch.Tensor, num_clusters: int = 3) -> None:
                 """TODO: Add docstring for batch_clustering_demo"""
-    """TODO: Add docstring for batch_clustering_demo"""
-        """TODO: Add docstring for batch_clustering_demo"""
+                    """TODO: Add docstring for batch_clustering_demo"""
+                        """TODO: Add docstring for batch_clustering_demo"""
     """Demonstrate batch similarity computation for clustering"""
     print("\n=== Batch Clustering Demo ===")
 
@@ -116,8 +116,8 @@ def simulate_variant_data(num_samples: int, num_variants: int) -> np.ndarray:
 
         def population_stratification_demo(hypervectors: torch.Tensor) -> None:
             """TODO: Add docstring for population_stratification_demo"""
-    """TODO: Add docstring for population_stratification_demo"""
-        """TODO: Add docstring for population_stratification_demo"""
+                """TODO: Add docstring for population_stratification_demo"""
+                    """TODO: Add docstring for population_stratification_demo"""
     """Demonstrate population stratification using Hamming similarity"""
     print("\n=== Population Stratification Demo ===")
 
@@ -156,8 +156,8 @@ def simulate_variant_data(num_samples: int, num_variants: int) -> np.ndarray:
 
             def performance_comparison() -> None:
                 """TODO: Add docstring for performance_comparison"""
-    """TODO: Add docstring for performance_comparison"""
-        """TODO: Add docstring for performance_comparison"""
+                    """TODO: Add docstring for performance_comparison"""
+                        """TODO: Add docstring for performance_comparison"""
     """Compare standard vs LUT-optimized similarity computation"""
     print("\n=== Performance Comparison ===")
 
@@ -193,8 +193,8 @@ def simulate_variant_data(num_samples: int, num_variants: int) -> np.ndarray:
 
         def main() -> None:
             """TODO: Add docstring for main"""
-    """TODO: Add docstring for main"""
-        """TODO: Add docstring for main"""
+                """TODO: Add docstring for main"""
+                    """TODO: Add docstring for main"""
     """Run all demonstrations"""
     print("GenomeVault Hamming LUT Example")
     print("================================")

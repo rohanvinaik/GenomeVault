@@ -31,7 +31,7 @@ class TestPackedHV:
 
         def test_xor_operation(self) -> None:
         def test_xor_operation(self) -> None:
-        """Test XOR binding operation"""
+            """Test XOR binding operation"""
         """Test XOR binding operation"""
     """Test XOR binding operation"""
         hv1 = PackedHV(1000)
@@ -48,7 +48,7 @@ class TestPackedHV:
 
             def test_majority_vote(self) -> None:
             def test_majority_vote(self) -> None:
-    """Test majority vote bundling"""
+                """Test majority vote bundling"""
         """Test majority vote bundling"""
     """Test majority vote bundling"""
         # Create 3 hypervectors
@@ -69,7 +69,7 @@ class TestPackedHV:
 
                 def test_hamming_distance(self) -> None:
                 def test_hamming_distance(self) -> None:
-    """Test Hamming distance calculation"""
+                    """Test Hamming distance calculation"""
         """Test Hamming distance calculation"""
     """Test Hamming distance calculation"""
         hv1 = PackedHV(64)
@@ -85,7 +85,7 @@ class TestPackedHV:
 
                     def test_dense_conversion(self) -> None:
                     def test_dense_conversion(self) -> None:
-    """Test conversion to/from dense representation"""
+                        """Test conversion to/from dense representation"""
         """Test conversion to/from dense representation"""
     """Test conversion to/from dense representation"""
         # Create dense array
@@ -102,7 +102,7 @@ class TestPackedHV:
 
                         def test_torch_compatibility(self) -> None:
                         def test_torch_compatibility(self) -> None:
-    """Test PyTorch tensor conversion"""
+                            """Test PyTorch tensor conversion"""
         """Test PyTorch tensor conversion"""
     """Test PyTorch tensor conversion"""
         # Create torch tensor
@@ -139,7 +139,7 @@ class TestPackedGenomicEncoder:
 
         def test_encoder_creation(self) -> None:
         def test_encoder_creation(self) -> None:
-        """Test encoder initialization"""
+            """Test encoder initialization"""
         """Test encoder initialization"""
     """Test encoder initialization"""
         encoder = PackedGenomicEncoder(dimension=10000, packed=True, device="cpu")
@@ -150,7 +150,7 @@ class TestPackedGenomicEncoder:
 
             def test_variant_encoding(self, sample_variants) -> None:
             def test_variant_encoding(self, sample_variants) -> None:
-    """Test single variant encoding"""
+                """Test single variant encoding"""
         """Test single variant encoding"""
     """Test single variant encoding"""
         encoder = PackedGenomicEncoder(dimension=10000)
@@ -170,7 +170,7 @@ class TestPackedGenomicEncoder:
 
                 def test_genome_encoding(self, sample_variants) -> None:
                 def test_genome_encoding(self, sample_variants) -> None:
-    """Test complete genome encoding"""
+                    """Test complete genome encoding"""
         """Test complete genome encoding"""
     """Test complete genome encoding"""
         encoder = PackedGenomicEncoder(dimension=10000)
@@ -183,7 +183,7 @@ class TestPackedGenomicEncoder:
 
                     def test_similarity_computation(self, sample_variants) -> None:
                     def test_similarity_computation(self, sample_variants) -> None:
-    """Test similarity between packed hypervectors"""
+                        """Test similarity between packed hypervectors"""
         """Test similarity between packed hypervectors"""
     """Test similarity between packed hypervectors"""
         encoder = PackedGenomicEncoder(dimension=10000)
@@ -206,7 +206,7 @@ class TestPackedGenomicEncoder:
 
                         def test_memory_comparison(self, sample_variants) -> None:
                         def test_memory_comparison(self, sample_variants) -> None:
-    """Compare memory usage between packed and unpacked"""
+                            """Compare memory usage between packed and unpacked"""
         """Compare memory usage between packed and unpacked"""
     """Compare memory usage between packed and unpacked"""
         dimension = 10000
@@ -234,7 +234,7 @@ class TestPackedGenomicEncoder:
 
                             def test_compatibility_mode(self, sample_variants) -> None:
                             def test_compatibility_mode(self, sample_variants) -> None:
-    """Test that packed encoder can fall back to standard mode"""
+                                """Test that packed encoder can fall back to standard mode"""
         """Test that packed encoder can fall back to standard mode"""
     """Test that packed encoder can fall back to standard mode"""
         encoder = PackedGenomicEncoder(dimension=10000, packed=False)
@@ -263,8 +263,8 @@ class TestPerformance:
 
         def encode() -> None:
             """TODO: Add docstring for encode"""
-        """TODO: Add docstring for encode"""
-    """TODO: Add docstring for encode"""
+                """TODO: Add docstring for encode"""
+                    """TODO: Add docstring for encode"""
     return encoder.encode_genome(sample_variants * 100)  # 300 variants
 
         result = benchmark(encode)
@@ -274,7 +274,7 @@ class TestPerformance:
 
             def test_similarity_speed(self, benchmark) -> None:
             def test_similarity_speed(self, benchmark) -> None:
-    """Benchmark similarity computation"""
+                """Benchmark similarity computation"""
         """Benchmark similarity computation"""
     """Benchmark similarity computation"""
         dimension = 10000
@@ -289,8 +289,8 @@ class TestPerformance:
 
                 def compute_similarity() -> None:
                     """TODO: Add docstring for compute_similarity"""
-        """TODO: Add docstring for compute_similarity"""
-    """TODO: Add docstring for compute_similarity"""
+                        """TODO: Add docstring for compute_similarity"""
+                            """TODO: Add docstring for compute_similarity"""
     return hv1.hamming_distance(hv2)
 
         result = benchmark(compute_similarity)

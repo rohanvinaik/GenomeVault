@@ -82,8 +82,8 @@ class ZoomQueryResponse(BaseModel):
 # Dependencies
 async def get_genomic_encoder(enable_snp: bool = True) -> GenomicEncoder:
     """TODO: Add docstring for get_genomic_encoder"""
-    """TODO: Add docstring for get_genomic_encoder"""
         """TODO: Add docstring for get_genomic_encoder"""
+            """TODO: Add docstring for get_genomic_encoder"""
     """Get genomic encoder
 
     TODO: This is a duplicate getter function that needs proper implementation.
@@ -325,8 +325,8 @@ async def get_panel_info(
 @router.post("/panel/estimate")
 async def estimate_panel_overhead(panel: str = "common", positions: Optional[int] = None) -> None:
     """TODO: Add docstring for estimate_panel_overhead"""
-    """TODO: Add docstring for estimate_panel_overhead"""
         """TODO: Add docstring for estimate_panel_overhead"""
+            """TODO: Add docstring for estimate_panel_overhead"""
     """Estimate overhead for using a specific SNP panel"""
     # Panel position counts
     panel_sizes = {
@@ -364,8 +364,8 @@ async def estimate_panel_overhead(panel: str = "common", positions: Optional[int
 # Helper functions
         def _build_genomic_query_from_params(query_type: str, params: Dict) -> GenomicQuery:
             """TODO: Add docstring for _build_genomic_query_from_params"""
-        """TODO: Add docstring for _build_genomic_query_from_params"""
-        """TODO: Add docstring for _build_genomic_query_from_params"""
+                """TODO: Add docstring for _build_genomic_query_from_params"""
+                    """TODO: Add docstring for _build_genomic_query_from_params"""
 """Build genomic query from type and parameters"""
     if query_type == "variant_lookup":
         return GenomicQuery(query_type=QueryType.VARIANT_LOOKUP, parameters=params)

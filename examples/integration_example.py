@@ -28,8 +28,8 @@ logger = get_logger(__name__)
 
 def process_and_encode_genome(vcf_path: str) -> None:
     """TODO: Add docstring for process_and_encode_genome"""
-    """TODO: Add docstring for process_and_encode_genome"""
         """TODO: Add docstring for process_and_encode_genome"""
+            """TODO: Add docstring for process_and_encode_genome"""
     """
     Complete pipeline from VCF to privacy-preserving hypervector
     """
@@ -75,8 +75,8 @@ def process_and_encode_genome(vcf_path: str) -> None:
 
     def demonstrate_variant_encoding(genomic_data: dict) -> None:
         """TODO: Add docstring for demonstrate_variant_encoding"""
-    """TODO: Add docstring for demonstrate_variant_encoding"""
-        """TODO: Add docstring for demonstrate_variant_encoding"""
+            """TODO: Add docstring for demonstrate_variant_encoding"""
+                """TODO: Add docstring for demonstrate_variant_encoding"""
     """
     Show holographic encoding of specific variants
     """
@@ -109,8 +109,8 @@ def process_and_encode_genome(vcf_path: str) -> None:
 
         def demonstrate_privacy_preservation(genomic_hv: torch.Tensor) -> None:
             """TODO: Add docstring for demonstrate_privacy_preservation"""
-    """TODO: Add docstring for demonstrate_privacy_preservation"""
-        """TODO: Add docstring for demonstrate_privacy_preservation"""
+                """TODO: Add docstring for demonstrate_privacy_preservation"""
+                    """TODO: Add docstring for demonstrate_privacy_preservation"""
     """
     Show privacy properties of hypervectors
     """
@@ -153,8 +153,8 @@ def process_and_encode_genome(vcf_path: str) -> None:
 
             def simulate_multi_omics_integration() -> None:
                 """TODO: Add docstring for simulate_multi_omics_integration"""
-    """TODO: Add docstring for simulate_multi_omics_integration"""
-        """TODO: Add docstring for simulate_multi_omics_integration"""
+                    """TODO: Add docstring for simulate_multi_omics_integration"""
+                        """TODO: Add docstring for simulate_multi_omics_integration"""
     """
     Demonstrate multi-omics integration with privacy
     """
@@ -193,8 +193,8 @@ def process_and_encode_genome(vcf_path: str) -> None:
 
                 def main() -> None:
                     """TODO: Add docstring for main"""
-    """TODO: Add docstring for main"""
-        """TODO: Add docstring for main"""
+                        """TODO: Add docstring for main"""
+                            """TODO: Add docstring for main"""
     """
     Run the complete integration example
     """

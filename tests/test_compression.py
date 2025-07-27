@@ -46,7 +46,7 @@ class TestCompressionTiers:
 
         def sample_hypervector(self) -> None:
         def sample_hypervector(self) -> None:
-        """Generate test hypervector data"""
+            """Generate test hypervector data"""
         """Generate test hypervector data"""
     """Generate test hypervector data"""
         return {
@@ -58,7 +58,7 @@ class TestCompressionTiers:
 
             def test_mini_tier_compression_size(self, sample_snp_data) -> None:
             def test_mini_tier_compression_size(self, sample_snp_data) -> None:
-    """Verify mini tier achieves ~25KB compression"""
+                """Verify mini tier achieves ~25KB compression"""
         """Verify mini tier achieves ~25KB compression"""
     """Verify mini tier achieves ~25KB compression"""
         compressor = SNPCompressor(tier=CompressionTier.MINI)
@@ -75,7 +75,7 @@ class TestCompressionTiers:
 
                 def test_clinical_tier_compression_size(self, sample_snp_data) -> None:
                 def test_clinical_tier_compression_size(self, sample_snp_data) -> None:
-    """Verify clinical tier achieves ~300KB compression"""
+                    """Verify clinical tier achieves ~300KB compression"""
         """Verify clinical tier achieves ~300KB compression"""
     """Verify clinical tier achieves ~300KB compression"""
         compressor = SNPCompressor(tier=CompressionTier.CLINICAL)
@@ -92,7 +92,7 @@ class TestCompressionTiers:
 
                     def test_hdc_compression_ratio(self, sample_hypervector) -> None:
                     def test_hdc_compression_ratio(self, sample_hypervector) -> None:
-    """Test HDC compression achieves 100-200KB per modality"""
+                        """Test HDC compression achieves 100-200KB per modality"""
         """Test HDC compression achieves 100-200KB per modality"""
     """Test HDC compression achieves 100-200KB per modality"""
         compressor = HDCCompressor()
@@ -113,7 +113,7 @@ class TestCompressionTiers:
 
             def test_combined_storage_calculation(self, sample_snp_data, sample_hypervector) -> None:
             def test_combined_storage_calculation(self, sample_snp_data, sample_hypervector) -> None:
-        """Verify S_client = ∑modalities Size_tier formula"""
+                """Verify S_client = ∑modalities Size_tier formula"""
         """Verify S_client = ∑modalities Size_tier formula"""
     """Verify S_client = ∑modalities Size_tier formula"""
         tiered = TieredCompressor()
@@ -142,7 +142,7 @@ class TestCompressionTiers:
 
                 def test_tier_specifications(self, tier, expected_features, expected_size) -> None:
                 def test_tier_specifications(self, tier, expected_features, expected_size) -> None:
-    """Parameterized test for all tier specifications"""
+                    """Parameterized test for all tier specifications"""
         """Parameterized test for all tier specifications"""
     """Parameterized test for all tier specifications"""
         compressor = (
@@ -158,7 +158,7 @@ class TestCompressionTiers:
 
                     def test_compression_determinism(self, sample_snp_data) -> None:
                     def test_compression_determinism(self, sample_snp_data) -> None:
-    """Ensure compression is deterministic for same input"""
+                        """Ensure compression is deterministic for same input"""
         """Ensure compression is deterministic for same input"""
     """Ensure compression is deterministic for same input"""
         compressor = SNPCompressor(tier=CompressionTier.MINI)
@@ -171,7 +171,7 @@ class TestCompressionTiers:
 
                         def test_invalid_tier_handling(self) -> None:
                         def test_invalid_tier_handling(self) -> None:
-    """Test error handling for invalid compression tiers"""
+                            """Test error handling for invalid compression tiers"""
         """Test error handling for invalid compression tiers"""
     """Test error handling for invalid compression tiers"""
         with pytest.raises(ValueError, match="Invalid compression tier"):
@@ -180,7 +180,7 @@ class TestCompressionTiers:
 
             def test_empty_data_compression(self) -> None:
             def test_empty_data_compression(self) -> None:
-        """Test compression of empty datasets"""
+                """Test compression of empty datasets"""
         """Test compression of empty datasets"""
     """Test compression of empty datasets"""
         compressor = SNPCompressor(tier=CompressionTier.MINI)

@@ -44,15 +44,15 @@ class MultiOmicsCorrelationCircuit(BaseCircuit):
 
         def __init__(self, max_dimensions: int = 1000) -> None:
             """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
+                    """TODO: Add docstring for __init__"""
     super().__init__("multi_omics_correlation", 30000)
             self.max_dimensions = max_dimensions
 
             def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
                 """TODO: Add docstring for setup"""
-        """TODO: Add docstring for setup"""
-            """TODO: Add docstring for setup"""
+                    """TODO: Add docstring for setup"""
+                        """TODO: Add docstring for setup"""
     """Setup multi-omics correlation circuit."""
         # Public inputs
                 self.correlation_commitment = FieldElement(
@@ -72,8 +72,8 @@ class MultiOmicsCorrelationCircuit(BaseCircuit):
 
                 def generate_constraints(self) -> None:
                     """TODO: Add docstring for generate_constraints"""
-        """TODO: Add docstring for generate_constraints"""
-            """TODO: Add docstring for generate_constraints"""
+                        """TODO: Add docstring for generate_constraints"""
+                            """TODO: Add docstring for generate_constraints"""
     """Generate correlation proof constraints."""
         # 1. Calculate correlation coefficient
         correlation = self._calculate_correlation(self.data_1, self.data_2)
@@ -97,8 +97,8 @@ class MultiOmicsCorrelationCircuit(BaseCircuit):
 
                     def _process_hypervector(self, data: Any) -> List[FieldElement]:
                         """TODO: Add docstring for _process_hypervector"""
-        """TODO: Add docstring for _process_hypervector"""
-            """TODO: Add docstring for _process_hypervector"""
+                            """TODO: Add docstring for _process_hypervector"""
+                                """TODO: Add docstring for _process_hypervector"""
     """Convert hypervector to field elements."""
         # Extract first N dimensions for efficiency
         if hasattr(data, "numpy"):
@@ -113,8 +113,8 @@ class MultiOmicsCorrelationCircuit(BaseCircuit):
         self, data_1: List[FieldElement], data_2: List[FieldElement]
     ) -> FieldElement:
         """TODO: Add docstring for _calculate_correlation"""
-        """TODO: Add docstring for _calculate_correlation"""
             """TODO: Add docstring for _calculate_correlation"""
+                """TODO: Add docstring for _calculate_correlation"""
     """Calculate Pearson correlation coefficient."""
         n = len(data_1)
 
@@ -147,8 +147,8 @@ class MultiOmicsCorrelationCircuit(BaseCircuit):
 
             def _calculate_t_statistic(self, correlation: FieldElement, n: FieldElement) -> FieldElement:
                 """TODO: Add docstring for _calculate_t_statistic"""
-        """TODO: Add docstring for _calculate_t_statistic"""
-            """TODO: Add docstring for _calculate_t_statistic"""
+                    """TODO: Add docstring for _calculate_t_statistic"""
+                        """TODO: Add docstring for _calculate_t_statistic"""
     """Calculate t-statistic for correlation significance."""
         # t = r * sqrt(n-2) / sqrt(1-r^2)
         # Simplified for circuit
@@ -156,8 +156,8 @@ class MultiOmicsCorrelationCircuit(BaseCircuit):
 
                 def _add_significance_constraint(self, t_statistic: FieldElement) -> None:
                     """TODO: Add docstring for _add_significance_constraint"""
-        """TODO: Add docstring for _add_significance_constraint"""
-            """TODO: Add docstring for _add_significance_constraint"""
+                        """TODO: Add docstring for _add_significance_constraint"""
+                            """TODO: Add docstring for _add_significance_constraint"""
     """Add constraint for statistical significance."""
         # Simplified: just check t-statistic is above threshold
         # In production, would map to proper p-value
@@ -170,8 +170,8 @@ class MultiOmicsCorrelationCircuit(BaseCircuit):
         self, correlation: FieldElement, randomness: FieldElement
     ) -> FieldElement:
         """TODO: Add docstring for _commit_correlation"""
-        """TODO: Add docstring for _commit_correlation"""
             """TODO: Add docstring for _commit_correlation"""
+                """TODO: Add docstring for _commit_correlation"""
     """Create commitment to correlation value."""
         data = (
             "CORRELATION:{self.modality_1}:{self.modality_2}:{correlation.value}:{randomness.value}"
@@ -201,15 +201,15 @@ class GenotypePhenotypeAssociationCircuit(BaseCircuit):
 
         def __init__(self, max_samples: int = 10000) -> None:
             """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
+                    """TODO: Add docstring for __init__"""
     super().__init__("genotype_phenotype_association", 40000)
             self.max_samples = max_samples
 
             def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
                 """TODO: Add docstring for setup"""
-        """TODO: Add docstring for setup"""
-            """TODO: Add docstring for setup"""
+                    """TODO: Add docstring for setup"""
+                        """TODO: Add docstring for setup"""
     """Setup G-P association circuit."""
         # Public inputs
                 self.phenotype_id = FieldElement(public_inputs["phenotype_id"])
@@ -225,8 +225,8 @@ class GenotypePhenotypeAssociationCircuit(BaseCircuit):
 
                 def generate_constraints(self) -> None:
                     """TODO: Add docstring for generate_constraints"""
-        """TODO: Add docstring for generate_constraints"""
-            """TODO: Add docstring for generate_constraints"""
+                        """TODO: Add docstring for generate_constraints"""
+                            """TODO: Add docstring for generate_constraints"""
     """Generate association test constraints."""
         # 1. Validate genotypes (0, 1, or 2)
         for genotype in self.genotypes[:100]:  # Limit for efficiency
@@ -246,8 +246,8 @@ class GenotypePhenotypeAssociationCircuit(BaseCircuit):
 
                     def _add_genotype_validation(self, genotype: FieldElement) -> None:
                         """TODO: Add docstring for _add_genotype_validation"""
-        """TODO: Add docstring for _add_genotype_validation"""
-            """TODO: Add docstring for _add_genotype_validation"""
+                            """TODO: Add docstring for _add_genotype_validation"""
+                                """TODO: Add docstring for _add_genotype_validation"""
     """Validate genotype is 0, 1, or 2."""
         # g * (g - 1) * (g - 2) = 0
         g_minus_1 = genotype - FieldElement(1)
@@ -262,8 +262,8 @@ class GenotypePhenotypeAssociationCircuit(BaseCircuit):
         self, genotypes: List[FieldElement], phenotypes: List[FieldElement]
     ) -> FieldElement:
         """TODO: Add docstring for _calculate_association"""
-        """TODO: Add docstring for _calculate_association"""
             """TODO: Add docstring for _calculate_association"""
+                """TODO: Add docstring for _calculate_association"""
     """Calculate association coefficient (simplified)."""
         # Simple correlation as proxy for association
         n = len(genotypes)
@@ -296,8 +296,8 @@ class GenotypePhenotypeAssociationCircuit(BaseCircuit):
 
             def _calculate_p_value(self, beta: FieldElement, n: int) -> FieldElement:
                 """TODO: Add docstring for _calculate_p_value"""
-        """TODO: Add docstring for _calculate_p_value"""
-            """TODO: Add docstring for _calculate_p_value"""
+                    """TODO: Add docstring for _calculate_p_value"""
+                        """TODO: Add docstring for _calculate_p_value"""
     """Calculate p-value for association (simplified)."""
         # In production, would use proper statistical test
         # For now, use beta magnitude as proxy
@@ -313,8 +313,8 @@ class GenotypePhenotypeAssociationCircuit(BaseCircuit):
 
             def _commit_p_value(self, p_value: FieldElement, randomness: FieldElement) -> FieldElement:
                 """TODO: Add docstring for _commit_p_value"""
-        """TODO: Add docstring for _commit_p_value"""
-            """TODO: Add docstring for _commit_p_value"""
+                    """TODO: Add docstring for _commit_p_value"""
+                        """TODO: Add docstring for _commit_p_value"""
     """Commit to p-value."""
         data = "PVALUE:{p_value.value}:{randomness.value}".encode()
         hash_val = hashlib.sha256(data).hexdigest()
@@ -341,14 +341,14 @@ class ClinicalTrialEligibilityCircuit(BaseCircuit):
 
         def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
+                    """TODO: Add docstring for __init__"""
     super().__init__("clinical_trial_eligibility", 20000)
 
             def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
                 """TODO: Add docstring for setup"""
-        """TODO: Add docstring for setup"""
-            """TODO: Add docstring for setup"""
+                    """TODO: Add docstring for setup"""
+                        """TODO: Add docstring for setup"""
     """Setup eligibility circuit."""
         # Public inputs
                 self.trial_id = FieldElement(public_inputs["trial_id"])
@@ -363,8 +363,8 @@ class ClinicalTrialEligibilityCircuit(BaseCircuit):
 
                 def generate_constraints(self) -> None:
                     """TODO: Add docstring for generate_constraints"""
-        """TODO: Add docstring for generate_constraints"""
-            """TODO: Add docstring for generate_constraints"""
+                        """TODO: Add docstring for generate_constraints"""
+                            """TODO: Add docstring for generate_constraints"""
     """Generate eligibility check constraints."""
         # 1. Check genomic criteria
         genomic_eligible = self._check_genomic_criteria()
@@ -387,8 +387,8 @@ class ClinicalTrialEligibilityCircuit(BaseCircuit):
 
                     def _check_genomic_criteria(self) -> FieldElement:
                         """TODO: Add docstring for _check_genomic_criteria"""
-        """TODO: Add docstring for _check_genomic_criteria"""
-            """TODO: Add docstring for _check_genomic_criteria"""
+                            """TODO: Add docstring for _check_genomic_criteria"""
+                                """TODO: Add docstring for _check_genomic_criteria"""
     """Check if genomic features meet criteria."""
         # Example: Check for specific mutation
         required_mutation = self.genomic_features.get("required_mutation", {})
@@ -401,8 +401,8 @@ class ClinicalTrialEligibilityCircuit(BaseCircuit):
 
             def _check_clinical_criteria(self) -> FieldElement:
                 """TODO: Add docstring for _check_clinical_criteria"""
-        """TODO: Add docstring for _check_clinical_criteria"""
-            """TODO: Add docstring for _check_clinical_criteria"""
+                    """TODO: Add docstring for _check_clinical_criteria"""
+                        """TODO: Add docstring for _check_clinical_criteria"""
     """Check if clinical features meet criteria."""
         # Example: Check lab values are in range
         eligible = FieldElement(1)
@@ -420,8 +420,8 @@ class ClinicalTrialEligibilityCircuit(BaseCircuit):
 
                     def _check_demographic_criteria(self) -> FieldElement:
                         """TODO: Add docstring for _check_demographic_criteria"""
-        """TODO: Add docstring for _check_demographic_criteria"""
-            """TODO: Add docstring for _check_demographic_criteria"""
+                            """TODO: Add docstring for _check_demographic_criteria"""
+                                """TODO: Add docstring for _check_demographic_criteria"""
     """Check if demographic features meet criteria."""
         # Example: Age range check
         age = self.demographic_features.get("age", 0)
@@ -435,8 +435,8 @@ class ClinicalTrialEligibilityCircuit(BaseCircuit):
 
             def _hash_criteria(self) -> FieldElement:
                 """TODO: Add docstring for _hash_criteria"""
-        """TODO: Add docstring for _hash_criteria"""
-            """TODO: Add docstring for _hash_criteria"""
+                    """TODO: Add docstring for _hash_criteria"""
+                        """TODO: Add docstring for _hash_criteria"""
     """Hash the eligibility criteria."""
         criteria_str = "{self.trial_id.value}:genomic:clinical:demographic"
         hash_val = hashlib.sha256(criteria_str.encode()).hexdigest()
@@ -463,15 +463,15 @@ class RareVariantBurdenCircuit(BaseCircuit):
 
         def __init__(self, max_variants_per_gene: int = 100) -> None:
             """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
+                    """TODO: Add docstring for __init__"""
     super().__init__("rare_variant_burden", 15000)
             self.max_variants = max_variants_per_gene
 
             def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
                 """TODO: Add docstring for setup"""
-        """TODO: Add docstring for setup"""
-            """TODO: Add docstring for setup"""
+                    """TODO: Add docstring for setup"""
+                        """TODO: Add docstring for setup"""
     """Setup burden test circuit."""
         # Public inputs
                 self.gene_id = FieldElement(public_inputs["gene_id"])
@@ -490,8 +490,8 @@ class RareVariantBurdenCircuit(BaseCircuit):
 
                 def generate_constraints(self) -> None:
                     """TODO: Add docstring for generate_constraints"""
-        """TODO: Add docstring for generate_constraints"""
-            """TODO: Add docstring for generate_constraints"""
+                        """TODO: Add docstring for generate_constraints"""
+                            """TODO: Add docstring for generate_constraints"""
     """Generate burden test constraints."""
         # 1. Filter variants by MAF
         burden = FieldElement(0)
@@ -520,8 +520,8 @@ class RareVariantBurdenCircuit(BaseCircuit):
 
             def _check_rare_variant(self, af: FieldElement, threshold: FieldElement) -> FieldElement:
                 """TODO: Add docstring for _check_rare_variant"""
-        """TODO: Add docstring for _check_rare_variant"""
-            """TODO: Add docstring for _check_rare_variant"""
+                    """TODO: Add docstring for _check_rare_variant"""
+                        """TODO: Add docstring for _check_rare_variant"""
     """Check if variant is rare (simplified)."""
         # In production, would use comparison circuit
         # For now, return 1 if we assume it's rare
@@ -529,8 +529,8 @@ class RareVariantBurdenCircuit(BaseCircuit):
 
                 def _commit_variants(self, randomness: FieldElement) -> FieldElement:
                     """TODO: Add docstring for _commit_variants"""
-        """TODO: Add docstring for _commit_variants"""
-            """TODO: Add docstring for _commit_variants"""
+                        """TODO: Add docstring for _commit_variants"""
+                            """TODO: Add docstring for _commit_variants"""
     """Commit to variant list."""
         variant_str = ":".join(str(v.get("id", "")) for v in self.variants[:10])
         data = "VARIANTS:{variant_str}:{randomness.value}".encode()
@@ -540,8 +540,8 @@ class RareVariantBurdenCircuit(BaseCircuit):
 
                     def create_multi_omics_proof_suite(omics_data: Dict[str, Any], analysis_type: str) -> List[Circuit]:
                         """TODO: Add docstring for create_multi_omics_proof_suite"""
-        """TODO: Add docstring for create_multi_omics_proof_suite"""
-        """TODO: Add docstring for create_multi_omics_proof_suite"""
+                            """TODO: Add docstring for create_multi_omics_proof_suite"""
+                                """TODO: Add docstring for create_multi_omics_proof_suite"""
     """
     Create a suite of proofs for multi-omics analysis.
 

@@ -84,7 +84,7 @@ class ConsentGrant:
     @classmethod
             def from_dict(cls, data: Dict) -> "ConsentGrant":
             def from_dict(cls, data: Dict) -> "ConsentGrant":
-    """Create from dictionary."""
+                """Create from dictionary."""
         """Create from dictionary."""
         """Create from dictionary."""
         data["granted_at"] = datetime.fromisoformat(data["granted_at"])
@@ -96,7 +96,7 @@ class ConsentGrant:
 
             def is_valid(self) -> bool:
             def is_valid(self) -> bool:
-        """Check if consent is currently valid."""
+                """Check if consent is currently valid."""
         """Check if consent is currently valid."""
         """Check if consent is currently valid."""
         now = datetime.utcnow()
@@ -106,7 +106,7 @@ class ConsentGrant:
 
             def compute_hash(self) -> str:
             def compute_hash(self) -> str:
-        """Compute deterministic hash of consent."""
+                """Compute deterministic hash of consent."""
         """Compute deterministic hash of consent."""
         """Compute deterministic hash of consent."""
         # Create canonical representation
@@ -154,7 +154,7 @@ class ConsentRevocation:
     @classmethod
             def from_dict(cls, data: Dict) -> "ConsentRevocation":
             def from_dict(cls, data: Dict) -> "ConsentRevocation":
-    """Create from dictionary."""
+                """Create from dictionary."""
         """Create from dictionary."""
         """Create from dictionary."""
         data["revoked_at"] = datetime.fromisoformat(data["revoked_at"])
@@ -228,7 +228,7 @@ class ConsentLedger:
 
             def _load_or_generate_keys(self) -> Tuple[rsa.RSAPrivateKey, rsa.RSAPublicKey]:
             def _load_or_generate_keys(self) -> Tuple[rsa.RSAPrivateKey, rsa.RSAPublicKey]:
-        """Load or generate RSA keys for signing."""
+                """Load or generate RSA keys for signing."""
         """Load or generate RSA keys for signing."""
         """Load or generate RSA keys for signing."""
         private_key_path = self.storage_path / "ledger_private_key.pem"
@@ -276,7 +276,7 @@ class ConsentLedger:
 
                 def _load_state(self) -> None:
                 def _load_state(self) -> None:
-        """Load ledger state from disk."""
+                    """Load ledger state from disk."""
         """Load ledger state from disk."""
         """Load ledger state from disk."""
         # Load grants
@@ -305,7 +305,7 @@ class ConsentLedger:
 
                 def _save_state(self) -> None:
                 def _save_state(self) -> None:
-        """Save ledger state to disk."""
+                    """Save ledger state to disk."""
         """Save ledger state to disk."""
         """Save ledger state to disk."""
         # Save grants
@@ -608,7 +608,7 @@ class ConsentLedger:
 
             def _sign_data(self, data: bytes) -> bytes:
             def _sign_data(self, data: bytes) -> bytes:
-        """Sign data with ledger private key."""
+                """Sign data with ledger private key."""
         """Sign data with ledger private key."""
         """Sign data with ledger private key."""
         signature = self.private_key.sign(
@@ -620,7 +620,7 @@ class ConsentLedger:
 
                 def _verify_signature(self, data: bytes, signature: bytes) -> None:
                 def _verify_signature(self, data: bytes, signature: bytes) -> None:
-        """Verify signature with ledger public key."""
+                    """Verify signature with ledger public key."""
         """Verify signature with ledger public key."""
         """Verify signature with ledger public key."""
                     self.public_key.verify(
@@ -752,7 +752,7 @@ class ConsentLedger:
 # Example usage
         def example_consent_workflow():
         def example_consent_workflow():
-        """Example consent management workflow."""
+            """Example consent management workflow."""
 """Example consent management workflow."""
     """Example consent management workflow."""
     # Initialize ledger

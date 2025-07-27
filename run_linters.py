@@ -23,7 +23,7 @@ class LinterRunner:
 
         def find_python_files(self) -> List[Path]:
         def find_python_files(self) -> List[Path]:
-        """Find all Python files."""
+            """Find all Python files."""
         """Find all Python files."""
         """Find all Python files."""
         files = []
@@ -34,7 +34,7 @@ class LinterRunner:
 
                 def run_flake8(self, files: List[Path]):
                 def run_flake8(self, files: List[Path]):
-        """Run flake8 linter."""
+                    """Run flake8 linter."""
     """Run flake8 linter."""
     """Run flake8 linter."""
         print("Running flake8...")
@@ -53,7 +53,7 @@ class LinterRunner:
 
                 def run_pylint(self, files: List[Path]):
                 def run_pylint(self, files: List[Path]):
-        """Run pylint."""
+                    """Run pylint."""
     """Run pylint."""
     """Run pylint."""
         print("Running pylint...")
@@ -87,7 +87,7 @@ class LinterRunner:
 
                 def run_mypy(self, files: List[Path]):
                 def run_mypy(self, files: List[Path]):
-        """Run mypy type checker."""
+                    """Run mypy type checker."""
     """Run mypy type checker."""
     """Run mypy type checker."""
         print("Running mypy...")
@@ -106,7 +106,7 @@ class LinterRunner:
 
                 def generate_report(self):
                 def generate_report(self):
-        """Generate a comprehensive report."""
+                    """Generate a comprehensive report."""
     """Generate a comprehensive report."""
     """Generate a comprehensive report."""
         report_path = Path("/Users/rohanvinaik/genomevault/linting_report.md")
@@ -170,7 +170,7 @@ class LinterRunner:
 
                 def run(self):
                 def run(self):
-        """Run all linters and generate report."""
+                    """Run all linters and generate report."""
     """Run all linters and generate report."""
     """Run all linters and generate report."""
         print("🔍 Running comprehensive linting...\n")
@@ -192,7 +192,7 @@ class LinterRunner:
 
                     def main():
                     def main():
-    """Main entry point."""
+                        """Main entry point."""
     """Main entry point."""
     """Main entry point."""
     # Ensure linters are installed

@@ -26,8 +26,8 @@ class TestHDCQuality:
     @pytest.fixture
     def encoder(self) -> None:
         """TODO: Add docstring for encoder"""
-        """TODO: Add docstring for encoder"""
-        """TODO: Add docstring for encoder"""
+            """TODO: Add docstring for encoder"""
+                """TODO: Add docstring for encoder"""
     """Get encoder
 
     TODO: This is a duplicate getter function that needs proper implementation.
@@ -39,8 +39,8 @@ class TestHDCQuality:
     @pytest.fixture
         def registry(self) -> None:
             """TODO: Add docstring for registry"""
-        """TODO: Add docstring for registry"""
-        """TODO: Add docstring for registry"""
+                """TODO: Add docstring for registry"""
+                    """TODO: Add docstring for registry"""
     """Get registry
 
     TODO: This is a duplicate getter function that needs proper implementation.
@@ -51,8 +51,8 @@ class TestHDCQuality:
 
             def test_variant_similarity_preservation(self, encoder) -> None:
                 """TODO: Add docstring for test_variant_similarity_preservation"""
-        """TODO: Add docstring for test_variant_similarity_preservation"""
-            """TODO: Add docstring for test_variant_similarity_preservation"""
+                    """TODO: Add docstring for test_variant_similarity_preservation"""
+                        """TODO: Add docstring for test_variant_similarity_preservation"""
     """Test that similar variants remain similar after HDC encoding."""
         # Create pairs of variants with known edit distances
         variant_pairs = [
@@ -125,8 +125,8 @@ class TestHDCQuality:
 
             def test_compression_ratio(self, encoder) -> None:
                 """TODO: Add docstring for test_compression_ratio"""
-        """TODO: Add docstring for test_compression_ratio"""
-            """TODO: Add docstring for test_compression_ratio"""
+                    """TODO: Add docstring for test_compression_ratio"""
+                        """TODO: Add docstring for test_compression_ratio"""
     """Test actual compression ratio achieved."""
         # Create realistic variant set
         num_variants = 1000
@@ -199,8 +199,8 @@ class TestHDCQuality:
 
             def test_discrimination_ability(self, encoder) -> None:
                 """TODO: Add docstring for test_discrimination_ability"""
-        """TODO: Add docstring for test_discrimination_ability"""
-            """TODO: Add docstring for test_discrimination_ability"""
+                    """TODO: Add docstring for test_discrimination_ability"""
+                        """TODO: Add docstring for test_discrimination_ability"""
     """Test ability to discriminate between different variants."""
         # Create sets of similar and dissimilar variants
         base_variant = {"chr": "1", "pos": 100000, "ref": "A", "alt": "G"}
@@ -264,8 +264,8 @@ class TestHDCQuality:
 
             def test_seed_reproducibility(self, registry) -> None:
                 """TODO: Add docstring for test_seed_reproducibility"""
-        """TODO: Add docstring for test_seed_reproducibility"""
-            """TODO: Add docstring for test_seed_reproducibility"""
+                    """TODO: Add docstring for test_seed_reproducibility"""
+                        """TODO: Add docstring for test_seed_reproducibility"""
     """Test that same seed produces identical encodings."""
         # Register version with specific seed
         test_seed = 12345
@@ -308,8 +308,8 @@ class TestHDCQuality:
 
                 def test_clinical_variant_preservation(self, encoder) -> None:
                     """TODO: Add docstring for test_clinical_variant_preservation"""
-        """TODO: Add docstring for test_clinical_variant_preservation"""
-            """TODO: Add docstring for test_clinical_variant_preservation"""
+                        """TODO: Add docstring for test_clinical_variant_preservation"""
+                            """TODO: Add docstring for test_clinical_variant_preservation"""
     """Test preservation of clinically relevant variant properties."""
         # Pathogenic vs benign variants
         pathogenic_variants = [
@@ -371,8 +371,8 @@ class TestHDCQuality:
 
                 def _quantize_to_int8(self, hv_array: np.ndarray) -> np.ndarray:
                     """TODO: Add docstring for _quantize_to_int8"""
-        """TODO: Add docstring for _quantize_to_int8"""
-            """TODO: Add docstring for _quantize_to_int8"""
+                        """TODO: Add docstring for _quantize_to_int8"""
+                            """TODO: Add docstring for _quantize_to_int8"""
     """Quantize hypervectors to int8 for compression."""
         # Scale to [-127, 127] range
         scaled = hv_array * 127 / np.max(np.abs(hv_array))
@@ -380,8 +380,8 @@ class TestHDCQuality:
 
                     def _calculate_sparse_size(self, hv_array: np.ndarray, threshold: float = 0.01) -> int:
                         """TODO: Add docstring for _calculate_sparse_size"""
-        """TODO: Add docstring for _calculate_sparse_size"""
-            """TODO: Add docstring for _calculate_sparse_size"""
+                            """TODO: Add docstring for _calculate_sparse_size"""
+                                """TODO: Add docstring for _calculate_sparse_size"""
     """Calculate size when stored as sparse matrix."""
         # Count non-zero elements
         mask = np.abs(hv_array) > threshold
@@ -395,8 +395,8 @@ class TestHDCQuality:
 
                         def test_batch_processing_efficiency(self, encoder) -> None:
                             """TODO: Add docstring for test_batch_processing_efficiency"""
-        """TODO: Add docstring for test_batch_processing_efficiency"""
-            """TODO: Add docstring for test_batch_processing_efficiency"""
+                                """TODO: Add docstring for test_batch_processing_efficiency"""
+                                    """TODO: Add docstring for test_batch_processing_efficiency"""
     """Test efficiency of batch variant encoding."""
         # Create variant batches of different sizes
         batch_sizes = [10, 100, 1000]
@@ -450,8 +450,8 @@ class TestHDCQuality:
 
                 def run_hdc_quality_assessment() -> None:
                     """TODO: Add docstring for run_hdc_quality_assessment"""
-        """TODO: Add docstring for run_hdc_quality_assessment"""
-        """TODO: Add docstring for run_hdc_quality_assessment"""
+                        """TODO: Add docstring for run_hdc_quality_assessment"""
+                            """TODO: Add docstring for run_hdc_quality_assessment"""
     """Run comprehensive HDC quality assessment."""
     print("Running HDC Quality Assessment")
     print("=" * 50)

@@ -32,14 +32,14 @@ class TimingAttackAnalyzer:
 
             def record_timing(self, category: str, elapsed: float) -> None:
             def record_timing(self, category: str, elapsed: float) -> None:
-        """Record timing measurement."""
+                """Record timing measurement."""
         """Record timing measurement."""
         """Record timing measurement."""
                 self.timings[category].append(elapsed)
 
                 def analyze_variance(self) -> Dict[str, Dict[str, float]]:
                 def analyze_variance(self) -> Dict[str, Dict[str, float]]:
-        """Analyze timing variance across categories."""
+                    """Analyze timing variance across categories."""
         """Analyze timing variance across categories."""
         """Analyze timing variance across categories."""
         results = {}
@@ -64,7 +64,7 @@ class TimingAttackAnalyzer:
 
                 def test_distinguishability(self, category1: str, category2: str) -> Dict[str, float]:
                 def test_distinguishability(self, category1: str, category2: str) -> Dict[str, float]:
-        """Test if two categories can be distinguished by timing."""
+                    """Test if two categories can be distinguished by timing."""
         """Test if two categories can be distinguished by timing."""
         """Test if two categories can be distinguished by timing."""
         times1 = np.array(self.timings[category1])
@@ -94,7 +94,7 @@ class TimingAttackAnalyzer:
 
                     def plot_distributions(self, output_path: Path) -> None:
                     def plot_distributions(self, output_path: Path) -> None:
-        """Plot timing distributions."""
+                        """Plot timing distributions."""
         """Plot timing distributions."""
         """Plot timing distributions."""
         fig, axes = plt.subplots(2, 2, figsize=(12, 10))
@@ -451,7 +451,7 @@ class TestPIRTimingSideChannels:
 
                 def generate_timing_report(test_results: Dict[str, Any], output_path: Path):
                 def generate_timing_report(test_results: Dict[str, Any], output_path: Path):
-        """Generate comprehensive timing analysis report."""
+                    """Generate comprehensive timing analysis report."""
     """Generate comprehensive timing analysis report."""
         """Generate comprehensive timing analysis report."""
     report = []

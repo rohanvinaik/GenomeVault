@@ -14,8 +14,8 @@ import numpy as np
 
 def parse_variant(variant_str) -> None:
     """TODO: Add docstring for parse_variant"""
-    """TODO: Add docstring for parse_variant"""
         """TODO: Add docstring for parse_variant"""
+            """TODO: Add docstring for parse_variant"""
     """Parse variant string format chr:pos:ref:alt"""
     parts = variant_str.split(":")
     if len(parts) != 4:
@@ -26,8 +26,8 @@ def parse_variant(variant_str) -> None:
 
         def encode_variant_hd(variant, dimension=10000) -> None:
             """TODO: Add docstring for encode_variant_hd"""
-    """TODO: Add docstring for encode_variant_hd"""
-        """TODO: Add docstring for encode_variant_hd"""
+                """TODO: Add docstring for encode_variant_hd"""
+                    """TODO: Add docstring for encode_variant_hd"""
     """Encode a variant into hyperdimensional vector"""
     print(
         f"\nEncoding variant: {variant['chromosome']}:{variant['position']}:{variant['ref']}>{variant['alt']}"
@@ -55,8 +55,8 @@ def parse_variant(variant_str) -> None:
 
             def test_privacy(variant_vec, dimension=10000, attempts=10000) -> None:
                 """TODO: Add docstring for test_privacy"""
-    """TODO: Add docstring for test_privacy"""
-        """TODO: Add docstring for test_privacy"""
+                    """TODO: Add docstring for test_privacy"""
+                        """TODO: Add docstring for test_privacy"""
     """Test if the encoding preserves privacy"""
     print(f"\nTesting privacy preservation with {attempts} reverse-engineering attempts...")
 
@@ -98,8 +98,8 @@ def parse_variant(variant_str) -> None:
 
             def main() -> None:
                 """TODO: Add docstring for main"""
-    """TODO: Add docstring for main"""
-        """TODO: Add docstring for main"""
+                    """TODO: Add docstring for main"""
+                        """TODO: Add docstring for main"""
     parser = argparse.ArgumentParser(description="Test HD encoding for genomic variants")
     parser.add_argument(
         "--variant",

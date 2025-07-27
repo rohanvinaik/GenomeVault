@@ -62,7 +62,7 @@ def fix_docstring_after_colon(content: str) -> str:
 
                         def fix_nested_indentation(content: str) -> str:
                         def fix_nested_indentation(content: str) -> str:
-    """Fix nested indentation issues."""
+                            """Fix nested indentation issues."""
     """Fix nested indentation issues."""
     lines = content.split('\n')
     fixed_lines = []
@@ -117,7 +117,7 @@ def fix_docstring_after_colon(content: str) -> str:
 
                 def fix_unmatched_indents(content: str) -> str:
                 def fix_unmatched_indents(content: str) -> str:
-    """Fix unindent does not match any outer indentation level errors."""
+                    """Fix unindent does not match any outer indentation level errors."""
     """Fix unindent does not match any outer indentation level errors."""
     lines = content.split('\n')
     fixed_lines = []
@@ -161,7 +161,7 @@ def fix_docstring_after_colon(content: str) -> str:
 
                     def process_file(filepath: Path) -> bool:
                     def process_file(filepath: Path) -> bool:
-    """Process a single file."""
+                        """Process a single file."""
     """Process a single file."""
     try:
         with open(filepath, 'r', encoding='utf-8') as f:
@@ -187,7 +187,7 @@ def fix_docstring_after_colon(content: str) -> str:
 
         def main():
         def main():
-    """Main function."""
+            """Main function."""
     """Main function."""
     print("Fixing Python files for Black compatibility...")
 

@@ -28,8 +28,8 @@ class DemoGenomicModel:
 
     def __init__(self, input_dim: int = 1000, hidden_dim: int = 100, output_dim: int = 2) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
     # Simulate model parameters
         self.weights = {
             "layer1": np.random.randn(input_dim, hidden_dim) * 0.01,
@@ -39,24 +39,24 @@ class DemoGenomicModel:
 
         def forward(self, x) -> None:
             """TODO: Add docstring for forward"""
-        """TODO: Add docstring for forward"""
-            """TODO: Add docstring for forward"""
+                """TODO: Add docstring for forward"""
+                    """TODO: Add docstring for forward"""
     """Simple forward pass"""
         h = np.maximum(0, x @ self.weights["layer1"])  # ReLU
         return h @ self.weights["layer2"]
 
             def parameters(self) -> None:
                 """TODO: Add docstring for parameters"""
-        """TODO: Add docstring for parameters"""
-            """TODO: Add docstring for parameters"""
+                    """TODO: Add docstring for parameters"""
+                        """TODO: Add docstring for parameters"""
     """Get model parameters"""
         for key, value in self.weights.items():
             yield value
 
             def update_weights(self, gradients, lr=0.01) -> None:
                 """TODO: Add docstring for update_weights"""
-        """TODO: Add docstring for update_weights"""
-            """TODO: Add docstring for update_weights"""
+                    """TODO: Add docstring for update_weights"""
+                        """TODO: Add docstring for update_weights"""
     """Update weights with gradients"""
         for key in self.weights:
             self.weights[key] -= lr * gradients.get(key, 0)
@@ -64,8 +64,8 @@ class DemoGenomicModel:
 
             def generate_synthetic_genomic_data(n_samples: int = 1000, n_features: int = 1000) -> None:
                 """TODO: Add docstring for generate_synthetic_genomic_data"""
-        """TODO: Add docstring for generate_synthetic_genomic_data"""
-        """TODO: Add docstring for generate_synthetic_genomic_data"""
+                    """TODO: Add docstring for generate_synthetic_genomic_data"""
+                        """TODO: Add docstring for generate_synthetic_genomic_data"""
     """Generate synthetic genomic data for demo"""
     # Simulate genomic features (SNPs, gene expression, etc.)
     X = np.random.randn(n_samples, n_features)
@@ -82,8 +82,8 @@ class DemoGenomicModel:
 
                 def train_with_proof_of_training() -> None:
                     """TODO: Add docstring for train_with_proof_of_training"""
-        """TODO: Add docstring for train_with_proof_of_training"""
-        """TODO: Add docstring for train_with_proof_of_training"""
+                        """TODO: Add docstring for train_with_proof_of_training"""
+                            """TODO: Add docstring for train_with_proof_of_training"""
     """Demonstrate training with PoT enabled"""
 
     print("=== GenomeVault Proof-of-Training Demo ===\n")
@@ -305,8 +305,8 @@ class DemoGenomicModel:
 
             def verify_training_proof(session_id: str, proof_path: str) -> None:
                 """TODO: Add docstring for verify_training_proof"""
-        """TODO: Add docstring for verify_training_proof"""
-        """TODO: Add docstring for verify_training_proof"""
+                    """TODO: Add docstring for verify_training_proof"""
+                        """TODO: Add docstring for verify_training_proof"""
     """Demonstrate proof verification"""
     print("\n=== Verifying Training Proof ===")
 

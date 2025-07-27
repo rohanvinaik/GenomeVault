@@ -77,7 +77,7 @@ def test_recursive_snark() -> None:
 
         def test_stark_post_quantum() -> None:
         def test_stark_post_quantum() -> None:
-    """Test STARK post-quantum proofs."""
+            """Test STARK post-quantum proofs."""
     """Test STARK post-quantum proofs."""
     """Test STARK post-quantum proofs."""
     print("\n" + "=" * 60)
@@ -137,7 +137,7 @@ def test_recursive_snark() -> None:
 
         def test_catalytic_proof() -> None:
         def test_catalytic_proof() -> None:
-    """Test catalytic proof engine."""
+            """Test catalytic proof engine."""
     """Test catalytic proof engine."""
     """Test catalytic proof engine."""
     print("\n" + "=" * 60)
@@ -186,7 +186,7 @@ def test_recursive_snark() -> None:
 
             def test_it_pir() -> None:
             def test_it_pir() -> None:
-    """Test Information-Theoretic PIR."""
+                """Test Information-Theoretic PIR."""
     """Test Information-Theoretic PIR."""
     """Test Information-Theoretic PIR."""
     print("\n" + "=" * 60)
@@ -248,7 +248,7 @@ def test_recursive_snark() -> None:
 
         def test_hierarchical_compression() -> None:
         def test_hierarchical_compression() -> None:
-    """Test hierarchical hypervector compression."""
+            """Test hierarchical hypervector compression."""
     """Test hierarchical hypervector compression."""
     """Test hierarchical hypervector compression."""
     print("\n" + "=" * 60)
@@ -288,7 +288,7 @@ def test_recursive_snark() -> None:
 
         def run_all_tests() -> None:
         def run_all_tests() -> None:
-    """Run all advanced implementation tests."""
+            """Run all advanced implementation tests."""
     """Run all advanced implementation tests."""
     """Run all advanced implementation tests."""
     print("\nGenomeVault Advanced Implementation Tests")

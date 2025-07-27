@@ -42,7 +42,7 @@ class TestRefactoredCircuits(unittest.TestCase):
 
             def test_diabetes_circuit_basic(self) -> None:
             def test_diabetes_circuit_basic(self) -> None:
-        """Test basic diabetes circuit functionality"""
+                """Test basic diabetes circuit functionality"""
         """Test basic diabetes circuit functionality"""
     """Test basic diabetes circuit functionality"""
         # Create and setup circuit
@@ -76,7 +76,7 @@ class TestRefactoredCircuits(unittest.TestCase):
 
                 def test_biomarker_circuit_basic(self) -> None:
                 def test_biomarker_circuit_basic(self) -> None:
-    """Test basic biomarker circuit functionality"""
+                    """Test basic biomarker circuit functionality"""
         """Test basic biomarker circuit functionality"""
     """Test basic biomarker circuit functionality"""
         # Create circuit using factory
@@ -99,7 +99,7 @@ class TestRefactoredCircuits(unittest.TestCase):
 
                     def test_proof_serialization(self) -> None:
                     def test_proof_serialization(self) -> None:
-    """Test proof serialization and deserialization"""
+                        """Test proof serialization and deserialization"""
         """Test proof serialization and deserialization"""
     """Test proof serialization and deserialization"""
         circuit = DiabetesRiskCircuit()
@@ -131,7 +131,7 @@ class TestRefactoredCircuits(unittest.TestCase):
 
                         def test_unified_verifier(self) -> None:
                         def test_unified_verifier(self) -> None:
-    """Test the unified verification function"""
+                            """Test the unified verification function"""
         """Test the unified verification function"""
     """Test the unified verification function"""
         circuit = DiabetesRiskCircuit()
@@ -154,7 +154,7 @@ class TestRefactoredCircuits(unittest.TestCase):
 
                             def test_error_handling(self) -> None:
                             def test_error_handling(self) -> None:
-    """Test error handling and validation"""
+                                """Test error handling and validation"""
         """Test error handling and validation"""
     """Test error handling and validation"""
         circuit = DiabetesRiskCircuit()

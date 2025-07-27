@@ -42,8 +42,8 @@ class PIRProtocol:
 
     def __init__(self, params: PIRParameters) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
     """
         Initialize PIR protocol.
 
@@ -55,8 +55,8 @@ class PIRProtocol:
 
             def _validate_parameters(self) -> None:
                 """TODO: Add docstring for _validate_parameters"""
-        """TODO: Add docstring for _validate_parameters"""
-            """TODO: Add docstring for _validate_parameters"""
+                    """TODO: Add docstring for _validate_parameters"""
+                        """TODO: Add docstring for _validate_parameters"""
     """Validate protocol parameters."""
         if self.params.num_servers < 2:
             raise ValueError("IT-PIR requires at least 2 servers")
@@ -67,8 +67,8 @@ class PIRProtocol:
 
             def generate_query_vectors(self, index: int) -> List[np.ndarray]:
                 """TODO: Add docstring for generate_query_vectors"""
-        """TODO: Add docstring for generate_query_vectors"""
-            """TODO: Add docstring for generate_query_vectors"""
+                    """TODO: Add docstring for generate_query_vectors"""
+                        """TODO: Add docstring for generate_query_vectors"""
     """
         Generate query vectors for retrieving element at given index.
 
@@ -118,8 +118,8 @@ class PIRProtocol:
 
             def process_server_response(self, query_vector: np.ndarray, database: np.ndarray) -> np.ndarray:
                 """TODO: Add docstring for process_server_response"""
-        """TODO: Add docstring for process_server_response"""
-            """TODO: Add docstring for process_server_response"""
+                    """TODO: Add docstring for process_server_response"""
+                        """TODO: Add docstring for process_server_response"""
     """
         Process query on server side.
 
@@ -148,8 +148,8 @@ class PIRProtocol:
 
                 def reconstruct_element(self, responses: List[np.ndarray]) -> np.ndarray:
                     """TODO: Add docstring for reconstruct_element"""
-        """TODO: Add docstring for reconstruct_element"""
-            """TODO: Add docstring for reconstruct_element"""
+                        """TODO: Add docstring for reconstruct_element"""
+                            """TODO: Add docstring for reconstruct_element"""
     """
         Reconstruct original element from server responses.
 
@@ -174,8 +174,8 @@ class PIRProtocol:
 
             def add_query_padding(self, query_vector: np.ndarray) -> Dict[str, Any]:
                 """TODO: Add docstring for add_query_padding"""
-        """TODO: Add docstring for add_query_padding"""
-            """TODO: Add docstring for add_query_padding"""
+                    """TODO: Add docstring for add_query_padding"""
+                        """TODO: Add docstring for add_query_padding"""
     """
         Add padding to query to ensure fixed message size.
 
@@ -211,8 +211,8 @@ class PIRProtocol:
         self, response: np.ndarray, target_time_ms: float = 100
     ) -> Tuple[np.ndarray, float]:
         """TODO: Add docstring for timing_safe_response"""
-        """TODO: Add docstring for timing_safe_response"""
             """TODO: Add docstring for timing_safe_response"""
+                """TODO: Add docstring for timing_safe_response"""
     """
         Add timing protection to response generation.
 
@@ -248,8 +248,8 @@ class PIRProtocol:
 
             def calculate_privacy_breach_probability(self, k_honest: int, honesty_prob: float) -> float:
                 """TODO: Add docstring for calculate_privacy_breach_probability"""
-        """TODO: Add docstring for calculate_privacy_breach_probability"""
-            """TODO: Add docstring for calculate_privacy_breach_probability"""
+                    """TODO: Add docstring for calculate_privacy_breach_probability"""
+                        """TODO: Add docstring for calculate_privacy_breach_probability"""
     """
         Calculate probability of privacy breach.
 
@@ -268,8 +268,8 @@ class PIRProtocol:
 
             def calculate_min_servers(self, target_failure_prob: float, honesty_prob: float) -> int:
                 """TODO: Add docstring for calculate_min_servers"""
-        """TODO: Add docstring for calculate_min_servers"""
-            """TODO: Add docstring for calculate_min_servers"""
+                    """TODO: Add docstring for calculate_min_servers"""
+                        """TODO: Add docstring for calculate_min_servers"""
     """
         Calculate minimum servers needed for target failure probability.
 
@@ -298,15 +298,15 @@ class BatchPIRProtocol(PIRProtocol):
 
     def __init__(self, params: PIRParameters) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
     super().__init__(params)
         self.batch_size = 100  # Default batch size
 
         def generate_batch_queries(self, indices: List[int]) -> List[List[np.ndarray]]:
             """TODO: Add docstring for generate_batch_queries"""
-        """TODO: Add docstring for generate_batch_queries"""
-            """TODO: Add docstring for generate_batch_queries"""
+                """TODO: Add docstring for generate_batch_queries"""
+                    """TODO: Add docstring for generate_batch_queries"""
     """
         Generate batch queries using cuckoo hashing.
 
@@ -332,8 +332,8 @@ class BatchPIRProtocol(PIRProtocol):
 
                 def _cuckoo_hash(self, indices: List[int], num_buckets: int) -> List[List[int]]:
                     """TODO: Add docstring for _cuckoo_hash"""
-        """TODO: Add docstring for _cuckoo_hash"""
-            """TODO: Add docstring for _cuckoo_hash"""
+                        """TODO: Add docstring for _cuckoo_hash"""
+                            """TODO: Add docstring for _cuckoo_hash"""
     """
         Map indices to buckets using cuckoo hashing.
 

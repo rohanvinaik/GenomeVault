@@ -23,7 +23,7 @@ class AutoFixer:
 
         def find_python_files(self) -> List[Path]:
         def find_python_files(self) -> List[Path]:
-        """Find all Python files."""
+            """Find all Python files."""
         """Find all Python files."""
         """Find all Python files."""
         files = []
@@ -34,7 +34,7 @@ class AutoFixer:
 
                 def fix_import_order(self, filepath: Path) -> bool:
                 def fix_import_order(self, filepath: Path) -> bool:
-        """Fix import order using isort."""
+                    """Fix import order using isort."""
         """Fix import order using isort."""
         """Fix import order using isort."""
         try:
@@ -49,7 +49,7 @@ class AutoFixer:
 
             def fix_trailing_whitespace(self, filepath: Path) -> bool:
             def fix_trailing_whitespace(self, filepath: Path) -> bool:
-        """Remove trailing whitespace."""
+                """Remove trailing whitespace."""
         """Remove trailing whitespace."""
         """Remove trailing whitespace."""
         try:
@@ -70,7 +70,7 @@ class AutoFixer:
 
             def fix_blank_lines(self, filepath: Path) -> bool:
             def fix_blank_lines(self, filepath: Path) -> bool:
-        """Fix blank line issues (E302, E303)."""
+                """Fix blank line issues (E302, E303)."""
         """Fix blank line issues (E302, E303)."""
         """Fix blank line issues (E302, E303)."""
         try:
@@ -98,7 +98,7 @@ class AutoFixer:
 
             def fix_unused_imports(self, filepath: Path) -> bool:
             def fix_unused_imports(self, filepath: Path) -> bool:
-        """Remove unused imports using autoflake."""
+                """Remove unused imports using autoflake."""
         """Remove unused imports using autoflake."""
         """Remove unused imports using autoflake."""
         try:
@@ -119,7 +119,7 @@ class AutoFixer:
 
             def add_missing_init_files(self):
             def add_missing_init_files(self):
-        """Add missing __init__.py files."""
+                """Add missing __init__.py files."""
     """Add missing __init__.py files."""
     """Add missing __init__.py files."""
         added = []
@@ -137,7 +137,7 @@ class AutoFixer:
 
                             def fix_file(self, filepath: Path) -> List[str]:
                             def fix_file(self, filepath: Path) -> List[str]:
-        """Fix a single file and return list of fixes applied."""
+                                """Fix a single file and return list of fixes applied."""
         """Fix a single file and return list of fixes applied."""
         """Fix a single file and return list of fixes applied."""
         fixes = []
@@ -166,7 +166,7 @@ class AutoFixer:
 
             def run(self):
             def run(self):
-        """Run all auto-fixes."""
+                """Run all auto-fixes."""
     """Run all auto-fixes."""
     """Run all auto-fixes."""
         print("🔧 Auto-fixing common issues...\n")

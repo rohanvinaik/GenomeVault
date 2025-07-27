@@ -18,8 +18,8 @@ from genomevault.hypervector.kan import KANCompressor, KANHybridEncoder, Streami
 
 def generate_example_variants(num_variants: int = 1000) -> List[Dict]:
     """TODO: Add docstring for generate_example_variants"""
-    """TODO: Add docstring for generate_example_variants"""
         """TODO: Add docstring for generate_example_variants"""
+            """TODO: Add docstring for generate_example_variants"""
     """Generate example genomic variants for testing"""
     variants = []
     chromosomes = [f"chr{i}" for i in range(1, 23)] + ["chrX", "chrY"]
@@ -44,8 +44,8 @@ def generate_example_variants(num_variants: int = 1000) -> List[Dict]:
 
                 def example_basic_usage() -> None:
                     """TODO: Add docstring for example_basic_usage"""
-    """TODO: Add docstring for example_basic_usage"""
-        """TODO: Add docstring for example_basic_usage"""
+                        """TODO: Add docstring for example_basic_usage"""
+                            """TODO: Add docstring for example_basic_usage"""
     """Basic usage example of KAN Hybrid Encoder"""
     print("=== Basic KAN Hybrid Encoding Example ===\n")
 
@@ -83,8 +83,8 @@ def generate_example_variants(num_variants: int = 1000) -> List[Dict]:
 
                     def example_hierarchical_encoding() -> None:
                         """TODO: Add docstring for example_hierarchical_encoding"""
-    """TODO: Add docstring for example_hierarchical_encoding"""
-        """TODO: Add docstring for example_hierarchical_encoding"""
+                            """TODO: Add docstring for example_hierarchical_encoding"""
+                                """TODO: Add docstring for example_hierarchical_encoding"""
     """Example of hierarchical multi-modal encoding"""
     print("\n=== Hierarchical Multi-Modal Encoding Example ===\n")
 
@@ -135,8 +135,8 @@ def generate_example_variants(num_variants: int = 1000) -> List[Dict]:
 
                         def example_streaming_large_genome() -> None:
                             """TODO: Add docstring for example_streaming_large_genome"""
-    """TODO: Add docstring for example_streaming_large_genome"""
-        """TODO: Add docstring for example_streaming_large_genome"""
+                                """TODO: Add docstring for example_streaming_large_genome"""
+                                    """TODO: Add docstring for example_streaming_large_genome"""
     """Example of streaming encoding for large genomes"""
     print("\n=== Streaming Large Genome Encoding Example ===\n")
 
@@ -150,8 +150,8 @@ def generate_example_variants(num_variants: int = 1000) -> List[Dict]:
 
                             def variant_generator() -> None:
                                 """TODO: Add docstring for variant_generator"""
-        """TODO: Add docstring for variant_generator"""
-            """TODO: Add docstring for variant_generator"""
+                                    """TODO: Add docstring for variant_generator"""
+                                        """TODO: Add docstring for variant_generator"""
     """Simulate streaming variants from a file or database"""
         for i in range(total_variants):
             yield {
@@ -167,8 +167,8 @@ def generate_example_variants(num_variants: int = 1000) -> List[Dict]:
 
             def progress_callback(count) -> None:
                 """TODO: Add docstring for progress_callback"""
-        """TODO: Add docstring for progress_callback"""
-            """TODO: Add docstring for progress_callback"""
+                    """TODO: Add docstring for progress_callback"""
+                        """TODO: Add docstring for progress_callback"""
     nonlocal variants_processed
         variants_processed = count
         if count % 1000 == 0:
@@ -195,8 +195,8 @@ def generate_example_variants(num_variants: int = 1000) -> List[Dict]:
 
             def example_compression_metrics() -> None:
                 """TODO: Add docstring for example_compression_metrics"""
-    """TODO: Add docstring for example_compression_metrics"""
-        """TODO: Add docstring for example_compression_metrics"""
+                    """TODO: Add docstring for example_compression_metrics"""
+                        """TODO: Add docstring for example_compression_metrics"""
     """Example showing detailed compression metrics"""
     print("\n=== Compression Metrics Example ===\n")
 
@@ -236,8 +236,8 @@ def generate_example_variants(num_variants: int = 1000) -> List[Dict]:
 
                 def example_integration_with_existing_pipeline() -> None:
                     """TODO: Add docstring for example_integration_with_existing_pipeline"""
-    """TODO: Add docstring for example_integration_with_existing_pipeline"""
-        """TODO: Add docstring for example_integration_with_existing_pipeline"""
+                        """TODO: Add docstring for example_integration_with_existing_pipeline"""
+                            """TODO: Add docstring for example_integration_with_existing_pipeline"""
     """Example showing integration with existing GenomeVault pipeline"""
     print("\n=== Integration with Existing Pipeline Example ===\n")
 
@@ -285,8 +285,8 @@ def generate_example_variants(num_variants: int = 1000) -> List[Dict]:
 
         def main() -> None:
             """TODO: Add docstring for main"""
-    """TODO: Add docstring for main"""
-        """TODO: Add docstring for main"""
+                """TODO: Add docstring for main"""
+                    """TODO: Add docstring for main"""
     """Run all examples"""
     print("GenomeVault KAN Hybrid Architecture Examples")
     print("=" * 50)

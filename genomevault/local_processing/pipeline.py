@@ -24,8 +24,8 @@ class MultiOmicsPipeline:
 
     def __init__(self, compression_tier: CompressionTier = CompressionTier.CLINICAL) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
         self.compression_tier = compression_tier
         self.compressor = TieredCompressor(tier=compression_tier)
         self.processors = {}
@@ -33,8 +33,8 @@ class MultiOmicsPipeline:
 
         def _init_processors(self) -> None:
             """TODO: Add docstring for _init_processors"""
-        """TODO: Add docstring for _init_processors"""
-            """TODO: Add docstring for _init_processors"""
+                """TODO: Add docstring for _init_processors"""
+                    """TODO: Add docstring for _init_processors"""
     """Initialize omics-specific processors"""
         # These would be imported from container-specific modules
             self.processors = {
@@ -46,8 +46,8 @@ class MultiOmicsPipeline:
 
     async def process(self, input_data: Dict[OmicsType, Path], output_dir: Path) -> Dict[str, Any]:
         """TODO: Add docstring for process"""
-        """TODO: Add docstring for process"""
             """TODO: Add docstring for process"""
+                """TODO: Add docstring for process"""
     """
         Process multi-omics data through secure pipeline
 
@@ -95,8 +95,8 @@ class MultiOmicsPipeline:
         self, omics_type: OmicsType, input_path: Path, output_dir: Path
     ) -> Dict[str, Any]:
         """TODO: Add docstring for _process_single_omics"""
-        """TODO: Add docstring for _process_single_omics"""
             """TODO: Add docstring for _process_single_omics"""
+                """TODO: Add docstring for _process_single_omics"""
     """Process a single omics data type"""
         logger.info(f"Processing {omics_type.value} data from {input_path}")
 
@@ -126,8 +126,8 @@ class MultiOmicsPipeline:
 
     async def _process_genomic(self, input_path: Path, output_dir: Path) -> Dict[str, Any]:
         """TODO: Add docstring for _process_genomic"""
-        """TODO: Add docstring for _process_genomic"""
             """TODO: Add docstring for _process_genomic"""
+                """TODO: Add docstring for _process_genomic"""
     """Process genomic data (VCF/FASTA)"""
         # Validate input
         validate_genomic_data(input_path)
@@ -145,8 +145,8 @@ class MultiOmicsPipeline:
 
     async def _process_transcriptomic(self, input_path: Path, output_dir: Path) -> Dict[str, Any]:
         """TODO: Add docstring for _process_transcriptomic"""
-        """TODO: Add docstring for _process_transcriptomic"""
             """TODO: Add docstring for _process_transcriptomic"""
+                """TODO: Add docstring for _process_transcriptomic"""
     """Process transcriptomic data (expression matrices)"""
         validate_transcriptomic_data(input_path)
 
@@ -164,8 +164,8 @@ class MultiOmicsPipeline:
 
     async def _process_epigenetic(self, input_path: Path, output_dir: Path) -> Dict[str, Any]:
         """TODO: Add docstring for _process_epigenetic"""
-        """TODO: Add docstring for _process_epigenetic"""
             """TODO: Add docstring for _process_epigenetic"""
+                """TODO: Add docstring for _process_epigenetic"""
     """Process epigenetic data (methylation)"""
         await asyncio.sleep(0.5)  # Simulate processing
 
@@ -181,8 +181,8 @@ class MultiOmicsPipeline:
 
     async def _process_proteomic(self, input_path: Path, output_dir: Path) -> Dict[str, Any]:
         """TODO: Add docstring for _process_proteomic"""
-        """TODO: Add docstring for _process_proteomic"""
             """TODO: Add docstring for _process_proteomic"""
+                """TODO: Add docstring for _process_proteomic"""
     """Process proteomic data (mass spec)"""
         await asyncio.sleep(0.5)  # Simulate processing
 
@@ -198,8 +198,8 @@ class MultiOmicsPipeline:
 
         def _generate_metadata(self, results: Dict[str, Any]) -> Dict[str, Any]:
             """TODO: Add docstring for _generate_metadata"""
-        """TODO: Add docstring for _generate_metadata"""
-            """TODO: Add docstring for _generate_metadata"""
+                """TODO: Add docstring for _generate_metadata"""
+                    """TODO: Add docstring for _generate_metadata"""
     """Generate combined metadata for all processed omics"""
         return {
             "pipeline_version": "3.0.0",

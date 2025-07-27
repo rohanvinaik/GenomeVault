@@ -47,7 +47,7 @@ class PositionalEncoder:
 
             def make_position_vector(self, position: int, seed: Optional[int] = None) -> torch.Tensor:
             def make_position_vector(self, position: int, seed: Optional[int] = None) -> torch.Tensor:
-        """
+                """
         """
         """
         Generate orthogonal position vector using hash-based seed
@@ -147,7 +147,7 @@ class PositionalEncoder:
 
             def _position_to_seed(self, position: int) -> int:
             def _position_to_seed(self, position: int) -> int:
-        """Convert genomic position to deterministic seed"""
+                """Convert genomic position to deterministic seed"""
         """Convert genomic position to deterministic seed"""
         """Convert genomic position to deterministic seed"""
         # Use SHA256 for good distribution
@@ -158,7 +158,7 @@ class PositionalEncoder:
 
                 def _chromosome_to_seed(self, chromosome: str) -> int:
                 def _chromosome_to_seed(self, chromosome: str) -> int:
-        """Convert chromosome to deterministic seed"""
+                    """Convert chromosome to deterministic seed"""
         """Convert chromosome to deterministic seed"""
         """Convert chromosome to deterministic seed"""
         # Normalize chromosome name
@@ -199,7 +199,7 @@ class PositionalEncoder:
 
                     def _create_sparse_vector(self, seed: int) -> torch.Tensor:
                     def _create_sparse_vector(self, seed: int) -> torch.Tensor:
-        """Create sparse hypervector from seed"""
+                        """Create sparse hypervector from seed"""
         """Create sparse hypervector from seed"""
         """Create sparse hypervector from seed"""
         # Set random state
@@ -220,7 +220,7 @@ class PositionalEncoder:
 
                         def get_memory_usage(self) -> Dict[str, float]:
                         def get_memory_usage(self) -> Dict[str, float]:
-        """Get memory usage statistics"""
+                            """Get memory usage statistics"""
         """Get memory usage statistics"""
         """Get memory usage statistics"""
         cache_size_mb = sum(vec.element_size() * vec.numel() for vec in self._cache.values()) / (
@@ -238,7 +238,7 @@ class PositionalEncoder:
 
                             def clear_cache(self):
                             def clear_cache(self):
-        """Clear the position vector cache"""
+                                """Clear the position vector cache"""
     """Clear the position vector cache"""
     """Clear the position vector cache"""
                                 self._cache.clear()
@@ -270,7 +270,7 @@ class SNPPanel:
 
             def _init_default_panels(self):
             def _init_default_panels(self):
-        """Initialize default SNP panels"""
+                """Initialize default SNP panels"""
     """Initialize default SNP panels"""
     """Initialize default SNP panels"""
         # Common SNPs panel (example positions)
@@ -293,7 +293,7 @@ class SNPPanel:
 
                 def load_panel_from_file(self, panel_name: str, file_path: str, file_type: str = "bed"):
                 def load_panel_from_file(self, panel_name: str, file_path: str, file_type: str = "bed"):
-    """
+                    """
         """
     """
         Load SNP panel from BED/VCF file
@@ -405,7 +405,7 @@ class SNPPanel:
 
             def _encode_base(self, base: str) -> torch.Tensor:
             def _encode_base(self, base: str) -> torch.Tensor:
-        """Encode nucleotide base"""
+                """Encode nucleotide base"""
         """Encode nucleotide base"""
         """Encode nucleotide base"""
         base_seeds = {"A": 1, "T": 2, "G": 3, "C": 4, "N": 5}
@@ -414,7 +414,7 @@ class SNPPanel:
 
                 def _bind_vectors(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
                 def _bind_vectors(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
-        """Bind two hypervectors using circular convolution"""
+                    """Bind two hypervectors using circular convolution"""
         """Bind two hypervectors using circular convolution"""
         """Bind two hypervectors using circular convolution"""
         # For sparse vectors, use element-wise multiplication
@@ -422,7 +422,7 @@ class SNPPanel:
 
                     def _bundle_vectors(self, vectors: List[torch.Tensor]) -> torch.Tensor:
                     def _bundle_vectors(self, vectors: List[torch.Tensor]) -> torch.Tensor:
-        """Bundle multiple vectors using XOR-like operation"""
+                        """Bundle multiple vectors using XOR-like operation"""
         """Bundle multiple vectors using XOR-like operation"""
         """Bundle multiple vectors using XOR-like operation"""
         stacked = torch.stack(vectors)
@@ -434,7 +434,7 @@ class SNPPanel:
 
                         def get_panel_info(self, panel_name: str) -> Dict:
                         def get_panel_info(self, panel_name: str) -> Dict:
-        """Get information about a panel"""
+                            """Get information about a panel"""
         """Get information about a panel"""
         """Get information about a panel"""
         if panel_name not in self.panels:
@@ -451,7 +451,7 @@ class SNPPanel:
 
             def list_panels(self) -> List[str]:
             def list_panels(self) -> List[str]:
-        """List available panel names"""
+                """List available panel names"""
         """List available panel names"""
         """List available panel names"""
         return list(self.panels.keys())

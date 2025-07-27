@@ -21,51 +21,51 @@ class FieldElement:
 
     def __post_init__(self) -> None:
         """TODO: Add docstring for __post_init__"""
-        """TODO: Add docstring for __post_init__"""
             """TODO: Add docstring for __post_init__"""
+                """TODO: Add docstring for __post_init__"""
         self.value = self.value % self.modulus
 
         def __add__(self, other) -> None:
             """TODO: Add docstring for __add__"""
-        """TODO: Add docstring for __add__"""
-            """TODO: Add docstring for __add__"""
+                """TODO: Add docstring for __add__"""
+                    """TODO: Add docstring for __add__"""
     if isinstance(other, FieldElement):
             return FieldElement((self.value + other.value) % self.modulus)
         return FieldElement((self.value + other) % self.modulus)
 
         def __mul__(self, other) -> None:
             """TODO: Add docstring for __mul__"""
-        """TODO: Add docstring for __mul__"""
-            """TODO: Add docstring for __mul__"""
+                """TODO: Add docstring for __mul__"""
+                    """TODO: Add docstring for __mul__"""
     if isinstance(other, FieldElement):
             return FieldElement((self.value * other.value) % self.modulus)
         return FieldElement((self.value * other) % self.modulus)
 
         def __sub__(self, other) -> None:
             """TODO: Add docstring for __sub__"""
-        """TODO: Add docstring for __sub__"""
-            """TODO: Add docstring for __sub__"""
+                """TODO: Add docstring for __sub__"""
+                    """TODO: Add docstring for __sub__"""
     if isinstance(other, FieldElement):
             return FieldElement((self.value - other.value) % self.modulus)
         return FieldElement((self.value - other) % self.modulus)
 
         def __pow__(self, exp) -> None:
             """TODO: Add docstring for __pow__"""
-        """TODO: Add docstring for __pow__"""
-            """TODO: Add docstring for __pow__"""
+                """TODO: Add docstring for __pow__"""
+                    """TODO: Add docstring for __pow__"""
     return FieldElement(pow(self.value, exp, self.modulus))
 
             def inverse(self) -> None:
                 """TODO: Add docstring for inverse"""
-        """TODO: Add docstring for inverse"""
-            """TODO: Add docstring for inverse"""
+                    """TODO: Add docstring for inverse"""
+                        """TODO: Add docstring for inverse"""
     """Modular inverse using Fermat's little theorem"""
         return FieldElement(pow(self.value, self.modulus - 2, self.modulus))
 
                 def __eq__(self, other) -> None:
                     """TODO: Add docstring for __eq__"""
-        """TODO: Add docstring for __eq__"""
-            """TODO: Add docstring for __eq__"""
+                        """TODO: Add docstring for __eq__"""
+                            """TODO: Add docstring for __eq__"""
     if isinstance(other, FieldElement):
             return self.value == other.value
         return self.value == other % self.modulus
@@ -88,8 +88,8 @@ class CircuitConstraint:
 
     def evaluate(self) -> FieldElement:
         """TODO: Add docstring for evaluate"""
-        """TODO: Add docstring for evaluate"""
             """TODO: Add docstring for evaluate"""
+                """TODO: Add docstring for evaluate"""
     """Evaluate constraint - should equal zero if satisfied"""
         return (
             FieldElement(self.ql) * self.a
@@ -101,8 +101,8 @@ class CircuitConstraint:
 
         def is_satisfied(self) -> bool:
             """TODO: Add docstring for is_satisfied"""
-        """TODO: Add docstring for is_satisfied"""
-            """TODO: Add docstring for is_satisfied"""
+                """TODO: Add docstring for is_satisfied"""
+                    """TODO: Add docstring for is_satisfied"""
     """Check if constraint is satisfied"""
         return self.evaluate() == FieldElement(0)
 
@@ -114,8 +114,8 @@ class PLONKCircuit(ABC):
 
     def __init__(self, name: str, max_constraints: int = 10000) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
         self.name = name
         self.max_constraints = max_constraints
         self.constraints: List[CircuitConstraint] = []
@@ -135,8 +135,8 @@ class PLONKCircuit(ABC):
         qc: int = 0,
     ) -> None:
         """TODO: Add docstring for add_constraint"""
-        """TODO: Add docstring for add_constraint"""
             """TODO: Add docstring for add_constraint"""
+                """TODO: Add docstring for add_constraint"""
     """Add a PLONK constraint to the circuit"""
         if len(self.constraints) >= self.max_constraints:
             raise RuntimeError(f"Circuit constraint limit exceeded: {self.max_constraints}")
@@ -146,29 +146,29 @@ class PLONKCircuit(ABC):
 
             def add_multiplication_gate(self, a: FieldElement, b: FieldElement, c: FieldElement) -> None:
                 """TODO: Add docstring for add_multiplication_gate"""
-        """TODO: Add docstring for add_multiplication_gate"""
-            """TODO: Add docstring for add_multiplication_gate"""
+                    """TODO: Add docstring for add_multiplication_gate"""
+                        """TODO: Add docstring for add_multiplication_gate"""
     """Add constraint: a * b = c"""
                 self.add_constraint(a, b, c, qm=1, qo=-1)
 
                 def add_addition_gate(self, a: FieldElement, b: FieldElement, c: FieldElement) -> None:
                     """TODO: Add docstring for add_addition_gate"""
-        """TODO: Add docstring for add_addition_gate"""
-            """TODO: Add docstring for add_addition_gate"""
+                        """TODO: Add docstring for add_addition_gate"""
+                            """TODO: Add docstring for add_addition_gate"""
     """Add constraint: a + b = c"""
                     self.add_constraint(a, b, c, ql=1, qr=1, qo=-1)
 
                     def add_equality_gate(self, a: FieldElement, b: FieldElement) -> None:
                         """TODO: Add docstring for add_equality_gate"""
-        """TODO: Add docstring for add_equality_gate"""
-            """TODO: Add docstring for add_equality_gate"""
+                            """TODO: Add docstring for add_equality_gate"""
+                                """TODO: Add docstring for add_equality_gate"""
     """Add constraint: a = b"""
                         self.add_constraint(a, b, FieldElement(0), ql=1, qr=-1)
 
                         def verify_constraints(self) -> bool:
                             """TODO: Add docstring for verify_constraints"""
-        """TODO: Add docstring for verify_constraints"""
-            """TODO: Add docstring for verify_constraints"""
+                                """TODO: Add docstring for verify_constraints"""
+                                    """TODO: Add docstring for verify_constraints"""
     """Verify all constraints are satisfied"""
         for constraint in self.constraints:
             if not constraint.is_satisfied():
@@ -177,24 +177,24 @@ class PLONKCircuit(ABC):
 
                 def get_constraint_count(self) -> int:
                     """TODO: Add docstring for get_constraint_count"""
-        """TODO: Add docstring for get_constraint_count"""
-            """TODO: Add docstring for get_constraint_count"""
+                        """TODO: Add docstring for get_constraint_count"""
+                            """TODO: Add docstring for get_constraint_count"""
     """Get number of constraints in circuit"""
         return len(self.constraints)
 
     @abstractmethod
                     def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
                         """TODO: Add docstring for setup"""
-        """TODO: Add docstring for setup"""
-            """TODO: Add docstring for setup"""
+                            """TODO: Add docstring for setup"""
+                                """TODO: Add docstring for setup"""
     """Setup circuit with inputs"""
         pass
 
     @abstractmethod
                         def generate_constraints(self) -> None:
                             """TODO: Add docstring for generate_constraints"""
-        """TODO: Add docstring for generate_constraints"""
-            """TODO: Add docstring for generate_constraints"""
+                                """TODO: Add docstring for generate_constraints"""
+                                    """TODO: Add docstring for generate_constraints"""
     """Generate circuit constraints"""
         pass
 
@@ -207,8 +207,8 @@ class PoseidonHash:
     @staticmethod
     def hash_two(left: FieldElement, right: FieldElement) -> FieldElement:
         """TODO: Add docstring for hash_two"""
-        """TODO: Add docstring for hash_two"""
             """TODO: Add docstring for hash_two"""
+                """TODO: Add docstring for hash_two"""
     """Hash two field elements (simplified implementation)"""
         # In production, would use actual Poseidon round constants
         combined = (left.value * 31 + right.value * 37) % BLS12_381_SCALAR_FIELD
@@ -217,8 +217,8 @@ class PoseidonHash:
     @staticmethod
         def hash_many(inputs: List[FieldElement]) -> FieldElement:
             """TODO: Add docstring for hash_many"""
-        """TODO: Add docstring for hash_many"""
-            """TODO: Add docstring for hash_many"""
+                """TODO: Add docstring for hash_many"""
+                    """TODO: Add docstring for hash_many"""
     """Hash multiple field elements"""
         if not inputs:
             return FieldElement(0)
@@ -237,15 +237,15 @@ class MerkleInclusionCircuit(PLONKCircuit):
 
     def __init__(self, tree_depth: int = 20) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
     super().__init__("merkle_inclusion", tree_depth * 5)
         self.tree_depth = tree_depth
 
         def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
             """TODO: Add docstring for setup"""
-        """TODO: Add docstring for setup"""
-            """TODO: Add docstring for setup"""
+                """TODO: Add docstring for setup"""
+                    """TODO: Add docstring for setup"""
     """Setup Merkle inclusion circuit"""
         # Public inputs
             self.root = FieldElement(int(public_inputs["root"], 16))
@@ -260,8 +260,8 @@ class MerkleInclusionCircuit(PLONKCircuit):
 
             def generate_constraints(self) -> None:
                 """TODO: Add docstring for generate_constraints"""
-        """TODO: Add docstring for generate_constraints"""
-            """TODO: Add docstring for generate_constraints"""
+                    """TODO: Add docstring for generate_constraints"""
+                        """TODO: Add docstring for generate_constraints"""
     """Generate Merkle tree inclusion constraints"""
         current = self.leaf
 
@@ -301,14 +301,14 @@ class DiabetesRiskCircuit(PLONKCircuit):
 
         def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
+                    """TODO: Add docstring for __init__"""
     super().__init__("diabetes_risk_alert", 15000)
 
             def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
                 """TODO: Add docstring for setup"""
-        """TODO: Add docstring for setup"""
-            """TODO: Add docstring for setup"""
+                    """TODO: Add docstring for setup"""
+                        """TODO: Add docstring for setup"""
     """Setup diabetes risk circuit"""
         # Public inputs (scaled to avoid decimals)
                 self.glucose_threshold = FieldElement(int(public_inputs["glucose_threshold"] * 100))
@@ -322,8 +322,8 @@ class DiabetesRiskCircuit(PLONKCircuit):
 
                 def generate_constraints(self) -> None:
                     """TODO: Add docstring for generate_constraints"""
-        """TODO: Add docstring for generate_constraints"""
-            """TODO: Add docstring for generate_constraints"""
+                        """TODO: Add docstring for generate_constraints"""
+                            """TODO: Add docstring for generate_constraints"""
     """Generate diabetes risk assessment constraints"""
         # 1. Prove G > G_threshold
         glucose_diff = self.glucose_reading - self.glucose_threshold
@@ -346,8 +346,8 @@ class DiabetesRiskCircuit(PLONKCircuit):
 
                     def _add_positive_constraint(self, value: FieldElement) -> None:
                         """TODO: Add docstring for _add_positive_constraint"""
-        """TODO: Add docstring for _add_positive_constraint"""
-            """TODO: Add docstring for _add_positive_constraint"""
+                            """TODO: Add docstring for _add_positive_constraint"""
+                                """TODO: Add docstring for _add_positive_constraint"""
     """Add constraint that value > 0 (simplified)"""
         # In production, would implement proper range proof
         # For now, just ensure value exists in circuit
@@ -355,8 +355,8 @@ class DiabetesRiskCircuit(PLONKCircuit):
 
                         def _add_glucose_range_constraint(self) -> None:
                             """TODO: Add docstring for _add_glucose_range_constraint"""
-        """TODO: Add docstring for _add_glucose_range_constraint"""
-            """TODO: Add docstring for _add_glucose_range_constraint"""
+                                """TODO: Add docstring for _add_glucose_range_constraint"""
+                                    """TODO: Add docstring for _add_glucose_range_constraint"""
     """Ensure glucose is in reasonable range (50-500 mg/dL scaled)"""
         max_glucose = FieldElement(50000)  # 500 * 100
         min_glucose = FieldElement(5000)  # 50 * 100
@@ -369,8 +369,8 @@ class DiabetesRiskCircuit(PLONKCircuit):
 
                             def _add_risk_range_constraint(self) -> None:
                                 """TODO: Add docstring for _add_risk_range_constraint"""
-        """TODO: Add docstring for _add_risk_range_constraint"""
-            """TODO: Add docstring for _add_risk_range_constraint"""
+                                    """TODO: Add docstring for _add_risk_range_constraint"""
+                                        """TODO: Add docstring for _add_risk_range_constraint"""
     """Ensure risk score is in [0, 1] range (scaled to [0, 1000])"""
         max_risk = FieldElement(1000)
         min_risk = FieldElement(0)
@@ -396,16 +396,16 @@ class VariantVerificationCircuit(PLONKCircuit):
 
         def __init__(self, merkle_depth: int = 20) -> None:
             """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
+                    """TODO: Add docstring for __init__"""
     super().__init__("variant_verification", 5000)
             self.merkle_depth = merkle_depth
             self.merkle_circuit = MerkleInclusionCircuit(merkle_depth)
 
             def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
                 """TODO: Add docstring for setup"""
-        """TODO: Add docstring for setup"""
-            """TODO: Add docstring for setup"""
+                    """TODO: Add docstring for setup"""
+                        """TODO: Add docstring for setup"""
     """Setup variant verification circuit"""
         # Public inputs
                 self.variant_hash = FieldElement(int(public_inputs["variant_hash"], 16))
@@ -422,8 +422,8 @@ class VariantVerificationCircuit(PLONKCircuit):
 
                 def generate_constraints(self) -> None:
                     """TODO: Add docstring for generate_constraints"""
-        """TODO: Add docstring for generate_constraints"""
-            """TODO: Add docstring for generate_constraints"""
+                        """TODO: Add docstring for generate_constraints"""
+                            """TODO: Add docstring for generate_constraints"""
     """Generate variant verification constraints"""
         # 1. Verify variant hash matches computed hash
         computed_hash = self._hash_variant_data(self.variant_data)
@@ -449,8 +449,8 @@ class VariantVerificationCircuit(PLONKCircuit):
 
                     def _compute_variant_leaf(self) -> FieldElement:
                         """TODO: Add docstring for _compute_variant_leaf"""
-        """TODO: Add docstring for _compute_variant_leaf"""
-            """TODO: Add docstring for _compute_variant_leaf"""
+                            """TODO: Add docstring for _compute_variant_leaf"""
+                                """TODO: Add docstring for _compute_variant_leaf"""
     """Compute Merkle leaf for variant"""
         var_str = f"{self.variant_data['chr']}:{self.variant_data['pos']}:{self.variant_data['ref']}:{self.variant_data['alt']}"
         hash_bytes = hashlib.sha256(var_str.encode()).digest()
@@ -458,8 +458,8 @@ class VariantVerificationCircuit(PLONKCircuit):
 
                         def _hash_variant_data(self, variant_data: Dict) -> FieldElement:
                             """TODO: Add docstring for _hash_variant_data"""
-        """TODO: Add docstring for _hash_variant_data"""
-            """TODO: Add docstring for _hash_variant_data"""
+                                """TODO: Add docstring for _hash_variant_data"""
+                                    """TODO: Add docstring for _hash_variant_data"""
     """Hash variant data into field element"""
         var_str = f"{variant_data['chr']}:{variant_data['pos']}:{variant_data['ref']}:{variant_data['alt']}"
         hash_bytes = hashlib.sha256(var_str.encode()).digest()
@@ -480,15 +480,15 @@ class PolygeneticRiskScoreCircuit(PLONKCircuit):
 
         def __init__(self, max_variants: int = 1000) -> None:
             """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
+                    """TODO: Add docstring for __init__"""
     super().__init__("polygenic_risk_score", 20000)
             self.max_variants = max_variants
 
             def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
                 """TODO: Add docstring for setup"""
-        """TODO: Add docstring for setup"""
-            """TODO: Add docstring for setup"""
+                    """TODO: Add docstring for setup"""
+                        """TODO: Add docstring for setup"""
     """Setup PRS circuit"""
         # Public inputs
                 self.prs_model_hash = FieldElement(int(public_inputs["prs_model"], 16))
@@ -510,8 +510,8 @@ class PolygeneticRiskScoreCircuit(PLONKCircuit):
 
             def generate_constraints(self) -> None:
                 """TODO: Add docstring for generate_constraints"""
-        """TODO: Add docstring for generate_constraints"""
-            """TODO: Add docstring for generate_constraints"""
+                    """TODO: Add docstring for generate_constraints"""
+                        """TODO: Add docstring for generate_constraints"""
     """Generate PRS calculation constraints"""
         # 1. Verify each variant genotype is valid (0, 1, or 2)
         for variant in self.variants:
@@ -551,8 +551,8 @@ class PolygeneticRiskScoreCircuit(PLONKCircuit):
 
             def _add_genotype_constraint(self, genotype: FieldElement) -> None:
                 """TODO: Add docstring for _add_genotype_constraint"""
-        """TODO: Add docstring for _add_genotype_constraint"""
-            """TODO: Add docstring for _add_genotype_constraint"""
+                    """TODO: Add docstring for _add_genotype_constraint"""
+                        """TODO: Add docstring for _add_genotype_constraint"""
     """Constrain genotype to be 0, 1, or 2"""
         # g * (g - 1) * (g - 2) = 0
         g_minus_1 = genotype - FieldElement(1)
@@ -569,15 +569,15 @@ class PolygeneticRiskScoreCircuit(PLONKCircuit):
 
                 def _commit_score(self, score: FieldElement, randomness: FieldElement) -> FieldElement:
                     """TODO: Add docstring for _commit_score"""
-        """TODO: Add docstring for _commit_score"""
-            """TODO: Add docstring for _commit_score"""
+                        """TODO: Add docstring for _commit_score"""
+                            """TODO: Add docstring for _commit_score"""
     """Create Pedersen-style commitment to score"""
         # Simplified commitment: hash(score || randomness)
         return PoseidonHash.hash_two(score, randomness)
 
                     def _hash_prs_model(self) -> FieldElement:
                         """TODO: Add docstring for _hash_prs_model"""
-        """TODO: Add docstring for _hash_prs_model"""
-            """TODO: Add docstring for _hash_prs_model"""
+                            """TODO: Add docstring for _hash_prs_model"""
+                                """TODO: Add docstring for _hash_prs_model"""
     """Hash PRS model weights"""
         return PoseidonHash.hash_many(self.weights)

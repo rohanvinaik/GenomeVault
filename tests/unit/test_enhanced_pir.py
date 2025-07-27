@@ -43,7 +43,7 @@ class TestOptimizedPIRDatabase:
 
         def test_shard(self, tmp_path) -> None:
         def test_shard(self, tmp_path) -> None:
-        """Create test shard with index."""
+            """Create test shard with index."""
         """Create test shard with index."""
     """Create test shard with index."""
         # Create data file
@@ -112,7 +112,7 @@ class TestOptimizedPIRDatabase:
 
         def test_cache_functionality(self, database, test_shard) -> None:
         def test_cache_functionality(self, database, test_shard) -> None:
-        """Test caching behavior."""
+            """Test caching behavior."""
         """Test caching behavior."""
     """Test caching behavior."""
         # Simulate cache updates
@@ -178,7 +178,7 @@ class TestEnhancedPIRServer:
 
             def test_server_initialization(self, tmp_path) -> None:
             def test_server_initialization(self, tmp_path) -> None:
-        """Test server initialization."""
+                """Test server initialization."""
         """Test server initialization."""
     """Test server initialization."""
         server = EnhancedPIRServer(

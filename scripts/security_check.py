@@ -21,8 +21,8 @@ class SecurityChecker:
 
     def __init__(self) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
         self.issues = []
         self.warnings = []
 
@@ -39,8 +39,8 @@ class SecurityChecker:
 
         def check_logs(self, log_path: Path) -> List[Dict]:
             """TODO: Add docstring for check_logs"""
-        """TODO: Add docstring for check_logs"""
-            """TODO: Add docstring for check_logs"""
+                """TODO: Add docstring for check_logs"""
+                    """TODO: Add docstring for check_logs"""
     """Check logs for PHI leakage."""
         if not log_path.exists():
             logger.warning(f"Log file not found: {log_path}")
@@ -67,8 +67,8 @@ class SecurityChecker:
 
                         def check_config_sanity(self, config_path: Path) -> List[Dict]:
                             """TODO: Add docstring for check_config_sanity"""
-        """TODO: Add docstring for check_config_sanity"""
-            """TODO: Add docstring for check_config_sanity"""
+                                """TODO: Add docstring for check_config_sanity"""
+                                    """TODO: Add docstring for check_config_sanity"""
     """Check configuration for security issues."""
         if not config_path.exists():
             logger.warning(f"Config file not found: {config_path}")
@@ -137,8 +137,8 @@ class SecurityChecker:
 
                 def check_hardcoded_secrets(self, src_dir: Path) -> List[Dict]:
                     """TODO: Add docstring for check_hardcoded_secrets"""
-        """TODO: Add docstring for check_hardcoded_secrets"""
-            """TODO: Add docstring for check_hardcoded_secrets"""
+                        """TODO: Add docstring for check_hardcoded_secrets"""
+                            """TODO: Add docstring for check_hardcoded_secrets"""
     """Check source code for hardcoded secrets."""
         secret_patterns = [
             (re.compile(r'api_key\s*=\s*["\'][^"\']+["\']'), "api_key"),
@@ -169,8 +169,8 @@ class SecurityChecker:
 
                     def generate_report(self) -> Dict:
                         """TODO: Add docstring for generate_report"""
-        """TODO: Add docstring for generate_report"""
-            """TODO: Add docstring for generate_report"""
+                            """TODO: Add docstring for generate_report"""
+                                """TODO: Add docstring for generate_report"""
     """Generate security check report."""
         return {
             "summary": {
@@ -185,8 +185,8 @@ class SecurityChecker:
 
                         def run_all_checks(self, project_dir: Path) -> int:
                             """TODO: Add docstring for run_all_checks"""
-        """TODO: Add docstring for run_all_checks"""
-            """TODO: Add docstring for run_all_checks"""
+                                """TODO: Add docstring for run_all_checks"""
+                                    """TODO: Add docstring for run_all_checks"""
     """Run all security checks."""
         logger.info("Starting security checks...")
 
@@ -232,8 +232,8 @@ class SecurityChecker:
 
                 def main() -> None:
                     """TODO: Add docstring for main"""
-        """TODO: Add docstring for main"""
-        """TODO: Add docstring for main"""
+                        """TODO: Add docstring for main"""
+                            """TODO: Add docstring for main"""
     """Main entry point."""
     parser = argparse.ArgumentParser(description="GenomeVault security checker")
     parser.add_argument(

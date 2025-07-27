@@ -42,8 +42,8 @@ class ShardMetadata:
 
     def to_dict(self) -> Dict:
         """TODO: Add docstring for to_dict"""
-        """TODO: Add docstring for to_dict"""
             """TODO: Add docstring for to_dict"""
+                """TODO: Add docstring for to_dict"""
     return {
             "id": self.shard_id,
             "index": self.shard_index,
@@ -70,15 +70,15 @@ class ShardDistribution:
 
     def assign_shard(self, shard_id: str, server_ids: List[str]) -> None:
         """TODO: Add docstring for assign_shard"""
-        """TODO: Add docstring for assign_shard"""
             """TODO: Add docstring for assign_shard"""
+                """TODO: Add docstring for assign_shard"""
     """Assign shard to servers."""
         self.server_assignments[shard_id] = server_ids
 
         def get_servers_for_shard(self, shard_id: str) -> List[str]:
             """TODO: Add docstring for get_servers_for_shard"""
-        """TODO: Add docstring for get_servers_for_shard"""
-            """TODO: Add docstring for get_servers_for_shard"""
+                """TODO: Add docstring for get_servers_for_shard"""
+                    """TODO: Add docstring for get_servers_for_shard"""
     """Get servers hosting a shard."""
         return self.server_assignments.get(shard_id, [])
 
@@ -93,8 +93,8 @@ class ShardManager:
 
     def __init__(self, data_directory: Path, num_shards: int = 10) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
     """
         Initialize shard manager.
 
@@ -125,8 +125,8 @@ class ShardManager:
 
             def _load_shard_metadata(self) -> None:
                 """TODO: Add docstring for _load_shard_metadata"""
-        """TODO: Add docstring for _load_shard_metadata"""
-            """TODO: Add docstring for _load_shard_metadata"""
+                    """TODO: Add docstring for _load_shard_metadata"""
+                        """TODO: Add docstring for _load_shard_metadata"""
     """Load shard metadata from manifest."""
         manifest_path = self.data_directory / "shard_manifest.json"
 
@@ -160,8 +160,8 @@ class ShardManager:
 
                 def _save_shard_metadata(self) -> None:
                     """TODO: Add docstring for _save_shard_metadata"""
-        """TODO: Add docstring for _save_shard_metadata"""
-            """TODO: Add docstring for _save_shard_metadata"""
+                        """TODO: Add docstring for _save_shard_metadata"""
+                            """TODO: Add docstring for _save_shard_metadata"""
     """Save shard metadata to manifest."""
         manifest = {
             "version": "1.0",
@@ -184,8 +184,8 @@ class ShardManager:
     @performance_logger.log_operation("create_shards")
             def create_shards_from_data(self, data_source: Path, data_type: str = "genomic") -> List[str]:
                 """TODO: Add docstring for create_shards_from_data"""
-        """TODO: Add docstring for create_shards_from_data"""
-            """TODO: Add docstring for create_shards_from_data"""
+                    """TODO: Add docstring for create_shards_from_data"""
+                        """TODO: Add docstring for create_shards_from_data"""
     """
         Create shards from source data.
 
@@ -240,8 +240,8 @@ class ShardManager:
         self, shard_index: int, shard_data: bytes, data_type: str
     ) -> Optional[str]:
         """TODO: Add docstring for _create_single_shard"""
-        """TODO: Add docstring for _create_single_shard"""
             """TODO: Add docstring for _create_single_shard"""
+                """TODO: Add docstring for _create_single_shard"""
     """
         Create a single shard.
 
@@ -300,8 +300,8 @@ class ShardManager:
 
             def distribute_shards(self, server_list: List[str]) -> ShardDistribution:
                 """TODO: Add docstring for distribute_shards"""
-        """TODO: Add docstring for distribute_shards"""
-            """TODO: Add docstring for distribute_shards"""
+                    """TODO: Add docstring for distribute_shards"""
+                        """TODO: Add docstring for distribute_shards"""
     """
         Distribute shards across servers.
 
@@ -357,8 +357,8 @@ class ShardManager:
 
             def verify_shard_integrity(self, shard_id: str) -> bool:
                 """TODO: Add docstring for verify_shard_integrity"""
-        """TODO: Add docstring for verify_shard_integrity"""
-            """TODO: Add docstring for verify_shard_integrity"""
+                    """TODO: Add docstring for verify_shard_integrity"""
+                        """TODO: Add docstring for verify_shard_integrity"""
     """
         Verify integrity of a shard.
 
@@ -392,8 +392,8 @@ class ShardManager:
 
             def update_shard(self, shard_id: str, new_data: bytes) -> bool:
                 """TODO: Add docstring for update_shard"""
-        """TODO: Add docstring for update_shard"""
-            """TODO: Add docstring for update_shard"""
+                    """TODO: Add docstring for update_shard"""
+                        """TODO: Add docstring for update_shard"""
     """
         Update a shard with new data.
 
@@ -457,8 +457,8 @@ class ShardManager:
 
                 def get_shard_statistics(self) -> Dict[str, Any]:
                     """TODO: Add docstring for get_shard_statistics"""
-        """TODO: Add docstring for get_shard_statistics"""
-            """TODO: Add docstring for get_shard_statistics"""
+                        """TODO: Add docstring for get_shard_statistics"""
+                            """TODO: Add docstring for get_shard_statistics"""
     """
         Get statistics about shards.
 
@@ -496,8 +496,8 @@ class ShardManager:
 
                 def optimize_distribution(self, server_stats: Dict[str, Dict]) -> ShardDistribution:
                     """TODO: Add docstring for optimize_distribution"""
-        """TODO: Add docstring for optimize_distribution"""
-            """TODO: Add docstring for optimize_distribution"""
+                        """TODO: Add docstring for optimize_distribution"""
+                            """TODO: Add docstring for optimize_distribution"""
     """
         Optimize shard distribution based on server performance.
 
@@ -534,8 +534,8 @@ class ShardManager:
 
                 def cleanup(self) -> None:
                     """TODO: Add docstring for cleanup"""
-        """TODO: Add docstring for cleanup"""
-            """TODO: Add docstring for cleanup"""
+                        """TODO: Add docstring for cleanup"""
+                            """TODO: Add docstring for cleanup"""
     """Cleanup resources."""
                     self.executor.shutdown(wait=True)
 

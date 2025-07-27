@@ -36,8 +36,8 @@ class VariantFrequencyCircuit:
 
         def __init__(self, max_snps: int = 32, merkle_depth: int = 20) -> None:
             """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
+                    """TODO: Add docstring for __init__"""
     """
         Initialize the variant frequency circuit.
 
@@ -55,8 +55,8 @@ class VariantFrequencyCircuit:
 
             def setup_circuit(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
                 """TODO: Add docstring for setup_circuit"""
-        """TODO: Add docstring for setup_circuit"""
-            """TODO: Add docstring for setup_circuit"""
+                    """TODO: Add docstring for setup_circuit"""
+                        """TODO: Add docstring for setup_circuit"""
     """Setup the circuit with actual inputs."""
 
         # Public inputs
@@ -137,8 +137,8 @@ class VariantFrequencyCircuit:
 
                     def generate_constraints(self) -> None:
                         """TODO: Add docstring for generate_constraints"""
-        """TODO: Add docstring for generate_constraints"""
-            """TODO: Add docstring for generate_constraints"""
+                            """TODO: Add docstring for generate_constraints"""
+                                """TODO: Add docstring for generate_constraints"""
     """Generate all circuit constraints."""
         if not self.setup_complete:
             raise RuntimeError("Circuit must be setup before generating constraints")
@@ -160,8 +160,8 @@ class VariantFrequencyCircuit:
 
             def _constrain_allele_count_ranges(self) -> None:
                 """TODO: Add docstring for _constrain_allele_count_ranges"""
-        """TODO: Add docstring for _constrain_allele_count_ranges"""
-            """TODO: Add docstring for _constrain_allele_count_ranges"""
+                    """TODO: Add docstring for _constrain_allele_count_ranges"""
+                        """TODO: Add docstring for _constrain_allele_count_ranges"""
     """Constrain each allele count to be within valid range [0, C_MAX]."""
 
         for i, count_var in enumerate(self.count_vars):
@@ -191,8 +191,8 @@ class VariantFrequencyCircuit:
 
                 def _constrain_sum(self) -> None:
                     """TODO: Add docstring for _constrain_sum"""
-        """TODO: Add docstring for _constrain_sum"""
-            """TODO: Add docstring for _constrain_sum"""
+                        """TODO: Add docstring for _constrain_sum"""
+                            """TODO: Add docstring for _constrain_sum"""
     """Constrain that the sum of counts equals the public sum."""
 
         # Build running sum
@@ -227,8 +227,8 @@ class VariantFrequencyCircuit:
 
             def _constrain_merkle_inclusions(self) -> None:
                 """TODO: Add docstring for _constrain_merkle_inclusions"""
-        """TODO: Add docstring for _constrain_merkle_inclusions"""
-            """TODO: Add docstring for _constrain_merkle_inclusions"""
+                    """TODO: Add docstring for _constrain_merkle_inclusions"""
+                        """TODO: Add docstring for _constrain_merkle_inclusions"""
     """Verify Merkle inclusion proof for each allele count."""
 
         num_snps = int(self.cs.get_assignment(self.num_snps_var).value)
@@ -280,8 +280,8 @@ class VariantFrequencyCircuit:
 
                     def _constrain_unused_slots(self) -> None:
                         """TODO: Add docstring for _constrain_unused_slots"""
-        """TODO: Add docstring for _constrain_unused_slots"""
-            """TODO: Add docstring for _constrain_unused_slots"""
+                            """TODO: Add docstring for _constrain_unused_slots"""
+                                """TODO: Add docstring for _constrain_unused_slots"""
     """Ensure counts for SNPs beyond num_snps are zero."""
 
         num_snps = int(self.cs.get_assignment(self.num_snps_var).value)
@@ -292,8 +292,8 @@ class VariantFrequencyCircuit:
 
             def _add_zk_randomness(self) -> None:
                 """TODO: Add docstring for _add_zk_randomness"""
-        """TODO: Add docstring for _add_zk_randomness"""
-            """TODO: Add docstring for _add_zk_randomness"""
+                    """TODO: Add docstring for _add_zk_randomness"""
+                        """TODO: Add docstring for _add_zk_randomness"""
     """Add randomness to achieve zero-knowledge property."""
 
         # Create blinding factors
@@ -315,36 +315,36 @@ class VariantFrequencyCircuit:
 
                 def get_constraint_system(self) -> ConstraintSystem:
                     """TODO: Add docstring for get_constraint_system"""
-        """TODO: Add docstring for get_constraint_system"""
-            """TODO: Add docstring for get_constraint_system"""
+                        """TODO: Add docstring for get_constraint_system"""
+                            """TODO: Add docstring for get_constraint_system"""
     """Get the constraint system."""
         return self.cs
 
                     def get_public_inputs(self) -> List[FieldElement]:
                         """TODO: Add docstring for get_public_inputs"""
-        """TODO: Add docstring for get_public_inputs"""
-            """TODO: Add docstring for get_public_inputs"""
+                            """TODO: Add docstring for get_public_inputs"""
+                                """TODO: Add docstring for get_public_inputs"""
     """Get public input values."""
         return self.cs.get_public_inputs()
 
                         def get_witness(self) -> Dict[int, FieldElement]:
                             """TODO: Add docstring for get_witness"""
-        """TODO: Add docstring for get_witness"""
-            """TODO: Add docstring for get_witness"""
+                                """TODO: Add docstring for get_witness"""
+                                    """TODO: Add docstring for get_witness"""
     """Get witness (private inputs)."""
         return self.cs.get_witness()
 
                             def verify_constraints(self) -> bool:
                                 """TODO: Add docstring for verify_constraints"""
-        """TODO: Add docstring for verify_constraints"""
-            """TODO: Add docstring for verify_constraints"""
+                                    """TODO: Add docstring for verify_constraints"""
+                                        """TODO: Add docstring for verify_constraints"""
     """Verify all constraints are satisfied."""
         return self.cs.is_satisfied()
 
                                 def get_circuit_info(self) -> Dict[str, Any]:
                                     """TODO: Add docstring for get_circuit_info"""
-        """TODO: Add docstring for get_circuit_info"""
-            """TODO: Add docstring for get_circuit_info"""
+                                        """TODO: Add docstring for get_circuit_info"""
+                                            """TODO: Add docstring for get_circuit_info"""
     """Get circuit information."""
         return {
             "name": "variant_frequency_sum",
@@ -360,8 +360,8 @@ class VariantFrequencyCircuit:
 
                                     def create_example_frequency_proof() -> Dict[str, Any]:
                                         """TODO: Add docstring for create_example_frequency_proof"""
-        """TODO: Add docstring for create_example_frequency_proof"""
-        """TODO: Add docstring for create_example_frequency_proof"""
+                                            """TODO: Add docstring for create_example_frequency_proof"""
+                                                """TODO: Add docstring for create_example_frequency_proof"""
     """Example usage of the VariantFrequencyCircuit."""
 
     # Example: Query for 5 SNPs

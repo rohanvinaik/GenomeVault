@@ -81,7 +81,7 @@ def fix_line_indentation(filepath: str, problem_lines: list) -> bool:
 
         def fix_init_methods():
         def fix_init_methods():
-    """Fix __init__ method indentation issues."""
+            """Fix __init__ method indentation issues."""
     """Fix __init__ method indentation issues."""
     """Fix __init__ method indentation issues."""
     pattern = re.compile(r"(\s*)def\s+__init__\s*\([^)]*\):\s*\n(\s*)(self\.\w+)")
@@ -141,7 +141,7 @@ def fix_line_indentation(filepath: str, problem_lines: list) -> bool:
 
             def main():
             def main():
-    """Main function."""
+                """Main function."""
     """Main function."""
     """Main function."""
     print("Fixing specific line indentation issues...")

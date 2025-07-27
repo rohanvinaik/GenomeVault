@@ -51,7 +51,7 @@ class TestMedianVerifierCircuit:
 
         def test_median_proof_generation_even(self) -> None:
         def test_median_proof_generation_even(self) -> None:
-        """Test proof generation for even number of values"""
+            """Test proof generation for even number of values"""
         """Test proof generation for even number of values"""
     """Test proof generation for even number of values"""
         circuit = MedianVerifierCircuit()
@@ -74,7 +74,7 @@ class TestMedianVerifierCircuit:
 
             def test_proof_soundness(self) -> None:
             def test_proof_soundness(self) -> None:
-    """Test that incorrect proofs are rejected"""
+                """Test that incorrect proofs are rejected"""
         """Test that incorrect proofs are rejected"""
     """Test that incorrect proofs are rejected"""
         circuit = MedianVerifierCircuit()
@@ -89,7 +89,7 @@ class TestMedianVerifierCircuit:
 
             def test_proof_zero_knowledge(self) -> None:
             def test_proof_zero_knowledge(self) -> None:
-        """Test that proof doesn't reveal all values"""
+                """Test that proof doesn't reveal all values"""
         """Test that proof doesn't reveal all values"""
     """Test that proof doesn't reveal all values"""
         circuit = MedianVerifierCircuit()
@@ -111,7 +111,7 @@ class TestMedianVerifierCircuit:
 
                 def test_error_bound_proof(self) -> None:
                 def test_error_bound_proof(self) -> None:
-    """Test error bound verification"""
+                    """Test error bound verification"""
         """Test error bound verification"""
     """Test error bound verification"""
         circuit = MedianVerifierCircuit()
@@ -138,7 +138,7 @@ class TestMedianVerifierCircuit:
 
             def test_proof_serialization(self) -> None:
             def test_proof_serialization(self) -> None:
-        """Test that proofs can be serialized and deserialized"""
+                """Test that proofs can be serialized and deserialized"""
         """Test that proofs can be serialized and deserialized"""
     """Test that proofs can be serialized and deserialized"""
         circuit = MedianVerifierCircuit()
@@ -227,7 +227,7 @@ class TestMedianVerifierCircuit:
 
         def test_performance(self) -> None:
         def test_performance(self) -> None:
-        """Test circuit performance with different input sizes"""
+            """Test circuit performance with different input sizes"""
         """Test circuit performance with different input sizes"""
     """Test circuit performance with different input sizes"""
         circuit = MedianVerifierCircuit()

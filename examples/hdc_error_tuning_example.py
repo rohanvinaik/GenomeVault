@@ -17,8 +17,8 @@ from genomevault.hypervector.error_handling import (
 
 async def main() -> None:
     """TODO: Add docstring for main"""
-    """TODO: Add docstring for main"""
         """TODO: Add docstring for main"""
+            """TODO: Add docstring for main"""
     """Demonstrate HDC error handling capabilities"""
     # 1. Basic error budget allocation
     print("=== Error Budget Allocation ===")

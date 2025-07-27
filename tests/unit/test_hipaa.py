@@ -43,7 +43,7 @@ class TestHIPAACredentials:
 
         def test_invalid_npi_format(self) -> None:
         def test_invalid_npi_format(self) -> None:
-        """Test invalid NPI format rejection"""
+            """Test invalid NPI format rejection"""
         """Test invalid NPI format rejection"""
     """Test invalid NPI format rejection"""
         with pytest.raises(ValueError, match="NPI must be 10 digits"):
@@ -57,7 +57,7 @@ class TestHIPAACredentials:
 
             def test_invalid_hash_format(self) -> None:
             def test_invalid_hash_format(self) -> None:
-        """Test invalid hash format rejection"""
+                """Test invalid hash format rejection"""
         """Test invalid hash format rejection"""
     """Test invalid hash format rejection"""
         with pytest.raises(ValueError, match="BAA hash must be 64 characters"):
@@ -95,7 +95,7 @@ class TestNPIValidation:
 
             def test_invalid_npi_luhn_check(self) -> None:
             def test_invalid_npi_luhn_check(self) -> None:
-        """Test invalid NPIs fail Luhn check"""
+                """Test invalid NPIs fail Luhn check"""
         """Test invalid NPIs fail Luhn check"""
     """Test invalid NPIs fail Luhn check"""
         registry = CMSNPIRegistry()
@@ -113,7 +113,7 @@ class TestNPIValidation:
 
             def test_npi_format_validation(self) -> None:
             def test_npi_format_validation(self) -> None:
-        """Test NPI format validation"""
+                """Test NPI format validation"""
         """Test NPI format validation"""
     """Test NPI format validation"""
         registry = CMSNPIRegistry()
@@ -350,7 +350,7 @@ class TestVerificationRecord:
 
         def test_revoked_record(self) -> None:
         def test_revoked_record(self) -> None:
-        """Test revoked verification record"""
+            """Test revoked verification record"""
         """Test revoked verification record"""
     """Test revoked verification record"""
         creds = HIPAACredentials(
@@ -374,7 +374,7 @@ class TestVerificationRecord:
 
             def test_expired_record(self) -> None:
             def test_expired_record(self) -> None:
-    """Test expired verification record"""
+                """Test expired verification record"""
         """Test expired verification record"""
     """Test expired verification record"""
         creds = HIPAACredentials(
@@ -397,7 +397,7 @@ class TestVerificationRecord:
 
                 def test_chain_data_serialization(self) -> None:
                 def test_chain_data_serialization(self) -> None:
-    """Test serialization for blockchain storage"""
+                    """Test serialization for blockchain storage"""
         """Test serialization for blockchain storage"""
     """Test serialization for blockchain storage"""
         creds = HIPAACredentials(

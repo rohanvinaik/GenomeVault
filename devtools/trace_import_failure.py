@@ -61,8 +61,8 @@ print("\n5. Looking for the cryptography import...")
 
 def find_cryptography_imports(directory) -> None:
     """TODO: Add docstring for find_cryptography_imports"""
-    """TODO: Add docstring for find_cryptography_imports"""
         """TODO: Add docstring for find_cryptography_imports"""
+            """TODO: Add docstring for find_cryptography_imports"""
     """Find all files that import cryptography"""
     files_with_crypto = []
     for root, dirs, files in os.walk(directory):

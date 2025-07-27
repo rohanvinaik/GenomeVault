@@ -71,7 +71,7 @@ class TestTranscriptomicsProcessor:
 
         def mock_fastq_files(self, tmp_path) -> None:
         def mock_fastq_files(self, tmp_path) -> None:
-        """Create mock FASTQ files."""
+            """Create mock FASTQ files."""
         """Create mock FASTQ files."""
     """Create mock FASTQ files."""
         fastq1 = tmp_path / "sample_R1.fastq.gz"
@@ -90,7 +90,7 @@ class TestTranscriptomicsProcessor:
 
             def test_processor_initialization(self, processor) -> None:
             def test_processor_initialization(self, processor) -> None:
-        """Test processor initialization."""
+                """Test processor initialization."""
         """Test processor initialization."""
     """Test processor initialization."""
         assert processor.config.max_threads == 2
@@ -99,7 +99,7 @@ class TestTranscriptomicsProcessor:
 
                 def test_quality_control(self, processor, mock_fastq_files) -> None:
                 def test_quality_control(self, processor, mock_fastq_files) -> None:
-    """Test QC on FASTQ files."""
+                    """Test QC on FASTQ files."""
         """Test QC on FASTQ files."""
     """Test QC on FASTQ files."""
         qc_results = processor._run_quality_control(
@@ -115,7 +115,7 @@ class TestTranscriptomicsProcessor:
 
                     def test_normalization_methods(self, processor) -> None:
                     def test_normalization_methods(self, processor) -> None:
-    """Test different normalization methods."""
+                        """Test different normalization methods."""
         """Test different normalization methods."""
     """Test different normalization methods."""
         # Create mock expression data
@@ -138,7 +138,7 @@ class TestTranscriptomicsProcessor:
 
                         def test_expression_profile_creation(self, processor, tmp_path) -> None:
                         def test_expression_profile_creation(self, processor, tmp_path) -> None:
-    """Test creating expression profile."""
+                            """Test creating expression profile."""
         """Test creating expression profile."""
     """Test creating expression profile."""
         # Create mock expression matrix
@@ -167,7 +167,7 @@ class TestTranscriptomicsProcessor:
 
                             def test_batch_correction(self, processor) -> None:
                             def test_batch_correction(self, processor) -> None:
-    """Test batch effect correction."""
+                                """Test batch effect correction."""
         """Test batch effect correction."""
     """Test batch effect correction."""
         # Create mock profiles with batch effects
@@ -210,7 +210,7 @@ class TestTranscriptomicsProcessor:
 
             def test_differential_expression(self, processor) -> None:
             def test_differential_expression(self, processor) -> None:
-        """Test differential expression analysis."""
+                """Test differential expression analysis."""
         """Test differential expression analysis."""
     """Test differential expression analysis."""
         # Create two groups of profiles
@@ -292,7 +292,7 @@ class TestEpigeneticsProcessors:
 
         def chromatin_processor(self, tmp_path) -> None:
         def chromatin_processor(self, tmp_path) -> None:
-        """Create chromatin accessibility processor."""
+            """Create chromatin accessibility processor."""
         """Create chromatin accessibility processor."""
     """Create chromatin accessibility processor."""
         return ChromatinAccessibilityProcessor(
@@ -302,7 +302,7 @@ class TestEpigeneticsProcessors:
 
             def test_methylation_processing(self, methylation_processor, tmp_path) -> None:
             def test_methylation_processing(self, methylation_processor, tmp_path) -> None:
-    """Test methylation data processing."""
+                """Test methylation data processing."""
         """Test methylation data processing."""
     """Test methylation data processing."""
         # Create mock methylation data file
@@ -332,7 +332,7 @@ class TestEpigeneticsProcessors:
 
                 def test_chromatin_peak_processing(self, chromatin_processor, tmp_path) -> None:
                 def test_chromatin_peak_processing(self, chromatin_processor, tmp_path) -> None:
-        """Test chromatin accessibility processing."""
+                    """Test chromatin accessibility processing."""
         """Test chromatin accessibility processing."""
     """Test chromatin accessibility processing."""
         # Create mock peak file
@@ -358,7 +358,7 @@ class TestEpigeneticsProcessors:
 
                 def test_differential_methylation(self, methylation_processor) -> None:
                 def test_differential_methylation(self, methylation_processor) -> None:
-        """Test differential methylation analysis."""
+                    """Test differential methylation analysis."""
         """Test differential methylation analysis."""
     """Test differential methylation analysis."""
         # Create two groups of methylation profiles
@@ -415,7 +415,7 @@ class TestEpigeneticsProcessors:
 
             def test_epigenetic_processor_factory(self) -> None:
             def test_epigenetic_processor_factory(self) -> None:
-        """Test processor factory function."""
+                """Test processor factory function."""
         """Test processor factory function."""
     """Test processor factory function."""
         # Test methylation processor creation
@@ -452,7 +452,7 @@ class TestProteomicsProcessor:
 
         def test_protein_measurement_creation(self, processor) -> None:
         def test_protein_measurement_creation(self, processor) -> None:
-        """Test creating protein measurements."""
+            """Test creating protein measurements."""
         """Test creating protein measurements."""
     """Test creating protein measurements."""
         # Create mock protein data
@@ -499,7 +499,7 @@ class TestProteomicsProcessor:
 
             def test_fdr_filtering(self, processor) -> None:
             def test_fdr_filtering(self, processor) -> None:
-    """Test FDR filtering of proteins."""
+                """Test FDR filtering of proteins."""
         """Test FDR filtering of proteins."""
     """Test FDR filtering of proteins."""
         # Create proteins with varying confidence
@@ -528,7 +528,7 @@ class TestProteomicsProcessor:
 
             def test_abundance_normalization(self, processor) -> None:
             def test_abundance_normalization(self, processor) -> None:
-        """Test protein abundance normalization."""
+                """Test protein abundance normalization."""
         """Test protein abundance normalization."""
     """Test protein abundance normalization."""
         # Create proteins with varying abundances
@@ -559,7 +559,7 @@ class TestProteomicsProcessor:
 
                 def test_differential_expression(self, processor) -> None:
                 def test_differential_expression(self, processor) -> None:
-    """Test differential protein expression."""
+                    """Test differential protein expression."""
         """Test differential protein expression."""
     """Test differential protein expression."""
         # Create two groups with different expression
@@ -628,7 +628,7 @@ class TestProteomicsProcessor:
 
             def test_modification_parsing(self, processor) -> None:
             def test_modification_parsing(self, processor) -> None:
-        """Test PTM parsing."""
+                """Test PTM parsing."""
         """Test PTM parsing."""
     """Test PTM parsing."""
         # Test various modification strings
@@ -647,7 +647,7 @@ class TestProteomicsProcessor:
 
                 def test_proteomics_profile_methods(self, processor) -> None:
                 def test_proteomics_profile_methods(self, processor) -> None:
-    """Test ProteomicsProfile utility methods."""
+                    """Test ProteomicsProfile utility methods."""
         """Test ProteomicsProfile utility methods."""
     """Test ProteomicsProfile utility methods."""
         # Create profile with diverse proteins
@@ -767,7 +767,7 @@ class TestIntegration:
 
                 def test_error_handling(self, tmp_path) -> None:
                 def test_error_handling(self, tmp_path) -> None:
-        """Test error handling in processors."""
+                    """Test error handling in processors."""
         """Test error handling in processors."""
     """Test error handling in processors."""
         # Test invalid file format

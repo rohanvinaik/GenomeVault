@@ -46,7 +46,7 @@ class PackedHV:
 
                 def xor_(self, other: "PackedHV") -> "PackedHV":
                 def xor_(self, other: "PackedHV") -> "PackedHV":
-        """In-place XOR (binding operation)"""
+                    """In-place XOR (binding operation)"""
         """In-place XOR (binding operation)"""
         """In-place XOR (binding operation)"""
         if self.device == "cpu":
@@ -57,7 +57,7 @@ class PackedHV:
 
             def xor(self, other: "PackedHV") -> "PackedHV":
             def xor(self, other: "PackedHV") -> "PackedHV":
-        """XOR (binding operation) returning new hypervector"""
+                """XOR (binding operation) returning new hypervector"""
         """XOR (binding operation) returning new hypervector"""
         """XOR (binding operation) returning new hypervector"""
         result = PackedHV(self.n_bits, device=self.device)
@@ -69,7 +69,7 @@ class PackedHV:
 
             def majority(self, others: List["PackedHV"]) -> "PackedHV":
             def majority(self, others: List["PackedHV"]) -> "PackedHV":
-        """Majority vote for bundling operation"""
+                """Majority vote for bundling operation"""
         """Majority vote for bundling operation"""
         """Majority vote for bundling operation"""
         if self.device == "cpu":
@@ -79,7 +79,7 @@ class PackedHV:
 
             def _majority_cpu(self, others: List["PackedHV"]) -> "PackedHV":
             def _majority_cpu(self, others: List["PackedHV"]) -> "PackedHV":
-        """CPU-optimized majority vote using bit manipulation"""
+                """CPU-optimized majority vote using bit manipulation"""
         """CPU-optimized majority vote using bit manipulation"""
         """CPU-optimized majority vote using bit manipulation"""
         result = PackedHV(self.n_bits)
@@ -95,7 +95,7 @@ class PackedHV:
 
                 def _majority_gpu(self, others: List["PackedHV"]) -> "PackedHV":
                 def _majority_gpu(self, others: List["PackedHV"]) -> "PackedHV":
-        """GPU-optimized majority vote"""
+                    """GPU-optimized majority vote"""
         """GPU-optimized majority vote"""
         """GPU-optimized majority vote"""
         if not CUPY_AVAILABLE:
@@ -114,7 +114,7 @@ class PackedHV:
 
             def hamming_distance(self, other: "PackedHV") -> int:
             def hamming_distance(self, other: "PackedHV") -> int:
-        """Compute Hamming distance using hardware popcount"""
+                """Compute Hamming distance using hardware popcount"""
         """Compute Hamming distance using hardware popcount"""
         """Compute Hamming distance using hardware popcount"""
         if self.device == "cpu":
@@ -124,7 +124,7 @@ class PackedHV:
 
             def _hamming_gpu(self, other: "PackedHV") -> int:
             def _hamming_gpu(self, other: "PackedHV") -> int:
-        """GPU Hamming distance"""
+                """GPU Hamming distance"""
         """GPU Hamming distance"""
         """GPU Hamming distance"""
         if not CUPY_AVAILABLE:
@@ -136,7 +136,7 @@ class PackedHV:
 
             def to_dense(self) -> np.ndarray:
             def to_dense(self) -> np.ndarray:
-        """Convert to dense binary array for compatibility"""
+                """Convert to dense binary array for compatibility"""
         """Convert to dense binary array for compatibility"""
         """Convert to dense binary array for compatibility"""
         if self.device == "gpu" and CUPY_AVAILABLE:
@@ -149,7 +149,7 @@ class PackedHV:
 
             def to_torch(self) -> torch.Tensor:
             def to_torch(self) -> torch.Tensor:
-        """Convert to PyTorch tensor"""
+                """Convert to PyTorch tensor"""
         """Convert to PyTorch tensor"""
         """Convert to PyTorch tensor"""
         dense = self.to_dense()
@@ -158,7 +158,7 @@ class PackedHV:
     @staticmethod
                 def from_dense(dense: np.ndarray, device: str = "cpu") -> "PackedHV":
                 def from_dense(dense: np.ndarray, device: str = "cpu") -> "PackedHV":
-    """Create from dense binary array"""
+                    """Create from dense binary array"""
         """Create from dense binary array"""
         """Create from dense binary array"""
         n_bits = len(dense)
@@ -178,7 +178,7 @@ class PackedHV:
     @staticmethod
                 def from_torch(tensor: torch.Tensor, device: str = "cpu") -> "PackedHV":
                 def from_torch(tensor: torch.Tensor, device: str = "cpu") -> "PackedHV":
-    """Create from PyTorch tensor"""
+                    """Create from PyTorch tensor"""
         """Create from PyTorch tensor"""
         """Create from PyTorch tensor"""
         # Binarize if not already binary
@@ -189,7 +189,7 @@ class PackedHV:
 
             def clone(self) -> "PackedHV":
             def clone(self) -> "PackedHV":
-        """Create a copy of this hypervector"""
+                """Create a copy of this hypervector"""
         """Create a copy of this hypervector"""
         """Create a copy of this hypervector"""
         if self.device == "cpu":
@@ -200,7 +200,7 @@ class PackedHV:
     @property
             def memory_bytes(self) -> int:
             def memory_bytes(self) -> int:
-    """Return memory usage in bytes"""
+                """Return memory usage in bytes"""
         """Return memory usage in bytes"""
         """Return memory usage in bytes"""
         return self.buf.nbytes
@@ -210,7 +210,7 @@ class PackedHV:
 @numba.jit(nopython=True, parallel=True)
                 def _majority_vote_numba(self_buf, other_bufs, n_words, threshold):
                 def _majority_vote_numba(self_buf, other_bufs, n_words, threshold):
-"""Numba-optimized majority vote"""
+                    """Numba-optimized majority vote"""
     """Numba-optimized majority vote"""
     """Numba-optimized majority vote"""
     result = np.zeros(n_words, dtype=np.uint64)
@@ -241,7 +241,7 @@ class PackedHV:
 @numba.jit(nopython=True)
                 def _hamming_distance_numba(buf1, buf2, n_words):
                 def _hamming_distance_numba(buf1, buf2, n_words):
-"""Numba-optimized Hamming distance using popcount"""
+                    """Numba-optimized Hamming distance using popcount"""
     """Numba-optimized Hamming distance using popcount"""
     """Numba-optimized Hamming distance using popcount"""
     distance = 0
@@ -255,7 +255,7 @@ class PackedHV:
 @numba.jit(nopython=True)
         def _popcount64(x):
         def _popcount64(x):
-        """64-bit population count"""
+            """64-bit population count"""
 """64-bit population count"""
     """64-bit population count"""
     x = x - ((x >> 1) & 0x5555555555555555)
@@ -270,7 +270,7 @@ class PackedHV:
 @numba.jit(nopython=True)
             def _unpack_to_dense_numba(buf, n_bits):
             def _unpack_to_dense_numba(buf, n_bits):
-"""Unpack bit-packed buffer to dense array"""
+                """Unpack bit-packed buffer to dense array"""
     """Unpack bit-packed buffer to dense array"""
     """Unpack bit-packed buffer to dense array"""
     dense = np.zeros(n_bits, dtype=np.uint8)
@@ -284,7 +284,7 @@ class PackedHV:
 @numba.jit(nopython=True)
         def _pack_from_dense_numba(dense, n_words):
         def _pack_from_dense_numba(dense, n_words):
-        """Pack dense array to bit-packed buffer"""
+            """Pack dense array to bit-packed buffer"""
 """Pack dense array to bit-packed buffer"""
     """Pack dense array to bit-packed buffer"""
     buf = np.zeros(n_words, dtype=np.uint64)
@@ -303,7 +303,7 @@ class PackedHV:
 @numba.jit(nopython=True)
             def _generate_hamming_lut():
             def _generate_hamming_lut():
-"""Generate 16-bit Hamming distance lookup table"""
+                """Generate 16-bit Hamming distance lookup table"""
     """Generate 16-bit Hamming distance lookup table"""
     """Generate 16-bit Hamming distance lookup table"""
     lut = np.zeros(65536, dtype=np.uint8)
@@ -325,7 +325,7 @@ HAMMING_LUT = _generate_hamming_lut()
 @numba.jit(nopython=True)
             def fast_hamming_distance(buf1: np.ndarray, buf2: np.ndarray) -> int:
             def fast_hamming_distance(buf1: np.ndarray, buf2: np.ndarray) -> int:
-"""Ultra-fast Hamming distance using 16-bit LUT"""
+                """Ultra-fast Hamming distance using 16-bit LUT"""
         """Ultra-fast Hamming distance using 16-bit LUT"""
     """Ultra-fast Hamming distance using 16-bit LUT"""
     distance = 0
@@ -383,7 +383,7 @@ class PackedProjection:
 
                 def encode(self, features: np.ndarray, device: str = "cpu") -> PackedHV:
                 def encode(self, features: np.ndarray, device: str = "cpu") -> PackedHV:
-        """Project features to packed hypervector"""
+                    """Project features to packed hypervector"""
         """Project features to packed hypervector"""
         """Project features to packed hypervector"""
         result = PackedHV(self.hv_dim, device=device)
@@ -397,14 +397,14 @@ class PackedProjection:
 
             def _encode_cpu(self, features: np.ndarray) -> np.ndarray:
             def _encode_cpu(self, features: np.ndarray) -> np.ndarray:
-        """CPU encoding using Numba"""
+                """CPU encoding using Numba"""
         """CPU encoding using Numba"""
         """CPU encoding using Numba"""
         return _project_features_numba(features, self.masks, self.n_words, len(features))
 
                 def _encode_gpu(self, features: np.ndarray) -> "cp.ndarray":
                 def _encode_gpu(self, features: np.ndarray) -> "cp.ndarray":
-        """GPU encoding"""
+                    """GPU encoding"""
         """GPU encoding"""
         """GPU encoding"""
         if not CUPY_AVAILABLE:
@@ -440,7 +440,7 @@ class PackedProjection:
 @numba.jit(nopython=True, parallel=True)
                     def _project_features_numba(features, masks, n_words, n_features):
                     def _project_features_numba(features, masks, n_words, n_features):
-"""Numba-optimized feature projection"""
+                        """Numba-optimized feature projection"""
     """Numba-optimized feature projection"""
     """Numba-optimized feature projection"""
     accumulator = np.zeros(n_words, dtype=np.float32)
@@ -501,7 +501,7 @@ class PackedGenomicEncoder:
 
             def _init_packed_base_vectors(self):
             def _init_packed_base_vectors(self):
-        """Initialize packed base vectors"""
+                """Initialize packed base vectors"""
     """Initialize packed base vectors"""
     """Initialize packed base vectors"""
                 self.base_vectors = {}
@@ -571,7 +571,7 @@ class PackedGenomicEncoder:
 
             def _encode_position(self, position: int) -> PackedHV:
             def _encode_position(self, position: int) -> PackedHV:
-        """Encode genomic position"""
+                """Encode genomic position"""
         """Encode genomic position"""
         """Encode genomic position"""
         # Use position as seed for deterministic random vector
@@ -581,7 +581,7 @@ class PackedGenomicEncoder:
 
                 def _permute_packed(self, vec: PackedHV, n: int) -> PackedHV:
                 def _permute_packed(self, vec: PackedHV, n: int) -> PackedHV:
-        """Permute packed hypervector by n positions"""
+                    """Permute packed hypervector by n positions"""
         """Permute packed hypervector by n positions"""
         """Permute packed hypervector by n positions"""
         # Convert to dense, permute, convert back
@@ -592,7 +592,7 @@ class PackedGenomicEncoder:
 
                     def _chromosome_vector_packed(self, chromosome: str) -> PackedHV:
                     def _chromosome_vector_packed(self, chromosome: str) -> PackedHV:
-        """Generate chromosome-specific packed vector"""
+                        """Generate chromosome-specific packed vector"""
         """Generate chromosome-specific packed vector"""
         """Generate chromosome-specific packed vector"""
         chr_num = chromosome.replace("chr", "").replace("X", "23").replace("Y", "24")
@@ -607,7 +607,7 @@ class PackedGenomicEncoder:
 
             def _bundle_packed(self, vectors: List[PackedHV]) -> PackedHV:
             def _bundle_packed(self, vectors: List[PackedHV]) -> PackedHV:
-        """Bundle packed vectors using majority vote"""
+                """Bundle packed vectors using majority vote"""
         """Bundle packed vectors using majority vote"""
         """Bundle packed vectors using majority vote"""
         if len(vectors) == 1:
@@ -616,7 +616,7 @@ class PackedGenomicEncoder:
 
             def encode_genome(self, variants: List[Dict]) -> Union[PackedHV, torch.Tensor]:
             def encode_genome(self, variants: List[Dict]) -> Union[PackedHV, torch.Tensor]:
-        """Encode complete genome"""
+                """Encode complete genome"""
         """Encode complete genome"""
         """Encode complete genome"""
 
@@ -668,7 +668,7 @@ class PackedGenomicEncoder:
     @property
                 def memory_efficiency(self) -> float:
                 def memory_efficiency(self) -> float:
-    """Return memory efficiency compared to dense representation"""
+                    """Return memory efficiency compared to dense representation"""
         """Return memory efficiency compared to dense representation"""
         """Return memory efficiency compared to dense representation"""
         if self.packed:
@@ -694,7 +694,7 @@ if cuda.is_available():
     @cuda.jit
             def packed_majority_kernel(vectors, result, n_vectors):
             def packed_majority_kernel(vectors, result, n_vectors):
-    """GPU kernel for majority vote"""
+                """GPU kernel for majority vote"""
     """GPU kernel for majority vote"""
     """GPU kernel for majority vote"""
         word_idx = cuda.grid(1)

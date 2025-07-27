@@ -48,7 +48,7 @@ class TestConfig:
 
         def test_voting_power_calculation(self) -> None:
         def test_voting_power_calculation(self) -> None:
-        """Test dual-axis voting power calculation."""
+            """Test dual-axis voting power calculation."""
         """Test dual-axis voting power calculation."""
     """Test dual-axis voting power calculation."""
         config = Config()
@@ -75,7 +75,7 @@ class TestConfig:
 
             def test_block_rewards_calculation(self) -> None:
             def test_block_rewards_calculation(self) -> None:
-        """Test block rewards calculation."""
+                """Test block rewards calculation."""
         """Test block rewards calculation."""
     """Test block rewards calculation."""
         config = Config()
@@ -102,7 +102,7 @@ class TestConfig:
 
             def test_pir_failure_probability(self) -> None:
             def test_pir_failure_probability(self) -> None:
-        """Test PIR privacy breach probability calculations."""
+                """Test PIR privacy breach probability calculations."""
         """Test PIR privacy breach probability calculations."""
     """Test PIR privacy breach probability calculations."""
         config = Config()
@@ -125,7 +125,7 @@ class TestConfig:
 
             def test_min_honest_servers_calculation(self) -> None:
             def test_min_honest_servers_calculation(self) -> None:
-        """Test minimum honest servers calculation."""
+                """Test minimum honest servers calculation."""
         """Test minimum honest servers calculation."""
     """Test minimum honest servers calculation."""
         config = Config()
@@ -146,7 +146,7 @@ class TestConfig:
 
             def test_compression_tier_sizes(self) -> None:
             def test_compression_tier_sizes(self) -> None:
-        """Test compression tier storage calculations."""
+                """Test compression tier storage calculations."""
         """Test compression tier storage calculations."""
     """Test compression tier storage calculations."""
         config = Config()
@@ -179,7 +179,7 @@ class TestConfig:
 
             def test_config_validation(self) -> None:
             def test_config_validation(self) -> None:
-        """Test configuration validation."""
+                """Test configuration validation."""
         """Test configuration validation."""
     """Test configuration validation."""
         config = Config()
@@ -201,7 +201,7 @@ class TestConfig:
 
             def test_config_save_load(self) -> None:
             def test_config_save_load(self) -> None:
-        """Test configuration persistence."""
+                """Test configuration persistence."""
         """Test configuration persistence."""
     """Test configuration persistence."""
         config1 = Config()
@@ -230,7 +230,7 @@ class TestConfig:
 
             def test_hipaa_verification_config(self) -> None:
             def test_hipaa_verification_config(self) -> None:
-        """Test HIPAA verification configuration."""
+                """Test HIPAA verification configuration."""
         """Test HIPAA verification configuration."""
     """Test HIPAA verification configuration."""
         config = Config()
@@ -249,7 +249,7 @@ class TestConfig:
 
                 def test_security_config_defaults(self) -> None:
                 def test_security_config_defaults(self) -> None:
-    """Test security configuration defaults."""
+                    """Test security configuration defaults."""
         """Test security configuration defaults."""
     """Test security configuration defaults."""
         sec_config = SecurityConfig()
@@ -262,7 +262,7 @@ class TestConfig:
 
                     def test_network_config_validation(self) -> None:
                     def test_network_config_validation(self) -> None:
-    """Test network configuration validation."""
+                        """Test network configuration validation."""
         """Test network configuration validation."""
     """Test network configuration validation."""
         config = Config()
@@ -295,7 +295,7 @@ class TestCompressionTierEnum:
 
         def test_tier_comparison(self) -> None:
         def test_tier_comparison(self) -> None:
-        """Test tier comparisons."""
+            """Test tier comparisons."""
         """Test tier comparisons."""
     """Test tier comparisons."""
         assert CompressionTier.MINI != CompressionTier.CLINICAL
@@ -320,7 +320,7 @@ class TestNodeClassEnum:
 
         def test_node_class_ordering(self) -> None:
         def test_node_class_ordering(self) -> None:
-        """Test node class ordering."""
+            """Test node class ordering."""
         """Test node class ordering."""
     """Test node class ordering."""
         assert NodeClass.LIGHT.value < NodeClass.FULL.value < NodeClass.ARCHIVE.value

@@ -31,8 +31,8 @@ from genomevault.utils.logging import setup_logging
 
 def demonstrate_basic_encoding() -> None:
     """TODO: Add docstring for demonstrate_basic_encoding"""
-    """TODO: Add docstring for demonstrate_basic_encoding"""
         """TODO: Add docstring for demonstrate_basic_encoding"""
+            """TODO: Add docstring for demonstrate_basic_encoding"""
     """Demonstrate basic hypervector encoding"""
     print("\n=== Basic Hypervector Encoding ===")
 
@@ -88,8 +88,8 @@ def demonstrate_basic_encoding() -> None:
 
     def demonstrate_binding_operations() -> None:
         """TODO: Add docstring for demonstrate_binding_operations"""
-    """TODO: Add docstring for demonstrate_binding_operations"""
-        """TODO: Add docstring for demonstrate_binding_operations"""
+            """TODO: Add docstring for demonstrate_binding_operations"""
+                """TODO: Add docstring for demonstrate_binding_operations"""
     """Demonstrate binding operations for combining information"""
     print("\n=== Hypervector Binding Operations ===")
 
@@ -139,8 +139,8 @@ def demonstrate_basic_encoding() -> None:
 
         def demonstrate_positional_encoding() -> None:
             """TODO: Add docstring for demonstrate_positional_encoding"""
-    """TODO: Add docstring for demonstrate_positional_encoding"""
-        """TODO: Add docstring for demonstrate_positional_encoding"""
+                """TODO: Add docstring for demonstrate_positional_encoding"""
+                    """TODO: Add docstring for demonstrate_positional_encoding"""
     """Demonstrate position-aware binding for genomic sequences"""
     print("\n=== Positional Encoding for Genomic Sequences ===")
 
@@ -176,8 +176,8 @@ def demonstrate_basic_encoding() -> None:
 
         def demonstrate_holographic_encoding() -> None:
             """TODO: Add docstring for demonstrate_holographic_encoding"""
-    """TODO: Add docstring for demonstrate_holographic_encoding"""
-        """TODO: Add docstring for demonstrate_holographic_encoding"""
+                """TODO: Add docstring for demonstrate_holographic_encoding"""
+                    """TODO: Add docstring for demonstrate_holographic_encoding"""
     """Demonstrate holographic encoding for structured data"""
     print("\n=== Holographic Encoding for Genomic Variants ===")
 
@@ -265,8 +265,8 @@ def demonstrate_basic_encoding() -> None:
 
             def demonstrate_cross_modal_binding() -> None:
                 """TODO: Add docstring for demonstrate_cross_modal_binding"""
-    """TODO: Add docstring for demonstrate_cross_modal_binding"""
-        """TODO: Add docstring for demonstrate_cross_modal_binding"""
+                    """TODO: Add docstring for demonstrate_cross_modal_binding"""
+                        """TODO: Add docstring for demonstrate_cross_modal_binding"""
     """Demonstrate binding across different omics modalities"""
     print("\n=== Cross-Modal Binding for Multi-Omics ===")
 
@@ -313,8 +313,8 @@ def demonstrate_basic_encoding() -> None:
 
         def demonstrate_similarity_preservation() -> None:
             """TODO: Add docstring for demonstrate_similarity_preservation"""
-    """TODO: Add docstring for demonstrate_similarity_preservation"""
-        """TODO: Add docstring for demonstrate_similarity_preservation"""
+                """TODO: Add docstring for demonstrate_similarity_preservation"""
+                    """TODO: Add docstring for demonstrate_similarity_preservation"""
     """Demonstrate similarity preservation in mappings"""
     print("\n=== Similarity-Preserving Transformations ===")
 
@@ -359,8 +359,8 @@ def demonstrate_basic_encoding() -> None:
 
             def demonstrate_privacy_guarantees() -> None:
                 """TODO: Add docstring for demonstrate_privacy_guarantees"""
-    """TODO: Add docstring for demonstrate_privacy_guarantees"""
-        """TODO: Add docstring for demonstrate_privacy_guarantees"""
+                    """TODO: Add docstring for demonstrate_privacy_guarantees"""
+                        """TODO: Add docstring for demonstrate_privacy_guarantees"""
     """Demonstrate privacy properties of hypervectors"""
     print("\n=== Privacy Guarantees of Hypervectors ===")
 
@@ -404,8 +404,8 @@ def demonstrate_basic_encoding() -> None:
 
                 def demonstrate_compression_tiers() -> None:
                     """TODO: Add docstring for demonstrate_compression_tiers"""
-    """TODO: Add docstring for demonstrate_compression_tiers"""
-        """TODO: Add docstring for demonstrate_compression_tiers"""
+                        """TODO: Add docstring for demonstrate_compression_tiers"""
+                            """TODO: Add docstring for demonstrate_compression_tiers"""
     """Demonstrate tiered compression for different use cases"""
     print("\n=== Tiered Compression System ===")
 
@@ -440,8 +440,8 @@ def demonstrate_basic_encoding() -> None:
 
         def visualize_hypervector_properties() -> None:
             """TODO: Add docstring for visualize_hypervector_properties"""
-    """TODO: Add docstring for visualize_hypervector_properties"""
-        """TODO: Add docstring for visualize_hypervector_properties"""
+                """TODO: Add docstring for visualize_hypervector_properties"""
+                    """TODO: Add docstring for visualize_hypervector_properties"""
     """Visualize key properties of hypervectors"""
     print("\n=== Visualizing Hypervector Properties ===")
 
@@ -478,8 +478,8 @@ def demonstrate_basic_encoding() -> None:
 
         def main() -> None:
             """TODO: Add docstring for main"""
-    """TODO: Add docstring for main"""
-        """TODO: Add docstring for main"""
+                """TODO: Add docstring for main"""
+                    """TODO: Add docstring for main"""
     """Run all demonstrations"""
     print("=" * 60)
     print("GenomeVault Hypervector Encoding Demonstration")

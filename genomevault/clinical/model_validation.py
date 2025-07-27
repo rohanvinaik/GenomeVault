@@ -114,8 +114,8 @@ class ClinicalModelValidator:
 
         def __init__(self, validator_id: str) -> None:
             """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
+                    """TODO: Add docstring for __init__"""
             self.validator_id = validator_id
             self.validation_results: Dict[str, ClinicalValidationResult] = {}
             self.attestations: Dict[str, ModelCapabilityAttestation] = {}
@@ -149,8 +149,8 @@ class ClinicalModelValidator:
         metadata: Optional[Dict[str, Any]] = None,
     ) -> ClinicalValidationResult:
         """TODO: Add docstring for validate_model"""
-        """TODO: Add docstring for validate_model"""
             """TODO: Add docstring for validate_model"""
+                """TODO: Add docstring for validate_model"""
     """
         Perform clinical validation of a model.
 
@@ -239,8 +239,8 @@ class ClinicalModelValidator:
         expiration_months: int = 12,
     ) -> ModelCapabilityAttestation:
         """TODO: Add docstring for issue_capability_attestation"""
-        """TODO: Add docstring for issue_capability_attestation"""
             """TODO: Add docstring for issue_capability_attestation"""
+                """TODO: Add docstring for issue_capability_attestation"""
     """
         Issue a capability attestation for a validated model.
 
@@ -319,8 +319,8 @@ class ClinicalModelValidator:
 
             def verify_attestation(self, attestation_id: str) -> Tuple[bool, Dict[str, Any]]:
                 """TODO: Add docstring for verify_attestation"""
-        """TODO: Add docstring for verify_attestation"""
-            """TODO: Add docstring for verify_attestation"""
+                    """TODO: Add docstring for verify_attestation"""
+                        """TODO: Add docstring for verify_attestation"""
     """
         Verify a capability attestation.
 
@@ -375,8 +375,8 @@ class ClinicalModelValidator:
         self, model: Any, test_data: Any, clinical_domain: ClinicalDomain
     ) -> Dict[str, float]:
         """TODO: Add docstring for _evaluate_performance"""
-        """TODO: Add docstring for _evaluate_performance"""
             """TODO: Add docstring for _evaluate_performance"""
+                """TODO: Add docstring for _evaluate_performance"""
     """Evaluate model performance metrics"""
         # Simplified for demo - in practice would run actual evaluation
         metrics = {
@@ -404,8 +404,8 @@ class ClinicalModelValidator:
         self, model: Any, test_data: Any, clinical_domain: ClinicalDomain
     ) -> Dict[str, float]:
         """TODO: Add docstring for _evaluate_safety"""
-        """TODO: Add docstring for _evaluate_safety"""
             """TODO: Add docstring for _evaluate_safety"""
+                """TODO: Add docstring for _evaluate_safety"""
     """Evaluate model safety metrics"""
         return {
             "false_positive_rate": np.random.uniform(0.02, 0.08),
@@ -420,8 +420,8 @@ class ClinicalModelValidator:
         self, model: Any, test_data: Any, clinical_domain: ClinicalDomain
     ) -> Dict[str, Any]:
         """TODO: Add docstring for _assess_bias"""
-        """TODO: Add docstring for _assess_bias"""
             """TODO: Add docstring for _assess_bias"""
+                """TODO: Add docstring for _assess_bias"""
     """Assess model bias across different populations"""
         return {
             "demographic_parity": {
@@ -439,8 +439,8 @@ class ClinicalModelValidator:
 
         def _analyze_dataset(self, test_data: Any) -> Dict[str, Any]:
             """TODO: Add docstring for _analyze_dataset"""
-        """TODO: Add docstring for _analyze_dataset"""
-            """TODO: Add docstring for _analyze_dataset"""
+                """TODO: Add docstring for _analyze_dataset"""
+                    """TODO: Add docstring for _analyze_dataset"""
     """Analyze test dataset characteristics"""
         return {
             "sample_size": 10000,
@@ -463,8 +463,8 @@ class ClinicalModelValidator:
         validation_level: ValidationLevel,
     ) -> bool:
         """TODO: Add docstring for _check_validation_criteria"""
-        """TODO: Add docstring for _check_validation_criteria"""
             """TODO: Add docstring for _check_validation_criteria"""
+                """TODO: Add docstring for _check_validation_criteria"""
     """Check if validation criteria are met"""
         # Check performance thresholds
         domain_thresholds = self.performance_thresholds.get(clinical_domain, {"auc": 0.85})
@@ -517,8 +517,8 @@ class ClinicalModelValidator:
         dataset_characteristics: Dict[str, Any],
     ) -> List[str]:
         """TODO: Add docstring for _identify_limitations"""
-        """TODO: Add docstring for _identify_limitations"""
             """TODO: Add docstring for _identify_limitations"""
+                """TODO: Add docstring for _identify_limitations"""
     """Identify model limitations"""
         limitations = []
 
@@ -550,8 +550,8 @@ class ClinicalModelValidator:
         self, validation_level: ValidationLevel, clinical_domains: List[ClinicalDomain]
     ) -> List[RegulatoryStandard]:
         """TODO: Add docstring for _determine_regulatory_standards"""
-        """TODO: Add docstring for _determine_regulatory_standards"""
             """TODO: Add docstring for _determine_regulatory_standards"""
+                """TODO: Add docstring for _determine_regulatory_standards"""
     """Determine applicable regulatory standards"""
         standards = [RegulatoryStandard.HIPAA]  # Always required
 
@@ -585,8 +585,8 @@ class ClinicalModelValidator:
         self, validation_results: List[ClinicalValidationResult]
     ) -> Dict[str, Any]:
         """TODO: Add docstring for _aggregate_performance_claims"""
-        """TODO: Add docstring for _aggregate_performance_claims"""
             """TODO: Add docstring for _aggregate_performance_claims"""
+                """TODO: Add docstring for _aggregate_performance_claims"""
     """Aggregate performance claims from validation results"""
         all_metrics = {}
 
@@ -630,8 +630,8 @@ class ClinicalValidationReport:
         attestation: Optional[ModelCapabilityAttestation] = None,
     ) -> Dict[str, Any]:
         """TODO: Add docstring for generate_validation_report"""
-        """TODO: Add docstring for generate_validation_report"""
             """TODO: Add docstring for generate_validation_report"""
+                """TODO: Add docstring for generate_validation_report"""
     """Generate a comprehensive validation report"""
         report = {
             "report_id": hashlib.sha256(

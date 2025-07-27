@@ -66,8 +66,8 @@ class MethylationSite:
 
     def to_dict(self) -> Dict[str, Any]:
         """TODO: Add docstring for to_dict"""
-        """TODO: Add docstring for to_dict"""
             """TODO: Add docstring for to_dict"""
+                """TODO: Add docstring for to_dict"""
     """Convert to dictionary"""
         return {
             "chromosome": self.chromosome,
@@ -100,8 +100,8 @@ class ChromatinPeak:
 
     def to_dict(self) -> Dict[str, Any]:
         """TODO: Add docstring for to_dict"""
-        """TODO: Add docstring for to_dict"""
             """TODO: Add docstring for to_dict"""
+                """TODO: Add docstring for to_dict"""
     """Convert to dictionary"""
         return {
             "chromosome": self.chromosome,
@@ -134,8 +134,8 @@ class EpigeneticProfile:
         self, chromosome: str, start: int, end: int
     ) -> List[MethylationSite]:
         """TODO: Add docstring for get_methylation_by_region"""
-        """TODO: Add docstring for get_methylation_by_region"""
             """TODO: Add docstring for get_methylation_by_region"""
+                """TODO: Add docstring for get_methylation_by_region"""
     """Get methylation sites in a specific region"""
         if not self.methylation_sites:
             return []
@@ -148,8 +148,8 @@ class EpigeneticProfile:
 
             def get_peaks_by_gene(self, gene_id: str) -> List[ChromatinPeak]:
                 """TODO: Add docstring for get_peaks_by_gene"""
-        """TODO: Add docstring for get_peaks_by_gene"""
-            """TODO: Add docstring for get_peaks_by_gene"""
+                    """TODO: Add docstring for get_peaks_by_gene"""
+                        """TODO: Add docstring for get_peaks_by_gene"""
     """Get chromatin peaks near a specific gene"""
         if not self.chromatin_peaks:
             return []
@@ -160,8 +160,8 @@ class EpigeneticProfile:
         self, chromosome: str, start: int, end: int
     ) -> Optional[float]:
         """TODO: Add docstring for calculate_regional_methylation"""
-        """TODO: Add docstring for calculate_regional_methylation"""
             """TODO: Add docstring for calculate_regional_methylation"""
+                """TODO: Add docstring for calculate_regional_methylation"""
     """Calculate average methylation in a region"""
         sites = self.get_methylation_by_region(chromosome, start, end)
         if not sites:
@@ -174,8 +174,8 @@ class EpigeneticProfile:
 
             def to_dataframe(self) -> pd.DataFrame:
                 """TODO: Add docstring for to_dataframe"""
-        """TODO: Add docstring for to_dataframe"""
-            """TODO: Add docstring for to_dataframe"""
+                    """TODO: Add docstring for to_dataframe"""
+                        """TODO: Add docstring for to_dataframe"""
     """Convert to pandas DataFrame"""
         if self.methylation_sites:
             _ = [site.to_dict() for site in self.methylation_sites]
@@ -200,8 +200,8 @@ class MethylationProcessor:
         max_threads: _ = 4,
     ) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
     """
         Initialize methylation processor
 
@@ -221,8 +221,8 @@ class MethylationProcessor:
 
             def _load_annotations(self) -> Dict[str, Dict[str, Any]]:
                 """TODO: Add docstring for _load_annotations"""
-        """TODO: Add docstring for _load_annotations"""
-            """TODO: Add docstring for _load_annotations"""
+                    """TODO: Add docstring for _load_annotations"""
+                        """TODO: Add docstring for _load_annotations"""
     """Load gene annotations for region assignment"""
         if not self.annotation_file or not self.annotation_file.exists():
             logger.warning("No annotation file provided")
@@ -257,8 +257,8 @@ class MethylationProcessor:
         context: _ = MethylationContext.CG,
     ) -> EpigeneticProfile:
         """TODO: Add docstring for process"""
-        """TODO: Add docstring for process"""
             """TODO: Add docstring for process"""
+                """TODO: Add docstring for process"""
     """
         Process methylation data
 
@@ -318,8 +318,8 @@ class MethylationProcessor:
 
             def _load_bismark_output(self, file_path: Path) -> pd.DataFrame:
                 """TODO: Add docstring for _load_bismark_output"""
-        """TODO: Add docstring for _load_bismark_output"""
-            """TODO: Add docstring for _load_bismark_output"""
+                    """TODO: Add docstring for _load_bismark_output"""
+                        """TODO: Add docstring for _load_bismark_output"""
     """Load Bismark methylation extractor output"""
         logger.info(f"Loading Bismark output from {file_path}")
 
@@ -347,8 +347,8 @@ class MethylationProcessor:
 
                 def _load_bedgraph(self, file_path: Path) -> pd.DataFrame:
                     """TODO: Add docstring for _load_bedgraph"""
-        """TODO: Add docstring for _load_bedgraph"""
-            """TODO: Add docstring for _load_bedgraph"""
+                        """TODO: Add docstring for _load_bedgraph"""
+                            """TODO: Add docstring for _load_bedgraph"""
     """Load BedGraph format methylation data"""
         logger.info(f"Loading BedGraph from {file_path}")
 
@@ -360,8 +360,8 @@ class MethylationProcessor:
         self, data: pd.DataFrame, context: MethylationContext
     ) -> pd.DataFrame:
         """TODO: Add docstring for _filter_methylation_data"""
-        """TODO: Add docstring for _filter_methylation_data"""
             """TODO: Add docstring for _filter_methylation_data"""
+                """TODO: Add docstring for _filter_methylation_data"""
     """Filter methylation data by context and coverage"""
         _ = data[data["coverage"] >= self.min_coverage].copy()
 
@@ -373,8 +373,8 @@ class MethylationProcessor:
 
             def _annotate_methylation_sites(self, data: pd.DataFrame) -> List[MethylationSite]:
                 """TODO: Add docstring for _annotate_methylation_sites"""
-        """TODO: Add docstring for _annotate_methylation_sites"""
-            """TODO: Add docstring for _annotate_methylation_sites"""
+                    """TODO: Add docstring for _annotate_methylation_sites"""
+                        """TODO: Add docstring for _annotate_methylation_sites"""
     """Annotate methylation sites with genomic regions"""
         _ = []
 
@@ -400,8 +400,8 @@ class MethylationProcessor:
         self, chromosome: str, position: int
     ) -> Tuple[Optional[str], Optional[str]]:
         """TODO: Add docstring for _find_genomic_region"""
-        """TODO: Add docstring for _find_genomic_region"""
             """TODO: Add docstring for _find_genomic_region"""
+                """TODO: Add docstring for _find_genomic_region"""
     """Find gene and region type for a genomic position"""
         for gene_id, info in self.gene_annotations.items():
             if info["chr"] != chromosome:
@@ -419,8 +419,8 @@ class MethylationProcessor:
 
                 def _calculate_methylation_metrics(self, sites: List[MethylationSite]) -> Dict[str, Any]:
                     """TODO: Add docstring for _calculate_methylation_metrics"""
-        """TODO: Add docstring for _calculate_methylation_metrics"""
-            """TODO: Add docstring for _calculate_methylation_metrics"""
+                        """TODO: Add docstring for _calculate_methylation_metrics"""
+                            """TODO: Add docstring for _calculate_methylation_metrics"""
     """Calculate quality control metrics for methylation data"""
         if not sites:
             return {}
@@ -460,8 +460,8 @@ class MethylationProcessor:
 
                 def _normalize_methylation(self, sites: List[MethylationSite]) -> List[MethylationSite]:
                     """TODO: Add docstring for _normalize_methylation"""
-        """TODO: Add docstring for _normalize_methylation"""
-            """TODO: Add docstring for _normalize_methylation"""
+                        """TODO: Add docstring for _normalize_methylation"""
+                            """TODO: Add docstring for _normalize_methylation"""
     """Perform beta-mixture quantile normalization"""
         if not sites:
             return sites
@@ -513,8 +513,8 @@ class MethylationProcessor:
         fdr_threshold: _ = 0.05,
     ) -> pd.DataFrame:
         """TODO: Add docstring for differential_methylation"""
-        """TODO: Add docstring for differential_methylation"""
             """TODO: Add docstring for differential_methylation"""
+                """TODO: Add docstring for differential_methylation"""
     """
         Identify differentially methylated regions
 
@@ -622,8 +622,8 @@ class ChromatinAccessibilityProcessor:
         max_threads: _ = 4,
     ) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
     """
         Initialize chromatin accessibility processor
 
@@ -643,8 +643,8 @@ class ChromatinAccessibilityProcessor:
 
             def _load_annotations(self) -> Dict[str, Dict[str, Any]]:
                 """TODO: Add docstring for _load_annotations"""
-        """TODO: Add docstring for _load_annotations"""
-            """TODO: Add docstring for _load_annotations"""
+                    """TODO: Add docstring for _load_annotations"""
+                        """TODO: Add docstring for _load_annotations"""
     """Load gene annotations"""
         # Reuse methylation processor's mock annotations
         return MethylationProcessor()._load_annotations()
@@ -657,8 +657,8 @@ class ChromatinAccessibilityProcessor:
         peak_format: _ = "narrowPeak",
     ) -> EpigeneticProfile:
         """TODO: Add docstring for process"""
-        """TODO: Add docstring for process"""
             """TODO: Add docstring for process"""
+                """TODO: Add docstring for process"""
     """
         Process ATAC-seq data
 
@@ -716,8 +716,8 @@ class ChromatinAccessibilityProcessor:
 
             def _load_peak_file(self, file_path: Path, format: str) -> pd.DataFrame:
                 """TODO: Add docstring for _load_peak_file"""
-        """TODO: Add docstring for _load_peak_file"""
-            """TODO: Add docstring for _load_peak_file"""
+                    """TODO: Add docstring for _load_peak_file"""
+                        """TODO: Add docstring for _load_peak_file"""
     """Load peak file"""
         logger.info(f"Loading peaks from {file_path}")
 
@@ -748,16 +748,16 @@ class ChromatinAccessibilityProcessor:
         self, input_paths: Union[Path, List[Path]], paired_end: bool
     ) -> pd.DataFrame:
         """TODO: Add docstring for _process_fastq_to_peaks"""
-        """TODO: Add docstring for _process_fastq_to_peaks"""
             """TODO: Add docstring for _process_fastq_to_peaks"""
+                """TODO: Add docstring for _process_fastq_to_peaks"""
     """Process FASTQ files to peaks (mock implementation)"""
         logger.info("Processing FASTQ to peaks (mock implementation)")
         return self._generate_mock_peaks()
 
         def _generate_mock_peaks(self) -> pd.DataFrame:
             """TODO: Add docstring for _generate_mock_peaks"""
-        """TODO: Add docstring for _generate_mock_peaks"""
-            """TODO: Add docstring for _generate_mock_peaks"""
+                """TODO: Add docstring for _generate_mock_peaks"""
+                    """TODO: Add docstring for _generate_mock_peaks"""
     """Generate mock peak data for demonstration"""
         np.random.seed(42)
 
@@ -787,8 +787,8 @@ class ChromatinAccessibilityProcessor:
 
             def _annotate_peaks(self, peaks_df: pd.DataFrame) -> List[ChromatinPeak]:
                 """TODO: Add docstring for _annotate_peaks"""
-        """TODO: Add docstring for _annotate_peaks"""
-            """TODO: Add docstring for _annotate_peaks"""
+                    """TODO: Add docstring for _annotate_peaks"""
+                        """TODO: Add docstring for _annotate_peaks"""
     """Annotate peaks with nearest genes"""
         _ = []
 
@@ -816,8 +816,8 @@ class ChromatinAccessibilityProcessor:
         self, chromosome: str, position: int
     ) -> Tuple[Optional[str], Optional[int]]:
         """TODO: Add docstring for _find_nearest_gene"""
-        """TODO: Add docstring for _find_nearest_gene"""
             """TODO: Add docstring for _find_nearest_gene"""
+                """TODO: Add docstring for _find_nearest_gene"""
     """Find nearest gene and distance to TSS"""
         _ = float("inf")
         _ = None
@@ -838,8 +838,8 @@ class ChromatinAccessibilityProcessor:
 
                 def _calculate_peak_metrics(self, peaks: List[ChromatinPeak]) -> Dict[str, Any]:
                     """TODO: Add docstring for _calculate_peak_metrics"""
-        """TODO: Add docstring for _calculate_peak_metrics"""
-            """TODO: Add docstring for _calculate_peak_metrics"""
+                        """TODO: Add docstring for _calculate_peak_metrics"""
+                            """TODO: Add docstring for _calculate_peak_metrics"""
     """Calculate quality metrics for peaks"""
         if not peaks:
             return {}
@@ -877,8 +877,8 @@ class ChromatinAccessibilityProcessor:
         fdr_threshold: _ = 0.05,
     ) -> pd.DataFrame:
         """TODO: Add docstring for find_differential_peaks"""
-        """TODO: Add docstring for find_differential_peaks"""
             """TODO: Add docstring for find_differential_peaks"""
+                """TODO: Add docstring for find_differential_peaks"""
     """
         Find differential chromatin accessibility
 
@@ -988,8 +988,8 @@ class ChromatinAccessibilityProcessor:
     data_type: EpigeneticDataType, **kwargs
 ) -> Union[MethylationProcessor, ChromatinAccessibilityProcessor]:
     """TODO: Add docstring for create_epigenetic_processor"""
-    """TODO: Add docstring for create_epigenetic_processor"""
         """TODO: Add docstring for create_epigenetic_processor"""
+            """TODO: Add docstring for create_epigenetic_processor"""
     """
     Factory function to create appropriate epigenetic processor
 

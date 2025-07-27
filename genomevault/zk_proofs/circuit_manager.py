@@ -50,8 +50,8 @@ class CircuitMetadata:
 
     def to_dict(self) -> Dict:
         """TODO: Add docstring for to_dict"""
-        """TODO: Add docstring for to_dict"""
             """TODO: Add docstring for to_dict"""
+                """TODO: Add docstring for to_dict"""
     return {
             "name": self.name,
             "constraint_count": self.constraint_count,
@@ -72,8 +72,8 @@ class CircuitManager:
 
     def __init__(self) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
     """Initialize circuit manager."""
         self.circuits = self._initialize_circuits()
         self.optimization_cache = {}
@@ -83,8 +83,8 @@ class CircuitManager:
 
         def _initialize_circuits(self) -> Dict[str, CircuitMetadata]:
             """TODO: Add docstring for _initialize_circuits"""
-        """TODO: Add docstring for _initialize_circuits"""
-            """TODO: Add docstring for _initialize_circuits"""
+                """TODO: Add docstring for _initialize_circuits"""
+                    """TODO: Add docstring for _initialize_circuits"""
     """Initialize available circuits with metadata."""
         circuits = {
             "variant_presence": CircuitMetadata(
@@ -165,8 +165,8 @@ class CircuitManager:
 
             def get_circuit(self, circuit_name: str) -> BaseCircuit:
                 """TODO: Add docstring for get_circuit"""
-        """TODO: Add docstring for get_circuit"""
-            """TODO: Add docstring for get_circuit"""
+                    """TODO: Add docstring for get_circuit"""
+                        """TODO: Add docstring for get_circuit"""
     """
         Get circuit instance by name.
 
@@ -209,8 +209,8 @@ class CircuitManager:
 
             def get_circuit_metadata(self, circuit_name: str) -> CircuitMetadata:
                 """TODO: Add docstring for get_circuit_metadata"""
-        """TODO: Add docstring for get_circuit_metadata"""
-            """TODO: Add docstring for get_circuit_metadata"""
+                    """TODO: Add docstring for get_circuit_metadata"""
+                        """TODO: Add docstring for get_circuit_metadata"""
     """Get metadata for a circuit."""
         if circuit_name not in self.circuits:
             raise ValueError("Unknown circuit: {circuit_name}")
@@ -219,8 +219,8 @@ class CircuitManager:
 
             def list_circuits(self) -> List[Dict[str, Any]]:
                 """TODO: Add docstring for list_circuits"""
-        """TODO: Add docstring for list_circuits"""
-            """TODO: Add docstring for list_circuits"""
+                    """TODO: Add docstring for list_circuits"""
+                        """TODO: Add docstring for list_circuits"""
     """List all available circuits with metadata."""
         return [{"name": name, **metadata.to_dict()} for name, metadata in self.circuits.items()]
 
@@ -228,8 +228,8 @@ class CircuitManager:
         self, analysis_type: str, data_characteristics: Dict[str, Any]
     ) -> str:
         """TODO: Add docstring for select_optimal_circuit"""
-        """TODO: Add docstring for select_optimal_circuit"""
             """TODO: Add docstring for select_optimal_circuit"""
+                """TODO: Add docstring for select_optimal_circuit"""
     """
         Select optimal circuit based on analysis type and data.
 
@@ -280,8 +280,8 @@ class CircuitManager:
 
             def _needs_optimization(self, circuit_name: str, data_characteristics: Dict[str, Any]) -> bool:
                 """TODO: Add docstring for _needs_optimization"""
-        """TODO: Add docstring for _needs_optimization"""
-            """TODO: Add docstring for _needs_optimization"""
+                    """TODO: Add docstring for _needs_optimization"""
+                        """TODO: Add docstring for _needs_optimization"""
     """Check if circuit selection needs optimization."""
         metadata = self.circuits[circuit_name]
 
@@ -302,8 +302,8 @@ class CircuitManager:
         self, base_circuit: str, data_characteristics: Dict[str, Any]
     ) -> str:
         """TODO: Add docstring for _optimize_circuit_selection"""
-        """TODO: Add docstring for _optimize_circuit_selection"""
             """TODO: Add docstring for _optimize_circuit_selection"""
+                """TODO: Add docstring for _optimize_circuit_selection"""
     """Optimize circuit selection based on constraints."""
         # Cache key for optimization
         cache_key = "{base_circuit}:{json.dumps(data_characteristics, sort_keys=True)}"
@@ -337,8 +337,8 @@ class CircuitManager:
         self, metadata: CircuitMetadata, requirements: Dict[str, Any]
     ) -> bool:
         """TODO: Add docstring for _circuit_meets_requirements"""
-        """TODO: Add docstring for _circuit_meets_requirements"""
             """TODO: Add docstring for _circuit_meets_requirements"""
+                """TODO: Add docstring for _circuit_meets_requirements"""
     """Check if circuit meets requirements."""
         # Check proof size
         if "max_proof_size" in requirements:
@@ -367,8 +367,8 @@ class CircuitManager:
         self, circuit_name: str, target_metrics: Dict[str, Any]
     ) -> Dict[str, Any]:
         """TODO: Add docstring for optimize_circuit_parameters"""
-        """TODO: Add docstring for optimize_circuit_parameters"""
             """TODO: Add docstring for optimize_circuit_parameters"""
+                """TODO: Add docstring for optimize_circuit_parameters"""
     """
         Optimize circuit parameters for target metrics.
 
@@ -409,8 +409,8 @@ class CircuitManager:
 
                     def estimate_proof_generation_time(self, circuit_name: str, data_size: Dict[str, int]) -> float:
                         """TODO: Add docstring for estimate_proof_generation_time"""
-        """TODO: Add docstring for estimate_proof_generation_time"""
-            """TODO: Add docstring for estimate_proof_generation_time"""
+                            """TODO: Add docstring for estimate_proof_generation_time"""
+                                """TODO: Add docstring for estimate_proof_generation_time"""
     """
         Estimate proof generation time.
 
@@ -442,8 +442,8 @@ class CircuitManager:
 
             def get_circuit_statistics(self) -> Dict[str, Any]:
                 """TODO: Add docstring for get_circuit_statistics"""
-        """TODO: Add docstring for get_circuit_statistics"""
-            """TODO: Add docstring for get_circuit_statistics"""
+                    """TODO: Add docstring for get_circuit_statistics"""
+                        """TODO: Add docstring for get_circuit_statistics"""
     """Get usage statistics for circuits."""
         stats = {
             "total_circuits": len(self.circuits),
@@ -469,8 +469,8 @@ class CircuitManager:
         private_inputs: Dict[str, Any],
     ) -> Tuple[bool, List[str]]:
         """TODO: Add docstring for validate_circuit_inputs"""
-        """TODO: Add docstring for validate_circuit_inputs"""
             """TODO: Add docstring for validate_circuit_inputs"""
+                """TODO: Add docstring for validate_circuit_inputs"""
     """
         Validate inputs for a circuit.
 
@@ -523,8 +523,8 @@ class CircuitManager:
 
                     def _get_expected_inputs(self, circuit_name: str) -> Dict[str, List[str]]:
                         """TODO: Add docstring for _get_expected_inputs"""
-        """TODO: Add docstring for _get_expected_inputs"""
-            """TODO: Add docstring for _get_expected_inputs"""
+                            """TODO: Add docstring for _get_expected_inputs"""
+                                """TODO: Add docstring for _get_expected_inputs"""
     """Get expected inputs for a circuit."""
         expected = {
             "variant_presence": {
@@ -616,8 +616,8 @@ class CircuitManager:
         self, circuit_name: str, test_data: Optional[Dict[str, Any]] = None
     ) -> Dict[str, float]:
         """TODO: Add docstring for benchmark_circuit"""
-        """TODO: Add docstring for benchmark_circuit"""
             """TODO: Add docstring for benchmark_circuit"""
+                """TODO: Add docstring for benchmark_circuit"""
     """
         Benchmark a circuit's performance.
 
@@ -678,8 +678,8 @@ class CircuitManager:
 
             def _generate_test_data(self, circuit_name: str) -> Dict[str, Any]:
                 """TODO: Add docstring for _generate_test_data"""
-        """TODO: Add docstring for _generate_test_data"""
-            """TODO: Add docstring for _generate_test_data"""
+                    """TODO: Add docstring for _generate_test_data"""
+                        """TODO: Add docstring for _generate_test_data"""
     """Generate test data for benchmarking."""
         import numpy as np
 

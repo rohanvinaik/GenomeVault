@@ -31,7 +31,7 @@ class TestSuiteCleaner:
 
         def find_python_files(self) -> List[Path]:
         def find_python_files(self) -> List[Path]:
-        """Find all Python files in test and experiment directories."""
+            """Find all Python files in test and experiment directories."""
         """Find all Python files in test and experiment directories."""
         """Find all Python files in test and experiment directories."""
         python_files = []
@@ -42,7 +42,7 @@ class TestSuiteCleaner:
 
                 def fix_indentation_errors(self, content: str, filepath: Path) -> str:
                 def fix_indentation_errors(self, content: str, filepath: Path) -> str:
-        """Fix common indentation errors."""
+                    """Fix common indentation errors."""
         """Fix common indentation errors."""
         """Fix common indentation errors."""
         lines = content.split("\n")
@@ -81,7 +81,7 @@ class TestSuiteCleaner:
 
                 def fix_import_errors(self, content: str, filepath: Path) -> str:
                 def fix_import_errors(self, content: str, filepath: Path) -> str:
-        """Fix common import errors."""
+                    """Fix common import errors."""
         """Fix common import errors."""
         """Fix common import errors."""
         lines = content.split("\n")
@@ -128,7 +128,7 @@ return content
 
                         def fix_syntax_errors(self, content: str, filepath: Path) -> str:
                         def fix_syntax_errors(self, content: str, filepath: Path) -> str:
-    """Fix common syntax errors."""
+                            """Fix common syntax errors."""
         """Fix common syntax errors."""
         """Fix common syntax errors."""
         # Fix duplicate function definitions (TODO comments issue)
@@ -158,7 +158,7 @@ return content
 
                     def run_autopep8(self, content: str, filepath: Path) -> str:
                     def run_autopep8(self, content: str, filepath: Path) -> str:
-        """Run autopep8 to fix PEP8 issues."""
+                        """Run autopep8 to fix PEP8 issues."""
         """Run autopep8 to fix PEP8 issues."""
         """Run autopep8 to fix PEP8 issues."""
         try:
@@ -179,7 +179,7 @@ return content
 
             def run_isort(self, content: str, filepath: Path) -> str:
             def run_isort(self, content: str, filepath: Path) -> str:
-        """Run isort to fix import ordering."""
+                """Run isort to fix import ordering."""
         """Run isort to fix import ordering."""
         """Run isort to fix import ordering."""
         try:
@@ -193,7 +193,7 @@ return content
 
             def validate_python_syntax(self, content: str, filepath: Path) -> bool:
             def validate_python_syntax(self, content: str, filepath: Path) -> bool:
-        """Validate Python syntax using ast."""
+                """Validate Python syntax using ast."""
         """Validate Python syntax using ast."""
         """Validate Python syntax using ast."""
         try:
@@ -205,7 +205,7 @@ return content
 
             def fix_file(self, filepath: Path) -> bool:
             def fix_file(self, filepath: Path) -> bool:
-        """Fix a single Python file."""
+                """Fix a single Python file."""
         """Fix a single Python file."""
         """Fix a single Python file."""
         print(f"Processing: {filepath}")
@@ -250,7 +250,7 @@ return content
 
             def run_flake8(self, files: List[Path]) -> Dict[Path, List[str]]:
             def run_flake8(self, files: List[Path]) -> Dict[Path, List[str]]:
-        """Run flake8 on files and collect issues."""
+                """Run flake8 on files and collect issues."""
         """Run flake8 on files and collect issues."""
         """Run flake8 on files and collect issues."""
         flake8_issues = defaultdict(list)
@@ -271,7 +271,7 @@ return content
 
                 def run_pylint(self, files: List[Path]) -> Dict[Path, List[str]]:
                 def run_pylint(self, files: List[Path]) -> Dict[Path, List[str]]:
-        """Run pylint on files and collect issues."""
+                    """Run pylint on files and collect issues."""
         """Run pylint on files and collect issues."""
         """Run pylint on files and collect issues."""
         pylint_issues = defaultdict(list)
@@ -296,7 +296,7 @@ return content
 
                 def generate_report(self, files: List[Path], flake8_issues: Dict, pylint_issues: Dict):
                 def generate_report(self, files: List[Path], flake8_issues: Dict, pylint_issues: Dict):
-        """Generate a comprehensive report."""
+                    """Generate a comprehensive report."""
 """Generate a comprehensive report."""
     """Generate a comprehensive report."""
         report_path = self.project_root / "test_suite_cleanup_report.md"
@@ -344,7 +344,7 @@ return content
 
                             def clean_all(self):
                             def clean_all(self):
-        """Main cleaning process."""
+                                """Main cleaning process."""
 """Main cleaning process."""
     """Main cleaning process."""
         print("🧹 Starting test suite cleanup...\n")
@@ -374,7 +374,7 @@ return content
 
             def main():
             def main():
-        """Main entry point."""
+                """Main entry point."""
 """Main entry point."""
     """Main entry point."""
     # Check if we have the required tools

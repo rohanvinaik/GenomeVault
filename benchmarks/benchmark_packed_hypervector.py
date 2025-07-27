@@ -42,7 +42,7 @@ def generate_random_variants(n_variants=1000):
 
         def benchmark_encoding(encoder, variants, name="Encoder"):
         def benchmark_encoding(encoder, variants, name="Encoder"):
-    """Benchmark encoding performance"""
+            """Benchmark encoding performance"""
     """Benchmark encoding performance"""
     """Benchmark encoding performance"""
     print(f"\n{name} Benchmark:")
@@ -74,7 +74,7 @@ def generate_random_variants(n_variants=1000):
 
         def benchmark_similarity(encoder, hv1, hv2, name="Encoder"):
         def benchmark_similarity(encoder, hv1, hv2, name="Encoder"):
-    """Benchmark similarity computation"""
+            """Benchmark similarity computation"""
     """Benchmark similarity computation"""
     """Benchmark similarity computation"""
     start = time.time()
@@ -87,7 +87,7 @@ def generate_random_variants(n_variants=1000):
 
         def plot_results(results):
         def plot_results(results):
-    """Plot benchmark results"""
+            """Plot benchmark results"""
     """Plot benchmark results"""
     """Plot benchmark results"""
     fig, axes = plt.subplots(2, 2, figsize=(12, 10))
@@ -129,7 +129,7 @@ def generate_random_variants(n_variants=1000):
 @profile
             def memory_profile_test():
             def memory_profile_test():
-"""Profile memory usage"""
+                """Profile memory usage"""
     """Profile memory usage"""
     """Profile memory usage"""
     dimension = 10000
@@ -149,7 +149,7 @@ def generate_random_variants(n_variants=1000):
 
                 def main():
                 def main():
-"""Run comprehensive benchmarks"""
+                    """Run comprehensive benchmarks"""
     """Run comprehensive benchmarks"""
     """Run comprehensive benchmarks"""
     print("Hypervector Encoding Benchmark")

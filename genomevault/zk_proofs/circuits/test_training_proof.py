@@ -24,8 +24,8 @@ class TestTrainingProofCircuit:
     @pytest.fixture
     def sample_training_data(self) -> Dict[str, Any]:
         """TODO: Add docstring for sample_training_data"""
-        """TODO: Add docstring for sample_training_data"""
             """TODO: Add docstring for sample_training_data"""
+                """TODO: Add docstring for sample_training_data"""
     """Generate sample training data for testing"""
         # Create mock training snapshots
         snapshots = []
@@ -83,8 +83,8 @@ class TestTrainingProofCircuit:
 
             def test_training_proof_setup(self, sample_training_data) -> None:
                 """TODO: Add docstring for test_training_proof_setup"""
-        """TODO: Add docstring for test_training_proof_setup"""
-            """TODO: Add docstring for test_training_proof_setup"""
+                    """TODO: Add docstring for test_training_proof_setup"""
+                        """TODO: Add docstring for test_training_proof_setup"""
     """Test circuit setup with training data"""
         circuit = TrainingProofCircuit(max_snapshots=20)
 
@@ -96,8 +96,8 @@ class TestTrainingProofCircuit:
 
                 def test_training_proof_generation(self, sample_training_data) -> None:
                     """TODO: Add docstring for test_training_proof_generation"""
-        """TODO: Add docstring for test_training_proof_generation"""
-            """TODO: Add docstring for test_training_proof_generation"""
+                        """TODO: Add docstring for test_training_proof_generation"""
+                            """TODO: Add docstring for test_training_proof_generation"""
     """Test proof generation"""
         circuit = TrainingProofCircuit(max_snapshots=20)
 
@@ -112,8 +112,8 @@ class TestTrainingProofCircuit:
 
                     def test_semantic_consistency_verification(self, sample_training_data) -> None:
                         """TODO: Add docstring for test_semantic_consistency_verification"""
-        """TODO: Add docstring for test_semantic_consistency_verification"""
-            """TODO: Add docstring for test_semantic_consistency_verification"""
+                            """TODO: Add docstring for test_semantic_consistency_verification"""
+                                """TODO: Add docstring for test_semantic_consistency_verification"""
     """Test semantic consistency checking"""
         circuit = TrainingProofCircuit(max_snapshots=20)
 
@@ -125,8 +125,8 @@ class TestTrainingProofCircuit:
 
                         def test_invalid_training_sequence(self) -> None:
                             """TODO: Add docstring for test_invalid_training_sequence"""
-        """TODO: Add docstring for test_invalid_training_sequence"""
-            """TODO: Add docstring for test_invalid_training_sequence"""
+                                """TODO: Add docstring for test_invalid_training_sequence"""
+                                    """TODO: Add docstring for test_invalid_training_sequence"""
     """Test circuit with invalid training sequence (timestamps out of order)"""
         circuit = TrainingProofCircuit(max_snapshots=10)
 
@@ -176,8 +176,8 @@ class TestMultiModalTrainingProof:
     @pytest.fixture
     def multi_modal_data(self) -> Dict[str, Any]:
         """TODO: Add docstring for multi_modal_data"""
-        """TODO: Add docstring for multi_modal_data"""
             """TODO: Add docstring for multi_modal_data"""
+                """TODO: Add docstring for multi_modal_data"""
     """Generate sample multi-modal training data"""
         # Base training data
         base_time = int(time.time()) - 3600
@@ -293,8 +293,8 @@ class TestMultiModalTrainingProof:
 
             def test_multi_modal_setup(self, multi_modal_data) -> None:
                 """TODO: Add docstring for test_multi_modal_setup"""
-        """TODO: Add docstring for test_multi_modal_setup"""
-            """TODO: Add docstring for test_multi_modal_setup"""
+                    """TODO: Add docstring for test_multi_modal_setup"""
+                        """TODO: Add docstring for test_multi_modal_setup"""
     """Test multi-modal circuit setup"""
         circuit = MultiModalTrainingProof(max_snapshots=10)
 
@@ -308,8 +308,8 @@ class TestMultiModalTrainingProof:
 
                 def test_multi_modal_proof_generation(self, multi_modal_data) -> None:
                     """TODO: Add docstring for test_multi_modal_proof_generation"""
-        """TODO: Add docstring for test_multi_modal_proof_generation"""
-            """TODO: Add docstring for test_multi_modal_proof_generation"""
+                        """TODO: Add docstring for test_multi_modal_proof_generation"""
+                            """TODO: Add docstring for test_multi_modal_proof_generation"""
     """Test multi-modal proof generation"""
         circuit = MultiModalTrainingProof(max_snapshots=10)
 
@@ -325,8 +325,8 @@ class TestMultiModalTrainingProof:
 
                     def test_cross_modal_consistency(self, multi_modal_data) -> None:
                         """TODO: Add docstring for test_cross_modal_consistency"""
-        """TODO: Add docstring for test_cross_modal_consistency"""
-            """TODO: Add docstring for test_cross_modal_consistency"""
+                            """TODO: Add docstring for test_cross_modal_consistency"""
+                                """TODO: Add docstring for test_cross_modal_consistency"""
     """Test cross-modal consistency verification"""
         circuit = MultiModalTrainingProof(max_snapshots=10)
 
@@ -344,8 +344,8 @@ class TestMultiModalTrainingProof:
 
             def test_invalid_correlation_threshold(self, multi_modal_data) -> None:
                 """TODO: Add docstring for test_invalid_correlation_threshold"""
-        """TODO: Add docstring for test_invalid_correlation_threshold"""
-            """TODO: Add docstring for test_invalid_correlation_threshold"""
+                    """TODO: Add docstring for test_invalid_correlation_threshold"""
+                        """TODO: Add docstring for test_invalid_correlation_threshold"""
     """Test with correlations below threshold"""
         # Modify alignment to have low correlation
         multi_modal_data["private_inputs"]["cross_modal_alignments"][0]["correlation"] = 0.3
@@ -362,8 +362,8 @@ class TestMultiModalTrainingProof:
 
                 def test_attention_weight_validation(self, multi_modal_data) -> None:
                     """TODO: Add docstring for test_attention_weight_validation"""
-        """TODO: Add docstring for test_attention_weight_validation"""
-            """TODO: Add docstring for test_attention_weight_validation"""
+                        """TODO: Add docstring for test_attention_weight_validation"""
+                            """TODO: Add docstring for test_attention_weight_validation"""
     """Test attention weight constraints"""
         # Create invalid attention weights that don't sum to 1
         multi_modal_data["private_inputs"]["cross_modal_alignments"][0]["attention_weights"] = [
@@ -381,8 +381,8 @@ class TestMultiModalTrainingProof:
 
                     def test_training_proof_end_to_end() -> None:
                         """TODO: Add docstring for test_training_proof_end_to_end"""
-        """TODO: Add docstring for test_training_proof_end_to_end"""
-        """TODO: Add docstring for test_training_proof_end_to_end"""
+                            """TODO: Add docstring for test_training_proof_end_to_end"""
+                                """TODO: Add docstring for test_training_proof_end_to_end"""
     """End-to-end test of training proof generation and verification"""
     # Create a simple training scenario
     circuit = TrainingProofCircuit(max_snapshots=5)
@@ -434,8 +434,8 @@ class TestMultiModalTrainingProof:
 
         def test_multi_modal_training_proof() -> None:
             """TODO: Add docstring for test_multi_modal_training_proof"""
-        """TODO: Add docstring for test_multi_modal_training_proof"""
-        """TODO: Add docstring for test_multi_modal_training_proof"""
+                """TODO: Add docstring for test_multi_modal_training_proof"""
+                    """TODO: Add docstring for test_multi_modal_training_proof"""
     """Test multi-modal training proof with minimal setup"""
     modality_commits = {
         "genomic": hashlib.sha256(b"genomic_features").hexdigest(),

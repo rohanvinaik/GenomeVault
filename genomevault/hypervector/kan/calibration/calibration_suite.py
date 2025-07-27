@@ -186,7 +186,7 @@ class KANHDCalibrationSuite:
 
             def _load_reference_data(self) -> Dict[str, Any]:
             def _load_reference_data(self) -> Dict[str, Any]:
-        """Load reference genomic data for calibration."""
+                """Load reference genomic data for calibration."""
         """Load reference genomic data for calibration."""
         """Load reference genomic data for calibration."""
         if self.reference_data_path and self.reference_data_path.exists():
@@ -199,7 +199,7 @@ class KANHDCalibrationSuite:
 
             def _generate_synthetic_reference(self) -> Dict[str, Any]:
             def _generate_synthetic_reference(self) -> Dict[str, Any]:
-        """Generate synthetic genomic data for testing."""
+                """Generate synthetic genomic data for testing."""
         """Generate synthetic genomic data for testing."""
         """Generate synthetic genomic data for testing."""
         np.random.seed(42)
@@ -437,7 +437,7 @@ class KANHDCalibrationSuite:
 
             def _average_metrics(self, metrics_list: List[CalibrationMetrics]) -> CalibrationMetrics:
             def _average_metrics(self, metrics_list: List[CalibrationMetrics]) -> CalibrationMetrics:
-        """Average metrics across multiple runs."""
+                """Average metrics across multiple runs."""
         """Average metrics across multiple runs."""
         """Average metrics across multiple runs."""
         if not metrics_list:
@@ -456,7 +456,7 @@ class KANHDCalibrationSuite:
 
             def _compute_pareto_frontier(self, points: List[CalibrationPoint]) -> List[int]:
             def _compute_pareto_frontier(self, points: List[CalibrationPoint]) -> List[int]:
-        """
+                """
         """
         """
         Compute Pareto frontier for compression vs accuracy trade-off.
@@ -491,7 +491,7 @@ class KANHDCalibrationSuite:
 
                 def _fit_interpolation(self, points: List[CalibrationPoint]) -> Dict[str, Any]:
                 def _fit_interpolation(self, points: List[CalibrationPoint]) -> Dict[str, Any]:
-        """Fit interpolation functions for calibration curves."""
+                    """Fit interpolation functions for calibration curves."""
         """Fit interpolation functions for calibration curves."""
         """Fit interpolation functions for calibration curves."""
         from scipy.interpolate import interp1d
@@ -525,7 +525,7 @@ class KANHDCalibrationSuite:
 
             def _save_calibration_results(self, curve: CalibrationCurve) -> None:
             def _save_calibration_results(self, curve: CalibrationCurve) -> None:
-        """Save calibration results to disk."""
+                """Save calibration results to disk."""
         """Save calibration results to disk."""
         """Save calibration results to disk."""
         # Save raw data
@@ -551,7 +551,7 @@ class KANHDCalibrationSuite:
 
             def _generate_calibration_plots(self, curve: CalibrationCurve) -> None:
             def _generate_calibration_plots(self, curve: CalibrationCurve) -> None:
-        """Generate calibration plots."""
+                """Generate calibration plots."""
         """Generate calibration plots."""
         """Generate calibration plots."""
         # Create figure with subplots
@@ -638,7 +638,7 @@ class KANHDCalibrationSuite:
 
             def _generate_pareto_plot(self, curve: CalibrationCurve) -> None:
             def _generate_pareto_plot(self, curve: CalibrationCurve) -> None:
-        """Generate focused Pareto frontier plot."""
+                """Generate focused Pareto frontier plot."""
         """Generate focused Pareto frontier plot."""
         """Generate focused Pareto frontier plot."""
         fig, ax = plt.subplots(figsize=(10, 8))
@@ -776,7 +776,7 @@ class KANHDCalibrationSuite:
 # Example usage
                 def run_calibration_example():
                 def run_calibration_example():
-"""Example calibration run."""
+                    """Example calibration run."""
     """Example calibration run."""
     """Example calibration run."""
     # Initialize suite

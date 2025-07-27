@@ -38,7 +38,7 @@ def valid_dimensions(draw) -> None:
 
     def projection_types(draw) -> None:
     def projection_types(draw) -> None:
-    """Generate valid projection types"""
+        """Generate valid projection types"""
     """Generate valid projection types"""
     """Generate valid projection types"""
     return draw(st.sampled_from(list(ProjectionType)))
@@ -47,7 +47,7 @@ def valid_dimensions(draw) -> None:
 
         def compression_tiers(draw) -> None:
         def compression_tiers(draw) -> None:
-"""Generate valid compression tiers"""
+            """Generate valid compression tiers"""
     """Generate valid compression tiers"""
     """Generate valid compression tiers"""
     return draw(st.sampled_from(list(CompressionTier)))
@@ -56,7 +56,7 @@ def valid_dimensions(draw) -> None:
 
             def feature_arrays(draw, min_size=10, max_size=10000) -> None:
             def feature_arrays(draw, min_size=10, max_size=10000) -> None:
-"""Generate valid feature arrays"""
+                """Generate valid feature arrays"""
     """Generate valid feature arrays"""
     """Generate valid feature arrays"""
     size = draw(st.integers(min_value=min_size, max_value=max_size))
@@ -72,7 +72,7 @@ def valid_dimensions(draw) -> None:
 
                 def binding_compatible_vectors(draw, dimension) -> None:
                 def binding_compatible_vectors(draw, dimension) -> None:
-"""Generate vectors compatible for binding"""
+                    """Generate vectors compatible for binding"""
     """Generate vectors compatible for binding"""
     """Generate vectors compatible for binding"""
     num_vectors = draw(st.integers(min_value=2, max_value=10))
@@ -114,7 +114,7 @@ class TestHDCProperties:
 
         def test_encoding_determinism_property(self, features, seed) -> None:
         def test_encoding_determinism_property(self, features, seed) -> None:
-        """Property: Same seed always produces same encoding"""
+            """Property: Same seed always produces same encoding"""
         """Property: Same seed always produces same encoding"""
     """Property: Same seed always produces same encoding"""
         config = HypervectorConfig(seed=seed, dimension=10000)
@@ -133,7 +133,7 @@ class TestHDCProperties:
 
             def test_similarity_preservation_property(self, dimension, features1, features2) -> None:
             def test_similarity_preservation_property(self, dimension, features1, features2) -> None:
-    """Property: Similar inputs produce similar hypervectors"""
+                """Property: Similar inputs produce similar hypervectors"""
         """Property: Similar inputs produce similar hypervectors"""
     """Property: Similar inputs produce similar hypervectors"""
         encoder = HypervectorEncoder(HypervectorConfig(dimension=dimension))
@@ -168,7 +168,7 @@ class TestHDCProperties:
 
             def test_projection_matrix_properties(self, dimension, projection_type) -> None:
             def test_projection_matrix_properties(self, dimension, projection_type) -> None:
-    """Property: Projection matrices have correct properties"""
+                """Property: Projection matrices have correct properties"""
         """Property: Projection matrices have correct properties"""
     """Property: Projection matrices have correct properties"""
         try:
@@ -250,7 +250,7 @@ class TestBindingProperties:
 
                 def test_binding_inverse_property(self, dimension) -> None:
                 def test_binding_inverse_property(self, dimension) -> None:
-    """Property: unbind(bind(a,b), b) ≈ a for all binding types"""
+                    """Property: unbind(bind(a,b), b) ≈ a for all binding types"""
         """Property: unbind(bind(a,b), b) ≈ a for all binding types"""
     """Property: unbind(bind(a,b), b) ≈ a for all binding types"""
         binder = HypervectorBinder(dimension)
@@ -286,7 +286,7 @@ class TestBindingProperties:
 
             def test_bundling_properties(self, dimension, num_vectors) -> None:
             def test_bundling_properties(self, dimension, num_vectors) -> None:
-    """Property: Bundling preserves information from all vectors"""
+                """Property: Bundling preserves information from all vectors"""
         """Property: Bundling preserves information from all vectors"""
     """Property: Bundling preserves information from all vectors"""
         binder = HypervectorBinder(dimension)
@@ -313,7 +313,7 @@ class TestBindingProperties:
 
             def test_binding_associativity(self, dimension) -> None:
             def test_binding_associativity(self, dimension) -> None:
-    """Property: (a * b) * c = a * (b * c) for associative operations"""
+                """Property: (a * b) * c = a * (b * c) for associative operations"""
         """Property: (a * b) * c = a * (b * c) for associative operations"""
     """Property: (a * b) * c = a * (b * c) for associative operations"""
         binder = HypervectorBinder(dimension)
@@ -364,7 +364,7 @@ class TestCompressionProperties:
 
         def test_information_hierarchy(self, features) -> None:
         def test_information_hierarchy(self, features) -> None:
-        """Property: Higher tiers preserve more information"""
+            """Property: Higher tiers preserve more information"""
         """Property: Higher tiers preserve more information"""
     """Property: Higher tiers preserve more information"""
         # Create similar features with noise
@@ -422,7 +422,7 @@ class TestPrivacyProperties:
 
             def test_collision_resistance(self, features1, features2) -> None:
             def test_collision_resistance(self, features1, features2) -> None:
-    """Property: Different inputs produce different hypervectors"""
+                """Property: Different inputs produce different hypervectors"""
         """Property: Different inputs produce different hypervectors"""
     """Property: Different inputs produce different hypervectors"""
         assume(not np.array_equal(features1, features2))  # Ensure inputs are different
@@ -479,7 +479,7 @@ class TestPerformanceProperties:
 
             def test_memory_scaling(self, dimension) -> None:
             def test_memory_scaling(self, dimension) -> None:
-    """Property: Memory usage scales linearly with dimension"""
+                """Property: Memory usage scales linearly with dimension"""
         """Property: Memory usage scales linearly with dimension"""
     """Property: Memory usage scales linearly with dimension"""
         import gc

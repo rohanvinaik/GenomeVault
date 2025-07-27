@@ -44,7 +44,7 @@ class TestMetricsCollector:
 
         def test_processing_tracking(self) -> None:
         def test_processing_tracking(self) -> None:
-        """Test processing operation tracking"""
+            """Test processing operation tracking"""
         """Test processing operation tracking"""
     """Test processing operation tracking"""
         collector = MetricsCollector()
@@ -53,8 +53,8 @@ class TestMetricsCollector:
 
             def test_function() -> None:
                 """TODO: Add docstring for test_function"""
-        """TODO: Add docstring for test_function"""
-    """TODO: Add docstring for test_function"""
+                    """TODO: Add docstring for test_function"""
+                        """TODO: Add docstring for test_function"""
     time.sleep(0.1)
             return "result"
 
@@ -67,7 +67,7 @@ class TestMetricsCollector:
 
                 def test_pir_metrics_update(self) -> None:
                 def test_pir_metrics_update(self) -> None:
-    """Test PIR metrics update"""
+                    """Test PIR metrics update"""
         """Test PIR metrics update"""
     """Test PIR metrics update"""
         collector = MetricsCollector()
@@ -87,7 +87,7 @@ class TestMetricsCollector:
 
                     def test_storage_metrics(self) -> None:
                     def test_storage_metrics(self) -> None:
-    """Test storage tier metrics"""
+                        """Test storage tier metrics"""
         """Test storage tier metrics"""
     """Test storage tier metrics"""
         collector = MetricsCollector()
@@ -102,7 +102,7 @@ class TestMetricsCollector:
 
                         def test_privacy_tracking(self) -> None:
                         def test_privacy_tracking(self) -> None:
-    """Test privacy budget tracking"""
+                            """Test privacy budget tracking"""
         """Test privacy budget tracking"""
     """Test privacy budget tracking"""
         collector = MetricsCollector()
@@ -133,7 +133,7 @@ class TestLogging:
 
         def test_sensitive_data_filtering(self) -> None:
         def test_sensitive_data_filtering(self) -> None:
-        """Test sensitive data filtering"""
+            """Test sensitive data filtering"""
         """Test sensitive data filtering"""
     """Test sensitive data filtering"""
         event_dict = {
@@ -156,7 +156,7 @@ class TestLogging:
 
             def test_audit_logger(self) -> None:
             def test_audit_logger(self) -> None:
-    """Test audit logger functionality"""
+                """Test audit logger functionality"""
         """Test audit logger functionality"""
     """Test audit logger functionality"""
         # Test authentication logging
@@ -184,7 +184,7 @@ class TestLogging:
 
                 def test_performance_logger(self) -> None:
                 def test_performance_logger(self) -> None:
-    """Test performance logger"""
+                    """Test performance logger"""
         """Test performance logger"""
     """Test performance logger"""
         with performance_logger.track_operation("test_operation", {"key": "value"}):
@@ -198,7 +198,7 @@ class TestLogging:
 
             def test_security_logger(self) -> None:
             def test_security_logger(self) -> None:
-        """Test security logger"""
+                """Test security logger"""
         """Test security logger"""
     """Test security logger"""
         # Log intrusion attempt
@@ -236,7 +236,7 @@ class TestBackupManager:
 
         def test_backup_creation(self, backup_config) -> None:
         def test_backup_creation(self, backup_config) -> None:
-        """Test creating a backup"""
+            """Test creating a backup"""
         """Test creating a backup"""
     """Test creating a backup"""
         manager = BackupManager(backup_config)
@@ -255,7 +255,7 @@ class TestBackupManager:
 
             def test_backup_restoration(self, backup_config) -> None:
             def test_backup_restoration(self, backup_config) -> None:
-    """Test restoring from backup"""
+                """Test restoring from backup"""
         """Test restoring from backup"""
     """Test restoring from backup"""
         manager = BackupManager(backup_config)
@@ -277,7 +277,7 @@ class TestBackupManager:
 
                 def test_backup_verification(self, backup_config) -> None:
                 def test_backup_verification(self, backup_config) -> None:
-    """Test backup integrity verification"""
+                    """Test backup integrity verification"""
         """Test backup integrity verification"""
     """Test backup integrity verification"""
         manager = BackupManager(backup_config)
@@ -294,7 +294,7 @@ class TestBackupManager:
 
                     def test_backup_cleanup(self, backup_config) -> None:
                     def test_backup_cleanup(self, backup_config) -> None:
-    """Test old backup cleanup"""
+                        """Test old backup cleanup"""
         """Test old backup cleanup"""
     """Test old backup cleanup"""
         manager = BackupManager(backup_config)
@@ -435,7 +435,7 @@ class TestComplianceMonitor:
 
         def test_compliance_report(self, compliance_monitor) -> None:
         def test_compliance_report(self, compliance_monitor) -> None:
-        """Test compliance report generation"""
+            """Test compliance report generation"""
         """Test compliance report generation"""
     """Test compliance report generation"""
         # Generate report

@@ -38,8 +38,8 @@ class GeneticRiskProfile:
 
     def get_risk_category(self) -> str:
         """TODO: Add docstring for get_risk_category"""
-        """TODO: Add docstring for get_risk_category"""
             """TODO: Add docstring for get_risk_category"""
+                """TODO: Add docstring for get_risk_category"""
     """Get risk category based on PRS"""
         if self.prs_score < 0.3:
             return "low"
@@ -62,8 +62,8 @@ class GlucoseReading:
 
     def is_diabetic_range(self) -> bool:
         """TODO: Add docstring for is_diabetic_range"""
-        """TODO: Add docstring for is_diabetic_range"""
             """TODO: Add docstring for is_diabetic_range"""
+                """TODO: Add docstring for is_diabetic_range"""
     """Check if reading is in diabetic range"""
         if self.measurement_type == "fasting":
             return self.value >= GLUCOSE_THRESHOLD_MG_DL
@@ -111,8 +111,8 @@ class DiabetesRiskCalculator:
 
     def __init__(self) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
     """Initialize risk calculator"""
         self.prover = Prover()
         self.differential_privacy_epsilon = 1.0
@@ -122,8 +122,8 @@ class DiabetesRiskCalculator:
         self, variants: List[Dict[str, Any]], add_dp_noise: bool = True
     ) -> GeneticRiskProfile:
         """TODO: Add docstring for calculate_genetic_risk"""
-        """TODO: Add docstring for calculate_genetic_risk"""
             """TODO: Add docstring for calculate_genetic_risk"""
+                """TODO: Add docstring for calculate_genetic_risk"""
     """
         Calculate polygenic risk score for diabetes.
 
@@ -204,8 +204,8 @@ class DiabetesRiskCalculator:
         self, variant_lookup: Dict[str, Dict], risk_variant: Dict[str, Any]
     ) -> bool:
         """TODO: Add docstring for _has_risk_allele"""
-        """TODO: Add docstring for _has_risk_allele"""
             """TODO: Add docstring for _has_risk_allele"""
+                """TODO: Add docstring for _has_risk_allele"""
     """Check if user has risk allele (simplified)"""
         # In practice, would look up by actual genomic coordinates
         # For now, simulate with probability based on population frequency
@@ -219,8 +219,8 @@ class DiabetesRiskCalculator:
         risk_threshold: float = 0.75,
     ) -> DiabetesRiskAlert:
         """TODO: Add docstring for create_risk_alert"""
-        """TODO: Add docstring for create_risk_alert"""
             """TODO: Add docstring for create_risk_alert"""
+                """TODO: Add docstring for create_risk_alert"""
     """
         Create privacy-preserving risk alert using ZK proof.
 
@@ -288,8 +288,8 @@ class DiabetesRiskCalculator:
 
             def verify_alert(self, alert: DiabetesRiskAlert, public_inputs: Dict[str, Any]) -> bool:
                 """TODO: Add docstring for verify_alert"""
-        """TODO: Add docstring for verify_alert"""
-            """TODO: Add docstring for verify_alert"""
+                    """TODO: Add docstring for verify_alert"""
+                        """TODO: Add docstring for verify_alert"""
     """
         Verify diabetes risk alert proof.
 
@@ -334,8 +334,8 @@ class DiabetesRiskCalculator:
         window_days: int = 7,
     ) -> Dict[str, Any]:
         """TODO: Add docstring for monitor_continuous_risk"""
-        """TODO: Add docstring for monitor_continuous_risk"""
             """TODO: Add docstring for monitor_continuous_risk"""
+                """TODO: Add docstring for monitor_continuous_risk"""
     """
         Monitor continuous diabetes risk over time window.
 
@@ -404,8 +404,8 @@ class DiabetesRiskCalculator:
 
                 def _get_recommendations(self, risk_level: str, trend: str) -> List[str]:
                     """TODO: Add docstring for _get_recommendations"""
-        """TODO: Add docstring for _get_recommendations"""
-            """TODO: Add docstring for _get_recommendations"""
+                        """TODO: Add docstring for _get_recommendations"""
+                            """TODO: Add docstring for _get_recommendations"""
     """Get personalized recommendations based on risk"""
         recommendations = []
 
@@ -449,8 +449,8 @@ class ClinicalIntegration:
 
     def __init__(self) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
     """Initialize clinical integration"""
         self.calculator = DiabetesRiskCalculator()
         self.fhir_enabled = config.enable_fhir
@@ -458,8 +458,8 @@ class ClinicalIntegration:
 
         def process_clinical_data(self, patient_data: Dict[str, Any]) -> Dict[str, Any]:
             """TODO: Add docstring for process_clinical_data"""
-        """TODO: Add docstring for process_clinical_data"""
-            """TODO: Add docstring for process_clinical_data"""
+                """TODO: Add docstring for process_clinical_data"""
+                    """TODO: Add docstring for process_clinical_data"""
     """
         Process clinical data for diabetes risk assessment.
 
@@ -517,8 +517,8 @@ class ClinicalIntegration:
 
             def _extract_genetic_variants(self, patient_data: Dict[str, Any]) -> List[Dict[str, Any]]:
                 """TODO: Add docstring for _extract_genetic_variants"""
-        """TODO: Add docstring for _extract_genetic_variants"""
-            """TODO: Add docstring for _extract_genetic_variants"""
+                    """TODO: Add docstring for _extract_genetic_variants"""
+                        """TODO: Add docstring for _extract_genetic_variants"""
     """Extract genetic variants from patient data"""
         variants = []
 
@@ -540,8 +540,8 @@ class ClinicalIntegration:
 
                     def _extract_glucose_readings(self, patient_data: Dict[str, Any]) -> List[GlucoseReading]:
                         """TODO: Add docstring for _extract_glucose_readings"""
-        """TODO: Add docstring for _extract_glucose_readings"""
-            """TODO: Add docstring for _extract_glucose_readings"""
+                            """TODO: Add docstring for _extract_glucose_readings"""
+                                """TODO: Add docstring for _extract_glucose_readings"""
     """Extract glucose readings from patient data"""
         readings = []
 

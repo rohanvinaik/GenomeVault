@@ -37,7 +37,7 @@ class TestPIRClient:
 
         def test_query_generation(self, client) -> None:
         def test_query_generation(self, client) -> None:
-        """Test PIR query generation"""
+            """Test PIR query generation"""
         """Test PIR query generation"""
     """Test PIR query generation"""
         query = client._generate_query(index=42, database_size=1000)
@@ -60,7 +60,7 @@ class TestPIRClient:
 
             def test_privacy_guarantee_calculation(self, client) -> None:
             def test_privacy_guarantee_calculation(self, client) -> None:
-        """Test privacy guarantee calculations"""
+                """Test privacy guarantee calculations"""
         """Test privacy guarantee calculations"""
     """Test privacy guarantee calculations"""
         # With 3 servers, 98% honest
@@ -74,7 +74,7 @@ class TestPIRClient:
 
                 def test_insufficient_servers(self) -> None:
                 def test_insufficient_servers(self) -> None:
-    """Test error with insufficient servers"""
+                    """Test error with insufficient servers"""
         """Test error with insufficient servers"""
     """Test error with insufficient servers"""
         with pytest.raises(PIRError):
@@ -134,7 +134,7 @@ class TestPIRServer:
 
         def server(self, server_config) -> None:
         def server(self, server_config) -> None:
-        """Create PIR server"""
+            """Create PIR server"""
         """Create PIR server"""
     """Create PIR server"""
         return PIRServer(server_config)
@@ -184,7 +184,7 @@ class TestPIRServer:
 
             def test_statistics(self, server) -> None:
             def test_statistics(self, server) -> None:
-        """Test server statistics"""
+                """Test server statistics"""
         """Test server statistics"""
     """Test server statistics"""
         stats = server.get_statistics()
@@ -219,8 +219,8 @@ class TestPIRIntegration:
         # Mock HTTP client to use local servers
         async def mock_query_server(server_url, shard_id, query) -> None:
             """TODO: Add docstring for mock_query_server"""
-            """TODO: Add docstring for mock_query_server"""
-    """TODO: Add docstring for mock_query_server"""
+                """TODO: Add docstring for mock_query_server"""
+                    """TODO: Add docstring for mock_query_server"""
     response = await servers[shard_id].handle_query(
                 {
                     "query_id": query.query_id,

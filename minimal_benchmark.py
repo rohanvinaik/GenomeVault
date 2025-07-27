@@ -39,7 +39,7 @@ class MinimalGenomicEncoder:
 
         def _init_base_vectors(self):
         def _init_base_vectors(self):
-        """Initialize base vectors"""
+            """Initialize base vectors"""
     """Initialize base vectors"""
     """Initialize base vectors"""
         vectors = {}
@@ -55,7 +55,7 @@ class MinimalGenomicEncoder:
 
             def encode_variant(self, chromosome, position, ref, alt):
             def encode_variant(self, chromosome, position, ref, alt):
-        """Encode a single variant"""
+                """Encode a single variant"""
     """Encode a single variant"""
     """Encode a single variant"""
         # Simple encoding: combine base vectors
@@ -73,7 +73,7 @@ class MinimalGenomicEncoder:
 
             def encode_genome(self, variants):
             def encode_genome(self, variants):
-        """Encode multiple variants"""
+                """Encode multiple variants"""
     """Encode multiple variants"""
     """Encode multiple variants"""
         if not variants:

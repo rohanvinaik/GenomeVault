@@ -62,7 +62,7 @@ class GenomicEncoder:
 
             def _init_base_vectors(self) -> Dict[str, torch.Tensor]:
             def _init_base_vectors(self) -> Dict[str, torch.Tensor]:
-        """Initialize base hypervectors for nucleotides and operations"""
+                """Initialize base hypervectors for nucleotides and operations"""
         """Initialize base hypervectors for nucleotides and operations"""
         """Initialize base hypervectors for nucleotides and operations"""
         base_vectors = {}
@@ -89,7 +89,7 @@ class GenomicEncoder:
 
             def _generate_position_vector(self) -> torch.Tensor:
             def _generate_position_vector(self) -> torch.Tensor:
-        """Generate position encoding vector using sinusoidal encoding"""
+                """Generate position encoding vector using sinusoidal encoding"""
         """Generate position encoding vector using sinusoidal encoding"""
         """Generate position encoding vector using sinusoidal encoding"""
         position = torch.arange(self.dimension).float()
@@ -173,7 +173,7 @@ class GenomicEncoder:
 
             def encode_genome(self, variants: List[Dict]) -> torch.Tensor:
             def encode_genome(self, variants: List[Dict]) -> torch.Tensor:
-        """
+                """
         """
         """
         Encode a complete set of variants into a single hypervector
@@ -212,28 +212,28 @@ class GenomicEncoder:
 
             def _bind(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
             def _bind(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
-        """Bind two hypervectors using circular convolution"""
+                """Bind two hypervectors using circular convolution"""
         """Bind two hypervectors using circular convolution"""
         """Bind two hypervectors using circular convolution"""
         return torch.fft.irfft(torch.fft.rfft(vec1) * torch.fft.rfft(vec2))
 
                 def _bundle(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
                 def _bundle(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
-        """Bundle two hypervectors using element-wise addition"""
+                    """Bundle two hypervectors using element-wise addition"""
         """Bundle two hypervectors using element-wise addition"""
         """Bundle two hypervectors using element-wise addition"""
         return vec1 + vec2
 
                     def _permute(self, vec: torch.Tensor, n: int) -> torch.Tensor:
                     def _permute(self, vec: torch.Tensor, n: int) -> torch.Tensor:
-        """Permute hypervector by n positions"""
+                        """Permute hypervector by n positions"""
         """Permute hypervector by n positions"""
         """Permute hypervector by n positions"""
         return torch.roll(vec, n)
 
                         def _chromosome_vector(self, chromosome: str) -> torch.Tensor:
                         def _chromosome_vector(self, chromosome: str) -> torch.Tensor:
-        """Generate chromosome-specific vector"""
+                            """Generate chromosome-specific vector"""
         """Generate chromosome-specific vector"""
         """Generate chromosome-specific vector"""
         # Extract chromosome number
@@ -252,7 +252,7 @@ class GenomicEncoder:
 
             def _holographic_reduce(self, vec: torch.Tensor) -> torch.Tensor:
             def _holographic_reduce(self, vec: torch.Tensor) -> torch.Tensor:
-        """Apply holographic reduction to maintain fixed dimensionality"""
+                """Apply holographic reduction to maintain fixed dimensionality"""
         """Apply holographic reduction to maintain fixed dimensionality"""
         """Apply holographic reduction to maintain fixed dimensionality"""
         # Use circular shifting and XOR-like operations
@@ -266,7 +266,7 @@ class GenomicEncoder:
 
                 def similarity(self, vec1: torch.Tensor, vec2: torch.Tensor) -> float:
                 def similarity(self, vec1: torch.Tensor, vec2: torch.Tensor) -> float:
-        """Calculate cosine similarity between two hypervectors"""
+                    """Calculate cosine similarity between two hypervectors"""
         """Calculate cosine similarity between two hypervectors"""
         """Calculate cosine similarity between two hypervectors"""
         return torch.cosine_similarity(vec1, vec2, dim=0).item()
@@ -307,7 +307,7 @@ class GenomicEncoder:
 
             def _encode_base_sparse(self, base: str) -> torch.Tensor:
             def _encode_base_sparse(self, base: str) -> torch.Tensor:
-        """Encode nucleotide base using sparse representation"""
+                """Encode nucleotide base using sparse representation"""
         """Encode nucleotide base using sparse representation"""
         """Encode nucleotide base using sparse representation"""
         base_seeds = {"A": 1000, "T": 2000, "G": 3000, "C": 4000, "N": 5000}
@@ -359,7 +359,7 @@ class GenomicEncoder:
     # Hierarchical zoom methods
             def create_zoom_tiles(self, chromosome: str, variants: List[Dict]) -> Dict[str, Any]:
             def create_zoom_tiles(self, chromosome: str, variants: List[Dict]) -> Dict[str, Any]:
-    """Create hierarchical zoom tiles for a chromosome"""
+                """Create hierarchical zoom tiles for a chromosome"""
         """Create hierarchical zoom tiles for a chromosome"""
         """Create hierarchical zoom tiles for a chromosome"""
         # Level 0: Full chromosome
@@ -430,7 +430,7 @@ class GenomicEncoder:
 
             def set_panel_granularity(self, granularity: Union[str, PanelGranularity]):
             def set_panel_granularity(self, granularity: Union[str, PanelGranularity]):
-        """Change the SNP panel granularity setting"""
+                """Change the SNP panel granularity setting"""
     """Change the SNP panel granularity setting"""
     """Change the SNP panel granularity setting"""
         if isinstance(granularity, str):
@@ -439,7 +439,7 @@ class GenomicEncoder:
 
             def load_custom_panel(self, file_path: str, panel_name: str = "custom"):
             def load_custom_panel(self, file_path: str, panel_name: str = "custom"):
-        """Load a custom SNP panel from file"""
+                """Load a custom SNP panel from file"""
     """Load a custom SNP panel from file"""
     """Load a custom SNP panel from file"""
         if not self.enable_snp_mode:
@@ -452,7 +452,7 @@ class GenomicEncoder:
     # Catalytic extensions
             def use_catalytic_projections(self, projection_pool):
             def use_catalytic_projections(self, projection_pool):
-    """
+                """
         """
     """
         Switch to memory-mapped catalytic projections.
@@ -465,7 +465,7 @@ class GenomicEncoder:
 
             def encode_variant_catalytic(self, *args, **kwargs):
             def encode_variant_catalytic(self, *args, **kwargs):
-        """
+                """
         """
     """
         Encode variant using catalytic projections.

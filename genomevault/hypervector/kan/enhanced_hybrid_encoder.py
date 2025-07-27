@@ -74,8 +74,8 @@ class EnhancedKANHybridEncoder(nn.Module):
         compression_strategy: CompressionStrategy = CompressionStrategy.ADAPTIVE,
     ) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
     super().__init__()
 
         # Core parameters
@@ -139,8 +139,8 @@ class EnhancedKANHybridEncoder(nn.Module):
 
             def _create_kan_projection(self, in_dim: int, out_dim: int) -> nn.Module:
                 """TODO: Add docstring for _create_kan_projection"""
-        """TODO: Add docstring for _create_kan_projection"""
-            """TODO: Add docstring for _create_kan_projection"""
+                    """TODO: Add docstring for _create_kan_projection"""
+                        """TODO: Add docstring for _create_kan_projection"""
     """Create KAN-based domain projection"""
         if in_dim == out_dim:
             # Identity projection with learnable KAN transformation
@@ -162,8 +162,8 @@ class EnhancedKANHybridEncoder(nn.Module):
 
             def _create_privacy_mixer(self) -> nn.Module:
                 """TODO: Add docstring for _create_privacy_mixer"""
-        """TODO: Add docstring for _create_privacy_mixer"""
-            """TODO: Add docstring for _create_privacy_mixer"""
+                    """TODO: Add docstring for _create_privacy_mixer"""
+                        """TODO: Add docstring for _create_privacy_mixer"""
     """Create privacy-preserving mixer using KAN layers"""
         return nn.Sequential(
             LinearKAN(self.compressed_dim, self.compressed_dim * 2),
@@ -175,15 +175,15 @@ class EnhancedKANHybridEncoder(nn.Module):
 
                 def _create_noise_generator(self) -> nn.Module:
                     """TODO: Add docstring for _create_noise_generator"""
-        """TODO: Add docstring for _create_noise_generator"""
-            """TODO: Add docstring for _create_noise_generator"""
+                        """TODO: Add docstring for _create_noise_generator"""
+                            """TODO: Add docstring for _create_noise_generator"""
     """Create structured noise generator for differential privacy"""
         return nn.Sequential(LinearKAN(self.compressed_dim, self.compressed_dim), nn.Tanh())
 
                     def _create_obfuscator(self) -> nn.Module:
                         """TODO: Add docstring for _create_obfuscator"""
-        """TODO: Add docstring for _create_obfuscator"""
-            """TODO: Add docstring for _create_obfuscator"""
+                            """TODO: Add docstring for _create_obfuscator"""
+                                """TODO: Add docstring for _create_obfuscator"""
     """Create obfuscation layer"""
         return nn.Sequential(LinearKAN(self.compressed_dim, self.compressed_dim), nn.Sigmoid())
 
@@ -194,8 +194,8 @@ class EnhancedKANHybridEncoder(nn.Module):
         privacy_level: str = "sensitive",
     ) -> torch.Tensor:
         """TODO: Add docstring for encode_genomic_data"""
-        """TODO: Add docstring for encode_genomic_data"""
             """TODO: Add docstring for encode_genomic_data"""
+                """TODO: Add docstring for encode_genomic_data"""
     """
         Enhanced genomic data encoding with KAN-HD hybrid approach
 
@@ -269,8 +269,8 @@ class EnhancedKANHybridEncoder(nn.Module):
         specifications: Dict[str, EncodingSpecification],
     ) -> Dict[str, MultiResolutionVector]:
         """TODO: Add docstring for encode_multimodal_data"""
-        """TODO: Add docstring for encode_multimodal_data"""
             """TODO: Add docstring for encode_multimodal_data"""
+                """TODO: Add docstring for encode_multimodal_data"""
     """
         Encode multi-modal genomic data with hierarchical resolution
 
@@ -304,8 +304,8 @@ class EnhancedKANHybridEncoder(nn.Module):
         binding_strategy: str = "hierarchical",
     ) -> MultiResolutionVector:
         """TODO: Add docstring for bind_modalities"""
-        """TODO: Add docstring for bind_modalities"""
             """TODO: Add docstring for bind_modalities"""
+                """TODO: Add docstring for bind_modalities"""
     """Bind multiple modalities into unified representation"""
         return self.hierarchical_encoder.bind_multimodal_vectors(
             multi_res_vectors, binding_strategy
@@ -315,8 +315,8 @@ class EnhancedKANHybridEncoder(nn.Module):
         self, compressed: torch.Tensor, privacy_level: str
     ) -> torch.Tensor:
         """TODO: Add docstring for _apply_privacy_transformations"""
-        """TODO: Add docstring for _apply_privacy_transformations"""
             """TODO: Add docstring for _apply_privacy_transformations"""
+                """TODO: Add docstring for _apply_privacy_transformations"""
     """Apply privacy transformations based on level"""
         result = compressed
 
@@ -345,8 +345,8 @@ class EnhancedKANHybridEncoder(nn.Module):
         self, original: torch.Tensor, compressed: torch.Tensor
     ) -> float:
         """TODO: Add docstring for _estimate_compression_ratio"""
-        """TODO: Add docstring for _estimate_compression_ratio"""
             """TODO: Add docstring for _estimate_compression_ratio"""
+                """TODO: Add docstring for _estimate_compression_ratio"""
     """Estimate achieved compression ratio"""
         original_bits = original.numel() * 32  # Assuming float32
         compressed_bits = compressed.numel() * 32
@@ -354,8 +354,8 @@ class EnhancedKANHybridEncoder(nn.Module):
 
         def _compute_quality_score(self, original: torch.Tensor, compressed: torch.Tensor) -> float:
             """TODO: Add docstring for _compute_quality_score"""
-        """TODO: Add docstring for _compute_quality_score"""
-            """TODO: Add docstring for _compute_quality_score"""
+                """TODO: Add docstring for _compute_quality_score"""
+                    """TODO: Add docstring for _compute_quality_score"""
     """Compute quality score for compression"""
         # Reconstruct and compare
         try:
@@ -381,8 +381,8 @@ class EnhancedKANHybridEncoder(nn.Module):
         self, encoding_time: float, compression_ratio: float, privacy_level: str, data_size: int
     ) -> None:
         """TODO: Add docstring for _update_performance_stats"""
-        """TODO: Add docstring for _update_performance_stats"""
             """TODO: Add docstring for _update_performance_stats"""
+                """TODO: Add docstring for _update_performance_stats"""
     """Update performance statistics"""
         stats = {
             "timestamp": time.time(),
@@ -416,8 +416,8 @@ class EnhancedKANHybridEncoder(nn.Module):
         self, compressed: torch.Tensor, compression_level: Optional[str] = None
     ) -> torch.Tensor:
         """TODO: Add docstring for decode_compressed_data"""
-        """TODO: Add docstring for decode_compressed_data"""
             """TODO: Add docstring for decode_compressed_data"""
+                """TODO: Add docstring for decode_compressed_data"""
     """
         Decode compressed representation back to hypervector space
 
@@ -446,8 +446,8 @@ class EnhancedKANHybridEncoder(nn.Module):
 
             def extract_scientific_patterns(self, data: torch.Tensor) -> Dict[str, Any]:
                 """TODO: Add docstring for extract_scientific_patterns"""
-        """TODO: Add docstring for extract_scientific_patterns"""
-            """TODO: Add docstring for extract_scientific_patterns"""
+                    """TODO: Add docstring for extract_scientific_patterns"""
+                        """TODO: Add docstring for extract_scientific_patterns"""
     """
         Extract scientifically interpretable patterns
 
@@ -489,8 +489,8 @@ class EnhancedKANHybridEncoder(nn.Module):
 
             def get_performance_summary(self) -> Dict[str, Any]:
                 """TODO: Add docstring for get_performance_summary"""
-        """TODO: Add docstring for get_performance_summary"""
-            """TODO: Add docstring for get_performance_summary"""
+                    """TODO: Add docstring for get_performance_summary"""
+                        """TODO: Add docstring for get_performance_summary"""
     """Get comprehensive performance summary"""
         if not self.performance_history:
             return {}
@@ -541,8 +541,8 @@ class EnhancedKANHybridEncoder(nn.Module):
         target_privacy_level: Optional[str] = None,
     ) -> Dict[str, Any]:
         """TODO: Add docstring for tune_performance"""
-        """TODO: Add docstring for tune_performance"""
             """TODO: Add docstring for tune_performance"""
+                """TODO: Add docstring for tune_performance"""
     """
         Automatically tune performance parameters
 
@@ -592,8 +592,8 @@ class EnhancedKANHybridEncoder(nn.Module):
         self, participant_id: str, institution_type: str, is_coordinator: bool = False
     ) -> Dict[str, Any]:
         """TODO: Add docstring for enable_federated_mode"""
-        """TODO: Add docstring for enable_federated_mode"""
             """TODO: Add docstring for enable_federated_mode"""
+                """TODO: Add docstring for enable_federated_mode"""
     """
         Enable federated learning mode
 
@@ -631,8 +631,8 @@ class EnhancedKANHybridEncoder(nn.Module):
         self, original: torch.Tensor, encoded: torch.Tensor
     ) -> Dict[str, float]:
         """TODO: Add docstring for compute_privacy_guarantee"""
-        """TODO: Add docstring for compute_privacy_guarantee"""
             """TODO: Add docstring for compute_privacy_guarantee"""
+                """TODO: Add docstring for compute_privacy_guarantee"""
     """
         Compute comprehensive privacy guarantee metrics
 
@@ -675,8 +675,8 @@ class EnhancedKANHybridEncoder(nn.Module):
 
             def _estimate_entropy(self, tensor: torch.Tensor) -> float:
                 """TODO: Add docstring for _estimate_entropy"""
-        """TODO: Add docstring for _estimate_entropy"""
-            """TODO: Add docstring for _estimate_entropy"""
+                    """TODO: Add docstring for _estimate_entropy"""
+                        """TODO: Add docstring for _estimate_entropy"""
     """Estimate entropy using histogram method"""
         # Quantize to 256 levels
         tensor_flat = tensor.flatten()
@@ -698,8 +698,8 @@ class EnhancedKANHybridEncoder(nn.Module):
 
             def _estimate_mutual_information(self, original: torch.Tensor, encoded: torch.Tensor) -> float:
                 """TODO: Add docstring for _estimate_mutual_information"""
-        """TODO: Add docstring for _estimate_mutual_information"""
-            """TODO: Add docstring for _estimate_mutual_information"""
+                    """TODO: Add docstring for _estimate_mutual_information"""
+                        """TODO: Add docstring for _estimate_mutual_information"""
     """Estimate mutual information between original and encoded data"""
         # Simplified mutual information estimation
         # In practice, would use more sophisticated methods
@@ -740,8 +740,8 @@ class EnhancedKANHybridEncoder(nn.Module):
 
                 def _test_reconstruction_attacks(self, original: torch.Tensor, encoded: torch.Tensor) -> float:
                     """TODO: Add docstring for _test_reconstruction_attacks"""
-        """TODO: Add docstring for _test_reconstruction_attacks"""
-            """TODO: Add docstring for _test_reconstruction_attacks"""
+                        """TODO: Add docstring for _test_reconstruction_attacks"""
+                            """TODO: Add docstring for _test_reconstruction_attacks"""
     """Test resistance to reconstruction attacks"""
         num_trials = 50
         successful_attacks = 0
@@ -778,8 +778,8 @@ class EnhancedKANHybridEncoder(nn.Module):
 
                 def _compute_correlation(self, original: torch.Tensor, encoded: torch.Tensor) -> float:
                     """TODO: Add docstring for _compute_correlation"""
-        """TODO: Add docstring for _compute_correlation"""
-            """TODO: Add docstring for _compute_correlation"""
+                        """TODO: Add docstring for _compute_correlation"""
+                            """TODO: Add docstring for _compute_correlation"""
     """Compute correlation between original and encoded data"""
         try:
             if original.shape == encoded.shape:

@@ -77,8 +77,8 @@ async def start_streaming(
     background_tasks: BackgroundTasks = Depends(),
 ) -> Dict[str, str]:
     """TODO: Add docstring for start_streaming"""
-    """TODO: Add docstring for start_streaming"""
         """TODO: Add docstring for start_streaming"""
+            """TODO: Add docstring for start_streaming"""
     """
     Start nanopore streaming analysis.
 
@@ -152,8 +152,8 @@ async def upload_fast5(
 
 async def _process_fast5_async(stream_id: str, fast5_path: Path) -> None:
     """TODO: Add docstring for _process_fast5_async"""
-    """TODO: Add docstring for _process_fast5_async"""
         """TODO: Add docstring for _process_fast5_async"""
+            """TODO: Add docstring for _process_fast5_async"""
     """Background task for Fast5 processing."""
     processor = _processors[stream_id]
     results = []
@@ -163,8 +163,8 @@ async def _process_fast5_async(stream_id: str, fast5_path: Path) -> None:
 
     async def collect_results(result) -> None:
         """TODO: Add docstring for collect_results"""
-        """TODO: Add docstring for collect_results"""
             """TODO: Add docstring for collect_results"""
+                """TODO: Add docstring for collect_results"""
     results.append(result)
 
         # Detect biological signals
@@ -210,8 +210,8 @@ async def _process_fast5_async(stream_id: str, fast5_path: Path) -> None:
 @router.get("/stream/{stream_id}/status")
 async def get_stream_status(stream_id: str) -> StreamingResult:
     """TODO: Add docstring for get_stream_status"""
-    """TODO: Add docstring for get_stream_status"""
         """TODO: Add docstring for get_stream_status"""
+            """TODO: Add docstring for get_stream_status"""
     """Get status of streaming analysis."""
     if stream_id not in _results_cache:
         raise HTTPException(404, f"Stream {stream_id} not found")
@@ -243,8 +243,8 @@ async def get_biological_signals(
     min_confidence: float = Query(0.5, ge=0, le=1),
 ) -> List[BiologicalSignalResult]:
     """TODO: Add docstring for get_biological_signals"""
-    """TODO: Add docstring for get_biological_signals"""
         """TODO: Add docstring for get_biological_signals"""
+            """TODO: Add docstring for get_biological_signals"""
     """Get detected biological signals."""
     if stream_id not in _results_cache:
         raise HTTPException(404, f"Stream {stream_id} not found")
@@ -287,8 +287,8 @@ async def export_results(
     format: str = Query("bedgraph", regex="^(bedgraph|bed|json)$"),
 ) -> Dict[str, Any]:
     """TODO: Add docstring for export_results"""
-    """TODO: Add docstring for export_results"""
         """TODO: Add docstring for export_results"""
+            """TODO: Add docstring for export_results"""
     """Export analysis results in various formats."""
     if stream_id not in _results_cache:
         raise HTTPException(404, f"Stream {stream_id} not found")
@@ -349,8 +349,8 @@ async def generate_proof(
     max_slices: int = Query(10, description="Maximum slices to include in proof"),
 ) -> Dict[str, Any]:
     """TODO: Add docstring for generate_proof"""
-    """TODO: Add docstring for generate_proof"""
         """TODO: Add docstring for generate_proof"""
+            """TODO: Add docstring for generate_proof"""
     """Generate zero-knowledge proof of analysis."""
     if stream_id not in _processors:
         raise HTTPException(404, f"Stream {stream_id} not found")
@@ -379,8 +379,8 @@ async def generate_proof(
 @router.delete("/stream/{stream_id}")
 async def stop_streaming(stream_id: str) -> Dict[str, str]:
     """TODO: Add docstring for stop_streaming"""
-    """TODO: Add docstring for stop_streaming"""
         """TODO: Add docstring for stop_streaming"""
+            """TODO: Add docstring for stop_streaming"""
     """Stop and cleanup streaming analysis."""
     if stream_id not in _processors:
         raise HTTPException(404, f"Stream {stream_id} not found")
@@ -398,8 +398,8 @@ async def stop_streaming(stream_id: str) -> Dict[str, str]:
 @router.get("/signal-types")
 async def get_signal_types() -> List[Dict[str, str]]:
     """TODO: Add docstring for get_signal_types"""
-    """TODO: Add docstring for get_signal_types"""
         """TODO: Add docstring for get_signal_types"""
+            """TODO: Add docstring for get_signal_types"""
     """Get available biological signal types."""
     return [
         {
@@ -421,8 +421,8 @@ async def websocket_stream(
     stream_id: str,
 ) -> None:
     """TODO: Add docstring for websocket_stream"""
-    """TODO: Add docstring for websocket_stream"""
         """TODO: Add docstring for websocket_stream"""
+            """TODO: Add docstring for websocket_stream"""
     """WebSocket for real-time streaming updates."""
     await websocket.accept()
 

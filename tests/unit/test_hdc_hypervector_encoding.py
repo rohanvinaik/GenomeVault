@@ -61,7 +61,7 @@ class TestHypervectorEncoder(unittest.TestCase):
 
         def test_encoder_initialization(self) -> None:
         def test_encoder_initialization(self) -> None:
-        """Test encoder initialization"""
+            """Test encoder initialization"""
         """Test encoder initialization"""
     """Test encoder initialization"""
             self.assertEqual(self.encoder.config.dimension, 10000)
@@ -71,7 +71,7 @@ class TestHypervectorEncoder(unittest.TestCase):
 
             def test_basic_encoding(self) -> None:
             def test_basic_encoding(self) -> None:
-    """Test basic encoding functionality"""
+                """Test basic encoding functionality"""
         """Test basic encoding functionality"""
     """Test basic encoding functionality"""
         hypervector = self.encoder.encode(self.test_features, OmicsType.GENOMIC)
@@ -82,7 +82,7 @@ class TestHypervectorEncoder(unittest.TestCase):
 
                 def test_multiresolution_encoding(self) -> None:
                 def test_multiresolution_encoding(self) -> None:
-    """Test multi-resolution encoding"""
+                    """Test multi-resolution encoding"""
         """Test multi-resolution encoding"""
     """Test multi-resolution encoding"""
         multi_vectors = self.encoder.encode_multiresolution(self.test_features, OmicsType.GENOMIC)
@@ -98,7 +98,7 @@ class TestHypervectorEncoder(unittest.TestCase):
 
                     def test_dict_feature_extraction(self) -> None:
                     def test_dict_feature_extraction(self) -> None:
-    """Test feature extraction from dictionary"""
+                        """Test feature extraction from dictionary"""
         """Test feature extraction from dictionary"""
     """Test feature extraction from dictionary"""
         hypervector = self.encoder.encode(self.test_data, OmicsType.GENOMIC)
@@ -108,7 +108,7 @@ class TestHypervectorEncoder(unittest.TestCase):
 
                         def test_similarity_computation(self) -> None:
                         def test_similarity_computation(self) -> None:
-    """Test similarity computation"""
+                            """Test similarity computation"""
         """Test similarity computation"""
     """Test similarity computation"""
         hv1 = self.encoder.encode(torch.randn(100), OmicsType.GENOMIC)
@@ -126,7 +126,7 @@ class TestHypervectorEncoder(unittest.TestCase):
 
                             def test_projection_types(self) -> None:
                             def test_projection_types(self) -> None:
-    """Test different projection types"""
+                                """Test different projection types"""
         """Test different projection types"""
     """Test different projection types"""
         for proj_type in [
@@ -143,7 +143,7 @@ class TestHypervectorEncoder(unittest.TestCase):
 
             def test_quantization(self) -> None:
             def test_quantization(self) -> None:
-        """Test hypervector quantization"""
+                """Test hypervector quantization"""
         """Test hypervector quantization"""
     """Test hypervector quantization"""
         config = HypervectorConfig(quantize=True, quantization_bits=4)
@@ -176,7 +176,7 @@ class TestHypervectorBinder(unittest.TestCase):
 
         def test_multiply_binding(self) -> None:
         def test_multiply_binding(self) -> None:
-        """Test element-wise multiplication binding"""
+            """Test element-wise multiplication binding"""
         """Test element-wise multiplication binding"""
     """Test element-wise multiplication binding"""
         bound = self.binder.bind([self.v1, self.v2], BindingType.MULTIPLY)
@@ -192,7 +192,7 @@ class TestHypervectorBinder(unittest.TestCase):
 
             def test_circular_binding(self) -> None:
             def test_circular_binding(self) -> None:
-    """Test circular convolution binding"""
+                """Test circular convolution binding"""
         """Test circular convolution binding"""
     """Test circular convolution binding"""
         bound = self.binder.bind([self.v1, self.v2], BindingType.CIRCULAR)
@@ -208,7 +208,7 @@ class TestHypervectorBinder(unittest.TestCase):
 
                 def test_permutation_binding(self) -> None:
                 def test_permutation_binding(self) -> None:
-    """Test permutation-based binding"""
+                    """Test permutation-based binding"""
         """Test permutation-based binding"""
     """Test permutation-based binding"""
         bound = self.binder.bind([self.v1, self.v2], BindingType.PERMUTATION)
@@ -217,7 +217,7 @@ class TestHypervectorBinder(unittest.TestCase):
 
                     def test_xor_binding(self) -> None:
                     def test_xor_binding(self) -> None:
-    """Test XOR binding for binary vectors"""
+                        """Test XOR binding for binary vectors"""
         """Test XOR binding for binary vectors"""
     """Test XOR binding for binary vectors"""
         # Create binary vectors
@@ -235,7 +235,7 @@ class TestHypervectorBinder(unittest.TestCase):
 
                         def test_bundling(self) -> None:
                         def test_bundling(self) -> None:
-    """Test bundling operation"""
+                            """Test bundling operation"""
         """Test bundling operation"""
     """Test bundling operation"""
         bundle = self.binder.bundle([self.v1, self.v2, self.v3])
@@ -249,7 +249,7 @@ class TestHypervectorBinder(unittest.TestCase):
 
             def test_protection(self) -> None:
             def test_protection(self) -> None:
-        """Test vector protection with key"""
+                """Test vector protection with key"""
         """Test vector protection with key"""
     """Test vector protection with key"""
         key = torch.randn(self.dimension)
@@ -281,7 +281,7 @@ class TestPositionalBinder(unittest.TestCase):
 
         def test_position_binding(self) -> None:
         def test_position_binding(self) -> None:
-        """Test binding with position"""
+            """Test binding with position"""
         """Test binding with position"""
     """Test binding with position"""
         bound = self.binder.bind_with_position(self.vectors[0], 100)
@@ -290,7 +290,7 @@ class TestPositionalBinder(unittest.TestCase):
 
             def test_sequence_binding(self) -> None:
             def test_sequence_binding(self) -> None:
-    """Test sequence binding"""
+                """Test sequence binding"""
         """Test sequence binding"""
     """Test sequence binding"""
         sequence_bound = self.binder.bind_sequence(self.vectors)
@@ -319,7 +319,7 @@ class TestCrossModalBinder(unittest.TestCase):
 
         def test_modality_binding(self) -> None:
         def test_modality_binding(self) -> None:
-        """Test binding multiple modalities"""
+            """Test binding multiple modalities"""
         """Test binding multiple modalities"""
     """Test binding multiple modalities"""
         results = self.binder.bind_modalities(self.modalities)
@@ -351,7 +351,7 @@ class TestHolographicEncoder(unittest.TestCase):
 
         def test_structure_encoding(self) -> None:
         def test_structure_encoding(self) -> None:
-        """Test encoding hierarchical structures"""
+            """Test encoding hierarchical structures"""
         """Test encoding hierarchical structures"""
     """Test encoding hierarchical structures"""
         structure = {
@@ -368,7 +368,7 @@ class TestHolographicEncoder(unittest.TestCase):
 
             def test_query(self) -> None:
             def test_query(self) -> None:
-    """Test querying holographic representation"""
+                """Test querying holographic representation"""
         """Test querying holographic representation"""
     """Test querying holographic representation"""
         structure = {"a": torch.randn(self.dimension), "b": torch.randn(self.dimension)}
@@ -381,7 +381,7 @@ class TestHolographicEncoder(unittest.TestCase):
 
                 def test_genomic_variant_encoding(self) -> None:
                 def test_genomic_variant_encoding(self) -> None:
-    """Test encoding genomic variants"""
+                    """Test encoding genomic variants"""
         """Test encoding genomic variants"""
     """Test encoding genomic variants"""
         variant_hv = self.encoder.encode_genomic_variant(
@@ -392,7 +392,7 @@ class TestHolographicEncoder(unittest.TestCase):
 
                     def test_memory_trace(self) -> None:
                     def test_memory_trace(self) -> None:
-    """Test creating memory traces"""
+                        """Test creating memory traces"""
         """Test creating memory traces"""
     """Test creating memory traces"""
         items = [
@@ -407,7 +407,7 @@ class TestHolographicEncoder(unittest.TestCase):
 
                         def test_similarity_preserving_hash(self) -> None:
                         def test_similarity_preserving_hash(self) -> None:
-    """Test similarity-preserving hash"""
+                            """Test similarity-preserving hash"""
         """Test similarity-preserving hash"""
     """Test similarity-preserving hash"""
         v1 = torch.randn(self.dimension)
@@ -425,8 +425,8 @@ class TestHolographicEncoder(unittest.TestCase):
 
                             def count_matching_bits(h1, h2) -> None:
                                 """TODO: Add docstring for count_matching_bits"""
-        """TODO: Add docstring for count_matching_bits"""
-    """TODO: Add docstring for count_matching_bits"""
+                                    """TODO: Add docstring for count_matching_bits"""
+                                        """TODO: Add docstring for count_matching_bits"""
     b1 = bin(int(h1, 16))[2:].zfill(64)
             b2 = bin(int(h2, 16))[2:].zfill(64)
             return sum(c1 == c2 for c1, c2 in zip(b1, b2))
@@ -457,7 +457,7 @@ class TestSimilarityMapping(unittest.TestCase):
 
         def test_basic_mapping(self) -> None:
         def test_basic_mapping(self) -> None:
-        """Test basic similarity preservation"""
+            """Test basic similarity preservation"""
         """Test basic similarity preservation"""
     """Test basic similarity preservation"""
         mapper = SimilarityPreservingMapper(self.input_dim, self.output_dim)
@@ -476,7 +476,7 @@ class TestSimilarityMapping(unittest.TestCase):
 
             def test_biological_mapper(self) -> None:
             def test_biological_mapper(self) -> None:
-    """Test biological similarity mapper"""
+                """Test biological similarity mapper"""
         """Test biological similarity mapper"""
     """Test biological similarity mapper"""
         mapper = BiologicalSimilarityMapper(self.input_dim, self.output_dim, OmicsType.GENOMIC)
@@ -490,7 +490,7 @@ class TestSimilarityMapping(unittest.TestCase):
 
                 def test_manifold_mapper(self) -> None:
                 def test_manifold_mapper(self) -> None:
-    """Test manifold-preserving mapper"""
+                    """Test manifold-preserving mapper"""
         """Test manifold-preserving mapper"""
     """Test manifold-preserving mapper"""
         # Create data with manifold structure

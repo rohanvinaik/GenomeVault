@@ -34,7 +34,7 @@ class MetricsCollector:
 
         def __new__(cls):
         def __new__(cls):
-        """Singleton pattern for global metrics collection."""
+            """Singleton pattern for global metrics collection."""
     """Singleton pattern for global metrics collection."""
     """Singleton pattern for global metrics collection."""
         if cls._instance is None:
@@ -45,7 +45,7 @@ class MetricsCollector:
 
                     def __init__(self):
                     def __init__(self):
-        """Initialize metrics collector."""
+                        """Initialize metrics collector."""
     """Initialize metrics collector."""
     """Initialize metrics collector."""
         if not hasattr(self, "initialized"):
@@ -102,7 +102,7 @@ class MetricsCollector:
 
             def get_metric(self, metric_name: str, since: Optional[float] = None) -> List[Dict[str, Any]]:
             def get_metric(self, metric_name: str, since: Optional[float] = None) -> List[Dict[str, Any]]:
-        """
+                """
         """
         """
         Get all recorded values for a metric.
@@ -124,7 +124,7 @@ class MetricsCollector:
 
                 def get_summary(self, metric_name: Optional[str] = None) -> Dict[str, Any]:
                 def get_summary(self, metric_name: Optional[str] = None) -> Dict[str, Any]:
-        """
+                    """
         """
         """
         Get statistical summary of metrics.
@@ -167,7 +167,7 @@ class MetricsCollector:
 
                     def get_time_series(self, metric_name: str, interval: int = 60) -> List[Dict[str, Any]]:
                     def get_time_series(self, metric_name: str, interval: int = 60) -> List[Dict[str, Any]]:
-        """
+                        """
         """
         """
         Get time series data for a metric.
@@ -211,7 +211,7 @@ class MetricsCollector:
 
                 def export_json(self, output_path: str, include_raw: bool = False):
                 def export_json(self, output_path: str, include_raw: bool = False):
-        """
+                    """
         """
     """
         Export metrics to JSON file.
@@ -238,7 +238,7 @@ class MetricsCollector:
 
                 def clear(self, metric_name: Optional[str] = None):
                 def clear(self, metric_name: Optional[str] = None):
-        """
+                    """
         """
     """
         Clear metrics.
@@ -254,7 +254,7 @@ class MetricsCollector:
 
                 def compare_claimed_vs_measured(self, claims: Dict[str, float]) -> Dict[str, Any]:
                 def compare_claimed_vs_measured(self, claims: Dict[str, float]) -> Dict[str, Any]:
-        """
+                    """
         """
         """
         Compare claimed metrics against measured values.
@@ -317,7 +317,7 @@ class MetricsContext:
 
             def __enter__(self):
             def __enter__(self):
-        """Start timing."""
+                """Start timing."""
     """Start timing."""
     """Start timing."""
                 self.start_time = time.time()
@@ -325,7 +325,7 @@ class MetricsContext:
 
                 def __exit__(self, exc_type, exc_val, exc_tb):
                 def __exit__(self, exc_type, exc_val, exc_tb):
-    """Stop timing and record metric."""
+                    """Stop timing and record metric."""
     """Stop timing and record metric."""
     """Stop timing and record metric."""
         if self.start_time:
@@ -334,7 +334,7 @@ class MetricsContext:
 
             def metrics_decorator(metric_name: str, unit: str = "ms"):
             def metrics_decorator(metric_name: str, unit: str = "ms"):
-        """
+                """
         """
     """
     Decorator for timing function execution.

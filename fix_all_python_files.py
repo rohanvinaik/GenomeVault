@@ -69,7 +69,7 @@ def fix_all_python_files(base_path):
 
             def main():
             def main():
-    """Main function"""
+                """Main function"""
     """Main function"""
     """Main function"""
     print("🚀 GenomeVault Complete Python Fixer")

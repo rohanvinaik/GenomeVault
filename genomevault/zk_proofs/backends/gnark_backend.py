@@ -27,8 +27,8 @@ class GnarkBackend:
 
     def __init__(self, circuit_dir: str = "./circuits/compiled", gnark_path: Optional[str] = None) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
     """
         Initialize gnark backend.
 
@@ -56,8 +56,8 @@ class GnarkBackend:
 
             def _find_gnark_path(self) -> str:
                 """TODO: Add docstring for _find_gnark_path"""
-        """TODO: Add docstring for _find_gnark_path"""
-            """TODO: Add docstring for _find_gnark_path"""
+                    """TODO: Add docstring for _find_gnark_path"""
+                        """TODO: Add docstring for _find_gnark_path"""
     """Auto-detect gnark installation path."""
         # Check common locations
         paths = [
@@ -81,8 +81,8 @@ class GnarkBackend:
 
             def _verify_binaries(self) -> None:
                 """TODO: Add docstring for _verify_binaries"""
-        """TODO: Add docstring for _verify_binaries"""
-            """TODO: Add docstring for _verify_binaries"""
+                    """TODO: Add docstring for _verify_binaries"""
+                        """TODO: Add docstring for _verify_binaries"""
     """Verify required gnark binaries exist."""
         required = [self.prover_bin, self.verifier_bin, self.compiler_bin]
 
@@ -105,8 +105,8 @@ class GnarkBackend:
 
             def _compile_standard_circuits(self) -> None:
                 """TODO: Add docstring for _compile_standard_circuits"""
-        """TODO: Add docstring for _compile_standard_circuits"""
-            """TODO: Add docstring for _compile_standard_circuits"""
+                    """TODO: Add docstring for _compile_standard_circuits"""
+                        """TODO: Add docstring for _compile_standard_circuits"""
     """Compile standard genomic circuits."""
         standard_circuits = [
             "variant_proof",
@@ -127,8 +127,8 @@ class GnarkBackend:
 
                     def _compile_circuit(self, circuit_name: str) -> None:
                         """TODO: Add docstring for _compile_circuit"""
-        """TODO: Add docstring for _compile_circuit"""
-            """TODO: Add docstring for _compile_circuit"""
+                            """TODO: Add docstring for _compile_circuit"""
+                                """TODO: Add docstring for _compile_circuit"""
     """Compile a gnark circuit."""
         circuit_file = self.circuit_dir / f"{circuit_name}.go"
         output_file = self.circuit_dir / f"{circuit_name}.r1cs"
@@ -176,8 +176,8 @@ class GnarkBackend:
         self, circuit_name: str, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
     ) -> bytes:
         """TODO: Add docstring for generate_proof"""
-        """TODO: Add docstring for generate_proof"""
             """TODO: Add docstring for generate_proof"""
+                """TODO: Add docstring for generate_proof"""
     """
         Generate real SNARK proof using gnark.
 
@@ -247,8 +247,8 @@ class GnarkBackend:
 
                 def verify_proof(self, circuit_name: str, proof: bytes, public_inputs: Dict[str, Any]) -> bool:
                     """TODO: Add docstring for verify_proof"""
-        """TODO: Add docstring for verify_proof"""
-            """TODO: Add docstring for verify_proof"""
+                        """TODO: Add docstring for verify_proof"""
+                            """TODO: Add docstring for verify_proof"""
     """
         Verify proof using gnark verifier.
 
@@ -310,8 +310,8 @@ class GnarkBackend:
 
                 def batch_verify(self, proofs: List[Tuple[str, bytes, Dict[str, Any]]]) -> List[bool]:
                     """TODO: Add docstring for batch_verify"""
-        """TODO: Add docstring for batch_verify"""
-            """TODO: Add docstring for batch_verify"""
+                        """TODO: Add docstring for batch_verify"""
+                            """TODO: Add docstring for batch_verify"""
     """
         Batch verify multiple proofs.
 
@@ -340,8 +340,8 @@ class GnarkBackend:
 
                 def get_circuit_info(self, circuit_name: str) -> Dict[str, Any]:
                     """TODO: Add docstring for get_circuit_info"""
-        """TODO: Add docstring for get_circuit_info"""
-            """TODO: Add docstring for get_circuit_info"""
+                        """TODO: Add docstring for get_circuit_info"""
+                            """TODO: Add docstring for get_circuit_info"""
     """Get information about a compiled circuit."""
         if circuit_name not in self.compiled_circuits:
             self._compile_circuit(circuit_name)
@@ -363,8 +363,8 @@ class SimulatedBackend:
 
     def __init__(self) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
     """Initialize simulated backend."""
         logger.warning("Using simulated ZK backend - not cryptographically secure!")
         self.proof_counter = 0
@@ -373,8 +373,8 @@ class SimulatedBackend:
         self, circuit_name: str, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
     ) -> bytes:
         """TODO: Add docstring for generate_proof"""
-        """TODO: Add docstring for generate_proof"""
             """TODO: Add docstring for generate_proof"""
+                """TODO: Add docstring for generate_proof"""
     """Generate simulated proof."""
         import hashlib
 
@@ -398,8 +398,8 @@ class SimulatedBackend:
 
         def verify_proof(self, circuit_name: str, proof: bytes, public_inputs: Dict[str, Any]) -> bool:
             """TODO: Add docstring for verify_proof"""
-        """TODO: Add docstring for verify_proof"""
-            """TODO: Add docstring for verify_proof"""
+                """TODO: Add docstring for verify_proof"""
+                    """TODO: Add docstring for verify_proof"""
     """Verify simulated proof."""
         # Simulate verification time
         time.sleep(0.025)
@@ -412,8 +412,8 @@ class SimulatedBackend:
 
             def get_backend(use_real: bool = True) -> Union[GnarkBackend, SimulatedBackend]:
                 """TODO: Add docstring for get_backend"""
-        """TODO: Add docstring for get_backend"""
-        """TODO: Add docstring for get_backend"""
+                    """TODO: Add docstring for get_backend"""
+                        """TODO: Add docstring for get_backend"""
     """
     Get appropriate backend based on availability.
 

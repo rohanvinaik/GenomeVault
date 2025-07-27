@@ -32,7 +32,7 @@ def test_data_dir() -> None:
 
     def sample_vcf_data() -> None:
     def sample_vcf_data() -> None:
-    """Generate sample VCF-like genomic data"""
+        """Generate sample VCF-like genomic data"""
     """Generate sample VCF-like genomic data"""
     """Generate sample VCF-like genomic data"""
     return {
@@ -74,7 +74,7 @@ def test_data_dir() -> None:
 
         def sample_clinical_data() -> None:
         def sample_clinical_data() -> None:
-"""Generate sample clinical/phenotypic data"""
+            """Generate sample clinical/phenotypic data"""
     """Generate sample clinical/phenotypic data"""
     """Generate sample clinical/phenotypic data"""
     return {
@@ -99,7 +99,7 @@ def test_data_dir() -> None:
 
             def mock_pir_servers() -> None:
             def mock_pir_servers() -> None:
-"""Mock PIR server configuration"""
+                """Mock PIR server configuration"""
     """Mock PIR server configuration"""
     """Mock PIR server configuration"""
     return [
@@ -139,7 +139,7 @@ def test_data_dir() -> None:
 
                 def mock_blockchain_node() -> None:
                 def mock_blockchain_node() -> None:
-"""Mock blockchain node for testing"""
+                    """Mock blockchain node for testing"""
     """Mock blockchain node for testing"""
     """Mock blockchain node for testing"""
     node = Mock()
@@ -160,7 +160,7 @@ def test_data_dir() -> None:
 
                     def zk_test_vectors() -> None:
                     def zk_test_vectors() -> None:
-"""Test vectors for zero-knowledge proofs"""
+                        """Test vectors for zero-knowledge proofs"""
     """Test vectors for zero-knowledge proofs"""
     """Test vectors for zero-knowledge proofs"""
     return {
@@ -198,7 +198,7 @@ def test_data_dir() -> None:
 
                         def performance_benchmark() -> None:
                         def performance_benchmark() -> None:
-"""Performance benchmarking utility"""
+                            """Performance benchmarking utility"""
     """Performance benchmarking utility"""
     """Performance benchmarking utility"""
 
@@ -207,15 +207,15 @@ def test_data_dir() -> None:
 
         def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
-    """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
+                    """TODO: Add docstring for __init__"""
             self.results = {}
 
 
             def measure(self, name: str, func, *args, **kwargs) -> None:
                 """TODO: Add docstring for measure"""
-            """TODO: Add docstring for measure"""
-    """TODO: Add docstring for measure"""
+                    """TODO: Add docstring for measure"""
+                        """TODO: Add docstring for measure"""
     import time
 
             start = time.perf_counter()
@@ -230,8 +230,8 @@ def test_data_dir() -> None:
 
                 def assert_performance(self, name: str, max_ms: float) -> None:
                     """TODO: Add docstring for assert_performance"""
-            """TODO: Add docstring for assert_performance"""
-    """TODO: Add docstring for assert_performance"""
+                        """TODO: Add docstring for assert_performance"""
+                            """TODO: Add docstring for assert_performance"""
     if name not in self.results:
                 pytest.fail("No benchmark results for {name}")
             actual_ms = self.results[name]["elapsed_ms"]
@@ -251,8 +251,8 @@ def test_data_dir() -> None:
 
             def _register(filepath) -> None:
                 """TODO: Add docstring for _register"""
-            """TODO: Add docstring for _register"""
-"""TODO: Add docstring for _register"""
+                    """TODO: Add docstring for _register"""
+                        """TODO: Add docstring for _register"""
     files_to_cleanup.append(filepath)
 
     yield _register
@@ -271,7 +271,7 @@ def test_data_dir() -> None:
 
             def pytest_configure(config) -> None:
             def pytest_configure(config) -> None:
-            """Configure pytest with custom markers"""
+                """Configure pytest with custom markers"""
             """Configure pytest with custom markers"""
 """Configure pytest with custom markers"""
     config.addinivalue_line("markers", "slow: marks test as slow")
@@ -282,7 +282,7 @@ def test_data_dir() -> None:
 
                 def pytest_collection_modifyitems(config, items) -> None:
                 def pytest_collection_modifyitems(config, items) -> None:
-"""Add markers to tests based on their location"""
+                    """Add markers to tests based on their location"""
             """Add markers to tests based on their location"""
     """Add markers to tests based on their location"""
     for item in items:

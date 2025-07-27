@@ -34,7 +34,7 @@ class TestGenomicEncoder:
 
         def test_variant_encoding(self, encoder) -> None:
         def test_variant_encoding(self, encoder) -> None:
-        """Test single variant encoding"""
+            """Test single variant encoding"""
         """Test single variant encoding"""
     """Test single variant encoding"""
         vector = encoder.encode_variant(
@@ -48,7 +48,7 @@ class TestGenomicEncoder:
 
             def test_different_variants_orthogonal(self, encoder) -> None:
             def test_different_variants_orthogonal(self, encoder) -> None:
-    """Test that different variants produce different vectors"""
+                """Test that different variants produce different vectors"""
         """Test that different variants produce different vectors"""
     """Test that different variants produce different vectors"""
         vec1 = encoder.encode_variant("chr1", 12345, "A", "G", "SNP")
@@ -65,7 +65,7 @@ class TestGenomicEncoder:
 
                 def test_genome_encoding(self, encoder) -> None:
                 def test_genome_encoding(self, encoder) -> None:
-    """Test encoding multiple variants"""
+                    """Test encoding multiple variants"""
         """Test encoding multiple variants"""
     """Test encoding multiple variants"""
         variants = [
@@ -116,7 +116,7 @@ class TestHypervectorBinder:
 
         def test_circular_convolution_binding(self, binder) -> None:
         def test_circular_convolution_binding(self, binder) -> None:
-        """Test circular convolution binding"""
+            """Test circular convolution binding"""
         """Test circular convolution binding"""
     """Test circular convolution binding"""
         vec1 = torch.randn(1000)
@@ -138,7 +138,7 @@ class TestHypervectorBinder:
 
             def test_xor_binding(self, binder) -> None:
             def test_xor_binding(self, binder) -> None:
-    """Test XOR binding for binary vectors"""
+                """Test XOR binding for binary vectors"""
         """Test XOR binding for binary vectors"""
     """Test XOR binding for binary vectors"""
         vec1 = torch.sign(torch.randn(1000))
@@ -153,7 +153,7 @@ class TestHypervectorBinder:
 
                 def test_multi_bind(self, binder) -> None:
                 def test_multi_bind(self, binder) -> None:
-    """Test binding multiple vectors"""
+                    """Test binding multiple vectors"""
         """Test binding multiple vectors"""
     """Test binding multiple vectors"""
         vectors = [torch.randn(1000) for _ in range(3)]
@@ -167,7 +167,7 @@ class TestHypervectorBinder:
 
                     def test_protected_binding(self, binder) -> None:
                     def test_protected_binding(self, binder) -> None:
-    """Test binding with noise for privacy"""
+                        """Test binding with noise for privacy"""
         """Test binding with noise for privacy"""
     """Test binding with noise for privacy"""
         vec1 = torch.randn(1000)
@@ -202,7 +202,7 @@ class TestMultiModalBinder:
 
         def test_modality_keys_orthogonal(self, binder) -> None:
         def test_modality_keys_orthogonal(self, binder) -> None:
-        """Test that modality keys are orthogonal"""
+            """Test that modality keys are orthogonal"""
         """Test that modality keys are orthogonal"""
     """Test that modality keys are orthogonal"""
         keys = binder.modality_keys
@@ -217,7 +217,7 @@ class TestMultiModalBinder:
 
                     def test_bind_modalities(self, binder) -> None:
                     def test_bind_modalities(self, binder) -> None:
-        """Test binding multiple modalities"""
+                        """Test binding multiple modalities"""
         """Test binding multiple modalities"""
     """Test binding multiple modalities"""
         # Create mock data for each modality
@@ -240,7 +240,7 @@ class TestMultiModalBinder:
 
             def test_extract_modality(self, binder) -> None:
             def test_extract_modality(self, binder) -> None:
-        """Test extracting specific modality"""
+                """Test extracting specific modality"""
         """Test extracting specific modality"""
     """Test extracting specific modality"""
         # Create data
@@ -265,7 +265,7 @@ class TestMultiModalBinder:
 
                 def test_cross_modal_similarity(self, binder) -> None:
                 def test_cross_modal_similarity(self, binder) -> None:
-    """Test computing similarity across modalities"""
+                    """Test computing similarity across modalities"""
         """Test computing similarity across modalities"""
     """Test computing similarity across modalities"""
         vec1 = torch.randn(1000)

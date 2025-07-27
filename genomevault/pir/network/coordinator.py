@@ -76,8 +76,8 @@ class PIRCoordinator:
 
         def __init__(self) -> None:
             """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
+                    """TODO: Add docstring for __init__"""
             self.servers: Dict[str, ServerInfo] = {}
             self.active_queries: Dict[str, List[str]] = {}  # query_id -> server_ids
 
@@ -98,16 +98,16 @@ class PIRCoordinator:
 
     async def start(self) -> None:
         """TODO: Add docstring for start"""
-        """TODO: Add docstring for start"""
             """TODO: Add docstring for start"""
+                """TODO: Add docstring for start"""
     """Start coordinator background tasks."""
         self._health_check_task = asyncio.create_task(self._health_monitor_loop())
         logger.info("PIR Coordinator started")
 
     async def stop(self) -> None:
         """TODO: Add docstring for stop"""
-        """TODO: Add docstring for stop"""
             """TODO: Add docstring for stop"""
+                """TODO: Add docstring for stop"""
     """Stop coordinator."""
         if self._health_check_task:
             self._health_check_task.cancel()
@@ -118,8 +118,8 @@ class PIRCoordinator:
 
                 def register_server(self, server_info: ServerInfo) -> None:
                     """TODO: Add docstring for register_server"""
-        """TODO: Add docstring for register_server"""
-            """TODO: Add docstring for register_server"""
+                        """TODO: Add docstring for register_server"""
+                            """TODO: Add docstring for register_server"""
     """
         Register a new PIR server.
 
@@ -146,8 +146,8 @@ class PIRCoordinator:
         self, criteria: ServerSelectionCriteria, user_region: Optional[str] = None
     ) -> List[ServerInfo]:
         """TODO: Add docstring for select_servers"""
-        """TODO: Add docstring for select_servers"""
             """TODO: Add docstring for select_servers"""
+                """TODO: Add docstring for select_servers"""
     """
         Select optimal servers based on criteria.
 
@@ -215,8 +215,8 @@ class PIRCoordinator:
         self, server: ServerInfo, criteria: ServerSelectionCriteria
     ) -> float:
         """TODO: Add docstring for _calculate_server_score"""
-        """TODO: Add docstring for _calculate_server_score"""
             """TODO: Add docstring for _calculate_server_score"""
+                """TODO: Add docstring for _calculate_server_score"""
     """Calculate server selection score."""
         score = 0.0
 
@@ -243,8 +243,8 @@ class PIRCoordinator:
         self, candidate: ServerInfo, selected: List[ServerInfo], min_distance_km: float
     ) -> bool:
         """TODO: Add docstring for _check_geographic_diversity"""
-        """TODO: Add docstring for _check_geographic_diversity"""
             """TODO: Add docstring for _check_geographic_diversity"""
+                """TODO: Add docstring for _check_geographic_diversity"""
     """Check if candidate provides geographic diversity."""
         for server in selected:
             distance = geodesic(candidate.location, server.location).kilometers
@@ -254,8 +254,8 @@ class PIRCoordinator:
 
                 def _has_sufficient_diversity(self, servers: List[ServerInfo]) -> bool:
                     """TODO: Add docstring for _has_sufficient_diversity"""
-        """TODO: Add docstring for _has_sufficient_diversity"""
-            """TODO: Add docstring for _has_sufficient_diversity"""
+                        """TODO: Add docstring for _has_sufficient_diversity"""
+                            """TODO: Add docstring for _has_sufficient_diversity"""
     """Check if selected servers have sufficient diversity."""
         regions = set(s.region for s in servers)
         return len(regions) >= 2
@@ -264,8 +264,8 @@ class PIRCoordinator:
         self, servers: List[ServerInfo], user_region: str
     ) -> List[ServerInfo]:
         """TODO: Add docstring for _filter_compliant_servers"""
-        """TODO: Add docstring for _filter_compliant_servers"""
             """TODO: Add docstring for _filter_compliant_servers"""
+                """TODO: Add docstring for _filter_compliant_servers"""
     """Filter servers based on compliance requirements."""
         required_compliance = self.compliance_regions.get(user_region, set())
 
@@ -284,8 +284,8 @@ class PIRCoordinator:
 
     async def _health_monitor_loop(self) -> None:
         """TODO: Add docstring for _health_monitor_loop"""
-        """TODO: Add docstring for _health_monitor_loop"""
             """TODO: Add docstring for _health_monitor_loop"""
+                """TODO: Add docstring for _health_monitor_loop"""
     """Background task for health monitoring."""
         while True:
             try:
@@ -299,8 +299,8 @@ class PIRCoordinator:
 
     async def _check_all_servers_health(self) -> None:
         """TODO: Add docstring for _check_all_servers_health"""
-        """TODO: Add docstring for _check_all_servers_health"""
             """TODO: Add docstring for _check_all_servers_health"""
+                """TODO: Add docstring for _check_all_servers_health"""
     """Check health of all registered servers."""
         tasks = []
         for server in self.servers.values():
@@ -317,8 +317,8 @@ class PIRCoordinator:
 
     async def _check_server_health(self, server: ServerInfo) -> None:
         """TODO: Add docstring for _check_server_health"""
-        """TODO: Add docstring for _check_server_health"""
             """TODO: Add docstring for _check_server_health"""
+                """TODO: Add docstring for _check_server_health"""
     """Check health of individual server."""
         try:
             start_time = time.time()
@@ -356,8 +356,8 @@ class PIRCoordinator:
         self, query_id: str, query_vectors: List[Dict], selected_servers: List[ServerInfo]
     ) -> List[Dict]:
         """TODO: Add docstring for execute_query"""
-        """TODO: Add docstring for execute_query"""
             """TODO: Add docstring for execute_query"""
+                """TODO: Add docstring for execute_query"""
     """
         Execute PIR query across selected servers.
 
@@ -410,8 +410,8 @@ class PIRCoordinator:
         self, server: ServerInfo, query_id: str, query_data: Dict
     ) -> Dict:
         """TODO: Add docstring for _execute_server_query"""
-        """TODO: Add docstring for _execute_server_query"""
             """TODO: Add docstring for _execute_server_query"""
+                """TODO: Add docstring for _execute_server_query"""
     """Execute query on single server."""
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -427,8 +427,8 @@ class PIRCoordinator:
 
                     def get_coordinator_stats(self) -> Dict[str, Any]:
                         """TODO: Add docstring for get_coordinator_stats"""
-        """TODO: Add docstring for get_coordinator_stats"""
-            """TODO: Add docstring for get_coordinator_stats"""
+                            """TODO: Add docstring for get_coordinator_stats"""
+                                """TODO: Add docstring for get_coordinator_stats"""
     """Get coordinator statistics."""
         healthy_servers = sum(1 for s in self.servers.values() if s.health_score > 0.8)
         degraded_servers = sum(1 for s in self.servers.values() if 0.5 < s.health_score <= 0.8)
@@ -463,8 +463,8 @@ if __name__ == "__main__":
 
     async def demo() -> None:
         """TODO: Add docstring for demo"""
-        """TODO: Add docstring for demo"""
             """TODO: Add docstring for demo"""
+                """TODO: Add docstring for demo"""
     # Create coordinator
         coordinator = PIRCoordinator()
         await coordinator.start()

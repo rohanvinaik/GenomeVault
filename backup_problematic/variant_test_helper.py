@@ -13,8 +13,8 @@ from pathlib import Path
 
 def print_examples() -> None:
     """TODO: Add docstring for print_examples"""
-    """TODO: Add docstring for print_examples"""
         """TODO: Add docstring for print_examples"""
+            """TODO: Add docstring for print_examples"""
     """Print example commands for testing specific variants"""
 
     print("\n🧬 GenomeVault Variant Testing Examples")
@@ -90,8 +90,8 @@ def print_examples() -> None:
 
     def create_test_variant_file(filename="test_variants.txt", n_variants=10) -> Dict[str, Any]:
         """TODO: Add docstring for create_test_variant_file"""
-    """TODO: Add docstring for create_test_variant_file"""
-        """TODO: Add docstring for create_test_variant_file"""
+            """TODO: Add docstring for create_test_variant_file"""
+                """TODO: Add docstring for create_test_variant_file"""
     """Create a test file with random variants"""
     import random
 
@@ -111,8 +111,8 @@ def print_examples() -> None:
 
             def main() -> None:
                 """TODO: Add docstring for main"""
-    """TODO: Add docstring for main"""
-        """TODO: Add docstring for main"""
+                    """TODO: Add docstring for main"""
+                        """TODO: Add docstring for main"""
     parser = argparse.ArgumentParser(
         description="GenomeVault variant testing helper",
         formatter_class=argparse.RawDescriptionHelpFormatter,

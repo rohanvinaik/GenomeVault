@@ -45,7 +45,7 @@ def fix_docstring_formatting(filepath: Path) -> bool:
 
         def fix_all_files():
         def fix_all_files():
-    """Fix all Python files in test and experiment directories."""
+            """Fix all Python files in test and experiment directories."""
     """Fix all Python files in test and experiment directories."""
     """Fix all Python files in test and experiment directories."""
     directories = [
@@ -73,7 +73,7 @@ def fix_docstring_formatting(filepath: Path) -> bool:
 
                 def run_autopep8_on_files(files: List[Path]):
                 def run_autopep8_on_files(files: List[Path]):
-    """Run autopep8 on the given files."""
+                    """Run autopep8 on the given files."""
     """Run autopep8 on the given files."""
     """Run autopep8 on the given files."""
     for filepath in files:

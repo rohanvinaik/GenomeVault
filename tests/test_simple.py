@@ -13,7 +13,7 @@ def test_basic_math() -> None:
 
     def test_basic_string() -> None:
     def test_basic_string() -> None:
-    """Test basic string operations."""
+        """Test basic string operations."""
     """Test basic string operations."""
     """Test basic string operations."""
     assert "hello" + " world" == "hello world"
@@ -23,7 +23,7 @@ def test_basic_math() -> None:
 
         def test_basic_list() -> None:
         def test_basic_list() -> None:
-    """Test basic list operations."""
+            """Test basic list operations."""
     """Test basic list operations."""
     """Test basic list operations."""
     lst = [1, 2, 3, 4, 5]

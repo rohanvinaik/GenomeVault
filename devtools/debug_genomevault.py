@@ -14,16 +14,16 @@ from pathlib import Path
 class GenomeVaultDebugger:
     def __init__(self) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
         self.root_dir = Path(__file__).parent
         self.issues = []
         self.fixed = []
 
         def check_python_version(self) -> None:
             """TODO: Add docstring for check_python_version"""
-        """TODO: Add docstring for check_python_version"""
-            """TODO: Add docstring for check_python_version"""
+                """TODO: Add docstring for check_python_version"""
+                    """TODO: Add docstring for check_python_version"""
     """Check if Python version is compatible"""
         print("🐍 Checking Python version...")
         version = sys.version_info
@@ -36,8 +36,8 @@ class GenomeVaultDebugger:
 
             def check_pydantic(self) -> None:
                 """TODO: Add docstring for check_pydantic"""
-        """TODO: Add docstring for check_pydantic"""
-            """TODO: Add docstring for check_pydantic"""
+                    """TODO: Add docstring for check_pydantic"""
+                        """TODO: Add docstring for check_pydantic"""
     """Check Pydantic installation and version"""
         print("📦 Checking Pydantic...")
         try:
@@ -61,8 +61,8 @@ class GenomeVaultDebugger:
 
             def fix_pydantic(self) -> None:
                 """TODO: Add docstring for fix_pydantic"""
-        """TODO: Add docstring for fix_pydantic"""
-            """TODO: Add docstring for fix_pydantic"""
+                    """TODO: Add docstring for fix_pydantic"""
+                        """TODO: Add docstring for fix_pydantic"""
     """Fix Pydantic issues"""
         print("🔧 Fixing Pydantic issues...")
         try:
@@ -89,8 +89,8 @@ class GenomeVaultDebugger:
 
             def check_imports(self) -> None:
                 """TODO: Add docstring for check_imports"""
-        """TODO: Add docstring for check_imports"""
-            """TODO: Add docstring for check_imports"""
+                    """TODO: Add docstring for check_imports"""
+                        """TODO: Add docstring for check_imports"""
     """Check if all GenomeVault modules can be imported"""
         print("📦 Checking GenomeVault imports...")
 
@@ -120,8 +120,8 @@ class GenomeVaultDebugger:
 
             def check_requirements(self) -> None:
                 """TODO: Add docstring for check_requirements"""
-        """TODO: Add docstring for check_requirements"""
-            """TODO: Add docstring for check_requirements"""
+                    """TODO: Add docstring for check_requirements"""
+                        """TODO: Add docstring for check_requirements"""
     """Check if all requirements are installed"""
         print("📦 Checking requirements...")
 
@@ -153,8 +153,8 @@ class GenomeVaultDebugger:
 
             def run_tests(self) -> None:
                 """TODO: Add docstring for run_tests"""
-        """TODO: Add docstring for run_tests"""
-            """TODO: Add docstring for run_tests"""
+                    """TODO: Add docstring for run_tests"""
+                        """TODO: Add docstring for run_tests"""
     """Run basic tests"""
         print("🧪 Running tests...")
         try:
@@ -177,8 +177,8 @@ class GenomeVaultDebugger:
 
             def run_diagnostics(self) -> None:
                 """TODO: Add docstring for run_diagnostics"""
-        """TODO: Add docstring for run_diagnostics"""
-            """TODO: Add docstring for run_diagnostics"""
+                    """TODO: Add docstring for run_diagnostics"""
+                        """TODO: Add docstring for run_diagnostics"""
     """Run all diagnostics"""
         print("=" * 60)
         print("🔍 GenomeVault Diagnostic Tool")
@@ -232,8 +232,8 @@ class GenomeVaultDebugger:
 
             def main() -> None:
                 """TODO: Add docstring for main"""
-        """TODO: Add docstring for main"""
-        """TODO: Add docstring for main"""
+                    """TODO: Add docstring for main"""
+                        """TODO: Add docstring for main"""
     debugger = GenomeVaultDebugger()
     success = debugger.run_diagnostics()
     sys.exit(0 if success else 1)

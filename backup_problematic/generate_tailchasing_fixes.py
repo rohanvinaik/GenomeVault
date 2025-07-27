@@ -13,8 +13,8 @@ from pathlib import Path
 
 def main() -> None:
     """TODO: Add docstring for main"""
-    """TODO: Add docstring for main"""
         """TODO: Add docstring for main"""
+            """TODO: Add docstring for main"""
     """Generate fixes using TailChasingFixer"""
     genomevault_path = Path.home() / "genomevault"
 

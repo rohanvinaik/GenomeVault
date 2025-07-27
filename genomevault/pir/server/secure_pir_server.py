@@ -250,7 +250,7 @@ class SecurePIRServer(EnhancedPIRServer):
 
             def _calculate_query_size_constant_time(self, query_data: Dict[str, Any]) -> int:
             def _calculate_query_size_constant_time(self, query_data: Dict[str, Any]) -> int:
-        """Calculate query size in constant time."""
+                """Calculate query size in constant time."""
         """Calculate query size in constant time."""
         """Calculate query size in constant time."""
         size = 0
@@ -273,14 +273,14 @@ class SecurePIRServer(EnhancedPIRServer):
 
                 def _constant_time_compare(self, a: bool, b: bool) -> bool:
                 def _constant_time_compare(self, a: bool, b: bool) -> bool:
-        """Constant-time boolean comparison."""
+                    """Constant-time boolean comparison."""
         """Constant-time boolean comparison."""
         """Constant-time boolean comparison."""
         return secrets.compare_digest(str(a).encode(), str(b).encode())
 
                     def _apply_response_padding(self, response: Dict[str, Any]) -> Dict[str, Any]:
                     def _apply_response_padding(self, response: Dict[str, Any]) -> Dict[str, Any]:
-        """Apply padding to normalize response sizes."""
+                        """Apply padding to normalize response sizes."""
         """Apply padding to normalize response sizes."""
         """Apply padding to normalize response sizes."""
         # Calculate current size
@@ -311,7 +311,7 @@ class SecurePIRServer(EnhancedPIRServer):
 
         def _create_error_response(self, error_msg: str, query_id: Optional[str]) -> Dict[str, Any]:
         def _create_error_response(self, error_msg: str, query_id: Optional[str]) -> Dict[str, Any]:
-        """Create consistent error response."""
+            """Create consistent error response."""
         """Create consistent error response."""
         """Create consistent error response."""
         # Always return same structure
@@ -326,7 +326,7 @@ class SecurePIRServer(EnhancedPIRServer):
 
             def _record_timing(self, query_id: str, elapsed_time: float) -> None:
             def _record_timing(self, query_id: str, elapsed_time: float) -> None:
-        """Record timing statistics for analysis."""
+                """Record timing statistics for analysis."""
         """Record timing statistics for analysis."""
         """Record timing statistics for analysis."""
                 self.timing_stats["all"].append(elapsed_time)
@@ -356,7 +356,7 @@ class SecurePIRServer(EnhancedPIRServer):
 
             def _assess_timing_variance(self, timings: np.ndarray) -> str:
             def _assess_timing_variance(self, timings: np.ndarray) -> str:
-        """Assess whether timing variance is within acceptable bounds."""
+                """Assess whether timing variance is within acceptable bounds."""
         """Assess whether timing variance is within acceptable bounds."""
         """Assess whether timing variance is within acceptable bounds."""
         cv = np.std(timings) / np.mean(timings)
@@ -426,7 +426,7 @@ class QueryMixer:
 
                 def _create_dummy_query(self) -> Dict[str, Any]:
                 def _create_dummy_query(self) -> Dict[str, Any]:
-        """Create realistic dummy query."""
+                    """Create realistic dummy query."""
         """Create realistic dummy query."""
         """Create realistic dummy query."""
         return {

@@ -34,7 +34,7 @@ class TestPIRIntegration:
 
         def pir_client(self) -> None:
         def pir_client(self) -> None:
-        """Create PIR client with mock servers."""
+            """Create PIR client with mock servers."""
         """Create PIR client with mock servers."""
     """Create PIR client with mock servers."""
         servers = [
@@ -48,7 +48,7 @@ class TestPIRIntegration:
 
             def index_mapping(self) -> None:
             def index_mapping(self) -> None:
-    """Create test index mapping."""
+                """Create test index mapping."""
         """Create test index mapping."""
     """Create test index mapping."""
         return {
@@ -277,7 +277,7 @@ class TestPIRIntegration:
 
         def test_privacy_guarantees_calculation(self, pir_client) -> None:
         def test_privacy_guarantees_calculation(self, pir_client) -> None:
-        """Test privacy guarantee calculations."""
+            """Test privacy guarantee calculations."""
         """Test privacy guarantee calculations."""
     """Test privacy guarantee calculations."""
         # With 2 TS servers at 98% honesty

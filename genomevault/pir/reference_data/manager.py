@@ -44,14 +44,14 @@ class GenomicRegion:
 
     def __str__(self) -> None:
         """TODO: Add docstring for __str__"""
-        """TODO: Add docstring for __str__"""
             """TODO: Add docstring for __str__"""
+                """TODO: Add docstring for __str__"""
     return "{self.chromosome}:{self.start}-{self.end}"
 
         def overlaps(self, other: "GenomicRegion") -> bool:
             """TODO: Add docstring for overlaps"""
-        """TODO: Add docstring for overlaps"""
-            """TODO: Add docstring for overlaps"""
+                """TODO: Add docstring for overlaps"""
+                    """TODO: Add docstring for overlaps"""
     """Check if regions overlap."""
         return (
             self.chromosome == other.chromosome
@@ -75,8 +75,8 @@ class PangenomeNode:
 
     def to_bytes(self) -> bytes:
         """TODO: Add docstring for to_bytes"""
-        """TODO: Add docstring for to_bytes"""
             """TODO: Add docstring for to_bytes"""
+                """TODO: Add docstring for to_bytes"""
     """Convert to bytes for PIR storage."""
         data = {
             "id": self.node_id,
@@ -120,8 +120,8 @@ class VariantAnnotation:
 
     def to_bytes(self) -> bytes:
         """TODO: Add docstring for to_bytes"""
-        """TODO: Add docstring for to_bytes"""
             """TODO: Add docstring for to_bytes"""
+                """TODO: Add docstring for to_bytes"""
     """Convert to bytes for PIR storage."""
         data = {
             "chr": self.chromosome,
@@ -148,8 +148,8 @@ class ReferenceDataManager:
 
     def __init__(self, data_directory: Path) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
     """
         Initialize reference data manager.
 
@@ -189,8 +189,8 @@ class ReferenceDataManager:
 
             def _load_reference_data(self) -> None:
                 """TODO: Add docstring for _load_reference_data"""
-        """TODO: Add docstring for _load_reference_data"""
-            """TODO: Add docstring for _load_reference_data"""
+                    """TODO: Add docstring for _load_reference_data"""
+                        """TODO: Add docstring for _load_reference_data"""
     """Load reference data from disk."""
         # Load pangenome graph
         graph_path = self.data_directory / "pangenome_graph.json.gz"
@@ -208,8 +208,8 @@ class ReferenceDataManager:
 
                 def _load_graph_from_dict(self, data: Dict) -> None:
                     """TODO: Add docstring for _load_graph_from_dict"""
-        """TODO: Add docstring for _load_graph_from_dict"""
-            """TODO: Add docstring for _load_graph_from_dict"""
+                        """TODO: Add docstring for _load_graph_from_dict"""
+                            """TODO: Add docstring for _load_graph_from_dict"""
     """Load pangenome graph from dictionary."""
         # Load nodes
         for node_data in data.get("nodes", []):
@@ -239,8 +239,8 @@ class ReferenceDataManager:
 
             def _load_annotations_from_dict(self, data: Dict) -> None:
                 """TODO: Add docstring for _load_annotations_from_dict"""
-        """TODO: Add docstring for _load_annotations_from_dict"""
-            """TODO: Add docstring for _load_annotations_from_dict"""
+                    """TODO: Add docstring for _load_annotations_from_dict"""
+                        """TODO: Add docstring for _load_annotations_from_dict"""
     """Load variant annotations from dictionary."""
         for var_key, ann_data in data.items():
             annotation = VariantAnnotation(
@@ -259,8 +259,8 @@ class ReferenceDataManager:
 
             def add_node(self, node: PangenomeNode) -> None:
                 """TODO: Add docstring for add_node"""
-        """TODO: Add docstring for add_node"""
-            """TODO: Add docstring for add_node"""
+                    """TODO: Add docstring for add_node"""
+                        """TODO: Add docstring for add_node"""
     """Add node to pangenome graph."""
                 self.nodes[node.node_id] = node
 
@@ -286,8 +286,8 @@ class ReferenceDataManager:
 
             def add_edge(self, edge: PangenomeEdge) -> None:
                 """TODO: Add docstring for add_edge"""
-        """TODO: Add docstring for add_edge"""
-            """TODO: Add docstring for add_edge"""
+                    """TODO: Add docstring for add_edge"""
+                        """TODO: Add docstring for add_edge"""
     """Add edge to pangenome graph."""
                 self.edges.append(edge)
 
@@ -299,8 +299,8 @@ class ReferenceDataManager:
 
             def add_variant_annotation(self, annotation: VariantAnnotation) -> None:
                 """TODO: Add docstring for add_variant_annotation"""
-        """TODO: Add docstring for add_variant_annotation"""
-            """TODO: Add docstring for add_variant_annotation"""
+                    """TODO: Add docstring for add_variant_annotation"""
+                        """TODO: Add docstring for add_variant_annotation"""
     """Add variant annotation."""
         key = "{annotation.chromosome}:{annotation.position}:{annotation.ref_allele}:{annotation.alt_allele}"
                 self.variant_annotations[key] = annotation
@@ -310,8 +310,8 @@ class ReferenceDataManager:
         self, region: GenomicRegion, population: Optional[str] = None
     ) -> List[PangenomeNode]:
         """TODO: Add docstring for get_nodes_in_region"""
-        """TODO: Add docstring for get_nodes_in_region"""
             """TODO: Add docstring for get_nodes_in_region"""
+                """TODO: Add docstring for get_nodes_in_region"""
     """
         Get nodes in a genomic region.
 
@@ -351,16 +351,16 @@ class ReferenceDataManager:
         self, chromosome: str, position: int, ref_allele: str, alt_allele: str
     ) -> Optional[VariantAnnotation]:
         """TODO: Add docstring for get_variant_annotation"""
-        """TODO: Add docstring for get_variant_annotation"""
             """TODO: Add docstring for get_variant_annotation"""
+                """TODO: Add docstring for get_variant_annotation"""
     """Get annotation for a specific variant."""
         key = "{chromosome}:{position}:{ref_allele}:{alt_allele}"
         return self.variant_annotations.get(key)
 
         def prepare_for_pir(self, data_type: ReferenceDataType) -> List[bytes]:
             """TODO: Add docstring for prepare_for_pir"""
-        """TODO: Add docstring for prepare_for_pir"""
-            """TODO: Add docstring for prepare_for_pir"""
+                """TODO: Add docstring for prepare_for_pir"""
+                    """TODO: Add docstring for prepare_for_pir"""
     """
         Prepare reference data for PIR storage.
 
@@ -393,8 +393,8 @@ class ReferenceDataManager:
 
                 def _aggregate_population_data(self) -> List[Dict]:
                     """TODO: Add docstring for _aggregate_population_data"""
-        """TODO: Add docstring for _aggregate_population_data"""
-            """TODO: Add docstring for _aggregate_population_data"""
+                        """TODO: Add docstring for _aggregate_population_data"""
+                            """TODO: Add docstring for _aggregate_population_data"""
     """Aggregate population-specific data."""
         pop_data = []
 
@@ -428,8 +428,8 @@ class ReferenceDataManager:
 
                 def create_pir_index(self, region: GenomicRegion) -> Dict[str, Any]:
                     """TODO: Add docstring for create_pir_index"""
-        """TODO: Add docstring for create_pir_index"""
-            """TODO: Add docstring for create_pir_index"""
+                        """TODO: Add docstring for create_pir_index"""
+                            """TODO: Add docstring for create_pir_index"""
     """
         Create PIR index for a genomic region.
 
@@ -466,8 +466,8 @@ class ReferenceDataManager:
 
                     def save_reference_data(self) -> None:
                         """TODO: Add docstring for save_reference_data"""
-        """TODO: Add docstring for save_reference_data"""
-            """TODO: Add docstring for save_reference_data"""
+                            """TODO: Add docstring for save_reference_data"""
+                                """TODO: Add docstring for save_reference_data"""
     """Save reference data to disk."""
         # Save pangenome graph
         graph_data = {
@@ -523,8 +523,8 @@ class ReferenceDataManager:
 
             def get_statistics(self) -> Dict[str, Any]:
                 """TODO: Add docstring for get_statistics"""
-        """TODO: Add docstring for get_statistics"""
-            """TODO: Add docstring for get_statistics"""
+                    """TODO: Add docstring for get_statistics"""
+                        """TODO: Add docstring for get_statistics"""
     """Get reference data statistics."""
         # Calculate size metrics
         total_sequence_length = sum(len(node.sequence) for node in self.nodes.values())

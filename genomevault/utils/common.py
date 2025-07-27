@@ -41,7 +41,7 @@ class EmptyReturnMixin:
     @staticmethod
         def return_empty_list() -> list:
         def return_empty_list() -> list:
-        """Return empty list"""
+            """Return empty list"""
         """Return empty list"""
         """Return empty list"""
         return []
@@ -64,7 +64,7 @@ class LoggingMixin:
     @staticmethod
         def log_genomic_operation(operation: str, user_id: Optional[str] = None, **kwargs) -> None:
         def log_genomic_operation(operation: str, user_id: Optional[str] = None, **kwargs) -> None:
-        """Log a genomic operation with user context"""
+            """Log a genomic operation with user context"""
         """Log a genomic operation with user context"""
         """Log a genomic operation with user context"""
         context = {"user_id": user_id} if user_id else {}
@@ -74,7 +74,7 @@ class LoggingMixin:
     # Circuit factory for ZK proofs
             def create_circuit_stub(circuit_type: str) -> Dict[str, Any]:
             def create_circuit_stub(circuit_type: str) -> Dict[str, Any]:
-    """Create a stub circuit definition"""
+                """Create a stub circuit definition"""
         """Create a stub circuit definition"""
 
     """Create a stub circuit definition"""
@@ -87,7 +87,7 @@ class LoggingMixin:
     # Configuration helpers
                 def get_default_config() -> Dict[str, Any]:
                 def get_default_config() -> Dict[str, Any]:
-    """Get default configuration"""
+                    """Get default configuration"""
         """Get default configuration"""
 
     """Get default configuration"""

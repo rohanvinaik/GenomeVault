@@ -35,7 +35,7 @@ class TestZKAdversarial:
 
             def test_proof_replay_attack(self) -> None:
             def test_proof_replay_attack(self) -> None:
-        """Test protection against proof replay attacks."""
+                """Test protection against proof replay attacks."""
         """Test protection against proof replay attacks."""
     """Test protection against proof replay attacks."""
         circuit = PRSProofCircuit()
@@ -55,7 +55,7 @@ class TestZKAdversarial:
 
                 def test_proof_malleability(self) -> None:
                 def test_proof_malleability(self) -> None:
-    """Test that proofs cannot be modified without detection."""
+                    """Test that proofs cannot be modified without detection."""
         """Test that proofs cannot be modified without detection."""
     """Test that proofs cannot be modified without detection."""
         circuit = PRSProofCircuit()
@@ -80,7 +80,7 @@ class TestZKAdversarial:
 
             def test_timing_attack_resistance(self) -> None:
             def test_timing_attack_resistance(self) -> None:
-        """Test that verification time doesn't leak information."""
+                """Test that verification time doesn't leak information."""
         """Test that verification time doesn't leak information."""
     """Test that verification time doesn't leak information."""
         circuit = PRSProofCircuit()
@@ -117,7 +117,7 @@ class TestZKAdversarial:
 
             def test_invalid_circuit_parameters(self) -> None:
             def test_invalid_circuit_parameters(self) -> None:
-        """Test handling of invalid circuit parameters."""
+                """Test handling of invalid circuit parameters."""
         """Test handling of invalid circuit parameters."""
     """Test handling of invalid circuit parameters."""
         circuit = PRSProofCircuit()
@@ -138,7 +138,7 @@ class TestZKAdversarial:
 
                 def test_proof_extraction_resistance(self) -> None:
                 def test_proof_extraction_resistance(self) -> None:
-        """Test that proofs don't leak private inputs."""
+                    """Test that proofs don't leak private inputs."""
         """Test that proofs don't leak private inputs."""
     """Test that proofs don't leak private inputs."""
         circuit = PRSProofCircuit()
@@ -180,7 +180,7 @@ class TestZKSidechannelResistance:
 
         def test_power_analysis_resistance(self) -> None:
         def test_power_analysis_resistance(self) -> None:
-        """Test resistance to power analysis attacks."""
+            """Test resistance to power analysis attacks."""
         """Test resistance to power analysis attacks."""
     """Test resistance to power analysis attacks."""
         # This would require hardware testing

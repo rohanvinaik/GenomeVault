@@ -32,8 +32,8 @@ class HypervectorBinder:
 
     def __init__(self, dimension: int = HYPERVECTOR_DIMENSIONS["base"], use_gpu: bool = False) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
         self.dimension = dimension
         self.hamming_lut = HammingLUT(use_gpu=use_gpu)  # Initialize LUT calculator
 
@@ -44,8 +44,8 @@ class HypervectorBinder:
         operation: BindingOperation = BindingOperation.CIRCULAR_CONVOLUTION,
     ) -> torch.Tensor:
         """TODO: Add docstring for bind"""
-        """TODO: Add docstring for bind"""
             """TODO: Add docstring for bind"""
+                """TODO: Add docstring for bind"""
     """
         Bind two hypervectors using specified operation
 
@@ -73,8 +73,8 @@ class HypervectorBinder:
 
             def _circular_convolution(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
                 """TODO: Add docstring for _circular_convolution"""
-        """TODO: Add docstring for _circular_convolution"""
-            """TODO: Add docstring for _circular_convolution"""
+                    """TODO: Add docstring for _circular_convolution"""
+                        """TODO: Add docstring for _circular_convolution"""
     """
         Bind using circular convolution (preserves algebraic properties)
         """
@@ -88,8 +88,8 @@ class HypervectorBinder:
 
                 def _xor_binding(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
                     """TODO: Add docstring for _xor_binding"""
-        """TODO: Add docstring for _xor_binding"""
-            """TODO: Add docstring for _xor_binding"""
+                        """TODO: Add docstring for _xor_binding"""
+                            """TODO: Add docstring for _xor_binding"""
     """
         XOR binding for binary hypervectors
         """
@@ -107,8 +107,8 @@ class HypervectorBinder:
 
                     def _multiply_binding(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
                         """TODO: Add docstring for _multiply_binding"""
-        """TODO: Add docstring for _multiply_binding"""
-            """TODO: Add docstring for _multiply_binding"""
+                            """TODO: Add docstring for _multiply_binding"""
+                                """TODO: Add docstring for _multiply_binding"""
     """
         Element-wise multiplication binding
         """
@@ -117,8 +117,8 @@ class HypervectorBinder:
 
                         def _permutation_binding(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
                             """TODO: Add docstring for _permutation_binding"""
-        """TODO: Add docstring for _permutation_binding"""
-            """TODO: Add docstring for _permutation_binding"""
+                                """TODO: Add docstring for _permutation_binding"""
+                                    """TODO: Add docstring for _permutation_binding"""
     """
         Bind using permutation of one vector
         """
@@ -136,8 +136,8 @@ class HypervectorBinder:
         operation: BindingOperation = BindingOperation.CIRCULAR_CONVOLUTION,
     ) -> torch.Tensor:
         """TODO: Add docstring for unbind"""
-        """TODO: Add docstring for unbind"""
             """TODO: Add docstring for unbind"""
+                """TODO: Add docstring for unbind"""
     """
         Unbind a hypervector given one of the bound components
 
@@ -163,8 +163,8 @@ class HypervectorBinder:
 
             def _circular_correlation(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
                 """TODO: Add docstring for _circular_correlation"""
-        """TODO: Add docstring for _circular_correlation"""
-            """TODO: Add docstring for _circular_correlation"""
+                    """TODO: Add docstring for _circular_correlation"""
+                        """TODO: Add docstring for _circular_correlation"""
     """
         Circular correlation (inverse of circular convolution)
         """
@@ -181,8 +181,8 @@ class HypervectorBinder:
         operation: BindingOperation = BindingOperation.CIRCULAR_CONVOLUTION,
     ) -> torch.Tensor:
         """TODO: Add docstring for multi_bind"""
-        """TODO: Add docstring for multi_bind"""
             """TODO: Add docstring for multi_bind"""
+                """TODO: Add docstring for multi_bind"""
     """
         Bind multiple hypervectors together
         """
@@ -199,8 +199,8 @@ class HypervectorBinder:
         self, vec1: torch.Tensor, vec2: torch.Tensor, noise_level: float = 0.1
     ) -> torch.Tensor:
         """TODO: Add docstring for protect_binding"""
-        """TODO: Add docstring for protect_binding"""
             """TODO: Add docstring for protect_binding"""
+                """TODO: Add docstring for protect_binding"""
     """
         Bind with added noise for additional privacy
         """
@@ -224,16 +224,16 @@ class MultiModalBinder:
 
     def __init__(self, dimension: int = HYPERVECTOR_DIMENSIONS["base"]) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
         self.dimension = dimension
         self.binder = HypervectorBinder(dimension)
         self.modality_keys = self._generate_modality_keys()
 
         def _generate_modality_keys(self) -> Dict[str, torch.Tensor]:
             """TODO: Add docstring for _generate_modality_keys"""
-        """TODO: Add docstring for _generate_modality_keys"""
-            """TODO: Add docstring for _generate_modality_keys"""
+                """TODO: Add docstring for _generate_modality_keys"""
+                    """TODO: Add docstring for _generate_modality_keys"""
     """Generate orthogonal keys for each modality"""
         keys = {}
 
@@ -258,8 +258,8 @@ class MultiModalBinder:
 
             def bind_modalities(self, modality_data: Dict[str, torch.Tensor]) -> torch.Tensor:
                 """TODO: Add docstring for bind_modalities"""
-        """TODO: Add docstring for bind_modalities"""
-            """TODO: Add docstring for bind_modalities"""
+                    """TODO: Add docstring for bind_modalities"""
+                        """TODO: Add docstring for bind_modalities"""
     """
         Bind multiple modalities with their respective keys
 
@@ -286,8 +286,8 @@ class MultiModalBinder:
 
                 def extract_modality(self, integrated_vec: torch.Tensor, modality: str) -> torch.Tensor:
                     """TODO: Add docstring for extract_modality"""
-        """TODO: Add docstring for extract_modality"""
-            """TODO: Add docstring for extract_modality"""
+                        """TODO: Add docstring for extract_modality"""
+                            """TODO: Add docstring for extract_modality"""
     """
         Extract a specific modality from an integrated vector
         """
@@ -304,8 +304,8 @@ class MultiModalBinder:
         self, vec1: torch.Tensor, modality1: str, vec2: torch.Tensor, modality2: str
     ) -> float:
         """TODO: Add docstring for cross_modal_similarity"""
-        """TODO: Add docstring for cross_modal_similarity"""
             """TODO: Add docstring for cross_modal_similarity"""
+                """TODO: Add docstring for cross_modal_similarity"""
     """
         Compute similarity between vectors from different modalities
         """
@@ -322,8 +322,8 @@ class MultiModalBinder:
         self, vec1: Union[torch.Tensor, np.ndarray], vec2: Union[torch.Tensor, np.ndarray]
     ) -> float:
         """TODO: Add docstring for hamming_similarity"""
-        """TODO: Add docstring for hamming_similarity"""
             """TODO: Add docstring for hamming_similarity"""
+                """TODO: Add docstring for hamming_similarity"""
     """
         Compute Hamming-based similarity using optimized LUT.
 
@@ -363,8 +363,8 @@ class MultiModalBinder:
         self, vecs1: Union[torch.Tensor, np.ndarray], vecs2: Union[torch.Tensor, np.ndarray]
     ) -> np.ndarray:
         """TODO: Add docstring for batch_hamming_similarity"""
-        """TODO: Add docstring for batch_hamming_similarity"""
             """TODO: Add docstring for batch_hamming_similarity"""
+                """TODO: Add docstring for batch_hamming_similarity"""
     """
         Compute pairwise Hamming similarities for batches using optimized LUT.
 

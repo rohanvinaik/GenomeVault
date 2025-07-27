@@ -40,16 +40,16 @@ class VariantProofCircuit:
 
         def __init__(self, merkle_depth: int = 20) -> None:
             """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
-            """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
+                    """TODO: Add docstring for __init__"""
             self.merkle_depth = merkle_depth
             self.cs = ConstraintSystem()
             self.setup_complete = False
 
             def setup_circuit(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> None:
                 """TODO: Add docstring for setup_circuit"""
-        """TODO: Add docstring for setup_circuit"""
-            """TODO: Add docstring for setup_circuit"""
+                    """TODO: Add docstring for setup_circuit"""
+                        """TODO: Add docstring for setup_circuit"""
     """Setup the circuit with actual inputs"""
 
         # Public input variables
@@ -109,8 +109,8 @@ class VariantProofCircuit:
 
                 def generate_constraints(self) -> None:
                     """TODO: Add docstring for generate_constraints"""
-        """TODO: Add docstring for generate_constraints"""
-            """TODO: Add docstring for generate_constraints"""
+                        """TODO: Add docstring for generate_constraints"""
+                            """TODO: Add docstring for generate_constraints"""
     """Generate all circuit constraints"""
         if not self.setup_complete:
             raise RuntimeError("Circuit must be setup before generating constraints")
@@ -129,8 +129,8 @@ class VariantProofCircuit:
 
             def _constrain_variant_hash(self) -> None:
                 """TODO: Add docstring for _constrain_variant_hash"""
-        """TODO: Add docstring for _constrain_variant_hash"""
-            """TODO: Add docstring for _constrain_variant_hash"""
+                    """TODO: Add docstring for _constrain_variant_hash"""
+                        """TODO: Add docstring for _constrain_variant_hash"""
     """Constrain that the variant hash is computed correctly"""
 
         # Compute variant hash from components
@@ -153,8 +153,8 @@ class VariantProofCircuit:
 
                 def _constrain_merkle_inclusion(self) -> None:
                     """TODO: Add docstring for _constrain_merkle_inclusion"""
-        """TODO: Add docstring for _constrain_merkle_inclusion"""
-            """TODO: Add docstring for _constrain_merkle_inclusion"""
+                        """TODO: Add docstring for _constrain_merkle_inclusion"""
+                            """TODO: Add docstring for _constrain_merkle_inclusion"""
     """Constrain Merkle tree inclusion proof"""
 
         # Create variant leaf
@@ -210,8 +210,8 @@ class VariantProofCircuit:
 
             def _constrain_ranges(self) -> None:
                 """TODO: Add docstring for _constrain_ranges"""
-        """TODO: Add docstring for _constrain_ranges"""
-            """TODO: Add docstring for _constrain_ranges"""
+                    """TODO: Add docstring for _constrain_ranges"""
+                        """TODO: Add docstring for _constrain_ranges"""
     """Add range constraints for validity"""
 
         # Chromosome should be 1-23, X(24), Y(25), MT(26)
@@ -235,8 +235,8 @@ class VariantProofCircuit:
 
             def _add_zero_knowledge_randomness(self) -> None:
                 """TODO: Add docstring for _add_zero_knowledge_randomness"""
-        """TODO: Add docstring for _add_zero_knowledge_randomness"""
-            """TODO: Add docstring for _add_zero_knowledge_randomness"""
+                    """TODO: Add docstring for _add_zero_knowledge_randomness"""
+                        """TODO: Add docstring for _add_zero_knowledge_randomness"""
     """Add randomness to achieve zero-knowledge"""
 
         # Create additional random variables
@@ -255,8 +255,8 @@ class VariantProofCircuit:
 
                 def _encode_chromosome(self, chr_str: str) -> int:
                     """TODO: Add docstring for _encode_chromosome"""
-        """TODO: Add docstring for _encode_chromosome"""
-            """TODO: Add docstring for _encode_chromosome"""
+                        """TODO: Add docstring for _encode_chromosome"""
+                            """TODO: Add docstring for _encode_chromosome"""
     """Encode chromosome string to integer"""
         if chr_str.startswith("chr"):
             chr_str = chr_str[3:]
@@ -272,44 +272,44 @@ class VariantProofCircuit:
 
             def _encode_base(self, base: str) -> int:
                 """TODO: Add docstring for _encode_base"""
-        """TODO: Add docstring for _encode_base"""
-            """TODO: Add docstring for _encode_base"""
+                    """TODO: Add docstring for _encode_base"""
+                        """TODO: Add docstring for _encode_base"""
     """Encode DNA base to integer"""
         base_map = {"A": 1, "C": 2, "G": 3, "T": 4}
         return base_map.get(base.upper(), 1)
 
                 def get_constraint_system(self) -> ConstraintSystem:
                     """TODO: Add docstring for get_constraint_system"""
-        """TODO: Add docstring for get_constraint_system"""
-            """TODO: Add docstring for get_constraint_system"""
+                        """TODO: Add docstring for get_constraint_system"""
+                            """TODO: Add docstring for get_constraint_system"""
     """Get the constraint system"""
         return self.cs
 
                     def get_public_inputs(self) -> List[FieldElement]:
                         """TODO: Add docstring for get_public_inputs"""
-        """TODO: Add docstring for get_public_inputs"""
-            """TODO: Add docstring for get_public_inputs"""
+                            """TODO: Add docstring for get_public_inputs"""
+                                """TODO: Add docstring for get_public_inputs"""
     """Get public input values"""
         return self.cs.get_public_inputs()
 
                         def get_witness(self) -> Dict[int, FieldElement]:
                             """TODO: Add docstring for get_witness"""
-        """TODO: Add docstring for get_witness"""
-            """TODO: Add docstring for get_witness"""
+                                """TODO: Add docstring for get_witness"""
+                                    """TODO: Add docstring for get_witness"""
     """Get witness (private inputs)"""
         return self.cs.get_witness()
 
                             def verify_constraints(self) -> bool:
                                 """TODO: Add docstring for verify_constraints"""
-        """TODO: Add docstring for verify_constraints"""
-            """TODO: Add docstring for verify_constraints"""
+                                    """TODO: Add docstring for verify_constraints"""
+                                        """TODO: Add docstring for verify_constraints"""
     """Verify all constraints are satisfied"""
         return self.cs.is_satisfied()
 
                                 def get_circuit_info(self) -> Dict[str, Any]:
                                     """TODO: Add docstring for get_circuit_info"""
-        """TODO: Add docstring for get_circuit_info"""
-            """TODO: Add docstring for get_circuit_info"""
+                                        """TODO: Add docstring for get_circuit_info"""
+                                            """TODO: Add docstring for get_circuit_info"""
     """Get circuit information"""
         return {
             "name": "variant_proof",
@@ -323,8 +323,8 @@ class VariantProofCircuit:
 
                                     def create_variant_proof_example() -> Dict[str, Any]:
                                         """TODO: Add docstring for create_variant_proof_example"""
-        """TODO: Add docstring for create_variant_proof_example"""
-        """TODO: Add docstring for create_variant_proof_example"""
+                                            """TODO: Add docstring for create_variant_proof_example"""
+                                                """TODO: Add docstring for create_variant_proof_example"""
     """Example of how to use the VariantProofCircuit"""
 
     # Example variant: chr1:12345:A>G

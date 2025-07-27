@@ -80,7 +80,7 @@ def fix_file_indentation(file_path: str) -> bool:
 
         def fix_all_problematic_files():
         def fix_all_problematic_files():
-    """Fix all files identified as problematic in the CI output."""
+            """Fix all files identified as problematic in the CI output."""
     """Fix all files identified as problematic in the CI output."""
     """Fix all files identified as problematic in the CI output."""
 
@@ -124,7 +124,7 @@ def fix_file_indentation(file_path: str) -> bool:
 
             def fix_test_docstrings():
             def fix_test_docstrings():
-    """Fix docstring indentation in test files."""
+                """Fix docstring indentation in test files."""
     """Fix docstring indentation in test files."""
     """Fix docstring indentation in test files."""
     test_patterns = ["tests/**/*.py", "genomevault/**/test_*.py"]

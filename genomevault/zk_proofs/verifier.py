@@ -32,8 +32,8 @@ class VerificationResult:
 
     def to_dict(self) -> Dict:
         """TODO: Add docstring for to_dict"""
-        """TODO: Add docstring for to_dict"""
             """TODO: Add docstring for to_dict"""
+                """TODO: Add docstring for to_dict"""
     return {
             "is_valid": self.is_valid,
             "proof_id": self.proof_id,
@@ -54,8 +54,8 @@ class Verifier:
 
     def __init__(self, circuit_library: Optional[CircuitLibrary] = None) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
     """
         Initialize verifier with circuit library.
 
@@ -70,8 +70,8 @@ class Verifier:
 
             def _load_verification_keys(self) -> Dict[str, Any]:
                 """TODO: Add docstring for _load_verification_keys"""
-        """TODO: Add docstring for _load_verification_keys"""
-            """TODO: Add docstring for _load_verification_keys"""
+                    """TODO: Add docstring for _load_verification_keys"""
+                        """TODO: Add docstring for _load_verification_keys"""
     """Load verification keys for each circuit."""
         # In production, would load actual verification keys
         return {
@@ -103,8 +103,8 @@ class Verifier:
 
                 def _load_trusted_setup(self) -> Dict:
                     """TODO: Add docstring for _load_trusted_setup"""
-        """TODO: Add docstring for _load_trusted_setup"""
-            """TODO: Add docstring for _load_trusted_setup"""
+                        """TODO: Add docstring for _load_trusted_setup"""
+                            """TODO: Add docstring for _load_trusted_setup"""
     """Load trusted setup parameters."""
         # In production, would load actual PLONK SRS
         return {
@@ -116,8 +116,8 @@ class Verifier:
     @performance_logger.log_operation("verify_proof")
                     def verify_proof(self, proof: Proof) -> VerificationResult:
                         """TODO: Add docstring for verify_proof"""
-        """TODO: Add docstring for verify_proof"""
-            """TODO: Add docstring for verify_proof"""
+                            """TODO: Add docstring for verify_proof"""
+                                """TODO: Add docstring for verify_proof"""
     """
         Verify a zero-knowledge proof.
 
@@ -195,8 +195,8 @@ class Verifier:
 
             def _validate_proof_format(self, proof: Proof) -> bool:
                 """TODO: Add docstring for _validate_proof_format"""
-        """TODO: Add docstring for _validate_proof_format"""
-            """TODO: Add docstring for _validate_proof_format"""
+                    """TODO: Add docstring for _validate_proof_format"""
+                        """TODO: Add docstring for _validate_proof_format"""
     """Validate proof has correct format."""
         if not proof.proof_data or len(proof.proof_data) == 0:
             return False
@@ -229,8 +229,8 @@ class Verifier:
 
                 def _verify_circuit_proof(self, proof: Proof, vk: Dict) -> bool:
                     """TODO: Add docstring for _verify_circuit_proof"""
-        """TODO: Add docstring for _verify_circuit_proof"""
-            """TODO: Add docstring for _verify_circuit_proof"""
+                        """TODO: Add docstring for _verify_circuit_proof"""
+                            """TODO: Add docstring for _verify_circuit_proof"""
     """
         Verify proof for specific circuit.
         In production, would perform actual PLONK verification.
@@ -254,8 +254,8 @@ class Verifier:
 
             def _verify_variant_proof(self, proof: Proof) -> bool:
                 """TODO: Add docstring for _verify_variant_proof"""
-        """TODO: Add docstring for _verify_variant_proof"""
-            """TODO: Add docstring for _verify_variant_proof"""
+                    """TODO: Add docstring for _verify_variant_proof"""
+                        """TODO: Add docstring for _verify_variant_proof"""
     """Verify variant presence proof."""
         try:
             # Verify public inputs are present
@@ -284,8 +284,8 @@ class Verifier:
 
             def _verify_prs_proof(self, proof: Proof) -> bool:
                 """TODO: Add docstring for _verify_prs_proof"""
-        """TODO: Add docstring for _verify_prs_proof"""
-            """TODO: Add docstring for _verify_prs_proof"""
+                    """TODO: Add docstring for _verify_prs_proof"""
+                        """TODO: Add docstring for _verify_prs_proof"""
     """Verify polygenic risk score proof."""
         try:
             # Verify public inputs
@@ -327,8 +327,8 @@ class Verifier:
 
             def _verify_diabetes_proof(self, proof: Proof) -> bool:
                 """TODO: Add docstring for _verify_diabetes_proof"""
-        """TODO: Add docstring for _verify_diabetes_proof"""
-            """TODO: Add docstring for _verify_diabetes_proof"""
+                    """TODO: Add docstring for _verify_diabetes_proof"""
+                        """TODO: Add docstring for _verify_diabetes_proof"""
     """Verify diabetes risk alert proof."""
         try:
             # Verify public inputs
@@ -374,8 +374,8 @@ class Verifier:
 
             def _verify_ancestry_proof(self, proof: Proof) -> bool:
                 """TODO: Add docstring for _verify_ancestry_proof"""
-        """TODO: Add docstring for _verify_ancestry_proof"""
-            """TODO: Add docstring for _verify_ancestry_proof"""
+                    """TODO: Add docstring for _verify_ancestry_proof"""
+                        """TODO: Add docstring for _verify_ancestry_proof"""
     """Verify ancestry composition proof."""
         try:
             # Verify public inputs
@@ -393,8 +393,8 @@ class Verifier:
 
             def _verify_pharmacogenomic_proof(self, proof: Proof) -> bool:
                 """TODO: Add docstring for _verify_pharmacogenomic_proof"""
-        """TODO: Add docstring for _verify_pharmacogenomic_proof"""
-            """TODO: Add docstring for _verify_pharmacogenomic_proof"""
+                    """TODO: Add docstring for _verify_pharmacogenomic_proof"""
+                        """TODO: Add docstring for _verify_pharmacogenomic_proof"""
     """Verify pharmacogenomic proof."""
         try:
             # Verify public inputs
@@ -417,8 +417,8 @@ class Verifier:
 
             def _verify_pathway_proof(self, proof: Proof) -> bool:
                 """TODO: Add docstring for _verify_pathway_proof"""
-        """TODO: Add docstring for _verify_pathway_proof"""
-            """TODO: Add docstring for _verify_pathway_proof"""
+                    """TODO: Add docstring for _verify_pathway_proof"""
+                        """TODO: Add docstring for _verify_pathway_proof"""
     """Verify pathway enrichment proof."""
         try:
             # Verify public inputs
@@ -436,8 +436,8 @@ class Verifier:
 
             def _verify_generic_proof(self, proof: Proof, vk: Dict) -> bool:
                 """TODO: Add docstring for _verify_generic_proof"""
-        """TODO: Add docstring for _verify_generic_proof"""
-            """TODO: Add docstring for _verify_generic_proof"""
+                    """TODO: Add docstring for _verify_generic_proof"""
+                        """TODO: Add docstring for _verify_generic_proof"""
     """Generic proof verification."""
         try:
             # Basic validation passed, simulate verification
@@ -448,8 +448,8 @@ class Verifier:
 
             def batch_verify(self, proofs: List[Proof]) -> List[VerificationResult]:
                 """TODO: Add docstring for batch_verify"""
-        """TODO: Add docstring for batch_verify"""
-            """TODO: Add docstring for batch_verify"""
+                    """TODO: Add docstring for batch_verify"""
+                        """TODO: Add docstring for batch_verify"""
     """
         Verify multiple proofs in batch.
 
@@ -478,8 +478,8 @@ class Verifier:
         self, recursive_proof: Proof, original_proofs: List[Proof]
     ) -> VerificationResult:
         """TODO: Add docstring for verify_recursive_proof"""
-        """TODO: Add docstring for verify_recursive_proof"""
             """TODO: Add docstring for verify_recursive_proof"""
+                """TODO: Add docstring for verify_recursive_proof"""
     """
         Verify a recursive proof that aggregates multiple proofs.
 
@@ -524,8 +524,8 @@ class Verifier:
 
                 def _hash_proof(self, proof: Proof) -> str:
                     """TODO: Add docstring for _hash_proof"""
-        """TODO: Add docstring for _hash_proof"""
-            """TODO: Add docstring for _hash_proof"""
+                        """TODO: Add docstring for _hash_proof"""
+                            """TODO: Add docstring for _hash_proof"""
     """Calculate hash of proof."""
         _ = json.dumps(
             {
@@ -544,8 +544,8 @@ class Verifier:
 
                     def get_verification_time_estimate(self, circuit_name: str) -> float:
                         """TODO: Add docstring for get_verification_time_estimate"""
-        """TODO: Add docstring for get_verification_time_estimate"""
-            """TODO: Add docstring for get_verification_time_estimate"""
+                            """TODO: Add docstring for get_verification_time_estimate"""
+                                """TODO: Add docstring for get_verification_time_estimate"""
     """
         Get estimated verification time for a circuit.
 

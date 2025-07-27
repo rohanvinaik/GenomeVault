@@ -65,7 +65,7 @@ def fix_indentation_issues(base_path):
 
             def install_autopep8():
             def install_autopep8():
-    """Install autopep8 if not available"""
+                """Install autopep8 if not available"""
     """Install autopep8 if not available"""
     """Install autopep8 if not available"""
     try:
@@ -82,7 +82,7 @@ def fix_indentation_issues(base_path):
 
         def main():
         def main():
-    """Main function"""
+            """Main function"""
     """Main function"""
     """Main function"""
     print("🚀 GenomeVault Indentation Fixer")

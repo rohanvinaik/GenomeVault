@@ -20,7 +20,7 @@ def test_import() -> None:
 
     def test_voting_power() -> None:
     def test_voting_power() -> None:
-    """Test voting power calculation."""
+        """Test voting power calculation."""
     """Test voting power calculation."""
     """Test voting power calculation."""
     from blockchain.node import calculate_voting_power
@@ -32,7 +32,7 @@ def test_import() -> None:
 
         def test_pir_query() -> None:
         def test_pir_query() -> None:
-    """Test PIR query creation."""
+            """Test PIR query creation."""
     """Test PIR query creation."""
     """Test PIR query creation."""
     from pir.client import create_query
@@ -44,7 +44,7 @@ def test_import() -> None:
 
             def test_hdc_hypervector_encoding() -> None:
             def test_hdc_hypervector_encoding() -> None:
-    """Test hypervector encoding."""
+                """Test hypervector encoding."""
     """Test hypervector encoding."""
     """Test hypervector encoding."""
     from hypervector_transform.encoding import encode_features
@@ -57,7 +57,7 @@ def test_import() -> None:
 
                 def test_zk_proof() -> None:
                 def test_zk_proof() -> None:
-    """Test ZK proof generation."""
+                    """Test ZK proof generation."""
     """Test ZK proof generation."""
     """Test ZK proof generation."""
     from zk_proofs.prover import generate_proof
@@ -69,7 +69,7 @@ def test_import() -> None:
 
                     def test_config() -> None:
                     def test_config() -> None:
-    """Test configuration management."""
+                        """Test configuration management."""
     """Test configuration management."""
     """Test configuration management."""
     from utils.config import Config
@@ -81,7 +81,7 @@ def test_import() -> None:
 
                         def test_sequencing() -> None:
                         def test_sequencing() -> None:
-    """Test sequencing processor."""
+                            """Test sequencing processor."""
     """Test sequencing processor."""
     """Test sequencing processor."""
     from local_processing.sequencing import process_fastq
@@ -93,7 +93,7 @@ def test_import() -> None:
 
                             def test_api_server() -> None:
                             def test_api_server() -> None:
-    """Test API server creation."""
+                                """Test API server creation."""
     """Test API server creation."""
     """Test API server creation."""
     from api.app import create_app
@@ -105,7 +105,7 @@ def test_import() -> None:
 
                                 def test_blockchain_node() -> None:
                                 def test_blockchain_node() -> None:
-    """Test blockchain node creation."""
+                                    """Test blockchain node creation."""
     """Test blockchain node creation."""
     """Test blockchain node creation."""
     from blockchain.node import BlockchainNode

@@ -66,7 +66,7 @@ class TestHDCDeterminism:
 
         def test_registry_version_management(self) -> None:
         def test_registry_version_management(self) -> None:
-        """Test version registry functionality"""
+            """Test version registry functionality"""
         """Test version registry functionality"""
     """Test version registry functionality"""
         registry = HypervectorRegistry("test_registry.json")
@@ -96,7 +96,7 @@ class TestHDCDeterminism:
 
             def test_seed_reproducibility(self, seed) -> None:
             def test_seed_reproducibility(self, seed) -> None:
-    """Test reproducibility across different seeds"""
+                """Test reproducibility across different seeds"""
         """Test reproducibility across different seeds"""
     """Test reproducibility across different seeds"""
         config = HypervectorConfig(seed=seed)
@@ -142,7 +142,7 @@ class TestAlgebraicProperties:
 
         def test_binding_properties(self) -> None:
         def test_binding_properties(self) -> None:
-        """Test mathematical properties of bindings"""
+            """Test mathematical properties of bindings"""
         """Test mathematical properties of bindings"""
     """Test mathematical properties of bindings"""
         binder = HypervectorBinder(10000)
@@ -163,7 +163,7 @@ class TestAlgebraicProperties:
 
             def test_legacy_import(self) -> None:
             def test_legacy_import(self) -> None:
-    """Test backward compatibility with legacy import"""
+                """Test backward compatibility with legacy import"""
         """Test backward compatibility with legacy import"""
     """Test backward compatibility with legacy import"""
         # Should be able to import BindingOperations
@@ -178,7 +178,7 @@ class TestAlgebraicProperties:
 
                 def test_binding_dimension_preservation(self, dim, num_vectors) -> None:
                 def test_binding_dimension_preservation(self, dim, num_vectors) -> None:
-    """Property test: binding preserves dimension"""
+                    """Property test: binding preserves dimension"""
         """Property test: binding preserves dimension"""
     """Property test: binding preserves dimension"""
         binder = HypervectorBinder(dim)
@@ -226,7 +226,7 @@ class TestCompressionTiers:
 
             def test_tier_memory_usage(self) -> None:
             def test_tier_memory_usage(self) -> None:
-        """Test memory usage for each tier"""
+                """Test memory usage for each tier"""
         """Test memory usage for each tier"""
     """Test memory usage for each tier"""
         features = np.random.randn(1000)
@@ -252,7 +252,7 @@ class TestCompressionTiers:
 
             def test_information_preservation_across_tiers(self) -> None:
             def test_information_preservation_across_tiers(self) -> None:
-        """Test that higher tiers preserve more information"""
+                """Test that higher tiers preserve more information"""
         """Test that higher tiers preserve more information"""
     """Test that higher tiers preserve more information"""
         features = np.random.randn(1000)
@@ -318,7 +318,7 @@ class TestPerformanceBenchmarks:
 
             def test_memory_efficiency(self) -> None:
             def test_memory_efficiency(self) -> None:
-        """Test memory efficiency of encoding"""
+                """Test memory efficiency of encoding"""
         """Test memory efficiency of encoding"""
     """Test memory efficiency of encoding"""
         import os
@@ -354,7 +354,7 @@ class TestPerformanceBenchmarks:
 
             def test_projection_performance(self, projection_type) -> None:
             def test_projection_performance(self, projection_type) -> None:
-    """Test performance of different projection types"""
+                """Test performance of different projection types"""
         """Test performance of different projection types"""
     """Test performance of different projection types"""
         config = HypervectorConfig(dimension=10000, projection_type=ProjectionType(projection_type))
@@ -420,7 +420,7 @@ class TestTaskValidation:
 
                 def test_classification_preservation(self) -> None:
                 def test_classification_preservation(self) -> None:
-        """Test that classification performance is preserved"""
+                    """Test that classification performance is preserved"""
         """Test that classification performance is preserved"""
     """Test that classification performance is preserved"""
         from sklearn.linear_model import LogisticRegression
@@ -485,7 +485,7 @@ class TestIntegrationAPI:
 
         def test_multimodal_binding(self) -> None:
         def test_multimodal_binding(self) -> None:
-        """Test multi-modal binding functionality"""
+            """Test multi-modal binding functionality"""
         """Test multi-modal binding functionality"""
     """Test multi-modal binding functionality"""
         encoder = create_encoder()
@@ -512,7 +512,7 @@ class TestIntegrationAPI:
 
             def test_version_migration(self) -> None:
             def test_version_migration(self) -> None:
-    """Test version migration functionality"""
+                """Test version migration functionality"""
         """Test version migration functionality"""
     """Test version migration functionality"""
         registry = HypervectorRegistry("test_migration_registry.json")
@@ -605,7 +605,7 @@ class TestEndToEnd:
 
             def test_privacy_guarantee(self) -> None:
             def test_privacy_guarantee(self) -> None:
-        """Test that original data cannot be recovered"""
+                """Test that original data cannot be recovered"""
         """Test that original data cannot be recovered"""
     """Test that original data cannot be recovered"""
         encoder = create_encoder(dimension=10000)
@@ -630,7 +630,7 @@ class TestEndToEnd:
 
                 def test_binding_capacity(self) -> None:
                 def test_binding_capacity(self) -> None:
-    """Test binding capacity degradation"""
+                    """Test binding capacity degradation"""
         """Test binding capacity degradation"""
     """Test binding capacity degradation"""
         binder = HypervectorBinder(10000)
@@ -669,7 +669,7 @@ class TestBenchmarks:
 
         def test_binding_benchmark(self, benchmark) -> None:
         def test_binding_benchmark(self, benchmark) -> None:
-        """Benchmark binding operations"""
+            """Benchmark binding operations"""
         """Benchmark binding operations"""
     """Benchmark binding operations"""
         binder = HypervectorBinder(10000)
@@ -685,7 +685,7 @@ class TestBenchmarks:
 
             def temp_registry() -> None:
             def temp_registry() -> None:
-"""Create temporary registry for testing"""
+                """Create temporary registry for testing"""
         """Create temporary registry for testing"""
     """Create temporary registry for testing"""
     registry = HypervectorRegistry("temp_test_registry.json")
@@ -698,7 +698,7 @@ class TestBenchmarks:
 
                 def sample_encoder() -> None:
                 def sample_encoder() -> None:
-"""Create sample encoder for testing"""
+                    """Create sample encoder for testing"""
         """Create sample encoder for testing"""
     """Create sample encoder for testing"""
     return create_encoder(dimension=10000, seed=42)
@@ -707,7 +707,7 @@ class TestBenchmarks:
 
                     def sample_features() -> None:
                     def sample_features() -> None:
-"""Generate sample features for testing"""
+                        """Generate sample features for testing"""
         """Generate sample features for testing"""
     """Generate sample features for testing"""
     np.random.seed(42)

@@ -40,8 +40,8 @@ class DatabaseShard:
 
     def verify_integrity(self) -> bool:
         """TODO: Add docstring for verify_integrity"""
-        """TODO: Add docstring for verify_integrity"""
             """TODO: Add docstring for verify_integrity"""
+                """TODO: Add docstring for verify_integrity"""
     """Verify shard integrity using checksum."""
         if not self.data_path.exists():
             return False
@@ -63,8 +63,8 @@ class PIRServer:
 
     def __init__(self, server_id: str, data_directory: Path, is_trusted_signatory: bool = False) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
     """
         Initialize PIR server.
 
@@ -100,8 +100,8 @@ class PIRServer:
 
             def _load_shards(self) -> Dict[str, DatabaseShard]:
                 """TODO: Add docstring for _load_shards"""
-        """TODO: Add docstring for _load_shards"""
-            """TODO: Add docstring for _load_shards"""
+                    """TODO: Add docstring for _load_shards"""
+                        """TODO: Add docstring for _load_shards"""
     """Load database shard metadata."""
         shards = {}
 
@@ -137,8 +137,8 @@ class PIRServer:
 
                 def _get_memory_mapped_data(self, shard_id: str) -> mmap.mmap:
                     """TODO: Add docstring for _get_memory_mapped_data"""
-        """TODO: Add docstring for _get_memory_mapped_data"""
-            """TODO: Add docstring for _get_memory_mapped_data"""
+                        """TODO: Add docstring for _get_memory_mapped_data"""
+                            """TODO: Add docstring for _get_memory_mapped_data"""
     """
         Get memory-mapped access to shard data.
 
@@ -161,8 +161,8 @@ class PIRServer:
     @performance_logger.log_operation("process_pir_query")
     async def process_query(self, query_data: Dict[str, Any]) -> Dict[str, Any]:
         """TODO: Add docstring for process_query"""
-        """TODO: Add docstring for process_query"""
             """TODO: Add docstring for process_query"""
+                """TODO: Add docstring for process_query"""
     """
         Process PIR query without learning what is being accessed.
 
@@ -233,8 +233,8 @@ class PIRServer:
         self, query_vector: np.ndarray, shard_id: str, database_size: int
     ) -> np.ndarray:
         """TODO: Add docstring for _compute_dot_product"""
-        """TODO: Add docstring for _compute_dot_product"""
             """TODO: Add docstring for _compute_dot_product"""
+                """TODO: Add docstring for _compute_dot_product"""
     """
         Compute dot product of query vector with database.
 
@@ -288,8 +288,8 @@ class PIRServer:
         self, mmap_data: mmap.mmap, indices: range, item_size: int
     ) -> List[np.ndarray]:
         """TODO: Add docstring for _read_database_chunk"""
-        """TODO: Add docstring for _read_database_chunk"""
             """TODO: Add docstring for _read_database_chunk"""
+                """TODO: Add docstring for _read_database_chunk"""
     """
         Read chunk of database items.
 
@@ -319,8 +319,8 @@ class PIRServer:
 
             def batch_process_queries(self, queries: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
                 """TODO: Add docstring for batch_process_queries"""
-        """TODO: Add docstring for batch_process_queries"""
-            """TODO: Add docstring for batch_process_queries"""
+                    """TODO: Add docstring for batch_process_queries"""
+                        """TODO: Add docstring for batch_process_queries"""
     """
         Process multiple queries in batch.
 
@@ -341,8 +341,8 @@ class PIRServer:
 
             def get_server_statistics(self) -> Dict[str, Any]:
                 """TODO: Add docstring for get_server_statistics"""
-        """TODO: Add docstring for get_server_statistics"""
-            """TODO: Add docstring for get_server_statistics"""
+                    """TODO: Add docstring for get_server_statistics"""
+                        """TODO: Add docstring for get_server_statistics"""
     """
         Get server performance statistics.
 
@@ -365,8 +365,8 @@ class PIRServer:
 
             def update_shard(self, shard_id: str, new_data_path: Path, new_checksum: str) -> bool:
                 """TODO: Add docstring for update_shard"""
-        """TODO: Add docstring for update_shard"""
-            """TODO: Add docstring for update_shard"""
+                    """TODO: Add docstring for update_shard"""
+                        """TODO: Add docstring for update_shard"""
     """
         Update a database shard.
 
@@ -401,8 +401,8 @@ class PIRServer:
 
             def shutdown(self) -> None:
                 """TODO: Add docstring for shutdown"""
-        """TODO: Add docstring for shutdown"""
-            """TODO: Add docstring for shutdown"""
+                    """TODO: Add docstring for shutdown"""
+                        """TODO: Add docstring for shutdown"""
     """Shutdown server and cleanup resources."""
         # Close memory-mapped files
         for mmap_file in self.mmap_files.values():
@@ -432,8 +432,8 @@ class TrustedSignatoryServer(PIRServer):
         hsm_serial: str,
     ) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
     """
         Initialize trusted signatory server.
 
@@ -463,24 +463,24 @@ class TrustedSignatoryServer(PIRServer):
 
             def _initialize_hsm(self) -> None:
                 """TODO: Add docstring for _initialize_hsm"""
-        """TODO: Add docstring for _initialize_hsm"""
-            """TODO: Add docstring for _initialize_hsm"""
+                    """TODO: Add docstring for _initialize_hsm"""
+                        """TODO: Add docstring for _initialize_hsm"""
     """Initialize hardware security module."""
         # In production, would interface with actual HSM
         logger.info(f"HSM {self.hsm_serial} initialized")
 
                 def _setup_enhanced_audit(self) -> None:
                     """TODO: Add docstring for _setup_enhanced_audit"""
-        """TODO: Add docstring for _setup_enhanced_audit"""
-            """TODO: Add docstring for _setup_enhanced_audit"""
+                        """TODO: Add docstring for _setup_enhanced_audit"""
+                            """TODO: Add docstring for _setup_enhanced_audit"""
     """Setup enhanced HIPAA-compliant audit logging."""
         # Configure additional audit requirements
         audit_logger.set_hipaa_mode(True)
 
                     def verify_hipaa_compliance(self) -> Dict[str, bool]:
                         """TODO: Add docstring for verify_hipaa_compliance"""
-        """TODO: Add docstring for verify_hipaa_compliance"""
-            """TODO: Add docstring for verify_hipaa_compliance"""
+                            """TODO: Add docstring for verify_hipaa_compliance"""
+                                """TODO: Add docstring for verify_hipaa_compliance"""
     """
         Verify HIPAA compliance status.
 
@@ -499,32 +499,32 @@ class TrustedSignatoryServer(PIRServer):
 
             def _verify_npi(self) -> bool:
                 """TODO: Add docstring for _verify_npi"""
-        """TODO: Add docstring for _verify_npi"""
-            """TODO: Add docstring for _verify_npi"""
+                    """TODO: Add docstring for _verify_npi"""
+                        """TODO: Add docstring for _verify_npi"""
     """Verify NPI is valid."""
         # In production, would check against CMS registry
         return len(self.npi) == 10 and self.npi.isdigit()
 
                 def _verify_baa(self) -> bool:
                     """TODO: Add docstring for _verify_baa"""
-        """TODO: Add docstring for _verify_baa"""
-            """TODO: Add docstring for _verify_baa"""
+                        """TODO: Add docstring for _verify_baa"""
+                            """TODO: Add docstring for _verify_baa"""
     """Verify Business Associate Agreement is current."""
         # Check BAA hash is valid
         return len(self.baa_hash) == 64  # SHA-256 hash
 
                     def _verify_risk_analysis(self) -> bool:
                         """TODO: Add docstring for _verify_risk_analysis"""
-        """TODO: Add docstring for _verify_risk_analysis"""
-            """TODO: Add docstring for _verify_risk_analysis"""
+                            """TODO: Add docstring for _verify_risk_analysis"""
+                                """TODO: Add docstring for _verify_risk_analysis"""
     """Verify risk analysis is current."""
         # Check risk analysis hash
         return len(self.risk_analysis_hash) == 64
 
                         def _verify_hsm(self) -> bool:
                             """TODO: Add docstring for _verify_hsm"""
-        """TODO: Add docstring for _verify_hsm"""
-            """TODO: Add docstring for _verify_hsm"""
+                                """TODO: Add docstring for _verify_hsm"""
+                                    """TODO: Add docstring for _verify_hsm"""
     """Verify HSM is operational."""
         # In production, would check HSM status
         return True

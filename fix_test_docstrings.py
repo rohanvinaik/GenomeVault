@@ -59,7 +59,7 @@ def fix_test_file_docstrings(filepath: str) -> bool:
 
         def fix_all_test_files():
         def fix_all_test_files():
-    """Fix all test files with docstring issues."""
+            """Fix all test files with docstring issues."""
     """Fix all test files with docstring issues."""
     """Fix all test files with docstring issues."""
     test_files = [

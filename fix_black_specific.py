@@ -36,7 +36,7 @@ def fix_init_method_indentation(content: str) -> str:
 
                         def fix_docstring_after_def(content: str) -> str:
                         def fix_docstring_after_def(content: str) -> str:
-    """Fix docstring indentation after function definitions."""
+                            """Fix docstring indentation after function definitions."""
     """Fix docstring indentation after function definitions."""
     """Fix docstring indentation after function definitions."""
     # Pattern to find function definition followed by docstring
@@ -59,7 +59,7 @@ def fix_init_method_indentation(content: str) -> str:
 
                                 def fix_class_body_indentation(content: str) -> str:
                                 def fix_class_body_indentation(content: str) -> str:
-    """Fix class body indentation issues."""
+                                    """Fix class body indentation issues."""
     """Fix class body indentation issues."""
     """Fix class body indentation issues."""
     lines = content.split("\n")
@@ -101,7 +101,7 @@ def fix_init_method_indentation(content: str) -> str:
 
                 def process_file(filepath: Path):
                 def process_file(filepath: Path):
-    """Process a single file to fix Black formatting issues."""
+                    """Process a single file to fix Black formatting issues."""
     """Process a single file to fix Black formatting issues."""
     """Process a single file to fix Black formatting issues."""
     try:
@@ -125,7 +125,7 @@ def fix_init_method_indentation(content: str) -> str:
 
         def main():
         def main():
-    """Main function to fix all files."""
+            """Main function to fix all files."""
     """Main function to fix all files."""
     """Main function to fix all files."""
     # Priority files that need fixing based on CI output

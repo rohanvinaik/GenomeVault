@@ -25,16 +25,16 @@ class TestHammingLUT(unittest.TestCase):
 
     def setUp(self) -> None:
         """TODO: Add docstring for setUp"""
-        """TODO: Add docstring for setUp"""
             """TODO: Add docstring for setUp"""
+                """TODO: Add docstring for setUp"""
     """Set up test fixtures"""
         self.lut = generate_popcount_lut()
         self.hamming_cpu = HammingLUT(use_gpu=False)
 
         def test_popcount_lut_generation(self) -> None:
             """TODO: Add docstring for test_popcount_lut_generation"""
-        """TODO: Add docstring for test_popcount_lut_generation"""
-            """TODO: Add docstring for test_popcount_lut_generation"""
+                """TODO: Add docstring for test_popcount_lut_generation"""
+                    """TODO: Add docstring for test_popcount_lut_generation"""
     """Test that the popcount LUT is generated correctly"""
         # Check size
             self.assertEqual(len(self.lut), 65536)  # 2^16
@@ -49,8 +49,8 @@ class TestHammingLUT(unittest.TestCase):
 
             def test_hamming_distance_correctness(self) -> None:
                 """TODO: Add docstring for test_hamming_distance_correctness"""
-        """TODO: Add docstring for test_hamming_distance_correctness"""
-            """TODO: Add docstring for test_hamming_distance_correctness"""
+                    """TODO: Add docstring for test_hamming_distance_correctness"""
+                        """TODO: Add docstring for test_hamming_distance_correctness"""
     """Test that Hamming distance computation is correct"""
         # Test vectors
         vec1 = np.array([1, 0, 1, 0, 1, 0, 1, 0], dtype=np.uint8)
@@ -68,8 +68,8 @@ class TestHammingLUT(unittest.TestCase):
 
                 def test_hamming_distance_identical(self) -> None:
                     """TODO: Add docstring for test_hamming_distance_identical"""
-        """TODO: Add docstring for test_hamming_distance_identical"""
-            """TODO: Add docstring for test_hamming_distance_identical"""
+                        """TODO: Add docstring for test_hamming_distance_identical"""
+                            """TODO: Add docstring for test_hamming_distance_identical"""
     """Test Hamming distance for identical vectors"""
         vec = np.random.randint(0, 2, 1000, dtype=np.uint8)
         vec_packed = np.packbits(vec).view(np.uint64)
@@ -79,8 +79,8 @@ class TestHammingLUT(unittest.TestCase):
 
                     def test_hamming_distance_batch(self) -> None:
                         """TODO: Add docstring for test_hamming_distance_batch"""
-        """TODO: Add docstring for test_hamming_distance_batch"""
-            """TODO: Add docstring for test_hamming_distance_batch"""
+                            """TODO: Add docstring for test_hamming_distance_batch"""
+                                """TODO: Add docstring for test_hamming_distance_batch"""
     """Test batch Hamming distance computation"""
         n, m, d = 10, 15, 1000
 
@@ -106,8 +106,8 @@ class TestHammingLUT(unittest.TestCase):
 
                 def test_integration_with_binder(self) -> None:
                     """TODO: Add docstring for test_integration_with_binder"""
-        """TODO: Add docstring for test_integration_with_binder"""
-            """TODO: Add docstring for test_integration_with_binder"""
+                        """TODO: Add docstring for test_integration_with_binder"""
+                            """TODO: Add docstring for test_integration_with_binder"""
     """Test integration with HypervectorBinder"""
         binder = HypervectorBinder(dimension=10000, use_gpu=False)
 
@@ -128,8 +128,8 @@ class TestHammingLUT(unittest.TestCase):
 
                     def test_batch_similarity(self) -> None:
                         """TODO: Add docstring for test_batch_similarity"""
-        """TODO: Add docstring for test_batch_similarity"""
-            """TODO: Add docstring for test_batch_similarity"""
+                            """TODO: Add docstring for test_batch_similarity"""
+                                """TODO: Add docstring for test_batch_similarity"""
     """Test batch similarity computation"""
         binder = HypervectorBinder(dimension=5000, use_gpu=False)
 
@@ -149,8 +149,8 @@ class TestHammingLUT(unittest.TestCase):
 
                         def test_performance_improvement(self) -> None:
                             """TODO: Add docstring for test_performance_improvement"""
-        """TODO: Add docstring for test_performance_improvement"""
-            """TODO: Add docstring for test_performance_improvement"""
+                                """TODO: Add docstring for test_performance_improvement"""
+                                    """TODO: Add docstring for test_performance_improvement"""
     """Basic performance test to ensure LUT is faster"""
         import time
 
@@ -190,8 +190,8 @@ class TestPlatformExports(unittest.TestCase):
 
     def test_pulp_code_generation(self) -> None:
         """TODO: Add docstring for test_pulp_code_generation"""
-        """TODO: Add docstring for test_pulp_code_generation"""
             """TODO: Add docstring for test_pulp_code_generation"""
+                """TODO: Add docstring for test_pulp_code_generation"""
     """Test PULP C code generation"""
         from genomevault.hypervector.operations.hamming_lut import generate_pulp_lut_code
 
@@ -205,8 +205,8 @@ class TestPlatformExports(unittest.TestCase):
 
         def test_fpga_verilog_generation(self) -> None:
             """TODO: Add docstring for test_fpga_verilog_generation"""
-        """TODO: Add docstring for test_fpga_verilog_generation"""
-            """TODO: Add docstring for test_fpga_verilog_generation"""
+                """TODO: Add docstring for test_fpga_verilog_generation"""
+                    """TODO: Add docstring for test_fpga_verilog_generation"""
     """Test FPGA Verilog generation"""
         from genomevault.hypervector.operations.hamming_lut import generate_fpga_verilog
 

@@ -39,8 +39,8 @@ class ProofGenerator:
 
     def __init__(self) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
         self.median_circuit = MedianVerifierCircuit()
         self.proof_cache = {}
         logger.info("ProofGenerator initialized with real ZK circuits")
@@ -53,8 +53,8 @@ class ProofGenerator:
         metadata: Dict[str, Any],
     ) -> ProofResult:
         """TODO: Add docstring for generate_median_proof"""
-        """TODO: Add docstring for generate_median_proof"""
             """TODO: Add docstring for generate_median_proof"""
+                """TODO: Add docstring for generate_median_proof"""
     """
         Generate proof that median of results is within error bound
 
@@ -170,8 +170,8 @@ class ProofGenerator:
         error: Optional[str] = None,
     ) -> ProofResult:
         """TODO: Add docstring for _generate_mock_proof"""
-        """TODO: Add docstring for _generate_mock_proof"""
             """TODO: Add docstring for _generate_mock_proof"""
+                """TODO: Add docstring for _generate_mock_proof"""
     """Generate mock proof as fallback"""
         import json
 
@@ -205,8 +205,8 @@ class ProofGenerator:
 
         def verify_proof(self, proof: ProofResult) -> bool:
             """TODO: Add docstring for verify_proof"""
-        """TODO: Add docstring for verify_proof"""
-            """TODO: Add docstring for verify_proof"""
+                """TODO: Add docstring for verify_proof"""
+                    """TODO: Add docstring for verify_proof"""
     """
         Verify a generated proof
 
@@ -265,8 +265,8 @@ class ProofGenerator:
         metadata: Dict[str, Any],
     ) -> ProofResult:
         """TODO: Add docstring for generate_ecc_proof"""
-        """TODO: Add docstring for generate_ecc_proof"""
             """TODO: Add docstring for generate_ecc_proof"""
+                """TODO: Add docstring for generate_ecc_proof"""
     """
         Generate proof of ECC error correction
 
@@ -299,8 +299,8 @@ class ProofGenerator:
 
         def get_proof_statistics(self) -> Dict[str, Any]:
             """TODO: Add docstring for get_proof_statistics"""
-        """TODO: Add docstring for get_proof_statistics"""
-            """TODO: Add docstring for get_proof_statistics"""
+                """TODO: Add docstring for get_proof_statistics"""
+                    """TODO: Add docstring for get_proof_statistics"""
     """Get statistics about generated proofs"""
         return {
             "cached_proofs": len(self.proof_cache),

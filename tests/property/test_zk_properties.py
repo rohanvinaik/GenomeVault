@@ -52,7 +52,7 @@ class TestZKProperties:
 
             def test_soundness_property(self, prs_score, min_val, max_val) -> None:
             def test_soundness_property(self, prs_score, min_val, max_val) -> None:
-    """Test soundness: invalid proofs should not verify."""
+                """Test soundness: invalid proofs should not verify."""
         """Test soundness: invalid proofs should not verify."""
     """Test soundness: invalid proofs should not verify."""
         if min_val >= max_val:
@@ -78,7 +78,7 @@ class TestZKProperties:
 
             def test_zero_knowledge_property(self, prs_scores) -> None:
             def test_zero_knowledge_property(self, prs_scores) -> None:
-    """Test zero-knowledge: proofs don't reveal private inputs."""
+                """Test zero-knowledge: proofs don't reveal private inputs."""
         """Test zero-knowledge: proofs don't reveal private inputs."""
     """Test zero-knowledge: proofs don't reveal private inputs."""
         circuit = PRSProofCircuit()
@@ -103,7 +103,7 @@ class TestZKProperties:
 
             def test_proof_indistinguishability(self, data, num_proofs) -> None:
             def test_proof_indistinguishability(self, data, num_proofs) -> None:
-    """Test that proofs are computationally indistinguishable."""
+                """Test that proofs are computationally indistinguishable."""
         """Test that proofs are computationally indistinguishable."""
     """Test that proofs are computationally indistinguishable."""
         circuit = PRSProofCircuit()
@@ -131,7 +131,7 @@ class TestZKProperties:
 
             def _entropy(self, data: bytes) -> float:
             def _entropy(self, data: bytes) -> float:
-        """Calculate Shannon entropy of bytes."""
+                """Calculate Shannon entropy of bytes."""
         """Calculate Shannon entropy of bytes."""
     """Calculate Shannon entropy of bytes."""
         if not data:
@@ -164,7 +164,7 @@ class TestZKProperties:
 
                 def test_batch_verification_consistency(self, proof_params) -> None:
                 def test_batch_verification_consistency(self, proof_params) -> None:
-    """Test that batch verification is consistent with individual verification."""
+                    """Test that batch verification is consistent with individual verification."""
         """Test that batch verification is consistent with individual verification."""
     """Test that batch verification is consistent with individual verification."""
         circuit = PRSProofCircuit()
@@ -219,7 +219,7 @@ class TestZKCircuitProperties:
 
         def test_circuit_depth_bounds(self, circuit_depth) -> None:
         def test_circuit_depth_bounds(self, circuit_depth) -> None:
-        """Test that circuit depth affects proof generation time predictably."""
+            """Test that circuit depth affects proof generation time predictably."""
         """Test that circuit depth affects proof generation time predictably."""
     """Test that circuit depth affects proof generation time predictably."""
         # This would measure actual circuit performance

@@ -41,7 +41,7 @@ class TestZKBasicFunctionality:
 
         def test_invalid_prs_proof(self) -> None:
         def test_invalid_prs_proof(self) -> None:
-        """Test that invalid PRS values fail verification."""
+            """Test that invalid PRS values fail verification."""
         """Test that invalid PRS values fail verification."""
     """Test that invalid PRS values fail verification."""
         circuit = PRSProofCircuit()
@@ -60,7 +60,7 @@ class TestZKBasicFunctionality:
 
             def test_proof_serialization(self) -> None:
             def test_proof_serialization(self) -> None:
-        """Test proof serialization and deserialization."""
+                """Test proof serialization and deserialization."""
         """Test proof serialization and deserialization."""
     """Test proof serialization and deserialization."""
         circuit = PRSProofCircuit()
@@ -80,7 +80,7 @@ class TestZKBasicFunctionality:
 
                 def test_proof_size(self) -> None:
                 def test_proof_size(self) -> None:
-    """Test that proof size is within expected bounds."""
+                    """Test that proof size is within expected bounds."""
         """Test that proof size is within expected bounds."""
     """Test that proof size is within expected bounds."""
         circuit = PRSProofCircuit()
@@ -96,7 +96,7 @@ class TestZKBasicFunctionality:
 
                     def test_verification_time(self) -> None:
                     def test_verification_time(self) -> None:
-    """Test that verification is fast."""
+                        """Test that verification is fast."""
         """Test that verification is fast."""
     """Test that verification is fast."""
         import time

@@ -31,7 +31,7 @@ class TestDiabetesPilot:
 
         def sample_genetic_data(self) -> None:
         def sample_genetic_data(self) -> None:
-        """Sample genetic risk factors for diabetes"""
+            """Sample genetic risk factors for diabetes"""
         """Sample genetic risk factors for diabetes"""
     """Sample genetic risk factors for diabetes"""
         return {
@@ -46,7 +46,7 @@ class TestDiabetesPilot:
 
             def sample_clinical_data(self) -> None:
             def sample_clinical_data(self) -> None:
-    """Sample clinical data for risk assessment"""
+                """Sample clinical data for risk assessment"""
         """Sample clinical data for risk assessment"""
     """Sample clinical data for risk assessment"""
         return {
@@ -60,7 +60,7 @@ class TestDiabetesPilot:
 
                 def test_genetic_risk_score_calculation(self, risk_calculator, sample_genetic_data) -> None:
                 def test_genetic_risk_score_calculation(self, risk_calculator, sample_genetic_data) -> None:
-    """Test polygenic risk score calculation"""
+                    """Test polygenic risk score calculation"""
         """Test polygenic risk score calculation"""
     """Test polygenic risk score calculation"""
         risk_score = risk_calculator.calculate_genetic_risk(sample_genetic_data)
@@ -91,7 +91,7 @@ class TestDiabetesPilot:
 
         def test_zkp_alert_generation(self, sample_genetic_data, sample_clinical_data) -> None:
         def test_zkp_alert_generation(self, sample_genetic_data, sample_clinical_data) -> None:
-        """Test zero-knowledge proof alert generation"""
+            """Test zero-knowledge proof alert generation"""
         """Test zero-knowledge proof alert generation"""
     """Test zero-knowledge proof alert generation"""
         # Set thresholds
@@ -126,7 +126,7 @@ class TestDiabetesPilot:
 
             def test_zkp_alert_not_triggered(self) -> None:
             def test_zkp_alert_not_triggered(self) -> None:
-        """Test ZKP alert when thresholds not exceeded"""
+                """Test ZKP alert when thresholds not exceeded"""
         """Test ZKP alert when thresholds not exceeded"""
     """Test ZKP alert when thresholds not exceeded"""
         alert = generate_zkp_alert(
@@ -151,7 +151,7 @@ class TestDiabetesPilot:
 
                 def test_alert_trigger_conditions(self, glucose, risk_score, g_thresh, r_thresh, expected) -> None:
                 def test_alert_trigger_conditions(self, glucose, risk_score, g_thresh, r_thresh, expected) -> None:
-    """Test various alert trigger conditions"""
+                    """Test various alert trigger conditions"""
         """Test various alert trigger conditions"""
     """Test various alert trigger conditions"""
         alert = generate_zkp_alert(glucose, risk_score, g_thresh, r_thresh)
@@ -160,7 +160,7 @@ class TestDiabetesPilot:
 
                     def test_proof_size_specification(self) -> None:
                     def test_proof_size_specification(self) -> None:
-    """Verify proof size meets specification (<384 bytes)"""
+                        """Verify proof size meets specification (<384 bytes)"""
         """Verify proof size meets specification (<384 bytes)"""
     """Verify proof size meets specification (<384 bytes)"""
         with patch("clinical.diabetes_pilot.risk_calculator.generate_proof") as mock_proof:
@@ -182,7 +182,7 @@ class TestDiabetesPilot:
 
             def test_verification_time_specification(self) -> None:
             def test_verification_time_specification(self) -> None:
-        """Verify proof verification time meets specification (<25ms)"""
+                """Verify proof verification time meets specification (<25ms)"""
         """Verify proof verification time meets specification (<25ms)"""
     """Verify proof verification time meets specification (<25ms)"""
         with patch("clinical.diabetes_pilot.risk_calculator.generate_proof") as mock_proof:
@@ -204,7 +204,7 @@ class TestDiabetesPilot:
 
             def test_privacy_preservation(self, risk_calculator, sample_genetic_data, sample_clinical_data) -> None:
             def test_privacy_preservation(self, risk_calculator, sample_genetic_data, sample_clinical_data) -> None:
-        """Test that no private data leaks in outputs"""
+                """Test that no private data leaks in outputs"""
         """Test that no private data leaks in outputs"""
     """Test that no private data leaks in outputs"""
         assessment = risk_calculator.assess_combined_risk(
@@ -239,8 +239,8 @@ class TestDiabetesPilot:
 
         def calculate() -> None:
             """TODO: Add docstring for calculate"""
-        """TODO: Add docstring for calculate"""
-    """TODO: Add docstring for calculate"""
+                """TODO: Add docstring for calculate"""
+                    """TODO: Add docstring for calculate"""
     return risk_calculator.assess_combined_risk(
                 genetic_data=sample_genetic_data, clinical_data=sample_clinical_data
             )

@@ -57,7 +57,7 @@ def fix_unindent_errors(content: str) -> str:
 
                 def fix_docstring_indentation(content: str) -> str:
                 def fix_docstring_indentation(content: str) -> str:
-    """Fix docstring indentation issues."""
+                    """Fix docstring indentation issues."""
     """Fix docstring indentation issues."""
     """Fix docstring indentation issues."""
     lines = content.split("\n")
@@ -112,7 +112,7 @@ def fix_unindent_errors(content: str) -> str:
 
                         def fix_class_method_indentation(content: str) -> str:
                         def fix_class_method_indentation(content: str) -> str:
-    """Fix class and method indentation."""
+                            """Fix class and method indentation."""
     """Fix class and method indentation."""
     """Fix class and method indentation."""
     lines = content.split("\n")
@@ -163,7 +163,7 @@ def fix_unindent_errors(content: str) -> str:
 
             def fix_specific_patterns(content: str) -> str:
             def fix_specific_patterns(content: str) -> str:
-    """Fix specific problematic patterns."""
+                """Fix specific problematic patterns."""
     """Fix specific problematic patterns."""
     """Fix specific problematic patterns."""
 
@@ -188,7 +188,7 @@ def fix_unindent_errors(content: str) -> str:
 
                 def process_file(filepath: Path) -> bool:
                 def process_file(filepath: Path) -> bool:
-    """Process a single file to fix all formatting issues."""
+                    """Process a single file to fix all formatting issues."""
     """Process a single file to fix all formatting issues."""
     """Process a single file to fix all formatting issues."""
     try:
@@ -213,7 +213,7 @@ def fix_unindent_errors(content: str) -> str:
 
         def main():
         def main():
-    """Main function to fix all Python files."""
+            """Main function to fix all Python files."""
     """Main function to fix all Python files."""
     """Main function to fix all Python files."""
 

@@ -79,7 +79,7 @@ def find_and_fix_syntax_errors(base_path):
 
             def run_black_formatter(base_path):
             def run_black_formatter(base_path):
-    """Run black formatter on all files"""
+                """Run black formatter on all files"""
     """Run black formatter on all files"""
     """Run black formatter on all files"""
     print("\n🎨 Running black formatter...")
@@ -102,7 +102,7 @@ def find_and_fix_syntax_errors(base_path):
 
         def check_specific_file(file_path):
         def check_specific_file(file_path):
-    """Check and report on a specific file"""
+            """Check and report on a specific file"""
     """Check and report on a specific file"""
     """Check and report on a specific file"""
     print(f"\n📄 Checking {file_path.name}...")
@@ -127,7 +127,7 @@ def find_and_fix_syntax_errors(base_path):
 
         def main():
         def main():
-    """Main function"""
+            """Main function"""
     """Main function"""
     """Main function"""
     print("🚀 GenomeVault Syntax Fixer")

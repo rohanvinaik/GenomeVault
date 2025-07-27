@@ -35,7 +35,7 @@ def fix_venv_issues():
 
             def create_clean_runner():
             def create_clean_runner():
-    """Create a clean benchmark runner that bypasses venv issues"""
+                """Create a clean benchmark runner that bypasses venv issues"""
     """Create a clean benchmark runner that bypasses venv issues"""
     """Create a clean benchmark runner that bypasses venv issues"""
     base_path = Path.home() / "genomevault"
@@ -125,7 +125,7 @@ except Exception as e:
 
     def use_system_python_benchmark():
     def use_system_python_benchmark():
-    """Run benchmark using system Python"""
+        """Run benchmark using system Python"""
     """Run benchmark using system Python"""
     """Run benchmark using system Python"""
     base_path = Path.home() / "genomevault"
@@ -172,7 +172,7 @@ except Exception as e:
 
         def main():
         def main():
-    """Main function"""
+            """Main function"""
     """Main function"""
     """Main function"""
     print("🛠️ GenomeVault Benchmark Fixer")

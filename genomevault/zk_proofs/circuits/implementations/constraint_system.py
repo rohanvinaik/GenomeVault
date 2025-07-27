@@ -41,44 +41,44 @@ class FieldElement:
 
     def __post_init__(self) -> None:
         """TODO: Add docstring for __post_init__"""
-        """TODO: Add docstring for __post_init__"""
             """TODO: Add docstring for __post_init__"""
+                """TODO: Add docstring for __post_init__"""
         self.value = self.value % self.MODULUS
 
         def __add__(self, other) -> None:
             """TODO: Add docstring for __add__"""
-        """TODO: Add docstring for __add__"""
-            """TODO: Add docstring for __add__"""
+                """TODO: Add docstring for __add__"""
+                    """TODO: Add docstring for __add__"""
     if isinstance(other, FieldElement):
             return FieldElement((self.value + other.value) % self.MODULUS)
         return FieldElement((self.value + other) % self.MODULUS)
 
         def __sub__(self, other) -> None:
             """TODO: Add docstring for __sub__"""
-        """TODO: Add docstring for __sub__"""
-            """TODO: Add docstring for __sub__"""
+                """TODO: Add docstring for __sub__"""
+                    """TODO: Add docstring for __sub__"""
     if isinstance(other, FieldElement):
             return FieldElement((self.value - other.value) % self.MODULUS)
         return FieldElement((self.value - other) % self.MODULUS)
 
         def __mul__(self, other) -> None:
             """TODO: Add docstring for __mul__"""
-        """TODO: Add docstring for __mul__"""
-            """TODO: Add docstring for __mul__"""
+                """TODO: Add docstring for __mul__"""
+                    """TODO: Add docstring for __mul__"""
     if isinstance(other, FieldElement):
             return FieldElement((self.value * other.value) % self.MODULUS)
         return FieldElement((self.value * other) % self.MODULUS)
 
         def __pow__(self, exp) -> None:
             """TODO: Add docstring for __pow__"""
-        """TODO: Add docstring for __pow__"""
-            """TODO: Add docstring for __pow__"""
+                """TODO: Add docstring for __pow__"""
+                    """TODO: Add docstring for __pow__"""
     return FieldElement(pow(self.value, exp, self.MODULUS))
 
             def inverse(self) -> None:
                 """TODO: Add docstring for inverse"""
-        """TODO: Add docstring for inverse"""
-            """TODO: Add docstring for inverse"""
+                    """TODO: Add docstring for inverse"""
+                        """TODO: Add docstring for inverse"""
     """Modular inverse using Fermat's little theorem"""
         if self.value == 0:
             raise ValueError("Cannot invert zero")
@@ -86,71 +86,71 @@ class FieldElement:
 
             def __truediv__(self, other) -> None:
                 """TODO: Add docstring for __truediv__"""
-        """TODO: Add docstring for __truediv__"""
-            """TODO: Add docstring for __truediv__"""
+                    """TODO: Add docstring for __truediv__"""
+                        """TODO: Add docstring for __truediv__"""
     if isinstance(other, FieldElement):
             return self * other.inverse()
         return self * FieldElement(other).inverse()
 
         def __eq__(self, other) -> None:
             """TODO: Add docstring for __eq__"""
-        """TODO: Add docstring for __eq__"""
-            """TODO: Add docstring for __eq__"""
+                """TODO: Add docstring for __eq__"""
+                    """TODO: Add docstring for __eq__"""
     if isinstance(other, FieldElement):
             return self.value == other.value
         return self.value == (other % self.MODULUS)
 
         def __ne__(self, other) -> None:
             """TODO: Add docstring for __ne__"""
-        """TODO: Add docstring for __ne__"""
-            """TODO: Add docstring for __ne__"""
+                """TODO: Add docstring for __ne__"""
+                    """TODO: Add docstring for __ne__"""
     return not self.__eq__(other)
 
             def __repr__(self) -> None:
                 """TODO: Add docstring for __repr__"""
-        """TODO: Add docstring for __repr__"""
-            """TODO: Add docstring for __repr__"""
+                    """TODO: Add docstring for __repr__"""
+                        """TODO: Add docstring for __repr__"""
     return f"FieldElement({self.value})"
 
                 def __str__(self) -> None:
                     """TODO: Add docstring for __str__"""
-        """TODO: Add docstring for __str__"""
-            """TODO: Add docstring for __str__"""
+                        """TODO: Add docstring for __str__"""
+                            """TODO: Add docstring for __str__"""
     return str(self.value)
 
                     def to_bytes(self) -> bytes:
                         """TODO: Add docstring for to_bytes"""
-        """TODO: Add docstring for to_bytes"""
-            """TODO: Add docstring for to_bytes"""
+                            """TODO: Add docstring for to_bytes"""
+                                """TODO: Add docstring for to_bytes"""
     """Convert to 32-byte representation"""
         return self.value.to_bytes(32, byteorder="big")
 
     @classmethod
                         def from_bytes(cls, data: bytes) -> "FieldElement":
                             """TODO: Add docstring for from_bytes"""
-        """TODO: Add docstring for from_bytes"""
-            """TODO: Add docstring for from_bytes"""
+                                """TODO: Add docstring for from_bytes"""
+                                    """TODO: Add docstring for from_bytes"""
     """Create from 32-byte representation"""
         return cls(int.from_bytes(data, byteorder="big"))
 
     @classmethod
                             def random(cls) -> "FieldElement":
                                 """TODO: Add docstring for random"""
-        """TODO: Add docstring for random"""
-            """TODO: Add docstring for random"""
+                                    """TODO: Add docstring for random"""
+                                        """TODO: Add docstring for random"""
     """Generate random field element"""
         return cls(np.random.randint(0, cls.MODULUS))
 
                                 def is_zero(self) -> bool:
                                     """TODO: Add docstring for is_zero"""
-        """TODO: Add docstring for is_zero"""
-            """TODO: Add docstring for is_zero"""
+                                        """TODO: Add docstring for is_zero"""
+                                            """TODO: Add docstring for is_zero"""
     return self.value == 0
 
                                     def is_one(self) -> bool:
                                         """TODO: Add docstring for is_one"""
-        """TODO: Add docstring for is_one"""
-            """TODO: Add docstring for is_one"""
+                                            """TODO: Add docstring for is_one"""
+                                                """TODO: Add docstring for is_one"""
     return self.value == 1
 
 
@@ -167,8 +167,8 @@ class Variable:
 
     def __hash__(self) -> None:
         """TODO: Add docstring for __hash__"""
-        """TODO: Add docstring for __hash__"""
             """TODO: Add docstring for __hash__"""
+                """TODO: Add docstring for __hash__"""
     return hash(self.index)
 
 
@@ -183,8 +183,8 @@ class LinearCombination:
 
     def __add__(self, other) -> None:
         """TODO: Add docstring for __add__"""
-        """TODO: Add docstring for __add__"""
             """TODO: Add docstring for __add__"""
+                """TODO: Add docstring for __add__"""
     if isinstance(other, LinearCombination):
             new_terms = self.terms.copy()
             for var, coeff in other.terms.items():
@@ -207,8 +207,8 @@ class LinearCombination:
 
             def __mul__(self, scalar) -> None:
                 """TODO: Add docstring for __mul__"""
-        """TODO: Add docstring for __mul__"""
-            """TODO: Add docstring for __mul__"""
+                    """TODO: Add docstring for __mul__"""
+                        """TODO: Add docstring for __mul__"""
     if isinstance(scalar, (int, FieldElement)):
             scalar = FieldElement(scalar)
             new_terms = {var: coeff * scalar for var, coeff in self.terms.items()}
@@ -218,14 +218,14 @@ class LinearCombination:
 
             def __rmul__(self, scalar) -> None:
                 """TODO: Add docstring for __rmul__"""
-        """TODO: Add docstring for __rmul__"""
-            """TODO: Add docstring for __rmul__"""
+                    """TODO: Add docstring for __rmul__"""
+                        """TODO: Add docstring for __rmul__"""
     return self.__mul__(scalar)
 
                 def evaluate(self, assignment: Dict[Variable, FieldElement]) -> FieldElement:
                     """TODO: Add docstring for evaluate"""
-        """TODO: Add docstring for evaluate"""
-            """TODO: Add docstring for evaluate"""
+                        """TODO: Add docstring for evaluate"""
+                            """TODO: Add docstring for evaluate"""
     """Evaluate the linear combination given variable assignment"""
         result = self.constant
         for var, coeff in self.terms.items():
@@ -252,8 +252,8 @@ class Constraint:
 
     def is_satisfied(self, assignment: Dict[Variable, FieldElement]) -> bool:
         """TODO: Add docstring for is_satisfied"""
-        """TODO: Add docstring for is_satisfied"""
             """TODO: Add docstring for is_satisfied"""
+                """TODO: Add docstring for is_satisfied"""
     """Check if constraint is satisfied by variable assignment"""
         try:
             a_val = self.a.evaluate(assignment)
@@ -281,8 +281,8 @@ class ConstraintSystem:
 
     def __init__(self) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
         self.variables: Dict[int, Variable] = {}
         self.constraints: List[Constraint] = []
         self.public_inputs: List[Variable] = []
@@ -300,8 +300,8 @@ class ConstraintSystem:
 
         def new_variable(self, label: Optional[str] = None, is_public: bool = False) -> Variable:
             """TODO: Add docstring for new_variable"""
-        """TODO: Add docstring for new_variable"""
-            """TODO: Add docstring for new_variable"""
+                """TODO: Add docstring for new_variable"""
+                    """TODO: Add docstring for new_variable"""
     """Create a new variable"""
         var = Variable(self.variable_counter, label=label, is_public=is_public)
             self.variables[self.variable_counter] = var
@@ -314,8 +314,8 @@ class ConstraintSystem:
 
             def assign(self, var: Variable, value: Union[int, FieldElement]) -> None:
                 """TODO: Add docstring for assign"""
-        """TODO: Add docstring for assign"""
-            """TODO: Add docstring for assign"""
+                    """TODO: Add docstring for assign"""
+                        """TODO: Add docstring for assign"""
     """Assign value to variable"""
         if isinstance(value, int):
             value = FieldElement(value)
@@ -324,8 +324,8 @@ class ConstraintSystem:
 
             def get_assignment(self, var: Variable) -> FieldElement:
                 """TODO: Add docstring for get_assignment"""
-        """TODO: Add docstring for get_assignment"""
-            """TODO: Add docstring for get_assignment"""
+                    """TODO: Add docstring for get_assignment"""
+                        """TODO: Add docstring for get_assignment"""
     """Get assigned value for variable"""
         if var in self.assignment:
             return self.assignment[var]
@@ -336,8 +336,8 @@ class ConstraintSystem:
 
             def enforce_constraint(self, constraint: Constraint) -> None:
                 """TODO: Add docstring for enforce_constraint"""
-        """TODO: Add docstring for enforce_constraint"""
-            """TODO: Add docstring for enforce_constraint"""
+                    """TODO: Add docstring for enforce_constraint"""
+                        """TODO: Add docstring for enforce_constraint"""
     """Add constraint to the system"""
                 self.constraints.append(constraint)
 
@@ -347,8 +347,8 @@ class ConstraintSystem:
         b: Union[Variable, LinearCombination, int, FieldElement],
     ) -> None:
         """TODO: Add docstring for enforce_equal"""
-        """TODO: Add docstring for enforce_equal"""
             """TODO: Add docstring for enforce_equal"""
+                """TODO: Add docstring for enforce_equal"""
     """Enforce a == b"""
         a_lc = self._to_linear_combination(a)
         b_lc = self._to_linear_combination(b)
@@ -369,8 +369,8 @@ class ConstraintSystem:
         c: Union[Variable, LinearCombination],
     ) -> None:
         """TODO: Add docstring for enforce_multiplication"""
-        """TODO: Add docstring for enforce_multiplication"""
             """TODO: Add docstring for enforce_multiplication"""
+                """TODO: Add docstring for enforce_multiplication"""
     """Enforce a * b = c"""
         a_lc = self._to_linear_combination(a)
         b_lc = self._to_linear_combination(b)
@@ -381,8 +381,8 @@ class ConstraintSystem:
 
         def enforce_boolean(self, var: Variable) -> None:
             """TODO: Add docstring for enforce_boolean"""
-        """TODO: Add docstring for enforce_boolean"""
-            """TODO: Add docstring for enforce_boolean"""
+                """TODO: Add docstring for enforce_boolean"""
+                    """TODO: Add docstring for enforce_boolean"""
     """Enforce var is boolean (0 or 1): var * (var - 1) = 0"""
         var_minus_one = self.add_variable()
             self.assign(var_minus_one, self.get_assignment(var) - FieldElement(1))
@@ -400,22 +400,22 @@ class ConstraintSystem:
 
             def add_variable(self, label: Optional[str] = None) -> Variable:
                 """TODO: Add docstring for add_variable"""
-        """TODO: Add docstring for add_variable"""
-            """TODO: Add docstring for add_variable"""
+                    """TODO: Add docstring for add_variable"""
+                        """TODO: Add docstring for add_variable"""
     """Add a private variable"""
         return self.new_variable(label, is_public=False)
 
                 def add_public_input(self, label: Optional[str] = None) -> Variable:
                     """TODO: Add docstring for add_public_input"""
-        """TODO: Add docstring for add_public_input"""
-            """TODO: Add docstring for add_public_input"""
+                        """TODO: Add docstring for add_public_input"""
+                            """TODO: Add docstring for add_public_input"""
     """Add a public input variable"""
         return self.new_variable(label, is_public=True)
 
                     def _to_linear_combination(self, value) -> LinearCombination:
                         """TODO: Add docstring for _to_linear_combination"""
-        """TODO: Add docstring for _to_linear_combination"""
-            """TODO: Add docstring for _to_linear_combination"""
+                            """TODO: Add docstring for _to_linear_combination"""
+                                """TODO: Add docstring for _to_linear_combination"""
     """Convert various types to LinearCombination"""
         if isinstance(value, LinearCombination):
             return value
@@ -428,8 +428,8 @@ class ConstraintSystem:
 
             def is_satisfied(self) -> bool:
                 """TODO: Add docstring for is_satisfied"""
-        """TODO: Add docstring for is_satisfied"""
-            """TODO: Add docstring for is_satisfied"""
+                    """TODO: Add docstring for is_satisfied"""
+                        """TODO: Add docstring for is_satisfied"""
     """Check if all constraints are satisfied"""
         for constraint in self.constraints:
             if not constraint.is_satisfied(self.assignment):
@@ -438,37 +438,37 @@ class ConstraintSystem:
 
                 def num_constraints(self) -> int:
                     """TODO: Add docstring for num_constraints"""
-        """TODO: Add docstring for num_constraints"""
-            """TODO: Add docstring for num_constraints"""
+                        """TODO: Add docstring for num_constraints"""
+                            """TODO: Add docstring for num_constraints"""
     """Get number of constraints"""
         return len(self.constraints)
 
                     def num_variables(self) -> int:
                         """TODO: Add docstring for num_variables"""
-        """TODO: Add docstring for num_variables"""
-            """TODO: Add docstring for num_variables"""
+                            """TODO: Add docstring for num_variables"""
+                                """TODO: Add docstring for num_variables"""
     """Get number of variables"""
         return len(self.variables)
 
                         def get_public_inputs(self) -> List[FieldElement]:
                             """TODO: Add docstring for get_public_inputs"""
-        """TODO: Add docstring for get_public_inputs"""
-            """TODO: Add docstring for get_public_inputs"""
+                                """TODO: Add docstring for get_public_inputs"""
+                                    """TODO: Add docstring for get_public_inputs"""
     """Get public input values"""
         return [self.get_assignment(var) for var in self.public_inputs]
 
                             def get_witness(self) -> Dict[int, FieldElement]:
                                 """TODO: Add docstring for get_witness"""
-        """TODO: Add docstring for get_witness"""
-            """TODO: Add docstring for get_witness"""
+                                    """TODO: Add docstring for get_witness"""
+                                        """TODO: Add docstring for get_witness"""
     """Get witness (all variable assignments)"""
         return {var.index: self.get_assignment(var) for var in self.variables.values()}
 
 
                                 def poseidon_hash(inputs: List[FieldElement]) -> FieldElement:
                                     """TODO: Add docstring for poseidon_hash"""
-        """TODO: Add docstring for poseidon_hash"""
-        """TODO: Add docstring for poseidon_hash"""
+                                        """TODO: Add docstring for poseidon_hash"""
+                                            """TODO: Add docstring for poseidon_hash"""
     """
     Simplified Poseidon hash implementation for demonstration
     In production, would use optimized implementation
@@ -481,8 +481,8 @@ class ConstraintSystem:
 
                                     def pedersen_commit(value: FieldElement, randomness: FieldElement) -> FieldElement:
                                         """TODO: Add docstring for pedersen_commit"""
-        """TODO: Add docstring for pedersen_commit"""
-        """TODO: Add docstring for pedersen_commit"""
+                                            """TODO: Add docstring for pedersen_commit"""
+                                                """TODO: Add docstring for pedersen_commit"""
     """
     Simplified Pedersen commitment for demonstration
     In production, would use proper elliptic curve implementation
@@ -495,8 +495,8 @@ class ConstraintSystem:
     leaf: FieldElement, path: List[FieldElement], indices: List[int]
 ) -> FieldElement:
     """TODO: Add docstring for create_merkle_proof"""
-    """TODO: Add docstring for create_merkle_proof"""
         """TODO: Add docstring for create_merkle_proof"""
+            """TODO: Add docstring for create_merkle_proof"""
     """
     Create Merkle proof by computing root from leaf and path
     """

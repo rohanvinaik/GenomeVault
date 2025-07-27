@@ -15,8 +15,8 @@ from genomevault.pir.client import BatchedPIRQueryBuilder, GenomicQuery, PIRClie
 
 async def main() -> None:
     """TODO: Add docstring for main"""
-    """TODO: Add docstring for main"""
         """TODO: Add docstring for main"""
+            """TODO: Add docstring for main"""
     """
     Demonstrate the complete error-tuned query pipeline
     """
@@ -165,8 +165,8 @@ class MockPIRClient(PIRClient):
 
     def __init__(self, servers: List[str], database_size: int) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
     # Don't call super().__init__ to avoid real connection
         self.server_urls = servers
         self.database_size = database_size
@@ -174,8 +174,8 @@ class MockPIRClient(PIRClient):
 
     async def execute_query(self, query) -> None:
         """TODO: Add docstring for execute_query"""
-        """TODO: Add docstring for execute_query"""
             """TODO: Add docstring for execute_query"""
+                """TODO: Add docstring for execute_query"""
     """Simulate PIR query execution"""
         # Simulate network delay
         await asyncio.sleep(0.01 + np.random.exponential(0.005))
@@ -194,8 +194,8 @@ class MockPIRClient(PIRClient):
 
         def create_query(self, db_index: int, seed: int = None) -> Dict[str, Any]:
             """TODO: Add docstring for create_query"""
-        """TODO: Add docstring for create_query"""
-            """TODO: Add docstring for create_query"""
+                """TODO: Add docstring for create_query"""
+                    """TODO: Add docstring for create_query"""
     """Create mock query"""
         from genomevault.pir.client.pir_client import PIRQuery
 
@@ -203,15 +203,15 @@ class MockPIRClient(PIRClient):
 
             def decode_response(self, response_data, response_type="genomic") -> None:
                 """TODO: Add docstring for decode_response"""
-        """TODO: Add docstring for decode_response"""
-            """TODO: Add docstring for decode_response"""
+                    """TODO: Add docstring for decode_response"""
+                        """TODO: Add docstring for decode_response"""
     """Decode mock response"""
         return response_data
 
                 def calculate_privacy_guarantee(self, num_servers: int) -> float:
                     """TODO: Add docstring for calculate_privacy_guarantee"""
-        """TODO: Add docstring for calculate_privacy_guarantee"""
-            """TODO: Add docstring for calculate_privacy_guarantee"""
+                        """TODO: Add docstring for calculate_privacy_guarantee"""
+                            """TODO: Add docstring for calculate_privacy_guarantee"""
     """Calculate privacy guarantee"""
         honesty_prob = 0.95
         return (1 - honesty_prob) ** num_servers
@@ -219,8 +219,8 @@ class MockPIRClient(PIRClient):
 
                     def create_mock_index_mapping() -> Dict[str, Dict]:
                         """TODO: Add docstring for create_mock_index_mapping"""
-        """TODO: Add docstring for create_mock_index_mapping"""
-        """TODO: Add docstring for create_mock_index_mapping"""
+                            """TODO: Add docstring for create_mock_index_mapping"""
+                                """TODO: Add docstring for create_mock_index_mapping"""
     """Create mock index mapping for demo"""
     return {
         "variants": {
@@ -249,8 +249,8 @@ class MockPIRClient(PIRClient):
 
                         def generate_mock_proof(metadata: Dict) -> str:
                             """TODO: Add docstring for generate_mock_proof"""
-        """TODO: Add docstring for generate_mock_proof"""
-        """TODO: Add docstring for generate_mock_proof"""
+                                """TODO: Add docstring for generate_mock_proof"""
+                                    """TODO: Add docstring for generate_mock_proof"""
     """Generate mock proof hash"""
     import hashlib
 

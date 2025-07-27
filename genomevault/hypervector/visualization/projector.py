@@ -31,8 +31,8 @@ class ModelEvolutionVisualizer:
 
     def __init__(self, output_dir: str = "./visualizations") -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
         self.output_dir = output_dir
         self.projections = {}
         self.drift_history = []
@@ -45,8 +45,8 @@ class ModelEvolutionVisualizer:
         save_path: Optional[str] = None,
     ) -> Dict[str, np.ndarray]:
         """TODO: Add docstring for visualize_semantic_space"""
-        """TODO: Add docstring for visualize_semantic_space"""
             """TODO: Add docstring for visualize_semantic_space"""
+                """TODO: Add docstring for visualize_semantic_space"""
     """
         Visualize high-dimensional model representations in 2D space.
 
@@ -183,8 +183,8 @@ class ModelEvolutionVisualizer:
         self, snapshot_vectors: List[np.ndarray], threshold: float = 0.15, window_size: int = 5
     ) -> Tuple[List[float], List[int]]:
         """TODO: Add docstring for detect_semantic_drift"""
-        """TODO: Add docstring for detect_semantic_drift"""
             """TODO: Add docstring for detect_semantic_drift"""
+                """TODO: Add docstring for detect_semantic_drift"""
     """
         Detect semantic drift in model evolution.
 
@@ -244,8 +244,8 @@ class ModelEvolutionVisualizer:
         save_path: Optional[str] = None,
     ) -> None:
         """TODO: Add docstring for plot_drift_analysis"""
-        """TODO: Add docstring for plot_drift_analysis"""
             """TODO: Add docstring for plot_drift_analysis"""
+                """TODO: Add docstring for plot_drift_analysis"""
     """
         Plot semantic drift analysis over training.
 
@@ -303,8 +303,8 @@ class ModelEvolutionVisualizer:
         self, projections: np.ndarray, projection_type: str = "umap"
     ) -> Dict[str, float]:
         """TODO: Add docstring for analyze_trajectory_smoothness"""
-        """TODO: Add docstring for analyze_trajectory_smoothness"""
             """TODO: Add docstring for analyze_trajectory_smoothness"""
+                """TODO: Add docstring for analyze_trajectory_smoothness"""
     """
         Analyze the smoothness of model evolution trajectory.
 
@@ -366,8 +366,8 @@ class ModelEvolutionVisualizer:
         self, snapshot_vectors: List[np.ndarray], n_phases: int = 3
     ) -> List[Tuple[int, int]]:
         """TODO: Add docstring for detect_training_phases"""
-        """TODO: Add docstring for detect_training_phases"""
             """TODO: Add docstring for detect_training_phases"""
+                """TODO: Add docstring for detect_training_phases"""
     """
         Detect distinct phases in model training based on semantic changes.
 
@@ -415,8 +415,8 @@ class ModelEvolutionVisualizer:
         save_path: Optional[str] = None,
     ) -> Dict[str, Any]:
         """TODO: Add docstring for create_phase_visualization"""
-        """TODO: Add docstring for create_phase_visualization"""
             """TODO: Add docstring for create_phase_visualization"""
+                """TODO: Add docstring for create_phase_visualization"""
     """
         Visualize training phases with different colors.
 
@@ -481,8 +481,8 @@ class ModelEvolutionVisualizer:
     output_path: str = "./semantic_debug_report.png",
 ) -> Dict[str, Any]:
     """TODO: Add docstring for create_semantic_debugging_report"""
-    """TODO: Add docstring for create_semantic_debugging_report"""
         """TODO: Add docstring for create_semantic_debugging_report"""
+            """TODO: Add docstring for create_semantic_debugging_report"""
     """
     Create comprehensive semantic debugging report.
 

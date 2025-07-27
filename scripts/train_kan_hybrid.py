@@ -25,8 +25,8 @@ class GenomicDataset(Dataset):
 
     def __init__(self, num_samples: int = 10000, variants_per_sample: int = 100) -> None:
         """TODO: Add docstring for __init__"""
-        """TODO: Add docstring for __init__"""
             """TODO: Add docstring for __init__"""
+                """TODO: Add docstring for __init__"""
         self.num_samples = num_samples
         self.variants_per_sample = variants_per_sample
 
@@ -44,8 +44,8 @@ class GenomicDataset(Dataset):
 
             def _generate_variants(self, n: int) -> List[Dict]:
                 """TODO: Add docstring for _generate_variants"""
-        """TODO: Add docstring for _generate_variants"""
-            """TODO: Add docstring for _generate_variants"""
+                    """TODO: Add docstring for _generate_variants"""
+                        """TODO: Add docstring for _generate_variants"""
     """Generate random genomic variants"""
         variants = []
         for _ in range(n):
@@ -62,14 +62,14 @@ class GenomicDataset(Dataset):
 
             def __len__(self) -> None:
                 """TODO: Add docstring for __len__"""
-        """TODO: Add docstring for __len__"""
-            """TODO: Add docstring for __len__"""
+                    """TODO: Add docstring for __len__"""
+                        """TODO: Add docstring for __len__"""
     return self.num_samples
 
                 def __getitem__(self, idx) -> None:
                     """TODO: Add docstring for __getitem__"""
-        """TODO: Add docstring for __getitem__"""
-            """TODO: Add docstring for __getitem__"""
+                        """TODO: Add docstring for __getitem__"""
+                            """TODO: Add docstring for __getitem__"""
     return self.samples[idx]
 
 
@@ -82,8 +82,8 @@ class GenomicDataset(Dataset):
     device: str = "cpu",
 ) -> Dict[str, List[float]]:
     """TODO: Add docstring for train_kan_compressor"""
-    """TODO: Add docstring for train_kan_compressor"""
         """TODO: Add docstring for train_kan_compressor"""
+            """TODO: Add docstring for train_kan_compressor"""
     """
     Train KAN compressor model
 
@@ -181,8 +181,8 @@ class GenomicDataset(Dataset):
     compressor: KANCompressor, test_loader: DataLoader, device: str = "cpu"
 ) -> Dict[str, float]:
     """TODO: Add docstring for evaluate_kan_model"""
-    """TODO: Add docstring for evaluate_kan_model"""
         """TODO: Add docstring for evaluate_kan_model"""
+            """TODO: Add docstring for evaluate_kan_model"""
     """
     Evaluate trained KAN model
 
@@ -242,8 +242,8 @@ class GenomicDataset(Dataset):
 
             def visualize_training_history(history: Dict[str, List[float]]) -> None:
                 """TODO: Add docstring for visualize_training_history"""
-        """TODO: Add docstring for visualize_training_history"""
-        """TODO: Add docstring for visualize_training_history"""
+                    """TODO: Add docstring for visualize_training_history"""
+                        """TODO: Add docstring for visualize_training_history"""
     """Visualize training history"""
     fig, axes = plt.subplots(1, 3, figsize=(15, 5))
 
@@ -277,8 +277,8 @@ class GenomicDataset(Dataset):
 
                 def analyze_learned_functions(compressor: KANCompressor, num_functions: int = 5) -> None:
                     """TODO: Add docstring for analyze_learned_functions"""
-        """TODO: Add docstring for analyze_learned_functions"""
-        """TODO: Add docstring for analyze_learned_functions"""
+                        """TODO: Add docstring for analyze_learned_functions"""
+                            """TODO: Add docstring for analyze_learned_functions"""
     """Analyze and visualize learned KAN functions"""
     print("\nAnalyzing learned functions...")
 
@@ -313,8 +313,8 @@ class GenomicDataset(Dataset):
 
             def main() -> None:
                 """TODO: Add docstring for main"""
-        """TODO: Add docstring for main"""
-        """TODO: Add docstring for main"""
+                    """TODO: Add docstring for main"""
+                        """TODO: Add docstring for main"""
     """Main training pipeline"""
     # Configuration
     config = {

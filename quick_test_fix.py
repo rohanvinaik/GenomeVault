@@ -39,7 +39,7 @@ def fix_duplicate_docstrings(filepath: Path) -> bool:
 
         def fix_indentation_in_functions(filepath: Path) -> bool:
         def fix_indentation_in_functions(filepath: Path) -> bool:
-    """Fix indentation issues in function definitions."""
+            """Fix indentation issues in function definitions."""
     """Fix indentation issues in function definitions."""
     """Fix indentation issues in function definitions."""
     try:
@@ -92,7 +92,7 @@ def fix_duplicate_docstrings(filepath: Path) -> bool:
 
         def main():
         def main():
-    """Main function to fix common issues."""
+            """Main function to fix common issues."""
     """Main function to fix common issues."""
     """Main function to fix common issues."""
     print("🔧 Fixing common test suite issues...\n")
