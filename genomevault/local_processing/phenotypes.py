@@ -753,47 +753,79 @@ class PhenotypeProcessor:
 
         for profile in profiles[1:]:
             if merge_strategy == "most_recent":
-                # Take most recent measurements
-                measurement_dict = {m.measurement_type: m for m in merged.measurements}
-                for measurement in profile.measurements:
-                    existing = measurement_dict.get(measurement.measurement_type)
-                    if not existing or (
-                        measurement.date and existing.date and measurement.date > existing.date
-                    ):
-                        measurement_dict[measurement.measurement_type] = measurement
-                merged.measurements = list(measurement_dict.values())
-
-                # Union of diagnoses and medications
-                diagnosis_ids = {d.diagnosis_id for d in merged.diagnoses}
-                merged.diagnoses.extend(
-                    [d for d in profile.diagnoses if d.diagnosis_id not in diagnosis_ids]
-                )
-
-                medication_ids = {m.medication_id for m in merged.medications}
-                merged.medications.extend(
-                    [m for m in profile.medications if m.medication_id not in medication_ids]
-                )
-
-                # Merge family history
-                merged.family_history.extend(profile.family_history)
-
-                # Update demographics with non-empty values
-                for key, value in profile.demographics.items():
-                    if value and (key not in merged.demographics or not merged.demographics[key]):
-                        merged.demographics[key] = value
-
+                self._merge_most_recent(merged, profile)
             elif merge_strategy == "union":
-                # Keep all data from all profiles
-                merged.measurements.extend(profile.measurements)
-                merged.diagnoses.extend(profile.diagnoses)
-                merged.medications.extend(profile.medications)
-                merged.family_history.extend(profile.family_history)
-
+                self._merge_union(merged, profile)
             else:
-                raise ValueError("Unknown merge strategy: {merge_strategy}")
+                raise ValueError(f"Unknown merge strategy: {merge_strategy}")
 
         # Update metadata
         merged.metadata["merged_from"] = [p.sample_id for p in profiles]
         merged.metadata["merge_strategy"] = merge_strategy
 
         return merged
+
+    def _merge_most_recent(self, merged: PhenotypeProfile, profile: PhenotypeProfile) -> None:
+        """Merge using most recent strategy"""
+        # Merge measurements
+        self._merge_measurements_most_recent(merged, profile)
+
+        # Merge diagnoses and medications
+        self._merge_diagnoses(merged, profile)
+        self._merge_medications(merged, profile)
+
+        # Merge family history
+        merged.family_history.extend(profile.family_history)
+
+        # Merge demographics
+        self._merge_demographics(merged, profile)
+
+    def _merge_union(self, merged: PhenotypeProfile, profile: PhenotypeProfile) -> None:
+        """Merge using union strategy - keep all data"""
+        merged.measurements.extend(profile.measurements)
+        merged.diagnoses.extend(profile.diagnoses)
+        merged.medications.extend(profile.medications)
+        merged.family_history.extend(profile.family_history)
+
+    def _merge_measurements_most_recent(
+        self, merged: PhenotypeProfile, profile: PhenotypeProfile
+    ) -> None:
+        """Merge measurements keeping most recent ones"""
+        measurement_dict = {m.measurement_type: m for m in merged.measurements}
+
+        for measurement in profile.measurements:
+            existing = measurement_dict.get(measurement.measurement_type)
+            if self._should_replace_measurement(existing, measurement):
+                measurement_dict[measurement.measurement_type] = measurement
+
+        merged.measurements = list(measurement_dict.values())
+
+    def _should_replace_measurement(
+        self, existing: Optional[ClinicalMeasurement], new: ClinicalMeasurement
+    ) -> bool:
+        """Check if measurement should be replaced"""
+        if not existing:
+            return True
+        if not new.date or not existing.date:
+            return True
+        return new.date > existing.date
+
+    def _merge_diagnoses(self, merged: PhenotypeProfile, profile: PhenotypeProfile) -> None:
+        """Merge diagnoses avoiding duplicates"""
+        diagnosis_ids = {d.diagnosis_id for d in merged.diagnoses}
+        merged.diagnoses.extend(
+            [d for d in profile.diagnoses if d.diagnosis_id not in diagnosis_ids]
+        )
+
+    def _merge_medications(self, merged: PhenotypeProfile, profile: PhenotypeProfile) -> None:
+        """Merge medications avoiding duplicates"""
+        medication_ids = {m.medication_id for m in merged.medications}
+        merged.medications.extend(
+            [m for m in profile.medications if m.medication_id not in medication_ids]
+        )
+
+    def _merge_demographics(self, merged: PhenotypeProfile, profile: PhenotypeProfile) -> None:
+        """Merge demographics with non-empty values"""
+        for key, value in profile.demographics.items():
+            if value and (key not in merged.demographics or not merged.demographics[key]):
+                merged.demographics[key] = value

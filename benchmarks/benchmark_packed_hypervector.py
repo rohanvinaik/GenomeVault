@@ -12,7 +12,7 @@ from memory_profiler import profile
 from genomevault.hypervector.encoding import GenomicEncoder, PackedGenomicEncoder
 
 
-def generate_random_variants(n_variants=1000):
+def generate_random_variants(n_variants: int = 1000) -> list[dict[str, any]]:
     """Generate random genomic variants for testing"""
     chromosomes = [f"chr{i}" for i in range(1, 23)] + ["chrX", "chrY"]
     bases = ["A", "T", "G", "C"]
@@ -37,7 +37,9 @@ def generate_random_variants(n_variants=1000):
     return variants
 
 
-def benchmark_encoding(encoder, variants, name="Encoder"):
+def benchmark_encoding(
+    encoder: any, variants: list[dict[str, any]], name: str = "Encoder"
+) -> tuple[any, float, float, int]:
     """Benchmark encoding performance"""
     print(f"\n{name} Benchmark:")
     print("-" * 50)
@@ -45,7 +47,7 @@ def benchmark_encoding(encoder, variants, name="Encoder"):
     # Single variant encoding
     start = time.time()
     for _ in range(100):
-        hv = encoder.encode_variant(chromosome="chr1", position=12345, ref="A", alt="G")
+        _ = encoder.encode_variant(chromosome="chr1", position=12345, ref="A", alt="G")
     single_time = (time.time() - start) / 100
     print(f"Single variant encoding: {single_time*1000:.3f} ms")
 
@@ -66,17 +68,17 @@ def benchmark_encoding(encoder, variants, name="Encoder"):
     return genome_hv, single_time, batch_time, memory
 
 
-def benchmark_similarity(encoder, hv1, hv2, name="Encoder"):
+def benchmark_similarity(encoder: any, hv1: any, hv2: any, name: str = "Encoder") -> float:
     """Benchmark similarity computation"""
     start = time.time()
     for _ in range(1000):
-        sim = encoder.similarity(hv1, hv2)
+        _ = encoder.similarity(hv1, hv2)
     sim_time = (time.time() - start) / 1000
     print(f"{name} - Similarity computation: {sim_time*1000:.3f} ms")
     return sim_time
 
 
-def plot_results(results):
+def plot_results(results: dict[str, dict[str, float]]) -> None:
     """Plot benchmark results"""
     fig, axes = plt.subplots(2, 2, figsize=(12, 10))
 
@@ -115,7 +117,7 @@ def plot_results(results):
 
 
 @profile
-def memory_profile_test():
+def memory_profile_test() -> None:
     """Profile memory usage"""
     dimension = 10000
     variants = generate_random_variants(1000)
@@ -132,7 +134,7 @@ def memory_profile_test():
     print(f"Packed memory: {packed_hv.memory_bytes / 1024:.2f} KB")
 
 
-def main():
+def main() -> None:
     """Run comprehensive benchmarks"""
     print("Hypervector Encoding Benchmark")
     print("=" * 50)

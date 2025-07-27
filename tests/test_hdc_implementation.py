@@ -23,10 +23,7 @@ from hypothesis import strategies as st
 from genomevault.hypervector_transform.binding_operations import (
     BindingOperations,  # Test legacy import
 )
-from genomevault.hypervector_transform.binding_operations import (
-    BindingType,
-    HypervectorBinder,
-)
+from genomevault.hypervector_transform.binding_operations import BindingType, HypervectorBinder
 from genomevault.hypervector_transform.hdc_encoder import (
     CompressionTier,
     HypervectorConfig,
@@ -163,7 +160,7 @@ class TestAlgebraicProperties:
             try:
                 bound = binder.bind(vectors, binding_type)
                 assert bound.shape[0] == dim, f"Dimension not preserved for {binding_type}"
-            except:
+            except (ValueError, NotImplementedError, Exception):
                 # Some binding types may not support multiple vectors
                 pass
 

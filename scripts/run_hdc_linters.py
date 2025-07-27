@@ -66,7 +66,7 @@ def main():
             ["mypy", str(hdc_module), "--ignore-missing-imports", "--no-strict-optional"]
         )
         results["mypy"] = mypy_result
-    except:
+    except (FileNotFoundError, subprocess.CalledProcessError, Exception):
         print("mypy not available, skipping type checking")
         results["mypy"] = None
 
