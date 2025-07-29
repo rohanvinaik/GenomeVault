@@ -1,0 +1,19 @@
+name: SAST
+on:
+  push:
+    branches: [ clean-slate ]
+  pull_request:
+    branches: [ clean-slate ]
+
+jobs:
+  bandit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install bandit
+        run: pip install bandit==1.7.7
+      - name: Run Bandit (low false-positives)
+        run: bandit -q -r genomevault -ll
