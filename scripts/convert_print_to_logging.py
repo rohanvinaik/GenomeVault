@@ -4,9 +4,9 @@ Convert print statements to proper logging in the genomevault package.
 This script helps with step 5 of the audit checklist.
 """
 
+import ast
 import os
 import re
-import ast
 from pathlib import Path
 from typing import List, Tuple
 
@@ -16,16 +16,16 @@ def find_print_statements(file_path: Path) -> list[tuple[int, str]]:
     prints = []
 
     try:
-        with open(file_path, encoding='utf-8') as f:
+        with open(file_path, encoding="utf-8") as f:
             content = f.read()
             tree = ast.parse(content)
 
         for node in ast.walk(tree):
             if isinstance(node, ast.Call):
-                if isinstance(node.func, ast.Name) and node.func.id == 'print':
+                if isinstance(node.func, ast.Name) and node.func.id == "print":
                     line_num = node.lineno
                     # Get the actual line content
-                    lines = content.split('\n')
+                    lines = content.split("\n")
                     if 0 <= line_num - 1 < len(lines):
                         prints.append((line_num, lines[line_num - 1].strip()))
 
@@ -39,11 +39,19 @@ def find_print_statements(file_path: Path) -> list[tuple[int, str]]:
 def scan_directory(root_dir: Path, exclude_dirs: list[str] = None) -> dict:
     """Scan directory for Python files with print statements."""
     if exclude_dirs is None:
-        exclude_dirs = ['tests', 'scripts', 'benchmarks', '.git', '__pycache__', 'venv', '.venv']
+        exclude_dirs = [
+            "tests",
+            "scripts",
+            "benchmarks",
+            ".git",
+            "__pycache__",
+            "venv",
+            ".venv",
+        ]
 
     results = {}
 
-    for file_path in root_dir.rglob('*.py'):
+    for file_path in root_dir.rglob("*.py"):
         # Skip excluded directories
         if any(excluded in file_path.parts for excluded in exclude_dirs):
             continue
@@ -82,20 +90,20 @@ def generate_conversion_guide(results: dict) -> str:
     guide.append("   - Errors: `print(msg)` → `logger.error(msg)`")
     guide.append("   - Warnings: `print(msg)` → `logger.warning(msg)`")
 
-    return '\n'.join(guide)
+    return "\n".join(guide)
 
 
 def main():
     """Main function to scan for print statements."""
-    genomevault_dir = Path('/Users/rohanvinaik/genomevault/genomevault')
+    genomevault_dir = Path("/Users/rohanvinaik/genomevault/genomevault")
 
     print("Scanning for print statements in genomevault package...")
     results = scan_directory(genomevault_dir)
 
     if results:
         guide = generate_conversion_guide(results)
-        output_file = Path('/Users/rohanvinaik/genomevault/print_to_logging_guide.md')
-        with open(output_file, 'w', encoding='utf-8') as f:
+        output_file = Path("/Users/rohanvinaik/genomevault/print_to_logging_guide.md")
+        with open(output_file, "w", encoding="utf-8") as f:
             f.write(guide)
         print(f"Conversion guide written to: {output_file}")
         print(f"Total files with print statements: {len(results)}")

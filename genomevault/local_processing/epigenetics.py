@@ -134,9 +134,7 @@ class EpigeneticProfile:
 
         return [peak for peak in self.chromatin_peaks if peak.nearest_gene == gene_id]
 
-    def calculate_regional_methylation(
-        self, chromosome: str, start: int, end: int
-    ) -> float | None:
+    def calculate_regional_methylation(self, chromosome: str, start: int, end: int) -> float | None:
         """Calculate average methylation in a region"""
         sites = self.get_methylation_by_region(chromosome, start, end)
         if not sites:
@@ -345,9 +343,7 @@ class MethylationProcessor:
 
         return sites
 
-    def _find_genomic_region(
-        self, chromosome: str, position: int
-    ) -> tuple[str | None, str | None]:
+    def _find_genomic_region(self, chromosome: str, position: int) -> tuple[str | None, str | None]:
         """Find gene and region type for a genomic position"""
         for gene_id, info in self.gene_annotations.items():
             if info["chr"] != chromosome:
@@ -726,9 +722,7 @@ class ChromatinAccessibilityProcessor:
 
         return peaks
 
-    def _find_nearest_gene(
-        self, chromosome: str, position: int
-    ) -> tuple[str | None, int | None]:
+    def _find_nearest_gene(self, chromosome: str, position: int) -> tuple[str | None, int | None]:
         """Find nearest gene and distance to TSS"""
         _ = float("inf")
         _ = None

@@ -42,7 +42,7 @@ class TestOptimizedPIRDatabase:
         with open(data_path, "wb") as f:
             # Write 10 test items
             for i in range(10):
-                data = "item_{i}".encode() * 10  # Make it longer
+                data = b"item_{i}" * 10  # Make it longer
                 f.write(struct.pack(">H", len(data)))  # Size
                 f.write(data)
 
@@ -56,7 +56,7 @@ class TestOptimizedPIRDatabase:
                 f.write(struct.pack(">I", offset))  # data offset
 
                 # Calculate next offset
-                item_size = len("item_{i}".encode() * 10) + 2  # +2 for size header
+                item_size = len(b"item_{i}" * 10) + 2  # +2 for size header
                 offset += item_size
 
         return ShardMetadata(
@@ -98,7 +98,7 @@ class TestOptimizedPIRDatabase:
         # Simulate cache updates
         for i in range(20):
             key = "test_key_{i}"
-            data = "test_data_{i}".encode()
+            data = b"test_data_{i}"
             database._update_cache(key, data)
 
         # Check cache stats

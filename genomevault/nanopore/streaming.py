@@ -10,7 +10,8 @@ import hashlib
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, AsyncIterator, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
+from collections.abc import AsyncIterator
 
 import h5py
 import numpy as np
@@ -33,7 +34,7 @@ class NanoporeSlice:
     start_idx: int
     end_idx: int
     timestamp: float
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
 
 
 @dataclass
@@ -45,7 +46,7 @@ class StreamingStats:
     total_slices: int = 0
     processing_time: float = 0.0
     memory_peak_mb: float = 0.0
-    variance_peaks: List[Tuple[int, float]] = None
+    variance_peaks: list[tuple[int, float]] = None
 
     def __post_init__(self):
         if self.variance_peaks is None:
@@ -67,8 +68,8 @@ class SliceReader:
 
     async def read_fast5_slices(
         self,
-        fast5_path: Union[str, Path],
-        read_ids: Optional[List[str]] = None,
+        fast5_path: str | Path,
+        read_ids: list[str] | None = None,
     ) -> AsyncIterator[NanoporeSlice]:
         """
         Stream slices from Fast5 file.
@@ -228,7 +229,7 @@ class NanoporeStreamProcessor:
 
     async def process_fast5(
         self,
-        fast5_path: Union[str, Path],
+        fast5_path: str | Path,
         output_callback=None,
         anomaly_threshold: float = 3.0,
     ) -> StreamingStats:
@@ -278,7 +279,7 @@ class NanoporeStreamProcessor:
             del variance
 
         self.stats.processing_time = time.time() - start_time
-        self.stats.total_reads = len(set(s.read_id for s in self.stats.variance_peaks))
+        self.stats.total_reads = len({s.read_id for s in self.stats.variance_peaks})
 
         logger.info(
             f"Completed processing: {self.stats.total_events} events, "
@@ -290,7 +291,7 @@ class NanoporeStreamProcessor:
     async def _process_slice(
         self,
         slice_data: NanoporeSlice,
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    ) -> tuple[np.ndarray, np.ndarray]:
         """
         Process single slice to HV with variance tracking.
 
@@ -342,7 +343,7 @@ class NanoporeStreamProcessor:
         self,
         events: np.ndarray,
         start_pos: int,
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    ) -> tuple[np.ndarray, np.ndarray]:
         """CPU implementation of event processing."""
         hv_dim = self.hv_encoder.dimension
         batch_hv = np.zeros(hv_dim, dtype=np.float32)
@@ -404,7 +405,7 @@ class NanoporeStreamProcessor:
         self,
         variances: np.ndarray,
         threshold: float,
-    ) -> List[Tuple[int, float]]:
+    ) -> list[tuple[int, float]]:
         """Detect anomalous positions based on variance."""
         anomalies = []
 
@@ -423,7 +424,7 @@ class NanoporeStreamProcessor:
 
     async def generate_streaming_proof(
         self,
-        slice_results: List[Dict],
+        slice_results: list[dict],
         proof_type: str = "anomaly_detection",
     ) -> bytes:
         """

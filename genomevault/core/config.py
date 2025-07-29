@@ -28,10 +28,10 @@ class Config(BaseSettings):
     encryption_key: str = Field("test_key", env="ENCRYPTION_KEY")
 
     # HIPAA Configuration
-    npi_number: Optional[str] = Field(None, env="NPI_NUMBER")
-    baa_hash: Optional[str] = Field(None, env="BAA_HASH")
-    risk_analysis_hash: Optional[str] = Field(None, env="RISK_ANALYSIS_HASH")
-    hsm_serial: Optional[str] = Field(None, env="HSM_SERIAL")
+    npi_number: str | None = Field(None, env="NPI_NUMBER")
+    baa_hash: str | None = Field(None, env="BAA_HASH")
+    risk_analysis_hash: str | None = Field(None, env="RISK_ANALYSIS_HASH")
+    hsm_serial: str | None = Field(None, env="HSM_SERIAL")
 
     # API Configuration
     api_host: str = Field("0.0.0.0", env="API_HOST")
@@ -100,7 +100,7 @@ class Config(BaseSettings):
         return all([self.npi_number, self.baa_hash, self.risk_analysis_hash, self.hsm_serial])
 
 
-@lru_cache()
+@lru_cache
 def get_config() -> Config:
     """Get cached configuration instance"""
     return Config()

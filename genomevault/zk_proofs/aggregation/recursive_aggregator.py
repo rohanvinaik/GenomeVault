@@ -30,9 +30,9 @@ class Proof:
     """Represents a zero-knowledge proof."""
 
     circuit_name: str
-    public_inputs: List[FieldElement]
+    public_inputs: list[FieldElement]
     proof_data: bytes
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
 
 
 @dataclass
@@ -42,7 +42,7 @@ class AggregatedProof:
     num_proofs: int
     aggregated_data: bytes
     public_aggregate: FieldElement
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
 
 
 class RecursiveProofAggregator:
@@ -63,7 +63,7 @@ class RecursiveProofAggregator:
         self.max_aggregation_depth = max_aggregation_depth
         self.metrics = MetricsCollector()
 
-    def aggregate_proofs(self, proofs: List[Proof]) -> AggregatedProof:
+    def aggregate_proofs(self, proofs: list[Proof]) -> AggregatedProof:
         """
         Aggregate multiple proofs into a single proof.
 
@@ -102,7 +102,7 @@ class RecursiveProofAggregator:
 
         return aggregated_proof
 
-    def _build_aggregation_tree(self, proofs: List[Proof]) -> Dict[str, Any]:
+    def _build_aggregation_tree(self, proofs: list[Proof]) -> dict[str, Any]:
         """Build a tree structure for recursive aggregation."""
         # For N proofs, create a balanced binary tree
         # This gives O(log N) verification depth
@@ -126,7 +126,7 @@ class RecursiveProofAggregator:
             "depth": max(left_tree["depth"], right_tree["depth"]) + 1,
         }
 
-    def _create_aggregated_proof(self, tree: Dict[str, Any]) -> AggregatedProof:
+    def _create_aggregated_proof(self, tree: dict[str, Any]) -> AggregatedProof:
         """Create aggregated proof from tree structure."""
         if tree["type"] == "leaf":
             # Base case: aggregate 1-2 proofs directly
@@ -173,7 +173,7 @@ class RecursiveProofAggregator:
             },
         )
 
-    def _aggregate_leaf_proofs(self, proofs: List[Proof]) -> AggregatedProof:
+    def _aggregate_leaf_proofs(self, proofs: list[Proof]) -> AggregatedProof:
         """Aggregate 1-2 proofs at leaf level."""
         if len(proofs) == 1:
             return self._wrap_single_proof(proofs[0])
@@ -186,7 +186,10 @@ class RecursiveProofAggregator:
         for proof in proofs:
             combined_public.extend(proof.public_inputs)
 
-        public_inputs = {"num_proofs": len(proofs), "public_hash": poseidon_hash(combined_public)}
+        public_inputs = {
+            "num_proofs": len(proofs),
+            "public_hash": poseidon_hash(combined_public),
+        }
 
         private_inputs = {
             "proof_data": [proof.proof_data for proof in proofs],
@@ -203,7 +206,10 @@ class RecursiveProofAggregator:
             num_proofs=len(proofs),
             aggregated_data=aggregated_data,
             public_aggregate=public_inputs["public_hash"],
-            metadata={"aggregation_depth": 0, "circuit_names": [p.circuit_name for p in proofs]},
+            metadata={
+                "aggregation_depth": 0,
+                "circuit_names": [p.circuit_name for p in proofs],
+            },
         )
 
     def _wrap_single_proof(self, proof: Proof) -> AggregatedProof:
@@ -268,7 +274,7 @@ class RecursiveVerifierCircuit:
         self.cs = ConstraintSystem()
         self.setup_complete = False
 
-    def setup_circuit(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
+    def setup_circuit(self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]):
         """Setup the verifier circuit."""
         # Public inputs
         self.left_aggregate_var = self.cs.add_public_input("left_aggregate")
@@ -320,7 +326,7 @@ class SimpleAggregationCircuit:
         self.cs = ConstraintSystem()
         self.setup_complete = False
 
-    def setup_circuit(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
+    def setup_circuit(self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]):
         """Setup the aggregation circuit."""
         self.num_proofs_var = self.cs.add_public_input("num_proofs")
         self.public_hash_var = self.cs.add_public_input("public_hash")
@@ -340,7 +346,7 @@ class SimpleAggregationCircuit:
         pass
 
 
-def benchmark_recursive_aggregation(max_proofs: int = 128) -> Dict[str, Any]:
+def benchmark_recursive_aggregation(max_proofs: int = 128) -> dict[str, Any]:
     """
     Benchmark recursive proof aggregation performance.
 
@@ -403,7 +409,7 @@ def benchmark_recursive_aggregation(max_proofs: int = 128) -> Dict[str, Any]:
     return results
 
 
-def plot_aggregation_benchmarks(results: Dict[str, Any]):
+def plot_aggregation_benchmarks(results: dict[str, Any]):
     """Plot benchmark results."""
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12, 10))
 

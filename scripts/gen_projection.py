@@ -64,7 +64,7 @@ class ProjectionGenerator:
 
         return filepath
 
-    def generate_standard_projections(self, max_dimension: int = None) -> List[Tuple[int, Path]]:
+    def generate_standard_projections(self, max_dimension: int = None) -> list[tuple[int, Path]]:
         """Generate projections for standard dimensions used in GenomeVault.
 
         Args:
@@ -177,11 +177,16 @@ def main():
         help="Maximum dimension to generate (for memory-constrained environments)",
     )
     parser.add_argument(
-        "--dim", type=int, help="Specific dimension to generate (default: all standard dimensions)"
+        "--dim",
+        type=int,
+        help="Specific dimension to generate (default: all standard dimensions)",
     )
     parser.add_argument("--outfile", type=str, help="Output filename (only used with --dim)")
     parser.add_argument(
-        "--cache-dir", type=str, default=".cache", help="Cache directory (default: .cache)"
+        "--cache-dir",
+        type=str,
+        default=".cache",
+        help="Cache directory (default: .cache)",
     )
     parser.add_argument("--verify", action="store_true", help="Verify existing projections")
     parser.add_argument("--clean", action="store_true", help="Clean old projection files")

@@ -5,6 +5,7 @@ Implements catalytic computation to reduce memory requirements.
 
 import hashlib
 import json
+import logging
 import time
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple
@@ -12,7 +13,6 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 
 from genomevault.utils.logging import get_logger
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -148,7 +148,10 @@ class CatalyticProofEngine:
         return bytearray(size)
 
     def generate_catalytic_proof(
-        self, circuit_name: str, public_inputs: dict[str, Any], private_inputs: dict[str, Any]
+        self,
+        circuit_name: str,
+        public_inputs: dict[str, Any],
+        private_inputs: dict[str, Any],
     ) -> CatalyticProof:
         """
         Generate proof using catalytic space.

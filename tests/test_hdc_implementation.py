@@ -21,8 +21,8 @@ from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from genomevault.hypervector_transform.binding_operations import (
-    BindingOperations,  # Test legacy import
-)
+    BindingOperations,
+)  # Test legacy import
 from genomevault.hypervector_transform.binding_operations import BindingType, HypervectorBinder
 from genomevault.hypervector_transform.hdc_encoder import (
     CompressionTier,
@@ -62,7 +62,11 @@ class TestHDCDeterminism:
         # Register new version
         registry.register_version(
             version="test_v1.0",
-            params={"dimension": 15000, "projection_type": "sparse_random", "seed": 12345},
+            params={
+                "dimension": 15000,
+                "projection_type": "sparse_random",
+                "seed": 12345,
+            },
             description="Test version",
         )
 

@@ -43,7 +43,7 @@ class CalibrationMetrics:
     precision_at_threshold: float
     recall_at_threshold: float
     optimal_threshold: float
-    confidence_interval: Tuple[float, float]
+    confidence_interval: tuple[float, float]
     sample_size: int
     calibration_timestamp: float
 
@@ -54,18 +54,18 @@ class ParetoPoint:
 
     compression_ratio: float
     error_rate: float
-    settings: Dict[str, Any]
+    settings: dict[str, Any]
     metrics: CalibrationMetrics
 
 
 class CalibrationDataset(Protocol):
     """Protocol for calibration datasets."""
 
-    def get_samples(self, n: int) -> Tuple[np.ndarray, np.ndarray]:
+    def get_samples(self, n: int) -> tuple[np.ndarray, np.ndarray]:
         """Get n samples with labels."""
         ...
 
-    def get_validation_set(self) -> Tuple[np.ndarray, np.ndarray]:
+    def get_validation_set(self) -> tuple[np.ndarray, np.ndarray]:
         """Get validation dataset."""
         ...
 
@@ -73,14 +73,14 @@ class CalibrationDataset(Protocol):
 class ClinicalCalibrationSuite:
     """Comprehensive calibration suite for clinical compliance."""
 
-    def __init__(self, model: Any, output_dir: Optional[Path] = None):  # HybridKANHD model
+    def __init__(self, model: Any, output_dir: Path | None = None):  # HybridKANHD model
         self.model = model
         self.output_dir = output_dir or Path("calibration_results")
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         # Calibration results cache
-        self.calibration_results: Dict[str, CalibrationMetrics] = {}
-        self.pareto_frontiers: Dict[str, List[ParetoPoint]] = {}
+        self.calibration_results: dict[str, CalibrationMetrics] = {}
+        self.pareto_frontiers: dict[str, list[ParetoPoint]] = {}
 
     def calibrate_for_use_case(
         self,
@@ -144,8 +144,8 @@ class ClinicalCalibrationSuite:
         return best_metrics
 
     def compute_pareto_frontier(
-        self, dataset: CalibrationDataset, use_cases: List[UseCaseCategory]
-    ) -> Dict[str, List[ParetoPoint]]:
+        self, dataset: CalibrationDataset, use_cases: list[UseCaseCategory]
+    ) -> dict[str, list[ParetoPoint]]:
         """Compute Pareto frontier for compression vs accuracy tradeoff."""
         X_test, y_test = dataset.get_validation_set()
 
@@ -167,7 +167,11 @@ class ClinicalCalibrationSuite:
                     # Configure and evaluate
                     self._configure_model(**settings)
                     metrics = self._evaluate_configuration(
-                        X_test[:100], y_test[:100], X_test, y_test, use_case  # Quick eval
+                        X_test[:100],
+                        y_test[:100],
+                        X_test,
+                        y_test,
+                        use_case,  # Quick eval
                     )
 
                     if metrics.achieved_error < best_error:
@@ -194,7 +198,7 @@ class ClinicalCalibrationSuite:
 
     def validate_compliance(
         self, use_case: UseCaseCategory, test_dataset: CalibrationDataset
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Validate model meets compliance requirements."""
         if use_case.key not in self.calibration_results:
             raise ValueError(f"Model not calibrated for {use_case.description}")
@@ -231,7 +235,7 @@ class ClinicalCalibrationSuite:
             "recommendations": self._generate_compliance_recommendations(checks, current_metrics),
         }
 
-    def generate_calibration_report(self) -> Dict[str, Any]:
+    def generate_calibration_report(self) -> dict[str, Any]:
         """Generate comprehensive calibration report."""
         report = {
             "calibration_summary": {},
@@ -311,7 +315,9 @@ class ClinicalCalibrationSuite:
         encoded_results = []
         for x in X_test:
             result = self.model.encode_genomic_data(
-                x, resolution=15000, use_case=use_case.key  # From configuration
+                x,
+                resolution=15000,
+                use_case=use_case.key,  # From configuration
             )
             encoded_results.append(result)
 
@@ -360,7 +366,7 @@ class ClinicalCalibrationSuite:
         metrics: CalibrationMetrics,
         confidence_level: float,
         n_bootstrap: int = 1000,
-    ) -> Tuple[float, float]:
+    ) -> tuple[float, float]:
         """Compute bootstrap confidence interval."""
         errors = []
         n_samples = len(y)
@@ -384,7 +390,7 @@ class ClinicalCalibrationSuite:
 
         return lower, upper
 
-    def _sample_random_settings(self, target_compression: float) -> Dict[str, Any]:
+    def _sample_random_settings(self, target_compression: float) -> dict[str, Any]:
         """Sample random model settings targeting compression ratio."""
         # Heuristic: higher resolution → lower compression
         # More layers/knots → better accuracy but lower compression
@@ -413,7 +419,7 @@ class ClinicalCalibrationSuite:
             "n_knots": n_knots,
         }
 
-    def _filter_pareto_optimal(self, points: List[ParetoPoint]) -> List[ParetoPoint]:
+    def _filter_pareto_optimal(self, points: list[ParetoPoint]) -> list[ParetoPoint]:
         """Filter points to Pareto optimal set."""
         pareto_points = []
 
@@ -469,8 +475,8 @@ class ClinicalCalibrationSuite:
             json.dump(data, f, indent=2)
 
     def _generate_compliance_recommendations(
-        self, checks: Dict[str, bool], metrics: CalibrationMetrics
-    ) -> List[str]:
+        self, checks: dict[str, bool], metrics: CalibrationMetrics
+    ) -> list[str]:
         """Generate recommendations based on compliance checks."""
         recommendations = []
 
@@ -501,7 +507,7 @@ class ClinicalCalibrationSuite:
 
         return recommendations
 
-    def _generate_global_recommendations(self) -> List[str]:
+    def _generate_global_recommendations(self) -> list[str]:
         """Generate overall recommendations from all calibrations."""
         recommendations = []
 

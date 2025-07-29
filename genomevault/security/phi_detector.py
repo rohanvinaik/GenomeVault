@@ -11,8 +11,8 @@ import logging
 import re
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
 from re import Pattern
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +38,11 @@ class PHILeakageDetector:
             "description": "Genomic coordinates",
             "severity": "high",
         },
-        "rsid": {"pattern": r"\brs\d{4,}\b", "description": "SNP rsID", "severity": "medium"},
+        "rsid": {
+            "pattern": r"\brs\d{4,}\b",
+            "description": "SNP rsID",
+            "severity": "medium",
+        },
         "dob": {
             "pattern": r"\b(0[1-9]|1[0-2])[/-](0[1-9]|[12]\d|3[01])[/-](19|20)\d{2}\b",
             "description": "Date of Birth",
@@ -142,7 +146,10 @@ class PHILeakageDetector:
         return self.scan_file(log_file)
 
     def scan_directory(
-        self, directory: str, extensions: list[str] = None, exclude_patterns: list[str] = None
+        self,
+        directory: str,
+        extensions: list[str] = None,
+        exclude_patterns: list[str] = None,
     ) -> dict[str, list[dict[str, Any]]]:
         """
         Recursively scan directory for PHI leakage.

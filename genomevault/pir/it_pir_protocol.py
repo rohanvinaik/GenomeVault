@@ -55,7 +55,7 @@ class PIRProtocol:
         if self.params.element_size != 1024:
             raise ValueError("Element size must be 1024 bytes for this implementation")
 
-    def generate_query_vectors(self, index: int) -> List[np.ndarray]:
+    def generate_query_vectors(self, index: int) -> list[np.ndarray]:
         """
         Generate query vectors for retrieving element at given index.
 
@@ -130,7 +130,7 @@ class PIRProtocol:
 
         return response
 
-    def reconstruct_element(self, responses: List[np.ndarray]) -> np.ndarray:
+    def reconstruct_element(self, responses: list[np.ndarray]) -> np.ndarray:
         """
         Reconstruct original element from server responses.
 
@@ -153,7 +153,7 @@ class PIRProtocol:
 
         return result
 
-    def add_query_padding(self, query_vector: np.ndarray) -> Dict[str, Any]:
+    def add_query_padding(self, query_vector: np.ndarray) -> dict[str, Any]:
         """
         Add padding to query to ensure fixed message size.
 
@@ -187,7 +187,7 @@ class PIRProtocol:
 
     def timing_safe_response(
         self, response: np.ndarray, target_time_ms: float = 100
-    ) -> Tuple[np.ndarray, float]:
+    ) -> tuple[np.ndarray, float]:
         """
         Add timing protection to response generation.
 
@@ -267,7 +267,7 @@ class BatchPIRProtocol(PIRProtocol):
         super().__init__(params)
         self.batch_size = 100  # Default batch size
 
-    def generate_batch_queries(self, indices: List[int]) -> List[List[np.ndarray]]:
+    def generate_batch_queries(self, indices: list[int]) -> list[list[np.ndarray]]:
         """
         Generate batch queries using cuckoo hashing.
 
@@ -291,7 +291,7 @@ class BatchPIRProtocol(PIRProtocol):
 
         return batch_queries
 
-    def _cuckoo_hash(self, indices: List[int], num_buckets: int) -> List[List[int]]:
+    def _cuckoo_hash(self, indices: list[int], num_buckets: int) -> list[list[int]]:
         """
         Map indices to buckets using cuckoo hashing.
 

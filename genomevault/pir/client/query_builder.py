@@ -35,8 +35,8 @@ class GenomicQuery:
     """High-level genomic query specification."""
 
     query_type: QueryType
-    parameters: Dict[str, Any]
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    parameters: dict[str, Any]
+    metadata: dict[str, Any] = field(default_factory=dict)
 
     def get_cache_key(self) -> str:
         """Generate cache key for query."""
@@ -50,7 +50,7 @@ class QueryResult:
 
     query: GenomicQuery
     data: Any
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
     pir_queries_used: int
     computation_time_ms: float
 
@@ -61,7 +61,7 @@ class PIRQueryBuilder:
     Translates high-level queries to PIR operations.
     """
 
-    def __init__(self, pir_client: PIRClient, index_mapping: Dict[str, Dict[str, int]]):
+    def __init__(self, pir_client: PIRClient, index_mapping: dict[str, dict[str, int]]):
         """
         Initialize query builder.
 
@@ -73,7 +73,7 @@ class PIRQueryBuilder:
         self.index_mapping = index_mapping
 
         # Query cache
-        self.cache: Dict[str, QueryResult] = {}
+        self.cache: dict[str, QueryResult] = {}
         self.cache_size = 100
 
         logger.info("PIRQueryBuilder initialized")
@@ -311,8 +311,8 @@ class PIRQueryBuilder:
         self,
         chromosome: str,
         position: int,
-        ref_allele: Optional[str] = None,
-        alt_allele: Optional[str] = None,
+        ref_allele: str | None = None,
+        alt_allele: str | None = None,
     ) -> GenomicQuery:
         """Build a variant lookup query."""
         params = {"chromosome": chromosome, "position": position}
@@ -339,7 +339,7 @@ class PIRQueryBuilder:
         )
 
     def build_population_frequency_query(
-        self, variants: List[Dict], population: str
+        self, variants: list[dict], population: str
     ) -> GenomicQuery:
         """Build a population frequency query."""
         return GenomicQuery(
@@ -348,7 +348,7 @@ class PIRQueryBuilder:
         )
 
     async def query_clinical_variants(
-        self, gene_list: List[str], significance_filter: Optional[str] = None
+        self, gene_list: list[str], significance_filter: str | None = None
     ) -> QueryResult:
         """
         Query for clinically significant variants in genes.
@@ -403,7 +403,7 @@ class PIRQueryBuilder:
             computation_time_ms=computation_time,
         )
 
-    def get_query_statistics(self) -> Dict[str, Any]:
+    def get_query_statistics(self) -> dict[str, Any]:
         """Get query statistics."""
         query_types = {}
         total_pir_queries = 0

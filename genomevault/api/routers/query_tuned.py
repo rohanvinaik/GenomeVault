@@ -163,7 +163,10 @@ async def query_with_panel(
             results=batched_result.results,
             median=result,
             budget=budget,
-            metadata={"panel": panel_granularity.value, "positions": panel_info["size"]},
+            metadata={
+                "panel": panel_granularity.value,
+                "positions": panel_info["size"],
+            },
         )
 
         # Calculate overhead

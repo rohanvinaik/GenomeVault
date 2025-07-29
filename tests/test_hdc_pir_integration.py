@@ -14,12 +14,7 @@ from genomevault.hypervector.error_handling import (
     ECCEncoderMixin,
     ErrorBudgetAllocator,
 )
-from genomevault.pir.client import (
-    BatchedPIRQueryBuilder,
-    GenomicQuery,
-    PIRClient,
-    QueryType,
-)
+from genomevault.pir.client import BatchedPIRQueryBuilder, GenomicQuery, PIRClient, QueryType
 
 
 class TestBatchedPIRIntegration:
@@ -81,7 +76,11 @@ class TestBatchedPIRIntegration:
         mock_client.decode_response = Mock(return_value=42.0)
 
         # Mock index mapping
-        index_mapping = {"variants": {"chr1:100000:A:G": 123}, "positions": {}, "genes": {}}
+        index_mapping = {
+            "variants": {"chr1:100000:A:G": 123},
+            "positions": {},
+            "genes": {},
+        }
 
         builder = BatchedPIRQueryBuilder(mock_client, index_mapping)
 
@@ -120,7 +119,11 @@ class TestBatchedPIRIntegration:
         )
         mock_client.decode_response = Mock(side_effect=lambda r, t: r["value"])
 
-        index_mapping = {"variants": {"chr1:100000:A:G": 123}, "positions": {}, "genes": {}}
+        index_mapping = {
+            "variants": {"chr1:100000:A:G": 123},
+            "positions": {},
+            "genes": {},
+        }
 
         builder = BatchedPIRQueryBuilder(mock_client, index_mapping)
 
@@ -197,7 +200,11 @@ class TestBatchedPIRIntegration:
         mock_client.execute_query = mock_execute
         mock_client.decode_response = Mock(side_effect=lambda r, t: r["value"])
 
-        index_mapping = {"variants": {"chr1:100000:A:G": 123}, "positions": {}, "genes": {}}
+        index_mapping = {
+            "variants": {"chr1:100000:A:G": 123},
+            "positions": {},
+            "genes": {},
+        }
 
         builder = BatchedPIRQueryBuilder(mock_client, index_mapping)
 

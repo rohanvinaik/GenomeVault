@@ -54,8 +54,8 @@ except Exception as e:
     logger.info("❌ core/__init__.py failed: {e}")
 
 logger.info("\n5. Looking for the cryptography import...")
-import os
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 

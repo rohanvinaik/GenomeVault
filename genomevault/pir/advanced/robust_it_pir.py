@@ -124,7 +124,11 @@ class RobustITPIR(InformationTheoreticPIR):
         self._clean_query_cache()
 
         # Add authentication metadata
-        query.metadata = {"nonce": nonce.hex(), "timestamp": timestamp, "query_id": query_id.hex()}
+        query.metadata = {
+            "nonce": nonce.hex(),
+            "timestamp": timestamp,
+            "query_id": query_id.hex(),
+        }
 
         return query
 
@@ -245,7 +249,11 @@ class RobustITPIR(InformationTheoreticPIR):
             del self.query_cache[query_id]
 
     def simulate_server_response(
-        self, server_id: int, query: PIRQuery, database: np.ndarray, malicious: bool = False
+        self,
+        server_id: int,
+        query: PIRQuery,
+        database: np.ndarray,
+        malicious: bool = False,
     ) -> tuple[np.ndarray, bytes]:
         """
         Simulate server response with optional Byzantine behavior.

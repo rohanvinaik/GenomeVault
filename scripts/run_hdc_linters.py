@@ -55,7 +55,12 @@ def main():
     # 3. Flake8 linting
     print("\n3. Running flake8 linter...")
     flake8_result = run_command(
-        ["flake8", str(hdc_module), "--max-line-length=100", "--extend-ignore=E203,W503"]
+        [
+            "flake8",
+            str(hdc_module),
+            "--max-line-length=100",
+            "--extend-ignore=E203,W503",
+        ]
     )
     results["flake8"] = flake8_result
 
@@ -63,7 +68,12 @@ def main():
     print("\n4. Running mypy type checker...")
     try:
         mypy_result = run_command(
-            ["mypy", str(hdc_module), "--ignore-missing-imports", "--no-strict-optional"]
+            [
+                "mypy",
+                str(hdc_module),
+                "--ignore-missing-imports",
+                "--no-strict-optional",
+            ]
         )
         results["mypy"] = mypy_result
     except (FileNotFoundError, subprocess.CalledProcessError, Exception):

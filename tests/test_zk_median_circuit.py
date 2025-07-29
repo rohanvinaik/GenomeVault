@@ -4,6 +4,7 @@ Test for Zero-Knowledge Median Verification Circuit
 
 import asyncio
 import json
+import logging
 import time
 from typing import List
 
@@ -12,7 +13,6 @@ import pytest
 from genomevault.hypervector.error_handling import ErrorBudget
 from genomevault.zk.circuits.median_verifier import MedianProof, MedianVerifierCircuit
 from genomevault.zk.proof import ProofGenerator, ProofResult
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -104,7 +104,10 @@ class TestMedianVerifierCircuit:
         error_bound = 0.2  # Allows up to 0.2 error
 
         proof = circuit.generate_proof(
-            values=values, claimed_median=median, error_bound=error_bound, expected_value=expected
+            values=values,
+            claimed_median=median,
+            error_bound=error_bound,
+            expected_value=expected,
         )
 
         # Check error proof is included
@@ -180,7 +183,12 @@ class TestMedianVerifierCircuit:
 
         median = 0.0123
         budget = ErrorBudget(
-            dimension=10000, parity_g=3, repeats=5, epsilon=0.01, delta_exp=15, ecc_enabled=True
+            dimension=10000,
+            parity_g=3,
+            repeats=5,
+            epsilon=0.01,
+            delta_exp=15,
+            ecc_enabled=True,
         )
 
         metadata = {"median_error": 0.0002, "expected_value": 0.0122}

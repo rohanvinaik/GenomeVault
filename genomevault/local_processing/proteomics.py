@@ -60,12 +60,12 @@ class Peptide:
     retention_time: float
     intensity: float
     score: float
-    modifications: List[Tuple[int, ModificationType, float]] = field(default_factory=list)
-    protein_ids: List[str] = field(default_factory=list)
+    modifications: list[tuple[int, ModificationType, float]] = field(default_factory=list)
+    protein_ids: list[str] = field(default_factory=list)
     is_unique: _ = True
     missed_cleavages: _ = 0
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary"""
         return {
             "sequence": self.sequence,
@@ -94,11 +94,11 @@ class ProteinMeasurement:
     num_unique_peptides: int
     abundance: float
     normalized_abundance: float
-    modifications: Dict[ModificationType, int] = field(default_factory=dict)
-    peptides: List[Peptide] = field(default_factory=list)
+    modifications: dict[ModificationType, int] = field(default_factory=dict)
+    peptides: list[Peptide] = field(default_factory=list)
     confidence_score: _ = 1.0
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary"""
         return {
             "protein_id": self.protein_id,
@@ -120,23 +120,23 @@ class ProteomicsProfile:
     """Complete proteomics profile for a sample"""
 
     sample_id: str
-    proteins: List[ProteinMeasurement]
+    proteins: list[ProteinMeasurement]
     quantification_method: QuantificationMethod
-    quality_metrics: Dict[str, Any]
-    processing_metadata: Dict[str, Any] = field(default_factory=dict)
+    quality_metrics: dict[str, Any]
+    processing_metadata: dict[str, Any] = field(default_factory=dict)
 
-    def filter_by_abundance(self, min_abundance: float) -> List[ProteinMeasurement]:
+    def filter_by_abundance(self, min_abundance: float) -> list[ProteinMeasurement]:
         """Filter proteins by abundance threshold"""
         return [p for p in self.proteins if p.normalized_abundance >= min_abundance]
 
-    def get_protein_by_gene(self, gene_name: str) -> Optional[ProteinMeasurement]:
+    def get_protein_by_gene(self, gene_name: str) -> ProteinMeasurement | None:
         """Get protein measurement by gene name"""
         for protein in self.proteins:
             if protein.gene_name == gene_name:
                 return protein
         return None
 
-    def get_modified_proteins(self, modification: ModificationType) -> List[ProteinMeasurement]:
+    def get_modified_proteins(self, modification: ModificationType) -> list[ProteinMeasurement]:
         """Get proteins with specific modification"""
         return [
             p
@@ -149,7 +149,7 @@ class ProteomicsProfile:
         data = [p.to_dict() for p in self.proteins]
         return pd.DataFrame(data)
 
-    def calculate_pathway_enrichment(self, pathway_genes: Set[str]) -> Dict[str, float]:
+    def calculate_pathway_enrichment(self, pathway_genes: set[str]) -> dict[str, float]:
         """Calculate enrichment for a gene set/pathway"""
         detected_genes = {p.gene_name for p in self.proteins if p.normalized_abundance > 0}
         _ = detected_genes.intersection(pathway_genes)
@@ -168,8 +168,8 @@ class ProteomicsProcessor:
 
     def __init__(
         self,
-        protein_database: Optional[Path] = None,
-        modifications_config: Optional[Path] = None,
+        protein_database: Path | None = None,
+        modifications_config: Path | None = None,
         min_peptides: _ = 2,
         fdr_threshold: _ = 0.01,
         max_threads: _ = 4,
@@ -194,7 +194,7 @@ class ProteomicsProcessor:
 
         logger.info("Initialized ProteomicsProcessor")
 
-    def _load_protein_database(self) -> Dict[str, Dict[str, Any]]:
+    def _load_protein_database(self) -> dict[str, dict[str, Any]]:
         """Load protein sequences from FASTA database"""
         if not self.protein_database or not self.protein_database.exists():
             logger.warning("No protein database provided, using mock data")
@@ -222,7 +222,7 @@ class ProteomicsProcessor:
         # ... FASTA parsing code ...
         return proteins
 
-    def _load_modifications(self) -> Dict[ModificationType, float]:
+    def _load_modifications(self) -> dict[ModificationType, float]:
         """Load modification mass shifts"""
         # Standard modification masses
         return {
@@ -298,7 +298,7 @@ class ProteomicsProcessor:
             logger.error(f"Error processing proteomics data: {str(e)}")
             raise ProcessingError("Failed to process proteomics data: {str(e)}")
 
-    def _load_maxquant_output(self, input_path: Path) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    def _load_maxquant_output(self, input_path: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
         """Load MaxQuant output files"""
         logger.info(f"Loading MaxQuant output from {input_path}")
 
@@ -349,7 +349,7 @@ class ProteomicsProcessor:
 
         return protein_data, peptide_data
 
-    def _process_mzml(self, input_path: Path) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    def _process_mzml(self, input_path: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
         """Process mzML mass spectrometry data"""
         logger.info(f"Processing mzML file {input_path}")
         # In production, would use pyteomics or similar to parse mzML
@@ -378,7 +378,7 @@ class ProteomicsProcessor:
 
         return "; ".join(mods)
 
-    def _parse_modifications(self, mod_string: str) -> List[Tuple[int, ModificationType, float]]:
+    def _parse_modifications(self, mod_string: str) -> list[tuple[int, ModificationType, float]]:
         """Parse modification string into structured format"""
         if not mod_string:
             return []
@@ -396,7 +396,7 @@ class ProteomicsProcessor:
 
     def _create_protein_measurements(
         self, protein_data: pd.DataFrame, peptide_data: pd.DataFrame
-    ) -> List[ProteinMeasurement]:
+    ) -> list[ProteinMeasurement]:
         """Create protein measurements from data"""
         _ = []
 
@@ -448,7 +448,7 @@ class ProteomicsProcessor:
 
         return proteins
 
-    def _apply_fdr_filter(self, proteins: List[ProteinMeasurement]) -> List[ProteinMeasurement]:
+    def _apply_fdr_filter(self, proteins: list[ProteinMeasurement]) -> list[ProteinMeasurement]:
         """Apply FDR filtering to proteins"""
         # Filter by minimum peptides
         _ = [p for p in proteins if p.num_peptides >= self.min_peptides]
@@ -468,8 +468,8 @@ class ProteomicsProcessor:
         return filtered
 
     def _normalize_abundances(
-        self, proteins: List[ProteinMeasurement], method: QuantificationMethod
-    ) -> List[ProteinMeasurement]:
+        self, proteins: list[ProteinMeasurement], method: QuantificationMethod
+    ) -> list[ProteinMeasurement]:
         """Normalize protein abundances"""
         if not proteins:
             return proteins
@@ -500,8 +500,8 @@ class ProteomicsProcessor:
         return proteins
 
     def _calculate_quality_metrics(
-        self, proteins: List[ProteinMeasurement], peptide_data: pd.DataFrame
-    ) -> Dict[str, Any]:
+        self, proteins: list[ProteinMeasurement], peptide_data: pd.DataFrame
+    ) -> dict[str, Any]:
         """Calculate quality control metrics"""
         if not proteins:
             return {}
@@ -539,8 +539,8 @@ class ProteomicsProcessor:
 
     def differential_expression(
         self,
-        group1_profiles: List[ProteomicsProfile],
-        group2_profiles: List[ProteomicsProfile],
+        group1_profiles: list[ProteomicsProfile],
+        group2_profiles: list[ProteomicsProfile],
         min_fold_change: float = 2.0,
         fdr_threshold: _ = 0.05,
     ) -> pd.DataFrame:

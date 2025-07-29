@@ -41,7 +41,7 @@ class PrivacyEvent:
     sensitivity: float
     data_size: int
     operation: str
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
 
 
 @dataclass
@@ -52,9 +52,9 @@ class PrivacyBudget:
     total_delta: float
     consumed_epsilon: float
     consumed_delta: float
-    mechanism_allocations: Dict[str, float]
+    mechanism_allocations: dict[str, float]
     start_time: int
-    end_time: Optional[int]
+    end_time: int | None
 
 
 class DifferentialPrivacyAuditor:
@@ -78,8 +78,8 @@ class DifferentialPrivacyAuditor:
             total_delta: Total privacy budget (delta)
         """
         self.session_id = session_id
-        self.privacy_events: List[PrivacyEvent] = []
-        self.event_hashes: List[str] = []
+        self.privacy_events: list[PrivacyEvent] = []
+        self.event_hashes: list[str] = []
 
         # Initialize budget
         self.budget = PrivacyBudget(
@@ -109,8 +109,8 @@ class DifferentialPrivacyAuditor:
         sensitivity: float,
         data_size: int,
         operation: str,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> Tuple[str, bool]:
+        metadata: dict[str, Any] | None = None,
+    ) -> tuple[str, bool]:
         """
         Log a privacy-consuming event and check budget.
 
@@ -182,7 +182,7 @@ class DifferentialPrivacyAuditor:
 
     def verify_gradient_clipping(
         self, gradients: np.ndarray, clip_norm: float, noise_scale: float
-    ) -> Tuple[float, float]:
+    ) -> tuple[float, float]:
         """
         Verify gradient clipping and compute privacy loss.
 
@@ -231,9 +231,9 @@ class DifferentialPrivacyAuditor:
         self,
         mechanism: PrivacyMechanism,
         sensitivity: float,
-        noise_params: Dict[str, float],
+        noise_params: dict[str, float],
         data_size: int,
-    ) -> Tuple[float, float]:
+    ) -> tuple[float, float]:
         """
         Verify noise addition and compute privacy loss.
 
@@ -275,7 +275,7 @@ class DifferentialPrivacyAuditor:
 
         return epsilon, delta
 
-    def _compose_privacy_loss(self, new_epsilon: float, new_delta: float) -> Tuple[float, float]:
+    def _compose_privacy_loss(self, new_epsilon: float, new_delta: float) -> tuple[float, float]:
         """
         Compose privacy loss using appropriate composition theorem.
 
@@ -310,18 +310,18 @@ class DifferentialPrivacyAuditor:
 
         return total_epsilon, total_delta
 
-    def get_remaining_budget(self) -> Tuple[float, float]:
+    def get_remaining_budget(self) -> tuple[float, float]:
         """Get remaining privacy budget"""
         remaining_epsilon = self.budget.total_epsilon - self.budget.consumed_epsilon
         remaining_delta = self.budget.total_delta - self.budget.consumed_delta
 
         return max(0, remaining_epsilon), max(0, remaining_delta)
 
-    def get_mechanism_breakdown(self) -> Dict[str, float]:
+    def get_mechanism_breakdown(self) -> dict[str, float]:
         """Get privacy consumption breakdown by mechanism"""
         return self.budget.mechanism_allocations.copy()
 
-    def finalize_session(self) -> Dict[str, Any]:
+    def finalize_session(self) -> dict[str, Any]:
         """
         Finalize the privacy audit session and generate report.
 
@@ -374,7 +374,7 @@ class DifferentialPrivacyAuditor:
 
         return report
 
-    def export_audit_trail(self, include_metadata: bool = False) -> List[Dict[str, Any]]:
+    def export_audit_trail(self, include_metadata: bool = False) -> list[dict[str, Any]]:
         """
         Export the complete audit trail.
 
@@ -485,13 +485,13 @@ class PrivacyAccountant:
     """
 
     def __init__(self):
-        self.sessions: Dict[str, DifferentialPrivacyAuditor] = {}
+        self.sessions: dict[str, DifferentialPrivacyAuditor] = {}
         self.global_budget = {
             "daily_epsilon": 10.0,
             "weekly_epsilon": 50.0,
             "monthly_epsilon": 150.0,
         }
-        self.consumption_history: List[Dict[str, Any]] = []
+        self.consumption_history: list[dict[str, Any]] = []
 
     def create_session(
         self, session_id: str, epsilon_budget: float, delta_budget: float = 1e-5
@@ -513,11 +513,11 @@ class PrivacyAccountant:
 
         return auditor
 
-    def get_session(self, session_id: str) -> Optional[DifferentialPrivacyAuditor]:
+    def get_session(self, session_id: str) -> DifferentialPrivacyAuditor | None:
         """Get an existing session"""
         return self.sessions.get(session_id)
 
-    def finalize_session(self, session_id: str) -> Dict[str, Any]:
+    def finalize_session(self, session_id: str) -> dict[str, Any]:
         """Finalize a session and update global records"""
         if session_id not in self.sessions:
             raise ValueError(f"Session {session_id} not found")

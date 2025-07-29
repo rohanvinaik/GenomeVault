@@ -3,7 +3,6 @@ Complete HDC-PIR Integration with Real ZK Proofs
 Demonstrates the full pipeline with actual zero-knowledge proof generation
 """
 
-
 # Note: This example uses print() statements for demonstration purposes.
 # In production code, use proper logging instead.
 
@@ -60,7 +59,11 @@ async def main():
     for i in range(budget.repeats):
         # Add realistic noise to each query result
         noisy_value = true_value + np.random.normal(0, noise_std)
-        result = {"allele_frequency": noisy_value, "query_index": i, "timestamp": time.time()}
+        result = {
+            "allele_frequency": noisy_value,
+            "query_index": i,
+            "timestamp": time.time(),
+        }
         results.append(result)
         print(f"   Query {i+1}/{budget.repeats}: frequency = {noisy_value:.6f}")
 

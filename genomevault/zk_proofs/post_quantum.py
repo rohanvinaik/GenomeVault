@@ -25,19 +25,19 @@ class PostQuantumParameters:
     algorithm: str  # 'STARK', 'Lattice', 'Hash-based'
     field_size: int  # Field size for arithmetic
     hash_function: str  # Hash function used
-    parameters: Dict[str, Any]  # Algorithm-specific parameters
+    parameters: dict[str, Any]  # Algorithm-specific parameters
 
 
 class PostQuantumProver(ABC):
     """Abstract base class for post-quantum provers."""
 
     @abstractmethod
-    def generate_proof(self, statement: Dict[str, Any], witness: Dict[str, Any]) -> bytes:
+    def generate_proof(self, statement: dict[str, Any], witness: dict[str, Any]) -> bytes:
         """Generate a post-quantum secure proof."""
         pass
 
     @abstractmethod
-    def verify_proof(self, proof: bytes, statement: Dict[str, Any]) -> bool:
+    def verify_proof(self, proof: bytes, statement: dict[str, Any]) -> bool:
         """Verify a post-quantum secure proof."""
         pass
 
@@ -55,7 +55,7 @@ class STARKProver(PostQuantumProver):
     hash functions rather than discrete log or pairing assumptions.
     """
 
-    def __init__(self, parameters: Optional[PostQuantumParameters] = None):
+    def __init__(self, parameters: PostQuantumParameters | None = None):
         """Initialize STARK prover."""
         self.params = parameters or PostQuantumParameters(
             security_level=128,
@@ -74,7 +74,7 @@ class STARKProver(PostQuantumProver):
             extra={"security_level": self.params.security_level},
         )
 
-    def generate_proof(self, statement: Dict[str, Any], witness: Dict[str, Any]) -> bytes:
+    def generate_proof(self, statement: dict[str, Any], witness: dict[str, Any]) -> bytes:
         """
         Generate a STARK proof.
 
@@ -118,7 +118,7 @@ class STARKProver(PostQuantumProver):
 
         return proof_bytes
 
-    def verify_proof(self, proof: bytes, statement: Dict[str, Any]) -> bool:
+    def verify_proof(self, proof: bytes, statement: dict[str, Any]) -> bool:
         """
         Verify a STARK proof.
 
@@ -161,7 +161,7 @@ class STARKProver(PostQuantumProver):
         return self.params.security_level
 
     def _generate_execution_trace(
-        self, statement: Dict[str, Any], witness: Dict[str, Any]
+        self, statement: dict[str, Any], witness: dict[str, Any]
     ) -> np.ndarray:
         """Generate execution trace for the computation."""
         # Simplified trace generation
@@ -205,10 +205,10 @@ class STARKProver(PostQuantumProver):
         root = hashlib.blake2b(b"".join(leaves)).hexdigest()
         return root
 
-    def _generate_challenges(self, commitment: str, statement: Dict[str, Any]) -> List[int]:
+    def _generate_challenges(self, commitment: str, statement: dict[str, Any]) -> list[int]:
         """Generate verification challenges via Fiat-Shamir."""
         # Hash commitment and statement to get challenges
-        _ = hashlib.blake2b("{commitment}:{statement}".encode()).digest()
+        _ = hashlib.blake2b(b"{commitment}:{statement}").digest()
 
         # Generate deterministic challenges
         _ = np.random.RandomState(int.from_bytes(challenge_seed[:4], "big"))
@@ -217,7 +217,7 @@ class STARKProver(PostQuantumProver):
         challenges = rng.randint(0, self.params.field_size, size=num_queries)
         return challenges.tolist()
 
-    def _fri_prove(self, lde: np.ndarray, challenges: List[int]) -> Dict:
+    def _fri_prove(self, lde: np.ndarray, challenges: list[int]) -> dict:
         """Generate FRI (Fast Reed-Solomon IOP) proof."""
         # Simplified FRI proof
         # In production, would implement full FRI protocol
@@ -242,7 +242,7 @@ class STARKProver(PostQuantumProver):
             "final_value": current[0].item() if len(current) > 0 else 0,
         }
 
-    def _generate_queries(self, lde: np.ndarray, challenges: List[int]) -> List[Dict]:
+    def _generate_queries(self, lde: np.ndarray, challenges: list[int]) -> list[dict]:
         """Generate query responses for verification."""
         _ = []
 
@@ -259,36 +259,36 @@ class STARKProver(PostQuantumProver):
 
         return queries
 
-    def _generate_auth_path(self, index: int) -> List[str]:
+    def _generate_auth_path(self, index: int) -> list[str]:
         """Generate Merkle authentication path."""
         # Simplified - return dummy path
         _ = []
         for i in range(10):  # Tree depth
-            sibling = hashlib.blake2b("sibling_{index}_{i}".encode()).hexdigest()
+            sibling = hashlib.blake2b(b"sibling_{index}_{i}").hexdigest()
             path.append(sibling)
         return path
 
-    def _serialize_proof(self, proof_data: Dict) -> bytes:
+    def _serialize_proof(self, proof_data: dict) -> bytes:
         """Serialize proof to bytes."""
         import json
 
         proof_json = json.dumps(proof_data, sort_keys=True)
         return proof_json.encode()
 
-    def _deserialize_proof(self, proof_bytes: bytes) -> Dict:
+    def _deserialize_proof(self, proof_bytes: bytes) -> dict:
         """Deserialize proof from bytes."""
         import json
 
         return json.loads(proof_bytes.decode())
 
-    def _fri_verify(self, fri_proof: Dict, challenges: List[int]) -> bool:
+    def _fri_verify(self, fri_proof: dict, challenges: list[int]) -> bool:
         """Verify FRI proof."""
         # Simplified verification
         # Check that folding was done correctly
         return "layers" in fri_proof and len(fri_proof["layers"]) > 0
 
     def _verify_trace_queries(
-        self, queries: List[Dict], merkle_root: str, challenges: List[int]
+        self, queries: list[dict], merkle_root: str, challenges: list[int]
     ) -> bool:
         """Verify trace query responses."""
         # Simplified - check queries exist and have valid structure
@@ -297,7 +297,7 @@ class STARKProver(PostQuantumProver):
                 return False
         return True
 
-    def _verify_constraints(self, proof_data: Dict, statement: Dict[str, Any]) -> bool:
+    def _verify_constraints(self, proof_data: dict, statement: dict[str, Any]) -> bool:
         """Verify that constraints are satisfied."""
         # Simplified - would check actual constraint polynomials
         return True
@@ -310,7 +310,7 @@ class LatticeProver(PostQuantumProver):
     Uses Ring-LWE or Module-LWE for post-quantum security.
     """
 
-    def __init__(self, parameters: Optional[PostQuantumParameters] = None):
+    def __init__(self, parameters: PostQuantumParameters | None = None):
         """Initialize lattice-based prover."""
         self.params = parameters or PostQuantumParameters(
             security_level=128,
@@ -329,7 +329,7 @@ class LatticeProver(PostQuantumProver):
             extra={"security_level": self.params.security_level},
         )
 
-    def generate_proof(self, statement: Dict[str, Any], witness: Dict[str, Any]) -> bytes:
+    def generate_proof(self, statement: dict[str, Any], witness: dict[str, Any]) -> bytes:
         """Generate lattice-based ZK proof."""
         # Simulate lattice-based proof
         # In production, would use actual Ring-LWE implementation
@@ -355,7 +355,7 @@ class LatticeProver(PostQuantumProver):
 
         return self._serialize_proof(proof_data)
 
-    def verify_proof(self, proof: bytes, statement: Dict[str, Any]) -> bool:
+    def verify_proof(self, proof: bytes, statement: dict[str, Any]) -> bool:
         """Verify lattice-based proof."""
         try:
             _ = self._deserialize_proof(proof)
@@ -376,7 +376,7 @@ class LatticeProver(PostQuantumProver):
         """Get post-quantum security level."""
         return self.params.security_level
 
-    def _commit_witness(self, witness: Dict[str, Any]) -> Dict:
+    def _commit_witness(self, witness: dict[str, Any]) -> dict:
         """Create commitment to witness using Ring-LWE."""
         # Simplified commitment
         witness_bytes = str(witness).encode()
@@ -384,9 +384,9 @@ class LatticeProver(PostQuantumProver):
 
         return {"value": commitment_value, "timestamp": np.random.randint(0, 2**32)}
 
-    def _hash_to_challenge(self, commitment: Dict, statement: Dict[str, Any]) -> np.ndarray:
+    def _hash_to_challenge(self, commitment: dict, statement: dict[str, Any]) -> np.ndarray:
         """Hash commitment and statement to challenge."""
-        data = "{commitment}:{statement}".encode()
+        data = b"{commitment}:{statement}"
         _ = hashlib.sha3_256(data).digest()
 
         # Convert to polynomial coefficients
@@ -402,24 +402,24 @@ class LatticeProver(PostQuantumProver):
 
         return np.array(coeffs)
 
-    def _compute_response(self, witness: Dict[str, Any], challenge: np.ndarray) -> Dict:
+    def _compute_response(self, witness: dict[str, Any], challenge: np.ndarray) -> dict:
         """Compute proof response."""
         # Simplified response computation
         # In production, would compute _ = r + c*s for Ring-LWE
 
-        _ = hashlib.sha3_256("{witness}:{challenge.tobytes()}".encode()).hexdigest()
+        _ = hashlib.sha3_256(b"{witness}:{challenge.tobytes()}").hexdigest()
 
         return {"value": response_value, "norm_bound": 1000}  # Rejection sampling bound
 
     def _verify_response(
-        self, commitment: Dict, response: Dict, challenge: np.ndarray, statement: Dict
+        self, commitment: dict, response: dict, challenge: np.ndarray, statement: dict
     ) -> bool:
         """Verify the response is valid."""
         # Simplified verification
         # In production, would check Ring-LWE relation
         return "value" in response and "norm_bound" in response
 
-    def _serialize_proof(self, proof_data: Dict) -> bytes:
+    def _serialize_proof(self, proof_data: dict) -> bytes:
         """Serialize proof to bytes."""
         import json
 
@@ -436,7 +436,7 @@ class LatticeProver(PostQuantumProver):
         proof_data = convert_arrays(proof_data)
         return json.dumps(proof_data).encode()
 
-    def _deserialize_proof(self, proof_bytes: bytes) -> Dict:
+    def _deserialize_proof(self, proof_bytes: bytes) -> dict:
         """Deserialize proof from bytes."""
         import json
 
@@ -458,8 +458,8 @@ class PostQuantumTransition:
         logger.info("Post-quantum transition manager initialized")
 
     def generate_hybrid_proof(
-        self, circuit_name: str, statement: Dict[str, Any], witness: Dict[str, Any]
-    ) -> Dict[str, bytes]:
+        self, circuit_name: str, statement: dict[str, Any], witness: dict[str, Any]
+    ) -> dict[str, bytes]:
         """
         Generate both classical and post-quantum proofs.
 
@@ -488,8 +488,8 @@ class PostQuantumTransition:
         return proofs
 
     def verify_hybrid_proof(
-        self, proofs: Dict[str, bytes], statement: Dict[str, Any]
-    ) -> Dict[str, bool]:
+        self, proofs: dict[str, bytes], statement: dict[str, Any]
+    ) -> dict[str, bool]:
         """
         Verify both classical and post-quantum proofs.
 
@@ -514,7 +514,7 @@ class PostQuantumTransition:
 
         return results
 
-    def get_transition_status(self) -> Dict[str, Any]:
+    def get_transition_status(self) -> dict[str, Any]:
         """Get current transition status."""
         return {
             "classical_active": self.classical_active,
@@ -568,7 +568,7 @@ def estimate_pq_proof_size(algorithm: str, constraint_count: int) -> int:
         raise ValueError("Unknown algorithm: {algorithm}")
 
 
-def benchmark_pq_performance(num_constraints: _ = 10000) -> Dict[str, Any]:
+def benchmark_pq_performance(num_constraints: _ = 10000) -> dict[str, Any]:
     """
     Benchmark post-quantum proof performance.
 

@@ -193,7 +193,11 @@ def train_with_proof_of_training():
     # 7. Complete training session
     print("\nCompleting training session and generating proof...")
 
-    final_metrics = {"loss": avg_epoch_loss, "accuracy": val_accuracy, "epochs_trained": n_epochs}
+    final_metrics = {
+        "loss": avg_epoch_loss,
+        "accuracy": val_accuracy,
+        "epochs_trained": n_epochs,
+    }
 
     completion_result = pot_integration.complete_training_session(
         session_id=session_id, final_model=model, final_metrics=final_metrics
@@ -286,7 +290,7 @@ def verify_training_proof(session_id: str, proof_path: str):
     print("\n=== Verifying Training Proof ===")
 
     # In practice, this would use the CLI tool or verification circuits
-    with open(proof_path, "r") as f:
+    with open(proof_path) as f:
         proof = json.load(f)
 
     print(f"Proof type: {proof['circuit_type']}")

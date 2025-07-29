@@ -45,14 +45,14 @@ class ModelVersion:
     """Represents a specific version of the model"""
 
     version_id: str
-    parent_version: Optional[str]
+    parent_version: str | None
     model_hash: str
     timestamp: int
     round_number: int
     contributor_id: str
     update_type: UpdateType
-    metrics: Dict[str, float]
-    metadata: Dict[str, Any]
+    metrics: dict[str, float]
+    metadata: dict[str, Any]
 
 
 @dataclass
@@ -63,7 +63,7 @@ class LineageEdge:
     to_version: str
     edge_type: str  # 'update', 'aggregate', 'validate'
     weight: float  # Contribution weight for aggregation
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
 
 
 class FederatedModelLineage:
@@ -87,9 +87,9 @@ class FederatedModelLineage:
         """
         self.federation_id = federation_id
         self.lineage_graph = nx.DiGraph()
-        self.versions: Dict[str, ModelVersion] = {}
+        self.versions: dict[str, ModelVersion] = {}
         self.current_round = 0
-        self.active_branches: Set[str] = set()
+        self.active_branches: set[str] = set()
 
         # Create initial version
         initial_version = ModelVersion(
@@ -114,8 +114,8 @@ class FederatedModelLineage:
         client_id: str,
         parent_version: str,
         new_model_hash: str,
-        metrics: Dict[str, float],
-        metadata: Optional[Dict[str, Any]] = None,
+        metrics: dict[str, float],
+        metadata: dict[str, Any] | None = None,
     ) -> str:
         """
         Record a local model update from a client.
@@ -174,11 +174,11 @@ class FederatedModelLineage:
     def record_aggregation(
         self,
         aggregator_id: str,
-        input_versions: List[Tuple[str, float]],
+        input_versions: list[tuple[str, float]],
         aggregated_model_hash: str,
         aggregation_method: str,
-        metrics: Dict[str, float],
-        metadata: Optional[Dict[str, Any]] = None,
+        metrics: dict[str, float],
+        metadata: dict[str, Any] | None = None,
     ) -> str:
         """
         Record model aggregation operation.
@@ -250,9 +250,9 @@ class FederatedModelLineage:
         self,
         validator_id: str,
         version_id: str,
-        validation_metrics: Dict[str, float],
+        validation_metrics: dict[str, float],
         validation_passed: bool,
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: dict[str, Any] | None = None,
     ) -> str:
         """
         Record model validation checkpoint.
@@ -321,7 +321,7 @@ class FederatedModelLineage:
         logger.info(f"Advanced to round {self.current_round}")
         return self.current_round
 
-    def get_lineage_path(self, version_id: str) -> List[str]:
+    def get_lineage_path(self, version_id: str) -> list[str]:
         """
         Get the lineage path from initial version to specified version.
 
@@ -348,7 +348,7 @@ class FederatedModelLineage:
             subgraph = self.lineage_graph.subgraph(ancestors)
             return list(nx.topological_sort(subgraph))
 
-    def get_version_provenance(self, version_id: str) -> Dict[str, Any]:
+    def get_version_provenance(self, version_id: str) -> dict[str, Any]:
         """
         Get complete provenance information for a model version.
 
@@ -392,7 +392,7 @@ class FederatedModelLineage:
 
         return provenance
 
-    def detect_forks(self) -> List[Tuple[str, List[str]]]:
+    def detect_forks(self) -> list[tuple[str, list[str]]]:
         """
         Detect fork points in the lineage graph.
 
@@ -415,7 +415,9 @@ class FederatedModelLineage:
         return forks
 
     def visualize_lineage(
-        self, highlight_versions: Optional[List[str]] = None, save_path: Optional[str] = None
+        self,
+        highlight_versions: list[str] | None = None,
+        save_path: str | None = None,
     ):
         """
         Visualize the model lineage graph.
@@ -454,7 +456,11 @@ class FederatedModelLineage:
 
         # Draw nodes
         nx.draw_networkx_nodes(
-            self.lineage_graph, pos, node_color=node_colors, node_size=node_sizes, alpha=0.8
+            self.lineage_graph,
+            pos,
+            node_color=node_colors,
+            node_size=node_sizes,
+            alpha=0.8,
         )
 
         # Highlight specified versions
@@ -524,7 +530,7 @@ class FederatedModelLineage:
 
         plt.show()
 
-    def export_lineage_dag(self) -> Dict[str, Any]:
+    def export_lineage_dag(self) -> dict[str, Any]:
         """
         Export the lineage DAG in a serializable format.
 

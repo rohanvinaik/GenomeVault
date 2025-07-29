@@ -37,7 +37,15 @@ class FocusedAuditValidator:
         }
 
         # File patterns to exclude
-        self.exclude_patterns = {"*.pyc", "*.pyo", "*.pyd", ".DS_Store", "*.so", "*.dylib", "*.dll"}
+        self.exclude_patterns = {
+            "*.pyc",
+            "*.pyo",
+            "*.pyd",
+            ".DS_Store",
+            "*.so",
+            "*.dylib",
+            "*.dll",
+        }
 
         self.report = {
             "files_total": 0,
@@ -74,7 +82,7 @@ class FocusedAuditValidator:
 
         return False
 
-    def get_project_files(self) -> List[Path]:
+    def get_project_files(self) -> list[Path]:
         """Get all Python files in the project, excluding non-project directories"""
         project_files = []
 
@@ -83,7 +91,14 @@ class FocusedAuditValidator:
                 # Additional check: ensure it's within the genomevault project
                 rel_path = py_file.relative_to(self.base_path)
                 if str(rel_path).startswith(
-                    ("genomevault/", "tests/", "examples/", "scripts/", "benchmarks/", "devtools/")
+                    (
+                        "genomevault/",
+                        "tests/",
+                        "examples/",
+                        "scripts/",
+                        "benchmarks/",
+                        "devtools/",
+                    )
                 ) or py_file.name in [
                     "setup.py",
                     "fix_audit_issues.py",
@@ -115,7 +130,15 @@ class FocusedAuditValidator:
                         "data/",
                         "deployment/",
                     )
-                ) or item.suffix in [".py", ".md", ".txt", ".yml", ".yaml", ".toml", ".cfg"]:
+                ) or item.suffix in [
+                    ".py",
+                    ".md",
+                    ".txt",
+                    ".yml",
+                    ".yaml",
+                    ".toml",
+                    ".cfg",
+                ]:
                     project_files.append(item)
 
         self.report["files_total"] = len(project_files)
@@ -169,7 +192,10 @@ class FocusedAuditValidator:
 
                 if print_count > 0:
                     self.report["files_with_prints"].append(
-                        {"path": str(py_file.relative_to(self.base_path)), "count": print_count}
+                        {
+                            "path": str(py_file.relative_to(self.base_path)),
+                            "count": print_count,
+                        }
                     )
             except Exception:
                 pass
@@ -195,12 +221,15 @@ class FocusedAuditValidator:
 
                 if total_count > 0:
                     self.report["files_with_broad_excepts"].append(
-                        {"path": str(py_file.relative_to(self.base_path)), "count": total_count}
+                        {
+                            "path": str(py_file.relative_to(self.base_path)),
+                            "count": total_count,
+                        }
                     )
             except Exception:
                 pass
 
-    def calculate_complexity(self, py_file: Path) -> List[Tuple[str, int]]:
+    def calculate_complexity(self, py_file: Path) -> list[tuple[str, int]]:
         """Calculate cyclomatic complexity for functions in a file"""
         complex_funcs = []
         try:

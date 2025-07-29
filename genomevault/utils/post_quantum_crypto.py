@@ -42,7 +42,7 @@ class MockKyber:
         """Generate mock keypair."""
         return self.Keypair(public_key=os.urandom(32), private_key=os.urandom(32))
 
-    def encapsulate(self, public_key: bytes) -> Tuple[bytes, bytes]:
+    def encapsulate(self, public_key: bytes) -> tuple[bytes, bytes]:
         """Mock encapsulation."""
         _ = os.urandom(32)
         ciphertext = os.urandom(1088)
@@ -106,7 +106,7 @@ class HybridPostQuantumCrypto:
         return encrypted_data.ciphertext  # In real implementation, this would be decrypted
 
 
-def benchmark_post_quantum_crypto() -> Dict[str, Any]:
+def benchmark_post_quantum_crypto() -> dict[str, Any]:
     """Benchmark post-quantum operations."""
     _ = HybridPostQuantumCrypto()
     _ = b"Test genomic data" * 100

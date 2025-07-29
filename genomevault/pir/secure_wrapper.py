@@ -467,9 +467,11 @@ class SecurePIRServer:
             "query_mixing": {
                 "total_queries": self.stats.total_queries,
                 "decoy_queries": self.stats.decoy_queries,
-                "decoy_percentage": (self.stats.decoy_queries / self.stats.total_queries * 100)
-                if self.stats.total_queries > 0
-                else 0,
+                "decoy_percentage": (
+                    (self.stats.decoy_queries / self.stats.total_queries * 100)
+                    if self.stats.total_queries > 0
+                    else 0
+                ),
             },
             "performance": {
                 "average_response_time_ms": self.stats.average_response_time * 1000,

@@ -49,7 +49,7 @@ class TranscriptExpression:
     biotype: _ = "protein_coding"
     confidence: _ = 1.0
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary"""
         return {
             "transcript_id": self.transcript_id,
@@ -68,9 +68,9 @@ class BatchEffectResult:
     """Results from batch effect correction"""
 
     corrected_expression: pd.DataFrame
-    batch_coefficients: Dict[str, float]
+    batch_coefficients: dict[str, float]
     variance_explained: float
-    samples_affected: List[str]
+    samples_affected: list[str]
 
 
 @dataclass
@@ -78,16 +78,16 @@ class ExpressionProfile:
     """Complete transcriptomic profile for a sample"""
 
     sample_id: str
-    expressions: List[TranscriptExpression]
+    expressions: list[TranscriptExpression]
     normalization_method: NormalizationMethod
-    quality_metrics: Dict[str, Any]
-    processing_metadata: Dict[str, Any] = field(default_factory=dict)
+    quality_metrics: dict[str, Any]
+    processing_metadata: dict[str, Any] = field(default_factory=dict)
 
-    def filter_by_expression(self, min_value: _ = 1.0) -> List[TranscriptExpression]:
+    def filter_by_expression(self, min_value: _ = 1.0) -> list[TranscriptExpression]:
         """Filter transcripts by expression level"""
         return [e for e in self.expressions if e.normalized_value >= min_value]
 
-    def get_gene_expression(self, gene_id: str) -> Optional[float]:
+    def get_gene_expression(self, gene_id: str) -> float | None:
         """Get expression for specific gene"""
         for expr in self.expressions:
             if expr.gene_id == gene_id:
@@ -105,8 +105,8 @@ class TranscriptomicsProcessor:
 
     def __init__(
         self,
-        reference_transcriptome: Optional[Path] = None,
-        annotation_file: Optional[Path] = None,
+        reference_transcriptome: Path | None = None,
+        annotation_file: Path | None = None,
         max_threads: _ = 4,
     ):
         """
@@ -124,7 +124,7 @@ class TranscriptomicsProcessor:
 
         logger.info("Initialized TranscriptomicsProcessor")
 
-    def _load_annotations(self) -> Dict[str, Dict[str, Any]]:
+    def _load_annotations(self) -> dict[str, dict[str, Any]]:
         """Load gene annotations"""
         if not self.annotation_file or not self.annotation_file.exists():
             logger.warning("No annotation file provided, using minimal annotations")
@@ -153,7 +153,7 @@ class TranscriptomicsProcessor:
 
     def process(
         self,
-        input_path: Union[Path, List[Path]],
+        input_path: Path | list[Path],
         sample_id: str,
         paired_end: _ = True,
         normalization: _ = NormalizationMethod.TPM,
@@ -222,7 +222,7 @@ class TranscriptomicsProcessor:
             raise ProcessingError("Failed to process RNA-seq data: {str(e)}")
 
     def _process_fastq(
-        self, input_paths: Union[Path, List[Path]], paired_end: bool, min_quality: int
+        self, input_paths: Path | list[Path], paired_end: bool, min_quality: int
     ) -> pd.DataFrame:
         """Process FASTQ files to get raw counts"""
         # In production, would use STAR/Kallisto/Salmon for alignment and quantification
@@ -313,7 +313,7 @@ class TranscriptomicsProcessor:
 
         return normalized
 
-    def _create_expressions(self, normalized_data: pd.DataFrame) -> List[TranscriptExpression]:
+    def _create_expressions(self, normalized_data: pd.DataFrame) -> list[TranscriptExpression]:
         """Create TranscriptExpression objects"""
         _ = []
 
@@ -337,7 +337,7 @@ class TranscriptomicsProcessor:
 
     def _calculate_quality_metrics(
         self, raw_data: pd.DataFrame, normalized_data: pd.DataFrame
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Calculate quality control metrics"""
         _ = raw_data["raw_count"].sum()
         _ = (raw_data["raw_count"] > 0).sum()
@@ -364,10 +364,10 @@ class TranscriptomicsProcessor:
 
     def batch_effect_correction(
         self,
-        profiles: List[ExpressionProfile],
-        batch_labels: List[str],
+        profiles: list[ExpressionProfile],
+        batch_labels: list[str],
         method: _ = "combat",
-    ) -> List[ExpressionProfile]:
+    ) -> list[ExpressionProfile]:
         """
         Correct batch effects across multiple samples
 
@@ -456,8 +456,8 @@ class TranscriptomicsProcessor:
 
     def differential_expression(
         self,
-        group1_profiles: List[ExpressionProfile],
-        group2_profiles: List[ExpressionProfile],
+        group1_profiles: list[ExpressionProfile],
+        group2_profiles: list[ExpressionProfile],
         method: _ = "ttest",
         fdr_threshold: _ = 0.05,
     ) -> pd.DataFrame:

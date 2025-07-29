@@ -126,13 +126,30 @@ class TestAdaptiveEncoder:
 
         # Create test variants
         variants = [
-            {"chromosome": "chr1", "position": 100000, "ref": "A", "alt": "G", "type": "SNP"},
-            {"chromosome": "chr2", "position": 200000, "ref": "C", "alt": "T", "type": "SNP"},
+            {
+                "chromosome": "chr1",
+                "position": 100000,
+                "ref": "A",
+                "alt": "G",
+                "type": "SNP",
+            },
+            {
+                "chromosome": "chr2",
+                "position": 200000,
+                "ref": "C",
+                "alt": "T",
+                "type": "SNP",
+            },
         ]
 
         # Create budget
         budget = ErrorBudget(
-            dimension=10000, parity_g=3, repeats=5, epsilon=0.01, delta_exp=15, ecc_enabled=True
+            dimension=10000,
+            parity_g=3,
+            repeats=5,
+            epsilon=0.01,
+            delta_exp=15,
+            ecc_enabled=True,
         )
 
         # Encode
@@ -147,17 +164,33 @@ class TestAdaptiveEncoder:
         encoder = AdaptiveHDCEncoder(dimension=1000)
 
         variants = [
-            {"chromosome": "chr1", "position": 100000, "ref": "A", "alt": "G", "type": "SNP"}
+            {
+                "chromosome": "chr1",
+                "position": 100000,
+                "ref": "A",
+                "alt": "G",
+                "type": "SNP",
+            }
         ]
 
         # Single repeat
         budget_single = ErrorBudget(
-            dimension=1000, parity_g=3, repeats=1, epsilon=0.01, delta_exp=10, ecc_enabled=False
+            dimension=1000,
+            parity_g=3,
+            repeats=1,
+            epsilon=0.01,
+            delta_exp=10,
+            ecc_enabled=False,
         )
 
         # Multiple repeats
         budget_multi = ErrorBudget(
-            dimension=1000, parity_g=3, repeats=20, epsilon=0.01, delta_exp=10, ecc_enabled=False
+            dimension=1000,
+            parity_g=3,
+            repeats=20,
+            epsilon=0.01,
+            delta_exp=10,
+            ecc_enabled=False,
         )
 
         _, meta_single = encoder.encode_with_budget(variants, budget_single)
@@ -171,12 +204,23 @@ class TestAdaptiveEncoder:
         encoder = AdaptiveHDCEncoder(dimension=5000)
 
         variants = [
-            {"chromosome": "chr1", "position": 100000, "ref": "A", "alt": "G", "type": "SNP"}
+            {
+                "chromosome": "chr1",
+                "position": 100000,
+                "ref": "A",
+                "alt": "G",
+                "type": "SNP",
+            }
         ]
 
         # Budget with different dimension
         budget = ErrorBudget(
-            dimension=10000, parity_g=3, repeats=1, epsilon=0.01, delta_exp=10, ecc_enabled=False
+            dimension=10000,
+            parity_g=3,
+            repeats=1,
+            epsilon=0.01,
+            delta_exp=10,
+            ecc_enabled=False,
         )
 
         encoded_vector, _ = encoder.encode_with_budget(variants, budget)
@@ -191,7 +235,12 @@ class TestErrorBudgetClass:
     def test_properties(self):
         """Test ErrorBudget properties"""
         budget = ErrorBudget(
-            dimension=10000, parity_g=3, repeats=10, epsilon=0.01, delta_exp=20, ecc_enabled=True
+            dimension=10000,
+            parity_g=3,
+            repeats=10,
+            epsilon=0.01,
+            delta_exp=20,
+            ecc_enabled=True,
         )
 
         assert budget.delta == 2**-20

@@ -35,7 +35,7 @@ class PIRIntegrationDemo:
 
     def __init__(self):
         self.coordinator = PIRCoordinator()
-        self.servers: List[EnhancedPIRServer] = []
+        self.servers: list[EnhancedPIRServer] = []
         self.database_size = 10000
         self.element_size = 1024
 
@@ -69,7 +69,7 @@ class PIRIntegrationDemo:
             # Register with coordinator
             server_info = ServerInfo(
                 server_id=server_id,
-                server_type=ServerType.TRUSTED_SIGNATORY if is_ts else ServerType.LIGHT_NODE,
+                server_type=(ServerType.TRUSTED_SIGNATORY if is_ts else ServerType.LIGHT_NODE),
                 endpoint=f"http://localhost:808{len(self.servers)}",
                 location=location,
                 region=region,
@@ -86,7 +86,9 @@ class PIRIntegrationDemo:
 
         # Create PIR protocol
         params = PIRParameters(
-            database_size=self.database_size, element_size=self.element_size, num_servers=2
+            database_size=self.database_size,
+            element_size=self.element_size,
+            num_servers=2,
         )
         protocol = PIRProtocol(params)
 
@@ -101,7 +103,9 @@ class PIRIntegrationDemo:
 
         # Select servers
         criteria = ServerSelectionCriteria(
-            min_servers=2, require_geographic_diversity=True, prefer_trusted_signatories=True
+            min_servers=2,
+            require_geographic_diversity=True,
+            prefer_trusted_signatories=True,
         )
 
         selected_servers = await self.coordinator.select_servers(criteria)

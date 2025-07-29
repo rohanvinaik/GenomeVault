@@ -265,7 +265,7 @@ class GenotypePhenotypeAssociationCircuit(BaseCircuit):
 
     def _commit_p_value(self, p_value: FieldElement, randomness: FieldElement) -> FieldElement:
         """Commit to p-value."""
-        data = "PVALUE:{p_value.value}:{randomness.value}".encode()
+        data = b"PVALUE:{p_value.value}:{randomness.value}"
         hash_val = hashlib.sha256(data).hexdigest()
         return FieldElement(int(hash_val, 16))
 
@@ -442,7 +442,7 @@ class RareVariantBurdenCircuit(BaseCircuit):
     def _commit_variants(self, randomness: FieldElement) -> FieldElement:
         """Commit to variant list."""
         variant_str = ":".join(str(v.get("id", "")) for v in self.variants[:10])
-        data = "VARIANTS:{variant_str}:{randomness.value}".encode()
+        data = b"VARIANTS:{variant_str}:{randomness.value}"
         hash_val = hashlib.sha256(data).hexdigest()
         return FieldElement(int(hash_val, 16))
 

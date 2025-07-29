@@ -48,7 +48,7 @@ class HDCBenchmark:
             "benchmarks": {},
         }
 
-    def _get_system_info(self) -> Dict[str, Any]:
+    def _get_system_info(self) -> dict[str, Any]:
         """Get system information"""
         return {
             "cpu_count": psutil.cpu_count(),
@@ -60,7 +60,7 @@ class HDCBenchmark:
             "platform": os.sys.platform,
         }
 
-    def benchmark_encoding_throughput(self) -> Dict[str, Any]:
+    def benchmark_encoding_throughput(self) -> dict[str, Any]:
         """Benchmark encoding throughput across dimensions and tiers"""
         print("Benchmarking encoding throughput...")
 
@@ -101,7 +101,7 @@ class HDCBenchmark:
 
         return results
 
-    def benchmark_memory_usage(self) -> Dict[str, Any]:
+    def benchmark_memory_usage(self) -> dict[str, Any]:
         """Benchmark memory usage across tiers"""
         print("\nBenchmarking memory usage...")
 
@@ -141,7 +141,7 @@ class HDCBenchmark:
 
         return results
 
-    def benchmark_binding_operations(self) -> Dict[str, Any]:
+    def benchmark_binding_operations(self) -> dict[str, Any]:
         """Benchmark different binding operations"""
         print("\nBenchmarking binding operations...")
 
@@ -182,12 +182,15 @@ class HDCBenchmark:
                 print(f"  {binding_type.value}: {throughput:.1f} ops/s")
 
             except Exception as e:
-                results["data"][binding_type.value] = {"supported": False, "error": str(e)}
+                results["data"][binding_type.value] = {
+                    "supported": False,
+                    "error": str(e),
+                }
                 print(f"  {binding_type.value}: Not supported for this configuration")
 
         return results
 
-    def benchmark_similarity_computation(self) -> Dict[str, Any]:
+    def benchmark_similarity_computation(self) -> dict[str, Any]:
         """Benchmark similarity computation"""
         print("\nBenchmarking similarity computation...")
 
@@ -231,7 +234,7 @@ class HDCBenchmark:
 
         return results
 
-    def benchmark_projection_types(self) -> Dict[str, Any]:
+    def benchmark_projection_types(self) -> dict[str, Any]:
         """Benchmark different projection types"""
         print("\nBenchmarking projection types...")
 
@@ -280,7 +283,7 @@ class HDCBenchmark:
 
         return results
 
-    def benchmark_scalability(self) -> Dict[str, Any]:
+    def benchmark_scalability(self) -> dict[str, Any]:
         """Benchmark scalability with batch processing"""
         print("\nBenchmarking batch scalability...")
 
@@ -328,11 +331,14 @@ class HDCBenchmark:
 
         return results
 
-    def benchmark_multimodal_encoding(self) -> Dict[str, Any]:
+    def benchmark_multimodal_encoding(self) -> dict[str, Any]:
         """Benchmark multi-modal encoding performance"""
         print("\nBenchmarking multi-modal encoding...")
 
-        results = {"description": "Multi-modal encoding and binding performance", "data": {}}
+        results = {
+            "description": "Multi-modal encoding and binding performance",
+            "data": {},
+        }
 
         encoder = create_encoder(dimension=10000)
         binder = HypervectorBinder(10000)
@@ -406,9 +412,9 @@ class HDCBenchmark:
         self.results["benchmarks"]["encoding_throughput"] = self.benchmark_encoding_throughput()
         self.results["benchmarks"]["memory_usage"] = self.benchmark_memory_usage()
         self.results["benchmarks"]["binding_operations"] = self.benchmark_binding_operations()
-        self.results["benchmarks"][
-            "similarity_computation"
-        ] = self.benchmark_similarity_computation()
+        self.results["benchmarks"]["similarity_computation"] = (
+            self.benchmark_similarity_computation()
+        )
         self.results["benchmarks"]["projection_types"] = self.benchmark_projection_types()
         self.results["benchmarks"]["scalability"] = self.benchmark_scalability()
         self.results["benchmarks"]["multimodal"] = self.benchmark_multimodal_encoding()
@@ -431,7 +437,7 @@ class HDCBenchmark:
         # Generate performance badge
         self.generate_performance_badge()
 
-    def _calculate_summary(self) -> Dict[str, Any]:
+    def _calculate_summary(self) -> dict[str, Any]:
         """Calculate summary metrics"""
         # Get reference throughput (10k dimension, 1000 features)
         throughput_data = self.results["benchmarks"]["encoding_throughput"]["data"]
@@ -505,7 +511,11 @@ class HDCBenchmark:
         # Add value labels
         for x, y in zip(dimensions, throughputs):
             plt.annotate(
-                f"{y:.0f}", xy=(x, y), xytext=(0, 5), textcoords="offset points", ha="center"
+                f"{y:.0f}",
+                xy=(x, y),
+                xytext=(0, 5),
+                textcoords="offset points",
+                ha="center",
             )
 
         plt.tight_layout()
@@ -699,9 +709,9 @@ def main():
     if args.quick:
         # Quick mode - only essential benchmarks
         print("Running quick benchmarks...")
-        benchmark.results["benchmarks"][
-            "encoding_throughput"
-        ] = benchmark.benchmark_encoding_throughput()
+        benchmark.results["benchmarks"]["encoding_throughput"] = (
+            benchmark.benchmark_encoding_throughput()
+        )
         benchmark.results["benchmarks"]["memory_usage"] = benchmark.benchmark_memory_usage()
 
         # Save quick results

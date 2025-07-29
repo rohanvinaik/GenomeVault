@@ -33,13 +33,13 @@ class PositionalEncoder:
         self.dimension = dimension
         self.sparsity = sparsity
         self.cache_size = cache_size
-        self._cache: Dict[int, torch.Tensor] = {}
+        self._cache: dict[int, torch.Tensor] = {}
 
         # Pre-compute constants for efficiency
         self.nnz = int(dimension * sparsity)  # Number of non-zero elements
         logger.info(f"Initialized PositionalEncoder: {dimension}D, {self.nnz} non-zeros per vector")
 
-    def make_position_vector(self, position: int, seed: Optional[int] = None) -> torch.Tensor:
+    def make_position_vector(self, position: int, seed: int | None = None) -> torch.Tensor:
         """
         Generate orthogonal position vector using hash-based seed
 
@@ -71,7 +71,7 @@ class PositionalEncoder:
         return vec
 
     def make_position_vectors_batch(
-        self, positions: List[int], seed: Optional[int] = None
+        self, positions: list[int], seed: int | None = None
     ) -> torch.Tensor:
         """
         Generate batch of position vectors efficiently
@@ -91,7 +91,7 @@ class PositionalEncoder:
         return torch.stack(vectors)
 
     def encode_snp_positions(
-        self, chromosome: str, positions: List[int], panel_name: str = "default"
+        self, chromosome: str, positions: list[int], panel_name: str = "default"
     ) -> torch.Tensor:
         """
         Encode a set of SNP positions into a single panel hypervector
@@ -196,7 +196,7 @@ class PositionalEncoder:
 
         return vec
 
-    def get_memory_usage(self) -> Dict[str, float]:
+    def get_memory_usage(self) -> dict[str, float]:
         """Get memory usage statistics"""
         cache_size_mb = sum(vec.element_size() * vec.numel() for vec in self._cache.values()) / (
             1024**2
@@ -230,7 +230,7 @@ class SNPPanel:
             positional_encoder: PositionalEncoder instance
         """
         self.encoder = positional_encoder
-        self.panels: Dict[str, Dict] = {}
+        self.panels: dict[str, dict] = {}
 
         # Initialize default panels
         self._init_default_panels()
@@ -269,7 +269,7 @@ class SNPPanel:
         try:
             if file_type == "bed":
                 # Parse BED file
-                with open(file_path, "r") as f:
+                with open(file_path) as f:
                     for line in f:
                         if line.startswith("#"):
                             continue
@@ -287,7 +287,7 @@ class SNPPanel:
 
             elif file_type == "vcf":
                 # Parse VCF file
-                with open(file_path, "r") as f:
+                with open(file_path) as f:
                     for line in f:
                         if line.startswith("#"):
                             continue
@@ -319,7 +319,7 @@ class SNPPanel:
             raise HypervectorError(f"Failed to load panel from {file_path}: {str(e)}")
 
     def encode_with_panel(
-        self, panel_name: str, chromosome: str, observed_bases: Dict[int, str]
+        self, panel_name: str, chromosome: str, observed_bases: dict[int, str]
     ) -> torch.Tensor:
         """
         Encode observed bases using specified SNP panel
@@ -373,7 +373,7 @@ class SNPPanel:
         # For sparse vectors, use element-wise multiplication
         return vec1 * vec2
 
-    def _bundle_vectors(self, vectors: List[torch.Tensor]) -> torch.Tensor:
+    def _bundle_vectors(self, vectors: list[torch.Tensor]) -> torch.Tensor:
         """Bundle multiple vectors using XOR-like operation"""
         stacked = torch.stack(vectors)
         # Majority vote for each dimension
@@ -382,7 +382,7 @@ class SNPPanel:
         bundled[bundled == 0] = 1
         return bundled
 
-    def get_panel_info(self, panel_name: str) -> Dict:
+    def get_panel_info(self, panel_name: str) -> dict:
         """Get information about a panel"""
         if panel_name not in self.panels:
             raise ValueError(f"Unknown panel: {panel_name}")
@@ -396,6 +396,6 @@ class SNPPanel:
             "file_path": panel.get("file_path", "built-in"),
         }
 
-    def list_panels(self) -> List[str]:
+    def list_panels(self) -> list[str]:
         """List available panel names"""
         return list(self.panels.keys())

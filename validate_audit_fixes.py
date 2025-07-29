@@ -66,7 +66,10 @@ class AuditValidator:
                 print_count = len(re.findall(r"^\s*print\(", content, re.MULTILINE))
                 if print_count > 0:
                     self.report["files_with_prints"].append(
-                        {"path": str(py_file.relative_to(self.base_path)), "count": print_count}
+                        {
+                            "path": str(py_file.relative_to(self.base_path)),
+                            "count": print_count,
+                        }
                     )
             except Exception:
                 pass
@@ -87,7 +90,7 @@ class AuditValidator:
             except Exception:
                 pass
 
-    def calculate_complexity(self, py_file: Path) -> List[Tuple[str, int]]:
+    def calculate_complexity(self, py_file: Path) -> list[tuple[str, int]]:
         """Calculate cyclomatic complexity for functions in a file"""
         complex_funcs = []
         try:

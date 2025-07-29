@@ -7,12 +7,7 @@ from .batched_query_builder import (
     BatchedQueryResult,
 )
 from .pir_client import PIRClient, PIRQuery
-from .query_builder import (
-    GenomicQuery,
-    PIRQueryBuilder,
-    QueryResult,
-    QueryType,
-)
+from .query_builder import GenomicQuery, PIRQueryBuilder, QueryResult, QueryType
 
 __all__ = [
     "PIRClient",

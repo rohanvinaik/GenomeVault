@@ -38,51 +38,51 @@ registry = HypervectorRegistry()
 class EncodingRequest(BaseModel):
     """Request model for encoding genomic data"""
 
-    features: Dict[str, Any] = Field(..., description="Feature dictionary or array")
+    features: dict[str, Any] = Field(..., description="Feature dictionary or array")
     omics_type: str = Field(..., description="Type of omics data")
-    compression_tier: Optional[str] = Field("full", description="Compression tier")
-    version: Optional[str] = Field(None, description="Encoding version to use")
+    compression_tier: str | None = Field("full", description="Compression tier")
+    version: str | None = Field(None, description="Encoding version to use")
 
 
 class EncodingResponse(BaseModel):
     """Response model for encoded data"""
 
-    vector: List[float] = Field(..., description="Encoded hypervector")
+    vector: list[float] = Field(..., description="Encoded hypervector")
     dimension: int = Field(..., description="Vector dimension")
     version: str = Field(..., description="Encoding version used")
     encoding_time_ms: float = Field(..., description="Encoding time in milliseconds")
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
 
 
 class MultiModalEncodingRequest(BaseModel):
     """Request for encoding multiple modalities"""
 
-    modalities: Dict[str, Dict[str, Any]] = Field(..., description="Dict of modality data")
-    compression_tier: Optional[str] = Field("full", description="Compression tier")
-    binding_type: Optional[str] = Field("fourier", description="Binding type for cross-modal")
+    modalities: dict[str, dict[str, Any]] = Field(..., description="Dict of modality data")
+    compression_tier: str | None = Field("full", description="Compression tier")
+    binding_type: str | None = Field("fourier", description="Binding type for cross-modal")
 
 
 class SimilarityRequest(BaseModel):
     """Request for computing similarity between vectors"""
 
-    vector1: List[float] = Field(..., description="First hypervector")
-    vector2: List[float] = Field(..., description="Second hypervector")
-    metric: Optional[str] = Field("cosine", description="Similarity metric")
+    vector1: list[float] = Field(..., description="First hypervector")
+    vector2: list[float] = Field(..., description="Second hypervector")
+    metric: str | None = Field("cosine", description="Similarity metric")
 
 
 class DecodeRequest(BaseModel):
     """Request for decoding/querying a hypervector"""
 
-    vector: List[float] = Field(..., description="Hypervector to decode")
+    vector: list[float] = Field(..., description="Hypervector to decode")
     query_type: str = Field(..., description="Type of query")
-    role: Optional[str] = Field(None, description="Role to query for composite vectors")
+    role: str | None = Field(None, description="Role to query for composite vectors")
 
 
 class VersionInfo(BaseModel):
     """Version information response"""
 
     current_version: str
-    available_versions: List[Dict[str, Any]]
+    available_versions: list[dict[str, Any]]
     hdc_seed: str
     encoder_version: str
 
@@ -98,7 +98,7 @@ class PerformanceMetrics(BaseModel):
 
 
 # Dependency to get encoder
-def get_encoder(version: Optional[str] = None) -> HypervectorEncoder:
+def get_encoder(version: str | None = None) -> HypervectorEncoder:
     """Get encoder instance with specified version"""
     try:
         return registry.get_encoder(version)
@@ -136,7 +136,8 @@ async def encode_genome(
                 compression_tier = CompressionTier(request.compression_tier)
             except ValueError:
                 raise HTTPException(
-                    status_code=400, detail=f"Invalid compression tier: {request.compression_tier}"
+                    status_code=400,
+                    detail=f"Invalid compression tier: {request.compression_tier}",
                 )
 
         # Encode the data
@@ -156,7 +157,7 @@ async def encode_genome(
             encoding_time_ms=encoding_time_ms,
             metadata={
                 "omics_type": omics_type.value,
-                "compression_tier": compression_tier.value if compression_tier else "default",
+                "compression_tier": (compression_tier.value if compression_tier else "default"),
                 "fingerprint": getattr(encoder, "fingerprint", "unknown"),
                 "sparsity": metrics.sparsity,
                 "compression_ratio": metrics.compression_ratio,
@@ -172,7 +173,8 @@ async def encode_genome(
 
 @router.post("/encode_multimodal", response_model=EncodingResponse)
 async def encode_multimodal(
-    request: MultiModalEncodingRequest, encoder: HypervectorEncoder = Depends(get_encoder)
+    request: MultiModalEncodingRequest,
+    encoder: HypervectorEncoder = Depends(get_encoder),
 ) -> EncodingResponse:
     """
     Encode multiple modalities and bind them together
@@ -376,8 +378,8 @@ async def register_new_version(
     version: str,
     dimension: int,
     projection_type: str,
-    description: Optional[str] = None,
-    sparsity: Optional[float] = 0.1,
+    description: str | None = None,
+    sparsity: float | None = 0.1,
 ):
     """Register a new encoding version"""
     try:
@@ -389,7 +391,11 @@ async def register_new_version(
                 status_code=400, detail=f"Invalid projection type: {projection_type}"
             )
 
-        params = {"dimension": dimension, "projection_type": projection_type, "sparsity": sparsity}
+        params = {
+            "dimension": dimension,
+            "projection_type": projection_type,
+            "sparsity": sparsity,
+        }
 
         registry.register_version(
             version=version,
@@ -397,7 +403,11 @@ async def register_new_version(
             description=description or f"Registered via API at {datetime.now()}",
         )
 
-        return {"message": "Version registered successfully", "version": version, "params": params}
+        return {
+            "message": "Version registered successfully",
+            "version": version,
+            "params": params,
+        }
 
     except HTTPException:
         raise
@@ -408,7 +418,9 @@ async def register_new_version(
 
 @router.post("/encode_file")
 async def encode_genomic_file(
-    file: UploadFile = File(...), omics_type: str = "genomic", compression_tier: str = "full"
+    file: UploadFile = File(...),
+    omics_type: str = "genomic",
+    compression_tier: str = "full",
 ):
     """
     Encode a genomic data file directly
@@ -423,7 +435,8 @@ async def encode_genomic_file(
 
         if len(content) > max_size:
             raise HTTPException(
-                status_code=413, detail=f"File too large. Maximum size: {max_size/1024/1024}MB"
+                status_code=413,
+                detail=f"File too large. Maximum size: {max_size/1024/1024}MB",
             )
 
         # This is a placeholder - actual implementation would
@@ -441,7 +454,7 @@ async def encode_genomic_file(
 
     except HTTPException:
         raise
-    except (ValueError, RuntimeError, IOError, OSError) as e:
+    except (ValueError, RuntimeError, OSError) as e:
         logger.error(f"File encoding error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 

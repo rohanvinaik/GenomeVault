@@ -15,12 +15,7 @@ from genomevault.hypervector.error_handling import (
     ErrorBudget,
     ErrorBudgetAllocator,
 )
-from genomevault.pir.client import (
-    BatchedPIRQueryBuilder,
-    GenomicQuery,
-    PIRClient,
-    QueryType,
-)
+from genomevault.pir.client import BatchedPIRQueryBuilder, GenomicQuery, PIRClient, QueryType
 from genomevault.utils.logging import get_logger
 from genomevault.zk.proof import ProofGenerator
 
@@ -37,7 +32,10 @@ class TunedQueryRequest(BaseModel):
     query_params: dict[str, Any]
     epsilon: float = Field(0.01, description="Allowed relative error", gt=0, le=1)
     delta_exp: int = Field(
-        15, description="Target failure probability exponent (2^-delta_exp)", ge=5, le=30
+        15,
+        description="Target failure probability exponent (2^-delta_exp)",
+        ge=5,
+        le=30,
     )
     ecc_enabled: bool = Field(True, description="Enable error correcting codes")
     parity_g: int = Field(3, description="XOR(g) parity groups", ge=2, le=5)

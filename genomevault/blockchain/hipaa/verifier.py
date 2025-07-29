@@ -14,13 +14,7 @@ import aiohttp
 
 from ...core.exceptions import VerificationError
 from ...utils import audit_logger, get_logger
-from .models import (
-    HIPAACredentials,
-    NPIRecord,
-    NPIType,
-    VerificationRecord,
-    VerificationStatus,
-)
+from .models import HIPAACredentials, NPIRecord, NPIType, VerificationRecord, VerificationStatus
 
 logger = get_logger(__name__)
 
@@ -29,7 +23,7 @@ class NPIRegistry(ABC):
     """Abstract base class for NPI registry access"""
 
     @abstractmethod
-    async def lookup_npi(self, npi: str) -> Optional[NPIRecord]:
+    async def lookup_npi(self, npi: str) -> NPIRecord | None:
         """Look up an NPI in the registry"""
         pass
 
@@ -47,11 +41,11 @@ class CMSNPIRegistry(NPIRegistry):
     For development, it simulates the registry.
     """
 
-    def __init__(self, api_endpoint: Optional[str] = None):
+    def __init__(self, api_endpoint: str | None = None):
         """Initialize CMS registry client"""
         self.api_endpoint = api_endpoint or "https://npiregistry.cms.hhs.gov/api"
-        self._cache: Dict[str, NPIRecord] = {}
-        self._session: Optional[aiohttp.ClientSession] = None
+        self._cache: dict[str, NPIRecord] = {}
+        self._session: aiohttp.ClientSession | None = None
 
     async def __aenter__(self):
         """Async context manager entry"""
@@ -63,7 +57,7 @@ class CMSNPIRegistry(NPIRegistry):
         if self._session:
             await self._session.close()
 
-    async def lookup_npi(self, npi: str) -> Optional[NPIRecord]:
+    async def lookup_npi(self, npi: str) -> NPIRecord | None:
         """
         Look up an NPI in the CMS registry.
 
@@ -130,7 +124,7 @@ class CMSNPIRegistry(NPIRegistry):
         check_digit = (10 - (total % 10)) % 10
         return int(npi[-1]) == check_digit
 
-    async def _simulate_npi_lookup(self, npi: str) -> Optional[NPIRecord]:
+    async def _simulate_npi_lookup(self, npi: str) -> NPIRecord | None:
         """
         Simulate NPI lookup for development.
 
@@ -181,7 +175,7 @@ class HIPAAVerifier:
     to become Trusted Signatories.
     """
 
-    def __init__(self, npi_registry: Optional[NPIRegistry] = None):
+    def __init__(self, npi_registry: NPIRegistry | None = None):
         """
         Initialize HIPAA verifier.
 
@@ -189,8 +183,8 @@ class HIPAAVerifier:
             npi_registry: NPI registry client (defaults to CMS)
         """
         self.npi_registry = npi_registry or CMSNPIRegistry()
-        self.verification_records: Dict[str, VerificationRecord] = {}
-        self.pending_verifications: Dict[str, HIPAACredentials] = {}
+        self.verification_records: dict[str, VerificationRecord] = {}
+        self.pending_verifications: dict[str, HIPAACredentials] = {}
 
         # Verification parameters
         self.signatory_weight = 10
@@ -331,7 +325,7 @@ class HIPAAVerifier:
 
             raise
 
-    def get_verification_status(self, npi: str) -> Optional[VerificationRecord]:
+    def get_verification_status(self, npi: str) -> VerificationRecord | None:
         """
         Get verification status for an NPI.
 
@@ -416,7 +410,7 @@ class HIPAAVerifier:
 
         return hashlib.sha256(data.encode()).hexdigest()
 
-    def get_active_verifications(self) -> List[Tuple[str, VerificationRecord]]:
+    def get_active_verifications(self) -> list[tuple[str, VerificationRecord]]:
         """Get all active verifications"""
         active = []
         for npi, record in self.verification_records.items():

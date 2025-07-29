@@ -53,7 +53,7 @@ class GenomicEncoder:
             2: {},  # 1kb tile HVs
         }
 
-    def _init_base_vectors(self) -> Dict[str, torch.Tensor]:
+    def _init_base_vectors(self) -> dict[str, torch.Tensor]:
         """Initialize base hypervectors for nucleotides and operations"""
         base_vectors = {}
 
@@ -156,7 +156,7 @@ class GenomicEncoder:
         except Exception:
             raise HypervectorError("Failed to encode variant: {str(e)}")
 
-    def encode_genome(self, variants: List[Dict]) -> torch.Tensor:
+    def encode_genome(self, variants: list[dict]) -> torch.Tensor:
         """
         Encode a complete set of variants into a single hypervector
 
@@ -274,7 +274,7 @@ class GenomicEncoder:
         return self.positional_encoder._create_sparse_vector(seed)
 
     def encode_genome_with_panel(
-        self, variants: List[Dict], panel_name: Optional[str] = None
+        self, variants: list[dict], panel_name: str | None = None
     ) -> torch.Tensor:
         """
         Encode genome using SNP panel for improved accuracy
@@ -314,7 +314,7 @@ class GenomicEncoder:
             return torch.zeros(self.dimension)
 
     # Hierarchical zoom methods
-    def create_zoom_tiles(self, chromosome: str, variants: List[Dict]):
+    def create_zoom_tiles(self, chromosome: str, variants: list[dict]):
         """Create hierarchical zoom tiles for a chromosome"""
         # Level 0: Full chromosome
         chr_variants = [v for v in variants if v["chromosome"] == chromosome]
@@ -380,7 +380,7 @@ class GenomicEncoder:
         else:
             raise ValueError(f"Invalid zoom level: {level}")
 
-    def set_panel_granularity(self, granularity: Union[str, PanelGranularity]):
+    def set_panel_granularity(self, granularity: str | PanelGranularity):
         """Change the SNP panel granularity setting"""
         if isinstance(granularity, str):
             granularity = PanelGranularity(granularity)
@@ -419,7 +419,8 @@ class GenomicEncoder:
 
             # Apply catalytic projection
             projected = self.projection_pool.apply_catalytic_projection(
-                variant_vec, [0, 1, 2]  # Use first 3 projections
+                variant_vec,
+                [0, 1, 2],  # Use first 3 projections
             )
 
             return projected

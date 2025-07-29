@@ -11,22 +11,14 @@ from .sequencing import (
 )
 
 try:
-    from .transcriptomics import (
-        ExpressionProfile,
-        GeneExpression,
-        TranscriptomicsProcessor,
-    )
+    from .transcriptomics import ExpressionProfile, GeneExpression, TranscriptomicsProcessor
 except ImportError:
     TranscriptomicsProcessor = None
     ExpressionProfile = None
     GeneExpression = None
 
 try:
-    from .epigenetics import (
-        EpigeneticsProcessor,
-        MethylationProfile,
-        MethylationSite,
-    )
+    from .epigenetics import EpigeneticsProcessor, MethylationProfile, MethylationSite
 except ImportError:
     EpigeneticsProcessor = None
     MethylationProfile = None

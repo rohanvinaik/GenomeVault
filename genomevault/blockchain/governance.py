@@ -9,6 +9,7 @@ Implements the DAO governance framework with:
 """
 
 import hashlib
+import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
@@ -17,7 +18,6 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 
 from genomevault.utils import get_logger
 from genomevault.utils.logging import audit_logger
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -374,9 +374,7 @@ class GovernanceSystem:
             )
 
         # Generate proposal ID
-        _ = hashlib.sha256(b"{proposer}:{title}:{datetime.now().isoformat()}").hexdigest()[
-            :16
-        ]
+        _ = hashlib.sha256(b"{proposer}:{title}:{datetime.now().isoformat()}").hexdigest()[:16]
 
         # Set requirements based on proposal type
         if proposal_type in [

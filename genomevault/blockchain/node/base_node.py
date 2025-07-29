@@ -25,8 +25,8 @@ class Block:
 
     index: int
     timestamp: float
-    transactions: List[Dict[str, Any]]
-    proof_hashes: List[str]
+    transactions: list[dict[str, Any]]
+    proof_hashes: list[str]
     previous_hash: str
     nonce: int
     hash: str
@@ -51,13 +51,13 @@ class BaseNode(ABC):
         self.voting_power = self.hardware_weight + self.signatory_weight
 
         # Blockchain state
-        self.chain: List[Block] = []
-        self.pending_transactions: List[Dict[str, Any]] = []
-        self.peers: List[str] = []
+        self.chain: list[Block] = []
+        self.pending_transactions: list[dict[str, Any]] = []
+        self.peers: list[str] = []
 
         # Node-specific storage
         self.storage_limit = self._get_storage_limit()
-        self.stored_proofs: Dict[str, bytes] = {}
+        self.stored_proofs: dict[str, bytes] = {}
 
     def _get_hardware_weight(self) -> int:
         """Get hardware class weight based on node type"""
@@ -79,7 +79,7 @@ class BaseNode(ABC):
         pass
 
     @abstractmethod
-    async def validate_transaction(self, transaction: Dict[str, Any]) -> bool:
+    async def validate_transaction(self, transaction: dict[str, Any]) -> bool:
         """Validate a transaction based on node capabilities"""
         pass
 
@@ -92,7 +92,7 @@ class BaseNode(ABC):
         signatory_bonus = 2 if self.is_signatory else 0
         return base_credits + signatory_bonus
 
-    async def create_block(self) -> Optional[Block]:
+    async def create_block(self) -> Block | None:
         """Create a new block if this node is selected"""
         if not self.pending_transactions:
             return None
@@ -123,7 +123,7 @@ class BaseNode(ABC):
         # Simplified selection based on voting power
         # In production, use proper BFT consensus
         current_slot = int(time.time() / BLOCK_TIME_SECONDS)
-        selection_hash = hashlib.sha256("{current_slot}:{self.voting_power}".encode()).hexdigest()
+        selection_hash = hashlib.sha256(b"{current_slot}:{self.voting_power}").hexdigest()
         selection_value = int(selection_hash[:8], 16)
 
         # Probability proportional to voting power
@@ -159,14 +159,14 @@ class BaseNode(ABC):
         )
         return hashlib.sha256(block_string.encode()).hexdigest()
 
-    async def add_transaction(self, transaction: Dict[str, Any]) -> bool:
+    async def add_transaction(self, transaction: dict[str, Any]) -> bool:
         """Add a transaction to pending pool"""
         if await self.validate_transaction(transaction):
             self.pending_transactions.append(transaction)
             return True
         return False
 
-    def get_node_info(self) -> Dict[str, Any]:
+    def get_node_info(self) -> dict[str, Any]:
         """Get node information"""
         return {
             "node_type": self.node_type.value,

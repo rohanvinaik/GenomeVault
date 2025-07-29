@@ -21,10 +21,10 @@ class ProofResult:
 
     hash: str
     proof_data: bytes
-    public_inputs: Dict[str, Any]
+    public_inputs: dict[str, Any]
     generation_time_ms: float
     circuit_type: str
-    verification_result: Optional[bool] = None
+    verification_result: bool | None = None
 
 
 class ProofGenerator:
@@ -40,10 +40,10 @@ class ProofGenerator:
 
     async def generate_median_proof(
         self,
-        results: List[Any],
+        results: list[Any],
         median: Any,
         budget: ErrorBudget,
-        metadata: Dict[str, Any],
+        metadata: dict[str, Any],
     ) -> ProofResult:
         """
         Generate proof that median of results is within error bound
@@ -153,11 +153,11 @@ class ProofGenerator:
 
     async def _generate_mock_proof(
         self,
-        results: List[Any],
+        results: list[Any],
         median: Any,
         budget: ErrorBudget,
-        metadata: Dict[str, Any],
-        error: Optional[str] = None,
+        metadata: dict[str, Any],
+        error: str | None = None,
     ) -> ProofResult:
         """Generate mock proof as fallback"""
         import json
@@ -246,7 +246,7 @@ class ProofGenerator:
         original_vector: Any,
         corrected_vector: Any,
         errors_corrected: int,
-        metadata: Dict[str, Any],
+        metadata: dict[str, Any],
     ) -> ProofResult:
         """
         Generate proof of ECC error correction
@@ -256,7 +256,9 @@ class ProofGenerator:
         proof_data = {
             "circuit_type": "ecc_verification",
             "errors_corrected": errors_corrected,
-            "vector_dimension": len(original_vector) if hasattr(original_vector, "__len__") else 0,
+            "vector_dimension": (
+                len(original_vector) if hasattr(original_vector, "__len__") else 0
+            ),
             "timestamp": time.time(),
             "metadata": metadata,
         }
@@ -278,7 +280,7 @@ class ProofGenerator:
             verification_result=True,
         )
 
-    def get_proof_statistics(self) -> Dict[str, Any]:
+    def get_proof_statistics(self) -> dict[str, Any]:
         """Get statistics about generated proofs"""
         return {
             "cached_proofs": len(self.proof_cache),

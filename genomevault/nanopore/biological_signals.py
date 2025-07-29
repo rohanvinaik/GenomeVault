@@ -42,7 +42,7 @@ class BiologicalSignal:
     confidence: float
     variance_score: float
     context: str  # Sequence context
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
 
 
 @dataclass
@@ -109,10 +109,10 @@ class BiologicalSignalDetector:
     def detect_signals(
         self,
         variance_array: np.ndarray,
-        dwell_times: Optional[np.ndarray] = None,
-        sequence_context: Optional[str] = None,
-        genomic_positions: Optional[np.ndarray] = None,
-    ) -> List[BiologicalSignal]:
+        dwell_times: np.ndarray | None = None,
+        sequence_context: str | None = None,
+        genomic_positions: np.ndarray | None = None,
+    ) -> list[BiologicalSignal]:
         """
         Detect biological signals from variance patterns.
 
@@ -170,7 +170,7 @@ class BiologicalSignalDetector:
     def _detect_anomaly_regions(
         self,
         variance_array: np.ndarray,
-    ) -> List[Tuple[int, int]]:
+    ) -> list[tuple[int, int]]:
         """Detect contiguous anomaly regions."""
         # Z-score normalization
         z_scores = zscore(variance_array)
@@ -197,9 +197,9 @@ class BiologicalSignalDetector:
     def _extract_region_features(
         self,
         variance: np.ndarray,
-        dwell_times: Optional[np.ndarray],
-        sequence: Optional[str],
-    ) -> Dict[str, float]:
+        dwell_times: np.ndarray | None,
+        sequence: str | None,
+    ) -> dict[str, float]:
         """Extract features from anomaly region."""
         features = {
             "variance_mean": float(np.mean(variance)),
@@ -242,8 +242,8 @@ class BiologicalSignalDetector:
 
     def _classify_signal(
         self,
-        features: Dict[str, float],
-    ) -> Tuple[BiologicalSignalType, float]:
+        features: dict[str, float],
+    ) -> tuple[BiologicalSignalType, float]:
         """
         Classify signal type based on features.
 
@@ -320,7 +320,7 @@ class BiologicalSignalDetector:
 
     def train_on_known_modifications(
         self,
-        training_data: List[Tuple[np.ndarray, BiologicalSignalType]],
+        training_data: list[tuple[np.ndarray, BiologicalSignalType]],
     ):
         """
         Train detector on known modifications.
@@ -355,7 +355,7 @@ class BiologicalSignalDetector:
 
     def export_signal_track(
         self,
-        signals: List[BiologicalSignal],
+        signals: list[BiologicalSignal],
         output_format: str = "bedgraph",
     ) -> str:
         """

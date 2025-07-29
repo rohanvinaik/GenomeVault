@@ -34,7 +34,10 @@ class ErrorBudgetRequest(BaseModel):
 
     epsilon: float = Field(0.01, description="Allowed relative error", gt=0, le=1)
     delta_exp: int = Field(
-        15, description="Target failure probability exponent (2^-delta_exp)", ge=5, le=30
+        15,
+        description="Target failure probability exponent (2^-delta_exp)",
+        ge=5,
+        le=30,
     )
     ecc_enabled: bool = Field(True, description="Enable error correcting codes")
     parity_g: int = Field(3, description="XOR(g) parity groups", ge=2, le=5)
@@ -73,8 +76,8 @@ class QueryResponse(BaseModel):
     ci: str
     delta: str
     proof_uri: str
-    settings: Dict
-    performance: Dict
+    settings: dict
+    performance: dict
 
 
 @dataclass
@@ -161,7 +164,7 @@ class ECCEncoderMixin:
         encoded_vector = torch.cat(encoded_blocks)
         return encoded_vector[: self.expanded_dimension]
 
-    def decode_with_ecc(self, encoded_vector: torch.Tensor) -> Tuple[torch.Tensor, int]:
+    def decode_with_ecc(self, encoded_vector: torch.Tensor) -> tuple[torch.Tensor, int]:
         """
         Decode ECC-encoded hypervector and correct errors
         Returns: (decoded_vector, num_errors_corrected)
@@ -214,7 +217,7 @@ class ErrorBudgetAllocator:
         epsilon: float,
         delta_exp: int,
         ecc_enabled: bool = True,
-        repeat_cap: Optional[int] = None,
+        repeat_cap: int | None = None,
     ) -> ErrorBudget:
         """
         Plan error budget allocation deterministically from (ε, δ)
@@ -304,8 +307,8 @@ class AdaptiveHDCEncoder(GenomicEncoder):
         self.budget_allocator = ErrorBudgetAllocator()
 
     def encode_with_budget(
-        self, variants: List[Dict], budget: ErrorBudget
-    ) -> Tuple[torch.Tensor, Dict]:
+        self, variants: list[dict], budget: ErrorBudget
+    ) -> tuple[torch.Tensor, dict]:
         """
         Encode genome with specified error budget
         Returns encoded vector and proof metadata
@@ -441,8 +444,20 @@ async def query_with_tuning(request: QueryRequest):
         # In production, would fetch actual cohort data
         # For now, simulate with mock variants
         mock_variants = [
-            {"chromosome": "chr1", "position": 100000, "ref": "A", "alt": "G", "type": "SNP"},
-            {"chromosome": "chr2", "position": 200000, "ref": "C", "alt": "T", "type": "SNP"},
+            {
+                "chromosome": "chr1",
+                "position": 100000,
+                "ref": "A",
+                "alt": "G",
+                "type": "SNP",
+            },
+            {
+                "chromosome": "chr2",
+                "position": 200000,
+                "ref": "C",
+                "alt": "T",
+                "type": "SNP",
+            },
             # ... more variants
         ]
 
@@ -486,4 +501,10 @@ async def query_with_tuning(request: QueryRequest):
 
 
 # Module exports
-__all__ = ["ECCEncoderMixin", "ErrorBudgetAllocator", "AdaptiveHDCEncoder", "ErrorBudget", "router"]
+__all__ = [
+    "ECCEncoderMixin",
+    "ErrorBudgetAllocator",
+    "AdaptiveHDCEncoder",
+    "ErrorBudget",
+    "router",
+]

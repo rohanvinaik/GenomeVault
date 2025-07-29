@@ -22,10 +22,10 @@ from .pir_server import PIRServer
 
 logger = get_logger(__name__)
 
-with open("schemas/pir_query.json", "r") as f:
+with open("schemas/pir_query.json") as f:
     QUERY_SCHEMA = json.load(f)
 
-with open("schemas/pir_response.json", "r") as f:
+with open("schemas/pir_response.json") as f:
     RESPONSE_SCHEMA = json.load(f)
 
 
@@ -176,7 +176,10 @@ class PIRHandler:
 
     def _error_response(self, code: str, message: str, status: int) -> web.Response:
         """Create error response."""
-        response = {"error": {"code": code, "message": message}, "timestamp": time.time()}
+        response = {
+            "error": {"code": code, "message": message},
+            "timestamp": time.time(),
+        }
 
         return web.json_response(response, status=status)
 

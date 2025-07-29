@@ -12,7 +12,8 @@ import pickle
 import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
+from collections.abc import Callable
 
 import numpy as np
 import tensorflow as tf
@@ -36,10 +37,10 @@ class ModelSnapshot:
     weight_hash: str
     hypervector_hash: str
     loss: float
-    metrics: Dict[str, float]
-    gradient_stats: Dict[str, float]
-    io_samples: List[str]  # Hashes of input/output pairs
-    metadata: Dict[str, Any]
+    metrics: dict[str, float]
+    gradient_stats: dict[str, float]
+    io_samples: list[str]  # Hashes of input/output pairs
+    metadata: dict[str, Any]
 
 
 class ModelSnapshotLogger:
@@ -82,9 +83,9 @@ class ModelSnapshotLogger:
         self.capture_io = capture_io
         self.compression = compression
 
-        self.snapshots: List[ModelSnapshot] = []
-        self.snapshot_hashes: List[str] = []
-        self.io_buffer: List[Tuple[str, str]] = []
+        self.snapshots: list[ModelSnapshot] = []
+        self.snapshot_hashes: list[str] = []
+        self.io_buffer: list[tuple[str, str]] = []
 
         # Framework detection
         self.framework = self._detect_framework()
@@ -100,10 +101,10 @@ class ModelSnapshotLogger:
         epoch: int,
         step: int,
         loss: float,
-        metrics: Dict[str, float],
-        gradients: Optional[Any] = None,
+        metrics: dict[str, float],
+        gradients: Any | None = None,
         force: bool = False,
-    ) -> Optional[str]:
+    ) -> str | None:
         """
         Log a model snapshot if conditions are met.
 
@@ -235,7 +236,7 @@ class ModelSnapshotLogger:
 
         return current_level[0]
 
-    def create_training_summary(self) -> Dict[str, Any]:
+    def create_training_summary(self) -> dict[str, Any]:
         """
         Create a summary of the training session.
 
@@ -293,7 +294,7 @@ class ModelSnapshotLogger:
 
         return summary
 
-    def export_for_proof(self) -> Dict[str, Any]:
+    def export_for_proof(self) -> dict[str, Any]:
         """
         Export snapshot data for proof generation.
 
@@ -325,7 +326,7 @@ class ModelSnapshotLogger:
 
         return "unknown"
 
-    def _extract_weights(self, model: Any) -> Dict[str, np.ndarray]:
+    def _extract_weights(self, model: Any) -> dict[str, np.ndarray]:
         """Extract weights from model"""
         weights = {}
 
@@ -341,7 +342,7 @@ class ModelSnapshotLogger:
 
         return weights
 
-    def _hash_weights(self, weights: Dict[str, np.ndarray]) -> str:
+    def _hash_weights(self, weights: dict[str, np.ndarray]) -> str:
         """Compute hash of model weights"""
         # Sort keys for deterministic hashing
         sorted_keys = sorted(weights.keys())
@@ -353,7 +354,7 @@ class ModelSnapshotLogger:
 
         return hasher.hexdigest()
 
-    def _create_model_hypervector(self, weights: Dict[str, np.ndarray]) -> np.ndarray:
+    def _create_model_hypervector(self, weights: dict[str, np.ndarray]) -> np.ndarray:
         """Create hypervector representation of model"""
         # Flatten all weights
         all_weights = []
@@ -380,7 +381,7 @@ class ModelSnapshotLogger:
 
         return hypervector
 
-    def _compute_gradient_stats(self, gradients: Any) -> Dict[str, float]:
+    def _compute_gradient_stats(self, gradients: Any) -> dict[str, float]:
         """Compute gradient statistics"""
         stats = {}
 
@@ -425,7 +426,10 @@ class ModelSnapshotLogger:
             return hashlib.sha256(str(data).encode()).hexdigest()[:16]
 
     def _save_snapshot(
-        self, snapshot: ModelSnapshot, weights: Dict[str, np.ndarray], hypervector: np.ndarray
+        self,
+        snapshot: ModelSnapshot,
+        weights: dict[str, np.ndarray],
+        hypervector: np.ndarray,
     ):
         """Save snapshot to disk"""
         snapshot_dir = self.output_dir / f"snapshot_{snapshot.snapshot_id}"
@@ -458,7 +462,7 @@ class SnapshotVerifier:
     """Verify model snapshots for proof generation"""
 
     @staticmethod
-    def verify_snapshot_chain(snapshots: List[ModelSnapshot]) -> bool:
+    def verify_snapshot_chain(snapshots: list[ModelSnapshot]) -> bool:
         """Verify the integrity of a snapshot chain"""
         if not snapshots:
             return True
@@ -489,12 +493,14 @@ class SnapshotVerifier:
         return True
 
     @staticmethod
-    def load_snapshot(snapshot_dir: str) -> Tuple[ModelSnapshot, Dict[str, np.ndarray], np.ndarray]:
+    def load_snapshot(
+        snapshot_dir: str,
+    ) -> tuple[ModelSnapshot, dict[str, np.ndarray], np.ndarray]:
         """Load a snapshot from disk"""
         snapshot_path = Path(snapshot_dir)
 
         # Load metadata
-        with open(snapshot_path / "metadata.json", "r") as f:
+        with open(snapshot_path / "metadata.json") as f:
             metadata = json.load(f)
 
         snapshot = ModelSnapshot(**metadata)

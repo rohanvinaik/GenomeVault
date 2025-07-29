@@ -240,7 +240,7 @@ class MetricsCollector:
 
         return decorator
 
-    def update_pir_metrics(self, config: Dict[str, Any]):
+    def update_pir_metrics(self, config: dict[str, Any]):
         """Update PIR-specific metrics"""
         # Calculate privacy failure probability
         k = config.get("trusted_signatures", 2)
@@ -286,7 +286,7 @@ class MetricsCollector:
         """Export metrics in Prometheus format"""
         return prometheus_client.generate_latest()
 
-    def get_metrics_summary(self) -> Dict[str, Any]:
+    def get_metrics_summary(self) -> dict[str, Any]:
         """Get a summary of current metrics"""
         return {
             "uptime_seconds": time.time() - self._start_time,
@@ -352,7 +352,7 @@ class PrivacyAwareLogger:
         ]
 
         # Deep scan for sensitive keys
-        def redact_dict(d: Dict[str, Any]) -> Dict[str, Any]:
+        def redact_dict(d: dict[str, Any]) -> dict[str, Any]:
             redacted = {}
             for key, value in d.items():
                 if any(sk in key.lower() for sk in sensitive_keys):
@@ -369,7 +369,7 @@ class PrivacyAwareLogger:
 
         return redact_dict(event_dict)
 
-    def log_audit_event(self, event_type: str, details: Dict[str, Any]):
+    def log_audit_event(self, event_type: str, details: dict[str, Any]):
         """Log security audit events"""
         self.logger.info("audit_event", event_type=event_type, details=details, audit=True)
 
@@ -397,9 +397,9 @@ class PrivacyAwareLogger:
     def log_governance_event(
         self,
         action: str,
-        proposal_id: Optional[str] = None,
-        voter_id: Optional[str] = None,
-        vote: Optional[str] = None,
+        proposal_id: str | None = None,
+        voter_id: str | None = None,
+        vote: str | None = None,
     ):
         """Log governance-related events"""
         self.logger.info(

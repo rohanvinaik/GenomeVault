@@ -34,7 +34,7 @@ class ParticipantProfile:
     join_timestamp: float
     reputation_score: float = 1.0
     contributions: int = 0
-    quality_scores: List[float] = field(default_factory=list)
+    quality_scores: list[float] = field(default_factory=list)
 
     @property
     def average_quality(self) -> float:
@@ -62,7 +62,7 @@ class DPConfig:
 class UpdateValidator(Protocol):
     """Protocol for update validation."""
 
-    def validate(self, update: np.ndarray, metadata: Dict[str, Any]) -> bool:
+    def validate(self, update: np.ndarray, metadata: dict[str, Any]) -> bool:
         """Validate an update."""
         ...
 
@@ -73,7 +73,7 @@ class SecureAggregator:
     def __init__(
         self,
         aggregation_method: AggregationMethod = AggregationMethod.TRIMMED_MEAN,
-        dp_config: Optional[DPConfig] = None,
+        dp_config: DPConfig | None = None,
         min_participants: int = 3,
         reputation_threshold: float = 0.7,
     ):
@@ -83,11 +83,11 @@ class SecureAggregator:
         self.reputation_threshold = reputation_threshold
 
         # Participant tracking
-        self.participants: Dict[str, ParticipantProfile] = {}
+        self.participants: dict[str, ParticipantProfile] = {}
 
         # Aggregation state
         self.current_round = 0
-        self.round_history: List[Dict[str, Any]] = []
+        self.round_history: list[dict[str, Any]] = []
 
     def register_participant(self, profile: ParticipantProfile) -> bool:
         """Register new participant."""
@@ -98,8 +98,10 @@ class SecureAggregator:
         return True
 
     async def aggregate_updates(
-        self, updates: Dict[str, np.ndarray], metadata: Optional[Dict[str, Dict[str, Any]]] = None
-    ) -> Tuple[np.ndarray, Dict[str, Any]]:
+        self,
+        updates: dict[str, np.ndarray],
+        metadata: dict[str, dict[str, Any]] | None = None,
+    ) -> tuple[np.ndarray, dict[str, Any]]:
         """Aggregate updates with privacy and robustness."""
         # Filter by reputation
         valid_updates = self._filter_by_reputation(updates)
@@ -147,7 +149,7 @@ class SecureAggregator:
 
         return aggregated, round_info
 
-    def _filter_by_reputation(self, updates: Dict[str, np.ndarray]) -> Dict[str, np.ndarray]:
+    def _filter_by_reputation(self, updates: dict[str, np.ndarray]) -> dict[str, np.ndarray]:
         """Filter updates by participant reputation."""
         valid = {}
 
@@ -160,8 +162,8 @@ class SecureAggregator:
         return valid
 
     def _validate_updates(
-        self, updates: Dict[str, np.ndarray], metadata: Dict[str, Dict[str, Any]]
-    ) -> Dict[str, np.ndarray]:
+        self, updates: dict[str, np.ndarray], metadata: dict[str, dict[str, Any]]
+    ) -> dict[str, np.ndarray]:
         """Validate updates based on metadata."""
         valid = {}
 
@@ -181,12 +183,12 @@ class SecureAggregator:
 
         return valid
 
-    def _secure_mean(self, updates: Dict[str, np.ndarray]) -> np.ndarray:
+    def _secure_mean(self, updates: dict[str, np.ndarray]) -> np.ndarray:
         """Compute secure mean."""
         values = list(updates.values())
         return np.mean(values, axis=0)
 
-    def _trimmed_mean(self, updates: Dict[str, np.ndarray], trim_pct: float = 0.2) -> np.ndarray:
+    def _trimmed_mean(self, updates: dict[str, np.ndarray], trim_pct: float = 0.2) -> np.ndarray:
         """Compute trimmed mean."""
         values = np.array(list(updates.values()))
         n_trim = int(len(values) * trim_pct)
@@ -199,7 +201,7 @@ class SecureAggregator:
         return trimmed
 
     def _krum_aggregation(
-        self, updates: Dict[str, np.ndarray], n_byzantine: Optional[int] = None
+        self, updates: dict[str, np.ndarray], n_byzantine: int | None = None
     ) -> np.ndarray:
         """Krum aggregation for Byzantine robustness."""
         pids = list(updates.keys())
@@ -232,12 +234,12 @@ class SecureAggregator:
         best_idx = np.argmin(scores)
         return values[best_idx]
 
-    def _median_aggregation(self, updates: Dict[str, np.ndarray]) -> np.ndarray:
+    def _median_aggregation(self, updates: dict[str, np.ndarray]) -> np.ndarray:
         """Coordinate-wise median aggregation."""
         values = np.array(list(updates.values()))
         return np.median(values, axis=0)
 
-    def _byzantine_robust_aggregation(self, updates: Dict[str, np.ndarray]) -> np.ndarray:
+    def _byzantine_robust_aggregation(self, updates: dict[str, np.ndarray]) -> np.ndarray:
         """Byzantine-robust aggregation using multiple defenses."""
         # First apply Krum to identify good subset
         krum_result = self._krum_aggregation(updates)
@@ -268,7 +270,7 @@ class SecureAggregator:
         return aggregated + noise
 
     def _update_participant_profiles(
-        self, updates: Dict[str, np.ndarray], aggregated: np.ndarray
+        self, updates: dict[str, np.ndarray], aggregated: np.ndarray
     ) -> None:
         """Update participant profiles based on contribution quality."""
         # Compute quality scores
@@ -289,7 +291,7 @@ class SecureAggregator:
             alpha = 0.1
             profile.reputation_score = (1 - alpha) * profile.reputation_score + alpha * quality
 
-    def get_participant_stats(self) -> Dict[str, Any]:
+    def get_participant_stats(self) -> dict[str, Any]:
         """Get statistics about participants."""
         active = sum(
             1 for p in self.participants.values() if p.reputation_score >= self.reputation_threshold

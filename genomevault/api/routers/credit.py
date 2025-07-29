@@ -32,7 +32,7 @@ class VaultRequest(BaseModel):
 
     amount: int = Field(..., gt=0, description="Amount of credits to vault")
     duration_blocks: int = Field(..., gt=0, description="Vaulting duration in blocks")
-    beneficiary: Optional[str] = Field(None, description="Address to receive bonus credits")
+    beneficiary: str | None = Field(None, description="Address to receive bonus credits")
 
 
 class RedeemRequest(BaseModel):
@@ -53,12 +53,12 @@ class VaultInfo(BaseModel):
     maturity_block: int
     bonus_rate: float
     status: str  # active, matured, redeemed
-    beneficiary: Optional[str] = None
+    beneficiary: str | None = None
 
 
 # Simulated credit ledger (in production, this would be on-chain)
-CREDIT_LEDGER: Dict[str, CreditBalance] = {}
-VAULTS: Dict[str, VaultInfo] = {}
+CREDIT_LEDGER: dict[str, CreditBalance] = {}
+VAULTS: dict[str, VaultInfo] = {}
 
 
 def get_or_create_balance(address: str) -> CreditBalance:
@@ -135,7 +135,7 @@ async def vault_credits(request: VaultRequest, address: str = "0x123..."):  # Wo
     return vault
 
 
-@router.post("/redeem", response_model=Dict[str, any])
+@router.post("/redeem", response_model=dict[str, any])
 async def redeem_vaulted_credits(request: RedeemRequest, address: str = "0x123..."):
     """
     Redeem vaulted credits
@@ -196,7 +196,7 @@ async def redeem_vaulted_credits(request: RedeemRequest, address: str = "0x123..
 
 
 @router.get("/vaults/{address}")
-async def list_vaults(address: str, status: Optional[str] = None):
+async def list_vaults(address: str, status: str | None = None):
     """List all vaults for an address"""
     user_vaults = []
 

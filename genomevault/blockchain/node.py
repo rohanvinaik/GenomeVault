@@ -6,6 +6,7 @@ Implements Tendermint BFT consensus with weighted voting.
 import asyncio
 import hashlib
 import json
+import logging
 import time
 from dataclasses import dataclass
 from enum import Enum
@@ -13,7 +14,6 @@ from typing import Dict, List, Tuple
 
 from genomevault.core.constants import NodeClassWeight as NodeClass
 from genomevault.utils.logging import audit_logger, get_logger, logger, performance_logger
-import logging
 
 logger = logging.getLogger(__name__)
 

@@ -22,7 +22,10 @@ class MockModel:
     """Mock model for testing"""
 
     def __init__(self):
-        self.weights = {"layer1": np.random.randn(100, 50), "layer2": np.random.randn(50, 2)}
+        self.weights = {
+            "layer1": np.random.randn(100, 50),
+            "layer2": np.random.randn(50, 2),
+        }
 
     def parameters(self):
         return [self.weights["layer1"], self.weights["layer2"]]
@@ -109,7 +112,9 @@ class TestProofOfTrainingIntegration:
 
         # Complete session
         completion_result = pot_integration.complete_training_session(
-            session_id=session_id, final_model=model, final_metrics={"accuracy": 0.9, "loss": 0.1}
+            session_id=session_id,
+            final_model=model,
+            final_metrics={"accuracy": 0.9, "loss": 0.1},
         )
 
         assert "training_summary" in completion_result
@@ -264,11 +269,17 @@ class TestProofOfTrainingIntegration:
 
         # Record local updates
         version1 = lineage.record_local_update(
-            client_id="site_1", parent_version="v0", new_model_hash="hash_1", metrics={"loss": 0.5}
+            client_id="site_1",
+            parent_version="v0",
+            new_model_hash="hash_1",
+            metrics={"loss": 0.5},
         )
 
         version2 = lineage.record_local_update(
-            client_id="site_2", parent_version="v0", new_model_hash="hash_2", metrics={"loss": 0.6}
+            client_id="site_2",
+            parent_version="v0",
+            new_model_hash="hash_2",
+            metrics={"loss": 0.6},
         )
 
         # Record aggregation
@@ -324,7 +335,7 @@ class TestProofOfTrainingIntegration:
         # Verify proof exists and has correct structure
         assert proof_path.exists()
 
-        with open(proof_path, "r") as f:
+        with open(proof_path) as f:
             loaded_proof = json.load(f)
 
         assert loaded_proof["circuit_type"] == "training_proof"
@@ -376,7 +387,12 @@ class TestProofOfTrainingIntegration:
         # Test invalid session ID
         with pytest.raises(KeyError):
             pot_integration.log_training_step(
-                session_id="nonexistent", model=MockModel(), epoch=0, step=0, loss=0.5, metrics={}
+                session_id="nonexistent",
+                model=MockModel(),
+                epoch=0,
+                step=0,
+                loss=0.5,
+                metrics={},
             )
 
         # Test completing non-existent session

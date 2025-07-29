@@ -5,6 +5,7 @@ Implements the advanced compression from the project specifications.
 
 import hashlib
 import json
+import logging
 import time
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple
@@ -12,7 +13,6 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 
 from genomevault.utils.logging import get_logger
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -117,7 +117,9 @@ class AdvancedHierarchicalCompressor:
         sparsity = 1 / np.sqrt(in_dim)
 
         matrix = np.random.choice(
-            [-1, 0, 1], size=(out_dim, in_dim), p=[sparsity / 2, 1 - sparsity, sparsity / 2]
+            [-1, 0, 1],
+            size=(out_dim, in_dim),
+            p=[sparsity / 2, 1 - sparsity, sparsity / 2],
         )
 
         # Normalize for distance preservation
@@ -374,7 +376,9 @@ class AdvancedHierarchicalCompressor:
             full_compressed = self.hierarchical_compression(base_vector)
             full_compressed.base_vector = base_vector
             full_compressed.mid_vector = self.semantic_composition(
-                base_vector, compressed.compression_metadata["modality_context"], "base_to_mid"
+                base_vector,
+                compressed.compression_metadata["modality_context"],
+                "base_to_mid",
             )
 
             return {

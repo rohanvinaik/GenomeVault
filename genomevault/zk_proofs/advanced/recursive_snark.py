@@ -25,11 +25,11 @@ class RecursiveProof:
     """Recursive proof that aggregates multiple sub-proofs."""
 
     proof_id: str
-    sub_proof_ids: List[str]
+    sub_proof_ids: list[str]
     aggregation_proof: bytes
-    public_aggregate: Dict[str, Any]
+    public_aggregate: dict[str, Any]
     verification_key: str
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
 
     @property
     def proof_count(self) -> int:
@@ -67,7 +67,7 @@ class RecursiveSNARKProver:
         logger.info(f"RecursiveSNARKProver initialized with max depth {max_recursion_depth}")
         logger.info(f"Using {'real gnark' if use_real_backend else 'simulated'} backend")
 
-    def _initialize_accumulator(self) -> Dict[str, Any]:
+    def _initialize_accumulator(self) -> dict[str, Any]:
         """Initialize cryptographic accumulator for proof aggregation."""
         return {
             "accumulator_value": np.random.bytes(32),
@@ -77,7 +77,7 @@ class RecursiveSNARKProver:
         }
 
     def compose_proofs(
-        self, proofs: List[Proof], aggregation_strategy: str = "balanced_tree"
+        self, proofs: list[Proof], aggregation_strategy: str = "balanced_tree"
     ) -> RecursiveProof:
         """
         Compose multiple proofs into a single recursive proof.
@@ -108,7 +108,7 @@ class RecursiveSNARKProver:
         else:
             raise ValueError(f"Unknown aggregation strategy: {aggregation_strategy}")
 
-    def _balanced_tree_composition(self, proofs: List[Proof]) -> RecursiveProof:
+    def _balanced_tree_composition(self, proofs: list[Proof]) -> RecursiveProof:
         """
         Compose proofs using balanced binary tree structure.
         Achieves O(log n) verification depth.
@@ -161,7 +161,7 @@ class RecursiveSNARKProver:
             },
         )
 
-    def _accumulator_based_composition(self, proofs: List[Proof]) -> RecursiveProof:
+    def _accumulator_based_composition(self, proofs: list[Proof]) -> RecursiveProof:
         """
         Compose proofs using cryptographic accumulator.
         Achieves O(1) verification time.
@@ -205,7 +205,7 @@ class RecursiveSNARKProver:
             },
         )
 
-    def _sequential_composition(self, proofs: List[Proof]) -> RecursiveProof:
+    def _sequential_composition(self, proofs: list[Proof]) -> RecursiveProof:
         """Simple sequential proof composition (for comparison/testing)."""
         logger.info(f"Composing {len(proofs)} proofs using sequential strategy")
 
@@ -287,7 +287,7 @@ class RecursiveSNARKProver:
             },
         )
 
-    def _create_verifier_circuit(self, left_circuit: str, right_circuit: str) -> Dict[str, Any]:
+    def _create_verifier_circuit(self, left_circuit: str, right_circuit: str) -> dict[str, Any]:
         """Create SNARK verifier circuit for proof pair."""
         # Circuit that verifies two proofs
         return {
@@ -303,7 +303,10 @@ class RecursiveSNARKProver:
         }
 
     def _generate_recursive_proof(
-        self, circuit: Dict[str, Any], public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
+        self,
+        circuit: dict[str, Any],
+        public_inputs: dict[str, Any],
+        private_inputs: dict[str, Any],
     ) -> bytes:
         """Generate proof for recursive verification circuit."""
         if self.use_real_backend:
@@ -333,7 +336,7 @@ class RecursiveSNARKProver:
 
             return proof_data
 
-    def _accumulator_add(self, acc_value: bytes, proof: Proof) -> Tuple[bytes, bytes]:
+    def _accumulator_add(self, acc_value: bytes, proof: Proof) -> tuple[bytes, bytes]:
         """Add proof to cryptographic accumulator."""
         # Hash proof into accumulator
         proof_digest = self._hash_proof(proof).encode()
@@ -349,7 +352,7 @@ class RecursiveSNARKProver:
         return new_acc, witness
 
     def _generate_accumulator_proof(
-        self, proofs: List[Proof], witnesses: List[bytes], final_acc: bytes
+        self, proofs: list[Proof], witnesses: list[bytes], final_acc: bytes
     ) -> bytes:
         """Generate proof of correct accumulator construction."""
         # Prove that final_acc correctly accumulates all proofs
@@ -367,11 +370,11 @@ class RecursiveSNARKProver:
 
         return json.dumps(proof_components).encode()[:512]
 
-    def _aggregate_public_inputs(self, proofs: List[Proof]) -> Dict[str, Any]:
+    def _aggregate_public_inputs(self, proofs: list[Proof]) -> dict[str, Any]:
         """Aggregate public inputs from multiple proofs."""
         aggregate = {
             "proof_count": len(proofs),
-            "circuit_types": list(set(p.circuit_name for p in proofs)),
+            "circuit_types": list({p.circuit_name for p in proofs}),
             "timestamp_range": {
                 "min": min(p.timestamp for p in proofs),
                 "max": max(p.timestamp for p in proofs),
@@ -383,14 +386,14 @@ class RecursiveSNARKProver:
             # Aggregate PRS results
             aggregate["prs_summary"] = {
                 "count": len(proofs),
-                "models": list(set(p.public_inputs.get("prs_model", "unknown") for p in proofs)),
+                "models": list({p.public_inputs.get("prs_model", "unknown") for p in proofs}),
             }
 
         return aggregate
 
     def _merge_public_inputs(
-        self, left_public: Dict[str, Any], right_public: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, left_public: dict[str, Any], right_public: dict[str, Any]
+    ) -> dict[str, Any]:
         """Merge public inputs from two proofs."""
         merged = {"left": left_public, "right": right_public}
 
@@ -400,7 +403,7 @@ class RecursiveSNARKProver:
 
         return merged
 
-    def _compute_aggregate_vk(self, proofs: List[Proof]) -> str:
+    def _compute_aggregate_vk(self, proofs: list[Proof]) -> str:
         """Compute aggregate verification key."""
         # In practice, would compute proper aggregate VK
         vk_components = [p.verification_key or p.proof_id for p in proofs]
@@ -428,7 +431,7 @@ class RecursiveSNARKProver:
 
         return hashlib.sha256(json.dumps(proof_data, sort_keys=True).encode()).hexdigest()
 
-    def _generate_proof_id(self, proofs: List[Proof]) -> str:
+    def _generate_proof_id(self, proofs: list[Proof]) -> str:
         """Generate ID for recursive proof."""
         content = {
             "sub_proof_ids": sorted([p.proof_id for p in proofs]),

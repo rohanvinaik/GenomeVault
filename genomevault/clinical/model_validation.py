@@ -62,11 +62,11 @@ class ClinicalValidationResult:
     validation_date: int
     clinical_domain: ClinicalDomain
     validation_level: ValidationLevel
-    performance_metrics: Dict[str, float]
-    dataset_characteristics: Dict[str, Any]
-    safety_metrics: Dict[str, float]
-    bias_assessment: Dict[str, Any]
-    limitations: List[str]
+    performance_metrics: dict[str, float]
+    dataset_characteristics: dict[str, Any]
+    safety_metrics: dict[str, float]
+    bias_assessment: dict[str, Any]
+    limitations: list[str]
     passed: bool
     evidence_hash: str
 
@@ -77,13 +77,13 @@ class ModelCapabilityAttestation:
 
     attestation_id: str
     model_hash: str
-    clinical_domains: List[ClinicalDomain]
+    clinical_domains: list[ClinicalDomain]
     validation_level: ValidationLevel
-    regulatory_standards: List[RegulatoryStandard]
+    regulatory_standards: list[RegulatoryStandard]
     intended_use: str
-    contraindications: List[str]
-    performance_claims: Dict[str, Any]
-    validation_results: List[str]  # IDs of validation results
+    contraindications: list[str]
+    performance_claims: dict[str, Any]
+    validation_results: list[str]  # IDs of validation results
     expiration_date: int
     issuer: str
     signature: str
@@ -102,16 +102,32 @@ class ClinicalModelValidator:
 
     def __init__(self, validator_id: str):
         self.validator_id = validator_id
-        self.validation_results: Dict[str, ClinicalValidationResult] = {}
-        self.attestations: Dict[str, ModelCapabilityAttestation] = {}
-        self.test_datasets: Dict[ClinicalDomain, str] = {}
+        self.validation_results: dict[str, ClinicalValidationResult] = {}
+        self.attestations: dict[str, ModelCapabilityAttestation] = {}
+        self.test_datasets: dict[ClinicalDomain, str] = {}
 
         # Performance thresholds by domain
         self.performance_thresholds = {
-            ClinicalDomain.ONCOLOGY: {"sensitivity": 0.95, "specificity": 0.90, "auc": 0.92},
-            ClinicalDomain.CARDIOLOGY: {"sensitivity": 0.90, "specificity": 0.85, "auc": 0.88},
-            ClinicalDomain.RARE_DISEASE: {"sensitivity": 0.85, "specificity": 0.95, "auc": 0.90},
-            ClinicalDomain.PHARMACOGENOMICS: {"accuracy": 0.90, "precision": 0.85, "recall": 0.85},
+            ClinicalDomain.ONCOLOGY: {
+                "sensitivity": 0.95,
+                "specificity": 0.90,
+                "auc": 0.92,
+            },
+            ClinicalDomain.CARDIOLOGY: {
+                "sensitivity": 0.90,
+                "specificity": 0.85,
+                "auc": 0.88,
+            },
+            ClinicalDomain.RARE_DISEASE: {
+                "sensitivity": 0.85,
+                "specificity": 0.95,
+                "auc": 0.90,
+            },
+            ClinicalDomain.PHARMACOGENOMICS: {
+                "accuracy": 0.90,
+                "precision": 0.85,
+                "recall": 0.85,
+            },
         }
 
         # Safety thresholds
@@ -131,7 +147,7 @@ class ClinicalModelValidator:
         clinical_domain: ClinicalDomain,
         test_data: Any,
         validation_level: ValidationLevel,
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: dict[str, Any] | None = None,
     ) -> ClinicalValidationResult:
         """
         Perform clinical validation of a model.
@@ -172,7 +188,10 @@ class ClinicalModelValidator:
 
         # Identify limitations
         limitations = self._identify_limitations(
-            performance_metrics, safety_metrics, bias_assessment, dataset_characteristics
+            performance_metrics,
+            safety_metrics,
+            bias_assessment,
+            dataset_characteristics,
         )
 
         # Create evidence package
@@ -215,9 +234,9 @@ class ClinicalModelValidator:
     def issue_capability_attestation(
         self,
         model_hash: str,
-        validation_results: List[ClinicalValidationResult],
+        validation_results: list[ClinicalValidationResult],
         intended_use: str,
-        contraindications: List[str],
+        contraindications: list[str],
         expiration_months: int = 12,
     ) -> ModelCapabilityAttestation:
         """
@@ -238,7 +257,7 @@ class ClinicalModelValidator:
             raise ValueError("Cannot issue attestation - not all validations passed")
 
         # Determine domains and validation level
-        clinical_domains = list(set(r.clinical_domain for r in validation_results))
+        clinical_domains = list({r.clinical_domain for r in validation_results})
         validation_level = min(
             (r.validation_level for r in validation_results),
             key=lambda x: list(ValidationLevel).index(x),
@@ -296,7 +315,7 @@ class ClinicalModelValidator:
 
         return attestation
 
-    def verify_attestation(self, attestation_id: str) -> Tuple[bool, Dict[str, Any]]:
+    def verify_attestation(self, attestation_id: str) -> tuple[bool, dict[str, Any]]:
         """
         Verify a capability attestation.
 
@@ -349,7 +368,7 @@ class ClinicalModelValidator:
 
     def _evaluate_performance(
         self, model: Any, test_data: Any, clinical_domain: ClinicalDomain
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """Evaluate model performance metrics"""
         # Simplified for demo - in practice would run actual evaluation
         metrics = {
@@ -375,7 +394,7 @@ class ClinicalModelValidator:
 
     def _evaluate_safety(
         self, model: Any, test_data: Any, clinical_domain: ClinicalDomain
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """Evaluate model safety metrics"""
         return {
             "false_positive_rate": np.random.uniform(0.02, 0.08),
@@ -388,7 +407,7 @@ class ClinicalModelValidator:
 
     def _assess_bias(
         self, model: Any, test_data: Any, clinical_domain: ClinicalDomain
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Assess model bias across different populations"""
         return {
             "demographic_parity": {
@@ -404,7 +423,7 @@ class ClinicalModelValidator:
             "disparate_impact": {"threshold": 0.8, "violations": []},
         }
 
-    def _analyze_dataset(self, test_data: Any) -> Dict[str, Any]:
+    def _analyze_dataset(self, test_data: Any) -> dict[str, Any]:
         """Analyze test dataset characteristics"""
         return {
             "sample_size": 10000,
@@ -413,7 +432,12 @@ class ClinicalModelValidator:
             "demographic_distribution": {
                 "gender": {"male": 0.48, "female": 0.52},
                 "age": {"mean": 55, "std": 15, "range": [18, 95]},
-                "ethnicity": {"european": 0.60, "african": 0.15, "asian": 0.20, "other": 0.05},
+                "ethnicity": {
+                    "european": 0.60,
+                    "african": 0.15,
+                    "asian": 0.20,
+                    "other": 0.05,
+                },
             },
             "data_quality_score": 0.92,
             "completeness": 0.95,
@@ -421,8 +445,8 @@ class ClinicalModelValidator:
 
     def _check_validation_criteria(
         self,
-        performance_metrics: Dict[str, float],
-        safety_metrics: Dict[str, float],
+        performance_metrics: dict[str, float],
+        safety_metrics: dict[str, float],
         clinical_domain: ClinicalDomain,
         validation_level: ValidationLevel,
     ) -> bool:
@@ -472,11 +496,11 @@ class ClinicalModelValidator:
 
     def _identify_limitations(
         self,
-        performance_metrics: Dict[str, float],
-        safety_metrics: Dict[str, float],
-        bias_assessment: Dict[str, Any],
-        dataset_characteristics: Dict[str, Any],
-    ) -> List[str]:
+        performance_metrics: dict[str, float],
+        safety_metrics: dict[str, float],
+        bias_assessment: dict[str, Any],
+        dataset_characteristics: dict[str, Any],
+    ) -> list[str]:
         """Identify model limitations"""
         limitations = []
 
@@ -505,8 +529,8 @@ class ClinicalModelValidator:
         return limitations
 
     def _determine_regulatory_standards(
-        self, validation_level: ValidationLevel, clinical_domains: List[ClinicalDomain]
-    ) -> List[RegulatoryStandard]:
+        self, validation_level: ValidationLevel, clinical_domains: list[ClinicalDomain]
+    ) -> list[RegulatoryStandard]:
         """Determine applicable regulatory standards"""
         standards = [RegulatoryStandard.HIPAA]  # Always required
 
@@ -537,8 +561,8 @@ class ClinicalModelValidator:
         return list(set(standards))
 
     def _aggregate_performance_claims(
-        self, validation_results: List[ClinicalValidationResult]
-    ) -> Dict[str, Any]:
+        self, validation_results: list[ClinicalValidationResult]
+    ) -> dict[str, Any]:
         """Aggregate performance claims from validation results"""
         all_metrics = {}
 
@@ -577,8 +601,8 @@ class ClinicalValidationReport:
     @staticmethod
     def generate_validation_report(
         validation_result: ClinicalValidationResult,
-        attestation: Optional[ModelCapabilityAttestation] = None,
-    ) -> Dict[str, Any]:
+        attestation: ModelCapabilityAttestation | None = None,
+    ) -> dict[str, Any]:
         """Generate a comprehensive validation report"""
         report = {
             "report_id": hashlib.sha256(

@@ -21,7 +21,7 @@ class TestTrainingProofCircuit:
     """Test cases for basic training proof circuit"""
 
     @pytest.fixture
-    def sample_training_data(self) -> Dict[str, Any]:
+    def sample_training_data(self) -> dict[str, Any]:
         """Generate sample training data for testing"""
         # Create mock training snapshots
         snapshots = []
@@ -53,7 +53,7 @@ class TestTrainingProofCircuit:
         final_model_hash = snapshot_hashes[-1]
 
         # Create dataset hash
-        dataset_data = "genomic_dataset_v1".encode()
+        dataset_data = b"genomic_dataset_v1"
         dataset_hash = hashlib.sha256(dataset_data).hexdigest()
 
         # Create commitments
@@ -81,7 +81,10 @@ class TestTrainingProofCircuit:
         """Test circuit setup with training data"""
         circuit = TrainingProofCircuit(max_snapshots=20)
 
-        circuit.setup(sample_training_data["public_inputs"], sample_training_data["private_inputs"])
+        circuit.setup(
+            sample_training_data["public_inputs"],
+            sample_training_data["private_inputs"],
+        )
 
         assert len(circuit.snapshot_hashes) == 10
         assert circuit.model_commit == sample_training_data["private_inputs"]["model_commit"]
@@ -91,7 +94,10 @@ class TestTrainingProofCircuit:
         """Test proof generation"""
         circuit = TrainingProofCircuit(max_snapshots=20)
 
-        circuit.setup(sample_training_data["public_inputs"], sample_training_data["private_inputs"])
+        circuit.setup(
+            sample_training_data["public_inputs"],
+            sample_training_data["private_inputs"],
+        )
 
         proof = circuit.generate_proof()
 
@@ -104,7 +110,10 @@ class TestTrainingProofCircuit:
         """Test semantic consistency checking"""
         circuit = TrainingProofCircuit(max_snapshots=20)
 
-        circuit.setup(sample_training_data["public_inputs"], sample_training_data["private_inputs"])
+        circuit.setup(
+            sample_training_data["public_inputs"],
+            sample_training_data["private_inputs"],
+        )
 
         # Verify semantic consistency
         consistent = circuit.verify_semantic_consistency(tolerance=0.15)
@@ -156,7 +165,7 @@ class TestMultiModalTrainingProof:
     """Test cases for multi-modal training proof circuit"""
 
     @pytest.fixture
-    def multi_modal_data(self) -> Dict[str, Any]:
+    def multi_modal_data(self) -> dict[str, Any]:
         """Generate sample multi-modal training data"""
         # Base training data
         base_time = int(time.time()) - 3600

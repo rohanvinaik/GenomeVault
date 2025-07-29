@@ -53,9 +53,9 @@ class Variant:
     genotype: str  # "0/0", "0/1", "1/1"
     depth: int
     allele_frequency: float = 0.0
-    annotations: Dict[str, Any] = field(default_factory=dict)
+    annotations: dict[str, Any] = field(default_factory=dict)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary representation"""
         return {
             "chr": self.chromosome,
@@ -80,9 +80,9 @@ class GenomicProfile:
 
     sample_id: str
     reference_genome: str
-    variants: List[Variant]
+    variants: list[Variant]
     quality_metrics: QualityMetrics
-    processing_metadata: Dict[str, Any]
+    processing_metadata: dict[str, Any]
     checksum: str = ""
 
     def __post_init__(self):
@@ -109,9 +109,9 @@ class SequencingProcessor:
 
     def __init__(
         self,
-        reference_path: Optional[Path] = None,
-        temp_dir: Optional[Path] = None,
-        max_threads: Optional[int] = None,
+        reference_path: Path | None = None,
+        temp_dir: Path | None = None,
+        max_threads: int | None = None,
     ):
         """
         Initialize sequencing processor
@@ -386,7 +386,7 @@ class SequencingProcessor:
 
         return output_bam
 
-    def _calculate_coverage(self, bam_path: Path) -> Dict[str, float]:
+    def _calculate_coverage(self, bam_path: Path) -> dict[str, float]:
         """Calculate coverage statistics"""
         coverages = []
 
@@ -405,7 +405,7 @@ class SequencingProcessor:
         else:
             return {"mean": 0.0, "std": 0.0, "uniformity": 0.0}
 
-    def _call_variants(self, bam_path: Path, work_dir: Path) -> List[Variant]:
+    def _call_variants(self, bam_path: Path, work_dir: Path) -> list[Variant]:
         """Call variants using bcftools"""
         vcf_path = work_dir / "variants.vcf"
 
@@ -433,7 +433,7 @@ class SequencingProcessor:
 
         # Parse VCF
         variants = []
-        with open(vcf_path, "r") as vcf:
+        with open(vcf_path) as vcf:
             for line in vcf:
                 if line.startswith("#"):
                     continue
@@ -476,7 +476,7 @@ class SequencingProcessor:
 
         return variants
 
-    def _annotate_variants(self, variants: List[Variant]) -> List[Variant]:
+    def _annotate_variants(self, variants: list[Variant]) -> list[Variant]:
         """Annotate variants with functional information"""
         # This is a simplified annotation
         # In production, would use tools like VEP or SnpEff
@@ -517,7 +517,7 @@ class DifferentialStorage:
         self.reference_genome = reference_genome
         self.chunk_size = 1000  # variants per chunk
 
-    def compress_profile(self, profile: GenomicProfile) -> Dict[str, Any]:
+    def compress_profile(self, profile: GenomicProfile) -> dict[str, Any]:
         """
         Compress genomic profile using differential storage
 
@@ -552,7 +552,7 @@ class DifferentialStorage:
             "checksum": profile.checksum,
         }
 
-    def _compress_variant(self, variant: Variant) -> Dict[str, Any]:
+    def _compress_variant(self, variant: Variant) -> dict[str, Any]:
         """Compress individual variant"""
         # Use short keys to save space
         compressed = {
@@ -572,7 +572,7 @@ class DifferentialStorage:
 
         return compressed
 
-    def decompress_profile(self, compressed: Dict[str, Any]) -> GenomicProfile:
+    def decompress_profile(self, compressed: dict[str, Any]) -> GenomicProfile:
         """Decompress genomic profile"""
         variants = []
 

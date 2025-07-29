@@ -108,9 +108,9 @@ class Variable:
     """Variable in the constraint system"""
 
     index: int
-    value: Optional[FieldElement] = None
+    value: FieldElement | None = None
     is_public: bool = False
-    label: Optional[str] = None
+    label: str | None = None
 
     def __hash__(self):
         return hash(self.index)
@@ -120,7 +120,7 @@ class Variable:
 class LinearCombination:
     """Linear combination of variables with coefficients"""
 
-    terms: Dict[Variable, FieldElement] = field(default_factory=dict)
+    terms: dict[Variable, FieldElement] = field(default_factory=dict)
     constant: FieldElement = field(default_factory=FieldElement)
 
     def __add__(self, other):
@@ -155,7 +155,7 @@ class LinearCombination:
     def __rmul__(self, scalar):
         return self.__mul__(scalar)
 
-    def evaluate(self, assignment: Dict[Variable, FieldElement]) -> FieldElement:
+    def evaluate(self, assignment: dict[Variable, FieldElement]) -> FieldElement:
         """Evaluate the linear combination given variable assignment"""
         result = self.constant
         for var, coeff in self.terms.items():
@@ -176,9 +176,9 @@ class Constraint:
     b: LinearCombination
     c: LinearCombination
     constraint_type: ConstraintType = ConstraintType.MUL
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
-    def is_satisfied(self, assignment: Dict[Variable, FieldElement]) -> bool:
+    def is_satisfied(self, assignment: dict[Variable, FieldElement]) -> bool:
         """Check if constraint is satisfied by variable assignment"""
         try:
             a_val = self.a.evaluate(assignment)
@@ -203,12 +203,12 @@ class ConstraintSystem:
     """
 
     def __init__(self):
-        self.variables: Dict[int, Variable] = {}
-        self.constraints: List[Constraint] = []
-        self.public_inputs: List[Variable] = []
-        self.private_inputs: List[Variable] = []
+        self.variables: dict[int, Variable] = {}
+        self.constraints: list[Constraint] = []
+        self.public_inputs: list[Variable] = []
+        self.private_inputs: list[Variable] = []
         self.variable_counter = 0
-        self.assignment: Dict[Variable, FieldElement] = {}
+        self.assignment: dict[Variable, FieldElement] = {}
 
         # Create the constant ONE variable
         self.one = self.new_variable("ONE", is_public=True)
@@ -218,7 +218,7 @@ class ConstraintSystem:
         self.zero = self.new_variable("ZERO", is_public=True)
         self.assign(self.zero, FieldElement(0))
 
-    def new_variable(self, label: Optional[str] = None, is_public: bool = False) -> Variable:
+    def new_variable(self, label: str | None = None, is_public: bool = False) -> Variable:
         """Create a new variable"""
         var = Variable(self.variable_counter, label=label, is_public=is_public)
         self.variables[self.variable_counter] = var
@@ -229,7 +229,7 @@ class ConstraintSystem:
 
         return var
 
-    def assign(self, var: Variable, value: Union[int, FieldElement]):
+    def assign(self, var: Variable, value: int | FieldElement):
         """Assign value to variable"""
         if isinstance(value, int):
             value = FieldElement(value)
@@ -251,8 +251,8 @@ class ConstraintSystem:
 
     def enforce_equal(
         self,
-        a: Union[Variable, LinearCombination, int, FieldElement],
-        b: Union[Variable, LinearCombination, int, FieldElement],
+        a: Variable | LinearCombination | int | FieldElement,
+        b: Variable | LinearCombination | int | FieldElement,
     ):
         """Enforce a == b"""
         a_lc = self._to_linear_combination(a)
@@ -269,9 +269,9 @@ class ConstraintSystem:
 
     def enforce_multiplication(
         self,
-        a: Union[Variable, LinearCombination],
-        b: Union[Variable, LinearCombination],
-        c: Union[Variable, LinearCombination],
+        a: Variable | LinearCombination,
+        b: Variable | LinearCombination,
+        c: Variable | LinearCombination,
     ):
         """Enforce a * b = c"""
         a_lc = self._to_linear_combination(a)
@@ -297,11 +297,11 @@ class ConstraintSystem:
 
         return var_minus_one
 
-    def add_variable(self, label: Optional[str] = None) -> Variable:
+    def add_variable(self, label: str | None = None) -> Variable:
         """Add a private variable"""
         return self.new_variable(label, is_public=False)
 
-    def add_public_input(self, label: Optional[str] = None) -> Variable:
+    def add_public_input(self, label: str | None = None) -> Variable:
         """Add a public input variable"""
         return self.new_variable(label, is_public=True)
 
@@ -331,16 +331,16 @@ class ConstraintSystem:
         """Get number of variables"""
         return len(self.variables)
 
-    def get_public_inputs(self) -> List[FieldElement]:
+    def get_public_inputs(self) -> list[FieldElement]:
         """Get public input values"""
         return [self.get_assignment(var) for var in self.public_inputs]
 
-    def get_witness(self) -> Dict[int, FieldElement]:
+    def get_witness(self) -> dict[int, FieldElement]:
         """Get witness (all variable assignments)"""
         return {var.index: self.get_assignment(var) for var in self.variables.values()}
 
 
-def poseidon_hash(inputs: List[FieldElement]) -> FieldElement:
+def poseidon_hash(inputs: list[FieldElement]) -> FieldElement:
     """
     Simplified Poseidon hash implementation for demonstration
     In production, would use optimized implementation
@@ -361,7 +361,7 @@ def pedersen_commit(value: FieldElement, randomness: FieldElement) -> FieldEleme
 
 
 def create_merkle_proof(
-    leaf: FieldElement, path: List[FieldElement], indices: List[int]
+    leaf: FieldElement, path: list[FieldElement], indices: list[int]
 ) -> FieldElement:
     """
     Create Merkle proof by computing root from leaf and path

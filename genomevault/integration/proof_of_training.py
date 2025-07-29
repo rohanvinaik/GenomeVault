@@ -160,7 +160,12 @@ class ProofOfTrainingIntegration:
 
             # Check if snapshot should be taken
             snapshot_id = snapshot_logger.log_snapshot(
-                model=model, epoch=epoch, step=step, loss=loss, metrics=metrics, gradients=gradients
+                model=model,
+                epoch=epoch,
+                step=step,
+                loss=loss,
+                metrics=metrics,
+                gradients=gradients,
             )
 
             if snapshot_id:
@@ -208,7 +213,10 @@ class ProofOfTrainingIntegration:
         """
         logger.info(f"Completing PoT session {session_id}")
 
-        completion_result = {"session_id": session_id, "completion_time": int(time.time())}
+        completion_result = {
+            "session_id": session_id,
+            "completion_time": int(time.time()),
+        }
 
         # Finalize snapshot logging
         if session_id in self.snapshot_loggers:
@@ -217,8 +225,8 @@ class ProofOfTrainingIntegration:
             # Force final snapshot
             final_snapshot_id = snapshot_logger.log_snapshot(
                 model=final_model,
-                epoch=snapshot_logger.snapshots[-1].epoch if snapshot_logger.snapshots else 0,
-                step=snapshot_logger.snapshots[-1].step + 1 if snapshot_logger.snapshots else 0,
+                epoch=(snapshot_logger.snapshots[-1].epoch if snapshot_logger.snapshots else 0),
+                step=(snapshot_logger.snapshots[-1].step + 1 if snapshot_logger.snapshots else 0),
                 loss=final_metrics.get("loss", 0),
                 metrics=final_metrics,
                 force=True,

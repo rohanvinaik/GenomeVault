@@ -41,7 +41,7 @@ def standard_hamming_batch(vecs1: np.ndarray, vecs2: np.ndarray) -> np.ndarray:
     return distances
 
 
-def benchmark_single_vector(dimension: int) -> Dict[str, float]:
+def benchmark_single_vector(dimension: int) -> dict[str, float]:
     """Benchmark single vector Hamming distance computation"""
     results = {}
 
@@ -83,7 +83,7 @@ def benchmark_single_vector(dimension: int) -> Dict[str, float]:
     return results
 
 
-def benchmark_batch(dimension: int, batch_size: int) -> Dict[str, float]:
+def benchmark_batch(dimension: int, batch_size: int) -> dict[str, float]:
     """Benchmark batch Hamming distance computation"""
     results = {}
 
@@ -125,7 +125,7 @@ def benchmark_batch(dimension: int, batch_size: int) -> Dict[str, float]:
     return results
 
 
-def benchmark_hdc_encoder(dimension: int, num_vectors: int) -> Dict[str, float]:
+def benchmark_hdc_encoder(dimension: int, num_vectors: int) -> dict[str, float]:
     """Benchmark HDC encoder with and without LUT optimization"""
     results = {}
 
@@ -161,7 +161,7 @@ def benchmark_hdc_encoder(dimension: int, num_vectors: int) -> Dict[str, float]:
     return results
 
 
-def print_results(results: Dict):
+def print_results(results: dict):
     """Print benchmark results in a formatted table"""
     print("\n" + "=" * 80)
     print("HAMMING DISTANCE LUT BENCHMARK RESULTS")
@@ -225,7 +225,7 @@ def print_results(results: Dict):
         print(f"{dim:<12} {standard:<20.3f} {with_lut:<20.3f} {speedup:<12.2f}x")
 
 
-def create_performance_plots(results: Dict):
+def create_performance_plots(results: dict):
     """Create performance visualization plots"""
     # Extract data for plotting
     dimensions = sorted([int(d) for d in results["single"].keys()])

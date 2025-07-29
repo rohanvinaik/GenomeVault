@@ -17,7 +17,10 @@ class ProofRequest:
     """Request for proof generation."""
 
     def __init__(
-        self, proof_type: str, private_inputs: Dict[str, Any], public_inputs: Dict[str, Any]
+        self,
+        proof_type: str,
+        private_inputs: dict[str, Any],
+        public_inputs: dict[str, Any],
     ):
         self.proof_type = proof_type
         self.private_inputs = private_inputs
@@ -38,7 +41,10 @@ class VerificationResult:
     """Result of proof verification."""
 
     def __init__(
-        self, is_valid: bool, proof_id: Optional[str] = None, verifier_id: Optional[str] = None
+        self,
+        is_valid: bool,
+        proof_id: str | None = None,
+        verifier_id: str | None = None,
     ):
         self.is_valid = is_valid
         self.proof_id = proof_id
@@ -96,8 +102,8 @@ class ZKProofService:
         self,
         proof: bytes,
         verification_key: str,
-        public_inputs: Dict[str, Any],
-        verifier_id: Optional[str] = None,
+        public_inputs: dict[str, Any],
+        verifier_id: str | None = None,
     ) -> VerificationResult:
         """Verify a ZK proof."""
         logger.info(f"Verifying proof{f' for {verifier_id}' if verifier_id else ''}")
@@ -187,7 +193,7 @@ class ZKProofService:
 
         raise ValueError(f"Invalid verification key format: {verification_key}")
 
-    async def aggregate_proofs(self, proofs: List[ProofResponse]) -> Any:
+    async def aggregate_proofs(self, proofs: list[ProofResponse]) -> Any:
         """Aggregate multiple proofs (placeholder for future implementation)."""
         # This would implement proof aggregation/batching
         logger.info(f"Aggregating {len(proofs)} proofs")

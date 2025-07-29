@@ -100,7 +100,7 @@ class HypervectorRegistry:
     def _load_registry(self):
         """Load registry from file."""
         try:
-            with open(self.registry_path, "r") as f:
+            with open(self.registry_path) as f:
                 data = json.load(f)
 
             self.versions = data.get("versions", {})
@@ -149,10 +149,10 @@ class HypervectorRegistry:
     def register_version(
         self,
         version: str,
-        params: Dict[str, Any],
+        params: dict[str, Any],
         description: str = "",
         force: bool = False,
-        performance_data: Optional[Dict[str, float]] = None,
+        performance_data: dict[str, float] | None = None,
     ):
         """
         Register new encoding version.
@@ -209,7 +209,7 @@ class HypervectorRegistry:
 
         logger.info(f"Registered version {version} with fingerprint {fingerprint}")
 
-    def get_encoder(self, version: Optional[str] = None) -> HypervectorEncoder:
+    def get_encoder(self, version: str | None = None) -> HypervectorEncoder:
         """
         Get encoder with specific version parameters.
 
@@ -262,7 +262,7 @@ class HypervectorRegistry:
         self,
         version1: str,
         version2: str,
-        transform_function: Optional[str] = None,
+        transform_function: str | None = None,
         bidirectional: bool = True,
     ):
         """
@@ -294,7 +294,7 @@ class HypervectorRegistry:
 
         self._save_registry()
 
-    def check_compatibility(self, version1: str, version2: str) -> Dict[str, Any]:
+    def check_compatibility(self, version1: str, version2: str) -> dict[str, Any]:
         """
         Check if two versions are compatible.
 
@@ -331,7 +331,7 @@ class HypervectorRegistry:
                 ),
             }
 
-    def _generate_fingerprint(self, params: Dict[str, Any]) -> str:
+    def _generate_fingerprint(self, params: dict[str, Any]) -> str:
         """Generate unique fingerprint for parameters."""
         # Create stable string representation
         param_str = json.dumps(
@@ -347,7 +347,7 @@ class HypervectorRegistry:
         # Generate SHA256 hash
         return hashlib.sha256(param_str.encode()).hexdigest()[:16]
 
-    def list_versions(self) -> List[Dict[str, Any]]:
+    def list_versions(self) -> list[dict[str, Any]]:
         """List all registered versions with details."""
         versions = []
 
@@ -391,9 +391,9 @@ class HypervectorRegistry:
 
         logger.info(f"Exported version {version} to {filepath}")
 
-    def import_version(self, filepath: str, version: Optional[str] = None, force: bool = False):
+    def import_version(self, filepath: str, version: str | None = None, force: bool = False):
         """Import version configuration from file."""
-        with open(filepath, "r") as f:
+        with open(filepath) as f:
             data = json.load(f)
 
         # Use provided version or from file
@@ -411,7 +411,7 @@ class HypervectorRegistry:
             force=force,
         )
 
-    def get_version_info(self, version: str) -> Dict[str, Any]:
+    def get_version_info(self, version: str) -> dict[str, Any]:
         """Get detailed information about a specific version."""
         if version not in self.versions:
             raise ValueError(f"Unknown version: {version}")
@@ -431,7 +431,7 @@ class HypervectorRegistry:
 
         return info
 
-    def benchmark_version(self, version: str, num_samples: int = 100) -> Dict[str, float]:
+    def benchmark_version(self, version: str, num_samples: int = 100) -> dict[str, float]:
         """Benchmark a specific version's performance."""
         import time
 
@@ -485,7 +485,11 @@ class VersionMigrator:
         }
 
     def migrate_hypervector(
-        self, hv: torch.Tensor, from_version: str, to_version: str, preserve_norm: bool = True
+        self,
+        hv: torch.Tensor,
+        from_version: str,
+        to_version: str,
+        preserve_norm: bool = True,
     ) -> torch.Tensor:
         """
         Migrate hypervector between versions.
@@ -537,7 +541,7 @@ class VersionMigrator:
         return result
 
     def _migrate_dimension_reduction(
-        self, hv: torch.Tensor, from_params: Dict[str, Any], to_params: Dict[str, Any]
+        self, hv: torch.Tensor, from_params: dict[str, Any], to_params: dict[str, Any]
     ) -> torch.Tensor:
         """Reduce hypervector dimension using stable projection."""
         from_dim = from_params["dimension"]
@@ -556,7 +560,7 @@ class VersionMigrator:
         return reduced
 
     def _migrate_dimension_expansion(
-        self, hv: torch.Tensor, from_params: Dict[str, Any], to_params: Dict[str, Any]
+        self, hv: torch.Tensor, from_params: dict[str, Any], to_params: dict[str, Any]
     ) -> torch.Tensor:
         """Expand hypervector dimension with controlled padding."""
         from_dim = from_params["dimension"]
@@ -587,7 +591,7 @@ class VersionMigrator:
         return expanded
 
     def _migrate_projection_change(
-        self, hv: torch.Tensor, from_params: Dict[str, Any], to_params: Dict[str, Any]
+        self, hv: torch.Tensor, from_params: dict[str, Any], to_params: dict[str, Any]
     ) -> torch.Tensor:
         """
         Change projection type (approximate).
@@ -621,7 +625,7 @@ class VersionMigrator:
 
     def create_migration_report(
         self, from_version: str, to_version: str, test_vectors: int = 100
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Create detailed migration report between versions."""
         report = {
             "from_version": from_version,

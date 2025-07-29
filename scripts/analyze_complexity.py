@@ -14,7 +14,9 @@ def analyze_complexity(package_dir: Path):
     try:
         # Run radon cc command
         result = subprocess.run(
-            ['radon', 'cc', '-s', '-a', str(package_dir)], capture_output=True, text=True
+            ["radon", "cc", "-s", "-a", str(package_dir)],
+            capture_output=True,
+            text=True,
         )
 
         if result.returncode != 0:
@@ -22,24 +24,24 @@ def analyze_complexity(package_dir: Path):
             return
 
         # Save full output
-        output_file = package_dir.parent / 'radon_complexity_report.txt'
-        with open(output_file, 'w') as f:
+        output_file = package_dir.parent / "radon_complexity_report.txt"
+        with open(output_file, "w") as f:
             f.write(result.stdout)
 
         print(f"Full complexity report saved to: {output_file}")
 
         # Parse and find high complexity functions
         high_complexity = []
-        lines = result.stdout.split('\n')
+        lines = result.stdout.split("\n")
 
         for line in lines:
             # Look for lines with complexity ratings
-            if ' - ' in line and '(' in line and ')' in line:
+            if " - " in line and "(" in line and ")" in line:
                 # Extract complexity score
                 try:
-                    parts = line.split('(')
+                    parts = line.split("(")
                     if len(parts) > 1:
-                        score_part = parts[1].split(')')[0]
+                        score_part = parts[1].split(")")[0]
                         if score_part.isdigit():
                             score = int(score_part)
                             if score >= 12:
@@ -59,8 +61,8 @@ def analyze_complexity(package_dir: Path):
 
         # Generate refactoring recommendations
         if high_complexity:
-            recommendations_file = package_dir.parent / 'complexity_refactoring_guide.md'
-            with open(recommendations_file, 'w') as f:
+            recommendations_file = package_dir.parent / "complexity_refactoring_guide.md"
+            with open(recommendations_file, "w") as f:
                 f.write("# Cyclomatic Complexity Refactoring Guide\n\n")
                 f.write(f"Found {len(high_complexity)} functions with CC >= 12\n\n")
                 f.write("## Top 10 Functions to Refactor:\n\n")
@@ -88,7 +90,7 @@ def analyze_complexity(package_dir: Path):
 
 def main():
     """Main function to analyze complexity."""
-    genomevault_dir = Path('/Users/rohanvinaik/genomevault/genomevault')
+    genomevault_dir = Path("/Users/rohanvinaik/genomevault/genomevault")
 
     if not genomevault_dir.exists():
         print(f"Error: Directory not found: {genomevault_dir}")

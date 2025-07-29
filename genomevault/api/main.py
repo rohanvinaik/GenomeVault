@@ -19,11 +19,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from ..genomevault.blockchain.node import BlockchainNode, NodeInfo
 from ..genomevault.core.config import get_config
-from ..genomevault.core.constants import (
-    CREDITS_PER_BLOCK_BASE,
-    CREDITS_SIGNATORY_BONUS,
-    NodeType,
-)
+from ..genomevault.core.constants import CREDITS_PER_BLOCK_BASE, CREDITS_SIGNATORY_BONUS, NodeType
 from ..genomevault.utils.logging import audit_logger, get_logger
 
 logger = get_logger(__name__)
@@ -49,8 +45,8 @@ app.add_middleware(
 )
 
 # Global state (in production, would use proper state management)
-node_registry: Dict[str, NodeInfo] = {}
-blockchain_node: Optional[BlockchainNode] = None
+node_registry: dict[str, NodeInfo] = {}
+blockchain_node: BlockchainNode | None = None
 
 
 # Pydantic models for API
@@ -58,14 +54,14 @@ class TopologyRequest(BaseModel):
     """Request for network topology information"""
 
     node_id: str
-    location: Optional[Dict[str, float]] = None  # lat, lon
+    location: dict[str, float] | None = None  # lat, lon
 
 
 class TopologyResponse(BaseModel):
     """Network topology response"""
 
-    nearestLNs: List[str]
-    tsNodes: List[str]
+    nearestLNs: list[str]
+    tsNodes: list[str]
 
 
 class CreditVaultRequest(BaseModel):
@@ -73,7 +69,7 @@ class CreditVaultRequest(BaseModel):
 
     invoiceId: str
     creditsBurned: int
-    proof: Optional[str] = None
+    proof: str | None = None
 
 
 class CreditVaultResponse(BaseModel):
@@ -98,17 +94,17 @@ class AuditChallengeResponse(BaseModel):
 
     success: bool
     valid: bool
-    slashAmount: Optional[int] = None
-    rewardAmount: Optional[int] = None
+    slashAmount: int | None = None
+    rewardAmount: int | None = None
 
 
 class PipelineRequest(BaseModel):
     """Processing pipeline request"""
 
     pipeline_type: str  # genomic, transcriptomic, etc.
-    input_data: Dict[str, Any]
+    input_data: dict[str, Any]
     compression_tier: str = "clinical"
-    options: Optional[Dict[str, Any]] = None
+    options: dict[str, Any] | None = None
 
 
 class PipelineResponse(BaseModel):
@@ -123,23 +119,23 @@ class VectorRequest(BaseModel):
     """Hypervector operation request"""
 
     operation: str  # encode, bind, similarity
-    data: Dict[str, Any]
-    domain: Optional[str] = "general"
+    data: dict[str, Any]
+    domain: str | None = "general"
 
 
 class VectorResponse(BaseModel):
     """Hypervector operation response"""
 
     result: Any
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
 
 
 class ProofRequest(BaseModel):
     """Zero-knowledge proof request"""
 
     circuit_name: str
-    public_inputs: Dict[str, Any]
-    private_inputs: Dict[str, Any]
+    public_inputs: dict[str, Any]
+    private_inputs: dict[str, Any]
 
 
 class ProofResponse(BaseModel):
@@ -147,8 +143,8 @@ class ProofResponse(BaseModel):
 
     proof_id: str
     proof_data: str  # Base64 encoded
-    verification_key: Optional[str] = None
-    metadata: Dict[str, Any]
+    verification_key: str | None = None
+    metadata: dict[str, Any]
 
 
 # Dependency for authentication
@@ -297,7 +293,7 @@ async def create_processing_pipeline(
 
     # Create job
     job_id = hashlib.sha256(
-        "{user_id}:{request.pipeline_type}:{datetime.now().isoformat()}".encode()
+        b"{user_id}:{request.pipeline_type}:{datetime.now().isoformat()}"
     ).hexdigest()[:16]
 
     # Estimate processing time
@@ -406,7 +402,10 @@ async def generate_proof(request: ProofRequest, user_id: str = Depends(verify_to
 
     Creates privacy-preserving proofs for various circuits.
     """
-    logger.info(f"Proof generation request: {request.circuit_name}", extra={"privacy_safe": True})
+    logger.info(
+        f"Proof generation request: {request.circuit_name}",
+        extra={"privacy_safe": True},
+    )
 
     # Validate circuit
     valid_circuits = [
@@ -426,7 +425,7 @@ async def generate_proof(request: ProofRequest, user_id: str = Depends(verify_to
 
     # Generate proof (simplified)
     proof_id = hashlib.sha256(
-        "{user_id}:{request.circuit_name}:{datetime.now().isoformat()}".encode()
+        b"{user_id}:{request.circuit_name}:{datetime.now().isoformat()}"
     ).hexdigest()[:16]
 
     # Mock proof data
@@ -511,7 +510,7 @@ def _process_credit_redemption(user_id: str, invoice_id: str, amount: int) -> st
     """Process credit redemption transaction."""
     # In production, would submit to blockchain
     tx_id = hashlib.sha256(
-        "{user_id}:{invoice_id}:{amount}:{datetime.now().isoformat()}".encode()
+        b"{user_id}:{invoice_id}:{amount}:{datetime.now().isoformat()}"
     ).hexdigest()
     return tx_id
 
@@ -522,7 +521,7 @@ def _queue_pipeline_job(job_id: str, request: PipelineRequest):
     logger.info(f"Job {job_id} queued for processing", extra={"privacy_safe": True})
 
 
-def _encode_to_hypervector(data: Dict[str, Any], domain: str) -> Any:
+def _encode_to_hypervector(data: dict[str, Any], domain: str) -> Any:
     """Encode data to hypervector."""
     # In production, would use actual hypervector encoder
     return {"base": [0.1] * 10000, "mid": [0.2] * 15000, "high": [0.3] * 20000}

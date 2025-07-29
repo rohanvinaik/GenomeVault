@@ -40,7 +40,7 @@ class TrainingAttestation:
     submitter: str
     timestamp: int
     status: AttestationStatus
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
 
 
 @dataclass
@@ -70,20 +70,20 @@ class TrainingAttestationContract:
     def __init__(self, contract_address: str, chain_id: int):
         self.contract_address = contract_address
         self.chain_id = chain_id
-        self.attestations: Dict[str, TrainingAttestation] = {}
-        self.verifications: Dict[str, List[VerificationRecord]] = {}
-        self.model_to_attestations: Dict[str, List[str]] = {}
-        self.pending_attestations: List[str] = []
+        self.attestations: dict[str, TrainingAttestation] = {}
+        self.verifications: dict[str, list[VerificationRecord]] = {}
+        self.model_to_attestations: dict[str, list[str]] = {}
+        self.pending_attestations: list[str] = []
         self.dispute_threshold = 3  # Number of negative verifications to trigger dispute
 
         # Contract state
         self.owner = None
-        self.authorized_verifiers: List[str] = []
+        self.authorized_verifiers: list[str] = []
         self.paused = False
 
         logger.info(f"Training attestation contract deployed at {contract_address}")
 
-    def initialize(self, owner: str, initial_verifiers: List[str]):
+    def initialize(self, owner: str, initial_verifiers: list[str]):
         """Initialize contract with owner and initial verifiers"""
         if self.owner is not None:
             raise Exception("Contract already initialized")
@@ -104,7 +104,7 @@ class TrainingAttestationContract:
         snapshot_merkle_root: str,
         proof_hash: str,
         submitter: str,
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: dict[str, Any] | None = None,
     ) -> str:
         """
         Submit a new training attestation to the blockchain.
@@ -246,7 +246,7 @@ class TrainingAttestationContract:
 
         return verification_id
 
-    def get_attestation(self, attestation_id: str) -> Optional[Dict[str, Any]]:
+    def get_attestation(self, attestation_id: str) -> dict[str, Any] | None:
         """Get attestation details"""
         if attestation_id not in self.attestations:
             return None
@@ -268,7 +268,7 @@ class TrainingAttestationContract:
 
         return result
 
-    def get_attestations_for_model(self, model_hash: str) -> List[Dict[str, Any]]:
+    def get_attestations_for_model(self, model_hash: str) -> list[dict[str, Any]]:
         """Get all attestations for a specific model"""
         if model_hash not in self.model_to_attestations:
             return []
@@ -281,7 +281,7 @@ class TrainingAttestationContract:
 
         return attestations
 
-    def get_verifications(self, attestation_id: str) -> List[Dict[str, Any]]:
+    def get_verifications(self, attestation_id: str) -> list[dict[str, Any]]:
         """Get all verifications for an attestation"""
         if attestation_id not in self.verifications:
             return []
@@ -354,7 +354,11 @@ class TrainingAttestationContract:
 
         self._emit_event(
             "VerifierRemoved",
-            {"verifier": verifier, "removed_by": removed_by, "timestamp": int(time.time())},
+            {
+                "verifier": verifier,
+                "removed_by": removed_by,
+                "timestamp": int(time.time()),
+            },
         )
 
         return True
@@ -376,7 +380,8 @@ class TrainingAttestationContract:
         self.paused = False
 
         self._emit_event(
-            "ContractUnpaused", {"unpaused_by": unpaused_by, "timestamp": int(time.time())}
+            "ContractUnpaused",
+            {"unpaused_by": unpaused_by, "timestamp": int(time.time())},
         )
 
     def _update_attestation_status(self, attestation_id: str):
@@ -407,7 +412,7 @@ class TrainingAttestationContract:
                 {"attestation_id": attestation_id, "positive_verifications": positive},
             )
 
-    def _emit_event(self, event_name: str, data: Dict[str, Any]):
+    def _emit_event(self, event_name: str, data: dict[str, Any]):
         """Emit blockchain event (simulated)"""
         event_data = {
             "event": event_name,
@@ -421,7 +426,7 @@ class TrainingAttestationContract:
         # For now, just log it
         logger.debug(f"Event emitted: {json.dumps(event_data)}")
 
-    def get_contract_state(self) -> Dict[str, Any]:
+    def get_contract_state(self) -> dict[str, Any]:
         """Get current contract state"""
         return {
             "contract_address": self.contract_address,
@@ -442,7 +447,10 @@ class TrainingAttestationContract:
 
 
 def create_attestation_hash(
-    model_hash: str, dataset_hash: str, snapshot_merkle_root: str, metadata: Dict[str, Any]
+    model_hash: str,
+    dataset_hash: str,
+    snapshot_merkle_root: str,
+    metadata: dict[str, Any],
 ) -> str:
     """
     Create a deterministic hash for an attestation.

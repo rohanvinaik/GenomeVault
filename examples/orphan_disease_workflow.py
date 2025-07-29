@@ -44,7 +44,7 @@ class OrphanDiseaseResearchDemo:
         print(f"Participating sites: {len(self.research_sites)}")
         print("=" * 60)
 
-    def simulate_patient_data(self, num_patients: int = 50) -> List[Dict[str, Any]]:
+    def simulate_patient_data(self, num_patients: int = 50) -> list[dict[str, Any]]:
         """Simulate genomic and clinical data for rare disease patients."""
         patients = []
 
@@ -83,7 +83,7 @@ class OrphanDiseaseResearchDemo:
 
         return patients
 
-    def create_privacy_preserving_cohort(self, patients: List[Dict]) -> Dict[str, Any]:
+    def create_privacy_preserving_cohort(self, patients: list[dict]) -> dict[str, Any]:
         """Convert patient data to privacy-preserving representations."""
         print("\n1. Creating Privacy-Preserving Patient Representations")
         print("-" * 60)
@@ -103,7 +103,11 @@ class OrphanDiseaseResearchDemo:
             )
 
             cohort["compressed_vectors"].append(
-                {"patient_id": patient["id"], "vector": compressed, "site": patient["site"]}
+                {
+                    "patient_id": patient["id"],
+                    "vector": compressed,
+                    "site": patient["site"],
+                }
             )
 
             # Generate zero-knowledge proof of clinical criteria
@@ -123,7 +127,7 @@ class OrphanDiseaseResearchDemo:
 
         return cohort
 
-    def _generate_clinical_proof(self, patient: Dict) -> Any:
+    def _generate_clinical_proof(self, patient: dict) -> Any:
         """Generate ZK proof of clinical criteria without revealing details."""
         # Prove patient meets inclusion criteria
         inclusion_criteria = {
@@ -142,7 +146,7 @@ class OrphanDiseaseResearchDemo:
             "proof": proof_data[:64],  # Shortened for demo
         }
 
-    def federated_biomarker_discovery(self, cohort: Dict) -> Dict[str, Any]:
+    def federated_biomarker_discovery(self, cohort: dict) -> dict[str, Any]:
         """Discover biomarkers across sites without sharing data."""
         print("\n2. Federated Biomarker Discovery")
         print("-" * 60)
@@ -175,7 +179,12 @@ class OrphanDiseaseResearchDemo:
                     "commitment_root": hashlib.sha256(str(local_stats).encode()).hexdigest(),
                 },
                 private_inputs={
-                    "variant_data": {"chr": "chrX", "pos": 153296777, "ref": "C", "alt": "T"},
+                    "variant_data": {
+                        "chr": "chrX",
+                        "pos": 153296777,
+                        "ref": "C",
+                        "alt": "T",
+                    },
                     "merkle_proof": [
                         hashlib.sha256(f"node_{i}".encode()).hexdigest() for i in range(10)
                     ],
@@ -193,7 +202,8 @@ class OrphanDiseaseResearchDemo:
         # Create single proof representing all sites
         start_time = time.time()
         aggregated_proof = self.recursive_prover.compose_proofs(
-            proofs, aggregation_strategy="accumulator"  # O(1) verification
+            proofs,
+            aggregation_strategy="accumulator",  # O(1) verification
         )
         aggregation_time = time.time() - start_time
 
@@ -215,7 +225,7 @@ class OrphanDiseaseResearchDemo:
             "total_patients": sum(s[0]["patient_count"] for s in site_contributions),
         }
 
-    def privacy_preserving_trial_matching(self, cohort: Dict, trial_criteria: Dict) -> List[str]:
+    def privacy_preserving_trial_matching(self, cohort: dict, trial_criteria: dict) -> list[str]:
         """Match patients to clinical trials without exposing their data."""
         print("\n3. Privacy-Preserving Clinical Trial Matching")
         print("-" * 60)
@@ -253,13 +263,13 @@ class OrphanDiseaseResearchDemo:
 
         return matched_patients
 
-    def _check_trial_eligibility(self, patient_data: Dict, criteria: Dict) -> bool:
+    def _check_trial_eligibility(self, patient_data: dict, criteria: dict) -> bool:
         """Check if patient meets trial criteria (simulated)."""
         # In real implementation, this would use the compressed vector
         # to check criteria without accessing raw data
         return np.random.choice([True, False], p=[0.3, 0.7])
 
-    def generate_research_insights(self, discovery_results: Dict) -> None:
+    def generate_research_insights(self, discovery_results: dict) -> None:
         """Generate actionable research insights."""
         print("\n4. Research Insights")
         print("-" * 60)
@@ -334,7 +344,12 @@ def main():
     discovery_results = demo.federated_biomarker_discovery(cohort)
 
     # Match patients to trials
-    trial_criteria = {"min_age": 2, "max_age": 12, "mutation_type": "nonsense", "min_severity": 20}
+    trial_criteria = {
+        "min_age": 2,
+        "max_age": 12,
+        "mutation_type": "nonsense",
+        "min_severity": 20,
+    }
     matched = demo.privacy_preserving_trial_matching(cohort, trial_criteria)
 
     # Generate insights

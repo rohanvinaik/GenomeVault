@@ -32,7 +32,7 @@ class Proposal:
     proposal_type: ProposalType
     title: str
     description: str
-    parameters: Dict[str, Any]
+    parameters: dict[str, Any]
     created_at: float
     voting_deadline: float
     execution_delay: float = 86400  # 24 hours
@@ -65,8 +65,8 @@ class GovernanceToken:
 
     holder: str
     balance: float
-    locked_until: Optional[float] = None
-    delegation: Optional[str] = None
+    locked_until: float | None = None
+    delegation: str | None = None
 
     @property
     def available_balance(self) -> float:
@@ -90,13 +90,13 @@ class QuadraticVoting:
         self.proposal_threshold = proposal_threshold
 
         # State
-        self.proposals: Dict[str, Proposal] = {}
-        self.votes: Dict[str, List[Vote]] = defaultdict(list)
-        self.tokens: Dict[str, GovernanceToken] = {}
+        self.proposals: dict[str, Proposal] = {}
+        self.votes: dict[str, list[Vote]] = defaultdict(list)
+        self.tokens: dict[str, GovernanceToken] = {}
         self.total_supply = 0.0
 
         # Execution log
-        self.execution_log: List[Dict[str, Any]] = []
+        self.execution_log: list[dict[str, Any]] = []
 
     def issue_tokens(self, holder: str, amount: float) -> None:
         """Issue governance tokens."""
@@ -121,9 +121,9 @@ class QuadraticVoting:
         proposal_type: ProposalType,
         title: str,
         description: str,
-        parameters: Dict[str, Any],
+        parameters: dict[str, Any],
         voting_period: float = 259200,
-    ) -> Optional[str]:  # 3 days
+    ) -> str | None:  # 3 days
         """Create new governance proposal."""
         # Check proposer has enough tokens
         proposer_balance = self._get_voting_power(proposer)
@@ -175,7 +175,7 @@ class QuadraticVoting:
         self.votes[proposal_id].append(vote)
         return True
 
-    def get_proposal_status(self, proposal_id: str) -> Dict[str, Any]:
+    def get_proposal_status(self, proposal_id: str) -> dict[str, Any]:
         """Get current status of a proposal."""
         if proposal_id not in self.proposals:
             return {"error": "Proposal not found"}
@@ -189,7 +189,7 @@ class QuadraticVoting:
         total_weight = support_weight + oppose_weight
 
         # Calculate participation
-        unique_voters = set(v.voter for v in proposal_votes)
+        unique_voters = {v.voter for v in proposal_votes}
         total_voting_power = sum(math.sqrt(self._get_voting_power(v)) for v in unique_voters)
         max_possible_power = math.sqrt(self.total_supply)
         participation_rate = (
@@ -217,7 +217,7 @@ class QuadraticVoting:
             "is_active": proposal.is_active,
         }
 
-    def execute_proposal(self, proposal_id: str) -> Tuple[bool, Optional[str]]:
+    def execute_proposal(self, proposal_id: str) -> tuple[bool, str | None]:
         """Execute an approved proposal."""
         status = self.get_proposal_status(proposal_id)
 
@@ -264,7 +264,7 @@ class QuadraticVoting:
 
         return power
 
-    def _execute_parameter_change(self, proposal: Proposal) -> Tuple[bool, str]:
+    def _execute_parameter_change(self, proposal: Proposal) -> tuple[bool, str]:
         """Execute parameter change proposal."""
         params = proposal.parameters
 
@@ -278,7 +278,7 @@ class QuadraticVoting:
 
         return True, "Parameters updated successfully"
 
-    def _execute_participant_admission(self, proposal: Proposal) -> Tuple[bool, str]:
+    def _execute_participant_admission(self, proposal: Proposal) -> tuple[bool, str]:
         """Execute participant admission proposal."""
         participant_id = proposal.parameters.get("participant_id")
         initial_tokens = proposal.parameters.get("initial_tokens", 100.0)
@@ -289,12 +289,12 @@ class QuadraticVoting:
 
         return False, "Missing participant_id"
 
-    def _execute_emergency_pause(self, proposal: Proposal) -> Tuple[bool, str]:
+    def _execute_emergency_pause(self, proposal: Proposal) -> tuple[bool, str]:
         """Execute emergency pause proposal."""
         # This would trigger system-wide pause
         return True, "Emergency pause activated"
 
-    def get_governance_summary(self) -> Dict[str, Any]:
+    def get_governance_summary(self) -> dict[str, Any]:
         """Get summary of governance state."""
         active_proposals = sum(1 for p in self.proposals.values() if p.is_active)
 

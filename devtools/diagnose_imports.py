@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Quick test to identify the exact import issue"""
 
+import logging
 import sys
 import traceback
-import logging
 
 logger = logging.getLogger(__name__)
 

@@ -47,7 +47,11 @@ class MetricsCollector:
             self.initialized = True
 
     def record(
-        self, metric_name: str, value: float, unit: str = "", tags: Optional[Dict[str, str]] = None
+        self,
+        metric_name: str,
+        value: float,
+        unit: str = "",
+        tags: dict[str, str] | None = None,
     ):
         """
         Record a metric value.
@@ -60,7 +64,12 @@ class MetricsCollector:
         """
         with self.lock:
             self.metrics[metric_name].append(
-                {"value": value, "unit": unit, "timestamp": time.time(), "tags": tags or {}}
+                {
+                    "value": value,
+                    "unit": unit,
+                    "timestamp": time.time(),
+                    "tags": tags or {},
+                }
             )
 
     def record_duration(
@@ -68,7 +77,7 @@ class MetricsCollector:
         metric_name: str,
         start_time: float,
         unit: str = "ms",
-        tags: Optional[Dict[str, str]] = None,
+        tags: dict[str, str] | None = None,
     ):
         """
         Record a duration metric.
@@ -88,7 +97,7 @@ class MetricsCollector:
 
         self.record(metric_name, duration, unit, tags)
 
-    def get_metric(self, metric_name: str, since: Optional[float] = None) -> List[Dict[str, Any]]:
+    def get_metric(self, metric_name: str, since: float | None = None) -> list[dict[str, Any]]:
         """
         Get all recorded values for a metric.
 
@@ -107,7 +116,7 @@ class MetricsCollector:
 
             return records.copy()
 
-    def get_summary(self, metric_name: Optional[str] = None) -> Dict[str, Any]:
+    def get_summary(self, metric_name: str | None = None) -> dict[str, Any]:
         """
         Get statistical summary of metrics.
 
@@ -147,7 +156,7 @@ class MetricsCollector:
 
             return summary
 
-    def get_time_series(self, metric_name: str, interval: int = 60) -> List[Dict[str, Any]]:
+    def get_time_series(self, metric_name: str, interval: int = 60) -> list[dict[str, Any]]:
         """
         Get time series data for a metric.
 
@@ -212,7 +221,7 @@ class MetricsCollector:
             with open(output_path, "w") as f:
                 json.dump(export_data, f, indent=2, default=str)
 
-    def clear(self, metric_name: Optional[str] = None):
+    def clear(self, metric_name: str | None = None):
         """
         Clear metrics.
 
@@ -225,7 +234,7 @@ class MetricsCollector:
             else:
                 self.metrics.clear()
 
-    def compare_claimed_vs_measured(self, claims: Dict[str, float]) -> Dict[str, Any]:
+    def compare_claimed_vs_measured(self, claims: dict[str, float]) -> dict[str, Any]:
         """
         Compare claimed metrics against measured values.
 
@@ -265,7 +274,7 @@ class MetricsCollector:
 class MetricsContext:
     """Context manager for timing operations."""
 
-    def __init__(self, metric_name: str, unit: str = "ms", tags: Optional[Dict[str, str]] = None):
+    def __init__(self, metric_name: str, unit: str = "ms", tags: dict[str, str] | None = None):
         """
         Initialize metrics context.
 
