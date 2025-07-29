@@ -1,0 +1,21 @@
+name: Container Scan (Trivy)
+on:
+  push:
+    branches: [ clean-slate ]
+  pull_request:
+    branches: [ clean-slate ]
+
+jobs:
+  trivy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t genomevault/api:ci .
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: 'genomevault/api:ci'
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '0'
