@@ -24,3 +24,11 @@ def perform_operation(request: VectorOperationRequest):
         return res
     except GenomeVaultError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+@router.get("/similarity")
+def calculate_similarity(vector_id1: str, vector_id2: str):
+    try:
+        sim = _engine.calculate_similarity(vector_id1, vector_id2)
+        return {"similarity": sim, "vector_ids": [vector_id1, vector_id2]}
+    except GenomeVaultError as e:
+        raise HTTPException(status_code=400, detail=str(e))
