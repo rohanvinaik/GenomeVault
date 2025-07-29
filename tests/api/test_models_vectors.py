@@ -1,0 +1,14 @@
+import pytest
+from genomevault.api.models.vectors import VectorEncodeRequest, VectorDimension, VectorOperationRequest
+
+
+def test_encode_request_parsing():
+    req = VectorEncodeRequest(data={"genomic": [1.0, 2.0]}, dimension=VectorDimension.D10K, compression_tier="mini")
+    assert req.dimension.value == "10000"
+    assert "genomic" in req.data
+
+
+def test_operation_request_parsing():
+    op = VectorOperationRequest(operation="bundle", vector_ids=["a", "b"], parameters={"k": 1})
+    assert op.operation == "bundle"
+    assert op.vector_ids == ["a", "b"]
