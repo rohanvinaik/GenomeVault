@@ -417,9 +417,7 @@ class PhenotypeProcessor:
 
         return demographics
 
-    def _extract_fhir_observation(
-        self, observation: dict[str, Any]
-    ) -> ClinicalMeasurement | None:
+    def _extract_fhir_observation(self, observation: dict[str, Any]) -> ClinicalMeasurement | None:
         """Extract measurement from FHIR Observation"""
         # Get observation code
         coding = observation.get("code", {}).get("coding", [])

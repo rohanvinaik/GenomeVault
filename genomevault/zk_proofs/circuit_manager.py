@@ -642,9 +642,7 @@ class CircuitManager:
                         "alt": "G",
                     },
                     "merkle_proof": {
-                        "path": [
-                            hashlib.sha256(b"node_{i}").hexdigest() for i in range(20)
-                        ],
+                        "path": [hashlib.sha256(b"node_{i}").hexdigest() for i in range(20)],
                         "indices": [i % 2 for i in range(20)],
                     },
                     "witness_randomness": np.random.bytes(32).hex(),

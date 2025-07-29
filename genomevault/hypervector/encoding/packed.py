@@ -538,9 +538,7 @@ class PackedGenomicEncoder:
 
         return genome_vec
 
-    def similarity(
-        self, vec1: PackedHV | torch.Tensor, vec2: PackedHV | torch.Tensor
-    ) -> float:
+    def similarity(self, vec1: PackedHV | torch.Tensor, vec2: PackedHV | torch.Tensor) -> float:
         """Calculate similarity between hypervectors"""
 
         if isinstance(vec1, PackedHV) and isinstance(vec2, PackedHV):
