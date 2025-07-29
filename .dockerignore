@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.swp
+*.swo
+*.egg-info/
+.build/
+dist/
+.vscode/
+.idea/
+.git/
+.github/
+tests/**/__pycache__/
+**/.DS_Store
+.env
+*.npy
