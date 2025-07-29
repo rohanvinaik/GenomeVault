@@ -10,11 +10,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import aiohttp
 import numpy as np
 
-from genomevault.core.constants import (
-    MIN_PIR_SERVERS,
-    PIR_QUERY_TIMEOUT_MS,
-    PIR_THRESHOLD,
-)
+from genomevault.core.constants import MIN_PIR_SERVERS, PIR_QUERY_TIMEOUT_MS, PIR_THRESHOLD
 from genomevault.core.exceptions import PIRError
 
 

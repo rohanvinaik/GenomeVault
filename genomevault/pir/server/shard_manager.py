@@ -35,10 +35,10 @@ class ShardMetadata:
     size_bytes: int
     item_count: int
     checksum: str
-    genomic_regions: Optional[List[Dict]] = None
-    populations: Optional[List[str]] = None
+    genomic_regions: list[dict] | None = None
+    populations: list[str] | None = None
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         return {
             "id": self.shard_id,
             "index": self.shard_index,
@@ -59,13 +59,13 @@ class ShardDistribution:
 
     strategy: str  # 'replicated', 'striped', 'hybrid'
     replication_factor: int
-    server_assignments: Dict[str, List[str]] = field(default_factory=dict)
+    server_assignments: dict[str, list[str]] = field(default_factory=dict)
 
-    def assign_shard(self, shard_id: str, server_ids: List[str]):
+    def assign_shard(self, shard_id: str, server_ids: list[str]):
         """Assign shard to servers."""
         self.server_assignments[shard_id] = server_ids
 
-    def get_servers_for_shard(self, shard_id: str) -> List[str]:
+    def get_servers_for_shard(self, shard_id: str) -> list[str]:
         """Get servers hosting a shard."""
         return self.server_assignments.get(shard_id, [])
 
@@ -91,7 +91,7 @@ class ShardManager:
         self.data_directory.mkdir(parents=True, exist_ok=True)
 
         # Shard metadata
-        self.shards: Dict[str, ShardMetadata] = {}
+        self.shards: dict[str, ShardMetadata] = {}
         self.shard_distribution = ShardDistribution(strategy="hybrid", replication_factor=3)
 
         # Thread pool for parallel operations
@@ -110,7 +110,7 @@ class ShardManager:
         manifest_path = self.data_directory / "shard_manifest.json"
 
         if manifest_path.exists():
-            with open(manifest_path, "r") as f:
+            with open(manifest_path) as f:
                 manifest = json.load(f)
 
             for shard_data in manifest.get("shards", []):
@@ -158,7 +158,7 @@ class ShardManager:
             json.dump(manifest, f, indent=2)
 
     @performance_logger.log_operation("create_shards")
-    def create_shards_from_data(self, data_source: Path, data_type: str = "genomic") -> List[str]:
+    def create_shards_from_data(self, data_source: Path, data_type: str = "genomic") -> list[str]:
         """
         Create shards from source data.
 
@@ -211,7 +211,7 @@ class ShardManager:
 
     def _create_single_shard(
         self, shard_index: int, shard_data: bytes, data_type: str
-    ) -> Optional[str]:
+    ) -> str | None:
         """
         Create a single shard.
 
@@ -268,7 +268,7 @@ class ShardManager:
             logger.error(f"Error creating shard {shard_index}: {e}")
             return None
 
-    def distribute_shards(self, server_list: List[str]) -> ShardDistribution:
+    def distribute_shards(self, server_list: list[str]) -> ShardDistribution:
         """
         Distribute shards across servers.
 
@@ -416,7 +416,7 @@ class ShardManager:
 
             return False
 
-    def get_shard_statistics(self) -> Dict[str, Any]:
+    def get_shard_statistics(self) -> dict[str, Any]:
         """
         Get statistics about shards.
 
@@ -443,16 +443,16 @@ class ShardManager:
                 "strategy": self.shard_distribution.strategy,
                 "replication_factor": self.shard_distribution.replication_factor,
                 "servers_used": len(
-                    set(
+                    {
                         server
                         for servers in self.shard_distribution.server_assignments.values()
                         for server in servers
-                    )
+                    }
                 ),
             },
         }
 
-    def optimize_distribution(self, server_stats: Dict[str, Dict]) -> ShardDistribution:
+    def optimize_distribution(self, server_stats: dict[str, dict]) -> ShardDistribution:
         """
         Optimize shard distribution based on server performance.
 

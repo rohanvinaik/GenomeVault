@@ -176,7 +176,10 @@ def verify_proof(proof_file: str, snapshot_dir: str, output: str | None, verbose
 @training_proof_cli.command()
 @click.option("--snapshot-dir", "-s", required=True, help="Directory containing model snapshots")
 @click.option(
-    "--output-dir", "-o", default="./drift_analysis", help="Output directory for visualizations"
+    "--output-dir",
+    "-o",
+    default="./drift_analysis",
+    help="Output directory for visualizations",
 )
 @click.option("--threshold", "-t", default=0.15, help="Drift detection threshold")
 def analyze_drift(snapshot_dir: str, output_dir: str, threshold: float):
@@ -274,7 +277,10 @@ def analyze_drift(snapshot_dir: str, output_dir: str, threshold: float):
 
 @training_proof_cli.command()
 @click.option(
-    "--contract-address", "-c", required=True, help="Training attestation contract address"
+    "--contract-address",
+    "-c",
+    required=True,
+    help="Training attestation contract address",
 )
 @click.option("--attestation-id", "-a", required=True, help="Attestation ID to query")
 @click.option("--chain-id", "-n", default=1, help="Blockchain network ID")

@@ -449,7 +449,10 @@ async def main():
     """Run PIR benchmarks."""
     parser = argparse.ArgumentParser(description="PIR Performance Benchmarking")
     parser.add_argument(
-        "--output", type=Path, default=Path("benchmarks/pir"), help="Output directory for results"
+        "--output",
+        type=Path,
+        default=Path("benchmarks/pir"),
+        help="Output directory for results",
     )
     parser.add_argument("--quick", action="store_true", help="Run quick benchmarks only")
 

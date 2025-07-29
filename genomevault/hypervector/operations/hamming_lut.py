@@ -24,7 +24,7 @@ import numpy as np
 from numba import cuda, jit, prange
 
 # Global LUT cache - shared across all compute contexts
-_POPCOUNT_LUT_16: Optional[np.ndarray] = None
+_POPCOUNT_LUT_16: np.ndarray | None = None
 
 
 def generate_popcount_lut() -> np.ndarray:

@@ -21,12 +21,12 @@ class STARKProof:
     """Post-quantum STARK proof."""
 
     proof_id: str
-    claim: Dict[str, Any]
+    claim: dict[str, Any]
     commitment_root: str
-    fri_layers: List[Dict[str, Any]]
-    query_responses: List[Dict[str, Any]]
+    fri_layers: list[dict[str, Any]]
+    query_responses: list[dict[str, Any]]
     proof_of_work: str
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
 
     @property
     def security_level(self) -> int:
@@ -88,8 +88,8 @@ class STARKProver:
     def generate_stark_proof(
         self,
         computation_trace: np.ndarray,
-        public_inputs: Dict[str, Any],
-        constraints: List[Dict[str, Any]],
+        public_inputs: dict[str, Any],
+        constraints: list[dict[str, Any]],
     ) -> STARKProof:
         """
         Generate STARK proof for computation trace.
@@ -120,7 +120,11 @@ class STARKProver:
         query_indices = self._generate_query_indices(trace_commitment, constraint_commitment)
 
         query_responses = self._generate_query_responses(
-            computation_trace, constraint_poly, trace_tree, constraint_tree, query_indices
+            computation_trace,
+            constraint_poly,
+            trace_tree,
+            constraint_tree,
+            query_indices,
         )
 
         # Step 6: Proof of work for soundness amplification
@@ -151,7 +155,7 @@ class STARKProver:
 
         return proof
 
-    def _commit_to_trace(self, trace: np.ndarray) -> Tuple[str, Dict[str, Any]]:
+    def _commit_to_trace(self, trace: np.ndarray) -> tuple[str, dict[str, Any]]:
         """Commit to execution trace using Merkle tree."""
         # Reed-Solomon encode each column
         encoded_trace = []
@@ -174,7 +178,7 @@ class STARKProver:
         return commitment.hex(), merkle_tree
 
     def _generate_constraint_polynomial(
-        self, trace: np.ndarray, constraints: List[Dict[str, Any]]
+        self, trace: np.ndarray, constraints: list[dict[str, Any]]
     ) -> np.ndarray:
         """Generate polynomial that encodes constraint satisfaction."""
         # Combine all constraints into single polynomial
@@ -184,7 +188,10 @@ class STARKProver:
             if constraint["type"] == "boundary":
                 # Boundary constraints (e.g., initial values)
                 poly = self._boundary_constraint_poly(
-                    trace, constraint["register"], constraint["step"], constraint["value"]
+                    trace,
+                    constraint["register"],
+                    constraint["step"],
+                    constraint["value"],
                 )
             elif constraint["type"] == "transition":
                 # Transition constraints (e.g., state updates)
@@ -199,7 +206,7 @@ class STARKProver:
 
     def _fri_protocol(
         self, polynomial: np.ndarray, initial_commitment: str
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Fast Reed-Solomon IOP of Proximity.
         Core of STARK's post-quantum security.
@@ -242,10 +249,10 @@ class STARKProver:
         self,
         trace: np.ndarray,
         constraint_poly: np.ndarray,
-        trace_tree: Dict[str, Any],
-        constraint_tree: Dict[str, Any],
-        query_indices: List[int],
-    ) -> List[Dict[str, Any]]:
+        trace_tree: dict[str, Any],
+        constraint_tree: dict[str, Any],
+        query_indices: list[int],
+    ) -> list[dict[str, Any]]:
         """Generate responses to verifier queries."""
         responses = []
 
@@ -278,7 +285,10 @@ class STARKProver:
         return responses
 
     def _generate_proof_of_work(
-        self, trace_commitment: str, constraint_commitment: str, public_inputs: Dict[str, Any]
+        self,
+        trace_commitment: str,
+        constraint_commitment: str,
+        public_inputs: dict[str, Any],
     ) -> str:
         """Generate proof of work for additional soundness."""
         # Compute work threshold based on security parameter
@@ -319,7 +329,7 @@ class STARKProver:
 
         return encoded
 
-    def _build_merkle_tree(self, leaves: List[bytes]) -> Dict[str, Any]:
+    def _build_merkle_tree(self, leaves: list[bytes]) -> dict[str, Any]:
         """Build Merkle tree from leaves."""
         tree = {"leaves": leaves, "layers": [leaves]}
 
@@ -342,7 +352,7 @@ class STARKProver:
         tree["root"] = current_layer[0]
         return tree
 
-    def _get_merkle_path(self, tree: Dict[str, Any], index: int) -> List[bytes]:
+    def _get_merkle_path(self, tree: dict[str, Any], index: int) -> list[bytes]:
         """Get Merkle authentication path for leaf."""
         path = []
 
@@ -403,7 +413,7 @@ class STARKProver:
         return folded
 
     def _fiat_shamir_challenge(
-        self, commitment: str, fri_layers: List[Dict[str, Any]], round_idx: int
+        self, commitment: str, fri_layers: list[dict[str, Any]], round_idx: int
     ) -> bytes:
         """Generate challenge using Fiat-Shamir transform."""
         data = {"commitment": commitment, "fri_layers": fri_layers, "round": round_idx}
@@ -417,7 +427,7 @@ class STARKProver:
 
     def _generate_query_indices(
         self, trace_commitment: str, constraint_commitment: str
-    ) -> List[int]:
+    ) -> list[int]:
         """Generate random query indices."""
         # Use Fiat-Shamir to generate pseudorandom indices
         seed = hashlib.sha256((trace_commitment + constraint_commitment).encode()).digest()
@@ -469,7 +479,7 @@ class STARKProver:
 
         return poly
 
-    def _generate_proof_id(self, public_inputs: Dict[str, Any]) -> str:
+    def _generate_proof_id(self, public_inputs: dict[str, Any]) -> str:
         """Generate unique proof ID."""
         data = {
             "inputs": public_inputs,
@@ -479,7 +489,7 @@ class STARKProver:
 
         return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[:16]
 
-    def _commit_to_evaluations(self, evaluations: np.ndarray) -> Tuple[bytes, Dict[str, Any]]:
+    def _commit_to_evaluations(self, evaluations: np.ndarray) -> tuple[bytes, dict[str, Any]]:
         """Commit to polynomial evaluations."""
         # Convert to bytes for hashing
         leaves = []
@@ -549,7 +559,7 @@ class PostQuantumVerifier:
         hash_value = hashlib.sha256(data.encode()).digest()
         return int.from_bytes(hash_value, "big") < threshold
 
-    def _verify_fri_layers(self, fri_layers: List[Dict[str, Any]]) -> bool:
+    def _verify_fri_layers(self, fri_layers: list[dict[str, Any]]) -> bool:
         """Verify FRI protocol execution."""
         # Check layer consistency
         prev_degree = None
@@ -572,7 +582,7 @@ class PostQuantumVerifier:
         return True
 
     def _verify_query_responses(
-        self, responses: List[Dict[str, Any]], commitment_root: str
+        self, responses: list[dict[str, Any]], commitment_root: str
     ) -> bool:
         """Verify query responses against commitment."""
         # In practice, would verify Merkle paths and constraint evaluations

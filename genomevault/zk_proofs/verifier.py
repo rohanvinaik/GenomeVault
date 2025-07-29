@@ -160,7 +160,10 @@ class Verifier:
                 metadata={"is_valid": is_valid, "verification_time": verification_time},
             )
 
-            logger.info(f"Proof verification completed: {is_valid}", extra={"privacy_safe": True})
+            logger.info(
+                f"Proof verification completed: {is_valid}",
+                extra={"privacy_safe": True},
+            )
 
             return result
 

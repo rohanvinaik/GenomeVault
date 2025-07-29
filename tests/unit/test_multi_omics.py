@@ -686,7 +686,8 @@ class TestIntegration:
 
         with pytest.raises(Exception):
             trans_processor._normalize_expression(
-                expr_data, "INVALID_METHOD"  # This should cause an error
+                expr_data,
+                "INVALID_METHOD",  # This should cause an error
             )
 
 

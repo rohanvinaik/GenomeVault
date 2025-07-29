@@ -175,7 +175,10 @@ class TestPIRIntegration:
         gene_index = list(index_mapping["genes"].keys()).index(gene)
 
         # Mock ZK proof that index is valid
-        validity_proof = {"statement": "index in [0, num_genes)", "proof": "mock_zk_proof_data"}
+        validity_proof = {
+            "statement": "index in [0, num_genes)",
+            "proof": "mock_zk_proof_data",
+        }
 
         # Step 7: Return privacy-preserving result
         private_result = {
@@ -265,7 +268,8 @@ class TestPIRIntegration:
 
         # Calculate minimum servers needed
         min_servers = pir_client.calculate_min_servers_needed(
-            target_failure=0.0001, honesty_prob=0.98  # 0.01%
+            target_failure=0.0001,
+            honesty_prob=0.98,  # 0.01%
         )
         assert min_servers == 3  # Need 3 servers for this guarantee
 

@@ -38,14 +38,14 @@ class ClinicalMeasurement:
 
     measurement_id: str
     measurement_type: str
-    value: Union[str, float, bool]
-    unit: Optional[str] = None
-    date: Optional[datetime.datetime] = None
+    value: str | float | bool
+    unit: str | None = None
+    date: datetime.datetime | None = None
     source: str = "EHR"
-    code_system: Optional[str] = None  # LOINC, SNOMED, etc.
-    code: Optional[str] = None
-    reference_range: Optional[Dict[str, float]] = None
-    abnormal_flag: Optional[str] = None
+    code_system: str | None = None  # LOINC, SNOMED, etc.
+    code: str | None = None
+    reference_range: dict[str, float] | None = None
+    abnormal_flag: str | None = None
 
     def is_abnormal(self) -> bool:
         """Check if measurement is abnormal"""
@@ -60,7 +60,7 @@ class ClinicalMeasurement:
 
         return False
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary"""
         return {
             "id": self.measurement_id,
@@ -82,15 +82,15 @@ class Diagnosis:
 
     diagnosis_id: str
     name: str
-    icd10_code: Optional[str] = None
-    snomed_code: Optional[str] = None
-    date_diagnosed: Optional[datetime.datetime] = None
-    severity: Optional[str] = None
+    icd10_code: str | None = None
+    snomed_code: str | None = None
+    date_diagnosed: datetime.datetime | None = None
+    severity: str | None = None
     status: str = "active"  # active, resolved, inactive
     certainty: float = 1.0  # 0-1 confidence
-    metadata: Optional[Dict[str, Any]] = None
+    metadata: dict[str, Any] | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary"""
         return {
             "id": self.diagnosis_id,
@@ -111,14 +111,14 @@ class Medication:
 
     medication_id: str
     name: str
-    rxnorm_code: Optional[str] = None
-    dose: Optional[str] = None
-    frequency: Optional[str] = None
-    route: Optional[str] = None
-    start_date: Optional[datetime.datetime] = None
-    end_date: Optional[datetime.datetime] = None
+    rxnorm_code: str | None = None
+    dose: str | None = None
+    frequency: str | None = None
+    route: str | None = None
+    start_date: datetime.datetime | None = None
+    end_date: datetime.datetime | None = None
     status: str = "active"  # active, completed, discontinued
-    indication: Optional[str] = None
+    indication: str | None = None
 
     @property
     def is_active(self) -> bool:
@@ -131,7 +131,7 @@ class Medication:
 
         return True
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary"""
         return {
             "id": self.medication_id,
@@ -154,10 +154,10 @@ class FamilyHistory:
 
     relationship: str  # mother, father, sibling, etc.
     condition: str
-    age_at_onset: Optional[int] = None
-    outcome: Optional[str] = None
+    age_at_onset: int | None = None
+    outcome: str | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary"""
         return {
             "relationship": self.relationship,
@@ -172,16 +172,16 @@ class PhenotypeProfile:
     """Complete phenotypic profile"""
 
     sample_id: str
-    demographics: Dict[str, Any]
-    measurements: List[ClinicalMeasurement]
-    diagnoses: List[Diagnosis]
-    medications: List[Medication]
-    family_history: List[FamilyHistory]
-    lifestyle_factors: Dict[str, Any]
-    environmental_exposures: Dict[str, Any]
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    demographics: dict[str, Any]
+    measurements: list[ClinicalMeasurement]
+    diagnoses: list[Diagnosis]
+    medications: list[Medication]
+    family_history: list[FamilyHistory]
+    lifestyle_factors: dict[str, Any]
+    environmental_exposures: dict[str, Any]
+    metadata: dict[str, Any] = field(default_factory=dict)
 
-    def get_measurement_summary(self) -> Dict[str, Any]:
+    def get_measurement_summary(self) -> dict[str, Any]:
         """Get summary of measurements by type"""
         summary = {}
         for measurement in self.measurements:
@@ -197,15 +197,15 @@ class PhenotypeProfile:
             )
         return summary
 
-    def get_active_conditions(self) -> List[Diagnosis]:
+    def get_active_conditions(self) -> list[Diagnosis]:
         """Get list of active diagnoses"""
         return [d for d in self.diagnoses if d.status == "active"]
 
-    def get_active_medications(self) -> List[Medication]:
+    def get_active_medications(self) -> list[Medication]:
         """Get list of active medications"""
         return [m for m in self.medications if m.is_active]
 
-    def calculate_risk_factors(self) -> Dict[str, float]:
+    def calculate_risk_factors(self) -> dict[str, float]:
         """Calculate basic risk factors from phenotype data"""
         risk_factors = {}
 
@@ -280,7 +280,7 @@ class PhenotypeProcessor:
         """Initialize phenotype processor"""
         self.terminology_mapper = self._load_terminology_mappings()
 
-    def _load_terminology_mappings(self) -> Dict[str, Dict[str, str]]:
+    def _load_terminology_mappings(self) -> dict[str, dict[str, str]]:
         """Load terminology mappings"""
         # In production, would load from comprehensive terminology services
         return {"loinc": self.LOINC_CODES, "icd10_patterns": self.ICD10_PATTERNS}
@@ -288,7 +288,7 @@ class PhenotypeProcessor:
     @log_operation("process_phenotypes")
     def process(
         self,
-        input_data: Union[Dict[str, Any], Path],
+        input_data: dict[str, Any] | Path,
         sample_id: str,
         data_format: str = "fhir",
     ) -> PhenotypeProfile:
@@ -307,7 +307,7 @@ class PhenotypeProcessor:
 
         # Load data if path provided
         if isinstance(input_data, Path):
-            with open(input_data, "r") as f:
+            with open(input_data) as f:
                 if input_data.suffix == ".json":
                     input_data = json.load(f)
                 else:
@@ -336,7 +336,7 @@ class PhenotypeProcessor:
 
         return profile
 
-    def _process_fhir_data(self, fhir_bundle: Dict[str, Any], sample_id: str) -> PhenotypeProfile:
+    def _process_fhir_data(self, fhir_bundle: dict[str, Any], sample_id: str) -> PhenotypeProfile:
         """Process FHIR bundle data"""
         demographics = {}
         measurements = []
@@ -392,7 +392,7 @@ class PhenotypeProcessor:
             },
         )
 
-    def _extract_fhir_demographics(self, patient: Dict[str, Any]) -> Dict[str, Any]:
+    def _extract_fhir_demographics(self, patient: dict[str, Any]) -> dict[str, Any]:
         """Extract demographics from FHIR Patient resource"""
         demographics = {}
 
@@ -418,8 +418,8 @@ class PhenotypeProcessor:
         return demographics
 
     def _extract_fhir_observation(
-        self, observation: Dict[str, Any]
-    ) -> Optional[ClinicalMeasurement]:
+        self, observation: dict[str, Any]
+    ) -> ClinicalMeasurement | None:
         """Extract measurement from FHIR Observation"""
         # Get observation code
         coding = observation.get("code", {}).get("coding", [])
@@ -481,7 +481,7 @@ class PhenotypeProcessor:
 
         return measurement
 
-    def _extract_fhir_condition(self, condition: Dict[str, Any]) -> Optional[Diagnosis]:
+    def _extract_fhir_condition(self, condition: dict[str, Any]) -> Diagnosis | None:
         """Extract diagnosis from FHIR Condition"""
         # Get condition code
         coding = condition.get("code", {}).get("coding", [])
@@ -525,7 +525,7 @@ class PhenotypeProcessor:
 
         return diagnosis
 
-    def _extract_fhir_medication(self, medication: Dict[str, Any]) -> Optional[Medication]:
+    def _extract_fhir_medication(self, medication: dict[str, Any]) -> Medication | None:
         """Extract medication from FHIR MedicationStatement"""
         # Get medication code
         med_codeable = medication.get("medicationCodeableConcept", {})
@@ -590,7 +590,7 @@ class PhenotypeProcessor:
 
         return med
 
-    def _extract_fhir_family_history(self, history: Dict[str, Any]) -> List[FamilyHistory]:
+    def _extract_fhir_family_history(self, history: dict[str, Any]) -> list[FamilyHistory]:
         """Extract family history from FHIR FamilyMemberHistory"""
         family_history = []
 
@@ -648,7 +648,7 @@ class PhenotypeProcessor:
             metadata={"source": "csv"},
         )
 
-    def _process_custom_data(self, custom_data: Dict[str, Any], sample_id: str) -> PhenotypeProfile:
+    def _process_custom_data(self, custom_data: dict[str, Any], sample_id: str) -> PhenotypeProfile:
         """Process custom format data"""
         return PhenotypeProfile(
             sample_id=sample_id,
@@ -730,7 +730,7 @@ class PhenotypeProcessor:
         return profile
 
     def merge_profiles(
-        self, profiles: List[PhenotypeProfile], merge_strategy: str = "most_recent"
+        self, profiles: list[PhenotypeProfile], merge_strategy: str = "most_recent"
     ) -> PhenotypeProfile:
         """
         Merge multiple phenotype profiles
@@ -801,7 +801,7 @@ class PhenotypeProcessor:
         merged.measurements = list(measurement_dict.values())
 
     def _should_replace_measurement(
-        self, existing: Optional[ClinicalMeasurement], new: ClinicalMeasurement
+        self, existing: ClinicalMeasurement | None, new: ClinicalMeasurement
     ) -> bool:
         """Check if measurement should be replaced"""
         if not existing:

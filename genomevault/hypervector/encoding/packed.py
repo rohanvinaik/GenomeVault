@@ -24,7 +24,7 @@ from genomevault.core.exceptions import HypervectorError
 class PackedHV:
     """Bit-packed hypervector implementation with CPU/GPU support"""
 
-    def __init__(self, n_bits: int, buffer: Optional[np.ndarray] = None, device: str = "cpu"):
+    def __init__(self, n_bits: int, buffer: np.ndarray | None = None, device: str = "cpu"):
         self.n_bits = n_bits
         self.n_words = (n_bits + 63) // 64
         self.device = device
@@ -55,14 +55,14 @@ class PackedHV:
             cp.bitwise_xor(self.buf, other.buf, out=result.buf)
         return result
 
-    def majority(self, others: List["PackedHV"]) -> "PackedHV":
+    def majority(self, others: list["PackedHV"]) -> "PackedHV":
         """Majority vote for bundling operation"""
         if self.device == "cpu":
             return self._majority_cpu(others)
         else:
             return self._majority_gpu(others)
 
-    def _majority_cpu(self, others: List["PackedHV"]) -> "PackedHV":
+    def _majority_cpu(self, others: list["PackedHV"]) -> "PackedHV":
         """CPU-optimized majority vote using bit manipulation"""
         result = PackedHV(self.n_bits)
         n_vecs = len(others) + 1  # Include self
@@ -75,7 +75,7 @@ class PackedHV:
 
         return result
 
-    def _majority_gpu(self, others: List["PackedHV"]) -> "PackedHV":
+    def _majority_gpu(self, others: list["PackedHV"]) -> "PackedHV":
         """GPU-optimized majority vote"""
         if not CUPY_AVAILABLE:
             raise RuntimeError("CuPy not available for GPU operations")
@@ -404,7 +404,8 @@ class PackedGenomicEncoder:
         if packed:
             # Initialize packed components
             self.projection = PackedProjection(
-                input_dim=1000, hv_dim=dimension  # Adjust based on your needs
+                input_dim=1000,
+                hv_dim=dimension,  # Adjust based on your needs
             )
             self._init_packed_base_vectors()
         else:
@@ -444,7 +445,7 @@ class PackedGenomicEncoder:
         alt: str,
         variant_type: str = "SNP",
         **kwargs,
-    ) -> Union[PackedHV, torch.Tensor]:
+    ) -> PackedHV | torch.Tensor:
         """Encode a single variant"""
 
         if not self.packed:
@@ -505,13 +506,13 @@ class PackedGenomicEncoder:
         dense = rng.randint(0, 2, size=self.dimension).astype(np.uint8)
         return PackedHV.from_dense(dense, self.device)
 
-    def _bundle_packed(self, vectors: List[PackedHV]) -> PackedHV:
+    def _bundle_packed(self, vectors: list[PackedHV]) -> PackedHV:
         """Bundle packed vectors using majority vote"""
         if len(vectors) == 1:
             return vectors[0]
         return vectors[0].majority(vectors[1:])
 
-    def encode_genome(self, variants: List[Dict]) -> Union[PackedHV, torch.Tensor]:
+    def encode_genome(self, variants: list[dict]) -> PackedHV | torch.Tensor:
         """Encode complete genome"""
 
         if not self.packed:
@@ -538,7 +539,7 @@ class PackedGenomicEncoder:
         return genome_vec
 
     def similarity(
-        self, vec1: Union[PackedHV, torch.Tensor], vec2: Union[PackedHV, torch.Tensor]
+        self, vec1: PackedHV | torch.Tensor, vec2: PackedHV | torch.Tensor
     ) -> float:
         """Calculate similarity between hypervectors"""
 

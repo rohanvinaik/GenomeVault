@@ -43,9 +43,9 @@ class CircuitMetadata:
     verification_time_ms: float
     security_level: int = 128  # bits
     post_quantum: bool = False
-    parameters: Dict[str, Any] = field(default_factory=dict)
+    parameters: dict[str, Any] = field(default_factory=dict)
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         return {
             "name": self.name,
             "constraint_count": self.constraint_count,
@@ -70,7 +70,7 @@ class CircuitManager:
 
         logger.info("Circuit manager initialized", extra={"circuit_count": len(self.circuits)})
 
-    def _initialize_circuits(self) -> Dict[str, CircuitMetadata]:
+    def _initialize_circuits(self) -> dict[str, CircuitMetadata]:
         """Initialize available circuits with metadata."""
         circuits = {
             "variant_presence": CircuitMetadata(
@@ -197,12 +197,12 @@ class CircuitManager:
 
         return self.circuits[circuit_name]
 
-    def list_circuits(self) -> List[Dict[str, Any]]:
+    def list_circuits(self) -> list[dict[str, Any]]:
         """List all available circuits with metadata."""
         return [{"name": name, **metadata.to_dict()} for name, metadata in self.circuits.items()]
 
     def select_optimal_circuit(
-        self, analysis_type: str, data_characteristics: Dict[str, Any]
+        self, analysis_type: str, data_characteristics: dict[str, Any]
     ) -> str:
         """
         Select optimal circuit based on analysis type and data.
@@ -252,7 +252,7 @@ class CircuitManager:
 
         return base_circuit
 
-    def _needs_optimization(self, circuit_name: str, data_characteristics: Dict[str, Any]) -> bool:
+    def _needs_optimization(self, circuit_name: str, data_characteristics: dict[str, Any]) -> bool:
         """Check if circuit selection needs optimization."""
         metadata = self.circuits[circuit_name]
 
@@ -270,7 +270,7 @@ class CircuitManager:
         return False
 
     def _optimize_circuit_selection(
-        self, base_circuit: str, data_characteristics: Dict[str, Any]
+        self, base_circuit: str, data_characteristics: dict[str, Any]
     ) -> str:
         """Optimize circuit selection based on constraints."""
         # Cache key for optimization
@@ -302,7 +302,7 @@ class CircuitManager:
         return optimal
 
     def _circuit_meets_requirements(
-        self, metadata: CircuitMetadata, requirements: Dict[str, Any]
+        self, metadata: CircuitMetadata, requirements: dict[str, Any]
     ) -> bool:
         """Check if circuit meets requirements."""
         # Check proof size
@@ -329,8 +329,8 @@ class CircuitManager:
 
     @performance_logger.log_operation("optimize_circuit_parameters")
     def optimize_circuit_parameters(
-        self, circuit_name: str, target_metrics: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, circuit_name: str, target_metrics: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Optimize circuit parameters for target metrics.
 
@@ -369,7 +369,7 @@ class CircuitManager:
 
         return optimized_params
 
-    def estimate_proof_generation_time(self, circuit_name: str, data_size: Dict[str, int]) -> float:
+    def estimate_proof_generation_time(self, circuit_name: str, data_size: dict[str, int]) -> float:
         """
         Estimate proof generation time.
 
@@ -399,7 +399,7 @@ class CircuitManager:
 
         return base_time + overhead
 
-    def get_circuit_statistics(self) -> Dict[str, Any]:
+    def get_circuit_statistics(self) -> dict[str, Any]:
         """Get usage statistics for circuits."""
         stats = {
             "total_circuits": len(self.circuits),
@@ -421,9 +421,9 @@ class CircuitManager:
     def validate_circuit_inputs(
         self,
         circuit_name: str,
-        public_inputs: Dict[str, Any],
-        private_inputs: Dict[str, Any],
-    ) -> Tuple[bool, List[str]]:
+        public_inputs: dict[str, Any],
+        private_inputs: dict[str, Any],
+    ) -> tuple[bool, list[str]]:
         """
         Validate inputs for a circuit.
 
@@ -474,7 +474,7 @@ class CircuitManager:
 
         return is_valid, errors
 
-    def _get_expected_inputs(self, circuit_name: str) -> Dict[str, List[str]]:
+    def _get_expected_inputs(self, circuit_name: str) -> dict[str, list[str]]:
         """Get expected inputs for a circuit."""
         expected = {
             "variant_presence": {
@@ -563,8 +563,8 @@ class CircuitManager:
         return expected.get(circuit_name, {"public": [], "private": []})
 
     def benchmark_circuit(
-        self, circuit_name: str, test_data: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, float]:
+        self, circuit_name: str, test_data: dict[str, Any] | None = None
+    ) -> dict[str, float]:
         """
         Benchmark a circuit's performance.
 
@@ -623,7 +623,7 @@ class CircuitManager:
             "constraint_count": len(circuit.constraints),
         }
 
-    def _generate_test_data(self, circuit_name: str) -> Dict[str, Any]:
+    def _generate_test_data(self, circuit_name: str) -> dict[str, Any]:
         """Generate test data for benchmarking."""
         import numpy as np
 
@@ -643,7 +643,7 @@ class CircuitManager:
                     },
                     "merkle_proof": {
                         "path": [
-                            hashlib.sha256("node_{i}".encode()).hexdigest() for i in range(20)
+                            hashlib.sha256(b"node_{i}").hexdigest() for i in range(20)
                         ],
                         "indices": [i % 2 for i in range(20)],
                     },

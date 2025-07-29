@@ -242,7 +242,11 @@ class HypervectorEncoder:
             if "quality_metrics" in data:
                 qm = data["quality_metrics"]
                 features.extend(
-                    [qm.get("mean_coverage", 0), qm.get("uniformity", 0), qm.get("gc_content", 0)]
+                    [
+                        qm.get("mean_coverage", 0),
+                        qm.get("uniformity", 0),
+                        qm.get("gc_content", 0),
+                    ]
                 )
 
             # Convert to tensor
@@ -289,7 +293,11 @@ class HypervectorEncoder:
         return torch.tensor(features, dtype=torch.float32)
 
     def _get_projection_matrix(
-        self, input_dim: int, output_dim: int, omics_type: OmicsType, tier: CompressionTier
+        self,
+        input_dim: int,
+        output_dim: int,
+        omics_type: OmicsType,
+        tier: CompressionTier,
     ) -> torch.Tensor:
         """Get or create projection matrix for given dimensions"""
         # Create cache key

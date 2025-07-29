@@ -100,7 +100,11 @@ class TestHDCProperties:
 
         assert torch.allclose(hv1, hv2, rtol=1e-5)
 
-    @given(dimension=valid_dimensions(), features1=feature_arrays(), features2=feature_arrays())
+    @given(
+        dimension=valid_dimensions(),
+        features1=feature_arrays(),
+        features2=feature_arrays(),
+    )
     @settings(max_examples=30)
     def test_similarity_preservation_property(self, dimension, features1, features2):
         """Property: Similar inputs produce similar hypervectors"""
@@ -215,7 +219,11 @@ class TestBindingProperties:
         b = torch.randn(dimension)
         b = b / torch.norm(b)
 
-        for binding_type in [BindingType.MULTIPLY, BindingType.CIRCULAR, BindingType.FOURIER]:
+        for binding_type in [
+            BindingType.MULTIPLY,
+            BindingType.CIRCULAR,
+            BindingType.FOURIER,
+        ]:
             # Bind
             bound = binder.bind([a, b], binding_type)
 

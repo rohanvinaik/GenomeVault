@@ -86,7 +86,7 @@ class PIRServer:
             },
         )
 
-    def _load_shards(self) -> Dict[str, DatabaseShard]:
+    def _load_shards(self) -> dict[str, DatabaseShard]:
         """Load database shard metadata."""
         shards = {}
 
@@ -98,7 +98,7 @@ class PIRServer:
 
         import json
 
-        with open(manifest_path, "r") as f:
+        with open(manifest_path) as f:
             manifest = json.load(f)
 
         # Create shard objects
@@ -141,7 +141,7 @@ class PIRServer:
         return self.mmap_files[shard_id]
 
     @performance_logger.log_operation("process_pir_query")
-    async def process_query(self, query_data: Dict[str, Any]) -> Dict[str, Any]:
+    async def process_query(self, query_data: dict[str, Any]) -> dict[str, Any]:
         """
         Process PIR query without learning what is being accessed.
 
@@ -262,7 +262,7 @@ class PIRServer:
 
     def _read_database_chunk(
         self, mmap_data: mmap.mmap, indices: range, item_size: int
-    ) -> List[np.ndarray]:
+    ) -> list[np.ndarray]:
         """
         Read chunk of database items.
 
@@ -290,7 +290,7 @@ class PIRServer:
 
         return items
 
-    def batch_process_queries(self, queries: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def batch_process_queries(self, queries: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """
         Process multiple queries in batch.
 
@@ -309,7 +309,7 @@ class PIRServer:
 
         return responses
 
-    def get_server_statistics(self) -> Dict[str, Any]:
+    def get_server_statistics(self) -> dict[str, Any]:
         """
         Get server performance statistics.
 
@@ -427,7 +427,7 @@ class TrustedSignatoryServer(PIRServer):
         # Configure additional audit requirements
         audit_logger.set_hipaa_mode(True)
 
-    def verify_hipaa_compliance(self) -> Dict[str, bool]:
+    def verify_hipaa_compliance(self) -> dict[str, bool]:
         """
         Verify HIPAA compliance status.
 

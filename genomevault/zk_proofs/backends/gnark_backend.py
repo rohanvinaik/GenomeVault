@@ -24,7 +24,7 @@ metrics = MetricsCollector()
 class GnarkBackend:
     """Real ZK proof generation using gnark via FFI."""
 
-    def __init__(self, circuit_dir: str = "./circuits/compiled", gnark_path: Optional[str] = None):
+    def __init__(self, circuit_dir: str = "./circuits/compiled", gnark_path: str | None = None):
         """
         Initialize gnark backend.
 
@@ -83,7 +83,10 @@ class GnarkBackend:
         # Test execution
         try:
             result = subprocess.run(
-                [str(self.prover_bin), "--version"], capture_output=True, text=True, timeout=5
+                [str(self.prover_bin), "--version"],
+                capture_output=True,
+                text=True,
+                timeout=5,
             )
             if result.returncode != 0:
                 raise RuntimeError(f"Failed to execute gnark-prover: {result.stderr}")
@@ -157,7 +160,10 @@ class GnarkBackend:
         }
 
     def generate_proof(
-        self, circuit_name: str, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
+        self,
+        circuit_name: str,
+        public_inputs: dict[str, Any],
+        private_inputs: dict[str, Any],
     ) -> bytes:
         """
         Generate real SNARK proof using gnark.
@@ -226,7 +232,7 @@ class GnarkBackend:
 
             return proof_data
 
-    def verify_proof(self, circuit_name: str, proof: bytes, public_inputs: Dict[str, Any]) -> bool:
+    def verify_proof(self, circuit_name: str, proof: bytes, public_inputs: dict[str, Any]) -> bool:
         """
         Verify proof using gnark verifier.
 
@@ -286,7 +292,7 @@ class GnarkBackend:
 
             return valid
 
-    def batch_verify(self, proofs: List[Tuple[str, bytes, Dict[str, Any]]]) -> List[bool]:
+    def batch_verify(self, proofs: list[tuple[str, bytes, dict[str, Any]]]) -> list[bool]:
         """
         Batch verify multiple proofs.
 
@@ -313,7 +319,7 @@ class GnarkBackend:
 
         return results
 
-    def get_circuit_info(self, circuit_name: str) -> Dict[str, Any]:
+    def get_circuit_info(self, circuit_name: str) -> dict[str, Any]:
         """Get information about a compiled circuit."""
         if circuit_name not in self.compiled_circuits:
             self._compile_circuit(circuit_name)
@@ -337,7 +343,10 @@ class SimulatedBackend:
         self.proof_counter = 0
 
     def generate_proof(
-        self, circuit_name: str, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
+        self,
+        circuit_name: str,
+        public_inputs: dict[str, Any],
+        private_inputs: dict[str, Any],
     ) -> bytes:
         """Generate simulated proof."""
         import hashlib
@@ -360,7 +369,7 @@ class SimulatedBackend:
 
         return proof_data
 
-    def verify_proof(self, circuit_name: str, proof: bytes, public_inputs: Dict[str, Any]) -> bool:
+    def verify_proof(self, circuit_name: str, proof: bytes, public_inputs: dict[str, Any]) -> bool:
         """Verify simulated proof."""
         # Simulate verification time
         time.sleep(0.025)
@@ -371,7 +380,7 @@ class SimulatedBackend:
         return True
 
 
-def get_backend(use_real: bool = True) -> Union[GnarkBackend, SimulatedBackend]:
+def get_backend(use_real: bool = True) -> GnarkBackend | SimulatedBackend:
     """
     Get appropriate backend based on availability.
 

@@ -11,12 +11,7 @@ import numpy as np
 import torch
 
 from genomevault.hypervector.error_handling import ErrorBudgetAllocator
-from genomevault.pir.client import (
-    BatchedPIRQueryBuilder,
-    GenomicQuery,
-    PIRClient,
-    QueryType,
-)
+from genomevault.pir.client import BatchedPIRQueryBuilder, GenomicQuery, PIRClient, QueryType
 
 
 async def main():
@@ -37,7 +32,10 @@ async def main():
     print("\n2. Error Budget Planning:")
     allocator = ErrorBudgetAllocator(dim_cap=150000)
     budget = allocator.plan_budget(
-        epsilon=epsilon, delta_exp=delta_exp, ecc_enabled=True, repeat_cap=None  # AUTO mode
+        epsilon=epsilon,
+        delta_exp=delta_exp,
+        ecc_enabled=True,
+        repeat_cap=None,  # AUTO mode
     )
 
     print(f"   - Dimension: {budget.dimension:,}")
@@ -105,7 +103,10 @@ async def main():
     async for idx, result in query_builder.execute_streaming_batch(batched_query):
         results.append(result)
         progress = (idx + 1) / budget.repeats * 100
-        print(f"   [{progress:3.0f}%] Completed repeat {idx + 1}/{budget.repeats}", end="\r")
+        print(
+            f"   [{progress:3.0f}%] Completed repeat {idx + 1}/{budget.repeats}",
+            end="\r",
+        )
 
     print()  # New line after progress
 
@@ -164,7 +165,7 @@ async def main():
 class MockPIRClient(PIRClient):
     """Mock PIR client for demonstration"""
 
-    def __init__(self, servers: List[str], database_size: int):
+    def __init__(self, servers: list[str], database_size: int):
         # Don't call super().__init__ to avoid real connection
         self.server_urls = servers
         self.database_size = database_size
@@ -203,7 +204,7 @@ class MockPIRClient(PIRClient):
         return (1 - honesty_prob) ** num_servers
 
 
-def create_mock_index_mapping() -> Dict[str, Dict]:
+def create_mock_index_mapping() -> dict[str, dict]:
     """Create mock index mapping for demo"""
     return {
         "variants": {
@@ -230,7 +231,7 @@ def create_mock_index_mapping() -> Dict[str, Dict]:
     }
 
 
-def generate_mock_proof(metadata: Dict) -> str:
+def generate_mock_proof(metadata: dict) -> str:
     """Generate mock proof hash"""
     import hashlib
 

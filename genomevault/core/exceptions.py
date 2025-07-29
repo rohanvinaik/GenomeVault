@@ -1,141 +1,58 @@
-"""
-Custom exceptions for GenomeVault
-"""
+from __future__ import annotations
+
+from typing import Dict, Optional
 
 
 class GenomeVaultError(Exception):
-    """Base exception for all GenomeVault errors"""
+    """Base exception for GenomeVault."""
 
-    pass
+    def __init__(self, message: str = "", *, context: dict | None = None):
+        super().__init__(message)
+        self.context = context or {}
 
+    def __str__(self) -> str:
+        base = super().__str__() or self.__class__.__name__
+        if self.context:
+            return f"{self.__class__.__name__}: {base} | context={self.context}"
+        return f"{self.__class__.__name__}: {base}"
 
-class ValidationError(GenomeVaultError):
-    """Raised when data validation fails"""
 
-    pass
+class ConfigurationError(GenomeVaultError): ...
 
 
-class PrivacyError(GenomeVaultError):
-    """Raised when an operation would violate privacy guarantees"""
+class ValidationError(GenomeVaultError): ...
 
-    pass
 
+class ProjectionError(GenomeVaultError): ...
 
-class CryptographicError(GenomeVaultError):
-    """Raised when cryptographic operations fail"""
 
-    pass
+class EncodingError(GenomeVaultError): ...
 
 
-class ProofError(CryptographicError):
-    """Raised when zero-knowledge proof generation or verification fails"""
+class ZKProofError(GenomeVaultError): ...
 
-    pass
 
+class PIRProtocolError(GenomeVaultError): ...
 
-class CircuitError(ProofError):
-    """Raised when circuit operations fail"""
 
-    pass
+class LedgerError(GenomeVaultError): ...
 
 
-class PIRError(GenomeVaultError):
-    """Raised when Private Information Retrieval fails"""
+class FederatedError(GenomeVaultError): ...
 
-    pass
 
+class APISchemaError(GenomeVaultError): ...
 
-class BlockchainError(GenomeVaultError):
-    """Raised when blockchain operations fail"""
 
-    pass
-
-
-class HIPAAComplianceError(GenomeVaultError):
-    """Raised when HIPAA compliance requirements are not met"""
-
-    pass
-
-
-class CompressionError(GenomeVaultError):
-    """Raised when data compression/decompression fails"""
-
-    pass
-
-
-class HypervectorError(GenomeVaultError):
-    """Raised when hypervector operations fail"""
-
-    pass
-
-
-class BindingError(HypervectorError):
-    """Raised when hypervector binding operations fail"""
-
-    pass
-
-
-class EncodingError(HypervectorError):
-    """Raised when hypervector encoding operations fail"""
-
-    pass
-
-
-class MappingError(HypervectorError):
-    """Raised when hypervector mapping operations fail"""
-
-    pass
-
-
-class NetworkError(GenomeVaultError):
-    """Raised when network operations fail"""
-
-    pass
-
-
-class StorageError(GenomeVaultError):
-    """Raised when storage operations fail"""
-
-    pass
-
-
-class AuthenticationError(GenomeVaultError):
-    """Raised when authentication fails"""
-
-    pass
-
-
-class AuthorizationError(GenomeVaultError):
-    """Raised when authorization fails"""
-
-    pass
-
-
-class RateLimitError(GenomeVaultError):
-    """Raised when rate limits are exceeded"""
-
-    pass
-
-
-class ConfigurationError(GenomeVaultError):
-    """Raised when configuration is invalid"""
-
-    pass
-
-
-class ProcessingError(GenomeVaultError):
-    """Raised when data processing fails"""
-
-    pass
-
-
-class ClinicalError(GenomeVaultError):
-    """Raised when clinical operations fail"""
-
-    pass
-
-
-class ResearchError(GenomeVaultError):
-    """Raised when research operations fail"""
-
-    pass
+__all__ = [
+    "GenomeVaultError",
+    "ConfigurationError",
+    "ValidationError",
+    "ProjectionError",
+    "EncodingError",
+    "ZKProofError",
+    "PIRProtocolError",
+    "LedgerError",
+    "FederatedError",
+    "APISchemaError",
+]

@@ -25,7 +25,10 @@ class TestPIRProtocol:
 
         # Create test database
         self.database = np.random.randint(
-            0, 256, (self.params.database_size, self.params.element_size), dtype=np.uint8
+            0,
+            256,
+            (self.params.database_size, self.params.element_size),
+            dtype=np.uint8,
         )
 
     def test_parameter_validation(self):
@@ -153,7 +156,10 @@ class TestAdversarialPIR:
         self.params = PIRParameters(database_size=1000, element_size=1024, num_servers=2)
         self.protocol = PIRProtocol(self.params)
         self.database = np.random.randint(
-            0, 256, (self.params.database_size, self.params.element_size), dtype=np.uint8
+            0,
+            256,
+            (self.params.database_size, self.params.element_size),
+            dtype=np.uint8,
         )
 
     def test_malformed_query_length(self):
@@ -221,7 +227,7 @@ class TestAdversarialPIR:
         assert len(consistent_indices) > self.params.database_size / 10
 
     @given(st.lists(st.integers(0, 1), min_size=1000, max_size=1000))
-    def test_fuzz_query_vectors(self, query_values: List[int]):
+    def test_fuzz_query_vectors(self, query_values: list[int]):
         """Fuzz test with random query vectors."""
         query = np.array(query_values, dtype=np.uint8)
 
@@ -260,7 +266,10 @@ class TestBatchPIR:
         self.params = PIRParameters(database_size=10000, element_size=1024, num_servers=2)
         self.protocol = BatchPIRProtocol(self.params)
         self.database = np.random.randint(
-            0, 256, (self.params.database_size, self.params.element_size), dtype=np.uint8
+            0,
+            256,
+            (self.params.database_size, self.params.element_size),
+            dtype=np.uint8,
         )
 
     def test_batch_query_generation(self):
@@ -296,7 +305,10 @@ class TestPIRPerformance:
         self.params = PIRParameters(database_size=100000, element_size=1024, num_servers=2)
         self.protocol = PIRProtocol(self.params)
         self.database = np.random.randint(
-            0, 256, (self.params.database_size, self.params.element_size), dtype=np.uint8
+            0,
+            256,
+            (self.params.database_size, self.params.element_size),
+            dtype=np.uint8,
         )
 
     @pytest.mark.benchmark

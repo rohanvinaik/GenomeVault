@@ -42,15 +42,38 @@ async def main():
 
     # Sample genomic variants
     variants = [
-        {"chromosome": "chr1", "position": 762273, "ref": "G", "alt": "A", "type": "SNP"},
-        {"chromosome": "chr2", "position": 1234567, "ref": "T", "alt": "C", "type": "SNP"},
-        {"chromosome": "chr7", "position": 5566778, "ref": "A", "alt": "G", "type": "SNP"},
+        {
+            "chromosome": "chr1",
+            "position": 762273,
+            "ref": "G",
+            "alt": "A",
+            "type": "SNP",
+        },
+        {
+            "chromosome": "chr2",
+            "position": 1234567,
+            "ref": "T",
+            "alt": "C",
+            "type": "SNP",
+        },
+        {
+            "chromosome": "chr7",
+            "position": 5566778,
+            "ref": "A",
+            "alt": "G",
+            "type": "SNP",
+        },
     ]
 
     # Create encoder and budget
     encoder = AdaptiveHDCEncoder(dimension=10000)
     budget = ErrorBudget(
-        dimension=10000, parity_g=3, repeats=10, epsilon=0.01, delta_exp=15, ecc_enabled=True
+        dimension=10000,
+        parity_g=3,
+        repeats=10,
+        epsilon=0.01,
+        delta_exp=15,
+        ecc_enabled=True,
     )
 
     # Encode with budget
@@ -65,11 +88,21 @@ async def main():
     print("\n=== ECC Impact Comparison ===")
 
     budget_no_ecc = ErrorBudget(
-        dimension=10000, parity_g=0, repeats=10, epsilon=0.01, delta_exp=15, ecc_enabled=False
+        dimension=10000,
+        parity_g=0,
+        repeats=10,
+        epsilon=0.01,
+        delta_exp=15,
+        ecc_enabled=False,
     )
 
     budget_with_ecc = ErrorBudget(
-        dimension=10000, parity_g=3, repeats=10, epsilon=0.01, delta_exp=15, ecc_enabled=True
+        dimension=10000,
+        parity_g=3,
+        repeats=10,
+        epsilon=0.01,
+        delta_exp=15,
+        ecc_enabled=True,
     )
 
     _, meta_no_ecc = encoder.encode_with_budget(variants, budget_no_ecc)

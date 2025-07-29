@@ -29,11 +29,11 @@ class MedianProof:
 
     # Proof components
     commitment: bytes
-    sorted_commitments: List[bytes]
-    median_opening: Dict[str, Any]
-    range_proofs: List[Dict[str, Any]]
+    sorted_commitments: list[bytes]
+    median_opening: dict[str, Any]
+    range_proofs: list[dict[str, Any]]
     challenge: bytes
-    response: Dict[str, Any]
+    response: dict[str, Any]
 
     # Metadata
     timestamp: float
@@ -64,10 +64,10 @@ class MedianVerifierCircuit:
 
     def generate_proof(
         self,
-        values: List[float],
+        values: list[float],
         claimed_median: float,
         error_bound: float,
-        expected_value: Optional[float] = None,
+        expected_value: float | None = None,
     ) -> MedianProof:
         """
         Generate a zero-knowledge proof that the median is correctly computed
@@ -199,7 +199,10 @@ class MedianVerifierCircuit:
         try:
             # Step 1: Recompute the challenge
             computed_challenge = self._generate_challenge(
-                proof.commitment, proof.sorted_commitments, proof.claimed_median, proof.error_bound
+                proof.commitment,
+                proof.sorted_commitments,
+                proof.claimed_median,
+                proof.error_bound,
             )
 
             if computed_challenge != proof.challenge:
@@ -272,14 +275,18 @@ class MedianVerifierCircuit:
         commitment_input = value_bytes + randomness
         return self.hash_function(commitment_input).digest()
 
-    def _commit_list(self, values: List[float], randomness: List[bytes]) -> bytes:
+    def _commit_list(self, values: list[float], randomness: list[bytes]) -> bytes:
         """Create a commitment to a list of values"""
         commitments = [self._commit(v, r) for v, r in zip(values, randomness)]
         combined = b"".join(commitments)
         return self.hash_function(combined).digest()
 
     def _generate_challenge(
-        self, commitment: bytes, sorted_commitments: List[bytes], median: float, error_bound: float
+        self,
+        commitment: bytes,
+        sorted_commitments: list[bytes],
+        median: float,
+        error_bound: float,
     ) -> bytes:
         """Generate Fiat-Shamir challenge"""
         challenge_input = (
@@ -291,8 +298,8 @@ class MedianVerifierCircuit:
         return self.hash_function(challenge_input).digest()
 
     def _generate_range_proofs(
-        self, values: List[float], randomness: List[bytes]
-    ) -> List[Dict[str, Any]]:
+        self, values: list[float], randomness: list[bytes]
+    ) -> list[dict[str, Any]]:
         """
         Generate range proofs that values are in reasonable range
         This is a simplified version - production would use bulletproofs
@@ -304,7 +311,10 @@ class MedianVerifierCircuit:
         max_val = max(values)
         range_expansion = 0.1 * (max_val - min_val) if max_val > min_val else 1.0
 
-        proven_range = {"min": min_val - range_expansion, "max": max_val + range_expansion}
+        proven_range = {
+            "min": min_val - range_expansion,
+            "max": max_val + range_expansion,
+        }
 
         # For each value, create a simple range proof
         for i, (val, rand) in enumerate(zip(values, randomness)):
@@ -323,7 +333,7 @@ class MedianVerifierCircuit:
 
         return range_proofs
 
-    def _verify_range_proofs(self, range_proofs: List[Dict[str, Any]]) -> bool:
+    def _verify_range_proofs(self, range_proofs: list[dict[str, Any]]) -> bool:
         """Verify range proofs (simplified version)"""
         # In production, properly verify bulletproofs
         # For now, just check structure
@@ -336,7 +346,7 @@ class MedianVerifierCircuit:
 
         return True
 
-    def _prove_error_bound(self, error: float, bound: float, challenge: bytes) -> Dict[str, Any]:
+    def _prove_error_bound(self, error: float, bound: float, challenge: bytes) -> dict[str, Any]:
         """Prove that error is within bound without revealing exact error"""
         # Create a commitment to the fact that error <= bound
         is_within_bound = error <= bound
@@ -346,7 +356,11 @@ class MedianVerifierCircuit:
 
         if challenge_bit == 0:
             # Reveal the bound check directly
-            return {"type": "direct", "error_within_bound": is_within_bound, "bound": bound}
+            return {
+                "type": "direct",
+                "error_within_bound": is_within_bound,
+                "bound": bound,
+            }
         else:
             # Reveal a commitment
             commitment = self.hash_function(
@@ -393,7 +407,9 @@ if __name__ == "__main__":
         print("\nTest 3: Invalid proof (wrong median)")
         try:
             invalid_proof = circuit.generate_proof(
-                values=values, claimed_median=median + 1.0, error_bound=0.01  # Wrong median
+                values=values,
+                claimed_median=median + 1.0,
+                error_bound=0.01,  # Wrong median
             )
         except ValueError as e:
             print(f"Expected error: {e}")

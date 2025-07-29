@@ -217,7 +217,7 @@ class GPUBindingKernel:
         events: np.ndarray,
         start_position: int,
         hv_encoder,
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    ) -> tuple[np.ndarray, np.ndarray]:
         """
         Process events on GPU asynchronously.
 
@@ -314,7 +314,7 @@ class GPUBindingKernel:
         self,
         hv_encoder,
         stream,
-    ) -> Tuple[cp.ndarray, cp.ndarray]:
+    ) -> tuple[cp.ndarray, cp.ndarray]:
         """
         Load encoding tables from catalytic space.
 
@@ -337,7 +337,7 @@ class GPUBindingKernel:
 
         return pos_table, kmer_table
 
-    def get_memory_usage(self) -> Dict[str, float]:
+    def get_memory_usage(self) -> dict[str, float]:
         """Get GPU memory usage statistics."""
         stats = {}
 

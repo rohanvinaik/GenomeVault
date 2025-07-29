@@ -23,14 +23,14 @@ class NodeInfo(BaseModel):
     is_signatory: bool
     voting_power: int
     endpoint: str
-    latency: Optional[float] = None
+    latency: float | None = None
     available: bool = True
 
 
 class TopologyRequest(BaseModel):
     """Request for network topology"""
 
-    client_location: Optional[str] = None
+    client_location: str | None = None
     required_signatories: int = 2
     max_nodes: int = 10
 
@@ -38,8 +38,8 @@ class TopologyRequest(BaseModel):
 class TopologyResponse(BaseModel):
     """Network topology response"""
 
-    nearest_lns: List[NodeInfo]
-    ts_nodes: List[NodeInfo]
+    nearest_lns: list[NodeInfo]
+    ts_nodes: list[NodeInfo]
     total_nodes: int
     network_health: float
 

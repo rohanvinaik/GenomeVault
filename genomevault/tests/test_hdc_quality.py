@@ -73,13 +73,15 @@ class TestHDCQuality:
                 "variant_pair": (var1, var2),
                 "edit_distance": expected_distance,
                 "hv_similarity": similarity,
-                "preserved": similarity > 0.5 if expected_distance < 10 else similarity < 0.5,
+                "preserved": (similarity > 0.5 if expected_distance < 10 else similarity < 0.5),
             }
             results.append(result)
 
             # Log metrics
             metrics.record(
-                "hdc_similarity_test", similarity, metadata={"edit_distance": expected_distance}
+                "hdc_similarity_test",
+                similarity,
+                metadata={"edit_distance": expected_distance},
             )
 
         # Assertions
@@ -182,7 +184,12 @@ class TestHDCQuality:
         similar_variants = [
             {"chr": "1", "pos": 100001, "ref": "A", "alt": "G"},  # Adjacent
             {"chr": "1", "pos": 100010, "ref": "A", "alt": "G"},  # Nearby
-            {"chr": "1", "pos": 100000, "ref": "A", "alt": "T"},  # Same pos, different alt
+            {
+                "chr": "1",
+                "pos": 100000,
+                "ref": "A",
+                "alt": "T",
+            },  # Same pos, different alt
         ]
 
         # Dissimilar variants (should have low similarity)
@@ -241,7 +248,11 @@ class TestHDCQuality:
         test_seed = 12345
         registry.register_version(
             version="test_v1",
-            params={"dimension": 5000, "projection_type": "gaussian", "seed": test_seed},
+            params={
+                "dimension": 5000,
+                "projection_type": "gaussian",
+                "seed": test_seed,
+            },
             description="Test version for reproducibility",
         )
 
@@ -265,7 +276,11 @@ class TestHDCQuality:
         # Test with different seed
         registry.register_version(
             version="test_v2",
-            params={"dimension": 5000, "projection_type": "gaussian", "seed": test_seed + 1},
+            params={
+                "dimension": 5000,
+                "projection_type": "gaussian",
+                "seed": test_seed + 1,
+            },
         )
 
         encoder3 = registry.get_encoder("test_v2")
@@ -280,8 +295,20 @@ class TestHDCQuality:
         """Test preservation of clinically relevant variant properties."""
         # Pathogenic vs benign variants
         pathogenic_variants = [
-            {"chr": "17", "pos": 41276045, "ref": "T", "alt": "C", "gene": "BRCA1"},  # BRCA1
-            {"chr": "13", "pos": 32953886, "ref": "G", "alt": "A", "gene": "BRCA2"},  # BRCA2
+            {
+                "chr": "17",
+                "pos": 41276045,
+                "ref": "T",
+                "alt": "C",
+                "gene": "BRCA1",
+            },  # BRCA1
+            {
+                "chr": "13",
+                "pos": 32953886,
+                "ref": "G",
+                "alt": "A",
+                "gene": "BRCA2",
+            },  # BRCA2
             {
                 "chr": "7",
                 "pos": 117559590,
@@ -324,7 +351,7 @@ class TestHDCQuality:
             "avg_pathogenic_similarity": (
                 np.mean(pathogenic_similarities) if pathogenic_similarities else 0
             ),
-            "avg_benign_similarity": np.mean(benign_similarities) if benign_similarities else 0,
+            "avg_benign_similarity": (np.mean(benign_similarities) if benign_similarities else 0),
             "avg_cross_similarity": np.mean(cross_similarities),
             "separation_score": (np.mean(pathogenic_similarities) + np.mean(benign_similarities))
             / 2

@@ -116,7 +116,7 @@ class NetworkConfig:
 
     # HIPAA fast-track
     hipaa_verified: bool = False
-    npi_number: Optional[str] = None
+    npi_number: str | None = None
 
 
 @dataclass
@@ -129,7 +129,7 @@ class StorageConfig:
 
     # Database
     db_type: str = "sqlite"  # sqlite, postgresql, mongodb
-    db_path: Optional[str] = None
+    db_path: str | None = None
 
     # Compression
     compression_tier: str = "clinical"  # mini, clinical, full
@@ -163,7 +163,7 @@ class ProcessingConfig:
 class Config:
     """Main configuration manager for GenomeVault"""
 
-    def __init__(self, config_file: Optional[str] = None, environment: Optional[str] = None):
+    def __init__(self, config_file: str | None = None, environment: str | None = None):
         """
         Initialize configuration manager
 
@@ -204,7 +204,7 @@ class Config:
             return
 
         try:
-            with open(self.config_file, "r") as f:
+            with open(self.config_file) as f:
                 if self.config_file.endswith(".yaml") or self.config_file.endswith(".yml"):
                     if HAS_YAML:
                         data = yaml.safe_load(f)
@@ -228,7 +228,7 @@ class Config:
             logger.error(f"Failed to load configuration: {e}")
             raise
 
-    def _update_config_object(self, obj: Any, data: Dict[str, Any]):
+    def _update_config_object(self, obj: Any, data: dict[str, Any]):
         """Update dataclass object with dictionary data"""
         for key, value in data.items():
             if hasattr(obj, key):
@@ -314,7 +314,7 @@ class Config:
         """Decrypt a secret value"""
         return self._cipher.decrypt(encrypted.encode()).decode()
 
-    def get_compression_settings(self) -> Dict[str, Any]:
+    def get_compression_settings(self) -> dict[str, Any]:
         """Get compression settings based on tier"""
         tiers = {
             "mini": {
@@ -359,7 +359,7 @@ class Config:
         k = len([s for s in self.network.pir_servers if s.get("trusted", False)])
         return (1 - q) ** k if k > 0 else 1.0
 
-    def save(self, path: Optional[str] = None):
+    def save(self, path: str | None = None):
         """Save current configuration to file"""
         path = path or self.config_file
 
@@ -385,7 +385,7 @@ class Config:
 
         logger.info(f"Saved configuration to {path}")
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert configuration to dictionary"""
         return {
             "environment": self.environment.value,
@@ -398,7 +398,7 @@ class Config:
 
 
 # Singleton instance
-_config: Optional[Config] = None
+_config: Config | None = None
 
 
 def get_config() -> Config:
@@ -409,7 +409,7 @@ def get_config() -> Config:
     return _config
 
 
-def init_config(config_file: Optional[str] = None, environment: Optional[str] = None):
+def init_config(config_file: str | None = None, environment: str | None = None):
     """Initialize global configuration"""
     global _config
     _config = Config(config_file, environment)

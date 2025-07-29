@@ -24,8 +24,8 @@ class HolographicStructure:
     """Represents a holographic data structure"""
 
     root: torch.Tensor
-    components: Dict[str, torch.Tensor]
-    metadata: Dict[str, Any]
+    components: dict[str, torch.Tensor]
+    metadata: dict[str, Any]
 
 
 class HolographicEncoder:
@@ -51,7 +51,7 @@ class HolographicEncoder:
         logger.info(f"Initialized HolographicEncoder with {dimension}D vectors")
 
     def encode_structure(
-        self, structure: Dict[str, Any], recursive: bool = True
+        self, structure: dict[str, Any], recursive: bool = True
     ) -> HolographicStructure:
         """
         Encode a hierarchical structure holographically
@@ -130,7 +130,7 @@ class HolographicEncoder:
         position: int,
         ref: str,
         alt: str,
-        annotations: Optional[Dict] = None,
+        annotations: dict | None = None,
     ) -> torch.Tensor:
         """
         Encode a genomic variant holographically
@@ -154,7 +154,7 @@ class HolographicEncoder:
         return hologram.root
 
     def encode_gene_expression(
-        self, gene_id: str, expression: float, conditions: Dict[str, Any]
+        self, gene_id: str, expression: float, conditions: dict[str, Any]
     ) -> torch.Tensor:
         """
         Encode gene expression data holographically
@@ -201,7 +201,7 @@ class HolographicEncoder:
         hologram = self.encode_structure(structure)
         return hologram.root
 
-    def create_memory_trace(self, items: List[Dict[str, Any]]) -> torch.Tensor:
+    def create_memory_trace(self, items: list[dict[str, Any]]) -> torch.Tensor:
         """
         Create a memory trace by superimposing multiple items
 
@@ -314,7 +314,7 @@ class HolographicEncoder:
         vector = torch.randn(self.dimension)
         return vector / torch.norm(vector)
 
-    def _encode_sequence(self, sequence: List[Any]) -> torch.Tensor:
+    def _encode_sequence(self, sequence: list[Any]) -> torch.Tensor:
         """Encode a sequence of values"""
         if not sequence:
             return torch.zeros(self.dimension)

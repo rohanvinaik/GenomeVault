@@ -80,7 +80,7 @@ required_entries = [
 ]
 
 if gitignore_path.exists():
-    with open(gitignore_path, "r") as f:
+    with open(gitignore_path) as f:
         gitignore_content = f.read()
 
     missing = []
@@ -173,7 +173,7 @@ logger.info("-" * 40)
 # Check the specific fix we made
 variant_file = Path("zk_proofs/circuits/biological/variant.py")
 if variant_file.exists():
-    with open(variant_file, "r") as f:
+    with open(variant_file) as f:
         content = f.read()
     if "from ..base_circuits import" in content:
         successes.append("✅ variant.py import fix is in place")

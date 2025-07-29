@@ -59,7 +59,9 @@ class TestZKProperties:
 
     @given(
         prs_scores=st.lists(
-            st.floats(min_value=0.0, max_value=1.0, allow_nan=False), min_size=2, max_size=10
+            st.floats(min_value=0.0, max_value=1.0, allow_nan=False),
+            min_size=2,
+            max_size=10,
         )
     )
     @settings(max_examples=50, deadline=None)

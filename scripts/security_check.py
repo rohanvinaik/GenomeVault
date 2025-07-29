@@ -32,7 +32,7 @@ class SecurityChecker:
             "email_phi": re.compile(r"\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|org|edu|gov)\b"),
         }
 
-    def check_logs(self, log_path: Path) -> List[Dict]:
+    def check_logs(self, log_path: Path) -> list[dict]:
         """Check logs for PHI leakage."""
         if not log_path.exists():
             logger.warning(f"Log file not found: {log_path}")
@@ -40,7 +40,7 @@ class SecurityChecker:
 
         findings = []
 
-        with open(log_path, "r") as f:
+        with open(log_path) as f:
             for line_num, line in enumerate(f, 1):
                 for pattern_name, pattern in self.phi_patterns.items():
                     matches = pattern.findall(line)
@@ -57,7 +57,7 @@ class SecurityChecker:
 
         return findings
 
-    def check_config_sanity(self, config_path: Path) -> List[Dict]:
+    def check_config_sanity(self, config_path: Path) -> list[dict]:
         """Check configuration for security issues."""
         if not config_path.exists():
             logger.warning(f"Config file not found: {config_path}")
@@ -65,7 +65,7 @@ class SecurityChecker:
 
         issues = []
 
-        with open(config_path, "r") as f:
+        with open(config_path) as f:
             config = json.load(f)
 
         # Check PIR configuration
@@ -85,7 +85,11 @@ class SecurityChecker:
             # Honesty probability check
             if pir_config.get("server_honesty_hipaa", 0) < 0.95:
                 issues.append(
-                    {"type": "config", "issue": "HIPAA server honesty too low", "severity": "HIGH"}
+                    {
+                        "type": "config",
+                        "issue": "HIPAA server honesty too low",
+                        "severity": "HIGH",
+                    }
                 )
 
             # Privacy failure threshold
@@ -119,12 +123,16 @@ class SecurityChecker:
             # PHI redaction check
             if not log_config.get("redact_phi", False):
                 issues.append(
-                    {"type": "config", "issue": "PHI redaction not enabled", "severity": "CRITICAL"}
+                    {
+                        "type": "config",
+                        "issue": "PHI redaction not enabled",
+                        "severity": "CRITICAL",
+                    }
                 )
 
         return issues
 
-    def check_hardcoded_secrets(self, src_dir: Path) -> List[Dict]:
+    def check_hardcoded_secrets(self, src_dir: Path) -> list[dict]:
         """Check source code for hardcoded secrets."""
         secret_patterns = [
             (re.compile(r'api_key\s*=\s*["\'][^"\']+["\']'), "api_key"),
@@ -136,7 +144,7 @@ class SecurityChecker:
         findings = []
 
         for py_file in src_dir.rglob("*.py"):
-            with open(py_file, "r") as f:
+            with open(py_file) as f:
                 content = f.read()
 
             for pattern, secret_type in secret_patterns:
@@ -153,7 +161,7 @@ class SecurityChecker:
 
         return findings
 
-    def generate_report(self) -> Dict:
+    def generate_report(self) -> dict:
         """Generate security check report."""
         return {
             "summary": {
@@ -214,7 +222,10 @@ def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(description="GenomeVault security checker")
     parser.add_argument(
-        "--project-dir", type=Path, default=Path.cwd(), help="Project directory to check"
+        "--project-dir",
+        type=Path,
+        default=Path.cwd(),
+        help="Project directory to check",
     )
     parser.add_argument("--log-file", type=Path, help="Specific log file to check")
     parser.add_argument("--config-file", type=Path, help="Specific config file to check")

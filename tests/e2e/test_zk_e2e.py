@@ -116,7 +116,7 @@ class TestZKEndToEnd:
             json.dump(proof_data, f)
 
         # Retrieve and verify
-        with open(proof_file, "r") as f:
+        with open(proof_file) as f:
             loaded_data = json.load(f)
 
         # Verify loaded proof
@@ -146,7 +146,9 @@ class TestZKEndToEnd:
                 public_inputs={"min": 18, "max": 65},
             ),
             ProofRequest(
-                proof_type="variant_count", private_inputs={"count": 5}, public_inputs={"max": 10}
+                proof_type="variant_count",
+                private_inputs={"count": 5},
+                public_inputs={"max": 10},
             ),
         ]
 

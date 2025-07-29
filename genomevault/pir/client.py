@@ -32,7 +32,7 @@ class PIRServer:
     honesty_probability: float
     latency_ms: float
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         return {
             "server_id": self.server_id,
             "endpoint": self.endpoint,
@@ -49,9 +49,9 @@ class PIRQuery:
 
     query_id: str
     target_index: int
-    query_vectors: Dict[str, np.ndarray]
+    query_vectors: dict[str, np.ndarray]
     timestamp: float
-    metadata: Optional[Dict] = None
+    metadata: dict | None = None
 
 
 @dataclass
@@ -71,7 +71,7 @@ class PIRClient:
     Implements Chor et al. PIR scheme with enhanced security.
     """
 
-    def __init__(self, servers: List[PIRServer], database_size: int):
+    def __init__(self, servers: list[PIRServer], database_size: int):
         """
         Initialize PIR client.
 
@@ -161,7 +161,7 @@ class PIRClient:
             raise ValueError("Index {target_index} out of bounds")
 
         # Generate query ID
-        query_id = hashlib.sha256("{target_index}:{time.time()}".encode()).hexdigest()[:16]
+        query_id = hashlib.sha256(b"{target_index}:{time.time()}").hexdigest()[:16]
 
         # Create unit vector for target
         e_j = np.zeros(self.database_size)
@@ -185,7 +185,7 @@ class PIRClient:
 
         return query
 
-    def _generate_query_vectors(self, target_vector: np.ndarray) -> Dict[str, np.ndarray]:
+    def _generate_query_vectors(self, target_vector: np.ndarray) -> dict[str, np.ndarray]:
         """
         Generate random query vectors that sum to target vector.
 
@@ -259,7 +259,7 @@ class PIRClient:
 
         return result
 
-    async def _query_server(self, server: PIRServer, query: PIRQuery) -> Optional[PIRResponse]:
+    async def _query_server(self, server: PIRServer, query: PIRQuery) -> PIRResponse | None:
         """
         Query individual PIR server.
 
@@ -312,7 +312,7 @@ class PIRClient:
             logger.error(f"Error querying server {server.server_id}: {e}")
             return None
 
-    def _reconstruct_data(self, responses: List[PIRResponse]) -> Any:
+    def _reconstruct_data(self, responses: list[PIRResponse]) -> Any:
         """
         Reconstruct data from server responses.
 
@@ -352,7 +352,7 @@ class PIRClient:
             # Generic decoding
             return response_data
 
-    def _decode_genomic_data(self, data: np.ndarray) -> Dict:
+    def _decode_genomic_data(self, data: np.ndarray) -> dict:
         """
         Decode genomic reference data.
 
@@ -375,7 +375,7 @@ class PIRClient:
 
         return decoded
 
-    def _decode_reference_data(self, data: np.ndarray) -> Dict:
+    def _decode_reference_data(self, data: np.ndarray) -> dict:
         """Decode reference genome data."""
         # Decode pangenome graph structure
         return {
@@ -384,7 +384,7 @@ class PIRClient:
             "paths": self._extract_paths(data),
         }
 
-    def _decode_annotation_data(self, data: np.ndarray) -> Dict:
+    def _decode_annotation_data(self, data: np.ndarray) -> dict:
         """Decode functional annotations."""
         # Decode variant annotations
         return {
@@ -393,22 +393,22 @@ class PIRClient:
             "population_frequencies": self._extract_frequencies(data),
         }
 
-    def _extract_nodes(self, data: np.ndarray) -> List[Dict]:
+    def _extract_nodes(self, data: np.ndarray) -> list[dict]:
         """Extract graph nodes from data."""
         # Placeholder implementation
         return []
 
-    def _extract_edges(self, data: np.ndarray) -> List[Dict]:
+    def _extract_edges(self, data: np.ndarray) -> list[dict]:
         """Extract graph edges from data."""
         # Placeholder implementation
         return []
 
-    def _extract_paths(self, data: np.ndarray) -> List[Dict]:
+    def _extract_paths(self, data: np.ndarray) -> list[dict]:
         """Extract reference paths from data."""
         # Placeholder implementation
         return []
 
-    def _extract_gene_impact(self, data: np.ndarray) -> Dict:
+    def _extract_gene_impact(self, data: np.ndarray) -> dict:
         """Extract gene impact predictions."""
         # Placeholder implementation
         return {}
@@ -418,12 +418,12 @@ class PIRClient:
         # Placeholder implementation
         return np.array([])
 
-    def _extract_frequencies(self, data: np.ndarray) -> Dict:
+    def _extract_frequencies(self, data: np.ndarray) -> dict:
         """Extract population frequencies."""
         # Placeholder implementation
         return {}
 
-    async def batch_query(self, indices: List[int]) -> List[Any]:
+    async def batch_query(self, indices: list[int]) -> list[Any]:
         """
         Execute multiple PIR queries in batch.
 
@@ -452,7 +452,7 @@ class PIRClient:
 
         return results
 
-    def estimate_communication_cost(self, num_queries: int = 1) -> Dict[str, float]:
+    def estimate_communication_cost(self, num_queries: int = 1) -> dict[str, float]:
         """
         Estimate communication cost for PIR queries.
 
@@ -485,7 +485,7 @@ class PIRClient:
             "queries": num_queries,
         }
 
-    def get_optimal_server_configuration(self) -> Dict[str, Any]:
+    def get_optimal_server_configuration(self) -> dict[str, Any]:
         """
         Calculate optimal server configuration for current setup.
 

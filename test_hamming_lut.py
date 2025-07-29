@@ -69,7 +69,10 @@ def test_batch_computation():
     lut_distances = lut_calc.distance_batch(vecs1_packed, vecs2_packed)
 
     # Verify shape
-    assert lut_distances.shape == (n, m), f"Expected shape {(n, m)}, got {lut_distances.shape}"
+    assert lut_distances.shape == (
+        n,
+        m,
+    ), f"Expected shape {(n, m)}, got {lut_distances.shape}"
 
     # Spot check a few values
     for i in range(min(3, n)):

@@ -34,7 +34,7 @@ class AuditLogger:
         self.logger = structlog.get_logger("audit")
 
     def log_authentication(
-        self, user_id: str, method: str, success: bool, ip_address: Optional[str] = None
+        self, user_id: str, method: str, success: bool, ip_address: str | None = None
     ):
         """Log authentication attempts"""
         event = {
@@ -54,7 +54,7 @@ class AuditLogger:
         resource_id: str,
         action: str,
         success: bool,
-        reason: Optional[str] = None,
+        reason: str | None = None,
     ):
         """Log data access attempts"""
         event = {
@@ -85,8 +85,8 @@ class AuditLogger:
         self,
         actor_id: str,
         action: str,
-        target: Optional[str] = None,
-        details: Optional[Dict[str, Any]] = None,
+        target: str | None = None,
+        details: dict[str, Any] | None = None,
     ):
         """Log governance-related actions"""
         event = {
@@ -120,9 +120,9 @@ class AuditLogger:
     def log_cryptographic_operation(
         self,
         operation: str,
-        key_id: Optional[str] = None,
+        key_id: str | None = None,
         success: _ = True,
-        details: Optional[Dict] = None,
+        details: dict | None = None,
     ):
         """Log cryptographic operations for security audit"""
         event = {
@@ -141,7 +141,7 @@ class AuditLogger:
         actor: str,
         action: str,
         resource: str,
-        metadata: Optional[Dict] = None,
+        metadata: dict | None = None,
     ):
         """Generic event logging method"""
         event = {
@@ -154,7 +154,7 @@ class AuditLogger:
         }
         self._write_audit_log(event)
 
-    def _write_audit_log(self, event: Dict[str, Any]):
+    def _write_audit_log(self, event: dict[str, Any]):
         """Write event to audit log file"""
         # Add event hash for integrity
         event_str = json.dumps(event, sort_keys=True)
@@ -175,7 +175,7 @@ class PerformanceLogger:
         self.logger = structlog.get_logger("performance")
 
     @contextmanager
-    def track_operation(self, operation_name: str, metadata: Optional[Dict] = None):
+    def track_operation(self, operation_name: str, metadata: dict | None = None):
         """Context manager to track operation performance"""
         import time
 
@@ -264,7 +264,7 @@ class SecurityLogger:
         user_id: str,
         resource: str,
         required_permission: str,
-        user_permissions: List[str],
+        user_permissions: list[str],
     ):
         """Log access control violations"""
         self.logger.warning(
@@ -368,7 +368,7 @@ def filter_sensitive_data(logger, log_method, event_dict):
     return cleaned_dict
 
 
-def log_function_call(logger_name: Optional[str] = None):
+def log_function_call(logger_name: str | None = None):
     """Decorator to log function calls with arguments and results"""
 
     def decorator(func):
@@ -422,7 +422,7 @@ def log_genomic_operation(operation_name: str):
     return log_function_call(operation_name)
 
 
-def configure_logging(log_level: _ = "INFO", log_file: Optional[str] = None):
+def configure_logging(log_level: _ = "INFO", log_file: str | None = None):
     """Configure logging settings"""
     _ = getattr(logging, log_level.upper(), logging.INFO)
 

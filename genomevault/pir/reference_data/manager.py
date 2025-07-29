@@ -58,7 +58,7 @@ class PangenomeNode:
     sequence: str
     chromosome: str
     position: int
-    populations: Set[str] = field(default_factory=set)
+    populations: set[str] = field(default_factory=set)
     frequency: float = 0.0
 
     def to_bytes(self) -> bytes:
@@ -81,7 +81,7 @@ class PangenomeEdge:
     source_id: int
     target_id: int
     support: int  # Number of genomes with this edge
-    populations: Set[str] = field(default_factory=set)
+    populations: set[str] = field(default_factory=set)
 
 
 @dataclass
@@ -92,12 +92,12 @@ class VariantAnnotation:
     position: int
     ref_allele: str
     alt_allele: str
-    gene_impact: Optional[str] = None
-    protein_change: Optional[str] = None
-    conservation_score: Optional[float] = None
-    pathogenicity_score: Optional[float] = None
-    population_frequencies: Dict[str, float] = field(default_factory=dict)
-    clinical_significance: Optional[str] = None
+    gene_impact: str | None = None
+    protein_change: str | None = None
+    conservation_score: float | None = None
+    pathogenicity_score: float | None = None
+    population_frequencies: dict[str, float] = field(default_factory=dict)
+    clinical_significance: str | None = None
 
     def to_bytes(self) -> bytes:
         """Convert to bytes for PIR storage."""
@@ -133,17 +133,17 @@ class ReferenceDataManager:
         self.data_directory.mkdir(parents=True, exist_ok=True)
 
         # Pangenome graph
-        self.nodes: Dict[int, PangenomeNode] = {}
-        self.edges: List[PangenomeEdge] = []
-        self.node_index: Dict[Tuple[str, int], List[int]] = {}  # (chr, pos) -> node_ids
+        self.nodes: dict[int, PangenomeNode] = {}
+        self.edges: list[PangenomeEdge] = []
+        self.node_index: dict[tuple[str, int], list[int]] = {}  # (chr, pos) -> node_ids
 
         # Annotations
-        self.variant_annotations: Dict[str, VariantAnnotation] = {}
-        self.gene_annotations: Dict[str, Dict] = {}
+        self.variant_annotations: dict[str, VariantAnnotation] = {}
+        self.gene_annotations: dict[str, dict] = {}
 
         # Indexing structures
-        self.region_index: Dict[str, List[int]] = {}  # chr -> sorted positions
-        self.population_nodes: Dict[str, Set[int]] = {}  # population -> node_ids
+        self.region_index: dict[str, list[int]] = {}  # chr -> sorted positions
+        self.population_nodes: dict[str, set[int]] = {}  # population -> node_ids
 
         # Metadata
         self.metadata = {
@@ -176,7 +176,7 @@ class ReferenceDataManager:
                 annotations_data = json.load(f)
                 self._load_annotations_from_dict(annotations_data)
 
-    def _load_graph_from_dict(self, data: Dict):
+    def _load_graph_from_dict(self, data: dict):
         """Load pangenome graph from dictionary."""
         # Load nodes
         for node_data in data.get("nodes", []):
@@ -204,7 +204,7 @@ class ReferenceDataManager:
         if "metadata" in data:
             self.metadata.update(data["metadata"])
 
-    def _load_annotations_from_dict(self, data: Dict):
+    def _load_annotations_from_dict(self, data: dict):
         """Load variant annotations from dictionary."""
         for var_key, ann_data in data.items():
             annotation = VariantAnnotation(
@@ -262,8 +262,8 @@ class ReferenceDataManager:
         self.metadata["total_variants"] += 1
 
     def get_nodes_in_region(
-        self, region: GenomicRegion, population: Optional[str] = None
-    ) -> List[PangenomeNode]:
+        self, region: GenomicRegion, population: str | None = None
+    ) -> list[PangenomeNode]:
         """
         Get nodes in a genomic region.
 
@@ -301,12 +301,12 @@ class ReferenceDataManager:
 
     def get_variant_annotation(
         self, chromosome: str, position: int, ref_allele: str, alt_allele: str
-    ) -> Optional[VariantAnnotation]:
+    ) -> VariantAnnotation | None:
         """Get annotation for a specific variant."""
         key = "{chromosome}:{position}:{ref_allele}:{alt_allele}"
         return self.variant_annotations.get(key)
 
-    def prepare_for_pir(self, data_type: ReferenceDataType) -> List[bytes]:
+    def prepare_for_pir(self, data_type: ReferenceDataType) -> list[bytes]:
         """
         Prepare reference data for PIR storage.
 
@@ -337,7 +337,7 @@ class ReferenceDataManager:
         logger.info(f"Prepared {len(items)} items of type {data_type.value} for PIR")
         return items
 
-    def _aggregate_population_data(self) -> List[Dict]:
+    def _aggregate_population_data(self) -> list[dict]:
         """Aggregate population-specific data."""
         pop_data = []
 
@@ -369,7 +369,7 @@ class ReferenceDataManager:
 
         return pop_data
 
-    def create_pir_index(self, region: GenomicRegion) -> Dict[str, Any]:
+    def create_pir_index(self, region: GenomicRegion) -> dict[str, Any]:
         """
         Create PIR index for a genomic region.
 
@@ -458,7 +458,7 @@ class ReferenceDataManager:
 
         logger.info("Reference data saved")
 
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get reference data statistics."""
         # Calculate size metrics
         total_sequence_length = sum(len(node.sequence) for node in self.nodes.values())

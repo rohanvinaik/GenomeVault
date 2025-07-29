@@ -37,7 +37,7 @@ class HypervectorBinder:
     that represents their relationship while maintaining reversibility.
     """
 
-    def __init__(self, dimension: int = 10000, seed: Optional[int] = None):
+    def __init__(self, dimension: int = 10000, seed: int | None = None):
         """
         Initialize the binder
 
@@ -57,9 +57,9 @@ class HypervectorBinder:
 
     def bind(
         self,
-        vectors: List[torch.Tensor],
+        vectors: list[torch.Tensor],
         binding_type: BindingType = BindingType.CIRCULAR,
-        weights: Optional[List[float]] = None,
+        weights: list[float] | None = None,
     ) -> torch.Tensor:
         """
         Bind multiple hypervectors together
@@ -110,7 +110,7 @@ class HypervectorBinder:
     def unbind(
         self,
         bound_vector: torch.Tensor,
-        known_vectors: List[torch.Tensor],
+        known_vectors: list[torch.Tensor],
         binding_type: BindingType = BindingType.CIRCULAR,
     ) -> torch.Tensor:
         """
@@ -137,7 +137,7 @@ class HypervectorBinder:
         else:
             raise ValueError(f"Unbinding not implemented for {binding_type}")
 
-    def _multiply_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
+    def _multiply_bind(self, vectors: list[torch.Tensor]) -> torch.Tensor:
         """Element-wise multiplication binding"""
         result = vectors[0].clone()
         for v in vectors[1:]:
@@ -145,7 +145,7 @@ class HypervectorBinder:
         return result
 
     def _multiply_unbind(
-        self, bound_vector: torch.Tensor, known_vectors: List[torch.Tensor]
+        self, bound_vector: torch.Tensor, known_vectors: list[torch.Tensor]
     ) -> torch.Tensor:
         """Unbind using element-wise division"""
         result = bound_vector.clone()
@@ -154,7 +154,7 @@ class HypervectorBinder:
             result = result / (v + 1e-8)
         return result
 
-    def _circular_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
+    def _circular_bind(self, vectors: list[torch.Tensor]) -> torch.Tensor:
         """Circular convolution binding"""
         if len(vectors) == 1:
             return vectors[0]
@@ -178,7 +178,7 @@ class HypervectorBinder:
         return z
 
     def _circular_unbind(
-        self, bound_vector: torch.Tensor, known_vectors: List[torch.Tensor]
+        self, bound_vector: torch.Tensor, known_vectors: list[torch.Tensor]
     ) -> torch.Tensor:
         """Unbind using circular correlation (inverse of convolution)"""
         result = bound_vector
@@ -190,7 +190,7 @@ class HypervectorBinder:
 
         return result
 
-    def _permutation_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
+    def _permutation_bind(self, vectors: list[torch.Tensor]) -> torch.Tensor:
         """Permutation-based binding"""
         result = torch.zeros_like(vectors[0])
 
@@ -204,7 +204,7 @@ class HypervectorBinder:
         return result / len(vectors)
 
     def _permutation_unbind(
-        self, bound_vector: torch.Tensor, known_vectors: List[torch.Tensor]
+        self, bound_vector: torch.Tensor, known_vectors: list[torch.Tensor]
     ) -> torch.Tensor:
         """Unbind using inverse permutations"""
         # Subtract contributions of known vectors
@@ -220,7 +220,7 @@ class HypervectorBinder:
 
         return result[inv_perm]
 
-    def _xor_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
+    def _xor_bind(self, vectors: list[torch.Tensor]) -> torch.Tensor:
         """XOR binding for binary vectors"""
         # Convert to binary
         binary_vectors = [(v > 0).float() for v in vectors]
@@ -235,12 +235,12 @@ class HypervectorBinder:
         return result * 2 - 1
 
     def _xor_unbind(
-        self, bound_vector: torch.Tensor, known_vectors: List[torch.Tensor]
+        self, bound_vector: torch.Tensor, known_vectors: list[torch.Tensor]
     ) -> torch.Tensor:
         """XOR unbinding (XOR is its own inverse)"""
         return self._xor_bind([bound_vector] + known_vectors)
 
-    def _fourier_bind(self, vectors: List[torch.Tensor]) -> torch.Tensor:
+    def _fourier_bind(self, vectors: list[torch.Tensor]) -> torch.Tensor:
         """
         Fourier-based Holographic Reduced Representation (HRR) binding
         This is the most sophisticated binding operation
@@ -265,7 +265,7 @@ class HypervectorBinder:
         return result
 
     def _fourier_unbind(
-        self, bound_vector: torch.Tensor, known_vectors: List[torch.Tensor]
+        self, bound_vector: torch.Tensor, known_vectors: list[torch.Tensor]
     ) -> torch.Tensor:
         """
         Unbind using Fourier-based HRR
@@ -307,7 +307,7 @@ class HypervectorBinder:
         inv_perm[perm] = torch.arange(self.dimension)
         return inv_perm.long()
 
-    def bundle(self, vectors: List[torch.Tensor], normalize: bool = True) -> torch.Tensor:
+    def bundle(self, vectors: list[torch.Tensor], normalize: bool = True) -> torch.Tensor:
         """
         Bundle vectors using superposition (addition)
 
@@ -358,7 +358,7 @@ class HypervectorBinder:
 
     def create_composite_binding(
         self,
-        role_filler_pairs: List[Tuple[torch.Tensor, torch.Tensor]],
+        role_filler_pairs: list[tuple[torch.Tensor, torch.Tensor]],
         binding_type: BindingType = BindingType.FOURIER,
     ) -> torch.Tensor:
         """
@@ -417,7 +417,7 @@ class HypervectorBinder:
         capacity = 1.0 / (1.0 + np.log(num_items))
         return capacity
 
-    def test_binding_properties(self, num_samples: int = 100) -> Dict[str, float]:
+    def test_binding_properties(self, num_samples: int = 100) -> dict[str, float]:
         """
         Test mathematical properties of binding operations
 
@@ -473,7 +473,7 @@ class BindingOperations(HypervectorBinder):
 
 
 # Convenience functions
-def circular_bind(vectors: List[torch.Tensor]) -> torch.Tensor:
+def circular_bind(vectors: list[torch.Tensor]) -> torch.Tensor:
     """Convenience function for circular binding"""
     if not vectors:
         raise ValueError("No vectors provided")
@@ -482,7 +482,7 @@ def circular_bind(vectors: List[torch.Tensor]) -> torch.Tensor:
     return binder.bind(vectors, BindingType.CIRCULAR)
 
 
-def fourier_bind(vectors: List[torch.Tensor]) -> torch.Tensor:
+def fourier_bind(vectors: list[torch.Tensor]) -> torch.Tensor:
     """Convenience function for Fourier-based HRR binding"""
     if not vectors:
         raise ValueError("No vectors provided")

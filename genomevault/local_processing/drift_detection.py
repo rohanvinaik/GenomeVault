@@ -53,10 +53,10 @@ class DriftEvent:
     drift_type: DriftType
     severity: DriftSeverity
     drift_score: float
-    affected_features: List[str]
-    statistical_tests: Dict[str, float]
+    affected_features: list[str]
+    statistical_tests: dict[str, float]
     recommended_action: str
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
 
 
 @dataclass
@@ -67,9 +67,9 @@ class ModelMonitoringState:
     deployment_time: int
     total_predictions: int
     last_update: int
-    drift_events: List[str]
-    performance_metrics: Dict[str, float]
-    distribution_stats: Dict[str, Any]
+    drift_events: list[str]
+    performance_metrics: dict[str, float]
+    distribution_stats: dict[str, Any]
     alert_status: str
 
 
@@ -88,8 +88,8 @@ class RealTimeModelMonitor:
     def __init__(
         self,
         model_id: str,
-        baseline_stats: Dict[str, Any],
-        monitoring_config: Optional[Dict[str, Any]] = None,
+        baseline_stats: dict[str, Any],
+        monitoring_config: dict[str, Any] | None = None,
     ):
         """
         Initialize model monitor.
@@ -125,24 +125,24 @@ class RealTimeModelMonitor:
 
         # Sliding windows for streaming statistics
         self.prediction_window: Deque = deque(maxlen=self.config["window_size"])
-        self.feature_windows: Dict[str, Deque] = defaultdict(
+        self.feature_windows: dict[str, Deque] = defaultdict(
             lambda: deque(maxlen=self.config["window_size"])
         )
         self.performance_window: Deque = deque(maxlen=self.config["performance_window_size"])
 
         # Alert management
-        self.alert_history: List[DriftEvent] = []
-        self.alert_cooldown: Dict[DriftType, int] = {}
+        self.alert_history: list[DriftEvent] = []
+        self.alert_cooldown: dict[DriftType, int] = {}
 
         logger.info(f"Real-time monitor initialized for model {model_id}")
 
     def process_prediction(
         self,
-        input_features: Dict[str, Any],
+        input_features: dict[str, Any],
         prediction: Any,
-        ground_truth: Optional[Any] = None,
-        model_internal_state: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+        ground_truth: Any | None = None,
+        model_internal_state: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """
         Process a single prediction for drift detection.
 
@@ -165,7 +165,11 @@ class RealTimeModelMonitor:
 
         if ground_truth is not None:
             self.performance_window.append(
-                {"prediction": prediction, "ground_truth": ground_truth, "timestamp": time.time()}
+                {
+                    "prediction": prediction,
+                    "ground_truth": ground_truth,
+                    "timestamp": time.time(),
+                }
             )
 
         # Run drift detection
@@ -215,7 +219,7 @@ class RealTimeModelMonitor:
             "recommendations": self._get_recommendations(alerts),
         }
 
-    def get_monitoring_summary(self) -> Dict[str, Any]:
+    def get_monitoring_summary(self) -> dict[str, Any]:
         """Get comprehensive monitoring summary"""
         # Calculate uptime
         uptime_seconds = int(time.time()) - self.state.deployment_time
@@ -256,7 +260,7 @@ class RealTimeModelMonitor:
             "last_update": datetime.fromtimestamp(self.state.last_update).isoformat(),
         }
 
-    def trigger_retraining_protocol(self) -> Dict[str, Any]:
+    def trigger_retraining_protocol(self) -> dict[str, Any]:
         """
         Initiate automated retraining protocol when drift exceeds thresholds.
 
@@ -315,7 +319,7 @@ class RealTimeModelMonitor:
 
         return retraining_request
 
-    def _get_default_config(self) -> Dict[str, Any]:
+    def _get_default_config(self) -> dict[str, Any]:
         """Get default monitoring configuration"""
         return {
             "window_size": 1000,
@@ -328,7 +332,12 @@ class RealTimeModelMonitor:
                 DriftType.PERFORMANCE: 0.05,
                 DriftType.SEMANTIC: 0.2,
             },
-            "severity_thresholds": {"low": 0.1, "medium": 0.25, "high": 0.5, "critical": 0.75},
+            "severity_thresholds": {
+                "low": 0.1,
+                "medium": 0.25,
+                "high": 0.5,
+                "critical": 0.75,
+            },
         }
 
     def _should_check_drift(self, drift_type: DriftType) -> bool:
@@ -349,7 +358,7 @@ class RealTimeModelMonitor:
             return len(self.prediction_window) >= 100
 
     def _create_drift_alert(
-        self, drift_type: DriftType, detection_result: Dict[str, Any]
+        self, drift_type: DriftType, detection_result: dict[str, Any]
     ) -> DriftEvent:
         """Create a drift alert event"""
         # Determine severity
@@ -443,14 +452,14 @@ class RealTimeModelMonitor:
                 self.state.performance_metrics["accuracy"] = accuracy
                 self.state.performance_metrics["error_rate"] = 1 - accuracy
 
-    def _get_drift_event(self, event_id: str) -> Optional[DriftEvent]:
+    def _get_drift_event(self, event_id: str) -> DriftEvent | None:
         """Retrieve drift event by ID"""
         for event in self.alert_history:
             if event.event_id == event_id:
                 return event
         return None
 
-    def _get_recommendations(self, alerts: List[DriftEvent]) -> List[str]:
+    def _get_recommendations(self, alerts: list[DriftEvent]) -> list[str]:
         """Get actionable recommendations based on alerts"""
         if not alerts:
             return ["Continue normal monitoring"]
@@ -481,7 +490,7 @@ class RealTimeModelMonitor:
 
     def _determine_data_requirements(
         self, drift_types: set, affected_features: set
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Determine data requirements for retraining"""
         requirements = {
             "min_samples": 10000,
@@ -515,16 +524,16 @@ class RealTimeModelMonitor:
 class CovariateShiftDetector:
     """Detector for input distribution shifts"""
 
-    def __init__(self, baseline_stats: Dict[str, Any]):
+    def __init__(self, baseline_stats: dict[str, Any]):
         self.baseline_stats = baseline_stats
 
     def detect_drift(
         self,
         prediction_window: Deque,
-        feature_windows: Dict[str, Deque],
+        feature_windows: dict[str, Deque],
         performance_window: Deque,
-        model_internal_state: Optional[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+        model_internal_state: dict[str, Any] | None,
+    ) -> dict[str, Any]:
         """Detect covariate shift in input features"""
         if not feature_windows:
             return {"drift_detected": False, "drift_score": 0.0}
@@ -533,7 +542,10 @@ class CovariateShiftDetector:
         current_stats = {}
         for feature, values in feature_windows.items():
             if len(values) > 0:
-                current_stats[feature] = {"mean": np.mean(values), "std": np.std(values)}
+                current_stats[feature] = {
+                    "mean": np.mean(values),
+                    "std": np.std(values),
+                }
 
         # Compare with baseline
         drift_scores = []
@@ -569,16 +581,16 @@ class CovariateShiftDetector:
 class PredictionDriftDetector:
     """Detector for prediction distribution shifts"""
 
-    def __init__(self, baseline_stats: Dict[str, Any]):
+    def __init__(self, baseline_stats: dict[str, Any]):
         self.baseline_stats = baseline_stats
 
     def detect_drift(
         self,
         prediction_window: Deque,
-        feature_windows: Dict[str, Deque],
+        feature_windows: dict[str, Deque],
         performance_window: Deque,
-        model_internal_state: Optional[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+        model_internal_state: dict[str, Any] | None,
+    ) -> dict[str, Any]:
         """Detect drift in prediction distribution"""
         if len(prediction_window) < 100:
             return {"drift_detected": False, "drift_score": 0.0}
@@ -623,17 +635,17 @@ class PredictionDriftDetector:
 class PerformanceDriftDetector:
     """Detector for model performance degradation"""
 
-    def __init__(self, baseline_stats: Dict[str, Any]):
+    def __init__(self, baseline_stats: dict[str, Any]):
         self.baseline_stats = baseline_stats
         self.performance_buffer = deque(maxlen=1000)
 
     def detect_drift(
         self,
         prediction_window: Deque,
-        feature_windows: Dict[str, Deque],
+        feature_windows: dict[str, Deque],
         performance_window: Deque,
-        model_internal_state: Optional[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+        model_internal_state: dict[str, Any] | None,
+    ) -> dict[str, Any]:
         """Detect performance degradation"""
         if len(performance_window) < 10:
             return {"drift_detected": False, "drift_score": 0.0}
@@ -668,17 +680,17 @@ class PerformanceDriftDetector:
 class SemanticDriftDetector:
     """Detector for semantic model drift using hypervectors"""
 
-    def __init__(self, baseline_stats: Dict[str, Any]):
+    def __init__(self, baseline_stats: dict[str, Any]):
         self.baseline_stats = baseline_stats
         self.baseline_hypervector = baseline_stats.get("model_hypervector")
 
     def detect_drift(
         self,
         prediction_window: Deque,
-        feature_windows: Dict[str, Deque],
+        feature_windows: dict[str, Deque],
         performance_window: Deque,
-        model_internal_state: Optional[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+        model_internal_state: dict[str, Any] | None,
+    ) -> dict[str, Any]:
         """Detect semantic drift in model behavior"""
         if not model_internal_state or not self.baseline_hypervector:
             return {"drift_detected": False, "drift_score": 0.0}

@@ -10,7 +10,8 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
+from collections.abc import Callable
 
 import numpy as np
 
@@ -26,12 +27,12 @@ class ModelArchitecture:
 
     name: str
     model_type: str  # 'neural_network', 'gradient_boosting', 'linear'
-    input_shape: Tuple[int, ...]
-    output_shape: Tuple[int, ...]
-    layers: List[Dict[str, Any]]
-    hyperparameters: Dict[str, Any]
+    input_shape: tuple[int, ...]
+    output_shape: tuple[int, ...]
+    layers: list[dict[str, Any]]
+    hyperparameters: dict[str, Any]
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         return {
             "name": self.name,
             "model_type": self.model_type,
@@ -47,12 +48,12 @@ class FederatedRound:
     """Single round of federated learning."""
 
     round_id: int
-    selected_participants: List[str]
+    selected_participants: list[str]
     model_version: str
     start_time: float
-    end_time: Optional[float] = None
-    aggregated_update: Optional[np.ndarray] = None
-    metrics: Optional[Dict[str, float]] = None
+    end_time: float | None = None
+    aggregated_update: np.ndarray | None = None
+    metrics: dict[str, float] | None = None
 
 
 @dataclass
@@ -63,7 +64,7 @@ class ParticipantContribution:
     round_id: int
     model_update: np.ndarray
     num_samples: int
-    local_metrics: Dict[str, float]
+    local_metrics: dict[str, float]
     dp_noise_added: bool
     timestamp: float
 
@@ -85,7 +86,7 @@ class SecureAggregator:
         self.threshold = threshold
         self.num_shares = num_shares
 
-    def generate_masks(self, num_participants: int, vector_size: int) -> Dict[str, np.ndarray]:
+    def generate_masks(self, num_participants: int, vector_size: int) -> dict[str, np.ndarray]:
         """
         Generate pairwise masks for secure aggregation.
 
@@ -112,8 +113,8 @@ class SecureAggregator:
         self,
         update: np.ndarray,
         participant_id: int,
-        masks: Dict[str, np.ndarray],
-        participant_ids: List[int],
+        masks: dict[str, np.ndarray],
+        participant_ids: list[int],
     ) -> np.ndarray:
         """
         Mask participant update for secure aggregation.
@@ -139,7 +140,7 @@ class SecureAggregator:
         return masked
 
     def aggregate_masked_updates(
-        self, masked_updates: List[np.ndarray], num_samples: List[int]
+        self, masked_updates: list[np.ndarray], num_samples: list[int]
     ) -> np.ndarray:
         """
         Aggregate masked updates with weighted average.
@@ -180,7 +181,7 @@ class DifferentialPrivacyEngine:
         self.delta = delta
         self.clip_norm = clip_norm
 
-    def clip_gradient(self, gradient: np.ndarray) -> Tuple[np.ndarray, float]:
+    def clip_gradient(self, gradient: np.ndarray) -> tuple[np.ndarray, float]:
         """
         Clip gradient to bounded L2 norm.
 
@@ -225,7 +226,7 @@ class DifferentialPrivacyEngine:
 
         return noisy_gradient
 
-    def compute_privacy_spent(self, num_rounds: int) -> Tuple[float, float]:
+    def compute_privacy_spent(self, num_rounds: int) -> tuple[float, float]:
         """
         Compute total privacy budget spent.
 
@@ -272,8 +273,8 @@ class FederatedLearningCoordinator:
         # State
         self.current_round = 0
         self.global_model = self._initialize_model()
-        self.rounds_history: List[FederatedRound] = []
-        self.participants: Dict[str, Dict] = {}
+        self.rounds_history: list[FederatedRound] = []
+        self.participants: dict[str, dict] = {}
 
         logger.info(
             "FederatedLearningCoordinator initialized for {model_architecture.name}",
@@ -292,7 +293,7 @@ class FederatedLearningCoordinator:
         # Initialize with small random values
         return np.random.randn(total_params) * 0.01
 
-    def register_participant(self, participant_id: str, metadata: Dict[str, Any]) -> bool:
+    def register_participant(self, participant_id: str, metadata: dict[str, Any]) -> bool:
         """
         Register a participant for federated learning.
 
@@ -328,7 +329,7 @@ class FederatedLearningCoordinator:
         return True
 
     @performance_logger.log_operation("select_participants")
-    def select_participants(self, target_count: int) -> List[str]:
+    def select_participants(self, target_count: int) -> list[str]:
         """
         Select participants for current round.
 
@@ -440,7 +441,7 @@ class FederatedLearningCoordinator:
 
     @performance_logger.log_operation("aggregate_round")
     def aggregate_round(
-        self, round_id: int, contributions: List[ParticipantContribution]
+        self, round_id: int, contributions: list[ParticipantContribution]
     ) -> np.ndarray:
         """
         Aggregate contributions for a round.
@@ -503,8 +504,8 @@ class FederatedLearningCoordinator:
         return aggregated
 
     def _calculate_round_metrics(
-        self, contributions: List[ParticipantContribution]
-    ) -> Dict[str, float]:
+        self, contributions: list[ParticipantContribution]
+    ) -> dict[str, float]:
         """Calculate metrics for round."""
         metrics = {
             "num_participants": len(contributions),
@@ -546,7 +547,7 @@ class FederatedLearningCoordinator:
 
         return True
 
-    def get_privacy_budget_spent(self) -> Tuple[float, float]:
+    def get_privacy_budget_spent(self) -> tuple[float, float]:
         """
         Get total privacy budget spent so far.
 
@@ -556,7 +557,7 @@ class FederatedLearningCoordinator:
         num_rounds = len([r for r in self.rounds_history if r.end_time is not None])
         return self.dp_engine.compute_privacy_spent(num_rounds)
 
-    def evaluate_model(self, test_function: Callable) -> Dict[str, float]:
+    def evaluate_model(self, test_function: Callable) -> dict[str, float]:
         """
         Evaluate current global model.
 
@@ -596,7 +597,7 @@ class FederatedLearningCoordinator:
 
     def load_checkpoint(self, path: Path):
         """Load model checkpoint."""
-        with open(path, "r") as f:
+        with open(path) as f:
             checkpoint = json.load(f)
 
         self.global_model = np.array(checkpoint["global_model"])

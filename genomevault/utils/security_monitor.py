@@ -24,7 +24,7 @@ logger = get_logger(__name__)
 class SecurityMonitor:
     """Real-time security monitoring and threat detection"""
 
-    def __init__(self, config: Dict[str, Any]):
+    def __init__(self, config: dict[str, Any]):
         self.config = config
         self.threat_threshold = config.get("threat_threshold", 0.8)
         self.anomaly_window = config.get("anomaly_window_minutes", 60)
@@ -48,7 +48,7 @@ class SecurityMonitor:
         action: str,
         success: bool,
         ip_address: str,
-        metadata: Optional[Dict] = None,
+        metadata: dict | None = None,
     ):
         """Monitor access attempts for security threats"""
 
@@ -120,7 +120,7 @@ class SecurityMonitor:
             )
 
     async def monitor_privacy_violations(
-        self, violation_type: str, user_id: str, details: Dict[str, Any]
+        self, violation_type: str, user_id: str, details: dict[str, Any]
     ):
         """Monitor and respond to privacy violations"""
 
@@ -145,7 +145,7 @@ class SecurityMonitor:
         )
 
     async def monitor_cryptographic_operations(
-        self, operation: str, key_id: Optional[str] = None, algorithm: str = None
+        self, operation: str, key_id: str | None = None, algorithm: str = None
     ):
         """Monitor cryptographic operations for suspicious activity"""
 
@@ -164,7 +164,7 @@ class SecurityMonitor:
                 {"operation": operation, "algorithm": algorithm, "key_id": key_id},
             )
 
-    async def _detect_anomaly(self, user_id: str, access_event: Dict) -> bool:
+    async def _detect_anomaly(self, user_id: str, access_event: dict) -> bool:
         """Detect anomalous access patterns using ML"""
 
         # Extract features from access history
@@ -213,7 +213,7 @@ class SecurityMonitor:
         except Exception as e:
             logger.error("anomaly_detector_training_failed", error=str(e))
 
-    def _extract_access_features(self, events: List[Dict]) -> List[float]:
+    def _extract_access_features(self, events: list[dict]) -> list[float]:
         """Extract features from access event sequence"""
 
         if not events:
@@ -231,7 +231,7 @@ class SecurityMonitor:
         success_rate = sum(1 for e in events if e["success"]) / len(events)
 
         # IP diversity
-        unique_ips = len(set(e.get("ip_address", "") for e in events))
+        unique_ips = len({e.get("ip_address", "") for e in events})
 
         features = [
             len(events),  # Event count
@@ -276,7 +276,7 @@ class SecurityMonitor:
         # Reset counter
         self.failed_attempts[ip_address] = 0
 
-    async def _handle_anomaly(self, user_id: str, access_event: Dict):
+    async def _handle_anomaly(self, user_id: str, access_event: dict):
         """Handle detected anomaly"""
 
         security_logger.log_intrusion_attempt(
@@ -298,7 +298,7 @@ class SecurityMonitor:
         # This would integrate with the authentication system
         # to actually block the user
 
-    async def _trigger_alert(self, alert_type: str, details: Dict[str, Any]):
+    async def _trigger_alert(self, alert_type: str, details: dict[str, Any]):
         """Trigger security alert"""
 
         alert = {
@@ -330,7 +330,7 @@ class SecurityMonitor:
 
         return thresholds.get(data_type, 10000)
 
-    def _assess_violation_severity(self, violation_type: str, details: Dict[str, Any]) -> float:
+    def _assess_violation_severity(self, violation_type: str, details: dict[str, Any]) -> float:
         """Assess severity of privacy violation"""
 
         base_severities = {
@@ -349,7 +349,7 @@ class SecurityMonitor:
 
         return severity
 
-    def _calculate_severity(self, alert_type: str, details: Dict[str, Any]) -> float:
+    def _calculate_severity(self, alert_type: str, details: dict[str, Any]) -> float:
         """Calculate alert severity"""
 
         base_severities = {
@@ -366,7 +366,7 @@ class SecurityMonitor:
         """Register callback for security alerts"""
         self.alert_callbacks.append(callback)
 
-    def get_security_status(self) -> Dict[str, Any]:
+    def get_security_status(self) -> dict[str, Any]:
         """Get current security status"""
 
         return {
@@ -381,12 +381,12 @@ class SecurityMonitor:
 class ComplianceMonitor:
     """Monitor compliance with regulations (HIPAA, GDPR, etc.)"""
 
-    def __init__(self, config: Dict[str, Any]):
+    def __init__(self, config: dict[str, Any]):
         self.config = config
         self.compliance_checks = []
         self.violations = []
 
-    async def check_hipaa_compliance(self, operation: str, context: Dict[str, Any]) -> bool:
+    async def check_hipaa_compliance(self, operation: str, context: dict[str, Any]) -> bool:
         """Check HIPAA compliance for operation"""
 
         # Minimum necessary standard
@@ -426,7 +426,7 @@ class ComplianceMonitor:
 
         return True
 
-    async def check_gdpr_compliance(self, operation: str, context: Dict[str, Any]) -> bool:
+    async def check_gdpr_compliance(self, operation: str, context: dict[str, Any]) -> bool:
         """Check GDPR compliance for operation"""
 
         # Consent verification
@@ -468,7 +468,7 @@ class ComplianceMonitor:
 
         return True
 
-    async def _record_violation(self, violation_type: str, details: Dict[str, Any]):
+    async def _record_violation(self, violation_type: str, details: dict[str, Any]):
         """Record compliance violation"""
 
         violation = {
@@ -492,8 +492,8 @@ class ComplianceMonitor:
         logger.warning("compliance_violation", violation_type=violation_type, **details)
 
     def get_compliance_report(
-        self, start_date: Optional[datetime] = None, end_date: Optional[datetime] = None
-    ) -> Dict[str, Any]:
+        self, start_date: datetime | None = None, end_date: datetime | None = None
+    ) -> dict[str, Any]:
         """Generate compliance report"""
 
         # Filter violations by date

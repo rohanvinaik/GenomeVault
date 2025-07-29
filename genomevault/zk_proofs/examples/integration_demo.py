@@ -5,7 +5,6 @@ This example demonstrates the complete workflow for generating and
 verifying privacy-preserving proofs for genomic analyses.
 """
 
-
 # Note: This example uses print() statements for demonstration purposes.
 # In production code, use proper logging instead.
 
@@ -355,9 +354,7 @@ def demonstrate_batch_operations():
                 "private_inputs": {
                     "variant_data": variant,
                     "merkle_proof": {
-                        "path": [
-                            hashlib.sha256(b"batch_{i}_{j}").hexdigest() for j in range(20)
-                        ],
+                        "path": [hashlib.sha256(b"batch_{i}_{j}").hexdigest() for j in range(20)],
                         "indices": [j % 2 for j in range(20)],
                     },
                     "witness_randomness": np.random.bytes(32).hex(),

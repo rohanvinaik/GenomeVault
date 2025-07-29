@@ -74,7 +74,14 @@ class TargetedGenomeVaultFixer:
         # Only process Python files in project directories
         rel_path = path.relative_to(self.base_path)
         return str(rel_path).startswith(
-            ("genomevault/", "tests/", "examples/", "scripts/", "benchmarks/", "devtools/")
+            (
+                "genomevault/",
+                "tests/",
+                "examples/",
+                "scripts/",
+                "benchmarks/",
+                "devtools/",
+            )
         )
 
     def create_backup(self):
@@ -105,7 +112,9 @@ class TargetedGenomeVaultFixer:
             if src_dir.exists():
                 dst_dir = self.backup_dir / dir_name
                 shutil.copytree(
-                    src_dir, dst_dir, ignore=shutil.ignore_patterns("__pycache__", "*.pyc")
+                    src_dir,
+                    dst_dir,
+                    ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
                 )
 
         # Copy important root files
@@ -204,7 +213,10 @@ class TargetedGenomeVaultFixer:
 
                 # Replace print statements
                 content = re.sub(
-                    r"^(\s*)print\((.*?)\)$", r"\1logger.info(\2)", content, flags=re.MULTILINE
+                    r"^(\s*)print\((.*?)\)$",
+                    r"\1logger.info(\2)",
+                    content,
+                    flags=re.MULTILINE,
                 )
                 content = re.sub(
                     r'^(\s*)print\(f(["\'])(.*?)\2\)$',
@@ -241,8 +253,16 @@ class TargetedGenomeVaultFixer:
     def add_complexity_todos(self):
         """Add TODO comments for complex functions"""
         complex_functions = [
-            ("genomevault/hypervector_transform/hdc_encoder.py", "_extract_features", 20),
-            ("genomevault/local_processing/epigenetics.py", "find_differential_peaks", 16),
+            (
+                "genomevault/hypervector_transform/hdc_encoder.py",
+                "_extract_features",
+                20,
+            ),
+            (
+                "genomevault/local_processing/epigenetics.py",
+                "find_differential_peaks",
+                16,
+            ),
             ("genomevault/hypervector_transform/encoding.py", "_extract_features", 15),
         ]
 

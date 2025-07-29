@@ -4,9 +4,9 @@ Final verification test - check if the import path fix worked
 without requiring external dependencies
 """
 
+import logging
 import os
 import sys
-import logging
 
 logger = logging.getLogger(__name__)
 

@@ -34,11 +34,11 @@ class ModelEvolutionVisualizer:
 
     def visualize_semantic_space(
         self,
-        hypervectors: List[np.ndarray],
-        labels: List[str],
+        hypervectors: list[np.ndarray],
+        labels: list[str],
         title: str = "Model Semantic Evolution",
-        save_path: Optional[str] = None,
-    ) -> Dict[str, np.ndarray]:
+        save_path: str | None = None,
+    ) -> dict[str, np.ndarray]:
         """
         Visualize high-dimensional model representations in 2D space.
 
@@ -58,7 +58,10 @@ class ModelEvolutionVisualizer:
 
         # T-SNE for local structure preservation
         tsne = TSNE(
-            n_components=2, perplexity=min(30, len(hypervectors) - 1), random_state=42, n_iter=1000
+            n_components=2,
+            perplexity=min(30, len(hypervectors) - 1),
+            random_state=42,
+            n_iter=1000,
         )
         embeddings_tsne = tsne.fit_transform(X)
 
@@ -172,8 +175,11 @@ class ModelEvolutionVisualizer:
         return self.projections
 
     def detect_semantic_drift(
-        self, snapshot_vectors: List[np.ndarray], threshold: float = 0.15, window_size: int = 5
-    ) -> Tuple[List[float], List[int]]:
+        self,
+        snapshot_vectors: list[np.ndarray],
+        threshold: float = 0.15,
+        window_size: int = 5,
+    ) -> tuple[list[float], list[int]]:
         """
         Detect semantic drift in model evolution.
 
@@ -194,7 +200,8 @@ class ModelEvolutionVisualizer:
         for i in range(1, len(snapshot_vectors)):
             # Cosine similarity between consecutive snapshots
             similarity = cosine_similarity(
-                snapshot_vectors[i - 1].reshape(1, -1), snapshot_vectors[i].reshape(1, -1)
+                snapshot_vectors[i - 1].reshape(1, -1),
+                snapshot_vectors[i].reshape(1, -1),
             )[0, 0]
 
             drift = 1 - similarity
@@ -227,10 +234,10 @@ class ModelEvolutionVisualizer:
 
     def plot_drift_analysis(
         self,
-        drift_scores: List[float],
-        anomaly_indices: List[int],
-        labels: Optional[List[str]] = None,
-        save_path: Optional[str] = None,
+        drift_scores: list[float],
+        anomaly_indices: list[int],
+        labels: list[str] | None = None,
+        save_path: str | None = None,
     ):
         """
         Plot semantic drift analysis over training.
@@ -287,7 +294,7 @@ class ModelEvolutionVisualizer:
 
     def analyze_trajectory_smoothness(
         self, projections: np.ndarray, projection_type: str = "umap"
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """
         Analyze the smoothness of model evolution trajectory.
 
@@ -346,8 +353,8 @@ class ModelEvolutionVisualizer:
         return metrics
 
     def detect_training_phases(
-        self, snapshot_vectors: List[np.ndarray], n_phases: int = 3
-    ) -> List[Tuple[int, int]]:
+        self, snapshot_vectors: list[np.ndarray], n_phases: int = 3
+    ) -> list[tuple[int, int]]:
         """
         Detect distinct phases in model training based on semantic changes.
 
@@ -373,7 +380,7 @@ class ModelEvolutionVisualizer:
         drift_changes = np.abs(np.diff(drift_scores))
 
         # Find top n_phases-1 change points
-        change_points = np.argsort(drift_changes)[-1 - ((n_phases - 1)) :]
+        change_points = np.argsort(drift_changes)[-1 - (n_phases - 1) :]
         change_points = sorted(change_points) + [len(snapshot_vectors) - 1]
 
         # Create phase boundaries
@@ -389,10 +396,10 @@ class ModelEvolutionVisualizer:
 
     def create_phase_visualization(
         self,
-        hypervectors: List[np.ndarray],
-        phases: List[Tuple[int, int]],
-        labels: List[str],
-        save_path: Optional[str] = None,
+        hypervectors: list[np.ndarray],
+        phases: list[tuple[int, int]],
+        labels: list[str],
+        save_path: str | None = None,
     ):
         """
         Visualize training phases with different colors.
@@ -453,10 +460,10 @@ class ModelEvolutionVisualizer:
 
 def create_semantic_debugging_report(
     visualizer: ModelEvolutionVisualizer,
-    snapshot_vectors: List[np.ndarray],
-    labels: List[str],
+    snapshot_vectors: list[np.ndarray],
+    labels: list[str],
     output_path: str = "./semantic_debug_report.png",
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Create comprehensive semantic debugging report.
 
@@ -546,7 +553,14 @@ def create_semantic_debugging_report(
     Trajectory Smoothness: {metrics['smoothness']:.3f}
     Path Efficiency: {metrics['efficiency']:.3f}
     """
-    ax6.text(0.1, 0.5, summary_text, fontsize=12, family="monospace", verticalalignment="center")
+    ax6.text(
+        0.1,
+        0.5,
+        summary_text,
+        fontsize=12,
+        family="monospace",
+        verticalalignment="center",
+    )
 
     plt.suptitle("Model Semantic Debugging Report", fontsize=16)
     plt.tight_layout()

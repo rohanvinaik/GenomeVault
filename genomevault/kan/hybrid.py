@@ -108,7 +108,7 @@ class BiologicalPattern:
     """Discovered biological pattern from KAN analysis."""
 
     pattern_type: str  # 'monotonic', 'periodic', 'threshold', etc.
-    genes: List[str]
+    genes: list[str]
     confidence: float
     mathematical_form: str
     biological_interpretation: str
@@ -123,7 +123,7 @@ class KANEncoder:
         hidden_dim: int,
         output_dim: int,
         n_layers: int = 3,
-        spline_config: Optional[SplineConfig] = None,
+        spline_config: SplineConfig | None = None,
     ):
         self.input_dim = input_dim
         self.hidden_dim = hidden_dim
@@ -133,9 +133,9 @@ class KANEncoder:
 
         # Initialize KAN layers
         self.layers = self._init_layers()
-        self.patterns: List[BiologicalPattern] = []
+        self.patterns: list[BiologicalPattern] = []
 
-    def _init_layers(self) -> List[Dict[str, Any]]:
+    def _init_layers(self) -> list[dict[str, Any]]:
         """Initialize KAN layers with spline edges."""
         layers = []
         dims = [self.input_dim] + [self.hidden_dim] * (self.n_layers - 1) + [self.output_dim]
@@ -153,7 +153,7 @@ class KANEncoder:
 
         return layers
 
-    def encode(self, x: np.ndarray) -> Tuple[np.ndarray, CompressionMetrics]:
+    def encode(self, x: np.ndarray) -> tuple[np.ndarray, CompressionMetrics]:
         """Encode genomic data with compression metrics."""
         import time
 
@@ -188,8 +188,8 @@ class KANEncoder:
         return h, metrics
 
     def discover_patterns(
-        self, x: np.ndarray, gene_names: Optional[List[str]] = None
-    ) -> List[BiologicalPattern]:
+        self, x: np.ndarray, gene_names: list[str] | None = None
+    ) -> list[BiologicalPattern]:
         """Discover biological patterns from learned splines."""
         self.patterns = []
 
@@ -205,8 +205,8 @@ class KANEncoder:
         return self.patterns
 
     def _analyze_spline_pattern(
-        self, spline: Spline1D, input_idx: int, gene_names: Optional[List[str]] = None
-    ) -> Optional[BiologicalPattern]:
+        self, spline: Spline1D, input_idx: int, gene_names: list[str] | None = None
+    ) -> BiologicalPattern | None:
         """Analyze individual spline for biological patterns."""
         # Sample spline function
         x = np.linspace(-1, 1, 100)
@@ -272,7 +272,7 @@ class ClinicalCalibration:
     error_budget: float  # Maximum allowed error
     confidence_level: float
     calibrated: bool = False
-    calibration_metrics: Dict[str, float] = field(default_factory=dict)
+    calibration_metrics: dict[str, float] = field(default_factory=dict)
 
 
 class HybridKANHD:
@@ -281,7 +281,7 @@ class HybridKANHD:
     def __init__(
         self,
         genomic_dim: int = 30000,
-        hd_dims: List[int] = None,
+        hd_dims: list[int] = None,
         kan_hidden_dim: int = 256,
         kan_output_dim: int = 64,
         privacy_tier: PrivacyTier = PrivacyTier.SENSITIVE,
@@ -304,7 +304,7 @@ class HybridKANHD:
         }
 
         # Clinical calibration
-        self.calibrations: Dict[str, ClinicalCalibration] = {}
+        self.calibrations: dict[str, ClinicalCalibration] = {}
         self._init_clinical_calibrations()
 
     def _init_hd_projection(self, kan_dim: int, hd_dim: int) -> np.ndarray:
@@ -323,8 +323,11 @@ class HybridKANHD:
         self.calibrations = use_cases
 
     def encode_genomic_data(
-        self, genomic_data: np.ndarray, resolution: int = 15000, use_case: str = "research"
-    ) -> Dict[str, Any]:
+        self,
+        genomic_data: np.ndarray,
+        resolution: int = 15000,
+        use_case: str = "research",
+    ) -> dict[str, Any]:
         """Encode genomic data with clinical calibration."""
         # Validate resolution
         if resolution not in self.hd_dims:
@@ -374,7 +377,7 @@ class HybridKANHD:
         return base_noise * error_budget
 
     def validate_clinical_compliance(
-        self, encoded_data: Dict[str, Any], test_data: Optional[np.ndarray] = None
+        self, encoded_data: dict[str, Any], test_data: np.ndarray | None = None
     ) -> bool:
         """Validate encoded data meets clinical requirements."""
         calibration = encoded_data["calibration"]
@@ -388,8 +391,8 @@ class HybridKANHD:
         return True
 
     def generate_interpretability_report(
-        self, genomic_data: np.ndarray, gene_names: Optional[List[str]] = None
-    ) -> Dict[str, Any]:
+        self, genomic_data: np.ndarray, gene_names: list[str] | None = None
+    ) -> dict[str, Any]:
         """Generate scientific interpretability report."""
         # Discover patterns
         patterns = self.kan_encoder.discover_patterns(genomic_data, gene_names)
@@ -412,7 +415,7 @@ class HybridKANHD:
 
         return report
 
-    def _assess_clinical_relevance(self, patterns: List[BiologicalPattern]) -> Dict[str, Any]:
+    def _assess_clinical_relevance(self, patterns: list[BiologicalPattern]) -> dict[str, Any]:
         """Assess clinical relevance of discovered patterns."""
         relevance_scores = {
             "monotonic_increasing": 0.8,  # Dose-response relationships
@@ -466,12 +469,15 @@ class FederatedKANHD:
     def __init__(self, base_model: HybridKANHD, federation_config: FederationConfig):
         self.base_model = base_model
         self.config = federation_config
-        self.participants: Dict[str, Dict[str, Any]] = {}
-        self.reputation_scores: Dict[str, float] = {}
-        self.round_history: List[Dict[str, Any]] = []
+        self.participants: dict[str, dict[str, Any]] = {}
+        self.reputation_scores: dict[str, float] = {}
+        self.round_history: list[dict[str, Any]] = []
 
     def register_participant(
-        self, participant_id: str, institution: str, data_characteristics: Dict[str, Any]
+        self,
+        participant_id: str,
+        institution: str,
+        data_characteristics: dict[str, Any],
     ) -> bool:
         """Register a new participant in the federation."""
         if participant_id in self.participants:
@@ -488,8 +494,8 @@ class FederatedKANHD:
         return True
 
     def federated_round(
-        self, local_updates: Dict[str, np.ndarray]
-    ) -> Tuple[np.ndarray, Dict[str, Any]]:
+        self, local_updates: dict[str, np.ndarray]
+    ) -> tuple[np.ndarray, dict[str, Any]]:
         """Execute one round of federated learning."""
         # Filter by reputation
         valid_updates = {
@@ -528,13 +534,13 @@ class FederatedKANHD:
 
         return aggregated, round_info
 
-    def _secure_mean_aggregation(self, updates: Dict[str, np.ndarray]) -> np.ndarray:
+    def _secure_mean_aggregation(self, updates: dict[str, np.ndarray]) -> np.ndarray:
         """Secure averaging of updates."""
         values = list(updates.values())
         return np.mean(values, axis=0)
 
     def _trimmed_mean_aggregation(
-        self, updates: Dict[str, np.ndarray], trim_pct: float = 0.2
+        self, updates: dict[str, np.ndarray], trim_pct: float = 0.2
     ) -> np.ndarray:
         """Trimmed mean to handle outliers."""
         values = np.array(list(updates.values()))
@@ -559,7 +565,7 @@ class FederatedKANHD:
         noise = np.random.normal(0, noise_scale, aggregated.shape)
         return aggregated + noise
 
-    def _update_reputation_scores(self, updates: Dict[str, np.ndarray]):
+    def _update_reputation_scores(self, updates: dict[str, np.ndarray]):
         """Update participant reputation based on contribution quality."""
         # Simple reputation: penalize outliers
         mean_update = np.mean(list(updates.values()), axis=0)
@@ -573,7 +579,7 @@ class FederatedKANHD:
             else:  # Potential outlier
                 self.reputation_scores[pid] = max(0.0, self.reputation_scores[pid] - 0.05)
 
-    def generate_federation_report(self) -> Dict[str, Any]:
+    def generate_federation_report(self) -> dict[str, Any]:
         """Generate comprehensive federation report."""
         return {
             "federation_size": len(self.participants),
@@ -596,7 +602,7 @@ class FederatedKANHD:
             "convergence_metrics": self._compute_convergence_metrics(),
         }
 
-    def _compute_convergence_metrics(self) -> Dict[str, float]:
+    def _compute_convergence_metrics(self) -> dict[str, float]:
         """Compute convergence metrics for the federation."""
         if len(self.round_history) < 2:
             return {"status": "insufficient_data"}

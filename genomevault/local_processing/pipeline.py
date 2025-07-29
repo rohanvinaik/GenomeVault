@@ -37,7 +37,7 @@ class MultiOmicsPipeline:
             OmicsType.PROTEOMIC: self._process_proteomic,
         }
 
-    async def process(self, input_data: Dict[OmicsType, Path], output_dir: Path) -> Dict[str, Any]:
+    async def process(self, input_data: dict[OmicsType, Path], output_dir: Path) -> dict[str, Any]:
         """
         Process multi-omics data through secure pipeline
 
@@ -83,7 +83,7 @@ class MultiOmicsPipeline:
 
     async def _process_single_omics(
         self, omics_type: OmicsType, input_path: Path, output_dir: Path
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Process a single omics data type"""
         logger.info(f"Processing {omics_type.value} data from {input_path}")
 
@@ -111,7 +111,7 @@ class MultiOmicsPipeline:
             "processing_stats": processed_data.get("stats", {}),
         }
 
-    async def _process_genomic(self, input_path: Path, output_dir: Path) -> Dict[str, Any]:
+    async def _process_genomic(self, input_path: Path, output_dir: Path) -> dict[str, Any]:
         """Process genomic data (VCF/FASTA)"""
         # Validate input
         validate_genomic_data(input_path)
@@ -127,7 +127,7 @@ class MultiOmicsPipeline:
             "stats": {"snps": 800, "indels": 200, "quality_score": 0.95},
         }
 
-    async def _process_transcriptomic(self, input_path: Path, output_dir: Path) -> Dict[str, Any]:
+    async def _process_transcriptomic(self, input_path: Path, output_dir: Path) -> dict[str, Any]:
         """Process transcriptomic data (expression matrices)"""
         validate_transcriptomic_data(input_path)
 
@@ -143,7 +143,7 @@ class MultiOmicsPipeline:
             },
         }
 
-    async def _process_epigenetic(self, input_path: Path, output_dir: Path) -> Dict[str, Any]:
+    async def _process_epigenetic(self, input_path: Path, output_dir: Path) -> dict[str, Any]:
         """Process epigenetic data (methylation)"""
         await asyncio.sleep(0.5)  # Simulate processing
 
@@ -157,7 +157,7 @@ class MultiOmicsPipeline:
             },
         }
 
-    async def _process_proteomic(self, input_path: Path, output_dir: Path) -> Dict[str, Any]:
+    async def _process_proteomic(self, input_path: Path, output_dir: Path) -> dict[str, Any]:
         """Process proteomic data (mass spec)"""
         await asyncio.sleep(0.5)  # Simulate processing
 
@@ -171,7 +171,7 @@ class MultiOmicsPipeline:
             },
         }
 
-    def _generate_metadata(self, results: Dict[str, Any]) -> Dict[str, Any]:
+    def _generate_metadata(self, results: dict[str, Any]) -> dict[str, Any]:
         """Generate combined metadata for all processed omics"""
         return {
             "pipeline_version": "3.0.0",

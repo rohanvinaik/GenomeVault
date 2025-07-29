@@ -12,7 +12,8 @@ import contextlib
 import multiprocessing as mp
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from functools import lru_cache
-from typing import Any, Callable, Dict, Generator, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
+from collections.abc import Callable, Generator
 
 import cupy as cp  # GPU arrays
 import numba
@@ -67,7 +68,7 @@ class HypervectorAccelerator:
         return distance
 
     def hamming_distance(
-        self, v1: Union[np.ndarray, torch.Tensor], v2: Union[np.ndarray, torch.Tensor]
+        self, v1: np.ndarray | torch.Tensor, v2: np.ndarray | torch.Tensor
     ) -> int:
         """Compute Hamming distance with hardware acceleration"""
 
@@ -106,7 +107,7 @@ class HypervectorAccelerator:
         return dot_product / (np.sqrt(norm1) * np.sqrt(norm2))
 
     def cosine_similarity(
-        self, v1: Union[np.ndarray, torch.Tensor], v2: Union[np.ndarray, torch.Tensor]
+        self, v1: np.ndarray | torch.Tensor, v2: np.ndarray | torch.Tensor
     ) -> float:
         """Compute cosine similarity with hardware acceleration"""
 
@@ -133,7 +134,7 @@ class HypervectorAccelerator:
         else:
             return self._cosine_similarity_cpu(v1.astype(np.float32), v2.astype(np.float32))
 
-    def batch_hamming_distance(self, vectors: List[np.ndarray], query: np.ndarray) -> np.ndarray:
+    def batch_hamming_distance(self, vectors: list[np.ndarray], query: np.ndarray) -> np.ndarray:
         """Compute Hamming distances for batch of vectors"""
 
         if self.backend == "torch":
@@ -234,7 +235,7 @@ class MemoryEfficientStorage:
         else:
             raise IndexError("Vector index out of range")
 
-    def _compress_chunk(self, vectors: List[np.ndarray]) -> bytes:
+    def _compress_chunk(self, vectors: list[np.ndarray]) -> bytes:
         """Compress a chunk of vectors"""
         # Stack vectors and compress
         chunk_array = np.stack(vectors)
@@ -250,12 +251,12 @@ class MemoryEfficientStorage:
 class ParallelProcessor:
     """Utilities for parallel processing of genomic data"""
 
-    def __init__(self, n_workers: Optional[int] = None):
+    def __init__(self, n_workers: int | None = None):
         self.n_workers = n_workers or CPU_COUNT
         self.thread_pool = ThreadPoolExecutor(max_workers=self.n_workers)
         self.process_pool = ProcessPoolExecutor(max_workers=self.n_workers)
 
-    def parallel_map(self, func: Callable, items: List, use_processes: bool = False) -> List:
+    def parallel_map(self, func: Callable, items: list, use_processes: bool = False) -> list:
         """Apply function to items in parallel"""
 
         pool = self.process_pool if use_processes else self.thread_pool
@@ -328,7 +329,7 @@ class ResourceMonitor:
     def __init__(self):
         self.process = psutil.Process()
 
-    def get_memory_usage(self) -> Dict[str, float]:
+    def get_memory_usage(self) -> dict[str, float]:
         """Get current memory usage"""
         memory_info = self.process.memory_info()
         return {

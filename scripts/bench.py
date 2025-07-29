@@ -30,9 +30,13 @@ class BenchmarkHarness:
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.results = []
 
-    def add_result(self, test_name: str, metrics: Dict):
+    def add_result(self, test_name: str, metrics: dict):
         """Add benchmark result."""
-        result = {"test": test_name, "timestamp": datetime.now().isoformat(), "metrics": metrics}
+        result = {
+            "test": test_name,
+            "timestamp": datetime.now().isoformat(),
+            "metrics": metrics,
+        }
         self.results.append(result)
 
     def save_results(self):
@@ -226,7 +230,11 @@ class ZKBenchmark:
         logger.info("Starting ZK benchmarks...")
 
         # Placeholder for ZK benchmarks
-        results = {"proof_generation_ms": 150, "proof_size_bytes": 384, "verification_ms": 25}
+        results = {
+            "proof_generation_ms": 150,
+            "proof_size_bytes": 384,
+            "verification_ms": 25,
+        }
 
         self.harness.add_result("zk_basic", results)
 
@@ -283,7 +291,7 @@ class HDCBenchmark:
             logger.warning(f"HDC benchmark script not found at {script_path}")
             await self._run_basic_hdc_benchmarks()
 
-    def _load_latest_hdc_results(self) -> Optional[Dict]:
+    def _load_latest_hdc_results(self) -> dict | None:
         """Load the most recent HDC benchmark results."""
         try:
             # Find the most recent JSON file
@@ -293,7 +301,7 @@ class HDCBenchmark:
 
             latest_file = max(json_files, key=lambda f: f.stat().st_mtime)
 
-            with open(latest_file, "r") as f:
+            with open(latest_file) as f:
                 data = json.load(f)
 
             # Extract summary metrics
@@ -379,7 +387,10 @@ def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(description="GenomeVault benchmark harness")
     parser.add_argument(
-        "--lane", choices=["zk", "pir", "hdc"], required=True, help="Benchmark lane to run"
+        "--lane",
+        choices=["zk", "pir", "hdc"],
+        required=True,
+        help="Benchmark lane to run",
     )
     parser.add_argument("--output", default="benchmarks", help="Output directory for results")
 

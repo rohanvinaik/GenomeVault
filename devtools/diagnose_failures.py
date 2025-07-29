@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Quick diagnostic to see what's failing"""
 
+import logging
 import sys
 import traceback
-import logging
 
 logger = logging.getLogger(__name__)
 

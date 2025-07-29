@@ -61,9 +61,7 @@ class TopologyRequest(BaseModel):
     location: dict[str, float] | None = Field(
         None, description="User location for nearest node discovery"
     )
-    node_requirements: dict[str, Any] | None = Field(
-        None, description="Specific node requirements"
-    )
+    node_requirements: dict[str, Any] | None = Field(None, description="Specific node requirements")
 
 
 class TopologyResponse(BaseModel):

@@ -171,7 +171,12 @@ class TestVariantProofCircuit:
         circuit = VariantProofCircuit(merkle_depth=5)
 
         # Test all valid chromosome values
-        valid_chromosomes = [f"chr{i}" for i in range(1, 23)] + ["chrX", "chrY", "chrMT", "chrM"]
+        valid_chromosomes = [f"chr{i}" for i in range(1, 23)] + [
+            "chrX",
+            "chrY",
+            "chrMT",
+            "chrM",
+        ]
 
         for chr_name in valid_chromosomes:
             variant_data = {"chr": chr_name, "pos": 12345, "ref": "A", "alt": "G"}
@@ -398,7 +403,10 @@ class ZKCircuitStateMachine(RuleBasedStateMachine):
         self.total_count = 0
         self.circuit = VariantFrequencyCircuit(max_snps=10, merkle_depth=5)
 
-    @rule(snp_id=st.text(min_size=5, max_size=10), count=st.integers(min_value=0, max_value=5000))
+    @rule(
+        snp_id=st.text(min_size=5, max_size=10),
+        count=st.integers(min_value=0, max_value=5000),
+    )
     def add_variant(self, snp_id, count):
         """Add a variant with count."""
         if len(self.variants) < 10:
@@ -472,9 +480,17 @@ def test_malformed_public_inputs():
         # Missing required field
         {"reference_hash": "abc123", "commitment_root": "def456"},
         # Invalid hash format
-        {"variant_hash": "not-a-hash", "reference_hash": "abc123", "commitment_root": "def456"},
+        {
+            "variant_hash": "not-a-hash",
+            "reference_hash": "abc123",
+            "commitment_root": "def456",
+        },
         # Wrong type
-        {"variant_hash": 12345, "reference_hash": "abc123", "commitment_root": "def456"},
+        {
+            "variant_hash": 12345,
+            "reference_hash": "abc123",
+            "commitment_root": "def456",
+        },
     ]
 
     for i, malformed_input in enumerate(malformed_cases):

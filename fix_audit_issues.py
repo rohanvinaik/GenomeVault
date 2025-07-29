@@ -131,7 +131,10 @@ class GenomeVaultFixer:
             # Replace print statements
             # Simple print() -> logger.info()
             content = re.sub(
-                r"^(\s*)print\((.*?)\)$", r"\1logger.info(\2)", content, flags=re.MULTILINE
+                r"^(\s*)print\((.*?)\)$",
+                r"\1logger.info(\2)",
+                content,
+                flags=re.MULTILINE,
             )
 
             # print(f"...") -> logger.info(f"...")
@@ -245,7 +248,7 @@ class GenomeVaultFixer:
         except Exception as e:
             logger.error(f"Error processing {file_path}: {e}")
 
-    def _determine_exceptions(self, try_block: str) -> List[str]:
+    def _determine_exceptions(self, try_block: str) -> list[str]:
         """Determine appropriate exceptions based on code patterns"""
         exceptions = []
 
@@ -284,9 +287,21 @@ class GenomeVaultFixer:
         """Refactor functions with high complexity"""
         complex_functions = [
             ("genomevault/cli/training_proof_cli.py", "verify_proof", 20),
-            ("genomevault/local_processing/epigenetics.py", "find_differential_peaks", 20),
-            ("genomevault/hypervector_transform/hdc_encoder.py", "_extract_features", 20),
-            ("genomevault/local_processing/proteomics.py", "differential_expression", 17),
+            (
+                "genomevault/local_processing/epigenetics.py",
+                "find_differential_peaks",
+                20,
+            ),
+            (
+                "genomevault/hypervector_transform/hdc_encoder.py",
+                "_extract_features",
+                20,
+            ),
+            (
+                "genomevault/local_processing/proteomics.py",
+                "differential_expression",
+                17,
+            ),
             ("genomevault/local_processing/sequencing.py", "_run_quality_control", 17),
         ]
 

@@ -28,7 +28,7 @@ class CompressionProfile:
     max_size_kb: int
     feature_count: int
     description: str
-    omics_types: List[OmicsType] = field(default_factory=list)
+    omics_types: list[OmicsType] = field(default_factory=list)
 
 
 @dataclass
@@ -40,8 +40,8 @@ class CompressedData:
     data: bytes
     size_bytes: int
     checksum: str
-    metadata: Dict[str, Any]
-    omics_included: List[OmicsType]
+    metadata: dict[str, Any]
+    omics_included: list[OmicsType]
 
     def verify_checksum(self) -> bool:
         """Verify data integrity"""
@@ -91,7 +91,7 @@ class CompressionEngine:
         self.variant_databases = self._load_variant_databases()
         logger.info("Compression engine initialized")
 
-    def _load_variant_databases(self) -> Dict[str, List[str]]:
+    def _load_variant_databases(self) -> dict[str, list[str]]:
         """Load reference variant databases for compression tiers"""
         # In production, these would be loaded from actual databases
         databases = {
@@ -106,7 +106,7 @@ class CompressionEngine:
         return databases
 
     def compress(
-        self, data: Dict[str, Any], tier: CompressionTier, sample_id: str
+        self, data: dict[str, Any], tier: CompressionTier, sample_id: str
     ) -> CompressedData:
         """
         Compress multi-omics data according to specified tier.
@@ -170,7 +170,7 @@ class CompressionEngine:
         logger.info(f"Compression complete: {size_kb:.1f}KB ({tier.value} tier)")
         return compressed_data
 
-    def _compress_mini_tier(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    def _compress_mini_tier(self, data: dict[str, Any]) -> dict[str, Any]:
         """
         Mini tier compression: ~25KB with 5,000 most-studied SNPs.
         """
@@ -203,7 +203,7 @@ class CompressionEngine:
 
         return compressed
 
-    def _compress_clinical_tier(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    def _compress_clinical_tier(self, data: dict[str, Any]) -> dict[str, Any]:
         """
         Clinical tier compression: ~300KB with ACMG + PharmGKB variants.
         """
@@ -260,7 +260,7 @@ class CompressionEngine:
 
         return compressed
 
-    def _compress_full_tier(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    def _compress_full_tier(self, data: dict[str, Any]) -> dict[str, Any]:
         """
         Full tier compression: 100-200KB per modality using HDC vectors.
         """
@@ -273,7 +273,8 @@ class CompressionEngine:
                 # For now, simulate with compressed representation
                 compressed["modalities"][modality] = {
                     "hypervector": self._create_mock_hypervector(
-                        data[modality], 10000  # 10,000-D as specified
+                        data[modality],
+                        10000,  # 10,000-D as specified
                     ),
                     "stats": self._extract_modality_stats(data[modality]),
                 }
@@ -295,7 +296,7 @@ class CompressionEngine:
 
         return compressed
 
-    def _is_acmg_variant(self, variant: Dict[str, Any]) -> bool:
+    def _is_acmg_variant(self, variant: dict[str, Any]) -> bool:
         """Check if variant is in ACMG secondary findings list"""
         # Simplified check - in production would use actual ACMG database
         acmg_genes = [
@@ -319,7 +320,7 @@ class CompressionEngine:
         ]
         return variant.get("gene", "") in acmg_genes
 
-    def _is_pharmgkb_variant(self, variant: Dict[str, Any]) -> bool:
+    def _is_pharmgkb_variant(self, variant: dict[str, Any]) -> bool:
         """Check if variant is pharmacogenomically relevant"""
         # Simplified check - in production would use PharmGKB database
         pgx_genes = [
@@ -340,7 +341,7 @@ class CompressionEngine:
         ]
         return variant.get("gene", "") in pgx_genes
 
-    def _compress_lab_values(self, lab_results: Dict[str, Any]) -> Dict[str, Any]:
+    def _compress_lab_values(self, lab_results: dict[str, Any]) -> dict[str, Any]:
         """Compress laboratory values for clinical tier"""
         compressed_labs = {}
 
@@ -373,7 +374,7 @@ class CompressionEngine:
 
         return compressed_labs
 
-    def _create_mock_hypervector(self, modality_data: Dict[str, Any], dimensions: int) -> str:
+    def _create_mock_hypervector(self, modality_data: dict[str, Any], dimensions: int) -> str:
         """
         Create mock hypervector representation.
         In production, this would use the actual hypervector encoder.
@@ -393,7 +394,7 @@ class CompressionEngine:
 
         return base64.b64encode(expanded).decode("ascii")
 
-    def _extract_modality_stats(self, modality_data: Dict[str, Any]) -> Dict[str, Any]:
+    def _extract_modality_stats(self, modality_data: dict[str, Any]) -> dict[str, Any]:
         """Extract key statistics from modality data"""
         stats = {}
 
@@ -413,7 +414,7 @@ class CompressionEngine:
 
         return stats
 
-    def _compute_cross_modal_features(self, modalities: Dict[str, Any]) -> Dict[str, Any]:
+    def _compute_cross_modal_features(self, modalities: dict[str, Any]) -> dict[str, Any]:
         """Compute cross-modal binding features for multi-omics integration"""
         # Placeholder for cross-modal analysis
         # In production, would compute actual biological relationships
@@ -423,7 +424,7 @@ class CompressionEngine:
             "integration_method": "circular_convolution",
         }
 
-    def decompress(self, compressed: CompressedData) -> Dict[str, Any]:
+    def decompress(self, compressed: CompressedData) -> dict[str, Any]:
         """
         Decompress data package back to usable format.
 
@@ -452,8 +453,8 @@ class CompressionEngine:
         return data
 
     def calculate_storage_requirements(
-        self, tiers: List[CompressionTier], modalities: List[OmicsType]
-    ) -> Dict[str, Any]:
+        self, tiers: list[CompressionTier], modalities: list[OmicsType]
+    ) -> dict[str, Any]:
         """
         Calculate storage requirements for given tiers and modalities.
 

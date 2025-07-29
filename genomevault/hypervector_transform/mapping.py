@@ -37,7 +37,7 @@ class SimilarityPreservingMapper:
     transforming data into hyperdimensional space.
     """
 
-    def __init__(self, input_dim: int, output_dim: int, config: Optional[MappingConfig] = None):
+    def __init__(self, input_dim: int, output_dim: int, config: MappingConfig | None = None):
         """
         Initialize the mapper
 
@@ -67,7 +67,7 @@ class SimilarityPreservingMapper:
             self.mapping_matrix = torch.randn(self.output_dim, self.input_dim)
             self.mapping_matrix /= torch.norm(self.mapping_matrix, dim=1, keepdim=True)
 
-    def fit(self, data: torch.Tensor, similarity_matrix: Optional[torch.Tensor] = None):
+    def fit(self, data: torch.Tensor, similarity_matrix: torch.Tensor | None = None):
         """
         Fit the mapping to preserve similarities in the data
 
@@ -234,7 +234,7 @@ class BiologicalSimilarityMapper(SimilarityPreservingMapper):
         input_dim: int,
         output_dim: int,
         omics_type: OmicsType,
-        config: Optional[MappingConfig] = None,
+        config: MappingConfig | None = None,
     ):
         """
         Initialize biological similarity mapper
@@ -249,7 +249,7 @@ class BiologicalSimilarityMapper(SimilarityPreservingMapper):
         self.omics_type = omics_type
         self.similarity_functions = self._get_similarity_functions()
 
-    def _get_similarity_functions(self) -> Dict[str, Callable]:
+    def _get_similarity_functions(self) -> dict[str, Callable]:
         """Get omics-specific similarity functions"""
         if self.omics_type == OmicsType.GENOMIC:
             return {

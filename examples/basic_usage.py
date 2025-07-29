@@ -71,11 +71,7 @@ def process_genomic_data_example():
     """
 
     # For demo purposes, create mock data
-    from genomevault.local_processing.sequencing import (
-        GenomicProfile,
-        QualityMetrics,
-        Variant,
-    )
+    from genomevault.local_processing.sequencing import GenomicProfile, QualityMetrics, Variant
 
     mock_variants = [
         Variant(

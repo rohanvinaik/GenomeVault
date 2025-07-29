@@ -39,7 +39,7 @@ class CrossModalAlignment:
     correlation: float
     mutual_information: float
     alignment_score: float
-    attention_weights: List[float]
+    attention_weights: list[float]
 
 
 class MultiModalTrainingProof(TrainingProofCircuit):
@@ -71,12 +71,12 @@ class MultiModalTrainingProof(TrainingProofCircuit):
         self.num_constraints += additional_constraints
         self.max_modalities = max_modalities
 
-        self.modality_commits: Dict[str, str] = {}
-        self.correlation_thresholds: Dict[str, float] = {}
-        self.modality_metrics: Dict[str, ModalityMetrics] = {}
-        self.cross_modal_alignments: List[CrossModalAlignment] = []
+        self.modality_commits: dict[str, str] = {}
+        self.correlation_thresholds: dict[str, float] = {}
+        self.modality_metrics: dict[str, ModalityMetrics] = {}
+        self.cross_modal_alignments: list[CrossModalAlignment] = []
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
+    def setup(self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]):
         """
         Setup multi-modal circuit inputs.
 
@@ -298,7 +298,7 @@ class MultiModalTrainingProof(TrainingProofCircuit):
                 diff_inv = corr_diff.inverse()
                 self.add_constraint(corr_diff, diff_inv, FieldElement(1), qm=1, qo=-1)
 
-    def verify_cross_modal_consistency(self) -> Dict[str, float]:
+    def verify_cross_modal_consistency(self) -> dict[str, float]:
         """
         Verify cross-modal consistency metrics.
 
@@ -326,7 +326,7 @@ class MultiModalTrainingProof(TrainingProofCircuit):
 
         return consistency_scores
 
-    def generate_proof(self) -> Dict[str, Any]:
+    def generate_proof(self) -> dict[str, Any]:
         """Generate multi-modal training proof"""
         # Generate base proof
         proof = super().generate_proof()

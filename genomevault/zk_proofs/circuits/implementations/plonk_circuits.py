@@ -83,10 +83,10 @@ class PLONKCircuit(ABC):
     def __init__(self, name: str, max_constraints: int = 10000):
         self.name = name
         self.max_constraints = max_constraints
-        self.constraints: List[CircuitConstraint] = []
-        self.public_inputs: Dict[str, FieldElement] = {}
-        self.private_inputs: Dict[str, FieldElement] = {}
-        self.wire_assignments: Dict[str, FieldElement] = {}
+        self.constraints: list[CircuitConstraint] = []
+        self.public_inputs: dict[str, FieldElement] = {}
+        self.private_inputs: dict[str, FieldElement] = {}
+        self.wire_assignments: dict[str, FieldElement] = {}
 
     def add_constraint(
         self,
@@ -130,7 +130,7 @@ class PLONKCircuit(ABC):
         return len(self.constraints)
 
     @abstractmethod
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
+    def setup(self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]):
         """Setup circuit with inputs"""
         pass
 
@@ -151,7 +151,7 @@ class PoseidonHash:
         return FieldElement(combined)
 
     @staticmethod
-    def hash_many(inputs: List[FieldElement]) -> FieldElement:
+    def hash_many(inputs: list[FieldElement]) -> FieldElement:
         """Hash multiple field elements"""
         if not inputs:
             return FieldElement(0)
@@ -170,7 +170,7 @@ class MerkleInclusionCircuit(PLONKCircuit):
         super().__init__("merkle_inclusion", tree_depth * 5)
         self.tree_depth = tree_depth
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
+    def setup(self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]):
         """Setup Merkle inclusion circuit"""
         # Public inputs
         self.root = FieldElement(int(public_inputs["root"], 16))
@@ -222,7 +222,7 @@ class DiabetesRiskCircuit(PLONKCircuit):
     def __init__(self):
         super().__init__("diabetes_risk_alert", 15000)
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
+    def setup(self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]):
         """Setup diabetes risk circuit"""
         # Public inputs (scaled to avoid decimals)
         self.glucose_threshold = FieldElement(int(public_inputs["glucose_threshold"] * 100))
@@ -299,7 +299,7 @@ class VariantVerificationCircuit(PLONKCircuit):
         self.merkle_depth = merkle_depth
         self.merkle_circuit = MerkleInclusionCircuit(merkle_depth)
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
+    def setup(self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]):
         """Setup variant verification circuit"""
         # Public inputs
         self.variant_hash = FieldElement(int(public_inputs["variant_hash"], 16))
@@ -344,7 +344,7 @@ class VariantVerificationCircuit(PLONKCircuit):
         hash_bytes = hashlib.sha256(var_str.encode()).digest()
         return FieldElement(int.from_bytes(hash_bytes[:31], "big"))  # Ensure < field size
 
-    def _hash_variant_data(self, variant_data: Dict) -> FieldElement:
+    def _hash_variant_data(self, variant_data: dict) -> FieldElement:
         """Hash variant data into field element"""
         var_str = f"{variant_data['chr']}:{variant_data['pos']}:{variant_data['ref']}:{variant_data['alt']}"
         hash_bytes = hashlib.sha256(var_str.encode()).digest()
@@ -365,7 +365,7 @@ class PolygeneticRiskScoreCircuit(PLONKCircuit):
         super().__init__("polygenic_risk_score", 20000)
         self.max_variants = max_variants
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
+    def setup(self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]):
         """Setup PRS circuit"""
         # Public inputs
         self.prs_model_hash = FieldElement(int(public_inputs["prs_model"], 16))

@@ -28,11 +28,11 @@ class Circuit:
     name: str
     circuit_type: str
     constraints: int
-    public_inputs: List[str]
-    private_inputs: List[str]
-    parameters: Dict[str, Any]
+    public_inputs: list[str]
+    private_inputs: list[str]
+    parameters: dict[str, Any]
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         return {
             "name": self.name,
             "circuit_type": self.circuit_type,
@@ -50,12 +50,12 @@ class Proof:
     proof_id: str
     circuit_name: str
     proof_data: bytes
-    public_inputs: Dict[str, Any]
+    public_inputs: dict[str, Any]
     timestamp: float
-    verification_key: Optional[str] = None
-    metadata: Optional[Dict] = None
+    verification_key: str | None = None
+    metadata: dict | None = None
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         return {
             "proof_id": self.proof_id,
             "circuit_name": self.circuit_name,
@@ -220,7 +220,7 @@ class Prover:
     Simulates proof generation for development.
     """
 
-    def __init__(self, circuit_library: Optional[CircuitLibrary] = None):
+    def __init__(self, circuit_library: CircuitLibrary | None = None):
         """
         Initialize prover with circuit library.
 
@@ -232,7 +232,7 @@ class Prover:
 
         logger.info("Prover initialized", extra={"privacy_safe": True})
 
-    def _load_trusted_setup(self) -> Dict:
+    def _load_trusted_setup(self) -> dict:
         """Load trusted setup parameters."""
         # In production, would load actual PLONK SRS
         return {
@@ -245,8 +245,8 @@ class Prover:
     def generate_proof(
         self,
         circuit_name: str,
-        public_inputs: Dict[str, Any],
-        private_inputs: Dict[str, Any],
+        public_inputs: dict[str, Any],
+        private_inputs: dict[str, Any],
     ) -> Proof:
         """
         Generate zero-knowledge proof.
@@ -323,7 +323,7 @@ class Prover:
 
         return circuit_map[circuit_name]
 
-    def _validate_inputs(self, circuit: Circuit, public_inputs: Dict, private_inputs: Dict):
+    def _validate_inputs(self, circuit: Circuit, public_inputs: dict, private_inputs: dict):
         """Validate inputs match circuit requirements."""
         # Check public inputs
         for required_input in circuit.public_inputs:
@@ -335,7 +335,7 @@ class Prover:
             if required_input not in private_inputs:
                 raise ValueError("Missing private input: {required_input}")
 
-    def _generate_proof_id(self, circuit_name: str, public_inputs: Dict) -> str:
+    def _generate_proof_id(self, circuit_name: str, public_inputs: dict) -> str:
         """Generate unique proof ID."""
         _ = {
             "circuit": circuit_name,
@@ -348,7 +348,7 @@ class Prover:
         return hashlib.sha256(data_str.encode()).hexdigest()[:16]
 
     def _simulate_proof_generation(
-        self, circuit: Circuit, public_inputs: Dict, private_inputs: Dict
+        self, circuit: Circuit, public_inputs: dict, private_inputs: dict
     ) -> bytes:
         """
         Simulate PLONK proof generation.
@@ -365,7 +365,7 @@ class Prover:
             # Generic simulation
             return self._simulate_generic_proof(circuit, public_inputs)
 
-    def _simulate_variant_proof(self, public_inputs: Dict, private_inputs: Dict) -> bytes:
+    def _simulate_variant_proof(self, public_inputs: dict, private_inputs: dict) -> bytes:
         """Simulate variant presence proof."""
         # Verify variant is in commitment
         _ = private_inputs["variant_data"]
@@ -385,7 +385,7 @@ class Prover:
 
         return json.dumps(proof_data).encode()[:192]
 
-    def _simulate_prs_proof(self, public_inputs: Dict, private_inputs: Dict) -> bytes:
+    def _simulate_prs_proof(self, public_inputs: dict, private_inputs: dict) -> bytes:
         """Simulate PRS calculation proof."""
         # Calculate score
         _ = private_inputs["variants"]
@@ -408,7 +408,7 @@ class Prover:
 
         return json.dumps(proof_data).encode()[:384]
 
-    def _simulate_diabetes_proof(self, public_inputs: Dict, private_inputs: Dict) -> bytes:
+    def _simulate_diabetes_proof(self, public_inputs: dict, private_inputs: dict) -> bytes:
         """Simulate diabetes risk alert proof."""
         # Extract values
         _ = private_inputs["glucose_reading"]
@@ -425,14 +425,14 @@ class Prover:
             "pi_b": np.random.bytes(96).hex(),
             "pi_c": np.random.bytes(48).hex(),
             "condition_commitment": hashlib.sha256(
-                "{condition}:{private_inputs['witness_randomness']}".encode()
+                b"{condition}:{private_inputs['witness_randomness']}"
             ).hexdigest(),
             "range_proofs": [np.random.bytes(32).hex() for _ in range(4)],
         }
 
         return json.dumps(proof_data).encode()[:384]
 
-    def _simulate_generic_proof(self, circuit: Circuit, public_inputs: Dict) -> bytes:
+    def _simulate_generic_proof(self, circuit: Circuit, public_inputs: dict) -> bytes:
         """Generic proof simulation."""
         # Size based on circuit constraints
         _ = min(800, 192 + circuit.constraints // 100)
@@ -446,7 +446,7 @@ class Prover:
 
         return json.dumps(proof_data).encode()[:proof_size]
 
-    def batch_prove(self, proof_requests: List[Dict]) -> List[Proof]:
+    def batch_prove(self, proof_requests: list[dict]) -> list[Proof]:
         """
         Generate multiple proofs in batch.
 
@@ -472,7 +472,7 @@ class Prover:
 
         return proofs
 
-    def generate_recursive_proof(self, proofs: List[Proof]) -> Proof:
+    def generate_recursive_proof(self, proofs: list[Proof]) -> Proof:
         """
         Generate recursive proof combining multiple proofs.
 

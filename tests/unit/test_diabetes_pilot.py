@@ -1,5 +1,6 @@
 # tests/unit/test_diabetes_pilot.py
 """Test suite for the diabetes risk pilot implementation"""
+
 from unittest.mock import Mock, patch
 
 import pytest

@@ -8,7 +8,8 @@ import pickle
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
+from collections.abc import Callable
 
 import numpy as np
 
@@ -25,7 +26,7 @@ class LocalDataset:
 
     features: np.ndarray
     labels: np.ndarray
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
 
     @property
     def num_samples(self) -> int:
@@ -41,7 +42,7 @@ class FederatedLearningClient:
     def __init__(
         self,
         client_id: str,
-        data_path: Optional[Path] = None,
+        data_path: Path | None = None,
         use_hypervectors: bool = True,
     ):
         """
@@ -110,7 +111,7 @@ class FederatedLearningClient:
 
         return self.local_dataset
 
-    def _generate_synthetic_data(self) -> Tuple[np.ndarray, np.ndarray, Dict]:
+    def _generate_synthetic_data(self) -> tuple[np.ndarray, np.ndarray, dict]:
         """Generate synthetic genomic data for testing."""
         num_samples = 1000
         num_features = 10000  # Variants for PRS
@@ -140,7 +141,7 @@ class FederatedLearningClient:
 
     def _apply_privacy_filter(
         self, features: np.ndarray, labels: np.ndarray
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    ) -> tuple[np.ndarray, np.ndarray]:
         """Apply privacy filtering to remove identifying information."""
         # Remove rare variants (MAF < 1%)
         maf = np.mean(features > 0, axis=0)
@@ -180,7 +181,7 @@ class FederatedLearningClient:
         num_epochs: int = 5,
         batch_size: int = 32,
         learning_rate: float = 0.001,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Train model locally on private data.
 
@@ -329,7 +330,7 @@ class FederatedLearningClient:
 
     def validate_model(
         self, model_params: np.ndarray, validation_split: float = 0.2
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """
         Validate model on local validation set.
 
@@ -382,7 +383,7 @@ class FederatedLearningClient:
 
         return metrics
 
-    def get_model_explanation(self, model_params: np.ndarray, top_k: int = 20) -> Dict[str, Any]:
+    def get_model_explanation(self, model_params: np.ndarray, top_k: int = 20) -> dict[str, Any]:
         """
         Get interpretable explanation of model.
 
@@ -598,7 +599,7 @@ class ResearchFLClient(FederatedLearningClient):
             "causal_inference": True,
         }
 
-    def run_pathway_analysis(self, model_params: np.ndarray) -> Dict[str, Any]:
+    def run_pathway_analysis(self, model_params: np.ndarray) -> dict[str, Any]:
         """Run pathway enrichment analysis on model."""
         # Extract significant features
         threshold = np.percentile(np.abs(model_params), 95)

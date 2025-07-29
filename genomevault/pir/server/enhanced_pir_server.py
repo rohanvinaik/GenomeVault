@@ -41,9 +41,9 @@ class GenomicRegion:
     start: int
     end: int
     reference_allele: str
-    alternate_alleles: List[str]
-    population_frequencies: Dict[str, float]
-    annotations: Dict[str, Any] = field(default_factory=dict)
+    alternate_alleles: list[str]
+    population_frequencies: dict[str, float]
+    annotations: dict[str, Any] = field(default_factory=dict)
 
     def to_bytes(self) -> bytes:
         """Serialize to bytes for PIR storage."""
@@ -88,7 +88,7 @@ class ShardMetadata:
     data_type: str
     version: str
     checksum: str
-    chromosome_ranges: Dict[str, Tuple[int, int]] = field(default_factory=dict)
+    chromosome_ranges: dict[str, tuple[int, int]] = field(default_factory=dict)
     creation_time: float = field(default_factory=time.time)
     last_accessed: float = field(default_factory=time.time)
     compression_ratio: float = 1.0
@@ -126,7 +126,7 @@ class OptimizedPIRDatabase:
 
         logger.info(f"Initialized PIR database at {base_path}")
 
-    async def load_shard_index(self, shard: ShardMetadata) -> Dict[str, int]:
+    async def load_shard_index(self, shard: ShardMetadata) -> dict[str, int]:
         """
         Load shard index for fast lookups.
 
@@ -171,7 +171,7 @@ class OptimizedPIRDatabase:
                 self.memory_maps[shard.shard_id] = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
         return self.memory_maps[shard.shard_id]
 
-    async def query_item(self, shard: ShardMetadata, position_key: str) -> Optional[bytes]:
+    async def query_item(self, shard: ShardMetadata, position_key: str) -> bytes | None:
         """
         Query a specific item from the database.
 
@@ -225,7 +225,7 @@ class OptimizedPIRDatabase:
 
         self.cache[key] = data
 
-    def get_cache_stats(self) -> Dict[str, Any]:
+    def get_cache_stats(self) -> dict[str, Any]:
         """Get cache performance statistics."""
         total = self.cache_stats["hits"] + self.cache_stats["misses"]
         hit_rate = self.cache_stats["hits"] / total if total > 0 else 0
@@ -308,7 +308,7 @@ class EnhancedPIRServer:
             },
         )
 
-    def _load_enhanced_shards(self) -> Dict[str, ShardMetadata]:
+    def _load_enhanced_shards(self) -> dict[str, ShardMetadata]:
         """Load enhanced shard metadata with genomic ranges."""
         shards = {}
         manifest_path = self.data_directory / "enhanced_manifest.json"
@@ -317,7 +317,7 @@ class EnhancedPIRServer:
             logger.warning("No enhanced manifest found, creating default")
             return self._create_default_shards()
 
-        with open(manifest_path, "r") as f:
+        with open(manifest_path) as f:
             manifest = json.load(f)
 
         for shard_info in manifest["shards"]:
@@ -341,7 +341,7 @@ class EnhancedPIRServer:
 
         return shards
 
-    def _create_default_shards(self) -> Dict[str, ShardMetadata]:
+    def _create_default_shards(self) -> dict[str, ShardMetadata]:
         """Create default shard structure for genomic data."""
         shards = {}
 
@@ -386,7 +386,7 @@ class EnhancedPIRServer:
         # For now, just check files exist and are non-empty
         return shard.data_path.stat().st_size > 0 and shard.index_path.stat().st_size > 0
 
-    def _init_rate_limiter(self) -> Dict[str, List[float]]:
+    def _init_rate_limiter(self) -> dict[str, list[float]]:
         """Initialize rate limiting for security."""
         return defaultdict(list)
 
@@ -407,7 +407,7 @@ class EnhancedPIRServer:
         self.rate_limiter[client_id].append(now)
         return True
 
-    async def process_query(self, query_data: Dict[str, Any]) -> Dict[str, Any]:
+    async def process_query(self, query_data: dict[str, Any]) -> dict[str, Any]:
         """
         Process enhanced PIR query with optimizations.
 
@@ -485,8 +485,8 @@ class EnhancedPIRServer:
             return {"error": str(e), "query_id": query_id, "server_id": self.server_id}
 
     async def _process_genomic_query(
-        self, query_vectors: List[np.ndarray], parameters: Dict[str, Any]
-    ) -> List[bytes]:
+        self, query_vectors: list[np.ndarray], parameters: dict[str, Any]
+    ) -> list[bytes]:
         """
         Process genomic data query.
 
@@ -529,22 +529,22 @@ class EnhancedPIRServer:
         return results
 
     async def _process_annotation_query(
-        self, query_vectors: List[np.ndarray], parameters: Dict[str, Any]
-    ) -> List[bytes]:
+        self, query_vectors: list[np.ndarray], parameters: dict[str, Any]
+    ) -> list[bytes]:
         """Process annotation data query."""
         # Similar to genomic query but for annotation data
         # Implementation would follow same pattern
         return await self._process_genomic_query(query_vectors, parameters)
 
     async def _process_graph_query(
-        self, query_vectors: List[np.ndarray], parameters: Dict[str, Any]
-    ) -> List[bytes]:
+        self, query_vectors: list[np.ndarray], parameters: dict[str, Any]
+    ) -> list[bytes]:
         """Process graph data query."""
         # Process pangenome graph queries
         # Implementation would handle graph-specific operations
         return await self._process_genomic_query(query_vectors, parameters)
 
-    def _select_target_shards(self, parameters: Dict[str, Any]) -> List[ShardMetadata]:
+    def _select_target_shards(self, parameters: dict[str, Any]) -> list[ShardMetadata]:
         """Select shards based on query parameters."""
         target_shards = []
 
@@ -564,7 +564,7 @@ class EnhancedPIRServer:
         return target_shards
 
     async def _compute_pir_result(
-        self, query_vector: np.ndarray, shards: List[ShardMetadata]
+        self, query_vector: np.ndarray, shards: list[ShardMetadata]
     ) -> bytes:
         """
         Compute PIR result across multiple shards.
@@ -607,7 +607,7 @@ class EnhancedPIRServer:
 
     async def _process_shard_query(
         self, query_vector: np.ndarray, shard: ShardMetadata
-    ) -> Optional[np.ndarray]:
+    ) -> np.ndarray | None:
         """Process query on a single shard."""
         try:
             # Get shard index
@@ -654,7 +654,7 @@ class EnhancedPIRServer:
         current_avg = self.metrics["average_query_time_ms"]
         self.metrics["average_query_time_ms"] = (current_avg * (n - 1) + processing_time_ms) / n
 
-    async def get_server_status(self) -> Dict[str, Any]:
+    async def get_server_status(self) -> dict[str, Any]:
         """Get comprehensive server status."""
         return {
             "server_id": self.server_id,
@@ -683,7 +683,7 @@ class EnhancedPIRServer:
             },
         }
 
-    def _count_shards_by_type(self) -> Dict[str, int]:
+    def _count_shards_by_type(self) -> dict[str, int]:
         """Count shards by data type."""
         counts = defaultdict(int)
         for shard in self.shards.values():

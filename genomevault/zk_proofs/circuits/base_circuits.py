@@ -70,7 +70,7 @@ class BaseCircuit(ABC):
         self.private_input_indices = []
 
     @abstractmethod
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
+    def setup(self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]):
         """Setup circuit with inputs"""
         pass
 
@@ -125,7 +125,7 @@ class MerkleTreeCircuit(BaseCircuit):
         super().__init__("merkle_inclusion", 2 * tree_depth)
         self.tree_depth = tree_depth
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
+    def setup(self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]):
         """Setup Merkle tree circuit"""
         self.root = FieldElement(int(public_inputs["root"], 16))
         self.leaf = FieldElement(int(private_inputs["leaf"], 16))
@@ -159,7 +159,7 @@ class MerkleTreeCircuit(BaseCircuit):
     def _hash_pair(self, left: FieldElement, right: FieldElement) -> FieldElement:
         """Hash two field elements (simplified for demo)"""
         # In production, would use Poseidon hash
-        data = "{left.value}:{right.value}".encode()
+        data = b"{left.value}:{right.value}"
         hash_val = int(hashlib.sha256(data).hexdigest(), 16)
         return FieldElement(hash_val)
 
@@ -171,7 +171,7 @@ class RangeProofCircuit(BaseCircuit):
         super().__init__("range_proof", bit_width + 2)
         self.bit_width = bit_width
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
+    def setup(self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]):
         """Setup range proof circuit"""
         self.min_val = FieldElement(public_inputs["min"])
         self.max_val = FieldElement(public_inputs["max"])
@@ -202,7 +202,7 @@ class RangeProofCircuit(BaseCircuit):
         diff_max = self.max_val - self.value
         self._add_non_negative_constraint(diff_max)
 
-    def _to_bits(self, value: int) -> List[int]:
+    def _to_bits(self, value: int) -> list[int]:
         """Convert value to bit representation"""
         return [(value >> i) & 1 for i in range(self.bit_width)]
 
@@ -218,7 +218,7 @@ class ComparisonCircuit(BaseCircuit):
     def __init__(self):
         super().__init__("comparison", 10)
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
+    def setup(self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]):
         """Setup comparison circuit"""
         self.result = FieldElement(1 if public_inputs["result"] else 0)
         self.a = FieldElement(private_inputs["a"])
@@ -257,7 +257,7 @@ class HashPreimageCircuit(BaseCircuit):
     def __init__(self):
         super().__init__("hash_preimage", 100)
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
+    def setup(self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]):
         """Setup hash preimage circuit"""
         self.hash_output = FieldElement(int(public_inputs["hash"], 16))
         self.preimage = private_inputs["preimage"]
@@ -275,7 +275,7 @@ class HashPreimageCircuit(BaseCircuit):
         # Constraint: computed hash equals public hash
         self.add_constraint(computed_hash, self.hash_output, FieldElement(0), ql=1, qr=-1)
 
-    def _hash_elements(self, elements: List[FieldElement]) -> FieldElement:
+    def _hash_elements(self, elements: list[FieldElement]) -> FieldElement:
         """Hash field elements (simplified)"""
         data = ":".join(str(e.value) for e in elements).encode()
         hash_val = int(hashlib.sha256(data).hexdigest(), 16)
@@ -289,7 +289,7 @@ class AggregatorCircuit(BaseCircuit):
         super().__init__("aggregator", num_values * 2)
         self.num_values = num_values
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
+    def setup(self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]):
         """Setup aggregator circuit"""
         self.sum_commitment = FieldElement(int(public_inputs["sum_commitment"], 16))
         self.count = FieldElement(public_inputs["count"])
@@ -317,18 +317,18 @@ class AggregatorCircuit(BaseCircuit):
     def _commit(self, value: FieldElement, randomness: FieldElement) -> FieldElement:
         """Create Pedersen commitment (simplified)"""
         # In production, use proper Pedersen commitment
-        data = "{value.value}:{randomness.value}".encode()
+        data = b"{value.value}:{randomness.value}"
         hash_val = int(hashlib.sha256(data).hexdigest(), 16)
         return FieldElement(hash_val)
 
 
 # Helper functions for circuit construction
-def create_wire_assignment(num_wires: int) -> Dict[str, int]:
+def create_wire_assignment(num_wires: int) -> dict[str, int]:
     """Create wire assignment mapping"""
     return {"w_{i}": i for i in range(num_wires)}
 
 
-def evaluate_constraint(constraint: Dict, wire_values: Dict[int, FieldElement]) -> FieldElement:
+def evaluate_constraint(constraint: dict, wire_values: dict[int, FieldElement]) -> FieldElement:
     """Evaluate a PLONK constraint"""
     a = wire_values.get(constraint["a"], FieldElement(0))
     b = wire_values.get(constraint["b"], FieldElement(0))
@@ -345,7 +345,7 @@ def evaluate_constraint(constraint: Dict, wire_values: Dict[int, FieldElement]) 
     return result
 
 
-def verify_constraints(circuit: BaseCircuit, wire_values: Dict[int, FieldElement]) -> bool:
+def verify_constraints(circuit: BaseCircuit, wire_values: dict[int, FieldElement]) -> bool:
     """Verify all constraints are satisfied"""
     for constraint in circuit.constraints:
         result = evaluate_constraint(constraint, wire_values)

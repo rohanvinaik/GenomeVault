@@ -222,13 +222,17 @@ async def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(description="CI Benchmark Runner")
     parser.add_argument(
-        "--output-dir", default="benchmarks/ci", help="Output directory for benchmark results"
+        "--output-dir",
+        default="benchmarks/ci",
+        help="Output directory for benchmark results",
     )
     parser.add_argument(
         "--csv-file", default="benchmark_results.csv", help="CSV filename for Grafana"
     )
     parser.add_argument(
-        "--json-file", default="benchmark_results.json", help="JSON filename for detailed results"
+        "--json-file",
+        default="benchmark_results.json",
+        help="JSON filename for detailed results",
     )
 
     args = parser.parse_args()

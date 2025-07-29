@@ -5,6 +5,7 @@ Provides unconditional privacy guarantees without computational assumptions.
 
 import hashlib
 import json
+import logging
 import time
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple
@@ -12,7 +13,6 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 
 from genomevault.utils.logging import get_logger
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -216,7 +216,11 @@ class InformationTheoreticPIR:
 
     def _generate_query_id(self, index: int) -> str:
         """Generate unique query ID."""
-        data = {"index": index, "timestamp": time.time(), "nonce": np.random.bytes(8).hex()}
+        data = {
+            "index": index,
+            "timestamp": time.time(),
+            "nonce": np.random.bytes(8).hex(),
+        }
 
         return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[:16]
 

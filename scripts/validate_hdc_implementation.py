@@ -17,9 +17,13 @@ class HDCImplementationValidator:
 
     def __init__(self):
         self.project_root = Path(__file__).parent.parent
-        self.results = {"timestamp": datetime.now().isoformat(), "stages": {}, "summary": {}}
+        self.results = {
+            "timestamp": datetime.now().isoformat(),
+            "stages": {},
+            "summary": {},
+        }
 
-    def validate_stage_0_scope(self) -> Tuple[bool, List[str]]:
+    def validate_stage_0_scope(self) -> tuple[bool, list[str]]:
         """Validate Stage 0 - Scope & Targets"""
         issues = []
 
@@ -41,7 +45,7 @@ class HDCImplementationValidator:
 
         return len(issues) == 0, issues
 
-    def validate_stage_1_registry(self) -> Tuple[bool, List[str]]:
+    def validate_stage_1_registry(self) -> tuple[bool, list[str]]:
         """Validate Stage 1 - Seed/Version Registry & Determinism"""
         issues = []
 
@@ -76,7 +80,7 @@ class HDCImplementationValidator:
 
         return len(issues) == 0, issues
 
-    def validate_stage_2_encoders(self) -> Tuple[bool, List[str]]:
+    def validate_stage_2_encoders(self) -> tuple[bool, list[str]]:
         """Validate Stage 2 - Prototype Encoders & Basic Tests"""
         issues = []
 
@@ -131,7 +135,7 @@ class HDCImplementationValidator:
 
         return len(issues) == 0, issues
 
-    def validate_stage_3_validation(self) -> Tuple[bool, List[str]]:
+    def validate_stage_3_validation(self) -> tuple[bool, list[str]]:
         """Validate Stage 3 - Task-level Validation"""
         issues = []
 
@@ -157,7 +161,7 @@ class HDCImplementationValidator:
 
         return len(issues) == 0, issues
 
-    def validate_stage_4_benchmarks(self) -> Tuple[bool, List[str]]:
+    def validate_stage_4_benchmarks(self) -> tuple[bool, list[str]]:
         """Validate Stage 4 - Performance & Memory Benchmarks"""
         issues = []
 
@@ -189,7 +193,7 @@ class HDCImplementationValidator:
 
         return len(issues) == 0, issues
 
-    def validate_stage_5_api(self) -> Tuple[bool, List[str]]:
+    def validate_stage_5_api(self) -> tuple[bool, list[str]]:
         """Validate Stage 5 - Integration & API"""
         issues = []
 
@@ -219,7 +223,7 @@ class HDCImplementationValidator:
 
         return len(issues) == 0, issues
 
-    def validate_stage_6_release(self) -> Tuple[bool, List[str]]:
+    def validate_stage_6_release(self) -> tuple[bool, list[str]]:
         """Validate Stage 6 - Release & Maintain"""
         issues = []
 
@@ -238,7 +242,7 @@ class HDCImplementationValidator:
 
         return len(issues) == 0, issues
 
-    def validate_cross_cutting(self) -> Tuple[bool, List[str]]:
+    def validate_cross_cutting(self) -> tuple[bool, list[str]]:
         """Validate cross-cutting requirements"""
         issues = []
 
@@ -267,7 +271,7 @@ class HDCImplementationValidator:
 
         return len(issues) == 0, issues
 
-    def check_code_quality(self) -> Tuple[bool, List[str]]:
+    def check_code_quality(self) -> tuple[bool, list[str]]:
         """Check code quality metrics"""
         issues = []
 
@@ -308,7 +312,7 @@ class HDCImplementationValidator:
 
         return len(issues) == 0, issues
 
-    def generate_report(self) -> Dict[str, Any]:
+    def generate_report(self) -> dict[str, Any]:
         """Generate comprehensive validation report"""
         stages = [
             ("Stage 0: Scope & Targets", self.validate_stage_0_scope),
@@ -348,7 +352,7 @@ class HDCImplementationValidator:
 
         return self.results
 
-    def print_report(self, report: Dict[str, Any]):
+    def print_report(self, report: dict[str, Any]):
         """Print formatted validation report"""
         print("\n" + "=" * 70)
         print("HDC IMPLEMENTATION VALIDATION REPORT")
@@ -391,7 +395,7 @@ class HDCImplementationValidator:
             print("Significant work needed. Review failed stages above.")
         print("=" * 70 + "\n")
 
-    def save_report(self, report: Dict[str, Any], output_file: str = "hdc_validation_report.json"):
+    def save_report(self, report: dict[str, Any], output_file: str = "hdc_validation_report.json"):
         """Save validation report to file"""
         output_path = self.project_root / output_file
         with open(output_path, "w") as f:

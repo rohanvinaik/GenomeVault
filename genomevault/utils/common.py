@@ -135,7 +135,7 @@ def verify_hsm(hsm_serial: str, provider_type: str = "generic") -> bool:
 # =============================================================================
 
 
-def calculate_total_voting_power(nodes: Dict[str, Any]) -> int:
+def calculate_total_voting_power(nodes: dict[str, Any]) -> int:
     """
     Calculate total voting power across all nodes in dual-axis model.
 
@@ -248,7 +248,7 @@ def get_config(key: str, default: Any = None, config_type: str = "main") -> Any:
 # =============================================================================
 
 
-def create_circuit_template(circuit_type: str, **kwargs) -> Dict[str, Any]:
+def create_circuit_template(circuit_type: str, **kwargs) -> dict[str, Any]:
     """
     Create zero-knowledge proof circuit template.
 
@@ -358,8 +358,8 @@ def create_circuit_template(circuit_type: str, **kwargs) -> Dict[str, Any]:
 
 
 def create_hierarchical_encoder(
-    config: Optional[Dict[str, Any]] = None,
-) -> Dict[str, Any]:
+    config: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     """
     Create hierarchical hypervector encoder configuration.
 
@@ -450,7 +450,7 @@ def create_hierarchical_encoder(
 # =============================================================================
 
 
-def check_hipaa_compliance(data_dict: Dict[str, Any], context: str = "general") -> Dict[str, Any]:
+def check_hipaa_compliance(data_dict: dict[str, Any], context: str = "general") -> dict[str, Any]:
     """
     Check HIPAA compliance for data processing and storage.
 

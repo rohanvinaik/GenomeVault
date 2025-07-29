@@ -51,7 +51,7 @@ class StreamingResult(BaseModel):
     total_slices: int
     processing_time: float
     anomalies_detected: int
-    biological_signals: List[Dict]
+    biological_signals: list[dict]
 
 
 class BiologicalSignalResult(BaseModel):
@@ -62,14 +62,14 @@ class BiologicalSignalResult(BaseModel):
     confidence: float
     variance_score: float
     context: str
-    metadata: Dict
+    metadata: dict
 
 
 @router.post("/stream/start")
 async def start_streaming(
     config: NanoporeStreamConfig,
     background_tasks: BackgroundTasks = Depends(),
-) -> Dict[str, str]:
+) -> dict[str, str]:
     """
     Start nanopore streaming analysis.
 
@@ -108,7 +108,7 @@ async def upload_fast5(
     stream_id: str,
     file: UploadFile = File(...),
     background_tasks: BackgroundTasks = Depends(),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Upload Fast5 file for streaming analysis.
     """
@@ -219,9 +219,9 @@ async def get_stream_status(stream_id: str) -> StreamingResult:
 @router.get("/stream/{stream_id}/signals")
 async def get_biological_signals(
     stream_id: str,
-    signal_type: Optional[str] = None,
+    signal_type: str | None = None,
     min_confidence: float = Query(0.5, ge=0, le=1),
-) -> List[BiologicalSignalResult]:
+) -> list[BiologicalSignalResult]:
     """Get detected biological signals."""
     if stream_id not in _results_cache:
         raise HTTPException(404, f"Stream {stream_id} not found")
@@ -262,7 +262,7 @@ async def get_biological_signals(
 async def export_results(
     stream_id: str,
     format: str = Query("bedgraph", regex="^(bedgraph|bed|json)$"),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Export analysis results in various formats."""
     if stream_id not in _results_cache:
         raise HTTPException(404, f"Stream {stream_id} not found")
@@ -321,7 +321,7 @@ async def export_results(
 async def generate_proof(
     stream_id: str,
     max_slices: int = Query(10, description="Maximum slices to include in proof"),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Generate zero-knowledge proof of analysis."""
     if stream_id not in _processors:
         raise HTTPException(404, f"Stream {stream_id} not found")
@@ -348,7 +348,7 @@ async def generate_proof(
 
 
 @router.delete("/stream/{stream_id}")
-async def stop_streaming(stream_id: str) -> Dict[str, str]:
+async def stop_streaming(stream_id: str) -> dict[str, str]:
     """Stop and cleanup streaming analysis."""
     if stream_id not in _processors:
         raise HTTPException(404, f"Stream {stream_id} not found")
@@ -364,7 +364,7 @@ async def stop_streaming(stream_id: str) -> Dict[str, str]:
 
 
 @router.get("/signal-types")
-async def get_signal_types() -> List[Dict[str, str]]:
+async def get_signal_types() -> list[dict[str, str]]:
     """Get available biological signal types."""
     return [
         {

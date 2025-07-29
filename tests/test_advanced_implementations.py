@@ -39,7 +39,12 @@ def test_recursive_snark():
                 "commitment_root": hashlib.sha256(f"root_{i}".encode()).hexdigest(),
             },
             private_inputs={
-                "variant_data": {"chr": f"chr{i+1}", "pos": i * 1000, "ref": "A", "alt": "G"},
+                "variant_data": {
+                    "chr": f"chr{i+1}",
+                    "pos": i * 1000,
+                    "ref": "A",
+                    "alt": "G",
+                },
                 "merkle_proof": [
                     hashlib.sha256(f"node_{j}".encode()).hexdigest() for j in range(10)
                 ],

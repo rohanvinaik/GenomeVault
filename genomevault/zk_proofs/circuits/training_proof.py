@@ -51,11 +51,11 @@ class TrainingProofCircuit(BaseCircuit):
         # + final model verification + IO sequence verification
         super().__init__("training_proof", max_snapshots * 5 + 10)
         self.max_snapshots = max_snapshots
-        self.snapshot_hashes: List[str] = []
+        self.snapshot_hashes: list[str] = []
         self.model_commit: str = ""
         self.io_sequence_commit: str = ""
 
-    def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
+    def setup(self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]):
         """
         Setup circuit with training proof inputs.
 
@@ -234,7 +234,7 @@ class TrainingProofCircuit(BaseCircuit):
         hash_val = int(hashlib.sha256(data).hexdigest(), 16)
         return FieldElement(hash_val)
 
-    def generate_proof(self) -> Dict[str, Any]:
+    def generate_proof(self) -> dict[str, Any]:
         """Generate the training proof"""
         self.generate_constraints()
 

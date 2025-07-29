@@ -20,10 +20,7 @@ from genomevault.hypervector_transform.binding import (
 )
 
 # GenomeVault imports
-from genomevault.hypervector_transform.encoding import (
-    HypervectorEncoder,
-    create_encoder,
-)
+from genomevault.hypervector_transform.encoding import HypervectorEncoder, create_encoder
 from genomevault.hypervector_transform.holographic import HolographicEncoder
 from genomevault.hypervector_transform.mapping import (
     BiologicalSimilarityMapper,

@@ -4,19 +4,19 @@ Master script to implement the genomevault audit checklist.
 Run this to execute all checklist items in order.
 """
 
+import json
+import os
+import shutil
 import subprocess
 import sys
-import os
-from pathlib import Path
-import shutil
-import json
 from datetime import datetime
+from pathlib import Path
 
 
 class ChecklistImplementer:
     def __init__(self, project_root):
         self.project_root = Path(project_root)
-        self.log_file = self.project_root / 'checklist_implementation.log'
+        self.log_file = self.project_root / "checklist_implementation.log"
         self.backup_dir = (
             self.project_root / f'genomevault_backup_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
         )
@@ -24,7 +24,7 @@ class ChecklistImplementer:
     def log(self, message):
         """Log message to both console and file."""
         print(message)
-        with open(self.log_file, 'a') as f:
+        with open(self.log_file, "a") as f:
             f.write(f"{datetime.now().isoformat()} - {message}\n")
 
     def backup_project(self):
@@ -33,16 +33,16 @@ class ChecklistImplementer:
 
         # Create backup of key files
         files_to_backup = [
-            'pyproject.toml',
-            'setup.py',
-            'setup.cfg',
-            'requirements.txt',
-            'requirements-dev.txt',
-            '.pre-commit-config.yaml',
-            'mypy.ini',
-            '.flake8',
-            '.pylintrc',
-            'LICENSE',
+            "pyproject.toml",
+            "setup.py",
+            "setup.cfg",
+            "requirements.txt",
+            "requirements-dev.txt",
+            ".pre-commit-config.yaml",
+            "mypy.ini",
+            ".flake8",
+            ".pylintrc",
+            "LICENSE",
         ]
 
         os.makedirs(self.backup_dir, exist_ok=True)
@@ -77,36 +77,36 @@ class ChecklistImplementer:
         self.log("\n=== Step 5: Converting print statements to logging ===")
 
         # First, run the analysis script
-        script_path = self.project_root / 'scripts' / 'convert_print_to_logging.py'
+        script_path = self.project_root / "scripts" / "convert_print_to_logging.py"
         if script_path.exists():
-            self.run_command(['python', str(script_path)])
+            self.run_command(["python", str(script_path)])
         else:
             self.log("Print conversion script not found, skipping analysis")
 
         # Add logging setup to CLI entry points
         cli_files = [
-            self.project_root / 'genomevault' / 'cli' / '__main__.py',
-            self.project_root / 'genomevault' / 'cli' / 'main.py',
+            self.project_root / "genomevault" / "cli" / "__main__.py",
+            self.project_root / "genomevault" / "cli" / "main.py",
         ]
 
-        logging_setup = '''import logging
+        logging_setup = """import logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message)s")
-'''
+"""
 
         for cli_file in cli_files:
             if cli_file.exists():
                 content = cli_file.read_text()
-                if 'logging.basicConfig' not in content:
+                if "logging.basicConfig" not in content:
                     # Add after imports
-                    lines = content.split('\n')
+                    lines = content.split("\n")
                     import_end = 0
                     for i, line in enumerate(lines):
-                        if line.strip() and not line.startswith(('import', 'from', '#')):
+                        if line.strip() and not line.startswith(("import", "from", "#")):
                             import_end = i
                             break
 
                     lines.insert(import_end, logging_setup)
-                    cli_file.write_text('\n'.join(lines))
+                    cli_file.write_text("\n".join(lines))
                     self.log(f"Added logging setup to: {cli_file}")
 
     def step_7_reduce_complexity(self):
@@ -114,21 +114,21 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message
         self.log("\n=== Step 7: Analyzing cyclomatic complexity ===")
 
         # Run complexity analysis script
-        script_path = self.project_root / 'scripts' / 'analyze_complexity.py'
+        script_path = self.project_root / "scripts" / "analyze_complexity.py"
         if script_path.exists():
-            self.run_command(['python', str(script_path)])
+            self.run_command(["python", str(script_path)])
         else:
             # Run radon directly
-            if self.run_command(['radon', '--version'], check=False):
+            if self.run_command(["radon", "--version"], check=False):
                 self.run_command(
                     [
-                        'radon',
-                        'cc',
-                        '-s',
-                        '-a',
-                        str(self.project_root / 'genomevault'),
-                        '--min',
-                        'B',  # Show only B grade and worse (CC >= 6)
+                        "radon",
+                        "cc",
+                        "-s",
+                        "-a",
+                        str(self.project_root / "genomevault"),
+                        "--min",
+                        "B",  # Show only B grade and worse (CC >= 6)
                     ]
                 )
             else:
@@ -138,18 +138,18 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message
         """Step 9: Ensure all packages have __init__.py files."""
         self.log("\n=== Step 9: Adding missing __init__.py files ===")
 
-        genomevault_dir = self.project_root / 'genomevault'
+        genomevault_dir = self.project_root / "genomevault"
         added_count = 0
 
         for root, dirs, files in os.walk(genomevault_dir):
             root_path = Path(root)
 
             # Skip __pycache__ and other special directories
-            dirs[:] = [d for d in dirs if not d.startswith(('.', '__pycache__'))]
+            dirs[:] = [d for d in dirs if not d.startswith((".", "__pycache__"))]
 
             # Check if this directory contains Python files
-            if any(f.endswith('.py') for f in files):
-                init_file = root_path / '__init__.py'
+            if any(f.endswith(".py") for f in files):
+                init_file = root_path / "__init__.py"
                 if not init_file.exists():
                     init_file.touch()
                     self.log(f"  Created: {init_file.relative_to(self.project_root)}")
@@ -162,27 +162,27 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message
         self.log("\n=== Step 12: Extracting TODOs ===")
 
         # Search for TODOs
-        patterns = ['TODO', 'FIXME', 'XXX']
+        patterns = ["TODO", "FIXME", "XXX"]
         todos = []
 
         for pattern in patterns:
             result = subprocess.run(
-                ['rg', '-n', pattern, 'genomevault'],
+                ["rg", "-n", pattern, "genomevault"],
                 cwd=self.project_root,
                 capture_output=True,
                 text=True,
             )
 
             if result.returncode == 0 and result.stdout:
-                for line in result.stdout.strip().split('\n'):
+                for line in result.stdout.strip().split("\n"):
                     if line:
                         todos.append(f"{pattern}: {line}")
 
         # Write to file
-        todos_file = self.project_root / 'docs' / 'todo_issues.md'
+        todos_file = self.project_root / "docs" / "todo_issues.md"
         todos_file.parent.mkdir(exist_ok=True)
 
-        with open(todos_file, 'w') as f:
+        with open(todos_file, "w") as f:
             f.write("# TODO/FIXME/XXX Items\n\n")
             f.write(f"Generated: {datetime.now().isoformat()}\n\n")
             f.write(f"Total items found: {len(todos)}\n\n")
@@ -197,24 +197,24 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message
         self.log("\n=== Installing dependencies ===")
 
         # First, try to install the package with dev dependencies
-        if not self.run_command(['pip', 'install', '-e', '.[dev]'], check=False):
+        if not self.run_command(["pip", "install", "-e", ".[dev]"], check=False):
             # If that fails, try installing individual packages
             self.log("Package install failed, trying individual packages...")
-            packages = ['ruff', 'mypy', 'pytest', 'pytest-cov', 'pyupgrade', 'radon']
+            packages = ["ruff", "mypy", "pytest", "pytest-cov", "pyupgrade", "radon"]
             for pkg in packages:
-                self.run_command(['pip', 'install', pkg], check=False)
+                self.run_command(["pip", "install", pkg], check=False)
 
         # Install pre-commit
-        if self.run_command(['pip', 'install', 'pre-commit'], check=False):
-            self.run_command(['pre-commit', 'install'], check=False)
+        if self.run_command(["pip", "install", "pre-commit"], check=False):
+            self.run_command(["pre-commit", "install"], check=False)
 
     def run_validation(self):
         """Run the validation script."""
         self.log("\n=== Running validation ===")
 
-        script_path = self.project_root / 'scripts' / 'validate_checklist.py'
+        script_path = self.project_root / "scripts" / "validate_checklist.py"
         if script_path.exists():
-            self.run_command(['python', str(script_path)])
+            self.run_command(["python", str(script_path)])
         else:
             self.log("Validation script not found")
 
@@ -256,28 +256,28 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message
 
         # Create summary
         summary = {
-            'timestamp': datetime.now().isoformat(),
-            'backup_dir': str(self.backup_dir),
-            'log_file': str(self.log_file),
-            'steps_completed': [
-                'Created Hatch-based pyproject.toml',
-                'Updated LICENSE to MIT',
-                'Created ruff.toml configuration',
-                'Updated mypy.ini',
-                'Created pytest.ini',
-                'Updated .pre-commit-config.yaml',
-                'Created CI workflow',
-                'Created logging utilities',
-                'Created exception hierarchy',
-                'Analyzed print statements',
-                'Analyzed cyclomatic complexity',
-                'Added missing __init__.py files',
-                'Extracted TODO items',
+            "timestamp": datetime.now().isoformat(),
+            "backup_dir": str(self.backup_dir),
+            "log_file": str(self.log_file),
+            "steps_completed": [
+                "Created Hatch-based pyproject.toml",
+                "Updated LICENSE to MIT",
+                "Created ruff.toml configuration",
+                "Updated mypy.ini",
+                "Created pytest.ini",
+                "Updated .pre-commit-config.yaml",
+                "Created CI workflow",
+                "Created logging utilities",
+                "Created exception hierarchy",
+                "Analyzed print statements",
+                "Analyzed cyclomatic complexity",
+                "Added missing __init__.py files",
+                "Extracted TODO items",
             ],
         }
 
-        summary_file = self.project_root / 'checklist_implementation_summary.json'
-        with open(summary_file, 'w') as f:
+        summary_file = self.project_root / "checklist_implementation_summary.json"
+        with open(summary_file, "w") as f:
             json.dump(summary, f, indent=2)
 
         self.log(f"\nSummary saved to: {summary_file}")
@@ -285,7 +285,7 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message
 
 def main():
     """Main function."""
-    project_root = Path('/Users/rohanvinaik/genomevault')
+    project_root = Path("/Users/rohanvinaik/genomevault")
 
     if not project_root.exists():
         print(f"Error: Project root not found: {project_root}")

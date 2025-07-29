@@ -36,8 +36,8 @@ class EncryptionKey:
     key_material: bytes
     algorithm: str
     created_at: float
-    expires_at: Optional[float] = None
-    metadata: Dict[str, Any] = None
+    expires_at: float | None = None
+    metadata: dict[str, Any] = None
 
 
 @dataclass
@@ -65,8 +65,8 @@ class AESGCMCipher:
 
     @classmethod
     def encrypt(
-        cls, plaintext: bytes, key: bytes, associated_data: Optional[bytes] = None
-    ) -> Tuple[bytes, bytes, bytes]:
+        cls, plaintext: bytes, key: bytes, associated_data: bytes | None = None
+    ) -> tuple[bytes, bytes, bytes]:
         """
         Encrypt data using AES-GCM
 
@@ -101,7 +101,7 @@ class AESGCMCipher:
         key: bytes,
         nonce: bytes,
         tag: bytes,
-        associated_data: Optional[bytes] = None,
+        associated_data: bytes | None = None,
     ) -> bytes:
         """
         Decrypt data using AES-GCM
@@ -187,7 +187,7 @@ class RSAEncryption:
     """RSA encryption for key exchange"""
 
     @classmethod
-    def generate_keypair(cls, key_size: int = 4096) -> Tuple[bytes, bytes]:
+    def generate_keypair(cls, key_size: int = 4096) -> tuple[bytes, bytes]:
         """Generate RSA keypair"""
         private_key = rsa.generate_private_key(
             public_exponent=65537, key_size=key_size, backend=default_backend()
@@ -245,7 +245,7 @@ class ThresholdCrypto:
     PRIME = 2**256 - 189  # Large prime for GF(p)
 
     @classmethod
-    def split_secret(cls, secret: bytes, threshold: int, total_shares: int) -> List[ThresholdShare]:
+    def split_secret(cls, secret: bytes, threshold: int, total_shares: int) -> list[ThresholdShare]:
         """
         Split secret into shares using Shamir's Secret Sharing
 
@@ -291,7 +291,7 @@ class ThresholdCrypto:
         return shares
 
     @classmethod
-    def reconstruct_secret(cls, shares: List[ThresholdShare]) -> bytes:
+    def reconstruct_secret(cls, shares: list[ThresholdShare]) -> bytes:
         """
         Reconstruct secret from shares
 
@@ -331,7 +331,7 @@ class ThresholdCrypto:
         return secret
 
     @classmethod
-    def _evaluate_polynomial(cls, coefficients: List[int], x: int) -> int:
+    def _evaluate_polynomial(cls, coefficients: list[int], x: int) -> int:
         """Evaluate polynomial at x in GF(p)"""
         result = 0
         for i, coeff in enumerate(coefficients):
@@ -339,7 +339,7 @@ class ThresholdCrypto:
         return result
 
     @classmethod
-    def _lagrange_interpolation(cls, points: List[Tuple[int, int]], x: int) -> int:
+    def _lagrange_interpolation(cls, points: list[tuple[int, int]], x: int) -> int:
         """Lagrange interpolation in GF(p)"""
         result = 0
 
@@ -437,11 +437,11 @@ class HomomorphicHelper:
 class EncryptionManager:
     """Manages encryption keys and operations"""
 
-    def __init__(self, key_store_path: Optional[Path] = None):
+    def __init__(self, key_store_path: Path | None = None):
         """Initialize encryption manager"""
         self.key_store_path = key_store_path or Path.home() / ".genomevault" / "keys"
         self.key_store_path.mkdir(parents=True, exist_ok=True)
-        self._keys: Dict[str, EncryptionKey] = {}
+        self._keys: dict[str, EncryptionKey] = {}
         self._load_keys()
 
     def generate_key(self, key_id: str, algorithm: str = "AES-GCM") -> EncryptionKey:
@@ -467,7 +467,7 @@ class EncryptionManager:
         logger.info(f"Generated new {algorithm} key: {key_id}")
         return key
 
-    def encrypt_data(self, data: bytes, key_id: str) -> Dict[str, Any]:
+    def encrypt_data(self, data: bytes, key_id: str) -> dict[str, Any]:
         """Encrypt data using specified key"""
         if key_id not in self._keys:
             raise ValueError("Key not found: {key_id}")
@@ -493,7 +493,7 @@ class EncryptionManager:
         else:
             raise ValueError("Unsupported algorithm: {key.algorithm}")
 
-    def decrypt_data(self, encrypted_data: Dict[str, Any]) -> bytes:
+    def decrypt_data(self, encrypted_data: dict[str, Any]) -> bytes:
         """Decrypt data"""
         key_id = encrypted_data["key_id"]
         if key_id not in self._keys:

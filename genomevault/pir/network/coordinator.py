@@ -32,9 +32,9 @@ class ServerInfo:
     server_id: str
     server_type: ServerType
     endpoint: str
-    location: Tuple[float, float]  # (latitude, longitude)
+    location: tuple[float, float]  # (latitude, longitude)
     region: str  # Geographic region
-    capabilities: Set[str] = field(default_factory=set)
+    capabilities: set[str] = field(default_factory=set)
     health_score: float = 1.0  # 0-1 health score
     last_health_check: float = 0
     response_time_ms: float = 0
@@ -67,8 +67,8 @@ class PIRCoordinator:
     """
 
     def __init__(self):
-        self.servers: Dict[str, ServerInfo] = {}
-        self.active_queries: Dict[str, List[str]] = {}  # query_id -> server_ids
+        self.servers: dict[str, ServerInfo] = {}
+        self.active_queries: dict[str, list[str]] = {}  # query_id -> server_ids
 
         # Configuration
         self.health_check_interval = 30  # seconds
@@ -123,8 +123,8 @@ class PIRCoordinator:
         )
 
     async def select_servers(
-        self, criteria: ServerSelectionCriteria, user_region: Optional[str] = None
-    ) -> List[ServerInfo]:
+        self, criteria: ServerSelectionCriteria, user_region: str | None = None
+    ) -> list[ServerInfo]:
         """
         Select optimal servers based on criteria.
 
@@ -214,7 +214,7 @@ class PIRCoordinator:
         return score
 
     def _check_geographic_diversity(
-        self, candidate: ServerInfo, selected: List[ServerInfo], min_distance_km: float
+        self, candidate: ServerInfo, selected: list[ServerInfo], min_distance_km: float
     ) -> bool:
         """Check if candidate provides geographic diversity."""
         for server in selected:
@@ -223,14 +223,14 @@ class PIRCoordinator:
                 return False
         return True
 
-    def _has_sufficient_diversity(self, servers: List[ServerInfo]) -> bool:
+    def _has_sufficient_diversity(self, servers: list[ServerInfo]) -> bool:
         """Check if selected servers have sufficient diversity."""
-        regions = set(s.region for s in servers)
+        regions = {s.region for s in servers}
         return len(regions) >= 2
 
     def _filter_compliant_servers(
-        self, servers: List[ServerInfo], user_region: str
-    ) -> List[ServerInfo]:
+        self, servers: list[ServerInfo], user_region: str
+    ) -> list[ServerInfo]:
         """Filter servers based on compliance requirements."""
         required_compliance = self.compliance_regions.get(user_region, set())
 
@@ -309,8 +309,11 @@ class PIRCoordinator:
             server.success_rate = 0.95 * server.success_rate + 0.05 * 0.0
 
     async def execute_query(
-        self, query_id: str, query_vectors: List[Dict], selected_servers: List[ServerInfo]
-    ) -> List[Dict]:
+        self,
+        query_id: str,
+        query_vectors: list[dict],
+        selected_servers: list[ServerInfo],
+    ) -> list[dict]:
         """
         Execute PIR query across selected servers.
 
@@ -360,8 +363,8 @@ class PIRCoordinator:
             del self.active_queries[query_id]
 
     async def _execute_server_query(
-        self, server: ServerInfo, query_id: str, query_data: Dict
-    ) -> Dict:
+        self, server: ServerInfo, query_id: str, query_data: dict
+    ) -> dict:
         """Execute query on single server."""
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -375,7 +378,7 @@ class PIRCoordinator:
                     error_text = await response.text()
                     raise Exception(f"Server returned {response.status}: {error_text}")
 
-    def get_coordinator_stats(self) -> Dict[str, Any]:
+    def get_coordinator_stats(self) -> dict[str, Any]:
         """Get coordinator statistics."""
         healthy_servers = sum(1 for s in self.servers.values() if s.health_score > 0.8)
         degraded_servers = sum(1 for s in self.servers.values() if 0.5 < s.health_score <= 0.8)
@@ -401,7 +404,7 @@ class PIRCoordinator:
             "light_nodes": ln_servers,
             "active_queries": len(self.active_queries),
             "average_latency_ms": avg_latency,
-            "geographic_regions": len(set(s.region for s in self.servers.values())),
+            "geographic_regions": len({s.region for s in self.servers.values()}),
         }
 
 

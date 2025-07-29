@@ -25,7 +25,7 @@ class PersistencePair:
     birth: float
     death: float
     dimension: int
-    representatives: Optional[List[int]] = None
+    representatives: list[int] | None = None
 
     @property
     def persistence(self) -> float:
@@ -44,7 +44,7 @@ class PersistencePair:
 class PersistenceDiagram:
     """Collection of persistence pairs"""
 
-    pairs: List[PersistencePair]
+    pairs: list[PersistencePair]
     dimension: int
 
     def filter_by_persistence(self, threshold: float) -> "PersistenceDiagram":
@@ -69,7 +69,7 @@ class TopologicalAnalyzer:
 
     def compute_persistence_diagram(
         self, data: np.ndarray, max_scale: float = None
-    ) -> Dict[int, PersistenceDiagram]:
+    ) -> dict[int, PersistenceDiagram]:
         """
         Compute persistence diagrams for genomic data
 
@@ -99,7 +99,7 @@ class TopologicalAnalyzer:
 
     def _build_vietoris_rips(
         self, distances: np.ndarray, max_scale: float
-    ) -> List[Tuple[float, List[int]]]:
+    ) -> list[tuple[float, list[int]]]:
         """Build Vietoris-Rips filtration from distance matrix"""
         n = distances.shape[0]
         filtration = []
@@ -130,7 +130,7 @@ class TopologicalAnalyzer:
         return filtration
 
     def _compute_homology_persistence(
-        self, filtration: List[Tuple[float, List[int]]], dimension: int
+        self, filtration: list[tuple[float, list[int]]], dimension: int
     ) -> PersistenceDiagram:
         """Compute persistent homology in given dimension"""
         pairs = []
@@ -148,8 +148,8 @@ class TopologicalAnalyzer:
         return PersistenceDiagram(pairs, dimension)
 
     def _compute_0d_persistence(
-        self, filtration: List[Tuple[float, List[int]]]
-    ) -> List[PersistencePair]:
+        self, filtration: list[tuple[float, list[int]]]
+    ) -> list[PersistencePair]:
         """Compute 0-dimensional persistence (connected components)"""
         pairs = []
         union_find = UnionFind()
@@ -193,8 +193,8 @@ class TopologicalAnalyzer:
         return pairs
 
     def _compute_1d_persistence(
-        self, filtration: List[Tuple[float, List[int]]]
-    ) -> List[PersistencePair]:
+        self, filtration: list[tuple[float, list[int]]]
+    ) -> list[PersistencePair]:
         """Compute 1-dimensional persistence (loops)"""
         # Simplified implementation - would use boundary matrices in practice
         pairs = []
@@ -226,7 +226,7 @@ class TopologicalAnalyzer:
         for i, j, k, val in triangles:
             # Check if triangle fills a loop
             for cycle_key, birth in list(loop_births.items()):
-                if set([i, j, k]).issubset(set(cycle_key)):
+                if {i, j, k}.issubset(set(cycle_key)):
                     pairs.append(PersistencePair(birth, val, 1))
                     del loop_births[cycle_key]
                     break
@@ -238,8 +238,8 @@ class TopologicalAnalyzer:
         return pairs
 
     def _compute_2d_persistence(
-        self, filtration: List[Tuple[float, List[int]]]
-    ) -> List[PersistencePair]:
+        self, filtration: list[tuple[float, list[int]]]
+    ) -> list[PersistencePair]:
         """
         Compute 2-dimensional persistence (voids) for genomic structural analysis.
 
@@ -289,8 +289,8 @@ class TopologicalAnalyzer:
         return pairs
 
     def _find_neighboring_triangles(
-        self, triangle: List[int], all_triangles: List[Tuple[float, List[int]]]
-    ) -> List[List[int]]:
+        self, triangle: list[int], all_triangles: list[tuple[float, list[int]]]
+    ) -> list[list[int]]:
         """Find triangles that share an edge with the given triangle"""
         neighbors = []
         triangle_set = set(triangle)
@@ -302,7 +302,7 @@ class TopologicalAnalyzer:
 
         return neighbors
 
-    def _get_tetrahedron_faces(self, tetrahedron: List[int]) -> List[List[int]]:
+    def _get_tetrahedron_faces(self, tetrahedron: list[int]) -> list[list[int]]:
         """Get the four triangular faces of a tetrahedron"""
         faces = []
         for i in range(4):
@@ -428,7 +428,7 @@ class StructuralSignatureAnalyzer:
 
     def compute_dna_structural_signature(
         self, contact_matrix: np.ndarray, threshold: float = 0.1
-    ) -> Dict[str, any]:
+    ) -> dict[str, any]:
         """
         Compute topological signature from DNA contact matrix
 
@@ -471,7 +471,7 @@ class StructuralSignatureAnalyzer:
             "distance_matrix": distance_matrix,
         }
 
-    def compare_structural_signatures(self, sig1: Dict, sig2: Dict) -> float:
+    def compare_structural_signatures(self, sig1: dict, sig2: dict) -> float:
         """Compare two structural signatures"""
         # Compare persistence diagrams
         distances = []

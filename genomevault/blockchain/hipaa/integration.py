@@ -41,12 +41,12 @@ class HIPAANodeIntegration:
         """
         self.verifier = verifier
         self.governance = governance
-        self.node_registry: Dict[str, BlockchainNode] = {}
+        self.node_registry: dict[str, BlockchainNode] = {}
 
         logger.info("HIPAA node integration initialized")
 
     async def register_provider_node(
-        self, credentials: HIPAACredentials, node_config: Dict[str, Any]
+        self, credentials: HIPAACredentials, node_config: dict[str, Any]
     ) -> BlockchainNode:
         """
         Register a healthcare provider as a blockchain node.
@@ -83,7 +83,7 @@ class HIPAANodeIntegration:
             raise
 
     def _create_trusted_node(
-        self, record: VerificationRecord, config: Dict[str, Any]
+        self, record: VerificationRecord, config: dict[str, Any]
     ) -> BlockchainNode:
         """Create a blockchain node with trusted signatory status"""
         # Determine node class from config
@@ -146,11 +146,11 @@ class HIPAANodeIntegration:
 
         return True
 
-    def get_provider_node(self, npi: str) -> Optional[BlockchainNode]:
+    def get_provider_node(self, npi: str) -> BlockchainNode | None:
         """Get node for a provider NPI"""
         return self.node_registry.get(npi)
 
-    async def refresh_verifications(self) -> Dict[str, Any]:
+    async def refresh_verifications(self) -> dict[str, Any]:
         """
         Refresh all provider verifications.
 

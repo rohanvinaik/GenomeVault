@@ -150,7 +150,7 @@ class HypervectorBinder:
 
     def multi_bind(
         self,
-        vectors: List[torch.Tensor],
+        vectors: list[torch.Tensor],
         operation: BindingOperation = BindingOperation.CIRCULAR_CONVOLUTION,
     ) -> torch.Tensor:
         """
@@ -192,7 +192,7 @@ class MultiModalBinder:
         self.binder = HypervectorBinder(dimension)
         self.modality_keys = self._generate_modality_keys()
 
-    def _generate_modality_keys(self) -> Dict[str, torch.Tensor]:
+    def _generate_modality_keys(self) -> dict[str, torch.Tensor]:
         """Generate orthogonal keys for each modality"""
         keys = {}
 
@@ -215,7 +215,7 @@ class MultiModalBinder:
 
         return keys
 
-    def bind_modalities(self, modality_data: Dict[str, torch.Tensor]) -> torch.Tensor:
+    def bind_modalities(self, modality_data: dict[str, torch.Tensor]) -> torch.Tensor:
         """
         Bind multiple modalities with their respective keys
 
@@ -269,7 +269,9 @@ class MultiModalBinder:
         return similarity
 
     def hamming_similarity(
-        self, vec1: Union[torch.Tensor, np.ndarray], vec2: Union[torch.Tensor, np.ndarray]
+        self,
+        vec1: torch.Tensor | np.ndarray,
+        vec2: torch.Tensor | np.ndarray,
     ) -> float:
         """
         Compute Hamming-based similarity using optimized LUT.
@@ -307,7 +309,9 @@ class MultiModalBinder:
         return similarity
 
     def batch_hamming_similarity(
-        self, vecs1: Union[torch.Tensor, np.ndarray], vecs2: Union[torch.Tensor, np.ndarray]
+        self,
+        vecs1: torch.Tensor | np.ndarray,
+        vecs2: torch.Tensor | np.ndarray,
     ) -> np.ndarray:
         """
         Compute pairwise Hamming similarities for batches using optimized LUT.

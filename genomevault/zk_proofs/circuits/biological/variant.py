@@ -210,7 +210,7 @@ class PolygenenicRiskScoreCircuit(BaseCircuit):
 
     def _commit_score(self, score: FieldElement, randomness: FieldElement) -> FieldElement:
         """Create commitment to PRS score"""
-        data = "PRS:{score.value}:{randomness.value}".encode()
+        data = b"PRS:{score.value}:{randomness.value}"
         hash_val = hashlib.sha256(data).hexdigest()
         return FieldElement(int(hash_val, 16))
 
@@ -297,7 +297,7 @@ class DiabetesRiskCircuit(BaseCircuit):
 
     def _commit_result(self, result: FieldElement, randomness: FieldElement) -> FieldElement:
         """Commit to boolean result"""
-        data = "DIABETES_RISK:{result.value}:{randomness.value}".encode()
+        data = b"DIABETES_RISK:{result.value}:{randomness.value}"
         hash_val = hashlib.sha256(data).hexdigest()
         return FieldElement(int(hash_val, 16))
 
@@ -405,7 +405,7 @@ class PharmacogenomicCircuit(BaseCircuit):
     def _commit_genotypes(self, genotypes: List[Dict], randomness: FieldElement) -> FieldElement:
         """Create commitment to genotypes"""
         genotype_str = ":".join("{g['variant']}={g['genotype']}" for g in genotypes)
-        data = "GENOTYPES:{genotype_str}:{randomness.value}".encode()
+        data = b"GENOTYPES:{genotype_str}:{randomness.value}"
         hash_val = hashlib.sha256(data).hexdigest()
         return FieldElement(int(hash_val, 16))
 
@@ -526,7 +526,7 @@ class PathwayEnrichmentCircuit(BaseCircuit):
         p_value = FieldElement((exceed_count + 1) * 1000 // (len(permutation_scores) + 1))
 
         # Create commitment
-        data = "PVALUE:{p_value.value}:{randomness.value}".encode()
+        data = b"PVALUE:{p_value.value}:{randomness.value}"
         hash_val = hashlib.sha256(data).hexdigest()
         return FieldElement(int(hash_val, 16))
 
@@ -552,7 +552,7 @@ def create_hypervector_proof(
         return {
             "circuit": "hypervector_similarity",
             "similarity_commitment": hashlib.sha256(
-                "{hypervector.sum().item()}".encode()
+                b"{hypervector.sum().item()}"
             ).hexdigest(),
             "dimension": hypervector.shape[0],
         }
@@ -561,10 +561,10 @@ def create_hypervector_proof(
         return {
             "circuit": "hypervector_range",
             "norm_commitment": hashlib.sha256(
-                "{torch.norm(hypervector).item()}".encode()
+                b"{torch.norm(hypervector).item()}"
             ).hexdigest(),
             "sparsity_commitment": hashlib.sha256(
-                "{(hypervector == 0).float().mean().item()}".encode()
+                b"{(hypervector == 0).float().mean().item()}"
             ).hexdigest(),
         }
     else:

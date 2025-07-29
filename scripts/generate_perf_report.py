@@ -30,7 +30,7 @@ class PerformanceReportGenerator:
         plt.rcParams["figure.figsize"] = (10, 6)
         plt.rcParams["figure.dpi"] = 150
 
-    def load_benchmark_data(self) -> Dict[str, List[Dict]]:
+    def load_benchmark_data(self) -> dict[str, list[dict]]:
         """Load all benchmark JSON files"""
         data = {"hdc": [], "pir": [], "zk": []}
 
@@ -39,7 +39,7 @@ class PerformanceReportGenerator:
             if lane_dir.exists():
                 for json_file in lane_dir.glob("*.json"):
                     try:
-                        with open(json_file, "r") as f:
+                        with open(json_file) as f:
                             benchmark_data = json.load(f)
                             data[lane].append(benchmark_data)
                     except Exception as e:
@@ -47,7 +47,7 @@ class PerformanceReportGenerator:
 
         return data
 
-    def analyze_hdc_performance(self, hdc_data: List[Dict]) -> Dict[str, Any]:
+    def analyze_hdc_performance(self, hdc_data: list[dict]) -> dict[str, Any]:
         """Analyze HDC benchmark data"""
         if not hdc_data:
             return {}
@@ -93,7 +93,7 @@ class PerformanceReportGenerator:
 
         return analysis
 
-    def generate_hdc_plots(self, hdc_data: List[Dict]):
+    def generate_hdc_plots(self, hdc_data: list[dict]):
         """Generate HDC performance plots"""
         if not hdc_data:
             return
@@ -117,7 +117,7 @@ class PerformanceReportGenerator:
         if "scalability" in benchmarks:
             self._plot_scalability(benchmarks["scalability"])
 
-    def _plot_throughput_comparison(self, throughput_data: Dict):
+    def _plot_throughput_comparison(self, throughput_data: dict):
         """Plot encoding throughput comparison"""
         data = throughput_data["data"]
 
@@ -143,14 +143,18 @@ class PerformanceReportGenerator:
         # Add annotations
         for x, y in zip(dimensions, throughputs):
             plt.annotate(
-                f"{y:.0f}", xy=(x, y), xytext=(0, 5), textcoords="offset points", ha="center"
+                f"{y:.0f}",
+                xy=(x, y),
+                xytext=(0, 5),
+                textcoords="offset points",
+                ha="center",
             )
 
         plt.tight_layout()
         plt.savefig(self.output_dir / "hdc_throughput.png")
         plt.close()
 
-    def _plot_memory_comparison(self, memory_data: Dict):
+    def _plot_memory_comparison(self, memory_data: dict):
         """Plot memory usage comparison"""
         data = memory_data["data"]
 
@@ -196,7 +200,7 @@ class PerformanceReportGenerator:
         plt.savefig(self.output_dir / "hdc_memory_comparison.png")
         plt.close()
 
-    def _plot_scalability(self, scalability_data: Dict):
+    def _plot_scalability(self, scalability_data: dict):
         """Plot batch processing scalability"""
         data = scalability_data["data"]
 
@@ -222,7 +226,7 @@ class PerformanceReportGenerator:
         plt.savefig(self.output_dir / "hdc_scalability.png")
         plt.close()
 
-    def generate_summary_report(self, all_data: Dict[str, List[Dict]]) -> Dict[str, Any]:
+    def generate_summary_report(self, all_data: dict[str, list[dict]]) -> dict[str, Any]:
         """Generate overall summary report"""
         report = {"generated_at": datetime.now().isoformat(), "lanes": {}}
 
@@ -241,7 +245,7 @@ class PerformanceReportGenerator:
 
         return report
 
-    def generate_html_report(self, summary: Dict[str, Any]):
+    def generate_html_report(self, summary: dict[str, Any]):
         """Generate HTML performance report"""
         html_content = f"""
 <!DOCTYPE html>
@@ -296,7 +300,11 @@ class PerformanceReportGenerator:
 """
 
         # Add plots
-        for plot in ["hdc_throughput.png", "hdc_memory_comparison.png", "hdc_scalability.png"]:
+        for plot in [
+            "hdc_throughput.png",
+            "hdc_memory_comparison.png",
+            "hdc_scalability.png",
+        ]:
             if (self.output_dir / plot).exists():
                 html_content += f'<img src="{plot}" alt="{plot}">\n'
 

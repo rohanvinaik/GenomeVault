@@ -9,6 +9,7 @@ Implements the diabetes risk assessment system with:
 
 import hashlib
 import json
+import logging
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
@@ -19,7 +20,6 @@ import torch
 from ...core.constants import GLUCOSE_THRESHOLD_MG_DL, HBA1C_THRESHOLD_PERCENT
 from ...utils import get_config, get_logger
 from ...zk_proofs.prover import Prover
-import logging
 
 logger = logging.getLogger(__name__)
 

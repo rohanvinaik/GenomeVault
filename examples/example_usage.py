@@ -3,6 +3,7 @@
 Example usage of GenomeVault 3.0 integrated system.
 Demonstrates the complete workflow from data processing to proof generation.
 """
+
 import asyncio
 import json
 import time
@@ -11,10 +12,7 @@ from pathlib import Path
 import numpy as np
 
 from genomevault.blockchain.node import BlockchainNode
-from genomevault.hypervector_transform.encoding import (
-    HypervectorBinder,
-    HypervectorEncoder,
-)
+from genomevault.hypervector_transform.encoding import HypervectorBinder, HypervectorEncoder
 from genomevault.local_processing.sequencing import SequencingProcessor, Variant
 from genomevault.pir.client import PIRClient, PIRServer
 

@@ -24,17 +24,17 @@ from genomevault.zk_proofs.circuits.implementations.variant_proof_circuit import
 )
 
 
-def load_json_file(filepath: str) -> Dict[str, Any]:
+def load_json_file(filepath: str) -> dict[str, Any]:
     """Load JSON data from file."""
     try:
-        with open(filepath, "r") as f:
+        with open(filepath) as f:
             return json.load(f)
     except Exception:
         print(f"Error loading {filepath}: {e}")
         sys.exit(1)
 
 
-def save_json_file(data: Dict[str, Any], filepath: str):
+def save_json_file(data: dict[str, Any], filepath: str):
     """Save JSON data to file."""
     try:
         with open(filepath, "w") as f:
@@ -278,7 +278,11 @@ def cmd_info(args):
         },
         "diabetes_risk": {
             "description": "Clinical pilot: prove glucose AND genetic risk exceed thresholds",
-            "public_inputs": ["glucose_threshold", "risk_threshold", "alert_commitment"],
+            "public_inputs": [
+                "glucose_threshold",
+                "risk_threshold",
+                "alert_commitment",
+            ],
             "private_inputs": ["glucose_reading", "risk_score", "randomness"],
             "proof_size": "384 bytes",
             "verification_time": "<25ms",
@@ -344,14 +348,22 @@ Examples:
         "--circuit",
         "-c",
         required=True,
-        choices=["variant_presence", "variant_frequency", "polygenic_risk_score", "diabetes_risk"],
+        choices=[
+            "variant_presence",
+            "variant_frequency",
+            "polygenic_risk_score",
+            "diabetes_risk",
+        ],
         help="Circuit type to use",
     )
     prove_parser.add_argument(
         "--public-input", "-p", required=True, help="Path to public inputs JSON file"
     )
     prove_parser.add_argument(
-        "--private-input", "-w", required=True, help="Path to private inputs (witness) JSON file"
+        "--private-input",
+        "-w",
+        required=True,
+        help="Path to private inputs (witness) JSON file",
     )
     prove_parser.add_argument(
         "--output", "-o", help="Output proof file (default: <circuit>_proof.json)"

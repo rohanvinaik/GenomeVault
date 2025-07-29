@@ -106,7 +106,7 @@ class GenomeVaultDebugger:
         print("📦 Checking requirements...")
 
         try:
-            with open(self.root_dir / "requirements.txt", "r") as f:
+            with open(self.root_dir / "requirements.txt") as f:
                 requirements = f.readlines()
 
             missing = []

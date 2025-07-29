@@ -28,10 +28,7 @@ from .hdc_encoder import (
     create_encoder,
     encode_genomic_data,
 )
-from .registry import (
-    HypervectorRegistry,
-    VersionMigrator,
-)
+from .registry import HypervectorRegistry, VersionMigrator
 
 __version__ = "1.0.0"
 

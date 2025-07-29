@@ -97,9 +97,27 @@ class TestPackedGenomicEncoder:
     def sample_variants(self):
         """Sample genomic variants for testing"""
         return [
-            {"chromosome": "chr1", "position": 12345, "ref": "A", "alt": "G", "type": "SNP"},
-            {"chromosome": "chr1", "position": 23456, "ref": "C", "alt": "T", "type": "SNP"},
-            {"chromosome": "chr2", "position": 34567, "ref": "G", "alt": "A", "type": "SNP"},
+            {
+                "chromosome": "chr1",
+                "position": 12345,
+                "ref": "A",
+                "alt": "G",
+                "type": "SNP",
+            },
+            {
+                "chromosome": "chr1",
+                "position": 23456,
+                "ref": "C",
+                "alt": "T",
+                "type": "SNP",
+            },
+            {
+                "chromosome": "chr2",
+                "position": 34567,
+                "ref": "G",
+                "alt": "A",
+                "type": "SNP",
+            },
         ]
 
     def test_encoder_creation(self):
@@ -233,8 +251,20 @@ if __name__ == "__main__":
     # Test genomic encoding
     encoder = PackedGenomicEncoder(dimension=10000)
     variants = [
-        {"chromosome": "chr1", "position": 12345, "ref": "A", "alt": "G", "type": "SNP"},
-        {"chromosome": "chr2", "position": 67890, "ref": "C", "alt": "T", "type": "SNP"},
+        {
+            "chromosome": "chr1",
+            "position": 12345,
+            "ref": "A",
+            "alt": "G",
+            "type": "SNP",
+        },
+        {
+            "chromosome": "chr2",
+            "position": 67890,
+            "ref": "C",
+            "alt": "T",
+            "type": "SNP",
+        },
     ]
 
     genome_hv = encoder.encode_genome(variants)

@@ -49,7 +49,7 @@ class VariantFrequencyCircuit:
         # Configure constants
         self.C_MAX = 10000  # Maximum plausible allele count (2N for diploid with N samples)
 
-    def setup_circuit(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
+    def setup_circuit(self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]):
         """Setup the circuit with actual inputs."""
 
         # Public inputs
@@ -123,7 +123,8 @@ class VariantFrequencyCircuit:
         # Randomness for zero-knowledge
         self.randomness_var = self.cs.add_variable("zk_randomness")
         self.cs.assign(
-            self.randomness_var, FieldElement(int(private_inputs.get("randomness", "0"), 16))
+            self.randomness_var,
+            FieldElement(int(private_inputs.get("randomness", "0"), 16)),
         )
 
         self.setup_complete = True
@@ -292,11 +293,11 @@ class VariantFrequencyCircuit:
         """Get the constraint system."""
         return self.cs
 
-    def get_public_inputs(self) -> List[FieldElement]:
+    def get_public_inputs(self) -> list[FieldElement]:
         """Get public input values."""
         return self.cs.get_public_inputs()
 
-    def get_witness(self) -> Dict[int, FieldElement]:
+    def get_witness(self) -> dict[int, FieldElement]:
         """Get witness (private inputs)."""
         return self.cs.get_witness()
 
@@ -304,7 +305,7 @@ class VariantFrequencyCircuit:
         """Verify all constraints are satisfied."""
         return self.cs.is_satisfied()
 
-    def get_circuit_info(self) -> Dict[str, Any]:
+    def get_circuit_info(self) -> dict[str, Any]:
         """Get circuit information."""
         return {
             "name": "variant_frequency_sum",

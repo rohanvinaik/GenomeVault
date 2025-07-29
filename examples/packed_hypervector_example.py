@@ -107,8 +107,20 @@ def main():
 
     # Compare with completely different genome
     variants_different = [
-        {"chromosome": "chr2", "position": 12345678, "ref": "A", "alt": "T", "type": "SNP"},
-        {"chromosome": "chr3", "position": 87654321, "ref": "G", "alt": "C", "type": "SNP"},
+        {
+            "chromosome": "chr2",
+            "position": 12345678,
+            "ref": "A",
+            "alt": "T",
+            "type": "SNP",
+        },
+        {
+            "chromosome": "chr3",
+            "position": 87654321,
+            "ref": "G",
+            "alt": "C",
+            "type": "SNP",
+        },
     ]
 
     genome_hv3 = encoder.encode_genome(variants_different)
