@@ -1,349 +1,89 @@
-"""
-Hypervector binding operations for multi-modal data integration
-"""
-
-from enum import Enum
-from typing import Dict, List, Optional, Tuple, Union
+from __future__ import annotations
 
 import numpy as np
-import torch
-
-from genomevault.core.constants import HYPERVECTOR_DIMENSIONS
-
-from .hamming_lut import HammingLUT
+from typing import Iterable, Dict, List, Tuple
 
 
-class BindingOperation(Enum):
-    """Types of binding operations"""
+def circular_convolution(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    """Bind two hypervectors via circular convolution (fft-based).
 
-    CIRCULAR_CONVOLUTION = "circular_convolution"
-    XOR = "xor"
-    MULTIPLY = "multiply"
-    PERMUTATION = "permutation"
-
-
-class HypervectorBinder:
+    Args:
+        a, b: 1-D float arrays of equal length
+    Returns:
+        1-D float array of same length
     """
-    Implements binding operations for hyperdimensional computing
+    if a.ndim != 1 or b.ndim != 1 or a.shape[0] != b.shape[0]:
+        raise ValueError("a and b must be 1-D arrays with equal length")
+    fa = np.fft.fft(a)
+    fb = np.fft.fft(b)
+    return np.real(np.fft.ifft(fa * fb))
+
+
+def element_wise_multiply(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    """Bind two hypervectors via element-wise multiplication."""
+    if a.ndim != 1 or b.ndim != 1 or a.shape[0] != b.shape[0]:
+        raise ValueError("a and b must be 1-D arrays with equal length")
+    return a * b
+
+
+def permutation_binding(v: np.ndarray, shift: int = 1) -> np.ndarray:
+    """Apply cyclic permutation (roll) used for sequence encoding."""
+    if v.ndim != 1:
+        raise ValueError("v must be a 1-D array")
+    if not isinstance(shift, int):
+        raise ValueError("shift must be an integer")
+    L = v.shape[0]
+    return np.roll(v, shift % L)
+
+
+def _safe_norm(x: np.ndarray) -> float:
+    n = float(np.linalg.norm(x))
+    return n if n > 0.0 else 1.0
+
+
+def bundle(vectors: Iterable[np.ndarray]) -> np.ndarray:
+    """Bundle multiple hypervectors via normalized addition.
+
+    Args:
+        vectors: iterable of 1-D float arrays of equal length
+    Returns:
+        normalized sum (L2) of inputs; if all-zero, returns the zero vector
     """
-
-    def __init__(self, dimension: int = HYPERVECTOR_DIMENSIONS["base"], use_gpu: bool = False):
-        self.dimension = dimension
-        self.hamming_lut = HammingLUT(use_gpu=use_gpu)  # Initialize LUT calculator
-
-    def bind(
-        self,
-        vec1: torch.Tensor,
-        vec2: torch.Tensor,
-        operation: BindingOperation = BindingOperation.CIRCULAR_CONVOLUTION,
-    ) -> torch.Tensor:
-        """
-        Bind two hypervectors using specified operation
-
-        Args:
-            vec1: First hypervector
-            vec2: Second hypervector
-            operation: Type of binding operation
-
-        Returns:
-            Bound hypervector
-        """
-        if vec1.shape != vec2.shape:
-            raise ValueError("Vector shapes must match: {vec1.shape} != {vec2.shape}")
-
-        if operation == BindingOperation.CIRCULAR_CONVOLUTION:
-            return self._circular_convolution(vec1, vec2)
-        elif operation == BindingOperation.XOR:
-            return self._xor_binding(vec1, vec2)
-        elif operation == BindingOperation.MULTIPLY:
-            return self._multiply_binding(vec1, vec2)
-        elif operation == BindingOperation.PERMUTATION:
-            return self._permutation_binding(vec1, vec2)
-        else:
-            raise ValueError("Unknown binding operation: {operation}")
-
-    def _circular_convolution(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
-        """
-        Bind using circular convolution (preserves algebraic properties)
-        """
-        # Use FFT for efficient circular convolution
-        fft1 = torch.fft.rfft(vec1)
-        fft2 = torch.fft.rfft(vec2)
-        bound = torch.fft.irfft(fft1 * fft2, n=len(vec1))
-
-        # Normalize to maintain magnitude
-        return bound / torch.norm(bound)
-
-    def _xor_binding(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
-        """
-        XOR binding for binary hypervectors
-        """
-        # Convert to binary
-        binary1 = (vec1 > 0).float()
-        binary2 = (vec2 > 0).float()
-
-        # XOR operation
-        bound = torch.logical_xor(binary1.bool(), binary2.bool()).float()
-
-        # Convert back to bipolar (-1, 1)
-        bound = 2 * bound - 1
-
-        return bound
-
-    def _multiply_binding(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
-        """
-        Element-wise multiplication binding
-        """
-        bound = vec1 * vec2
-        return bound / torch.norm(bound)
-
-    def _permutation_binding(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
-        """
-        Bind using permutation of one vector
-        """
-        # Create a deterministic permutation based on vec2
-        perm_indices = torch.argsort(vec2)
-        permuted_vec1 = vec1[perm_indices]
-
-        # Bind with circular convolution
-        return self._circular_convolution(permuted_vec1, vec2)
-
-    def unbind(
-        self,
-        bound_vec: torch.Tensor,
-        known_vec: torch.Tensor,
-        operation: BindingOperation = BindingOperation.CIRCULAR_CONVOLUTION,
-    ) -> torch.Tensor:
-        """
-        Unbind a hypervector given one of the bound components
-
-        Args:
-            bound_vec: The bound hypervector
-            known_vec: One of the original vectors
-            operation: The binding operation that was used
-
-        Returns:
-            The other original vector
-        """
-        if operation == BindingOperation.CIRCULAR_CONVOLUTION:
-            # Inverse is correlation (convolution with reversed vector)
-            return self._circular_correlation(bound_vec, known_vec)
-        elif operation == BindingOperation.XOR:
-            # XOR is its own inverse
-            return self._xor_binding(bound_vec, known_vec)
-        elif operation == BindingOperation.MULTIPLY:
-            # Inverse is division (multiplication by reciprocal)
-            return bound_vec / (known_vec + 1e-8)  # Add small epsilon to avoid division by zero
-        else:
-            raise ValueError("Unbinding not supported for {operation}")
-
-    def _circular_correlation(self, vec1: torch.Tensor, vec2: torch.Tensor) -> torch.Tensor:
-        """
-        Circular correlation (inverse of circular convolution)
-        """
-        # Correlation is convolution with conjugate in frequency domain
-        fft1 = torch.fft.rfft(vec1)
-        fft2_conj = torch.conj(torch.fft.rfft(vec2))
-        result = torch.fft.irfft(fft1 * fft2_conj, n=len(vec1))
-
-        return result / torch.norm(result)
-
-    def multi_bind(
-        self,
-        vectors: list[torch.Tensor],
-        operation: BindingOperation = BindingOperation.CIRCULAR_CONVOLUTION,
-    ) -> torch.Tensor:
-        """
-        Bind multiple hypervectors together
-        """
-        if len(vectors) < 2:
-            raise ValueError("Need at least 2 vectors to bind")
-
-        result = vectors[0]
-        for vec in vectors[1:]:
-            result = self.bind(result, vec, operation)
-
-        return result
-
-    def protect_binding(
-        self, vec1: torch.Tensor, vec2: torch.Tensor, noise_level: float = 0.1
-    ) -> torch.Tensor:
-        """
-        Bind with added noise for additional privacy
-        """
-        # Regular binding
-        bound = self.bind(vec1, vec2)
-
-        # Add Gaussian noise
-        noise = torch.randn_like(bound) * noise_level
-        noisy_bound = bound + noise
-
-        # Renormalize
-        return noisy_bound / torch.norm(noisy_bound)
+    vectors = list(vectors)
+    if not vectors:
+        raise ValueError("vectors must be non-empty")
+    L = vectors[0].shape[0]
+    for v in vectors:
+        if v.ndim != 1 or v.shape[0] != L:
+            raise ValueError("all vectors must be 1-D and equal length")
+    s = np.sum(np.stack(vectors, axis=0), axis=0)
+    n = np.linalg.norm(s)
+    return s if n == 0.0 else s / n
 
 
-class MultiModalBinder:
+def _cosine(a: np.ndarray, b: np.ndarray) -> float:
+    denom = _safe_norm(a) * _safe_norm(b)
+    return float(a @ b / denom)
+
+
+def unbundle(bundled: np.ndarray, item_memory: Dict[str, np.ndarray], threshold: float = 0.3) -> List[Tuple[str, float]]:
+    """Retrieve components from a bundled vector using cosine similarity threshold.
+
+    Args:
+        bundled: 1-D array
+        item_memory: mapping name -> prototype vector (1-D)
+        threshold: minimum cosine similarity to include
+    Returns:
+        list of (label, similarity) sorted by similarity desc
     """
-    Specialized binder for multi-omics data integration
-    """
-
-    def __init__(self, dimension: int = HYPERVECTOR_DIMENSIONS["base"]):
-        self.dimension = dimension
-        self.binder = HypervectorBinder(dimension)
-        self.modality_keys = self._generate_modality_keys()
-
-    def _generate_modality_keys(self) -> dict[str, torch.Tensor]:
-        """Generate orthogonal keys for each modality"""
-        keys = {}
-
-        # Create orthogonal vectors for each modality
-        modalities = [
-            "genomic",
-            "transcriptomic",
-            "epigenetic",
-            "proteomic",
-            "phenotypic",
-        ]
-
-        for i, modality in enumerate(modalities):
-            key = torch.zeros(self.dimension)
-            # Use sparse orthogonal vectors
-            indices = torch.arange(i, self.dimension, len(modalities))
-            key[indices] = 1.0
-            key = key / torch.norm(key)
-            keys[modality] = key
-
-        return keys
-
-    def bind_modalities(self, modality_data: dict[str, torch.Tensor]) -> torch.Tensor:
-        """
-        Bind multiple modalities with their respective keys
-
-        Args:
-            modality_data: Dictionary mapping modality names to their hypervectors
-
-        Returns:
-            Integrated multi-modal hypervector
-        """
-        bound_modalities = []
-
-        for modality, data_vec in modality_data.items():
-            if modality not in self.modality_keys:
-                raise ValueError("Unknown modality: {modality}")
-
-            # Bind modality data with its key
-            modality_key = self.modality_keys[modality]
-            bound = self.binder.bind(data_vec, modality_key)
-            bound_modalities.append(bound)
-
-        # Bundle all bound modalities
-        integrated = torch.stack(bound_modalities).sum(dim=0)
-        return integrated / torch.norm(integrated)
-
-    def extract_modality(self, integrated_vec: torch.Tensor, modality: str) -> torch.Tensor:
-        """
-        Extract a specific modality from an integrated vector
-        """
-        if modality not in self.modality_keys:
-            raise ValueError("Unknown modality: {modality}")
-
-        # Unbind with the modality key
-        modality_key = self.modality_keys[modality]
-        extracted = self.binder.unbind(integrated_vec, modality_key)
-
-        return extracted
-
-    def cross_modal_similarity(
-        self, vec1: torch.Tensor, modality1: str, vec2: torch.Tensor, modality2: str
-    ) -> float:
-        """
-        Compute similarity between vectors from different modalities
-        """
-        # Bind each with its modality key
-        bound1 = self.binder.bind(vec1, self.modality_keys[modality1])
-        bound2 = self.binder.bind(vec2, self.modality_keys[modality2])
-
-        # Compute cosine similarity
-        similarity = torch.cosine_similarity(bound1, bound2, dim=0).item()
-
-        return similarity
-
-    def hamming_similarity(
-        self,
-        vec1: torch.Tensor | np.ndarray,
-        vec2: torch.Tensor | np.ndarray,
-    ) -> float:
-        """
-        Compute Hamming-based similarity using optimized LUT.
-
-        Args:
-            vec1: First hypervector (binary or bipolar)
-            vec2: Second hypervector (binary or bipolar)
-
-        Returns:
-            float: Normalized Hamming similarity (0 to 1)
-        """
-        # Convert to numpy if needed
-        if isinstance(vec1, torch.Tensor):
-            vec1 = vec1.numpy()
-        if isinstance(vec2, torch.Tensor):
-            vec2 = vec2.numpy()
-
-        # Convert to binary representation
-        if vec1.dtype == np.float32 or vec1.dtype == np.float64:
-            vec1 = (vec1 > 0).astype(np.uint8)
-        if vec2.dtype == np.float32 or vec2.dtype == np.float64:
-            vec2 = (vec2 > 0).astype(np.uint8)
-
-        # Pack bits into uint64 for efficient processing
-        vec1_packed = np.packbits(vec1).view(np.uint64)
-        vec2_packed = np.packbits(vec2).view(np.uint64)
-
-        # Compute Hamming distance
-        distance = self.hamming_lut.distance(vec1_packed, vec2_packed)
-
-        # Normalize to similarity (0 to 1)
-        max_distance = len(vec1)
-        similarity = 1.0 - (distance / max_distance)
-
-        return similarity
-
-    def batch_hamming_similarity(
-        self,
-        vecs1: torch.Tensor | np.ndarray,
-        vecs2: torch.Tensor | np.ndarray,
-    ) -> np.ndarray:
-        """
-        Compute pairwise Hamming similarities for batches using optimized LUT.
-
-        Args:
-            vecs1: First batch of hypervectors (N x D)
-            vecs2: Second batch of hypervectors (M x D)
-
-        Returns:
-            np.ndarray: Pairwise similarities (N x M)
-        """
-        # Convert to numpy if needed
-        if isinstance(vecs1, torch.Tensor):
-            vecs1 = vecs1.numpy()
-        if isinstance(vecs2, torch.Tensor):
-            vecs2 = vecs2.numpy()
-
-        # Convert to binary representation
-        if vecs1.dtype == np.float32 or vecs1.dtype == np.float64:
-            vecs1 = (vecs1 > 0).astype(np.uint8)
-        if vecs2.dtype == np.float32 or vecs2.dtype == np.float64:
-            vecs2 = (vecs2 > 0).astype(np.uint8)
-
-        # Pack bits into uint64 for efficient processing
-        vecs1_packed = np.array([np.packbits(v).view(np.uint64) for v in vecs1])
-        vecs2_packed = np.array([np.packbits(v).view(np.uint64) for v in vecs2])
-
-        # Compute Hamming distances
-        distances = self.hamming_lut.distance_batch(vecs1_packed, vecs2_packed)
-
-        # Normalize to similarities
-        max_distance = vecs1.shape[1]
-        similarities = 1.0 - (distances / max_distance)
-
-        return similarities
+    if bundled.ndim != 1:
+        raise ValueError("bundled must be a 1-D array")
+    out: List[Tuple[str, float]] = []
+    for label, proto in item_memory.items():
+        if proto.ndim != 1 or proto.shape[0] != bundled.shape[0]:
+            raise ValueError("prototypes must be 1-D and equal length to bundled")
+        sim = _cosine(bundled, proto)
+        if sim >= threshold:
+            out.append((label, float(sim)))
+    out.sort(key=lambda x: x[1], reverse=True)
+    return out
