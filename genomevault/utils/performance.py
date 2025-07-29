@@ -67,9 +67,7 @@ class HypervectorAccelerator:
                 distance += 1
         return distance
 
-    def hamming_distance(
-        self, v1: np.ndarray | torch.Tensor, v2: np.ndarray | torch.Tensor
-    ) -> int:
+    def hamming_distance(self, v1: np.ndarray | torch.Tensor, v2: np.ndarray | torch.Tensor) -> int:
         """Compute Hamming distance with hardware acceleration"""
 
         if self.backend == "torch":

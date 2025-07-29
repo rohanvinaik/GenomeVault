@@ -551,18 +551,14 @@ def create_hypervector_proof(
         # Prove similarity between two hypervectors without revealing them
         return {
             "circuit": "hypervector_similarity",
-            "similarity_commitment": hashlib.sha256(
-                b"{hypervector.sum().item()}"
-            ).hexdigest(),
+            "similarity_commitment": hashlib.sha256(b"{hypervector.sum().item()}").hexdigest(),
             "dimension": hypervector.shape[0],
         }
     elif proof_type == "range":
         # Prove hypervector properties are in expected range
         return {
             "circuit": "hypervector_range",
-            "norm_commitment": hashlib.sha256(
-                b"{torch.norm(hypervector).item()}"
-            ).hexdigest(),
+            "norm_commitment": hashlib.sha256(b"{torch.norm(hypervector).item()}").hexdigest(),
             "sparsity_commitment": hashlib.sha256(
                 b"{(hypervector == 0).float().mean().item()}"
             ).hexdigest(),
