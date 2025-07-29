@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: genomevault-api
+spec:
+  selector:
+    app: genomevault-api
+  ports:
+    - port: 80
+      targetPort: 8000
+      protocol: TCP
+      name: http
+  type: ClusterIP
