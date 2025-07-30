@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import os
-from typing import List
-from fastapi import Header, HTTPException, status, Depends
+
+from fastapi import Header, HTTPException, status
 
 _HEADER = "X-API-Key"
 
 
-def _load_keys() -> List[str]:
+def _load_keys() -> list[str]:
     raw = os.getenv("GV_API_KEYS", "").strip()
     if not raw:
         return []
@@ -20,5 +20,7 @@ def require_api_key(x_api_key: str | None = Header(default=None, alias=_HEADER))
         # Security off: allow (development mode). In prod, set GV_API_KEYS!
         return "ANON"
     if x_api_key is None or x_api_key not in keys:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing or invalid API key")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing or invalid API key"
+        )
     return x_api_key

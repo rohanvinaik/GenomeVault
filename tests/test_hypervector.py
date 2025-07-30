@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 # tests/test_hdc_hypervector.py
 import numpy as np
 import pytest
@@ -5,7 +8,6 @@ import pytest
 from genomevault.hypervector_transform.binding import BindingOperations
 from genomevault.hypervector_transform.encoding import HypervectorEncoder
 from genomevault.hypervector_transform.holographic import HolographicRepresentation
-from genomevault.hypervector_transform.mapping import SimilarityPreservingMapper
 
 
 class TestHypervectorEngine:

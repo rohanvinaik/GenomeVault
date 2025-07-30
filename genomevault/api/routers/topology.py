@@ -3,13 +3,11 @@ Topology API endpoints
 """
 
 import asyncio
-from typing import Dict, List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from genomevault.core.config import get_config
-from genomevault.core.exceptions import NetworkError
 
 router = APIRouter()
 config = get_config()
@@ -139,7 +137,12 @@ async def get_network_topology(request: TopologyRequest):
         )
 
     except Exception as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         raise HTTPException(status_code=500, detail=str(e))
+        raise
 
 
 @router.get("/nodes")

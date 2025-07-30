@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -218,8 +218,13 @@ class TranscriptomicsProcessor:
             return profile
 
         except Exception as _:
-            logger.error(f"Error processing RNA-seq data: {str(e)}")
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
+            logger.error(f"Error processing RNA-seq data: {e!s}")
             raise ProcessingError("Failed to process RNA-seq data: {str(e)}")
+            raise
 
     def _process_fastq(
         self, input_paths: Path | list[Path], paired_end: bool, min_quality: int

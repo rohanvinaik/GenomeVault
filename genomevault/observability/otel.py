@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 
+
 def try_enable_otel() -> bool:
     """Enable OpenTelemetry if OTEL_EXPORTER_OTLP_ENDPOINT is set and packages are installed."""
     endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
@@ -10,10 +11,10 @@ def try_enable_otel() -> bool:
     try:
         from opentelemetry import trace
         from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+        from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
         from opentelemetry.sdk.resources import Resource
         from opentelemetry.sdk.trace import TracerProvider
         from opentelemetry.sdk.trace.export import BatchSpanProcessor
-        from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 
         provider = TracerProvider(resource=Resource.create({"service.name": "genomevault-api"}))
         trace.set_tracer_provider(provider)
@@ -23,4 +24,9 @@ def try_enable_otel() -> bool:
         FastAPIInstrumentor().instrument()
         return True
     except Exception:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         return False
+        raise

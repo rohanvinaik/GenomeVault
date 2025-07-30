@@ -7,16 +7,13 @@ import asyncio
 import hashlib
 import os
 import random
-import struct
 import time
 from collections import deque
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Protocol, Tuple
+from dataclasses import dataclass
+from typing import Any, Protocol
 
 import numpy as np
-from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import constant_time
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 # ======================== Configuration ========================
 
@@ -275,7 +272,12 @@ class SecurePIRServer:
             try:
                 await self.batch_processor_task
             except asyncio.CancelledError:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 pass
+                raise
 
     async def answer_query_async(self, payload: bytes) -> bytes:
         """Answer query with comprehensive timing protection."""
@@ -350,9 +352,14 @@ class SecurePIRServer:
             response = await self.backend.answer_query_async(payload)
             return response[: self.config.fixed_response_bytes]
         except KeyError as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             # Return error response of same size
-            error_msg = f"Error: {str(e)}"[:100]
+            error_msg = f"Error: {e!s}"[:100]
             return error_msg.encode().ljust(self.config.fixed_response_bytes, b"\x00")
+            raise
 
     def _generate_decoy_response(self) -> bytes:
         """Generate realistic decoy response."""
@@ -422,18 +429,33 @@ class SecurePIRServer:
                         item = await asyncio.wait_for(self.batch_queue.get(), timeout=timeout)
                         batch.append(item)
                     except TimeoutError:
+                        from genomevault.observability.logging import configure_logging
+
+                        logger = configure_logging()
+                        logger.exception("Unhandled exception")
                         break
+                        raise
 
                 # Process batch if we have queries
                 if batch:
                     await self._process_batch(batch)
 
             except asyncio.CancelledError:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 break
+                raise
             except Exception as e:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 # Log error but continue
                 print(f"Batch processor error: {e}")
                 await asyncio.sleep(1)
+                raise
 
     async def _process_batch(self, batch: list[tuple[bytes, asyncio.Future]]) -> None:
         """Process a batch of queries together."""
@@ -447,7 +469,12 @@ class SecurePIRServer:
                 result = await self.answer_query_async(payload)
                 results.append((future, result))
             except Exception as e:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 results.append((future, str(e).encode()))
+                raise
 
         # Return results in random order with delays
         random.shuffle(results)

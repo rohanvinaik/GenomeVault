@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """
 Demonstration of GenomeVault Hypervector Encoding System
 
@@ -5,10 +8,7 @@ This script demonstrates the key features of the hypervector encoding module,
 showing how genomic data is transformed into privacy-preserving representations.
 """
 
-from typing import Dict, List
 
-import matplotlib.pyplot as plt
-import numpy as np
 import torch
 
 from genomevault.core.constants import OmicsType
@@ -20,18 +20,17 @@ from genomevault.hypervector_transform.binding import (
 )
 
 # GenomeVault imports
-from genomevault.hypervector_transform.encoding import HypervectorEncoder, create_encoder
+from genomevault.hypervector_transform.encoding import create_encoder
 from genomevault.hypervector_transform.holographic import HolographicEncoder
 from genomevault.hypervector_transform.mapping import (
     BiologicalSimilarityMapper,
-    ManifoldPreservingMapper,
 )
 from genomevault.utils.logging import setup_logging
 
 
 def demonstrate_basic_encoding():
     """Demonstrate basic hypervector encoding"""
-    print("\n=== Basic Hypervector Encoding ===")
+    logger.info("\n=== Basic Hypervector Encoding ===")
 
     # Create encoder
     encoder = create_encoder(dimension=10000, projection_type="sparse_random")
@@ -53,14 +52,14 @@ def demonstrate_basic_encoding():
     # Encode the genomic data
     hypervector = encoder.encode(genomic_features, OmicsType.GENOMIC)
 
-    print(
+    logger.info(
         "Input features: {len(genomic_features['variants']['snps'])} SNPs, "
         "{len(genomic_features['variants']['indels'])} indels, "
         "{len(genomic_features['variants']['cnvs'])} CNVs"
     )
-    print("Encoded hypervector dimension: {hypervector.shape[0]}")
-    print("Hypervector sparsity: {(hypervector == 0).float().mean():.2%}")
-    print("Compression ratio: {125 * 8 / (hypervector.shape[0] * 4):.2f}:1")
+    logger.info("Encoded hypervector dimension: {hypervector.shape[0]}")
+    logger.info("Hypervector sparsity: {(hypervector == 0).float().mean():.2%}")
+    logger.info("Compression ratio: {125 * 8 / (hypervector.shape[0] * 4):.2f}:1")
 
     # Demonstrate similarity preservation
     # Create a similar genomic profile
@@ -79,13 +78,13 @@ def demonstrate_basic_encoding():
     sim_similar = encoder.similarity(hypervector, similar_hv)
     sim_different = encoder.similarity(hypervector, different_hv)
 
-    print("\nSimilarity with 95% overlap: {sim_similar:.3f}")
-    print("Similarity with 0% overlap: {sim_different:.3f}")
+    logger.info("\nSimilarity with 95% overlap: {sim_similar:.3f}")
+    logger.info("Similarity with 0% overlap: {sim_different:.3f}")
 
 
 def demonstrate_binding_operations():
     """Demonstrate binding operations for combining information"""
-    print("\n=== Hypervector Binding Operations ===")
+    logger.info("\n=== Hypervector Binding Operations ===")
 
     dimension = 5000
     binder = HypervectorBinder(dimension)
@@ -106,9 +105,9 @@ def demonstrate_binding_operations():
     # Bind with experimental condition
     full_bound = binder.bind([gene_expr_bound, condition_hv], BindingType.CIRCULAR)
 
-    print("Original gene vector norm: {torch.norm(gene_hv):.3f}")
-    print("Gene+expression bound vector norm: {torch.norm(gene_expr_bound):.3f}")
-    print("Full bound vector norm: {torch.norm(full_bound):.3f}")
+    logger.info("Original gene vector norm: {torch.norm(gene_hv):.3f}")
+    logger.info("Gene+expression bound vector norm: {torch.norm(gene_expr_bound):.3f}")
+    logger.info("Full bound vector norm: {torch.norm(full_bound):.3f}")
 
     # Demonstrate unbinding (recovery)
     recovered_gene = binder.unbind(gene_expr_bound, [expression_hv], BindingType.CIRCULAR)
@@ -116,24 +115,24 @@ def demonstrate_binding_operations():
         gene_hv.unsqueeze(0), recovered_gene.unsqueeze(0)
     ).item()
 
-    print("\nRecovery similarity after unbinding: {recovery_similarity:.3f}")
+    logger.info("\nRecovery similarity after unbinding: {recovery_similarity:.3f}")
 
     # Demonstrate bundling (superposition)
     genes = [torch.randn(dimension) for _ in range(5)]
     gene_set = binder.bundle(genes, normalize=True)
 
-    print("\nBundled 5 genes into single vector")
-    print("Each gene's contribution to bundle:")
+    logger.info("\nBundled 5 genes into single vector")
+    logger.info("Each gene's contribution to bundle:")
     for i, gene in enumerate(genes):
         contrib = torch.nn.functional.cosine_similarity(
             gene_set.unsqueeze(0), gene.unsqueeze(0)
         ).item()
-        print("  Gene {i}: {contrib:.3f}")
+        logger.info("  Gene {i}: {contrib:.3f}")
 
 
 def demonstrate_positional_encoding():
     """Demonstrate position-aware binding for genomic sequences"""
-    print("\n=== Positional Encoding for Genomic Sequences ===")
+    logger.info("\n=== Positional Encoding for Genomic Sequences ===")
 
     dimension = 5000
     pos_binder = PositionalBinder(dimension)
@@ -151,8 +150,8 @@ def demonstrate_positional_encoding():
     # Bind with positions
     sequence_bound = pos_binder.bind_sequence(features, start_position=1000)
 
-    print("Encoded sequence of {sequence_length} elements")
-    print("Sequence hypervector dimension: {sequence_bound.shape[0]}")
+    logger.info("Encoded sequence of {sequence_length} elements")
+    logger.info("Sequence hypervector dimension: {sequence_bound.shape[0]}")
 
     # Show that different positions create different bindings
     pos_100 = pos_binder.bind_with_position(features[0], 100)
@@ -162,12 +161,12 @@ def demonstrate_positional_encoding():
         pos_100.unsqueeze(0), pos_200.unsqueeze(0)
     ).item()
 
-    print("Same feature at different positions similarity: {position_similarity:.3f}")
+    logger.info("Same feature at different positions similarity: {position_similarity:.3f}")
 
 
 def demonstrate_holographic_encoding():
     """Demonstrate holographic encoding for structured data"""
-    print("\n=== Holographic Encoding for Genomic Variants ===")
+    logger.info("\n=== Holographic Encoding for Genomic Variants ===")
 
     dimension = 5000
     holo_encoder = HolographicEncoder(dimension)
@@ -234,10 +233,10 @@ def demonstrate_holographic_encoding():
         variant1.unsqueeze(0), variant4.unsqueeze(0)
     ).item()
 
-    print("Variant similarities:")
-    print("  Adjacent positions (same gene): {sim_adjacent:.3f}")
-    print("  Same gene, different position: {sim_same_gene:.3f}")
-    print("  Different gene: {sim_diff_gene:.3f}")
+    logger.info("Variant similarities:")
+    logger.info("  Adjacent positions (same gene): {sim_adjacent:.3f}")
+    logger.info("  Same gene, different position: {sim_same_gene:.3f}")
+    logger.info("  Different gene: {sim_diff_gene:.3f}")
 
     # Create memory trace of multiple variants
     variants = [
@@ -247,13 +246,13 @@ def demonstrate_holographic_encoding():
     ]
 
     memory = holo_encoder.create_memory_trace(variants)
-    print("\nCreated memory trace of {len(variants)} variants")
-    print("Memory trace dimension: {memory.shape[0]}")
+    logger.info("\nCreated memory trace of {len(variants)} variants")
+    logger.info("Memory trace dimension: {memory.shape[0]}")
 
 
 def demonstrate_cross_modal_binding():
     """Demonstrate binding across different omics modalities"""
-    print("\n=== Cross-Modal Binding for Multi-Omics ===")
+    logger.info("\n=== Cross-Modal Binding for Multi-Omics ===")
 
     dimension = 5000
     cross_binder = CrossModalBinder(dimension)
@@ -281,24 +280,24 @@ def demonstrate_cross_modal_binding():
 
     bound_modalities = cross_binder.bind_modalities(modality_data)
 
-    print("Created cross-modal bindings:")
+    logger.info("Created cross-modal bindings:")
     for key in bound_modalities:
-        print("  {key}: dimension {bound_modalities[key].shape[0]}")
+        logger.info("  {key}: dimension {bound_modalities[key].shape[0]}")
 
     # Show that combined representation preserves information from all modalities
     combined = bound_modalities["combined"]
 
-    print("\nContribution of each modality to combined representation:")
+    logger.info("\nContribution of each modality to combined representation:")
     for modality, hv in modality_data.items():
         contrib = torch.nn.functional.cosine_similarity(
             combined.unsqueeze(0), hv.unsqueeze(0)
         ).item()
-        print("  {modality}: {contrib:.3f}")
+        logger.info("  {modality}: {contrib:.3f}")
 
 
 def demonstrate_similarity_preservation():
     """Demonstrate similarity preservation in mappings"""
-    print("\n=== Similarity-Preserving Transformations ===")
+    logger.info("\n=== Similarity-Preserving Transformations ===")
 
     # Create synthetic biological data with structure
     n_samples = 100
@@ -317,8 +316,8 @@ def demonstrate_similarity_preservation():
     # Transform data
     transformed = mapper.fit_transform(data)
 
-    print("Original data: {data.shape}")
-    print("Transformed data: {transformed.shape}")
+    logger.info("Original data: {data.shape}")
+    logger.info("Transformed data: {transformed.shape}")
 
     # Check that clusters remain separated
     cluster1_transformed = transformed[: n_samples // 2]
@@ -334,14 +333,14 @@ def demonstrate_similarity_preservation():
         cluster2_transformed.mean(dim=0).unsqueeze(0),
     ).item()
 
-    print("\nWithin-cluster similarity: {within_cluster_sim:.3f}")
-    print("Between-cluster similarity: {between_cluster_sim:.3f}")
-    print("Separation maintained: {within_cluster_sim > between_cluster_sim}")
+    logger.info("\nWithin-cluster similarity: {within_cluster_sim:.3f}")
+    logger.info("Between-cluster similarity: {between_cluster_sim:.3f}")
+    logger.info("Separation maintained: {within_cluster_sim > between_cluster_sim}")
 
 
 def demonstrate_privacy_guarantees():
     """Demonstrate privacy properties of hypervectors"""
-    print("\n=== Privacy Guarantees of Hypervectors ===")
+    logger.info("\n=== Privacy Guarantees of Hypervectors ===")
 
     dimension = 10000
     encoder = create_encoder(dimension=dimension)
@@ -358,17 +357,17 @@ def demonstrate_privacy_guarantees():
     # Encode to hypervector
     hypervector = encoder.encode(sensitive_data, OmicsType.GENOMIC)
 
-    print("Original data contains:")
-    print("  - {len(sensitive_data['variants']['snps'])} SNPs")
-    print("  - {len(sensitive_data['variants']['pathogenic'])} pathogenic variants")
-    print("\nEncoded to {dimension}D hypervector")
+    logger.info("Original data contains:")
+    logger.info("  - {len(sensitive_data['variants']['snps'])} SNPs")
+    logger.info("  - {len(sensitive_data['variants']['pathogenic'])} pathogenic variants")
+    logger.info("\nEncoded to {dimension}D hypervector")
 
     # Demonstrate irreversibility
     # Try to recover information from hypervector
-    print("\nAttempting to recover original data...")
+    logger.info("\nAttempting to recover original data...")
 
     # Random projection is not invertible when D >> d
-    print("Projection: {1000}D -> {dimension}D (not invertible)")
+    logger.info("Projection: {1000}D -> {dimension}D (not invertible)")
 
     # Show that similar inputs create distinguishable outputs
     modified_data = sensitive_data.copy()
@@ -377,13 +376,13 @@ def demonstrate_privacy_guarantees():
     modified_hv = encoder.encode(modified_data, OmicsType.GENOMIC)
 
     similarity = encoder.similarity(hypervector, modified_hv)
-    print("\nSingle SNP difference creates {1-similarity:.4f} change in hypervector")
-    print("This demonstrates sensitivity while maintaining privacy")
+    logger.info("\nSingle SNP difference creates {1-similarity:.4f} change in hypervector")
+    logger.info("This demonstrates sensitivity while maintaining privacy")
 
 
 def demonstrate_compression_tiers():
     """Demonstrate tiered compression for different use cases"""
-    print("\n=== Tiered Compression System ===")
+    logger.info("\n=== Tiered Compression System ===")
 
     from local_processing.compression import CompressionTier, TieredCompressor
 
@@ -398,10 +397,12 @@ def demonstrate_compression_tiers():
 
         compressed = compressor.compress({"hypervector": hypervector}, OmicsType.GENOMIC)
 
-        print("\n{tier.value} tier:")
-        print("  Original size: {hypervector.numel() * 4:,} bytes")
-        print("  Compressed size: {compressed.compressed_size:,} bytes")
-        print("  Compression ratio: {hypervector.numel() * 4 / compressed.compressed_size:.1f}:1")
+        logger.info("\n{tier.value} tier:")
+        logger.info("  Original size: {hypervector.numel() * 4:,} bytes")
+        logger.info("  Compressed size: {compressed.compressed_size:,} bytes")
+        logger.info(
+            "  Compression ratio: {hypervector.numel() * 4 / compressed.compressed_size:.1f}:1"
+        )
 
         # Test decompression
         decompressed = compressor.decompress(compressed)
@@ -411,12 +412,12 @@ def demonstrate_compression_tiers():
             hypervector.unsqueeze(0), decompressed.unsqueeze(0)
         ).item()
 
-        print("  Reconstruction similarity: {reconstruction_sim:.3f}")
+        logger.info("  Reconstruction similarity: {reconstruction_sim:.3f}")
 
 
 def visualize_hypervector_properties():
     """Visualize key properties of hypervectors"""
-    print("\n=== Visualizing Hypervector Properties ===")
+    logger.info("\n=== Visualizing Hypervector Properties ===")
 
     # This would normally create plots, but for text output:
     dimension = 1000
@@ -435,25 +436,25 @@ def visualize_hypervector_properties():
     mean_sim = off_diag.mean().item()
     std_sim = off_diag.std().item()
 
-    print("\nRandom hypervector statistics ({dimension}D):")
-    print("  Self-similarity: {self_sim:.3f}")
-    print("  Mean pairwise similarity: {mean_sim:.3f} ± {std_sim:.3f}")
-    print("  Min similarity: {off_diag.min().item():.3f}")
-    print("  Max similarity: {off_diag.max().item():.3f}")
+    logger.info("\nRandom hypervector statistics ({dimension}D):")
+    logger.info("  Self-similarity: {self_sim:.3f}")
+    logger.info("  Mean pairwise similarity: {mean_sim:.3f} ± {std_sim:.3f}")
+    logger.info("  Min similarity: {off_diag.min().item():.3f}")
+    logger.info("  Max similarity: {off_diag.max().item():.3f}")
 
     # Concentration of measure
-    print("\nConcentration of measure:")
-    print(
+    logger.info("\nConcentration of measure:")
+    logger.info(
         "  99% of similarities in range: [{mean_sim - 3*std_sim:.3f}, {mean_sim + 3*std_sim:.3f}]"
     )
-    print("  This demonstrates the 'blessing of dimensionality' for privacy")
+    logger.info("  This demonstrates the 'blessing of dimensionality' for privacy")
 
 
 def main():
     """Run all demonstrations"""
-    print("=" * 60)
-    print("GenomeVault Hypervector Encoding Demonstration")
-    print("=" * 60)
+    logger.info("=" * 60)
+    logger.info("GenomeVault Hypervector Encoding Demonstration")
+    logger.info("=" * 60)
 
     # Set up logging
     setup_logging(level="INFO")
@@ -469,16 +470,16 @@ def main():
     demonstrate_compression_tiers()
     visualize_hypervector_properties()
 
-    print("\n" + "=" * 60)
-    print("Demonstration Complete")
-    print("=" * 60)
-    print("\nKey Takeaways:")
-    print("1. Hypervectors preserve biological similarities while protecting privacy")
-    print("2. Binding operations enable complex relationships to be encoded")
-    print("3. Holographic encoding allows structured data representation")
-    print("4. Cross-modal binding integrates multiple omics types")
-    print("5. Tiered compression provides flexibility for different use cases")
-    print("6. High dimensionality provides mathematical privacy guarantees")
+    logger.info("\n" + "=" * 60)
+    logger.info("Demonstration Complete")
+    logger.info("=" * 60)
+    logger.info("\nKey Takeaways:")
+    logger.info("1. Hypervectors preserve biological similarities while protecting privacy")
+    logger.info("2. Binding operations enable complex relationships to be encoded")
+    logger.info("3. Holographic encoding allows structured data representation")
+    logger.info("4. Cross-modal binding integrates multiple omics types")
+    logger.info("5. Tiered compression provides flexibility for different use cases")
+    logger.info("6. High dimensionality provides mathematical privacy guarantees")
 
 
 if __name__ == "__main__":

@@ -7,7 +7,7 @@ import hashlib
 import json
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import numpy as np
 
@@ -467,7 +467,12 @@ class Prover:
                 )
                 proofs.append(proof)
             except Exception as _:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 logger.error(f"Batch proof generation failed: {e}")
+                raise
                 # Continue with other proofs
 
         return proofs

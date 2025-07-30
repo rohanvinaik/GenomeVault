@@ -8,12 +8,11 @@ and verification with actual cryptographic guarantees.
 
 import json
 import logging
-import shutil
 import subprocess
 import tempfile
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any
 
 from genomevault.utils.metrics import MetricsCollector
 
@@ -66,7 +65,9 @@ class GnarkBackend:
                 return str(expanded)
 
         # Try to find in PATH
-        result = subprocess.run(["which", "gnark-prover"], capture_output=True, text=True)
+        result = subprocess.run(
+            ["which", "gnark-prover"], check=False, capture_output=True, text=True
+        )
         if result.returncode == 0:
             return str(Path(result.stdout.strip()).parent)
 
@@ -84,6 +85,7 @@ class GnarkBackend:
         try:
             result = subprocess.run(
                 [str(self.prover_bin), "--version"],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=5,
@@ -94,7 +96,12 @@ class GnarkBackend:
             logger.info(f"gnark backend initialized: {result.stdout.strip()}")
 
         except subprocess.TimeoutExpired:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             raise RuntimeError("gnark-prover timed out during version check")
+            raise
 
     def _compile_standard_circuits(self):
         """Compile standard genomic circuits."""
@@ -113,7 +120,12 @@ class GnarkBackend:
                 try:
                     self._compile_circuit(circuit_name)
                 except Exception as e:
+                    from genomevault.observability.logging import configure_logging
+
+                    logger = configure_logging()
+                    logger.exception("Unhandled exception")
                     logger.warning(f"Failed to compile {circuit_name}: {e}")
+                    raise
 
     def _compile_circuit(self, circuit_name: str):
         """Compile a gnark circuit."""
@@ -142,7 +154,7 @@ class GnarkBackend:
         ]
 
         start = time.time()
-        result = subprocess.run(cmd, capture_output=True, text=True)
+        result = subprocess.run(cmd, check=False, capture_output=True, text=True)
         compile_time = time.time() - start
 
         if result.returncode != 0:
@@ -211,7 +223,7 @@ class GnarkBackend:
             ]
 
             start = time.time()
-            result = subprocess.run(cmd, capture_output=True, text=True)
+            result = subprocess.run(cmd, check=False, capture_output=True, text=True)
             generation_time = time.time() - start
 
             if result.returncode != 0:
@@ -274,7 +286,7 @@ class GnarkBackend:
             ]
 
             start = time.time()
-            result = subprocess.run(cmd, capture_output=True, text=True)
+            result = subprocess.run(cmd, check=False, capture_output=True, text=True)
             verification_time = time.time() - start
 
             # Record metrics
@@ -394,7 +406,12 @@ def get_backend(use_real: bool = True) -> GnarkBackend | SimulatedBackend:
         try:
             return GnarkBackend()
         except RuntimeError as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.warning(f"Failed to initialize gnark backend: {e}")
             logger.warning("Falling back to simulated backend")
+            raise
 
     return SimulatedBackend()

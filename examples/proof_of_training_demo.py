@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """
 Example usage script for Proof-of-Training in GenomeVault
 
@@ -10,8 +13,6 @@ import time
 from pathlib import Path
 
 import numpy as np
-
-from genomevault.clinical.model_validation import ClinicalDomain, ValidationLevel
 
 # Import GenomeVault PoT components
 from genomevault.integration.proof_of_training import ProofOfTrainingIntegration
@@ -64,7 +65,7 @@ def generate_synthetic_genomic_data(n_samples: int = 1000, n_features: int = 100
 def train_with_proof_of_training():
     """Demonstrate training with PoT enabled"""
 
-    print("=== GenomeVault Proof-of-Training Demo ===\n")
+    logger.info("=== GenomeVault Proof-of-Training Demo ===\n")
 
     # 1. Configuration
     config = {
@@ -78,7 +79,7 @@ def train_with_proof_of_training():
     }
 
     # 2. Initialize PoT integration
-    print("Initializing Proof-of-Training system...")
+    logger.info("Initializing Proof-of-Training system...")
     pot_integration = ProofOfTrainingIntegration(config)
 
     # 3. Start training session
@@ -98,11 +99,11 @@ def train_with_proof_of_training():
         is_federated=False,
     )
 
-    print(f"Started training session: {session_id}")
-    print(f"Snapshot directory: {session_info['snapshot_dir']}\n")
+    logger.info(f"Started training session: {session_id}")
+    logger.info(f"Snapshot directory: {session_info['snapshot_dir']}\n")
 
     # 4. Generate synthetic data
-    print("Generating synthetic genomic data...")
+    logger.info("Generating synthetic genomic data...")
     X_train, y_train = generate_synthetic_genomic_data(1000, 1000)
     X_val, y_val = generate_synthetic_genomic_data(200, 1000)
 
@@ -110,7 +111,7 @@ def train_with_proof_of_training():
     model = DemoGenomicModel(input_dim=1000)
 
     # 6. Training loop with PoT logging
-    print("\nStarting training with PoT logging...")
+    logger.info("\nStarting training with PoT logging...")
 
     n_epochs = 20
     batch_size = 32
@@ -177,7 +178,7 @@ def train_with_proof_of_training():
                 )
 
                 if "snapshot_id" in log_result:
-                    print(f"  Snapshot saved: {log_result['snapshot_id']}")
+                    logger.info(f"  Snapshot saved: {log_result['snapshot_id']}")
 
         # Epoch metrics
         avg_epoch_loss = epoch_loss / n_batches
@@ -186,12 +187,12 @@ def train_with_proof_of_training():
         val_predictions = model.forward(X_val)
         val_accuracy = np.mean((val_predictions[:, 0] > 0.5) == y_val)
 
-        print(
+        logger.info(
             f"Epoch {epoch + 1}/{n_epochs}: Loss={avg_epoch_loss:.4f}, Val Acc={val_accuracy:.3f}"
         )
 
     # 7. Complete training session
-    print("\nCompleting training session and generating proof...")
+    logger.info("\nCompleting training session and generating proof...")
 
     final_metrics = {
         "loss": avg_epoch_loss,
@@ -203,38 +204,40 @@ def train_with_proof_of_training():
         session_id=session_id, final_model=model, final_metrics=final_metrics
     )
 
-    print("\n=== Training Summary ===")
+    logger.info("\n=== Training Summary ===")
     if "training_summary" in completion_result:
         summary = completion_result["training_summary"]
-        print(f"Total snapshots: {summary['total_snapshots']}")
-        print(f"Training duration: {summary['duration_seconds']}s")
-        print(f"Best loss: {summary['loss_trajectory']['best']:.4f}")
-        print(f"Loss improvement: {summary['loss_trajectory']['improvement']:.4f}")
-        print(f"Merkle root: {summary['merkle_root'][:32]}...")
+        logger.info(f"Total snapshots: {summary['total_snapshots']}")
+        logger.info(f"Training duration: {summary['duration_seconds']}s")
+        logger.info(f"Best loss: {summary['loss_trajectory']['best']:.4f}")
+        logger.info(f"Loss improvement: {summary['loss_trajectory']['improvement']:.4f}")
+        logger.info(f"Merkle root: {summary['merkle_root'][:32]}...")
 
     if "privacy_report" in completion_result:
         privacy = completion_result["privacy_report"]
-        print(f"\n=== Privacy Budget Usage ===")
-        print(f"Total epsilon used: {privacy['privacy_budget']['consumed_epsilon']:.4f}")
-        print(f"Total delta used: {privacy['privacy_budget']['consumed_delta']:.2e}")
-        print(f"Budget utilization: {privacy['privacy_budget']['utilization_epsilon']*100:.1f}%")
+        logger.info("\n=== Privacy Budget Usage ===")
+        logger.info(f"Total epsilon used: {privacy['privacy_budget']['consumed_epsilon']:.4f}")
+        logger.info(f"Total delta used: {privacy['privacy_budget']['consumed_delta']:.2e}")
+        logger.info(
+            f"Budget utilization: {privacy['privacy_budget']['utilization_epsilon']*100:.1f}%"
+        )
 
     if "semantic_analysis" in completion_result:
         semantic = completion_result["semantic_analysis"]
-        print(f"\n=== Semantic Analysis ===")
-        print(f"Average drift: {semantic['avg_drift']:.4f}")
-        print(f"Max drift: {semantic['max_drift']:.4f}")
-        print(f"Anomalies detected: {semantic['anomalies_detected']}")
+        logger.info("\n=== Semantic Analysis ===")
+        logger.info(f"Average drift: {semantic['avg_drift']:.4f}")
+        logger.info(f"Max drift: {semantic['max_drift']:.4f}")
+        logger.info(f"Anomalies detected: {semantic['anomalies_detected']}")
 
     # 8. Save proof
     if "proof" in completion_result:
         proof_path = Path(config["storage_path"]) / f"{session_id}_proof.json"
         with open(proof_path, "w") as f:
             json.dump(completion_result["proof"], f, indent=2)
-        print(f"\n✅ Training proof saved to: {proof_path}")
+        logger.info(f"\n✅ Training proof saved to: {proof_path}")
 
     # 9. Clinical validation (optional)
-    print("\n=== Clinical Validation ===")
+    logger.info("\n=== Clinical Validation ===")
     validation_result = pot_integration.validate_model_clinically(
         model_id=f"model_{session_id}",
         model=model,
@@ -243,11 +246,11 @@ def train_with_proof_of_training():
         validation_level="research",
     )
 
-    print(f"Validation passed: {validation_result['passed']}")
-    print(f"Performance metrics: {json.dumps(validation_result['metrics'], indent=2)}")
+    logger.info(f"Validation passed: {validation_result['passed']}")
+    logger.info(f"Performance metrics: {json.dumps(validation_result['metrics'], indent=2)}")
 
     # 10. Start monitoring (for deployed model)
-    print("\n=== Starting Model Monitoring ===")
+    logger.info("\n=== Starting Model Monitoring ===")
     monitor = pot_integration.start_model_monitoring(
         model_id=f"model_{session_id}",
         model=model,
@@ -255,7 +258,7 @@ def train_with_proof_of_training():
     )
 
     # Simulate some predictions to test monitoring
-    print("Simulating production predictions...")
+    logger.info("Simulating production predictions...")
     for i in range(100):
         # Generate a prediction
         x_new = np.random.randn(1, 1000)
@@ -269,39 +272,39 @@ def train_with_proof_of_training():
         )
 
         if monitoring_result["alerts"]:
-            print(
+            logger.info(
                 f"  ⚠️  Drift alert at prediction {i}: {monitoring_result['alerts'][0]['drift_type']}"
             )
 
     # Get monitoring summary
     monitoring_summary = monitor.get_monitoring_summary()
-    print(f"\nMonitoring summary:")
-    print(f"  Total predictions: {monitoring_summary['total_predictions']}")
-    print(f"  Current status: {monitoring_summary['current_status']}")
-    print(f"  Drift events: {monitoring_summary['total_drift_events']}")
+    logger.info("\nMonitoring summary:")
+    logger.info(f"  Total predictions: {monitoring_summary['total_predictions']}")
+    logger.info(f"  Current status: {monitoring_summary['current_status']}")
+    logger.info(f"  Drift events: {monitoring_summary['total_drift_events']}")
 
-    print("\n✅ Proof-of-Training demo completed successfully!")
+    logger.info("\n✅ Proof-of-Training demo completed successfully!")
 
     return session_id, completion_result
 
 
 def verify_training_proof(session_id: str, proof_path: str):
     """Demonstrate proof verification"""
-    print("\n=== Verifying Training Proof ===")
+    logger.info("\n=== Verifying Training Proof ===")
 
     # In practice, this would use the CLI tool or verification circuits
     with open(proof_path) as f:
         proof = json.load(f)
 
-    print(f"Proof type: {proof['circuit_type']}")
-    print(f"Model hash: {proof['public_inputs']['final_model_hash'][:32]}...")
-    print(f"Snapshots: {proof['public_inputs']['num_snapshots']}")
-    print(f"Constraints satisfied: {proof['constraints_satisfied']}")
+    logger.info(f"Proof type: {proof['circuit_type']}")
+    logger.info(f"Model hash: {proof['public_inputs']['final_model_hash'][:32]}...")
+    logger.info(f"Snapshots: {proof['public_inputs']['num_snapshots']}")
+    logger.info(f"Constraints satisfied: {proof['constraints_satisfied']}")
 
     # Verify Merkle root
-    print(f"\nMerkle root: {proof['commitments']['snapshot_merkle_root'][:32]}...")
+    logger.info(f"\nMerkle root: {proof['commitments']['snapshot_merkle_root'][:32]}...")
 
-    print("\n✅ Proof verification completed")
+    logger.info("\n✅ Proof verification completed")
 
 
 if __name__ == "__main__":
@@ -313,4 +316,4 @@ if __name__ == "__main__":
     if proof_path.exists():
         verify_training_proof(session_id, str(proof_path))
 
-    print("\n🎉 Demo completed! Check ./demo_pot_output for generated artifacts.")
+    logger.info("\n🎉 Demo completed! Check ./demo_pot_output for generated artifacts.")

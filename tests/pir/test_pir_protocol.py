@@ -5,11 +5,10 @@ Includes unit tests, adversarial tests, and performance benchmarks.
 
 import secrets
 import time
-from typing import List, Tuple
 
 import numpy as np
 import pytest
-from hypothesis import given, settings
+from hypothesis import given
 from hypothesis import strategies as st
 
 from genomevault.pir.it_pir_protocol import BatchPIRProtocol, PIRParameters, PIRProtocol
@@ -236,8 +235,13 @@ class TestAdversarialPIR:
             response = self.protocol.process_server_response(query, self.database)
             assert len(response) == self.params.element_size
         except ValueError:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             # Expected for invalid inputs
             pass
+            raise
 
     def test_replay_attack_protection(self):
         """Test protection against replay attacks."""

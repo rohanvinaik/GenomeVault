@@ -167,8 +167,13 @@ class TestHDCProperties:
                     assert diag_var < 1.0
 
         except NotImplementedError:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             # Some projection types might not be implemented
             pass
+            raise
 
 
 class TestBindingProperties:
@@ -204,8 +209,13 @@ class TestBindingProperties:
                 assert bound.shape[0] == dimension
                 assert torch.isfinite(bound).all()
             except (ValueError, NotImplementedError, Exception):
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 # Some binding types may not support multiple vectors
                 pass
+                raise
 
     @given(dimension=st.integers(min_value=1000, max_value=20000))
     @settings(max_examples=30)

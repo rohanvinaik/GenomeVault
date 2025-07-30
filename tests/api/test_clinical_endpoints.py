@@ -1,18 +1,25 @@
 from fastapi.testclient import TestClient
+
 from genomevault.api.app import app
 
 client = TestClient(app)
 
+
 def test_clinical_eval_endpoint(monkeypatch):
     # Ensure consistent behavior: default to auth disabled unless GV_API_KEYS is set
     monkeypatch.delenv("GV_API_KEYS", raising=False)
-    payload = {"y_true": [0,1,0,1], "y_score": [0.1,0.8,0.2,0.9], "calibrator":"none", "bins": 5}
+    payload = {
+        "y_true": [0, 1, 0, 1],
+        "y_score": [0.1, 0.8, 0.2, 0.9],
+        "calibrator": "none",
+        "bins": 5,
+    }
     r = client.post("/clinical/eval", json=payload)
 
     # If API keys are enforced in this environment, retry with a key
     if r.status_code == 401:
         monkeypatch.setenv("GV_API_KEYS", "devkey")
-        r = client.post("/clinical/eval", headers={"X-API-Key":"devkey"}, json=payload)
+        r = client.post("/clinical/eval", headers={"X-API-Key": "devkey"}, json=payload)
 
     assert r.status_code == 200
     j = r.json()

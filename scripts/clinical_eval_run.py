@@ -1,7 +1,12 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 #!/usr/bin/env python3
 import argparse
 import json
-from genomevault.clinical.eval.harness import load_csv, compute_report
+
+from genomevault.clinical.eval.harness import compute_report, load_csv
+
 
 def main():
     ap = argparse.ArgumentParser()
@@ -14,13 +19,20 @@ def main():
     y, s = load_csv(args.data)
     rep = compute_report(y, s, calibrator=args.calibrator, bins=args.bins)
     with open(args.out, "w") as f:
-        json.dump({{
-            "metrics": rep.metrics,
-            "threshold": rep.threshold,
-            "confusion": rep.confusion,
-            "calibration_bins": rep.calibration_bins,
-        }}, f, indent=2)
-    print(f"Wrote {{args.out}}")
+        json.dump(
+            {
+                {
+                    "metrics": rep.metrics,
+                    "threshold": rep.threshold,
+                    "confusion": rep.confusion,
+                    "calibration_bins": rep.calibration_bins,
+                }
+            },
+            f,
+            indent=2,
+        )
+    logger.info("Wrote {args.out}")
+
 
 if __name__ == "__main__":
     main()

@@ -8,7 +8,7 @@ for genomic privacy-preserving proofs using PLONK.
 import hashlib
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Dict, List
+from typing import Any
 
 from genomevault.utils.logging import get_logger
 

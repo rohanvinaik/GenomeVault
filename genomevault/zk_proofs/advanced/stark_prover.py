@@ -7,7 +7,7 @@ import hashlib
 import json
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import numpy as np
 
@@ -538,8 +538,13 @@ class PostQuantumVerifier:
             return True
 
         except Exception as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"STARK verification error: {e}")
             return False
+            raise
 
     def _verify_proof_of_work(self, proof: STARKProof) -> bool:
         """Verify proof of work meets threshold."""
@@ -657,7 +662,7 @@ if __name__ == "__main__":
 
     generation_time = time.time() - start_time
 
-    print(f"\nSTARK Proof Generated:")
+    print("\nSTARK Proof Generated:")
     print(f"  Proof ID: {stark_proof.proof_id}")
     print(f"  Security level: {stark_proof.security_level} bits (post-quantum)")
     print(f"  Proof size: {stark_proof.proof_size_kb:.1f} KB")

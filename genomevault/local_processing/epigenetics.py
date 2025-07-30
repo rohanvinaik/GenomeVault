@@ -13,7 +13,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -272,8 +272,13 @@ class MethylationProcessor:
             return profile
 
         except Exception as _:
-            logger.error(f"Error processing methylation data: {str(e)}")
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
+            logger.error(f"Error processing methylation data: {e!s}")
             raise ProcessingError("Failed to process methylation data: {str(e)}")
+            raise
 
     def _load_bismark_output(self, file_path: Path) -> pd.DataFrame:
         """Load Bismark methylation extractor output"""
@@ -633,8 +638,13 @@ class ChromatinAccessibilityProcessor:
             return profile
 
         except Exception as _:
-            logger.error(f"Error processing ATAC-seq data: {str(e)}")
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
+            logger.error(f"Error processing ATAC-seq data: {e!s}")
             raise ProcessingError("Failed to process ATAC-seq data: {str(e)}")
+            raise
 
     def _load_peak_file(self, file_path: Path, format: str) -> pd.DataFrame:
         """Load peak file"""

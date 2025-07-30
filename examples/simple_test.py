@@ -16,7 +16,7 @@ def test_basic_imports():
 
     try:
         # Test core config
-        from core.config import Config, get_config
+        from core.config import get_config
 
         print("✅ core.config imported successfully")
 
@@ -25,23 +25,26 @@ def test_basic_imports():
         print("✅ Config created: node_type={config.node_type}")
 
         # Test exceptions
-        from core.exceptions import BindingError, GenomeVaultError
 
         print("✅ core.exceptions imported successfully")
 
         # Test utils
-        from utils import AESGCMCipher, get_logger, secure_hash
 
         print("✅ utils imported successfully")
 
         return True
 
-    except Exception as e:
+    except Exception:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         print("❌ Import failed: {e}")
         import traceback
 
         traceback.print_exc()
         return False
+        raise
 
 
 def test_module_imports():
@@ -62,9 +65,14 @@ def test_module_imports():
             parts = module.split(".")
             exec("from {parts[0]} import {parts[1]}")
             print("✅ {module} imported successfully")
-        except Exception as e:
+        except Exception:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             print("❌ {module} failed: {e}")
             success = False
+            raise
 
     return success
 

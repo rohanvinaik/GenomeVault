@@ -3,18 +3,15 @@ Federated Learning Client for secure model training participation.
 Implements local training with privacy guarantees.
 """
 
-import hashlib
 import pickle
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
-from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
 from genomevault.hypervector_transform.encoding import HypervectorEncoder
-from genomevault.utils.config import config
 from genomevault.utils.logging import get_logger, logger, performance_logger
 
 logger = get_logger(__name__)
@@ -374,7 +371,12 @@ class FederatedLearningClient:
         try:
             auc = roc_auc_score(y_val, probs)
         except Exception:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             auc = 0.5
+            raise
 
         # Loss
         loss = -np.mean(y_val * np.log(probs + 1e-8) + (1 - y_val) * np.log(1 - probs + 1e-8))

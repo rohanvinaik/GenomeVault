@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 #!/usr/bin/env python3
 """
 Analyze cyclomatic complexity in the genomevault package.
@@ -15,12 +18,13 @@ def analyze_complexity(package_dir: Path):
         # Run radon cc command
         result = subprocess.run(
             ["radon", "cc", "-s", "-a", str(package_dir)],
+            check=False,
             capture_output=True,
             text=True,
         )
 
         if result.returncode != 0:
-            print(f"Error running radon: {result.stderr}")
+            logger.info(f"Error running radon: {result.stderr}")
             return
 
         # Save full output
@@ -28,7 +32,7 @@ def analyze_complexity(package_dir: Path):
         with open(output_file, "w") as f:
             f.write(result.stdout)
 
-        print(f"Full complexity report saved to: {output_file}")
+        logger.info(f"Full complexity report saved to: {output_file}")
 
         # Parse and find high complexity functions
         high_complexity = []
@@ -46,18 +50,23 @@ def analyze_complexity(package_dir: Path):
                             score = int(score_part)
                             if score >= 12:
                                 high_complexity.append((score, line.strip()))
-                except:
+                except Exception:
+                    from genomevault.observability.logging import configure_logging
+
+                    logger = configure_logging()
+                    logger.exception("Unhandled exception")
                     continue
+                    raise
 
         # Sort by complexity score (descending)
         high_complexity.sort(reverse=True)
 
-        print("\nFunctions with cyclomatic complexity >= 12:")
-        print("=" * 60)
+        logger.info("\nFunctions with cyclomatic complexity >= 12:")
+        logger.info("=" * 60)
         for score, func_info in high_complexity[:10]:  # Top 10
-            print(f"CC={score}: {func_info}")
+            logger.info(f"CC={score}: {func_info}")
 
-        print(f"\nTotal functions with CC >= 12: {len(high_complexity)}")
+        logger.info(f"\nTotal functions with CC >= 12: {len(high_complexity)}")
 
         # Generate refactoring recommendations
         if high_complexity:
@@ -81,10 +90,10 @@ def analyze_complexity(package_dir: Path):
                     "5. **Extract Validation Logic**: Move input validation to separate functions\n"
                 )
 
-            print(f"\nRefactoring guide saved to: {recommendations_file}")
+            logger.info(f"\nRefactoring guide saved to: {recommendations_file}")
 
     except FileNotFoundError:
-        print("Error: radon not installed. Please run: pip install radon")
+        logger.info("Error: radon not installed. Please run: pip install radon")
         sys.exit(1)
 
 
@@ -93,10 +102,10 @@ def main():
     genomevault_dir = Path("/Users/rohanvinaik/genomevault/genomevault")
 
     if not genomevault_dir.exists():
-        print(f"Error: Directory not found: {genomevault_dir}")
+        logger.info(f"Error: Directory not found: {genomevault_dir}")
         sys.exit(1)
 
-    print("Analyzing cyclomatic complexity...")
+    logger.info("Analyzing cyclomatic complexity...")
     analyze_complexity(genomevault_dir)
 
 

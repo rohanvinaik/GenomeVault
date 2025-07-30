@@ -4,11 +4,10 @@ Implements the advanced compression from the project specifications.
 """
 
 import hashlib
-import json
 import logging
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import numpy as np
 
@@ -457,7 +456,7 @@ if __name__ == "__main__":
         optimized = compressor.create_storage_optimized_vector(base_features, tier)
 
         logger.info(f"\n{tier.upper()} Tier:")
-        logger.info(f"  Target use case: ", end="")
+        logger.info("  Target use case: ", end="")
         if tier == "mini":
             logger.info("Mobile apps, quick lookups")
         elif tier == "clinical":

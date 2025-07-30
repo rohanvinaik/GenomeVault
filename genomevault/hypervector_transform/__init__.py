@@ -11,8 +11,8 @@ Key components:
 - HDC API: RESTful endpoints for encoding services
 """
 
-from .binding_operations import BindingOperations  # Legacy compatibility
 from .binding_operations import (
+    BindingOperations,  # Legacy compatibility
     BindingType,
     HypervectorBinder,
     circular_bind,

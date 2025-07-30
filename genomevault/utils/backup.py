@@ -16,7 +16,7 @@ import os
 import threading
 import time
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import boto3
 import schedule
@@ -115,7 +115,12 @@ class BackupManager:
             return backup_id
 
         except json.JSONDecodeError as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error("backup_creation_failed", backup_type=backup_type, error=str(e))
+            raise
             raise
 
     def restore_backup(self, backup_id: str) -> dict[str, Any]:
@@ -155,7 +160,12 @@ class BackupManager:
             return data
 
         except (json.JSONDecodeError, KeyError) as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error("backup_restoration_failed", backup_id=backup_id, error=str(e))
+            raise
             raise
 
     def list_backups(
@@ -209,8 +219,13 @@ class BackupManager:
             return is_valid
 
         except KeyError as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error("backup_verification_failed", backup_id=backup_id, error=str(e))
             return False
+            raise
 
     def cleanup_old_backups(self):
         """Remove backups older than retention period"""
@@ -255,11 +270,16 @@ class BackupManager:
                 )
 
             except KeyError as e:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 logger.error(
                     "scheduled_backup_failed",
                     backup_type=backup_config.get("backup_type"),
                     error=str(e),
                 )
+                raise
 
         # Schedule backups
         for config in backup_configs:
@@ -355,7 +375,12 @@ class BackupManager:
             logger.info("backup_replicated_to_s3", backup_id=backup_id, bucket=self.s3_bucket)
 
         except json.JSONDecodeError as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error("s3_replication_failed", backup_id=backup_id, error=str(e))
+            raise
 
     def _remove_backup(self, backup_id: str):
         """Remove a backup"""
@@ -371,7 +396,12 @@ class BackupManager:
                     Bucket=self.s3_bucket, Key="backups/{backup_id}.backup"
                 )
             except Exception as _:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 logger.error("s3_deletion_failed", backup_id=backup_id, error=str(e))
+                raise
 
         # Remove from metadata
         if backup_id in self.metadata.get("backups", {}):
@@ -451,7 +481,12 @@ class DisasterRecoveryOrchestrator:
             return recovery_point_id
 
         except KeyError as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error("recovery_point_creation_failed", name=name, error=str(e))
+            raise
             raise
 
     def restore_recovery_point(self, recovery_point_id: str) -> dict[str, Any]:
@@ -480,11 +515,16 @@ class DisasterRecoveryOrchestrator:
             return results
 
         except KeyError as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(
                 "recovery_point_restoration_failed",
                 recovery_point_id=recovery_point_id,
                 error=str(e),
             )
+            raise
             raise
 
     def _collect_component_data(self, component: str) -> dict[str, Any]:

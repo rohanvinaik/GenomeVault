@@ -13,7 +13,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -295,8 +295,13 @@ class ProteomicsProcessor:
             return profile
 
         except Exception as _:
-            logger.error(f"Error processing proteomics data: {str(e)}")
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
+            logger.error(f"Error processing proteomics data: {e!s}")
             raise ProcessingError("Failed to process proteomics data: {str(e)}")
+            raise
 
     def _load_maxquant_output(self, input_path: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
         """Load MaxQuant output files"""

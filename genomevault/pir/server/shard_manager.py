@@ -11,9 +11,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
-
-import numpy as np
+from typing import Any
 
 from genomevault.utils.config import get_config
 
@@ -265,8 +263,13 @@ class ShardManager:
             return shard_id
 
         except Exception:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Error creating shard {shard_index}: {e}")
             return None
+            raise
 
     def distribute_shards(self, server_list: list[str]) -> ShardDistribution:
         """
@@ -407,6 +410,10 @@ class ShardManager:
             return True
 
         except Exception:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Error updating shard {shard_id}: {e}")
 
             # Restore backup
@@ -415,6 +422,7 @@ class ShardManager:
                 backup_path.unlink()
 
             return False
+            raise
 
     def get_shard_statistics(self) -> dict[str, Any]:
         """

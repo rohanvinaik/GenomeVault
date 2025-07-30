@@ -8,7 +8,6 @@ import hashlib
 import json
 from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Tuple
 
 import aiohttp
 
@@ -86,8 +85,13 @@ class CMSNPIRegistry(NPIRegistry):
             return record
 
         except Exception as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Error looking up NPI {npi}: {e}")
             return None
+            raise
 
     async def validate_npi(self, npi: str) -> bool:
         """
@@ -300,6 +304,10 @@ class HIPAAVerifier:
             return record
 
         except VerificationError as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             # Create failed record
             record = VerificationRecord(
                 credentials=credentials,
@@ -323,6 +331,7 @@ class HIPAAVerifier:
             # Clean up pending
             del self.pending_verifications[verification_id]
 
+            raise
             raise
 
     def get_verification_status(self, npi: str) -> VerificationRecord | None:
@@ -469,7 +478,12 @@ if __name__ == "__main__":
                 print(f"\nVerification active: {status.is_active()}")
 
             except VerificationError as e:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 print(f"Verification failed: {e}")
+                raise
 
             # Test invalid NPI
             print("\n\nTesting invalid NPI...")
@@ -484,7 +498,12 @@ if __name__ == "__main__":
                 bad_id = await verifier.submit_verification(bad_credentials)
                 await verifier.process_verification(bad_id)
             except VerificationError as e:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 print(f"Correctly rejected: {e}")
+                raise
 
     # Run test
     asyncio.run(test_hipaa_verification())

@@ -6,7 +6,7 @@ Integrates HIPAA fast-track verification with the blockchain node system.
 
 import asyncio
 from datetime import datetime, timedelta
-from typing import Any, Dict, Optional
+from typing import Any
 
 from genomevault.utils.logging import get_logger
 
@@ -79,7 +79,12 @@ class HIPAANodeIntegration:
             return node
 
         except VerificationError as _:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Failed to register provider {credentials.npi}: {e}")
+            raise
             raise
 
     def _create_trusted_node(
@@ -280,7 +285,12 @@ if __name__ == "__main__":
                 print("\nHIPAA governance integration complete!")
 
             except VerificationError as _:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 print("Registration failed: {e}")
+                raise
 
     # Run test
     asyncio.run(test_hipaa_integration())

@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """
 Variant Frequency (Allele Count) Sum Verification Circuit
 
@@ -6,13 +9,12 @@ This is the minimum ZK artifact to power the MVP-VPQ (Variant Population Query).
 """
 
 import hashlib
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from genomevault.zk_proofs.circuits.implementations.constraint_system import (
     ConstraintSystem,
     FieldElement,
     LinearCombination,
-    Variable,
     poseidon_hash,
 )
 
@@ -390,13 +392,13 @@ if __name__ == "__main__":
     # Test the circuit
     circuit = create_example_frequency_proof()
 
-    print("Variant Frequency Sum Verification Circuit")
-    print("=" * 50)
+    logger.info("Variant Frequency Sum Verification Circuit")
+    logger.info("=" * 50)
 
     info = circuit.get_circuit_info()
     for key, value in info.items():
-        print(f"{key}: {value}")
+        logger.info(f"{key}: {value}")
 
-    print(f"\nConstraints satisfied: {circuit.verify_constraints()}")
-    print(f"Public inputs: {len(circuit.get_public_inputs())}")
-    print(f"Witness size: {len(circuit.get_witness())}")
+    logger.info(f"\nConstraints satisfied: {circuit.verify_constraints()}")
+    logger.info(f"Public inputs: {len(circuit.get_public_inputs())}")
+    logger.info(f"Witness size: {len(circuit.get_witness())}")

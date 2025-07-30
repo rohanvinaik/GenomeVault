@@ -10,7 +10,6 @@ verifying privacy-preserving proofs for genomic analyses.
 
 import hashlib
 import time
-from typing import Any, Dict
 
 import numpy as np
 
@@ -410,7 +409,12 @@ def main():
         print("All demonstrations completed successfully!")
 
     except Exception:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         logger.error(f"Demonstration failed: {e}")
+        raise
         raise
 
 

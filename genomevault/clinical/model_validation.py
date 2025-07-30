@@ -8,14 +8,13 @@ for ML models used in GenomeVault, ensuring FDA/EMA compliance.
 import hashlib
 import json
 import time
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any
 
 import numpy as np
 
-from genomevault.clinical.hipaa import HIPAACompliance
 from genomevault.utils.logging import get_logger
 
 logger = get_logger(__name__)

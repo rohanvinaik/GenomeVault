@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 import time
-from typing import Dict, Tuple
+
 from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import PlainTextResponse
@@ -31,7 +31,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         super().__init__(app)
         self.rate = float(rate or float(os.getenv("RATE_LIMIT_RPS", "5.0")))
         self.burst = int(burst or int(os.getenv("RATE_LIMIT_BURST", "10")))
-        self.buckets: Dict[str, TokenBucket] = {}
+        self.buckets: dict[str, TokenBucket] = {}
 
     def _key(self, request: Request) -> str:
         # Per-client-IP key

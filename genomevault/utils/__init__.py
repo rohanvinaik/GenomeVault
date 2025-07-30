@@ -2,4 +2,4 @@
 
 from .metrics import MetricsCollector, MetricsContext, metrics, metrics_decorator
 
-__all__ = ["MetricsCollector", "MetricsContext", "metrics_decorator", "metrics"]
+__all__ = ["MetricsCollector", "MetricsContext", "metrics", "metrics_decorator"]

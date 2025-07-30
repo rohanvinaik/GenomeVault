@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import numpy as np
-from typing import Tuple
 
 
 class PlattCalibrator:
@@ -18,7 +17,7 @@ class PlattCalibrator:
     def _sigmoid(z: np.ndarray) -> np.ndarray:
         return 1.0 / (1.0 + np.exp(-z))
 
-    def fit(self, y_true: np.ndarray, y_score: np.ndarray) -> "PlattCalibrator":
+    def fit(self, y_true: np.ndarray, y_score: np.ndarray) -> PlattCalibrator:
         y = np.asarray(y_true, dtype=np.float64)
         x = np.asarray(y_score, dtype=np.float64)
         X = np.c_[np.ones_like(x), x]  # intercept, slope
@@ -53,7 +52,7 @@ class IsotonicCalibrator:
         self.x_: np.ndarray | None = None  # breakpoints (sorted scores)
         self.y_: np.ndarray | None = None  # fitted (piecewise-constant) probabilities
 
-    def fit(self, y_true: np.ndarray, y_score: np.ndarray) -> "IsotonicCalibrator":
+    def fit(self, y_true: np.ndarray, y_score: np.ndarray) -> IsotonicCalibrator:
         y = np.asarray(y_true, dtype=np.float64)
         x = np.asarray(y_score, dtype=np.float64)
         order = np.argsort(x)
@@ -96,15 +95,20 @@ class IsotonicCalibrator:
         return self.y_[idx]
 
 
-def fit_and_calibrate(y_true: np.ndarray, y_score: np.ndarray, method: str = "platt") -> Tuple[np.ndarray, object]:
+def fit_and_calibrate(
+    y_true: np.ndarray, y_score: np.ndarray, method: str = "platt"
+) -> tuple[np.ndarray, object]:
     method = (method or "").lower()
     if method == "platt":
         cal = PlattCalibrator().fit(y_true, y_score)
     elif method == "isotonic":
         cal = IsotonicCalibrator().fit(y_true, y_score)
     elif method in ("none", "identity"):
+
         class Identity:
-            def predict_proba(self, v): return np.asarray(v, dtype=np.float64)
+            def predict_proba(self, v):
+                return np.asarray(v, dtype=np.float64)
+
         cal = Identity()
     else:
         raise ValueError("unknown calibration method: %s" % method)

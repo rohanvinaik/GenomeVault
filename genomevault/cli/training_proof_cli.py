@@ -8,17 +8,13 @@ and attestations in GenomeVault.
 import hashlib
 import json
 from pathlib import Path
-from typing import Any, Dict, Optional
 
 import click
-import matplotlib.pyplot as plt
 from tabulate import tabulate
 
 from genomevault.blockchain.contracts.training_attestation import TrainingAttestationContract
 from genomevault.hypervector.visualization.projector import ModelEvolutionVisualizer
-from genomevault.local_processing.model_snapshot import SnapshotVerifier
 from genomevault.utils.logging import get_logger
-from genomevault.zk_proofs.circuits.multi_modal_training_proof import MultiModalTrainingProof
 from genomevault.zk_proofs.circuits.training_proof import TrainingProofCircuit
 
 logger = get_logger(__name__)
@@ -97,10 +93,10 @@ def verify_proof(proof_file: str, snapshot_dir: str, output: str | None, verbose
         }
 
         if not hash_check:
-            click.echo(f"❌ Final model hash mismatch")
+            click.echo("❌ Final model hash mismatch")
             verification_results["proof_valid"] = False
         else:
-            click.echo(f"✅ Final model hash verified")
+            click.echo("✅ Final model hash verified")
 
     # Check 3: Training timeline
     start_time = proof_data.get("public_inputs", {}).get("training_start_time", 0)
@@ -122,10 +118,10 @@ def verify_proof(proof_file: str, snapshot_dir: str, output: str | None, verbose
         }
 
         if not timeline_check:
-            click.echo(f"❌ Timeline mismatch")
+            click.echo("❌ Timeline mismatch")
             verification_results["proof_valid"] = False
         else:
-            click.echo(f"✅ Training timeline verified")
+            click.echo("✅ Training timeline verified")
 
     # Check 4: Merkle root
     if "snapshot_merkle_root" in proof_data.get("commitments", {}):
@@ -142,10 +138,10 @@ def verify_proof(proof_file: str, snapshot_dir: str, output: str | None, verbose
         }
 
         if not merkle_check:
-            click.echo(f"❌ Merkle root mismatch")
+            click.echo("❌ Merkle root mismatch")
             verification_results["proof_valid"] = False
         else:
-            click.echo(f"✅ Merkle root verified")
+            click.echo("✅ Merkle root verified")
 
     # Summary
     click.echo("\n📊 Verification Summary:")

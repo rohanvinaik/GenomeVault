@@ -5,7 +5,6 @@ Demonstrates the complete HIPAA verification and governance integration flow.
 """
 
 import asyncio
-from datetime import datetime, timedelta
 
 from genomevault.blockchain.governance import (
     CommitteeType,
@@ -106,8 +105,13 @@ async def demonstrate_hipaa_fasttrack():
                 # Add to HIPAA committee
                 governance.committees[CommitteeType.SCIENTIFIC_ADVISORY].add_member(node.node_id)
 
-            except Exception as e:
+            except Exception:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 print("  ✗ Registration failed: {e}")
+                raise
 
         print("\n\nTotal governance voting power: {governance.total_voting_power}")
 

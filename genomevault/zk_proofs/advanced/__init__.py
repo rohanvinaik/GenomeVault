@@ -5,9 +5,9 @@ from .recursive_snark import RecursiveProof, RecursiveSNARKProver
 from .stark_prover import PostQuantumVerifier, STARKProver
 
 __all__ = [
-    "RecursiveSNARKProver",
-    "RecursiveProof",
-    "STARKProver",
-    "PostQuantumVerifier",
     "CatalyticProofEngine",
+    "PostQuantumVerifier",
+    "RecursiveProof",
+    "RecursiveSNARKProver",
+    "STARKProver",
 ]

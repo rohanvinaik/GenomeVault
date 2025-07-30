@@ -1,5 +1,6 @@
-from genomevault.pir.engine import PIREngine
 from hashlib import sha256
+
+from genomevault.pir.engine import PIREngine
 
 
 def test_pir_engine_recovers_record():

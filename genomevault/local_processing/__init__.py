@@ -13,27 +13,37 @@ from .sequencing import (
 try:
     from .transcriptomics import ExpressionProfile, GeneExpression, TranscriptomicsProcessor
 except ImportError:
+    from genomevault.observability.logging import configure_logging
+
+    logger = configure_logging()
+    logger.exception("Unhandled exception")
     TranscriptomicsProcessor = None
     ExpressionProfile = None
     GeneExpression = None
+    raise
 
 try:
     from .epigenetics import EpigeneticsProcessor, MethylationProfile, MethylationSite
 except ImportError:
+    from genomevault.observability.logging import configure_logging
+
+    logger = configure_logging()
+    logger.exception("Unhandled exception")
     EpigeneticsProcessor = None
     MethylationProfile = None
     MethylationSite = None
+    raise
 
 __all__ = [
-    "SequencingProcessor",
     "DifferentialStorage",
     "GenomicProfile",
-    "Variant",
     "QualityMetrics",
+    "SequencingProcessor",
+    "Variant",
 ]
 
 if TranscriptomicsProcessor:
-    __all__.extend(["TranscriptomicsProcessor", "ExpressionProfile", "GeneExpression"])
+    __all__.extend(["ExpressionProfile", "GeneExpression", "TranscriptomicsProcessor"])
 
 if EpigeneticsProcessor:
     __all__.extend(["EpigeneticsProcessor", "MethylationProfile", "MethylationSite"])

@@ -7,13 +7,11 @@ This module tests the end-to-end functionality of the PoT implementation.
 import json
 import shutil
 import tempfile
-import time
 from pathlib import Path
 
 import numpy as np
 import pytest
 
-from genomevault.clinical.model_validation import ClinicalDomain, ValidationLevel
 from genomevault.integration.proof_of_training import ProofOfTrainingIntegration
 from genomevault.local_processing.differential_privacy_audit import PrivacyMechanism
 

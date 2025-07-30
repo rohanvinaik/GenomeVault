@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 # genomevault/clinical/calibration.py
 """Clinical calibration suite for error budget management and compliance."""
 
@@ -5,13 +8,12 @@ from __future__ import annotations
 
 import json
 import time
-from dataclasses import dataclass, field
-from enum import Enum, auto
+from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Protocol, Tuple
+from typing import Any, Protocol
 
 import numpy as np
-from scipy import optimize
 from sklearn.metrics import precision_recall_curve, roc_auc_score
 
 
@@ -90,7 +92,9 @@ class ClinicalCalibrationSuite:
         confidence_level: float = 0.95,
     ) -> CalibrationMetrics:
         """Calibrate model for specific clinical use case."""
-        print(f"Calibrating for {use_case.description} (error budget: {use_case.error_budget})")
+        logger.info(
+            f"Calibrating for {use_case.description} (error budget: {use_case.error_budget})"
+        )
 
         # Get calibration data
         X_cal, y_cal = dataset.get_samples(n=1000)

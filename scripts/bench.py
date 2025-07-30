@@ -12,13 +12,11 @@ import sys
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional
 
 import numpy as np
 
 from genomevault.pir.client import PIRClient, PIRServer
-from genomevault.pir.client.query_builder import PIRQueryBuilder
-from genomevault.utils.logging import logger, performance_logger
+from genomevault.utils.logging import logger
 
 
 class BenchmarkHarness:
@@ -280,12 +278,17 @@ class HDCBenchmark:
                     self.harness.add_result("hdc_comprehensive", latest_results)
 
             except subprocess.CalledProcessError as e:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 logger.error(f"HDC benchmark failed: {e}")
                 logger.error(f"stdout: {e.stdout}")
                 logger.error(f"stderr: {e.stderr}")
 
                 # Fall back to basic benchmarks
                 await self._run_basic_hdc_benchmarks()
+                raise
         else:
             # Fall back to basic benchmarks
             logger.warning(f"HDC benchmark script not found at {script_path}")
@@ -315,8 +318,13 @@ class HDCBenchmark:
                 }
 
         except Exception as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Failed to load HDC results: {e}")
             return None
+            raise
 
     async def _run_basic_hdc_benchmarks(self):
         """Run basic HDC benchmarks as fallback."""
@@ -354,6 +362,10 @@ class HDCBenchmark:
             self.harness.add_result("hdc_basic", results)
 
         except ImportError as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Failed to import HDC modules: {e}")
             # Add minimal results
             results = {
@@ -362,6 +374,7 @@ class HDCBenchmark:
                 "dimension": 10000,
             }
             self.harness.add_result("hdc_basic", results)
+            raise
 
 
 async def run_benchmarks(lane: str, output_dir: str):

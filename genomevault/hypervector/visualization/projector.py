@@ -6,8 +6,7 @@ during training using dimensionality reduction techniques.
 """
 
 import warnings
-from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np

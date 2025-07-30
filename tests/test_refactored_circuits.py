@@ -2,7 +2,6 @@
 Unit tests for the refactored clinical circuits.
 """
 
-import os
 import sys
 import unittest
 
@@ -19,8 +18,13 @@ try:
 
     IMPORTS_AVAILABLE = True
 except ImportError as e:
+    from genomevault.observability.logging import configure_logging
+
+    logger = configure_logging()
+    logger.exception("Unhandled exception")
     IMPORTS_AVAILABLE = False
     IMPORT_ERROR = str(e)
+    raise
 
 
 class TestRefactoredCircuits(unittest.TestCase):

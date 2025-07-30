@@ -10,7 +10,7 @@ import json
 import time
 from dataclasses import asdict, dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from genomevault.utils.logging import get_logger
 
@@ -204,7 +204,7 @@ class TrainingAttestationContract:
 
         attestation = self.attestations[attestation_id]
         if attestation.status != AttestationStatus.PENDING:
-            raise Exception(f"Attestation not in pending status")
+            raise Exception("Attestation not in pending status")
 
         # Create verification record
         verification_data = f"{attestation_id}{verifier}{verification_result}{evidence_hash}"

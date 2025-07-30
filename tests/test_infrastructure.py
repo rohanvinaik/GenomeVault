@@ -2,8 +2,6 @@
 Test to verify the test infrastructure is working correctly
 """
 
-from pathlib import Path
-
 import pytest
 
 

@@ -1,7 +1,9 @@
 from fastapi.testclient import TestClient
+
 from genomevault.api.app import app
 
 client = TestClient(app)
+
 
 def test_proofs_stubs():
     r = client.post("/proofs/create")

@@ -37,21 +37,23 @@ from __future__ import annotations
 
 import argparse
 import ast
-import io
 import os
 import sys
-import textwrap
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Set, Tuple
 
 try:
     import libcst as cst
     from libcst import matchers as m
-except Exception as e:
+except Exception:
+    from genomevault.observability.logging import configure_logging
+
+    logger = configure_logging()
+    logger.exception("Unhandled exception")
     print(
         "ERROR: This codemod requires 'libcst'. Install with: pip install libcst",
         file=sys.stderr,
     )
+    raise
     raise
 
 # --------------------------
@@ -146,7 +148,12 @@ def analyze_unused_params(file_path: str, source: str) -> dict[FunctionKey, set[
     try:
         tree = ast.parse(source, filename=file_path)
     except SyntaxError:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         return {}
+        raise
     result: dict[FunctionKey, set[str]] = {}
 
     class Visitor(ast.NodeVisitor):
@@ -228,7 +235,12 @@ class FirstPassDetect(cst.CSTVisitor):
                     if m.matches(t.target, m.Name("logger")):
                         self.state.has_logger_var = True
         except Exception:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             pass
+            raise
 
 
 class AutoFixTransformer(cst.CSTTransformer):
@@ -464,7 +476,12 @@ def process_file(path: str, apply: bool, verbose: int) -> tuple[bool, str, dict[
     try:
         mod = cst.parse_module(src)
     except Exception as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         return False, f"Parse error: {e}", {}
+        raise
 
     # Pass 1: detect logging, etc.
     state = ModuleState()

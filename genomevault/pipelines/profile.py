@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from typing import Dict, Any
+from typing import Any
+
 import pandas as pd
 
 
-def profile_dataframe(df: pd.DataFrame) -> Dict[str, Any]:
-    out: Dict[str, Any] = {"row_count": int(df.shape[0]), "columns": {}}
+def profile_dataframe(df: pd.DataFrame) -> dict[str, Any]:
+    out: dict[str, Any] = {"row_count": int(df.shape[0]), "columns": {}}
     for c in df.columns:
         s = df[c]
         out["columns"][c] = {

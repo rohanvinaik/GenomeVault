@@ -2,18 +2,24 @@ from __future__ import annotations
 
 import time
 import uuid
-from typing import Callable
 
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
+
 from genomevault.observability.logging import get_logger
 
 # Metrics are optional; if import fails, we no-op
 try:
-    from genomevault.observability.metrics import http_requests_total, http_request_duration
+    from genomevault.observability.metrics import http_request_duration, http_requests_total
+
     _METRICS = True
 except Exception:  # pragma: no cover
+    from genomevault.observability.logging import configure_logging
+
+    logger = configure_logging()
+    logger.exception("Unhandled exception")
     _METRICS = False
+    raise
 
 _LOG = get_logger(__name__)
 
@@ -27,6 +33,10 @@ class ObservabilityMiddleware(BaseHTTPMiddleware):
         try:
             resp = await call_next(request)
         except Exception:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             # still log, then raise
             dt = (time.perf_counter() - t0) * 1000.0
             _LOG.error(
@@ -40,6 +50,7 @@ class ObservabilityMiddleware(BaseHTTPMiddleware):
                     "client": request.client.host if request.client else None,
                 },
             )
+            raise
             raise
 
         dt = (time.perf_counter() - t0) * 1000.0

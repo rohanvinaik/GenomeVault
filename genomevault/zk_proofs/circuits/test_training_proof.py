@@ -4,17 +4,14 @@ Tests for Training Proof and Multi-Modal Training Proof circuits
 
 import hashlib
 import time
-from typing import Any, Dict, List
+from typing import Any
 
 import pytest
 
-from genomevault.zk_proofs.circuits.base_circuits import FieldElement
 from genomevault.zk_proofs.circuits.multi_modal_training_proof import (
-    CrossModalAlignment,
-    ModalityMetrics,
     MultiModalTrainingProof,
 )
-from genomevault.zk_proofs.circuits.training_proof import TrainingProofCircuit, TrainingSnapshot
+from genomevault.zk_proofs.circuits.training_proof import TrainingProofCircuit
 
 
 class TestTrainingProofCircuit:

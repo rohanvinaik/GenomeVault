@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """
 Biological signal detection from hypervector variance patterns.
 
@@ -5,13 +8,11 @@ Detects methylation, structural variants, and other biological
 signals from nanopore HV instability patterns.
 """
 
-import json
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import numpy as np
-from scipy import signal as scipy_signal
 from scipy.stats import zscore
 from sklearn.ensemble import IsolationForest
 
@@ -447,17 +448,17 @@ def example_signal_detection():
         genomic_positions=np.arange(n_positions) * 100,  # Assume 100bp spacing
     )
 
-    print(f"Detected {len(signals)} biological signals:")
+    logger.info(f"Detected {len(signals)} biological signals:")
     for signal in signals:
-        print(
+        logger.info(
             f"  {signal.signal_type.value} at position {signal.genomic_position} "
             f"(confidence: {signal.confidence:.2f})"
         )
 
     # Export as track
     track_data = detector.export_signal_track(signals, "bedgraph")
-    print(f"\nBedGraph track preview:")
-    print("\n".join(track_data.split("\n")[:5]))
+    logger.info("\nBedGraph track preview:")
+    logger.info("\n".join(track_data.split("\n")[:5]))
 
 
 if __name__ == "__main__":

@@ -3,17 +3,12 @@ Comprehensive tests for enhanced PIR implementation.
 """
 
 import asyncio
-import hashlib
 import json
 import struct
-import tempfile
-from pathlib import Path
-from unittest.mock import AsyncMock, Mock, patch
 
 import numpy as np
 import pytest
 
-from genomevault.pir.client import PIRClient
 from genomevault.pir.server.enhanced_pir_server import (
     EnhancedPIRServer,
     GenomicRegion,

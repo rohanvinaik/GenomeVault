@@ -8,12 +8,9 @@ import argparse
 import asyncio
 import csv
 import json
-import subprocess
-import sys
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 
@@ -79,8 +76,13 @@ class CIBenchmarkRunner:
             return avg_ms
 
         except ImportError as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Encode benchmark failed: {e}")
             return -1.0
+            raise
 
     async def _run_pir_benchmark(self) -> float:
         """Run PIR query benchmark and return average time in ms."""
@@ -123,8 +125,13 @@ class CIBenchmarkRunner:
             KeyError,
             ValueError,
         ) as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"PIR benchmark failed: {e}")
             return -1.0
+            raise
 
     async def _run_proof_benchmark(self) -> float:
         """Run proof generation benchmark and return average time in ms."""
@@ -154,8 +161,13 @@ class CIBenchmarkRunner:
             return avg_ms
 
         except Exception as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Proof benchmark failed: {e}")
             return -1.0
+            raise
 
     def save_csv(self, timing_data: dict[str, float], filename: str = "benchmark_results.csv"):
         """Save timing data to CSV file for Grafana."""
@@ -258,7 +270,7 @@ async def main():
     print("-" * 50)
     print(f"Total time:  {timing_data['total_ms']:.2f} ms")
     print("=" * 50)
-    print(f"\nResults saved to:")
+    print("\nResults saved to:")
     print(f"  CSV: {csv_path}")
     print(f"  JSON: {json_path}")
 

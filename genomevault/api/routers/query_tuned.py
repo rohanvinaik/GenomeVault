@@ -3,15 +3,14 @@ API Router for SNP-tuned and Zoom Queries
 Extends the tuned query endpoint with panel granularity and hierarchical zoom
 """
 
-import asyncio
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 
 from genomevault.hypervector.encoding.genomic import GenomicEncoder, PanelGranularity
-from genomevault.hypervector.error_handling import ErrorBudget, ErrorBudgetAllocator
+from genomevault.hypervector.error_handling import ErrorBudgetAllocator
 from genomevault.pir.client import BatchedPIRQueryBuilder, GenomicQuery, QueryType
 from genomevault.utils.logging import get_logger
 from genomevault.zk.proof import ProofGenerator
@@ -192,8 +191,13 @@ async def query_with_panel(
         )
 
     except KeyError as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         logger.error(f"Panel query failed: {e}")
-        raise HTTPException(500, f"Panel query failed: {str(e)}")
+        raise HTTPException(500, f"Panel query failed: {e!s}")
+        raise
 
 
 @router.post("/zoom", response_model=ZoomQueryResponse)
@@ -273,8 +277,13 @@ async def query_with_zoom(
         )
 
     except (DatabaseError, KeyError) as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         logger.error(f"Zoom query failed: {e}")
-        raise HTTPException(500, f"Zoom query failed: {str(e)}")
+        raise HTTPException(500, f"Zoom query failed: {e!s}")
+        raise
 
 
 @router.get("/panel/info")
@@ -297,10 +306,20 @@ async def get_panel_info(
             return {"panel": panel_name, "info": info}
 
     except ValueError as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         raise HTTPException(404, str(e))
+        raise
     except KeyError as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         logger.error(f"Failed to get panel info: {e}")
-        raise HTTPException(500, f"Failed to get panel info: {str(e)}")
+        raise HTTPException(500, f"Failed to get panel info: {e!s}")
+        raise
 
 
 @router.post("/panel/estimate")

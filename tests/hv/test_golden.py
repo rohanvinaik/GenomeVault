@@ -1,13 +1,17 @@
 from pathlib import Path
+
 import numpy as np
+
 from genomevault.hypervector.encoding.sparse_projection import SparseRandomProjection
 
 GOLDEN_PATH = Path("/Users/rohanvinaik/genomevault/tests/hv/golden/vec_100d_seed123.npy")
+
 
 def _make_input():
     x = np.zeros((1, 50), dtype=np.float64)
     x[0, 0] = 1.0
     return x
+
 
 def test_golden_vector_regression():
     proj = SparseRandomProjection(n_components=100, density=0.1, seed=123).fit(n_features=50)

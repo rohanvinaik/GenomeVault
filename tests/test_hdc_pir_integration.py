@@ -1,9 +1,12 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """
 Test for HDC Error Handling with PIR Batch Integration
 """
 
 import asyncio
-from unittest.mock import AsyncMock, Mock, patch
+from unittest.mock import AsyncMock, Mock
 
 import numpy as np
 import pytest

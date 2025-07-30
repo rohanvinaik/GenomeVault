@@ -1,10 +1,11 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """
 Example usage of HDC error handling with uncertainty tuning
 """
 
 import asyncio
-
-import numpy as np
 
 from genomevault.hypervector.error_handling import (
     AdaptiveHDCEncoder,
@@ -16,7 +17,7 @@ from genomevault.hypervector.error_handling import (
 async def main():
     """Demonstrate HDC error handling capabilities"""
     # 1. Basic error budget allocation
-    print("=== Error Budget Allocation ===")
+    logger.info("=== Error Budget Allocation ===")
     allocator = ErrorBudgetAllocator()
 
     # Different accuracy/confidence settings
@@ -31,14 +32,14 @@ async def main():
         latency = allocator.estimate_latency(budget)
         bandwidth = allocator.estimate_bandwidth(budget)
 
-        print(f"\n{name} Setting:")
-        print(f"  Dimension: {budget.dimension:,}")
-        print(f"  Repeats: {budget.repeats}")
-        print(f"  Estimated latency: {latency}ms")
-        print(f"  Estimated bandwidth: {bandwidth:.1f}MB")
+        logger.info(f"\n{name} Setting:")
+        logger.info(f"  Dimension: {budget.dimension:,}")
+        logger.info(f"  Repeats: {budget.repeats}")
+        logger.info(f"  Estimated latency: {latency}ms")
+        logger.info(f"  Estimated bandwidth: {bandwidth:.1f}MB")
 
     # 2. Encoding with error handling
-    print("\n=== Adaptive Encoding ===")
+    logger.info("\n=== Adaptive Encoding ===")
 
     # Sample genomic variants
     variants = [
@@ -79,13 +80,13 @@ async def main():
     # Encode with budget
     encoded_vector, metadata = encoder.encode_with_budget(variants, budget)
 
-    print(f"Encoded vector shape: {encoded_vector.shape}")
-    print(f"Median error: {metadata['median_error']:.6f}")
-    print(f"Error within bound: {metadata['error_within_bound']}")
-    print(f"Number of proofs: {len(metadata['proofs'])}")
+    logger.info(f"Encoded vector shape: {encoded_vector.shape}")
+    logger.info(f"Median error: {metadata['median_error']:.6f}")
+    logger.info(f"Error within bound: {metadata['error_within_bound']}")
+    logger.info(f"Number of proofs: {len(metadata['proofs'])}")
 
     # 3. Compare with and without ECC
-    print("\n=== ECC Impact Comparison ===")
+    logger.info("\n=== ECC Impact Comparison ===")
 
     budget_no_ecc = ErrorBudget(
         dimension=10000,
@@ -108,29 +109,29 @@ async def main():
     _, meta_no_ecc = encoder.encode_with_budget(variants, budget_no_ecc)
     _, meta_with_ecc = encoder.encode_with_budget(variants, budget_with_ecc)
 
-    print(f"Without ECC - Median error: {meta_no_ecc['median_error']:.6f}")
-    print(f"With ECC    - Median error: {meta_with_ecc['median_error']:.6f}")
-    print(
+    logger.info(f"Without ECC - Median error: {meta_no_ecc['median_error']:.6f}")
+    logger.info(f"With ECC    - Median error: {meta_with_ecc['median_error']:.6f}")
+    logger.info(
         f"Error reduction: {(1 - meta_with_ecc['median_error']/meta_no_ecc['median_error'])*100:.1f}%"
     )
 
     # 4. API usage example
-    print("\n=== API Usage Example ===")
-    print("POST /api/hdc/estimate_budget")
-    print("Body: {")
-    print('  "epsilon": 0.005,')
-    print('  "delta_exp": 20,')
-    print('  "ecc_enabled": true')
-    print("}")
-    print("\nExpected Response: {")
-    print('  "dimension": 120000,')
-    print('  "repeats": 27,')
-    print('  "estimated_latency_ms": 1400,')
-    print('  "estimated_bandwidth_mb": 5.8')
-    print("}")
+    logger.info("\n=== API Usage Example ===")
+    logger.info("POST /api/hdc/estimate_budget")
+    logger.info("Body: {")
+    logger.info('  "epsilon": 0.005,')
+    logger.info('  "delta_exp": 20,')
+    logger.info('  "ecc_enabled": true')
+    logger.info("}")
+    logger.info("\nExpected Response: {")
+    logger.info('  "dimension": 120000,')
+    logger.info('  "repeats": 27,')
+    logger.info('  "estimated_latency_ms": 1400,')
+    logger.info('  "estimated_bandwidth_mb": 5.8')
+    logger.info("}")
 
     # 5. Preset configurations
-    print("\n=== Preset Configurations ===")
+    logger.info("\n=== Preset Configurations ===")
     from genomevault.core.constants import HDC_ERROR_CONFIG
 
     for preset_name, preset_config in HDC_ERROR_CONFIG["presets"].items():
@@ -139,11 +140,11 @@ async def main():
             delta_exp=preset_config["delta_exp"],
             ecc_enabled=preset_config["ecc"],
         )
-        print(f"\n{preset_name}: {preset_config.get('description', '')}")
-        print(
+        logger.info(f"\n{preset_name}: {preset_config.get('description', '')}")
+        logger.info(
             f"  Settings: {preset_config['epsilon']*100}% error, 1 in {2**preset_config['delta_exp']:,} confidence"
         )
-        print(f"  Dimension: {budget.dimension:,}, Repeats: {budget.repeats}")
+        logger.info(f"  Dimension: {budget.dimension:,}, Repeats: {budget.repeats}")
 
 
 if __name__ == "__main__":

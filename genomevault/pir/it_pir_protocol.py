@@ -1,18 +1,19 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """
 Information-Theoretic PIR Protocol Implementation
 Implements 2-server IT-PIR with XOR-based scheme and security guarantees.
 """
 
-import hashlib
 import secrets
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import numpy as np
 
 from genomevault.utils.logging import get_logger, logger
-from genomevault.version import PIR_PROTOCOL_VERSION
 
 logger = get_logger(__name__)
 
@@ -333,7 +334,7 @@ if __name__ == "__main__":
 
     # Generate query vectors
     queries = protocol.generate_query_vectors(index)
-    print(f"Generated {len(queries)} query vectors for index {index}")
+    logger.info(f"Generated {len(queries)} query vectors for index {index}")
 
     # Simulate server databases (normally distributed across servers)
     # Each database element is 1024 bytes
@@ -347,7 +348,7 @@ if __name__ == "__main__":
         response = protocol.process_server_response(query, database)
         padded_response, time_ms = protocol.timing_safe_response(response)
         responses.append(padded_response)
-        print(f"Server {i+1} response generated in {time_ms:.1f}ms")
+        logger.info(f"Server {i+1} response generated in {time_ms:.1f}ms")
 
     # Reconstruct element
     reconstructed = protocol.reconstruct_element(responses)
@@ -355,21 +356,21 @@ if __name__ == "__main__":
     # Verify correctness
     original = database[index]
     assert np.array_equal(reconstructed, original), "Reconstruction failed!"
-    print("✓ Successfully retrieved element via IT-PIR")
+    logger.info("✓ Successfully retrieved element via IT-PIR")
 
     # Calculate privacy guarantees
     prob_ts = protocol.calculate_privacy_breach_probability(k_honest=2, honesty_prob=0.98)
     prob_ln = protocol.calculate_privacy_breach_probability(k_honest=3, honesty_prob=0.95)
 
-    print(f"\nPrivacy breach probabilities:")
-    print(f"  2 HIPAA TS servers: {prob_ts:.6f}")
-    print(f"  3 Light Node servers: {prob_ln:.6f}")
+    logger.info("\nPrivacy breach probabilities:")
+    logger.info(f"  2 HIPAA TS servers: {prob_ts:.6f}")
+    logger.info(f"  3 Light Node servers: {prob_ln:.6f}")
 
     # Calculate minimum servers needed
     target_prob = 1e-4
     min_ts = protocol.calculate_min_servers(target_prob, 0.98)
     min_ln = protocol.calculate_min_servers(target_prob, 0.95)
 
-    print(f"\nMinimum servers for {target_prob} failure probability:")
-    print(f"  HIPAA TS nodes: {min_ts}")
-    print(f"  Light Nodes: {min_ln}")
+    logger.info(f"\nMinimum servers for {target_prob} failure probability:")
+    logger.info(f"  HIPAA TS nodes: {min_ts}")
+    logger.info(f"  Light Nodes: {min_ln}")

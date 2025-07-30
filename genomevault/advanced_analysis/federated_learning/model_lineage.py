@@ -8,10 +8,9 @@ creating a verifiable DAG (Directed Acyclic Graph) of model updates.
 import hashlib
 import json
 import time
-from collections import defaultdict
 from dataclasses import asdict, dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any
 
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -339,6 +338,10 @@ class FederatedModelLineage:
             path = nx.shortest_path(self.lineage_graph, "v0", version_id)
             return path
         except nx.NetworkXNoPath:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             # Handle multiple parent case (aggregation)
             # Find all ancestors
             ancestors = nx.ancestors(self.lineage_graph, version_id)
@@ -347,6 +350,7 @@ class FederatedModelLineage:
             # Return topologically sorted ancestors
             subgraph = self.lineage_graph.subgraph(ancestors)
             return list(nx.topological_sort(subgraph))
+            raise
 
     def get_version_provenance(self, version_id: str) -> dict[str, Any]:
         """

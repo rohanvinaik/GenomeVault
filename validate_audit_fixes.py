@@ -6,10 +6,8 @@ Validates that fixes have been applied correctly
 
 import ast
 import json
-import os
 import re
 from pathlib import Path
-from typing import Dict, List, Tuple
 
 
 class AuditValidator:
@@ -72,7 +70,12 @@ class AuditValidator:
                         }
                     )
             except Exception:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 pass
+                raise
 
     def check_broad_exceptions(self):
         """Find files with broad exception handlers"""
@@ -88,7 +91,12 @@ class AuditValidator:
                         }
                     )
             except Exception:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 pass
+                raise
 
     def calculate_complexity(self, py_file: Path) -> list[tuple[str, int]]:
         """Calculate cyclomatic complexity for functions in a file"""
@@ -103,7 +111,12 @@ class AuditValidator:
                     if complexity > 10:  # Functions with complexity > 10
                         complex_funcs.append((node.name, complexity))
         except Exception:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             pass
+            raise
 
         return complex_funcs
 
@@ -153,7 +166,7 @@ class AuditValidator:
     def print_report(self):
         """Print validation report"""
         print("\n=== GenomeVault Validation Report ===")
-        print(f"\nProject Structure:")
+        print("\nProject Structure:")
         print(f"  Total files: {self.report['files_total']}")
         print(f"  Python files: {self.report['py_files']}")
         print(f"  Test files: {self.report['tests_detected']}")

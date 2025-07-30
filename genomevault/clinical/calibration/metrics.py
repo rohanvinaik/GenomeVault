@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import numpy as np
-from typing import Tuple, Dict
 
 
 def _safe_prob(p: np.ndarray) -> np.ndarray:
@@ -29,15 +28,17 @@ def auroc(y_true: np.ndarray, y_score: np.ndarray) -> float:
         while j + 1 < len(sorted_scores) and sorted_scores[j + 1] == sorted_scores[i]:
             j += 1
         if j > i:
-            mean_rank = np.mean(ranks[order][i:j+1])
-            ranks[order][i:j+1] = mean_rank
+            mean_rank = np.mean(ranks[order][i : j + 1])
+            ranks[order][i : j + 1] = mean_rank
         i = j + 1
     sum_pos = ranks[y_true == 1].sum()
     auc = (sum_pos - n_pos * (n_pos + 1) / 2.0) / (n_pos * n_neg)
     return float(auc)
 
 
-def precision_recall_curve(y_true: np.ndarray, y_score: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+def precision_recall_curve(
+    y_true: np.ndarray, y_score: np.ndarray
+) -> tuple[np.ndarray, np.ndarray]:
     """Return precision and recall arrays sorted by descending score."""
     y_true = np.asarray(y_true, dtype=np.int32)
     y_score = np.asarray(y_score, dtype=np.float64)
@@ -59,7 +60,7 @@ def average_precision(y_true: np.ndarray, y_score: np.ndarray) -> float:
     # integrate precision over recall using step-wise method
     ap = 0.0
     for i in range(1, len(p)):
-        dr = r[i] - r[i-1]
+        dr = r[i] - r[i - 1]
         ap += p[i] * dr
     return float(ap)
 
@@ -70,7 +71,9 @@ def brier_score(y_true: np.ndarray, y_prob: np.ndarray) -> float:
     return float(np.mean((y_prob - y_true) ** 2))
 
 
-def calibration_curve(y_true: np.ndarray, y_prob: np.ndarray, n_bins: int = 10) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+def calibration_curve(
+    y_true: np.ndarray, y_prob: np.ndarray, n_bins: int = 10
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Return (bin_centers, mean_pred, frac_positives) using equal-width bins in [0,1]."""
     y_true = np.asarray(y_true, dtype=np.int32)
     y_prob = _safe_prob(np.asarray(y_prob, dtype=np.float64))
@@ -108,7 +111,7 @@ def mce(y_true: np.ndarray, y_prob: np.ndarray, n_bins: int = 10) -> float:
     return float(np.max(np.abs(frac_pos - mean_pred)))
 
 
-def confusion_at(y_true: np.ndarray, y_prob: np.ndarray, threshold: float) -> Dict[str, float]:
+def confusion_at(y_true: np.ndarray, y_prob: np.ndarray, threshold: float) -> dict[str, float]:
     y_true = np.asarray(y_true, dtype=np.int32)
     y_prob = np.asarray(y_prob, dtype=np.float64)
     y_hat = (y_prob >= threshold).astype(np.int32)
@@ -121,10 +124,20 @@ def confusion_at(y_true: np.ndarray, y_prob: np.ndarray, threshold: float) -> Di
     prec = tp / max(1, tp + fp)
     rec = sens
     f1 = 2 * prec * rec / max(1e-12, (prec + rec))
-    return {"tp": tp, "tn": tn, "fp": fp, "fn": fn, "sensitivity": sens, "specificity": spec, "precision": prec, "recall": rec, "f1": f1}
+    return {
+        "tp": tp,
+        "tn": tn,
+        "fp": fp,
+        "fn": fn,
+        "sensitivity": sens,
+        "specificity": spec,
+        "precision": prec,
+        "recall": rec,
+        "f1": f1,
+    }
 
 
-def youdens_j_threshold(y_true: np.ndarray, y_prob: np.ndarray) -> Tuple[float, Dict[str, float]]:
+def youdens_j_threshold(y_true: np.ndarray, y_prob: np.ndarray) -> tuple[float, dict[str, float]]:
     """Compute threshold that maximizes Youden's J = sensitivity + specificity - 1."""
     # candidate thresholds are unique probabilities
     probs = np.unique(np.asarray(y_prob, dtype=np.float64))

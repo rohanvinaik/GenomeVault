@@ -1,29 +1,39 @@
 import pandas as pd
+
 from genomevault.contracts.contract import TableContract, validate_dataframe
+
 
 def test_validate_dataframe_detects_violations(tmp_path):
     contract_path = tmp_path / "variant.json"
     contract = {
-        "name":"variant_table",
-        "columns":[
-            {"name":"sample_id","dtype":"string","required":True,"allow_null":False},
-            {"name":"chrom","dtype":"string","required":True,"allow_null":False,"regex":"^(chr)?([0-9]|1[0-9]|2[0-2]|X|Y|MT)$"},
-            {"name":"pos","dtype":"int","required":True,"allow_null":False,"minimum":1},
-            {"name":"ref","dtype":"string","required":True,"allow_null":False},
-            {"name":"alt","dtype":"string","required":True,"allow_null":False}
+        "name": "variant_table",
+        "columns": [
+            {"name": "sample_id", "dtype": "string", "required": True, "allow_null": False},
+            {
+                "name": "chrom",
+                "dtype": "string",
+                "required": True,
+                "allow_null": False,
+                "regex": "^(chr)?([0-9]|1[0-9]|2[0-2]|X|Y|MT)$",
+            },
+            {"name": "pos", "dtype": "int", "required": True, "allow_null": False, "minimum": 1},
+            {"name": "ref", "dtype": "string", "required": True, "allow_null": False},
+            {"name": "alt", "dtype": "string", "required": True, "allow_null": False},
         ],
-        "unique_key": ["sample_id","chrom","pos"]
+        "unique_key": ["sample_id", "chrom", "pos"],
     }
     contract_path.write_text(__import__("json").dumps(contract), encoding="utf-8")
     tc = TableContract.from_json(str(contract_path))
 
-    df = pd.DataFrame({
-        "sample_id": ["s1","s1"],
-        "chrom": ["chr1","chr1"],
-        "pos": [100,100],  # duplicate unique key
-        "ref": ["A","A"],
-        "alt": ["T","T"],
-    })
+    df = pd.DataFrame(
+        {
+            "sample_id": ["s1", "s1"],
+            "chrom": ["chr1", "chr1"],
+            "pos": [100, 100],  # duplicate unique key
+            "ref": ["A", "A"],
+            "alt": ["T", "T"],
+        }
+    )
     rep = validate_dataframe(df, tc)
     assert rep["ok"] is False
     assert any(v["type"] == "unique_key" for v in rep["violations"])

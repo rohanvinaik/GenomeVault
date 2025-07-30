@@ -1,24 +1,20 @@
 from __future__ import annotations
 
-from fastapi import FastAPI, APIRouter, Depends
+from fastapi import APIRouter, Depends, FastAPI
 
-from genomevault.api.routers import vectors
-from genomevault.api.routers import proofs
-from genomevault.api.routers import pir
-from genomevault.api.routers import federated
-from genomevault.api.routers import ledger
-from genomevault.api.routers import clinical
-from genomevault.api.routers import governance
 from genomevault.api.errors import register_error_handlers  # created in task 26A
+from genomevault.api.routers import clinical, federated, governance, ledger, pir, proofs, vectors
 from genomevault.observability.logging import configure_logging
-from genomevault.observability.middleware import add_observability_middleware
 from genomevault.observability.metrics import metrics_router
-from genomevault.security.headers import register_security
-from genomevault.security.body_limit import MaximumBodySizeMiddleware
+from genomevault.observability.middleware import add_observability_middleware
 from genomevault.security.auth import require_api_key
+from genomevault.security.body_limit import MaximumBodySizeMiddleware
+from genomevault.security.headers import register_security
 from genomevault.security.rate_limit import RateLimitMiddleware
 
-app = FastAPI(title="GenomeVault API", version="3.0.0", description="Privacy-preserving genomic data platform")
+app = FastAPI(
+    title="GenomeVault API", version="3.0.0", description="Privacy-preserving genomic data platform"
+)
 
 # configure observability
 configure_logging()
@@ -45,10 +41,12 @@ app.include_router(protected)
 # Include governance router
 app.include_router(governance.router)
 
+
 # health
 @app.get("/health")
 def health_check():
     return {"status": "healthy", "version": "3.0.0"}
+
 
 # register error handlers
 register_error_handlers(app)

@@ -3,7 +3,7 @@
 import asyncio
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from genomevault.utils.logging import get_logger, logger
 from genomevault.zk_proofs.circuits import PRSProofCircuit

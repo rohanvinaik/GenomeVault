@@ -1,8 +1,10 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """End-to-end tests for ZK proof system integration."""
 
 import asyncio
 import json
-from pathlib import Path
 
 import pytest
 

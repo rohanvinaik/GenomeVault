@@ -7,7 +7,6 @@ processed multi-omics data into high-dimensional, privacy-preserving representat
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, Optional, Union
 
 import numpy as np
 import torch
@@ -122,8 +121,13 @@ class HypervectorEncoder:
             return hypervector
 
         except Exception as e:
-            logger.error(f"Encoding error: {str(e)}")
-            raise EncodingError(f"Failed to encode features: {str(e)}")
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
+            logger.error(f"Encoding error: {e!s}")
+            raise EncodingError(f"Failed to encode features: {e!s}")
+            raise
 
     def encode_multiresolution(
         self, features: np.ndarray | torch.Tensor | dict, omics_type: OmicsType
@@ -357,4 +361,9 @@ def encode_genomic_data(genomic_data: dict, dimension: int = 10000) -> torch.Ten
 try:
     import pandas as pd
 except ImportError:
+    from genomevault.observability.logging import configure_logging
+
+    logger = configure_logging()
+    logger.exception("Unhandled exception")
     pd = None
+    raise

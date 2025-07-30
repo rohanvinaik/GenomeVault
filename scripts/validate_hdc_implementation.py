@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 #!/usr/bin/env python3
 """
 HDC Implementation Validation Script
@@ -9,7 +12,7 @@ import json
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 
 class HDCImplementationValidator:
@@ -354,60 +357,60 @@ class HDCImplementationValidator:
 
     def print_report(self, report: dict[str, Any]):
         """Print formatted validation report"""
-        print("\n" + "=" * 70)
-        print("HDC IMPLEMENTATION VALIDATION REPORT")
-        print("=" * 70)
-        print(f"Timestamp: {report['timestamp']}")
-        print(f"Project: {self.project_root}")
-        print("\n" + "-" * 70)
+        logger.info("\n" + "=" * 70)
+        logger.info("HDC IMPLEMENTATION VALIDATION REPORT")
+        logger.info("=" * 70)
+        logger.info(f"Timestamp: {report['timestamp']}")
+        logger.info(f"Project: {self.project_root}")
+        logger.info("\n" + "-" * 70)
 
         # Stage results
         for stage_name, stage_data in report["stages"].items():
             status = "✓ PASSED" if stage_data["passed"] else "✗ FAILED"
-            print(f"\n{stage_name}: {status}")
+            logger.info(f"\n{stage_name}: {status}")
 
             if not stage_data["passed"]:
-                print(f"  Issues ({stage_data['issue_count']}):")
+                logger.info(f"  Issues ({stage_data['issue_count']}):")
                 for issue in stage_data["issues"]:
-                    print(f"    - {issue}")
+                    logger.info(f"    - {issue}")
 
         # Summary
-        print("\n" + "=" * 70)
-        print("SUMMARY")
-        print("=" * 70)
+        logger.info("\n" + "=" * 70)
+        logger.info("SUMMARY")
+        logger.info("=" * 70)
         summary = report["summary"]
-        print(f"Total Stages: {summary['total_stages']}")
-        print(f"Passed: {summary['stages_passed']}")
-        print(f"Failed: {summary['stages_failed']}")
-        print(f"Total Issues: {summary['total_issues']}")
-        print(f"Completion: {summary['completion_percentage']:.1f}%")
+        logger.info(f"Total Stages: {summary['total_stages']}")
+        logger.info(f"Passed: {summary['stages_passed']}")
+        logger.info(f"Failed: {summary['stages_failed']}")
+        logger.info(f"Total Issues: {summary['total_issues']}")
+        logger.info(f"Completion: {summary['completion_percentage']:.1f}%")
 
         # Final verdict
-        print("\n" + "=" * 70)
+        logger.info("\n" + "=" * 70)
         if summary["completion_percentage"] == 100:
-            print("✓ HDC IMPLEMENTATION COMPLETE!")
-            print("All stages validated successfully.")
+            logger.info("✓ HDC IMPLEMENTATION COMPLETE!")
+            logger.info("All stages validated successfully.")
         elif summary["completion_percentage"] >= 90:
-            print("⚠ HDC IMPLEMENTATION NEARLY COMPLETE")
-            print("Minor issues remaining. See above for details.")
+            logger.info("⚠ HDC IMPLEMENTATION NEARLY COMPLETE")
+            logger.info("Minor issues remaining. See above for details.")
         else:
-            print("✗ HDC IMPLEMENTATION INCOMPLETE")
-            print("Significant work needed. Review failed stages above.")
-        print("=" * 70 + "\n")
+            logger.info("✗ HDC IMPLEMENTATION INCOMPLETE")
+            logger.info("Significant work needed. Review failed stages above.")
+        logger.info("=" * 70 + "\n")
 
     def save_report(self, report: dict[str, Any], output_file: str = "hdc_validation_report.json"):
         """Save validation report to file"""
         output_path = self.project_root / output_file
         with open(output_path, "w") as f:
             json.dump(report, f, indent=2)
-        print(f"\nReport saved to: {output_path}")
+        logger.info(f"\nReport saved to: {output_path}")
 
 
 def main():
     """Main validation entry point"""
     validator = HDCImplementationValidator()
 
-    print("Validating HDC implementation...")
+    logger.info("Validating HDC implementation...")
     report = validator.generate_report()
 
     # Print report

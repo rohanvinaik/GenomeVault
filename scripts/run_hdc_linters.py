@@ -15,14 +15,19 @@ def run_command(cmd):
     print("=" * 60)
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True)
+        result = subprocess.run(cmd, check=False, capture_output=True, text=True)
         print(result.stdout)
         if result.stderr:
             print("STDERR:", result.stderr)
         return result.returncode == 0
     except Exception as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         print(f"Error running command: {e}")
         return False
+        raise
 
 
 def main():
@@ -77,8 +82,13 @@ def main():
         )
         results["mypy"] = mypy_result
     except (FileNotFoundError, subprocess.CalledProcessError, Exception):
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         print("mypy not available, skipping type checking")
         results["mypy"] = None
+        raise
 
     # 5. Run quick tests
     print("\n5. Running quick unit tests...")

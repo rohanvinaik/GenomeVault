@@ -8,14 +8,12 @@ with bounded memory usage.
 import asyncio
 import hashlib
 import time
+from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
-from collections.abc import AsyncIterator
+from typing import Any
 
-import h5py
 import numpy as np
-from ont_fast5_api.fast5_file import Fast5File
 from ont_fast5_api.fast5_interface import get_fast5_file
 
 from genomevault.hypervector.encoding import HypervectorEncoder
@@ -225,7 +223,12 @@ class NanoporeStreamProcessor:
                 self.gpu_kernel = GPUBindingKernel(self.catalytic_space)
                 logger.info("GPU acceleration enabled")
             except ImportError:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 logger.warning("GPU kernel not available, using CPU")
+                raise
 
     async def process_fast5(
         self,
@@ -505,7 +508,7 @@ async def example_streaming_pipeline():
         output_callback=collect_results,
     )
 
-    print(f"\nProcessing complete:")
+    print("\nProcessing complete:")
     print(f"  Total events: {stats.total_events:,}")
     print(f"  Total slices: {stats.total_slices}")
     print(f"  Processing time: {stats.processing_time:.1f}s")

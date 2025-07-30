@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """
 Variant Proof Circuit Implementation
 
@@ -13,10 +16,7 @@ from .constraint_system import (
     Dict,
     FieldElement,
     List,
-    Variable,
-    create_merkle_proof,
     poseidon_hash,
-    typing,
 )
 
 
@@ -329,13 +329,13 @@ if __name__ == "__main__":
     # Test the circuit
     circuit = create_variant_proof_example()
 
-    print("Variant Proof Circuit Test")
-    print("=" * 40)
+    logger.info("Variant Proof Circuit Test")
+    logger.info("=" * 40)
 
     info = circuit.get_circuit_info()
     for key, value in info.items():
-        print(f"{key}: {value}")
+        logger.info(f"{key}: {value}")
 
-    print(f"\nConstraints satisfied: {circuit.verify_constraints()}")
-    print(f"Public inputs: {len(circuit.get_public_inputs())}")
-    print(f"Witness size: {len(circuit.get_witness())}")
+    logger.info(f"\nConstraints satisfied: {circuit.verify_constraints()}")
+    logger.info(f"Public inputs: {len(circuit.get_public_inputs())}")
+    logger.info(f"Witness size: {len(circuit.get_witness())}")

@@ -10,7 +10,7 @@ This module provides:
 
 import json
 from collections import defaultdict
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import numpy as np
 from sklearn.ensemble import IsolationForest
@@ -211,7 +211,12 @@ class SecurityMonitor:
                 logger.info("anomaly_detector_trained", training_samples=len(all_features))
 
         except Exception as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error("anomaly_detector_training_failed", error=str(e))
+            raise
 
     def _extract_access_features(self, events: list[dict]) -> list[float]:
         """Extract features from access event sequence"""
@@ -316,7 +321,12 @@ class SecurityMonitor:
             try:
                 await callback(alert)
             except Exception as e:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 logger.error("alert_callback_failed", callback=callback.__name__, error=str(e))
+                raise
 
     def _get_volume_threshold(self, data_type: str) -> int:
         """Get volume threshold for data type"""

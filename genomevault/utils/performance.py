@@ -10,10 +10,9 @@ This module provides:
 
 import contextlib
 import multiprocessing as mp
+from collections.abc import Callable, Generator
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from functools import lru_cache
-from typing import Any, Dict, List, Optional, Union
-from collections.abc import Callable, Generator
 
 import cupy as cp  # GPU arrays
 import numba
@@ -29,8 +28,13 @@ logger = get_logger(__name__)
 # Check available acceleration
 try:
     CUDA_AVAILABLE = cp.cuda.is_available()
-except:
+except Exception:
+    from genomevault.observability.logging import configure_logging
+
+    logger = configure_logging()
+    logger.exception("Unhandled exception")
     CUDA_AVAILABLE = False
+    raise
 CPU_COUNT = mp.cpu_count()
 TORCH_AVAILABLE = torch.cuda.is_available()
 
@@ -399,7 +403,12 @@ def with_gpu(exit: bool = False) -> Generator[None, None, None]:
                     cp.cuda.runtime.deviceReset()
                     logger.debug("GPU device reset completed")
             except Exception as e:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 logger.warning(f"GPU cleanup warning: {e}")
+                raise
 
         if TORCH_AVAILABLE:
             try:
@@ -412,4 +421,9 @@ def with_gpu(exit: bool = False) -> Generator[None, None, None]:
                         torch.cuda.empty_cache()
                         logger.debug("PyTorch GPU cache cleared")
             except Exception as e:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 logger.warning(f"PyTorch GPU cleanup warning: {e}")
+                raise

@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """
 Metrics collection framework for GenomeVault.
 
@@ -11,7 +14,7 @@ import time
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import numpy as np
 
@@ -342,14 +345,14 @@ if __name__ == "__main__":
     example_function()
 
     # Get summary
-    print("Metrics Summary:")
-    print(json.dumps(metrics.get_summary(), indent=2))
+    logger.info("Metrics Summary:")
+    logger.info(json.dumps(metrics.get_summary(), indent=2))
 
     # Compare against claims
     claims = {"proof_size": 384, "verification_time": 25}
 
-    print("\nClaimed vs Measured:")
-    print(json.dumps(metrics.compare_claimed_vs_measured(claims), indent=2))
+    logger.info("\nClaimed vs Measured:")
+    logger.info(json.dumps(metrics.compare_claimed_vs_measured(claims), indent=2))
 
     # Export to file
     metrics.export_json("metrics_report.json", include_raw=True)

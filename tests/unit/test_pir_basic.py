@@ -2,7 +2,6 @@
 Test suite for PIR implementation
 """
 
-import asyncio
 from unittest.mock import Mock, patch
 
 import numpy as np

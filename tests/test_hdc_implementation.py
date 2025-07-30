@@ -9,9 +9,7 @@ Tests all stages of the HDC implementation plan including:
 - API endpoints
 """
 
-import json
 import time
-from datetime import datetime
 from pathlib import Path
 
 import numpy as np
@@ -22,8 +20,9 @@ from hypothesis import strategies as st
 
 from genomevault.hypervector_transform.binding_operations import (
     BindingOperations,
+    BindingType,
+    HypervectorBinder,
 )  # Test legacy import
-from genomevault.hypervector_transform.binding_operations import BindingType, HypervectorBinder
 from genomevault.hypervector_transform.hdc_encoder import (
     CompressionTier,
     HypervectorConfig,
@@ -165,8 +164,13 @@ class TestAlgebraicProperties:
                 bound = binder.bind(vectors, binding_type)
                 assert bound.shape[0] == dim, f"Dimension not preserved for {binding_type}"
             except (ValueError, NotImplementedError, Exception):
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 # Some binding types may not support multiple vectors
                 pass
+                raise
 
 
 class TestCompressionTiers:
@@ -395,7 +399,7 @@ class TestIntegrationAPI:
 
     def test_encoding_api_response(self):
         """Test encoding API response format"""
-        from genomevault.hypervector_transform.hdc_api import EncodingRequest, EncodingResponse
+        from genomevault.hypervector_transform.hdc_api import EncodingRequest
 
         # Create request
         request = EncodingRequest(

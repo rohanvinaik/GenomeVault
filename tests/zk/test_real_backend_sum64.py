@@ -1,9 +1,11 @@
 from pathlib import Path
-from genomevault.zk.backends.circom_snarkjs import CircuitPaths
+
 from genomevault.zk.real_engine import RealZKEngine
+
 from ._toolcheck import require_toolchain
 
 REPO_ROOT = Path("/Users/rohanvinaik/genomevault")
+
 
 def test_sum64_proof_roundtrip():
     require_toolchain()

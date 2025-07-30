@@ -1,20 +1,20 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """
 Reference data manager for PIR system.
 Handles pangenome graphs, annotations, and population-specific data.
 """
 
 import gzip
-import hashlib
 import json
 import time
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any
 
-import numpy as np
-
-from genomevault.utils.logging import get_logger, logger, performance_logger
+from genomevault.utils.logging import get_logger, logger
 
 logger = get_logger(__name__)
 
@@ -534,15 +534,15 @@ if __name__ == "__main__":
         # Query a region
         region = GenomicRegion("chr1", 1000000, 1010000)
         nodes = manager.get_nodes_in_region(region)
-        print("Found {len(nodes)} nodes in {region}")
+        logger.info("Found {len(nodes)} nodes in {region}")
 
         # Prepare for PIR
         pir_data = manager.prepare_for_pir(ReferenceDataType.PANGENOME_GRAPH)
-        print("Prepared {len(pir_data)} items for PIR")
+        logger.info("Prepared {len(pir_data)} items for PIR")
 
         # Get statistics
         stats = manager.get_statistics()
-        print("\nStatistics: {json.dumps(stats, indent=2)}")
+        logger.info("\nStatistics: {json.dumps(stats, indent=2)}")
 
         # Save data
         manager.save_reference_data()

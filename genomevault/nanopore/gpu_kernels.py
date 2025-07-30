@@ -6,7 +6,6 @@ with catalytic memory management.
 """
 
 import asyncio
-from typing import Dict, Optional, Tuple
 
 import numpy as np
 
@@ -15,8 +14,13 @@ try:
 
     GPU_AVAILABLE = True
 except ImportError:
+    from genomevault.observability.logging import configure_logging
+
+    logger = configure_logging()
+    logger.exception("Unhandled exception")
     cp = None
     GPU_AVAILABLE = False
+    raise
 
 from genomevault.utils.logging import get_logger
 
@@ -401,7 +405,7 @@ async def example_gpu_processing():
 
     elapsed = asyncio.get_event_loop().time() - start_time
 
-    print(f"\nProcessing complete:")
+    print("\nProcessing complete:")
     print(f"  Time: {elapsed:.3f}s")
     print(f"  Throughput: {n_events/elapsed:,.0f} events/s")
     print(f"  HV norm: {np.linalg.norm(final_hv):.6f}")
@@ -409,7 +413,7 @@ async def example_gpu_processing():
 
     # Memory usage
     mem_stats = gpu_kernel.get_memory_usage()
-    print(f"\nGPU memory usage:")
+    print("\nGPU memory usage:")
     print(f"  Allocated: {mem_stats['total_mb']:.1f} MB")
     print(f"  Used: {mem_stats['gpu_used_mb']:.1f} MB")
 

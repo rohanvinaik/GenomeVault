@@ -6,10 +6,8 @@ Validates only project code, excluding venv and other non-project directories
 
 import ast
 import json
-import os
 import re
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
 
 
 class FocusedAuditValidator:
@@ -198,7 +196,12 @@ class FocusedAuditValidator:
                         }
                     )
             except Exception:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 pass
+                raise
 
     def check_broad_exceptions(self):
         """Find files with broad exception handlers in project code only"""
@@ -227,7 +230,12 @@ class FocusedAuditValidator:
                         }
                     )
             except Exception:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 pass
+                raise
 
     def calculate_complexity(self, py_file: Path) -> list[tuple[str, int]]:
         """Calculate cyclomatic complexity for functions in a file"""
@@ -242,7 +250,12 @@ class FocusedAuditValidator:
                     if complexity > 10:  # Functions with complexity > 10
                         complex_funcs.append((node.name, complexity))
         except Exception:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             pass
+            raise
 
         return complex_funcs
 
@@ -303,7 +316,12 @@ class FocusedAuditValidator:
                             return_annotated += 1
 
             except Exception:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 pass
+                raise
 
         if total_functions > 0:
             self.report["quality_metrics"]["func_ann_cov"] = annotated_functions / total_functions
@@ -336,7 +354,7 @@ class FocusedAuditValidator:
         print("(Project files only - excluding venv, caches, etc.)")
         print()
 
-        print(f"Project Structure:")
+        print("Project Structure:")
         print(f"  Total project files: {self.report['files_total']}")
         print(f"  Python files: {self.report['py_files']}")
         print(f"  Test files: {self.report['tests_detected']}")
@@ -384,7 +402,7 @@ class FocusedAuditValidator:
 
         # Type coverage
         if "func_ann_cov" in self.report["quality_metrics"]:
-            print(f"\nType Annotation Coverage:")
+            print("\nType Annotation Coverage:")
             print(
                 f"  Function parameter annotations: {self.report['quality_metrics']['func_ann_cov']:.1%}"
             )
@@ -395,8 +413,8 @@ class FocusedAuditValidator:
                 f"  Total functions analyzed: {self.report['quality_metrics']['total_functions']}"
             )
 
-        print(f"\n📊 Summary:")
-        print(f"  Issues in actual project code:")
+        print("\n📊 Summary:")
+        print("  Issues in actual project code:")
         print(f"  - Missing __init__.py: {len(self.report['missing_init_dirs'])}")
         print(f"  - Print statements: {total_prints}")
         print(f"  - Broad exceptions: {total_excepts}")

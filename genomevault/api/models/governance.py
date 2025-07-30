@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-from typing import Optional, List, Dict, Any
+from typing import Any
+
 from pydantic import BaseModel, Field
 
 
 class ConsentGrantRequest(BaseModel):
     subject_id: str = Field(...)
     scope: str = Field(...)
-    ttl_days: Optional[int] = Field(None, ge=1)
+    ttl_days: int | None = Field(None, ge=1)
 
 
 class ConsentRevokeRequest(BaseModel):
@@ -32,4 +33,4 @@ class DSAREraseRequest(BaseModel):
 class DSARExportResponse(BaseModel):
     subject_id: str
     redacted: bool = True
-    data: List[Dict[str, Any]] = []
+    data: list[dict[str, Any]] = []

@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """
 Recursive Proof Aggregation for GenomeVault ZK System
 
@@ -11,7 +14,7 @@ import json
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -20,7 +23,6 @@ from genomevault.utils.metrics import MetricsCollector
 from genomevault.zk_proofs.circuits.implementations.constraint_system import (
     ConstraintSystem,
     FieldElement,
-    Variable,
     poseidon_hash,
 )
 
@@ -352,7 +354,7 @@ def benchmark_recursive_aggregation(max_proofs: int = 128) -> dict[str, Any]:
 
     Tests aggregation time and verification time for varying numbers of proofs.
     """
-    print(f"Benchmarking recursive aggregation up to {max_proofs} proofs...")
+    logger.info(f"Benchmarking recursive aggregation up to {max_proofs} proofs...")
 
     aggregator = RecursiveProofAggregator()
 
@@ -369,7 +371,7 @@ def benchmark_recursive_aggregation(max_proofs: int = 128) -> dict[str, Any]:
     }
 
     for batch_size in batch_sizes:
-        print(f"\nTesting batch size: {batch_size}")
+        logger.info(f"\nTesting batch size: {batch_size}")
 
         # Create mock proofs
         proofs = []
@@ -398,10 +400,10 @@ def benchmark_recursive_aggregation(max_proofs: int = 128) -> dict[str, Any]:
         results["proof_sizes"].append(len(aggregated.aggregated_data))
         results["aggregation_depths"].append(aggregated.metadata.get("aggregation_depth", 0))
 
-        print(f"  Aggregation time: {aggregation_time*1000:.2f}ms")
-        print(f"  Verification time: {verification_time*1000:.2f}ms")
-        print(f"  Proof size: {len(aggregated.aggregated_data)} bytes")
-        print(f"  Aggregation depth: {aggregated.metadata.get('aggregation_depth', 0)}")
+        logger.info(f"  Aggregation time: {aggregation_time*1000:.2f}ms")
+        logger.info(f"  Verification time: {verification_time*1000:.2f}ms")
+        logger.info(f"  Proof size: {len(aggregated.aggregated_data)} bytes")
+        logger.info(f"  Aggregation depth: {aggregated.metadata.get('aggregation_depth', 0)}")
 
     # Plot results
     plot_aggregation_benchmarks(results)
@@ -455,18 +457,18 @@ def plot_aggregation_benchmarks(results: dict[str, Any]):
 
     timestamp = time.strftime("%Y%m%d_%H%M%S")
     plt.savefig(output_dir / f"recursive_aggregation_{timestamp}.png", dpi=150)
-    print(f"\nBenchmark plot saved to benchmarks/zk/recursive_aggregation_{timestamp}.png")
+    logger.info(f"\nBenchmark plot saved to benchmarks/zk/recursive_aggregation_{timestamp}.png")
 
 
 def main():
     """Run recursive aggregation demonstration and benchmarks."""
-    print("=" * 60)
-    print("GenomeVault Recursive Proof Aggregation")
-    print("=" * 60)
+    logger.info("=" * 60)
+    logger.info("GenomeVault Recursive Proof Aggregation")
+    logger.info("=" * 60)
 
     # Simple demonstration
-    print("\n1. Simple Aggregation Demo")
-    print("-" * 30)
+    logger.info("\n1. Simple Aggregation Demo")
+    logger.info("-" * 30)
 
     aggregator = RecursiveProofAggregator()
 
@@ -481,33 +483,33 @@ def main():
         )
         proofs.append(proof)
 
-    print(f"Created {len(proofs)} individual proofs")
+    logger.info(f"Created {len(proofs)} individual proofs")
 
     # Aggregate them
     aggregated = aggregator.aggregate_proofs(proofs)
 
-    print(f"\nAggregated into single proof:")
-    print(f"  Number of proofs: {aggregated.num_proofs}")
-    print(f"  Proof size: {len(aggregated.aggregated_data)} bytes")
-    print(f"  Public aggregate: {aggregated.public_aggregate}")
+    logger.info("\nAggregated into single proof:")
+    logger.info(f"  Number of proofs: {aggregated.num_proofs}")
+    logger.info(f"  Proof size: {len(aggregated.aggregated_data)} bytes")
+    logger.info(f"  Public aggregate: {aggregated.public_aggregate}")
 
     # Verify
     valid = aggregator.verify_aggregated_proof(aggregated)
-    print(f"  Verification: {'VALID' if valid else 'INVALID'}")
+    logger.info(f"  Verification: {'VALID' if valid else 'INVALID'}")
 
     # Run benchmarks
-    print("\n2. Performance Benchmarks")
-    print("-" * 30)
+    logger.info("\n2. Performance Benchmarks")
+    logger.info("-" * 30)
 
     results = benchmark_recursive_aggregation(max_proofs=128)
 
     # Summary
-    print("\n3. Summary")
-    print("-" * 30)
-    print(f"✓ Constant verification time: ~{np.mean(results['verification_times']):.1f}ms")
-    print(f"✓ Constant proof size: {results['proof_sizes'][0]} bytes")
-    print(f"✓ Logarithmic aggregation depth: O(log N)")
-    print(f"✓ Efficient aggregation: up to {max(results['batch_sizes'])} proofs")
+    logger.info("\n3. Summary")
+    logger.info("-" * 30)
+    logger.info(f"✓ Constant verification time: ~{np.mean(results['verification_times']):.1f}ms")
+    logger.info(f"✓ Constant proof size: {results['proof_sizes'][0]} bytes")
+    logger.info("✓ Logarithmic aggregation depth: O(log N)")
+    logger.info(f"✓ Efficient aggregation: up to {max(results['batch_sizes'])} proofs")
 
     # Save benchmark results
     output_dir = Path("benchmarks/zk")
@@ -517,7 +519,7 @@ def main():
     with open(output_dir / f"{timestamp}.json", "w") as f:
         json.dump(results, f, indent=2)
 
-    print(f"\nBenchmark data saved to benchmarks/zk/{timestamp}.json")
+    logger.info(f"\nBenchmark data saved to benchmarks/zk/{timestamp}.json")
 
 
 if __name__ == "__main__":

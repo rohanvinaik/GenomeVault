@@ -20,7 +20,6 @@ from ..base_circuits import (
     List,
     MerkleTreeCircuit,
     RangeProofCircuit,
-    typing,
 )
 
 logger = get_logger(__name__)

@@ -8,7 +8,7 @@ import hashlib
 import json
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import aiohttp
 import numpy as np
@@ -309,8 +309,13 @@ class PIRClient:
             return pir_response
 
         except Exception:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Error querying server {server.server_id}: {e}")
             return None
+            raise
 
     def _reconstruct_data(self, responses: list[PIRResponse]) -> Any:
         """

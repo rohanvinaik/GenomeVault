@@ -1,13 +1,19 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 #!/usr/bin/env python3
 import argparse
 from pathlib import Path
+
 from genomevault.governance.pii.patterns import detect
+
 
 def scan_file(path: Path):
     text = path.read_text(encoding="utf-8", errors="ignore")
     matches = detect(text)
     for m in matches:
-        print(f"{path}:{m.span[0]}-{m.span[1]}\t{m.kind}\t{m.value}")
+        logger.info(f"{path}:{m.span[0]}-{m.span[1]}\t{m.kind}\t{m.value}")
+
 
 def main():
     ap = argparse.ArgumentParser()
@@ -19,6 +25,7 @@ def main():
             scan_file(q)
     else:
         scan_file(p)
+
 
 if __name__ == "__main__":
     main()

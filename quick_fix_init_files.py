@@ -1,9 +1,11 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 #!/usr/bin/env python3
 """
 Quick fix for missing __init__.py files in GenomeVault
 """
 
-import os
 from pathlib import Path
 
 
@@ -39,15 +41,15 @@ def add_init_files():
 
         if full_path.exists():
             if not init_file.exists():
-                print(f"Creating __init__.py in {dir_path}")
+                logger.info(f"Creating __init__.py in {dir_path}")
                 init_file.write_text('"""Module initialization."""\n')
                 created += 1
             else:
-                print(f"__init__.py already exists in {dir_path}")
+                logger.info(f"__init__.py already exists in {dir_path}")
         else:
-            print(f"Directory does not exist: {dir_path}")
+            logger.info(f"Directory does not exist: {dir_path}")
 
-    print(f"\nCreated {created} __init__.py files")
+    logger.info(f"\nCreated {created} __init__.py files")
 
 
 if __name__ == "__main__":

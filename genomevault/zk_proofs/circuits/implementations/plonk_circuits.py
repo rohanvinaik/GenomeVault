@@ -5,7 +5,7 @@ Implements the actual zero-knowledge proof circuits for genomic privacy.
 
 import hashlib
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List
+from typing import Any
 
 # Core field arithmetic for BLS12-381 scalar field
 BLS12_381_SCALAR_FIELD = 0x73EDA753299D7D483339D80809A1D80553BDA402FFFE5BFEFFFFFFFF00000001

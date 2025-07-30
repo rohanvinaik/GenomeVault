@@ -1,17 +1,22 @@
 from __future__ import annotations
 
-import json
 from pathlib import Path
-from typing import Dict, List, Optional
 
 import pandas as pd
 
 from genomevault.contracts.contract import TableContract, validate_dataframe
+
 try:
     from genomevault.ledger.store import InMemoryLedger
+
     _LEDGER = InMemoryLedger()
 except Exception:
+    from genomevault.observability.logging import configure_logging
+
+    logger = configure_logging()
+    logger.exception("Unhandled exception")
     _LEDGER = None
+    raise
 
 
 DEFAULT_CONTRACT_PATH = "etc/contracts/variant_table.json"
@@ -45,7 +50,9 @@ def transform(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def run_etl(input_csv: str, *, contract_path: Optional[str] = None, out_csv: Optional[str] = None) -> Dict[str, any]:
+def run_etl(
+    input_csv: str, *, contract_path: str | None = None, out_csv: str | None = None
+) -> dict[str, any]:
     df = load_csv(input_csv)
     df = transform(df)
     cpath = contract_path or DEFAULT_CONTRACT_PATH
@@ -57,6 +64,8 @@ def run_etl(input_csv: str, *, contract_path: Optional[str] = None, out_csv: Opt
         df.to_csv(out_csv, index=False)
 
     if _LEDGER is not None:
-        _LEDGER.append({"type": "etl_run", "input": input_csv, "rows": int(df.shape[0]), "ok": report["ok"]})
+        _LEDGER.append(
+            {"type": "etl_run", "input": input_csv, "rows": int(df.shape[0]), "ok": report["ok"]}
+        )
 
     return {"ok": report["ok"], "report": report, "rows": int(df.shape[0])}

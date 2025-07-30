@@ -6,7 +6,7 @@ import asyncio
 import json
 import logging
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 from genomevault.core.constants import CompressionTier, OmicsType
 
@@ -67,8 +67,13 @@ class MultiOmicsPipeline:
                 result = await task
                 results[omics_type.value] = result
             except Exception as e:
-                logger.error(f"Failed to process {omics_type}: {str(e)}")
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
+                logger.error(f"Failed to process {omics_type}: {e!s}")
                 results[omics_type.value] = {"status": "failed", "error": str(e)}
+                raise
 
         # Generate combined metadata
         metadata = self._generate_metadata(results)

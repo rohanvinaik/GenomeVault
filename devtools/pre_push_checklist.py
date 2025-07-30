@@ -4,7 +4,6 @@ Pre-GitHub Push Checklist for GenomeVault
 """
 
 import logging
-import os
 import subprocess
 import sys
 from pathlib import Path
@@ -47,6 +46,7 @@ for desc, patterns in sensitive_patterns:
                 "--include=*.yaml",
                 "--include=*.json",
             ],
+            check=False,
             capture_output=True,
             text=True,
         )
@@ -124,7 +124,12 @@ for path in Path(".").rglob("*"):
             if size_mb > 10:  # Files larger than 10MB
                 large_files.append((str(path), f"{size_mb:.1f}MB"))
         except Exception:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             pass
+            raise
 
 if large_files:
     warnings.append(
@@ -140,6 +145,7 @@ logger.info("-" * 40)
 # Check for print debugging statements
 debug_prints = subprocess.run(
     ["grep", "-r", "print(", ".", "--include=*.py", "--exclude-dir=tests"],
+    check=False,
     capture_output=True,
     text=True,
 )
@@ -157,6 +163,7 @@ logger.info("-" * 40)
 
 todos = subprocess.run(
     ["grep", "-r", "-E", "TODO|FIXME|XXX|HACK", ".", "--include=*.py"],
+    check=False,
     capture_output=True,
     text=True,
 )

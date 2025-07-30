@@ -1,11 +1,10 @@
 import numpy as np
-import pytest
 
 from genomevault.hypervector.operations.binding import (
+    bundle,
     circular_convolution,
     element_wise_multiply,
     permutation_binding,
-    bundle,
     unbundle,
 )
 

@@ -1,9 +1,12 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """Post-quantum cryptography implementations for GenomeVault."""
 
 import os
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, Tuple
+from typing import Any
 
 
 @dataclass
@@ -152,18 +155,18 @@ if __name__ == "__main__":
 
     # Encrypt
     encrypted = crypto.encrypt(genomic_data, recipient_keypair.public_key)
-    print("Encrypted size: {len(encrypted.to_bytes())} bytes")
+    logger.info("Encrypted size: {len(encrypted.to_bytes())} bytes")
 
     # Decrypt
     decrypted = crypto.decrypt(encrypted, recipient_keypair.private_key)
     assert decrypted == genomic_data
-    print("Decryption successful!")
+    logger.info("Decryption successful!")
 
     # Benchmark
-    print("\nBenchmarking post-quantum crypto...")
+    logger.info("\nBenchmarking post-quantum crypto...")
     _ = benchmark_post_quantum_crypto()
 
     for algo, metrics in results.items():
-        print("\n{algo}:")
+        logger.info("\n{algo}:")
         for key, value in metrics.items():
-            print("  {key}: {value}")
+            logger.info("  {key}: {value}")

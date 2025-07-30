@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """
 Federated Learning Coordinator for privacy-preserving multi-institutional research.
 Implements secure aggregation with differential privacy.
@@ -7,11 +10,10 @@ import asyncio
 import hashlib
 import json
 import time
-from concurrent.futures import ThreadPoolExecutor
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
-from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -724,14 +726,14 @@ if __name__ == "__main__":
     for p_id, metadata in participants:
         prs_fl.register_participant(p_id, metadata)
 
-    print("=== Federated Learning Example ===")
-    print("Registered {len(participants)} participants")
+    logger.info("=== Federated Learning Example ===")
+    logger.info("Registered {len(participants)} participants")
 
     # Start training round
     import asyncio
 
     round_id = asyncio.run(prs_fl.start_training_round(min_participants=3))
-    print("Started {round_id}")
+    logger.info("Started {round_id}")
 
     # Simulate participant contributions
     contributions = []
@@ -750,26 +752,26 @@ if __name__ == "__main__":
 
     # Aggregate round
     aggregated = prs_fl.aggregate_round(0, contributions)
-    print("Aggregated update norm: {np.linalg.norm(aggregated):.4f}")
+    logger.info("Aggregated update norm: {np.linalg.norm(aggregated):.4f}")
 
     # Update global model
     prs_fl.update_global_model(0)
 
     # Check privacy budget
     epsilon_spent, delta_spent = prs_fl.get_privacy_budget_spent()
-    print("Privacy spent: ε={epsilon_spent:.4f}, δ={delta_spent:.2e}")
+    logger.info("Privacy spent: ε={epsilon_spent:.4f}, δ={delta_spent:.2e}")
 
     # Example 2: Pathway analysis
-    print("\n=== Pathway Analysis FL ===")
+    logger.info("\n=== Pathway Analysis FL ===")
     pathway_fl = PathwayAnalysisFederatedLearning(num_pathways=300)
 
     # Register same participants
     for p_id, metadata in participants:
         pathway_fl.register_participant(p_id, metadata)
 
-    print("Model size: {len(pathway_fl.global_model)} parameters")
+    logger.info("Model size: {len(pathway_fl.global_model)} parameters")
 
     # Save checkpoint
     checkpoint_path = Path("/tmp/genomevault_fl_checkpoint.json")
     prs_fl.save_checkpoint(checkpoint_path)
-    print("Saved checkpoint to {checkpoint_path}")
+    logger.info("Saved checkpoint to {checkpoint_path}")

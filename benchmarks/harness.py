@@ -1,0 +1,33 @@
+import json
+import time
+
+import numpy as np
+
+from genomevault.kan.hybrid import HybridKANHD
+from genomevault.pir.client import PIRClient
+
+
+def bench():
+    rng = np.random.default_rng(42)
+    X = (rng.integers(0, 4, size=(256, 1024)) - 1).astype("int8")
+    t0 = time.perf_counter()
+    model = HybridKANHD(dimension=256, spline_mode="bspline", privacy_tier="standard")
+    enc, metrics = model.encode_genomic_data(X)
+    t1 = time.perf_counter()
+    pir = PIRClient()
+    t2 = time.perf_counter()
+    _ = pir.query(index=0, key="demo")
+    t3 = time.perf_counter()
+    print(
+        json.dumps(
+            {
+                "encode_s": t1 - t0,
+                "pir_query_s": t3 - t2,
+                "compression_ratio": getattr(metrics, "compression_ratio", None),
+            }
+        )
+    )
+
+
+if __name__ == "__main__":
+    bench()

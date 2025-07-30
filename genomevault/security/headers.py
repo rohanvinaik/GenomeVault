@@ -4,7 +4,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
-from starlette.types import ASGIApp, Receive, Scope, Send
 
 # Reasonable defaults for an API (CSP largely irrelevant; disable framing/referrer; disable sniffing)
 SECURITY_HEADERS = {

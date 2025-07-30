@@ -7,13 +7,11 @@ with proper cross-modal alignment.
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Tuple
-
-import numpy as np
+from typing import Any
 
 from genomevault.utils.logging import get_logger
 from genomevault.zk_proofs.circuits.base_circuits import FieldElement
-from genomevault.zk_proofs.circuits.training_proof import TrainingProofCircuit, TrainingSnapshot
+from genomevault.zk_proofs.circuits.training_proof import TrainingProofCircuit
 
 logger = get_logger(__name__)
 

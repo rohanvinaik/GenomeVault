@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Dict, List, Optional, Any
+from typing import Any
 
 from pydantic import BaseModel, Field, validator
 
@@ -13,12 +13,12 @@ class VectorDimension(str, Enum):
 
 
 class VectorEncodeRequest(BaseModel):
-    data: Dict[str, List[float]] = Field(..., description="Multi-modal input data")
+    data: dict[str, list[float]] = Field(..., description="Multi-modal input data")
     dimension: VectorDimension = Field(VectorDimension.D10K, description="Target dimension")
     compression_tier: str = Field("full", description="mini, clinical, or full")
 
     @validator("data")
-    def _validate_data(cls, v: Dict[str, List[float]]):
+    def _validate_data(cls, v: dict[str, list[float]]):
         if not isinstance(v, dict) or not v:
             raise ValueError("data must be a non-empty dict[str, list[float]]")
         return v
@@ -33,5 +33,5 @@ class VectorEncodeResponse(BaseModel):
 
 class VectorOperationRequest(BaseModel):
     operation: str = Field(..., description="bundle, bind, permute, multiply, convolve")
-    vector_ids: List[str]
-    parameters: Optional[Dict[str, Any]] = None
+    vector_ids: list[str]
+    parameters: dict[str, Any] | None = None

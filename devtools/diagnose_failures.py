@@ -17,9 +17,14 @@ try:
     import torch
 
     logger.info("✓ Torch version: {torch.__version__}")
-except ImportError as e:
+except ImportError:
+    from genomevault.observability.logging import configure_logging
+
+    logger = configure_logging()
+    logger.exception("Unhandled exception")
     logger.info("✗ Torch not installed: {e}")
     logger.info("  Install with: pip install torch")
+    raise
 
 # Test 2: Test the specific imports that were failing
 logger.info("\n2. Testing specific failing imports...")
@@ -28,10 +33,13 @@ logger.info("\n2. Testing specific failing imports...")
 logger.info("\n  Testing PIR Client...")
 try:
     sys.path.insert(0, "/Users/rohanvinaik/genomevault")
-    from pir.client import PIRClient
 
     logger.info("  ✓ PIR Client imported")
-except Exception as e:
+except Exception:
+    from genomevault.observability.logging import configure_logging
+
+    logger = configure_logging()
+    logger.exception("Unhandled exception")
     logger.info("  ✗ PIR Client failed: {e}")
     # Try to see what's in the pir directory
     import os
@@ -46,16 +54,20 @@ except Exception as e:
                 lines = f.readlines()[:10]
                 for i, line in enumerate(lines):
                     logger.info("    {i+1}: {line.rstrip()}")
+    raise
 
 # ZK Prover
 logger.info("\n  Testing ZK Prover...")
 try:
-    from zk_proofs.prover import ZKProver
-
     logger.info("  ✓ ZK Prover imported")
-except Exception as e:
+except Exception:
+    from genomevault.observability.logging import configure_logging
+
+    logger = configure_logging()
+    logger.exception("Unhandled exception")
     logger.info("  ✗ ZK Prover failed: {e}")
     traceback.print_exc()
+    raise
 
 # Test the config import pattern
 logger.info("\n3. Testing config import pattern...")
@@ -65,9 +77,14 @@ try:
     config = get_config()
     logger.info("  ✓ Config loaded: {type(config)}")
     logger.info("  ✓ Environment: {config.environment}")
-except Exception as e:
+except Exception:
+    from genomevault.observability.logging import configure_logging
+
+    logger = configure_logging()
+    logger.exception("Unhandled exception")
     logger.info("  ✗ Config failed: {e}")
     traceback.print_exc()
+    raise
 
 # Test if we have the required dependencies
 logger.info("\n4. Checking required dependencies...")
@@ -77,7 +94,12 @@ for dep in deps:
         __import__(dep)
         logger.info("  ✓ {dep} installed")
     except ImportError:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         logger.info("  ✗ {dep} NOT installed")
+        raise
 
 logger.info("\n" + "=" * 50)
 logger.info("Diagnostic complete!")

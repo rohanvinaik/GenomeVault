@@ -1,6 +1,11 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 import argparse
 import time
+
 import numpy as np
+
 from genomevault.hypervector.encoding.sparse_projection import SparseRandomProjection
 
 
@@ -10,7 +15,7 @@ def run(variants: int, features: int, dim: int, seed: int):
     t0 = time.time()
     Y = proj.transform(X)
     dt = (time.time() - t0) * 1000.0
-    print(f"Encoded {variants}×{features} -> dim={dim} in {dt:.2f} ms (shape={Y.shape})")
+    logger.info(f"Encoded {variants}×{features} -> dim={dim} in {dt:.2f} ms (shape={Y.shape})")
 
 
 if __name__ == "__main__":

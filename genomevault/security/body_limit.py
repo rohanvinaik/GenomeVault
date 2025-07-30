@@ -1,16 +1,18 @@
 from __future__ import annotations
 
 import os
+
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
-from starlette.responses import Response, PlainTextResponse
-from starlette.datastructures import UploadFile
+from starlette.responses import PlainTextResponse
 
 
 class MaximumBodySizeMiddleware(BaseHTTPMiddleware):
     def __init__(self, app, max_body: int | None = None):
         super().__init__(app)
-        self.max_body = int(max_body or int(os.getenv("MAX_BODY_SIZE", "10485760")))  # 10 MiB default
+        self.max_body = int(
+            max_body or int(os.getenv("MAX_BODY_SIZE", "10485760"))
+        )  # 10 MiB default
 
     async def dispatch(self, request: Request, call_next):
         # For multipart, rely on Content-Length; otherwise, read body into memory once (ASGI servers buffer anyway)

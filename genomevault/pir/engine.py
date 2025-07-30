@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from typing import List
-import numpy as np
 from hashlib import sha256
+
+import numpy as np
 
 from genomevault.pir.servers import PIRServer
 
 
-def _normalize_db(items: List[bytes]) -> List[bytes]:
+def _normalize_db(items: list[bytes]) -> list[bytes]:
     """Convert arbitrary byte-like items into fixed-length 32-byte records using SHA-256."""
-    out: List[bytes] = []
+    out: list[bytes] = []
     for it in items:
         if not isinstance(it, (bytes, bytearray)):
             it = bytes(it)
@@ -20,7 +20,7 @@ def _normalize_db(items: List[bytes]) -> List[bytes]:
 class PIREngine:
     """Simple m-server IT-PIR engine (replicated DB, XOR aggregation)."""
 
-    def __init__(self, db_items: List[bytes], n_servers: int = 3):
+    def __init__(self, db_items: list[bytes], n_servers: int = 3):
         if n_servers < 2:
             raise ValueError("n_servers must be >= 2")
         self.db = _normalize_db(db_items)
@@ -28,7 +28,7 @@ class PIREngine:
         self.m = int(n_servers)
         self.servers = [PIRServer(self.db) for _ in range(self.m)]
 
-    def _random_masks(self, index: int) -> List[np.ndarray]:
+    def _random_masks(self, index: int) -> list[np.ndarray]:
         rng = np.random.default_rng()
         masks = []
         # Generate m-1 random masks of length n over GF(2)

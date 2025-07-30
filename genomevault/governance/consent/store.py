@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
-from typing import Dict, List, Optional
 
 
 @dataclass
@@ -10,8 +9,8 @@ class ConsentRecord:
     subject_id: str
     scope: str
     granted_at: datetime
-    expires_at: Optional[datetime] = None
-    revoked_at: Optional[datetime] = None
+    expires_at: datetime | None = None
+    revoked_at: datetime | None = None
 
     @property
     def active(self) -> bool:
@@ -26,7 +25,7 @@ class ConsentStore:
     """In-memory consent store. Replace with DB in production."""
 
     def __init__(self) -> None:
-        self._by_subject: Dict[str, List[ConsentRecord]] = {}
+        self._by_subject: dict[str, list[ConsentRecord]] = {}
 
     def grant(self, subject_id: str, scope: str, ttl_days: int | None = None) -> ConsentRecord:
         now = datetime.now(timezone.utc)
@@ -44,4 +43,6 @@ class ConsentStore:
         return ok
 
     def has_consent(self, subject_id: str, scope: str) -> bool:
-        return any(rec.scope == scope and rec.active for rec in self._by_subject.get(subject_id, []))
+        return any(
+            rec.scope == scope and rec.active for rec in self._by_subject.get(subject_id, [])
+        )

@@ -11,8 +11,7 @@ import logging
 import re
 from datetime import datetime
 from pathlib import Path
-from re import Pattern
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -129,7 +128,12 @@ class PHILeakageDetector:
                     findings.extend(line_findings)
 
         except Exception:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Error scanning file {filepath}: {e}")
+            raise
 
         return findings
 

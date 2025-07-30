@@ -4,9 +4,7 @@ GenomeVault Pre-Flight Check
 Shows current state before applying fixes
 """
 
-import os
 import re
-from collections import defaultdict
 from pathlib import Path
 
 
@@ -19,16 +17,14 @@ def check_current_state():
 
     # Check project files
     print("Project Files:")
+    print("  ✓ README.md exists" if (base_path / "README.md").exists() else "  ✗ README.md missing")
     print(
-        f"  ✓ README.md exists" if (base_path / "README.md").exists() else "  ✗ README.md missing"
-    )
-    print(
-        f"  ✓ requirements.txt exists"
+        "  ✓ requirements.txt exists"
         if (base_path / "requirements.txt").exists()
         else "  ✗ requirements.txt missing"
     )
     print(
-        f"  ✓ pyproject.toml exists"
+        "  ✓ pyproject.toml exists"
         if (base_path / "pyproject.toml").exists()
         else "  ✗ pyproject.toml missing"
     )
@@ -90,7 +86,12 @@ def check_current_state():
                     print(f"  {file_path}: {print_count} print statements")
                     total_prints += print_count
             except Exception as e:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 print(f"  Error reading {file_path}: {e}")
+                raise
 
     print(f"\nTotal print statements in sample: {total_prints}")
     print()
@@ -108,7 +109,12 @@ def check_current_state():
                     print(f"  {file_path}: {except_count} broad exceptions")
                     total_broad_excepts += except_count
             except Exception as e:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 print(f"  Error reading {file_path}: {e}")
+                raise
 
     print(f"\nTotal broad exceptions in sample: {total_broad_excepts}")
     print()

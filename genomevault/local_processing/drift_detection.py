@@ -6,20 +6,17 @@ performance degradation, distribution shifts, and semantic drift.
 """
 
 import hashlib
-import json
 import time
-import warnings
 from collections import defaultdict, deque
 from dataclasses import asdict, dataclass
-from datetime import datetime, timedelta
+from datetime import datetime
 from enum import Enum
-from typing import Any, Deque, Dict, List, Optional, Tuple
+from typing import Any
 
 import numpy as np
 
 from genomevault.hypervector.operations import cosine_similarity
 from genomevault.utils.logging import get_logger
-from genomevault.zk_proofs.circuits.base_circuits import FieldElement
 
 logger = get_logger(__name__)
 
@@ -124,11 +121,11 @@ class RealTimeModelMonitor:
         }
 
         # Sliding windows for streaming statistics
-        self.prediction_window: Deque = deque(maxlen=self.config["window_size"])
-        self.feature_windows: dict[str, Deque] = defaultdict(
+        self.prediction_window: deque = deque(maxlen=self.config["window_size"])
+        self.feature_windows: dict[str, deque] = defaultdict(
             lambda: deque(maxlen=self.config["window_size"])
         )
-        self.performance_window: Deque = deque(maxlen=self.config["performance_window_size"])
+        self.performance_window: deque = deque(maxlen=self.config["performance_window_size"])
 
         # Alert management
         self.alert_history: list[DriftEvent] = []
@@ -529,9 +526,9 @@ class CovariateShiftDetector:
 
     def detect_drift(
         self,
-        prediction_window: Deque,
-        feature_windows: dict[str, Deque],
-        performance_window: Deque,
+        prediction_window: deque,
+        feature_windows: dict[str, deque],
+        performance_window: deque,
         model_internal_state: dict[str, Any] | None,
     ) -> dict[str, Any]:
         """Detect covariate shift in input features"""
@@ -586,9 +583,9 @@ class PredictionDriftDetector:
 
     def detect_drift(
         self,
-        prediction_window: Deque,
-        feature_windows: dict[str, Deque],
-        performance_window: Deque,
+        prediction_window: deque,
+        feature_windows: dict[str, deque],
+        performance_window: deque,
         model_internal_state: dict[str, Any] | None,
     ) -> dict[str, Any]:
         """Detect drift in prediction distribution"""
@@ -641,9 +638,9 @@ class PerformanceDriftDetector:
 
     def detect_drift(
         self,
-        prediction_window: Deque,
-        feature_windows: dict[str, Deque],
-        performance_window: Deque,
+        prediction_window: deque,
+        feature_windows: dict[str, deque],
+        performance_window: deque,
         model_internal_state: dict[str, Any] | None,
     ) -> dict[str, Any]:
         """Detect performance degradation"""
@@ -686,9 +683,9 @@ class SemanticDriftDetector:
 
     def detect_drift(
         self,
-        prediction_window: Deque,
-        feature_windows: dict[str, Deque],
-        performance_window: Deque,
+        prediction_window: deque,
+        feature_windows: dict[str, deque],
+        performance_window: deque,
         model_internal_state: dict[str, Any] | None,
     ) -> dict[str, Any]:
         """Detect semantic drift in model behavior"""

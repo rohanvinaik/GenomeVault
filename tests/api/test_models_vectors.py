@@ -1,9 +1,14 @@
-import pytest
-from genomevault.api.models.vectors import VectorEncodeRequest, VectorDimension, VectorOperationRequest
+from genomevault.api.models.vectors import (
+    VectorDimension,
+    VectorEncodeRequest,
+    VectorOperationRequest,
+)
 
 
 def test_encode_request_parsing():
-    req = VectorEncodeRequest(data={"genomic": [1.0, 2.0]}, dimension=VectorDimension.D10K, compression_tier="mini")
+    req = VectorEncodeRequest(
+        data={"genomic": [1.0, 2.0]}, dimension=VectorDimension.D10K, compression_tier="mini"
+    )
     assert req.dimension.value == "10000"
     assert "genomic" in req.data
 

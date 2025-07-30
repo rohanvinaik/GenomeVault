@@ -7,7 +7,7 @@ import asyncio
 import base64
 import json
 import time
-from typing import Any, Dict, Optional
+from typing import Any
 
 import jsonschema
 import numpy as np
@@ -57,9 +57,14 @@ class PIRHandler:
             try:
                 jsonschema.validate(request_data, QUERY_SCHEMA)
             except jsonschema.ValidationError as e:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 return self._error_response(
-                    "INVALID_SCHEMA", f"Query validation failed: {str(e)}", 400
+                    "INVALID_SCHEMA", f"Query validation failed: {e!s}", 400
                 )
+                raise
 
             # Check protocol version
             if request_data.get("protocol_version") not in ["1.0", "1.1"]:
@@ -118,8 +123,13 @@ class PIRHandler:
             return web.json_response(response)
 
         except Exception as e:
-            logger.error(f"Error handling PIR query: {str(e)}")
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
+            logger.error(f"Error handling PIR query: {e!s}")
             return self._error_response("INTERNAL_ERROR", "Query processing failed", 500)
+            raise
 
     def _ensure_fixed_size(self, data: Any) -> bytes:
         """
@@ -248,10 +258,20 @@ def create_app(pir_server: PIRServer) -> web.Application:
             )
             return response
         except web.HTTPException:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
+            raise
             raise
         except Exception as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             elapsed = (time.time() - start) * 1000
-            logger.error(f"{request.method} {request.path} - ERROR - {elapsed:.1f}ms - {str(e)}")
+            logger.error(f"{request.method} {request.path} - ERROR - {elapsed:.1f}ms - {e!s}")
+            raise
             raise
 
     app.middlewares.append(logging_middleware)
