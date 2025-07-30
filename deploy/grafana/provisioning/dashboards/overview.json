@@ -1,0 +1,27 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "panels": [
+    {
+      "type": "graph",
+      "title": "HTTP Requests Rate",
+      "targets": [
+        {"expr": "rate(genomevault_http_requests_total[1m])"}
+      ],
+      "gridPos": {"x":0, "y":0, "w":24, "h":8}
+    },
+    {
+      "type": "graph",
+      "title": "Request Duration p95",
+      "targets": [
+        {"expr": "histogram_quantile(0.95, sum(rate(genomevault_http_request_duration_seconds_bucket[5m])) by (le))"}
+      ],
+      "gridPos": {"x":0, "y":8, "w":24, "h":8}
+    }
+  ],
+  "schemaVersion": 38,
+  "title": "GenomeVault Overview",
+  "version": 1
+}
