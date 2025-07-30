@@ -18,7 +18,6 @@ Performance targets:
 
 import functools
 import os
-from typing import Optional, Tuple, Union
 
 import numpy as np
 from numba import cuda, jit, prange

@@ -1,16 +1,17 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """
 PIR Integration Demo
 Demonstrates end-to-end PIR functionality with ZK and HDC integration.
 """
 
 import asyncio
-import json
 import time
-from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 
-from genomevault.pir.client.query_builder import GenomicQuery, PIRQueryBuilder, QueryType
+from genomevault.pir.client.query_builder import PIRQueryBuilder
 from genomevault.pir.it_pir_protocol import BatchPIRProtocol, PIRParameters, PIRProtocol
 from genomevault.pir.network.coordinator import (
     PIRCoordinator,
@@ -41,7 +42,7 @@ class PIRIntegrationDemo:
 
     async def setup(self):
         """Setup PIR infrastructure."""
-        print("🔧 Setting up PIR infrastructure...")
+        logger.info("🔧 Setting up PIR infrastructure...")
 
         # Start coordinator
         await self.coordinator.start()
@@ -77,12 +78,12 @@ class PIRIntegrationDemo:
             )
             self.coordinator.register_server(server_info)
 
-        print(f"✅ Created {len(self.servers)} PIR servers")
+        logger.info(f"✅ Created {len(self.servers)} PIR servers")
 
     async def demonstrate_basic_pir(self):
         """Demonstrate basic PIR retrieval."""
-        print("\n📊 Basic PIR Demonstration")
-        print("-" * 50)
+        logger.info("\n📊 Basic PIR Demonstration")
+        logger.info("-" * 50)
 
         # Create PIR protocol
         params = PIRParameters(
@@ -94,12 +95,12 @@ class PIRIntegrationDemo:
 
         # Target index to retrieve
         target_index = 42
-        print(f"🎯 Target: Retrieve element at index {target_index}")
+        logger.info(f"🎯 Target: Retrieve element at index {target_index}")
 
         # Generate query vectors
-        print("\n1️⃣ Generating query vectors...")
+        logger.info("\n1️⃣ Generating query vectors...")
         query_vectors = protocol.generate_query_vectors(target_index)
-        print(f"   Generated {len(query_vectors)} query vectors")
+        logger.info(f"   Generated {len(query_vectors)} query vectors")
 
         # Select servers
         criteria = ServerSelectionCriteria(
@@ -109,12 +110,12 @@ class PIRIntegrationDemo:
         )
 
         selected_servers = await self.coordinator.select_servers(criteria)
-        print(f"\n2️⃣ Selected servers:")
+        logger.info("\n2️⃣ Selected servers:")
         for server in selected_servers:
-            print(f"   - {server.server_id} ({server.server_type.value}) in {server.region}")
+            logger.info(f"   - {server.server_id} ({server.server_type.value}) in {server.region}")
 
         # Process queries on servers
-        print("\n3️⃣ Processing queries on servers...")
+        logger.info("\n3️⃣ Processing queries on servers...")
         responses = []
 
         for i, (server_info, query_vector) in enumerate(zip(selected_servers[:2], query_vectors)):
@@ -134,27 +135,27 @@ class PIRIntegrationDemo:
             response = await server.process_query(query_data)
             latency = (time.time() - start_time) * 1000
 
-            print(f"   Server {server.server_id}: {latency:.1f}ms")
+            logger.info(f"   Server {server.server_id}: {latency:.1f}ms")
 
             # Convert response back to numpy array
             response_array = np.array(response["response"], dtype=np.uint8)
             responses.append(response_array)
 
         # Reconstruct element
-        print("\n4️⃣ Reconstructing element...")
+        logger.info("\n4️⃣ Reconstructing element...")
         reconstructed = protocol.reconstruct_element(responses)
-        print(f"   Reconstructed element size: {len(reconstructed)} bytes")
+        logger.info(f"   Reconstructed element size: {len(reconstructed)} bytes")
 
         # Calculate privacy guarantees
-        print("\n5️⃣ Privacy Analysis:")
+        logger.info("\n5️⃣ Privacy Analysis:")
         prob_ts = protocol.calculate_privacy_breach_probability(k_honest=2, honesty_prob=0.98)
-        print(f"   Privacy breach probability (2 TS nodes): {prob_ts:.6f}")
-        print(f"   Information leaked to single server: 0 bits ✅")
+        logger.info(f"   Privacy breach probability (2 TS nodes): {prob_ts:.6f}")
+        logger.info("   Information leaked to single server: 0 bits ✅")
 
     async def demonstrate_genomic_query(self):
         """Demonstrate genomic data query."""
-        print("\n🧬 Genomic Query Demonstration")
-        print("-" * 50)
+        logger.info("\n🧬 Genomic Query Demonstration")
+        logger.info("-" * 50)
 
         # Create mock index mapping
         index_mapping = {
@@ -214,40 +215,40 @@ class PIRIntegrationDemo:
         query_builder = PIRQueryBuilder(pir_client, index_mapping)
 
         # Example 1: Variant lookup
-        print("\n🔍 Variant Lookup: BRCA1 c.68_69delAG")
+        logger.info("\n🔍 Variant Lookup: BRCA1 c.68_69delAG")
         variant_query = query_builder.build_variant_query("chr17", 43044295, "C", "T")
 
         start_time = time.time()
         result = await query_builder.execute_query(variant_query)
         query_time = (time.time() - start_time) * 1000
 
-        print(f"   Query time: {query_time:.1f}ms")
-        print(f"   Result: {result.data['clinical_significance']} variant")
-        print(f"   Global frequency: {result.data['population_frequencies']['global']:.4f}")
+        logger.info(f"   Query time: {query_time:.1f}ms")
+        logger.info(f"   Result: {result.data['clinical_significance']} variant")
+        logger.info(f"   Global frequency: {result.data['population_frequencies']['global']:.4f}")
 
         # Example 2: Gene scan
-        print("\n🧬 Gene Scan: BRCA1")
+        logger.info("\n🧬 Gene Scan: BRCA1")
         gene_query = query_builder.build_gene_query("BRCA1")
 
         start_time = time.time()
         result = await query_builder.execute_query(gene_query)
         query_time = (time.time() - start_time) * 1000
 
-        print(f"   Query time: {query_time:.1f}ms")
-        print(f"   Variants found: {result.data['total_variants']}")
-        print(f"   PIR queries used: {result.pir_queries_used}")
+        logger.info(f"   Query time: {query_time:.1f}ms")
+        logger.info(f"   Variants found: {result.data['total_variants']}")
+        logger.info(f"   PIR queries used: {result.pir_queries_used}")
 
         # Show query statistics
         stats = query_builder.get_query_statistics()
-        print("\n📈 Query Statistics:")
-        print(f"   Cache size: {stats['cache_size']}")
-        print(f"   Total PIR queries: {stats['total_pir_queries']}")
-        print(f"   Avg computation time: {stats['avg_computation_time_ms']:.1f}ms")
+        logger.info("\n📈 Query Statistics:")
+        logger.info(f"   Cache size: {stats['cache_size']}")
+        logger.info(f"   Total PIR queries: {stats['total_pir_queries']}")
+        logger.info(f"   Avg computation time: {stats['avg_computation_time_ms']:.1f}ms")
 
     async def demonstrate_batch_queries(self):
         """Demonstrate batch PIR queries."""
-        print("\n📦 Batch Query Demonstration")
-        print("-" * 50)
+        logger.info("\n📦 Batch Query Demonstration")
+        logger.info("-" * 50)
 
         # Create batch protocol
         params = PIRParameters(database_size=self.database_size)
@@ -257,30 +258,30 @@ class PIRIntegrationDemo:
         batch_size = 50
         indices = np.random.choice(self.database_size, batch_size, replace=False).tolist()
 
-        print(f"🎯 Retrieving {batch_size} elements in batch")
+        logger.info(f"🎯 Retrieving {batch_size} elements in batch")
 
         # Generate batch queries
         start_time = time.time()
         batch_queries = batch_protocol.generate_batch_queries(indices)
         gen_time = (time.time() - start_time) * 1000
 
-        print(f"   Query generation: {gen_time:.1f}ms")
-        print(f"   Buckets used: {len(batch_queries)}")
+        logger.info(f"   Query generation: {gen_time:.1f}ms")
+        logger.info(f"   Buckets used: {len(batch_queries)}")
 
         # Calculate efficiency
         single_query_size = self.database_size  # bits
         batch_query_size = len(batch_queries) * self.database_size
         efficiency = (batch_size * single_query_size) / batch_query_size
 
-        print(f"   Bandwidth efficiency: {efficiency:.2f}x")
+        logger.info(f"   Bandwidth efficiency: {efficiency:.2f}x")
 
     async def demonstrate_security_features(self):
         """Demonstrate security features."""
-        print("\n🔒 Security Features Demonstration")
-        print("-" * 50)
+        logger.info("\n🔒 Security Features Demonstration")
+        logger.info("-" * 50)
 
         # 1. Timing attack mitigation
-        print("\n1️⃣ Timing Attack Mitigation:")
+        logger.info("\n1️⃣ Timing Attack Mitigation:")
         params = PIRParameters(database_size=1000)
         protocol = PIRProtocol(params)
 
@@ -292,11 +293,11 @@ class PIRIntegrationDemo:
             timings.append(time_ms)
 
         timing_variance = np.var(timings)
-        print(f"   Timing variance: {timing_variance:.2f}ms²")
-        print(f"   Max timing difference: {max(timings) - min(timings):.2f}ms")
+        logger.info(f"   Timing variance: {timing_variance:.2f}ms²")
+        logger.info(f"   Max timing difference: {max(timings) - min(timings):.2f}ms")
 
         # 2. Replay protection
-        print("\n2️⃣ Replay Protection:")
+        logger.info("\n2️⃣ Replay Protection:")
         server = self.servers[0]
 
         # Create query with nonce
@@ -310,13 +311,13 @@ class PIRIntegrationDemo:
 
         # First query should succeed
         response1 = await server.process_query(query_data)
-        print(f"   First query: ✅ Success")
+        logger.info("   First query: ✅ Success")
 
         # Replay would be detected by handler (not shown here)
-        print(f"   Replay attempt: ❌ Would be blocked")
+        logger.info("   Replay attempt: ❌ Would be blocked")
 
         # 3. Server collusion analysis
-        print("\n3️⃣ Collusion Resistance:")
+        logger.info("\n3️⃣ Collusion Resistance:")
 
         # Calculate minimum servers needed for different threat models
         target_prob = 1e-6  # One in a million
@@ -325,22 +326,22 @@ class PIRIntegrationDemo:
         min_ln = protocol.calculate_min_servers(target_prob, 0.95)
         min_mixed = protocol.calculate_min_servers(target_prob, 0.96)  # Mix of TS and LN
 
-        print(f"   For {target_prob:.0e} failure probability:")
-        print(f"   - Pure TS nodes: {min_ts} servers")
-        print(f"   - Pure LN nodes: {min_ln} servers")
-        print(f"   - Mixed (TS+LN): {min_mixed} servers")
+        logger.info(f"   For {target_prob:.0e} failure probability:")
+        logger.info(f"   - Pure TS nodes: {min_ts} servers")
+        logger.info(f"   - Pure LN nodes: {min_ln} servers")
+        logger.info(f"   - Mixed (TS+LN): {min_mixed} servers")
 
     async def cleanup(self):
         """Cleanup resources."""
         await self.coordinator.stop()
-        print("\n✅ Cleanup complete")
+        logger.info("\n✅ Cleanup complete")
 
 
 async def main():
     """Run the integration demo."""
-    print("=" * 60)
-    print("        GenomeVault PIR Integration Demo")
-    print("=" * 60)
+    logger.info("=" * 60)
+    logger.info("        GenomeVault PIR Integration Demo")
+    logger.info("=" * 60)
 
     demo = PIRIntegrationDemo()
 
@@ -355,34 +356,34 @@ async def main():
         await demo.demonstrate_security_features()
 
         # Summary
-        print("\n" + "=" * 60)
-        print("📊 Demo Summary")
-        print("-" * 60)
+        logger.info("\n" + "=" * 60)
+        logger.info("📊 Demo Summary")
+        logger.info("-" * 60)
 
         stats = demo.coordinator.get_coordinator_stats()
-        print(f"Total servers: {stats['total_servers']}")
-        print(f"  - Trusted Signatories: {stats['trusted_signatories']}")
-        print(f"  - Light Nodes: {stats['light_nodes']}")
-        print(f"Geographic regions: {stats['geographic_regions']}")
+        logger.info(f"Total servers: {stats['total_servers']}")
+        logger.info(f"  - Trusted Signatories: {stats['trusted_signatories']}")
+        logger.info(f"  - Light Nodes: {stats['light_nodes']}")
+        logger.info(f"Geographic regions: {stats['geographic_regions']}")
 
-        print("\n✨ Key Features Demonstrated:")
-        print("  ✅ Information-theoretic security (zero leakage)")
-        print("  ✅ Geographic diversity enforcement")
-        print("  ✅ Timing attack mitigation")
-        print("  ✅ Batch query optimization")
-        print("  ✅ Server health monitoring")
-        print("  ✅ Privacy-preserving genomic queries")
+        logger.info("\n✨ Key Features Demonstrated:")
+        logger.info("  ✅ Information-theoretic security (zero leakage)")
+        logger.info("  ✅ Geographic diversity enforcement")
+        logger.info("  ✅ Timing attack mitigation")
+        logger.info("  ✅ Batch query optimization")
+        logger.info("  ✅ Server health monitoring")
+        logger.info("  ✅ Privacy-preserving genomic queries")
 
-        print("\n🔐 Security Guarantees:")
-        print("  • Perfect privacy against t < n colluding servers")
-        print("  • Fixed-size responses prevent traffic analysis")
-        print("  • Constant-time operations prevent timing attacks")
-        print("  • Geographic diversity prevents regional attacks")
+        logger.info("\n🔐 Security Guarantees:")
+        logger.info("  • Perfect privacy against t < n colluding servers")
+        logger.info("  • Fixed-size responses prevent traffic analysis")
+        logger.info("  • Constant-time operations prevent timing attacks")
+        logger.info("  • Geographic diversity prevents regional attacks")
 
     finally:
         await demo.cleanup()
 
-    print("\n🎉 Demo complete!")
+    logger.info("\n🎉 Demo complete!")
 
 
 if __name__ == "__main__":

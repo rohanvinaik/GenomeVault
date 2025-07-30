@@ -10,14 +10,14 @@ from .pir_client import PIRClient, PIRQuery
 from .query_builder import GenomicQuery, PIRQueryBuilder, QueryResult, QueryType
 
 __all__ = [
+    "AggregationMethod",
+    "BatchedPIRQueryBuilder",
+    "BatchedQuery",
+    "BatchedQueryResult",
+    "GenomicQuery",
     "PIRClient",
     "PIRQuery",
     "PIRQueryBuilder",
-    "BatchedPIRQueryBuilder",
-    "GenomicQuery",
     "QueryResult",
-    "BatchedQuery",
-    "BatchedQueryResult",
     "QueryType",
-    "AggregationMethod",
 ]

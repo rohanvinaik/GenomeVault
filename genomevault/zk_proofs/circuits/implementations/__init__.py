@@ -14,10 +14,10 @@ from .range_proof_circuit import RangeProofCircuit
 from .variant_proof_circuit import VariantProofCircuit
 
 __all__ = [
-    "VariantProofCircuit",
     "DiabetesRiskCircuit",
-    "PolygeneticRiskScoreCircuit",
     "MerkleInclusionCircuit",
-    "RangeProofCircuit",
     "PedersenCommitmentCircuit",
+    "PolygeneticRiskScoreCircuit",
+    "RangeProofCircuit",
+    "VariantProofCircuit",
 ]

@@ -12,15 +12,20 @@ import os
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 try:
     import yaml
 
     HAS_YAML = True
 except ImportError:
+    from genomevault.observability.logging import configure_logging
+
+    logger = configure_logging()
+    logger.exception("Unhandled exception")
     HAS_YAML = False
     yaml = None
+    raise
 
 # These are REQUIRED - not optional!
 from cryptography.fernet import Fernet
@@ -225,7 +230,12 @@ class Config:
 
             logger.info(f"Loaded configuration from {self.config_file}")
         except Exception as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Failed to load configuration: {e}")
+            raise
             raise
 
     def _update_config_object(self, obj: Any, data: dict[str, Any]):

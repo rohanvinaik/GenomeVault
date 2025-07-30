@@ -3,22 +3,15 @@ Unit tests for configuration system.
 Tests dual-axis voting model, compression tiers, and PIR calculations.
 """
 
-import json
 import tempfile
 from pathlib import Path
 
-import numpy as np
 import pytest
 
 from genomevault.utils.config import (
-    BlockchainConfig,
     CompressionTier,
     Config,
-    HypervectorConfig,
-    NetworkConfig,
     NodeClass,
-    PIRConfig,
-    ProcessingConfig,
     SecurityConfig,
 )
 

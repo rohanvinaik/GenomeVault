@@ -8,7 +8,7 @@ proving systems including STARKs and lattice-based proofs.
 import hashlib
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import numpy as np
 
@@ -153,8 +153,13 @@ class STARKProver(PostQuantumProver):
             return True
 
         except Exception as _:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"STARK verification failed: {e}")
             return False
+            raise
 
     def get_security_level(self) -> int:
         """Get post-quantum security level."""
@@ -369,8 +374,13 @@ class LatticeProver(PostQuantumProver):
             )
 
         except Exception as _:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Lattice verification failed: {e}")
             return False
+            raise
 
     def get_security_level(self) -> int:
         """Get post-quantum security level."""

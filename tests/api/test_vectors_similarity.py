@@ -1,4 +1,5 @@
 from fastapi.testclient import TestClient
+
 from genomevault.api.app import app
 from genomevault.core.constants import HYPERVECTOR_DIMENSIONS
 
@@ -7,8 +8,13 @@ client = TestClient(app)
 
 def test_similarity_of_same_vector_is_high():
     dim = HYPERVECTOR_DIMENSIONS["base"]
-    a = client.post("/vectors/encode", json={"data": {"genomic": [1, 2, 3]}, "dimension": str(dim), "compression_tier": "full"}).json()
-    r = client.get("/vectors/similarity", params={"vector_id1": a["vector_id"], "vector_id2": a["vector_id"]})
+    a = client.post(
+        "/vectors/encode",
+        json={"data": {"genomic": [1, 2, 3]}, "dimension": str(dim), "compression_tier": "full"},
+    ).json()
+    r = client.get(
+        "/vectors/similarity", params={"vector_id1": a["vector_id"], "vector_id2": a["vector_id"]}
+    )
     assert r.status_code == 200
     j = r.json()
     assert 0.99 <= j["similarity"] <= 1.0

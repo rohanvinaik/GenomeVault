@@ -1,19 +1,19 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """
 End-to-end integration test for PIR with ZK and HDC.
 Tests the complete genomic query pipeline.
 """
 
-import asyncio
-import json
 from pathlib import Path
-from typing import Dict, List
 
 import numpy as np
 import pytest
 
 from genomevault.hypervector.encoder import HyperdimensionalEncoder
 from genomevault.pir.client import PIRClient, PIRServer
-from genomevault.pir.client.query_builder import PIRQueryBuilder, QueryType
+from genomevault.pir.client.query_builder import PIRQueryBuilder
 from genomevault.zk_proofs.circuits.prs_circuit import PRSCircuit
 
 

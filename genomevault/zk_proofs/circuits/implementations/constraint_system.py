@@ -8,7 +8,7 @@ for PLONK-style arithmetic circuits.
 import hashlib
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 import numpy as np
 
@@ -194,7 +194,12 @@ class Constraint:
                 return (a_val * b_val) == c_val
 
         except Exception:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             return False
+            raise
 
 
 class ConstraintSystem:

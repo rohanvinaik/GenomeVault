@@ -8,16 +8,14 @@ Implements the diabetes risk assessment system with:
 """
 
 import hashlib
-import json
 import logging
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import numpy as np
-import torch
 
-from ...core.constants import GLUCOSE_THRESHOLD_MG_DL, HBA1C_THRESHOLD_PERCENT
+from ...core.constants import GLUCOSE_THRESHOLD_MG_DL
 from ...utils import get_config, get_logger
 from ...zk_proofs.prover import Prover
 
@@ -300,8 +298,13 @@ class DiabetesRiskCalculator:
             return True
 
         except Exception as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Alert verification failed: {e}")
             return False
+            raise
 
     def monitor_continuous_risk(
         self,

@@ -5,8 +5,8 @@ import hmac
 import json
 import os
 import threading
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Dict, Iterable, Tuple
 
 from .patterns import detect, mask_value
 
@@ -17,7 +17,7 @@ def _secret() -> bytes:
 
 
 def _hmac_token(kind: str, value: str) -> str:
-    msg = f"{kind}:{value}".encode("utf-8")
+    msg = f"{kind}:{value}".encode()
     digest = hmac.new(_secret(), msg, hashlib.sha256).hexdigest()[:16]
     return f"tok_{digest}"
 
@@ -28,16 +28,22 @@ class PseudonymStore:
     WARNING: Storing originals on disk may be sensitive. Use only for dev/demo or
     place the store in encrypted storage with restricted access.
     """
+
     def __init__(self, path: str | None = None):
         path = path or os.getenv("GV_PSEUDONYM_STORE", "")
         self.path = Path(path) if path else None
         self._lock = threading.Lock()
-        self._map: Dict[str, str] = {}
+        self._map: dict[str, str] = {}
         if self.path and self.path.exists():
             try:
                 self._map = json.loads(self.path.read_text(encoding="utf-8"))
             except Exception:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 self._map = {}
+                raise
 
     def save(self) -> None:
         if not self.path:
@@ -72,7 +78,9 @@ def redact_text(text: str, kinds: Iterable[str] | None = None) -> str:
     return "".join(out)
 
 
-def tokenize_text(text: str, kinds: Iterable[str] | None = None, store: PseudonymStore | None = None) -> str:
+def tokenize_text(
+    text: str, kinds: Iterable[str] | None = None, store: PseudonymStore | None = None
+) -> str:
     """Replace PII with deterministic tokens tok_<hash> using HMAC-SHA256.
     If a PseudonymStore is provided, store a reversible mapping token->original.
     """

@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """
 Recursive SNARK implementation for efficient proof composition.
 Enables constant verification time regardless of composed proof count.
@@ -7,7 +10,7 @@ import hashlib
 import json
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import numpy as np
 
@@ -524,26 +527,26 @@ if __name__ == "__main__":
         )
         proofs.append(proof)
 
-    print(f"Generated {len(proofs)} base proofs")
+    logger.info(f"Generated {len(proofs)} base proofs")
 
     # Test different aggregation strategies
     strategies = ["balanced_tree", "accumulator", "sequential"]
 
     for strategy in strategies:
-        print(f"\nTesting {strategy} aggregation:")
+        logger.info(f"\nTesting {strategy} aggregation:")
 
         start_time = time.time()
         recursive_proof = recursive_prover.compose_proofs(proofs, strategy)
         composition_time = time.time() - start_time
 
-        print(f"  Composition time: {composition_time*1000:.1f}ms")
-        print(f"  Proof size: {len(recursive_proof.aggregation_proof)} bytes")
-        print(f"  Verification complexity: {recursive_proof.verification_complexity}")
+        logger.info(f"  Composition time: {composition_time*1000:.1f}ms")
+        logger.info(f"  Proof size: {len(recursive_proof.aggregation_proof)} bytes")
+        logger.info(f"  Verification complexity: {recursive_proof.verification_complexity}")
 
         # Verify the recursive proof
         start_time = time.time()
         valid = recursive_prover.verify_recursive_proof(recursive_proof)
         verification_time = time.time() - start_time
 
-        print(f"  Verification time: {verification_time*1000:.1f}ms")
-        print(f"  Valid: {valid}")
+        logger.info(f"  Verification time: {verification_time*1000:.1f}ms")
+        logger.info(f"  Valid: {valid}")

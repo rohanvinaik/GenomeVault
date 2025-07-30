@@ -1,17 +1,18 @@
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
+
 from pydantic import BaseModel, Field
 
 
 class LedgerAppendRequest(BaseModel):
-    data: Dict[str, Any] = Field(..., description="Arbitrary JSON-serializable payload")
+    data: dict[str, Any] = Field(..., description="Arbitrary JSON-serializable payload")
 
 
 class LedgerEntryModel(BaseModel):
     index: int
     timestamp: float
-    data: Dict[str, Any]
+    data: dict[str, Any]
     prev_hash: str
     hash: str
 
@@ -21,4 +22,4 @@ class LedgerVerifyResponse(BaseModel):
 
 
 class LedgerEntriesResponse(BaseModel):
-    entries: List[LedgerEntryModel]
+    entries: list[LedgerEntryModel]

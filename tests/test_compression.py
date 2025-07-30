@@ -1,5 +1,4 @@
 # tests/test_compression.py
-from unittest.mock import Mock, patch
 
 import numpy as np
 import pytest

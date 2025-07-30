@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """
 Benchmark script for Hamming distance LUT optimization in GenomeVault
 
@@ -8,7 +11,6 @@ This script compares the performance of:
 """
 
 import time
-from typing import Dict, List
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -163,17 +165,17 @@ def benchmark_hdc_encoder(dimension: int, num_vectors: int) -> dict[str, float]:
 
 def print_results(results: dict):
     """Print benchmark results in a formatted table"""
-    print("\n" + "=" * 80)
-    print("HAMMING DISTANCE LUT BENCHMARK RESULTS")
-    print("=" * 80)
+    logger.info("\n" + "=" * 80)
+    logger.info("HAMMING DISTANCE LUT BENCHMARK RESULTS")
+    logger.info("=" * 80)
 
     # Single vector results
-    print("\n1. SINGLE VECTOR OPERATIONS")
-    print("-" * 60)
-    print(
+    logger.info("\n1. SINGLE VECTOR OPERATIONS")
+    logger.info("-" * 60)
+    logger.info(
         f"{'Dimension':<12} {'Standard':<15} {'LUT CPU':<15} {'LUT GPU':<15} {'CPU Speedup':<12} {'GPU Speedup':<12}"
     )
-    print("-" * 60)
+    logger.info("-" * 60)
 
     for dim, res in results["single"].items():
         standard = res["standard"] * 1000  # Convert to ms
@@ -183,19 +185,19 @@ def print_results(results: dict):
         cpu_speedup = standard / lut_cpu if lut_cpu > 0 else 0
         gpu_speedup = standard / lut_gpu if lut_gpu > 0 else 0
 
-        print(f"{dim:<12} {standard:<15.3f} {lut_cpu:<15.3f} ", end="")
+        logger.info(f"{dim:<12} {standard:<15.3f} {lut_cpu:<15.3f} ")
         if lut_gpu > 0:
-            print(f"{lut_gpu:<15.3f} {cpu_speedup:<12.2f}x {gpu_speedup:<12.2f}x")
+            logger.info(f"{lut_gpu:<15.3f} {cpu_speedup:<12.2f}x {gpu_speedup:<12.2f}x")
         else:
-            print(f"{'N/A':<15} {cpu_speedup:<12.2f}x {'N/A':<12}")
+            logger.info(f"{'N/A':<15} {cpu_speedup:<12.2f}x {'N/A':<12}")
 
     # Batch results
-    print("\n2. BATCH OPERATIONS")
-    print("-" * 80)
-    print(
+    logger.info("\n2. BATCH OPERATIONS")
+    logger.info("-" * 80)
+    logger.info(
         f"{'Dim x Batch':<20} {'Standard':<15} {'LUT CPU':<15} {'LUT GPU':<15} {'CPU Speedup':<12} {'GPU Speedup':<12}"
     )
-    print("-" * 80)
+    logger.info("-" * 80)
 
     for key, res in results["batch"].items():
         standard = res["standard"] * 1000
@@ -205,24 +207,24 @@ def print_results(results: dict):
         cpu_speedup = standard / lut_cpu if lut_cpu > 0 else 0
         gpu_speedup = standard / lut_gpu if lut_gpu > 0 else 0
 
-        print(f"{key:<20} {standard:<15.3f} {lut_cpu:<15.3f} ", end="")
+        logger.info(f"{key:<20} {standard:<15.3f} {lut_cpu:<15.3f} ")
         if lut_gpu > 0:
-            print(f"{lut_gpu:<15.3f} {cpu_speedup:<12.2f}x {gpu_speedup:<12.2f}x")
+            logger.info(f"{lut_gpu:<15.3f} {cpu_speedup:<12.2f}x {gpu_speedup:<12.2f}x")
         else:
-            print(f"{'N/A':<15} {cpu_speedup:<12.2f}x {'N/A':<12}")
+            logger.info(f"{'N/A':<15} {cpu_speedup:<12.2f}x {'N/A':<12}")
 
     # HDC encoder results
-    print("\n3. HDC ENCODER INTEGRATION")
-    print("-" * 60)
-    print(f"{'Dimension':<12} {'Standard':<20} {'With LUT':<20} {'Speedup':<12}")
-    print("-" * 60)
+    logger.info("\n3. HDC ENCODER INTEGRATION")
+    logger.info("-" * 60)
+    logger.info(f"{'Dimension':<12} {'Standard':<20} {'With LUT':<20} {'Speedup':<12}")
+    logger.info("-" * 60)
 
     for dim, res in results["hdc"].items():
         standard = res["hdc_standard"] * 1000
         with_lut = res.get("hdc_lut", standard) * 1000
         speedup = standard / with_lut if with_lut > 0 else 1.0
 
-        print(f"{dim:<12} {standard:<20.3f} {with_lut:<20.3f} {speedup:<12.2f}x")
+        logger.info(f"{dim:<12} {standard:<20.3f} {with_lut:<20.3f} {speedup:<12.2f}x")
 
 
 def create_performance_plots(results: dict):
@@ -275,49 +277,49 @@ def create_performance_plots(results: dict):
 
 def main():
     """Run complete benchmark suite"""
-    print("Starting Hamming Distance LUT Benchmark...")
-    print(f"CUDA Available: {torch.cuda.is_available()}")
+    logger.info("Starting Hamming Distance LUT Benchmark...")
+    logger.info(f"CUDA Available: {torch.cuda.is_available()}")
 
     # Generate LUT once
-    print("\nGenerating 16-bit popcount LUT...")
+    logger.info("\nGenerating 16-bit popcount LUT...")
     lut = generate_popcount_lut()
-    print(f"LUT size: {lut.nbytes / 1024:.1f} KB")
+    logger.info(f"LUT size: {lut.nbytes / 1024:.1f} KB")
 
     results = {"single": {}, "batch": {}, "hdc": {}}
 
     # Benchmark single vectors
-    print("\nBenchmarking single vector operations...")
+    logger.info("\nBenchmarking single vector operations...")
     for dim in VECTOR_DIMENSIONS:
-        print(f"  Dimension {dim}...")
+        logger.info(f"  Dimension {dim}...")
         results["single"][str(dim)] = benchmark_single_vector(dim)
 
     # Benchmark batch operations
-    print("\nBenchmarking batch operations...")
+    logger.info("\nBenchmarking batch operations...")
     for dim in [5000, 10000]:  # Subset for batch tests
         for batch_size in [50, 100]:
             key = f"{dim}x{batch_size}"
-            print(f"  {key}...")
+            logger.info(f"  {key}...")
             results["batch"][key] = benchmark_batch(dim, batch_size)
 
     # Benchmark HDC encoder
-    print("\nBenchmarking HDC encoder integration...")
+    logger.info("\nBenchmarking HDC encoder integration...")
     for dim in VECTOR_DIMENSIONS:
-        print(f"  Dimension {dim}...")
+        logger.info(f"  Dimension {dim}...")
         results["hdc"][str(dim)] = benchmark_hdc_encoder(dim, 50)
 
     # Print results
     print_results(results)
 
     # Create plots
-    print("\nGenerating performance plots...")
+    logger.info("\nGenerating performance plots...")
     fig = create_performance_plots(results)
     fig.savefig("hamming_lut_benchmark.png", dpi=150, bbox_inches="tight")
-    print("Plots saved to hamming_lut_benchmark.png")
+    logger.info("Plots saved to hamming_lut_benchmark.png")
 
     # Summary
-    print("\n" + "=" * 80)
-    print("SUMMARY")
-    print("=" * 80)
+    logger.info("\n" + "=" * 80)
+    logger.info("SUMMARY")
+    logger.info("=" * 80)
 
     avg_cpu_speedup = np.mean(
         [
@@ -326,7 +328,7 @@ def main():
         ]
     )
 
-    print(f"Average CPU Speedup: {avg_cpu_speedup:.2f}x")
+    logger.info(f"Average CPU Speedup: {avg_cpu_speedup:.2f}x")
 
     if torch.cuda.is_available():
         avg_gpu_speedup = np.mean(
@@ -335,14 +337,14 @@ def main():
                 for d in VECTOR_DIMENSIONS
             ]
         )
-        print(f"Average GPU Speedup: {avg_gpu_speedup:.2f}x")
+        logger.info(f"Average GPU Speedup: {avg_gpu_speedup:.2f}x")
 
-    print("\nKey Findings:")
-    print("✓ LUT-based approach achieves target 2-3x speedup on CPU")
-    print("✓ GPU acceleration provides additional performance gains")
-    print("✓ Speedup increases with vector dimension")
-    print("✓ Batch operations show excellent scalability")
-    print("✓ HDC encoder successfully integrated with LUT optimization")
+    logger.info("\nKey Findings:")
+    logger.info("✓ LUT-based approach achieves target 2-3x speedup on CPU")
+    logger.info("✓ GPU acceleration provides additional performance gains")
+    logger.info("✓ Speedup increases with vector dimension")
+    logger.info("✓ Batch operations show excellent scalability")
+    logger.info("✓ HDC encoder successfully integrated with LUT optimization")
 
 
 if __name__ == "__main__":

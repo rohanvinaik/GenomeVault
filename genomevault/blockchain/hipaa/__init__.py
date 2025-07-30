@@ -23,19 +23,19 @@ from .models import (
 )
 
 __all__ = [
-    "integration",
     "EXPIRED",
     "FAILED",
-    "HIPAACredentials",
     "INDIVIDUAL",
-    "NPIRecord",
-    "NPIType",
     "ORGANIZATION",
     "PENDING",
     "REVOKED",
     "VERIFIED",
+    "HIPAACredentials",
+    "NPIRecord",
+    "NPIType",
     "VerificationRecord",
     "VerificationStatus",
+    "integration",
     "is_active",
     "to_chain_data",
     "verifier",

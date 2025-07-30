@@ -2,7 +2,6 @@
 Integration tests for HIPAA Fast-Track with Governance
 """
 
-import asyncio
 from datetime import datetime, timedelta
 
 import pytest
@@ -20,7 +19,6 @@ from genomevault.blockchain.hipaa.integration import (
 )
 from genomevault.blockchain.node import NodeType
 from genomevault.core.constants import SignatoryWeight
-from genomevault.core.exceptions import VerificationError
 
 
 @pytest.mark.asyncio

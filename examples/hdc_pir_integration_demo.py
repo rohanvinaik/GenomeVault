@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """
 HDC Error Tuning with PIR Batching - Complete Example
 Demonstrates the full pipeline from accuracy dial to batched PIR queries
@@ -5,10 +8,8 @@ Demonstrates the full pipeline from accuracy dial to batched PIR queries
 
 import asyncio
 import time
-from typing import Dict, List
 
 import numpy as np
-import torch
 
 from genomevault.hypervector.error_handling import ErrorBudgetAllocator
 from genomevault.pir.client import BatchedPIRQueryBuilder, GenomicQuery, PIRClient, QueryType
@@ -18,18 +19,18 @@ async def main():
     """
     Demonstrate the complete error-tuned query pipeline
     """
-    print("=== HDC Error Tuning with PIR Batching Demo ===\n")
+    logger.info("=== HDC Error Tuning with PIR Batching Demo ===\n")
 
     # Step 1: User specifies accuracy requirements
-    print("1. User Accuracy Requirements:")
+    logger.info("1. User Accuracy Requirements:")
     epsilon = 0.01  # 1% relative error
     delta_exp = 20  # 1 in 2^20 failure probability
-    print(f"   - Allowed error: ±{epsilon*100}%")
-    print(f"   - Confidence: 1 in {2**delta_exp:,} chance of failure")
-    print(f"   - ECC enabled: Yes (3-block XOR parity)")
+    logger.info(f"   - Allowed error: ±{epsilon*100}%")
+    logger.info(f"   - Confidence: 1 in {2**delta_exp:,} chance of failure")
+    logger.info("   - ECC enabled: Yes (3-block XOR parity)")
 
     # Step 2: System plans error budget
-    print("\n2. Error Budget Planning:")
+    logger.info("\n2. Error Budget Planning:")
     allocator = ErrorBudgetAllocator(dim_cap=150000)
     budget = allocator.plan_budget(
         epsilon=epsilon,
@@ -38,14 +39,14 @@ async def main():
         repeat_cap=None,  # AUTO mode
     )
 
-    print(f"   - Dimension: {budget.dimension:,}")
-    print(f"   - Parity groups: {budget.parity_g}")
-    print(f"   - Repeats needed: {budget.repeats}")
-    print(f"   - Estimated latency: {allocator.estimate_latency(budget)}ms")
-    print(f"   - Estimated bandwidth: {allocator.estimate_bandwidth(budget)}MB")
+    logger.info(f"   - Dimension: {budget.dimension:,}")
+    logger.info(f"   - Parity groups: {budget.parity_g}")
+    logger.info(f"   - Repeats needed: {budget.repeats}")
+    logger.info(f"   - Estimated latency: {allocator.estimate_latency(budget)}ms")
+    logger.info(f"   - Estimated bandwidth: {allocator.estimate_bandwidth(budget)}MB")
 
     # Step 3: Initialize PIR infrastructure (mock)
-    print("\n3. Initializing PIR Infrastructure:")
+    logger.info("\n3. Initializing PIR Infrastructure:")
 
     # Mock PIR servers
     servers = [
@@ -67,12 +68,12 @@ async def main():
     # Create batched query builder
     query_builder = BatchedPIRQueryBuilder(pir_client, index_mapping)
 
-    print(f"   - Connected to {len(servers)} PIR servers")
-    print(f"   - Database size: {database_size:,} entries")
-    print(f"   - Privacy guarantee: {pir_client.calculate_privacy_guarantee(3):.2e}")
+    logger.info(f"   - Connected to {len(servers)} PIR servers")
+    logger.info(f"   - Database size: {database_size:,} entries")
+    logger.info(f"   - Privacy guarantee: {pir_client.calculate_privacy_guarantee(3):.2e}")
 
     # Step 4: Build and execute query
-    print("\n4. Executing Privacy-Preserving Query:")
+    logger.info("\n4. Executing Privacy-Preserving Query:")
 
     # User wants to query BRCA1 variant
     genomic_query = GenomicQuery(
@@ -85,10 +86,10 @@ async def main():
         },
     )
 
-    print(
+    logger.info(
         f"   Query: {genomic_query.parameters['chromosome']}:{genomic_query.parameters['position']} "
     )
-    print(
+    logger.info(
         f"         {genomic_query.parameters['ref_allele']}>{genomic_query.parameters['alt_allele']}"
     )
 
@@ -96,35 +97,32 @@ async def main():
     start_time = time.time()
 
     # Simulate streaming execution with progress
-    print("\n   Executing batched PIR queries:")
+    logger.info("\n   Executing batched PIR queries:")
     batched_query = query_builder.build_repeat_batch(budget, genomic_query)
 
     results = []
     async for idx, result in query_builder.execute_streaming_batch(batched_query):
         results.append(result)
         progress = (idx + 1) / budget.repeats * 100
-        print(
-            f"   [{progress:3.0f}%] Completed repeat {idx + 1}/{budget.repeats}",
-            end="\r",
-        )
+        logger.info(f"   [{progress:3.0f}%] Completed repeat {idx + 1}/{budget.repeats}")
 
-    print()  # New line after progress
+    logger.info("")  # New line after progress
 
     # Step 5: Aggregate results
-    print("\n5. Aggregating Results:")
+    logger.info("\n5. Aggregating Results:")
 
     # Calculate median and error
     values = [r["allele_frequency"] for r in results]
     median_freq = np.median(values)
     median_error = np.median(np.abs(np.array(values) - median_freq))
 
-    print(f"   - Individual results: {values[:5]}... (showing first 5)")
-    print(f"   - Median frequency: {median_freq:.4f}")
-    print(f"   - Median absolute deviation: {median_error:.6f}")
-    print(f"   - Error within bound: {median_error <= epsilon} ✓")
+    logger.info(f"   - Individual results: {values[:5]}... (showing first 5)")
+    logger.info(f"   - Median frequency: {median_freq:.4f}")
+    logger.info(f"   - Median absolute deviation: {median_error:.6f}")
+    logger.info(f"   - Error within bound: {median_error <= epsilon} ✓")
 
     # Step 6: Generate proof (mock)
-    print("\n6. Zero-Knowledge Proof Generation:")
+    logger.info("\n6. Zero-Knowledge Proof Generation:")
     proof_metadata = {
         "query_type": "variant_lookup",
         "repeats": budget.repeats,
@@ -135,29 +133,29 @@ async def main():
     }
 
     proof_hash = generate_mock_proof(proof_metadata)
-    print(f"   - Proof generated: ipfs://{proof_hash}")
-    print(f"   - Proof verifies: median error ≤ ε ✓")
+    logger.info(f"   - Proof generated: ipfs://{proof_hash}")
+    logger.info("   - Proof verifies: median error ≤ ε ✓")
 
     # Step 7: Final results
     elapsed_time = (time.time() - start_time) * 1000
 
-    print("\n7. Query Complete:")
-    print(f"   - Result: Allele frequency = {median_freq:.4f} ± {epsilon*100}%")
-    print(f"   - Confidence: {budget.confidence}")
-    print(f"   - Total time: {elapsed_time:.0f}ms")
-    print(f"   - PIR queries used: {budget.repeats}")
+    logger.info("\n7. Query Complete:")
+    logger.info(f"   - Result: Allele frequency = {median_freq:.4f} ± {epsilon*100}%")
+    logger.info(f"   - Confidence: {budget.confidence}")
+    logger.info(f"   - Total time: {elapsed_time:.0f}ms")
+    logger.info(f"   - PIR queries used: {budget.repeats}")
 
     # Demonstrate different accuracy levels
-    print("\n=== Accuracy vs Performance Trade-offs ===")
-    print("\nEpsilon | Delta    | Dimension | Repeats | Latency | Bandwidth")
-    print("--------|----------|-----------|---------|---------|----------")
+    logger.info("\n=== Accuracy vs Performance Trade-offs ===")
+    logger.info("\nEpsilon | Delta    | Dimension | Repeats | Latency | Bandwidth")
+    logger.info("--------|----------|-----------|---------|---------|----------")
 
     for eps in [0.1, 0.05, 0.01, 0.005]:
         for delta_e in [10, 15, 20]:
             b = allocator.plan_budget(eps, delta_e, ecc_enabled=True)
             lat = allocator.estimate_latency(b)
             bw = allocator.estimate_bandwidth(b)
-            print(
+            logger.info(
                 f"{eps:7.3f} | 2^-{delta_e:<5} | {b.dimension:>9,} | {b.repeats:>7} | {lat:>6}ms | {bw:>7.1f}MB"
             )
 

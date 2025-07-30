@@ -6,7 +6,7 @@ encoding complex structured information in hypervectors.
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import numpy as np
 import torch

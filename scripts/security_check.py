@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 #!/usr/bin/env python3
 """
 Security check script for GenomeVault.
@@ -9,7 +12,6 @@ import json
 import re
 import sys
 from pathlib import Path
-from typing import Dict, List, Tuple
 
 from genomevault.utils.logging import logger
 
@@ -201,18 +203,18 @@ class SecurityChecker:
         report = self.generate_report()
 
         # Print summary
-        print("\n=== Security Check Summary ===")
-        print(f"Total Issues: {report['summary']['total_issues']}")
-        print(f"  Critical: {report['summary']['critical']}")
-        print(f"  High: {report['summary']['high']}")
-        print(f"  Warnings: {report['summary']['warnings']}")
+        logger.info("\n=== Security Check Summary ===")
+        logger.info(f"Total Issues: {report['summary']['total_issues']}")
+        logger.info(f"  Critical: {report['summary']['critical']}")
+        logger.info(f"  High: {report['summary']['high']}")
+        logger.info(f"  Warnings: {report['summary']['warnings']}")
 
         # Print critical issues
         critical_issues = [i for i in self.issues if i.get("severity") == "CRITICAL"]
         if critical_issues:
-            print("\nCRITICAL ISSUES:")
+            logger.info("\nCRITICAL ISSUES:")
             for issue in critical_issues:
-                print(f"  - {issue}")
+                logger.info(f"  - {issue}")
 
         # Return exit code
         return 1 if report["summary"]["critical"] > 0 else 0
@@ -238,21 +240,21 @@ def main():
         # Check specific log file
         findings = checker.check_logs(args.log_file)
         if findings:
-            print(f"Found {len(findings)} PHI instances in {args.log_file}")
+            logger.info(f"Found {len(findings)} PHI instances in {args.log_file}")
             for finding in findings:
-                print(f"  Line {finding['line']}: {finding['type']} - {finding['matches']}")
+                logger.info(f"  Line {finding['line']}: {finding['type']} - {finding['matches']}")
         else:
-            print("No PHI found in log file")
+            logger.info("No PHI found in log file")
 
     elif args.config_file:
         # Check specific config
         issues = checker.check_config_sanity(args.config_file)
         if issues:
-            print(f"Found {len(issues)} configuration issues")
+            logger.info(f"Found {len(issues)} configuration issues")
             for issue in issues:
-                print(f"  [{issue['severity']}] {issue['issue']}")
+                logger.info(f"  [{issue['severity']}] {issue['issue']}")
         else:
-            print("Configuration looks secure")
+            logger.info("Configuration looks secure")
 
     else:
         # Run all checks

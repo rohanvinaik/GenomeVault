@@ -7,9 +7,7 @@ without exposing model internals or training data.
 
 import hashlib
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
-
-import numpy as np
+from typing import Any
 
 from genomevault.utils.logging import get_logger
 from genomevault.zk_proofs.circuits.base_circuits import BaseCircuit, FieldElement

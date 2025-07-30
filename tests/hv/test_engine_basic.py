@@ -1,13 +1,14 @@
-import numpy as np
-from genomevault.hypervector.engine import HypervectorEngine
 from genomevault.core.constants import HYPERVECTOR_DIMENSIONS
-from genomevault.core.exceptions import ValidationError, ProjectionError
+from genomevault.core.exceptions import ProjectionError, ValidationError
+from genomevault.hypervector.engine import HypervectorEngine
 
 
 def test_encode_and_similarity_roundtrip():
     engine = HypervectorEngine()
     dim = HYPERVECTOR_DIMENSIONS["base"]
-    r1 = engine.encode(data={"genomic": [1.0, 0.0, 2.0, 3.0]}, dimension=dim, compression_tier="mini")
+    r1 = engine.encode(
+        data={"genomic": [1.0, 0.0, 2.0, 3.0]}, dimension=dim, compression_tier="mini"
+    )
     assert r1["dimension"] == dim and "vector_id" in r1
     sim = engine.calculate_similarity(r1["vector_id"], r1["vector_id"])
     assert 0.99 <= sim <= 1.0
@@ -40,7 +41,12 @@ def test_invalid_dimension_raises():
         engine.encode(data={"genomic": [1, 2]}, dimension=123)
         assert False, "should have raised"
     except ProjectionError:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         pass
+        raise
 
 
 def test_missing_vector_id_raises():
@@ -49,4 +55,9 @@ def test_missing_vector_id_raises():
         engine.calculate_similarity("nope", "nope2")
         assert False, "should have raised"
     except ValidationError:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         pass
+        raise

@@ -4,7 +4,6 @@ Implements sparse, memory-efficient position vectors for SNP-level granularity
 """
 
 import hashlib
-from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -130,7 +129,12 @@ class PositionalEncoder:
                 return torch.zeros(self.dimension)
 
         except Exception as e:
-            raise HypervectorError(f"Failed to encode SNP positions: {str(e)}")
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
+            raise HypervectorError(f"Failed to encode SNP positions: {e!s}")
+            raise
 
     def _position_to_seed(self, position: int) -> int:
         """Convert genomic position to deterministic seed"""
@@ -316,7 +320,12 @@ class SNPPanel:
             logger.info(f"Loaded panel '{panel_name}' with {total_positions} positions")
 
         except Exception as e:
-            raise HypervectorError(f"Failed to load panel from {file_path}: {str(e)}")
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
+            raise HypervectorError(f"Failed to load panel from {file_path}: {e!s}")
+            raise
 
     def encode_with_panel(
         self, panel_name: str, chromosome: str, observed_bases: dict[int, str]

@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """
 PIR query builder for genomic data queries.
 Provides high-level interface for constructing privacy-preserving queries.
@@ -7,14 +10,11 @@ import hashlib
 import json
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple, Union
-
-import numpy as np
+from typing import Any
 
 from genomevault.utils.logging import get_logger, logger
 
-from ..client import PIRClient, PIRQuery
-from ..reference_data.manager import GenomicRegion, ReferenceDataType
+from ..client import PIRClient
 
 logger = get_logger(__name__)
 
@@ -454,7 +454,7 @@ if __name__ == "__main__":
     # builder = PIRQueryBuilder(pir_client, index_mapping)
 
     # Example queries
-    print("Example Query Types:")
+    logger.info("Example Query Types:")
 
     # Variant lookup
     var_query = GenomicQuery(
@@ -466,17 +466,17 @@ if __name__ == "__main__":
             "alt_allele": "G",
         },
     )
-    print("Variant Query: {var_query.parameters}")
+    logger.info("Variant Query: {var_query.parameters}")
 
     # Region scan
     region_query = GenomicQuery(
         query_type=QueryType.REGION_SCAN,
         parameters={"chromosome": "chr1", "start": 100000, "end": 100500},
     )
-    print("Region Query: {region_query.parameters}")
+    logger.info("Region Query: {region_query.parameters}")
 
     # Gene annotation
     gene_query = GenomicQuery(
         query_type=QueryType.GENE_ANNOTATION, parameters={"gene_symbol": "BRCA1"}
     )
-    print("Gene Query: {gene_query.parameters}")
+    logger.info("Gene Query: {gene_query.parameters}")

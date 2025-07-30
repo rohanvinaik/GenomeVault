@@ -3,7 +3,6 @@
 Debug script for GenomeVault - identifies and helps fix common issues
 """
 
-import os
 import subprocess
 import sys
 from pathlib import Path
@@ -42,11 +41,21 @@ class GenomeVaultDebugger:
                 print("  ✅ pydantic-settings is installed")
                 return True
             except ImportError:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 self.issues.append("pydantic-settings is not installed")
                 return False
+                raise
         except ImportError:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             self.issues.append("Pydantic is not installed")
             return False
+            raise
 
     def fix_pydantic(self):
         """Fix Pydantic issues"""
@@ -69,9 +78,14 @@ class GenomeVaultDebugger:
             )
             self.fixed.append("Pydantic upgraded to v2 with pydantic-settings")
             return True
-        except subprocess.CalledProcessError as e:
+        except subprocess.CalledProcessError:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             print("  ❌ Failed to fix Pydantic: {e}")
             return False
+            raise
 
     def check_imports(self):
         """Check if all GenomeVault modules can be imported"""
@@ -93,8 +107,13 @@ class GenomeVaultDebugger:
                 __import__(module)
                 print("  ✅ {module}")
             except ImportError as e:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 print("  ❌ {module}: {e}")
                 failed_imports.append((module, str(e)))
+                raise
 
         if failed_imports:
             self.issues.append("Failed to import {len(failed_imports)} modules")
@@ -118,7 +137,12 @@ class GenomeVaultDebugger:
                     try:
                         __import__(pkg_name.replace("-", "_"))
                     except ImportError:
+                        from genomevault.observability.logging import configure_logging
+
+                        logger = configure_logging()
+                        logger.exception("Unhandled exception")
                         missing.append(pkg_name)
+                        raise
 
             if missing:
                 self.issues.append("Missing packages: {', '.join(missing)}")
@@ -128,8 +152,13 @@ class GenomeVaultDebugger:
             return True
 
         except FileNotFoundError:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             self.issues.append("requirements.txt not found")
             return False
+            raise
 
     def run_tests(self):
         """Run basic tests"""
@@ -137,6 +166,7 @@ class GenomeVaultDebugger:
         try:
             result = subprocess.run(
                 [sys.executable, "-m", "pytest", "tests/test_simple.py", "-v"],
+                check=False,
                 capture_output=True,
                 text=True,
             )
@@ -148,9 +178,14 @@ class GenomeVaultDebugger:
                 print(result.stdout)
                 self.issues.append("Tests failed")
                 return False
-        except subprocess.CalledProcessError as e:
+        except subprocess.CalledProcessError:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             self.issues.append("Failed to run tests: {e}")
             return False
+            raise
 
     def run_diagnostics(self):
         """Run all diagnostics"""

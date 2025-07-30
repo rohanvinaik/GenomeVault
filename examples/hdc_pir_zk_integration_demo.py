@@ -9,12 +9,10 @@ Demonstrates the full pipeline with actual zero-knowledge proof generation
 import asyncio
 import json
 import time
-from typing import Dict, List
 
 import numpy as np
 
 from genomevault.hypervector.error_handling import ErrorBudgetAllocator
-from genomevault.pir.client import BatchedPIRQueryBuilder, GenomicQuery, QueryType
 from genomevault.zk.circuits.median_verifier import MedianVerifierCircuit
 from genomevault.zk.proof import ProofGenerator
 
@@ -31,7 +29,7 @@ async def main():
     delta_exp = 20  # 1 in 2^20 failure probability
     print(f"   - Allowed error: ±{epsilon*100}%")
     print(f"   - Confidence: 1 in {2**delta_exp:,} chance of failure")
-    print(f"   - ECC enabled: Yes (3-block XOR parity)")
+    print("   - ECC enabled: Yes (3-block XOR parity)")
 
     # Step 2: System plans error budget
     print("\n2. Error Budget Planning:")
@@ -118,7 +116,7 @@ async def main():
 
     print(f"   - Opened {len(opened_indices)} commitment(s) around median")
     print(f"   - Opened indices: {opened_indices}")
-    print(f"   - Median computation verified: ✓")
+    print("   - Median computation verified: ✓")
 
     # Verify using the proof generator
     is_valid = proof_generator.verify_proof(proof_result)
@@ -150,7 +148,7 @@ async def main():
     print(f"   - Mock proof time: {mock_time:.3f}ms")
     print(f"   - Real ZK proof time: {proof_result.generation_time_ms:.1f}ms")
     print(f"   - Overhead factor: {proof_result.generation_time_ms/mock_time:.1f}x")
-    print(f"   - Security guarantee: Cryptographic vs None")
+    print("   - Security guarantee: Cryptographic vs None")
 
     # Step 10: Demonstrate proof properties
     print("\n10. ZK Proof Properties:")
@@ -168,8 +166,13 @@ async def main():
         )
         print("   ✗ Soundness check failed - invalid proof accepted!")
     except Exception as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         print("   ✓ Soundness verified - invalid proof rejected")
         print(f"     Error: {str(e)[:50]}...")
+        raise
 
     # Test zero-knowledge
     print("\n   Testing zero-knowledge property...")
@@ -192,7 +195,7 @@ async def main():
     print(f"- Proof provides cryptographic guarantee with {2**-delta_exp:.2e} failure probability")
     print(f"- Only revealed {revealed_count}/{total_count} values, maintaining privacy")
     print(f"- Total proof size: {len(proof_result.proof_data)} bytes")
-    print(f"- Verification time: <5ms (much faster than generation)")
+    print("- Verification time: <5ms (much faster than generation)")
 
     return proof_result
 

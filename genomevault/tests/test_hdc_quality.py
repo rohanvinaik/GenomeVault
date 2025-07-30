@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """
 Test HDC compression quality and similarity preservation.
 
@@ -6,7 +9,6 @@ to ensure clinical validity.
 """
 
 import itertools
-from typing import Dict, List, Tuple
 
 import numpy as np
 import pytest
@@ -232,7 +234,7 @@ class TestHDCQuality:
         low_dissimilar = sum(s < 0.3 for s in dissimilar_similarities)
         assert (
             low_dissimilar >= len(dissimilar_similarities) * 0.8
-        ), f"Dissimilar variants not sufficiently separated"
+        ), "Dissimilar variants not sufficiently separated"
 
         return {
             "avg_similar_similarity": avg_similar,

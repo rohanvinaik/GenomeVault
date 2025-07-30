@@ -6,15 +6,10 @@ This example demonstrates the core functionality of GenomeVault's
 privacy-preserving genomic data processing pipeline.
 """
 
-import os
-from datetime import datetime
-from pathlib import Path
-
 # Import GenomeVault components
 from genomevault import (
     PhenotypeProcessor,
     SequencingProcessor,
-    TranscriptomicsProcessor,
     get_logger,
     init_config,
 )
@@ -252,8 +247,13 @@ def main():
 
         print("\nFor more examples, see the documentation at https://docs.genomevault.io")
 
-    except Exception as e:
+    except Exception:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         logger.error("Error in demonstration: {e}")
+        raise
         raise
 
 

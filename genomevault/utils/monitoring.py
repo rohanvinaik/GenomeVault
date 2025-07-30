@@ -12,7 +12,7 @@ This module provides comprehensive monitoring capabilities including:
 import time
 from datetime import datetime
 from functools import wraps
-from typing import Any, Dict, Optional
+from typing import Any
 
 import prometheus_client
 import structlog
@@ -171,6 +171,10 @@ class MetricsCollector:
                     return result
 
                 except Exception as e:
+                    from genomevault.observability.logging import configure_logging
+
+                    logger = configure_logging()
+                    logger.exception("Unhandled exception")
                     # Track error
                     self.processing_errors.labels(
                         operation=operation,
@@ -187,6 +191,7 @@ class MetricsCollector:
                         error_message=str(e),
                     )
 
+                    raise
                     raise
 
             return wrapper

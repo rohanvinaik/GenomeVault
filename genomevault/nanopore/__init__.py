@@ -13,7 +13,7 @@ from .gpu_kernels import GPUBindingKernel
 from .streaming import NanoporeStreamProcessor
 
 __all__ = [
-    "NanoporeStreamProcessor",
     "BiologicalSignalDetector",
     "GPUBindingKernel",
+    "NanoporeStreamProcessor",
 ]

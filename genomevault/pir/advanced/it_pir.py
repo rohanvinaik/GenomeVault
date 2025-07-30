@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """
 Information-Theoretic PIR implementation.
 Provides unconditional privacy guarantees without computational assumptions.
@@ -8,7 +11,7 @@ import json
 import logging
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import numpy as np
 
@@ -414,7 +417,7 @@ if __name__ == "__main__":
     actual = reconstructed[: len(expected)]
 
     logger.info(f"\nRetrieved data matches: {actual == expected}")
-    print(f"Retrieved: {actual[:50]}...")  # First 50 bytes
+    logger.info(f"Retrieved: {actual[:50]}...")  # First 50 bytes
 
     # Test batch queries
     logger.info("\n\nBatch Query Example:")

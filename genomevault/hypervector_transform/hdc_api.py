@@ -7,10 +7,8 @@ Hierarchical Hyperdimensional Computing (HDC).
 
 import logging
 from datetime import datetime
-from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
-import numpy as np
 import torch
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from pydantic import BaseModel, Field
@@ -18,11 +16,9 @@ from pydantic import BaseModel, Field
 from .binding_operations import BindingType, HypervectorBinder
 from .hdc_encoder import (
     CompressionTier,
-    HypervectorConfig,
     HypervectorEncoder,
     OmicsType,
     ProjectionType,
-    create_encoder,
 )
 from .registry import HypervectorRegistry
 
@@ -103,8 +99,13 @@ def get_encoder(version: str | None = None) -> HypervectorEncoder:
     try:
         return registry.get_encoder(version)
     except (KeyError, ValueError, RuntimeError) as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         logger.error(f"Failed to get encoder: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+        raise
 
 
 @router.post("/encode", response_model=EncodingResponse)
@@ -124,10 +125,15 @@ async def encode_genome(
         try:
             omics_type = OmicsType(request.omics_type)
         except ValueError:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             raise HTTPException(
                 status_code=400,
                 detail=f"Invalid omics type: {request.omics_type}. Valid types: {[t.value for t in OmicsType]}",
             )
+            raise
 
         # Parse compression tier if provided
         compression_tier = None
@@ -135,10 +141,15 @@ async def encode_genome(
             try:
                 compression_tier = CompressionTier(request.compression_tier)
             except ValueError:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 raise HTTPException(
                     status_code=400,
                     detail=f"Invalid compression tier: {request.compression_tier}",
                 )
+                raise
 
         # Encode the data
         hypervector = encoder.encode(request.features, omics_type, compression_tier)
@@ -165,10 +176,20 @@ async def encode_genome(
         )
 
     except HTTPException:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
+        raise
         raise
     except (ValueError, RuntimeError, TypeError, AttributeError) as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         logger.error(f"Encoding error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+        raise
 
 
 @router.post("/encode_multimodal", response_model=EncodingResponse)
@@ -236,8 +257,13 @@ async def encode_multimodal(
         )
 
     except (ValueError, RuntimeError, TypeError, KeyError, AttributeError) as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         logger.error(f"Multi-modal encoding error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+        raise
 
 
 @router.post("/decode")
@@ -296,10 +322,20 @@ async def decode_vector(request: DecodeRequest):
             raise HTTPException(status_code=400, detail=f"Unknown query type: {request.query_type}")
 
     except HTTPException:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
+        raise
         raise
     except (ValueError, RuntimeError, TypeError, AttributeError) as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         logger.error(f"Decoding error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+        raise
 
 
 @router.post("/similarity")
@@ -347,10 +383,20 @@ async def compute_similarity(request: SimilarityRequest):
         }
 
     except HTTPException:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
+        raise
         raise
     except (ValueError, RuntimeError, TypeError, AttributeError) as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         logger.error(f"Similarity computation error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+        raise
 
 
 @router.get("/version", response_model=VersionInfo)
@@ -369,8 +415,13 @@ async def get_version_info():
         )
 
     except (ImportError, AttributeError, RuntimeError) as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         logger.error(f"Version info error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+        raise
 
 
 @router.post("/register_version")
@@ -387,9 +438,14 @@ async def register_new_version(
         try:
             ProjectionType(projection_type)
         except ValueError:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             raise HTTPException(
                 status_code=400, detail=f"Invalid projection type: {projection_type}"
             )
+            raise
 
         params = {
             "dimension": dimension,
@@ -410,10 +466,20 @@ async def register_new_version(
         }
 
     except HTTPException:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
+        raise
         raise
     except (ValueError, RuntimeError, TypeError) as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         logger.error(f"Version registration error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+        raise
 
 
 @router.post("/encode_file")
@@ -453,10 +519,20 @@ async def encode_genomic_file(
         }
 
     except HTTPException:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
+        raise
         raise
     except (ValueError, RuntimeError, OSError) as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         logger.error(f"File encoding error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+        raise
 
 
 @router.get("/performance_metrics", response_model=PerformanceMetrics)
@@ -498,8 +574,13 @@ async def get_performance_metrics():
         )
 
     except (RuntimeError, AttributeError, TypeError) as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         logger.error(f"Performance metrics error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+        raise
 
 
 @router.get("/health")
@@ -519,7 +600,12 @@ async def health_check():
             "test_encoding_dimension": test_vector.shape[0],
         }
     except (RuntimeError, ValueError, AttributeError, Exception) as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         return {"status": "unhealthy", "error": str(e)}
+        raise
 
 
 # Include router in main app

@@ -11,8 +11,6 @@ import logging
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 import torch
@@ -21,7 +19,12 @@ import torch
 try:
     import pandas as pd
 except ImportError:
+    from genomevault.observability.logging import configure_logging
+
+    logger = configure_logging()
+    logger.exception("Unhandled exception")
     pd = None
+    raise
 
 # Import our optimized Hamming LUT
 try:
@@ -29,7 +32,12 @@ try:
 
     HAMMING_LUT_AVAILABLE = True
 except ImportError:
+    from genomevault.observability.logging import configure_logging
+
+    logger = configure_logging()
+    logger.exception("Unhandled exception")
     HAMMING_LUT_AVAILABLE = False
+    raise
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -144,7 +152,12 @@ class HypervectorEncoder:
                 self.hamming_lut = HammingLUT(use_gpu=torch.cuda.is_available())
                 logger.info("Initialized with optimized Hamming LUT")
             except Exception as e:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 logger.warning(f"Failed to initialize Hamming LUT: {e}")
+                raise
 
         logger.info(f"Initialized HypervectorEncoder with {self.config.dimension}D vectors")
 
@@ -202,7 +215,12 @@ class HypervectorEncoder:
             return hypervector
 
         except Exception as e:
-            logger.error(f"Encoding error: {str(e)}")
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
+            logger.error(f"Encoding error: {e!s}")
+            raise
             raise
 
     def encode_multiresolution(

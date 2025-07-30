@@ -13,19 +13,29 @@ from pathlib import Path
 def check_command_exists(cmd):
     """Check if a command exists in the system."""
     try:
-        subprocess.run([cmd, "--version"], capture_output=True)
+        subprocess.run([cmd, "--version"], check=False, capture_output=True)
         return True
     except FileNotFoundError:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         return False
+        raise
 
 
 def run_command(cmd_list, cwd=None):
     """Run a command and return success status and output."""
     try:
-        result = subprocess.run(cmd_list, capture_output=True, text=True, cwd=cwd)
+        result = subprocess.run(cmd_list, check=False, capture_output=True, text=True, cwd=cwd)
         return result.returncode == 0, result.stdout, result.stderr
     except Exception as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         return False, "", str(e)
+        raise
 
 
 class ChecklistValidator:
@@ -330,7 +340,7 @@ class ChecklistValidator:
         # Generate report
         json_path, md_path = self.generate_report()
 
-        print(f"\nValidation complete!")
+        print("\nValidation complete!")
         print(f"JSON report: {json_path}")
         print(f"Markdown report: {md_path}")
 

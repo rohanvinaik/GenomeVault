@@ -7,10 +7,9 @@ with biological signal detection.
 
 import asyncio
 import hashlib
-import json
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import numpy as np
 from fastapi import APIRouter, BackgroundTasks, Depends, File, HTTPException, Query, UploadFile
@@ -180,9 +179,14 @@ async def _process_fast5_async(stream_id: str, fast5_path: Path):
         _results_cache[stream_id]["status"] = "completed"
 
     except Exception as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         logger.error(f"Error processing stream {stream_id}: {e}")
         _results_cache[stream_id]["status"] = "error"
         _results_cache[stream_id]["error"] = str(e)
+        raise
 
     finally:
         # Cleanup
@@ -436,8 +440,17 @@ async def websocket_stream(
             await asyncio.sleep(1)  # Poll interval
 
     except WebSocketDisconnect:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         logger.info(f"WebSocket disconnected for stream {stream_id}")
+        raise
     except Exception as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         logger.error(f"WebSocket error: {e}")
         await websocket.send_json(
             {
@@ -445,5 +458,6 @@ async def websocket_stream(
                 "error": str(e),
             }
         )
+        raise
     finally:
         await websocket.close()

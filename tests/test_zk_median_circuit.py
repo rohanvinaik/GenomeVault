@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """
 Test for Zero-Knowledge Median Verification Circuit
 """
@@ -6,13 +9,12 @@ import asyncio
 import json
 import logging
 import time
-from typing import List
 
 import pytest
 
 from genomevault.hypervector.error_handling import ErrorBudget
 from genomevault.zk.circuits.median_verifier import MedianProof, MedianVerifierCircuit
-from genomevault.zk.proof import ProofGenerator, ProofResult
+from genomevault.zk.proof import ProofGenerator
 
 logger = logging.getLogger(__name__)
 

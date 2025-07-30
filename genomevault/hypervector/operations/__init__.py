@@ -10,9 +10,9 @@ from .hamming_lut import HammingLUT, export_platform_implementations, generate_p
 
 __all__ = [
     "BindingOperation",
+    "HammingLUT",
     "HypervectorBinder",
     "MultiModalBinder",
-    "HammingLUT",
-    "generate_popcount_lut",
     "export_platform_implementations",
+    "generate_popcount_lut",
 ]

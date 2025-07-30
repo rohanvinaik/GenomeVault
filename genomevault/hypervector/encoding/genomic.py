@@ -3,7 +3,6 @@ Hypervector encoding for genomic data
 """
 
 from enum import Enum
-from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -154,7 +153,12 @@ class GenomicEncoder:
             return variant_vec
 
         except Exception:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             raise HypervectorError("Failed to encode variant: {str(e)}")
+            raise
 
     def encode_genome(self, variants: list[dict]) -> torch.Tensor:
         """
@@ -211,7 +215,12 @@ class GenomicEncoder:
         try:
             chr_idx = int(chr_num)
         except Exception:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             chr_idx = 25  # For mitochondrial or other
+            raise
 
         # Generate deterministic vector based on chromosome
         torch.manual_seed(chr_idx)

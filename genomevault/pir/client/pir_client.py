@@ -5,7 +5,7 @@ PIR Client implementation for private genomic queries
 import asyncio
 import json
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import aiohttp
 import numpy as np
@@ -136,9 +136,19 @@ class PIRClient:
                 else:
                     raise PIRError("Server returned status {response.status}")
         except TimeoutError:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             raise PIRError("Query timeout for server {server_url}")
-        except (ConnectionError, TimeoutError, RequestException) as e:
+            raise
+        except (ConnectionError, TimeoutError, RequestException):
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             raise PIRError("Query failed for server {server_url}: {str(e)}")
+            raise
 
     def _reconstruct_data(self, responses: list[dict[str, Any]], query: PIRQuery) -> bytes:
         """
@@ -199,7 +209,12 @@ class PIRClient:
                             }
                         )
             except KeyError as e:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 statuses.append({"url": server_url, "online": False, "error": str(e)})
+                raise
 
         return statuses
 
@@ -309,9 +324,19 @@ class PIRClient:
                 else:
                     raise PIRError(f"Server returned status {response.status}")
         except TimeoutError:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             raise PIRError(f"Query timeout for server {server_url}")
+            raise
         except (ConnectionError, TimeoutError, RequestException) as e:
-            raise PIRError(f"Query failed for server {server_url}: {str(e)}")
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
+            raise PIRError(f"Query failed for server {server_url}: {e!s}")
+            raise
 
     def _reconstruct_data_v2(self, responses: list[dict[str, Any]], query: PIRQuery) -> Any:
         """
@@ -353,7 +378,7 @@ class PIRClient:
         final_results = []
         for i, result in enumerate(results):
             if isinstance(result, Exception):
-                raise PIRError(f"Query for index {indices[i]} failed: {str(result)}")
+                raise PIRError(f"Query for index {indices[i]} failed: {result!s}")
             final_results.append(result)
 
         return final_results

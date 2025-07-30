@@ -11,9 +11,9 @@ from genomevault.hypervector.error_handling import (
 )
 
 __all__ = [
-    "GenomicEncoder",
     "AdaptiveHDCEncoder",
     "ECCEncoderMixin",
     "ErrorBudget",
     "ErrorBudgetAllocator",
+    "GenomicEncoder",
 ]

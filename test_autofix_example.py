@@ -10,8 +10,13 @@ print(f"Processing file: {filename}")
 # Example 2: Bare except clause
 try:
     risky_operation()
-except:
+except Exception:
+    from genomevault.observability.logging import configure_logging
+
+    logger = configure_logging()
+    logger.exception("Unhandled exception")
     print("Something went wrong")
+    raise
 
 # Example 3: Broad exception handling
 try:
@@ -40,9 +45,13 @@ class MyClass:
             result = param1 + param2
             print(f"Result is: {result}")
             return result
-        except:
+        except Exception:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             print("Failed to calculate")
-            return None
+            raise
 
 
 # Example usage at module level

@@ -1,4 +1,5 @@
 from fastapi.testclient import TestClient
+
 from genomevault.api.app import app
 from genomevault.core.constants import HYPERVECTOR_DIMENSIONS
 
@@ -7,7 +8,11 @@ client = TestClient(app)
 
 def test_vectors_encode_happy_path():
     dim = HYPERVECTOR_DIMENSIONS["base"]
-    payload = {"data": {"genomic": [1.0, 2.0, 3.0]}, "dimension": str(dim), "compression_tier": "mini"}
+    payload = {
+        "data": {"genomic": [1.0, 2.0, 3.0]},
+        "dimension": str(dim),
+        "compression_tier": "mini",
+    }
     r = client.post("/vectors/encode", json=payload)
     assert r.status_code == 200
     j = r.json()
@@ -15,6 +20,10 @@ def test_vectors_encode_happy_path():
 
 
 def test_vectors_encode_bad_dim():
-    payload = {"data": {"genomic": [1.0, 2.0, 3.0]}, "dimension": "99999", "compression_tier": "mini"}
+    payload = {
+        "data": {"genomic": [1.0, 2.0, 3.0]},
+        "dimension": "99999",
+        "compression_tier": "mini",
+    }
     r = client.post("/vectors/encode", json=payload)
     assert r.status_code == 400

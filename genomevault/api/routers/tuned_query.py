@@ -3,15 +3,13 @@ API Router for Error-Tuned Queries
 Implements the /query_tuned endpoint with real-time progress updates
 """
 
-import asyncio
 import time
-from typing import Any, Dict, Optional
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel, Field
 
 from genomevault.hypervector.error_handling import (
-    AdaptiveHDCEncoder,
     ErrorBudget,
     ErrorBudgetAllocator,
 )
@@ -85,8 +83,13 @@ class WebSocketManager:
             try:
                 await self.active_connections[session_id].send_json(update.dict())
             except KeyError as e:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 logger.error(f"Failed to send progress update: {e}")
                 self.disconnect(session_id)
+                raise
 
 
 ws_manager = WebSocketManager()
@@ -259,6 +262,10 @@ async def query_with_tuning(
         return response
 
     except (ValueError, DatabaseError, TypeError, KeyError) as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         logger.error(f"Tuned query failed: {e}")
         if request.session_id:
             await ws_manager.send_progress(
@@ -267,10 +274,11 @@ async def query_with_tuning(
                     session_id=request.session_id,
                     stage="error",
                     progress=0.0,
-                    message=f"Query failed: {str(e)}",
+                    message=f"Query failed: {e!s}",
                 ),
             )
-        raise HTTPException(500, f"Query processing failed: {str(e)}")
+        raise HTTPException(500, f"Query processing failed: {e!s}")
+        raise
 
 
 @router.websocket("/progress/{session_id}")
@@ -282,7 +290,12 @@ async def websocket_progress(websocket: WebSocket, session_id: str):
             # Keep connection alive
             await websocket.receive_text()
     except WebSocketDisconnect:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         ws_manager.disconnect(session_id)
+        raise
 
 
 @router.post("/estimate")
@@ -327,8 +340,13 @@ async def estimate_query_performance(
         }
 
     except (ValueError, TypeError) as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         logger.error(f"Estimation failed: {e}")
-        raise HTTPException(500, f"Estimation failed: {str(e)}")
+        raise HTTPException(500, f"Estimation failed: {e!s}")
+        raise
 
 
 # Helper functions
@@ -431,4 +449,4 @@ def _estimate_theoretical_error(budget: ErrorBudget) -> float:
 
 
 # Module exports
-__all__ = ["router", "TunedQueryRequest", "TunedQueryResponse"]
+__all__ = ["TunedQueryRequest", "TunedQueryResponse", "router"]

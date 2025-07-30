@@ -5,10 +5,8 @@ These cached projections significantly speed up encoder initialization.
 """
 
 import argparse
-import os
 import time
 from pathlib import Path
-from typing import List, Tuple
 
 import numpy as np
 
@@ -16,10 +14,15 @@ import numpy as np
 try:
     from genomevault.utils.logging import logger
 except ImportError:
+    from genomevault.observability.logging import configure_logging
+
+    logger = configure_logging()
+    logger.exception("Unhandled exception")
     import logging
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
     logger = logging.getLogger(__name__)
+    raise
 
 
 class ProjectionGenerator:
@@ -131,8 +134,13 @@ class ProjectionGenerator:
             return True
 
         except Exception as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"✗ Failed to verify {filepath.name}: {e}")
             return False
+            raise
 
     def clean_old_projections(self, keep_latest: int = 1):
         """Remove old projection files, keeping only the latest versions."""
@@ -149,7 +157,12 @@ class ProjectionGenerator:
                     dimension_files[dimension] = []
                 dimension_files[dimension].append(file_path)
             except (IndexError, ValueError):
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 continue
+                raise
 
         # Clean old files
         for dimension, files in dimension_files.items():

@@ -1,15 +1,12 @@
-from typing import Tuple
-
 # genomevault/governance/node.py
 """Decentralized governance with quadratic voting."""
-
 
 import math
 import time
 from collections import defaultdict
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Any, Dict, List, Optional, Set
+from typing import Any
 
 
 class ProposalType(Enum):

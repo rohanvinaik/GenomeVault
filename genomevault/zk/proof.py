@@ -6,7 +6,7 @@ Uses real ZK circuits for proof generation and verification
 import hashlib
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from genomevault.hypervector.error_handling import ErrorBudget
 from genomevault.utils.logging import get_logger
@@ -147,9 +147,14 @@ class ProofGenerator:
             )
 
         except Exception as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Failed to generate ZK proof: {e}")
             # Fall back to mock proof for compatibility
             return await self._generate_mock_proof(results, median, budget, metadata, error=str(e))
+            raise
 
     async def _generate_mock_proof(
         self,
@@ -238,8 +243,13 @@ class ProofGenerator:
             return is_valid
 
         except Exception as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Proof verification failed: {e}")
             return False
+            raise
 
     async def generate_ecc_proof(
         self,

@@ -6,11 +6,9 @@ Fixes only issues in actual project files (excludes venv)
 
 import datetime
 import logging
-import os
 import re
 import shutil
 from pathlib import Path
-from typing import List, Set
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -248,7 +246,12 @@ class TargetedGenomeVaultFixer:
                 logger.info(f"Updated {file_path}")
 
         except Exception as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Error processing {file_path}: {e}")
+            raise
 
     def add_complexity_todos(self):
         """Add TODO comments for complex functions"""
@@ -295,7 +298,12 @@ class TargetedGenomeVaultFixer:
                 file_path.write_text(new_content)
 
         except Exception as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Error adding TODO to {file_path}: {e}")
+            raise
 
     def run_targeted_fixes(self):
         """Run targeted fixes for actual project issues"""

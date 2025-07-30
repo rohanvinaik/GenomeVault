@@ -10,7 +10,7 @@ import json
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import numpy as np
 import torch
@@ -111,8 +111,13 @@ class HypervectorRegistry:
             logger.info(f"Loaded registry with {len(self.versions)} versions")
 
         except Exception:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Failed to load registry: {e}")
             self._initialize_registry()
+            raise
 
     def _save_registry(self):
         """Save registry to file with backup."""
@@ -140,10 +145,15 @@ class HypervectorRegistry:
                 backup_path.unlink()
 
         except Exception:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Failed to save registry: {e}")
             # Restore backup
             if backup_path and backup_path.exists():
                 backup_path.rename(self.registry_path)
+            raise
             raise
 
     def register_version(
@@ -175,7 +185,7 @@ class HypervectorRegistry:
 
         # Validate dimension constraints
         if not 1000 <= params["dimension"] <= 100000:
-            raise ValueError(f"Dimension must be between 1000 and 100000")
+            raise ValueError("Dimension must be between 1000 and 100000")
 
         # Add seed if not provided
         if "seed" not in params:

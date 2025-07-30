@@ -11,7 +11,7 @@ Implements the main API endpoints as specified in the System Breakdown:
 import hashlib
 import json
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from fastapi import Depends, FastAPI, HTTPException, Security, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,7 +19,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from ..genomevault.blockchain.node import BlockchainNode, NodeInfo
 from ..genomevault.core.config import get_config
-from ..genomevault.core.constants import CREDITS_PER_BLOCK_BASE, CREDITS_SIGNATORY_BONUS, NodeType
+from ..genomevault.core.constants import NodeType
 from ..genomevault.utils.logging import audit_logger, get_logger
 
 logger = get_logger(__name__)

@@ -8,14 +8,12 @@ Stage 3 implementation: Verification & Property Tests
 """
 
 import hashlib
-from typing import Any, Dict, List
 
 import pytest
-from hypothesis import assume, given, settings
+from hypothesis import given
 from hypothesis import strategies as st
 from hypothesis.stateful import RuleBasedStateMachine, initialize, rule
 
-from genomevault.zk_proofs.circuits.implementations.constraint_system import FieldElement
 from genomevault.zk_proofs.circuits.implementations.variant_frequency_circuit import (
     VariantFrequencyCircuit,
 )
@@ -125,8 +123,13 @@ class TestVariantProofCircuit:
             satisfied = circuit.verify_constraints()
             assert not satisfied, "Wrong hash should not satisfy constraints"
         except (ValueError, AssertionError, Exception):
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             # Constraint generation might fail, which is also acceptable
             pass
+            raise
 
     @given(
         variant_data=variant_data_strategy(),
@@ -164,7 +167,12 @@ class TestVariantProofCircuit:
             satisfied = circuit.verify_constraints()
             assert not satisfied, "Mutated position should not satisfy constraints"
         except (ValueError, AssertionError, Exception):
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             pass
+            raise
 
     def test_boundary_chromosome_values(self):
         """Test boundary values for chromosome encoding."""
@@ -295,7 +303,12 @@ class TestVariantFrequencyCircuit:
             satisfied = circuit.verify_constraints()
             assert not satisfied, "Wrong sum should not satisfy constraints"
         except (ValueError, AssertionError, Exception):
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             pass
+            raise
 
     @given(
         num_snps=st.integers(min_value=1, max_value=30),
@@ -339,7 +352,12 @@ class TestVariantFrequencyCircuit:
             # The circuit should detect the range violation
             # In a real implementation with proper range proofs, this would fail
         except ValueError:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             pass  # Expected for out-of-range values
+            raise
 
     def test_unused_slots_zero(self):
         """Unused SNP slots should be constrained to zero."""
@@ -507,8 +525,13 @@ def test_malformed_public_inputs():
             # Should raise an error
             assert False, f"Malformed input {i} should have raised an error"
         except (KeyError, ValueError, TypeError):
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             # Expected behavior
             pass
+            raise
 
 
 @pytest.mark.parametrize("constraint_count", [100, 1000, 5000])

@@ -11,7 +11,6 @@ import hmac
 import logging
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
@@ -380,12 +379,12 @@ if __name__ == "__main__":
 
         # HIPAA Trust Score nodes (q = 0.98)
         analysis = analyze_privacy_breach_probability(num_servers, 0.98)
-        logger.info(f"  HIPAA TS nodes (q=0.98):")
+        logger.info("  HIPAA TS nodes (q=0.98):")
         logger.info(f"    Privacy breach probability: {analysis['breach_probability']:.2e}")
 
         # Generic nodes (q = 0.95)
         analysis = analyze_privacy_breach_probability(num_servers, 0.95)
-        logger.info(f"  Generic nodes (q=0.95):")
+        logger.info("  Generic nodes (q=0.95):")
         logger.info(f"    Privacy breach probability: {analysis['breach_probability']:.2e}")
 
     logger.info("\nMinimum servers for privacy targets:")
@@ -439,7 +438,12 @@ if __name__ == "__main__":
     # Process responses
     try:
         recovered_data = pir.process_responses_with_verification(query, responses)
-        logger.info(f"\n  Successfully recovered data despite Byzantine server!")
+        logger.info("\n  Successfully recovered data despite Byzantine server!")
         logger.info(f"  Data size: {len(recovered_data)} bytes")
     except SecurityError:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         logger.info(f"\n  Security error: {e}")
+        raise

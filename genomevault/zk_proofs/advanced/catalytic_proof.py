@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """
 Catalytic space computing for proof efficiency.
 Implements catalytic computation to reduce memory requirements.
@@ -8,7 +11,7 @@ import json
 import logging
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import numpy as np
 
@@ -534,7 +537,7 @@ if __name__ == "__main__":
     logger.info(f"Space efficiency: {variant_proof.space_efficiency:.1f}x")
 
     savings = engine.get_space_savings("variant_presence")
-    logger.info(f"\nSpace savings:")
+    logger.info("\nSpace savings:")
     logger.info(f"  Standard approach: {savings['standard_approach_mb']:.1f} MB")
     logger.info(f"  Catalytic clean: {savings['catalytic_clean_mb']:.1f} MB")
     logger.info(f"  Reduction: {savings['clean_space_reduction']:.1f}%")
@@ -567,16 +570,16 @@ if __name__ == "__main__":
     logger.info(f"Computation time: {prs_proof.metadata['computation_time']*1000:.1f} ms")
 
     savings = engine.get_space_savings("polygenic_risk_score")
-    logger.info(f"\nSpace savings:")
+    logger.info("\nSpace savings:")
     logger.info(f"  Standard approach: {savings['standard_approach_mb']:.1f} MB")
     logger.info(f"  Catalytic clean: {savings['catalytic_clean_mb']:.1f} MB")
     logger.info(f"  Reduction: {savings['clean_space_reduction']:.1f}%")
 
     # Show catalytic space statistics
-    logger.info(f"\nCatalytic space statistics:")
+    logger.info("\nCatalytic space statistics:")
     stats = engine.catalytic_space.get_usage_stats()
     logger.info(f"  Total size: {stats['size']/1024/1024:.1f} MB")
     logger.info(f"  Access count: {stats['access_count']}")
-    print(
+    logger.info(
         f"  State preserved: {stats['fingerprint'] == engine.catalytic_space.initial_fingerprint}"
     )

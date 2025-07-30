@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from typing import List, Tuple
 import numpy as np
+
 from genomevault.core.exceptions import ValidationError
-from genomevault.federated.models import ModelUpdate, AggregateRequest, AggregateResponse
+from genomevault.federated.models import AggregateRequest, AggregateResponse, ModelUpdate
 
 
 def _l2_norm(x: np.ndarray) -> float:
@@ -27,16 +27,21 @@ class FedAvgAggregator:
     def __init__(self) -> None:
         self._last_shape: int | None = None
 
-    def _validate_and_prepare(self, updates: List[ModelUpdate], clip_norm: float | None) -> Tuple[List[np.ndarray], List[int]]:
-        arrs: List[np.ndarray] = []
-        counts: List[int] = []
+    def _validate_and_prepare(
+        self, updates: list[ModelUpdate], clip_norm: float | None
+    ) -> tuple[list[np.ndarray], list[int]]:
+        arrs: list[np.ndarray] = []
+        counts: list[int] = []
         L: int | None = None
         for u in updates:
             w = np.asarray(u.weights, dtype=np.float64)
             if L is None:
                 L = w.size
             if w.size != L:
-                raise ValidationError("all weight vectors must have the same length", context={"expected": L, "got": w.size, "client_id": u.client_id})
+                raise ValidationError(
+                    "all weight vectors must have the same length",
+                    context={"expected": L, "got": w.size, "client_id": u.client_id},
+                )
             if clip_norm is not None and clip_norm > 0.0:
                 w = _clip_by_l2(w, clip_norm)
             arrs.append(w)

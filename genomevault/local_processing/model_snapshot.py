@@ -7,19 +7,15 @@ enabling cryptographic proof of training evolution.
 
 import hashlib
 import json
-import os
 import pickle
 import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
-from collections.abc import Callable
+from typing import Any
 
 import numpy as np
-import tensorflow as tf
 import torch
 
-from genomevault.hypervector.encoding import create_hypervector
 from genomevault.utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -315,14 +311,24 @@ class ModelSnapshotLogger:
 
             return "pytorch"
         except ImportError:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             pass
+            raise
 
         try:
             import tensorflow
 
             return "tensorflow"
         except ImportError:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             pass
+            raise
 
         return "unknown"
 

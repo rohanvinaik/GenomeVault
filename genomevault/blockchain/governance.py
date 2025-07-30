@@ -14,7 +14,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any
 
 from genomevault.utils import get_logger
 from genomevault.utils.logging import audit_logger
@@ -948,4 +948,9 @@ if __name__ == "__main__":
         delegation.delegate("expert_1", "user_3")
         logger.info("ERROR: Circular delegation allowed!")
     except ValueError as _:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         logger.info("Correctly prevented circular delegation: {e}")
+        raise

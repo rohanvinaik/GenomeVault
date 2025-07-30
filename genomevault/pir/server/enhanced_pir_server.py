@@ -14,7 +14,7 @@ from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any
 
 import aiofiles
 import lz4.frame
@@ -23,7 +23,6 @@ import uvloop
 
 from ...core.config import get_config
 from ...core.exceptions import SecurityError, ValidationError
-from ...utils.encryption import AESGCMEncryption
 from ...utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -437,11 +436,16 @@ class EnhancedPIRServer:
                 raise ValidationError("Query size exceeds maximum")
 
         except (KeyError, ValueError) as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Invalid query format: {e}")
             return {
                 "error": "Invalid query format",
                 "query_id": query_data.get("query_id"),
             }
+            raise
 
         # Log query (privacy-safe)
         logger.info(
@@ -481,8 +485,13 @@ class EnhancedPIRServer:
             return response
 
         except Exception:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Error processing query {query_id}: {e}")
             return {"error": str(e), "query_id": query_id, "server_id": self.server_id}
+            raise
 
     async def _process_genomic_query(
         self, query_vectors: list[np.ndarray], parameters: dict[str, Any]
@@ -641,8 +650,13 @@ class EnhancedPIRServer:
             return result
 
         except Exception:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Error processing shard {shard.shard_id}: {e}")
             return None
+            raise
 
     def _update_metrics(self, processing_time_ms: float, result_count: int):
         """Update server metrics."""

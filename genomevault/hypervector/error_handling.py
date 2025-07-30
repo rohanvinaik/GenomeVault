@@ -6,14 +6,11 @@ Implements the ECC-HDC core with dynamic budget allocation from the project know
 import math
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Optional, Tuple
 
-import numpy as np
 import torch
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from genomevault.core.exceptions import HypervectorError
 from genomevault.hypervector.encoding.genomic import GenomicEncoder
 from genomevault.utils.logging import get_logger
 
@@ -393,7 +390,12 @@ async def estimate_budget(request: ErrorBudgetRequest):
             try:
                 repeat_cap = int(request.repeat_cap)
             except ValueError:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 raise HTTPException(400, "Invalid repeat_cap value")
+                raise
 
         # Plan budget
         budget = allocator.plan_budget(
@@ -419,8 +421,13 @@ async def estimate_budget(request: ErrorBudgetRequest):
         )
 
     except Exception as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         logger.error(f"Budget estimation failed: {e}")
         raise HTTPException(500, "Failed to estimate error budget")
+        raise
 
 
 @router.post("/query", response_model=QueryResponse)
@@ -496,15 +503,20 @@ async def query_with_tuning(request: QueryRequest):
         )
 
     except Exception as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         logger.error(f"Query processing failed: {e}")
         raise HTTPException(500, "Query processing failed")
+        raise
 
 
 # Module exports
 __all__ = [
-    "ECCEncoderMixin",
-    "ErrorBudgetAllocator",
     "AdaptiveHDCEncoder",
+    "ECCEncoderMixin",
     "ErrorBudget",
+    "ErrorBudgetAllocator",
     "router",
 ]

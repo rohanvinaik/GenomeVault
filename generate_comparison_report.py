@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 #!/usr/bin/env python3
 """
 GenomeVault Before/After Comparison Report Generator
@@ -37,20 +40,20 @@ def generate_comparison_report():
         with open(current_report_path) as f:
             current_audit = json.load(f)
     else:
-        print("No current validation report found. Run validate_audit_fixes.py first.")
+        logger.info("No current validation report found. Run validate_audit_fixes.py first.")
         return
 
     # Generate comparison report
-    print("═" * 60)
-    print("GenomeVault Audit Comparison Report")
-    print(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print("═" * 60)
-    print()
+    logger.info("═" * 60)
+    logger.info("GenomeVault Audit Comparison Report")
+    logger.info(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    logger.info("═" * 60)
+    logger.info("")
 
-    print("Project Structure Comparison:")
-    print("-" * 40)
-    print(f"{'Metric':<25} {'Original':<15} {'Current':<15} {'Status'}")
-    print("-" * 40)
+    logger.info("Project Structure Comparison:")
+    logger.info("-" * 40)
+    logger.info(f"{'Metric':<25} {'Original':<15} {'Current':<15} {'Status'}")
+    logger.info("-" * 40)
 
     # Compare basic metrics
     metrics = [
@@ -77,69 +80,73 @@ def generate_comparison_report():
         else:
             status = "→"
 
-        print(f"{label:<25} {str(orig_val):<15} {str(curr_val):<15} {status}")
+        logger.info(f"{label:<25} {orig_val!s:<15} {curr_val!s:<15} {status}")
 
-    print()
-    print("Code Quality Issues:")
-    print("-" * 40)
+    logger.info("")
+    logger.info("Code Quality Issues:")
+    logger.info("-" * 40)
 
     # Missing init files
     orig_missing = original_audit.get("missing_init_dirs", 19)
     curr_missing = len(current_audit.get("missing_init_dirs", []))
     fixed_inits = orig_missing - curr_missing
-    print(f"Missing __init__.py files: {orig_missing} → {curr_missing} ({fixed_inits} fixed)")
+    logger.info(f"Missing __init__.py files: {orig_missing} → {curr_missing} ({fixed_inits} fixed)")
 
     # Print statements
     orig_prints = original_audit.get("n_print_calls", 456)
     curr_prints = sum(item["count"] for item in current_audit.get("files_with_prints", []))
     fixed_prints = orig_prints - curr_prints
-    print(f"Print statements: {orig_prints} → {curr_prints} ({fixed_prints} converted to logging)")
+    logger.info(
+        f"Print statements: {orig_prints} → {curr_prints} ({fixed_prints} converted to logging)"
+    )
 
     # Broad exceptions
     orig_excepts = original_audit.get("n_broad_excepts", 118)
     curr_excepts = sum(item["count"] for item in current_audit.get("files_with_broad_excepts", []))
     fixed_excepts = orig_excepts - curr_excepts
-    print(f"Broad exceptions: {orig_excepts} → {curr_excepts} ({fixed_excepts} made specific)")
+    logger.info(
+        f"Broad exceptions: {orig_excepts} → {curr_excepts} ({fixed_excepts} made specific)"
+    )
 
     # Complex functions
     curr_complex = len(current_audit.get("complex_functions", []))
-    print(
+    logger.info(
         f"Complex functions: {original_audit.get('max_complexity', 20)} max → {curr_complex} functions > 10"
     )
 
-    print()
-    print("Overall Progress:")
-    print("-" * 40)
+    logger.info("")
+    logger.info("Overall Progress:")
+    logger.info("-" * 40)
 
     # Calculate overall progress
     total_issues = orig_missing + orig_prints + orig_excepts
     total_fixed = fixed_inits + fixed_prints + fixed_excepts
     progress = (total_fixed / total_issues * 100) if total_issues > 0 else 0
 
-    print(f"Total issues fixed: {total_fixed} / {total_issues} ({progress:.1f}%)")
+    logger.info(f"Total issues fixed: {total_fixed} / {total_issues} ({progress:.1f}%)")
 
     # Recommendations
-    print()
-    print("Recommendations:")
-    print("-" * 40)
+    logger.info("")
+    logger.info("Recommendations:")
+    logger.info("-" * 40)
 
     if curr_missing > 0:
-        print(f"• Add {curr_missing} remaining __init__.py files")
+        logger.info(f"• Add {curr_missing} remaining __init__.py files")
     if curr_prints > 0:
-        print(f"• Convert {curr_prints} remaining print statements to logging")
+        logger.info(f"• Convert {curr_prints} remaining print statements to logging")
     if curr_excepts > 0:
-        print(f"• Fix {curr_excepts} remaining broad exception handlers")
+        logger.info(f"• Fix {curr_excepts} remaining broad exception handlers")
     if curr_complex > 5:
-        print(f"• Refactor {curr_complex} complex functions")
+        logger.info(f"• Refactor {curr_complex} complex functions")
 
     if progress >= 80:
-        print("\n✓ Great progress! Most issues have been addressed.")
+        logger.info("\n✓ Great progress! Most issues have been addressed.")
     elif progress >= 50:
-        print("\n→ Good start! Continue with remaining fixes.")
+        logger.info("\n→ Good start! Continue with remaining fixes.")
     else:
-        print("\n→ Run the comprehensive fix script to address most issues automatically.")
+        logger.info("\n→ Run the comprehensive fix script to address most issues automatically.")
 
-    print()
+    logger.info("")
 
 
 if __name__ == "__main__":

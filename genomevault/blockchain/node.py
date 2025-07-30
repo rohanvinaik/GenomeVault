@@ -10,7 +10,6 @@ import logging
 import time
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Tuple
 
 from genomevault.core.constants import NodeClassWeight as NodeClass
 from genomevault.utils.logging import audit_logger, get_logger, logger, performance_logger
@@ -208,8 +207,13 @@ class BlockchainNode:
             return True
 
         except Exception as _:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"HIPAA verification failed: {e}")
             return False
+            raise
 
     def add_peer(self, peer_info: NodeInfo):
         """Add peer to network."""

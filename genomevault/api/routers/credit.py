@@ -4,13 +4,11 @@ Credit system API endpoints
 
 import uuid
 from datetime import datetime
-from typing import Dict, List, Optional
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from genomevault.core.config import get_config
-from genomevault.core.exceptions import BlockchainError
 
 router = APIRouter()
 config = get_config()
@@ -164,17 +162,16 @@ async def redeem_vaulted_credits(request: RedeemRequest, address: str = "0x123..
         redemption_amount = int(vault.amount * (1 + vault.bonus_rate))
         penalty = 0
         vault.status = "matured"
+    # Early withdrawal - apply penalty
+    elif request.early_withdrawal:
+        redemption_amount = int(vault.amount * 0.9)  # 10% penalty
+        penalty = vault.amount - redemption_amount
+        vault.status = "redeemed"
     else:
-        # Early withdrawal - apply penalty
-        if request.early_withdrawal:
-            redemption_amount = int(vault.amount * 0.9)  # 10% penalty
-            penalty = vault.amount - redemption_amount
-            vault.status = "redeemed"
-        else:
-            raise HTTPException(
-                status_code=400,
-                detail="Vault not matured. Matures at block {vault.maturity_block}",
-            )
+        raise HTTPException(
+            status_code=400,
+            detail="Vault not matured. Matures at block {vault.maturity_block}",
+        )
 
     # Update balances
     balance.balance += redemption_amount

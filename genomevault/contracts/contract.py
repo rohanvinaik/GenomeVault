@@ -4,7 +4,7 @@ import json
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import pandas as pd
 
@@ -15,23 +15,25 @@ class ColumnSpec:
     dtype: str  # 'string' | 'int' | 'float' | 'bool' | 'datetime'
     required: bool = True
     allow_null: bool = False
-    regex: Optional[str] = None
-    minimum: Optional[float] = None
-    maximum: Optional[float] = None
+    regex: str | None = None
+    minimum: float | None = None
+    maximum: float | None = None
     unique: bool = False
 
 
 @dataclass
 class TableContract:
     name: str
-    columns: List[ColumnSpec] = field(default_factory=list)
-    unique_key: Optional[List[str]] = None  # compound unique key (list of columns)
+    columns: list[ColumnSpec] = field(default_factory=list)
+    unique_key: list[str] | None = None  # compound unique key (list of columns)
 
     @staticmethod
-    def from_json(path: str) -> "TableContract":
+    def from_json(path: str) -> TableContract:
         obj = json.loads(Path(path).read_text(encoding="utf-8"))
         cols = [ColumnSpec(**c) for c in obj["columns"]]
-        return TableContract(name=obj.get("name", Path(path).stem), columns=cols, unique_key=obj.get("unique_key"))
+        return TableContract(
+            name=obj.get("name", Path(path).stem), columns=cols, unique_key=obj.get("unique_key")
+        )
 
     def to_json(self, path: str) -> None:
         obj = {
@@ -79,13 +81,18 @@ def _dtype_ok(series: pd.Series, spec: ColumnSpec) -> bool:
     return True
 
 
-def validate_dataframe(df: pd.DataFrame, contract: TableContract) -> Dict[str, Any]:
+def validate_dataframe(df: pd.DataFrame, contract: TableContract) -> dict[str, Any]:
     """Return a validation report with booleans and violation details."""
-    report: Dict[str, Any] = {"ok": True, "columns": {}, "row_count": int(df.shape[0]), "violations": []}
+    report: dict[str, Any] = {
+        "ok": True,
+        "columns": {},
+        "row_count": int(df.shape[0]),
+        "violations": [],
+    }
     df = _coerce_types(df, contract)
 
     for spec in contract.columns:
-        colrep: Dict[str, Any] = {"present": spec.name in df.columns}
+        colrep: dict[str, Any] = {"present": spec.name in df.columns}
         if spec.name not in df.columns:
             if spec.required:
                 report["ok"] = False
@@ -107,30 +114,52 @@ def validate_dataframe(df: pd.DataFrame, contract: TableContract) -> Dict[str, A
 
         if spec.regex:
             pat = re.compile(spec.regex)
-            bad = s.dropna().astype(str).map(lambda v: bool(pat.fullmatch(v)) if isinstance(v, str) else False)
+            bad = (
+                s.dropna()
+                .astype(str)
+                .map(lambda v: bool(pat.fullmatch(v)) if isinstance(v, str) else False)
+            )
             if not bad.all():
                 nbad = int((~bad).sum())
                 if nbad > 0:
                     report["ok"] = False
-                    report["violations"].append({"type": "regex", "column": spec.name, "count": nbad})
+                    report["violations"].append(
+                        {"type": "regex", "column": spec.name, "count": nbad}
+                    )
 
         if spec.minimum is not None:
             mask = s.dropna() < spec.minimum
             if mask.any():
                 report["ok"] = False
-                report["violations"].append({"type": "min", "column": spec.name, "count": int(mask.sum()), "min": spec.minimum})
+                report["violations"].append(
+                    {
+                        "type": "min",
+                        "column": spec.name,
+                        "count": int(mask.sum()),
+                        "min": spec.minimum,
+                    }
+                )
 
         if spec.maximum is not None:
             mask = s.dropna() > spec.maximum
             if mask.any():
                 report["ok"] = False
-                report["violations"].append({"type": "max", "column": spec.name, "count": int(mask.sum()), "max": spec.maximum})
+                report["violations"].append(
+                    {
+                        "type": "max",
+                        "column": spec.name,
+                        "count": int(mask.sum()),
+                        "max": spec.maximum,
+                    }
+                )
 
         if spec.unique:
             dups = s.dropna().duplicated(keep=False)
             if dups.any():
                 report["ok"] = False
-                report["violations"].append({"type": "unique", "column": spec.name, "count": int(dups.sum())})
+                report["violations"].append(
+                    {"type": "unique", "column": spec.name, "count": int(dups.sum())}
+                )
 
         report["columns"][spec.name] = colrep
 
@@ -141,9 +170,13 @@ def validate_dataframe(df: pd.DataFrame, contract: TableContract) -> Dict[str, A
             dups = df[subset].astype(str).duplicated(keep=False)
             if dups.any():
                 report["ok"] = False
-                report["violations"].append({"type": "unique_key", "columns": subset, "count": int(dups.sum())})
+                report["violations"].append(
+                    {"type": "unique_key", "columns": subset, "count": int(dups.sum())}
+                )
         else:
             report["ok"] = False
-            report["violations"].append({"type": "unique_key_missing_columns", "columns": contract.unique_key})
+            report["violations"].append(
+                {"type": "unique_key_missing_columns", "columns": contract.unique_key}
+            )
 
     return report

@@ -26,10 +26,10 @@ warnings.warn(
 
 # Re-export for backward compatibility
 __all__ = [
-    "DiabetesRiskCircuit",
-    "ClinicalBiomarkerCircuit",
     "BaseCircuit",
+    "CircuitType",
+    "ClinicalBiomarkerCircuit",
+    "DiabetesRiskCircuit",
     "ProofData",
     "create_circuit",
-    "CircuitType",
 ]

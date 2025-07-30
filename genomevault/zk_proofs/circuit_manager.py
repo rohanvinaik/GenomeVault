@@ -8,7 +8,7 @@ genomic privacy-preserving proofs.
 import hashlib
 import time
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 from genomevault.utils.config import get_config
 
@@ -29,7 +29,6 @@ from .circuits.biological.multi_omics import (
     MultiOmicsCorrelationCircuit,
     RareVariantBurdenCircuit,
 )
-from .circuits.biological.variant import VariantProofCircuit
 
 
 @dataclass

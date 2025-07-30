@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
+
 import numpy as np
-from typing import Iterable, Dict, List, Tuple
 
 
 def circular_convolution(a: np.ndarray, b: np.ndarray) -> np.ndarray:
@@ -66,7 +67,9 @@ def _cosine(a: np.ndarray, b: np.ndarray) -> float:
     return float(a @ b / denom)
 
 
-def unbundle(bundled: np.ndarray, item_memory: Dict[str, np.ndarray], threshold: float = 0.3) -> List[Tuple[str, float]]:
+def unbundle(
+    bundled: np.ndarray, item_memory: dict[str, np.ndarray], threshold: float = 0.3
+) -> list[tuple[str, float]]:
     """Retrieve components from a bundled vector using cosine similarity threshold.
 
     Args:
@@ -78,7 +81,7 @@ def unbundle(bundled: np.ndarray, item_memory: Dict[str, np.ndarray], threshold:
     """
     if bundled.ndim != 1:
         raise ValueError("bundled must be a 1-D array")
-    out: List[Tuple[str, float]] = []
+    out: list[tuple[str, float]] = []
     for label, proto in item_memory.items():
         if proto.ndim != 1 or proto.shape[0] != bundled.shape[0]:
             raise ValueError("prototypes must be 1-D and equal length to bundled")

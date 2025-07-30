@@ -99,8 +99,12 @@ def process_file(filepath, apply=False):
         with open(filepath, encoding="utf-8") as f:
             original_content = f.read()
     except Exception as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         print(f"  Error reading file: {e}")
-        return False
+        raise
 
     # Apply fixes
     content = original_content
@@ -111,20 +115,24 @@ def process_file(filepath, apply=False):
 
     # Check if changes were made
     if content != original_content:
-        print(f"  ✓ Changes detected")
+        print("  ✓ Changes detected")
         if apply:
             try:
                 with open(filepath, "w", encoding="utf-8") as f:
                     f.write(content)
-                print(f"  ✓ Changes applied")
+                print("  ✓ Changes applied")
             except Exception as e:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 print(f"  ✗ Error writing file: {e}")
-                return False
+                raise
         else:
-            print(f"  (Dry run - no changes written)")
+            print("  (Dry run - no changes written)")
         return True
     else:
-        print(f"  No changes needed")
+        print("  No changes needed")
         return False
 
 

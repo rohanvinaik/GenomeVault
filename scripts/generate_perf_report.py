@@ -10,10 +10,9 @@ import argparse
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 import matplotlib.pyplot as plt
-import numpy as np
 import seaborn as sns
 
 
@@ -43,7 +42,12 @@ class PerformanceReportGenerator:
                             benchmark_data = json.load(f)
                             data[lane].append(benchmark_data)
                     except Exception as e:
+                        from genomevault.observability.logging import configure_logging
+
+                        logger = configure_logging()
+                        logger.exception("Unhandled exception")
                         print(f"Error loading {json_file}: {e}")
+                        raise
 
         return data
 

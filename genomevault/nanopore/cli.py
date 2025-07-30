@@ -8,7 +8,6 @@ with biological signal detection.
 import asyncio
 import json
 from pathlib import Path
-from typing import Optional
 
 import click
 import numpy as np
@@ -63,7 +62,7 @@ def nanopore():
 )
 def process(
     fast5_file: str,
-    output: Optional[str],
+    output: str | None,
     slice_size: int,
     catalytic_mb: int,
     gpu: bool,
@@ -94,7 +93,7 @@ def process(
 
 async def _process_async(
     fast5_file: str,
-    output: Optional[str],
+    output: str | None,
     slice_size: int,
     catalytic_mb: int,
     gpu: bool,
@@ -362,7 +361,7 @@ async def _benchmark_async(slice_size: int, n_events: int, gpu: bool):
 
     if gpu and processor.gpu_kernel:
         mem_stats = processor.gpu_kernel.get_memory_usage()
-        click.echo(f"\nGPU memory usage:")
+        click.echo("\nGPU memory usage:")
         click.echo(f"  Allocated: {mem_stats['total_mb']:.1f} MB")
         click.echo(f"  Peak used: {mem_stats['gpu_used_mb']:.1f} MB")
 

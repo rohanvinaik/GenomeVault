@@ -101,7 +101,12 @@ class TestMalformedQueries:
             response = await handler.handle_query(request)
             assert response.status in [200, 400, 500]
         except Exception:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             pytest.fail("Server crashed on fuzzed input")
+            raise
 
 
 class TestTimingAttacks:
@@ -342,7 +347,12 @@ class TestErrorInjection:
                 # Would execute: result = await client.execute_query(query)
                 pass
             except Exception:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 pytest.fail("Failed to handle corrupted response")
+                raise
 
     def test_byzantine_server_behavior(self):
         """Test Byzantine fault tolerance."""

@@ -1,8 +1,9 @@
 import numpy as np
 import pytest
-from genomevault.federated.aggregator import FedAvgAggregator
-from genomevault.federated.models import ModelUpdate, AggregateRequest
+
 from genomevault.core.exceptions import ValidationError
+from genomevault.federated.aggregator import FedAvgAggregator
+from genomevault.federated.models import AggregateRequest, ModelUpdate
 
 
 def test_fedavg_weighted_average():

@@ -6,10 +6,10 @@ Implements repeat-aware PIR batching with median aggregation for uncertainty tun
 import asyncio
 import hashlib
 import time
+from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
-from collections.abc import AsyncIterator
+from typing import Any
 
 import numpy as np
 import torch
@@ -18,7 +18,7 @@ from genomevault.hypervector.error_handling import ErrorBudget
 from genomevault.utils.logging import get_logger
 
 from .pir_client import PIRClient, PIRQuery
-from .query_builder import GenomicQuery, PIRQueryBuilder, QueryResult, QueryType
+from .query_builder import GenomicQuery, PIRQueryBuilder, QueryType
 
 logger = get_logger(__name__)
 
@@ -589,8 +589,8 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
 
 # Module exports
 __all__ = [
+    "AggregationMethod",
     "BatchedPIRQueryBuilder",
     "BatchedQuery",
     "BatchedQueryResult",
-    "AggregationMethod",
 ]

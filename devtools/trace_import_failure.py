@@ -3,7 +3,6 @@
 Trace the exact import failure point
 """
 
-import sys
 import traceback
 
 logger.info("=" * 70)
@@ -14,13 +13,16 @@ logger.info("=" * 70)
 logger.info("\n1. Testing __init__.py imports...")
 
 try:
-    import zk_proofs
-
     logger.info("✅ zk_proofs/__init__.py imported")
-except Exception as e:
+except Exception:
+    from genomevault.observability.logging import configure_logging
+
+    logger = configure_logging()
+    logger.exception("Unhandled exception")
     logger.info("❌ zk_proofs/__init__.py failed: {e}")
     traceback.print_exc()
     logger.info("\nThis is likely where cryptography is first imported")
+    raise
 
 # Let's check what's in the zk_proofs __init__.py
 logger.info("\n2. Checking zk_proofs/__init__.py content...")
@@ -32,26 +34,37 @@ try:
         else:
             logger.info("✅ No direct 'cryptography' import in zk_proofs/__init__.py")
             logger.info("   Import chain must be indirect...")
-except Exception as e:
+except Exception:
+    from genomevault.observability.logging import configure_logging
+
+    logger = configure_logging()
+    logger.exception("Unhandled exception")
     logger.info("Could not read file: {e}")
+    raise
 
 # Let's check the utils module since that's likely imported
 logger.info("\n3. Testing utils imports...")
 try:
-    import utils
-
     logger.info("✅ utils/__init__.py imported")
-except Exception as e:
+except Exception:
+    from genomevault.observability.logging import configure_logging
+
+    logger = configure_logging()
+    logger.exception("Unhandled exception")
     logger.info("❌ utils/__init__.py failed: {e}")
+    raise
 
 # Check core module
 logger.info("\n4. Testing core imports...")
 try:
-    import core
-
     logger.info("✅ core/__init__.py imported")
-except Exception as e:
+except Exception:
+    from genomevault.observability.logging import configure_logging
+
+    logger = configure_logging()
+    logger.exception("Unhandled exception")
     logger.info("❌ core/__init__.py failed: {e}")
+    raise
 
 logger.info("\n5. Looking for the cryptography import...")
 import logging
@@ -76,7 +89,12 @@ def find_cryptography_imports(directory):
                         if "from cryptography" in content or "import cryptography" in content:
                             files_with_crypto.append(filepath)
                 except Exception:
+                    from genomevault.observability.logging import configure_logging
+
+                    logger = configure_logging()
+                    logger.exception("Unhandled exception")
                     pass
+                    raise
     return files_with_crypto
 
 

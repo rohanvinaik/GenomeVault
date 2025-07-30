@@ -7,7 +7,7 @@ Data models for HIPAA fast-track verification system.
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, Optional
+from typing import Any
 
 
 class VerificationStatus(Enum):
@@ -37,9 +37,9 @@ class HIPAACredentials:
     hsm_serial: str  # Hardware Security Module serial number
 
     # Optional fields
-    organization_name: Optional[str] = None
-    provider_name: Optional[str] = None
-    npi_type: Optional[NPIType] = None
+    organization_name: str | None = None
+    provider_name: str | None = None
+    npi_type: NPIType | None = None
 
     def __post_init__(self):
         """Validate credentials format"""
@@ -70,14 +70,14 @@ class VerificationRecord:
     honesty_probability: float = 0.98  # Higher for HIPAA-compliant
 
     # CMS registry data
-    cms_data: Optional[Dict[str, Any]] = None
+    cms_data: dict[str, Any] | None = None
 
     # Revocation info if applicable
-    revoked_at: Optional[datetime] = None
-    revocation_reason: Optional[str] = None
+    revoked_at: datetime | None = None
+    revocation_reason: str | None = None
 
     # Expiration
-    expires_at: Optional[datetime] = None
+    expires_at: datetime | None = None
 
     def is_active(self) -> bool:
         """Check if verification is currently active"""
@@ -92,7 +92,7 @@ class VerificationRecord:
 
         return True
 
-    def to_chain_data(self) -> Dict[str, Any]:
+    def to_chain_data(self) -> dict[str, Any]:
         """Convert to data for blockchain storage"""
         return {
             "npi": self.credentials.npi,
@@ -117,23 +117,23 @@ class NPIRecord:
     name: str
 
     # Organization fields
-    organization_name: Optional[str] = None
-    ein: Optional[str] = None  # Employer Identification Number
+    organization_name: str | None = None
+    ein: str | None = None  # Employer Identification Number
 
     # Individual fields
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    credential: Optional[str] = None  # MD, DO, etc.
+    first_name: str | None = None
+    last_name: str | None = None
+    credential: str | None = None  # MD, DO, etc.
 
     # Common fields
-    primary_taxonomy: Optional[str] = None  # Provider specialty
-    address: Optional[Dict[str, str]] = None
-    phone: Optional[str] = None
+    primary_taxonomy: str | None = None  # Provider specialty
+    address: dict[str, str] | None = None
+    phone: str | None = None
 
     # Status
     is_active: bool = True
-    deactivation_date: Optional[datetime] = None
-    reactivation_date: Optional[datetime] = None
+    deactivation_date: datetime | None = None
+    reactivation_date: datetime | None = None
 
     def __str__(self) -> str:
         if self.npi_type == NPIType.ORGANIZATION:

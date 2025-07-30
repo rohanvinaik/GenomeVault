@@ -11,7 +11,7 @@ import subprocess
 import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import numpy as np
 import pysam
@@ -152,7 +152,12 @@ class SequencingProcessor:
             try:
                 subprocess.run([tool, "--version"], capture_output=True, check=True)
             except (subprocess.CalledProcessError, FileNotFoundError):
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 missing_tools.append(name)
+                raise
 
         if missing_tools:
             logger.warning(f"Missing tools: {', '.join(missing_tools)}")
@@ -370,6 +375,10 @@ class SequencingProcessor:
                 capture_output=True,
             )
         except (subprocess.CalledProcessError, FileNotFoundError):
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.warning("GATK not available, using samtools")
             subprocess.run(
                 [
@@ -383,6 +392,7 @@ class SequencingProcessor:
                 check=True,
             )
             subprocess.run(["samtools", "index", str(output_bam)], check=True)
+            raise
 
         return output_bam
 

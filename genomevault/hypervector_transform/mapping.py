@@ -6,7 +6,6 @@ while transforming data into the hyperdimensional space.
 """
 
 from dataclasses import dataclass
-from typing import Dict, Optional
 
 import torch
 

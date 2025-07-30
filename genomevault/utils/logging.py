@@ -16,7 +16,7 @@ import traceback
 from contextlib import contextmanager
 from datetime import datetime
 from functools import wraps
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import structlog
 
@@ -192,6 +192,10 @@ class PerformanceLogger:
                 success=True,
             )
         except Exception as _:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             _ = time.time() - start_time
             self.logger.error(
                 "operation_failed",
@@ -202,6 +206,7 @@ class PerformanceLogger:
                 error_message=str(e),
                 success=False,
             )
+            raise
             raise
 
     def log_resource_usage(
@@ -397,6 +402,10 @@ def log_function_call(logger_name: str | None = None):
                 return result
 
             except Exception as _:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 # Log function error
                 logger.error(
                     "function_error",
@@ -405,6 +414,7 @@ def log_function_call(logger_name: str | None = None):
                     error_message=str(e),
                     traceback=traceback.format_exc(),
                 )
+                raise
                 raise
 
         return wrapper

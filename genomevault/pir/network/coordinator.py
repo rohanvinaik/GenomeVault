@@ -8,7 +8,7 @@ import json
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any
 
 import aiohttp
 from geopy.distance import geodesic
@@ -97,7 +97,12 @@ class PIRCoordinator:
             try:
                 await self._health_check_task
             except asyncio.CancelledError:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 pass
+                raise
 
     def register_server(self, server_info: ServerInfo):
         """
@@ -254,10 +259,20 @@ class PIRCoordinator:
                 await self._check_all_servers_health()
                 await asyncio.sleep(self.health_check_interval)
             except asyncio.CancelledError:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 break
+                raise
             except Exception:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
                 logger.error(f"Health monitor error: {e}")
                 await asyncio.sleep(5)
+                raise
 
     async def _check_all_servers_health(self):
         """Check health of all registered servers."""
@@ -304,9 +319,14 @@ class PIRCoordinator:
                         server.success_rate = 0.95 * server.success_rate + 0.05 * 0.0
 
         except Exception as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.warning(f"Health check failed for {server.server_id}: {e}")
             server.health_score *= 0.7
             server.success_rate = 0.95 * server.success_rate + 0.05 * 0.0
+            raise
 
     async def execute_query(
         self,

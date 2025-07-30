@@ -2,14 +2,12 @@
 Tests for monitoring and logging infrastructure.
 """
 
-import json
 import time
 from datetime import datetime
-from unittest.mock import Mock, patch
 
 import pytest
 
-from genomevault.utils.backup import BackupManager, DisasterRecoveryOrchestrator
+from genomevault.utils.backup import BackupManager
 from genomevault.utils.logging import (
     audit_logger,
     filter_sensitive_data,
@@ -17,7 +15,7 @@ from genomevault.utils.logging import (
     performance_logger,
     security_logger,
 )
-from genomevault.utils.monitoring import MetricsCollector, PrivacyAwareLogger
+from genomevault.utils.monitoring import MetricsCollector
 from genomevault.utils.security_monitor import ComplianceMonitor, SecurityMonitor
 
 

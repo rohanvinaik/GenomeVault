@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 #!/usr/bin/env python3
 """
 Orphan Disease Research Workflow Example
@@ -8,11 +11,9 @@ research for rare diseases, using Rett Syndrome as an example.
 
 import hashlib
 import time
-from typing import Any, Dict, List
+from typing import Any
 
 import numpy as np
-
-from genomevault.clinical.diabetes_pilot.risk_calculator import SecureRiskCalculator
 
 # Import GenomeVault modules
 from genomevault.hypervector_transform.advanced_compression import AdvancedHierarchicalCompressor
@@ -40,9 +41,9 @@ class OrphanDiseaseResearchDemo:
             "Tokyo University Hospital",
         ]
 
-        print(f"Initialized Orphan Disease Research Network for {disease_name}")
-        print(f"Participating sites: {len(self.research_sites)}")
-        print("=" * 60)
+        logger.info(f"Initialized Orphan Disease Research Network for {disease_name}")
+        logger.info(f"Participating sites: {len(self.research_sites)}")
+        logger.info("=" * 60)
 
     def simulate_patient_data(self, num_patients: int = 50) -> list[dict[str, Any]]:
         """Simulate genomic and clinical data for rare disease patients."""
@@ -85,8 +86,8 @@ class OrphanDiseaseResearchDemo:
 
     def create_privacy_preserving_cohort(self, patients: list[dict]) -> dict[str, Any]:
         """Convert patient data to privacy-preserving representations."""
-        print("\n1. Creating Privacy-Preserving Patient Representations")
-        print("-" * 60)
+        logger.info("\n1. Creating Privacy-Preserving Patient Representations")
+        logger.info("-" * 60)
 
         cohort = {
             "compressed_vectors": [],
@@ -117,13 +118,15 @@ class OrphanDiseaseResearchDemo:
             # Add to site aggregate
             cohort["site_aggregates"][patient["site"]].append(patient["id"])
 
-        print(f"✓ Compressed {len(patients)} patient genomes")
-        print(
+        logger.info(f"✓ Compressed {len(patients)} patient genomes")
+        logger.info(
             f"  - Original size per patient: {patients[0]['genomic_features'].nbytes / 1024:.1f} KB"
         )
-        print(f"  - Compressed size: {compressed.high_vector.nbytes / 1024:.1f} KB")
-        print(f"  - Compression ratio: {compressed.compression_metadata['compression_ratio']:.1f}x")
-        print(f"✓ Generated {len(cohort['clinical_proofs'])} clinical proofs")
+        logger.info(f"  - Compressed size: {compressed.high_vector.nbytes / 1024:.1f} KB")
+        logger.info(
+            f"  - Compression ratio: {compressed.compression_metadata['compression_ratio']:.1f}x"
+        )
+        logger.info(f"✓ Generated {len(cohort['clinical_proofs'])} clinical proofs")
 
         return cohort
 
@@ -148,8 +151,8 @@ class OrphanDiseaseResearchDemo:
 
     def federated_biomarker_discovery(self, cohort: dict) -> dict[str, Any]:
         """Discover biomarkers across sites without sharing data."""
-        print("\n2. Federated Biomarker Discovery")
-        print("-" * 60)
+        logger.info("\n2. Federated Biomarker Discovery")
+        logger.info("-" * 60)
 
         # Each site computes local statistics
         site_contributions = []
@@ -197,7 +200,7 @@ class OrphanDiseaseResearchDemo:
         # Aggregate proofs using recursive SNARKs
         proofs = [contribution[1] for contribution in site_contributions]
 
-        print(f"✓ Collected statistics from {len(site_contributions)} sites")
+        logger.info(f"✓ Collected statistics from {len(site_contributions)} sites")
 
         # Create single proof representing all sites
         start_time = time.time()
@@ -207,9 +210,9 @@ class OrphanDiseaseResearchDemo:
         )
         aggregation_time = time.time() - start_time
 
-        print(f"✓ Aggregated proofs in {aggregation_time*1000:.1f} ms")
-        print(f"  - Verification complexity: {aggregated_proof.verification_complexity}")
-        print(f"  - Proof size: {len(aggregated_proof.aggregation_proof)} bytes")
+        logger.info(f"✓ Aggregated proofs in {aggregation_time*1000:.1f} ms")
+        logger.info(f"  - Verification complexity: {aggregated_proof.verification_complexity}")
+        logger.info(f"  - Proof size: {len(aggregated_proof.aggregation_proof)} bytes")
 
         # Identify potential biomarkers
         biomarkers = {
@@ -227,8 +230,8 @@ class OrphanDiseaseResearchDemo:
 
     def privacy_preserving_trial_matching(self, cohort: dict, trial_criteria: dict) -> list[str]:
         """Match patients to clinical trials without exposing their data."""
-        print("\n3. Privacy-Preserving Clinical Trial Matching")
-        print("-" * 60)
+        logger.info("\n3. Privacy-Preserving Clinical Trial Matching")
+        logger.info("-" * 60)
 
         matched_patients = []
 
@@ -256,10 +259,10 @@ class OrphanDiseaseResearchDemo:
             if self._check_trial_eligibility(patient_data, trial_criteria):
                 matched_patients.append(patient_data["patient_id"])
 
-        print(f"✓ Identified {len(matched_patients)} eligible patients")
-        print(f"  - Without revealing individual identities")
-        print(f"  - Using {self.pir_system.num_servers}-server PIR system")
-        print(f"  - Privacy threshold: {self.pir_system.threshold}")
+        logger.info(f"✓ Identified {len(matched_patients)} eligible patients")
+        logger.info("  - Without revealing individual identities")
+        logger.info(f"  - Using {self.pir_system.num_servers}-server PIR system")
+        logger.info(f"  - Privacy threshold: {self.pir_system.threshold}")
 
         return matched_patients
 
@@ -271,28 +274,28 @@ class OrphanDiseaseResearchDemo:
 
     def generate_research_insights(self, discovery_results: dict) -> None:
         """Generate actionable research insights."""
-        print("\n4. Research Insights")
-        print("-" * 60)
+        logger.info("\n4. Research Insights")
+        logger.info("-" * 60)
 
-        print(f"✓ Biomarker Discovery Results:")
+        logger.info("✓ Biomarker Discovery Results:")
         for category, markers in discovery_results["discovered_biomarkers"].items():
-            print(f"  - {category}: {', '.join(markers)}")
+            logger.info(f"  - {category}: {', '.join(markers)}")
 
-        print(f"\n✓ Cohort Statistics:")
-        print(f"  - Total patients analyzed: {discovery_results['total_patients']}")
-        print(f"  - Sites participating: {discovery_results['sites_contributing']}")
-        print(f"  - Data shared: 0 bytes (all computations on encrypted data)")
+        logger.info("\n✓ Cohort Statistics:")
+        logger.info(f"  - Total patients analyzed: {discovery_results['total_patients']}")
+        logger.info(f"  - Sites participating: {discovery_results['sites_contributing']}")
+        logger.info("  - Data shared: 0 bytes (all computations on encrypted data)")
 
-        print(f"\n✓ Privacy Guarantees Maintained:")
-        print(f"  - Zero-knowledge proofs: ✓")
-        print(f"  - Recursive proof aggregation: ✓")
-        print(f"  - Information-theoretic PIR: ✓")
-        print(f"  - No raw data exposed: ✓")
+        logger.info("\n✓ Privacy Guarantees Maintained:")
+        logger.info("  - Zero-knowledge proofs: ✓")
+        logger.info("  - Recursive proof aggregation: ✓")
+        logger.info("  - Information-theoretic PIR: ✓")
+        logger.info("  - No raw data exposed: ✓")
 
     def demonstrate_drug_development_acceleration(self) -> None:
         """Show how privacy-preserving collaboration accelerates drug development."""
-        print("\n5. Accelerating Drug Development")
-        print("-" * 60)
+        logger.info("\n5. Accelerating Drug Development")
+        logger.info("-" * 60)
 
         traditional_timeline = {
             "Patient identification": "12-18 months",
@@ -312,30 +315,30 @@ class OrphanDiseaseResearchDemo:
             "Total": "6-8 weeks",
         }
 
-        print("Traditional Approach:")
+        logger.info("Traditional Approach:")
         for step, duration in traditional_timeline.items():
-            print(f"  - {step}: {duration}")
+            logger.info(f"  - {step}: {duration}")
 
-        print("\nGenomeVault Approach:")
+        logger.info("\nGenomeVault Approach:")
         for step, duration in genomevault_timeline.items():
-            print(f"  - {step}: {duration}")
+            logger.info(f"  - {step}: {duration}")
 
-        print("\n✓ Time savings: ~95% reduction")
-        print("✓ Cost savings: ~90% reduction")
-        print("✓ Privacy: 100% maintained")
+        logger.info("\n✓ Time savings: ~95% reduction")
+        logger.info("✓ Cost savings: ~90% reduction")
+        logger.info("✓ Privacy: 100% maintained")
 
 
 def main():
     """Run the orphan disease research demonstration."""
-    print("GenomeVault Orphan Disease Research Demonstration")
-    print("================================================\n")
+    logger.info("GenomeVault Orphan Disease Research Demonstration")
+    logger.info("================================================\n")
 
     # Initialize demo
     demo = OrphanDiseaseResearchDemo("Rett Syndrome")
 
     # Simulate patient cohort
     patients = demo.simulate_patient_data(num_patients=50)
-    print(f"Simulated {len(patients)} patients across {len(demo.research_sites)} sites")
+    logger.info(f"Simulated {len(patients)} patients across {len(demo.research_sites)} sites")
 
     # Create privacy-preserving representations
     cohort = demo.create_privacy_preserving_cohort(patients)
@@ -358,15 +361,15 @@ def main():
     # Show acceleration benefits
     demo.demonstrate_drug_development_acceleration()
 
-    print("\n" + "=" * 60)
-    print("Demonstration complete!")
-    print("\nKey Takeaways:")
-    print("1. Connected 50 patients across 5 sites without sharing data")
-    print("2. Discovered biomarkers using federated analysis")
-    print("3. Matched patients to trials preserving privacy")
-    print("4. Reduced research timeline from years to weeks")
-    print("5. Maintained 100% patient privacy throughout")
-    print("\nGenomeVault: Accelerating rare disease research through privacy")
+    logger.info("\n" + "=" * 60)
+    logger.info("Demonstration complete!")
+    logger.info("\nKey Takeaways:")
+    logger.info("1. Connected 50 patients across 5 sites without sharing data")
+    logger.info("2. Discovered biomarkers using federated analysis")
+    logger.info("3. Matched patients to trials preserving privacy")
+    logger.info("4. Reduced research timeline from years to weeks")
+    logger.info("5. Maintained 100% patient privacy throughout")
+    logger.info("\nGenomeVault: Accelerating rare disease research through privacy")
 
 
 if __name__ == "__main__":

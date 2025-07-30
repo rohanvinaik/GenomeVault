@@ -9,7 +9,7 @@ import hashlib
 import json
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 from genomevault.advanced_analysis.federated_learning.model_lineage import FederatedModelLineage
 from genomevault.blockchain.contracts.training_attestation import TrainingAttestationContract
@@ -293,8 +293,13 @@ class ProofOfTrainingIntegration:
             return attestation_id
 
         except (DatabaseError, json.JSONDecodeError, KeyError) as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Failed to submit attestation: {e}")
             return None
+            raise
 
     def start_model_monitoring(
         self, model_id: str, model: Any, training_summary: dict[str, Any]
@@ -513,8 +518,13 @@ class ProofOfTrainingIntegration:
             return hypervector
 
         except (ValueError, TypeError, KeyError) as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Failed to extract hypervector: {e}")
             return None
+            raise
 
     def _init_blockchain(self):
         """Initialize blockchain connection"""
@@ -535,8 +545,13 @@ class ProofOfTrainingIntegration:
             logger.info(f"Blockchain connection established: {contract_address}")
 
         except KeyError as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Failed to initialize blockchain: {e}")
             self.attestation_contract = None
+            raise
 
 
 # Export main integration class

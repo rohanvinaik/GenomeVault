@@ -1,5 +1,15 @@
 import numpy as np
-from genomevault.clinical.calibration.metrics import auroc, average_precision, brier_score, ece, mce, calibration_curve, confusion_at, youdens_j_threshold
+
+from genomevault.clinical.calibration.metrics import (
+    auroc,
+    average_precision,
+    brier_score,
+    calibration_curve,
+    confusion_at,
+    ece,
+    mce,
+    youdens_j_threshold,
+)
 
 
 def test_auroc_perfect_and_random():
@@ -27,8 +37,8 @@ def test_ap_and_brier_and_calibration_metrics():
 
 
 def test_confusion_and_j():
-    y = np.array([0,0,1,1])
-    p = np.array([0.1,0.2,0.8,0.9])
+    y = np.array([0, 0, 1, 1])
+    p = np.array([0.1, 0.2, 0.8, 0.9])
     stats = confusion_at(y, p, threshold=0.5)
     assert stats["tp"] == 2 and stats["tn"] == 2
     t, s = youdens_j_threshold(y, p)

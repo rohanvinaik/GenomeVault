@@ -6,10 +6,8 @@ while preserving their mathematical properties and biological relationships.
 Includes all operations specified in the HDC implementation plan.
 """
 
-import hashlib
 import logging
 from enum import Enum
-from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import torch

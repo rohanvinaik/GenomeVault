@@ -3,10 +3,7 @@ Comprehensive test suite for multi-omics processors.
 """
 
 import gzip
-import json
-import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock, Mock, patch
 
 import numpy as np
 import pandas as pd
@@ -24,7 +21,6 @@ from genomevault.local_processing.epigenetics import (
 )
 from genomevault.local_processing.proteomics import (
     ModificationType,
-    Peptide,
     ProteinMeasurement,
     ProteomicsProcessor,
     ProteomicsProfile,

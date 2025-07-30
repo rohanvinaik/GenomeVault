@@ -6,11 +6,9 @@ Based on audit report v2 from 2025-07-27
 
 import datetime
 import logging
-import os
 import re
 import shutil
 from pathlib import Path
-from typing import Dict, List, Tuple
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -174,7 +172,12 @@ class GenomeVaultFixer:
                 logger.info(f"Updated {file_path}")
 
         except Exception as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Error processing {file_path}: {e}")
+            raise
 
     def fix_broad_exceptions(self):
         """Replace broad 'except Exception' with more specific exception handling"""
@@ -246,7 +249,12 @@ class GenomeVaultFixer:
                 logger.info(f"Updated {file_path}")
 
         except Exception as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Error processing {file_path}: {e}")
+            raise
 
     def _determine_exceptions(self, try_block: str) -> list[str]:
         """Determine appropriate exceptions based on code patterns"""
@@ -333,7 +341,12 @@ class GenomeVaultFixer:
             file_path.write_text(new_content)
 
         except Exception as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Error adding TODO to {file_path}: {e}")
+            raise
 
     def add_type_annotations(self):
         """Add type annotations to functions missing them"""

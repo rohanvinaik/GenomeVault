@@ -10,8 +10,7 @@ import argparse
 import json
 import sys
 import time
-from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 from genomevault.zk_proofs import Prover, Verifier
 from genomevault.zk_proofs.circuits.implementations.variant_frequency_circuit import (
@@ -30,8 +29,13 @@ def load_json_file(filepath: str) -> dict[str, Any]:
         with open(filepath) as f:
             return json.load(f)
     except Exception:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         print(f"Error loading {filepath}: {e}")
         sys.exit(1)
+        raise
 
 
 def save_json_file(data: dict[str, Any], filepath: str):
@@ -40,8 +44,13 @@ def save_json_file(data: dict[str, Any], filepath: str):
         with open(filepath, "w") as f:
             json.dump(data, f, indent=2)
     except Exception:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         print(f"Error saving {filepath}: {e}")
         sys.exit(1)
+        raise
 
 
 def cmd_prove(args):
@@ -123,10 +132,10 @@ def cmd_prove(args):
 
     total_time = time.time() - start_time
 
-    print(f"\nProof generated successfully!")
+    print("\nProof generated successfully!")
     print(f"Output: {output_file}")
     print(f"Total time: {total_time:.3f}s")
-    print(f"Proof size: ~384 bytes")
+    print("Proof size: ~384 bytes")
 
 
 def cmd_verify(args):
@@ -177,7 +186,7 @@ def cmd_verify(args):
     print(f"Verification time: {verification_time:.1f}ms")
 
     if args.verbose and is_valid:
-        print(f"\nProof metadata:")
+        print("\nProof metadata:")
         metadata = proof_data.get("metadata", {})
         for key, value in metadata.items():
             print(f"  {key}: {value}")
@@ -231,7 +240,7 @@ def cmd_demo(args):
 
     # Display circuit info
     info = circuit.get_circuit_info()
-    print(f"\nCircuit Information:")
+    print("\nCircuit Information:")
     for key, value in info.items():
         print(f"  {key}: {value}")
 
@@ -239,10 +248,10 @@ def cmd_demo(args):
     if args.save_inputs:
         save_json_file(public_inputs, f"{args.circuit}_public.json")
         save_json_file(private_inputs, f"{args.circuit}_private.json")
-        print(f"\nExample inputs saved:")
+        print("\nExample inputs saved:")
         print(f"  Public: {args.circuit}_public.json")
         print(f"  Private: {args.circuit}_private.json")
-        print(f"\nYou can now run:")
+        print("\nYou can now run:")
         print(
             f"  zk_prove --circuit {args.circuit} --public-input {args.circuit}_public.json --private-input {args.circuit}_private.json"
         )
@@ -296,13 +305,13 @@ def cmd_info(args):
             circuit = circuits[args.circuit]
             print(f"\nCircuit: {args.circuit}")
             print(f"Description: {circuit['description']}")
-            print(f"\nPublic Inputs:")
+            print("\nPublic Inputs:")
             for inp in circuit["public_inputs"]:
                 print(f"  - {inp}")
-            print(f"\nPrivate Inputs:")
+            print("\nPrivate Inputs:")
             for inp in circuit["private_inputs"]:
                 print(f"  - {inp}")
-            print(f"\nPerformance:")
+            print("\nPerformance:")
             print(f"  Proof size: {circuit['proof_size']}")
             print(f"  Verification time: {circuit['verification_time']}")
             print(f"  Constraints: {circuit['constraints']}")

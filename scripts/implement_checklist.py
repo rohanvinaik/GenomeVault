@@ -67,10 +67,15 @@ class ChecklistImplementer:
                 self.log(f"Output: {result.stdout[:200]}...")
             return True
         except subprocess.CalledProcessError as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             self.log(f"Error: {e}")
             if e.stderr:
                 self.log(f"Stderr: {e.stderr}")
             return False
+            raise
 
     def step_5_convert_prints(self):
         """Step 5: Convert print statements to logging."""
@@ -117,22 +122,21 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message
         script_path = self.project_root / "scripts" / "analyze_complexity.py"
         if script_path.exists():
             self.run_command(["python", str(script_path)])
+        # Run radon directly
+        elif self.run_command(["radon", "--version"], check=False):
+            self.run_command(
+                [
+                    "radon",
+                    "cc",
+                    "-s",
+                    "-a",
+                    str(self.project_root / "genomevault"),
+                    "--min",
+                    "B",  # Show only B grade and worse (CC >= 6)
+                ]
+            )
         else:
-            # Run radon directly
-            if self.run_command(["radon", "--version"], check=False):
-                self.run_command(
-                    [
-                        "radon",
-                        "cc",
-                        "-s",
-                        "-a",
-                        str(self.project_root / "genomevault"),
-                        "--min",
-                        "B",  # Show only B grade and worse (CC >= 6)
-                    ]
-                )
-            else:
-                self.log("radon not installed, skipping complexity analysis")
+            self.log("radon not installed, skipping complexity analysis")
 
     def step_9_add_init_files(self):
         """Step 9: Ensure all packages have __init__.py files."""
@@ -168,6 +172,7 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message
         for pattern in patterns:
             result = subprocess.run(
                 ["rg", "-n", pattern, "genomevault"],
+                check=False,
                 cwd=self.project_root,
                 capture_output=True,
                 text=True,
@@ -308,8 +313,13 @@ def main():
     try:
         input()
     except KeyboardInterrupt:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         print("\nCancelled.")
         sys.exit(0)
+        raise
 
     implementer.implement_checklist()
 

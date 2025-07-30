@@ -3,7 +3,7 @@
 
 try:
     # Test basic imports
-    from core.config import Config, get_config
+    from core.config import get_config
 
     print("✅ Core config imported")
 
@@ -11,15 +11,9 @@ try:
 
     print("✅ Utils imported")
 
-    from local_processing.sequencing import SequencingProcessor
-
     print("✅ Sequencing module imported")
 
-    from hypervector_transform.encoding import HypervectorEncoder
-
     print("✅ Hypervector module imported")
-
-    from zk_proofs.prover import Prover
 
     print("✅ ZK proofs module imported")
 
@@ -32,9 +26,14 @@ try:
 
     print("\n✅ All imports successful!")
 
-except Exception as e:
+except Exception:
+    from genomevault.observability.logging import configure_logging
+
+    logger = configure_logging()
+    logger.exception("Unhandled exception")
     print("\n❌ Error: {e}")
     import traceback
 
     traceback.print_exc()
     exit(1)
+    raise

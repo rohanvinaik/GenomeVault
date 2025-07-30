@@ -172,7 +172,7 @@ def test_catalytic_proof():
 
     # Show space savings
     savings = engine.get_space_savings("polygenic_risk_score")
-    print(f"\nSpace savings:")
+    print("\nSpace savings:")
     print(f"  Standard approach: {savings['standard_approach_mb']:.1f} MB")
     print(f"  Catalytic clean: {savings['catalytic_clean_mb']:.1f} MB")
     print(f"  Reduction: {savings['clean_space_reduction']:.1f}%")
@@ -252,7 +252,7 @@ def test_hierarchical_compression():
     base_vector = np.random.randn(10000)
     base_vector[np.random.choice(10000, 9000, replace=False)] = 0  # Sparse
 
-    print(f"\nBase vector:")
+    print("\nBase vector:")
     print(f"  Dimensions: {len(base_vector)}")
     print(f"  Sparsity: {np.mean(base_vector == 0):.2%}")
     print(f"  Size: {base_vector.nbytes/1024:.1f} KB")
@@ -262,7 +262,7 @@ def test_hierarchical_compression():
         base_vector, modality_context="genomic", overall_model_context="disease_risk"
     )
 
-    print(f"\nCompressed vector:")
+    print("\nCompressed vector:")
     print(f"  Level: {compressed.level}")
     print(f"  Dimensions: {len(compressed.high_vector)}")
     print(f"  Compression ratio: {compressed.compression_metadata['compression_ratio']:.2f}x")
@@ -296,8 +296,13 @@ def run_all_tests():
             result = test_func()
             results[test_name] = "PASSED" if result else "FAILED"
         except Exception as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             print(f"\nError in {test_name}: {e}")
             results[test_name] = "ERROR"
+            raise
 
     # Summary
     print("\n" + "=" * 60)

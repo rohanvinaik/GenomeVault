@@ -1,6 +1,5 @@
 """Unit tests for basic ZK proof functionality."""
 
-import numpy as np
 import pytest
 
 from genomevault.zk_proofs.circuits import PRSProofCircuit

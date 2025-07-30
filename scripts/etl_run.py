@@ -1,6 +1,12 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 #!/usr/bin/env python3
-import argparse, json
+import argparse
+import json
+
 from genomevault.pipelines.etl import run_etl
+
 
 def main():
     ap = argparse.ArgumentParser()
@@ -13,7 +19,8 @@ def main():
     res = run_etl(args.input, contract_path=args.contract, out_csv=args.out)
     with open(args.report, "w") as f:
         json.dump(res, f, indent=2)
-    print(f"Wrote {args.report} (ok={res['ok']}, rows={res['rows']})")
+    logger.info(f"Wrote {args.report} (ok={res['ok']}, rows={res['rows']})")
+
 
 if __name__ == "__main__":
     main()

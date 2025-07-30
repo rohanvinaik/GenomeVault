@@ -1,26 +1,24 @@
 from __future__ import annotations
 
 import json
-import os
 import shutil
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Any, Optional
 
 
 @dataclass
 class CircuitPaths:
-    root: Path           # e.g., genomevault/zk/circuits/sum64
-    circom: Path         # sum64.circom
-    build: Path          # build directory inside root
-    r1cs: Path           # build/sum64.r1cs
-    wasm: Path           # build/sum64_js/sum64.wasm
-    zkey: Path           # build/sum64_final.zkey
-    vkey: Path           # build/verification_key.json
+    root: Path  # e.g., genomevault/zk/circuits/sum64
+    circom: Path  # sum64.circom
+    build: Path  # build directory inside root
+    r1cs: Path  # build/sum64.r1cs
+    wasm: Path  # build/sum64_js/sum64.wasm
+    zkey: Path  # build/sum64_final.zkey
+    vkey: Path  # build/verification_key.json
 
     @staticmethod
-    def for_sum64(repo_root: Path) -> "CircuitPaths":
+    def for_sum64(repo_root: Path) -> CircuitPaths:
         root = repo_root / "genomevault" / "zk" / "circuits" / "sum64"
         return CircuitPaths(
             root=root,
@@ -33,7 +31,7 @@ class CircuitPaths:
         )
 
 
-def _which(cmd: str) -> Optional[str]:
+def _which(cmd: str) -> str | None:
     return shutil.which(cmd)
 
 
@@ -54,24 +52,45 @@ def ensure_built(paths: CircuitPaths) -> None:
 
     # Compile circom → r1cs, wasm
     if not paths.r1cs.exists() or not paths.wasm.exists():
-        run(["circom", str(paths.circom), "--r1cs", "--wasm", "--output", str(paths.build)], cwd=paths.root)
+        run(
+            ["circom", str(paths.circom), "--r1cs", "--wasm", "--output", str(paths.build)],
+            cwd=paths.root,
+        )
 
     # Powers of tau & zkey (small 12 power for tests)
     pot0 = paths.build / "pot12_0000.ptau"
     potF = paths.build / "pot12_final.ptau"
     if not potF.exists():
         run(["snarkjs", "powersoftau", "new", "bn128", "12", str(pot0), "-v"], cwd=paths.root)
-        run(["snarkjs", "powersoftau", "contribute", str(pot0), str(potF), "--name", "genesis", "-v"], cwd=paths.root)
+        run(
+            [
+                "snarkjs",
+                "powersoftau",
+                "contribute",
+                str(pot0),
+                str(potF),
+                "--name",
+                "genesis",
+                "-v",
+            ],
+            cwd=paths.root,
+        )
 
     if not paths.zkey.exists():
         zkey0 = paths.build / "sum64_0000.zkey"
         run(["snarkjs", "groth16", "setup", str(paths.r1cs), str(potF), str(zkey0)], cwd=paths.root)
-        run(["snarkjs", "zkey", "export", "verificationkey", str(zkey0), str(paths.vkey)], cwd=paths.root)
+        run(
+            ["snarkjs", "zkey", "export", "verificationkey", str(zkey0), str(paths.vkey)],
+            cwd=paths.root,
+        )
         # Optionally contribute and mark final
         paths.zkey.write_bytes(zkey0.read_bytes())
 
     if not paths.vkey.exists():
-        run(["snarkjs", "zkey", "export", "verificationkey", str(paths.zkey), str(paths.vkey)], cwd=paths.root)
+        run(
+            ["snarkjs", "zkey", "export", "verificationkey", str(paths.zkey), str(paths.vkey)],
+            cwd=paths.root,
+        )
 
 
 def prove(paths: CircuitPaths, a: int, b: int, c_public: int) -> dict:
@@ -92,7 +111,18 @@ def prove(paths: CircuitPaths, a: int, b: int, c_public: int) -> dict:
     run(["node", str(gen_witness), str(paths.wasm), str(inp), str(wtns)], cwd=paths.root)
 
     # Proof
-    run(["snarkjs", "groth16", "prove", str(paths.zkey), str(wtns), str(proof_json), str(public_json)], cwd=paths.root)
+    run(
+        [
+            "snarkjs",
+            "groth16",
+            "prove",
+            str(paths.zkey),
+            str(wtns),
+            str(proof_json),
+            str(public_json),
+        ],
+        cwd=paths.root,
+    )
 
     return {
         "proof": json.loads(proof_json.read_text(encoding="utf-8")),
@@ -107,7 +137,15 @@ def verify(paths: CircuitPaths, proof: dict, public: dict) -> bool:
     tmp_proof.write_text(json.dumps(proof), encoding="utf-8")
     tmp_pub.write_text(json.dumps(public), encoding="utf-8")
     try:
-        run(["snarkjs", "groth16", "verify", str(paths.vkey), str(tmp_pub), str(tmp_proof)], cwd=paths.root)
+        run(
+            ["snarkjs", "groth16", "verify", str(paths.vkey), str(tmp_pub), str(tmp_proof)],
+            cwd=paths.root,
+        )
         return True
     except subprocess.CalledProcessError:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         return False
+        raise

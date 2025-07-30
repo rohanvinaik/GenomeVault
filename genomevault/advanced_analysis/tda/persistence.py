@@ -3,13 +3,9 @@ Topological Data Analysis for genomic structure analysis
 """
 
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Set, Tuple
 
 import networkx as nx
 import numpy as np
-import torch
-from scipy.sparse import csr_matrix
-from scipy.sparse.csgraph import connected_components
 from scipy.spatial import distance_matrix
 
 # from genomevault.core.constants import MAX_HOMOLOGY_DIMENSION, PERSISTENCE_THRESHOLD

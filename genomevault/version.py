@@ -5,7 +5,7 @@ protocols, and seeds used throughout the GenomeVault system.
 """
 
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any
 
 # Protocol Versions
 PIR_PROTOCOL_VERSION = "PIR-IT-1.0"
@@ -39,7 +39,7 @@ COMPONENT_VERSIONS = {
 __version__ = "1.0.0"
 
 
-def get_version_info() -> Dict[str, Any]:
+def get_version_info() -> dict[str, Any]:
     """Get comprehensive version information for all components.
 
     Returns:

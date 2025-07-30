@@ -6,12 +6,11 @@ Handles private queries over distributed genomic reference data.
 import asyncio
 import hashlib
 import mmap
-import os
 import time
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import numpy as np
 
@@ -205,8 +204,13 @@ class PIRServer:
             return response
 
         except Exception as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Error processing PIR query: {e}")
             return {"error": str(e), "query_id": query_id}
+            raise
 
     async def _compute_dot_product(
         self, query_vector: np.ndarray, shard_id: str, database_size: int

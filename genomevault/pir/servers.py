@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from typing import List
 import numpy as np
 
 
@@ -11,7 +10,7 @@ def _xor_bytes(a: bytes, b: bytes) -> bytes:
 class PIRServer:
     """Information-theoretic PIR server holding a replicated DB of equal-length byte records."""
 
-    def __init__(self, db: List[bytes]):
+    def __init__(self, db: list[bytes]):
         if not db:
             raise ValueError("db must be non-empty")
         L = len(db[0])

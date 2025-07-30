@@ -68,4 +68,4 @@ class PRSProofCircuit(BaseCircuit):
 
 
 # Re-export for convenience
-__all__ = ["PRSProofCircuit", "BaseCircuit", "ClinicalCircuit"]
+__all__ = ["BaseCircuit", "ClinicalCircuit", "PRSProofCircuit"]

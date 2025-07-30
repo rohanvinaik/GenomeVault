@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 #!/usr/bin/env python3
 """
 Example usage of GenomeVault 3.0 integrated system.
@@ -5,9 +8,6 @@ Demonstrates the complete workflow from data processing to proof generation.
 """
 
 import asyncio
-import json
-import time
-from pathlib import Path
 
 import numpy as np
 
@@ -18,24 +18,24 @@ from genomevault.pir.client import PIRClient, PIRServer
 
 # Import GenomeVault components
 from genomevault.utils.config import CompressionTier, NodeClass, config
-from genomevault.utils.logging import audit_logger, logger
+from genomevault.utils.logging import logger
 from genomevault.zk_proofs.prover import Prover
 
 
 async def demonstrate_genomevault():
     """Demonstrate complete GenomeVault workflow."""
 
-    print("=== GenomeVault 3.0 Demonstration ===\n")
+    logger.info("=== GenomeVault 3.0 Demonstration ===\n")
 
     # Step 1: Configuration
-    print("1. System Configuration")
-    print("   Compression Tier: {config.hypervector.compression_tier.value}")
-    print("   Hypervector Dimensions: {config.hypervector.base_dimensions}")
-    print("   PIR Servers: {config.pir.num_servers}")
-    print("   Privacy Target: {config.pir.target_failure_probability}")
+    logger.info("1. System Configuration")
+    logger.info("   Compression Tier: {config.hypervector.compression_tier.value}")
+    logger.info("   Hypervector Dimensions: {config.hypervector.base_dimensions}")
+    logger.info("   PIR Servers: {config.pir.num_servers}")
+    logger.info("   Privacy Target: {config.pir.target_failure_probability}")
 
     # Step 2: Local Processing (simulated)
-    print("\n2. Local Genomic Processing")
+    logger.info("\n2. Local Genomic Processing")
 
     # Simulate variant data
     variants = [
@@ -47,11 +47,11 @@ async def demonstrate_genomevault():
     # Calculate differential storage
     processor = SequencingProcessor()
     diff_storage = processor.compute_differential_storage(variants)
-    print("   Variants found: {len(variants)}")
-    print("   Storage hash: {diff_storage['storage_hash'][:16]}...")
+    logger.info("   Variants found: {len(variants)}")
+    logger.info("   Storage hash: {diff_storage['storage_hash'][:16]}...")
 
     # Step 3: Hypervector Encoding
-    print("\n3. Hypervector Encoding")
+    logger.info("\n3. Hypervector Encoding")
 
     encoder = HypervectorEncoder(compression_tier=CompressionTier.CLINICAL)
 
@@ -69,17 +69,19 @@ async def demonstrate_genomevault():
     }
     clinical_hv = encoder.encode_features(clinical_features, domain="clinical")
 
-    print("   Genomic hypervector shape: {genomic_hv.shape}")
-    print("   Clinical hypervector shape: {clinical_hv.shape}")
-    print("   Compression achieved: {config.get_compression_size(['genomics', 'clinical'])} KB")
+    logger.info("   Genomic hypervector shape: {genomic_hv.shape}")
+    logger.info("   Clinical hypervector shape: {clinical_hv.shape}")
+    logger.info(
+        "   Compression achieved: {config.get_compression_size(['genomics', 'clinical'])} KB"
+    )
 
     # Cross-modal binding
     binder = HypervectorBinder()
     bound_hv = binder.circular_convolution(genomic_hv, clinical_hv)
-    print("   Cross-modal binding complete")
+    logger.info("   Cross-modal binding complete")
 
     # Step 4: Zero-Knowledge Proof Generation
-    print("\n4. Zero-Knowledge Proof Generation")
+    logger.info("\n4. Zero-Knowledge Proof Generation")
 
     prover = Prover()
 
@@ -98,12 +100,14 @@ async def demonstrate_genomevault():
         },
     )
 
-    print("   Proof ID: {diabetes_proof.proof_id}")
-    print("   Proof size: {len(diabetes_proof.proof_data)} bytes")
-    print("   Generation time: {diabetes_proof.metadata['generation_time_seconds']*1000:.1f}ms")
+    logger.info("   Proof ID: {diabetes_proof.proof_id}")
+    logger.info("   Proof size: {len(diabetes_proof.proof_data)} bytes")
+    logger.info(
+        "   Generation time: {diabetes_proof.metadata['generation_time_seconds']*1000:.1f}ms"
+    )
 
     # Step 5: PIR Query (simulated)
-    print("\n5. Private Information Retrieval")
+    logger.info("\n5. Private Information Retrieval")
 
     # Configure PIR servers
     servers = [
@@ -117,12 +121,14 @@ async def demonstrate_genomevault():
 
     # Show optimal configuration
     optimal_config = pir_client.get_optimal_server_configuration()
-    print("   Optimal PIR config: {optimal_config['optimal']['name']}")
-    print("   Expected latency: {optimal_config['optimal']['latency_ms']}ms")
-    print("   Privacy guarantee: P_fail = {optimal_config['optimal']['failure_probability']:.2e}")
+    logger.info("   Optimal PIR config: {optimal_config['optimal']['name']}")
+    logger.info("   Expected latency: {optimal_config['optimal']['latency_ms']}ms")
+    logger.info(
+        "   Privacy guarantee: P_fail = {optimal_config['optimal']['failure_probability']:.2e}"
+    )
 
     # Step 6: Blockchain Integration
-    print("\n6. Blockchain Node Setup")
+    logger.info("\n6. Blockchain Node Setup")
 
     # Create a light node with HIPAA verification
     node = BlockchainNode(
@@ -131,7 +137,7 @@ async def demonstrate_genomevault():
         is_trusted_signatory=False,
     )
 
-    print("   Initial voting power: {node.voting_power}")
+    logger.info("   Initial voting power: {node.voting_power}")
 
     # HIPAA fast-track verification
     await node.verify_hipaa_credentials(
@@ -141,8 +147,8 @@ async def demonstrate_genomevault():
         hsm_serial="HSM12345",
     )
 
-    print("   Post-HIPAA voting power: {node.voting_power}")
-    print("   Block rewards: {node._calculate_block_rewards()} credits/block")
+    logger.info("   Post-HIPAA voting power: {node.voting_power}")
+    logger.info("   Block rewards: {node._calculate_block_rewards()} credits/block")
 
     # Submit proof transaction
     tx_hash = node.submit_transaction(
@@ -159,58 +165,58 @@ async def demonstrate_genomevault():
         }
     )
 
-    print("   Transaction submitted: {tx_hash[:16]}...")
+    logger.info("   Transaction submitted: {tx_hash[:16]}...")
 
     # Step 7: Summary
-    print("\n7. System Summary")
-    print("   Total data processed: ~100GB (simulated)")
-    print("   Data leaving device: <60KB")
-    print("   Privacy preserved: ✓")
-    print("   Proof verifiable: ✓")
-    print("   Blockchain recorded: ✓")
+    logger.info("\n7. System Summary")
+    logger.info("   Total data processed: ~100GB (simulated)")
+    logger.info("   Data leaving device: <60KB")
+    logger.info("   Privacy preserved: ✓")
+    logger.info("   Proof verifiable: ✓")
+    logger.info("   Blockchain recorded: ✓")
 
     # Calculate total system metrics
-    print("\n=== Performance Metrics ===")
-    print("Processing time: <10 minutes (consumer hardware)")
-    print("Proof generation: <1 minute")
-    print("PIR query latency: ~{optimal_config['optimal']['latency_ms']}ms")
-    print(
+    logger.info("\n=== Performance Metrics ===")
+    logger.info("Processing time: <10 minutes (consumer hardware)")
+    logger.info("Proof generation: <1 minute")
+    logger.info("PIR query latency: ~{optimal_config['optimal']['latency_ms']}ms")
+    logger.info(
         "Storage required: {config.get_compression_size(['genomics', 'clinical', 'transcriptomics'])} KB"
     )
-    print("Security level: 256-bit post-quantum")
+    logger.info("Security level: 256-bit post-quantum")
 
     # Privacy calculations
-    print("\n=== Privacy Guarantees ===")
-    print(
+    logger.info("\n=== Privacy Guarantees ===")
+    logger.info(
         "PIR privacy (2 TS): P_fail = {pir_client.calculate_privacy_failure_probability(2, 0.98):.2e}"
     )
-    print("Differential privacy: ε = {config.security.differential_privacy_epsilon}")
-    print("Zero-knowledge: Perfect secrecy")
+    logger.info("Differential privacy: ε = {config.security.differential_privacy_epsilon}")
+    logger.info("Zero-knowledge: Perfect secrecy")
 
     # Network voting power
-    print("\n=== Network Governance ===")
-    print("Light TS node: w = {1 + 10} = 11")
-    print("Full node: w = {4 + 0} = 4")
-    print("Archive node: w = {8 + 0} = 8")
-    print("BFT requirement: H > F (majority honest voting power)")
+    logger.info("\n=== Network Governance ===")
+    logger.info("Light TS node: w = {1 + 10} = 11")
+    logger.info("Full node: w = {4 + 0} = 4")
+    logger.info("Archive node: w = {8 + 0} = 8")
+    logger.info("BFT requirement: H > F (majority honest voting power)")
 
 
 def demonstrate_privacy_calculations():
     """Demonstrate privacy guarantee calculations."""
-    print("\n=== Privacy Guarantee Calculations ===")
+    logger.info("\n=== Privacy Guarantee Calculations ===")
 
     # PIR privacy calculations
-    print("\nPIR Privacy Breach Probability:")
-    print("P_fail(k,q) = (1-q)^k")
-    print("\nFor HIPAA TS servers (q=0.98):")
+    logger.info("\nPIR Privacy Breach Probability:")
+    logger.info("P_fail(k,q) = (1-q)^k")
+    logger.info("\nFor HIPAA TS servers (q=0.98):")
     for k in range(1, 5):
         p_fail = (1 - 0.98) ** k
-        print("  {k} servers: P_fail = {p_fail:.2e}")
+        logger.info("  {k} servers: P_fail = {p_fail:.2e}")
 
-    print("\nFor generic servers (q=0.95):")
+    logger.info("\nFor generic servers (q=0.95):")
     for k in range(1, 6):
         p_fail = (1 - 0.95) ** k
-        print("  {k} servers: P_fail = {p_fail:.2e}")
+        logger.info("  {k} servers: P_fail = {p_fail:.2e}")
 
     # Minimum servers calculation
     target_failure = 1e-4
@@ -222,25 +228,25 @@ def demonstrate_privacy_calculations():
     k_min_hipaa = math.ceil(math.log(target_failure) / math.log(1 - q_hipaa))
     k_min_generic = math.ceil(math.log(target_failure) / math.log(1 - q_generic))
 
-    print("\nMinimum servers for P_fail ≤ {target_failure}:")
-    print("  HIPAA TS: {k_min_hipaa} servers")
-    print("  Generic: {k_min_generic} servers")
+    logger.info("\nMinimum servers for P_fail ≤ {target_failure}:")
+    logger.info("  HIPAA TS: {k_min_hipaa} servers")
+    logger.info("  Generic: {k_min_generic} servers")
 
 
 def demonstrate_compression_tiers():
     """Demonstrate compression tier calculations."""
-    print("\n=== Compression Tier Analysis ===")
+    logger.info("\n=== Compression Tier Analysis ===")
 
     modalities = ["genomics", "transcriptomics", "epigenetics", "proteomics"]
 
-    print("\nStorage by tier:")
+    logger.info("\nStorage by tier:")
     for tier in CompressionTier:
         config.hypervector.compression_tier = tier
 
-        print("\n{tier.value.upper()} Tier:")
+        logger.info("\n{tier.value.upper()} Tier:")
         for i in range(1, len(modalities) + 1):
             size = config.get_compression_size(modalities[:i])
-            print("  {i} modality(ies): {size} KB")
+            logger.info("  {i} modality(ies): {size} KB")
 
 
 if __name__ == "__main__":
@@ -251,5 +257,5 @@ if __name__ == "__main__":
     demonstrate_privacy_calculations()
     demonstrate_compression_tiers()
 
-    print("\n=== GenomeVault 3.0 Demonstration Complete ===")
-    print("Your genomic data remains private while enabling breakthrough research!")
+    logger.info("\n=== GenomeVault 3.0 Demonstration Complete ===")
+    logger.info("Your genomic data remains private while enabling breakthrough research!")

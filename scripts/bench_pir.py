@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """
 PIR Performance Benchmarking Script
 Measures latency, throughput, and resource usage for PIR operations.
@@ -10,19 +13,13 @@ import os
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 import numpy as np
 import psutil
 from tabulate import tabulate
 
 from genomevault.pir.it_pir_protocol import BatchPIRProtocol, PIRParameters, PIRProtocol
-from genomevault.pir.network.coordinator import (
-    PIRCoordinator,
-    ServerInfo,
-    ServerSelectionCriteria,
-    ServerType,
-)
 from genomevault.pir.server.enhanced_pir_server import EnhancedPIRServer, ServerConfig
 
 
@@ -53,7 +50,7 @@ class PIRBenchmark:
         self, database_sizes: list[int], num_iterations: int = 100
     ):
         """Benchmark query vector generation."""
-        print("\n=== Query Generation Benchmark ===")
+        logger.info("\n=== Query Generation Benchmark ===")
         results = []
 
         for db_size in database_sizes:
@@ -83,7 +80,7 @@ class PIRBenchmark:
                 }
             )
 
-            print(
+            logger.info(
                 f"DB Size: {db_size:>8} | "
                 f"Queries/sec: {queries_per_sec:>8.1f} | "
                 f"Avg time: {avg_time_ms:>6.2f}ms"
@@ -94,7 +91,7 @@ class PIRBenchmark:
 
     async def benchmark_server_response(self, database_sizes: list[int], num_iterations: int = 10):
         """Benchmark server response computation."""
-        print("\n=== Server Response Benchmark ===")
+        logger.info("\n=== Server Response Benchmark ===")
         results = []
 
         for db_size in database_sizes:
@@ -140,7 +137,7 @@ class PIRBenchmark:
                 }
             )
 
-            print(
+            logger.info(
                 f"DB Size: {db_size:>8} | "
                 f"Responses/sec: {responses_per_sec:>6.1f} | "
                 f"Avg time: {avg_time_ms:>7.2f}ms | "
@@ -152,7 +149,7 @@ class PIRBenchmark:
 
     async def benchmark_end_to_end(self, database_sizes: list[int], num_servers: list[int]):
         """Benchmark end-to-end PIR retrieval."""
-        print("\n=== End-to-End PIR Benchmark ===")
+        logger.info("\n=== End-to-End PIR Benchmark ===")
         results = []
 
         for db_size in database_sizes:
@@ -205,7 +202,7 @@ class PIRBenchmark:
                     }
                 )
 
-                print(
+                logger.info(
                     f"DB: {db_size:>8} | Servers: {n_servers} | "
                     f"Avg: {avg_latency:>6.1f}ms | "
                     f"P95: {p95_latency:>6.1f}ms | "
@@ -217,7 +214,7 @@ class PIRBenchmark:
 
     async def benchmark_batch_pir(self, database_size: int, batch_sizes: list[int]):
         """Benchmark batch PIR operations."""
-        print("\n=== Batch PIR Benchmark ===")
+        logger.info("\n=== Batch PIR Benchmark ===")
         results = []
 
         params = PIRParameters(database_size=database_size)
@@ -259,7 +256,7 @@ class PIRBenchmark:
                 }
             )
 
-            print(
+            logger.info(
                 f"Batch size: {batch_size:>4} | "
                 f"Gen: {query_gen_time:>6.1f}ms | "
                 f"Process: {process_time:>7.1f}ms | "
@@ -271,7 +268,7 @@ class PIRBenchmark:
 
     async def benchmark_enhanced_server(self, database_size: int, cache_sizes: list[int]):
         """Benchmark enhanced PIR server with caching."""
-        print("\n=== Enhanced Server Benchmark ===")
+        logger.info("\n=== Enhanced Server Benchmark ===")
         results = []
 
         for cache_size_mb in cache_sizes:
@@ -345,7 +342,7 @@ class PIRBenchmark:
                 }
             )
 
-            print(
+            logger.info(
                 f"Cache: {cache_size_mb:>4}MB | "
                 f"Hit rate: {cache_hit_rate:>5.1%} | "
                 f"Avg latency: {avg_latency:>6.1f}ms"
@@ -356,7 +353,7 @@ class PIRBenchmark:
 
     async def benchmark_network_latency(self, num_shards: list[int], rtt_ms: float = 70):
         """Benchmark network latency impact."""
-        print("\n=== Network Latency Benchmark ===")
+        logger.info("\n=== Network Latency Benchmark ===")
         results = []
 
         for n_shards in num_shards:
@@ -384,7 +381,7 @@ class PIRBenchmark:
                 }
             )
 
-            print(
+            logger.info(
                 f"Shards: {n_shards} ({config:>12}) | "
                 f"RTT: {rtt_ms}ms | "
                 f"Total: {total_latency:>5.0f}ms"
@@ -401,7 +398,7 @@ class PIRBenchmark:
         with open(filename, "w") as f:
             json.dump(self.results, f, indent=2)
 
-        print(f"\nResults saved to: {filename}")
+        logger.info(f"\nResults saved to: {filename}")
 
         # Also save summary
         self._save_summary()
@@ -461,8 +458,8 @@ async def main():
     # Create benchmark suite
     benchmark = PIRBenchmark(args.output)
 
-    print("Starting PIR Performance Benchmarks")
-    print("=" * 50)
+    logger.info("Starting PIR Performance Benchmarks")
+    logger.info("=" * 50)
 
     if args.quick:
         # Quick benchmarks
@@ -481,7 +478,7 @@ async def main():
     # Save results
     benchmark.save_results()
 
-    print("\nBenchmark complete!")
+    logger.info("\nBenchmark complete!")
 
 
 if __name__ == "__main__":

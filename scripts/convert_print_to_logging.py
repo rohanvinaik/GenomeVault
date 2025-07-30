@@ -5,10 +5,7 @@ This script helps with step 5 of the audit checklist.
 """
 
 import ast
-import os
-import re
 from pathlib import Path
-from typing import List, Tuple
 
 
 def find_print_statements(file_path: Path) -> list[tuple[int, str]]:
@@ -30,8 +27,13 @@ def find_print_statements(file_path: Path) -> list[tuple[int, str]]:
                         prints.append((line_num, lines[line_num - 1].strip()))
 
     except (SyntaxError, UnicodeDecodeError):
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         # Skip files with syntax errors or encoding issues
         pass
+        raise
 
     return prints
 

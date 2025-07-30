@@ -1,3 +1,6 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 """
 GenomeVault Compression System - Multi-tier implementation
 
@@ -11,7 +14,7 @@ import gzip
 import hashlib
 import json
 from dataclasses import dataclass, field
-from typing import Any, Dict, List
+from typing import Any
 
 from genomevault.core.constants import CompressionTier, OmicsType
 from genomevault.utils import get_config, get_logger
@@ -500,25 +503,25 @@ if __name__ == "__main__":
     engine = CompressionEngine()
 
     # Example: Calculate storage for different configurations
-    print("Storage Requirements Examples:")
-    print("=" * 50)
+    logger.info("Storage Requirements Examples:")
+    logger.info("=" * 50)
 
     # Example 1: Mini genomics only
     req1 = engine.calculate_storage_requirements([CompressionTier.MINI], [OmicsType.GENOMIC])
-    print("Mini genomics only: {req1['total_size_kb']} KB")
+    logger.info("Mini genomics only: {req1['total_size_kb']} KB")
 
     # Example 2: Clinical pharmacogenomics
     req2 = engine.calculate_storage_requirements(
         [CompressionTier.CLINICAL], [OmicsType.GENOMIC, OmicsType.PHENOTYPIC]
     )
-    print("Clinical tier: {req2['total_size_kb']} KB")
+    logger.info("Clinical tier: {req2['total_size_kb']} KB")
 
     # Example 3: Mini + Clinical (as specified in docs)
     req3 = engine.calculate_storage_requirements(
         [CompressionTier.MINI, CompressionTier.CLINICAL],
         [OmicsType.GENOMIC, OmicsType.PHENOTYPIC],
     )
-    print("Mini + Clinical: {req3['total_size_kb']} KB")
+    logger.info("Mini + Clinical: {req3['total_size_kb']} KB")
 
     # Example 4: Full multi-omics
     req4 = engine.calculate_storage_requirements(
@@ -530,7 +533,7 @@ if __name__ == "__main__":
             OmicsType.PROTEOMIC,
         ],
     )
-    print("Full multi-omics (4 modalities): {req4['total_size_kb']} KB")
+    logger.info("Full multi-omics (4 modalities): {req4['total_size_kb']} KB")
 
-    print("\nDetailed breakdown:")
-    print(json.dumps(req4, indent=2))
+    logger.info("\nDetailed breakdown:")
+    logger.info(json.dumps(req4, indent=2))

@@ -2,8 +2,6 @@
 Bit-packed hypervector implementation for memory-efficient genomic encoding
 """
 
-from typing import Dict, List, Optional, Tuple, Union
-
 import numba
 import numpy as np
 import torch
@@ -14,8 +12,13 @@ try:
 
     CUPY_AVAILABLE = True
 except ImportError:
+    from genomevault.observability.logging import configure_logging
+
+    logger = configure_logging()
+    logger.exception("Unhandled exception")
     cp = None
     CUPY_AVAILABLE = False
+    raise
 
 from genomevault.core.constants import HYPERVECTOR_DIMENSIONS
 from genomevault.core.exceptions import HypervectorError
@@ -477,7 +480,12 @@ class PackedGenomicEncoder:
             return variant_vec
 
         except Exception as e:
-            raise HypervectorError(f"Failed to encode variant: {str(e)}")
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
+            raise HypervectorError(f"Failed to encode variant: {e!s}")
+            raise
 
     def _encode_position(self, position: int) -> PackedHV:
         """Encode genomic position"""
@@ -500,7 +508,12 @@ class PackedGenomicEncoder:
         try:
             chr_idx = int(chr_num)
         except (ValueError, Exception):
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             chr_idx = 25
+            raise
 
         rng = np.random.RandomState(chr_idx)
         dense = rng.randint(0, 2, size=self.dimension).astype(np.uint8)

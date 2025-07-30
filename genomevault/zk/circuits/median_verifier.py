@@ -7,11 +7,7 @@ import hashlib
 import json
 import secrets
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
-
-import numpy as np
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from typing import Any
 
 from genomevault.utils.logging import get_logger
 
@@ -266,8 +262,13 @@ class MedianVerifierCircuit:
             return True
 
         except Exception as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             logger.error(f"Proof verification failed: {e}")
             return False
+            raise
 
     def _commit(self, value: float, randomness: bytes) -> bytes:
         """Create a commitment to a value"""
@@ -412,7 +413,12 @@ if __name__ == "__main__":
                 error_bound=0.01,  # Wrong median
             )
         except ValueError as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             print(f"Expected error: {e}")
+            raise
 
         return is_valid and is_valid2
 

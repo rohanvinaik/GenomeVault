@@ -3,7 +3,6 @@ Unit tests for hypervector encoding module
 """
 
 import unittest
-from typing import Dict
 
 import numpy as np
 import torch
@@ -14,26 +13,19 @@ from genomevault.hypervector_transform.binding import (
     CrossModalBinder,
     HypervectorBinder,
     PositionalBinder,
-    circular_bind,
-    protect_vector,
 )
 from genomevault.hypervector_transform.encoding import (
     HypervectorConfig,
     HypervectorEncoder,
     ProjectionType,
-    create_encoder,
-    encode_genomic_data,
 )
 from genomevault.hypervector_transform.holographic import (
     HolographicEncoder,
-    encode_variant,
-    query_hologram,
 )
 from genomevault.hypervector_transform.mapping import (
     BiologicalSimilarityMapper,
     ManifoldPreservingMapper,
     SimilarityPreservingMapper,
-    preserve_similarities,
 )
 
 

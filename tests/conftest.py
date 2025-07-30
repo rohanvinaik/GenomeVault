@@ -8,7 +8,6 @@ import shutil
 import tempfile
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict
 from unittest.mock import Mock
 
 import numpy as np
@@ -225,7 +224,12 @@ def cleanup_test_files():
             elif os.path.isdir(filepath):
                 shutil.rmtree(filepath)
         except Exception:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             pass
+            raise
 
 
 # Pytest hooks

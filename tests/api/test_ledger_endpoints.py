@@ -1,7 +1,9 @@
 from fastapi.testclient import TestClient
+
 from genomevault.api.app import app
 
 client = TestClient(app)
+
 
 def test_ledger_endpoints():
     r1 = client.post("/ledger/append", json={"data": {"a": 1}})

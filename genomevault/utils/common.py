@@ -8,14 +8,11 @@ consistent behavior.
 Created as part of the tail-chasing fixes initiative.
 """
 
-import hashlib
-import hmac
 import json
 import logging
 import os
-import secrets
-from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Union
+from datetime import datetime
+from typing import Any
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -123,7 +120,7 @@ def verify_hsm(hsm_serial: str, provider_type: str = "generic") -> bool:
     if provider_type == "research":
         # Research institutions need at least basic hardware security
         if not is_known_manufacturer:
-            logger.error(f"Research provider requires recognized HSM manufacturer")
+            logger.error("Research provider requires recognized HSM manufacturer")
             return False
 
     logger.info(f"HSM {hsm_serial} verified for {provider_type} provider")
@@ -236,7 +233,12 @@ def get_config(key: str, default: Any = None, config_type: str = "main") -> Any:
         try:
             return json.loads(env_value)
         except (json.JSONDecodeError, TypeError):
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
             return env_value
+            raise
 
     # Fall back to defaults
     config_section = config_defaults.get(config_type, {})
@@ -528,7 +530,7 @@ def check_hipaa_compliance(data_dict: dict[str, Any], context: str = "general") 
         "ethnicity",
         "diagnosis_codes",
     ]
-    present_quasi = [qi for qi in quasi_identifiers if qi in data_dict and data_dict[qi]]
+    present_quasi = [qi for qi in quasi_identifiers if data_dict.get(qi)]
 
     if len(present_quasi) >= 3:
         compliance_results["warnings"].append(
@@ -650,14 +652,24 @@ def validate_fix_implementation():
         credits = get_user_credits("hospital_test_001", "hipaa")
         test_results.append(("get_user_credits", credits == 1500, f"Got {credits} credits"))
     except Exception as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         test_results.append(("get_user_credits", False, str(e)))
+        raise
 
     # Test HSM verification
     try:
         hsm_valid = verify_hsm("HSM123456789", "hipaa")
         test_results.append(("verify_hsm", hsm_valid, "HSM verification successful"))
     except Exception as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         test_results.append(("verify_hsm", False, str(e)))
+        raise
 
     # Test circuit template
     try:
@@ -666,14 +678,24 @@ def validate_fix_implementation():
             ("create_circuit_template", "constraints" in template, "Template created")
         )
     except Exception as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         test_results.append(("create_circuit_template", False, str(e)))
+        raise
 
     # Test configuration
     try:
         config_val = get_config("log_level", "DEBUG", "main")
         test_results.append(("get_config", config_val is not None, f"Config: {config_val}"))
     except Exception as e:
+        from genomevault.observability.logging import configure_logging
+
+        logger = configure_logging()
+        logger.exception("Unhandled exception")
         test_results.append(("get_config", False, str(e)))
+        raise
 
     return test_results
 
