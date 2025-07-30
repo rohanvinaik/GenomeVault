@@ -1,0 +1,12 @@
+{
+  "levels": ["public", "confidential", "restricted"],
+  "fields": {
+    "email": "restricted",
+    "phone": "restricted",
+    "ssn": "restricted",
+    "address": "confidential",
+    "notes": "confidential",
+    "age": "public",
+    "zip": "confidential"
+  }
+}

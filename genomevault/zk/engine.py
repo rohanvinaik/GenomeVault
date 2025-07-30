@@ -3,86 +3,49 @@ from __future__ import annotations
 import base64
 import json
 from dataclasses import dataclass
-from hashlib import blake2b
 from typing import Dict, Any
 
-
-def _b64(data: bytes) -> str:
-    return base64.b64encode(data).decode("ascii")
+from genomevault.zk.real_engine import RealZKEngine
 
 
-def _b64d(s: str) -> bytes:
-    return base64.b64decode(s.encode("ascii"))
-
-
+# Legacy placeholder kept for import compatibility (not used in router after switch)
 @dataclass
 class Proof:
     version: str
-    algo: str  # e.g., "hash-commit-v1"
+    algo: str
     circuit_type: str
-    nonce: str  # base64
-    commitment: str  # base64
-    proof: str  # base64 of hash(commitment || nonce)
+    nonce: str
+    commitment: str
+    proof: str
     public_inputs: Dict[str, Any]
 
     def to_base64(self) -> str:
         payload = json.dumps(self.__dict__, separators=(",", ":"), sort_keys=True).encode("utf-8")
-        return _b64(payload)
+        return base64.b64encode(payload).decode("ascii")
 
     @staticmethod
     def from_base64(s: str) -> "Proof":
-        obj = json.loads(_b64d(s).decode("utf-8"))
+        obj = json.loads(base64.b64decode(s.encode("ascii")).decode("utf-8"))
         return Proof(**obj)
 
 
 class ZKProofEngine:
-    """Minimal, dependency-light ZK placeholder engine.
+    """Compatibility shim that forwards to RealZKEngine for supported circuits."""
 
-    NOTE: This is NOT a cryptographic ZK system. It simulates a proof flow using commitments.
-    Replace with a real PLONK/zk-SNARK backend in production.
-    """
+    def __init__(self, repo_root: str = "/Users/rohanvinaik/genomevault") -> None:
+        self._real = RealZKEngine(repo_root=repo_root)
 
-    VERSION = "0.1.0"
-    ALGO = "hash-commit-v1"
-
-    @staticmethod
-    def _commit(circuit_type: str, inputs: Dict[str, Any]) -> bytes:
-        h = blake2b(digest_size=32)
-        h.update(circuit_type.encode("utf-8"))
-        h.update(b"::")
-        h.update(json.dumps(inputs, sort_keys=True, separators=(",", ":")).encode("utf-8"))
-        return h.digest()
-
-    def create_proof(self, *, circuit_type: str, inputs: Dict[str, Any]) -> Proof:
-        # Derive a commitment over circuit_type and inputs
-        commitment = self._commit(circuit_type, inputs)
-        # Public inputs expose the commitment only (no raw inputs)
-        public_inputs = {"commitment": _b64(commitment)}
-        # Derive a per-proof nonce and proof hash
-        nonce = blake2b(b"nonce::" + commitment, digest_size=16).digest()
-        prf = blake2b(commitment + nonce, digest_size=32).digest()
-        return Proof(
-            version=self.VERSION,
-            algo=self.ALGO,
-            circuit_type=circuit_type,
-            nonce=_b64(nonce),
-            commitment=_b64(commitment),
-            proof=_b64(prf),
-            public_inputs=public_inputs,
-        )
+    def create_proof(self, *, circuit_type: str, inputs: Dict[str, Any]):
+        # Only 'sum64' supported in real backend
+        if circuit_type == "sum64":
+            rp = self._real.create_proof(circuit_type=circuit_type, inputs=inputs)
+            # Return wire-format compatible with API
+            return type("Obj", (), {"to_base64": lambda self2: json.dumps(rp.to_wire()), "public_inputs": rp.public})()
+        raise ValueError("unsupported circuit_type for real backend: use 'sum64'")
 
     def verify_proof(self, *, proof_data: str, public_inputs: Dict[str, Any]) -> bool:
         try:
-            p = Proof.from_base64(proof_data)
+            wire = json.loads(proof_data)
+            return self._real.verify_proof(proof=wire["proof"], public_inputs=wire["public_inputs"])
         except Exception:
             return False
-        if p.algo != self.ALGO or p.version != self.VERSION:
-            return False
-        # Ensure provided public_inputs match the embedded ones
-        if public_inputs != p.public_inputs:
-            return False
-        # Recompute proof hash
-        commitment = _b64d(p.commitment)
-        nonce = _b64d(p.nonce)
-        expect = blake2b(commitment + nonce, digest_size=32).digest()
-        return _b64(expect) == p.proof
