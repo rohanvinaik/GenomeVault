@@ -11,7 +11,12 @@ def main():
     model = HybridKANHD(dimension=256, spline_mode="bspline", privacy_tier="standard")
     enc, metrics = model.encode_genomic_data(X)
     t1 = time.perf_counter()
-    print({"latency_s": t1 - t0, "compression_ratio": getattr(metrics, "compression_ratio", None)})
+    print(
+        {
+            "latency_s": t1 - t0,
+            "compression_ratio": getattr(metrics, "compression_ratio", None),
+        }
+    )
 
 
 if __name__ == "__main__":

@@ -87,7 +87,9 @@ class TestPIRIntegration:
         retrieved_hv = np.frombuffer(mock_response, dtype=np.float32)
 
         # Verify similarity
-        similarity = np.dot(hv, retrieved_hv) / (np.linalg.norm(hv) * np.linalg.norm(retrieved_hv))
+        similarity = np.dot(hv, retrieved_hv) / (
+            np.linalg.norm(hv) * np.linalg.norm(retrieved_hv)
+        )
         assert similarity > 0.95  # High similarity
 
     @pytest.mark.asyncio
@@ -186,7 +188,9 @@ class TestPIRIntegration:
             "impact_summary": {"HIGH": 1, "MODERATE": 1},
             "clinical_summary": {"Pathogenic": 1, "Likely pathogenic": 1},
             "zkproof": validity_proof,
-            "hypervectors": [hv.tolist()[:10] for hv in variant_hvs],  # Truncated for test
+            "hypervectors": [
+                hv.tolist()[:10] for hv in variant_hvs
+            ],  # Truncated for test
         }
 
         # Verify result

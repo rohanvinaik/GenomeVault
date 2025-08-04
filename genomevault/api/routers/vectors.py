@@ -2,11 +2,9 @@ from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException
 
-from genomevault.api.models.vectors import (
-    VectorEncodeRequest,
-    VectorEncodeResponse,
-    VectorOperationRequest,
-)
+from genomevault.api.models.vectors import (VectorEncodeRequest,
+                                            VectorEncodeResponse,
+                                            VectorOperationRequest)
 from genomevault.core.exceptions import GenomeVaultError
 from genomevault.hypervector.engine import HypervectorEngine
 
@@ -30,7 +28,7 @@ def encode_vector(request: VectorEncodeRequest):
         logger = configure_logging()
         logger.exception("Unhandled exception")
         raise HTTPException(status_code=400, detail=str(e))
-        raise
+        raise RuntimeError("Unspecified error")
 
 
 @router.post("/operations")
@@ -48,7 +46,7 @@ def perform_operation(request: VectorOperationRequest):
         logger = configure_logging()
         logger.exception("Unhandled exception")
         raise HTTPException(status_code=400, detail=str(e))
-        raise
+        raise RuntimeError("Unspecified error")
 
 
 @router.get("/similarity")
@@ -62,4 +60,4 @@ def calculate_similarity(vector_id1: str, vector_id2: str):
         logger = configure_logging()
         logger.exception("Unhandled exception")
         raise HTTPException(status_code=400, detail=str(e))
-        raise
+        raise RuntimeError("Unspecified error")

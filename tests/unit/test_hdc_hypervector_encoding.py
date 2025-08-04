@@ -8,25 +8,17 @@ import numpy as np
 import torch
 
 from genomevault.core.constants import OmicsType
-from genomevault.hypervector_transform.binding import (
-    BindingType,
-    CrossModalBinder,
-    HypervectorBinder,
-    PositionalBinder,
-)
-from genomevault.hypervector_transform.encoding import (
-    HypervectorConfig,
-    HypervectorEncoder,
-    ProjectionType,
-)
-from genomevault.hypervector_transform.holographic import (
-    HolographicEncoder,
-)
+from genomevault.hypervector_transform.binding import (BindingType,
+                                                       CrossModalBinder,
+                                                       HypervectorBinder,
+                                                       PositionalBinder)
+from genomevault.hypervector_transform.encoding import (HypervectorConfig,
+                                                        HypervectorEncoder,
+                                                        ProjectionType)
+from genomevault.hypervector_transform.holographic import HolographicEncoder
 from genomevault.hypervector_transform.mapping import (
-    BiologicalSimilarityMapper,
-    ManifoldPreservingMapper,
-    SimilarityPreservingMapper,
-)
+    BiologicalSimilarityMapper, ManifoldPreservingMapper,
+    SimilarityPreservingMapper)
 
 
 class TestHypervectorEncoder(unittest.TestCase):
@@ -48,7 +40,9 @@ class TestHypervectorEncoder(unittest.TestCase):
     def test_encoder_initialization(self):
         """Test encoder initialization"""
         self.assertEqual(self.encoder.config.dimension, 10000)
-        self.assertEqual(self.encoder.config.projection_type, ProjectionType.SPARSE_RANDOM)
+        self.assertEqual(
+            self.encoder.config.projection_type, ProjectionType.SPARSE_RANDOM
+        )
         self.assertTrue(self.encoder.config.normalize)
 
     def test_basic_encoding(self):
@@ -60,7 +54,9 @@ class TestHypervectorEncoder(unittest.TestCase):
 
     def test_multiresolution_encoding(self):
         """Test multi-resolution encoding"""
-        multi_vectors = self.encoder.encode_multiresolution(self.test_features, OmicsType.GENOMIC)
+        multi_vectors = self.encoder.encode_multiresolution(
+            self.test_features, OmicsType.GENOMIC
+        )
 
         self.assertIn("base", multi_vectors)
         self.assertIn("mid", multi_vectors)
@@ -176,7 +172,9 @@ class TestHypervectorBinder(unittest.TestCase):
 
         # Bundle should have positive similarity with all components
         for v in [self.v1, self.v2, self.v3]:
-            sim = torch.nn.functional.cosine_similarity(bundle.unsqueeze(0), v.unsqueeze(0)).item()
+            sim = torch.nn.functional.cosine_similarity(
+                bundle.unsqueeze(0), v.unsqueeze(0)
+            ).item()
             self.assertGreater(sim, 0)
 
     def test_protection(self):
@@ -340,7 +338,9 @@ class TestSimilarityMapping(unittest.TestCase):
 
     def test_biological_mapper(self):
         """Test biological similarity mapper"""
-        mapper = BiologicalSimilarityMapper(self.input_dim, self.output_dim, OmicsType.GENOMIC)
+        mapper = BiologicalSimilarityMapper(
+            self.input_dim, self.output_dim, OmicsType.GENOMIC
+        )
 
         # Test variant similarity
         v1 = torch.rand(100)

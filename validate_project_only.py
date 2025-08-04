@@ -146,7 +146,9 @@ class FocusedAuditValidator:
         self.report["py_files"] = len(py_files)
 
         # Count test files
-        test_files = [f for f in py_files if f.name.startswith("test_") or "_test.py" in str(f)]
+        test_files = [
+            f for f in py_files if f.name.startswith("test_") or "_test.py" in str(f)
+        ]
         self.report["tests_detected"] = len(test_files)
 
     def check_project_files(self):
@@ -324,8 +326,12 @@ class FocusedAuditValidator:
                 raise
 
         if total_functions > 0:
-            self.report["quality_metrics"]["func_ann_cov"] = annotated_functions / total_functions
-            self.report["quality_metrics"]["func_ret_cov"] = return_annotated / total_functions
+            self.report["quality_metrics"]["func_ann_cov"] = (
+                annotated_functions / total_functions
+            )
+            self.report["quality_metrics"]["func_ret_cov"] = (
+                return_annotated / total_functions
+            )
             self.report["quality_metrics"]["total_functions"] = total_functions
 
     def run_validation(self):
@@ -343,8 +349,12 @@ class FocusedAuditValidator:
 
         # Sort results
         self.report["files_with_prints"].sort(key=lambda x: x["count"], reverse=True)
-        self.report["files_with_broad_excepts"].sort(key=lambda x: x["count"], reverse=True)
-        self.report["complex_functions"].sort(key=lambda x: x["complexity"], reverse=True)
+        self.report["files_with_broad_excepts"].sort(
+            key=lambda x: x["count"], reverse=True
+        )
+        self.report["complex_functions"].sort(
+            key=lambda x: x["complexity"], reverse=True
+        )
 
         return self.report
 
@@ -380,18 +390,26 @@ class FocusedAuditValidator:
         total_prints = sum(item["count"] for item in self.report["files_with_prints"])
         print(f"  Total print statements: {total_prints}")
 
-        print(f"\nFiles with broad exceptions: {len(self.report['files_with_broad_excepts'])}")
+        print(
+            f"\nFiles with broad exceptions: {len(self.report['files_with_broad_excepts'])}"
+        )
         if self.report["files_with_broad_excepts"]:
             for item in self.report["files_with_broad_excepts"][:10]:
                 print(f"  - {item['path']}: {item['count']} broad except(s)")
             if len(self.report["files_with_broad_excepts"]) > 10:
-                print(f"  ... and {len(self.report['files_with_broad_excepts']) - 10} more")
+                print(
+                    f"  ... and {len(self.report['files_with_broad_excepts']) - 10} more"
+                )
 
         # Calculate totals
-        total_excepts = sum(item["count"] for item in self.report["files_with_broad_excepts"])
+        total_excepts = sum(
+            item["count"] for item in self.report["files_with_broad_excepts"]
+        )
         print(f"  Total broad exceptions: {total_excepts}")
 
-        print(f"\nComplex functions (complexity > 10): {len(self.report['complex_functions'])}")
+        print(
+            f"\nComplex functions (complexity > 10): {len(self.report['complex_functions'])}"
+        )
         if self.report["complex_functions"]:
             for item in self.report["complex_functions"][:10]:
                 print(

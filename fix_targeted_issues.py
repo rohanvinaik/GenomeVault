@@ -11,7 +11,9 @@ import shutil
 from pathlib import Path
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 
@@ -165,9 +167,13 @@ class TargetedGenomeVaultFixer:
                     insert_pos = 0
                     if lines[0].startswith("#!"):
                         insert_pos = 1
-                    if lines[insert_pos].startswith('"""') or lines[insert_pos].startswith("'''"):
+                    if lines[insert_pos].startswith('"""') or lines[
+                        insert_pos
+                    ].startswith("'''"):
                         # Find end of docstring
-                        for i, line in enumerate(lines[insert_pos + 1 :], insert_pos + 1):
+                        for i, line in enumerate(
+                            lines[insert_pos + 1 :], insert_pos + 1
+                        ):
                             if line.endswith('"""') or line.endswith("'''"):
                                 insert_pos = i + 1
                                 break
@@ -331,7 +337,9 @@ class TargetedGenomeVaultFixer:
         logger.info("1. Run 'python3 validate_project_only.py' to see updated metrics")
         logger.info("2. Review changes with 'git diff'")
         logger.info("3. Run tests to ensure nothing broke")
-        logger.info("4. Consider manually refactoring the complex functions marked with TODOs")
+        logger.info(
+            "4. Consider manually refactoring the complex functions marked with TODOs"
+        )
 
 
 if __name__ == "__main__":

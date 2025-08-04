@@ -12,7 +12,8 @@ import time
 import numpy as np
 
 from genomevault.hypervector.error_handling import ErrorBudgetAllocator
-from genomevault.pir.client import BatchedPIRQueryBuilder, GenomicQuery, PIRClient, QueryType
+from genomevault.pir.client import (BatchedPIRQueryBuilder, GenomicQuery,
+                                    PIRClient, QueryType)
 
 
 async def main():
@@ -25,7 +26,7 @@ async def main():
     logger.info("1. User Accuracy Requirements:")
     epsilon = 0.01  # 1% relative error
     delta_exp = 20  # 1 in 2^20 failure probability
-    logger.info(f"   - Allowed error: ±{epsilon*100}%")
+    logger.info(f"   - Allowed error: ±{epsilon * 100}%")
     logger.info(f"   - Confidence: 1 in {2**delta_exp:,} chance of failure")
     logger.info("   - ECC enabled: Yes (3-block XOR parity)")
 
@@ -70,7 +71,9 @@ async def main():
 
     logger.info(f"   - Connected to {len(servers)} PIR servers")
     logger.info(f"   - Database size: {database_size:,} entries")
-    logger.info(f"   - Privacy guarantee: {pir_client.calculate_privacy_guarantee(3):.2e}")
+    logger.info(
+        f"   - Privacy guarantee: {pir_client.calculate_privacy_guarantee(3):.2e}"
+    )
 
     # Step 4: Build and execute query
     logger.info("\n4. Executing Privacy-Preserving Query:")
@@ -104,7 +107,9 @@ async def main():
     async for idx, result in query_builder.execute_streaming_batch(batched_query):
         results.append(result)
         progress = (idx + 1) / budget.repeats * 100
-        logger.info(f"   [{progress:3.0f}%] Completed repeat {idx + 1}/{budget.repeats}")
+        logger.info(
+            f"   [{progress:3.0f}%] Completed repeat {idx + 1}/{budget.repeats}"
+        )
 
     logger.info("")  # New line after progress
 
@@ -140,7 +145,7 @@ async def main():
     elapsed_time = (time.time() - start_time) * 1000
 
     logger.info("\n7. Query Complete:")
-    logger.info(f"   - Result: Allele frequency = {median_freq:.4f} ± {epsilon*100}%")
+    logger.info(f"   - Result: Allele frequency = {median_freq:.4f} ± {epsilon * 100}%")
     logger.info(f"   - Confidence: {budget.confidence}")
     logger.info(f"   - Total time: {elapsed_time:.0f}ms")
     logger.info(f"   - PIR queries used: {budget.repeats}")

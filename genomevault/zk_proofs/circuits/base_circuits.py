@@ -105,7 +105,9 @@ class BaseCircuit(ABC):
         }
         self.constraints.append(constraint)
 
-    def add_multiplication_gate(self, a: FieldElement, b: FieldElement, c: FieldElement):
+    def add_multiplication_gate(
+        self, a: FieldElement, b: FieldElement, c: FieldElement
+    ):
         """Add constraint: a * b = c"""
         self.add_constraint(a, b, c, qm=1, qo=-1)
 
@@ -184,7 +186,9 @@ class RangeProofCircuit(BaseCircuit):
         for i, bit in enumerate(self.value_bits):
             bit_elem = FieldElement(bit)
             # bit * (1 - bit) = 0
-            self.add_constraint(bit_elem, FieldElement(1) - bit_elem, FieldElement(0), qm=1)
+            self.add_constraint(
+                bit_elem, FieldElement(1) - bit_elem, FieldElement(0), qm=1
+            )
 
         # Reconstruct value from bits
         reconstructed = FieldElement(0)
@@ -273,7 +277,9 @@ class HashPreimageCircuit(BaseCircuit):
         computed_hash = self._hash_elements(preimage_elements)
 
         # Constraint: computed hash equals public hash
-        self.add_constraint(computed_hash, self.hash_output, FieldElement(0), ql=1, qr=-1)
+        self.add_constraint(
+            computed_hash, self.hash_output, FieldElement(0), ql=1, qr=-1
+        )
 
     def _hash_elements(self, elements: list[FieldElement]) -> FieldElement:
         """Hash field elements (simplified)"""
@@ -307,7 +313,9 @@ class AggregatorCircuit(BaseCircuit):
         commitment = self._commit(total, self.randomness)
 
         # Constraint: commitment matches public commitment
-        self.add_constraint(commitment, self.sum_commitment, FieldElement(0), ql=1, qr=-1)
+        self.add_constraint(
+            commitment, self.sum_commitment, FieldElement(0), ql=1, qr=-1
+        )
 
         # Constraint: count is correct
         self.add_constraint(
@@ -328,7 +336,9 @@ def create_wire_assignment(num_wires: int) -> dict[str, int]:
     return {"w_{i}": i for i in range(num_wires)}
 
 
-def evaluate_constraint(constraint: dict, wire_values: dict[int, FieldElement]) -> FieldElement:
+def evaluate_constraint(
+    constraint: dict, wire_values: dict[int, FieldElement]
+) -> FieldElement:
     """Evaluate a PLONK constraint"""
     a = wire_values.get(constraint["a"], FieldElement(0))
     b = wire_values.get(constraint["b"], FieldElement(0))
@@ -345,7 +355,9 @@ def evaluate_constraint(constraint: dict, wire_values: dict[int, FieldElement]) 
     return result
 
 
-def verify_constraints(circuit: BaseCircuit, wire_values: dict[int, FieldElement]) -> bool:
+def verify_constraints(
+    circuit: BaseCircuit, wire_values: dict[int, FieldElement]
+) -> bool:
     """Verify all constraints are satisfied"""
     for constraint in circuit.constraints:
         result = evaluate_constraint(constraint, wire_values)

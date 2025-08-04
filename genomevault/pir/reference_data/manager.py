@@ -158,9 +158,9 @@ class ReferenceDataManager:
         # Load existing data
         self._load_reference_data()
 
-        logger.info(f"ReferenceDataManager initialized with {len(self.nodes)} nodes")
+        logger.info("ReferenceDataManager initialized with %slen(self.nodes) nodes")
 
-    def _load_reference_data(self):
+    def _load_reference_data(self) -> None:
         """Load reference data from disk."""
         # Load pangenome graph
         graph_path = self.data_directory / "pangenome_graph.json.gz"
@@ -176,7 +176,7 @@ class ReferenceDataManager:
                 annotations_data = json.load(f)
                 self._load_annotations_from_dict(annotations_data)
 
-    def _load_graph_from_dict(self, data: dict):
+    def _load_graph_from_dict(self, data: dict) -> None:
         """Load pangenome graph from dictionary."""
         # Load nodes
         for node_data in data.get("nodes", []):
@@ -204,7 +204,7 @@ class ReferenceDataManager:
         if "metadata" in data:
             self.metadata.update(data["metadata"])
 
-    def _load_annotations_from_dict(self, data: dict):
+    def _load_annotations_from_dict(self, data: dict) -> None:
         """Load variant annotations from dictionary."""
         for var_key, ann_data in data.items():
             annotation = VariantAnnotation(
@@ -221,7 +221,7 @@ class ReferenceDataManager:
             )
             self.variant_annotations[var_key] = annotation
 
-    def add_node(self, node: PangenomeNode):
+    def add_node(self, node: PangenomeNode) -> None:
         """Add node to pangenome graph."""
         self.nodes[node.node_id] = node
 
@@ -245,7 +245,7 @@ class ReferenceDataManager:
 
         self.metadata["total_nodes"] += 1
 
-    def add_edge(self, edge: PangenomeEdge):
+    def add_edge(self, edge: PangenomeEdge) -> None:
         """Add edge to pangenome graph."""
         self.edges.append(edge)
 
@@ -255,7 +255,7 @@ class ReferenceDataManager:
 
         self.metadata["total_edges"] += 1
 
-    def add_variant_annotation(self, annotation: VariantAnnotation):
+    def add_variant_annotation(self, annotation: VariantAnnotation) -> None:
         """Add variant annotation."""
         key = "{annotation.chromosome}:{annotation.position}:{annotation.ref_allele}:{annotation.alt_allele}"
         self.variant_annotations[key] = annotation
@@ -334,7 +334,7 @@ class ReferenceDataManager:
             for item in pop_data:
                 items.append(json.dumps(item).encode())
 
-        logger.info(f"Prepared {len(items)} items of type {data_type.value} for PIR")
+        logger.info("Prepared %slen(items) items of type %sdata_type.value for PIR")
         return items
 
     def _aggregate_population_data(self) -> list[dict]:
@@ -404,7 +404,7 @@ class ReferenceDataManager:
 
         return index
 
-    def save_reference_data(self):
+    def save_reference_data(self) -> None:
         """Save reference data to disk."""
         # Save pangenome graph
         graph_data = {
@@ -468,7 +468,9 @@ class ReferenceDataManager:
         for pop, node_ids in self.population_nodes.items():
             pop_stats[pop] = {
                 "nodes": len(node_ids),
-                "percentage": (len(node_ids) / len(self.nodes) * 100 if self.nodes else 0),
+                "percentage": (
+                    len(node_ids) / len(self.nodes) * 100 if self.nodes else 0
+                ),
             }
 
         # Chromosome distribution
@@ -534,15 +536,15 @@ if __name__ == "__main__":
         # Query a region
         region = GenomicRegion("chr1", 1000000, 1010000)
         nodes = manager.get_nodes_in_region(region)
-        logger.info("Found {len(nodes)} nodes in {region}")
+        logger.info("Found %slen(nodes) nodes in %sregion")
 
         # Prepare for PIR
         pir_data = manager.prepare_for_pir(ReferenceDataType.PANGENOME_GRAPH)
-        logger.info("Prepared {len(pir_data)} items for PIR")
+        logger.info("Prepared %slen(pir_data) items for PIR")
 
         # Get statistics
         stats = manager.get_statistics()
-        logger.info("\nStatistics: {json.dumps(stats, indent=2)}")
+        logger.info("\nStatistics: %sjson.dumps(stats, indent=2)")
 
         # Save data
         manager.save_reference_data()

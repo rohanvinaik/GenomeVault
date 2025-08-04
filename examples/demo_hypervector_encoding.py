@@ -12,19 +12,15 @@ showing how genomic data is transformed into privacy-preserving representations.
 import torch
 
 from genomevault.core.constants import OmicsType
-from genomevault.hypervector_transform.binding import (
-    BindingType,
-    CrossModalBinder,
-    HypervectorBinder,
-    PositionalBinder,
-)
-
+from genomevault.hypervector_transform.binding import (BindingType,
+                                                       CrossModalBinder,
+                                                       HypervectorBinder,
+                                                       PositionalBinder)
 # GenomeVault imports
 from genomevault.hypervector_transform.encoding import create_encoder
 from genomevault.hypervector_transform.holographic import HolographicEncoder
-from genomevault.hypervector_transform.mapping import (
-    BiologicalSimilarityMapper,
-)
+from genomevault.hypervector_transform.mapping import \
+    BiologicalSimilarityMapper
 from genomevault.utils.logging import setup_logging
 
 
@@ -110,7 +106,9 @@ def demonstrate_binding_operations():
     logger.info("Full bound vector norm: {torch.norm(full_bound):.3f}")
 
     # Demonstrate unbinding (recovery)
-    recovered_gene = binder.unbind(gene_expr_bound, [expression_hv], BindingType.CIRCULAR)
+    recovered_gene = binder.unbind(
+        gene_expr_bound, [expression_hv], BindingType.CIRCULAR
+    )
     recovery_similarity = torch.nn.functional.cosine_similarity(
         gene_hv.unsqueeze(0), recovered_gene.unsqueeze(0)
     ).item()
@@ -161,7 +159,9 @@ def demonstrate_positional_encoding():
         pos_100.unsqueeze(0), pos_200.unsqueeze(0)
     ).item()
 
-    logger.info("Same feature at different positions similarity: {position_similarity:.3f}")
+    logger.info(
+        "Same feature at different positions similarity: {position_similarity:.3f}"
+    )
 
 
 def demonstrate_holographic_encoding():
@@ -304,8 +304,12 @@ def demonstrate_similarity_preservation():
     n_features = 50
 
     # Create two clusters of samples
-    cluster1 = torch.randn(n_samples // 2, n_features) + torch.tensor([2.0] * n_features)
-    cluster2 = torch.randn(n_samples // 2, n_features) - torch.tensor([2.0] * n_features)
+    cluster1 = torch.randn(n_samples // 2, n_features) + torch.tensor(
+        [2.0] * n_features
+    )
+    cluster2 = torch.randn(n_samples // 2, n_features) - torch.tensor(
+        [2.0] * n_features
+    )
 
     data = torch.cat([cluster1, cluster2], dim=0)
     labels = torch.cat([torch.zeros(n_samples // 2), torch.ones(n_samples // 2)])
@@ -359,7 +363,9 @@ def demonstrate_privacy_guarantees():
 
     logger.info("Original data contains:")
     logger.info("  - {len(sensitive_data['variants']['snps'])} SNPs")
-    logger.info("  - {len(sensitive_data['variants']['pathogenic'])} pathogenic variants")
+    logger.info(
+        "  - {len(sensitive_data['variants']['pathogenic'])} pathogenic variants"
+    )
     logger.info("\nEncoded to {dimension}D hypervector")
 
     # Demonstrate irreversibility
@@ -376,7 +382,9 @@ def demonstrate_privacy_guarantees():
     modified_hv = encoder.encode(modified_data, OmicsType.GENOMIC)
 
     similarity = encoder.similarity(hypervector, modified_hv)
-    logger.info("\nSingle SNP difference creates {1-similarity:.4f} change in hypervector")
+    logger.info(
+        "\nSingle SNP difference creates {1-similarity:.4f} change in hypervector"
+    )
     logger.info("This demonstrates sensitivity while maintaining privacy")
 
 
@@ -395,7 +403,9 @@ def demonstrate_compression_tiers():
     for tier in [CompressionTier.MINI, CompressionTier.CLINICAL, CompressionTier.FULL]:
         compressor = TieredCompressor(tier)
 
-        compressed = compressor.compress({"hypervector": hypervector}, OmicsType.GENOMIC)
+        compressed = compressor.compress(
+            {"hypervector": hypervector}, OmicsType.GENOMIC
+        )
 
         logger.info("\n{tier.value} tier:")
         logger.info("  Original size: {hypervector.numel() * 4:,} bytes")
@@ -474,7 +484,9 @@ def main():
     logger.info("Demonstration Complete")
     logger.info("=" * 60)
     logger.info("\nKey Takeaways:")
-    logger.info("1. Hypervectors preserve biological similarities while protecting privacy")
+    logger.info(
+        "1. Hypervectors preserve biological similarities while protecting privacy"
+    )
     logger.info("2. Binding operations enable complex relationships to be encoded")
     logger.info("3. Holographic encoding allows structured data representation")
     logger.info("4. Cross-modal binding integrates multiple omics types")

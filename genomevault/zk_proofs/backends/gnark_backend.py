@@ -23,7 +23,9 @@ metrics = MetricsCollector()
 class GnarkBackend:
     """Real ZK proof generation using gnark via FFI."""
 
-    def __init__(self, circuit_dir: str = "./circuits/compiled", gnark_path: str | None = None):
+    def __init__(
+        self, circuit_dir: str = "./circuits/compiled", gnark_path: str | None = None
+    ):
         """
         Initialize gnark backend.
 
@@ -71,7 +73,9 @@ class GnarkBackend:
         if result.returncode == 0:
             return str(Path(result.stdout.strip()).parent)
 
-        raise RuntimeError("gnark binaries not found. Please install gnark or specify path.")
+        raise RuntimeError(
+            "gnark binaries not found. Please install gnark or specify path."
+        )
 
     def _verify_binaries(self):
         """Verify required gnark binaries exist."""
@@ -93,7 +97,7 @@ class GnarkBackend:
             if result.returncode != 0:
                 raise RuntimeError(f"Failed to execute gnark-prover: {result.stderr}")
 
-            logger.info(f"gnark backend initialized: {result.stdout.strip()}")
+            logger.info("gnark backend initialized: %sresult.stdout.strip()")
 
         except subprocess.TimeoutExpired:
             from genomevault.observability.logging import configure_logging
@@ -101,7 +105,7 @@ class GnarkBackend:
             logger = configure_logging()
             logger.exception("Unhandled exception")
             raise RuntimeError("gnark-prover timed out during version check")
-            raise
+            raise RuntimeError("Unspecified error")
 
     def _compile_standard_circuits(self):
         """Compile standard genomic circuits."""
@@ -119,13 +123,14 @@ class GnarkBackend:
             if circuit_file.exists():
                 try:
                     self._compile_circuit(circuit_name)
-                except Exception as e:
-                    from genomevault.observability.logging import configure_logging
+                except Exception:
+                    from genomevault.observability.logging import \
+                        configure_logging
 
                     logger = configure_logging()
                     logger.exception("Unhandled exception")
-                    logger.warning(f"Failed to compile {circuit_name}: {e}")
-                    raise
+                    logger.warning("Failed to compile %scircuit_name: %se")
+                    raise RuntimeError("Unspecified error")
 
     def _compile_circuit(self, circuit_name: str):
         """Compile a gnark circuit."""
@@ -138,10 +143,10 @@ class GnarkBackend:
         # Skip if already compiled and up-to-date
         if output_file.exists():
             if output_file.stat().st_mtime > circuit_file.stat().st_mtime:
-                logger.debug(f"Circuit {circuit_name} already compiled")
+                logger.debug("Circuit %scircuit_name already compiled")
                 return
 
-        logger.info(f"Compiling circuit: {circuit_name}")
+        logger.info("Compiling circuit: %scircuit_name")
 
         cmd = [
             str(self.compiler_bin),
@@ -163,7 +168,7 @@ class GnarkBackend:
         # Record metrics
         metrics.record(f"{circuit_name}_compile_time", compile_time * 1000, "ms")
 
-        logger.info(f"Compiled {circuit_name} in {compile_time:.2f}s")
+        logger.info("Compiled %scircuit_name in %scompile_time:.2fs")
 
         # Cache circuit info
         self.compiled_circuits[circuit_name] = {
@@ -236,15 +241,19 @@ class GnarkBackend:
             # Measure and record metrics
             proof_size = len(proof_data)
             metrics.record(f"{circuit_name}_proof_size", proof_size, "bytes")
-            metrics.record(f"{circuit_name}_generation_time", generation_time * 1000, "ms")
+            metrics.record(
+                f"{circuit_name}_generation_time", generation_time * 1000, "ms"
+            )
 
             logger.info(
-                f"Generated {circuit_name} proof: " f"{proof_size} bytes in {generation_time:.3f}s"
+                "Generated %scircuit_name proof: %sproof_size bytes in %sgeneration_time:.3fs"
             )
 
             return proof_data
 
-    def verify_proof(self, circuit_name: str, proof: bytes, public_inputs: dict[str, Any]) -> bool:
+    def verify_proof(
+        self, circuit_name: str, proof: bytes, public_inputs: dict[str, Any]
+    ) -> bool:
         """
         Verify proof using gnark verifier.
 
@@ -290,21 +299,25 @@ class GnarkBackend:
             verification_time = time.time() - start
 
             # Record metrics
-            metrics.record(f"{circuit_name}_verification_time", verification_time * 1000, "ms")
+            metrics.record(
+                f"{circuit_name}_verification_time", verification_time * 1000, "ms"
+            )
 
             valid = result.returncode == 0
 
             logger.info(
-                f"Verified {circuit_name} proof in {verification_time*1000:.2f}ms: "
-                f"{'VALID' if valid else 'INVALID'}"
+                "Verified %scircuit_name proof in %sverification_time * 1000:.2fms: "
+                "%s'VALID' if valid else 'INVALID'"
             )
 
             if not valid and result.stderr:
-                logger.debug(f"Verification error: {result.stderr}")
+                logger.debug("Verification error: %sresult.stderr")
 
             return valid
 
-    def batch_verify(self, proofs: list[tuple[str, bytes, dict[str, Any]]]) -> list[bool]:
+    def batch_verify(
+        self, proofs: list[tuple[str, bytes, dict[str, Any]]]
+    ) -> list[bool]:
         """
         Batch verify multiple proofs.
 
@@ -381,7 +394,9 @@ class SimulatedBackend:
 
         return proof_data
 
-    def verify_proof(self, circuit_name: str, proof: bytes, public_inputs: dict[str, Any]) -> bool:
+    def verify_proof(
+        self, circuit_name: str, proof: bytes, public_inputs: dict[str, Any]
+    ) -> bool:
         """Verify simulated proof."""
         # Simulate verification time
         time.sleep(0.025)
@@ -405,13 +420,13 @@ def get_backend(use_real: bool = True) -> GnarkBackend | SimulatedBackend:
     if use_real:
         try:
             return GnarkBackend()
-        except RuntimeError as e:
+        except RuntimeError:
             from genomevault.observability.logging import configure_logging
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.warning(f"Failed to initialize gnark backend: {e}")
+            logger.warning("Failed to initialize gnark backend: %se")
             logger.warning("Falling back to simulated backend")
-            raise
+            raise RuntimeError("Unspecified error")
 
     return SimulatedBackend()

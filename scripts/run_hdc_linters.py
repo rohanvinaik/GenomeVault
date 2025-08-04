@@ -10,7 +10,7 @@ from pathlib import Path
 
 def run_command(cmd):
     """Run a command and return success status"""
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"Running: {' '.join(cmd)}")
     print("=" * 60)
 
@@ -95,7 +95,11 @@ def main():
     test_result = run_command(
         [
             "pytest",
-            str(project_root / "tests" / "test_hdc_implementation.py::TestHDCDeterminism"),
+            str(
+                project_root
+                / "tests"
+                / "test_hdc_implementation.py::TestHDCDeterminism"
+            ),
             "-v",
             "--tb=short",
         ]

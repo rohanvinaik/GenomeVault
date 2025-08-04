@@ -85,7 +85,9 @@ def main():
     genome_hv = encoder.encode_genome(variants)
     logger.info(f"Encoded {len(variants)} variants into genome hypervector")
     logger.info(f"Memory usage: {genome_hv.memory_bytes} bytes")
-    logger.info(f"Memory per variant: {genome_hv.memory_bytes / len(variants):.1f} bytes")
+    logger.info(
+        f"Memory per variant: {genome_hv.memory_bytes / len(variants):.1f} bytes"
+    )
 
     # Example 3: Compare two genomes
     logger.info("\n\nExample 3: Genome Similarity")
@@ -141,7 +143,7 @@ def main():
     logger.info(f"Traditional (float32): {traditional_bytes:,} bytes")
     logger.info(f"Packed (bit-packed): {packed_bytes:,} bytes")
     logger.info(f"Compression ratio: {traditional_bytes / packed_bytes:.1f}x")
-    logger.info(f"Memory saved: {(1 - packed_bytes/traditional_bytes) * 100:.1f}%")
+    logger.info(f"Memory saved: {(1 - packed_bytes / traditional_bytes) * 100:.1f}%")
 
     # Example 5: Batch processing
     logger.info("\n\nExample 5: Batch Processing")
@@ -151,7 +153,9 @@ def main():
     n_genomes = 100
     n_variants_per_genome = 50
 
-    logger.info(f"Processing {n_genomes} genomes with {n_variants_per_genome} variants each...")
+    logger.info(
+        f"Processing {n_genomes} genomes with {n_variants_per_genome} variants each..."
+    )
 
     genomes = []
     for i in range(n_genomes):

@@ -59,7 +59,7 @@ class ShardDistribution:
     replication_factor: int
     server_assignments: dict[str, list[str]] = field(default_factory=dict)
 
-    def assign_shard(self, shard_id: str, server_ids: list[str]):
+    def assign_shard(self, shard_id: str, server_ids: list[str]) -> None:
         """Assign shard to servers."""
         self.server_assignments[shard_id] = server_ids
 
@@ -90,7 +90,9 @@ class ShardManager:
 
         # Shard metadata
         self.shards: dict[str, ShardMetadata] = {}
-        self.shard_distribution = ShardDistribution(strategy="hybrid", replication_factor=3)
+        self.shard_distribution = ShardDistribution(
+            strategy="hybrid", replication_factor=3
+        )
 
         # Thread pool for parallel operations
         self.executor = ThreadPoolExecutor(max_workers=4)
@@ -101,9 +103,9 @@ class ShardManager:
         # Load existing shards
         self._load_shard_metadata()
 
-        logger.info(f"ShardManager initialized with {len(self.shards)} shards")
+        logger.info("ShardManager initialized with len(self.shards) shards")
 
-    def _load_shard_metadata(self):
+    def _load_shard_metadata(self) -> None:
         """Load shard metadata from manifest."""
         manifest_path = self.data_directory / "shard_manifest.json"
 
@@ -135,7 +137,7 @@ class ShardManager:
                     server_assignments=dist.get("assignments", {}),
                 )
 
-    def _save_shard_metadata(self):
+    def _save_shard_metadata(self) -> None:
         """Save shard metadata to manifest."""
         manifest = {
             "version": "1.0",
@@ -156,7 +158,9 @@ class ShardManager:
             json.dump(manifest, f, indent=2)
 
     @performance_logger.log_operation("create_shards")
-    def create_shards_from_data(self, data_source: Path, data_type: str = "genomic") -> list[str]:
+    def create_shards_from_data(
+        self, data_source: Path, data_type: str = "genomic"
+    ) -> list[str]:
         """
         Create shards from source data.
 
@@ -167,7 +171,7 @@ class ShardManager:
         Returns:
             List of created shard IDs
         """
-        logger.info(f"Creating {self.num_shards} shards from {data_source}")
+        logger.info("Creating self.num_shards shards from data_source")
 
         # Read source data
         with open(data_source, "rb") as f:
@@ -204,7 +208,7 @@ class ShardManager:
         with self.lock:
             self._save_shard_metadata()
 
-        logger.info(f"Created {len(created_shards)} shards")
+        logger.info("Created len(created_shards) shards")
         return created_shards
 
     def _create_single_shard(
@@ -259,7 +263,7 @@ class ShardManager:
             with self.lock:
                 self.shards[shard_id] = metadata
 
-            logger.info(f"Created shard {shard_id} with {item_count} items")
+            logger.info("Created shard shard_id with item_count items")
             return shard_id
 
         except Exception:
@@ -267,9 +271,9 @@ class ShardManager:
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error(f"Error creating shard {shard_index}: {e}")
+            logger.error("Error creating shard shard_index: e")
             return None
-            raise
+            raise RuntimeError("Unspecified error")
 
     def distribute_shards(self, server_list: list[str]) -> ShardDistribution:
         """
@@ -294,7 +298,9 @@ class ShardManager:
             # Select servers for this shard
             if self.shard_distribution.strategy == "replicated":
                 # All servers get all shards
-                assigned_servers = server_list[: self.shard_distribution.replication_factor]
+                assigned_servers = server_list[
+                    : self.shard_distribution.replication_factor
+                ]
 
             elif self.shard_distribution.strategy == "striped":
                 # Round-robin distribution
@@ -313,7 +319,9 @@ class ShardManager:
 
                 assigned_servers = ts_servers[:2]
                 if len(assigned_servers) < self.shard_distribution.replication_factor:
-                    needed = self.shard_distribution.replication_factor - len(assigned_servers)
+                    needed = self.shard_distribution.replication_factor - len(
+                        assigned_servers
+                    )
                     assigned_servers.extend(ln_servers[:needed])
 
             self.shard_distribution.assign_shard(shard_id, assigned_servers)
@@ -322,7 +330,9 @@ class ShardManager:
         with self.lock:
             self._save_shard_metadata()
 
-        logger.info(f"Distributed {len(self.shards)} shards across {len(server_list)} servers")
+        logger.info(
+            "Distributed len(self.shards) shards across len(server_list) servers"
+        )
         return self.shard_distribution
 
     def verify_shard_integrity(self, shard_id: str) -> bool:
@@ -336,14 +346,14 @@ class ShardManager:
             True if integrity check passes
         """
         if shard_id not in self.shards:
-            logger.error(f"Unknown shard: {shard_id}")
+            logger.error("Unknown shard: shard_id")
             return False
 
         metadata = self.shards[shard_id]
         shard_path = self.data_directory / "shard_{metadata.shard_index:04d}.dat"
 
         if not shard_path.exists():
-            logger.error(f"Shard file missing: {shard_path}")
+            logger.error("Shard file missing: shard_path")
             return False
 
         # Calculate checksum
@@ -352,7 +362,7 @@ class ShardManager:
             checksum = hashlib.sha256(data).hexdigest()
 
         if checksum != metadata.checksum:
-            logger.error(f"Shard {shard_id} checksum mismatch")
+            logger.error("Shard shard_id checksum mismatch")
             return False
 
         return True
@@ -369,7 +379,7 @@ class ShardManager:
             Success status
         """
         if shard_id not in self.shards:
-            logger.error(f"Unknown shard: {shard_id}")
+            logger.error("Unknown shard: shard_id")
             return False
 
         metadata = self.shards[shard_id]
@@ -406,7 +416,7 @@ class ShardManager:
             # Remove backup
             backup_path.unlink()
 
-            logger.info(f"Updated shard {shard_id} to version {metadata.version}")
+            logger.info("Updated shard shard_id to version metadata.version")
             return True
 
         except Exception:
@@ -414,7 +424,7 @@ class ShardManager:
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error(f"Error updating shard {shard_id}: {e}")
+            logger.error("Error updating shard shard_id: e")
 
             # Restore backup
             if backup_path.exists():
@@ -422,7 +432,7 @@ class ShardManager:
                 backup_path.unlink()
 
             return False
-            raise
+            raise RuntimeError("Unspecified error")
 
     def get_shard_statistics(self) -> dict[str, Any]:
         """
@@ -495,7 +505,7 @@ class ShardManager:
         logger.info("Optimized shard distribution based on server performance")
         return new_distribution
 
-    def cleanup(self):
+    def cleanup(self) -> None:
         """Cleanup resources."""
         self.executor.shutdown(wait=True)
 

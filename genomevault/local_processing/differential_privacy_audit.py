@@ -68,7 +68,9 @@ class DifferentialPrivacyAuditor:
     4. Audit trail is cryptographically verifiable
     """
 
-    def __init__(self, session_id: str, total_epsilon: float, total_delta: float = 1e-5):
+    def __init__(
+        self, session_id: str, total_epsilon: float, total_delta: float = 1e-5
+    ):
         """
         Initialize privacy auditor for a training session.
 
@@ -87,7 +89,9 @@ class DifferentialPrivacyAuditor:
             total_delta=total_delta,
             consumed_epsilon=0.0,
             consumed_delta=0.0,
-            mechanism_allocations={mechanism.value: 0.0 for mechanism in PrivacyMechanism},
+            mechanism_allocations={
+                mechanism.value: 0.0 for mechanism in PrivacyMechanism
+            },
             start_time=int(time.time()),
             end_time=None,
         )
@@ -97,8 +101,8 @@ class DifferentialPrivacyAuditor:
         self.composition_slack = 1e-5
 
         logger.info(
-            f"Privacy auditor initialized for session {session_id} "
-            f"with budget ε={total_epsilon}, δ={total_delta}"
+            "Privacy auditor initialized for session %ssession_id "
+            "with budget ε=%stotal_epsilon, δ=%stotal_delta"
         )
 
     def log_privacy_event(
@@ -131,15 +135,14 @@ class DifferentialPrivacyAuditor:
 
         if new_epsilon > self.budget.total_epsilon:
             logger.error(
-                f"Privacy budget would be exceeded: "
-                f"{new_epsilon:.4f} > {self.budget.total_epsilon:.4f}"
+                "Privacy budget would be exceeded: "
+                "%snew_epsilon:.4f > %sself.budget.total_epsilon:.4f"
             )
             return "", False
 
         if new_delta > self.budget.total_delta:
             logger.error(
-                f"Delta budget would be exceeded: "
-                f"{new_delta:.6f} > {self.budget.total_delta:.6f}"
+                "Delta budget would be exceeded: %snew_delta:.6f > %sself.budget.total_delta:.6f"
             )
             return "", False
 
@@ -173,9 +176,9 @@ class DifferentialPrivacyAuditor:
         self.event_hashes.append(event_hash)
 
         logger.info(
-            f"Privacy event {event_id}: {operation} consumed "
-            f"ε={epsilon:.4f}, δ={delta:.6f} "
-            f"(total: ε={self.budget.consumed_epsilon:.4f}, δ={self.budget.consumed_delta:.6f})"
+            "Privacy event %sevent_id: %soperation consumed "
+            "ε=%sepsilon:.4f, δ=%sdelta:.6f "
+            "(total: ε=%sself.budget.consumed_epsilon:.4f, δ=%sself.budget.consumed_delta:.6f)"
         )
 
         return event_id, True
@@ -200,7 +203,7 @@ class DifferentialPrivacyAuditor:
         # Verify clipping was applied
         if actual_norm > clip_norm * 1.01:  # Allow 1% tolerance
             logger.warning(
-                f"Gradient norm {actual_norm:.4f} exceeds " f"clip threshold {clip_norm:.4f}"
+                "Gradient norm %sactual_norm:.4f exceeds clip threshold %sclip_norm:.4f"
             )
 
         # Compute sensitivity
@@ -275,7 +278,9 @@ class DifferentialPrivacyAuditor:
 
         return epsilon, delta
 
-    def _compose_privacy_loss(self, new_epsilon: float, new_delta: float) -> tuple[float, float]:
+    def _compose_privacy_loss(
+        self, new_epsilon: float, new_delta: float
+    ) -> tuple[float, float]:
         """
         Compose privacy loss using appropriate composition theorem.
 
@@ -295,13 +300,19 @@ class DifferentialPrivacyAuditor:
             eps_squared_sum += new_epsilon**2
 
             # Advanced composition bound
-            total_epsilon = np.sqrt(2 * eps_squared_sum * np.log(1 / self.composition_slack))
-            total_epsilon += sum(e.epsilon_consumed for e in self.privacy_events) + new_epsilon
+            total_epsilon = np.sqrt(
+                2 * eps_squared_sum * np.log(1 / self.composition_slack)
+            )
+            total_epsilon += (
+                sum(e.epsilon_consumed for e in self.privacy_events) + new_epsilon
+            )
             total_epsilon = min(
                 total_epsilon, self.budget.consumed_epsilon + new_epsilon
             )  # Basic composition
 
-            total_delta = self.budget.consumed_delta + new_delta + k * self.composition_slack
+            total_delta = (
+                self.budget.consumed_delta + new_delta + k * self.composition_slack
+            )
 
         else:
             # Basic composition
@@ -344,8 +355,10 @@ class DifferentialPrivacyAuditor:
                 "total_delta": self.budget.total_delta,
                 "consumed_epsilon": self.budget.consumed_epsilon,
                 "consumed_delta": self.budget.consumed_delta,
-                "utilization_epsilon": self.budget.consumed_epsilon / self.budget.total_epsilon,
-                "utilization_delta": self.budget.consumed_delta / self.budget.total_delta,
+                "utilization_epsilon": self.budget.consumed_epsilon
+                / self.budget.total_epsilon,
+                "utilization_delta": self.budget.consumed_delta
+                / self.budget.total_delta,
             },
             "mechanism_breakdown": self.budget.mechanism_allocations,
             "total_events": len(self.privacy_events),
@@ -367,14 +380,16 @@ class DifferentialPrivacyAuditor:
         }
 
         logger.info(
-            f"Privacy audit session {self.session_id} finalized: "
-            f"ε={self.budget.consumed_epsilon:.4f}/{self.budget.total_epsilon:.4f}, "
-            f"δ={self.budget.consumed_delta:.6f}/{self.budget.total_delta:.6f}"
+            "Privacy audit session %sself.session_id finalized: "
+            "ε=%sself.budget.consumed_epsilon:.4f/%sself.budget.total_epsilon:.4f, "
+            "δ=%sself.budget.consumed_delta:.6f/%sself.budget.total_delta:.6f"
         )
 
         return report
 
-    def export_audit_trail(self, include_metadata: bool = False) -> list[dict[str, Any]]:
+    def export_audit_trail(
+        self, include_metadata: bool = False
+    ) -> list[dict[str, Any]]:
         """
         Export the complete audit trail.
 
@@ -424,7 +439,7 @@ class DifferentialPrivacyAuditor:
             expected_hash = self._hash_event(event, previous_hash)
 
             if expected_hash != self.event_hashes[i]:
-                logger.error(f"Hash mismatch at event {i}: {event.event_id}")
+                logger.error("Hash mismatch at event %si: %sevent.event_id")
                 return False
 
             previous_hash = expected_hash
@@ -443,7 +458,7 @@ class DifferentialPrivacyAuditor:
 
         if epsilon_error > 1e-6 or delta_error > 1e-9:
             logger.error(
-                f"Budget calculation mismatch: " f"ε error={epsilon_error}, δ error={delta_error}"
+                "Budget calculation mismatch: ε error=%sepsilon_error, δ error=%sdelta_error"
             )
             return False
 

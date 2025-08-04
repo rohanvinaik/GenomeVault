@@ -13,7 +13,8 @@ import aiohttp
 
 from ...core.exceptions import VerificationError
 from ...utils import audit_logger, get_logger
-from .models import HIPAACredentials, NPIRecord, NPIType, VerificationRecord, VerificationStatus
+from .models import (HIPAACredentials, NPIRecord, NPIType, VerificationRecord,
+                     VerificationStatus)
 
 logger = get_logger(__name__)
 
@@ -84,14 +85,14 @@ class CMSNPIRegistry(NPIRegistry):
 
             return record
 
-        except Exception as e:
+        except Exception:
             from genomevault.observability.logging import configure_logging
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error(f"Error looking up NPI {npi}: {e}")
+            logger.error("Error looking up NPI %snpi: %se")
             return None
-            raise
+            raise RuntimeError("Unspecified error")
 
     async def validate_npi(self, npi: str) -> bool:
         """
@@ -227,11 +228,13 @@ class HIPAAVerifier:
             resource=verification_id,
             metadata={
                 "hsm_serial": credentials.hsm_serial,
-                "npi_type": (credentials.npi_type.value if credentials.npi_type else None),
+                "npi_type": (
+                    credentials.npi_type.value if credentials.npi_type else None
+                ),
             },
         )
 
-        logger.info(f"HIPAA verification submitted: {verification_id}")
+        logger.info("HIPAA verification submitted: %sverification_id")
 
         return verification_id
 
@@ -279,7 +282,8 @@ class HIPAAVerifier:
                     "type": npi_record.npi_type.value,
                     "taxonomy": npi_record.primary_taxonomy,
                 },
-                expires_at=datetime.now() + timedelta(days=self.verification_expiry_days),
+                expires_at=datetime.now()
+                + timedelta(days=self.verification_expiry_days),
             )
 
             # Store verification
@@ -299,7 +303,7 @@ class HIPAAVerifier:
                 },
             )
 
-            logger.info(f"HIPAA verification successful for NPI {credentials.npi}")
+            logger.info("HIPAA verification successful for NPI %scredentials.npi")
 
             return record
 
@@ -326,13 +330,13 @@ class HIPAAVerifier:
                 metadata={"verification_id": verification_id, "error": str(e)},
             )
 
-            logger.warning(f"HIPAA verification failed for NPI {credentials.npi}: {e}")
+            logger.warning("HIPAA verification failed for NPI %scredentials.npi: %se")
 
             # Clean up pending
             del self.pending_verifications[verification_id]
 
-            raise
-            raise
+            raise RuntimeError("Unspecified error")
+            raise RuntimeError("Unspecified error")
 
     def get_verification_status(self, npi: str) -> VerificationRecord | None:
         """
@@ -378,7 +382,7 @@ class HIPAAVerifier:
             metadata={"reason": reason},
         )
 
-        logger.info(f"HIPAA verification revoked for NPI {npi}: {reason}")
+        logger.info("HIPAA verification revoked for NPI %snpi: %sreason")
 
         return True
 
@@ -435,7 +439,7 @@ class HIPAAVerifier:
                 record.status = VerificationStatus.EXPIRED
                 expired_count += 1
 
-                logger.info(f"Expired HIPAA verification for NPI {npi}")
+                logger.info("Expired HIPAA verification for NPI %snpi")
 
         return expired_count
 
@@ -483,7 +487,7 @@ if __name__ == "__main__":
                 logger = configure_logging()
                 logger.exception("Unhandled exception")
                 print(f"Verification failed: {e}")
-                raise
+                raise RuntimeError("Unspecified error")
 
             # Test invalid NPI
             print("\n\nTesting invalid NPI...")
@@ -503,7 +507,7 @@ if __name__ == "__main__":
                 logger = configure_logging()
                 logger.exception("Unhandled exception")
                 print(f"Correctly rejected: {e}")
-                raise
+                raise RuntimeError("Unspecified error")
 
     # Run test
     asyncio.run(test_hipaa_verification())

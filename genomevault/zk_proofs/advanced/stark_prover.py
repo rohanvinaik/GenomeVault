@@ -74,10 +74,10 @@ class STARKProver:
         self.num_queries = self._compute_query_count()
 
         logger.info(
-            f"STARKProver initialized: "
-            f"field_size={field_size}, "
-            f"security={security_bits} bits, "
-            f"queries={self.num_queries}"
+            "STARKProver initialized: "
+            "field_size=%sfield_size, "
+            "security=%ssecurity_bits bits, "
+            "queries=%sself.num_queries"
         )
 
     def _compute_query_count(self) -> int:
@@ -102,22 +102,30 @@ class STARKProver:
         Returns:
             Post-quantum secure STARK proof
         """
-        logger.info(f"Generating STARK proof for trace of size " f"{computation_trace.shape}")
+        logger.info(
+            "Generating STARK proof for trace of size %scomputation_trace.shape"
+        )
 
         # Step 1: Commit to execution trace
         trace_commitment, trace_tree = self._commit_to_trace(computation_trace)
 
         # Step 2: Generate constraint polynomial
-        constraint_poly = self._generate_constraint_polynomial(computation_trace, constraints)
+        constraint_poly = self._generate_constraint_polynomial(
+            computation_trace, constraints
+        )
 
         # Step 3: Commit to constraint polynomial evaluations
-        constraint_commitment, constraint_tree = self._commit_to_evaluations(constraint_poly)
+        constraint_commitment, constraint_tree = self._commit_to_evaluations(
+            constraint_poly
+        )
 
         # Step 4: FRI protocol for low-degree testing
         fri_layers = self._fri_protocol(constraint_poly, constraint_commitment)
 
         # Step 5: Generate query responses
-        query_indices = self._generate_query_indices(trace_commitment, constraint_commitment)
+        query_indices = self._generate_query_indices(
+            trace_commitment, constraint_commitment
+        )
 
         query_responses = self._generate_query_responses(
             computation_trace,
@@ -136,7 +144,9 @@ class STARKProver:
         proof = STARKProof(
             proof_id=self._generate_proof_id(public_inputs),
             claim=public_inputs,
-            commitment_root=self._combine_commitments(trace_commitment, constraint_commitment),
+            commitment_root=self._combine_commitments(
+                trace_commitment, constraint_commitment
+            ),
             fri_layers=fri_layers,
             query_responses=query_responses,
             proof_of_work=proof_of_work,
@@ -150,7 +160,7 @@ class STARKProver:
         )
 
         logger.info(
-            f"Generated STARK proof: {proof.proof_id}, " f"size: {proof.proof_size_kb:.1f}KB"
+            "Generated STARK proof: %sproof.proof_id, size: %sproof.proof_size_kb:.1fKB"
         )
 
         return proof
@@ -218,10 +228,14 @@ class STARKProver:
         # Folding rounds
         for round_idx in range(self._compute_fri_rounds()):
             # Get challenge from Fiat-Shamir
-            challenge = self._fiat_shamir_challenge(initial_commitment, fri_layers, round_idx)
+            challenge = self._fiat_shamir_challenge(
+                initial_commitment, fri_layers, round_idx
+            )
 
             # Fold polynomial
-            folded_poly = self._fold_polynomial(current_poly, challenge, self.fri_folding_factor)
+            folded_poly = self._fold_polynomial(
+                current_poly, challenge, self.fri_folding_factor
+            )
 
             # Commit to folded polynomial
             commitment, merkle_tree = self._commit_to_evaluations(folded_poly)
@@ -240,7 +254,9 @@ class STARKProver:
 
             # Stop when polynomial is small enough
             if current_domain_size <= 256:
-                fri_layers.append({"round": "final", "coefficients": current_poly.tolist()})
+                fri_layers.append(
+                    {"round": "final", "coefficients": current_poly.tolist()}
+                )
                 break
 
         return fri_layers
@@ -375,7 +391,9 @@ class STARKProver:
         # For now, return mock coefficients
         return np.random.randint(0, self.field_size, len(points))
 
-    def _evaluate_polynomial(self, coeffs: np.ndarray, domain: np.ndarray) -> np.ndarray:
+    def _evaluate_polynomial(
+        self, coeffs: np.ndarray, domain: np.ndarray
+    ) -> np.ndarray:
         """Evaluate polynomial on domain (simplified)."""
         # In practice, would use FFT for efficiency
         evaluations = []
@@ -430,7 +448,9 @@ class STARKProver:
     ) -> list[int]:
         """Generate random query indices."""
         # Use Fiat-Shamir to generate pseudorandom indices
-        seed = hashlib.sha256((trace_commitment + constraint_commitment).encode()).digest()
+        seed = hashlib.sha256(
+            (trace_commitment + constraint_commitment).encode()
+        ).digest()
 
         rng = np.random.RandomState(int.from_bytes(seed[:4], "big"))
         domain_size = 8 * 1024  # Example domain size
@@ -464,7 +484,9 @@ class STARKProver:
         poly[step] = (int(trace[step, register]) - value) % self.field_size
         return poly
 
-    def _transition_constraint_poly(self, trace: np.ndarray, expression: str) -> np.ndarray:
+    def _transition_constraint_poly(
+        self, trace: np.ndarray, expression: str
+    ) -> np.ndarray:
         """Generate polynomial for transition constraint."""
         # Parse and evaluate constraint expression
         # Simplified - in practice would have full expression parser
@@ -487,9 +509,13 @@ class STARKProver:
             "nonce": np.random.bytes(8).hex(),
         }
 
-        return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[:16]
+        return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[
+            :16
+        ]
 
-    def _commit_to_evaluations(self, evaluations: np.ndarray) -> tuple[bytes, dict[str, Any]]:
+    def _commit_to_evaluations(
+        self, evaluations: np.ndarray
+    ) -> tuple[bytes, dict[str, Any]]:
         """Commit to polynomial evaluations."""
         # Convert to bytes for hashing
         leaves = []
@@ -516,7 +542,7 @@ class PostQuantumVerifier:
         Returns:
             True if proof is valid
         """
-        logger.info(f"Verifying STARK proof {proof.proof_id}")
+        logger.info("Verifying STARK proof %sproof.proof_id")
 
         try:
             # Verify proof of work
@@ -530,21 +556,23 @@ class PostQuantumVerifier:
                 return False
 
             # Verify query responses
-            if not self._verify_query_responses(proof.query_responses, proof.commitment_root):
+            if not self._verify_query_responses(
+                proof.query_responses, proof.commitment_root
+            ):
                 logger.warning("Query response verification failed")
                 return False
 
-            logger.info(f"STARK proof {proof.proof_id} verified successfully")
+            logger.info("STARK proof %sproof.proof_id verified successfully")
             return True
 
-        except Exception as e:
+        except Exception:
             from genomevault.observability.logging import configure_logging
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error(f"STARK verification error: {e}")
+            logger.error("STARK verification error: %se")
             return False
-            raise
+            raise RuntimeError("Unspecified error")
 
     def _verify_proof_of_work(self, proof: STARKProof) -> bool:
         """Verify proof of work meets threshold."""
@@ -666,7 +694,7 @@ if __name__ == "__main__":
     print(f"  Proof ID: {stark_proof.proof_id}")
     print(f"  Security level: {stark_proof.security_level} bits (post-quantum)")
     print(f"  Proof size: {stark_proof.proof_size_kb:.1f} KB")
-    print(f"  Generation time: {generation_time*1000:.1f} ms")
+    print(f"  Generation time: {generation_time * 1000:.1f} ms")
     print(f"  FRI rounds: {len(stark_proof.fri_layers)}")
     print(f"  Query responses: {len(stark_proof.query_responses)}")
 
@@ -679,4 +707,4 @@ if __name__ == "__main__":
     verification_time = time.time() - start_time
 
     print(f"Verification result: {'VALID' if valid else 'INVALID'}")
-    print(f"Verification time: {verification_time*1000:.1f} ms")
+    print(f"Verification time: {verification_time * 1000:.1f} ms")

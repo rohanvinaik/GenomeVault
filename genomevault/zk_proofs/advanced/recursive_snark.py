@@ -67,8 +67,10 @@ class RecursiveSNARKProver:
         # Initialize ZK backend
         self.backend = get_backend(use_real=use_real_backend)
 
-        logger.info(f"RecursiveSNARKProver initialized with max depth {max_recursion_depth}")
-        logger.info(f"Using {'real gnark' if use_real_backend else 'simulated'} backend")
+        logger.info(
+            "RecursiveSNARKProver initialized with max depth %smax_recursion_depth"
+        )
+        logger.info("Using %s'real gnark' if use_real_backend else 'simulated' backend")
 
     def _initialize_accumulator(self) -> dict[str, Any]:
         """Initialize cryptographic accumulator for proof aggregation."""
@@ -116,7 +118,7 @@ class RecursiveSNARKProver:
         Compose proofs using balanced binary tree structure.
         Achieves O(log n) verification depth.
         """
-        logger.info(f"Composing {len(proofs)} proofs using balanced tree strategy")
+        logger.info("Composing %slen(proofs) proofs using balanced tree strategy")
 
         # Build tree bottom-up
         current_level = proofs
@@ -169,7 +171,7 @@ class RecursiveSNARKProver:
         Compose proofs using cryptographic accumulator.
         Achieves O(1) verification time.
         """
-        logger.info(f"Composing {len(proofs)} proofs using accumulator strategy")
+        logger.info("Composing %slen(proofs) proofs using accumulator strategy")
 
         # Update accumulator with each proof
         acc_value = self.accumulator_state["accumulator_value"]
@@ -210,7 +212,7 @@ class RecursiveSNARKProver:
 
     def _sequential_composition(self, proofs: list[Proof]) -> RecursiveProof:
         """Simple sequential proof composition (for comparison/testing)."""
-        logger.info(f"Composing {len(proofs)} proofs using sequential strategy")
+        logger.info("Composing %slen(proofs) proofs using sequential strategy")
 
         # Start with first proof
         current = proofs[0]
@@ -223,7 +225,9 @@ class RecursiveSNARKProver:
             proof_id=self._generate_proof_id(proofs),
             sub_proof_ids=[p.proof_id for p in proofs],
             aggregation_proof=(
-                current.proof_data if isinstance(current, Proof) else current.aggregation_proof
+                current.proof_data
+                if isinstance(current, Proof)
+                else current.aggregation_proof
             ),
             public_aggregate=self._aggregate_public_inputs(proofs),
             verification_key=self._compute_aggregate_vk(proofs),
@@ -257,7 +261,9 @@ class RecursiveSNARKProver:
         public_inputs = {
             "left_proof_hash": self._hash_proof(left),
             "right_proof_hash": self._hash_proof(right),
-            "aggregated_public": self._merge_public_inputs(left.public_inputs, right.public_inputs),
+            "aggregated_public": self._merge_public_inputs(
+                left.public_inputs, right.public_inputs
+            ),
         }
 
         # Private inputs: the actual proofs
@@ -275,7 +281,9 @@ class RecursiveSNARKProver:
         )
 
         return Proof(
-            proof_id=hashlib.sha256(f"{left.proof_id}_{right.proof_id}".encode()).hexdigest()[:16],
+            proof_id=hashlib.sha256(
+                f"{left.proof_id}_{right.proof_id}".encode()
+            ).hexdigest()[:16],
             circuit_name=f"recursive_{level}",
             proof_data=composed_proof_data,
             public_inputs=public_inputs,
@@ -290,7 +298,9 @@ class RecursiveSNARKProver:
             },
         )
 
-    def _create_verifier_circuit(self, left_circuit: str, right_circuit: str) -> dict[str, Any]:
+    def _create_verifier_circuit(
+        self, left_circuit: str, right_circuit: str
+    ) -> dict[str, Any]:
         """Create SNARK verifier circuit for proof pair."""
         # Circuit that verifies two proofs
         return {
@@ -363,7 +373,9 @@ class RecursiveSNARKProver:
         proof_components = {
             "final_accumulator": final_acc.hex(),
             "batch_proof": {
-                "commitment": hashlib.sha256(b"".join(w for w in witnesses)).hexdigest(),
+                "commitment": hashlib.sha256(
+                    b"".join(w for w in witnesses)
+                ).hexdigest(),
                 "challenge": np.random.bytes(32).hex(),
                 "response": np.random.bytes(128).hex(),
             },
@@ -389,7 +401,9 @@ class RecursiveSNARKProver:
             # Aggregate PRS results
             aggregate["prs_summary"] = {
                 "count": len(proofs),
-                "models": list({p.public_inputs.get("prs_model", "unknown") for p in proofs}),
+                "models": list(
+                    {p.public_inputs.get("prs_model", "unknown") for p in proofs}
+                ),
             }
 
         return aggregate
@@ -402,7 +416,9 @@ class RecursiveSNARKProver:
 
         # Special handling for certain input types
         if "proof_count" in left_public and "proof_count" in right_public:
-            merged["total_proof_count"] = left_public["proof_count"] + right_public["proof_count"]
+            merged["total_proof_count"] = (
+                left_public["proof_count"] + right_public["proof_count"]
+            )
 
         return merged
 
@@ -411,7 +427,9 @@ class RecursiveSNARKProver:
         # In practice, would compute proper aggregate VK
         vk_components = [p.verification_key or p.proof_id for p in proofs]
 
-        aggregate_vk = hashlib.sha256("".join(sorted(vk_components)).encode()).hexdigest()
+        aggregate_vk = hashlib.sha256(
+            "".join(sorted(vk_components)).encode()
+        ).hexdigest()
 
         return aggregate_vk
 
@@ -432,7 +450,9 @@ class RecursiveSNARKProver:
             ),
         }
 
-        return hashlib.sha256(json.dumps(proof_data, sort_keys=True).encode()).hexdigest()
+        return hashlib.sha256(
+            json.dumps(proof_data, sort_keys=True).encode()
+        ).hexdigest()
 
     def _generate_proof_id(self, proofs: list[Proof]) -> str:
         """Generate ID for recursive proof."""
@@ -442,7 +462,9 @@ class RecursiveSNARKProver:
             "nonce": np.random.bytes(8).hex(),
         }
 
-        return hashlib.sha256(json.dumps(content, sort_keys=True).encode()).hexdigest()[:16]
+        return hashlib.sha256(json.dumps(content, sort_keys=True).encode()).hexdigest()[
+            :16
+        ]
 
     def _wrap_single_proof(self, proof: Proof) -> RecursiveProof:
         """Wrap single proof as recursive proof."""
@@ -451,7 +473,8 @@ class RecursiveSNARKProver:
             sub_proof_ids=[proof.proof_id],
             aggregation_proof=proof.proof_data,
             public_aggregate=proof.public_inputs,
-            verification_key=proof.verification_key or self._compute_aggregate_vk([proof]),
+            verification_key=proof.verification_key
+            or self._compute_aggregate_vk([proof]),
             metadata={
                 "strategy": "single",
                 "total_proof_count": 1,
@@ -468,8 +491,8 @@ class RecursiveSNARKProver:
             True if proof is valid
         """
         logger.info(
-            f"Verifying recursive proof {recursive_proof.proof_id} "
-            f"aggregating {recursive_proof.proof_count} proofs"
+            "Verifying recursive proof %srecursive_proof.proof_id "
+            "aggregating %srecursive_proof.proof_count proofs"
         )
 
         if self.use_real_backend:
@@ -487,7 +510,9 @@ class RecursiveSNARKProver:
                 verification_time = 0.025  # 25ms constant
             else:
                 # O(log n) for tree-based
-                verification_time = 0.025 + 0.005 * recursive_proof.metadata.get("tree_depth", 1)
+                verification_time = 0.025 + 0.005 * recursive_proof.metadata.get(
+                    "tree_depth", 1
+                )
 
             # Simulate verification time
             time.sleep(verification_time)
@@ -527,26 +552,28 @@ if __name__ == "__main__":
         )
         proofs.append(proof)
 
-    logger.info(f"Generated {len(proofs)} base proofs")
+    logger.info("Generated %slen(proofs) base proofs")
 
     # Test different aggregation strategies
     strategies = ["balanced_tree", "accumulator", "sequential"]
 
     for strategy in strategies:
-        logger.info(f"\nTesting {strategy} aggregation:")
+        logger.info("\nTesting %sstrategy aggregation:")
 
         start_time = time.time()
         recursive_proof = recursive_prover.compose_proofs(proofs, strategy)
         composition_time = time.time() - start_time
 
-        logger.info(f"  Composition time: {composition_time*1000:.1f}ms")
-        logger.info(f"  Proof size: {len(recursive_proof.aggregation_proof)} bytes")
-        logger.info(f"  Verification complexity: {recursive_proof.verification_complexity}")
+        logger.info("  Composition time: %scomposition_time * 1000:.1fms")
+        logger.info("  Proof size: %slen(recursive_proof.aggregation_proof) bytes")
+        logger.info(
+            "  Verification complexity: %srecursive_proof.verification_complexity"
+        )
 
         # Verify the recursive proof
         start_time = time.time()
         valid = recursive_prover.verify_recursive_proof(recursive_proof)
         verification_time = time.time() - start_time
 
-        logger.info(f"  Verification time: {verification_time*1000:.1f}ms")
-        logger.info(f"  Valid: {valid}")
+        logger.info("  Verification time: %sverification_time * 1000:.1fms")
+        logger.info("  Valid: %svalid")

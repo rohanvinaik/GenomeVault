@@ -18,20 +18,16 @@ import torch
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from genomevault.hypervector_transform.binding_operations import (
-    BindingOperations,
-    BindingType,
-    HypervectorBinder,
-)  # Test legacy import
-from genomevault.hypervector_transform.hdc_encoder import (
-    CompressionTier,
-    HypervectorConfig,
-    HypervectorEncoder,
-    OmicsType,
-    ProjectionType,
-    create_encoder,
-)
-from genomevault.hypervector_transform.registry import HypervectorRegistry, VersionMigrator
+from genomevault.hypervector_transform.binding_operations import (  # Test legacy import
+    BindingOperations, BindingType, HypervectorBinder)
+from genomevault.hypervector_transform.hdc_encoder import (CompressionTier,
+                                                           HypervectorConfig,
+                                                           HypervectorEncoder,
+                                                           OmicsType,
+                                                           ProjectionType,
+                                                           create_encoder)
+from genomevault.hypervector_transform.registry import (HypervectorRegistry,
+                                                        VersionMigrator)
 
 
 class TestHDCDeterminism:
@@ -162,7 +158,9 @@ class TestAlgebraicProperties:
 
             try:
                 bound = binder.bind(vectors, binding_type)
-                assert bound.shape[0] == dim, f"Dimension not preserved for {binding_type}"
+                assert (
+                    bound.shape[0] == dim
+                ), f"Dimension not preserved for {binding_type}"
             except (ValueError, NotImplementedError, Exception):
                 from genomevault.observability.logging import configure_logging
 
@@ -237,10 +235,12 @@ class TestCompressionTiers:
 
         # Higher tiers should preserve similarity better
         assert (
-            tier_similarities[CompressionTier.MINI] <= tier_similarities[CompressionTier.CLINICAL]
+            tier_similarities[CompressionTier.MINI]
+            <= tier_similarities[CompressionTier.CLINICAL]
         )
         assert (
-            tier_similarities[CompressionTier.CLINICAL] <= tier_similarities[CompressionTier.FULL]
+            tier_similarities[CompressionTier.CLINICAL]
+            <= tier_similarities[CompressionTier.FULL]
         )
 
 
@@ -267,7 +267,9 @@ class TestPerformanceBenchmarks:
         encodings_per_second = num_trials / elapsed
 
         # Should achieve reasonable throughput
-        assert encodings_per_second > 100, f"Low throughput: {encodings_per_second:.1f} enc/s"
+        assert (
+            encodings_per_second > 100
+        ), f"Low throughput: {encodings_per_second:.1f} enc/s"
 
     def test_memory_efficiency(self):
         """Test memory efficiency of encoding"""
@@ -298,12 +300,16 @@ class TestPerformanceBenchmarks:
         # Expected: ~200KB per vector * 1000 = ~200MB
         expected_mb = 200
 
-        assert memory_increase < expected_mb * 2, f"Memory usage too high: {memory_increase:.1f} MB"
+        assert (
+            memory_increase < expected_mb * 2
+        ), f"Memory usage too high: {memory_increase:.1f} MB"
 
     @pytest.mark.parametrize("projection_type", [p.value for p in ProjectionType])
     def test_projection_performance(self, projection_type):
         """Test performance of different projection types"""
-        config = HypervectorConfig(dimension=10000, projection_type=ProjectionType(projection_type))
+        config = HypervectorConfig(
+            dimension=10000, projection_type=ProjectionType(projection_type)
+        )
         encoder = HypervectorEncoder(config)
 
         features = np.random.randn(1000)
@@ -428,7 +434,9 @@ class TestIntegrationAPI:
         clinical_hv = encoder.encode(clinical_data, OmicsType.CLINICAL)
 
         # Bind together
-        combined = binder.bind([genomic_hv, transcript_hv, clinical_hv], BindingType.FOURIER)
+        combined = binder.bind(
+            [genomic_hv, transcript_hv, clinical_hv], BindingType.FOURIER
+        )
 
         assert combined.shape[0] == encoder.config.dimension
 
@@ -440,8 +448,12 @@ class TestIntegrationAPI:
         registry = HypervectorRegistry("test_migration_registry.json")
 
         # Register two versions
-        registry.register_version("v1", {"dimension": 10000, "projection_type": "random_gaussian"})
-        registry.register_version("v2", {"dimension": 15000, "projection_type": "sparse_random"})
+        registry.register_version(
+            "v1", {"dimension": 10000, "projection_type": "random_gaussian"}
+        )
+        registry.register_version(
+            "v2", {"dimension": 15000, "projection_type": "sparse_random"}
+        )
 
         # Create test vector
         encoder_v1 = registry.get_encoder("v1")
@@ -495,7 +507,9 @@ class TestEndToEnd:
         # 5. Encode each modality
         encoded = {}
         for modality, features in data.items():
-            omics_type = OmicsType.GENOMIC if modality == "genomic" else OmicsType.CLINICAL
+            omics_type = (
+                OmicsType.GENOMIC if modality == "genomic" else OmicsType.CLINICAL
+            )
             encoded[modality] = encoder.encode(features, omics_type)
 
         # 6. Bind modalities

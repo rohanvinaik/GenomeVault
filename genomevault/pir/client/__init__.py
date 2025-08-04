@@ -1,13 +1,10 @@
 """PIR client module."""
 
-from .batched_query_builder import (
-    AggregationMethod,
-    BatchedPIRQueryBuilder,
-    BatchedQuery,
-    BatchedQueryResult,
-)
+from .batched_query_builder import (AggregationMethod, BatchedPIRQueryBuilder,
+                                    BatchedQuery, BatchedQueryResult)
 from .pir_client import PIRClient, PIRQuery
-from .query_builder import GenomicQuery, PIRQueryBuilder, QueryResult, QueryType
+from .query_builder import (GenomicQuery, PIRQueryBuilder, QueryResult,
+                            QueryType)
 
 __all__ = [
     "AggregationMethod",

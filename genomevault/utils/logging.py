@@ -29,7 +29,7 @@ logging.basicConfig(
 class AuditLogger:
     """Specialized logger for audit trail events"""
 
-    def __init__(self, audit_file: _ = "genomevault_audit.log"):
+    def __init__(self, audit_file: str = "genomevault_audit.log"):
         self.audit_file = audit_file
         self.logger = structlog.get_logger("audit")
 
@@ -69,7 +69,9 @@ class AuditLogger:
         }
         self._write_audit_log(event)
 
-    def log_consent_change(self, user_id: str, consent_type: str, old_value: Any, new_value: Any):
+    def log_consent_change(
+        self, user_id: str, consent_type: str, old_value: Any, new_value: Any
+    ):
         """Log consent changes for GDPR compliance"""
         event = {
             "event_type": "consent_change",
@@ -121,7 +123,7 @@ class AuditLogger:
         self,
         operation: str,
         key_id: str | None = None,
-        success: _ = True,
+        success: bool = True,
         details: dict | None = None,
     ):
         """Log cryptographic operations for security audit"""
@@ -179,11 +181,11 @@ class PerformanceLogger:
         """Context manager to track operation performance"""
         import time
 
-        _ = time.time()
+        start_time = time.time()
 
         try:
             yield
-            _ = time.time() - start_time
+            duration = time.time() - start_time
             self.logger.info(
                 "operation_completed",
                 operation=operation_name,
@@ -191,12 +193,12 @@ class PerformanceLogger:
                 metadata=metadata,
                 success=True,
             )
-        except Exception as _:
+        except Exception as e:
             from genomevault.observability.logging import configure_logging
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            _ = time.time() - start_time
+            duration = time.time() - start_time
             self.logger.error(
                 "operation_failed",
                 operation=operation_name,
@@ -206,8 +208,8 @@ class PerformanceLogger:
                 error_message=str(e),
                 success=False,
             )
-            raise
-            raise
+            raise RuntimeError("Unspecified error")
+            raise RuntimeError("Unspecified error")
 
     def log_resource_usage(
         self, component: str, cpu_percent: float, memory_mb: float, disk_io_mb: float
@@ -242,7 +244,9 @@ class SecurityLogger:
     def __init__(self):
         self.logger = structlog.get_logger("security")
 
-    def log_intrusion_attempt(self, source_ip: str, attack_type: str, target: str, blocked: bool):
+    def log_intrusion_attempt(
+        self, source_ip: str, attack_type: str, target: str, blocked: bool
+    ):
         """Log potential intrusion attempts"""
         self.logger.warning(
             "intrusion_attempt",
@@ -253,7 +257,9 @@ class SecurityLogger:
             timestamp=datetime.utcnow().isoformat(),
         )
 
-    def log_encryption_event(self, operation: str, algorithm: str, key_length: int, success: bool):
+    def log_encryption_event(
+        self, operation: str, algorithm: str, key_length: int, success: bool
+    ):
         """Log encryption/decryption events"""
         self.logger.info(
             "encryption_event",
@@ -286,7 +292,7 @@ def get_logger(name: str) -> structlog.BoundLogger:
     """Get a configured logger instance"""
 
     # Configure processors
-    _ = [
+    processors = [
         structlog.stdlib.filter_by_level,
         structlog.stdlib.add_logger_name,
         structlog.stdlib.add_log_level,
@@ -322,7 +328,7 @@ def filter_sensitive_data(logger, log_method, event_dict):
     """Filter sensitive data from logs"""
 
     # List of sensitive field patterns
-    _ = {
+    sensitive_patterns = {
         "password",
         "token",
         "key",
@@ -363,7 +369,7 @@ def filter_sensitive_data(logger, log_method, event_dict):
         return value
 
     # Apply redaction
-    _ = {}
+    cleaned_dict = {}
     for key, value in event_dict.items():
         if should_redact(key):
             cleaned_dict[key] = "[REDACTED]"
@@ -379,10 +385,10 @@ def log_function_call(logger_name: str | None = None):
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            _ = get_logger(logger_name or func.__module__)
+            func_logger = get_logger(logger_name or func.__module__)
 
             # Log function entry
-            logger.debug(
+            func_logger.debug(
                 "function_called",
                 function=func.__name__,
                 args_count=len(args),
@@ -390,10 +396,10 @@ def log_function_call(logger_name: str | None = None):
             )
 
             try:
-                _ = func(*args, **kwargs)
+                result = func(*args, **kwargs)
 
                 # Log function exit
-                logger.debug(
+                func_logger.debug(
                     "function_completed",
                     function=func.__name__,
                     has_result=result is not None,
@@ -401,21 +407,21 @@ def log_function_call(logger_name: str | None = None):
 
                 return result
 
-            except Exception as _:
+            except Exception as e:
                 from genomevault.observability.logging import configure_logging
 
                 logger = configure_logging()
                 logger.exception("Unhandled exception")
                 # Log function error
-                logger.error(
+                func_logger.error(
                     "function_error",
                     function=func.__name__,
                     error_type=type(e).__name__,
                     error_message=str(e),
                     traceback=traceback.format_exc(),
                 )
-                raise
-                raise
+                raise RuntimeError("Unspecified error")
+                raise RuntimeError("Unspecified error")
 
         return wrapper
 
@@ -432,9 +438,9 @@ def log_genomic_operation(operation_name: str):
     return log_function_call(operation_name)
 
 
-def configure_logging(log_level: _ = "INFO", log_file: str | None = None):
+def configure_logging(log_level: str = "INFO", log_file: str | None = None):
     """Configure logging settings"""
-    _ = getattr(logging, log_level.upper(), logging.INFO)
+    level = getattr(logging, log_level.upper(), logging.INFO)
 
     if log_file:
         logging.basicConfig(
@@ -452,21 +458,21 @@ def configure_logging(log_level: _ = "INFO", log_file: str | None = None):
 class LogEvent:
     """Event types for logging"""
 
-    _ = "authentication"
-    _ = "data_access"
-    _ = "consent_change"
-    _ = "governance"
-    _ = "privacy_budget"
-    _ = "crypto_operation"
+    AUTHENTICATION = "authentication"
+    DATA_ACCESS = "data_access"
+    CONSENT_CHANGE = "consent_change"
+    GOVERNANCE = "governance"
+    PRIVACY_BUDGET = "privacy_budget"
+    CRYPTO_OPERATION = "crypto_operation"
 
 
 class PrivacyLevel:
     """Privacy levels for data"""
 
-    _ = "low"
-    _ = "medium"
-    _ = "high"
-    _ = "critical"
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+    CRITICAL = "critical"
 
 
 class GenomeVaultLogger:
@@ -489,9 +495,28 @@ class GenomeVaultLogger:
 
 
 # Global logger instances
-_ = AuditLogger()
+audit_logger = AuditLogger()
 performance_logger = PerformanceLogger()
-_ = SecurityLogger()
+security_logger = SecurityLogger()
 
-# Main logger
-_ = get_logger(__name__)
+# Main logger singleton
+logger = get_logger(__name__)
+
+# Export all required symbols
+__all__ = [
+    "AuditLogger",
+    "GenomeVaultLogger",
+    "LogEvent",
+    "PerformanceLogger",
+    "PrivacyLevel",
+    "SecurityLogger",
+    "audit_logger",
+    "configure_logging",
+    "get_logger",
+    "log_function_call",
+    "log_genomic_operation",
+    "log_operation",
+    "logger",
+    "performance_logger",
+    "security_logger",
+]

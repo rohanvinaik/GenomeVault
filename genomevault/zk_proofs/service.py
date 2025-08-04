@@ -30,7 +30,9 @@ class ProofRequest:
 class ProofResponse:
     """Response containing generated proof."""
 
-    def __init__(self, proof: bytes, proof_id: str, verification_key: str, generated_at: datetime):
+    def __init__(
+        self, proof: bytes, proof_id: str, verification_key: str, generated_at: datetime
+    ):
         self.proof = proof
         self.proof_id = proof_id
         self.verification_key = verification_key
@@ -70,7 +72,7 @@ class ZKProofService:
 
     async def generate_proof(self, request: ProofRequest) -> ProofResponse:
         """Generate a ZK proof based on the request."""
-        logger.info(f"Generating {request.proof_type} proof")
+        logger.info("Generating %srequest.proof_type proof")
 
         if request.proof_type not in self.provers:
             raise ValueError(f"Unknown proof type: {request.proof_type}")
@@ -106,7 +108,7 @@ class ZKProofService:
         verifier_id: str | None = None,
     ) -> VerificationResult:
         """Verify a ZK proof."""
-        logger.info(f"Verifying proof{f' for {verifier_id}' if verifier_id else ''}")
+        logger.info("Verifying proof%sf' for %sverifier_id' if verifier_id else ''")
 
         # Determine proof type from verification key
         proof_type = self._get_proof_type_from_key(verification_key)
@@ -160,11 +162,15 @@ class ZKProofService:
         normalized = (age - min_age) / (max_age - min_age)
 
         loop = asyncio.get_event_loop()
-        proof = await loop.run_in_executor(None, prover.prove_prs_in_range, normalized, 0.0, 1.0)
+        proof = await loop.run_in_executor(
+            None, prover.prove_prs_in_range, normalized, 0.0, 1.0
+        )
 
         return proof
 
-    async def _generate_variant_proof(self, prover: ZKProver, request: ProofRequest) -> Any:
+    async def _generate_variant_proof(
+        self, prover: ZKProver, request: ProofRequest
+    ) -> Any:
         """Generate variant count proof."""
         # For demo, reuse PRS proof logic
         count = request.private_inputs.get("count", 0)
@@ -174,7 +180,9 @@ class ZKProofService:
         normalized = count / max_count
 
         loop = asyncio.get_event_loop()
-        proof = await loop.run_in_executor(None, prover.prove_prs_in_range, normalized, 0.0, 1.0)
+        proof = await loop.run_in_executor(
+            None, prover.prove_prs_in_range, normalized, 0.0, 1.0
+        )
 
         return proof
 
@@ -196,7 +204,7 @@ class ZKProofService:
     async def aggregate_proofs(self, proofs: list[ProofResponse]) -> Any:
         """Aggregate multiple proofs (placeholder for future implementation)."""
         # This would implement proof aggregation/batching
-        logger.info(f"Aggregating {len(proofs)} proofs")
+        logger.info("Aggregating %slen(proofs) proofs")
 
         # For now, return a simple aggregation result
         return {

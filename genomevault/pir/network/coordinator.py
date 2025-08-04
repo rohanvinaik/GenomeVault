@@ -102,9 +102,9 @@ class PIRCoordinator:
                 logger = configure_logging()
                 logger.exception("Unhandled exception")
                 pass
-                raise
+                raise RuntimeError("Unspecified error")
 
-    def register_server(self, server_info: ServerInfo):
+    def register_server(self, server_info: ServerInfo) -> None:
         """
         Register a new PIR server.
 
@@ -112,7 +112,9 @@ class PIRCoordinator:
             server_info: Server information
         """
         self.servers[server_info.server_id] = server_info
-        logger.info(f"Registered server {server_info.server_id} ({server_info.server_type.value})")
+        logger.info(
+            "Registered server %sserver_info.server_id (%sserver_info.server_type.value)"
+        )
 
         # Audit log
         audit_logger.log_event(
@@ -155,7 +157,9 @@ class PIRCoordinator:
 
         # Apply compliance filtering if needed
         if user_region:
-            healthy_servers = self._filter_compliant_servers(healthy_servers, user_region)
+            healthy_servers = self._filter_compliant_servers(
+                healthy_servers, user_region
+            )
 
         # Sort by preference
         scored_servers = []
@@ -173,15 +177,18 @@ class PIRCoordinator:
 
             # Check geographic diversity
             if criteria.require_geographic_diversity and selected:
-                if not self._check_geographic_diversity(server, selected, criteria.min_distance_km):
+                if not self._check_geographic_diversity(
+                    server, selected, criteria.min_distance_km
+                ):
                     continue
 
             selected.append(server)
 
             if len(selected) >= criteria.min_servers:
                 # Check if we have minimum diversity
-                if not criteria.require_geographic_diversity or self._has_sufficient_diversity(
-                    selected
+                if (
+                    not criteria.require_geographic_diversity
+                    or self._has_sufficient_diversity(selected)
                 ):
                     break
 
@@ -190,7 +197,9 @@ class PIRCoordinator:
                 f"Could not select {criteria.min_servers} servers with required diversity"
             )
 
-        logger.info(f"Selected {len(selected)} servers: {[s.server_id for s in selected]}")
+        logger.info(
+            "Selected %slen(selected) servers: %s[s.server_id for s in selected]"
+        )
         return selected
 
     def _calculate_server_score(
@@ -264,15 +273,15 @@ class PIRCoordinator:
                 logger = configure_logging()
                 logger.exception("Unhandled exception")
                 break
-                raise
+                raise RuntimeError("Unspecified error")
             except Exception:
                 from genomevault.observability.logging import configure_logging
 
                 logger = configure_logging()
                 logger.exception("Unhandled exception")
-                logger.error(f"Health monitor error: {e}")
+                logger.error("Health monitor error: %se")
                 await asyncio.sleep(5)
-                raise
+                raise RuntimeError("Unspecified error")
 
     async def _check_all_servers_health(self):
         """Check health of all registered servers."""
@@ -286,7 +295,7 @@ class PIRCoordinator:
         healthy_count = sum(1 for s in self.servers.values() if s.health_score > 0.5)
         if healthy_count < self.min_healthy_servers:
             logger.warning(
-                f"Low healthy server count: {healthy_count} < {self.min_healthy_servers}"
+                "Low healthy server count: %shealthy_count < %sself.min_healthy_servers"
             )
 
     async def _check_server_health(self, server: ServerInfo):
@@ -318,15 +327,15 @@ class PIRCoordinator:
                         server.health_score *= 0.8  # Degrade score
                         server.success_rate = 0.95 * server.success_rate + 0.05 * 0.0
 
-        except Exception as e:
+        except Exception:
             from genomevault.observability.logging import configure_logging
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.warning(f"Health check failed for {server.server_id}: {e}")
+            logger.warning("Health check failed for %sserver.server_id: %se")
             server.health_score *= 0.7
             server.success_rate = 0.95 * server.success_rate + 0.05 * 0.0
-            raise
+            raise RuntimeError("Unspecified error")
 
     async def execute_query(
         self,
@@ -367,13 +376,15 @@ class PIRCoordinator:
             for i, response in enumerate(responses):
                 if isinstance(response, Exception):
                     failed_servers.append(selected_servers[i].server_id)
-                    logger.error(f"Query failed on {selected_servers[i].server_id}: {response}")
+                    logger.error(
+                        "Query failed on %sselected_servers[i].server_id: %sresponse"
+                    )
                 else:
                     valid_responses.append(response)
 
             if failed_servers:
                 # Handle failover
-                logger.warning(f"Query {query_id} failed on servers: {failed_servers}")
+                logger.warning("Query %squery_id failed on servers: %sfailed_servers")
                 # Could implement automatic failover here
 
             return valid_responses
@@ -401,13 +412,21 @@ class PIRCoordinator:
     def get_coordinator_stats(self) -> dict[str, Any]:
         """Get coordinator statistics."""
         healthy_servers = sum(1 for s in self.servers.values() if s.health_score > 0.8)
-        degraded_servers = sum(1 for s in self.servers.values() if 0.5 < s.health_score <= 0.8)
-        unhealthy_servers = sum(1 for s in self.servers.values() if s.health_score <= 0.5)
+        degraded_servers = sum(
+            1 for s in self.servers.values() if 0.5 < s.health_score <= 0.8
+        )
+        unhealthy_servers = sum(
+            1 for s in self.servers.values() if s.health_score <= 0.5
+        )
 
         ts_servers = sum(
-            1 for s in self.servers.values() if s.server_type == ServerType.TRUSTED_SIGNATORY
+            1
+            for s in self.servers.values()
+            if s.server_type == ServerType.TRUSTED_SIGNATORY
         )
-        ln_servers = sum(1 for s in self.servers.values() if s.server_type == ServerType.LIGHT_NODE)
+        ln_servers = sum(
+            1 for s in self.servers.values() if s.server_type == ServerType.LIGHT_NODE
+        )
 
         avg_latency = (
             sum(s.response_time_ms for s in self.servers.values()) / len(self.servers)
@@ -496,7 +515,9 @@ if __name__ == "__main__":
 
         print("Selected servers:")
         for server in selected:
-            print(f"  - {server.server_id} ({server.server_type.value}) in {server.region}")
+            print(
+                f"  - {server.server_id} ({server.server_type.value}) in {server.region}"
+            )
 
         # Show statistics
         stats = coordinator.get_coordinator_stats()

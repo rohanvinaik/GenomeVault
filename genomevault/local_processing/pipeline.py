@@ -37,7 +37,9 @@ class MultiOmicsPipeline:
             OmicsType.PROTEOMIC: self._process_proteomic,
         }
 
-    async def process(self, input_data: dict[OmicsType, Path], output_dir: Path) -> dict[str, Any]:
+    async def process(
+        self, input_data: dict[OmicsType, Path], output_dir: Path
+    ) -> dict[str, Any]:
         """
         Process multi-omics data through secure pipeline
 
@@ -59,7 +61,7 @@ class MultiOmicsPipeline:
                 )
                 tasks.append((omics_type, task))
             else:
-                logger.warning(f"No processor for omics type: {omics_type}")
+                logger.warning("No processor for omics type: %somics_type")
 
         # Wait for all processing to complete
         for omics_type, task in tasks:
@@ -71,9 +73,9 @@ class MultiOmicsPipeline:
 
                 logger = configure_logging()
                 logger.exception("Unhandled exception")
-                logger.error(f"Failed to process {omics_type}: {e!s}")
+                logger.error("Failed to process %somics_type: %se!s")
                 results[omics_type.value] = {"status": "failed", "error": str(e)}
-                raise
+                raise RuntimeError("Unspecified error")
 
         # Generate combined metadata
         metadata = self._generate_metadata(results)
@@ -90,7 +92,7 @@ class MultiOmicsPipeline:
         self, omics_type: OmicsType, input_path: Path, output_dir: Path
     ) -> dict[str, Any]:
         """Process a single omics data type"""
-        logger.info(f"Processing {omics_type.value} data from {input_path}")
+        logger.info("Processing %somics_type.value data from %sinput_path")
 
         # Create output subdirectory
         omics_output_dir = output_dir / omics_type.value
@@ -116,7 +118,9 @@ class MultiOmicsPipeline:
             "processing_stats": processed_data.get("stats", {}),
         }
 
-    async def _process_genomic(self, input_path: Path, output_dir: Path) -> dict[str, Any]:
+    async def _process_genomic(
+        self, input_path: Path, output_dir: Path
+    ) -> dict[str, Any]:
         """Process genomic data (VCF/FASTA)"""
         # Validate input
         validate_genomic_data(input_path)
@@ -132,7 +136,9 @@ class MultiOmicsPipeline:
             "stats": {"snps": 800, "indels": 200, "quality_score": 0.95},
         }
 
-    async def _process_transcriptomic(self, input_path: Path, output_dir: Path) -> dict[str, Any]:
+    async def _process_transcriptomic(
+        self, input_path: Path, output_dir: Path
+    ) -> dict[str, Any]:
         """Process transcriptomic data (expression matrices)"""
         validate_transcriptomic_data(input_path)
 
@@ -148,7 +154,9 @@ class MultiOmicsPipeline:
             },
         }
 
-    async def _process_epigenetic(self, input_path: Path, output_dir: Path) -> dict[str, Any]:
+    async def _process_epigenetic(
+        self, input_path: Path, output_dir: Path
+    ) -> dict[str, Any]:
         """Process epigenetic data (methylation)"""
         await asyncio.sleep(0.5)  # Simulate processing
 
@@ -162,7 +170,9 @@ class MultiOmicsPipeline:
             },
         }
 
-    async def _process_proteomic(self, input_path: Path, output_dir: Path) -> dict[str, Any]:
+    async def _process_proteomic(
+        self, input_path: Path, output_dir: Path
+    ) -> dict[str, Any]:
         """Process proteomic data (mass spec)"""
         await asyncio.sleep(0.5)  # Simulate processing
 
@@ -184,6 +194,8 @@ class MultiOmicsPipeline:
             "omics_processed": list(results.keys()),
             "processing_timestamp": asyncio.get_event_loop().time(),
             "total_compressed_size": sum(
-                r.get("compressed_size", 0) for r in results.values() if isinstance(r, dict)
+                r.get("compressed_size", 0)
+                for r in results.values()
+                if isinstance(r, dict)
             ),
         }

@@ -53,7 +53,14 @@ def ensure_built(paths: CircuitPaths) -> None:
     # Compile circom → r1cs, wasm
     if not paths.r1cs.exists() or not paths.wasm.exists():
         run(
-            ["circom", str(paths.circom), "--r1cs", "--wasm", "--output", str(paths.build)],
+            [
+                "circom",
+                str(paths.circom),
+                "--r1cs",
+                "--wasm",
+                "--output",
+                str(paths.build),
+            ],
             cwd=paths.root,
         )
 
@@ -61,7 +68,10 @@ def ensure_built(paths: CircuitPaths) -> None:
     pot0 = paths.build / "pot12_0000.ptau"
     potF = paths.build / "pot12_final.ptau"
     if not potF.exists():
-        run(["snarkjs", "powersoftau", "new", "bn128", "12", str(pot0), "-v"], cwd=paths.root)
+        run(
+            ["snarkjs", "powersoftau", "new", "bn128", "12", str(pot0), "-v"],
+            cwd=paths.root,
+        )
         run(
             [
                 "snarkjs",
@@ -78,9 +88,19 @@ def ensure_built(paths: CircuitPaths) -> None:
 
     if not paths.zkey.exists():
         zkey0 = paths.build / "sum64_0000.zkey"
-        run(["snarkjs", "groth16", "setup", str(paths.r1cs), str(potF), str(zkey0)], cwd=paths.root)
         run(
-            ["snarkjs", "zkey", "export", "verificationkey", str(zkey0), str(paths.vkey)],
+            ["snarkjs", "groth16", "setup", str(paths.r1cs), str(potF), str(zkey0)],
+            cwd=paths.root,
+        )
+        run(
+            [
+                "snarkjs",
+                "zkey",
+                "export",
+                "verificationkey",
+                str(zkey0),
+                str(paths.vkey),
+            ],
             cwd=paths.root,
         )
         # Optionally contribute and mark final
@@ -88,7 +108,14 @@ def ensure_built(paths: CircuitPaths) -> None:
 
     if not paths.vkey.exists():
         run(
-            ["snarkjs", "zkey", "export", "verificationkey", str(paths.zkey), str(paths.vkey)],
+            [
+                "snarkjs",
+                "zkey",
+                "export",
+                "verificationkey",
+                str(paths.zkey),
+                str(paths.vkey),
+            ],
             cwd=paths.root,
         )
 
@@ -108,7 +135,9 @@ def prove(paths: CircuitPaths, a: int, b: int, c_public: int) -> dict:
     # Witness generation
     wasm_dir = paths.wasm.parent  # build/sum64_js
     gen_witness = wasm_dir / "generate_witness.js"
-    run(["node", str(gen_witness), str(paths.wasm), str(inp), str(wtns)], cwd=paths.root)
+    run(
+        ["node", str(gen_witness), str(paths.wasm), str(inp), str(wtns)], cwd=paths.root
+    )
 
     # Proof
     run(
@@ -138,7 +167,14 @@ def verify(paths: CircuitPaths, proof: dict, public: dict) -> bool:
     tmp_pub.write_text(json.dumps(public), encoding="utf-8")
     try:
         run(
-            ["snarkjs", "groth16", "verify", str(paths.vkey), str(tmp_pub), str(tmp_proof)],
+            [
+                "snarkjs",
+                "groth16",
+                "verify",
+                str(paths.vkey),
+                str(tmp_pub),
+                str(tmp_proof),
+            ],
             cwd=paths.root,
         )
         return True
@@ -148,4 +184,4 @@ def verify(paths: CircuitPaths, proof: dict, public: dict) -> bool:
         logger = configure_logging()
         logger.exception("Unhandled exception")
         return False
-        raise
+        raise RuntimeError("Unspecified error")

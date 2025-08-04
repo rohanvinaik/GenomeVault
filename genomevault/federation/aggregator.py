@@ -52,7 +52,9 @@ class DPConfig:
     def compute_noise_scale(self) -> float:
         """Compute noise scale for privacy mechanism."""
         if self.mechanism == "gaussian":
-            return self.sensitivity * np.sqrt(2 * np.log(1.25 / self.delta)) / self.epsilon
+            return (
+                self.sensitivity * np.sqrt(2 * np.log(1.25 / self.delta)) / self.epsilon
+            )
         else:  # laplace
             return self.sensitivity / self.epsilon
 
@@ -147,7 +149,9 @@ class SecureAggregator:
 
         return aggregated, round_info
 
-    def _filter_by_reputation(self, updates: dict[str, np.ndarray]) -> dict[str, np.ndarray]:
+    def _filter_by_reputation(
+        self, updates: dict[str, np.ndarray]
+    ) -> dict[str, np.ndarray]:
         """Filter updates by participant reputation."""
         valid = {}
 
@@ -186,7 +190,9 @@ class SecureAggregator:
         values = list(updates.values())
         return np.mean(values, axis=0)
 
-    def _trimmed_mean(self, updates: dict[str, np.ndarray], trim_pct: float = 0.2) -> np.ndarray:
+    def _trimmed_mean(
+        self, updates: dict[str, np.ndarray], trim_pct: float = 0.2
+    ) -> np.ndarray:
         """Compute trimmed mean."""
         values = np.array(list(updates.values()))
         n_trim = int(len(values) * trim_pct)
@@ -237,7 +243,9 @@ class SecureAggregator:
         values = np.array(list(updates.values()))
         return np.median(values, axis=0)
 
-    def _byzantine_robust_aggregation(self, updates: dict[str, np.ndarray]) -> np.ndarray:
+    def _byzantine_robust_aggregation(
+        self, updates: dict[str, np.ndarray]
+    ) -> np.ndarray:
         """Byzantine-robust aggregation using multiple defenses."""
         # First apply Krum to identify good subset
         krum_result = self._krum_aggregation(updates)
@@ -287,29 +295,43 @@ class SecureAggregator:
 
             # Update reputation (exponential moving average)
             alpha = 0.1
-            profile.reputation_score = (1 - alpha) * profile.reputation_score + alpha * quality
+            profile.reputation_score = (
+                1 - alpha
+            ) * profile.reputation_score + alpha * quality
 
     def get_participant_stats(self) -> dict[str, Any]:
         """Get statistics about participants."""
         active = sum(
-            1 for p in self.participants.values() if p.reputation_score >= self.reputation_threshold
+            1
+            for p in self.participants.values()
+            if p.reputation_score >= self.reputation_threshold
         )
 
         return {
             "total_participants": len(self.participants),
             "active_participants": active,
-            "average_reputation": np.mean([p.reputation_score for p in self.participants.values()]),
-            "total_contributions": sum(p.contributions for p in self.participants.values()),
+            "average_reputation": np.mean(
+                [p.reputation_score for p in self.participants.values()]
+            ),
+            "total_contributions": sum(
+                p.contributions for p in self.participants.values()
+            ),
             "reputation_distribution": {
                 "excellent": sum(
                     1 for p in self.participants.values() if p.reputation_score >= 0.9
                 ),
                 "good": sum(
-                    1 for p in self.participants.values() if 0.7 <= p.reputation_score < 0.9
+                    1
+                    for p in self.participants.values()
+                    if 0.7 <= p.reputation_score < 0.9
                 ),
                 "fair": sum(
-                    1 for p in self.participants.values() if 0.5 <= p.reputation_score < 0.7
+                    1
+                    for p in self.participants.values()
+                    if 0.5 <= p.reputation_score < 0.7
                 ),
-                "poor": sum(1 for p in self.participants.values() if p.reputation_score < 0.5),
+                "poor": sum(
+                    1 for p in self.participants.values() if p.reputation_score < 0.5
+                ),
             },
         }

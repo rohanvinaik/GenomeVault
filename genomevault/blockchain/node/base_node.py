@@ -10,12 +10,8 @@ from dataclasses import dataclass
 from typing import Any
 
 from genomevault.core.config import get_config
-from genomevault.core.constants import (
-    BLOCK_TIME_SECONDS,
-    NodeClassWeight,
-    NodeType,
-    SignatoryWeight,
-)
+from genomevault.core.constants import (BLOCK_TIME_SECONDS, NODE_CLASS_WEIGHT,
+                                        NodeType, SignatoryWeight)
 
 
 @dataclass
@@ -45,7 +41,9 @@ class BaseNode(ABC):
         # Calculate voting power: w = c + s
         self.hardware_weight = self._get_hardware_weight()
         self.signatory_weight = (
-            SignatoryWeight.TRUSTED_SIGNATORY if is_signatory else SignatoryWeight.NON_SIGNER
+            SignatoryWeight.TRUSTED_SIGNATORY
+            if is_signatory
+            else SignatoryWeight.NON_SIGNER
         )
         self.voting_power = self.hardware_weight + self.signatory_weight
 
@@ -61,9 +59,9 @@ class BaseNode(ABC):
     def _get_hardware_weight(self) -> int:
         """Get hardware class weight based on node type"""
         weight_map = {
-            NodeType.LIGHT: NodeClassWeight.LIGHT,
-            NodeType.FULL: NodeClassWeight.FULL,
-            NodeType.ARCHIVE: NodeClassWeight.ARCHIVE,
+            NodeType.LIGHT: NODE_CLASS_WEIGHT.LIGHT,
+            NodeType.FULL: NODE_CLASS_WEIGHT.FULL,
+            NodeType.ARCHIVE: NODE_CLASS_WEIGHT.ARCHIVE,
         }
         return weight_map[self.node_type]
 
@@ -104,8 +102,12 @@ class BaseNode(ABC):
         block = Block(
             index=len(self.chain),
             timestamp=time.time(),
-            transactions=self.pending_transactions[:100],  # Limit transactions per block
-            proof_hashes=[tx.get("proof_hash", "") for tx in self.pending_transactions[:100]],
+            transactions=self.pending_transactions[
+                :100
+            ],  # Limit transactions per block
+            proof_hashes=[
+                tx.get("proof_hash", "") for tx in self.pending_transactions[:100]
+            ],
             previous_hash=self.chain[-1].hash if self.chain else "0",
             nonce=0,
             hash="",
@@ -122,7 +124,9 @@ class BaseNode(ABC):
         # Simplified selection based on voting power
         # In production, use proper BFT consensus
         current_slot = int(time.time() / BLOCK_TIME_SECONDS)
-        selection_hash = hashlib.sha256(b"{current_slot}:{self.voting_power}").hexdigest()
+        selection_hash = hashlib.sha256(
+            b"{current_slot}:{self.voting_power}"
+        ).hexdigest()
         selection_value = int(selection_hash[:8], 16)
 
         # Probability proportional to voting power

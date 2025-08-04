@@ -10,7 +10,7 @@ Implements the diabetes risk assessment system with:
 import hashlib
 import logging
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any
 
 import numpy as np
@@ -177,7 +177,7 @@ class DiabetesRiskCalculator:
         )
 
         logger.info(
-            "Calculated PRS: {prs:.3f} (category: {profile.get_risk_category()})",
+            f"Calculated PRS: {prs:.3f} (category: {profile.get_risk_category()})",
             extra={"privacy_safe": True},
         )
 
@@ -250,20 +250,23 @@ class DiabetesRiskCalculator:
             timestamp=datetime.now(),
             metadata={
                 "proof_size_bytes": len(proof.proof_data),
-                "verification_time_ms": proof.metadata.get("generation_time_seconds", 0) * 1000,
+                "verification_time_ms": proof.metadata.get("generation_time_seconds", 0)
+                * 1000,
                 "glucose_type": glucose_reading.measurement_type,
                 "risk_category": genetic_profile.get_risk_category(),
             },
         )
 
         logger.info(
-            "Risk alert created: triggered={alert_triggered}",
+            f"Risk alert created: triggered={alert_triggered}",
             extra={"privacy_safe": True},
         )
 
         return alert
 
-    def verify_alert(self, alert: DiabetesRiskAlert, public_inputs: dict[str, Any]) -> bool:
+    def verify_alert(
+        self, alert: DiabetesRiskAlert, public_inputs: dict[str, Any]
+    ) -> bool:
         """
         Verify diabetes risk alert proof.
 
@@ -304,7 +307,7 @@ class DiabetesRiskCalculator:
             logger.exception("Unhandled exception")
             logger.error(f"Alert verification failed: {e}")
             return False
-            raise
+            raise RuntimeError("Unspecified error")
 
     def monitor_continuous_risk(
         self,
@@ -345,7 +348,9 @@ class DiabetesRiskCalculator:
             # Simple linear regression for trend
             x = np.arange(len(glucose_values))
             slope, _ = np.polyfit(x, glucose_values, 1)
-            trend = "increasing" if slope > 1 else "decreasing" if slope < -1 else "stable"
+            trend = (
+                "increasing" if slope > 1 else "decreasing" if slope < -1 else "stable"
+            )
         else:
             trend = "unknown"
 
@@ -407,7 +412,9 @@ class DiabetesRiskCalculator:
             )
 
         if trend == "increasing":
-            recommendations.append("Glucose trend is increasing - consider lifestyle adjustments")
+            recommendations.append(
+                "Glucose trend is increasing - consider lifestyle adjustments"
+            )
 
         return recommendations
 
@@ -480,7 +487,9 @@ class ClinicalIntegration:
 
         return response
 
-    def _extract_genetic_variants(self, patient_data: dict[str, Any]) -> list[dict[str, Any]]:
+    def _extract_genetic_variants(
+        self, patient_data: dict[str, Any]
+    ) -> list[dict[str, Any]]:
         """Extract genetic variants from patient data"""
         variants = []
 
@@ -500,7 +509,9 @@ class ClinicalIntegration:
 
         return variants
 
-    def _extract_glucose_readings(self, patient_data: dict[str, Any]) -> list[GlucoseReading]:
+    def _extract_glucose_readings(
+        self, patient_data: dict[str, Any]
+    ) -> list[GlucoseReading]:
         """Extract glucose readings from patient data"""
         readings = []
 
@@ -549,9 +560,9 @@ if __name__ == "__main__":
     # Calculate genetic risk
     logger.info("Calculating genetic risk...")
     genetic_profile = calculator.calculate_genetic_risk(variants)
-    logger.info("PRS Score: {genetic_profile.prs_score:.3f}")
-    logger.info("Risk Category: {genetic_profile.get_risk_category()}")
-    logger.info("Confidence Interval: {genetic_profile.confidence_interval}")
+    logger.info(f"PRS Score: {genetic_profile.prs_score:.3f}")
+    logger.info(f"Risk Category: {genetic_profile.get_risk_category()}")
+    logger.info(f"Confidence Interval: {genetic_profile.confidence_interval}")
 
     # Example glucose reading
     glucose = GlucoseReading(
@@ -563,10 +574,10 @@ if __name__ == "__main__":
     # Create risk alert
     logger.info("\nCreating risk alert...")
     alert = calculator.create_risk_alert(genetic_profile, glucose)
-    logger.info("Alert Triggered: {alert.alert_triggered}")
-    logger.info("Proof ID: {alert.proof_id}")
-    logger.info("Proof Size: {alert.metadata['proof_size_bytes']} bytes")
-    logger.info("Verification Time: {alert.metadata['verification_time_ms']:.1f} ms")
+    logger.info(f"Alert Triggered: {alert.alert_triggered}")
+    logger.info(f"Proof ID: {alert.proof_id}")
+    logger.info(f"Proof Size: {alert.metadata['proof_size_bytes']} bytes")
+    logger.info(f"Verification Time: {alert.metadata['verification_time_ms']:.1f} ms")
 
     # Verify alert
     public_inputs = {
@@ -576,7 +587,7 @@ if __name__ == "__main__":
     }
 
     is_valid = calculator.verify_alert(alert, public_inputs)
-    logger.info("\nProof Verification: {'PASSED' if is_valid else 'FAILED'}")
+    logger.info(f"\nProof Verification: {'PASSED' if is_valid else 'FAILED'}")
 
     # Test continuous monitoring
     logger.info("\nTesting continuous monitoring...")
@@ -588,9 +599,9 @@ if __name__ == "__main__":
     ]
 
     monitoring = calculator.monitor_continuous_risk(genetic_profile, glucose_history)
-    logger.info("Risk Level: {monitoring['risk_level']}")
-    logger.info("Trend: {monitoring['trend']}")
-    logger.info("Recommendations: {monitoring['recommendations']}")
+    logger.info(f"Risk Level: {monitoring['risk_level']}")
+    logger.info(f"Trend: {monitoring['trend']}")
+    logger.info(f"Recommendations: {monitoring['recommendations']}")
 
     # Test clinical integration
     logger.info("\nTesting clinical integration...")
@@ -617,4 +628,8 @@ if __name__ == "__main__":
     }
 
     clinical_result = clinical.process_clinical_data(patient_data)
-    logger.info("Clinical Assessment: {json.dumps(clinical_result, indent=2, default=str)}")
+    import json
+
+    logger.info(
+        f"Clinical Assessment: {json.dumps(clinical_result, indent=2, default=str)}"
+    )

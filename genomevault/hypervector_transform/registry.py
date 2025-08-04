@@ -95,7 +95,7 @@ class HypervectorRegistry:
         self.current_version = default_version
         self._save_registry()
 
-        logger.info(f"Initialized hypervector registry with version {default_version}")
+        logger.info("Initialized hypervector registry with version %sdefault_version")
 
     def _load_registry(self):
         """Load registry from file."""
@@ -108,16 +108,16 @@ class HypervectorRegistry:
             self.compatibility_map = data.get("compatibility_map", {})
             self.performance_metrics = data.get("performance_metrics", {})
 
-            logger.info(f"Loaded registry with {len(self.versions)} versions")
+            logger.info("Loaded registry with %slen(self.versions) versions")
 
         except Exception:
             from genomevault.observability.logging import configure_logging
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error(f"Failed to load registry: {e}")
+            logger.error("Failed to load registry: %se")
             self._initialize_registry()
-            raise
+            raise RuntimeError("Unspecified error")
 
     def _save_registry(self):
         """Save registry to file with backup."""
@@ -149,12 +149,12 @@ class HypervectorRegistry:
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error(f"Failed to save registry: {e}")
+            logger.error("Failed to save registry: %se")
             # Restore backup
             if backup_path and backup_path.exists():
                 backup_path.rename(self.registry_path)
-            raise
-            raise
+            raise RuntimeError("Unspecified error")
+            raise RuntimeError("Unspecified error")
 
     def register_version(
         self,
@@ -217,7 +217,7 @@ class HypervectorRegistry:
 
         self._save_registry()
 
-        logger.info(f"Registered version {version} with fingerprint {fingerprint}")
+        logger.info("Registered version %sversion with fingerprint %sfingerprint")
 
     def get_encoder(self, version: str | None = None) -> HypervectorEncoder:
         """
@@ -266,7 +266,7 @@ class HypervectorRegistry:
         self.current_version = version
         self._save_registry()
 
-        logger.info(f"Changed current version from {old_version} to {version}")
+        logger.info("Changed current version from %sold_version to %sversion")
 
     def add_compatibility(
         self,
@@ -337,7 +337,9 @@ class HypervectorRegistry:
                 "projection_match": projection_match,
                 "reason": "No explicit compatibility mapping",
                 "recommendation": (
-                    "Use VersionMigrator for conversion" if not dimension_match else None
+                    "Use VersionMigrator for conversion"
+                    if not dimension_match
+                    else None
                 ),
             }
 
@@ -399,9 +401,11 @@ class HypervectorRegistry:
         with open(filepath, "w") as f:
             json.dump(export_data, f, indent=2)
 
-        logger.info(f"Exported version {version} to {filepath}")
+        logger.info("Exported version %sversion to %sfilepath")
 
-    def import_version(self, filepath: str, version: str | None = None, force: bool = False):
+    def import_version(
+        self, filepath: str, version: str | None = None, force: bool = False
+    ):
         """Import version configuration from file."""
         with open(filepath) as f:
             data = json.load(f)
@@ -412,7 +416,9 @@ class HypervectorRegistry:
 
         # Validate registry version compatibility
         if data.get("registry_version", "1.0") != "1.0":
-            logger.warning(f"Registry version mismatch: {data.get('registry_version')} != 1.0")
+            logger.warning(
+                "Registry version mismatch: %sdata.get('registry_version') != 1.0"
+            )
 
         self.register_version(
             version=version,
@@ -441,7 +447,9 @@ class HypervectorRegistry:
 
         return info
 
-    def benchmark_version(self, version: str, num_samples: int = 100) -> dict[str, float]:
+    def benchmark_version(
+        self, version: str, num_samples: int = 100
+    ) -> dict[str, float]:
         """Benchmark a specific version's performance."""
         import time
 
@@ -547,7 +555,7 @@ class VersionMigrator:
         if preserve_norm and original_norm is not None:
             result = result / torch.norm(result) * original_norm
 
-        logger.info(f"Migrated hypervector from {from_version} to {to_version}")
+        logger.info("Migrated hypervector from %sfrom_version to %sto_version")
         return result
 
     def _migrate_dimension_reduction(
@@ -630,7 +638,7 @@ class VersionMigrator:
 
         else:
             # Unknown type, return as-is
-            logger.warning(f"Unknown projection type: {to_type}")
+            logger.warning("Unknown projection type: %sto_type")
             return hv
 
     def create_migration_report(
@@ -641,7 +649,9 @@ class VersionMigrator:
             "from_version": from_version,
             "to_version": to_version,
             "timestamp": datetime.now().isoformat(),
-            "compatibility": self.registry.check_compatibility(from_version, to_version),
+            "compatibility": self.registry.check_compatibility(
+                from_version, to_version
+            ),
             "tests": {},
         }
 
@@ -661,7 +671,9 @@ class VersionMigrator:
 
             # Migrate back if possible
             if from_encoder.config.dimension == to_encoder.config.dimension:
-                back_migrated = self.migrate_hypervector(migrated, to_version, from_version)
+                back_migrated = self.migrate_hypervector(
+                    migrated, to_version, from_version
+                )
                 similarity = torch.nn.functional.cosine_similarity(
                     original.unsqueeze(0), back_migrated.unsqueeze(0)
                 ).item()

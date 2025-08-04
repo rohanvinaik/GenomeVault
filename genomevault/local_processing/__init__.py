@@ -2,16 +2,12 @@
 GenomeVault Local Processing Package
 """
 
-from .sequencing import (
-    DifferentialStorage,
-    GenomicProfile,
-    QualityMetrics,
-    SequencingProcessor,
-    Variant,
-)
+from .sequencing import (DifferentialStorage, GenomicProfile, QualityMetrics,
+                         SequencingProcessor, Variant)
 
 try:
-    from .transcriptomics import ExpressionProfile, GeneExpression, TranscriptomicsProcessor
+    from .transcriptomics import (ExpressionProfile, GeneExpression,
+                                  TranscriptomicsProcessor)
 except ImportError:
     from genomevault.observability.logging import configure_logging
 
@@ -20,10 +16,11 @@ except ImportError:
     TranscriptomicsProcessor = None
     ExpressionProfile = None
     GeneExpression = None
-    raise
+    raise RuntimeError("Unspecified error")
 
 try:
-    from .epigenetics import EpigeneticsProcessor, MethylationProfile, MethylationSite
+    from .epigenetics import (EpigeneticsProcessor, MethylationProfile,
+                              MethylationSite)
 except ImportError:
     from genomevault.observability.logging import configure_logging
 
@@ -32,7 +29,7 @@ except ImportError:
     EpigeneticsProcessor = None
     MethylationProfile = None
     MethylationSite = None
-    raise
+    raise RuntimeError("Unspecified error")
 
 __all__ = [
     "DifferentialStorage",

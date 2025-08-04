@@ -27,7 +27,7 @@ async def main():
     print("1. User Accuracy Requirements:")
     epsilon = 0.01  # 1% relative error
     delta_exp = 20  # 1 in 2^20 failure probability
-    print(f"   - Allowed error: ±{epsilon*100}%")
+    print(f"   - Allowed error: ±{epsilon * 100}%")
     print(f"   - Confidence: 1 in {2**delta_exp:,} chance of failure")
     print("   - ECC enabled: Yes (3-block XOR parity)")
 
@@ -63,7 +63,7 @@ async def main():
             "timestamp": time.time(),
         }
         results.append(result)
-        print(f"   Query {i+1}/{budget.repeats}: frequency = {noisy_value:.6f}")
+        print(f"   Query {i + 1}/{budget.repeats}: frequency = {noisy_value:.6f}")
 
     # Step 4: Calculate median
     print("\n4. Calculating Median:")
@@ -126,11 +126,13 @@ async def main():
     print("\n7. Zero-Knowledge Property:")
     print(f"   - Total values: {len(values)}")
     print(f"   - Values revealed in proof: {len(opened_values)}")
-    print(f"   - Zero-knowledge ratio: {(1 - len(opened_values)/len(values))*100:.1f}% hidden")
+    print(
+        f"   - Zero-knowledge ratio: {(1 - len(opened_values) / len(values)) * 100:.1f}% hidden"
+    )
 
     # Step 8: Show complete results
     print("\n8. Complete Query Result:")
-    print(f"   - Allele frequency: {median:.6f} ± {epsilon*100}%")
+    print(f"   - Allele frequency: {median:.6f} ± {epsilon * 100}%")
     print(f"   - Confidence: {budget.confidence}")
     print(f"   - Proof URI: ipfs://{proof_result.hash[:32]}...")
     print(f"   - Total processing time: {proof_result.generation_time_ms + 100:.0f}ms")
@@ -147,7 +149,7 @@ async def main():
 
     print(f"   - Mock proof time: {mock_time:.3f}ms")
     print(f"   - Real ZK proof time: {proof_result.generation_time_ms:.1f}ms")
-    print(f"   - Overhead factor: {proof_result.generation_time_ms/mock_time:.1f}x")
+    print(f"   - Overhead factor: {proof_result.generation_time_ms / mock_time:.1f}x")
     print("   - Security guarantee: Cryptographic vs None")
 
     # Step 10: Demonstrate proof properties
@@ -191,8 +193,10 @@ async def main():
     print("\n=== Demo Complete ===")
     print("\nSummary:")
     print(f"- Generated real ZK proof for {budget.repeats} query results")
-    print(f"- Proved median {median:.6f} is within {epsilon*100}% error bound")
-    print(f"- Proof provides cryptographic guarantee with {2**-delta_exp:.2e} failure probability")
+    print(f"- Proved median {median:.6f} is within {epsilon * 100}% error bound")
+    print(
+        f"- Proof provides cryptographic guarantee with {2**-delta_exp:.2e} failure probability"
+    )
     print(f"- Only revealed {revealed_count}/{total_count} values, maintaining privacy")
     print(f"- Total proof size: {len(proof_result.proof_data)} bytes")
     print("- Verification time: <5ms (much faster than generation)")
@@ -214,7 +218,9 @@ async def benchmark_zk_performance():
 
         # Time proof generation
         start = time.time()
-        proof = circuit.generate_proof(values=values, claimed_median=median, error_bound=0.01)
+        proof = circuit.generate_proof(
+            values=values, claimed_median=median, error_bound=0.01
+        )
         gen_time = (time.time() - start) * 1000
 
         # Time verification
@@ -289,7 +295,9 @@ def demonstrate_proof_structure():
 
     print("\n4. Challenge-Response:")
     print(f"   - Fiat-Shamir challenge: {proof.challenge.hex()[:32]}...")
-    print(f"   - Response type: {proof.response.get('error_proof', {}).get('type', 'N/A')}")
+    print(
+        f"   - Response type: {proof.response.get('error_proof', {}).get('type', 'N/A')}"
+    )
 
     print("\n5. Range Proofs:")
     if proof.range_proofs:

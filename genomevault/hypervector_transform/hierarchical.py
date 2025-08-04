@@ -132,7 +132,8 @@ class HierarchicalEncoder:
         self.projection_matrices = {}
         self.domain_projections = {}
         self.holographic_systems = {
-            level: HolographicRepresentation(dim) for level, dim in self.dimensions.items()
+            level: HolographicRepresentation(dim)
+            for level, dim in self.dimensions.items()
         }
 
         # Initialize domain-specific projections
@@ -255,7 +256,9 @@ class HierarchicalEncoder:
                     else:
                         end_idx = x.shape[1]
 
-                    gene_features = x[:, start_idx:end_idx] if x.dim() > 1 else x[start_idx:end_idx]
+                    gene_features = (
+                        x[:, start_idx:end_idx] if x.dim() > 1 else x[start_idx:end_idx]
+                    )
                     outputs.append(layer(gene_features))
                     start_idx = end_idx
 
@@ -336,7 +339,7 @@ class HierarchicalEncoder:
             },
         )
 
-        logger.debug(f"Encoded {omics_type.value} data into hierarchical hypervector")
+        logger.debug("Encoded %somics_type.value data into hierarchical hypervector")
 
         return hierarchical_hv
 
@@ -494,7 +497,9 @@ class HierarchicalEncoder:
             v2 = hv2.get_level(level)
 
             # Cosine similarity
-            sim = torch.nn.functional.cosine_similarity(v1.view(1, -1), v2.view(1, -1)).item()
+            sim = torch.nn.functional.cosine_similarity(
+                v1.view(1, -1), v2.view(1, -1)
+            ).item()
 
             similarities[level] = sim
 
@@ -503,7 +508,9 @@ class HierarchicalEncoder:
 
         return total_sim
 
-    def compress_to_tier(self, hv: HierarchicalHypervector, tier: str = "clinical") -> torch.Tensor:
+    def compress_to_tier(
+        self, hv: HierarchicalHypervector, tier: str = "clinical"
+    ) -> torch.Tensor:
         """
         Compress hierarchical hypervector to specific storage tier.
 
@@ -537,7 +544,9 @@ class HierarchicalEncoder:
     def _quantize_vector(self, vector: torch.Tensor, bits: int) -> torch.Tensor:
         """Quantize vector to specified bit depth"""
         # Normalize to [-1, 1]
-        normalized = 2 * (vector - vector.min()) / (vector.max() - vector.min() + 1e-8) - 1
+        normalized = (
+            2 * (vector - vector.min()) / (vector.max() - vector.min() + 1e-8) - 1
+        )
 
         # Quantize
         levels = 2**bits
@@ -583,10 +592,10 @@ if __name__ == "__main__":
         ProjectionDomain.PHARMACOGENOMICS,
     ]:
         hv = encoder.encode_hierarchical(genomic_data, OmicsType.GENOMIC, domain)
-        logger.info("\n{domain.value} domain:")
-        logger.info("  Base dimensions: {hv.base.shape}")
-        logger.info("  Mid dimensions: {hv.mid.shape}")
-        logger.info("  High dimensions: {hv.high.shape}")
+        logger.info("\n%sdomain.value domain:")
+        logger.info("  Base dimensions: %shv.base.shape")
+        logger.info("  Mid dimensions: %shv.mid.shape")
+        logger.info("  High dimensions: %shv.high.shape")
 
     # Test binding operations
     logger.info("\nTesting binding operations:")
@@ -598,18 +607,18 @@ if __name__ == "__main__":
     bound_circular = encoder.bind_hypervectors(hv1, hv2, "circular")
     bound_cross_modal = encoder.bind_hypervectors(hv1, hv2, "cross_modal")
 
-    logger.info("Circular binding metadata: {bound_circular.metadata}")
-    logger.info("Cross-modal binding metadata: {bound_cross_modal.metadata}")
+    logger.info("Circular binding metadata: %sbound_circular.metadata")
+    logger.info("Cross-modal binding metadata: %sbound_cross_modal.metadata")
 
     # Test similarity
     similarity = encoder.similarity_multiresolution(hv1, hv1)
-    logger.info("\nSelf-similarity: {similarity:.4f}")
+    logger.info("\nSelf-similarity: %ssimilarity:.4f")
 
     similarity_cross = encoder.similarity_multiresolution(hv1, hv2)
-    logger.info("Cross-omics similarity: {similarity_cross:.4f}")
+    logger.info("Cross-omics similarity: %ssimilarity_cross:.4f")
 
     # Test compression
     logger.info("\nTesting compression to tiers:")
     for tier in ["mini", "clinical", "full"]:
         compressed = encoder.compress_to_tier(hv1, tier)
-        logger.info("{tier} tier size: {compressed.shape}")
+        logger.info("%stier tier size: %scompressed.shape")

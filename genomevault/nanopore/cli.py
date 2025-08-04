@@ -151,7 +151,7 @@ async def _process_async(
     click.echo(f"  Total events: {stats.total_events:,}")
     click.echo(f"  Total slices: {stats.total_slices}")
     click.echo(f"  Processing time: {stats.processing_time:.1f}s")
-    click.echo(f"  Events/second: {stats.total_events/stats.processing_time:,.0f}")
+    click.echo(f"  Events/second: {stats.total_events / stats.processing_time:,.0f}")
     click.echo(f"  Anomalies found: {len(stats.variance_peaks)}")
     click.echo(f"  Biological signals: {len(all_signals)}")
 
@@ -256,7 +256,7 @@ def analyze(
 
         for i, sig in enumerate(sorted_signals[:10]):
             click.echo(
-                f"  {i+1}. {sig['type']} at position {sig['position']} "
+                f"  {i + 1}. {sig['type']} at position {sig['position']} "
                 f"(confidence: {sig['confidence']:.2f}, variance: {sig['variance_score']:.2f})"
             )
 
@@ -270,7 +270,7 @@ def analyze(
         if contexts and signal_type == "5mC":
             cpg_count = sum(1 for ctx in contexts if "CG" in ctx)
             click.echo(
-                f"CpG contexts: {cpg_count}/{len(contexts)} ({cpg_count/len(contexts)*100:.1f}%)"
+                f"CpG contexts: {cpg_count}/{len(contexts)} ({cpg_count / len(contexts) * 100:.1f}%)"
             )
 
 
@@ -355,9 +355,9 @@ async def _benchmark_async(slice_size: int, n_events: int, gpu: bool):
     click.echo(f"  Processing mode: {'GPU' if gpu else 'CPU'}")
     click.echo(f"  Total events: {n_events:,}")
     click.echo(f"  Total time: {total_time:.2f}s")
-    click.echo(f"  Throughput: {n_events/total_time:,.0f} events/s")
-    click.echo(f"  Average slice time: {np.mean(slice_times)*1000:.1f}ms")
-    click.echo(f"  Slice time std: {np.std(slice_times)*1000:.1f}ms")
+    click.echo(f"  Throughput: {n_events / total_time:,.0f} events/s")
+    click.echo(f"  Average slice time: {np.mean(slice_times) * 1000:.1f}ms")
+    click.echo(f"  Slice time std: {np.std(slice_times) * 1000:.1f}ms")
 
     if gpu and processor.gpu_kernel:
         mem_stats = processor.gpu_kernel.get_memory_usage()

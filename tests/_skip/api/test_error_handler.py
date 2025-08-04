@@ -8,7 +8,11 @@ client = TestClient(app)
 def test_error_handler_returns_400_for_domain_error():
     r = client.post(
         "/vectors/encode",
-        json={"data": {"genomic": [1, 2]}, "dimension": "12345", "compression_tier": "mini"},
+        json={
+            "data": {"genomic": [1, 2]},
+            "dimension": "12345",
+            "compression_tier": "mini",
+        },
     )
     assert r.status_code == 400
     j = r.json()

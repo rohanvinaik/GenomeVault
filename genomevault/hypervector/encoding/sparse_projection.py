@@ -1,8 +1,13 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import numpy as np
 
 from genomevault.core.exceptions import ProjectionError
+
+if TYPE_CHECKING:
+    pass
 
 
 class SparseRandomProjection:
@@ -12,13 +17,18 @@ class SparseRandomProjection:
     For testability, dimensions in tests are small. Production tiers (10k/15k/20k) can be used later.
     """
 
-    def __init__(self, n_components: int, density: float = 0.1, seed: int | None = None) -> None:
+    def __init__(
+        self, n_components: int, density: float = 0.1, seed: int | None = None
+    ) -> None:
         if not isinstance(n_components, int) or n_components <= 0:
             raise ProjectionError(
-                "n_components must be a positive integer", context={"n_components": n_components}
+                "n_components must be a positive integer",
+                context={"n_components": n_components},
             )
         if not (0.0 < float(density) <= 1.0):
-            raise ProjectionError("density must be in (0, 1]", context={"density": density})
+            raise ProjectionError(
+                "density must be in (0, 1]", context={"density": density}
+            )
         self.n_components = int(n_components)
         self.density = float(density)
         self.rng = np.random.default_rng(seed)
@@ -35,7 +45,8 @@ class SparseRandomProjection:
         """
         if not isinstance(n_features, int) or n_features <= 0:
             raise ProjectionError(
-                "n_features must be a positive integer", context={"n_features": n_features}
+                "n_features must be a positive integer",
+                context={"n_features": n_features},
             )
 
         k = max(1, int(round(self.density * n_features)))
@@ -57,12 +68,16 @@ class SparseRandomProjection:
             raise ProjectionError("fit() must be called before transform()")
         if not isinstance(X, np.ndarray) or X.ndim != 2:
             raise ProjectionError(
-                "X must be a 2-D numpy array", context={"ndim": getattr(X, "ndim", None)}
+                "X must be a 2-D numpy array",
+                context={"ndim": getattr(X, "ndim", None)},
             )
         if X.shape[1] != self._n_features:
             raise ProjectionError(
                 "X has mismatched n_features",
-                context={"X_n_features": int(X.shape[1]), "fit_n_features": int(self._n_features)},
+                context={
+                    "X_n_features": int(X.shape[1]),
+                    "fit_n_features": int(self._n_features),
+                },
             )
         n_samples = X.shape[0]
         Y = np.empty((n_samples, self.n_components), dtype=np.float64)

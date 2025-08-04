@@ -124,7 +124,9 @@ class PHILeakageDetector:
         try:
             with open(filepath, encoding="utf-8", errors="ignore") as f:
                 for line_num, line in enumerate(f, 1):
-                    line_findings = self._scan_line(line, line_num, str(filepath), max_context)
+                    line_findings = self._scan_line(
+                        line, line_num, str(filepath), max_context
+                    )
                     findings.extend(line_findings)
 
         except Exception:
@@ -132,8 +134,8 @@ class PHILeakageDetector:
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error(f"Error scanning file {filepath}: {e}")
-            raise
+            logger.error("Error scanning file %sfilepath: %se")
+            raise RuntimeError("Unspecified error")
 
         return findings
 
@@ -283,7 +285,9 @@ class PHILeakageDetector:
 
         return redacted
 
-    def generate_report(self, findings: list[dict[str, Any]], output_format: str = "json") -> str:
+    def generate_report(
+        self, findings: list[dict[str, Any]], output_format: str = "json"
+    ) -> str:
         """
         Generate a PHI leakage report.
 
@@ -307,7 +311,9 @@ class PHILeakageDetector:
 
         elif output_format == "markdown":
             report = ["# PHI Leakage Detection Report\n"]
-            report.append(f"**Scan Date**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            report.append(
+                f"**Scan Date**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+            )
             report.append(f"**Total Findings**: {len(findings)}\n")
 
             # Group by severity
@@ -319,9 +325,15 @@ class PHILeakageDetector:
                         f"\n## {severity.upper()} Severity ({len(by_severity[severity])})\n"
                     )
 
-                    for finding in by_severity[severity][:10]:  # Limit to 10 per severity
-                        report.append(f"- **{finding['description']}** in `{finding['file']}`")
-                        report.append(f"  - Line {finding['line']}: `{finding['match']}`")
+                    for finding in by_severity[severity][
+                        :10
+                    ]:  # Limit to 10 per severity
+                        report.append(
+                            f"- **{finding['description']}** in `{finding['file']}`"
+                        )
+                        report.append(
+                            f"  - Line {finding['line']}: `{finding['match']}`"
+                        )
                         report.append(f"  - Context: `...{finding['context']}...`\n")
 
             return "\n".join(report)
@@ -339,7 +351,9 @@ class PHILeakageDetector:
             html.append("</style></head><body>")
 
             html.append("<h1>PHI Leakage Detection Report</h1>")
-            html.append(f'<p>Scan Date: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}</p>')
+            html.append(
+                f"<p>Scan Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>"
+            )
             html.append(f"<p>Total Findings: {len(findings)}</p>")
 
             by_severity = self._group_by_severity(findings)
@@ -354,10 +368,12 @@ class PHILeakageDetector:
                     for finding in by_severity[severity][:10]:
                         html.append("<li>")
                         html.append(
-                            f'<strong>{finding["description"]}</strong> in {finding["file"]}<br>'
+                            f"<strong>{finding['description']}</strong> in {finding['file']}<br>"
                         )
-                        html.append(f'Line {finding["line"]}: <code>{finding["match"]}</code><br>')
-                        html.append(f'<pre>{finding["context"]}</pre>')
+                        html.append(
+                            f"Line {finding['line']}: <code>{finding['match']}</code><br>"
+                        )
+                        html.append(f"<pre>{finding['context']}</pre>")
                         html.append("</li>")
 
                     html.append("</ul>")
@@ -368,7 +384,9 @@ class PHILeakageDetector:
         else:
             raise ValueError(f"Unknown output format: {output_format}")
 
-    def _group_by_severity(self, findings: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
+    def _group_by_severity(
+        self, findings: list[dict[str, Any]]
+    ) -> dict[str, list[dict[str, Any]]]:
         """Group findings by severity level."""
         grouped = {}
 
@@ -417,7 +435,7 @@ class PHILeakageDetector:
         with open(metadata_path, "w") as f:
             json.dump(metadata, f, indent=2)
 
-        logger.warning(f"Quarantined file with PHI: {filepath} -> {quarantine_path}")
+        logger.warning("Quarantined file with PHI: %sfilepath -> %squarantine_path")
 
         return str(quarantine_path)
 
@@ -477,7 +495,9 @@ class RealTimePHIMonitor:
         """
         Trigger alert for PHI leakage.
         """
-        logger.critical(f"PHI LEAKAGE ALERT: {len(self.findings_buffer)} instances detected!")
+        logger.critical(
+            "PHI LEAKAGE ALERT: %slen(self.findings_buffer) instances detected!"
+        )
 
         # In production, would send alerts to:
         # - Security team
@@ -551,10 +571,10 @@ if __name__ == "__main__":
     # Scan for PHI
     findings = detector._scan_line(test_text, 1, "test.txt", 50)
 
-    logger.info(f"Found {len(findings)} potential PHI instances:\n")
+    logger.info("Found %slen(findings) potential PHI instances:\n")
     for finding in findings:
         logger.info(
-            f"- {finding['description']}: {finding['match']} (Severity: {finding['severity']})"
+            "- %sfinding['description']: %sfinding['match'] (Severity: %sfinding['severity'])"
         )
 
     logger.info("\n" + "=" * 50 + "\n")

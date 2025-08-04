@@ -12,12 +12,11 @@ import numpy as np
 import pytest
 import torch
 
-from genomevault.hypervector.error_handling import (
-    AdaptiveHDCEncoder,
-    ECCEncoderMixin,
-    ErrorBudgetAllocator,
-)
-from genomevault.pir.client import BatchedPIRQueryBuilder, GenomicQuery, PIRClient, QueryType
+from genomevault.hypervector.error_handling import (AdaptiveHDCEncoder,
+                                                    ECCEncoderMixin,
+                                                    ErrorBudgetAllocator)
+from genomevault.pir.client import (BatchedPIRQueryBuilder, GenomicQuery,
+                                    PIRClient, QueryType)
 
 
 class TestBatchedPIRIntegration:
@@ -38,10 +37,15 @@ class TestBatchedPIRIntegration:
         assert budget.ecc_enabled
 
         # Test without ECC
-        budget_no_ecc = allocator.plan_budget(epsilon=0.01, delta_exp=15, ecc_enabled=False)
+        budget_no_ecc = allocator.plan_budget(
+            epsilon=0.01, delta_exp=15, ecc_enabled=False
+        )
 
         # Without ECC, should need more dimension or repeats
-        assert budget_no_ecc.dimension > budget.dimension or budget_no_ecc.repeats > budget.repeats
+        assert (
+            budget_no_ecc.dimension > budget.dimension
+            or budget_no_ecc.repeats > budget.repeats
+        )
 
     def test_ecc_encoder(self):
         """Test ECC encoding and decoding"""
@@ -118,7 +122,9 @@ class TestBatchedPIRIntegration:
         # Mock PIR client
         mock_client = Mock(spec=PIRClient)
         mock_client.execute_query = AsyncMock(
-            side_effect=lambda q: {"value": 42.0 + np.random.normal(0, 0.1)}  # Add some noise
+            side_effect=lambda q: {
+                "value": 42.0 + np.random.normal(0, 0.1)
+            }  # Add some noise
         )
         mock_client.decode_response = Mock(side_effect=lambda r, t: r["value"])
 

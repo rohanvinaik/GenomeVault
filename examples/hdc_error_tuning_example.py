@@ -7,11 +7,9 @@ Example usage of HDC error handling with uncertainty tuning
 
 import asyncio
 
-from genomevault.hypervector.error_handling import (
-    AdaptiveHDCEncoder,
-    ErrorBudget,
-    ErrorBudgetAllocator,
-)
+from genomevault.hypervector.error_handling import (AdaptiveHDCEncoder,
+                                                    ErrorBudget,
+                                                    ErrorBudgetAllocator)
 
 
 async def main():
@@ -112,7 +110,7 @@ async def main():
     logger.info(f"Without ECC - Median error: {meta_no_ecc['median_error']:.6f}")
     logger.info(f"With ECC    - Median error: {meta_with_ecc['median_error']:.6f}")
     logger.info(
-        f"Error reduction: {(1 - meta_with_ecc['median_error']/meta_no_ecc['median_error'])*100:.1f}%"
+        f"Error reduction: {(1 - meta_with_ecc['median_error'] / meta_no_ecc['median_error']) * 100:.1f}%"
     )
 
     # 4. API usage example
@@ -142,7 +140,7 @@ async def main():
         )
         logger.info(f"\n{preset_name}: {preset_config.get('description', '')}")
         logger.info(
-            f"  Settings: {preset_config['epsilon']*100}% error, 1 in {2**preset_config['delta_exp']:,} confidence"
+            f"  Settings: {preset_config['epsilon'] * 100}% error, 1 in {2 ** preset_config['delta_exp']:,} confidence"
         )
         logger.info(f"  Dimension: {budget.dimension:,}, Repeats: {budget.repeats}")
 

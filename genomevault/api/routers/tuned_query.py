@@ -6,14 +6,14 @@ Implements the /query_tuned endpoint with real-time progress updates
 import time
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import (APIRouter, Depends, HTTPException, WebSocket,
+                     WebSocketDisconnect)
 from pydantic import BaseModel, Field
 
-from genomevault.hypervector.error_handling import (
-    ErrorBudget,
-    ErrorBudgetAllocator,
-)
-from genomevault.pir.client import BatchedPIRQueryBuilder, GenomicQuery, PIRClient, QueryType
+from genomevault.hypervector.error_handling import (ErrorBudget,
+                                                    ErrorBudgetAllocator)
+from genomevault.pir.client import (BatchedPIRQueryBuilder, GenomicQuery,
+                                    PIRClient, QueryType)
 from genomevault.utils.logging import get_logger
 from genomevault.zk.proof import ProofGenerator
 
@@ -38,7 +38,9 @@ class TunedQueryRequest(BaseModel):
     ecc_enabled: bool = Field(True, description="Enable error correcting codes")
     parity_g: int = Field(3, description="XOR(g) parity groups", ge=2, le=5)
     repeat_cap: str = Field("AUTO", description="Number of repeats or 'AUTO'")
-    session_id: str | None = Field(None, description="WebSocket session ID for progress")
+    session_id: str | None = Field(
+        None, description="WebSocket session ID for progress"
+    )
 
 
 class TunedQueryResponse(BaseModel):
@@ -71,25 +73,25 @@ class WebSocketManager:
     async def connect(self, session_id: str, websocket: WebSocket):
         await websocket.accept()
         self.active_connections[session_id] = websocket
-        logger.info(f"WebSocket connected: {session_id}")
+        logger.info("WebSocket connected: %ssession_id")
 
     def disconnect(self, session_id: str):
         if session_id in self.active_connections:
             del self.active_connections[session_id]
-            logger.info(f"WebSocket disconnected: {session_id}")
+            logger.info("WebSocket disconnected: %ssession_id")
 
     async def send_progress(self, session_id: str, update: ProgressUpdate):
         if session_id in self.active_connections:
             try:
                 await self.active_connections[session_id].send_json(update.dict())
-            except KeyError as e:
+            except KeyError:
                 from genomevault.observability.logging import configure_logging
 
                 logger = configure_logging()
                 logger.exception("Unhandled exception")
-                logger.error(f"Failed to send progress update: {e}")
+                logger.error("Failed to send progress update: %se")
                 self.disconnect(session_id)
-                raise
+                raise RuntimeError("Unspecified error")
 
 
 ws_manager = WebSocketManager()
@@ -167,8 +169,8 @@ async def query_with_tuning(
         )
 
         logger.info(
-            f"Planned budget: dim={budget.dimension}, repeats={budget.repeats}, "
-            f"epsilon={budget.epsilon}, delta=2^-{budget.delta_exp}"
+            "Planned budget: dim=%sbudget.dimension, repeats=%sbudget.repeats, "
+            "epsilon=%sbudget.epsilon, delta=2^-%sbudget.delta_exp"
         )
 
         # Send progress update if WebSocket session provided
@@ -194,7 +196,9 @@ async def query_with_tuning(
             )
         else:
             # Use batch execution without progress
-            batched_result = await query_builder.query_with_error_budget(genomic_query, budget)
+            batched_result = await query_builder.query_with_error_budget(
+                genomic_query, budget
+            )
             result = batched_result.aggregated_result
 
         # Step 4: Generate ZK proof for median computation
@@ -227,7 +231,7 @@ async def query_with_tuning(
         # Prepare response
         response = TunedQueryResponse(
             estimate=result,
-            confidence_interval=f"±{budget.epsilon*100:.1f}%",
+            confidence_interval=f"±{budget.epsilon * 100:.1f}%",
             delta_achieved=f"≈{budget.confidence}",
             proof_uri=proof_uri,
             settings={
@@ -266,7 +270,7 @@ async def query_with_tuning(
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        logger.error(f"Tuned query failed: {e}")
+        logger.error("Tuned query failed: %se")
         if request.session_id:
             await ws_manager.send_progress(
                 request.session_id,
@@ -278,7 +282,7 @@ async def query_with_tuning(
                 ),
             )
         raise HTTPException(500, f"Query processing failed: {e!s}")
-        raise
+        raise RuntimeError("Unspecified error")
 
 
 @router.websocket("/progress/{session_id}")
@@ -295,7 +299,7 @@ async def websocket_progress(websocket: WebSocket, session_id: str):
         logger = configure_logging()
         logger.exception("Unhandled exception")
         ws_manager.disconnect(session_id)
-        raise
+        raise RuntimeError("Unspecified error")
 
 
 @router.post("/estimate")
@@ -344,9 +348,9 @@ async def estimate_query_performance(
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        logger.error(f"Estimation failed: {e}")
+        logger.error("Estimation failed: %se")
         raise HTTPException(500, f"Estimation failed: {e!s}")
-        raise
+        raise RuntimeError("Unspecified error")
 
 
 # Helper functions

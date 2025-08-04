@@ -12,8 +12,10 @@ from pathlib import Path
 import click
 from tabulate import tabulate
 
-from genomevault.blockchain.contracts.training_attestation import TrainingAttestationContract
-from genomevault.hypervector.visualization.projector import ModelEvolutionVisualizer
+from genomevault.blockchain.contracts.training_attestation import \
+    TrainingAttestationContract
+from genomevault.hypervector.visualization.projector import \
+    ModelEvolutionVisualizer
 from genomevault.utils.logging import get_logger
 from genomevault.zk_proofs.circuits.training_proof import TrainingProofCircuit
 
@@ -28,7 +30,9 @@ def training_proof_cli():
 
 @training_proof_cli.command()
 @click.option("--proof-file", "-p", required=True, help="Path to proof file")
-@click.option("--snapshot-dir", "-s", required=True, help="Directory containing model snapshots")
+@click.option(
+    "--snapshot-dir", "-s", required=True, help="Directory containing model snapshots"
+)
 @click.option("--output", "-o", help="Output file for verification report")
 @click.option("--verbose", "-v", is_flag=True, help="Verbose output")
 # TODO: Refactor this function to reduce complexity
@@ -170,7 +174,9 @@ def verify_proof(proof_file: str, snapshot_dir: str, output: str | None, verbose
 
 
 @training_proof_cli.command()
-@click.option("--snapshot-dir", "-s", required=True, help="Directory containing model snapshots")
+@click.option(
+    "--snapshot-dir", "-s", required=True, help="Directory containing model snapshots"
+)
 @click.option(
     "--output-dir",
     "-o",
@@ -229,7 +235,9 @@ def analyze_drift(snapshot_dir: str, output_dir: str, threshold: float):
 
     # Detect drift
     click.echo("Detecting semantic drift...")
-    drift_scores, anomalies = visualizer.detect_semantic_drift(hypervectors, threshold=threshold)
+    drift_scores, anomalies = visualizer.detect_semantic_drift(
+        hypervectors, threshold=threshold
+    )
 
     # Plot drift analysis
     visualizer.plot_drift_analysis(
@@ -281,7 +289,9 @@ def analyze_drift(snapshot_dir: str, output_dir: str, threshold: float):
 @click.option("--attestation-id", "-a", required=True, help="Attestation ID to query")
 @click.option("--chain-id", "-n", default=1, help="Blockchain network ID")
 @click.option("--verify", "-v", is_flag=True, help="Verify attestation on-chain")
-def check_attestation(contract_address: str, attestation_id: str, chain_id: int, verify: bool):
+def check_attestation(
+    contract_address: str, attestation_id: str, chain_id: int, verify: bool
+):
     """Check training attestation on blockchain"""
 
     click.echo(f"🔗 Checking attestation {attestation_id}...")
@@ -327,7 +337,11 @@ def check_attestation(contract_address: str, attestation_id: str, chain_id: int,
                     ]
                 )
 
-            click.echo(tabulate(table_data, headers=["Verifier", "Result", "Timestamp", "Notes"]))
+            click.echo(
+                tabulate(
+                    table_data, headers=["Verifier", "Result", "Timestamp", "Notes"]
+                )
+            )
 
     # Check if disputed
     if attestation["status"] == "disputed":
@@ -337,9 +351,13 @@ def check_attestation(contract_address: str, attestation_id: str, chain_id: int,
 @training_proof_cli.command()
 @click.option("--session-id", "-s", required=True, help="Training session ID")
 @click.option("--proof-file", "-p", required=True, help="Path to save proof")
-@click.option("--snapshot-dir", "-d", required=True, help="Directory containing snapshots")
+@click.option(
+    "--snapshot-dir", "-d", required=True, help="Directory containing snapshots"
+)
 @click.option("--dataset-hash", "-h", required=True, help="Hash of training dataset")
-def generate_proof(session_id: str, proof_file: str, snapshot_dir: str, dataset_hash: str):
+def generate_proof(
+    session_id: str, proof_file: str, snapshot_dir: str, dataset_hash: str
+):
     """Generate a training proof from snapshots"""
 
     click.echo("🔨 Generating training proof...")
@@ -392,7 +410,9 @@ def generate_proof(session_id: str, proof_file: str, snapshot_dir: str, dataset_
     click.echo(f"✅ Proof generated and saved to {proof_file}")
     click.echo(f"   Snapshots: {len(proof_data['snapshot_hashes'])}")
     click.echo(f"   Duration: {summary['duration_seconds']}s")
-    click.echo(f"   Merkle root: {proof['commitments']['snapshot_merkle_root'][:32]}...")
+    click.echo(
+        f"   Merkle root: {proof['commitments']['snapshot_merkle_root'][:32]}..."
+    )
 
 
 def compute_merkle_root(hashes: list) -> str:

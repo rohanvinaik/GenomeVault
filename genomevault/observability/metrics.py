@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 try:
-    from prometheus_client import CONTENT_TYPE_LATEST, Counter, Histogram, generate_latest
+    from prometheus_client import (CONTENT_TYPE_LATEST, Counter, Histogram,
+                                   generate_latest)
 
     _PROM = True
 except Exception:  # pragma: no cover
@@ -10,7 +11,7 @@ except Exception:  # pragma: no cover
     logger = configure_logging()
     logger.exception("Unhandled exception")
     _PROM = False
-    raise
+    raise RuntimeError("Unspecified error")
 
 from fastapi import APIRouter, Response
 
@@ -48,6 +49,7 @@ else:
 def metrics():
     if not _PROM:
         return Response(
-            content="# prometheus_client not installed\n", media_type="text/plain; version=0.0.4"
+            content="# prometheus_client not installed\n",
+            media_type="text/plain; version=0.0.4",
         )
     return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)

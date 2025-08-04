@@ -14,13 +14,9 @@ from typing import Any
 
 from genomevault.zk_proofs import Prover, Verifier
 from genomevault.zk_proofs.circuits.implementations.variant_frequency_circuit import (
-    VariantFrequencyCircuit,
-    create_example_frequency_proof,
-)
+    VariantFrequencyCircuit, create_example_frequency_proof)
 from genomevault.zk_proofs.circuits.implementations.variant_proof_circuit import (
-    VariantProofCircuit,
-    create_variant_proof_example,
-)
+    VariantProofCircuit, create_variant_proof_example)
 
 
 def load_json_file(filepath: str) -> dict[str, Any]:
@@ -35,7 +31,7 @@ def load_json_file(filepath: str) -> dict[str, Any]:
         logger.exception("Unhandled exception")
         print(f"Error loading {filepath}: {e}")
         sys.exit(1)
-        raise
+        raise RuntimeError("Unspecified error")
 
 
 def save_json_file(data: dict[str, Any], filepath: str):
@@ -50,7 +46,7 @@ def save_json_file(data: dict[str, Any], filepath: str):
         logger.exception("Unhandled exception")
         print(f"Error saving {filepath}: {e}")
         sys.exit(1)
-        raise
+        raise RuntimeError("Unspecified error")
 
 
 def cmd_prove(args):
@@ -325,7 +321,9 @@ def cmd_info(args):
         for name, info in circuits.items():
             print(f"\n{name}:")
             print(f"  {info['description']}")
-            print(f"  Proof size: {info['proof_size']}, Verification: {info['verification_time']}")
+            print(
+                f"  Proof size: {info['proof_size']}, Verification: {info['verification_time']}"
+            )
 
 
 def main():
@@ -381,7 +379,9 @@ Examples:
 
     # Verify command
     verify_parser = subparsers.add_parser("verify", help="Verify a ZK proof")
-    verify_parser.add_argument("--proof", "-p", required=True, help="Path to proof JSON file")
+    verify_parser.add_argument(
+        "--proof", "-p", required=True, help="Path to proof JSON file"
+    )
     verify_parser.add_argument(
         "--public-input", "-i", help="Path to public inputs (if not in proof file)"
     )
@@ -406,7 +406,9 @@ Examples:
 
     # Info command
     info_parser = subparsers.add_parser("info", help="Display circuit information")
-    info_parser.add_argument("--circuit", "-c", help="Show details for specific circuit")
+    info_parser.add_argument(
+        "--circuit", "-c", help="Show details for specific circuit"
+    )
     info_parser.set_defaults(func=cmd_info)
 
     # Parse arguments

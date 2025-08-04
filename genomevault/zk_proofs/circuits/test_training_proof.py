@@ -8,9 +8,8 @@ from typing import Any
 
 import pytest
 
-from genomevault.zk_proofs.circuits.multi_modal_training_proof import (
-    MultiModalTrainingProof,
-)
+from genomevault.zk_proofs.circuits.multi_modal_training_proof import \
+    MultiModalTrainingProof
 from genomevault.zk_proofs.circuits.training_proof import TrainingProofCircuit
 
 
@@ -84,7 +83,10 @@ class TestTrainingProofCircuit:
         )
 
         assert len(circuit.snapshot_hashes) == 10
-        assert circuit.model_commit == sample_training_data["private_inputs"]["model_commit"]
+        assert (
+            circuit.model_commit
+            == sample_training_data["private_inputs"]["model_commit"]
+        )
         assert len(circuit.training_snapshots) == 10
 
     def test_training_proof_generation(self, sample_training_data):
@@ -243,7 +245,8 @@ class TestMultiModalTrainingProof:
 
         # Create modality hashes for public inputs
         modality_hashes = {
-            metrics["modality_name"]: metrics["data_hash"] for metrics in modality_metrics
+            metrics["modality_name"]: metrics["data_hash"]
+            for metrics in modality_metrics
         }
 
         return {
@@ -268,7 +271,9 @@ class TestMultiModalTrainingProof:
                 "training_snapshots": snapshots,
                 "modality_commits": {
                     "genomic": hashlib.sha256(b"genomic_commit").hexdigest(),
-                    "transcriptomic": hashlib.sha256(b"transcriptomic_commit").hexdigest(),
+                    "transcriptomic": hashlib.sha256(
+                        b"transcriptomic_commit"
+                    ).hexdigest(),
                     "proteomic": hashlib.sha256(b"proteomic_commit").hexdigest(),
                 },
                 "modality_metrics": modality_metrics,
@@ -280,7 +285,9 @@ class TestMultiModalTrainingProof:
         """Test multi-modal circuit setup"""
         circuit = MultiModalTrainingProof(max_snapshots=10)
 
-        circuit.setup(multi_modal_data["public_inputs"], multi_modal_data["private_inputs"])
+        circuit.setup(
+            multi_modal_data["public_inputs"], multi_modal_data["private_inputs"]
+        )
 
         assert len(circuit.modality_metrics) == 3
         assert len(circuit.cross_modal_alignments) == 3
@@ -292,7 +299,9 @@ class TestMultiModalTrainingProof:
         """Test multi-modal proof generation"""
         circuit = MultiModalTrainingProof(max_snapshots=10)
 
-        circuit.setup(multi_modal_data["public_inputs"], multi_modal_data["private_inputs"])
+        circuit.setup(
+            multi_modal_data["public_inputs"], multi_modal_data["private_inputs"]
+        )
 
         proof = circuit.generate_proof()
 
@@ -306,7 +315,9 @@ class TestMultiModalTrainingProof:
         """Test cross-modal consistency verification"""
         circuit = MultiModalTrainingProof(max_snapshots=10)
 
-        circuit.setup(multi_modal_data["public_inputs"], multi_modal_data["private_inputs"])
+        circuit.setup(
+            multi_modal_data["public_inputs"], multi_modal_data["private_inputs"]
+        )
 
         consistency_scores = circuit.verify_cross_modal_consistency()
 
@@ -321,10 +332,14 @@ class TestMultiModalTrainingProof:
     def test_invalid_correlation_threshold(self, multi_modal_data):
         """Test with correlations below threshold"""
         # Modify alignment to have low correlation
-        multi_modal_data["private_inputs"]["cross_modal_alignments"][0]["correlation"] = 0.3
+        multi_modal_data["private_inputs"]["cross_modal_alignments"][0][
+            "correlation"
+        ] = 0.3
 
         circuit = MultiModalTrainingProof(max_snapshots=10)
-        circuit.setup(multi_modal_data["public_inputs"], multi_modal_data["private_inputs"])
+        circuit.setup(
+            multi_modal_data["public_inputs"], multi_modal_data["private_inputs"]
+        )
 
         # Should handle low correlation gracefully
         proof = circuit.generate_proof()
@@ -336,13 +351,17 @@ class TestMultiModalTrainingProof:
     def test_attention_weight_validation(self, multi_modal_data):
         """Test attention weight constraints"""
         # Create invalid attention weights that don't sum to 1
-        multi_modal_data["private_inputs"]["cross_modal_alignments"][0]["attention_weights"] = [
+        multi_modal_data["private_inputs"]["cross_modal_alignments"][0][
+            "attention_weights"
+        ] = [
             0.8,
             0.4,
         ]
 
         circuit = MultiModalTrainingProof(max_snapshots=10)
-        circuit.setup(multi_modal_data["public_inputs"], multi_modal_data["private_inputs"])
+        circuit.setup(
+            multi_modal_data["public_inputs"], multi_modal_data["private_inputs"]
+        )
 
         # Should handle this in constraints
         proof = circuit.generate_proof()
@@ -434,7 +453,9 @@ def test_multi_modal_training_proof():
     }
 
     private_inputs = {
-        "snapshot_hashes": [hashlib.sha256(f"snap_{i}".encode()).hexdigest() for i in range(3)],
+        "snapshot_hashes": [
+            hashlib.sha256(f"snap_{i}".encode()).hexdigest() for i in range(3)
+        ],
         "model_commit": hashlib.sha256(b"commit").hexdigest(),
         "io_sequence_commit": hashlib.sha256(b"io").hexdigest(),
         "training_snapshots": [

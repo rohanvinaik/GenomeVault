@@ -1,12 +1,10 @@
 import numpy as np
 
-from genomevault.hypervector.operations.binding import (
-    bundle,
-    circular_convolution,
-    element_wise_multiply,
-    permutation_binding,
-    unbundle,
-)
+from genomevault.hypervector.operations.binding import (bundle,
+                                                        circular_convolution,
+                                                        element_wise_multiply,
+                                                        permutation_binding,
+                                                        unbundle)
 
 
 def test_circular_convolution_and_elementwise():
@@ -34,7 +32,11 @@ def test_bundle_and_unbundle_retrieval():
     B = rng.standard_normal(L)
     C = rng.standard_normal(L)
 
-    mem = {"A": A / np.linalg.norm(A), "B": B / np.linalg.norm(B), "C": C / np.linalg.norm(C)}
+    mem = {
+        "A": A / np.linalg.norm(A),
+        "B": B / np.linalg.norm(B),
+        "C": C / np.linalg.norm(C),
+    }
     mix = bundle([A, B])  # should be closest to A/B
     hits = unbundle(mix, mem, threshold=0.1)
     labels = [k for k, _ in hits]

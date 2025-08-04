@@ -66,7 +66,8 @@ class FederatedLearningClient:
         self.training_history = []
 
         logger.info(
-            "FederatedLearningClient {client_id} initialized",
+            "FederatedLearningClient %s initialized",
+            self.client_id,
             extra={"privacy_safe": True},
         )
 
@@ -99,10 +100,13 @@ class FederatedLearningClient:
         if self.use_hypervectors:
             features = self._encode_features(features)
 
-        self.local_dataset = LocalDataset(features=features, labels=labels, metadata=metadata)
+        self.local_dataset = LocalDataset(
+            features=features, labels=labels, metadata=metadata
+        )
 
         logger.info(
-            "Loaded {self.local_dataset.num_samples} samples",
+            "Loaded %s samples",
+            self.local_dataset.num_samples,
             extra={"privacy_safe": True},
         )
 
@@ -147,7 +151,10 @@ class FederatedLearningClient:
         filtered_features = features[:, common_variants]
 
         # Add small noise to continuous features
-        if filtered_features.dtype == np.float32 or filtered_features.dtype == np.float64:
+        if (
+            filtered_features.dtype == np.float32
+            or filtered_features.dtype == np.float64
+        ):
             noise = np.random.laplace(0, 0.1, size=filtered_features.shape)
             filtered_features += noise
 
@@ -161,7 +168,9 @@ class FederatedLearningClient:
             # Convert to feature dict
             feature_dict = {
                 "variants": [
-                    {"genotype": "{int(g)}/0", "position": i} for i, g in enumerate(sample) if g > 0
+                    {"genotype": "{int(g)}/0", "position": i}
+                    for i, g in enumerate(sample)
+                    if g > 0
                 ]
             }
 
@@ -236,7 +245,8 @@ class FederatedLearningClient:
 
                 # Binary cross-entropy loss
                 loss = -np.mean(
-                    y_batch * np.log(probs + 1e-8) + (1 - y_batch) * np.log(1 - probs + 1e-8)
+                    y_batch * np.log(probs + 1e-8)
+                    + (1 - y_batch) * np.log(1 - probs + 1e-8)
                 )
                 epoch_loss += loss * len(batch_indices)
 
@@ -284,7 +294,9 @@ class FederatedLearningClient:
         self.training_history.append(results)
 
         logger.info(
-            "Local training complete: loss={losses[-1]:.4f}, accuracy={accuracies[-1]:.4f}",
+            "Local training complete: loss=%.4f, accuracy=%.4f",
+            losses[-1],
+            accuracies[-1],
             extra={"privacy_safe": True},
         )
 
@@ -321,7 +333,9 @@ class FederatedLearningClient:
         noise = np.random.normal(0, sigma, size=model_update.shape)
         private_update = model_update + noise
 
-        logger.info(f"Applied DP with ε={epsilon}, δ={delta}", extra={"privacy_safe": True})
+        logger.info(
+            "Applied DP with ε=%s, δ=", epsilon, delta, extra={"privacy_safe": True}
+        )
 
         return private_update
 
@@ -376,16 +390,20 @@ class FederatedLearningClient:
             logger = configure_logging()
             logger.exception("Unhandled exception")
             auc = 0.5
-            raise
+            raise RuntimeError("Unspecified error")
 
         # Loss
-        loss = -np.mean(y_val * np.log(probs + 1e-8) + (1 - y_val) * np.log(1 - probs + 1e-8))
+        loss = -np.mean(
+            y_val * np.log(probs + 1e-8) + (1 - y_val) * np.log(1 - probs + 1e-8)
+        )
 
         metrics = {"accuracy": accuracy, "auc": auc, "loss": loss, "num_samples": n_val}
 
         return metrics
 
-    def get_model_explanation(self, model_params: np.ndarray, top_k: int = 20) -> dict[str, Any]:
+    def get_model_explanation(
+        self, model_params: np.ndarray, top_k: int = 20
+    ) -> dict[str, Any]:
         """
         Get interpretable explanation of model.
 
@@ -427,13 +445,15 @@ class FederatedLearningClient:
             "client_id": self.client_id,
             "current_model": self.current_model,
             "training_history": self.training_history,
-            "dataset_metadata": (self.local_dataset.metadata if self.local_dataset else None),
+            "dataset_metadata": (
+                self.local_dataset.metadata if self.local_dataset else None
+            ),
         }
 
         with open(path, "wb") as f:
             pickle.dump(state, f)
 
-        logger.info(f"Saved client state to {path}", extra={"privacy_safe": True})
+        logger.info("Saved client state to %s", path, extra={"privacy_safe": True})
 
     def load_state(self, path: Path):
         """Load client state."""
@@ -443,7 +463,7 @@ class FederatedLearningClient:
         self.current_model = state["current_model"]
         self.training_history = state["training_history"]
 
-        logger.info(f"Loaded client state from {path}", extra={"privacy_safe": True})
+        logger.info("Loaded client state from %s", path, extra={"privacy_safe": True})
 
 
 # Specialized clients for different use cases
@@ -520,12 +540,14 @@ class HospitalFLClient(FederatedLearningClient):
         metadata = getattr(self.local_dataset, "metadata", {})
         for field in prohibited_fields:
             if field in metadata and metadata[field] is not None:
-                logger.error(f"Direct identifier '{field}' found in dataset")
+                logger.error("Direct identifier '%s' found in dataset", field)
                 return False
 
         # Check for quasi-identifiers that could enable re-identification
         if self._check_quasi_identifiers():
-            logger.error("Dataset contains quasi-identifiers that may enable re-identification")
+            logger.error(
+                "Dataset contains quasi-identifiers that may enable re-identification"
+            )
             return False
 
         return True
@@ -538,7 +560,9 @@ class HospitalFLClient(FederatedLearningClient):
         metadata = getattr(self.local_dataset, "metadata", {})
 
         # Flag if we have detailed demographic + genetic data
-        has_demographics = any(key in metadata for key in ["zipcode", "birth_year", "gender"])
+        has_demographics = any(
+            key in metadata for key in ["zipcode", "birth_year", "gender"]
+        )
         has_detailed_genetic = getattr(self.local_dataset, "num_samples", 0) < 1000
 
         return has_demographics and has_detailed_genetic
@@ -644,7 +668,9 @@ if __name__ == "__main__":
     )
 
     # Apply differential privacy
-    private_update = client.apply_differential_privacy(results["model_update"], epsilon=1.0)
+    private_update = client.apply_differential_privacy(
+        results["model_update"], epsilon=1.0
+    )
     print(
         "Update norm: original={np.linalg.norm(results['model_update']):.4f}, private={np.linalg.norm(private_update):.4f}"
     )
@@ -671,5 +697,7 @@ if __name__ == "__main__":
     print("Pathway analysis: {pathway_results['enriched_pathways']}")
 
     # Get model explanation
-    explanation = research_client.get_model_explanation(research_client.current_model, top_k=10)
+    explanation = research_client.get_model_explanation(
+        research_client.current_model, top_k=10
+    )
     print("Top feature importance: {explanation['top_features'][0]['importance']:.4f}")

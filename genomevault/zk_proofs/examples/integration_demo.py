@@ -17,13 +17,8 @@ from genomevault.utils.logging import logger
 
 logger = get_logger(__name__)
 
-from genomevault.zk_proofs import (
-    CircuitManager,
-    PostQuantumTransition,
-    Prover,
-    Verifier,
-    benchmark_pq_performance,
-)
+from genomevault.zk_proofs import (CircuitManager, PostQuantumTransition,
+                                   Prover, Verifier, benchmark_pq_performance)
 
 
 def demonstrate_variant_presence():
@@ -119,7 +114,9 @@ def demonstrate_diabetes_risk_assessment():
     print("Verification time: {result.verification_time*1000:.1f}ms")
 
     if result.is_valid:
-        print("\n✓ Alert triggered: Patient meets both glucose AND genetic risk criteria")
+        print(
+            "\n✓ Alert triggered: Patient meets both glucose AND genetic risk criteria"
+        )
         print("  (Without revealing actual values)")
 
     return proof, result
@@ -262,7 +259,9 @@ def demonstrate_circuit_optimization():
     ]
 
     for scenario in scenarios:
-        optimal = manager.select_optimal_circuit(scenario["analysis_type"], scenario["data"])
+        optimal = manager.select_optimal_circuit(
+            scenario["analysis_type"], scenario["data"]
+        )
         print("\nScenario: {scenario['analysis_type']}")
         print("  Data: {scenario['data']}")
         print("  Selected circuit: {optimal}")
@@ -340,7 +339,9 @@ def demonstrate_batch_operations():
     for i in range(3):
         variant = {"chr": "chr{i+1}", "pos": 1000000 + i * 1000, "re": "A", "alt": "G"}
 
-        variant_str = "{variant['chr']}:{variant['pos']}:{variant['re']}:{variant['alt']}"
+        variant_str = (
+            "{variant['chr']}:{variant['pos']}:{variant['re']}:{variant['alt']}"
+        )
 
         batch_requests.append(
             {
@@ -353,7 +354,10 @@ def demonstrate_batch_operations():
                 "private_inputs": {
                     "variant_data": variant,
                     "merkle_proof": {
-                        "path": [hashlib.sha256(b"batch_{i}_{j}").hexdigest() for j in range(20)],
+                        "path": [
+                            hashlib.sha256(b"batch_{i}_{j}").hexdigest()
+                            for j in range(20)
+                        ],
                         "indices": [j % 2 for j in range(20)],
                     },
                     "witness_randomness": np.random.bytes(32).hex(),
@@ -413,9 +417,9 @@ def main():
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        logger.error(f"Demonstration failed: {e}")
-        raise
-        raise
+        logger.error("Demonstration failed: %se")
+        raise RuntimeError("Unspecified error")
+        raise RuntimeError("Unspecified error")
 
 
 if __name__ == "__main__":

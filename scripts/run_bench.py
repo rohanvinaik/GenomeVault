@@ -52,7 +52,8 @@ class CIBenchmarkRunner:
         logger.info("Running encode benchmark...")
 
         try:
-            from genomevault.hypervector_transform.hdc_encoder import OmicsType, create_encoder
+            from genomevault.hypervector_transform.hdc_encoder import (
+                OmicsType, create_encoder)
 
             # Create encoder
             encoder = create_encoder(dimension=10000)
@@ -91,7 +92,9 @@ class CIBenchmarkRunner:
         try:
             # Mock servers for testing
             servers = [
-                PIRServer(f"server_{i}", f"http://localhost:900{i}", "region", False, 0.95, 50)
+                PIRServer(
+                    f"server_{i}", f"http://localhost:900{i}", "region", False, 0.95, 50
+                )
                 for i in range(3)
             ]
 
@@ -169,7 +172,9 @@ class CIBenchmarkRunner:
             return -1.0
             raise
 
-    def save_csv(self, timing_data: dict[str, float], filename: str = "benchmark_results.csv"):
+    def save_csv(
+        self, timing_data: dict[str, float], filename: str = "benchmark_results.csv"
+    ):
         """Save timing data to CSV file for Grafana."""
         csv_path = self.output_dir / filename
 
@@ -192,7 +197,9 @@ class CIBenchmarkRunner:
         logger.info(f"CSV results saved to {csv_path}")
         return csv_path
 
-    def save_json(self, timing_data: dict[str, float], filename: str = "benchmark_results.json"):
+    def save_json(
+        self, timing_data: dict[str, float], filename: str = "benchmark_results.json"
+    ):
         """Save timing data to JSON file for detailed analysis."""
         json_path = self.output_dir / filename
 
