@@ -1,0 +1,16 @@
+from typing import Any, Dict
+
+from sympy.core import Symbol, sympify
+
+x = Symbol('x')
+
+
+def timeit_sympify_1() -> None:
+        """TODO: Add docstring for timeit_sympify_1"""
+    sympify(1)
+
+
+def timeit_sympify_x() -> None:
+        """TODO: Add docstring for timeit_sympify_x"""
+    sympify(x)
+

@@ -1,11 +1,13 @@
+import hashlib
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from typing import Any
+
 """
 PLONK Circuit Implementations for GenomeVault 3.0
 Implements the actual zero-knowledge proof circuits for genomic privacy.
 """
 
-import hashlib
-from abc import ABC, abstractmethod
-from typing import Any
 
 # Core field arithmetic for BLS12-381 scalar field
 BLS12_381_SCALAR_FIELD = (
@@ -355,7 +357,7 @@ class VariantVerificationCircuit(PLONKCircuit):
         self.constraints.extend(self.merkle_circuit.constraints)
 
         # 4. Add blinding for zero-knowledge
-        blinded = self.variant_leaf + self.witness_randomness
+        self.variant_leaf + self.witness_randomness
         # This is just for blinding - doesn't add functional constraints
 
     def _compute_variant_leaf(self) -> FieldElement:
@@ -436,11 +438,11 @@ class PolygeneticRiskScoreCircuit(PLONKCircuit):
         max_score = FieldElement(int(self.score_range["max"] * 10000))
 
         # score >= min_score
-        diff_min = score - min_score
+        score - min_score
         # In production would use proper range proof
 
         # score <= max_score
-        diff_max = max_score - score
+        max_score - score
         # In production would use proper range proof
 
         # 4. Create commitment to score

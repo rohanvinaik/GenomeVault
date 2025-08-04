@@ -590,7 +590,7 @@ class PhenotypeProcessor:
             elif "doseAndRate" in dosage_info:
                 dose_rate = dosage_info["doseAndRate"][0]
                 if "doseQuantity" in dose_rate:
-                    dose_qty = dose_rate["doseQuantity"]
+                    dose_rate["doseQuantity"]
                     med.dose = "{dose_qty.get('value')} {dose_qty.get('unit')}"
 
             if "route" in dosage_info:

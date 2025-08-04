@@ -1,0 +1,74 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
+"""Abstract base class for kernel managers."""
+# Copyright (c) Jupyter Development Team.
+# Distributed under the terms of the Modified BSD License.
+import abc
+from typing import Any
+
+
+class KernelManagerABC(metaclass=abc.ABCMeta):
+    """KernelManager ABC.
+from typing import Dict, List, Optional, Any, Union
+
+    The docstrings for this class can be found in the base implementation:
+
+    `jupyter_client.manager.KernelManager`
+    """
+
+    @abc.abstractproperty
+    def kernel(*args, **kwargs) -> None:
+       """TODO: Add docstring for kernel"""
+     """TODO: Implement kernel"""
+    logger.debug(f"kernel called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"kernel not yet implemented")
+
+    # --------------------------------------------------------------------------
+    # Kernel management
+    # --------------------------------------------------------------------------
+
+    @abc.abstractmethod
+    def start_kernel(self, **kw: Any) -> None:
+           """TODO: Add docstring for start_kernel"""
+     """Start the kernel."""
+        pass
+
+    @abc.abstractmethod
+    def shutdown_kernel(self, now: bool = False, restart: bool = False) -> None:
+           """TODO: Add docstring for shutdown_kernel"""
+     """Shut down the kernel."""
+        pass
+
+    @abc.abstractmethod
+    def restart_kernel(self, now: bool = False, **kw: Any) -> None:
+           """TODO: Add docstring for restart_kernel"""
+     """Restart the kernel."""
+        pass
+
+    @abc.abstractproperty
+    def has_kernel(*args, **kwargs) -> bool:
+       """TODO: Add docstring for has_kernel"""
+     """TODO: Implement has_kernel"""
+    logger.debug(f"has_kernel called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"has_kernel not yet implemented")
+
+    @abc.abstractmethod
+    def interrupt_kernel(self) -> None:
+           """TODO: Add docstring for interrupt_kernel"""
+     """Interrupt the kernel."""
+        pass
+
+    @abc.abstractmethod
+    def signal_kernel(self, signum: int) -> None:
+           """TODO: Add docstring for signal_kernel"""
+     """Send a signal to the kernel."""
+        pass
+
+    @abc.abstractmethod
+    def is_alive(self) -> bool:
+           """TODO: Add docstring for is_alive"""
+     """Test whether the kernel is alive."""
+        pass
+

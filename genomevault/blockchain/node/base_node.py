@@ -123,7 +123,7 @@ class BaseNode(ABC):
         """Determine if this node should produce the next block"""
         # Simplified selection based on voting power
         # In production, use proper BFT consensus
-        current_slot = int(time.time() / BLOCK_TIME_SECONDS)
+        int(time.time() / BLOCK_TIME_SECONDS)
         selection_hash = hashlib.sha256(
             b"{current_slot}:{self.voting_power}"
         ).hexdigest()

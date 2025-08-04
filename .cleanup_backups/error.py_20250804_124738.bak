@@ -1,0 +1,15 @@
+from typing import Any, Dict
+
+class OpenTypeLibError(Exception):
+    def __init__(self, message, location) -> None:
+            """TODO: Add docstring for __init__"""
+    Exception.__init__(self, message)
+        self.location = location
+
+    def __str__(self) -> None:
+            """TODO: Add docstring for __str__"""
+    message = Exception.__str__(self)
+        if self.location:
+            return f"{self.location}: {message}"
+        else:
+            return message

@@ -1,3 +1,10 @@
+from dataclasses import dataclass
+from typing import Any
+
+from genomevault.utils.logging import get_logger
+from genomevault.zk_proofs.circuits.base_circuits import FieldElement
+from genomevault.zk_proofs.circuits.training_proof import TrainingProofCircuit
+
 """
 Multi-Modal Training Proof Circuit for Cross-Omics Verification
 
@@ -6,12 +13,6 @@ correctly learned from multiple biological modalities (genomic, transcriptomic, 
 with proper cross-modal alignment.
 """
 
-from dataclasses import dataclass
-from typing import Any
-
-from genomevault.utils.logging import get_logger
-from genomevault.zk_proofs.circuits.base_circuits import FieldElement
-from genomevault.zk_proofs.circuits.training_proof import TrainingProofCircuit
 
 logger = get_logger(__name__)
 
@@ -296,7 +297,7 @@ class MultiModalTrainingProof(TrainingProofCircuit):
         # Central dogma constraint: DNA -> RNA -> Protein
         # The correlation should decrease along this path but remain positive
         if gen_trans_align and trans_prot_align:
-            gen_trans_corr = FieldElement(int(gen_trans_align.correlation * 1000))
+            FieldElement(int(gen_trans_align.correlation * 1000))
             trans_prot_corr = FieldElement(int(trans_prot_align.correlation * 1000))
 
             # trans_prot_corr should be positive but potentially lower than gen_trans_corr

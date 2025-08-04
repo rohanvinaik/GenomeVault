@@ -140,7 +140,7 @@ class PIRIntegrationDemo:
             # Process query
             start_time = time.time()
             response = await server.process_query(query_data)
-            latency = (time.time() - start_time) * 1000
+            (time.time() - start_time) * 1000
 
             logger.info("   Server %sserver.server_id: %slatency:.1fms")
 
@@ -150,7 +150,7 @@ class PIRIntegrationDemo:
 
         # Reconstruct element
         logger.info("\n4️⃣ Reconstructing element...")
-        reconstructed = protocol.reconstruct_element(responses)
+        protocol.reconstruct_element(responses)
         logger.info("   Reconstructed element size: %slen(reconstructed) bytes")
 
         # Calculate privacy guarantees
@@ -230,8 +230,8 @@ class PIRIntegrationDemo:
         variant_query = query_builder.build_variant_query("chr17", 43044295, "C", "T")
 
         start_time = time.time()
-        result = await query_builder.execute_query(variant_query)
-        query_time = (time.time() - start_time) * 1000
+        await query_builder.execute_query(variant_query)
+        (time.time() - start_time) * 1000
 
         logger.info("   Query time: %squery_time:.1fms")
         logger.info("   Result: %sresult.data['clinical_significance'] variant")
@@ -244,15 +244,15 @@ class PIRIntegrationDemo:
         gene_query = query_builder.build_gene_query("BRCA1")
 
         start_time = time.time()
-        result = await query_builder.execute_query(gene_query)
-        query_time = (time.time() - start_time) * 1000
+        await query_builder.execute_query(gene_query)
+        (time.time() - start_time) * 1000
 
         logger.info("   Query time: %squery_time:.1fms")
         logger.info("   Variants found: %sresult.data['total_variants']")
         logger.info("   PIR queries used: %sresult.pir_queries_used")
 
         # Show query statistics
-        stats = query_builder.get_query_statistics()
+        query_builder.get_query_statistics()
         logger.info("\n📈 Query Statistics:")
         logger.info("   Cache size: %sstats['cache_size']")
         logger.info("   Total PIR queries: %sstats['total_pir_queries']")
@@ -278,7 +278,7 @@ class PIRIntegrationDemo:
         # Generate batch queries
         start_time = time.time()
         batch_queries = batch_protocol.generate_batch_queries(indices)
-        gen_time = (time.time() - start_time) * 1000
+        (time.time() - start_time) * 1000
 
         logger.info("   Query generation: %sgen_time:.1fms")
         logger.info("   Buckets used: %slen(batch_queries)")
@@ -286,7 +286,7 @@ class PIRIntegrationDemo:
         # Calculate efficiency
         single_query_size = self.database_size  # bits
         batch_query_size = len(batch_queries) * self.database_size
-        efficiency = (batch_size * single_query_size) / batch_query_size
+        (batch_size * single_query_size) / batch_query_size
 
         logger.info("   Bandwidth efficiency: %sefficiency:.2fx")
 
@@ -307,7 +307,7 @@ class PIRIntegrationDemo:
             _, time_ms = protocol.timing_safe_response(response, target_time_ms=50)
             timings.append(time_ms)
 
-        timing_variance = np.var(timings)
+        np.var(timings)
         logger.info("   Timing variance: %stiming_variance:.2fms²")
         logger.info("   Max timing difference: %smax(timings) - min(timings):.2fms")
 
@@ -325,7 +325,7 @@ class PIRIntegrationDemo:
         }
 
         # First query should succeed
-        response1 = await server.process_query(query_data)
+        await server.process_query(query_data)
         logger.info("   First query: ✅ Success")
 
         # Replay would be detected by handler (not shown here)
@@ -337,8 +337,8 @@ class PIRIntegrationDemo:
         # Calculate minimum servers needed for different threat models
         target_prob = 1e-6  # One in a million
 
-        min_ts = protocol.calculate_min_servers(target_prob, 0.98)
-        min_ln = protocol.calculate_min_servers(target_prob, 0.95)
+        protocol.calculate_min_servers(target_prob, 0.98)
+        protocol.calculate_min_servers(target_prob, 0.95)
         min_mixed = protocol.calculate_min_servers(
             target_prob, 0.96
         )  # Mix of TS and LN
@@ -377,7 +377,7 @@ async def main():
         logger.info("📊 Demo Summary")
         logger.info("-" * 60)
 
-        stats = demo.coordinator.get_coordinator_stats()
+        demo.coordinator.get_coordinator_stats()
         logger.info("Total servers: %sstats['total_servers']")
         logger.info("  - Trusted Signatories: %sstats['trusted_signatories']")
         logger.info("  - Light Nodes: %sstats['light_nodes']")

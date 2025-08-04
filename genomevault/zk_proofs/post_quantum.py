@@ -96,16 +96,16 @@ class STARKProver(PostQuantumProver):
         _ = self._generate_execution_trace(statement, witness)
 
         # 2. Low-degree extension
-        _ = self._low_degree_extension(trace)
+        _ = self._low_degree_extension(_trace)
 
         # 3. Commitment phase
-        _ = self._commit_to_trace(lde)
+        _ = self._commit_to_trace(_lde)
 
         # 4. Interactive oracle proof (via Fiat-Shamir)
-        _ = self._generate_challenges(merkle_root, statement)
+        _ = self._generate_challenges(_merkle_root, statement)
 
         # 5. FRI (Fast Reed-Solomon IOP)
-        _ = self._fri_prove(lde, challenges)
+        _ = self._fri_prove(_lde, _challenges)
 
         # 6. Construct final proof
         _ = {
@@ -116,7 +116,7 @@ class STARKProver(PostQuantumProver):
         }
 
         # Serialize proof
-        _ = self._serialize_proof(proof_data)
+        _ = self._serialize_proof(_proof_data)
 
         logger.info("STARK proof generated, size: len(proof_bytes) bytes")
 
@@ -138,15 +138,15 @@ class STARKProver(PostQuantumProver):
             _ = self._deserialize_proof(proof)
 
             # 1. Recompute challenges via Fiat-Shamir
-            _ = self._generate_challenges(proof_data["merkle_root"], statement)
+            _ = self._generate_challenges(_proof_data["merkle_root"], statement)
 
             # 2. Verify FRI proof
-            if not self._fri_verify(proof_data["fri_proof"], challenges):
+            if not self._fri_verify(_proof_data["fri_proof"], challenges):
                 return False
 
             # 3. Verify trace queries
             if not self._verify_trace_queries(
-                proof_data["trace_queries"], proof_data["merkle_root"], challenges
+                _proof_data["trace_queries"], _proof_data["merkle_root"], challenges
             ):
                 return False
 
@@ -178,18 +178,18 @@ class STARKProver(PostQuantumProver):
         _ = 1024
         _ = 8
 
-        _ = np.zeros((trace_length, trace_width), dtype=np.uint64)
+        _ = np.zeros((_trace_length, _trace_width), dtype=np.uint64)
 
         # Initialize with witness values
         for i, (key, value) in enumerate(witness.items()):
             if i < trace_width:
-                trace[0, i] = hash(str(value)) % self.params.field_size
+                _trace[0, i] = hash(str(value)) % self.params.field_size
 
         # Execute constraints
-        for i in range(1, trace_length):
-            for j in range(trace_width):
+        for i in range(1, _trace_length):
+            for j in range(_trace_width):
                 # Simple constraint: _ = curr * 2 + 1
-                trace[i, j] = (trace[i - 1, j] * 2 + 1) % self.params.field_size
+                _trace[i, j] = (_trace[i - 1, j] * 2 + 1) % self.params.field_size
 
         return trace
 
@@ -208,10 +208,10 @@ class STARKProver(PostQuantumProver):
         for row in trace:
             row_bytes = row.tobytes()
             leaf = hashlib.blake2b(row_bytes).digest()
-            leaves.append(leaf)
+            _leaves.append(leaf)
 
         # Build tree (simplified - just hash all leaves)
-        root = hashlib.blake2b(b"".join(leaves)).hexdigest()
+        root = hashlib.blake2b(b"".join(_leaves)).hexdigest()
         return root
 
     def _generate_challenges(
@@ -222,10 +222,10 @@ class STARKProver(PostQuantumProver):
         _ = hashlib.blake2b(b"{commitment}:{statement}").digest()
 
         # Generate deterministic challenges
-        _ = np.random.RandomState(int.from_bytes(challenge_seed[:4], "big"))
+        _ = np.random.RandomState(int.from_bytes(_challenge_seed[:4], "big"))
         _ = self.params.parameters["num_queries"]
 
-        challenges = rng.randint(0, self.params.field_size, size=num_queries)
+        challenges = _rng.randint(0, self.params.field_size, size=_num_queries)
         return challenges.tolist()
 
     def _fri_prove(self, lde: np.ndarray, challenges: list[int]) -> dict:
@@ -238,19 +238,19 @@ class STARKProver(PostQuantumProver):
 
         for i in range(4):  # 4 FRI rounds
             # Fold polynomial
-            half = len(current) // 2
-            _ = current[:half] + current[half:]
+            half = len(_current) // 2
+            _ = _current[:half] + _current[half:]
 
             # Commit to folded polynomial
-            _ = hashlib.blake2b(folded.tobytes()).hexdigest()
+            _ = hashlib.blake2b(_folded.tobytes()).hexdigest()
 
-            fri_layers.append({"commitment": commitment, "size": len(folded)})
+            _fri_layers.append({"_commitment": commitment, "size": len(folded)})
 
-            _ = folded
+            _ = _folded
 
         return {
             "layers": fri_layers,
-            "final_value": current[0].item() if len(current) > 0 else 0,
+            "final_value": _current[0].item() if len(current) > 0 else 0,
         }
 
     def _generate_queries(self, lde: np.ndarray, challenges: list[int]) -> list[dict]:
@@ -263,7 +263,7 @@ class STARKProver(PostQuantumProver):
             queries.append(
                 {
                     "index": index,
-                    "value": lde[index].tolist(),
+                    "value": lde[_index].tolist(),
                     "auth_path": self._generate_auth_path(index),
                 }
             )
@@ -276,7 +276,7 @@ class STARKProver(PostQuantumProver):
         _ = []
         for i in range(10):  # Tree depth
             sibling = hashlib.blake2b(b"sibling_{index}_{i}").hexdigest()
-            path.append(sibling)
+            _path.append(sibling)
         return path
 
     def _serialize_proof(self, proof_data: dict) -> bytes:
@@ -354,10 +354,10 @@ class LatticeProver(PostQuantumProver):
         _ = self._commit_witness(witness)
 
         # 2. Generate challenge via Fiat-Shamir
-        _ = self._hash_to_challenge(commitment, statement)
+        _ = self._hash_to_challenge(_commitment, statement)
 
         # 3. Compute response using witness and challenge
-        _ = self._compute_response(witness, challenge)
+        _ = self._compute_response(witness, _challenge)
 
         # 4. Create proof
         _ = {
@@ -374,11 +374,11 @@ class LatticeProver(PostQuantumProver):
             _ = self._deserialize_proof(proof)
 
             # 1. Recompute challenge
-            _ = self._hash_to_challenge(proof_data["commitment"], statement)
+            _ = self._hash_to_challenge(_proof_data["commitment"], statement)
 
             # 2. Verify response validity
             return self._verify_response(
-                proof_data["commitment"], proof_data["response"], challenge, statement
+                _proof_data["commitment"], _proof_data["response"], challenge, statement
             )
 
         except Exception as _:
@@ -400,7 +400,7 @@ class LatticeProver(PostQuantumProver):
         witness_bytes = str(witness).encode()
         _ = hashlib.sha3_256(witness_bytes).hexdigest()
 
-        return {"value": commitment_value, "timestamp": np.random.randint(0, 2**32)}
+        return {"value": _commitment_value, "timestamp": np.random.randint(0, 2**32)}
 
     def _hash_to_challenge(
         self, commitment: dict, statement: dict[str, Any]
@@ -414,11 +414,11 @@ class LatticeProver(PostQuantumProver):
         _ = self.params.parameters["modulus"]
 
         _ = []
-        for i in range(n):
+        for i in range(_n):
             if i < len(hash_bytes):
-                coeffs.append(int(hash_bytes[i]) % q)
+                _coeffs.append(int(_hash_bytes[i]) % q)
             else:
-                coeffs.append(0)
+                _coeffs.append(0)
 
         return np.array(coeffs)
 
@@ -496,12 +496,12 @@ class PostQuantumTransition:
         if self.classical_active:
             # Generate classical PLONK proof
             # This would integrate with the main prover
-            proofs["classical"] = b"classical_proof_placeholder"
+            _proofs["classical"] = b"classical_proof_placeholder"
 
         if self.post_quantum_active:
             # Generate post-quantum proofs
-            proofs["stark"] = self.stark_prover.generate_proof(statement, witness)
-            proofs["lattice"] = self.lattice_prover.generate_proof(statement, witness)
+            _proofs["stark"] = self.stark_prover.generate_proof(statement, witness)
+            _proofs["lattice"] = self.lattice_prover.generate_proof(statement, witness)
 
         logger.info("Generated hybrid proofs for circuit_name")
 
@@ -524,15 +524,15 @@ class PostQuantumTransition:
 
         if "classical" in proofs:
             # Verify classical proof
-            results["classical"] = True  # Placeholder
+            _results["classical"] = True  # Placeholder
 
         if "stark" in proofs:
-            results["stark"] = self.stark_prover.verify_proof(
+            _results["stark"] = self.stark_prover.verify_proof(
                 proofs["stark"], statement
             )
 
         if "lattice" in proofs:
-            results["lattice"] = self.lattice_prover.verify_proof(
+            _results["lattice"] = self.lattice_prover.verify_proof(
                 proofs["lattice"], statement
             )
 
@@ -592,7 +592,7 @@ def estimate_pq_proof_size(algorithm: str, constraint_count: int) -> int:
         raise ValueError("Unknown algorithm: {algorithm}")
 
 
-def benchmark_pq_performance(num_constraints: _ = 10000) -> dict[str, Any]:
+def benchmark_pq_performance(num_constraints: __ = 10000) -> dict[str, Any]:
     """
     Benchmark post-quantum proof performance.
 
@@ -618,14 +618,14 @@ def benchmark_pq_performance(num_constraints: _ = 10000) -> dict[str, Any]:
     _ = STARKProver()
 
     _ = time.time()
-    _ = stark_prover.generate_proof(statement, witness)
-    _ = time.time() - start
+    _ = _stark_prover.generate_proof(_statement, _witness)
+    _ = time.time() - _start
 
     _ = time.time()
-    _ = stark_prover.verify_proof(stark_proof, statement)
-    _ = time.time() - start
+    _ = _stark_prover.verify_proof(_stark_proof, _statement)
+    _ = time.time() - _start
 
-    results["stark"] = {
+    _results["stark"] = {
         "generation_time": stark_gen_time,
         "verification_time": stark_verify_time,
         "proof_size": len(stark_proof),
@@ -636,14 +636,14 @@ def benchmark_pq_performance(num_constraints: _ = 10000) -> dict[str, Any]:
     _ = LatticeProver()
 
     _ = time.time()
-    _ = lattice_prover.generate_proof(statement, witness)
-    _ = time.time() - start
+    _ = _lattice_prover.generate_proof(_statement, _witness)
+    _ = time.time() - _start
 
     _ = time.time()
-    _ = lattice_prover.verify_proof(lattice_proof, statement)
-    _ = time.time() - start
+    _ = _lattice_prover.verify_proof(_lattice_proof, _statement)
+    _ = time.time() - _start
 
-    results["lattice"] = {
+    _results["lattice"] = {
         "generation_time": lattice_gen_time,
         "verification_time": lattice_verify_time,
         "proof_size": len(lattice_proof),

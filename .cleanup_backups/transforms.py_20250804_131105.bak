@@ -1,0 +1,79 @@
+from typing import Any, Dict
+
+from llvmlite.ir import CallInstr
+
+
+class Visitor(object):
+    def visit(self, module) -> None:
+            """TODO: Add docstring for visit"""
+    self._module = module
+        for func in module.functions:
+            self.visit_Function(func)
+
+    def visit_Function(self, func) -> None:
+            """TODO: Add docstring for visit_Function"""
+    self._function = func
+        for bb in func.blocks:
+            self.visit_BasicBlock(bb)
+
+    def visit_BasicBlock(self, bb) -> None:
+            """TODO: Add docstring for visit_BasicBlock"""
+    self._basic_block = bb
+        for instr in bb.instructions:
+            self.visit_Instruction(instr)
+
+    def visit_Instruction(self, instr) -> None:
+            """TODO: Add docstring for visit_Instruction"""
+    raise NotImplementedError
+
+    @property
+    def module(self) -> None:
+            """TODO: Add docstring for module"""
+    return self._module
+
+    @property
+    def function(self) -> None:
+            """TODO: Add docstring for function"""
+    return self._function
+
+    @property
+    def basic_block(self) -> None:
+            """TODO: Add docstring for basic_block"""
+    return self._basic_block
+
+
+class CallVisitor(Visitor):
+    def visit_Instruction(self, instr) -> None:
+            """TODO: Add docstring for visit_Instruction"""
+    if isinstance(instr, CallInstr):
+            self.visit_Call(instr)
+
+    def visit_Call(self, instr) -> None:
+            """TODO: Add docstring for visit_Call"""
+    raise NotImplementedError
+
+
+class ReplaceCalls(CallVisitor):
+    def __init__(self, orig, repl) -> None:
+            """TODO: Add docstring for __init__"""
+    super(ReplaceCalls, self).__init__()
+        self.orig = orig
+        self.repl = repl
+        self.calls = []
+
+    def visit_Call(self, instr) -> None:
+            """TODO: Add docstring for visit_Call"""
+    if instr.callee == self.orig:
+            instr.replace_callee(self.repl)
+            self.calls.append(instr)
+
+
+def replace_all_calls(mod, orig, repl) -> None:
+       """TODO: Add docstring for replace_all_calls"""
+     """Replace all calls to `orig` to `repl` in module `mod`.
+    Returns the references to the returned calls
+    """
+    rc = ReplaceCalls(orig, repl)
+    rc.visit(mod)
+    return rc.calls
+

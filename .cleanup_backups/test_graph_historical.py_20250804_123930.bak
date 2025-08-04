@@ -1,0 +1,15 @@
+from typing import Any, Dict
+
+"""Original NetworkX graph tests"""
+import networkx
+import networkx as nx
+
+from .historical_tests import HistoricalTests
+
+
+class TestGraphHistorical(HistoricalTests):
+    @classmethod
+    def setup_class(cls) -> None:
+            """TODO: Add docstring for setup_class"""
+    HistoricalTests.setup_class()
+        cls.G = nx.Graph

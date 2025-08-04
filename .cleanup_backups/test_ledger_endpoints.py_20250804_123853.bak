@@ -1,0 +1,18 @@
+from fastapi.testclient import TestClient
+
+from genomevault.api.app import app
+
+client = TestClient(app)
+
+
+def test_ledger_endpoints():
+    r1 = client.post("/ledger/append", json={"data": {"a": 1}})
+    assert r1.status_code == 200
+    r2 = client.post("/ledger/append", json={"data": {"b": 2}})
+    assert r2.status_code == 200
+
+    v = client.get("/ledger/verify")
+    assert v.status_code == 200 and v.json()["valid"] is True
+
+    L = client.get("/ledger/entries").json()["entries"]
+    assert len(L) >= 2 and L[-1]["index"] == len(L) - 1

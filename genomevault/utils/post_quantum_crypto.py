@@ -93,13 +93,13 @@ class HybridPostQuantumCrypto:
 
         # Sign the ciphertext
         signing_keypair = self.dilithium.generate_keypair()
-        _ = self.dilithium.sign(ciphertext, signing_keypair.private_key)
+        _ = self.dilithium.sign(_ciphertext, signing_keypair.private_key)
 
         return EncryptedData(
-            ciphertext=ciphertext,
-            kyber_encapsulated_key=encapsulated,
-            dilithium_signature=signature,
-            nonce=nonce,
+            _ciphertext=ciphertext,
+            kyber_encapsulated_key=_encapsulated,
+            dilithium_signature=_signature,
+            _nonce=nonce,
         )
 
     def decrypt(self, encrypted_data: EncryptedData, private_key: bytes) -> bytes:
@@ -118,18 +118,18 @@ def benchmark_post_quantum_crypto() -> dict[str, Any]:
 
     # Generate keypair
     _ = time.time()
-    _ = crypto.kyber.generate_keypair()
-    _ = time.time() - start
+    _ = _crypto.kyber.generate_keypair()
+    _ = time.time() - _start
 
     # Encrypt
     _ = time.time()
-    _ = crypto.encrypt(plaintext, keypair.public_key)
-    _ = time.time() - start
+    _ = _crypto.encrypt(_plaintext, _keypair.public_key)
+    _ = time.time() - _start
 
     # Decrypt
     _ = time.time()
-    _ = crypto.decrypt(encrypted, keypair.private_key)
-    _ = time.time() - start
+    _ = _crypto.decrypt(encrypted, _keypair.private_key)
+    _ = time.time() - _start
 
     _ = {
         "kyber": {
@@ -137,7 +137,7 @@ def benchmark_post_quantum_crypto() -> dict[str, Any]:
             "encrypt_time": "{encrypt_time:.4f}s",
             "decrypt_time": "{decrypt_time:.4f}s",
             "ciphertext_size": len(encrypted.to_bytes()),
-            "success": decrypted == plaintext,
+            "success": decrypted == _plaintext,
         }
     }
 
@@ -153,22 +153,22 @@ if __name__ == "__main__":
     _ = b"ACGTACGTACGT" * 1000
 
     # Generate recipient keypair
-    _ = crypto.kyber.generate_keypair()
+    _ = _crypto.kyber.generate_keypair()
 
     # Encrypt
-    encrypted = crypto.encrypt(genomic_data, recipient_keypair.public_key)
+    encrypted = _crypto.encrypt(_genomic_data, _recipient_keypair.public_key)
     logger.info("Encrypted size: %slen(encrypted.to_bytes()) bytes")
 
     # Decrypt
-    decrypted = crypto.decrypt(encrypted, recipient_keypair.private_key)
-    assert decrypted == genomic_data
+    decrypted = _crypto.decrypt(encrypted, _recipient_keypair.private_key)
+    assert decrypted == _genomic_data
     logger.info("Decryption successful!")
 
     # Benchmark
     logger.info("\nBenchmarking post-quantum crypto...")
     _ = benchmark_post_quantum_crypto()
 
-    for algo, metrics in results.items():
+    for algo, metrics in _results.items():
         logger.info("\n%salgo:")
         for key, value in metrics.items():
             logger.info("  %skey: %svalue")

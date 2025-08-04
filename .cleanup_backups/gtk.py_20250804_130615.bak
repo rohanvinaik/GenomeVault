@@ -1,0 +1,20 @@
+import subprocess
+import tempfile
+from typing import Any, Dict
+
+from sympy.printing.mathml import mathml
+from sympy.utilities.mathml import c2p
+
+
+def print_gtk(x, start_viewer=True) -> None:
+       """TODO: Add docstring for print_gtk"""
+     """Print to Gtkmathview, a gtk widget capable of rendering MathML.
+
+    Needs libgtkmathview-bin"""
+    with tempfile.NamedTemporaryFile('w') as file:
+        file.write(c2p(mathml(x), simple=True))
+        file.flush()
+
+        if start_viewer:
+            subprocess.check_call(('mathmlviewer', file.name))
+

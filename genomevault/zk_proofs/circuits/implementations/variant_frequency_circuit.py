@@ -1,18 +1,19 @@
-from genomevault.observability.logging import configure_logging
+import hashlib
+from typing import Any, Dict, List
 
-logger = configure_logging()
+from genomevault.utils.logging import get_logger
+
+from .constraint_system import (ConstraintSystem, FieldElement,
+                                LinearCombination, poseidon_hash)
+
+logger = get_logger(__name__)
+
 """
 Variant Frequency (Allele Count) Sum Verification Circuit
 
 Implementation based on the Circuit Spec Draft (A) from project knowledge.
 This is the minimum ZK artifact to power the MVP-VPQ (Variant Population Query).
 """
-
-import hashlib
-from typing import Any
-
-from genomevault.zk_proofs.circuits.implementations.constraint_system import (
-    ConstraintSystem, FieldElement, LinearCombination, poseidon_hash)
 
 
 class VariantFrequencyCircuit:
@@ -50,7 +51,7 @@ class VariantFrequencyCircuit:
         )
 
     def setup_circuit(
-        self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]
+        self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
     ):
         """Setup the circuit with actual inputs."""
 
@@ -301,11 +302,11 @@ class VariantFrequencyCircuit:
         """Get the constraint system."""
         return self.cs
 
-    def get_public_inputs(self) -> list[FieldElement]:
+    def get_public_inputs(self) -> List[FieldElement]:
         """Get public input values."""
         return self.cs.get_public_inputs()
 
-    def get_witness(self) -> dict[int, FieldElement]:
+    def get_witness(self) -> Dict[int, FieldElement]:
         """Get witness (private inputs)."""
         return self.cs.get_witness()
 
@@ -313,7 +314,7 @@ class VariantFrequencyCircuit:
         """Verify all constraints are satisfied."""
         return self.cs.is_satisfied()
 
-    def get_circuit_info(self) -> dict[str, Any]:
+    def get_circuit_info(self) -> Dict[str, Any]:
         """Get circuit information."""
         return {
             "name": "variant_frequency_sum",
@@ -360,7 +361,7 @@ def create_example_frequency_proof():
 
     # Create mock Merkle proofs
     merkle_proofs = []
-    for i, (snp_id, count) in enumerate(zip(snp_id_values, allele_counts)):
+    for i, (_snp_id, _count) in enumerate(zip(snp_id_values, allele_counts)):
         # In practice, these would be real Merkle paths
         proof = {
             "path": [
@@ -405,8 +406,8 @@ if __name__ == "__main__":
 
     info = circuit.get_circuit_info()
     for key, value in info.items():
-        logger.info("%skey: %svalue")
+        logger.info(f"{key}: {value}")
 
-    logger.info("\nConstraints satisfied: %scircuit.verify_constraints()")
-    logger.info("Public inputs: %slen(circuit.get_public_inputs())")
-    logger.info("Witness size: %slen(circuit.get_witness())")
+    logger.info(f"\nConstraints satisfied: {circuit.verify_constraints()}")
+    logger.info(f"Public inputs: {len(circuit.get_public_inputs())}")
+    logger.info(f"Witness size: {len(circuit.get_witness())}")

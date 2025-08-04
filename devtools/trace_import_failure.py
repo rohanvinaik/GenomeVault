@@ -5,14 +5,19 @@ Trace the exact import failure point
 
 import traceback
 
+logger = logging.getLogger(__name__)  # Added by cleanup
 logger.info("=" * 70)
+logger = logging.getLogger(__name__)  # Added by cleanup
 logger.info("TRACING IMPORT FAILURE")
+logger = logging.getLogger(__name__)  # Added by cleanup
 logger.info("=" * 70)
 
 # First, let's see if we can import our __init__ files
+logger = logging.getLogger(__name__)  # Added by cleanup
 logger.info("\n1. Testing __init__.py imports...")
 
 try:
+logger = logging.getLogger(__name__)  # Added by cleanup
     logger.info("✅ zk_proofs/__init__.py imported")
 except Exception:
     from genomevault.observability.logging import configure_logging
@@ -108,3 +113,7 @@ for f in crypto_files[:10]:  # Show first 10
     logger.info("  - {f}")
 
 logger.info("\n" + "=" * 70)
+
+
+
+

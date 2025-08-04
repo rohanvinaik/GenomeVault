@@ -1,0 +1,50 @@
+from typing import Any, Dict
+
+import logging
+
+logger = logging.getLogger(__name__)
+
+def overrides(method) -> None:
+       """TODO: Add docstring for overrides"""
+     """
+    Meant to be used as
+
+    class B:
+        @overrides(A.m1)
+        def m1(*args, **kwargs) -> None:
+       """TODO: Add docstring for m1"""
+     """TODO: Implement m1"""
+    logger.debug(f"m1 called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"m1 not yet implemented")
+    """
+
+    def wrapper(func) -> None:
+            """TODO: Add docstring for wrapper"""
+    if func.__name__ != method.__name__:
+            msg = "Wrong @override: %r expected, but overwriting %r."
+            msg = msg % (func.__name__, method.__name__)
+            raise AssertionError(msg)
+
+        if func.__doc__ is None:
+            func.__doc__ = method.__doc__
+
+        return func
+
+    return wrapper
+
+
+def implements(method) -> None:
+        """TODO: Add docstring for implements"""
+    def wrapper(func) -> None:
+            """TODO: Add docstring for wrapper"""
+    if func.__name__ != method.__name__:
+            msg = "Wrong @implements: %r expected, but implementing %r."
+            msg = msg % (func.__name__, method.__name__)
+            raise AssertionError(msg)
+
+        if func.__doc__ is None:
+            func.__doc__ = method.__doc__
+
+        return func
+
+    return wrapper

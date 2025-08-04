@@ -26,121 +26,121 @@ class MetricsCollector:
 
     def __init__(self):
         # Processing metrics
-        self.processing_duration = Histogram(
+        self.processing_duration = _Histogram(
             "genomevault_processing_duration_seconds",
             "Time spent processing genomic data",
             ["operation", "data_type"],
         )
 
-        self.processing_errors = Counter(
+        self.processing_errors = _Counter(
             "genomevault_processing_errors_total",
             "Total processing errors",
             ["operation", "data_type", "error_type"],
         )
 
         # Hypervector metrics
-        self.hypervector_operations = Counter(
+        self.hypervector_operations = _Counter(
             "genomevault_hypervector_operations_total",
             "Total hypervector operations performed",
             ["operation_type"],
         )
 
-        self.hypervector_compression_ratio = Gauge(
+        self.hypervector_compression_ratio = _Gauge(
             "genomevault_hypervector_compression_ratio",
             "Current compression ratio achieved",
             ["tier"],
         )
 
         # Zero-knowledge proof metrics
-        self.proof_generation_time = Histogram(
+        self.proof_generation_time = _Histogram(
             "genomevault_proof_generation_seconds",
             "Time to generate zero-knowledge proofs",
             ["circuit_type"],
         )
 
-        self.proof_verification_time = Histogram(
+        self.proof_verification_time = _Histogram(
             "genomevault_proof_verification_seconds",
             "Time to verify zero-knowledge proofs",
             ["circuit_type"],
         )
 
-        self.proof_size_bytes = Histogram(
+        self.proof_size_bytes = _Histogram(
             "genomevault_proof_size_bytes",
             "Size of generated proofs in bytes",
             ["circuit_type"],
         )
 
         # PIR metrics
-        self.pir_query_latency = Histogram(
+        self.pir_query_latency = _Histogram(
             "genomevault_pir_query_latency_seconds",
             "PIR query latency",
             ["shard_count", "config_type"],
         )
 
-        self.pir_privacy_failure_prob = Gauge(
+        self.pir_privacy_failure_prob = _Gauge(
             "genomevault_pir_privacy_failure_probability",
             "Current PIR privacy failure probability",
         )
 
-        self.pir_server_honesty = Gauge(
+        self.pir_server_honesty = _Gauge(
             "genomevault_pir_server_honesty_score",
             "Server honesty probability",
             ["server_type"],
         )
 
         # Blockchain metrics
-        self.block_production_time = Histogram(
+        self.block_production_time = _Histogram(
             "genomevault_block_production_seconds", "Time to produce blocks"
         )
 
-        self.node_voting_power = Gauge(
+        self.node_voting_power = _Gauge(
             "genomevault_node_voting_power",
             "Node voting power distribution",
             ["node_class", "signatory_status"],
         )
 
-        self.credits_earned = Counter(
+        self.credits_earned = _Counter(
             "genomevault_credits_earned_total", "Total credits earned", ["node_type"]
         )
 
-        self.governance_proposals = Counter(
+        self.governance_proposals = _Counter(
             "genomevault_governance_proposals_total",
             "Total governance proposals",
             ["status", "committee"],
         )
 
         # Storage metrics
-        self.storage_tier_usage = Gauge(
+        self.storage_tier_usage = _Gauge(
             "genomevault_storage_tier_bytes",
             "Storage usage by compression tier",
             ["tier"],
         )
 
-        self.storage_operations = Counter(
+        self.storage_operations = _Counter(
             "genomevault_storage_operations_total",
             "Storage operations performed",
             ["operation", "tier"],
         )
 
         # Privacy metrics
-        self.privacy_budget_consumed = Gauge(
+        self.privacy_budget_consumed = _Gauge(
             "genomevault_privacy_budget_consumed",
             "Differential privacy budget consumed",
             ["user_id"],
         )
 
-        self.privacy_violations = Counter(
+        self.privacy_violations = _Counter(
             "genomevault_privacy_violations_total",
             "Privacy violation attempts detected",
             ["violation_type"],
         )
 
         # System health metrics
-        self.system_uptime = Gauge(
+        self.system_uptime = _Gauge(
             "genomevault_system_uptime_seconds", "System uptime in seconds"
         )
 
-        self.active_connections = Gauge(
+        self.active_connections = _Gauge(
             "genomevault_active_connections",
             "Number of active connections",
             ["connection_type"],

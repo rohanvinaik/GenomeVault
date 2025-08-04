@@ -1,0 +1,73 @@
+#!/usr/bin/env python3
+"""
+Quick verification that Ruff configuration is working.
+"""
+import json
+import subprocess
+
+
+def test_ruff_config():
+    """Test Ruff configuration and F821 detection."""
+    print("🔧 Testing Ruff configuration...")
+    
+    # Test 1: Check if ruff check works at all
+    try:
+        result = subprocess.run(
+            ["ruff", "check", ".", "--quiet"],
+            cwd="/Users/rohanvinaik/genomevault",
+            capture_output=True,
+            text=True,
+            timeout=10
+        )
+        print(f"✅ Basic ruff check works (exit code: {result.returncode})")
+    except Exception as e:
+        print(f"❌ Basic ruff check failed: {e}")
+        return False
+    
+    # Test 2: Check F821 specific detection
+    try:
+        result = subprocess.run(
+            ["ruff", "check", ".", "--select", "F821", "--output-format", "json"],
+            cwd="/Users/rohanvinaik/genomevault", 
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+        
+        print(f"✅ F821 check works (exit code: {result.returncode})")
+        
+        if result.stdout:
+            try:
+                violations = json.loads(result.stdout)
+                print(f"✅ Found {len(violations)} F821 violations")
+                
+                if violations:
+                    print("\\nFirst few violations:")
+                    for i, v in enumerate(violations[:3]):
+                        file_short = v['filename'].replace('/Users/rohanvinaik/genomevault/', '')
+                        print(f"  {i+1}. {file_short}:{v['location']['row']} - {v['message']}")
+                
+                return len(violations) > 0
+            except json.JSONDecodeError:
+                print("❌ Could not parse JSON output")
+                print(f"Raw output: {result.stdout[:200]}")
+        else:
+            print("✅ No F821 violations found")
+            return True
+            
+    except Exception as e:
+        print(f"❌ F821 check failed: {e}")
+        return False
+
+if __name__ == "__main__":
+    print("🚀 Verifying Ruff Configuration Fix\\n")
+    
+    success = test_ruff_config()
+    
+    if success:
+        print("\\n✅ Ruff is working correctly! Phase 3 should now work.")
+    else:
+        print("\\n❌ Ruff still has issues. Need more debugging.")
+
+
+

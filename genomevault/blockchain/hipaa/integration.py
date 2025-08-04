@@ -63,13 +63,13 @@ class HIPAANodeIntegration:
 
         try:
             # Process verification
-            _ = await self.verifier.process_verification(verification_id)
+            _ = await self.verifier.process_verification(_verification_id)
 
             # Create node with trusted signatory status
-            _ = self._create_trusted_node(record, node_config)
+            _ = self._create_trusted_node(_record, node_config)
 
             # Register node
-            self.node_registry[credentials.npi] = node
+            self.node_registry[credentials.npi] = _node
 
             # Update governance voting power
             self._update_governance_power(node)
@@ -97,7 +97,7 @@ class HIPAANodeIntegration:
         # Create node with enhanced properties
         node = BlockchainNode(
             node_id="hipaa_{record.credentials.npi}",
-            node_type=node_class,
+            node_type=_node_class,
             signatory_status=SignatoryWeight.TRUSTED_SIGNATORY,
             metadata={
                 "npi": record.credentials.npi,
@@ -146,7 +146,7 @@ class HIPAANodeIntegration:
             _ = self.node_registry[npi]
 
             # Update governance power
-            self.governance.total_voting_power -= node.voting_power
+            self.governance.total_voting_power -= _node.voting_power
 
             # Remove from registry
             del self.node_registry[npi]
@@ -173,15 +173,15 @@ class HIPAANodeIntegration:
         for npi, node in list(self.node_registry.items()):
             _ = self.verifier.get_verification_status(npi)
 
-            if not record or not record.is_active():
+            if not _record or not _record.is_active():
                 # Remove inactive nodes
                 self.governance.total_voting_power -= node.voting_power
                 del self.node_registry[npi]
-                revoked_nodes.append(npi)
+                _revoked_nodes.append(npi)
 
         return {
             "expired_verifications": expired_count,
-            "revoked_nodes": len(revoked_nodes),
+            "_revoked_nodes": len(revoked_nodes),
             "active_nodes": len(self.node_registry),
         }
 
@@ -211,7 +211,7 @@ class HIPAAGovernanceIntegration:
             voting_weight_multiplier=1.5,  # Enhanced weight for healthcare decisions
         )
 
-        governance.committees[CommitteeType.SCIENTIFIC_ADVISORY] = hipaa_committee
+        governance.committees[CommitteeType.SCIENTIFIC_ADVISORY] = _hipaa_committee
 
         logger.info("Created HIPAA providers committee")
 
@@ -236,7 +236,7 @@ class HIPAAGovernanceIntegration:
         }
 
         # Store in governance metadata
-        governance.hipaa_proposal_rules = hipaa_proposals
+        governance.hipaa_proposal_rules = _hipaa_proposals
 
         logger.info("Added HIPAA-specific proposal types")
 
@@ -253,7 +253,7 @@ if __name__ == "__main__":
             _ = GovernanceSystem()
 
             # Create integration
-            _ = HIPAANodeIntegration(verifier, governance)
+            _ = HIPAANodeIntegration(_verifier, _governance)
 
             # Test provider registration
             _ = HIPAACredentials(
@@ -272,7 +272,9 @@ if __name__ == "__main__":
 
             print("Registering HIPAA provider as node...")
             try:
-                _ = await integration.register_provider_node(credentials, node_config)
+                _ = await _integration.register_provider_node(
+                    _credentials, _node_config
+                )
                 print("Node registered successfully!")
                 print("  Node ID: {node.node_id}")
                 print("  Voting power: {node.voting_power}")

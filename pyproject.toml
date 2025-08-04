@@ -1,6 +1,6 @@
 [build-system]
-requires = ["hatchling>=1.25"]
-build-backend = "hatchling.build"
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "genomevault"
@@ -47,8 +47,10 @@ full = [
   "genomevault[ml,zk,nanopore,gpu]"
 ]
 
-[tool.hatch.build.targets.wheel]
-packages = ["genomevault"]
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["genomevault", "genomevault.*"]
+exclude = ["scripts", "examples"]
 
 [project.scripts]
 genomevault = "genomevault.cli:main"

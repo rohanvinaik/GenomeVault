@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+"""Simple test to start the API."""
+
+import pytest
+
+pytest.skip("API not wired up yet; skipping", allow_module_level=True)
+
+import os
+import sys
+import traceback
+
+# Add the genomevault directory to the Python path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+try:
+    print("Starting API test...")
+
+    # Test imports step by step
+    print("1. Importing constants...")
+    from genomevault.core.constants import NodeType
+
+    print("2. Importing config...")
+    from genomevault.core.config import get_config
+
+    print("3. Importing logging...")
+
+    print("4. Importing blockchain node...")
+    from genomevault.blockchain.node import BlockchainNode
+
+    print("5. Importing API main...")
+    from genomevault.api import main
+
+    print("6. Getting app object...")
+    app = main.app
+
+    print(f"\n✅ SUCCESS! API app created: {app.title} v{app.version}")
+
+    # Try to start the blockchain node
+    print("\n7. Creating blockchain node...")
+    config = get_config()
+    node = BlockchainNode("test_node", NodeType.LIGHT, False)
+    print("✅ Blockchain node created successfully!")
+
+except Exception as e:
+    print(f"\n❌ ERROR at step: {type(e).__name__}: {e}")
+    traceback.print_exc()
+    sys.exit(1)
+
+print("\n✅ All tests passed! The API should be able to start.")
+
+
+
+

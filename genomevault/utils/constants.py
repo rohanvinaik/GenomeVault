@@ -1,0 +1,19 @@
+"""Common constants for GenomeVault."""
+
+# Security constants
+DEFAULT_SECURITY_LEVEL = 128
+MAX_VARIANTS = 1000
+VERIFICATION_TIME_MAX = 30.0
+
+# Hypervector constants
+DEFAULT_DIMENSION = 10000
+HYPERVECTOR_DIMENSIONS = 10000  # Alias for compatibility
+BINDING_SPARSITY = 0.1
+DEFAULT_SPARSITY = 0.1  # Alias for compatibility
+
+# ZK Proof constants
+DEFAULT_CIRCUIT_SIZE = 1024
+MAX_PROOF_SIZE = 1024 * 1024  # 1MB
+
+# Node types and weights for blockchain operations
+NODE_CLASS_WEIGHT = {"VALIDATOR": 3, "COMPUTE": 2, "STORAGE": 1, "CLIENT": 0}

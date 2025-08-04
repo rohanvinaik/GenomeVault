@@ -1,0 +1,267 @@
+#!/usr/bin/env python3
+"""
+Dashboard Zero-Red Sprint Implementation
+Fix E402 import order issues across the GenomeVault project
+"""
+
+import subprocess
+from pathlib import Path
+
+
+class DashboardZeroRedFixer:
+    def __init__(self, project_root: str):
+        self.project_root = Path(project_root)
+
+    def run_command(self, cmd: str, cwd: str = None) -> subprocess.CompletedProcess:
+        """Run a shell command and return the result"""
+        cwd = cwd or str(self.project_root)
+        print(f"Running: {cmd}")
+        return subprocess.run(cmd, shell=True, cwd=cwd, capture_output=True, text=True)
+
+    def find_e402_issues(self) -> list[str]:
+        """Find all files with E402 import order issues"""
+        result = self.run_command("ruff check . --select E402 --format json")
+
+        if result.returncode != 0:
+            print("Error running ruff:", result.stderr)
+            return []
+
+        # Parse JSON output to find E402 issues
+        import json
+
+        try:
+            issues = json.loads(result.stdout) if result.stdout.strip() else []
+            e402_files = list(
+                set(
+                    issue.get("filename", "")
+                    for issue in issues
+                    if issue.get("code") == "E402"
+                )
+            )
+            return e402_files
+        except json.JSONDecodeError:
+            print("Could not parse ruff JSON output")
+            return []
+
+    def fix_import_order(self, file_path: Path) -> bool:
+        """Fix import order in a single Python file"""
+        try:
+            with open(file_path, encoding="utf-8") as f:
+                content = f.read()
+
+            # Split into lines
+            lines = content.split("\n")
+
+            # Find imports and separate them from the rest
+            import_lines = []
+            other_lines = []
+            docstring_lines = []
+
+            in_docstring = False
+            docstring_quote = None
+            past_imports = False
+
+            i = 0
+            while i < len(lines):
+                line = lines[i].strip()
+
+                # Handle module docstring at the top
+                if i == 0 and (line.startswith('"""') or line.startswith("'''")):
+                    docstring_quote = line[:3]
+                    docstring_lines.append(lines[i])
+                    if line.count(docstring_quote) == 1:  # Opening docstring
+                        in_docstring = True
+                    i += 1
+                    continue
+                elif in_docstring:
+                    docstring_lines.append(lines[i])
+                    if docstring_quote in lines[i]:
+                        in_docstring = False
+                    i += 1
+                    continue
+
+                # Skip empty lines and comments at the top
+                if not line or line.startswith("#"):
+                    if not past_imports and not import_lines:
+                        docstring_lines.append(lines[i])
+                    else:
+                        other_lines.append(lines[i])
+                    i += 1
+                    continue
+
+                # Check if this is an import line
+                if (
+                    line.startswith("import ") or line.startswith("from ")
+                ) and not past_imports:
+                    import_lines.append(lines[i])
+                elif (
+                    "logger" in line
+                    and ("=" in line or ":" in line)
+                    and not past_imports
+                ):
+                    import_lines.append(lines[i])
+                else:
+                    past_imports = True
+                    other_lines.append(lines[i])
+
+                i += 1
+
+            # Reorganize imports
+            if import_lines:
+                # Separate different types of imports
+                stdlib_imports = []
+                third_party_imports = []
+                local_imports = []
+                logger_lines = []
+
+                for line in import_lines:
+                    stripped = line.strip()
+                    if "logger" in stripped and ("=" in stripped or ":" in stripped):
+                        logger_lines.append(line)
+                    elif stripped.startswith("from genomevault") or stripped.startswith(
+                        "import genomevault"
+                    ):
+                        local_imports.append(line)
+                    elif any(
+                        pkg in stripped
+                        for pkg in [
+                            "numpy",
+                            "scipy",
+                            "pandas",
+                            "torch",
+                            "sklearn",
+                            "matplotlib",
+                            "fastapi",
+                            "pydantic",
+                            "cupy",
+                        ]
+                    ):
+                        third_party_imports.append(line)
+                    else:
+                        stdlib_imports.append(line)
+
+                # Reconstruct the file
+                new_content = []
+
+                # Add docstring/comments at top
+                if docstring_lines:
+                    new_content.extend(docstring_lines)
+                    new_content.append("")  # Empty line after docstring
+
+                # Add imports in proper order
+                if stdlib_imports:
+                    new_content.extend(stdlib_imports)
+
+                if third_party_imports:
+                    if stdlib_imports:
+                        new_content.append("")  # Empty line between groups
+                    new_content.extend(third_party_imports)
+
+                if local_imports:
+                    if stdlib_imports or third_party_imports:
+                        new_content.append("")  # Empty line between groups
+                    new_content.extend(local_imports)
+
+                # Add logger configuration
+                if logger_lines:
+                    new_content.append("")
+                    new_content.extend(logger_lines)
+
+                # Add rest of the code
+                if other_lines:
+                    new_content.append("")
+                    new_content.extend(other_lines)
+
+                # Write back to file
+                new_file_content = "\n".join(new_content)
+
+                if new_file_content != content:
+                    with open(file_path, "w", encoding="utf-8") as f:
+                        f.write(new_file_content)
+                    print(f"✓ Fixed import order in {file_path}")
+                    return True
+
+            return False
+
+        except Exception as e:
+            print(f"Error processing {file_path}: {e}")
+            return False
+
+    def run_dashboard_zero_red(self):
+        """Main implementation method"""
+        print("🎯 Dashboard Zero-Red Sprint: Fixing E402 Import Issues")
+        print("=" * 60)
+
+        # First, check current state
+        print("\n1. Finding E402 issues...")
+        e402_files = self.find_e402_issues()
+
+        if not e402_files:
+            print("✅ No E402 issues found!")
+            return True
+
+        print(f"Found E402 issues in {len(e402_files)} files:")
+        for file in e402_files:
+            print(f"  - {file}")
+
+        # Fix each file
+        print("\n2. Fixing import order...")
+        fixed_count = 0
+
+        for file_path_str in e402_files:
+            file_path = Path(file_path_str)
+            if file_path.exists():
+                if self.fix_import_order(file_path):
+                    fixed_count += 1
+
+        print(f"\n✅ Fixed {fixed_count} files")
+
+        # Run ruff again to verify
+        print("\n3. Verifying fixes...")
+        result = self.run_command("ruff check . --select E402")
+
+        if result.returncode == 0:
+            print("✅ All E402 issues resolved!")
+            return True
+        else:
+            print("⚠️  Some E402 issues remain:")
+            print(result.stdout)
+            return False
+
+    def run_full_ruff_check(self):
+        """Run full ruff check to see overall status"""
+        print("\n4. Running full ruff check...")
+        result = self.run_command("ruff check .")
+
+        if result.returncode == 0:
+            print("🎉 All ruff checks pass!")
+        else:
+            print("Current ruff issues:")
+            print(result.stdout[:2000])  # Limit output
+            if len(result.stdout) > 2000:
+                print("... (output truncated)")
+
+
+def main():
+    """Main entry point"""
+    project_root = "/Users/rohanvinaik/genomevault"
+    fixer = DashboardZeroRedFixer(project_root)
+
+    success = fixer.run_dashboard_zero_red()
+    fixer.run_full_ruff_check()
+
+    if success:
+        print("\n🎉 Dashboard Zero-Red Sprint Complete!")
+        print("All E402 import order issues have been resolved.")
+    else:
+        print("\n⚠️  Dashboard Zero-Red Sprint needs attention")
+        print("Some issues remain to be fixed manually.")
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+

@@ -1,6 +1,4 @@
-"""GenomeVault utilities package."""
+from .logging import get_logger
+from .metrics import MetricsCollector, get_metrics
 
-from .metrics import (MetricsCollector, MetricsContext, metrics,
-                      metrics_decorator)
-
-__all__ = ["MetricsCollector", "MetricsContext", "metrics", "metrics_decorator"]
+__all__ = ["get_logger", "MetricsCollector", "get_metrics"]

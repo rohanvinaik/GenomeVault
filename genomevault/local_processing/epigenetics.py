@@ -184,11 +184,13 @@ class MethylationProcessor:
         self.max_threads = max_threads
         self.gene_annotations = self._load_annotations()
 
+logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Initialized MethylationProcessor")
 
     def _load_annotations(self) -> dict[str, dict[str, Any]]:
         """Load gene annotations for region assignment"""
         if not self.annotation_file or not self.annotation_file.exists():
+logger = logging.getLogger(__name__)  # Added by cleanup
             logger.warning("No annotation file provided")
             return {}
 
@@ -232,6 +234,7 @@ class MethylationProcessor:
         Returns:
             EpigeneticProfile with methylation data
         """
+logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Processing methylation data for %ssample_id")
 
         try:
@@ -244,23 +247,23 @@ class MethylationProcessor:
                 raise ValidationError("Unsupported format: {data_format}")
 
             # Filter by context and coverage
-            _ = self._filter_methylation_data(methylation_data, context)
+            _ = self._filter_methylation_data(_methylation_data, context)
 
             # Annotate with genomic regions
-            _ = self._annotate_methylation_sites(filtered_data)
+            _ = self._annotate_methylation_sites(_filtered_data)
 
             # Calculate quality metrics
-            _ = self._calculate_methylation_metrics(annotated_sites)
+            _ = self._calculate_methylation_metrics(_annotated_sites)
 
             # Perform quantile normalization
-            _ = self._normalize_methylation(annotated_sites)
+            _ = self._normalize_methylation(_annotated_sites)
 
             # Create profile
             _ = EpigeneticProfile(
                 sample_id=sample_id,
                 data_type=EpigeneticDataType.METHYLATION,
-                methylation_sites=normalized_sites,
-                quality_metrics=quality_metrics,
+                methylation_sites=_normalized_sites,
+                _quality_metrics=quality_metrics,
                 processing_metadata={
                     "processor_version": "1.0.0",
                     "processed_at": datetime.now().isoformat(),
@@ -270,6 +273,7 @@ class MethylationProcessor:
                 },
             )
 
+logger = logging.getLogger(__name__)  # Added by cleanup
             logger.info(
                 "Successfully processed %slen(normalized_sites) methylation sites"
             )
@@ -286,6 +290,7 @@ class MethylationProcessor:
 
     def _load_bismark_output(self, file_path: Path) -> pd.DataFrame:
         """Load Bismark methylation extractor output"""
+logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Loading Bismark output from %sfile_path")
 
         # Mock data for demonstration
@@ -302,11 +307,11 @@ class MethylationProcessor:
             "methylated": np.random.binomial(20, 0.7, n_sites),
             "unmethylated": np.random.binomial(20, 0.3, n_sites),
             "context": np.random.choice(
-                ["CG", "CHG", "CHH"], n_sites, p=[0.8, 0.15, 0.05]
+                ["CG", "CHG", "CHH"], _n_sites, p=[0.8, 0.15, 0.05]
             ),
         }
 
-        df = pd.DataFrame(data)
+        df = pd.DataFrame(_data)
         df["coverage"] = df["methylated"] + df["unmethylated"]
         df["methylation_level"] = df["methylated"] / df["coverage"]
 
@@ -314,6 +319,7 @@ class MethylationProcessor:
 
     def _load_bedgraph(self, file_path: Path) -> pd.DataFrame:
         """Load BedGraph format methylation data"""
+logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Loading BedGraph from %sfile_path")
 
         # In production, would parse actual BedGraph file
@@ -327,8 +333,9 @@ class MethylationProcessor:
         _ = data[data["coverage"] >= self.min_coverage].copy()
 
         if context != MethylationContext.ALL:
-            _ = filtered[filtered["context"] == context.value]
+            _ = _filtered[_filtered["context"] == context.value]
 
+logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info(
             "Filtered to %slen(filtered) sites with coverage >= %sself.min_coverage"
         )
@@ -350,9 +357,9 @@ class MethylationProcessor:
                 coverage=int(row["coverage"]),
                 strand=row["strand"],
                 gene_id=gene_id,
-                region_type=region_type,
+                _region_type=region_type,
             )
-            sites.append(site)
+            _sites.append(site)
 
         return sites
 
@@ -394,23 +401,23 @@ class MethylationProcessor:
             "median_coverage": float(np.median(coverages)),
             "sites_by_context": {},
             "sites_by_region": {},
-            "hypomethylated_sites": sum(1 for m in methylation_levels if m < 0.2),
-            "hypermethylated_sites": sum(1 for m in methylation_levels if m > 0.8),
-            "intermediate_sites": sum(1 for m in methylation_levels if 0.2 <= m <= 0.8),
+            "hypomethylated_sites": sum(1 for m in _methylation_levels if m < 0.2),
+            "hypermethylated_sites": sum(1 for m in _methylation_levels if m > 0.8),
+            "intermediate_sites": sum(1 for m in _methylation_levels if 0.2 <= m <= 0.8),
         }
 
         # Count by context
         _ = defaultdict(int)
         for site in sites:
-            context_counts[site.context.value] += 1
-        metrics["sites_by_context"] = dict(context_counts)
+            _context_counts[site.context.value] += 1
+        _metrics["sites_by_context"] = dict(_context_counts)
 
         # Count by region
         _ = defaultdict(int)
         for site in sites:
             if site.region_type:
-                region_counts[site.region_type] += 1
-        metrics["sites_by_region"] = dict(region_counts)
+                _region_counts[site.region_type] += 1
+        _metrics["sites_by_region"] = dict(_region_counts)
 
         return metrics
 
@@ -429,9 +436,9 @@ class MethylationProcessor:
         # For now, apply quantile normalization
 
         # Rank the values
-        sorted_indices = np.argsort(methylation_values)
+        sorted_indices = np.argsort(_methylation_values)
         ranks = np.empty_like(sorted_indices)
-        ranks[sorted_indices] = np.arange(len(methylation_values))
+        ranks[sorted_indices] = np.arange(len(_methylation_values))
 
         # Calculate quantiles
         _ = (ranks + 0.5) / len(ranks)
@@ -440,7 +447,7 @@ class MethylationProcessor:
         from scipy.stats import beta
 
         a, b = 2, 5  # Beta distribution parameters
-        _ = beta.ppf(quantiles, a, b)
+        _ = beta.ppf(_quantiles, a, b)
 
         # Create normalized sites
         _ = []
@@ -449,14 +456,15 @@ class MethylationProcessor:
                 chromosome=site.chromosome,
                 position=site.position,
                 context=site.context,
-                methylation_level=float(normalized_values[i]),
+                methylation_level=float(_normalized_values[i]),
                 coverage=site.coverage,
                 strand=site.strand,
                 gene_id=site.gene_id,
                 region_type=site.region_type,
             )
-            normalized_sites.append(normalized_site)
+            _normalized_sites.append(normalized_site)
 
+logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Applied beta-mixture quantile normalization")
         return normalized_sites
 
@@ -479,6 +487,7 @@ class MethylationProcessor:
         Returns:
             DataFrame with differential methylation results
         """
+logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Performing differential methylation analysis")
 
         # Collect all sites
@@ -486,11 +495,11 @@ class MethylationProcessor:
         for profile in group1_profiles + group2_profiles:
             if profile.methylation_sites:
                 for site in profile.methylation_sites:
-                    all_sites.add((site.chromosome, site.position))
+                    _all_sites.add((site.chromosome, site.position))
 
         _ = []
 
-        for chr_pos in all_sites:
+        for chr_pos in _all_sites:
             chr, _ = chr_pos
 
             # Get methylation values for each group
@@ -501,27 +510,27 @@ class MethylationProcessor:
                 _ = [
                     s
                     for s in profile.methylation_sites
-                    if s.chromosome == chr and s.position == pos
+                    if s.chromosome == chr and s.position == _pos
                 ]
                 if sites:
-                    group1_values.append(sites[0].methylation_level)
+                    _group1_values.append(_sites[0].methylation_level)
 
             for profile in group2_profiles:
                 _ = [
                     s
                     for s in profile.methylation_sites
-                    if s.chromosome == chr and s.position == pos
+                    if s.chromosome == chr and s.position == _pos
                 ]
                 if sites:
-                    group2_values.append(sites[0].methylation_level)
+                    _group2_values.append(_sites[0].methylation_level)
 
-            if len(group1_values) >= 2 and len(group2_values) >= 2:
+            if len(_group1_values) >= 2 and len(_group2_values) >= 2:
                 # Perform t-test
-                t_stat, _ = stats.ttest_ind(group1_values, group2_values)
+                t_stat, _ = stats.ttest_ind(_group1_values, _group2_values)
 
-                _ = np.mean(group1_values)
-                mean2 = np.mean(group2_values)
-                _ = mean2 - mean1
+                _ = np.mean(_group1_values)
+                mean2 = np.mean(_group2_values)
+                _ = mean2 - _mean1
 
                 results.append(
                     {
@@ -536,26 +545,28 @@ class MethylationProcessor:
                 )
 
         if not results:
+logger = logging.getLogger(__name__)  # Added by cleanup
             logger.warning("No differential methylation sites found")
             return pd.DataFrame()
 
         # Create results DataFrame
-        _ = pd.DataFrame(results)
+        _ = pd.DataFrame(_results)
 
         # Multiple testing correction
         from statsmodels.stats.multitest import multipletests
 
-        _, fdr_values, _, _ = multipletests(results_df["p_value"], method="fdr_bh")
-        results_df["fdr"] = fdr_values
+        _, fdr_values, _, _ = multipletests(_results_df["p_value"], method="fdr_bh")
+        _results_df["fdr"] = fdr_values
 
         # Filter by significance and difference
-        results_df["significant"] = (results_df["fdr"] < fdr_threshold) & (
-            np.abs(results_df["methylation_difference"]) >= min_difference
+        _results_df["significant"] = (_results_df["fdr"] < fdr_threshold) & (
+            np.abs(_results_df["methylation_difference"]) >= min_difference
         )
 
         # Sort by p-value
-        results_df.sort_values("p_value", inplace=True)
+        _results_df.sort_values("p_value", inplace=True)
 
+logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info(
             "Found %sresults_df['significant'].sum() differentially methylated sites"
         )
@@ -588,6 +599,7 @@ class ChromatinAccessibilityProcessor:
         self.max_threads = max_threads
         self.gene_annotations = self._load_annotations()
 
+logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Initialized ChromatinAccessibilityProcessor")
 
     def _load_annotations(self) -> dict[str, dict[str, Any]]:
@@ -614,6 +626,7 @@ class ChromatinAccessibilityProcessor:
         Returns:
             EpigeneticProfile with chromatin accessibility data
         """
+logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Processing ATAC-seq data for %ssample_id")
 
         try:
@@ -630,17 +643,17 @@ class ChromatinAccessibilityProcessor:
                 _ = self._process_fastq_to_peaks(input_path, paired_end)
 
             # Annotate peaks with nearest genes
-            _ = self._annotate_peaks(peaks)
+            _ = self._annotate_peaks(_peaks)
 
             # Calculate quality metrics
-            _ = self._calculate_peak_metrics(annotated_peaks)
+            _ = self._calculate_peak_metrics(_annotated_peaks)
 
             # Create profile
             _ = EpigeneticProfile(
                 sample_id=sample_id,
                 data_type=EpigeneticDataType.CHROMATIN_ACCESSIBILITY,
-                chromatin_peaks=annotated_peaks,
-                quality_metrics=quality_metrics,
+                chromatin_peaks=_annotated_peaks,
+                _quality_metrics=quality_metrics,
                 processing_metadata={
                     "processor_version": "1.0.0",
                     "processed_at": datetime.now().isoformat(),
@@ -650,6 +663,7 @@ class ChromatinAccessibilityProcessor:
                 },
             )
 
+logger = logging.getLogger(__name__)  # Added by cleanup
             logger.info("Successfully processed %slen(annotated_peaks) chromatin peaks")
             return profile
 
@@ -664,6 +678,7 @@ class ChromatinAccessibilityProcessor:
 
     def _load_peak_file(self, file_path: Path, format: str) -> pd.DataFrame:
         """Load peak file"""
+logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Loading peaks from %sfile_path")
 
         if format == "narrowPeak":
@@ -680,7 +695,7 @@ class ChromatinAccessibilityProcessor:
                 "q_value",
                 "peak",
             ]
-            df = pd.read_csv(file_path, sep="\t", names=columns)
+            df = pd.read_csv(file_path, sep="\t", names=_columns)
             df["summit"] = df["start"] + df["peak"]
             df["fold_enrichment"] = df["signal_value"]
         else:
@@ -693,6 +708,7 @@ class ChromatinAccessibilityProcessor:
         self, input_paths: Path | list[Path], paired_end: bool
     ) -> pd.DataFrame:
         """Process FASTQ files to peaks (mock implementation)"""
+logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Processing FASTQ to peaks (mock implementation)")
         return self._generate_mock_peaks()
 
@@ -704,8 +720,8 @@ class ChromatinAccessibilityProcessor:
         _ = ["chr" + str(i) for i in range(1, 23)] + ["chrX"]
 
         _ = []
-        for i in range(n_peaks):
-            _ = np.random.choice(chromosomes)
+        for i in range(_n_peaks):
+            _ = np.random.choice(_chromosomes)
             _ = np.random.randint(1000000, 200000000)
             _ = np.random.randint(200, 2000)
 
@@ -742,9 +758,9 @@ class ChromatinAccessibilityProcessor:
                 p_value=float(row["p_value"]),
                 q_value=float(row["q_value"]),
                 nearest_gene=nearest_gene,
-                distance_to_tss=distance,
+                distance_to_tss=_distance,
             )
-            peaks.append(peak)
+            _peaks.append(peak)
 
         return peaks
 
@@ -764,10 +780,10 @@ class ChromatinAccessibilityProcessor:
             _ = abs(position - tss)
 
             if distance < min_distance:
-                _ = distance
+                _ = _distance
                 _ = gene_id
 
-        return nearest_gene, int(min_distance) if nearest_gene else None
+        return _nearest_gene, int(min_distance) if nearest_gene else None
 
     def _calculate_peak_metrics(self, peaks: list[ChromatinPeak]) -> dict[str, Any]:
         """Calculate quality metrics for peaks"""
@@ -784,8 +800,8 @@ class ChromatinAccessibilityProcessor:
             "median_score": float(np.median(scores)),
             "mean_fold_enrichment": float(np.mean(enrichments)),
             "median_fold_enrichment": float(np.median(enrichments)),
-            "peaks_near_tss": sum(1 for d in distances if d < 3000),
-            "distal_peaks": sum(1 for d in distances if d > 50000),
+            "peaks_near_tss": sum(1 for d in _distances if d < 3000),
+            "distal_peaks": sum(1 for d in _distances if d > 50000),
             "mean_peak_width": float(np.mean([p.end - p.start for p in peaks])),
             "significant_peaks": sum(1 for p in peaks if p.q_value < 0.05),
             "highly_enriched_peaks": sum(1 for p in peaks if p.fold_enrichment > 10),
@@ -794,8 +810,8 @@ class ChromatinAccessibilityProcessor:
         # Peak distribution by chromosome
         _ = defaultdict(int)
         for peak in peaks:
-            chr_counts[peak.chromosome] += 1
-        metrics["peaks_by_chromosome"] = dict(chr_counts)
+            _chr_counts[peak.chromosome] += 1
+        _metrics["peaks_by_chromosome"] = dict(_chr_counts)
 
         return metrics
 
@@ -819,6 +835,7 @@ class ChromatinAccessibilityProcessor:
         Returns:
             DataFrame with differential peaks
         """
+logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Finding differential chromatin accessibility")
 
         # This is a simplified implementation
@@ -829,12 +846,12 @@ class ChromatinAccessibilityProcessor:
         for profile in group1_profiles + group2_profiles:
             if profile.chromatin_peaks:
                 for peak in profile.chromatin_peaks:
-                    all_regions.add((peak.chromosome, peak.start, peak.end))
+                    _all_regions.add((peak.chromosome, peak.start, peak.end))
 
         _ = []
 
         # For each region, compare enrichment between groups
-        for region in all_regions:
+        for region in _all_regions:
             chr, start, _ = region
 
             # Get enrichment values for each group
@@ -848,7 +865,7 @@ class ChromatinAccessibilityProcessor:
                     if p.chromosome == chr and p.start <= start <= p.end
                 ]
                 if peaks:
-                    group1_enrichments.append(peaks[0].fold_enrichment)
+                    _group1_enrichments.append(_peaks[0].fold_enrichment)
 
             for profile in group2_profiles:
                 _ = [
@@ -857,18 +874,18 @@ class ChromatinAccessibilityProcessor:
                     if p.chromosome == chr and p.start <= start <= p.end
                 ]
                 if peaks:
-                    group2_enrichments.append(peaks[0].fold_enrichment)
+                    _group2_enrichments.append(_peaks[0].fold_enrichment)
 
             if group1_enrichments and group2_enrichments:
                 # Calculate statistics
-                _ = np.mean(group1_enrichments)
-                mean2 = np.mean(group2_enrichments)
-                _ = mean2 / mean1 if mean1 > 0 else 0
+                _ = np.mean(_group1_enrichments)
+                mean2 = np.mean(_group2_enrichments)
+                _ = mean2 / _mean1 if _mean1 > 0 else 0
 
                 # Simplified p-value calculation
-                if len(group1_enrichments) >= 2 and len(group2_enrichments) >= 2:
+                if len(_group1_enrichments) >= 2 and len(_group2_enrichments) >= 2:
                     _, _ = stats.ttest_ind(
-                        np.log2(group1_enrichments + 1), np.log2(group2_enrichments + 1)
+                        np.log2(_group1_enrichments + 1), np.log2(group2_enrichments + 1)
                     )
                 else:
                     _ = 1.0
@@ -889,26 +906,28 @@ class ChromatinAccessibilityProcessor:
                 )
 
         if not results:
+logger = logging.getLogger(__name__)  # Added by cleanup
             logger.warning("No differential peaks found")
             return pd.DataFrame()
 
         # Create results DataFrame
-        _ = pd.DataFrame(results)
+        _ = pd.DataFrame(_results)
 
         # Multiple testing correction
         from statsmodels.stats.multitest import multipletests
 
-        _, fdr_values, _, _ = multipletests(results_df["p_value"], method="fdr_bh")
-        results_df["fdr"] = fdr_values
+        _, fdr_values, _, _ = multipletests(_results_df["p_value"], method="fdr_bh")
+        _results_df["fdr"] = fdr_values
 
         # Filter by significance and fold change
-        results_df["significant"] = (results_df["fdr"] < fdr_threshold) & (
-            np.abs(results_df["log2_fold_change"]) >= np.log2(min_fold_change)
+        _results_df["significant"] = (_results_df["fdr"] < fdr_threshold) & (
+            np.abs(_results_df["log2_fold_change"]) >= np.log2(min_fold_change)
         )
 
         # Sort by p-value
-        results_df.sort_values("p_value", inplace=True)
+        _results_df.sort_values("p_value", inplace=True)
 
+logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Found %sresults_df['significant'].sum() differential peaks")
 
         return results_df

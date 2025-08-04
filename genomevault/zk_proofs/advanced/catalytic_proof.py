@@ -232,7 +232,7 @@ class CatalyticProofEngine:
 
         # Use catalytic space for Merkle path verification
         path_cache_offset = 0
-        path_cache_size = 32 * len(merkle_proof)
+        32 * len(merkle_proof)
 
         # Store Merkle path in catalytic space
         for i, node in enumerate(merkle_proof):
@@ -348,7 +348,6 @@ class CatalyticProofEngine:
 
         # Use catalytic space for reference panel storage
         panel_offset = 1024 * 1024  # 1MB offset
-        populations = 26  # Number of reference populations
 
         # Compute ancestry proportions
         ancestry_counts = {}

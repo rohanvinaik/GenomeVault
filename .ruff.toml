@@ -1,8 +1,14 @@
+[output]
+max-violations = 200
+
+# .ruff.toml - Compatible with Ruff 0.4.x
 [lint]
-extend-ignore = ["E501"]            # long lines fine
-# Ruff will ONLY lint real source files; skip scripts, tests, notebooks
+extend-ignore = ["E501"]
+
 exclude = [
   "scripts/*",
-  "test_*.py",
   "tests/*",
 ]
+
+[lint.per-file-ignores]
+"tools/*.py" = ["ALL"]        # silence helper scripts

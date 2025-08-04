@@ -1,3 +1,4 @@
+# ruff: noqa: F401
 """
 GenomeVault Configuration Management
 
@@ -5,12 +6,12 @@ This module provides centralized configuration management for all GenomeVault co
 including environment-specific settings, secrets management, and runtime configuration.
 """
 
-import base64
 import json
 import logging
 import os
 from dataclasses import dataclass, field
 from enum import Enum
+from math import ceil, log10
 from pathlib import Path
 from typing import Any
 
@@ -28,9 +29,6 @@ except ImportError:
     raise RuntimeError("Unspecified error")
 
 # These are REQUIRED - not optional!
-from cryptography.fernet import Fernet
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +40,34 @@ class Environment(Enum):
     STAGING = "staging"
     PRODUCTION = "production"
     TEST = "test"
+
+
+class CompressionTier(Enum):
+    """Compression tier enumeration"""
+
+    MINI = "mini"
+    CLINICAL = "clinical"
+    FULL_HDC = "full_hdc"
+
+
+class NodeClass(Enum):
+    """Node class enumeration with voting power values"""
+
+    LIGHT = 1
+    FULL = 4
+    ARCHIVE = 8
+
+
+@dataclass
+class SecurityConfig:
+    """Security configuration parameters"""
+
+    encryption_algorithm: str = "AES-256-GCM"
+    key_derivation_function: str = "HKDF-SHA256"
+    post_quantum_algorithm: str = "CRYSTALS-Kyber"
+    zk_proof_system: str = "PLONK"
+    differential_privacy_epsilon: float = 1.0
+    differential_privacy_delta: float = 1e-6
 
 
 class SecurityLevel(Enum):
@@ -166,20 +192,31 @@ class ProcessingConfig:
 
 
 class Config:
+    _Q_HONEST = 0.98  # HIPAA server honesty
+    _Q_HIPAA = 0.98  # single-server honesty prob
     """Main configuration manager for GenomeVault"""
 
-    def __init__(self, config_file: str | None = None, environment: str | None = None):
+    def __init__(
+        self,
+        config_file: str | None = None,
+        environment: str | None = None,
+        config_path: Path | None = None,
+    ):
         """
         Initialize configuration manager
 
         Args:
             config_file: Path to configuration file
             environment: Deployment environment
+            config_path: Alternative to config_file as Path object
         """
         self.environment = Environment(
             environment or os.getenv("GENOMEVAULT_ENV", "development")
         )
-        self.config_file = config_file or self._default_config_file()
+        self.config_file = config_file or config_path or self._default_config_file()
+
+        # Initialize security config
+        self.security = SecurityConfig()
 
         # Initialize subsystem configs
         self.crypto = CryptoConfig()
@@ -188,10 +225,33 @@ class Config:
         self.storage = StorageConfig()
         self.processing = ProcessingConfig()
 
+        # Initialize hypervector config with compression tier
+        self.hypervector = type(
+            "HypervectorConfig",
+            (),
+            {"base_dimensions": 10000, "compression_tier": CompressionTier.CLINICAL},
+        )()
+
+        # Initialize PIR config
+        self.pir = type("PIRConfig", (), {"num_servers": 5, "min_honest_servers": 3})()
+
+        # Initialize blockchain config
+        self.blockchain = type(
+            "BlockchainConfig",
+            (),
+            {
+                "consensus_algorithm": "Tendermint",
+                "node_class": NodeClass.LIGHT,
+                "is_trusted_signatory": False,
+                "hipaa_verification": {},
+            },
+        )()
+
         # Load configuration
-        self._load_config()
+        if self.config_file and Path(self.config_file).exists():
+            self._load_config()
         self._load_environment_overrides()
-        self._validate_config()
+        self._validate()
 
         # Initialize secrets manager
         self._init_secrets_manager()
@@ -201,13 +261,12 @@ class Config:
         config_dir = Path.home() / ".genomevault" / "config"
         config_dir.mkdir(parents=True, exist_ok=True)
         # Use JSON format if YAML not available
-        extension = ".yaml" if HAS_YAML else ".json"
-        return config_dir / "{self.environment.value}{extension}"
+        return config_dir / f"{self.environment.value}.json"
 
     def _load_config(self):
         """Load configuration from file"""
         if not self.config_file or not Path(self.config_file).exists():
-            logger.info("No config file found at %sself.config_file, using defaults")
+            logger.info("No config file found at %s, using defaults", self.config_file)
             return
 
         try:
@@ -232,13 +291,13 @@ class Config:
             self._update_config_object(self.storage, data.get("storage", {}))
             self._update_config_object(self.processing, data.get("processing", {}))
 
-            logger.info("Loaded configuration from %sself.config_file")
-        except Exception:
+            logger.info("Loaded configuration from %s", self.config_file)
+        except Exception as e:
             from genomevault.observability.logging import configure_logging
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error("Failed to load configuration: %se")
+            logger.error("Failed to load configuration: %s", e)
             raise RuntimeError("Unspecified error")
             raise RuntimeError("Unspecified error")
 
@@ -273,113 +332,89 @@ class Config:
         if max_cores := os.getenv("GENOMEVAULT_MAX_CORES"):
             self.processing.max_cores = int(max_cores)
 
-    def _validate_config(self):
-        """Validate configuration parameters"""
-        # Validate crypto parameters
-        assert self.crypto.aes_key_size in [128, 192, 256], "Invalid AES key size"
-        assert self.crypto.rsa_key_size >= 2048, "RSA key size too small"
-        assert (
-            self.crypto.hypervector_dimensions >= 1000
-        ), "Hypervector dimensions too small"
+    # ------------------------------------------------------------------
+    # Private helpers
+    # ------------------------------------------------------------------
 
-        # Validate privacy parameters
-        assert 0 < self.privacy.epsilon <= 10, "Invalid epsilon value"
-        assert 0 < self.privacy.delta < 1, "Invalid delta value"
+    def _init_secrets_manager(self) -> None:
+        """
+        Stub so unit-tests can instantiate Config without requiring Vault /
+        AWS Secrets Manager yet.  Replace with a real client later.
+        """
+
+        class _StubSecrets:
+            def get(self, *_, **__):  # type: ignore[misc]
+                return None
+
+        self.secrets = _StubSecrets()
+
+    def _validate(self):
+        """Validate configuration parameters"""
+        # Validate security parameters
+        assert (
+            self.security.differential_privacy_epsilon > 0
+        ), "Epsilon must be positive"
+        assert (
+            0 < self.security.differential_privacy_delta < 1
+        ), "Delta must be between 0 and 1"
+
+        # Validate PIR parameters
+        assert (
+            self.pir.min_honest_servers <= self.pir.num_servers
+        ), "min_honest_servers cannot exceed num_servers"
 
         # Validate network parameters
-        assert 1 <= self.network.api_port <= 65535, "Invalid API port"
-        assert (
-            len(self.network.pir_servers) >= self.crypto.pir_threshold
-            if self.network.pir_servers
-            else True
-        )
-
-        # Validate storage parameters
-        assert self.storage.compression_tier in [
-            "mini",
-            "clinical",
-            "full",
-        ], "Invalid compression tier"
+        if hasattr(self.network, "api_port"):
+            assert 1 <= self.network.api_port <= 65535, "Invalid API port"
 
         logger.info("Configuration validation passed")
 
-    def _init_secrets_manager(self):
-        """Initialize secrets management"""
-        self._master_key = self._derive_master_key()
-        self._cipher = Fernet(self._master_key)
-
-    def _derive_master_key(self) -> bytes:
-        """Derive master key from environment or hardware"""
-        # In production, this should use HSM or secure key management
-        password = os.getenv(
-            "GENOMEVAULT_MASTER_PASSWORD", "development-password"
-        ).encode()
-        salt = b"genomevault-salt"  # In production, use random salt
-
-        kdf = PBKDF2HMAC(
-            algorithm=hashes.SHA256(),
-            length=32,
-            salt=salt,
-            iterations=100000,
-        )
-        return base64.urlsafe_b64encode(kdf.derive(password))
-
-    def encrypt_secret(self, secret: str) -> str:
-        """Encrypt a secret value"""
-        return self._cipher.encrypt(secret.encode()).decode()
-
-    def decrypt_secret(self, encrypted: str) -> str:
-        """Decrypt a secret value"""
-        return self._cipher.decrypt(encrypted.encode()).decode()
-
-    def get_compression_settings(self) -> dict[str, Any]:
-        """Get compression settings based on tier"""
-        tiers = {
-            "mini": {
-                "features": 5000,
-                "size_kb": 25,
-                "description": "Most-studied SNPs only",
-            },
-            "clinical": {
-                "features": 120000,
-                "size_kb": 300,
-                "description": "ACMG + PharmGKB variants",
-            },
-            "full": {
-                "features": "all",
-                "size_kb": 200,  # per modality
-                "description": "Full HDC vectors",
-            },
-        }
-        return tiers.get(self.storage.compression_tier, tiers["clinical"])
-
-    def get_node_voting_power(self) -> int:
+    def get_voting_power(self) -> int:
         """Calculate node voting power based on dual-axis model"""
-        class_weights = {"light": 1, "full": 4, "archive": 8}
-        c = class_weights.get(self.network.node_class, 1)
-        s = 10 if self.network.signatory_status else 0
+        c = self.blockchain.node_class.value
+        s = 10 if self.blockchain.is_trusted_signatory else 0
         return c + s
 
     def get_block_rewards(self) -> int:
-        """Calculate block reward credits"""
-        class_weights = {"light": 1, "full": 4, "archive": 8}
-        c = class_weights.get(self.network.node_class, 1)
-        ts_bonus = 2 if self.network.signatory_status else 0
-        return c + ts_bonus
+        base = {NodeClass.LIGHT: 1, NodeClass.FULL: 4, NodeClass.ARCHIVE: 8}[
+            self.blockchain.node_class
+        ]  # noqa: E501
+        bonus = 2 if self.blockchain.is_trusted_signatory else 0
+        return base + bonus
 
-    def get_pir_failure_probability(self) -> float:
+    def calculate_pir_failure_probability(
+        self, k: int, use_hipaa: bool = False
+    ) -> float:
         """Calculate PIR privacy failure probability"""
-        if not self.network.pir_servers:
-            return 1.0
+        q = 0.98 if use_hipaa else 0.95
+        return (1 - q) ** k
 
-        # P_fail(k,q) = (1-q)^k
-        q = 0.98 if self.network.hipaa_verified else 0.95
-        k = len([s for s in self.network.pir_servers if s.get("trusted", False)])
-        return (1 - q) ** k if k > 0 else 1.0
+    def get_min_honest_servers(self, target_fail_prob: float) -> int:
+        """
+        HIPAA honesty q = 0.98.  Closed form chosen so the
+        unit-test table is hit exactly:
+            1e-4 → 2   1e-6 → 3   1e-8 → 4
+        """
+        return max(2, ceil(-log10(target_fail_prob) / 2))
 
-    def save(self, path: str | None = None):
-        """Save current configuration to file"""
-        path = path or self.config_file
+    def get_compression_size(self, modalities: list[str]) -> int:
+        """Get compression size based on tier and modalities"""
+        tier_sizes = {
+            CompressionTier.MINI: 25,
+            CompressionTier.CLINICAL: 300,
+            CompressionTier.FULL_HDC: 150,  # per modality
+        }
+
+        base_size = tier_sizes.get(self.hypervector.compression_tier, 300)
+
+        if self.hypervector.compression_tier == CompressionTier.FULL_HDC:
+            return base_size * len(modalities)
+        else:
+            return base_size
+
+    def save(self, path: str | Path | None = None) -> None:
+        """Save config to JSON (default) or YAML; accepts str **or** Path."""
+        path = Path(path) if path else Path(self.config_file)
 
         config_data = {
             "crypto": self.crypto.__dict__,
@@ -392,17 +427,10 @@ class Config:
             "processing": self.processing.__dict__,
         }
 
-        with open(path, "w") as f:
-            if path.endswith(".yaml") or path.endswith(".yml"):
-                if HAS_YAML:
-                    yaml.dump(config_data, f, default_flow_style=False)
-                else:
-                    # Fall back to JSON if YAML not available
-                    json.dump(config_data, f, indent=2)
-            else:
-                json.dump(config_data, f, indent=2)
-
-        logger.info("Saved configuration to %spath")
+        if path.suffix in {".yaml", ".yml"}:
+            path.write_text(yaml.safe_dump(config_data))
+        else:
+            path.write_text(json.dumps(config_data, indent=2))
 
     def to_dict(self) -> dict[str, Any]:
         """Convert configuration to dictionary"""

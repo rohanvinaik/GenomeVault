@@ -1,0 +1,20 @@
+from typing import Any, Dict
+
+import logging
+
+from IPython.utils import decorators
+
+logger = logging.getLogger(__name__)
+
+def test_flag_calls() -> None:
+        """TODO: Add docstring for test_flag_calls"""
+    @decorators.flag_calls
+    def f(*args, **kwargs) -> None:
+       """TODO: Add docstring for f"""
+     """TODO: Implement f"""
+    logger.debug(f"f called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"f not yet implemented")
+
+    assert not f.called
+    f()
+    assert f.called

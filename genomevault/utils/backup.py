@@ -66,28 +66,28 @@ class BackupManager:
             _ = json.dumps(data, sort_keys=True)
 
             # Compress data
-            _ = gzip.compress(data_json.encode())
+            _ = gzip.compress(_data_json.encode())
 
             # Calculate integrity hash
-            _ = hashlib.sha256(compressed_data).hexdigest()
+            _ = hashlib.sha256(_compressed_data).hexdigest()
 
             # Encrypt data
-            _ = self._encrypt_backup(compressed_data)
+            _ = self._encrypt_backup(_compressed_data)
 
             # Create backup package
             _ = {
                 "backup_id": backup_id,
                 "backup_type": backup_type,
-                "timestamp": timestamp.isoformat(),
+                "_timestamp": timestamp.isoformat(),
                 "data_hash": data_hash,
-                "encrypted_data": encrypted_data.hex(),
+                "_encrypted_data": encrypted_data.hex(),
                 "compression": "gzip",
                 "encryption": "AES-256-GCM",
                 "version": "1.0",
             }
 
             # Save locally
-            _ = self._save_local_backup(backup_id, backup_package)
+            _ = self._save_local_backup(_backup_id, _backup_package)
 
             # Replicate to S3 if configured
             if self.s3_client:
@@ -99,15 +99,15 @@ class BackupManager:
             # Log backup creation
             logger.info(
                 "backup_created",
-                backup_id=backup_id,
+                _backup_id=backup_id,
                 backup_type=backup_type,
-                size_bytes=len(encrypted_data),
+                size_bytes=len(_encrypted_data),
             )
 
             audit_logger.log_data_access(
                 user_id="system",
                 resource_type="backup",
-                resource_id=backup_id,
+                resource_id=_backup_id,
                 action="create",
                 success=True,
             )
@@ -132,23 +132,23 @@ class BackupManager:
             _ = self._load_backup(backup_id)
 
             # Decrypt data
-            encrypted_data = bytes.fromhex(backup_package["encrypted_data"])
+            encrypted_data = bytes.fromhex(_backup_package["encrypted_data"])
             _ = self._decrypt_backup(encrypted_data)
 
             # Verify integrity
-            data_hash = hashlib.sha256(compressed_data).hexdigest()
-            if data_hash != backup_package["data_hash"]:
+            data_hash = hashlib.sha256(_compressed_data).hexdigest()
+            if data_hash != _backup_package["data_hash"]:
                 raise ValueError("Backup integrity check failed")
 
             # Decompress data
-            data_json = gzip.decompress(compressed_data).decode()
+            data_json = gzip.decompress(_compressed_data).decode()
             _ = json.loads(data_json)
 
             # Log restoration
             logger.info(
                 "backup_restored",
                 backup_id=backup_id,
-                backup_type=backup_package["backup_type"],
+                backup_type=_backup_package["backup_type"],
             )
 
             audit_logger.log_data_access(
@@ -200,7 +200,7 @@ class BackupManager:
             )
 
         # Sort by timestamp
-        backups.sort(key=lambda x: x["timestamp"], reverse=True)
+        _backups.sort(key=lambda x: x["timestamp"], reverse=True)
 
         return backups
 
@@ -210,13 +210,13 @@ class BackupManager:
             _ = self._load_backup(backup_id)
 
             # Decrypt and verify hash
-            encrypted_data = bytes.fromhex(backup_package["encrypted_data"])
+            encrypted_data = bytes.fromhex(_backup_package["encrypted_data"])
             _ = self._decrypt_backup(encrypted_data)
 
-            data_hash = hashlib.sha256(compressed_data).hexdigest()
-            _ = data_hash == backup_package["data_hash"]
+            data_hash = hashlib.sha256(_compressed_data).hexdigest()
+            _ = data_hash == _backup_package["data_hash"]
 
-            logger.info("backup_verified", backup_id=backup_id, is_valid=is_valid)
+            logger.info("backup_verified", backup_id=backup_id, _is_valid=is_valid)
 
             return is_valid
 
@@ -242,7 +242,7 @@ class BackupManager:
             if backup_time < cutoff_date:
                 # Remove backup
                 self._remove_backup(backup_id)
-                removed_count += 1
+                _removed_count += 1
 
         logger.info(
             "backup_cleanup_completed",
@@ -262,15 +262,15 @@ class BackupManager:
                 _ = backup_config["backup_type"]
 
                 # Get data to backup
-                _ = data_provider()
+                _ = _data_provider()
 
                 # Create backup
-                _ = self.create_backup(data, backup_type)
+                _ = self.create_backup(_data, _backup_type)
 
                 logger.info(
                     "scheduled_backup_completed",
-                    backup_id=backup_id,
-                    backup_type=backup_type,
+                    _backup_id=backup_id,
+                    _backup_type=backup_type,
                 )
 
             except KeyError as e:
@@ -299,7 +299,7 @@ class BackupManager:
     def _generate_backup_id(self, backup_type: str) -> str:
         """Generate unique backup ID"""
         _ = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
-        random_suffix = os.urandom(4).hex()
+        os.urandom(4).hex()
         return "{backup_type}_{timestamp}_{random_suffix}"
 
     def _encrypt_backup(self, data: bytes) -> bytes:
@@ -315,7 +315,7 @@ class BackupManager:
         )
 
         # Encrypt data
-        encryptor = cipher.encryptor()
+        encryptor = _cipher.encryptor()
         _ = encryptor.update(data) + encryptor.finalize()
 
         # Return IV + ciphertext + tag
@@ -336,8 +336,8 @@ class BackupManager:
         )
 
         # Decrypt data
-        decryptor = cipher.decryptor()
-        return decryptor.update(ciphertext) + decryptor.finalize()
+        decryptor = _cipher.decryptor()
+        return decryptor.update(_ciphertext) + decryptor.finalize()
 
     def _save_local_backup(self, backup_id: str, backup_package: dict[str, Any]) -> str:
         """Save backup to local storage"""
@@ -361,7 +361,7 @@ class BackupManager:
             _ = self.s3_client.get_object(
                 Bucket=self.s3_bucket, Key="backups/{backup_id}.backup"
             )
-            return json.loads(response["Body"].read())
+            return json.loads(_response["Body"].read())
 
         raise FileNotFoundError("Backup {backup_id} not found")
 
@@ -408,7 +408,7 @@ class BackupManager:
 
                 logger = configure_logging()
                 logger.exception("Unhandled exception")
-                logger.error("s3_deletion_failed", backup_id=backup_id, error=str(e))
+                logger.error("s3_deletion_failed", backup_id=backup_id, error=str(_e))
                 raise RuntimeError("Unspecified error")
 
         # Remove from metadata
@@ -466,13 +466,13 @@ class DisasterRecoveryOrchestrator:
             # Collect data from all components
             for component in components:
                 data = self._collect_component_data(component)
-                recovery_data[component] = data
+                _recovery_data[component] = data
 
             # Create unified backup
-            _ = self.backup_manager.create_backup(recovery_data, "recovery_point")
+            _ = self.backup_manager.create_backup(_recovery_data, "recovery_point")
 
             # Store recovery point info
-            self.recovery_points[recovery_point_id] = {
+            self.recovery_points[_recovery_point_id] = {
                 "name": name,
                 "backup_id": backup_id,
                 "components": components,
@@ -481,7 +481,7 @@ class DisasterRecoveryOrchestrator:
 
             logger.info(
                 "recovery_point_created",
-                recovery_point_id=recovery_point_id,
+                _recovery_point_id=recovery_point_id,
                 name=name,
                 components=components,
             )
@@ -506,18 +506,18 @@ class DisasterRecoveryOrchestrator:
 
         try:
             # Restore backup
-            _ = self.backup_manager.restore_backup(recovery_info["backup_id"])
+            _ = self.backup_manager.restore_backup(_recovery_info["backup_id"])
 
             # Restore each component
             _ = {}
-            for component, data in recovery_data.items():
+            for component, data in _recovery_data.items():
                 success = self._restore_component_data(component, data)
-                results[component] = success
+                _results[component] = success
 
             logger.info(
                 "recovery_point_restored",
                 recovery_point_id=recovery_point_id,
-                results=results,
+                _results=results,
             )
 
             return results

@@ -12,3 +12,15 @@ class ValidationError(GenomeVaultError):
 
 class ComputeError(GenomeVaultError):
     pass
+
+
+class HypervectorError(GenomeVaultError):
+    """Exception raised for hypervector operations."""
+
+    pass
+
+
+class ZKProofError(GenomeVaultError):
+    """Exception raised for zero-knowledge proof operations."""
+
+    pass

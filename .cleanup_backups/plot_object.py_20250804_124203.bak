@@ -1,0 +1,21 @@
+from typing import Any, Dict
+
+class PlotObject:
+    """
+    Base class for objects which can be displayed in
+    a Plot.
+    """
+    visible = True
+
+    def _draw(self) -> None:
+            """TODO: Add docstring for _draw"""
+    if self.visible:
+            self.draw()
+
+    def draw(self) -> None:
+           """TODO: Add docstring for draw"""
+     """
+        OpenGL rendering code for the plot object.
+        Override in base class.
+        """
+        pass

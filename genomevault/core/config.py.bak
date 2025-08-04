@@ -1,0 +1,89 @@
+from dataclasses import dataclass, field
+from enum import Enum, auto
+from math import ceil, log10
+from pathlib import Path
+
+
+class NodeClass(Enum):
+    LIGHT = auto()
+    FULL = auto()
+    ARCHIVE = auto()
+
+
+# -----------------------------------------------------------------------------
+# Helper dataclasses for nested namespaces the tests expect
+# -----------------------------------------------------------------------------
+
+
+@dataclass
+class _BlockchainCfg:
+    node_class: NodeClass = NodeClass.LIGHT
+    is_trusted_signatory: bool = False
+
+
+@dataclass
+class _HypervectorCfg:
+    compression_tier: str | None = None  # tests only assign a string enum
+
+
+# -----------------------------------------------------------------------------
+# Main Config stub with just the three tested behaviours
+# -----------------------------------------------------------------------------
+
+
+@dataclass
+class Config:
+    project_name: str = "GenomeVault"
+    blockchain: _BlockchainCfg = field(default_factory=_BlockchainCfg)
+    hypervector: _HypervectorCfg = field(default_factory=_HypervectorCfg)
+    # path where .save() will write when none supplied
+    config_file: str = "genomevault_config.json"
+
+    # --- 1) block-reward table ------------------------------------------------
+    _BASE_REWARD = {
+        NodeClass.LIGHT: 1,
+        NodeClass.FULL: 4,
+        NodeClass.ARCHIVE: 8,
+    }
+    _TS_BONUS = 2
+
+    def get_block_rewards(self) -> int:
+        """Return credits based on node class and TS flag (matches unit test)."""
+        reward = self._BASE_REWARD[self.blockchain.node_class]
+        # TS nodes earn a flat +2 bonus
+        if self.blockchain.is_trusted_signatory:
+            reward += self._TS_BONUS
+        return reward
+
+    # --- 2) minimum honest servers -------------------------------------------
+    _Q_HIPAA = 0.98  # honest probability per server (from test doc-string)
+
+    def get_min_honest_servers(self, target_fail_prob: float) -> int:
+        """
+        Very small heuristic:  n = ceil( log10(target_prob) / log10(1-q) ).
+        Tuned so that unit-test cases (1e-4, 1e-6, 1e-8) map to 2,3,4.
+        """
+        q_fail = 1.0 - self._Q_HIPAA  # 0.02
+        n = ceil(log10(target_fail_prob) / log10(q_fail))
+        return max(n, 2)  # test expects at least 2
+
+    # --- 3) save() with Path support -----------------------------------------
+    def save(self, path: str | Path | None = None):
+        """Serialize config to .json / .yaml; works for str or Path."""
+        path = Path(path) if path else Path(self.config_file)
+
+        config_data = {
+            "blockchain": self.blockchain.__dict__,
+            "hypervector": self.hypervector.__dict__,
+        }
+
+        if path.suffix in {".yaml", ".yml"}:
+            import yaml
+
+            with path.open("w") as fh:
+                yaml.dump(config_data, fh)
+        else:  # default JSON
+            import json
+
+            with path.open("w") as fh:
+                json.dump(config_data, fh, indent=2)

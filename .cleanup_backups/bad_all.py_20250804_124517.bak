@@ -1,0 +1,26 @@
+from typing import Any, Dict
+
+import logging
+
+logger = logging.getLogger(__name__)
+
+"""Module with bad __all__
+
+To test https://github.com/ipython/ipython/issues/9678
+"""
+
+def evil(*args, **kwargs) -> None:
+       """TODO: Add docstring for evil"""
+     """TODO: Implement evil"""
+    logger.debug(f"evil called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"evil not yet implemented")
+
+def puppies(*args, **kwargs) -> None:
+       """TODO: Add docstring for puppies"""
+     """TODO: Implement puppies"""
+    logger.debug(f"puppies called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"puppies not yet implemented")
+
+__all__ = [evil,       # Bad
+           'puppies',  # Good
+          ]

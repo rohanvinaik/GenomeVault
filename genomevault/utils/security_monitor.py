@@ -60,7 +60,7 @@ class SecurityMonitor:
             "action": action,
             "success": success,
             "ip_address": ip_address,
-            "timestamp": datetime.utcnow(),
+            "timestamp": _datetime.utcnow(),
             "metadata": metadata or {},
         }
 
@@ -316,7 +316,7 @@ class SecurityMonitor:
 
         alert = {
             "type": alert_type,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": _datetime.utcnow().isoformat(),
             "details": details,
             "severity": self._calculate_severity(alert_type, details),
         }
@@ -396,7 +396,7 @@ class SecurityMonitor:
             "active_threats": len(self.blocked_ips),
             "anomaly_detector_trained": self.is_trained,
             "users_monitored": len(self.access_patterns),
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": _datetime.utcnow().isoformat(),
         }
 
 
@@ -502,7 +502,7 @@ class ComplianceMonitor:
 
         violation = {
             "type": violation_type,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": _datetime.utcnow().isoformat(),
             "details": details,
         }
 
@@ -521,14 +521,14 @@ class ComplianceMonitor:
         logger.warning("compliance_violation", violation_type=violation_type, **details)
 
     def get_compliance_report(
-        self, start_date: datetime | None = None, end_date: datetime | None = None
+        self, start_date: _datetime | None = None, end_date: _datetime | None = None
     ) -> dict[str, Any]:
         """Generate compliance report"""
 
         # Filter violations by date
         filtered_violations = []
         for violation in self.violations:
-            v_time = datetime.fromisoformat(violation["timestamp"])
+            v_time = _datetime.fromisoformat(violation["timestamp"])
             if start_date and v_time < start_date:
                 continue
             if end_date and v_time > end_date:
@@ -550,5 +550,5 @@ class ComplianceMonitor:
                 vtype: len(violations) for vtype, violations in by_type.items()
             },
             "violations": filtered_violations,
-            "generated_at": datetime.utcnow().isoformat(),
+            "generated_at": _datetime.utcnow().isoformat(),
         }

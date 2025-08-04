@@ -1,56 +1,31 @@
-from __future__ import annotations
+"""Core exceptions for GenomeVault."""
 
 
 class GenomeVaultError(Exception):
     """Base exception for GenomeVault."""
 
-    def __init__(self, message: str = "", *, context: dict | None = None):
-        super().__init__(message)
-        self.context = context or {}
-
-    def __str__(self) -> str:
-        base = super().__str__() or self.__class__.__name__
-        if self.context:
-            return f"{self.__class__.__name__}: {base} | context={self.context}"
-        return f"{self.__class__.__name__}: {base}"
+    pass
 
 
-class ConfigurationError(GenomeVaultError): ...
+class HypervectorError(GenomeVaultError):
+    """Exception raised for hypervector operations."""
+
+    pass
 
 
-class ValidationError(GenomeVaultError): ...
+class ZKProofError(GenomeVaultError):
+    """Exception raised for zero-knowledge proof operations."""
+
+    pass
 
 
-class ProjectionError(GenomeVaultError): ...
+class ValidationError(GenomeVaultError):
+    """Exception raised for validation failures."""
+
+    pass
 
 
-class EncodingError(GenomeVaultError): ...
+class ConfigurationError(GenomeVaultError):
+    """Exception raised for configuration issues."""
 
-
-class ZKProofError(GenomeVaultError): ...
-
-
-class PIRProtocolError(GenomeVaultError): ...
-
-
-class LedgerError(GenomeVaultError): ...
-
-
-class FederatedError(GenomeVaultError): ...
-
-
-class APISchemaError(GenomeVaultError): ...
-
-
-__all__ = [
-    "APISchemaError",
-    "ConfigurationError",
-    "EncodingError",
-    "FederatedError",
-    "GenomeVaultError",
-    "LedgerError",
-    "PIRProtocolError",
-    "ProjectionError",
-    "ValidationError",
-    "ZKProofError",
-]
+    pass

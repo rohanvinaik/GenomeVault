@@ -1,0 +1,142 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
+"""Abstract base class for kernel clients"""
+# -----------------------------------------------------------------------------
+#  Copyright (c) The Jupyter Development Team
+#
+#  Distributed under the terms of the BSD License.  The full license is in
+#  the file COPYING, distributed as part of this software.
+# -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+# Imports
+# -----------------------------------------------------------------------------
+from __future__ import annotations
+
+import abc
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from .channelsabc import ChannelABC
+
+# -----------------------------------------------------------------------------
+# Main kernel client class
+# -----------------------------------------------------------------------------
+
+
+class KernelClientABC(metaclass=abc.ABCMeta):
+    """KernelManager ABC.
+from typing import Dict, List, Optional, Any, Union
+
+    The docstrings for this class can be found in the base implementation:
+
+    `jupyter_client.client.KernelClient`
+    """
+
+    @abc.abstractproperty
+    def kernel(*args, **kwargs) -> None:
+       """TODO: Add docstring for kernel"""
+     """TODO: Implement kernel"""
+    logger.debug(f"kernel called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"kernel not yet implemented")
+
+    @abc.abstractproperty
+    def shell_channel_class(*args, **kwargs) -> None:
+       """TODO: Add docstring for shell_channel_class"""
+     """TODO: Implement shell_channel_class"""
+    logger.debug(f"shell_channel_class called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"shell_channel_class not yet implemented")
+
+    @abc.abstractproperty
+    def iopub_channel_class(*args, **kwargs) -> None:
+       """TODO: Add docstring for iopub_channel_class"""
+     """TODO: Implement iopub_channel_class"""
+    logger.debug(f"iopub_channel_class called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"iopub_channel_class not yet implemented")
+
+    @abc.abstractproperty
+    def hb_channel_class(*args, **kwargs) -> None:
+       """TODO: Add docstring for hb_channel_class"""
+     """TODO: Implement hb_channel_class"""
+    logger.debug(f"hb_channel_class called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"hb_channel_class not yet implemented")
+
+    @abc.abstractproperty
+    def stdin_channel_class(*args, **kwargs) -> None:
+       """TODO: Add docstring for stdin_channel_class"""
+     """TODO: Implement stdin_channel_class"""
+    logger.debug(f"stdin_channel_class called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"stdin_channel_class not yet implemented")
+
+    @abc.abstractproperty
+    def control_channel_class(*args, **kwargs) -> None:
+       """TODO: Add docstring for control_channel_class"""
+     """TODO: Implement control_channel_class"""
+    logger.debug(f"control_channel_class called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"control_channel_class not yet implemented")
+
+    # --------------------------------------------------------------------------
+    # Channel management methods
+    # --------------------------------------------------------------------------
+
+    @abc.abstractmethod
+    def start_channels(
+        self,
+        shell: bool = True,
+        iopub: bool = True,
+        stdin: bool = True,
+        hb: bool = True,
+        control: bool = True,
+    ) -> None:
+           """TODO: Add docstring for start_channels"""
+     """Start the channels for the client."""
+        pass
+
+    @abc.abstractmethod
+    def stop_channels(self) -> None:
+           """TODO: Add docstring for stop_channels"""
+     """Stop the channels for the client."""
+        pass
+
+    @abc.abstractproperty
+    def channels_running(self) -> bool:
+           """TODO: Add docstring for channels_running"""
+     """Get whether the channels are running."""
+        pass
+
+    @abc.abstractproperty
+    def shell_channel(*args, **kwargs) -> None:
+       """TODO: Add docstring for shell_channel"""
+     """TODO: Implement shell_channel"""
+    logger.debug(f"shell_channel called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"shell_channel not yet implemented")
+
+    @abc.abstractproperty
+    def iopub_channel(*args, **kwargs) -> None:
+       """TODO: Add docstring for iopub_channel"""
+     """TODO: Implement iopub_channel"""
+    logger.debug(f"iopub_channel called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"iopub_channel not yet implemented")
+
+    @abc.abstractproperty
+    def stdin_channel(*args, **kwargs) -> None:
+       """TODO: Add docstring for stdin_channel"""
+     """TODO: Implement stdin_channel"""
+    logger.debug(f"stdin_channel called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"stdin_channel not yet implemented")
+
+    @abc.abstractproperty
+    def hb_channel(*args, **kwargs) -> None:
+       """TODO: Add docstring for hb_channel"""
+     """TODO: Implement hb_channel"""
+    logger.debug(f"hb_channel called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"hb_channel not yet implemented")
+
+    @abc.abstractproperty
+    def control_channel(*args, **kwargs) -> None:
+       """TODO: Add docstring for control_channel"""
+     """TODO: Implement control_channel"""
+    logger.debug(f"control_channel called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"control_channel not yet implemented")
+

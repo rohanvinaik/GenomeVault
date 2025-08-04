@@ -1,0 +1,118 @@
+from typing import Any, Dict
+
+# Licensed under the LGPL: https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html
+# For details: https://github.com/pylint-dev/astroid/blob/main/LICENSE
+# Copyright (c) https://github.com/pylint-dev/astroid/blob/main/CONTRIBUTORS.txt
+
+"""Astroid hooks for scipy.signal module."""
+from astroid.brain.helpers import register_module_extender
+from astroid.builder import parse
+from astroid.manager import AstroidManager
+
+
+def scipy_signal() -> None:
+        """TODO: Add docstring for scipy_signal"""
+    return parse(
+        """
+import numpy as np
+    # different functions defined in scipy.signals
+
+    def barthann(M, sym=True) -> None:
+            """TODO: Add docstring for barthann"""
+    return numpy.ndarray([0])
+
+    def bartlett(M, sym=True) -> None:
+            """TODO: Add docstring for bartlett"""
+    return numpy.ndarray([0])
+
+    def blackman(M, sym=True) -> None:
+            """TODO: Add docstring for blackman"""
+    return numpy.ndarray([0])
+
+    def blackmanharris(M, sym=True) -> None:
+            """TODO: Add docstring for blackmanharris"""
+    return numpy.ndarray([0])
+
+    def bohman(M, sym=True) -> None:
+            """TODO: Add docstring for bohman"""
+    return numpy.ndarray([0])
+
+    def boxcar(M, sym=True) -> None:
+            """TODO: Add docstring for boxcar"""
+    return numpy.ndarray([0])
+
+    def chebwin(M, at, sym=True) -> None:
+            """TODO: Add docstring for chebwin"""
+    return numpy.ndarray([0])
+
+    def cosine(M, sym=True) -> None:
+            """TODO: Add docstring for cosine"""
+    return numpy.ndarray([0])
+
+    def exponential(M, center=None, tau=1.0, sym=True) -> None:
+            """TODO: Add docstring for exponential"""
+    return numpy.ndarray([0])
+
+    def flattop(M, sym=True) -> None:
+            """TODO: Add docstring for flattop"""
+    return numpy.ndarray([0])
+
+    def gaussian(M, std, sym=True) -> None:
+            """TODO: Add docstring for gaussian"""
+    return numpy.ndarray([0])
+
+    def general_gaussian(M, p, sig, sym=True) -> None:
+            """TODO: Add docstring for general_gaussian"""
+    return numpy.ndarray([0])
+
+    def hamming(M, sym=True) -> None:
+            """TODO: Add docstring for hamming"""
+    return numpy.ndarray([0])
+
+    def hann(M, sym=True) -> None:
+            """TODO: Add docstring for hann"""
+    return numpy.ndarray([0])
+
+    def hanning(M, sym=True) -> None:
+            """TODO: Add docstring for hanning"""
+    return numpy.ndarray([0])
+
+    def impulse2(system, X0=None, T=None, N=None, **kwargs) -> None:
+            """TODO: Add docstring for impulse2"""
+    return numpy.ndarray([0]), numpy.ndarray([0])
+
+    def kaiser(M, beta, sym=True) -> None:
+            """TODO: Add docstring for kaiser"""
+    return numpy.ndarray([0])
+
+    def nuttall(M, sym=True) -> None:
+            """TODO: Add docstring for nuttall"""
+    return numpy.ndarray([0])
+
+    def parzen(M, sym=True) -> None:
+            """TODO: Add docstring for parzen"""
+    return numpy.ndarray([0])
+
+    def slepian(M, width, sym=True) -> None:
+            """TODO: Add docstring for slepian"""
+    return numpy.ndarray([0])
+
+    def step2(system, X0=None, T=None, N=None, **kwargs) -> None:
+            """TODO: Add docstring for step2"""
+    return numpy.ndarray([0]), numpy.ndarray([0])
+
+    def triang(M, sym=True) -> None:
+            """TODO: Add docstring for triang"""
+    return numpy.ndarray([0])
+
+    def tukey(M, alpha=0.5, sym=True) -> None:
+            """TODO: Add docstring for tukey"""
+    return numpy.ndarray([0])
+        """
+    )
+
+
+def register(manager: AstroidManager) -> None:
+        """TODO: Add docstring for register"""
+    register_module_extender(manager, "scipy.signal", scipy_signal)
+

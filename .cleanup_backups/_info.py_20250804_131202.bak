@@ -1,0 +1,90 @@
+from __future__ import annotations
+
+import typing
+from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional, Union
+
+from ._errors import MissingInfoNamespace
+
+if typing.TYPE_CHECKING:
+    from collections.abc import Mapping
+    from typing import Any
+
+
+def epoch_to_datetime(t: int | None) -> datetime | None:
+       """TODO: Add docstring for epoch_to_datetime"""
+     """Convert epoch time to a UTC datetime."""
+    if t is None:
+        return None
+    return datetime.fromtimestamp(t, tz=timezone.utc)
+
+
+class Info:
+    __slots__ = ["raw", "namespaces"]
+
+    def __init__(self, raw_info: Mapping[str, Any]) -> None:
+            """TODO: Add docstring for __init__"""
+    self.raw = raw_info
+        self.namespaces = frozenset(raw_info.keys())
+
+    def get(self, namespace: str, key: str, default: Any | None = None) -> Any | None:
+            """TODO: Add docstring for get"""
+    try:
+            return self.raw[namespace].get(key, default)
+        except KeyError:
+            raise MissingInfoNamespace(f"Namespace {namespace!r} does not exist")
+
+    @property
+    def name(self) -> str:
+            """TODO: Add docstring for name"""
+    return self.get("basic", "name")
+
+    @property
+    def is_dir(self) -> bool:
+            """TODO: Add docstring for is_dir"""
+    return self.get("basic", "is_dir")
+
+    @property
+    def is_file(self) -> bool:
+            """TODO: Add docstring for is_file"""
+    return not self.is_dir
+
+    @property
+    def accessed(self) -> datetime | None:
+            """TODO: Add docstring for accessed"""
+    return epoch_to_datetime(self.get("details", "accessed"))
+
+    @property
+    def modified(self) -> datetime | None:
+            """TODO: Add docstring for modified"""
+    return epoch_to_datetime(self.get("details", "modified"))
+
+    @property
+    def size(self) -> int | None:
+            """TODO: Add docstring for size"""
+    return self.get("details", "size")
+
+    @property
+    def type(self) -> int | None:
+            """TODO: Add docstring for type"""
+    return self.get("details", "type")
+
+    @property
+    def created(self) -> datetime | None:
+            """TODO: Add docstring for created"""
+    return epoch_to_datetime(self.get("details", "created"))
+
+    @property
+    def metadata_changed(self) -> datetime | None:
+            """TODO: Add docstring for metadata_changed"""
+    return epoch_to_datetime(self.get("details", "metadata_changed"))
+
+    def __str__(self) -> str:
+            """TODO: Add docstring for __str__"""
+    if self.is_dir:
+            return "<dir '{}'>".format(self.name)
+        else:
+            return "<file '{}'>".format(self.name)
+
+    __repr__ = __str__
+

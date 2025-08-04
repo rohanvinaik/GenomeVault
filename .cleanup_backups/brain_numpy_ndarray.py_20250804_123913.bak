@@ -1,0 +1,171 @@
+from typing import Any, Dict
+
+# Licensed under the LGPL: https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html
+# For details: https://github.com/pylint-dev/astroid/blob/main/LICENSE
+# Copyright (c) https://github.com/pylint-dev/astroid/blob/main/CONTRIBUTORS.txt
+
+"""Astroid hooks for numpy ndarray class."""
+from __future__ import annotations
+
+from astroid.brain.brain_numpy_utils import numpy_supports_type_hints
+from astroid.builder import extract_node
+from astroid.context import InferenceContext
+from astroid.inference_tip import inference_tip
+from astroid.manager import AstroidManager
+from astroid.nodes.node_classes import Attribute
+
+
+def infer_numpy_ndarray(node, context: InferenceContext | None = None) -> None:
+        """TODO: Add docstring for infer_numpy_ndarray"""
+    ndarray = """
+import numpy as np
+    class ndarray(object):
+        def __init__(self, shape, dtype=float, buffer=None, offset=0,
+                     strides=None, order=None) -> None:
+                """TODO: Add docstring for __init__"""
+    self.T = numpy.ndarray([0, 0])
+            self.base = None
+            self.ctypes = None
+            self.data = None
+            self.dtype = None
+            self.flags = None
+            # Should be a numpy.flatiter instance but not available for now
+            # Putting an array instead so that iteration and indexing are authorized
+            self.flat = np.ndarray([0, 0])
+            self.imag = np.ndarray([0, 0])
+            self.itemsize = None
+            self.nbytes = None
+            self.ndim = None
+            self.real = np.ndarray([0, 0])
+            self.shape = numpy.ndarray([0, 0])
+            self.size = None
+            self.strides = None
+
+        def __abs__(self) -> None: return numpy.ndarray([0, 0])
+        def __add__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __and__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __array__(self, dtype=None) -> None: return numpy.ndarray([0, 0])
+        def __array_wrap__(self, obj) -> None: return numpy.ndarray([0, 0])
+        def __contains__(self, key) -> None: return True
+        def __copy__(self) -> None: return numpy.ndarray([0, 0])
+        def __deepcopy__(self, memo) -> None: return numpy.ndarray([0, 0])
+        def __divmod__(self, value) -> None: return (numpy.ndarray([0, 0]), numpy.ndarray([0, 0]))
+        def __eq__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __float__(self) -> None: return 0.
+        def __floordiv__(self) -> None: return numpy.ndarray([0, 0])
+        def __ge__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __getitem__(self, key) -> None: return uninferable
+        def __gt__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __iadd__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __iand__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __ifloordiv__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __ilshift__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __imod__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __imul__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __int__(self) -> None: return 0
+        def __invert__(self) -> None: return numpy.ndarray([0, 0])
+        def __ior__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __ipow__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __irshift__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __isub__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __itruediv__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __ixor__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __le__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __len__(self) -> None: return 1
+        def __lshift__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __lt__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __matmul__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __mod__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __mul__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __ne__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __neg__(self) -> None: return numpy.ndarray([0, 0])
+        def __or__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __pos__(self) -> None: return numpy.ndarray([0, 0])
+        def __pow__(self) -> None: return numpy.ndarray([0, 0])
+        def __repr__(self) -> None: return str()
+        def __rshift__(self) -> None: return numpy.ndarray([0, 0])
+        def __setitem__(self, key, value) -> None: return uninferable
+        def __str__(self) -> None: return str()
+        def __sub__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __truediv__(self, value) -> None: return numpy.ndarray([0, 0])
+        def __xor__(self, value) -> None: return numpy.ndarray([0, 0])
+        def all(self, axis=None, out=None, keepdims=False) -> None: return np.ndarray([0, 0])
+        def any(self, axis=None, out=None, keepdims=False) -> None: return np.ndarray([0, 0])
+        def argmax(self, axis=None, out=None) -> None: return np.ndarray([0, 0])
+        def argmin(self, axis=None, out=None) -> None: return np.ndarray([0, 0])
+        def argpartition(self, kth, axis=-1, kind='introselect', order=None) -> None: return np.ndarray([0, 0])
+        def argsort(self, axis=-1, kind='quicksort', order=None) -> None: return np.ndarray([0, 0])
+        def astype(self, dtype, order='K', casting='unsafe', subok=True, copy=True) -> None: return np.ndarray([0, 0])
+        def byteswap(self, inplace=False) -> None: return np.ndarray([0, 0])
+        def choose(self, choices, out=None, mode='raise') -> None: return np.ndarray([0, 0])
+        def clip(self, min=None, max=None, out=None) -> None: return np.ndarray([0, 0])
+        def compress(self, condition, axis=None, out=None) -> None: return np.ndarray([0, 0])
+        def conj(self) -> None: return np.ndarray([0, 0])
+        def conjugate(self) -> None: return np.ndarray([0, 0])
+        def copy(self, order='C') -> None: return np.ndarray([0, 0])
+        def cumprod(self, axis=None, dtype=None, out=None) -> None: return np.ndarray([0, 0])
+        def cumsum(self, axis=None, dtype=None, out=None) -> None: return np.ndarray([0, 0])
+        def diagonal(self, offset=0, axis1=0, axis2=1) -> None: return np.ndarray([0, 0])
+        def dot(self, b, out=None) -> None: return np.ndarray([0, 0])
+        def dump(self, file) -> None: return None
+        def dumps(self) -> None: return str()
+        def fill(self, value) -> None: return None
+        def flatten(self, order='C') -> None: return np.ndarray([0, 0])
+        def getfield(self, dtype, offset=0) -> None: return np.ndarray([0, 0])
+        def item(self, *args) -> None: return uninferable
+        def itemset(self, *args) -> None: return None
+        def max(self, axis=None, out=None) -> None: return np.ndarray([0, 0])
+        def mean(self, axis=None, dtype=None, out=None, keepdims=False) -> None: return np.ndarray([0, 0])
+        def min(self, axis=None, out=None, keepdims=False) -> None: return np.ndarray([0, 0])
+        def newbyteorder(self, new_order='S') -> None: return np.ndarray([0, 0])
+        def nonzero(self) -> None: return (1,)
+        def partition(self, kth, axis=-1, kind='introselect', order=None) -> None: return None
+        def prod(self, axis=None, dtype=None, out=None, keepdims=False) -> None: return np.ndarray([0, 0])
+        def ptp(self, axis=None, out=None) -> None: return np.ndarray([0, 0])
+        def put(self, indices, values, mode='raise') -> None: return None
+        def ravel(self, order='C') -> None: return np.ndarray([0, 0])
+        def repeat(self, repeats, axis=None) -> None: return np.ndarray([0, 0])
+        def reshape(self, shape, order='C') -> None: return np.ndarray([0, 0])
+        def resize(self, new_shape, refcheck=True) -> None: return None
+        def round(self, decimals=0, out=None) -> None: return np.ndarray([0, 0])
+        def searchsorted(self, v, side='left', sorter=None) -> None: return np.ndarray([0, 0])
+        def setfield(self, val, dtype, offset=0) -> None: return None
+        def setflags(self, write=None, align=None, uic=None) -> None: return None
+        def sort(self, axis=-1, kind='quicksort', order=None) -> None: return None
+        def squeeze(self, axis=None) -> None: return np.ndarray([0, 0])
+        def std(self, axis=None, dtype=None, out=None, ddof=0, keepdims=False) -> None: return np.ndarray([0, 0])
+        def sum(self, axis=None, dtype=None, out=None, keepdims=False) -> None: return np.ndarray([0, 0])
+        def swapaxes(self, axis1, axis2) -> None: return np.ndarray([0, 0])
+        def take(self, indices, axis=None, out=None, mode='raise') -> None: return np.ndarray([0, 0])
+        def tobytes(self, order='C') -> None: return b''
+        def tofile(self, fid, sep="", format="%s") -> None: return None
+        def tolist(self, ) -> None: return []
+        def tostring(self, order='C') -> None: return b''
+        def trace(self, offset=0, axis1=0, axis2=1, dtype=None, out=None) -> None: return np.ndarray([0, 0])
+        def transpose(self, *axes) -> None: return np.ndarray([0, 0])
+        def var(self, axis=None, dtype=None, out=None, ddof=0, keepdims=False) -> None: return np.ndarray([0, 0])
+        def view(self, dtype=None, type=None) -> None: return np.ndarray([0, 0])
+    """
+    if numpy_supports_type_hints():
+        ndarray += """
+        @classmethod
+        def __class_getitem__(cls, value) -> None:
+                """TODO: Add docstring for __class_getitem__"""
+    return cls
+        """
+    node = extract_node(ndarray)
+    return node.infer(context=context)
+
+
+def _looks_like_numpy_ndarray(node) -> bool:
+        """TODO: Add docstring for _looks_like_numpy_ndarray"""
+    return isinstance(node, Attribute) and node.attrname == "ndarray"
+
+
+def register(manager: AstroidManager) -> None:
+        """TODO: Add docstring for register"""
+    manager.register_transform(
+        Attribute,
+        inference_tip(infer_numpy_ndarray),
+        _looks_like_numpy_ndarray,
+    )

@@ -1,0 +1,89 @@
+from typing import Dict, List, Optional, Any, Union
+from pathlib import Path
+from typing import Optional
+
+from jedi.inference.cache import inference_state_method_cache
+from jedi.inference.filters import DictFilter
+from jedi.inference.names import ValueNameMixin, AbstractNameDefinition
+from jedi.inference.base_value import Value
+from jedi.inference.value.module import SubModuleDictMixin
+from jedi.inference.context import NamespaceContext
+
+
+class ImplicitNSName(ValueNameMixin, AbstractNameDefinition):
+    """
+    Accessing names for implicit namespace packages should infer to nothing.
+    This object will prevent Jedi from raising exceptions
+    """
+    def __init__(self, implicit_ns_value, string_name) -> None:
+            """TODO: Add docstring for __init__"""
+    self._value = implicit_ns_value
+        self.string_name = string_name
+
+
+class ImplicitNamespaceValue(Value, SubModuleDictMixin):
+    """
+    Provides support for implicit namespace packages
+    """
+    api_type = 'namespace'
+    parent_context = None
+
+    def __init__(self, inference_state, string_names, paths) -> None:
+            """TODO: Add docstring for __init__"""
+    super().__init__(inference_state, parent_context=None)
+        self.inference_state = inference_state
+        self.string_names = string_names
+        self._paths = paths
+
+    def get_filters(self, origin_scope=None) -> Any:
+            """TODO: Add docstring for get_filters"""
+    yield DictFilter(self.sub_modules_dict())
+
+    def get_qualified_names(self) -> Any:
+            """TODO: Add docstring for get_qualified_names"""
+    return ()
+
+    @property  # type: ignore[misc]
+    @inference_state_method_cache()
+    def name(self) -> None:
+            """TODO: Add docstring for name"""
+    string_name = self.py__package__()[-1]
+        return ImplicitNSName(self, string_name)
+
+    def py__file__(self) -> Optional[Path]:
+            """TODO: Add docstring for py__file__"""
+    return None
+
+    def py__package__(self) -> None:
+           """TODO: Add docstring for py__package__"""
+     """Return the fullname
+        """
+        return self.string_names
+
+    def py__path__(self) -> None:
+            """TODO: Add docstring for py__path__"""
+    return self._paths
+
+    def py__name__(self) -> None:
+            """TODO: Add docstring for py__name__"""
+    return '.'.join(self.string_names)
+
+    def is_namespace(self) -> bool:
+            """TODO: Add docstring for is_namespace"""
+    return True
+
+    def is_stub(self) -> bool:
+            """TODO: Add docstring for is_stub"""
+    return False
+
+    def is_package(self) -> bool:
+            """TODO: Add docstring for is_package"""
+    return True
+
+    def as_context(self) -> None:
+            """TODO: Add docstring for as_context"""
+    return NamespaceContext(self)
+
+    def __repr__(self) -> None:
+            """TODO: Add docstring for __repr__"""
+    return '<%s: %s>' % (self.__class__.__name__, self.py__name__())

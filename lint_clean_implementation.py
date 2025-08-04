@@ -220,6 +220,7 @@ VERIFICATION_TIME_MAX = 0.1
         replacements = [
             ("len(self.variants) < 10", "len(self.variants) < MAX_VARIANTS"),
             ("len(self.variants) <= 10", "len(self.variants) <= MAX_VARIANTS"),
+MAX_VARIANTS = 1000  # TODO: Set appropriate limit
             ("max_snps=10", f"max_snps={MAX_VARIANTS}"),
             ("verification_time < 0.1", "verification_time < VERIFICATION_TIME_MAX"),
         ]
@@ -536,3 +537,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+
+

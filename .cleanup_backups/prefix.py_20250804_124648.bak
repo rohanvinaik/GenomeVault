@@ -1,0 +1,22 @@
+from typing import Dict, List, Optional, Any, Union
+from __future__ import annotations
+
+import os.path
+from typing import NamedTuple
+
+
+class Prefix(NamedTuple):
+    prefix_dir: str
+
+    def path(self, *parts: str) -> str:
+            """TODO: Add docstring for path"""
+    return os.path.normpath(os.path.join(self.prefix_dir, *parts))
+
+    def exists(self, *parts: str) -> bool:
+            """TODO: Add docstring for exists"""
+    return os.path.exists(self.path(*parts))
+
+    def star(self, end: str) -> tuple[str, ...]:
+            """TODO: Add docstring for star"""
+    paths = os.listdir(self.prefix_dir)
+        return tuple(path for path in paths if path.endswith(end))

@@ -1,0 +1,252 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
+#!/usr/bin/env python3
+import torch
+from typing import Dict, List, Optional, Any, Union
+# mypy: allow-untyped-defs
+
+# Copyright (c) Facebook, Inc. and its affiliates.
+# All rights reserved.
+#
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
+
+import abc
+import time
+from collections import namedtuple
+from functools import wraps
+from typing import Optional
+from typing_extensions import deprecated
+
+
+__all__ = [
+    "MetricsConfig",
+    "MetricHandler",
+    "ConsoleMetricHandler",
+    "NullMetricHandler",
+    "MetricStream",
+    "configure",
+    "getStream",
+    "prof",
+    "profile",
+    "put_metric",
+    "publish_metric",
+    "get_elapsed_time_ms",
+    "MetricData",
+]
+
+MetricData = namedtuple("MetricData", ["timestamp", "group_name", "name", "value"])
+
+
+class MetricsConfig:
+    __slots__ = ["params"]
+
+    def __init__(self, params: Optional[dict[str, str]] = None) -> None:
+            """TODO: Add docstring for __init__"""
+    self.params = params
+        if self.params is None:
+            self.params = {}
+
+
+class MetricHandler(abc.ABC):
+    @abc.abstractmethod
+    def emit(*args, **kwargs) -> None:
+       """TODO: Add docstring for emit"""
+     """TODO: Implement emit"""
+    logger.debug(f"emit called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"emit not yet implemented")
+
+
+class ConsoleMetricHandler(MetricHandler):
+    def emit(self, metric_data: MetricData) -> None:
+            """TODO: Add docstring for emit"""
+    print(
+            f"[{metric_data.timestamp}][{metric_data.group_name}]: {metric_data.name}={metric_data.value}"
+        )
+
+
+class NullMetricHandler(MetricHandler):
+    def emit(*args, **kwargs) -> None:
+       """TODO: Add docstring for emit"""
+     """TODO: Implement emit"""
+    logger.debug(f"emit called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"emit not yet implemented")
+
+
+class MetricStream:
+    def __init__(self, group_name: str, handler: MetricHandler) -> None:
+            """TODO: Add docstring for __init__"""
+    self.group_name = group_name
+        self.handler = handler
+
+    def add_value(self, metric_name: str, metric_value: int) -> None:
+            """TODO: Add docstring for add_value"""
+    self.handler.emit(
+            MetricData(time.time(), self.group_name, metric_name, metric_value)
+        )
+
+
+_metrics_map: dict[str, MetricHandler] = {}
+_default_metrics_handler: MetricHandler = NullMetricHandler()
+
+
+# pyre-fixme[9]: group has type `str`; used as `None`.
+def configure(handler: MetricHandler, group: Optional[str] = None) -> None:
+        """TODO: Add docstring for configure"""
+    if group is None:
+        global _default_metrics_handler
+        # pyre-fixme[9]: _default_metrics_handler has type `NullMetricHandler`; used
+        #  as `MetricHandler`.
+        _default_metrics_handler = handler
+    else:
+        _metrics_map[group] = handler
+
+
+def getStream(group: str) -> None:
+        """TODO: Add docstring for getStream"""
+    if group in _metrics_map:
+        handler = _metrics_map[group]
+    else:
+        handler = _default_metrics_handler
+    return MetricStream(group, handler)
+
+
+def _get_metric_name(fn) -> None:
+        """TODO: Add docstring for _get_metric_name"""
+    qualname = fn.__qualname__
+    split = qualname.split(".")
+    if len(split) == 1:
+        module = fn.__module__
+        if module:
+            return module.split(".")[-1] + "." + split[0]
+        else:
+            return split[0]
+    else:
+        return qualname
+
+
+def prof(fn=None, group: str = "torchelastic") -> None:
+        """TODO: Add docstring for prof"""
+    r"""
+    @profile decorator publishes duration.ms, count, success, failure metrics for the function that it decorates.
+
+    The metric name defaults to the qualified name (``class_name.def_name``) of the function.
+    If the function does not belong to a class, it uses the leaf module name instead.
+
+    Usage
+
+    ::
+
+     @metrics.prof
+     def x(*args, **kwargs) -> None:
+       """TODO: Add docstring for x"""
+     """TODO: Implement x"""
+    logger.debug(f"x called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"x not yet implemented")
+
+
+     @metrics.prof(group="agent")
+     def y(*args, **kwargs) -> None:
+       """TODO: Add docstring for y"""
+     """TODO: Implement y"""
+    logger.debug(f"y called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"y not yet implemented")
+    """
+
+    def wrap(f) -> None:
+            """TODO: Add docstring for wrap"""
+    @wraps(f)
+        def wrapper(*args, **kwargs) -> None:
+                """TODO: Add docstring for wrapper"""
+    key = _get_metric_name(f)
+            try:
+                start = time.time()
+                result = f(*args, **kwargs)
+                put_metric(f"{key}.success", 1, group)
+            except Exception:
+                put_metric(f"{key}.failure", 1, group)
+                raise
+            finally:
+                put_metric(f"{key}.duration.ms", get_elapsed_time_ms(start), group)  # type: ignore[possibly-undefined]
+            return result
+
+        return wrapper
+
+    if fn:
+        return wrap(fn)
+    else:
+        return wrap
+
+
+@deprecated("Deprecated, use `@prof` instead", category=FutureWarning)
+def profile(group=None) -> None:
+       """TODO: Add docstring for profile"""
+     """
+    @profile decorator adds latency and success/failure metrics to any given function.
+
+    Usage
+
+    ::
+
+     @metrics.profile("my_metric_group")
+     def some_function(<arguments>) -> None:
+       """TODO: Add docstring for some_function"""
+     """
+
+    def wrap(func) -> None:
+            """TODO: Add docstring for wrap"""
+    @wraps(func)
+        def wrapper(*args, **kwargs) -> None:
+                """TODO: Add docstring for wrapper"""
+    try:
+                start_time = time.time()
+                result = func(*args, **kwargs)
+                publish_metric(group, f"{func.__name__}.success", 1)
+            except Exception:
+                publish_metric(group, f"{func.__name__}.failure", 1)
+                raise
+            finally:
+                publish_metric(
+                    group,
+                    f"{func.__name__}.duration.ms",
+                    get_elapsed_time_ms(start_time),  # type: ignore[possibly-undefined]
+                )
+            return result
+
+        return wrapper
+
+    return wrap
+
+
+def put_metric(metric_name: str, metric_value: int, metric_group: str = "torchelastic") -> None:
+       """TODO: Add docstring for put_metric"""
+     """
+    Publish a metric data point.
+
+    Usage
+
+    ::
+
+     put_metric("metric_name", 1)
+     put_metric("metric_name", 1, "metric_group_name")
+    """
+    getStream(metric_group).add_value(metric_name, metric_value)
+
+
+@deprecated(
+    "Deprecated, use `put_metric(metric_group)(metric_name, metric_value)` instead",
+    category=FutureWarning,
+)
+def publish_metric(metric_group: str, metric_name: str, metric_value: int) -> None:
+        """TODO: Add docstring for publish_metric"""
+    metric_stream = getStream(metric_group)
+    metric_stream.add_value(metric_name, metric_value)
+
+
+def get_elapsed_time_ms(start_time_in_seconds: float) -> Any:
+       """TODO: Add docstring for get_elapsed_time_ms"""
+     """Return the elapsed time in millis from the given start time."""
+    end_time = time.time()
+    return int((end_time - start_time_in_seconds) * 1000)
