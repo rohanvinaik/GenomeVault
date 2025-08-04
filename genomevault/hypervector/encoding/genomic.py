@@ -386,7 +386,7 @@ class GenomicEncoder:
 
         elif level == 2:
             # Create 1kb tiles on demand
-            tile_size = 1000
+            # tile_size = 1000
             #             tile_start = start // tile_size
             #             tile_end = end // tile_size
 

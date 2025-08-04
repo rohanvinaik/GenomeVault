@@ -77,7 +77,7 @@ class ModelEvolutionVisualizer:
         colors = plt.cm.viridis(np.linspace(0, 1, len(labels)))
 
         # T-SNE plot
-        scatter1 = ax1.scatter(
+        ax1.scatter(
             embeddings_tsne[:, 0],
             embeddings_tsne[:, 1],
             c=colors,
@@ -114,7 +114,7 @@ class ModelEvolutionVisualizer:
         ax1.grid(True, alpha=0.3)
 
         # UMAP plot
-        scatter2 = ax2.scatter(
+        ax2.scatter(
             embeddings_umap[:, 0],
             embeddings_umap[:, 1],
             c=colors,
@@ -427,7 +427,7 @@ class ModelEvolutionVisualizer:
 
         for idx, (start, end) in enumerate(phases):
             phase_embeddings = embeddings[start:end]
-            phase_labels = labels[start:end]
+            # phase_labels = labels[start:end]  # Keep for potential future use
 
             # Plot phase points
             plt.scatter(
@@ -482,7 +482,7 @@ def create_semantic_debugging_report(
         Dictionary with analysis results
     """
     # Create figure with subplots
-    fig = plt.figure(figsize=(20, 12))
+    plt.figure(figsize=(20, 12))
 
     # 1. Projection visualization
     ax1 = plt.subplot(2, 3, 1)
