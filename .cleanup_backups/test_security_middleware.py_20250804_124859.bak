@@ -1,0 +1,29 @@
+from fastapi.testclient import TestClient
+
+from genomevault.api.app import app
+from genomevault.security.headers import SECURITY_HEADERS
+from genomevault.security.rate_limit import RateLimitMiddleware
+
+
+def test_default_security_headers_present():
+    client = TestClient(app)
+    r = client.get("/health")
+    assert r.status_code == 200
+    for k, v in SECURITY_HEADERS.items():
+        assert r.headers.get(k) == v
+
+
+def test_rate_limit_middleware_allows_burst_then_limits(monkeypatch):
+    # Install a low-rate limiter on the fly for test isolation
+    app.add_middleware(RateLimitMiddleware, rate=5.0, burst=3)
+    client = TestClient(app)
+    ok = 0
+    denied = 0
+    for _ in range(6):
+        r = client.get("/health")
+        if r.status_code == 200:
+            ok += 1
+        elif r.status_code == 429:
+            denied += 1
+    assert ok >= 3 and denied >= 1
+

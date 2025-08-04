@@ -400,7 +400,7 @@ def benchmark_recursive_aggregation(max_proofs: int = 128) -> dict[str, Any]:
 
         # Time verification
         start_time = time.time()
-        valid = aggregator.verify_aggregated_proof(aggregated)
+        aggregator.verify_aggregated_proof(aggregated)
         verification_time = time.time() - start_time
 
         # Record results
@@ -510,7 +510,7 @@ def main():
     logger.info("  Public aggregate: %saggregated.public_aggregate")
 
     # Verify
-    valid = aggregator.verify_aggregated_proof(aggregated)
+    aggregator.verify_aggregated_proof(aggregated)
     logger.info("  Verification: %s'VALID' if valid else 'INVALID'")
 
     # Run benchmarks

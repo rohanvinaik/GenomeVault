@@ -118,8 +118,8 @@ class PIRQueryBuilder:
         start_time = time.time()
 
         # Extract parameters
-        chromosome = query.parameters["chromosome"]
-        position = query.parameters["position"]
+        query.parameters["chromosome"]
+        query.parameters["position"]
         ref_allele = query.parameters.get("ref_allele", "")
         alt_allele = query.parameters.get("alt_allele", "")
 
@@ -167,7 +167,7 @@ class PIRQueryBuilder:
         start_time = time.time()
 
         # Extract parameters
-        chromosome = query.parameters["chromosome"]
+        query.parameters["chromosome"]
         start_pos = query.parameters["start"]
         end_pos = query.parameters["end"]
 

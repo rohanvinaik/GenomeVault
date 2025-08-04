@@ -1,16 +1,17 @@
+import hashlib
+from typing import Dict, List
+
+import numpy as np
+
+from ...prover import Circuit
+from ..base_circuits import Any, BaseCircuit, FieldElement
+
 """
 Multi-omics integration circuits for zero-knowledge proofs.
 
 This module implements circuits that integrate multiple omics data types
 while preserving privacy.
 """
-
-import hashlib
-
-import numpy as np
-
-from ...prover import Circuit
-from ..base_circuits import Any, BaseCircuit, Dict, FieldElement, List
 
 
 class MultiOmicsCorrelationCircuit(BaseCircuit):
@@ -136,7 +137,7 @@ class MultiOmicsCorrelationCircuit(BaseCircuit):
         # In production, would map to proper p-value
         threshold = FieldElement(196)  # ~1.96 for p=0.05, scaled
 
-        diff = t_statistic - threshold
+        t_statistic - threshold
         # Add range proof that diff > 0
 
     def _commit_correlation(
@@ -456,7 +457,7 @@ class RareVariantBurdenCircuit(BaseCircuit):
         self.add_constraint(burden, self.burden_score, FieldElement(0), ql=1, qr=-1)
 
         # 3. Create commitment to hide individual variants
-        variant_commit = self._commit_variants(self.witness_randomness)
+        self._commit_variants(self.witness_randomness)
 
     def _check_rare_variant(
         self, af: FieldElement, threshold: FieldElement
@@ -468,7 +469,7 @@ class RareVariantBurdenCircuit(BaseCircuit):
 
     def _commit_variants(self, randomness: FieldElement) -> FieldElement:
         """Commit to variant list."""
-        variant_str = ":".join(str(v.get("id", "")) for v in self.variants[:10])
+        ":".join(str(v.get("id", "")) for v in self.variants[:10])
         data = b"VARIANTS:{variant_str}:{randomness.value}"
         hash_val = hashlib.sha256(data).hexdigest()
         return FieldElement(int(hash_val, 16))

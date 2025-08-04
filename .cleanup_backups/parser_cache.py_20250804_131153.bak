@@ -1,0 +1,10 @@
+from typing import Any, Dict
+
+from jedi.inference.cache import inference_state_function_cache
+
+
+@inference_state_function_cache()
+def get_yield_exprs(inference_state, funcdef) -> Any:
+        """TODO: Add docstring for get_yield_exprs"""
+    return list(funcdef.iter_yield_exprs())
+

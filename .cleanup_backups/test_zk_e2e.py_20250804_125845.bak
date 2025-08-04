@@ -1,0 +1,289 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
+"""End-to-end tests for ZK proof system integration."""
+
+import asyncio
+import json
+
+import pytest
+
+from genomevault.api.models import ProofRequest, ProofResponse
+from genomevault.clinical.prs_calculator import PRSCalculator
+from genomevault.zk_proofs.service import ZKProofService
+
+
+class TestZKEndToEnd:
+    """Test complete ZK proof workflows."""
+
+    @pytest.mark.asyncio
+    async def test_prs_proof_workflow(self, test_data_dir):
+        """Test complete PRS proof generation workflow."""
+        # Initialize services
+        zk_service = ZKProofService()
+        prs_calculator = PRSCalculator()
+
+        # Load test genomic data
+        genomic_data = self._load_test_genomic_data(test_data_dir)
+
+        # Calculate PRS
+        prs_score = prs_calculator.calculate(genomic_data)
+        assert 0.0 <= prs_score <= 1.0
+
+        # Generate proof request
+        request = ProofRequest(
+            proof_type="prs_range",
+            private_inputs={"prs_score": prs_score},
+            public_inputs={"min": 0.0, "max": 1.0},
+        )
+
+        # Generate proof
+        response = await zk_service.generate_proof(request)
+
+        # Verify response
+        assert isinstance(response, ProofResponse)
+        assert response.proof is not None
+        assert response.proof_id is not None
+        assert response.verification_key is not None
+
+        # Verify proof independently
+        verification_result = await zk_service.verify_proof(
+            response.proof, response.verification_key, request.public_inputs
+        )
+
+        assert verification_result.is_valid
+        assert verification_result.proof_id == response.proof_id
+
+    @pytest.mark.asyncio
+    async def test_multi_party_verification(self):
+        """Test proof verification by multiple parties."""
+        zk_service = ZKProofService()
+
+        # Generate proof
+        request = ProofRequest(
+            proof_type="prs_range",
+            private_inputs={"prs_score": 0.75},
+            public_inputs={"min": 0.0, "max": 1.0},
+        )
+
+        response = await zk_service.generate_proof(request)
+
+        # Simulate multiple verifiers
+        verifiers = ["hospital_a", "insurance_b", "researcher_c"]
+        verification_tasks = []
+
+        for verifier in verifiers:
+            task = zk_service.verify_proof(
+                response.proof,
+                response.verification_key,
+                request.public_inputs,
+                verifier_id=verifier,
+            )
+            verification_tasks.append(task)
+
+        # All verifications should succeed
+        results = await asyncio.gather(*verification_tasks)
+
+        for result in results:
+            assert result.is_valid
+            assert result.proof_id == response.proof_id
+
+    @pytest.mark.asyncio
+    async def test_proof_storage_and_retrieval(self, tmp_path):
+        """Test storing and retrieving proofs."""
+        zk_service = ZKProofService()
+
+        # Generate proof
+        request = ProofRequest(
+            proof_type="prs_range",
+            private_inputs={"prs_score": 0.6},
+            public_inputs={"min": 0.0, "max": 1.0},
+        )
+
+        response = await zk_service.generate_proof(request)
+
+        # Store proof
+        proof_file = tmp_path / f"proof_{response.proof_id}.json"
+        proof_data = {
+            "proof": response.proof.hex(),
+            "verification_key": response.verification_key,
+            "public_inputs": request.public_inputs,
+            "metadata": {
+                "generated_at": response.generated_at.isoformat(),
+                "proof_type": request.proof_type,
+            },
+        }
+
+        with open(proof_file, "w") as f:
+            json.dump(proof_data, f)
+
+        # Retrieve and verify
+        with open(proof_file) as f:
+            loaded_data = json.load(f)
+
+        # Verify loaded proof
+        verification_result = await zk_service.verify_proof(
+            bytes.fromhex(loaded_data["proof"]),
+            loaded_data["verification_key"],
+            loaded_data["public_inputs"],
+        )
+
+        assert verification_result.is_valid
+
+    @pytest.mark.asyncio
+    async def test_proof_aggregation(self):
+        """Test aggregating multiple proofs."""
+        zk_service = ZKProofService()
+
+        # Generate multiple proofs for different attributes
+        proof_requests = [
+            ProofRequest(
+                proof_type="prs_range",
+                private_inputs={"prs_score": 0.7},
+                public_inputs={"min": 0.0, "max": 1.0},
+            ),
+            ProofRequest(
+                proof_type="age_range",
+                private_inputs={"age": 45},
+                public_inputs={"min": 18, "max": 65},
+            ),
+            ProofRequest(
+                proof_type="variant_count",
+                private_inputs={"count": 5},
+                public_inputs={"max": 10},
+            ),
+        ]
+
+        # Generate individual proofs
+        proofs = []
+        for request in proof_requests:
+            response = await zk_service.generate_proof(request)
+            proofs.append(response)
+
+        # Aggregate proofs
+        if hasattr(zk_service, "aggregate_proofs"):
+            aggregated = await zk_service.aggregate_proofs(proofs)
+
+            # Verify aggregated proof
+            assert aggregated.is_valid
+            assert len(aggregated.sub_proofs) == len(proofs)
+
+    @pytest.mark.asyncio
+    async def test_concurrent_proof_generation(self):
+        """Test generating multiple proofs concurrently."""
+        zk_service = ZKProofService()
+
+        # Create multiple proof requests
+        requests = []
+        for i in range(10):
+            request = ProofRequest(
+                proof_type="prs_range",
+                private_inputs={"prs_score": i / 10.0},
+                public_inputs={"min": 0.0, "max": 1.0},
+            )
+            requests.append(request)
+
+        # Generate proofs concurrently
+        tasks = [zk_service.generate_proof(req) for req in requests]
+        responses = await asyncio.gather(*tasks)
+
+        # Verify all proofs
+        assert len(responses) == 10
+
+        for i, response in enumerate(responses):
+            assert response.proof is not None
+
+            # Verify proof
+            result = await zk_service.verify_proof(
+                response.proof, response.verification_key, requests[i].public_inputs
+            )
+            assert result.is_valid
+
+    @pytest.mark.asyncio
+    async def test_invalid_proof_handling(self):
+        """Test handling of invalid proofs."""
+        zk_service = ZKProofService()
+
+        # Generate valid proof
+        request = ProofRequest(
+            proof_type="prs_range",
+            private_inputs={"prs_score": 0.5},
+            public_inputs={"min": 0.0, "max": 1.0},
+        )
+
+        response = await zk_service.generate_proof(request)
+
+        # Corrupt the proof
+        corrupted_proof = bytearray(response.proof)
+        corrupted_proof[10] ^= 0xFF  # Flip some bits
+
+        # Verification should fail
+        with pytest.raises(Exception):
+            await zk_service.verify_proof(
+                bytes(corrupted_proof), response.verification_key, request.public_inputs
+            )
+
+    def _load_test_genomic_data(self, test_data_dir):
+        """Load test genomic data."""
+        # In a real implementation, this would load actual test data
+        return {
+            "variants": [
+                {"rsid": "rs12345", "genotype": "AA"},
+                {"rsid": "rs67890", "genotype": "AG"},
+            ]
+        }
+
+    @pytest.fixture
+    def test_data_dir(self, tmp_path):
+        """Create test data directory."""
+        data_dir = tmp_path / "test_data"
+        data_dir.mkdir()
+
+        # Create sample genomic data file
+        genomic_file = data_dir / "sample.vcf"
+        genomic_file.write_text("##fileformat=VCFv4.2\n#CHROM\tPOS\tID\n")
+
+        return data_dir
+
+
+class TestZKPerformance:
+    """Performance tests for ZK proof system."""
+
+    @pytest.mark.asyncio
+    @pytest.mark.performance
+    async def test_proof_generation_performance(self):
+        """Test proof generation performance."""
+        import time
+
+        zk_service = ZKProofService()
+
+        request = ProofRequest(
+            proof_type="prs_range",
+            private_inputs={"prs_score": 0.5},
+            public_inputs={"min": 0.0, "max": 1.0},
+        )
+
+        # Warm up
+        await zk_service.generate_proof(request)
+
+        # Measure proof generation time
+        times = []
+        for _ in range(10):
+            start = time.time()
+            await zk_service.generate_proof(request)
+            elapsed = time.time() - start
+            times.append(elapsed)
+
+        avg_time = sum(times) / len(times)
+
+        # Should generate proofs in reasonable time
+        assert avg_time < 1.0  # Less than 1 second
+
+        # Log performance metrics
+        print(f"Average proof generation time: {avg_time:.3f}s")
+        print(f"Min time: {min(times):.3f}s")
+        print(f"Max time: {max(times):.3f}s")
+
+
+
+

@@ -1,10 +1,3 @@
-"""
-Training Proof Circuit for Zero-Knowledge Machine Learning
-
-This module implements cryptographic proofs for verifying ML model training lineage
-without exposing model internals or training data.
-"""
-
 import hashlib
 from dataclasses import dataclass
 from typing import Any
@@ -175,11 +168,10 @@ class TrainingProofCircuit(BaseCircuit):
             # 1. Loss decreased (common case)
             # 2. Loss increased by less than 10% (allowing for training noise)
 
-            loss_diff = curr_loss - prev_loss
-            tolerance = prev_loss * 100 // 1000  # 10% tolerance
+            curr_loss - prev_loss
+            prev_loss * 100 // 1000  # 10% tolerance
 
             # Add soft constraint - in production would use more sophisticated verification
-            max_allowed_increase = tolerance
 
             # Simplified constraint: verify loss doesn't increase dramatically
             # In production, would use range proofs
@@ -265,7 +257,9 @@ class TrainingProofCircuit(BaseCircuit):
             "constraints_satisfied": True,  # Simplified - would run actual constraint verification
         }
 
-        logger.info("Generated training proof with %slen(self.constraints) constraints")
+        logger.info(
+            f"Generated training proof with {len(self.constraints)} constraints"
+        )
         return proof
 
     def verify_semantic_consistency(self, tolerance: float = 0.15) -> bool:
@@ -276,7 +270,7 @@ class TrainingProofCircuit(BaseCircuit):
             tolerance: Maximum allowed semantic drift between snapshots
 
         Returns:
-            True if semantic consistency maintained
+            True if semantic consistency maintained.
         """
         # This would integrate with hypervector representations
         # to ensure model didn't dramatically change behavior

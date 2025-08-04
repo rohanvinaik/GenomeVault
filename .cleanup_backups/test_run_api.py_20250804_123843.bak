@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+"""Test starting the FastAPI server."""
+
+import os
+import sys
+
+# Add the genomevault directory to the Python path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+if __name__ == "__main__":
+    try:
+        print("Starting GenomeVault API...")
+        import uvicorn
+
+        from genomevault.api.main import app
+
+        # Run the app on a test port
+        print("Running on http://localhost:8001")
+        print("Press Ctrl+C to stop")
+
+        uvicorn.run(app, host="0.0.0.0", port=8001, log_level="info")
+
+    except KeyboardInterrupt:
+        print("\nShutting down...")
+    except Exception as e:
+        print(f"Error: {e}")
+        import traceback
+
+        traceback.print_exc()

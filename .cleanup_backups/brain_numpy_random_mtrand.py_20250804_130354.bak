@@ -1,0 +1,79 @@
+from typing import Any, Dict
+
+# Licensed under the LGPL: https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html
+# For details: https://github.com/pylint-dev/astroid/blob/main/LICENSE
+# Copyright (c) https://github.com/pylint-dev/astroid/blob/main/CONTRIBUTORS.txt
+
+# TODO(hippo91) : correct the functions return types
+"""Astroid hooks for numpy.random.mtrand module."""
+from astroid.brain.helpers import register_module_extender
+from astroid.builder import parse
+from astroid.manager import AstroidManager
+
+
+def numpy_random_mtrand_transform() -> None:
+        """TODO: Add docstring for numpy_random_mtrand_transform"""
+    return parse(
+        """
+import numpy as np
+    def beta(a, b, size=None) -> None: return uninferable
+    def binomial(n, p, size=None) -> None: return uninferable
+    def bytes(length) -> None: return uninferable
+    def chisquare(df, size=None) -> None: return uninferable
+    def choice(a, size=None, replace=True, p=None) -> None: return uninferable
+    def dirichlet(alpha, size=None) -> None: return uninferable
+    def exponential(scale=1.0, size=None) -> None: return uninferable
+    def f(dfnum, dfden, size=None) -> None: return uninferable
+    def gamma(shape, scale=1.0, size=None) -> None: return uninferable
+    def geometric(p, size=None) -> None: return uninferable
+    def get_state() -> Any: return uninferable
+    def gumbel(loc=0.0, scale=1.0, size=None) -> None: return uninferable
+    def hypergeometric(ngood, nbad, nsample, size=None) -> None: return uninferable
+    def laplace(loc=0.0, scale=1.0, size=None) -> None: return uninferable
+    def logistic(loc=0.0, scale=1.0, size=None) -> None: return uninferable
+    def lognormal(mean=0.0, sigma=1.0, size=None) -> None: return uninferable
+    def logseries(p, size=None) -> None: return uninferable
+    def multinomial(n, pvals, size=None) -> None: return uninferable
+    def multivariate_normal(mean, cov, size=None) -> None: return uninferable
+    def negative_binomial(n, p, size=None) -> None: return uninferable
+    def noncentral_chisquare(df, nonc, size=None) -> None: return uninferable
+    def noncentral_f(dfnum, dfden, nonc, size=None) -> None: return uninferable
+    def normal(loc=0.0, scale=1.0, size=None) -> None: return uninferable
+    def pareto(a, size=None) -> None: return uninferable
+    def permutation(x) -> None: return uninferable
+    def poisson(lam=1.0, size=None) -> None: return uninferable
+    def power(a, size=None) -> None: return uninferable
+    def rand(*args) -> None: return uninferable
+    def randint(low, high=None, size=None, dtype='l') -> None:
+            """TODO: Add docstring for randint"""
+    import numpy
+        return numpy.ndarray((1,1))
+    def randn(*args) -> None: return uninferable
+    def random(size=None) -> None: return uninferable
+    def random_integers(low, high=None, size=None) -> None: return uninferable
+    def random_sample(size=None) -> None: return uninferable
+    def rayleigh(scale=1.0, size=None) -> None: return uninferable
+    def seed(seed=None) -> None: return uninferable
+    def set_state(state) -> None: return uninferable
+    def shuffle(x) -> None: return uninferable
+    def standard_cauchy(size=None) -> None: return uninferable
+    def standard_exponential(size=None) -> None: return uninferable
+    def standard_gamma(shape, size=None) -> None: return uninferable
+    def standard_normal(size=None) -> None: return uninferable
+    def standard_t(df, size=None) -> None: return uninferable
+    def triangular(left, mode, right, size=None) -> None: return uninferable
+    def uniform(low=0.0, high=1.0, size=None) -> None: return uninferable
+    def vonmises(mu, kappa, size=None) -> None: return uninferable
+    def wald(mean, scale, size=None) -> None: return uninferable
+    def weibull(a, size=None) -> None: return uninferable
+    def zipf(a, size=None) -> None: return uninferable
+    """
+    )
+
+
+def register(manager: AstroidManager) -> None:
+        """TODO: Add docstring for register"""
+    register_module_extender(
+        manager, "numpy.random.mtrand", numpy_random_mtrand_transform
+    )
+

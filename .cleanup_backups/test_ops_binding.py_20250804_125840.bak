@@ -1,0 +1,48 @@
+import numpy as np
+
+from genomevault.hypervector.operations.binding import (bundle,
+                                                        circular_convolution,
+                                                        element_wise_multiply,
+                                                        permutation_binding,
+                                                        unbundle)
+
+
+def test_circular_convolution_and_elementwise():
+    rng = np.random.default_rng(7)
+    a = rng.standard_normal(64)
+    b = rng.standard_normal(64)
+    c1 = circular_convolution(a, b)
+    c2 = element_wise_multiply(a, b)
+    assert c1.shape == a.shape == b.shape
+    assert c2.shape == a.shape == b.shape
+    assert np.isfinite(c1).all() and np.isfinite(c2).all()
+
+
+def test_permutation_binding_invertibility():
+    v = np.arange(10.0)
+    w = permutation_binding(v, shift=3)
+    v_back = permutation_binding(w, shift=-3)
+    assert np.allclose(v, v_back)
+
+
+def test_bundle_and_unbundle_retrieval():
+    rng = np.random.default_rng(123)
+    L = 128
+    A = rng.standard_normal(L)
+    B = rng.standard_normal(L)
+    C = rng.standard_normal(L)
+
+    mem = {
+        "A": A / np.linalg.norm(A),
+        "B": B / np.linalg.norm(B),
+        "C": C / np.linalg.norm(C),
+    }
+    mix = bundle([A, B])  # should be closest to A/B
+    hits = unbundle(mix, mem, threshold=0.1)
+    labels = [k for k, _ in hits]
+    assert "A" in labels and "B" in labels
+    assert ("C" not in labels) or (labels.index("A") < labels.index("C"))
+
+
+
+

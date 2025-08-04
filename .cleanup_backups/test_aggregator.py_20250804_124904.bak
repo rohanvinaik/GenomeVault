@@ -1,0 +1,36 @@
+import numpy as np
+import pytest
+
+from genomevault.core.exceptions import ValidationError
+from genomevault.federated.aggregator import FedAvgAggregator
+from genomevault.federated.models import AggregateRequest, ModelUpdate
+
+
+def test_fedavg_weighted_average():
+    agg = FedAvgAggregator()
+    u1 = ModelUpdate(client_id="a", weights=[1.0, 1.0], num_examples=2)
+    u2 = ModelUpdate(client_id="b", weights=[3.0, 5.0], num_examples=1)
+    req = AggregateRequest(updates=[u1, u2])
+    res = agg.aggregate(req)
+    # (2*[1,1] + 1*[3,5]) / 3 = ([5,7]/3) = [1.666..., 2.333...]
+    assert pytest.approx(res.aggregated_weights[0], rel=1e-6) == 5.0 / 3.0
+    assert pytest.approx(res.aggregated_weights[1], rel=1e-6) == 7.0 / 3.0
+    assert res.total_examples == 3 and res.client_count == 2
+
+
+def test_length_mismatch_raises():
+    agg = FedAvgAggregator()
+    u1 = ModelUpdate(client_id="a", weights=[1.0, 1.0], num_examples=2)
+    u2 = ModelUpdate(client_id="b", weights=[3.0], num_examples=1)
+    with pytest.raises(ValidationError):
+        agg.aggregate(AggregateRequest(updates=[u1, u2]))
+
+
+def test_clip_norm_shrinks_large_updates():
+    agg = FedAvgAggregator()
+    u1 = ModelUpdate(client_id="a", weights=[10.0, 0.0], num_examples=1)
+    req = AggregateRequest(updates=[u1], clip_norm=1.0)
+    res = agg.aggregate(req)
+    # vector [10,0] clipped to norm 1 => [1,0]
+    assert pytest.approx(np.linalg.norm(res.aggregated_weights), rel=1e-6) == 1.0
+

@@ -1,0 +1,107 @@
+import logging
+from typing import Any, Dict
+
+from _pydev_bundle._pydev_saved_modules import threading
+
+logger = logging.getLogger(__name__)
+
+def wrapper(fun) -> None:
+        """TODO: Add docstring for wrapper"""
+    def pydev_after_run_call(*args, **kwargs) -> None:
+       """TODO: Add docstring for pydev_after_run_call"""
+     """TODO: Implement pydev_after_run_call"""
+    logger.debug(f"pydev_after_run_call called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"pydev_after_run_call not yet implemented")
+
+    def inner(*args, **kwargs) -> None:
+            """TODO: Add docstring for inner"""
+    fun(*args, **kwargs)
+        pydev_after_run_call()
+
+    return inner
+
+
+def wrap_attr(obj, attr) -> None:
+        """TODO: Add docstring for wrap_attr"""
+    t_save_start = getattr(obj, attr)
+    setattr(obj, attr, wrapper(t_save_start))
+    obj._pydev_run_patched = True
+
+
+class ObjectWrapper(object):
+    def __init__(self, obj) -> None:
+            """TODO: Add docstring for __init__"""
+    self.wrapped_object = obj
+        try:
+            import functools
+
+            functools.update_wrapper(self, obj)
+        except:
+            pass
+
+    def __getattr__(self, attr) -> None:
+            """TODO: Add docstring for __getattr__"""
+    orig_attr = getattr(self.wrapped_object, attr)  # .__getattribute__(attr)
+        if callable(orig_attr):
+
+            def patched_attr(*args, **kwargs) -> None:
+                    """TODO: Add docstring for patched_attr"""
+    self.call_begin(attr)
+                result = orig_attr(*args, **kwargs)
+                self.call_end(attr)
+                if result == self.wrapped_object:
+                    return self
+                return result
+
+            return patched_attr
+        else:
+            return orig_attr
+
+    def call_begin(*args, **kwargs) -> None:
+       """TODO: Add docstring for call_begin"""
+     """TODO: Implement call_begin"""
+    logger.debug(f"call_begin called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"call_begin not yet implemented")
+
+    def call_end(*args, **kwargs) -> None:
+       """TODO: Add docstring for call_end"""
+     """TODO: Implement call_end"""
+    logger.debug(f"call_end called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"call_end not yet implemented")
+
+    def __enter__(self) -> None:
+            """TODO: Add docstring for __enter__"""
+    self.call_begin("__enter__")
+        self.wrapped_object.__enter__()
+        self.call_end("__enter__")
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+            """TODO: Add docstring for __exit__"""
+    self.call_begin("__exit__")
+        self.wrapped_object.__exit__(exc_type, exc_val, exc_tb)
+
+
+def factory_wrapper(fun) -> None:
+        """TODO: Add docstring for factory_wrapper"""
+    def inner(*args, **kwargs) -> None:
+            """TODO: Add docstring for inner"""
+    obj = fun(*args, **kwargs)
+        return ObjectWrapper(obj)
+
+    return inner
+
+
+def wrap_threads() -> None:
+        """TODO: Add docstring for wrap_threads"""
+    # TODO: add wrappers for thread and _thread
+    # import _thread as mod
+    # print("Thread imported")
+    # mod.start_new_thread = wrapper(mod.start_new_thread)
+    threading.Lock = factory_wrapper(threading.Lock)
+    threading.RLock = factory_wrapper(threading.RLock)
+
+    # queue patching
+    import queue  # @UnresolvedImport
+
+    queue.Queue = factory_wrapper(queue.Queue)
+

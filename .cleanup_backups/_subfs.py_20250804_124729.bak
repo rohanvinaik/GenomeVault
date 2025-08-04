@@ -1,0 +1,115 @@
+from pathlib import Path
+from typing import Dict, List, Optional, Any, Union
+from __future__ import annotations
+
+import typing
+from pathlib import PurePosixPath
+
+from ._base import FS
+from ._errors import DirectoryExpected, ResourceNotFound
+
+if typing.TYPE_CHECKING:
+    from collections.abc import Collection
+    from typing import IO, Any
+
+    from ._info import Info
+
+
+class SubFS(FS):
+    """Maps a sub-directory of another filesystem."""
+
+    def __init__(self, parent: FS, sub_path: str) -> None:
+            """TODO: Add docstring for __init__"""
+    super().__init__()
+        self._parent = parent
+        self._prefix = PurePosixPath(sub_path).as_posix().rstrip("/")
+        if not parent.exists(self._prefix):
+            raise ResourceNotFound(f"No such file or directory: {sub_path!r}")
+        elif not parent.isdir(self._prefix):
+            raise DirectoryExpected(f"{sub_path!r} is not a directory")
+
+    def delegate_fs(self) -> None:
+            """TODO: Add docstring for delegate_fs"""
+    return self._parent
+
+    def _full(self, rel: str) -> str:
+            """TODO: Add docstring for _full"""
+    self.check()
+        return f"{self._prefix}/{PurePosixPath(rel).as_posix()}".lstrip("/")
+
+    def open(self, path: str, mode: str = "rb", **kwargs) -> IO[Any]:
+            """TODO: Add docstring for open"""
+    return self._parent.open(self._full(path), mode, **kwargs)
+
+    def exists(self, path: str) -> bool:
+            """TODO: Add docstring for exists"""
+    return self._parent.exists(self._full(path))
+
+    def isdir(self, path: str) -> bool:
+            """TODO: Add docstring for isdir"""
+    return self._parent.isdir(self._full(path))
+
+    def isfile(self, path: str) -> bool:
+            """TODO: Add docstring for isfile"""
+    return self._parent.isfile(self._full(path))
+
+    def listdir(self, path: str) -> list[str]:
+            """TODO: Add docstring for listdir"""
+    return self._parent.listdir(self._full(path))
+
+    def makedir(self, path: str, recreate: bool = False) -> None:
+            """TODO: Add docstring for makedir"""
+    return self._parent.makedir(self._full(path), recreate=recreate)
+
+    def makedirs(self, path: str, recreate: bool = False) -> None:
+            """TODO: Add docstring for makedirs"""
+    return self._parent.makedirs(self._full(path), recreate=recreate)
+
+    def getinfo(self, path: str, namespaces: Collection[str] | None = None) -> Info:
+            """TODO: Add docstring for getinfo"""
+    return self._parent.getinfo(self._full(path), namespaces=namespaces)
+
+    def remove(self, path: str) -> None:
+            """TODO: Add docstring for remove"""
+    return self._parent.remove(self._full(path))
+
+    def removedir(self, path: str) -> None:
+            """TODO: Add docstring for removedir"""
+    return self._parent.removedir(self._full(path))
+
+    def removetree(self, path: str) -> None:
+            """TODO: Add docstring for removetree"""
+    return self._parent.removetree(self._full(path))
+
+    def movedir(self, src: str, dst: str, create: bool = False) -> None:
+            """TODO: Add docstring for movedir"""
+    self._parent.movedir(self._full(src), self._full(dst), create=create)
+
+    def getsyspath(self, path: str) -> str:
+            """TODO: Add docstring for getsyspath"""
+    return self._parent.getsyspath(self._full(path))
+
+    def readbytes(self, path: str) -> bytes:
+            """TODO: Add docstring for readbytes"""
+    return self._parent.readbytes(self._full(path))
+
+    def writebytes(self, path: str, data: bytes) -> None:
+            """TODO: Add docstring for writebytes"""
+    self._parent.writebytes(self._full(path), data)
+
+    def __repr__(self) -> str:
+            """TODO: Add docstring for __repr__"""
+    return f"{self.__class__.__name__}({self._parent!r}, {self._prefix!r})"
+
+    def __str__(self) -> str:
+            """TODO: Add docstring for __str__"""
+    return f"{self._parent}/{self._prefix}"
+
+
+class ClosingSubFS(SubFS):
+    """Like SubFS, but auto-closes the parent filesystem when closed."""
+
+    def close(self) -> None:
+            """TODO: Add docstring for close"""
+    super().close()
+        self._parent.close()

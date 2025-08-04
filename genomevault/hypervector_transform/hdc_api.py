@@ -287,7 +287,7 @@ async def decode_vector(request: DecodeRequest):
             )
 
         # Get encoder for decoding operations
-        encoder = registry.get_encoder()
+        registry.get_encoder()
 
         if request.query_type == "non_invertible_proof":
             # Demonstrate non-invertibility

@@ -1,0 +1,134 @@
+#!/usr/bin/env python3
+"""
+Quick Ruff upgrade and configuration fix.
+This upgrades Ruff to 0.4.4 and updates the configuration to use max-violations.
+"""
+import subprocess
+import sys
+from pathlib import Path
+
+def upgrade_ruff():
+    """Upgrade Ruff to version 0.4.4."""
+    print("🔧 Upgrading Ruff to 0.4.4...")
+    
+    # Try pip first
+    try:
+        result = subprocess.run([
+            "pip", "install", "--upgrade", "ruff==0.4.4"
+        ], capture_output=True, text=True, timeout=120)
+        
+        if result.returncode == 0:
+            print("✅ Ruff upgraded successfully via pip")
+            return True
+        else:
+            print(f"pip failed: {result.stderr}")
+    except Exception as e:
+        print(f"pip error: {e}")
+    
+    # Try pip3
+    try:
+        result = subprocess.run([
+            "pip3", "install", "--upgrade", "ruff==0.4.4"
+        ], capture_output=True, text=True, timeout=120)
+        
+        if result.returncode == 0:
+            print("✅ Ruff upgraded successfully via pip3")
+            return True
+        else:
+            print(f"pip3 failed: {result.stderr}")
+    except Exception as e:
+        print(f"pip3 error: {e}")
+    
+    print("❌ Could not upgrade Ruff")
+    return False
+
+def update_ruff_config():
+    """Update .ruff.toml to use max-violations."""
+    print("📝 Updating Ruff configuration...")
+    
+    ruff_config = Path("/Users/rohanvinaik/genomevault/.ruff.toml")
+    
+    if not ruff_config.exists():
+        print("❌ .ruff.toml not found")
+        return False
+    
+    content = ruff_config.read_text()
+    
+    # Add [output] section with max-violations if not present
+    if "[output]" not in content:
+        new_content = "[output]\\nmax-violations = 200\\n\\n" + content
+        ruff_config.write_text(new_content)
+        print("✅ Added [output] section with max-violations = 200")
+    else:
+        print("✅ [output] section already exists")
+    
+    return True
+
+def verify_setup():
+    """Verify Ruff version and configuration."""
+    print("🔍 Verifying setup...")
+    
+    # Check version
+    try:
+        result = subprocess.run(["ruff", "--version"], capture_output=True, text=True)
+        if result.returncode == 0:
+            version = result.stdout.strip()
+            print(f"Ruff version: {version}")
+            
+            if "0.4" in version:
+                print("✅ Ruff version is adequate")
+            else:
+                print("❌ Ruff version may still be old")
+                return False
+        else:
+            print("❌ Could not get Ruff version")
+            return False
+    except Exception as e:
+        print(f"❌ Error checking Ruff version: {e}")
+        return False
+    
+    # Test configuration
+    try:
+        result = subprocess.run([
+            "ruff", "check", ".", "--quiet"
+        ], cwd="/Users/rohanvinaik/genomevault", capture_output=True, text=True, timeout=10)
+        
+        print(f"Ruff config test exit code: {result.returncode}")
+        if "unknown field" in result.stderr:
+            print("❌ Configuration still has issues")
+            return False
+        else:
+            print("✅ Ruff configuration is working")
+            return True
+            
+    except Exception as e:
+        print(f"❌ Error testing Ruff config: {e}")
+        return False
+
+def main():
+    print("🚀 Ruff Upgrade and Configuration Fix\\n")
+    
+    # Step 1: Upgrade Ruff
+    if not upgrade_ruff():
+        print("\\n❌ Failed to upgrade Ruff. You may need to:")
+        print("   1. Check your Python environment")
+        print("   2. Try: pip install --upgrade ruff==0.4.4")
+        print("   3. Or: conda install -c conda-forge ruff=0.4.4")
+        sys.exit(1)
+    
+    # Step 2: Update configuration
+    if not update_ruff_config():
+        print("\\n❌ Failed to update configuration")
+        sys.exit(1)
+    
+    # Step 3: Verify everything works
+    if not verify_setup():
+        print("\\n❌ Setup verification failed")
+        sys.exit(1)
+    
+    print("\\n🎉 Success! Ruff is now ready for Phase 3 F821 fixing.")
+    print("\\nYou can now run:")
+    print("   python enhanced_cleanup.py --phase 3")
+
+if __name__ == "__main__":
+    main()

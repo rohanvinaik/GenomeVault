@@ -184,8 +184,8 @@ def print_results(results: dict):
         lut_cpu = res["lut_cpu"] * 1000
         lut_gpu = res.get("lut_gpu", 0) * 1000
 
-        cpu_speedup = standard / lut_cpu if lut_cpu > 0 else 0
-        gpu_speedup = standard / lut_gpu if lut_gpu > 0 else 0
+        standard / lut_cpu if lut_cpu > 0 else 0
+        standard / lut_gpu if lut_gpu > 0 else 0
 
         logger.info("%sdim:<12 %sstandard:<15.3f %slut_cpu:<15.3f ")
         if lut_gpu > 0:
@@ -206,8 +206,8 @@ def print_results(results: dict):
         lut_cpu = res["lut_cpu"] * 1000
         lut_gpu = res.get("lut_gpu", 0) * 1000
 
-        cpu_speedup = standard / lut_cpu if lut_cpu > 0 else 0
-        gpu_speedup = standard / lut_gpu if lut_gpu > 0 else 0
+        standard / lut_cpu if lut_cpu > 0 else 0
+        standard / lut_gpu if lut_gpu > 0 else 0
 
         logger.info("%skey:<20 %sstandard:<15.3f %slut_cpu:<15.3f ")
         if lut_gpu > 0:
@@ -224,7 +224,7 @@ def print_results(results: dict):
     for dim, res in results["hdc"].items():
         standard = res["hdc_standard"] * 1000
         with_lut = res.get("hdc_lut", standard) * 1000
-        speedup = standard / with_lut if with_lut > 0 else 1.0
+        standard / with_lut if with_lut > 0 else 1.0
 
         logger.info("%sdim:<12 %sstandard:<20.3f %swith_lut:<20.3f %sspeedup:<12.2fx")
 
@@ -288,7 +288,7 @@ def main():
 
     # Generate LUT once
     logger.info("\nGenerating 16-bit popcount LUT...")
-    lut = generate_popcount_lut()
+    generate_popcount_lut()
     logger.info("LUT size: %slut.nbytes / 1024:.1f KB")
 
     results = {"single": {}, "batch": {}, "hdc": {}}
@@ -327,7 +327,7 @@ def main():
     logger.info("SUMMARY")
     logger.info("=" * 80)
 
-    avg_cpu_speedup = np.mean(
+    np.mean(
         [
             results["single"][str(d)]["standard"] / results["single"][str(d)]["lut_cpu"]
             for d in VECTOR_DIMENSIONS
@@ -337,7 +337,7 @@ def main():
     logger.info("Average CPU Speedup: %savg_cpu_speedup:.2fx")
 
     if torch.cuda.is_available():
-        avg_gpu_speedup = np.mean(
+        np.mean(
             [
                 results["single"][str(d)]["standard"]
                 / results["single"][str(d)]["lut_gpu"]

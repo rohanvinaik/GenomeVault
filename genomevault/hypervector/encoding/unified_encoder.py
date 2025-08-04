@@ -74,7 +74,7 @@ class UnifiedHypervectorEncoder:
         self._base_vectors: dict[str, np.ndarray] = {}
         self._fitted = False
 
-    def fit(self, n_features: int) -> UnifiedHypervectorEncoder:
+    def fit(self, n_features: int) -> "UnifiedHypervectorEncoder":
         """
         Fit the encoder to the input feature dimension.
 

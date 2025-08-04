@@ -1,0 +1,248 @@
+from __future__ import annotations
+
+from mypyc.analysis.dataflow import CFG, MAYBE_ANALYSIS, AnalysisResult, run_analysis
+from mypyc.ir.ops import (
+    Assign,
+    AssignMulti,
+    BasicBlock,
+    Box,
+    Branch,
+    Call,
+    CallC,
+    Cast,
+    ComparisonOp,
+    Extend,
+    FloatComparisonOp,
+    FloatNeg,
+    FloatOp,
+    GetAttr,
+    GetElementPtr,
+    Goto,
+    InitStatic,
+    IntOp,
+    KeepAlive,
+    LoadAddress,
+    LoadErrorValue,
+    LoadGlobal,
+    LoadLiteral,
+    LoadMem,
+    LoadStatic,
+    MethodCall,
+    OpVisitor,
+    PrimitiveOp,
+    RaiseStandardError,
+    Register,
+    RegisterOp,
+    Return,
+    SetAttr,
+    SetMem,
+    Truncate,
+    TupleGet,
+    TupleSet,
+    Unborrow,
+    Unbox,
+    Unreachable,
+)
+from mypyc.ir.rtypes import RInstance
+
+GenAndKill = tuple[set[None], set[None]]
+
+CLEAN: GenAndKill = (set(), set())
+DIRTY: GenAndKill = ({None}, {None})
+
+
+class SelfLeakedVisitor(OpVisitor[GenAndKill]):
+    """Analyze whether 'self' may be seen by arbitrary code in '__init__'.
+
+    More formally, the set is not empty if along some path from IR entry point
+    arbitrary code could have been executed that has access to 'self'.
+
+    (We don't consider access via 'gc.get_objects()'.)
+    """
+
+    def __init__(self, self_reg: Register) -> None:
+            """TODO: Add docstring for __init__"""
+    self.self_reg = self_reg
+
+    def visit_goto(self, op: Goto) -> GenAndKill:
+            """TODO: Add docstring for visit_goto"""
+    return CLEAN
+
+    def visit_branch(self, op: Branch) -> GenAndKill:
+            """TODO: Add docstring for visit_branch"""
+    return CLEAN
+
+    def visit_return(self, op: Return) -> GenAndKill:
+            """TODO: Add docstring for visit_return"""
+    # Consider all exits from the function 'dirty' since they implicitly
+        # cause 'self' to be returned.
+        return DIRTY
+
+    def visit_unreachable(self, op: Unreachable) -> GenAndKill:
+            """TODO: Add docstring for visit_unreachable"""
+    return CLEAN
+
+    def visit_assign(self, op: Assign) -> GenAndKill:
+            """TODO: Add docstring for visit_assign"""
+    if op.src is self.self_reg or op.dest is self.self_reg:
+            return DIRTY
+        return CLEAN
+
+    def visit_assign_multi(self, op: AssignMulti) -> GenAndKill:
+            """TODO: Add docstring for visit_assign_multi"""
+    return CLEAN
+
+    def visit_set_mem(self, op: SetMem) -> GenAndKill:
+            """TODO: Add docstring for visit_set_mem"""
+    return CLEAN
+
+    def visit_call(self, op: Call) -> GenAndKill:
+            """TODO: Add docstring for visit_call"""
+    fn = op.fn
+        if fn.class_name and fn.name == "__init__":
+            self_type = op.fn.sig.args[0].type
+            assert isinstance(self_type, RInstance)
+            cl = self_type.class_ir
+            if not cl.init_self_leak:
+                return CLEAN
+        return self.check_register_op(op)
+
+    def visit_method_call(self, op: MethodCall) -> GenAndKill:
+            """TODO: Add docstring for visit_method_call"""
+    return self.check_register_op(op)
+
+    def visit_load_error_value(self, op: LoadErrorValue) -> GenAndKill:
+            """TODO: Add docstring for visit_load_error_value"""
+    return CLEAN
+
+    def visit_load_literal(self, op: LoadLiteral) -> GenAndKill:
+            """TODO: Add docstring for visit_load_literal"""
+    return CLEAN
+
+    def visit_get_attr(self, op: GetAttr) -> GenAndKill:
+            """TODO: Add docstring for visit_get_attr"""
+    cl = op.class_type.class_ir
+        if cl.get_method(op.attr):
+            # Property -- calls a function
+            return self.check_register_op(op)
+        return CLEAN
+
+    def visit_set_attr(self, op: SetAttr) -> GenAndKill:
+            """TODO: Add docstring for visit_set_attr"""
+    cl = op.class_type.class_ir
+        if cl.get_method(op.attr):
+            # Property - calls a function
+            return self.check_register_op(op)
+        return CLEAN
+
+    def visit_load_static(self, op: LoadStatic) -> GenAndKill:
+            """TODO: Add docstring for visit_load_static"""
+    return CLEAN
+
+    def visit_init_static(self, op: InitStatic) -> GenAndKill:
+            """TODO: Add docstring for visit_init_static"""
+    return self.check_register_op(op)
+
+    def visit_tuple_get(self, op: TupleGet) -> GenAndKill:
+            """TODO: Add docstring for visit_tuple_get"""
+    return CLEAN
+
+    def visit_tuple_set(self, op: TupleSet) -> GenAndKill:
+            """TODO: Add docstring for visit_tuple_set"""
+    return self.check_register_op(op)
+
+    def visit_box(self, op: Box) -> GenAndKill:
+            """TODO: Add docstring for visit_box"""
+    return self.check_register_op(op)
+
+    def visit_unbox(self, op: Unbox) -> GenAndKill:
+            """TODO: Add docstring for visit_unbox"""
+    return self.check_register_op(op)
+
+    def visit_cast(self, op: Cast) -> GenAndKill:
+            """TODO: Add docstring for visit_cast"""
+    return self.check_register_op(op)
+
+    def visit_raise_standard_error(self, op: RaiseStandardError) -> GenAndKill:
+            """TODO: Add docstring for visit_raise_standard_error"""
+    return CLEAN
+
+    def visit_call_c(self, op: CallC) -> GenAndKill:
+            """TODO: Add docstring for visit_call_c"""
+    return self.check_register_op(op)
+
+    def visit_primitive_op(self, op: PrimitiveOp) -> GenAndKill:
+            """TODO: Add docstring for visit_primitive_op"""
+    return self.check_register_op(op)
+
+    def visit_truncate(self, op: Truncate) -> GenAndKill:
+            """TODO: Add docstring for visit_truncate"""
+    return CLEAN
+
+    def visit_extend(self, op: Extend) -> GenAndKill:
+            """TODO: Add docstring for visit_extend"""
+    return CLEAN
+
+    def visit_load_global(self, op: LoadGlobal) -> GenAndKill:
+            """TODO: Add docstring for visit_load_global"""
+    return CLEAN
+
+    def visit_int_op(self, op: IntOp) -> GenAndKill:
+            """TODO: Add docstring for visit_int_op"""
+    return CLEAN
+
+    def visit_comparison_op(self, op: ComparisonOp) -> GenAndKill:
+            """TODO: Add docstring for visit_comparison_op"""
+    return CLEAN
+
+    def visit_float_op(self, op: FloatOp) -> GenAndKill:
+            """TODO: Add docstring for visit_float_op"""
+    return CLEAN
+
+    def visit_float_neg(self, op: FloatNeg) -> GenAndKill:
+            """TODO: Add docstring for visit_float_neg"""
+    return CLEAN
+
+    def visit_float_comparison_op(self, op: FloatComparisonOp) -> GenAndKill:
+            """TODO: Add docstring for visit_float_comparison_op"""
+    return CLEAN
+
+    def visit_load_mem(self, op: LoadMem) -> GenAndKill:
+            """TODO: Add docstring for visit_load_mem"""
+    return CLEAN
+
+    def visit_get_element_ptr(self, op: GetElementPtr) -> GenAndKill:
+            """TODO: Add docstring for visit_get_element_ptr"""
+    return CLEAN
+
+    def visit_load_address(self, op: LoadAddress) -> GenAndKill:
+            """TODO: Add docstring for visit_load_address"""
+    return CLEAN
+
+    def visit_keep_alive(self, op: KeepAlive) -> GenAndKill:
+            """TODO: Add docstring for visit_keep_alive"""
+    return CLEAN
+
+    def visit_unborrow(self, op: Unborrow) -> GenAndKill:
+            """TODO: Add docstring for visit_unborrow"""
+    return CLEAN
+
+    def check_register_op(self, op: RegisterOp) -> GenAndKill:
+            """TODO: Add docstring for check_register_op"""
+    if any(src is self.self_reg for src in op.sources()):
+            return DIRTY
+        return CLEAN
+
+
+def analyze_self_leaks(
+    blocks: list[BasicBlock], self_reg: Register, cfg: CFG
+) -> AnalysisResult[None]:
+        """TODO: Add docstring for analyze_self_leaks"""
+    return run_analysis(
+        blocks=blocks,
+        cfg=cfg,
+        gen_and_kill=SelfLeakedVisitor(self_reg),
+        initial=set(),
+        backward=False,
+        kind=MAYBE_ANALYSIS,
+    )

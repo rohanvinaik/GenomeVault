@@ -1,0 +1,91 @@
+#!/usr/bin/env python3
+"""
+Quick test to verify Phase 3 F821 fixing works correctly.
+"""
+import json
+import subprocess
+from pathlib import Path
+
+
+def test_ruff_f821():
+    """Test that we can detect F821 errors with Ruff."""
+    print("🔍 Testing Ruff F821 detection...")
+
+    try:
+        result = subprocess.run(
+            ["ruff", "check", ".", "--select", "F821", "--output-format", "json"],
+            cwd="/Users/rohanvinaik/genomevault",
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+
+        print(f"Ruff exit code: {result.returncode}")
+
+        if result.stdout:
+            try:
+                violations = json.loads(result.stdout)
+                print(f"✅ Found {len(violations)} F821 violations")
+
+                if violations:
+                    print("\nSample violations:")
+                    for i, v in enumerate(violations[:5]):
+                        print(
+                            f"  {i+1}. {v['filename']}:{v['location']['row']} - {v['message']}"
+                        )
+
+                return violations
+            except json.JSONDecodeError as e:
+                print(f"❌ JSON decode error: {e}")
+                print(f"Raw stdout: {result.stdout[:200]}")
+        else:
+            print("No stdout from Ruff")
+
+        if result.stderr:
+            print(f"Stderr: {result.stderr}")
+
+    except subprocess.TimeoutExpired:
+        print("❌ Ruff command timed out")
+    except FileNotFoundError:
+        print("❌ Ruff command not found")
+    except Exception as e:
+        print(f"❌ Error running Ruff: {e}")
+
+    return []
+
+
+def test_enhanced_cleanup_phase3():
+    """Test the enhanced cleanup Phase 3."""
+    print("\n🧪 Testing enhanced cleanup Phase 3...")
+
+    try:
+        result = subprocess.run(
+            ["python", "enhanced_cleanup.py", "--phase", "3", "--dry-run"],
+            cwd="/Users/rohanvinaik/genomevault",
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+
+        print(f"Enhanced cleanup exit code: {result.returncode}")
+        print(f"Output:\n{result.stdout}")
+
+        if result.stderr:
+            print(f"Stderr:\n{result.stderr}")
+
+    except Exception as e:
+        print(f"❌ Error testing enhanced cleanup: {e}")
+
+
+if __name__ == "__main__":
+    print("🚀 Testing Phase 3 F821 fixes\n")
+
+    # Test 1: Direct Ruff F821 detection
+    violations = test_ruff_f821()
+
+    # Test 2: Enhanced cleanup phase 3
+    test_enhanced_cleanup_phase3()
+
+    print(f"\n📊 Summary:")
+    print(f"   F821 violations detected: {len(violations)}")
+    print(f"   Phase 3 should be able to process these violations")

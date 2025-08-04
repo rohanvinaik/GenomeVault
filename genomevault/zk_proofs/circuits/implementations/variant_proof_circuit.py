@@ -1,17 +1,18 @@
-from genomevault.observability.logging import configure_logging
+import hashlib
+from typing import Any, Dict, List
 
-logger = configure_logging()
+from genomevault.utils.logging import get_logger
+
+from .constraint_system import ConstraintSystem, FieldElement, poseidon_hash
+
+logger = get_logger(__name__)
+
 """
 Variant Proof Circuit Implementation
 
 This implements the actual constraint generation for proving
 variant presence without revealing the variant position.
 """
-
-import hashlib
-
-from .constraint_system import (Any, ConstraintSystem, Dict, FieldElement,
-                                List, poseidon_hash)
 
 
 class VariantProofCircuit:
@@ -340,8 +341,8 @@ if __name__ == "__main__":
 
     info = circuit.get_circuit_info()
     for key, value in info.items():
-        logger.info("%skey: %svalue")
+        logger.info(f"{key}: {value}")
 
-    logger.info("\nConstraints satisfied: %scircuit.verify_constraints()")
-    logger.info("Public inputs: %slen(circuit.get_public_inputs())")
-    logger.info("Witness size: %slen(circuit.get_witness())")
+    logger.info(f"\nConstraints satisfied: {circuit.verify_constraints()}")
+    logger.info(f"Public inputs: {len(circuit.get_public_inputs())}")
+    logger.info(f"Witness size: {len(circuit.get_witness())}")

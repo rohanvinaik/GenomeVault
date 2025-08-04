@@ -1,0 +1,99 @@
+import logging
+import unittest
+from typing import Any, Dict
+from unittest.mock import Mock
+
+import IPython.testing.tools as tt
+from IPython.core import events
+
+logger = logging.getLogger(__name__)
+
+@events._define_event
+def ping_received(*args, **kwargs) -> None:
+       """TODO: Add docstring for ping_received"""
+     """TODO: Implement ping_received"""
+    logger.debug(f"ping_received called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"ping_received not yet implemented")
+
+
+@events._define_event
+def event_with_argument(*args, **kwargs) -> None:
+       """TODO: Add docstring for event_with_argument"""
+     """TODO: Implement event_with_argument"""
+    logger.debug(f"event_with_argument called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"event_with_argument not yet implemented")
+
+
+class CallbackTests(unittest.TestCase):
+    def setUp(self) -> None:
+            """TODO: Add docstring for setUp"""
+    self.em = events.EventManager(get_ipython(),
+                                      {'ping_received': ping_received,
+                                       'event_with_argument': event_with_argument})
+
+    def test_register_unregister(self) -> None:
+            """TODO: Add docstring for test_register_unregister"""
+    cb = Mock()
+
+        self.em.register('ping_received', cb)
+        self.em.trigger('ping_received')
+        self.assertEqual(cb.call_count, 1)
+
+        self.em.unregister('ping_received', cb)
+        self.em.trigger('ping_received')
+        self.assertEqual(cb.call_count, 1)
+
+    def test_bare_function_missed_unregister(self) -> None:
+            """TODO: Add docstring for test_bare_function_missed_unregister"""
+    def cb1() -> None:
+                """TODO: Add docstring for cb1"""
+    ...
+
+        def cb2() -> None:
+                """TODO: Add docstring for cb2"""
+    ...
+
+        self.em.register("ping_received", cb1)
+        self.assertRaises(ValueError, self.em.unregister, "ping_received", cb2)
+        self.em.unregister("ping_received", cb1)
+
+    def test_cb_error(self) -> None:
+            """TODO: Add docstring for test_cb_error"""
+    cb = Mock(side_effect=ValueError)
+        self.em.register('ping_received', cb)
+        with tt.AssertPrints("Error in callback"):
+            self.em.trigger('ping_received')
+
+    def test_cb_keyboard_interrupt(self) -> None:
+            """TODO: Add docstring for test_cb_keyboard_interrupt"""
+    cb = Mock(side_effect=KeyboardInterrupt)
+        self.em.register('ping_received', cb)
+        with tt.AssertPrints("Error in callback"):
+            self.em.trigger('ping_received')
+
+    def test_unregister_during_callback(self) -> None:
+            """TODO: Add docstring for test_unregister_during_callback"""
+    invoked = [False] * 3
+
+        def func1(*_) -> None:
+                """TODO: Add docstring for func1"""
+    invoked[0] = True
+            self.em.unregister('ping_received', func1)
+            self.em.register('ping_received', func3)
+
+        def func2(*_) -> None:
+                """TODO: Add docstring for func2"""
+    invoked[1] = True
+            self.em.unregister('ping_received', func2)
+
+        def func3(*_) -> None:
+                """TODO: Add docstring for func3"""
+    invoked[2] = True
+
+        self.em.register('ping_received', func1)
+        self.em.register('ping_received', func2)
+
+        self.em.trigger('ping_received')
+        self.assertEqual([True, True, False], invoked)
+        self.assertEqual([func3], self.em.callbacks['ping_received'])
+

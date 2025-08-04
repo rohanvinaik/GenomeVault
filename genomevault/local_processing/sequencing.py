@@ -1,11 +1,4 @@
-"""
-GenomeVault Sequencing Data Processing
-
-Handles genomic sequencing data processing including alignment, variant calling,
-and reference-based differential storage.
-"""
-
-import gzip
+# Standard library imports
 import json
 import subprocess
 import tempfile
@@ -13,11 +6,25 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+# Third-party imports
 import numpy as np
 import pysam
 from Bio import SeqIO
 
-from genomevault.utils.logging import log_operation
+from genomevault.crypto.hashing import secure_hash
+from genomevault.utils.config import get_config
+# Local imports
+from genomevault.utils.logging import get_logger
+
+"""
+GenomeVault Sequencing Data Processing
+
+Handles genomic sequencing data processing including alignment, variant calling,
+and reference-based differential storage.
+"""
+
+
+# sequencing.py
 
 logger = get_logger(__name__)
 config = get_config()
@@ -165,7 +172,7 @@ class SequencingProcessor:
             logger.warning("Missing tools: %s', '.join(missing_tools)")
             logger.warning("Some processing features may be unavailable")
 
-    @log_operation("process_sequencing_data")
+    @_log_operation("process_sequencing_data")
     def process(self, input_path: Path, sample_id: str) -> GenomicProfile:
         """
         Process sequencing data to generate genomic profile
@@ -251,7 +258,7 @@ class SequencingProcessor:
 
         if input_path.suffix in {".fastq", ".fq", ".fastq.gz", ".fq.gz"}:
             # Process FASTQ files
-            open_func = gzip.open if input_path.suffix.endswith(".gz") else open
+            open_func = _gzip.open if input_path.suffix.endswith(".gz") else open
 
             with open_func(input_path, "rt") as f:
                 for i, record in enumerate(SeqIO.parse(f, "fastq")):

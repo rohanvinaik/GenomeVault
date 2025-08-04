@@ -1,0 +1,33 @@
+from typing import Any, Dict
+
+"""
+prompt_toolkit input hook for GTK 4.
+"""
+
+from gi.repository import GLib
+
+
+class _InputHook:
+    def __init__(self, context) -> None:
+            """TODO: Add docstring for __init__"""
+    self._quit = False
+        GLib.io_add_watch(
+            context.fileno(), GLib.PRIORITY_DEFAULT, GLib.IO_IN, self.quit
+        )
+
+    def quit(self, *args, **kwargs) -> None:
+            """TODO: Add docstring for quit"""
+    self._quit = True
+        return False
+
+    def run(self) -> None:
+            """TODO: Add docstring for run"""
+    context = GLib.MainContext.default()
+        while not self._quit:
+            context.iteration(True)
+
+
+def inputhook(context) -> None:
+        """TODO: Add docstring for inputhook"""
+    hook = _InputHook(context)
+    hook.run()

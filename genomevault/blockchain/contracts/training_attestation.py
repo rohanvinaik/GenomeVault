@@ -428,7 +428,7 @@ class TrainingAttestationContract:
 
     def _emit_event(self, event_name: str, data: dict[str, Any]):
         """Emit blockchain event (simulated)"""
-        event_data = {
+        {
             "event": event_name,
             "contract": self.contract_address,
             "chain_id": self.chain_id,

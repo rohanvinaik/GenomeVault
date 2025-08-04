@@ -1,0 +1,177 @@
+from sympy.core.numbers import pi
+from sympy.core.singleton import S
+from sympy.physics.units import DimensionSystem, hertz, kilogram
+from sympy.physics.units.definitions import (G, Hz, J, K, N, Pa, W,
+                                             acceleration_due_to_gravity,
+                                             ampere, angstrom, angular_mil,
+                                             astronomical_unit, atmosphere,
+                                             atomic_mass_constant,
+                                             atomic_mass_unit,
+                                             avogadro_constant,
+                                             avogadro_number, bar, becquerel,
+                                             bit, boltzmann,
+                                             boltzmann_constant, byte, c,
+                                             candela, cd, coulomb,
+                                             coulomb_constant, curie, degree,
+                                             dioptre, electric_constant,
+                                             electronvolt, elementary_charge,
+                                             exbibyte, farad, faraday_constant,
+                                             g, gee, gibibyte, gram,
+                                             gravitational_constant, gray,
+                                             hbar, hectare, henry, inch,
+                                             josephson_constant, joule,
+                                             julian_year, katal, kelvin, kg,
+                                             kibibyte, kPa, lightyear, liter,
+                                             lux, m, magnetic_constant,
+                                             mebibyte, meter, milli_mass_unit,
+                                             mmHg, mol, molar_gas_constant,
+                                             mole, newton, ohm, pascal,
+                                             pebibyte, planck,
+                                             planck_acceleration,
+                                             planck_angular_frequency,
+                                             planck_area, planck_charge,
+                                             planck_current, planck_density,
+                                             planck_energy,
+                                             planck_energy_density,
+                                             planck_force, planck_impedance,
+                                             planck_intensity, planck_length,
+                                             planck_mass, planck_momentum,
+                                             planck_power, planck_pressure,
+                                             planck_temperature, planck_time,
+                                             planck_voltage, planck_volume,
+                                             pound, psi, quart, radian,
+                                             rutherford, s, second, siemens,
+                                             speed_of_light,
+                                             stefan_boltzmann_constant,
+                                             steradian, tebibyte, tesla, u0,
+                                             vacuum_impedance,
+                                             vacuum_permittivity, volt,
+                                             von_klitzing_constant, watt,
+                                             weber)
+from sympy.physics.units.definitions.dimension_definitions import (
+    acceleration, action, energy, force, frequency, length, mass, momentum,
+    power, pressure, time, velocity)
+from sympy.physics.units.prefixes import (PREFIXES, exbi, gibi, kibi, mebi,
+                                          pebi, prefix_unit, tebi)
+
+dimsys_length_weight_time = DimensionSystem([
+    # Dimensional dependencies for MKS base dimensions
+    length,
+    mass,
+    time,
+], dimensional_dependencies={
+    # Dimensional dependencies for derived dimensions
+    "velocity": {"length": 1, "time": -1},
+    "acceleration": {"length": 1, "time": -2},
+    "momentum": {"mass": 1, "length": 1, "time": -1},
+    "force": {"mass": 1, "length": 1, "time": -2},
+    "energy": {"mass": 1, "length": 2, "time": -2},
+    "power": {"length": 2, "mass": 1, "time": -3},
+    "pressure": {"mass": 1, "length": -1, "time": -2},
+    "frequency": {"time": -1},
+    "action": {"length": 2, "mass": 1, "time": -1},
+    "area": {"length": 2},
+    "volume": {"length": 3},
+})
+
+
+One = S.One
+
+
+# Base units:
+dimsys_length_weight_time.set_quantity_dimension(meter, length)
+dimsys_length_weight_time.set_quantity_scale_factor(meter, One)
+
+# gram; used to define its prefixed units
+dimsys_length_weight_time.set_quantity_dimension(gram, mass)
+dimsys_length_weight_time.set_quantity_scale_factor(gram, One)
+
+dimsys_length_weight_time.set_quantity_dimension(second, time)
+dimsys_length_weight_time.set_quantity_scale_factor(second, One)
+
+# derived units
+
+dimsys_length_weight_time.set_quantity_dimension(newton, force)
+dimsys_length_weight_time.set_quantity_scale_factor(newton, kilogram*meter/second**2)
+
+dimsys_length_weight_time.set_quantity_dimension(joule, energy)
+dimsys_length_weight_time.set_quantity_scale_factor(joule, newton*meter)
+
+dimsys_length_weight_time.set_quantity_dimension(watt, power)
+dimsys_length_weight_time.set_quantity_scale_factor(watt, joule/second)
+
+dimsys_length_weight_time.set_quantity_dimension(pascal, pressure)
+dimsys_length_weight_time.set_quantity_scale_factor(pascal, newton/meter**2)
+
+dimsys_length_weight_time.set_quantity_dimension(hertz, frequency)
+dimsys_length_weight_time.set_quantity_scale_factor(hertz, One)
+
+# Other derived units:
+
+dimsys_length_weight_time.set_quantity_dimension(dioptre, 1 / length)
+dimsys_length_weight_time.set_quantity_scale_factor(dioptre, 1/meter)
+
+# Common volume and area units
+
+dimsys_length_weight_time.set_quantity_dimension(hectare, length**2)
+dimsys_length_weight_time.set_quantity_scale_factor(hectare, (meter**2)*(10000))
+
+dimsys_length_weight_time.set_quantity_dimension(liter, length**3)
+dimsys_length_weight_time.set_quantity_scale_factor(liter, meter**3/1000)
+
+
+# Newton constant
+# REF: NIST SP 959 (June 2019)
+
+dimsys_length_weight_time.set_quantity_dimension(gravitational_constant, length ** 3 * mass ** -1 * time ** -2)
+dimsys_length_weight_time.set_quantity_scale_factor(gravitational_constant, 6.67430e-11*m**3/(kg*s**2))
+
+# speed of light
+
+dimsys_length_weight_time.set_quantity_dimension(speed_of_light, velocity)
+dimsys_length_weight_time.set_quantity_scale_factor(speed_of_light, 299792458*meter/second)
+
+
+# Planck constant
+# REF: NIST SP 959 (June 2019)
+
+dimsys_length_weight_time.set_quantity_dimension(planck, action)
+dimsys_length_weight_time.set_quantity_scale_factor(planck, 6.62607015e-34*joule*second)
+
+# Reduced Planck constant
+# REF: NIST SP 959 (June 2019)
+
+dimsys_length_weight_time.set_quantity_dimension(hbar, action)
+dimsys_length_weight_time.set_quantity_scale_factor(hbar, planck / (2 * pi))
+
+
+__all__ = [
+    'mmHg', 'atmosphere', 'newton', 'meter', 'vacuum_permittivity', 'pascal',
+    'magnetic_constant', 'angular_mil', 'julian_year', 'weber', 'exbibyte',
+    'liter', 'molar_gas_constant', 'faraday_constant', 'avogadro_constant',
+    'planck_momentum', 'planck_density', 'gee', 'mol', 'bit', 'gray', 'kibi',
+    'bar', 'curie', 'prefix_unit', 'PREFIXES', 'planck_time', 'gram',
+    'candela', 'force', 'planck_intensity', 'energy', 'becquerel',
+    'planck_acceleration', 'speed_of_light', 'dioptre', 'second', 'frequency',
+    'Hz', 'power', 'lux', 'planck_current', 'momentum', 'tebibyte',
+    'planck_power', 'degree', 'mebi', 'K', 'planck_volume',
+    'quart', 'pressure', 'W', 'joule', 'boltzmann_constant', 'c', 'g',
+    'planck_force', 'exbi', 's', 'watt', 'action', 'hbar', 'gibibyte',
+    'DimensionSystem', 'cd', 'volt', 'planck_charge', 'angstrom',
+    'dimsys_length_weight_time', 'pebi', 'vacuum_impedance', 'planck',
+    'farad', 'gravitational_constant', 'u0', 'hertz', 'tesla', 'steradian',
+    'josephson_constant', 'planck_area', 'stefan_boltzmann_constant',
+    'astronomical_unit', 'J', 'N', 'planck_voltage', 'planck_energy',
+    'atomic_mass_constant', 'rutherford', 'elementary_charge', 'Pa',
+    'planck_mass', 'henry', 'planck_angular_frequency', 'ohm', 'pound',
+    'planck_pressure', 'G', 'avogadro_number', 'psi', 'von_klitzing_constant',
+    'planck_length', 'radian', 'mole', 'acceleration',
+    'planck_energy_density', 'mebibyte', 'length',
+    'acceleration_due_to_gravity', 'planck_temperature', 'tebi', 'inch',
+    'electronvolt', 'coulomb_constant', 'kelvin', 'kPa', 'boltzmann',
+    'milli_mass_unit', 'gibi', 'planck_impedance', 'electric_constant', 'kg',
+    'coulomb', 'siemens', 'byte', 'atomic_mass_unit', 'm', 'kibibyte',
+    'kilogram', 'lightyear', 'mass', 'time', 'pebibyte', 'velocity',
+    'ampere', 'katal',
+]
+

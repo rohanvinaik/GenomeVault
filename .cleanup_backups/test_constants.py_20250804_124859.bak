@@ -1,0 +1,13 @@
+from genomevault.core.constants import (DEFAULT_DENSITY, DEFAULT_SEED,
+                                        HYPERVECTOR_DIMENSIONS)
+
+
+def test_dimensions_and_defaults_present():
+    assert HYPERVECTOR_DIMENSIONS["base"] == 10000
+    assert HYPERVECTOR_DIMENSIONS["mid"] == 15000
+    assert HYPERVECTOR_DIMENSIONS["high"] == 20000
+
+    assert isinstance(DEFAULT_SEED, int)
+    assert isinstance(DEFAULT_DENSITY, float)
+    assert 0.0 < DEFAULT_DENSITY <= 1.0
+

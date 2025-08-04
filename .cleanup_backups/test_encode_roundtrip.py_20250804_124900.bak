@@ -1,0 +1,322 @@
+"""
+Integration tests for hypervector encoding roundtrip functionality.
+
+Tests the complete pipeline from encoding to decoding genomic sequences.
+"""
+
+import numpy as np
+import pytest
+import torch
+
+from genomevault.core.constants import HYPERVECTOR_DIMENSIONS
+from genomevault.hypervector.encoding import UnifiedHypervectorEncoder
+from genomevault.hypervector.encoding.packed import (PackedGenomicEncoder,
+                                                     PackedHV)
+from genomevault.hypervector_transform.hdc_encoder import (CompressionTier,
+                                                           HypervectorEncoder,
+                                                           OmicsType)
+
+
+class TestHypervectorEncodingRoundtrip:
+    """Test roundtrip encoding/decoding functionality"""
+
+    def test_sequence_encoding_roundtrip(self):
+        """Test that we can encode and decode a genomic sequence maintaining identity"""
+        # Test sequence
+        test_sequence = "ACGTACGT"
+
+        # Create encoder
+        encoder = UnifiedHypervectorEncoder(dimension=HYPERVECTOR_DIMENSIONS["base"])
+
+        # Encode sequence
+        encoded = encoder.encode_sequence(test_sequence)
+
+        # Verify encoding
+        assert isinstance(encoded, (np.ndarray, torch.Tensor))
+        assert len(encoded) == HYPERVECTOR_DIMENSIONS["base"]
+
+        # Simple similarity test - the same sequence should have high similarity
+        encoded2 = encoder.encode_sequence(test_sequence)
+        similarity = encoder.similarity(encoded, encoded2)
+
+        # Should be very similar (allowing for some randomness in implementation)
+        assert similarity > 0.9, f"Self-similarity too low: {similarity}"
+
+        # Different sequences should have lower similarity
+        different_sequence = "TGCATGCA"
+        encoded_different = encoder.encode_sequence(different_sequence)
+        diff_similarity = encoder.similarity(encoded, encoded_different)
+
+        assert (
+            diff_similarity < similarity
+        ), "Different sequences should have lower similarity"
+
+    def test_packed_hypervector_roundtrip(self):
+        """Test packed hypervector encoding/decoding"""
+        test_sequence = "ACGTACGTACGTACGT"
+
+        # Create packed encoder
+        encoder = PackedGenomicEncoder(
+            dimension=HYPERVECTOR_DIMENSIONS["base"], packed=True, device="cpu"
+        )
+
+        # Encode variant as test case
+        variant = {
+            "chromosome": "chr1",
+            "position": 12345,
+            "ref": "A",
+            "alt": "T",
+            "type": "SNP",
+        }
+
+        encoded = encoder.encode_variant(**variant)
+
+        # Should return PackedHV
+        assert isinstance(encoded, PackedHV)
+        assert encoded.n_bits == HYPERVECTOR_DIMENSIONS["base"]
+
+        # Test conversion to dense
+        dense = encoded.to_dense()
+        assert len(dense) == HYPERVECTOR_DIMENSIONS["base"]
+        assert dense.dtype == np.uint8
+
+        # Test conversion to torch
+        torch_vec = encoded.to_torch()
+        assert isinstance(torch_vec, torch.Tensor)
+        assert torch_vec.shape[0] == HYPERVECTOR_DIMENSIONS["base"]
+
+        # Test roundtrip through torch
+        packed_from_torch = PackedHV.from_torch(torch_vec)
+
+        # Should be identical or very similar
+        hamming_dist = encoded.hamming_distance(packed_from_torch)
+        # Allow for small differences due to type conversions
+        assert hamming_dist < HYPERVECTOR_DIMENSIONS["base"] * 0.01
+
+    def test_hdc_encoder_multiresolution(self):
+        """Test HDC encoder with multiple compression tiers"""
+        # Sample genomic data
+        genomic_data = {
+            "variants": {
+                "snps": [
+                    {"chromosome": "chr1", "position": 1000, "ref": "A", "alt": "T"},
+                    {"chromosome": "chr2", "position": 2000, "ref": "G", "alt": "C"},
+                ],
+                "indels": [],
+                "cnvs": [],
+            },
+            "quality_metrics": {
+                "mean_coverage": 30.5,
+                "uniformity": 0.85,
+                "gc_content": 0.42,
+            },
+        }
+
+        # Create HDC encoder
+        encoder = HypervectorEncoder()
+
+        # Test multiresolution encoding
+        multiresolution = encoder.encode_multiresolution(
+            genomic_data, OmicsType.GENOMIC
+        )
+
+        # Should have all tiers
+        assert CompressionTier.MINI.value in multiresolution
+        assert CompressionTier.CLINICAL.value in multiresolution
+        assert CompressionTier.FULL.value in multiresolution
+
+        # Different tiers should have different dimensions
+        mini_vec = multiresolution[CompressionTier.MINI.value]
+        clinical_vec = multiresolution[CompressionTier.CLINICAL.value]
+        full_vec = multiresolution[CompressionTier.FULL.value]
+
+        assert (
+            mini_vec.shape[0] == encoder.tier_configs[CompressionTier.MINI]["dimension"]
+        )
+        assert (
+            clinical_vec.shape[0]
+            == encoder.tier_configs[CompressionTier.CLINICAL]["dimension"]
+        )
+        assert (
+            full_vec.shape[0] == encoder.tier_configs[CompressionTier.FULL]["dimension"]
+        )
+
+        # Test similarity between tiers - should be somewhat correlated
+        mini_clinical_sim = encoder.similarity(
+            mini_vec[:5000], clinical_vec[:5000]
+        )  # Compare first 5000 dims
+        assert (
+            mini_clinical_sim > 0.1
+        ), "Different tiers should maintain some similarity"
+
+    def test_similarity_metrics(self):
+        """Test different similarity metrics work correctly"""
+        encoder = HypervectorEncoder()
+
+        # Create two similar genomic samples
+        sample1 = {
+            "variants": {
+                "snps": [{"chr": "chr1", "pos": 1000, "ref": "A", "alt": "T"}]
+            },
+            "quality_metrics": {"mean_coverage": 30.0},
+        }
+
+        sample2 = {
+            "variants": {
+                "snps": [{"chr": "chr1", "pos": 1000, "ref": "A", "alt": "T"}]
+            },
+            "quality_metrics": {"mean_coverage": 30.1},  # Slightly different
+        }
+
+        # Encode both
+        hv1 = encoder.encode(sample1, OmicsType.GENOMIC)
+        hv2 = encoder.encode(sample2, OmicsType.GENOMIC)
+
+        # Test different similarity metrics
+        cosine_sim = encoder.similarity(hv1, hv2, "cosine")
+        euclidean_sim = encoder.similarity(hv1, hv2, "euclidean")
+        hamming_sim = encoder.similarity(hv1, hv2, "hamming")
+
+        # Cosine similarity should be between -1 and 1
+        assert -1 <= cosine_sim <= 1
+
+        # Euclidean similarity is negative distance, so should be <= 0
+        assert euclidean_sim <= 0
+
+        # Hamming similarity should be between 0 and 1
+        assert 0 <= hamming_sim <= 1
+
+        # Similar samples should have high cosine and hamming similarity
+        assert cosine_sim > 0.5, f"Cosine similarity too low: {cosine_sim}"
+        assert hamming_sim > 0.5, f"Hamming similarity too low: {hamming_sim}"
+
+    def test_encoder_consistency(self):
+        """Test that encoders produce consistent results with same inputs"""
+        test_data = {
+            "variants": {
+                "snps": [{"chr": "chr1", "pos": 12345, "ref": "A", "alt": "G"}]
+            },
+            "quality_metrics": {"mean_coverage": 25.0},
+        }
+
+        # Create multiple encoders with same seed
+        encoder1 = HypervectorEncoder()
+        encoder1.config.seed = 42
+        encoder2 = HypervectorEncoder()
+        encoder2.config.seed = 42
+
+        # Reset random seeds
+        torch.manual_seed(42)
+        np.random.seed(42)
+        hv1 = encoder1.encode(test_data, OmicsType.GENOMIC)
+
+        torch.manual_seed(42)
+        np.random.seed(42)
+        hv2 = encoder2.encode(test_data, OmicsType.GENOMIC)
+
+        # Should be very similar (allowing for floating point differences)
+        similarity = encoder1.similarity(hv1, hv2, "cosine")
+        assert similarity > 0.99, f"Encoders not consistent: {similarity}"
+
+    def test_memory_efficiency(self):
+        """Test that packed representations are more memory efficient"""
+        # Regular encoder
+        regular_encoder = PackedGenomicEncoder(packed=False)
+
+        # Packed encoder
+        packed_encoder = PackedGenomicEncoder(packed=True)
+
+        # Test memory efficiency calculation
+        regular_efficiency = regular_encoder.memory_efficiency
+        packed_efficiency = packed_encoder.memory_efficiency
+
+        assert packed_efficiency > regular_efficiency
+        assert (
+            packed_efficiency >= 32.0
+        )  # Should be 32x more efficient (1 bit vs 32 bits)
+
+    def test_batch_processing(self):
+        """Test batch processing of multiple samples"""
+        encoder = HypervectorEncoder()
+
+        # Create batch of samples
+        samples = []
+        for i in range(5):
+            sample = {
+                "variants": {
+                    "snps": [{"chr": "chr1", "pos": 1000 + i, "ref": "A", "alt": "T"}]
+                },
+                "quality_metrics": {"mean_coverage": 30.0 + i},
+            }
+            samples.append(sample)
+
+        # Encode each sample
+        hypervectors = []
+        for sample in samples:
+            hv = encoder.encode(sample, OmicsType.GENOMIC)
+            hypervectors.append(hv)
+
+        # Test batch similarity computation
+        hv_tensor = torch.stack(hypervectors)
+
+        # Should be able to compute similarities
+        assert hv_tensor.shape[0] == 5
+        assert hv_tensor.shape[1] == encoder.config.dimension
+
+        # Test pairwise similarities
+        for i in range(len(hypervectors)):
+            for j in range(i + 1, len(hypervectors)):
+                sim = encoder.similarity(hypervectors[i], hypervectors[j])
+                assert 0 <= sim <= 1  # Should be valid similarity
+
+
+class TestEdgeCases:
+    """Test edge cases and error conditions"""
+
+    def test_empty_sequence(self):
+        """Test encoding empty or invalid sequences"""
+        encoder = UnifiedHypervectorEncoder()
+
+        # Test empty sequence
+        with pytest.raises((ValueError, AttributeError)):
+            encoder.encode_sequence("")
+
+    def test_invalid_variant_data(self):
+        """Test handling of invalid variant data"""
+        encoder = PackedGenomicEncoder()
+
+        # Test with missing required fields
+        with pytest.raises((KeyError, ValueError)):
+            encoder.encode_variant(
+                chromosome="chr1",
+                position=12345,
+                ref="A",
+                # Missing 'alt' field
+            )
+
+    def test_unsupported_similarity_metric(self):
+        """Test error handling for unsupported similarity metrics"""
+        encoder = HypervectorEncoder()
+
+        hv1 = torch.randn(1000)
+        hv2 = torch.randn(1000)
+
+        with pytest.raises(ValueError):
+            encoder.similarity(hv1, hv2, "unsupported_metric")
+
+    def test_dimension_mismatch(self):
+        """Test handling of dimension mismatches"""
+        encoder = HypervectorEncoder()
+
+        hv1 = torch.randn(1000)
+        hv2 = torch.randn(2000)  # Different dimension
+
+        # Should handle gracefully or raise appropriate error
+        with pytest.raises((RuntimeError, ValueError)):
+            encoder.similarity(hv1, hv2)
+
+
+if __name__ == "__main__":
+    # Run tests if script is executed directly
+    pytest.main([__file__, "-v"])
+

@@ -1,16 +1,18 @@
-"""
-Core constraint system for ZK proofs
-
-This module implements the fundamental constraint generation and solving
-for PLONK-style arithmetic circuits.
-"""
-
 import hashlib
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
 import numpy as np
+
+from genomevault.observability.logging import configure_logging
+
+"""
+Core constraint system for ZK proofs
+
+This module implements the fundamental constraint generation and solving
+for PLONK-style arithmetic circuits.
+"""
 
 
 class ConstraintType(Enum):
@@ -196,7 +198,6 @@ class Constraint:
                 return (a_val * b_val) == c_val
 
         except Exception:
-            from genomevault.observability.logging import configure_logging
 
             logger = configure_logging()
             logger.exception("Unhandled exception")

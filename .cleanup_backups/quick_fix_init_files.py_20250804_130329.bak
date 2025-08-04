@@ -1,0 +1,61 @@
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
+#!/usr/bin/env python3
+"""
+Quick fix for missing __init__.py files in GenomeVault
+"""
+
+from pathlib import Path
+
+
+def add_init_files():
+    base_path = Path("/Users/rohanvinaik/genomevault")
+
+    # Directories that need __init__.py based on the audit
+    missing_init_dirs = [
+        "genomevault/blockchain/contracts",
+        "genomevault/blockchain/node",
+        "genomevault/cli",
+        "genomevault/clinical",
+        "genomevault/clinical/diabetes_pilot",
+        "genomevault/federation",
+        "genomevault/governance",
+        "genomevault/kan",
+        "genomevault/pir/reference_data",
+        "genomevault/zk_proofs/examples",
+        "scripts",
+        "tests",
+        "tests/adversarial",
+        "tests/e2e",
+        "tests/integration",
+        "tests/property",
+        "tests/unit",
+        "tests/zk",
+    ]
+
+    created = 0
+    for dir_path in missing_init_dirs:
+        full_path = base_path / dir_path
+        init_file = full_path / "__init__.py"
+
+        if full_path.exists():
+            if not init_file.exists():
+                logger.info(f"Creating __init__.py in {dir_path}")
+                init_file.write_text('"""Module initialization."""\n')
+                created += 1
+            else:
+                logger.info(f"__init__.py already exists in {dir_path}")
+        else:
+            logger.info(f"Directory does not exist: {dir_path}")
+
+    logger.info(f"\nCreated {created} __init__.py files")
+
+
+if __name__ == "__main__":
+    add_init_files()
+
+
+
+
+

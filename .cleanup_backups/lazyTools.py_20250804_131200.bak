@@ -1,0 +1,49 @@
+from collections import UserDict, UserList
+from typing import Any, Dict
+
+__all__ = ["LazyDict", "LazyList"]
+
+
+class LazyDict(UserDict):
+    def __init__(self, data) -> None:
+            """TODO: Add docstring for __init__"""
+    super().__init__()
+        self.data = data
+
+    def __getitem__(self, k) -> None:
+            """TODO: Add docstring for __getitem__"""
+    v = self.data[k]
+        if callable(v):
+            v = v(k)
+            self.data[k] = v
+        return v
+
+
+class LazyList(UserList):
+    def __getitem__(self, k) -> None:
+            """TODO: Add docstring for __getitem__"""
+    if isinstance(k, slice):
+            indices = range(*k.indices(len(self)))
+            return [self[i] for i in indices]
+        v = self.data[k]
+        if callable(v):
+            v = v(k)
+            self.data[k] = v
+        return v
+
+    def __add__(self, other) -> None:
+            """TODO: Add docstring for __add__"""
+    if isinstance(other, LazyList):
+            other = list(other)
+        elif isinstance(other, list):
+            pass
+        else:
+            return NotImplemented
+        return list(self) + other
+
+    def __radd__(self, other) -> None:
+            """TODO: Add docstring for __radd__"""
+    if not isinstance(other, list):
+            return NotImplemented
+        return other + list(self)
+

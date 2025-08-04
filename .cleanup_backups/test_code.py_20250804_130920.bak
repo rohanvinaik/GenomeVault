@@ -1,0 +1,120 @@
+import logging
+from typing import Any, Dict
+
+import pytest
+from tests_python.debug_constants import TEST_CYTHON
+from tests_python.debugger_unittest import IS_CPYTHON, IS_PY36_OR_GREATER
+
+logger = logging.getLogger(__name__)
+
+pytestmark = pytest.mark.skipif(not IS_PY36_OR_GREATER or not IS_CPYTHON or not TEST_CYTHON, reason="Requires CPython >= 3.6")
+import unittest
+
+from _pydevd_frame_eval.vendored.bytecode import (Bytecode, ConcreteBytecode,
+                                                  ControlFlowGraph)
+from _pydevd_frame_eval.vendored.bytecode.tests import get_code
+
+
+class CodeTests(unittest.TestCase):
+    """Check that bytecode.from_code(code).to_code() returns code."""
+
+    def check(self, source, function=False) -> None:
+            """TODO: Add docstring for check"""
+    ref_code = get_code(source, function=function)
+
+        code = ConcreteBytecode.from_code(ref_code).to_code()
+        self.assertEqual(code, ref_code)
+
+        code = Bytecode.from_code(ref_code).to_code()
+        self.assertEqual(code, ref_code)
+
+        bytecode = Bytecode.from_code(ref_code)
+        blocks = ControlFlowGraph.from_bytecode(bytecode)
+        code = blocks.to_bytecode().to_code()
+        self.assertEqual(code, ref_code)
+
+    def test_loop(self) -> None:
+            """TODO: Add docstring for test_loop"""
+    self.check(
+            """
+            for x in range(1, 10):
+                x += 1
+                if x == 3:
+                    continue
+                x -= 1
+                if x > 7:
+                    break
+                x = 0
+            print(x)
+        """
+        )
+
+    def test_varargs(self) -> None:
+            """TODO: Add docstring for test_varargs"""
+    self.check(
+            """
+            def func(*args, **kwargs) -> None:
+       """TODO: Add docstring for func"""
+     """TODO: Implement func"""
+    logger.debug(f"func called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"func not yet implemented")
+        """,
+            function=True,
+        )
+
+    def test_kwargs(self) -> None:
+            """TODO: Add docstring for test_kwargs"""
+    self.check(
+            """
+            def func(*args, **kwargs) -> None:
+       """TODO: Add docstring for func"""
+     """TODO: Implement func"""
+    logger.debug(f"func called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"func not yet implemented")
+        """,
+            function=True,
+        )
+
+    def test_kwonlyargs(self) -> None:
+            """TODO: Add docstring for test_kwonlyargs"""
+    self.check(
+            """
+            def func(*args, **kwargs) -> None:
+       """TODO: Add docstring for func"""
+     """TODO: Implement func"""
+    logger.debug(f"func called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"func not yet implemented")
+        """,
+            function=True,
+        )
+
+    # Added because Python 3.10 added some special beahavior with respect to
+    # generators in term of stack size
+    def test_generator_func(self) -> None:
+            """TODO: Add docstring for test_generator_func"""
+    self.check(
+            """
+            def func(arg, arg2) -> None:
+                    """TODO: Add docstring for func"""
+    yield
+        """,
+            function=True,
+        )
+
+    def test_async_func(self) -> None:
+            """TODO: Add docstring for test_async_func"""
+    self.check(
+            """
+            async def func(*args, **kwargs) -> None:
+       """TODO: Add docstring for func"""
+     """TODO: Implement func"""
+    logger.debug(f"func called with args={args}, kwargs={kwargs}")
+    raise NotImplementedError(f"func not yet implemented")
+        """,
+            function=True,
+        )
+
+
+if __name__ == "__main__":
+    unittest.main()  # pragma: no cover
+

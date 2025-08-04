@@ -15,7 +15,7 @@ import numpy as np
 
 from genomevault.utils.logging import logger
 
-logger = get_logger(__name__)
+logger = _get_logger(__name__)
 
 from genomevault.zk_proofs import (CircuitManager, PostQuantumTransition,
                                    Prover, Verifier, benchmark_pq_performance)
@@ -138,7 +138,7 @@ def demonstrate_polygenic_risk_score():
     weights = np.random.normal(0, 0.1, size=num_variants).tolist()
 
     # Calculate actual score
-    actual_score = sum(v * w for v, w in zip(variants, weights))
+    sum(v * w for v, w in zip(variants, weights))
 
     print("PRS Model:")
     print("  - Variants: {num_variants}")
@@ -183,7 +183,6 @@ def demonstrate_pharmacogenomics():
     verifier = Verifier()
 
     # Medication being evaluated
-    medication = "warfarin"
     medication_id = 114  # RxNorm CUI
 
     # Patient's star alleles (private)
@@ -245,7 +244,7 @@ def demonstrate_circuit_optimization():
     manager = CircuitManager()
 
     # List available circuits
-    circuits = manager.list_circuits()
+    manager.list_circuits()
     print("Available circuits: {len(circuits)}")
 
     # Select optimal circuit for different scenarios
@@ -267,7 +266,7 @@ def demonstrate_circuit_optimization():
         print("  Selected circuit: {optimal}")
 
         # Get metadata
-        metadata = manager.get_circuit_metadata(optimal)
+        manager.get_circuit_metadata(optimal)
         print("  Constraints: {metadata.constraint_count}")
         print("  Proof size: {metadata.proof_size_bytes} bytes")
         print("  Verification time: {metadata.verification_time_ms}ms")
@@ -281,7 +280,7 @@ def demonstrate_post_quantum_transition():
     pq_transition = PostQuantumTransition()
 
     # Get transition status
-    status = pq_transition.get_transition_status()
+    pq_transition.get_transition_status()
     print("Transition status:")
     print("  Classical active: {status['classical_active']}")
     print("  Post-quantum active: {status['post_quantum_active']}")
@@ -300,7 +299,7 @@ def demonstrate_post_quantum_transition():
         circuit_name="test_circuit", statement=statement, witness=witness
     )
 
-    generation_time = time.time() - start
+    time.time() - start
 
     print("Generation time: {generation_time:.2f}s")
     print("Proof types generated: {list(proofs.keys())}")
@@ -371,7 +370,7 @@ def demonstrate_batch_operations():
 
     proofs = prover.batch_prove(batch_requests)
 
-    batch_time = time.time() - start
+    time.time() - start
     print("Batch generation time: {batch_time:.2f}s")
     print("Average per proof: {batch_time/len(proofs):.3f}s")
 
@@ -381,11 +380,11 @@ def demonstrate_batch_operations():
 
     results = verifier.batch_verify(proofs)
 
-    verify_time = time.time() - start
+    time.time() - start
     print("Batch verification time: {verify_time:.2f}s")
 
     # Summary
-    valid_count = sum(1 for r in results if r.is_valid)
+    sum(1 for r in results if r.is_valid)
     print("\nBatch results: {valid_count}/{len(results)} valid")
 
 

@@ -1,0 +1,357 @@
+#!/usr/bin/env python3
+"""
+GenomeVault Targeted Fix Script
+Fixes only issues in actual project files (excludes venv)
+"""
+
+import datetime
+import logging
+import re
+import shutil
+from pathlib import Path
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
+
+
+class TargetedGenomeVaultFixer:
+    def __init__(self, base_path: str):
+        self.base_path = Path(base_path)
+        self.backup_dir = (
+            self.base_path.parent
+            / f"genomevault_backup_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        )
+
+        # Directories to exclude from fixes
+        self.exclude_dirs = {
+            "venv",
+            ".venv",
+            "env",
+            ".env",
+            "__pycache__",
+            ".git",
+            ".pytest_cache",
+            ".mypy_cache",
+            ".tox",
+            "htmlcov",
+            "node_modules",
+            "build",
+            "dist",
+            ".idea",
+            ".vscode",
+        }
+
+        # High-priority files identified from audit
+        self.priority_files = {
+            "examples/hdc_pir_zk_integration_demo.py": 97,  # print statements
+            "genomevault/zk_proofs/examples/integration_demo.py": 75,  # print statements
+            "examples/minimal_verification.py": 33,
+            "devtools/verify_fix.py": 29,
+            "devtools/diagnose_imports.py": 27,
+            "devtools/diagnose_failures.py": 25,
+            "genomevault/hypervector_transform/advanced_compression.py": 24,
+            "genomevault/zk_proofs/advanced/catalytic_proof.py": 23,
+            "devtools/trace_import_failure.py": 22,
+            "genomevault/pir/advanced/it_pir.py": 20,
+            "genomevault/blockchain/node.py": 17,
+            "genomevault/pir/advanced/robust_it_pir.py": 16,
+            "genomevault/clinical/diabetes_pilot/risk_calculator.py": 16,
+            "genomevault/blockchain/governance.py": 14,
+            "genomevault/hypervector_transform/hierarchical.py": 12,
+            "genomevault/security/phi_detector.py": 11,
+        }
+
+    def should_process_file(self, path: Path) -> bool:
+        """Check if file should be processed"""
+        # Check if in excluded directory
+        for part in path.parts:
+            if part in self.exclude_dirs:
+                return False
+
+        # Only process Python files in project directories
+        rel_path = path.relative_to(self.base_path)
+        return str(rel_path).startswith(
+            (
+                "genomevault/",
+                "tests/",
+                "examples/",
+                "scripts/",
+                "benchmarks/",
+                "devtools/",
+            )
+        )
+
+    def create_backup(self):
+        """Create a backup of project files only"""
+        if self.backup_dir.exists():
+            logger.warning(f"Backup directory already exists: {self.backup_dir}")
+            return
+
+        logger.info(f"Creating backup at: {self.backup_dir}")
+
+        # Create backup directory
+        self.backup_dir.mkdir(parents=True)
+
+        # Copy only project directories
+        project_dirs = [
+            "genomevault",
+            "tests",
+            "examples",
+            "scripts",
+            "benchmarks",
+            "devtools",
+            "docs",
+            "config",
+        ]
+
+        for dir_name in project_dirs:
+            src_dir = self.base_path / dir_name
+            if src_dir.exists():
+                dst_dir = self.backup_dir / dir_name
+                shutil.copytree(
+                    src_dir,
+                    dst_dir,
+                    ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+                )
+
+        # Copy important root files
+        root_files = [
+            "setup.py",
+            "requirements.txt",
+            "README.md",
+            "pyproject.toml",
+            ".flake8",
+            ".pylintrc",
+        ]
+
+        for file_name in root_files:
+            src_file = self.base_path / file_name
+            if src_file.exists():
+                shutil.copy2(src_file, self.backup_dir / file_name)
+
+    def fix_root_init_file(self):
+        """Add __init__.py to root directory if needed"""
+        init_file = self.base_path / "__init__.py"
+        if not init_file.exists():
+            logger.info("Creating root __init__.py")
+            init_file.write_text('"""GenomeVault root package."""\n')
+
+    def fix_priority_print_statements(self):
+        """Fix print statements in high-priority files"""
+        logger.info("Fixing print statements in priority files...")
+
+        for file_path, print_count in self.priority_files.items():
+            full_path = self.base_path / file_path
+            if full_path.exists() and self.should_process_file(full_path):
+                logger.info(f"Processing {file_path} ({print_count} prints)")
+                self._convert_prints_to_logging(full_path)
+
+    def _convert_prints_to_logging(self, file_path: Path):
+        """Convert print statements to logging in a single file"""
+        try:
+            content = file_path.read_text()
+            original_content = content
+
+            # Check if it's an example/demo file - these might legitimately use print
+            is_example = "examples/" in str(file_path) or "demo" in file_path.name
+
+            if is_example:
+                # For examples, add a comment explaining the prints
+                if "import logging" not in content and content.count("print(") > 10:
+                    lines = content.split("\n")
+
+                    # Find where to insert the comment
+                    insert_pos = 0
+                    if lines[0].startswith("#!"):
+                        insert_pos = 1
+                    if lines[insert_pos].startswith('"""') or lines[
+                        insert_pos
+                    ].startswith("'''"):
+                        # Find end of docstring
+                        for i, line in enumerate(
+                            lines[insert_pos + 1 :], insert_pos + 1
+                        ):
+                            if line.endswith('"""') or line.endswith("'''"):
+                                insert_pos = i + 1
+                                break
+
+                    comment = [
+                        "",
+                        "# Note: This example uses print() statements for demonstration purposes.",
+                        "# In production code, use proper logging instead.",
+                        "",
+                    ]
+
+                    for i, line in enumerate(comment):
+                        lines.insert(insert_pos + i + 1, line)
+
+                    content = "\n".join(lines)
+            else:
+                # For non-example files, convert prints to logging
+                # Add logging import if not present
+                if "import logging" not in content:
+                    lines = content.split("\n")
+                    import_lines = []
+                    for i, line in enumerate(lines):
+                        if line.startswith("import ") or line.startswith("from "):
+                            import_lines.append(i)
+
+                    if import_lines:
+                        insert_pos = max(import_lines) + 1
+                    else:
+                        insert_pos = 0
+                        if lines[0].startswith('"""') or lines[0].startswith("'''"):
+                            for i, line in enumerate(lines[1:], 1):
+                                if line.endswith('"""') or line.endswith("'''"):
+                                    insert_pos = i + 1
+                                    break
+
+                    lines.insert(insert_pos, "import logging")
+                    lines.insert(insert_pos + 1, "")
+                    lines.insert(insert_pos + 2, "logger = logging.getLogger(__name__)")
+                    lines.insert(insert_pos + 3, "")
+                    content = "\n".join(lines)
+
+                # Replace print statements
+                content = re.sub(
+                    r"^(\s*)print\((.*?)\)$",
+                    r"\1logger.info(\2)",
+                    content,
+                    flags=re.MULTILINE,
+                )
+                content = re.sub(
+                    r'^(\s*)print\(f(["\'])(.*?)\2\)$',
+                    r"\1logger.info(f\2\3\2)",
+                    content,
+                    flags=re.MULTILINE,
+                )
+                content = re.sub(
+                    r'^(\s*)print\(["\']Error:?["\'],?\s*(.*?)\)$',
+                    r"\1logger.error(\2)",
+                    content,
+                    flags=re.MULTILINE,
+                )
+                content = re.sub(
+                    r'^(\s*)print\(["\']Warning:?["\'],?\s*(.*?)\)$',
+                    r"\1logger.warning(\2)",
+                    content,
+                    flags=re.MULTILINE,
+                )
+                content = re.sub(
+                    r'^(\s*)print\(["\']Debug:?["\'],?\s*(.*?)\)$',
+                    r"\1logger.debug(\2)",
+                    content,
+                    flags=re.MULTILINE,
+                )
+
+            if content != original_content:
+                file_path.write_text(content)
+                logger.info(f"Updated {file_path}")
+
+        except Exception as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
+            logger.error(f"Error processing {file_path}: {e}")
+            raise
+
+    def add_complexity_todos(self):
+        """Add TODO comments for complex functions"""
+        complex_functions = [
+            (
+                "genomevault/hypervector_transform/hdc_encoder.py",
+                "_extract_features",
+                20,
+            ),
+            (
+                "genomevault/local_processing/epigenetics.py",
+                "find_differential_peaks",
+                16,
+            ),
+            ("genomevault/hypervector_transform/encoding.py", "_extract_features", 15),
+        ]
+
+        for file_path, func_name, complexity in complex_functions:
+            full_path = self.base_path / file_path
+            if full_path.exists():
+                logger.info(f"Adding refactor TODO for {func_name} in {file_path}")
+                self._add_refactor_todo(full_path, func_name, complexity)
+
+    def _add_refactor_todo(self, file_path: Path, func_name: str, complexity: int):
+        """Add a TODO comment for refactoring"""
+        try:
+            content = file_path.read_text()
+            lines = content.split("\n")
+
+            # Find the function
+            for i, line in enumerate(lines):
+                if f"def {func_name}(" in line:
+                    # Add TODO comment before the function
+                    indent = re.match(r"^(\s*)", line).group(1)
+                    todo_comment = f"{indent}# TODO: Refactor this function to reduce complexity (current: {complexity})"
+
+                    # Check if TODO already exists
+                    if i > 0 and "TODO: Refactor" not in lines[i - 1]:
+                        lines.insert(i, todo_comment)
+                        break
+
+            new_content = "\n".join(lines)
+            if new_content != content:
+                file_path.write_text(new_content)
+
+        except Exception as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
+            logger.error(f"Error adding TODO to {file_path}: {e}")
+            raise
+
+    def run_targeted_fixes(self):
+        """Run targeted fixes for actual project issues"""
+        logger.info("Starting targeted GenomeVault fixes...")
+        logger.info("Focusing only on actual project files (excluding venv)")
+
+        # Create backup first
+        self.create_backup()
+
+        # Fix the root __init__.py issue
+        logger.info("\n1. Fixing missing root __init__.py...")
+        self.fix_root_init_file()
+
+        # Fix print statements in priority files
+        logger.info("\n2. Fixing print statements in priority files...")
+        self.fix_priority_print_statements()
+
+        # Add complexity TODOs
+        logger.info("\n3. Adding complexity TODOs...")
+        self.add_complexity_todos()
+
+        logger.info("\nTargeted fixes completed!")
+        logger.info(f"Backup created at: {self.backup_dir}")
+        logger.info("\nNext steps:")
+        logger.info("1. Run 'python3 validate_project_only.py' to see updated metrics")
+        logger.info("2. Review changes with 'git diff'")
+        logger.info("3. Run tests to ensure nothing broke")
+        logger.info(
+            "4. Consider manually refactoring the complex functions marked with TODOs"
+        )
+
+
+if __name__ == "__main__":
+    import sys
+
+    if len(sys.argv) > 1:
+        base_path = sys.argv[1]
+    else:
+        base_path = "/Users/rohanvinaik/genomevault"
+
+    fixer = TargetedGenomeVaultFixer(base_path)
+    fixer.run_targeted_fixes()
+
+
+

@@ -1,0 +1,609 @@
+#!/usr/bin/env python3
+"""
+Focused GenomeVault Technical Debt Cleanup
+==========================================
+
+Based on the analysis of GenomeVault_function_inventory.csv, this script targets
+the most problematic files with placeholder functions and undefined names.
+
+Priority fixes:
+1. genomevault/core/exceptions.py (23 placeholders)
+2. genomevault/zk_proofs/ modules (high F821 error potential)
+3. Guard example code blocks
+4. Fix tooling script organization
+"""
+
+import os
+import re
+from pathlib import Path
+from typing import Dict, List, Set
+
+
+class FocusedCleanup:
+    def __init__(self, repo_root: str = "/Users/rohanvinaik/genomevault"):
+        self.repo_root = Path(repo_root)
+        self.fixes_applied = []
+        
+    def log_fix(self, message: str):
+        """Log a fix that was applied."""
+        print(f"✓ {message}")
+        self.fixes_applied.append(message)
+    
+    def read_file_safe(self, file_path: Path) -> str:
+        """Safely read a file, return empty string if file doesn't exist."""
+        try:
+            return file_path.read_text(encoding='utf-8')
+        except Exception as e:
+            print(f"Warning: Could not read {file_path}: {e}")
+            return ""
+    
+    def write_file_safe(self, file_path: Path, content: str):
+        """Safely write a file."""
+        try:
+            file_path.write_text(content, encoding='utf-8')
+            return True
+        except Exception as e:
+            print(f"Error: Could not write {file_path}: {e}")
+            return False
+    
+    def fix_exceptions_module(self):
+        """Fix the core exceptions module with 23 placeholders."""
+        exceptions_path = self.repo_root / "genomevault" / "core" / "exceptions.py"
+        if not exceptions_path.exists():
+            exceptions_path = self.repo_root / "genomevault" / "exceptions.py"
+        
+        if not exceptions_path.exists():
+            print("Exceptions module not found, skipping")
+            return
+        
+        content = self.read_file_safe(exceptions_path)
+        if not content:
+            return
+        
+        lines = content.split('\n')
+        modified = False
+        
+        # Common placeholder patterns to fix
+        for i, line in enumerate(lines):
+            # Replace pass-only function bodies with NotImplementedError
+            if (line.strip() == "pass" and 
+                i > 0 and 
+                (lines[i-1].strip().startswith("def ") or
+                 ":" in lines[i-1] and "def " in lines[i-1])):
+                
+                lines[i] = "    raise NotImplementedError(\"This exception type is not yet implemented\")"
+                modified = True
+        
+        # Add basic exception classes if they're missing
+        essential_exceptions = [
+            "class GenomeVaultError(Exception):",
+            "    \"\"\"Base exception for GenomeVault.\"\"\"",
+            "    pass",
+            "",
+            "class ValidationError(GenomeVaultError):",
+            "    \"\"\"Raised when data validation fails.\"\"\"",
+            "    pass",
+            "",
+            "class SecurityError(GenomeVaultError):",
+            "    \"\"\"Raised when security constraints are violated.\"\"\"",
+            "    pass",
+            "",
+            "class ConfigurationError(GenomeVaultError):",
+            "    \"\"\"Raised when configuration is invalid.\"\"\"",
+            "    pass"
+        ]
+        
+        # Check if we need to add basic exceptions
+        if "class GenomeVaultError" not in content:
+            # Find a good insertion point
+            insert_pos = len(lines)
+            for i, line in enumerate(lines):
+                if line.strip().startswith("class ") and "Error" in line:
+                    insert_pos = i
+                    break
+            
+            # Insert essential exceptions
+            for j, exc_line in enumerate(essential_exceptions):
+                lines.insert(insert_pos + j, exc_line)
+            modified = True
+        
+        if modified:
+            new_content = '\n'.join(lines)
+            if self.write_file_safe(exceptions_path, new_content):
+                self.log_fix(f"Fixed exceptions module at {exceptions_path}")
+    
+    def fix_zk_proofs_modules(self):
+        """Fix key ZK proofs modules."""
+        zk_modules = [
+            "genomevault/zk_proofs/prover.py",
+            "genomevault/zk_proofs/verifier.py",
+            "genomevault/zk_proofs/circuits/base_circuits.py"
+        ]
+        
+        for module_path in zk_modules:
+            full_path = self.repo_root / module_path
+            if not full_path.exists():
+                continue
+                
+            content = self.read_file_safe(full_path)
+            if not content:
+                continue
+            
+            original_content = content
+            
+            # Add basic imports if missing
+            content = self.ensure_basic_imports(content)
+            
+            # Fix common undefined variables
+            content = self.fix_common_undefined_vars(content)
+            
+            # Guard example code
+            content = self.guard_example_code(content)
+            
+            if content != original_content:
+                if self.write_file_safe(full_path, content):
+                    self.log_fix(f"Fixed ZK module {module_path}")
+    
+    def ensure_basic_imports(self, content: str) -> str:
+        """Ensure basic imports are present."""
+        lines = content.split('\n')
+        
+        # Check what's already imported
+        has_logging = any('import logging' in line for line in lines[:20])
+        has_time = any('import time' in line for line in lines[:20])
+        has_typing = any('from typing import' in line for line in lines[:20])
+        
+        # Find insertion point (after docstring, before first non-import)
+        insert_pos = 0
+        in_docstring = False
+        
+        for i, line in enumerate(lines):
+            if line.strip().startswith('"""') or line.strip().startswith("'''"):
+                in_docstring = not in_docstring
+                if not in_docstring:
+                    insert_pos = i + 1
+            elif not in_docstring and (line.startswith('import ') or line.startswith('from ')):
+                insert_pos = i + 1
+            elif not in_docstring and line.strip() and not line.startswith('#'):
+                break
+        
+        # Add missing imports
+        imports_to_add = []
+        if not has_logging:
+            imports_to_add.extend(['import logging', 'logger = logging.getLogger(__name__)'])
+        if not has_time:
+            imports_to_add.append('import time')
+        if not has_typing:
+            imports_to_add.append('from typing import Any, Dict, List, Optional')
+        
+        if imports_to_add:
+            for j, import_line in enumerate(imports_to_add):
+                lines.insert(insert_pos + j, import_line)
+            lines.insert(insert_pos + len(imports_to_add), '')  # Add blank line
+        
+        return '\n'.join(lines)
+    
+    def fix_common_undefined_vars(self, content: str) -> str:
+        """Fix common undefined variable patterns."""
+        lines = content.split('\n')
+        
+        # Common undefined variables and their fixes
+        common_fixes = {
+            'MAX_VARIANTS': '1000  # TODO: Set appropriate limit',
+            'VERIFICATION_TIME_MAX': '30.0  # TODO: Set appropriate timeout',
+            'DEFAULT_SECURITY_LEVEL': '128  # TODO: Set security level',
+        }
+        
+        # Find functions that use these variables
+        for i, line in enumerate(lines):
+            for var_name, default_value in common_fixes.items():
+                if var_name in line and not line.strip().startswith('#'):
+                    # Check if the variable is already defined
+                    if not any(f'{var_name} =' in l for l in lines[:i]):
+                        # Add the definition at the top of the file
+                        # Find constants section or create one
+                        const_pos = self.find_constants_section(lines)
+                        lines.insert(const_pos, f'{var_name} = {default_value}')
+                        break
+        
+        return '\n'.join(lines)
+    
+    def find_constants_section(self, lines: List[str]) -> int:
+        """Find where to insert constants in the file."""
+        # Look for existing constants or imports
+        for i, line in enumerate(lines):
+            if (line.strip() and 
+                not line.startswith('#') and 
+                not line.startswith('import') and 
+                not line.startswith('from') and
+                not line.strip().startswith('"""') and
+                not line.strip().startswith("'''")):
+                return i
+        return 0
+    
+    def guard_example_code(self, content: str) -> str:
+        """Guard example code with if __name__ == '__main__': blocks."""
+        if 'if __name__ == "__main__":' in content:
+            return content  # Already guarded
+        
+        lines = content.split('\n')
+        
+        # Look for example code patterns at the end of the file
+        example_start = -1
+        for i in range(len(lines) - 1, -1, -1):
+            line = lines[i].strip()
+            if (line.startswith('print(') or
+                line.startswith('# Example') or
+                line.startswith('# Demo') or
+                ('test' in line.lower() and line.startswith('def'))):
+                example_start = i
+                break
+        
+        if example_start > 0:
+            # Check if this looks like example code (not part of class/function)
+            indent_level = len(lines[example_start]) - len(lines[example_start].lstrip())
+            if indent_level == 0:  # Top-level code
+                # Wrap in guard
+                guarded_lines = lines[:example_start]
+                guarded_lines.append('')
+                guarded_lines.append('if __name__ == "__main__":')
+                
+                for line in lines[example_start:]:
+                    if line.strip():
+                        guarded_lines.append('    ' + line)
+                    else:
+                        guarded_lines.append('')
+                
+                return '\n'.join(guarded_lines)
+        
+        return content
+    
+    def update_ruff_config(self):
+        """Update Ruff configuration for better tooling management."""
+        ruff_config_path = self.repo_root / ".ruff.toml"
+        
+        if not ruff_config_path.exists():
+            print("Ruff config not found")
+            return
+        
+        content = self.read_file_safe(ruff_config_path)
+        lines = content.split('\n')
+        
+        # Ensure we have the tools glob ignore
+        has_tools_ignore = any('tools/*.py' in line for line in lines)
+        
+        if not has_tools_ignore:
+            # Find per-file-ignores section
+            for i, line in enumerate(lines):
+                if '[lint.per-file-ignores]' in line:
+                    lines.insert(i + 1, '"tools/*.py" = ["ALL"]')
+                    break
+            
+            new_content = '\n'.join(lines)
+            if self.write_file_safe(ruff_config_path, new_content):
+                self.log_fix("Updated Ruff config with tools glob ignore")
+    
+    def create_tools_directory(self):
+        """Create tools directory and move helper scripts."""
+        tools_dir = self.repo_root / "tools"
+        tools_dir.mkdir(exist_ok=True)
+        
+        # Scripts to move to tools/
+        helper_scripts = [
+            "genomevault_autofix.py",
+            "green_toolchain_impl.py",
+            "quick_fix_init_files.py",
+            "genomevault_cleanup.py"  # This script too
+        ]
+        
+        for script_name in helper_scripts:
+            script_path = self.repo_root / script_name
+            target_path = tools_dir / script_name
+            
+            if script_path.exists() and not target_path.exists():
+                try:
+                    # Copy the file
+                    content = self.read_file_safe(script_path)
+                    if content and self.write_file_safe(target_path, content):
+                        self.log_fix(f"Copied {script_name} to tools/")
+                except Exception as e:
+                    print(f"Could not move {script_name}: {e}")
+    
+    def fix_imports_in_key_files(self):
+        """Fix import issues in key files."""
+        key_files = [
+            "genomevault/hypervector/encoding/unified_encoder.py",
+            "genomevault/hypervector/encoding/__init__.py",
+            "genomevault/pipelines/e2e_pipeline.py"
+        ]
+        
+        for file_path in key_files:
+            full_path = self.repo_root / file_path
+            if not full_path.exists():
+                continue
+            
+            content = self.read_file_safe(full_path)
+            if not content:
+                continue
+            
+            original_content = content
+            
+            # Fix common import issues
+            content = self.fix_import_issues(content, file_path)
+            
+            if content != original_content:
+                if self.write_file_safe(full_path, content):
+                    self.log_fix(f"Fixed imports in {file_path}")
+    
+    def fix_import_issues(self, content: str, file_path: str) -> str:
+        """Fix common import issues."""
+        lines = content.split('\n')
+        
+        # Move imports to the top
+        imports_lines = []
+        other_lines = []
+        in_docstring = False
+        docstring_lines = []
+        
+        for line in lines:
+            stripped = line.strip()
+            
+            # Handle docstrings
+            if stripped.startswith('"""') or stripped.startswith("'''"):
+                in_docstring = not in_docstring
+                if in_docstring or stripped.count('"""') == 2 or stripped.count("'''") == 2:
+                    docstring_lines.append(line)
+                    if stripped.count('"""') == 2 or stripped.count("'''") == 2:
+                        in_docstring = False
+                continue
+            elif in_docstring:
+                docstring_lines.append(line)
+                continue
+            
+            # Collect imports
+            if stripped.startswith('import ') or stripped.startswith('from '):
+                imports_lines.append(line)
+            else:
+                other_lines.append(line)
+        
+        # Reconstruct file with proper order: docstring, imports, code
+        new_lines = []
+        new_lines.extend(docstring_lines)
+        if docstring_lines:
+            new_lines.append('')  # Blank line after docstring
+        
+        # Add imports (remove duplicates while preserving order)
+        seen_imports = set()
+        for import_line in imports_lines:
+            if import_line.strip() not in seen_imports:
+                new_lines.append(import_line)
+                seen_imports.add(import_line.strip())
+        
+        if imports_lines:
+            new_lines.append('')  # Blank line after imports
+        
+        new_lines.extend(other_lines)
+        
+        return '\n'.join(new_lines)
+    
+    def create_stub_modules(self):
+        """Create stub modules for missing dependencies."""
+        stubs_to_create = [
+            ("genomevault/observability/__init__.py", 
+             '''"""Observability module stub."""
+import logging
+from logging import Logger
+
+def configure_logging() -> Logger:
+    """Configure logging for GenomeVault."""
+    logger = logging.getLogger("genomevault.observability")
+    if not logger.handlers:
+        handler = logging.StreamHandler()
+        formatter = logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        )
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+        logger.setLevel(logging.INFO)
+    return logger
+'''),
+            ("genomevault/core/config.py",
+             '''"""Core configuration module."""
+from typing import Dict, Any
+
+def get_config() -> Dict[str, Any]:
+    """Get configuration dictionary."""
+    return {
+        "security_level": 128,
+        "max_variants": 1000,
+        "verification_timeout": 30.0,
+        "debug": False
+    }
+'''),
+            ("genomevault/utils/constants.py",
+             '''"""Common constants for GenomeVault."""
+
+# Security constants
+DEFAULT_SECURITY_LEVEL = 128
+MAX_VARIANTS = 1000
+VERIFICATION_TIME_MAX = 30.0
+
+# Hypervector constants
+DEFAULT_DIMENSION = 10000
+BINDING_SPARSITY = 0.1
+
+# ZK Proof constants
+DEFAULT_CIRCUIT_SIZE = 1024
+MAX_PROOF_SIZE = 1024 * 1024  # 1MB
+''')
+        ]
+        
+        for file_path, content in stubs_to_create:
+            full_path = self.repo_root / file_path
+            
+            # Create directory if it doesn't exist
+            full_path.parent.mkdir(parents=True, exist_ok=True)
+            
+            if not full_path.exists():
+                if self.write_file_safe(full_path, content):
+                    self.log_fix(f"Created stub module {file_path}")
+    
+    def fix_placeholder_functions(self):
+        """Convert placeholder functions to proper NotImplementedError."""
+        high_priority_files = [
+            "genomevault/core/exceptions.py",
+            "genomevault/exceptions.py",
+            "genomevault/zk_proofs/circuits/base_circuits.py",
+            "genomevault/zk_proofs/post_quantum.py"
+        ]
+        
+        for file_path in high_priority_files:
+            full_path = self.repo_root / file_path
+            if not full_path.exists():
+                continue
+            
+            content = self.read_file_safe(full_path)
+            if not content:
+                continue
+            
+            original_content = content
+            lines = content.split('\n')
+            
+            # Look for placeholder functions
+            for i, line in enumerate(lines):
+                if line.strip() == "pass" and i > 0:
+                    # Check if this is in a function
+                    prev_lines = lines[max(0, i-5):i]
+                    for prev_line in reversed(prev_lines):
+                        if prev_line.strip().startswith("def "):
+                            # This is a function with just pass - replace with NotImplementedError
+                            func_name = prev_line.strip().split("(")[0].replace("def ", "")
+                            lines[i] = f'    raise NotImplementedError("Function {func_name} not yet implemented")'
+                            break
+                        elif prev_line.strip().startswith("class "):
+                            # This is a class with just pass - leave it alone
+                            break
+                        elif prev_line.strip() and not prev_line.strip().startswith("#"):
+                            # Found other code, not a simple pass function
+                            break
+            
+            new_content = '\n'.join(lines)
+            if new_content != original_content:
+                if self.write_file_safe(full_path, new_content):
+                    self.log_fix(f"Fixed placeholder functions in {file_path}")
+    
+    def create_mypy_config(self):
+        """Create a basic mypy configuration."""
+        mypy_config_path = self.repo_root / "mypy.ini"
+        
+        mypy_config = '''[mypy]
+python_version = 3.11
+strict = false
+show_error_codes = true
+pretty = true
+ignore_missing_imports = true
+
+# Gradually enable strict checking
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+
+# Specific module settings
+[mypy-genomevault.core.*]
+strict = true
+
+[mypy-genomevault.hypervector.*]
+strict = true
+
+[mypy-genomevault.utils.*]
+strict = true
+
+# Ignore problematic modules for now
+[mypy-genomevault.nanopore.*]
+ignore_errors = true
+
+[mypy-genomevault.cli.*]
+ignore_errors = true
+
+[mypy-tests.*]
+ignore_errors = true
+
+[mypy-tools.*]
+ignore_errors = true
+'''
+        
+        if not mypy_config_path.exists():
+            if self.write_file_safe(mypy_config_path, mypy_config):
+                self.log_fix("Created mypy.ini configuration")
+    
+    def generate_summary_report(self):
+        """Generate a summary of all fixes applied."""
+        print("\n" + "="*60)
+        print("FOCUSED CLEANUP SUMMARY")
+        print("="*60)
+        
+        if self.fixes_applied:
+            print(f"Applied {len(self.fixes_applied)} fixes:")
+            for i, fix in enumerate(self.fixes_applied, 1):
+                print(f"{i:2d}. {fix}")
+        else:
+            print("No fixes were applied.")
+        
+        print("\nNext steps:")
+        print("1. Run: ruff check . --select F821 (check for remaining undefined names)")
+        print("2. Run: ruff check . --select F811,E402 (check import/redefinition issues)")
+        print("3. Run: mypy genomevault/core genomevault/hypervector (type checking)")
+        print("4. Run: pytest -q -k 'not api and not nanopore' (test validation)")
+        
+        print("\nManual review needed for:")
+        print("- Any remaining syntax errors (E999)")
+        print("- Complex undefined variable patterns")
+        print("- Import cycles or missing dependencies")
+    
+    def run_all_fixes(self):
+        """Run all focused fixes in order."""
+        print("Starting focused GenomeVault cleanup...")
+        
+        # Phase 1: Configuration and structure
+        self.update_ruff_config()
+        self.create_tools_directory()
+        self.create_mypy_config()
+        
+        # Phase 2: Stub modules for missing dependencies
+        self.create_stub_modules()
+        
+        # Phase 3: Fix high-priority files
+        self.fix_exceptions_module()
+        self.fix_zk_proofs_modules()
+        self.fix_imports_in_key_files()
+        
+        # Phase 4: Convert placeholders
+        self.fix_placeholder_functions()
+        
+        # Phase 5: Generate summary
+        self.generate_summary_report()
+
+def main():
+    """Main entry point."""
+    import argparse
+    
+    parser = argparse.ArgumentParser(description="Focused GenomeVault Cleanup")
+    parser.add_argument("--repo-root", default="/Users/rohanvinaik/genomevault",
+                       help="Repository root path")
+    parser.add_argument("--dry-run", action="store_true",
+                       help="Show what would be done without making changes")
+    
+    args = parser.parse_args()
+    
+    cleanup = FocusedCleanup(args.repo_root)
+    
+    if args.dry_run:
+        print("DRY RUN MODE - No changes will be made")
+        # TODO: Implement dry run logic
+        return
+    
+    cleanup.run_all_fixes()
+
+if __name__ == "__main__":
+    main()
+

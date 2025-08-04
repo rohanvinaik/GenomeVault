@@ -1,17 +1,11 @@
-"""
-DEPRECATED: Clinical circuits module - use clinical_validation.circuits instead.
-
-This file provides backward compatibility for existing code.
-All new code should import from clinical_validation.circuits directly.
-"""
-
 import warnings
 
-# Import from the new refactored location
-from clinical_validation.circuits import (BaseCircuit,
-                                          ClinicalBiomarkerCircuit,
-                                          DiabetesRiskCircuit, create_circuit)
-from clinical_validation.proofs import CircuitType, ProofData
+##from clinical_validation.circuits import (  # Import from the new refactored location; DEPRECATED:, All, BaseCircuit, CircuitType, Clinical,
+    ClinicalBiomarkerCircuit, DiabetesRiskCircuit, ProofData, This, """, -,
+    backward, circuits, clinical_validation.circuits,
+    clinical_validation.proofs, code, code., compatibility, create_circuit,
+    directly., existing, file, for, from, import, instead., module, new,
+    provides, should, use)
 
 # Issue deprecation warning
 warnings.warn(
@@ -30,3 +24,4 @@ __all__ = [
     "ProofData",
     "create_circuit",
 ]
+"""

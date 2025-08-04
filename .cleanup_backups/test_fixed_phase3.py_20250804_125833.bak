@@ -1,0 +1,113 @@
+#!/usr/bin/env python3
+"""
+Quick test to verify Phase 3 can now run successfully.
+"""
+import subprocess
+import sys
+
+def test_ruff_basic():
+    """Test that Ruff works with current configuration."""
+    print("🔍 Testing Ruff basic functionality...")
+    
+    try:
+        result = subprocess.run([
+            "ruff", "check", ".", "--quiet"
+        ], cwd="/Users/rohanvinaik/genomevault", capture_output=True, text=True, timeout=15)
+        
+        if "unknown field" in result.stderr or "TOML parse error" in result.stderr:
+            print("❌ Ruff configuration still has issues")
+            print(f"Error: {result.stderr}")
+            return False
+        else:
+            print("✅ Ruff configuration is working")
+            return True
+            
+    except Exception as e:
+        print(f"❌ Error testing Ruff: {e}")
+        return False
+
+def test_f821_detection():
+    """Test F821 detection specifically."""
+    print("\\n🎯 Testing F821 detection...")
+    
+    try:
+        result = subprocess.run([
+            "ruff", "check", ".", "--select", "F821"
+        ], cwd="/Users/rohanvinaik/genomevault", capture_output=True, text=True, timeout=30)
+        
+        if result.returncode != 0 and result.stdout:
+            # Count F821 errors
+            f821_count = result.stdout.count("F821")
+            print(f"✅ Found {f821_count} F821 errors to fix")
+            
+            # Show a few examples
+            lines = result.stdout.split('\\n')
+            f821_lines = [line for line in lines if 'F821' in line][:3]
+            
+            if f821_lines:
+                print("Sample F821 errors:")
+                for line in f821_lines:
+                    print(f"  {line.strip()}")
+            
+            return True
+        elif result.returncode == 0:
+            print("✅ No F821 errors found")
+            return True
+        else:
+            print(f"❌ F821 detection failed: {result.stderr}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ Error testing F821 detection: {e}")
+        return False
+
+def test_phase3_dry_run():
+    """Test Phase 3 dry run."""
+    print("\\n🧪 Testing Phase 3 dry run...")
+    
+    try:
+        result = subprocess.run([
+            "python", "enhanced_cleanup.py", "--phase", "3", "--dry-run"
+        ], cwd="/Users/rohanvinaik/genomevault", capture_output=True, text=True, timeout=60)
+        
+        print(f"Exit code: {result.returncode}")
+        
+        if result.stdout:
+            print("Output preview:")
+            lines = result.stdout.split('\\n')
+            for line in lines[-10:]:  # Show last 10 lines
+                if line.strip():
+                    print(f"  {line}")
+        
+        if result.stderr:
+            print("Errors:")
+            print(result.stderr)
+        
+        return result.returncode == 0
+        
+    except Exception as e:
+        print(f"❌ Error testing Phase 3: {e}")
+        return False
+
+if __name__ == "__main__":
+    print("🚀 Testing Fixed Phase 3\\n")
+    
+    # Test 1: Basic Ruff functionality
+    ruff_works = test_ruff_basic()
+    
+    # Test 2: F821 detection
+    f821_works = test_f821_detection()
+    
+    # Test 3: Phase 3 dry run
+    phase3_works = test_phase3_dry_run()
+    
+    print(f"\\n📊 Results:")
+    print(f"   Ruff configuration: {'✅' if ruff_works else '❌'}")
+    print(f"   F821 detection: {'✅' if f821_works else '❌'}")
+    print(f"   Phase 3 dry run: {'✅' if phase3_works else '❌'}")
+    
+    if all([ruff_works, f821_works, phase3_works]):
+        print("\\n🎉 Everything looks good! Ready to run:")
+        print("   python enhanced_cleanup.py --phase 3")
+    else:
+        print("\\n⚠️  Some issues remain - check the output above")

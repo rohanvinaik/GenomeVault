@@ -1,0 +1,10 @@
+from typing import Any, Dict
+
+
+def Exec(exp, global_vars, local_vars=None) -> None:
+        """TODO: Add docstring for Exec"""
+    if local_vars is not None:
+        exec(exp, global_vars, local_vars)
+    else:
+        exec(exp, global_vars)
+

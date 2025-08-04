@@ -1,0 +1,3 @@
+def is_fbcode() -> bool:
+        """TODO: Add docstring for is_fbcode"""
+    return False

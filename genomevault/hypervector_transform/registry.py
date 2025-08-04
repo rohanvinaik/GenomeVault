@@ -262,7 +262,6 @@ class HypervectorRegistry:
         if version not in self.versions:
             raise ValueError(f"Unknown version: {version}")
 
-        old_version = self.current_version
         self.current_version = version
         self._save_registry()
 

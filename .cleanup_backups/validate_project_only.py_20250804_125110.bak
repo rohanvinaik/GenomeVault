@@ -1,0 +1,462 @@
+#!/usr/bin/env python3
+"""
+GenomeVault Focused Audit Validator
+Validates only project code, excluding venv and other non-project directories
+"""
+
+import ast
+import json
+import re
+from pathlib import Path
+
+
+class FocusedAuditValidator:
+    def __init__(self, base_path: str):
+        self.base_path = Path(base_path)
+
+        # Directories to exclude from analysis
+        self.exclude_dirs = {
+            "venv",
+            ".venv",
+            "env",
+            ".env",
+            "__pycache__",
+            ".git",
+            ".pytest_cache",
+            ".mypy_cache",
+            ".tox",
+            "htmlcov",
+            "node_modules",
+            "build",
+            "dist",
+            "*.egg-info",
+            ".idea",
+            ".vscode",
+        }
+
+        # File patterns to exclude
+        self.exclude_patterns = {
+            "*.pyc",
+            "*.pyo",
+            "*.pyd",
+            ".DS_Store",
+            "*.so",
+            "*.dylib",
+            "*.dll",
+        }
+
+        self.report = {
+            "files_total": 0,
+            "py_files": 0,
+            "tests_detected": 0,
+            "has_pyproject": False,
+            "has_requirements": False,
+            "has_readme": False,
+            "missing_init_dirs": [],
+            "files_with_prints": [],
+            "files_with_broad_excepts": [],
+            "complex_functions": [],
+            "quality_metrics": {},
+            "project_only": True,
+        }
+
+    def should_exclude_path(self, path: Path) -> bool:
+        """Check if a path should be excluded from analysis"""
+        path_parts = path.parts
+
+        # Check if any part of the path matches exclude patterns
+        for part in path_parts:
+            if part in self.exclude_dirs:
+                return True
+            if part.startswith(".") and part != ".":
+                return True
+            if "cache" in part.lower():
+                return True
+
+        # Check file patterns
+        for pattern in self.exclude_patterns:
+            if path.match(pattern):
+                return True
+
+        return False
+
+    def get_project_files(self) -> list[Path]:
+        """Get all Python files in the project, excluding non-project directories"""
+        project_files = []
+
+        for py_file in self.base_path.rglob("*.py"):
+            if not self.should_exclude_path(py_file):
+                # Additional check: ensure it's within the genomevault project
+                rel_path = py_file.relative_to(self.base_path)
+                if str(rel_path).startswith(
+                    (
+                        "genomevault/",
+                        "tests/",
+                        "examples/",
+                        "scripts/",
+                        "benchmarks/",
+                        "devtools/",
+                    )
+                ) or py_file.name in [
+                    "setup.py",
+                    "fix_audit_issues.py",
+                    "validate_audit_fixes.py",
+                    "preflight_check.py",
+                ]:
+                    project_files.append(py_file)
+
+        return project_files
+
+    def count_files(self):
+        """Count total files and Python files in the actual project"""
+        project_files = []
+
+        # Count all files in project directories
+        for item in self.base_path.rglob("*"):
+            if item.is_file() and not self.should_exclude_path(item):
+                rel_path = item.relative_to(self.base_path)
+                # Only count files in actual project directories
+                if str(rel_path).startswith(
+                    (
+                        "genomevault/",
+                        "tests/",
+                        "examples/",
+                        "scripts/",
+                        "benchmarks/",
+                        "docs/",
+                        "config/",
+                        "data/",
+                        "deployment/",
+                    )
+                ) or item.suffix in [
+                    ".py",
+                    ".md",
+                    ".txt",
+                    ".yml",
+                    ".yaml",
+                    ".toml",
+                    ".cfg",
+                ]:
+                    project_files.append(item)
+
+        self.report["files_total"] = len(project_files)
+
+        # Count Python files
+        py_files = self.get_project_files()
+        self.report["py_files"] = len(py_files)
+
+        # Count test files
+        test_files = [
+            f for f in py_files if f.name.startswith("test_") or "_test.py" in str(f)
+        ]
+        self.report["tests_detected"] = len(test_files)
+
+    def check_project_files(self):
+        """Check for essential project files"""
+        self.report["has_pyproject"] = (self.base_path / "pyproject.toml").exists()
+        self.report["has_requirements"] = (self.base_path / "requirements.txt").exists()
+        self.report["has_readme"] = (self.base_path / "README.md").exists()
+
+    def find_missing_init_files(self):
+        """Find directories with Python files but no __init__.py"""
+        py_files = self.get_project_files()
+        dirs_with_py = set()
+
+        for py_file in py_files:
+            dir_path = py_file.parent
+            dirs_with_py.add(dir_path)
+
+        for dir_path in dirs_with_py:
+            if not (dir_path / "__init__.py").exists():
+                rel_path = str(dir_path.relative_to(self.base_path))
+                # Only report project directories
+                if (
+                    rel_path.startswith(
+                        ("genomevault", "tests", "examples", "scripts", "benchmarks")
+                    )
+                    and rel_path not in self.report["missing_init_dirs"]
+                ):
+                    self.report["missing_init_dirs"].append(rel_path)
+
+    def check_print_statements(self):
+        """Find files with print statements in project code only"""
+        py_files = self.get_project_files()
+
+        for py_file in py_files:
+            try:
+                content = py_file.read_text()
+                # More accurate regex for print statements
+                print_pattern = r"^\s*print\s*\("
+                print_matches = re.findall(print_pattern, content, re.MULTILINE)
+                print_count = len(print_matches)
+
+                if print_count > 0:
+                    self.report["files_with_prints"].append(
+                        {
+                            "path": str(py_file.relative_to(self.base_path)),
+                            "count": print_count,
+                        }
+                    )
+            except Exception:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
+                pass
+                raise
+
+    def check_broad_exceptions(self):
+        """Find files with broad exception handlers in project code only"""
+        py_files = self.get_project_files()
+
+        for py_file in py_files:
+            try:
+                content = py_file.read_text()
+                # Look for except Exception patterns
+                patterns = [
+                    r"except\s+Exception\s*:",
+                    r"except\s+Exception\s+as",
+                    r"except\s*\(\s*Exception\s*\)",
+                ]
+
+                total_count = 0
+                for pattern in patterns:
+                    matches = re.findall(pattern, content)
+                    total_count += len(matches)
+
+                if total_count > 0:
+                    self.report["files_with_broad_excepts"].append(
+                        {
+                            "path": str(py_file.relative_to(self.base_path)),
+                            "count": total_count,
+                        }
+                    )
+            except Exception:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
+                pass
+                raise
+
+    def calculate_complexity(self, py_file: Path) -> list[tuple[str, int]]:
+        """Calculate cyclomatic complexity for functions in a file"""
+        complex_funcs = []
+        try:
+            content = py_file.read_text()
+            tree = ast.parse(content)
+
+            for node in ast.walk(tree):
+                if isinstance(node, ast.FunctionDef):
+                    complexity = self._calculate_node_complexity(node)
+                    if complexity > 10:  # Functions with complexity > 10
+                        complex_funcs.append((node.name, complexity))
+        except Exception:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
+            pass
+            raise
+
+        return complex_funcs
+
+    def _calculate_node_complexity(self, node) -> int:
+        """Calculate cyclomatic complexity for an AST node"""
+        complexity = 1
+        for child in ast.walk(node):
+            if isinstance(child, (ast.If, ast.While, ast.For, ast.ExceptHandler)):
+                complexity += 1
+            elif isinstance(child, ast.BoolOp):
+                complexity += len(child.values) - 1
+
+        return complexity
+
+    def check_complex_functions(self):
+        """Find functions with high complexity in project code only"""
+        py_files = self.get_project_files()
+
+        for py_file in py_files:
+            complex_funcs = self.calculate_complexity(py_file)
+            if complex_funcs:
+                for func_name, complexity in complex_funcs:
+                    self.report["complex_functions"].append(
+                        {
+                            "path": str(py_file.relative_to(self.base_path)),
+                            "function": func_name,
+                            "complexity": complexity,
+                        }
+                    )
+
+    def calculate_type_coverage(self):
+        """Calculate type annotation coverage for project functions"""
+        py_files = self.get_project_files()
+
+        total_functions = 0
+        annotated_functions = 0
+        return_annotated = 0
+
+        for py_file in py_files:
+            try:
+                content = py_file.read_text()
+                tree = ast.parse(content)
+
+                for node in ast.walk(tree):
+                    if isinstance(node, ast.FunctionDef):
+                        total_functions += 1
+
+                        # Check for parameter annotations
+                        has_param_annotations = any(
+                            arg.annotation is not None for arg in node.args.args
+                        )
+
+                        if has_param_annotations:
+                            annotated_functions += 1
+
+                        # Check for return annotation
+                        if node.returns is not None:
+                            return_annotated += 1
+
+            except Exception:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
+                pass
+                raise
+
+        if total_functions > 0:
+            self.report["quality_metrics"]["func_ann_cov"] = (
+                annotated_functions / total_functions
+            )
+            self.report["quality_metrics"]["func_ret_cov"] = (
+                return_annotated / total_functions
+            )
+            self.report["quality_metrics"]["total_functions"] = total_functions
+
+    def run_validation(self):
+        """Run all validations"""
+        print("Running GenomeVault focused audit validation...")
+        print("(Excluding venv and other non-project directories)")
+
+        self.count_files()
+        self.check_project_files()
+        self.find_missing_init_files()
+        self.check_print_statements()
+        self.check_broad_exceptions()
+        self.check_complex_functions()
+        self.calculate_type_coverage()
+
+        # Sort results
+        self.report["files_with_prints"].sort(key=lambda x: x["count"], reverse=True)
+        self.report["files_with_broad_excepts"].sort(
+            key=lambda x: x["count"], reverse=True
+        )
+        self.report["complex_functions"].sort(
+            key=lambda x: x["complexity"], reverse=True
+        )
+
+        return self.report
+
+    def print_report(self):
+        """Print validation report"""
+        print("\n=== GenomeVault Focused Validation Report ===")
+        print("(Project files only - excluding venv, caches, etc.)")
+        print()
+
+        print("Project Structure:")
+        print(f"  Total project files: {self.report['files_total']}")
+        print(f"  Python files: {self.report['py_files']}")
+        print(f"  Test files: {self.report['tests_detected']}")
+        print(f"  Has pyproject.toml: {self.report['has_pyproject']}")
+        print(f"  Has requirements.txt: {self.report['has_requirements']}")
+        print(f"  Has README.md: {self.report['has_readme']}")
+
+        print(f"\nMissing __init__.py files: {len(self.report['missing_init_dirs'])}")
+        if self.report["missing_init_dirs"]:
+            for dir_path in self.report["missing_init_dirs"][:10]:
+                print(f"  - {dir_path}")
+            if len(self.report["missing_init_dirs"]) > 10:
+                print(f"  ... and {len(self.report['missing_init_dirs']) - 10} more")
+
+        print(f"\nFiles with print statements: {len(self.report['files_with_prints'])}")
+        if self.report["files_with_prints"]:
+            for item in self.report["files_with_prints"][:10]:
+                print(f"  - {item['path']}: {item['count']} print(s)")
+            if len(self.report["files_with_prints"]) > 10:
+                print(f"  ... and {len(self.report['files_with_prints']) - 10} more")
+
+        # Calculate totals
+        total_prints = sum(item["count"] for item in self.report["files_with_prints"])
+        print(f"  Total print statements: {total_prints}")
+
+        print(
+            f"\nFiles with broad exceptions: {len(self.report['files_with_broad_excepts'])}"
+        )
+        if self.report["files_with_broad_excepts"]:
+            for item in self.report["files_with_broad_excepts"][:10]:
+                print(f"  - {item['path']}: {item['count']} broad except(s)")
+            if len(self.report["files_with_broad_excepts"]) > 10:
+                print(
+                    f"  ... and {len(self.report['files_with_broad_excepts']) - 10} more"
+                )
+
+        # Calculate totals
+        total_excepts = sum(
+            item["count"] for item in self.report["files_with_broad_excepts"]
+        )
+        print(f"  Total broad exceptions: {total_excepts}")
+
+        print(
+            f"\nComplex functions (complexity > 10): {len(self.report['complex_functions'])}"
+        )
+        if self.report["complex_functions"]:
+            for item in self.report["complex_functions"][:10]:
+                print(
+                    f"  - {item['path']} :: {item['function']}() - complexity: {item['complexity']}"
+                )
+            if len(self.report["complex_functions"]) > 10:
+                print(f"  ... and {len(self.report['complex_functions']) - 10} more")
+
+        # Type coverage
+        if "func_ann_cov" in self.report["quality_metrics"]:
+            print("\nType Annotation Coverage:")
+            print(
+                f"  Function parameter annotations: {self.report['quality_metrics']['func_ann_cov']:.1%}"
+            )
+            print(
+                f"  Function return annotations: {self.report['quality_metrics']['func_ret_cov']:.1%}"
+            )
+            print(
+                f"  Total functions analyzed: {self.report['quality_metrics']['total_functions']}"
+            )
+
+        print("\n📊 Summary:")
+        print("  Issues in actual project code:")
+        print(f"  - Missing __init__.py: {len(self.report['missing_init_dirs'])}")
+        print(f"  - Print statements: {total_prints}")
+        print(f"  - Broad exceptions: {total_excepts}")
+        print(f"  - Complex functions: {len(self.report['complex_functions'])}")
+
+    def save_report(self, output_file: str = "focused_audit_report.json"):
+        """Save report to JSON file"""
+        output_path = self.base_path / output_file
+        with open(output_path, "w") as f:
+            json.dump(self.report, f, indent=2)
+        print(f"\nReport saved to: {output_path}")
+
+
+if __name__ == "__main__":
+    import sys
+
+    if len(sys.argv) > 1:
+        base_path = sys.argv[1]
+    else:
+        base_path = "/Users/rohanvinaik/genomevault"
+
+    validator = FocusedAuditValidator(base_path)
+    validator.run_validation()
+    validator.print_report()
+    validator.save_report()
+
+

@@ -169,7 +169,7 @@ class ProteomicsProfile:
             "pathway_size": len(pathway_genes),
             "detected_in_pathway": len(overlap),
             "enrichment_ratio": (
-                len(overlap) / len(pathway_genes) if pathway_genes else 0
+                len(_overlap) / len(pathway_genes) if pathway_genes else 0
             ),
             "detected_genes": list(overlap),
         }
@@ -204,11 +204,13 @@ class ProteomicsProcessor:
         self.protein_sequences = self._load_protein_database()
         self.modification_masses = self._load_modifications()
 
+logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Initialized ProteomicsProcessor")
 
     def _load_protein_database(self) -> dict[str, dict[str, Any]]:
         """Load protein sequences from FASTA database"""
         if not self.protein_database or not self.protein_database.exists():
+logger = logging.getLogger(__name__)  # Added by cleanup
             logger.warning("No protein database provided, using mock data")
             # Mock protein database
             return {
@@ -265,6 +267,7 @@ class ProteomicsProcessor:
         Returns:
             ProteomicsProfile with protein measurements
         """
+logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Processing proteomics data for %ssample_id")
 
         try:
@@ -277,23 +280,23 @@ class ProteomicsProcessor:
                 raise ValidationError("Unsupported format: {input_format}")
 
             # Create protein measurements
-            _ = self._create_protein_measurements(protein_data, peptide_data)
+            _ = self._create_protein_measurements(protein_data, _peptide_data)
 
             # Apply FDR filtering
-            _ = self._apply_fdr_filter(proteins)
+            _ = self._apply_fdr_filter(_proteins)
 
             # Normalize abundances
-            _ = self._normalize_abundances(filtered_proteins, quantification_method)
+            _ = self._normalize_abundances(_filtered_proteins, quantification_method)
 
             # Calculate quality metrics
-            _ = self._calculate_quality_metrics(normalized_proteins, peptide_data)
+            _ = self._calculate_quality_metrics(_normalized_proteins, _peptide_data)
 
             # Create profile
             _ = ProteomicsProfile(
                 sample_id=sample_id,
-                proteins=normalized_proteins,
+                proteins=_normalized_proteins,
                 quantification_method=quantification_method,
-                quality_metrics=quality_metrics,
+                _quality_metrics=quality_metrics,
                 processing_metadata={
                     "processor_version": "1.0.0",
                     "processed_at": datetime.now().isoformat(),
@@ -303,6 +306,7 @@ class ProteomicsProcessor:
                 },
             )
 
+logger = logging.getLogger(__name__)  # Added by cleanup
             logger.info("Successfully processed %slen(normalized_proteins) proteins")
             return profile
 
@@ -319,6 +323,7 @@ class ProteomicsProcessor:
         self, input_path: Path
     ) -> tuple[pd.DataFrame, pd.DataFrame]:
         """Load MaxQuant output files"""
+logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Loading MaxQuant output from %sinput_path")
 
         # In production, would load proteinGroups.txt and peptides.txt
@@ -328,21 +333,21 @@ class ProteomicsProcessor:
         # Mock protein data
         _ = 2000
         _ = list(self.protein_sequences.keys()) + [
-            "PROT{i:04d}_HUMAN" for i in range(n_proteins - len(self.protein_sequences))
+            "PROT{i:04d}_HUMAN" for i in range(_n_proteins - len(self.protein_sequences))
         ]
 
         _ = pd.DataFrame(
             {
-                "Protein IDs": protein_ids[:n_proteins],
+                "Protein IDs": _protein_ids[:n_proteins],
                 "Gene names": [
                     self.protein_sequences.get(pid, {}).get("gene_name", "GENE{i}")
-                    for i, pid in enumerate(protein_ids[:n_proteins])
+                    for i, pid in enumerate(_protein_ids[:_n_proteins])
                 ],
                 "Protein names": [
                     self.protein_sequences.get(pid, {}).get(
                         "description", "Protein {i}"
                     )
-                    for i, pid in enumerate(protein_ids[:n_proteins])
+                    for i, pid in enumerate(_protein_ids[:_n_proteins])
                 ],
                 "Peptides": np.random.poisson(10, n_proteins),
                 "Unique peptides": np.random.poisson(8, n_proteins),
@@ -359,16 +364,16 @@ class ProteomicsProcessor:
         _ = pd.DataFrame(
             {
                 "Sequence": [
-                    self._generate_random_peptide() for _ in range(n_peptides)
+                    self._generate_random_peptide() for _ in range(_n_peptides)
                 ],
-                "Proteins": np.random.choice(protein_ids[:n_proteins], n_peptides),
-                "Charge": np.random.choice([2, 3, 4], n_peptides, p=[0.6, 0.3, 0.1]),
+                "Proteins": np.random.choice(_protein_ids[:n_proteins], n_peptides),
+                "Charge": np.random.choice([2, 3, 4], _n_peptides, p=[0.6, 0.3, 0.1]),
                 "Mass": np.random.normal(1500, 500, n_peptides),
                 "Retention time": np.random.uniform(0, 120, n_peptides),
                 "Intensity": np.random.lognormal(18, 2, n_peptides),
                 "Score": np.random.uniform(20, 200, n_peptides),
                 "Modifications": [
-                    self._generate_random_modifications() for _ in range(n_peptides)
+                    self._generate_random_modifications() for _ in range(_n_peptides)
                 ],
             }
         )
@@ -377,6 +382,7 @@ class ProteomicsProcessor:
 
     def _process_mzml(self, input_path: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
         """Process mzML mass spectrometry data"""
+logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Processing mzML file %sinput_path")
         # In production, would use pyteomics or similar to parse mzML
         # For now, return mock data
@@ -396,11 +402,11 @@ class ProteomicsProcessor:
 
         _ = []
         if np.random.random() < 0.5:
-            mods.append("Phospho (STY)")
+            _mods.append("Phospho (STY)")
         if np.random.random() < 0.3:
-            mods.append("Acetyl (K)")
+            _mods.append("Acetyl (K)")
         if np.random.random() < 0.2:
-            mods.append("Oxidation (M)")
+            _mods.append("Oxidation (M)")
 
         return "; ".join(mods)
 
@@ -414,11 +420,11 @@ class ProteomicsProcessor:
         _ = []
         # Simple parsing - in production would be more sophisticated
         if "Phospho" in mod_string:
-            modifications.append((1, ModificationType.PHOSPHORYLATION, 79.966331))
+            _modifications.append((1, ModificationType.PHOSPHORYLATION, 79.966331))
         if "Acetyl" in mod_string:
-            modifications.append((1, ModificationType.ACETYLATION, 42.010565))
+            _modifications.append((1, ModificationType.ACETYLATION, 42.010565))
         if "Oxidation" in mod_string:
-            modifications.append((1, ModificationType.OXIDATION, 15.994915))
+            _modifications.append((1, ModificationType.OXIDATION, 15.994915))
 
         return modifications
 
@@ -436,12 +442,12 @@ class ProteomicsProcessor:
             _ = []
             _ = defaultdict(int)
 
-            for _, pep_row in protein_peptides.iterrows():
+            for _, pep_row in _protein_peptides.iterrows():
                 _ = self._parse_modifications(pep_row.get("Modifications", ""))
 
                 # Count modifications
-                for _, mod_type, _ in modifications:
-                    mod_counts[mod_type] += 1
+                for _, mod_type, _ in _modifications:
+                    _mod_counts[mod_type] += 1
 
                 _ = Peptide(
                     sequence=pep_row["Sequence"],
@@ -451,11 +457,11 @@ class ProteomicsProcessor:
                     retention_time=float(pep_row["Retention time"]),
                     intensity=float(pep_row["Intensity"]),
                     score=float(pep_row["Score"]),
-                    modifications=modifications,
+                    _modifications=modifications,
                     protein_ids=[prot_row["Protein IDs"]],
                     is_unique=True,  # Simplified
                 )
-                peptides.append(peptide)
+                _peptides.append(peptide)
 
             # Create protein measurement
             protein = ProteinMeasurement(
@@ -469,12 +475,12 @@ class ProteomicsProcessor:
                 normalized_abundance=float(
                     prot_row.get("Intensity", 0)
                 ),  # Will normalize later
-                modifications=dict(mod_counts),
-                peptides=peptides[:10],  # Limit peptides for memory
+                modifications=dict(_mod_counts),
+                _peptides=peptides[:10],  # Limit peptides for memory
                 confidence_score=1.0 - float(prot_row.get("PEP", 0)),
             )
 
-            proteins.append(protein)
+            _proteins.append(protein)
 
         return proteins
 
@@ -486,16 +492,17 @@ class ProteomicsProcessor:
         _ = [p for p in proteins if p.num_peptides >= self.min_peptides]
 
         # Sort by confidence and apply FDR
-        filtered.sort(key=lambda p: p.confidence_score, reverse=True)
+        _filtered.sort(key=lambda p: p.confidence_score, reverse=True)
 
         # Simple FDR calculation - in production would use more sophisticated methods
-        n_targets = len(filtered)
+        n_targets = len(_filtered)
         _ = int(n_targets * self.fdr_threshold)
 
         if n_decoys > 0:
-            threshold_score = filtered[n_targets - n_decoys].confidence_score
-            _ = [p for p in filtered if p.confidence_score >= threshold_score]
+            threshold_score = _filtered[n_targets - _n_decoys].confidence_score
+            _ = [p for p in _filtered if p.confidence_score >= threshold_score]
 
+logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Filtered to %slen(filtered) proteins at %sself.fdr_threshold FDR")
         return filtered
 
@@ -510,24 +517,24 @@ class ProteomicsProcessor:
 
         if method == QuantificationMethod.LABEL_FREE:
             # Log transform and median normalization
-            log_abundances = np.log2(abundances + 1)
+            log_abundances = np.log2(_abundances + 1)
             median_shift = np.median(log_abundances)
             _ = 2 ** (log_abundances - median_shift + 20)  # Scale to reasonable range
 
         elif method == QuantificationMethod.TMT:
             # TMT-specific normalization
             # Simplified - in production would handle reporter ion intensities
-            total = np.sum(abundances)
-            _ = (abundances / total) * 1e9
+            total = np.sum(_abundances)
+            _ = (_abundances / total) * 1e9
 
         else:
             # Default normalization
-            total = np.sum(abundances)
-            _ = (abundances / total) * 1e9
+            total = np.sum(_abundances)
+            _ = (_abundances / total) * 1e9
 
         # Update normalized abundances
         for i, protein in enumerate(proteins):
-            protein.normalized_abundance = float(normalized[i])
+            protein.normalized_abundance = float(_normalized[i])
 
         return proteins
 
@@ -546,10 +553,10 @@ class ProteomicsProcessor:
             "total_peptides": len(peptide_data),
             "median_sequence_coverage": float(np.median(coverages)),
             "mean_sequence_coverage": float(np.mean(coverages)),
-            "proteins_above_50_coverage": sum(1 for c in coverages if c > 50),
+            "proteins_above_50_coverage": sum(1 for c in _coverages if c > 50),
             "median_abundance": float(np.median(abundances)),
             "dynamic_range": (
-                float(np.log10(max(abundances) / min(abundances)))
+                float(np.log10(max(_abundances) / min(abundances)))
                 if min(abundances) > 0
                 else 0
             ),
@@ -567,9 +574,9 @@ class ProteomicsProcessor:
         _ = defaultdict(int)
         for protein in proteins:
             for mod_type, count in protein.modifications.items():
-                all_mods[mod_type.value] += count
+                _all_mods[mod_type.value] += count
 
-        metrics["modifications_summary"] = dict(all_mods)
+        _metrics["modifications_summary"] = dict(_all_mods)
 
         return metrics
 
@@ -592,16 +599,17 @@ class ProteomicsProcessor:
         Returns:
             DataFrame with differential expression results
         """
+logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Performing differential protein expression analysis")
 
         # Collect all proteins
         _ = set()
         for profile in group1_profiles + group2_profiles:
-            all_proteins.update([p.protein_id for p in profile.proteins])
+            _all_proteins.update([p.protein_id for p in profile.proteins])
 
         _ = []
 
-        for protein_id in all_proteins:
+        for protein_id in _all_proteins:
             # Get abundances for each group
             _ = []
             _ = []
@@ -611,29 +619,29 @@ class ProteomicsProcessor:
                     (p for p in profile.proteins if p.protein_id == protein_id), None
                 )
                 if protein:
-                    group1_abundances.append(protein.normalized_abundance)
+                    _group1_abundances.append(protein.normalized_abundance)
 
             for profile in group2_profiles:
                 protein = next(
                     (p for p in profile.proteins if p.protein_id == protein_id), None
                 )
                 if protein:
-                    group2_abundances.append(protein.normalized_abundance)
+                    _group2_abundances.append(protein.normalized_abundance)
 
-            if len(group1_abundances) >= 2 and len(group2_abundances) >= 2:
+            if len(_group1_abundances) >= 2 and len(_group2_abundances) >= 2:
                 # Log transform for statistics
-                _ = np.log2(np.array(group1_abundances) + 1)
-                _ = np.log2(np.array(group2_abundances) + 1)
+                _ = np.log2(np.array(_group1_abundances) + 1)
+                _ = np.log2(np.array(_group2_abundances) + 1)
 
                 # Perform t-test
                 from scipy import stats
 
-                t_stat, _ = stats.ttest_ind(log_group1, log_group2)
+                t_stat, _ = stats.ttest_ind(_log_group1, _log_group2)
 
                 # Calculate fold change
-                _ = np.mean(group1_abundances)
-                mean2 = np.mean(group2_abundances)
-                fold_change = mean2 / mean1 if mean1 > 0 else 0
+                _ = np.mean(_group1_abundances)
+                mean2 = np.mean(_group2_abundances)
+                fold_change = mean2 / _mean1 if _mean1 > 0 else 0
                 _ = np.log2(fold_change) if fold_change > 0 else 0
 
                 # Get gene name
@@ -646,7 +654,7 @@ class ProteomicsProcessor:
                     ),
                     None,
                 )
-                _ = example_protein.gene_name if example_protein else ""
+                _ = _example_protein.gene_name if _example_protein else ""
 
                 results.append(
                     {
@@ -662,26 +670,28 @@ class ProteomicsProcessor:
                 )
 
         if not results:
+logger = logging.getLogger(__name__)  # Added by cleanup
             logger.warning("No proteins found for differential expression")
             return pd.DataFrame()
 
         # Create results DataFrame
-        _ = pd.DataFrame(results)
+        _ = pd.DataFrame(_results)
 
         # Multiple testing correction
         from statsmodels.stats.multitest import multipletests
 
-        _, fdr_values, _, _ = multipletests(results_df["p_value"], method="fdr_bh")
-        results_df["fdr"] = fdr_values
+        _, fdr_values, _, _ = multipletests(_results_df["p_value"], method="fdr_bh")
+        _results_df["fdr"] = fdr_values
 
         # Mark significant proteins
-        results_df["significant"] = (results_df["fdr"] < fdr_threshold) & (
-            np.abs(results_df["log2_fold_change"]) >= np.log2(min_fold_change)
+        _results_df["significant"] = (_results_df["fdr"] < fdr_threshold) & (
+            np.abs(_results_df["log2_fold_change"]) >= np.log2(min_fold_change)
         )
 
         # Sort by p-value
-        results_df.sort_values("p_value", inplace=True)
+        _results_df.sort_values("p_value", inplace=True)
 
+logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info(
             "Found %sresults_df['significant'].sum() differentially expressed proteins"
         )
@@ -692,17 +702,19 @@ class ProteomicsProcessor:
         self, profile: ProteomicsProfile, output_path: Path, format: _ = "tsv"
     ) -> None:
         """Export proteomics results to file"""
+logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Exporting proteomics results to %soutput_path")
 
         _ = profile.to_dataframe()
 
         if format == "tsv":
-            df.to_csv(output_path, sep="\t", index=False)
+            _df.to_csv(output_path, sep="\t", index=False)
         elif format == "csv":
-            df.to_csv(output_path, index=False)
+            _df.to_csv(output_path, index=False)
         elif format == "json":
-            df.to_json(output_path, orient="records", indent=2)
+            _df.to_json(output_path, orient="records", indent=2)
         else:
             raise ValidationError("Unsupported export format: {format}")
 
+logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Successfully exported %slen(df) proteins")

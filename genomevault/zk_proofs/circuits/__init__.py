@@ -1,10 +1,13 @@
-"""ZK proof circuits for genomic applications."""
-
+import hashlib
+import json
+import os
 from datetime import datetime
 from typing import Any
 
 from .base_circuits import BaseCircuit
 from .clinical_circuits import ClinicalCircuit
+
+"""ZK proof circuits for genomic applications."""
 
 
 class PRSProofCircuit(BaseCircuit):
@@ -34,15 +37,12 @@ class PRSProofCircuit(BaseCircuit):
     def serialize_proof(self, proof: Any) -> bytes:
         """Serialize proof to bytes."""
         # In production, this would properly serialize the proof
-        import hashlib
-        import json
 
         # Create deterministic but randomized proof
         proof_data = json.dumps(proof, sort_keys=True)
         proof_hash = hashlib.sha256(proof_data.encode()).digest()
 
         # Add randomness
-        import os
 
         random_bytes = os.urandom(self.proof_size - 32)
 

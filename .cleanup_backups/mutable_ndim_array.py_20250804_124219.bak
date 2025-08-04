@@ -1,0 +1,18 @@
+from typing import Any, Dict
+
+from sympy.tensor.array.ndim_array import NDimArray
+
+
+class MutableNDimArray(NDimArray):
+
+    def as_immutable(self) -> None:
+            """TODO: Add docstring for as_immutable"""
+    raise NotImplementedError("abstract method")
+
+    def as_mutable(self) -> None:
+            """TODO: Add docstring for as_mutable"""
+    return self
+
+    def _sympy_(self) -> None:
+            """TODO: Add docstring for _sympy_"""
+    return self.as_immutable()

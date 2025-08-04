@@ -113,19 +113,19 @@ class MedianVerifierCircuit:
         )
 
         # Step 6: Generate response based on challenge
-        challenge_int = int.from_bytes(challenge, "big") % n
+        int.from_bytes(challenge, "big") % n
 
         # Open commitments around the median
         if n % 2 == 0:
             # Even case: open the two middle values
             median_indices = [n // 2 - 1, n // 2]
-            median_values = [sorted_values[i] for i in median_indices]
-            median_randomness = [randomness[i] for i in median_indices]
+            [sorted_values[i] for i in median_indices]
+            [randomness[i] for i in median_indices]
         else:
             # Odd case: open the middle value
             median_indices = [n // 2]
-            median_values = [sorted_values[n // 2]]
-            median_randomness = [randomness[n // 2]]
+            [sorted_values[n // 2]]
+            [randomness[n // 2]]
 
         # Also open some neighboring values to prove sortedness
         neighbor_range = min(3, n // 4)  # Open up to 3 neighbors on each side
@@ -415,7 +415,7 @@ if __name__ == "__main__":
         # Test case 3: Invalid proof (wrong median)
         print("\nTest 3: Invalid proof (wrong median)")
         try:
-            invalid_proof = circuit.generate_proof(
+            circuit.generate_proof(
                 values=values,
                 claimed_median=median + 1.0,
                 error_bound=0.01,  # Wrong median

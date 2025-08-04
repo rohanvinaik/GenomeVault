@@ -181,7 +181,7 @@ class HypervectorAccelerator:
 
     def circular_convolution(self, v1: np.ndarray, v2: np.ndarray) -> np.ndarray:
         """Perform circular convolution with acceleration"""
-        n = len(v1)
+        len(v1)
 
         if self.backend == "torch":
             # Use FFT for circular convolution

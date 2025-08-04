@@ -1,0 +1,424 @@
+#!/usr/bin/env python3
+"""
+Performance benchmarking harness for GenomeVault.
+Supports multiple lanes: ZK, PIR, HDC.
+"""
+
+import argparse
+import asyncio
+import json
+import subprocess
+import sys
+import time
+from datetime import datetime
+from pathlib import Path
+
+import numpy as np
+
+from genomevault.pir.client import PIRClient, PIRServer
+from genomevault.utils.logging import logger
+
+
+class BenchmarkHarness:
+    """Generic benchmarking harness for GenomeVault components."""
+
+    def __init__(self, lane: str, output_dir: Path):
+        self.lane = lane
+        self.output_dir = Path(output_dir) / lane
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.results = []
+
+    def add_result(self, test_name: str, metrics: dict):
+        """Add benchmark result."""
+        result = {
+            "test": test_name,
+            "timestamp": datetime.now().isoformat(),
+            "metrics": metrics,
+        }
+        self.results.append(result)
+
+    def save_results(self):
+        """Save results to JSON file."""
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_file = self.output_dir / f"{timestamp}.json"
+
+        summary = {
+            "lane": self.lane,
+            "timestamp": datetime.now().isoformat(),
+            "results": self.results,
+        }
+
+        with open(output_file, "w") as f:
+            json.dump(summary, f, indent=2)
+
+        logger.info(f"Benchmark results saved to {output_file}")
+        return output_file
+
+
+class PIRBenchmark:
+    """PIR-specific benchmarks."""
+
+    def __init__(self, harness: BenchmarkHarness):
+        self.harness = harness
+
+    async def run_all(self):
+        """Run all PIR benchmarks."""
+        logger.info("Starting PIR benchmarks...")
+
+        # Test different configurations
+        await self.benchmark_query_generation()
+        await self.benchmark_server_response()
+        await self.benchmark_reconstruction()
+        await self.benchmark_scaling()
+        await self.benchmark_batch_queries()
+
+    async def benchmark_query_generation(self):
+        """Benchmark PIR query generation."""
+        logger.info("Benchmarking query generation...")
+
+        # Test different database sizes
+        db_sizes = [1000, 10000, 100000, 1000000]
+        results = {}
+
+        for db_size in db_sizes:
+            # Mock servers for testing
+            servers = [
+                PIRServer(
+                    f"server_{i}", f"http://localhost:900{i}", "region", False, 0.95, 50
+                )
+                for i in range(3)
+            ]
+
+            client = PIRClient(servers, db_size)
+
+            # Time query generation
+            start_time = time.time()
+            for _ in range(100):
+                query = client.create_query(np.random.randint(0, db_size))
+            end_time = time.time()
+
+            avg_time = (end_time - start_time) / 100 * 1000  # ms
+            results[f"db_{db_size}"] = {
+                "avg_query_generation_ms": avg_time,
+                "queries_per_second": 1000 / avg_time,
+            }
+
+        self.harness.add_result("query_generation", results)
+
+    async def benchmark_server_response(self):
+        """Benchmark server response computation."""
+        logger.info("Benchmarking server response...")
+
+        # Simulate server computation
+        vector_sizes = [1000, 10000, 100000]
+        results = {}
+
+        for size in vector_sizes:
+            # Create random query vector
+            query_vector = np.random.randint(0, 2, size=size)
+
+            # Simulate database
+            database = np.random.bytes(size * 100)  # 100 bytes per item
+
+            # Time computation
+            start_time = time.time()
+
+            # Simulate dot product computation
+            result = np.zeros(100, dtype=np.uint8)
+            for i in range(size):
+                if query_vector[i]:
+                    item = database[i * 100 : (i + 1) * 100]
+                    result = np.bitwise_xor(result, np.frombuffer(item, dtype=np.uint8))
+
+            end_time = time.time()
+
+            computation_time = (end_time - start_time) * 1000  # ms
+            results[f"vector_{size}"] = {
+                "computation_time_ms": computation_time,
+                "throughput_mbps": (size * 100 * 8) / (computation_time * 1000),
+            }
+
+        self.harness.add_result("server_response", results)
+
+    async def benchmark_reconstruction(self):
+        """Benchmark data reconstruction from responses."""
+        logger.info("Benchmarking reconstruction...")
+
+        response_counts = [2, 3, 5]
+        results = {}
+
+        for count in response_counts:
+            # Generate random responses
+            responses = [np.random.bytes(1024) for _ in range(count)]
+
+            # Time reconstruction
+            start_time = time.time()
+
+            # XOR all responses
+            result = np.zeros(1024, dtype=np.uint8)
+            for response in responses:
+                result = np.bitwise_xor(result, np.frombuffer(response, dtype=np.uint8))
+
+            end_time = time.time()
+
+            reconstruction_time = (end_time - start_time) * 1000  # ms
+            results[f"servers_{count}"] = {
+                "reconstruction_time_ms": reconstruction_time,
+                "throughput_mbps": (1024 * 8 * count) / (reconstruction_time * 1000),
+            }
+
+        self.harness.add_result("reconstruction", results)
+
+    async def benchmark_scaling(self):
+        """Benchmark PIR scaling with database size."""
+        logger.info("Benchmarking scaling...")
+
+        # Test scaling characteristics
+        server_counts = [2, 3, 5, 7]
+        db_size = 1000000
+        results = {}
+
+        for n in server_counts:
+            # Calculate theoretical communication cost
+            download_per_server = db_size ** (1 / n)
+            total_download = download_per_server * n
+
+            # Calculate theoretical latency (assuming 70ms RTT)
+            latency = 70 * n  # Sequential queries
+
+            results[f"n_{n}"] = {
+                "download_per_server_bytes": download_per_server,
+                "total_download_bytes": total_download,
+                "estimated_latency_ms": latency,
+                "communication_reduction": db_size / total_download,
+            }
+
+        self.harness.add_result("scaling", results)
+
+    async def benchmark_batch_queries(self):
+        """Benchmark batch query performance."""
+        logger.info("Benchmarking batch queries...")
+
+        batch_sizes = [1, 10, 50, 100]
+        results = {}
+
+        for batch_size in batch_sizes:
+            # Simulate batch processing time
+            # Assumes 10ms per query + overhead
+            base_time = 10 * batch_size
+            overhead = 5 * np.log(batch_size)  # Logarithmic overhead
+
+            total_time = base_time + overhead
+
+            results[f"batch_{batch_size}"] = {
+                "total_time_ms": total_time,
+                "avg_per_query_ms": total_time / batch_size,
+                "queries_per_second": 1000 / (total_time / batch_size),
+            }
+
+        self.harness.add_result("batch_queries", results)
+
+
+class ZKBenchmark:
+    """ZK proof benchmarks."""
+
+    def __init__(self, harness: BenchmarkHarness):
+        self.harness = harness
+
+    async def run_all(self):
+        """Run all ZK benchmarks."""
+        logger.info("Starting ZK benchmarks...")
+
+        # Placeholder for ZK benchmarks
+        results = {
+            "proof_generation_ms": 150,
+            "proof_size_bytes": 384,
+            "verification_ms": 25,
+        }
+
+        self.harness.add_result("zk_basic", results)
+
+
+class HDCBenchmark:
+    """Hyperdimensional computing benchmarks."""
+
+    def __init__(self, harness: BenchmarkHarness):
+        self.harness = harness
+
+    async def run_all(self):
+        """Run all HDC benchmarks."""
+        logger.info("Starting HDC benchmarks...")
+
+        # Run the dedicated HDC benchmark script
+        script_path = Path(__file__).parent / "bench_hdc.py"
+
+        if script_path.exists():
+            # Run the comprehensive HDC benchmark
+            logger.info("Running comprehensive HDC benchmarks...")
+            try:
+                result = subprocess.run(
+                    [
+                        sys.executable,
+                        str(script_path),
+                        "--output-dir",
+                        str(self.harness.output_dir),
+                    ],
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                )
+
+                # Log output
+                if result.stdout:
+                    logger.info(f"HDC benchmark output:\n{result.stdout}")
+                if result.stderr:
+                    logger.warning(f"HDC benchmark warnings:\n{result.stderr}")
+
+                # Load the latest results
+                latest_results = self._load_latest_hdc_results()
+                if latest_results:
+                    self.harness.add_result("hdc_comprehensive", latest_results)
+
+            except subprocess.CalledProcessError as e:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
+                logger.error(f"HDC benchmark failed: {e}")
+                logger.error(f"stdout: {e.stdout}")
+                logger.error(f"stderr: {e.stderr}")
+
+                # Fall back to basic benchmarks
+                await self._run_basic_hdc_benchmarks()
+                raise
+        else:
+            # Fall back to basic benchmarks
+            logger.warning(f"HDC benchmark script not found at {script_path}")
+            await self._run_basic_hdc_benchmarks()
+
+    def _load_latest_hdc_results(self) -> dict | None:
+        """Load the most recent HDC benchmark results."""
+        try:
+            # Find the most recent JSON file
+            json_files = list(self.harness.output_dir.glob("*.json"))
+            if not json_files:
+                return None
+
+            latest_file = max(json_files, key=lambda f: f.stat().st_mtime)
+
+            with open(latest_file) as f:
+                data = json.load(f)
+
+            # Extract summary metrics
+            if "summary" in data:
+                return data["summary"]
+            else:
+                return {
+                    "source": str(latest_file.name),
+                    "timestamp": data.get("timestamp", "unknown"),
+                    "benchmarks_completed": len(data.get("benchmarks", {})),
+                }
+
+        except Exception as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
+            logger.error(f"Failed to load HDC results: {e}")
+            return None
+            raise
+
+    async def _run_basic_hdc_benchmarks(self):
+        """Run basic HDC benchmarks as fallback."""
+        logger.info("Running basic HDC benchmarks...")
+
+        try:
+            import time
+
+            from genomevault.hypervector_transform.hdc_encoder import (
+                OmicsType, create_encoder)
+
+            # Basic encoding benchmark
+            encoder = create_encoder(dimension=10000)
+            features = np.random.randn(1000)
+
+            # Warm-up
+            for _ in range(10):
+                _ = encoder.encode(features, OmicsType.GENOMIC)
+
+            # Benchmark
+            start_time = time.time()
+            num_trials = 100
+
+            for _ in range(num_trials):
+                _ = encoder.encode(features, OmicsType.GENOMIC)
+
+            elapsed = time.time() - start_time
+
+            results = {
+                "encoding_time_ms": (elapsed / num_trials) * 1000,
+                "dimension": 10000,
+                "throughput_ops_per_sec": num_trials / elapsed,
+                "feature_size": 1000,
+            }
+
+            self.harness.add_result("hdc_basic", results)
+
+        except ImportError as e:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
+            logger.error(f"Failed to import HDC modules: {e}")
+            # Add minimal results
+            results = {
+                "error": "HDC modules not available",
+                "encoding_time_ms": -1,
+                "dimension": 10000,
+            }
+            self.harness.add_result("hdc_basic", results)
+            raise
+
+
+async def run_benchmarks(lane: str, output_dir: str):
+    """Run benchmarks for specified lane."""
+    harness = BenchmarkHarness(lane, output_dir)
+
+    if lane == "pir":
+        benchmark = PIRBenchmark(harness)
+    elif lane == "zk":
+        benchmark = ZKBenchmark(harness)
+    elif lane == "hdc":
+        benchmark = HDCBenchmark(harness)
+    else:
+        raise ValueError(f"Unknown lane: {lane}")
+
+    await benchmark.run_all()
+    output_file = harness.save_results()
+
+    return output_file
+
+
+def main():
+    """Main entry point."""
+    parser = argparse.ArgumentParser(description="GenomeVault benchmark harness")
+    parser.add_argument(
+        "--lane",
+        choices=["zk", "pir", "hdc"],
+        required=True,
+        help="Benchmark lane to run",
+    )
+    parser.add_argument(
+        "--output", default="benchmarks", help="Output directory for results"
+    )
+
+    args = parser.parse_args()
+
+    # Run benchmarks
+    output_file = asyncio.run(run_benchmarks(args.lane, args.output))
+
+    print(f"Benchmark complete. Results saved to: {output_file}")
+
+
+if __name__ == "__main__":
+    main()

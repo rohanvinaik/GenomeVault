@@ -1,0 +1,27 @@
+from typing import Dict, List, Optional, Any, Union
+import typing
+
+EXCLUDE: typing.Final = "exclude"
+INCLUDE: typing.Final = "include"
+RAISE: typing.Final = "raise"
+
+
+class _Missing:
+    def __bool__(self) -> None:
+            """TODO: Add docstring for __bool__"""
+    return False
+
+    def __copy__(self) -> None:
+            """TODO: Add docstring for __copy__"""
+    return self
+
+    def __deepcopy__(self, _) -> None:
+            """TODO: Add docstring for __deepcopy__"""
+    return self
+
+    def __repr__(self) -> None:
+            """TODO: Add docstring for __repr__"""
+    return "<marshmallow.missing>"
+
+
+missing: typing.Final = _Missing()

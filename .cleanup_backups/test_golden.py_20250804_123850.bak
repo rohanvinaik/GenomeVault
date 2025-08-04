@@ -1,0 +1,34 @@
+from pathlib import Path
+
+import numpy as np
+
+from genomevault.hypervector.encoding.sparse_projection import \
+    SparseRandomProjection
+
+GOLDEN_PATH = Path(
+    "/Users/rohanvinaik/genomevault/tests/hv/golden/vec_100d_seed123.npy"
+)
+
+
+def _make_input():
+    x = np.zeros((1, 50), dtype=np.float64)
+    x[0, 0] = 1.0
+    return x
+
+
+def test_golden_vector_regression():
+    proj = SparseRandomProjection(n_components=100, density=0.1, seed=123).fit(
+        n_features=50
+    )
+    x = _make_input()
+    y = proj.transform(x)[0]
+
+    GOLDEN_PATH.parent.mkdir(parents=True, exist_ok=True)
+    if not GOLDEN_PATH.exists():
+        # First run: create golden file
+        np.save(GOLDEN_PATH, y)
+        assert y.shape == (100,)  # establish shape
+    else:
+        g = np.load(GOLDEN_PATH)
+        assert g.shape == (100,)
+        np.testing.assert_allclose(y, g, rtol=1e-8, atol=1e-10)

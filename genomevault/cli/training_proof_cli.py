@@ -401,7 +401,7 @@ def generate_proof(
 
     # Add session info
     proof["session_id"] = session_id
-    proof["generation_time"] = int(time.time())
+    proof["generation_time"] = int(_time.time())
 
     # Save proof
     with open(proof_file, "w") as f:

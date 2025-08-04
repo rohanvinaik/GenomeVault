@@ -1,0 +1,44 @@
+from fastapi.testclient import TestClient
+
+from genomevault.api.app import app
+from genomevault.core.constants import HYPERVECTOR_DIMENSIONS
+
+client = TestClient(app)
+
+
+def test_operations_bundle_and_permute():
+    dim = HYPERVECTOR_DIMENSIONS["base"]
+    a = client.post(
+        "/vectors/encode",
+        json={
+            "data": {"genomic": [1, 2, 3]},
+            "dimension": str(dim),
+            "compression_tier": "full",
+        },
+    ).json()
+    b = client.post(
+        "/vectors/encode",
+        json={
+            "data": {"genomic": [3, 2, 1]},
+            "dimension": str(dim),
+            "compression_tier": "full",
+        },
+    ).json()
+
+    r = client.post(
+        "/vectors/operations",
+        json={"operation": "bundle", "vector_ids": [a["vector_id"], b["vector_id"]]},
+    )
+    assert r.status_code == 200
+    rid = r.json()["result_vector_id"]
+    assert isinstance(rid, str)
+
+    r2 = client.post(
+        "/vectors/operations",
+        json={"operation": "permute", "vector_ids": [rid], "parameters": {"shift": 3}},
+    )
+    assert r2.status_code == 200
+
+
+
+

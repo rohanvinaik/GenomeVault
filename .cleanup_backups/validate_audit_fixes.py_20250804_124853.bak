@@ -1,0 +1,237 @@
+#!/usr/bin/env python3
+"""
+GenomeVault Audit Validator
+Validates that fixes have been applied correctly
+"""
+
+import ast
+import json
+import re
+from pathlib import Path
+
+
+class AuditValidator:
+    def __init__(self, base_path: str):
+        self.base_path = Path(base_path)
+        self.report = {
+            "files_total": 0,
+            "py_files": 0,
+            "tests_detected": 0,
+            "has_pyproject": False,
+            "has_requirements": False,
+            "has_readme": False,
+            "missing_init_dirs": [],
+            "files_with_prints": [],
+            "files_with_broad_excepts": [],
+            "complex_functions": [],
+            "quality_metrics": {},
+        }
+
+    def count_files(self):
+        """Count total files and Python files"""
+        all_files = list(self.base_path.rglob("*"))
+        self.report["files_total"] = len([f for f in all_files if f.is_file()])
+        self.report["py_files"] = len(list(self.base_path.rglob("*.py")))
+        self.report["tests_detected"] = len(list(self.base_path.rglob("test_*.py")))
+
+    def check_project_files(self):
+        """Check for essential project files"""
+        self.report["has_pyproject"] = (self.base_path / "pyproject.toml").exists()
+        self.report["has_requirements"] = (self.base_path / "requirements.txt").exists()
+        self.report["has_readme"] = (self.base_path / "README.md").exists()
+
+    def find_missing_init_files(self):
+        """Find directories with Python files but no __init__.py"""
+        for path in self.base_path.rglob("*.py"):
+            dir_path = path.parent
+            if not (dir_path / "__init__.py").exists():
+                # Check if directory has Python files
+                py_files = list(dir_path.glob("*.py"))
+                if (
+                    py_files
+                    and str(dir_path.relative_to(self.base_path))
+                    not in self.report["missing_init_dirs"]
+                ):
+                    self.report["missing_init_dirs"].append(
+                        str(dir_path.relative_to(self.base_path))
+                    )
+
+    def check_print_statements(self):
+        """Find files with print statements"""
+        for py_file in self.base_path.rglob("*.py"):
+            try:
+                content = py_file.read_text()
+                print_count = len(re.findall(r"^\s*print\(", content, re.MULTILINE))
+                if print_count > 0:
+                    self.report["files_with_prints"].append(
+                        {
+                            "path": str(py_file.relative_to(self.base_path)),
+                            "count": print_count,
+                        }
+                    )
+            except Exception:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
+                pass
+                raise
+
+    def check_broad_exceptions(self):
+        """Find files with broad exception handlers"""
+        for py_file in self.base_path.rglob("*.py"):
+            try:
+                content = py_file.read_text()
+                broad_except_count = len(re.findall(r"except\s+Exception", content))
+                if broad_except_count > 0:
+                    self.report["files_with_broad_excepts"].append(
+                        {
+                            "path": str(py_file.relative_to(self.base_path)),
+                            "count": broad_except_count,
+                        }
+                    )
+            except Exception:
+                from genomevault.observability.logging import configure_logging
+
+                logger = configure_logging()
+                logger.exception("Unhandled exception")
+                pass
+                raise
+
+    def calculate_complexity(self, py_file: Path) -> list[tuple[str, int]]:
+        """Calculate cyclomatic complexity for functions in a file"""
+        complex_funcs = []
+        try:
+            content = py_file.read_text()
+            tree = ast.parse(content)
+
+            for node in ast.walk(tree):
+                if isinstance(node, ast.FunctionDef):
+                    complexity = self._calculate_node_complexity(node)
+                    if complexity > 10:  # Functions with complexity > 10
+                        complex_funcs.append((node.name, complexity))
+        except Exception:
+            from genomevault.observability.logging import configure_logging
+
+            logger = configure_logging()
+            logger.exception("Unhandled exception")
+            pass
+            raise
+
+        return complex_funcs
+
+    def _calculate_node_complexity(self, node) -> int:
+        """Calculate cyclomatic complexity for an AST node"""
+        complexity = 1
+        for child in ast.walk(node):
+            if isinstance(child, (ast.If, ast.While, ast.For, ast.ExceptHandler)):
+                complexity += 1
+            elif isinstance(child, ast.BoolOp):
+                complexity += len(child.values) - 1
+
+        return complexity
+
+    def check_complex_functions(self):
+        """Find functions with high complexity"""
+        for py_file in self.base_path.rglob("*.py"):
+            complex_funcs = self.calculate_complexity(py_file)
+            if complex_funcs:
+                for func_name, complexity in complex_funcs:
+                    self.report["complex_functions"].append(
+                        {
+                            "path": str(py_file.relative_to(self.base_path)),
+                            "function": func_name,
+                            "complexity": complexity,
+                        }
+                    )
+
+    def run_validation(self):
+        """Run all validations"""
+        print("Running GenomeVault audit validation...")
+
+        self.count_files()
+        self.check_project_files()
+        self.find_missing_init_files()
+        self.check_print_statements()
+        self.check_broad_exceptions()
+        self.check_complex_functions()
+
+        # Sort results
+        self.report["files_with_prints"].sort(key=lambda x: x["count"], reverse=True)
+        self.report["files_with_broad_excepts"].sort(
+            key=lambda x: x["count"], reverse=True
+        )
+        self.report["complex_functions"].sort(
+            key=lambda x: x["complexity"], reverse=True
+        )
+
+        return self.report
+
+    def print_report(self):
+        """Print validation report"""
+        print("\n=== GenomeVault Validation Report ===")
+        print("\nProject Structure:")
+        print(f"  Total files: {self.report['files_total']}")
+        print(f"  Python files: {self.report['py_files']}")
+        print(f"  Test files: {self.report['tests_detected']}")
+        print(f"  Has pyproject.toml: {self.report['has_pyproject']}")
+        print(f"  Has requirements.txt: {self.report['has_requirements']}")
+        print(f"  Has README.md: {self.report['has_readme']}")
+
+        print(f"\nMissing __init__.py files: {len(self.report['missing_init_dirs'])}")
+        if self.report["missing_init_dirs"]:
+            for dir_path in self.report["missing_init_dirs"][:10]:
+                print(f"  - {dir_path}")
+            if len(self.report["missing_init_dirs"]) > 10:
+                print(f"  ... and {len(self.report['missing_init_dirs']) - 10} more")
+
+        print(f"\nFiles with print statements: {len(self.report['files_with_prints'])}")
+        if self.report["files_with_prints"]:
+            for item in self.report["files_with_prints"][:5]:
+                print(f"  - {item['path']}: {item['count']} print(s)")
+            if len(self.report["files_with_prints"]) > 5:
+                print(f"  ... and {len(self.report['files_with_prints']) - 5} more")
+
+        print(
+            f"\nFiles with broad exceptions: {len(self.report['files_with_broad_excepts'])}"
+        )
+        if self.report["files_with_broad_excepts"]:
+            for item in self.report["files_with_broad_excepts"][:5]:
+                print(f"  - {item['path']}: {item['count']} broad except(s)")
+            if len(self.report["files_with_broad_excepts"]) > 5:
+                print(
+                    f"  ... and {len(self.report['files_with_broad_excepts']) - 5} more"
+                )
+
+        print(
+            f"\nComplex functions (complexity > 10): {len(self.report['complex_functions'])}"
+        )
+        if self.report["complex_functions"]:
+            for item in self.report["complex_functions"][:5]:
+                print(
+                    f"  - {item['path']} :: {item['function']}() - complexity: {item['complexity']}"
+                )
+            if len(self.report["complex_functions"]) > 5:
+                print(f"  ... and {len(self.report['complex_functions']) - 5} more")
+
+    def save_report(self, output_file: str = "audit_validation_report.json"):
+        """Save report to JSON file"""
+        output_path = self.base_path / output_file
+        with open(output_path, "w") as f:
+            json.dump(self.report, f, indent=2)
+        print(f"\nReport saved to: {output_path}")
+
+
+if __name__ == "__main__":
+    import sys
+
+    if len(sys.argv) > 1:
+        base_path = sys.argv[1]
+    else:
+        base_path = "/Users/rohanvinaik/genomevault"
+
+    validator = AuditValidator(base_path)
+    validator.run_validation()
+    validator.print_report()
+    validator.save_report()
+

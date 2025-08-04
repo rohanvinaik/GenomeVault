@@ -1,16 +1,20 @@
-"""
-Base circuit implementations for zero-knowledge proofs
-
-This module provides the foundational circuit building blocks
-for genomic privacy-preserving proofs using PLONK.
-"""
-
 import hashlib
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any
 
 from genomevault.utils.logging import get_logger
+
+"""
+Base circuit implementations for zero-knowledge proofs
+
+This module provides the foundational circuit building blocks
+for genomic privacy-preserving proofs using PLONK.
+"""
+import logging
+
+logger = logging.getLogger(__name__)
+import time
 
 logger = get_logger(__name__)
 
