@@ -161,6 +161,10 @@ cleanup_for_github.py
 cleanup_auto.py
 preview_cleanup.py
 
+# Backup files
+.cleanup_backups/
+*.bak
+
 # Cryptographic keys (security)
 *.key
 *.pem
