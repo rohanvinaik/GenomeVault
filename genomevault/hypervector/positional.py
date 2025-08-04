@@ -330,12 +330,8 @@ class SNPPanel:
             logger.info("Loaded panel '%spanel_name' with %stotal_positions positions")
 
         except Exception as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
-            logger.exception("Unhandled exception")
+            logger.exception("Failed to load panel from %s: %s", file_path, str(e))
             raise HypervectorError(f"Failed to load panel from {file_path}: {e!s}")
-            raise RuntimeError("Unspecified error")
 
     def encode_with_panel(
         self, panel_name: str, chromosome: str, observed_bases: dict[int, str]

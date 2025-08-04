@@ -426,7 +426,7 @@ class PackedGenomicEncoder:
 
         # Create orthogonal base vectors for nucleotides
         for i, base in enumerate(["A", "T", "G", "C"]):
-            vec = PackedHV(self.dimension, device=self.device)
+            # PackedHV vector creation - keep reference for use
             # Set specific bits for orthogonality
             start_bit = i * (self.dimension // 4)
             end_bit = (i + 1) * (self.dimension // 4)
