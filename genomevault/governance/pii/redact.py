@@ -43,7 +43,7 @@ class PseudonymStore:
                 logger = configure_logging()
                 logger.exception("Unhandled exception")
                 self._map = {}
-                raise
+                raise RuntimeError("Unspecified error")
 
     def save(self) -> None:
         if not self.path:

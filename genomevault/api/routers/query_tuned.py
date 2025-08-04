@@ -9,9 +9,11 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 
-from genomevault.hypervector.encoding.genomic import GenomicEncoder, PanelGranularity
+from genomevault.hypervector.encoding.genomic import (GenomicEncoder,
+                                                      PanelGranularity)
 from genomevault.hypervector.error_handling import ErrorBudgetAllocator
-from genomevault.pir.client import BatchedPIRQueryBuilder, GenomicQuery, QueryType
+from genomevault.pir.client import (BatchedPIRQueryBuilder, GenomicQuery,
+                                    QueryType)
 from genomevault.utils.logging import get_logger
 from genomevault.zk.proof import ProofGenerator
 
@@ -26,10 +28,16 @@ class SNPPanelQueryRequest(BaseModel):
     cohort_id: str
     query_type: str = Field("variant_lookup", description="Type of query")
     query_params: dict[str, Any]
-    panel: str = Field("off", description="SNP panel granularity: off/common/clinical/custom")
-    custom_panel_path: str | None = Field(None, description="Path to custom BED/VCF file")
+    panel: str = Field(
+        "off", description="SNP panel granularity: off/common/clinical/custom"
+    )
+    custom_panel_path: str | None = Field(
+        None, description="Path to custom BED/VCF file"
+    )
     epsilon: float = Field(0.01, description="Allowed relative error", gt=0, le=1)
-    delta_exp: int = Field(15, description="Target failure probability exponent", ge=5, le=30)
+    delta_exp: int = Field(
+        15, description="Target failure probability exponent", ge=5, le=30
+    )
 
 
 class ZoomQueryRequest(BaseModel):
@@ -100,7 +108,7 @@ async def query_with_panel(
         # Load custom panel if provided
         if panel_granularity == PanelGranularity.CUSTOM and request.custom_panel_path:
             encoder.load_custom_panel(request.custom_panel_path)
-            logger.info(f"Loaded custom panel from {request.custom_panel_path}")
+            logger.info("Loaded custom panel from %srequest.custom_panel_path")
 
         # Get panel info
         panel_info = encoder.snp_panel.get_panel_info(panel_granularity.value)
@@ -115,7 +123,9 @@ async def query_with_panel(
         )
 
         # Build genomic query
-        genomic_query = _build_genomic_query_from_params(request.query_type, request.query_params)
+        genomic_query = _build_genomic_query_from_params(
+            request.query_type, request.query_params
+        )
 
         # Measure encoding overhead
         encode_start = time.time()
@@ -133,7 +143,9 @@ async def query_with_panel(
             )
 
             # PIR query for encoded variant
-            batched_result = await query_builder.query_with_error_budget(genomic_query, budget)
+            batched_result = await query_builder.query_with_error_budget(
+                genomic_query, budget
+            )
             result = batched_result.aggregated_result
 
         elif request.query_type == "genome_scan":
@@ -149,7 +161,9 @@ async def query_with_panel(
                 parameters={"encoded_genome": encoded_genome},
             )
 
-            batched_result = await query_builder.query_with_error_budget(genome_query, budget)
+            batched_result = await query_builder.query_with_error_budget(
+                genome_query, budget
+            )
             result = batched_result.aggregated_result
 
         else:
@@ -195,9 +209,9 @@ async def query_with_panel(
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        logger.error(f"Panel query failed: {e}")
+        logger.error("Panel query failed: %se")
         raise HTTPException(500, f"Panel query failed: {e!s}")
-        raise
+        raise RuntimeError("Unspecified error")
 
 
 @router.post("/zoom", response_model=ZoomQueryResponse)
@@ -281,9 +295,9 @@ async def query_with_zoom(
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        logger.error(f"Zoom query failed: {e}")
+        logger.error("Zoom query failed: %se")
         raise HTTPException(500, f"Zoom query failed: {e!s}")
-        raise
+        raise RuntimeError("Unspecified error")
 
 
 @router.get("/panel/info")
@@ -311,15 +325,15 @@ async def get_panel_info(
         logger = configure_logging()
         logger.exception("Unhandled exception")
         raise HTTPException(404, str(e))
-        raise
+        raise RuntimeError("Unspecified error")
     except KeyError as e:
         from genomevault.observability.logging import configure_logging
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        logger.error(f"Failed to get panel info: {e}")
+        logger.error("Failed to get panel info: %se")
         raise HTTPException(500, f"Failed to get panel info: {e!s}")
-        raise
+        raise RuntimeError("Unspecified error")
 
 
 @router.post("/panel/estimate")

@@ -90,7 +90,7 @@ class CatalyticSpace:
         current_fingerprint = self._compute_fingerprint()
 
         if current_fingerprint != self.initial_fingerprint:
-            logger.warning(f"Catalytic space modified: {self.modification_count} writes")
+            logger.warning("Catalytic space modified: %sself.modification_count writes")
             # Restore initial state (simplified)
             self.data = np.random.bytes(self.size)
 
@@ -141,9 +141,9 @@ class CatalyticProofEngine:
         }
 
         logger.info(
-            f"CatalyticProofEngine initialized: "
-            f"clean={clean_space_limit/1024:.1f}KB, "
-            f"catalytic={catalytic_space_size/1024/1024:.1f}MB"
+            "CatalyticProofEngine initialized: "
+            "clean=%sclean_space_limit / 1024:.1fKB, "
+            "catalytic=%scatalytic_space_size / 1024 / 1024:.1fMB"
         )
 
     def _allocate_clean_space(self, size: int) -> bytearray:
@@ -167,7 +167,7 @@ class CatalyticProofEngine:
         Returns:
             Proof generated with catalytic space
         """
-        logger.info(f"Generating catalytic proof for {circuit_name}")
+        logger.info("Generating catalytic proof for %scircuit_name")
 
         if circuit_name not in self.catalytic_algorithms:
             raise ValueError(f"No catalytic algorithm for circuit: {circuit_name}")
@@ -209,9 +209,9 @@ class CatalyticProofEngine:
         )
 
         logger.info(
-            f"Generated catalytic proof {proof.proof_id}: "
-            f"clean_space={clean_space_used/1024:.1f}KB, "
-            f"efficiency={proof.space_efficiency:.1f}x"
+            "Generated catalytic proof %sproof.proof_id: "
+            "clean_space=%sclean_space_used / 1024:.1fKB, "
+            "efficiency=%sproof.space_efficiency:.1fx"
         )
 
         return proof
@@ -320,7 +320,9 @@ class CatalyticProofEngine:
 
         # Generate proof
         proof_components = {
-            "score_commitment": hashlib.sha256(f"{final_score:.6f}".encode()).hexdigest(),
+            "score_commitment": hashlib.sha256(
+                f"{final_score:.6f}".encode()
+            ).hexdigest(),
             "variant_count": sum(variants),
             "dp_epsilon": dp_epsilon,
             "catalytic_storage": "weights",
@@ -368,7 +370,9 @@ class CatalyticProofEngine:
 
         # Calculate proportions
         total_segments = len(ancestry_assignments)
-        proportions = {pop: count / total_segments for pop, count in ancestry_counts.items()}
+        proportions = {
+            pop: count / total_segments for pop, count in ancestry_counts.items()
+        }
 
         # Generate proof
         proof_components = {
@@ -435,7 +439,9 @@ class CatalyticProofEngine:
                 expr_bytes = self.catalytic_space.read(expr_offset + idx * 4, 4)
                 perm_score += int.from_bytes(expr_bytes, "big") / 1000
 
-            permutation_scores.append(perm_score / len(pathway_genes) if pathway_genes else 0)
+            permutation_scores.append(
+                perm_score / len(pathway_genes) if pathway_genes else 0
+            )
 
             clean_used = max(clean_used, len(pathway_genes) * 4)
 
@@ -469,7 +475,9 @@ class CatalyticProofEngine:
 
         return estimates.get(circuit_name, 10000)
 
-    def _generate_proof_id(self, circuit_name: str, public_inputs: dict[str, Any]) -> str:
+    def _generate_proof_id(
+        self, circuit_name: str, public_inputs: dict[str, Any]
+    ) -> str:
         """Generate unique proof ID."""
         data = {
             "circuit": circuit_name,
@@ -478,7 +486,9 @@ class CatalyticProofEngine:
             "nonce": np.random.bytes(8).hex(),
         }
 
-        return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[:16]
+        return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[
+            :16
+        ]
 
     def get_space_savings(self, circuit_name: str) -> dict[str, Any]:
         """
@@ -500,8 +510,11 @@ class CatalyticProofEngine:
         return {
             "standard_approach_mb": standard_required / 1024 / 1024,
             "catalytic_clean_mb": catalytic_clean_space / 1024 / 1024,
-            "catalytic_total_mb": (catalytic_clean_space + self.catalytic_space.size) / 1024 / 1024,
-            "clean_space_reduction": (1 - catalytic_clean_space / standard_required) * 100,
+            "catalytic_total_mb": (catalytic_clean_space + self.catalytic_space.size)
+            / 1024
+            / 1024,
+            "clean_space_reduction": (1 - catalytic_clean_space / standard_required)
+            * 100,
             "reuses_catalytic": True,
         }
 
@@ -527,20 +540,22 @@ if __name__ == "__main__":
         },
         private_inputs={
             "variant_data": {"chr": "chr1", "pos": 12345, "ref": "A", "alt": "G"},
-            "merkle_proof": [hashlib.sha256(f"node_{i}".encode()).hexdigest() for i in range(20)],
+            "merkle_proof": [
+                hashlib.sha256(f"node_{i}".encode()).hexdigest() for i in range(20)
+            ],
             "witness_randomness": np.random.bytes(32).hex(),
         },
     )
 
-    logger.info(f"Proof ID: {variant_proof.proof_id}")
-    logger.info(f"Clean space used: {variant_proof.clean_space_used/1024:.1f} KB")
-    logger.info(f"Space efficiency: {variant_proof.space_efficiency:.1f}x")
+    logger.info("Proof ID: %svariant_proof.proof_id")
+    logger.info("Clean space used: %svariant_proof.clean_space_used / 1024:.1f KB")
+    logger.info("Space efficiency: %svariant_proof.space_efficiency:.1fx")
 
     savings = engine.get_space_savings("variant_presence")
     logger.info("\nSpace savings:")
-    logger.info(f"  Standard approach: {savings['standard_approach_mb']:.1f} MB")
-    logger.info(f"  Catalytic clean: {savings['catalytic_clean_mb']:.1f} MB")
-    logger.info(f"  Reduction: {savings['clean_space_reduction']:.1f}%")
+    logger.info("  Standard approach: %ssavings['standard_approach_mb']:.1f MB")
+    logger.info("  Catalytic clean: %ssavings['catalytic_clean_mb']:.1f MB")
+    logger.info("  Reduction: %ssavings['clean_space_reduction']:.1f%")
 
     # Example 2: PRS calculation with weight storage
     logger.info("\n\nExample 2: Catalytic PRS Proof")
@@ -559,27 +574,31 @@ if __name__ == "__main__":
         private_inputs={
             "variants": np.random.randint(0, 2, num_variants).tolist(),
             "weights": np.random.rand(num_variants).tolist(),
-            "merkle_proofs": [hashlib.sha256(f"proof_{i}".encode()).hexdigest() for i in range(20)],
+            "merkle_proofs": [
+                hashlib.sha256(f"proof_{i}".encode()).hexdigest() for i in range(20)
+            ],
             "witness_randomness": np.random.bytes(32).hex(),
         },
     )
 
-    logger.info(f"Proof ID: {prs_proof.proof_id}")
-    logger.info(f"Clean space used: {prs_proof.clean_space_used/1024:.1f} KB")
-    logger.info(f"Space efficiency: {prs_proof.space_efficiency:.1f}x")
-    logger.info(f"Computation time: {prs_proof.metadata['computation_time']*1000:.1f} ms")
+    logger.info("Proof ID: %sprs_proof.proof_id")
+    logger.info("Clean space used: %sprs_proof.clean_space_used / 1024:.1f KB")
+    logger.info("Space efficiency: %sprs_proof.space_efficiency:.1fx")
+    logger.info(
+        "Computation time: %sprs_proof.metadata['computation_time'] * 1000:.1f ms"
+    )
 
     savings = engine.get_space_savings("polygenic_risk_score")
     logger.info("\nSpace savings:")
-    logger.info(f"  Standard approach: {savings['standard_approach_mb']:.1f} MB")
-    logger.info(f"  Catalytic clean: {savings['catalytic_clean_mb']:.1f} MB")
-    logger.info(f"  Reduction: {savings['clean_space_reduction']:.1f}%")
+    logger.info("  Standard approach: %ssavings['standard_approach_mb']:.1f MB")
+    logger.info("  Catalytic clean: %ssavings['catalytic_clean_mb']:.1f MB")
+    logger.info("  Reduction: %ssavings['clean_space_reduction']:.1f%")
 
     # Show catalytic space statistics
     logger.info("\nCatalytic space statistics:")
     stats = engine.catalytic_space.get_usage_stats()
-    logger.info(f"  Total size: {stats['size']/1024/1024:.1f} MB")
-    logger.info(f"  Access count: {stats['access_count']}")
+    logger.info("  Total size: %sstats['size'] / 1024 / 1024:.1f MB")
+    logger.info("  Access count: %sstats['access_count']")
     logger.info(
-        f"  State preserved: {stats['fingerprint'] == engine.catalytic_space.initial_fingerprint}"
+        "  State preserved: %sstats['fingerprint'] == engine.catalytic_space.initial_fingerprint"
     )

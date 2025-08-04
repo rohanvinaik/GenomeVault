@@ -134,7 +134,9 @@ class EpigeneticProfile:
 
         return [peak for peak in self.chromatin_peaks if peak.nearest_gene == gene_id]
 
-    def calculate_regional_methylation(self, chromosome: str, start: int, end: int) -> float | None:
+    def calculate_regional_methylation(
+        self, chromosome: str, start: int, end: int
+    ) -> float | None:
         """Calculate average methylation in a region"""
         sites = self.get_methylation_by_region(chromosome, start, end)
         if not sites:
@@ -230,7 +232,7 @@ class MethylationProcessor:
         Returns:
             EpigeneticProfile with methylation data
         """
-        logger.info(f"Processing methylation data for {sample_id}")
+        logger.info("Processing methylation data for %ssample_id")
 
         try:
             # Load methylation data based on format
@@ -268,7 +270,9 @@ class MethylationProcessor:
                 },
             )
 
-            logger.info(f"Successfully processed {len(normalized_sites)} methylation sites")
+            logger.info(
+                "Successfully processed %slen(normalized_sites) methylation sites"
+            )
             return profile
 
         except Exception as _:
@@ -276,13 +280,13 @@ class MethylationProcessor:
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error(f"Error processing methylation data: {e!s}")
+            logger.error("Error processing methylation data: %se!s")
             raise ProcessingError("Failed to process methylation data: {str(e)}")
-            raise
+            raise RuntimeError("Unspecified error")
 
     def _load_bismark_output(self, file_path: Path) -> pd.DataFrame:
         """Load Bismark methylation extractor output"""
-        logger.info(f"Loading Bismark output from {file_path}")
+        logger.info("Loading Bismark output from %sfile_path")
 
         # Mock data for demonstration
         # In production, would parse actual Bismark output
@@ -297,7 +301,9 @@ class MethylationProcessor:
             "strand": np.random.choice(["+", "-"], n_sites),
             "methylated": np.random.binomial(20, 0.7, n_sites),
             "unmethylated": np.random.binomial(20, 0.3, n_sites),
-            "context": np.random.choice(["CG", "CHG", "CHH"], n_sites, p=[0.8, 0.15, 0.05]),
+            "context": np.random.choice(
+                ["CG", "CHG", "CHH"], n_sites, p=[0.8, 0.15, 0.05]
+            ),
         }
 
         df = pd.DataFrame(data)
@@ -308,7 +314,7 @@ class MethylationProcessor:
 
     def _load_bedgraph(self, file_path: Path) -> pd.DataFrame:
         """Load BedGraph format methylation data"""
-        logger.info(f"Loading BedGraph from {file_path}")
+        logger.info("Loading BedGraph from %sfile_path")
 
         # In production, would parse actual BedGraph file
         # For now, generate mock data
@@ -323,7 +329,9 @@ class MethylationProcessor:
         if context != MethylationContext.ALL:
             _ = filtered[filtered["context"] == context.value]
 
-        logger.info(f"Filtered to {len(filtered)} sites with coverage >= {self.min_coverage}")
+        logger.info(
+            "Filtered to %slen(filtered) sites with coverage >= %sself.min_coverage"
+        )
         return filtered
 
     def _annotate_methylation_sites(self, data: pd.DataFrame) -> list[MethylationSite]:
@@ -348,7 +356,9 @@ class MethylationProcessor:
 
         return sites
 
-    def _find_genomic_region(self, chromosome: str, position: int) -> tuple[str | None, str | None]:
+    def _find_genomic_region(
+        self, chromosome: str, position: int
+    ) -> tuple[str | None, str | None]:
         """Find gene and region type for a genomic position"""
         for gene_id, info in self.gene_annotations.items():
             if info["chr"] != chromosome:
@@ -364,7 +374,9 @@ class MethylationProcessor:
 
         return None, "intergenic"
 
-    def _calculate_methylation_metrics(self, sites: list[MethylationSite]) -> dict[str, Any]:
+    def _calculate_methylation_metrics(
+        self, sites: list[MethylationSite]
+    ) -> dict[str, Any]:
         """Calculate quality control metrics for methylation data"""
         if not sites:
             return {}
@@ -402,7 +414,9 @@ class MethylationProcessor:
 
         return metrics
 
-    def _normalize_methylation(self, sites: list[MethylationSite]) -> list[MethylationSite]:
+    def _normalize_methylation(
+        self, sites: list[MethylationSite]
+    ) -> list[MethylationSite]:
         """Perform beta-mixture quantile normalization"""
         if not sites:
             return sites
@@ -542,7 +556,9 @@ class MethylationProcessor:
         # Sort by p-value
         results_df.sort_values("p_value", inplace=True)
 
-        logger.info(f"Found {results_df['significant'].sum()} differentially methylated sites")
+        logger.info(
+            "Found %sresults_df['significant'].sum() differentially methylated sites"
+        )
 
         return results_df
 
@@ -598,7 +614,7 @@ class ChromatinAccessibilityProcessor:
         Returns:
             EpigeneticProfile with chromatin accessibility data
         """
-        logger.info(f"Processing ATAC-seq data for {sample_id}")
+        logger.info("Processing ATAC-seq data for %ssample_id")
 
         try:
             # Detect input type
@@ -634,7 +650,7 @@ class ChromatinAccessibilityProcessor:
                 },
             )
 
-            logger.info(f"Successfully processed {len(annotated_peaks)} chromatin peaks")
+            logger.info("Successfully processed %slen(annotated_peaks) chromatin peaks")
             return profile
 
         except Exception as _:
@@ -642,13 +658,13 @@ class ChromatinAccessibilityProcessor:
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error(f"Error processing ATAC-seq data: {e!s}")
+            logger.error("Error processing ATAC-seq data: %se!s")
             raise ProcessingError("Failed to process ATAC-seq data: {str(e)}")
-            raise
+            raise RuntimeError("Unspecified error")
 
     def _load_peak_file(self, file_path: Path, format: str) -> pd.DataFrame:
         """Load peak file"""
-        logger.info(f"Loading peaks from {file_path}")
+        logger.info("Loading peaks from %sfile_path")
 
         if format == "narrowPeak":
             # Standard ENCODE narrowPeak format
@@ -732,7 +748,9 @@ class ChromatinAccessibilityProcessor:
 
         return peaks
 
-    def _find_nearest_gene(self, chromosome: str, position: int) -> tuple[str | None, int | None]:
+    def _find_nearest_gene(
+        self, chromosome: str, position: int
+    ) -> tuple[str | None, int | None]:
         """Find nearest gene and distance to TSS"""
         _ = float("inf")
         _ = None
@@ -863,7 +881,9 @@ class ChromatinAccessibilityProcessor:
                         "mean_enrichment_group1": mean1,
                         "mean_enrichment_group2": mean2,
                         "fold_change": fold_change,
-                        "log2_fold_change": (np.log2(fold_change) if fold_change > 0 else 0),
+                        "log2_fold_change": (
+                            np.log2(fold_change) if fold_change > 0 else 0
+                        ),
                         "p_value": p_value,
                     }
                 )
@@ -889,7 +909,7 @@ class ChromatinAccessibilityProcessor:
         # Sort by p-value
         results_df.sort_values("p_value", inplace=True)
 
-        logger.info(f"Found {results_df['significant'].sum()} differential peaks")
+        logger.info("Found %sresults_df['significant'].sum() differential peaks")
 
         return results_df
 

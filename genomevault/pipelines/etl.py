@@ -16,7 +16,7 @@ except Exception:
     logger = configure_logging()
     logger.exception("Unhandled exception")
     _LEDGER = None
-    raise
+    raise RuntimeError("Unspecified error")
 
 
 DEFAULT_CONTRACT_PATH = "etc/contracts/variant_table.json"
@@ -65,7 +65,12 @@ def run_etl(
 
     if _LEDGER is not None:
         _LEDGER.append(
-            {"type": "etl_run", "input": input_csv, "rows": int(df.shape[0]), "ok": report["ok"]}
+            {
+                "type": "etl_run",
+                "input": input_csv,
+                "rows": int(df.shape[0]),
+                "ok": report["ok"],
+            }
         )
 
     return {"ok": report["ok"], "report": report, "rows": int(df.shape[0])}

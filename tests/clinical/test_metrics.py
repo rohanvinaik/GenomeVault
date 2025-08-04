@@ -1,15 +1,10 @@
 import numpy as np
 
-from genomevault.clinical.calibration.metrics import (
-    auroc,
-    average_precision,
-    brier_score,
-    calibration_curve,
-    confusion_at,
-    ece,
-    mce,
-    youdens_j_threshold,
-)
+from genomevault.clinical.calibration.metrics import (auroc, average_precision,
+                                                      brier_score,
+                                                      calibration_curve,
+                                                      confusion_at, ece, mce,
+                                                      youdens_j_threshold)
 
 
 def test_auroc_perfect_and_random():

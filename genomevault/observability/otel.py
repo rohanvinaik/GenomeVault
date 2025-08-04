@@ -10,13 +10,16 @@ def try_enable_otel() -> bool:
         return False
     try:
         from opentelemetry import trace
-        from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+        from opentelemetry.exporter.otlp.proto.http.trace_exporter import \
+            OTLPSpanExporter
         from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
         from opentelemetry.sdk.resources import Resource
         from opentelemetry.sdk.trace import TracerProvider
         from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
-        provider = TracerProvider(resource=Resource.create({"service.name": "genomevault-api"}))
+        provider = TracerProvider(
+            resource=Resource.create({"service.name": "genomevault-api"})
+        )
         trace.set_tracer_provider(provider)
         span_exporter = OTLPSpanExporter(endpoint=endpoint)
         provider.add_span_processor(BatchSpanProcessor(span_exporter))
@@ -29,4 +32,4 @@ def try_enable_otel() -> bool:
         logger = configure_logging()
         logger.exception("Unhandled exception")
         return False
-        raise
+        raise RuntimeError("Unspecified error")

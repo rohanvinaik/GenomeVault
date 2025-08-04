@@ -12,7 +12,9 @@ def _hash_bytes(b: bytes) -> str:
 
 
 def _hash_obj(obj: dict[str, Any]) -> str:
-    return _hash_bytes(json.dumps(obj, sort_keys=True, separators=(",", ":")).encode("utf-8"))
+    return _hash_bytes(
+        json.dumps(obj, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    )
 
 
 @dataclass(frozen=True)
@@ -30,8 +32,15 @@ class InMemoryLedger:
     def __init__(self) -> None:
         self._entries: list[LedgerEntry] = []
 
-    def _compute_hash(self, index: int, ts: float, data: dict[str, Any], prev_hash: str) -> str:
-        payload = {"index": index, "timestamp": ts, "data": data, "prev_hash": prev_hash}
+    def _compute_hash(
+        self, index: int, ts: float, data: dict[str, Any], prev_hash: str
+    ) -> str:
+        payload = {
+            "index": index,
+            "timestamp": ts,
+            "data": data,
+            "prev_hash": prev_hash,
+        }
         return _hash_obj(payload)
 
     def append(self, data: dict[str, Any]) -> LedgerEntry:

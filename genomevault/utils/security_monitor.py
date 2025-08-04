@@ -15,7 +15,8 @@ from typing import Any
 import numpy as np
 from sklearn.ensemble import IsolationForest
 
-from ..genomevault.utils.logging import audit_logger, get_logger, security_logger
+from ..genomevault.utils.logging import (audit_logger, get_logger,
+                                         security_logger)
 from ..genomevault.utils.monitoring import metrics_collector
 
 logger = get_logger(__name__)
@@ -97,7 +98,9 @@ class SecurityMonitor:
 
         return True
 
-    async def monitor_data_access(self, user_id: str, data_type: str, volume: int, operation: str):
+    async def monitor_data_access(
+        self, user_id: str, data_type: str, volume: int, operation: str
+    ):
         """Monitor data access patterns for exfiltration attempts"""
 
         # Check for unusual data volume
@@ -132,7 +135,9 @@ class SecurityMonitor:
 
         if severity >= 0.8:
             # Immediate response for critical violations
-            await self._block_user(user_id, "Critical privacy violation: {violation_type}")
+            await self._block_user(
+                user_id, "Critical privacy violation: {violation_type}"
+            )
 
         await self._trigger_alert(
             "privacy_violation",
@@ -208,7 +213,9 @@ class SecurityMonitor:
                 self.anomaly_detector.fit(X)
                 self.is_trained = True
 
-                logger.info("anomaly_detector_trained", training_samples=len(all_features))
+                logger.info(
+                    "anomaly_detector_trained", training_samples=len(all_features)
+                )
 
         except Exception as e:
             from genomevault.observability.logging import configure_logging
@@ -216,7 +223,7 @@ class SecurityMonitor:
             logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("anomaly_detector_training_failed", error=str(e))
-            raise
+            raise RuntimeError("Unspecified error")
 
     def _extract_access_features(self, events: list[dict]) -> list[float]:
         """Extract features from access event sequence"""
@@ -227,7 +234,8 @@ class SecurityMonitor:
         # Time-based features
         timestamps = [e["timestamp"] for e in events]
         time_deltas = [
-            (timestamps[i + 1] - timestamps[i]).total_seconds() for i in range(len(timestamps) - 1)
+            (timestamps[i + 1] - timestamps[i]).total_seconds()
+            for i in range(len(timestamps) - 1)
         ]
 
         # Access pattern features
@@ -325,8 +333,10 @@ class SecurityMonitor:
 
                 logger = configure_logging()
                 logger.exception("Unhandled exception")
-                logger.error("alert_callback_failed", callback=callback.__name__, error=str(e))
-                raise
+                logger.error(
+                    "alert_callback_failed", callback=callback.__name__, error=str(e)
+                )
+                raise RuntimeError("Unspecified error")
 
     def _get_volume_threshold(self, data_type: str) -> int:
         """Get volume threshold for data type"""
@@ -340,7 +350,9 @@ class SecurityMonitor:
 
         return thresholds.get(data_type, 10000)
 
-    def _assess_violation_severity(self, violation_type: str, details: dict[str, Any]) -> float:
+    def _assess_violation_severity(
+        self, violation_type: str, details: dict[str, Any]
+    ) -> float:
         """Assess severity of privacy violation"""
 
         base_severities = {
@@ -396,7 +408,9 @@ class ComplianceMonitor:
         self.compliance_checks = []
         self.violations = []
 
-    async def check_hipaa_compliance(self, operation: str, context: dict[str, Any]) -> bool:
+    async def check_hipaa_compliance(
+        self, operation: str, context: dict[str, Any]
+    ) -> bool:
         """Check HIPAA compliance for operation"""
 
         # Minimum necessary standard
@@ -427,7 +441,10 @@ class ComplianceMonitor:
 
         # Encryption requirement
         if operation == "data_transmission":
-            if not context.get("encrypted") or context.get("encryption_algorithm") == "none":
+            if (
+                not context.get("encrypted")
+                or context.get("encryption_algorithm") == "none"
+            ):
                 await self._record_violation(
                     "hipaa_encryption_missing",
                     {"operation": operation, "context": context},
@@ -436,7 +453,9 @@ class ComplianceMonitor:
 
         return True
 
-    async def check_gdpr_compliance(self, operation: str, context: dict[str, Any]) -> bool:
+    async def check_gdpr_compliance(
+        self, operation: str, context: dict[str, Any]
+    ) -> bool:
         """Check GDPR compliance for operation"""
 
         # Consent verification
@@ -527,7 +546,9 @@ class ComplianceMonitor:
                 "end": end_date.isoformat() if end_date else None,
             },
             "total_violations": len(filtered_violations),
-            "violations_by_type": {vtype: len(violations) for vtype, violations in by_type.items()},
+            "violations_by_type": {
+                vtype: len(violations) for vtype, violations in by_type.items()
+            },
             "violations": filtered_violations,
             "generated_at": datetime.utcnow().isoformat(),
         }

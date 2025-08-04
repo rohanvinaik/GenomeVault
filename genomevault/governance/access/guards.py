@@ -22,7 +22,8 @@ def require_consent(scope: str):
             )
         if not store.has_consent(subject_id, scope):
             raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN, detail=f"No consent for scope '{scope}'"
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"No consent for scope '{scope}'",
             )
         return subject_id
 

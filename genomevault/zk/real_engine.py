@@ -4,7 +4,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from genomevault.zk.backends.circom_snarkjs import CircuitPaths, prove, toolchain_available, verify
+from genomevault.zk.backends.circom_snarkjs import (CircuitPaths, prove,
+                                                    toolchain_available,
+                                                    verify)
 
 
 @dataclass
@@ -28,7 +30,9 @@ class RealZKEngine:
 
     def create_proof(self, *, circuit_type: str, inputs: dict[str, Any]) -> RealProof:
         if circuit_type != "sum64":
-            raise ValueError("unsupported circuit_type; only 'sum64' is available in this build")
+            raise ValueError(
+                "unsupported circuit_type; only 'sum64' is available in this build"
+            )
         if not toolchain_available():
             raise RuntimeError("ZK toolchain not available (circom/snarkjs/node)")
         a = int(inputs.get("a"))

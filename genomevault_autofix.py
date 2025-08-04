@@ -44,16 +44,11 @@ from dataclasses import dataclass, field
 try:
     import libcst as cst
     from libcst import matchers as m
-except Exception:
-    from genomevault.observability.logging import configure_logging
-
-    logger = configure_logging()
-    logger.exception("Unhandled exception")
+except ImportError:
     print(
         "ERROR: This codemod requires 'libcst'. Install with: pip install libcst",
         file=sys.stderr,
     )
-    raise
     raise
 
 # --------------------------
@@ -62,16 +57,26 @@ except Exception:
 
 
 def parse_args() -> argparse.Namespace:
-    p = argparse.ArgumentParser(description="GenomeVault autofix codemod (style/logic hygiene).")
-    p.add_argument("--root", default=".", help="Repository root to modify (default: current dir).")
+    p = argparse.ArgumentParser(
+        description="GenomeVault autofix codemod (style/logic hygiene)."
+    )
+    p.add_argument(
+        "--root", default=".", help="Repository root to modify (default: current dir)."
+    )
     p.add_argument(
         "--apply",
         action="store_true",
         help="Apply changes in-place (otherwise dry-run).",
     )
-    p.add_argument("--include-tests", action="store_true", help="Include tests/ directories.")
-    p.add_argument("--include-scripts", action="store_true", help="Include scripts/ directories.")
-    p.add_argument("--verbose", "-v", action="count", default=0, help="Increase verbosity.")
+    p.add_argument(
+        "--include-tests", action="store_true", help="Include tests/ directories."
+    )
+    p.add_argument(
+        "--include-scripts", action="store_true", help="Include scripts/ directories."
+    )
+    p.add_argument(
+        "--verbose", "-v", action="count", default=0, help="Increase verbosity."
+    )
     return p.parse_args()
 
 
@@ -102,12 +107,16 @@ def should_visit_file(path: str, include_tests: bool, include_scripts: bool) -> 
         "tests" in parts or low.endswith("_test.py") or os.sep + "test_" in low
     ):
         return False
-    if not include_scripts and ("scripts" in parts or "examples" in parts or "demo" in parts):
+    if not include_scripts and (
+        "scripts" in parts or "examples" in parts or "demo" in parts
+    ):
         return False
     return True
 
 
-def walk_python_files(root: str, include_tests: bool, include_scripts: bool) -> list[str]:
+def walk_python_files(
+    root: str, include_tests: bool, include_scripts: bool
+) -> list[str]:
     out = []
     for dirpath, dirnames, filenames in os.walk(root):
         dirnames[:] = [d for d in dirnames if d not in IGNORED_DIRS]
@@ -148,12 +157,7 @@ def analyze_unused_params(file_path: str, source: str) -> dict[FunctionKey, set[
     try:
         tree = ast.parse(source, filename=file_path)
     except SyntaxError:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
-        logger.exception("Unhandled exception")
         return {}
-        raise
     result: dict[FunctionKey, set[str]] = {}
 
     class Visitor(ast.NodeVisitor):
@@ -178,7 +182,11 @@ def analyze_unused_params(file_path: str, source: str) -> dict[FunctionKey, set[
             for n in ast.walk(node):
                 if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load):
                     used.add(n.id)
-            unused = [p for p in params if p not in used and p not in {"self", "cls", "_", "__"}]
+            unused = [
+                p
+                for p in params
+                if p not in used and p not in {"self", "cls", "_", "__"}
+            ]
             if unused:
                 key = FunctionKey(name=node.name, lineno=node.lineno)
                 result.setdefault(key, set()).update(unused)
@@ -229,18 +237,15 @@ class FirstPassDetect(cst.CSTVisitor):
         try:
             if m.matches(
                 node.value,
-                m.Call(func=m.Attribute(value=m.Name("logging"), attr=m.Name("getLogger"))),
+                m.Call(
+                    func=m.Attribute(value=m.Name("logging"), attr=m.Name("getLogger"))
+                ),
             ):
                 for t in node.targets:
                     if m.matches(t.target, m.Name("logger")):
                         self.state.has_logger_var = True
         except Exception:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
-            logger.exception("Unhandled exception")
             pass
-            raise
 
 
 class AutoFixTransformer(cst.CSTTransformer):
@@ -262,7 +267,9 @@ class AutoFixTransformer(cst.CSTTransformer):
             self.state.added_import = True
         # Add logger var if missing
         if not self.state.has_logger_var:
-            logger_assign = cst.parse_statement("logger = logging.getLogger(__name__)\n")
+            logger_assign = cst.parse_statement(
+                "logger = logging.getLogger(__name__)\n"
+            )
             # place after imports if possible
             if self.state.insert_logger_after_import is not None:
                 # find index of first import
@@ -279,7 +286,9 @@ class AutoFixTransformer(cst.CSTTransformer):
 
     # ----- Module & Simple statements -----
 
-    def leave_Module(self, original_node: cst.Module, updated_node: cst.Module) -> cst.Module:
+    def leave_Module(
+        self, original_node: cst.Module, updated_node: cst.Module
+    ) -> cst.Module:
         # If we converted any print -> logger, ensure logging boilerplate exists
         if self.state.print_to_logger_count > 0 and (
             not self.state.has_logging_import or not self.state.has_logger_var
@@ -365,10 +374,14 @@ class AutoFixTransformer(cst.CSTTransformer):
             self.state.bare_except_count += 1
             # change to Exception and add TODO
             updated_node = updated_node.with_changes(type=cst.Name("Exception"))
-            todo_comment = "  # TODO: narrow this bare 'except' to specific exception(s)"
+            todo_comment = (
+                "  # TODO: narrow this bare 'except' to specific exception(s)"
+            )
         elif is_broad:
             self.state.broad_except_count += 1
-            todo_comment = "  # TODO: narrow broad 'except Exception' to specific exception(s)"
+            todo_comment = (
+                "  # TODO: narrow broad 'except Exception' to specific exception(s)"
+            )
 
         if todo_comment:
             body = updated_node.body
@@ -380,7 +393,9 @@ class AutoFixTransformer(cst.CSTTransformer):
                         newline=body.header.trailing_whitespace.newline,
                     )
                 )
-                updated_node = updated_node.with_changes(body=body.with_changes(header=new_header))
+                updated_node = updated_node.with_changes(
+                    body=body.with_changes(header=new_header)
+                )
         return updated_node
 
     # ----- from x import * -----
@@ -450,7 +465,9 @@ class ParamRenameTransformer(cst.CSTTransformer):
         params = updated_node.params
         new_params = params.with_changes(
             params=[rename_param(p) for p in params.params],
-            posonly_params=[rename_param(p) for p in getattr(params, "posonly_params", [])],
+            posonly_params=[
+                rename_param(p) for p in getattr(params, "posonly_params", [])
+            ],
             kwonly_params=[rename_param(p) for p in params.kwonly_params],
         )
         return updated_node.with_changes(params=new_params)
@@ -466,7 +483,9 @@ def build_unused_index_for_file(path: str, src: str) -> dict[tuple[str, int], se
 
 
 # Apply transforms to one file
-def process_file(path: str, apply: bool, verbose: int) -> tuple[bool, str, dict[str, int]]:
+def process_file(
+    path: str, apply: bool, verbose: int
+) -> tuple[bool, str, dict[str, int]]:
     with open(path, encoding="utf-8") as f:
         src = f.read()
 
@@ -476,12 +495,7 @@ def process_file(path: str, apply: bool, verbose: int) -> tuple[bool, str, dict[
     try:
         mod = cst.parse_module(src)
     except Exception as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
-        logger.exception("Unhandled exception")
         return False, f"Parse error: {e}", {}
-        raise
 
     # Pass 1: detect logging, etc.
     state = ModuleState()
@@ -530,7 +544,9 @@ def main():
         ns.root, include_tests=ns.include_tests, include_scripts=ns.include_scripts
     )
     if ns.verbose:
-        print(f"Discovered {len(py_files)} Python files under {ns.root}", file=sys.stderr)
+        print(
+            f"Discovered {len(py_files)} Python files under {ns.root}", file=sys.stderr
+        )
 
     total_changes = 0
     totals = {

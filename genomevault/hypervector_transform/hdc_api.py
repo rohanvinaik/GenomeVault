@@ -14,12 +14,8 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from pydantic import BaseModel, Field
 
 from .binding_operations import BindingType, HypervectorBinder
-from .hdc_encoder import (
-    CompressionTier,
-    HypervectorEncoder,
-    OmicsType,
-    ProjectionType,
-)
+from .hdc_encoder import (CompressionTier, HypervectorEncoder, OmicsType,
+                          ProjectionType)
 from .registry import HypervectorRegistry
 
 logger = logging.getLogger(__name__)
@@ -53,9 +49,13 @@ class EncodingResponse(BaseModel):
 class MultiModalEncodingRequest(BaseModel):
     """Request for encoding multiple modalities"""
 
-    modalities: dict[str, dict[str, Any]] = Field(..., description="Dict of modality data")
+    modalities: dict[str, dict[str, Any]] = Field(
+        ..., description="Dict of modality data"
+    )
     compression_tier: str | None = Field("full", description="Compression tier")
-    binding_type: str | None = Field("fourier", description="Binding type for cross-modal")
+    binding_type: str | None = Field(
+        "fourier", description="Binding type for cross-modal"
+    )
 
 
 class SimilarityRequest(BaseModel):
@@ -103,9 +103,9 @@ def get_encoder(version: str | None = None) -> HypervectorEncoder:
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        logger.error(f"Failed to get encoder: {e}")
+        logger.error("Failed to get encoder: %se")
         raise HTTPException(status_code=500, detail=str(e))
-        raise
+        raise RuntimeError("Unspecified error")
 
 
 @router.post("/encode", response_model=EncodingResponse)
@@ -133,7 +133,7 @@ async def encode_genome(
                 status_code=400,
                 detail=f"Invalid omics type: {request.omics_type}. Valid types: {[t.value for t in OmicsType]}",
             )
-            raise
+            raise RuntimeError("Unspecified error")
 
         # Parse compression tier if provided
         compression_tier = None
@@ -149,7 +149,7 @@ async def encode_genome(
                     status_code=400,
                     detail=f"Invalid compression tier: {request.compression_tier}",
                 )
-                raise
+                raise RuntimeError("Unspecified error")
 
         # Encode the data
         hypervector = encoder.encode(request.features, omics_type, compression_tier)
@@ -168,7 +168,9 @@ async def encode_genome(
             encoding_time_ms=encoding_time_ms,
             metadata={
                 "omics_type": omics_type.value,
-                "compression_tier": (compression_tier.value if compression_tier else "default"),
+                "compression_tier": (
+                    compression_tier.value if compression_tier else "default"
+                ),
                 "fingerprint": getattr(encoder, "fingerprint", "unknown"),
                 "sparsity": metrics.sparsity,
                 "compression_ratio": metrics.compression_ratio,
@@ -180,16 +182,16 @@ async def encode_genome(
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        raise
-        raise
+        raise RuntimeError("Unspecified error")
+        raise RuntimeError("Unspecified error")
     except (ValueError, RuntimeError, TypeError, AttributeError) as e:
         from genomevault.observability.logging import configure_logging
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        logger.error(f"Encoding error: {e}")
+        logger.error("Encoding error: %se")
         raise HTTPException(status_code=500, detail=str(e))
-        raise
+        raise RuntimeError("Unspecified error")
 
 
 @router.post("/encode_multimodal", response_model=EncodingResponse)
@@ -261,9 +263,9 @@ async def encode_multimodal(
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        logger.error(f"Multi-modal encoding error: {e}")
+        logger.error("Multi-modal encoding error: %se")
         raise HTTPException(status_code=500, detail=str(e))
-        raise
+        raise RuntimeError("Unspecified error")
 
 
 @router.post("/decode")
@@ -280,7 +282,9 @@ async def decode_vector(request: DecodeRequest):
 
         # Validate vector
         if not torch.isfinite(vector).all():
-            raise HTTPException(status_code=400, detail="Vector contains invalid values (inf/nan)")
+            raise HTTPException(
+                status_code=400, detail="Vector contains invalid values (inf/nan)"
+            )
 
         # Get encoder for decoding operations
         encoder = registry.get_encoder()
@@ -319,23 +323,25 @@ async def decode_vector(request: DecodeRequest):
             }
 
         else:
-            raise HTTPException(status_code=400, detail=f"Unknown query type: {request.query_type}")
+            raise HTTPException(
+                status_code=400, detail=f"Unknown query type: {request.query_type}"
+            )
 
     except HTTPException:
         from genomevault.observability.logging import configure_logging
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        raise
-        raise
+        raise RuntimeError("Unspecified error")
+        raise RuntimeError("Unspecified error")
     except (ValueError, RuntimeError, TypeError, AttributeError) as e:
         from genomevault.observability.logging import configure_logging
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        logger.error(f"Decoding error: {e}")
+        logger.error("Decoding error: %se")
         raise HTTPException(status_code=500, detail=str(e))
-        raise
+        raise RuntimeError("Unspecified error")
 
 
 @router.post("/similarity")
@@ -359,7 +365,9 @@ async def compute_similarity(request: SimilarityRequest):
 
         # Validate vectors
         if not (torch.isfinite(v1).all() and torch.isfinite(v2).all()):
-            raise HTTPException(status_code=400, detail="Vectors contain invalid values (inf/nan)")
+            raise HTTPException(
+                status_code=400, detail="Vectors contain invalid values (inf/nan)"
+            )
 
         # Get encoder for similarity computation
         encoder = registry.get_encoder()
@@ -387,16 +395,16 @@ async def compute_similarity(request: SimilarityRequest):
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        raise
-        raise
+        raise RuntimeError("Unspecified error")
+        raise RuntimeError("Unspecified error")
     except (ValueError, RuntimeError, TypeError, AttributeError) as e:
         from genomevault.observability.logging import configure_logging
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        logger.error(f"Similarity computation error: {e}")
+        logger.error("Similarity computation error: %se")
         raise HTTPException(status_code=500, detail=str(e))
-        raise
+        raise RuntimeError("Unspecified error")
 
 
 @router.get("/version", response_model=VersionInfo)
@@ -419,9 +427,9 @@ async def get_version_info():
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        logger.error(f"Version info error: {e}")
+        logger.error("Version info error: %se")
         raise HTTPException(status_code=500, detail=str(e))
-        raise
+        raise RuntimeError("Unspecified error")
 
 
 @router.post("/register_version")
@@ -445,7 +453,7 @@ async def register_new_version(
             raise HTTPException(
                 status_code=400, detail=f"Invalid projection type: {projection_type}"
             )
-            raise
+            raise RuntimeError("Unspecified error")
 
         params = {
             "dimension": dimension,
@@ -470,16 +478,16 @@ async def register_new_version(
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        raise
-        raise
+        raise RuntimeError("Unspecified error")
+        raise RuntimeError("Unspecified error")
     except (ValueError, RuntimeError, TypeError) as e:
         from genomevault.observability.logging import configure_logging
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        logger.error(f"Version registration error: {e}")
+        logger.error("Version registration error: %se")
         raise HTTPException(status_code=500, detail=str(e))
-        raise
+        raise RuntimeError("Unspecified error")
 
 
 @router.post("/encode_file")
@@ -502,7 +510,7 @@ async def encode_genomic_file(
         if len(content) > max_size:
             raise HTTPException(
                 status_code=413,
-                detail=f"File too large. Maximum size: {max_size/1024/1024}MB",
+                detail=f"File too large. Maximum size: {max_size / 1024 / 1024}MB",
             )
 
         # This is a placeholder - actual implementation would
@@ -523,16 +531,16 @@ async def encode_genomic_file(
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        raise
-        raise
+        raise RuntimeError("Unspecified error")
+        raise RuntimeError("Unspecified error")
     except (ValueError, RuntimeError, OSError) as e:
         from genomevault.observability.logging import configure_logging
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        logger.error(f"File encoding error: {e}")
+        logger.error("File encoding error: %se")
         raise HTTPException(status_code=500, detail=str(e))
-        raise
+        raise RuntimeError("Unspecified error")
 
 
 @router.get("/performance_metrics", response_model=PerformanceMetrics)
@@ -578,9 +586,9 @@ async def get_performance_metrics():
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        logger.error(f"Performance metrics error: {e}")
+        logger.error("Performance metrics error: %se")
         raise HTTPException(status_code=500, detail=str(e))
-        raise
+        raise RuntimeError("Unspecified error")
 
 
 @router.get("/health")
@@ -605,7 +613,7 @@ async def health_check():
         logger = configure_logging()
         logger.exception("Unhandled exception")
         return {"status": "unhealthy", "error": str(e)}
-        raise
+        raise RuntimeError("Unspecified error")
 
 
 # Include router in main app

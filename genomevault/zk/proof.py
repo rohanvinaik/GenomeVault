@@ -10,7 +10,8 @@ from typing import Any
 
 from genomevault.hypervector.error_handling import ErrorBudget
 from genomevault.utils.logging import get_logger
-from genomevault.zk.circuits.median_verifier import MedianProof, MedianVerifierCircuit
+from genomevault.zk.circuits.median_verifier import (MedianProof,
+                                                     MedianVerifierCircuit)
 
 logger = get_logger(__name__)
 
@@ -108,7 +109,9 @@ class ProofGenerator:
                     "error_bound": zk_proof.error_bound,
                     "num_values": zk_proof.num_values,
                     "commitment": zk_proof.commitment.hex(),
-                    "sorted_commitments": [c.hex() for c in zk_proof.sorted_commitments],
+                    "sorted_commitments": [
+                        c.hex() for c in zk_proof.sorted_commitments
+                    ],
                     "median_opening": zk_proof.median_opening,
                     "range_proofs": zk_proof.range_proofs,
                     "challenge": zk_proof.challenge.hex(),
@@ -123,9 +126,9 @@ class ProofGenerator:
             generation_time = (time.time() - start_time) * 1000
 
             logger.info(
-                f"Generated ZK median proof: {len(values)} values, "
-                f"median={median}, error_bound={budget.epsilon}, "
-                f"time: {generation_time:.0f}ms, valid={is_valid}"
+                "Generated ZK median proof: %slen(values) values, "
+                "median=%smedian, error_bound=%sbudget.epsilon, "
+                "time: %sgeneration_time:.0fms, valid=%sis_valid"
             )
 
             # Cache the proof for quick retrieval
@@ -151,10 +154,12 @@ class ProofGenerator:
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error(f"Failed to generate ZK proof: {e}")
+            logger.error("Failed to generate ZK proof: %se")
             # Fall back to mock proof for compatibility
-            return await self._generate_mock_proof(results, median, budget, metadata, error=str(e))
-            raise
+            return await self._generate_mock_proof(
+                results, median, budget, metadata, error=str(e)
+            )
+            raise RuntimeError("Unspecified error")
 
     async def _generate_mock_proof(
         self,
@@ -227,7 +232,9 @@ class ProofGenerator:
                 error_bound=proof_dict["error_bound"],
                 num_values=proof_dict["num_values"],
                 commitment=bytes.fromhex(proof_dict["commitment"]),
-                sorted_commitments=[bytes.fromhex(c) for c in proof_dict["sorted_commitments"]],
+                sorted_commitments=[
+                    bytes.fromhex(c) for c in proof_dict["sorted_commitments"]
+                ],
                 median_opening=proof_dict["median_opening"],
                 range_proofs=proof_dict["range_proofs"],
                 challenge=bytes.fromhex(proof_dict["challenge"]),
@@ -239,17 +246,17 @@ class ProofGenerator:
             # Verify using the circuit
             is_valid = self.median_circuit.verify_proof(median_proof)
 
-            logger.info(f"Verified proof {proof_id}: valid={is_valid}")
+            logger.info("Verified proof %sproof_id: valid=%sis_valid")
             return is_valid
 
-        except Exception as e:
+        except Exception:
             from genomevault.observability.logging import configure_logging
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error(f"Proof verification failed: {e}")
+            logger.error("Proof verification failed: %se")
             return False
-            raise
+            raise RuntimeError("Unspecified error")
 
     async def generate_ecc_proof(
         self,

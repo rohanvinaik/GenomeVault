@@ -10,11 +10,19 @@ def test_operations_bundle_and_permute():
     dim = HYPERVECTOR_DIMENSIONS["base"]
     a = client.post(
         "/vectors/encode",
-        json={"data": {"genomic": [1, 2, 3]}, "dimension": str(dim), "compression_tier": "full"},
+        json={
+            "data": {"genomic": [1, 2, 3]},
+            "dimension": str(dim),
+            "compression_tier": "full",
+        },
     ).json()
     b = client.post(
         "/vectors/encode",
-        json={"data": {"genomic": [3, 2, 1]}, "dimension": str(dim), "compression_tier": "full"},
+        json={
+            "data": {"genomic": [3, 2, 1]},
+            "dimension": str(dim),
+            "compression_tier": "full",
+        },
     ).json()
 
     r = client.post(

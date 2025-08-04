@@ -9,11 +9,9 @@ import unittest
 sys.path.insert(0, "/Users/rohanvinaik/genomevault")
 
 try:
-    from clinical_validation.circuits import (
-        ClinicalBiomarkerCircuit,
-        DiabetesRiskCircuit,
-        create_circuit,
-    )
+    from clinical_validation.circuits import (ClinicalBiomarkerCircuit,
+                                              DiabetesRiskCircuit,
+                                              create_circuit)
     from clinical_validation.proofs import CircuitType, ProofData, verify_proof
 
     IMPORTS_AVAILABLE = True

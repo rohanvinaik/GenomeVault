@@ -20,15 +20,14 @@ import psutil
 import seaborn as sns
 import torch
 
-from genomevault.hypervector_transform.binding_operations import BindingType, HypervectorBinder
-from genomevault.hypervector_transform.hdc_encoder import (
-    CompressionTier,
-    HypervectorConfig,
-    HypervectorEncoder,
-    OmicsType,
-    ProjectionType,
-    create_encoder,
-)
+from genomevault.hypervector_transform.binding_operations import (
+    BindingType, HypervectorBinder)
+from genomevault.hypervector_transform.hdc_encoder import (CompressionTier,
+                                                           HypervectorConfig,
+                                                           HypervectorEncoder,
+                                                           OmicsType,
+                                                           ProjectionType,
+                                                           create_encoder)
 
 
 class HDCBenchmark:
@@ -234,7 +233,7 @@ class HDCBenchmark:
                 }
 
                 print(
-                    f"  Dim={dim}, Metric={metric}: {throughput:.1f} ops/s ({(elapsed/num_trials)*1e6:.1f} µs/op)"
+                    f"  Dim={dim}, Metric={metric}: {throughput:.1f} ops/s ({(elapsed / num_trials) * 1e6:.1f} µs/op)"
                 )
 
         return results
@@ -250,7 +249,9 @@ class HDCBenchmark:
 
         for proj_type in ProjectionType:
             try:
-                config = HypervectorConfig(dimension=dimension, projection_type=proj_type)
+                config = HypervectorConfig(
+                    dimension=dimension, projection_type=proj_type
+                )
                 encoder = HypervectorEncoder(config)
 
                 # Warm-up
@@ -332,11 +333,12 @@ class HDCBenchmark:
                 "throughput_samples_per_sec": throughput_per_sample,
                 "avg_batch_time_ms": (elapsed / num_trials) * 1000,
                 "speedup": throughput_per_sample / baseline_throughput,
-                "efficiency": (throughput_per_sample / baseline_throughput) / batch_size,
+                "efficiency": (throughput_per_sample / baseline_throughput)
+                / batch_size,
             }
 
             print(
-                f"  Batch size={batch_size}: {throughput_per_sample:.1f} samples/s (speedup: {throughput_per_sample/baseline_throughput:.2f}x)"
+                f"  Batch size={batch_size}: {throughput_per_sample:.1f} samples/s (speedup: {throughput_per_sample / baseline_throughput:.2f}x)"
             )
 
         return results
@@ -364,7 +366,9 @@ class HDCBenchmark:
         # Benchmark individual encoding
         for modality, data in modalities.items():
             omics_type = (
-                OmicsType[modality.upper()] if modality != "clinical" else OmicsType.CLINICAL
+                OmicsType[modality.upper()]
+                if modality != "clinical"
+                else OmicsType.CLINICAL
             )
 
             # Warm-up
@@ -391,7 +395,9 @@ class HDCBenchmark:
         encoded_vectors = []
         for modality, data in modalities.items():
             omics_type = (
-                OmicsType[modality.upper()] if modality != "clinical" else OmicsType.CLINICAL
+                OmicsType[modality.upper()]
+                if modality != "clinical"
+                else OmicsType.CLINICAL
             )
             hv = encoder.encode(data, omics_type)
             encoded_vectors.append(hv)
@@ -407,7 +413,9 @@ class HDCBenchmark:
             "final_dimension": combined.shape[0],
         }
 
-        print(f"  Complete pipeline: {total_time*1000:.1f} ms for {len(modalities)} modalities")
+        print(
+            f"  Complete pipeline: {total_time * 1000:.1f} ms for {len(modalities)} modalities"
+        )
 
         return results
 
@@ -419,13 +427,19 @@ class HDCBenchmark:
         print("-" * 60)
 
         # Run benchmarks
-        self.results["benchmarks"]["encoding_throughput"] = self.benchmark_encoding_throughput()
+        self.results["benchmarks"][
+            "encoding_throughput"
+        ] = self.benchmark_encoding_throughput()
         self.results["benchmarks"]["memory_usage"] = self.benchmark_memory_usage()
-        self.results["benchmarks"]["binding_operations"] = self.benchmark_binding_operations()
-        self.results["benchmarks"]["similarity_computation"] = (
-            self.benchmark_similarity_computation()
-        )
-        self.results["benchmarks"]["projection_types"] = self.benchmark_projection_types()
+        self.results["benchmarks"][
+            "binding_operations"
+        ] = self.benchmark_binding_operations()
+        self.results["benchmarks"][
+            "similarity_computation"
+        ] = self.benchmark_similarity_computation()
+        self.results["benchmarks"][
+            "projection_types"
+        ] = self.benchmark_projection_types()
         self.results["benchmarks"]["scalability"] = self.benchmark_scalability()
         self.results["benchmarks"]["multimodal"] = self.benchmark_multimodal_encoding()
 
@@ -507,12 +521,16 @@ class HDCBenchmark:
         for dim_key, dim_data in data.items():
             dim = int(dim_key.split("_")[1])
             # Use 1000 feature size as reference
-            throughput = dim_data.get("features_1000", {}).get("throughput_ops_per_sec", 0)
+            throughput = dim_data.get("features_1000", {}).get(
+                "throughput_ops_per_sec", 0
+            )
             dimensions.append(dim)
             throughputs.append(throughput)
 
         plt.figure()
-        plt.plot(dimensions, throughputs, "o-", linewidth=2, markersize=8, color="#1f77b4")
+        plt.plot(
+            dimensions, throughputs, "o-", linewidth=2, markersize=8, color="#1f77b4"
+        )
         plt.xlabel("Hypervector Dimension")
         plt.ylabel("Throughput (operations/second)")
         plt.title("HDC Encoding Throughput vs Dimension\n(1000 features)")
@@ -623,8 +641,12 @@ class HDCBenchmark:
         ax1.grid(True, alpha=0.3)
 
         # Efficiency plot
-        ax2.plot(batch_sizes, efficiencies, "o-", linewidth=2, markersize=8, color="green")
-        ax2.axhline(y=100, color="r", linestyle="--", alpha=0.5, label="Perfect efficiency")
+        ax2.plot(
+            batch_sizes, efficiencies, "o-", linewidth=2, markersize=8, color="green"
+        )
+        ax2.axhline(
+            y=100, color="r", linestyle="--", alpha=0.5, label="Perfect efficiency"
+        )
         ax2.set_xlabel("Batch Size")
         ax2.set_ylabel("Efficiency (%)")
         ax2.set_title("HDC Batch Processing Efficiency")
@@ -680,7 +702,7 @@ class HDCBenchmark:
 
         # Convert to GOPS (Giga operations per second) if > 1000
         if ref_throughput > 1000:
-            badge_text = f"HDC Performance: {ref_throughput/1000:.1f} KOPS"
+            badge_text = f"HDC Performance: {ref_throughput / 1000:.1f} KOPS"
         else:
             badge_text = f"HDC Performance: {ref_throughput:.0f} OPS"
 
@@ -707,8 +729,12 @@ class HDCBenchmark:
 def main():
     """Main benchmark entry point"""
     parser = argparse.ArgumentParser(description="HDC Performance Benchmarking")
-    parser.add_argument("--output-dir", default="benchmarks/hdc", help="Output directory")
-    parser.add_argument("--quick", action="store_true", help="Run quick benchmarks only")
+    parser.add_argument(
+        "--output-dir", default="benchmarks/hdc", help="Output directory"
+    )
+    parser.add_argument(
+        "--quick", action="store_true", help="Run quick benchmarks only"
+    )
 
     args = parser.parse_args()
 
@@ -719,10 +745,12 @@ def main():
     if args.quick:
         # Quick mode - only essential benchmarks
         print("Running quick benchmarks...")
-        benchmark.results["benchmarks"]["encoding_throughput"] = (
-            benchmark.benchmark_encoding_throughput()
-        )
-        benchmark.results["benchmarks"]["memory_usage"] = benchmark.benchmark_memory_usage()
+        benchmark.results["benchmarks"][
+            "encoding_throughput"
+        ] = benchmark.benchmark_encoding_throughput()
+        benchmark.results["benchmarks"][
+            "memory_usage"
+        ] = benchmark.benchmark_memory_usage()
 
         # Save quick results
         output_file = benchmark.output_dir / f"quick_{benchmark.timestamp}.json"

@@ -18,7 +18,8 @@ from typing import Any
 import numpy as np
 
 from genomevault.utils.config import config
-from genomevault.utils.logging import audit_logger, get_logger, logger, performance_logger
+from genomevault.utils.logging import (audit_logger, get_logger, logger,
+                                       performance_logger)
 
 logger = get_logger(__name__)
 
@@ -88,7 +89,9 @@ class SecureAggregator:
         self.threshold = threshold
         self.num_shares = num_shares
 
-    def generate_masks(self, num_participants: int, vector_size: int) -> dict[str, np.ndarray]:
+    def generate_masks(
+        self, num_participants: int, vector_size: int
+    ) -> dict[str, np.ndarray]:
         """
         Generate pairwise masks for secure aggregation.
 
@@ -106,8 +109,8 @@ class SecureAggregator:
             for j in range(i + 1, num_participants):
                 # Generate symmetric mask
                 mask = np.random.randn(vector_size)
-                masks["{i},{j}"] = mask
-                masks["{j},{i}"] = -mask  # Negative for cancellation
+                masks[f"{i},{j}"] = mask
+                masks[f"{j},{i}"] = -mask  # Negative for cancellation
 
         return masks
 
@@ -135,7 +138,7 @@ class SecureAggregator:
         # Add masks for all other participants
         for other_id in participant_ids:
             if other_id != participant_id:
-                mask_key = "{participant_id},{other_id}"
+                mask_key = f"{participant_id},{other_id}"
                 if mask_key in masks:
                     masked += masks[mask_key]
 
@@ -170,7 +173,9 @@ class DifferentialPrivacyEngine:
     Differential privacy mechanisms for federated learning.
     """
 
-    def __init__(self, epsilon: float = 1.0, delta: float = 1e-6, clip_norm: float = 1.0):
+    def __init__(
+        self, epsilon: float = 1.0, delta: float = 1e-6, clip_norm: float = 1.0
+    ):
         """
         Initialize DP engine.
 
@@ -279,7 +284,7 @@ class FederatedLearningCoordinator:
         self.participants: dict[str, dict] = {}
 
         logger.info(
-            "FederatedLearningCoordinator initialized for {model_architecture.name}",
+            f"FederatedLearningCoordinator initialized for {self.model_architecture.name}",
             extra={"privacy_safe": True},
         )
 
@@ -295,7 +300,9 @@ class FederatedLearningCoordinator:
         # Initialize with small random values
         return np.random.randn(total_params) * 0.01
 
-    def register_participant(self, participant_id: str, metadata: dict[str, Any]) -> bool:
+    def register_participant(
+        self, participant_id: str, metadata: dict[str, Any]
+    ) -> bool:
         """
         Register a participant for federated learning.
 
@@ -326,7 +333,9 @@ class FederatedLearningCoordinator:
             metadata=metadata,
         )
 
-        logger.info(f"Participant {participant_id} registered", extra={"privacy_safe": True})
+        logger.info(
+            f"Participant {participant_id} registered", extra={"privacy_safe": True}
+        )
 
         return True
 
@@ -342,7 +351,9 @@ class FederatedLearningCoordinator:
             List of selected participant IDs
         """
         eligible = [
-            p_id for p_id, p_data in self.participants.items() if p_data["reputation_score"] > 0.5
+            p_id
+            for p_id, p_data in self.participants.items()
+            if p_data["reputation_score"] > 0.5
         ]
 
         if len(eligible) <= target_count:
@@ -372,7 +383,9 @@ class FederatedLearningCoordinator:
         selected = self.select_participants(min_participants)
 
         if len(selected) < min_participants:
-            raise ValueError("Insufficient participants: {len(selected)} < {min_participants}")
+            raise ValueError(
+                f"Insufficient participants: {len(selected)} < {min_participants}"
+            )
 
         # Create round
         round_id = self.current_round
@@ -392,11 +405,11 @@ class FederatedLearningCoordinator:
             self.participants[participant_id]["last_participation"] = round_id
 
         logger.info(
-            "Started federated round {round_id} with {len(selected)} participants",
+            f"Started federated round {round_id} with {len(selected)} participants",
             extra={"privacy_safe": True},
         )
 
-        return "round_{round_id}"
+        return f"round_{round_id}"
 
     def submit_update(self, contribution: ParticipantContribution) -> bool:
         """
@@ -427,7 +440,9 @@ class FederatedLearningCoordinator:
         # Apply differential privacy if not already done
         if not contribution.dp_noise_added:
             clipped_update, _ = self.dp_engine.clip_gradient(contribution.model_update)
-            noisy_update = self.dp_engine.add_noise(clipped_update, contribution.num_samples)
+            noisy_update = self.dp_engine.add_noise(
+                clipped_update, contribution.num_samples
+            )
             contribution.model_update = noisy_update
             contribution.dp_noise_added = True
 
@@ -435,7 +450,7 @@ class FederatedLearningCoordinator:
         # For now, we'll process it immediately
 
         logger.info(
-            "Received update from {contribution.participant_id} for round {contribution.round_id}",
+            f"Received update from {contribution.participant_id} for round {contribution.round_id}",
             extra={"privacy_safe": True},
         )
 
@@ -456,7 +471,7 @@ class FederatedLearningCoordinator:
             Aggregated model update
         """
         if round_id >= len(self.rounds_history):
-            raise ValueError("Invalid round: {round_id}")
+            raise ValueError(f"Invalid round: {round_id}")
 
         current_round = self.rounds_history[round_id]
 
@@ -476,11 +491,15 @@ class FederatedLearningCoordinator:
         elif self.aggregation_strategy == "secure_aggregation":
             # Use secure aggregation protocol
             participant_ids = list(range(len(contributions)))
-            masks = self.secure_aggregator.generate_masks(len(contributions), len(updates[0]))
+            masks = self.secure_aggregator.generate_masks(
+                len(contributions), len(updates[0])
+            )
 
             masked_updates = []
             for i, update in enumerate(updates):
-                masked = self.secure_aggregator.mask_update(update, i, masks, participant_ids)
+                masked = self.secure_aggregator.mask_update(
+                    update, i, masks, participant_ids
+                )
                 masked_updates.append(masked)
 
             aggregated = self.secure_aggregator.aggregate_masked_updates(
@@ -488,7 +507,9 @@ class FederatedLearningCoordinator:
             )
 
         else:
-            raise ValueError("Unknown aggregation strategy: {self.aggregation_strategy}")
+            raise ValueError(
+                f"Unknown aggregation strategy: {self.aggregation_strategy}"
+            )
 
         # Update round record
         current_round.aggregated_update = aggregated
@@ -499,7 +520,7 @@ class FederatedLearningCoordinator:
         current_round.metrics = metrics
 
         logger.info(
-            "Aggregated round {round_id} with {len(contributions)} contributions",
+            f"Aggregated round {round_id} with {len(contributions)} contributions",
             extra={"privacy_safe": True},
         )
 
@@ -512,7 +533,9 @@ class FederatedLearningCoordinator:
         metrics = {
             "num_participants": len(contributions),
             "total_samples": sum(c.num_samples for c in contributions),
-            "avg_local_loss": np.mean([c.local_metrics.get("loss", 0) for c in contributions]),
+            "avg_local_loss": np.mean(
+                [c.local_metrics.get("loss", 0) for c in contributions]
+            ),
             "participation_rate": len(contributions) / len(self.participants),
         }
 
@@ -538,14 +561,18 @@ class FederatedLearningCoordinator:
             return False
 
         # Apply update with learning rate
-        learning_rate = self.model_architecture.hyperparameters.get("learning_rate", 0.01)
+        learning_rate = self.model_architecture.hyperparameters.get(
+            "learning_rate", 0.01
+        )
         self.global_model += learning_rate * current_round.aggregated_update
 
         # Update participant statistics
         for participant_id in current_round.selected_participants:
             self.participants[participant_id]["rounds_participated"] += 1
 
-        logger.info(f"Updated global model with round {round_id}", extra={"privacy_safe": True})
+        logger.info(
+            f"Updated global model with round {round_id}", extra={"privacy_safe": True}
+        )
 
         return True
 
@@ -727,13 +754,13 @@ if __name__ == "__main__":
         prs_fl.register_participant(p_id, metadata)
 
     logger.info("=== Federated Learning Example ===")
-    logger.info("Registered {len(participants)} participants")
+    logger.info(f"Registered {len(participants)} participants")
 
     # Start training round
     import asyncio
 
     round_id = asyncio.run(prs_fl.start_training_round(min_participants=3))
-    logger.info("Started {round_id}")
+    logger.info(f"Started {round_id}")
 
     # Simulate participant contributions
     contributions = []
@@ -752,14 +779,14 @@ if __name__ == "__main__":
 
     # Aggregate round
     aggregated = prs_fl.aggregate_round(0, contributions)
-    logger.info("Aggregated update norm: {np.linalg.norm(aggregated):.4f}")
+    logger.info(f"Aggregated update norm: {np.linalg.norm(aggregated):.4f}")
 
     # Update global model
     prs_fl.update_global_model(0)
 
     # Check privacy budget
     epsilon_spent, delta_spent = prs_fl.get_privacy_budget_spent()
-    logger.info("Privacy spent: ε={epsilon_spent:.4f}, δ={delta_spent:.2e}")
+    logger.info(f"Privacy spent: ε={epsilon_spent:.4f}, δ={delta_spent:.2e}")
 
     # Example 2: Pathway analysis
     logger.info("\n=== Pathway Analysis FL ===")
@@ -769,9 +796,9 @@ if __name__ == "__main__":
     for p_id, metadata in participants:
         pathway_fl.register_participant(p_id, metadata)
 
-    logger.info("Model size: {len(pathway_fl.global_model)} parameters")
+    logger.info(f"Model size: {len(pathway_fl.global_model)} parameters")
 
     # Save checkpoint
     checkpoint_path = Path("/tmp/genomevault_fl_checkpoint.json")
     prs_fl.save_checkpoint(checkpoint_path)
-    logger.info("Saved checkpoint to {checkpoint_path}")
+    logger.info(f"Saved checkpoint to {checkpoint_path}")

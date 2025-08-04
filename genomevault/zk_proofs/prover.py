@@ -303,7 +303,7 @@ class Prover:
             },
         )
 
-        logger.info(f"Proof generated for {circuit_name}", extra={"privacy_safe": True})
+        logger.info("Proof generated for circuit_name", extra={"privacy_safe": True})
 
         return proof
 
@@ -323,7 +323,9 @@ class Prover:
 
         return circuit_map[circuit_name]
 
-    def _validate_inputs(self, circuit: Circuit, public_inputs: dict, private_inputs: dict):
+    def _validate_inputs(
+        self, circuit: Circuit, public_inputs: dict, private_inputs: dict
+    ):
         """Validate inputs match circuit requirements."""
         # Check public inputs
         for required_input in circuit.public_inputs:
@@ -365,7 +367,9 @@ class Prover:
             # Generic simulation
             return self._simulate_generic_proof(circuit, public_inputs)
 
-    def _simulate_variant_proof(self, public_inputs: dict, private_inputs: dict) -> bytes:
+    def _simulate_variant_proof(
+        self, public_inputs: dict, private_inputs: dict
+    ) -> bytes:
         """Simulate variant presence proof."""
         # Verify variant is in commitment
         _ = private_inputs["variant_data"]
@@ -408,7 +412,9 @@ class Prover:
 
         return json.dumps(proof_data).encode()[:384]
 
-    def _simulate_diabetes_proof(self, public_inputs: dict, private_inputs: dict) -> bytes:
+    def _simulate_diabetes_proof(
+        self, public_inputs: dict, private_inputs: dict
+    ) -> bytes:
         """Simulate diabetes risk alert proof."""
         # Extract values
         _ = private_inputs["glucose_reading"]
@@ -471,8 +477,8 @@ class Prover:
 
                 logger = configure_logging()
                 logger.exception("Unhandled exception")
-                logger.error(f"Batch proof generation failed: {e}")
-                raise
+                logger.error("Batch proof generation failed: e")
+                raise RuntimeError("Unspecified error")
                 # Continue with other proofs
 
         return proofs
@@ -579,4 +585,6 @@ if __name__ == "__main__":
 
     print("\nDiabetes risk proof generated: {diabetes_proof.proof_id}")
     print("Proof size: {len(diabetes_proof.proof_data)} bytes")
-    print("Verification time: {diabetes_proof.metadata['generation_time_seconds']*1000:.1f}ms")
+    print(
+        "Verification time: {diabetes_proof.metadata['generation_time_seconds']*1000:.1f}ms"
+    )

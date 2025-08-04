@@ -106,7 +106,7 @@ class FederatedModelLineage:
         self._add_version(initial_version)
         self.active_branches.add("v0")
 
-        logger.info(f"Initialized federated lineage for {federation_id}")
+        logger.info("Initialized federated lineage for %sfederation_id")
 
     def record_local_update(
         self,
@@ -164,8 +164,8 @@ class FederatedModelLineage:
         self.active_branches.add(version_id)
 
         logger.info(
-            f"Recorded local update {version_id} from {client_id} "
-            f"(parent: {parent_version}, round: {self.current_round})"
+            "Recorded local update %sversion_id from %sclient_id "
+            "(parent: %sparent_version, round: %sself.current_round)"
         )
 
         return version_id
@@ -239,8 +239,8 @@ class FederatedModelLineage:
         self.active_branches.add(version_id)
 
         logger.info(
-            f"Recorded aggregation {version_id} from {len(input_versions)} inputs "
-            f"using {aggregation_method} (round: {self.current_round})"
+            "Recorded aggregation %sversion_id from %slen(input_versions) inputs "
+            "using %saggregation_method (round: %sself.current_round)"
         )
 
         return version_id
@@ -308,8 +308,7 @@ class FederatedModelLineage:
             self.active_branches.add(val_version_id)
 
         logger.info(
-            f"Recorded validation {val_version_id} for {version_id} "
-            f"(passed: {validation_passed})"
+            "Recorded validation %sval_version_id for %sversion_id (passed: %svalidation_passed)"
         )
 
         return val_version_id
@@ -317,7 +316,7 @@ class FederatedModelLineage:
     def advance_round(self) -> int:
         """Advance to next federated learning round"""
         self.current_round += 1
-        logger.info(f"Advanced to round {self.current_round}")
+        logger.info("Advanced to round %sself.current_round")
         return self.current_round
 
     def get_lineage_path(self, version_id: str) -> list[str]:
@@ -350,7 +349,7 @@ class FederatedModelLineage:
             # Return topologically sorted ancestors
             subgraph = self.lineage_graph.subgraph(ancestors)
             return list(nx.topological_sort(subgraph))
-            raise
+            raise RuntimeError("Unspecified error")
 
     def get_version_provenance(self, version_id: str) -> dict[str, Any]:
         """
@@ -410,7 +409,9 @@ class FederatedModelLineage:
 
             # Fork if multiple successors that aren't aggregation
             non_agg_successors = [
-                s for s in successors if self.versions[s].update_type != UpdateType.AGGREGATION
+                s
+                for s in successors
+                if self.versions[s].update_type != UpdateType.AGGREGATION
             ]
 
             if len(non_agg_successors) > 1:
@@ -469,7 +470,9 @@ class FederatedModelLineage:
 
         # Highlight specified versions
         if highlight_versions:
-            highlight_nodes = [n for n in self.lineage_graph.nodes() if n in highlight_versions]
+            highlight_nodes = [
+                n for n in self.lineage_graph.nodes() if n in highlight_versions
+            ]
             nx.draw_networkx_nodes(
                 self.lineage_graph,
                 pos,
@@ -512,7 +515,9 @@ class FederatedModelLineage:
             version = self.versions[node]
             labels[node] = f"{node[:4]}...\nR{version.round_number}"
 
-        nx.draw_networkx_labels(self.lineage_graph, pos, labels, font_size=8, font_weight="bold")
+        nx.draw_networkx_labels(
+            self.lineage_graph, pos, labels, font_size=8, font_weight="bold"
+        )
 
         # Add legend
         from matplotlib.patches import Patch

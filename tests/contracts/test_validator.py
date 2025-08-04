@@ -8,7 +8,12 @@ def test_validate_dataframe_detects_violations(tmp_path):
     contract = {
         "name": "variant_table",
         "columns": [
-            {"name": "sample_id", "dtype": "string", "required": True, "allow_null": False},
+            {
+                "name": "sample_id",
+                "dtype": "string",
+                "required": True,
+                "allow_null": False,
+            },
             {
                 "name": "chrom",
                 "dtype": "string",
@@ -16,7 +21,13 @@ def test_validate_dataframe_detects_violations(tmp_path):
                 "allow_null": False,
                 "regex": "^(chr)?([0-9]|1[0-9]|2[0-2]|X|Y|MT)$",
             },
-            {"name": "pos", "dtype": "int", "required": True, "allow_null": False, "minimum": 1},
+            {
+                "name": "pos",
+                "dtype": "int",
+                "required": True,
+                "allow_null": False,
+                "minimum": 1,
+            },
             {"name": "ref", "dtype": "string", "required": True, "allow_null": False},
             {"name": "alt", "dtype": "string", "required": True, "allow_null": False},
         ],

@@ -6,15 +6,10 @@ from dataclasses import dataclass
 import numpy as np
 
 from genomevault.clinical.calibration.calibrators import fit_and_calibrate
-from genomevault.clinical.calibration.metrics import (
-    auroc,
-    average_precision,
-    brier_score,
-    calibration_curve,
-    ece,
-    mce,
-    youdens_j_threshold,
-)
+from genomevault.clinical.calibration.metrics import (auroc, average_precision,
+                                                      brier_score,
+                                                      calibration_curve, ece,
+                                                      mce, youdens_j_threshold)
 
 
 @dataclass
@@ -37,7 +32,10 @@ def compute_report(
     m = mce(y_true, y_prob, n_bins=bins)
     t, stats = youdens_j_threshold(y_true, y_prob)
     centers, mean_pred, frac_pos = calibration_curve(y_true, y_prob, n_bins=bins)
-    bins_out = [(float(c), float(mp), float(fp)) for c, mp, fp in zip(centers, mean_pred, frac_pos)]
+    bins_out = [
+        (float(c), float(mp), float(fp))
+        for c, mp, fp in zip(centers, mean_pred, frac_pos)
+    ]
     return EvalReport(
         metrics={
             {

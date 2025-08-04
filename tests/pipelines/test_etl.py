@@ -5,7 +5,13 @@ from genomevault.pipelines.etl import run_etl, transform
 
 def test_transform_standardizes_and_renames():
     df = pd.DataFrame(
-        {"Sample": ["s1"], "Chromosome": ["chr1"], "Position": [10], "Ref": ["A"], "Alt": ["T"]}
+        {
+            "Sample": ["s1"],
+            "Chromosome": ["chr1"],
+            "Position": [10],
+            "Ref": ["A"],
+            "Alt": ["T"],
+        }
     )
     out = transform(df)
     assert set(out.columns) >= {"sample_id", "chrom", "pos", "ref", "alt"}

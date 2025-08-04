@@ -4,13 +4,15 @@ import time
 import uuid
 
 from fastapi import Request, Response
-from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
+from starlette.middleware.base import (BaseHTTPMiddleware,
+                                       RequestResponseEndpoint)
 
 from genomevault.observability.logging import get_logger
 
 # Metrics are optional; if import fails, we no-op
 try:
-    from genomevault.observability.metrics import http_request_duration, http_requests_total
+    from genomevault.observability.metrics import (http_request_duration,
+                                                   http_requests_total)
 
     _METRICS = True
 except Exception:  # pragma: no cover
@@ -19,13 +21,15 @@ except Exception:  # pragma: no cover
     logger = configure_logging()
     logger.exception("Unhandled exception")
     _METRICS = False
-    raise
+    raise RuntimeError("Unspecified error")
 
 _LOG = get_logger(__name__)
 
 
 class ObservabilityMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+    async def dispatch(
+        self, request: Request, call_next: RequestResponseEndpoint
+    ) -> Response:
         t0 = time.perf_counter()
         req_id = request.headers.get("x-request-id") or str(uuid.uuid4())
         # store in state for handlers to access
@@ -50,8 +54,8 @@ class ObservabilityMiddleware(BaseHTTPMiddleware):
                     "client": request.client.host if request.client else None,
                 },
             )
-            raise
-            raise
+            raise RuntimeError("Unspecified error")
+            raise RuntimeError("Unspecified error")
 
         dt = (time.perf_counter() - t0) * 1000.0
         status = resp.status_code
@@ -59,8 +63,12 @@ class ObservabilityMiddleware(BaseHTTPMiddleware):
         if _METRICS:
             route = request.scope.get("route")
             path_t = getattr(route, "path_format", None) or request.url.path
-            http_requests_total.labels(method=request.method, path=path_t, status=str(status)).inc()
-            http_request_duration.labels(method=request.method, path=path_t).observe(dt / 1000.0)
+            http_requests_total.labels(
+                method=request.method, path=path_t, status=str(status)
+            ).inc()
+            http_request_duration.labels(method=request.method, path=path_t).observe(
+                dt / 1000.0
+            )
 
         _LOG.info(
             "request complete",

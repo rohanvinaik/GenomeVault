@@ -27,7 +27,9 @@ def check_command_exists(cmd):
 def run_command(cmd_list, cwd=None):
     """Run a command and return success status and output."""
     try:
-        result = subprocess.run(cmd_list, check=False, capture_output=True, text=True, cwd=cwd)
+        result = subprocess.run(
+            cmd_list, check=False, capture_output=True, text=True, cwd=cwd
+        )
         return result.returncode == 0, result.stdout, result.stderr
     except Exception as e:
         from genomevault.observability.logging import configure_logging
@@ -58,7 +60,9 @@ class ChecklistValidator:
             checks["has_correct_name"] = 'name = "genomevault"' in content
 
         # Try pip install
-        success, _, _ = run_command(["pip", "install", "-e", ".[dev]"], cwd=self.project_root)
+        success, _, _ = run_command(
+            ["pip", "install", "-e", ".[dev]"], cwd=self.project_root
+        )
         checks["pip_install_works"] = success
 
         # Try import
@@ -99,14 +103,18 @@ class ChecklistValidator:
         checks["ruff_toml_exists"] = (self.project_root / "ruff.toml").exists()
         checks["mypy_ini_exists"] = (self.project_root / "mypy.ini").exists()
         checks["pytest_ini_exists"] = (self.project_root / "pytest.ini").exists()
-        checks["pre_commit_exists"] = (self.project_root / ".pre-commit-config.yaml").exists()
+        checks["pre_commit_exists"] = (
+            self.project_root / ".pre-commit-config.yaml"
+        ).exists()
 
         # Check ruff
         if check_command_exists("ruff"):
             success, _, _ = run_command(["ruff", "check", "."], cwd=self.project_root)
             checks["ruff_check_passes"] = success
 
-            success, _, _ = run_command(["ruff", "format", "--check", "."], cwd=self.project_root)
+            success, _, _ = run_command(
+                ["ruff", "format", "--check", "."], cwd=self.project_root
+            )
             checks["ruff_format_passes"] = success
         else:
             checks["ruff_installed"] = False
@@ -187,7 +195,9 @@ class ChecklistValidator:
             ["rg", "-n", r"except\s*:", "genomevault"], cwd=self.project_root
         )
 
-        bare_except_count = len(stdout.strip().split("\n")) if stdout.strip() and success else 0
+        bare_except_count = (
+            len(stdout.strip().split("\n")) if stdout.strip() and success else 0
+        )
         checks["bare_except_count"] = bare_except_count
         checks["no_bare_excepts"] = bare_except_count == 0
 
@@ -235,7 +245,9 @@ class ChecklistValidator:
 
         # Check if pytest works
         if check_command_exists("pytest"):
-            success, stdout, stderr = run_command(["pytest", "--version"], cwd=self.project_root)
+            success, stdout, stderr = run_command(
+                ["pytest", "--version"], cwd=self.project_root
+            )
             checks["pytest_installed"] = success
 
             # Try running tests
@@ -258,7 +270,8 @@ class ChecklistValidator:
             checks["pytest_installed"] = False
 
         self.results["item_11_tests_coverage"] = {
-            "passed": checks.get("tests_pass", False) and checks.get("coverage_above_80", False),
+            "passed": checks.get("tests_pass", False)
+            and checks.get("coverage_above_80", False),
             "checks": checks,
         }
 
@@ -270,7 +283,9 @@ class ChecklistValidator:
             "summary": {
                 "total_items_checked": len(self.results),
                 "items_passed": sum(1 for r in self.results.values() if r["passed"]),
-                "items_failed": sum(1 for r in self.results.values() if not r["passed"]),
+                "items_failed": sum(
+                    1 for r in self.results.values() if not r["passed"]
+                ),
             },
             "details": self.results,
         }
@@ -284,7 +299,9 @@ class ChecklistValidator:
         md_lines = ["# Checklist Validation Report\n"]
         md_lines.append(f"Generated: {report['timestamp']}\n")
         md_lines.append("## Summary\n")
-        md_lines.append(f"- Total items checked: {report['summary']['total_items_checked']}")
+        md_lines.append(
+            f"- Total items checked: {report['summary']['total_items_checked']}"
+        )
         md_lines.append(f"- Items passed: {report['summary']['items_passed']}")
         md_lines.append(f"- Items failed: {report['summary']['items_failed']}\n")
 

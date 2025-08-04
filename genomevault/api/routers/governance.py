@@ -15,7 +15,10 @@ _CONSENT = ConsentStore()
 def consent_grant(payload):
     rec = _CONSENT.grant(payload.subject_id, payload.scope, ttl_days=payload.ttl_days)
     record_event(
-        "consent_granted", payload.subject_id, payload.scope, {"ttl_days": payload.ttl_days}
+        "consent_granted",
+        payload.subject_id,
+        payload.scope,
+        {"ttl_days": payload.ttl_days},
     )
     return {"ok": True, "granted_at": rec.granted_at.isoformat()}
 
@@ -38,7 +41,9 @@ def consent_check(subject_id: str, scope: str):
 def dsar_export(payload):
     # In a real system, locate subject's records and redact PII as needed.
     # Here we return a minimal synthetic response for demonstration.
-    sample = [{"note": redact_text(f"Contact {payload.subject_id}@example.com for updates")}]
+    sample = [
+        {"note": redact_text(f"Contact {payload.subject_id}@example.com for updates")}
+    ]
     record_event("export", payload.subject_id, "dsar", {"items": len(sample)})
     return {"subject_id": payload.subject_id, "redacted": True, "data": sample}
 

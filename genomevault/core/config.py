@@ -12,12 +12,15 @@ class Config(BaseSettings):
     """Central configuration for GenomeVault system"""
 
     # Node Configuration
+    node_id: str = Field("node_001", env="NODE_ID")
     node_type: str = Field("light", env="NODE_TYPE")
     signatory_status: bool = Field(False, env="SIGNATORY_STATUS")
-    node_class_weight: int = Field(1, env="NODE_CLASS_WEIGHT")
+    NODE_CLASS_WEIGHT: int = Field(1, env="NODE_CLASS_WEIGHT")
 
     # Network Configuration
-    pir_servers: str = Field("localhost:9001,localhost:9002,localhost:9003", env="PIR_SERVERS")
+    pir_servers: str = Field(
+        "localhost:9001,localhost:9002,localhost:9003", env="PIR_SERVERS"
+    )
     blockchain_rpc: str = Field("http://localhost:8545", env="BLOCKCHAIN_RPC")
     ipfs_api: str = Field("http://localhost:5001", env="IPFS_API")
 
@@ -80,12 +83,12 @@ class Config(BaseSettings):
     def total_voting_power(self) -> int:
         """Calculate total voting power: w = c + s"""
         signatory_weight = 10 if self.signatory_status else 0
-        return self.node_class_weight + signatory_weight
+        return self.NODE_CLASS_WEIGHT + signatory_weight
 
     @property
     def credits_per_block(self) -> int:
         """Calculate credits earned per block"""
-        base_credits = self.node_class_weight
+        base_credits = self.NODE_CLASS_WEIGHT
         signatory_bonus = 2 if self.signatory_status else 0
         return base_credits + signatory_bonus
 
@@ -96,7 +99,9 @@ class Config(BaseSettings):
 
     def is_hipaa_compliant(self) -> bool:
         """Check if all HIPAA requirements are met"""
-        return all([self.npi_number, self.baa_hash, self.risk_analysis_hash, self.hsm_serial])
+        return all(
+            [self.npi_number, self.baa_hash, self.risk_analysis_hash, self.hsm_serial]
+        )
 
 
 @lru_cache

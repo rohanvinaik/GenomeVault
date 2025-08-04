@@ -51,7 +51,7 @@ class HypervectorBinder:
             torch.manual_seed(seed)
             np.random.seed(seed)
 
-        logger.info(f"Initialized HypervectorBinder for {dimension}D vectors")
+        logger.info("Initialized HypervectorBinder for %sdimensionD vectors")
 
     def bind(
         self,
@@ -102,7 +102,7 @@ class HypervectorBinder:
         else:
             raise ValueError(f"Unknown binding type: {binding_type}")
 
-        logger.debug(f"Bound {len(vectors)} vectors using {binding_type.value}")
+        logger.debug("Bound %slen(vectors) vectors using %sbinding_type.value")
         return result
 
     def unbind(
@@ -305,7 +305,9 @@ class HypervectorBinder:
         inv_perm[perm] = torch.arange(self.dimension)
         return inv_perm.long()
 
-    def bundle(self, vectors: list[torch.Tensor], normalize: bool = True) -> torch.Tensor:
+    def bundle(
+        self, vectors: list[torch.Tensor], normalize: bool = True
+    ) -> torch.Tensor:
         """
         Bundle vectors using superposition (addition)
 
@@ -458,7 +460,9 @@ class HypervectorBinder:
         ac = self.bind([a, c], BindingType.MULTIPLY)
         bc = self.bind([b, c], BindingType.MULTIPLY)
         right = self.bundle([ac, bc])
-        results["distributive"] = F.cosine_similarity(left.unsqueeze(0), right.unsqueeze(0)).item()
+        results["distributive"] = F.cosine_similarity(
+            left.unsqueeze(0), right.unsqueeze(0)
+        ).item()
 
         return results
 

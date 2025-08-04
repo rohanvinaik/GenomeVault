@@ -25,7 +25,7 @@ except ImportError:
     logger.exception("Unhandled exception")
     HAS_YAML = False
     yaml = None
-    raise
+    raise RuntimeError("Unspecified error")
 
 # These are REQUIRED - not optional!
 from cryptography.fernet import Fernet
@@ -176,7 +176,9 @@ class Config:
             config_file: Path to configuration file
             environment: Deployment environment
         """
-        self.environment = Environment(environment or os.getenv("GENOMEVAULT_ENV", "development"))
+        self.environment = Environment(
+            environment or os.getenv("GENOMEVAULT_ENV", "development")
+        )
         self.config_file = config_file or self._default_config_file()
 
         # Initialize subsystem configs
@@ -205,12 +207,14 @@ class Config:
     def _load_config(self):
         """Load configuration from file"""
         if not self.config_file or not Path(self.config_file).exists():
-            logger.info(f"No config file found at {self.config_file}, using defaults")
+            logger.info("No config file found at %sself.config_file, using defaults")
             return
 
         try:
             with open(self.config_file) as f:
-                if self.config_file.endswith(".yaml") or self.config_file.endswith(".yml"):
+                if self.config_file.endswith(".yaml") or self.config_file.endswith(
+                    ".yml"
+                ):
                     if HAS_YAML:
                         data = yaml.safe_load(f)
                     else:
@@ -228,15 +232,15 @@ class Config:
             self._update_config_object(self.storage, data.get("storage", {}))
             self._update_config_object(self.processing, data.get("processing", {}))
 
-            logger.info(f"Loaded configuration from {self.config_file}")
-        except Exception as e:
+            logger.info("Loaded configuration from %sself.config_file")
+        except Exception:
             from genomevault.observability.logging import configure_logging
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error(f"Failed to load configuration: {e}")
-            raise
-            raise
+            logger.error("Failed to load configuration: %se")
+            raise RuntimeError("Unspecified error")
+            raise RuntimeError("Unspecified error")
 
     def _update_config_object(self, obj: Any, data: dict[str, Any]):
         """Update dataclass object with dictionary data"""
@@ -274,7 +278,9 @@ class Config:
         # Validate crypto parameters
         assert self.crypto.aes_key_size in [128, 192, 256], "Invalid AES key size"
         assert self.crypto.rsa_key_size >= 2048, "RSA key size too small"
-        assert self.crypto.hypervector_dimensions >= 1000, "Hypervector dimensions too small"
+        assert (
+            self.crypto.hypervector_dimensions >= 1000
+        ), "Hypervector dimensions too small"
 
         # Validate privacy parameters
         assert 0 < self.privacy.epsilon <= 10, "Invalid epsilon value"
@@ -305,7 +311,9 @@ class Config:
     def _derive_master_key(self) -> bytes:
         """Derive master key from environment or hardware"""
         # In production, this should use HSM or secure key management
-        password = os.getenv("GENOMEVAULT_MASTER_PASSWORD", "development-password").encode()
+        password = os.getenv(
+            "GENOMEVAULT_MASTER_PASSWORD", "development-password"
+        ).encode()
         salt = b"genomevault-salt"  # In production, use random salt
 
         kdf = PBKDF2HMAC(
@@ -378,7 +386,8 @@ class Config:
             "privacy": self.privacy.__dict__,
             "network": self.network.__dict__,
             "storage": {
-                k: str(v) if isinstance(v, Path) else v for k, v in self.storage.__dict__.items()
+                k: str(v) if isinstance(v, Path) else v
+                for k, v in self.storage.__dict__.items()
             },
             "processing": self.processing.__dict__,
         }
@@ -393,7 +402,7 @@ class Config:
             else:
                 json.dump(config_data, f, indent=2)
 
-        logger.info(f"Saved configuration to {path}")
+        logger.info("Saved configuration to %spath")
 
     def to_dict(self) -> dict[str, Any]:
         """Convert configuration to dictionary"""

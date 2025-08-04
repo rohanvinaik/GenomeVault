@@ -13,9 +13,7 @@ def fix_bare_except(content):
     """Fix bare except clauses by converting to except Exception"""
     # Pattern to match bare except:
     pattern = r"(\s*)except\s*:\s*$"
-    replacement = (
-        r"\1except Exception:  # TODO: narrow this bare \'except\' to specific exception(s)"
-    )
+    replacement = r"\1except Exception:  # TODO: narrow this bare \'except\' to specific exception(s)"
 
     fixed_content = re.sub(pattern, replacement, content, flags=re.MULTILINE)
     return fixed_content
@@ -99,12 +97,8 @@ def process_file(filepath, apply=False):
         with open(filepath, encoding="utf-8") as f:
             original_content = f.read()
     except Exception as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
-        logger.exception("Unhandled exception")
         print(f"  Error reading file: {e}")
-        raise
+        return False
 
     # Apply fixes
     content = original_content
@@ -122,12 +116,8 @@ def process_file(filepath, apply=False):
                     f.write(content)
                 print("  ✓ Changes applied")
             except Exception as e:
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
-                logger.exception("Unhandled exception")
                 print(f"  ✗ Error writing file: {e}")
-                raise
+                return False
         else:
             print("  (Dry run - no changes written)")
         return True

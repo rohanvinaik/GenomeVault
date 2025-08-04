@@ -103,8 +103,7 @@ class AdvancedHierarchicalCompressor:
         self.semantic_contexts = self._init_semantic_contexts()
 
         logger.info(
-            f"AdvancedHierarchicalCompressor initialized: "
-            f"{base_dim}D -> {mid_dim}D -> {high_dim}D"
+            "AdvancedHierarchicalCompressor initialized: %sbase_dimD -> %smid_dimD -> %shigh_dimD"
         )
 
     def _init_projection_matrix(self, in_dim: int, out_dim: int) -> np.ndarray:
@@ -193,7 +192,9 @@ class AdvancedHierarchicalCompressor:
         compression_start = time.time()
 
         # Base -> Mid compression using semantic composition
-        mid_vector = self.semantic_composition(base_vector, modality_context, level="base_to_mid")
+        mid_vector = self.semantic_composition(
+            base_vector, modality_context, level="base_to_mid"
+        )
 
         # Mid -> High compression using semantic composition
         high_vector = self.semantic_composition(
@@ -214,7 +215,9 @@ class AdvancedHierarchicalCompressor:
                 "compression_time": compression_time,
                 "original_dim": self.base_dim,
                 "final_dim": self.high_dim,
-                "compression_ratio": self.base_dim * 4 / (self.high_dim * 4),  # Assuming float32
+                "compression_ratio": self.base_dim
+                * 4
+                / (self.high_dim * 4),  # Assuming float32
                 "sparsity": {
                     "base": np.mean(np.abs(base_vector) < self.sparsity_threshold),
                     "mid": np.mean(np.abs(mid_vector) < self.sparsity_threshold),
@@ -224,14 +227,16 @@ class AdvancedHierarchicalCompressor:
         )
 
         logger.info(
-            f"Compressed vector {compressed.vector_id}: "
-            f"{self.base_dim}D -> {self.high_dim}D, "
-            f"ratio: {compressed.compression_metadata['compression_ratio']:.2f}x"
+            "Compressed vector %scompressed.vector_id: "
+            "%sself.base_dimD -> %sself.high_dimD, "
+            "ratio: %scompressed.compression_metadata['compression_ratio']:.2fx"
         )
 
         return compressed
 
-    def semantic_composition(self, vector: np.ndarray, context: str, level: str) -> np.ndarray:
+    def semantic_composition(
+        self, vector: np.ndarray, context: str, level: str
+    ) -> np.ndarray:
         """
         Perform semantic composition of vector with context.
 
@@ -249,7 +254,7 @@ class AdvancedHierarchicalCompressor:
 
             # Get modality context
             if context not in self.modality_contexts:
-                logger.warning(f"Unknown modality {context}, using genomic")
+                logger.warning("Unknown modality %scontext, using genomic")
                 context = "genomic"
 
             context_vector = self.modality_contexts[context]
@@ -260,7 +265,7 @@ class AdvancedHierarchicalCompressor:
 
             # Get semantic context
             if context not in self.semantic_contexts:
-                logger.warning(f"Unknown semantic context {context}, using disease_risk")
+                logger.warning("Unknown semantic context %scontext, using disease_risk")
                 context = "disease_risk"
 
             context_vector = self.semantic_contexts[context]
@@ -279,7 +284,9 @@ class AdvancedHierarchicalCompressor:
 
         return composed
 
-    def _circular_convolution(self, vector: np.ndarray, context: np.ndarray) -> np.ndarray:
+    def _circular_convolution(
+        self, vector: np.ndarray, context: np.ndarray
+    ) -> np.ndarray:
         """
         Perform circular convolution for semantic binding.
         Preserves similarity relationships while integrating context.
@@ -427,9 +434,9 @@ if __name__ == "__main__":
     base_features = np.random.randn(10000)
     base_features[np.random.choice(10000, 9000, replace=False)] = 0  # Make sparse
 
-    logger.info(f"Base vector: {len(base_features)} dimensions")
-    logger.info(f"Sparsity: {np.mean(base_features == 0):.2%}")
-    logger.info(f"Size: {base_features.nbytes / 1024:.1f} KB")
+    logger.info("Base vector: %slen(base_features) dimensions")
+    logger.info("Sparsity: %snp.mean(base_features == 0):.2%")
+    logger.info("Size: %sbase_features.nbytes / 1024:.1f KB")
 
     # Test hierarchical compression
     logger.info("\n\nHierarchical Compression:")
@@ -439,14 +446,18 @@ if __name__ == "__main__":
         base_features, modality_context="genomic", overall_model_context="disease_risk"
     )
 
-    logger.info(f"Vector ID: {compressed.vector_id}")
-    logger.info(f"Compression level: {compressed.level}")
-    logger.info(f"Final dimensions: {len(compressed.high_vector)}")
-    logger.info(f"Compression ratio: {compressed.compression_metadata['compression_ratio']:.2f}x")
+    logger.info("Vector ID: %scompressed.vector_id")
+    logger.info("Compression level: %scompressed.level")
+    logger.info("Final dimensions: %slen(compressed.high_vector)")
     logger.info(
-        f"Compression time: {compressed.compression_metadata['compression_time']*1000:.1f} ms"
+        "Compression ratio: %scompressed.compression_metadata['compression_ratio']:.2fx"
     )
-    logger.info(f"Sparsity (high): {compressed.compression_metadata['sparsity']['high']:.2%}")
+    logger.info(
+        "Compression time: %scompressed.compression_metadata['compression_time'] * 1000:.1f ms"
+    )
+    logger.info(
+        f"Sparsity (high): {compressed.compression_metadata['sparsity']['high']:.2%}"
+    )
 
     # Test storage tiers
     logger.info("\n\nStorage Optimization Tiers:")
@@ -455,7 +466,7 @@ if __name__ == "__main__":
     for tier in ["mini", "clinical", "fullhdc"]:
         optimized = compressor.create_storage_optimized_vector(base_features, tier)
 
-        logger.info(f"\n{tier.upper()} Tier:")
+        logger.info("\n%stier.upper() Tier:")
         logger.info("  Target use case: ", end="")
         if tier == "mini":
             logger.info("Mobile apps, quick lookups")
@@ -464,10 +475,10 @@ if __name__ == "__main__":
         else:
             logger.info("Full analysis, research")
 
-        logger.info(f"  Actual size: {optimized['size_kb']:.1f} KB")
+        logger.info("  Actual size: %soptimized['size_kb']:.1f KB")
 
         if tier == "mini":
-            logger.info(f"  Dimensions kept: {len(optimized['data'])}")
+            logger.info("  Dimensions kept: %slen(optimized['data'])")
         elif tier == "clinical":
-            logger.info(f"  Non-zero values: {len(optimized['values'])}")
-            logger.info(f"  Compression: {20000 / len(optimized['values']):.1f}x")
+            logger.info("  Non-zero values: %slen(optimized['values'])")
+            logger.info("  Compression: %s20000 / len(optimized['values']):.1fx")

@@ -8,12 +8,8 @@ from pathlib import Path
 
 import pytest
 
-from genomevault.utils.config import (
-    CompressionTier,
-    Config,
-    NodeClass,
-    SecurityConfig,
-)
+from genomevault.utils.config import (CompressionTier, Config, NodeClass,
+                                      SecurityConfig)
 
 
 class TestConfig:

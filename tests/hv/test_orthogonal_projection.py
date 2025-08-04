@@ -2,7 +2,8 @@ import numpy as np
 import pytest
 
 from genomevault.core.exceptions import ProjectionError
-from genomevault.hypervector.encoding.orthogonal_projection import OrthogonalProjection
+from genomevault.hypervector.encoding.orthogonal_projection import \
+    OrthogonalProjection
 
 
 def cosine(a: np.ndarray, b: np.ndarray) -> float:
@@ -18,7 +19,7 @@ def test_dimension_and_angle_preservation():
 
     # Compare pairwise cosines
     cos_before = [cosine(X[0], X[1]), cosine(X[0], X[2]), cosine(X[1], X[2])]
-    cos_after  = [cosine(Y[0], Y[1]), cosine(Y[0], Y[2]), cosine(Y[1], Y[2])]
+    cos_after = [cosine(Y[0], Y[1]), cosine(Y[0], Y[2]), cosine(Y[1], Y[2])]
     for cb, ca in zip(cos_before, cos_after):
         assert np.isfinite(ca)
         assert np.allclose(cb, ca, rtol=1e-5, atol=1e-6)

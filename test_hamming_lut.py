@@ -1,15 +1,14 @@
-from genomevault.observability.logging import configure_logging
-
-logger = configure_logging()
-"""
-Test script for Hamming LUT implementation
-"""
+"""Test script for Hamming LUT implementation"""
 
 import numpy as np
 import torch
 
-from genomevault.hypervector.operations import HammingLUT, generate_popcount_lut
+from genomevault.hypervector.operations import (HammingLUT,
+                                                generate_popcount_lut)
 from genomevault.hypervector.operations.binding import HypervectorBinder
+from genomevault.observability.logging import configure_logging
+
+logger = configure_logging()
 
 
 def test_lut_generation():
@@ -133,8 +132,8 @@ def test_performance_comparison():
     lut_time = time.perf_counter() - start
 
     speedup = standard_time / lut_time
-    print(f"Standard time: {standard_time*1000:.2f} ms")
-    print(f"LUT time: {lut_time*1000:.2f} ms")
+    print(f"Standard time: {standard_time * 1000:.2f} ms")
+    print(f"LUT time: {lut_time * 1000:.2f} ms")
     print(f"Speedup: {speedup:.2f}x")
 
 

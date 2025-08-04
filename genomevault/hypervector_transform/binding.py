@@ -45,7 +45,7 @@ class HypervectorBinder:
         self.dimension = dimension
         self._permutation_cache = {}
 
-        logger.info(f"Initialized HypervectorBinder for {dimension}D vectors")
+        logger.info("Initialized HypervectorBinder for %sdimensionD vectors")
 
     def bind(
         self,
@@ -94,7 +94,7 @@ class HypervectorBinder:
         else:
             raise BindingError("Unknown binding type: {binding_type}")
 
-        logger.debug(f"Bound {len(vectors)} vectors using {binding_type.value}")
+        logger.debug("Bound %slen(vectors) vectors using %sbinding_type.value")
         return result
 
     def unbind(
@@ -260,7 +260,9 @@ class HypervectorBinder:
         inv_perm[perm] = torch.arange(self.dimension)
         return inv_perm
 
-    def bundle(self, vectors: list[torch.Tensor], normalize: bool = True) -> torch.Tensor:
+    def bundle(
+        self, vectors: list[torch.Tensor], normalize: bool = True
+    ) -> torch.Tensor:
         """
         Bundle vectors using superposition (addition)
 
@@ -343,7 +345,9 @@ class PositionalBinder(HypervectorBinder):
         pos_vector = self._get_position_vector(position)
         return self.bind([vector, pos_vector], BindingType.CIRCULAR)
 
-    def bind_sequence(self, vectors: list[torch.Tensor], start_position: int = 0) -> torch.Tensor:
+    def bind_sequence(
+        self, vectors: list[torch.Tensor], start_position: int = 0
+    ) -> torch.Tensor:
         """
         Bind a sequence of vectors with their positions
 

@@ -10,11 +10,13 @@ import time
 
 import numpy as np
 
-from genomevault.hypervector_transform.advanced_compression import AdvancedHierarchicalCompressor
+from genomevault.hypervector_transform.advanced_compression import \
+    AdvancedHierarchicalCompressor
 from genomevault.pir.advanced.it_pir import InformationTheoreticPIR
 from genomevault.zk_proofs.advanced.catalytic_proof import CatalyticProofEngine
 from genomevault.zk_proofs.advanced.recursive_snark import RecursiveSNARKProver
-from genomevault.zk_proofs.advanced.stark_prover import PostQuantumVerifier, STARKProver
+from genomevault.zk_proofs.advanced.stark_prover import (PostQuantumVerifier,
+                                                         STARKProver)
 from genomevault.zk_proofs.prover import Prover
 
 
@@ -40,7 +42,7 @@ def test_recursive_snark():
             },
             private_inputs={
                 "variant_data": {
-                    "chr": f"chr{i+1}",
+                    "chr": f"chr{i + 1}",
                     "pos": i * 1000,
                     "ref": "A",
                     "alt": "G",
@@ -62,7 +64,7 @@ def test_recursive_snark():
         recursive_proof = recursive_prover.compose_proofs(proofs, strategy)
         comp_time = time.time() - start
 
-        print(f"  Composition time: {comp_time*1000:.1f} ms")
+        print(f"  Composition time: {comp_time * 1000:.1f} ms")
         print(f"  Proof count: {recursive_proof.proof_count}")
         print(f"  Verification complexity: {recursive_proof.verification_complexity}")
 
@@ -71,7 +73,7 @@ def test_recursive_snark():
         valid = recursive_prover.verify_recursive_proof(recursive_proof)
         verify_time = time.time() - start
 
-        print(f"  Verification time: {verify_time*1000:.1f} ms")
+        print(f"  Verification time: {verify_time * 1000:.1f} ms")
         print(f"  Valid: {valid}")
 
     return True
@@ -89,7 +91,9 @@ def test_stark_post_quantum():
 
     # Create execution trace for PRS calculation
     trace_length = 256
-    trace = np.zeros((trace_length, 3), dtype=np.uint64)  # [accumulator, variant, weight]
+    trace = np.zeros(
+        (trace_length, 3), dtype=np.uint64
+    )  # [accumulator, variant, weight]
 
     # Simulate PRS computation
     for i in range(1, trace_length):
@@ -120,7 +124,7 @@ def test_stark_post_quantum():
     print(f"  Proof ID: {stark_proof.proof_id}")
     print(f"  Security level: {stark_proof.security_level} bits (post-quantum)")
     print(f"  Proof size: {stark_proof.proof_size_kb:.1f} KB")
-    print(f"  Generation time: {gen_time*1000:.1f} ms")
+    print(f"  Generation time: {gen_time * 1000:.1f} ms")
 
     # Verify proof
     print("\nVerifying STARK proof...")
@@ -129,7 +133,7 @@ def test_stark_post_quantum():
     verify_time = time.time() - start
 
     print(f"  Verification result: {'VALID' if valid else 'INVALID'}")
-    print(f"  Verification time: {verify_time*1000:.1f} ms")
+    print(f"  Verification time: {verify_time * 1000:.1f} ms")
 
     return valid
 
@@ -161,13 +165,15 @@ def test_catalytic_proof():
         private_inputs={
             "variants": np.random.randint(0, 2, num_variants).tolist(),
             "weights": np.random.rand(num_variants).tolist(),
-            "merkle_proofs": [hashlib.sha256(f"p_{i}".encode()).hexdigest() for i in range(20)],
+            "merkle_proofs": [
+                hashlib.sha256(f"p_{i}".encode()).hexdigest() for i in range(20)
+            ],
             "witness_randomness": np.random.bytes(32).hex(),
         },
     )
 
     print(f"  Proof ID: {catalytic_proof.proof_id}")
-    print(f"  Clean space used: {catalytic_proof.clean_space_used/1024:.1f} KB")
+    print(f"  Clean space used: {catalytic_proof.clean_space_used / 1024:.1f} KB")
     print(f"  Space efficiency: {catalytic_proof.space_efficiency:.1f}x")
 
     # Show space savings
@@ -212,8 +218,8 @@ def test_it_pir():
     query = pir.generate_query(target_index, database_size, block_size)
     query_time = time.time() - start
 
-    print(f"\n  Query generation: {query_time*1000:.2f} ms")
-    print(f"  Query size/server: {query.server_queries[0].nbytes/1024:.2f} KB")
+    print(f"\n  Query generation: {query_time * 1000:.2f} ms")
+    print(f"  Query size/server: {query.server_queries[0].nbytes / 1024:.2f} KB")
 
     # Process on servers
     responses = []
@@ -222,14 +228,14 @@ def test_it_pir():
         response = pir.process_server_query(server_id, query, databases[server_id])
         response_time = time.time() - start
         responses.append(response)
-        print(f"  Server {server_id} response: {response_time*1000:.2f} ms")
+        print(f"  Server {server_id} response: {response_time * 1000:.2f} ms")
 
     # Reconstruct
     start = time.time()
     reconstructed = pir.reconstruct_response(query, responses)
     recon_time = time.time() - start
 
-    print(f"\n  Reconstruction: {recon_time*1000:.2f} ms")
+    print(f"\n  Reconstruction: {recon_time * 1000:.2f} ms")
 
     # Verify
     expected = databases[0][target_index]
@@ -255,7 +261,7 @@ def test_hierarchical_compression():
     print("\nBase vector:")
     print(f"  Dimensions: {len(base_vector)}")
     print(f"  Sparsity: {np.mean(base_vector == 0):.2%}")
-    print(f"  Size: {base_vector.nbytes/1024:.1f} KB")
+    print(f"  Size: {base_vector.nbytes / 1024:.1f} KB")
 
     # Compress hierarchically
     compressed = compressor.hierarchical_compression(
@@ -265,7 +271,9 @@ def test_hierarchical_compression():
     print("\nCompressed vector:")
     print(f"  Level: {compressed.level}")
     print(f"  Dimensions: {len(compressed.high_vector)}")
-    print(f"  Compression ratio: {compressed.compression_metadata['compression_ratio']:.2f}x")
+    print(
+        f"  Compression ratio: {compressed.compression_metadata['compression_ratio']:.2f}x"
+    )
 
     # Test storage tiers
     print("\nStorage tiers:")

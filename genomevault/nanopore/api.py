@@ -12,11 +12,13 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
-from fastapi import APIRouter, BackgroundTasks, Depends, File, HTTPException, Query, UploadFile
+from fastapi import (APIRouter, BackgroundTasks, Depends, File, HTTPException,
+                     Query, UploadFile)
 from pydantic import BaseModel, Field
 
 from genomevault.hypervector.encoding import HypervectorEncoder
-from genomevault.nanopore.biological_signals import BiologicalSignalDetector, BiologicalSignalType
+from genomevault.nanopore.biological_signals import (BiologicalSignalDetector,
+                                                     BiologicalSignalType)
 from genomevault.nanopore.streaming import NanoporeStreamProcessor
 from genomevault.utils.logging import get_logger
 
@@ -75,7 +77,9 @@ async def start_streaming(
     Returns stream ID for tracking.
     """
     # Generate stream ID
-    stream_id = hashlib.sha256(f"{time.time()}_{config.json()}".encode()).hexdigest()[:16]
+    stream_id = hashlib.sha256(f"{time.time()}_{config.json()}".encode()).hexdigest()[
+        :16
+    ]
 
     # Initialize processor
     encoder = HypervectorEncoder(dimension=10000)
@@ -93,7 +97,7 @@ async def start_streaming(
         "stats": None,
     }
 
-    logger.info(f"Started nanopore stream: {stream_id}")
+    logger.info("Started nanopore stream: %sstream_id")
 
     return {
         "stream_id": stream_id,
@@ -183,10 +187,10 @@ async def _process_fast5_async(stream_id: str, fast5_path: Path):
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        logger.error(f"Error processing stream {stream_id}: {e}")
+        logger.error("Error processing stream %sstream_id: %se")
         _results_cache[stream_id]["status"] = "error"
         _results_cache[stream_id]["error"] = str(e)
-        raise
+        raise RuntimeError("Unspecified error")
 
     finally:
         # Cleanup
@@ -347,7 +351,9 @@ async def generate_proof(
         "proof_size": len(proof_data),
         "proof_hash": hashlib.sha256(proof_data).hexdigest(),
         "slices_included": min(len(cache["results"]), max_slices),
-        "anomalies_proven": sum(len(r.get("anomalies", [])) for r in cache["results"][:max_slices]),
+        "anomalies_proven": sum(
+            len(r.get("anomalies", [])) for r in cache["results"][:max_slices]
+        ),
     }
 
 
@@ -444,20 +450,20 @@ async def websocket_stream(
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        logger.info(f"WebSocket disconnected for stream {stream_id}")
-        raise
+        logger.info("WebSocket disconnected for stream %sstream_id")
+        raise RuntimeError("Unspecified error")
     except Exception as e:
         from genomevault.observability.logging import configure_logging
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        logger.error(f"WebSocket error: {e}")
+        logger.error("WebSocket error: %se")
         await websocket.send_json(
             {
                 "type": "error",
                 "error": str(e),
             }
         )
-        raise
+        raise RuntimeError("Unspecified error")
     finally:
         await websocket.close()

@@ -10,7 +10,8 @@ from typing import Any
 import aiohttp
 import numpy as np
 
-from genomevault.core.constants import MIN_PIR_SERVERS, PIR_QUERY_TIMEOUT_MS, PIR_THRESHOLD
+from genomevault.core.constants import (MIN_PIR_SERVERS, PIR_QUERY_TIMEOUT_MS,
+                                        PIR_THRESHOLD)
 from genomevault.core.exceptions import PIRError
 
 
@@ -44,7 +45,9 @@ class PIRClient:
         self.session: aiohttp.ClientSession | None = None
 
         if len(server_urls) < MIN_PIR_SERVERS:
-            raise PIRError(f"Need at least {MIN_PIR_SERVERS} servers, got {len(server_urls)}")
+            raise PIRError(
+                f"Need at least {MIN_PIR_SERVERS} servers, got {len(server_urls)}"
+            )
 
     async def __aenter__(self):
         self.session = aiohttp.ClientSession()
@@ -54,7 +57,9 @@ class PIRClient:
         if self.session:
             await self.session.close()
 
-    async def query_position(self, chromosome: str, position: int, length: int = 1000) -> bytes:
+    async def query_position(
+        self, chromosome: str, position: int, length: int = 1000
+    ) -> bytes:
         """
         Query a genomic position privately
 
@@ -113,7 +118,9 @@ class PIRClient:
 
         nonce = np.random.bytes(32)
 
-        return PIRQuery(position=position, length=length, query_vector=query_vector, nonce=nonce)
+        return PIRQuery(
+            position=position, length=length, query_vector=query_vector, nonce=nonce
+        )
 
     async def _query_server(self, server_url: str, query: PIRQuery) -> dict[str, Any]:
         """Query a single PIR server"""
@@ -141,16 +148,18 @@ class PIRClient:
             logger = configure_logging()
             logger.exception("Unhandled exception")
             raise PIRError("Query timeout for server {server_url}")
-            raise
+            raise RuntimeError("Unspecified error")
         except (ConnectionError, TimeoutError, RequestException):
             from genomevault.observability.logging import configure_logging
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
             raise PIRError("Query failed for server {server_url}: {str(e)}")
-            raise
+            raise RuntimeError("Unspecified error")
 
-    def _reconstruct_data(self, responses: list[dict[str, Any]], query: PIRQuery) -> bytes:
+    def _reconstruct_data(
+        self, responses: list[dict[str, Any]], query: PIRQuery
+    ) -> bytes:
         """
         Reconstruct data from PIR responses
         Uses threshold reconstruction
@@ -214,7 +223,7 @@ class PIRClient:
                 logger = configure_logging()
                 logger.exception("Unhandled exception")
                 statuses.append({"url": server_url, "online": False, "error": str(e)})
-                raise
+                raise RuntimeError("Unspecified error")
 
         return statuses
 
@@ -302,7 +311,9 @@ class PIRClient:
 
         return result
 
-    async def _query_server_v2(self, server_url: str, query: PIRQuery) -> dict[str, Any]:
+    async def _query_server_v2(
+        self, server_url: str, query: PIRQuery
+    ) -> dict[str, Any]:
         """Query a single PIR server with enhanced query format"""
         if not self.session:
             raise PIRError("Session not initialized")
@@ -329,16 +340,18 @@ class PIRClient:
             logger = configure_logging()
             logger.exception("Unhandled exception")
             raise PIRError(f"Query timeout for server {server_url}")
-            raise
+            raise RuntimeError("Unspecified error")
         except (ConnectionError, TimeoutError, RequestException) as e:
             from genomevault.observability.logging import configure_logging
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
             raise PIRError(f"Query failed for server {server_url}: {e!s}")
-            raise
+            raise RuntimeError("Unspecified error")
 
-    def _reconstruct_data_v2(self, responses: list[dict[str, Any]], query: PIRQuery) -> Any:
+    def _reconstruct_data_v2(
+        self, responses: list[dict[str, Any]], query: PIRQuery
+    ) -> Any:
         """
         Reconstruct data from PIR responses (enhanced version)
         """
@@ -383,7 +396,9 @@ class PIRClient:
 
         return final_results
 
-    def decode_response(self, response_data: Any, response_type: str = "genomic") -> Any:
+    def decode_response(
+        self, response_data: Any, response_type: str = "genomic"
+    ) -> Any:
         """
         Decode response data based on type
 

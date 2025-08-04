@@ -17,7 +17,8 @@ import numpy as np
 from genomevault.utils.config import get_config
 
 config = get_config()
-from genomevault.utils.logging import audit_logger, get_logger, logger, performance_logger
+from genomevault.utils.logging import (audit_logger, get_logger, logger,
+                                       performance_logger)
 
 logger = get_logger(__name__)
 
@@ -51,7 +52,9 @@ class PIRServer:
     Processes queries without learning what is being retrieved.
     """
 
-    def __init__(self, server_id: str, data_directory: Path, is_trusted_signatory: bool = False):
+    def __init__(
+        self, server_id: str, data_directory: Path, is_trusted_signatory: bool = False
+    ):
         """
         Initialize PIR server.
 
@@ -78,7 +81,7 @@ class PIRServer:
         self.total_computation_time = 0
 
         logger.info(
-            "PIR server {server_id} initialized",
+            "PIR server server_id initialized",
             extra={
                 "server_type": "TS" if is_trusted_signatory else "LN",
                 "shards": len(self.shards),
@@ -115,7 +118,7 @@ class PIRServer:
             if shard.verify_integrity():
                 shards[shard.shard_id] = shard
             else:
-                logger.error(f"Shard {shard.shard_id} integrity check failed")
+                logger.error("Shard shard.shard_id integrity check failed")
 
         return shards
 
@@ -135,7 +138,9 @@ class PIRServer:
             # Open file for memory mapping
             with open(shard.data_path, "rb") as f:
                 # Memory-map the file
-                self.mmap_files[shard_id] = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
+                self.mmap_files[shard_id] = mmap.mmap(
+                    f.fileno(), 0, access=mmap.ACCESS_READ
+                )
 
         return self.mmap_files[shard_id]
 
@@ -160,7 +165,7 @@ class PIRServer:
 
         # Validate query
         if shard_id not in self.shards:
-            logger.error(f"Unknown shard: {shard_id}")
+            logger.error("Unknown shard: shard_id")
             return {"error": "Unknown shard", "query_id": query_id}
 
         # Audit log (privacy-safe)
@@ -179,7 +184,9 @@ class PIRServer:
         # Process query
         try:
             # Compute dot product with database
-            response_vector = await self._compute_dot_product(query_vector, shard_id, database_size)
+            response_vector = await self._compute_dot_product(
+                query_vector, shard_id, database_size
+            )
 
             computation_time = (time.time() - start_time) * 1000
 
@@ -197,7 +204,7 @@ class PIRServer:
             }
 
             logger.info(
-                "PIR query {query_id} processed in {computation_time:.1f}ms",
+                "PIR query query_id processed in computation_time:.1fms",
                 extra={"privacy_safe": True},
             )
 
@@ -208,9 +215,9 @@ class PIRServer:
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error(f"Error processing PIR query: {e}")
+            logger.error("Error processing PIR query: e")
             return {"error": str(e), "query_id": query_id}
-            raise
+            raise RuntimeError("Unspecified error")
 
     async def _compute_dot_product(
         self, query_vector: np.ndarray, shard_id: str, database_size: int
@@ -294,7 +301,9 @@ class PIRServer:
 
         return items
 
-    def batch_process_queries(self, queries: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    def batch_process_queries(
+        self, queries: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]:
         """
         Process multiple queries in batch.
 
@@ -321,7 +330,9 @@ class PIRServer:
             Server statistics
         """
         avg_computation_time = (
-            self.total_computation_time / self.query_count if self.query_count > 0 else 0
+            self.total_computation_time / self.query_count
+            if self.query_count > 0
+            else 0
         )
 
         return {
@@ -334,7 +345,9 @@ class PIRServer:
             "uptime_seconds": time.time(),  # Would track actual uptime
         }
 
-    def update_shard(self, shard_id: str, new_data_path: Path, new_checksum: str) -> bool:
+    def update_shard(
+        self, shard_id: str, new_data_path: Path, new_checksum: str
+    ) -> bool:
         """
         Update a database shard.
 
@@ -347,7 +360,7 @@ class PIRServer:
             Success status
         """
         if shard_id not in self.shards:
-            logger.error(f"Unknown shard: {shard_id}")
+            logger.error("Unknown shard: shard_id")
             return False
 
         # Close existing memory map
@@ -364,10 +377,10 @@ class PIRServer:
             logger.error("New shard data integrity check failed")
             return False
 
-        logger.info(f"Shard {shard_id} updated successfully")
+        logger.info("Shard shard_id updated successfully")
         return True
 
-    def shutdown(self):
+    def shutdown(self) -> None:
         """Shutdown server and cleanup resources."""
         # Close memory-mapped files
         for mmap_file in self.mmap_files.values():
@@ -376,7 +389,7 @@ class PIRServer:
         # Shutdown process pool
         self.process_pool.shutdown(wait=True)
 
-        logger.info(f"PIR server {self.server_id} shutdown complete")
+        logger.info("PIR server self.server_id shutdown complete")
 
 
 class TrustedSignatoryServer(PIRServer):
@@ -417,16 +430,16 @@ class TrustedSignatoryServer(PIRServer):
         self._setup_enhanced_audit()
 
         logger.info(
-            "Trusted Signatory server {server_id} initialized",
+            "Trusted Signatory server server_id initialized",
             extra={"npi": npi, "hsm": hsm_serial},
         )
 
-    def _initialize_hsm(self):
+    def _initialize_hsm(self) -> None:
         """Initialize hardware security module."""
         # In production, would interface with actual HSM
-        logger.info(f"HSM {self.hsm_serial} initialized")
+        logger.info("HSM self.hsm_serial initialized")
 
-    def _setup_enhanced_audit(self):
+    def _setup_enhanced_audit(self) -> None:
         """Setup enhanced HIPAA-compliant audit logging."""
         # Configure additional audit requirements
         audit_logger.set_hipaa_mode(True)

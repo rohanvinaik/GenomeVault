@@ -106,7 +106,7 @@ def fit_and_calibrate(
     elif method in ("none", "identity"):
 
         class Identity:
-            def predict_proba(self, v):
+            def predict_proba(self, v) -> None:
                 return np.asarray(v, dtype=np.float64)
 
         cal = Identity()

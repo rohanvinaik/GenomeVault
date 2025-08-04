@@ -25,5 +25,9 @@ def register_error_handlers(app: FastAPI) -> None:
         rid = str(uuid.uuid4())
         return JSONResponse(
             status_code=500,
-            content={"code": "InternalServerError", "message": "Internal error", "request_id": rid},
+            content={
+                "code": "InternalServerError",
+                "message": "Internal error",
+                "request_id": rid,
+            },
         )

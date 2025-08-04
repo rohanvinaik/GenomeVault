@@ -2,8 +2,10 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, FastAPI
 
-from genomevault.api.errors import register_error_handlers  # created in task 26A
-from genomevault.api.routers import clinical, federated, governance, ledger, pir, proofs, vectors
+from genomevault.api.errors import \
+    register_error_handlers  # created in task 26A
+from genomevault.api.routers import (clinical, federated, governance, ledger,
+                                     pir, proofs, vectors)
 from genomevault.observability.logging import configure_logging
 from genomevault.observability.metrics import metrics_router
 from genomevault.observability.middleware import add_observability_middleware
@@ -13,7 +15,9 @@ from genomevault.security.headers import register_security
 from genomevault.security.rate_limit import RateLimitMiddleware
 
 app = FastAPI(
-    title="GenomeVault API", version="3.0.0", description="Privacy-preserving genomic data platform"
+    title="GenomeVault API",
+    version="3.0.0",
+    description="Privacy-preserving genomic data platform",
 )
 
 # configure observability

@@ -6,10 +6,7 @@ from unittest.mock import patch
 import pytest
 
 from genomevault.clinical.diabetes_pilot.risk_calculator import (
-    DiabetesRiskCalculator,
-    RiskAssessment,
-    generate_zkp_alert,
-)
+    DiabetesRiskCalculator, RiskAssessment, generate_zkp_alert)
 
 
 class TestDiabetesPilot:
@@ -73,7 +70,9 @@ class TestDiabetesPilot:
         risk_threshold = 0.15
 
         # Generate ZKP alert
-        with patch("clinical.diabetes_pilot.risk_calculator.generate_proof") as mock_proof:
+        with patch(
+            "clinical.diabetes_pilot.risk_calculator.generate_proof"
+        ) as mock_proof:
             mock_proof.return_value = {
                 "proo": b"mock_proof_data",
                 "size": 384,
@@ -118,14 +117,18 @@ class TestDiabetesPilot:
             (95, 0.10, 100, 0.15, False),  # Neither exceeds
         ],
     )
-    def test_alert_trigger_conditions(self, glucose, risk_score, g_thresh, r_thresh, expected):
+    def test_alert_trigger_conditions(
+        self, glucose, risk_score, g_thresh, r_thresh, expected
+    ):
         """Test various alert trigger conditions"""
         alert = generate_zkp_alert(glucose, risk_score, g_thresh, r_thresh)
         assert alert["triggered"] == expected
 
     def test_proof_size_specification(self):
         """Verify proof size meets specification (<384 bytes)"""
-        with patch("clinical.diabetes_pilot.risk_calculator.generate_proof") as mock_proof:
+        with patch(
+            "clinical.diabetes_pilot.risk_calculator.generate_proof"
+        ) as mock_proof:
             mock_proof.return_value = {
                 "proo": b"a" * 384,  # Exactly 384 bytes
                 "size": 384,
@@ -143,7 +146,9 @@ class TestDiabetesPilot:
 
     def test_verification_time_specification(self):
         """Verify proof verification time meets specification (<25ms)"""
-        with patch("clinical.diabetes_pilot.risk_calculator.generate_proof") as mock_proof:
+        with patch(
+            "clinical.diabetes_pilot.risk_calculator.generate_proof"
+        ) as mock_proof:
             mock_proof.return_value = {
                 "proo": b"mock_proof",
                 "size": 384,
@@ -159,7 +164,9 @@ class TestDiabetesPilot:
 
             assert alert["verification_time_ms"] < 25
 
-    def test_privacy_preservation(self, risk_calculator, sample_genetic_data, sample_clinical_data):
+    def test_privacy_preservation(
+        self, risk_calculator, sample_genetic_data, sample_clinical_data
+    ):
         """Test that no private data leaks in outputs"""
         assessment = risk_calculator.assess_combined_risk(
             genetic_data=sample_genetic_data, clinical_data=sample_clinical_data

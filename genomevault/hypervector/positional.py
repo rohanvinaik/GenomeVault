@@ -20,7 +20,9 @@ class PositionalEncoder:
     Uses sparse representations and hash-based seeds for 10M+ positions
     """
 
-    def __init__(self, dimension: int = 100000, sparsity: float = 0.01, cache_size: int = 10000):
+    def __init__(
+        self, dimension: int = 100000, sparsity: float = 0.01, cache_size: int = 10000
+    ):
         """
         Initialize positional encoder
 
@@ -36,9 +38,13 @@ class PositionalEncoder:
 
         # Pre-compute constants for efficiency
         self.nnz = int(dimension * sparsity)  # Number of non-zero elements
-        logger.info(f"Initialized PositionalEncoder: {dimension}D, {self.nnz} non-zeros per vector")
+        logger.info(
+            "Initialized PositionalEncoder: %sdimensionD, %sself.nnz non-zeros per vector"
+        )
 
-    def make_position_vector(self, position: int, seed: int | None = None) -> torch.Tensor:
+    def make_position_vector(
+        self, position: int, seed: int | None = None
+    ) -> torch.Tensor:
         """
         Generate orthogonal position vector using hash-based seed
 
@@ -134,7 +140,7 @@ class PositionalEncoder:
             logger = configure_logging()
             logger.exception("Unhandled exception")
             raise HypervectorError(f"Failed to encode SNP positions: {e!s}")
-            raise
+            raise RuntimeError("Unspecified error")
 
     def _position_to_seed(self, position: int) -> int:
         """Convert genomic position to deterministic seed"""
@@ -202,9 +208,9 @@ class PositionalEncoder:
 
     def get_memory_usage(self) -> dict[str, float]:
         """Get memory usage statistics"""
-        cache_size_mb = sum(vec.element_size() * vec.numel() for vec in self._cache.values()) / (
-            1024**2
-        )
+        cache_size_mb = sum(
+            vec.element_size() * vec.numel() for vec in self._cache.values()
+        ) / (1024**2)
 
         return {
             "cache_entries": len(self._cache),
@@ -215,7 +221,7 @@ class PositionalEncoder:
             "nnz_per_vector": self.nnz,
         }
 
-    def clear_cache(self):
+    def clear_cache(self) -> None:
         """Clear the position vector cache"""
         self._cache.clear()
         logger.info("Cleared position vector cache")
@@ -239,7 +245,7 @@ class SNPPanel:
         # Initialize default panels
         self._init_default_panels()
 
-    def _init_default_panels(self):
+    def _init_default_panels(self) -> None:
         """Initialize default SNP panels"""
         # Common SNPs panel (example positions)
         self.panels["common"] = {
@@ -257,9 +263,11 @@ class SNPPanel:
             "positions": {},  # Would be loaded from file
         }
 
-        logger.info(f"Initialized {len(self.panels)} default SNP panels")
+        logger.info("Initialized %slen(self.panels) default SNP panels")
 
-    def load_panel_from_file(self, panel_name: str, file_path: str, file_type: str = "bed"):
+    def load_panel_from_file(
+        self, panel_name: str, file_path: str, file_type: str = "bed"
+    ) -> None:
         """
         Load SNP panel from BED/VCF file
 
@@ -306,7 +314,9 @@ class SNPPanel:
                             positions_by_chr[chrom].append(pos)
 
             # Count total positions
-            total_positions = sum(len(positions) for positions in positions_by_chr.values())
+            total_positions = sum(
+                len(positions) for positions in positions_by_chr.values()
+            )
 
             # Store panel
             self.panels[panel_name] = {
@@ -317,7 +327,7 @@ class SNPPanel:
                 "file_path": file_path,
             }
 
-            logger.info(f"Loaded panel '{panel_name}' with {total_positions} positions")
+            logger.info("Loaded panel '%spanel_name' with %stotal_positions positions")
 
         except Exception as e:
             from genomevault.observability.logging import configure_logging
@@ -325,7 +335,7 @@ class SNPPanel:
             logger = configure_logging()
             logger.exception("Unhandled exception")
             raise HypervectorError(f"Failed to load panel from {file_path}: {e!s}")
-            raise
+            raise RuntimeError("Unspecified error")
 
     def encode_with_panel(
         self, panel_name: str, chromosome: str, observed_bases: dict[int, str]
@@ -348,7 +358,7 @@ class SNPPanel:
 
         # Get panel positions for this chromosome
         if chromosome not in panel.get("positions", {}):
-            logger.warning(f"No positions for {chromosome} in panel {panel_name}")
+            logger.warning("No positions for %schromosome in panel %spanel_name")
             return torch.zeros(self.encoder.dimension)
 
         panel_positions = panel["positions"][chromosome]

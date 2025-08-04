@@ -100,7 +100,9 @@ class MetricsCollector:
 
         self.record(metric_name, duration, unit, tags)
 
-    def get_metric(self, metric_name: str, since: float | None = None) -> list[dict[str, Any]]:
+    def get_metric(
+        self, metric_name: str, since: float | None = None
+    ) -> list[dict[str, Any]]:
         """
         Get all recorded values for a metric.
 
@@ -159,7 +161,9 @@ class MetricsCollector:
 
             return summary
 
-    def get_time_series(self, metric_name: str, interval: int = 60) -> list[dict[str, Any]]:
+    def get_time_series(
+        self, metric_name: str, interval: int = 60
+    ) -> list[dict[str, Any]]:
         """
         Get time series data for a metric.
 
@@ -277,7 +281,9 @@ class MetricsCollector:
 class MetricsContext:
     """Context manager for timing operations."""
 
-    def __init__(self, metric_name: str, unit: str = "ms", tags: dict[str, str] | None = None):
+    def __init__(
+        self, metric_name: str, unit: str = "ms", tags: dict[str, str] | None = None
+    ):
         """
         Initialize metrics context.
 
@@ -300,7 +306,9 @@ class MetricsContext:
     def __exit__(self, exc_type, exc_val, exc_tb):
         """Stop timing and record metric."""
         if self.start_time:
-            self.collector.record_duration(self.metric_name, self.start_time, self.unit, self.tags)
+            self.collector.record_duration(
+                self.metric_name, self.start_time, self.unit, self.tags
+            )
 
 
 def metrics_decorator(metric_name: str, unit: str = "ms"):

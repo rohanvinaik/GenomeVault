@@ -32,7 +32,9 @@ class FixExceptions(cst.CSTTransformer):
             )
         if needs_reraise:
             new_body.append(cst.parse_statement("raise"))
-        return updated_node.with_changes(body=updated_node.body.with_changes(body=tuple(new_body)))
+        return updated_node.with_changes(
+            body=updated_node.body.with_changes(body=tuple(new_body))
+        )
 
 
 def main():

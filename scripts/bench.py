@@ -83,7 +83,9 @@ class PIRBenchmark:
         for db_size in db_sizes:
             # Mock servers for testing
             servers = [
-                PIRServer(f"server_{i}", f"http://localhost:900{i}", "region", False, 0.95, 50)
+                PIRServer(
+                    f"server_{i}", f"http://localhost:900{i}", "region", False, 0.95, 50
+                )
                 for i in range(3)
             ]
 
@@ -333,7 +335,8 @@ class HDCBenchmark:
         try:
             import time
 
-            from genomevault.hypervector_transform.hdc_encoder import OmicsType, create_encoder
+            from genomevault.hypervector_transform.hdc_encoder import (
+                OmicsType, create_encoder)
 
             # Basic encoding benchmark
             encoder = create_encoder(dimension=10000)
@@ -405,7 +408,9 @@ def main():
         required=True,
         help="Benchmark lane to run",
     )
-    parser.add_argument("--output", default="benchmarks", help="Output directory for results")
+    parser.add_argument(
+        "--output", default="benchmarks", help="Output directory for results"
+    )
 
     args = parser.parse_args()
 

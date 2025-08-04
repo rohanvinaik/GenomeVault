@@ -10,13 +10,21 @@ def test_vectors_encode_requires_api_key(monkeypatch):
     # Without key -> 401
     r = client.post(
         "/vectors/encode",
-        json={"data": {"x": [0.1, 0.2]}, "dimension": "10000", "compression_tier": "mini"},
+        json={
+            "data": {"x": [0.1, 0.2]},
+            "dimension": "10000",
+            "compression_tier": "mini",
+        },
     )
     assert r.status_code in (401, 403)
     # With key -> 200 or 400 depending on engine availability; but not 401
     r = client.post(
         "/vectors/encode",
         headers={"X-API-Key": "devkey"},
-        json={"data": {"x": [0.1, 0.2]}, "dimension": "10000", "compression_tier": "mini"},
+        json={
+            "data": {"x": [0.1, 0.2]},
+            "dimension": "10000",
+            "compression_tier": "mini",
+        },
     )
     assert r.status_code != 401

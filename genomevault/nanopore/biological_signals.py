@@ -151,12 +151,16 @@ class BiologicalSignalDetector:
                 signal = BiologicalSignal(
                     signal_type=signal_type,
                     genomic_position=(
-                        genomic_positions[start] if genomic_positions is not None else start
+                        genomic_positions[start]
+                        if genomic_positions is not None
+                        else start
                     ),
                     confidence=confidence,
                     variance_score=float(np.max(region_variance)),
                     context=(
-                        sequence_context[max(0, start - 5) : end + 5] if sequence_context else ""
+                        sequence_context[max(0, start - 5) : end + 5]
+                        if sequence_context
+                        else ""
                     ),
                     metadata={
                         "region_length": end - start,
@@ -264,7 +268,10 @@ class BiologicalSignalDetector:
             scores[BiologicalSignalType.METHYLATION_6MA] = 0.7
 
         # Check for oxidative damage
-        if features.get("gc_content", 0) > 0.7 and features.get("variance_max", 0) > 3.0:
+        if (
+            features.get("gc_content", 0) > 0.7
+            and features.get("variance_max", 0) > 3.0
+        ):
             scores[BiologicalSignalType.OXIDATIVE_DAMAGE] = 0.75
 
         # Check for structural variants
@@ -352,7 +359,7 @@ class BiologicalSignalDetector:
         # Train anomaly detector
         if X:
             self.anomaly_detector.fit(X)
-            logger.info(f"Trained on {len(X)} modification examples")
+            logger.info("Trained on %slen(X) modification examples")
 
     def export_signal_track(
         self,
@@ -448,11 +455,11 @@ def example_signal_detection():
         genomic_positions=np.arange(n_positions) * 100,  # Assume 100bp spacing
     )
 
-    logger.info(f"Detected {len(signals)} biological signals:")
+    logger.info("Detected %slen(signals) biological signals:")
     for signal in signals:
         logger.info(
-            f"  {signal.signal_type.value} at position {signal.genomic_position} "
-            f"(confidence: {signal.confidence:.2f})"
+            "  %ssignal.signal_type.value at position %ssignal.genomic_position "
+            "(confidence: %ssignal.confidence:.2f)"
         )
 
     # Export as track

@@ -106,7 +106,9 @@ class HybridPostQuantumCrypto:
         """Decrypt data using hybrid post-quantum scheme."""
         # Mock implementation
         _ = self.kyber.decapsulate(encrypted_data.kyber_encapsulated_key, private_key)
-        return encrypted_data.ciphertext  # In real implementation, this would be decrypted
+        return (
+            encrypted_data.ciphertext
+        )  # In real implementation, this would be decrypted
 
 
 def benchmark_post_quantum_crypto() -> dict[str, Any]:
@@ -155,7 +157,7 @@ if __name__ == "__main__":
 
     # Encrypt
     encrypted = crypto.encrypt(genomic_data, recipient_keypair.public_key)
-    logger.info("Encrypted size: {len(encrypted.to_bytes())} bytes")
+    logger.info("Encrypted size: %slen(encrypted.to_bytes()) bytes")
 
     # Decrypt
     decrypted = crypto.decrypt(encrypted, recipient_keypair.private_key)
@@ -167,6 +169,6 @@ if __name__ == "__main__":
     _ = benchmark_post_quantum_crypto()
 
     for algo, metrics in results.items():
-        logger.info("\n{algo}:")
+        logger.info("\n%salgo:")
         for key, value in metrics.items():
-            logger.info("  {key}: {value}")
+            logger.info("  %skey: %svalue")

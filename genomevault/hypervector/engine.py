@@ -4,21 +4,19 @@ from uuid import uuid4
 
 import numpy as np
 
-from genomevault.core.constants import DEFAULT_DENSITY, DEFAULT_SEED, HYPERVECTOR_DIMENSIONS
-from genomevault.core.exceptions import EncodingError, ProjectionError, ValidationError
-from genomevault.hypervector.encoding.sparse_projection import SparseRandomProjection
-from genomevault.hypervector.operations.binding import (
-    bundle as hv_bundle,
-)
-from genomevault.hypervector.operations.binding import (
-    circular_convolution as hv_convolve,
-)
-from genomevault.hypervector.operations.binding import (
-    element_wise_multiply as hv_multiply,
-)
-from genomevault.hypervector.operations.binding import (
-    permutation_binding as hv_permute,
-)
+from genomevault.core.constants import (DEFAULT_DENSITY, DEFAULT_SEED,
+                                        HYPERVECTOR_DIMENSIONS)
+from genomevault.core.exceptions import (EncodingError, ProjectionError,
+                                         ValidationError)
+from genomevault.hypervector.encoding.sparse_projection import \
+    SparseRandomProjection
+from genomevault.hypervector.operations.binding import bundle as hv_bundle
+from genomevault.hypervector.operations.binding import \
+    circular_convolution as hv_convolve
+from genomevault.hypervector.operations.binding import \
+    element_wise_multiply as hv_multiply
+from genomevault.hypervector.operations.binding import \
+    permutation_binding as hv_permute
 from genomevault.hypervector.stores.in_memory import InMemoryStore
 
 
@@ -45,12 +43,18 @@ class HypervectorEngine:
     def _get(self, vid: str) -> np.ndarray:
         v = self.store.get(vid)
         if v is None:
-            raise ValidationError(f"vector_id not found: {vid}", context={"vector_id": vid})
+            raise ValidationError(
+                f"vector_id not found: {vid}", context={"vector_id": vid}
+            )
         return v
 
     # ---- public API ----
     def encode(
-        self, *, data: dict[str, list[float]], dimension: int, compression_tier: str = "full"
+        self,
+        *,
+        data: dict[str, list[float]],
+        dimension: int,
+        compression_tier: str = "full",
     ) -> dict:
         allowed_dims = set(HYPERVECTOR_DIMENSIONS.values())
         if int(dimension) not in allowed_dims:
@@ -73,7 +77,7 @@ class HypervectorEngine:
                 raise EncodingError(
                     "failed to parse input array", context={"modality": modality}
                 ) from e
-                raise
+                raise RuntimeError("Unspecified error")
             n_features = int(x.shape[1])
             proj = SparseRandomProjection(
                 n_components=int(dimension), density=DEFAULT_DENSITY, seed=DEFAULT_SEED
@@ -102,7 +106,9 @@ class HypervectorEngine:
         operation = (operation or "").lower()
         parameters = parameters or {}
         if operation not in {"permute", "bundle", "bind", "multiply", "convolve"}:
-            raise ValidationError("unsupported operation", context={"operation": operation})
+            raise ValidationError(
+                "unsupported operation", context={"operation": operation}
+            )
 
         if operation == "permute":
             if len(vector_ids) != 1:

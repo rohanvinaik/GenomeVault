@@ -16,13 +16,13 @@ from typing import Any
 from fastapi import Depends, FastAPI, HTTPException, Security, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from pydantic import BaseModel
 
-from ..genomevault.blockchain.node import BlockchainNode, NodeInfo
-from ..genomevault.core.config import get_config
-from ..genomevault.core.constants import NodeType
-from ..genomevault.utils.logging import audit_logger, get_logger
+from genomevault.blockchain.node import BlockchainNode, NodeInfo
+from genomevault.core.config import get_config
+from genomevault.core.constants import DEFAULT_PIPELINE_TYPES, NodeType
+from genomevault.utils.logging import audit_logger, logger
 
-logger = get_logger(__name__)
 config = get_config()
 
 # Initialize FastAPI app
@@ -101,18 +101,16 @@ class AuditChallengeResponse(BaseModel):
 class PipelineRequest(BaseModel):
     """Processing pipeline request"""
 
-    pipeline_type: str  # genomic, transcriptomic, etc.
-    input_data: dict[str, Any]
-    compression_tier: str = "clinical"
-    options: dict[str, Any] | None = None
+    pipeline_type: str
+    params: dict[str, Any] = {}
 
 
-class PipelineResponse(BaseModel):
+class PipelineCreateResponse(BaseModel):
     """Processing pipeline response"""
 
     job_id: str
-    status: str
-    estimated_time_seconds: int
+    pipeline_type: str
+    accepted: bool
 
 
 class VectorRequest(BaseModel):
@@ -161,22 +159,24 @@ async def verify_token(
 
 
 @app.post("/topology", response_model=TopologyResponse)
-async def get_network_topology(request: TopologyRequest, user_id: str = Depends(verify_token)):
+async def get_network_topology(
+    request: TopologyRequest, user_id: str = Depends(verify_token)
+):
     """
     Get network topology information for optimal PIR server selection.
 
     Returns nearest light nodes (LN) and trusted signatories (TS).
     """
-    logger.info(f"Topology request from {request.node_id}", extra={"privacy_safe": True})
+    logger.info("Topology request from %s", request.node_id)
 
     # Get all nodes
     light_nodes = []
     ts_nodes = []
 
     for node_id, node_info in node_registry.items():
-        if node_info.is_trusted_signatory:
+        if node_info.signatory:
             ts_nodes.append(node_id)
-        elif node_info.node_class == NodeType.LIGHT:
+        elif node_info.node_type == NodeType.LIGHT.value:
             light_nodes.append(node_id)
 
     # Sort by geographic proximity if location provided
@@ -192,16 +192,15 @@ async def get_network_topology(request: TopologyRequest, user_id: str = Depends(
 
 
 @app.post("/credit/vault/redeem", response_model=CreditVaultResponse)
-async def redeem_credits(request: CreditVaultRequest, user_id: str = Depends(verify_token)):
+async def redeem_credits(
+    request: CreditVaultRequest, user_id: str = Depends(verify_token)
+):
     """
     Redeem credits from vault for services.
 
     Burns credits and processes payment/service delivery.
     """
-    logger.info(
-        "Credit redemption: {request.creditsBurned} credits for invoice {request.invoiceId}",
-        extra={"privacy_safe": True},
-    )
+    logger.info("Credit redemption: %s for %s", request.creditsBurned, user_id)
 
     # Verify user has sufficient credits
     user_credits = _get_user_credits(user_id)
@@ -212,7 +211,9 @@ async def redeem_credits(request: CreditVaultRequest, user_id: str = Depends(ver
         )
 
     # Process redemption
-    tx_id = _process_credit_redemption(user_id, request.invoiceId, request.creditsBurned)
+    tx_id = _process_credit_redemption(
+        user_id, request.invoiceId, request.creditsBurned
+    )
 
     # Get remaining balance
     remaining = user_credits - request.creditsBurned
@@ -229,7 +230,9 @@ async def redeem_credits(request: CreditVaultRequest, user_id: str = Depends(ver
         },
     )
 
-    response = CreditVaultResponse(success=True, transactionId=tx_id, remainingCredits=remaining)
+    response = CreditVaultResponse(
+        success=True, transactionId=tx_id, remainingCredits=remaining
+    )
 
     return response
 
@@ -243,10 +246,7 @@ async def create_audit_challenge(
 
     Validates node behavior and handles slashing if needed.
     """
-    logger.info(
-        "Audit challenge from {request.challenger} to {request.target}",
-        extra={"privacy_safe": True},
-    )
+    logger.info("Audit challenge from %s to %s", request.challenger, request.target)
 
     if not blockchain_node:
         raise HTTPException(
@@ -272,7 +272,7 @@ async def create_audit_challenge(
 # Client API Endpoints
 
 
-@app.post("/pipelines", response_model=PipelineResponse)
+@app.post("/pipelines/create", response_model=PipelineCreateResponse)
 async def create_processing_pipeline(
     request: PipelineRequest, user_id: str = Depends(verify_token)
 ):
@@ -281,40 +281,17 @@ async def create_processing_pipeline(
 
     Initiates local processing for specified omics type.
     """
-    logger.info(f"Pipeline request: {request.pipeline_type}", extra={"privacy_safe": True})
+    if request.pipeline_type not in DEFAULT_PIPELINE_TYPES:
+        raise HTTPException(status_code=400, detail="Unsupported pipeline type")
 
-    # Validate pipeline type
-    valid_types = ["genomic", "transcriptomic", "epigenetic", "proteomic", "phenotypic"]
-    if request.pipeline_type not in valid_types:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid pipeline type. Must be one of: {valid_types}",
-        )
+    job_id = f"{user_id}:{request.pipeline_type}:{int(datetime.now().timestamp())}"
+    logger.info("Pipeline requested: %s by %s", request.pipeline_type, user_id)
 
-    # Create job
-    job_id = hashlib.sha256(
-        b"{user_id}:{request.pipeline_type}:{datetime.now().isoformat()}"
-    ).hexdigest()[:16]
-
-    # Estimate processing time
-    time_estimates = {
-        "genomic": 240,  # 4 hours
-        "transcriptomic": 120,  # 2 hours
-        "epigenetic": 180,  # 3 hours
-        "proteomic": 90,  # 1.5 hours
-        "phenotypic": 30,  # 30 minutes
-    }
-
-    response = PipelineResponse(
-        job_id=job_id,
-        status="queued",
-        estimated_time_seconds=time_estimates.get(request.pipeline_type, 120) * 60,
-    )
-
-    # Queue job for processing
     _queue_pipeline_job(job_id, request)
 
-    return response
+    return PipelineCreateResponse(
+        job_id=job_id, pipeline_type=request.pipeline_type, accepted=True
+    )
 
 
 @app.get("/pipelines/{job_id}")
@@ -330,13 +307,15 @@ async def get_pipeline_status(job_id: str, user_id: str = Depends(verify_token))
 
 
 @app.post("/vectors", response_model=VectorResponse)
-async def perform_vector_operation(request: VectorRequest, user_id: str = Depends(verify_token)):
+async def perform_vector_operation(
+    request: VectorRequest, user_id: str = Depends(verify_token)
+):
     """
     Perform hypervector operations.
 
     Supports encoding, binding, and similarity operations.
     """
-    logger.info(f"Vector operation: {request.operation}", extra={"privacy_safe": True})
+    logger.info("Vector operation: %s", request.operation)
 
     if request.operation == "encode":
         # Encode data to hypervector
@@ -387,7 +366,7 @@ async def perform_vector_operation(request: VectorRequest, user_id: str = Depend
     else:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Unknown operation: {request.operation}",
+            detail=f"Unknown operation: {request.operation}",
         )
 
     response = VectorResponse(result=result, metadata=metadata)
@@ -402,10 +381,7 @@ async def generate_proof(request: ProofRequest, user_id: str = Depends(verify_to
 
     Creates privacy-preserving proofs for various circuits.
     """
-    logger.info(
-        f"Proof generation request: {request.circuit_name}",
-        extra={"privacy_safe": True},
-    )
+    logger.info("Proof generation request: %s", request.circuit_name)
 
     # Validate circuit
     valid_circuits = [
@@ -420,12 +396,12 @@ async def generate_proof(request: ProofRequest, user_id: str = Depends(verify_to
     if request.circuit_name not in valid_circuits:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid circuit. Must be one of: {valid_circuits}",
+            detail=f"Invalid circuit. Must be one of: {valid_circuits}",
         )
 
     # Generate proof (simplified)
     proof_id = hashlib.sha256(
-        b"{user_id}:{request.circuit_name}:{datetime.now().isoformat()}"
+        f"{user_id}:{request.circuit_name}:{datetime.now().isoformat()}".encode()
     ).hexdigest()[:16]
 
     # Mock proof data
@@ -510,7 +486,7 @@ def _process_credit_redemption(user_id: str, invoice_id: str, amount: int) -> st
     """Process credit redemption transaction."""
     # In production, would submit to blockchain
     tx_id = hashlib.sha256(
-        b"{user_id}:{invoice_id}:{amount}:{datetime.now().isoformat()}"
+        f"{user_id}:{invoice_id}:{amount}:{datetime.now().isoformat()}".encode()
     ).hexdigest()
     return tx_id
 
@@ -518,7 +494,7 @@ def _process_credit_redemption(user_id: str, invoice_id: str, amount: int) -> st
 def _queue_pipeline_job(job_id: str, request: PipelineRequest):
     """Queue processing pipeline job."""
     # In production, would add to job queue
-    logger.info(f"Job {job_id} queued for processing", extra={"privacy_safe": True})
+    logger.info("Job %s queued for processing", job_id)
 
 
 def _encode_to_hypervector(data: dict[str, Any], domain: str) -> Any:
@@ -550,53 +526,59 @@ async def startup_event():
     logger.info("Starting GenomeVault API...")
 
     # Initialize blockchain node
-    blockchain_node = BlockchainNode(
-        node_id=config.network.node_id,
-        node_class=NodeType(config.network.node_class),
-        is_trusted_signatory=config.network.signatory_status,
+    node_type = (
+        NodeType(config.node_type)
+        if not isinstance(config.node_type, NodeType)
+        else config.node_type
     )
+    blockchain_node = BlockchainNode(
+        node_id=config.node_id,
+        node_type=node_type,
+        signatory=config.signatory_status,
+    )
+    logger.info("Blockchain node started: %s (%s)", config.node_id, node_type.value)
 
     # Register some example nodes
     example_nodes = [
         NodeInfo(
-            "ln1",
-            "10.0.0.1",
-            NodeType.LIGHT,
-            False,
-            1,
-            100,
-            100,
-            datetime.now().timestamp(),
+            node_id="ln1",
+            ip_address="10.0.0.1",
+            node_type=NodeType.LIGHT.value,
+            signatory=False,
+            class_weight=1,
+            stake=100,
+            credits=100,
+            last_seen=datetime.now().timestamp(),
         ),
         NodeInfo(
-            "ln2",
-            "10.0.0.2",
-            NodeType.LIGHT,
-            False,
-            1,
-            100,
-            100,
-            datetime.now().timestamp(),
+            node_id="ln2",
+            ip_address="10.0.0.2",
+            node_type=NodeType.LIGHT.value,
+            signatory=False,
+            class_weight=1,
+            stake=100,
+            credits=100,
+            last_seen=datetime.now().timestamp(),
         ),
         NodeInfo(
-            "ts1",
-            "10.0.0.3",
-            NodeType.FULL,
-            True,
-            14,
-            1000,
-            300,
-            datetime.now().timestamp(),
+            node_id="ts1",
+            ip_address="10.0.0.3",
+            node_type=NodeType.FULL.value,
+            signatory=True,
+            class_weight=4,
+            stake=1000,
+            credits=300,
+            last_seen=datetime.now().timestamp(),
         ),
         NodeInfo(
-            "ts2",
-            "10.0.0.4",
-            NodeType.FULL,
-            True,
-            14,
-            1000,
-            300,
-            datetime.now().timestamp(),
+            node_id="ts2",
+            ip_address="10.0.0.4",
+            node_type=NodeType.FULL.value,
+            signatory=True,
+            class_weight=4,
+            stake=1000,
+            credits=300,
+            last_seen=datetime.now().timestamp(),
         ),
     ]
 
@@ -610,9 +592,7 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_event():
     """Cleanup on shutdown."""
-    logger.info("Shutting down GenomeVault API...")
-    # Cleanup tasks
-    logger.info("API shutdown complete")
+    logger.info("API shutdown")
 
 
 # Run the application
@@ -621,7 +601,7 @@ if __name__ == "__main__":
 
     uvicorn.run(
         app,
-        host=config.network.api_host,
-        port=config.network.api_port,
+        host="0.0.0.0",
+        port=8000,
         log_level="info",
     )

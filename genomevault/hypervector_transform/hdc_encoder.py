@@ -19,12 +19,7 @@ import torch
 try:
     import pandas as pd
 except ImportError:
-    from genomevault.observability.logging import configure_logging
-
-    logger = configure_logging()
-    logger.exception("Unhandled exception")
     pd = None
-    raise
 
 # Import our optimized Hamming LUT
 try:
@@ -32,12 +27,7 @@ try:
 
     HAMMING_LUT_AVAILABLE = True
 except ImportError:
-    from genomevault.observability.logging import configure_logging
-
-    logger = configure_logging()
-    logger.exception("Unhandled exception")
     HAMMING_LUT_AVAILABLE = False
-    raise
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -151,15 +141,17 @@ class HypervectorEncoder:
             try:
                 self.hamming_lut = HammingLUT(use_gpu=torch.cuda.is_available())
                 logger.info("Initialized with optimized Hamming LUT")
-            except Exception as e:
+            except Exception:
                 from genomevault.observability.logging import configure_logging
 
                 logger = configure_logging()
                 logger.exception("Unhandled exception")
-                logger.warning(f"Failed to initialize Hamming LUT: {e}")
-                raise
+                logger.warning("Failed to initialize Hamming LUT: %se")
+                raise RuntimeError("Unspecified error")
 
-        logger.info(f"Initialized HypervectorEncoder with {self.config.dimension}D vectors")
+        logger.info(
+            "Initialized HypervectorEncoder with %sself.config.dimensionD vectors"
+        )
 
     def encode(
         self,
@@ -210,18 +202,20 @@ class HypervectorEncoder:
             if self.config.quantize:
                 hypervector = self._quantize(hypervector)
 
-            logger.debug(f"Encoded {omics_type.value} features to {dimension}D hypervector")
+            logger.debug(
+                "Encoded %somics_type.value features to %sdimensionD hypervector"
+            )
 
             return hypervector
 
-        except Exception as e:
+        except Exception:
             from genomevault.observability.logging import configure_logging
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error(f"Encoding error: {e!s}")
-            raise
-            raise
+            logger.error("Encoding error: %se!s")
+            raise RuntimeError("Unspecified error")
+            raise RuntimeError("Unspecified error")
 
     def encode_multiresolution(
         self, features: np.ndarray | torch.Tensor | dict, omics_type: OmicsType
@@ -239,7 +233,9 @@ class HypervectorEncoder:
         multiresolution_vectors = {}
 
         for tier in CompressionTier:
-            multiresolution_vectors[tier.value] = self.encode(features, omics_type, tier)
+            multiresolution_vectors[tier.value] = self.encode(
+                features, omics_type, tier
+            )
 
         return multiresolution_vectors
 
@@ -297,7 +293,9 @@ class HypervectorEncoder:
                     features.append(value)
                 elif isinstance(value, str):
                     # Hash categorical values
-                    features.append(int(hashlib.md5(value.encode()).hexdigest()[:8], 16) % 1000)
+                    features.append(
+                        int(hashlib.md5(value.encode()).hexdigest()[:8], 16) % 1000
+                    )
             return torch.tensor(features, dtype=torch.float32)
 
         # Default: flatten all numeric values
@@ -332,20 +330,26 @@ class HypervectorEncoder:
         elif self.config.projection_type == ProjectionType.ORTHOGONAL:
             matrix = self._create_orthogonal_projection(input_dim, output_dim)
         else:
-            raise ValueError(f"Unsupported projection type: {self.config.projection_type}")
+            raise ValueError(
+                f"Unsupported projection type: {self.config.projection_type}"
+            )
 
         # Cache the matrix
         self._projection_cache[cache_key] = matrix
 
         return matrix
 
-    def _create_gaussian_projection(self, input_dim: int, output_dim: int) -> torch.Tensor:
+    def _create_gaussian_projection(
+        self, input_dim: int, output_dim: int
+    ) -> torch.Tensor:
         """Create random Gaussian projection matrix"""
         # Standard random projection
         matrix = torch.randn(output_dim, input_dim) / np.sqrt(input_dim)
         return matrix
 
-    def _create_sparse_projection(self, input_dim: int, output_dim: int) -> torch.Tensor:
+    def _create_sparse_projection(
+        self, input_dim: int, output_dim: int
+    ) -> torch.Tensor:
         """Create sparse random projection matrix"""
         matrix = torch.zeros(output_dim, input_dim)
 
@@ -367,7 +371,9 @@ class HypervectorEncoder:
 
         return matrix
 
-    def _create_orthogonal_projection(self, input_dim: int, output_dim: int) -> torch.Tensor:
+    def _create_orthogonal_projection(
+        self, input_dim: int, output_dim: int
+    ) -> torch.Tensor:
         """Create orthogonal projection matrix using QR decomposition"""
         # For orthogonal projection, we need output_dim <= input_dim
         if output_dim > input_dim:
@@ -380,7 +386,9 @@ class HypervectorEncoder:
             q, _ = torch.linalg.qr(base_matrix)
             return q
 
-    def _project(self, features: torch.Tensor, projection_matrix: torch.Tensor) -> torch.Tensor:
+    def _project(
+        self, features: torch.Tensor, projection_matrix: torch.Tensor
+    ) -> torch.Tensor:
         """Project features using the projection matrix"""
         # Handle batch dimension if present
         if features.dim() > 1:
@@ -414,7 +422,9 @@ class HypervectorEncoder:
         # Scale back
         return 2 * quantized / (levels - 1) - 1
 
-    def similarity(self, hv1: torch.Tensor, hv2: torch.Tensor, metric: str = "cosine") -> float:
+    def similarity(
+        self, hv1: torch.Tensor, hv2: torch.Tensor, metric: str = "cosine"
+    ) -> float:
         """
         Compute similarity between two hypervectors
 
@@ -427,7 +437,9 @@ class HypervectorEncoder:
             Similarity score
         """
         if metric == "cosine":
-            return torch.nn.functional.cosine_similarity(hv1.view(1, -1), hv2.view(1, -1)).item()
+            return torch.nn.functional.cosine_similarity(
+                hv1.view(1, -1), hv2.view(1, -1)
+            ).item()
         elif metric == "euclidean":
             return -torch.dist(hv1, hv2, p=2).item()
         elif metric == "hamming":
@@ -470,8 +482,12 @@ class HypervectorEncoder:
             hvs2_binary = (torch.sign(hvs2) > 0).numpy().astype(np.uint8)
 
             # Pack bits for each vector
-            hvs1_packed = np.array([np.packbits(v).view(np.uint64) for v in hvs1_binary])
-            hvs2_packed = np.array([np.packbits(v).view(np.uint64) for v in hvs2_binary])
+            hvs1_packed = np.array(
+                [np.packbits(v).view(np.uint64) for v in hvs1_binary]
+            )
+            hvs2_packed = np.array(
+                [np.packbits(v).view(np.uint64) for v in hvs2_binary]
+            )
 
             # Compute distances
             distances = self.hamming_lut.distance_batch(hvs1_packed, hvs2_packed)
@@ -491,7 +507,9 @@ class HypervectorEncoder:
 
             return similarities
 
-    def get_encoding_metrics(self, start_time: float, hypervector: torch.Tensor) -> EncodingMetrics:
+    def get_encoding_metrics(
+        self, start_time: float, hypervector: torch.Tensor
+    ) -> EncodingMetrics:
         """Calculate encoding metrics"""
         encoding_time_ms = (datetime.now().timestamp() - start_time) * 1000
         memory_usage_kb = hypervector.element_size() * hypervector.nelement() / 1024
@@ -519,7 +537,8 @@ class HypervectorEncoder:
             "cache_keys": list(self._projection_cache.keys()),
             "total_parameters": sum(m.numel() for m in self._projection_cache.values()),
             "memory_mb": sum(
-                m.element_size() * m.numel() / 1024**2 for m in self._projection_cache.values()
+                m.element_size() * m.numel() / 1024**2
+                for m in self._projection_cache.values()
             ),
         }
         return stats

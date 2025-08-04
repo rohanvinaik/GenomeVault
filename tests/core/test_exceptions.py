@@ -1,17 +1,10 @@
 import pytest
 
-from genomevault.core.exceptions import (
-    APISchemaError,
-    ConfigurationError,
-    EncodingError,
-    FederatedError,
-    GenomeVaultError,
-    LedgerError,
-    PIRProtocolError,
-    ProjectionError,
-    ValidationError,
-    ZKProofError,
-)
+from genomevault.core.exceptions import (APISchemaError, ConfigurationError,
+                                         EncodingError, FederatedError,
+                                         GenomeVaultError, LedgerError,
+                                         PIRProtocolError, ProjectionError,
+                                         ValidationError, ZKProofError)
 
 
 def test_instantiation_and_str_contains_class():

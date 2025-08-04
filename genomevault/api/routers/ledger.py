@@ -2,12 +2,9 @@ from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException
 
-from genomevault.ledger.models import (
-    LedgerAppendRequest,
-    LedgerEntriesResponse,
-    LedgerEntryModel,
-    LedgerVerifyResponse,
-)
+from genomevault.ledger.models import (LedgerAppendRequest,
+                                       LedgerEntriesResponse, LedgerEntryModel,
+                                       LedgerVerifyResponse)
 from genomevault.ledger.store import InMemoryLedger
 
 router = APIRouter(prefix="/ledger", tags=["ledger"])
@@ -25,7 +22,7 @@ def append_entry(req: LedgerAppendRequest):
         logger = configure_logging()
         logger.exception("Unhandled exception")
         raise HTTPException(status_code=400, detail=str(e))
-        raise
+        raise RuntimeError("Unspecified error")
 
 
 @router.get("/verify", response_model=LedgerVerifyResponse)
@@ -35,4 +32,6 @@ def verify_chain():
 
 @router.get("/entries", response_model=LedgerEntriesResponse)
 def list_entries():
-    return LedgerEntriesResponse(entries=[LedgerEntryModel(**e.__dict__) for e in _L.entries()])
+    return LedgerEntriesResponse(
+        entries=[LedgerEntryModel(**e.__dict__) for e in _L.entries()]
+    )

@@ -50,7 +50,7 @@ class ModelEvolutionVisualizer:
         Returns:
             Dictionary with 'tsne' and 'umap' projections
         """
-        logger.info(f"Projecting {len(hypervectors)} hypervectors to 2D space")
+        logger.info("Projecting %slen(hypervectors) hypervectors to 2D space")
 
         # Convert to numpy array
         X = np.array(hypervectors)
@@ -210,8 +210,8 @@ class ModelEvolutionVisualizer:
             if drift > threshold:
                 anomaly_indices.append(i)
                 logger.warning(
-                    f"⚠️  Semantic drift detected at epoch {i*50}: {drift:.3f} "
-                    f"(threshold: {threshold})"
+                    "⚠️  Semantic drift detected at epoch %si * 50: %sdrift:.3f "
+                    "(threshold: %sthreshold)"
                 )
 
         # Compute rolling average drift for trend analysis
@@ -224,8 +224,8 @@ class ModelEvolutionVisualizer:
             sustained_drift_indices = np.where(rolling_drift > threshold * 0.8)[0]
             if len(sustained_drift_indices) > 0:
                 logger.warning(
-                    f"Sustained semantic drift detected in epochs "
-                    f"{sustained_drift_indices[0]*50} to {sustained_drift_indices[-1]*50}"
+                    "Sustained semantic drift detected in epochs "
+                    "%ssustained_drift_indices[0] * 50 to %ssustained_drift_indices[-1] * 50"
                 )
 
         self.drift_history = drift_scores
@@ -237,7 +237,7 @@ class ModelEvolutionVisualizer:
         anomaly_indices: list[int],
         labels: list[str] | None = None,
         save_path: str | None = None,
-    ):
+    ) -> None:
         """
         Plot semantic drift analysis over training.
 
@@ -328,7 +328,9 @@ class ModelEvolutionVisualizer:
             v2 = projections[i + 1] - projections[i]
 
             # Angle between vectors
-            cos_angle = np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2) + 1e-8)
+            cos_angle = np.dot(v1, v2) / (
+                np.linalg.norm(v1) * np.linalg.norm(v2) + 1e-8
+            )
             angle = np.arccos(np.clip(cos_angle, -1, 1))
             curvatures.append(angle)
 
@@ -345,8 +347,8 @@ class ModelEvolutionVisualizer:
         }
 
         logger.info(
-            f"{projection_type} trajectory analysis: "
-            f"smoothness={smoothness:.3f}, efficiency={metrics['efficiency']:.3f}"
+            "%sprojection_type trajectory analysis: "
+            "smoothness=%ssmoothness:.3f, efficiency=%smetrics['efficiency']:.3f"
         )
 
         return metrics
@@ -368,7 +370,9 @@ class ModelEvolutionVisualizer:
             return [(0, len(snapshot_vectors) - 1)]
 
         # Compute drift scores
-        drift_scores, _ = self.detect_semantic_drift(snapshot_vectors, threshold=float("inf"))
+        drift_scores, _ = self.detect_semantic_drift(
+            snapshot_vectors, threshold=float("inf")
+        )
 
         # Find phase boundaries using change point detection
         # Simple approach: find points with largest drift changes
@@ -389,7 +393,7 @@ class ModelEvolutionVisualizer:
             phases.append((start_idx, end_idx + 1))
             start_idx = end_idx + 1
 
-        logger.info(f"Detected {len(phases)} training phases: {phases}")
+        logger.info("Detected %slen(phases) training phases: %sphases")
 
         return phases
 
@@ -399,7 +403,7 @@ class ModelEvolutionVisualizer:
         phases: list[tuple[int, int]],
         labels: list[str],
         save_path: str | None = None,
-    ):
+    ) -> None:
         """
         Visualize training phases with different colors.
 
@@ -411,7 +415,9 @@ class ModelEvolutionVisualizer:
         """
         # Get UMAP projection
         X = np.array(hypervectors)
-        reducer = umap.UMAP(n_neighbors=min(15, len(X) - 1), min_dist=0.1, random_state=42)
+        reducer = umap.UMAP(
+            n_neighbors=min(15, len(X) - 1), min_dist=0.1, random_state=42
+        )
         embeddings = reducer.fit_transform(X)
 
         plt.figure(figsize=(10, 8))
@@ -432,7 +438,7 @@ class ModelEvolutionVisualizer:
                 alpha=0.7,
                 edgecolors="black",
                 linewidth=1,
-                label=f"Phase {idx+1}",
+                label=f"Phase {idx + 1}",
             )
 
             # Connect points within phase
@@ -514,8 +520,12 @@ def create_semantic_debugging_report(
     phase_colors = plt.cm.Set3(np.linspace(0, 1, len(phases)))
 
     for idx, (start, end) in enumerate(phases):
-        ax3.axvspan(start, end, alpha=0.3, color=phase_colors[idx], label=f"Phase {idx+1}")
-    ax3.plot(range(len(snapshot_vectors)), [0] * len(snapshot_vectors), "k.", markersize=10)
+        ax3.axvspan(
+            start, end, alpha=0.3, color=phase_colors[idx], label=f"Phase {idx + 1}"
+        )
+    ax3.plot(
+        range(len(snapshot_vectors)), [0] * len(snapshot_vectors), "k.", markersize=10
+    )
     ax3.set_title("Training Phases")
     ax3.set_xlabel("Snapshot Index")
     ax3.legend()
@@ -549,8 +559,8 @@ def create_semantic_debugging_report(
     Number of Phases: {len(phases)}
     Avg Drift: {np.mean(drift_scores):.3f}
     Max Drift: {np.max(drift_scores):.3f}
-    Trajectory Smoothness: {metrics['smoothness']:.3f}
-    Path Efficiency: {metrics['efficiency']:.3f}
+    Trajectory Smoothness: {metrics["smoothness"]:.3f}
+    Path Efficiency: {metrics["efficiency"]:.3f}
     """
     ax6.text(
         0.1,

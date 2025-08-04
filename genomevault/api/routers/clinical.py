@@ -3,7 +3,8 @@ from __future__ import annotations
 import numpy as np
 from fastapi import APIRouter, HTTPException
 
-from genomevault.api.models.clinical import ClinicalEvalRequest, ClinicalEvalResponse
+from genomevault.api.models.clinical import (ClinicalEvalRequest,
+                                             ClinicalEvalResponse)
 from genomevault.clinical.eval.harness import compute_report
 
 router = APIRouter(prefix="/clinical", tags=["clinical"])
@@ -27,4 +28,4 @@ def clinical_eval(req: ClinicalEvalRequest):
         logger = configure_logging()
         logger.exception("Unhandled exception")
         raise HTTPException(status_code=400, detail=str(e))
-        raise
+        raise RuntimeError("Unspecified error")

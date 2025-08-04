@@ -3,7 +3,8 @@ from __future__ import annotations
 import numpy as np
 
 from genomevault.core.exceptions import ValidationError
-from genomevault.federated.models import AggregateRequest, AggregateResponse, ModelUpdate
+from genomevault.federated.models import (AggregateRequest, AggregateResponse,
+                                          ModelUpdate)
 
 
 def _l2_norm(x: np.ndarray) -> float:

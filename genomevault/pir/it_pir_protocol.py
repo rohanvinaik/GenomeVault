@@ -47,7 +47,7 @@ class PIRProtocol:
         self.params = params
         self._validate_parameters()
 
-    def _validate_parameters(self):
+    def _validate_parameters(self) -> None:
         """Validate protocol parameters."""
         if self.params.num_servers < 2:
             raise ValueError("IT-PIR requires at least 2 servers")
@@ -86,7 +86,9 @@ class PIRProtocol:
         # Generate n-1 random vectors
         for i in range(self.params.num_servers - 1):
             # Generate random binary vector
-            random_vector = np.random.randint(0, 2, self.params.database_size, dtype=np.uint8)
+            random_vector = np.random.randint(
+                0, 2, self.params.database_size, dtype=np.uint8
+            )
             query_vectors.append(random_vector)
 
         # Last vector is chosen so sum equals unit vector
@@ -100,11 +102,15 @@ class PIRProtocol:
         sum_vec = np.zeros(self.params.database_size, dtype=np.uint8)
         for vec in query_vectors:
             sum_vec = (sum_vec + vec) % 2
-        assert np.array_equal(sum_vec, unit_vector), "Query vectors do not sum to unit vector"
+        assert np.array_equal(
+            sum_vec, unit_vector
+        ), "Query vectors do not sum to unit vector"
 
         return query_vectors
 
-    def process_server_response(self, query_vector: np.ndarray, database: np.ndarray) -> np.ndarray:
+    def process_server_response(
+        self, query_vector: np.ndarray, database: np.ndarray
+    ) -> np.ndarray:
         """
         Process query on server side.
 
@@ -145,7 +151,9 @@ class PIRProtocol:
             Reconstructed database element
         """
         if len(responses) != self.params.num_servers:
-            raise ValueError(f"Expected {self.params.num_servers} responses, got {len(responses)}")
+            raise ValueError(
+                f"Expected {self.params.num_servers} responses, got {len(responses)}"
+            )
 
         # XOR all responses together
         result = responses[0].copy()
@@ -206,7 +214,9 @@ class PIRProtocol:
             # Pad with random bytes
             padding_size = self.params.element_size - len(response)
             padding = secrets.token_bytes(padding_size)
-            response = np.concatenate([response, np.frombuffer(padding, dtype=np.uint8)])
+            response = np.concatenate(
+                [response, np.frombuffer(padding, dtype=np.uint8)]
+            )
         elif len(response) > self.params.element_size:
             # Truncate
             response = response[: self.params.element_size]
@@ -222,7 +232,9 @@ class PIRProtocol:
 
         return response, actual_time_ms
 
-    def calculate_privacy_breach_probability(self, k_honest: int, honesty_prob: float) -> float:
+    def calculate_privacy_breach_probability(
+        self, k_honest: int, honesty_prob: float
+    ) -> float:
         """
         Calculate probability of privacy breach.
 
@@ -239,7 +251,9 @@ class PIRProtocol:
         """
         return (1 - honesty_prob) ** k_honest
 
-    def calculate_min_servers(self, target_failure_prob: float, honesty_prob: float) -> int:
+    def calculate_min_servers(
+        self, target_failure_prob: float, honesty_prob: float
+    ) -> int:
         """
         Calculate minimum servers needed for target failure probability.
 
@@ -334,7 +348,7 @@ if __name__ == "__main__":
 
     # Generate query vectors
     queries = protocol.generate_query_vectors(index)
-    logger.info(f"Generated {len(queries)} query vectors for index {index}")
+    logger.info("Generated %slen(queries) query vectors for index %sindex")
 
     # Simulate server databases (normally distributed across servers)
     # Each database element is 1024 bytes
@@ -348,7 +362,7 @@ if __name__ == "__main__":
         response = protocol.process_server_response(query, database)
         padded_response, time_ms = protocol.timing_safe_response(response)
         responses.append(padded_response)
-        logger.info(f"Server {i+1} response generated in {time_ms:.1f}ms")
+        logger.info("Server %si + 1 response generated in %stime_ms:.1fms")
 
     # Reconstruct element
     reconstructed = protocol.reconstruct_element(responses)
@@ -359,18 +373,22 @@ if __name__ == "__main__":
     logger.info("✓ Successfully retrieved element via IT-PIR")
 
     # Calculate privacy guarantees
-    prob_ts = protocol.calculate_privacy_breach_probability(k_honest=2, honesty_prob=0.98)
-    prob_ln = protocol.calculate_privacy_breach_probability(k_honest=3, honesty_prob=0.95)
+    prob_ts = protocol.calculate_privacy_breach_probability(
+        k_honest=2, honesty_prob=0.98
+    )
+    prob_ln = protocol.calculate_privacy_breach_probability(
+        k_honest=3, honesty_prob=0.95
+    )
 
     logger.info("\nPrivacy breach probabilities:")
-    logger.info(f"  2 HIPAA TS servers: {prob_ts:.6f}")
-    logger.info(f"  3 Light Node servers: {prob_ln:.6f}")
+    logger.info("  2 HIPAA TS servers: %sprob_ts:.6f")
+    logger.info("  3 Light Node servers: %sprob_ln:.6f")
 
     # Calculate minimum servers needed
     target_prob = 1e-4
     min_ts = protocol.calculate_min_servers(target_prob, 0.98)
     min_ln = protocol.calculate_min_servers(target_prob, 0.95)
 
-    logger.info(f"\nMinimum servers for {target_prob} failure probability:")
-    logger.info(f"  HIPAA TS nodes: {min_ts}")
-    logger.info(f"  Light Nodes: {min_ln}")
+    logger.info("\nMinimum servers for %starget_prob failure probability:")
+    logger.info("  HIPAA TS nodes: %smin_ts")
+    logger.info("  Light Nodes: %smin_ln")

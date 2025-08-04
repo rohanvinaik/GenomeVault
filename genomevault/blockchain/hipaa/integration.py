@@ -74,7 +74,7 @@ class HIPAANodeIntegration:
             # Update governance voting power
             self._update_governance_power(node)
 
-            logger.info(f"Registered HIPAA provider {credentials.npi} as trusted node")
+            logger.info("Registered HIPAA provider %scredentials.npi as trusted node")
 
             return node
 
@@ -83,9 +83,9 @@ class HIPAANodeIntegration:
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error(f"Failed to register provider {credentials.npi}: {e}")
-            raise
-            raise
+            logger.error("Failed to register provider %scredentials.npi: %se")
+            raise RuntimeError("Unspecified error")
+            raise RuntimeError("Unspecified error")
 
     def _create_trusted_node(
         self, record: VerificationRecord, config: dict[str, Any]
@@ -104,13 +104,17 @@ class HIPAANodeIntegration:
                 "provider_name": record.cms_data.get("name", ""),
                 "hsm_serial": record.credentials.hsm_serial,
                 "verified_at": record.verified_at.isoformat(),
-                "expires_at": (record.expires_at.isoformat() if record.expires_at else None),
+                "expires_at": (
+                    record.expires_at.isoformat() if record.expires_at else None
+                ),
                 "honesty_probability": record.honesty_probability,
             },
         )
 
         # Calculate voting power (c + s)
-        node.voting_power = node.get_class_weight() + SignatoryWeight.TRUSTED_SIGNATORY.value
+        node.voting_power = (
+            node.get_class_weight() + SignatoryWeight.TRUSTED_SIGNATORY.value
+        )
 
         return node
 
@@ -120,7 +124,7 @@ class HIPAANodeIntegration:
         # For now, update local governance system
         self.governance.total_voting_power += node.voting_power
 
-        logger.info(f"Updated governance voting power: +{node.voting_power}")
+        logger.info("Updated governance voting power: +%snode.voting_power")
 
     async def revoke_provider_node(self, npi: str, reason: str) -> bool:
         """
@@ -147,7 +151,7 @@ class HIPAANodeIntegration:
             # Remove from registry
             del self.node_registry[npi]
 
-            logger.info(f"Revoked node status for NPI {npi}")
+            logger.info("Revoked node status for NPI %snpi")
 
         return True
 
@@ -276,7 +280,9 @@ if __name__ == "__main__":
                 print("  Signatory weight: {node.signatory_status.value}")
 
                 # Check governance impact
-                print("\nGovernance total voting power: {governance.total_voting_power}")
+                print(
+                    "\nGovernance total voting power: {governance.total_voting_power}"
+                )
 
                 # Test committee setup
                 HIPAAGovernanceIntegration.create_hipaa_committee(governance)
@@ -290,7 +296,7 @@ if __name__ == "__main__":
                 logger = configure_logging()
                 logger.exception("Unhandled exception")
                 print("Registration failed: {e}")
-                raise
+                raise RuntimeError("Unspecified error")
 
     # Run test
     asyncio.run(test_hipaa_integration())

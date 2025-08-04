@@ -158,8 +158,12 @@ class AuditValidator:
 
         # Sort results
         self.report["files_with_prints"].sort(key=lambda x: x["count"], reverse=True)
-        self.report["files_with_broad_excepts"].sort(key=lambda x: x["count"], reverse=True)
-        self.report["complex_functions"].sort(key=lambda x: x["complexity"], reverse=True)
+        self.report["files_with_broad_excepts"].sort(
+            key=lambda x: x["count"], reverse=True
+        )
+        self.report["complex_functions"].sort(
+            key=lambda x: x["complexity"], reverse=True
+        )
 
         return self.report
 
@@ -188,14 +192,20 @@ class AuditValidator:
             if len(self.report["files_with_prints"]) > 5:
                 print(f"  ... and {len(self.report['files_with_prints']) - 5} more")
 
-        print(f"\nFiles with broad exceptions: {len(self.report['files_with_broad_excepts'])}")
+        print(
+            f"\nFiles with broad exceptions: {len(self.report['files_with_broad_excepts'])}"
+        )
         if self.report["files_with_broad_excepts"]:
             for item in self.report["files_with_broad_excepts"][:5]:
                 print(f"  - {item['path']}: {item['count']} broad except(s)")
             if len(self.report["files_with_broad_excepts"]) > 5:
-                print(f"  ... and {len(self.report['files_with_broad_excepts']) - 5} more")
+                print(
+                    f"  ... and {len(self.report['files_with_broad_excepts']) - 5} more"
+                )
 
-        print(f"\nComplex functions (complexity > 10): {len(self.report['complex_functions'])}")
+        print(
+            f"\nComplex functions (complexity > 10): {len(self.report['complex_functions'])}"
+        )
         if self.report["complex_functions"]:
             for item in self.report["complex_functions"][:5]:
                 print(

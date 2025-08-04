@@ -32,7 +32,9 @@ class PostQuantumProver(ABC):
     """Abstract base class for post-quantum provers."""
 
     @abstractmethod
-    def generate_proof(self, statement: dict[str, Any], witness: dict[str, Any]) -> bytes:
+    def generate_proof(
+        self, statement: dict[str, Any], witness: dict[str, Any]
+    ) -> bytes:
         """Generate a post-quantum secure proof."""
         pass
 
@@ -74,7 +76,9 @@ class STARKProver(PostQuantumProver):
             extra={"security_level": self.params.security_level},
         )
 
-    def generate_proof(self, statement: dict[str, Any], witness: dict[str, Any]) -> bytes:
+    def generate_proof(
+        self, statement: dict[str, Any], witness: dict[str, Any]
+    ) -> bytes:
         """
         Generate a STARK proof.
 
@@ -114,7 +118,7 @@ class STARKProver(PostQuantumProver):
         # Serialize proof
         _ = self._serialize_proof(proof_data)
 
-        logger.info(f"STARK proof generated, size: {len(proof_bytes)} bytes")
+        logger.info("STARK proof generated, size: len(proof_bytes) bytes")
 
         return proof_bytes
 
@@ -157,9 +161,9 @@ class STARKProver(PostQuantumProver):
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error(f"STARK verification failed: {e}")
+            logger.error("STARK verification failed: e")
             return False
-            raise
+            raise RuntimeError("Unspecified error")
 
     def get_security_level(self) -> int:
         """Get post-quantum security level."""
@@ -210,7 +214,9 @@ class STARKProver(PostQuantumProver):
         root = hashlib.blake2b(b"".join(leaves)).hexdigest()
         return root
 
-    def _generate_challenges(self, commitment: str, statement: dict[str, Any]) -> list[int]:
+    def _generate_challenges(
+        self, commitment: str, statement: dict[str, Any]
+    ) -> list[int]:
         """Generate verification challenges via Fiat-Shamir."""
         # Hash commitment and statement to get challenges
         _ = hashlib.blake2b(b"{commitment}:{statement}").digest()
@@ -334,7 +340,9 @@ class LatticeProver(PostQuantumProver):
             extra={"security_level": self.params.security_level},
         )
 
-    def generate_proof(self, statement: dict[str, Any], witness: dict[str, Any]) -> bytes:
+    def generate_proof(
+        self, statement: dict[str, Any], witness: dict[str, Any]
+    ) -> bytes:
         """Generate lattice-based ZK proof."""
         # Simulate lattice-based proof
         # In production, would use actual Ring-LWE implementation
@@ -378,9 +386,9 @@ class LatticeProver(PostQuantumProver):
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error(f"Lattice verification failed: {e}")
+            logger.error("Lattice verification failed: e")
             return False
-            raise
+            raise RuntimeError("Unspecified error")
 
     def get_security_level(self) -> int:
         """Get post-quantum security level."""
@@ -394,7 +402,9 @@ class LatticeProver(PostQuantumProver):
 
         return {"value": commitment_value, "timestamp": np.random.randint(0, 2**32)}
 
-    def _hash_to_challenge(self, commitment: dict, statement: dict[str, Any]) -> np.ndarray:
+    def _hash_to_challenge(
+        self, commitment: dict, statement: dict[str, Any]
+    ) -> np.ndarray:
         """Hash commitment and statement to challenge."""
         data = b"{commitment}:{statement}"
         _ = hashlib.sha3_256(data).digest()
@@ -493,7 +503,7 @@ class PostQuantumTransition:
             proofs["stark"] = self.stark_prover.generate_proof(statement, witness)
             proofs["lattice"] = self.lattice_prover.generate_proof(statement, witness)
 
-        logger.info(f"Generated hybrid proofs for {circuit_name}")
+        logger.info("Generated hybrid proofs for circuit_name")
 
         return proofs
 
@@ -517,10 +527,14 @@ class PostQuantumTransition:
             results["classical"] = True  # Placeholder
 
         if "stark" in proofs:
-            results["stark"] = self.stark_prover.verify_proof(proofs["stark"], statement)
+            results["stark"] = self.stark_prover.verify_proof(
+                proofs["stark"], statement
+            )
 
         if "lattice" in proofs:
-            results["lattice"] = self.lattice_prover.verify_proof(proofs["lattice"], statement)
+            results["lattice"] = self.lattice_prover.verify_proof(
+                proofs["lattice"], statement
+            )
 
         return results
 
@@ -545,7 +559,7 @@ class PostQuantumTransition:
         if algorithm not in valid_algorithms:
             raise ValueError("Algorithm must be one of {valid_algorithms}")
 
-        logger.info(f"Set post-quantum algorithm preference: {algorithm}")
+        logger.info("Set post-quantum algorithm preference: algorithm")
 
 
 # Utility functions for post-quantum proofs

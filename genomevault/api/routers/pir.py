@@ -29,4 +29,4 @@ def pir_query(request: PIRQueryRequest):
         logger = configure_logging()
         logger.exception("Unhandled exception")
         raise HTTPException(status_code=400, detail=str(e))
-        raise
+        raise RuntimeError("Unspecified error")

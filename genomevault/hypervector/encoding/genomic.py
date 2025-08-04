@@ -80,7 +80,8 @@ class GenomicEncoder:
         """Generate position encoding vector using sinusoidal encoding"""
         position = torch.arange(self.dimension).float()
         div_term = torch.exp(
-            torch.arange(0, self.dimension, 2).float() * -(np.log(10000.0) / self.dimension)
+            torch.arange(0, self.dimension, 2).float()
+            * -(np.log(10000.0) / self.dimension)
         )
 
         pos_encoding = torch.zeros(self.dimension)
@@ -117,12 +118,17 @@ class GenomicEncoder:
             use_panel = (
                 use_panel
                 if use_panel is not None
-                else (self.enable_snp_mode and self.panel_granularity != PanelGranularity.OFF)
+                else (
+                    self.enable_snp_mode
+                    and self.panel_granularity != PanelGranularity.OFF
+                )
             )
 
             if use_panel and hasattr(self, "positional_encoder"):
                 # Use SNP-level encoding with positional encoder
-                return self._encode_variant_with_panel(chromosome, position, ref, alt, variant_type)
+                return self._encode_variant_with_panel(
+                    chromosome, position, ref, alt, variant_type
+                )
 
             # Standard encoding (original path)
             # Start with variant type vector
@@ -158,7 +164,7 @@ class GenomicEncoder:
             logger = configure_logging()
             logger.exception("Unhandled exception")
             raise HypervectorError("Failed to encode variant: {str(e)}")
-            raise
+            raise RuntimeError("Unspecified error")
 
     def encode_genome(self, variants: list[dict]) -> torch.Tensor:
         """
@@ -220,7 +226,7 @@ class GenomicEncoder:
             logger = configure_logging()
             logger.exception("Unhandled exception")
             chr_idx = 25  # For mitochondrial or other
-            raise
+            raise RuntimeError("Unspecified error")
 
         # Generate deterministic vector based on chromosome
         torch.manual_seed(chr_idx)
@@ -311,7 +317,9 @@ class GenomicEncoder:
         # Encode each chromosome with panel
         chr_vectors = []
         for chr_name, observed_bases in variants_by_chr.items():
-            chr_vec = self.snp_panel.encode_with_panel(panel_name, chr_name, observed_bases)
+            chr_vec = self.snp_panel.encode_with_panel(
+                panel_name, chr_name, observed_bases
+            )
             chr_vectors.append(chr_vec)
 
         # Bundle chromosomes
@@ -323,7 +331,7 @@ class GenomicEncoder:
             return torch.zeros(self.dimension)
 
     # Hierarchical zoom methods
-    def create_zoom_tiles(self, chromosome: str, variants: list[dict]):
+    def create_zoom_tiles(self, chromosome: str, variants: list[dict]) -> None:
         """Create hierarchical zoom tiles for a chromosome"""
         # Level 0: Full chromosome
         chr_variants = [v for v in variants if v["chromosome"] == chromosome]
@@ -389,13 +397,13 @@ class GenomicEncoder:
         else:
             raise ValueError(f"Invalid zoom level: {level}")
 
-    def set_panel_granularity(self, granularity: str | PanelGranularity):
+    def set_panel_granularity(self, granularity: str | PanelGranularity) -> None:
         """Change the SNP panel granularity setting"""
         if isinstance(granularity, str):
             granularity = PanelGranularity(granularity)
         self.panel_granularity = granularity
 
-    def load_custom_panel(self, file_path: str, panel_name: str = "custom"):
+    def load_custom_panel(self, file_path: str, panel_name: str = "custom") -> None:
         """Load a custom SNP panel from file"""
         if not self.enable_snp_mode:
             raise HypervectorError("SNP mode not enabled")
@@ -405,7 +413,7 @@ class GenomicEncoder:
         self.panel_granularity = PanelGranularity.CUSTOM
 
     # Catalytic extensions
-    def use_catalytic_projections(self, projection_pool):
+    def use_catalytic_projections(self, projection_pool) -> None:
         """
         Switch to memory-mapped catalytic projections.
 
@@ -415,7 +423,7 @@ class GenomicEncoder:
         self.projection_pool = projection_pool
         self.use_catalytic = True
 
-    def encode_variant_catalytic(self, *args, **kwargs):
+    def encode_variant_catalytic(self, *args, **kwargs) -> None:
         """
         Encode variant using catalytic projections.
 

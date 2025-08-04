@@ -17,14 +17,10 @@ from pathlib import Path
 from typing import Any
 
 import matplotlib.pyplot as plt
-import numpy as np
 
 from genomevault.utils.metrics import MetricsCollector
 from genomevault.zk_proofs.circuits.implementations.constraint_system import (
-    ConstraintSystem,
-    FieldElement,
-    poseidon_hash,
-)
+    ConstraintSystem, FieldElement, poseidon_hash)
 
 
 @dataclass
@@ -100,7 +96,9 @@ class RecursiveProofAggregator:
         # Record metrics
         self.metrics.record("aggregation_time", aggregation_time * 1000, "ms")
         self.metrics.record("num_proofs_aggregated", len(proofs), "count")
-        self.metrics.record("aggregated_proof_size", len(aggregated_proof.aggregated_data), "bytes")
+        self.metrics.record(
+            "aggregated_proof_size", len(aggregated_proof.aggregated_data), "bytes"
+        )
 
         return aggregated_proof
 
@@ -162,7 +160,9 @@ class RecursiveProofAggregator:
         aggregated_data = self._mock_create_proof(verifier_circuit)
 
         # Compute public aggregate
-        public_aggregate = poseidon_hash([left_agg.public_aggregate, right_agg.public_aggregate])
+        public_aggregate = poseidon_hash(
+            [left_agg.public_aggregate, right_agg.public_aggregate]
+        )
 
         return AggregatedProof(
             num_proofs=left_agg.num_proofs + right_agg.num_proofs,
@@ -259,7 +259,9 @@ class RecursiveProofAggregator:
         verification_time = time.time() - start_time
 
         # Record metrics
-        self.metrics.record("aggregated_verification_time", verification_time * 1000, "ms")
+        self.metrics.record(
+            "aggregated_verification_time", verification_time * 1000, "ms"
+        )
 
         return is_valid
 
@@ -276,7 +278,9 @@ class RecursiveVerifierCircuit:
         self.cs = ConstraintSystem()
         self.setup_complete = False
 
-    def setup_circuit(self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]):
+    def setup_circuit(
+        self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]
+    ):
         """Setup the verifier circuit."""
         # Public inputs
         self.left_aggregate_var = self.cs.add_public_input("left_aggregate")
@@ -286,7 +290,9 @@ class RecursiveVerifierCircuit:
         # Assign values
         self.cs.assign(self.left_aggregate_var, public_inputs["left_aggregate"])
         self.cs.assign(self.right_aggregate_var, public_inputs["right_aggregate"])
-        self.cs.assign(self.total_proofs_var, FieldElement(public_inputs["total_proofs"]))
+        self.cs.assign(
+            self.total_proofs_var, FieldElement(public_inputs["total_proofs"])
+        )
 
         # Private inputs (proof data)
         # In practice, would parse and verify the actual proofs
@@ -328,7 +334,9 @@ class SimpleAggregationCircuit:
         self.cs = ConstraintSystem()
         self.setup_complete = False
 
-    def setup_circuit(self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]):
+    def setup_circuit(
+        self, public_inputs: dict[str, Any], private_inputs: dict[str, Any]
+    ):
         """Setup the aggregation circuit."""
         self.num_proofs_var = self.cs.add_public_input("num_proofs")
         self.public_hash_var = self.cs.add_public_input("public_hash")
@@ -354,7 +362,7 @@ def benchmark_recursive_aggregation(max_proofs: int = 128) -> dict[str, Any]:
 
     Tests aggregation time and verification time for varying numbers of proofs.
     """
-    logger.info(f"Benchmarking recursive aggregation up to {max_proofs} proofs...")
+    logger.info("Benchmarking recursive aggregation up to %smax_proofs proofs...")
 
     aggregator = RecursiveProofAggregator()
 
@@ -371,7 +379,7 @@ def benchmark_recursive_aggregation(max_proofs: int = 128) -> dict[str, Any]:
     }
 
     for batch_size in batch_sizes:
-        logger.info(f"\nTesting batch size: {batch_size}")
+        logger.info("\nTesting batch size: %sbatch_size")
 
         # Create mock proofs
         proofs = []
@@ -379,7 +387,8 @@ def benchmark_recursive_aggregation(max_proofs: int = 128) -> dict[str, Any]:
             proof = Proof(
                 circuit_name=f"test_circuit_{i}",
                 public_inputs=[FieldElement(i), FieldElement(i * 2)],
-                proof_data=hashlib.sha256(f"proof_{i}".encode()).digest() + b"\x00" * 352,
+                proof_data=hashlib.sha256(f"proof_{i}".encode()).digest()
+                + b"\x00" * 352,
                 metadata={"index": i},
             )
             proofs.append(proof)
@@ -398,12 +407,16 @@ def benchmark_recursive_aggregation(max_proofs: int = 128) -> dict[str, Any]:
         results["aggregation_times"].append(aggregation_time * 1000)  # Convert to ms
         results["verification_times"].append(verification_time * 1000)
         results["proof_sizes"].append(len(aggregated.aggregated_data))
-        results["aggregation_depths"].append(aggregated.metadata.get("aggregation_depth", 0))
+        results["aggregation_depths"].append(
+            aggregated.metadata.get("aggregation_depth", 0)
+        )
 
-        logger.info(f"  Aggregation time: {aggregation_time*1000:.2f}ms")
-        logger.info(f"  Verification time: {verification_time*1000:.2f}ms")
-        logger.info(f"  Proof size: {len(aggregated.aggregated_data)} bytes")
-        logger.info(f"  Aggregation depth: {aggregated.metadata.get('aggregation_depth', 0)}")
+        logger.info("  Aggregation time: %saggregation_time * 1000:.2fms")
+        logger.info("  Verification time: %sverification_time * 1000:.2fms")
+        logger.info("  Proof size: %slen(aggregated.aggregated_data) bytes")
+        logger.info(
+            "  Aggregation depth: %saggregated.metadata.get('aggregation_depth', 0)"
+        )
 
     # Plot results
     plot_aggregation_benchmarks(results)
@@ -457,7 +470,9 @@ def plot_aggregation_benchmarks(results: dict[str, Any]):
 
     timestamp = time.strftime("%Y%m%d_%H%M%S")
     plt.savefig(output_dir / f"recursive_aggregation_{timestamp}.png", dpi=150)
-    logger.info(f"\nBenchmark plot saved to benchmarks/zk/recursive_aggregation_{timestamp}.png")
+    logger.info(
+        "\nBenchmark plot saved to benchmarks/zk/recursive_aggregation_%stimestamp.png"
+    )
 
 
 def main():
@@ -478,24 +493,25 @@ def main():
         proof = Proof(
             circuit_name="variant_presence",
             public_inputs=[FieldElement(1000 + i), FieldElement(2000 + i)],
-            proof_data=hashlib.sha256(f"demo_proof_{i}".encode()).digest() + b"\x00" * 352,
-            metadata={"variant_id": f"rs{1000+i}"},
+            proof_data=hashlib.sha256(f"demo_proof_{i}".encode()).digest()
+            + b"\x00" * 352,
+            metadata={"variant_id": f"rs{1000 + i}"},
         )
         proofs.append(proof)
 
-    logger.info(f"Created {len(proofs)} individual proofs")
+    logger.info("Created %slen(proofs) individual proofs")
 
     # Aggregate them
     aggregated = aggregator.aggregate_proofs(proofs)
 
     logger.info("\nAggregated into single proof:")
-    logger.info(f"  Number of proofs: {aggregated.num_proofs}")
-    logger.info(f"  Proof size: {len(aggregated.aggregated_data)} bytes")
-    logger.info(f"  Public aggregate: {aggregated.public_aggregate}")
+    logger.info("  Number of proofs: %saggregated.num_proofs")
+    logger.info("  Proof size: %slen(aggregated.aggregated_data) bytes")
+    logger.info("  Public aggregate: %saggregated.public_aggregate")
 
     # Verify
     valid = aggregator.verify_aggregated_proof(aggregated)
-    logger.info(f"  Verification: {'VALID' if valid else 'INVALID'}")
+    logger.info("  Verification: %s'VALID' if valid else 'INVALID'")
 
     # Run benchmarks
     logger.info("\n2. Performance Benchmarks")
@@ -506,10 +522,12 @@ def main():
     # Summary
     logger.info("\n3. Summary")
     logger.info("-" * 30)
-    logger.info(f"✓ Constant verification time: ~{np.mean(results['verification_times']):.1f}ms")
-    logger.info(f"✓ Constant proof size: {results['proof_sizes'][0]} bytes")
+    logger.info(
+        "✓ Constant verification time: ~%snp.mean(results['verification_times']):.1fms"
+    )
+    logger.info("✓ Constant proof size: %sresults['proof_sizes'][0] bytes")
     logger.info("✓ Logarithmic aggregation depth: O(log N)")
-    logger.info(f"✓ Efficient aggregation: up to {max(results['batch_sizes'])} proofs")
+    logger.info("✓ Efficient aggregation: up to %smax(results['batch_sizes']) proofs")
 
     # Save benchmark results
     output_dir = Path("benchmarks/zk")
@@ -519,7 +537,7 @@ def main():
     with open(output_dir / f"{timestamp}.json", "w") as f:
         json.dump(results, f, indent=2)
 
-    logger.info(f"\nBenchmark data saved to benchmarks/zk/{timestamp}.json")
+    logger.info("\nBenchmark data saved to benchmarks/zk/%stimestamp.json")
 
 
 if __name__ == "__main__":

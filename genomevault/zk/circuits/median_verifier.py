@@ -161,11 +161,13 @@ class MedianVerifierCircuit:
 
         # Generate proof ID
         proof_id = self.hash_function(
-            json.dumps({"median": claimed_median, "n": n, "timestamp": time.time()}).encode()
+            json.dumps(
+                {"median": claimed_median, "n": n, "timestamp": time.time()}
+            ).encode()
         ).hexdigest()[:16]
 
         logger.info(
-            f"Generated median proof for {n} values in {response['computation_time_ms']:.1f}ms"
+            "Generated median proof for %sn values in %sresponse['computation_time_ms']:.1fms"
         )
 
         return MedianProof(
@@ -215,7 +217,7 @@ class MedianVerifierCircuit:
             for i, idx in enumerate(indices):
                 expected_commitment = self._commit(values[i], randomness[i])
                 if expected_commitment != proof.sorted_commitments[idx]:
-                    logger.error(f"Commitment verification failed for index {idx}")
+                    logger.error("Commitment verification failed for index %sidx")
                     return False
 
             # Step 3: Verify sortedness of opened values
@@ -249,7 +251,7 @@ class MedianVerifierCircuit:
 
             if abs(computed_median - proof.claimed_median) > 1e-9:
                 logger.error(
-                    f"Median computation mismatch: {computed_median} vs {proof.claimed_median}"
+                    "Median computation mismatch: %scomputed_median vs %sproof.claimed_median"
                 )
                 return False
 
@@ -258,17 +260,17 @@ class MedianVerifierCircuit:
                 logger.error("Range proof verification failed")
                 return False
 
-            logger.info(f"Successfully verified median proof {proof.proof_id}")
+            logger.info("Successfully verified median proof %sproof.proof_id")
             return True
 
-        except Exception as e:
+        except Exception:
             from genomevault.observability.logging import configure_logging
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error(f"Proof verification failed: {e}")
+            logger.error("Proof verification failed: %se")
             return False
-            raise
+            raise RuntimeError("Unspecified error")
 
     def _commit(self, value: float, randomness: bytes) -> bytes:
         """Create a commitment to a value"""
@@ -342,12 +344,16 @@ class MedianVerifierCircuit:
             return False
 
         for proof in range_proofs:
-            if not all(key in proof for key in ["index", "range", "in_range_commitment"]):
+            if not all(
+                key in proof for key in ["index", "range", "in_range_commitment"]
+            ):
                 return False
 
         return True
 
-    def _prove_error_bound(self, error: float, bound: float, challenge: bytes) -> dict[str, Any]:
+    def _prove_error_bound(
+        self, error: float, bound: float, challenge: bytes
+    ) -> dict[str, Any]:
         """Prove that error is within bound without revealing exact error"""
         # Create a commitment to the fact that error <= bound
         is_within_bound = error <= bound
@@ -399,7 +405,9 @@ if __name__ == "__main__":
 
         print(f"\nTest 2: {len(values2)} values, median = {median2}")
 
-        proof2 = circuit.generate_proof(values=values2, claimed_median=median2, error_bound=0.1)
+        proof2 = circuit.generate_proof(
+            values=values2, claimed_median=median2, error_bound=0.1
+        )
 
         is_valid2 = circuit.verify_proof(proof2)
         print(f"Proof valid: {is_valid2}")
@@ -418,7 +426,7 @@ if __name__ == "__main__":
             logger = configure_logging()
             logger.exception("Unhandled exception")
             print(f"Expected error: {e}")
-            raise
+            raise RuntimeError("Unspecified error")
 
         return is_valid and is_valid2
 

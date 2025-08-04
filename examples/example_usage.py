@@ -12,10 +12,11 @@ import asyncio
 import numpy as np
 
 from genomevault.blockchain.node import BlockchainNode
-from genomevault.hypervector_transform.encoding import HypervectorBinder, HypervectorEncoder
-from genomevault.local_processing.sequencing import SequencingProcessor, Variant
+from genomevault.hypervector_transform.encoding import (HypervectorBinder,
+                                                        HypervectorEncoder)
+from genomevault.local_processing.sequencing import (SequencingProcessor,
+                                                     Variant)
 from genomevault.pir.client import PIRClient, PIRServer
-
 # Import GenomeVault components
 from genomevault.utils.config import CompressionTier, NodeClass, config
 from genomevault.utils.logging import logger
@@ -190,7 +191,9 @@ async def demonstrate_genomevault():
     logger.info(
         "PIR privacy (2 TS): P_fail = {pir_client.calculate_privacy_failure_probability(2, 0.98):.2e}"
     )
-    logger.info("Differential privacy: ε = {config.security.differential_privacy_epsilon}")
+    logger.info(
+        "Differential privacy: ε = {config.security.differential_privacy_epsilon}"
+    )
     logger.info("Zero-knowledge: Perfect secrecy")
 
     # Network voting power
@@ -258,4 +261,6 @@ if __name__ == "__main__":
     demonstrate_compression_tiers()
 
     logger.info("\n=== GenomeVault 3.0 Demonstration Complete ===")
-    logger.info("Your genomic data remains private while enabling breakthrough research!")
+    logger.info(
+        "Your genomic data remains private while enabling breakthrough research!"
+    )

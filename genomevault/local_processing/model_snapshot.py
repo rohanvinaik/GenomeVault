@@ -87,8 +87,8 @@ class ModelSnapshotLogger:
         self.framework = self._detect_framework()
 
         logger.info(
-            f"Model snapshot logger initialized for session {session_id} "
-            f"(framework: {self.framework})"
+            "Model snapshot logger initialized for session %ssession_id "
+            "(framework: %sself.framework)"
         )
 
     def log_snapshot(
@@ -120,7 +120,7 @@ class ModelSnapshotLogger:
         if not force and epoch % self.snapshot_frequency != 0:
             return None
 
-        logger.info(f"Creating snapshot at epoch {epoch}, step {step}")
+        logger.info("Creating snapshot at epoch %sepoch, step %sstep")
 
         # Extract model weights
         weights = self._extract_weights(model)
@@ -141,7 +141,8 @@ class ModelSnapshotLogger:
             # Take last 10 IO pairs
             io_samples = self.io_buffer[-10:]
             io_sample_hashes = [
-                hashlib.sha256(f"{inp}{out}".encode()).hexdigest()[:8] for inp, out in io_samples
+                hashlib.sha256(f"{inp}{out}".encode()).hexdigest()[:8]
+                for inp, out in io_samples
             ]
 
         # Create snapshot
@@ -177,7 +178,7 @@ class ModelSnapshotLogger:
         self.io_buffer = []
 
         logger.info(
-            f"Snapshot {snapshot_id} saved: " f"loss={loss:.4f}, model_hash={model_hash[:8]}..."
+            "Snapshot %ssnapshot_id saved: loss=%sloss:.4f, model_hash=%smodel_hash[:8]..."
         )
 
         return snapshot_id
@@ -257,7 +258,9 @@ class ModelSnapshotLogger:
                 curr_hv_hash = self.snapshots[i].hypervector_hash
 
                 # Simple drift metric based on hash difference
-                drift = sum(a != b for a, b in zip(prev_hv_hash, curr_hv_hash)) / len(prev_hv_hash)
+                drift = sum(a != b for a, b in zip(prev_hv_hash, curr_hv_hash)) / len(
+                    prev_hv_hash
+                )
                 drift_scores.append(drift)
 
         summary = {
@@ -266,7 +269,8 @@ class ModelSnapshotLogger:
             "snapshot_frequency": self.snapshot_frequency,
             "start_time": self.snapshots[0].timestamp,
             "end_time": self.snapshots[-1].timestamp,
-            "duration_seconds": self.snapshots[-1].timestamp - self.snapshots[0].timestamp,
+            "duration_seconds": self.snapshots[-1].timestamp
+            - self.snapshots[0].timestamp,
             "total_epochs": self.snapshots[-1].epoch,
             "merkle_root": self.get_snapshot_merkle_root(),
             "best_snapshot": {
@@ -316,7 +320,7 @@ class ModelSnapshotLogger:
             logger = configure_logging()
             logger.exception("Unhandled exception")
             pass
-            raise
+            raise RuntimeError("Unspecified error")
 
         try:
             import tensorflow
@@ -328,7 +332,7 @@ class ModelSnapshotLogger:
             logger = configure_logging()
             logger.exception("Unhandled exception")
             pass
-            raise
+            raise RuntimeError("Unspecified error")
 
         return "unknown"
 
@@ -461,7 +465,7 @@ class ModelSnapshotLogger:
         # Save hypervector
         np.save(snapshot_dir / "hypervector.npy", hypervector)
 
-        logger.debug(f"Snapshot saved to {snapshot_dir}")
+        logger.debug("Snapshot saved to %ssnapshot_dir")
 
 
 class SnapshotVerifier:
@@ -476,23 +480,21 @@ class SnapshotVerifier:
         # Check temporal ordering
         for i in range(1, len(snapshots)):
             if snapshots[i].timestamp <= snapshots[i - 1].timestamp:
-                logger.error(f"Timestamp ordering violation at snapshot {i}")
+                logger.error("Timestamp ordering violation at snapshot %si")
                 return False
 
             if snapshots[i].epoch < snapshots[i - 1].epoch:
-                logger.error(f"Epoch ordering violation at snapshot {i}")
+                logger.error("Epoch ordering violation at snapshot %si")
                 return False
 
         # Verify hashes
         for snapshot in snapshots:
             # Recompute snapshot ID
-            snapshot_data = (
-                f"{snapshot.epoch}{snapshot.step}" f"{snapshot.weight_hash}{snapshot.timestamp}"
-            )
+            snapshot_data = f"{snapshot.epoch}{snapshot.step}{snapshot.weight_hash}{snapshot.timestamp}"
             expected_id_prefix = hashlib.sha256(snapshot_data.encode()).hexdigest()[:16]
 
             if not snapshot.snapshot_id.startswith(expected_id_prefix[:8]):
-                logger.error(f"Invalid snapshot ID: {snapshot.snapshot_id}")
+                logger.error("Invalid snapshot ID: %ssnapshot.snapshot_id")
                 return False
 
         logger.info("Snapshot chain verification passed")

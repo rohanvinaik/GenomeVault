@@ -34,14 +34,14 @@ except Exception:
     logger = configure_logging()
     logger.exception("Unhandled exception")
     CUDA_AVAILABLE = False
-    raise
+    raise RuntimeError("Unspecified error")
 CPU_COUNT = mp.cpu_count()
 TORCH_AVAILABLE = torch.cuda.is_available()
 
 if CUDA_AVAILABLE:
     logger.info("CUDA acceleration available")
 if TORCH_AVAILABLE:
-    logger.info(f"PyTorch GPU available: {torch.cuda.get_device_name(0)}")
+    logger.info("PyTorch GPU available: %storch.cuda.get_device_name(0)")
 
 
 class HypervectorAccelerator:
@@ -56,7 +56,7 @@ class HypervectorAccelerator:
                 self.backend = "torch"
             elif CUDA_AVAILABLE:
                 self.backend = "cupy"
-            logger.info(f"Using GPU acceleration with {self.backend}")
+            logger.info("Using GPU acceleration with %sself.backend")
         else:
             self.backend = "numpy"
             logger.info("Using CPU with SIMD optimizations")
@@ -71,7 +71,9 @@ class HypervectorAccelerator:
                 distance += 1
         return distance
 
-    def hamming_distance(self, v1: np.ndarray | torch.Tensor, v2: np.ndarray | torch.Tensor) -> int:
+    def hamming_distance(
+        self, v1: np.ndarray | torch.Tensor, v2: np.ndarray | torch.Tensor
+    ) -> int:
         """Compute Hamming distance with hardware acceleration"""
 
         if self.backend == "torch":
@@ -119,7 +121,9 @@ class HypervectorAccelerator:
             if not isinstance(v2, torch.Tensor):
                 v2 = torch.from_numpy(v2).float().to(self.device)
 
-            cos_sim = torch.nn.functional.cosine_similarity(v1.unsqueeze(0), v2.unsqueeze(0))
+            cos_sim = torch.nn.functional.cosine_similarity(
+                v1.unsqueeze(0), v2.unsqueeze(0)
+            )
             return float(cos_sim.cpu())
 
         elif self.backend == "cupy":
@@ -134,9 +138,13 @@ class HypervectorAccelerator:
             return float(dot / (norm1 * norm2))
 
         else:
-            return self._cosine_similarity_cpu(v1.astype(np.float32), v2.astype(np.float32))
+            return self._cosine_similarity_cpu(
+                v1.astype(np.float32), v2.astype(np.float32)
+            )
 
-    def batch_hamming_distance(self, vectors: list[np.ndarray], query: np.ndarray) -> np.ndarray:
+    def batch_hamming_distance(
+        self, vectors: list[np.ndarray], query: np.ndarray
+    ) -> np.ndarray:
         """Compute Hamming distances for batch of vectors"""
 
         if self.backend == "torch":
@@ -258,7 +266,9 @@ class ParallelProcessor:
         self.thread_pool = ThreadPoolExecutor(max_workers=self.n_workers)
         self.process_pool = ProcessPoolExecutor(max_workers=self.n_workers)
 
-    def parallel_map(self, func: Callable, items: list, use_processes: bool = False) -> list:
+    def parallel_map(
+        self, func: Callable, items: list, use_processes: bool = False
+    ) -> list:
         """Apply function to items in parallel"""
 
         pool = self.process_pool if use_processes else self.thread_pool
@@ -273,7 +283,9 @@ class ParallelProcessor:
 
     @staticmethod
     @numba.jit(nopython=True, parallel=True)
-    def _parallel_variant_processing(variants: np.ndarray, reference: np.ndarray) -> np.ndarray:
+    def _parallel_variant_processing(
+        variants: np.ndarray, reference: np.ndarray
+    ) -> np.ndarray:
         """Process variants in parallel using Numba"""
         n_variants = len(variants)
         results = np.zeros(n_variants, dtype=np.int32)
@@ -288,7 +300,9 @@ class ParallelProcessor:
 
         return results
 
-    def process_variants_batch(self, variants: np.ndarray, reference: np.ndarray) -> np.ndarray:
+    def process_variants_batch(
+        self, variants: np.ndarray, reference: np.ndarray
+    ) -> np.ndarray:
         """Process batch of variants with parallel acceleration"""
         return self._parallel_variant_processing(variants, reference)
 
@@ -305,7 +319,9 @@ class CacheOptimizer:
         self.max_size = max_size
 
     @lru_cache(maxsize=1000)
-    def cached_hypervector_operation(self, v1_hash: int, v2_hash: int, operation: str) -> float:
+    def cached_hypervector_operation(
+        self, v1_hash: int, v2_hash: int, operation: str
+    ) -> float:
         """Cache results of expensive hypervector operations"""
         # This would be called with actual computation
         pass
@@ -319,7 +335,9 @@ class CacheOptimizer:
         # Align to cache line boundaries (typically 64 bytes)
         if vectors.itemsize * vectors.shape[1] % 64 != 0:
             # Pad to align
-            pad_size = (64 - (vectors.itemsize * vectors.shape[1] % 64)) // vectors.itemsize
+            pad_size = (
+                64 - (vectors.itemsize * vectors.shape[1] % 64)
+            ) // vectors.itemsize
             vectors = np.pad(vectors, ((0, 0), (0, pad_size)), mode="constant")
 
         return vectors
@@ -402,13 +420,13 @@ def with_gpu(exit: bool = False) -> Generator[None, None, None]:
                 if exit:
                     cp.cuda.runtime.deviceReset()
                     logger.debug("GPU device reset completed")
-            except Exception as e:
+            except Exception:
                 from genomevault.observability.logging import configure_logging
 
                 logger = configure_logging()
                 logger.exception("Unhandled exception")
-                logger.warning(f"GPU cleanup warning: {e}")
-                raise
+                logger.warning("GPU cleanup warning: %se")
+                raise RuntimeError("Unspecified error")
 
         if TORCH_AVAILABLE:
             try:
@@ -420,10 +438,10 @@ def with_gpu(exit: bool = False) -> Generator[None, None, None]:
                     if exit:
                         torch.cuda.empty_cache()
                         logger.debug("PyTorch GPU cache cleared")
-            except Exception as e:
+            except Exception:
                 from genomevault.observability.logging import configure_logging
 
                 logger = configure_logging()
                 logger.exception("Unhandled exception")
-                logger.warning(f"PyTorch GPU cleanup warning: {e}")
-                raise
+                logger.warning("PyTorch GPU cleanup warning: %se")
+                raise RuntimeError("Unspecified error")

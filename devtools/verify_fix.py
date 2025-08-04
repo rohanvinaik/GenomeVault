@@ -24,7 +24,9 @@ logger.info("\nProject root: {project_root}")
 logger.info("Python path includes project: {project_root in sys.path}")
 
 # Check the file that was fixed
-variant_file = os.path.join(project_root, "zk_proofs", "circuits", "biological", "variant.py")
+variant_file = os.path.join(
+    project_root, "zk_proofs", "circuits", "biological", "variant.py"
+)
 logger.info("\nChecking fixed file: {variant_file}")
 logger.info("File exists: {os.path.exists(variant_file)}")
 
@@ -46,7 +48,9 @@ if os.path.exists(variant_file):
         logger.info("\n❓ WARNING: Could not find the base_circuits import")
 
 # Check the base_circuits.py file exists
-base_circuits_file = os.path.join(project_root, "zk_proofs", "circuits", "base_circuits.py")
+base_circuits_file = os.path.join(
+    project_root, "zk_proofs", "circuits", "base_circuits.py"
+)
 logger.info("\nChecking base_circuits.py location:")
 logger.info("Expected at: {base_circuits_file}")
 logger.info("File exists: {os.path.exists(base_circuits_file)}")
@@ -71,7 +75,9 @@ logger.info("\n" + "=" * 70)
 logger.info("SUMMARY")
 logger.info("=" * 70)
 logger.info("The import fix has been applied successfully!")
-logger.info("Changed: 'from .base_circuits import ...' → 'from ..base_circuits import ...'")
+logger.info(
+    "Changed: 'from .base_circuits import ...' → 'from ..base_circuits import ...'"
+)
 logger.info("\nThis fix allows the biological circuits to correctly import from")
 logger.info("the parent circuits/ directory where base_circuits.py is located.")
 logger.info("\n✅ The import path issue has been resolved!")

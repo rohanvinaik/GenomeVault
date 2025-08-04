@@ -14,12 +14,11 @@ import torch
 
 from genomevault.core.constants import OmicsType
 from genomevault.hypervector_transform.binding import CrossModalBinder
-
 # Phase 2: Hypervector Encoding
 from genomevault.hypervector_transform.encoding import create_encoder
 from genomevault.hypervector_transform.holographic import HolographicEncoder
-from genomevault.local_processing.compression import CompressionTier, TieredCompressor
-
+from genomevault.local_processing.compression import (CompressionTier,
+                                                      TieredCompressor)
 # Phase 1: Local Processing
 from genomevault.local_processing.sequencing import SequencingProcessor
 from genomevault.utils.logging import get_logger, setup_logging
@@ -43,7 +42,9 @@ def process_and_encode_genome(vcf_path: str):
     logger.info("  - Processed {genomic_data['summary']['total_variants']} variants")
     logger.info("  - Found {genomic_data['summary']['snp_count']} SNPs")
     logger.info("  - Found {genomic_data['summary']['indel_count']} indels")
-    logger.info("  - Mean quality: {genomic_data['quality_metrics']['mean_quality']:.1f}")
+    logger.info(
+        "  - Mean quality: {genomic_data['quality_metrics']['mean_quality']:.1f}"
+    )
 
     # Phase 2: Hypervector Encoding
     logger.info("\nPhase 2: Encoding to hypervector...")
@@ -63,10 +64,14 @@ def process_and_encode_genome(vcf_path: str):
     # Tier compression
     logger.info("\nPhase 2b: Tiered compression...")
     compressor = TieredCompressor(CompressionTier.CLINICAL)
-    compressed = compressor.compress({"hypervector": genomic_hv, **genomic_data}, OmicsType.GENOMIC)
+    compressed = compressor.compress(
+        {"hypervector": genomic_hv, **genomic_data}, OmicsType.GENOMIC
+    )
 
     logger.info("  - Clinical tier size: {compressed.compressed_size:,} bytes")
-    logger.info("  - Total compression: {original_size / compressed.compressed_size:.1f}:1")
+    logger.info(
+        "  - Total compression: {original_size / compressed.compressed_size:.1f}:1"
+    )
 
     return genomic_hv, compressed, genomic_data
 
@@ -92,7 +97,9 @@ def demonstrate_variant_encoding(genomic_data: dict):
             annotations=snp.get("annotations", {}),
         )
 
-        logger.info("  - Encoded variant {snp['chr']}:{snp['pos']} {snp['re']}>{snp['alt']}")
+        logger.info(
+            "  - Encoded variant {snp['chr']}:{snp['pos']} {snp['re']}>{snp['alt']}"
+        )
         logger.info("  - Holographic dimension: {variant_hv.shape[0]}")
 
         # Query for chromosome
@@ -202,7 +209,9 @@ def main():
                     {"chr": "chr1", "pos": 200, "re": "C", "alt": "T", "quality": 40},
                     {"chr": "chr2", "pos": 300, "re": "G", "alt": "A", "quality": 35},
                 ],
-                "indels": [{"chr": "chr3", "pos": 400, "re": "AT", "alt": "A", "quality": 25}],
+                "indels": [
+                    {"chr": "chr3", "pos": 400, "re": "AT", "alt": "A", "quality": 25}
+                ],
                 "cnvs": [],
             },
             "quality_metrics": {
@@ -251,7 +260,9 @@ def main():
     logger.info("3. Mathematical privacy through high-dimensional projection")
     logger.info("4. Efficient compression for storage and transmission")
     logger.info("5. Multi-omics integration while maintaining privacy")
-    logger.info("\nNext: Zero-knowledge proofs will enable verification without disclosure")
+    logger.info(
+        "\nNext: Zero-knowledge proofs will enable verification without disclosure"
+    )
 
 
 if __name__ == "__main__":

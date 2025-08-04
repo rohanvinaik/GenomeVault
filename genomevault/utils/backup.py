@@ -119,9 +119,11 @@ class BackupManager:
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error("backup_creation_failed", backup_type=backup_type, error=str(e))
-            raise
-            raise
+            logger.error(
+                "backup_creation_failed", backup_type=backup_type, error=str(e)
+            )
+            raise RuntimeError("Unspecified error")
+            raise RuntimeError("Unspecified error")
 
     def restore_backup(self, backup_id: str) -> dict[str, Any]:
         """Restore data from an encrypted backup"""
@@ -165,8 +167,8 @@ class BackupManager:
             logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("backup_restoration_failed", backup_id=backup_id, error=str(e))
-            raise
-            raise
+            raise RuntimeError("Unspecified error")
+            raise RuntimeError("Unspecified error")
 
     def list_backups(
         self,
@@ -223,9 +225,11 @@ class BackupManager:
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error("backup_verification_failed", backup_id=backup_id, error=str(e))
+            logger.error(
+                "backup_verification_failed", backup_id=backup_id, error=str(e)
+            )
             return False
-            raise
+            raise RuntimeError("Unspecified error")
 
     def cleanup_old_backups(self):
         """Remove backups older than retention period"""
@@ -279,7 +283,7 @@ class BackupManager:
                     backup_type=backup_config.get("backup_type"),
                     error=str(e),
                 )
-                raise
+                raise RuntimeError("Unspecified error")
 
         # Schedule backups
         for config in backup_configs:
@@ -354,7 +358,9 @@ class BackupManager:
 
         # Try S3 if configured
         if self.s3_client:
-            _ = self.s3_client.get_object(Bucket=self.s3_bucket, Key="backups/{backup_id}.backup")
+            _ = self.s3_client.get_object(
+                Bucket=self.s3_bucket, Key="backups/{backup_id}.backup"
+            )
             return json.loads(response["Body"].read())
 
         raise FileNotFoundError("Backup {backup_id} not found")
@@ -372,7 +378,9 @@ class BackupManager:
                 ServerSideEncryption="AES256",
             )
 
-            logger.info("backup_replicated_to_s3", backup_id=backup_id, bucket=self.s3_bucket)
+            logger.info(
+                "backup_replicated_to_s3", backup_id=backup_id, bucket=self.s3_bucket
+            )
 
         except json.JSONDecodeError as e:
             from genomevault.observability.logging import configure_logging
@@ -380,7 +388,7 @@ class BackupManager:
             logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("s3_replication_failed", backup_id=backup_id, error=str(e))
-            raise
+            raise RuntimeError("Unspecified error")
 
     def _remove_backup(self, backup_id: str):
         """Remove a backup"""
@@ -401,7 +409,7 @@ class BackupManager:
                 logger = configure_logging()
                 logger.exception("Unhandled exception")
                 logger.error("s3_deletion_failed", backup_id=backup_id, error=str(e))
-                raise
+                raise RuntimeError("Unspecified error")
 
         # Remove from metadata
         if backup_id in self.metadata.get("backups", {}):
@@ -486,8 +494,8 @@ class DisasterRecoveryOrchestrator:
             logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("recovery_point_creation_failed", name=name, error=str(e))
-            raise
-            raise
+            raise RuntimeError("Unspecified error")
+            raise RuntimeError("Unspecified error")
 
     def restore_recovery_point(self, recovery_point_id: str) -> dict[str, Any]:
         """Restore system state from a recovery point"""
@@ -524,8 +532,8 @@ class DisasterRecoveryOrchestrator:
                 recovery_point_id=recovery_point_id,
                 error=str(e),
             )
-            raise
-            raise
+            raise RuntimeError("Unspecified error")
+            raise RuntimeError("Unspecified error")
 
     def _collect_component_data(self, component: str) -> dict[str, Any]:
         """Collect data from a component for backup"""

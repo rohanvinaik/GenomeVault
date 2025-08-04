@@ -137,7 +137,7 @@ class ClinicalModelValidator:
             "out_of_distribution_detection": 0.90,
         }
 
-        logger.info(f"Clinical validator initialized: {validator_id}")
+        logger.info("Clinical validator initialized: %svalidator_id")
 
     def validate_model(
         self,
@@ -163,8 +163,8 @@ class ClinicalModelValidator:
             Clinical validation result
         """
         logger.info(
-            f"Starting clinical validation for model {model_hash[:16]}... "
-            f"in domain {clinical_domain.value}"
+            "Starting clinical validation for model %smodel_hash[:16]... "
+            "in domain %sclinical_domain.value"
         )
 
         # Generate validation ID
@@ -172,7 +172,9 @@ class ClinicalModelValidator:
         validation_id = hashlib.sha256(val_data.encode()).hexdigest()[:16]
 
         # Perform validation tests
-        performance_metrics = self._evaluate_performance(model, test_data, clinical_domain)
+        performance_metrics = self._evaluate_performance(
+            model, test_data, clinical_domain
+        )
 
         safety_metrics = self._evaluate_safety(model, test_data, clinical_domain)
 
@@ -225,7 +227,7 @@ class ClinicalModelValidator:
         self.validation_results[validation_id] = result
 
         logger.info(
-            f"Clinical validation {validation_id} completed: " f"{'PASSED' if passed else 'FAILED'}"
+            "Clinical validation %svalidation_id completed: %s'PASSED' if passed else 'FAILED'"
         )
 
         return result
@@ -286,7 +288,9 @@ class ClinicalModelValidator:
             "expiration": expiration_date,
         }
 
-        signature = hashlib.sha256(json.dumps(signature_data, sort_keys=True).encode()).hexdigest()
+        signature = hashlib.sha256(
+            json.dumps(signature_data, sort_keys=True).encode()
+        ).hexdigest()
 
         # Create attestation
         attestation = ModelCapabilityAttestation(
@@ -308,8 +312,8 @@ class ClinicalModelValidator:
         self.attestations[attestation_id] = attestation
 
         logger.info(
-            f"Capability attestation {attestation_id} issued for model "
-            f"{model_hash[:16]}... (expires: {datetime.fromtimestamp(expiration_date)})"
+            "Capability attestation %sattestation_id issued for model "
+            "%smodel_hash[:16]... (expires: %sdatetime.fromtimestamp(expiration_date))"
         )
 
         return attestation
@@ -360,7 +364,9 @@ class ClinicalModelValidator:
         return True, {
             "attestation_id": attestation_id,
             "model_hash": attestation.model_hash,
-            "valid_until": datetime.fromtimestamp(attestation.expiration_date).isoformat(),
+            "valid_until": datetime.fromtimestamp(
+                attestation.expiration_date
+            ).isoformat(),
             "clinical_domains": [d.value for d in attestation.clinical_domains],
             "validation_level": attestation.validation_level.value,
         }
@@ -451,14 +457,16 @@ class ClinicalModelValidator:
     ) -> bool:
         """Check if validation criteria are met"""
         # Check performance thresholds
-        domain_thresholds = self.performance_thresholds.get(clinical_domain, {"auc": 0.85})
+        domain_thresholds = self.performance_thresholds.get(
+            clinical_domain, {"auc": 0.85}
+        )
 
         for metric, threshold in domain_thresholds.items():
             if metric in performance_metrics:
                 if performance_metrics[metric] < threshold:
                     logger.warning(
-                        f"Performance metric {metric} "
-                        f"({performance_metrics[metric]:.3f}) "
+                        f"Performance metric metric "
+                        f"(performance_metrics[metric]:.3f) "
                         f"below threshold ({threshold})"
                     )
                     return False
@@ -468,15 +476,17 @@ class ClinicalModelValidator:
             if metric in safety_metrics:
                 if metric.endswith("_rate") and safety_metrics[metric] > threshold:
                     logger.warning(
-                        f"Safety metric {metric} "
-                        f"({safety_metrics[metric]:.3f}) "
+                        f"Safety metric metric "
+                        f"(safety_metrics[metric]:.3f) "
                         f"above threshold ({threshold})"
                     )
                     return False
-                elif not metric.endswith("_rate") and safety_metrics[metric] < threshold:
+                elif (
+                    not metric.endswith("_rate") and safety_metrics[metric] < threshold
+                ):
                     logger.warning(
-                        f"Safety metric {metric} "
-                        f"({safety_metrics[metric]:.3f}) "
+                        f"Safety metric metric "
+                        f"(safety_metrics[metric]:.3f) "
                         f"below threshold ({threshold})"
                     )
                     return False
@@ -553,7 +563,8 @@ class ClinicalModelValidator:
             )
 
         if any(
-            d in [ClinicalDomain.ONCOLOGY, ClinicalDomain.RARE_DISEASE] for d in clinical_domains
+            d in [ClinicalDomain.ONCOLOGY, ClinicalDomain.RARE_DISEASE]
+            for d in clinical_domains
         ):
             standards.append(RegulatoryStandard.GDPR)  # EU data protection
 
@@ -577,7 +588,11 @@ class ClinicalModelValidator:
             metric_names.update(domain_metrics.keys())
 
         for metric in metric_names:
-            values = [metrics.get(metric) for metrics in all_metrics.values() if metric in metrics]
+            values = [
+                metrics.get(metric)
+                for metrics in all_metrics.values()
+                if metric in metrics
+            ]
 
             if values:
                 overall_metrics[metric] = {
@@ -631,8 +646,12 @@ class ClinicalValidationReport:
                 "attestation_id": attestation.attestation_id,
                 "intended_use": attestation.intended_use,
                 "contraindications": attestation.contraindications,
-                "regulatory_standards": [s.value for s in attestation.regulatory_standards],
-                "expiration_date": datetime.fromtimestamp(attestation.expiration_date).isoformat(),
+                "regulatory_standards": [
+                    s.value for s in attestation.regulatory_standards
+                ],
+                "expiration_date": datetime.fromtimestamp(
+                    attestation.expiration_date
+                ).isoformat(),
             }
 
         return report

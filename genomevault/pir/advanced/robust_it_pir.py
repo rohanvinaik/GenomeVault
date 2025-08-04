@@ -90,8 +90,8 @@ class RobustITPIR(InformationTheoreticPIR):
         self.cache_ttl = 300  # 5 minutes
 
         logger.info(
-            f"Initialized RobustITPIR: {num_servers} servers, "
-            f"Byzantine threshold: {byzantine_threshold}"
+            "Initialized RobustITPIR: %snum_servers servers, "
+            "Byzantine threshold: %sbyzantine_threshold"
         )
 
     def generate_authenticated_query(self, item_index: int) -> PIRQuery:
@@ -157,7 +157,7 @@ class RobustITPIR(InformationTheoreticPIR):
                     valid_responses.append((i, response))
                 else:
                     invalid_count += 1
-                    logger.warning(f"Invalid response from server {i}")
+                    logger.warning("Invalid response from server %si")
 
             # Check if we have enough valid responses
             if invalid_count > self.byzantine_threshold:
@@ -166,7 +166,9 @@ class RobustITPIR(InformationTheoreticPIR):
                 )
 
             if len(valid_responses) < self.num_servers - self.byzantine_threshold:
-                raise SecurityError(f"Insufficient valid responses: {len(valid_responses)}")
+                raise SecurityError(
+                    f"Insufficient valid responses: {len(valid_responses)}"
+                )
 
             # Use Reed-Solomon decoding to recover data
             recovered_data = self._reed_solomon_decode(valid_responses)
@@ -197,7 +199,9 @@ class RobustITPIR(InformationTheoreticPIR):
         # Constant-time comparison
         return hmac.compare_digest(mac, expected_mac)
 
-    def _reed_solomon_decode(self, valid_responses: list[tuple[int, np.ndarray]]) -> bytes:
+    def _reed_solomon_decode(
+        self, valid_responses: list[tuple[int, np.ndarray]]
+    ) -> bytes:
         """
         Decode data using Reed-Solomon error correction.
 
@@ -235,7 +239,7 @@ class RobustITPIR(InformationTheoreticPIR):
 
         return decoded.tobytes()
 
-    def _clean_query_cache(self):
+    def _clean_query_cache(self) -> None:
         """Remove expired queries from cache."""
         current_time = time.time()
         expired = []
@@ -267,7 +271,9 @@ class RobustITPIR(InformationTheoreticPIR):
             (response, mac) tuple
         """
         # Process query (constant time)
-        response = self._process_query_constant_time(query.query_vectors[server_id], database)
+        response = self._process_query_constant_time(
+            query.query_vectors[server_id], database
+        )
 
         # Add padding to fixed size
         if len(response) < self.response_size:
@@ -375,22 +381,26 @@ if __name__ == "__main__":
     logger.info("=" * 50)
 
     for num_servers in [2, 3, 5, 7]:
-        logger.info(f"\nConfiguration: {num_servers} servers")
+        logger.info("\nConfiguration: %snum_servers servers")
 
         # HIPAA Trust Score nodes (q = 0.98)
         analysis = analyze_privacy_breach_probability(num_servers, 0.98)
         logger.info("  HIPAA TS nodes (q=0.98):")
-        logger.info(f"    Privacy breach probability: {analysis['breach_probability']:.2e}")
+        logger.info(
+            "    Privacy breach probability: %sanalysis['breach_probability']:.2e"
+        )
 
         # Generic nodes (q = 0.95)
         analysis = analyze_privacy_breach_probability(num_servers, 0.95)
         logger.info("  Generic nodes (q=0.95):")
-        logger.info(f"    Privacy breach probability: {analysis['breach_probability']:.2e}")
+        logger.info(
+            "    Privacy breach probability: %sanalysis['breach_probability']:.2e"
+        )
 
     logger.info("\nMinimum servers for privacy targets:")
     analysis = analyze_privacy_breach_probability(3, 0.98)
     for target, min_k in analysis["minimum_servers"].items():
-        logger.info(f"  {target}: {min_k} servers")
+        logger.info("  %starget: %smin_k servers")
 
     # Test robust PIR with Byzantine servers
     logger.info("\n" + "=" * 50)
@@ -431,19 +441,19 @@ if __name__ == "__main__":
         responses.append((response, mac))
 
         if is_malicious:
-            logger.info(f"  Server {i}: Byzantine (sending corrupted response)")
+            logger.info("  Server %si: Byzantine (sending corrupted response)")
         else:
-            logger.info(f"  Server {i}: Honest")
+            logger.info("  Server %si: Honest")
 
     # Process responses
     try:
         recovered_data = pir.process_responses_with_verification(query, responses)
         logger.info("\n  Successfully recovered data despite Byzantine server!")
-        logger.info(f"  Data size: {len(recovered_data)} bytes")
+        logger.info("  Data size: %slen(recovered_data) bytes")
     except SecurityError:
         from genomevault.observability.logging import configure_logging
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        logger.info(f"\n  Security error: {e}")
-        raise
+        logger.info("\n  Security error: %se")
+        raise RuntimeError("Unspecified error")

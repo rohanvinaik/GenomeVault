@@ -20,7 +20,7 @@ except ImportError:
     logger.exception("Unhandled exception")
     cp = None
     GPU_AVAILABLE = False
-    raise
+    raise RuntimeError("Unspecified error")
 
 from genomevault.utils.logging import get_logger
 
@@ -65,7 +65,7 @@ class GPUBindingKernel:
         # Allocate GPU buffers
         self._allocate_buffers()
 
-        logger.info(f"GPU kernel initialized with {n_streams} streams")
+        logger.info("GPU kernel initialized with %sn_streams streams")
 
     def _compile_kernels(self):
         """Compile CUDA kernels."""
@@ -245,7 +245,9 @@ class GPUBindingKernel:
             cp.copyto(self.buffers["events"][:n_events], cp.asarray(events))
 
             # Generate positions
-            positions = cp.arange(start_position, start_position + n_events, dtype=cp.int32)
+            positions = cp.arange(
+                start_position, start_position + n_events, dtype=cp.int32
+            )
             cp.copyto(self.buffers["positions"][:n_events], positions)
 
             # Step 1: Map events to k-mers
@@ -266,7 +268,9 @@ class GPUBindingKernel:
             )
 
             # Step 2: Load encoding tables from catalytic space
-            pos_table, kmer_table = await self._load_encoding_tables_async(hv_encoder, stream)
+            pos_table, kmer_table = await self._load_encoding_tables_async(
+                hv_encoder, stream
+            )
 
             # Step 3: Bind HVs
             output_hv = cp.zeros(hv_dim, dtype=cp.float32)
@@ -407,7 +411,7 @@ async def example_gpu_processing():
 
     print("\nProcessing complete:")
     print(f"  Time: {elapsed:.3f}s")
-    print(f"  Throughput: {n_events/elapsed:,.0f} events/s")
+    print(f"  Throughput: {n_events / elapsed:,.0f} events/s")
     print(f"  HV norm: {np.linalg.norm(final_hv):.6f}")
     print(f"  Variance mean: {np.mean(all_vars):.3f}")
 

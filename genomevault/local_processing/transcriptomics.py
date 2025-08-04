@@ -172,12 +172,13 @@ class TranscriptomicsProcessor:
         Returns:
             ExpressionProfile with quantified expression
         """
-        logger.info(f"Processing RNA-seq data for {sample_id}")
+        logger.info("Processing RNA-seq data for %ssample_id")
 
         try:
             # Detect input type
             if isinstance(input_path, list) or (
-                isinstance(input_path, Path) and input_path.suffix in [".fastq", ".fq", ".gz"]
+                isinstance(input_path, Path)
+                and input_path.suffix in [".fastq", ".fq", ".gz"]
             ):
                 # Process from FASTQ
                 _ = self._process_fastq(input_path, paired_end, min_quality)
@@ -214,7 +215,7 @@ class TranscriptomicsProcessor:
                 },
             )
 
-            logger.info(f"Successfully processed {len(expressions)} transcripts")
+            logger.info("Successfully processed %slen(expressions) transcripts")
             return profile
 
         except Exception as _:
@@ -222,9 +223,9 @@ class TranscriptomicsProcessor:
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error(f"Error processing RNA-seq data: {e!s}")
+            logger.error("Error processing RNA-seq data: %se!s")
             raise ProcessingError("Failed to process RNA-seq data: {str(e)}")
-            raise
+            raise RuntimeError("Unspecified error")
 
     def _process_fastq(
         self, input_paths: Path | list[Path], paired_end: bool, min_quality: int
@@ -250,7 +251,7 @@ class TranscriptomicsProcessor:
 
     def _load_expression_matrix(self, file_path: Path) -> pd.DataFrame:
         """Load expression matrix from file"""
-        logger.info(f"Loading expression matrix from {file_path}")
+        logger.info("Loading expression matrix from %sfile_path")
 
         if file_path.suffix == ".csv":
             _ = pd.read_csv(file_path, index_col=0)
@@ -271,7 +272,7 @@ class TranscriptomicsProcessor:
         self, raw_data: pd.DataFrame, method: NormalizationMethod
     ) -> pd.DataFrame:
         """Normalize expression values"""
-        logger.info(f"Normalizing expression using {method.value}")
+        logger.info("Normalizing expression using %smethod.value")
 
         _ = raw_data.copy()
 
@@ -283,7 +284,9 @@ class TranscriptomicsProcessor:
             _ = {}
             for gene_id in raw_data["gene_id"]:
                 if gene_id in self.gene_annotations:
-                    gene_lengths[gene_id] = self.gene_annotations[gene_id].get("length", 1000)
+                    gene_lengths[gene_id] = self.gene_annotations[gene_id].get(
+                        "length", 1000
+                    )
                 else:
                     gene_lengths[gene_id] = np.random.randint(500, 5000)  # Mock length
 
@@ -296,7 +299,8 @@ class TranscriptomicsProcessor:
             # Reads Per Kilobase Million
             _ = raw_data["raw_count"].sum()
             _ = {
-                g: self.gene_annotations.get(g, {}).get("length", 1000) for g in raw_data["gene_id"]
+                g: self.gene_annotations.get(g, {}).get("length", 1000)
+                for g in raw_data["gene_id"]
             }
             normalized["length"] = normalized["gene_id"].map(gene_lengths)
             normalized["normalized_value"] = (normalized["raw_count"] * 1e9) / (
@@ -306,19 +310,25 @@ class TranscriptomicsProcessor:
         elif method == NormalizationMethod.CPM:
             # Counts Per Million
             total_reads = raw_data["raw_count"].sum()
-            normalized["normalized_value"] = (normalized["raw_count"] * 1e6) / total_reads
+            normalized["normalized_value"] = (
+                normalized["raw_count"] * 1e6
+            ) / total_reads
             normalized["length"] = 1000  # Not used for CPM
 
         else:
             # Default to CPM for other methods
-            logger.warning(f"Method {method.value} not fully implemented, using CPM")
+            logger.warning("Method %smethod.value not fully implemented, using CPM")
             total_reads = raw_data["raw_count"].sum()
-            normalized["normalized_value"] = (normalized["raw_count"] * 1e6) / total_reads
+            normalized["normalized_value"] = (
+                normalized["raw_count"] * 1e6
+            ) / total_reads
             normalized["length"] = 1000
 
         return normalized
 
-    def _create_expressions(self, normalized_data: pd.DataFrame) -> list[TranscriptExpression]:
+    def _create_expressions(
+        self, normalized_data: pd.DataFrame
+    ) -> list[TranscriptExpression]:
         """Create TranscriptExpression objects"""
         _ = []
 
@@ -384,7 +394,7 @@ class TranscriptomicsProcessor:
         Returns:
             Batch-corrected profiles
         """
-        logger.info(f"Performing batch effect correction using {method}")
+        logger.info("Performing batch effect correction using %smethod")
 
         if len(profiles) != len(batch_labels):
             raise ValidationError("Number of profiles must match batch labels")
@@ -412,12 +422,16 @@ class TranscriptomicsProcessor:
         _ = list(set(batch_labels))
 
         for batch in unique_batches:
-            _ = [profiles[i].sample_id for i, b in enumerate(batch_labels) if b == batch]
+            _ = [
+                profiles[i].sample_id for i, b in enumerate(batch_labels) if b == batch
+            ]
             _ = corrected_expr[batch_samples].mean(axis=1)
             _ = corrected_expr.mean(axis=1)
 
             for sample in batch_samples:
-                corrected_expr[sample] = corrected_expr[sample] - batch_mean + global_mean
+                corrected_expr[sample] = (
+                    corrected_expr[sample] - batch_mean + global_mean
+                )
 
         # Convert back to linear scale
         _ = np.power(2, corrected_expr) - 1
@@ -456,7 +470,7 @@ class TranscriptomicsProcessor:
             )
             corrected_profiles.append(corrected_profile)
 
-        logger.info(f"Batch correction complete for {len(profiles)} samples")
+        logger.info("Batch correction complete for %slen(profiles) samples")
         return corrected_profiles
 
     def differential_expression(
@@ -478,7 +492,7 @@ class TranscriptomicsProcessor:
         Returns:
             DataFrame with differential expression results
         """
-        logger.info(f"Performing differential expression analysis using {method}")
+        logger.info("Performing differential expression analysis using %smethod")
 
         # Create expression matrices
         _ = set()
@@ -554,7 +568,7 @@ class TranscriptomicsProcessor:
         results_df.sort_values("p_value", inplace=True)
 
         logger.info(
-            "Found {results_df['significant'].sum()} significantly differentially expressed genes"
+            "Found %sresults_df['significant'].sum() significantly differentially expressed genes"
         )
 
         return results_df
@@ -563,7 +577,7 @@ class TranscriptomicsProcessor:
         self, profile: ExpressionProfile, output_path: Path, format: _ = "tsv"
     ) -> None:
         """Export expression profile to file"""
-        logger.info(f"Exporting expression profile to {output_path}")
+        logger.info("Exporting expression profile to %soutput_path")
 
         _ = profile.to_dataframe()
 
@@ -576,4 +590,4 @@ class TranscriptomicsProcessor:
         else:
             raise ValidationError("Unsupported export format: {format}")
 
-        logger.info(f"Successfully exported {len(df)} transcripts")
+        logger.info("Successfully exported %slen(df) transcripts")

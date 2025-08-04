@@ -11,15 +11,20 @@ import time
 from pathlib import Path
 from typing import Any
 
-from genomevault.advanced_analysis.federated_learning.model_lineage import FederatedModelLineage
-from genomevault.blockchain.contracts.training_attestation import TrainingAttestationContract
+from genomevault.advanced_analysis.federated_learning.model_lineage import \
+    FederatedModelLineage
+from genomevault.blockchain.contracts.training_attestation import \
+    TrainingAttestationContract
 from genomevault.clinical.model_validation import ClinicalModelValidator
-from genomevault.hypervector.visualization.projector import ModelEvolutionVisualizer
-from genomevault.local_processing.differential_privacy_audit import DifferentialPrivacyAuditor
+from genomevault.hypervector.visualization.projector import \
+    ModelEvolutionVisualizer
+from genomevault.local_processing.differential_privacy_audit import \
+    DifferentialPrivacyAuditor
 from genomevault.local_processing.drift_detection import RealTimeModelMonitor
 from genomevault.local_processing.model_snapshot import ModelSnapshotLogger
 from genomevault.utils.logging import get_logger
-from genomevault.zk_proofs.circuits.multi_modal_training_proof import MultiModalTrainingProof
+from genomevault.zk_proofs.circuits.multi_modal_training_proof import \
+    MultiModalTrainingProof
 from genomevault.zk_proofs.circuits.training_proof import TrainingProofCircuit
 
 logger = get_logger(__name__)
@@ -86,7 +91,7 @@ class ProofOfTrainingIntegration:
         Returns:
             Session initialization info
         """
-        logger.info(f"Starting PoT session {session_id}")
+        logger.info("Starting PoT session %ssession_id")
 
         # Initialize snapshot logger
         snapshot_dir = self.storage_base / "snapshots" / session_id
@@ -190,7 +195,7 @@ class ProofOfTrainingIntegration:
             )
 
             if not budget_ok:
-                logger.error(f"Privacy budget exceeded in session {session_id}")
+                logger.error("Privacy budget exceeded in session %ssession_id")
                 result["privacy_exceeded"] = True
 
             result["privacy_event"] = event_id
@@ -211,7 +216,7 @@ class ProofOfTrainingIntegration:
         Returns:
             Session completion info including proof
         """
-        logger.info(f"Completing PoT session {session_id}")
+        logger.info("Completing PoT session %ssession_id")
 
         completion_result = {
             "session_id": session_id,
@@ -225,8 +230,16 @@ class ProofOfTrainingIntegration:
             # Force final snapshot
             final_snapshot_id = snapshot_logger.log_snapshot(
                 model=final_model,
-                epoch=(snapshot_logger.snapshots[-1].epoch if snapshot_logger.snapshots else 0),
-                step=(snapshot_logger.snapshots[-1].step + 1 if snapshot_logger.snapshots else 0),
+                epoch=(
+                    snapshot_logger.snapshots[-1].epoch
+                    if snapshot_logger.snapshots
+                    else 0
+                ),
+                step=(
+                    snapshot_logger.snapshots[-1].step + 1
+                    if snapshot_logger.snapshots
+                    else 0
+                ),
                 loss=final_metrics.get("loss", 0),
                 metrics=final_metrics,
                 force=True,
@@ -281,7 +294,9 @@ class ProofOfTrainingIntegration:
                 training_start=proof["public_inputs"]["training_start_time"],
                 training_end=proof["public_inputs"]["training_end_time"],
                 snapshot_merkle_root=proof["commitments"]["snapshot_merkle_root"],
-                proof_hash=hashlib.sha256(json.dumps(proof, sort_keys=True).encode()).hexdigest(),
+                proof_hash=hashlib.sha256(
+                    json.dumps(proof, sort_keys=True).encode()
+                ).hexdigest(),
                 submitter=submitter_address,
                 metadata={
                     "session_id": session_id,
@@ -289,17 +304,19 @@ class ProofOfTrainingIntegration:
                 },
             )
 
-            logger.info(f"Attestation {attestation_id} submitted for session {session_id}")
+            logger.info(
+                "Attestation %sattestation_id submitted for session %ssession_id"
+            )
             return attestation_id
 
-        except (DatabaseError, json.JSONDecodeError, KeyError) as e:
+        except (DatabaseError, json.JSONDecodeError, KeyError):
             from genomevault.observability.logging import configure_logging
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error(f"Failed to submit attestation: {e}")
+            logger.error("Failed to submit attestation: %se")
             return None
-            raise
+            raise RuntimeError("Unspecified error")
 
     def start_model_monitoring(
         self, model_id: str, model: Any, training_summary: dict[str, Any]
@@ -332,7 +349,7 @@ class ProofOfTrainingIntegration:
 
         self.model_monitors[model_id] = monitor
 
-        logger.info(f"Started monitoring for model {model_id}")
+        logger.info("Started monitoring for model %smodel_id")
         return monitor
 
     def validate_model_clinically(
@@ -367,7 +384,8 @@ class ProofOfTrainingIntegration:
         validator = self.clinical_validators[validator_id]
 
         # Perform validation
-        from genomevault.clinical.model_validation import ClinicalDomain, ValidationLevel
+        from genomevault.clinical.model_validation import (ClinicalDomain,
+                                                           ValidationLevel)
 
         domain_enum = ClinicalDomain[clinical_domain.upper()]
         level_enum = ValidationLevel[validation_level.upper()]
@@ -381,8 +399,8 @@ class ProofOfTrainingIntegration:
         )
 
         logger.info(
-            f"Clinical validation for model {model_id}: "
-            f"{'PASSED' if validation_result.passed else 'FAILED'}"
+            "Clinical validation for model %smodel_id: "
+            "%s'PASSED' if validation_result.passed else 'FAILED'"
         )
 
         return {
@@ -403,7 +421,9 @@ class ProofOfTrainingIntegration:
         is_multimodal = self.config.get("multimodal", False)
 
         if is_multimodal:
-            circuit = MultiModalTrainingProof(max_snapshots=len(proof_data["snapshot_hashes"]))
+            circuit = MultiModalTrainingProof(
+                max_snapshots=len(proof_data["snapshot_hashes"])
+            )
 
             # Add multi-modal specific inputs
             # (simplified for demo)
@@ -415,7 +435,9 @@ class ProofOfTrainingIntegration:
             proof_data["modality_commits"] = modality_commits
 
         else:
-            circuit = TrainingProofCircuit(max_snapshots=len(proof_data["snapshot_hashes"]))
+            circuit = TrainingProofCircuit(
+                max_snapshots=len(proof_data["snapshot_hashes"])
+            )
 
         # Setup inputs
         public_inputs = {
@@ -430,7 +452,9 @@ class ProofOfTrainingIntegration:
         private_inputs = {
             "snapshot_hashes": proof_data["snapshot_hashes"],
             "model_commit": hashlib.sha256(f"{session_id}_model".encode()).hexdigest(),
-            "io_sequence_commit": hashlib.sha256(f"{session_id}_io".encode()).hexdigest(),
+            "io_sequence_commit": hashlib.sha256(
+                f"{session_id}_io".encode()
+            ).hexdigest(),
             "training_snapshots": proof_data["snapshots"],
         }
 
@@ -454,7 +478,9 @@ class ProofOfTrainingIntegration:
         labels = []
 
         for snapshot in snapshot_logger.snapshots:
-            hv_path = snapshot_dir / f"snapshot_{snapshot.snapshot_id}" / "hypervector.npy"
+            hv_path = (
+                snapshot_dir / f"snapshot_{snapshot.snapshot_id}" / "hypervector.npy"
+            )
             if hv_path.exists():
                 import numpy as np
 
@@ -517,14 +543,14 @@ class ProofOfTrainingIntegration:
 
             return hypervector
 
-        except (ValueError, TypeError, KeyError) as e:
+        except (ValueError, TypeError, KeyError):
             from genomevault.observability.logging import configure_logging
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error(f"Failed to extract hypervector: {e}")
+            logger.error("Failed to extract hypervector: %se")
             return None
-            raise
+            raise RuntimeError("Unspecified error")
 
     def _init_blockchain(self):
         """Initialize blockchain connection"""
@@ -542,16 +568,16 @@ class ProofOfTrainingIntegration:
 
             self.attestation_contract.initialize(owner, verifiers)
 
-            logger.info(f"Blockchain connection established: {contract_address}")
+            logger.info("Blockchain connection established: %scontract_address")
 
-        except KeyError as e:
+        except KeyError:
             from genomevault.observability.logging import configure_logging
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error(f"Failed to initialize blockchain: {e}")
+            logger.error("Failed to initialize blockchain: %se")
             self.attestation_contract = None
-            raise
+            raise RuntimeError("Unspecified error")
 
 
 # Export main integration class

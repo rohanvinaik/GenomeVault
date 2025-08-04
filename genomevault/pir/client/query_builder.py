@@ -278,7 +278,9 @@ class PIRQueryBuilder:
         total_queries = 0
 
         for variant in variant_list:
-            var_query = GenomicQuery(query_type=QueryType.VARIANT_LOOKUP, parameters=variant)
+            var_query = GenomicQuery(
+                query_type=QueryType.VARIANT_LOOKUP, parameters=variant
+            )
 
             result = await self._execute_variant_lookup(var_query)
             total_queries += result.pir_queries_used
@@ -298,7 +300,7 @@ class PIRQueryBuilder:
             computation_time_ms=computation_time,
         )
 
-    def _add_to_cache(self, key: str, result: QueryResult):
+    def _add_to_cache(self, key: str, result: QueryResult) -> None:
         """Add result to cache with LRU eviction."""
         if len(self.cache) >= self.cache_size:
             # Remove oldest entry
@@ -379,7 +381,9 @@ class PIRQueryBuilder:
                 for variant in gene_result.data.get("variants", []):
                     clin_sig = variant.get("clinical_significance")
 
-                    if clin_sig and (not significance_filter or clin_sig == significance_filter):
+                    if clin_sig and (
+                        not significance_filter or clin_sig == significance_filter
+                    ):
                         all_clinical_variants.append(
                             {"gene": gene, "variant": variant, "significance": clin_sig}
                         )
@@ -466,17 +470,17 @@ if __name__ == "__main__":
             "alt_allele": "G",
         },
     )
-    logger.info("Variant Query: {var_query.parameters}")
+    logger.info("Variant Query: %svar_query.parameters")
 
     # Region scan
     region_query = GenomicQuery(
         query_type=QueryType.REGION_SCAN,
         parameters={"chromosome": "chr1", "start": 100000, "end": 100500},
     )
-    logger.info("Region Query: {region_query.parameters}")
+    logger.info("Region Query: %sregion_query.parameters")
 
     # Gene annotation
     gene_query = GenomicQuery(
         query_type=QueryType.GENE_ANNOTATION, parameters={"gene_symbol": "BRCA1"}
     )
-    logger.info("Gene Query: {gene_query.parameters}")
+    logger.info("Gene Query: %sgene_query.parameters")

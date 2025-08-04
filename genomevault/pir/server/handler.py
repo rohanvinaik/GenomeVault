@@ -64,7 +64,7 @@ class PIRHandler:
                 return self._error_response(
                     "INVALID_SCHEMA", f"Query validation failed: {e!s}", 400
                 )
-                raise
+                raise RuntimeError("Unspecified error")
 
             # Check protocol version
             if request_data.get("protocol_version") not in ["1.0", "1.1"]:
@@ -79,7 +79,9 @@ class PIRHandler:
             nonce = request_data.get("nonce")
 
             if nonce and nonce in self.query_cache:
-                return self._error_response("REPLAY_DETECTED", "Query nonce already used", 400)
+                return self._error_response(
+                    "REPLAY_DETECTED", "Query nonce already used", 400
+                )
 
             # Add to cache
             if nonce:
@@ -128,8 +130,10 @@ class PIRHandler:
             logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error(f"Error handling PIR query: {e!s}")
-            return self._error_response("INTERNAL_ERROR", "Query processing failed", 500)
-            raise
+            return self._error_response(
+                "INTERNAL_ERROR", "Query processing failed", 500
+            )
+            raise RuntimeError("Unspecified error")
 
     def _ensure_fixed_size(self, data: Any) -> bytes:
         """
@@ -175,7 +179,7 @@ class PIRHandler:
         if elapsed < target_time:
             await asyncio.sleep(target_time - elapsed)
 
-    def _add_to_cache(self, nonce: str):
+    def _add_to_cache(self, nonce: str) -> None:
         """Add nonce to replay cache with LRU eviction."""
         if len(self.query_cache) >= self.cache_max_size:
             # Remove oldest entry
@@ -262,17 +266,19 @@ def create_app(pir_server: PIRServer) -> web.Application:
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            raise
-            raise
+            raise RuntimeError("Unspecified error")
+            raise RuntimeError("Unspecified error")
         except Exception as e:
             from genomevault.observability.logging import configure_logging
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
             elapsed = (time.time() - start) * 1000
-            logger.error(f"{request.method} {request.path} - ERROR - {elapsed:.1f}ms - {e!s}")
-            raise
-            raise
+            logger.error(
+                f"{request.method} {request.path} - ERROR - {elapsed:.1f}ms - {e!s}"
+            )
+            raise RuntimeError("Unspecified error")
+            raise RuntimeError("Unspecified error")
 
     app.middlewares.append(logging_middleware)
 

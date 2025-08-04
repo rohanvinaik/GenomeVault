@@ -106,7 +106,9 @@ class SliceReader:
                         timestamp=time.time(),
                         metadata={
                             "channel": read.get_channel_info().get("channel_number", 0),
-                            "sampling_rate": read.get_channel_info().get("sampling_rate", 4000),
+                            "sampling_rate": read.get_channel_info().get(
+                                "sampling_rate", 4000
+                            ),
                             "offset": read.get_channel_info().get("offset", 0),
                             "range": read.get_channel_info().get("range", 1),
                         },
@@ -165,7 +167,10 @@ class SliceReader:
             if np.std(segment) < threshold:
                 # Extend until change
                 j = i + window
-                while j < len(raw_signal) and abs(raw_signal[j] - np.mean(segment)) < threshold:
+                while (
+                    j < len(raw_signal)
+                    and abs(raw_signal[j] - np.mean(segment)) < threshold
+                ):
                     j += 1
 
                 # Record event
@@ -228,7 +233,7 @@ class NanoporeStreamProcessor:
                 logger = configure_logging()
                 logger.exception("Unhandled exception")
                 logger.warning("GPU kernel not available, using CPU")
-                raise
+                raise RuntimeError("Unspecified error")
 
     async def process_fast5(
         self,
@@ -247,7 +252,7 @@ class NanoporeStreamProcessor:
         Returns:
             Processing statistics
         """
-        logger.info(f"Processing Fast5: {fast5_path}")
+        logger.info("Processing Fast5: %sfast5_path")
 
         start_time = time.time()
 
@@ -285,8 +290,8 @@ class NanoporeStreamProcessor:
         self.stats.total_reads = len({s.read_id for s in self.stats.variance_peaks})
 
         logger.info(
-            f"Completed processing: {self.stats.total_events} events, "
-            f"{self.stats.total_slices} slices in {self.stats.processing_time:.1f}s"
+            "Completed processing: %sself.stats.total_events events, "
+            "%sself.stats.total_slices slices in %sself.stats.processing_time:.1fs"
         )
 
         return self.stats
@@ -440,7 +445,8 @@ class NanoporeStreamProcessor:
         Returns:
             Proof bytes
         """
-        from genomevault.zk_proofs.advanced.catalytic_proof import CatalyticProofEngine
+        from genomevault.zk_proofs.advanced.catalytic_proof import \
+            CatalyticProofEngine
 
         # Initialize proof engine with our catalytic space
         proof_engine = CatalyticProofEngine(
@@ -500,7 +506,9 @@ async def example_streaming_pipeline():
     async def collect_results(result):
         results.append(result)
         if result["anomalies"]:
-            print(f"Anomalies detected in slice {result['slice_id']}: {len(result['anomalies'])}")
+            print(
+                f"Anomalies detected in slice {result['slice_id']}: {len(result['anomalies'])}"
+            )
 
     # Process file
     stats = await processor.process_fast5(
@@ -512,7 +520,7 @@ async def example_streaming_pipeline():
     print(f"  Total events: {stats.total_events:,}")
     print(f"  Total slices: {stats.total_slices}")
     print(f"  Processing time: {stats.processing_time:.1f}s")
-    print(f"  Events/second: {stats.total_events/stats.processing_time:,.0f}")
+    print(f"  Events/second: {stats.total_events / stats.processing_time:,.0f}")
     print(f"  Anomalies found: {len(stats.variance_peaks)}")
 
     # Generate proof
