@@ -503,7 +503,7 @@ def test_malformed_public_inputs():
     ]
 
     for i, malformed_input in enumerate(malformed_cases):
-        try:
+        with pytest.raises((KeyError, ValueError, TypeError)):
             circuit.setup_circuit(
                 malformed_input,
                 {
@@ -513,12 +513,6 @@ def test_malformed_public_inputs():
                     "witness_randomness": "0" * 64,
                 },
             )
-            # Should raise an error
-            assert False, f"Malformed input {i} should have raised an error"
-        except (KeyError, ValueError, TypeError):
-            logger.exception("Unhandled exception")
-            # Expected behavior
-            raise
 
 
 @pytest.mark.parametrize("constraint_count", [100, 1000, 5000])

@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: genomevault-pir-server
+  namespace: genomevault
+  labels:
+    app: genomevault
+    component: pir-server
+spec:
+  serviceName: genomevault-pir-server
+  replicas: 5  # N-server PIR configuration
+  selector:
+    matchLabels:
+      app: genomevault
+      component: pir-server
+  template:
+    metadata:
+      labels:
+        app: genomevault
+        component: pir-server
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+    spec:
+      serviceAccountName: genomevault-pir
+
+      containers:
+      - name: pir-server
+        image: genomevault/pir-server:3.0.0
+        imagePullPolicy: IfNotPresent
+
+        ports:
+        - name: pir
+          containerPort: 8080
+          protocol: TCP
+        - name: metrics
+          containerPort: 9090
+          protocol: TCP
+
+        env:
+        - name: SERVER_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: PIR_NODE_TYPE
+          value: "server"
+        - name: SHARD_COUNT
+          value: "3"
+        - name: SERVER_TYPE
+          value: "hipaa-ts"  # hipaa-ts or generic
+        - name: HONESTY_PROBABILITY
+          value: "0.98"
+
+        resources:
+          requests:
+            memory: "8Gi"
+            cpu: "4000m"
+          limits:
+            memory: "16Gi"
+            cpu: "8000m"
+
+        volumeMounts:
+        - name: pir-data
+          mountPath: /data/genomevault/pir
+        - name: reference-data
+          mountPath: /data/reference
+          readOnly: true
+
+  volumeClaimTemplates:
+  - metadata:
+      name: pir-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: fast-ssd
+      resources:
+        requests:
+          storage: 500Gi

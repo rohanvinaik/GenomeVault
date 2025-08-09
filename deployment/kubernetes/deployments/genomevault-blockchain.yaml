@@ -1,0 +1,111 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: genomevault-blockchain
+  namespace: genomevault
+  labels:
+    app: genomevault
+    component: blockchain
+spec:
+  serviceName: genomevault-blockchain
+  replicas: 3
+  selector:
+    matchLabels:
+      app: genomevault
+      component: blockchain
+  template:
+    metadata:
+      labels:
+        app: genomevault
+        component: blockchain
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "26660"
+    spec:
+      serviceAccountName: genomevault-blockchain
+
+      initContainers:
+      - name: init-blockchain
+        image: genomevault/blockchain:3.0.0
+        command: ['/scripts/init-node.sh']
+        volumeMounts:
+        - name: blockchain-data
+          mountPath: /data/genomevault/blockchain
+        - name: scripts
+          mountPath: /scripts
+
+      containers:
+      - name: blockchain
+        image: genomevault/blockchain:3.0.0
+        imagePullPolicy: IfNotPresent
+
+        ports:
+        - name: p2p
+          containerPort: 26656
+          protocol: TCP
+        - name: rpc
+          containerPort: 26657
+          protocol: TCP
+        - name: prometheus
+          containerPort: 26660
+          protocol: TCP
+
+        env:
+        - name: NODE_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NODE_CLASS
+          value: "full"  # Can be light, full, or archive
+        - name: SIGNATORY_STATUS
+          value: "trusted"  # Can be non-signer or trusted
+        - name: VALIDATOR_KEY
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-validator-keys
+              key: $(NODE_ID)
+              optional: true
+
+        resources:
+          requests:
+            memory: "4Gi"
+            cpu: "2000m"
+          limits:
+            memory: "8Gi"
+            cpu: "4000m"
+
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: rpc
+          initialDelaySeconds: 60
+          periodSeconds: 10
+
+        volumeMounts:
+        - name: blockchain-data
+          mountPath: /data/genomevault/blockchain
+        - name: config
+          mountPath: /config
+          readOnly: true
+        - name: scripts
+          mountPath: /scripts
+          readOnly: true
+
+      volumes:
+      - name: config
+        configMap:
+          name: genomevault-config
+      - name: scripts
+        configMap:
+          name: genomevault-scripts
+          defaultMode: 0755
+
+  volumeClaimTemplates:
+  - metadata:
+      name: blockchain-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: fast-ssd
+      resources:
+        requests:
+          storage: 100Gi

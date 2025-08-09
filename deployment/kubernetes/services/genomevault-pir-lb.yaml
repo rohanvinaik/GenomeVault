@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: genomevault-pir-lb
+  namespace: genomevault
+  labels:
+    app: genomevault
+    component: pir-server
+spec:
+  type: LoadBalancer
+  selector:
+    app: genomevault
+    component: pir-server
+  ports:
+  - name: pir
+    port: 8080
+    targetPort: 8080
+    protocol: TCP

@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: genomevault-pir-server
+  namespace: genomevault
+  labels:
+    app: genomevault
+    component: pir-server
+spec:
+  type: ClusterIP
+  clusterIP: None  # Headless service for StatefulSet
+  selector:
+    app: genomevault
+    component: pir-server
+  ports:
+  - name: pir
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+  - name: metrics
+    port: 9090
+    targetPort: 9090
+    protocol: TCP

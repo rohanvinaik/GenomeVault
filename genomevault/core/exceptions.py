@@ -77,3 +77,27 @@ class ProjectionError(GVComputeError):
 
 class HypervectorError(GVComputeError):
     code = "GV_HYPERVECTOR"
+
+
+class ValidationError(GVInputError):
+    code = "GV_VALIDATION"
+
+
+class VerificationError(GVSecurityError):
+    code = "GV_VERIFICATION"
+
+
+class PIRError(GVComputeError):
+    code = "GV_PIR"
+
+
+class ProcessingError(GVComputeError):
+    code = "GV_PROCESSING"
+
+
+class BindingError(GVComputeError):
+    code = "GV_BINDING"
+
+
+# Legacy alias for backwards compatibility
+GenomeVaultError = GVError
