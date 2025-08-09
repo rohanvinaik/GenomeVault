@@ -283,21 +283,21 @@ class TestPIRSystemIntegration:
         """Test multi-server PIR deployment."""
         # This would test actual server deployment
         # with Docker containers or local processes
-        pass
+        pytest.skip("Multi-server deployment testing requires container orchestration")
 
     @pytest.mark.asyncio
     async def test_failure_recovery(self):
         """Test system recovery from server failures."""
         # Test handling of server crashes
         # and automatic failover
-        pass
+        pytest.skip("Server failure recovery testing requires cluster setup")
 
     @pytest.mark.asyncio
     async def test_performance_under_load(self):
         """Test system performance under load."""
         # Simulate concurrent queries
         # and measure throughput/latency
-        pass
+        pytest.skip("Load testing requires full deployment setup")
 
 
 # Demo notebook content (would be in separate .ipynb file)

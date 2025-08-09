@@ -2,6 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any, Dict
 
+
 class BaseCircuit(ABC):
     @abstractmethod
     def public_statement(self) -> Dict[str, Any]: ...

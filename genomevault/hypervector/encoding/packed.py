@@ -2,6 +2,7 @@ from __future__ import annotations
 import numpy as np
 import torch
 
+
 def pack_bits(x: torch.Tensor) -> np.ndarray:
     """Pack {-1,+1} or {0,1} signs into bytes (numpy)."""
     x = x.detach().cpu().view(-1)
@@ -10,6 +11,7 @@ def pack_bits(x: torch.Tensor) -> np.ndarray:
     pad = (-len(bits)) % 8
     bits = np.pad(bits, (0, pad))
     return np.packbits(bits, bitorder="little")
+
 
 def unpack_bits(packed: np.ndarray, length: int) -> torch.Tensor:
     bits = np.unpackbits(packed, bitorder="little")[:length].astype(np.uint8)

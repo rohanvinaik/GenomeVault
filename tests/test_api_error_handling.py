@@ -22,7 +22,7 @@ def test_gv_input_error_handling():
     # Test empty data
     response = client.post("/api/v1/encode", json={"data": [], "seed": 42})
     assert response.status_code == 400
-    
+
     error_data = response.json()
     assert error_data["type"] == "GVInputError"
     assert error_data["code"] == "GV_INPUT"
@@ -34,12 +34,11 @@ def test_gv_input_error_handling():
 def test_gv_input_error_inconsistent_row_lengths():
     """Test validation error for inconsistent row lengths."""
     # Test inconsistent row lengths
-    response = client.post("/api/v1/encode", json={
-        "data": [[1.0, 2.0], [3.0, 4.0, 5.0]], 
-        "seed": 42
-    })
+    response = client.post(
+        "/api/v1/encode", json={"data": [[1.0, 2.0], [3.0, 4.0, 5.0]], "seed": 42}
+    )
     assert response.status_code == 400
-    
+
     error_data = response.json()
     assert error_data["type"] == "GVInputError"
     assert error_data["code"] == "GV_INPUT"
@@ -49,12 +48,9 @@ def test_gv_input_error_inconsistent_row_lengths():
 
 def test_gv_input_error_empty_rows():
     """Test validation error for empty rows."""
-    response = client.post("/api/v1/encode", json={
-        "data": [[], [1.0, 2.0]], 
-        "seed": 42
-    })
+    response = client.post("/api/v1/encode", json={"data": [[], [1.0, 2.0]], "seed": 42})
     assert response.status_code == 400
-    
+
     error_data = response.json()
     assert error_data["type"] == "GVInputError"
     assert error_data["code"] == "GV_INPUT"
@@ -70,13 +66,13 @@ def test_health_endpoint():
 def test_exception_structure():
     """Test that our exceptions have the expected structure."""
     exc = GVInputError("Test message", details={"test": "value"})
-    
+
     # Test to_dict method
     data = exc.to_dict()
     assert data["type"] == "GVInputError"
     assert data["code"] == "GV_INPUT"
     assert data["message"] == "Test message"
     assert data["details"]["test"] == "value"
-    
+
     # Test HTTP status
     assert exc.http_status == 400

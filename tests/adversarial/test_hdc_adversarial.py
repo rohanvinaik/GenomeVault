@@ -9,7 +9,10 @@ import numpy as np
 import pytest
 import torch
 
-from genomevault.hypervector_transform.binding_operations import BindingType, HypervectorBinder
+from genomevault.hypervector_transform.binding_operations import (
+    BindingType,
+    HypervectorBinder,
+)
 from genomevault.hypervector_transform.hdc_encoder import (
     HypervectorConfig,
     HypervectorEncoder,
@@ -125,7 +128,6 @@ class TestAdversarialInputs:
                 logger = configure_logging()
                 logger.exception("Unhandled exception")
                 # It's OK to reject malformed input
-                pass
                 raise
 
 
@@ -407,7 +409,6 @@ class TestSystematicVulnerabilities:
             logger = configure_logging()
             logger.exception("Unhandled exception")
             # It's OK to fail with MemoryError
-            pass
             raise
         except Exception as e:
             from genomevault.observability.logging import configure_logging

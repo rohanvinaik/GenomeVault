@@ -14,10 +14,12 @@ import logging
 TensorLike = Union[np.ndarray, torch.Tensor]
 logger = logging.getLogger(__name__)
 
+
 class ProjectionType(Enum):
     RANDOM_GAUSSIAN = "random_gaussian"
     SPARSE_RANDOM = "sparse_random"
     ORTHOGONAL = "orthogonal"
+
 
 @dataclass
 class HypervectorConfig:
@@ -28,6 +30,7 @@ class HypervectorConfig:
     normalize: bool = True
     quantize: bool = False
     quantization_bits: int = 8
+
 
 class HypervectorEncoder:
     """Minimal, correct encoder to unblock tests."""
@@ -103,7 +106,9 @@ class HypervectorEncoder:
     def _cache_key(self, input_dim: int, output_dim: int, omics_type: OmicsType) -> str:
         return f"{omics_type.value}:{input_dim}->{output_dim}:{self.config.projection_type.value}"
 
-    def _get_projection_matrix(self, input_dim: int, output_dim: int, omics_type: OmicsType) -> torch.Tensor:
+    def _get_projection_matrix(
+        self, input_dim: int, output_dim: int, omics_type: OmicsType
+    ) -> torch.Tensor:
         key = self._cache_key(input_dim, output_dim, omics_type)
         if key in self._projection_cache:
             return self._projection_cache[key]
@@ -122,7 +127,7 @@ class HypervectorEncoder:
 
     def _sparse_random(self, rows: int, cols: int, *, sparsity: float) -> torch.Tensor:
         # Achlioptas-style: values in {-1, 0, +1}
-        probs = [sparsity/2, 1 - sparsity, sparsity/2]
+        probs = [sparsity / 2, 1 - sparsity, sparsity / 2]
         vals = np.random.choice([-1.0, 0.0, 1.0], size=(rows, cols), p=probs).astype(np.float32)
         mat = torch.from_numpy(vals)
         # scale so that E[||x||] is preserved
@@ -143,26 +148,31 @@ class HypervectorEncoder:
     def _quantize(self, hv: torch.Tensor, *, bits: int = 8) -> torch.Tensor:
         # symmetric uniform quantization to int8/intN
         scale = hv.abs().max().clamp_min(1e-8)
-        q = torch.clamp((hv / scale) * (2 ** (bits - 1) - 1), min=-(2 ** (bits - 1)), max=(2 ** (bits - 1) - 1))
+        q = torch.clamp(
+            (hv / scale) * (2 ** (bits - 1) - 1),
+            min=-(2 ** (bits - 1)),
+            max=(2 ** (bits - 1) - 1),
+        )
         return q.round()
 
 
 # Convenience functions
 def create_encoder(
-    dimension: int = HYPERVECTOR_DIMENSIONS, 
-    projection_type: str = "sparse_random", 
-    **kwargs
+    dimension: int = HYPERVECTOR_DIMENSIONS,
+    projection_type: str = "sparse_random",
+    **kwargs,
 ) -> HypervectorEncoder:
     """Create a hypervector encoder with specified configuration."""
     config = HypervectorConfig(
-        dimension=dimension, 
-        projection_type=ProjectionType(projection_type), 
-        **kwargs
+        dimension=dimension, projection_type=ProjectionType(projection_type), **kwargs
     )
     return HypervectorEncoder(config)
 
 
-def encode_genomic_data(genomic_data: Union[TensorLike, Mapping[str, TensorLike]], dimension: int = HYPERVECTOR_DIMENSIONS) -> torch.Tensor:
+def encode_genomic_data(
+    genomic_data: Union[TensorLike, Mapping[str, TensorLike]],
+    dimension: int = HYPERVECTOR_DIMENSIONS,
+) -> torch.Tensor:
     """Convenience function to encode genomic data."""
     encoder = create_encoder(dimension=dimension)
     return encoder.encode(genomic_data, OmicsType.GENOMIC)

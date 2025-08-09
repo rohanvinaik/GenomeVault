@@ -17,7 +17,9 @@ from hypothesis.stateful import RuleBasedStateMachine, initialize, rule
 from genomevault.zk_proofs.circuits.implementations.variant_frequency_circuit import (
     VariantFrequencyCircuit,
 )
-from genomevault.zk_proofs.circuits.implementations.variant_proof_circuit import VariantProofCircuit
+from genomevault.zk_proofs.circuits.implementations.variant_proof_circuit import (
+    VariantProofCircuit,
+)
 
 # Constants for magic number elimination (PLR2004)
 MAX_VARIANTS = 10
@@ -132,7 +134,6 @@ class TestVariantProofCircuit:
             logger = configure_logging()
             logger.exception("Unhandled exception")
             # Constraint generation might fail, which is also acceptable
-            pass
             raise
 
     @given(
@@ -175,7 +176,6 @@ class TestVariantProofCircuit:
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            pass
             raise
 
     def test_boundary_chromosome_values(self):
@@ -311,7 +311,6 @@ class TestVariantFrequencyCircuit:
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            pass
             raise
 
     @given(
@@ -360,7 +359,7 @@ class TestVariantFrequencyCircuit:
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            pass  # Expected for out-of-range values
+            # Expected for out-of-range values
             raise
 
     def test_unused_slots_zero(self):
@@ -534,7 +533,6 @@ def test_malformed_public_inputs():
             logger = configure_logging()
             logger.exception("Unhandled exception")
             # Expected behavior
-            pass
             raise
 
 

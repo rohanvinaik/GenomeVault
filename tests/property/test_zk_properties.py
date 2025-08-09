@@ -181,11 +181,11 @@ class TestZKCircuitProperties:
         """Test that circuits are satisfiable for valid inputs."""
         # This would test the actual circuit construction
         # in a real implementation
-        pass
+        pytest.skip("Circuit satisfiability testing requires full ZK implementation")
 
     @given(circuit_depth=st.integers(min_value=1, max_value=100))
     def test_circuit_depth_bounds(self, circuit_depth):
         """Test that circuit depth affects proof generation time predictably."""
         # This would measure actual circuit performance
         # in a real implementation
-        pass
+        pytest.skip("Circuit depth performance testing requires full ZK implementation")

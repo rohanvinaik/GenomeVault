@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import Dict
 from genomevault.utils.metrics import Counter, Gauge, Histogram
 
+
 class MetricsRegistry:
     def __init__(self) -> None:
         self.counters: Dict[str, Counter] = {}
@@ -19,5 +20,6 @@ class MetricsRegistry:
     def histogram(self, name: str) -> Histogram:
         self.hists.setdefault(name, Histogram())
         return self.hists[name]
+
 
 REGISTRY = MetricsRegistry()

@@ -45,7 +45,6 @@ def test_invalid_dimension_raises():
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        pass
         raise
 
 
@@ -59,5 +58,4 @@ def test_missing_vector_id_raises():
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        pass
         raise

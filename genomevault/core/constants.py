@@ -15,6 +15,7 @@ VERIFICATION_TIME_MAX = 30.0
 DEFAULT_CIRCUIT_SIZE = 1024
 MAX_PROOF_SIZE = 1024 * 1024  # 1MB
 
+
 class OmicsType(Enum):
     GENOMIC = "genomic"
     TRANSCRIPTOMIC = "transcriptomic"

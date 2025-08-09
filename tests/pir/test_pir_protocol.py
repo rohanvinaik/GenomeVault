@@ -247,7 +247,6 @@ class TestAdversarialPIR:
             logger = configure_logging()
             logger.exception("Unhandled exception")
             # Expected for invalid inputs
-            pass
             raise
 
     def test_replay_attack_protection(self):

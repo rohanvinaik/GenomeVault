@@ -1,10 +1,12 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import List, Sequence, Any
+from typing import Sequence
+
 
 @dataclass
 class PIRServer:
     """Toy 2-server info-theoretic PIR server holding a shard."""
+
     data: Sequence[int]
 
     def get(self, mask: Sequence[int]) -> int:
@@ -15,12 +17,14 @@ class PIRServer:
                 acc ^= int(val)
         return acc
 
+
 class SecurePIRWrapper:
     """
     Minimal 2-server XOR PIR wrapper:
     - query(index) builds two random masks whose XOR selects exactly index
     - correctness: server1(mask1) ^ server2(mask2) == data[index]
     """
+
     def __init__(self, server1: PIRServer, server2: PIRServer):
         assert len(server1.data) == len(server2.data), "server sizes must match"
         self.n = len(server1.data)
@@ -32,6 +36,7 @@ class SecurePIRWrapper:
             raise ValueError("index out of range")
         # mask1 random; mask2 = mask1 with index bit flipped
         import random
+
         mask1 = [random.randint(0, 1) for _ in range(self.n)]
         mask2 = mask1[:]
         mask2[index] ^= 1

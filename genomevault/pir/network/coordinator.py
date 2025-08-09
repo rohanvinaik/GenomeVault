@@ -2,13 +2,16 @@ from __future__ import annotations
 from typing import List
 from dataclasses import dataclass
 
+
 @dataclass
 class NodeRef:
     name: str
     healthy: bool = True
 
+
 class PIRCoordinator:
     """Routes read-only queries to healthy nodes; trivial round-robin."""
+
     def __init__(self, nodes: List[NodeRef]):
         if not nodes:
             raise ValueError("no nodes")

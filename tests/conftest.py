@@ -228,7 +228,6 @@ def cleanup_test_files():
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            pass
             raise
 
 

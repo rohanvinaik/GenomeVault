@@ -280,7 +280,7 @@ class TestReplayAttacks:
         """Test that old timestamps are rejected."""
         # This would be implemented in production
         # to prevent replay of old queries
-        pass
+        pytest.skip("Timestamp validation not implemented in minimal version")
 
 
 class TestPaddingAndSizing:
@@ -314,7 +314,7 @@ class TestPaddingAndSizing:
         """Test that queries enforce padding."""
         # Queries should also have consistent sizes
         # to prevent traffic analysis
-        pass
+        pytest.skip("Query padding not implemented in minimal version")
 
 
 class TestErrorInjection:
@@ -345,7 +345,7 @@ class TestErrorInjection:
             # Should still succeed with 4/5 servers
             try:
                 # Would execute: result = await client.execute_query(query)
-                pass
+                pytest.skip("Full query execution not implemented in minimal version")
             except Exception:
                 from genomevault.observability.logging import configure_logging
 
@@ -358,7 +358,7 @@ class TestErrorInjection:
         """Test Byzantine fault tolerance."""
         # Test that system tolerates malicious servers
         # that return intentionally wrong results
-        pass
+        pytest.skip("Byzantine fault tolerance not implemented in minimal version")
 
 
 if __name__ == "__main__":
