@@ -1,0 +1,199 @@
+path	days_since_commit	is_executable	has_shebang	shebang	size_kb	referenced
+docker/blockchain/init-node.sh	21	0	1	#!/bin/sh	1.1	1
+scripts/setup/init_node.sh	21	1	1	#!/bin/bash	5.5	0
+devops/setup-dev.sh	20	1	1	#!/bin/bash	6.1	1
+scripts/quick_start.sh	15	1	1	#!/bin/bash	2.4	0
+cleanup_duplicates.sh	14	0	1	#!/bin/bash	2.0	0
+fix_and_push.sh	14	0	1	#!/bin/bash	3.0	0
+push_packed_hv.sh	14	0	1	#!/bin/bash	1.7	0
+push_to_github.sh	14	1	1	#!/bin/bash	3.8	1
+apply_audit_fixes.sh	12	1	1	#!/bin/bash	0.9	1
+audit_fix_menu.sh	12	1	1	#!/bin/bash	5.4	1
+audit_menu_final.sh	12	1	1	#!/bin/bash	7.2	1
+bypass_hooks_push.sh	12	1	1	#!/bin/bash	1.0	1
+check_commit_status.sh	12	1	1	#!/bin/bash	1.0	0
+check_git_status.sh	12	1	1	#!/bin/bash	1.0	1
+commit_and_push_now.sh	12	1	1	#!/bin/bash	2.9	1
+final_push.sh	12	1	1	#!/bin/bash	0.8	0
+force_push_audit.sh	12	1	1	#!/bin/bash	1.2	1
+git_diagnostic.sh	12	1	1	#!/bin/bash	0.6	0
+one_line_push.sh	12	1	1	#!/bin/bash	0.5	1
+prepare_for_github.sh	12	1	1	#!/bin/bash	0.7	0
+push_audit_checklist.sh	12	1	1	#!/bin/bash	2.8	1
+push_now.sh	12	1	1	#!/bin/bash	2.0	1
+push_packed_hv_audit.sh	12	0	1	#!/bin/bash	5.7	0
+push_to_clean_slate.sh	12	1	1	#!/bin/bash	5.4	1
+quick_push_clean_slate.sh	12	0	1	#!/bin/bash	0.6	1
+run_tests.sh	12	1	1	#!/bin/bash	0.8	0
+scripts/__init__.py	12	1	0		0.0	1
+devtools/diagnose_failures.py	10	0	1	#!/usr/bin/env python3	3.1	1
+devtools/diagnose_imports.py	10	0	1	#!/usr/bin/env python3	3.4	1
+push_bypass_hooks.sh	10	1	1	#!/bin/bash	1.5	0
+run_exception_checks.sh	10	1	1	#!/bin/bash	0.5	0
+scripts/convert_print_to_logging.py	10	1	1	#!/usr/bin/env python3	4.0	1
+scripts/dev_down.sh	10	1	1	#!/usr/bin/env bash	0.1	1
+scripts/dev_up.sh	10	1	1	#!/usr/bin/env bash	0.1	1
+scripts/pii_scan.py	10	1	0		0.7	1
+scripts/run_api_local.sh	10	1	1	#!/usr/bin/env bash	0.1	0
+scripts/test.sh	10	1	1	#!/usr/bin/env bash	0.1	1
+scripts/zk_build_sum64.sh	10	1	1	#!/usr/bin/env bash	1.1	1
+test_autofix_example.py	10	0	1	#!/usr/bin/env python3	1.4	1
+tools/__init__.py	10	0	0		0.0	1
+tools/codemods/__init__.py	10	0	0		0.0	1
+tools/codemods/replace_prints_with_logging.py	10	1	1	#!/usr/bin/env python3	1.3	1
+commit_lint_clean.sh	5	1	1	#!/bin/bash	1.6	0
+dashboard_zero_red_commit.sh	5	1	1	#!/bin/bash	2.5	0
+diagnostic.py	5	0	1	#!/usr/bin/env python3	1.1	1
+green_toolchain_commit.sh	5	1	1	#!/bin/bash	2.9	0
+scripts/auto_fix_syntax.sh	5	1	1	#!/usr/bin/env bash	3.1	1
+scripts/cleanup_one_pkg.sh	5	1	1	#!/usr/bin/env bash	7.0	1
+scripts/fix_fstrings.sh	5	1	1	#!/usr/bin/env bash	1.0	1
+scripts/scripts/fix_fstrings.sh	5	0	1	#!/usr/bin/env bash	1.1	1
+test_api_startup.py	5	0	1	#!/usr/bin/env python3	0.9	1
+test_run_api.py	5	0	1	#!/usr/bin/env python3	0.7	0
+test_simple.py	5	0	1	#!/usr/bin/env python3	1.3	1
+validate_lint_clean.py	5	0	1	#!/usr/bin/env python3	2.1	1
+add_utils_stubs.sh	4	1	1	#!/bin/bash	2.9	0
+commit_all_tasks.sh	4	1	1	#!/bin/bash	1.3	0
+commit_constants.sh	4	1	1	#!/bin/bash	1.2	0
+commit_fixes.sh	4	1	1	#!/bin/bash	1.2	0
+examples/simple_test.py	4	1	1	#!/usr/bin/env python3	2.2	1
+fix_original_format.sh	4	0	1	#!/bin/bash	2.2	0
+fix_ruff_comprehensive.sh	4	1	1	#!/bin/bash	6.3	0
+fix_zk_comprehensive_v2.sh	4	1	1	#!/bin/bash	2.9	0
+fix_zk_proofs.sh	4	1	1	#!/usr/bin/env bash	2.2	0
+fix_zk_proofs_comprehensive.sh	4	1	0		2.2	0
+health_dashboard_summary.sh	4	1	1	#!/bin/bash	4.6	0
+import_fixes_summary.sh	4	1	1	#!/bin/bash	2.5	0
+package_structure_summary.sh	4	1	1	#!/bin/bash	2.2	0
+pyproject_update_summary.sh	4	1	1	#!/bin/bash	2.3	0
+setup_dev_environment.sh	4	1	1	#!/bin/bash	2.6	0
+setup_summary.sh	4	1	1	#!/bin/bash	1.7	0
+test_genomevault.sh	4	1	1	#!/bin/bash	3.3	0
+tools/convert_print_to_logging.py	4	0	1	#!/usr/bin/env python3	4.0	1
+tools/diagnose_failures.py	4	0	1	#!/usr/bin/env python3	3.1	1
+tools/diagnose_imports.py	4	0	1	#!/usr/bin/env python3	3.4	1
+tools/fix_prover.py	4	0	1	#!/usr/bin/env python3	6.7	1
+tools/pii_scan.py	4	0	0		0.7	1
+tools/quick_fix_init_files.py	4	0	0		1.6	1
+tools/test_autofix_example.py	4	0	1	#!/usr/bin/env python3	1.4	1
+verify_metrics_setup.sh	4	1	1	#!/bin/bash	2.0	0
+verify_package_structure.sh	4	1	1	#!/bin/bash	2.2	0
+write_logging_metrics_stubs.sh	4	1	1	#!/bin/bash	3.7	0
+zk_fixes_complete_summary.sh	4	1	1	#!/bin/bash	4.3	0
+zk_fixes_summary.sh	4	1	1	#!/bin/bash	2.8	0
+apply_area_fixes.py	0	0	1	#!/usr/bin/env python3	4.8	1
+apply_common_fixes.py	0	0	1	#!/usr/bin/env python3	7.5	1
+apply_lint_fixes.py	0	0	1	#!/usr/bin/env python3	3.6	1
+check_implementation_status.sh	0	1	1	#!/bin/bash	2.0	0
+check_lint_status.py	0	0	1	#!/usr/bin/env python3	2.1	1
+commit_task3.sh	0	1	1	#!/bin/bash	0.6	0
+commit_task4.sh	0	1	1	#!/bin/bash	0.5	0
+commit_task5.sh	0	1	1	#!/bin/bash	0.5	0
+commit_task6.sh	0	1	1	#!/bin/bash	0.8	0
+comprehensive_cleanup.py	0	0	1	#!/usr/bin/env python3	33.1	1
+comprehensive_status.py	0	0	1	#!/usr/bin/env python3	6.6	1
+dashboard_zero_red.py	0	0	1	#!/usr/bin/env python3	8.6	1
+devtools/debug_genomevault.py	0	1	1	#!/usr/bin/env python3	7.6	1
+devtools/debug_summary.py	0	0	1	#!/usr/bin/env python3	2.8	0
+devtools/dependency_analysis.py	0	0	1	#!/usr/bin/env python3	3.8	0
+devtools/pre_push_checklist.py	0	0	1	#!/usr/bin/env python3	7.1	1
+devtools/trace_import_failure.py	0	0	1	#!/usr/bin/env python3	2.5	1
+devtools/verify_fix.py	0	0	1	#!/usr/bin/env python3	3.0	1
+enhanced_cleanup.py	0	0	1	#!/usr/bin/env python3	69.3	1
+examples/basic_usage.py	0	0	1	#!/usr/bin/env python3	8.1	1
+examples/hv_unified_encoder_demo.py	0	0	1	#!/usr/bin/env python3	4.9	1
+examples/minimal_verification.py	0	0	1	#!/usr/bin/env python3	3.5	1
+final_validation.py	0	0	1	#!/usr/bin/env python3	8.2	1
+final_verification.py	0	0	1	#!/usr/bin/env python3	13.1	1
+fix_audit_issues.py	0	0	1	#!/usr/bin/env python3	15.6	1
+fix_imports.py	0	0	1	#!/usr/bin/env python3	8.4	1
+fix_prover.py	0	0	1	#!/usr/bin/env python3	6.7	1
+fix_python_compatibility.py	0	0	1	#!/usr/bin/env python3	2.1	1
+focused_cleanup.py	0	0	1	#!/usr/bin/env python3	21.6	1
+focused_green_impl.py	0	0	1	#!/usr/bin/env python3	1.5	1
+genomevault/zk_proofs/cli/zk_cli.py	0	0	1	#!/usr/bin/env python3	13.9	1
+genomevault_autofix.py	0	1	1	#!/usr/bin/env python3	19.7	1
+genomevault_cleanup.py	0	0	1	#!/usr/bin/env python3	17.2	1
+genomevault_safe_fix_implementation.py	0	1	1	#!/usr/bin/env python3	22.6	1
+green_toolchain_impl.py	0	0	1	#!/usr/bin/env python3	14.3	1
+implement_mvp_complete.py	0	0	1	#!/usr/bin/env python3	23.3	1
+lint_clean_implementation.py	0	0	1	#!/usr/bin/env python3	17.8	1
+manual_verification.py	0	0	1	#!/usr/bin/env python3	11.0	1
+pre_push_validation.sh	0	1	1	#!/bin/bash	2.7	0
+preflight_check.py	0	0	1	#!/usr/bin/env python3	4.0	1
+proper_ruff_upgrade.py	0	0	1	#!/usr/bin/env python3	6.4	1
+push_audit_implementation.sh	0	1	1	#!/bin/bash	1.0	0
+push_to_git.sh	0	0	1	#!/bin/bash	1.3	0
+run_complete_lint_fix.py	0	0	1	#!/usr/bin/env python3	7.0	1
+run_mvp_tests.sh	0	1	1	#!/usr/bin/env bash	0.4	0
+run_mypy_task4.sh	0	1	1	#!/bin/bash	0.2	0
+run_pytest_task5.sh	0	1	1	#!/bin/bash	0.2	0
+run_ruff_fix_task3.sh	0	1	1	#!/bin/bash	0.2	0
+run_ruff_task3.sh	0	1	1	#!/bin/bash	0.3	0
+scripts/analyze_complexity.py	0	1	0		4.1	1
+scripts/audit_fix.sh	0	1	1	#!/usr/bin/env bash	1.6	1
+scripts/bench.py	0	1	1	#!/usr/bin/env python3	13.2	1
+scripts/bench_hdc.py	0	1	1	#!/usr/bin/env python3	25.1	1
+scripts/bench_pir.py	0	1	0		17.2	1
+scripts/clinical_eval_run.py	0	1	0		1.1	1
+scripts/etl_run.py	0	1	0		0.9	1
+scripts/gen_projection.py	0	1	1	#!/usr/bin/env python3	9.6	1
+scripts/generate_perf_report.py	0	1	1	#!/usr/bin/env python3	12.6	1
+scripts/implement_checklist.py	0	1	1	#!/usr/bin/env python3	11.4	1
+scripts/lint_check.sh	0	1	1	#!/usr/bin/env bash	0.3	1
+scripts/lint_fix.sh	0	1	1	#!/usr/bin/env bash	0.4	1
+scripts/lint_ratchet.sh	0	1	1	#!/usr/bin/env bash	0.3	1
+scripts/make_sbom.sh	0	1	1	#!/usr/bin/env bash	0.9	1
+scripts/run_bench.py	0	1	1	#!/usr/bin/env python3	8.7	1
+scripts/run_hdc_linters.py	0	1	1	#!/usr/bin/env python3	3.8	1
+scripts/security_check.py	0	1	0		8.8	1
+scripts/validate_checklist.py	0	1	1	#!/usr/bin/env python3	13.1	1
+scripts/validate_hdc_implementation.py	0	1	0		15.4	1
+simple_autofix_demo.py	0	0	1	#!/usr/bin/env python3	5.5	1
+test_and_validate.sh	0	1	1	#!/bin/bash	2.0	0
+test_constant.py	0	0	1	#!/usr/bin/env python3	1.3	1
+test_fixed_phase3.py	0	0	1	#!/usr/bin/env python3	3.7	0
+test_fixes.py	0	0	1	#!/usr/bin/env python3	4.2	1
+test_phase3.py	0	0	1	#!/usr/bin/env python3	2.5	0
+test_ruff_upgrade.py	0	0	1	#!/usr/bin/env python3	3.8	1
+tools/analyze_complexity.py	0	0	0		4.1	1
+tools/bench.py	0	0	1	#!/usr/bin/env python3	13.2	1
+tools/bench_hdc.py	0	0	1	#!/usr/bin/env python3	25.1	1
+tools/bench_pir.py	0	0	0		17.2	1
+tools/clinical_eval_run.py	0	0	0		1.1	1
+tools/codemods/fix_exceptions.py	0	1	1	#!/usr/bin/env python3	1.7	1
+tools/comprehensive_cleanup.py	0	0	1	#!/usr/bin/env python3	29.4	1
+tools/debug_genomevault.py	0	0	1	#!/usr/bin/env python3	7.6	1
+tools/debug_summary.py	0	0	1	#!/usr/bin/env python3	2.8	0
+tools/dependency_analysis.py	0	0	1	#!/usr/bin/env python3	3.8	0
+tools/enhanced_cleanup.py	0	0	1	#!/usr/bin/env python3	51.9	1
+tools/etl_run.py	0	0	0		0.9	1
+tools/fix_audit_issues.py	0	0	1	#!/usr/bin/env python3	15.6	1
+tools/fix_python_compatibility.py	0	0	1	#!/usr/bin/env python3	2.1	1
+tools/fix_targeted_issues.py	0	0	1	#!/usr/bin/env python3	12.7	1
+tools/focused_cleanup.py	0	0	1	#!/usr/bin/env python3	21.7	1
+tools/gen_projection.py	0	0	1	#!/usr/bin/env python3	9.6	1
+tools/generate_perf_report.py	0	0	1	#!/usr/bin/env python3	12.6	1
+tools/genomevault_autofix.py	0	0	1	#!/usr/bin/env python3	19.8	1
+tools/genomevault_cleanup.py	0	0	1	#!/usr/bin/env python3	17.2	1
+tools/green_toolchain_impl.py	0	0	1	#!/usr/bin/env python3	14.3	1
+tools/implement_checklist.py	0	0	1	#!/usr/bin/env python3	11.4	1
+tools/pre_push_checklist.py	0	0	1	#!/usr/bin/env python3	7.1	1
+tools/run_bench.py	0	0	1	#!/usr/bin/env python3	8.7	1
+tools/run_hdc_linters.py	0	0	1	#!/usr/bin/env python3	3.8	1
+tools/security_check.py	0	0	0		8.8	1
+tools/simple_autofix_demo.py	0	0	1	#!/usr/bin/env python3	5.5	1
+tools/trace_import_failure.py	0	0	1	#!/usr/bin/env python3	3.3	1
+tools/validate_checklist.py	0	0	1	#!/usr/bin/env python3	13.1	1
+tools/validate_hdc_implementation.py	0	0	0		15.4	1
+tools/verify_fix.py	0	0	1	#!/usr/bin/env python3	3.0	1
+upgrade_ruff.py	0	0	1	#!/usr/bin/env python3	4.1	1
+validate_audit_fixes.py	0	0	1	#!/usr/bin/env python3	9.0	1
+validate_implementation.py	0	0	1	#!/usr/bin/env python3	9.0	1
+validate_lint_fixes.py	0	0	1	#!/usr/bin/env python3	5.5	1
+validate_project_only.py	0	0	1	#!/usr/bin/env python3	16.2	1
+verify_fixes.py	0	0	1	#!/usr/bin/env python3	3.1	1
+verify_mvp.sh	0	1	1	#!/bin/bash	4.0	1
+verify_phase3_ready.py	0	0	1	#!/usr/bin/env python3	5.2	1
+verify_ruff.py	0	0	1	#!/usr/bin/env python3	2.2	1

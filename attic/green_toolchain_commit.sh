@@ -44,7 +44,7 @@ git commit -m "fix: clean Ruff noise, mypy cfg, syntax error, stub API for tests
 - Update .ruff.toml to exclude validator scripts
 - Fix mypy.ini python_version format (remove quotes)
 - Fix syntax errors in federated learning client.py logging statements
-- Add minimal smoke tests for API health/status endpoints  
+- Add minimal smoke tests for API health/status endpoints
 - Add voting power parity tests for blockchain consistency
 - Update pytest dependencies to >=8.2 with asyncio >=1.1.0
 - Add pre-commit hooks for ruff, black, isort, mypy

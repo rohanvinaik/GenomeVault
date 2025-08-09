@@ -23,7 +23,7 @@ echo ""
 
 echo "🔧 Step 2: Variant Circuit Headers"
 echo "   • Fixed variant_frequency_circuit.py import header"
-echo "   • Fixed variant_proof_circuit.py import header"  
+echo "   • Fixed variant_proof_circuit.py import header"
 echo "   • Added clean typing imports"
 echo "   • Added proper logger configuration"
 echo ""
@@ -67,7 +67,7 @@ total_tests = 0
 # Test imports that were previously broken
 test_modules = [
     "genomevault.zk_proofs.circuits.training_proof",
-    "genomevault.zk_proofs.circuits.biological.variant", 
+    "genomevault.zk_proofs.circuits.biological.variant",
     "genomevault.zk_proofs.circuits.implementations.variant_frequency_circuit",
     "genomevault.zk_proofs.circuits.implementations.plonk_circuits"
 ]
@@ -88,18 +88,18 @@ try:
     from genomevault.zk_proofs.circuits.training_proof import TrainingProofCircuit
     from genomevault.zk_proofs.circuits.biological.variant import VariantPresenceCircuit
     from genomevault.zk_proofs.circuits.implementations.variant_frequency_circuit import VariantFrequencyCircuit
-    
+
     # Create instances
     training_circuit = TrainingProofCircuit(max_snapshots=10)
     variant_circuit = VariantPresenceCircuit(merkle_depth=15)
     frequency_circuit = VariantFrequencyCircuit(max_snps=16)
-    
+
     print(f"✅ TrainingProofCircuit: {training_circuit.circuit_name}")
     print(f"✅ VariantPresenceCircuit: {variant_circuit.circuit_name}")
     print(f"✅ VariantFrequencyCircuit: max_snps={frequency_circuit.max_snps}")
-    
+
     print("\n🎉 All functionality verified!")
-    
+
 except Exception as e:
     print(f"❌ Functionality test failed: {e}")
     sys.exit(1)
@@ -112,7 +112,7 @@ echo "• Import statements cleaned and functional"
 echo "• Missing dependencies added (dataclass)"
 echo "• Unused variable warnings silenced"
 echo "• Code properly formatted and linted"
-echo "• All syntax errors eliminated" 
+echo "• All syntax errors eliminated"
 echo "• Full import compatibility restored"
 echo ""
 

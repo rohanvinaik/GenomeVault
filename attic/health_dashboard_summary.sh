@@ -89,7 +89,7 @@ python - <<'PY'
 print("🔍 Core Module Import Test:")
 modules = [
     "genomevault",
-    "genomevault.utils.config", 
+    "genomevault.utils.config",
     "genomevault.zk_proofs.circuits.training_proof",
     "genomevault.zk_proofs.circuits.biological.variant",
     "genomevault.hypervector.operations",
@@ -111,14 +111,14 @@ print(f"\n📊 Final Import Success Rate: {success}/{len(modules)} ({success/len
 try:
     from genomevault.utils.config import Config
     from genomevault.zk_proofs.circuits.training_proof import TrainingProofCircuit
-    
+
     config = Config()
     circuit = TrainingProofCircuit(max_snapshots=5)
-    
+
     print(f"✅ Config instantiation: voting_power={config.get_voting_power()}")
     print(f"✅ ZK Circuit creation: {circuit.circuit_name}")
     print("\n🎉 Core functionality verified!")
-    
+
 except Exception as e:
     print(f"❌ Functionality test failed: {e}")
 PY
@@ -129,7 +129,7 @@ echo "========================="
 echo ""
 echo "🟢 READY FOR DEVELOPMENT"
 echo "   • All import errors resolved"
-echo "   • Syntax issues eliminated" 
+echo "   • Syntax issues eliminated"
 echo "   • Code quality standards met"
 echo "   • Test suite functional"
 echo "   • Package properly installable"

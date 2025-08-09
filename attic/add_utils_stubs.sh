@@ -36,10 +36,10 @@ from typing import Any
 class MetricsCollector:
     def __init__(self) -> None:
         self._counter: Counter[str] = Counter()
-    
+
     def inc(self, name: str, value: int = 1) -> None:
         self._counter[name] += value
-    
+
     def get(self, name: str) -> int:
         return self._counter[name]
 

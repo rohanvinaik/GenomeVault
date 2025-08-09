@@ -53,17 +53,17 @@ try:
     from genomevault.core.config import get_config
     result = get_config()
     print(f"✅ genomevault.core.config import: {result}")
-    
+
     # Test existing functionality still works
     from genomevault.utils import get_logger, get_metrics
     from genomevault.utils.config import Config
-    
+
     logger = get_logger("summary_test")
     metrics = get_metrics()
     config = Config()
-    
+
     print("✅ All imports and functionality verified")
-    
+
 except Exception as e:
     print(f"❌ Error: {e}")
     exit(1)

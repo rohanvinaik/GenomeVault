@@ -41,18 +41,18 @@ try:
     import genomevault
     from genomevault.utils import get_logger, get_metrics
     print("✅ Core imports successful")
-    
+
     # Test functionality
     logger = get_logger("verify")
     metrics = get_metrics()
     metrics["verification"] = 1
     print(f"✅ Functionality working: {dict(metrics)}")
-    
+
     # Test package discovery
     import pkgutil
     package_count = len(list(pkgutil.iter_modules(genomevault.__path__)))
     print(f"✅ Discovered {package_count} subpackages")
-    
+
 except Exception as e:
     print(f"❌ Error: {e}")
     exit(1)

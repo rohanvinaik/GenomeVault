@@ -37,23 +37,23 @@ python - <<'PY'
 try:
     import genomevault
     from genomevault.utils import get_logger, get_metrics
-    
+
     # Test that setuptools can find packages
     from setuptools import find_packages
     packages = find_packages(where='.', include=['genomevault', 'genomevault.*'], exclude=['scripts', 'examples'])
-    
+
     print(f"✅ Package imports working")
     print(f"✅ Setuptools finds {len(packages)} packages")
     print(f"✅ Sample packages: {packages[:5]}")
-    
+
     # Test functionality
     logger = get_logger("config_test")
     metrics = get_metrics()
     metrics["config_update"] = 1
-    
+
     print(f"✅ Functionality verified: {dict(metrics)}")
     print(f"✅ GenomeVault version: {genomevault.__version__}")
-    
+
 except Exception as e:
     print(f"❌ Error: {e}")
     exit(1)

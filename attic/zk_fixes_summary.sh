@@ -38,25 +38,25 @@ try:
     # Test that both files can be imported without syntax errors
     from genomevault.zk_proofs.circuits.training_proof import TrainingProofCircuit, TrainingSnapshot
     from genomevault.zk_proofs.circuits.biological.variant import (
-        VariantPresenceCircuit, 
+        VariantPresenceCircuit,
         PolygenenicRiskScoreCircuit,
         DiabetesRiskCircuit,
         PharmacogenomicCircuit,
         PathwayEnrichmentCircuit,
         create_hypervector_proof
     )
-    
+
     print("✅ All imports successful")
     print("✅ No syntax errors")
     print("✅ All classes available")
-    
+
     # Quick functionality test
     variant_circuit = VariantPresenceCircuit(merkle_depth=10)
     training_circuit = TrainingProofCircuit(max_snapshots=50)
-    
+
     print(f"✅ VariantPresenceCircuit: {variant_circuit.circuit_name}")
     print(f"✅ TrainingProofCircuit: {training_circuit.circuit_name}")
-    
+
 except Exception as e:
     print(f"❌ Error: {e}")
     exit(1)

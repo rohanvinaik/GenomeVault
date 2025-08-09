@@ -9,7 +9,7 @@ echo ""
 
 echo "📊 Setup Summary:"
 echo "• Created __init__.py files in all subdirectories"
-echo "• Refreshed editable pip install"  
+echo "• Refreshed editable pip install"
 echo "• Created pytest.ini with unit test markers"
 echo "• Cleared stale Python bytecode"
 echo "• Ran test collection and validation"
@@ -28,16 +28,16 @@ try:
     import genomevault
     from genomevault.utils import get_logger, get_metrics
     from genomevault.utils.config import Config
-    
+
     # Test basic functionality
     logger = get_logger("setup_test")
-    metrics = get_metrics()  
+    metrics = get_metrics()
     config = Config()
-    
+
     print("✅ Core functionality verified")
     print(f"✅ Package version: {genomevault.__version__}")
     print(f"✅ Node class: {config.blockchain.node_class.name}")
-    
+
 except Exception as e:
     print(f"❌ Error: {e}")
 PY

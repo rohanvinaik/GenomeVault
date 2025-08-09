@@ -18,7 +18,7 @@ git add .ruff.toml
 git commit -m "fix(syntax): resolve syntax errors in unified_encoder.py and __init__.py
 
 - Fixed broken import statements in unified_encoder.py
-- Fixed broken import statements in hypervector/encoding/__init__.py  
+- Fixed broken import statements in hypervector/encoding/__init__.py
 - Added missing get_config() function to core/config.py
 - Updated .ruff.toml to be compatible with both old and new Ruff versions
 - Addresses the specific syntax errors blocking Phase 7 validation
