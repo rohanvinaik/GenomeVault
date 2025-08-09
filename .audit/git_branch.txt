@@ -1,0 +1,9 @@
+  backup-manual-222117       2b6aa089 Fix critical Pylint issues to improve code quality
+  backup-manual-revert       92992b68 Emergency fix: resolve black formatter syntax errors
+  black-formatting-fix       e3508c52 [origin/black-formatting-fix] Fix black formatting issues and update advanced implementations
+* chore/lint-sweep           4fb01fb3 ci: improve API health check with uvicorn and retry loop
+  clean-slate                28fd4077 [origin/clean-slate: behind 11] chore: prune backups & dedupe tools
+  feature/zk-proof-system-v3 a30ece92 refactor: Complete GenomeVault 3.0 implementation with ZK proof system
+  main                       5e289e58 [origin/main] Fix: Implement core modules and add CI/CD pipeline
+  main-recovered             c62e1dd9 [origin/main-recovered: gone] feat: Add enhanced features - KAN-HD compression, clinical calibration, federation, governance, and secure PIR
+  tailchasing-fixes-20250723 6bcdeb2f feat: major system refactor and documentation updates

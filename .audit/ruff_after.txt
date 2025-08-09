@@ -1,0 +1,804 @@
+check_lint_status.py:48:29: E741 Ambiguous variable name: `l`
+devtools/debug_genomevault.py:32:20: F401 `pydantic` imported but unused; consider using `importlib.util.find_spec` to test for availability
+devtools/debug_genomevault.py:38:24: F401 `pydantic_settings` imported but unused; consider using `importlib.util.find_spec` to test for availability
+devtools/diagnose_failures.py:17:12: F401 `torch` imported but unused; consider using `importlib.util.find_spec` to test for availability
+enhanced_cleanup.py:286:9: E722 Do not use bare `except`
+enhanced_cleanup.py:490:13: E722 Do not use bare `except`
+enhanced_cleanup.py:685:13: E722 Do not use bare `except`
+examples/basic_usage.py:241:9: F823 Local variable `logger` referenced before assignment
+examples/demo_hypervector_encoding.py:12:1: E402 Module level import not at top of file
+examples/demo_hypervector_encoding.py:14:1: E402 Module level import not at top of file
+examples/demo_hypervector_encoding.py:15:1: E402 Module level import not at top of file
+examples/demo_hypervector_encoding.py:23:1: E402 Module level import not at top of file
+examples/demo_hypervector_encoding.py:24:1: E402 Module level import not at top of file
+examples/demo_hypervector_encoding.py:25:1: E402 Module level import not at top of file
+examples/demo_hypervector_encoding.py:26:1: E402 Module level import not at top of file
+examples/diabetes_risk_demo.py:9:1: E402 Module level import not at top of file
+examples/diabetes_risk_demo.py:11:1: E402 Module level import not at top of file
+examples/example_usage.py:10:1: E402 Module level import not at top of file
+examples/example_usage.py:12:1: E402 Module level import not at top of file
+examples/example_usage.py:14:1: E402 Module level import not at top of file
+examples/example_usage.py:15:1: E402 Module level import not at top of file
+examples/example_usage.py:19:1: E402 Module level import not at top of file
+examples/example_usage.py:20:1: E402 Module level import not at top of file
+examples/example_usage.py:23:1: E402 Module level import not at top of file
+examples/example_usage.py:24:1: E402 Module level import not at top of file
+examples/example_usage.py:25:1: E402 Module level import not at top of file
+examples/hdc_error_tuning_example.py:8:1: E402 Module level import not at top of file
+examples/hdc_error_tuning_example.py:10:1: E402 Module level import not at top of file
+examples/hdc_pir_integration_demo.py:9:1: E402 Module level import not at top of file
+examples/hdc_pir_integration_demo.py:10:1: E402 Module level import not at top of file
+examples/hdc_pir_integration_demo.py:12:1: E402 Module level import not at top of file
+examples/hdc_pir_integration_demo.py:14:1: E402 Module level import not at top of file
+examples/hdc_pir_integration_demo.py:15:1: E402 Module level import not at top of file
+examples/integration_example.py:11:1: E402 Module level import not at top of file
+examples/integration_example.py:13:1: E402 Module level import not at top of file
+examples/integration_example.py:15:1: E402 Module level import not at top of file
+examples/integration_example.py:16:1: E402 Module level import not at top of file
+examples/integration_example.py:19:1: E402 Module level import not at top of file
+examples/integration_example.py:20:1: E402 Module level import not at top of file
+examples/integration_example.py:21:1: E402 Module level import not at top of file
+examples/integration_example.py:24:1: E402 Module level import not at top of file
+examples/integration_example.py:25:1: E402 Module level import not at top of file
+examples/orphan_disease_workflow.py:12:1: E402 Module level import not at top of file
+examples/orphan_disease_workflow.py:13:1: E402 Module level import not at top of file
+examples/orphan_disease_workflow.py:14:1: E402 Module level import not at top of file
+examples/orphan_disease_workflow.py:16:1: E402 Module level import not at top of file
+examples/orphan_disease_workflow.py:19:1: E402 Module level import not at top of file
+examples/orphan_disease_workflow.py:22:1: E402 Module level import not at top of file
+examples/orphan_disease_workflow.py:23:1: E402 Module level import not at top of file
+examples/orphan_disease_workflow.py:24:1: E402 Module level import not at top of file
+examples/packed_hypervector_example.py:8:1: E402 Module level import not at top of file
+examples/packed_hypervector_example.py:10:1: E402 Module level import not at top of file
+examples/proof_of_training_demo.py:11:1: E402 Module level import not at top of file
+examples/proof_of_training_demo.py:12:1: E402 Module level import not at top of file
+examples/proof_of_training_demo.py:13:1: E402 Module level import not at top of file
+examples/proof_of_training_demo.py:15:1: E402 Module level import not at top of file
+examples/proof_of_training_demo.py:18:1: E402 Module level import not at top of file
+examples/proof_of_training_demo.py:19:1: E402 Module level import not at top of file
+final_verification.py:91:44: F401 `genomevault.exceptions.HypervectorError` imported but unused; consider using `importlib.util.find_spec` to test for availability
+final_verification.py:91:62: F401 `genomevault.exceptions.ZKProofError` imported but unused; consider using `importlib.util.find_spec` to test for availability
+final_verification.py:99:37: F401 `genomevault.core.exceptions.HypervectorError` imported but unused; consider using `importlib.util.find_spec` to test for availability
+fix_audit_issues.py:97:9: F823 Local variable `logger` referenced before assignment
+fix_audit_issues.py:205:9: F823 Local variable `logger` referenced before assignment
+fix_imports.py:233:42: F401 `genomevault.api.main.app` imported but unused; consider using `importlib.util.find_spec` to test for availability
+focused_cleanup.py:206:57: E741 Ambiguous variable name: `l`
+generate_comparison_report.py:9:1: E402 Module level import not at top of file
+generate_comparison_report.py:10:1: E402 Module level import not at top of file
+generate_comparison_report.py:11:1: E402 Module level import not at top of file
+genomevault/__init__.py:9:1: F403 `from genomevault.core.constants import *` used; unable to detect undefined names
+genomevault/__init__.py:10:1: F403 `from genomevault.core.exceptions import *` used; unable to detect undefined names
+genomevault/advanced_analysis/federated_learning/client.py:17:1: F811 Redefinition of unused `logger` from line 15
+genomevault/advanced_analysis/federated_learning/coordinator.py:9:1: E402 Module level import not at top of file
+genomevault/advanced_analysis/federated_learning/coordinator.py:10:1: E402 Module level import not at top of file
+genomevault/advanced_analysis/federated_learning/coordinator.py:11:1: E402 Module level import not at top of file
+genomevault/advanced_analysis/federated_learning/coordinator.py:12:1: E402 Module level import not at top of file
+genomevault/advanced_analysis/federated_learning/coordinator.py:13:1: E402 Module level import not at top of file
+genomevault/advanced_analysis/federated_learning/coordinator.py:14:1: E402 Module level import not at top of file
+genomevault/advanced_analysis/federated_learning/coordinator.py:15:1: E402 Module level import not at top of file
+genomevault/advanced_analysis/federated_learning/coordinator.py:16:1: E402 Module level import not at top of file
+genomevault/advanced_analysis/federated_learning/coordinator.py:18:1: E402 Module level import not at top of file
+genomevault/advanced_analysis/federated_learning/coordinator.py:20:1: E402 Module level import not at top of file
+genomevault/advanced_analysis/federated_learning/coordinator.py:21:1: E402 Module level import not at top of file
+genomevault/advanced_analysis/federated_learning/coordinator.py:28:1: F811 Redefinition of unused `logger` from line 24
+genomevault/api/routers/query_tuned.py:103:13: F823 Local variable `logger` referenced before assignment
+genomevault/api/routers/query_tuned.py:279:13: F821 Undefined name `DatabaseError`
+genomevault/api/routers/tuned_query.py:171:9: F823 Local variable `logger` referenced before assignment
+genomevault/api/routers/tuned_query.py:266:25: F821 Undefined name `DatabaseError`
+genomevault/benchmarks/benchmark_hamming_lut.py:13:1: E402 Module level import not at top of file
+genomevault/benchmarks/benchmark_hamming_lut.py:15:1: E402 Module level import not at top of file
+genomevault/benchmarks/benchmark_hamming_lut.py:16:1: E402 Module level import not at top of file
+genomevault/benchmarks/benchmark_hamming_lut.py:17:1: E402 Module level import not at top of file
+genomevault/benchmarks/benchmark_hamming_lut.py:19:1: E402 Module level import not at top of file
+genomevault/benchmarks/benchmark_hamming_lut.py:23:1: E402 Module level import not at top of file
+genomevault/blockchain/hipaa/integration.py:15:22: F811 Redefinition of unused `get_logger` from line 11
+genomevault/blockchain/hipaa/integration.py:66:58: F821 Undefined name `_verification_id`
+genomevault/blockchain/hipaa/integration.py:69:43: F821 Undefined name `_record`
+genomevault/blockchain/hipaa/integration.py:72:51: F821 Undefined name `_node`
+genomevault/blockchain/hipaa/integration.py:75:43: F821 Undefined name `node`
+genomevault/blockchain/hipaa/integration.py:77:13: F823 Local variable `logger` referenced before assignment
+genomevault/blockchain/hipaa/integration.py:79:20: F821 Undefined name `node`
+genomevault/blockchain/hipaa/integration.py:100:23: F821 Undefined name `_node_class`
+genomevault/blockchain/hipaa/integration.py:145:51: F821 Undefined name `_node`
+genomevault/blockchain/hipaa/integration.py:172:20: F821 Undefined name `_record`
+genomevault/blockchain/hipaa/integration.py:172:35: F821 Undefined name `_record`
+genomevault/blockchain/hipaa/integration.py:176:17: F821 Undefined name `_revoked_nodes`
+genomevault/blockchain/hipaa/integration.py:179:38: F821 Undefined name `expired_count`
+genomevault/blockchain/hipaa/integration.py:180:35: F821 Undefined name `revoked_nodes`
+genomevault/blockchain/hipaa/integration.py:210:68: F821 Undefined name `_hipaa_committee`
+genomevault/blockchain/hipaa/integration.py:235:43: F821 Undefined name `_hipaa_proposals`
+genomevault/blockchain/hipaa/integration.py:252:38: F821 Undefined name `_verifier`
+genomevault/blockchain/hipaa/integration.py:252:49: F821 Undefined name `_governance`
+genomevault/blockchain/hipaa/integration.py:269:13: F823 Local variable `logger` referenced before assignment
+genomevault/blockchain/hipaa/integration.py:271:27: F821 Undefined name `_integration`
+genomevault/blockchain/hipaa/integration.py:271:63: F821 Undefined name `_credentials`
+genomevault/blockchain/hipaa/integration.py:271:77: F821 Undefined name `_node_config`
+genomevault/blockchain/hipaa/integration.py:282:67: F821 Undefined name `governance`
+genomevault/blockchain/hipaa/integration.py:283:69: F821 Undefined name `governance`
+genomevault/blockchain/hipaa/verifier.py:308:13: F823 Local variable `logger` referenced before assignment
+genomevault/cli/training_proof_cli.py:388:36: F821 Undefined name `_time`
+genomevault/clinical/diabetes_pilot/risk_calculator.py:296:17: F823 Local variable `logger` referenced before assignment
+genomevault/hypervector_transform/encoding.py:119:13: F823 Local variable `logger` referenced before assignment
+genomevault/hypervector_transform/hdc_encoder.py:143:17: F823 Local variable `logger` referenced before assignment
+genomevault/hypervector_transform/hdc_encoder.py:203:13: F823 Local variable `logger` referenced before assignment
+genomevault/hypervector_transform/holographic.py:400:1: E402 Module level import not at top of file
+genomevault/hypervector_transform/mapping.py:251:54: F821 Undefined name `Callable`
+genomevault/hypervector_transform/registry.py:111:13: F823 Local variable `logger` referenced before assignment
+genomevault/hypervector_transform/registry.py:681:1: E402 Module level import not at top of file
+genomevault/integration/proof_of_training.py:282:13: F823 Local variable `logger` referenced before assignment
+genomevault/integration/proof_of_training.py:303:17: F821 Undefined name `DatabaseError`
+genomevault/integration/proof_of_training.py:556:13: F823 Local variable `logger` referenced before assignment
+genomevault/local_processing/compression.py:13:1: E402 Module level import not at top of file
+genomevault/local_processing/compression.py:14:1: E402 Module level import not at top of file
+genomevault/local_processing/compression.py:15:1: E402 Module level import not at top of file
+genomevault/local_processing/compression.py:16:1: E402 Module level import not at top of file
+genomevault/local_processing/compression.py:17:1: E402 Module level import not at top of file
+genomevault/local_processing/compression.py:19:1: E402 Module level import not at top of file
+genomevault/local_processing/compression.py:20:1: E402 Module level import not at top of file
+genomevault/local_processing/epigenetics.py:234:18: F821 Undefined name `logging`
+genomevault/local_processing/epigenetics.py:287:18: F821 Undefined name `logging`
+genomevault/local_processing/epigenetics.py:298:44: F821 Undefined name `chromosomes`
+genomevault/local_processing/epigenetics.py:298:57: F821 Undefined name `n_sites`
+genomevault/local_processing/epigenetics.py:299:57: F821 Undefined name `n_sites`
+genomevault/local_processing/epigenetics.py:300:52: F821 Undefined name `n_sites`
+genomevault/local_processing/epigenetics.py:301:55: F821 Undefined name `n_sites`
+genomevault/local_processing/epigenetics.py:302:57: F821 Undefined name `n_sites`
+genomevault/local_processing/epigenetics.py:303:63: F821 Undefined name `_n_sites`
+genomevault/local_processing/epigenetics.py:306:27: F821 Undefined name `_data`
+genomevault/local_processing/epigenetics.py:314:18: F821 Undefined name `logging`
+genomevault/local_processing/epigenetics.py:328:17: F821 Undefined name `_filtered`
+genomevault/local_processing/epigenetics.py:328:27: F821 Undefined name `_filtered`
+genomevault/local_processing/epigenetics.py:330:18: F821 Undefined name `logging`
+genomevault/local_processing/epigenetics.py:332:16: F821 Undefined name `filtered`
+genomevault/local_processing/epigenetics.py:350:30: F821 Undefined name `region_type`
+genomevault/local_processing/epigenetics.py:352:13: F821 Undefined name `_sites`
+genomevault/local_processing/epigenetics.py:352:27: F821 Undefined name `site`
+genomevault/local_processing/epigenetics.py:354:16: F821 Undefined name `sites`
+genomevault/local_processing/epigenetics.py:383:47: F821 Undefined name `methylation_levels`
+genomevault/local_processing/epigenetics.py:384:51: F821 Undefined name `methylation_levels`
+genomevault/local_processing/epigenetics.py:385:45: F821 Undefined name `methylation_levels`
+genomevault/local_processing/epigenetics.py:386:44: F821 Undefined name `coverages`
+genomevault/local_processing/epigenetics.py:387:48: F821 Undefined name `coverages`
+genomevault/local_processing/epigenetics.py:390:52: F821 Undefined name `_methylation_levels`
+genomevault/local_processing/epigenetics.py:391:53: F821 Undefined name `_methylation_levels`
+genomevault/local_processing/epigenetics.py:392:50: F821 Undefined name `_methylation_levels`
+genomevault/local_processing/epigenetics.py:398:13: F821 Undefined name `_context_counts`
+genomevault/local_processing/epigenetics.py:399:9: F821 Undefined name `_metrics`
+genomevault/local_processing/epigenetics.py:399:45: F821 Undefined name `_context_counts`
+genomevault/local_processing/epigenetics.py:405:17: F821 Undefined name `_region_counts`
+genomevault/local_processing/epigenetics.py:406:9: F821 Undefined name `_metrics`
+genomevault/local_processing/epigenetics.py:406:44: F821 Undefined name `_region_counts`
+genomevault/local_processing/epigenetics.py:408:16: F821 Undefined name `metrics`
+genomevault/local_processing/epigenetics.py:423:37: F821 Undefined name `_methylation_values`
+genomevault/local_processing/epigenetics.py:425:47: F821 Undefined name `_methylation_values`
+genomevault/local_processing/epigenetics.py:434:22: F821 Undefined name `_quantiles`
+genomevault/local_processing/epigenetics.py:443:41: F821 Undefined name `_normalized_values`
+genomevault/local_processing/epigenetics.py:449:13: F821 Undefined name `_normalized_sites`
+genomevault/local_processing/epigenetics.py:449:38: F821 Undefined name `normalized_site`
+genomevault/local_processing/epigenetics.py:451:18: F821 Undefined name `logging`
+genomevault/local_processing/epigenetics.py:453:16: F821 Undefined name `normalized_sites`
+genomevault/local_processing/epigenetics.py:474:18: F821 Undefined name `logging`
+genomevault/local_processing/epigenetics.py:482:21: F821 Undefined name `_all_sites`
+genomevault/local_processing/epigenetics.py:486:24: F821 Undefined name `_all_sites`
+genomevault/local_processing/epigenetics.py:497:62: F821 Undefined name `_pos`
+genomevault/local_processing/epigenetics.py:499:20: F821 Undefined name `sites`
+genomevault/local_processing/epigenetics.py:500:21: F821 Undefined name `_group1_values`
+genomevault/local_processing/epigenetics.py:500:43: F821 Undefined name `_sites`
+genomevault/local_processing/epigenetics.py:506:62: F821 Undefined name `_pos`
+genomevault/local_processing/epigenetics.py:508:20: F821 Undefined name `sites`
+genomevault/local_processing/epigenetics.py:509:21: F821 Undefined name `_group2_values`
+genomevault/local_processing/epigenetics.py:509:43: F821 Undefined name `_sites`
+genomevault/local_processing/epigenetics.py:511:20: F821 Undefined name `_group1_values`
+genomevault/local_processing/epigenetics.py:511:49: F821 Undefined name `_group2_values`
+genomevault/local_processing/epigenetics.py:513:45: F821 Undefined name `_group1_values`
+genomevault/local_processing/epigenetics.py:513:61: F821 Undefined name `_group2_values`
+genomevault/local_processing/epigenetics.py:515:29: F821 Undefined name `_group1_values`
+genomevault/local_processing/epigenetics.py:516:33: F821 Undefined name `_group2_values`
+genomevault/local_processing/epigenetics.py:517:29: F821 Undefined name `_mean1`
+genomevault/local_processing/epigenetics.py:519:17: F821 Undefined name `results`
+genomevault/local_processing/epigenetics.py:522:37: F821 Undefined name `pos`
+genomevault/local_processing/epigenetics.py:523:40: F821 Undefined name `mean1`
+genomevault/local_processing/epigenetics.py:525:51: F821 Undefined name `diff`
+genomevault/local_processing/epigenetics.py:526:36: F821 Undefined name `p_value`
+genomevault/local_processing/epigenetics.py:531:16: F821 Undefined name `results`
+genomevault/local_processing/epigenetics.py:532:22: F821 Undefined name `logging`
+genomevault/local_processing/epigenetics.py:537:26: F821 Undefined name `_results`
+genomevault/local_processing/epigenetics.py:542:45: F821 Undefined name `_results_df`
+genomevault/local_processing/epigenetics.py:543:9: F821 Undefined name `_results_df`
+genomevault/local_processing/epigenetics.py:546:9: F821 Undefined name `_results_df`
+genomevault/local_processing/epigenetics.py:546:39: F821 Undefined name `_results_df`
+genomevault/local_processing/epigenetics.py:547:20: F821 Undefined name `_results_df`
+genomevault/local_processing/epigenetics.py:551:9: F821 Undefined name `_results_df`
+genomevault/local_processing/epigenetics.py:553:18: F821 Undefined name `logging`
+genomevault/local_processing/epigenetics.py:556:16: F821 Undefined name `results_df`
+genomevault/local_processing/epigenetics.py:584:18: F821 Undefined name `logging`
+genomevault/local_processing/epigenetics.py:611:18: F821 Undefined name `logging`
+genomevault/local_processing/epigenetics.py:628:38: F821 Undefined name `_peaks`
+genomevault/local_processing/epigenetics.py:631:46: F821 Undefined name `_annotated_peaks`
+genomevault/local_processing/epigenetics.py:637:33: F821 Undefined name `_annotated_peaks`
+genomevault/local_processing/epigenetics.py:638:34: F821 Undefined name `quality_metrics`
+genomevault/local_processing/epigenetics.py:648:22: F821 Undefined name `logging`
+genomevault/local_processing/epigenetics.py:649:55: F821 Undefined name `annotated_peaks`
+genomevault/local_processing/epigenetics.py:650:20: F821 Undefined name `profile`
+genomevault/local_processing/epigenetics.py:663:18: F821 Undefined name `logging`
+genomevault/local_processing/epigenetics.py:680:57: F821 Undefined name `_columns`
+genomevault/local_processing/epigenetics.py:693:18: F821 Undefined name `logging`
+genomevault/local_processing/epigenetics.py:705:24: F821 Undefined name `_n_peaks`
+genomevault/local_processing/epigenetics.py:706:34: F821 Undefined name `_chromosomes`
+genomevault/local_processing/epigenetics.py:710:13: F821 Undefined name `data`
+genomevault/local_processing/epigenetics.py:713:30: F821 Undefined name `start`
+genomevault/local_processing/epigenetics.py:714:28: F821 Undefined name `start`
+genomevault/local_processing/epigenetics.py:714:36: F821 Undefined name `length`
+genomevault/local_processing/epigenetics.py:716:31: F821 Undefined name `start`
+genomevault/local_processing/epigenetics.py:716:39: F821 Undefined name `length`
+genomevault/local_processing/epigenetics.py:723:29: F821 Undefined name `data`
+genomevault/local_processing/epigenetics.py:743:33: F821 Undefined name `_distance`
+genomevault/local_processing/epigenetics.py:745:13: F821 Undefined name `_peaks`
+genomevault/local_processing/epigenetics.py:745:27: F821 Undefined name `peak`
+genomevault/local_processing/epigenetics.py:747:16: F821 Undefined name `peaks`
+genomevault/local_processing/epigenetics.py:762:16: F821 Undefined name `distance`
+genomevault/local_processing/epigenetics.py:762:27: F821 Undefined name `min_distance`
+genomevault/local_processing/epigenetics.py:763:21: F821 Undefined name `_distance`
+genomevault/local_processing/epigenetics.py:766:16: F821 Undefined name `_nearest_gene`
+genomevault/local_processing/epigenetics.py:766:35: F821 Undefined name `min_distance`
+genomevault/local_processing/epigenetics.py:766:52: F821 Undefined name `nearest_gene`
+genomevault/local_processing/epigenetics.py:779:41: F821 Undefined name `scores`
+genomevault/local_processing/epigenetics.py:780:45: F821 Undefined name `scores`
+genomevault/local_processing/epigenetics.py:781:51: F821 Undefined name `enrichments`
+genomevault/local_processing/epigenetics.py:782:55: F821 Undefined name `enrichments`
+genomevault/local_processing/epigenetics.py:783:46: F821 Undefined name `_distances`
+genomevault/local_processing/epigenetics.py:784:44: F821 Undefined name `_distances`
+genomevault/local_processing/epigenetics.py:793:13: F821 Undefined name `_chr_counts`
+genomevault/local_processing/epigenetics.py:794:9: F821 Undefined name `_metrics`
+genomevault/local_processing/epigenetics.py:794:48: F821 Undefined name `_chr_counts`
+genomevault/local_processing/epigenetics.py:796:16: F821 Undefined name `metrics`
+genomevault/local_processing/epigenetics.py:818:18: F821 Undefined name `logging`
+genomevault/local_processing/epigenetics.py:829:21: F821 Undefined name `_all_regions`
+genomevault/local_processing/epigenetics.py:834:23: F821 Undefined name `_all_regions`
+genomevault/local_processing/epigenetics.py:847:20: F821 Undefined name `peaks`
+genomevault/local_processing/epigenetics.py:848:21: F821 Undefined name `_group1_enrichments`
+genomevault/local_processing/epigenetics.py:848:48: F821 Undefined name `_peaks`
+genomevault/local_processing/epigenetics.py:856:20: F821 Undefined name `peaks`
+genomevault/local_processing/epigenetics.py:857:21: F821 Undefined name `_group2_enrichments`
+genomevault/local_processing/epigenetics.py:857:48: F821 Undefined name `_peaks`
+genomevault/local_processing/epigenetics.py:859:16: F821 Undefined name `group1_enrichments`
+genomevault/local_processing/epigenetics.py:859:39: F821 Undefined name `group2_enrichments`
+genomevault/local_processing/epigenetics.py:861:29: F821 Undefined name `_group1_enrichments`
+genomevault/local_processing/epigenetics.py:862:33: F821 Undefined name `_group2_enrichments`
+genomevault/local_processing/epigenetics.py:863:29: F821 Undefined name `_mean1`
+genomevault/local_processing/epigenetics.py:863:39: F821 Undefined name `_mean1`
+genomevault/local_processing/epigenetics.py:866:24: F821 Undefined name `_group1_enrichments`
+genomevault/local_processing/epigenetics.py:866:58: F821 Undefined name `_group2_enrichments`
+genomevault/local_processing/epigenetics.py:868:33: F821 Undefined name `_group1_enrichments`
+genomevault/local_processing/epigenetics.py:868:67: F821 Undefined name `group2_enrichments`
+genomevault/local_processing/epigenetics.py:873:17: F821 Undefined name `results`
+genomevault/local_processing/epigenetics.py:877:32: F821 Undefined name `end`
+genomevault/local_processing/epigenetics.py:878:51: F821 Undefined name `mean1`
+genomevault/local_processing/epigenetics.py:880:40: F821 Undefined name `fold_change`
+genomevault/local_processing/epigenetics.py:881:54: F821 Undefined name `fold_change`
+genomevault/local_processing/epigenetics.py:881:70: F821 Undefined name `fold_change`
+genomevault/local_processing/epigenetics.py:882:36: F821 Undefined name `p_value`
+genomevault/local_processing/epigenetics.py:886:16: F821 Undefined name `results`
+genomevault/local_processing/epigenetics.py:887:22: F821 Undefined name `logging`
+genomevault/local_processing/epigenetics.py:892:26: F821 Undefined name `_results`
+genomevault/local_processing/epigenetics.py:897:45: F821 Undefined name `_results_df`
+genomevault/local_processing/epigenetics.py:898:9: F821 Undefined name `_results_df`
+genomevault/local_processing/epigenetics.py:901:9: F821 Undefined name `_results_df`
+genomevault/local_processing/epigenetics.py:901:39: F821 Undefined name `_results_df`
+genomevault/local_processing/epigenetics.py:902:20: F821 Undefined name `_results_df`
+genomevault/local_processing/epigenetics.py:906:9: F821 Undefined name `_results_df`
+genomevault/local_processing/epigenetics.py:908:18: F821 Undefined name `logging`
+genomevault/local_processing/epigenetics.py:911:16: F821 Undefined name `results_df`
+genomevault/local_processing/model_snapshot.py:308:20: F401 `torch` imported but unused; consider using `importlib.util.find_spec` to test for availability
+genomevault/local_processing/model_snapshot.py:320:20: F401 `tensorflow` imported but unused; consider using `importlib.util.find_spec` to test for availability
+genomevault/local_processing/pipeline.py:62:17: F823 Local variable `logger` referenced before assignment
+genomevault/local_processing/proteomics.py:255:9: F823 Local variable `logger` referenced before assignment
+genomevault/local_processing/proteomics.py:378:13: F821 Undefined name `_mods`
+genomevault/local_processing/proteomics.py:380:13: F821 Undefined name `_mods`
+genomevault/local_processing/proteomics.py:382:13: F821 Undefined name `_mods`
+genomevault/local_processing/proteomics.py:384:26: F821 Undefined name `mods`
+genomevault/local_processing/proteomics.py:394:13: F821 Undefined name `_modifications`
+genomevault/local_processing/proteomics.py:396:13: F821 Undefined name `_modifications`
+genomevault/local_processing/proteomics.py:398:13: F821 Undefined name `_modifications`
+genomevault/local_processing/proteomics.py:400:16: F821 Undefined name `modifications`
+genomevault/local_processing/proteomics.py:416:31: F821 Undefined name `_protein_peptides`
+genomevault/local_processing/proteomics.py:420:39: F821 Undefined name `_modifications`
+genomevault/local_processing/proteomics.py:421:21: F821 Undefined name `_mod_counts`
+genomevault/local_processing/proteomics.py:431:36: F821 Undefined name `modifications`
+genomevault/local_processing/proteomics.py:435:17: F821 Undefined name `_peptides`
+genomevault/local_processing/proteomics.py:435:34: F821 Undefined name `peptide`
+genomevault/local_processing/proteomics.py:447:36: F821 Undefined name `_mod_counts`
+genomevault/local_processing/proteomics.py:448:27: F821 Undefined name `peptides`
+genomevault/local_processing/proteomics.py:452:13: F821 Undefined name `_proteins`
+genomevault/local_processing/proteomics.py:454:16: F821 Undefined name `proteins`
+genomevault/local_processing/proteomics.py:462:9: F821 Undefined name `_filtered`
+genomevault/local_processing/proteomics.py:465:25: F821 Undefined name `_filtered`
+genomevault/local_processing/proteomics.py:468:12: F821 Undefined name `n_decoys`
+genomevault/local_processing/proteomics.py:469:31: F821 Undefined name `_filtered`
+genomevault/local_processing/proteomics.py:469:53: F821 Undefined name `_n_decoys`
+genomevault/local_processing/proteomics.py:470:29: F821 Undefined name `_filtered`
+genomevault/local_processing/proteomics.py:472:40: F821 Undefined name `filtered`
+genomevault/local_processing/proteomics.py:473:16: F821 Undefined name `filtered`
+genomevault/local_processing/proteomics.py:486:38: F821 Undefined name `_abundances`
+genomevault/local_processing/proteomics.py:493:28: F821 Undefined name `_abundances`
+genomevault/local_processing/proteomics.py:494:18: F821 Undefined name `_abundances`
+genomevault/local_processing/proteomics.py:498:28: F821 Undefined name `_abundances`
+genomevault/local_processing/proteomics.py:499:18: F821 Undefined name `_abundances`
+genomevault/local_processing/proteomics.py:503:50: F821 Undefined name `_normalized`
+genomevault/local_processing/proteomics.py:520:57: F821 Undefined name `coverages`
+genomevault/local_processing/proteomics.py:521:53: F821 Undefined name `coverages`
+genomevault/local_processing/proteomics.py:522:58: F821 Undefined name `_coverages`
+genomevault/local_processing/proteomics.py:523:49: F821 Undefined name `abundances`
+genomevault/local_processing/proteomics.py:525:36: F821 Undefined name `_abundances`
+genomevault/local_processing/proteomics.py:525:55: F821 Undefined name `abundances`
+genomevault/local_processing/proteomics.py:525:76: F821 Undefined name `abundances`
+genomevault/local_processing/proteomics.py:539:17: F821 Undefined name `_all_mods`
+genomevault/local_processing/proteomics.py:541:9: F821 Undefined name `_metrics`
+genomevault/local_processing/proteomics.py:541:50: F821 Undefined name `_all_mods`
+genomevault/local_processing/proteomics.py:543:16: F821 Undefined name `metrics`
+genomevault/local_processing/proteomics.py:564:18: F821 Undefined name `logging`
+genomevault/local_processing/proteomics.py:570:13: F821 Undefined name `_all_proteins`
+genomevault/local_processing/proteomics.py:574:27: F821 Undefined name `_all_proteins`
+genomevault/local_processing/proteomics.py:582:21: F821 Undefined name `_group1_abundances`
+genomevault/local_processing/proteomics.py:587:21: F821 Undefined name `_group2_abundances`
+genomevault/local_processing/proteomics.py:589:20: F821 Undefined name `_group1_abundances`
+genomevault/local_processing/proteomics.py:589:53: F821 Undefined name `_group2_abundances`
+genomevault/local_processing/proteomics.py:591:38: F821 Undefined name `_group1_abundances`
+genomevault/local_processing/proteomics.py:592:38: F821 Undefined name `_group2_abundances`
+genomevault/local_processing/proteomics.py:597:45: F821 Undefined name `_log_group1`
+genomevault/local_processing/proteomics.py:597:58: F821 Undefined name `_log_group2`
+genomevault/local_processing/proteomics.py:600:29: F821 Undefined name `_group1_abundances`
+genomevault/local_processing/proteomics.py:601:33: F821 Undefined name `_group2_abundances`
+genomevault/local_processing/proteomics.py:602:39: F821 Undefined name `_mean1`
+genomevault/local_processing/proteomics.py:602:49: F821 Undefined name `_mean1`
+genomevault/local_processing/proteomics.py:615:21: F821 Undefined name `_example_protein`
+genomevault/local_processing/proteomics.py:615:51: F821 Undefined name `_example_protein`
+genomevault/local_processing/proteomics.py:617:17: F821 Undefined name `results`
+genomevault/local_processing/proteomics.py:620:38: F821 Undefined name `gene_name`
+genomevault/local_processing/proteomics.py:621:50: F821 Undefined name `mean1`
+genomevault/local_processing/proteomics.py:624:45: F821 Undefined name `log2_fc`
+genomevault/local_processing/proteomics.py:625:36: F821 Undefined name `p_value`
+genomevault/local_processing/proteomics.py:630:16: F821 Undefined name `results`
+genomevault/local_processing/proteomics.py:631:22: F821 Undefined name `logging`
+genomevault/local_processing/proteomics.py:636:26: F821 Undefined name `_results`
+genomevault/local_processing/proteomics.py:641:45: F821 Undefined name `_results_df`
+genomevault/local_processing/proteomics.py:642:9: F821 Undefined name `_results_df`
+genomevault/local_processing/proteomics.py:645:9: F821 Undefined name `_results_df`
+genomevault/local_processing/proteomics.py:645:39: F821 Undefined name `_results_df`
+genomevault/local_processing/proteomics.py:646:20: F821 Undefined name `_results_df`
+genomevault/local_processing/proteomics.py:650:9: F821 Undefined name `_results_df`
+genomevault/local_processing/proteomics.py:652:18: F821 Undefined name `logging`
+genomevault/local_processing/proteomics.py:655:16: F821 Undefined name `results_df`
+genomevault/local_processing/proteomics.py:661:18: F821 Undefined name `logging`
+genomevault/local_processing/proteomics.py:667:13: F821 Undefined name `_df`
+genomevault/local_processing/proteomics.py:669:13: F821 Undefined name `_df`
+genomevault/local_processing/proteomics.py:671:13: F821 Undefined name `_df`
+genomevault/local_processing/proteomics.py:675:18: F821 Undefined name `logging`
+genomevault/local_processing/sequencing.py:174:6: F821 Undefined name `_log_operation`
+genomevault/local_processing/sequencing.py:260:25: F821 Undefined name `_gzip`
+genomevault/nanopore/api.py:395:1: E402 Module level import not at top of file
+genomevault/nanopore/biological_signals.py:11:1: E402 Module level import not at top of file
+genomevault/nanopore/biological_signals.py:12:1: E402 Module level import not at top of file
+genomevault/nanopore/biological_signals.py:13:1: E402 Module level import not at top of file
+genomevault/nanopore/biological_signals.py:15:1: E402 Module level import not at top of file
+genomevault/nanopore/biological_signals.py:16:1: E402 Module level import not at top of file
+genomevault/nanopore/biological_signals.py:17:1: E402 Module level import not at top of file
+genomevault/nanopore/biological_signals.py:19:1: E402 Module level import not at top of file
+genomevault/nanopore/streaming.py:224:17: F823 Local variable `logger` referenced before assignment
+genomevault/pir/advanced/it_pir.py:9:1: E402 Module level import not at top of file
+genomevault/pir/advanced/it_pir.py:10:1: E402 Module level import not at top of file
+genomevault/pir/advanced/it_pir.py:11:1: E402 Module level import not at top of file
+genomevault/pir/advanced/it_pir.py:12:1: E402 Module level import not at top of file
+genomevault/pir/advanced/it_pir.py:13:1: E402 Module level import not at top of file
+genomevault/pir/advanced/it_pir.py:14:1: E402 Module level import not at top of file
+genomevault/pir/advanced/it_pir.py:16:1: E402 Module level import not at top of file
+genomevault/pir/advanced/it_pir.py:18:1: E402 Module level import not at top of file
+genomevault/pir/client/pir_client.py:149:48: F821 Undefined name `RequestException`
+genomevault/pir/client/pir_client.py:337:48: F821 Undefined name `RequestException`
+genomevault/pir/client/query_builder.py:9:1: E402 Module level import not at top of file
+genomevault/pir/client/query_builder.py:10:1: E402 Module level import not at top of file
+genomevault/pir/client/query_builder.py:11:1: E402 Module level import not at top of file
+genomevault/pir/client/query_builder.py:12:1: E402 Module level import not at top of file
+genomevault/pir/client/query_builder.py:13:1: E402 Module level import not at top of file
+genomevault/pir/client/query_builder.py:15:1: E402 Module level import not at top of file
+genomevault/pir/client/query_builder.py:17:1: E402 Module level import not at top of file
+genomevault/pir/client/query_builder.py:19:1: F811 Redefinition of unused `logger` from line 15
+genomevault/pir/examples/integration_demo.py:9:1: E402 Module level import not at top of file
+genomevault/pir/examples/integration_demo.py:10:1: E402 Module level import not at top of file
+genomevault/pir/examples/integration_demo.py:12:1: E402 Module level import not at top of file
+genomevault/pir/examples/integration_demo.py:14:1: E402 Module level import not at top of file
+genomevault/pir/examples/integration_demo.py:15:1: E402 Module level import not at top of file
+genomevault/pir/examples/integration_demo.py:16:1: E402 Module level import not at top of file
+genomevault/pir/examples/integration_demo.py:22:1: E402 Module level import not at top of file
+genomevault/pir/examples/integration_demo.py:23:1: E402 Module level import not at top of file
+genomevault/pir/examples/integration_demo.py:25:1: F811 Redefinition of unused `logger` from line 23
+genomevault/pir/it_pir_protocol.py:9:1: E402 Module level import not at top of file
+genomevault/pir/it_pir_protocol.py:10:1: E402 Module level import not at top of file
+genomevault/pir/it_pir_protocol.py:11:1: E402 Module level import not at top of file
+genomevault/pir/it_pir_protocol.py:12:1: E402 Module level import not at top of file
+genomevault/pir/it_pir_protocol.py:14:1: E402 Module level import not at top of file
+genomevault/pir/it_pir_protocol.py:16:1: E402 Module level import not at top of file
+genomevault/pir/it_pir_protocol.py:18:1: F811 Redefinition of unused `logger` from line 16
+genomevault/pir/network/coordinator.py:18:1: F811 Redefinition of unused `logger` from line 16
+genomevault/pir/reference_data/manager.py:9:1: E402 Module level import not at top of file
+genomevault/pir/reference_data/manager.py:10:1: E402 Module level import not at top of file
+genomevault/pir/reference_data/manager.py:11:1: E402 Module level import not at top of file
+genomevault/pir/reference_data/manager.py:12:1: E402 Module level import not at top of file
+genomevault/pir/reference_data/manager.py:13:1: E402 Module level import not at top of file
+genomevault/pir/reference_data/manager.py:14:1: E402 Module level import not at top of file
+genomevault/pir/reference_data/manager.py:15:1: E402 Module level import not at top of file
+genomevault/pir/reference_data/manager.py:17:1: E402 Module level import not at top of file
+genomevault/pir/reference_data/manager.py:19:1: F811 Redefinition of unused `logger` from line 17
+genomevault/pir/server/handler.py:23:1: F811 Redefinition of unused `logger` from line 16
+genomevault/pir/server/pir_server.py:20:1: E402 Module level import not at top of file
+genomevault/pir/server/pir_server.py:27:1: F811 Redefinition of unused `logger` from line 23
+genomevault/pir/server/pir_server.py:168:13: F823 Local variable `logger` referenced before assignment
+genomevault/pir/server/shard_manager.py:19:1: E402 Module level import not at top of file
+genomevault/pir/server/shard_manager.py:21:1: F811 Redefinition of unused `logger` from line 19
+genomevault/pir/server/shard_manager.py:262:13: F823 Local variable `logger` referenced before assignment
+genomevault/pir/server/shard_manager.py:372:13: F823 Local variable `logger` referenced before assignment
+genomevault/tests/test_hdc_quality.py:11:1: E402 Module level import not at top of file
+genomevault/tests/test_hdc_quality.py:13:1: E402 Module level import not at top of file
+genomevault/tests/test_hdc_quality.py:14:1: E402 Module level import not at top of file
+genomevault/tests/test_hdc_quality.py:16:1: E402 Module level import not at top of file
+genomevault/tests/test_hdc_quality.py:17:1: E402 Module level import not at top of file
+genomevault/tests/test_hdc_quality.py:18:1: E402 Module level import not at top of file
+genomevault/utils/backup.py:28:55: F811 Redefinition of unused `get_logger` from line 26
+genomevault/utils/backup.py:69:31: F821 Undefined name `_data_json`
+genomevault/utils/backup.py:72:32: F821 Undefined name `_compressed_data`
+genomevault/utils/backup.py:75:38: F821 Undefined name `_compressed_data`
+genomevault/utils/backup.py:79:30: F821 Undefined name `backup_id`
+genomevault/utils/backup.py:81:31: F821 Undefined name `timestamp`
+genomevault/utils/backup.py:82:30: F821 Undefined name `data_hash`
+genomevault/utils/backup.py:83:36: F821 Undefined name `encrypted_data`
+genomevault/utils/backup.py:90:41: F821 Undefined name `_backup_id`
+genomevault/utils/backup.py:90:53: F821 Undefined name `_backup_package`
+genomevault/utils/backup.py:94:39: F821 Undefined name `backup_id`
+genomevault/utils/backup.py:94:50: F821 Undefined name `backup_package`
+genomevault/utils/backup.py:97:35: F821 Undefined name `backup_id`
+genomevault/utils/backup.py:97:59: F821 Undefined name `timestamp`
+genomevault/utils/backup.py:97:70: F821 Undefined name `data_hash`
+genomevault/utils/backup.py:100:13: F823 Local variable `logger` referenced before assignment
+genomevault/utils/backup.py:102:28: F821 Undefined name `backup_id`
+genomevault/utils/backup.py:104:32: F821 Undefined name `_encrypted_data`
+genomevault/utils/backup.py:110:29: F821 Undefined name `_backup_id`
+genomevault/utils/backup.py:115:20: F821 Undefined name `backup_id`
+genomevault/utils/backup.py:133:44: F821 Undefined name `_backup_package`
+genomevault/utils/backup.py:137:40: F821 Undefined name `_compressed_data`
+genomevault/utils/backup.py:138:29: F821 Undefined name `_backup_package`
+genomevault/utils/backup.py:142:41: F821 Undefined name `_compressed_data`
+genomevault/utils/backup.py:146:13: F823 Local variable `logger` referenced before assignment
+genomevault/utils/backup.py:149:29: F821 Undefined name `_backup_package`
+genomevault/utils/backup.py:160:20: F821 Undefined name `data`
+genomevault/utils/backup.py:191:13: F821 Undefined name `backups`
+genomevault/utils/backup.py:201:9: F821 Undefined name `_backups`
+genomevault/utils/backup.py:203:16: F821 Undefined name `backups`
+genomevault/utils/backup.py:211:44: F821 Undefined name `_backup_package`
+genomevault/utils/backup.py:214:40: F821 Undefined name `_compressed_data`
+genomevault/utils/backup.py:215:30: F821 Undefined name `_backup_package`
+genomevault/utils/backup.py:217:13: F823 Local variable `logger` referenced before assignment
+genomevault/utils/backup.py:217:75: F821 Undefined name `is_valid`
+genomevault/utils/backup.py:219:20: F821 Undefined name `is_valid`
+genomevault/utils/backup.py:238:16: F821 Undefined name `backup_time`
+genomevault/utils/backup.py:238:30: F821 Undefined name `cutoff_date`
+genomevault/utils/backup.py:241:17: F821 Undefined name `_removed_count`
+genomevault/utils/backup.py:245:27: F821 Undefined name `removed_count`
+genomevault/utils/backup.py:249:16: F821 Undefined name `removed_count`
+genomevault/utils/backup.py:261:21: F821 Undefined name `_data_provider`
+genomevault/utils/backup.py:264:40: F821 Undefined name `_data`
+genomevault/utils/backup.py:264:47: F821 Undefined name `_backup_type`
+genomevault/utils/backup.py:266:17: F823 Local variable `logger` referenced before assignment
+genomevault/utils/backup.py:268:32: F821 Undefined name `backup_id`
+genomevault/utils/backup.py:269:34: F821 Undefined name `backup_type`
+genomevault/utils/backup.py:309:23: F821 Undefined name `iv`
+genomevault/utils/backup.py:314:21: F821 Undefined name `_cipher`
+genomevault/utils/backup.py:318:16: F821 Undefined name `iv`
+genomevault/utils/backup.py:318:21: F821 Undefined name `ciphertext`
+genomevault/utils/backup.py:330:23: F821 Undefined name `iv`
+genomevault/utils/backup.py:330:27: F821 Undefined name `tag`
+genomevault/utils/backup.py:335:21: F821 Undefined name `_cipher`
+genomevault/utils/backup.py:336:33: F821 Undefined name `_ciphertext`
+genomevault/utils/backup.py:342:19: F821 Undefined name `backup_path`
+genomevault/utils/backup.py:345:16: F821 Undefined name `backup_path`
+genomevault/utils/backup.py:358:31: F821 Undefined name `_response`
+genomevault/utils/backup.py:375:13: F823 Local variable `logger` referenced before assignment
+genomevault/utils/backup.py:403:83: F821 Undefined name `_e`
+genomevault/utils/backup.py:461:17: F821 Undefined name `_recovery_data`
+genomevault/utils/backup.py:464:51: F821 Undefined name `_recovery_data`
+genomevault/utils/backup.py:467:34: F821 Undefined name `_recovery_point_id`
+genomevault/utils/backup.py:469:30: F821 Undefined name `backup_id`
+genomevault/utils/backup.py:474:13: F823 Local variable `logger` referenced before assignment
+genomevault/utils/backup.py:476:36: F821 Undefined name `recovery_point_id`
+genomevault/utils/backup.py:481:20: F821 Undefined name `recovery_point_id`
+genomevault/utils/backup.py:501:52: F821 Undefined name `_recovery_info`
+genomevault/utils/backup.py:505:36: F821 Undefined name `_recovery_data`
+genomevault/utils/backup.py:507:17: F821 Undefined name `_results`
+genomevault/utils/backup.py:509:13: F823 Local variable `logger` referenced before assignment
+genomevault/utils/backup.py:512:26: F821 Undefined name `results`
+genomevault/utils/backup.py:515:20: F821 Undefined name `results`
+genomevault/utils/config.py:267:13: F823 Local variable `logger` referenced before assignment
+genomevault/utils/monitoring.py:29:36: F821 Undefined name `_Histogram`
+genomevault/utils/monitoring.py:35:34: F821 Undefined name `_Counter`
+genomevault/utils/monitoring.py:42:39: F821 Undefined name `_Counter`
+genomevault/utils/monitoring.py:48:46: F821 Undefined name `_Gauge`
+genomevault/utils/monitoring.py:55:38: F821 Undefined name `_Histogram`
+genomevault/utils/monitoring.py:61:40: F821 Undefined name `_Histogram`
+genomevault/utils/monitoring.py:67:33: F821 Undefined name `_Histogram`
+genomevault/utils/monitoring.py:74:34: F821 Undefined name `_Histogram`
+genomevault/utils/monitoring.py:80:41: F821 Undefined name `_Gauge`
+genomevault/utils/monitoring.py:85:35: F821 Undefined name `_Gauge`
+genomevault/utils/monitoring.py:92:38: F821 Undefined name `_Histogram`
+genomevault/utils/monitoring.py:96:34: F821 Undefined name `_Gauge`
+genomevault/utils/monitoring.py:102:31: F821 Undefined name `_Counter`
+genomevault/utils/monitoring.py:106:37: F821 Undefined name `_Counter`
+genomevault/utils/monitoring.py:113:35: F821 Undefined name `_Gauge`
+genomevault/utils/monitoring.py:119:35: F821 Undefined name `_Counter`
+genomevault/utils/monitoring.py:126:40: F821 Undefined name `_Gauge`
+genomevault/utils/monitoring.py:132:35: F821 Undefined name `_Counter`
+genomevault/utils/monitoring.py:139:30: F821 Undefined name `_Gauge`
+genomevault/utils/monitoring.py:141:35: F821 Undefined name `_Gauge`
+genomevault/utils/monitoring.py:164:21: F823 Local variable `logger` referenced before assignment
+genomevault/utils/post_quantum_crypto.py:6:1: E402 Module level import not at top of file
+genomevault/utils/post_quantum_crypto.py:7:1: E402 Module level import not at top of file
+genomevault/utils/post_quantum_crypto.py:8:1: E402 Module level import not at top of file
+genomevault/utils/post_quantum_crypto.py:9:1: E402 Module level import not at top of file
+genomevault/utils/post_quantum_crypto.py:52:16: F821 Undefined name `shared_secret`
+genomevault/utils/post_quantum_crypto.py:96:33: F821 Undefined name `_ciphertext`
+genomevault/utils/post_quantum_crypto.py:99:25: F821 Undefined name `ciphertext`
+genomevault/utils/post_quantum_crypto.py:100:36: F821 Undefined name `_encapsulated`
+genomevault/utils/post_quantum_crypto.py:101:33: F821 Undefined name `_signature`
+genomevault/utils/post_quantum_crypto.py:102:20: F821 Undefined name `nonce`
+genomevault/utils/post_quantum_crypto.py:119:9: F821 Undefined name `_crypto`
+genomevault/utils/post_quantum_crypto.py:120:23: F821 Undefined name `_start`
+genomevault/utils/post_quantum_crypto.py:124:9: F821 Undefined name `_crypto`
+genomevault/utils/post_quantum_crypto.py:124:25: F821 Undefined name `_plaintext`
+genomevault/utils/post_quantum_crypto.py:124:37: F821 Undefined name `_keypair`
+genomevault/utils/post_quantum_crypto.py:125:23: F821 Undefined name `_start`
+genomevault/utils/post_quantum_crypto.py:129:9: F821 Undefined name `_crypto`
+genomevault/utils/post_quantum_crypto.py:129:36: F821 Undefined name `_keypair`
+genomevault/utils/post_quantum_crypto.py:130:23: F821 Undefined name `_start`
+genomevault/utils/post_quantum_crypto.py:138:37: F821 Undefined name `_plaintext`
+genomevault/utils/post_quantum_crypto.py:142:12: F821 Undefined name `results`
+genomevault/utils/post_quantum_crypto.py:154:9: F821 Undefined name `_crypto`
+genomevault/utils/post_quantum_crypto.py:157:17: F821 Undefined name `_crypto`
+genomevault/utils/post_quantum_crypto.py:157:33: F821 Undefined name `_genomic_data`
+genomevault/utils/post_quantum_crypto.py:157:48: F821 Undefined name `_recipient_keypair`
+genomevault/utils/post_quantum_crypto.py:161:17: F821 Undefined name `_crypto`
+genomevault/utils/post_quantum_crypto.py:161:44: F821 Undefined name `_recipient_keypair`
+genomevault/utils/post_quantum_crypto.py:162:25: F821 Undefined name `_genomic_data`
+genomevault/utils/post_quantum_crypto.py:169:26: F821 Undefined name `_results`
+genomevault/utils/security_monitor.py:62:26: F821 Undefined name `_datetime`
+genomevault/utils/security_monitor.py:211:17: F823 Local variable `logger` referenced before assignment
+genomevault/utils/security_monitor.py:311:26: F821 Undefined name `_datetime`
+genomevault/utils/security_monitor.py:317:9: F823 Local variable `logger` referenced before assignment
+genomevault/utils/security_monitor.py:387:26: F821 Undefined name `_datetime`
+genomevault/utils/security_monitor.py:486:26: F821 Undefined name `_datetime`
+genomevault/utils/security_monitor.py:505:27: F821 Undefined name `_datetime`
+genomevault/utils/security_monitor.py:505:62: F821 Undefined name `_datetime`
+genomevault/utils/security_monitor.py:512:22: F821 Undefined name `_datetime`
+genomevault/utils/security_monitor.py:532:29: F821 Undefined name `_datetime`
+genomevault/zk/circuits/median_verifier.py:205:17: F823 Local variable `logger` referenced before assignment
+genomevault/zk/circuits/median_verifier.py:386:9: F823 Local variable `logger` referenced before assignment
+genomevault/zk/proof.py:98:17: F823 Local variable `logger` referenced before assignment
+genomevault/zk/proof.py:242:13: F823 Local variable `logger` referenced before assignment
+genomevault/zk_proofs/advanced/catalytic_proof.py:9:1: E402 Module level import not at top of file
+genomevault/zk_proofs/advanced/catalytic_proof.py:10:1: E402 Module level import not at top of file
+genomevault/zk_proofs/advanced/catalytic_proof.py:11:1: E402 Module level import not at top of file
+genomevault/zk_proofs/advanced/catalytic_proof.py:12:1: E402 Module level import not at top of file
+genomevault/zk_proofs/advanced/catalytic_proof.py:13:1: E402 Module level import not at top of file
+genomevault/zk_proofs/advanced/catalytic_proof.py:14:1: E402 Module level import not at top of file
+genomevault/zk_proofs/advanced/catalytic_proof.py:16:1: E402 Module level import not at top of file
+genomevault/zk_proofs/advanced/catalytic_proof.py:18:1: E402 Module level import not at top of file
+genomevault/zk_proofs/advanced/recursive_snark.py:9:1: E402 Module level import not at top of file
+genomevault/zk_proofs/advanced/recursive_snark.py:10:1: E402 Module level import not at top of file
+genomevault/zk_proofs/advanced/recursive_snark.py:11:1: E402 Module level import not at top of file
+genomevault/zk_proofs/advanced/recursive_snark.py:12:1: E402 Module level import not at top of file
+genomevault/zk_proofs/advanced/recursive_snark.py:13:1: E402 Module level import not at top of file
+genomevault/zk_proofs/advanced/recursive_snark.py:15:1: E402 Module level import not at top of file
+genomevault/zk_proofs/advanced/recursive_snark.py:17:1: E402 Module level import not at top of file
+genomevault/zk_proofs/advanced/recursive_snark.py:18:1: E402 Module level import not at top of file
+genomevault/zk_proofs/advanced/recursive_snark.py:19:1: E402 Module level import not at top of file
+genomevault/zk_proofs/advanced/recursive_snark.py:20:1: E402 Module level import not at top of file
+genomevault/zk_proofs/advanced/stark_prover.py:517:9: F823 Local variable `logger` referenced before assignment
+genomevault/zk_proofs/aggregation/recursive_aggregator.py:12:1: E402 Module level import not at top of file
+genomevault/zk_proofs/aggregation/recursive_aggregator.py:13:1: E402 Module level import not at top of file
+genomevault/zk_proofs/aggregation/recursive_aggregator.py:14:1: E402 Module level import not at top of file
+genomevault/zk_proofs/aggregation/recursive_aggregator.py:15:1: E402 Module level import not at top of file
+genomevault/zk_proofs/aggregation/recursive_aggregator.py:16:1: E402 Module level import not at top of file
+genomevault/zk_proofs/aggregation/recursive_aggregator.py:17:1: E402 Module level import not at top of file
+genomevault/zk_proofs/aggregation/recursive_aggregator.py:19:1: E402 Module level import not at top of file
+genomevault/zk_proofs/aggregation/recursive_aggregator.py:21:1: E402 Module level import not at top of file
+genomevault/zk_proofs/aggregation/recursive_aggregator.py:22:1: E402 Module level import not at top of file
+genomevault/zk_proofs/backends/gnark_backend.py:96:13: F823 Local variable `logger` referenced before assignment
+genomevault/zk_proofs/circuit_manager.py:16:1: E402 Module level import not at top of file
+genomevault/zk_proofs/circuit_manager.py:18:1: E402 Module level import not at top of file
+genomevault/zk_proofs/circuit_manager.py:19:1: E402 Module level import not at top of file
+genomevault/zk_proofs/circuit_manager.py:26:1: E402 Module level import not at top of file
+genomevault/zk_proofs/circuits/base_circuits.py:14:1: E402 Module level import not at top of file
+genomevault/zk_proofs/circuits/clinical_circuits.py:3:5: F821 Undefined name `ClinicalBiomarkerCircuit`
+genomevault/zk_proofs/circuits/clinical_circuits.py:4:5: F821 Undefined name `DiabetesRiskCircuit`
+genomevault/zk_proofs/circuits/clinical_circuits.py:5:5: F821 Undefined name `ProofData`
+genomevault/zk_proofs/circuits/clinical_circuits.py:6:5: F821 Undefined name `This`
+genomevault/zk_proofs/circuits/test_training_proof.py:11:1: E402 Module level import not at top of file
+genomevault/zk_proofs/circuits/test_training_proof.py:14:1: E402 Module level import not at top of file
+genomevault/zk_proofs/cli/zk_cli.py:36:50: F821 Undefined name `e`
+genomevault/zk_proofs/cli/zk_cli.py:51:49: F821 Undefined name `e`
+genomevault/zk_proofs/cli/zk_cli.py:58:5: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:64:9: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:70:9: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:87:9: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:92:9: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:93:9: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:99:5: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:100:5: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:101:5: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:135:5: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:136:5: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:137:5: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:138:5: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:143:5: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:169:13: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:178:17: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:184:5: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:185:5: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:186:5: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:189:9: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:192:13: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:199:5: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:238:9: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:243:5: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:245:9: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:251:9: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:252:9: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:253:9: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:254:9: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:306:13: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:307:13: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:308:13: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:310:17: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:311:13: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:313:17: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:314:13: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:315:13: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:316:13: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:317:13: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:319:13: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:323:9: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:324:9: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:326:13: F821 Undefined name `logger`
+genomevault/zk_proofs/cli/zk_cli.py:327:13: F821 Undefined name `logger`
+genomevault/zk_proofs/examples/integration_demo.py:18:1: F811 Redefinition of unused `logger` from line 16
+genomevault/zk_proofs/examples/integration_demo.py:18:10: F821 Undefined name `_get_logger`
+genomevault/zk_proofs/examples/integration_demo.py:20:1: E402 Module level import not at top of file
+genomevault/zk_proofs/examples/integration_demo.py:389:5: F823 Local variable `logger` referenced before assignment
+genomevault/zk_proofs/post_quantum.py:17:1: F811 Redefinition of unused `logger` from line 15
+genomevault/zk_proofs/post_quantum.py:95:40: F821 Undefined name `_trace`
+genomevault/zk_proofs/post_quantum.py:98:35: F821 Undefined name `_lde`
+genomevault/zk_proofs/post_quantum.py:101:39: F821 Undefined name `_merkle_root`
+genomevault/zk_proofs/post_quantum.py:104:29: F821 Undefined name `_lde`
+genomevault/zk_proofs/post_quantum.py:104:35: F821 Undefined name `_challenges`
+genomevault/zk_proofs/post_quantum.py:108:28: F821 Undefined name `merkle_root`
+genomevault/zk_proofs/post_quantum.py:109:26: F821 Undefined name `fri_proof`
+genomevault/zk_proofs/post_quantum.py:110:53: F821 Undefined name `lde`
+genomevault/zk_proofs/post_quantum.py:110:58: F821 Undefined name `challenges`
+genomevault/zk_proofs/post_quantum.py:115:35: F821 Undefined name `_proof_data`
+genomevault/zk_proofs/post_quantum.py:119:16: F821 Undefined name `proof_bytes`
+genomevault/zk_proofs/post_quantum.py:137:43: F821 Undefined name `_proof_data`
+genomevault/zk_proofs/post_quantum.py:140:37: F821 Undefined name `_proof_data`
+genomevault/zk_proofs/post_quantum.py:140:63: F821 Undefined name `challenges`
+genomevault/zk_proofs/post_quantum.py:145:17: F821 Undefined name `_proof_data`
+genomevault/zk_proofs/post_quantum.py:145:47: F821 Undefined name `_proof_data`
+genomevault/zk_proofs/post_quantum.py:145:75: F821 Undefined name `challenges`
+genomevault/zk_proofs/post_quantum.py:150:45: F821 Undefined name `proof_data`
+genomevault/zk_proofs/post_quantum.py:177:23: F821 Undefined name `_trace_length`
+genomevault/zk_proofs/post_quantum.py:177:38: F821 Undefined name `_trace_width`
+genomevault/zk_proofs/post_quantum.py:181:20: F821 Undefined name `trace_width`
+genomevault/zk_proofs/post_quantum.py:182:17: F821 Undefined name `_trace`
+genomevault/zk_proofs/post_quantum.py:185:27: F821 Undefined name `_trace_length`
+genomevault/zk_proofs/post_quantum.py:186:28: F821 Undefined name `_trace_width`
+genomevault/zk_proofs/post_quantum.py:188:17: F821 Undefined name `_trace`
+genomevault/zk_proofs/post_quantum.py:188:33: F821 Undefined name `_trace`
+genomevault/zk_proofs/post_quantum.py:190:16: F821 Undefined name `trace`
+genomevault/zk_proofs/post_quantum.py:207:13: F821 Undefined name `_leaves`
+genomevault/zk_proofs/post_quantum.py:210:41: F821 Undefined name `_leaves`
+genomevault/zk_proofs/post_quantum.py:219:50: F821 Undefined name `_challenge_seed`
+genomevault/zk_proofs/post_quantum.py:222:22: F821 Undefined name `_rng`
+genomevault/zk_proofs/post_quantum.py:222:67: F821 Undefined name `_num_queries`
+genomevault/zk_proofs/post_quantum.py:235:24: F821 Undefined name `_current`
+genomevault/zk_proofs/post_quantum.py:236:17: F821 Undefined name `_current`
+genomevault/zk_proofs/post_quantum.py:236:35: F821 Undefined name `_current`
+genomevault/zk_proofs/post_quantum.py:239:33: F821 Undefined name `_folded`
+genomevault/zk_proofs/post_quantum.py:241:13: F821 Undefined name `_fri_layers`
+genomevault/zk_proofs/post_quantum.py:241:48: F821 Undefined name `commitment`
+genomevault/zk_proofs/post_quantum.py:241:72: F821 Undefined name `folded`
+genomevault/zk_proofs/post_quantum.py:243:17: F821 Undefined name `_folded`
+genomevault/zk_proofs/post_quantum.py:246:23: F821 Undefined name `fri_layers`
+genomevault/zk_proofs/post_quantum.py:247:28: F821 Undefined name `_current`
+genomevault/zk_proofs/post_quantum.py:247:54: F821 Undefined name `current`
+genomevault/zk_proofs/post_quantum.py:257:13: F821 Undefined name `queries`
+genomevault/zk_proofs/post_quantum.py:259:30: F821 Undefined name `index`
+genomevault/zk_proofs/post_quantum.py:260:34: F821 Undefined name `_index`
+genomevault/zk_proofs/post_quantum.py:261:59: F821 Undefined name `index`
+genomevault/zk_proofs/post_quantum.py:265:16: F821 Undefined name `queries`
+genomevault/zk_proofs/post_quantum.py:273:13: F821 Undefined name `_path`
+genomevault/zk_proofs/post_quantum.py:274:16: F821 Undefined name `path`
+genomevault/zk_proofs/post_quantum.py:349:37: F821 Undefined name `_commitment`
+genomevault/zk_proofs/post_quantum.py:352:45: F821 Undefined name `_challenge`
+genomevault/zk_proofs/post_quantum.py:356:27: F821 Undefined name `commitment`
+genomevault/zk_proofs/post_quantum.py:357:25: F821 Undefined name `response`
+genomevault/zk_proofs/post_quantum.py:358:33: F821 Undefined name `n`
+genomevault/zk_proofs/post_quantum.py:358:41: F821 Undefined name `q`
+genomevault/zk_proofs/post_quantum.py:361:38: F821 Undefined name `proof_data`
+genomevault/zk_proofs/post_quantum.py:369:41: F821 Undefined name `_proof_data`
+genomevault/zk_proofs/post_quantum.py:373:17: F821 Undefined name `_proof_data`
+genomevault/zk_proofs/post_quantum.py:373:44: F821 Undefined name `_proof_data`
+genomevault/zk_proofs/post_quantum.py:373:69: F821 Undefined name `challenge`
+genomevault/zk_proofs/post_quantum.py:395:26: F821 Undefined name `_commitment_value`
+genomevault/zk_proofs/post_quantum.py:407:24: F821 Undefined name `_n`
+genomevault/zk_proofs/post_quantum.py:408:24: F821 Undefined name `hash_bytes`
+genomevault/zk_proofs/post_quantum.py:409:17: F821 Undefined name `_coeffs`
+genomevault/zk_proofs/post_quantum.py:409:36: F821 Undefined name `_hash_bytes`
+genomevault/zk_proofs/post_quantum.py:409:54: F821 Undefined name `q`
+genomevault/zk_proofs/post_quantum.py:411:17: F821 Undefined name `_coeffs`
+genomevault/zk_proofs/post_quantum.py:413:25: F821 Undefined name `coeffs`
+genomevault/zk_proofs/post_quantum.py:422:26: F821 Undefined name `response_value`
+genomevault/zk_proofs/post_quantum.py:489:13: F821 Undefined name `_proofs`
+genomevault/zk_proofs/post_quantum.py:493:13: F821 Undefined name `_proofs`
+genomevault/zk_proofs/post_quantum.py:494:13: F821 Undefined name `_proofs`
+genomevault/zk_proofs/post_quantum.py:498:16: F821 Undefined name `proofs`
+genomevault/zk_proofs/post_quantum.py:517:13: F821 Undefined name `_results`
+genomevault/zk_proofs/post_quantum.py:520:13: F821 Undefined name `_results`
+genomevault/zk_proofs/post_quantum.py:523:13: F821 Undefined name `_results`
+genomevault/zk_proofs/post_quantum.py:525:16: F821 Undefined name `results`
+genomevault/zk_proofs/post_quantum.py:545:29: F821 Undefined name `valid_algorithms`
+genomevault/zk_proofs/post_quantum.py:568:20: F821 Undefined name `base_size`
+genomevault/zk_proofs/post_quantum.py:575:20: F821 Undefined name `base_size`
+genomevault/zk_proofs/post_quantum.py:581:47: F821 Undefined name `__`
+genomevault/zk_proofs/post_quantum.py:607:9: F821 Undefined name `_stark_prover`
+genomevault/zk_proofs/post_quantum.py:607:38: F821 Undefined name `_statement`
+genomevault/zk_proofs/post_quantum.py:607:50: F821 Undefined name `_witness`
+genomevault/zk_proofs/post_quantum.py:608:23: F821 Undefined name `_start`
+genomevault/zk_proofs/post_quantum.py:611:9: F821 Undefined name `_stark_prover`
+genomevault/zk_proofs/post_quantum.py:611:36: F821 Undefined name `_stark_proof`
+genomevault/zk_proofs/post_quantum.py:611:50: F821 Undefined name `_statement`
+genomevault/zk_proofs/post_quantum.py:612:23: F821 Undefined name `_start`
+genomevault/zk_proofs/post_quantum.py:614:5: F821 Undefined name `_results`
+genomevault/zk_proofs/post_quantum.py:615:28: F821 Undefined name `stark_gen_time`
+genomevault/zk_proofs/post_quantum.py:616:30: F821 Undefined name `stark_verify_time`
+genomevault/zk_proofs/post_quantum.py:617:27: F821 Undefined name `stark_proof`
+genomevault/zk_proofs/post_quantum.py:618:18: F821 Undefined name `stark_valid`
+genomevault/zk_proofs/post_quantum.py:625:9: F821 Undefined name `_lattice_prover`
+genomevault/zk_proofs/post_quantum.py:625:40: F821 Undefined name `_statement`
+genomevault/zk_proofs/post_quantum.py:625:52: F821 Undefined name `_witness`
+genomevault/zk_proofs/post_quantum.py:626:23: F821 Undefined name `_start`
+genomevault/zk_proofs/post_quantum.py:629:9: F821 Undefined name `_lattice_prover`
+genomevault/zk_proofs/post_quantum.py:629:38: F821 Undefined name `_lattice_proof`
+genomevault/zk_proofs/post_quantum.py:629:54: F821 Undefined name `_statement`
+genomevault/zk_proofs/post_quantum.py:630:23: F821 Undefined name `_start`
+genomevault/zk_proofs/post_quantum.py:632:5: F821 Undefined name `_results`
+genomevault/zk_proofs/post_quantum.py:633:28: F821 Undefined name `lattice_gen_time`
+genomevault/zk_proofs/post_quantum.py:634:30: F821 Undefined name `lattice_verify_time`
+genomevault/zk_proofs/post_quantum.py:635:27: F821 Undefined name `lattice_proof`
+genomevault/zk_proofs/post_quantum.py:636:18: F821 Undefined name `lattice_valid`
+genomevault/zk_proofs/post_quantum.py:639:12: F821 Undefined name `results`
+genomevault/zk_proofs/service.py:13:1: F811 Redefinition of unused `logger` from line 8
+quick_fix_init_files.py:9:1: E402 Module level import not at top of file
+test_api_startup.py:8:1: E402 Module level import not at top of file
+test_api_startup.py:9:1: E402 Module level import not at top of file
+test_autofix_example.py:8:27: F821 Undefined name `filename`
+test_autofix_example.py:12:5: F821 Undefined name `risky_operation`
+test_autofix_example.py:23:5: F821 Undefined name `another_operation`
+test_autofix_example.py:35:1: E402 Module level import not at top of file
+test_autofix_example.py:35:1: F403 `from os import *` used; unable to detect undefined names
+test_autofix_example.py:38:1: F405 `initialize_something` may be undefined, or defined from star imports
+test_fixes.py:33:49: F401 `genomevault.core.exceptions.HypervectorError` imported but unused; consider using `importlib.util.find_spec` to test for availability
+test_fixes.py:37:16: F401 `genomevault.core.constants` imported but unused; consider using `importlib.util.find_spec` to test for availability
+test_ruff_upgrade.py:49:9: E722 Do not use bare `except`
+test_ruff_upgrade.py:57:9: E722 Do not use bare `except`
+test_ruff_upgrade.py:65:9: E722 Do not use bare `except`
+test_simple.py:8:1: E402 Module level import not at top of file
+test_simple.py:9:1: E402 Module level import not at top of file
+test_simple.py:10:1: E402 Module level import not at top of file
+validate_implementation.py:221:46: E741 Ambiguous variable name: `l`
+validate_lint_fixes.py:80:30: E741 Ambiguous variable name: `l`
+Found 803 errors.
