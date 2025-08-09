@@ -13,38 +13,37 @@ import pytest
 import torch
 
 from genomevault.hypervector.error_handling import (
-    AdaptiveHDCEncoder, BatchedPIRQueryBuilder, ECCEncoderMixin,
-    ErrorBudgetAllocator
+    AdaptiveHDCEncoder,
+    BatchedPIRQueryBuilder,
+    ECCEncoderMixin,
+    ErrorBudgetAllocator,
 )
 from genomevault.pir.client import GenomicQuery, PIRClient, QueryType
 
 
 class TestBatchedPIRIntegration:
     """Test HDC-PIR integration with error handling"""
-    
+
     def test_error_budget_allocation(self):
         """Test error budget allocation"""
         allocator = ErrorBudgetAllocator()
-        
+
         # Test basic allocation
         budget = allocator.plan_budget(epsilon=0.01, delta_exp=15)
         assert budget.epsilon == 0.01
         assert budget.delta_exp == 15
         assert budget.dimension >= 1000
         assert budget.repeats >= 2
-        
+
         # Test without ECC
-        budget_no_ecc = allocator.plan_budget(
-            epsilon=0.01, delta_exp=15, ecc_enabled=False
-        )
+        budget_no_ecc = allocator.plan_budget(epsilon=0.01, delta_exp=15, ecc_enabled=False)
         # Without ECC, should need more dimension or repeats
-        assert (budget_no_ecc.dimension > budget.dimension or 
-                budget_no_ecc.repeats > budget.repeats)
-    
+        assert budget_no_ecc.dimension > budget.dimension or budget_no_ecc.repeats > budget.repeats
+
     def test_ecc_encoder(self):
         """Test ECC encoding and decoding"""
         encoder = ECCEncoderMixin(base_dimension=1000, parity_g=3)
-        
+
         # Test with binary vector
         binary_vec = torch.randint(0, 2, (1000,)).bool()
         encoded = encoder.encode_with_ecc(binary_vec.float())
@@ -116,9 +115,7 @@ class TestBatchedPIRIntegration:
         # Mock PIR client
         mock_client = Mock(spec=PIRClient)
         mock_client.execute_query = AsyncMock(
-            side_effect=lambda q: {
-                "value": 42.0 + np.random.normal(0, 0.1)
-            }  # Add some noise
+            side_effect=lambda q: {"value": 42.0 + np.random.normal(0, 0.1)}  # Add some noise
         )
         mock_client.decode_response = Mock(side_effect=lambda r, t: r["value"])
 

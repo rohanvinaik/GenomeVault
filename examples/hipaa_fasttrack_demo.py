@@ -95,9 +95,7 @@ async def demonstrate_hipaa_fasttrack():
             }
 
             try:
-                node = await integration.register_provider_node(
-                    credentials, node_config
-                )
+                node = await integration.register_provider_node(credentials, node_config)
                 registered_nodes.append((provider, node))
 
                 print("  ✓ Verification successful!")
@@ -105,9 +103,7 @@ async def demonstrate_hipaa_fasttrack():
                 print("  ✓ Voting power: {node.voting_power}")
 
                 # Add to HIPAA committee
-                governance.committees[CommitteeType.SCIENTIFIC_ADVISORY].add_member(
-                    node.node_id
-                )
+                governance.committees[CommitteeType.SCIENTIFIC_ADVISORY].add_member(node.node_id)
 
             except Exception:
                 from genomevault.observability.logging import configure_logging
@@ -126,9 +122,7 @@ async def demonstrate_hipaa_fasttrack():
         if registered_nodes:
             proposer_node = registered_nodes[0][1]  # Metro General Hospital
 
-            print(
-                "\n{registered_nodes[0][0]['name']} creating clinical data proposal..."
-            )
+            print("\n{registered_nodes[0][0]['name']} creating clinical data proposal...")
 
             proposal = governance.create_proposal(
                 proposer=proposer_node.node_id,
@@ -180,12 +174,7 @@ async def demonstrate_hipaa_fasttrack():
                 print("  Vote weight: {vote.vote_weight}")
 
                 # Show enhanced weight for committee members
-                if (
-                    governance._get_committee_multiplier(
-                        node.node_id, proposal.proposal_type
-                    )
-                    > 1
-                ):
+                if governance._get_committee_multiplier(node.node_id, proposal.proposal_type) > 1:
                     print("  ✓ Committee bonus applied!")
 
             # Add some non-HIPAA votes for comparison

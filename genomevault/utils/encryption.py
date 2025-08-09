@@ -83,9 +83,7 @@ class AESGCMCipher:
 
         nonce = os.urandom(cls.NONCE_SIZE)
 
-        cipher = Cipher(
-            algorithms.AES(key), modes.GCM(nonce), backend=default_backend()
-        )
+        cipher = Cipher(algorithms.AES(key), modes.GCM(nonce), backend=default_backend())
         encryptor = cipher.encryptor()
 
         if associated_data:
@@ -121,9 +119,7 @@ class AESGCMCipher:
         if len(key) != cls.KEY_SIZE:
             raise ValueError("Key must be {cls.KEY_SIZE} bytes")
 
-        cipher = Cipher(
-            algorithms.AES(key), modes.GCM(nonce, tag), backend=default_backend()
-        )
+        cipher = Cipher(algorithms.AES(key), modes.GCM(nonce, tag), backend=default_backend())
         decryptor = cipher.decryptor()
 
         if associated_data:
@@ -213,9 +209,7 @@ class RSAEncryption:
     @classmethod
     def encrypt(cls, plaintext: bytes, public_key_pem: bytes) -> bytes:
         """Encrypt using RSA-OAEP"""
-        public_key = serialization.load_pem_public_key(
-            public_key_pem, backend=default_backend()
-        )
+        public_key = serialization.load_pem_public_key(public_key_pem, backend=default_backend())
 
         ciphertext = public_key.encrypt(
             plaintext,
@@ -251,9 +245,7 @@ class ThresholdCrypto:
     PRIME = 2**256 - 189  # Large prime for GF(p)
 
     @classmethod
-    def split_secret(
-        cls, secret: bytes, threshold: int, total_shares: int
-    ) -> list[ThresholdShare]:
+    def split_secret(cls, secret: bytes, threshold: int, total_shares: int) -> list[ThresholdShare]:
         """
         Split secret into shares using Shamir's Secret Sharing
 
@@ -321,9 +313,7 @@ class ThresholdCrypto:
         for share in shares[:threshold]:
             # Verify checksum
             expected_checksum = hashlib.sha256(share.share_value).hexdigest()[:8]
-            if not constant_time.bytes_eq(
-                share.checksum.encode(), expected_checksum.encode()
-            ):
+            if not constant_time.bytes_eq(share.checksum.encode(), expected_checksum.encode()):
                 raise ValueError("Invalid checksum for share {share.share_id}")
 
             # Parse share data
@@ -388,9 +378,7 @@ class KeyDerivation:
         return kdf.derive(password.encode())
 
     @classmethod
-    def derive_key_hkdf(
-        cls, input_key: bytes, info: bytes, key_length: int = 32
-    ) -> bytes:
+    def derive_key_hkdf(cls, input_key: bytes, info: bytes, key_length: int = 32) -> bytes:
         """Derive key using HKDF"""
         hkdf = HKDF(
             algorithm=hashes.SHA256(),
@@ -531,9 +519,7 @@ class EncryptionManager:
         key_file = self.key_store_path / "keys.json"
         if key_file.exists():
             # This would be encrypted in production
-            logger.warning(
-                "Loading keys from unencrypted storage - use HSM in production"
-            )
+            logger.warning("Loading keys from unencrypted storage - use HSM in production")
 
     def _save_keys(self):
         """Save keys to storage"""

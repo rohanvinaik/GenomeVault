@@ -2,8 +2,7 @@ import numpy as np
 import pytest
 
 from genomevault.core.exceptions import ProjectionError
-from genomevault.hypervector.encoding.orthogonal_projection import \
-    OrthogonalProjection
+from genomevault.hypervector.encoding.orthogonal_projection import OrthogonalProjection
 
 
 def cosine(a: np.ndarray, b: np.ndarray) -> float:

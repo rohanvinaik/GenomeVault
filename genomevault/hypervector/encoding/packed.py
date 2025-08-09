@@ -22,24 +22,18 @@ from genomevault.core.exceptions import HypervectorError
 class PackedHV:
     """Bit-packed hypervector implementation with CPU/GPU support"""
 
-    def __init__(
-        self, n_bits: int, buffer: np.ndarray | None = None, device: str = "cpu"
-    ):
+    def __init__(self, n_bits: int, buffer: np.ndarray | None = None, device: str = "cpu"):
         self.n_bits = n_bits
         self.n_words = (n_bits + 63) // 64
         self.device = device
 
         if device == "cpu":
-            self.buf = (
-                np.zeros(self.n_words, dtype=np.uint64) if buffer is None else buffer
-            )
+            self.buf = np.zeros(self.n_words, dtype=np.uint64) if buffer is None else buffer
         else:  # GPU
             if not CUPY_AVAILABLE:
                 raise RuntimeError("CuPy not available for GPU operations")
             self.buf = (
-                cp.zeros(self.n_words, dtype=cp.uint64)
-                if buffer is None
-                else cp.asarray(buffer)
+                cp.zeros(self.n_words, dtype=cp.uint64) if buffer is None else cp.asarray(buffer)
             )
 
     def xor_(self, other: "PackedHV") -> "PackedHV":
@@ -326,9 +320,7 @@ class PackedProjection:
 
     def _encode_cpu(self, features: np.ndarray) -> np.ndarray:
         """CPU encoding using Numba"""
-        return _project_features_numba(
-            features, self.masks, self.n_words, len(features)
-        )
+        return _project_features_numba(features, self.masks, self.n_words, len(features))
 
     def _encode_gpu(self, features: np.ndarray) -> cp.ndarray:
         """GPU encoding"""
@@ -554,9 +546,7 @@ class PackedGenomicEncoder:
 
         return genome_vec
 
-    def similarity(
-        self, vec1: PackedHV | torch.Tensor, vec2: PackedHV | torch.Tensor
-    ) -> float:
+    def similarity(self, vec1: PackedHV | torch.Tensor, vec2: PackedHV | torch.Tensor) -> float:
         """Calculate similarity between hypervectors"""
 
         if isinstance(vec1, PackedHV) and isinstance(vec2, PackedHV):

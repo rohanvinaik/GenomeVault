@@ -19,10 +19,8 @@ import numpy as np
 import psutil
 from tabulate import tabulate
 
-from genomevault.pir.it_pir_protocol import (BatchPIRProtocol, PIRParameters,
-                                             PIRProtocol)
-from genomevault.pir.server.enhanced_pir_server import (EnhancedPIRServer,
-                                                        ServerConfig)
+from genomevault.pir.it_pir_protocol import BatchPIRProtocol, PIRParameters, PIRProtocol
+from genomevault.pir.server.enhanced_pir_server import EnhancedPIRServer, ServerConfig
 
 
 class PIRBenchmark:
@@ -91,9 +89,7 @@ class PIRBenchmark:
         self.results["benchmarks"]["query_generation"] = results
         return results
 
-    async def benchmark_server_response(
-        self, database_sizes: list[int], num_iterations: int = 10
-    ):
+    async def benchmark_server_response(self, database_sizes: list[int], num_iterations: int = 10):
         """Benchmark server response computation."""
         logger.info("\n=== Server Response Benchmark ===")
         results = []
@@ -137,8 +133,7 @@ class PIRBenchmark:
                     "avg_time_ms": avg_time_ms,
                     "cpu_usage_percent": cpu_after - cpu_before,
                     "memory_delta_mb": mem_after - mem_before,
-                    "throughput_mbps": (db_size * 1024 * num_iterations / elapsed)
-                    / (1024**2),
+                    "throughput_mbps": (db_size * 1024 * num_iterations / elapsed) / (1024**2),
                 }
             )
 
@@ -152,9 +147,7 @@ class PIRBenchmark:
         self.results["benchmarks"]["server_response"] = results
         return results
 
-    async def benchmark_end_to_end(
-        self, database_sizes: list[int], num_servers: list[int]
-    ):
+    async def benchmark_end_to_end(self, database_sizes: list[int], num_servers: list[int]):
         """Benchmark end-to-end PIR retrieval."""
         logger.info("\n=== End-to-End PIR Benchmark ===")
         results = []
@@ -232,9 +225,7 @@ class PIRBenchmark:
 
         for batch_size in batch_sizes:
             # Generate batch of indices
-            indices = np.random.choice(
-                database_size, batch_size, replace=False
-            ).tolist()
+            indices = np.random.choice(database_size, batch_size, replace=False).tolist()
 
             # Measure batch query generation
             start_time = time.time()
@@ -249,9 +240,7 @@ class PIRBenchmark:
                 for queries in bucket_queries:
                     for server_queries in queries:
                         for query in server_queries:
-                            response = batch_protocol.process_server_response(
-                                query, database
-                            )
+                            response = batch_protocol.process_server_response(query, database)
                             total_responses += 1
 
             process_time = (time.time() - start_time) * 1000
@@ -262,8 +251,7 @@ class PIRBenchmark:
                     "query_generation_ms": query_gen_time,
                     "processing_ms": process_time,
                     "total_time_ms": query_gen_time + process_time,
-                    "items_per_second": batch_size
-                    / ((query_gen_time + process_time) / 1000),
+                    "items_per_second": batch_size / ((query_gen_time + process_time) / 1000),
                     "buckets_used": len(batch_queries),
                 }
             )
@@ -278,9 +266,7 @@ class PIRBenchmark:
         self.results["benchmarks"]["batch_pir"] = results
         return results
 
-    async def benchmark_enhanced_server(
-        self, database_size: int, cache_sizes: list[int]
-    ):
+    async def benchmark_enhanced_server(self, database_size: int, cache_sizes: list[int]):
         """Benchmark enhanced PIR server with caching."""
         logger.info("\n=== Enhanced Server Benchmark ===")
         results = []
@@ -365,9 +351,7 @@ class PIRBenchmark:
         self.results["benchmarks"]["enhanced_server"] = results
         return results
 
-    async def benchmark_network_latency(
-        self, num_shards: list[int], rtt_ms: float = 70
-    ):
+    async def benchmark_network_latency(self, num_shards: list[int], rtt_ms: float = 70):
         """Benchmark network latency impact."""
         logger.info("\n=== Network Latency Benchmark ===")
         results = []
@@ -467,9 +451,7 @@ async def main():
         default=Path("benchmarks/pir"),
         help="Output directory for results",
     )
-    parser.add_argument(
-        "--quick", action="store_true", help="Run quick benchmarks only"
-    )
+    parser.add_argument("--quick", action="store_true", help="Run quick benchmarks only")
 
     args = parser.parse_args()
 

@@ -18,8 +18,7 @@ class ChecklistImplementer:
         self.project_root = Path(project_root)
         self.log_file = self.project_root / "checklist_implementation.log"
         self.backup_dir = (
-            self.project_root
-            / f"genomevault_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            self.project_root / f"genomevault_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         )
 
     def log(self, message):
@@ -107,9 +106,7 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message
                     lines = content.split("\n")
                     import_end = 0
                     for i, line in enumerate(lines):
-                        if line.strip() and not line.startswith(
-                            ("import", "from", "#")
-                        ):
+                        if line.strip() and not line.startswith(("import", "from", "#")):
                             import_end = i
                             break
 

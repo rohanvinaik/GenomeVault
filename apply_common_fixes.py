@@ -98,8 +98,10 @@ def fix_mutable_defaults(file_path):
                 lines[func_line_idx] = re.sub(
                     rf"{arg_name}\s*=\s*\[\]", f"{arg_name}=None", lines[func_line_idx]
                 )
+                # Use r-string without f-string for regex pattern with braces
+                pattern = r"%s\s*=\s*\{\}" % arg_name
                 lines[func_line_idx] = re.sub(
-                    rf"{arg_name}\s*=\s*\{{\}}",
+                    pattern,
                     f"{arg_name}=None",
                     lines[func_line_idx],
                 )

@@ -153,9 +153,7 @@ class CompressionEngine:
             max_size = profile.max_size_kb * modalities_included
 
         if size_kb > max_size:
-            logger.warning(
-                "Compressed size %ssize_kb:.1fKB exceeds target %smax_sizeKB"
-            )
+            logger.warning("Compressed size %ssize_kb:.1fKB exceeds target %smax_sizeKB")
 
         # Create compressed data package
         compressed_data = CompressedData(
@@ -252,9 +250,7 @@ class CompressionEngine:
             compressed["phenotypic"] = {
                 "conditions": data["phenotypic"].get("conditions", []),
                 "medications": data["phenotypic"].get("medications", []),
-                "labs": self._compress_lab_values(
-                    data["phenotypic"].get("lab_results", {})
-                ),
+                "labs": self._compress_lab_values(data["phenotypic"].get("lab_results", {})),
             }
 
         # Metadata
@@ -289,9 +285,7 @@ class CompressionEngine:
         # Add integrated multi-omics features
         if len(compressed["modalities"]) > 1:
             compressed["integrated"] = {
-                "cross_modal_binding": self._compute_cross_modal_features(
-                    compressed["modalities"]
-                )
+                "cross_modal_binding": self._compute_cross_modal_features(compressed["modalities"])
             }
 
         # Metadata
@@ -383,9 +377,7 @@ class CompressionEngine:
 
         return compressed_labs
 
-    def _create_mock_hypervector(
-        self, modality_data: dict[str, Any], dimensions: int
-    ) -> str:
+    def _create_mock_hypervector(self, modality_data: dict[str, Any], dimensions: int) -> str:
         """
         Create mock hypervector representation.
         In production, this would use the actual hypervector encoder.
@@ -425,9 +417,7 @@ class CompressionEngine:
 
         return stats
 
-    def _compute_cross_modal_features(
-        self, modalities: dict[str, Any]
-    ) -> dict[str, Any]:
+    def _compute_cross_modal_features(self, modalities: dict[str, Any]) -> dict[str, Any]:
         """Compute cross-modal binding features for multi-omics integration"""
         # Placeholder for cross-modal analysis
         # In production, would compute actual biological relationships
@@ -486,9 +476,7 @@ class CompressionEngine:
 
             if tier == CompressionTier.FULL:
                 # Full tier is per-modality
-                modality_count = len(
-                    [m for m in modalities if m in profile.omics_types]
-                )
+                modality_count = len([m for m in modalities if m in profile.omics_types])
                 size_kb = profile.max_size_kb * modality_count
             else:
                 size_kb = profile.max_size_kb
@@ -519,9 +507,7 @@ if __name__ == "__main__":
     logger.info("=" * 50)
 
     # Example 1: Mini genomics only
-    req1 = engine.calculate_storage_requirements(
-        [CompressionTier.MINI], [OmicsType.GENOMIC]
-    )
+    req1 = engine.calculate_storage_requirements([CompressionTier.MINI], [OmicsType.GENOMIC])
     logger.info("Mini genomics only: %sreq1['total_size_kb'] KB")
 
     # Example 2: Clinical pharmacogenomics

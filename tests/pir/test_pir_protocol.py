@@ -11,8 +11,7 @@ import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 
-from genomevault.pir.it_pir_protocol import (BatchPIRProtocol, PIRParameters,
-                                             PIRProtocol)
+from genomevault.pir.it_pir_protocol import BatchPIRProtocol, PIRParameters, PIRProtocol
 
 # Constants for magic number elimination (PLR2004)
 TIMING_VARIANCE_MAX = 5.0
@@ -27,9 +26,7 @@ class TestPIRProtocol:
 
     def setup_method(self):
         """Setup test parameters."""
-        self.params = PIRParameters(
-            database_size=1000, element_size=1024, num_servers=2
-        )
+        self.params = PIRParameters(database_size=1000, element_size=1024, num_servers=2)
         self.protocol = PIRProtocol(self.params)
 
         # Create test database
@@ -129,9 +126,7 @@ class TestPIRProtocol:
         # Test multiple responses have similar timing
         timings = []
         for _ in range(10):
-            padded, time_ms = self.protocol.timing_safe_response(
-                response, target_time_ms=50
-            )
+            padded, time_ms = self.protocol.timing_safe_response(response, target_time_ms=50)
             timings.append(time_ms)
 
             # Check fixed size
@@ -144,15 +139,11 @@ class TestPIRProtocol:
     def test_privacy_calculations(self):
         """Test privacy breach probability calculations."""
         # Test with HIPAA TS nodes
-        prob_ts = self.protocol.calculate_privacy_breach_probability(
-            k_honest=2, honesty_prob=0.98
-        )
+        prob_ts = self.protocol.calculate_privacy_breach_probability(k_honest=2, honesty_prob=0.98)
         assert prob_ts == pytest.approx(0.0004, rel=1e-4)
 
         # Test with Light Nodes
-        prob_ln = self.protocol.calculate_privacy_breach_probability(
-            k_honest=3, honesty_prob=0.95
-        )
+        prob_ln = self.protocol.calculate_privacy_breach_probability(k_honest=3, honesty_prob=0.95)
         assert prob_ln == pytest.approx(0.000125, rel=1e-4)
 
         # Test minimum servers calculation
@@ -168,9 +159,7 @@ class TestAdversarialPIR:
 
     def setup_method(self):
         """Setup test parameters."""
-        self.params = PIRParameters(
-            database_size=1000, element_size=1024, num_servers=2
-        )
+        self.params = PIRParameters(database_size=1000, element_size=1024, num_servers=2)
         self.protocol = PIRProtocol(self.params)
         self.database = np.random.randint(
             0,
@@ -206,9 +195,7 @@ class TestAdversarialPIR:
             for _ in range(20):
                 start = time.time()
                 response = self.protocol.process_server_response(query, self.database)
-                padded, _ = self.protocol.timing_safe_response(
-                    response, target_time_ms=50
-                )
+                padded, _ = self.protocol.timing_safe_response(response, target_time_ms=50)
                 elapsed = (time.time() - start) * 1000
                 timings.append(elapsed)
 
@@ -287,9 +274,7 @@ class TestBatchPIR:
 
     def setup_method(self):
         """Setup test parameters."""
-        self.params = PIRParameters(
-            database_size=10000, element_size=1024, num_servers=2
-        )
+        self.params = PIRParameters(database_size=10000, element_size=1024, num_servers=2)
         self.protocol = BatchPIRProtocol(self.params)
         self.database = np.random.randint(
             0,
@@ -328,9 +313,7 @@ class TestPIRPerformance:
 
     def setup_method(self):
         """Setup test parameters."""
-        self.params = PIRParameters(
-            database_size=100000, element_size=1024, num_servers=2
-        )
+        self.params = PIRParameters(database_size=100000, element_size=1024, num_servers=2)
         self.protocol = PIRProtocol(self.params)
         self.database = np.random.randint(
             0,

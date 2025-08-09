@@ -12,13 +12,14 @@ from hypothesis import assume, given, note, settings
 from hypothesis import strategies as st
 from hypothesis.extra.numpy import arrays
 
-from genomevault.hypervector_transform.binding_operations import (
-    BindingType, HypervectorBinder)
-from genomevault.hypervector_transform.hdc_encoder import (CompressionTier,
-                                                           HypervectorConfig,
-                                                           HypervectorEncoder,
-                                                           OmicsType,
-                                                           ProjectionType)
+from genomevault.hypervector_transform.binding_operations import BindingType, HypervectorBinder
+from genomevault.hypervector_transform.hdc_encoder import (
+    CompressionTier,
+    HypervectorConfig,
+    HypervectorEncoder,
+    OmicsType,
+    ProjectionType,
+)
 
 
 # Custom strategies for HDC components
@@ -84,9 +85,7 @@ class TestHDCProperties:
         assert hv.shape[0] == dimension
         assert torch.isfinite(hv).all()
 
-    @given(
-        features=feature_arrays(), seed=st.integers(min_value=0, max_value=2**32 - 1)
-    )
+    @given(features=feature_arrays(), seed=st.integers(min_value=0, max_value=2**32 - 1))
     @settings(max_examples=20)
     def test_encoding_determinism_property(self, features, seed):
         """Property: Same seed always produces same encoding"""
@@ -141,9 +140,7 @@ class TestHDCProperties:
     def test_projection_matrix_properties(self, dimension, projection_type):
         """Property: Projection matrices have correct properties"""
         try:
-            config = HypervectorConfig(
-                dimension=dimension, projection_type=projection_type
-            )
+            config = HypervectorConfig(dimension=dimension, projection_type=projection_type)
             encoder = HypervectorEncoder(config)
 
             # Create projection matrix
@@ -343,12 +340,8 @@ class TestCompressionProperties:
             similarities[tier] = sim
 
         # Higher tiers should preserve similarity better
-        assert (
-            similarities[CompressionTier.MINI] <= similarities[CompressionTier.CLINICAL]
-        )
-        assert (
-            similarities[CompressionTier.CLINICAL] <= similarities[CompressionTier.FULL]
-        )
+        assert similarities[CompressionTier.MINI] <= similarities[CompressionTier.CLINICAL]
+        assert similarities[CompressionTier.CLINICAL] <= similarities[CompressionTier.FULL]
 
 
 class TestPrivacyProperties:

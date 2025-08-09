@@ -9,12 +9,13 @@ import numpy as np
 import pytest
 import torch
 
-from genomevault.hypervector_transform.binding_operations import (
-    BindingType, HypervectorBinder)
-from genomevault.hypervector_transform.hdc_encoder import (HypervectorConfig,
-                                                           HypervectorEncoder,
-                                                           OmicsType,
-                                                           ProjectionType)
+from genomevault.hypervector_transform.binding_operations import BindingType, HypervectorBinder
+from genomevault.hypervector_transform.hdc_encoder import (
+    HypervectorConfig,
+    HypervectorEncoder,
+    OmicsType,
+    ProjectionType,
+)
 
 
 class TestAdversarialInputs:
@@ -66,9 +67,7 @@ class TestAdversarialInputs:
         for i in range(len(encoded_vectors)):
             for j in range(i + 1, len(encoded_vectors)):
                 similarity = encoder.similarity(encoded_vectors[i], encoded_vectors[j])
-                assert (
-                    similarity < 0.99
-                ), "Different inputs produced nearly identical outputs"
+                assert similarity < 0.99, "Different inputs produced nearly identical outputs"
 
     def test_adversarial_patterns(self):
         """Test with patterns designed to exploit weaknesses"""
@@ -151,9 +150,7 @@ class TestPrivacyAttacks:
         train_max_sims = []
         for train_hv in train_hvs:
             sims = [
-                encoder.similarity(train_hv, other)
-                for other in train_hvs
-                if other is not train_hv
+                encoder.similarity(train_hv, other) for other in train_hvs if other is not train_hv
             ]
             train_max_sims.append(max(sims))
 
@@ -176,9 +173,7 @@ class TestPrivacyAttacks:
         encoder = HypervectorEncoder(HypervectorConfig(dimension=10000))
 
         # Original sensitive data
-        sensitive_features = np.array(
-            [1.5, -2.3, 0.7, 3.1, -0.5] * 200
-        )  # 1000 features
+        sensitive_features = np.array([1.5, -2.3, 0.7, 3.1, -0.5] * 200)  # 1000 features
         hv = encoder.encode(sensitive_features, OmicsType.GENOMIC)
 
         # Attacker tries to invert using optimization
@@ -194,9 +189,7 @@ class TestPrivacyAttacks:
             eps = 1e-4
             gradients = np.zeros_like(guess)
 
-            for i in range(
-                min(10, len(guess))
-            ):  # Only optimize first 10 dims for speed
+            for i in range(min(10, len(guess))):  # Only optimize first 10 dims for speed
                 guess_plus = guess.copy()
                 guess_plus[i] += eps
                 hv_plus = encoder.encode(guess_plus, OmicsType.GENOMIC)
@@ -389,9 +382,7 @@ class TestSystematicVulnerabilities:
                 "/" not in msg and "\\" not in msg
             ), f"Error message contains path information: {msg}"
             # Should not contain internal state
-            assert (
-                "0x" not in msg.lower()
-            ), f"Error message contains memory addresses: {msg}"
+            assert "0x" not in msg.lower(), f"Error message contains memory addresses: {msg}"
 
     def test_resource_exhaustion(self):
         """Test resistance to resource exhaustion attacks"""
@@ -501,9 +492,7 @@ def run_adversarial_tests():
         test_instance = test_class()
 
         # Get all test methods
-        test_methods = [
-            method for method in dir(test_instance) if method.startswith("test_")
-        ]
+        test_methods = [method for method in dir(test_instance) if method.startswith("test_")]
 
         for method_name in test_methods:
             print(f"  - {method_name}...", end=" ")

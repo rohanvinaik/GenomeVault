@@ -20,9 +20,7 @@ class PositionalEncoder:
     Uses sparse representations and hash-based seeds for 10M+ positions
     """
 
-    def __init__(
-        self, dimension: int = 100000, sparsity: float = 0.01, cache_size: int = 10000
-    ):
+    def __init__(self, dimension: int = 100000, sparsity: float = 0.01, cache_size: int = 10000):
         """
         Initialize positional encoder
 
@@ -38,13 +36,9 @@ class PositionalEncoder:
 
         # Pre-compute constants for efficiency
         self.nnz = int(dimension * sparsity)  # Number of non-zero elements
-        logger.info(
-            "Initialized PositionalEncoder: %sdimensionD, %sself.nnz non-zeros per vector"
-        )
+        logger.info("Initialized PositionalEncoder: %sdimensionD, %sself.nnz non-zeros per vector")
 
-    def make_position_vector(
-        self, position: int, seed: int | None = None
-    ) -> torch.Tensor:
+    def make_position_vector(self, position: int, seed: int | None = None) -> torch.Tensor:
         """
         Generate orthogonal position vector using hash-based seed
 
@@ -208,9 +202,9 @@ class PositionalEncoder:
 
     def get_memory_usage(self) -> dict[str, float]:
         """Get memory usage statistics"""
-        cache_size_mb = sum(
-            vec.element_size() * vec.numel() for vec in self._cache.values()
-        ) / (1024**2)
+        cache_size_mb = sum(vec.element_size() * vec.numel() for vec in self._cache.values()) / (
+            1024**2
+        )
 
         return {
             "cache_entries": len(self._cache),
@@ -265,9 +259,7 @@ class SNPPanel:
 
         logger.info("Initialized %slen(self.panels) default SNP panels")
 
-    def load_panel_from_file(
-        self, panel_name: str, file_path: str, file_type: str = "bed"
-    ) -> None:
+    def load_panel_from_file(self, panel_name: str, file_path: str, file_type: str = "bed") -> None:
         """
         Load SNP panel from BED/VCF file
 
@@ -314,9 +306,7 @@ class SNPPanel:
                             positions_by_chr[chrom].append(pos)
 
             # Count total positions
-            total_positions = sum(
-                len(positions) for positions in positions_by_chr.values()
-            )
+            total_positions = sum(len(positions) for positions in positions_by_chr.values())
 
             # Store panel
             self.panels[panel_name] = {

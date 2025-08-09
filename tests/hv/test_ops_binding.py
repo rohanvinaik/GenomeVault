@@ -1,10 +1,12 @@
 import numpy as np
 
-from genomevault.hypervector.operations.binding import (bundle,
-                                                        circular_convolution,
-                                                        element_wise_multiply,
-                                                        permutation_binding,
-                                                        unbundle)
+from genomevault.hypervector.operations.binding import (
+    bundle,
+    circular_convolution,
+    element_wise_multiply,
+    permutation_binding,
+    unbundle,
+)
 
 
 def test_circular_convolution_and_elementwise():

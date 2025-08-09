@@ -166,9 +166,7 @@ class RobustITPIR(InformationTheoreticPIR):
                 )
 
             if len(valid_responses) < self.num_servers - self.byzantine_threshold:
-                raise SecurityError(
-                    f"Insufficient valid responses: {len(valid_responses)}"
-                )
+                raise SecurityError(f"Insufficient valid responses: {len(valid_responses)}")
 
             # Use Reed-Solomon decoding to recover data
             recovered_data = self._reed_solomon_decode(valid_responses)
@@ -199,9 +197,7 @@ class RobustITPIR(InformationTheoreticPIR):
         # Constant-time comparison
         return hmac.compare_digest(mac, expected_mac)
 
-    def _reed_solomon_decode(
-        self, valid_responses: list[tuple[int, np.ndarray]]
-    ) -> bytes:
+    def _reed_solomon_decode(self, valid_responses: list[tuple[int, np.ndarray]]) -> bytes:
         """
         Decode data using Reed-Solomon error correction.
 
@@ -271,9 +267,7 @@ class RobustITPIR(InformationTheoreticPIR):
             (response, mac) tuple
         """
         # Process query (constant time)
-        response = self._process_query_constant_time(
-            query.query_vectors[server_id], database
-        )
+        response = self._process_query_constant_time(query.query_vectors[server_id], database)
 
         # Add padding to fixed size
         if len(response) < self.response_size:
@@ -386,16 +380,12 @@ if __name__ == "__main__":
         # HIPAA Trust Score nodes (q = 0.98)
         analysis = analyze_privacy_breach_probability(num_servers, 0.98)
         logger.info("  HIPAA TS nodes (q=0.98):")
-        logger.info(
-            "    Privacy breach probability: %sanalysis['breach_probability']:.2e"
-        )
+        logger.info("    Privacy breach probability: %sanalysis['breach_probability']:.2e")
 
         # Generic nodes (q = 0.95)
         analysis = analyze_privacy_breach_probability(num_servers, 0.95)
         logger.info("  Generic nodes (q=0.95):")
-        logger.info(
-            "    Privacy breach probability: %sanalysis['breach_probability']:.2e"
-        )
+        logger.info("    Privacy breach probability: %sanalysis['breach_probability']:.2e")
 
     logger.info("\nMinimum servers for privacy targets:")
     analysis = analyze_privacy_breach_probability(3, 0.98)

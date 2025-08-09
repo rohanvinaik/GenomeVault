@@ -134,9 +134,7 @@ class EpigeneticProfile:
 
         return [peak for peak in self.chromatin_peaks if peak.nearest_gene == gene_id]
 
-    def calculate_regional_methylation(
-        self, chromosome: str, start: int, end: int
-    ) -> float | None:
+    def calculate_regional_methylation(self, chromosome: str, start: int, end: int) -> float | None:
         """Calculate average methylation in a region"""
         sites = self.get_methylation_by_region(chromosome, start, end)
         if not sites:
@@ -187,6 +185,7 @@ class MethylationProcessor:
     def _load_annotations(self) -> dict[str, dict[str, Any]]:
         """Load gene annotations for region assignment"""
         import logging
+
         logger = logging.getLogger(__name__)
         if not self.annotation_file or not self.annotation_file.exists():
             logger.warning("No annotation file provided")
@@ -271,9 +270,7 @@ class MethylationProcessor:
                 },
             )
 
-            logger.info(
-                f"Successfully processed {len(normalized_sites)} methylation sites"
-            )
+            logger.info(f"Successfully processed {len(normalized_sites)} methylation sites")
             return profile
 
         except Exception as _:
@@ -303,9 +300,7 @@ class MethylationProcessor:
             "strand": np.random.choice(["+", "-"], n_sites),
             "methylated": np.random.binomial(20, 0.7, n_sites),
             "unmethylated": np.random.binomial(20, 0.3, n_sites),
-            "context": np.random.choice(
-                ["CG", "CHG", "CHH"], _n_sites, p=[0.8, 0.15, 0.05]
-            ),
+            "context": np.random.choice(["CG", "CHG", "CHH"], _n_sites, p=[0.8, 0.15, 0.05]),
         }
 
         df = pd.DataFrame(_data)
@@ -333,9 +328,7 @@ class MethylationProcessor:
             _ = _filtered[_filtered["context"] == context.value]
 
         logger = logging.getLogger(__name__)  # Added by cleanup
-        logger.info(
-            "Filtered to %slen(filtered) sites with coverage >= %sself.min_coverage"
-        )
+        logger.info("Filtered to %slen(filtered) sites with coverage >= %sself.min_coverage")
         return filtered
 
     def _annotate_methylation_sites(self, data: pd.DataFrame) -> list[MethylationSite]:
@@ -360,9 +353,7 @@ class MethylationProcessor:
 
         return sites
 
-    def _find_genomic_region(
-        self, chromosome: str, position: int
-    ) -> tuple[str | None, str | None]:
+    def _find_genomic_region(self, chromosome: str, position: int) -> tuple[str | None, str | None]:
         """Find gene and region type for a genomic position"""
         for gene_id, info in self.gene_annotations.items():
             if info["chr"] != chromosome:
@@ -378,9 +369,7 @@ class MethylationProcessor:
 
         return None, "intergenic"
 
-    def _calculate_methylation_metrics(
-        self, sites: list[MethylationSite]
-    ) -> dict[str, Any]:
+    def _calculate_methylation_metrics(self, sites: list[MethylationSite]) -> dict[str, Any]:
         """Calculate quality control metrics for methylation data"""
         if not sites:
             return {}
@@ -418,9 +407,7 @@ class MethylationProcessor:
 
         return metrics
 
-    def _normalize_methylation(
-        self, sites: list[MethylationSite]
-    ) -> list[MethylationSite]:
+    def _normalize_methylation(self, sites: list[MethylationSite]) -> list[MethylationSite]:
         """Perform beta-mixture quantile normalization"""
         if not sites:
             return sites
@@ -564,9 +551,7 @@ class MethylationProcessor:
         _results_df.sort_values("p_value", inplace=True)
 
         logger = logging.getLogger(__name__)  # Added by cleanup
-        logger.info(
-            "Found %sresults_df['significant'].sum() differentially methylated sites"
-        )
+        logger.info("Found %sresults_df['significant'].sum() differentially methylated sites")
 
         return results_df
 
@@ -761,9 +746,7 @@ class ChromatinAccessibilityProcessor:
 
         return peaks
 
-    def _find_nearest_gene(
-        self, chromosome: str, position: int
-    ) -> tuple[str | None, int | None]:
+    def _find_nearest_gene(self, chromosome: str, position: int) -> tuple[str | None, int | None]:
         """Find nearest gene and distance to TSS"""
         _ = float("inf")
         _ = None
@@ -895,9 +878,7 @@ class ChromatinAccessibilityProcessor:
                         "mean_enrichment_group1": mean1,
                         "mean_enrichment_group2": mean2,
                         "fold_change": fold_change,
-                        "log2_fold_change": (
-                            np.log2(fold_change) if fold_change > 0 else 0
-                        ),
+                        "log2_fold_change": (np.log2(fold_change) if fold_change > 0 else 0),
                         "p_value": p_value,
                     }
                 )

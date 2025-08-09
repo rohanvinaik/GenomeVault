@@ -14,10 +14,10 @@ from hypothesis import given
 from hypothesis import strategies as st
 from hypothesis.stateful import RuleBasedStateMachine, initialize, rule
 
-from genomevault.zk_proofs.circuits.implementations.variant_frequency_circuit import \
-    VariantFrequencyCircuit
-from genomevault.zk_proofs.circuits.implementations.variant_proof_circuit import \
-    VariantProofCircuit
+from genomevault.zk_proofs.circuits.implementations.variant_frequency_circuit import (
+    VariantFrequencyCircuit,
+)
+from genomevault.zk_proofs.circuits.implementations.variant_proof_circuit import VariantProofCircuit
 
 # Constants for magic number elimination (PLR2004)
 MAX_VARIANTS = 10
@@ -61,8 +61,7 @@ def variant_data_strategy(draw):
 def merkle_proof_strategy(draw, depth=20):
     """Generate Merkle proof data."""
     path = [
-        hashlib.sha256(f"node_{i}_{draw(st.integers())}".encode()).hexdigest()
-        for i in range(depth)
+        hashlib.sha256(f"node_{i}_{draw(st.integers())}".encode()).hexdigest() for i in range(depth)
     ]
     indices = draw(st.lists(st.integers(0, 1), min_size=depth, max_size=depth))
     return {"path": path, "indices": indices}
@@ -88,9 +87,7 @@ class TestVariantProofCircuit:
 
         private_inputs = {
             "variant_data": variant_data,
-            "merkle_path": [
-                hashlib.sha256(f"path_{i}".encode()).hexdigest() for i in range(5)
-            ],
+            "merkle_path": [hashlib.sha256(f"path_{i}".encode()).hexdigest() for i in range(5)],
             "merkle_indices": [i % 2 for i in range(5)],
             "witness_randomness": hashlib.sha256(b"random").hexdigest(),
         }
@@ -117,9 +114,7 @@ class TestVariantProofCircuit:
 
         private_inputs = {
             "variant_data": variant_data,
-            "merkle_path": [
-                hashlib.sha256(f"path_{i}".encode()).hexdigest() for i in range(5)
-            ],
+            "merkle_path": [hashlib.sha256(f"path_{i}".encode()).hexdigest() for i in range(5)],
             "merkle_indices": [i % 2 for i in range(5)],
             "witness_randomness": hashlib.sha256(b"random").hexdigest(),
         }
@@ -164,9 +159,7 @@ class TestVariantProofCircuit:
 
         private_inputs = {
             "variant_data": mutated_variant,
-            "merkle_path": [
-                hashlib.sha256(f"path_{i}".encode()).hexdigest() for i in range(5)
-            ],
+            "merkle_path": [hashlib.sha256(f"path_{i}".encode()).hexdigest() for i in range(5)],
             "merkle_indices": [i % 2 for i in range(5)],
             "witness_randomness": hashlib.sha256(b"random").hexdigest(),
         }
@@ -211,9 +204,7 @@ class TestVariantProofCircuit:
 
             private_inputs = {
                 "variant_data": variant_data,
-                "merkle_path": [
-                    hashlib.sha256(f"path_{i}".encode()).hexdigest() for i in range(5)
-                ],
+                "merkle_path": [hashlib.sha256(f"path_{i}".encode()).hexdigest() for i in range(5)],
                 "merkle_indices": [0] * 5,
                 "witness_randomness": hashlib.sha256(b"random").hexdigest(),
             }
@@ -221,9 +212,7 @@ class TestVariantProofCircuit:
             circuit.setup_circuit(public_inputs, private_inputs)
             circuit.generate_constraints()
 
-            assert (
-                circuit.verify_constraints()
-            ), f"Valid chromosome {chr_name} should work"
+            assert circuit.verify_constraints(), f"Valid chromosome {chr_name} should work"
 
 
 class TestVariantFrequencyCircuit:
@@ -231,9 +220,7 @@ class TestVariantFrequencyCircuit:
 
     @given(
         num_snps=st.integers(min_value=1, max_value=32),
-        allele_counts=st.lists(
-            st.integers(min_value=0, max_value=10000), min_size=1, max_size=32
-        ),
+        allele_counts=st.lists(st.integers(min_value=0, max_value=10000), min_size=1, max_size=32),
     )
     def test_sum_constraint_satisfied(self, num_snps, allele_counts):
         """Sum of allele counts should match public sum."""
@@ -259,10 +246,7 @@ class TestVariantFrequencyCircuit:
         merkle_proofs = []
         for i in range(num_snps):
             proof = {
-                "path": [
-                    hashlib.sha256(f"node_{i}_{j}".encode()).hexdigest()
-                    for j in range(5)
-                ],
+                "path": [hashlib.sha256(f"node_{i}_{j}".encode()).hexdigest() for j in range(5)],
                 "indices": [j % 2 for j in range(5)],
             }
             merkle_proofs.append(proof)
@@ -280,9 +264,7 @@ class TestVariantFrequencyCircuit:
 
     @given(
         num_snps=st.integers(min_value=1, max_value=32),
-        allele_counts=st.lists(
-            st.integers(min_value=0, max_value=10000), min_size=1, max_size=32
-        ),
+        allele_counts=st.lists(st.integers(min_value=0, max_value=10000), min_size=1, max_size=32),
         sum_offset=st.integers(min_value=1, max_value=100),
     )
     def test_wrong_sum_fails(self, num_snps, allele_counts, sum_offset):
@@ -307,10 +289,7 @@ class TestVariantFrequencyCircuit:
         merkle_proofs = []
         for i in range(num_snps):
             proof = {
-                "path": [
-                    hashlib.sha256(f"node_{i}_{j}".encode()).hexdigest()
-                    for j in range(5)
-                ],
+                "path": [hashlib.sha256(f"node_{i}_{j}".encode()).hexdigest() for j in range(5)],
                 "indices": [j % 2 for j in range(5)],
             }
             merkle_proofs.append(proof)
@@ -358,10 +337,7 @@ class TestVariantFrequencyCircuit:
         merkle_proofs = []
         for i in range(num_snps):
             proof = {
-                "path": [
-                    hashlib.sha256(f"node_{i}_{j}".encode()).hexdigest()
-                    for j in range(5)
-                ],
+                "path": [hashlib.sha256(f"node_{i}_{j}".encode()).hexdigest() for j in range(5)],
                 "indices": [j % 2 for j in range(5)],
             }
             merkle_proofs.append(proof)
@@ -406,10 +382,7 @@ class TestVariantFrequencyCircuit:
         merkle_proofs = []
         for i in range(num_snps):
             proof = {
-                "path": [
-                    hashlib.sha256(f"node_{i}_{j}".encode()).hexdigest()
-                    for j in range(5)
-                ],
+                "path": [hashlib.sha256(f"node_{i}_{j}".encode()).hexdigest() for j in range(5)],
                 "indices": [j % 2 for j in range(5)],
             }
             merkle_proofs.append(proof)
@@ -484,10 +457,7 @@ class ZKCircuitStateMachine(RuleBasedStateMachine):
         merkle_proofs = []
         for i in range(len(self.variants)):
             proof = {
-                "path": [
-                    hashlib.sha256(f"state_{i}_{j}".encode()).hexdigest()
-                    for j in range(5)
-                ],
+                "path": [hashlib.sha256(f"state_{i}_{j}".encode()).hexdigest() for j in range(5)],
                 "indices": [j % 2 for j in range(5)],
             }
             merkle_proofs.append(proof)
@@ -495,9 +465,7 @@ class ZKCircuitStateMachine(RuleBasedStateMachine):
         private_inputs = {
             "allele_counts": allele_counts,
             "merkle_proofs": merkle_proofs,
-            "randomness": hashlib.sha256(
-                f"state_{len(self.variants)}".encode()
-            ).hexdigest(),
+            "randomness": hashlib.sha256(f"state_{len(self.variants)}".encode()).hexdigest(),
         }
 
         # Create new circuit instance for each verification
@@ -593,9 +561,7 @@ def test_circuit_performance_scaling(constraint_count):
     merkle_proofs = []
     for i in range(num_snps):
         proof = {
-            "path": [
-                hashlib.sha256(f"perf_{i}_{j}".encode()).hexdigest() for j in range(10)
-            ],
+            "path": [hashlib.sha256(f"perf_{i}_{j}".encode()).hexdigest() for j in range(10)],
             "indices": [j % 2 for j in range(10)],
         }
         merkle_proofs.append(proof)

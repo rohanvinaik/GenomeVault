@@ -95,11 +95,7 @@ def main():
     test_result = run_command(
         [
             "pytest",
-            str(
-                project_root
-                / "tests"
-                / "test_hdc_implementation.py::TestHDCDeterminism"
-            ),
+            str(project_root / "tests" / "test_hdc_implementation.py::TestHDCDeterminism"),
             "-v",
             "--tb=short",
         ]

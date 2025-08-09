@@ -1,6 +1,8 @@
-from genomevault.api.models.vectors import (VectorDimension,
-                                            VectorEncodeRequest,
-                                            VectorOperationRequest)
+from genomevault.api.models.vectors import (
+    VectorDimension,
+    VectorEncodeRequest,
+    VectorOperationRequest,
+)
 
 
 def test_encode_request_parsing():
@@ -14,8 +16,6 @@ def test_encode_request_parsing():
 
 
 def test_operation_request_parsing():
-    op = VectorOperationRequest(
-        operation="bundle", vector_ids=["a", "b"], parameters={"k": 1}
-    )
+    op = VectorOperationRequest(operation="bundle", vector_ids=["a", "b"], parameters={"k": 1})
     assert op.operation == "bundle"
     assert op.vector_ids == ["a", "b"]

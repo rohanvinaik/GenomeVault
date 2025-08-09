@@ -116,9 +116,7 @@ class TestTimingAttacks:
     async def test_constant_response_time(self):
         """Test that response times are constant."""
         servers = [
-            PIRServer(
-                f"server_{i}", f"http://localhost:900{i}", "region", False, 0.95, 50
-            )
+            PIRServer(f"server_{i}", f"http://localhost:900{i}", "region", False, 0.95, 50)
             for i in range(3)
         ]
 
@@ -175,9 +173,7 @@ class TestCollusion:
         """Test that server responses are independent."""
         # Create client with 3 servers
         servers = [
-            PIRServer(
-                f"server_{i}", f"http://localhost:900{i}", "region", False, 0.95, 50
-            )
+            PIRServer(f"server_{i}", f"http://localhost:900{i}", "region", False, 0.95, 50)
             for i in range(3)
         ]
 
@@ -213,9 +209,7 @@ class TestCollusion:
         }
 
         # Colluding servers 1 and 2 can determine query
-        colluding_sum = np.bitwise_xor(
-            server_queries["server_1"], server_queries["server_2"]
-        )
+        colluding_sum = np.bitwise_xor(server_queries["server_1"], server_queries["server_2"])
 
         # This equals server_3's query, revealing the target
         assert np.array_equal(colluding_sum, server_queries["server_3"])

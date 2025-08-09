@@ -11,9 +11,7 @@ logger = configure_logging()
 
 def run(variants: int, features: int, dim: int, seed: int):
     X = np.random.default_rng(seed).standard_normal((variants, features))
-    proj = SparseRandomProjection(n_components=dim, density=0.1, seed=seed).fit(
-        n_features=features
-    )
+    proj = SparseRandomProjection(n_components=dim, density=0.1, seed=seed).fit(n_features=features)
     t0 = time.time()
     Y = proj.transform(X)
     dt = (time.time() - t0) * 1000.0

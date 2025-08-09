@@ -5,10 +5,12 @@ Test cases for HDC error handling with uncertainty tuning
 import pytest
 import torch
 
-from genomevault.hypervector.error_handling import (AdaptiveHDCEncoder,
-                                                    ECCEncoderMixin,
-                                                    ErrorBudget,
-                                                    ErrorBudgetAllocator)
+from genomevault.hypervector.error_handling import (
+    AdaptiveHDCEncoder,
+    ECCEncoderMixin,
+    ErrorBudget,
+    ErrorBudgetAllocator,
+)
 
 
 class TestErrorBudgetAllocator:
@@ -28,12 +30,8 @@ class TestErrorBudgetAllocator:
         """Test that ECC reduces required dimension"""
         allocator = ErrorBudgetAllocator()
 
-        budget_with_ecc = allocator.plan_budget(
-            epsilon=0.01, delta_exp=15, ecc_enabled=True
-        )
-        budget_without_ecc = allocator.plan_budget(
-            epsilon=0.01, delta_exp=15, ecc_enabled=False
-        )
+        budget_with_ecc = allocator.plan_budget(epsilon=0.01, delta_exp=15, ecc_enabled=True)
+        budget_without_ecc = allocator.plan_budget(epsilon=0.01, delta_exp=15, ecc_enabled=False)
 
         # ECC should allow smaller dimensions for same error
         assert budget_with_ecc.dimension <= budget_without_ecc.dimension

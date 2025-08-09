@@ -19,9 +19,7 @@ def test_operate_and_bundle():
     dim = HYPERVECTOR_DIMENSIONS["base"]
     a = engine.encode(data={"genomic": [1, 2, 3]}, dimension=dim)
     b = engine.encode(data={"genomic": [3, 2, 1]}, dimension=dim)
-    out = engine.operate(
-        operation="bundle", vector_ids=[a["vector_id"], b["vector_id"]]
-    )
+    out = engine.operate(operation="bundle", vector_ids=[a["vector_id"], b["vector_id"]])
     assert "result_vector_id" in out
 
 
@@ -29,9 +27,7 @@ def test_perm_and_bind():
     engine = HypervectorEngine()
     dim = HYPERVECTOR_DIMENSIONS["base"]
     a = engine.encode(data={"genomic": [1, 0, 0]}, dimension=dim)
-    r = engine.operate(
-        operation="permute", vector_ids=[a["vector_id"]], parameters={"shift": 3}
-    )
+    r = engine.operate(operation="permute", vector_ids=[a["vector_id"]], parameters={"shift": 3})
     assert "result_vector_id" in r
     # bind/multiply
     b = engine.encode(data={"genomic": [0, 1, 0]}, dimension=dim)

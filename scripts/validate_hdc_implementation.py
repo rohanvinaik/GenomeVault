@@ -53,9 +53,7 @@ class HDCImplementationValidator:
         issues = []
 
         # Check registry module
-        registry_file = (
-            self.project_root / "genomevault" / "hypervector_transform" / "registry.py"
-        )
+        registry_file = self.project_root / "genomevault" / "hypervector_transform" / "registry.py"
         if not registry_file.exists():
             issues.append("Missing registry.py")
             return False, issues
@@ -91,10 +89,7 @@ class HDCImplementationValidator:
 
         # Check encoder implementation
         encoder_file = (
-            self.project_root
-            / "genomevault"
-            / "hypervector_transform"
-            / "hdc_encoder.py"
+            self.project_root / "genomevault" / "hypervector_transform" / "hdc_encoder.py"
         )
         if not encoder_file.exists():
             issues.append("Missing hdc_encoder.py")
@@ -121,10 +116,7 @@ class HDCImplementationValidator:
 
         # Check binding operations
         binding_file = (
-            self.project_root
-            / "genomevault"
-            / "hypervector_transform"
-            / "binding_operations.py"
+            self.project_root / "genomevault" / "hypervector_transform" / "binding_operations.py"
         )
         if not binding_file.exists():
             issues.append("Missing binding_operations.py")
@@ -154,9 +146,7 @@ class HDCImplementationValidator:
         quality_test = self.project_root / "tests" / "test_hdc_quality.py"
         if not quality_test.exists():
             # Try alternative location
-            quality_test = (
-                self.project_root / "genomevault" / "tests" / "test_hdc_quality.py"
-            )
+            quality_test = self.project_root / "genomevault" / "tests" / "test_hdc_quality.py"
 
         if not quality_test.exists():
             issues.append("Missing test_hdc_quality.py")
@@ -211,9 +201,7 @@ class HDCImplementationValidator:
         issues = []
 
         # Check API implementation
-        api_file = (
-            self.project_root / "genomevault" / "hypervector_transform" / "hdc_api.py"
-        )
+        api_file = self.project_root / "genomevault" / "hypervector_transform" / "hdc_api.py"
         if not api_file.exists():
             issues.append("Missing hdc_api.py")
         else:
@@ -291,9 +279,7 @@ class HDCImplementationValidator:
         issues = []
 
         # Check for docstrings
-        hdc_files = list(
-            (self.project_root / "genomevault" / "hypervector_transform").glob("*.py")
-        )
+        hdc_files = list((self.project_root / "genomevault" / "hypervector_transform").glob("*.py"))
 
         for file in hdc_files:
             if file.name == "__init__.py":
@@ -412,9 +398,7 @@ class HDCImplementationValidator:
             logger.info("Significant work needed. Review failed stages above.")
         logger.info("=" * 70 + "\n")
 
-    def save_report(
-        self, report: dict[str, Any], output_file: str = "hdc_validation_report.json"
-    ):
+    def save_report(self, report: dict[str, Any], output_file: str = "hdc_validation_report.json"):
         """Save validation report to file"""
         output_path = self.project_root / output_file
         with open(output_path, "w") as f:

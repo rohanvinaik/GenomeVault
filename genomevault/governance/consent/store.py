@@ -16,10 +16,7 @@ class ConsentRecord:
     def active(self) -> bool:
         if self.revoked_at is not None:
             return False
-        if (
-            self.expires_at is not None
-            and datetime.now(timezone.utc) >= self.expires_at
-        ):
+        if self.expires_at is not None and datetime.now(timezone.utc) >= self.expires_at:
             return False
         return True
 
@@ -30,14 +27,10 @@ class ConsentStore:
     def __init__(self) -> None:
         self._by_subject: dict[str, list[ConsentRecord]] = {}
 
-    def grant(
-        self, subject_id: str, scope: str, ttl_days: int | None = None
-    ) -> ConsentRecord:
+    def grant(self, subject_id: str, scope: str, ttl_days: int | None = None) -> ConsentRecord:
         now = datetime.now(timezone.utc)
         exp = now + timedelta(days=int(ttl_days)) if ttl_days else None
-        rec = ConsentRecord(
-            subject_id=subject_id, scope=scope, granted_at=now, expires_at=exp
-        )
+        rec = ConsentRecord(subject_id=subject_id, scope=scope, granted_at=now, expires_at=exp)
         self._by_subject.setdefault(subject_id, []).append(rec)
         return rec
 
@@ -51,6 +44,5 @@ class ConsentStore:
 
     def has_consent(self, subject_id: str, scope: str) -> bool:
         return any(
-            rec.scope == scope and rec.active
-            for rec in self._by_subject.get(subject_id, [])
+            rec.scope == scope and rec.active for rec in self._by_subject.get(subject_id, [])
         )

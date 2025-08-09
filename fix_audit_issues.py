@@ -11,9 +11,7 @@ import shutil
 from pathlib import Path
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -219,9 +217,7 @@ class GenomeVaultFixer:
                 if "except Exception" in line:
                     # Look at the try block to determine appropriate exceptions
                     try_start = i - 1
-                    while try_start >= 0 and not lines[try_start].strip().startswith(
-                        "try:"
-                    ):
+                    while try_start >= 0 and not lines[try_start].strip().startswith("try:"):
                         try_start -= 1
 
                     if try_start >= 0:
@@ -235,13 +231,9 @@ class GenomeVaultFixer:
                             # Replace with specific exceptions
                             indent = re.match(r"^(\s*)", line).group(1)
                             if len(exceptions) == 1:
-                                new_lines.append(
-                                    f"{indent}except {exceptions[0]} as e:"
-                                )
+                                new_lines.append(f"{indent}except {exceptions[0]} as e:")
                             else:
-                                new_lines.append(
-                                    f"{indent}except ({', '.join(exceptions)}) as e:"
-                                )
+                                new_lines.append(f"{indent}except ({', '.join(exceptions)}) as e:")
                         else:
                             # Keep the original if we can't determine specific exceptions
                             new_lines.append(line)
@@ -269,10 +261,7 @@ class GenomeVaultFixer:
         exceptions = []
 
         # File operations
-        if any(
-            word in try_block
-            for word in ["open(", "read(", "write(", "Path(", "os.path"]
-        ):
+        if any(word in try_block for word in ["open(", "read(", "write(", "Path(", "os.path"]):
             exceptions.extend(["FileNotFoundError", "IOError", "PermissionError"])
 
         # Network operations
@@ -284,9 +273,7 @@ class GenomeVaultFixer:
             exceptions.append("json.JSONDecodeError")
 
         # Database operations
-        if any(
-            word in try_block for word in ["cursor", "execute", "commit", "rollback"]
-        ):
+        if any(word in try_block for word in ["cursor", "execute", "commit", "rollback"]):
             exceptions.append("DatabaseError")
 
         # Value/Type errors
@@ -326,14 +313,10 @@ class GenomeVaultFixer:
             ("genomevault/local_processing/sequencing.py", "_run_quality_control", 17),
         ]
 
-        for file_path, func_name, complexity in complex_functions[
-            :3
-        ]:  # Start with top 3
+        for file_path, func_name, complexity in complex_functions[:3]:  # Start with top 3
             full_path = self.base_path / file_path
             if full_path.exists():
-                logger.info(
-                    f"TODO: Refactor {func_name} in {file_path} (complexity: {complexity})"
-                )
+                logger.info(f"TODO: Refactor {func_name} in {file_path} (complexity: {complexity})")
                 # Note: Actual refactoring would require understanding the business logic
                 # For now, we'll add TODO comments
                 self._add_refactor_todo(full_path, func_name)
@@ -349,9 +332,7 @@ class GenomeVaultFixer:
                 if f"def {func_name}(" in line:
                     # Add TODO comment before the function
                     indent = re.match(r"^(\s*)", line).group(1)
-                    todo_comment = (
-                        f"{indent}# TODO: Refactor this function to reduce complexity"
-                    )
+                    todo_comment = f"{indent}# TODO: Refactor this function to reduce complexity"
                     if i > 0 and lines[i - 1].strip() != todo_comment.strip():
                         lines.insert(i, todo_comment)
                         break

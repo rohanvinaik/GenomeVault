@@ -86,14 +86,10 @@ def find_cryptography_imports(directory):
                 try:
                     with open(filepath) as f:
                         content = f.read()
-                        if (
-                            "from cryptography" in content
-                            or "import cryptography" in content
-                        ):
+                        if "from cryptography" in content or "import cryptography" in content:
                             files_with_crypto.append(filepath)
                 except Exception:
-                    from genomevault.observability.logging import \
-                        configure_logging
+                    from genomevault.observability.logging import configure_logging
 
                     logger = configure_logging()
                     logger.exception("Unhandled exception")

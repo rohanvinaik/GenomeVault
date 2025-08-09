@@ -30,9 +30,7 @@ class ProofRequest:
 class ProofResponse:
     """Response containing generated proof."""
 
-    def __init__(
-        self, proof: bytes, proof_id: str, verification_key: str, generated_at: datetime
-    ):
+    def __init__(self, proof: bytes, proof_id: str, verification_key: str, generated_at: datetime):
         self.proof = proof
         self.proof_id = proof_id
         self.verification_key = verification_key
@@ -162,15 +160,11 @@ class ZKProofService:
         normalized = (age - min_age) / (max_age - min_age)
 
         loop = asyncio.get_event_loop()
-        proof = await loop.run_in_executor(
-            None, prover.prove_prs_in_range, normalized, 0.0, 1.0
-        )
+        proof = await loop.run_in_executor(None, prover.prove_prs_in_range, normalized, 0.0, 1.0)
 
         return proof
 
-    async def _generate_variant_proof(
-        self, prover: ZKProver, request: ProofRequest
-    ) -> Any:
+    async def _generate_variant_proof(self, prover: ZKProver, request: ProofRequest) -> Any:
         """Generate variant count proof."""
         # For demo, reuse PRS proof logic
         count = request.private_inputs.get("count", 0)
@@ -180,9 +174,7 @@ class ZKProofService:
         normalized = count / max_count
 
         loop = asyncio.get_event_loop()
-        proof = await loop.run_in_executor(
-            None, prover.prove_prs_in_range, normalized, 0.0, 1.0
-        )
+        proof = await loop.run_in_executor(None, prover.prove_prs_in_range, normalized, 0.0, 1.0)
 
         return proof
 

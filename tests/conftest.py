@@ -201,9 +201,7 @@ def performance_benchmark():
             if name not in self.results:
                 pytest.fail("No benchmark results for {name}")
             actual_ms = self.results[name]["elapsed_ms"]
-            assert (
-                actual_ms <= max_ms
-            ), "{name} took {actual_ms:.1f}ms, expected <= {max_ms}ms"
+            assert actual_ms <= max_ms, "{name} took {actual_ms:.1f}ms, expected <= {max_ms}ms"
 
     return PerformanceBenchmark()
 
@@ -240,9 +238,7 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "slow: marks test as slow")
     config.addinivalue_line("markers", "integration: marks test as integration test")
     config.addinivalue_line("markers", "security: marks test as security-related")
-    config.addinivalue_line(
-        "markers", "performance: marks test as performance benchmark"
-    )
+    config.addinivalue_line("markers", "performance: marks test as performance benchmark")
 
 
 def pytest_collection_modifyitems(config, items):

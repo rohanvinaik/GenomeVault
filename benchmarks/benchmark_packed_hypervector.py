@@ -68,9 +68,7 @@ def benchmark_encoding(
     return genome_hv, single_time, batch_time, memory
 
 
-def benchmark_similarity(
-    encoder: any, hv1: any, hv2: any, name: str = "Encoder"
-) -> float:
+def benchmark_similarity(encoder: any, hv1: any, hv2: any, name: str = "Encoder") -> float:
     """Benchmark similarity computation"""
     start = time.time()
     for _ in range(1000):
@@ -132,9 +130,7 @@ def memory_profile_test() -> None:
     packed_encoder = PackedGenomicEncoder(dimension=dimension, packed=True)
     packed_hv = packed_encoder.encode_genome(variants)
 
-    print(
-        f"\nStandard memory: {standard_hv.element_size() * standard_hv.nelement() / 1024:.2f} KB"
-    )
+    print(f"\nStandard memory: {standard_hv.element_size() * standard_hv.nelement() / 1024:.2f} KB")
     print(f"Packed memory: {packed_hv.memory_bytes / 1024:.2f} KB")
 
 
@@ -178,9 +174,7 @@ def main() -> None:
     packed_hv2 = packed_encoder.encode_genome(variants2)
 
     std_sim_time = benchmark_similarity(standard_encoder, std_hv, std_hv2, "Standard")
-    packed_sim_time = benchmark_similarity(
-        packed_encoder, packed_hv, packed_hv2, "Packed"
-    )
+    packed_sim_time = benchmark_similarity(packed_encoder, packed_hv, packed_hv2, "Packed")
 
     # Store results
     results["Standard"] = {
@@ -214,9 +208,7 @@ def main() -> None:
     packed_normalized = packed_torch / torch.norm(packed_torch)
 
     # Check that encodings are similar (not identical due to different methods)
-    similarity = torch.cosine_similarity(
-        std_normalized, packed_normalized, dim=0
-    ).item()
+    similarity = torch.cosine_similarity(std_normalized, packed_normalized, dim=0).item()
     print(f"Encoding similarity between methods: {similarity:.4f}")
 
     # Plot results

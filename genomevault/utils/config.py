@@ -210,9 +210,7 @@ class Config:
             environment: Deployment environment
             config_path: Alternative to config_file as Path object
         """
-        self.environment = Environment(
-            environment or os.getenv("GENOMEVAULT_ENV", "development")
-        )
+        self.environment = Environment(environment or os.getenv("GENOMEVAULT_ENV", "development"))
         self.config_file = config_file or config_path or self._default_config_file()
 
         # Initialize security config
@@ -271,9 +269,7 @@ class Config:
 
         try:
             with open(self.config_file) as f:
-                if self.config_file.endswith(".yaml") or self.config_file.endswith(
-                    ".yml"
-                ):
+                if self.config_file.endswith(".yaml") or self.config_file.endswith(".yml"):
                     if HAS_YAML:
                         data = yaml.safe_load(f)
                     else:
@@ -351,12 +347,8 @@ class Config:
     def _validate(self):
         """Validate configuration parameters"""
         # Validate security parameters
-        assert (
-            self.security.differential_privacy_epsilon > 0
-        ), "Epsilon must be positive"
-        assert (
-            0 < self.security.differential_privacy_delta < 1
-        ), "Delta must be between 0 and 1"
+        assert self.security.differential_privacy_epsilon > 0, "Epsilon must be positive"
+        assert 0 < self.security.differential_privacy_delta < 1, "Delta must be between 0 and 1"
 
         # Validate PIR parameters
         assert (
@@ -382,9 +374,7 @@ class Config:
         bonus = 2 if self.blockchain.is_trusted_signatory else 0
         return base + bonus
 
-    def calculate_pir_failure_probability(
-        self, k: int, use_hipaa: bool = False
-    ) -> float:
+    def calculate_pir_failure_probability(self, k: int, use_hipaa: bool = False) -> float:
         """Calculate PIR privacy failure probability"""
         q = 0.98 if use_hipaa else 0.95
         return (1 - q) ** k
@@ -421,8 +411,7 @@ class Config:
             "privacy": self.privacy.__dict__,
             "network": self.network.__dict__,
             "storage": {
-                k: str(v) if isinstance(v, Path) else v
-                for k, v in self.storage.__dict__.items()
+                k: str(v) if isinstance(v, Path) else v for k, v in self.storage.__dict__.items()
             },
             "processing": self.processing.__dict__,
         }

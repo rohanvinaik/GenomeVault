@@ -17,18 +17,14 @@ class SparseRandomProjection:
     For testability, dimensions in tests are small. Production tiers (10k/15k/20k) can be used later.
     """
 
-    def __init__(
-        self, n_components: int, density: float = 0.1, seed: int | None = None
-    ) -> None:
+    def __init__(self, n_components: int, density: float = 0.1, seed: int | None = None) -> None:
         if not isinstance(n_components, int) or n_components <= 0:
             raise ProjectionError(
                 "n_components must be a positive integer",
                 context={"n_components": n_components},
             )
         if not (0.0 < float(density) <= 1.0):
-            raise ProjectionError(
-                "density must be in (0, 1]", context={"density": density}
-            )
+            raise ProjectionError("density must be in (0, 1]", context={"density": density})
         self.n_components = int(n_components)
         self.density = float(density)
         self.rng = np.random.default_rng(seed)

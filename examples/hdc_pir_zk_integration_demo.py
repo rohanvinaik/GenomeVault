@@ -126,9 +126,7 @@ async def main():
     print("\n7. Zero-Knowledge Property:")
     print(f"   - Total values: {len(values)}")
     print(f"   - Values revealed in proof: {len(opened_values)}")
-    print(
-        f"   - Zero-knowledge ratio: {(1 - len(opened_values) / len(values)) * 100:.1f}% hidden"
-    )
+    print(f"   - Zero-knowledge ratio: {(1 - len(opened_values) / len(values)) * 100:.1f}% hidden")
 
     # Step 8: Show complete results
     print("\n8. Complete Query Result:")
@@ -194,9 +192,7 @@ async def main():
     print("\nSummary:")
     print(f"- Generated real ZK proof for {budget.repeats} query results")
     print(f"- Proved median {median:.6f} is within {epsilon * 100}% error bound")
-    print(
-        f"- Proof provides cryptographic guarantee with {2**-delta_exp:.2e} failure probability"
-    )
+    print(f"- Proof provides cryptographic guarantee with {2**-delta_exp:.2e} failure probability")
     print(f"- Only revealed {revealed_count}/{total_count} values, maintaining privacy")
     print(f"- Total proof size: {len(proof_result.proof_data)} bytes")
     print("- Verification time: <5ms (much faster than generation)")
@@ -218,9 +214,7 @@ async def benchmark_zk_performance():
 
         # Time proof generation
         start = time.time()
-        proof = circuit.generate_proof(
-            values=values, claimed_median=median, error_bound=0.01
-        )
+        proof = circuit.generate_proof(values=values, claimed_median=median, error_bound=0.01)
         gen_time = (time.time() - start) * 1000
 
         # Time verification
@@ -295,9 +289,7 @@ def demonstrate_proof_structure():
 
     print("\n4. Challenge-Response:")
     print(f"   - Fiat-Shamir challenge: {proof.challenge.hex()[:32]}...")
-    print(
-        f"   - Response type: {proof.response.get('error_proof', {}).get('type', 'N/A')}"
-    )
+    print(f"   - Response type: {proof.response.get('error_proof', {}).get('type', 'N/A')}")
 
     print("\n5. Range Proofs:")
     if proof.range_proofs:
