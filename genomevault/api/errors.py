@@ -1,3 +1,4 @@
+# genomevault/api/errors.py
 from __future__ import annotations
 
 import uuid
@@ -5,29 +6,30 @@ import uuid
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
-from genomevault.core.exceptions import GenomeVaultError
+from genomevault.exceptions import GVError
+
+
+async def gv_error_handler(request: Request, exc: GVError):
+    """Global exception handler for GV errors that returns consistent JSON."""
+    body = exc.to_dict()
+    return JSONResponse(status_code=getattr(exc, "http_status", 500), content=body)
+
+
+async def generic_error_handler(request: Request, exc: Exception):
+    """Generic exception handler for unexpected errors."""
+    rid = str(uuid.uuid4())
+    return JSONResponse(
+        status_code=500,
+        content={
+            "type": "InternalServerError",
+            "code": "GV_INTERNAL",
+            "message": "Internal error",
+            "details": {"request_id": rid},
+        },
+    )
 
 
 def register_error_handlers(app: FastAPI) -> None:
-    @app.exception_handler(GenomeVaultError)
-    async def handle_domain_error(request: Request, exc: GenomeVaultError):
-        return JSONResponse(
-            status_code=400,
-            content={
-                "code": exc.__class__.__name__,
-                "message": str(exc),
-                "context": getattr(exc, "context", {}) or {},
-            },
-        )
-
-    @app.exception_handler(Exception)
-    async def handle_generic_error(request: Request, exc: Exception):
-        rid = str(uuid.uuid4())
-        return JSONResponse(
-            status_code=500,
-            content={
-                "code": "InternalServerError",
-                "message": "Internal error",
-                "request_id": rid,
-            },
-        )
+    """Register all error handlers for the FastAPI app."""
+    app.add_exception_handler(GVError, gv_error_handler)
+    app.add_exception_handler(Exception, generic_error_handler)
