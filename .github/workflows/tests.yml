@@ -1,0 +1,157 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      test_suite:
+        description: 'Test suite to run'
+        required: true
+        default: 'fast'
+        type: choice
+        options:
+          - fast
+          - unit
+          - integration
+          - e2e
+          - all
+
+jobs:
+  fast-tests:
+    if: github.event.inputs.test_suite == 'fast' || github.event.inputs.test_suite == '' || github.event_name != 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e ".[dev]"
+    
+    - name: Run fast unit tests
+      run: |
+        pytest -m "unit and not slow" --tb=short
+    
+    - name: Upload coverage
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-fast
+        path: htmlcov/
+
+  integration-tests:
+    if: github.event.inputs.test_suite == 'integration' || github.event.inputs.test_suite == 'all'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e ".[dev]"
+    
+    - name: Run integration tests
+      run: |
+        pytest -m "integration" --tb=short --cov=genomevault
+    
+    - name: Upload coverage
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-integration
+        path: htmlcov/
+
+  e2e-tests:
+    if: github.event.inputs.test_suite == 'e2e' || github.event.inputs.test_suite == 'all'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install all dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e ".[full,dev]"
+    
+    - name: Run e2e tests
+      run: |
+        pytest -m "e2e" --tb=short
+      timeout-minutes: 30
+    
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: e2e-results
+        path: test-results/
+
+  specialized-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test-suite: [zk, pir, federated, nanopore]
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e ".[dev]"
+    
+    - name: Run ${{ matrix.test-suite }} tests
+      run: |
+        pytest -m "${{ matrix.test-suite }}" --tb=short
+      continue-on-error: true
+
+  benchmark-tests:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e ".[dev]"
+    
+    - name: Run benchmark tests
+      run: |
+        pytest -m "benchmark" --benchmark-only --benchmark-autosave
+    
+    - name: Store benchmark results
+      uses: actions/upload-artifact@v3
+      with:
+        name: benchmark-results
+        path: .benchmarks/

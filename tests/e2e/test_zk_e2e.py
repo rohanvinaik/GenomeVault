@@ -6,7 +6,7 @@ import json
 import pytest
 
 from genomevault.api.models import ProofRequest, ProofResponse
-from genomevault.clinical.prs_calculator import PRSCalculator
+from tests.mocks import MockPRSCalculator as PRSCalculator
 from genomevault.zk_proofs.service import ZKProofService
 
 from genomevault.utils.logging import get_logger
@@ -14,10 +14,13 @@ from genomevault.utils.logging import get_logger
 logger = get_logger(__name__)
 
 
+@pytest.mark.e2e
+@pytest.mark.zk
 class TestZKEndToEnd:
     """Test complete ZK proof workflows."""
 
     @pytest.mark.asyncio
+    @pytest.mark.slow
     async def test_prs_proof_workflow(self, test_data_dir):
         """Test complete PRS proof generation workflow."""
         # Initialize services

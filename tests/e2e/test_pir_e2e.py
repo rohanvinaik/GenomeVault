@@ -8,12 +8,14 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from genomevault.hypervector.encoder import HyperdimensionalEncoder
+from genomevault.hypervector_transform.encoding import HypervectorEncoder as HyperdimensionalEncoder
 from genomevault.pir.client import PIRClient, PIRServer
 from genomevault.pir.client.query_builder import PIRQueryBuilder
 from genomevault.zk_proofs.circuits.prs_circuit import PRSCircuit
 
 
+@pytest.mark.e2e
+@pytest.mark.pir
 class TestPIRIntegration:
     """Test PIR integration with other components."""
 
@@ -322,7 +324,7 @@ DEMO_NOTEBOOK = """
    "source": [
     "from genomevault.pir.client import PIRClient, PIRServer\\n",
     "from genomevault.pir.client.query_builder import PIRQueryBuilder\\n",
-    "from genomevault.hypervector.encoder import HyperdimensionalEncoder\\n",
+    "from genomevault.hypervector_transform.encoding import HypervectorEncoder as HyperdimensionalEncoder\\n",
     "\\n",
     "# Initialize components\\n",
     "servers = [\\n",
