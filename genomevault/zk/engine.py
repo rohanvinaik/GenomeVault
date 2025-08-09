@@ -38,7 +38,7 @@ class ZKProofEngine:
             repo_root = str(PROJECT_ROOT)
         self._real = RealZKEngine(repo_root=repo_root)
 
-    def create_proof(self, *, circuit_type: str, inputs: dict[str, Any]) -> None:
+    def create_proof(self, *, circuit_type: str, inputs: dict[str, Any]) -> Any:
         # Only 'sum64' supported in real backend
         if circuit_type == "sum64":
             rp = self._real.create_proof(circuit_type=circuit_type, inputs=inputs)

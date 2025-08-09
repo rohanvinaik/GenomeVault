@@ -63,6 +63,16 @@ class EncodingError(GVComputeError):
 class ProjectionError(GVComputeError):
     code = "GV_PROJECTION"
 
+    def __init__(
+        self,
+        message: str = "",
+        *,
+        details: Optional[Dict[str, Any]] = None,
+        context: Optional[Dict[str, Any]] = None,
+    ):
+        # Accept both 'details' and 'context' for backwards compatibility
+        super().__init__(message, details=details or context)
+
 
 class HypervectorError(GVComputeError):
     code = "GV_HYPERVECTOR"

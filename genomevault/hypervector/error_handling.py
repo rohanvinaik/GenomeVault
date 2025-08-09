@@ -288,7 +288,7 @@ class ErrorBudgetAllocator:
 
         if budget.ecc_enabled:
             # ECC expansion factor
-            base_size *= (budget.parity_g + 1) / budget.parity_g
+            base_size = int(base_size * (budget.parity_g + 1) / budget.parity_g)
 
         total_size = base_size * budget.repeats
         return round(total_size / (1024 * 1024), 1)  # Convert to MB
@@ -302,7 +302,7 @@ class AdaptiveHDCEncoder(GenomicEncoder):
 
     def __init__(self, dimension: int = 10000):
         super().__init__(dimension)
-        self.ecc_encoders = {}  # Cache ECC encoders by configuration
+        self.ecc_encoders: dict[tuple, object] = {}  # Cache ECC encoders by configuration
         self.budget_allocator = ErrorBudgetAllocator()
 
     def encode_with_budget(

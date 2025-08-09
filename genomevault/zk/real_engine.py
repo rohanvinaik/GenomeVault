@@ -36,9 +36,9 @@ class RealZKEngine:
             raise ValueError("unsupported circuit_type; only 'sum64' is available in this build")
         if not toolchain_available():
             raise RuntimeError("ZK toolchain not available (circom/snarkjs/node)")
-        a = int(inputs.get("a"))
-        b = int(inputs.get("b"))
-        c = int(inputs.get("c"))
+        a = int(inputs.get("a", 0))
+        b = int(inputs.get("b", 0))
+        c = int(inputs.get("c", 0))
         paths = CircuitPaths.for_sum64(self.repo_root)
         out = prove(paths, a=a, b=b, c_public=c)
         return RealProof(proof=out["proof"], public=out["public"])

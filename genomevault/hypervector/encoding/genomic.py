@@ -48,7 +48,7 @@ class GenomicEncoder:
             self.snp_panel = SNPPanel(self.positional_encoder)
 
         # Hierarchical zoom tiles
-        self.zoom_levels = {
+        self.zoom_levels: dict[int, dict] = {
             0: {},  # Genome-wide HVs
             1: {},  # 1Mb window HVs
             2: {},  # 1kb tile HVs
@@ -303,7 +303,7 @@ class GenomicEncoder:
         panel_name = panel_name or self.panel_granularity.value
 
         # Group variants by chromosome
-        variants_by_chr = {}
+        variants_by_chr: dict[str, dict[int, str]] = {}
         for var in variants:
             chr_name = var["chromosome"]
             if chr_name not in variants_by_chr:
@@ -334,7 +334,7 @@ class GenomicEncoder:
 
         # Level 1: 1Mb windows
         window_size = 1_000_000
-        windows = {}
+        windows: dict[int, list] = {}
         for var in chr_variants:
             window_idx = var["position"] // window_size
             if window_idx not in windows:

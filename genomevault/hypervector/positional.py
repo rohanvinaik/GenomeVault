@@ -34,7 +34,7 @@ class PositionalEncoder:
         self.dimension = dimension
         self.sparsity = sparsity
         self.cache_size = cache_size
-        self._cache: dict[int, torch.Tensor] = {}
+        self._cache: dict[tuple[int, int | None], torch.Tensor] = {}
 
         # Pre-compute constants for efficiency
         self.nnz = int(dimension * sparsity)  # Number of non-zero elements
@@ -270,7 +270,7 @@ class SNPPanel:
             file_path: Path to BED/VCF file
             file_type: File type ('bed' or 'vcf')
         """
-        positions_by_chr = {}
+        positions_by_chr: dict[str, list[tuple[int, int]]] = {}
 
         try:
             if file_type == "bed":
