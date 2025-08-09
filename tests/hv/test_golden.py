@@ -2,9 +2,10 @@ from pathlib import Path
 
 import numpy as np
 
+from genomevault.config import TESTS_DIR
 from genomevault.hypervector.encoding.sparse_projection import SparseRandomProjection
 
-GOLDEN_PATH = Path("/Users/rohanvinaik/genomevault/tests/hv/golden/vec_100d_seed123.npy")
+GOLDEN_PATH = TESTS_DIR / "hv" / "golden" / "vec_100d_seed123.npy"
 
 
 def _make_input():

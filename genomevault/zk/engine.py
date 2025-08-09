@@ -5,6 +5,7 @@ import json
 from dataclasses import dataclass
 from typing import Any
 
+from genomevault.config import PROJECT_ROOT
 from genomevault.zk.real_engine import RealZKEngine
 
 
@@ -32,7 +33,9 @@ class Proof:
 class ZKProofEngine:
     """Compatibility shim that forwards to RealZKEngine for supported circuits."""
 
-    def __init__(self, repo_root: str = "/Users/rohanvinaik/genomevault") -> None:
+    def __init__(self, repo_root: str | None = None) -> None:
+        if repo_root is None:
+            repo_root = str(PROJECT_ROOT)
         self._real = RealZKEngine(repo_root=repo_root)
 
     def create_proof(self, *, circuit_type: str, inputs: dict[str, Any]) -> None:
