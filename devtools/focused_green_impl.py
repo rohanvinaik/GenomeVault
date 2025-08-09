@@ -1,3 +1,7 @@
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
+
+
 #!/usr/bin/env python3
 """
 Focused Green Toolchain Implementation
@@ -12,42 +16,42 @@ def main():
     project_root = Path("/Users/rohanvinaik/genomevault")
     os.chdir(project_root)
 
-    print("Starting focused Green Toolchain implementation...")
+    logger.debug("Starting focused Green Toolchain implementation...")
 
     # First, install updated dependencies
-    print("\n=== Installing updated dependencies ===")
+    logger.debug("\n=== Installing updated dependencies ===")
     subprocess.run(["pip", "install", "-e", ".[dev]"], check=False)
 
     # Run quick validation
-    print("\n=== Running validation ===")
+    logger.debug("\n=== Running validation ===")
 
-    print("1. Checking ruff...")
+    logger.debug("1. Checking ruff...")
     result = subprocess.run(["ruff", "check", "."], capture_output=True, text=True)
     if result.returncode == 0:
-        print("✓ Ruff check passed")
+        logger.info("✓ Ruff check passed")
     else:
-        print(f"⚠ Ruff found issues:\n{result.stdout}{result.stderr}")
+        logger.debug(f"⚠ Ruff found issues:\n{result.stdout}{result.stderr}")
 
-    print("\n2. Checking mypy on core packages...")
+    logger.debug("\n2. Checking mypy on core packages...")
     result = subprocess.run(
         ["mypy", "genomevault/hypervector", "genomevault/core"],
         capture_output=True,
         text=True,
     )
     if result.returncode == 0:
-        print("✓ MyPy check passed")
+        logger.info("✓ MyPy check passed")
     else:
-        print(f"⚠ MyPy found issues:\n{result.stdout}{result.stderr}")
+        logger.debug(f"⚠ MyPy found issues:\n{result.stdout}{result.stderr}")
 
-    print("\n3. Running pytest...")
+    logger.debug("\n3. Running pytest...")
     result = subprocess.run(["pytest", "-q", "--tb=short"], capture_output=True, text=True)
-    print(f"Pytest result: {result.returncode}")
+    logger.debug(f"Pytest result: {result.returncode}")
     if result.stdout:
-        print(f"Output:\n{result.stdout}")
+        logger.debug(f"Output:\n{result.stdout}")
     if result.stderr:
-        print(f"Errors:\n{result.stderr}")
+        logger.error(f"Errors:\n{result.stderr}")
 
-    print("\n=== Green Toolchain basic implementation completed ===")
+    logger.info("\n=== Green Toolchain basic implementation completed ===")
 
 
 if __name__ == "__main__":

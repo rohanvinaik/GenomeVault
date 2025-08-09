@@ -1,3 +1,7 @@
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
+
+
 """
 Test suite for Information-Theoretic PIR Protocol.
 Includes unit tests, adversarial tests, and performance benchmarks.
@@ -332,7 +336,7 @@ class TestPIRPerformance:
         elapsed = time.time() - start_time
         queries_per_second = 100 / elapsed
 
-        print(f"\nQuery generation: {queries_per_second:.1f} queries/sec")
+        logger.debug(f"\nQuery generation: {queries_per_second:.1f} queries/sec")
         assert queries_per_second > QPS_MIN  # Should generate >10 queries/sec
 
     @pytest.mark.benchmark
@@ -349,8 +353,8 @@ class TestPIRPerformance:
         elapsed = time.time() - start_time
         responses_per_second = 10 / elapsed
 
-        print(f"Server response: {responses_per_second:.1f} responses/sec")
-        print(f"Average latency: {elapsed / 10 * 1000:.1f}ms")
+        logger.debug(f"Server response: {responses_per_second:.1f} responses/sec")
+        logger.debug(f"Average latency: {elapsed / 10 * 1000:.1f}ms")
 
     @pytest.mark.benchmark
     def test_batch_performance(self):
@@ -362,7 +366,7 @@ class TestPIRPerformance:
         batch_queries = batch_protocol.generate_batch_queries(indices)
         elapsed = time.time() - start_time
 
-        print(f"\nBatch query generation for 100 indices: {elapsed * 1000:.1f}ms")
+        logger.debug(f"\nBatch query generation for 100 indices: {elapsed * 1000:.1f}ms")
 
 
 if __name__ == "__main__":

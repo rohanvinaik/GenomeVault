@@ -1,3 +1,7 @@
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
+
+
 """
 Property-based tests for ZK circuits using Hypothesis.
 
@@ -571,35 +575,35 @@ def test_circuit_performance_scaling(constraint_count):
         verification_time < VERIFICATION_TIME_MAX
     ), f"Verification took too long: {verification_time:.3f}s"
 
-    print(f"\nPerformance for {constraint_count} constraints:")
-    print(f"  Generation: {generation_time * 1000:.1f}ms")
-    print(f"  Verification: {verification_time * 1000:.1f}ms")
-    print(f"  Constraints: {circuit.cs.num_constraints()}")
+    logger.debug(f"\nPerformance for {constraint_count} constraints:")
+    logger.debug(f"  Generation: {generation_time * 1000:.1f}ms")
+    logger.debug(f"  Verification: {verification_time * 1000:.1f}ms")
+    logger.debug(f"  Constraints: {circuit.cs.num_constraints()}")
 
 
 if __name__ == "__main__":
     # Run specific test examples
-    print("Running ZK Circuit Property Tests")
-    print("=" * 50)
+    logger.debug("Running ZK Circuit Property Tests")
+    logger.debug("=" * 50)
 
     # Test variant proof
     test_variant = TestVariantProofCircuit()
     test_variant.test_valid_variant_proof_verifies()
     test_variant.test_boundary_chromosome_values()
-    print("✓ Variant proof tests passed")
+    logger.debug("✓ Variant proof tests passed")
 
     # Test frequency circuit
     test_freq = TestVariantFrequencyCircuit()
     test_freq.test_sum_constraint_satisfied()
     test_freq.test_unused_slots_zero()
-    print("✓ Frequency circuit tests passed")
+    logger.debug("✓ Frequency circuit tests passed")
 
     # Test malformed inputs
     test_malformed_public_inputs()
-    print("✓ Malformed input tests passed")
+    logger.debug("✓ Malformed input tests passed")
 
     # Performance test
     test_circuit_performance_scaling(1000)
-    print("✓ Performance tests passed")
+    logger.debug("✓ Performance tests passed")
 
-    print("\nAll property tests completed successfully!")
+    logger.debug("\nAll property tests completed successfully!")

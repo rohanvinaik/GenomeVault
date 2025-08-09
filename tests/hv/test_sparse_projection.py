@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
 
+
 from genomevault.core.exceptions import ProjectionError
 from genomevault.hypervector.encoding.sparse_projection import SparseRandomProjection
 

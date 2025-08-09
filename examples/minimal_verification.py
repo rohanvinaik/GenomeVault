@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 Minimal test to verify the import path fix works
 This avoids importing the full dependency chain

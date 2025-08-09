@@ -1,44 +1,48 @@
 #!/usr/bin/env python3
+
 """Quick diagnostic script to check for import issues."""
 
 import os
 import sys
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
+
 
 # Add the genomevault directory to the Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-print("Checking imports...")
+logger.debug("Checking imports...")
 
 # Check core imports
 try:
-    print("✅ core.constants imported successfully")
+    logger.info("✅ core.constants imported successfully")
 except Exception as e:
-    print(f"❌ core.constants import failed: {e}")
+    logger.error(f"❌ core.constants import failed: {e}")
 
 try:
-    print("✅ core.config imported successfully")
+    logger.info("✅ core.config imported successfully")
 except Exception as e:
-    print(f"❌ core.config import failed: {e}")
+    logger.error(f"❌ core.config import failed: {e}")
 
 try:
-    print("✅ utils.logging imported successfully")
+    logger.info("✅ utils.logging imported successfully")
 except Exception as e:
-    print(f"❌ utils.logging import failed: {e}")
+    logger.error(f"❌ utils.logging import failed: {e}")
 
 try:
-    print("✅ blockchain.node imported successfully")
+    logger.info("✅ blockchain.node imported successfully")
 except Exception as e:
-    print(f"❌ blockchain.node import failed: {e}")
+    logger.error(f"❌ blockchain.node import failed: {e}")
 
 try:
     from genomevault.api.main import app
 
-    print("✅ api.main imported successfully")
-    print(f"   App created: {app.title} v{app.version}")
+    logger.info("✅ api.main imported successfully")
+    logger.debug(f"   App created: {app.title} v{app.version}")
 except Exception as e:
-    print(f"❌ api.main import failed: {e}")
+    logger.error(f"❌ api.main import failed: {e}")
     import traceback
 
     traceback.print_exc()
 
-print("\nDiagnostic complete!")
+logger.info("\nDiagnostic complete!")

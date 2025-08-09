@@ -1,6 +1,7 @@
 from genomevault.ledger.store import InMemoryLedger
 
 
+
 def test_ledger_append_and_verify():
     L = InMemoryLedger()
     e1 = L.append({"a": 1})

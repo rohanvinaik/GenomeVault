@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """Quick diagnostic to see what's failing"""
 
 import logging

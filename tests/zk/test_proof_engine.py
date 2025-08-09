@@ -1,6 +1,7 @@
 from genomevault.zk.engine import ProofEngine
 
 
+
 def test_proof_verify_roundtrip():
     zk = ProofEngine()
     payload = {"x": 3, "y": 4}

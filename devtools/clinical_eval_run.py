@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
+
 import argparse
 import json
+
 
 from genomevault.clinical.eval.harness import compute_report, load_csv
 from genomevault.utils.logging import get_logger

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 Focused GenomeVault Technical Debt Cleanup
 ==========================================
@@ -26,7 +27,7 @@ class FocusedCleanup:
 
     def log_fix(self, message: str):
         """Log a fix that was applied."""
-        print(f"✓ {message}")
+        logger.info(f"✓ {message}")
         self.fixes_applied.append(message)
 
     def read_file_safe(self, file_path: Path) -> str:
@@ -34,7 +35,7 @@ class FocusedCleanup:
         try:
             return file_path.read_text(encoding="utf-8")
         except Exception as e:
-            print(f"Warning: Could not read {file_path}: {e}")
+            logger.warning(f"Warning: Could not read {file_path}: {e}")
             return ""
 
     def write_file_safe(self, file_path: Path, content: str):
@@ -43,7 +44,7 @@ class FocusedCleanup:
             file_path.write_text(content, encoding="utf-8")
             return True
         except Exception as e:
-            print(f"Error: Could not write {file_path}: {e}")
+            logger.error(f"Error: Could not write {file_path}: {e}")
             return False
 
     def fix_exceptions_module(self):
@@ -53,7 +54,7 @@ class FocusedCleanup:
             exceptions_path = self.repo_root / "genomevault" / "exceptions.py"
 
         if not exceptions_path.exists():
-            print("Exceptions module not found, skipping")
+            logger.error("Exceptions module not found, skipping")
             return
 
         content = self.read_file_safe(exceptions_path)
@@ -273,7 +274,7 @@ class FocusedCleanup:
         ruff_config_path = self.repo_root / ".ruff.toml"
 
         if not ruff_config_path.exists():
-            print("Ruff config not found")
+            logger.debug("Ruff config not found")
             return
 
         content = self.read_file_safe(ruff_config_path)
@@ -317,7 +318,7 @@ class FocusedCleanup:
                     if content and self.write_file_safe(target_path, content):
                         self.log_fix(f"Copied {script_name} to tools/")
                 except Exception as e:
-                    print(f"Could not move {script_name}: {e}")
+                    logger.debug(f"Could not move {script_name}: {e}")
 
     def fix_imports_in_key_files(self):
         """Fix import issues in key files."""
@@ -556,31 +557,31 @@ ignore_errors = true
 
     def generate_summary_report(self):
         """Generate a summary of all fixes applied."""
-        print("\n" + "=" * 60)
-        print("FOCUSED CLEANUP SUMMARY")
-        print("=" * 60)
+        logger.debug("\n" + "=" * 60)
+        logger.debug("FOCUSED CLEANUP SUMMARY")
+        logger.debug("=" * 60)
 
         if self.fixes_applied:
-            print(f"Applied {len(self.fixes_applied)} fixes:")
+            logger.debug(f"Applied {len(self.fixes_applied)} fixes:")
             for i, fix in enumerate(self.fixes_applied, 1):
-                print(f"{i:2d}. {fix}")
+                logger.debug(f"{i:2d}. {fix}")
         else:
-            print("No fixes were applied.")
+            logger.debug("No fixes were applied.")
 
-        print("\nNext steps:")
-        print("1. Run: ruff check . --select F821 (check for remaining undefined names)")
-        print("2. Run: ruff check . --select F811,E402 (check import/redefinition issues)")
-        print("3. Run: mypy genomevault/core genomevault/hypervector (type checking)")
-        print("4. Run: pytest -q -k 'not api and not nanopore' (test validation)")
+        logger.debug("\nNext steps:")
+        logger.debug("1. Run: ruff check . --select F821 (check for remaining undefined names)")
+        logger.debug("2. Run: ruff check . --select F811,E402 (check import/redefinition issues)")
+        logger.debug("3. Run: mypy genomevault/core genomevault/hypervector (type checking)")
+        logger.debug("4. Run: pytest -q -k 'not api and not nanopore' (test validation)")
 
-        print("\nManual review needed for:")
-        print("- Any remaining syntax errors (E999)")
-        print("- Complex undefined variable patterns")
-        print("- Import cycles or missing dependencies")
+        logger.debug("\nManual review needed for:")
+        logger.error("- Any remaining syntax errors (E999)")
+        logger.debug("- Complex undefined variable patterns")
+        logger.debug("- Import cycles or missing dependencies")
 
     def run_all_fixes(self):
         """Run all focused fixes in order."""
-        print("Starting focused GenomeVault cleanup...")
+        logger.debug("Starting focused GenomeVault cleanup...")
 
         # Phase 1: Configuration and structure
         self.update_ruff_config()
@@ -623,20 +624,20 @@ def main():
     cleanup = FocusedCleanup(args.repo_root)
 
     if args.dry_run:
-        print("DRY RUN MODE - No changes will be made")
-        print("\nThe following fixes would be applied:")
-        print("-" * 50)
+        logger.debug("DRY RUN MODE - No changes will be made")
+        logger.debug("\nThe following fixes would be applied:")
+        logger.debug("-" * 50)
 
         # Check what would be fixed
         cleanup_check = FocusedCleanup(args.repo_root)
 
         # List potential fixes
-        print("\n1. Core exceptions module:")
+        logger.error("\n1. Core exceptions module:")
         exceptions_path = cleanup_check.repo_root / "genomevault" / "core" / "exceptions.py"
         if exceptions_path.exists():
-            print(f"   - Would check and fix placeholders in {exceptions_path}")
+            logger.error(f"   - Would check and fix placeholders in {exceptions_path}")
 
-        print("\n2. ZK proof stub modules:")
+        logger.debug("\n2. ZK proof stub modules:")
         stubs_to_check = [
             "genomevault/zk_proofs/circuits/base_circuits.py",
             "genomevault/zk_proofs/post_quantum.py",
@@ -644,19 +645,19 @@ def main():
         for stub in stubs_to_check:
             stub_path = cleanup_check.repo_root / stub
             if not stub_path.exists():
-                print(f"   - Would create stub module: {stub}")
+                logger.debug(f"   - Would create stub module: {stub}")
             else:
-                print(f"   - Would check: {stub}")
+                logger.debug(f"   - Would check: {stub}")
 
-        print("\n3. Placeholder functions:")
-        print("   - Would scan for 'pass' only functions and convert to NotImplementedError")
+        logger.debug("\n3. Placeholder functions:")
+        logger.error("   - Would scan for 'pass' only functions and convert to NotImplementedError")
 
-        print("\n4. MyPy configuration:")
+        logger.debug("\n4. MyPy configuration:")
         mypy_path = cleanup_check.repo_root / "mypy.ini"
         if not mypy_path.exists():
-            print("   - Would create mypy.ini configuration file")
+            logger.debug("   - Would create mypy.ini configuration file")
 
-        print("\nRun without --dry-run to apply these fixes.")
+        logger.debug("\nRun without --dry-run to apply these fixes.")
         return
 
     cleanup.run_all_fixes()

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 GenomeVault Before/After Comparison Report Generator
 """

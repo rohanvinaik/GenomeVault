@@ -1,3 +1,7 @@
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
+
+
 """
 Adversarial tests for HDC implementation
 
@@ -473,28 +477,28 @@ def run_adversarial_tests():
         TestCryptographicProperties,
     ]
 
-    print("Running HDC Adversarial Tests")
-    print("=" * 50)
+    logger.debug("Running HDC Adversarial Tests")
+    logger.debug("=" * 50)
 
     for test_class in test_classes:
-        print(f"\n{test_class.__name__}:")
+        logger.debug(f"\n{test_class.__name__}:")
         test_instance = test_class()
 
         # Get all test methods
         test_methods = [method for method in dir(test_instance) if method.startswith("test_")]
 
         for method_name in test_methods:
-            print(f"  - {method_name}...", end=" ")
+            logger.debug(f"  - {method_name}...", end=" ")
             try:
                 method = getattr(test_instance, method_name)
                 method()
-                print("PASSED")
+                logger.debug("PASSED")
             except (ValueError, TypeError) as e:
                 logger.exception("Unhandled exception")
-                print(f"FAILED: {e}")
+                logger.debug(f"FAILED: {e}")
                 raise
 
-    print("\nAdversarial testing complete!")
+    logger.debug("\nAdversarial testing complete!")
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 Analyze cyclomatic complexity in the genomevault package.
 This script helps with step 7 of the audit checklist.

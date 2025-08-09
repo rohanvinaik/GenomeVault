@@ -2,6 +2,9 @@
 
 import os
 import sys
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
+
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
@@ -20,9 +23,9 @@ from genomevault.zk_proofs.prover import Prover
 
 def test_recursive_snark():
     """Test recursive SNARK composition."""
-    print("\n" + "=" * 60)
-    print("Testing Recursive SNARK Composition")
-    print("=" * 60)
+    logger.debug("\n" + "=" * 60)
+    logger.debug("Testing Recursive SNARK Composition")
+    logger.debug("=" * 60)
 
     # Initialize provers
     base_prover = Prover()
@@ -57,31 +60,31 @@ def test_recursive_snark():
     strategies = ["balanced_tree", "accumulator"]
 
     for strategy in strategies:
-        print(f"\nTesting {strategy} aggregation:")
+        logger.debug(f"\nTesting {strategy} aggregation:")
         start = time.time()
         recursive_proof = recursive_prover.compose_proofs(proofs, strategy)
         comp_time = time.time() - start
 
-        print(f"  Composition time: {comp_time * 1000:.1f} ms")
-        print(f"  Proof count: {recursive_proof.proof_count}")
-        print(f"  Verification complexity: {recursive_proof.verification_complexity}")
+        logger.debug(f"  Composition time: {comp_time * 1000:.1f} ms")
+        logger.debug(f"  Proof count: {recursive_proof.proof_count}")
+        logger.debug(f"  Verification complexity: {recursive_proof.verification_complexity}")
 
         # Verify
         start = time.time()
         valid = recursive_prover.verify_recursive_proof(recursive_proof)
         verify_time = time.time() - start
 
-        print(f"  Verification time: {verify_time * 1000:.1f} ms")
-        print(f"  Valid: {valid}")
+        logger.debug(f"  Verification time: {verify_time * 1000:.1f} ms")
+        logger.debug(f"  Valid: {valid}")
 
     return True
 
 
 def test_stark_post_quantum():
     """Test STARK post-quantum proofs."""
-    print("\n" + "=" * 60)
-    print("Testing Post-Quantum STARK Proofs")
-    print("=" * 60)
+    logger.debug("\n" + "=" * 60)
+    logger.debug("Testing Post-Quantum STARK Proofs")
+    logger.debug("=" * 60)
 
     # Initialize STARK system
     prover = STARKProver(security_bits=128)
@@ -112,33 +115,33 @@ def test_stark_post_quantum():
         "final_score": int(trace[-1, 0]),
     }
 
-    print("\nGenerating STARK proof...")
+    logger.debug("\nGenerating STARK proof...")
     start = time.time()
     stark_proof = prover.generate_stark_proof(trace, public_inputs, constraints)
     gen_time = time.time() - start
 
-    print(f"  Proof ID: {stark_proof.proof_id}")
-    print(f"  Security level: {stark_proof.security_level} bits (post-quantum)")
-    print(f"  Proof size: {stark_proof.proof_size_kb:.1f} KB")
-    print(f"  Generation time: {gen_time * 1000:.1f} ms")
+    logger.debug(f"  Proof ID: {stark_proof.proof_id}")
+    logger.debug(f"  Security level: {stark_proof.security_level} bits (post-quantum)")
+    logger.debug(f"  Proof size: {stark_proof.proof_size_kb:.1f} KB")
+    logger.debug(f"  Generation time: {gen_time * 1000:.1f} ms")
 
     # Verify proof
-    print("\nVerifying STARK proof...")
+    logger.debug("\nVerifying STARK proof...")
     start = time.time()
     valid = verifier.verify_stark(stark_proof)
     verify_time = time.time() - start
 
-    print(f"  Verification result: {'VALID' if valid else 'INVALID'}")
-    print(f"  Verification time: {verify_time * 1000:.1f} ms")
+    logger.debug(f"  Verification result: {'VALID' if valid else 'INVALID'}")
+    logger.debug(f"  Verification time: {verify_time * 1000:.1f} ms")
 
     return valid
 
 
 def test_catalytic_proof():
     """Test catalytic proof engine."""
-    print("\n" + "=" * 60)
-    print("Testing Catalytic Proof Engine")
-    print("=" * 60)
+    logger.debug("\n" + "=" * 60)
+    logger.debug("Testing Catalytic Proof Engine")
+    logger.debug("=" * 60)
 
     # Initialize with limited clean space
     engine = CatalyticProofEngine(
@@ -147,7 +150,7 @@ def test_catalytic_proof():
     )
 
     # Test PRS proof with catalytic space
-    print("\nGenerating PRS proof with catalytic space:")
+    logger.debug("\nGenerating PRS proof with catalytic space:")
 
     num_variants = 5000
     catalytic_proof = engine.generate_catalytic_proof(
@@ -166,25 +169,25 @@ def test_catalytic_proof():
         },
     )
 
-    print(f"  Proof ID: {catalytic_proof.proof_id}")
-    print(f"  Clean space used: {catalytic_proof.clean_space_used / 1024:.1f} KB")
-    print(f"  Space efficiency: {catalytic_proof.space_efficiency:.1f}x")
+    logger.debug(f"  Proof ID: {catalytic_proof.proof_id}")
+    logger.debug(f"  Clean space used: {catalytic_proof.clean_space_used / 1024:.1f} KB")
+    logger.debug(f"  Space efficiency: {catalytic_proof.space_efficiency:.1f}x")
 
     # Show space savings
     savings = engine.get_space_savings("polygenic_risk_score")
-    print("\nSpace savings:")
-    print(f"  Standard approach: {savings['standard_approach_mb']:.1f} MB")
-    print(f"  Catalytic clean: {savings['catalytic_clean_mb']:.1f} MB")
-    print(f"  Reduction: {savings['clean_space_reduction']:.1f}%")
+    logger.debug("\nSpace savings:")
+    logger.debug(f"  Standard approach: {savings['standard_approach_mb']:.1f} MB")
+    logger.debug(f"  Catalytic clean: {savings['catalytic_clean_mb']:.1f} MB")
+    logger.debug(f"  Reduction: {savings['clean_space_reduction']:.1f}%")
 
     return True
 
 
 def test_it_pir():
     """Test Information-Theoretic PIR."""
-    print("\n" + "=" * 60)
-    print("Testing Information-Theoretic PIR")
-    print("=" * 60)
+    logger.debug("\n" + "=" * 60)
+    logger.debug("Testing Information-Theoretic PIR")
+    logger.debug("=" * 60)
 
     # Initialize IT-PIR
     pir = InformationTheoreticPIR(num_servers=3, threshold=2)
@@ -203,17 +206,17 @@ def test_it_pir():
 
     # Retrieve item privately
     target_index = 42
-    print(f"\nRetrieving index {target_index} privately:")
-    print(f"  Database size: {database_size} blocks")
-    print(f"  Servers: {pir.num_servers}, Threshold: {pir.threshold}")
+    logger.debug(f"\nRetrieving index {target_index} privately:")
+    logger.debug(f"  Database size: {database_size} blocks")
+    logger.debug(f"  Servers: {pir.num_servers}, Threshold: {pir.threshold}")
 
     # Generate query
     start = time.time()
     query = pir.generate_query(target_index, database_size, block_size)
     query_time = time.time() - start
 
-    print(f"\n  Query generation: {query_time * 1000:.2f} ms")
-    print(f"  Query size/server: {query.server_queries[0].nbytes / 1024:.2f} KB")
+    logger.debug(f"\n  Query generation: {query_time * 1000:.2f} ms")
+    logger.debug(f"  Query size/server: {query.server_queries[0].nbytes / 1024:.2f} KB")
 
     # Process on servers
     responses = []
@@ -222,28 +225,28 @@ def test_it_pir():
         response = pir.process_server_query(server_id, query, databases[server_id])
         response_time = time.time() - start
         responses.append(response)
-        print(f"  Server {server_id} response: {response_time * 1000:.2f} ms")
+        logger.debug(f"  Server {server_id} response: {response_time * 1000:.2f} ms")
 
     # Reconstruct
     start = time.time()
     reconstructed = pir.reconstruct_response(query, responses)
     recon_time = time.time() - start
 
-    print(f"\n  Reconstruction: {recon_time * 1000:.2f} ms")
+    logger.debug(f"\n  Reconstruction: {recon_time * 1000:.2f} ms")
 
     # Verify
     expected = databases[0][target_index]
     matches = reconstructed[: len(expected)] == expected
-    print(f"  Retrieved correctly: {matches}")
+    logger.debug(f"  Retrieved correctly: {matches}")
 
     return matches
 
 
 def test_hierarchical_compression():
     """Test hierarchical hypervector compression."""
-    print("\n" + "=" * 60)
-    print("Testing Hierarchical Hypervector Compression")
-    print("=" * 60)
+    logger.debug("\n" + "=" * 60)
+    logger.debug("Testing Hierarchical Hypervector Compression")
+    logger.debug("=" * 60)
 
     # Initialize compressor
     compressor = AdvancedHierarchicalCompressor()
@@ -252,34 +255,34 @@ def test_hierarchical_compression():
     base_vector = np.random.randn(10000)
     base_vector[np.random.choice(10000, 9000, replace=False)] = 0  # Sparse
 
-    print("\nBase vector:")
-    print(f"  Dimensions: {len(base_vector)}")
-    print(f"  Sparsity: {np.mean(base_vector == 0):.2%}")
-    print(f"  Size: {base_vector.nbytes / 1024:.1f} KB")
+    logger.debug("\nBase vector:")
+    logger.debug(f"  Dimensions: {len(base_vector)}")
+    logger.debug(f"  Sparsity: {np.mean(base_vector == 0):.2%}")
+    logger.debug(f"  Size: {base_vector.nbytes / 1024:.1f} KB")
 
     # Compress hierarchically
     compressed = compressor.hierarchical_compression(
         base_vector, modality_context="genomic", overall_model_context="disease_risk"
     )
 
-    print("\nCompressed vector:")
-    print(f"  Level: {compressed.level}")
-    print(f"  Dimensions: {len(compressed.high_vector)}")
-    print(f"  Compression ratio: {compressed.compression_metadata['compression_ratio']:.2f}x")
+    logger.debug("\nCompressed vector:")
+    logger.debug(f"  Level: {compressed.level}")
+    logger.debug(f"  Dimensions: {len(compressed.high_vector)}")
+    logger.debug(f"  Compression ratio: {compressed.compression_metadata['compression_ratio']:.2f}x")
 
     # Test storage tiers
-    print("\nStorage tiers:")
+    logger.debug("\nStorage tiers:")
     for tier in ["mini", "clinical", "fullhdc"]:
         optimized = compressor.create_storage_optimized_vector(base_vector, tier)
-        print(f"  {tier}: {optimized['size_kb']:.1f} KB")
+        logger.debug(f"  {tier}: {optimized['size_kb']:.1f} KB")
 
     return True
 
 
 def run_all_tests():
     """Run all advanced implementation tests."""
-    print("\nGenomeVault Advanced Implementation Tests")
-    print("=========================================")
+    logger.debug("\nGenomeVault Advanced Implementation Tests")
+    # print("=========================================")
 
     tests = [
         ("Recursive SNARK", test_recursive_snark),
@@ -297,25 +300,25 @@ def run_all_tests():
             results[test_name] = "PASSED" if result else "FAILED"
         except Exception as e:
             logger.exception("Unhandled exception")
-            print(f"\nError in {test_name}: {e}")
+            logger.debug(f"\nError in {test_name}: {e}")
             results[test_name] = "ERROR"
             raise
 
     # Summary
-    print("\n" + "=" * 60)
-    print("Test Summary")
-    print("=" * 60)
+    logger.debug("\n" + "=" * 60)
+    logger.debug("Test Summary")
+    logger.debug("=" * 60)
 
     for test_name, result in results.items():
         status_symbol = "✓" if result == "PASSED" else "✗"
-        print(f"{status_symbol} {test_name}: {result}")
+        logger.debug(f"{status_symbol} {test_name}: {result}")
 
     all_passed = all(r == "PASSED" for r in results.values())
 
     if all_passed:
-        print("\nAll tests passed! Advanced implementations are working correctly.")
+        logger.debug("\nAll tests passed! Advanced implementations are working correctly.")
     else:
-        print("\nSome tests failed. Please check the output above.")
+        logger.debug("\nSome tests failed. Please check the output above.")
 
     return all_passed
 

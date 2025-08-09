@@ -1,5 +1,5 @@
-# tests/unit/test_voting_power.py
 import itertools
+
 
 from genomevault.blockchain.node import BlockchainNode, NodeInfo
 from genomevault.core.constants import NODE_CLASS_WEIGHT, NodeType

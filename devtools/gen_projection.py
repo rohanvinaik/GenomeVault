@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 Generate pre-built projection memory maps for faster startup.
 These cached projections significantly speed up encoder initialization.
@@ -259,12 +260,12 @@ def main():
             logger.info("✅ All projections generated and verified successfully!")
 
             # Print summary
-            print("\nGenerated projections:")
-            print("-" * 50)
+            logger.debug("\nGenerated projections:")
+            logger.debug("-" * 50)
             for dim, filepath in generated:
                 size_mb = filepath.stat().st_size / (1024 * 1024)
-                print(f"  {dim:>6}D: {filepath.name} ({size_mb:.1f} MB)")
-            print("-" * 50)
+                logger.debug(f"  {dim:>6}D: {filepath.name} ({size_mb:.1f} MB)")
+            logger.debug("-" * 50)
         else:
             logger.error("❌ Some projections failed verification")
             exit(1)

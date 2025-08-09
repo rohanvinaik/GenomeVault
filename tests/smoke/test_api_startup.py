@@ -1,5 +1,5 @@
-# tests/smoke/test_api_startup.py
 from fastapi.testclient import TestClient
+
 
 from genomevault.api.main import app
 

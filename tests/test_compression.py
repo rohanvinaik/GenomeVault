@@ -1,5 +1,3 @@
-# tests/test_compression.py
-
 import numpy as np
 import pytest
 

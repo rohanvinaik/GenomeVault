@@ -34,9 +34,9 @@ async def demonstrate_hipaa_fasttrack():
     4. Special committee participation
     """
 
-    print("=" * 80)
-    print("GenomeVault HIPAA Fast-Track Demonstration")
-    print("=" * 80)
+    logger.debug("=" * 80)
+    logger.debug("GenomeVault HIPAA Fast-Track Demonstration")
+    logger.debug("=" * 80)
 
     # Initialize components
     async with CMSNPIRegistry() as registry:
@@ -48,8 +48,8 @@ async def demonstrate_hipaa_fasttrack():
         HIPAAGovernanceIntegration.create_hipaa_committee(governance)
         HIPAAGovernanceIntegration.add_hipaa_proposal_types(governance)
 
-        print("\n1. HEALTHCARE PROVIDER REGISTRATION")
-        print("-" * 40)
+        logger.debug("\n1. HEALTHCARE PROVIDER REGISTRATION")
+        logger.debug("-" * 40)
 
         # Simulate three different healthcare providers
         providers = [
@@ -76,9 +76,9 @@ async def demonstrate_hipaa_fasttrack():
         registered_nodes = []
 
         for provider in providers:
-            print("\nRegistering: {provider['name']}")
-            print("  NPI: {provider['npi']}")
-            print("  Type: {provider['description']}")
+            logger.debug("\nRegistering: {provider['name']}")
+            logger.debug("  NPI: {provider['npi']}")
+            logger.debug("  Type: {provider['description']}")
 
             credentials = HIPAACredentials(
                 npi=provider["npi"],
@@ -98,28 +98,28 @@ async def demonstrate_hipaa_fasttrack():
                 node = await integration.register_provider_node(credentials, node_config)
                 registered_nodes.append((provider, node))
 
-                print("  ✓ Verification successful!")
-                print("  ✓ Node ID: {node.node_id}")
-                print("  ✓ Voting power: {node.voting_power}")
+                logger.info("  ✓ Verification successful!")
+                logger.info("  ✓ Node ID: {node.node_id}")
+                logger.info("  ✓ Voting power: {node.voting_power}")
 
                 # Add to HIPAA committee
                 governance.committees[CommitteeType.SCIENTIFIC_ADVISORY].add_member(node.node_id)
 
             except Exception:
                 logger.exception("Unhandled exception")
-                print("  ✗ Registration failed: {e}")
+                logger.error("  ✗ Registration failed: {e}")
                 raise
 
-        print("\n\nTotal governance voting power: {governance.total_voting_power}")
+        logger.debug("\n\nTotal governance voting power: {governance.total_voting_power}")
 
-        print("\n\n2. GOVERNANCE PARTICIPATION")
-        print("-" * 40)
+        logger.debug("\n\n2. GOVERNANCE PARTICIPATION")
+        logger.debug("-" * 40)
 
         # Create a clinical protocol proposal
         if registered_nodes:
             proposer_node = registered_nodes[0][1]  # Metro General Hospital
 
-            print("\n{registered_nodes[0][0]['name']} creating clinical data proposal...")
+            logger.debug("\n{registered_nodes[0][0]['name']} creating clinical data proposal...")
 
             proposal = governance.create_proposal(
                 proposer=proposer_node.node_id,
@@ -143,13 +143,13 @@ async def demonstrate_hipaa_fasttrack():
                 },
             )
 
-            print("  ✓ Proposal created: {proposal.proposal_id}")
-            print("  Voting period: {proposal.voting_period.days} days")
-            print("  Required quorum: {proposal.quorum_required:.0%}")
-            print("  Approval threshold: {proposal.approval_threshold:.0%}")
+            logger.info("  ✓ Proposal created: {proposal.proposal_id}")
+            logger.debug("  Voting period: {proposal.voting_period.days} days")
+            logger.debug("  Required quorum: {proposal.quorum_required:.0%}")
+            logger.debug("  Approval threshold: {proposal.approval_threshold:.0%}")
 
             # Simulate voting
-            print("\n\nSimulating governance votes...")
+            logger.debug("\n\nSimulating governance votes...")
             proposal.status = ProposalStatus.ACTIVE  # Activate for demo
 
             # Healthcare providers vote
@@ -167,15 +167,15 @@ async def demonstrate_hipaa_fasttrack():
                     voting_power=node.voting_power,
                 )
 
-                print("\n{provider['name']} voted: {choice}")
-                print("  Vote weight: {vote.vote_weight}")
+                logger.debug("\n{provider['name']} voted: {choice}")
+                logger.debug("  Vote weight: {vote.vote_weight}")
 
                 # Show enhanced weight for committee members
                 if governance._get_committee_multiplier(node.node_id, proposal.proposal_type) > 1:
-                    print("  ✓ Committee bonus applied!")
+                    logger.info("  ✓ Committee bonus applied!")
 
             # Add some non-HIPAA votes for comparison
-            print("\n\nNon-HIPAA participants voting...")
+            logger.debug("\n\nNon-HIPAA participants voting...")
             for i in range(3):
                 voter_id = "regular_node_{i}"
                 choice = "yes" if i < 2 else "no"
@@ -187,38 +187,38 @@ async def demonstrate_hipaa_fasttrack():
                     voting_power=50,  # Lower voting power
                 )
 
-                print("Regular Node {i} voted: {choice} (weight: {vote.vote_weight})")
+                logger.debug("Regular Node {i} voted: {choice} (weight: {vote.vote_weight})")
 
             # Check results
-            print("\n\nProposal Results:")
-            print("-" * 40)
+            logger.debug("\n\nProposal Results:")
+            logger.debug("-" * 40)
             governance.get_proposal_details(proposal.proposal_id)
 
-            print("Total votes cast: {details['vote_count']}")
-            print("Yes votes: {details['votes']['yes']:.1f}")
-            print("No votes: {details['votes']['no']:.1f}")
-            print("Abstentions: {details['votes']['abstain']:.1f}")
-            print("Current approval: {details['requirements']['current_approval']:.1%}")
-            print("Has quorum: {details['requirements']['has_quorum']}")
+            logger.debug("Total votes cast: {details['vote_count']}")
+            logger.debug("Yes votes: {details['votes']['yes']:.1f}")
+            logger.debug("No votes: {details['votes']['no']:.1f}")
+            logger.debug("Abstentions: {details['votes']['abstain']:.1f}")
+            logger.debug("Current approval: {details['requirements']['current_approval']:.1%}")
+            logger.debug("Has quorum: {details['requirements']['has_quorum']}")
 
             # Demonstrate the voting power difference
-            print("\n\n3. VOTING POWER COMPARISON")
-            print("-" * 40)
-            print("\nHIPAA-Verified Nodes (Trusted Signatories):")
+            logger.debug("\n\n3. VOTING POWER COMPARISON")
+            logger.debug("-" * 40)
+            logger.debug("\nHIPAA-Verified Nodes (Trusted Signatories):")
             for provider, node in registered_nodes:
                 print(
                     "  {provider['name']:30} | Class: {node.node_type.name:7} | Power: {node.voting_power:3}"
                 )
 
-            print("\nRegular Nodes (Non-signatories):")
-            print("  {'Regular Light Node':30} | Class: {'LIGHT':7} | Power: {1:3}")
-            print("  {'Regular Full Node':30} | Class: {'FULL':7} | Power: {4:3}")
-            print("  {'Regular Archive Node':30} | Class: {'ARCHIVE':7} | Power: {8:3}")
+            logger.debug("\nRegular Nodes (Non-signatories):")
+            logger.debug("  {'Regular Light Node':30} | Class: {'LIGHT':7} | Power: {1:3}")
+            logger.debug("  {'Regular Full Node':30} | Class: {'FULL':7} | Power: {4:3}")
+            logger.debug("  {'Regular Archive Node':30} | Class: {'ARCHIVE':7} | Power: {8:3}")
 
-            print("\n✓ HIPAA providers receive +10 signatory weight!")
+            logger.info("\n✓ HIPAA providers receive +10 signatory weight!")
 
-        print("\n\n4. BENEFITS SUMMARY")
-        print("-" * 40)
+        logger.debug("\n\n4. BENEFITS SUMMARY")
+        logger.debug("-" * 40)
         print(
             """
 The HIPAA Fast-Track system provides:
@@ -246,32 +246,32 @@ The HIPAA Fast-Track system provides:
         )
 
         # Cleanup demonstration
-        print("\n\n5. VERIFICATION MANAGEMENT")
-        print("-" * 40)
+        logger.debug("\n\n5. VERIFICATION MANAGEMENT")
+        logger.debug("-" * 40)
 
-        print("\nRefreshing verifications...")
+        logger.debug("\nRefreshing verifications...")
         await integration.refresh_verifications()
-        print("  Active nodes: {refresh_results['active_nodes']}")
-        print("  Expired verifications: {refresh_results['expired_verifications']}")
-        print("  Revoked nodes: {refresh_results['revoked_nodes']}")
+        logger.debug("  Active nodes: {refresh_results['active_nodes']}")
+        logger.debug("  Expired verifications: {refresh_results['expired_verifications']}")
+        logger.debug("  Revoked nodes: {refresh_results['revoked_nodes']}")
 
         # Demonstrate revocation
         if registered_nodes:
             test_npi = registered_nodes[-1][0]["npi"]
-            print("\nDemonstrating revocation for NPI {test_npi}...")
+            logger.debug("\nDemonstrating revocation for NPI {test_npi}...")
 
             success = await integration.revoke_provider_node(
                 npi=test_npi, reason="Demonstration of revocation process"
             )
 
             if success:
-                print("  ✓ Verification revoked")
-                print("  ✓ Node removed from network")
-                print("  ✓ Voting power updated")
+                logger.info("  ✓ Verification revoked")
+                logger.info("  ✓ Node removed from network")
+                logger.info("  ✓ Voting power updated")
 
-        print("\n" + "=" * 80)
-        print("HIPAA Fast-Track Demonstration Complete!")
-        print("=" * 80)
+        logger.debug("\n" + "=" * 80)
+        logger.info("HIPAA Fast-Track Demonstration Complete!")
+        logger.debug("=" * 80)
 
 
 if __name__ == "__main__":

@@ -1,3 +1,7 @@
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
+
+
 #!/usr/bin/env python3
 """
 Simple test to verify GenomeVault imports
@@ -12,31 +16,31 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 def test_basic_imports():
     """Test basic imports work"""
-    print("Testing basic imports...")
+    logger.debug("Testing basic imports...")
 
     try:
         # Test core config
         from core.config import get_config
 
-        print("✅ core.config imported successfully")
+        logger.debug("✅ core.config imported successfully")
 
         # Test creating config
         get_config()
-        print("✅ Config created: node_type={config.node_type}")
+        logger.debug("✅ Config created: node_type={config.node_type}")
 
         # Test exceptions
 
-        print("✅ core.exceptions imported successfully")
+        logger.debug("✅ core.exceptions imported successfully")
 
         # Test utils
 
-        print("✅ utils imported successfully")
+        logger.debug("✅ utils imported successfully")
 
         return True
 
     except Exception:
         logger.exception("Unhandled exception")
-        print("❌ Import failed: {e}")
+        logger.debug("❌ Import failed: {e}")
         import traceback
 
         traceback.print_exc()
@@ -46,7 +50,7 @@ def test_basic_imports():
 
 def test_module_imports():
     """Test module imports"""
-    print("\nTesting module imports...")
+    logger.debug("\nTesting module imports...")
 
     modules = [
         "local_processing.sequencing",
@@ -61,10 +65,10 @@ def test_module_imports():
         try:
             module.split(".")
             exec("from {parts[0]} import {parts[1]}")
-            print("✅ {module} imported successfully")
+            logger.debug("✅ {module} imported successfully")
         except Exception:
             logger.exception("Unhandled exception")
-            print("❌ {module} failed: {e}")
+            logger.debug("❌ {module} failed: {e}")
             success = False
             raise
 
@@ -72,16 +76,16 @@ def test_module_imports():
 
 
 if __name__ == "__main__":
-    print("=" * 50)
-    print("GenomeVault Import Test")
-    print("=" * 50)
+    logger.debug("=" * 50)
+    logger.debug("GenomeVault Import Test")
+    logger.debug("=" * 50)
 
     basic_ok = test_basic_imports()
     modules_ok = test_module_imports()
 
     if basic_ok and modules_ok:
-        print("\n✅ All imports successful!")
+        logger.debug("\n✅ All imports successful!")
         sys.exit(0)
     else:
-        print("\n❌ Some imports failed")
+        logger.debug("\n❌ Some imports failed")
         sys.exit(1)

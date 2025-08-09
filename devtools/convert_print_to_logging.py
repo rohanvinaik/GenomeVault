@@ -1,3 +1,5 @@
+from genomevault.utils.logging import get_logger
+
 #!/usr/bin/env python3
 """
 Convert print statements to proper logging in the genomevault package.
@@ -98,7 +100,7 @@ def main():
     """Main function to scan for print statements."""
     genomevault_dir = Path("/Users/rohanvinaik/genomevault/genomevault")
 
-    print("Scanning for print statements in genomevault package...")
+    logger.debug("Scanning for print statements in genomevault package...")
     results = scan_directory(genomevault_dir)
 
     if results:
@@ -106,11 +108,11 @@ def main():
         output_file = Path("/Users/rohanvinaik/genomevault/print_to_logging_guide.md")
         with open(output_file, "w", encoding="utf-8") as f:
             f.write(guide)
-        print(f"Conversion guide written to: {output_file}")
-        print(f"Total files with print statements: {len(results)}")
-        print(f"Total print statements found: {sum(len(p) for p in results.values())}")
+        logger.debug(f"Conversion guide written to: {output_file}")
+        logger.debug(f"Total files with print statements: {len(results)}")
+        logger.debug(f"Total print statements found: {sum(len(p) for p in results.values())}")
     else:
-        print("No print statements found in library code!")
+        logger.debug("No print statements found in library code!")
 
 
 if __name__ == "__main__":

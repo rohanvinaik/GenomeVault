@@ -1,3 +1,7 @@
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
+
+
 """
 Test for HDC Error Handling with PIR Batch Integration
 """
@@ -242,26 +246,26 @@ if __name__ == "__main__":
     # Run basic tests
     test = TestBatchedPIRIntegration()
 
-    print("Testing error budget allocation...")
+    logger.debug("Testing error budget allocation...")
     test.test_error_budget_allocation()
-    print("✓ Error budget allocation works correctly")
+    logger.debug("✓ Error budget allocation works correctly")
 
-    print("\nTesting ECC encoder...")
+    logger.debug("\nTesting ECC encoder...")
     test.test_ecc_encoder()
-    print("✓ ECC encoding/decoding works correctly")
+    logger.debug("✓ ECC encoding/decoding works correctly")
 
-    print("\nTesting adaptive HDC encoder...")
+    logger.debug("\nTesting adaptive HDC encoder...")
     test.test_adaptive_hdc_encoder()
-    print("✓ Adaptive HDC encoder works correctly")
+    logger.debug("✓ Adaptive HDC encoder works correctly")
 
-    print("\nRunning async tests...")
+    logger.debug("\nRunning async tests...")
     asyncio.run(test.test_batched_query_builder())
-    print("✓ Batched query builder works correctly")
+    logger.debug("✓ Batched query builder works correctly")
 
     asyncio.run(test.test_streaming_execution())
-    print("✓ Streaming execution works correctly")
+    logger.debug("✓ Streaming execution works correctly")
 
     asyncio.run(test.test_early_termination())
-    print("✓ Early termination works correctly")
+    logger.debug("✓ Early termination works correctly")
 
-    print("\n✅ All tests passed!")
+    logger.debug("\n✅ All tests passed!")

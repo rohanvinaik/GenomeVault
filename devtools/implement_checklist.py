@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 Master script to implement the genomevault audit checklist.
 Run this to execute all checklist items in order.
@@ -27,7 +28,7 @@ class ChecklistImplementer:
 
     def log(self, message):
         """Log message to both console and file."""
-        print(message)
+        logger.debug(message)
         with open(self.log_file, "a") as f:
             f.write(f"{datetime.now().isoformat()} - {message}\n")
 
@@ -293,28 +294,28 @@ def main():
     project_root = Path("/Users/rohanvinaik/genomevault")
 
     if not project_root.exists():
-        print(f"Error: Project root not found: {project_root}")
+        logger.error(f"Error: Project root not found: {project_root}")
         sys.exit(1)
 
     implementer = ChecklistImplementer(project_root)
 
     # Confirm before proceeding
-    print("This script will implement the genomevault audit checklist.")
-    print(f"Project root: {project_root}")
-    print("\nThis will:")
-    print("- Create a backup of current configuration files")
-    print("- Update project configuration to use Hatch, ruff, etc.")
-    print("- Install development dependencies")
-    print("- Analyze and report on code quality issues")
-    print("- Add missing __init__.py files")
-    print("- Extract TODO items")
-    print("\nPress Enter to continue or Ctrl+C to cancel...")
+    logger.debug("This script will implement the genomevault audit checklist.")
+    logger.debug(f"Project root: {project_root}")
+    logger.debug("\nThis will:")
+    logger.debug("- Create a backup of current configuration files")
+    logger.debug("- Update project configuration to use Hatch, ruff, etc.")
+    logger.debug("- Install development dependencies")
+    logger.debug("- Analyze and report on code quality issues")
+    logger.debug("- Add missing __init__.py files")
+    logger.debug("- Extract TODO items")
+    logger.debug("\nPress Enter to continue or Ctrl+C to cancel...")
 
     try:
         input()
     except KeyboardInterrupt:
         logger.exception("Unhandled exception")
-        print("\nCancelled.")
+        logger.debug("\nCancelled.")
         sys.exit(0)
 
     implementer.implement_checklist()

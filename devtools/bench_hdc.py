@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 HDC Performance Benchmarking Script
 
@@ -7,6 +8,9 @@ following Stage 4 requirements.
 """
 
 from __future__ import annotations
+
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
 
 import argparse
 import json
@@ -67,7 +71,7 @@ class HDCBenchmark:
 
     def benchmark_encoding_throughput(self) -> dict[str, Any]:
         """Benchmark encoding throughput across dimensions and tiers"""
-        print("Benchmarking encoding throughput...")
+        logger.debug("Benchmarking encoding throughput...")
 
         results = {"description": "Encoding throughput (operations/second)", "data": {}}
 
@@ -102,13 +106,13 @@ class HDCBenchmark:
                     "total_time_sec": elapsed,
                 }
 
-                print(f"  Dim={dim}, Features={feat_size}: {throughput:.1f} ops/s")
+                logger.debug(f"  Dim={dim}, Features={feat_size}: {throughput:.1f} ops/s")
 
         return results
 
     def benchmark_memory_usage(self) -> dict[str, Any]:
         """Benchmark memory usage across tiers"""
-        print("\nBenchmarking memory usage...")
+        logger.debug("\nBenchmarking memory usage...")
 
         results = {"description": "Memory usage by compression tier", "data": {}}
 
@@ -148,7 +152,7 @@ class HDCBenchmark:
 
     def benchmark_binding_operations(self) -> dict[str, Any]:
         """Benchmark different binding operations"""
-        print("\nBenchmarking binding operations...")
+        logger.debug("\nBenchmarking binding operations...")
 
         results = {"description": "Binding operation performance", "data": {}}
 
@@ -184,7 +188,7 @@ class HDCBenchmark:
                     "supported": True,
                 }
 
-                print(f"  {binding_type.value}: {throughput:.1f} ops/s")
+                logger.debug(f"  {binding_type.value}: {throughput:.1f} ops/s")
 
             except Exception as e:
                 logger.exception("Unhandled exception")
@@ -192,14 +196,14 @@ class HDCBenchmark:
                     "supported": False,
                     "error": str(e),
                 }
-                print(f"  {binding_type.value}: Not supported for this configuration")
+                logger.debug(f"  {binding_type.value}: Not supported for this configuration")
                 raise
 
         return results
 
     def benchmark_similarity_computation(self) -> dict[str, Any]:
         """Benchmark similarity computation"""
-        print("\nBenchmarking similarity computation...")
+        logger.debug("\nBenchmarking similarity computation...")
 
         results = {"description": "Similarity computation performance", "data": {}}
 
@@ -243,7 +247,7 @@ class HDCBenchmark:
 
     def benchmark_projection_types(self) -> dict[str, Any]:
         """Benchmark different projection types"""
-        print("\nBenchmarking projection types...")
+        logger.debug("\nBenchmarking projection types...")
 
         results = {"description": "Performance by projection type", "data": {}}
 
@@ -287,14 +291,14 @@ class HDCBenchmark:
             except Exception as e:
                 logger.exception("Unhandled exception")
                 results["data"][proj_type.value] = {"supported": False, "error": str(e)}
-                print(f"  {proj_type.value}: Not implemented")
+                logger.debug(f"  {proj_type.value}: Not implemented")
                 raise
 
         return results
 
     def benchmark_scalability(self) -> dict[str, Any]:
         """Benchmark scalability with batch processing"""
-        print("\nBenchmarking batch scalability...")
+        logger.debug("\nBenchmarking batch scalability...")
 
         results = {"description": "Batch processing scalability", "data": {}}
 
@@ -342,7 +346,7 @@ class HDCBenchmark:
 
     def benchmark_multimodal_encoding(self) -> dict[str, Any]:
         """Benchmark multi-modal encoding performance"""
-        print("\nBenchmarking multi-modal encoding...")
+        logger.debug("\nBenchmarking multi-modal encoding...")
 
         results = {
             "description": "Multi-modal encoding and binding performance",
@@ -406,16 +410,16 @@ class HDCBenchmark:
             "final_dimension": combined.shape[0],
         }
 
-        print(f"  Complete pipeline: {total_time * 1000:.1f} ms for {len(modalities)} modalities")
+        logger.info(f"  Complete pipeline: {total_time * 1000:.1f} ms for {len(modalities)} modalities")
 
         return results
 
     def run_all_benchmarks(self):
         """Run all benchmarks"""
-        print("Starting HDC benchmarking suite...")
-        print(f"Output directory: {self.output_dir}")
-        print(f"Timestamp: {self.timestamp}")
-        print("-" * 60)
+        logger.debug("Starting HDC benchmarking suite...")
+        logger.debug(f"Output directory: {self.output_dir}")
+        logger.debug(f"Timestamp: {self.timestamp}")
+        logger.debug("-" * 60)
 
         # Run benchmarks
         self.results["benchmarks"]["encoding_throughput"] = self.benchmark_encoding_throughput()
@@ -437,8 +441,8 @@ class HDCBenchmark:
         with open(output_file, "w") as f:
             json.dump(self.results, f, indent=2)
 
-        print("-" * 60)
-        print(f"Benchmarks complete! Results saved to: {output_file}")
+        logger.debug("-" * 60)
+        logger.info(f"Benchmarks complete! Results saved to: {output_file}")
 
         # Generate visualizations
         self.generate_plots()
@@ -468,7 +472,7 @@ class HDCBenchmark:
 
     def generate_plots(self):
         """Generate visualization plots"""
-        print("\nGenerating visualization plots...")
+        logger.debug("\nGenerating visualization plots...")
 
         # Set plot style
         sns.set_style("whitegrid")
@@ -494,7 +498,7 @@ class HDCBenchmark:
         # 5. Projection type comparison
         self._plot_projection_comparison(plots_dir)
 
-        print(f"Plots saved to {plots_dir}")
+        logger.debug(f"Plots saved to {plots_dir}")
 
     def _plot_throughput_by_dimension(self, plots_dir: Path):
         """Plot encoding throughput by dimension"""
@@ -700,7 +704,7 @@ class HDCBenchmark:
                 f,
             )
 
-        print(f"\nPerformance badge: {badge_text}")
+        logger.debug(f"\nPerformance badge: {badge_text}")
 
 
 def main():
@@ -717,7 +721,7 @@ def main():
     # Run benchmarks
     if args.quick:
         # Quick mode - only essential benchmarks
-        print("Running quick benchmarks...")
+        logger.debug("Running quick benchmarks...")
         benchmark.results["benchmarks"][
             "encoding_throughput"
         ] = benchmark.benchmark_encoding_throughput()
@@ -728,7 +732,7 @@ def main():
         with open(output_file, "w") as f:
             json.dump(benchmark.results, f, indent=2)
 
-        print(f"\nQuick benchmark results saved to: {output_file}")
+        logger.debug(f"\nQuick benchmark results saved to: {output_file}")
     else:
         # Full benchmarks
         benchmark.run_all_benchmarks()

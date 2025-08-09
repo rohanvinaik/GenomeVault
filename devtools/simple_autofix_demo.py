@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 Simple demonstration of automated code fixes for GenomeVault
 This is a simplified version showing the core concepts
@@ -93,13 +94,13 @@ def fix_unused_params(content):
 
 def process_file(filepath, apply=False):
     """Process a single Python file"""
-    print(f"Processing: {filepath}")
+    logger.debug(f"Processing: {filepath}")
 
     try:
         with open(filepath, encoding="utf-8") as f:
             original_content = f.read()
     except Exception as e:
-        print(f"  Error reading file: {e}")
+        logger.error(f"  Error reading file: {e}")
         return False
 
     # Apply fixes
@@ -111,20 +112,20 @@ def process_file(filepath, apply=False):
 
     # Check if changes were made
     if content != original_content:
-        print("  ✓ Changes detected")
+        logger.info("  ✓ Changes detected")
         if apply:
             try:
                 with open(filepath, "w", encoding="utf-8") as f:
                     f.write(content)
-                print("  ✓ Changes applied")
+                logger.info("  ✓ Changes applied")
             except Exception as e:
-                print(f"  ✗ Error writing file: {e}")
+                logger.error(f"  ✗ Error writing file: {e}")
                 return False
         else:
-            print("  (Dry run - no changes written)")
+            logger.debug("  (Dry run - no changes written)")
         return True
     else:
-        print("  No changes needed")
+        logger.debug("  No changes needed")
         return False
 
 
@@ -132,10 +133,10 @@ def main():
     """Main function"""
     apply_changes = "--apply" in sys.argv
 
-    print("GenomeVault Simple Auto-Fix Demo")
-    print("================================")
-    print(f"Mode: {'APPLY CHANGES' if apply_changes else 'DRY RUN'}")
-    print()
+    logger.debug("GenomeVault Simple Auto-Fix Demo")
+    logger.debug("================================")
+    logger.debug(f"Mode: {'APPLY CHANGES' if apply_changes else 'DRY RUN'}")
+    # Removed empty print()
 
     # For demo, just process the test file
     test_file = "test_autofix_example.py"
@@ -143,22 +144,22 @@ def main():
         changed = process_file(test_file, apply=apply_changes)
 
         if not apply_changes and changed:
-            print("\nTo apply changes, run with --apply flag")
+            logger.debug("\nTo apply changes, run with --apply flag")
     else:
-        print(f"Test file {test_file} not found")
-        print("Creating example file...")
+        logger.debug(f"Test file {test_file} not found")
+        logger.debug("Creating example file...")
 
         example_content = '''#!/usr/bin/env python3
 """Example file with issues to fix"""
 
 # Issue 1: Print statements
-print("Starting application")
+logger.debug("Starting application")
 
 # Issue 2: Bare except
 try:
     risky_operation()
 except:
-    print("Error occurred")
+    logger.error("Error occurred")
 
 # Issue 3: Star import
 from os import *
@@ -176,8 +177,8 @@ except Exception:
 
         with open(test_file, "w") as f:
             f.write(example_content)
-        print(f"Created {test_file}")
-        print("Run the script again to process it")
+        logger.debug(f"Created {test_file}")
+        logger.debug("Run the script again to process it")
 
 
 if __name__ == "__main__":

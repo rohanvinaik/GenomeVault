@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 GenomeVault auto-fix codemod
 ----------------------------
@@ -13,16 +14,12 @@ What it does (safe, conservative):
   6) Flags obvious import-time calls (bare Call expr at module level) with a TODO comment about side-effects.
 
 Usage:
-  # Dry-run (default) on current directory
   python genomevault_autofix.py
 
-  # Apply in-place changes
   python genomevault_autofix.py --apply
 
-  # Target a specific repo path
   python genomevault_autofix.py --root /path/to/repo --apply
 
-  # Include tests and scripts (by default excluded)
   python genomevault_autofix.py --apply --include-tests --include-scripts
 
 Requires:
@@ -510,7 +507,7 @@ def main():
         ns.root, include_tests=ns.include_tests, include_scripts=ns.include_scripts
     )
     if ns.verbose:
-        print(f"Discovered {len(py_files)} Python files under {ns.root}", file=sys.stderr)
+        logger.debug(f"Discovered {len(py_files)} Python files under {ns.root}", file=sys.stderr)
 
     total_changes = 0
     totals = {
@@ -525,7 +522,7 @@ def main():
     for path in py_files:
         changed, msg, summary = process_file(path, apply=ns.apply, verbose=ns.verbose)
         if ns.verbose and changed:
-            print(f"[CHANGED] {path} -> {summary}", file=sys.stderr)
+            logger.debug(f"[CHANGED] {path} -> {summary}", file=sys.stderr)
         if changed:
             totals["files_changed"] += 1
         for k in (
@@ -537,11 +534,11 @@ def main():
         ):
             totals[k] += summary.get(k, 0)
 
-    print("==== Autofix Summary ====")
+    logger.debug("==== Autofix Summary ====")
     for k, v in totals.items():
-        print(f"{k}: {v}")
+        logger.debug(f"{k}: {v}")
     if not ns.apply:
-        print("\n(Dry-run only; re-run with --apply to write changes.)")
+        logger.debug("\n(Dry-run only; re-run with --apply to write changes.)")
 
 
 if __name__ == "__main__":

@@ -4,6 +4,9 @@ Tests for hypervector encoding with golden vectors, stability tests, and benchma
 
 from __future__ import annotations
 
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
+
 import time
 
 import numpy as np
@@ -311,10 +314,10 @@ class TestPerformanceBenchmarks:
         variants_per_second = n_variants / encoding_time
         ms_per_variant = (encoding_time / n_variants) * 1000
 
-        print(f"\nDimension: {dimension}, Projection: {projection_type}")
-        print(f"Encoded {n_variants} variants in {encoding_time:.2f} seconds")
-        print(f"Throughput: {variants_per_second:.0f} variants/second")
-        print(f"Latency: {ms_per_variant:.3f} ms/variant")
+        logger.debug(f"\nDimension: {dimension}, Projection: {projection_type}")
+        logger.debug(f"Encoded {n_variants} variants in {encoding_time:.2f} seconds")
+        logger.debug(f"Throughput: {variants_per_second:.0f} variants/second")
+        logger.debug(f"Latency: {ms_per_variant:.3f} ms/variant")
 
         # Basic performance assertion (adjust based on hardware)
         # On 8-core CPU, should encode at least 1000 variants/second
@@ -364,8 +367,8 @@ class TestPerformanceBenchmarks:
                 0, 1
             ]
 
-            print(f"\n{projection_type} projection similarity preservation:")
-            print(f"Correlation: {correlation:.3f}")
+            logger.debug(f"\n{projection_type} projection similarity preservation:")
+            logger.debug(f"Correlation: {correlation:.3f}")
 
             # Should preserve similarity structure reasonably well
             assert (
@@ -390,10 +393,10 @@ class TestPerformanceBenchmarks:
             vec_memory = sys.getsizeof(vec1)
             expected_memory = dim * 8  # 8 bytes per float64
 
-            print(f"\nDimension {dim}:")
-            print(f"Vector memory: {vec_memory} bytes")
-            print(f"Expected: ~{expected_memory} bytes")
-            print(f"Overhead: {vec_memory - expected_memory} bytes")
+            logger.debug(f"\nDimension {dim}:")
+            logger.debug(f"Vector memory: {vec_memory} bytes")
+            logger.debug(f"Expected: ~{expected_memory} bytes")
+            logger.debug(f"Overhead: {vec_memory - expected_memory} bytes")
 
             # Memory should be close to expected (some overhead is normal)
             assert (
@@ -405,7 +408,7 @@ if __name__ == "__main__":
     # Run performance benchmarks
     benchmarks = TestPerformanceBenchmarks()
 
-    print("Running performance benchmarks...")
+    logger.debug("Running performance benchmarks...")
     for dim in [10000, 15000, 20000]:
         for proj in ["sparse", "orthogonal"]:
             benchmarks.test_encoding_performance(dim, proj)

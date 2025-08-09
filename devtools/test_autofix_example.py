@@ -1,18 +1,22 @@
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
+
+
 #!/usr/bin/env python3
 """
 Example file to demonstrate autofix changes
 """
 
 # Example 1: Print statements that should be converted to logging
-print("Starting the application")
-print(f"Processing file: {filename}")
+logger.debug("Starting the application")
+logger.debug(f"Processing file: {filename}")
 
 # Example 2: Bare except clause
 try:
     risky_operation()
 except Exception:
     logger.exception("Unhandled exception")
-    print("Something went wrong")
+    logger.debug("Something went wrong")
     raise
 
 # Example 3: Broad exception handling
@@ -40,11 +44,11 @@ class MyClass:
         """Method with various issues"""
         try:
             result = param1 + param2
-            print(f"Result is: {result}")
+            logger.debug(f"Result is: {result}")
             return result
         except Exception:
             logger.exception("Unhandled exception")
-            print("Failed to calculate")
+            logger.debug("Failed to calculate")
             raise
 
 

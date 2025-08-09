@@ -1,3 +1,7 @@
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
+
+
 #!/usr/bin/env python3
 """
 Unit tests for enhanced_cleanup.py exception handling.
@@ -26,7 +30,7 @@ except ImportError:
             self.errors_found = []
 
         def log_error(self, message, phase="general"):
-            print(f"ERROR: {message}")
+            logger.debug(f"ERROR: {message}")
             self.errors_found.append(message)
 
         def get_file_hash(self, file_path):
@@ -246,42 +250,42 @@ class TestExceptionContextLogging(unittest.TestCase):
 
 def run_single_test():
     """Run a single test to demonstrate exception handling works."""
-    print("🧪 Testing exception handling in enhanced_cleanup.py...")
+    logger.debug("🧪 Testing exception handling in enhanced_cleanup.py...")
 
     # Create test instance
     temp_dir = tempfile.mkdtemp()
     cleanup = EnhancedCleanup(temp_dir)
 
-    print(f"✓ Created test cleanup instance in {temp_dir}")
+    logger.debug(f"✓ Created test cleanup instance in {temp_dir}")
 
     # Test 1: get_file_hash with non-existent file
-    print("\n📋 Test 1: get_file_hash with non-existent file")
+    logger.debug("\n📋 Test 1: get_file_hash with non-existent file")
     non_existent = Path(temp_dir) / "does_not_exist.py"
     result = cleanup.get_file_hash(non_existent)
 
-    print(f"  Result: '{result}' (should be empty string)")
-    print(f"  Errors logged: {len(cleanup.errors_found)}")
+    logger.debug(f"  Result: '{result}' (should be empty string)")
+    logger.debug(f"  Errors logged: {len(cleanup.errors_found)}")
     if cleanup.errors_found:
-        print(f"  Last error: {cleanup.errors_found[-1]}")
+        logger.debug(f"  Last error: {cleanup.errors_found[-1]}")
 
     # Test 2: Verify error contains context
     if cleanup.errors_found and "does_not_exist.py" in cleanup.errors_found[-1]:
-        print("  ✅ PASS: Exception was properly caught and logged with file context")
+        logger.debug("  ✅ PASS: Exception was properly caught and logged with file context")
     else:
-        print("  ❌ FAIL: Exception was not properly logged")
+        logger.debug("  ❌ FAIL: Exception was not properly logged")
         return False
 
     # Test 3: Verify no exception was raised (not silently swallowed)
     try:
         cleanup.get_file_hash(Path("/completely/invalid/path/file.py"))
-        print("\n📋 Test 2: Exception handling - no crash")
-        print("  ✅ PASS: Method did not crash despite invalid input")
+        logger.debug("\n📋 Test 2: Exception handling - no crash")
+        logger.debug("  ✅ PASS: Method did not crash despite invalid input")
     except Exception as e:
-        print(f"  ❌ FAIL: Method raised exception: {e}")
+        logger.debug(f"  ❌ FAIL: Method raised exception: {e}")
         return False
 
-    print(f"\n📊 Final state: {len(cleanup.errors_found)} errors logged total")
-    print("🎉 All exception handling tests passed!")
+    logger.debug(f"\n📊 Final state: {len(cleanup.errors_found)} errors logged total")
+    logger.debug("🎉 All exception handling tests passed!")
     return True
 
 

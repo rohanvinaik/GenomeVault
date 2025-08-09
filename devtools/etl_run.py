@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
+
 import argparse
 import json
+
 
 from genomevault.pipelines.etl import run_etl
 

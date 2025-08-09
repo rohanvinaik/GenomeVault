@@ -1,3 +1,7 @@
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
+
+
 #!/usr/bin/env python3
 """
 Quick Ruff upgrade and configuration fix.
@@ -11,7 +15,7 @@ from pathlib import Path
 
 def upgrade_ruff():
     """Upgrade Ruff to version 0.4.4."""
-    print("🔧 Upgrading Ruff to 0.4.4...")
+    logger.debug("🔧 Upgrading Ruff to 0.4.4...")
 
     # Try pip first
     try:
@@ -23,12 +27,12 @@ def upgrade_ruff():
         )
 
         if result.returncode == 0:
-            print("✅ Ruff upgraded successfully via pip")
+            logger.info("✅ Ruff upgraded successfully via pip")
             return True
         else:
-            print(f"pip failed: {result.stderr}")
+            logger.error(f"pip failed: {result.stderr}")
     except Exception as e:
-        print(f"pip error: {e}")
+        logger.error(f"pip error: {e}")
 
     # Try pip3
     try:
@@ -40,25 +44,25 @@ def upgrade_ruff():
         )
 
         if result.returncode == 0:
-            print("✅ Ruff upgraded successfully via pip3")
+            logger.info("✅ Ruff upgraded successfully via pip3")
             return True
         else:
-            print(f"pip3 failed: {result.stderr}")
+            logger.error(f"pip3 failed: {result.stderr}")
     except Exception as e:
-        print(f"pip3 error: {e}")
+        logger.error(f"pip3 error: {e}")
 
-    print("❌ Could not upgrade Ruff")
+    logger.debug("❌ Could not upgrade Ruff")
     return False
 
 
 def update_ruff_config():
     """Update .ruff.toml to use max-violations."""
-    print("📝 Updating Ruff configuration...")
+    logger.debug("📝 Updating Ruff configuration...")
 
     ruff_config = Path("/Users/rohanvinaik/genomevault/.ruff.toml")
 
     if not ruff_config.exists():
-        print("❌ .ruff.toml not found")
+        logger.debug("❌ .ruff.toml not found")
         return False
 
     content = ruff_config.read_text()
@@ -67,34 +71,34 @@ def update_ruff_config():
     if "[output]" not in content:
         new_content = "[output]\\nmax-violations = 200\\n\\n" + content
         ruff_config.write_text(new_content)
-        print("✅ Added [output] section with max-violations = 200")
+        logger.debug("✅ Added [output] section with max-violations = 200")
     else:
-        print("✅ [output] section already exists")
+        logger.debug("✅ [output] section already exists")
 
     return True
 
 
 def verify_setup():
     """Verify Ruff version and configuration."""
-    print("🔍 Verifying setup...")
+    logger.debug("🔍 Verifying setup...")
 
     # Check version
     try:
         result = subprocess.run(["ruff", "--version"], capture_output=True, text=True)
         if result.returncode == 0:
             version = result.stdout.strip()
-            print(f"Ruff version: {version}")
+            logger.debug(f"Ruff version: {version}")
 
             if "0.4" in version:
-                print("✅ Ruff version is adequate")
+                logger.debug("✅ Ruff version is adequate")
             else:
-                print("❌ Ruff version may still be old")
+                logger.debug("❌ Ruff version may still be old")
                 return False
         else:
-            print("❌ Could not get Ruff version")
+            logger.debug("❌ Could not get Ruff version")
             return False
     except Exception as e:
-        print(f"❌ Error checking Ruff version: {e}")
+        logger.error(f"❌ Error checking Ruff version: {e}")
         return False
 
     # Test configuration
@@ -107,43 +111,43 @@ def verify_setup():
             timeout=10,
         )
 
-        print(f"Ruff config test exit code: {result.returncode}")
+        logger.debug(f"Ruff config test exit code: {result.returncode}")
         if "unknown field" in result.stderr:
-            print("❌ Configuration still has issues")
+            logger.debug("❌ Configuration still has issues")
             return False
         else:
-            print("✅ Ruff configuration is working")
+            logger.debug("✅ Ruff configuration is working")
             return True
 
     except Exception as e:
-        print(f"❌ Error testing Ruff config: {e}")
+        logger.error(f"❌ Error testing Ruff config: {e}")
         return False
 
 
 def main():
-    print("🚀 Ruff Upgrade and Configuration Fix\\n")
+    logger.debug("🚀 Ruff Upgrade and Configuration Fix\\n")
 
     # Step 1: Upgrade Ruff
     if not upgrade_ruff():
-        print("\\n❌ Failed to upgrade Ruff. You may need to:")
-        print("   1. Check your Python environment")
-        print("   2. Try: pip install --upgrade ruff==0.4.4")
-        print("   3. Or: conda install -c conda-forge ruff=0.4.4")
+        logger.error("\\n❌ Failed to upgrade Ruff. You may need to:")
+        logger.debug("   1. Check your Python environment")
+        logger.debug("   2. Try: pip install --upgrade ruff==0.4.4")
+        logger.debug("   3. Or: conda install -c conda-forge ruff=0.4.4")
         sys.exit(1)
 
     # Step 2: Update configuration
     if not update_ruff_config():
-        print("\\n❌ Failed to update configuration")
+        logger.error("\\n❌ Failed to update configuration")
         sys.exit(1)
 
     # Step 3: Verify everything works
     if not verify_setup():
-        print("\\n❌ Setup verification failed")
+        logger.error("\\n❌ Setup verification failed")
         sys.exit(1)
 
-    print("\\n🎉 Success! Ruff is now ready for Phase 3 F821 fixing.")
-    print("\\nYou can now run:")
-    print("   python enhanced_cleanup.py --phase 3")
+    logger.info("\\n🎉 Success! Ruff is now ready for Phase 3 F821 fixing.")
+    logger.debug("\\nYou can now run:")
+    logger.debug("   python enhanced_cleanup.py --phase 3")
 
 
 if __name__ == "__main__":

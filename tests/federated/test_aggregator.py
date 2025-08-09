@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
 
+
 from genomevault.core.exceptions import ValidationError
 from genomevault.federated.aggregator import FedAvgAggregator
 from genomevault.federated.models import AggregateRequest, ModelUpdate

@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
+
 import re
 import subprocess
 from pathlib import Path
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
+
+
 
 root = Path(".")
 outdir = Path(".tidy")
@@ -121,6 +126,6 @@ with (outdir / "old_unreferenced_scripts.txt").open("w", encoding="utf-8") as f:
     for r in sorted(short, key=lambda x: (-x["days_since_commit"], x["path"])):
         f.write(r["path"] + "\n")
 
-print("Wrote:", tsv, "and", outdir / "old_unreferenced_scripts.txt")
-print(f"Found {len(candidates)} script candidates")
-print(f"Found {len(short)} old unreferenced scripts (>=120 days)")
+logger.debug("Wrote:", tsv, "and", outdir / "old_unreferenced_scripts.txt")
+logger.debug(f"Found {len(candidates)} script candidates")
+logger.debug(f"Found {len(short)} old unreferenced scripts (>=120 days)")

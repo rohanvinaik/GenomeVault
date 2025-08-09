@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 Performance benchmarking harness for GenomeVault.
 Supports multiple lanes: ZK, PIR, HDC.
@@ -406,7 +407,7 @@ def main():
     # Run benchmarks
     output_file = asyncio.run(run_benchmarks(args.lane, args.output))
 
-    print(f"Benchmark complete. Results saved to: {output_file}")
+    logger.info(f"Benchmark complete. Results saved to: {output_file}")
 
 
 if __name__ == "__main__":

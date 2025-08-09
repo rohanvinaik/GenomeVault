@@ -1,3 +1,7 @@
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
+
+
 """
 Tests for bit-packed hypervector implementation
 """
@@ -244,12 +248,12 @@ class TestPerformance:
 
 if __name__ == "__main__":
     # Run basic tests
-    print("Testing PackedHV implementation...")
+    logger.debug("Testing PackedHV implementation...")
 
     # Test creation and memory
     hv = PackedHV(10000)
-    print(f"Created {hv.n_bits}-bit hypervector using {hv.memory_bytes} bytes")
-    print(f"Compression vs float32: {10000 * 4 / hv.memory_bytes:.1f}x")
+    logger.debug(f"Created {hv.n_bits}-bit hypervector using {hv.memory_bytes} bytes")
+    logger.debug(f"Compression vs float32: {10000 * 4 / hv.memory_bytes:.1f}x")
 
     # Test genomic encoding
     encoder = PackedGenomicEncoder(dimension=10000)
@@ -271,5 +275,5 @@ if __name__ == "__main__":
     ]
 
     genome_hv = encoder.encode_genome(variants)
-    print(f"\nEncoded {len(variants)} variants into packed hypervector")
-    print(f"Memory efficiency: {encoder.memory_efficiency}x")
+    logger.debug(f"\nEncoded {len(variants)} variants into packed hypervector")
+    logger.debug(f"Memory efficiency: {encoder.memory_efficiency}x")

@@ -1,3 +1,7 @@
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
+
+
 #!/usr/bin/env python3
 """
 Debug script for GenomeVault - identifies and helps fix common issues
@@ -16,10 +20,10 @@ class GenomeVaultDebugger:
 
     def check_python_version(self):
         """Check if Python version is compatible"""
-        print("🐍 Checking Python version...")
+        logger.debug("🐍 Checking Python version...")
         version = sys.version_info
         if version.major == 3 and version.minor >= 8:
-            print("  ✅ Python {version.major}.{version.minor}.{version.micro} is compatible")
+            logger.debug("  ✅ Python {version.major}.{version.minor}.{version.micro} is compatible")
             return True
         else:
             self.issues.append("Python {version.major}.{version.minor} is too old. Need 3.8+")
@@ -27,17 +31,17 @@ class GenomeVaultDebugger:
 
     def check_pydantic(self):
         """Check Pydantic installation and version"""
-        print("📦 Checking Pydantic...")
+        logger.debug("📦 Checking Pydantic...")
         try:
             import pydantic
 
-            print("  ✅ Pydantic {version} is installed")
+            logger.debug("  ✅ Pydantic {version} is installed")
 
             # Check if pydantic-settings is installed
             try:
                 import pydantic_settings
 
-                print("  ✅ pydantic-settings is installed")
+                logger.debug("  ✅ pydantic-settings is installed")
                 return True
             except ImportError:
                 logger.exception("Unhandled exception")
@@ -52,7 +56,7 @@ class GenomeVaultDebugger:
 
     def fix_pydantic(self):
         """Fix Pydantic issues"""
-        print("🔧 Fixing Pydantic issues...")
+        logger.debug("🔧 Fixing Pydantic issues...")
         try:
             subprocess.run(
                 [
@@ -73,13 +77,13 @@ class GenomeVaultDebugger:
             return True
         except subprocess.CalledProcessError:
             logger.exception("Unhandled exception")
-            print("  ❌ Failed to fix Pydantic: {e}")
+            logger.error("  ❌ Failed to fix Pydantic: {e}")
             return False
             raise
 
     def check_imports(self):
         """Check if all GenomeVault modules can be imported"""
-        print("📦 Checking GenomeVault imports...")
+        logger.debug("📦 Checking GenomeVault imports...")
 
         modules_to_check = [
             "core.config",
@@ -95,10 +99,10 @@ class GenomeVaultDebugger:
         for module in modules_to_check:
             try:
                 __import__(module)
-                print("  ✅ {module}")
+                logger.debug("  ✅ {module}")
             except ImportError as e:
                 logger.exception("Unhandled exception")
-                print("  ❌ {module}: {e}")
+                logger.debug("  ❌ {module}: {e}")
                 failed_imports.append((module, str(e)))
                 raise
 
@@ -109,7 +113,7 @@ class GenomeVaultDebugger:
 
     def check_requirements(self):
         """Check if all requirements are installed"""
-        print("📦 Checking requirements...")
+        logger.debug("📦 Checking requirements...")
 
         try:
             with open(self.root_dir / "requirements.txt") as f:
@@ -132,7 +136,7 @@ class GenomeVaultDebugger:
                 self.issues.append("Missing packages: {', '.join(missing)}")
                 return False
 
-            print("  ✅ All requirements satisfied")
+            logger.debug("  ✅ All requirements satisfied")
             return True
 
         except FileNotFoundError:
@@ -143,7 +147,7 @@ class GenomeVaultDebugger:
 
     def run_tests(self):
         """Run basic tests"""
-        print("🧪 Running tests...")
+        logger.debug("🧪 Running tests...")
         try:
             result = subprocess.run(
                 [sys.executable, "-m", "pytest", "tests/test_simple.py", "-v"],
@@ -152,11 +156,11 @@ class GenomeVaultDebugger:
                 text=True,
             )
             if result.returncode == 0:
-                print("  ✅ Tests passed!")
+                logger.info("  ✅ Tests passed!")
                 return True
             else:
-                print("  ❌ Tests failed:")
-                print(result.stdout)
+                logger.error("  ❌ Tests failed:")
+                logger.debug(result.stdout)
                 self.issues.append("Tests failed")
                 return False
         except subprocess.CalledProcessError:
@@ -167,52 +171,52 @@ class GenomeVaultDebugger:
 
     def run_diagnostics(self):
         """Run all diagnostics"""
-        print("=" * 60)
-        print("🔍 GenomeVault Diagnostic Tool")
-        print("=" * 60)
-        print()
+        logger.debug("=" * 60)
+        logger.debug("🔍 GenomeVault Diagnostic Tool")
+        logger.debug("=" * 60)
+        # Removed empty print()
 
         # Run checks
         self.check_python_version()
-        print()
+        # Removed empty print()
 
         pydantic_ok = self.check_pydantic()
         if not pydantic_ok:
             self.fix_pydantic()
             pydantic_ok = self.check_pydantic()
-        print()
+        # Removed empty print()
 
         self.check_requirements()
-        print()
+        # Removed empty print()
 
         self.check_imports()
-        print()
+        # Removed empty print()
 
         if not self.issues:
             self.run_tests()
 
         # Summary
-        print()
-        print("=" * 60)
-        print("📊 Summary")
-        print("=" * 60)
+        # Removed empty print()
+        logger.debug("=" * 60)
+        logger.debug("📊 Summary")
+        logger.debug("=" * 60)
 
         if self.fixed:
-            print("✅ Fixed issues:")
+            logger.debug("✅ Fixed issues:")
             for fix in self.fixed:
-                print("  - {fix}")
-            print()
+                logger.debug("  - {fix}")
+            # Removed empty print()
 
         if self.issues:
-            print("❌ Remaining issues:")
+            logger.debug("❌ Remaining issues:")
             for issue in self.issues:
-                print("  - {issue}")
-            print()
-            print("🔧 To fix remaining issues, run:")
-            print("  pip install -r requirements.txt")
-            print("  ./fix_dependencies.sh")
+                logger.debug("  - {issue}")
+            # Removed empty print()
+            logger.debug("🔧 To fix remaining issues, run:")
+            logger.debug("  pip install -r requirements.txt")
+            logger.debug("  ./fix_dependencies.sh")
         else:
-            print("✅ All checks passed! GenomeVault is ready to use.")
+            logger.info("✅ All checks passed! GenomeVault is ready to use.")
 
         return len(self.issues) == 0
 

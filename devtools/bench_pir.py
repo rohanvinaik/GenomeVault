@@ -1,9 +1,9 @@
-from __future__ import annotations
-
 """
 PIR Performance Benchmarking Script
 Measures latency, throughput, and resource usage for PIR operations.
 """
+
+from __future__ import annotations
 
 import argparse
 import asyncio

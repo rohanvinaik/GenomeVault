@@ -1,6 +1,7 @@
 from genomevault.governance.policy.classifier import classify_record
 
 
+
 def test_classify_record_uses_policy(tmp_path, monkeypatch):
     policy = tmp_path / "policy.json"
     policy.write_text(

@@ -1,9 +1,11 @@
-# devtools/assert_no_stubs.py
 from __future__ import annotations
 
 import re
 import sys
 from pathlib import Path
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
+
 
 PATTERNS = [
     r"\braise\s+NotImplementedError\b",
@@ -36,7 +38,7 @@ def main() -> int:
             file=sys.stderr,
         )
         for f in offenders:
-            print(f" - {f}", file=sys.stderr)
+            logger.debug(f" - {f}", file=sys.stderr)
         return 1
     return 0
 
