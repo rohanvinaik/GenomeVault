@@ -3,6 +3,10 @@ from __future__ import annotations
 import re
 import sys
 from pathlib import Path
+
+# Add parent directory to path to allow imports
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 from genomevault.utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -39,7 +43,7 @@ def main() -> int:
             file=sys.stderr,
         )
         for f in offenders:
-            logger.debug(f" - {f}", file=sys.stderr)
+            print(f" - {f}", file=sys.stderr)
         return 1
     return 0
 
