@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: genomevault-blockchain
+  namespace: genomevault
+  labels:
+    app: genomevault
+    component: blockchain
+spec:
+  type: ClusterIP
+  clusterIP: None  # Headless service for StatefulSet
+  selector:
+    app: genomevault
+    component: blockchain
+  ports:
+  - name: p2p
+    port: 26656
+    targetPort: 26656
+    protocol: TCP
+  - name: rpc
+    port: 26657
+    targetPort: 26657
+    protocol: TCP
+  - name: prometheus
+    port: 26660
+    targetPort: 26660
+    protocol: TCP

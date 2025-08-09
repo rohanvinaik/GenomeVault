@@ -22,7 +22,7 @@ from typing import List
 class FocusedCleanup:
     def __init__(self, repo_root: str = "/Users/rohanvinaik/genomevault"):
         self.repo_root = Path(repo_root)
-        self.fixes_applied = []
+        self.fixes_applied: List[str] = []
 
     def log_fix(self, message: str):
         """Log a fix that was applied."""
@@ -205,7 +205,7 @@ class FocusedCleanup:
             for var_name, default_value in common_fixes.items():
                 if var_name in line and not line.strip().startswith("#"):
                     # Check if the variable is already defined
-                    if not any(f"{var_name} =" in l for l in lines[:i]):
+                    if not any(f"{var_name} =" in line_text for line_text in lines[:i]):
                         # Add the definition at the top of the file
                         # Find constants section or create one
                         const_pos = self.find_constants_section(lines)
@@ -624,7 +624,39 @@ def main():
 
     if args.dry_run:
         print("DRY RUN MODE - No changes will be made")
-        # TODO: Implement dry run logic
+        print("\nThe following fixes would be applied:")
+        print("-" * 50)
+
+        # Check what would be fixed
+        cleanup_check = FocusedCleanup(args.repo_root)
+
+        # List potential fixes
+        print("\n1. Core exceptions module:")
+        exceptions_path = cleanup_check.repo_root / "genomevault" / "core" / "exceptions.py"
+        if exceptions_path.exists():
+            print(f"   - Would check and fix placeholders in {exceptions_path}")
+
+        print("\n2. ZK proof stub modules:")
+        stubs_to_check = [
+            "genomevault/zk_proofs/circuits/base_circuits.py",
+            "genomevault/zk_proofs/post_quantum.py",
+        ]
+        for stub in stubs_to_check:
+            stub_path = cleanup_check.repo_root / stub
+            if not stub_path.exists():
+                print(f"   - Would create stub module: {stub}")
+            else:
+                print(f"   - Would check: {stub}")
+
+        print("\n3. Placeholder functions:")
+        print("   - Would scan for 'pass' only functions and convert to NotImplementedError")
+
+        print("\n4. MyPy configuration:")
+        mypy_path = cleanup_check.repo_root / "mypy.ini"
+        if not mypy_path.exists():
+            print("   - Would create mypy.ini configuration file")
+
+        print("\nRun without --dry-run to apply these fixes.")
         return
 
     cleanup.run_all_fixes()

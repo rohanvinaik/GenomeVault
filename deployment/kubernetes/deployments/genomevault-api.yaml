@@ -1,0 +1,131 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: genomevault-api
+  namespace: genomevault
+  labels:
+    app: genomevault
+    component: api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: genomevault
+      component: api
+  template:
+    metadata:
+      labels:
+        app: genomevault
+        component: api
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: genomevault-api
+
+      initContainers:
+      - name: wait-for-blockchain
+        image: busybox:1.35
+        command: ['sh', '-c', 'until nc -z genomevault-blockchain 26657; do echo waiting for blockchain; sleep 2; done;']
+
+      containers:
+      - name: api
+        image: genomevault/api:3.0.0
+        imagePullPolicy: IfNotPresent
+
+        ports:
+        - name: http
+          containerPort: 8000
+          protocol: TCP
+        - name: metrics
+          containerPort: 9090
+          protocol: TCP
+
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: ENCRYPTION_KEY
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-secrets
+              key: encryption-key
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-secrets
+              key: database-url
+
+        envFrom:
+        - configMapRef:
+            name: genomevault-config
+
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+
+        volumeMounts:
+        - name: config
+          mountPath: /config
+          readOnly: true
+        - name: cache
+          mountPath: /cache
+        - name: tls-certs
+          mountPath: /etc/tls
+          readOnly: true
+
+      volumes:
+      - name: config
+        configMap:
+          name: genomevault-config
+      - name: cache
+        emptyDir:
+          sizeLimit: 1Gi
+      - name: tls-certs
+        secret:
+          secretName: genomevault-tls
+
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - genomevault
+                - key: component
+                  operator: In
+                  values:
+                  - api
+              topologyKey: kubernetes.io/hostname

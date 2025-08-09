@@ -1,3 +1,5 @@
+import pytest
+
 from genomevault.core.constants import HYPERVECTOR_DIMENSIONS
 from genomevault.core.exceptions import ProjectionError, ValidationError
 from genomevault.hypervector.engine import HypervectorEngine
@@ -37,19 +39,11 @@ def test_perm_and_bind():
 
 def test_invalid_dimension_raises():
     engine = HypervectorEngine()
-    try:
+    with pytest.raises(ProjectionError):
         engine.encode(data={"genomic": [1, 2]}, dimension=123)
-        assert False, "should have raised"
-    except ProjectionError:
-        logger.exception("Unhandled exception")
-        raise
 
 
 def test_missing_vector_id_raises():
     engine = HypervectorEngine()
-    try:
+    with pytest.raises(ValidationError):
         engine.calculate_similarity("nope", "nope2")
-        assert False, "should have raised"
-    except ValidationError:
-        logger.exception("Unhandled exception")
-        raise

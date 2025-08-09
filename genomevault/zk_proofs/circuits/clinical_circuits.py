@@ -1,31 +1,71 @@
-##from clinical_validation.circuits import (  # Import from the new refactored location; DEPRECATED:, All, BaseCircuit, CircuitType, Clinical,
-(
-    ClinicalBiomarkerCircuit,
-    DiabetesRiskCircuit,
-    ProofData,
-    This,
-    """, -,
-    backward, circuits, clinical_validation.circuits,
-    clinical_validation.proofs, code, code., compatibility, create_circuit,
-    directly., existing, file, for, from, import, instead., module, new,
-    provides, should, use)
+"""
+Clinical circuits module - placeholder for backward compatibility.
+Actual implementation moved to clinical subdirectory.
+"""
 
-# Issue deprecation warning
+import warnings
+
+
+# Placeholder classes for backward compatibility
+class ClinicalBiomarkerCircuit:
+    """Placeholder - use genomevault.zk_proofs.circuits.clinical instead"""
+
+    def __init__(self):
+        warnings.warn(
+            "ClinicalBiomarkerCircuit moved to genomevault.zk_proofs.circuits.clinical",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
+
+class DiabetesRiskCircuit:
+    """Placeholder - use genomevault.zk_proofs.circuits.clinical instead"""
+
+    def __init__(self):
+        warnings.warn(
+            "DiabetesRiskCircuit moved to genomevault.zk_proofs.circuits.clinical",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
+
+class ProofData:
+    """Placeholder - use genomevault.zk_proofs.circuits.clinical instead"""
+
+    def __init__(self):
+        warnings.warn(
+            "ProofData moved to genomevault.zk_proofs.circuits.clinical",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
+
+class ClinicalCircuit:
+    """Placeholder - use genomevault.zk_proofs.circuits.clinical instead"""
+
+    def __init__(self):
+        warnings.warn(
+            "ClinicalCircuit moved to genomevault.zk_proofs.circuits.clinical",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
+
+def create_circuit(*args, **kwargs):
+    """Placeholder - use genomevault.zk_proofs.circuits.clinical instead"""
+    warnings.warn(
+        "genomevault.zk_proofs.circuits.clinical_circuits is deprecated. "
+        "Use genomevault.zk_proofs.circuits.clinical instead.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return None
+
+
+# Issue deprecation warning on import
 warnings.warn(
     "genomevault.zk_proofs.circuits.clinical_circuits is deprecated. "
-    "Use clinical_validation.circuits instead.",
+    "Use genomevault.zk_proofs.circuits.clinical instead.",
     DeprecationWarning,
     stacklevel=2,
-)
-
-# Re-export for backward compatibility
-__all__ = [
-    "BaseCircuit",
-    "CircuitType",
-    "ClinicalBiomarkerCircuit",
-    "DiabetesRiskCircuit",
-    "ProofData",
-    "create_circuit",
-]
-""",
 )

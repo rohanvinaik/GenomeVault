@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: genomevault-scripts
+  namespace: genomevault
+data:
+  healthcheck.sh: |
+    #!/bin/bash
+    # Health check script for GenomeVault services
+
+    # Check API health
+    curl -f http://localhost:8000/health || exit 1
+
+    # Check metrics endpoint
+    curl -f http://localhost:9090/metrics || exit 1
+
+    # Check blockchain sync status
+    SYNC_STATUS=$(curl -s http://localhost:26657/status | jq -r '.result.sync_info.catching_up')
+    if [ "$SYNC_STATUS" = "true" ]; then
+      echo "Node is still syncing"
+      exit 1
+    fi
+
+    echo "All health checks passed"
+    exit 0
+
+  init-node.sh: |
+    #!/bin/bash
+    # Initialize GenomeVault node
+
+    echo "Initializing GenomeVault node..."
+
+    # Create required directories
+    mkdir -p /data/genomevault/{blockchain,pir,backups,logs}
+
+    # Initialize blockchain node
+    if [ ! -f /data/genomevault/blockchain/config/genesis.json ]; then
+      echo "Initializing blockchain..."
+      genomevault-node init --home /data/genomevault/blockchain
+    fi
+
+    # Set up PIR shards
+    if [ "$PIR_NODE_TYPE" = "server" ]; then
+      echo "Setting up PIR server..."
+      genomevault-pir-server init --data-dir /data/genomevault/pir
+    fi
+
+    # Configure monitoring
+    echo "Configuring monitoring..."
+    cp /config/prometheus.yml /etc/prometheus/
+
+    echo "Node initialization complete"

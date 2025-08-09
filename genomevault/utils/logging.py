@@ -17,3 +17,8 @@ def log_operation(func):
         return func(*args, **kwargs)
 
     return wrapper
+
+
+# Default logger instances for backward compatibility
+logger = get_logger(__name__)
+performance_logger = get_logger("genomevault.performance")
