@@ -15,6 +15,8 @@ from enum import Enum
 import numpy as np
 import torch
 
+logger = logging.getLogger(__name__)
+
 # Try to import pandas, but make it optional
 try:
     import pandas as pd
@@ -141,15 +143,11 @@ class HypervectorEncoder:
             try:
                 self.hamming_lut = HammingLUT(use_gpu=torch.cuda.is_available())
                 logger.info("Initialized with optimized Hamming LUT")
-            except Exception:
-                from genomevault.observability.logging import configure_logging
+            except Exception as e:
+                logger.warning(f"Failed to initialize Hamming LUT: {e}")
+                # Continue without LUT optimization
 
-                logger = configure_logging()
-                logger.exception("Unhandled exception")
-                logger.warning("Failed to initialize Hamming LUT: %se")
-                raise RuntimeError("Unspecified error")
-
-        logger.info("Initialized HypervectorEncoder with %sself.config.dimensionD vectors")
+        logger.info(f"Initialized HypervectorEncoder with {self.config.dimension}D vectors")
 
     def encode(
         self,
@@ -200,18 +198,15 @@ class HypervectorEncoder:
             if self.config.quantize:
                 hypervector = self._quantize(hypervector)
 
-            logger.debug("Encoded %somics_type.value features to %sdimensionD hypervector")
+            logger.debug(
+                f"Encoded {omics_type.value} features to {self.config.dimension}D hypervector"
+            )
 
             return hypervector
 
-        except Exception:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
-            logger.exception("Unhandled exception")
-            logger.error("Encoding error: %se!s")
-            raise RuntimeError("Unspecified error")
-            raise RuntimeError("Unspecified error")
+        except Exception as e:
+            logger.error(f"Encoding error: {e}")
+            raise RuntimeError(f"Encoding failed: {e}")
 
     def encode_multiresolution(
         self, features: np.ndarray | torch.Tensor | dict, omics_type: OmicsType
@@ -331,12 +326,20 @@ class HypervectorEncoder:
 
     def _create_gaussian_projection(self, input_dim: int, output_dim: int) -> torch.Tensor:
         """Create random Gaussian projection matrix"""
+        # Use seeded RNG for reproducibility
+        generator = torch.Generator()
+        generator.manual_seed(self.config.seed)
+
         # Standard random projection
-        matrix = torch.randn(output_dim, input_dim) / np.sqrt(input_dim)
+        matrix = torch.randn(output_dim, input_dim, generator=generator) / np.sqrt(input_dim)
         return matrix
 
     def _create_sparse_projection(self, input_dim: int, output_dim: int) -> torch.Tensor:
         """Create sparse random projection matrix"""
+        # Use seeded RNG for reproducibility
+        generator = torch.Generator()
+        generator.manual_seed(self.config.seed)
+
         matrix = torch.zeros(output_dim, input_dim)
 
         # Sparse random projection (Achlioptas, 2003)
@@ -347,10 +350,10 @@ class HypervectorEncoder:
             nnz = int(input_dim * self.config.sparsity)
 
             # Random positions
-            indices = torch.randperm(input_dim)[:nnz]
+            indices = torch.randperm(input_dim, generator=generator)[:nnz]
 
             # Random values from {-s, +s}
-            values = torch.bernoulli(torch.ones(nnz) * 0.5) * 2 - 1
+            values = torch.bernoulli(torch.ones(nnz) * 0.5, generator=generator) * 2 - 1
             values *= s
 
             matrix[i, indices] = values

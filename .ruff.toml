@@ -12,3 +12,4 @@ exclude = [
 
 [lint.per-file-ignores]
 "tools/*.py" = ["ALL"]        # silence helper scripts
+"examples/*.py" = ["E402"]    # allow imports after setup/config in examples

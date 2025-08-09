@@ -15,7 +15,12 @@ from typing import Any
 import numpy as np
 import torch
 
-from .hdc_encoder import HypervectorConfig, HypervectorEncoder, ProjectionType
+from .hdc_encoder import (
+    HypervectorConfig,
+    HypervectorEncoder,
+    OmicsType,
+    ProjectionType,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -56,46 +61,57 @@ class HypervectorRegistry:
         default_version = "v1.0.0"
 
         # Production-ready configurations
-        self.versions = {
-            default_version: {
-                "params": {
+        configs = [
+            (
+                default_version,
+                {
                     "dimension": 10000,
                     "projection_type": "sparse_random",
                     "seed": 42,
                     "sparsity": 0.1,
                 },
-                "created_at": datetime.now().isoformat(),
-                "description": "Default HDC encoding parameters - Clinical tier",
-                "tier": "clinical",
-            },
-            "mini_v1.0.0": {
-                "params": {
+                "Default HDC encoding parameters - Clinical tier",
+                "clinical",
+            ),
+            (
+                "mini_v1.0.0",
+                {
                     "dimension": 5000,
                     "projection_type": "sparse_random",
                     "seed": 42,
                     "sparsity": 0.05,
                 },
-                "created_at": datetime.now().isoformat(),
-                "description": "Mini tier for most-studied SNPs",
-                "tier": "mini",
-            },
-            "full_v1.0.0": {
-                "params": {
+                "Mini tier for most-studied SNPs",
+                "mini",
+            ),
+            (
+                "full_v1.0.0",
+                {
                     "dimension": 20000,
                     "projection_type": "sparse_random",
                     "seed": 42,
                     "sparsity": 0.1,
                 },
+                "Full tier for comprehensive analysis",
+                "full",
+            ),
+        ]
+
+        self.versions = {}
+        for version, params, description, tier in configs:
+            fingerprint = self._generate_fingerprint(params)
+            self.versions[version] = {
+                "params": params,
+                "fingerprint": fingerprint,
                 "created_at": datetime.now().isoformat(),
-                "description": "Full tier for comprehensive analysis",
-                "tier": "full",
-            },
-        }
+                "description": description,
+                "tier": tier,
+            }
 
         self.current_version = default_version
         self._save_registry()
 
-        logger.info("Initialized hypervector registry with version %sdefault_version")
+        logger.info(f"Initialized hypervector registry with version {default_version}")
 
     def _load_registry(self):
         """Load registry from file."""
@@ -108,16 +124,11 @@ class HypervectorRegistry:
             self.compatibility_map = data.get("compatibility_map", {})
             self.performance_metrics = data.get("performance_metrics", {})
 
-            logger.info("Loaded registry with %slen(self.versions) versions")
+            logger.info(f"Loaded registry with {len(self.versions)} versions")
 
-        except Exception:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
-            logger.exception("Unhandled exception")
-            logger.error("Failed to load registry: %se")
+        except Exception as e:
+            logger.error(f"Failed to load registry: {e}")
             self._initialize_registry()
-            raise RuntimeError("Unspecified error")
 
     def _save_registry(self):
         """Save registry to file with backup."""
@@ -144,17 +155,12 @@ class HypervectorRegistry:
             if backup_path and backup_path.exists():
                 backup_path.unlink()
 
-        except Exception:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
-            logger.exception("Unhandled exception")
-            logger.error("Failed to save registry: %se")
+        except Exception as e:
+            logger.error(f"Failed to save registry: {e}")
             # Restore backup
             if backup_path and backup_path.exists():
                 backup_path.rename(self.registry_path)
-            raise RuntimeError("Unspecified error")
-            raise RuntimeError("Unspecified error")
+            raise RuntimeError("Failed to save registry")
 
     def register_version(
         self,
@@ -217,21 +223,18 @@ class HypervectorRegistry:
 
         self._save_registry()
 
-        logger.info("Registered version %sversion with fingerprint %sfingerprint")
+        logger.info(f"Registered version {version} with fingerprint {fingerprint}")
 
-    def get_encoder(self, version: str | None = None) -> HypervectorEncoder:
+    def create_encoder(self, version: str) -> HypervectorEncoder:
         """
-        Get encoder with specific version parameters.
+        Create encoder from version parameters.
 
         Args:
-            version: Version to use (current if None)
+            version: Version identifier
 
         Returns:
-            Configured encoder
+            Configured HypervectorEncoder
         """
-        if version is None:
-            version = self.current_version
-
         if version not in self.versions:
             raise ValueError(f"Unknown version: {version}")
 
@@ -253,19 +256,48 @@ class HypervectorRegistry:
 
         # Tag encoder with version metadata
         encoder.version = version
-        encoder.fingerprint = self.versions[version]["fingerprint"]
+        encoder.fingerprint = self.versions[version].get(
+            "fingerprint", self._generate_fingerprint(params)
+        )
 
         return encoder
+
+    def get_encoder(self, version: str | None = None) -> HypervectorEncoder:
+        """
+        Get encoder with specific version parameters.
+
+        Args:
+            version: Version to use (current if None)
+
+        Returns:
+            Configured encoder
+        """
+        if version is None:
+            version = self.current_version
+
+        return self.create_encoder(version)
+
+    def get_current_encoder(self) -> HypervectorEncoder:
+        """
+        Get encoder with current default version.
+
+        Returns:
+            Configured encoder with current version
+        """
+        if self.current_version is None:
+            raise ValueError("No current version set")
+        return self.create_encoder(self.current_version)
 
     def set_current_version(self, version: str):
         """Set current default version."""
         if version not in self.versions:
             raise ValueError(f"Unknown version: {version}")
 
+        old_version = self.current_version
         self.current_version = version
         self._save_registry()
 
-        logger.info("Changed current version from %sold_version to %sversion")
+        logger.info(f"Changed current version from {old_version} to {version}")
 
     def add_compatibility(
         self,
@@ -398,7 +430,7 @@ class HypervectorRegistry:
         with open(filepath, "w", encoding="utf-8") as f:
             json.dump(export_data, f, indent=2)
 
-        logger.info("Exported version %sversion to %sfilepath")
+        logger.info(f"Exported version {version} to {filepath}")
 
     def import_version(self, filepath: str, version: str | None = None, force: bool = False):
         """Import version configuration from file."""
@@ -411,7 +443,7 @@ class HypervectorRegistry:
 
         # Validate registry version compatibility
         if data.get("registry_version", "1.0") != "1.0":
-            logger.warning("Registry version mismatch: %sdata.get('registry_version') != 1.0")
+            logger.warning(f"Registry version mismatch: {data.get('registry_version')} != 1.0")
 
         self.register_version(
             version=version,
@@ -419,6 +451,95 @@ class HypervectorRegistry:
             description=data.get("description", f"Imported from {filepath}"),
             force=force,
         )
+
+    def add_version(
+        self,
+        version: str,
+        dimension: int,
+        projection_type: str = "sparse_random",
+        seed: int = 42,
+        sparsity: float = 0.1,
+        description: str = "",
+        tier: str | None = None,
+    ):
+        """
+        Add a new version with specified parameters (convenience method).
+
+        Args:
+            version: Version identifier
+            dimension: Hypervector dimension
+            projection_type: Type of projection
+            seed: Random seed
+            sparsity: Sparsity level
+            description: Version description
+            tier: Optional tier designation
+        """
+        params = {
+            "dimension": dimension,
+            "projection_type": projection_type,
+            "seed": seed,
+            "sparsity": sparsity,
+        }
+
+        # Auto-determine tier if not provided
+        if tier is None:
+            if dimension <= 5000:
+                tier = "mini"
+            elif dimension <= 10000:
+                tier = "clinical"
+            elif dimension <= 20000:
+                tier = "full"
+            else:
+                tier = "custom"
+
+        self.register_version(version, params, description or f"{tier} tier configuration")
+
+    def export_json(self, filepath: str):
+        """
+        Export entire registry to JSON file.
+
+        Args:
+            filepath: Path to export file
+        """
+        data = {
+            "versions": self.versions,
+            "current_version": self.current_version,
+            "compatibility_map": self.compatibility_map,
+            "performance_metrics": self.performance_metrics,
+            "exported_at": datetime.now().isoformat(),
+            "registry_version": "1.0",
+        }
+
+        with open(filepath, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, sort_keys=True)
+
+        logger.info(f"Exported registry to {filepath}")
+
+    def import_json(self, filepath: str, merge: bool = False):
+        """
+        Import registry from JSON file.
+
+        Args:
+            filepath: Path to import file
+            merge: If True, merge with existing registry; if False, replace
+        """
+        with open(filepath) as f:
+            data = json.load(f)
+
+        if not merge:
+            # Replace entire registry
+            self.versions = data.get("versions", {})
+            self.current_version = data.get("current_version")
+            self.compatibility_map = data.get("compatibility_map", {})
+            self.performance_metrics = data.get("performance_metrics", {})
+        else:
+            # Merge with existing
+            self.versions.update(data.get("versions", {}))
+            self.compatibility_map.update(data.get("compatibility_map", {}))
+            self.performance_metrics.update(data.get("performance_metrics", {}))
+
+        self._save_registry()
+        logger.info(f"Imported registry from {filepath} (merge={merge})")
 
     def get_version_info(self, version: str) -> dict[str, Any]:
         """Get detailed information about a specific version."""
@@ -546,7 +667,7 @@ class VersionMigrator:
         if preserve_norm and original_norm is not None:
             result = result / torch.norm(result) * original_norm
 
-        logger.info("Migrated hypervector from %sfrom_version to %sto_version")
+        logger.info(f"Migrated hypervector from {from_version} to {to_version}")
         return result
 
     def _migrate_dimension_reduction(
@@ -629,7 +750,7 @@ class VersionMigrator:
 
         else:
             # Unknown type, return as-is
-            logger.warning("Unknown projection type: %sto_type")
+            logger.warning(f"Unknown projection type: {to_type}")
             return hv
 
     def create_migration_report(
@@ -675,7 +796,3 @@ class VersionMigrator:
             }
 
         return report
-
-
-# Import OmicsType for benchmarking
-from .hdc_encoder import OmicsType
