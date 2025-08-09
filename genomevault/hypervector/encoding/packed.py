@@ -2,10 +2,23 @@
 Bit-packed hypervector implementation for memory-efficient genomic encoding
 """
 
-import numba
+import logging
 import numpy as np
 import torch
-from numba import cuda
+
+from genomevault.core.constants import HYPERVECTOR_DIMENSIONS
+from genomevault.core.exceptions import HypervectorError
+
+# Optional imports - make them safely optional
+try:
+    import numba
+    from numba import cuda
+
+    NUMBA_AVAILABLE = True
+except ImportError:
+    numba = None
+    cuda = None
+    NUMBA_AVAILABLE = False
 
 try:
     import cupy as cp
@@ -15,8 +28,7 @@ except ImportError:
     cp = None
     CUPY_AVAILABLE = False
 
-from genomevault.core.constants import HYPERVECTOR_DIMENSIONS
-from genomevault.core.exceptions import HypervectorError
+logger = logging.getLogger(__name__)
 
 
 class PackedHV:
@@ -28,16 +40,55 @@ class PackedHV:
         self.device = device
 
         if device == "cpu":
-            self.buf = np.zeros(self.n_words, dtype=np.uint64) if buffer is None else buffer
+            if buffer is None:
+                self.buf = np.zeros(self.n_words, dtype=np.uint64)
+            else:
+                # Ensure buffer is np.uint64
+                self.buf = np.asarray(buffer, dtype=np.uint64)
         else:  # GPU
             if not CUPY_AVAILABLE:
-                raise RuntimeError("CuPy not available for GPU operations")
-            self.buf = (
-                cp.zeros(self.n_words, dtype=cp.uint64) if buffer is None else cp.asarray(buffer)
-            )
+                logger.warning("CuPy not available, falling back to CPU")
+                self.device = "cpu"
+                self.buf = (
+                    np.zeros(self.n_words, dtype=np.uint64)
+                    if buffer is None
+                    else np.asarray(buffer, dtype=np.uint64)
+                )
+            else:
+                self.buf = (
+                    cp.zeros(self.n_words, dtype=cp.uint64)
+                    if buffer is None
+                    else cp.asarray(buffer, dtype=cp.uint64)
+                )
+
+    def __xor__(self, other: "PackedHV") -> "PackedHV":
+        """XOR operation (binding) using ^ operator"""
+        return self.xor(other)
+
+    def __and__(self, other: "PackedHV") -> "PackedHV":
+        """AND operation using & operator"""
+        result = PackedHV(self.n_bits, device=self.device)
+        if self.device == "cpu":
+            np.bitwise_and(self.buf, other.buf, out=result.buf)
+        else:
+            cp.bitwise_and(self.buf, other.buf, out=result.buf)
+        return result
+
+    def __or__(self, other: "PackedHV") -> "PackedHV":
+        """OR operation using | operator"""
+        result = PackedHV(self.n_bits, device=self.device)
+        if self.device == "cpu":
+            np.bitwise_or(self.buf, other.buf, out=result.buf)
+        else:
+            cp.bitwise_or(self.buf, other.buf, out=result.buf)
+        return result
 
     def xor_(self, other: "PackedHV") -> "PackedHV":
         """In-place XOR (binding operation)"""
+        # Ensure devices match
+        if self.device != other.device:
+            other = other.to(self.device)
+
         if self.device == "cpu":
             np.bitwise_xor(self.buf, other.buf, out=self.buf)
         else:
@@ -46,6 +97,10 @@ class PackedHV:
 
     def xor(self, other: "PackedHV") -> "PackedHV":
         """XOR (binding operation) returning new hypervector"""
+        # Ensure devices match
+        if self.device != other.device:
+            other = other.to(self.device)
+
         result = PackedHV(self.n_bits, device=self.device)
         if self.device == "cpu":
             np.bitwise_xor(self.buf, other.buf, out=result.buf)
@@ -66,10 +121,38 @@ class PackedHV:
         n_vecs = len(others) + 1  # Include self
         threshold = n_vecs // 2
 
-        # Use Numba for faster execution
-        result.buf = _majority_vote_numba(
-            self.buf, [other.buf for other in others], self.n_words, threshold
-        )
+        if NUMBA_AVAILABLE:
+            # Use Numba for faster execution
+            result.buf = _majority_vote_numba(
+                self.buf, [other.buf for other in others], self.n_words, threshold
+            )
+        else:
+            # Pure numpy fallback
+            result.buf = self._majority_vote_numpy(others, threshold)
+
+        return result
+
+    def _majority_vote_numpy(self, others: list["PackedHV"], threshold: int) -> np.ndarray:
+        """Pure numpy majority vote fallback"""
+        result = np.zeros(self.n_words, dtype=np.uint64)
+
+        for word_idx in range(self.n_words):
+            for bit in range(64):
+                mask = np.uint64(1) << bit
+                count = 0
+
+                # Count bit in self
+                if self.buf[word_idx] & mask:
+                    count += 1
+
+                # Count bit in others
+                for other in others:
+                    if other.buf[word_idx] & mask:
+                        count += 1
+
+                # Set bit if majority
+                if count > threshold:
+                    result[word_idx] |= mask
 
         return result
 
@@ -89,10 +172,43 @@ class PackedHV:
 
         return result
 
+    def popcount(self) -> int:
+        """Count number of set bits (population count)"""
+        if self.device == "cpu":
+            # Try numpy.bit_count if available (numpy >= 1.26)
+            if hasattr(np, "bit_count"):
+                return int(np.bit_count(self.buf).sum())
+            elif NUMBA_AVAILABLE:
+                return _popcount_buffer_numba(self.buf, self.n_words)
+            else:
+                # Pure Python fallback
+                return sum(bin(word).count("1") for word in self.buf)
+        else:
+            if CUPY_AVAILABLE:
+                # Use CuPy's bit counting
+                return int(cp.unpackbits(self.buf.view(cp.uint8)).sum())
+            else:
+                # Shouldn't reach here, but fallback to CPU
+                return self.to("cpu").popcount()
+
     def hamming_distance(self, other: "PackedHV") -> int:
         """Compute Hamming distance using hardware popcount"""
+        # Ensure devices match
+        if self.device != other.device:
+            other = other.to(self.device)
+
         if self.device == "cpu":
-            return _hamming_distance_numba(self.buf, other.buf, self.n_words)
+            # XOR and count bits
+            if hasattr(np, "bit_count"):
+                # Use numpy bit_count if available
+                xor_result = np.bitwise_xor(self.buf, other.buf)
+                return int(np.bit_count(xor_result).sum())
+            elif NUMBA_AVAILABLE:
+                return _hamming_distance_numba(self.buf, other.buf, self.n_words)
+            else:
+                # Pure Python fallback
+                xor_result = np.bitwise_xor(self.buf, other.buf)
+                return sum(bin(word).count("1") for word in xor_result)
         else:
             return self._hamming_gpu(other)
 
@@ -105,6 +221,31 @@ class PackedHV:
         # Count bits using CuPy
         return int(cp.unpackbits(xor_result.view(cp.uint8)).sum())
 
+    def to(self, device: str) -> "PackedHV":
+        """Move hypervector to specified device"""
+        if device == self.device:
+            return self
+
+        if device == "cpu":
+            if self.device == "gpu" and CUPY_AVAILABLE:
+                # Move from GPU to CPU
+                buf_cpu = cp.asnumpy(self.buf)
+                return PackedHV(self.n_bits, buffer=buf_cpu, device="cpu")
+            else:
+                return self
+        elif device == "gpu":
+            if not CUPY_AVAILABLE:
+                logger.warning("CuPy not available, staying on CPU")
+                return self
+            if self.device == "cpu":
+                # Move from CPU to GPU
+                buf_gpu = cp.asarray(self.buf)
+                return PackedHV(self.n_bits, buffer=buf_gpu, device="gpu")
+            else:
+                return self
+        else:
+            raise ValueError(f"Unknown device: {device}. Use 'cpu' or 'gpu'.")
+
     def to_dense(self) -> np.ndarray:
         """Convert to dense binary array for compatibility"""
         if self.device == "gpu" and CUPY_AVAILABLE:
@@ -113,7 +254,16 @@ class PackedHV:
         else:
             buf_cpu = self.buf
 
-        return _unpack_to_dense_numba(buf_cpu, self.n_bits)
+        if NUMBA_AVAILABLE:
+            return _unpack_to_dense_numba(buf_cpu, self.n_bits)
+        else:
+            # Pure numpy fallback
+            dense = np.zeros(self.n_bits, dtype=np.uint8)
+            for i in range(self.n_bits):
+                word_idx = i // 64
+                bit_idx = i % 64
+                dense[i] = (buf_cpu[word_idx] >> bit_idx) & 1
+            return dense
 
     def to_torch(self) -> torch.Tensor:
         """Convert to PyTorch tensor"""
@@ -124,16 +274,25 @@ class PackedHV:
     def from_dense(dense: np.ndarray, device: str = "cpu") -> "PackedHV":
         """Create from dense binary array"""
         n_bits = len(dense)
-        packed = PackedHV(n_bits, device=device)
+        n_words = (n_bits + 63) // 64
 
-        if device == "cpu":
-            packed.buf = _pack_from_dense_numba(dense, (n_bits + 63) // 64)
+        if NUMBA_AVAILABLE:
+            buf = _pack_from_dense_numba(dense, n_words)
         else:
-            if not CUPY_AVAILABLE:
-                raise RuntimeError("CuPy not available for GPU operations")
-            # Pack on CPU then move to GPU
-            buf_cpu = _pack_from_dense_numba(dense, (n_bits + 63) // 64)
-            packed.buf = cp.asarray(buf_cpu)
+            # Pure numpy fallback
+            buf = np.zeros(n_words, dtype=np.uint64)
+            for i in range(n_bits):
+                if dense[i]:
+                    word_idx = i // 64
+                    bit_idx = i % 64
+                    buf[word_idx] |= np.uint64(1) << bit_idx
+
+        packed = PackedHV(n_bits, device="cpu")
+        packed.buf = buf
+
+        # Move to device if needed
+        if device != "cpu":
+            packed = packed.to(device)
 
         return packed
 
@@ -159,122 +318,141 @@ class PackedHV:
         return self.buf.nbytes
 
 
-# Numba JIT compiled functions for performance
-@numba.jit(nopython=True, parallel=True)
-def _majority_vote_numba(self_buf, other_bufs, n_words, threshold) -> None:
-    """Numba-optimized majority vote"""
-    result = np.zeros(n_words, dtype=np.uint64)
-    n_others = len(other_bufs)
+# Numba JIT compiled functions for performance (if available)
+if NUMBA_AVAILABLE:
 
-    for word_idx in numba.prange(n_words):
-        # Process 64 bits at once
-        for bit in range(64):
-            count = 0
-            mask = np.uint64(1) << bit
+    @numba.jit(nopython=True, parallel=True)
+    def _majority_vote_numba(self_buf, other_bufs, n_words, threshold):
+        """Numba-optimized majority vote"""
+        result = np.zeros(n_words, dtype=np.uint64)
+        n_others = len(other_bufs)
 
-            # Count bit in self
-            if self_buf[word_idx] & mask:
-                count += 1
+        for word_idx in numba.prange(n_words):
+            # Process 64 bits at once
+            for bit in range(64):
+                count = 0
+                mask = np.uint64(1) << bit
 
-            # Count bit in others
-            for i in range(n_others):
-                if other_bufs[i][word_idx] & mask:
+                # Count bit in self
+                if self_buf[word_idx] & mask:
                     count += 1
 
-            # Set bit if majority
-            if count > threshold:
-                result[word_idx] |= mask
+                # Count bit in others
+                for i in range(n_others):
+                    if other_bufs[i][word_idx] & mask:
+                        count += 1
 
-    return result
+                # Set bit if majority
+                if count > threshold:
+                    result[word_idx] |= mask
 
+        return result
 
-@numba.jit(nopython=True)
-def _hamming_distance_numba(buf1, buf2, n_words) -> None:
-    """Numba-optimized Hamming distance using popcount"""
-    distance = 0
-    for i in range(n_words):
-        xor_word = buf1[i] ^ buf2[i]
-        # Use bit manipulation for popcount
-        distance += _popcount64(xor_word)
-    return distance
+    @numba.jit(nopython=True)
+    def _hamming_distance_numba(buf1, buf2, n_words):
+        """Numba-optimized Hamming distance using popcount"""
+        distance = 0
+        for i in range(n_words):
+            xor_word = buf1[i] ^ buf2[i]
+            # Use bit manipulation for popcount
+            distance += _popcount64(xor_word)
+        return distance
 
+    @numba.jit(nopython=True)
+    def _popcount64(x):
+        """64-bit population count"""
+        x = x - ((x >> 1) & 0x5555555555555555)
+        x = (x & 0x3333333333333333) + ((x >> 2) & 0x3333333333333333)
+        x = (x + (x >> 4)) & 0x0F0F0F0F0F0F0F0F
+        x = x + (x >> 8)
+        x = x + (x >> 16)
+        x = x + (x >> 32)
+        return x & 0x7F
 
-@numba.jit(nopython=True)
-def _popcount64(x) -> None:
-    """64-bit population count"""
-    x = x - ((x >> 1) & 0x5555555555555555)
-    x = (x & 0x3333333333333333) + ((x >> 2) & 0x3333333333333333)
-    x = (x + (x >> 4)) & 0x0F0F0F0F0F0F0F0F
-    x = x + (x >> 8)
-    x = x + (x >> 16)
-    x = x + (x >> 32)
-    return x & 0x7F
+    @numba.jit(nopython=True)
+    def _popcount_buffer_numba(buf, n_words):
+        """Count all bits in buffer"""
+        count = 0
+        for i in range(n_words):
+            count += _popcount64(buf[i])
+        return count
 
-
-@numba.jit(nopython=True)
-def _unpack_to_dense_numba(buf, n_bits) -> None:
-    """Unpack bit-packed buffer to dense array"""
-    dense = np.zeros(n_bits, dtype=np.uint8)
-    for i in range(n_bits):
-        word_idx = i // 64
-        bit_idx = i % 64
-        dense[i] = (buf[word_idx] >> bit_idx) & 1
-    return dense
-
-
-@numba.jit(nopython=True)
-def _pack_from_dense_numba(dense, n_words) -> None:
-    """Pack dense array to bit-packed buffer"""
-    buf = np.zeros(n_words, dtype=np.uint64)
-    n_bits = len(dense)
-
-    for i in range(n_bits):
-        if dense[i]:
+    @numba.jit(nopython=True)
+    def _unpack_to_dense_numba(buf, n_bits):
+        """Unpack bit-packed buffer to dense array"""
+        dense = np.zeros(n_bits, dtype=np.uint8)
+        for i in range(n_bits):
             word_idx = i // 64
             bit_idx = i % 64
-            buf[word_idx] |= np.uint64(1) << bit_idx
+            dense[i] = (buf[word_idx] >> bit_idx) & 1
+        return dense
 
-    return buf
+    @numba.jit(nopython=True)
+    def _pack_from_dense_numba(dense, n_words):
+        """Pack dense array to bit-packed buffer"""
+        buf = np.zeros(n_words, dtype=np.uint64)
+        n_bits = len(dense)
+
+        for i in range(n_bits):
+            if dense[i]:
+                word_idx = i // 64
+                bit_idx = i % 64
+                buf[word_idx] |= np.uint64(1) << bit_idx
+
+        return buf
+
+else:
+    # Define stub functions that will not be used (fallback is in class methods)
+    _majority_vote_numba = None
+    _hamming_distance_numba = None
+    _popcount64 = None
+    _popcount_buffer_numba = None
+    _unpack_to_dense_numba = None
+    _pack_from_dense_numba = None
 
 
 # Generate Hamming distance lookup table
-@numba.jit(nopython=True)
-def _generate_hamming_lut() -> None:
-    """Generate 16-bit Hamming distance lookup table"""
-    lut = np.zeros(65536, dtype=np.uint8)
-    for i in range(65536):
-        # Count bits
-        count = 0
-        x = i
-        while x:
-            count += x & 1
-            x >>= 1
-        lut[i] = count
-    return lut
+if NUMBA_AVAILABLE:
 
+    @numba.jit(nopython=True)
+    def _generate_hamming_lut():
+        """Generate 16-bit Hamming distance lookup table"""
+        lut = np.zeros(65536, dtype=np.uint8)
+        for i in range(65536):
+            # Count bits
+            count = 0
+            x = i
+            while x:
+                count += x & 1
+                x >>= 1
+            lut[i] = count
+        return lut
 
-# Pre-compute lookup table
-HAMMING_LUT = _generate_hamming_lut()
+    # Pre-compute lookup table
+    HAMMING_LUT = _generate_hamming_lut()
 
+    @numba.jit(nopython=True)
+    def fast_hamming_distance(buf1: np.ndarray, buf2: np.ndarray) -> int:
+        """Ultra-fast Hamming distance using 16-bit LUT"""
+        distance = 0
+        for i in range(len(buf1)):
+            xor_word = buf1[i] ^ buf2[i]
+            # Process 16 bits at a time
+            distance += HAMMING_LUT[xor_word & 0xFFFF]
+            distance += HAMMING_LUT[(xor_word >> 16) & 0xFFFF]
+            distance += HAMMING_LUT[(xor_word >> 32) & 0xFFFF]
+            distance += HAMMING_LUT[(xor_word >> 48) & 0xFFFF]
+        return distance
 
-@numba.jit(nopython=True)
-def fast_hamming_distance(buf1: np.ndarray, buf2: np.ndarray) -> int:
-    """Ultra-fast Hamming distance using 16-bit LUT"""
-    distance = 0
-    for i in range(len(buf1)):
-        xor_word = buf1[i] ^ buf2[i]
-        # Process 16 bits at a time
-        distance += HAMMING_LUT[xor_word & 0xFFFF]
-        distance += HAMMING_LUT[(xor_word >> 16) & 0xFFFF]
-        distance += HAMMING_LUT[(xor_word >> 32) & 0xFFFF]
-        distance += HAMMING_LUT[(xor_word >> 48) & 0xFFFF]
-    return distance
+else:
+    HAMMING_LUT = None
+    fast_hamming_distance = None
 
 
 # GPU functions (if CuPy available)
 if CUPY_AVAILABLE:
 
-    def _gpu_majority_vote(all_vecs, n_vecs) -> None:
+    def _gpu_majority_vote(all_vecs, n_vecs):
         """GPU-accelerated majority vote"""
         n_words = all_vecs.shape[1]
         result = cp.zeros(n_words, dtype=cp.uint64)
@@ -289,6 +467,9 @@ if CUPY_AVAILABLE:
             result |= (bit_counts > threshold).astype(cp.uint64) << bit
 
         return result
+
+else:
+    _gpu_majority_vote = None
 
 
 class PackedProjection:
@@ -307,7 +488,7 @@ class PackedProjection:
             for j in range(self.n_words):
                 self.masks[i, j] = rng.randint(0, 2**64, dtype=np.uint64)
 
-    def encode(self, features: np.ndarray, device: str = "cpu") -> PackedHV:
+    def encode(self, features: np.ndarray, device: str = "cpu"):
         """Project features to packed hypervector"""
         result = PackedHV(self.hv_dim, device=device)
 
@@ -319,10 +500,36 @@ class PackedProjection:
         return result
 
     def _encode_cpu(self, features: np.ndarray) -> np.ndarray:
-        """CPU encoding using Numba"""
-        return _project_features_numba(features, self.masks, self.n_words, len(features))
+        """CPU encoding"""
+        if NUMBA_AVAILABLE:
+            return _project_features_numba(features, self.masks, self.n_words, len(features))
+        else:
+            # Pure numpy fallback
+            accumulator = np.zeros(self.n_words, dtype=np.float32)
+            n_features = len(features)
 
-    def _encode_gpu(self, features: np.ndarray) -> cp.ndarray:
+            for i in range(n_features):
+                if features[i] > 0:
+                    weight = min(features[i] * 16, 16)
+                    for j in range(self.n_words):
+                        # Count bits in mask
+                        mask_bits = bin(self.masks[i, j]).count("1")
+                        accumulator[j] += mask_bits * weight
+
+            # Binarize
+            threshold = n_features * 8
+            result = np.zeros(self.n_words, dtype=np.uint64)
+
+            for j in range(self.n_words):
+                acc_val = accumulator[j]
+                for bit in range(64):
+                    bit_threshold = threshold * (bit + 1) / 64
+                    if acc_val > bit_threshold:
+                        result[j] |= np.uint64(1) << bit
+
+            return result
+
+    def _encode_gpu(self, features: np.ndarray):
         """GPU encoding"""
         if not CUPY_AVAILABLE:
             raise RuntimeError("CuPy not available for GPU operations")
@@ -354,32 +561,37 @@ class PackedProjection:
         return result
 
 
-@numba.jit(nopython=True, parallel=True)
-def _project_features_numba(features, masks, n_words, n_features) -> None:
-    """Numba-optimized feature projection"""
-    accumulator = np.zeros(n_words, dtype=np.float32)
+if NUMBA_AVAILABLE:
 
-    # Accumulate weighted projections
-    for i in range(n_features):
-        if features[i] > 0:
-            weight = min(features[i] * 16, 16)
-            for j in numba.prange(n_words):
-                # Count bits in mask
-                mask_bits = _popcount64(masks[i, j])
-                accumulator[j] += mask_bits * weight
+    @numba.jit(nopython=True, parallel=True)
+    def _project_features_numba(features, masks, n_words, n_features):
+        """Numba-optimized feature projection"""
+        accumulator = np.zeros(n_words, dtype=np.float32)
 
-    # Binarize
-    threshold = n_features * 8
-    result = np.zeros(n_words, dtype=np.uint64)
+        # Accumulate weighted projections
+        for i in range(n_features):
+            if features[i] > 0:
+                weight = min(features[i] * 16, 16)
+                for j in numba.prange(n_words):
+                    # Count bits in mask
+                    mask_bits = _popcount64(masks[i, j])
+                    accumulator[j] += mask_bits * weight
 
-    for j in range(n_words):
-        acc_val = accumulator[j]
-        for bit in range(64):
-            bit_threshold = threshold * (bit + 1) / 64
-            if acc_val > bit_threshold:
-                result[j] |= np.uint64(1) << bit
+        # Binarize
+        threshold = n_features * 8
+        result = np.zeros(n_words, dtype=np.uint64)
 
-    return result
+        for j in range(n_words):
+            acc_val = accumulator[j]
+            for bit in range(64):
+                bit_threshold = threshold * (bit + 1) / 64
+                if acc_val > bit_threshold:
+                    result[j] |= np.uint64(1) << bit
+
+        return result
+
+else:
+    _project_features_numba = None
 
 
 class PackedGenomicEncoder:
@@ -390,7 +602,7 @@ class PackedGenomicEncoder:
 
     def __init__(
         self,
-        dimension: int = HYPERVECTOR_DIMENSIONS["base"],
+        dimension: int = HYPERVECTOR_DIMENSIONS,
         packed: bool = True,
         device: str = "cpu",
         **kwargs,
@@ -575,17 +787,17 @@ class PackedGenomicEncoder:
 
 
 # GPU kernel compilation (if CUDA available)
-if cuda.is_available():
+if NUMBA_AVAILABLE and cuda and cuda.is_available():
 
     @cuda.jit
-    def packed_xor_kernel(a, b, result) -> None:
+    def packed_xor_kernel(a, b, result):
         """GPU kernel for packed XOR"""
         idx = cuda.grid(1)
         if idx < a.shape[0]:
             result[idx] = a[idx] ^ b[idx]
 
     @cuda.jit
-    def packed_majority_kernel(vectors, result, n_vectors) -> None:
+    def packed_majority_kernel(vectors, result, n_vectors):
         """GPU kernel for majority vote"""
         word_idx = cuda.grid(1)
         if word_idx < result.shape[0]:
@@ -600,3 +812,7 @@ if cuda.is_available():
 
                 if count > n_vectors // 2:
                     result[word_idx] |= mask
+
+else:
+    packed_xor_kernel = None
+    packed_majority_kernel = None

@@ -50,11 +50,11 @@ def process_genomic_data_example():
         input_path=Path("sample.fastq.gz"),
         sample_id="patient_001"
     )
-    
+
     # Compress using differential storage
     storage = DifferentialStorage()
     compressed = storage.compress_profile(profile)
-    
+
     logger.info("Found {len(profile.variants)} variants")
     logger.info("Average coverage: {profile.quality_metrics.coverage_mean:.1f}x")
     logger.info("Compression achieved: {len(compressed['chunks'])} chunks")
@@ -101,7 +101,7 @@ def process_genomic_data_example():
     storage.compress_profile(mock_profile)
 
     logger.info("Mock genomic profile created with {len(mock_profile.variants)} variants")
-    logger.info("Compressed to {len(compressed['chunks'])} chunks")
+    # logger.info("Compressed to {len(compressed['chunks'])} chunks")
 
     return mock_profile
 
@@ -176,7 +176,7 @@ def process_clinical_data_example():
 
     # Calculate risk factors
     phenotype_profile.calculate_risk_factors()
-    logger.info("Risk factors: {risk_factors}")
+    # logger.info("Risk factors: {risk_factors}")
 
     return phenotype_profile
 
@@ -204,9 +204,9 @@ def demonstrate_privacy_features():
 
     # Demonstrate threshold secret sharing
     secret = b"master_secret_key_123456789012"  # 30 bytes
-    ThresholdCrypto.split_secret(secret, threshold=3, total_shares=5)
+    shares = ThresholdCrypto.split_secret(secret, threshold=3, total_shares=5)
     logger.info(
-        "4. Secret split into {len(shares)} shares (need {shares[0].threshold} to reconstruct)"
+        f"4. Secret split into {len(shares)} shares (need {shares[0].threshold} to reconstruct)"
     )
 
     # 4. Zero-knowledge proofs (placeholder)
@@ -214,8 +214,8 @@ def demonstrate_privacy_features():
 
     # 5. PIR privacy
     logger.info("6. Private Information Retrieval ensures query privacy")
-    config.get_pir_failure_probability()
-    logger.info("   PIR privacy failure probability: {pir_failure_prob:.2e}")
+    pir_failure_prob = config.get_pir_failure_probability()
+    logger.info(f"   PIR privacy failure probability: {pir_failure_prob:.2e}")
 
 
 def main():
@@ -246,13 +246,12 @@ def main():
 
         print("\nFor more examples, see the documentation at https://docs.genomevault.io")
 
-    except Exception:
+    except Exception as e:
         from genomevault.observability.logging import configure_logging
 
-        logger = configure_logging()
-        logger.exception("Unhandled exception")
-        logger.error("Error in demonstration: {e}")
-        raise
+        error_logger = configure_logging()
+        error_logger.exception("Unhandled exception")
+        error_logger.error(f"Error in demonstration: {e}")
         raise
 
 
