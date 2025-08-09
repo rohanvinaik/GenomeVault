@@ -22,7 +22,7 @@ app.add_middleware(
 )
 
 # Include routers
-app.include_router(health.router, prefix="/api/v1", tags=["health"])
+app.include_router(health.router)  # Health at /health for CI
 app.include_router(encode.router, prefix="/api/v1", tags=["encoding"])
 
 
