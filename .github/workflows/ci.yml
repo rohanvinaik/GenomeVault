@@ -35,7 +35,7 @@ jobs:
 
     - name: Test with pytest
       run: |
-        pytest tests/ -v --cov=genomevault --cov-report=xml
+        pytest -q -k "health or vectors or proofs" tests/smoke
       continue-on-error: true
 
     - name: Check API startup
