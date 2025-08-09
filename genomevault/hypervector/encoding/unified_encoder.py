@@ -5,7 +5,7 @@ for genomic data at 10k/15k/20k dimensions with seed control and determinism.
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, Union
 
 import numpy as np
 
@@ -58,6 +58,7 @@ class UnifiedHypervectorEncoder:
         self.sparse_density = sparse_density
 
         # Initialize projection
+        self.projection: Union[SparseRandomProjection, OrthogonalProjection]
         if projection_type == "sparse":
             self.projection = SparseRandomProjection(
                 n_components=dimension, density=sparse_density, seed=seed

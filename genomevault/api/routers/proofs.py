@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any, Dict
+
 from fastapi import APIRouter, HTTPException
 
 from genomevault.zk.engine import ZKProofEngine
@@ -11,7 +13,7 @@ _engine = ZKProofEngine()  # Will use default PROJECT_ROOT
 
 
 @router.post("/create")
-def create_proof(request: ProofCreateRequest):
+def create_proof(request: ProofCreateRequest) -> Dict[str, Any]:
     try:
         proof = _engine.create_proof(circuit_type=request.circuit_type, inputs=request.inputs)
         # proof is a shim object with to_base64()
@@ -30,7 +32,7 @@ def create_proof(request: ProofCreateRequest):
 
 
 @router.post("/verify")
-def verify_proof(request: ProofVerifyRequest):
+def verify_proof(request: ProofVerifyRequest) -> Dict[str, bool]:
     try:
         ok = _engine.verify_proof(proof_data=request.proof, public_inputs=request.public_inputs)
         return {"valid": bool(ok)}
