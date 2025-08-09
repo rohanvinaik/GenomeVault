@@ -9,13 +9,13 @@ from fastapi.responses import JSONResponse
 from genomevault.exceptions import GVError
 
 
-async def gv_error_handler(request: Request, exc: GVError):
+async def gv_error_handler(request: Request, exc: GVError) -> JSONResponse:
     """Global exception handler for GV errors that returns consistent JSON."""
     body = exc.to_dict()
     return JSONResponse(status_code=getattr(exc, "http_status", 500), content=body)
 
 
-async def generic_error_handler(request: Request, exc: Exception):
+async def generic_error_handler(request: Request, exc: Exception) -> JSONResponse:
     """Generic exception handler for unexpected errors."""
     rid = str(uuid.uuid4())
     return JSONResponse(
