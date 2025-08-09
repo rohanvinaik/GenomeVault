@@ -1,17 +1,31 @@
 """
 Hypervector encoding for genomic data
+
+This module is maintained for backward compatibility.
+Please migrate to genomevault.hypervector_transform.encoding
 """
 
 from __future__ import annotations
 
+import warnings
 from enum import Enum
 
 import numpy as np
 import torch
 
-from genomevault.core.constants import HYPERVECTOR_DIMENSIONS
-from genomevault.core.exceptions import HypervectorError
-from genomevault.hypervector.positional import PositionalEncoder, SNPPanel
+from genomevault.core.constants import HYPERVECTOR_DIMENSIONS  # noqa: E402
+from genomevault.core.exceptions import HypervectorError  # noqa: E402
+from genomevault.hypervector.positional import PositionalEncoder, SNPPanel  # noqa: E402
+from genomevault.utils.logging import get_logger  # noqa: E402
+
+logger = get_logger(__name__)
+
+warnings.warn(
+    "genomevault.hypervector.encoding.genomic is deprecated. "
+    "Use genomevault.hypervector_transform.encoding instead.",
+    DeprecationWarning,
+    stacklevel=2,
+)
 
 
 class PanelGranularity(Enum):

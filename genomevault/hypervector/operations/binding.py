@@ -1,8 +1,16 @@
 from __future__ import annotations
 
+import warnings
 from collections.abc import Iterable
 
 import numpy as np
+
+warnings.warn(
+    "genomevault.hypervector.operations.binding is deprecated. "
+    "Use genomevault.hypervector_transform.binding_operations instead.",
+    DeprecationWarning,
+    stacklevel=2,
+)
 
 
 def circular_convolution(a: np.ndarray, b: np.ndarray) -> np.ndarray:
