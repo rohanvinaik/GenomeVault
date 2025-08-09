@@ -233,9 +233,7 @@ class HIPAAVerifier:
             resource=verification_id,
             metadata={
                 "hsm_serial": credentials.hsm_serial,
-                "npi_type": (
-                    credentials.npi_type.value if credentials.npi_type else None
-                ),
+                "npi_type": (credentials.npi_type.value if credentials.npi_type else None),
             },
         )
 
@@ -287,8 +285,7 @@ class HIPAAVerifier:
                     "type": npi_record.npi_type.value,
                     "taxonomy": npi_record.primary_taxonomy,
                 },
-                expires_at=datetime.now()
-                + timedelta(days=self.verification_expiry_days),
+                expires_at=datetime.now() + timedelta(days=self.verification_expiry_days),
             )
 
             # Store verification

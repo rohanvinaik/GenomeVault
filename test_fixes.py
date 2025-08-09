@@ -60,9 +60,7 @@ def test_basic_ruff():
 
     try:
         # Test help command
-        result = subprocess.run(
-            ["ruff", "--help"], capture_output=True, text=True, timeout=10
-        )
+        result = subprocess.run(["ruff", "--help"], capture_output=True, text=True, timeout=10)
         if result.returncode == 0:
             print("✅ Ruff help command works")
         else:
@@ -70,9 +68,7 @@ def test_basic_ruff():
             return False
 
         # Test version command
-        result = subprocess.run(
-            ["ruff", "--version"], capture_output=True, text=True, timeout=10
-        )
+        result = subprocess.run(["ruff", "--version"], capture_output=True, text=True, timeout=10)
         if result.returncode == 0:
             version = result.stdout.strip()
             print(f"✅ Ruff version: {version}")

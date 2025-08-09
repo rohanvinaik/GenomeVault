@@ -4,11 +4,11 @@ Area-by-area lint fix implementation for GenomeVault.
 This script applies fixes to each module systematically.
 """
 
+import logging
 import subprocess
 import sys
-from pathlib import Path
-import logging
 import time
+from pathlib import Path
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -96,9 +96,7 @@ def process_area(area):
 def commit_area(area):
     """Commit changes for a specific area."""
     # Check if there are changes
-    result = subprocess.run(
-        ["git", "status", "--porcelain"], capture_output=True, text=True
-    )
+    result = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True)
 
     if result.stdout.strip():
         logger.info(f"Committing changes for {area}")
@@ -141,9 +139,7 @@ def main():
             run_command(["ruff", str(f), "--fix"])
 
         # Commit top-level changes
-        result = subprocess.run(
-            ["git", "status", "--porcelain"], capture_output=True, text=True
-        )
+        result = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True)
         if result.stdout.strip():
             run_command(["git", "add", "-A"])
             run_command(

@@ -4,10 +4,10 @@ Validate that the lint fixes have been applied correctly.
 Check that no functional changes were made.
 """
 
+import logging
 import subprocess
 import sys
 from pathlib import Path
-import logging
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
@@ -159,9 +159,7 @@ def generate_report():
     logger.info("GIT STATUS")
     logger.info("=" * 60)
 
-    result = subprocess.run(
-        ["git", "status", "--short"], capture_output=True, text=True
-    )
+    result = subprocess.run(["git", "status", "--short"], capture_output=True, text=True)
     if result.stdout:
         logger.info("Modified files:")
         print(result.stdout)
@@ -170,9 +168,7 @@ def generate_report():
 
     # Commit history
     logger.info("\nRecent commits:")
-    result = subprocess.run(
-        ["git", "log", "--oneline", "-5"], capture_output=True, text=True
-    )
+    result = subprocess.run(["git", "log", "--oneline", "-5"], capture_output=True, text=True)
     if result.stdout:
         print(result.stdout)
 

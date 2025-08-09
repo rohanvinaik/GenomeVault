@@ -16,8 +16,9 @@ try:
     print(f"✓ HYPERVECTOR_DIMENSIONS = {HYPERVECTOR_DIMENSIONS}")
 
     # Test 2: Import the encoder class
-    from genomevault.hypervector.encoding.unified_encoder import \
-        UnifiedHypervectorEncoder
+    from genomevault.hypervector.encoding.unified_encoder import (
+        UnifiedHypervectorEncoder,
+    )
 
     print("✓ UnifiedHypervectorEncoder imports successfully")
 

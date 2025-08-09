@@ -12,15 +12,17 @@ showing how genomic data is transformed into privacy-preserving representations.
 import torch
 
 from genomevault.core.constants import OmicsType
-from genomevault.hypervector_transform.binding import (BindingType,
-                                                       CrossModalBinder,
-                                                       HypervectorBinder,
-                                                       PositionalBinder)
+from genomevault.hypervector_transform.binding import (
+    BindingType,
+    CrossModalBinder,
+    HypervectorBinder,
+    PositionalBinder,
+)
+
 # GenomeVault imports
 from genomevault.hypervector_transform.encoding import create_encoder
 from genomevault.hypervector_transform.holographic import HolographicEncoder
-from genomevault.hypervector_transform.mapping import \
-    BiologicalSimilarityMapper
+from genomevault.hypervector_transform.mapping import BiologicalSimilarityMapper
 from genomevault.utils.logging import setup_logging
 
 

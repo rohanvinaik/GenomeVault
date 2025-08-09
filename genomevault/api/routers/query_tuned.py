@@ -26,16 +26,10 @@ class SNPPanelQueryRequest(BaseModel):
     cohort_id: str
     query_type: str = Field("variant_lookup", description="Type of query")
     query_params: dict[str, Any]
-    panel: str = Field(
-        "off", description="SNP panel granularity: off/common/clinical/custom"
-    )
-    custom_panel_path: str | None = Field(
-        None, description="Path to custom BED/VCF file"
-    )
+    panel: str = Field("off", description="SNP panel granularity: off/common/clinical/custom")
+    custom_panel_path: str | None = Field(None, description="Path to custom BED/VCF file")
     epsilon: float = Field(0.01, description="Allowed relative error", gt=0, le=1)
-    delta_exp: int = Field(
-        15, description="Target failure probability exponent", ge=5, le=30
-    )
+    delta_exp: int = Field(15, description="Target failure probability exponent", ge=5, le=30)
 
 
 class ZoomQueryRequest(BaseModel):
@@ -121,9 +115,7 @@ async def query_with_panel(
         )
 
         # Build genomic query
-        genomic_query = _build_genomic_query_from_params(
-            request.query_type, request.query_params
-        )
+        genomic_query = _build_genomic_query_from_params(request.query_type, request.query_params)
 
         # Measure encoding overhead
         encode_start = time.time()
@@ -141,9 +133,7 @@ async def query_with_panel(
             )
 
             # PIR query for encoded variant
-            batched_result = await query_builder.query_with_error_budget(
-                genomic_query, budget
-            )
+            batched_result = await query_builder.query_with_error_budget(genomic_query, budget)
             result = batched_result.aggregated_result
 
         elif request.query_type == "genome_scan":
@@ -159,9 +149,7 @@ async def query_with_panel(
                 parameters={"encoded_genome": encoded_genome},
             )
 
-            batched_result = await query_builder.query_with_error_budget(
-                genome_query, budget
-            )
+            batched_result = await query_builder.query_with_error_budget(genome_query, budget)
             result = batched_result.aggregated_result
 
         else:

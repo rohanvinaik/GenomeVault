@@ -30,9 +30,7 @@ class OptionalDependencyError(ImportError):
         self.install_extra = install_extra
 
 
-def require_package(
-    package: str, feature: str, install_extra: str | None = None
-) -> Callable:
+def require_package(package: str, feature: str, install_extra: str | None = None) -> Callable:
     """
     Decorator to require an optional package for a function or method.
 

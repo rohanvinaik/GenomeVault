@@ -14,11 +14,12 @@ import torch
 
 from genomevault.core.constants import OmicsType
 from genomevault.hypervector_transform.binding import CrossModalBinder
+
 # Phase 2: Hypervector Encoding
 from genomevault.hypervector_transform.encoding import create_encoder
 from genomevault.hypervector_transform.holographic import HolographicEncoder
-from genomevault.local_processing.compression import (CompressionTier,
-                                                      TieredCompressor)
+from genomevault.local_processing.compression import CompressionTier, TieredCompressor
+
 # Phase 1: Local Processing
 from genomevault.local_processing.sequencing import SequencingProcessor
 from genomevault.utils.logging import get_logger, setup_logging

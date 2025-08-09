@@ -37,10 +37,7 @@ def compute_report(
     m = mce(y_true, y_prob, n_bins=bins)
     t, stats = youdens_j_threshold(y_true, y_prob)
     centers, mean_pred, frac_pos = calibration_curve(y_true, y_prob, n_bins=bins)
-    bins_out = [
-        (float(c), float(mp), float(fp))
-        for c, mp, fp in zip(centers, mean_pred, frac_pos)
-    ]
+    bins_out = [(float(c), float(mp), float(fp)) for c, mp, fp in zip(centers, mean_pred, frac_pos)]
     return EvalReport(
         metrics={
             {

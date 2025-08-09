@@ -11,9 +11,7 @@ from pathlib import Path
 from typing import Dict, List
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # Project root
@@ -27,10 +25,7 @@ def check_syntax_errors() -> List[Dict]:
 
     for py_file in PROJECT_ROOT.rglob("*.py"):
         # Skip virtual environments and cache directories
-        if any(
-            part in str(py_file)
-            for part in ["venv", "__pycache__", ".git", "node_modules"]
-        ):
+        if any(part in str(py_file) for part in ["venv", "__pycache__", ".git", "node_modules"]):
             continue
 
         try:
@@ -104,9 +99,7 @@ def check_print_statements() -> List[Dict]:
 
     for py_file in PROJECT_ROOT.rglob("*.py"):
         # Skip virtual environments, cache, and test files
-        if any(
-            part in str(py_file) for part in ["venv", "__pycache__", ".git", "test"]
-        ):
+        if any(part in str(py_file) for part in ["venv", "__pycache__", ".git", "test"]):
             continue
 
         try:
@@ -204,9 +197,7 @@ def generate_validation_report():
     if syntax_errors:
         report.append("\n## Syntax Errors (CRITICAL)\n")
         for error in syntax_errors:
-            report.append(
-                f"- **{error['file']}** (line {error['line']}): {error['error']}\n"
-            )
+            report.append(f"- **{error['file']}** (line {error['line']}): {error['error']}\n")
     else:
         report.append("\n## ✅ No Syntax Errors Found\n")
 
@@ -228,9 +219,7 @@ def generate_validation_report():
         report.append("\n## Print Statements in Non-Test Code\n")
         for item in print_statements:
             lines_str = ", ".join(str(l) for l in item["lines"])
-            report.append(
-                f"- **{item['file']}**: {item['total']} total (lines: {lines_str}...)\n"
-            )
+            report.append(f"- **{item['file']}**: {item['total']} total (lines: {lines_str}...)\n")
     else:
         report.append("\n## ✅ No Print Statements in Production Code\n")
 
@@ -246,21 +235,15 @@ def generate_validation_report():
     report.append("\n## Recommendations\n")
 
     if syntax_errors:
-        report.append(
-            "1. **Fix syntax errors immediately** - These are blocking issues\n"
-        )
+        report.append("1. **Fix syntax errors immediately** - These are blocking issues\n")
     if missing_inits:
         report.append(
             "2. **Add missing __init__.py files** - Required for proper package structure\n"
         )
     if placeholders:
-        report.append(
-            "3. **Implement placeholder functions** - Replace with MVP implementations\n"
-        )
+        report.append("3. **Implement placeholder functions** - Replace with MVP implementations\n")
     if print_statements:
-        report.append(
-            "4. **Replace print with logging** - Use proper logging framework\n"
-        )
+        report.append("4. **Replace print with logging** - Use proper logging framework\n")
     if debug_code:
         report.append("5. **Remove debug code** - Clean up before committing\n")
 

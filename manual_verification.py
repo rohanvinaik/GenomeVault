@@ -69,9 +69,7 @@ def check_ruff_config():
 
         # Check for problematic 'output' section
         if "[output]" in config_content and "max-violations" in config_content:
-            print(
-                "⚠️  Config contains [output] section - may cause issues with older Ruff"
-            )
+            print("⚠️  Config contains [output] section - may cause issues with older Ruff")
             return False
         else:
             print("✅ Configuration looks compatible")
@@ -361,9 +359,7 @@ def main():
     print("2. Run: python -c 'import genomevault.core.exceptions'")
     print("3. Run: pytest -q -k 'not api and not nanopore' --maxfail=3")
     print("4. If issues persist, check Ruff version: ruff --version")
-    print(
-        "5. Commit working changes: git add -A && git commit -m 'fix: resolve issues'"
-    )
+    print("5. Commit working changes: git add -A && git commit -m 'fix: resolve issues'")
 
 
 if __name__ == "__main__":

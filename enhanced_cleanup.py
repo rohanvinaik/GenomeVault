@@ -44,9 +44,7 @@ class EnhancedCleanup:
         self.continue_on_error = False
 
         # Progress tracking
-        self.phase_stats = defaultdict(
-            lambda: {"fixes": 0, "errors": 0, "files_touched": 0}
-        )
+        self.phase_stats = defaultdict(lambda: {"fixes": 0, "errors": 0, "files_touched": 0})
 
     def log_fix(self, message: str, phase: str = "general"):
         """Log a fix that was applied."""
@@ -103,9 +101,7 @@ class EnhancedCleanup:
             if ret1 == 0:
                 self.log_fix("Successfully uninstalled old ruff", "phase3")
             else:
-                self.log_fix(
-                    "No old ruff to uninstall (or uninstall completed)", "phase3"
-                )
+                self.log_fix("No old ruff to uninstall (or uninstall completed)", "phase3")
 
             # Step 2: Install new version with proper constraints
             print("Installing ruff >= 0.4.4...")
@@ -185,20 +181,14 @@ class EnhancedCleanup:
 
             # Remove any lines with max-violations
             new_content = "\n".join(
-                [
-                    line
-                    for line in new_content.split("\n")
-                    if "max-violations" not in line
-                ]
+                [line for line in new_content.split("\n") if "max-violations" not in line]
             )
 
             if new_content != original_content:
                 # Backup first
                 self.backup_file(ruff_config)
                 ruff_config.write_text(new_content)
-                self.log_fix(
-                    "Removed incompatible [output] section from .ruff.toml", "phase3"
-                )
+                self.log_fix("Removed incompatible [output] section from .ruff.toml", "phase3")
 
         except Exception as e:
             self.log_error(f"Could not fix Ruff configuration: {e}", "phase3")
@@ -322,9 +312,7 @@ class EnhancedCleanup:
         # Check Ruff version to determine supported features
         ruff_version = self._get_ruff_version()
         supports_output_section = self._is_ruff_version_adequate(ruff_version)
-        print(
-            f"Detected Ruff {ruff_version}, supports [output]: {supports_output_section}"
-        )
+        print(f"Detected Ruff {ruff_version}, supports [output]: {supports_output_section}")
 
         original_hash = self.get_file_hash(config_file)
         content = config_file.read_text()
@@ -338,9 +326,7 @@ class EnhancedCleanup:
                         "[tool.ruff]\n\n[tool.ruff.output]\nmax-violations = 200",
                     )
                 else:
-                    content += (
-                        "\n\n[tool.ruff]\n\n[tool.ruff.output]\nmax-violations = 200\n"
-                    )
+                    content += "\n\n[tool.ruff]\n\n[tool.ruff.output]\nmax-violations = 200\n"
                 self.log_fix("Added max-violations = 200 to pyproject.toml", "phase1")
             elif not supports_output_section:
                 self.log_fix(
@@ -357,9 +343,7 @@ class EnhancedCleanup:
                         f"[tool.ruff.lint.per-file-ignores]\n{tools_ignore}",
                     )
                 else:
-                    content += (
-                        f"\n\n[tool.ruff.lint.per-file-ignores]\n{tools_ignore}\n"
-                    )
+                    content += f"\n\n[tool.ruff.lint.per-file-ignores]\n{tools_ignore}\n"
                 self.log_fix("Added tools/*.py ignore to pyproject.toml", "phase1")
         else:
             # Handle .ruff.toml format
@@ -367,9 +351,7 @@ class EnhancedCleanup:
                 if "[output]" not in content:
                     content = "[output]\nmax-violations = 200\n\n" + content
                 else:
-                    content = content.replace(
-                        "[output]", "[output]\nmax-violations = 200"
-                    )
+                    content = content.replace("[output]", "[output]\nmax-violations = 200")
                 self.log_fix("Added max-violations = 200 to .ruff.toml", "phase1")
             elif not supports_output_section:
                 self.log_fix(
@@ -415,9 +397,7 @@ class EnhancedCleanup:
         print("Testing Ruff configuration...")
         returncode, stdout, stderr = self.run_command_safe(["ruff", "--version"])
         if returncode == 0:
-            self.log_fix(
-                f"Ruff configuration validated (version {ruff_version})", "phase1"
-            )
+            self.log_fix(f"Ruff configuration validated (version {ruff_version})", "phase1")
         else:
             self.log_error(f"Ruff validation failed: {stderr}", "phase1")
 
@@ -472,13 +452,9 @@ class EnhancedCleanup:
                             target_path.write_text(content)
                             moved_count += 1
                             self.files_modified.add(str(target_path))
-                            self.log_fix(
-                                f"Moved {script_path.name} to tools/", "phase2"
-                            )
+                            self.log_fix(f"Moved {script_path.name} to tools/", "phase2")
                     except Exception as e:
-                        self.log_error(
-                            f"Could not move {script_path.name}: {e}", "phase2"
-                        )
+                        self.log_error(f"Could not move {script_path.name}: {e}", "phase2")
 
         if moved_count > 0:
             self.phase_stats["phase2"]["files_touched"] += moved_count
@@ -606,9 +582,7 @@ class EnhancedCleanup:
 
             print("Upgrading Ruff to 0.4.4 for better F821 handling...")
             if not self._upgrade_ruff():
-                self.log_error(
-                    "Failed to upgrade Ruff - trying with current version", "phase3"
-                )
+                self.log_error("Failed to upgrade Ruff - trying with current version", "phase3")
                 # Continue anyway with the fixed config
 
         # Verify Ruff can run now
@@ -633,16 +607,12 @@ class EnhancedCleanup:
             self.log_error(f"Ruff failed: {err.strip()}", "phase3")
             # Try without JSON format as fallback
             print("Trying Ruff without JSON format...")
-            ret2, out2, err2 = self.run_command_safe(
-                ["ruff", "check", ".", "--select", "F821"]
-            )
+            ret2, out2, err2 = self.run_command_safe(["ruff", "check", ".", "--select", "F821"])
             if ret2 != 0 and not out2:
                 self.log_error(f"Ruff completely failed: {err2.strip()}", "phase3")
                 return
             else:
-                self.log_fix(
-                    "Ruff detected errors but JSON parsing may not work", "phase3"
-                )
+                self.log_fix("Ruff detected errors but JSON parsing may not work", "phase3")
                 out = out2  # Use text output instead
 
         try:
@@ -713,9 +683,7 @@ class EnhancedCleanup:
                         "phase3",
                     )
             except:
-                self.log_fix(
-                    "Could not verify fix count, but fixes were applied", "phase3"
-                )
+                self.log_fix("Could not verify fix count, but fixes were applied", "phase3")
         else:
             self.log_error("No F821 fixes could be applied", "phase3")
 
@@ -757,9 +725,7 @@ class EnhancedCleanup:
                         name_match = re.search(r"`([^`]+)`", message)
                         if name_match:
                             name = name_match.group(1)
-                            modified_line = self._apply_f821_fix(
-                                modified_line, name, path
-                            )
+                            modified_line = self._apply_f821_fix(modified_line, name, path)
                             if modified_line != original_line:
                                 fixes_applied += 1
 
@@ -842,9 +808,7 @@ class EnhancedCleanup:
             return
 
         # 1️⃣ Get F811 and E402 violations from Ruff
-        print(
-            "Running Ruff to detect F811 (redefinition) and E402 (import order) errors..."
-        )
+        print("Running Ruff to detect F811 (redefinition) and E402 (import order) errors...")
         violations = self._get_ruff_violations(["F811", "E402"])
 
         if not violations:
@@ -866,9 +830,7 @@ class EnhancedCleanup:
 
         for file_path, file_violations in by_file.items():
             try:
-                fixes_applied = self._fix_f811_e402_in_file(
-                    Path(file_path), file_violations
-                )
+                fixes_applied = self._fix_f811_e402_in_file(Path(file_path), file_violations)
                 if fixes_applied > 0:
                     total_fixed += fixes_applied
                     files_processed += 1
@@ -927,14 +889,10 @@ class EnhancedCleanup:
                 if ret2 != 0 and not out2:
                     return []
                 else:
-                    return self._parse_ruff_text_violations(
-                        out2 if out2 else err2, rule_codes
-                    )
+                    return self._parse_ruff_text_violations(out2 if out2 else err2, rule_codes)
 
             try:
-                violations = (
-                    json.loads(out) if out and out.strip().startswith("[") else []
-                )
+                violations = json.loads(out) if out and out.strip().startswith("[") else []
                 return [v for v in violations if v.get("code") in rule_codes]
             except json.JSONDecodeError:
                 return self._parse_ruff_text_violations(out if out else err, rule_codes)
@@ -943,9 +901,7 @@ class EnhancedCleanup:
             self.log_error(f"Could not get Ruff violations: {e}", "phase4")
             return []
 
-    def _parse_ruff_text_violations(
-        self, text_output: str, rule_codes: List[str]
-    ) -> List[dict]:
+    def _parse_ruff_text_violations(self, text_output: str, rule_codes: List[str]) -> List[dict]:
         """Parse Ruff text output for specific rule codes."""
         violations = []
 
@@ -998,16 +954,12 @@ class EnhancedCleanup:
 
             # Fix F811 (redefinition) issues
             if f811_violations:
-                content, f811_fixes = self._fix_f811_redefinitions(
-                    content, f811_violations
-                )
+                content, f811_fixes = self._fix_f811_redefinitions(content, f811_violations)
                 fixes_applied += f811_fixes
 
             # Fix E402 (import order) issues
             if e402_violations:
-                content, e402_fixes = self._fix_e402_import_order(
-                    content, e402_violations
-                )
+                content, e402_fixes = self._fix_e402_import_order(content, e402_violations)
                 fixes_applied += e402_fixes
 
             # Write back if changed
@@ -1025,9 +977,7 @@ class EnhancedCleanup:
             self.log_error(f"Could not fix F811/E402 errors in {path}: {e}", "phase4")
             return 0
 
-    def _fix_f811_redefinitions(
-        self, content: str, violations: List[dict]
-    ) -> Tuple[str, int]:
+    def _fix_f811_redefinitions(self, content: str, violations: List[dict]) -> Tuple[str, int]:
         """Fix F811 redefinition issues."""
         lines = content.split("\n")
         fixes_applied = 0
@@ -1091,9 +1041,7 @@ class EnhancedCleanup:
 
         return "\n".join(lines), fixes_applied
 
-    def _fix_e402_import_order(
-        self, content: str, violations: List[dict]
-    ) -> Tuple[str, int]:
+    def _fix_e402_import_order(self, content: str, violations: List[dict]) -> Tuple[str, int]:
         """Fix E402 import order issues."""
         fixes_applied = 0
 
@@ -1193,9 +1141,7 @@ class EnhancedCleanup:
         tools_dir = self.repo_root / "tools"
         if tools_dir.exists():
             script_count = len(list(tools_dir.glob("*.py")))
-            self.log_fix(
-                f"Tools directory contains {script_count} Python scripts", "phase5"
-            )
+            self.log_fix(f"Tools directory contains {script_count} Python scripts", "phase5")
 
             # Add __init__.py to tools if needed
             init_file = tools_dir / "__init__.py"
@@ -1213,9 +1159,7 @@ class EnhancedCleanup:
             if config_file.exists():
                 content = config_file.read_text()
                 if '"tools/*.py" = ["ALL"]' in content:
-                    self.log_fix(
-                        f"{config_file.name} properly ignores tools/*.py", "phase5"
-                    )
+                    self.log_fix(f"{config_file.name} properly ignores tools/*.py", "phase5")
                     break
         else:
             self.log_error("No config file found with tools/*.py ignore", "phase5")
@@ -1287,9 +1231,7 @@ class EnhancedCleanup:
                     if self.backup_file(file_path):
                         file_path.write_text(content)
                         self.files_modified.add(str(file_path))
-                        self.log_fix(
-                            f"Fixed syntax errors in {file_path.name}", "phase6"
-                        )
+                        self.log_fix(f"Fixed syntax errors in {file_path.name}", "phase6")
                         return True
                 except SyntaxError:
                     # Revert if fix didn't work
@@ -1327,14 +1269,10 @@ class EnhancedCleanup:
                             "phase7",
                         )
 
-        self.log_fix(
-            f"Syntax validation: {syntax_valid}/{syntax_total} files valid", "phase7"
-        )
+        self.log_fix(f"Syntax validation: {syntax_valid}/{syntax_total} files valid", "phase7")
 
         # Test Ruff execution
-        returncode, stdout, stderr = self.run_command_safe(
-            ["ruff", "check", ".", "--statistics"]
-        )
+        returncode, stdout, stderr = self.run_command_safe(["ruff", "check", ".", "--statistics"])
         if returncode == 0:
             self.log_fix("Ruff check passed with no errors", "phase7")
         else:
@@ -1412,9 +1350,7 @@ class EnhancedCleanup:
         import_score = (import_success / import_total * 100) if import_total > 0 else 0
         structure_score = (dirs_existing / dirs_total * 100) if dirs_total > 0 else 0
 
-        print(
-            f"📊 SYNTAX VALIDATION: {syntax_score:.1f}% ({syntax_valid}/{syntax_total} files)"
-        )
+        print(f"📊 SYNTAX VALIDATION: {syntax_score:.1f}% ({syntax_valid}/{syntax_total} files)")
         print(
             f"📦 IMPORT VALIDATION: {import_score:.1f}% ({import_success}/{import_total} modules)"
         )
@@ -1854,9 +1790,7 @@ Examples:
         choices=range(0, 8),
         help="Run specific phase (0-7, where 0 = create stubs)",
     )
-    parser.add_argument(
-        "--all", action="store_true", help="Run all phases sequentially"
-    )
+    parser.add_argument("--all", action="store_true", help="Run all phases sequentially")
     parser.add_argument(
         "--repo-root",
         default="/Users/rohanvinaik/genomevault",

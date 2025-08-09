@@ -590,7 +590,7 @@ class ProteomicsProcessor:
         Returns:
             DataFrame with differential expression results
         """
-logger = logging.getLogger(__name__)  # Added by cleanup
+        logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Performing differential protein expression analysis")
 
         # Collect all proteins
@@ -661,7 +661,7 @@ logger = logging.getLogger(__name__)  # Added by cleanup
                 )
 
         if not results:
-logger = logging.getLogger(__name__)  # Added by cleanup
+            logger = logging.getLogger(__name__)  # Added by cleanup
             logger.warning("No proteins found for differential expression")
             return pd.DataFrame()
 
@@ -682,7 +682,7 @@ logger = logging.getLogger(__name__)  # Added by cleanup
         # Sort by p-value
         _results_df.sort_values("p_value", inplace=True)
 
-logger = logging.getLogger(__name__)  # Added by cleanup
+        logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info(
             "Found %sresults_df['significant'].sum() differentially expressed proteins"
         )
@@ -693,7 +693,7 @@ logger = logging.getLogger(__name__)  # Added by cleanup
         self, profile: ProteomicsProfile, output_path: Path, format: str = "tsv"
     ) -> None:
         """Export proteomics results to file"""
-logger = logging.getLogger(__name__)  # Added by cleanup
+        logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Exporting proteomics results to %soutput_path")
 
         _ = profile.to_dataframe()
@@ -707,5 +707,5 @@ logger = logging.getLogger(__name__)  # Added by cleanup
         else:
             raise ValidationError("Unsupported export format: {format}")
 
-logger = logging.getLogger(__name__)  # Added by cleanup
+        logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Successfully exported %slen(df) proteins")

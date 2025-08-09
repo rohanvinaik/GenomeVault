@@ -7,9 +7,11 @@ Example usage of HDC error handling with uncertainty tuning
 
 import asyncio
 
-from genomevault.hypervector.error_handling import (AdaptiveHDCEncoder,
-                                                    ErrorBudget,
-                                                    ErrorBudgetAllocator)
+from genomevault.hypervector.error_handling import (
+    AdaptiveHDCEncoder,
+    ErrorBudget,
+    ErrorBudgetAllocator,
+)
 
 
 async def main():

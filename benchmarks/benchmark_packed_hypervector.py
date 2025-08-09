@@ -9,8 +9,7 @@ import numpy as np
 import torch
 from memory_profiler import profile
 
-from genomevault.hypervector.encoding import (GenomicEncoder,
-                                              PackedGenomicEncoder)
+from genomevault.hypervector.encoding import GenomicEncoder, PackedGenomicEncoder
 
 
 def generate_random_variants(n_variants: int = 1000) -> list[dict[str, any]]:

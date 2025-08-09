@@ -325,9 +325,7 @@ def cmd_info(args):
         for name, info in circuits.items():
             logger.info(f"\n{name}:")
             logger.info(f"  {info['description']}")
-            print(
-                f"  Proof size: {info['proof_size']}, Verification: {info['verification_time']}"
-            )
+            print(f"  Proof size: {info['proof_size']}, Verification: {info['verification_time']}")
 
 
 def main():
@@ -383,9 +381,7 @@ Examples:
 
     # Verify command
     verify_parser = subparsers.add_parser("verify", help="Verify a ZK proof")
-    verify_parser.add_argument(
-        "--proof", "-p", required=True, help="Path to proof JSON file"
-    )
+    verify_parser.add_argument("--proof", "-p", required=True, help="Path to proof JSON file")
     verify_parser.add_argument(
         "--public-input", "-i", help="Path to public inputs (if not in proof file)"
     )
@@ -410,9 +406,7 @@ Examples:
 
     # Info command
     info_parser = subparsers.add_parser("info", help="Display circuit information")
-    info_parser.add_argument(
-        "--circuit", "-c", help="Show details for specific circuit"
-    )
+    info_parser.add_argument("--circuit", "-c", help="Show details for specific circuit")
     info_parser.set_defaults(func=cmd_info)
 
     # Parse arguments

@@ -102,30 +102,22 @@ class STARKProver:
         Returns:
             Post-quantum secure STARK proof
         """
-        logger.info(
-            "Generating STARK proof for trace of size %scomputation_trace.shape"
-        )
+        logger.info("Generating STARK proof for trace of size %scomputation_trace.shape")
 
         # Step 1: Commit to execution trace
         trace_commitment, trace_tree = self._commit_to_trace(computation_trace)
 
         # Step 2: Generate constraint polynomial
-        constraint_poly = self._generate_constraint_polynomial(
-            computation_trace, constraints
-        )
+        constraint_poly = self._generate_constraint_polynomial(computation_trace, constraints)
 
         # Step 3: Commit to constraint polynomial evaluations
-        constraint_commitment, constraint_tree = self._commit_to_evaluations(
-            constraint_poly
-        )
+        constraint_commitment, constraint_tree = self._commit_to_evaluations(constraint_poly)
 
         # Step 4: FRI protocol for low-degree testing
         fri_layers = self._fri_protocol(constraint_poly, constraint_commitment)
 
         # Step 5: Generate query responses
-        query_indices = self._generate_query_indices(
-            trace_commitment, constraint_commitment
-        )
+        query_indices = self._generate_query_indices(trace_commitment, constraint_commitment)
 
         query_responses = self._generate_query_responses(
             computation_trace,
@@ -144,9 +136,7 @@ class STARKProver:
         proof = STARKProof(
             proof_id=self._generate_proof_id(public_inputs),
             claim=public_inputs,
-            commitment_root=self._combine_commitments(
-                trace_commitment, constraint_commitment
-            ),
+            commitment_root=self._combine_commitments(trace_commitment, constraint_commitment),
             fri_layers=fri_layers,
             query_responses=query_responses,
             proof_of_work=proof_of_work,
@@ -159,9 +149,7 @@ class STARKProver:
             },
         )
 
-        logger.info(
-            "Generated STARK proof: %sproof.proof_id, size: %sproof.proof_size_kb:.1fKB"
-        )
+        logger.info("Generated STARK proof: %sproof.proof_id, size: %sproof.proof_size_kb:.1fKB")
 
         return proof
 
@@ -228,14 +216,10 @@ class STARKProver:
         # Folding rounds
         for round_idx in range(self._compute_fri_rounds()):
             # Get challenge from Fiat-Shamir
-            challenge = self._fiat_shamir_challenge(
-                initial_commitment, fri_layers, round_idx
-            )
+            challenge = self._fiat_shamir_challenge(initial_commitment, fri_layers, round_idx)
 
             # Fold polynomial
-            folded_poly = self._fold_polynomial(
-                current_poly, challenge, self.fri_folding_factor
-            )
+            folded_poly = self._fold_polynomial(current_poly, challenge, self.fri_folding_factor)
 
             # Commit to folded polynomial
             commitment, merkle_tree = self._commit_to_evaluations(folded_poly)
@@ -254,9 +238,7 @@ class STARKProver:
 
             # Stop when polynomial is small enough
             if current_domain_size <= 256:
-                fri_layers.append(
-                    {"round": "final", "coefficients": current_poly.tolist()}
-                )
+                fri_layers.append({"round": "final", "coefficients": current_poly.tolist()})
                 break
 
         return fri_layers
@@ -391,9 +373,7 @@ class STARKProver:
         # For now, return mock coefficients
         return np.random.randint(0, self.field_size, len(points))
 
-    def _evaluate_polynomial(
-        self, coeffs: np.ndarray, domain: np.ndarray
-    ) -> np.ndarray:
+    def _evaluate_polynomial(self, coeffs: np.ndarray, domain: np.ndarray) -> np.ndarray:
         """Evaluate polynomial on domain (simplified)."""
         # In practice, would use FFT for efficiency
         evaluations = []
@@ -448,9 +428,7 @@ class STARKProver:
     ) -> list[int]:
         """Generate random query indices."""
         # Use Fiat-Shamir to generate pseudorandom indices
-        seed = hashlib.sha256(
-            (trace_commitment + constraint_commitment).encode()
-        ).digest()
+        seed = hashlib.sha256((trace_commitment + constraint_commitment).encode()).digest()
 
         rng = np.random.RandomState(int.from_bytes(seed[:4], "big"))
         domain_size = 8 * 1024  # Example domain size
@@ -484,9 +462,7 @@ class STARKProver:
         poly[step] = (int(trace[step, register]) - value) % self.field_size
         return poly
 
-    def _transition_constraint_poly(
-        self, trace: np.ndarray, expression: str
-    ) -> np.ndarray:
+    def _transition_constraint_poly(self, trace: np.ndarray, expression: str) -> np.ndarray:
         """Generate polynomial for transition constraint."""
         # Parse and evaluate constraint expression
         # Simplified - in practice would have full expression parser
@@ -509,13 +485,9 @@ class STARKProver:
             "nonce": np.random.bytes(8).hex(),
         }
 
-        return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[
-            :16
-        ]
+        return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[:16]
 
-    def _commit_to_evaluations(
-        self, evaluations: np.ndarray
-    ) -> tuple[bytes, dict[str, Any]]:
+    def _commit_to_evaluations(self, evaluations: np.ndarray) -> tuple[bytes, dict[str, Any]]:
         """Commit to polynomial evaluations."""
         # Convert to bytes for hashing
         leaves = []
@@ -556,9 +528,7 @@ class PostQuantumVerifier:
                 return False
 
             # Verify query responses
-            if not self._verify_query_responses(
-                proof.query_responses, proof.commitment_root
-            ):
+            if not self._verify_query_responses(proof.query_responses, proof.commitment_root):
                 logger.warning("Query response verification failed")
                 return False
 

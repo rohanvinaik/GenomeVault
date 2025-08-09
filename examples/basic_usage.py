@@ -7,8 +7,7 @@ privacy-preserving genomic data processing pipeline.
 """
 
 # Import GenomeVault components
-from genomevault import (PhenotypeProcessor, SequencingProcessor, get_logger,
-                         init_config)
+from genomevault import PhenotypeProcessor, SequencingProcessor, get_logger, init_config
 from genomevault.local_processing import DifferentialStorage
 from genomevault.utils import get_config
 
@@ -62,9 +61,11 @@ def process_genomic_data_example():
     """
 
     # For demo purposes, create mock data
-    from genomevault.local_processing.sequencing import (GenomicProfile,
-                                                         QualityMetrics,
-                                                         Variant)
+    from genomevault.local_processing.sequencing import (
+        GenomicProfile,
+        QualityMetrics,
+        Variant,
+    )
 
     mock_variants = [
         Variant(

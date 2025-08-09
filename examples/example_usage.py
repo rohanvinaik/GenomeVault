@@ -12,11 +12,13 @@ import asyncio
 import numpy as np
 
 from genomevault.blockchain.node import BlockchainNode
-from genomevault.hypervector_transform.encoding import (HypervectorBinder,
-                                                        HypervectorEncoder)
-from genomevault.local_processing.sequencing import (SequencingProcessor,
-                                                     Variant)
+from genomevault.hypervector_transform.encoding import (
+    HypervectorBinder,
+    HypervectorEncoder,
+)
+from genomevault.local_processing.sequencing import SequencingProcessor, Variant
 from genomevault.pir.client import PIRClient, PIRServer
+
 # Import GenomeVault components
 from genomevault.utils.config import CompressionTier, NodeClass, config
 from genomevault.utils.logging import logger

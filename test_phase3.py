@@ -30,9 +30,7 @@ def test_ruff_f821():
                 if violations:
                     print("\nSample violations:")
                     for i, v in enumerate(violations[:5]):
-                        print(
-                            f"  {i+1}. {v['filename']}:{v['location']['row']} - {v['message']}"
-                        )
+                        print(f"  {i+1}. {v['filename']}:{v['location']['row']} - {v['message']}")
 
                 return violations
             except json.JSONDecodeError as e:

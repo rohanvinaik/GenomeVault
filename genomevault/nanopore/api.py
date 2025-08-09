@@ -86,9 +86,7 @@ async def start_streaming(
     Returns stream ID for tracking.
     """
     # Generate stream ID
-    stream_id = hashlib.sha256(f"{time.time()}_{config.json()}".encode()).hexdigest()[
-        :16
-    ]
+    stream_id = hashlib.sha256(f"{time.time()}_{config.json()}".encode()).hexdigest()[:16]
 
     # Initialize processor
     encoder = HypervectorEncoder(dimension=10000)
@@ -360,9 +358,7 @@ async def generate_proof(
         "proof_size": len(proof_data),
         "proof_hash": hashlib.sha256(proof_data).hexdigest(),
         "slices_included": min(len(cache["results"]), max_slices),
-        "anomalies_proven": sum(
-            len(r.get("anomalies", [])) for r in cache["results"][:max_slices]
-        ),
+        "anomalies_proven": sum(len(r.get("anomalies", [])) for r in cache["results"][:max_slices]),
     }
 
 

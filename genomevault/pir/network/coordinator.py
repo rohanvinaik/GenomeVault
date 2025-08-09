@@ -112,9 +112,7 @@ class PIRCoordinator:
             server_info: Server information
         """
         self.servers[server_info.server_id] = server_info
-        logger.info(
-            "Registered server %sserver_info.server_id (%sserver_info.server_type.value)"
-        )
+        logger.info("Registered server %sserver_info.server_id (%sserver_info.server_type.value)")
 
         # Audit log
         audit_logger.log_event(
@@ -157,9 +155,7 @@ class PIRCoordinator:
 
         # Apply compliance filtering if needed
         if user_region:
-            healthy_servers = self._filter_compliant_servers(
-                healthy_servers, user_region
-            )
+            healthy_servers = self._filter_compliant_servers(healthy_servers, user_region)
 
         # Sort by preference
         scored_servers = []
@@ -177,18 +173,15 @@ class PIRCoordinator:
 
             # Check geographic diversity
             if criteria.require_geographic_diversity and selected:
-                if not self._check_geographic_diversity(
-                    server, selected, criteria.min_distance_km
-                ):
+                if not self._check_geographic_diversity(server, selected, criteria.min_distance_km):
                     continue
 
             selected.append(server)
 
             if len(selected) >= criteria.min_servers:
                 # Check if we have minimum diversity
-                if (
-                    not criteria.require_geographic_diversity
-                    or self._has_sufficient_diversity(selected)
+                if not criteria.require_geographic_diversity or self._has_sufficient_diversity(
+                    selected
                 ):
                     break
 
@@ -197,9 +190,7 @@ class PIRCoordinator:
                 f"Could not select {criteria.min_servers} servers with required diversity"
             )
 
-        logger.info(
-            "Selected %slen(selected) servers: %s[s.server_id for s in selected]"
-        )
+        logger.info("Selected %slen(selected) servers: %s[s.server_id for s in selected]")
         return selected
 
     def _calculate_server_score(
@@ -294,9 +285,7 @@ class PIRCoordinator:
         # Check if we have minimum healthy servers
         healthy_count = sum(1 for s in self.servers.values() if s.health_score > 0.5)
         if healthy_count < self.min_healthy_servers:
-            logger.warning(
-                "Low healthy server count: %shealthy_count < %sself.min_healthy_servers"
-            )
+            logger.warning("Low healthy server count: %shealthy_count < %sself.min_healthy_servers")
 
     async def _check_server_health(self, server: ServerInfo):
         """Check health of individual server."""
@@ -376,9 +365,7 @@ class PIRCoordinator:
             for i, response in enumerate(responses):
                 if isinstance(response, Exception):
                     failed_servers.append(selected_servers[i].server_id)
-                    logger.error(
-                        "Query failed on %sselected_servers[i].server_id: %sresponse"
-                    )
+                    logger.error("Query failed on %sselected_servers[i].server_id: %sresponse")
                 else:
                     valid_responses.append(response)
 
@@ -412,21 +399,13 @@ class PIRCoordinator:
     def get_coordinator_stats(self) -> dict[str, Any]:
         """Get coordinator statistics."""
         healthy_servers = sum(1 for s in self.servers.values() if s.health_score > 0.8)
-        degraded_servers = sum(
-            1 for s in self.servers.values() if 0.5 < s.health_score <= 0.8
-        )
-        unhealthy_servers = sum(
-            1 for s in self.servers.values() if s.health_score <= 0.5
-        )
+        degraded_servers = sum(1 for s in self.servers.values() if 0.5 < s.health_score <= 0.8)
+        unhealthy_servers = sum(1 for s in self.servers.values() if s.health_score <= 0.5)
 
         ts_servers = sum(
-            1
-            for s in self.servers.values()
-            if s.server_type == ServerType.TRUSTED_SIGNATORY
+            1 for s in self.servers.values() if s.server_type == ServerType.TRUSTED_SIGNATORY
         )
-        ln_servers = sum(
-            1 for s in self.servers.values() if s.server_type == ServerType.LIGHT_NODE
-        )
+        ln_servers = sum(1 for s in self.servers.values() if s.server_type == ServerType.LIGHT_NODE)
 
         avg_latency = (
             sum(s.response_time_ms for s in self.servers.values()) / len(self.servers)
@@ -515,9 +494,7 @@ if __name__ == "__main__":
 
         logger.info("Selected servers:")
         for server in selected:
-            print(
-                f"  - {server.server_id} ({server.server_type.value}) in {server.region}"
-            )
+            print(f"  - {server.server_id} ({server.server_type.value}) in {server.region}")
 
         # Show statistics
         stats = coordinator.get_coordinator_stats()

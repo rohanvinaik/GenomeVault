@@ -48,13 +48,9 @@ class EncodingResponse(BaseModel):
 class MultiModalEncodingRequest(BaseModel):
     """Request for encoding multiple modalities"""
 
-    modalities: dict[str, dict[str, Any]] = Field(
-        ..., description="Dict of modality data"
-    )
+    modalities: dict[str, dict[str, Any]] = Field(..., description="Dict of modality data")
     compression_tier: str | None = Field("full", description="Compression tier")
-    binding_type: str | None = Field(
-        "fourier", description="Binding type for cross-modal"
-    )
+    binding_type: str | None = Field("fourier", description="Binding type for cross-modal")
 
 
 class SimilarityRequest(BaseModel):
@@ -167,9 +163,7 @@ async def encode_genome(
             encoding_time_ms=encoding_time_ms,
             metadata={
                 "omics_type": omics_type.value,
-                "compression_tier": (
-                    compression_tier.value if compression_tier else "default"
-                ),
+                "compression_tier": (compression_tier.value if compression_tier else "default"),
                 "fingerprint": getattr(encoder, "fingerprint", "unknown"),
                 "sparsity": metrics.sparsity,
                 "compression_ratio": metrics.compression_ratio,
@@ -281,9 +275,7 @@ async def decode_vector(request: DecodeRequest):
 
         # Validate vector
         if not torch.isfinite(vector).all():
-            raise HTTPException(
-                status_code=400, detail="Vector contains invalid values (inf/nan)"
-            )
+            raise HTTPException(status_code=400, detail="Vector contains invalid values (inf/nan)")
 
         # Get encoder for decoding operations
         registry.get_encoder()
@@ -322,9 +314,7 @@ async def decode_vector(request: DecodeRequest):
             }
 
         else:
-            raise HTTPException(
-                status_code=400, detail=f"Unknown query type: {request.query_type}"
-            )
+            raise HTTPException(status_code=400, detail=f"Unknown query type: {request.query_type}")
 
     except HTTPException:
         from genomevault.observability.logging import configure_logging
@@ -364,9 +354,7 @@ async def compute_similarity(request: SimilarityRequest):
 
         # Validate vectors
         if not (torch.isfinite(v1).all() and torch.isfinite(v2).all()):
-            raise HTTPException(
-                status_code=400, detail="Vectors contain invalid values (inf/nan)"
-            )
+            raise HTTPException(status_code=400, detail="Vectors contain invalid values (inf/nan)")
 
         # Get encoder for similarity computation
         encoder = registry.get_encoder()

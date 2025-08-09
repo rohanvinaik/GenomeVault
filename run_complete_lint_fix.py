@@ -4,14 +4,12 @@ Complete lint fix implementation for GenomeVault.
 Runs all fixes in the correct order as per the markdown plan.
 """
 
+import logging
 import subprocess
 import sys
 from pathlib import Path
-import logging
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s: %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -67,9 +65,7 @@ def create_branch():
     logger.info("Creating branch for lint sweep...")
 
     # Check current branch
-    result = subprocess.run(
-        ["git", "branch", "--show-current"], capture_output=True, text=True
-    )
+    result = subprocess.run(["git", "branch", "--show-current"], capture_output=True, text=True)
     current_branch = result.stdout.strip()
 
     if current_branch == "chore/lint-sweep":
@@ -99,9 +95,7 @@ def run_baseline_autofix():
     run_command(["ruff", "genomevault", "--select", "I", "--fix"])
 
     # Commit baseline changes
-    result = subprocess.run(
-        ["git", "status", "--porcelain"], capture_output=True, text=True
-    )
+    result = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True)
     if result.stdout.strip():
         logger.info("Committing baseline changes...")
         run_command(["git", "add", "-A"])
@@ -145,9 +139,7 @@ def run_area_by_area_fixes():
         run_command(["ruff", area, "--select", "I", "--fix"])
 
         # Commit if changes
-        result = subprocess.run(
-            ["git", "status", "--porcelain"], capture_output=True, text=True
-        )
+        result = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True)
         if result.stdout.strip():
             run_command(["git", "add", "-A"])
             run_command(
@@ -173,9 +165,7 @@ def run_common_fixes():
         run_command(["python", "apply_common_fixes.py"])
 
         # Commit if changes
-        result = subprocess.run(
-            ["git", "status", "--porcelain"], capture_output=True, text=True
-        )
+        result = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True)
         if result.stdout.strip():
             run_command(["git", "add", "-A"])
             run_command(

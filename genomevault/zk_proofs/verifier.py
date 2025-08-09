@@ -602,6 +602,4 @@ if __name__ == "__main__":
 
     logger.info("\nVerification result: {result.is_valid}")
     logger.info("Verification time: {result.verification_time*1000:.1f}ms")
-    print(
-        "Expected time: {verifier.get_verification_time_estimate('diabetes_risk_alert')}ms"
-    )
+    print("Expected time: {verifier.get_verification_time_estimate('diabetes_risk_alert')}ms")

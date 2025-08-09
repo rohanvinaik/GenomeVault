@@ -12,27 +12,19 @@ def main():
     print("=" * 60)
 
     # Check current branch
-    result = subprocess.run(
-        ["git", "branch", "--show-current"], capture_output=True, text=True
-    )
+    result = subprocess.run(["git", "branch", "--show-current"], capture_output=True, text=True)
     print(f"Current branch: {result.stdout.strip()}")
 
     # Check for uncommitted changes
-    result = subprocess.run(
-        ["git", "status", "--porcelain"], capture_output=True, text=True
-    )
+    result = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True)
     if result.stdout.strip():
-        print(
-            f"\nUncommitted changes: {len(result.stdout.strip().split(chr(10)))} files"
-        )
+        print(f"\nUncommitted changes: {len(result.stdout.strip().split(chr(10)))} files")
     else:
         print("\nNo uncommitted changes")
 
     # Show recent commits
     print("\nRecent commits:")
-    result = subprocess.run(
-        ["git", "log", "--oneline", "-5"], capture_output=True, text=True
-    )
+    result = subprocess.run(["git", "log", "--oneline", "-5"], capture_output=True, text=True)
     print(result.stdout)
 
     # Quick lint check
@@ -48,9 +40,7 @@ def main():
         print("❌ Black: Needs formatting")
 
     # Ruff
-    result = subprocess.run(
-        ["ruff", "genomevault", "--quiet"], capture_output=True, text=True
-    )
+    result = subprocess.run(["ruff", "genomevault", "--quiet"], capture_output=True, text=True)
     if result.returncode == 0:
         print("✅ Ruff: No issues")
     else:

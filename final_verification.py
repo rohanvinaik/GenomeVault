@@ -16,9 +16,7 @@ from pathlib import Path
 def run_cmd(cmd, timeout=30):
     """Run command safely with timeout."""
     try:
-        result = subprocess.run(
-            cmd, shell=True, capture_output=True, text=True, timeout=timeout
-        )
+        result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=timeout)
         return result.returncode, result.stdout, result.stderr
     except subprocess.TimeoutExpired:
         return 1, "", "Command timed out"
@@ -235,9 +233,7 @@ def test_phase7_validation():
 
     # Test pytest if available
     pytest_works = False
-    ret, out, err = run_cmd(
-        "pytest -q -k 'not api and not nanopore' --maxfail=1 --collect-only"
-    )
+    ret, out, err = run_cmd("pytest -q -k 'not api and not nanopore' --maxfail=1 --collect-only")
     if ret == 0:
         print("✅ pytest collection works")
         pytest_works = True
@@ -370,9 +366,7 @@ def main():
 
     if passed >= total - 1:  # Allow one test to fail
         print("\n🎉 IMPLEMENTATION SUCCESSFUL!")
-        print(
-            "The Ruff version conflict has been resolved and all major issues addressed."
-        )
+        print("The Ruff version conflict has been resolved and all major issues addressed.")
 
         print("\n📋 RECOMMENDED NEXT STEPS:")
         print("1. Run: ruff check . --statistics")

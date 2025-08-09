@@ -106,9 +106,7 @@ class SliceReader:
                         timestamp=time.time(),
                         metadata={
                             "channel": read.get_channel_info().get("channel_number", 0),
-                            "sampling_rate": read.get_channel_info().get(
-                                "sampling_rate", 4000
-                            ),
+                            "sampling_rate": read.get_channel_info().get("sampling_rate", 4000),
                             "offset": read.get_channel_info().get("offset", 0),
                             "range": read.get_channel_info().get("range", 1),
                         },
@@ -167,10 +165,7 @@ class SliceReader:
             if np.std(segment) < threshold:
                 # Extend until change
                 j = i + window
-                while (
-                    j < len(raw_signal)
-                    and abs(raw_signal[j] - np.mean(segment)) < threshold
-                ):
+                while j < len(raw_signal) and abs(raw_signal[j] - np.mean(segment)) < threshold:
                     j += 1
 
                 # Record event
@@ -505,9 +500,7 @@ async def example_streaming_pipeline():
     async def collect_results(result):
         results.append(result)
         if result["anomalies"]:
-            print(
-                f"Anomalies detected in slice {result['slice_id']}: {len(result['anomalies'])}"
-            )
+            print(f"Anomalies detected in slice {result['slice_id']}: {len(result['anomalies'])}")
 
     # Process file
     stats = await processor.process_fast5(

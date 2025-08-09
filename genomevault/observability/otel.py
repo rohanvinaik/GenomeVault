@@ -18,9 +18,7 @@ def try_enable_otel() -> bool:
         from opentelemetry.sdk.trace import TracerProvider
         from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
-        provider = TracerProvider(
-            resource=Resource.create({"service.name": "genomevault-api"})
-        )
+        provider = TracerProvider(resource=Resource.create({"service.name": "genomevault-api"}))
         trace.set_tracer_provider(provider)
         span_exporter = OTLPSpanExporter(endpoint=endpoint)
         provider.add_span_processor(BatchSpanProcessor(span_exporter))

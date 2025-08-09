@@ -40,9 +40,7 @@ class TunedQueryRequest(BaseModel):
     ecc_enabled: bool = Field(True, description="Enable error correcting codes")
     parity_g: int = Field(3, description="XOR(g) parity groups", ge=2, le=5)
     repeat_cap: str = Field("AUTO", description="Number of repeats or 'AUTO'")
-    session_id: str | None = Field(
-        None, description="WebSocket session ID for progress"
-    )
+    session_id: str | None = Field(None, description="WebSocket session ID for progress")
 
 
 class TunedQueryResponse(BaseModel):
@@ -198,9 +196,7 @@ async def query_with_tuning(
             )
         else:
             # Use batch execution without progress
-            batched_result = await query_builder.query_with_error_budget(
-                genomic_query, budget
-            )
+            batched_result = await query_builder.query_with_error_budget(genomic_query, budget)
             result = batched_result.aggregated_result
 
         # Step 4: Generate ZK proof for median computation

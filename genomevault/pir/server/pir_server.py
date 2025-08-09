@@ -56,9 +56,7 @@ class PIRServer:
     Processes queries without learning what is being retrieved.
     """
 
-    def __init__(
-        self, server_id: str, data_directory: Path, is_trusted_signatory: bool = False
-    ):
+    def __init__(self, server_id: str, data_directory: Path, is_trusted_signatory: bool = False):
         """
         Initialize PIR server.
 
@@ -142,9 +140,7 @@ class PIRServer:
             # Open file for memory mapping
             with open(shard.data_path, "rb") as f:
                 # Memory-map the file
-                self.mmap_files[shard_id] = mmap.mmap(
-                    f.fileno(), 0, access=mmap.ACCESS_READ
-                )
+                self.mmap_files[shard_id] = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
 
         return self.mmap_files[shard_id]
 
@@ -188,9 +184,7 @@ class PIRServer:
         # Process query
         try:
             # Compute dot product with database
-            response_vector = await self._compute_dot_product(
-                query_vector, shard_id, database_size
-            )
+            response_vector = await self._compute_dot_product(query_vector, shard_id, database_size)
 
             computation_time = (time.time() - start_time) * 1000
 
@@ -305,9 +299,7 @@ class PIRServer:
 
         return items
 
-    def batch_process_queries(
-        self, queries: list[dict[str, Any]]
-    ) -> list[dict[str, Any]]:
+    def batch_process_queries(self, queries: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """
         Process multiple queries in batch.
 
@@ -334,9 +326,7 @@ class PIRServer:
             Server statistics
         """
         avg_computation_time = (
-            self.total_computation_time / self.query_count
-            if self.query_count > 0
-            else 0
+            self.total_computation_time / self.query_count if self.query_count > 0 else 0
         )
 
         return {
@@ -349,9 +339,7 @@ class PIRServer:
             "uptime_seconds": time.time(),  # Would track actual uptime
         }
 
-    def update_shard(
-        self, shard_id: str, new_data_path: Path, new_checksum: str
-    ) -> bool:
+    def update_shard(self, shard_id: str, new_data_path: Path, new_checksum: str) -> bool:
         """
         Update a database shard.
 

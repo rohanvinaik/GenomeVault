@@ -84,9 +84,7 @@ CORRELATION_MIN = 0.7
         last_import_idx = 0
 
         for i, line in enumerate(lines):
-            if line.strip().startswith(
-                ("import ", "from ")
-            ) and not line.strip().startswith("#"):
+            if line.strip().startswith(("import ", "from ")) and not line.strip().startswith("#"):
                 last_import_idx = i
 
         # Insert constants after last import
@@ -111,18 +109,12 @@ CORRELATION_MIN = 0.7
             new_content = new_content.replace(old, new)
 
         # Fix unused variables - look for vec2 and similar patterns
-        if (
-            "vec2 =" in new_content
-            and "vec2[" not in new_content
-            and "vec2)" not in new_content
-        ):
+        if "vec2 =" in new_content and "vec2[" not in new_content and "vec2)" not in new_content:
             new_content = new_content.replace("vec2 =", "_ =")
 
         # Write back
         file_path.write_text(new_content)
-        self.fixes_applied.append(
-            f"Fixed {file_path}: Added constants, replaced magic numbers"
-        )
+        self.fixes_applied.append(f"Fixed {file_path}: Added constants, replaced magic numbers")
 
     def fix_test_pir_protocol(self) -> None:
         """Fix tests/pir/test_pir_protocol.py according to checklist."""
@@ -151,9 +143,7 @@ QPS_MIN = 10
         last_import_idx = 0
 
         for i, line in enumerate(lines):
-            if line.strip().startswith(
-                ("import ", "from ")
-            ) and not line.strip().startswith("#"):
+            if line.strip().startswith(("import ", "from ")) and not line.strip().startswith("#"):
                 last_import_idx = i
 
         lines.insert(last_import_idx + 1, constants)
@@ -181,9 +171,7 @@ QPS_MIN = 10
             new_content = re.sub(pattern, r"\1_ =", new_content, flags=re.MULTILINE)
 
         file_path.write_text(new_content)
-        self.fixes_applied.append(
-            f"Fixed {file_path}: Added constants, fixed unused variables"
-        )
+        self.fixes_applied.append(f"Fixed {file_path}: Added constants, fixed unused variables")
 
     def fix_test_zk_property_circuits(self) -> None:
         """Fix tests/zk/test_zk_property_circuits.py according to checklist."""
@@ -209,9 +197,7 @@ VERIFICATION_TIME_MAX = 0.1
         last_import_idx = 0
 
         for i, line in enumerate(lines):
-            if line.strip().startswith(
-                ("import ", "from ")
-            ) and not line.strip().startswith("#"):
+            if line.strip().startswith(("import ", "from ")) and not line.strip().startswith("#"):
                 last_import_idx = i
 
         lines.insert(last_import_idx + 1, constants)
@@ -254,18 +240,14 @@ HTTP_OK = 200
         last_import_idx = 0
 
         for i, line in enumerate(lines):
-            if line.strip().startswith(
-                ("import ", "from ")
-            ) and not line.strip().startswith("#"):
+            if line.strip().startswith(("import ", "from ")) and not line.strip().startswith("#"):
                 last_import_idx = i
 
         lines.insert(last_import_idx + 1, constants)
 
         # Replace magic numbers
         new_content = "\n".join(lines)
-        new_content = new_content.replace(
-            "r.status_code == 200", "r.status_code == HTTP_OK"
-        )
+        new_content = new_content.replace("r.status_code == 200", "r.status_code == HTTP_OK")
 
         file_path.write_text(new_content)
         self.fixes_applied.append(f"Fixed {file_path}: Added HTTP_OK constant")
@@ -433,9 +415,7 @@ HTTP_OK = 200
         """Commit changes with given message."""
         try:
             subprocess.run(["git", "add", "-A"], cwd=self.project_root, check=True)
-            subprocess.run(
-                ["git", "commit", "-m", message], cwd=self.project_root, check=True
-            )
+            subprocess.run(["git", "commit", "-m", message], cwd=self.project_root, check=True)
             return True
         except subprocess.CalledProcessError as e:
             print(f"Git commit failed: {e}")
@@ -486,9 +466,7 @@ HTTP_OK = 200
             for fix in self.fixes_applied:
                 print(f"  - {fix}")
 
-            if self.commit_changes(
-                "fix: implement lint clean checklist - constants and imports"
-            ):
+            if self.commit_changes("fix: implement lint clean checklist - constants and imports"):
                 print("✓ Changes committed")
             else:
                 print("✗ Commit failed")
@@ -520,9 +498,7 @@ def main():
                 project_root = potential_root
                 break
         else:
-            print(
-                "ERROR: Could not find GenomeVault project root (.ruff.toml not found)"
-            )
+            print("ERROR: Could not find GenomeVault project root (.ruff.toml not found)")
             print("Please run this script from the GenomeVault project directory")
             sys.exit(1)
 

@@ -12,9 +12,7 @@ import sys
 from pathlib import Path
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # Project root
@@ -207,9 +205,7 @@ __all__ = []
                     changes_made.append(f"Added __init__.py to {package_path}")
                     logger.info(f"✓ Added __init__.py to {package_path}")
                 except Exception as e:
-                    errors_encountered.append(
-                        f"Could not add __init__.py to {package_path}: {e}"
-                    )
+                    errors_encountered.append(f"Could not add __init__.py to {package_path}: {e}")
                     logger.error(f"✗ Could not add __init__.py to {package_path}: {e}")
 
 
@@ -532,9 +528,7 @@ def update_requirements():
         if req_file.exists():
             with open(req_file, "r") as f:
                 existing = set(
-                    line.strip()
-                    for line in f
-                    if line.strip() and not line.startswith("#")
+                    line.strip() for line in f if line.strip() and not line.startswith("#")
                 )
 
         # Add new requirements
@@ -643,9 +637,7 @@ def run_validation_checks():
 
     # Check 2: Module imports
     logger.info("Checking module imports...")
-    result = subprocess.run(
-        ["python", "-c", "import genomevault"], capture_output=True, text=True
-    )
+    result = subprocess.run(["python", "-c", "import genomevault"], capture_output=True, text=True)
     if result.returncode == 0:
         checks_passed.append("Module import check")
         logger.info("✓ Module imports successfully")
