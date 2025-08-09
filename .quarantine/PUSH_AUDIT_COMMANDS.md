@@ -17,7 +17,7 @@ git add .
 git commit -m "Implement audit checklist improvements
 
 - Convert to Hatch build system (pyproject.toml)
-- Add ruff linter/formatter configuration  
+- Add ruff linter/formatter configuration
 - Update mypy.ini for stricter type checking
 - Add pytest.ini with coverage requirements
 - Create CI workflow for Python 3.10/3.11
