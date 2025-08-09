@@ -6,6 +6,8 @@ Comprehensive benchmarking for the HDC encoding implementation
 following Stage 4 requirements.
 """
 
+from __future__ import annotations
+
 import argparse
 import json
 import os
@@ -20,7 +22,10 @@ import psutil
 import seaborn as sns
 import torch
 
-from genomevault.hypervector_transform.binding_operations import BindingType, HypervectorBinder
+from genomevault.hypervector_transform.binding_operations import (
+    BindingType,
+    HypervectorBinder,
+)
 from genomevault.hypervector_transform.hdc_encoder import (
     CompressionTier,
     HypervectorConfig,

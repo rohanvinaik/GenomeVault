@@ -5,6 +5,8 @@ This module provides clinical validation and capability attestation
 for ML models used in GenomeVault, ensuring FDA/EMA compliance.
 """
 
+from __future__ import annotations
+
 import hashlib
 import json
 import time

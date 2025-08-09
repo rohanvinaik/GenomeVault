@@ -6,6 +6,8 @@ Demonstrates the full pipeline with actual zero-knowledge proof generation
 # Note: This example uses print() statements for demonstration purposes.
 # In production code, use proper logging instead.
 
+from __future__ import annotations
+
 import asyncio
 import json
 import time

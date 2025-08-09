@@ -1,6 +1,8 @@
 # genomevault/governance/node.py
 """Decentralized governance with quadratic voting."""
 
+from __future__ import annotations
+
 import math
 import time
 from collections import defaultdict

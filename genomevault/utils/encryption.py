@@ -5,6 +5,8 @@ Provides cryptographic primitives and utilities for secure data handling,
 including AES-GCM encryption, homomorphic encryption support, and threshold cryptography.
 """
 
+from __future__ import annotations
+
 import base64
 import hashlib
 import json

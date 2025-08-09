@@ -3,6 +3,8 @@ API Router for Error-Tuned Queries
 Implements the /query_tuned endpoint with real-time progress updates
 """
 
+from __future__ import annotations
+
 import time
 from typing import Any
 

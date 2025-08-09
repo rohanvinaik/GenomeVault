@@ -156,14 +156,29 @@ tmp/
 test_output*.log
 clinical_validation/temp/
 
-# Cleanup scripts (remove after use)
+# Cleanup and temporary scripts
 cleanup_for_github.py
 cleanup_auto.py
 preview_cleanup.py
+.cleanup_backup/
+.cleanup_backups/
+test_*.py  # One-off test files in root
+task*_output/
+task*_output.txt
 
 # Backup files
-.cleanup_backups/
 *.bak
+*.backup
+
+# One-off scripts in root (should be in tools/)
+apply_*.py
+fix_*.py
+validate_*.py
+verify_*.py
+check_*.py
+run_*.py
+push_*.sh
+commit_*.sh
 
 # Cryptographic keys (security)
 *.key

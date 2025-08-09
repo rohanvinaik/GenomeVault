@@ -3,6 +3,8 @@ Zero-knowledge proof generation using PLONK templates.
 Implements specialized circuits for genomic privacy.
 """
 
+from __future__ import annotations
+
 import hashlib
 import json
 import time

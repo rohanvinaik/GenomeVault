@@ -5,6 +5,8 @@ Handles circuit selection, optimization, and management for
 genomic privacy-preserving proofs.
 """
 
+from __future__ import annotations
+
 import hashlib
 import time
 from dataclasses import dataclass, field

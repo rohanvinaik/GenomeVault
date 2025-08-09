@@ -1,10 +1,9 @@
-from genomevault.observability.logging import configure_logging
-
-logger = configure_logging()
 """
 Federated Learning Coordinator for privacy-preserving multi-institutional research.
 Implements secure aggregation with differential privacy.
 """
+
+from __future__ import annotations
 
 import asyncio
 import hashlib
@@ -21,7 +20,6 @@ from genomevault.utils.config import config
 from genomevault.utils.logging import (
     audit_logger,
     get_logger,
-    logger,
     performance_logger,
 )
 

@@ -5,6 +5,8 @@ Provides RESTful API endpoints for encoding genomic data using
 Hierarchical Hyperdimensional Computing (HDC).
 """
 
+from __future__ import annotations
+
 import logging
 from datetime import datetime
 from typing import Any

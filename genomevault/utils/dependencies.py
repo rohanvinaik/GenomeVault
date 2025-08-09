@@ -2,6 +2,8 @@
 Utilities for checking optional dependencies and providing helpful error messages.
 """
 
+from __future__ import annotations
+
 import importlib.util
 import logging
 from collections.abc import Callable

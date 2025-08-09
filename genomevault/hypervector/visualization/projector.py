@@ -5,6 +5,8 @@ This module provides visualization tools for understanding model evolution
 during training using dimensionality reduction techniques.
 """
 
+from __future__ import annotations
+
 import warnings
 from typing import Any
 

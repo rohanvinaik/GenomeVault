@@ -2,6 +2,8 @@
 Test for Zero-Knowledge Median Verification Circuit
 """
 
+from __future__ import annotations
+
 import asyncio
 import json
 import logging

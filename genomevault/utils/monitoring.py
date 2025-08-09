@@ -9,6 +9,8 @@ This module provides comprehensive monitoring capabilities including:
 - Privacy-preserving logging
 """
 
+from __future__ import annotations
+
 import time
 from datetime import datetime
 from functools import wraps

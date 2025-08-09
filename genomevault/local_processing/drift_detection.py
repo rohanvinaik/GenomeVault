@@ -5,6 +5,8 @@ This module provides real-time monitoring of deployed models for
 performance degradation, distribution shifts, and semantic drift.
 """
 
+from __future__ import annotations
+
 import hashlib
 import time
 from collections import defaultdict, deque

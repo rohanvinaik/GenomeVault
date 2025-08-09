@@ -19,6 +19,8 @@ Usage:
     python comprehensive_cleanup.py [--phase N] [--all] [--dry-run]
 """
 
+from __future__ import annotations
+
 import argparse
 import json
 import os

@@ -21,6 +21,8 @@ Usage:
     python enhanced_cleanup.py [--phase N] [--all] [--dry-run] [--continue-on-error]
 """
 
+from __future__ import annotations
+
 import argparse
 import ast
 import hashlib

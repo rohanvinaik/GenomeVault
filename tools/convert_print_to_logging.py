@@ -4,6 +4,8 @@ Convert print statements to proper logging in the genomevault package.
 This script helps with step 5 of the audit checklist.
 """
 
+from __future__ import annotations
+
 import ast
 from pathlib import Path
 

@@ -5,6 +5,8 @@ Provides REST API for real-time nanopore data processing
 with biological signal detection.
 """
 
+from __future__ import annotations
+
 import asyncio
 import hashlib
 import time
