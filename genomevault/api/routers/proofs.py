@@ -7,7 +7,7 @@ from genomevault.zk.models import ProofCreateRequest, ProofVerifyRequest
 
 router = APIRouter(prefix="/proofs", tags=["proofs"])
 
-_engine = ZKProofEngine(repo_root="/Users/rohanvinaik/genomevault")
+_engine = ZKProofEngine()  # Will use default PROJECT_ROOT
 
 
 @router.post("/create")

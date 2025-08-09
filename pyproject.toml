@@ -62,22 +62,36 @@ target-version = ["py311"]
 extend-exclude = "^(.*/)?(migrations|build|dist|node_modules|.venv|venv|.mypy_cache|.ruff_cache|.pytest_cache)/"
 
 [tool.ruff]
-line-length = 100
-target-version = "py311"
-extend-select = [
-  "I",   # isort
-  "UP",  # pyupgrade
-  "B",   # bugbear
-  "C4",  # comprehensions
-  "SIM", # simplify
-  "RET", # return
-  "T20", # print statements
-  "F",   # flakes
+line-length = 120
+target-version = "py39"
+select = [
+  "E",    # pycodestyle errors
+  "F",    # pyflakes
+  "I",    # isort
+  "N",    # pep8-naming
+  "UP",   # pyupgrade
+  "S",    # flake8-bandit
+  "B",    # flake8-bugbear
+  "A",    # flake8-builtins
+  "C4",   # flake8-comprehensions
+  "DTZ",  # flake8-datetimez
+  "T10",  # flake8-debugger
+  "ISC",  # flake8-implicit-str-concat
+  "ICN",  # flake8-import-conventions
+  "PIE",  # flake8-pie
+  "PT",   # flake8-pytest-style
+  "RET",  # flake8-return
+  "SIM",  # flake8-simplify
+  "ARG",  # flake8-unused-arguments
+  "PTH",  # flake8-use-pathlib
+  "ERA",  # eradicate
+  "PD",   # pandas-vet
+  "PGH",  # pygrep-hooks
+  "PL",   # Pylint
+  "TRY",  # tryceratops
+  "RUF",  # Ruff-specific rules
 ]
-extend-ignore = [
-  "D",    # docstring rules (defer)
-  "ANN",  # type annotation rules (handled by mypy phase)
-]
+ignore = ["E501", "PLR0913"]
 exclude = [
   "migrations",
   "build",
@@ -117,3 +131,9 @@ module = [
   "tests.*",
 ]
 ignore_errors = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]

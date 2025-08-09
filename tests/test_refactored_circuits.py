@@ -2,11 +2,7 @@
 Unit tests for the refactored clinical circuits.
 """
 
-import sys
 import unittest
-
-# Add genomevault to path
-sys.path.insert(0, "/Users/rohanvinaik/genomevault")
 
 try:
     from genomevault.clinical_validation.circuits import (
