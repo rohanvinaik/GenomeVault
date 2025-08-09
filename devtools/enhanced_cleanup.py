@@ -949,7 +949,9 @@ class EnhancedCleanup:
         import_score = (import_success / import_total * 100) if import_total > 0 else 0
         structure_score = (dirs_existing / dirs_total * 100) if dirs_total > 0 else 0
 
-        logger.debug(f"📊 SYNTAX VALIDATION: {syntax_score:.1f}% ({syntax_valid}/{syntax_total} files)")
+        logger.debug(
+            f"📊 SYNTAX VALIDATION: {syntax_score:.1f}% ({syntax_valid}/{syntax_total} files)"
+        )
         print(
             f"📦 IMPORT VALIDATION: {import_score:.1f}% ({import_success}/{import_total} modules)"
         )

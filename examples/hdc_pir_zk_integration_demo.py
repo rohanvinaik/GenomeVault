@@ -6,6 +6,7 @@ Demonstrates the full pipeline with actual zero-knowledge proof generation
 from __future__ import annotations
 
 from genomevault.utils.logging import get_logger
+
 logger = get_logger(__name__)
 
 # Note: This example uses print() statements for demonstration purposes.
@@ -131,7 +132,9 @@ async def main():
     logger.debug("\n7. Zero-Knowledge Property:")
     logger.debug(f"   - Total values: {len(values)}")
     logger.debug(f"   - Values revealed in proof: {len(opened_values)}")
-    logger.debug(f"   - Zero-knowledge ratio: {(1 - len(opened_values) / len(values)) * 100:.1f}% hidden")
+    logger.debug(
+        f"   - Zero-knowledge ratio: {(1 - len(opened_values) / len(values)) * 100:.1f}% hidden"
+    )
 
     # Step 8: Show complete results
     logger.info("\n8. Complete Query Result:")
@@ -194,7 +197,9 @@ async def main():
     logger.debug("\nSummary:")
     logger.debug(f"- Generated real ZK proof for {budget.repeats} query results")
     logger.error(f"- Proved median {median:.6f} is within {epsilon * 100}% error bound")
-    logger.error(f"- Proof provides cryptographic guarantee with {2**-delta_exp:.2e} failure probability")
+    logger.error(
+        f"- Proof provides cryptographic guarantee with {2**-delta_exp:.2e} failure probability"
+    )
     logger.debug(f"- Only revealed {revealed_count}/{total_count} values, maintaining privacy")
     logger.debug(f"- Total proof size: {len(proof_result.proof_data)} bytes")
     logger.debug("- Verification time: <5ms (much faster than generation)")

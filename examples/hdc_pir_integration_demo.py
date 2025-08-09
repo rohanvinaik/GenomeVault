@@ -74,9 +74,7 @@ async def main():
 
     logger.info(f"   - Connected to {len(servers)} PIR servers")
     logger.info(f"   - Database size: {database_size:,} entries")
-    logger.info(
-        f"   - Privacy guarantee: {pir_client.calculate_privacy_guarantee(3):.2e}"
-    )
+    logger.info(f"   - Privacy guarantee: {pir_client.calculate_privacy_guarantee(3):.2e}")
 
     # Step 4: Build and execute query
     logger.info("\n4. Executing Privacy-Preserving Query:")
@@ -110,9 +108,7 @@ async def main():
     async for idx, result in query_builder.execute_streaming_batch(batched_query):
         results.append(result)
         progress = (idx + 1) / budget.repeats * 100
-        logger.info(
-            f"   [{progress:3.0f}%] Completed repeat {idx + 1}/{budget.repeats}"
-        )
+        logger.info(f"   [{progress:3.0f}%] Completed repeat {idx + 1}/{budget.repeats}")
 
     logger.info("")  # New line after progress
 

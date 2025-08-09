@@ -1,4 +1,5 @@
 from genomevault.utils.logging import get_logger
+
 logger = get_logger(__name__)
 
 
@@ -23,7 +24,9 @@ class GenomeVaultDebugger:
         logger.debug("🐍 Checking Python version...")
         version = sys.version_info
         if version.major == 3 and version.minor >= 8:
-            logger.debug("  ✅ Python {version.major}.{version.minor}.{version.micro} is compatible")
+            logger.debug(
+                "  ✅ Python {version.major}.{version.minor}.{version.micro} is compatible"
+            )
             return True
         else:
             self.issues.append("Python {version.major}.{version.minor} is too old. Need 3.8+")

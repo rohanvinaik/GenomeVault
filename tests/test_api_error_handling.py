@@ -4,7 +4,6 @@ from genomevault.api.main import app
 from genomevault.exceptions import GVInputError
 
 
-
 client = TestClient(app)
 
 
@@ -48,9 +47,7 @@ def test_gv_input_error_inconsistent_row_lengths():
 
 def test_gv_input_error_empty_rows():
     """Test validation error for empty rows."""
-    response = client.post(
-        "/api/v1/encode", json={"data": [[], [1.0, 2.0]], "seed": 42}
-    )
+    response = client.post("/api/v1/encode", json={"data": [[], [1.0, 2.0]], "seed": 42})
     assert response.status_code == 400
 
     error_data = response.json()

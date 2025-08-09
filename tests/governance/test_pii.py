@@ -2,7 +2,6 @@ from genomevault.governance.pii.patterns import detect
 from genomevault.governance.pii.redact import PseudonymStore, redact_text, tokenize_text
 
 
-
 def test_detect_and_redact_and_tokenize(tmp_path, monkeypatch):
     text = "Contact john.doe@example.com or +1-415-555-1212 from 192.168.0.5"
     ms = detect(text)
@@ -17,7 +16,4 @@ def test_detect_and_redact_and_tokenize(tmp_path, monkeypatch):
     tok = tokenize_text(text, store=store)
     assert "tok_" in tok
     # Mapping persisted
-    assert (
-        store.get(next(v for v in tok.split() if v.startswith("tok_"))[:20]) is None
-        or True
-    )
+    assert store.get(next(v for v in tok.split() if v.startswith("tok_"))[:20]) is None or True

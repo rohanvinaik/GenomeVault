@@ -19,8 +19,6 @@ def test_vector_encode_roundtrip_e2e():
     )
     assert r.status_code == 200
     vid = r.json()["vector_id"]
-    r2 = client.get(
-        "/vectors/similarity", params={"vector_id1": vid, "vector_id2": vid}
-    )
+    r2 = client.get("/vectors/similarity", params={"vector_id1": vid, "vector_id2": vid})
     assert r2.status_code == 200
     assert 0.99 <= r2.json()["similarity"] <= 1.0
