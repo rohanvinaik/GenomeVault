@@ -14,7 +14,7 @@ from typing import Any
 import numpy as np
 
 from genomevault.hypervector_transform.encoding import HypervectorEncoder
-from genomevault.utils.logging import get_logger, performance_logger
+from genomevault.utils.logging import get_logger, log_operation
 
 logger = get_logger(__name__)
 
@@ -175,7 +175,7 @@ class FederatedLearningClient:
 
         return np.array(encoded_samples)
 
-    @performance_logger.log_operation("local_training")
+    @log_operation
     def train_local_model(
         self,
         global_model: np.ndarray,

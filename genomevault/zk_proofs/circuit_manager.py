@@ -8,22 +8,17 @@ genomic privacy-preserving proofs.
 from __future__ import annotations
 
 import hashlib
+import json
 import time
 from dataclasses import dataclass, field
 from typing import Any
 
 from genomevault.utils.config import get_config
-
-config = get_config()
-from genomevault.utils.logging import logger, performance_logger
+from genomevault.utils.logging import get_logger, log_operation
 
 from .circuits.base_circuits import BaseCircuit
 from .circuits.biological.diabetes import (
     DiabetesRiskCircuit,
-    PathwayEnrichmentCircuit,
-    PharmacogenomicCircuit,
-    PolygenenicRiskScoreCircuit,
-    VariantPresenceCircuit,
 )
 from .circuits.biological.multi_omics import (
     ClinicalTrialEligibilityCircuit,
@@ -31,6 +26,15 @@ from .circuits.biological.multi_omics import (
     MultiOmicsCorrelationCircuit,
     RareVariantBurdenCircuit,
 )
+from .circuits.biological.variant import (
+    PathwayEnrichmentCircuit,
+    PharmacogenomicCircuit,
+    PolygenenicRiskScoreCircuit,
+    VariantPresenceCircuit,
+)
+
+config = get_config()
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -69,9 +73,7 @@ class CircuitManager:
         self.optimization_cache = {}
         self.performance_stats = {}
 
-        logger.info(
-            "Circuit manager initialized", extra={"circuit_count": len(self.circuits)}
-        )
+        logger.info("Circuit manager initialized", extra={"circuit_count": len(self.circuits)})
 
     def _initialize_circuits(self) -> dict[str, CircuitMetadata]:
         """Initialize available circuits with metadata."""
@@ -163,15 +165,13 @@ class CircuitManager:
             Circuit instance
         """
         if circuit_name not in self.circuits:
-            raise ValueError("Unknown circuit: {circuit_name}")
+            raise ValueError(f"Unknown circuit: {circuit_name}")
 
         metadata = self.circuits[circuit_name]
 
         # Create circuit instance with parameters
         if circuit_name == "variant_presence":
-            return metadata.circuit_class(
-                merkle_depth=metadata.parameters.get("merkle_depth", 20)
-            )
+            return metadata.circuit_class(merkle_depth=metadata.parameters.get("merkle_depth", 20))
         elif circuit_name == "polygenic_risk_score":
             return metadata.circuit_class(
                 max_variants=metadata.parameters.get("max_variants", 1000)
@@ -181,22 +181,16 @@ class CircuitManager:
                 max_star_alleles=metadata.parameters.get("max_star_alleles", 50)
             )
         elif circuit_name == "pathway_enrichment":
-            return metadata.circuit_class(
-                max_genes=metadata.parameters.get("max_genes", 20000)
-            )
+            return metadata.circuit_class(max_genes=metadata.parameters.get("max_genes", 20000))
         elif circuit_name == "multi_omics_correlation":
             return metadata.circuit_class(
                 max_dimensions=metadata.parameters.get("max_dimensions", 1000)
             )
         elif circuit_name == "genotype_phenotype":
-            return metadata.circuit_class(
-                max_samples=metadata.parameters.get("max_samples", 10000)
-            )
+            return metadata.circuit_class(max_samples=metadata.parameters.get("max_samples", 10000))
         elif circuit_name == "rare_variant_burden":
             return metadata.circuit_class(
-                max_variants_per_gene=metadata.parameters.get(
-                    "max_variants_per_gene", 100
-                )
+                max_variants_per_gene=metadata.parameters.get("max_variants_per_gene", 100)
             )
         else:
             return metadata.circuit_class()
@@ -204,16 +198,13 @@ class CircuitManager:
     def get_circuit_metadata(self, circuit_name: str) -> CircuitMetadata:
         """Get metadata for a circuit."""
         if circuit_name not in self.circuits:
-            raise ValueError("Unknown circuit: {circuit_name}")
+            raise ValueError(f"Unknown circuit: {circuit_name}")
 
         return self.circuits[circuit_name]
 
     def list_circuits(self) -> list[dict[str, Any]]:
         """List all available circuits with metadata."""
-        return [
-            {"name": name, **metadata.to_dict()}
-            for name, metadata in self.circuits.items()
-        ]
+        return [{"name": name, **metadata.to_dict()} for name, metadata in self.circuits.items()]
 
     def select_optimal_circuit(
         self, analysis_type: str, data_characteristics: dict[str, Any]
@@ -260,17 +251,13 @@ class CircuitManager:
 
         # Check if optimization is needed
         if self._needs_optimization(base_circuit, data_characteristics):
-            base_circuit = self._optimize_circuit_selection(
-                base_circuit, data_characteristics
-            )
+            base_circuit = self._optimize_circuit_selection(base_circuit, data_characteristics)
 
-        logger.info("Selected circuit: base_circuit for analysis_type")
+        logger.info(f"Selected circuit: {base_circuit} for {analysis_type}")
 
         return base_circuit
 
-    def _needs_optimization(
-        self, circuit_name: str, data_characteristics: dict[str, Any]
-    ) -> bool:
+    def _needs_optimization(self, circuit_name: str, data_characteristics: dict[str, Any]) -> bool:
         """Check if circuit selection needs optimization."""
         metadata = self.circuits[circuit_name]
 
@@ -282,10 +269,7 @@ class CircuitManager:
 
         # Check performance requirements
         if "max_proof_time_ms" in data_characteristics:
-            if (
-                metadata.verification_time_ms
-                > data_characteristics["max_proof_time_ms"]
-            ):
+            if metadata.verification_time_ms > data_characteristics["max_proof_time_ms"]:
                 return True
 
         return False
@@ -295,7 +279,7 @@ class CircuitManager:
     ) -> str:
         """Optimize circuit selection based on constraints."""
         # Cache key for optimization
-        cache_key = "{base_circuit}:{json.dumps(data_characteristics, sort_keys=True)}"
+        cache_key = f"{base_circuit}:{json.dumps(data_characteristics, sort_keys=True)}"
 
         if cache_key in self.optimization_cache:
             return self.optimization_cache[cache_key]
@@ -348,7 +332,7 @@ class CircuitManager:
 
         return True
 
-    @performance_logger.log_operation("optimize_circuit_parameters")
+    @log_operation
     def optimize_circuit_parameters(
         self, circuit_name: str, target_metrics: dict[str, Any]
     ) -> dict[str, Any]:
@@ -386,13 +370,11 @@ class CircuitManager:
                 elif target_time < 30:
                     optimized_params["permutations"] = 500
 
-        logger.info("Optimized parameters for circuit_name: optimized_params")
+        logger.info(f"Optimized parameters for {circuit_name}: {optimized_params}")
 
         return optimized_params
 
-    def estimate_proof_generation_time(
-        self, circuit_name: str, data_size: dict[str, int]
-    ) -> float:
+    def estimate_proof_generation_time(self, circuit_name: str, data_size: dict[str, int]) -> float:
         """
         Estimate proof generation time.
 
@@ -466,12 +448,12 @@ class CircuitManager:
         # Check public inputs
         for required in expected_inputs["public"]:
             if required not in public_inputs:
-                errors.append("Missing public input: {required}")
+                errors.append(f"Missing public input: {required}")
 
         # Check private inputs
         for required in expected_inputs["private"]:
             if required not in private_inputs:
-                errors.append("Missing private input: {required}")
+                errors.append(f"Missing private input: {required}")
 
         # Circuit-specific validation
         if circuit_name == "diabetes_risk_alert":
@@ -666,7 +648,7 @@ class CircuitManager:
                     },
                     "merkle_proof": {
                         "path": [
-                            hashlib.sha256(b"node_{i}").hexdigest() for i in range(20)
+                            hashlib.sha256(f"node_{i}".encode()).hexdigest() for i in range(20)
                         ],
                         "indices": [i % 2 for i in range(20)],
                     },

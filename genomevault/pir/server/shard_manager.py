@@ -16,10 +16,9 @@ from pathlib import Path
 from typing import Any
 
 from genomevault.utils.config import get_config
+from genomevault.utils.logging import get_logger, log_operation
 
 config = get_config()
-from genomevault.utils.logging import get_logger, logger, performance_logger
-
 logger = get_logger(__name__)
 
 
@@ -157,7 +156,7 @@ class ShardManager:
         with open(manifest_path, "w", encoding="utf-8") as f:
             json.dump(manifest, f, indent=2)
 
-    @performance_logger.log_operation("create_shards")
+    @log_operation
     def create_shards_from_data(self, data_source: Path, data_type: str = "genomic") -> list[str]:
         """
         Create shards from source data.

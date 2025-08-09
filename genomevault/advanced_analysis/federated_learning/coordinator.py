@@ -16,12 +16,14 @@ from typing import Any
 
 import numpy as np
 
-from genomevault.utils.config import config
+from genomevault.utils.config import get_config
 from genomevault.utils.logging import (
     audit_logger,
     get_logger,
-    performance_logger,
+    log_operation,
 )
+
+config = get_config()
 
 logger = get_logger(__name__)
 
@@ -91,9 +93,7 @@ class SecureAggregator:
         self.threshold = threshold
         self.num_shares = num_shares
 
-    def generate_masks(
-        self, num_participants: int, vector_size: int
-    ) -> dict[str, np.ndarray]:
+    def generate_masks(self, num_participants: int, vector_size: int) -> dict[str, np.ndarray]:
         """
         Generate pairwise masks for secure aggregation.
 
@@ -175,9 +175,7 @@ class DifferentialPrivacyEngine:
     Differential privacy mechanisms for federated learning.
     """
 
-    def __init__(
-        self, epsilon: float = 1.0, delta: float = 1e-6, clip_norm: float = 1.0
-    ):
+    def __init__(self, epsilon: float = 1.0, delta: float = 1e-6, clip_norm: float = 1.0):
         """
         Initialize DP engine.
 
@@ -302,9 +300,7 @@ class FederatedLearningCoordinator:
         # Initialize with small random values
         return np.random.randn(total_params) * 0.01
 
-    def register_participant(
-        self, participant_id: str, metadata: dict[str, Any]
-    ) -> bool:
+    def register_participant(self, participant_id: str, metadata: dict[str, Any]) -> bool:
         """
         Register a participant for federated learning.
 
@@ -332,16 +328,15 @@ class FederatedLearningCoordinator:
             event_type="fl_registration",
             actor=participant_id,
             action="register_participant",
+            resource=participant_id,
             metadata=metadata,
         )
 
-        logger.info(
-            f"Participant {participant_id} registered", extra={"privacy_safe": True}
-        )
+        logger.info(f"Participant {participant_id} registered", extra={"privacy_safe": True})
 
         return True
 
-    @performance_logger.log_operation("select_participants")
+    @log_operation
     def select_participants(self, target_count: int) -> list[str]:
         """
         Select participants for current round.
@@ -353,9 +348,7 @@ class FederatedLearningCoordinator:
             List of selected participant IDs
         """
         eligible = [
-            p_id
-            for p_id, p_data in self.participants.items()
-            if p_data["reputation_score"] > 0.5
+            p_id for p_id, p_data in self.participants.items() if p_data["reputation_score"] > 0.5
         ]
 
         if len(eligible) <= target_count:
@@ -385,9 +378,7 @@ class FederatedLearningCoordinator:
         selected = self.select_participants(min_participants)
 
         if len(selected) < min_participants:
-            raise ValueError(
-                f"Insufficient participants: {len(selected)} < {min_participants}"
-            )
+            raise ValueError(f"Insufficient participants: {len(selected)} < {min_participants}")
 
         # Create round
         round_id = self.current_round
@@ -442,9 +433,7 @@ class FederatedLearningCoordinator:
         # Apply differential privacy if not already done
         if not contribution.dp_noise_added:
             clipped_update, _ = self.dp_engine.clip_gradient(contribution.model_update)
-            noisy_update = self.dp_engine.add_noise(
-                clipped_update, contribution.num_samples
-            )
+            noisy_update = self.dp_engine.add_noise(clipped_update, contribution.num_samples)
             contribution.model_update = noisy_update
             contribution.dp_noise_added = True
 
@@ -458,7 +447,7 @@ class FederatedLearningCoordinator:
 
         return True
 
-    @performance_logger.log_operation("aggregate_round")
+    @log_operation
     def aggregate_round(
         self, round_id: int, contributions: list[ParticipantContribution]
     ) -> np.ndarray:
@@ -493,15 +482,11 @@ class FederatedLearningCoordinator:
         elif self.aggregation_strategy == "secure_aggregation":
             # Use secure aggregation protocol
             participant_ids = list(range(len(contributions)))
-            masks = self.secure_aggregator.generate_masks(
-                len(contributions), len(updates[0])
-            )
+            masks = self.secure_aggregator.generate_masks(len(contributions), len(updates[0]))
 
             masked_updates = []
             for i, update in enumerate(updates):
-                masked = self.secure_aggregator.mask_update(
-                    update, i, masks, participant_ids
-                )
+                masked = self.secure_aggregator.mask_update(update, i, masks, participant_ids)
                 masked_updates.append(masked)
 
             aggregated = self.secure_aggregator.aggregate_masked_updates(
@@ -509,9 +494,7 @@ class FederatedLearningCoordinator:
             )
 
         else:
-            raise ValueError(
-                f"Unknown aggregation strategy: {self.aggregation_strategy}"
-            )
+            raise ValueError(f"Unknown aggregation strategy: {self.aggregation_strategy}")
 
         # Update round record
         current_round.aggregated_update = aggregated
@@ -535,9 +518,7 @@ class FederatedLearningCoordinator:
         metrics = {
             "num_participants": len(contributions),
             "total_samples": sum(c.num_samples for c in contributions),
-            "avg_local_loss": np.mean(
-                [c.local_metrics.get("loss", 0) for c in contributions]
-            ),
+            "avg_local_loss": np.mean([c.local_metrics.get("loss", 0) for c in contributions]),
             "participation_rate": len(contributions) / len(self.participants),
         }
 
@@ -563,18 +544,14 @@ class FederatedLearningCoordinator:
             return False
 
         # Apply update with learning rate
-        learning_rate = self.model_architecture.hyperparameters.get(
-            "learning_rate", 0.01
-        )
+        learning_rate = self.model_architecture.hyperparameters.get("learning_rate", 0.01)
         self.global_model += learning_rate * current_round.aggregated_update
 
         # Update participant statistics
         for participant_id in current_round.selected_participants:
             self.participants[participant_id]["rounds_participated"] += 1
 
-        logger.info(
-            f"Updated global model with round {round_id}", extra={"privacy_safe": True}
-        )
+        logger.info(f"Updated global model with round {round_id}", extra={"privacy_safe": True})
 
         return True
 

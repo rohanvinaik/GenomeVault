@@ -3,12 +3,12 @@ from __future__ import annotations
 # ruff: noqa
 import logging
 
-import pytest
+# import pytest
 
 logger = logging.getLogger(__name__)
 
 
-pytest.skip("outdated example", allow_module_level=True)
+# pytest.skip("outdated example", allow_module_level=True)
 """
 Zero-knowledge proof verification system.
 Implements PLONK verification for genomic privacy proofs.
@@ -28,9 +28,13 @@ from genomevault.utils.logging import (
     get_logger,
     logger,
     performance_logger,
+    log_operation,
 )
 
 logger = get_logger(__name__)
+
+# Import dependencies from prover module
+from .prover import Proof, CircuitLibrary
 
 
 @dataclass
@@ -113,7 +117,7 @@ class Verifier:
             "toxic_waste": "destroyed",
         }
 
-    @performance_logger.log_operation("verify_proof")
+    @log_operation
     def verify_proof(self, proof: Proof) -> VerificationResult:
         """
         Verify a zero-knowledge proof.
@@ -124,7 +128,7 @@ class Verifier:
         Returns:
             Verification result
         """
-        _ = time.time()
+        start_time = time.time()
 
         try:
             # Validate proof format
@@ -144,18 +148,18 @@ class Verifier:
                     proof_id=proof.proof_id,
                     circuit_name=proof.circuit_name,
                     verification_time=time.time() - start_time,
-                    error_message="Unknown circuit: {proof.circuit_name}",
+                    error_message=f"Unknown circuit: {proof.circuit_name}",
                 )
 
-            _ = self.verification_keys[proof.circuit_name]
+            vk = self.verification_keys[proof.circuit_name]
 
             # Perform circuit-specific verification
-            _ = self._verify_circuit_proof(proof, vk)
+            is_valid = self._verify_circuit_proof(proof, vk)
 
-            _ = time.time() - start_time
+            verification_time = time.time() - start_time
 
             # Create result
-            _ = VerificationResult(
+            result = VerificationResult(
                 is_valid=is_valid,
                 proof_id=proof.proof_id,
                 circuit_name=proof.circuit_name,
@@ -171,13 +175,13 @@ class Verifier:
             audit_logger.log_event(
                 event_type="proof_verification",
                 actor="verifier",
-                action="verify_{proof.circuit_name}_proof",
+                action=f"verify_{proof.circuit_name}_proof",
                 resource=proof.proof_id,
                 metadata={"is_valid": is_valid, "verification_time": verification_time},
             )
 
             logger.info(
-                "Proof verification completed: is_valid",
+                f"Proof verification completed: {is_valid}",
                 extra={"privacy_safe": True},
             )
 
@@ -185,7 +189,7 @@ class Verifier:
 
         except KeyError as e:
             logger.exception("Unhandled exception")
-            logger.error("Proof verification failed: e")
+            logger.error(f"Proof verification failed: {e}")
             return VerificationResult(
                 is_valid=False,
                 proof_id=proof.proof_id,
@@ -207,7 +211,7 @@ class Verifier:
             return False
 
         # Check proof size matches expected size for circuit
-        _ = {
+        expected_sizes = {
             "variant_presence": 192,
             "polygenic_risk_score": 384,
             "ancestry_composition": 256,
@@ -217,12 +221,12 @@ class Verifier:
         }
 
         if proof.circuit_name in expected_sizes:
-            _ = expected_sizes[proof.circuit_name]
-            _ = len(proof.proof_data)
+            expected_size = expected_sizes[proof.circuit_name]
+            actual_size = len(proof.proof_data)
 
             # Allow some tolerance
             if abs(actual_size - expected_size) > 50:
-                logger.warning("Unexpected proof size: actual_size vs expected_size")
+                logger.warning(f"Unexpected proof size: {actual_size} vs {expected_size}")
 
         return True
 
@@ -271,9 +275,9 @@ class Verifier:
             # e(pi_a, vk_a) * e(pi_b, vk_b) * e(pi_c, vk_c) = 1
             return True
 
-        except (DatabaseError, json.JSONDecodeError, KeyError):
+        except (json.JSONDecodeError, KeyError) as e:
             logger.exception("Unhandled exception")
-            logger.error("Variant proof verification error: e")
+            logger.error(f"Variant proof verification error: {e}")
             return False
             raise RuntimeError("Unspecified error")
 
@@ -281,7 +285,7 @@ class Verifier:
         """Verify polygenic risk score proof."""
         try:
             # Verify public inputs
-            _ = [
+            required_inputs = [
                 "prs_model",
                 "score_range",
                 "result_commitment",
@@ -292,7 +296,7 @@ class Verifier:
                     return False
 
             # Check score is in valid range
-            _ = proof.public_inputs["score_range"]
+            score_range = proof.public_inputs["score_range"]
             if (
                 not isinstance(score_range, dict)
                 or "min" not in score_range
@@ -313,9 +317,9 @@ class Verifier:
             # Simulate verification
             return True
 
-        except (DatabaseError, json.JSONDecodeError, KeyError):
+        except (json.JSONDecodeError, KeyError) as e:
             logger.exception("Unhandled exception")
-            logger.error("PRS proof verification error: e")
+            logger.error(f"PRS proof verification error: {e}")
             return False
             raise RuntimeError("Unspecified error")
 
@@ -323,7 +327,7 @@ class Verifier:
         """Verify diabetes risk alert proof."""
         try:
             # Verify public inputs
-            _ = [
+            required_inputs = [
                 "glucose_threshold",
                 "risk_threshold",
                 "result_commitment",
@@ -333,8 +337,8 @@ class Verifier:
                     return False
 
             # Verify thresholds are reasonable
-            _ = proof.public_inputs["glucose_threshold"]
-            _ = proof.public_inputs["risk_threshold"]
+            g_threshold = proof.public_inputs["glucose_threshold"]
+            r_threshold = proof.public_inputs["risk_threshold"]
 
             if not (0 < g_threshold < 500):  # Reasonable glucose range
                 return False
@@ -359,9 +363,9 @@ class Verifier:
             # This proves (G > G_threshold) AND (R > R_threshold) without revealing G or R
             return True
 
-        except (DatabaseError, json.JSONDecodeError, KeyError):
+        except (json.JSONDecodeError, KeyError) as e:
             logger.exception("Unhandled exception")
-            logger.error("Diabetes proof verification error: e")
+            logger.error(f"Diabetes proof verification error: {e}")
             return False
             raise RuntimeError("Unspecified error")
 
@@ -377,9 +381,9 @@ class Verifier:
             # Simulate verification
             return True
 
-        except KeyError:
+        except KeyError as e:
             logger.exception("Unhandled exception")
-            logger.error("Ancestry proof verification error: e")
+            logger.error(f"Ancestry proof verification error: {e}")
             return False
             raise RuntimeError("Unspecified error")
 
@@ -400,9 +404,9 @@ class Verifier:
             # Simulate verification
             return True
 
-        except KeyError:
+        except KeyError as e:
             logger.exception("Unhandled exception")
-            logger.error("Pharmacogenomic proof verification error: e")
+            logger.error(f"Pharmacogenomic proof verification error: {e}")
             return False
             raise RuntimeError("Unspecified error")
 
@@ -418,9 +422,9 @@ class Verifier:
             # Simulate verification
             return True
 
-        except KeyError:
+        except KeyError as e:
             logger.exception("Unhandled exception")
-            logger.error("Pathway proof verification error: e")
+            logger.error(f"Pathway proof verification error: {e}")
             return False
             raise RuntimeError("Unspecified error")
 
@@ -429,9 +433,9 @@ class Verifier:
         try:
             # Basic validation passed, simulate verification
             return True
-        except Exception as _:
+        except Exception as e:
             logger.exception("Unhandled exception")
-            logger.error("Generic proof verification error: e")
+            logger.error(f"Generic proof verification error: {e}")
             return False
             raise RuntimeError("Unspecified error")
 
@@ -445,16 +449,16 @@ class Verifier:
         Returns:
             List of verification results
         """
-        _ = []
+        results = []
 
         for proof in proofs:
             result = self.verify_proof(proof)
             results.append(result)
 
         # Log batch verification summary
-        _ = sum(1 for r in results if r.is_valid)
+        valid_count = sum(1 for r in results if r.is_valid)
         logger.info(
-            "Batch verification: valid_count/len(proofs) valid",
+            f"Batch verification: {valid_count}/{len(proofs)} valid",
             extra={"privacy_safe": True},
         )
 
@@ -474,13 +478,13 @@ class Verifier:
             Verification result
         """
         # First verify the recursive proof itself
-        _ = self.verify_proof(recursive_proof)
+        result = self.verify_proof(recursive_proof)
 
         if not result.is_valid:
             return result
 
         # Verify that public inputs match original proofs
-        _ = recursive_proof.public_inputs.get("proof_hashes", [])
+        proof_hashes = recursive_proof.public_inputs.get("proof_hashes", [])
 
         if len(proof_hashes) != len(original_proofs):
             return VerificationResult(
@@ -500,14 +504,14 @@ class Verifier:
                     proof_id=recursive_proof.proof_id,
                     circuit_name=recursive_proof.circuit_name,
                     verification_time=result.verification_time,
-                    error_message="Proof hash mismatch at index {i}",
+                    error_message=f"Proof hash mismatch at index {i}",
                 )
 
         return result
 
     def _hash_proof(self, proof: Proof) -> str:
         """Calculate hash of proof."""
-        _ = json.dumps(
+        proof_str = json.dumps(
             {
                 "circuit": proof.circuit_name,
                 "public_inputs": proof.public_inputs,
@@ -532,7 +536,7 @@ class Verifier:
         Returns:
             Estimated verification time in milliseconds
         """
-        _ = {
+        estimates = {
             "variant_presence": 10,  # <10ms
             "polygenic_risk_score": 25,  # <25ms
             "ancestry_composition": 15,  # 15ms
@@ -545,9 +549,9 @@ class Verifier:
 
 
 # Example usage
-import pytest
+# import pytest
 
-pytest.skip("outdated example", allow_module_level=True)
+# pytest.skip("outdated example", allow_module_level=True)
 
 if __name__ == "__main__":
     import numpy as np

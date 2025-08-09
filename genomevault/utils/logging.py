@@ -17,7 +17,7 @@ import sys
 import time
 from functools import wraps
 from pathlib import Path
-from typing import Any, Callable, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 # Configuration constants
 DEFAULT_LOG_LEVEL = "INFO"
@@ -298,6 +298,97 @@ class ContextLogger:
         return False  # Don't suppress exceptions
 
 
+class AuditLogger:
+    """Logger for audit and compliance events."""
+
+    def __init__(self, logger: Optional[logging.Logger] = None):
+        self.logger = logger or logging.getLogger("genomevault.audit")
+        self.hipaa_mode = False
+
+    def log_event(
+        self,
+        event_type: str,
+        actor: str,
+        action: str,
+        resource: str,
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> None:
+        """Log an audit event."""
+        event = {
+            "event_type": event_type,
+            "actor": actor,
+            "action": action,
+            "resource": resource,
+            "timestamp": time.time(),
+            "metadata": metadata or {},
+        }
+        self.logger.info(f"Audit: {event_type} - {action}", extra=event)
+
+    def log_data_access(
+        self,
+        user: str,
+        data_id: str,
+        access_type: str,
+        success: bool = True,
+        reason: Optional[str] = None,
+    ) -> None:
+        """Log data access events."""
+        event = {
+            "user": user,
+            "data_id": data_id,
+            "access_type": access_type,
+            "success": success,
+            "reason": reason,
+            "timestamp": time.time(),
+        }
+        level = logging.INFO if success else logging.WARNING
+        self.logger.log(level, f"Data access: {access_type} on {data_id}", extra=event)
+
+    def log_authentication(
+        self, user: str, success: bool, method: str, ip_address: Optional[str] = None
+    ) -> None:
+        """Log authentication events."""
+        event = {
+            "user": user,
+            "success": success,
+            "method": method,
+            "ip_address": ip_address,
+            "timestamp": time.time(),
+        }
+        level = logging.INFO if success else logging.WARNING
+        self.logger.log(level, f"Authentication: {user} - {method}", extra=event)
+
+    def log_consent_change(
+        self, user: str, consent_type: str, old_value: Any, new_value: Any
+    ) -> None:
+        """Log consent changes."""
+        event = {
+            "user": user,
+            "consent_type": consent_type,
+            "old_value": old_value,
+            "new_value": new_value,
+            "timestamp": time.time(),
+        }
+        self.logger.info(f"Consent change: {consent_type} for {user}", extra=event)
+
+    def set_hipaa_mode(self, enabled: bool) -> None:
+        """Enable or disable HIPAA compliance mode."""
+        self.hipaa_mode = enabled
+        self.logger.info(f"HIPAA mode: {'enabled' if enabled else 'disabled'}")
+
+    def info(self, message: str, **kwargs):
+        """Log info level message."""
+        self.logger.info(message, **kwargs)
+
+    def warning(self, message: str, **kwargs):
+        """Log warning level message."""
+        self.logger.warning(message, **kwargs)
+
+    def error(self, message: str, **kwargs):
+        """Log error level message."""
+        self.logger.error(message, **kwargs)
+
+
 # Convenience functions for different log levels
 def debug(message: str, logger_name: Optional[str] = None) -> None:
     """Log a debug message."""
@@ -327,6 +418,7 @@ def critical(message: str, logger_name: Optional[str] = None) -> None:
 # Default logger instances for backward compatibility
 logger = get_logger(__name__)
 performance_logger = get_logger("genomevault.performance")
+audit_logger = AuditLogger()
 
 
 # Initialize logging when module is imported
