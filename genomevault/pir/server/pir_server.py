@@ -17,15 +17,13 @@ from typing import Any
 import numpy as np
 
 from genomevault.utils.config import get_config
-
-config = get_config()
 from genomevault.utils.logging import (
     audit_logger,
     get_logger,
-    logger,
-    performance_logger,
+    log_operation,
 )
 
+config = get_config()
 logger = get_logger(__name__)
 
 
@@ -146,7 +144,7 @@ class PIRServer:
 
         return self.mmap_files[shard_id]
 
-    @performance_logger.log_operation("process_pir_query")
+    @log_operation
     async def process_query(self, query_data: dict[str, Any]) -> dict[str, Any]:
         """
         Process PIR query without learning what is being accessed.
