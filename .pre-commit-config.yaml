@@ -19,3 +19,10 @@ repos:
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
+  - repo: local
+    hooks:
+      - id: stub-guard
+        name: Stub Guard (critical paths)
+        entry: python devtools/assert_no_stubs.py
+        language: system
+        pass_filenames: false

@@ -1,37 +1,56 @@
-"""Core exceptions for GenomeVault."""
+# genomevault/core/exceptions.py
+from __future__ import annotations
+from typing import Any, Dict, Optional
 
+class GVError(Exception):
+    """Base class for all GenomeVault errors."""
+    code: str = "GV_ERROR"
+    http_status: int = 500
 
-class GenomeVaultError(Exception):
-    """Base exception for GenomeVault."""
+    def __init__(self, message: str = "", *, details: Optional[Dict[str, Any]] = None):
+        super().__init__(message or self.__class__.__name__)
+        self.details = details or {}
 
-    pass
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "type": self.__class__.__name__,
+            "code": self.code,
+            "message": str(self),
+            "details": self.details,
+        }
 
+class GVConfigError(GVError):
+    code = "GV_CONFIG"
 
-class HypervectorError(GenomeVaultError):
-    """Exception raised for hypervector operations."""
+class GVInputError(GVError):
+    code = "GV_INPUT"
+    http_status = 400
 
-    pass
+class GVNotFound(GVError):
+    code = "GV_NOT_FOUND"
+    http_status = 404
 
+class GVStateError(GVError):
+    code = "GV_STATE"
+    http_status = 409
 
-class ZKProofError(GenomeVaultError):
-    """Exception raised for zero-knowledge proof operations."""
+class GVComputeError(GVError):
+    code = "GV_COMPUTE"
 
-    pass
+class GVSecurityError(GVError):
+    code = "GV_SECURITY"
+    http_status = 403
 
+class GVTimeout(GVError):
+    code = "GV_TIMEOUT"
+    http_status = 504
 
-class ValidationError(GenomeVaultError):
-    """Exception raised for validation failures."""
+# Domain-specific aliases (used in HV/ZK code)
+class EncodingError(GVComputeError):
+    code = "GV_ENCODING"
 
-    pass
+class ProjectionError(GVComputeError):
+    code = "GV_PROJECTION"
 
-
-class ConfigurationError(GenomeVaultError):
-    """Exception raised for configuration issues."""
-
-    pass
-
-
-class ProjectionError(GenomeVaultError):
-    """Exception raised for projection operations."""
-
-    pass
+class HypervectorError(GVComputeError):
+    code = "GV_HYPERVECTOR"
