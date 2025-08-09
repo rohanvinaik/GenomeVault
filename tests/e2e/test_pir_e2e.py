@@ -1,3 +1,7 @@
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
+
+
 """
 End-to-end integration test for PIR with ZK and HDC.
 Tests the complete genomic query pipeline.
@@ -371,4 +375,4 @@ if __name__ == "__main__":
     with open(notebook_path, "w") as f:
         f.write(DEMO_NOTEBOOK)
 
-    print(f"Demo notebook saved to {notebook_path}")
+    logger.debug(f"Demo notebook saved to {notebook_path}")

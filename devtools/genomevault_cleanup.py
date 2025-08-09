@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 GenomeVault Technical Debt Cleanup Implementation
 =================================================
@@ -39,12 +40,12 @@ class GenomeVaultCleanup:
         """Run a command and return the result."""
         if cwd is None:
             cwd = self.repo_root
-        print(f"Running: {' '.join(cmd)}")
+        logger.debug(f"Running: {' '.join(cmd)}")
         return subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
 
     def phase_1_update_ruff_config(self):
         """Phase 1: Update Ruff configuration for better error management."""
-        print("=== Phase 1: Updating Ruff Configuration ===")
+        logger.debug("=== Phase 1: Updating Ruff Configuration ===")
 
         # Read current config
         current_config = self.ruff_config.read_text()
@@ -73,11 +74,11 @@ max-violations = 200
 
         # Write updated config
         self.ruff_config.write_text(new_config)
-        print("Updated .ruff.toml with max-violations and tools glob ignore")
+        logger.debug("Updated .ruff.toml with max-violations and tools glob ignore")
 
         # Test the configuration
         result = self.run_command(["ruff", "check", "--config", str(self.ruff_config), "."])
-        print(f"Ruff check result: {result.returncode}")
+        logger.debug(f"Ruff check result: {result.returncode}")
         if result.stdout:
             print(
                 "STDOUT:",
@@ -86,7 +87,7 @@ max-violations = 200
 
     def phase_2_triage_code(self):
         """Phase 2: Separate library code from examples/tooling."""
-        print("=== Phase 2: Triaging Code ===")
+        logger.debug("=== Phase 2: Triaging Code ===")
 
         # Create tools directory if it doesn't exist
         tools_dir = self.repo_root / "tools"
@@ -103,7 +104,7 @@ max-violations = 200
             script_path = self.repo_root / script
             if script_path.exists():
                 target_path = tools_dir / script
-                print(f"Moving {script} to tools/")
+                logger.debug(f"Moving {script} to tools/")
                 # Copy instead of move to avoid breaking existing processes
                 target_path.write_text(script_path.read_text())
 
@@ -112,7 +113,7 @@ max-violations = 200
 
     def guard_example_code(self):
         """Add guards to example code blocks."""
-        print("Guarding example code blocks...")
+        logger.debug("Guarding example code blocks...")
 
         zk_files = [
             "genomevault/zk_proofs/prover.py",
@@ -150,23 +151,23 @@ max-violations = 200
                         + "\n".join(f"    {line}" for line in lines[example_start:])
                     )
                     full_path.write_text(guarded_content)
-                    print(f"Guarded example code in {file_path}")
+                    logger.debug(f"Guarded example code in {file_path}")
 
     def phase_3_fix_undefined_names(self):
         """Phase 3: Systematically fix F821 undefined-name errors."""
-        print("=== Phase 3: Fixing Undefined Names (F821) ===")
+        logger.debug("=== Phase 3: Fixing Undefined Names (F821) ===")
 
         # Get F821 errors
         result = self.run_command(["ruff", "check", ".", "--select", "F821", "--format", "json"])
 
         if result.returncode == 0:
-            print("No F821 errors found!")
+            logger.error("No F821 errors found!")
             return
 
         try:
             errors = json.loads(result.stdout) if result.stdout else []
         except json.JSONDecodeError:
-            print("Could not parse Ruff JSON output")
+            logger.debug("Could not parse Ruff JSON output")
             errors = []
 
         # Group errors by file
@@ -177,11 +178,11 @@ max-violations = 200
                 files_with_errors[filename] = []
             files_with_errors[filename].append(error)
 
-        print(f"Found F821 errors in {len(files_with_errors)} files")
+        logger.error(f"Found F821 errors in {len(files_with_errors)} files")
 
         # Process each file
         for filename, file_errors in files_with_errors.items():
-            print(f"\nProcessing {filename} ({len(file_errors)} errors)")
+            logger.error(f"\nProcessing {filename} ({len(file_errors)} errors)")
             self.fix_undefined_names_in_file(filename, file_errors)
 
     def fix_undefined_names_in_file(self, filename: str, errors: List[Dict[str, Any]]):
@@ -218,7 +219,7 @@ max-violations = 200
         if fixes_applied:
             # Write fixed content
             file_path.write_text("\n".join(lines))
-            print(f"Applied fixes: {', '.join(fixes_applied)}")
+            logger.debug(f"Applied fixes: {', '.join(fixes_applied)}")
 
     def apply_undefined_name_fix(
         self, lines: List[str], line_num: int, var_name: str, filename: str
@@ -301,7 +302,7 @@ max-violations = 200
 
     def phase_4_fix_redefinition_imports(self):
         """Phase 4: Fix redefinition (F811) and import-order (E402) issues."""
-        print("=== Phase 4: Fixing Redefinition and Import Order ===")
+        logger.debug("=== Phase 4: Fixing Redefinition and Import Order ===")
 
         # Get F811 and E402 errors
         result = self.run_command(
@@ -309,7 +310,7 @@ max-violations = 200
         )
 
         if result.returncode == 0:
-            print("No F811/E402 errors found!")
+            logger.error("No F811/E402 errors found!")
             return
 
         try:
@@ -350,7 +351,7 @@ max-violations = 200
                     lines.pop(line_num)
 
                 file_path.write_text("\n".join(lines))
-                print(f"Fixed duplicate logger in {filename}")
+                logger.debug(f"Fixed duplicate logger in {filename}")
 
     def fix_import_order_error(self, error: Dict[str, Any]):
         """Fix import order error (E402)."""
@@ -380,41 +381,41 @@ max-violations = 200
         # Reconstruct with imports at top
         new_content = "\n".join(imports + [""] + other_lines)
         file_path.write_text(new_content)
-        print(f"Fixed import order in {filename}")
+        logger.debug(f"Fixed import order in {filename}")
 
     def phase_5_clean_tooling_scripts(self):
         """Phase 5: Clean up tooling scripts with glob ignore."""
-        print("=== Phase 5: Cleaning Tooling Scripts ===")
+        logger.debug("=== Phase 5: Cleaning Tooling Scripts ===")
 
         # The glob ignore was already added in phase 1
         # Now verify it works
         result = self.run_command(["ruff", "check", "tools/"])
 
         if result.returncode == 0:
-            print("Tooling scripts successfully ignored by Ruff")
+            logger.info("Tooling scripts successfully ignored by Ruff")
         else:
-            print("Tools directory still has issues - checking config")
+            logger.debug("Tools directory still has issues - checking config")
 
     def phase_6_fix_syntax_errors(self):
         """Phase 6: Fix syntax errors."""
-        print("=== Phase 6: Fixing Syntax Errors ===")
+        logger.error("=== Phase 6: Fixing Syntax Errors ===")
 
         # Get syntax errors
         result = self.run_command(["ruff", "check", ".", "--select", "E999"])
 
         if result.returncode == 0:
-            print("No syntax errors found!")
+            logger.error("No syntax errors found!")
             return
 
-        print("Syntax errors found:")
-        print(result.stdout)
+        logger.error("Syntax errors found:")
+        logger.debug(result.stdout)
 
         # Manual intervention required for syntax errors
-        print("Syntax errors require manual fixing. Check the output above.")
+        logger.error("Syntax errors require manual fixing. Check the output above.")
 
     def phase_7_validate_tools(self):
         """Phase 7: Run mypy & tests validation."""
-        print("=== Phase 7: Validating with mypy & tests ===")
+        logger.debug("=== Phase 7: Validating with mypy & tests ===")
 
         # Run mypy on core packages
         core_packages = [
@@ -426,20 +427,20 @@ max-violations = 200
         for package in core_packages:
             package_path = self.repo_root / package
             if package_path.exists():
-                print(f"Running mypy on {package}")
+                logger.debug(f"Running mypy on {package}")
                 result = self.run_command(["mypy", str(package_path)])
-                print(f"mypy result for {package}: {result.returncode}")
+                logger.debug(f"mypy result for {package}: {result.returncode}")
                 if result.stdout:
                     print(
                         result.stdout[:200] + "..." if len(result.stdout) > 200 else result.stdout
                     )
 
         # Run tests
-        print("Running pytest...")
+        logger.debug("Running pytest...")
         result = self.run_command(["pytest", "-q", "-k", "not api and not nanopore"])
-        print(f"pytest result: {result.returncode}")
+        logger.debug(f"pytest result: {result.returncode}")
         if result.stdout:
-            print(result.stdout[-500:])  # Show last 500 chars
+            logger.debug(result.stdout[-500:])  # Show last 500 chars
 
     def run_phase(self, phase: int):
         """Run a specific phase."""
@@ -456,14 +457,14 @@ max-violations = 200
         if phase in phases:
             phases[phase]()
         else:
-            print(f"Invalid phase: {phase}. Valid phases: {list(phases.keys())}")
+            logger.debug(f"Invalid phase: {phase}. Valid phases: {list(phases.keys())}")
 
     def run_all_phases(self):
         """Run all phases in sequence."""
         for phase in range(1, 8):
-            print(f"\n{'='*60}")
-            print(f"Starting Phase {phase}")
-            print(f"{'='*60}")
+            logger.debug(f"\n{'='*60}")
+            logger.debug(f"Starting Phase {phase}")
+            logger.debug(f"{'='*60}")
             self.run_phase(phase)
 
             # Check if we should continue
@@ -490,7 +491,7 @@ def main():
     elif args.phase:
         cleanup.run_phase(args.phase)
     else:
-        print("Specify --phase <1-7> or --all")
+        logger.debug("Specify --phase <1-7> or --all")
         parser.print_help()
 
 

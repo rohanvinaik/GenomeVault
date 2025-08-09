@@ -1,3 +1,5 @@
+from genomevault.utils.logging import get_logger
+
 #!/usr/bin/env python3
 """
 GenomeVault 3.0 - Basic Usage Example
@@ -226,9 +228,9 @@ def demonstrate_privacy_features():
 
 def main():
     """Main demonstration function"""
-    print("\n" + "=" * 60)
-    print("GenomeVault 3.0 - Privacy-Preserving Genomics Platform")
-    print("=" * 60)
+    logger.debug("\n" + "=" * 60)
+    logger.debug("GenomeVault 3.0 - Privacy-Preserving Genomics Platform")
+    logger.debug("=" * 60)
 
     try:
         # Setup

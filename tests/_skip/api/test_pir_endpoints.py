@@ -1,6 +1,7 @@
 import base64
 from hashlib import sha256
 
+
 from fastapi.testclient import TestClient
 
 from genomevault.api.app import app

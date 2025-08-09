@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 Comprehensive GenomeVault Technical Debt Cleanup
 ================================================
@@ -37,13 +38,13 @@ class ComprehensiveCleanup:
     def log_fix(self, message: str):
         """Log a fix that was applied."""
         timestamp = time.strftime("%H:%M:%S")
-        print(f"[{timestamp}] ✓ {message}")
+        logger.info(f"[{timestamp}] ✓ {message}")
         self.fixes_applied.append(message)
 
     def log_error(self, message: str):
         """Log an error found."""
         timestamp = time.strftime("%H:%M:%S")
-        print(f"[{timestamp}] ✗ {message}")
+        logger.debug(f"[{timestamp}] ✗ {message}")
 
     def run_command_safe(self, cmd: List[str], cwd: Path = None) -> Tuple[int, str, str]:
         """Safely run a command and return results."""
@@ -69,9 +70,9 @@ class ComprehensiveCleanup:
 
     def phase_1_update_ruff_config(self):
         """Phase 1: Update Ruff configuration for better error management."""
-        print("\n" + "=" * 50)
-        print("PHASE 1: Updating Ruff Configuration")
-        print("=" * 50)
+        logger.debug("\n" + "=" * 50)
+        logger.debug("PHASE 1: Updating Ruff Configuration")
+        logger.debug("=" * 50)
 
         ruff_config = self.repo_root / ".ruff.toml"
         if not ruff_config.exists():
@@ -105,7 +106,7 @@ class ComprehensiveCleanup:
         ruff_config.write_text(content)
 
         # Test the configuration
-        print("Testing Ruff configuration...")
+        logger.debug("Testing Ruff configuration...")
         returncode, stdout, stderr = self.run_command_safe(["ruff", "check", "--version"])
         if returncode == 0:
             self.log_fix("Ruff configuration validated")
@@ -114,9 +115,9 @@ class ComprehensiveCleanup:
 
     def phase_2_triage_code(self):
         """Phase 2: Separate library code from examples/tooling."""
-        print("\n" + "=" * 50)
-        print("PHASE 2: Triaging Code Structure")
-        print("=" * 50)
+        logger.debug("\n" + "=" * 50)
+        logger.debug("PHASE 2: Triaging Code Structure")
+        logger.debug("=" * 50)
 
         # Create tools directory
         tools_dir = self.repo_root / "tools"
@@ -198,9 +199,9 @@ class ComprehensiveCleanup:
 
     def phase_3_fix_undefined_names(self):
         """Phase 3: Systematically fix F821 undefined-name errors."""
-        print("\n" + "=" * 50)
-        print("PHASE 3: Fixing Undefined Names (F821)")
-        print("=" * 50)
+        logger.debug("\n" + "=" * 50)
+        logger.debug("PHASE 3: Fixing Undefined Names (F821)")
+        logger.debug("=" * 50)
 
         # Try to get F821 errors - if ruff not available, skip
         returncode, stdout, stderr = self.run_command_safe(
@@ -312,9 +313,9 @@ class ComprehensiveCleanup:
 
     def phase_4_fix_redefinition_imports(self):
         """Phase 4: Fix redefinition (F811) and import-order (E402) issues."""
-        print("\n" + "=" * 50)
-        print("PHASE 4: Fixing Redefinition and Import Order")
-        print("=" * 50)
+        logger.debug("\n" + "=" * 50)
+        logger.debug("PHASE 4: Fixing Redefinition and Import Order")
+        logger.debug("=" * 50)
 
         # Manual fixes for known issues
         files_to_fix = [
@@ -425,9 +426,9 @@ class ComprehensiveCleanup:
 
     def phase_5_clean_tooling_scripts(self):
         """Phase 5: Clean up tooling scripts with glob ignore."""
-        print("\n" + "=" * 50)
-        print("PHASE 5: Cleaning Tooling Scripts")
-        print("=" * 50)
+        logger.debug("\n" + "=" * 50)
+        logger.debug("PHASE 5: Cleaning Tooling Scripts")
+        logger.debug("=" * 50)
 
         # Verify tools directory exists and has ignore
         tools_dir = self.repo_root / "tools"
@@ -450,9 +451,9 @@ class ComprehensiveCleanup:
 
     def phase_6_fix_syntax_errors(self):
         """Phase 6: Fix syntax errors."""
-        print("\n" + "=" * 50)
-        print("PHASE 6: Fixing Syntax Errors")
-        print("=" * 50)
+        logger.debug("\n" + "=" * 50)
+        logger.error("PHASE 6: Fixing Syntax Errors")
+        logger.debug("=" * 50)
 
         # Manual syntax fixes for known issues
         files_with_syntax_issues = ["genomevault/zk_proofs/prover.py"]
@@ -501,9 +502,9 @@ class ComprehensiveCleanup:
 
     def phase_7_validate_tools(self):
         """Phase 7: Run validation with available tools."""
-        print("\n" + "=" * 50)
-        print("PHASE 7: Validation")
-        print("=" * 50)
+        logger.debug("\n" + "=" * 50)
+        logger.debug("PHASE 7: Validation")
+        logger.debug("=" * 50)
 
         # Test Python import capability
         test_files = [
@@ -551,27 +552,27 @@ class ComprehensiveCleanup:
         self.log_fix(f"Directory structure: {existing_dirs}/{len(key_dirs)} key directories exist")
 
         # Summary recommendations
-        print("\nVALIDATION SUMMARY:")
-        print("-" * 30)
+        logger.debug("\nVALIDATION SUMMARY:")
+        logger.debug("-" * 30)
         if import_success == len(test_files):
-            print("✓ Core files have valid Python syntax")
+            logger.info("✓ Core files have valid Python syntax")
         else:
-            print("✗ Some core files have syntax issues")
+            logger.debug("✗ Some core files have syntax issues")
 
         if existing_dirs == len(key_dirs):
-            print("✓ All key directories exist")
+            logger.info("✓ All key directories exist")
         else:
-            print("✗ Some key directories missing")
+            logger.debug("✗ Some key directories missing")
 
-        print("\nRECOMMENDED NEXT STEPS:")
-        print("1. Run: python -m py_compile genomevault/core/*.py")
-        print("2. Run: python -c 'import genomevault.core.exceptions'")
-        print("3. Check remaining files manually for F821 errors")
-        print("4. Consider setting up pre-commit hooks")
+        logger.debug("\nRECOMMENDED NEXT STEPS:")
+        logger.debug("1. Run: python -m py_compile genomevault/core/*.py")
+        logger.error("2. Run: python -c 'import genomevault.core.exceptions'")
+        logger.error("3. Check remaining files manually for F821 errors")
+        logger.debug("4. Consider setting up pre-commit hooks")
 
     def create_stub_modules(self):
         """Create essential stub modules that are missing."""
-        print("\nCreating essential stub modules...")
+        logger.debug("\nCreating essential stub modules...")
 
         stubs = [
             (
@@ -649,39 +650,39 @@ def get_config() -> Dict[str, Any]:
 
     def generate_final_report(self):
         """Generate comprehensive final report."""
-        print("\n" + "=" * 60)
-        print("COMPREHENSIVE CLEANUP FINAL REPORT")
-        print("=" * 60)
+        logger.debug("\n" + "=" * 60)
+        logger.debug("COMPREHENSIVE CLEANUP FINAL REPORT")
+        logger.debug("=" * 60)
 
         if self.fixes_applied:
-            print(f"\n✅ FIXES APPLIED ({len(self.fixes_applied)}):")
+            logger.debug(f"\n✅ FIXES APPLIED ({len(self.fixes_applied)}):")
             for i, fix in enumerate(self.fixes_applied, 1):
-                print(f"  {i:2d}. {fix}")
+                logger.debug(f"  {i:2d}. {fix}")
         else:
-            print("\n❌ No fixes were applied.")
+            logger.debug("\n❌ No fixes were applied.")
 
-        print("\n📊 SUMMARY STATISTICS:")
-        print(f"   Total fixes applied: {len(self.fixes_applied)}")
+        logger.debug("\n📊 SUMMARY STATISTICS:")
+        logger.debug(f"   Total fixes applied: {len(self.fixes_applied)}")
         print(
             f"   Errors encountered: {len([f for f in self.fixes_applied if '✗' in f or 'error' in f.lower()])}"
         )
 
-        print("\n🎯 TARGET ACHIEVED:")
-        print("   • Ruff configuration updated with max-violations=200")
-        print("   • Helper scripts moved to tools/ directory")
-        print("   • Common undefined variables addressed")
-        print("   • Import order and redefinition issues fixed")
-        print("   • Example code properly guarded")
-        print("   • Essential stub modules created")
+        logger.debug("\n🎯 TARGET ACHIEVED:")
+        logger.debug("   • Ruff configuration updated with max-violations=200")
+        logger.debug("   • Helper scripts moved to tools/ directory")
+        logger.debug("   • Common undefined variables addressed")
+        logger.debug("   • Import order and redefinition issues fixed")
+        logger.debug("   • Example code properly guarded")
+        logger.debug("   • Essential stub modules created")
 
-        print("\n📋 NEXT MANUAL STEPS:")
-        print("   1. Review any remaining F821 errors in ZK proof modules")
-        print("   2. Test imports: python -c 'import genomevault.core.exceptions'")
-        print("   3. Run comprehensive linting when tools are available")
-        print("   4. Set up CI/CD pipeline with pre-commit hooks")
-        print("   5. Gradually enable stricter mypy checking")
+        logger.debug("\n📋 NEXT MANUAL STEPS:")
+        logger.error("   1. Review any remaining F821 errors in ZK proof modules")
+        logger.error("   2. Test imports: python -c 'import genomevault.core.exceptions'")
+        logger.debug("   3. Run comprehensive linting when tools are available")
+        logger.debug("   4. Set up CI/CD pipeline with pre-commit hooks")
+        logger.debug("   5. Gradually enable stricter mypy checking")
 
-        print("\n🔍 FILES REQUIRING MANUAL REVIEW:")
+        logger.debug("\n🔍 FILES REQUIRING MANUAL REVIEW:")
         review_files = [
             "genomevault/zk_proofs/verifier.py",
             "genomevault/zk_proofs/circuits/base_circuits.py",
@@ -691,32 +692,32 @@ def get_config() -> Dict[str, Any]:
         for file_path in review_files:
             full_path = self.repo_root / file_path
             if full_path.exists():
-                print(f"   ✓ {file_path}")
+                logger.info(f"   ✓ {file_path}")
             else:
-                print(f"   ✗ {file_path} (not found)")
+                logger.debug(f"   ✗ {file_path} (not found)")
 
-        print("\n🚀 PROJECT STATUS:")
+        logger.debug("\n🚀 PROJECT STATUS:")
         if len(self.fixes_applied) >= 10:
-            print("   🟢 EXCELLENT: Major technical debt reduction achieved")
+            logger.debug("   🟢 EXCELLENT: Major technical debt reduction achieved")
         elif len(self.fixes_applied) >= 5:
-            print("   🟡 GOOD: Significant improvements made")
+            logger.debug("   🟡 GOOD: Significant improvements made")
         else:
-            print("   🔴 LIMITED: Few fixes applied, manual work needed")
+            logger.debug("   🔴 LIMITED: Few fixes applied, manual work needed")
 
-        print("\n💡 LONG-TERM RECOMMENDATIONS:")
-        print("   • Implement automated testing for all core modules")
-        print("   • Add type hints to all public APIs")
-        print("   • Create comprehensive documentation")
-        print("   • Set up continuous integration")
-        print("   • Regular dependency updates")
+        logger.debug("\n💡 LONG-TERM RECOMMENDATIONS:")
+        logger.debug("   • Implement automated testing for all core modules")
+        logger.debug("   • Add type hints to all public APIs")
+        logger.debug("   • Create comprehensive documentation")
+        logger.debug("   • Set up continuous integration")
+        logger.debug("   • Regular dependency updates")
 
     def run_all_phases(self):
         """Execute all cleanup phases in sequence."""
         start_time = time.time()
 
-        print("🚀 Starting Comprehensive GenomeVault Technical Debt Cleanup")
-        print(f"Repository: {self.repo_root}")
-        print(f"Start time: {time.strftime('%Y-%m-%d %H:%M:%S')}")
+        logger.debug("🚀 Starting Comprehensive GenomeVault Technical Debt Cleanup")
+        logger.debug(f"Repository: {self.repo_root}")
+        logger.debug(f"Start time: {time.strftime('%Y-%m-%d %H:%M:%S')}")
 
         # Pre-cleanup: Create essential stubs
         self.create_stub_modules()
@@ -735,18 +736,18 @@ def get_config() -> Dict[str, Any]:
             self.generate_final_report()
 
         except KeyboardInterrupt:
-            print("\n\n⚠️ Cleanup interrupted by user")
-            print("Partial fixes have been applied.")
+            logger.debug("\n\n⚠️ Cleanup interrupted by user")
+            logger.debug("Partial fixes have been applied.")
             self.generate_final_report()
         except Exception as e:
-            print(f"\n\n❌ Cleanup failed with error: {e}")
-            print("Partial fixes may have been applied.")
+            logger.error(f"\n\n❌ Cleanup failed with error: {e}")
+            logger.debug("Partial fixes may have been applied.")
             self.generate_final_report()
             raise
 
         elapsed = time.time() - start_time
-        print(f"\n⏱️  Total execution time: {elapsed:.1f} seconds")
-        print("✅ Comprehensive cleanup complete!")
+        logger.debug(f"\n⏱️  Total execution time: {elapsed:.1f} seconds")
+        logger.info("✅ Comprehensive cleanup complete!")
 
     def run_single_phase(self, phase_num: int):
         """Run a single phase."""
@@ -761,17 +762,17 @@ def get_config() -> Dict[str, Any]:
         }
 
         if phase_num not in phases:
-            print(f"❌ Invalid phase number: {phase_num}")
-            print(f"Valid phases: {list(phases.keys())}")
+            logger.debug(f"❌ Invalid phase number: {phase_num}")
+            logger.debug(f"Valid phases: {list(phases.keys())}")
             return
 
-        print(f"🎯 Running Phase {phase_num} only...")
+        logger.debug(f"🎯 Running Phase {phase_num} only...")
         phases[phase_num]()
 
-        print(f"\n📊 Phase {phase_num} Summary:")
+        logger.debug(f"\n📊 Phase {phase_num} Summary:")
         recent_fixes = [f for f in self.fixes_applied if f][-5:]  # Last 5 fixes
         for fix in recent_fixes:
-            print(f"  • {fix}")
+            logger.debug(f"  • {fix}")
 
 
 def main():
@@ -803,8 +804,8 @@ Examples:
     args = parser.parse_args()
 
     if args.dry_run:
-        print("🔍 DRY RUN MODE - No changes will be made")
-        print("This would analyze the repository and show planned fixes.")
+        logger.debug("🔍 DRY RUN MODE - No changes will be made")
+        logger.debug("This would analyze the repository and show planned fixes.")
         # TODO: Implement dry run analysis
         return
 
@@ -815,11 +816,11 @@ Examples:
     elif args.phase:
         cleanup.run_single_phase(args.phase)
     else:
-        print("❌ Specify --phase <1-7> or --all")
+        logger.debug("❌ Specify --phase <1-7> or --all")
         parser.print_help()
 
         # Show available phases
-        print("\n📋 AVAILABLE PHASES:")
+        logger.debug("\n📋 AVAILABLE PHASES:")
         phases_desc = [
             "1. Update Ruff configuration",
             "2. Triage library code from examples/tooling",
@@ -831,7 +832,7 @@ Examples:
         ]
 
         for desc in phases_desc:
-            print(f"   {desc}")
+            logger.debug(f"   {desc}")
 
 
 if __name__ == "__main__":

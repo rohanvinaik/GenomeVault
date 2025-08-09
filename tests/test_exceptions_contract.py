@@ -1,6 +1,6 @@
-# tests/test_exceptions_contract.py
 import pytest
 from genomevault.exceptions import (
+
     GVError,
     GVInputError,
     GVNotFound,

@@ -1,3 +1,7 @@
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
+
+
 #!/usr/bin/env python3
 """
 Proper Ruff cleanup and upgrade following the recommended approach.
@@ -10,26 +14,26 @@ from pathlib import Path
 
 def find_all_ruff():
     """Find all ruff installations on PATH."""
-    print("🔍 Finding all ruff installations...")
+    logger.debug("🔍 Finding all ruff installations...")
 
     try:
         result = subprocess.run(["which", "-a", "ruff"], capture_output=True, text=True, timeout=10)
 
         if result.returncode == 0 and result.stdout:
             paths = result.stdout.strip().split("\n")
-            print(f"Found ruff at: {paths}")
+            logger.debug(f"Found ruff at: {paths}")
             return paths
         else:
-            print("No ruff found on PATH")
+            logger.debug("No ruff found on PATH")
             return []
     except Exception as e:
-        print(f"Error finding ruff: {e}")
+        logger.error(f"Error finding ruff: {e}")
         return []
 
 
 def uninstall_old_ruff():
     """Nuke the old ruff installation."""
-    print("🗑️  Uninstalling old ruff...")
+    logger.debug("🗑️  Uninstalling old ruff...")
 
     try:
         result = subprocess.run(
@@ -39,27 +43,27 @@ def uninstall_old_ruff():
             timeout=60,
         )
 
-        print(f"Uninstall exit code: {result.returncode}")
+        logger.debug(f"Uninstall exit code: {result.returncode}")
         if result.stdout:
-            print(f"Stdout: {result.stdout}")
+            logger.debug(f"Stdout: {result.stdout}")
         if result.stderr:
-            print(f"Stderr: {result.stderr}")
+            logger.debug(f"Stderr: {result.stderr}")
 
         if result.returncode == 0:
-            print("✅ Old ruff uninstalled successfully")
+            logger.info("✅ Old ruff uninstalled successfully")
             return True
         else:
-            print("⚠️  Uninstall completed (may not have been installed)")
+            logger.info("⚠️  Uninstall completed (may not have been installed)")
             return True  # Continue anyway
 
     except Exception as e:
-        print(f"❌ Error uninstalling ruff: {e}")
+        logger.error(f"❌ Error uninstalling ruff: {e}")
         return False
 
 
 def install_new_ruff():
     """Install ruff >= 0.4.4."""
-    print("📦 Installing ruff >= 0.4.4...")
+    logger.debug("📦 Installing ruff >= 0.4.4...")
 
     try:
         result = subprocess.run(
@@ -69,53 +73,53 @@ def install_new_ruff():
             timeout=120,
         )
 
-        print(f"Install exit code: {result.returncode}")
+        logger.debug(f"Install exit code: {result.returncode}")
         if result.stdout:
-            print(f"Stdout: {result.stdout}")
+            logger.debug(f"Stdout: {result.stdout}")
         if result.stderr:
-            print(f"Stderr: {result.stderr}")
+            logger.debug(f"Stderr: {result.stderr}")
 
         if result.returncode == 0:
-            print("✅ New ruff installed successfully")
+            logger.info("✅ New ruff installed successfully")
             return True
         else:
-            print("❌ Failed to install new ruff")
+            logger.error("❌ Failed to install new ruff")
             return False
 
     except Exception as e:
-        print(f"❌ Error installing ruff: {e}")
+        logger.error(f"❌ Error installing ruff: {e}")
         return False
 
 
 def confirm_ruff_version():
     """Confirm the new ruff version."""
-    print("🔍 Confirming ruff version...")
+    logger.debug("🔍 Confirming ruff version...")
 
     try:
         result = subprocess.run(["ruff", "--version"], capture_output=True, text=True, timeout=10)
 
         if result.returncode == 0 and result.stdout:
             version = result.stdout.strip()
-            print(f"✅ Ruff version: {version}")
+            logger.debug(f"✅ Ruff version: {version}")
 
             if "0.4." in version or "0.5." in version:
-                print("✅ Version is adequate for F821 fixing")
+                logger.debug("✅ Version is adequate for F821 fixing")
                 return True
             else:
-                print("❌ Version is still too old")
+                logger.debug("❌ Version is still too old")
                 return False
         else:
-            print(f"❌ Could not get ruff version: {result.stderr}")
+            logger.debug(f"❌ Could not get ruff version: {result.stderr}")
             return False
 
     except Exception as e:
-        print(f"❌ Error checking ruff version: {e}")
+        logger.error(f"❌ Error checking ruff version: {e}")
         return False
 
 
 def test_ruff_functionality():
     """Test that ruff works correctly."""
-    print("🧪 Testing ruff functionality...")
+    logger.debug("🧪 Testing ruff functionality...")
 
     try:
         # Test basic check
@@ -127,10 +131,10 @@ def test_ruff_functionality():
             timeout=15,
         )
 
-        print(f"Basic check exit code: {result.returncode}")
+        logger.debug(f"Basic check exit code: {result.returncode}")
 
         if "unknown field" in (result.stderr or ""):
-            print("❌ Configuration issues remain")
+            logger.debug("❌ Configuration issues remain")
             return False
 
         # Test F821 JSON output
@@ -142,31 +146,31 @@ def test_ruff_functionality():
             timeout=30,
         )
 
-        print(f"F821 JSON check exit code: {result2.returncode}")
+        logger.debug(f"F821 JSON check exit code: {result2.returncode}")
 
         if result2.stdout or result2.returncode in [
             0,
             1,
         ]:  # 0 = no errors, 1 = errors found
-            print("✅ F821 JSON output works")
+            logger.debug("✅ F821 JSON output works")
             return True
         else:
-            print(f"❌ F821 JSON check failed: {result2.stderr}")
+            logger.error(f"❌ F821 JSON check failed: {result2.stderr}")
             return False
 
     except Exception as e:
-        print(f"❌ Error testing ruff: {e}")
+        logger.error(f"❌ Error testing ruff: {e}")
         return False
 
 
 def update_ruff_config():
     """Update .ruff.toml to use modern features."""
-    print("📝 Updating .ruff.toml...")
+    logger.debug("📝 Updating .ruff.toml...")
 
     ruff_config = Path("/Users/rohanvinaik/genomevault/.ruff.toml")
 
     if not ruff_config.exists():
-        print("❌ .ruff.toml not found")
+        logger.debug("❌ .ruff.toml not found")
         return False
 
     content = ruff_config.read_text()
@@ -174,54 +178,54 @@ def update_ruff_config():
     # Backup original
     backup_path = ruff_config.with_suffix(".toml.backup")
     backup_path.write_text(content)
-    print(f"✅ Backed up original config to {backup_path}")
+    logger.debug(f"✅ Backed up original config to {backup_path}")
 
     # Add [output] section if not present
     if "[output]" not in content:
         new_content = "[output]\nmax-violations = 200\n\n" + content
         ruff_config.write_text(new_content)
-        print("✅ Added [output] section with max-violations = 200")
+        logger.debug("✅ Added [output] section with max-violations = 200")
     else:
-        print("✅ [output] section already exists")
+        logger.debug("✅ [output] section already exists")
 
     return True
 
 
 def main():
-    print("🚀 Proper Ruff Cleanup and Upgrade\n")
+    logger.debug("🚀 Proper Ruff Cleanup and Upgrade\n")
 
     # Step 1: Find existing installations
     find_all_ruff()
 
     # Step 2: Uninstall old version
     if not uninstall_old_ruff():
-        print("\n❌ Failed to uninstall old ruff")
+        logger.error("\n❌ Failed to uninstall old ruff")
         sys.exit(1)
 
     # Step 3: Install new version
     if not install_new_ruff():
-        print("\n❌ Failed to install new ruff")
+        logger.error("\n❌ Failed to install new ruff")
         sys.exit(1)
 
     # Step 4: Confirm version
     if not confirm_ruff_version():
-        print("\n❌ New ruff version is not adequate")
+        logger.debug("\n❌ New ruff version is not adequate")
         sys.exit(1)
 
     # Step 5: Test functionality
     if not test_ruff_functionality():
-        print("\n❌ Ruff functionality test failed")
+        logger.error("\n❌ Ruff functionality test failed")
         sys.exit(1)
 
     # Step 6: Update configuration
     if not update_ruff_config():
-        print("\n❌ Failed to update configuration")
+        logger.error("\n❌ Failed to update configuration")
         sys.exit(1)
 
-    print("\n🎉 SUCCESS! Ruff is now properly upgraded and configured.")
-    print("\nYou can now run:")
-    print("   python enhanced_cleanup.py --phase 3")
-    print("   # This should now work without issues!")
+    logger.info("\n🎉 SUCCESS! Ruff is now properly upgraded and configured.")
+    logger.debug("\nYou can now run:")
+    logger.debug("   python enhanced_cleanup.py --phase 3")
+    logger.debug("   # This should now work without issues!")
 
 
 if __name__ == "__main__":

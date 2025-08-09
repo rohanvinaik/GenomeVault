@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 Green the Toolchain Implementation Script
 Implements the systematic cleanup and type-checking improvements
@@ -20,7 +21,7 @@ class GreenToolchainImplementer:
     def run_command(self, cmd: str, cwd: str = None) -> subprocess.CompletedProcess:
         """Run a shell command and return the result"""
         cwd = cwd or str(self.project_root)
-        print(f"Running: {cmd}")
+        logger.debug(f"Running: {cmd}")
         return subprocess.run(cmd, shell=True, cwd=cwd, capture_output=True, text=True)
 
     def validate_current_state(self) -> dict[str, Any]:
@@ -83,10 +84,10 @@ class GreenToolchainImplementer:
                 if modified:
                     with open(file_path, "w", encoding="utf-8") as f:
                         f.write(content)
-                    print(f"Fixed attribute mismatches in {file_path}")
+                    logger.debug(f"Fixed attribute mismatches in {file_path}")
 
             except Exception as e:
-                print(f"Error processing {file_path}: {e}")
+                logger.error(f"Error processing {file_path}: {e}")
 
     def fix_logging_braces(self):
         """Fix logging statements that use braces instead of % formatting"""
@@ -116,10 +117,10 @@ class GreenToolchainImplementer:
                 if new_content != content:
                     with open(file_path, "w", encoding="utf-8") as f:
                         f.write(new_content)
-                    print(f"Fixed logging braces in {file_path}")
+                    logger.debug(f"Fixed logging braces in {file_path}")
 
             except Exception as e:
-                print(f"Error processing {file_path}: {e}")
+                logger.error(f"Error processing {file_path}: {e}")
 
     def add_missing_imports_and_types(self):
         """Add missing imports and type annotations to core files"""
@@ -220,10 +221,10 @@ class GreenToolchainImplementer:
                 if modified:
                     with open(file_path, "w", encoding="utf-8") as f:
                         f.write(content)
-                    print(f"Added missing types and imports to {file_path}")
+                    logger.debug(f"Added missing types and imports to {file_path}")
 
             except Exception as e:
-                print(f"Error processing {file_path}: {e}")
+                logger.error(f"Error processing {file_path}: {e}")
 
     def fix_common_exceptions(self):
         """Fix common exception handling patterns"""
@@ -248,7 +249,7 @@ class GreenToolchainImplementer:
                     f.write(content)
 
             except Exception as e:
-                print(f"Error processing {file_path}: {e}")
+                logger.error(f"Error processing {file_path}: {e}")
 
     def create_minimal_tests(self):
         """Create minimal tests as specified in the task"""
@@ -312,61 +313,61 @@ def test_nodeinfo_and_blockchainnode_agree():
         with open(voting_test, "w") as f:
             f.write(voting_content)
 
-        print("Created minimal test files")
+        logger.debug("Created minimal test files")
 
     def run_validation(self) -> bool:
         """Run all validation commands and return True if all pass"""
-        print("Running validation...")
+        logger.debug("Running validation...")
 
         # Run ruff
         ruff_result = self.run_command("ruff check .")
         if ruff_result.returncode != 0:
-            print(f"Ruff failed: {ruff_result.stdout}{ruff_result.stderr}")
+            logger.error(f"Ruff failed: {ruff_result.stdout}{ruff_result.stderr}")
             return False
-        print("✓ Ruff check passed")
+        logger.info("✓ Ruff check passed")
 
         # Run mypy on core packages
         mypy_result = self.run_command("mypy --config-file mypy.ini .")
         if mypy_result.returncode != 0:
-            print(f"MyPy failed: {mypy_result.stdout}{mypy_result.stderr}")
+            logger.error(f"MyPy failed: {mypy_result.stdout}{mypy_result.stderr}")
             return False
-        print("✓ MyPy check passed")
+        logger.info("✓ MyPy check passed")
 
         # Run pytest
         pytest_result = self.run_command("pytest -q")
         if pytest_result.returncode != 0:
-            print(f"Pytest output: {pytest_result.stdout}{pytest_result.stderr}")
+            logger.debug(f"Pytest output: {pytest_result.stdout}{pytest_result.stderr}")
             # Don't fail on pytest issues for now, just report
-        print("✓ Pytest completed")
+        logger.info("✓ Pytest completed")
 
         return True
 
     def implement_green_toolchain(self):
         """Main implementation method"""
-        print("Starting Green the Toolchain implementation...")
+        logger.debug("Starting Green the Toolchain implementation...")
 
-        print("\n=== Phase 0: Already done - upgraded pytest stack ===")
+        logger.info("\n=== Phase 0: Already done - upgraded pytest stack ===")
 
-        print("\n=== Phase 1: Updated mypy config ===")
+        logger.debug("\n=== Phase 1: Updated mypy config ===")
 
-        print("\n=== Phase 2: Stub packages already exist ===")
+        logger.debug("\n=== Phase 2: Stub packages already exist ===")
 
-        print("\n=== Phase 3: Fixing core type issues ===")
+        logger.debug("\n=== Phase 3: Fixing core type issues ===")
         self.fix_attribute_mismatches()
         self.fix_logging_braces()
         self.add_missing_imports_and_types()
         self.fix_common_exceptions()
 
-        print("\n=== Phase 4: Creating minimal tests ===")
+        logger.debug("\n=== Phase 4: Creating minimal tests ===")
         self.create_minimal_tests()
 
-        print("\n=== Phase 5: Running validation ===")
+        logger.debug("\n=== Phase 5: Running validation ===")
         success = self.run_validation()
 
         if success:
-            print("\n🎉 Green the Toolchain implementation completed successfully!")
+            logger.info("\n🎉 Green the Toolchain implementation completed successfully!")
         else:
-            print("\n⚠️  Some validation steps failed, but core implementation is complete")
+            logger.error("\n⚠️  Some validation steps failed, but core implementation is complete")
 
         return success
 

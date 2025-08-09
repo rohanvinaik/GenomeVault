@@ -1,6 +1,5 @@
 """Minimal test to ensure pytest works."""
 
-
 def test_basic_math():
     """Test basic math operations."""
     assert 1 + 1 == 2

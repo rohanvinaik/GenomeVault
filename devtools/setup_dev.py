@@ -1,3 +1,7 @@
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
+
+
 #!/usr/bin/env python3
 """
 One-command development environment setup for GenomeVault.
@@ -36,29 +40,29 @@ class Colors:
 
 def print_header(msg: str) -> None:
     """Print a formatted header message."""
-    print(f"\n{Colors.HEADER}{Colors.BOLD}{'='*60}{Colors.ENDC}")
-    print(f"{Colors.HEADER}{Colors.BOLD}{msg}{Colors.ENDC}")
-    print(f"{Colors.HEADER}{Colors.BOLD}{'='*60}{Colors.ENDC}\n")
+    logger.debug(f"\n{Colors.HEADER}{Colors.BOLD}{'='*60}{Colors.ENDC}")
+    logger.debug(f"{Colors.HEADER}{Colors.BOLD}{msg}{Colors.ENDC}")
+    logger.debug(f"{Colors.HEADER}{Colors.BOLD}{'='*60}{Colors.ENDC}\n")
 
 
 def print_step(msg: str) -> None:
     """Print a formatted step message."""
-    print(f"{Colors.OKCYAN}➤ {msg}{Colors.ENDC}")
+    logger.debug(f"{Colors.OKCYAN}➤ {msg}{Colors.ENDC}")
 
 
 def print_success(msg: str) -> None:
     """Print a formatted success message."""
-    print(f"{Colors.OKGREEN}✓ {msg}{Colors.ENDC}")
+    logger.info(f"{Colors.OKGREEN}✓ {msg}{Colors.ENDC}")
 
 
 def print_error(msg: str) -> None:
     """Print a formatted error message."""
-    print(f"{Colors.FAIL}✗ {msg}{Colors.ENDC}")
+    logger.error(f"{Colors.FAIL}✗ {msg}{Colors.ENDC}")
 
 
 def print_warning(msg: str) -> None:
     """Print a formatted warning message."""
-    print(f"{Colors.WARNING}⚠ {msg}{Colors.ENDC}")
+    logger.warning(f"{Colors.WARNING}⚠ {msg}{Colors.ENDC}")
 
 
 def run_command(cmd: List[str], description: str, cwd: Optional[Path] = None) -> Tuple[bool, str]:
@@ -81,7 +85,7 @@ def run_command(cmd: List[str], description: str, cwd: Optional[Path] = None) ->
     except subprocess.CalledProcessError as e:
         print_error(f"{description} failed: {e}")
         if e.stderr:
-            print(f"  Error output: {e.stderr}")
+            logger.error(f"  Error output: {e.stderr}")
         return False, e.stderr
     except FileNotFoundError:
         print_error(f"Command not found: {' '.join(cmd)}")
@@ -150,7 +154,7 @@ def setup_virtual_environment(venv_name: str) -> Tuple[bool, Path]:
         python_path = venv_path / "bin" / "python"
 
     print_success(f"Virtual environment created at {venv_path}")
-    print(f"\n  To activate manually, run: {Colors.BOLD}{activate_cmd}{Colors.ENDC}\n")
+    logger.debug(f"\n  To activate manually, run: {Colors.BOLD}{activate_cmd}{Colors.ENDC}\n")
 
     return True, venv_path
 
@@ -355,8 +359,8 @@ def print_next_steps(venv_name: str) -> None:
    {Colors.BOLD}python scripts/bench.py{Colors.ENDC}
     """
 
-    print(steps)
-    print(f"\n{Colors.OKGREEN}Happy coding! 🚀{Colors.ENDC}\n")
+    logger.debug(steps)
+    logger.debug(f"\n{Colors.OKGREEN}Happy coding! 🚀{Colors.ENDC}\n")
 
 
 def main():

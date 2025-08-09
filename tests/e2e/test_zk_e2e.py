@@ -284,6 +284,6 @@ class TestZKPerformance:
         assert avg_time < 1.0  # Less than 1 second
 
         # Log performance metrics
-        print(f"Average proof generation time: {avg_time:.3f}s")
-        print(f"Min time: {min(times):.3f}s")
-        print(f"Max time: {max(times):.3f}s")
+        logger.debug(f"Average proof generation time: {avg_time:.3f}s")
+        logger.debug(f"Min time: {min(times):.3f}s")
+        logger.debug(f"Max time: {max(times):.3f}s")

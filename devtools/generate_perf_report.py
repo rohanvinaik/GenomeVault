@@ -1,3 +1,7 @@
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
+
+
 #!/usr/bin/env python3
 """
 Generate performance report from benchmark results
@@ -45,7 +49,7 @@ class PerformanceReportGenerator:
                             data[lane].append(benchmark_data)
                     except Exception as e:
                         logger.exception("Unhandled exception")
-                        print(f"Error loading {json_file}: {e}")
+                        logger.error(f"Error loading {json_file}: {e}")
                         raise
 
         return data
@@ -333,14 +337,14 @@ class PerformanceReportGenerator:
         with open(html_path, "w") as f:
             f.write(html_content)
 
-        print(f"HTML report saved to: {html_path}")
+        logger.debug(f"HTML report saved to: {html_path}")
 
     def generate_report(self):
         """Generate complete performance report"""
-        print("Loading benchmark data...")
+        logger.debug("Loading benchmark data...")
         all_data = self.load_benchmark_data()
 
-        print("Analyzing performance...")
+        logger.debug("Analyzing performance...")
         summary = self.generate_summary_report(all_data)
 
         # Save summary JSON
@@ -348,13 +352,13 @@ class PerformanceReportGenerator:
         with open(summary_path, "w") as f:
             json.dump(summary, f, indent=2)
 
-        print("Generating plots...")
+        logger.debug("Generating plots...")
         self.generate_hdc_plots(all_data["hdc"])
 
-        print("Generating HTML report...")
+        logger.debug("Generating HTML report...")
         self.generate_html_report(summary)
 
-        print(f"\nPerformance report generated in: {self.output_dir}")
+        logger.debug(f"\nPerformance report generated in: {self.output_dir}")
         return summary
 
 

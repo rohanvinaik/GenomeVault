@@ -1,3 +1,7 @@
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
+
+
 #!/usr/bin/env python3
 """
 Clean up the root directory by organizing files into appropriate locations.
@@ -108,11 +112,11 @@ def move_file_to_tools(file_name: str, backup_dir: Path) -> bool:
     # Move to tools
     dest = ROOT_DIR / "tools" / file_name
     if dest.exists():
-        print(f"  ⚠️  {file_name} already exists in tools/, skipping")
+        logger.debug(f"  ⚠️  {file_name} already exists in tools/, skipping")
         return False
 
     shutil.move(str(src), str(dest))
-    print(f"  ✓ Moved {file_name} to tools/")
+    logger.info(f"  ✓ Moved {file_name} to tools/")
     return True
 
 
@@ -128,7 +132,7 @@ def delete_file(file_name: str, backup_dir: Path) -> bool:
 
     # Delete file
     file_path.unlink()
-    print(f"  ✓ Deleted {file_name}")
+    logger.info(f"  ✓ Deleted {file_name}")
     return True
 
 
@@ -146,7 +150,7 @@ def delete_directory(dir_name: str, backup_dir: Path) -> bool:
 
     # Delete directory
     shutil.rmtree(dir_path)
-    print(f"  ✓ Deleted directory {dir_name}/")
+    logger.info(f"  ✓ Deleted directory {dir_name}/")
     return True
 
 
@@ -167,19 +171,19 @@ def clean_coverage_files() -> int:
                 file_path.unlink()
                 count += 1
     if count > 0:
-        print(f"  ✓ Cleaned {count} coverage-related files")
+        logger.info(f"  ✓ Cleaned {count} coverage-related files")
     return count
 
 
 def main():
     """Main cleanup function."""
-    print("🧹 Starting root directory cleanup...")
-    print(f"   Working in: {ROOT_DIR}")
+    logger.debug("🧹 Starting root directory cleanup...")
+    logger.debug(f"   Working in: {ROOT_DIR}")
 
     # Create backup directory
     backup_dir = create_backup_dir()
-    print(f"   Backup directory: {backup_dir}")
-    print()
+    logger.debug(f"   Backup directory: {backup_dir}")
+    # Removed empty print()
 
     # Statistics
     moved_count = 0
@@ -187,49 +191,49 @@ def main():
     deleted_dirs = 0
 
     # Move files to tools/
-    print("📦 Moving files to tools/...")
+    logger.debug("📦 Moving files to tools/...")
     for file_name in MOVE_TO_TOOLS:
         if move_file_to_tools(file_name, backup_dir):
             moved_count += 1
 
-    print()
-    print("🗑️  Deleting temporary files...")
+    # Removed empty print()
+    logger.debug("🗑️  Deleting temporary files...")
     for file_name in DELETE_FILES:
         if delete_file(file_name, backup_dir):
             deleted_files += 1
 
-    print()
-    print("🗑️  Deleting temporary directories...")
+    # Removed empty print()
+    logger.debug("🗑️  Deleting temporary directories...")
     for dir_name in DELETE_DIRS:
         if delete_directory(dir_name, backup_dir):
             deleted_dirs += 1
 
-    print()
-    print("🧹 Cleaning coverage files...")
+    # Removed empty print()
+    logger.debug("🧹 Cleaning coverage files...")
     coverage_count = clean_coverage_files()
 
     # Summary
-    print()
-    print("✨ Cleanup complete!")
-    print(f"   • Moved {moved_count} files to tools/")
-    print(f"   • Deleted {deleted_files} temporary files")
-    print(f"   • Deleted {deleted_dirs} temporary directories")
-    print(f"   • Cleaned {coverage_count} coverage files")
-    print()
-    print(f"💾 Backup saved to: {backup_dir}")
-    print("   (You can delete this after verifying everything works)")
+    # Removed empty print()
+    logger.info("✨ Cleanup complete!")
+    logger.debug(f"   • Moved {moved_count} files to tools/")
+    logger.debug(f"   • Deleted {deleted_files} temporary files")
+    logger.debug(f"   • Deleted {deleted_dirs} temporary directories")
+    logger.debug(f"   • Cleaned {coverage_count} coverage files")
+    # Removed empty print()
+    logger.debug(f"💾 Backup saved to: {backup_dir}")
+    logger.debug("   (You can delete this after verifying everything works)")
 
     # Suggest .gitignore additions
     if moved_count + deleted_files + deleted_dirs > 0:
-        print()
-        print("📝 Consider adding these to .gitignore:")
-        print("   # Generated files")
-        print("   htmlcov/")
-        print("   coverage.xml")
-        print("   .coverage")
-        print("   *.egg-info/")
-        print("   task*_output/")
-        print("   test_*.py  # One-off test files in root")
+        # Removed empty print()
+        logger.debug("📝 Consider adding these to .gitignore:")
+        logger.debug("   # Generated files")
+        logger.debug("   htmlcov/")
+        logger.debug("   coverage.xml")
+        logger.debug("   .coverage")
+        logger.debug("   *.egg-info/")
+        logger.debug("   task*_output/")
+        logger.debug("   test_*.py  # One-off test files in root")
 
 
 if __name__ == "__main__":

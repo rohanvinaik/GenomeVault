@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
+
 import re
 import subprocess
 import time
 from pathlib import Path
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
+
+
 
 ROOT = Path(".")
 OUT = Path(".tidy")
@@ -181,7 +186,7 @@ with report.open("w", encoding="utf-8") as w:
 cands = [f for cat, f, _, _, _, _, _, _, _ in rows if cat == "CANDIDATE"]
 (Path(".tidy") / "top_root_candidates.txt").write_text("\n".join(cands) + "\n", encoding="utf-8")
 
-print("Wrote:", report, "and", OUT / "top_root_candidates.txt")
+logger.debug("Wrote:", report, "and", OUT / "top_root_candidates.txt")
 print(
     f"Found {len(tracked)} root files: {len([1 for r in rows if r[0]=='KEEP'])} KEEP, {len([1 for r in rows if r[0]=='MAYBE'])} MAYBE, {len(cands)} CANDIDATE"
 )

@@ -3,10 +3,13 @@ Complete HDC-PIR Integration with Real ZK Proofs
 Demonstrates the full pipeline with actual zero-knowledge proof generation
 """
 
+from __future__ import annotations
+
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
+
 # Note: This example uses print() statements for demonstration purposes.
 # In production code, use proper logging instead.
-
-from __future__ import annotations
 
 import asyncio
 import json
@@ -23,18 +26,18 @@ async def main():
     """
     Demonstrate the complete error-tuned query pipeline with real ZK proofs
     """
-    print("=== HDC Error Tuning with Real ZK Proofs Demo ===\n")
+    logger.error("=== HDC Error Tuning with Real ZK Proofs Demo ===\n")
 
     # Step 1: User specifies accuracy requirements
-    print("1. User Accuracy Requirements:")
+    logger.debug("1. User Accuracy Requirements:")
     epsilon = 0.01  # 1% relative error
     delta_exp = 20  # 1 in 2^20 failure probability
-    print(f"   - Allowed error: ±{epsilon * 100}%")
-    print(f"   - Confidence: 1 in {2**delta_exp:,} chance of failure")
-    print("   - ECC enabled: Yes (3-block XOR parity)")
+    logger.error(f"   - Allowed error: ±{epsilon * 100}%")
+    logger.error(f"   - Confidence: 1 in {2**delta_exp:,} chance of failure")
+    logger.debug("   - ECC enabled: Yes (3-block XOR parity)")
 
     # Step 2: System plans error budget
-    print("\n2. Error Budget Planning:")
+    logger.error("\n2. Error Budget Planning:")
     allocator = ErrorBudgetAllocator(dim_cap=150000)
     budget = allocator.plan_budget(
         epsilon=epsilon,
@@ -43,19 +46,19 @@ async def main():
         repeat_cap=10,  # Limit repeats for demo
     )
 
-    print(f"   - Dimension: {budget.dimension:,}")
-    print(f"   - Parity groups: {budget.parity_g}")
-    print(f"   - Repeats needed: {budget.repeats}")
+    logger.debug(f"   - Dimension: {budget.dimension:,}")
+    logger.debug(f"   - Parity groups: {budget.parity_g}")
+    logger.debug(f"   - Repeats needed: {budget.repeats}")
 
     # Step 3: Simulate PIR query execution
-    print("\n3. Simulating PIR Query Execution:")
+    logger.debug("\n3. Simulating PIR Query Execution:")
 
     # Simulate query results with realistic noise
     true_value = 0.0123  # True allele frequency
     noise_std = 0.0005
 
     results = []
-    print("   Executing batched queries:")
+    logger.debug("   Executing batched queries:")
     for i in range(budget.repeats):
         # Add realistic noise to each query result
         noisy_value = true_value + np.random.normal(0, noise_std)
@@ -65,21 +68,21 @@ async def main():
             "timestamp": time.time(),
         }
         results.append(result)
-        print(f"   Query {i + 1}/{budget.repeats}: frequency = {noisy_value:.6f}")
+        logger.debug(f"   Query {i + 1}/{budget.repeats}: frequency = {noisy_value:.6f}")
 
     # Step 4: Calculate median
-    print("\n4. Calculating Median:")
+    logger.debug("\n4. Calculating Median:")
     values = [r["allele_frequency"] for r in results]
     median = np.median(values)
     median_error = np.median(np.abs(np.array(values) - median))
 
-    print(f"   - Individual values: {[f'{v:.6f}' for v in values[:5]]}...")
-    print(f"   - Median: {median:.6f}")
-    print(f"   - Median absolute deviation: {median_error:.6f}")
-    print(f"   - Error within bound: {median_error <= epsilon} ✓")
+    logger.debug(f"   - Individual values: {[f'{v:.6f}' for v in values[:5]]}...")
+    logger.debug(f"   - Median: {median:.6f}")
+    logger.error(f"   - Median absolute deviation: {median_error:.6f}")
+    logger.error(f"   - Error within bound: {median_error <= epsilon} ✓")
 
     # Step 5: Generate real ZK proof
-    print("\n5. Generating Zero-Knowledge Proof:")
+    logger.debug("\n5. Generating Zero-Knowledge Proof:")
 
     # Initialize real proof generator
     proof_generator = ProofGenerator()
@@ -97,14 +100,14 @@ async def main():
         results=results, median=median, budget=budget, metadata=metadata
     )
 
-    print(f"   - Proof type: {proof_result.circuit_type}")
-    print(f"   - Proof hash: {proof_result.hash[:32]}...")
-    print(f"   - Generation time: {proof_result.generation_time_ms:.1f}ms")
-    print(f"   - Proof size: {len(proof_result.proof_data)} bytes")
-    print(f"   - Verification result: {proof_result.verification_result} ✓")
+    logger.debug(f"   - Proof type: {proof_result.circuit_type}")
+    logger.debug(f"   - Proof hash: {proof_result.hash[:32]}...")
+    logger.debug(f"   - Generation time: {proof_result.generation_time_ms:.1f}ms")
+    logger.debug(f"   - Proof size: {len(proof_result.proof_data)} bytes")
+    logger.info(f"   - Verification result: {proof_result.verification_result} ✓")
 
     # Step 6: Verify the proof independently
-    print("\n6. Independent Proof Verification:")
+    logger.debug("\n6. Independent Proof Verification:")
 
     # Create new circuit instance for verification
     MedianVerifierCircuit()
@@ -116,30 +119,30 @@ async def main():
     opened_indices = proof_dict["median_opening"]["indices"]
     opened_values = proof_dict["median_opening"]["values"]
 
-    print(f"   - Opened {len(opened_indices)} commitment(s) around median")
-    print(f"   - Opened indices: {opened_indices}")
-    print("   - Median computation verified: ✓")
+    logger.debug(f"   - Opened {len(opened_indices)} commitment(s) around median")
+    logger.debug(f"   - Opened indices: {opened_indices}")
+    logger.info("   - Median computation verified: ✓")
 
     # Verify using the proof generator
     is_valid = proof_generator.verify_proof(proof_result)
-    print(f"   - Full proof verification: {'✓' if is_valid else '✗'}")
+    logger.info(f"   - Full proof verification: {'✓' if is_valid else '✗'}")
 
     # Step 7: Demonstrate zero-knowledge property
-    print("\n7. Zero-Knowledge Property:")
-    print(f"   - Total values: {len(values)}")
-    print(f"   - Values revealed in proof: {len(opened_values)}")
-    print(f"   - Zero-knowledge ratio: {(1 - len(opened_values) / len(values)) * 100:.1f}% hidden")
+    logger.debug("\n7. Zero-Knowledge Property:")
+    logger.debug(f"   - Total values: {len(values)}")
+    logger.debug(f"   - Values revealed in proof: {len(opened_values)}")
+    logger.debug(f"   - Zero-knowledge ratio: {(1 - len(opened_values) / len(values)) * 100:.1f}% hidden")
 
     # Step 8: Show complete results
-    print("\n8. Complete Query Result:")
-    print(f"   - Allele frequency: {median:.6f} ± {epsilon * 100}%")
-    print(f"   - Confidence: {budget.confidence}")
-    print(f"   - Proof URI: ipfs://{proof_result.hash[:32]}...")
-    print(f"   - Total processing time: {proof_result.generation_time_ms + 100:.0f}ms")
+    logger.info("\n8. Complete Query Result:")
+    logger.debug(f"   - Allele frequency: {median:.6f} ± {epsilon * 100}%")
+    logger.debug(f"   - Confidence: {budget.confidence}")
+    logger.debug(f"   - Proof URI: ipfs://{proof_result.hash[:32]}...")
+    logger.debug(f"   - Total processing time: {proof_result.generation_time_ms + 100:.0f}ms")
 
     # Step 9: Performance comparison
-    print("\n9. Performance Analysis:")
-    print("   Comparing mock vs real ZK proofs:")
+    logger.debug("\n9. Performance Analysis:")
+    logger.debug("   Comparing mock vs real ZK proofs:")
 
     # Time mock proof
     start = time.time()
@@ -147,16 +150,16 @@ async def main():
     hash(str(mock_proof))
     mock_time = (time.time() - start) * 1000
 
-    print(f"   - Mock proof time: {mock_time:.3f}ms")
-    print(f"   - Real ZK proof time: {proof_result.generation_time_ms:.1f}ms")
-    print(f"   - Overhead factor: {proof_result.generation_time_ms / mock_time:.1f}x")
-    print("   - Security guarantee: Cryptographic vs None")
+    logger.debug(f"   - Mock proof time: {mock_time:.3f}ms")
+    logger.debug(f"   - Real ZK proof time: {proof_result.generation_time_ms:.1f}ms")
+    logger.debug(f"   - Overhead factor: {proof_result.generation_time_ms / mock_time:.1f}x")
+    logger.debug("   - Security guarantee: Cryptographic vs None")
 
     # Step 10: Demonstrate proof properties
-    print("\n10. ZK Proof Properties:")
+    logger.debug("\n10. ZK Proof Properties:")
 
     # Test soundness - try to create invalid proof
-    print("   Testing soundness (invalid median)...")
+    logger.debug("   Testing soundness (invalid median)...")
     try:
         # This should fail
         invalid_generator = ProofGenerator()
@@ -166,42 +169,42 @@ async def main():
         await invalid_generator.generate_median_proof(
             results=results, median=invalid_median, budget=budget, metadata=metadata
         )
-        print("   ✗ Soundness check failed - invalid proof accepted!")
+        logger.error("   ✗ Soundness check failed - invalid proof accepted!")
     except Exception as e:
         logger.exception("Unhandled exception")
-        print("   ✓ Soundness verified - invalid proof rejected")
-        print(f"     Error: {str(e)[:50]}...")
+        logger.info("   ✓ Soundness verified - invalid proof rejected")
+        logger.error(f"     Error: {str(e)[:50]}...")
         raise
 
     # Test zero-knowledge
-    print("\n   Testing zero-knowledge property...")
+    logger.debug("\n   Testing zero-knowledge property...")
     # The proof should not reveal all input values
     revealed_count = len(proof_dict["median_opening"]["values"])
     total_count = proof_dict["num_values"]
     zk_percentage = (1 - revealed_count / total_count) * 100
-    print(f"   ✓ Zero-knowledge verified - {zk_percentage:.1f}% of values hidden")
+    logger.info(f"   ✓ Zero-knowledge verified - {zk_percentage:.1f}% of values hidden")
 
     # Test completeness
-    print("\n   Testing completeness property...")
+    logger.info("\n   Testing completeness property...")
     # Valid proofs should always verify
     verification_success = proof_result.verification_result
-    print(f"   ✓ Completeness verified - valid proof accepted: {verification_success}")
+    logger.info(f"   ✓ Completeness verified - valid proof accepted: {verification_success}")
 
-    print("\n=== Demo Complete ===")
-    print("\nSummary:")
-    print(f"- Generated real ZK proof for {budget.repeats} query results")
-    print(f"- Proved median {median:.6f} is within {epsilon * 100}% error bound")
-    print(f"- Proof provides cryptographic guarantee with {2**-delta_exp:.2e} failure probability")
-    print(f"- Only revealed {revealed_count}/{total_count} values, maintaining privacy")
-    print(f"- Total proof size: {len(proof_result.proof_data)} bytes")
-    print("- Verification time: <5ms (much faster than generation)")
+    logger.info("\n=== Demo Complete ===")
+    logger.debug("\nSummary:")
+    logger.debug(f"- Generated real ZK proof for {budget.repeats} query results")
+    logger.error(f"- Proved median {median:.6f} is within {epsilon * 100}% error bound")
+    logger.error(f"- Proof provides cryptographic guarantee with {2**-delta_exp:.2e} failure probability")
+    logger.debug(f"- Only revealed {revealed_count}/{total_count} values, maintaining privacy")
+    logger.debug(f"- Total proof size: {len(proof_result.proof_data)} bytes")
+    logger.debug("- Verification time: <5ms (much faster than generation)")
 
     return proof_result
 
 
 async def benchmark_zk_performance():
     """Benchmark ZK proof generation for different input sizes"""
-    print("\n=== ZK Proof Performance Benchmark ===")
+    logger.debug("\n=== ZK Proof Performance Benchmark ===")
 
     circuit = MedianVerifierCircuit()
     results = []
@@ -245,23 +248,23 @@ async def benchmark_zk_performance():
         )
 
     # Display results
-    print("\nInput Size | Generation | Verification | Proof Size | Valid")
-    print("-----------|------------|--------------|------------|-------")
+    logger.debug("\nInput Size | Generation | Verification | Proof Size | Valid")
+    logger.debug("-----------|------------|--------------|------------|-------")
     for r in results:
         print(
             f"{r['n']:10} | {r['gen_ms']:9.1f}ms | {r['verify_ms']:11.1f}ms | {r['size_bytes']:9}B | {r['valid']}"
         )
 
-    print("\nKey Observations:")
-    print("- Proof generation scales linearly with input size")
-    print("- Verification is consistently fast regardless of input size")
-    print("- Proof size grows logarithmically due to selective opening")
-    print("- All proofs are cryptographically valid")
+    logger.debug("\nKey Observations:")
+    logger.debug("- Proof generation scales linearly with input size")
+    logger.debug("- Verification is consistently fast regardless of input size")
+    logger.debug("- Proof size grows logarithmically due to selective opening")
+    logger.debug("- All proofs are cryptographically valid")
 
 
 def demonstrate_proof_structure():
     """Show the structure of a ZK median proof"""
-    print("\n=== ZK Median Proof Structure ===")
+    logger.debug("\n=== ZK Median Proof Structure ===")
 
     circuit = MedianVerifierCircuit()
     values = [1.0, 2.0, 3.0, 4.0, 5.0]
@@ -271,50 +274,50 @@ def demonstrate_proof_structure():
         values=values, claimed_median=median, error_bound=0.1, expected_value=2.9
     )
 
-    print("\n1. Public Inputs:")
-    print(f"   - Claimed median: {proof.claimed_median}")
-    print(f"   - Error bound: {proof.error_bound}")
-    print(f"   - Number of values: {proof.num_values}")
+    logger.debug("\n1. Public Inputs:")
+    logger.debug(f"   - Claimed median: {proof.claimed_median}")
+    logger.error(f"   - Error bound: {proof.error_bound}")
+    logger.debug(f"   - Number of values: {proof.num_values}")
 
-    print("\n2. Commitments:")
-    print(f"   - Overall commitment: {proof.commitment.hex()[:32]}...")
-    print(f"   - Individual commitments: {len(proof.sorted_commitments)} values")
+    logger.debug("\n2. Commitments:")
+    logger.debug(f"   - Overall commitment: {proof.commitment.hex()[:32]}...")
+    logger.debug(f"   - Individual commitments: {len(proof.sorted_commitments)} values")
 
-    print("\n3. Selective Opening:")
+    logger.debug("\n3. Selective Opening:")
     opening = proof.median_opening
-    print(f"   - Opened indices: {opening['indices']}")
-    print(f"   - Opened values: {opening['values']}")
-    print(f"   - Randomness: {len(opening['randomness'])} values (hidden)")
+    logger.debug(f"   - Opened indices: {opening['indices']}")
+    logger.debug(f"   - Opened values: {opening['values']}")
+    logger.debug(f"   - Randomness: {len(opening['randomness'])} values (hidden)")
 
-    print("\n4. Challenge-Response:")
-    print(f"   - Fiat-Shamir challenge: {proof.challenge.hex()[:32]}...")
-    print(f"   - Response type: {proof.response.get('error_proof', {}).get('type', 'N/A')}")
+    logger.debug("\n4. Challenge-Response:")
+    logger.debug(f"   - Fiat-Shamir challenge: {proof.challenge.hex()[:32]}...")
+    logger.error(f"   - Response type: {proof.response.get('error_proof', {}).get('type', 'N/A')}")
 
-    print("\n5. Range Proofs:")
+    logger.debug("\n5. Range Proofs:")
     if proof.range_proofs:
         range_info = proof.range_proofs[0]["range"]
-        print(f"   - Proven range: [{range_info['min']:.2f}, {range_info['max']:.2f}]")
-        print(f"   - Number of range proofs: {len(proof.range_proofs)}")
+        logger.debug(f"   - Proven range: [{range_info['min']:.2f}, {range_info['max']:.2f}]")
+        logger.debug(f"   - Number of range proofs: {len(proof.range_proofs)}")
 
-    print("\n6. Proof Metadata:")
-    print(f"   - Proof ID: {proof.proof_id}")
-    print(f"   - Timestamp: {proof.timestamp}")
-    print(f"   - Generation time: {proof.response.get('computation_time_ms', 0):.1f}ms")
+    logger.debug("\n6. Proof Metadata:")
+    logger.debug(f"   - Proof ID: {proof.proof_id}")
+    logger.debug(f"   - Timestamp: {proof.timestamp}")
+    logger.debug(f"   - Generation time: {proof.response.get('computation_time_ms', 0):.1f}ms")
 
 
 if __name__ == "__main__":
     # Run main demo
-    print("Running main integration demo...\n")
+    logger.debug("Running main integration demo...\n")
     proof = asyncio.run(main())
 
     # Run performance benchmark
-    print("\n" + "=" * 50)
+    logger.debug("\n" + "=" * 50)
     asyncio.run(benchmark_zk_performance())
 
     # Show proof structure
-    print("\n" + "=" * 50)
+    logger.debug("\n" + "=" * 50)
     demonstrate_proof_structure()
 
-    print("\n✅ All demonstrations complete!")
-    print("\nThe system now uses real zero-knowledge proofs for median verification,")
-    print("providing cryptographic guarantees while maintaining privacy.")
+    logger.info("\n✅ All demonstrations complete!")
+    logger.debug("\nThe system now uses real zero-knowledge proofs for median verification,")
+    logger.debug("providing cryptographic guarantees while maintaining privacy.")

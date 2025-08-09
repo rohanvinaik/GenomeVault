@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 Enhanced GenomeVault Technical Debt Cleanup
 ===========================================
@@ -52,7 +53,7 @@ class EnhancedCleanup:
         """Log a fix that was applied."""
         timestamp = time.strftime("%H:%M:%S")
         formatted_msg = f"[{timestamp}] ✓ {message}"
-        print(formatted_msg)
+        logger.debug(formatted_msg)
         self.fixes_applied.append(message)
         self.phase_stats[phase]["fixes"] += 1
 
@@ -60,7 +61,7 @@ class EnhancedCleanup:
         """Log an error found."""
         timestamp = time.strftime("%H:%M:%S")
         formatted_msg = f"[{timestamp}] ✗ {message}"
-        print(formatted_msg)
+        logger.debug(formatted_msg)
         self.errors_found.append(message)
         self.phase_stats[phase]["errors"] += 1
 
@@ -127,9 +128,9 @@ class EnhancedCleanup:
 
     def phase_1_update_ruff_config(self, dry_run: bool = False):
         """Phase 1: Update Ruff configuration for better error management."""
-        print("\n" + "=" * 60)
-        print("PHASE 1: Updating Ruff Configuration")
-        print("=" * 60)
+        logger.debug("\n" + "=" * 60)
+        logger.debug("PHASE 1: Updating Ruff Configuration")
+        logger.debug("=" * 60)
 
         ruff_config = self.repo_root / ".ruff.toml"
         pyproject_config = self.repo_root / "pyproject.toml"
@@ -145,7 +146,7 @@ class EnhancedCleanup:
             return
 
         if dry_run:
-            print(f"[DRY RUN] Would update Ruff configuration in {config_file}")
+            logger.debug(f"[DRY RUN] Would update Ruff configuration in {config_file}")
             return
 
         original_hash = self.get_file_hash(config_file)
@@ -203,7 +204,7 @@ class EnhancedCleanup:
                 self.phase_stats["phase1"]["files_touched"] += 1
 
         # Test the configuration
-        print("Testing Ruff configuration...")
+        logger.debug("Testing Ruff configuration...")
         returncode, stdout, stderr = self.run_command_safe(["ruff", "--version"])
         if returncode == 0:
             self.log_fix("Ruff configuration validated", "phase1")
@@ -212,15 +213,15 @@ class EnhancedCleanup:
 
     def phase_2_triage_code(self, dry_run: bool = False):
         """Phase 2: Separate library code from examples/tooling."""
-        print("\n" + "=" * 60)
-        print("PHASE 2: Triaging Code Structure")
-        print("=" * 60)
+        logger.debug("\n" + "=" * 60)
+        logger.debug("PHASE 2: Triaging Code Structure")
+        logger.debug("=" * 60)
 
         # Create tools directory
         tools_dir = self.repo_root / "tools"
 
         if dry_run:
-            print("[DRY RUN] Would create tools/ directory and move helper scripts")
+            logger.debug("[DRY RUN] Would create tools/ directory and move helper scripts")
             return
 
         tools_dir.mkdir(exist_ok=True)
@@ -304,9 +305,9 @@ class EnhancedCleanup:
                 continue
 
         if dry_run:
-            print(f"[DRY RUN] Would guard example code in {len(example_files)} files")
+            logger.debug(f"[DRY RUN] Would guard example code in {len(example_files)} files")
             for f in example_files[:5]:  # Show first 5
-                print(f"  - {f.relative_to(self.repo_root)}")
+                logger.debug(f"  - {f.relative_to(self.repo_root)}")
             return
 
         guarded_count = 0
@@ -376,12 +377,12 @@ class EnhancedCleanup:
 
     def phase_3_fix_undefined_names(self, dry_run: bool = False):
         """Phase 3: Systematically fix F821 undefined-name errors."""
-        print("\n" + "=" * 60)
-        print("PHASE 3: Fixing Undefined Names (F821)")
-        print("=" * 60)
+        logger.debug("\n" + "=" * 60)
+        logger.debug("PHASE 3: Fixing Undefined Names (F821)")
+        logger.debug("=" * 60)
 
         if dry_run:
-            print("[DRY RUN] Would analyze and fix undefined name errors")
+            logger.error("[DRY RUN] Would analyze and fix undefined name errors")
             return
 
         # Get current F821 errors from Ruff
@@ -548,12 +549,12 @@ class EnhancedCleanup:
 
     def phase_4_fix_redefinition_imports(self, dry_run: bool = False):
         """Phase 4: Fix redefinition (F811) and import-order (E402) issues."""
-        print("\n" + "=" * 60)
-        print("PHASE 4: Fixing Redefinition and Import Order")
-        print("=" * 60)
+        logger.debug("\n" + "=" * 60)
+        logger.debug("PHASE 4: Fixing Redefinition and Import Order")
+        logger.debug("=" * 60)
 
         if dry_run:
-            print("[DRY RUN] Would fix redefinition and import order issues")
+            logger.debug("[DRY RUN] Would fix redefinition and import order issues")
             return
 
         # Get Python files to process
@@ -727,12 +728,12 @@ class EnhancedCleanup:
 
     def phase_5_clean_tooling_scripts(self, dry_run: bool = False):
         """Phase 5: Clean up tooling scripts with glob ignore."""
-        print("\n" + "=" * 60)
-        print("PHASE 5: Cleaning Tooling Scripts")
-        print("=" * 60)
+        logger.debug("\n" + "=" * 60)
+        logger.debug("PHASE 5: Cleaning Tooling Scripts")
+        logger.debug("=" * 60)
 
         if dry_run:
-            print("[DRY RUN] Would verify tooling script organization")
+            logger.debug("[DRY RUN] Would verify tooling script organization")
             return
 
         # Verify tools directory and contents
@@ -766,12 +767,12 @@ class EnhancedCleanup:
 
     def phase_6_fix_syntax_errors(self, dry_run: bool = False):
         """Phase 6: Fix syntax errors."""
-        print("\n" + "=" * 60)
-        print("PHASE 6: Fixing Syntax Errors")
-        print("=" * 60)
+        logger.debug("\n" + "=" * 60)
+        logger.error("PHASE 6: Fixing Syntax Errors")
+        logger.debug("=" * 60)
 
         if dry_run:
-            print("[DRY RUN] Would analyze and fix syntax errors")
+            logger.error("[DRY RUN] Would analyze and fix syntax errors")
             return
 
         # Find Python files with syntax errors
@@ -841,12 +842,12 @@ class EnhancedCleanup:
 
     def phase_7_validate_tools(self, dry_run: bool = False):
         """Phase 7: Run validation with available tools."""
-        print("\n" + "=" * 60)
-        print("PHASE 7: Validation")
-        print("=" * 60)
+        logger.debug("\n" + "=" * 60)
+        logger.debug("PHASE 7: Validation")
+        logger.debug("=" * 60)
 
         if dry_run:
-            print("[DRY RUN] Would run comprehensive validation")
+            logger.debug("[DRY RUN] Would run comprehensive validation")
             return
 
         # Test core file syntax
@@ -939,16 +940,16 @@ class EnhancedCleanup:
         dirs_total: int,
     ):
         """Generate a comprehensive validation summary."""
-        print("\n" + "=" * 60)
-        print("VALIDATION SUMMARY")
-        print("=" * 60)
+        logger.debug("\n" + "=" * 60)
+        logger.debug("VALIDATION SUMMARY")
+        logger.debug("=" * 60)
 
         # Calculate scores
         syntax_score = (syntax_valid / syntax_total * 100) if syntax_total > 0 else 0
         import_score = (import_success / import_total * 100) if import_total > 0 else 0
         structure_score = (dirs_existing / dirs_total * 100) if dirs_total > 0 else 0
 
-        print(f"📊 SYNTAX VALIDATION: {syntax_score:.1f}% ({syntax_valid}/{syntax_total} files)")
+        logger.debug(f"📊 SYNTAX VALIDATION: {syntax_score:.1f}% ({syntax_valid}/{syntax_total} files)")
         print(
             f"📦 IMPORT VALIDATION: {import_score:.1f}% ({import_success}/{import_total} modules)"
         )
@@ -957,20 +958,20 @@ class EnhancedCleanup:
         )
 
         overall_score = (syntax_score + import_score + structure_score) / 3
-        print(f"\n🎯 OVERALL HEALTH SCORE: {overall_score:.1f}%")
+        logger.debug(f"\n🎯 OVERALL HEALTH SCORE: {overall_score:.1f}%")
 
         if overall_score >= 90:
-            print("✅ EXCELLENT: Repository is in great shape!")
+            logger.debug("✅ EXCELLENT: Repository is in great shape!")
         elif overall_score >= 70:
-            print("🟡 GOOD: Repository needs minor improvements")
+            logger.debug("🟡 GOOD: Repository needs minor improvements")
         elif overall_score >= 50:
-            print("🟠 FAIR: Repository needs attention")
+            logger.warning("🟠 FAIR: Repository needs attention")
         else:
-            print("🔴 POOR: Repository needs significant work")
+            logger.debug("🔴 POOR: Repository needs significant work")
 
     def create_stub_modules(self, dry_run: bool = False):
         """Create essential stub modules that are missing."""
-        print("\nCreating essential stub modules...")
+        logger.debug("\nCreating essential stub modules...")
 
         stubs = [
             (
@@ -1097,9 +1098,9 @@ class HypervectorError(GenomeVaultError):
         ]
 
         if dry_run:
-            print(f"[DRY RUN] Would create {len(stubs)} stub modules")
+            logger.debug(f"[DRY RUN] Would create {len(stubs)} stub modules")
             for file_path, _ in stubs:
-                print(f"  - {file_path}")
+                logger.debug(f"  - {file_path}")
             return
 
         created_count = 0
@@ -1124,32 +1125,32 @@ class HypervectorError(GenomeVaultError):
 
     def generate_final_report(self):
         """Generate comprehensive final report."""
-        print("\n" + "=" * 80)
-        print("ENHANCED GENOMEVAULT CLEANUP FINAL REPORT")
-        print("=" * 80)
+        logger.debug("\n" + "=" * 80)
+        logger.debug("ENHANCED GENOMEVAULT CLEANUP FINAL REPORT")
+        logger.debug("=" * 80)
 
         total_fixes = len(self.fixes_applied)
         total_errors = len(self.errors_found)
         total_files_modified = len(self.files_modified)
 
         if self.fixes_applied:
-            print(f"\n✅ FIXES APPLIED ({total_fixes}):")
+            logger.debug(f"\n✅ FIXES APPLIED ({total_fixes}):")
             for i, fix in enumerate(self.fixes_applied[-20:], 1):  # Show last 20
-                print(f"  {i:2d}. {fix}")
+                logger.debug(f"  {i:2d}. {fix}")
             if total_fixes > 20:
-                print(f"  ... and {total_fixes - 20} more fixes")
+                logger.debug(f"  ... and {total_fixes - 20} more fixes")
 
         if self.errors_found:
-            print(f"\n❌ ERRORS ENCOUNTERED ({total_errors}):")
+            logger.error(f"\n❌ ERRORS ENCOUNTERED ({total_errors}):")
             for i, error in enumerate(self.errors_found[-10:], 1):  # Show last 10
-                print(f"  {i:2d}. {error}")
+                logger.error(f"  {i:2d}. {error}")
             if total_errors > 10:
-                print(f"  ... and {total_errors - 10} more errors")
+                logger.error(f"  ... and {total_errors - 10} more errors")
 
-        print("\n📊 SUMMARY STATISTICS:")
-        print(f"   Total fixes applied: {total_fixes}")
-        print(f"   Total errors encountered: {total_errors}")
-        print(f"   Files modified: {total_files_modified}")
+        logger.debug("\n📊 SUMMARY STATISTICS:")
+        logger.debug(f"   Total fixes applied: {total_fixes}")
+        logger.error(f"   Total errors encountered: {total_errors}")
+        logger.debug(f"   Files modified: {total_files_modified}")
         print(
             f"   Success rate: {(total_fixes / (total_fixes + total_errors) * 100):.1f}%"
             if (total_fixes + total_errors) > 0
@@ -1157,14 +1158,14 @@ class HypervectorError(GenomeVaultError):
         )
 
         # Phase-by-phase breakdown
-        print("\n📈 PHASE BREAKDOWN:")
+        logger.debug("\n📈 PHASE BREAKDOWN:")
         for phase, stats in self.phase_stats.items():
             if stats["fixes"] > 0 or stats["errors"] > 0:
                 print(
                     f"   {phase}: {stats['fixes']} fixes, {stats['errors']} errors, {stats['files_touched']} files"
                 )
 
-        print("\n🎯 OBJECTIVES ACHIEVED:")
+        logger.debug("\n🎯 OBJECTIVES ACHIEVED:")
         objectives = [
             "✓ Ruff configuration updated with max-violations=200",
             "✓ Helper scripts organized in tools/ directory",
@@ -1177,9 +1178,9 @@ class HypervectorError(GenomeVaultError):
         ]
 
         for objective in objectives:
-            print(f"   {objective}")
+            logger.debug(f"   {objective}")
 
-        print("\n📋 IMMEDIATE NEXT STEPS:")
+        logger.debug("\n📋 IMMEDIATE NEXT STEPS:")
         next_steps = [
             "1. Run: ruff check . --statistics (should show significant reduction)",
             "2. Test imports: python -c 'import genomevault.core.exceptions'",
@@ -1189,9 +1190,9 @@ class HypervectorError(GenomeVaultError):
         ]
 
         for step in next_steps:
-            print(f"   {step}")
+            logger.debug(f"   {step}")
 
-        print("\n🔍 FILES REQUIRING MANUAL REVIEW:")
+        logger.debug("\n🔍 FILES REQUIRING MANUAL REVIEW:")
         manual_review = [
             "genomevault/zk_proofs/verifier.py (F821 errors)",
             "genomevault/zk_proofs/circuits/base_circuits.py (complex logic)",
@@ -1204,10 +1205,10 @@ class HypervectorError(GenomeVaultError):
             file_path = item.split(" ")[0]
             full_path = self.repo_root / file_path
             status = "✓" if full_path.exists() else "✗"
-            print(f"   {status} {item}")
+            logger.debug(f"   {status} {item}")
 
         # Determine project status
-        print("\n🚀 PROJECT STATUS:")
+        logger.debug("\n🚀 PROJECT STATUS:")
         if total_fixes >= 20 and total_errors < 5:
             status = "🟢 EXCELLENT: Major technical debt reduction achieved"
         elif total_fixes >= 10 and total_errors < 10:
@@ -1217,9 +1218,9 @@ class HypervectorError(GenomeVaultError):
         else:
             status = "🔴 LIMITED: Manual intervention required"
 
-        print(f"   {status}")
+        logger.debug(f"   {status}")
 
-        print("\n💡 LONG-TERM RECOMMENDATIONS:")
+        logger.debug("\n💡 LONG-TERM RECOMMENDATIONS:")
         recommendations = [
             "• Implement automated testing for all core modules",
             "• Add comprehensive type hints to public APIs",
@@ -1231,23 +1232,23 @@ class HypervectorError(GenomeVaultError):
         ]
 
         for rec in recommendations:
-            print(f"   {rec}")
+            logger.debug(f"   {rec}")
 
         # Backup information
         if self.backup_dir.exists() and list(self.backup_dir.glob("*.bak")):
             backup_count = len(list(self.backup_dir.glob("*.bak")))
-            print("\n💾 BACKUP INFORMATION:")
-            print(f"   {backup_count} backup files created in {self.backup_dir}")
-            print(f"   To restore: cp {self.backup_dir}/<file>.bak <original_location>")
+            logger.debug("\n💾 BACKUP INFORMATION:")
+            logger.debug(f"   {backup_count} backup files created in {self.backup_dir}")
+            logger.debug(f"   To restore: cp {self.backup_dir}/<file>.bak <original_location>")
 
     def run_all_phases(self, dry_run: bool = False):
         """Execute all cleanup phases in sequence."""
         start_time = time.time()
 
-        print("🚀 Starting Enhanced GenomeVault Technical Debt Cleanup")
-        print(f"Repository: {self.repo_root}")
-        print(f"Start time: {time.strftime('%Y-%m-%d %H:%M:%S')}")
-        print(f"Mode: {'DRY RUN' if dry_run else 'LIVE EXECUTION'}")
+        logger.debug("🚀 Starting Enhanced GenomeVault Technical Debt Cleanup")
+        logger.debug(f"Repository: {self.repo_root}")
+        logger.debug(f"Start time: {time.strftime('%Y-%m-%d %H:%M:%S')}")
+        logger.debug(f"Mode: {'DRY RUN' if dry_run else 'LIVE EXECUTION'}")
 
         phases = [
             (
@@ -1280,7 +1281,7 @@ class HypervectorError(GenomeVaultError):
 
         try:
             for phase_name, phase_func in phases:
-                print(f"\n{'='*20} {phase_name} {'='*20}")
+                logger.debug(f"\n{'='*20} {phase_name} {'='*20}")
                 try:
                     phase_func()
                 except Exception as e:
@@ -1292,25 +1293,25 @@ class HypervectorError(GenomeVaultError):
             self.generate_final_report()
 
         except KeyboardInterrupt:
-            print("\n\n⚠️ Cleanup interrupted by user")
-            print("Partial fixes have been applied.")
+            logger.debug("\n\n⚠️ Cleanup interrupted by user")
+            logger.debug("Partial fixes have been applied.")
             self.generate_final_report()
         except Exception as e:
-            print(f"\n\n❌ Cleanup failed with error: {e}")
-            print("Partial fixes may have been applied.")
+            logger.error(f"\n\n❌ Cleanup failed with error: {e}")
+            logger.debug("Partial fixes may have been applied.")
             self.generate_final_report()
             if not self.continue_on_error:
                 sys.exit(1)
 
         elapsed = time.time() - start_time
-        print(f"\n⏱️  Total execution time: {elapsed:.1f} seconds")
+        logger.debug(f"\n⏱️  Total execution time: {elapsed:.1f} seconds")
 
         # Exit with appropriate code for CI
         if self.errors_found and not self.continue_on_error:
-            print("❌ Exiting with error code due to unresolved issues")
+            logger.error("❌ Exiting with error code due to unresolved issues")
             sys.exit(1)
         else:
-            print("✅ Enhanced cleanup complete!")
+            logger.info("✅ Enhanced cleanup complete!")
             sys.exit(0)
 
     def run_single_phase(self, phase_num: int, dry_run: bool = False):
@@ -1336,34 +1337,34 @@ class HypervectorError(GenomeVaultError):
         }
 
         if phase_num not in phases:
-            print(f"❌ Invalid phase number: {phase_num}")
-            print(f"Valid phases: {list(phases.keys())}")
+            logger.debug(f"❌ Invalid phase number: {phase_num}")
+            logger.debug(f"Valid phases: {list(phases.keys())}")
             return
 
         phase_name, phase_func = phases[phase_num]
-        print(f"🎯 Running Phase {phase_num}: {phase_name}")
-        print(f"Mode: {'DRY RUN' if dry_run else 'LIVE EXECUTION'}")
+        logger.debug(f"🎯 Running Phase {phase_num}: {phase_name}")
+        logger.debug(f"Mode: {'DRY RUN' if dry_run else 'LIVE EXECUTION'}")
 
         try:
             phase_func()
 
-            print(f"\n📊 Phase {phase_num} Summary:")
+            logger.debug(f"\n📊 Phase {phase_num} Summary:")
             stats = (
                 self.phase_stats[f"phase{phase_num}"]
                 if phase_num > 0
                 else self.phase_stats["stubs"]
             )
-            print(f"  • Fixes applied: {stats['fixes']}")
-            print(f"  • Errors encountered: {stats['errors']}")
-            print(f"  • Files modified: {stats['files_touched']}")
+            logger.debug(f"  • Fixes applied: {stats['fixes']}")
+            logger.error(f"  • Errors encountered: {stats['errors']}")
+            logger.debug(f"  • Files modified: {stats['files_touched']}")
 
             recent_fixes = [f for f in self.fixes_applied[-5:]]  # Last 5 fixes
             if recent_fixes:
-                print("  • Recent fixes:")
+                logger.debug("  • Recent fixes:")
                 for fix in recent_fixes:
-                    print(f"    - {fix}")
+                    logger.debug(f"    - {fix}")
         except Exception as e:
-            print(f"❌ Phase {phase_num} failed: {e}")
+            logger.error(f"❌ Phase {phase_num} failed: {e}")
             if not self.continue_on_error:
                 sys.exit(1)
 
@@ -1415,11 +1416,11 @@ Examples:
     elif args.phase is not None:
         cleanup.run_single_phase(args.phase, args.dry_run)
     else:
-        print("❌ Specify --phase <0-7> or --all")
+        logger.debug("❌ Specify --phase <0-7> or --all")
         parser.print_help()
 
         # Show available phases
-        print("\n📋 AVAILABLE PHASES:")
+        logger.debug("\n📋 AVAILABLE PHASES:")
         phases_desc = [
             "0. Create essential stub modules",
             "1. Update Ruff configuration",
@@ -1432,7 +1433,7 @@ Examples:
         ]
 
         for desc in phases_desc:
-            print(f"   {desc}")
+            logger.debug(f"   {desc}")
 
 
 if __name__ == "__main__":

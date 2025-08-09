@@ -1,3 +1,7 @@
+from genomevault.utils.logging import get_logger
+logger = get_logger(__name__)
+
+
 #!/usr/bin/env python3
 """
 GenomeVault Pre-Flight Check
@@ -11,13 +15,13 @@ from pathlib import Path
 def check_current_state():
     base_path = Path("/Users/rohanvinaik/genomevault")
 
-    print("GenomeVault Pre-Flight Check")
-    print("=" * 50)
-    print()
+    logger.debug("GenomeVault Pre-Flight Check")
+    logger.debug("=" * 50)
+    # Removed empty print()
 
     # Check project files
-    print("Project Files:")
-    print("  ✓ README.md exists" if (base_path / "README.md").exists() else "  ✗ README.md missing")
+    logger.debug("Project Files:")
+    logger.info("  ✓ README.md exists" if (base_path / "README.md").exists() else "  ✗ README.md missing")
     print(
         "  ✓ requirements.txt exists"
         if (base_path / "requirements.txt").exists()
@@ -28,10 +32,10 @@ def check_current_state():
         if (base_path / "pyproject.toml").exists()
         else "  ✗ pyproject.toml missing"
     )
-    print()
+    # Removed empty print()
 
     # Check for missing __init__.py files
-    print("Checking for missing __init__.py files...")
+    logger.debug("Checking for missing __init__.py files...")
     missing_init_dirs = [
         "genomevault/blockchain/contracts",
         "genomevault/blockchain/node",
@@ -59,16 +63,16 @@ def check_current_state():
         if full_path.exists():
             init_file = full_path / "__init__.py"
             if not init_file.exists():
-                print(f"  ✗ Missing: {dir_path}/__init__.py")
+                logger.debug(f"  ✗ Missing: {dir_path}/__init__.py")
                 missing_count += 1
             else:
-                print(f"  ✓ Found: {dir_path}/__init__.py")
+                logger.info(f"  ✓ Found: {dir_path}/__init__.py")
 
-    print(f"\nTotal missing __init__.py files: {missing_count}")
-    print()
+    logger.debug(f"\nTotal missing __init__.py files: {missing_count}")
+    # Removed empty print()
 
     # Sample check for print statements
-    print("Sampling print statement usage...")
+    logger.debug("Sampling print statement usage...")
     sample_files = [
         "examples/minimal_verification.py",
         "genomevault/blockchain/node.py",
@@ -83,18 +87,18 @@ def check_current_state():
                 content = full_path.read_text()
                 print_count = len(re.findall(r"^\s*print\(", content, re.MULTILINE))
                 if print_count > 0:
-                    print(f"  {file_path}: {print_count} print statements")
+                    logger.debug(f"  {file_path}: {print_count} print statements")
                     total_prints += print_count
             except Exception as e:
                 logger.exception("Unhandled exception")
-                print(f"  Error reading {file_path}: {e}")
+                logger.error(f"  Error reading {file_path}: {e}")
                 raise
 
-    print(f"\nTotal print statements in sample: {total_prints}")
-    print()
+    logger.debug(f"\nTotal print statements in sample: {total_prints}")
+    # Removed empty print()
 
     # Sample check for broad exceptions
-    print("Sampling broad exception usage...")
+    logger.error("Sampling broad exception usage...")
     total_broad_excepts = 0
     for file_path in sample_files:
         full_path = base_path / file_path
@@ -103,19 +107,19 @@ def check_current_state():
                 content = full_path.read_text()
                 except_count = len(re.findall(r"except\s+Exception", content))
                 if except_count > 0:
-                    print(f"  {file_path}: {except_count} broad exceptions")
+                    logger.error(f"  {file_path}: {except_count} broad exceptions")
                     total_broad_excepts += except_count
             except Exception as e:
                 logger.exception("Unhandled exception")
-                print(f"  Error reading {file_path}: {e}")
+                logger.error(f"  Error reading {file_path}: {e}")
                 raise
 
-    print(f"\nTotal broad exceptions in sample: {total_broad_excepts}")
-    print()
+    logger.error(f"\nTotal broad exceptions in sample: {total_broad_excepts}")
+    # Removed empty print()
 
-    print("Pre-flight check complete!")
-    print("\nTo apply fixes, run: ./apply_audit_fixes.sh")
-    print("To apply only __init__.py fixes, run: python3 quick_fix_init_files.py")
+    logger.info("Pre-flight check complete!")
+    logger.debug("\nTo apply fixes, run: ./apply_audit_fixes.sh")
+    logger.debug("To apply only __init__.py fixes, run: python3 quick_fix_init_files.py")
 
 
 if __name__ == "__main__":
