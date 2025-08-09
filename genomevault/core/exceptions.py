@@ -29,3 +29,9 @@ class ConfigurationError(GenomeVaultError):
     """Exception raised for configuration issues."""
 
     pass
+
+
+class ProjectionError(GenomeVaultError):
+    """Exception raised for projection operations."""
+
+    pass
