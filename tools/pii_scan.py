@@ -1,11 +1,12 @@
-from genomevault.observability.logging import configure_logging
-
-logger = configure_logging()
 #!/usr/bin/env python3
 import argparse
 from pathlib import Path
 
 from genomevault.governance.pii.patterns import detect
+
+from genomevault.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def scan_file(path: Path):

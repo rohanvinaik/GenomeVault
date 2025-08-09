@@ -184,9 +184,6 @@ class Verifier:
             return result
 
         except KeyError as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("Proof verification failed: e")
             return VerificationResult(
@@ -275,9 +272,6 @@ class Verifier:
             return True
 
         except (DatabaseError, json.JSONDecodeError, KeyError):
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("Variant proof verification error: e")
             return False
@@ -320,9 +314,6 @@ class Verifier:
             return True
 
         except (DatabaseError, json.JSONDecodeError, KeyError):
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("PRS proof verification error: e")
             return False
@@ -369,9 +360,6 @@ class Verifier:
             return True
 
         except (DatabaseError, json.JSONDecodeError, KeyError):
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("Diabetes proof verification error: e")
             return False
@@ -390,9 +378,6 @@ class Verifier:
             return True
 
         except KeyError:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("Ancestry proof verification error: e")
             return False
@@ -416,9 +401,6 @@ class Verifier:
             return True
 
         except KeyError:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("Pharmacogenomic proof verification error: e")
             return False
@@ -437,9 +419,6 @@ class Verifier:
             return True
 
         except KeyError:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("Pathway proof verification error: e")
             return False
@@ -451,9 +430,6 @@ class Verifier:
             # Basic validation passed, simulate verification
             return True
         except Exception as _:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("Generic proof verification error: e")
             return False

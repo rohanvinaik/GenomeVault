@@ -1,6 +1,3 @@
-from genomevault.observability.logging import configure_logging
-
-logger = configure_logging()
 #!/usr/bin/env python3
 """
 Analyze cyclomatic complexity in the genomevault package.
@@ -51,9 +48,6 @@ def analyze_complexity(package_dir: Path):
                             if score >= 12:
                                 high_complexity.append((score, line.strip()))
                 except Exception:
-                    from genomevault.observability.logging import configure_logging
-
-                    logger = configure_logging()
                     logger.exception("Unhandled exception")
                     continue
                     raise

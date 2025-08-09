@@ -211,9 +211,6 @@ class PIRServer:
             return response
 
         except Exception as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("Error processing PIR query: e")
             return {"error": str(e), "query_id": query_id}

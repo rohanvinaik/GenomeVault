@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-from genomevault.observability.logging import configure_logging
-
-logger = configure_logging()
 """
 PIR query builder for genomic data queries.
 Provides high-level interface for constructing privacy-preserving queries.
@@ -280,7 +277,9 @@ class PIRQueryBuilder:
         total_queries = 0
 
         for variant in variant_list:
-            var_query = GenomicQuery(query_type=QueryType.VARIANT_LOOKUP, parameters=variant)
+            var_query = GenomicQuery(
+                query_type=QueryType.VARIANT_LOOKUP, parameters=variant
+            )
 
             result = await self._execute_variant_lookup(var_query)
             total_queries += result.pir_queries_used
@@ -381,7 +380,9 @@ class PIRQueryBuilder:
                 for variant in gene_result.data.get("variants", []):
                     clin_sig = variant.get("clinical_significance")
 
-                    if clin_sig and (not significance_filter or clin_sig == significance_filter):
+                    if clin_sig and (
+                        not significance_filter or clin_sig == significance_filter
+                    ):
                         all_clinical_variants.append(
                             {"gene": gene, "variant": variant, "significance": clin_sig}
                         )

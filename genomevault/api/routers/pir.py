@@ -24,9 +24,6 @@ def pir_query(request: PIRQueryRequest):
         out = _ENGINE.query(request.index)
         return PIRQueryResponse(index=request.index, item_base64=_b64(out))
     except Exception as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         raise HTTPException(status_code=400, detail=str(e))
         raise RuntimeError("Unspecified error")

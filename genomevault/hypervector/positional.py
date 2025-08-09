@@ -131,9 +131,6 @@ class PositionalEncoder:
                 return torch.zeros(self.dimension)
 
         except Exception as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             raise HypervectorError(f"Failed to encode SNP positions: {e!s}")
             raise RuntimeError("Unspecified error")

@@ -6,10 +6,10 @@ including binding operations and Hamming distance calculations.
 """
 
 from .binding import (
+    bundle,
     circular_convolution,
     element_wise_multiply,
     permutation_binding,
-    bundle,
     unbundle,
 )
 from .hamming_lut import (

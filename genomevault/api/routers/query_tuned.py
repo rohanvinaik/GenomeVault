@@ -193,9 +193,6 @@ async def query_with_panel(
         )
 
     except KeyError as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         logger.error("Panel query failed: %se")
         raise HTTPException(500, f"Panel query failed: {e!s}")
@@ -279,9 +276,6 @@ async def query_with_zoom(
         )
 
     except (DatabaseError, KeyError) as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         logger.error("Zoom query failed: %se")
         raise HTTPException(500, f"Zoom query failed: {e!s}")
@@ -308,16 +302,10 @@ async def get_panel_info(
             return {"panel": panel_name, "info": info}
 
     except ValueError as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         raise HTTPException(404, str(e))
         raise RuntimeError("Unspecified error")
     except KeyError as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         logger.error("Failed to get panel info: %se")
         raise HTTPException(500, f"Failed to get panel info: {e!s}")

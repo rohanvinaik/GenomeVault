@@ -339,9 +339,6 @@ class FederatedModelLineage:
             path = nx.shortest_path(self.lineage_graph, "v0", version_id)
             return path
         except nx.NetworkXNoPath:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             # Handle multiple parent case (aggregation)
             # Find all ancestors

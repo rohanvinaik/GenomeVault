@@ -87,9 +87,6 @@ class WebSocketManager:
             try:
                 await self.active_connections[session_id].send_json(update.dict())
             except KeyError:
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 logger.error("Failed to send progress update: %se")
                 self.disconnect(session_id)
@@ -266,9 +263,6 @@ async def query_with_tuning(
         return response
 
     except (ValueError, DatabaseError, TypeError, KeyError) as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         logger.error("Tuned query failed: %se")
         if request.session_id:
@@ -294,9 +288,6 @@ async def websocket_progress(websocket: WebSocket, session_id: str):
             # Keep connection alive
             await websocket.receive_text()
     except WebSocketDisconnect:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         ws_manager.disconnect(session_id)
         raise RuntimeError("Unspecified error")
@@ -344,9 +335,6 @@ async def estimate_query_performance(
         }
 
     except (ValueError, TypeError) as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         logger.error("Estimation failed: %se")
         raise HTTPException(500, f"Estimation failed: {e!s}")

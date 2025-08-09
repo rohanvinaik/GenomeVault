@@ -13,7 +13,9 @@ def find_all_ruff():
     print("🔍 Finding all ruff installations...")
 
     try:
-        result = subprocess.run(["which", "-a", "ruff"], capture_output=True, text=True, timeout=10)
+        result = subprocess.run(
+            ["which", "-a", "ruff"], capture_output=True, text=True, timeout=10
+        )
 
         if result.returncode == 0 and result.stdout:
             paths = result.stdout.strip().split("\n")
@@ -92,7 +94,9 @@ def confirm_ruff_version():
     print("🔍 Confirming ruff version...")
 
     try:
-        result = subprocess.run(["ruff", "--version"], capture_output=True, text=True, timeout=10)
+        result = subprocess.run(
+            ["ruff", "--version"], capture_output=True, text=True, timeout=10
+        )
 
         if result.returncode == 0 and result.stdout:
             version = result.stdout.strip()

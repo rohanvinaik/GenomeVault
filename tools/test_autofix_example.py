@@ -11,9 +11,6 @@ print(f"Processing file: {filename}")
 try:
     risky_operation()
 except Exception:
-    from genomevault.observability.logging import configure_logging
-
-    logger = configure_logging()
     logger.exception("Unhandled exception")
     print("Something went wrong")
     raise
@@ -46,9 +43,6 @@ class MyClass:
             print(f"Result is: {result}")
             return result
         except Exception:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             print("Failed to calculate")
             raise

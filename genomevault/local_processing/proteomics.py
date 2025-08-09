@@ -298,9 +298,6 @@ class ProteomicsProcessor:
             return profile
 
         except Exception as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error(f"Error processing proteomics data: {e!s}")
             raise ProcessingError(f"Failed to process proteomics data: {str(e)}")

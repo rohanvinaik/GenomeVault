@@ -117,9 +117,6 @@ class BackupManager:
             return backup_id
 
         except json.JSONDecodeError as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("backup_creation_failed", backup_type=backup_type, error=str(e))
             raise RuntimeError("Unspecified error")
@@ -162,9 +159,6 @@ class BackupManager:
             return data
 
         except (json.JSONDecodeError, KeyError) as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("backup_restoration_failed", backup_id=backup_id, error=str(e))
             raise RuntimeError("Unspecified error")
@@ -221,9 +215,6 @@ class BackupManager:
             return is_valid
 
         except KeyError as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("backup_verification_failed", backup_id=backup_id, error=str(e))
             return False
@@ -272,9 +263,6 @@ class BackupManager:
                 )
 
             except KeyError as e:
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 logger.error(
                     "scheduled_backup_failed",
@@ -377,9 +365,6 @@ class BackupManager:
             logger.info("backup_replicated_to_s3", backup_id=backup_id, bucket=self.s3_bucket)
 
         except json.JSONDecodeError as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("s3_replication_failed", backup_id=backup_id, error=str(e))
             raise RuntimeError("Unspecified error")
@@ -398,9 +383,6 @@ class BackupManager:
                     Bucket=self.s3_bucket, Key="backups/{backup_id}.backup"
                 )
             except Exception as _:
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 logger.error("s3_deletion_failed", backup_id=backup_id, error=str(_e))
                 raise RuntimeError("Unspecified error")
@@ -483,9 +465,6 @@ class DisasterRecoveryOrchestrator:
             return recovery_point_id
 
         except KeyError as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("recovery_point_creation_failed", name=name, error=str(e))
             raise RuntimeError("Unspecified error")
@@ -517,9 +496,6 @@ class DisasterRecoveryOrchestrator:
             return results
 
         except KeyError as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error(
                 "recovery_point_restoration_failed",

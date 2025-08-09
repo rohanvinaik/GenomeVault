@@ -194,7 +194,9 @@ class AdvancedHierarchicalCompressor:
         compression_start = time.time()
 
         # Base -> Mid compression using semantic composition
-        mid_vector = self.semantic_composition(base_vector, modality_context, level="base_to_mid")
+        mid_vector = self.semantic_composition(
+            base_vector, modality_context, level="base_to_mid"
+        )
 
         # Mid -> High compression using semantic composition
         high_vector = self.semantic_composition(
@@ -215,7 +217,9 @@ class AdvancedHierarchicalCompressor:
                 "compression_time": compression_time,
                 "original_dim": self.base_dim,
                 "final_dim": self.high_dim,
-                "compression_ratio": self.base_dim * 4 / (self.high_dim * 4),  # Assuming float32
+                "compression_ratio": self.base_dim
+                * 4
+                / (self.high_dim * 4),  # Assuming float32
                 "sparsity": {
                     "base": np.mean(np.abs(base_vector) < self.sparsity_threshold),
                     "mid": np.mean(np.abs(mid_vector) < self.sparsity_threshold),
@@ -232,7 +236,9 @@ class AdvancedHierarchicalCompressor:
 
         return compressed
 
-    def semantic_composition(self, vector: np.ndarray, context: str, level: str) -> np.ndarray:
+    def semantic_composition(
+        self, vector: np.ndarray, context: str, level: str
+    ) -> np.ndarray:
         """
         Perform semantic composition of vector with context.
 
@@ -280,7 +286,9 @@ class AdvancedHierarchicalCompressor:
 
         return composed
 
-    def _circular_convolution(self, vector: np.ndarray, context: np.ndarray) -> np.ndarray:
+    def _circular_convolution(
+        self, vector: np.ndarray, context: np.ndarray
+    ) -> np.ndarray:
         """
         Perform circular convolution for semantic binding.
         Preserves similarity relationships while integrating context.
@@ -443,11 +451,15 @@ if __name__ == "__main__":
     logger.info("Vector ID: %scompressed.vector_id")
     logger.info("Compression level: %scompressed.level")
     logger.info("Final dimensions: %slen(compressed.high_vector)")
-    logger.info("Compression ratio: %scompressed.compression_metadata['compression_ratio']:.2fx")
+    logger.info(
+        "Compression ratio: %scompressed.compression_metadata['compression_ratio']:.2fx"
+    )
     logger.info(
         "Compression time: %scompressed.compression_metadata['compression_time'] * 1000:.1f ms"
     )
-    logger.info(f"Sparsity (high): {compressed.compression_metadata['sparsity']['high']:.2%}")
+    logger.info(
+        f"Sparsity (high): {compressed.compression_metadata['sparsity']['high']:.2%}"
+    )
 
     # Test storage tiers
     logger.info("\n\nStorage Optimization Tiers:")

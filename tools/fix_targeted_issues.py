@@ -246,9 +246,6 @@ class TargetedGenomeVaultFixer:
                 logger.info(f"Updated {file_path}")
 
         except Exception as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error(f"Error processing {file_path}: {e}")
             raise
@@ -298,9 +295,6 @@ class TargetedGenomeVaultFixer:
                 file_path.write_text(new_content)
 
         except Exception as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error(f"Error adding TODO to {file_path}: {e}")
             raise

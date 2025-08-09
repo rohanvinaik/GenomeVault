@@ -217,9 +217,6 @@ def main() -> None:
     try:
         plot_results(results)
     except ImportError:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         print("\nMatplotlib not available for plotting")
         raise

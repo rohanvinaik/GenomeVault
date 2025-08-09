@@ -225,9 +225,6 @@ class NanoporeStreamProcessor:
                 self.gpu_kernel = GPUBindingKernel(self.catalytic_space)
                 logger.info("GPU acceleration enabled")
             except ImportError:
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 logger.warning("GPU kernel not available, using CPU")
                 raise RuntimeError("Unspecified error")

@@ -129,9 +129,6 @@ class TestVariantProofCircuit:
             satisfied = circuit.verify_constraints()
             assert not satisfied, "Wrong hash should not satisfy constraints"
         except (ValueError, AssertionError, Exception):
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             # Constraint generation might fail, which is also acceptable
             raise
@@ -172,9 +169,6 @@ class TestVariantProofCircuit:
             satisfied = circuit.verify_constraints()
             assert not satisfied, "Mutated position should not satisfy constraints"
         except (ValueError, AssertionError, Exception):
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             raise
 
@@ -307,9 +301,6 @@ class TestVariantFrequencyCircuit:
             satisfied = circuit.verify_constraints()
             assert not satisfied, "Wrong sum should not satisfy constraints"
         except (ValueError, AssertionError, Exception):
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             raise
 
@@ -355,9 +346,6 @@ class TestVariantFrequencyCircuit:
             # The circuit should detect the range violation
             # In a real implementation with proper range proofs, this would fail
         except ValueError:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             # Expected for out-of-range values
             raise
@@ -528,9 +516,6 @@ def test_malformed_public_inputs():
             # Should raise an error
             assert False, f"Malformed input {i} should have raised an error"
         except (KeyError, ValueError, TypeError):
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             # Expected behavior
             raise

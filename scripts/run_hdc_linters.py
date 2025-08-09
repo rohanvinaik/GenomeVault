@@ -21,9 +21,6 @@ def run_command(cmd):
             print("STDERR:", result.stderr)
         return result.returncode == 0
     except Exception as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         print(f"Error running command: {e}")
         return False
@@ -82,9 +79,6 @@ def main():
         )
         results["mypy"] = mypy_result
     except (FileNotFoundError, subprocess.CalledProcessError, Exception):
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         print("mypy not available, skipping type checking")
         results["mypy"] = None

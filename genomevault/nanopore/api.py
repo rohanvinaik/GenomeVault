@@ -192,9 +192,6 @@ async def _process_fast5_async(stream_id: str, fast5_path: Path):
         _results_cache[stream_id]["status"] = "completed"
 
     except Exception as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         logger.error("Error processing stream %sstream_id: %se")
         _results_cache[stream_id]["status"] = "error"
@@ -453,16 +450,10 @@ async def websocket_stream(
             await asyncio.sleep(1)  # Poll interval
 
     except WebSocketDisconnect:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         logger.info("WebSocket disconnected for stream %sstream_id")
         raise RuntimeError("Unspecified error")
     except Exception as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         logger.error("WebSocket error: %se")
         await websocket.send_json(

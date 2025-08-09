@@ -16,9 +16,6 @@ import numpy as np
 try:
     from genomevault.utils.logging import logger
 except ImportError:
-    from genomevault.observability.logging import configure_logging
-
-    logger = configure_logging()
     logger.exception("Unhandled exception")
     import logging
 
@@ -136,9 +133,6 @@ class ProjectionGenerator:
             return True
 
         except Exception as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error(f"✗ Failed to verify {filepath.name}: {e}")
             return False
@@ -159,9 +153,6 @@ class ProjectionGenerator:
                     dimension_files[dimension] = []
                 dimension_files[dimension].append(file_path)
             except (IndexError, ValueError):
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 continue
                 raise

@@ -69,9 +69,6 @@ class MultiOmicsPipeline:
                 result = await task
                 results[omics_type.value] = result
             except Exception as e:
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 logger.error("Failed to process %somics_type: %se!s")
                 results[omics_type.value] = {"status": "failed", "error": str(e)}

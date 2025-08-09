@@ -38,9 +38,6 @@ class PseudonymStore:
             try:
                 self._map = json.loads(self.path.read_text(encoding="utf-8"))
             except Exception:
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 self._map = {}
                 raise RuntimeError("Unspecified error")

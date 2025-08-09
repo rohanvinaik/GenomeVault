@@ -123,9 +123,6 @@ class TestAdversarialInputs:
                 hv = encoder.encode(data, OmicsType.GENOMIC)
                 assert torch.isfinite(hv).all()
             except (ValueError, TypeError):
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 # It's OK to reject malformed input
                 raise
@@ -370,9 +367,6 @@ class TestSystematicVulnerabilities:
             try:
                 _ = encoder.encode(invalid_input, OmicsType.GENOMIC)
             except Exception as e:
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 error_messages.append(str(e))
                 raise
@@ -404,16 +398,10 @@ class TestSystematicVulnerabilities:
             assert elapsed < 10, f"Encoding took too long: {elapsed:.2f}s"
 
         except MemoryError:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             # It's OK to fail with MemoryError
             raise
         except Exception as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             # Should not crash with other exceptions
             pytest.fail(f"Unexpected exception: {type(e).__name__}: {e}")
@@ -502,9 +490,6 @@ def run_adversarial_tests():
                 method()
                 print("PASSED")
             except (ValueError, TypeError) as e:
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 print(f"FAILED: {e}")
                 raise

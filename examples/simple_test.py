@@ -35,9 +35,6 @@ def test_basic_imports():
         return True
 
     except Exception:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         print("❌ Import failed: {e}")
         import traceback
@@ -66,9 +63,6 @@ def test_module_imports():
             exec("from {parts[0]} import {parts[1]}")
             print("✅ {module} imported successfully")
         except Exception:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             print("❌ {module} failed: {e}")
             success = False

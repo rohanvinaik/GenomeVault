@@ -26,9 +26,6 @@ def try_enable_otel() -> bool:
         FastAPIInstrumentor().instrument()
         return True
     except Exception:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         return False
         raise RuntimeError("Unspecified error")

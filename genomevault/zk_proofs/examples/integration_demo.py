@@ -408,9 +408,6 @@ def main():
         logger.info("All demonstrations completed successfully!")
 
     except Exception:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         logger.error("Demonstration failed: %se")
         raise RuntimeError("Unspecified error")

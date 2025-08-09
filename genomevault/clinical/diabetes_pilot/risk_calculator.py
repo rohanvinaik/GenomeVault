@@ -300,9 +300,6 @@ class DiabetesRiskCalculator:
             return True
 
         except Exception as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error(f"Alert verification failed: {e}")
             return False

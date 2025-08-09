@@ -1,14 +1,15 @@
 from __future__ import annotations
 
-from genomevault.observability.logging import configure_logging
-
-logger = configure_logging()
 """Post-quantum cryptography implementations for GenomeVault."""
 
 import os
 import time
 from dataclasses import dataclass
 from typing import Any
+
+from genomevault.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -108,7 +109,9 @@ class HybridPostQuantumCrypto:
         """Decrypt data using hybrid post-quantum scheme."""
         # Mock implementation
         _ = self.kyber.decapsulate(encrypted_data.kyber_encapsulated_key, private_key)
-        return encrypted_data.ciphertext  # In real implementation, this would be decrypted
+        return (
+            encrypted_data.ciphertext
+        )  # In real implementation, this would be decrypted
 
 
 def benchmark_post_quantum_crypto() -> dict[str, Any]:

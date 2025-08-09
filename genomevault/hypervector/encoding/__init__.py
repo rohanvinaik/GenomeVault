@@ -8,7 +8,7 @@ from .packed import (
     pack_bits,
     unpack_bits,
 )
-from .sparse_projection import sparse_random_matrix, SparseRandomProjection
+from .sparse_projection import SparseRandomProjection, sparse_random_matrix
 from .unified_encoder import UnifiedHypervectorEncoder, create_encoder
 
 # Alias for backward compatibility

@@ -67,7 +67,10 @@ def find_cryptography_imports(directory):
                 try:
                     with open(filepath) as f:
                         content = f.read()
-                        if "from cryptography" in content or "import cryptography" in content:
+                        if (
+                            "from cryptography" in content
+                            or "import cryptography" in content
+                        ):
                             files_with_crypto.append(filepath)
                 except Exception:
                     pass

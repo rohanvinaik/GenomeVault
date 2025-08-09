@@ -1,4 +1,8 @@
-from genomevault.core.constants import DEFAULT_DENSITY, DEFAULT_SEED, HYPERVECTOR_DIMENSIONS
+from genomevault.core.constants import (
+    DEFAULT_DENSITY,
+    DEFAULT_SEED,
+    HYPERVECTOR_DIMENSIONS,
+)
 
 
 def test_dimensions_and_defaults_present():

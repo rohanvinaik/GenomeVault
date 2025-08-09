@@ -44,9 +44,6 @@ class PerformanceReportGenerator:
                             benchmark_data = json.load(f)
                             data[lane].append(benchmark_data)
                     except Exception as e:
-                        from genomevault.observability.logging import configure_logging
-
-                        logger = configure_logging()
                         logger.exception("Unhandled exception")
                         print(f"Error loading {json_file}: {e}")
                         raise

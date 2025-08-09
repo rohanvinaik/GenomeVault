@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import numpy as np
 import torch
 
@@ -6,7 +7,9 @@ import torch
 def sparse_random_matrix(rows: int, cols: int, sparsity: float = 0.1) -> torch.Tensor:
     """Achlioptas sparse projection in {-1,0,+1}, scaled."""
     probs = [sparsity / 2, 1 - sparsity, sparsity / 2]
-    vals = np.random.choice([-1.0, 0.0, 1.0], size=(rows, cols), p=probs).astype(np.float32)
+    vals = np.random.choice([-1.0, 0.0, 1.0], size=(rows, cols), p=probs).astype(
+        np.float32
+    )
     mat = torch.from_numpy(vals)
     if sparsity > 0:
         mat = mat / np.sqrt(sparsity * cols)

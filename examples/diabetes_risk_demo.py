@@ -1,6 +1,3 @@
-from genomevault.observability.logging import configure_logging
-
-logger = configure_logging()
 """
 Example: Diabetes Risk Assessment with GenomeVault ZK Proofs
 Demonstrates privacy-preserving medical risk evaluation.
@@ -9,6 +6,9 @@ Demonstrates privacy-preserving medical risk evaluation.
 import asyncio
 
 from genomevault_zk_integration import GenomeVaultZKSystem
+from genomevault.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 async def main():

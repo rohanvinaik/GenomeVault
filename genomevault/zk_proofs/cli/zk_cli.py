@@ -31,9 +31,6 @@ def load_json_file(filepath: str) -> dict[str, Any]:
         with open(filepath) as f:
             return json.load(f)
     except Exception:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         logger.info(f"Error loading {filepath}: {e}")
         sys.exit(1)
@@ -46,9 +43,6 @@ def save_json_file(data: dict[str, Any], filepath: str):
         with open(filepath, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
     except Exception:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         logger.info(f"Error saving {filepath}: {e}")
         sys.exit(1)

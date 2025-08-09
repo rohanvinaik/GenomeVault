@@ -15,9 +15,6 @@ def aggregate(request: AggregateRequest):
     try:
         return _agg.aggregate(request)
     except GenomeVaultError as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         raise HTTPException(status_code=400, detail=str(e))
         raise RuntimeError("Unspecified error")

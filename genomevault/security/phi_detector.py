@@ -130,9 +130,6 @@ class PHILeakageDetector:
                     findings.extend(line_findings)
 
         except Exception:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("Error scanning file %sfilepath: %se")
             raise RuntimeError("Unspecified error")

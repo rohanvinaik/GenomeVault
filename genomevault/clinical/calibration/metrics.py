@@ -111,7 +111,9 @@ def mce(y_true: np.ndarray, y_prob: np.ndarray, n_bins: int = 10) -> float:
     return float(np.max(np.abs(frac_pos - mean_pred)))
 
 
-def confusion_at(y_true: np.ndarray, y_prob: np.ndarray, threshold: float) -> dict[str, float]:
+def confusion_at(
+    y_true: np.ndarray, y_prob: np.ndarray, threshold: float
+) -> dict[str, float]:
     y_true = np.asarray(y_true, dtype=np.int32)
     y_prob = np.asarray(y_prob, dtype=np.float64)
     y_hat = (y_prob >= threshold).astype(np.int32)
@@ -137,7 +139,9 @@ def confusion_at(y_true: np.ndarray, y_prob: np.ndarray, threshold: float) -> di
     }
 
 
-def youdens_j_threshold(y_true: np.ndarray, y_prob: np.ndarray) -> tuple[float, dict[str, float]]:
+def youdens_j_threshold(
+    y_true: np.ndarray, y_prob: np.ndarray
+) -> tuple[float, dict[str, float]]:
     """Compute threshold that maximizes Youden's J = sensitivity + specificity - 1."""
     # candidate thresholds are unique probabilities
     probs = np.unique(np.asarray(y_prob, dtype=np.float64))

@@ -16,9 +16,6 @@ def check_command_exists(cmd):
         subprocess.run([cmd, "--version"], check=False, capture_output=True)
         return True
     except FileNotFoundError:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         return False
         raise
@@ -30,9 +27,6 @@ def run_command(cmd_list, cwd=None):
         result = subprocess.run(cmd_list, check=False, capture_output=True, text=True, cwd=cwd)
         return result.returncode == 0, result.stdout, result.stderr
     except Exception as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         return False, "", str(e)
         raise

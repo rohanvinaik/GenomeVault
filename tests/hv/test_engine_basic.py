@@ -41,9 +41,6 @@ def test_invalid_dimension_raises():
         engine.encode(data={"genomic": [1, 2]}, dimension=123)
         assert False, "should have raised"
     except ProjectionError:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         raise
 
@@ -54,8 +51,5 @@ def test_missing_vector_id_raises():
         engine.calculate_similarity("nope", "nope2")
         assert False, "should have raised"
     except ValidationError:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         raise

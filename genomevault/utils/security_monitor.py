@@ -213,9 +213,6 @@ class SecurityMonitor:
                 logger.info("anomaly_detector_trained", training_samples=len(all_features))
 
         except Exception as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("anomaly_detector_training_failed", error=str(e))
             raise RuntimeError("Unspecified error")
@@ -323,9 +320,6 @@ class SecurityMonitor:
             try:
                 await callback(alert)
             except Exception as e:
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 logger.error("alert_callback_failed", callback=callback.__name__, error=str(e))
                 raise RuntimeError("Unspecified error")

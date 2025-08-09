@@ -1,6 +1,3 @@
-from genomevault.observability.logging import configure_logging
-
-logger = configure_logging()
 """
 Tests for bit-packed hypervector implementation
 """
@@ -9,7 +6,11 @@ import numpy as np
 import pytest
 import torch
 
-from genomevault.hypervector.encoding import GenomicEncoder, PackedGenomicEncoder, PackedHV
+from genomevault.hypervector.encoding import (
+    GenomicEncoder,
+    PackedGenomicEncoder,
+    PackedHV,
+)
 
 
 class TestPackedHV:

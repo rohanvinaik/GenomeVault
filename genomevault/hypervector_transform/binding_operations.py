@@ -1,6 +1,8 @@
 # genomevault/hypervector_transform/binding_operations.py
 from __future__ import annotations
+
 from enum import Enum
+
 import torch
 
 
@@ -44,7 +46,9 @@ class HypervectorBinder:
             result = result / (v + 1e-8)  # Avoid division by zero
         return result
 
-    def bundle(self, vectors: list[torch.Tensor], normalize: bool = True) -> torch.Tensor:
+    def bundle(
+        self, vectors: list[torch.Tensor], normalize: bool = True
+    ) -> torch.Tensor:
         if not vectors:
             raise ValueError("No vectors provided")
         result = torch.stack(vectors).sum(dim=0)

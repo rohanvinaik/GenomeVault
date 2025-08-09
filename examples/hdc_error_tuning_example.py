@@ -1,6 +1,3 @@
-from genomevault.observability.logging import configure_logging
-
-logger = configure_logging()
 """
 Example usage of HDC error handling with uncertainty tuning
 """

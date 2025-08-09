@@ -124,9 +124,6 @@ for path in Path(".").rglob("*"):
             if size_mb > 10:  # Files larger than 10MB
                 large_files.append((str(path), f"{size_mb:.1f}MB"))
         except Exception:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             pass
             raise

@@ -18,8 +18,12 @@ logger.info("\n1. YAML (PyYAML)")
 logger.info("-" * 40)
 logger.info("Used for: Loading/saving configuration files in YAML format")
 logger.info("Actually optional? YES")
-logger.info("Reason: The code already falls back to JSON format if YAML is not available")
-logger.info("Impact if missing: Minor - users just need to use JSON config files instead")
+logger.info(
+    "Reason: The code already falls back to JSON format if YAML is not available"
+)
+logger.info(
+    "Impact if missing: Minor - users just need to use JSON config files instead"
+)
 logger.info("✅ Making this optional is LEGITIMATE")
 
 logger.info("\n2. Cryptography Library (cryptography)")
@@ -77,7 +81,9 @@ logger.info("\n" + "=" * 80)
 logger.info("CONCLUSION")
 logger.info("=" * 80)
 logger.info("\n❌ I was WRONG to make these imports optional!")
-logger.info("\nOnly YAML is truly optional - the rest are REQUIRED for core functionality:")
+logger.info(
+    "\nOnly YAML is truly optional - the rest are REQUIRED for core functionality:"
+)
 logger.info("- Cryptography is essential for security")
 logger.info("- Structlog is essential for compliance")
 logger.info("- NumPy/Torch are essential for computations")
@@ -87,4 +93,6 @@ logger.info("1. Keep YAML as optional (legitimate fallback to JSON)")
 logger.info("2. Document all other dependencies as REQUIRED")
 logger.info("3. Add a requirements.txt file")
 logger.info("4. Provide clear installation instructions")
-logger.info("\n⚠️  Making core dependencies 'optional' just to pass tests is BAD PRACTICE!")
+logger.info(
+    "\n⚠️  Making core dependencies 'optional' just to pass tests is BAD PRACTICE!"
+)

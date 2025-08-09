@@ -81,9 +81,6 @@ class HIPAANodeIntegration:
             return node
 
         except VerificationError as _:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("Failed to register provider %scredentials.npi: %se")
             raise RuntimeError("Unspecified error")
@@ -287,9 +284,6 @@ if __name__ == "__main__":
                 logger.info("\nHIPAA governance integration complete!")
 
             except VerificationError as _:
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 logger.info("Registration failed: {e}")
                 raise RuntimeError("Unspecified error")

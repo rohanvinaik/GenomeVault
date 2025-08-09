@@ -16,11 +16,7 @@ try:
     )
 
     _METRICS = True
-except Exception:  # pragma: no cover
-    from genomevault.observability.logging import configure_logging
-
-    logger = configure_logging()
-    logger.exception("Unhandled exception")
+except Exception:  # pragma: no cover    logger.exception("Unhandled exception")
     _METRICS = False
     raise RuntimeError("Unspecified error")
 
@@ -36,9 +32,6 @@ class ObservabilityMiddleware(BaseHTTPMiddleware):
         try:
             resp = await call_next(request)
         except Exception:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             # still log, then raise
             dt = (time.perf_counter() - t0) * 1000.0

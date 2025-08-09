@@ -15,9 +15,6 @@ logger.info("\n1. Testing __init__.py imports...")
 try:
     logger.info("✅ zk_proofs/__init__.py imported")
 except Exception:
-    from genomevault.observability.logging import configure_logging
-
-    logger = configure_logging()
     logger.exception("Unhandled exception")
     logger.info("❌ zk_proofs/__init__.py failed: {e}")
     traceback.print_exc()
@@ -35,9 +32,6 @@ try:
             logger.info("✅ No direct 'cryptography' import in zk_proofs/__init__.py")
             logger.info("   Import chain must be indirect...")
 except Exception:
-    from genomevault.observability.logging import configure_logging
-
-    logger = configure_logging()
     logger.exception("Unhandled exception")
     logger.info("Could not read file: {e}")
     raise
@@ -47,9 +41,6 @@ logger.info("\n3. Testing utils imports...")
 try:
     logger.info("✅ utils/__init__.py imported")
 except Exception:
-    from genomevault.observability.logging import configure_logging
-
-    logger = configure_logging()
     logger.exception("Unhandled exception")
     logger.info("❌ utils/__init__.py failed: {e}")
     raise
@@ -59,9 +50,6 @@ logger.info("\n4. Testing core imports...")
 try:
     logger.info("✅ core/__init__.py imported")
 except Exception:
-    from genomevault.observability.logging import configure_logging
-
-    logger = configure_logging()
     logger.exception("Unhandled exception")
     logger.info("❌ core/__init__.py failed: {e}")
     raise
@@ -89,9 +77,6 @@ def find_cryptography_imports(directory):
                         if "from cryptography" in content or "import cryptography" in content:
                             files_with_crypto.append(filepath)
                 except Exception:
-                    from genomevault.observability.logging import configure_logging
-
-                    logger = configure_logging()
                     logger.exception("Unhandled exception")
                     pass
                     raise

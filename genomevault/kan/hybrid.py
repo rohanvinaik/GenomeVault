@@ -136,7 +136,11 @@ class KANEncoder:
     def _init_layers(self) -> list[dict[str, Any]]:
         """Initialize KAN layers with spline edges."""
         layers = []
-        dims = [self.input_dim] + [self.hidden_dim] * (self.n_layers - 1) + [self.output_dim]
+        dims = (
+            [self.input_dim]
+            + [self.hidden_dim] * (self.n_layers - 1)
+            + [self.output_dim]
+        )
 
         for i in range(len(dims) - 1):
             layer = {
@@ -406,14 +410,18 @@ class HybridKANHD:
         report = {
             "summary": f"Discovered {len(patterns)} biological patterns",
             "pattern_groups": pattern_groups,
-            "top_patterns": sorted(patterns, key=lambda p: p.confidence, reverse=True)[:10],
+            "top_patterns": sorted(patterns, key=lambda p: p.confidence, reverse=True)[
+                :10
+            ],
             "mathematical_forms": [p.mathematical_form for p in patterns],
             "clinical_relevance": self._assess_clinical_relevance(patterns),
         }
 
         return report
 
-    def _assess_clinical_relevance(self, patterns: list[BiologicalPattern]) -> dict[str, Any]:
+    def _assess_clinical_relevance(
+        self, patterns: list[BiologicalPattern]
+    ) -> dict[str, Any]:
         """Assess clinical relevance of discovered patterns."""
         relevance_scores = {
             "monotonic_increasing": 0.8,  # Dose-response relationships
@@ -422,7 +430,10 @@ class HybridKANHD:
         }
 
         total_relevance = (
-            sum(relevance_scores.get(p.pattern_type, 0.5) * p.confidence for p in patterns)
+            sum(
+                relevance_scores.get(p.pattern_type, 0.5) * p.confidence
+                for p in patterns
+            )
             / len(patterns)
             if patterns
             else 0
@@ -437,7 +448,9 @@ class HybridKANHD:
     def _interpret_relevance_score(self, score: float) -> str:
         """Interpret clinical relevance score."""
         if score > 0.8:
-            return "High clinical relevance - significant biological patterns discovered"
+            return (
+                "High clinical relevance - significant biological patterns discovered"
+            )
         elif score > 0.6:
             return "Moderate clinical relevance - some actionable patterns found"
         elif score > 0.4:
@@ -513,7 +526,9 @@ class FederatedKANHD:
         elif self.config.aggregation_method == "trimmed_mean":
             aggregated = self._trimmed_mean_aggregation(valid_updates)
         else:
-            raise ValueError(f"Unknown aggregation method: {self.config.aggregation_method}")
+            raise ValueError(
+                f"Unknown aggregation method: {self.config.aggregation_method}"
+            )
 
         # Add differential privacy
         aggregated = self._add_differential_privacy(aggregated)
@@ -526,7 +541,8 @@ class FederatedKANHD:
             "round_number": len(self.round_history) + 1,
             "participants": list(valid_updates.keys()),
             "aggregation_method": self.config.aggregation_method,
-            "privacy_budget_used": self.config.dp_epsilon / self.config.communication_rounds,
+            "privacy_budget_used": self.config.dp_epsilon
+            / self.config.communication_rounds,
         }
         self.round_history.append(round_info)
 
@@ -557,7 +573,9 @@ class FederatedKANHD:
         """Add calibrated Gaussian noise for differential privacy."""
         sensitivity = 1.0  # Assuming normalized updates
         noise_scale = (
-            sensitivity * np.sqrt(2 * np.log(1.25 / self.config.dp_delta)) / self.config.dp_epsilon
+            sensitivity
+            * np.sqrt(2 * np.log(1.25 / self.config.dp_delta))
+            / self.config.dp_epsilon
         )
 
         noise = np.random.normal(0, noise_scale, aggregated.shape)
@@ -573,22 +591,34 @@ class FederatedKANHD:
 
             # Adaptive reputation update
             if deviation < 2.0:  # Within reasonable range
-                self.reputation_scores[pid] = min(1.0, self.reputation_scores[pid] + 0.01)
+                self.reputation_scores[pid] = min(
+                    1.0, self.reputation_scores[pid] + 0.01
+                )
             else:  # Potential outlier
-                self.reputation_scores[pid] = max(0.0, self.reputation_scores[pid] - 0.05)
+                self.reputation_scores[pid] = max(
+                    0.0, self.reputation_scores[pid] - 0.05
+                )
 
     def generate_federation_report(self) -> dict[str, Any]:
         """Generate comprehensive federation report."""
         return {
             "federation_size": len(self.participants),
             "active_participants": sum(
-                1 for s in self.reputation_scores.values() if s >= self.config.reputation_threshold
+                1
+                for s in self.reputation_scores.values()
+                if s >= self.config.reputation_threshold
             ),
             "total_rounds": len(self.round_history),
             "reputation_distribution": {
-                "excellent": sum(1 for s in self.reputation_scores.values() if s >= 0.9),
-                "good": sum(1 for s in self.reputation_scores.values() if 0.7 <= s < 0.9),
-                "fair": sum(1 for s in self.reputation_scores.values() if 0.5 <= s < 0.7),
+                "excellent": sum(
+                    1 for s in self.reputation_scores.values() if s >= 0.9
+                ),
+                "good": sum(
+                    1 for s in self.reputation_scores.values() if 0.7 <= s < 0.9
+                ),
+                "fair": sum(
+                    1 for s in self.reputation_scores.values() if 0.5 <= s < 0.7
+                ),
                 "poor": sum(1 for s in self.reputation_scores.values() if s < 0.5),
             },
             "privacy_budget_remaining": max(

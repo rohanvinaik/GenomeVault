@@ -377,9 +377,6 @@ class FederatedLearningClient:
         try:
             auc = roc_auc_score(y_val, probs)
         except Exception:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             auc = 0.5
             raise RuntimeError("Unspecified error")

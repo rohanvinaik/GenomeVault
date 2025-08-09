@@ -18,9 +18,6 @@ try:
 
     logger.info("✓ Torch version: {torch.__version__}")
 except ImportError:
-    from genomevault.observability.logging import configure_logging
-
-    logger = configure_logging()
     logger.exception("Unhandled exception")
     logger.info("✗ Torch not installed: {e}")
     logger.info("  Install with: pip install torch")
@@ -36,9 +33,6 @@ try:
 
     logger.info("  ✓ PIR Client imported")
 except Exception:
-    from genomevault.observability.logging import configure_logging
-
-    logger = configure_logging()
     logger.exception("Unhandled exception")
     logger.info("  ✗ PIR Client failed: {e}")
     # Try to see what's in the pir directory
@@ -61,9 +55,6 @@ logger.info("\n  Testing ZK Prover...")
 try:
     logger.info("  ✓ ZK Prover imported")
 except Exception:
-    from genomevault.observability.logging import configure_logging
-
-    logger = configure_logging()
     logger.exception("Unhandled exception")
     logger.info("  ✗ ZK Prover failed: {e}")
     traceback.print_exc()
@@ -78,9 +69,6 @@ try:
     logger.info("  ✓ Config loaded: {type(config)}")
     logger.info("  ✓ Environment: {config.environment}")
 except Exception:
-    from genomevault.observability.logging import configure_logging
-
-    logger = configure_logging()
     logger.exception("Unhandled exception")
     logger.info("  ✗ Config failed: {e}")
     traceback.print_exc()
@@ -94,9 +82,6 @@ for dep in deps:
         __import__(dep)
         logger.info("  ✓ {dep} installed")
     except ImportError:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         logger.info("  ✗ {dep} NOT installed")
         raise

@@ -1,6 +1,3 @@
-from genomevault.observability.logging import configure_logging
-
-logger = configure_logging()
 """
 Example usage of packed hypervector encoding for genomic data
 """
@@ -85,7 +82,9 @@ def main():
     genome_hv = encoder.encode_genome(variants)
     logger.info(f"Encoded {len(variants)} variants into genome hypervector")
     logger.info(f"Memory usage: {genome_hv.memory_bytes} bytes")
-    logger.info(f"Memory per variant: {genome_hv.memory_bytes / len(variants):.1f} bytes")
+    logger.info(
+        f"Memory per variant: {genome_hv.memory_bytes / len(variants):.1f} bytes"
+    )
 
     # Example 3: Compare two genomes
     logger.info("\n\nExample 3: Genome Similarity")
@@ -151,7 +150,9 @@ def main():
     n_genomes = 100
     n_variants_per_genome = 50
 
-    logger.info(f"Processing {n_genomes} genomes with {n_variants_per_genome} variants each...")
+    logger.info(
+        f"Processing {n_genomes} genomes with {n_variants_per_genome} variants each..."
+    )
 
     genomes = []
     for i in range(n_genomes):

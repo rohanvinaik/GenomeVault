@@ -168,9 +168,6 @@ async def main():
         )
         print("   ✗ Soundness check failed - invalid proof accepted!")
     except Exception as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         print("   ✓ Soundness verified - invalid proof rejected")
         print(f"     Error: {str(e)[:50]}...")
