@@ -18,7 +18,7 @@ class BindingType(Enum):
 
 
 class HypervectorBinder:
-    def __init__(self, dimension: int = 10000, seed: int = None):
+    def __init__(self, dimension: int = 10000, seed: int | None = None) -> None:
         self.dimension = dimension
         if seed is not None:
             torch.manual_seed(seed)
@@ -46,9 +46,7 @@ class HypervectorBinder:
             result = result / (v + 1e-8)  # Avoid division by zero
         return result
 
-    def bundle(
-        self, vectors: list[torch.Tensor], normalize: bool = True
-    ) -> torch.Tensor:
+    def bundle(self, vectors: list[torch.Tensor], normalize: bool = True) -> torch.Tensor:
         if not vectors:
             raise ValueError("No vectors provided")
         result = torch.stack(vectors).sum(dim=0)

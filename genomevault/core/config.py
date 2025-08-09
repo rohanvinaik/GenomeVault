@@ -80,7 +80,7 @@ class Config:
         }
 
         if path.suffix in {".yaml", ".yml"}:
-            import yaml  # type: ignore[import-untyped]
+            import yaml
 
             with path.open("w") as f:
                 yaml.dump(config_data, f)
