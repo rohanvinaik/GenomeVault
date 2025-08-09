@@ -7,10 +7,15 @@ from genomevault.api.errors import gv_error_handler  # you'll add this below if 
 app = FastAPI(title="GenomeVault API", version="0.1.0")
 
 
-# Example health route (keeps tests happy)
+# Health routes (keeps tests happy)
 @app.get("/healthz")
-def health() -> dict:
+def healthz() -> dict:
     return {"ok": True}
+
+
+@app.get("/health")
+def health() -> dict:
+    return {"status": "healthy", "service": "GenomeVault API"}
 
 
 # Uniform error responses
