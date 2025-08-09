@@ -170,7 +170,13 @@ task*_output.txt
 *.bak
 *.backup
 
-# One-off scripts in root (should be in tools/)
+# Development tools (now in devtools/)
+/tools/
+/devtools/__pycache__/
+/devtools/*.pyc
+/devtools/.pytest_cache/
+
+# One-off scripts in root (should be in devtools/)
 apply_*.py
 fix_*.py
 validate_*.py

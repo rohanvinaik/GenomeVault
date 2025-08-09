@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-import os, re, subprocess, shlex, json
+import re
+import subprocess
 from pathlib import Path
 
 root = Path(".")
@@ -108,9 +109,7 @@ for p in sorted(set(candidates)):
 # Write TSV + summary
 tsv = outdir / "old_scripts_report.tsv"
 with tsv.open("w", encoding="utf-8") as f:
-    f.write(
-        "path\tdays_since_commit\tis_executable\thas_shebang\tshebang\tsize_kb\treferenced\n"
-    )
+    f.write("path\tdays_since_commit\tis_executable\thas_shebang\tshebang\tsize_kb\treferenced\n")
     for r in sorted(rows, key=lambda x: (-x["days_since_commit"], x["path"])):
         f.write(
             f'{r["path"]}\t{r["days_since_commit"]}\t{int(r["is_executable"])}\t{int(r["has_shebang"])}\t{r["shebang"]}\t{r["size_kb"]}\t{int(r["referenced"])}\n'

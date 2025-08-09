@@ -25,7 +25,6 @@ import argparse
 import json
 import re
 import subprocess
-import sys
 from pathlib import Path
 from typing import Any, Dict, List
 
@@ -36,9 +35,7 @@ class GenomeVaultCleanup:
         self.ruff_config = self.repo_root / ".ruff.toml"
         self.mypy_config = self.repo_root / "mypy.ini"
 
-    def run_command(
-        self, cmd: List[str], cwd: Path = None
-    ) -> subprocess.CompletedProcess:
+    def run_command(self, cmd: List[str], cwd: Path = None) -> subprocess.CompletedProcess:
         """Run a command and return the result."""
         if cwd is None:
             cwd = self.repo_root
@@ -79,18 +76,12 @@ max-violations = 200
         print("Updated .ruff.toml with max-violations and tools glob ignore")
 
         # Test the configuration
-        result = self.run_command(
-            ["ruff", "check", "--config", str(self.ruff_config), "."]
-        )
+        result = self.run_command(["ruff", "check", "--config", str(self.ruff_config), "."])
         print(f"Ruff check result: {result.returncode}")
         if result.stdout:
             print(
                 "STDOUT:",
-                (
-                    result.stdout[:500] + "..."
-                    if len(result.stdout) > 500
-                    else result.stdout
-                ),
+                (result.stdout[:500] + "..." if len(result.stdout) > 500 else result.stdout),
             )
 
     def phase_2_triage_code(self):
@@ -166,9 +157,7 @@ max-violations = 200
         print("=== Phase 3: Fixing Undefined Names (F821) ===")
 
         # Get F821 errors
-        result = self.run_command(
-            ["ruff", "check", ".", "--select", "F821", "--format", "json"]
-        )
+        result = self.run_command(["ruff", "check", ".", "--select", "F821", "--format", "json"])
 
         if result.returncode == 0:
             print("No F821 errors found!")
@@ -221,9 +210,7 @@ max-violations = 200
                 continue
 
             undefined_var = match.group(1)
-            fix_applied = self.apply_undefined_name_fix(
-                lines, line_num, undefined_var, filename
-            )
+            fix_applied = self.apply_undefined_name_fix(lines, line_num, undefined_var, filename)
 
             if fix_applied:
                 fixes_applied.append(f"Line {line_num + 1}: {undefined_var}")
@@ -284,7 +271,7 @@ max-violations = 200
                     break
 
             lines.insert(insert_pos, "import logging")
-            lines.insert(insert_pos + 1, f"logger = logging.getLogger(__name__)")
+            lines.insert(insert_pos + 1, "logger = logging.getLogger(__name__)")
 
     def add_constant_at_top(self, lines: List[str], const_name: str):
         """Add constant definition at module top."""
@@ -304,13 +291,9 @@ max-violations = 200
         # Add appropriate constant
         if "MAX" in const_name:
             if "VARIANTS" in const_name:
-                lines.insert(
-                    insert_pos, f"{const_name} = 1000  # TODO: Set appropriate limit"
-                )
+                lines.insert(insert_pos, f"{const_name} = 1000  # TODO: Set appropriate limit")
             elif "TIME" in const_name:
-                lines.insert(
-                    insert_pos, f"{const_name} = 30.0  # TODO: Set appropriate timeout"
-                )
+                lines.insert(insert_pos, f"{const_name} = 30.0  # TODO: Set appropriate timeout")
             else:
                 lines.insert(insert_pos, f"{const_name} = 100  # TODO: Define constant")
         else:
@@ -448,9 +431,7 @@ max-violations = 200
                 print(f"mypy result for {package}: {result.returncode}")
                 if result.stdout:
                     print(
-                        result.stdout[:200] + "..."
-                        if len(result.stdout) > 200
-                        else result.stdout
+                        result.stdout[:200] + "..." if len(result.stdout) > 200 else result.stdout
                     )
 
         # Run tests
@@ -487,16 +468,12 @@ max-violations = 200
 
             # Check if we should continue
             if phase < 7:
-                input(
-                    f"Phase {phase} complete. Press Enter to continue to phase {phase + 1}..."
-                )
+                input(f"Phase {phase} complete. Press Enter to continue to phase {phase + 1}...")
 
 
 def main():
     parser = argparse.ArgumentParser(description="GenomeVault Technical Debt Cleanup")
-    parser.add_argument(
-        "--phase", type=int, choices=range(1, 8), help="Run specific phase (1-7)"
-    )
+    parser.add_argument("--phase", type=int, choices=range(1, 8), help="Run specific phase (1-7)")
     parser.add_argument("--all", action="store_true", help="Run all phases")
     parser.add_argument(
         "--repo-root",
