@@ -120,7 +120,8 @@ class EnhancedCleanup:
         """Get MD5 hash of file content for change detection."""
         try:
             return hashlib.md5(file_path.read_text().encode()).hexdigest()
-        except:
+        except Exception as e:
+            self.log_error(f"Failed to compute hash for {file_path}: {e}")
             return ""
 
     def phase_1_update_ruff_config(self, dry_run: bool = False):
@@ -294,7 +295,11 @@ class EnhancedCleanup:
                     ]
                 ):
                     example_files.append(py_file)
-            except:
+            except Exception as e:
+                self.log_error(
+                    f"Failed to read file {py_file} while searching for examples: {e}",
+                    "phase2",
+                )
                 continue
 
         if dry_run:
@@ -629,8 +634,8 @@ class EnhancedCleanup:
 
             if returncode == 0 and stdout.strip():
                 return stdout
-        except:
-            pass
+        except Exception as e:
+            self.log_error(f"isort failed for {file_path}: {e}", "phase4")
 
         # Manual import sorting fallback
         return self._manual_import_sort(content)
@@ -998,7 +1003,7 @@ DEFAULT_SECURITY_LEVEL = 128
 MAX_VARIANTS = 1000
 VERIFICATION_TIME_MAX = 30.0
 
-# Hypervector constants  
+# Hypervector constants
 DEFAULT_DIMENSION = 10000
 BINDING_SPARSITY = 0.1
 HYPERVECTOR_DIM = 10000
@@ -1015,7 +1020,7 @@ REFERENCE_GENOME = "GRCh38"
 # Node and blockchain constants
 NODE_CLASS_WEIGHT = {
     "INSTITUTION": 10,
-    "RESEARCHER": 5, 
+    "RESEARCHER": 5,
     "INDIVIDUAL": 1
 }
 ''',
@@ -1040,18 +1045,18 @@ def get_config() -> Dict[str, Any]:
 
 class Config:
     """Configuration class for GenomeVault."""
-    
+
     def __init__(self):
         self._config = get_config()
-    
+
     @property
     def node_id(self) -> Optional[str]:
         return self._config.get("node_id")
-    
+
     @property
     def node_type(self) -> str:
         return self._config.get("node_type", "INDIVIDUAL")
-    
+
     @property
     def signatory_status(self) -> bool:
         return self._config.get("signatory_status", False)

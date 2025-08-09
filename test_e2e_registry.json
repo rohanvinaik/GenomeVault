@@ -1,0 +1,56 @@
+{
+  "compatibility_map": {},
+  "current_version": "v1.0.0",
+  "last_updated": "2025-08-08T23:28:26.494034",
+  "performance_metrics": {},
+  "versions": {
+    "e2e_test_v1": {
+      "created_at": "2025-08-08T23:28:26.494030",
+      "description": "",
+      "fingerprint": "fc37fd8c89e6704a",
+      "params": {
+        "dimension": 15000,
+        "projection_type": "sparse_random",
+        "seed": 42,
+        "sparsity": 0.1
+      },
+      "tier": "full"
+    },
+    "full_v1.0.0": {
+      "created_at": "2025-08-08T23:28:26.493772",
+      "description": "Full tier for comprehensive analysis",
+      "fingerprint": "f453233a13b1e4a2",
+      "params": {
+        "dimension": 20000,
+        "projection_type": "sparse_random",
+        "seed": 42,
+        "sparsity": 0.1
+      },
+      "tier": "full"
+    },
+    "mini_v1.0.0": {
+      "created_at": "2025-08-08T23:28:26.493766",
+      "description": "Mini tier for most-studied SNPs",
+      "fingerprint": "fbb1c39d577e219e",
+      "params": {
+        "dimension": 5000,
+        "projection_type": "sparse_random",
+        "seed": 42,
+        "sparsity": 0.05
+      },
+      "tier": "mini"
+    },
+    "v1.0.0": {
+      "created_at": "2025-08-08T23:28:26.493751",
+      "description": "Default HDC encoding parameters - Clinical tier",
+      "fingerprint": "d752288b187d0cbd",
+      "params": {
+        "dimension": 10000,
+        "projection_type": "sparse_random",
+        "seed": 42,
+        "sparsity": 0.1
+      },
+      "tier": "clinical"
+    }
+  }
+}
