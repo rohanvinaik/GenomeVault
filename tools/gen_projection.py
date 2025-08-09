@@ -4,6 +4,8 @@ Generate pre-built projection memory maps for faster startup.
 These cached projections significantly speed up encoder initialization.
 """
 
+from __future__ import annotations
+
 import argparse
 import time
 from pathlib import Path

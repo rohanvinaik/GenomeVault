@@ -3,6 +3,8 @@ Positional encoding for single-nucleotide accuracy
 Implements sparse, memory-efficient position vectors for SNP-level granularity
 """
 
+from __future__ import annotations
+
 import hashlib
 
 import numpy as np

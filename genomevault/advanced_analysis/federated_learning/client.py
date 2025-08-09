@@ -3,6 +3,8 @@ Federated Learning Client for secure model training participation.
 Implements local training with privacy guarantees.
 """
 
+from __future__ import annotations
+
 import pickle
 import time
 from dataclasses import dataclass
@@ -12,7 +14,7 @@ from typing import Any
 import numpy as np
 
 from genomevault.hypervector_transform.encoding import HypervectorEncoder
-from genomevault.utils.logging import get_logger, logger, performance_logger
+from genomevault.utils.logging import get_logger, performance_logger
 
 logger = get_logger(__name__)
 

@@ -3,6 +3,8 @@ API Router for SNP-tuned and Zoom Queries
 Extends the tuned query endpoint with panel granularity and hierarchical zoom
 """
 
+from __future__ import annotations
+
 import time
 from typing import Any
 

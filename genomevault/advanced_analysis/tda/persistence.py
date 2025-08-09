@@ -2,6 +2,8 @@
 Topological Data Analysis for genomic structure analysis
 """
 
+from __future__ import annotations
+
 from dataclasses import dataclass
 
 import networkx as nx

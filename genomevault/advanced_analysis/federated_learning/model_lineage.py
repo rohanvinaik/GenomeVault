@@ -5,6 +5,8 @@ This module tracks model evolution across federated learning rounds,
 creating a verifiable DAG (Directed Acyclic Graph) of model updates.
 """
 
+from __future__ import annotations
+
 import hashlib
 import json
 import time

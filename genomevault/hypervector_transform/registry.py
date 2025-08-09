@@ -5,6 +5,8 @@ Manages hypervector encoding versions for reproducibility and compatibility.
 This is a core component for Stage 1 of the HDC implementation.
 """
 
+from __future__ import annotations
+
 import hashlib
 import json
 import logging

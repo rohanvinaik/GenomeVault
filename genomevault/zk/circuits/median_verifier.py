@@ -3,6 +3,8 @@ Zero-Knowledge Circuit for Median Verification
 Implements a real ZK proof system for verifying median computation
 """
 
+from __future__ import annotations
+
 import hashlib
 import json
 import secrets

@@ -6,6 +6,8 @@ This module provides centralized configuration management for all GenomeVault co
 including environment-specific settings, secrets management, and runtime configuration.
 """
 
+from __future__ import annotations
+
 import json
 import logging
 import os

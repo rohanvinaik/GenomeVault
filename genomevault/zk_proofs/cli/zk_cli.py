@@ -6,6 +6,8 @@ Command-line interface for generating and verifying zero-knowledge proofs.
 As specified in Stage 2 of the ZK implementation plan.
 """
 
+from __future__ import annotations
+
 import argparse
 import json
 import sys

@@ -9,6 +9,8 @@ This module provides:
 - Integrity verification
 """
 
+from __future__ import annotations
+
 import gzip
 import hashlib
 import json

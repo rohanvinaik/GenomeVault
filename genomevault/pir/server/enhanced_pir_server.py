@@ -3,6 +3,8 @@ Enhanced PIR server implementation with full information-theoretic security.
 Handles real genomic reference data with optimized query processing.
 """
 
+from __future__ import annotations
+
 import asyncio
 import hashlib
 import json

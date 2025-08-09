@@ -4,6 +4,8 @@ CI benchmark runner that outputs CSV with separate timing columns.
 This script orchestrates all benchmarks and outputs timing data for Grafana.
 """
 
+from __future__ import annotations
+
 import argparse
 import asyncio
 import csv
@@ -52,7 +54,10 @@ class CIBenchmarkRunner:
         logger.info("Running encode benchmark...")
 
         try:
-            from genomevault.hypervector_transform.hdc_encoder import OmicsType, create_encoder
+            from genomevault.hypervector_transform.hdc_encoder import (
+                OmicsType,
+                create_encoder,
+            )
 
             # Create encoder
             encoder = create_encoder(dimension=10000)

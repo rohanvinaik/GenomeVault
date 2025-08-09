@@ -1,5 +1,7 @@
 """High-level ZK proof service API."""
 
+from __future__ import annotations
+
 import asyncio
 import uuid
 from datetime import datetime

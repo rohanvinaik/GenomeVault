@@ -5,6 +5,8 @@ This contract records cryptographic proofs of ML model training on-chain,
 enabling immutable audit trails for clinical AI/ML systems.
 """
 
+from __future__ import annotations
+
 import hashlib
 import json
 import time

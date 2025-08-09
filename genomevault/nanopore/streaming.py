@@ -5,6 +5,8 @@ Implements catalytic slice-wise processing of nanopore events
 with bounded memory usage.
 """
 
+from __future__ import annotations
+
 import asyncio
 import hashlib
 import time

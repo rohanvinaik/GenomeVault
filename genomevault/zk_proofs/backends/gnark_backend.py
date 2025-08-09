@@ -6,6 +6,8 @@ and verifying SNARK proofs. It handles circuit compilation, proof generation,
 and verification with actual cryptographic guarantees.
 """
 
+from __future__ import annotations
+
 import json
 import logging
 import subprocess

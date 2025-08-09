@@ -2,6 +2,8 @@
 Benchmark script comparing packed vs standard hypervector implementations
 """
 
+from __future__ import annotations
+
 import time
 
 import matplotlib.pyplot as plt

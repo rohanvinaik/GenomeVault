@@ -8,6 +8,8 @@ This module provides:
 - Automated response to security threats
 """
 
+from __future__ import annotations
+
 import json
 from collections import defaultdict
 from typing import Any

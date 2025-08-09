@@ -13,6 +13,8 @@ Priority fixes:
 4. Fix tooling script organization
 """
 
+from __future__ import annotations
+
 import os
 import re
 from pathlib import Path

@@ -5,6 +5,8 @@ This module implements various binding operations that combine hypervectors
 while preserving their mathematical properties and biological relationships.
 """
 
+from __future__ import annotations
+
 import hashlib
 from enum import Enum
 

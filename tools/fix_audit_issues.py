@@ -4,6 +4,8 @@ GenomeVault Comprehensive Fix Script
 Based on audit report v2 from 2025-07-27
 """
 
+from __future__ import annotations
+
 import datetime
 import logging
 import re

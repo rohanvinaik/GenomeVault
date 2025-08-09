@@ -3,6 +3,8 @@ Test suite for Information-Theoretic PIR Protocol.
 Includes unit tests, adversarial tests, and performance benchmarks.
 """
 
+from __future__ import annotations
+
 import secrets
 import time
 

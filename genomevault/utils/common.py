@@ -8,6 +8,8 @@ consistent behavior.
 Created as part of the tail-chasing fixes initiative.
 """
 
+from __future__ import annotations
+
 import json
 import logging
 import os

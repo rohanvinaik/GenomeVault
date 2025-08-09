@@ -5,6 +5,8 @@ This module provides tools to scan logs, outputs, and code for potential
 PHI leakage patterns to ensure HIPAA compliance.
 """
 
+from __future__ import annotations
+
 import hashlib
 import json
 import logging

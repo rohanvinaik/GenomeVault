@@ -5,6 +5,8 @@ Implements CuPy-based GPU kernels for streaming event binding
 with catalytic memory management.
 """
 
+from __future__ import annotations
+
 import asyncio
 
 import numpy as np
