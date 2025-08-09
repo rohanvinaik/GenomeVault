@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import pytest
 
 from genomevault.zk_proofs.circuits.clinical_circuits import prove, verify
 
