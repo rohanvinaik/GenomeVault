@@ -1,0 +1,18 @@
+# Development dependencies for GenomeVault
+# Generated from pyproject.toml
+
+-r requirements.txt
+
+# Development tools
+ruff>=0.1.0
+mypy>=1.0.0
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-benchmark>=4.0.0
+pytest-cov>=4.0.0
+pyupgrade>=3.0.0
+radon>=6.0.0
+pip-tools>=7.0.0
+bandit>=1.7.0
+requests>=2.31.0
+pre-commit>=3.0.0
