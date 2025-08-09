@@ -20,13 +20,9 @@ from .binding_operations import (
     protect_vector,
 )
 from .hdc_encoder import (
-    CompressionTier,
     HypervectorConfig,
     HypervectorEncoder,
-    OmicsType,
     ProjectionType,
-    create_encoder,
-    encode_genomic_data,
 )
 from .registry import HypervectorRegistry, VersionMigrator
 
@@ -36,12 +32,8 @@ __all__ = [
     # Main encoder
     "HypervectorEncoder",
     "HypervectorConfig",
-    "create_encoder",
-    "encode_genomic_data",
     # Enums
-    "CompressionTier",
     "ProjectionType",
-    "OmicsType",
     "BindingType",
     # Binding operations
     "HypervectorBinder",

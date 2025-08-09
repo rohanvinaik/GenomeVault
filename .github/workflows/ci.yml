@@ -37,7 +37,7 @@ jobs:
       run: |
         pytest -m "not slow and not e2e" --cov=genomevault --cov-report=term-missing
       continue-on-error: true
-    
+
     - name: Run smoke tests
       run: |
         pytest tests/smoke -m "not slow"
@@ -48,7 +48,7 @@ jobs:
         uvicorn genomevault.api.main:app --host 127.0.0.1 --port 8000 &
         sleep 2
         for i in {1..30}; do
-          curl -sf http://127.0.0.1:8000/health && echo "Health OK" && exit 0
+          curl -sf http://127.0.0.1:8000/healthz && echo "Health OK" && exit 0
           sleep 1
         done
         echo "Health check failed"; exit 1
