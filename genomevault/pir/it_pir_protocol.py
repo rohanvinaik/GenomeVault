@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""It Pir Protocol module."""
+"""It Pir Protocol module."""
 """
 Information-Theoretic PIR Protocol Implementation
 Implements 2-server IT-PIR with XOR-based scheme and security guarantees.
@@ -278,6 +280,11 @@ class BatchPIRProtocol(PIRProtocol):
     """
 
     def __init__(self, params: PIRParameters):
+        """Initialize instance.
+
+            Args:
+                params: Parameters dictionary.
+            """
         super().__init__(params)
         self.batch_size = 100  # Default batch size
 

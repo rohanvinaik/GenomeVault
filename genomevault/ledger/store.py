@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Store module."""
+"""Store module."""
 import json
 from dataclasses import dataclass
 from hashlib import sha256
@@ -19,6 +21,7 @@ def _hash_obj(obj: dict[str, Any]) -> str:
 
 @dataclass(frozen=True)
 class LedgerEntry:
+    """LedgerEntry implementation."""
     index: int
     timestamp: float
     data: dict[str, Any]
@@ -30,6 +33,8 @@ class InMemoryLedger:
     """Minimal append-only ledger with hash chaining (NOT a consensus blockchain)."""
 
     def __init__(self) -> None:
+        """Initialize instance.
+            """
         self._entries: list[LedgerEntry] = []
 
     def _compute_hash(
@@ -44,6 +49,14 @@ class InMemoryLedger:
         return _hash_obj(payload)
 
     def append(self, data: dict[str, Any]) -> LedgerEntry:
+        """Append.
+
+            Args:
+                data: Input data to process.
+
+            Returns:
+                LedgerEntry instance.
+            """
         idx = len(self._entries)
         ts = time()
         prev = self._entries[-1].hash if self._entries else "GENESIS"
@@ -53,6 +66,11 @@ class InMemoryLedger:
         return entry
 
     def verify_chain(self) -> bool:
+        """Verify chain.
+
+            Returns:
+                Boolean result.
+            """
         prev = "GENESIS"
         for i, e in enumerate(self._entries):
             if e.index != i:
@@ -64,4 +82,9 @@ class InMemoryLedger:
         return True
 
     def entries(self) -> list[LedgerEntry]:
+        """Entries.
+
+            Returns:
+                Operation result.
+            """
         return list(self._entries)

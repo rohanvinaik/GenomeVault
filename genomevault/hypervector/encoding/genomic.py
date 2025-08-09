@@ -44,6 +44,13 @@ class GenomicEncoder:
     """
 
     def __init__(
+        """Initialize instance.
+
+            Args:
+                dimension: Dimension value.
+                enable_snp_mode: SNP data.
+                panel_granularity: Panel granularity.
+            """
         self,
         dimension: int = HYPERVECTOR_DIMENSIONS,
         enable_snp_mode: bool = False,

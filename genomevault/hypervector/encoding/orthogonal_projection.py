@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Orthogonal Projection module."""
+"""Orthogonal Projection module."""
 import numpy as np
 
 from genomevault.core.exceptions import ProjectionError
@@ -9,6 +11,15 @@ class OrthogonalProjection:
     """Orthogonal projection preserving inner products/angles approximately."""
 
     def __init__(self, n_components: int, seed: int | None = None) -> None:
+        """Initialize instance.
+
+            Args:
+                n_components: N components.
+                seed: Seed.
+
+            Raises:
+                ProjectionError: When operation fails.
+            """
         if not isinstance(n_components, int) or n_components <= 0:
             raise ProjectionError(
                 "n_components must be a positive integer",
@@ -20,6 +31,17 @@ class OrthogonalProjection:
         self._n_features: int | None = None
 
     def fit(self, n_features: int) -> OrthogonalProjection:
+        """Fit.
+
+            Args:
+                n_features: Feature array.
+
+            Returns:
+                OrthogonalProjection instance.
+
+            Raises:
+                ProjectionError: When operation fails.
+            """
         if not isinstance(n_features, int) or n_features <= 0:
             raise ProjectionError(
                 "n_features must be a positive integer",
@@ -42,6 +64,17 @@ class OrthogonalProjection:
         return self
 
     def transform(self, X: np.ndarray) -> np.ndarray:
+        """Transform.
+
+            Args:
+                X: X.
+
+            Returns:
+                Operation result.
+
+            Raises:
+                ProjectionError: When operation fails.
+            """
         if self._P is None or self._n_features is None:
             raise ProjectionError("fit() must be called before transform()")
         if not isinstance(X, np.ndarray) or X.ndim != 2:

@@ -36,6 +36,11 @@ class Spline1D:
     """1D spline function for KAN edge computations."""
 
     def __init__(self, config: SplineConfig):
+        """Initialize instance.
+
+            Args:
+                config: Configuration dictionary.
+            """
         self.config = config
         self.knots = np.linspace(-1, 1, config.n_knots)
         self.coeffs = np.random.randn(config.n_knots) * config.init_scale
@@ -116,6 +121,15 @@ class KANEncoder:
     """Enhanced KAN encoder with interpretability and compression."""
 
     def __init__(
+        """Initialize instance.
+
+            Args:
+                input_dim: Dimension value.
+                hidden_dim: Dimension value.
+                output_dim: Dimension value.
+                n_layers: N layers.
+                spline_config: Configuration dictionary.
+            """
         self,
         input_dim: int,
         hidden_dim: int,
@@ -277,6 +291,15 @@ class HybridKANHD:
     """Hybrid KAN-HD system with 10-500x compression and clinical compliance."""
 
     def __init__(
+        """Initialize instance.
+
+            Args:
+                genomic_dim: Dimension value.
+                hd_dims: Dimension value.
+                kan_hidden_dim: Dimension value.
+                kan_output_dim: Dimension value.
+                privacy_tier: Privacy tier.
+            """
         self,
         genomic_dim: int = 30000,
         hd_dims: list[int] = None,
@@ -465,6 +488,12 @@ class FederatedKANHD:
     """Federated learning framework for KAN-HD models."""
 
     def __init__(self, base_model: HybridKANHD, federation_config: FederationConfig):
+        """Initialize instance.
+
+            Args:
+                base_model: Model instance.
+                federation_config: Configuration dictionary.
+            """
         self.base_model = base_model
         self.config = federation_config
         self.participants: dict[str, dict[str, Any]] = {}

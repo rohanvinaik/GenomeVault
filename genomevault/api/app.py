@@ -1,6 +1,8 @@
 # genomevault/api/app.py
 from __future__ import annotations
 
+"""App module."""
+"""App module."""
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 

@@ -34,6 +34,11 @@ class PIRClient:
     """Client for Private Information Retrieval."""
     
     def __init__(self, config: PIRConfig):
+        """Initialize instance.
+
+            Args:
+                config: Configuration dictionary.
+            """
         self.config = config
         self._private_key = secrets.token_bytes(32)
     
@@ -91,6 +96,15 @@ class PIRServer:
     """Server for Private Information Retrieval."""
     
     def __init__(self, database: List[bytes], config: PIRConfig):
+        """Initialize instance.
+
+            Args:
+                database: Input database to process.
+                config: Configuration dictionary.
+
+            Raises:
+                ValueError: When operation fails.
+            """
         self.database = database
         self.config = config
         
@@ -139,6 +153,11 @@ class SimplePIR:
     """Simple PIR implementation for basic use cases."""
     
     def __init__(self, database: List[bytes]):
+        """Initialize instance.
+
+            Args:
+                database: Input database to process.
+            """
         self.config = PIRConfig(database_size=len(database))
         self.server = PIRServer(database, self.config)
         self.client = PIRClient(self.config)

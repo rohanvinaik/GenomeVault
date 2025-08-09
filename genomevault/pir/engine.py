@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Engine module."""
+"""Engine module."""
 from hashlib import sha256
 
 import numpy as np
@@ -21,6 +23,15 @@ class PIREngine:
     """Simple m-server IT-PIR engine (replicated DB, XOR aggregation)."""
 
     def __init__(self, db_items: list[bytes], n_servers: int = 3):
+        """Initialize instance.
+
+            Args:
+                db_items: Db items.
+                n_servers: N servers.
+
+            Raises:
+                ValueError: When operation fails.
+            """
         if n_servers < 2:
             raise ValueError("n_servers must be >= 2")
         self.db = _normalize_db(db_items)
@@ -45,6 +56,17 @@ class PIREngine:
         return masks
 
     def query(self, index: int) -> bytes:
+        """Query.
+
+            Args:
+                index: Index position.
+
+            Returns:
+                bytes instance.
+
+            Raises:
+                IndexError: When operation fails.
+            """
         if not (0 <= index < self.n):
             raise IndexError("index out of range")
         masks = self._random_masks(index)

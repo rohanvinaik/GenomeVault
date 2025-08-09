@@ -36,6 +36,11 @@ class Circuit:
     parameters: dict[str, Any]
 
     def to_dict(self) -> dict:
+        """To dict.
+
+            Returns:
+                Dictionary result.
+            """
         return {
             "name": self.name,
             "circuit_type": self.circuit_type,
@@ -59,6 +64,11 @@ class Proof:
     metadata: dict | None = None
 
     def to_dict(self) -> dict:
+        """To dict.
+
+            Returns:
+                Dictionary result.
+            """
         return {
             "proof_id": self.proof_id,
             "circuit_name": self.circuit_name,

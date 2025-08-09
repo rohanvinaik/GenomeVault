@@ -191,6 +191,7 @@ class ProcessingConfig:
 
 
 class Config:
+    """Config implementation."""
     _Q_HONEST = 0.98  # HIPAA server honesty
     _Q_HIPAA = 0.98  # single-server honesty prob
     """Main configuration manager for GenomeVault"""
@@ -335,7 +336,13 @@ class Config:
         """
 
         class _StubSecrets:
+            """ StubSecrets implementation."""
             def get(self, *_, **__):  # type: ignore[misc]
+                """Get.
+
+                    Returns:
+                        Operation result.
+                    """
                 return None
 
         self.secrets = _StubSecrets()
@@ -364,6 +371,11 @@ class Config:
         return c + s
 
     def get_block_rewards(self) -> int:
+        """Retrieve block rewards.
+
+            Returns:
+                The block rewards.
+            """
         base = {NodeClass.LIGHT: 1, NodeClass.FULL: 4, NodeClass.ARCHIVE: 8}[
             self.blockchain.node_class
         ]  # noqa: E501

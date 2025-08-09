@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+"""Calibrators module."""
 import numpy as np
 
 
@@ -7,6 +8,13 @@ class PlattCalibrator:
     """Logistic regression (1D) via IRLS to map scores -> probability."""
 
     def __init__(self, max_iter: int = 100, tol: float = 1e-8, reg: float = 1e-6):
+        """Initialize instance.
+
+            Args:
+                max_iter: Max iter.
+                tol: Tol.
+                reg: Reg.
+            """
         self.coef_: float | None = None
         self.intercept_: float | None = None
         self.max_iter = int(max_iter)
@@ -18,6 +26,15 @@ class PlattCalibrator:
         return 1.0 / (1.0 + np.exp(-z))
 
     def fit(self, y_true: np.ndarray, y_score: np.ndarray) -> PlattCalibrator:
+        """Fit.
+
+            Args:
+                y_true: Y true.
+                y_score: Y score.
+
+            Returns:
+                PlattCalibrator instance.
+            """
         y = np.asarray(y_true, dtype=np.float64)
         x = np.asarray(y_score, dtype=np.float64)
         X = np.c_[np.ones_like(x), x]  # intercept, slope
@@ -39,6 +56,14 @@ class PlattCalibrator:
         return self
 
     def predict_proba(self, y_score: np.ndarray) -> np.ndarray:
+        """Predict proba.
+
+            Args:
+                y_score: Y score.
+
+            Returns:
+                Operation result.
+            """
         assert self.coef_ is not None and self.intercept_ is not None, "fit first"
         x = np.asarray(y_score, dtype=np.float64)
         z = self.intercept_ + self.coef_ * x
@@ -49,10 +74,21 @@ class IsotonicCalibrator:
     """Isotonic regression via pair-adjacent violators (PAV) algorithm."""
 
     def __init__(self):
+        """Initialize instance.
+            """
         self.x_: np.ndarray | None = None  # breakpoints (sorted scores)
         self.y_: np.ndarray | None = None  # fitted (piecewise-constant) probabilities
 
     def fit(self, y_true: np.ndarray, y_score: np.ndarray) -> IsotonicCalibrator:
+        """Fit.
+
+            Args:
+                y_true: Y true.
+                y_score: Y score.
+
+            Returns:
+                IsotonicCalibrator instance.
+            """
         y = np.asarray(y_true, dtype=np.float64)
         x = np.asarray(y_score, dtype=np.float64)
         order = np.argsort(x)
@@ -87,6 +123,14 @@ class IsotonicCalibrator:
         return self
 
     def predict_proba(self, y_score: np.ndarray) -> np.ndarray:
+        """Predict proba.
+
+            Args:
+                y_score: Y score.
+
+            Returns:
+                Operation result.
+            """
         assert self.x_ is not None and self.y_ is not None, "fit first"
         x = np.asarray(y_score, dtype=np.float64)
         # piecewise-constant: for each x, find last breakpoint <= x
@@ -96,6 +140,19 @@ class IsotonicCalibrator:
 
 
 def fit_and_calibrate(
+    """Fit and calibrate.
+
+        Args:
+            y_true: Y true.
+            y_score: Y score.
+            method: Method.
+
+        Returns:
+            Operation result.
+
+        Raises:
+            ValueError: When operation fails.
+        """
     y_true: np.ndarray, y_score: np.ndarray, method: str = "platt"
 ) -> tuple[np.ndarray, object]:
     method = (method or "").lower()
@@ -106,7 +163,16 @@ def fit_and_calibrate(
     elif method in ("none", "identity"):
 
         class Identity:
+            """Identity implementation."""
             def predict_proba(self, v) -> None:
+                """Predict proba.
+
+                    Args:
+                        v: V.
+
+                    Returns:
+                        Operation result.
+                    """
                 return np.asarray(v, dtype=np.float64)
 
         cal = Identity()

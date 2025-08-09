@@ -57,6 +57,12 @@ class SliceReader:
     """Reads nanopore data in memory-bounded slices."""
 
     def __init__(
+        """Initialize instance.
+
+            Args:
+                slice_size: Size value.
+                overlap: Overlap.
+            """
         self,
         slice_size: int = 50000,  # ~4MB per slice
         overlap: int = 1000,  # Event overlap between slices
@@ -497,6 +503,11 @@ async def example_streaming_pipeline():
     results = []
 
     async def collect_results(result):
+        """Async operation to Collect results.
+
+            Args:
+                result: Operation result.
+            """
         results.append(result)
         if result["anomalies"]:
             print(f"Anomalies detected in slice {result['slice_id']}: {len(result['anomalies'])}")

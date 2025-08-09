@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Middleware module."""
+"""Middleware module."""
 import time
 import uuid
 
@@ -24,7 +26,20 @@ _LOG = get_logger(__name__)
 
 
 class ObservabilityMiddleware(BaseHTTPMiddleware):
+    """ObservabilityMiddleware implementation."""
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+        """Async operation to Dispatch.
+
+            Args:
+                request: Client request.
+                call_next: Call next.
+
+            Returns:
+                Response instance.
+
+            Raises:
+                RuntimeError: When operation fails.
+            """
         t0 = time.perf_counter()
         req_id = request.headers.get("x-request-id") or str(uuid.uuid4())
         # store in state for handlers to access
@@ -75,4 +90,9 @@ class ObservabilityMiddleware(BaseHTTPMiddleware):
 
 
 def add_observability_middleware(app):
+    """Add observability middleware.
+
+        Args:
+            app: App.
+        """
     app.add_middleware(ObservabilityMiddleware)

@@ -175,7 +175,14 @@ class HierarchicalEncoder:
         """Create projection optimized for oncology applications"""
 
         class OncologyProjection(torch.nn.Module):
+            """OncologyProjection implementation."""
             def __init__(self, input_dim: int, output_dim: int):
+                """Initialize instance.
+
+                    Args:
+                        input_dim: Dimension value.
+                        output_dim: Dimension value.
+                    """
                 super().__init__()
                 # Multi-layer projection with cancer gene emphasis
                 self.layer1 = torch.nn.Linear(input_dim, output_dim * 2)
@@ -183,6 +190,14 @@ class HierarchicalEncoder:
                 self.cancer_gene_weights = torch.nn.Parameter(torch.ones(input_dim))
 
             def forward(self, x: torch.Tensor) -> torch.Tensor:
+                """Forward.
+
+                    Args:
+                        x: X.
+
+                    Returns:
+                        Operation result.
+                    """
                 # Apply cancer gene weights
                 weighted = x * self.cancer_gene_weights
                 # Project through layers
@@ -196,7 +211,14 @@ class HierarchicalEncoder:
         """Create projection for rare disease detection"""
 
         class RareDiseaseProjection(torch.nn.Module):
+            """RareDiseaseProjection implementation."""
             def __init__(self, input_dim: int, output_dim: int):
+                """Initialize instance.
+
+                    Args:
+                        input_dim: Dimension value.
+                        output_dim: Dimension value.
+                    """
                 super().__init__()
                 # Sparse projection to preserve rare variants
                 self.sparse_proj = torch.nn.Linear(input_dim, output_dim, bias=False)
@@ -206,6 +228,14 @@ class HierarchicalEncoder:
                     self.sparse_proj.weight.data *= mask.float()
 
             def forward(self, x: torch.Tensor) -> torch.Tensor:
+                """Forward.
+
+                    Args:
+                        x: X.
+
+                    Returns:
+                        Operation result.
+                    """
                 return self.sparse_proj(x)
 
         return RareDiseaseProjection(1000, dim)
@@ -214,13 +244,28 @@ class HierarchicalEncoder:
         """Create projection for population genetics"""
 
         class PopulationProjection(torch.nn.Module):
+            """PopulationProjection implementation."""
             def __init__(self, input_dim: int, output_dim: int):
+                """Initialize instance.
+
+                    Args:
+                        input_dim: Dimension value.
+                        output_dim: Dimension value.
+                    """
                 super().__init__()
                 # Structured projection preserving population structure
                 self.population_embeddings = torch.nn.Embedding(26, output_dim // 26)
                 self.combiner = torch.nn.Linear(output_dim, output_dim)
 
             def forward(self, x: torch.Tensor) -> torch.Tensor:
+                """Forward.
+
+                    Args:
+                        x: X.
+
+                    Returns:
+                        Operation result.
+                    """
                 # Placeholder - would use actual population assignments
                 pop_indices = torch.zeros(x.shape[0], dtype=torch.long)
                 pop_embeds = self.population_embeddings(pop_indices)
@@ -235,7 +280,14 @@ class HierarchicalEncoder:
         """Create projection for pharmacogenomics"""
 
         class PharmacogenomicProjection(torch.nn.Module):
+            """PharmacogenomicProjection implementation."""
             def __init__(self, input_dim: int, output_dim: int):
+                """Initialize instance.
+
+                    Args:
+                        input_dim: Dimension value.
+                        output_dim: Dimension value.
+                    """
                 super().__init__()
                 # Focus on known pharmacogenes
                 self.gene_specific = torch.nn.ModuleDict(
@@ -249,6 +301,14 @@ class HierarchicalEncoder:
                 )
 
             def forward(self, x: torch.Tensor) -> torch.Tensor:
+                """Forward.
+
+                    Args:
+                        x: X.
+
+                    Returns:
+                        Operation result.
+                    """
                 # Split input by gene regions (placeholder)
                 outputs = []
                 start_idx = 0
@@ -272,11 +332,26 @@ class HierarchicalEncoder:
         """Create general purpose projection"""
 
         class GeneralProjection(torch.nn.Module):
+            """GeneralProjection implementation."""
             def __init__(self, input_dim: int, output_dim: int):
+                """Initialize instance.
+
+                    Args:
+                        input_dim: Dimension value.
+                        output_dim: Dimension value.
+                    """
                 super().__init__()
                 self.projection = torch.nn.Linear(input_dim, output_dim)
 
             def forward(self, x: torch.Tensor) -> torch.Tensor:
+                """Forward.
+
+                    Args:
+                        x: X.
+
+                    Returns:
+                        Operation result.
+                    """
                 return self.projection(x)
 
         return GeneralProjection(1000, dim)

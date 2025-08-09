@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 # ruff: noqa
+"""Verifier module."""
 import logging
 
 # import pytest
@@ -49,6 +50,11 @@ class VerificationResult:
     metadata: dict | None = None
 
     def to_dict(self) -> dict:
+        """To dict.
+
+            Returns:
+                Dictionary result.
+            """
         return {
             "is_valid": self.is_valid,
             "proof_id": self.proof_id,

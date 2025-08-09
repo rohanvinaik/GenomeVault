@@ -1,3 +1,4 @@
+"""Config module."""
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from math import ceil, log10
@@ -6,6 +7,7 @@ from typing import Optional, Union
 
 
 class NodeClass(Enum):
+    """NodeClass implementation."""
     LIGHT = auto()
     FULL = auto()
     ARCHIVE = auto()
@@ -18,12 +20,14 @@ class NodeClass(Enum):
 
 @dataclass
 class _BlockchainCfg:
+    """Data container for  blockchaincfg information."""
     node_class: NodeClass = NodeClass.LIGHT
     is_trusted_signatory: bool = False
 
 
 @dataclass
 class _HypervectorCfg:
+    """Data container for  hypervectorcfg information."""
     compression_tier: Optional[str] = None  # tests only assign a string enum
 
 
@@ -34,6 +38,7 @@ class _HypervectorCfg:
 
 @dataclass
 class Config:
+    """Data container for config information."""
     project_name: str = "GenomeVault"
     blockchain: _BlockchainCfg = field(default_factory=_BlockchainCfg)
     hypervector: _HypervectorCfg = field(default_factory=_HypervectorCfg)

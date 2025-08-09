@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Variant Proof Circuit module."""
+"""Variant Proof Circuit module."""
 import hashlib
 from typing import Any, Dict, List
 
@@ -34,6 +36,11 @@ class VariantProofCircuit:
     """
 
     def __init__(self, merkle_depth: int = 20):
+        """Initialize instance.
+
+            Args:
+                merkle_depth: Merkle depth.
+            """
         self.merkle_depth = merkle_depth
         self.cs = ConstraintSystem()
         self.setup_complete = False

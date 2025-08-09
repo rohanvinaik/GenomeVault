@@ -38,6 +38,11 @@ class ShardMetadata:
     populations: list[str] | None = None
 
     def to_dict(self) -> dict:
+        """To dict.
+
+            Returns:
+                Dictionary result.
+            """
         return {
             "id": self.shard_id,
             "index": self.shard_index,

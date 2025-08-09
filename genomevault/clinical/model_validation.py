@@ -102,6 +102,11 @@ class ClinicalModelValidator:
     """
 
     def __init__(self, validator_id: str):
+        """Initialize instance.
+
+            Args:
+                validator_id: Validator id.
+            """
         self.validator_id = validator_id
         self.validation_results: dict[str, ClinicalValidationResult] = {}
         self.attestations: dict[str, ModelCapabilityAttestation] = {}

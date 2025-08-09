@@ -82,6 +82,13 @@ class QuadraticVoting:
     """Quadratic voting mechanism for governance."""
 
     def __init__(
+        """Initialize instance.
+
+            Args:
+                quorum_percentage: Quorum percentage.
+                approval_threshold: Threshold value.
+                proposal_threshold: Threshold value.
+            """
         self,
         quorum_percentage: float = 0.1,  # 10% quorum
         approval_threshold: float = 0.5,  # 50% approval

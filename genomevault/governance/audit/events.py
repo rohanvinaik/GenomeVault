@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+"""Events module."""
 from typing import Any
 
 from genomevault.ledger.store import InMemoryLedger
@@ -9,6 +10,14 @@ _LEDGER = InMemoryLedger()
 
 
 def record_event(
+    """Record event.
+
+        Args:
+            kind: Kind.
+            subject_id: Subject id.
+            scope: Scope.
+            details: Details.
+        """
     kind: str, subject_id: str, scope: str, details: dict[str, Any] | None = None
 ) -> None:
     data = {
@@ -22,4 +31,9 @@ def record_event(
 
 
 def list_events() -> list[dict]:
+    """List events.
+
+        Returns:
+            Operation result.
+        """
     return [e.__dict__ for e in _LEDGER.entries() if e.data.get("type") == "data_event"]

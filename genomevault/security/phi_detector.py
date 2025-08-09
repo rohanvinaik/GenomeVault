@@ -271,6 +271,14 @@ class PHILeakageDetector:
         for pattern_name, regex in self.compiled_patterns.items():
             # Replace matches with redacted version
             def replace_match(match):
+                """Replace match.
+
+                    Args:
+                        match: Match.
+
+                    Returns:
+                        Operation result.
+                    """
                 matched_text = match.group()
                 # Keep first and last char for context
                 if len(matched_text) > 2:

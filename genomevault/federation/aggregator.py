@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+"""Aggregator module."""
 from typing import Dict, List
 
 import torch
@@ -9,6 +10,14 @@ class FedAvgAggregator:
     """Simple FedAvg over state_dicts (float tensors only)."""
 
     def aggregate(
+        """Aggregate.
+
+            Args:
+                client_models: Model instance.
+
+            Returns:
+                Operation result.
+            """
         self, client_models: List[Dict[str, torch.Tensor]]
     ) -> Dict[str, torch.Tensor]:
         if not client_models:

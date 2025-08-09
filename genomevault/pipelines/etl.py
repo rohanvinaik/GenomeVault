@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+"""Etl module."""
 from pathlib import Path
 
 import pandas as pd
@@ -38,16 +39,40 @@ def _rename_synonyms(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def load_csv(path: str) -> pd.DataFrame:
+    """Load csv.
+
+        Args:
+            path: File or directory path.
+
+        Returns:
+            Loaded data.
+        """
     return pd.read_csv(path)
 
 
 def transform(df: pd.DataFrame) -> pd.DataFrame:
+    """Transform.
+
+        Args:
+            df: Df.
+
+        Returns:
+            Operation result.
+        """
     df = _standardize_columns(df)
     df = _rename_synonyms(df)
     return df
 
 
 def run_etl(
+    """Run etl.
+
+        Args:
+            input_csv: Input csv.
+
+        Returns:
+            Operation result.
+        """
     input_csv: str, *, contract_path: str | None = None, out_csv: str | None = None
 ) -> dict[str, any]:
     df = load_csv(input_csv)

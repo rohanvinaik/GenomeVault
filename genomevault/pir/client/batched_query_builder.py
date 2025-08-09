@@ -65,6 +65,12 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
     """
 
     def __init__(self, pir_client: PIRClient, index_mapping: dict[str, dict[str, int]]):
+        """Initialize instance.
+
+            Args:
+                pir_client: Pir client.
+                index_mapping: Index position.
+            """
         super().__init__(pir_client, index_mapping)
         self.batch_cache: dict[str, BatchedQueryResult] = {}
         self.batch_cache_size = 50

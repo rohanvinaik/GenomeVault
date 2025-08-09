@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Encode module."""
+"""Encode module."""
 import pandas as pd
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
@@ -9,11 +11,13 @@ from genomevault.local_processing.common import process
 
 
 class EncodeIn(BaseModel):
+    """EncodeIn implementation."""
     data: list[list[float]] = Field(..., description="Tabular numeric data")
     seed: int = 0
 
 
 class EncodeOut(BaseModel):
+    """EncodeOut implementation."""
     dim: int
     n: int
 

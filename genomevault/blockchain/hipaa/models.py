@@ -138,6 +138,7 @@ class NPIRecord:
     reactivation_date: datetime | None = None
 
     def __str__(self) -> str:
+        """Return string representation."""
         if self.npi_type == NPIType.ORGANIZATION:
             return "{self.organization_name} (NPI: {self.npi})"
         else:

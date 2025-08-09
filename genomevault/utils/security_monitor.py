@@ -27,6 +27,11 @@ class SecurityMonitor:
     """Real-time security monitoring and threat detection"""
 
     def __init__(self, config: dict[str, Any]):
+        """Initialize instance.
+
+            Args:
+                config: Configuration dictionary.
+            """
         self.config = config
         self.threat_threshold = config.get("threat_threshold", 0.8)
         self.anomaly_window = config.get("anomaly_window_minutes", 60)
@@ -388,6 +393,11 @@ class ComplianceMonitor:
     """Monitor compliance with regulations (HIPAA, GDPR, etc.)"""
 
     def __init__(self, config: dict[str, Any]):
+        """Initialize instance.
+
+            Args:
+                config: Configuration dictionary.
+            """
         self.config = config
         self.compliance_checks = []
         self.violations = []

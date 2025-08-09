@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Contract module."""
+"""Contract module."""
 import json
 import re
 from dataclasses import dataclass, field
@@ -11,6 +13,7 @@ import pandas as pd
 
 @dataclass
 class ColumnSpec:
+    """Data container for columnspec information."""
     name: str
     dtype: str  # 'string' | 'int' | 'float' | 'bool' | 'datetime'
     required: bool = True
@@ -23,12 +26,21 @@ class ColumnSpec:
 
 @dataclass
 class TableContract:
+    """Data container for tablecontract information."""
     name: str
     columns: list[ColumnSpec] = field(default_factory=list)
     unique_key: list[str] | None = None  # compound unique key (list of columns)
 
     @staticmethod
     def from_json(path: str) -> TableContract:
+        """From json.
+
+            Args:
+                path: File or directory path.
+
+            Returns:
+                TableContract instance.
+            """
         obj = json.loads(Path(path).read_text(encoding="utf-8"))
         cols = [ColumnSpec(**c) for c in obj["columns"]]
         return TableContract(
@@ -38,6 +50,11 @@ class TableContract:
         )
 
     def to_json(self, path: str) -> None:
+        """To json.
+
+            Args:
+                path: File or directory path.
+            """
         obj = {
             "name": self.name,
             "columns": [c.__dict__ for c in self.columns],

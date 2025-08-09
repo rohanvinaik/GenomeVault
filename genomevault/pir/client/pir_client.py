@@ -44,6 +44,16 @@ class PIRClient:
     """
 
     def __init__(self, server_urls: list[str], database_size: int, threshold: int = 2):
+        """Initialize instance.
+
+            Args:
+                server_urls: URL string.
+                database_size: Input database_size to process.
+                threshold: Threshold value.
+
+            Raises:
+                PIRError: When operation fails.
+            """
         self.server_urls = server_urls
         self.database_size = database_size
         self.threshold = threshold

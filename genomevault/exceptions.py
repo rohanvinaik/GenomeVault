@@ -1,6 +1,8 @@
 # genomevault/exceptions.py
 from __future__ import annotations
 
+"""Exceptions module."""
+"""Exceptions module."""
 from typing import Any, Dict, Type
 
 from .core.exceptions import (
@@ -35,6 +37,14 @@ __all__ = [
 
 
 def error_response(exc: GVError) -> Dict[str, Any]:
+    """Error response.
+
+        Args:
+            exc: Exc.
+
+        Returns:
+            Operation result.
+        """
     return exc.to_dict()
 
 

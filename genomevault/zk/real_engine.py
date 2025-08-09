@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Real Engine module."""
+"""Real Engine module."""
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -14,10 +16,16 @@ from genomevault.zk.backends.circom_snarkjs import (
 
 @dataclass
 class RealProof:
+    """Data container for realproof information."""
     proof: dict
     public: dict
 
     def to_wire(self) -> dict[str, Any]:
+        """To wire.
+
+            Returns:
+                Operation result.
+            """
         return {"proof": self.proof, "public_inputs": self.public}
 
 
@@ -29,9 +37,23 @@ class RealZKEngine:
     """
 
     def __init__(self, repo_root: str) -> None:
+        """Initialize instance.
+
+            Args:
+                repo_root: Repo root.
+            """
         self.repo_root = Path(repo_root)
 
     def create_proof(self, *, circuit_type: str, inputs: dict[str, Any]) -> RealProof:
+        """Create proof.
+
+            Returns:
+                Newly created proof.
+
+            Raises:
+                RuntimeError: When operation fails.
+                ValueError: When operation fails.
+            """
         if circuit_type != "sum64":
             raise ValueError(
                 "unsupported circuit_type; only 'sum64' is available in this build"
@@ -46,6 +68,11 @@ class RealZKEngine:
         return RealProof(proof=out["proof"], public=out["public"])
 
     def verify_proof(self, *, proof: dict, public_inputs: dict) -> bool:
+        """Verify proof.
+
+            Returns:
+                Boolean result.
+            """
         if not toolchain_available():
             return False
         paths = CircuitPaths.for_sum64(self.repo_root)

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Query Builder module."""
+"""Query Builder module."""
 """
 PIR query builder for genomic data queries.
 Provides high-level interface for constructing privacy-preserving queries.

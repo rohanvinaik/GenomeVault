@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""E2E Pipeline module."""
+"""E2E Pipeline module."""
 import numpy as np
 
 from genomevault.governance.ledger import Ledger
@@ -9,6 +11,14 @@ from genomevault.zk.engine import ProofEngine
 
 
 def run_e2e(seed=123):
+    """Run e2e.
+
+        Args:
+            seed: Seed.
+
+        Returns:
+            Operation result.
+        """
     rng = np.random.default_rng(seed)
     X = rng.integers(0, 4, size=(8, 64)).astype("int8")
     hv = HypervectorEngine()

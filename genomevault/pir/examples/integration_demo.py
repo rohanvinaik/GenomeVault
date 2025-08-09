@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Integration Demo module."""
+"""Integration Demo module."""
 """
 PIR Integration Demo
 Demonstrates end-to-end PIR functionality with ZK and HDC integration.
@@ -34,6 +36,8 @@ class PIRIntegrationDemo:
     """
 
     def __init__(self):
+        """Initialize instance.
+            """
         self.coordinator = PIRCoordinator()
         self.servers: list[EnhancedPIRServer] = []
         self.database_size = 10000
@@ -191,7 +195,16 @@ class PIRIntegrationDemo:
 
         # Create mock PIR client (would use real client in production)
         class MockPIRClient:
+            """Client for mockpir operations."""
             async def execute_query(self, query):
+                """Async operation to Execute query.
+
+                    Args:
+                        query: Query string.
+
+                    Returns:
+                        Operation result.
+                    """
                 # Simulate query execution
                 await asyncio.sleep(0.1)
                 return {
@@ -209,9 +222,25 @@ class PIRIntegrationDemo:
                 }
 
             def create_query(self, index) -> None:
+                """Create query.
+
+                    Args:
+                        index: Index position.
+
+                    Returns:
+                        Newly created query.
+                    """
                 return {"index": index}
 
             async def batch_query(self, indices):
+                """Async operation to Batch query.
+
+                    Args:
+                        indices: Indices.
+
+                    Returns:
+                        Operation result.
+                    """
                 results = []
                 for idx in indices:
                     result = await self.execute_query(None)
@@ -219,6 +248,15 @@ class PIRIntegrationDemo:
                 return results
 
             def decode_response(self, response, encoding) -> None:
+                """Decode response.
+
+                    Args:
+                        response: Server response.
+                        encoding: Character encoding.
+
+                    Returns:
+                        Operation result.
+                    """
                 return response
 
         # Create query builder

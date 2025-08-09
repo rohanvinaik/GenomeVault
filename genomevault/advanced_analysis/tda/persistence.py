@@ -63,6 +63,11 @@ class TopologicalAnalyzer:
     """
 
     def __init__(self, max_dimension: int = MAX_HOMOLOGY_DIMENSION):
+        """Initialize instance.
+
+            Args:
+                max_dimension: Dimension value.
+            """
         self.max_dimension = max_dimension
 
     def compute_persistence_diagram(
@@ -394,6 +399,8 @@ class UnionFind:
     """Union-Find data structure for connected components"""
 
     def __init__(self):
+        """Initialize instance.
+            """
         self.parent = {}
         self.rank = {}
 
@@ -432,6 +439,8 @@ class StructuralSignatureAnalyzer:
     """
 
     def __init__(self):
+        """Initialize instance.
+            """
         self.analyzer = TopologicalAnalyzer()
 
     def compute_dna_structural_signature(

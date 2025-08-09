@@ -27,6 +27,8 @@ class MetricsCollector:
     """Centralized metrics collection for GenomeVault"""
 
     def __init__(self):
+        """Initialize instance.
+            """
         # Processing metrics
         self.processing_duration = _Histogram(
             "genomevault_processing_duration_seconds",
@@ -153,8 +155,27 @@ class MetricsCollector:
         """Decorator to track processing operations"""
 
         def decorator(func):
+            """Decorator.
+
+                Args:
+                    func: Func.
+
+                Returns:
+                    Operation result.
+
+                Raises:
+                    RuntimeError: When operation fails.
+                """
             @wraps(func)
             def wrapper(*args, **kwargs):
+                """Wrapper.
+
+                    Returns:
+                        Operation result.
+
+                    Raises:
+                        RuntimeError: When operation fails.
+                    """
                 start_time = time.time()
                 try:
                     with self.processing_duration.labels(
@@ -201,8 +222,21 @@ class MetricsCollector:
         """Track hypervector operations"""
 
         def decorator(func):
+            """Decorator.
+
+                Args:
+                    func: Func.
+
+                Returns:
+                    Operation result.
+                """
             @wraps(func)
             def wrapper(*args, **kwargs):
+                """Wrapper.
+
+                    Returns:
+                        Operation result.
+                    """
                 start_time = time.time()
 
                 # Increment operation counter
@@ -227,8 +261,21 @@ class MetricsCollector:
         """Track zero-knowledge proof generation"""
 
         def decorator(func):
+            """Decorator.
+
+                Args:
+                    func: Func.
+
+                Returns:
+                    Operation result.
+                """
             @wraps(func)
             def wrapper(*args, **kwargs):
+                """Wrapper.
+
+                    Returns:
+                        Operation result.
+                    """
                 with self.proof_generation_time.labels(circuit_type=circuit_type).time():
                     proof = func(*args, **kwargs)
 
@@ -304,6 +351,11 @@ class PrivacyAwareLogger:
     """Structured logging with privacy-aware filtering"""
 
     def __init__(self, service_name: str):
+        """Initialize instance.
+
+            Args:
+                service_name: Service name.
+            """
         self.service_name = service_name
         self.logger = structlog.get_logger(service_name)
         self.configure_logging()
@@ -357,6 +409,14 @@ class PrivacyAwareLogger:
 
         # Deep scan for sensitive keys
         def redact_dict(d: dict[str, Any]) -> dict[str, Any]:
+            """Redact dict.
+
+                Args:
+                    d: D.
+
+                Returns:
+                    Operation result.
+                """
             redacted = {}
             for key, value in d.items():
                 if any(sk in key.lower() for sk in sensitive_keys):

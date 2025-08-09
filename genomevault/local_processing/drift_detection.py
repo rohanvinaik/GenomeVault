@@ -544,6 +544,11 @@ class CovariateShiftDetector:
     """Detector for input distribution shifts"""
 
     def __init__(self, baseline_stats: dict[str, Any]):
+        """Initialize instance.
+
+            Args:
+                baseline_stats: Baseline stats.
+            """
         self.baseline_stats = baseline_stats
 
     def detect_drift(
@@ -603,6 +608,11 @@ class PredictionDriftDetector:
     """Detector for prediction distribution shifts"""
 
     def __init__(self, baseline_stats: dict[str, Any]):
+        """Initialize instance.
+
+            Args:
+                baseline_stats: Baseline stats.
+            """
         self.baseline_stats = baseline_stats
 
     def detect_drift(
@@ -659,6 +669,11 @@ class PerformanceDriftDetector:
     """Detector for model performance degradation"""
 
     def __init__(self, baseline_stats: dict[str, Any]):
+        """Initialize instance.
+
+            Args:
+                baseline_stats: Baseline stats.
+            """
         self.baseline_stats = baseline_stats
         self.performance_buffer = deque(maxlen=1000)
 
@@ -708,6 +723,11 @@ class SemanticDriftDetector:
     """Detector for semantic model drift using hypervectors"""
 
     def __init__(self, baseline_stats: dict[str, Any]):
+        """Initialize instance.
+
+            Args:
+                baseline_stats: Baseline stats.
+            """
         self.baseline_stats = baseline_stats
         self.baseline_hypervector = baseline_stats.get("model_hypervector")
 

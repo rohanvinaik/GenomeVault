@@ -33,6 +33,11 @@ class PIRHandler:
     """HTTP request handler for PIR queries."""
 
     def __init__(self, pir_server: PIRServer):
+        """Initialize instance.
+
+            Args:
+                pir_server: Pir server.
+            """
         self.pir_server = pir_server
         self.query_cache = {}  # For replay detection
         self.cache_max_size = 10000
@@ -242,6 +247,18 @@ def create_app(pir_server: PIRServer) -> web.Application:
     # Add middleware for logging
     @web.middleware
     async def logging_middleware(request, handler):
+        """Async operation to Logging middleware.
+
+            Args:
+                request: Client request.
+                handler: Handler function.
+
+            Returns:
+                Operation result.
+
+            Raises:
+                RuntimeError: When operation fails.
+            """
         start = time.time()
         try:
             response = await handler(request)

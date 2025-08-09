@@ -1,11 +1,21 @@
 from __future__ import annotations
 
+"""Profile module."""
+"""Profile module."""
 from typing import Any
 
 import pandas as pd
 
 
 def profile_dataframe(df: pd.DataFrame) -> dict[str, Any]:
+    """Profile dataframe.
+
+        Args:
+            df: Df.
+
+        Returns:
+            Operation result.
+        """
     out: dict[str, Any] = {"row_count": int(df.shape[0]), "columns": {}}
     for c in df.columns:
         s = df[c]
