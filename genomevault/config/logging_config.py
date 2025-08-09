@@ -58,37 +58,37 @@ def get_staging_config() -> Dict[str, Any]:
 
 def configure_for_environment(env: str = None) -> None:
     """Configure logging based on environment.
-    
+
     Args:
         env: Environment name (development, production, testing, staging)
              If None, reads from GENOMEVAULT_ENV environment variable
     """
     if env is None:
         env = os.getenv("GENOMEVAULT_ENV", "development").lower()
-    
+
     configs = {
         "development": get_development_config,
         "production": get_production_config,
         "testing": get_testing_config,
         "staging": get_staging_config,
     }
-    
+
     if env not in configs:
         raise ValueError(f"Unknown environment: {env}. Supported: {list(configs.keys())}")
-    
+
     config = configs[env]()
-    
+
     # Override with environment-specific log directory if needed
     log_dir_env_var = f"GENOMEVAULT_{env.upper()}_LOG_DIR"
     if env_log_dir := os.getenv(log_dir_env_var):
         config["log_dir"] = Path(env_log_dir)
-    
+
     configure_logging(**config)
 
 
 def configure_for_docker() -> None:
     """Configure logging for Docker containers.
-    
+
     This configuration is optimized for containerized environments:
     - Logs to stdout/stderr for container log aggregation
     - JSON format for structured logging
@@ -104,17 +104,17 @@ def configure_for_docker() -> None:
 
 def configure_for_kubernetes() -> None:
     """Configure logging for Kubernetes deployments.
-    
+
     Similar to Docker but with additional considerations:
     - Structured logging for log aggregation
     - Performance-optimized configuration
     """
     log_level = logging.INFO
-    
+
     # Use WARNING level in production Kubernetes
     if os.getenv("GENOMEVAULT_ENV") == "production":
         log_level = logging.WARNING
-    
+
     configure_logging(
         level=log_level,
         enable_file_logging=False,
@@ -125,7 +125,7 @@ def configure_for_kubernetes() -> None:
 
 def configure_for_lambda() -> None:
     """Configure logging for AWS Lambda functions.
-    
+
     Lambda-specific configuration:
     - Console logging only (CloudWatch integration)
     - Minimal overhead
