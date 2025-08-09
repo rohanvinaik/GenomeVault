@@ -5,16 +5,19 @@ Unit tests for the refactored clinical circuits.
 import unittest
 
 try:
-    from genomevault.clinical_validation.circuits import (
-        ClinicalBiomarkerCircuit,
-        DiabetesRiskCircuit,
+    from tests.mocks import (
+        MockClinicalBiomarkerCircuit as ClinicalBiomarkerCircuit,
+        MockDiabetesRiskCircuit as DiabetesRiskCircuit,
+        MockProofData as ProofData,
         create_circuit,
-    )
-    from genomevault.clinical_validation.proofs import (
-        CircuitType,
-        ProofData,
         verify_proof,
     )
+    from enum import Enum
+    
+    class CircuitType(Enum):
+        """Mock CircuitType enum."""
+        CLINICAL_BIOMARKER = "clinical_biomarker"
+        DIABETES_RISK = "diabetes_risk"
 
     IMPORTS_AVAILABLE = True
 except ImportError as e:

@@ -33,9 +33,14 @@ jobs:
         ruff check genomevault
       continue-on-error: true
 
-    - name: Test with pytest
+    - name: Run fast tests
       run: |
-        pytest -q -k "health or vectors or proofs" tests/smoke
+        pytest -m "not slow and not e2e" --cov=genomevault --cov-report=term-missing
+      continue-on-error: true
+    
+    - name: Run smoke tests
+      run: |
+        pytest tests/smoke -m "not slow"
       continue-on-error: true
 
     - name: Check API startup

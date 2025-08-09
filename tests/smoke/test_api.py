@@ -1,25 +1,41 @@
 from __future__ import annotations
 
+import pytest
 from fastapi import FastAPI
-from fastapi.testclient import TestClient
+from httpx import ASGITransport, Client
 
 from genomevault.api.routers import encode, health
 
-# Create test app
-app = FastAPI()
-app.include_router(health.router)
-app.include_router(encode.router)
-client = TestClient(app)
+
+@pytest.fixture
+def app():
+    """Create test FastAPI app."""
+    app = FastAPI()
+    app.include_router(health.router)
+    app.include_router(encode.router)
+    return app
 
 
+@pytest.fixture
+def client(app):
+    """Create test client."""
+    transport = ASGITransport(app=app)
+    with Client(transport=transport, base_url="http://test") as c:
+        yield c
+
+
+@pytest.mark.integration
 class TestAPI:
-    def test_health(self):
+    
+    @pytest.mark.unit
+    def test_health(self, client):
         """Test health endpoint."""
         response = client.get("/health")
         assert response.status_code == 200
         assert response.json() == {"status": "ok"}
 
-    def test_encode(self):
+    @pytest.mark.integration
+    def test_encode(self, client):
         """Test encode endpoint."""
         payload = {"data": [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]], "seed": 42}
         response = client.post("/encode", json=payload)
