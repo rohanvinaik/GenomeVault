@@ -40,7 +40,10 @@ jobs:
 
     - name: Check API startup
       run: |
-        python -m genomevault.api.main &
-        sleep 5
-        curl -f http://localhost:8000/health || exit 1
-        kill %1
+        uvicorn genomevault.api.main:app --host 127.0.0.1 --port 8000 &
+        sleep 2
+        for i in {1..30}; do
+          curl -sf http://127.0.0.1:8000/health && echo "Health OK" && exit 0
+          sleep 1
+        done
+        echo "Health check failed"; exit 1
