@@ -20,9 +20,9 @@ import torch
 from .hdc_encoder import (
     HypervectorConfig,
     HypervectorEncoder,
-    OmicsType,
     ProjectionType,
 )
+from genomevault.core.constants import OmicsType
 
 logger = logging.getLogger(__name__)
 
@@ -370,9 +370,7 @@ class HypervectorRegistry:
                 "projection_match": projection_match,
                 "reason": "No explicit compatibility mapping",
                 "recommendation": (
-                    "Use VersionMigrator for conversion"
-                    if not dimension_match
-                    else None
+                    "Use VersionMigrator for conversion" if not dimension_match else None
                 ),
             }
 
@@ -436,9 +434,7 @@ class HypervectorRegistry:
 
         logger.info(f"Exported version {version} to {filepath}")
 
-    def import_version(
-        self, filepath: str, version: str | None = None, force: bool = False
-    ):
+    def import_version(self, filepath: str, version: str | None = None, force: bool = False):
         """Import version configuration from file."""
         with open(filepath) as f:
             data = json.load(f)
@@ -449,9 +445,7 @@ class HypervectorRegistry:
 
         # Validate registry version compatibility
         if data.get("registry_version", "1.0") != "1.0":
-            logger.warning(
-                f"Registry version mismatch: {data.get('registry_version')} != 1.0"
-            )
+            logger.warning(f"Registry version mismatch: {data.get('registry_version')} != 1.0")
 
         self.register_version(
             version=version,
@@ -500,9 +494,7 @@ class HypervectorRegistry:
             else:
                 tier = "custom"
 
-        self.register_version(
-            version, params, description or f"{tier} tier configuration"
-        )
+        self.register_version(version, params, description or f"{tier} tier configuration")
 
     def export_json(self, filepath: str):
         """
@@ -571,9 +563,7 @@ class HypervectorRegistry:
 
         return info
 
-    def benchmark_version(
-        self, version: str, num_samples: int = 100
-    ) -> dict[str, float]:
+    def benchmark_version(self, version: str, num_samples: int = 100) -> dict[str, float]:
         """Benchmark a specific version's performance."""
         import time
 
@@ -773,9 +763,7 @@ class VersionMigrator:
             "from_version": from_version,
             "to_version": to_version,
             "timestamp": datetime.now().isoformat(),
-            "compatibility": self.registry.check_compatibility(
-                from_version, to_version
-            ),
+            "compatibility": self.registry.check_compatibility(from_version, to_version),
             "tests": {},
         }
 
@@ -795,9 +783,7 @@ class VersionMigrator:
 
             # Migrate back if possible
             if from_encoder.config.dimension == to_encoder.config.dimension:
-                back_migrated = self.migrate_hypervector(
-                    migrated, to_version, from_version
-                )
+                back_migrated = self.migrate_hypervector(migrated, to_version, from_version)
                 similarity = torch.nn.functional.cosine_similarity(
                     original.unsqueeze(0), back_migrated.unsqueeze(0)
                 ).item()
