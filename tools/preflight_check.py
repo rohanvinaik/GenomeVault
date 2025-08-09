@@ -86,9 +86,6 @@ def check_current_state():
                     print(f"  {file_path}: {print_count} print statements")
                     total_prints += print_count
             except Exception as e:
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 print(f"  Error reading {file_path}: {e}")
                 raise
@@ -109,9 +106,6 @@ def check_current_state():
                     print(f"  {file_path}: {except_count} broad exceptions")
                     total_broad_excepts += except_count
             except Exception as e:
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 print(f"  Error reading {file_path}: {e}")
                 raise

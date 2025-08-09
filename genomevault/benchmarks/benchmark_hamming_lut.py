@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-from genomevault.observability.logging import configure_logging
-
-logger = configure_logging()
 """
 Benchmark script for Hamming distance LUT optimization in GenomeVault
 
@@ -242,7 +239,9 @@ def create_performance_plots(results: dict):
 
     standard_times = [results["single"][str(d)]["standard"] * 1000 for d in dimensions]
     lut_cpu_times = [results["single"][str(d)]["lut_cpu"] * 1000 for d in dimensions]
-    lut_gpu_times = [results["single"][str(d)].get("lut_gpu", 0) * 1000 for d in dimensions]
+    lut_gpu_times = [
+        results["single"][str(d)].get("lut_gpu", 0) * 1000 for d in dimensions
+    ]
 
     # Create figure
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
@@ -266,7 +265,9 @@ def create_performance_plots(results: dict):
     ax2.plot(dimensions, cpu_speedups, "s-", label="CPU Speedup", linewidth=2)
 
     if any(t > 0 for t in lut_gpu_times):
-        gpu_speedups = [s / g if g > 0 else 0 for s, g in zip(standard_times, lut_gpu_times)]
+        gpu_speedups = [
+            s / g if g > 0 else 0 for s, g in zip(standard_times, lut_gpu_times)
+        ]
         ax2.plot(dimensions, gpu_speedups, "^-", label="GPU Speedup", linewidth=2)
 
     ax2.axhline(y=2, color="r", linestyle="--", alpha=0.5, label="2x Target")
@@ -341,7 +342,8 @@ def main():
     if torch.cuda.is_available():
         np.mean(
             [
-                results["single"][str(d)]["standard"] / results["single"][str(d)]["lut_gpu"]
+                results["single"][str(d)]["standard"]
+                / results["single"][str(d)]["lut_gpu"]
                 for d in VECTOR_DIMENSIONS
             ]
         )

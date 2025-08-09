@@ -102,7 +102,9 @@ class HolographicEncoder:
             root=root, components=components, metadata={"roles": list(structure.keys())}
         )
 
-    def query(self, hologram: torch.Tensor, role: str, cleanup: bool = True) -> torch.Tensor:
+    def query(
+        self, hologram: torch.Tensor, role: str, cleanup: bool = True
+    ) -> torch.Tensor:
         """
         Query a holographic representation for a specific role
 
@@ -118,7 +120,9 @@ class HolographicEncoder:
         role_vector = self._get_role_vector(role)
 
         # Unbind to get approximate filler
-        filler_approx = self.binder.unbind(hologram, [role_vector], BindingType.CIRCULAR)
+        filler_approx = self.binder.unbind(
+            hologram, [role_vector], BindingType.CIRCULAR
+        )
 
         # Clean up if requested
         if cleanup:
@@ -345,7 +349,9 @@ class HolographicEncoder:
         torch.manual_seed(12345 + position)
         return torch.randperm(self.dimension)
 
-    def _cleanup_vector(self, vector: torch.Tensor, threshold: float = 0.1) -> torch.Tensor:
+    def _cleanup_vector(
+        self, vector: torch.Tensor, threshold: float = 0.1
+    ) -> torch.Tensor:
         """Clean up a noisy vector"""
         # Simple thresholding
         cleaned = vector.clone()
@@ -358,7 +364,9 @@ class HolographicEncoder:
 
         return cleaned
 
-    def similarity_preserving_hash(self, vector: torch.Tensor, num_bits: int = 64) -> str:
+    def similarity_preserving_hash(
+        self, vector: torch.Tensor, num_bits: int = 64
+    ) -> str:
         """
         Create a similarity-preserving hash of a hypervector
 

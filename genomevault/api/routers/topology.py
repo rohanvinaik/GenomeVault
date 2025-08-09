@@ -139,9 +139,6 @@ async def get_network_topology(request: TopologyRequest):
         )
 
     except Exception as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         raise HTTPException(status_code=500, detail=str(e))
         raise RuntimeError("Unspecified error")

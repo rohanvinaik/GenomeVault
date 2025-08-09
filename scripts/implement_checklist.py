@@ -67,9 +67,6 @@ class ChecklistImplementer:
                 self.log(f"Output: {result.stdout[:200]}...")
             return True
         except subprocess.CalledProcessError as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             self.log(f"Error: {e}")
             if e.stderr:
@@ -313,9 +310,6 @@ def main():
     try:
         input()
     except KeyboardInterrupt:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         print("\nCancelled.")
         sys.exit(0)

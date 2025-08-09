@@ -23,9 +23,6 @@ def create_proof(request: ProofCreateRequest) -> Dict[str, Any]:
             "circuit_type": request.circuit_type,
         }
     except Exception as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         raise HTTPException(status_code=400, detail=str(e))
         raise RuntimeError("Unspecified error")
@@ -37,9 +34,6 @@ def verify_proof(request: ProofVerifyRequest) -> Dict[str, bool]:
         ok = _engine.verify_proof(proof_data=request.proof, public_inputs=request.public_inputs)
         return {"valid": bool(ok)}
     except Exception as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         raise HTTPException(status_code=400, detail=str(e))
         raise RuntimeError("Unspecified error")

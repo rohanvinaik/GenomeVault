@@ -538,9 +538,6 @@ class PostQuantumVerifier:
             return True
 
         except Exception:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("STARK verification error: %se")
             return False

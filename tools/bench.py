@@ -278,9 +278,6 @@ class HDCBenchmark:
                     self.harness.add_result("hdc_comprehensive", latest_results)
 
             except subprocess.CalledProcessError as e:
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 logger.error(f"HDC benchmark failed: {e}")
                 logger.error(f"stdout: {e.stdout}")
@@ -318,9 +315,6 @@ class HDCBenchmark:
                 }
 
         except Exception as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error(f"Failed to load HDC results: {e}")
             return None
@@ -362,9 +356,6 @@ class HDCBenchmark:
             self.harness.add_result("hdc_basic", results)
 
         except ImportError as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error(f"Failed to import HDC modules: {e}")
             # Add minimal results

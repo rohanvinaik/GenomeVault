@@ -303,9 +303,6 @@ class ProofOfTrainingIntegration:
             return attestation_id
 
         except (DatabaseError, json.JSONDecodeError, KeyError):
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("Failed to submit attestation: %se")
             return None
@@ -531,9 +528,6 @@ class ProofOfTrainingIntegration:
             return hypervector
 
         except (ValueError, TypeError, KeyError):
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("Failed to extract hypervector: %se")
             return None
@@ -558,9 +552,6 @@ class ProofOfTrainingIntegration:
             logger.info("Blockchain connection established: %scontract_address")
 
         except KeyError:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("Failed to initialize blockchain: %se")
             self.attestation_contract = None

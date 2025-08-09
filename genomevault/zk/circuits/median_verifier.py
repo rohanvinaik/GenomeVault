@@ -264,9 +264,6 @@ class MedianVerifierCircuit:
             return True
 
         except Exception:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("Proof verification failed: %se")
             return False
@@ -415,9 +412,6 @@ if __name__ == "__main__":
                 error_bound=0.01,  # Wrong median
             )
         except ValueError as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.info(f"Expected error: {e}")
             raise RuntimeError("Unspecified error")

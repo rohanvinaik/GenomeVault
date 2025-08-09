@@ -187,9 +187,6 @@ class HDCBenchmark:
                 print(f"  {binding_type.value}: {throughput:.1f} ops/s")
 
             except Exception as e:
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 results["data"][binding_type.value] = {
                     "supported": False,
@@ -288,9 +285,6 @@ class HDCBenchmark:
                 )
 
             except Exception as e:
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 results["data"][proj_type.value] = {"supported": False, "error": str(e)}
                 print(f"  {proj_type.value}: Not implemented")

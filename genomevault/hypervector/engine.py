@@ -70,9 +70,6 @@ class HypervectorEngine:
             try:
                 x = np.asarray(arr, dtype=np.float64).reshape(1, -1)  # (1, n_features)
             except Exception as e:
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 raise EncodingError(
                     "failed to parse input array", context={"modality": modality}

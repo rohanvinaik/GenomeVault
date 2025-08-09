@@ -54,7 +54,9 @@ class TestMedianVerifierCircuit:
         values = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
         median = 3.5  # (3.0 + 4.0) / 2
 
-        proof = circuit.generate_proof(values=values, claimed_median=median, error_bound=0.1)
+        proof = circuit.generate_proof(
+            values=values, claimed_median=median, error_bound=0.1
+        )
 
         # Check that both median indices are opened
         opened_indices = proof.median_opening["indices"]
@@ -75,7 +77,9 @@ class TestMedianVerifierCircuit:
 
         # Try to create proof with wrong median
         with pytest.raises(ValueError, match="doesn't match actual"):
-            circuit.generate_proof(values=values, claimed_median=4.0, error_bound=0.01)  # Wrong!
+            circuit.generate_proof(
+                values=values, claimed_median=4.0, error_bound=0.01
+            )  # Wrong!
 
     def test_proof_zero_knowledge(self):
         """Test that proof doesn't reveal all values"""
@@ -85,7 +89,9 @@ class TestMedianVerifierCircuit:
         values = list(range(1, 101))  # 1 to 100
         median = 50.5
 
-        proof = circuit.generate_proof(values=values, claimed_median=median, error_bound=0.1)
+        proof = circuit.generate_proof(
+            values=values, claimed_median=median, error_bound=0.1
+        )
 
         # Check that not all values are revealed
         opened_values = proof.median_opening["values"]
@@ -128,7 +134,9 @@ class TestMedianVerifierCircuit:
         values = [1.5, 2.5, 3.5, 4.5, 5.5]
         median = 3.5
 
-        proof = circuit.generate_proof(values=values, claimed_median=median, error_bound=0.01)
+        proof = circuit.generate_proof(
+            values=values, claimed_median=median, error_bound=0.01
+        )
 
         # Serialize proof
         proof_dict = {
@@ -156,7 +164,9 @@ class TestMedianVerifierCircuit:
             error_bound=loaded_dict["error_bound"],
             num_values=loaded_dict["num_values"],
             commitment=bytes.fromhex(loaded_dict["commitment"]),
-            sorted_commitments=[bytes.fromhex(c) for c in loaded_dict["sorted_commitments"]],
+            sorted_commitments=[
+                bytes.fromhex(c) for c in loaded_dict["sorted_commitments"]
+            ],
             median_opening=loaded_dict["median_opening"],
             range_proofs=loaded_dict["range_proofs"],
             challenge=bytes.fromhex(loaded_dict["challenge"]),
@@ -217,10 +227,16 @@ class TestMedianVerifierCircuit:
 
         for n in [5, 10, 20, 50, 100]:
             values = list(range(n))
-            median = values[n // 2] if n % 2 == 1 else (values[n // 2 - 1] + values[n // 2]) / 2
+            median = (
+                values[n // 2]
+                if n % 2 == 1
+                else (values[n // 2 - 1] + values[n // 2]) / 2
+            )
 
             start = time.time()
-            proof = circuit.generate_proof(values=values, claimed_median=median, error_bound=0.01)
+            proof = circuit.generate_proof(
+                values=values, claimed_median=median, error_bound=0.01
+            )
             gen_time = (time.time() - start) * 1000
 
             start = time.time()
@@ -232,7 +248,9 @@ class TestMedianVerifierCircuit:
                 json.dumps(
                     {
                         "commitment": proof.commitment.hex(),
-                        "sorted_commitments": [c.hex() for c in proof.sorted_commitments],
+                        "sorted_commitments": [
+                            c.hex() for c in proof.sorted_commitments
+                        ],
                         "median_opening": proof.median_opening,
                         "range_proofs": proof.range_proofs,
                         "challenge": proof.challenge.hex(),

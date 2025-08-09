@@ -14,7 +14,9 @@ class VectorDimension(str, Enum):
 
 class VectorEncodeRequest(BaseModel):
     data: dict[str, list[float]] = Field(..., description="Multi-modal input data")
-    dimension: VectorDimension = Field(VectorDimension.D10K, description="Target dimension")
+    dimension: VectorDimension = Field(
+        VectorDimension.D10K, description="Target dimension"
+    )
     compression_tier: str = Field("full", description="mini, clinical, or full")
 
     @validator("data")

@@ -134,7 +134,8 @@ class HierarchicalEncoder:
         self.projection_matrices = {}
         self.domain_projections = {}
         self.holographic_systems = {
-            level: HolographicRepresentation(dim) for level, dim in self.dimensions.items()
+            level: HolographicRepresentation(dim)
+            for level, dim in self.dimensions.items()
         }
 
         # Initialize domain-specific projections
@@ -257,7 +258,9 @@ class HierarchicalEncoder:
                     else:
                         end_idx = x.shape[1]
 
-                    gene_features = x[:, start_idx:end_idx] if x.dim() > 1 else x[start_idx:end_idx]
+                    gene_features = (
+                        x[:, start_idx:end_idx] if x.dim() > 1 else x[start_idx:end_idx]
+                    )
                     outputs.append(layer(gene_features))
                     start_idx = end_idx
 
@@ -496,7 +499,9 @@ class HierarchicalEncoder:
             v2 = hv2.get_level(level)
 
             # Cosine similarity
-            sim = torch.nn.functional.cosine_similarity(v1.view(1, -1), v2.view(1, -1)).item()
+            sim = torch.nn.functional.cosine_similarity(
+                v1.view(1, -1), v2.view(1, -1)
+            ).item()
 
             similarities[level] = sim
 
@@ -505,7 +510,9 @@ class HierarchicalEncoder:
 
         return total_sim
 
-    def compress_to_tier(self, hv: HierarchicalHypervector, tier: str = "clinical") -> torch.Tensor:
+    def compress_to_tier(
+        self, hv: HierarchicalHypervector, tier: str = "clinical"
+    ) -> torch.Tensor:
         """
         Compress hierarchical hypervector to specific storage tier.
 
@@ -539,7 +546,9 @@ class HierarchicalEncoder:
     def _quantize_vector(self, vector: torch.Tensor, bits: int) -> torch.Tensor:
         """Quantize vector to specified bit depth"""
         # Normalize to [-1, 1]
-        normalized = 2 * (vector - vector.min()) / (vector.max() - vector.min() + 1e-8) - 1
+        normalized = (
+            2 * (vector - vector.min()) / (vector.max() - vector.min() + 1e-8) - 1
+        )
 
         # Quantize
         levels = 2**bits

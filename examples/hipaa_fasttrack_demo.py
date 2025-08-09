@@ -106,9 +106,6 @@ async def demonstrate_hipaa_fasttrack():
                 governance.committees[CommitteeType.SCIENTIFIC_ADVISORY].add_member(node.node_id)
 
             except Exception:
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 print("  ✗ Registration failed: {e}")
                 raise

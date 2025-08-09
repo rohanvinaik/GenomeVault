@@ -12,13 +12,18 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+from genomevault.utils.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class ChecklistImplementer:
     def __init__(self, project_root):
         self.project_root = Path(project_root)
         self.log_file = self.project_root / "checklist_implementation.log"
         self.backup_dir = (
-            self.project_root / f"genomevault_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            self.project_root
+            / f"genomevault_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         )
 
     def log(self, message):
@@ -67,15 +72,11 @@ class ChecklistImplementer:
                 self.log(f"Output: {result.stdout[:200]}...")
             return True
         except subprocess.CalledProcessError as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             self.log(f"Error: {e}")
             if e.stderr:
                 self.log(f"Stderr: {e.stderr}")
             return False
-            raise
 
     def step_5_convert_prints(self):
         """Step 5: Convert print statements to logging."""
@@ -106,7 +107,9 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message
                     lines = content.split("\n")
                     import_end = 0
                     for i, line in enumerate(lines):
-                        if line.strip() and not line.startswith(("import", "from", "#")):
+                        if line.strip() and not line.startswith(
+                            ("import", "from", "#")
+                        ):
                             import_end = i
                             break
 
@@ -313,13 +316,9 @@ def main():
     try:
         input()
     except KeyboardInterrupt:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         print("\nCancelled.")
         sys.exit(0)
-        raise
 
     implementer.implement_checklist()
 

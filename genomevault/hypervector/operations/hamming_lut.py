@@ -81,7 +81,9 @@ def hamming_distance_cpu(vec1: np.ndarray, vec2: np.ndarray, lut: np.ndarray) ->
 
 
 @jit(nopython=True, parallel=True, cache=True)
-def hamming_distance_batch_cpu(vecs1: np.ndarray, vecs2: np.ndarray, lut: np.ndarray) -> np.ndarray:
+def hamming_distance_batch_cpu(
+    vecs1: np.ndarray, vecs2: np.ndarray, lut: np.ndarray
+) -> np.ndarray:
     """
     Compute pairwise Hamming distances for batches of vectors.
 
@@ -261,11 +263,17 @@ class HammingLUT:
             # GPU implementation
             d_vecs1 = cuda.to_device(vecs1)
             d_vecs2 = cuda.to_device(vecs2)
-            d_distances = cuda.device_array((vecs1.shape[0], vecs2.shape[0]), dtype=np.int32)
+            d_distances = cuda.device_array(
+                (vecs1.shape[0], vecs2.shape[0]), dtype=np.int32
+            )
 
             threads_per_block = (16, 16)
-            blocks_x = (vecs1.shape[0] + threads_per_block[0] - 1) // threads_per_block[0]
-            blocks_y = (vecs2.shape[0] + threads_per_block[1] - 1) // threads_per_block[1]
+            blocks_x = (vecs1.shape[0] + threads_per_block[0] - 1) // threads_per_block[
+                0
+            ]
+            blocks_y = (vecs2.shape[0] + threads_per_block[1] - 1) // threads_per_block[
+                1
+            ]
             blocks = (blocks_x, blocks_y)
 
             hamming_distance_batch_kernel[blocks, threads_per_block](

@@ -1,6 +1,3 @@
-from genomevault.observability.logging import configure_logging
-
-logger = configure_logging()
 """End-to-end tests for ZK proof system integration."""
 
 import asyncio
@@ -11,6 +8,10 @@ import pytest
 from genomevault.api.models import ProofRequest, ProofResponse
 from genomevault.clinical.prs_calculator import PRSCalculator
 from genomevault.zk_proofs.service import ZKProofService
+
+from genomevault.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 class TestZKEndToEnd:

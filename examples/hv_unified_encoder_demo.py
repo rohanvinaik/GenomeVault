@@ -44,7 +44,9 @@ def main():
 
     # Example 2: Orthogonal projection with higher dimensions
     print("\n2. Using orthogonal projection with 15k dimensions")
-    encoder_ortho = create_encoder(dimension=15000, projection_type="orthogonal", seed=42)
+    encoder_ortho = create_encoder(
+        dimension=15000, projection_type="orthogonal", seed=42
+    )
 
     # Encode DNA sequences
     sequences = ["ATCGATCG", "ATCGATCG", "GGCCTTAA", "ATATATAT"]

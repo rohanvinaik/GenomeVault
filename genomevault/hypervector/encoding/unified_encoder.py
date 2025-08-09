@@ -343,4 +343,6 @@ def create_encoder(
     Returns:
         Configured encoder instance
     """
-    return UnifiedHypervectorEncoder(dimension=dimension, projection_type=projection_type, **kwargs)
+    return UnifiedHypervectorEncoder(
+        dimension=dimension, projection_type=projection_type, **kwargs
+    )

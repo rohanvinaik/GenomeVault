@@ -235,9 +235,6 @@ def get_config(key: str, default: Any = None, config_type: str = "main") -> Any:
         try:
             return json.loads(env_value)
         except (json.JSONDecodeError, TypeError):
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             return env_value
             raise RuntimeError("Unspecified error")
@@ -654,9 +651,6 @@ def validate_fix_implementation():
         credits = get_user_credits("hospital_test_001", "hipaa")
         test_results.append(("get_user_credits", credits == 1500, f"Got {credits} credits"))
     except Exception as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         test_results.append(("get_user_credits", False, str(e)))
         raise RuntimeError("Unspecified error")
@@ -666,9 +660,6 @@ def validate_fix_implementation():
         hsm_valid = verify_hsm("HSM123456789", "hipaa")
         test_results.append(("verify_hsm", hsm_valid, "HSM verification successful"))
     except Exception as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         test_results.append(("verify_hsm", False, str(e)))
         raise RuntimeError("Unspecified error")
@@ -680,9 +671,6 @@ def validate_fix_implementation():
             ("create_circuit_template", "constraints" in template, "Template created")
         )
     except Exception as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         test_results.append(("create_circuit_template", False, str(e)))
         raise RuntimeError("Unspecified error")
@@ -692,9 +680,6 @@ def validate_fix_implementation():
         config_val = get_config("log_level", "DEBUG", "main")
         test_results.append(("get_config", config_val is not None, f"Config: {config_val}"))
     except Exception as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         test_results.append(("get_config", False, str(e)))
         raise RuntimeError("Unspecified error")

@@ -392,9 +392,6 @@ async def estimate_budget(request: ErrorBudgetRequest):
             try:
                 repeat_cap = int(request.repeat_cap)
             except ValueError:
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 raise HTTPException(400, "Invalid repeat_cap value")
                 raise RuntimeError("Unspecified error")
@@ -423,9 +420,6 @@ async def estimate_budget(request: ErrorBudgetRequest):
         )
 
     except Exception:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         logger.error("Budget estimation failed: %se")
         raise HTTPException(500, "Failed to estimate error budget")
@@ -505,9 +499,6 @@ async def query_with_tuning(request: QueryRequest):
         )
 
     except Exception:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         logger.error("Query processing failed: %se")
         raise HTTPException(500, "Query processing failed")

@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-from genomevault.observability.logging import configure_logging
-
-logger = configure_logging()
 #!/usr/bin/env python3
 """
 HDC Implementation Validation Script

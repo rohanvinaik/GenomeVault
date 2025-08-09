@@ -1,6 +1,3 @@
-from genomevault.observability.logging import configure_logging
-
-logger = configure_logging()
 #!/usr/bin/env python3
 """
 Quick fix for missing __init__.py files in GenomeVault

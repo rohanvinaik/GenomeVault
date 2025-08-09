@@ -48,7 +48,9 @@ class TestHypervectorEncodingRoundtrip:
         encoded_different = encoder.encode_sequence(different_sequence)
         diff_similarity = encoder.similarity(encoded, encoded_different)
 
-        assert diff_similarity < similarity, "Different sequences should have lower similarity"
+        assert (
+            diff_similarity < similarity
+        ), "Different sequences should have lower similarity"
 
     def test_packed_hypervector_roundtrip(self):
         """Test packed hypervector encoding/decoding"""
@@ -115,7 +117,9 @@ class TestHypervectorEncodingRoundtrip:
         encoder = HypervectorEncoder()
 
         # Test multiresolution encoding
-        multiresolution = encoder.encode_multiresolution(genomic_data, OmicsType.GENOMIC)
+        multiresolution = encoder.encode_multiresolution(
+            genomic_data, OmicsType.GENOMIC
+        )
 
         # Should have all tiers
         assert CompressionTier.MINI.value in multiresolution
@@ -127,15 +131,24 @@ class TestHypervectorEncodingRoundtrip:
         clinical_vec = multiresolution[CompressionTier.CLINICAL.value]
         full_vec = multiresolution[CompressionTier.FULL.value]
 
-        assert mini_vec.shape[0] == encoder.tier_configs[CompressionTier.MINI]["dimension"]
-        assert clinical_vec.shape[0] == encoder.tier_configs[CompressionTier.CLINICAL]["dimension"]
-        assert full_vec.shape[0] == encoder.tier_configs[CompressionTier.FULL]["dimension"]
+        assert (
+            mini_vec.shape[0] == encoder.tier_configs[CompressionTier.MINI]["dimension"]
+        )
+        assert (
+            clinical_vec.shape[0]
+            == encoder.tier_configs[CompressionTier.CLINICAL]["dimension"]
+        )
+        assert (
+            full_vec.shape[0] == encoder.tier_configs[CompressionTier.FULL]["dimension"]
+        )
 
         # Test similarity between tiers - should be somewhat correlated
         mini_clinical_sim = encoder.similarity(
             mini_vec[:5000], clinical_vec[:5000]
         )  # Compare first 5000 dims
-        assert mini_clinical_sim > 0.1, "Different tiers should maintain some similarity"
+        assert (
+            mini_clinical_sim > 0.1
+        ), "Different tiers should maintain some similarity"
 
     def test_similarity_metrics(self):
         """Test different similarity metrics work correctly"""
@@ -143,12 +156,16 @@ class TestHypervectorEncodingRoundtrip:
 
         # Create two similar genomic samples
         sample1 = {
-            "variants": {"snps": [{"chr": "chr1", "pos": 1000, "ref": "A", "alt": "T"}]},
+            "variants": {
+                "snps": [{"chr": "chr1", "pos": 1000, "ref": "A", "alt": "T"}]
+            },
             "quality_metrics": {"mean_coverage": 30.0},
         }
 
         sample2 = {
-            "variants": {"snps": [{"chr": "chr1", "pos": 1000, "ref": "A", "alt": "T"}]},
+            "variants": {
+                "snps": [{"chr": "chr1", "pos": 1000, "ref": "A", "alt": "T"}]
+            },
             "quality_metrics": {"mean_coverage": 30.1},  # Slightly different
         }
 
@@ -177,7 +194,9 @@ class TestHypervectorEncodingRoundtrip:
     def test_encoder_consistency(self):
         """Test that encoders produce consistent results with same inputs"""
         test_data = {
-            "variants": {"snps": [{"chr": "chr1", "pos": 12345, "ref": "A", "alt": "G"}]},
+            "variants": {
+                "snps": [{"chr": "chr1", "pos": 12345, "ref": "A", "alt": "G"}]
+            },
             "quality_metrics": {"mean_coverage": 25.0},
         }
 
@@ -213,7 +232,9 @@ class TestHypervectorEncodingRoundtrip:
         packed_efficiency = packed_encoder.memory_efficiency
 
         assert packed_efficiency > regular_efficiency
-        assert packed_efficiency >= 32.0  # Should be 32x more efficient (1 bit vs 32 bits)
+        assert (
+            packed_efficiency >= 32.0
+        )  # Should be 32x more efficient (1 bit vs 32 bits)
 
     def test_batch_processing(self):
         """Test batch processing of multiple samples"""
@@ -223,7 +244,9 @@ class TestHypervectorEncodingRoundtrip:
         samples = []
         for i in range(5):
             sample = {
-                "variants": {"snps": [{"chr": "chr1", "pos": 1000 + i, "ref": "A", "alt": "T"}]},
+                "variants": {
+                    "snps": [{"chr": "chr1", "pos": 1000 + i, "ref": "A", "alt": "T"}]
+                },
                 "quality_metrics": {"mean_coverage": 30.0 + i},
             }
             samples.append(sample)

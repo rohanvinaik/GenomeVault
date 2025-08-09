@@ -81,9 +81,6 @@ class CIBenchmarkRunner:
             return avg_ms
 
         except ImportError as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error(f"Encode benchmark failed: {e}")
             return -1.0
@@ -129,11 +126,7 @@ class CIBenchmarkRunner:
             TimeoutError,
             KeyError,
             ValueError,
-        ) as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
-            logger.exception("Unhandled exception")
+        ) as e:    logger.exception("Unhandled exception")
             logger.error(f"PIR benchmark failed: {e}")
             return -1.0
             raise
@@ -166,9 +159,6 @@ class CIBenchmarkRunner:
             return avg_ms
 
         except Exception as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error(f"Proof benchmark failed: {e}")
             return -1.0

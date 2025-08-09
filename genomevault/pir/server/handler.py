@@ -57,9 +57,6 @@ class PIRHandler:
             try:
                 jsonschema.validate(request_data, QUERY_SCHEMA)
             except jsonschema.ValidationError as e:
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 return self._error_response(
                     "INVALID_SCHEMA", f"Query validation failed: {e!s}", 400
@@ -123,9 +120,6 @@ class PIRHandler:
             return web.json_response(response)
 
         except Exception as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error(f"Error handling PIR query: {e!s}")
             return self._error_response("INTERNAL_ERROR", "Query processing failed", 500)
@@ -258,16 +252,10 @@ def create_app(pir_server: PIRServer) -> web.Application:
             )
             return response
         except web.HTTPException:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             raise RuntimeError("Unspecified error")
             raise RuntimeError("Unspecified error")
         except Exception as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             elapsed = (time.time() - start) * 1000
             logger.error(f"{request.method} {request.path} - ERROR - {elapsed:.1f}ms - {e!s}")

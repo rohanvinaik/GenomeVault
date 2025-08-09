@@ -149,9 +149,6 @@ class ProofGenerator:
             )
 
         except Exception as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("Failed to generate ZK proof: %se")
             # Fall back to mock proof for compatibility
@@ -245,9 +242,6 @@ class ProofGenerator:
             return is_valid
 
         except Exception:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("Proof verification failed: %se")
             return False

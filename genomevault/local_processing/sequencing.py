@@ -162,9 +162,6 @@ class SequencingProcessor:
             try:
                 subprocess.run([tool, "--version"], capture_output=True, check=True)
             except (subprocess.CalledProcessError, FileNotFoundError):
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 missing_tools.append(name)
                 raise RuntimeError("Unspecified error")
@@ -385,9 +382,6 @@ class SequencingProcessor:
                 capture_output=True,
             )
         except (subprocess.CalledProcessError, FileNotFoundError):
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.warning("GATK not available, using samtools")
             subprocess.run(

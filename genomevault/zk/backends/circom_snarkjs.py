@@ -177,9 +177,6 @@ def verify(paths: CircuitPaths, proof: dict, public: dict) -> bool:
         )
         return True
     except subprocess.CalledProcessError:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         return False
         raise RuntimeError("Unspecified error")

@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-from genomevault.observability.logging import configure_logging
-
-logger = configure_logging()
 #!/usr/bin/env python3
 """
 Orphan Disease Research Workflow Example
@@ -78,7 +75,9 @@ class OrphanDiseaseResearchDemo:
                 "genomic_features": genomic_features,
                 "mutation": np.random.choice(mecp2_mutations),
                 "age": np.random.randint(2, 18),
-                "severity_score": np.random.uniform(10, 50),  # Rett Syndrome Severity Scale
+                "severity_score": np.random.uniform(
+                    10, 50
+                ),  # Rett Syndrome Severity Scale
                 "hand_stereotypies": np.random.choice([True, False], p=[0.95, 0.05]),
                 "seizures": np.random.choice([True, False], p=[0.7, 0.3]),
                 "scoliosis": np.random.choice([True, False], p=[0.6, 0.4]),
@@ -126,7 +125,9 @@ class OrphanDiseaseResearchDemo:
         logger.info(
             f"  - Original size per patient: {patients[0]['genomic_features'].nbytes / 1024:.1f} KB"
         )
-        logger.info(f"  - Compressed size: {compressed.high_vector.nbytes / 1024:.1f} KB")
+        logger.info(
+            f"  - Compressed size: {compressed.high_vector.nbytes / 1024:.1f} KB"
+        )
         logger.info(
             f"  - Compression ratio: {compressed.compression_metadata['compression_ratio']:.1f}x"
         )
@@ -181,9 +182,13 @@ class OrphanDiseaseResearchDemo:
             proof = self.prover.generate_proof(
                 circuit_name="variant_presence",
                 public_inputs={
-                    "variant_hash": hashlib.sha256(f"{site}_stats".encode()).hexdigest(),
+                    "variant_hash": hashlib.sha256(
+                        f"{site}_stats".encode()
+                    ).hexdigest(),
                     "reference_hash": hashlib.sha256(b"MECP2").hexdigest(),
-                    "commitment_root": hashlib.sha256(str(local_stats).encode()).hexdigest(),
+                    "commitment_root": hashlib.sha256(
+                        str(local_stats).encode()
+                    ).hexdigest(),
                 },
                 private_inputs={
                     "variant_data": {
@@ -193,7 +198,8 @@ class OrphanDiseaseResearchDemo:
                         "alt": "T",
                     },
                     "merkle_proof": [
-                        hashlib.sha256(f"node_{i}".encode()).hexdigest() for i in range(10)
+                        hashlib.sha256(f"node_{i}".encode()).hexdigest()
+                        for i in range(10)
                     ],
                     "witness_randomness": np.random.bytes(32).hex(),
                 },
@@ -215,7 +221,9 @@ class OrphanDiseaseResearchDemo:
         aggregation_time = time.time() - start_time
 
         logger.info(f"✓ Aggregated proofs in {aggregation_time * 1000:.1f} ms")
-        logger.info(f"  - Verification complexity: {aggregated_proof.verification_complexity}")
+        logger.info(
+            f"  - Verification complexity: {aggregated_proof.verification_complexity}"
+        )
         logger.info(f"  - Proof size: {len(aggregated_proof.aggregation_proof)} bytes")
 
         # Identify potential biomarkers
@@ -232,7 +240,9 @@ class OrphanDiseaseResearchDemo:
             "total_patients": sum(s[0]["patient_count"] for s in site_contributions),
         }
 
-    def privacy_preserving_trial_matching(self, cohort: dict, trial_criteria: dict) -> list[str]:
+    def privacy_preserving_trial_matching(
+        self, cohort: dict, trial_criteria: dict
+    ) -> list[str]:
         """Match patients to clinical trials without exposing their data."""
         logger.info("\n3. Privacy-Preserving Clinical Trial Matching")
         logger.info("-" * 60)
@@ -248,7 +258,9 @@ class OrphanDiseaseResearchDemo:
             query = self.pir_system.generate_query(i, database_size)
 
             # Simulate server responses
-            mock_database = [cv["vector"].high_vector for cv in cohort["compressed_vectors"]]
+            mock_database = [
+                cv["vector"].high_vector for cv in cohort["compressed_vectors"]
+            ]
             server_responses = []
 
             for server_id in range(self.pir_system.num_servers):
@@ -286,8 +298,12 @@ class OrphanDiseaseResearchDemo:
             logger.info(f"  - {category}: {', '.join(markers)}")
 
         logger.info("\n✓ Cohort Statistics:")
-        logger.info(f"  - Total patients analyzed: {discovery_results['total_patients']}")
-        logger.info(f"  - Sites participating: {discovery_results['sites_contributing']}")
+        logger.info(
+            f"  - Total patients analyzed: {discovery_results['total_patients']}"
+        )
+        logger.info(
+            f"  - Sites participating: {discovery_results['sites_contributing']}"
+        )
         logger.info("  - Data shared: 0 bytes (all computations on encrypted data)")
 
         logger.info("\n✓ Privacy Guarantees Maintained:")
@@ -342,7 +358,9 @@ def main():
 
     # Simulate patient cohort
     patients = demo.simulate_patient_data(num_patients=50)
-    logger.info(f"Simulated {len(patients)} patients across {len(demo.research_sites)} sites")
+    logger.info(
+        f"Simulated {len(patients)} patients across {len(demo.research_sites)} sites"
+    )
 
     # Create privacy-preserving representations
     cohort = demo.create_privacy_preserving_cohort(patients)

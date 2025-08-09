@@ -22,9 +22,6 @@ try:
 
     HAS_YAML = True
 except ImportError:
-    from genomevault.observability.logging import configure_logging
-
-    logger = configure_logging()
     logger.exception("Unhandled exception")
     HAS_YAML = False
     yaml = None
@@ -291,9 +288,6 @@ class Config:
 
             logger.info("Loaded configuration from %s", self.config_file)
         except Exception as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error("Failed to load configuration: %s", e)
             raise RuntimeError("Unspecified error")

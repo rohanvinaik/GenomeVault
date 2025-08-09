@@ -1,17 +1,20 @@
-from genomevault.observability.logging import configure_logging
-
-logger = configure_logging()
 #!/usr/bin/env python3
 import argparse
 import json
 
 from genomevault.clinical.eval.harness import compute_report, load_csv
 
+from genomevault.utils.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--data", required=True, help="CSV with columns y_true,y_score")
-    ap.add_argument("--calibrator", choices=["none", "platt", "isotonic"], default="none")
+    ap.add_argument(
+        "--calibrator", choices=["none", "platt", "isotonic"], default="none"
+    )
     ap.add_argument("--bins", type=int, default=10)
     ap.add_argument("--out", default="report.json")
     args = ap.parse_args()

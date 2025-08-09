@@ -296,9 +296,6 @@ def run_all_tests():
             result = test_func()
             results[test_name] = "PASSED" if result else "FAILED"
         except Exception as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             print(f"\nError in {test_name}: {e}")
             results[test_name] = "ERROR"

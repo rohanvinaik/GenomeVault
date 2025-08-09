@@ -52,9 +52,13 @@ class VariantFrequencyCircuit:
         self.setup_complete = False
 
         # Configure constants
-        self.C_MAX = 10000  # Maximum plausible allele count (2N for diploid with N samples)
+        self.C_MAX = (
+            10000  # Maximum plausible allele count (2N for diploid with N samples)
+        )
 
-    def setup_circuit(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
+    def setup_circuit(
+        self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
+    ):
         """Setup the circuit with actual inputs."""
 
         # Public inputs
@@ -70,7 +74,9 @@ class VariantFrequencyCircuit:
 
         # Assign public input values
         self.cs.assign(self.sum_var, FieldElement(public_inputs["total_sum"]))
-        self.cs.assign(self.merkle_root_var, FieldElement(int(public_inputs["merkle_root"], 16)))
+        self.cs.assign(
+            self.merkle_root_var, FieldElement(int(public_inputs["merkle_root"], 16))
+        )
         self.cs.assign(self.num_snps_var, FieldElement(public_inputs["num_snps"]))
 
         # Assign SNP IDs
@@ -113,7 +119,9 @@ class VariantFrequencyCircuit:
                 if snp_idx < len(merkle_proofs):
                     proof = merkle_proofs[snp_idx]
                     if depth < len(proof["path"]):
-                        self.cs.assign(path_var, FieldElement(int(proof["path"][depth], 16)))
+                        self.cs.assign(
+                            path_var, FieldElement(int(proof["path"][depth], 16))
+                        )
                         self.cs.assign(index_var, FieldElement(proof["indices"][depth]))
                     else:
                         self.cs.assign(path_var, FieldElement(0))
@@ -290,7 +298,9 @@ class VariantFrequencyCircuit:
         # Add constraint that depends on randomness but doesn't affect the main logic
         # r1 * r2 = r3 * randomness
         product_var = self.cs.add_variable("blind_product")
-        self.cs.assign(product_var, self.cs.get_assignment(r1) * self.cs.get_assignment(r2))
+        self.cs.assign(
+            product_var, self.cs.get_assignment(r1) * self.cs.get_assignment(r2)
+        )
 
         self.cs.enforce_multiplication(r1, r2, product_var)
 
@@ -360,7 +370,9 @@ def create_example_frequency_proof():
     for i, (_snp_id, _count) in enumerate(zip(snp_id_values, allele_counts)):
         # In practice, these would be real Merkle paths
         proof = {
-            "path": [hashlib.sha256(f"node_{i}_{j}".encode()).hexdigest() for j in range(20)],
+            "path": [
+                hashlib.sha256(f"node_{i}_{j}".encode()).hexdigest() for j in range(20)
+            ],
             "indices": [j % 2 for j in range(20)],
         }
         merkle_proofs.append(proof)

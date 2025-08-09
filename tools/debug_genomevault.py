@@ -40,17 +40,11 @@ class GenomeVaultDebugger:
                 print("  ✅ pydantic-settings is installed")
                 return True
             except ImportError:
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 self.issues.append("pydantic-settings is not installed")
                 return False
                 raise
         except ImportError:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             self.issues.append("Pydantic is not installed")
             return False
@@ -78,9 +72,6 @@ class GenomeVaultDebugger:
             self.fixed.append("Pydantic upgraded to v2 with pydantic-settings")
             return True
         except subprocess.CalledProcessError:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             print("  ❌ Failed to fix Pydantic: {e}")
             return False
@@ -106,9 +97,6 @@ class GenomeVaultDebugger:
                 __import__(module)
                 print("  ✅ {module}")
             except ImportError as e:
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 print("  ❌ {module}: {e}")
                 failed_imports.append((module, str(e)))
@@ -136,9 +124,6 @@ class GenomeVaultDebugger:
                     try:
                         __import__(pkg_name.replace("-", "_"))
                     except ImportError:
-                        from genomevault.observability.logging import configure_logging
-
-                        logger = configure_logging()
                         logger.exception("Unhandled exception")
                         missing.append(pkg_name)
                         raise
@@ -151,9 +136,6 @@ class GenomeVaultDebugger:
             return True
 
         except FileNotFoundError:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             self.issues.append("requirements.txt not found")
             return False
@@ -178,9 +160,6 @@ class GenomeVaultDebugger:
                 self.issues.append("Tests failed")
                 return False
         except subprocess.CalledProcessError:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             self.issues.append("Failed to run tests: {e}")
             return False

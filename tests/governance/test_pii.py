@@ -16,4 +16,7 @@ def test_detect_and_redact_and_tokenize(tmp_path, monkeypatch):
     tok = tokenize_text(text, store=store)
     assert "tok_" in tok
     # Mapping persisted
-    assert store.get(next(v for v in tok.split() if v.startswith("tok_"))[:20]) is None or True
+    assert (
+        store.get(next(v for v in tok.split() if v.startswith("tok_"))[:20]) is None
+        or True
+    )

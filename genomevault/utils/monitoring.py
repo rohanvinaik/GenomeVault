@@ -173,9 +173,6 @@ class MetricsCollector:
                     return result
 
                 except Exception as e:
-                    from genomevault.observability.logging import configure_logging
-
-                    logger = configure_logging()
                     logger.exception("Unhandled exception")
                     # Track error
                     self.processing_errors.labels(

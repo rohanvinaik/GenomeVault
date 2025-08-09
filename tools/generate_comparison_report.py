@@ -1,6 +1,3 @@
-from genomevault.observability.logging import configure_logging
-
-logger = configure_logging()
 #!/usr/bin/env python3
 """
 GenomeVault Before/After Comparison Report Generator
@@ -35,12 +32,16 @@ def generate_comparison_report():
     }
 
     # Try to load current validation report
-    current_report_path = Path("/Users/rohanvinaik/genomevault/audit_validation_report.json")
+    current_report_path = Path(
+        "/Users/rohanvinaik/genomevault/audit_validation_report.json"
+    )
     if current_report_path.exists():
         with open(current_report_path) as f:
             current_audit = json.load(f)
     else:
-        logger.info("No current validation report found. Run validate_audit_fixes.py first.")
+        logger.info(
+            "No current validation report found. Run validate_audit_fixes.py first."
+        )
         return
 
     # Generate comparison report
@@ -90,11 +91,15 @@ def generate_comparison_report():
     orig_missing = original_audit.get("missing_init_dirs", 19)
     curr_missing = len(current_audit.get("missing_init_dirs", []))
     fixed_inits = orig_missing - curr_missing
-    logger.info(f"Missing __init__.py files: {orig_missing} → {curr_missing} ({fixed_inits} fixed)")
+    logger.info(
+        f"Missing __init__.py files: {orig_missing} → {curr_missing} ({fixed_inits} fixed)"
+    )
 
     # Print statements
     orig_prints = original_audit.get("n_print_calls", 456)
-    curr_prints = sum(item["count"] for item in current_audit.get("files_with_prints", []))
+    curr_prints = sum(
+        item["count"] for item in current_audit.get("files_with_prints", [])
+    )
     fixed_prints = orig_prints - curr_prints
     logger.info(
         f"Print statements: {orig_prints} → {curr_prints} ({fixed_prints} converted to logging)"
@@ -102,7 +107,9 @@ def generate_comparison_report():
 
     # Broad exceptions
     orig_excepts = original_audit.get("n_broad_excepts", 118)
-    curr_excepts = sum(item["count"] for item in current_audit.get("files_with_broad_excepts", []))
+    curr_excepts = sum(
+        item["count"] for item in current_audit.get("files_with_broad_excepts", [])
+    )
     fixed_excepts = orig_excepts - curr_excepts
     logger.info(
         f"Broad exceptions: {orig_excepts} → {curr_excepts} ({fixed_excepts} made specific)"
@@ -144,7 +151,9 @@ def generate_comparison_report():
     elif progress >= 50:
         logger.info("\n→ Good start! Continue with remaining fixes.")
     else:
-        logger.info("\n→ Run the comprehensive fix script to address most issues automatically.")
+        logger.info(
+            "\n→ Run the comprehensive fix script to address most issues automatically."
+        )
 
     logger.info("")
 

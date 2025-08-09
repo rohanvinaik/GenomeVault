@@ -96,9 +96,6 @@ def get_encoder(version: str | None = None) -> HypervectorEncoder:
     try:
         return registry.get_encoder(version)
     except (KeyError, ValueError, RuntimeError) as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         logger.error("Failed to get encoder: %se")
         raise HTTPException(status_code=500, detail=str(e))
@@ -122,9 +119,6 @@ async def encode_genome(
         try:
             omics_type = OmicsType(request.omics_type)
         except ValueError:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             raise HTTPException(
                 status_code=400,
@@ -138,9 +132,6 @@ async def encode_genome(
             try:
                 compression_tier = CompressionTier(request.compression_tier)
             except ValueError:
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 raise HTTPException(
                     status_code=400,
@@ -173,16 +164,10 @@ async def encode_genome(
         )
 
     except HTTPException:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         raise RuntimeError("Unspecified error")
         raise RuntimeError("Unspecified error")
     except (ValueError, RuntimeError, TypeError, AttributeError) as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         logger.error("Encoding error: %se")
         raise HTTPException(status_code=500, detail=str(e))
@@ -254,9 +239,6 @@ async def encode_multimodal(
         )
 
     except (ValueError, RuntimeError, TypeError, KeyError, AttributeError) as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         logger.error("Multi-modal encoding error: %se")
         raise HTTPException(status_code=500, detail=str(e))
@@ -319,16 +301,10 @@ async def decode_vector(request: DecodeRequest):
             raise HTTPException(status_code=400, detail=f"Unknown query type: {request.query_type}")
 
     except HTTPException:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         raise RuntimeError("Unspecified error")
         raise RuntimeError("Unspecified error")
     except (ValueError, RuntimeError, TypeError, AttributeError) as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         logger.error("Decoding error: %se")
         raise HTTPException(status_code=500, detail=str(e))
@@ -380,16 +356,10 @@ async def compute_similarity(request: SimilarityRequest):
         }
 
     except HTTPException:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         raise RuntimeError("Unspecified error")
         raise RuntimeError("Unspecified error")
     except (ValueError, RuntimeError, TypeError, AttributeError) as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         logger.error("Similarity computation error: %se")
         raise HTTPException(status_code=500, detail=str(e))
@@ -412,9 +382,6 @@ async def get_version_info():
         )
 
     except (ImportError, AttributeError, RuntimeError) as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         logger.error("Version info error: %se")
         raise HTTPException(status_code=500, detail=str(e))
@@ -435,9 +402,6 @@ async def register_new_version(
         try:
             ProjectionType(projection_type)
         except ValueError:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             raise HTTPException(
                 status_code=400, detail=f"Invalid projection type: {projection_type}"
@@ -463,16 +427,10 @@ async def register_new_version(
         }
 
     except HTTPException:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         raise RuntimeError("Unspecified error")
         raise RuntimeError("Unspecified error")
     except (ValueError, RuntimeError, TypeError) as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         logger.error("Version registration error: %se")
         raise HTTPException(status_code=500, detail=str(e))
@@ -516,16 +474,10 @@ async def encode_genomic_file(
         }
 
     except HTTPException:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         raise RuntimeError("Unspecified error")
         raise RuntimeError("Unspecified error")
     except (ValueError, RuntimeError, OSError) as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         logger.error("File encoding error: %se")
         raise HTTPException(status_code=500, detail=str(e))
@@ -571,9 +523,6 @@ async def get_performance_metrics():
         )
 
     except (RuntimeError, AttributeError, TypeError) as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         logger.error("Performance metrics error: %se")
         raise HTTPException(status_code=500, detail=str(e))
@@ -597,9 +546,6 @@ async def health_check():
             "test_encoding_dimension": test_vector.shape[0],
         }
     except (RuntimeError, ValueError, AttributeError, Exception) as e:
-        from genomevault.observability.logging import configure_logging
-
-        logger = configure_logging()
         logger.exception("Unhandled exception")
         return {"status": "unhealthy", "error": str(e)}
         raise RuntimeError("Unspecified error")

@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Quick test to identify the exact import issue"""
 
-import logging
 import traceback
 
-logger = logging.getLogger(__name__)
+from genomevault.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 logger.info("🔍 GenomeVault Import Diagnostic")
@@ -13,47 +14,41 @@ logger.info("=" * 50)
 # Test 1: Basic package structure
 logger.info("\n1. Testing basic package structure...")
 try:
-    logger.info("✓ genomevault package exists")
-except Exception:
-    from genomevault.observability.logging import configure_logging
+    import genomevault
 
-    logger = configure_logging()
+    logger.info("✓ genomevault package exists")
+except Exception as e:
     logger.exception("Unhandled exception")
-    logger.info("✗ genomevault package error: {e}")
+    logger.info(f"✗ genomevault package error: {e}")
     raise
 
 # Test 2: Core config
 logger.info("\n2. Testing core.config...")
 try:
-    logger.info("✓ core.config imports work")
-except Exception:
-    from genomevault.observability.logging import configure_logging
+    from genomevault.core import config
 
-    logger = configure_logging()
+    logger.info("✓ core.config imports work")
+except Exception as e:
     logger.exception("Unhandled exception")
-    logger.info("✗ core.config error: {e}")
+    logger.info(f"✗ core.config error: {e}")
     raise
 
 # Test 3: Utils
 logger.info("\n3. Testing utils...")
 try:
-    logger.info("✓ utils.logging works")
-except Exception:
-    from genomevault.observability.logging import configure_logging
+    from genomevault.utils import logging
 
-    logger = configure_logging()
+    logger.info("✓ utils.logging works")
+except Exception as e:
     logger.exception("Unhandled exception")
-    logger.info("✗ utils.logging error: {e}")
+    logger.info(f"✗ utils.logging error: {e}")
     raise
 
 try:
     logger.info("✓ utils.encryption works")
-except Exception:
-    from genomevault.observability.logging import configure_logging
-
-    logger = configure_logging()
+except Exception as e:
     logger.exception("Unhandled exception")
-    logger.info("✗ utils.encryption error: {e}")
+    logger.info(f"✗ utils.encryption error: {e}")
     raise
 
 # Test 4: Hypervector - step by step
@@ -62,46 +57,34 @@ logger.info("\n4. Testing hypervector_transform step by step...")
 # 4a: Can we import the package?
 try:
     logger.info("✓ hypervector_transform package imports")
-except Exception:
-    from genomevault.observability.logging import configure_logging
-
-    logger = configure_logging()
+except Exception as e:
     logger.exception("Unhandled exception")
-    logger.info("✗ hypervector_transform package error: {e}")
+    logger.info(f"✗ hypervector_transform package error: {e}")
     traceback.print_exc()
     raise
 
 # 4b: Can we import from binding directly?
 try:
     logger.info("✓ circular_bind imports from binding.py")
-except Exception:
-    from genomevault.observability.logging import configure_logging
-
-    logger = configure_logging()
+except Exception as e:
     logger.exception("Unhandled exception")
-    logger.info("✗ binding.py error: {e}")
+    logger.info(f"✗ binding.py error: {e}")
     raise
 
 # 4c: What about the __init__.py imports?
 try:
     logger.info("✓ circular_bind imports from __init__.py")
-except Exception:
-    from genomevault.observability.logging import configure_logging
-
-    logger = configure_logging()
+except Exception as e:
     logger.exception("Unhandled exception")
-    logger.info("✗ __init__.py re-export error: {e}")
+    logger.info(f"✗ __init__.py re-export error: {e}")
     raise
 
 # 4d: Check encoding
 try:
     logger.info("✓ HypervectorEncoder imports correctly")
-except Exception:
-    from genomevault.observability.logging import configure_logging
-
-    logger = configure_logging()
+except Exception as e:
     logger.exception("Unhandled exception")
-    logger.info("✗ encoding.py error: {e}")
+    logger.info(f"✗ encoding.py error: {e}")
     traceback.print_exc()
     raise
 
@@ -109,12 +92,9 @@ except Exception:
 logger.info("\n5. Testing the specific failing import...")
 try:
     logger.info("✓ HypervectorEncoder imports from package")
-except Exception:
-    from genomevault.observability.logging import configure_logging
-
-    logger = configure_logging()
+except Exception as e:
     logger.exception("Unhandled exception")
-    logger.info("✗ Package-level import error: {e}")
+    logger.info(f"✗ Package-level import error: {e}")
     raise
 
 logger.info("\n" + "=" * 50)

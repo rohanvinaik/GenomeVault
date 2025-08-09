@@ -224,9 +224,6 @@ def cleanup_test_files():
             elif os.path.isdir(filepath):
                 shutil.rmtree(filepath)
         except Exception:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             raise
 

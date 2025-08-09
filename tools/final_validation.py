@@ -12,7 +12,9 @@ def test_ruff_functionality():
 
     try:
         # Test version
-        result = subprocess.run(["ruff", "--version"], capture_output=True, text=True, timeout=10)
+        result = subprocess.run(
+            ["ruff", "--version"], capture_output=True, text=True, timeout=10
+        )
         if result.returncode == 0:
             version = result.stdout.strip()
             print(f"✅ Ruff version: {version}")
@@ -45,7 +47,9 @@ def test_ruff_functionality():
         )
 
         if "unknown field" in result.stderr:
-            print("❌ CRITICAL: Ruff still has 'unknown field' error - version conflict remains!")
+            print(
+                "❌ CRITICAL: Ruff still has 'unknown field' error - version conflict remains!"
+            )
             return False
         else:
             print("✅ Ruff check runs without configuration crashes")
@@ -127,7 +131,9 @@ def test_pytest_basic():
     print("\n=== TESTING PYTEST BASICS ===")
 
     try:
-        result = subprocess.run(["pytest", "--version"], capture_output=True, text=True, timeout=10)
+        result = subprocess.run(
+            ["pytest", "--version"], capture_output=True, text=True, timeout=10
+        )
 
         if result.returncode == 0:
             print(f"✅ pytest available: {result.stdout.strip()}")
@@ -178,13 +184,17 @@ def show_summary_and_next_steps(results):
 
     if passed_tests == total_tests:
         print("\n🎉 ALL TESTS PASSED!")
-        print("\nThe Ruff version conflict has been resolved and core modules are working.")
+        print(
+            "\nThe Ruff version conflict has been resolved and core modules are working."
+        )
         print("\n📋 RECOMMENDED NEXT STEPS:")
         print("1. Run full Phase 3: python comprehensive_cleanup.py --phase 3")
         print("2. Run Phase 7 validation: python comprehensive_cleanup.py --phase 7")
         print("3. Test Ruff: ruff check . --statistics")
         print("4. Test pytest: pytest -q -k 'not api and not nanopore' --maxfail=3")
-        print("5. Commit changes: git add -A && git commit -m 'fix: resolve Ruff version conflict'")
+        print(
+            "5. Commit changes: git add -A && git commit -m 'fix: resolve Ruff version conflict'"
+        )
 
     elif passed_tests >= total_tests * 0.75:
         print("\n✅ MOSTLY SUCCESSFUL!")

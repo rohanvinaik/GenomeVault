@@ -1,5 +1,7 @@
 # genomevault/hypervector_transform/encoding.py
 from __future__ import annotations
+
+import logging
 from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, Iterable, Mapping, Optional, Union
@@ -7,9 +9,8 @@ from typing import Dict, Iterable, Mapping, Optional, Union
 import numpy as np
 import torch
 
-from genomevault.core.constants import OmicsType, HYPERVECTOR_DIMENSIONS
+from genomevault.core.constants import HYPERVECTOR_DIMENSIONS, OmicsType
 from genomevault.core.exceptions import EncodingError, ProjectionError
-import logging
 
 TensorLike = Union[np.ndarray, torch.Tensor]
 logger = logging.getLogger(__name__)
@@ -57,7 +58,9 @@ class HypervectorEncoder:
         """Encode features into a single hypervector."""
         try:
             x = self._as_tensor(features)
-            proj = self._get_projection_matrix(x.shape[-1], self.config.dimension, omics_type)
+            proj = self._get_projection_matrix(
+                x.shape[-1], self.config.dimension, omics_type
+            )
             hv = proj @ x.float()
             if self.config.normalize:
                 hv = self._normalize(hv)
@@ -91,7 +94,9 @@ class HypervectorEncoder:
 
     # --- internals ---
 
-    def _as_tensor(self, features: Union[TensorLike, Mapping[str, TensorLike]]) -> torch.Tensor:
+    def _as_tensor(
+        self, features: Union[TensorLike, Mapping[str, TensorLike]]
+    ) -> torch.Tensor:
         if isinstance(features, Mapping):
             # deterministic order
             arrs = [np.asarray(v) for k, v in sorted(features.items())]
@@ -116,11 +121,15 @@ class HypervectorEncoder:
         if self.config.projection_type == ProjectionType.RANDOM_GAUSSIAN:
             mat = torch.randn(output_dim, input_dim) / np.sqrt(input_dim)
         elif self.config.projection_type == ProjectionType.SPARSE_RANDOM:
-            mat = self._sparse_random(output_dim, input_dim, sparsity=self.config.sparsity)
+            mat = self._sparse_random(
+                output_dim, input_dim, sparsity=self.config.sparsity
+            )
         elif self.config.projection_type == ProjectionType.ORTHOGONAL:
             mat = self._orthogonal(output_dim, input_dim)
         else:
-            raise ProjectionError(f"Unsupported projection type {self.config.projection_type}")
+            raise ProjectionError(
+                f"Unsupported projection type {self.config.projection_type}"
+            )
 
         self._projection_cache[key] = mat
         return mat
@@ -128,7 +137,9 @@ class HypervectorEncoder:
     def _sparse_random(self, rows: int, cols: int, *, sparsity: float) -> torch.Tensor:
         # Achlioptas-style: values in {-1, 0, +1}
         probs = [sparsity / 2, 1 - sparsity, sparsity / 2]
-        vals = np.random.choice([-1.0, 0.0, 1.0], size=(rows, cols), p=probs).astype(np.float32)
+        vals = np.random.choice([-1.0, 0.0, 1.0], size=(rows, cols), p=probs).astype(
+            np.float32
+        )
         mat = torch.from_numpy(vals)
         # scale so that E[||x||] is preserved
         if sparsity > 0:

@@ -15,7 +15,9 @@ def _make_input():
 
 
 def test_golden_vector_regression():
-    proj = SparseRandomProjection(n_components=100, density=0.1, seed=123).fit(n_features=50)
+    proj = SparseRandomProjection(n_components=100, density=0.1, seed=123).fit(
+        n_features=50
+    )
     x = _make_input()
     y = proj.transform(x)[0]
 

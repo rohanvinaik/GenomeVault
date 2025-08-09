@@ -244,9 +244,6 @@ class TestAdversarialPIR:
             response = self.protocol.process_server_response(query, self.database)
             assert len(response) == self.params.element_size
         except ValueError:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             # Expected for invalid inputs
             raise

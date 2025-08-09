@@ -65,4 +65,6 @@ def test_performance_benchmark(performance_benchmark):
     result = performance_benchmark.measure("sum_calculation", sample_function, 1000)
 
     assert result == 499500
-    performance_benchmark.assert_performance("sum_calculation", 100)  # Should complete in 100ms
+    performance_benchmark.assert_performance(
+        "sum_calculation", 100
+    )  # Should complete in 100ms

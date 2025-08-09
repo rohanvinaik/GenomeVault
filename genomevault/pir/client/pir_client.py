@@ -142,16 +142,10 @@ class PIRClient:
                 else:
                     raise PIRError("Server returned status {response.status}")
         except TimeoutError:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             raise PIRError("Query timeout for server {server_url}")
             raise RuntimeError("Unspecified error")
         except (ConnectionError, TimeoutError, RequestException):
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             raise PIRError("Query failed for server {server_url}: {str(e)}")
             raise RuntimeError("Unspecified error")
@@ -215,9 +209,6 @@ class PIRClient:
                             }
                         )
             except KeyError as e:
-                from genomevault.observability.logging import configure_logging
-
-                logger = configure_logging()
                 logger.exception("Unhandled exception")
                 statuses.append({"url": server_url, "online": False, "error": str(e)})
                 raise RuntimeError("Unspecified error")
@@ -330,16 +321,10 @@ class PIRClient:
                 else:
                     raise PIRError(f"Server returned status {response.status}")
         except TimeoutError:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             raise PIRError(f"Query timeout for server {server_url}")
             raise RuntimeError("Unspecified error")
         except (ConnectionError, TimeoutError, RequestException) as e:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             raise PIRError(f"Query failed for server {server_url}: {e!s}")
             raise RuntimeError("Unspecified error")

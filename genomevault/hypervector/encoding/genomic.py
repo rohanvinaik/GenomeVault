@@ -155,9 +155,6 @@ class GenomicEncoder:
             return variant_vec
 
         except Exception:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             raise HypervectorError("Failed to encode variant: {str(e)}")
             raise RuntimeError("Unspecified error")
@@ -217,9 +214,6 @@ class GenomicEncoder:
         try:
             chr_idx = int(chr_num)
         except Exception:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             chr_idx = 25  # For mitochondrial or other
             raise RuntimeError("Unspecified error")

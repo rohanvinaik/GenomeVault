@@ -98,9 +98,6 @@ class GnarkBackend:
             logger.info("gnark backend initialized: %sresult.stdout.strip()")
 
         except subprocess.TimeoutExpired:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             raise RuntimeError("gnark-prover timed out during version check")
             raise RuntimeError("Unspecified error")
@@ -122,9 +119,6 @@ class GnarkBackend:
                 try:
                     self._compile_circuit(circuit_name)
                 except Exception:
-                    from genomevault.observability.logging import configure_logging
-
-                    logger = configure_logging()
                     logger.exception("Unhandled exception")
                     logger.warning("Failed to compile %scircuit_name: %se")
                     raise RuntimeError("Unspecified error")
@@ -408,9 +402,6 @@ def get_backend(use_real: bool = True) -> GnarkBackend | SimulatedBackend:
         try:
             return GnarkBackend()
         except RuntimeError:
-            from genomevault.observability.logging import configure_logging
-
-            logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.warning("Failed to initialize gnark backend: %se")
             logger.warning("Falling back to simulated backend")

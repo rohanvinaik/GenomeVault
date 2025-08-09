@@ -154,7 +154,9 @@ class MultiModalTrainingProof(TrainingProofCircuit):
                 actual_hash = FieldElement(int(metrics.data_hash, 16))
 
                 # Constraint: actual data hash matches declared
-                self.add_constraint(actual_hash, declared_hash, FieldElement(0), ql=1, qr=-1)
+                self.add_constraint(
+                    actual_hash, declared_hash, FieldElement(0), ql=1, qr=-1
+                )
 
             # Verify quality score is acceptable (> 0.8)
             quality_field = FieldElement(int(metrics.quality_score * 1000))
@@ -164,7 +166,9 @@ class MultiModalTrainingProof(TrainingProofCircuit):
             quality_diff = quality_field - min_quality
             if quality_diff.value > 0:
                 diff_inv = quality_diff.inverse()
-                self.add_constraint(quality_diff, diff_inv, FieldElement(1), qm=1, qo=-1)
+                self.add_constraint(
+                    quality_diff, diff_inv, FieldElement(1), qm=1, qo=-1
+                )
 
             # Verify coverage is sufficient (> 0.7)
             coverage_field = FieldElement(int(metrics.coverage * 1000))
@@ -173,7 +177,9 @@ class MultiModalTrainingProof(TrainingProofCircuit):
             coverage_diff = coverage_field - min_coverage
             if coverage_diff.value > 0:
                 cov_inv = coverage_diff.inverse()
-                self.add_constraint(coverage_diff, cov_inv, FieldElement(1), qm=1, qo=-1)
+                self.add_constraint(
+                    coverage_diff, cov_inv, FieldElement(1), qm=1, qo=-1
+                )
 
     def constrain_modality_alignment(self):
         """Ensure proper alignment between modalities"""
@@ -245,14 +251,18 @@ class MultiModalTrainingProof(TrainingProofCircuit):
                     # weight >= 0
                     if weight.value > 0:
                         weight_inv = weight.inverse()
-                        self.add_constraint(weight, weight_inv, FieldElement(1), qm=1, qo=-1)
+                        self.add_constraint(
+                            weight, weight_inv, FieldElement(1), qm=1, qo=-1
+                        )
 
                     # weight <= 1000
                     max_weight = FieldElement(1000)
                     weight_diff = max_weight - weight
                     if weight_diff.value > 0:
                         diff_inv = weight_diff.inverse()
-                        self.add_constraint(weight_diff, diff_inv, FieldElement(1), qm=1, qo=-1)
+                        self.add_constraint(
+                            weight_diff, diff_inv, FieldElement(1), qm=1, qo=-1
+                        )
 
                 # Verify weights sum to ~1 (allowing small epsilon for rounding)
                 weight_sum = FieldElement(0)
@@ -281,7 +291,9 @@ class MultiModalTrainingProof(TrainingProofCircuit):
         for align in self.cross_modal_alignments:
             if align.modality_a == "genomic" and align.modality_b == "transcriptomic":
                 gen_trans_align = align
-            elif align.modality_a == "transcriptomic" and align.modality_b == "proteomic":
+            elif (
+                align.modality_a == "transcriptomic" and align.modality_b == "proteomic"
+            ):
                 trans_prot_align = align
 
         # Central dogma constraint: DNA -> RNA -> Protein
@@ -337,7 +349,8 @@ class MultiModalTrainingProof(TrainingProofCircuit):
             "modalities": list(self.modality_metrics.keys()),
             "cross_modal_scores": self.verify_cross_modal_consistency(),
             "modality_qualities": {
-                mod: metrics.quality_score for mod, metrics in self.modality_metrics.items()
+                mod: metrics.quality_score
+                for mod, metrics in self.modality_metrics.items()
             },
             "alignment_summary": {
                 f"{align.modality_a}_{align.modality_b}": {

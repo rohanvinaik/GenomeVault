@@ -1,14 +1,11 @@
-from __future__ import annotations
-
-from genomevault.observability.logging import configure_logging
-
-logger = configure_logging()
 """
 Biological signal detection from hypervector variance patterns.
 
 Detects methylation, structural variants, and other biological
 signals from nanopore HV instability patterns.
 """
+
+from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
@@ -153,12 +150,16 @@ class BiologicalSignalDetector:
                 signal = BiologicalSignal(
                     signal_type=signal_type,
                     genomic_position=(
-                        genomic_positions[start] if genomic_positions is not None else start
+                        genomic_positions[start]
+                        if genomic_positions is not None
+                        else start
                     ),
                     confidence=confidence,
                     variance_score=float(np.max(region_variance)),
                     context=(
-                        sequence_context[max(0, start - 5) : end + 5] if sequence_context else ""
+                        sequence_context[max(0, start - 5) : end + 5]
+                        if sequence_context
+                        else ""
                     ),
                     metadata={
                         "region_length": end - start,
@@ -266,7 +267,10 @@ class BiologicalSignalDetector:
             scores[BiologicalSignalType.METHYLATION_6MA] = 0.7
 
         # Check for oxidative damage
-        if features.get("gc_content", 0) > 0.7 and features.get("variance_max", 0) > 3.0:
+        if (
+            features.get("gc_content", 0) > 0.7
+            and features.get("variance_max", 0) > 3.0
+        ):
             scores[BiologicalSignalType.OXIDATIVE_DAMAGE] = 0.75
 
         # Check for structural variants

@@ -1,18 +1,20 @@
 # genomevault/exceptions.py
 from __future__ import annotations
+
 from typing import Any, Dict, Type
+
 from .core.exceptions import (
-    GVError,
+    EncodingError,
+    GVComputeError,
     GVConfigError,
+    GVError,
     GVInputError,
     GVNotFound,
-    GVStateError,
-    GVComputeError,
     GVSecurityError,
+    GVStateError,
     GVTimeout,
-    EncodingError,
-    ProjectionError,
     HypervectorError,
+    ProjectionError,
 )
 
 __all__ = [

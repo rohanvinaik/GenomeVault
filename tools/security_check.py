@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-from genomevault.observability.logging import configure_logging
-
-logger = configure_logging()
 #!/usr/bin/env python3
 """
 Security check script for GenomeVault.
@@ -33,7 +30,9 @@ class SecurityChecker:
             "rsid": re.compile(r"\brs\d+\b"),
             "dob": re.compile(r"\b(0[1-9]|1[0-2])/(0[1-9]|[12]\d|3[01])/\d{4}\b"),
             "mrn": re.compile(r"\bMRN\d{6,}\b"),
-            "email_phi": re.compile(r"\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|org|edu|gov)\b"),
+            "email_phi": re.compile(
+                r"\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|org|edu|gov)\b"
+            ),
         }
 
     def check_logs(self, log_path: Path) -> list[dict]:
@@ -170,7 +169,9 @@ class SecurityChecker:
         return {
             "summary": {
                 "total_issues": len(self.issues),
-                "critical": len([i for i in self.issues if i.get("severity") == "CRITICAL"]),
+                "critical": len(
+                    [i for i in self.issues if i.get("severity") == "CRITICAL"]
+                ),
                 "high": len([i for i in self.issues if i.get("severity") == "HIGH"]),
                 "warnings": len(self.warnings),
             },
@@ -232,7 +233,9 @@ def main():
         help="Project directory to check",
     )
     parser.add_argument("--log-file", type=Path, help="Specific log file to check")
-    parser.add_argument("--config-file", type=Path, help="Specific config file to check")
+    parser.add_argument(
+        "--config-file", type=Path, help="Specific config file to check"
+    )
 
     args = parser.parse_args()
 
@@ -244,7 +247,9 @@ def main():
         if findings:
             logger.info(f"Found {len(findings)} PHI instances in {args.log_file}")
             for finding in findings:
-                logger.info(f"  Line {finding['line']}: {finding['type']} - {finding['matches']}")
+                logger.info(
+                    f"  Line {finding['line']}: {finding['type']} - {finding['matches']}"
+                )
         else:
             logger.info("No PHI found in log file")
 
