@@ -294,14 +294,14 @@ from pathlib import Path
 
 def monitor_performance():
     perf_log = Path("logs/genomevault_performance.log")
-    
+
     with open(perf_log) as f:
         for line in f:
             if "PERF" in line:
                 # Extract JSON data
                 json_part = line.split("PERF | ")[1]
                 metrics = json.loads(json_part)
-                
+
                 # Check for slow operations
                 if metrics["duration_ms"] > 1000:
                     print(f"Slow operation: {metrics}")
