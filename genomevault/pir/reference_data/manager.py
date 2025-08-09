@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Manager module."""
+"""Manager module."""
 """
 Reference data manager for PIR system.
 Handles pangenome graphs, annotations, and population-specific data.
@@ -38,6 +40,7 @@ class GenomicRegion:
     end: int
 
     def __str__(self):
+        """Return string representation."""
         return "{self.chromosome}:{self.start}-{self.end}"
 
     def overlaps(self, other: "GenomicRegion") -> bool:

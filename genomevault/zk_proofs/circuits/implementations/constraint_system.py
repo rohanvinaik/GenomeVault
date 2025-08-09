@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Constraint System module."""
+"""Constraint System module."""
 import hashlib
 from dataclasses import dataclass, field
 from enum import Enum
@@ -83,9 +85,11 @@ class FieldElement:
         return not self.__eq__(other)
 
     def __repr__(self):
+        """Return detailed representation for debugging."""
         return f"FieldElement({self.value})"
 
     def __str__(self):
+        """Return string representation."""
         return str(self.value)
 
     def to_bytes(self) -> bytes:
@@ -103,9 +107,19 @@ class FieldElement:
         return cls(np.random.randint(0, cls.MODULUS))
 
     def is_zero(self) -> bool:
+        """Check if zero.
+
+            Returns:
+                True if condition is met, False otherwise.
+            """
         return self.value == 0
 
     def is_one(self) -> bool:
+        """Check if one.
+
+            Returns:
+                True if condition is met, False otherwise.
+            """
         return self.value == 1
 
 
@@ -213,6 +227,8 @@ class ConstraintSystem:
     """
 
     def __init__(self):
+        """Initialize instance.
+            """
         self.variables: dict[int, Variable] = {}
         self.constraints: list[Constraint] = []
         self.public_inputs: list[Variable] = []

@@ -502,6 +502,8 @@ class PrivacyAccountant:
     """
 
     def __init__(self):
+        """Initialize instance.
+            """
         self.sessions: dict[str, DifferentialPrivacyAuditor] = {}
         self.global_budget = {
             "daily_epsilon": 10.0,

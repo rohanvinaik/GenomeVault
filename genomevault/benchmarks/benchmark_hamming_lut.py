@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Benchmark Hamming Lut module."""
+"""Benchmark Hamming Lut module."""
 """
 Benchmark script for Hamming distance LUT optimization in GenomeVault
 

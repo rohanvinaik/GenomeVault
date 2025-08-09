@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Patterns module."""
+"""Patterns module."""
 import re
 from collections.abc import Iterable
 from dataclasses import dataclass
@@ -7,6 +9,7 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class Match:
+    """Match implementation."""
     kind: str
     span: tuple[int, int]
     value: str
@@ -46,6 +49,14 @@ def detect(text: str, kinds: Iterable[str] | None = None) -> list[Match]:
 
 
 def mask_value(kind: str) -> str:
+    """Mask value.
+
+        Args:
+            kind: Kind.
+
+        Returns:
+            String result.
+        """
     return {
         "email": "[EMAIL]",
         "phone": "[PHONE]",

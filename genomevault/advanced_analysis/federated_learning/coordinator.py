@@ -40,6 +40,11 @@ class ModelArchitecture:
     hyperparameters: dict[str, Any]
 
     def to_dict(self) -> dict:
+        """To dict.
+
+            Returns:
+                Dictionary result.
+            """
         return {
             "name": self.name,
             "model_type": self.model_type,

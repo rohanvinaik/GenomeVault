@@ -1,3 +1,4 @@
+"""Package initialization for implementations."""
 from .commitment_circuit import PedersenCommitmentCircuit
 from .diabetes_risk_circuit import DiabetesRiskCircuit
 from .merkle_tree_circuit import MerkleInclusionCircuit

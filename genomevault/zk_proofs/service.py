@@ -19,6 +19,13 @@ class ProofRequest:
     """Request for proof generation."""
 
     def __init__(
+        """Initialize instance.
+
+            Args:
+                proof_type: Zero-knowledge proof.
+                private_inputs: Private inputs.
+                public_inputs: Public inputs.
+            """
         self,
         proof_type: str,
         private_inputs: dict[str, Any],
@@ -33,6 +40,14 @@ class ProofResponse:
     """Response containing generated proof."""
 
     def __init__(
+        """Initialize instance.
+
+            Args:
+                proof: Zero-knowledge proof.
+                proof_id: Zero-knowledge proof.
+                verification_key: Dictionary verification_key.
+                generated_at: Generated at.
+            """
         self, proof: bytes, proof_id: str, verification_key: str, generated_at: datetime
     ):
         self.proof = proof
@@ -45,6 +60,13 @@ class VerificationResult:
     """Result of proof verification."""
 
     def __init__(
+        """Initialize instance.
+
+            Args:
+                is_valid: Is valid.
+                proof_id: Zero-knowledge proof.
+                verifier_id: Verifier id.
+            """
         self,
         is_valid: bool,
         proof_id: str | None = None,
@@ -59,6 +81,8 @@ class ZKProofService:
     """High-level service for ZK proof operations."""
 
     def __init__(self):
+        """Initialize instance.
+            """
         self.circuits = {
             "prs_range": PRSProofCircuit(),
             "age_range": PRSProofCircuit(),  # Reuse for demo

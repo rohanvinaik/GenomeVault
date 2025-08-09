@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Proofs module."""
+"""Proofs module."""
 from typing import Any, Dict
 
 from fastapi import APIRouter, HTTPException
@@ -14,6 +16,18 @@ _engine = ZKProofEngine()  # Will use default PROJECT_ROOT
 
 @router.post("/create")
 def create_proof(request: ProofCreateRequest) -> Dict[str, Any]:
+    """Create proof.
+
+        Args:
+            request: Client request.
+
+        Returns:
+            Newly created proof.
+
+        Raises:
+            HTTPException: When operation fails.
+            RuntimeError: When operation fails.
+        """
     try:
         proof = _engine.create_proof(circuit_type=request.circuit_type, inputs=request.inputs)
         # proof is a shim object with to_base64()
@@ -30,6 +44,18 @@ def create_proof(request: ProofCreateRequest) -> Dict[str, Any]:
 
 @router.post("/verify")
 def verify_proof(request: ProofVerifyRequest) -> Dict[str, bool]:
+    """Verify proof.
+
+        Args:
+            request: Client request.
+
+        Returns:
+            Operation result.
+
+        Raises:
+            HTTPException: When operation fails.
+            RuntimeError: When operation fails.
+        """
     try:
         ok = _engine.verify_proof(proof_data=request.proof, public_inputs=request.public_inputs)
         return {"valid": bool(ok)}

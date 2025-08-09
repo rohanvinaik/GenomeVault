@@ -1,3 +1,4 @@
+"""Package initialization for biological."""
 from . import multi_omics, variant
 
 """

@@ -243,6 +243,14 @@ def log_operation(func: Callable) -> Callable:
 
     @wraps(func)
     def wrapper(*args, **kwargs):
+        """Wrapper.
+
+            Returns:
+                Operation result.
+
+            Raises:
+                Exception: When operation fails.
+            """
         logger = get_logger(func.__module__)
         operation_name = f"{func.__module__}.{func.__name__}"
 
@@ -273,12 +281,19 @@ class ContextLogger:
     """Context manager for logging with additional context."""
 
     def __init__(self, logger: logging.Logger, operation: str, **context: Any):
+        """Initialize instance.
+
+            Args:
+                logger: Logger instance.
+                operation: Operation.
+            """
         self.logger = logger
         self.operation = operation
         self.context = context
         self.start_time = None
 
     def __enter__(self):
+        """Enter context manager."""
         self.start_time = time.perf_counter()
         context_str = ", ".join(f"{k}={v}" for k, v in self.context.items())
         self.logger.info(
@@ -287,6 +302,7 @@ class ContextLogger:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        """Exit context manager."""
         duration = time.perf_counter() - self.start_time
 
         if exc_type is None:
@@ -302,6 +318,11 @@ class AuditLogger:
     """Logger for audit and compliance events."""
 
     def __init__(self, logger: Optional[logging.Logger] = None):
+        """Initialize instance.
+
+            Args:
+                logger: Logger instance.
+            """
         self.logger = logger or logging.getLogger("genomevault.audit")
         self.hipaa_mode = False
 

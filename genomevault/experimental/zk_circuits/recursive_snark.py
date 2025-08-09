@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Recursive Snark module."""
+"""Recursive Snark module."""
 """
 Recursive SNARK implementation for efficient proof composition.
 Enables constant verification time regardless of composed proof count.

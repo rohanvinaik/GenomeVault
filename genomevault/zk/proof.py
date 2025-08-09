@@ -36,6 +36,8 @@ class ProofGenerator:
     """
 
     def __init__(self):
+        """Initialize instance.
+            """
         self.median_circuit = MedianVerifierCircuit()
         self.proof_cache = {}
         logger.info("ProofGenerator initialized with real ZK circuits")

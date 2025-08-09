@@ -16,6 +16,13 @@ class OptionalDependencyError(ImportError):
     """Error raised when an optional dependency is missing."""
 
     def __init__(self, package: str, feature: str, install_extra: str | None = None):
+        """Initialize instance.
+
+            Args:
+                package: Package.
+                feature: Feature.
+                install_extra: Install extra.
+            """
         if install_extra:
             message = (
                 f"The '{package}' package is required for {feature}. "
@@ -48,7 +55,26 @@ def require_package(
     """
 
     def decorator(func: Callable) -> Callable:
+        """Decorator.
+
+            Args:
+                func: Func.
+
+            Returns:
+                Callable instance.
+
+            Raises:
+                OptionalDependencyError: When operation fails.
+            """
         def wrapper(*args: Any, **kwargs: Any) -> Any:
+            """Wrapper.
+
+                Returns:
+                    Any instance.
+
+                Raises:
+                    OptionalDependencyError: When operation fails.
+                """
             if not is_package_available(package):
                 raise OptionalDependencyError(package, feature, install_extra)
             return func(*args, **kwargs)

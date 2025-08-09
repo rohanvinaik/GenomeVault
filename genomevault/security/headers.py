@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Headers module."""
+"""Headers module."""
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -17,7 +19,17 @@ SECURITY_HEADERS = {
 
 
 class _SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    """ SecurityHeadersMiddleware implementation."""
     async def dispatch(self, request, call_next):
+        """Async operation to Dispatch.
+
+            Args:
+                request: Client request.
+                call_next: Call next.
+
+            Returns:
+                Operation result.
+            """
         resp: Response = await call_next(request)
         for k, v in SECURITY_HEADERS.items():
             if k not in resp.headers:
@@ -26,6 +38,11 @@ class _SecurityHeadersMiddleware(BaseHTTPMiddleware):
 
 
 def register_security(app: FastAPI, *, allow_origins: list[str] | None = None) -> None:
+    """Register security.
+
+        Args:
+            app: App.
+        """
     # CORS: default to no cross-site; override with explicit origins if needed
     if allow_origins:
         app.add_middleware(

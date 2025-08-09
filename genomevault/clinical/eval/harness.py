@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+"""Harness module."""
 import csv
 from dataclasses import dataclass
 
@@ -19,6 +20,7 @@ from genomevault.clinical.calibration.metrics import (
 
 @dataclass
 class EvalReport:
+    """Data container for evalreport information."""
     metrics: dict[str, float]
     threshold: float
     confusion: dict[str, float]
@@ -26,6 +28,15 @@ class EvalReport:
 
 
 def compute_report(
+    """Compute report.
+
+        Args:
+            y_true: Y true.
+            y_score: Y score.
+
+        Returns:
+            Calculated result.
+        """
     y_true: np.ndarray, y_score: np.ndarray, *, calibrator: str = "none", bins: int = 10
 ) -> EvalReport:
     # Calibrate if requested (on same data for simplicity; consider CV for unbiased estimates)
@@ -58,6 +69,16 @@ def compute_report(
 
 
 def load_csv(
+    """Load csv.
+
+        Args:
+            path: File or directory path.
+            y_col: Y col.
+            s_col: S col.
+
+        Returns:
+            Loaded data.
+        """
     path: str, y_col: str = "y_true", s_col: str = "y_score"
 ) -> tuple[np.ndarray, np.ndarray]:
     with open(path, newline="") as f:

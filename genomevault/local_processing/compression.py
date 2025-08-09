@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Compression module."""
+"""Compression module."""
 """
 GenomeVault Compression System - Multi-tier implementation
 

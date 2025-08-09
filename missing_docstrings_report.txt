@@ -1,0 +1,282 @@
+MISSING DOCSTRINGS DETAILED REPORT
+============================================================
+
+
+exceptions.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/exceptions.py'
+
+experimental/pir_advanced/it_pir.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/experimental/pir_advanced/it_pir.py'
+
+experimental/pir_advanced/robust_it_pir.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/experimental/pir_advanced/robust_it_pir.py'
+
+experimental/zk_circuits/catalytic_proof.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/experimental/zk_circuits/catalytic_proof.py'
+
+experimental/zk_circuits/post_quantum.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/experimental/zk_circuits/post_quantum.py'
+
+experimental/zk_circuits/recursive_snark.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/experimental/zk_circuits/recursive_snark.py'
+
+pir/servers.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/pir/servers.py'
+
+pir/engine.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/pir/engine.py'
+
+pir/secure_wrapper.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/pir/secure_wrapper.py'
+
+pir/it_pir_protocol.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/pir/it_pir_protocol.py'
+
+pir/advanced/it_pir.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/pir/advanced/it_pir.py'
+
+pir/advanced/robust_it_pir.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/pir/advanced/robust_it_pir.py'
+
+pir/network/coordinator.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/pir/network/coordinator.py'
+
+pir/examples/integration_demo.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/pir/examples/integration_demo.py'
+
+pir/reference_data/manager.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/pir/reference_data/manager.py'
+
+pir/client/query_builder.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/pir/client/query_builder.py'
+
+ledger/store.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/ledger/store.py'
+
+ledger/models.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/ledger/models.py'
+
+zk/models.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/zk/models.py'
+
+zk/engine.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/zk/engine.py'
+
+zk/real_engine.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/zk/real_engine.py'
+
+zk/backends/circom_snarkjs.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/zk/backends/circom_snarkjs.py'
+
+core/constants.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/core/constants.py'
+
+config/settings.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/config/settings.py'
+
+security/auth.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/security/auth.py'
+
+security/body_limit.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/security/body_limit.py'
+
+security/rate_limit.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/security/rate_limit.py'
+
+security/headers.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/security/headers.py'
+
+contracts/contract.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/contracts/contract.py'
+
+zk_proofs/post_quantum.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/zk_proofs/post_quantum.py'
+
+zk_proofs/verifier.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/zk_proofs/verifier.py'
+
+zk_proofs/aggregation/recursive_aggregator.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/zk_proofs/aggregation/recursive_aggregator.py'
+
+zk_proofs/advanced/catalytic_proof.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/zk_proofs/advanced/catalytic_proof.py'
+
+zk_proofs/advanced/recursive_snark.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/zk_proofs/advanced/recursive_snark.py'
+
+zk_proofs/circuits/multi_modal_training_proof.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/zk_proofs/circuits/multi_modal_training_proof.py'
+
+zk_proofs/circuits/training_proof.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/zk_proofs/circuits/training_proof.py'
+
+zk_proofs/circuits/biological/multi_omics.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/zk_proofs/circuits/biological/multi_omics.py'
+
+zk_proofs/circuits/biological/variant.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/zk_proofs/circuits/biological/variant.py'
+
+zk_proofs/circuits/implementations/variant_proof_circuit.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/zk_proofs/circuits/implementations/variant_proof_circuit.py'
+
+zk_proofs/circuits/implementations/variant_frequency_circuit.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/zk_proofs/circuits/implementations/variant_frequency_circuit.py'
+
+zk_proofs/circuits/implementations/constraint_system.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/zk_proofs/circuits/implementations/constraint_system.py'
+
+zk_proofs/circuits/implementations/plonk_circuits.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/zk_proofs/circuits/implementations/plonk_circuits.py'
+
+local_processing/epigenetics.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/local_processing/epigenetics.py'
+
+local_processing/model_snapshot.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/local_processing/model_snapshot.py'
+
+local_processing/compression.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/local_processing/compression.py'
+
+local_processing/transcriptomics.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/local_processing/transcriptomics.py'
+
+local_processing/genomics.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/local_processing/genomics.py'
+
+local_processing/common.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/local_processing/common.py'
+
+local_processing/sequencing.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/local_processing/sequencing.py'
+
+pipelines/profile.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/pipelines/profile.py'
+
+pipelines/e2e_pipeline.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/pipelines/e2e_pipeline.py'
+
+utils/metrics.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/utils/metrics.py'
+
+utils/post_quantum_crypto.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/utils/post_quantum_crypto.py'
+
+utils/performance.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/utils/performance.py'
+
+hypervector_transform/encoding.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/hypervector_transform/encoding.py'
+
+hypervector_transform/hdc_encoder.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/hypervector_transform/hdc_encoder.py'
+
+cli/training_proof_cli.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/cli/training_proof_cli.py'
+
+observability/logging.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/observability/logging.py'
+
+observability/metrics.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/observability/metrics.py'
+
+observability/otel.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/observability/otel.py'
+
+observability/middleware.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/observability/middleware.py'
+
+blockchain/hipaa/verifier.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/blockchain/hipaa/verifier.py'
+
+blockchain/contracts/training_attestation.py (1 missing):
+  Line 72: Function '__init__'
+
+blockchain/node/base_node.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/blockchain/node/base_node.py'
+
+hypervector/stores/in_memory.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/hypervector/stores/in_memory.py'
+
+hypervector/encoding/orthogonal_projection.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/hypervector/encoding/orthogonal_projection.py'
+
+hypervector/encoding/packed.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/hypervector/encoding/packed.py'
+
+hypervector/encoding/sparse_projection.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/hypervector/encoding/sparse_projection.py'
+
+hypervector/operations/binding.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/hypervector/operations/binding.py'
+
+benchmarks/benchmark_hamming_lut.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/benchmarks/benchmark_hamming_lut.py'
+
+governance/pii/patterns.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/governance/pii/patterns.py'
+
+governance/pii/redact.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/governance/pii/redact.py'
+
+api/app.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/api/app.py'
+
+api/errors.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/api/errors.py'
+
+api/main.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/api/main.py'
+
+api/routers/vectors.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/api/routers/vectors.py'
+
+api/routers/clinical.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/api/routers/clinical.py'
+
+api/routers/pir.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/api/routers/pir.py'
+
+api/routers/encode.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/api/routers/encode.py'
+
+api/routers/ledger.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/api/routers/ledger.py'
+
+api/routers/federated.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/api/routers/federated.py'
+
+api/routers/proofs.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/api/routers/proofs.py'
+
+api/routers/governance.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/api/routers/governance.py'
+
+api/models/vectors.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/api/models/vectors.py'
+
+api/models/clinical.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/api/models/clinical.py'
+
+api/models/pir.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/api/models/pir.py'
+
+api/models/governance.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/api/models/governance.py'
+
+hdc/core.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/hdc/core.py'
+
+federated/aggregate.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/federated/aggregate.py'
+
+federated/models.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/federated/models.py'
+
+federated/aggregator.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/federated/aggregator.py'
+
+federated/simulator.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/federated/simulator.py'
+
+nanopore/cli.py (1 missing):
+  Line 1: Module '/Users/rohanvinaik/genomevault/genomevault/nanopore/cli.py'

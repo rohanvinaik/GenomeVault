@@ -51,6 +51,11 @@ class CircuitMetadata:
     parameters: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict:
+        """To dict.
+
+            Returns:
+                Dictionary result.
+            """
         return {
             "name": self.name,
             "constraint_count": self.constraint_count,

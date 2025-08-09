@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Clinical module."""
+"""Clinical module."""
 import numpy as np
 from fastapi import APIRouter, HTTPException
 
@@ -11,6 +13,18 @@ router = APIRouter(prefix="/clinical", tags=["clinical"])
 
 @router.post("/eval", response_model=ClinicalEvalResponse)
 def clinical_eval(req: ClinicalEvalRequest):
+    """Process clinical clinical eval.
+
+        Args:
+            req: Req.
+
+        Returns:
+            Operation result.
+
+        Raises:
+            HTTPException: When operation fails.
+            RuntimeError: When operation fails.
+        """
     try:
         y = np.asarray(req.y_true, dtype=np.int32)
         s = np.asarray(req.y_score, dtype=np.float64)

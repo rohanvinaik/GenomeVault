@@ -1,6 +1,8 @@
 # genomevault/hypervector_transform/encoding.py
 from __future__ import annotations
 
+"""Encoding module."""
+"""Encoding module."""
 import logging
 from dataclasses import dataclass
 from enum import Enum
@@ -17,6 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 class ProjectionType(Enum):
+    """ProjectionType implementation."""
     RANDOM_GAUSSIAN = "random_gaussian"
     SPARSE_RANDOM = "sparse_random"
     ORTHOGONAL = "orthogonal"
@@ -24,6 +27,7 @@ class ProjectionType(Enum):
 
 @dataclass
 class HypervectorConfig:
+    """Data container for hypervectorconfig information."""
     dimension: int = HYPERVECTOR_DIMENSIONS
     projection_type: ProjectionType = ProjectionType.SPARSE_RANDOM
     sparsity: float = 0.1
@@ -37,6 +41,11 @@ class HypervectorEncoder:
     """Minimal, correct encoder to unblock tests."""
 
     def __init__(self, config: Optional[HypervectorConfig] = None) -> None:
+        """Initialize instance.
+
+            Args:
+                config: Configuration dictionary.
+            """
         self.config = config or HypervectorConfig()
         if self.config.seed is not None:
             torch.manual_seed(self.config.seed)

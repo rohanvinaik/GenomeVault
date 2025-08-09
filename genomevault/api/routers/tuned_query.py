@@ -69,20 +69,43 @@ class ProgressUpdate(BaseModel):
 
 # Global WebSocket manager for progress updates
 class WebSocketManager:
+    """Manage websocket operations and state."""
     def __init__(self):
+        """Initialize instance.
+            """
         self.active_connections: dict[str, WebSocket] = {}
 
     async def connect(self, session_id: str, websocket: WebSocket):
+        """Async operation to Connect.
+
+            Args:
+                session_id: Session id.
+                websocket: Websocket.
+            """
         await websocket.accept()
         self.active_connections[session_id] = websocket
         logger.info("WebSocket connected: %ssession_id")
 
     def disconnect(self, session_id: str):
+        """Disconnect.
+
+            Args:
+                session_id: Session id.
+            """
         if session_id in self.active_connections:
             del self.active_connections[session_id]
             logger.info("WebSocket disconnected: %ssession_id")
 
     async def send_progress(self, session_id: str, update: ProgressUpdate):
+        """Async operation to Send progress.
+
+            Args:
+                session_id: Session id.
+                update: Update.
+
+            Raises:
+                RuntimeError: When operation fails.
+            """
         if session_id in self.active_connections:
             try:
                 await self.active_connections[session_id].send_json(update.dict())

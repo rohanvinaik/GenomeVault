@@ -55,6 +55,7 @@ class HVEncodeRequest(BaseModel):
         return v
 
     class Config:
+        """Config implementation."""
         schema_extra = {
             "example": {
                 "data": "chr1:123456 A>G\nchr2:789012 C>T",
@@ -78,6 +79,7 @@ class HVEncodeResponse(BaseModel):
     )
 
     class Config:
+        """Config implementation."""
         schema_extra = {
             "example": {
                 "vector": [0.123, -0.456, 0.789],

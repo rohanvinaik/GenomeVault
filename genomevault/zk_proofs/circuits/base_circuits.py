@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+"""Base Circuits module."""
 import hashlib
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional
@@ -9,6 +10,12 @@ class FieldElement:
     """Represents a field element for zero-knowledge proofs."""
     
     def __init__(self, value: int, modulus: int = 2**256 - 1):
+        """Initialize instance.
+
+            Args:
+                value: Value to set.
+                modulus: Modulus.
+            """
         self.value = value % modulus
         self.modulus = modulus
     
@@ -24,22 +31,41 @@ class FieldElement:
         return self.value == other.value and self.modulus == other.modulus
     
     def __repr__(self) -> str:
+        """Return detailed representation for debugging."""
         return f"FieldElement({self.value})"
 
 
 class BaseCircuit(ABC):
+    """BaseCircuit implementation."""
     @abstractmethod
     def public_statement(self) -> Dict[str, Any]: ...
+        """Public statement.
+            """
     @abstractmethod
     def witness(self) -> Dict[str, Any]: ...
+        """Witness.
+            """
 
     def prove(self) -> bytes:
+        """Prove.
+
+            Returns:
+                bytes instance.
+            """
         # Deterministic placeholder proof
         s = str(sorted(self.public_statement().items())).encode()
         w = str(sorted(self.witness().items())).encode()
         return b"CIRCUIT:" + s + b"|" + w
 
     def verify(self, proof: bytes) -> bool:
+        """Verify.
+
+            Args:
+                proof: Zero-knowledge proof.
+
+            Returns:
+                Boolean result.
+            """
         return isinstance(proof, (bytes, bytearray)) and proof.startswith(b"CIRCUIT:")
 
 
@@ -47,6 +73,12 @@ class MerkleTreeCircuit(BaseCircuit):
     """Circuit for Merkle tree membership proofs."""
     
     def __init__(self, leaf: Optional[bytes] = None, root: Optional[bytes] = None):
+        """Initialize instance.
+
+            Args:
+                leaf: Leaf.
+                root: Root.
+            """
         self.leaf = leaf or b""
         self.root = root or b""
         self.path = []
@@ -85,6 +117,11 @@ class RangeProofCircuit(BaseCircuit):
     """Circuit for proving a value is within a range."""
     
     def __init__(self, bit_width: int = 32):
+        """Initialize instance.
+
+            Args:
+                bit_width: Bit width.
+            """
         self.bit_width = bit_width
         self.value = 0
         self.min_value = 0
@@ -120,6 +157,12 @@ class ComparisonCircuit(BaseCircuit):
     """Circuit for private comparison operations."""
     
     def __init__(self, value_a: Optional[int] = None, value_b: Optional[int] = None):
+        """Initialize instance.
+
+            Args:
+                value_a: Value to set.
+                value_b: Value to set.
+            """
         self.value_a = value_a or 0
         self.value_b = value_b or 0
         self._result = None

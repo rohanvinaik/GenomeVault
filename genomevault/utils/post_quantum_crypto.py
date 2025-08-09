@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Post Quantum Crypto module."""
+"""Post Quantum Crypto module."""
 """Post-quantum cryptography implementations for GenomeVault."""
 
 import os
@@ -41,6 +43,7 @@ class MockKyber:
 
     @dataclass
     class Keypair:
+        """Data container for keypair information."""
         public_key: bytes
         private_key: bytes
 
@@ -64,6 +67,7 @@ class MockDilithium:
 
     @dataclass
     class Keypair:
+        """Data container for keypair information."""
         public_key: bytes
         private_key: bytes
 
@@ -84,6 +88,8 @@ class HybridPostQuantumCrypto:
     """Hybrid classical/post-quantum encryption system."""
 
     def __init__(self):
+        """Initialize instance.
+            """
         self.kyber = MockKyber()
         self.dilithium = MockDilithium()
 

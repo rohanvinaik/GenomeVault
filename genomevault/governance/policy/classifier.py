@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+"""Classifier module."""
 import json
 import os
 from dataclasses import dataclass
@@ -10,6 +11,7 @@ DEFAULT_POLICY_PATH = os.getenv("GV_POLICY_PATH", "etc/policies/classification.j
 
 @dataclass(frozen=True)
 class Classification:
+    """Classification implementation."""
     field_levels: dict[str, str]
     overall: str
 
@@ -25,6 +27,14 @@ def _load_policy(path: str | None = None) -> dict[str, str]:
 
 
 def classify_record(
+    """Classify record.
+
+        Args:
+            record: Record.
+
+        Returns:
+            Classification instance.
+        """
     record: dict[str, object], *, policy_path: str | None = None
 ) -> Classification:
     fields = _load_policy(policy_path)

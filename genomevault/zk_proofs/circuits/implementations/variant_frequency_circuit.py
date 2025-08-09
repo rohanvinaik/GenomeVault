@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Variant Frequency Circuit module."""
+"""Variant Frequency Circuit module."""
 import hashlib
 from typing import Any, Dict, List
 

@@ -29,6 +29,11 @@ class ModelEvolutionVisualizer:
     """Visualize model semantic evolution during training"""
 
     def __init__(self, output_dir: str = "./visualizations"):
+        """Initialize instance.
+
+            Args:
+                output_dir: Output dir.
+            """
         self.output_dir = output_dir
         self.projections = {}
         self.drift_history = []

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Variant module."""
+"""Variant module."""
 import hashlib
 from typing import Dict, List
 
@@ -35,6 +37,11 @@ class VariantPresenceCircuit(BaseCircuit):
     """
 
     def __init__(self, merkle_depth: int = 20):
+        """Initialize instance.
+
+            Args:
+                merkle_depth: Merkle depth.
+            """
         super().__init__("variant_presence", 5000)
         self.merkle_depth = merkle_depth
         self.merkle_circuit = MerkleTreeCircuit(merkle_depth)
@@ -130,6 +137,11 @@ class PolygenenicRiskScoreCircuit(BaseCircuit):
     """
 
     def __init__(self, max_variants: int = 1000):
+        """Initialize instance.
+
+            Args:
+                max_variants: Genetic variant information.
+            """
         super().__init__("polygenic_risk_score", 20000)
         self.max_variants = max_variants
         self.range_circuit = RangeProofCircuit(bit_width=32)
@@ -248,6 +260,8 @@ class DiabetesRiskCircuit(BaseCircuit):
     """
 
     def __init__(self):
+        """Initialize instance.
+            """
         super().__init__("diabetes_risk_alert", 15000)
         self.glucose_comparison = ComparisonCircuit()
         self.risk_comparison = ComparisonCircuit()
@@ -352,6 +366,11 @@ class PharmacogenomicCircuit(BaseCircuit):
     """
 
     def __init__(self, max_star_alleles: int = 50):
+        """Initialize instance.
+
+            Args:
+                max_star_alleles: Max star alleles.
+            """
         super().__init__("pharmacogenomic", 10000)
         self.max_star_alleles = max_star_alleles
         self._genes = ["CYP2C19", "CYP2D6", "CYP2C9", "VKORC1", "TPMT"]
@@ -450,6 +469,11 @@ class PathwayEnrichmentCircuit(BaseCircuit):
     """
 
     def __init__(self, max_genes: int = 20000):
+        """Initialize instance.
+
+            Args:
+                max_genes: Max genes.
+            """
         super().__init__("pathway_enrichment", 25000)
         self.max_genes = max_genes
 

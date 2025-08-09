@@ -9,6 +9,8 @@ class DiabetesRiskCircuit(BaseCircuit):
     """Circuit for privacy-preserving diabetes risk assessment."""
     
     def __init__(self):
+        """Initialize instance.
+            """
         self.glucose_level = 0
         self.hba1c = 0.0
         self.risk_score = 0.0
@@ -70,6 +72,8 @@ class GlucoseMonitoringCircuit(BaseCircuit):
     """Circuit for privacy-preserving glucose monitoring."""
     
     def __init__(self):
+        """Initialize instance.
+            """
         self.readings = []
         self.average = 0.0
         self.in_range_count = 0

@@ -108,6 +108,12 @@ class ECCEncoderMixin:
     """
 
     def __init__(self, base_dimension: int, parity_g: int = 3):
+        """Initialize instance.
+
+            Args:
+                base_dimension: Dimension value.
+                parity_g: Parity g.
+            """
         self.base_dimension = base_dimension
         self.parity_g = parity_g
         self.code_length = parity_g + 1
@@ -208,6 +214,12 @@ class ErrorBudgetAllocator:
     """
 
     def __init__(self, dim_cap: int = 200000, default_g: int = 3):
+        """Initialize instance.
+
+            Args:
+                dim_cap: Dimension value.
+                default_g: Default g.
+            """
         self.dim_cap = dim_cap
         self.default_g = default_g
 
@@ -301,6 +313,11 @@ class AdaptiveHDCEncoder(GenomicEncoder):
     """
 
     def __init__(self, dimension: int = 10000):
+        """Initialize instance.
+
+            Args:
+                dimension: Dimension value.
+            """
         super().__init__(dimension)
         self.ecc_encoders: dict[tuple, object] = {}  # Cache ECC encoders by configuration
         self.budget_allocator = ErrorBudgetAllocator()

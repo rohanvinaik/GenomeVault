@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Multi Omics module."""
+"""Multi Omics module."""
 import hashlib
 from typing import Dict, List
 
@@ -34,6 +36,11 @@ class MultiOmicsCorrelationCircuit(BaseCircuit):
     """
 
     def __init__(self, max_dimensions: int = 1000):
+        """Initialize instance.
+
+            Args:
+                max_dimensions: Dimension value.
+            """
         super().__init__("multi_omics_correlation", 30000)
         self.max_dimensions = max_dimensions
 
@@ -169,6 +176,11 @@ class GenotypePhenotypeAssociationCircuit(BaseCircuit):
     """
 
     def __init__(self, max_samples: int = 10000):
+        """Initialize instance.
+
+            Args:
+                max_samples: Max samples.
+            """
         super().__init__("genotype_phenotype_association", 40000)
         self.max_samples = max_samples
 
@@ -300,6 +312,8 @@ class ClinicalTrialEligibilityCircuit(BaseCircuit):
     """
 
     def __init__(self):
+        """Initialize instance.
+            """
         super().__init__("clinical_trial_eligibility", 20000)
 
     def setup(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]):
@@ -409,6 +423,11 @@ class RareVariantBurdenCircuit(BaseCircuit):
     """
 
     def __init__(self, max_variants_per_gene: int = 100):
+        """Initialize instance.
+
+            Args:
+                max_variants_per_gene: Genetic variant information.
+            """
         super().__init__("rare_variant_burden", 15000)
         self.max_variants = max_variants_per_gene
 

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 # Standard library imports
+"""Sequencing module."""
+"""Sequencing module."""
 import json
 import subprocess
 import tempfile

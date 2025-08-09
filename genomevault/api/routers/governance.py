@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Governance module."""
+"""Governance module."""
 from fastapi import APIRouter
 
 from genomevault.governance.audit.events import list_events, record_event
@@ -13,6 +15,14 @@ _CONSENT = ConsentStore()
 
 @router.post("/consent/grant")
 def consent_grant(payload):
+    """Consent grant.
+
+        Args:
+            payload: Payload.
+
+        Returns:
+            Operation result.
+        """
     rec = _CONSENT.grant(payload.subject_id, payload.scope, ttl_days=payload.ttl_days)
     record_event(
         "consent_granted",
@@ -25,6 +35,14 @@ def consent_grant(payload):
 
 @router.post("/consent/revoke")
 def consent_revoke(payload):
+    """Consent revoke.
+
+        Args:
+            payload: Payload.
+
+        Returns:
+            Operation result.
+        """
     ok = _CONSENT.revoke(payload.subject_id, payload.scope)
     if ok:
         record_event("consent_revoked", payload.subject_id, payload.scope, {})
@@ -33,12 +51,29 @@ def consent_revoke(payload):
 
 @router.get("/consent/check")
 def consent_check(subject_id: str, scope: str):
+    """Consent check.
+
+        Args:
+            subject_id: Subject id.
+            scope: Scope.
+
+        Returns:
+            Operation result.
+        """
     active = _CONSENT.has_consent(subject_id, scope)
     return {"subject_id": subject_id, "scope": scope, "active": active}
 
 
 @router.post("/dsar/export")
 def dsar_export(payload):
+    """Dsar export.
+
+        Args:
+            payload: Payload.
+
+        Returns:
+            Operation result.
+        """
     # In a real system, locate subject's records and redact PII as needed.
     # Here we return a minimal synthetic response for demonstration.
     sample = [
@@ -50,6 +85,14 @@ def dsar_export(payload):
 
 @router.post("/dsar/erase")
 def dsar_erase(payload):
+    """Dsar erase.
+
+        Args:
+            payload: Payload.
+
+        Returns:
+            Operation result.
+        """
     # In a real system, erase or anonymize subject's data per retention policy.
     record_event("erase", payload.subject_id, "dsar", {})
     return {"ok": True}
@@ -57,5 +100,10 @@ def dsar_erase(payload):
 
 @router.get("/ropa")
 def ropa():
+    """Ropa.
+
+        Returns:
+            Operation result.
+        """
     # Record of Processing Activities from audit events
     return {"events": list_events()}

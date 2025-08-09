@@ -29,6 +29,11 @@ class LocalDataset:
 
     @property
     def num_samples(self) -> int:
+        """Num samples.
+
+            Returns:
+                Integer result.
+            """
         return len(self.features)
 
 
