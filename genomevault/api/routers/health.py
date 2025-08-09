@@ -1,11 +1,8 @@
-from __future__ import annotations
-
 from fastapi import APIRouter
 
 router = APIRouter(prefix="/health", tags=["health"])
 
 
-@router.get("")
-def health() -> dict:
-    """Health check endpoint."""
+@router.get("", include_in_schema=False)
+def health():
     return {"status": "ok"}
