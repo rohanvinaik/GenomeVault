@@ -22,14 +22,10 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import json
-import os
-import re
 import subprocess
-import sys
 import time
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
+from typing import List, Tuple
 
 
 class ComprehensiveCleanup:
@@ -49,9 +45,7 @@ class ComprehensiveCleanup:
         timestamp = time.strftime("%H:%M:%S")
         print(f"[{timestamp}] ✗ {message}")
 
-    def run_command_safe(
-        self, cmd: List[str], cwd: Path = None
-    ) -> Tuple[int, str, str]:
+    def run_command_safe(self, cmd: List[str], cwd: Path = None) -> Tuple[int, str, str]:
         """Safely run a command and return results."""
         if cwd is None:
             cwd = self.repo_root
@@ -112,9 +106,7 @@ class ComprehensiveCleanup:
 
         # Test the configuration
         print("Testing Ruff configuration...")
-        returncode, stdout, stderr = self.run_command_safe(
-            ["ruff", "check", "--version"]
-        )
+        returncode, stdout, stderr = self.run_command_safe(["ruff", "check", "--version"])
         if returncode == 0:
             self.log_fix("Ruff configuration validated")
         else:
@@ -216,9 +208,7 @@ class ComprehensiveCleanup:
         )
 
         if returncode != 0:
-            self.log_error(
-                "Cannot execute Python commands, skipping automated F821 fixes"
-            )
+            self.log_error("Cannot execute Python commands, skipping automated F821 fixes")
             self._manual_f821_fixes()
             return
 
@@ -250,9 +240,7 @@ class ComprehensiveCleanup:
 
                 # Add common missing imports
                 if "import logging" not in content:
-                    content = self._add_import_after_docstring(
-                        content, "import logging"
-                    )
+                    content = self._add_import_after_docstring(content, "import logging")
                     content = self._add_import_after_docstring(
                         content, "logger = logging.getLogger(__name__)"
                     )
@@ -266,9 +254,7 @@ class ComprehensiveCleanup:
 
                 for const_name, const_value in constants_to_add:
                     if const_name in content and f"{const_name} =" not in content:
-                        content = self._add_constant_definition(
-                            content, const_name, const_value
-                        )
+                        content = self._add_constant_definition(content, const_name, const_value)
 
                 if content != original_content:
                     full_path.write_text(content)
@@ -303,9 +289,7 @@ class ComprehensiveCleanup:
 
         return "\n".join(lines)
 
-    def _add_constant_definition(
-        self, content: str, const_name: str, const_value: str
-    ) -> str:
+    def _add_constant_definition(self, content: str, const_name: str, const_value: str) -> str:
         """Add constant definition at appropriate location."""
         lines = content.split("\n")
 
@@ -395,9 +379,7 @@ class ComprehensiveCleanup:
             stripped = line.strip()
 
             # Handle docstring
-            if not docstring_done and (
-                stripped.startswith('"""') or stripped.startswith("'''")
-            ):
+            if not docstring_done and (stripped.startswith('"""') or stripped.startswith("'''")):
                 in_docstring = not in_docstring
                 docstring_lines.append(line)
                 if not in_docstring:
@@ -406,9 +388,7 @@ class ComprehensiveCleanup:
             elif in_docstring:
                 docstring_lines.append(line)
                 continue
-            elif not docstring_done and (
-                stripped.startswith('"""') or stripped.startswith("'''")
-            ):
+            elif not docstring_done and (stripped.startswith('"""') or stripped.startswith("'''")):
                 docstring_lines.append(line)
                 docstring_done = True
                 continue
@@ -568,9 +548,7 @@ class ComprehensiveCleanup:
             else:
                 self.log_error(f"✗ {dir_path}/ missing")
 
-        self.log_fix(
-            f"Directory structure: {existing_dirs}/{len(key_dirs)} key directories exist"
-        )
+        self.log_fix(f"Directory structure: {existing_dirs}/{len(key_dirs)} key directories exist")
 
         # Summary recommendations
         print("\nVALIDATION SUMMARY:")
@@ -682,28 +660,28 @@ def get_config() -> Dict[str, Any]:
         else:
             print("\n❌ No fixes were applied.")
 
-        print(f"\n📊 SUMMARY STATISTICS:")
+        print("\n📊 SUMMARY STATISTICS:")
         print(f"   Total fixes applied: {len(self.fixes_applied)}")
         print(
             f"   Errors encountered: {len([f for f in self.fixes_applied if '✗' in f or 'error' in f.lower()])}"
         )
 
-        print(f"\n🎯 TARGET ACHIEVED:")
-        print(f"   • Ruff configuration updated with max-violations=200")
-        print(f"   • Helper scripts moved to tools/ directory")
-        print(f"   • Common undefined variables addressed")
-        print(f"   • Import order and redefinition issues fixed")
-        print(f"   • Example code properly guarded")
-        print(f"   • Essential stub modules created")
+        print("\n🎯 TARGET ACHIEVED:")
+        print("   • Ruff configuration updated with max-violations=200")
+        print("   • Helper scripts moved to tools/ directory")
+        print("   • Common undefined variables addressed")
+        print("   • Import order and redefinition issues fixed")
+        print("   • Example code properly guarded")
+        print("   • Essential stub modules created")
 
-        print(f"\n📋 NEXT MANUAL STEPS:")
-        print(f"   1. Review any remaining F821 errors in ZK proof modules")
-        print(f"   2. Test imports: python -c 'import genomevault.core.exceptions'")
-        print(f"   3. Run comprehensive linting when tools are available")
-        print(f"   4. Set up CI/CD pipeline with pre-commit hooks")
-        print(f"   5. Gradually enable stricter mypy checking")
+        print("\n📋 NEXT MANUAL STEPS:")
+        print("   1. Review any remaining F821 errors in ZK proof modules")
+        print("   2. Test imports: python -c 'import genomevault.core.exceptions'")
+        print("   3. Run comprehensive linting when tools are available")
+        print("   4. Set up CI/CD pipeline with pre-commit hooks")
+        print("   5. Gradually enable stricter mypy checking")
 
-        print(f"\n🔍 FILES REQUIRING MANUAL REVIEW:")
+        print("\n🔍 FILES REQUIRING MANUAL REVIEW:")
         review_files = [
             "genomevault/zk_proofs/verifier.py",
             "genomevault/zk_proofs/circuits/base_circuits.py",
@@ -717,20 +695,20 @@ def get_config() -> Dict[str, Any]:
             else:
                 print(f"   ✗ {file_path} (not found)")
 
-        print(f"\n🚀 PROJECT STATUS:")
+        print("\n🚀 PROJECT STATUS:")
         if len(self.fixes_applied) >= 10:
-            print(f"   🟢 EXCELLENT: Major technical debt reduction achieved")
+            print("   🟢 EXCELLENT: Major technical debt reduction achieved")
         elif len(self.fixes_applied) >= 5:
-            print(f"   🟡 GOOD: Significant improvements made")
+            print("   🟡 GOOD: Significant improvements made")
         else:
-            print(f"   🔴 LIMITED: Few fixes applied, manual work needed")
+            print("   🔴 LIMITED: Few fixes applied, manual work needed")
 
-        print(f"\n💡 LONG-TERM RECOMMENDATIONS:")
-        print(f"   • Implement automated testing for all core modules")
-        print(f"   • Add type hints to all public APIs")
-        print(f"   • Create comprehensive documentation")
-        print(f"   • Set up continuous integration")
-        print(f"   • Regular dependency updates")
+        print("\n💡 LONG-TERM RECOMMENDATIONS:")
+        print("   • Implement automated testing for all core modules")
+        print("   • Add type hints to all public APIs")
+        print("   • Create comprehensive documentation")
+        print("   • Set up continuous integration")
+        print("   • Regular dependency updates")
 
     def run_all_phases(self):
         """Execute all cleanup phases in sequence."""
@@ -809,12 +787,8 @@ Examples:
         """,
     )
 
-    parser.add_argument(
-        "--phase", type=int, choices=range(1, 8), help="Run specific phase (1-7)"
-    )
-    parser.add_argument(
-        "--all", action="store_true", help="Run all phases sequentially"
-    )
+    parser.add_argument("--phase", type=int, choices=range(1, 8), help="Run specific phase (1-7)")
+    parser.add_argument("--all", action="store_true", help="Run all phases sequentially")
     parser.add_argument(
         "--repo-root",
         default="/Users/rohanvinaik/genomevault",

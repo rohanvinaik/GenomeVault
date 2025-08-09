@@ -50,7 +50,7 @@ full = [
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["genomevault", "genomevault.*"]
-exclude = ["scripts", "examples"]
+exclude = ["scripts", "examples", "devtools", "tools", "attic"]
 
 [project.scripts]
 genomevault = "genomevault.cli:main"

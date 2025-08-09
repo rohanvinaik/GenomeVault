@@ -40,9 +40,7 @@ def main():
         print(f"⚠ MyPy found issues:\n{result.stdout}{result.stderr}")
 
     print("\n3. Running pytest...")
-    result = subprocess.run(
-        ["pytest", "-q", "--tb=short"], capture_output=True, text=True
-    )
+    result = subprocess.run(["pytest", "-q", "--tb=short"], capture_output=True, text=True)
     print(f"Pytest result: {result.returncode}")
     if result.stdout:
         print(f"Output:\n{result.stdout}")

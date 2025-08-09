@@ -4,10 +4,8 @@ Clean up the root directory by organizing files into appropriate locations.
 This script follows best practices for project structure.
 """
 
-import os
 import shutil
 from pathlib import Path
-from typing import List, Tuple
 
 # Define the root directory
 ROOT_DIR = Path(__file__).parent.parent

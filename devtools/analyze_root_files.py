@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-import os, re, subprocess, time, hashlib
+import re
+import subprocess
+import time
 from pathlib import Path
 
 ROOT = Path(".")
@@ -144,9 +146,7 @@ for f in tracked:
         if not refd:
             reason.append("unreferenced")
         # Promote to CANDIDATE if at least 2 signals OR clearly junk ext
-        signals = sum(
-            [days >= 120, size > 1_000_000, suspicious_name, (ext in BAD_EXT), not refd]
-        )
+        signals = sum([days >= 120, size > 1_000_000, suspicious_name, (ext in BAD_EXT), not refd])
         if (ext in BAD_EXT) or (signals >= 2):
             cat = "CANDIDATE"
 
@@ -179,9 +179,7 @@ with report.open("w", encoding="utf-8") as w:
 
 # propose candidates list
 cands = [f for cat, f, _, _, _, _, _, _, _ in rows if cat == "CANDIDATE"]
-(Path(".tidy") / "top_root_candidates.txt").write_text(
-    "\n".join(cands) + "\n", encoding="utf-8"
-)
+(Path(".tidy") / "top_root_candidates.txt").write_text("\n".join(cands) + "\n", encoding="utf-8")
 
 print("Wrote:", report, "and", OUT / "top_root_candidates.txt")
 print(

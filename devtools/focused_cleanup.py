@@ -15,10 +15,8 @@ Priority fixes:
 
 from __future__ import annotations
 
-import os
-import re
 from pathlib import Path
-from typing import Dict, List, Set
+from typing import List
 
 
 class FocusedCleanup:
@@ -170,9 +168,7 @@ class FocusedCleanup:
                 in_docstring = not in_docstring
                 if not in_docstring:
                     insert_pos = i + 1
-            elif not in_docstring and (
-                line.startswith("import ") or line.startswith("from ")
-            ):
+            elif not in_docstring and (line.startswith("import ") or line.startswith("from ")):
                 insert_pos = i + 1
             elif not in_docstring and line.strip() and not line.startswith("#"):
                 break
@@ -180,9 +176,7 @@ class FocusedCleanup:
         # Add missing imports
         imports_to_add = []
         if not has_logging:
-            imports_to_add.extend(
-                ["import logging", "logger = logging.getLogger(__name__)"]
-            )
+            imports_to_add.extend(["import logging", "logger = logging.getLogger(__name__)"])
         if not has_time:
             imports_to_add.append("import time")
         if not has_typing:
@@ -257,9 +251,7 @@ class FocusedCleanup:
 
         if example_start > 0:
             # Check if this looks like example code (not part of class/function)
-            indent_level = len(lines[example_start]) - len(
-                lines[example_start].lstrip()
-            )
+            indent_level = len(lines[example_start]) - len(lines[example_start].lstrip())
             if indent_level == 0:  # Top-level code
                 # Wrap in guard
                 guarded_lines = lines[:example_start]
@@ -369,11 +361,7 @@ class FocusedCleanup:
             # Handle docstrings
             if stripped.startswith('"""') or stripped.startswith("'''"):
                 in_docstring = not in_docstring
-                if (
-                    in_docstring
-                    or stripped.count('"""') == 2
-                    or stripped.count("'''") == 2
-                ):
+                if in_docstring or stripped.count('"""') == 2 or stripped.count("'''") == 2:
                     docstring_lines.append(line)
                     if stripped.count('"""') == 2 or stripped.count("'''") == 2:
                         in_docstring = False
@@ -505,9 +493,7 @@ MAX_PROOF_SIZE = 1024 * 1024  # 1MB
                     for prev_line in reversed(prev_lines):
                         if prev_line.strip().startswith("def "):
                             # This is a function with just pass - replace with NotImplementedError
-                            func_name = (
-                                prev_line.strip().split("(")[0].replace("def ", "")
-                            )
+                            func_name = prev_line.strip().split("(")[0].replace("def ", "")
                             lines[i] = (
                                 f'    raise NotImplementedError("Function {func_name} not yet implemented")'
                             )
@@ -515,9 +501,7 @@ MAX_PROOF_SIZE = 1024 * 1024  # 1MB
                         elif prev_line.strip().startswith("class "):
                             # This is a class with just pass - leave it alone
                             break
-                        elif prev_line.strip() and not prev_line.strip().startswith(
-                            "#"
-                        ):
+                        elif prev_line.strip() and not prev_line.strip().startswith("#"):
                             # Found other code, not a simple pass function
                             break
 
@@ -584,12 +568,8 @@ ignore_errors = true
             print("No fixes were applied.")
 
         print("\nNext steps:")
-        print(
-            "1. Run: ruff check . --select F821 (check for remaining undefined names)"
-        )
-        print(
-            "2. Run: ruff check . --select F811,E402 (check import/redefinition issues)"
-        )
+        print("1. Run: ruff check . --select F821 (check for remaining undefined names)")
+        print("2. Run: ruff check . --select F811,E402 (check import/redefinition issues)")
         print("3. Run: mypy genomevault/core genomevault/hypervector (type checking)")
         print("4. Run: pytest -q -k 'not api and not nanopore' (test validation)")
 

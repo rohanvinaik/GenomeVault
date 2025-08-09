@@ -327,7 +327,10 @@ class HDCBenchmark:
         try:
             import time
 
-            from genomevault.hypervector_transform.hdc_encoder import OmicsType, create_encoder
+            from genomevault.hypervector_transform.hdc_encoder import (
+                OmicsType,
+                create_encoder,
+            )
 
             # Basic encoding benchmark
             encoder = create_encoder(dimension=10000)

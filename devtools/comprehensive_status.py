@@ -24,9 +24,7 @@ def check_ruff_binary():
 
             if len(locations) > 1:
                 print("⚠️  WARNING: Multiple ruff binaries detected!")
-                print(
-                    "   This can cause version conflicts as mentioned in the error report"
-                )
+                print("   This can cause version conflicts as mentioned in the error report")
 
         # Check ruff version
         result = subprocess.run(["ruff", "--version"], capture_output=True, text=True)
@@ -89,9 +87,7 @@ def check_import_errors():
 
     for import_stmt, desc in import_tests:
         try:
-            result = subprocess.run(
-                ["python", "-c", import_stmt], capture_output=True, text=True
-            )
+            result = subprocess.run(["python", "-c", import_stmt], capture_output=True, text=True)
             if result.returncode == 0:
                 print(f"✅ {desc}: Import OK")
             else:
@@ -108,9 +104,7 @@ def check_ruff_config():
 
     try:
         # Test ruff config by running a help command
-        result = subprocess.run(
-            ["ruff", "check", "--help"], capture_output=True, text=True
-        )
+        result = subprocess.run(["ruff", "check", "--help"], capture_output=True, text=True)
         if result.returncode == 0:
             print("✅ Ruff configuration: Valid")
         else:

@@ -27,14 +27,13 @@ import argparse
 import ast
 import hashlib
 import json
-import os
 import re
 import subprocess
 import sys
 import time
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple, Union
+from typing import Dict, List, Optional, Tuple
 
 
 class EnhancedCleanup:
@@ -47,9 +46,7 @@ class EnhancedCleanup:
         self.continue_on_error = False
 
         # Progress tracking
-        self.phase_stats = defaultdict(
-            lambda: {"fixes": 0, "errors": 0, "files_touched": 0}
-        )
+        self.phase_stats = defaultdict(lambda: {"fixes": 0, "errors": 0, "files_touched": 0})
 
     def log_fix(self, message: str, phase: str = "general"):
         """Log a fix that was applied."""
@@ -163,9 +160,7 @@ class EnhancedCleanup:
                         "[tool.ruff]\n\n[tool.ruff.output]\nmax-violations = 200",
                     )
                 else:
-                    content += (
-                        "\n\n[tool.ruff]\n\n[tool.ruff.output]\nmax-violations = 200\n"
-                    )
+                    content += "\n\n[tool.ruff]\n\n[tool.ruff.output]\nmax-violations = 200\n"
                 self.log_fix("Added max-violations = 200 to pyproject.toml", "phase1")
 
             # Add per-file ignores
@@ -177,9 +172,7 @@ class EnhancedCleanup:
                         f"[tool.ruff.lint.per-file-ignores]\n{tools_ignore}",
                     )
                 else:
-                    content += (
-                        f"\n\n[tool.ruff.lint.per-file-ignores]\n{tools_ignore}\n"
-                    )
+                    content += f"\n\n[tool.ruff.lint.per-file-ignores]\n{tools_ignore}\n"
                 self.log_fix("Added tools/*.py ignore to pyproject.toml", "phase1")
         else:
             # Handle .ruff.toml format
@@ -187,9 +180,7 @@ class EnhancedCleanup:
                 if "[output]" not in content:
                     content = "[output]\nmax-violations = 200\n\n" + content
                 else:
-                    content = content.replace(
-                        "[output]", "[output]\nmax-violations = 200"
-                    )
+                    content = content.replace("[output]", "[output]\nmax-violations = 200")
                 self.log_fix("Added max-violations = 200 to .ruff.toml", "phase1")
 
             # Add per-file ignores
@@ -229,7 +220,7 @@ class EnhancedCleanup:
         tools_dir = self.repo_root / "tools"
 
         if dry_run:
-            print(f"[DRY RUN] Would create tools/ directory and move helper scripts")
+            print("[DRY RUN] Would create tools/ directory and move helper scripts")
             return
 
         tools_dir.mkdir(exist_ok=True)
@@ -270,13 +261,9 @@ class EnhancedCleanup:
                             target_path.write_text(content)
                             moved_count += 1
                             self.files_modified.add(str(target_path))
-                            self.log_fix(
-                                f"Moved {script_path.name} to tools/", "phase2"
-                            )
+                            self.log_fix(f"Moved {script_path.name} to tools/", "phase2")
                     except Exception as e:
-                        self.log_error(
-                            f"Could not move {script_path.name}: {e}", "phase2"
-                        )
+                        self.log_error(f"Could not move {script_path.name}: {e}", "phase2")
 
         if moved_count > 0:
             self.phase_stats["phase2"]["files_touched"] += moved_count
@@ -413,17 +400,13 @@ class EnhancedCleanup:
         total_fixes = 0
 
         for file_path, file_errors in errors_by_file.items():
-            fixes_in_file = self._fix_undefined_names_in_file(
-                Path(file_path), file_errors
-            )
+            fixes_in_file = self._fix_undefined_names_in_file(Path(file_path), file_errors)
             if fixes_in_file > 0:
                 fixed_files += 1
                 total_fixes += fixes_in_file
 
         if total_fixes > 0:
-            self.log_fix(
-                f"Fixed {total_fixes} undefined names in {fixed_files} files", "phase3"
-            )
+            self.log_fix(f"Fixed {total_fixes} undefined names in {fixed_files} files", "phase3")
             self.phase_stats["phase3"]["files_touched"] += fixed_files
 
     def _get_ruff_f821_errors(self) -> List[Dict]:
@@ -477,15 +460,11 @@ class EnhancedCleanup:
                     )
                     return fixes_applied
         except Exception as e:
-            self.log_error(
-                f"Could not fix undefined names in {file_path}: {e}", "phase3"
-            )
+            self.log_error(f"Could not fix undefined names in {file_path}: {e}", "phase3")
 
         return 0
 
-    def _fix_single_undefined_name(
-        self, content: str, name: str, file_path: Path
-    ) -> str:
+    def _fix_single_undefined_name(self, content: str, name: str, file_path: Path) -> str:
         """Fix a single undefined name in content."""
         # Common fixes based on GenomeVault patterns
         fixes = {
@@ -513,9 +492,7 @@ class EnhancedCleanup:
 
         # Try to infer the type and add a placeholder
         if name.isupper():  # Likely a constant
-            return self._add_definition_to_content(
-                content, f"{name} = None  # TODO: Define {name}"
-            )
+            return self._add_definition_to_content(content, f"{name} = None  # TODO: Define {name}")
         elif name.startswith("_"):  # Private variable
             return self._add_definition_to_content(
                 content, f"{name} = None  # TODO: Define private {name}"
@@ -591,9 +568,7 @@ class EnhancedCleanup:
                 fixed_count += 1
 
         if fixed_count > 0:
-            self.log_fix(
-                f"Fixed redefinition/import issues in {fixed_count} files", "phase4"
-            )
+            self.log_fix(f"Fixed redefinition/import issues in {fixed_count} files", "phase4")
             self.phase_stats["phase4"]["files_touched"] += fixed_count
 
     def _fix_single_file_redefinition_imports(self, file_path: Path) -> bool:
@@ -694,9 +669,7 @@ class EnhancedCleanup:
 
             # Collect imports
             if stripped.startswith(("import ", "from ")) and docstring_done:
-                if stripped not in [
-                    l.strip() for l in import_lines
-                ]:  # Avoid duplicates
+                if stripped not in [l.strip() for l in import_lines]:  # Avoid duplicates
                     import_lines.append(line)
             else:
                 if not docstring_done and not stripped:
@@ -723,8 +696,7 @@ class EnhancedCleanup:
             for imp_line in import_lines:
                 stripped = imp_line.strip()
                 if any(
-                    stripped.startswith(f"import {mod}")
-                    or stripped.startswith(f"from {mod}")
+                    stripped.startswith(f"import {mod}") or stripped.startswith(f"from {mod}")
                     for mod in [
                         "os",
                         "sys",
@@ -767,9 +739,7 @@ class EnhancedCleanup:
         tools_dir = self.repo_root / "tools"
         if tools_dir.exists():
             script_count = len(list(tools_dir.glob("*.py")))
-            self.log_fix(
-                f"Tools directory contains {script_count} Python scripts", "phase5"
-            )
+            self.log_fix(f"Tools directory contains {script_count} Python scripts", "phase5")
 
             # Add __init__.py to tools if needed
             init_file = tools_dir / "__init__.py"
@@ -787,9 +757,7 @@ class EnhancedCleanup:
             if config_file.exists():
                 content = config_file.read_text()
                 if '"tools/*.py" = ["ALL"]' in content:
-                    self.log_fix(
-                        f"{config_file.name} properly ignores tools/*.py", "phase5"
-                    )
+                    self.log_fix(f"{config_file.name} properly ignores tools/*.py", "phase5")
                     break
         else:
             self.log_error("No config file found with tools/*.py ignore", "phase5")
@@ -861,9 +829,7 @@ class EnhancedCleanup:
                     if self.backup_file(file_path):
                         file_path.write_text(content)
                         self.files_modified.add(str(file_path))
-                        self.log_fix(
-                            f"Fixed syntax errors in {file_path.name}", "phase6"
-                        )
+                        self.log_fix(f"Fixed syntax errors in {file_path.name}", "phase6")
                         return True
                 except SyntaxError:
                     # Revert if fix didn't work
@@ -901,14 +867,10 @@ class EnhancedCleanup:
                             "phase7",
                         )
 
-        self.log_fix(
-            f"Syntax validation: {syntax_valid}/{syntax_total} files valid", "phase7"
-        )
+        self.log_fix(f"Syntax validation: {syntax_valid}/{syntax_total} files valid", "phase7")
 
         # Test Ruff execution
-        returncode, stdout, stderr = self.run_command_safe(
-            ["ruff", "check", ".", "--statistics"]
-        )
+        returncode, stdout, stderr = self.run_command_safe(["ruff", "check", ".", "--statistics"])
         if returncode == 0:
             self.log_fix("Ruff check passed with no errors", "phase7")
         else:
@@ -986,9 +948,7 @@ class EnhancedCleanup:
         import_score = (import_success / import_total * 100) if import_total > 0 else 0
         structure_score = (dirs_existing / dirs_total * 100) if dirs_total > 0 else 0
 
-        print(
-            f"📊 SYNTAX VALIDATION: {syntax_score:.1f}% ({syntax_valid}/{syntax_total} files)"
-        )
+        print(f"📊 SYNTAX VALIDATION: {syntax_score:.1f}% ({syntax_valid}/{syntax_total} files)")
         print(
             f"📦 IMPORT VALIDATION: {import_score:.1f}% ({import_success}/{import_total} modules)"
         )
@@ -1186,7 +1146,7 @@ class HypervectorError(GenomeVaultError):
             if total_errors > 10:
                 print(f"  ... and {total_errors - 10} more errors")
 
-        print(f"\n📊 SUMMARY STATISTICS:")
+        print("\n📊 SUMMARY STATISTICS:")
         print(f"   Total fixes applied: {total_fixes}")
         print(f"   Total errors encountered: {total_errors}")
         print(f"   Files modified: {total_files_modified}")
@@ -1197,14 +1157,14 @@ class HypervectorError(GenomeVaultError):
         )
 
         # Phase-by-phase breakdown
-        print(f"\n📈 PHASE BREAKDOWN:")
+        print("\n📈 PHASE BREAKDOWN:")
         for phase, stats in self.phase_stats.items():
             if stats["fixes"] > 0 or stats["errors"] > 0:
                 print(
                     f"   {phase}: {stats['fixes']} fixes, {stats['errors']} errors, {stats['files_touched']} files"
                 )
 
-        print(f"\n🎯 OBJECTIVES ACHIEVED:")
+        print("\n🎯 OBJECTIVES ACHIEVED:")
         objectives = [
             "✓ Ruff configuration updated with max-violations=200",
             "✓ Helper scripts organized in tools/ directory",
@@ -1219,7 +1179,7 @@ class HypervectorError(GenomeVaultError):
         for objective in objectives:
             print(f"   {objective}")
 
-        print(f"\n📋 IMMEDIATE NEXT STEPS:")
+        print("\n📋 IMMEDIATE NEXT STEPS:")
         next_steps = [
             "1. Run: ruff check . --statistics (should show significant reduction)",
             "2. Test imports: python -c 'import genomevault.core.exceptions'",
@@ -1231,7 +1191,7 @@ class HypervectorError(GenomeVaultError):
         for step in next_steps:
             print(f"   {step}")
 
-        print(f"\n🔍 FILES REQUIRING MANUAL REVIEW:")
+        print("\n🔍 FILES REQUIRING MANUAL REVIEW:")
         manual_review = [
             "genomevault/zk_proofs/verifier.py (F821 errors)",
             "genomevault/zk_proofs/circuits/base_circuits.py (complex logic)",
@@ -1247,7 +1207,7 @@ class HypervectorError(GenomeVaultError):
             print(f"   {status} {item}")
 
         # Determine project status
-        print(f"\n🚀 PROJECT STATUS:")
+        print("\n🚀 PROJECT STATUS:")
         if total_fixes >= 20 and total_errors < 5:
             status = "🟢 EXCELLENT: Major technical debt reduction achieved"
         elif total_fixes >= 10 and total_errors < 10:
@@ -1259,7 +1219,7 @@ class HypervectorError(GenomeVaultError):
 
         print(f"   {status}")
 
-        print(f"\n💡 LONG-TERM RECOMMENDATIONS:")
+        print("\n💡 LONG-TERM RECOMMENDATIONS:")
         recommendations = [
             "• Implement automated testing for all core modules",
             "• Add comprehensive type hints to public APIs",
@@ -1276,7 +1236,7 @@ class HypervectorError(GenomeVaultError):
         # Backup information
         if self.backup_dir.exists() and list(self.backup_dir.glob("*.bak")):
             backup_count = len(list(self.backup_dir.glob("*.bak")))
-            print(f"\n💾 BACKUP INFORMATION:")
+            print("\n💾 BACKUP INFORMATION:")
             print(f"   {backup_count} backup files created in {self.backup_dir}")
             print(f"   To restore: cp {self.backup_dir}/<file>.bak <original_location>")
 
@@ -1428,9 +1388,7 @@ Examples:
         choices=range(0, 8),
         help="Run specific phase (0-7, where 0 = create stubs)",
     )
-    parser.add_argument(
-        "--all", action="store_true", help="Run all phases sequentially"
-    )
+    parser.add_argument("--all", action="store_true", help="Run all phases sequentially")
     parser.add_argument(
         "--repo-root",
         default="/Users/rohanvinaik/genomevault",
