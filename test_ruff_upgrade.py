@@ -2,8 +2,8 @@
 """
 Test the Ruff upgrade functionality in Phase 3.
 """
+
 import subprocess
-import sys
 
 
 def test_current_ruff():
@@ -128,7 +128,7 @@ if __name__ == "__main__":
     # Test 3: Enhanced Phase 3
     phase3_works = run_enhanced_phase3()
 
-    print(f"\\n📊 Test Results:")
+    print("\\n📊 Test Results:")
     print(f"   Current Ruff adequate: {'✅' if current_adequate else '❌'}")
     print(f"   Can upgrade Ruff: {'✅' if can_upgrade else '❌'}")
     print(f"   Phase 3 works: {'✅' if phase3_works else '❌'}")

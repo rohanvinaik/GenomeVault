@@ -1,8 +1,0 @@
-from typing import Any, Dict, List, Optional, Union
-
-# Copyright (c) Meta Platforms, Inc. and affiliates
-
-
-
-_derived_version: Optional[str] = None
-

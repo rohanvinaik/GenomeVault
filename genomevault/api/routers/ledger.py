@@ -2,9 +2,12 @@ from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException
 
-from genomevault.ledger.models import (LedgerAppendRequest,
-                                       LedgerEntriesResponse, LedgerEntryModel,
-                                       LedgerVerifyResponse)
+from genomevault.ledger.models import (
+    LedgerAppendRequest,
+    LedgerEntriesResponse,
+    LedgerEntryModel,
+    LedgerVerifyResponse,
+)
 from genomevault.ledger.store import InMemoryLedger
 
 router = APIRouter(prefix="/ledger", tags=["ledger"])

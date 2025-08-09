@@ -17,9 +17,13 @@ import numpy as np
 import torch
 
 from genomevault.hypervector.operations.hamming_lut import (
-    HammingLUT, generate_popcount_lut)
-from genomevault.hypervector_transform.hdc_encoder import (HypervectorConfig,
-                                                           HypervectorEncoder)
+    HammingLUT,
+    generate_popcount_lut,
+)
+from genomevault.hypervector_transform.hdc_encoder import (
+    HypervectorConfig,
+    HypervectorEncoder,
+)
 
 # Benchmark configurations
 VECTOR_DIMENSIONS = [1000, 5000, 10000, 20000]

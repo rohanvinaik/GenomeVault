@@ -3,8 +3,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from genomevault.utils.logging import get_logger
-from genomevault.zk_proofs.circuits.base_circuits import (BaseCircuit,
-                                                          FieldElement)
+from genomevault.zk_proofs.circuits.base_circuits import BaseCircuit, FieldElement
 
 logger = get_logger(__name__)
 

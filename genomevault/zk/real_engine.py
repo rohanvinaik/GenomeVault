@@ -4,9 +4,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from genomevault.zk.backends.circom_snarkjs import (CircuitPaths, prove,
-                                                    toolchain_available,
-                                                    verify)
+from genomevault.zk.backends.circom_snarkjs import (
+    CircuitPaths,
+    prove,
+    toolchain_available,
+    verify,
+)
 
 
 @dataclass

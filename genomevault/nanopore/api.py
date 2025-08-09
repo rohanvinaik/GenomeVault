@@ -12,13 +12,22 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
-from fastapi import (APIRouter, BackgroundTasks, Depends, File, HTTPException,
-                     Query, UploadFile)
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Depends,
+    File,
+    HTTPException,
+    Query,
+    UploadFile,
+)
 from pydantic import BaseModel, Field
 
 from genomevault.hypervector.encoding import HypervectorEncoder
-from genomevault.nanopore.biological_signals import (BiologicalSignalDetector,
-                                                     BiologicalSignalType)
+from genomevault.nanopore.biological_signals import (
+    BiologicalSignalDetector,
+    BiologicalSignalType,
+)
 from genomevault.nanopore.streaming import NanoporeStreamProcessor
 from genomevault.utils.logging import get_logger
 

@@ -17,8 +17,12 @@ import numpy as np
 from genomevault.utils.config import get_config
 
 config = get_config()
-from genomevault.utils.logging import (audit_logger, get_logger, logger,
-                                       performance_logger)
+from genomevault.utils.logging import (
+    audit_logger,
+    get_logger,
+    logger,
+    performance_logger,
+)
 
 logger = get_logger(__name__)
 

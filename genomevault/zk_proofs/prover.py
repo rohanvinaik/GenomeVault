@@ -13,17 +13,13 @@ from typing import Any
 import numpy as np
 
 from genomevault.core.config import get_config
-from genomevault.observability.logging import configure_logging
 from genomevault.utils.logging import get_logger
 
-logger = logging.getLogger(__name__)
-
-
-_ = get_config()
+config = get_config()
 
 # Configure logging
 logger = get_logger(__name__)
-_ = logger
+audit_logger = logger
 performance_logger = logger
 
 
@@ -278,9 +274,11 @@ class Prover:
         start_time = time.time()
 
         # In production, would call actual PLONK prover
-        proof_data = self._simulate_proof_generation(circuit, public_inputs, private_inputs)
+        proof_data = self._simulate_proof_generation(
+            circuit, public_inputs, private_inputs
+        )
 
-        start_time = time.time() - start_time
+        generation_time = time.time() - start_time
 
         # Create proof object
         proof = Proof(
@@ -298,12 +296,13 @@ class Prover:
         )
 
         # Audit log
-        audit_logger.log_event(
-            event_type="proof_generation",
-            actor="prover",
-            action=f"generate_{circuit_name}_proof",
-            resource=proof_id,
-            metadata={
+        audit_logger.info(
+            f"Proof generated for {circuit_name}",
+            extra={
+                "event_type": "proof_generation",
+                "actor": "prover",
+                "action": f"generate_{circuit_name}_proof",
+                "resource": proof_id,
                 "generation_time": generation_time,
                 "proof_size": len(proof_data),
             },
@@ -345,7 +344,7 @@ class Prover:
 
     def _generate_proof_id(self, circuit_name: str, public_inputs: dict) -> str:
         """Generate unique proof ID."""
-        circuit_map = {
+        data = {
             "circuit": circuit_name,
             "public_inputs": public_inputs,
             "timestamp": time.time(),
@@ -387,7 +386,7 @@ class Prover:
             raise ValueError("Variant hash mismatch")
 
         # Generate mock proof (192 bytes)
-        circuit_map = {
+        proof_data = {
             "pi_a": np.random.bytes(48).hex(),
             "pi_b": np.random.bytes(96).hex(),
             "pi_c": np.random.bytes(48).hex(),
@@ -409,7 +408,7 @@ class Prover:
             raise ValueError("Score out of range")
 
         # Generate mock proof (384 bytes)
-        circuit_map = {
+        proof_data = {
             "pi_a": np.random.bytes(48).hex(),
             "pi_b": np.random.bytes(96).hex(),
             "pi_c": np.random.bytes(48).hex(),
@@ -432,12 +431,12 @@ class Prover:
         condition = (g > g_threshold) and (r > r_threshold)
 
         # Generate proof that proves the condition without revealing g or r
-        circuit_map = {
+        proof_data = {
             "pi_a": np.random.bytes(48).hex(),
             "pi_b": np.random.bytes(96).hex(),
             "pi_c": np.random.bytes(48).hex(),
             "condition_commitment": hashlib.sha256(
-                ff"{condition}:{private_inputs['witness_randomness']}".encode()
+                f"{condition}:{private_inputs['witness_randomness']}".encode()
             ).hexdigest(),
             "range_proofs": [np.random.bytes(32).hex() for _ in range(4)],
         }
@@ -449,7 +448,7 @@ class Prover:
         # Size based on circuit constraints
         proof_size = min(800, 192 + circuit.constraints // 100)
 
-        circuit_map = {
+        proof_data = {
             "pi_a": np.random.bytes(48).hex(),
             "pi_b": np.random.bytes(96).hex(),
             "pi_c": np.random.bytes(48).hex(),
@@ -478,11 +477,8 @@ class Prover:
                     private_inputs=request["private_inputs"],
                 )
                 proofs.append(proof)
-            except Exception as _:
-
-                logger.exception("Unhandled exception")
+            except Exception as e:
                 logger.error(f"Batch proof generation failed: {e}")
-                raise RuntimeError("Unspecified error")
                 # Continue with other proofs
 
         return proofs
@@ -503,21 +499,35 @@ class Prover:
                 raise ValueError(f"Invalid proof: {proof.proof_id}")
 
         # Create recursive circuit
-        circuit_map = {
+        public_inputs = {
             "proof_hashes": [self._hash_proof(p) for p in proofs],
             "aggregation_method": "recursive_snark",
         }
 
-        circuit_map = {
+        private_inputs = {
             "proofs": [p.proof_data for p in proofs],
             "witness_randomness": np.random.bytes(32).hex(),
         }
 
-        # Generate recursive proof
-        proof = self.generate_proof(
+        # Generate recursive proof (simulated - no actual circuit needed)
+        proof_data = {
+            "pi_a": np.random.bytes(48).hex(),
+            "pi_b": np.random.bytes(96).hex(),
+            "pi_c": np.random.bytes(48).hex(),
+            "aggregated_proofs": len(proofs),
+        }
+
+        recursive_proof = Proof(
+            proof_id=self._generate_proof_id("recursive_aggregation", public_inputs),
             circuit_name="recursive_aggregation",
+            proof_data=json.dumps(proof_data).encode()[:512],
             public_inputs=public_inputs,
-            private_inputs=private_inputs,
+            timestamp=time.time(),
+            metadata={
+                "aggregated_proofs": len(proofs),
+                "proof_system": "recursive_snark",
+                "generation_time_seconds": 0.1,  # Simulated time
+            },
         )
 
         return recursive_proof
@@ -563,17 +573,17 @@ if __name__ == "__main__":
             "commitment_root": hashlib.sha256(b"genome_root").hexdigest(),
         },
         private_inputs={
-            "variant_data": {"chr": "chr1", "pos": 12345, "re": "A", "alt": "G"},
+            "variant_data": {"chr": "chr1", "pos": 12345, "ref": "A", "alt": "G"},
             "merkle_proof": ["hash1", "hash2", "hash3"],
             "witness_randomness": np.random.bytes(32).hex(),
         },
     )
 
-    print(f"Variant proof generated: {variant_proof.proof_id}")
-    print(f"Proof size: {len(variant_proof.proof_data)} bytes")
+    logger.info(f"Variant proof generated: {variant_proof.proof_id}")
+    logger.info(f"Proof size: {len(variant_proof.proof_data)} bytes")
 
     # Example 2: Diabetes risk alert proof
-    variant_proof = prover.generate_proof(
+    diabetes_proof = prover.generate_proof(
         circuit_name="diabetes_risk_alert",
         public_inputs={
             "glucose_threshold": 126,  # mg/dL
@@ -587,6 +597,8 @@ if __name__ == "__main__":
         },
     )
 
-    print(f"\nDiabetes risk proof generated: {diabetes_proof.proof_id}")
-    print(f"Proof size: {len(diabetes_proof.proof_data)} bytes")
-    print(f"Verification time: {diabetes_proof.metadata['generation_time_seconds']*1000:.1f}ms")
+    logger.info(f"\nDiabetes risk proof generated: {diabetes_proof.proof_id}")
+    logger.info(f"Proof size: {len(diabetes_proof.proof_data)} bytes")
+    print(
+        f"Verification time: {diabetes_proof.metadata['generation_time_seconds']*1000:.1f}ms"
+    )

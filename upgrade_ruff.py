@@ -3,6 +3,7 @@
 Quick Ruff upgrade and configuration fix.
 This upgrades Ruff to 0.4.4 and updates the configuration to use max-violations.
 """
+
 import subprocess
 import sys
 from pathlib import Path

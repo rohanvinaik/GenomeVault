@@ -75,7 +75,6 @@ class FocusedCleanup:
                     and "def " in lines[i - 1]
                 )
             ):
-
                 lines[i] = (
                     '    raise NotImplementedError("This exception type is not yet implemented")'
                 )

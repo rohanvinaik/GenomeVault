@@ -1,5 +1,0 @@
-from genomevault.observability.logging import configure_logging
-logger = configure_logging()
-import sys
-
-print(sys.argv[1:])

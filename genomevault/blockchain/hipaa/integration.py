@@ -270,16 +270,16 @@ if __name__ == "__main__":
                 "bandwidth": 1000,  # Mbps
             }
 
-            print("Registering HIPAA provider as node...")
+            logger.info("Registering HIPAA provider as node...")
             try:
                 _ = await _integration.register_provider_node(
                     _credentials, _node_config
                 )
-                print("Node registered successfully!")
-                print("  Node ID: {node.node_id}")
-                print("  Voting power: {node.voting_power}")
-                print("  Node class: {node.node_type.name}")
-                print("  Signatory weight: {node.signatory_status.value}")
+                logger.info("Node registered successfully!")
+                logger.info("  Node ID: {node.node_id}")
+                logger.info("  Voting power: {node.voting_power}")
+                logger.info("  Node class: {node.node_type.name}")
+                logger.info("  Signatory weight: {node.signatory_status.value}")
 
                 # Check governance impact
                 print(
@@ -290,14 +290,14 @@ if __name__ == "__main__":
                 HIPAAGovernanceIntegration.create_hipaa_committee(governance)
                 HIPAAGovernanceIntegration.add_hipaa_proposal_types(governance)
 
-                print("\nHIPAA governance integration complete!")
+                logger.info("\nHIPAA governance integration complete!")
 
             except VerificationError as _:
                 from genomevault.observability.logging import configure_logging
 
                 logger = configure_logging()
                 logger.exception("Unhandled exception")
-                print("Registration failed: {e}")
+                logger.info("Registration failed: {e}")
                 raise RuntimeError("Unspecified error")
 
     # Run test

@@ -3,7 +3,6 @@
 Targeted fix for GenomeVault ZK Prover module
 """
 
-import re
 from pathlib import Path
 
 

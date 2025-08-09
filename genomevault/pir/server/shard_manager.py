@@ -154,7 +154,7 @@ class ShardManager:
         }
 
         manifest_path = self.data_directory / "shard_manifest.json"
-        with open(manifest_path, "w") as f:
+        with open(manifest_path, "w", encoding="utf-8") as f:
             json.dump(manifest, f, indent=2)
 
     @performance_logger.log_operation("create_shards")
@@ -525,7 +525,7 @@ if __name__ == "__main__":
 
         # Create shards
         shard_ids = manager.create_shards_from_data(test_file, data_type="genomic")
-        print("Created {len(shard_ids)} shards")
+        logger.info("Created {len(shard_ids)} shards")
 
         # Distribute shards
         servers = ["ts1", "ts2", "ln1", "ln2", "ln3"]
@@ -533,8 +533,8 @@ if __name__ == "__main__":
 
         # Show distribution
         for shard_id, servers in distribution.server_assignments.items():
-            print("Shard {shard_id} -> {servers}")
+            logger.info("Shard {shard_id} -> {servers}")
 
         # Get statistics
         stats = manager.get_shard_statistics()
-        print("\nStatistics: {json.dumps(stats, indent=2)}")
+        logger.info("\nStatistics: {json.dumps(stats, indent=2)}")

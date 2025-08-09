@@ -97,8 +97,9 @@ def check_missing_exceptions():
 
         # Test core exceptions if they exist
         try:
-            from genomevault.core.exceptions import \
-                HypervectorError as CoreHypervectorError
+            from genomevault.core.exceptions import (
+                HypervectorError as CoreHypervectorError,
+            )
 
             print("✅ HypervectorError also available in genomevault.core.exceptions")
         except ImportError:
@@ -131,10 +132,12 @@ def check_missing_constants():
     print("\n📊 CHECKING MISSING CONSTANTS...")
 
     try:
-        from genomevault.utils.constants import (HYPERVECTOR_DIMENSIONS,
-                                                 MAX_VARIANTS,
-                                                 NODE_CLASS_WEIGHT,
-                                                 VERIFICATION_TIME_MAX)
+        from genomevault.utils.constants import (
+            HYPERVECTOR_DIMENSIONS,
+            MAX_VARIANTS,
+            NODE_CLASS_WEIGHT,
+            VERIFICATION_TIME_MAX,
+        )
 
         print("✅ All required constants available:")
         print(f"   HYPERVECTOR_DIMENSIONS = {HYPERVECTOR_DIMENSIONS}")
@@ -359,7 +362,7 @@ def main():
     generate_implementation_summary()
 
     # Final results
-    print(f"\n" + "=" * 60)
+    print("\n" + "=" * 60)
     print("FINAL VERIFICATION RESULTS")
     print("=" * 60)
     print(f"Tests passed: {passed}/{total}")

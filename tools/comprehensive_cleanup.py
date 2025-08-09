@@ -8,7 +8,7 @@ from ~1,100 down to zero without config spiral.
 
 Based on the game plan:
 1. Update Ruff configuration with max-violations=200
-2. Triage library code from examples/tooling  
+2. Triage library code from examples/tooling
 3. Fix undefined-name (F821) errors systematically
 4. Handle redefinition (F811) and import-order (E402)
 5. Clean up tooling scripts with glob ignore
@@ -623,7 +623,7 @@ DEFAULT_SECURITY_LEVEL = 128
 MAX_VARIANTS = 1000
 VERIFICATION_TIME_MAX = 30.0
 
-# Hypervector constants  
+# Hypervector constants
 DEFAULT_DIMENSION = 10000
 BINDING_SPARSITY = 0.1
 

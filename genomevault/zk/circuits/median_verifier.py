@@ -389,31 +389,31 @@ if __name__ == "__main__":
         sorted_vals = sorted(values)
         median = sorted_vals[len(values) // 2]
 
-        print(f"Test 1: {len(values)} values, median = {median}")
+        logger.info(f"Test 1: {len(values)} values, median = {median}")
 
         proof = circuit.generate_proof(
             values=values, claimed_median=median, error_bound=0.01, expected_value=3.3
         )
 
         is_valid = circuit.verify_proof(proof)
-        print(f"Proof valid: {is_valid}")
-        print(f"Proof size: {len(json.dumps(proof.__dict__, default=str))} bytes")
+        logger.info(f"Proof valid: {is_valid}")
+        logger.info(f"Proof size: {len(json.dumps(proof.__dict__, default=str))} bytes")
 
         # Test case 2: Even number of values
         values2 = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
         median2 = 3.5
 
-        print(f"\nTest 2: {len(values2)} values, median = {median2}")
+        logger.info(f"\nTest 2: {len(values2)} values, median = {median2}")
 
         proof2 = circuit.generate_proof(
             values=values2, claimed_median=median2, error_bound=0.1
         )
 
         is_valid2 = circuit.verify_proof(proof2)
-        print(f"Proof valid: {is_valid2}")
+        logger.info(f"Proof valid: {is_valid2}")
 
         # Test case 3: Invalid proof (wrong median)
-        print("\nTest 3: Invalid proof (wrong median)")
+        logger.info("\nTest 3: Invalid proof (wrong median)")
         try:
             circuit.generate_proof(
                 values=values,
@@ -425,11 +425,11 @@ if __name__ == "__main__":
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            print(f"Expected error: {e}")
+            logger.info(f"Expected error: {e}")
             raise RuntimeError("Unspecified error")
 
         return is_valid and is_valid2
 
     # Run test
     result = asyncio.run(test_median_circuit())
-    print(f"\nAll tests passed: {result}")
+    logger.info(f"\nAll tests passed: {result}")

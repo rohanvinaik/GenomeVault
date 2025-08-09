@@ -2,6 +2,7 @@
 """
 Proper Ruff cleanup and upgrade following the recommended approach.
 """
+
 import subprocess
 import sys
 from pathlib import Path

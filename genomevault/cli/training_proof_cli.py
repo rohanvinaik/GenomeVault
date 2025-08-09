@@ -12,10 +12,10 @@ from pathlib import Path
 import click
 from tabulate import tabulate
 
-from genomevault.blockchain.contracts.training_attestation import \
-    TrainingAttestationContract
-from genomevault.hypervector.visualization.projector import \
-    ModelEvolutionVisualizer
+from genomevault.blockchain.contracts.training_attestation import (
+    TrainingAttestationContract,
+)
+from genomevault.hypervector.visualization.projector import ModelEvolutionVisualizer
 from genomevault.utils.logging import get_logger
 from genomevault.zk_proofs.circuits.training_proof import TrainingProofCircuit
 
@@ -166,7 +166,7 @@ def verify_proof(proof_file: str, snapshot_dir: str, output: str | None, verbose
 
     # Save report
     if output:
-        with open(output, "w") as f:
+        with open(output, "w", encoding="utf-8") as f:
             json.dump(verification_results, f, indent=2)
         click.echo(f"\n💾 Verification report saved to {output}")
 
@@ -273,7 +273,7 @@ def analyze_drift(snapshot_dir: str, output_dir: str, threshold: float):
         "drift_scores": [float(d) for d in drift_scores],
     }
 
-    with open(output_path / "drift_report.json", "w") as f:
+    with open(output_path / "drift_report.json", "w", encoding="utf-8") as f:
         json.dump(report, f, indent=2)
 
     click.echo(f"\n💾 Analysis saved to {output_path}")
@@ -404,7 +404,7 @@ def generate_proof(
     proof["generation_time"] = int(_time.time())
 
     # Save proof
-    with open(proof_file, "w") as f:
+    with open(proof_file, "w", encoding="utf-8") as f:
         json.dump(proof, f, indent=2)
 
     click.echo(f"✅ Proof generated and saved to {proof_file}")

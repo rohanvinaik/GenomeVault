@@ -9,11 +9,9 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 
-from genomevault.hypervector.encoding.genomic import (GenomicEncoder,
-                                                      PanelGranularity)
+from genomevault.hypervector.encoding.genomic import GenomicEncoder, PanelGranularity
 from genomevault.hypervector.error_handling import ErrorBudgetAllocator
-from genomevault.pir.client import (BatchedPIRQueryBuilder, GenomicQuery,
-                                    QueryType)
+from genomevault.pir.client import BatchedPIRQueryBuilder, GenomicQuery, QueryType
 from genomevault.utils.logging import get_logger
 from genomevault.zk.proof import ProofGenerator
 

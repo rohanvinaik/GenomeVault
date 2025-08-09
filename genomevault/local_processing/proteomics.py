@@ -22,31 +22,31 @@ from genomevault.core.config import get_config
 from genomevault.core.exceptions import ProcessingError, ValidationError
 from genomevault.utils.logging import get_logger
 
-_ = get_logger(__name__)
+logger = get_logger(__name__)
 config = get_config()
 
 
 class QuantificationMethod(Enum):
     """Proteomics quantification methods"""
 
-    _ = "label_free"
-    _ = "tmt"  # Tandem Mass Tag
-    _ = "itraq"  # Isobaric Tags for Relative and Absolute Quantification
-    _ = "silac"  # Stable Isotope Labeling by Amino acids in Cell culture
-    _ = "dia"  # Data-Independent Acquisition
-    _ = "spectral_counting"
+    LABEL_FREE = "label_free"
+    TMT = "tmt"  # Tandem Mass Tag
+    ITRAQ = "itraq"  # Isobaric Tags for Relative and Absolute Quantification
+    SILAC = "silac"  # Stable Isotope Labeling by Amino acids in Cell culture
+    DIA = "dia"  # Data-Independent Acquisition
+    SPECTRAL_COUNTING = "spectral_counting"
 
 
 class ModificationType(Enum):
     """Common post-translational modifications"""
 
-    _ = "phosphorylation"
-    _ = "acetylation"
-    _ = "methylation"
-    _ = "ubiquitination"
-    _ = "glycosylation"
-    _ = "oxidation"
-    _ = "deamidation"
+    PHOSPHORYLATION = "phosphorylation"
+    ACETYLATION = "acetylation"
+    METHYLATION = "methylation"
+    UBIQUITINATION = "ubiquitination"
+    GLYCOSYLATION = "glycosylation"
+    OXIDATION = "oxidation"
+    DEAMIDATION = "deamidation"
 
 
 @dataclass
@@ -64,8 +64,8 @@ class Peptide:
         default_factory=list
     )
     protein_ids: list[str] = field(default_factory=list)
-    is_unique: _ = True
-    missed_cleavages: _ = 0
+    is_unique: bool = True
+    missed_cleavages: int = 0
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary"""
@@ -100,7 +100,7 @@ class ProteinMeasurement:
     normalized_abundance: float
     modifications: dict[ModificationType, int] = field(default_factory=dict)
     peptides: list[Peptide] = field(default_factory=list)
-    confidence_score: _ = 1.0
+    confidence_score: float = 1.0
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary"""
@@ -162,14 +162,14 @@ class ProteomicsProfile:
         detected_genes = {
             p.gene_name for p in self.proteins if p.normalized_abundance > 0
         }
-        _ = detected_genes.intersection(pathway_genes)
+        overlap = detected_genes.intersection(pathway_genes)
 
         return {
             "overlap_count": len(overlap),
             "pathway_size": len(pathway_genes),
             "detected_in_pathway": len(overlap),
             "enrichment_ratio": (
-                len(_overlap) / len(pathway_genes) if pathway_genes else 0
+                len(overlap) / len(pathway_genes) if pathway_genes else 0
             ),
             "detected_genes": list(overlap),
         }
@@ -182,9 +182,9 @@ class ProteomicsProcessor:
         self,
         protein_database: Path | None = None,
         modifications_config: Path | None = None,
-        min_peptides: _ = 2,
-        fdr_threshold: _ = 0.01,
-        max_threads: _ = 4,
+        min_peptides: int = 2,
+        fdr_threshold: float = 0.01,
+        max_threads: int = 4,
     ):
         """
         Initialize proteomics processor
@@ -203,14 +203,11 @@ class ProteomicsProcessor:
         self.max_threads = max_threads
         self.protein_sequences = self._load_protein_database()
         self.modification_masses = self._load_modifications()
-
-logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Initialized ProteomicsProcessor")
 
     def _load_protein_database(self) -> dict[str, dict[str, Any]]:
         """Load protein sequences from FASTA database"""
         if not self.protein_database or not self.protein_database.exists():
-logger = logging.getLogger(__name__)  # Added by cleanup
             logger.warning("No protein database provided, using mock data")
             # Mock protein database
             return {
@@ -232,7 +229,7 @@ logger = logging.getLogger(__name__)  # Added by cleanup
             }
 
         # In production, would parse FASTA file
-        _ = {}
+        proteins = {}
         # ... FASTA parsing code ...
         return proteins
 
@@ -252,8 +249,8 @@ logger = logging.getLogger(__name__)  # Added by cleanup
         self,
         input_path: Path,
         sample_id: str,
-        input_format: _ = "maxquant",
-        quantification_method: _ = QuantificationMethod.LABEL_FREE,
+        input_format: str = "maxquant",
+        quantification_method: QuantificationMethod = QuantificationMethod.LABEL_FREE,
     ) -> ProteomicsProfile:
         """
         Process proteomics data
@@ -267,36 +264,35 @@ logger = logging.getLogger(__name__)  # Added by cleanup
         Returns:
             ProteomicsProfile with protein measurements
         """
-logger = logging.getLogger(__name__)  # Added by cleanup
-        logger.info("Processing proteomics data for %ssample_id")
+        logger.info(f"Processing proteomics data for {sample_id}")
 
         try:
             # Load data based on format
             if input_format == "maxquant":
-                protein_data, _ = self._load_maxquant_output(input_path)
+                protein_data, peptide_data = self._load_maxquant_output(input_path)
             elif input_format == "mzml":
-                protein_data, _ = self._process_mzml(input_path)
+                protein_data, peptide_data = self._process_mzml(input_path)
             else:
-                raise ValidationError("Unsupported format: {input_format}")
+                raise ValidationError(f"Unsupported format: {input_format}")
 
             # Create protein measurements
-            _ = self._create_protein_measurements(protein_data, _peptide_data)
+            proteins = self._create_protein_measurements(protein_data, peptide_data)
 
             # Apply FDR filtering
-            _ = self._apply_fdr_filter(_proteins)
+            filtered_proteins = self._apply_fdr_filter(proteins)
 
             # Normalize abundances
-            _ = self._normalize_abundances(_filtered_proteins, quantification_method)
+            normalized_proteins = self._normalize_abundances(filtered_proteins, quantification_method)
 
             # Calculate quality metrics
-            _ = self._calculate_quality_metrics(_normalized_proteins, _peptide_data)
+            quality_metrics = self._calculate_quality_metrics(normalized_proteins, peptide_data)
 
             # Create profile
-            _ = ProteomicsProfile(
+            profile = ProteomicsProfile(
                 sample_id=sample_id,
-                proteins=_normalized_proteins,
+                proteins=normalized_proteins,
                 quantification_method=quantification_method,
-                _quality_metrics=quality_metrics,
+                quality_metrics=quality_metrics,
                 processing_metadata={
                     "processor_version": "1.0.0",
                     "processed_at": datetime.now().isoformat(),
@@ -306,48 +302,45 @@ logger = logging.getLogger(__name__)  # Added by cleanup
                 },
             )
 
-logger = logging.getLogger(__name__)  # Added by cleanup
-            logger.info("Successfully processed %slen(normalized_proteins) proteins")
+            logger.info(f"Successfully processed {len(normalized_proteins)} proteins")
             return profile
 
-        except Exception as _:
+        except Exception as e:
             from genomevault.observability.logging import configure_logging
 
             logger = configure_logging()
             logger.exception("Unhandled exception")
-            logger.error("Error processing proteomics data: %se!s")
-            raise ProcessingError("Failed to process proteomics data: {str(e)}")
-            raise RuntimeError("Unspecified error")
+            logger.error(f"Error processing proteomics data: {e!s}")
+            raise ProcessingError(f"Failed to process proteomics data: {str(e)}")
 
     def _load_maxquant_output(
         self, input_path: Path
     ) -> tuple[pd.DataFrame, pd.DataFrame]:
         """Load MaxQuant output files"""
-logger = logging.getLogger(__name__)  # Added by cleanup
-        logger.info("Loading MaxQuant output from %sinput_path")
+        logger.info(f"Loading MaxQuant output from {input_path}")
 
         # In production, would load proteinGroups.txt and peptides.txt
         # Generate mock data for demonstration
         np.random.seed(42)
 
         # Mock protein data
-        _ = 2000
-        _ = list(self.protein_sequences.keys()) + [
-            "PROT{i:04d}_HUMAN" for i in range(_n_proteins - len(self.protein_sequences))
+        n_proteins = 2000
+        protein_ids = list(self.protein_sequences.keys()) + [
+            f"PROT{i:04d}_HUMAN" for i in range(n_proteins - len(self.protein_sequences))
         ]
 
-        _ = pd.DataFrame(
+        protein_data = pd.DataFrame(
             {
-                "Protein IDs": _protein_ids[:n_proteins],
+                "Protein IDs": protein_ids[:n_proteins],
                 "Gene names": [
-                    self.protein_sequences.get(pid, {}).get("gene_name", "GENE{i}")
-                    for i, pid in enumerate(_protein_ids[:_n_proteins])
+                    self.protein_sequences.get(pid, {}).get("gene_name", f"GENE{i}")
+                    for i, pid in enumerate(protein_ids[:n_proteins])
                 ],
                 "Protein names": [
                     self.protein_sequences.get(pid, {}).get(
-                        "description", "Protein {i}"
+                        "description", f"Protein {i}"
                     )
-                    for i, pid in enumerate(_protein_ids[:_n_proteins])
+                    for i, pid in enumerate(protein_ids[:n_proteins])
                 ],
                 "Peptides": np.random.poisson(10, n_proteins),
                 "Unique peptides": np.random.poisson(8, n_proteins),
@@ -360,20 +353,20 @@ logger = logging.getLogger(__name__)  # Added by cleanup
         )
 
         # Mock peptide data
-        _ = 20000
-        _ = pd.DataFrame(
+        n_peptides = 20000
+        peptide_data = pd.DataFrame(
             {
                 "Sequence": [
-                    self._generate_random_peptide() for _ in range(_n_peptides)
+                    self._generate_random_peptide() for _ in range(n_peptides)
                 ],
-                "Proteins": np.random.choice(_protein_ids[:n_proteins], n_peptides),
-                "Charge": np.random.choice([2, 3, 4], _n_peptides, p=[0.6, 0.3, 0.1]),
+                "Proteins": np.random.choice(protein_ids[:n_proteins], n_peptides),
+                "Charge": np.random.choice([2, 3, 4], n_peptides, p=[0.6, 0.3, 0.1]),
                 "Mass": np.random.normal(1500, 500, n_peptides),
                 "Retention time": np.random.uniform(0, 120, n_peptides),
                 "Intensity": np.random.lognormal(18, 2, n_peptides),
                 "Score": np.random.uniform(20, 200, n_peptides),
                 "Modifications": [
-                    self._generate_random_modifications() for _ in range(_n_peptides)
+                    self._generate_random_modifications() for _ in range(n_peptides)
                 ],
             }
         )
@@ -382,15 +375,14 @@ logger = logging.getLogger(__name__)  # Added by cleanup
 
     def _process_mzml(self, input_path: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
         """Process mzML mass spectrometry data"""
-logger = logging.getLogger(__name__)  # Added by cleanup
-        logger.info("Processing mzML file %sinput_path")
+        logger.info(f"Processing mzML file {input_path}")
         # In production, would use pyteomics or similar to parse mzML
         # For now, return mock data
         return self._load_maxquant_output(input_path)
 
-    def _generate_random_peptide(self, length: _ = None) -> str:
+    def _generate_random_peptide(self, length: int | None = None) -> str:
         """Generate random peptide sequence"""
-        _ = "ACDEFGHIKLMNPQRSTVWY"
+        amino_acids = "ACDEFGHIKLMNPQRSTVWY"
         if length is None:
             length = np.random.randint(7, 30)
         return "".join(np.random.choice(list(amino_acids), length))
@@ -502,8 +494,7 @@ logger = logging.getLogger(__name__)  # Added by cleanup
             threshold_score = _filtered[n_targets - _n_decoys].confidence_score
             _ = [p for p in _filtered if p.confidence_score >= threshold_score]
 
-logger = logging.getLogger(__name__)  # Added by cleanup
-        logger.info("Filtered to %slen(filtered) proteins at %sself.fdr_threshold FDR")
+        logger.info(f"Filtered to {len(filtered)} proteins at {self.fdr_threshold} FDR")
         return filtered
 
     def _normalize_abundances(
@@ -585,7 +576,7 @@ logger = logging.getLogger(__name__)  # Added by cleanup
         group1_profiles: list[ProteomicsProfile],
         group2_profiles: list[ProteomicsProfile],
         min_fold_change: float = 2.0,
-        fdr_threshold: _ = 0.05,
+        fdr_threshold: float = 0.05,
     ) -> pd.DataFrame:
         """
         Perform differential protein expression analysis
@@ -699,7 +690,7 @@ logger = logging.getLogger(__name__)  # Added by cleanup
         return results_df
 
     def export_results(
-        self, profile: ProteomicsProfile, output_path: Path, format: _ = "tsv"
+        self, profile: ProteomicsProfile, output_path: Path, format: str = "tsv"
     ) -> None:
         """Export proteomics results to file"""
 logger = logging.getLogger(__name__)  # Added by cleanup

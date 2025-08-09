@@ -137,7 +137,7 @@ class HypervectorRegistry:
 
         try:
             # Write with pretty formatting
-            with open(self.registry_path, "w") as f:
+            with open(self.registry_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, sort_keys=True)
 
             # Remove backup on success
@@ -397,7 +397,7 @@ class HypervectorRegistry:
             "registry_version": "1.0",
         }
 
-        with open(filepath, "w") as f:
+        with open(filepath, "w", encoding="utf-8") as f:
             json.dump(export_data, f, indent=2)
 
         logger.info("Exported version %sversion to %sfilepath")

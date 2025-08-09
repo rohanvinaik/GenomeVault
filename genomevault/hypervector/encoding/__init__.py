@@ -4,8 +4,13 @@ Hypervector encoding modules
 
 from .genomic import GenomicEncoder, PanelGranularity
 from .orthogonal_projection import OrthogonalProjection
-from .packed import (HAMMING_LUT, PackedGenomicEncoder, PackedHV,
-                     PackedProjection, fast_hamming_distance)
+from .packed import (
+    HAMMING_LUT,
+    PackedGenomicEncoder,
+    PackedHV,
+    PackedProjection,
+    fast_hamming_distance,
+)
 from .sparse_projection import SparseRandomProjection
 from .unified_encoder import UnifiedHypervectorEncoder, create_encoder
 

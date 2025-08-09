@@ -2,8 +2,8 @@
 """
 Quick test to verify Phase 3 can now run successfully.
 """
+
 import subprocess
-import sys
 
 
 def test_ruff_basic():
@@ -117,7 +117,7 @@ if __name__ == "__main__":
     # Test 3: Phase 3 dry run
     phase3_works = test_phase3_dry_run()
 
-    print(f"\\n📊 Results:")
+    print("\\n📊 Results:")
     print(f"   Ruff configuration: {'✅' if ruff_works else '❌'}")
     print(f"   F821 detection: {'✅' if f821_works else '❌'}")
     print(f"   Phase 3 dry run: {'✅' if phase3_works else '❌'}")

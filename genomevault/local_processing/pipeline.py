@@ -83,7 +83,7 @@ class MultiOmicsPipeline:
 
         # Save results
         results_path = output_dir / "processing_results.json"
-        with open(results_path, "w") as f:
+        with open(results_path, "w", encoding="utf-8") as f:
             json.dump(results, f, indent=2)
 
         return results

@@ -1,7 +1,10 @@
-import warnings
-
 ##from clinical_validation.circuits import (  # Import from the new refactored location; DEPRECATED:, All, BaseCircuit, CircuitType, Clinical,
-    ClinicalBiomarkerCircuit, DiabetesRiskCircuit, ProofData, This, """, -,
+(
+    ClinicalBiomarkerCircuit,
+    DiabetesRiskCircuit,
+    ProofData,
+    This,
+    """, -,
     backward, circuits, clinical_validation.circuits,
     clinical_validation.proofs, code, code., compatibility, create_circuit,
     directly., existing, file, for, from, import, instead., module, new,
@@ -24,4 +27,5 @@ __all__ = [
     "ProofData",
     "create_circuit",
 ]
-"""
+""",
+)

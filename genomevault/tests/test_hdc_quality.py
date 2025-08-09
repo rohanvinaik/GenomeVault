@@ -451,8 +451,8 @@ class TestHDCQuality:
 
 def run_hdc_quality_assessment():
     """Run comprehensive HDC quality assessment."""
-    print("Running HDC Quality Assessment")
-    print("=" * 50)
+    logger.info("Running HDC Quality Assessment")
+    logger.info("=" * 50)
 
     # Initialize test class
     test = TestHDCQuality()
@@ -460,47 +460,49 @@ def run_hdc_quality_assessment():
     registry = HypervectorRegistry()
 
     # 1. Similarity preservation
-    print("\n1. Testing similarity preservation...")
+    logger.info("\n1. Testing similarity preservation...")
     similarity_results = test.test_variant_similarity_preservation(encoder)
     print(
         f"   Preservation rate: {sum(r['preserved'] for r in similarity_results) / len(similarity_results):.2%}"
     )
 
     # 2. Compression ratio
-    print("\n2. Testing compression ratio...")
+    logger.info("\n2. Testing compression ratio...")
     compression_results = test.test_compression_ratio(encoder)
     print(
         f"   Best compression: {max(compression_results['compression_ratios'].values()):.1f}:1"
     )
-    print(f"   Best strategy: {compression_results['best_strategy']}")
+    logger.info(f"   Best strategy: {compression_results['best_strategy']}")
 
     # 3. Discrimination ability
-    print("\n3. Testing discrimination ability...")
+    logger.info("\n3. Testing discrimination ability...")
     discrimination_results = test.test_discrimination_ability(encoder)
-    print(f"   Discrimination gap: {discrimination_results['discrimination_gap']:.3f}")
+    logger.info(
+        f"   Discrimination gap: {discrimination_results['discrimination_gap']:.3f}"
+    )
 
     # 4. Reproducibility
-    print("\n4. Testing reproducibility...")
+    logger.info("\n4. Testing reproducibility...")
     reproducible = test.test_seed_reproducibility(registry)
-    print(f"   Reproducible: {reproducible}")
+    logger.info(f"   Reproducible: {reproducible}")
 
     # 5. Clinical variant preservation
-    print("\n5. Testing clinical variant preservation...")
+    logger.info("\n5. Testing clinical variant preservation...")
     clinical_results = test.test_clinical_variant_preservation(encoder)
-    print(f"   Separation score: {clinical_results['separation_score']:.3f}")
+    logger.info(f"   Separation score: {clinical_results['separation_score']:.3f}")
 
     # 6. Batch processing
-    print("\n6. Testing batch processing efficiency...")
+    logger.info("\n6. Testing batch processing efficiency...")
     batch_results = test.test_batch_processing_efficiency(encoder)
     for size, results in batch_results.items():
         if results["batch_time"] > 0:
             speedup = results["individual_time"] / results["batch_time"]
-            print(f"   Batch size {size}: {speedup:.2f}x speedup")
+            logger.info(f"   Batch size {size}: {speedup:.2f}x speedup")
 
     # Export metrics
-    print("\n" + "=" * 50)
+    logger.info("\n" + "=" * 50)
     metrics_file = metrics.export_json("hdc_quality_metrics.json")
-    print(f"Metrics saved to: {metrics_file}")
+    logger.info(f"Metrics saved to: {metrics_file}")
 
     return True
 

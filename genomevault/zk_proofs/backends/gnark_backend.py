@@ -124,8 +124,7 @@ class GnarkBackend:
                 try:
                     self._compile_circuit(circuit_name)
                 except Exception:
-                    from genomevault.observability.logging import \
-                        configure_logging
+                    from genomevault.observability.logging import configure_logging
 
                     logger = configure_logging()
                     logger.exception("Unhandled exception")
@@ -206,10 +205,10 @@ class GnarkBackend:
             proof_file = Path(tmpdir) / "proof.bin"
 
             # Write inputs
-            with open(public_file, "w") as f:
+            with open(public_file, "w", encoding="utf-8") as f:
                 json.dump(public_inputs, f)
 
-            with open(private_file, "w") as f:
+            with open(private_file, "w", encoding="utf-8") as f:
                 json.dump(private_inputs, f)
 
             # Generate proof
@@ -275,7 +274,7 @@ class GnarkBackend:
             proof_file = Path(tmpdir) / "proof.bin"
 
             # Write inputs
-            with open(public_file, "w") as f:
+            with open(public_file, "w", encoding="utf-8") as f:
                 json.dump(public_inputs, f)
 
             with open(proof_file, "wb") as f:

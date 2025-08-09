@@ -2,6 +2,7 @@
 """
 Verify that Ruff is properly installed and Phase 3 is ready to run.
 """
+
 import json
 import subprocess
 from pathlib import Path

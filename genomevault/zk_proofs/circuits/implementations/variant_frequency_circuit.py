@@ -3,8 +3,12 @@ from typing import Any, Dict, List
 
 from genomevault.utils.logging import get_logger
 
-from .constraint_system import (ConstraintSystem, FieldElement,
-                                LinearCombination, poseidon_hash)
+from .constraint_system import (
+    ConstraintSystem,
+    FieldElement,
+    LinearCombination,
+    poseidon_hash,
+)
 
 logger = get_logger(__name__)
 

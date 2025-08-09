@@ -3,8 +3,11 @@ Utilities for checking optional dependencies and providing helpful error message
 """
 
 import importlib.util
+import logging
 from collections.abc import Callable
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 
 class OptionalDependencyError(ImportError):
@@ -136,16 +139,16 @@ def print_feature_status():
     """Print the status of all optional features."""
     features = get_available_features()
 
-    print("GenomeVault Optional Features:")
-    print("=" * 35)
+    logger.info("GenomeVault Optional Features:")
+    logger.info("=" * 35)
 
     for feature, available in features.items():
         status = "✓ Available" if available else "✗ Not installed"
-        print(f"{feature:15} {status}")
+        logger.info(f"{feature:15} {status}")
 
     unavailable = [f for f, a in features.items() if not a]
     if unavailable:
-        print("\nTo install missing features:")
+        logger.info("\nTo install missing features:")
         for feature in unavailable:
-            print(f"  pip install genomevault[{feature}]")
-        print("  pip install genomevault[full]  # Install all features")
+            logger.info(f"  pip install genomevault[{feature}]")
+        logger.info("  pip install genomevault[full]  # Install all features")

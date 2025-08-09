@@ -6,14 +6,16 @@ Implements the /query_tuned endpoint with real-time progress updates
 import time
 from typing import Any
 
-from fastapi import (APIRouter, Depends, HTTPException, WebSocket,
-                     WebSocketDisconnect)
+from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel, Field
 
-from genomevault.hypervector.error_handling import (ErrorBudget,
-                                                    ErrorBudgetAllocator)
-from genomevault.pir.client import (BatchedPIRQueryBuilder, GenomicQuery,
-                                    PIRClient, QueryType)
+from genomevault.hypervector.error_handling import ErrorBudget, ErrorBudgetAllocator
+from genomevault.pir.client import (
+    BatchedPIRQueryBuilder,
+    GenomicQuery,
+    PIRClient,
+    QueryType,
+)
 from genomevault.utils.logging import get_logger
 from genomevault.zk.proof import ProofGenerator
 

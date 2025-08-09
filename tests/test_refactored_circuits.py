@@ -9,20 +9,21 @@ import unittest
 sys.path.insert(0, "/Users/rohanvinaik/genomevault")
 
 try:
-    from clinical_validation.circuits import (ClinicalBiomarkerCircuit,
-                                              DiabetesRiskCircuit,
-                                              create_circuit)
-    from clinical_validation.proofs import CircuitType, ProofData, verify_proof
+    from genomevault.clinical_validation.circuits import (
+        ClinicalBiomarkerCircuit,
+        DiabetesRiskCircuit,
+        create_circuit,
+    )
+    from genomevault.clinical_validation.proofs import (
+        CircuitType,
+        ProofData,
+        verify_proof,
+    )
 
     IMPORTS_AVAILABLE = True
 except ImportError as e:
-    from genomevault.observability.logging import configure_logging
-
-    logger = configure_logging()
-    logger.exception("Unhandled exception")
     IMPORTS_AVAILABLE = False
     IMPORT_ERROR = str(e)
-    raise
 
 
 class TestRefactoredCircuits(unittest.TestCase):
@@ -137,8 +138,16 @@ class TestRefactoredCircuits(unittest.TestCase):
         # Test invalid glucose range
         with self.assertRaises(ValueError):
             circuit.generate_witness(
-                {"glucose": 500, "hba1c": 7.0},  # Invalid glucose
-                {"glucose_threshold": 126, "hba1c_threshold": 6.5},
+                {
+                    "glucose": 500,
+                    "hba1c": 7.0,
+                    "genetic_risk_score": 0.5,
+                },  # Invalid glucose
+                {
+                    "glucose_threshold": 126,
+                    "hba1c_threshold": 6.5,
+                    "risk_threshold": 1.0,
+                },
             )
 
         # Test circuit not setup for proof generation

@@ -432,7 +432,7 @@ class PHILeakageDetector:
         }
 
         metadata_path = quarantine_path.with_suffix(".json")
-        with open(metadata_path, "w") as f:
+        with open(metadata_path, "w", encoding="utf-8") as f:
             json.dump(metadata, f, indent=2)
 
         logger.warning("Quarantined file with PHI: %sfilepath -> %squarantine_path")
@@ -545,7 +545,7 @@ def redact_phi_from_file(filepath: str, output_path: str | None = None) -> str:
         path = Path(filepath)
         output_path = path.parent / f"{path.stem}_redacted{path.suffix}"
 
-    with open(output_path, "w") as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         f.write(redacted_content)
 
     return str(output_path)

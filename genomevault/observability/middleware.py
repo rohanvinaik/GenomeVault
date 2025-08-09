@@ -4,15 +4,16 @@ import time
 import uuid
 
 from fastapi import Request, Response
-from starlette.middleware.base import (BaseHTTPMiddleware,
-                                       RequestResponseEndpoint)
+from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 
 from genomevault.observability.logging import get_logger
 
 # Metrics are optional; if import fails, we no-op
 try:
-    from genomevault.observability.metrics import (http_request_duration,
-                                                   http_requests_total)
+    from genomevault.observability.metrics import (
+        http_request_duration,
+        http_requests_total,
+    )
 
     _METRICS = True
 except Exception:  # pragma: no cover

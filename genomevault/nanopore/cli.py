@@ -189,7 +189,7 @@ async def _process_async(
             ],
         }
 
-        with open(output, "w") as f:
+        with open(output, "w", encoding="utf-8") as f:
             json.dump(results_data, f, indent=2)
 
         click.echo(f"\nResults saved to {output}")
@@ -199,7 +199,7 @@ async def _process_async(
         track_file = Path(fast5_file).stem + f".{export_track}"
         track_data = detector.export_signal_track(all_signals, export_track)
 
-        with open(track_file, "w") as f:
+        with open(track_file, "w", encoding="utf-8") as f:
             f.write(track_data)
 
         click.echo(f"Track exported to {track_file}")

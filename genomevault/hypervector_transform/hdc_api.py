@@ -14,8 +14,7 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from pydantic import BaseModel, Field
 
 from .binding_operations import BindingType, HypervectorBinder
-from .hdc_encoder import (CompressionTier, HypervectorEncoder, OmicsType,
-                          ProjectionType)
+from .hdc_encoder import CompressionTier, HypervectorEncoder, OmicsType, ProjectionType
 from .registry import HypervectorRegistry
 
 logger = logging.getLogger(__name__)

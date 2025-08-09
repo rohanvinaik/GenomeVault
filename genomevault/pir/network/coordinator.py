@@ -513,7 +513,7 @@ if __name__ == "__main__":
 
         selected = await coordinator.select_servers(criteria, user_region="US")
 
-        print("Selected servers:")
+        logger.info("Selected servers:")
         for server in selected:
             print(
                 f"  - {server.server_id} ({server.server_type.value}) in {server.region}"
@@ -521,8 +521,8 @@ if __name__ == "__main__":
 
         # Show statistics
         stats = coordinator.get_coordinator_stats()
-        print("\nCoordinator statistics:")
-        print(json.dumps(stats, indent=2))
+        logger.info("\nCoordinator statistics:")
+        logger.info(json.dumps(stats, indent=2))
 
         # Cleanup
         await coordinator.stop()

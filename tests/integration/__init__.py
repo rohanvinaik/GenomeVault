@@ -1,1 +1,1 @@
-"""Module initialization."""
+"""Integration tests."""

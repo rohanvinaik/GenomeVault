@@ -1,18 +1,12 @@
-"""API smoke tests"""
-
-import pytest
+# tests/smoke/test_api_startup.py
 from fastapi.testclient import TestClient
+
+from genomevault.api.main import app
 
 
 def test_health_and_status():
-    """Test basic API endpoints"""
-    try:
-        from genomevault.api.main import app
-
-        with TestClient(app) as client:
-            r = client.get("/health")
-            assert r.status_code == 200
-            r = client.get("/status")
-            assert r.status_code == 200
-    except ImportError:
-        pytest.skip("API module not available")
+    with TestClient(app) as client:
+        r = client.get("/health")
+        assert r.status_code == 200
+        r = client.get("/status")
+        assert r.status_code == 200

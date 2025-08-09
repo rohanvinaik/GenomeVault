@@ -3,8 +3,7 @@ from __future__ import annotations
 import numpy as np
 from fastapi import APIRouter, HTTPException
 
-from genomevault.api.models.clinical import (ClinicalEvalRequest,
-                                             ClinicalEvalResponse)
+from genomevault.api.models.clinical import ClinicalEvalRequest, ClinicalEvalResponse
 from genomevault.clinical.eval.harness import compute_report
 
 router = APIRouter(prefix="/clinical", tags=["clinical"])

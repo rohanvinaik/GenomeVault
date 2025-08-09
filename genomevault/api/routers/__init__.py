@@ -1,1 +1,1 @@
-"""Package initialization for API routers"""
+"""API routers."""

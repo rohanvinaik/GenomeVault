@@ -39,8 +39,7 @@ def test_core_modules():
         print("✅ genomevault.core.constants imports successfully")
 
         # Test specific constants
-        from genomevault.core.constants import (HYPERVECTOR_DIMENSIONS,
-                                                MAX_VARIANTS)
+        from genomevault.core.constants import HYPERVECTOR_DIMENSIONS, MAX_VARIANTS
 
         print(
             f"✅ Constants loaded: HYPERVECTOR_DIMENSIONS={HYPERVECTOR_DIMENSIONS}, MAX_VARIANTS={MAX_VARIANTS}"
@@ -118,7 +117,7 @@ def main():
         except Exception as e:
             print(f"❌ {test_name} error: {e}")
 
-    print(f"\n=== SUMMARY ===")
+    print("\n=== SUMMARY ===")
     print(f"Tests passed: {passed}/{total}")
 
     if passed == total:

@@ -717,7 +717,7 @@ def validate_fix_implementation():
 if __name__ == "__main__":
     # Run validation tests
     results = validate_fix_implementation()
-    print("\n=== Utility Validation Results ===")
+    logger.info("\n=== Utility Validation Results ===")
     for test_name, passed, message in results:
         status = "✅ PASS" if passed else "❌ FAIL"
-        print(f"{status} {test_name}: {message}")
+        logger.info(f"{status} {test_name}: {message}")

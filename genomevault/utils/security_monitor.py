@@ -15,8 +15,7 @@ from typing import Any
 import numpy as np
 from sklearn.ensemble import IsolationForest
 
-from ..genomevault.utils.logging import (audit_logger, get_logger,
-                                         security_logger)
+from ..genomevault.utils.logging import audit_logger, get_logger, security_logger
 from ..genomevault.utils.monitoring import metrics_collector
 
 logger = get_logger(__name__)

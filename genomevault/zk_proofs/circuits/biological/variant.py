@@ -5,8 +5,14 @@ import torch
 
 from genomevault.utils.logging import get_logger
 
-from ..base_circuits import (Any, BaseCircuit, ComparisonCircuit, FieldElement,
-                             MerkleTreeCircuit, RangeProofCircuit)
+from ..base_circuits import (
+    Any,
+    BaseCircuit,
+    ComparisonCircuit,
+    FieldElement,
+    MerkleTreeCircuit,
+    RangeProofCircuit,
+)
 
 logger = get_logger(__name__)
 

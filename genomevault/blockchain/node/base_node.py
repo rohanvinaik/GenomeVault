@@ -10,8 +10,12 @@ from dataclasses import dataclass
 from typing import Any
 
 from genomevault.core.config import get_config
-from genomevault.core.constants import (BLOCK_TIME_SECONDS, NODE_CLASS_WEIGHT,
-                                        NodeType, SignatoryWeight)
+from genomevault.core.constants import (
+    BLOCK_TIME_SECONDS,
+    NODE_CLASS_WEIGHT,
+    NodeType,
+    SignatoryWeight,
+)
 
 
 @dataclass

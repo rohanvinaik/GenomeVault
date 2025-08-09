@@ -446,7 +446,7 @@ class ModelSnapshotLogger:
         snapshot_dir.mkdir(exist_ok=True)
 
         # Save metadata
-        with open(snapshot_dir / "metadata.json", "w") as f:
+        with open(snapshot_dir / "metadata.json", "w", encoding="utf-8") as f:
             json.dump(asdict(snapshot), f, indent=2)
 
         # Save weights (compressed)

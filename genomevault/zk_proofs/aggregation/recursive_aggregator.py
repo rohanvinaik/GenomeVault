@@ -20,7 +20,10 @@ import matplotlib.pyplot as plt
 
 from genomevault.utils.metrics import MetricsCollector
 from genomevault.zk_proofs.circuits.implementations.constraint_system import (
-    ConstraintSystem, FieldElement, poseidon_hash)
+    ConstraintSystem,
+    FieldElement,
+    poseidon_hash,
+)
 
 
 @dataclass
@@ -534,7 +537,7 @@ def main():
     output_dir.mkdir(parents=True, exist_ok=True)
 
     timestamp = time.strftime("%Y%m%d")
-    with open(output_dir / f"{timestamp}.json", "w") as f:
+    with open(output_dir / f"{timestamp}.json", "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2)
 
     logger.info("\nBenchmark data saved to benchmarks/zk/%stimestamp.json")

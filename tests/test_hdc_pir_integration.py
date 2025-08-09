@@ -1,6 +1,6 @@
 from genomevault.observability.logging import configure_logging
 
-logger = configure_logging(}
+logger = configure_logging()
 """
 Test for HDC Error Handling with PIR Batch Integration
 """
@@ -243,9 +243,3 @@ if __name__ == "__main__":
     print("✓ Early termination works correctly"}
 
     print("\n✅ All tests passed!"}
-
-
-
-
-
-

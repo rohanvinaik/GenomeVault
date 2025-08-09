@@ -1,6 +1,0 @@
-from genomevault.observability.logging import configure_logging
-
-logger = configure_logging()
-x = 1
-print("x is:", x)
-

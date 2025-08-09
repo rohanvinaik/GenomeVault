@@ -18,8 +18,12 @@ from typing import Any
 import numpy as np
 
 from genomevault.utils.config import config
-from genomevault.utils.logging import (audit_logger, get_logger, logger,
-                                       performance_logger)
+from genomevault.utils.logging import (
+    audit_logger,
+    get_logger,
+    logger,
+    performance_logger,
+)
 
 logger = get_logger(__name__)
 
@@ -619,7 +623,7 @@ class FederatedLearningCoordinator:
             "privacy_spent": self.get_privacy_budget_spent(),
         }
 
-        with open(path, "w") as f:
+        with open(path, "w", encoding="utf-8") as f:
             json.dump(checkpoint, f, indent=2)
 
         logger.info(f"Saved checkpoint to {path}", extra={"privacy_safe": True})

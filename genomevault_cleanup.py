@@ -8,7 +8,7 @@ from ~1,100 down to zero without another config spiral.
 
 Usage:
     python genomevault_cleanup.py --phase <phase_number>
-    
+
 Phases:
     1. Update Ruff configuration
     2. Triage library code from examples/tooling
@@ -23,7 +23,6 @@ import argparse
 import json
 import re
 import subprocess
-import sys
 from pathlib import Path
 from typing import Any, Dict, List
 
@@ -282,7 +281,7 @@ max-violations = 200
                     break
 
             lines.insert(insert_pos, "import logging")
-            lines.insert(insert_pos + 1, f"logger = logging.getLogger(__name__)")
+            lines.insert(insert_pos + 1, "logger = logging.getLogger(__name__)")
 
     def add_constant_at_top(self, lines: List[str], const_name: str):
         """Add constant definition at module top."""
