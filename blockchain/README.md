@@ -31,6 +31,12 @@ npm test
 
 ## Contract Overview
 
+### Consolidated Structure
+
+All smart contracts are now consolidated in `genomevault/blockchain/contracts/`:
+- **Source location**: `genomevault/blockchain/contracts/`
+- **Build location**: `blockchain/contracts/` (via symlinks)
+
 ### VerificationContract
 
 The main contract that handles:
@@ -38,6 +44,14 @@ The main contract that handles:
 - Verifying submitted proofs
 - Managing allowed circuit types
 - Tracking statistics for provers and circuit usage
+
+### GovernanceDAO
+
+Governance contract that implements:
+- On-chain governance with quadratic voting
+- Multi-stakeholder committees
+- Proposal management
+- Emergency actions
 
 ### Supported Circuit Types
 
