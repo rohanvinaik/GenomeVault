@@ -20,9 +20,7 @@ class Proof:
     public_inputs: dict[str, Any]
 
     def to_base64(self) -> str:
-        payload = json.dumps(
-            self.__dict__, separators=(",", ":"), sort_keys=True
-        ).encode("utf-8")
+        payload = json.dumps(self.__dict__, separators=(",", ":"), sort_keys=True).encode("utf-8")
         return base64.b64encode(payload).decode("ascii")
 
     @staticmethod
@@ -55,9 +53,7 @@ class ZKProofEngine:
     def verify_proof(self, *, proof_data: str, public_inputs: dict[str, Any]) -> bool:
         try:
             wire = json.loads(proof_data)
-            return self._real.verify_proof(
-                proof=wire["proof"], public_inputs=wire["public_inputs"]
-            )
+            return self._real.verify_proof(proof=wire["proof"], public_inputs=wire["public_inputs"])
         except Exception:
             from genomevault.observability.logging import configure_logging
 

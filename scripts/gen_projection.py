@@ -20,9 +20,7 @@ except ImportError:
     logger.exception("Unhandled exception")
     import logging
 
-    logging.basicConfig(
-        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-    )
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
     logger = logging.getLogger(__name__)
     raise
 
@@ -65,15 +63,11 @@ class ProjectionGenerator:
 
         # Save metadata
         metadata_path = filepath.with_suffix(".meta.npy")
-        np.save(
-            metadata_path, {"shape": shape, "dtype": str(dtype), "dimension": shape[0]}
-        )
+        np.save(metadata_path, {"shape": shape, "dtype": str(dtype), "dimension": shape[0]})
 
         return filepath
 
-    def generate_standard_projections(
-        self, max_dimension: int = None
-    ) -> list[tuple[int, Path]]:
+    def generate_standard_projections(self, max_dimension: int = None) -> list[tuple[int, Path]]:
         """Generate projections for standard dimensions used in GenomeVault.
 
         Args:
@@ -91,9 +85,7 @@ class ProjectionGenerator:
         # Filter dimensions based on max_dimension if provided
         if max_dimension:
             standard_dimensions = [d for d in standard_dimensions if d <= max_dimension]
-            logger.info(
-                f"Limiting to dimensions <= {max_dimension} due to memory constraints"
-            )
+            logger.info(f"Limiting to dimensions <= {max_dimension} due to memory constraints")
 
         generated_files = []
 
@@ -202,21 +194,15 @@ def main():
         type=int,
         help="Specific dimension to generate (default: all standard dimensions)",
     )
-    parser.add_argument(
-        "--outfile", type=str, help="Output filename (only used with --dim)"
-    )
+    parser.add_argument("--outfile", type=str, help="Output filename (only used with --dim)")
     parser.add_argument(
         "--cache-dir",
         type=str,
         default=".cache",
         help="Cache directory (default: .cache)",
     )
-    parser.add_argument(
-        "--verify", action="store_true", help="Verify existing projections"
-    )
-    parser.add_argument(
-        "--clean", action="store_true", help="Clean old projection files"
-    )
+    parser.add_argument("--verify", action="store_true", help="Verify existing projections")
+    parser.add_argument("--clean", action="store_true", help="Clean old projection files")
 
     args = parser.parse_args()
 

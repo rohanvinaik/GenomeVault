@@ -10,13 +10,11 @@ import time
 
 import numpy as np
 
-from genomevault.hypervector_transform.advanced_compression import \
-    AdvancedHierarchicalCompressor
+from genomevault.hypervector_transform.advanced_compression import AdvancedHierarchicalCompressor
 from genomevault.pir.advanced.it_pir import InformationTheoreticPIR
 from genomevault.zk_proofs.advanced.catalytic_proof import CatalyticProofEngine
 from genomevault.zk_proofs.advanced.recursive_snark import RecursiveSNARKProver
-from genomevault.zk_proofs.advanced.stark_prover import (PostQuantumVerifier,
-                                                         STARKProver)
+from genomevault.zk_proofs.advanced.stark_prover import PostQuantumVerifier, STARKProver
 from genomevault.zk_proofs.prover import Prover
 
 
@@ -91,9 +89,7 @@ def test_stark_post_quantum():
 
     # Create execution trace for PRS calculation
     trace_length = 256
-    trace = np.zeros(
-        (trace_length, 3), dtype=np.uint64
-    )  # [accumulator, variant, weight]
+    trace = np.zeros((trace_length, 3), dtype=np.uint64)  # [accumulator, variant, weight]
 
     # Simulate PRS computation
     for i in range(1, trace_length):
@@ -165,9 +161,7 @@ def test_catalytic_proof():
         private_inputs={
             "variants": np.random.randint(0, 2, num_variants).tolist(),
             "weights": np.random.rand(num_variants).tolist(),
-            "merkle_proofs": [
-                hashlib.sha256(f"p_{i}".encode()).hexdigest() for i in range(20)
-            ],
+            "merkle_proofs": [hashlib.sha256(f"p_{i}".encode()).hexdigest() for i in range(20)],
             "witness_randomness": np.random.bytes(32).hex(),
         },
     )
@@ -271,9 +265,7 @@ def test_hierarchical_compression():
     print("\nCompressed vector:")
     print(f"  Level: {compressed.level}")
     print(f"  Dimensions: {len(compressed.high_vector)}")
-    print(
-        f"  Compression ratio: {compressed.compression_metadata['compression_ratio']:.2f}x"
-    )
+    print(f"  Compression ratio: {compressed.compression_metadata['compression_ratio']:.2f}x")
 
     # Test storage tiers
     print("\nStorage tiers:")

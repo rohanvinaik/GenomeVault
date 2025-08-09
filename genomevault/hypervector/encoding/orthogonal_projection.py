@@ -31,9 +31,7 @@ class OrthogonalProjection:
                 context={"n_features": n_features, "n_components": self.n_components},
             )
         # Gaussian random matrix, then QR
-        A = self.rng.standard_normal(
-            (n_features, self.n_components)
-        )  # (n_features, n_components)
+        A = self.rng.standard_normal((n_features, self.n_components))  # (n_features, n_components)
         Q, _ = np.linalg.qr(
             A, mode="reduced"
         )  # Q: (n_features, n_components) with orthonormal columns

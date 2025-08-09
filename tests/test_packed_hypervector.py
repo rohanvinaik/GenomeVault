@@ -9,8 +9,7 @@ import numpy as np
 import pytest
 import torch
 
-from genomevault.hypervector.encoding import (GenomicEncoder,
-                                              PackedGenomicEncoder, PackedHV)
+from genomevault.hypervector.encoding import GenomicEncoder, PackedGenomicEncoder, PackedHV
 
 
 class TestPackedHV:

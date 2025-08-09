@@ -305,9 +305,7 @@ class HypervectorBinder:
         inv_perm[perm] = torch.arange(self.dimension)
         return inv_perm.long()
 
-    def bundle(
-        self, vectors: list[torch.Tensor], normalize: bool = True
-    ) -> torch.Tensor:
+    def bundle(self, vectors: list[torch.Tensor], normalize: bool = True) -> torch.Tensor:
         """
         Bundle vectors using superposition (addition)
 
@@ -460,9 +458,7 @@ class HypervectorBinder:
         ac = self.bind([a, c], BindingType.MULTIPLY)
         bc = self.bind([b, c], BindingType.MULTIPLY)
         right = self.bundle([ac, bc])
-        results["distributive"] = F.cosine_similarity(
-            left.unsqueeze(0), right.unsqueeze(0)
-        ).item()
+        results["distributive"] = F.cosine_similarity(left.unsqueeze(0), right.unsqueeze(0)).item()
 
         return results
 

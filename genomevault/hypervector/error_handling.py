@@ -117,9 +117,7 @@ class ECCEncoderMixin:
         Turns every hypervector into a self-healing codeword
         """
         if len(hypervector) != self.base_dimension:
-            raise ValueError(
-                f"Expected dimension {self.base_dimension}, got {len(hypervector)}"
-            )
+            raise ValueError(f"Expected dimension {self.base_dimension}, got {len(hypervector)}")
 
         # Reshape into blocks
         num_blocks = self.base_dimension // self.parity_g
@@ -173,9 +171,7 @@ class ECCEncoderMixin:
         errors_corrected = 0
 
         for i in range(num_blocks):
-            block_with_parity = encoded_vector[
-                i * self.code_length : (i + 1) * self.code_length
-            ]
+            block_with_parity = encoded_vector[i * self.code_length : (i + 1) * self.code_length]
             data_block = block_with_parity[: self.parity_g]
             received_parity = block_with_parity[-1]
 
@@ -195,9 +191,7 @@ class ECCEncoderMixin:
                 errors_corrected += 1
                 # Simple error correction: identify and flip the most likely error
                 # In practice, would use syndrome decoding
-                logger.debug(
-                    "Parity error detected in block %si: %sparity_error.item()"
-                )
+                logger.debug("Parity error detected in block %si: %sparity_error.item()")
 
             decoded_blocks.append(data_block)
 
@@ -326,9 +320,7 @@ class AdaptiveHDCEncoder(GenomicEncoder):
         if budget.ecc_enabled:
             encoder_key = (budget.dimension, budget.parity_g)
             if encoder_key not in self.ecc_encoders:
-                self.ecc_encoders[encoder_key] = ECCEncoderMixin(
-                    budget.dimension, budget.parity_g
-                )
+                self.ecc_encoders[encoder_key] = ECCEncoderMixin(budget.dimension, budget.parity_g)
             ecc_encoder = self.ecc_encoders[encoder_key]
 
         # Process with repeats for confidence
@@ -365,9 +357,7 @@ class AdaptiveHDCEncoder(GenomicEncoder):
         # Calculate confidence metrics
         std_dev = torch.std(stacked_vectors, dim=0).mean().item()
         median_error = (
-            torch.median(torch.abs(stacked_vectors - final_vector), dim=0)[0]
-            .mean()
-            .item()
+            torch.median(torch.abs(stacked_vectors - final_vector), dim=0)[0].mean().item()
         )
 
         metadata = {

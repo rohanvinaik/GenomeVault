@@ -89,9 +89,7 @@ class InformationTheoreticPIR:
             f"{self.threshold}-private, field size {self.field_size}"
         )
 
-    def generate_query(
-        self, index: int, database_size: int, block_size: int = 1024
-    ) -> PIRQuery:
+    def generate_query(self, index: int, database_size: int, block_size: int = 1024) -> PIRQuery:
         """
         Generate PIR queries for all servers.
 
@@ -103,9 +101,7 @@ class InformationTheoreticPIR:
         Returns:
             PIR query containing server-specific queries
         """
-        logger.info(
-            f"Generating PIR query for index {index} (database size: {database_size})"
-        )
+        logger.info(f"Generating PIR query for index {index} (database size: {database_size})")
 
         # Create unit vector for desired index
         unit_vector = np.zeros(database_size, dtype=np.uint64)
@@ -141,9 +137,7 @@ class InformationTheoreticPIR:
 
         # Generate n-1 random shares
         for i in range(n - 1):
-            share = np.random.randint(
-                0, self.field_size, size=len(vector), dtype=np.uint64
-            )
+            share = np.random.randint(0, self.field_size, size=len(vector), dtype=np.uint64)
             shares.append(share)
 
         # Compute last share to ensure sum equals original vector
@@ -197,9 +191,7 @@ class InformationTheoreticPIR:
 
         return response
 
-    def reconstruct_response(
-        self, query: PIRQuery, server_responses: list[np.ndarray]
-    ) -> bytes:
+    def reconstruct_response(self, query: PIRQuery, server_responses: list[np.ndarray]) -> bytes:
         """
         Reconstruct data from server responses.
 
@@ -211,9 +203,7 @@ class InformationTheoreticPIR:
             Reconstructed data
         """
         if len(server_responses) != self.num_servers:
-            raise ValueError(
-                f"Expected {self.num_servers} responses, got {len(server_responses)}"
-            )
+            raise ValueError(f"Expected {self.num_servers} responses, got {len(server_responses)}")
 
         # Sum all responses in finite field
         reconstructed = np.zeros_like(server_responses[0])
@@ -235,9 +225,7 @@ class InformationTheoreticPIR:
             "nonce": np.random.bytes(8).hex(),
         }
 
-        return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[
-            :16
-        ]
+        return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[:16]
 
     def create_multi_query(
         self, indices: list[int], database_size: int, block_size: int = 1024
@@ -296,9 +284,7 @@ class RobustITPIR(InformationTheoreticPIR):
     Handles malicious servers that may return incorrect responses.
     """
 
-    def __init__(
-        self, num_servers: int = 5, threshold: int = 2, byzantine_threshold: int = 1
-    ):
+    def __init__(self, num_servers: int = 5, threshold: int = 2, byzantine_threshold: int = 1):
         """
         Initialize robust IT-PIR.
 
@@ -351,9 +337,7 @@ class RobustITPIR(InformationTheoreticPIR):
     ) -> bool:
         """Verify response authenticity (simplified)."""
         # In practice, would use Merkle proofs or other authentication
-        expected_hash = hashlib.sha256(
-            response.tobytes() + query.query_id.encode()
-        ).digest()
+        expected_hash = hashlib.sha256(response.tobytes() + query.query_id.encode()).digest()
 
         return proof == expected_hash
 
@@ -406,9 +390,7 @@ if __name__ == "__main__":
     query_time = time.time() - start_time
 
     logger.info(f"\nQuery generation time: {query_time * 1000:.2f} ms")
-    logger.info(
-        f"Query size per server: {query.server_queries[0].nbytes / 1024:.2f} KB"
-    )
+    logger.info(f"Query size per server: {query.server_queries[0].nbytes / 1024:.2f} KB")
 
     # Each server processes its query
     server_responses = []
@@ -420,9 +402,7 @@ if __name__ == "__main__":
 
         server_responses.append(response)
 
-        logger.info(
-            f"\nServer {server_id} response time: {response_time * 1000:.2f} ms"
-        )
+        logger.info(f"\nServer {server_id} response time: {response_time * 1000:.2f} ms")
         logger.info(f"Response size: {response.nbytes / 1024:.2f} KB")
 
     # Client reconstructs the data
@@ -446,9 +426,7 @@ if __name__ == "__main__":
     batch_indices = [10, 42, 100, 200, 500]
     batch_queries = pir.create_multi_query(batch_indices, database_size, block_size)
 
-    logger.info(
-        f"Created {len(batch_queries)} queries for {len(batch_indices)} indices"
-    )
+    logger.info(f"Created {len(batch_queries)} queries for {len(batch_indices)} indices")
 
     # Test robust PIR
     logger.info("\n\nRobust IT-PIR Example (Byzantine tolerance):")

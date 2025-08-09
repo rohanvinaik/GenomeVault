@@ -18,9 +18,7 @@ logger.info("\n📋 ORIGINAL ISSUE:")
 logger.info("   Error: No module named 'zk_proofs.circuits.biological.base_circuits'")
 
 logger.info("\n🔍 ROOT CAUSE IDENTIFIED:")
-logger.info(
-    "   - variant.py had incorrect relative import: from .base_circuits import ..."
-)
+logger.info("   - variant.py had incorrect relative import: from .base_circuits import ...")
 logger.info("   - Single dot (.) looks in current directory (biological/)")
 logger.info("   - But base_circuits.py is in parent directory (circuits/)")
 

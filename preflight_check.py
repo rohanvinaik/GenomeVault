@@ -17,11 +17,7 @@ def check_current_state():
 
     # Check project files
     print("Project Files:")
-    print(
-        "  ✓ README.md exists"
-        if (base_path / "README.md").exists()
-        else "  ✗ README.md missing"
-    )
+    print("  ✓ README.md exists" if (base_path / "README.md").exists() else "  ✗ README.md missing")
     print(
         "  ✓ requirements.txt exists"
         if (base_path / "requirements.txt").exists()

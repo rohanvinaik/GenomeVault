@@ -19,14 +19,10 @@ class GenomeVaultDebugger:
         print("🐍 Checking Python version...")
         version = sys.version_info
         if version.major == 3 and version.minor >= 8:
-            print(
-                "  ✅ Python {version.major}.{version.minor}.{version.micro} is compatible"
-            )
+            print("  ✅ Python {version.major}.{version.minor}.{version.micro} is compatible")
             return True
         else:
-            self.issues.append(
-                "Python {version.major}.{version.minor} is too old. Need 3.8+"
-            )
+            self.issues.append("Python {version.major}.{version.minor} is too old. Need 3.8+")
             return False
 
     def check_pydantic(self):

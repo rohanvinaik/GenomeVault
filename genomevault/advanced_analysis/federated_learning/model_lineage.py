@@ -409,9 +409,7 @@ class FederatedModelLineage:
 
             # Fork if multiple successors that aren't aggregation
             non_agg_successors = [
-                s
-                for s in successors
-                if self.versions[s].update_type != UpdateType.AGGREGATION
+                s for s in successors if self.versions[s].update_type != UpdateType.AGGREGATION
             ]
 
             if len(non_agg_successors) > 1:
@@ -470,9 +468,7 @@ class FederatedModelLineage:
 
         # Highlight specified versions
         if highlight_versions:
-            highlight_nodes = [
-                n for n in self.lineage_graph.nodes() if n in highlight_versions
-            ]
+            highlight_nodes = [n for n in self.lineage_graph.nodes() if n in highlight_versions]
             nx.draw_networkx_nodes(
                 self.lineage_graph,
                 pos,
@@ -515,9 +511,7 @@ class FederatedModelLineage:
             version = self.versions[node]
             labels[node] = f"{node[:4]}...\nR{version.round_number}"
 
-        nx.draw_networkx_labels(
-            self.lineage_graph, pos, labels, font_size=8, font_weight="bold"
-        )
+        nx.draw_networkx_labels(self.lineage_graph, pos, labels, font_size=8, font_weight="bold")
 
         # Add legend
         from matplotlib.patches import Patch

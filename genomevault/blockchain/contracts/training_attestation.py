@@ -74,9 +74,7 @@ class TrainingAttestationContract:
         self.verifications: dict[str, list[VerificationRecord]] = {}
         self.model_to_attestations: dict[str, list[str]] = {}
         self.pending_attestations: list[str] = []
-        self.dispute_threshold = (
-            3  # Number of negative verifications to trigger dispute
-        )
+        self.dispute_threshold = 3  # Number of negative verifications to trigger dispute
 
         # Contract state
         self.owner = None
@@ -128,9 +126,7 @@ class TrainingAttestationContract:
             raise Exception("Contract is paused")
 
         # Generate attestation ID
-        attestation_data = (
-            f"{model_hash}{dataset_hash}{training_start}{training_end}{submitter}"
-        )
+        attestation_data = f"{model_hash}{dataset_hash}{training_start}{training_end}{submitter}"
         attestation_id = hashlib.sha256(attestation_data.encode()).hexdigest()[:16]
 
         # Check for duplicate
@@ -172,9 +168,7 @@ class TrainingAttestationContract:
             },
         )
 
-        logger.info(
-            "Attestation %sattestation_id submitted for model %smodel_hash[:8]..."
-        )
+        logger.info("Attestation %sattestation_id submitted for model %smodel_hash[:8]...")
 
         return attestation_id
 
@@ -213,9 +207,7 @@ class TrainingAttestationContract:
             raise Exception("Attestation not in pending status")
 
         # Create verification record
-        verification_data = (
-            f"{attestation_id}{verifier}{verification_result}{evidence_hash}"
-        )
+        verification_data = f"{attestation_id}{verifier}{verification_result}{evidence_hash}"
         verification_id = hashlib.sha256(verification_data.encode()).hexdigest()[:16]
 
         verification = VerificationRecord(
@@ -268,9 +260,7 @@ class TrainingAttestationContract:
             verifications = self.verifications[attestation_id]
             result["verification_count"] = len(verifications)
             result["positive_verifications"] = sum(1 for v in verifications if v.result)
-            result["negative_verifications"] = sum(
-                1 for v in verifications if not v.result
-            )
+            result["negative_verifications"] = sum(1 for v in verifications if not v.result)
         else:
             result["verification_count"] = 0
             result["positive_verifications"] = 0
@@ -298,9 +288,7 @@ class TrainingAttestationContract:
 
         return [asdict(v) for v in self.verifications[attestation_id]]
 
-    def dispute_attestation(
-        self, attestation_id: str, disputer: str, evidence_hash: str
-    ) -> bool:
+    def dispute_attestation(self, attestation_id: str, disputer: str, evidence_hash: str) -> bool:
         """
         Dispute an attestation.
 
@@ -382,9 +370,7 @@ class TrainingAttestationContract:
 
         self.paused = True
 
-        self._emit_event(
-            "ContractPaused", {"paused_by": paused_by, "timestamp": int(time.time())}
-        )
+        self._emit_event("ContractPaused", {"paused_by": paused_by, "timestamp": int(time.time())})
 
     def unpause_contract(self, unpaused_by: str):
         """Unpause contract operations (only owner)"""
@@ -450,14 +436,10 @@ class TrainingAttestationContract:
             "total_attestations": len(self.attestations),
             "pending_attestations": len(self.pending_attestations),
             "verified_attestations": sum(
-                1
-                for a in self.attestations.values()
-                if a.status == AttestationStatus.VERIFIED
+                1 for a in self.attestations.values() if a.status == AttestationStatus.VERIFIED
             ),
             "disputed_attestations": sum(
-                1
-                for a in self.attestations.values()
-                if a.status == AttestationStatus.DISPUTED
+                1 for a in self.attestations.values() if a.status == AttestationStatus.DISPUTED
             ),
             "authorized_verifiers": len(self.authorized_verifiers),
             "total_verifications": sum(len(v) for v in self.verifications.values()),
@@ -485,7 +467,5 @@ def create_attestation_hash(
     # Sort metadata for deterministic hashing
     sorted_metadata = json.dumps(metadata, sort_keys=True)
 
-    attestation_data = (
-        f"{model_hash}{dataset_hash}{snapshot_merkle_root}{sorted_metadata}"
-    )
+    attestation_data = f"{model_hash}{dataset_hash}{snapshot_merkle_root}{sorted_metadata}"
     return hashlib.sha256(attestation_data.encode()).hexdigest()

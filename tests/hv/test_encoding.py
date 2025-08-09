@@ -10,12 +10,12 @@ import numpy as np
 import pytest
 
 from genomevault.core.exceptions import ProjectionError
-from genomevault.hypervector.encoding.orthogonal_projection import \
-    OrthogonalProjection
-from genomevault.hypervector.encoding.sparse_projection import \
-    SparseRandomProjection
+from genomevault.hypervector.encoding.orthogonal_projection import OrthogonalProjection
+from genomevault.hypervector.encoding.sparse_projection import SparseRandomProjection
 from genomevault.hypervector.encoding.unified_encoder import (
-    UnifiedHypervectorEncoder, create_encoder)
+    UnifiedHypervectorEncoder,
+    create_encoder,
+)
 from genomevault.hypervector.operations.binding import bundle
 
 # Constants for magic number elimination (PLR2004)
@@ -53,9 +53,7 @@ class TestUnifiedHypervectorEncoder:
         assert isinstance(sparse_encoder.projection, SparseRandomProjection)
 
         # Orthogonal projection
-        ortho_encoder = UnifiedHypervectorEncoder(
-            dimension=10000, projection_type="orthogonal"
-        )
+        ortho_encoder = UnifiedHypervectorEncoder(dimension=10000, projection_type="orthogonal")
         assert ortho_encoder.projection_type == "orthogonal"
         assert isinstance(ortho_encoder.projection, OrthogonalProjection)
 
@@ -178,9 +176,7 @@ class TestUnifiedHypervectorEncoder:
 
         # Test custom weights
         weights = {"genomic": 0.7, "clinical": 0.3}
-        combined_weighted = encoder.cross_modal_binding(
-            genomic_vec, clinical_vec, weights
-        )
+        combined_weighted = encoder.cross_modal_binding(genomic_vec, clinical_vec, weights)
         assert combined_weighted.shape == (10000,)
         assert abs(np.linalg.norm(combined_weighted) - 1.0) < 1e-6
 
@@ -265,9 +261,7 @@ class TestGoldenVectors:
 
         # Create another chr1 variant
         encoder.fit(100)
-        encoder._base_vectors = create_encoder(
-            dimension=10000, seed=12345
-        )._base_vectors
+        encoder._base_vectors = create_encoder(dimension=10000, seed=12345)._base_vectors
         snp_chr1_other = encoder.encode_variant("chr1", 99999, "C", "T", "SNP")
 
         sim_same_chr = encoder.similarity(snp_chr1, snp_chr1_other)
@@ -360,17 +354,13 @@ class TestPerformanceBenchmarks:
             projected_similarities = np.array(projected_similarities)
 
             # Compute correlation
-            correlation = np.corrcoef(original_similarities, projected_similarities)[
-                0, 1
-            ]
+            correlation = np.corrcoef(original_similarities, projected_similarities)[0, 1]
 
             print(f"\n{projection_type} projection similarity preservation:")
             print(f"Correlation: {correlation:.3f}")
 
             # Should preserve similarity structure reasonably well
-            assert (
-                correlation > CORRELATION_MIN
-            ), f"Poor similarity preservation: {correlation:.3f}"
+            assert correlation > CORRELATION_MIN, f"Poor similarity preservation: {correlation:.3f}"
 
     def test_memory_efficiency(self):
         """Test memory usage of hypervector operations."""
@@ -396,9 +386,7 @@ class TestPerformanceBenchmarks:
             print(f"Overhead: {vec_memory - expected_memory} bytes")
 
             # Memory should be close to expected (some overhead is normal)
-            assert (
-                vec_memory < expected_memory * 1.5
-            ), f"Excessive memory usage: {vec_memory} bytes"
+            assert vec_memory < expected_memory * 1.5, f"Excessive memory usage: {vec_memory} bytes"
 
 
 if __name__ == "__main__":

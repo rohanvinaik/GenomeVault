@@ -6,9 +6,7 @@ from pydantic import BaseModel, Field
 
 
 class ProofCreateRequest(BaseModel):
-    circuit_type: str = Field(
-        ..., description="variant | prs | diabetes_risk (placeholder types)"
-    )
+    circuit_type: str = Field(..., description="variant | prs | diabetes_risk (placeholder types)")
     inputs: dict[str, Any]
 
 

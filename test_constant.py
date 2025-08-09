@@ -23,9 +23,7 @@ try:
     print("✓ UnifiedHypervectorEncoder imports successfully")
 
     # Test 3: Verify the constant has the expected value
-    assert (
-        HYPERVECTOR_DIMENSIONS == 10000
-    ), f"Expected 10000, got {HYPERVECTOR_DIMENSIONS}"
+    assert HYPERVECTOR_DIMENSIONS == 10000, f"Expected 10000, got {HYPERVECTOR_DIMENSIONS}"
     print("✓ Constant has correct value (10000)")
 
     # Test 4: Test basic encoder instantiation

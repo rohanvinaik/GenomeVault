@@ -51,8 +51,7 @@ def analyze_complexity(package_dir: Path):
                             if score >= 12:
                                 high_complexity.append((score, line.strip()))
                 except Exception:
-                    from genomevault.observability.logging import \
-                        configure_logging
+                    from genomevault.observability.logging import configure_logging
 
                     logger = configure_logging()
                     logger.exception("Unhandled exception")
@@ -71,9 +70,7 @@ def analyze_complexity(package_dir: Path):
 
         # Generate refactoring recommendations
         if high_complexity:
-            recommendations_file = (
-                package_dir.parent / "complexity_refactoring_guide.md"
-            )
+            recommendations_file = package_dir.parent / "complexity_refactoring_guide.md"
             with open(recommendations_file, "w") as f:
                 f.write("# Cyclomatic Complexity Refactoring Guide\n\n")
                 f.write(f"Found {len(high_complexity)} functions with CC >= 12\n\n")
@@ -87,9 +84,7 @@ def analyze_complexity(package_dir: Path):
                     "1. **Extract Helper Functions**: Break down large functions into smaller, focused helpers\n"
                 )
                 f.write("2. **Early Returns**: Use guard clauses to reduce nesting\n")
-                f.write(
-                    "3. **Replace Conditionals with Polymorphism**: For type-based switching\n"
-                )
+                f.write("3. **Replace Conditionals with Polymorphism**: For type-based switching\n")
                 f.write("4. **Use Dictionary Dispatch**: Replace long if/elif chains\n")
                 f.write(
                     "5. **Extract Validation Logic**: Move input validation to separate functions\n"

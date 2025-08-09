@@ -12,10 +12,8 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from genomevault.integration.proof_of_training import \
-    ProofOfTrainingIntegration
-from genomevault.local_processing.differential_privacy_audit import \
-    PrivacyMechanism
+from genomevault.integration.proof_of_training import ProofOfTrainingIntegration
+from genomevault.local_processing.differential_privacy_audit import PrivacyMechanism
 
 
 class MockModel:
@@ -358,9 +356,7 @@ class TestProofOfTrainingIntegration:
         for epoch in range(10):
             # Modify model to simulate drift
             if epoch > 5:
-                model.weights["layer1"] += (
-                    np.random.randn(*model.weights["layer1"].shape) * 0.1
-                )
+                model.weights["layer1"] += np.random.randn(*model.weights["layer1"].shape) * 0.1
 
             pot_integration.log_training_step(
                 session_id=session_id,

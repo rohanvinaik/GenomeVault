@@ -2,29 +2,22 @@ import numpy as np
 import pytest
 
 from genomevault.core.exceptions import ProjectionError
-from genomevault.hypervector.encoding.sparse_projection import \
-    SparseRandomProjection
+from genomevault.hypervector.encoding.sparse_projection import SparseRandomProjection
 
 
 def test_dimensions_and_determinism():
     rng = np.random.default_rng(123)
     X = rng.standard_normal((8, 64))  # small to keep tests fast
 
-    proj1 = SparseRandomProjection(n_components=128, density=0.2, seed=42).fit(
-        n_features=64
-    )
+    proj1 = SparseRandomProjection(n_components=128, density=0.2, seed=42).fit(n_features=64)
     Y1 = proj1.transform(X)
     assert Y1.shape == (8, 128)
 
-    proj2 = SparseRandomProjection(n_components=128, density=0.2, seed=42).fit(
-        n_features=64
-    )
+    proj2 = SparseRandomProjection(n_components=128, density=0.2, seed=42).fit(n_features=64)
     Y2 = proj2.transform(X)
     assert np.allclose(Y1, Y2)  # same seed -> identical
 
-    proj3 = SparseRandomProjection(n_components=128, density=0.2, seed=7).fit(
-        n_features=64
-    )
+    proj3 = SparseRandomProjection(n_components=128, density=0.2, seed=7).fit(n_features=64)
     Y3 = proj3.transform(X)
     with pytest.raises(AssertionError):
         assert np.allclose(Y1, Y3)  # different seed -> likely different

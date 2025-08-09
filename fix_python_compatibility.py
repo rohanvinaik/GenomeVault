@@ -25,9 +25,7 @@ def fix_union_syntax():
         # str | Path -> Union[str, Path]
 
         # Add typing imports if not present
-        if "from typing import" not in content and (
-            "str |" in content or "dict |" in content
-        ):
+        if "from typing import" not in content and ("str |" in content or "dict |" in content):
             # Find import section
             lines = content.split("\n")
             import_pos = 0

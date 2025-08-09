@@ -68,9 +68,7 @@ class DifferentialPrivacyAuditor:
     4. Audit trail is cryptographically verifiable
     """
 
-    def __init__(
-        self, session_id: str, total_epsilon: float, total_delta: float = 1e-5
-    ):
+    def __init__(self, session_id: str, total_epsilon: float, total_delta: float = 1e-5):
         """
         Initialize privacy auditor for a training session.
 
@@ -89,9 +87,7 @@ class DifferentialPrivacyAuditor:
             total_delta=total_delta,
             consumed_epsilon=0.0,
             consumed_delta=0.0,
-            mechanism_allocations={
-                mechanism.value: 0.0 for mechanism in PrivacyMechanism
-            },
+            mechanism_allocations={mechanism.value: 0.0 for mechanism in PrivacyMechanism},
             start_time=int(time.time()),
             end_time=None,
         )
@@ -202,9 +198,7 @@ class DifferentialPrivacyAuditor:
 
         # Verify clipping was applied
         if actual_norm > clip_norm * 1.01:  # Allow 1% tolerance
-            logger.warning(
-                "Gradient norm %sactual_norm:.4f exceeds clip threshold %sclip_norm:.4f"
-            )
+            logger.warning("Gradient norm %sactual_norm:.4f exceeds clip threshold %sclip_norm:.4f")
 
         # Compute sensitivity
         sensitivity = 2 * clip_norm  # For gradient clipping
@@ -278,9 +272,7 @@ class DifferentialPrivacyAuditor:
 
         return epsilon, delta
 
-    def _compose_privacy_loss(
-        self, new_epsilon: float, new_delta: float
-    ) -> tuple[float, float]:
+    def _compose_privacy_loss(self, new_epsilon: float, new_delta: float) -> tuple[float, float]:
         """
         Compose privacy loss using appropriate composition theorem.
 
@@ -300,19 +292,13 @@ class DifferentialPrivacyAuditor:
             eps_squared_sum += new_epsilon**2
 
             # Advanced composition bound
-            total_epsilon = np.sqrt(
-                2 * eps_squared_sum * np.log(1 / self.composition_slack)
-            )
-            total_epsilon += (
-                sum(e.epsilon_consumed for e in self.privacy_events) + new_epsilon
-            )
+            total_epsilon = np.sqrt(2 * eps_squared_sum * np.log(1 / self.composition_slack))
+            total_epsilon += sum(e.epsilon_consumed for e in self.privacy_events) + new_epsilon
             total_epsilon = min(
                 total_epsilon, self.budget.consumed_epsilon + new_epsilon
             )  # Basic composition
 
-            total_delta = (
-                self.budget.consumed_delta + new_delta + k * self.composition_slack
-            )
+            total_delta = self.budget.consumed_delta + new_delta + k * self.composition_slack
 
         else:
             # Basic composition
@@ -355,10 +341,8 @@ class DifferentialPrivacyAuditor:
                 "total_delta": self.budget.total_delta,
                 "consumed_epsilon": self.budget.consumed_epsilon,
                 "consumed_delta": self.budget.consumed_delta,
-                "utilization_epsilon": self.budget.consumed_epsilon
-                / self.budget.total_epsilon,
-                "utilization_delta": self.budget.consumed_delta
-                / self.budget.total_delta,
+                "utilization_epsilon": self.budget.consumed_epsilon / self.budget.total_epsilon,
+                "utilization_delta": self.budget.consumed_delta / self.budget.total_delta,
             },
             "mechanism_breakdown": self.budget.mechanism_allocations,
             "total_events": len(self.privacy_events),
@@ -387,9 +371,7 @@ class DifferentialPrivacyAuditor:
 
         return report
 
-    def export_audit_trail(
-        self, include_metadata: bool = False
-    ) -> list[dict[str, Any]]:
+    def export_audit_trail(self, include_metadata: bool = False) -> list[dict[str, Any]]:
         """
         Export the complete audit trail.
 

@@ -32,11 +32,7 @@ class DashboardZeroRedFixer:
         try:
             issues = json.loads(result.stdout) if result.stdout.strip() else []
             e402_files = list(
-                set(
-                    issue.get("filename", "")
-                    for issue in issues
-                    if issue.get("code") == "E402"
-                )
+                set(issue.get("filename", "") for issue in issues if issue.get("code") == "E402")
             )
             return e402_files
         except json.JSONDecodeError:
@@ -90,15 +86,9 @@ class DashboardZeroRedFixer:
                     continue
 
                 # Check if this is an import line
-                if (
-                    line.startswith("import ") or line.startswith("from ")
-                ) and not past_imports:
+                if (line.startswith("import ") or line.startswith("from ")) and not past_imports:
                     import_lines.append(lines[i])
-                elif (
-                    "logger" in line
-                    and ("=" in line or ":" in line)
-                    and not past_imports
-                ):
+                elif "logger" in line and ("=" in line or ":" in line) and not past_imports:
                     import_lines.append(lines[i])
                 else:
                     past_imports = True

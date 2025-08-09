@@ -42,10 +42,7 @@ class Proposal:
     @property
     def can_execute(self) -> bool:
         """Check if proposal can be executed."""
-        return (
-            not self.is_active
-            and time.time() > self.voting_deadline + self.execution_delay
-        )
+        return not self.is_active and time.time() > self.voting_deadline + self.execution_delay
 
 
 @dataclass
@@ -146,9 +143,7 @@ class QuadraticVoting:
         self.proposals[proposal_id] = proposal
         return proposal_id
 
-    def cast_vote(
-        self, voter: str, proposal_id: str, support: bool, token_amount: float
-    ) -> bool:
+    def cast_vote(self, voter: str, proposal_id: str, support: bool, token_amount: float) -> bool:
         """Cast quadratic vote on proposal."""
         if proposal_id not in self.proposals:
             return False
@@ -192,9 +187,7 @@ class QuadraticVoting:
 
         # Calculate participation
         unique_voters = {v.voter for v in proposal_votes}
-        total_voting_power = sum(
-            math.sqrt(self._get_voting_power(v)) for v in unique_voters
-        )
+        total_voting_power = sum(math.sqrt(self._get_voting_power(v)) for v in unique_voters)
         max_possible_power = math.sqrt(self.total_supply)
         participation_rate = (
             total_voting_power / max_possible_power if max_possible_power > 0 else 0

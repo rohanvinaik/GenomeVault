@@ -13,7 +13,9 @@ def fix_bare_except(content):
     """Fix bare except clauses by converting to except Exception"""
     # Pattern to match bare except:
     pattern = r"(\s*)except\s*:\s*$"
-    replacement = r"\1except Exception:  # TODO: narrow this bare \'except\' to specific exception(s)"
+    replacement = (
+        r"\1except Exception:  # TODO: narrow this bare \'except\' to specific exception(s)"
+    )
 
     fixed_content = re.sub(pattern, replacement, content, flags=re.MULTILINE)
     return fixed_content

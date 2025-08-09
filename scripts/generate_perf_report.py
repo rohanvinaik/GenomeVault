@@ -42,8 +42,7 @@ class PerformanceReportGenerator:
                             benchmark_data = json.load(f)
                             data[lane].append(benchmark_data)
                     except Exception as e:
-                        from genomevault.observability.logging import \
-                            configure_logging
+                        from genomevault.observability.logging import configure_logging
 
                         logger = configure_logging()
                         logger.exception("Unhandled exception")
@@ -70,9 +69,7 @@ class PerformanceReportGenerator:
             if "encoding_throughput" in benchmarks:
                 throughput_data = benchmarks["encoding_throughput"]["data"]
                 # Get clinical tier performance
-                clinical_perf = throughput_data.get("dim_10000", {}).get(
-                    "features_1000", {}
-                )
+                clinical_perf = throughput_data.get("dim_10000", {}).get("features_1000", {})
                 analysis["summary"]["encoding_ops_per_sec"] = clinical_perf.get(
                     "throughput_ops_per_sec", 0
                 )
@@ -82,9 +79,7 @@ class PerformanceReportGenerator:
                 mem_data = benchmarks["memory_usage"]["data"]
                 clinical_mem = mem_data.get("clinical", {})
                 analysis["summary"]["memory_kb"] = clinical_mem.get("memory_kb", 0)
-                analysis["summary"]["compression_ratio"] = clinical_mem.get(
-                    "compression_ratio", 0
-                )
+                analysis["summary"]["compression_ratio"] = clinical_mem.get("compression_ratio", 0)
 
             # Binding performance
             if "binding_operations" in benchmarks:
@@ -96,9 +91,9 @@ class PerformanceReportGenerator:
                 )
                 if best_binding:
                     analysis["summary"]["best_binding_type"] = best_binding
-                    analysis["summary"]["binding_ops_per_sec"] = binding_data[
-                        best_binding
-                    ]["throughput_ops_per_sec"]
+                    analysis["summary"]["binding_ops_per_sec"] = binding_data[best_binding][
+                        "throughput_ops_per_sec"
+                    ]
 
         return analysis
 
@@ -190,9 +185,7 @@ class PerformanceReportGenerator:
             )
 
         # Compression ratios
-        bars2 = ax2.bar(
-            tiers, compression_ratios, color=["#1f77b4", "#ff7f0e", "#2ca02c"]
-        )
+        bars2 = ax2.bar(tiers, compression_ratios, color=["#1f77b4", "#ff7f0e", "#2ca02c"])
         ax2.set_xlabel("Compression Tier")
         ax2.set_ylabel("Compression Ratio")
         ax2.set_title("Compression Ratio by Tier")
@@ -237,9 +230,7 @@ class PerformanceReportGenerator:
         plt.savefig(self.output_dir / "hdc_scalability.png")
         plt.close()
 
-    def generate_summary_report(
-        self, all_data: dict[str, list[dict]]
-    ) -> dict[str, Any]:
+    def generate_summary_report(self, all_data: dict[str, list[dict]]) -> dict[str, Any]:
         """Generate overall summary report"""
         report = {"generated_at": datetime.now().isoformat(), "lanes": {}}
 
@@ -371,9 +362,7 @@ class PerformanceReportGenerator:
 def main():
     """Main entry point"""
     parser = argparse.ArgumentParser(description="Generate performance report")
-    parser.add_argument(
-        "--input", default="benchmarks", help="Input benchmark directory"
-    )
+    parser.add_argument("--input", default="benchmarks", help="Input benchmark directory")
     parser.add_argument("--output", default="docs/perf", help="Output report directory")
 
     args = parser.parse_args()

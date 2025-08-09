@@ -1,15 +1,12 @@
 import numpy as np
 
-from genomevault.nanopore.streaming import (NanoporeSlice,
-                                            NanoporeStreamProcessor)
+from genomevault.nanopore.streaming import NanoporeSlice, NanoporeStreamProcessor
 
 
 def generate_signal(n_slices=8, length=256, seed=11):
     rng = np.random.default_rng(seed)
     for i in range(n_slices):
-        yield NanoporeSlice(
-            index=i, raw=rng.normal(0, 1, size=length).astype("float32")
-        )
+        yield NanoporeSlice(index=i, raw=rng.normal(0, 1, size=length).astype("float32"))
 
 
 def test_streaming_smoke():

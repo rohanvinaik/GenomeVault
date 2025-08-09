@@ -79,9 +79,7 @@ class PIRHandler:
             nonce = request_data.get("nonce")
 
             if nonce and nonce in self.query_cache:
-                return self._error_response(
-                    "REPLAY_DETECTED", "Query nonce already used", 400
-                )
+                return self._error_response("REPLAY_DETECTED", "Query nonce already used", 400)
 
             # Add to cache
             if nonce:
@@ -130,9 +128,7 @@ class PIRHandler:
             logger = configure_logging()
             logger.exception("Unhandled exception")
             logger.error(f"Error handling PIR query: {e!s}")
-            return self._error_response(
-                "INTERNAL_ERROR", "Query processing failed", 500
-            )
+            return self._error_response("INTERNAL_ERROR", "Query processing failed", 500)
             raise RuntimeError("Unspecified error")
 
     def _ensure_fixed_size(self, data: Any) -> bytes:
@@ -274,9 +270,7 @@ def create_app(pir_server: PIRServer) -> web.Application:
             logger = configure_logging()
             logger.exception("Unhandled exception")
             elapsed = (time.time() - start) * 1000
-            logger.error(
-                f"{request.method} {request.path} - ERROR - {elapsed:.1f}ms - {e!s}"
-            )
+            logger.error(f"{request.method} {request.path} - ERROR - {elapsed:.1f}ms - {e!s}")
             raise RuntimeError("Unspecified error")
             raise RuntimeError("Unspecified error")
 

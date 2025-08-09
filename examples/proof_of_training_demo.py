@@ -23,9 +23,7 @@ from genomevault.local_processing.differential_privacy_audit import PrivacyMecha
 class DemoGenomicModel:
     """Demo model for genomic prediction"""
 
-    def __init__(
-        self, input_dim: int = 1000, hidden_dim: int = 100, output_dim: int = 2
-    ):
+    def __init__(self, input_dim: int = 1000, hidden_dim: int = 100, output_dim: int = 2):
         # Simulate model parameters
         self.weights = {
             "layer1": np.random.randn(input_dim, hidden_dim) * 0.01,
@@ -212,20 +210,14 @@ def train_with_proof_of_training():
         logger.info(f"Total snapshots: {summary['total_snapshots']}")
         logger.info(f"Training duration: {summary['duration_seconds']}s")
         logger.info(f"Best loss: {summary['loss_trajectory']['best']:.4f}")
-        logger.info(
-            f"Loss improvement: {summary['loss_trajectory']['improvement']:.4f}"
-        )
+        logger.info(f"Loss improvement: {summary['loss_trajectory']['improvement']:.4f}")
         logger.info(f"Merkle root: {summary['merkle_root'][:32]}...")
 
     if "privacy_report" in completion_result:
         privacy = completion_result["privacy_report"]
         logger.info("\n=== Privacy Budget Usage ===")
-        logger.info(
-            f"Total epsilon used: {privacy['privacy_budget']['consumed_epsilon']:.4f}"
-        )
-        logger.info(
-            f"Total delta used: {privacy['privacy_budget']['consumed_delta']:.2e}"
-        )
+        logger.info(f"Total epsilon used: {privacy['privacy_budget']['consumed_epsilon']:.4f}")
+        logger.info(f"Total delta used: {privacy['privacy_budget']['consumed_delta']:.2e}")
         logger.info(
             f"Budget utilization: {privacy['privacy_budget']['utilization_epsilon'] * 100:.1f}%"
         )
@@ -255,9 +247,7 @@ def train_with_proof_of_training():
     )
 
     logger.info(f"Validation passed: {validation_result['passed']}")
-    logger.info(
-        f"Performance metrics: {json.dumps(validation_result['metrics'], indent=2)}"
-    )
+    logger.info(f"Performance metrics: {json.dumps(validation_result['metrics'], indent=2)}")
 
     # 10. Start monitoring (for deployed model)
     logger.info("\n=== Starting Model Monitoring ===")
@@ -276,9 +266,7 @@ def train_with_proof_of_training():
 
         # Process with monitor
         monitoring_result = monitor.process_prediction(
-            input_features={
-                f"feature_{j}": x_new[0, j] for j in range(10)
-            },  # Sample features
+            input_features={f"feature_{j}": x_new[0, j] for j in range(10)},  # Sample features
             prediction=pred[0, 0],
             ground_truth=None,  # Not available in production
         )
@@ -314,9 +302,7 @@ def verify_training_proof(session_id: str, proof_path: str):
     logger.info(f"Constraints satisfied: {proof['constraints_satisfied']}")
 
     # Verify Merkle root
-    logger.info(
-        f"\nMerkle root: {proof['commitments']['snapshot_merkle_root'][:32]}..."
-    )
+    logger.info(f"\nMerkle root: {proof['commitments']['snapshot_merkle_root'][:32]}...")
 
     logger.info("\n✅ Proof verification completed")
 

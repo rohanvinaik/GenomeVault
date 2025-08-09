@@ -135,9 +135,7 @@ def prove(paths: CircuitPaths, a: int, b: int, c_public: int) -> dict:
     # Witness generation
     wasm_dir = paths.wasm.parent  # build/sum64_js
     gen_witness = wasm_dir / "generate_witness.js"
-    run(
-        ["node", str(gen_witness), str(paths.wasm), str(inp), str(wtns)], cwd=paths.root
-    )
+    run(["node", str(gen_witness), str(paths.wasm), str(inp), str(wtns)], cwd=paths.root)
 
     # Proof
     run(

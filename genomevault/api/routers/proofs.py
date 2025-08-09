@@ -13,9 +13,7 @@ _engine = ZKProofEngine(repo_root="/Users/rohanvinaik/genomevault")
 @router.post("/create")
 def create_proof(request: ProofCreateRequest):
     try:
-        proof = _engine.create_proof(
-            circuit_type=request.circuit_type, inputs=request.inputs
-        )
+        proof = _engine.create_proof(circuit_type=request.circuit_type, inputs=request.inputs)
         # proof is a shim object with to_base64()
         return {
             "proof": proof.to_base64(),
@@ -34,9 +32,7 @@ def create_proof(request: ProofCreateRequest):
 @router.post("/verify")
 def verify_proof(request: ProofVerifyRequest):
     try:
-        ok = _engine.verify_proof(
-            proof_data=request.proof, public_inputs=request.public_inputs
-        )
+        ok = _engine.verify_proof(proof_data=request.proof, public_inputs=request.public_inputs)
         return {"valid": bool(ok)}
     except Exception as e:
         from genomevault.observability.logging import configure_logging
