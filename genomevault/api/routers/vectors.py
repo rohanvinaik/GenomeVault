@@ -2,9 +2,11 @@ from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException
 
-from genomevault.api.models.vectors import (VectorEncodeRequest,
-                                            VectorEncodeResponse,
-                                            VectorOperationRequest)
+from genomevault.api.models.vectors import (
+    VectorEncodeRequest,
+    VectorEncodeResponse,
+    VectorOperationRequest,
+)
 from genomevault.core.exceptions import GenomeVaultError
 from genomevault.hypervector.engine import HypervectorEngine
 

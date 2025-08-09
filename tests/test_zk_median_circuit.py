@@ -1,6 +1,3 @@
-from genomevault.observability.logging import configure_logging
-
-logger = configure_logging()
 """
 Test for Zero-Knowledge Median Verification Circuit
 """
@@ -13,8 +10,7 @@ import time
 import pytest
 
 from genomevault.hypervector.error_handling import ErrorBudget
-from genomevault.zk.circuits.median_verifier import (MedianProof,
-                                                     MedianVerifierCircuit)
+from genomevault.zk.circuits.median_verifier import MedianProof, MedianVerifierCircuit
 from genomevault.zk.proof import ProofGenerator
 
 logger = logging.getLogger(__name__)
@@ -276,7 +272,7 @@ class TestMedianVerifierCircuit:
         logger.info("N    | Gen Time | Verify Time | Proof Size")
         logger.info("-----|----------|-------------|------------")
         for r in results:
-            print(
+            logger.info(
                 f"{r['n']:4} | {r['gen_time_ms']:7.1f}ms | {r['verify_time_ms']:10.1f}ms | {r['proof_size_bytes']:9} B"
             )
 

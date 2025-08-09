@@ -152,7 +152,6 @@ class GreenToolchainImplementer:
                     or "Tuple[" in content
                     or "Any" in content
                 ) and "from typing import" not in content:
-
                     # Insert typing import after other imports
                     lines = content.split("\n")
                     import_insert_idx = 0
@@ -303,10 +302,10 @@ def test_nodeinfo_and_blockchainnode_agree():
     try:
         from genomevault.core.constants import NodeType, NODE_CLASS_WEIGHT
         from genomevault.blockchain.node import BlockchainNode, NodeInfo
-        
+
         def reference_vp(node_type, signatory):
             return NODE_CLASS_WEIGHT[node_type] + (2 if signatory else 0)
-        
+
         for nt, signatory in itertools.product(list(NodeType), [False, True]):
             bn = BlockchainNode("n1", nt, signatory)
             ni = NodeInfo(node_id="n2", node_type=nt.value, class_weight=NODE_CLASS_WEIGHT[nt], signatory=signatory)

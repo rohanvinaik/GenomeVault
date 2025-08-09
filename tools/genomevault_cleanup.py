@@ -8,7 +8,7 @@ from ~1,100 down to zero without another config spiral.
 
 Usage:
     python genomevault_cleanup.py --phase <phase_number>
-    
+
 Phases:
     1. Update Ruff configuration
     2. Triage library code from examples/tooling

@@ -19,17 +19,17 @@ dependencies = []
 
 [project.optional-dependencies]
 dev = [
-  "ruff", 
-  "mypy", 
-  "pytest>=8.2", 
-  "pytest-asyncio>=1.1.0", 
+  "ruff",
+  "mypy",
+  "pytest>=8.2",
+  "pytest-asyncio>=1.1.0",
   "pytest-benchmark>=5.1.0",
-  "pytest-cov", 
-  "pyupgrade", 
+  "pytest-cov",
+  "pyupgrade",
   "radon"
 ]
 ml = [
-  "torch>=2.3", 
+  "torch>=2.3",
   "scikit-learn>=1.6",
   "numpy>=1.21"
 ]
@@ -55,6 +55,50 @@ exclude = ["scripts", "examples"]
 [project.scripts]
 genomevault = "genomevault.cli:main"
 gv = "genomevault.cli:main"
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+extend-exclude = "^(.*/)?(migrations|build|dist|node_modules|.venv|venv|.mypy_cache|.ruff_cache|.pytest_cache)/"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-select = [
+  "I",   # isort
+  "UP",  # pyupgrade
+  "B",   # bugbear
+  "C4",  # comprehensions
+  "SIM", # simplify
+  "RET", # return
+  "T20", # print statements
+  "F",   # flakes
+]
+extend-ignore = [
+  "D",    # docstring rules (defer)
+  "ANN",  # type annotation rules (handled by mypy phase)
+]
+exclude = [
+  "migrations",
+  "build",
+  "dist",
+  "node_modules",
+  ".venv",
+  "venv",
+  ".mypy_cache",
+  ".ruff_cache",
+  ".pytest_cache",
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["genomevault"]
+force-single-line = false
+combine-as-imports = true
+lines-after-imports = 2
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
 
 [tool.mypy]
 python_version = "3.11"

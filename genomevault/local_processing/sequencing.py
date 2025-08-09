@@ -13,6 +13,7 @@ from Bio import SeqIO
 
 from genomevault.crypto.hashing import secure_hash
 from genomevault.utils.config import get_config
+
 # Local imports
 from genomevault.utils.logging import get_logger
 
@@ -318,7 +319,7 @@ class SequencingProcessor:
 
         # Run BWA alignment
         logger.info("Running BWA alignment...")
-        with open(work_dir / "aligned.sam", "w") as sam_file:
+        with open(work_dir / "aligned.sam", "w", encoding="utf-8") as sam_file:
             bwa_process = subprocess.Popen(
                 [
                     "bwa",

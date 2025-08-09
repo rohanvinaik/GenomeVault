@@ -10,8 +10,7 @@ from typing import Any
 
 from genomevault.hypervector.error_handling import ErrorBudget
 from genomevault.utils.logging import get_logger
-from genomevault.zk.circuits.median_verifier import (MedianProof,
-                                                     MedianVerifierCircuit)
+from genomevault.zk.circuits.median_verifier import MedianProof, MedianVerifierCircuit
 
 logger = get_logger(__name__)
 

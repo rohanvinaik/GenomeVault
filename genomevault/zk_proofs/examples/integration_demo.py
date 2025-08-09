@@ -5,7 +5,7 @@ This example demonstrates the complete workflow for generating and
 verifying privacy-preserving proofs for genomic analyses.
 """
 
-# Note: This example uses print() statements for demonstration purposes.
+# Note: This example uses logger.info() statements for demonstration purposes.
 # In production code, use proper logging instead.
 
 import hashlib
@@ -17,13 +17,18 @@ from genomevault.utils.logging import logger
 
 logger = _get_logger(__name__)
 
-from genomevault.zk_proofs import (CircuitManager, PostQuantumTransition,
-                                   Prover, Verifier, benchmark_pq_performance)
+from genomevault.zk_proofs import (
+    CircuitManager,
+    PostQuantumTransition,
+    Prover,
+    Verifier,
+    benchmark_pq_performance,
+)
 
 
 def demonstrate_variant_presence():
     """Demonstrate proving variant presence without revealing location."""
-    print("\n=== Variant Presence Proof ===")
+    logger.info("\n=== Variant Presence Proof ===")
 
     # Initialize components
     prover = Prover()
@@ -54,21 +59,21 @@ def demonstrate_variant_presence():
         },
     )
 
-    print("Proof generated: {proof.proof_id}")
-    print("Proof size: {len(proof.proof_data)} bytes")
+    logger.info("Proof generated: {proof.proof_id}")
+    logger.info("Proof size: {len(proof.proof_data)} bytes")
 
     # Verify proof
     result = verifier.verify_proof(proof)
 
-    print("Verification result: {'VALID' if result.is_valid else 'INVALID'}")
-    print("Verification time: {result.verification_time*1000:.1f}ms")
+    logger.info("Verification result: {'VALID' if result.is_valid else 'INVALID'}")
+    logger.info("Verification time: {result.verification_time*1000:.1f}ms")
 
     return proof, result
 
 
 def demonstrate_diabetes_risk_assessment():
     """Demonstrate diabetes risk assessment with privacy."""
-    print("\n=== Diabetes Risk Assessment ===")
+    logger.info("\n=== Diabetes Risk Assessment ===")
 
     # Initialize components
     prover = Prover()
@@ -82,12 +87,12 @@ def demonstrate_diabetes_risk_assessment():
     actual_glucose = 145  # Above threshold
     actual_risk_score = 0.83  # Above threshold
 
-    print("Clinical thresholds (public):")
-    print("  - Glucose: >{glucose_threshold} mg/dL")
-    print("  - Genetic risk: >{risk_threshold}")
-    print("\nPatient values (private - not revealed):")
-    print("  - Actual glucose: {actual_glucose} mg/dL")
-    print("  - Actual risk score: {actual_risk_score}")
+    logger.info("Clinical thresholds (public):")
+    logger.info("  - Glucose: >{glucose_threshold} mg/dL")
+    logger.info("  - Genetic risk: >{risk_threshold}")
+    logger.info("\nPatient values (private - not revealed):")
+    logger.info("  - Actual glucose: {actual_glucose} mg/dL")
+    logger.info("  - Actual risk score: {actual_risk_score}")
 
     # Generate proof that BOTH conditions are met
     proof = prover.generate_proof(
@@ -104,27 +109,27 @@ def demonstrate_diabetes_risk_assessment():
         },
     )
 
-    print("\nProof generated: {proof.proof_id}")
-    print("Proof size: {len(proof.proof_data)} bytes")
+    logger.info("\nProof generated: {proof.proof_id}")
+    logger.info("Proof size: {len(proof.proof_data)} bytes")
 
     # Verify proof
     result = verifier.verify_proof(proof)
 
-    print("Verification result: {'VALID' if result.is_valid else 'INVALID'}")
-    print("Verification time: {result.verification_time*1000:.1f}ms")
+    logger.info("Verification result: {'VALID' if result.is_valid else 'INVALID'}")
+    logger.info("Verification time: {result.verification_time*1000:.1f}ms")
 
     if result.is_valid:
         print(
             "\n✓ Alert triggered: Patient meets both glucose AND genetic risk criteria"
         )
-        print("  (Without revealing actual values)")
+        logger.info("  (Without revealing actual values)")
 
     return proof, result
 
 
 def demonstrate_polygenic_risk_score():
     """Demonstrate PRS calculation with privacy."""
-    print("\n=== Polygenic Risk Score Calculation ===")
+    logger.info("\n=== Polygenic Risk Score Calculation ===")
 
     # Initialize components
     prover = Prover()
@@ -140,10 +145,10 @@ def demonstrate_polygenic_risk_score():
     # Calculate actual score
     sum(v * w for v, w in zip(variants, weights))
 
-    print("PRS Model:")
-    print("  - Variants: {num_variants}")
-    print("  - Score range: [-1.0, 1.0]")
-    print("  - Actual score (private): {actual_score:.3f}")
+    logger.info("PRS Model:")
+    logger.info("  - Variants: {num_variants}")
+    logger.info("  - Score range: [-1.0, 1.0]")
+    logger.info("  - Actual score (private): {actual_score:.3f}")
 
     # Generate proof
     proof = prover.generate_proof(
@@ -162,21 +167,21 @@ def demonstrate_polygenic_risk_score():
         },
     )
 
-    print("\nProof generated: {proof.proof_id}")
-    print("Proof size: {len(proof.proof_data)} bytes")
+    logger.info("\nProof generated: {proof.proof_id}")
+    logger.info("Proof size: {len(proof.proof_data)} bytes")
 
     # Verify proof
     result = verifier.verify_proof(proof)
 
-    print("Verification result: {'VALID' if result.is_valid else 'INVALID'}")
-    print("Verification time: {result.verification_time*1000:.1f}ms")
+    logger.info("Verification result: {'VALID' if result.is_valid else 'INVALID'}")
+    logger.info("Verification time: {result.verification_time*1000:.1f}ms")
 
     return proof, result
 
 
 def demonstrate_pharmacogenomics():
     """Demonstrate pharmacogenomic analysis with privacy."""
-    print("\n=== Pharmacogenomic Analysis ===")
+    logger.info("\n=== Pharmacogenomic Analysis ===")
 
     # Initialize components
     prover = Prover()
@@ -197,9 +202,9 @@ def demonstrate_pharmacogenomics():
     # Predicted response category
     response_category = 0  # Poor metabolizer
 
-    print("Medication: {medication} (ID: {medication_id})")
-    print("Response prediction (public): Poor metabolizer")
-    print("Star alleles (private - not revealed)")
+    logger.info("Medication: {medication} (ID: {medication_id})")
+    logger.info("Response prediction (public): Poor metabolizer")
+    logger.info("Star alleles (private - not revealed)")
 
     # Generate proof
     proof = prover.generate_proof(
@@ -220,32 +225,34 @@ def demonstrate_pharmacogenomics():
         },
     )
 
-    print("\nProof generated: {proof.proof_id}")
-    print("Proof size: {len(proof.proof_data)} bytes")
+    logger.info("\nProof generated: {proof.proof_id}")
+    logger.info("Proof size: {len(proof.proof_data)} bytes")
 
     # Verify proof
     result = verifier.verify_proof(proof)
 
-    print("Verification result: {'VALID' if result.is_valid else 'INVALID'}")
-    print("Verification time: {result.verification_time*1000:.1f}ms")
+    logger.info("Verification result: {'VALID' if result.is_valid else 'INVALID'}")
+    logger.info("Verification time: {result.verification_time*1000:.1f}ms")
 
     if result.is_valid:
-        print("\n✓ Pharmacogenomic prediction verified")
-        print("  Recommendation: Consider alternative anticoagulant or dose adjustment")
+        logger.info("\n✓ Pharmacogenomic prediction verified")
+        logger.info(
+            "  Recommendation: Consider alternative anticoagulant or dose adjustment"
+        )
 
     return proof, result
 
 
 def demonstrate_circuit_optimization():
     """Demonstrate circuit selection and optimization."""
-    print("\n=== Circuit Optimization ===")
+    logger.info("\n=== Circuit Optimization ===")
 
     # Initialize circuit manager
     manager = CircuitManager()
 
     # List available circuits
     manager.list_circuits()
-    print("Available circuits: {len(circuits)}")
+    logger.info("Available circuits: {len(circuits)}")
 
     # Select optimal circuit for different scenarios
     scenarios = [
@@ -261,38 +268,38 @@ def demonstrate_circuit_optimization():
         optimal = manager.select_optimal_circuit(
             scenario["analysis_type"], scenario["data"]
         )
-        print("\nScenario: {scenario['analysis_type']}")
-        print("  Data: {scenario['data']}")
-        print("  Selected circuit: {optimal}")
+        logger.info("\nScenario: {scenario['analysis_type']}")
+        logger.info("  Data: {scenario['data']}")
+        logger.info("  Selected circuit: {optimal}")
 
         # Get metadata
         manager.get_circuit_metadata(optimal)
-        print("  Constraints: {metadata.constraint_count}")
-        print("  Proof size: {metadata.proof_size_bytes} bytes")
-        print("  Verification time: {metadata.verification_time_ms}ms")
+        logger.info("  Constraints: {metadata.constraint_count}")
+        logger.info("  Proof size: {metadata.proof_size_bytes} bytes")
+        logger.info("  Verification time: {metadata.verification_time_ms}ms")
 
 
 def demonstrate_post_quantum_transition():
     """Demonstrate post-quantum proof generation."""
-    print("\n=== Post-Quantum Transition ===")
+    logger.info("\n=== Post-Quantum Transition ===")
 
     # Initialize transition manager
     pq_transition = PostQuantumTransition()
 
     # Get transition status
     pq_transition.get_transition_status()
-    print("Transition status:")
-    print("  Classical active: {status['classical_active']}")
-    print("  Post-quantum active: {status['post_quantum_active']}")
-    print("  STARK ready: {status['stark_ready']}")
-    print("  Lattice ready: {status['lattice_ready']}")
+    logger.info("Transition status:")
+    logger.info("  Classical active: {status['classical_active']}")
+    logger.info("  Post-quantum active: {status['post_quantum_active']}")
+    logger.info("  STARK ready: {status['stark_ready']}")
+    logger.info("  Lattice ready: {status['lattice_ready']}")
 
     # Generate hybrid proofs
     statement = {"public_value": 42, "constraint_count": 5000}
 
     witness = {"private_value": 123, "randomness": np.random.bytes(32).hex()}
 
-    print("\nGenerating hybrid proofs...")
+    logger.info("\nGenerating hybrid proofs...")
     start = time.time()
 
     proofs = pq_transition.generate_hybrid_proof(
@@ -301,31 +308,31 @@ def demonstrate_post_quantum_transition():
 
     time.time() - start
 
-    print("Generation time: {generation_time:.2f}s")
-    print("Proof types generated: {list(proofs.keys())}")
+    logger.info("Generation time: {generation_time:.2f}s")
+    logger.info("Proof types generated: {list(proofs.keys())}")
 
     # Verify proofs
-    print("\nVerifying proofs...")
+    logger.info("\nVerifying proofs...")
     results = pq_transition.verify_hybrid_proof(proofs, statement)
 
     for proof_type, is_valid in results.items():
-        print("  {proof_type}: {'VALID' if is_valid else 'INVALID'}")
+        logger.info("  {proof_type}: {'VALID' if is_valid else 'INVALID'}")
 
     # Benchmark post-quantum performance
-    print("\nBenchmarking post-quantum algorithms...")
+    logger.info("\nBenchmarking post-quantum algorithms...")
     benchmark_results = benchmark_pq_performance(num_constraints=10000)
 
     for algorithm, metrics in benchmark_results.items():
-        print("\n{algorithm}:")
-        print("  Generation time: {metrics['generation_time']:.3f}s")
-        print("  Verification time: {metrics['verification_time']:.3f}s")
-        print("  Proof size: {metrics['proof_size']} bytes")
-        print("  Valid: {metrics['valid']}")
+        logger.info("\n{algorithm}:")
+        logger.info("  Generation time: {metrics['generation_time']:.3f}s")
+        logger.info("  Verification time: {metrics['verification_time']:.3f}s")
+        logger.info("  Proof size: {metrics['proof_size']} bytes")
+        logger.info("  Valid: {metrics['valid']}")
 
 
 def demonstrate_batch_operations():
     """Demonstrate batch proof generation and verification."""
-    print("\n=== Batch Operations ===")
+    logger.info("\n=== Batch Operations ===")
 
     # Initialize components
     prover = Prover()
@@ -365,35 +372,35 @@ def demonstrate_batch_operations():
         )
 
     # Generate batch proofs
-    print("Generating {len(batch_requests)} proofs in batch...")
+    logger.info("Generating {len(batch_requests)} proofs in batch...")
     start = time.time()
 
     proofs = prover.batch_prove(batch_requests)
 
     time.time() - start
-    print("Batch generation time: {batch_time:.2f}s")
-    print("Average per proof: {batch_time/len(proofs):.3f}s")
+    logger.info("Batch generation time: {batch_time:.2f}s")
+    logger.info("Average per proof: {batch_time/len(proofs):.3f}s")
 
     # Verify batch
-    print("\nVerifying batch...")
+    logger.info("\nVerifying batch...")
     start = time.time()
 
     results = verifier.batch_verify(proofs)
 
     time.time() - start
-    print("Batch verification time: {verify_time:.2f}s")
+    logger.info("Batch verification time: {verify_time:.2f}s")
 
     # Summary
     sum(1 for r in results if r.is_valid)
-    print("\nBatch results: {valid_count}/{len(results)} valid")
+    logger.info("\nBatch results: {valid_count}/{len(results)} valid")
 
 
 def main():
     """Run all demonstrations."""
-    print("=" * 60)
-    print("GenomeVault Zero-Knowledge Proof System")
-    print("Integration Examples")
-    print("=" * 60)
+    logger.info("=" * 60)
+    logger.info("GenomeVault Zero-Knowledge Proof System")
+    logger.info("Integration Examples")
+    logger.info("=" * 60)
 
     # Run demonstrations
     try:
@@ -408,8 +415,8 @@ def main():
         demonstrate_post_quantum_transition()
         demonstrate_batch_operations()
 
-        print("\n" + "=" * 60)
-        print("All demonstrations completed successfully!")
+        logger.info("\n" + "=" * 60)
+        logger.info("All demonstrations completed successfully!")
 
     except Exception:
         from genomevault.observability.logging import configure_logging

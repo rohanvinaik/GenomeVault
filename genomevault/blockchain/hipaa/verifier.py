@@ -13,8 +13,13 @@ import aiohttp
 
 from ...core.exceptions import VerificationError
 from ...utils import audit_logger, get_logger
-from .models import (HIPAACredentials, NPIRecord, NPIType, VerificationRecord,
-                     VerificationStatus)
+from .models import (
+    HIPAACredentials,
+    NPIRecord,
+    NPIType,
+    VerificationRecord,
+    VerificationStatus,
+)
 
 logger = get_logger(__name__)
 
@@ -464,33 +469,33 @@ if __name__ == "__main__":
                 provider_name="Dr. John Smith",
             )
 
-            print("Submitting HIPAA verification...")
+            logger.info("Submitting HIPAA verification...")
             verification_id = await verifier.submit_verification(credentials)
-            print(f"Verification ID: {verification_id}")
+            logger.info(f"Verification ID: {verification_id}")
 
-            print("\nProcessing verification...")
+            logger.info("\nProcessing verification...")
             try:
                 record = await verifier.process_verification(verification_id)
-                print("Verification successful!")
-                print(f"  Status: {record.status.value}")
-                print(f"  Signatory weight: {record.signatory_weight}")
-                print(f"  Honesty probability: {record.honesty_probability}")
-                print(f"  Expires: {record.expires_at}")
+                logger.info("Verification successful!")
+                logger.info(f"  Status: {record.status.value}")
+                logger.info(f"  Signatory weight: {record.signatory_weight}")
+                logger.info(f"  Honesty probability: {record.honesty_probability}")
+                logger.info(f"  Expires: {record.expires_at}")
 
                 # Check status
                 status = verifier.get_verification_status(credentials.npi)
-                print(f"\nVerification active: {status.is_active()}")
+                logger.info(f"\nVerification active: {status.is_active()}")
 
             except VerificationError as e:
                 from genomevault.observability.logging import configure_logging
 
                 logger = configure_logging()
                 logger.exception("Unhandled exception")
-                print(f"Verification failed: {e}")
+                logger.info(f"Verification failed: {e}")
                 raise RuntimeError("Unspecified error")
 
             # Test invalid NPI
-            print("\n\nTesting invalid NPI...")
+            logger.info("\n\nTesting invalid NPI...")
             bad_credentials = HIPAACredentials(
                 npi="1234567890",  # Invalid check digit
                 baa_hash="c" * 64,
@@ -506,7 +511,7 @@ if __name__ == "__main__":
 
                 logger = configure_logging()
                 logger.exception("Unhandled exception")
-                print(f"Correctly rejected: {e}")
+                logger.info(f"Correctly rejected: {e}")
                 raise RuntimeError("Unspecified error")
 
     # Run test

@@ -14,9 +14,13 @@ from typing import Any
 
 from genomevault.zk_proofs import Prover, Verifier
 from genomevault.zk_proofs.circuits.implementations.variant_frequency_circuit import (
-    VariantFrequencyCircuit, create_example_frequency_proof)
+    VariantFrequencyCircuit,
+    create_example_frequency_proof,
+)
 from genomevault.zk_proofs.circuits.implementations.variant_proof_circuit import (
-    VariantProofCircuit, create_variant_proof_example)
+    VariantProofCircuit,
+    create_variant_proof_example,
+)
 
 
 def load_json_file(filepath: str) -> dict[str, Any]:
@@ -29,7 +33,7 @@ def load_json_file(filepath: str) -> dict[str, Any]:
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        print(f"Error loading {filepath}: {e}")
+        logger.info(f"Error loading {filepath}: {e}")
         sys.exit(1)
         raise RuntimeError("Unspecified error")
 
@@ -37,33 +41,33 @@ def load_json_file(filepath: str) -> dict[str, Any]:
 def save_json_file(data: dict[str, Any], filepath: str):
     """Save JSON data to file."""
     try:
-        with open(filepath, "w") as f:
+        with open(filepath, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
     except Exception:
         from genomevault.observability.logging import configure_logging
 
         logger = configure_logging()
         logger.exception("Unhandled exception")
-        print(f"Error saving {filepath}: {e}")
+        logger.info(f"Error saving {filepath}: {e}")
         sys.exit(1)
         raise RuntimeError("Unspecified error")
 
 
 def cmd_prove(args):
     """Generate a zero-knowledge proof."""
-    print(f"Generating {args.circuit} proof...")
+    logger.info(f"Generating {args.circuit} proof...")
 
     # Load inputs
     if args.public_input:
         public_inputs = load_json_file(args.public_input)
     else:
-        print("Error: --public-input is required")
+        logger.info("Error: --public-input is required")
         sys.exit(1)
 
     if args.private_input:
         private_inputs = load_json_file(args.private_input)
     else:
-        print("Error: --private-input is required")
+        logger.info("Error: --private-input is required")
         sys.exit(1)
 
     # Initialize appropriate circuit
@@ -80,21 +84,21 @@ def cmd_prove(args):
         circuit.generate_constraints()
 
     else:
-        print(f"Error: Unknown circuit type: {args.circuit}")
+        logger.info(f"Error: Unknown circuit type: {args.circuit}")
         sys.exit(1)
 
     # Verify constraints are satisfied
     if not circuit.verify_constraints():
-        print("Error: Circuit constraints not satisfied!")
-        print("Please check your inputs.")
+        logger.info("Error: Circuit constraints not satisfied!")
+        logger.info("Please check your inputs.")
         sys.exit(1)
 
     setup_time = time.time() - start_time
 
     # Generate proof
-    print(f"Circuit setup complete ({setup_time:.3f}s)")
-    print(f"Constraints: {circuit.cs.num_constraints()}")
-    print(f"Variables: {circuit.cs.num_variables()}")
+    logger.info(f"Circuit setup complete ({setup_time:.3f}s)")
+    logger.info(f"Constraints: {circuit.cs.num_constraints()}")
+    logger.info(f"Variables: {circuit.cs.num_variables()}")
 
     # Initialize prover
     Prover()
@@ -128,15 +132,15 @@ def cmd_prove(args):
 
     total_time = time.time() - start_time
 
-    print("\nProof generated successfully!")
-    print(f"Output: {output_file}")
-    print(f"Total time: {total_time:.3f}s")
-    print("Proof size: ~384 bytes")
+    logger.info("\nProof generated successfully!")
+    logger.info(f"Output: {output_file}")
+    logger.info(f"Total time: {total_time:.3f}s")
+    logger.info("Proof size: ~384 bytes")
 
 
 def cmd_verify(args):
     """Verify a zero-knowledge proof."""
-    print(f"Verifying proof from {args.proof}...")
+    logger.info(f"Verifying proof from {args.proof}...")
 
     # Load proof
     proof_data = load_json_file(args.proof)
@@ -162,7 +166,7 @@ def cmd_verify(args):
     required_fields = ["circuit", "public_inputs", "proof", "metadata"]
     for field in required_fields:
         if field not in proof_data:
-            print(f"Error: Missing required field: {field}")
+            logger.info(f"Error: Missing required field: {field}")
             is_valid = False
 
     # Check proof components
@@ -171,28 +175,28 @@ def cmd_verify(args):
         required_proof_fields = ["pi_a", "pi_b", "pi_c", "protocol", "curve"]
         for field in required_proof_fields:
             if field not in proof:
-                print(f"Error: Missing proof field: {field}")
+                logger.info(f"Error: Missing proof field: {field}")
                 is_valid = False
 
     verification_time = (time.time() - start_time) * 1000
 
     # Display results
-    print(f"\nVerification Result: {'VALID' if is_valid else 'INVALID'}")
-    print(f"Circuit: {proof_data.get('circuit', 'unknown')}")
-    print(f"Verification time: {verification_time:.1f}ms")
+    logger.info(f"\nVerification Result: {'VALID' if is_valid else 'INVALID'}")
+    logger.info(f"Circuit: {proof_data.get('circuit', 'unknown')}")
+    logger.info(f"Verification time: {verification_time:.1f}ms")
 
     if args.verbose and is_valid:
-        print("\nProof metadata:")
+        logger.info("\nProof metadata:")
         metadata = proof_data.get("metadata", {})
         for key, value in metadata.items():
-            print(f"  {key}: {value}")
+            logger.info(f"  {key}: {value}")
 
     sys.exit(0 if is_valid else 1)
 
 
 def cmd_demo(args):
     """Run demonstration with example data."""
-    print(f"Running {args.circuit} demonstration...")
+    logger.info(f"Running {args.circuit} demonstration...")
 
     if args.circuit == "variant_presence":
         # Create example variant presence proof
@@ -231,23 +235,23 @@ def cmd_demo(args):
         }
 
     else:
-        print(f"Error: No demo available for circuit: {args.circuit}")
+        logger.info(f"Error: No demo available for circuit: {args.circuit}")
         sys.exit(1)
 
     # Display circuit info
     info = circuit.get_circuit_info()
-    print("\nCircuit Information:")
+    logger.info("\nCircuit Information:")
     for key, value in info.items():
-        print(f"  {key}: {value}")
+        logger.info(f"  {key}: {value}")
 
     # Save example inputs if requested
     if args.save_inputs:
         save_json_file(public_inputs, f"{args.circuit}_public.json")
         save_json_file(private_inputs, f"{args.circuit}_private.json")
-        print("\nExample inputs saved:")
-        print(f"  Public: {args.circuit}_public.json")
-        print(f"  Private: {args.circuit}_private.json")
-        print("\nYou can now run:")
+        logger.info("\nExample inputs saved:")
+        logger.info(f"  Public: {args.circuit}_public.json")
+        logger.info(f"  Private: {args.circuit}_private.json")
+        logger.info("\nYou can now run:")
         print(
             f"  zk_prove --circuit {args.circuit} --public-input {args.circuit}_public.json --private-input {args.circuit}_private.json"
         )
@@ -299,28 +303,28 @@ def cmd_info(args):
         # Show specific circuit details
         if args.circuit in circuits:
             circuit = circuits[args.circuit]
-            print(f"\nCircuit: {args.circuit}")
-            print(f"Description: {circuit['description']}")
-            print("\nPublic Inputs:")
+            logger.info(f"\nCircuit: {args.circuit}")
+            logger.info(f"Description: {circuit['description']}")
+            logger.info("\nPublic Inputs:")
             for inp in circuit["public_inputs"]:
-                print(f"  - {inp}")
-            print("\nPrivate Inputs:")
+                logger.info(f"  - {inp}")
+            logger.info("\nPrivate Inputs:")
             for inp in circuit["private_inputs"]:
-                print(f"  - {inp}")
-            print("\nPerformance:")
-            print(f"  Proof size: {circuit['proof_size']}")
-            print(f"  Verification time: {circuit['verification_time']}")
-            print(f"  Constraints: {circuit['constraints']}")
+                logger.info(f"  - {inp}")
+            logger.info("\nPerformance:")
+            logger.info(f"  Proof size: {circuit['proof_size']}")
+            logger.info(f"  Verification time: {circuit['verification_time']}")
+            logger.info(f"  Constraints: {circuit['constraints']}")
         else:
-            print(f"Error: Unknown circuit: {args.circuit}")
+            logger.info(f"Error: Unknown circuit: {args.circuit}")
             sys.exit(1)
     else:
         # List all circuits
-        print("\nAvailable ZK Circuits:")
-        print("=" * 60)
+        logger.info("\nAvailable ZK Circuits:")
+        logger.info("=" * 60)
         for name, info in circuits.items():
-            print(f"\n{name}:")
-            print(f"  {info['description']}")
+            logger.info(f"\n{name}:")
+            logger.info(f"  {info['description']}")
             print(
                 f"  Proof size: {info['proof_size']}, Verification: {info['verification_time']}"
             )
@@ -335,13 +339,13 @@ def main():
 Examples:
   # Generate a variant presence proof
   zk_prove --circuit variant_presence --public-input public.json --private-input private.json
-  
+
   # Verify a proof
   zk_verify --proof variant_proof.json
-  
+
   # Run demonstration
   zk_demo --circuit variant_frequency --save-inputs
-  
+
   # Get circuit information
   zk_info --circuit diabetes_risk
         """,

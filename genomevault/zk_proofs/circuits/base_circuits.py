@@ -14,7 +14,6 @@ for genomic privacy-preserving proofs using PLONK.
 import logging
 
 logger = logging.getLogger(__name__)
-import time
 
 logger = get_logger(__name__)
 
@@ -24,9 +23,7 @@ class FieldElement:
     """Element in the PLONK field (BLS12-381 scalar field)"""
 
     value: int
-    modulus: int = (
-        0x73EDA753299D7D483339D80809A1D80553BDA402FFFE5BFEFFFFFFFF00000001  # BLS12-381 scalar field
-    )
+    modulus: int = 0x73EDA753299D7D483339D80809A1D80553BDA402FFFE5BFEFFFFFFFF00000001  # BLS12-381 scalar field
 
     def __post_init__(self):
         self.value = self.value % self.modulus

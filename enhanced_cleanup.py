@@ -25,14 +25,13 @@ import argparse
 import ast
 import hashlib
 import json
-import os
 import re
 import subprocess
 import sys
 import time
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple, Union
+from typing import Dict, List, Optional, Tuple
 
 
 class EnhancedCleanup:
@@ -143,9 +142,9 @@ class EnhancedCleanup:
                     self.log_fix(f"Ruff upgraded to {new_version}", "phase3")
                     return True
 
-            self.log_error(f"All upgrade attempts failed", "phase3")
+            self.log_error("All upgrade attempts failed", "phase3")
             self.log_error(
-                f"You may need to manually run: python -m pip install ruff>=0.4.4",
+                "You may need to manually run: python -m pip install ruff>=0.4.4",
                 "phase3",
             )
             return False
@@ -432,7 +431,7 @@ class EnhancedCleanup:
         tools_dir = self.repo_root / "tools"
 
         if dry_run:
-            print(f"[DRY RUN] Would create tools/ directory and move helper scripts")
+            print("[DRY RUN] Would create tools/ directory and move helper scripts")
             return
 
         tools_dir.mkdir(exist_ok=True)
@@ -642,7 +641,7 @@ class EnhancedCleanup:
                 return
             else:
                 self.log_fix(
-                    f"Ruff detected errors but JSON parsing may not work", "phase3"
+                    "Ruff detected errors but JSON parsing may not work", "phase3"
                 )
                 out = out2  # Use text output instead
 
@@ -1471,7 +1470,7 @@ DEFAULT_SECURITY_LEVEL = 128
 MAX_VARIANTS = 1000
 VERIFICATION_TIME_MAX = 30.0
 
-# Hypervector constants  
+# Hypervector constants
 DEFAULT_DIMENSION = 10000
 BINDING_SPARSITY = 0.1
 HYPERVECTOR_DIM = 10000
@@ -1488,7 +1487,7 @@ REFERENCE_GENOME = "GRCh38"
 # Node and blockchain constants
 NODE_CLASS_WEIGHT = {
     "INSTITUTION": 10,
-    "RESEARCHER": 5, 
+    "RESEARCHER": 5,
     "INDIVIDUAL": 1
 }
 ''',
@@ -1513,18 +1512,18 @@ def get_config() -> Dict[str, Any]:
 
 class Config:
     """Configuration class for GenomeVault."""
-    
+
     def __init__(self):
         self._config = get_config()
-    
+
     @property
     def node_id(self) -> Optional[str]:
         return self._config.get("node_id")
-    
+
     @property
     def node_type(self) -> str:
         return self._config.get("node_type", "INDIVIDUAL")
-    
+
     @property
     def signatory_status(self) -> bool:
         return self._config.get("signatory_status", False)
@@ -1613,7 +1612,7 @@ class HypervectorError(GenomeVaultError):
             if total_errors > 10:
                 print(f"  ... and {total_errors - 10} more errors")
 
-        print(f"\n📊 SUMMARY STATISTICS:")
+        print("\n📊 SUMMARY STATISTICS:")
         print(f"   Total fixes applied: {total_fixes}")
         print(f"   Total errors encountered: {total_errors}")
         print(f"   Files modified: {total_files_modified}")
@@ -1624,14 +1623,14 @@ class HypervectorError(GenomeVaultError):
         )
 
         # Phase-by-phase breakdown
-        print(f"\n📈 PHASE BREAKDOWN:")
+        print("\n📈 PHASE BREAKDOWN:")
         for phase, stats in self.phase_stats.items():
             if stats["fixes"] > 0 or stats["errors"] > 0:
                 print(
                     f"   {phase}: {stats['fixes']} fixes, {stats['errors']} errors, {stats['files_touched']} files"
                 )
 
-        print(f"\n🎯 OBJECTIVES ACHIEVED:")
+        print("\n🎯 OBJECTIVES ACHIEVED:")
         objectives = [
             "✓ Ruff configuration updated with max-violations=200",
             "✓ Helper scripts organized in tools/ directory",
@@ -1646,7 +1645,7 @@ class HypervectorError(GenomeVaultError):
         for objective in objectives:
             print(f"   {objective}")
 
-        print(f"\n📋 IMMEDIATE NEXT STEPS:")
+        print("\n📋 IMMEDIATE NEXT STEPS:")
         next_steps = [
             "1. Run: ruff check . --statistics (should show significant reduction)",
             "2. Test imports: python -c 'import genomevault.core.exceptions'",
@@ -1658,7 +1657,7 @@ class HypervectorError(GenomeVaultError):
         for step in next_steps:
             print(f"   {step}")
 
-        print(f"\n🔍 FILES REQUIRING MANUAL REVIEW:")
+        print("\n🔍 FILES REQUIRING MANUAL REVIEW:")
         manual_review = [
             "genomevault/zk_proofs/verifier.py (F821 errors)",
             "genomevault/zk_proofs/circuits/base_circuits.py (complex logic)",
@@ -1674,7 +1673,7 @@ class HypervectorError(GenomeVaultError):
             print(f"   {status} {item}")
 
         # Determine project status
-        print(f"\n🚀 PROJECT STATUS:")
+        print("\n🚀 PROJECT STATUS:")
         if total_fixes >= 20 and total_errors < 5:
             status = "🟢 EXCELLENT: Major technical debt reduction achieved"
         elif total_fixes >= 10 and total_errors < 10:
@@ -1686,7 +1685,7 @@ class HypervectorError(GenomeVaultError):
 
         print(f"   {status}")
 
-        print(f"\n💡 LONG-TERM RECOMMENDATIONS:")
+        print("\n💡 LONG-TERM RECOMMENDATIONS:")
         recommendations = [
             "• Implement automated testing for all core modules",
             "• Add comprehensive type hints to public APIs",
@@ -1703,7 +1702,7 @@ class HypervectorError(GenomeVaultError):
         # Backup information
         if self.backup_dir.exists() and list(self.backup_dir.glob("*.bak")):
             backup_count = len(list(self.backup_dir.glob("*.bak")))
-            print(f"\n💾 BACKUP INFORMATION:")
+            print("\n💾 BACKUP INFORMATION:")
             print(f"   {backup_count} backup files created in {self.backup_dir}")
             print(f"   To restore: cp {self.backup_dir}/<file>.bak <original_location>")
 

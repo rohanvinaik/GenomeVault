@@ -10,15 +10,15 @@ from typing import Literal
 import numpy as np
 
 from genomevault.core.exceptions import HypervectorError, ProjectionError
-from genomevault.hypervector.encoding.orthogonal_projection import \
-    OrthogonalProjection
-from genomevault.hypervector.encoding.sparse_projection import \
-    SparseRandomProjection
-from genomevault.hypervector.operations.binding import (bundle,
-                                                        circular_convolution,
-                                                        element_wise_multiply,
-                                                        permutation_binding,
-                                                        unbundle)
+from genomevault.hypervector.encoding.orthogonal_projection import OrthogonalProjection
+from genomevault.hypervector.encoding.sparse_projection import SparseRandomProjection
+from genomevault.hypervector.operations.binding import (
+    bundle,
+    circular_convolution,
+    element_wise_multiply,
+    permutation_binding,
+    unbundle,
+)
 
 ProjectionType = Literal["sparse", "orthogonal"]
 DimensionTier = Literal[10000, 15000, 20000]

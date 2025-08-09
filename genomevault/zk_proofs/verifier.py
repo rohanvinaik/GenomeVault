@@ -21,8 +21,12 @@ from typing import Any
 from genomevault.utils.config import get_config
 
 _ = get_config()
-from genomevault.utils.logging import (audit_logger, get_logger, logger,
-                                       performance_logger)
+from genomevault.utils.logging import (
+    audit_logger,
+    get_logger,
+    logger,
+    performance_logger,
+)
 
 logger = get_logger(__name__)
 
@@ -591,13 +595,13 @@ if __name__ == "__main__":
         },
     )
 
-    print("Generated proof: {proof.proof_id}")
+    logger.info("Generated proof: {proof.proof_id}")
 
     # Verify the proof
     _ = verifier.verify_proof(proof)
 
-    print("\nVerification result: {result.is_valid}")
-    print("Verification time: {result.verification_time*1000:.1f}ms")
+    logger.info("\nVerification result: {result.is_valid}")
+    logger.info("Verification time: {result.verification_time*1000:.1f}ms")
     print(
         "Expected time: {verifier.get_verification_time_estimate('diabetes_risk_alert')}ms"
     )

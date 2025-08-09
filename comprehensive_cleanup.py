@@ -8,7 +8,7 @@ from ~1,100 down to zero without config spiral.
 
 Based on the game plan:
 1. Update Ruff configuration with max-violations=200
-2. Triage library code from examples/tooling  
+2. Triage library code from examples/tooling
 3. Fix undefined-name (F821) errors systematically
 4. Handle redefinition (F811) and import-order (E402)
 5. Clean up tooling scripts with glob ignore
@@ -21,13 +21,12 @@ Usage:
 
 import argparse
 import json
-import os
 import re
 import subprocess
 import sys
 import time
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
+from typing import List, Tuple
 
 # 2-a. helper
 from packaging.version import parse as _vparse
@@ -38,7 +37,6 @@ def _ensure_modern_ruff(min_ver: str = "0.4.4") -> str:
     import importlib.metadata
     import shutil
     import subprocess
-    import sys
 
     try:
         ver = importlib.metadata.version("ruff")
@@ -726,7 +724,7 @@ DEFAULT_SECURITY_LEVEL = 128
 MAX_VARIANTS = 1000
 VERIFICATION_TIME_MAX = 30.0
 
-# Hypervector constants  
+# Hypervector constants
 DEFAULT_DIMENSION = 10000
 BINDING_SPARSITY = 0.1
 
@@ -783,28 +781,28 @@ def get_config() -> Dict[str, Any]:
         else:
             print("\n❌ No fixes were applied.")
 
-        print(f"\n📊 SUMMARY STATISTICS:")
+        print("\n📊 SUMMARY STATISTICS:")
         print(f"   Total fixes applied: {len(self.fixes_applied)}")
         print(
             f"   Errors encountered: {len([f for f in self.fixes_applied if '✗' in f or 'error' in f.lower()])}"
         )
 
-        print(f"\n🎯 TARGET ACHIEVED:")
-        print(f"   • Ruff configuration updated with max-violations=200")
-        print(f"   • Helper scripts moved to tools/ directory")
-        print(f"   • Common undefined variables addressed")
-        print(f"   • Import order and redefinition issues fixed")
-        print(f"   • Example code properly guarded")
-        print(f"   • Essential stub modules created")
+        print("\n🎯 TARGET ACHIEVED:")
+        print("   • Ruff configuration updated with max-violations=200")
+        print("   • Helper scripts moved to tools/ directory")
+        print("   • Common undefined variables addressed")
+        print("   • Import order and redefinition issues fixed")
+        print("   • Example code properly guarded")
+        print("   • Essential stub modules created")
 
-        print(f"\n📋 NEXT MANUAL STEPS:")
-        print(f"   1. Review any remaining F821 errors in ZK proof modules")
-        print(f"   2. Test imports: python -c 'import genomevault.core.exceptions'")
-        print(f"   3. Run comprehensive linting when tools are available")
-        print(f"   4. Set up CI/CD pipeline with pre-commit hooks")
-        print(f"   5. Gradually enable stricter mypy checking")
+        print("\n📋 NEXT MANUAL STEPS:")
+        print("   1. Review any remaining F821 errors in ZK proof modules")
+        print("   2. Test imports: python -c 'import genomevault.core.exceptions'")
+        print("   3. Run comprehensive linting when tools are available")
+        print("   4. Set up CI/CD pipeline with pre-commit hooks")
+        print("   5. Gradually enable stricter mypy checking")
 
-        print(f"\n🔍 FILES REQUIRING MANUAL REVIEW:")
+        print("\n🔍 FILES REQUIRING MANUAL REVIEW:")
         review_files = [
             "genomevault/zk_proofs/verifier.py",
             "genomevault/zk_proofs/circuits/base_circuits.py",
@@ -818,20 +816,20 @@ def get_config() -> Dict[str, Any]:
             else:
                 print(f"   ✗ {file_path} (not found)")
 
-        print(f"\n🚀 PROJECT STATUS:")
+        print("\n🚀 PROJECT STATUS:")
         if len(self.fixes_applied) >= 10:
-            print(f"   🟢 EXCELLENT: Major technical debt reduction achieved")
+            print("   🟢 EXCELLENT: Major technical debt reduction achieved")
         elif len(self.fixes_applied) >= 5:
-            print(f"   🟡 GOOD: Significant improvements made")
+            print("   🟡 GOOD: Significant improvements made")
         else:
-            print(f"   🔴 LIMITED: Few fixes applied, manual work needed")
+            print("   🔴 LIMITED: Few fixes applied, manual work needed")
 
-        print(f"\n💡 LONG-TERM RECOMMENDATIONS:")
-        print(f"   • Implement automated testing for all core modules")
-        print(f"   • Add type hints to all public APIs")
-        print(f"   • Create comprehensive documentation")
-        print(f"   • Set up continuous integration")
-        print(f"   • Regular dependency updates")
+        print("\n💡 LONG-TERM RECOMMENDATIONS:")
+        print("   • Implement automated testing for all core modules")
+        print("   • Add type hints to all public APIs")
+        print("   • Create comprehensive documentation")
+        print("   • Set up continuous integration")
+        print("   • Regular dependency updates")
 
     def run_all_phases(self):
         """Execute all cleanup phases in sequence."""

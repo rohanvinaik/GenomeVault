@@ -29,7 +29,7 @@ class GenomicEncoder:
 
     def __init__(
         self,
-        dimension: int = HYPERVECTOR_DIMENSIONS["base"],
+        dimension: int = HYPERVECTOR_DIMENSIONS,
         enable_snp_mode: bool = False,
         panel_granularity: PanelGranularity = PanelGranularity.OFF,
     ):

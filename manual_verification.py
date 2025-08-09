@@ -7,10 +7,8 @@ This script provides manual verification and fallback fixes if the main
 script encounters issues.
 """
 
-import json
 import os
 import subprocess
-import sys
 from pathlib import Path
 
 
@@ -171,7 +169,7 @@ MAX_PROOF_SIZE = 1024 * 1024  # 1MB
 # Node types and weights
 NODE_CLASS_WEIGHT = {
     "VALIDATOR": 3,
-    "COMPUTE": 2, 
+    "COMPUTE": 2,
     "STORAGE": 1,
     "CLIENT": 0
 }

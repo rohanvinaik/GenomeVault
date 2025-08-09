@@ -11,20 +11,23 @@ import time
 from pathlib import Path
 from typing import Any
 
-from genomevault.advanced_analysis.federated_learning.model_lineage import \
-    FederatedModelLineage
-from genomevault.blockchain.contracts.training_attestation import \
-    TrainingAttestationContract
+from genomevault.advanced_analysis.federated_learning.model_lineage import (
+    FederatedModelLineage,
+)
+from genomevault.blockchain.contracts.training_attestation import (
+    TrainingAttestationContract,
+)
 from genomevault.clinical.model_validation import ClinicalModelValidator
-from genomevault.hypervector.visualization.projector import \
-    ModelEvolutionVisualizer
-from genomevault.local_processing.differential_privacy_audit import \
-    DifferentialPrivacyAuditor
+from genomevault.hypervector.visualization.projector import ModelEvolutionVisualizer
+from genomevault.local_processing.differential_privacy_audit import (
+    DifferentialPrivacyAuditor,
+)
 from genomevault.local_processing.drift_detection import RealTimeModelMonitor
 from genomevault.local_processing.model_snapshot import ModelSnapshotLogger
 from genomevault.utils.logging import get_logger
-from genomevault.zk_proofs.circuits.multi_modal_training_proof import \
-    MultiModalTrainingProof
+from genomevault.zk_proofs.circuits.multi_modal_training_proof import (
+    MultiModalTrainingProof,
+)
 from genomevault.zk_proofs.circuits.training_proof import TrainingProofCircuit
 
 logger = get_logger(__name__)
@@ -384,8 +387,10 @@ class ProofOfTrainingIntegration:
         validator = self.clinical_validators[validator_id]
 
         # Perform validation
-        from genomevault.clinical.model_validation import (ClinicalDomain,
-                                                           ValidationLevel)
+        from genomevault.clinical.model_validation import (
+            ClinicalDomain,
+            ValidationLevel,
+        )
 
         domain_enum = ClinicalDomain[clinical_domain.upper()]
         level_enum = ValidationLevel[validation_level.upper()]

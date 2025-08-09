@@ -12,13 +12,14 @@ import time
 import numpy as np
 
 from genomevault.pir.client.query_builder import PIRQueryBuilder
-from genomevault.pir.it_pir_protocol import (BatchPIRProtocol, PIRParameters,
-                                             PIRProtocol)
-from genomevault.pir.network.coordinator import (PIRCoordinator, ServerInfo,
-                                                 ServerSelectionCriteria,
-                                                 ServerType)
-from genomevault.pir.server.enhanced_pir_server import (EnhancedPIRServer,
-                                                        ServerConfig)
+from genomevault.pir.it_pir_protocol import BatchPIRProtocol, PIRParameters, PIRProtocol
+from genomevault.pir.network.coordinator import (
+    PIRCoordinator,
+    ServerInfo,
+    ServerSelectionCriteria,
+    ServerType,
+)
+from genomevault.pir.server.enhanced_pir_server import EnhancedPIRServer, ServerConfig
 from genomevault.utils.logging import get_logger, logger
 
 logger = get_logger(__name__)

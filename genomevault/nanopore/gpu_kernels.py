@@ -366,7 +366,7 @@ class GPUBindingKernel:
 async def example_gpu_processing():
     """Example of GPU-accelerated processing."""
     if not GPU_AVAILABLE:
-        print("GPU not available - install CuPy for GPU acceleration")
+        logger.info("GPU not available - install CuPy for GPU acceleration")
         return
 
     from genomevault.hypervector.encoding import HypervectorEncoder
@@ -386,7 +386,7 @@ async def example_gpu_processing():
     events[:, 1] = np.abs(events[:, 1]) * 0.01  # Dwell times
 
     # Process on GPU
-    print(f"Processing {n_events:,} events on GPU...")
+    logger.info(f"Processing {n_events:,} events on GPU...")
 
     start_time = asyncio.get_event_loop().time()
 
@@ -409,17 +409,17 @@ async def example_gpu_processing():
 
     elapsed = asyncio.get_event_loop().time() - start_time
 
-    print("\nProcessing complete:")
-    print(f"  Time: {elapsed:.3f}s")
-    print(f"  Throughput: {n_events / elapsed:,.0f} events/s")
-    print(f"  HV norm: {np.linalg.norm(final_hv):.6f}")
-    print(f"  Variance mean: {np.mean(all_vars):.3f}")
+    logger.info("\nProcessing complete:")
+    logger.info(f"  Time: {elapsed:.3f}s")
+    logger.info(f"  Throughput: {n_events / elapsed:,.0f} events/s")
+    logger.info(f"  HV norm: {np.linalg.norm(final_hv):.6f}")
+    logger.info(f"  Variance mean: {np.mean(all_vars):.3f}")
 
     # Memory usage
     mem_stats = gpu_kernel.get_memory_usage()
-    print("\nGPU memory usage:")
-    print(f"  Allocated: {mem_stats['total_mb']:.1f} MB")
-    print(f"  Used: {mem_stats['gpu_used_mb']:.1f} MB")
+    logger.info("\nGPU memory usage:")
+    logger.info(f"  Allocated: {mem_stats['total_mb']:.1f} MB")
+    logger.info(f"  Used: {mem_stats['gpu_used_mb']:.1f} MB")
 
 
 if __name__ == "__main__":

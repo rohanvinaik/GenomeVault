@@ -4,7 +4,6 @@
 import os
 import subprocess
 import sys
-from pathlib import Path
 
 
 def test_ruff_functionality():
@@ -214,7 +213,7 @@ def show_summary_and_next_steps(results):
         print("4. Try manual Ruff install: pip install 'ruff>=0.4.4,<0.5'")
         print("5. Clear shell cache: hash -r")
 
-    print(f"\n💡 KEY ACHIEVEMENTS:")
+    print("\n💡 KEY ACHIEVEMENTS:")
     print("• Ruff configuration updated for 0.4.x compatibility")
     print("• HypervectorError added to genomevault.exceptions")
     print("• Core constants enhanced with missing values")

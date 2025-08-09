@@ -683,28 +683,28 @@ if __name__ == "__main__":
         "final_score": int(trace[-1, 0]),
     }
 
-    print("Generating STARK proof for PRS calculation...")
+    logger.info("Generating STARK proof for PRS calculation...")
     start_time = time.time()
 
     stark_proof = prover.generate_stark_proof(trace, public_inputs, constraints)
 
     generation_time = time.time() - start_time
 
-    print("\nSTARK Proof Generated:")
-    print(f"  Proof ID: {stark_proof.proof_id}")
-    print(f"  Security level: {stark_proof.security_level} bits (post-quantum)")
-    print(f"  Proof size: {stark_proof.proof_size_kb:.1f} KB")
-    print(f"  Generation time: {generation_time * 1000:.1f} ms")
-    print(f"  FRI rounds: {len(stark_proof.fri_layers)}")
-    print(f"  Query responses: {len(stark_proof.query_responses)}")
+    logger.info("\nSTARK Proof Generated:")
+    logger.info(f"  Proof ID: {stark_proof.proof_id}")
+    logger.info(f"  Security level: {stark_proof.security_level} bits (post-quantum)")
+    logger.info(f"  Proof size: {stark_proof.proof_size_kb:.1f} KB")
+    logger.info(f"  Generation time: {generation_time * 1000:.1f} ms")
+    logger.info(f"  FRI rounds: {len(stark_proof.fri_layers)}")
+    logger.info(f"  Query responses: {len(stark_proof.query_responses)}")
 
     # Verify proof
-    print("\nVerifying STARK proof...")
+    logger.info("\nVerifying STARK proof...")
     start_time = time.time()
 
     valid = verifier.verify_stark(stark_proof)
 
     verification_time = time.time() - start_time
 
-    print(f"Verification result: {'VALID' if valid else 'INVALID'}")
-    print(f"Verification time: {verification_time * 1000:.1f} ms")
+    logger.info(f"Verification result: {'VALID' if valid else 'INVALID'}")
+    logger.info(f"Verification time: {verification_time * 1000:.1f} ms")

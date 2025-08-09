@@ -445,8 +445,7 @@ class NanoporeStreamProcessor:
         Returns:
             Proof bytes
         """
-        from genomevault.zk_proofs.advanced.catalytic_proof import \
-            CatalyticProofEngine
+        from genomevault.zk_proofs.advanced.catalytic_proof import CatalyticProofEngine
 
         # Initialize proof engine with our catalytic space
         proof_engine = CatalyticProofEngine(
@@ -516,17 +515,17 @@ async def example_streaming_pipeline():
         output_callback=collect_results,
     )
 
-    print("\nProcessing complete:")
-    print(f"  Total events: {stats.total_events:,}")
-    print(f"  Total slices: {stats.total_slices}")
-    print(f"  Processing time: {stats.processing_time:.1f}s")
-    print(f"  Events/second: {stats.total_events / stats.processing_time:,.0f}")
-    print(f"  Anomalies found: {len(stats.variance_peaks)}")
+    logger.info("\nProcessing complete:")
+    logger.info(f"  Total events: {stats.total_events:,}")
+    logger.info(f"  Total slices: {stats.total_slices}")
+    logger.info(f"  Processing time: {stats.processing_time:.1f}s")
+    logger.info(f"  Events/second: {stats.total_events / stats.processing_time:,.0f}")
+    logger.info(f"  Anomalies found: {len(stats.variance_peaks)}")
 
     # Generate proof
     if results:
         proof = await processor.generate_streaming_proof(results[:10])
-        print(f"\nGenerated proof: {len(proof)} bytes")
+        logger.info(f"\nGenerated proof: {len(proof)} bytes")
 
 
 if __name__ == "__main__":

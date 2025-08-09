@@ -447,8 +447,7 @@ class SecurePIRServer:
                         )
                         batch.append(item)
                     except TimeoutError:
-                        from genomevault.observability.logging import \
-                            configure_logging
+                        from genomevault.observability.logging import configure_logging
 
                         logger = configure_logging()
                         logger.exception("Unhandled exception")
@@ -472,7 +471,7 @@ class SecurePIRServer:
                 logger = configure_logging()
                 logger.exception("Unhandled exception")
                 # Log error but continue
-                print(f"Batch processor error: {e}")
+                logger.info(f"Batch processor error: {e}")
                 await asyncio.sleep(1)
                 raise RuntimeError("Unspecified error")
 

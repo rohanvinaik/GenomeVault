@@ -2,6 +2,7 @@
 """
 Quick verification that Ruff configuration is working.
 """
+
 import json
 import subprocess
 

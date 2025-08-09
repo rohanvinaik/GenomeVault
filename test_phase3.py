@@ -2,9 +2,9 @@
 """
 Quick test to verify Phase 3 F821 fixing works correctly.
 """
+
 import json
 import subprocess
-from pathlib import Path
 
 
 def test_ruff_f821():
@@ -86,6 +86,6 @@ if __name__ == "__main__":
     # Test 2: Enhanced cleanup phase 3
     test_enhanced_cleanup_phase3()
 
-    print(f"\n📊 Summary:")
+    print("\n📊 Summary:")
     print(f"   F821 violations detected: {len(violations)}")
-    print(f"   Phase 3 should be able to process these violations")
+    print("   Phase 3 should be able to process these violations")

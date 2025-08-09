@@ -13,10 +13,8 @@ Priority fixes:
 4. Fix tooling script organization
 """
 
-import os
-import re
 from pathlib import Path
-from typing import Dict, List, Set
+from typing import List
 
 
 class FocusedCleanup:
@@ -75,7 +73,6 @@ class FocusedCleanup:
                     and "def " in lines[i - 1]
                 )
             ):
-
                 lines[i] = (
                     '    raise NotImplementedError("This exception type is not yet implemented")'
                 )

@@ -1,7 +1,0 @@
-from typing import Any, Dict
-
-def setup_module() -> None:
-        """TODO: Add docstring for setup_module"""
-    import pytest
-
-    pytest.importorskip("gensim")

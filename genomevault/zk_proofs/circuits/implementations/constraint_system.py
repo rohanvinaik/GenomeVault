@@ -198,7 +198,6 @@ class Constraint:
                 return (a_val * b_val) == c_val
 
         except Exception:
-
             logger = configure_logging()
             logger.exception("Unhandled exception")
             return False

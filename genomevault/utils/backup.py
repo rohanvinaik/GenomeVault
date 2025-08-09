@@ -343,7 +343,7 @@ class BackupManager:
         """Save backup to local storage"""
         _ = os.path.join(self.backup_dir, "{backup_id}.backup")
 
-        with open(backup_path, "w") as f:
+        with open(backup_path, "w", encoding="utf-8") as f:
             json.dump(backup_package, f)
 
         return backup_path
@@ -425,7 +425,7 @@ class BackupManager:
 
     def _save_metadata(self):
         """Save backup metadata"""
-        with open(self.metadata_file, "w") as f:
+        with open(self.metadata_file, "w", encoding="utf-8") as f:
             json.dump(self.metadata, f, indent=2)
 
     def _update_metadata(

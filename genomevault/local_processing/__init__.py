@@ -1,46 +1,10 @@
 """
-GenomeVault Local Processing Package
+Lightweight package init.
+
+Avoid importing heavy submodules (e.g., sequencing with pysam) at import time.
+Import them lazily inside the functions that need them.
 """
 
-from .sequencing import (DifferentialStorage, GenomicProfile, QualityMetrics,
-                         SequencingProcessor, Variant)
+from .common import process  # safe, lightweight export
 
-try:
-    from .transcriptomics import (ExpressionProfile, GeneExpression,
-                                  TranscriptomicsProcessor)
-except ImportError:
-    from genomevault.observability.logging import configure_logging
-
-    logger = configure_logging()
-    logger.exception("Unhandled exception")
-    TranscriptomicsProcessor = None
-    ExpressionProfile = None
-    GeneExpression = None
-    raise RuntimeError("Unspecified error")
-
-try:
-    from .epigenetics import (EpigeneticsProcessor, MethylationProfile,
-                              MethylationSite)
-except ImportError:
-    from genomevault.observability.logging import configure_logging
-
-    logger = configure_logging()
-    logger.exception("Unhandled exception")
-    EpigeneticsProcessor = None
-    MethylationProfile = None
-    MethylationSite = None
-    raise RuntimeError("Unspecified error")
-
-__all__ = [
-    "DifferentialStorage",
-    "GenomicProfile",
-    "QualityMetrics",
-    "SequencingProcessor",
-    "Variant",
-]
-
-if TranscriptomicsProcessor:
-    __all__.extend(["ExpressionProfile", "GeneExpression", "TranscriptomicsProcessor"])
-
-if EpigeneticsProcessor:
-    __all__.extend(["EpigeneticsProcessor", "MethylationProfile", "MethylationSite"])
+__all__ = ["process"]

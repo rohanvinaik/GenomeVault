@@ -4,19 +4,21 @@ from uuid import uuid4
 
 import numpy as np
 
-from genomevault.core.constants import (DEFAULT_DENSITY, DEFAULT_SEED,
-                                        HYPERVECTOR_DIMENSIONS)
-from genomevault.core.exceptions import (EncodingError, ProjectionError,
-                                         ValidationError)
-from genomevault.hypervector.encoding.sparse_projection import \
-    SparseRandomProjection
+from genomevault.core.constants import (
+    DEFAULT_DENSITY,
+    DEFAULT_SEED,
+    HYPERVECTOR_DIMENSIONS,
+)
+from genomevault.core.exceptions import EncodingError, ProjectionError, ValidationError
+from genomevault.hypervector.encoding.sparse_projection import SparseRandomProjection
 from genomevault.hypervector.operations.binding import bundle as hv_bundle
-from genomevault.hypervector.operations.binding import \
-    circular_convolution as hv_convolve
-from genomevault.hypervector.operations.binding import \
-    element_wise_multiply as hv_multiply
-from genomevault.hypervector.operations.binding import \
-    permutation_binding as hv_permute
+from genomevault.hypervector.operations.binding import (
+    circular_convolution as hv_convolve,
+)
+from genomevault.hypervector.operations.binding import (
+    element_wise_multiply as hv_multiply,
+)
+from genomevault.hypervector.operations.binding import permutation_binding as hv_permute
 from genomevault.hypervector.stores.in_memory import InMemoryStore
 
 

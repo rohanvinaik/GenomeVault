@@ -652,12 +652,12 @@ class ResearchFLClient(FederatedLearningClient):
 # Example usage
 if __name__ == "__main__":
     # Example 1: Basic client
-    print("=== Basic FL Client Example ===")
+    logger.info("=== Basic FL Client Example ===")
     client = FederatedLearningClient("client_001")
 
     # Load data
     dataset = client.load_local_data()
-    print("Loaded {dataset.num_samples} samples")
+    logger.info("Loaded {dataset.num_samples} samples")
 
     # Train on global model
     global_model = np.random.randn(10001) * 0.01  # Initial model
@@ -676,16 +676,16 @@ if __name__ == "__main__":
     )
 
     # Example 2: Hospital client
-    print("\n=== Hospital FL Client Example ===")
+    logger.info("\n=== Hospital FL Client Example ===")
     hospital_client = HospitalFLClient("boston_general")
 
     if hospital_client.verify_compliance():
-        print("✓ Compliance verified")
+        logger.info("✓ Compliance verified")
         dataset = hospital_client.load_local_data()
-        print("Hospital data: {dataset.num_samples} patients")
+        logger.info("Hospital data: {dataset.num_samples} patients")
 
     # Example 3: Research client
-    print("\n=== Research FL Client Example ===")
+    logger.info("\n=== Research FL Client Example ===")
     research_client = ResearchFLClient("stanford_genomics", compute_resources="gpu")
 
     # Load and train
@@ -694,10 +694,12 @@ if __name__ == "__main__":
 
     # Run pathway analysis
     pathway_results = research_client.run_pathway_analysis(results["model_update"])
-    print("Pathway analysis: {pathway_results['enriched_pathways']}")
+    logger.info("Pathway analysis: {pathway_results['enriched_pathways']}")
 
     # Get model explanation
     explanation = research_client.get_model_explanation(
         research_client.current_model, top_k=10
     )
-    print("Top feature importance: {explanation['top_features'][0]['importance']:.4f}")
+    logger.info(
+        "Top feature importance: {explanation['top_features'][0]['importance']:.4f}"
+    )

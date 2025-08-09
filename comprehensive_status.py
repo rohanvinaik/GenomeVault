@@ -6,8 +6,6 @@ Addresses all the issues mentioned in the error report
 
 import os
 import subprocess
-import sys
-from pathlib import Path
 
 
 def check_ruff_binary():

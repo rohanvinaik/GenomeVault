@@ -142,19 +142,19 @@ class EpigeneticProfile:
         if not sites:
             return None
 
-        _ = sum(site.methylation_level * site.coverage for site in sites)
-        _ = sum(site.coverage for site in sites)
+        weighted_sum = sum(site.methylation_level * site.coverage for site in sites)
+        total_coverage = sum(site.coverage for site in sites)
 
         return weighted_sum / total_coverage if total_coverage > 0 else None
 
     def to_dataframe(self) -> pd.DataFrame:
         """Convert to pandas DataFrame"""
         if self.methylation_sites:
-            _ = [site.to_dict() for site in self.methylation_sites]
+            data = [site.to_dict() for site in self.methylation_sites]
         elif self.chromatin_peaks:
-            _ = [peak.to_dict() for peak in self.chromatin_peaks]
+            data = [peak.to_dict() for peak in self.chromatin_peaks]
         else:
-            _ = []
+            data = []
 
         return pd.DataFrame(data)
 
@@ -167,7 +167,7 @@ class MethylationProcessor:
         reference_genome: Path | None = None,
         annotation_file: Path | None = None,
         min_coverage: int = 5,
-        max_threads: _ = 4,
+        max_threads: int = 4,
     ):
         """
         Initialize methylation processor
@@ -184,13 +184,11 @@ class MethylationProcessor:
         self.max_threads = max_threads
         self.gene_annotations = self._load_annotations()
 
-logger = logging.getLogger(__name__)  # Added by cleanup
-        logger.info("Initialized MethylationProcessor")
-
     def _load_annotations(self) -> dict[str, dict[str, Any]]:
         """Load gene annotations for region assignment"""
+        import logging
+        logger = logging.getLogger(__name__)
         if not self.annotation_file or not self.annotation_file.exists():
-logger = logging.getLogger(__name__)  # Added by cleanup
             logger.warning("No annotation file provided")
             return {}
 
@@ -219,8 +217,8 @@ logger = logging.getLogger(__name__)  # Added by cleanup
         self,
         input_path: Path,
         sample_id: str,
-        data_format: _ = "bismark",
-        context: _ = MethylationContext.CG,
+        data_format: str = "bismark",
+        context: MethylationContext = MethylationContext.CG,
     ) -> EpigeneticProfile:
         """
         Process methylation data
@@ -234,36 +232,36 @@ logger = logging.getLogger(__name__)  # Added by cleanup
         Returns:
             EpigeneticProfile with methylation data
         """
-logger = logging.getLogger(__name__)  # Added by cleanup
-        logger.info("Processing methylation data for %ssample_id")
+        logger = logging.getLogger(__name__)  # Added by cleanup
+        logger.info(f"Processing methylation data for {sample_id}")
 
         try:
             # Load methylation data based on format
             if data_format == "bismark":
-                _ = self._load_bismark_output(input_path)
+                methylation_data = self._load_bismark_output(input_path)
             elif data_format == "bedgraph":
-                _ = self._load_bedgraph(input_path)
+                methylation_data = self._load_bedgraph(input_path)
             else:
-                raise ValidationError("Unsupported format: {data_format}")
+                raise ValidationError(f"Unsupported format: {data_format}")
 
             # Filter by context and coverage
-            _ = self._filter_methylation_data(_methylation_data, context)
+            filtered_data = self._filter_methylation_data(methylation_data, context)
 
             # Annotate with genomic regions
-            _ = self._annotate_methylation_sites(_filtered_data)
+            annotated_sites = self._annotate_methylation_sites(filtered_data)
 
             # Calculate quality metrics
-            _ = self._calculate_methylation_metrics(_annotated_sites)
+            quality_metrics = self._calculate_methylation_metrics(annotated_sites)
 
             # Perform quantile normalization
-            _ = self._normalize_methylation(_annotated_sites)
+            normalized_sites = self._normalize_methylation(annotated_sites)
 
             # Create profile
-            _ = EpigeneticProfile(
+            profile = EpigeneticProfile(
                 sample_id=sample_id,
                 data_type=EpigeneticDataType.METHYLATION,
-                methylation_sites=_normalized_sites,
-                _quality_metrics=quality_metrics,
+                methylation_sites=normalized_sites,
+                quality_metrics=quality_metrics,
                 processing_metadata={
                     "processor_version": "1.0.0",
                     "processed_at": datetime.now().isoformat(),
@@ -273,9 +271,8 @@ logger = logging.getLogger(__name__)  # Added by cleanup
                 },
             )
 
-logger = logging.getLogger(__name__)  # Added by cleanup
             logger.info(
-                "Successfully processed %slen(normalized_sites) methylation sites"
+                f"Successfully processed {len(normalized_sites)} methylation sites"
             )
             return profile
 
