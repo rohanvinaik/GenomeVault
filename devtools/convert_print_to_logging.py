@@ -1,5 +1,3 @@
-from genomevault.utils.logging import get_logger
-
 #!/usr/bin/env python3
 """
 Convert print statements to proper logging in the genomevault package.

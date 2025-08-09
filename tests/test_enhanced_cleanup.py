@@ -1,4 +1,5 @@
 from genomevault.utils.logging import get_logger
+
 logger = get_logger(__name__)
 
 
@@ -56,9 +57,7 @@ class TestEnhancedCleanupExceptions(unittest.TestCase):
         non_existent_file = Path(self.temp_dir) / "non_existent_file.py"
 
         # Mock the file reading to raise an exception
-        with patch.object(
-            Path, "read_text", side_effect=FileNotFoundError("File not found")
-        ):
+        with patch.object(Path, "read_text", side_effect=FileNotFoundError("File not found")):
             result = self.cleanup.get_file_hash(non_existent_file)
 
             # Should return empty string when exception occurs
@@ -74,9 +73,7 @@ class TestEnhancedCleanupExceptions(unittest.TestCase):
         test_file = Path(self.temp_dir) / "test_file.py"
 
         # Mock permission error
-        with patch.object(
-            Path, "read_text", side_effect=PermissionError("Permission denied")
-        ):
+        with patch.object(Path, "read_text", side_effect=PermissionError("Permission denied")):
             result = self.cleanup.get_file_hash(test_file)
 
             self.assertEqual(result, "")
@@ -97,9 +94,7 @@ class TestEnhancedCleanupExceptions(unittest.TestCase):
             result = self.cleanup.get_file_hash(test_file)
 
             self.assertEqual(result, "")
-            self.assertTrue(
-                any("invalid byte" in error for error in self.cleanup.errors_found)
-            )
+            self.assertTrue(any("invalid byte" in error for error in self.cleanup.errors_found))
 
     def test_guard_example_code_file_read_exception(self):
         """Test exception handling in _guard_example_code when reading files fails."""
@@ -130,12 +125,8 @@ class TestEnhancedCleanupExceptions(unittest.TestCase):
             self.cleanup._guard_example_code(dry_run=False)
 
             # Check that error was logged and not silently swallowed
-            phase2_errors = [
-                error for error in self.cleanup.errors_found if "phase2" in str(error)
-            ]
-            self.assertTrue(
-                any("Disk full" in error for error in self.cleanup.errors_found)
-            )
+            phase2_errors = [error for error in self.cleanup.errors_found if "phase2" in str(error)]
+            self.assertTrue(any("Disk full" in error for error in self.cleanup.errors_found))
 
     def test_isort_exception_handling(self):
         """Test that isort exceptions are properly handled and logged."""
@@ -150,18 +141,14 @@ class TestEnhancedCleanupExceptions(unittest.TestCase):
             ):
                 # This should not raise an exception
                 try:
-                    result = self.cleanup._fix_import_order(
-                        "import os\nimport sys", test_file
-                    )
+                    result = self.cleanup._fix_import_order("import os\nimport sys", test_file)
                     # Should fall back to manual sorting
                     self.assertIsInstance(result, str)
                 except Exception as e:
                     self.fail(f"_fix_import_order raised an exception: {e}")
 
                 # Check that the isort error was logged
-                self.assertTrue(
-                    any("isort failed" in error for error in self.cleanup.errors_found)
-                )
+                self.assertTrue(any("isort failed" in error for error in self.cleanup.errors_found))
 
     def test_no_silent_swallowing(self):
         """Comprehensive test to ensure no exceptions are silently swallowed."""
@@ -181,9 +168,7 @@ class TestEnhancedCleanupExceptions(unittest.TestCase):
                 try:
                     test_func()
                 except Exception as e:
-                    self.fail(
-                        f"{method_name} should not raise exceptions, but raised: {e}"
-                    )
+                    self.fail(f"{method_name} should not raise exceptions, but raised: {e}")
 
         # Should have logged errors (not silently swallowed)
         final_error_count = len(self.cleanup.errors_found)
@@ -222,9 +207,7 @@ class TestExceptionContextLogging(unittest.TestCase):
         problematic_file = Path(self.temp_dir) / "problematic_file.py"
 
         # Trigger an exception
-        with patch.object(
-            Path, "read_text", side_effect=PermissionError("Access denied")
-        ):
+        with patch.object(Path, "read_text", side_effect=PermissionError("Access denied")):
             self.cleanup.get_file_hash(problematic_file)
 
         # Check that the error message includes the file path
@@ -237,9 +220,7 @@ class TestExceptionContextLogging(unittest.TestCase):
         test_file = Path(self.temp_dir) / "test.py"
 
         # Test get_file_hash operation
-        with patch.object(
-            Path, "read_text", side_effect=ValueError("Invalid encoding")
-        ):
+        with patch.object(Path, "read_text", side_effect=ValueError("Invalid encoding")):
             self.cleanup.get_file_hash(test_file)
 
         # Error should specify it was a hash computation failure

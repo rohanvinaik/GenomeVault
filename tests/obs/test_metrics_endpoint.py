@@ -12,6 +12,5 @@ def test_metrics_endpoint_exposes_prometheus_text():
     assert r.headers["content-type"].startswith("text/plain")
     # should include at least our counter name or comment if lib missing
     assert (
-        "genomevault_http_requests_total" in r.text
-        or "prometheus_client not installed" in r.text
+        "genomevault_http_requests_total" in r.text or "prometheus_client not installed" in r.text
     )

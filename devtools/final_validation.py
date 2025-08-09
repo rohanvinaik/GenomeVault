@@ -6,8 +6,8 @@ import os
 import subprocess
 import sys
 from genomevault.utils.logging import get_logger
-logger = get_logger(__name__)
 
+logger = get_logger(__name__)
 
 
 def test_ruff_functionality():
@@ -49,7 +49,9 @@ def test_ruff_functionality():
         )
 
         if "unknown field" in result.stderr:
-            logger.error("❌ CRITICAL: Ruff still has 'unknown field' error - version conflict remains!")
+            logger.error(
+                "❌ CRITICAL: Ruff still has 'unknown field' error - version conflict remains!"
+            )
             return False
         else:
             logger.debug("✅ Ruff check runs without configuration crashes")
@@ -188,7 +190,9 @@ def show_summary_and_next_steps(results):
         logger.debug("2. Run Phase 7 validation: python comprehensive_cleanup.py --phase 7")
         logger.debug("3. Test Ruff: ruff check . --statistics")
         logger.error("4. Test pytest: pytest -q -k 'not api and not nanopore' --maxfail=3")
-        logger.debug("5. Commit changes: git add -A && git commit -m 'fix: resolve Ruff version conflict'")
+        logger.debug(
+            "5. Commit changes: git add -A && git commit -m 'fix: resolve Ruff version conflict'"
+        )
 
     elif passed_tests >= total_tests * 0.75:
         logger.info("\n✅ MOSTLY SUCCESSFUL!")

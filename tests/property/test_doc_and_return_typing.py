@@ -33,6 +33,4 @@ def compute_metrics():
 def test_doc_and_return_typing_thresholds():
     total, doc_cov, ret_cov = compute_metrics()
     assert doc_cov >= THRESHOLDS["doc"], f"Docstring coverage {doc_cov:.1%} < threshold"
-    assert (
-        ret_cov >= THRESHOLDS["ret"]
-    ), f"Return typing coverage {ret_cov:.1%} < threshold"
+    assert ret_cov >= THRESHOLDS["ret"], f"Return typing coverage {ret_cov:.1%} < threshold"

@@ -26,9 +26,7 @@ logger.info(f"\nProject root: {project_root}")
 # let's directly check if the file can be imported with correct paths
 
 logger.info("\n1. Checking if the biological variant.py file exists...")
-variant_file = os.path.join(
-    project_root, "zk_proofs", "circuits", "biological", "variant.py"
-)
+variant_file = os.path.join(project_root, "zk_proofs", "circuits", "biological", "variant.py")
 if os.path.exists(variant_file):
     logger.info(f"✅ File exists: {variant_file}")
 
@@ -44,9 +42,7 @@ else:
     logger.info(f"❌ File not found: {variant_file}")
 
 logger.info("\n2. Checking if base_circuits.py exists...")
-base_circuits_file = os.path.join(
-    project_root, "zk_proofs", "circuits", "base_circuits.py"
-)
+base_circuits_file = os.path.join(project_root, "zk_proofs", "circuits", "base_circuits.py")
 if os.path.exists(base_circuits_file):
     logger.info(f"✅ File exists: {base_circuits_file}")
 else:

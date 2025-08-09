@@ -10,6 +10,7 @@ following Stage 4 requirements.
 from __future__ import annotations
 
 from genomevault.utils.logging import get_logger
+
 logger = get_logger(__name__)
 
 import argparse
@@ -410,7 +411,9 @@ class HDCBenchmark:
             "final_dimension": combined.shape[0],
         }
 
-        logger.info(f"  Complete pipeline: {total_time * 1000:.1f} ms for {len(modalities)} modalities")
+        logger.info(
+            f"  Complete pipeline: {total_time * 1000:.1f} ms for {len(modalities)} modalities"
+        )
 
         return results
 

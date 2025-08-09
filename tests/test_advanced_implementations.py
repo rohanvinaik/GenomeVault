@@ -3,6 +3,7 @@
 import os
 import sys
 from genomevault.utils.logging import get_logger
+
 logger = get_logger(__name__)
 
 
@@ -13,7 +14,9 @@ import time
 
 import numpy as np
 
-from genomevault.hypervector_transform.advanced_compression import AdvancedHierarchicalCompressor
+from genomevault.hypervector_transform.advanced_compression import (
+    AdvancedHierarchicalCompressor,
+)
 from genomevault.pir.advanced.it_pir import InformationTheoreticPIR
 from genomevault.zk_proofs.advanced.catalytic_proof import CatalyticProofEngine
 from genomevault.zk_proofs.advanced.recursive_snark import RecursiveSNARKProver
@@ -268,7 +271,9 @@ def test_hierarchical_compression():
     logger.debug("\nCompressed vector:")
     logger.debug(f"  Level: {compressed.level}")
     logger.debug(f"  Dimensions: {len(compressed.high_vector)}")
-    logger.debug(f"  Compression ratio: {compressed.compression_metadata['compression_ratio']:.2f}x")
+    logger.debug(
+        f"  Compression ratio: {compressed.compression_metadata['compression_ratio']:.2f}x"
+    )
 
     # Test storage tiers
     logger.debug("\nStorage tiers:")

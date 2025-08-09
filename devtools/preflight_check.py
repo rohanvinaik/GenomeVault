@@ -1,4 +1,5 @@
 from genomevault.utils.logging import get_logger
+
 logger = get_logger(__name__)
 
 
@@ -21,7 +22,9 @@ def check_current_state():
 
     # Check project files
     logger.debug("Project Files:")
-    logger.info("  ✓ README.md exists" if (base_path / "README.md").exists() else "  ✗ README.md missing")
+    logger.info(
+        "  ✓ README.md exists" if (base_path / "README.md").exists() else "  ✗ README.md missing"
+    )
     print(
         "  ✓ requirements.txt exists"
         if (base_path / "requirements.txt").exists()

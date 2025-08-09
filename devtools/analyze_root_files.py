@@ -5,8 +5,8 @@ import subprocess
 import time
 from pathlib import Path
 from genomevault.utils.logging import get_logger
-logger = get_logger(__name__)
 
+logger = get_logger(__name__)
 
 
 ROOT = Path(".")

@@ -87,8 +87,7 @@ class PrintStatementTransformer(ast.NodeTransformer):
             elif any(word in content_lower for word in ["warn", "caution", "alert"]):
                 return "warning"
             elif any(
-                word in content_lower
-                for word in ["debug", "trace", "verbose", "detail", "print("]
+                word in content_lower for word in ["debug", "trace", "verbose", "detail", "print("]
             ):
                 return "debug"
             elif any(
@@ -138,9 +137,13 @@ class PrintStatementTransformer(ast.NodeTransformer):
 
         # Create logger.method() call
         logger_call = ast.Call(
-            func=ast.Attribute(value=ast.Name(id="logger", ctx=ast.Load()), attr=method_name, ctx=ast.Load()),
+            func=ast.Attribute(
+                value=ast.Name(id="logger", ctx=ast.Load()),
+                attr=method_name,
+                ctx=ast.Load(),
+            ),
             args=print_node.args,
-            keywords=[]
+            keywords=[],
         )
 
         return logger_call
@@ -209,7 +212,9 @@ def process_file(file_path: Path, dry_run: bool = False, verbose: bool = False) 
         new_content = clean_generated_code(new_content, original_content)
 
         if verbose:
-            script_logger.info(f"Processing {file_path}: {transformer.print_count} print statements found")
+            script_logger.info(
+                f"Processing {file_path}: {transformer.print_count} print statements found"
+            )
 
         if not dry_run and new_content != original_content:
             with open(file_path, "w", encoding="utf-8") as f:
@@ -258,14 +263,20 @@ def process_directory(
 
 def main():
     """Main entry point."""
-    parser = argparse.ArgumentParser(description="Remove debug print statements and replace with logging")
+    parser = argparse.ArgumentParser(
+        description="Remove debug print statements and replace with logging"
+    )
     parser.add_argument(
         "directories",
         nargs="*",
         default=["devtools", "examples", "tests"],
         help="Directories to process (default: devtools, examples, tests)",
     )
-    parser.add_argument("--dry-run", action="store_true", help="Show what would be done without making changes")
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Show what would be done without making changes",
+    )
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
 
     args = parser.parse_args()

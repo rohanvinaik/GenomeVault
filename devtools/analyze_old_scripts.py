@@ -4,8 +4,8 @@ import re
 import subprocess
 from pathlib import Path
 from genomevault.utils.logging import get_logger
-logger = get_logger(__name__)
 
+logger = get_logger(__name__)
 
 
 root = Path(".")

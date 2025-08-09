@@ -195,9 +195,7 @@ async def demonstrate_genomevault():
     logger.info(
         "PIR privacy (2 TS): P_fail = {pir_client.calculate_privacy_failure_probability(2, 0.98):.2e}"
     )
-    logger.info(
-        "Differential privacy: ε = {config.security.differential_privacy_epsilon}"
-    )
+    logger.info("Differential privacy: ε = {config.security.differential_privacy_epsilon}")
     logger.info("Zero-knowledge: Perfect secrecy")
 
     # Network voting power
@@ -265,6 +263,4 @@ if __name__ == "__main__":
     demonstrate_compression_tiers()
 
     logger.info("\n=== GenomeVault 3.0 Demonstration Complete ===")
-    logger.info(
-        "Your genomic data remains private while enabling breakthrough research!"
-    )
+    logger.info("Your genomic data remains private while enabling breakthrough research!")
