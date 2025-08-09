@@ -4,6 +4,7 @@ from typing import Dict, Any
 import json
 from pathlib import Path
 
+
 @dataclass
 class ModelSnapshot:
     version: str

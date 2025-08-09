@@ -1,8 +1,10 @@
 from __future__ import annotations
 import argparse
 from genomevault.zk_proofs.circuits.implementations.plonk_circuits import (
-    prove_training_sum_over_threshold, verify_training_sum_over_threshold
+    prove_training_sum_over_threshold,
+    verify_training_sum_over_threshold,
 )
+
 
 def main(argv=None) -> int:
     p = argparse.ArgumentParser()
@@ -18,6 +20,7 @@ def main(argv=None) -> int:
     else:
         print(proof.hex())
     return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main())

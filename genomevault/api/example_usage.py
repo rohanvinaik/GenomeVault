@@ -2,9 +2,14 @@
 """
 Example showing how to use the standardized GV exception system in API endpoints.
 """
+
 from fastapi import APIRouter
 from genomevault.exceptions import (
-    GVInputError, GVNotFound, GVComputeError, GVTimeout, GVSecurityError
+    GVInputError,
+    GVNotFound,
+    GVComputeError,
+    GVTimeout,
+    GVSecurityError,
 )
 
 router = APIRouter()
@@ -15,10 +20,10 @@ async def validate_input_example(item_id: str):
     """Example of input validation using GVInputError."""
     if not item_id or len(item_id) < 3:
         raise GVInputError(
-            "Item ID must be at least 3 characters", 
-            details={"field": "item_id", "min_length": 3}
+            "Item ID must be at least 3 characters",
+            details={"field": "item_id", "min_length": 3},
         )
-    
+
     return {"item_id": item_id, "status": "valid"}
 
 
@@ -29,9 +34,9 @@ async def not_found_example(resource_id: str):
     if resource_id == "missing":
         raise GVNotFound(
             f"Resource {resource_id} not found",
-            details={"resource_type": "genomic_data", "id": resource_id}
+            details={"resource_type": "genomic_data", "id": resource_id},
         )
-    
+
     return {"resource_id": resource_id, "data": "found"}
 
 
@@ -45,7 +50,7 @@ async def compute_error_example():
     except ZeroDivisionError as e:
         raise GVComputeError(
             "Mathematical computation failed",
-            details={"operation": "division", "error_type": "zero_division"}
+            details={"operation": "division", "error_type": "zero_division"},
         ) from e
 
 
@@ -54,29 +59,29 @@ async def timeout_example():
     """Example of timeout error using GVTimeout."""
     # Simulate a long-running operation
     import asyncio
-    
+
     try:
         await asyncio.wait_for(asyncio.sleep(10), timeout=1.0)
         return {"status": "completed"}
     except asyncio.TimeoutError as e:
         raise GVTimeout(
             "Operation timed out after 1 second",
-            details={"timeout_seconds": 1.0, "operation": "data_processing"}
+            details={"timeout_seconds": 1.0, "operation": "data_processing"},
         ) from e
 
 
-@router.post("/example-security-error") 
+@router.post("/example-security-error")
 async def security_error_example():
     """Example of security error using GVSecurityError."""
     # Simulate access control check
     user_role = "guest"  # This would come from auth middleware
-    
+
     if user_role != "admin":
         raise GVSecurityError(
             "Insufficient permissions for this operation",
-            details={"required_role": "admin", "user_role": user_role}
+            details={"required_role": "admin", "user_role": user_role},
         )
-    
+
     return {"status": "authorized", "data": "sensitive_info"}
 
 

@@ -141,10 +141,10 @@ class TestZKSidechannelResistance:
         """Test that memory access doesn't leak information."""
         # This would require more sophisticated testing
         # in a real implementation
-        pass
+        pytest.skip("Memory access pattern testing requires specialized tools")
 
     def test_power_analysis_resistance(self):
         """Test resistance to power analysis attacks."""
         # This would require hardware testing
         # in a real implementation
-        pass
+        pytest.skip("Power analysis testing requires hardware setup")
