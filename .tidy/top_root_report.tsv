@@ -1,0 +1,135 @@
+category	path	days_since_commit	size_kb	ext	has_shebang	suspicious_name	referenced	reasons
+MAYBE	CONTRIBUTING.md	21	3	.md	0	0	1
+MAYBE	MANIFEST.in	21	0	.in	0	0	1
+MAYBE	setup.py	20	3	.py	0	0	1
+MAYBE	INSTALL.md	20	2	.md	0	0	1
+MAYBE	setup.cfg	20	0	.cfg	0	0	1
+MAYBE	SECURITY.md	15	8	.md	0	0	1
+MAYBE	docker-compose.dev.yml	15	6	.yml	0	0	1
+MAYBE	requirements-pot.txt	15	2	.txt	0	0	1
+MAYBE	VERSION.md	15	1	.md	0	0	1
+MAYBE	Dockerfile.pir	15	0	.pir	0	0	1
+MAYBE	README_backup.md	14	21	.md	0	1	1	suspicious_name
+MAYBE	push_to_github.sh	14	3	.sh	1	0	1
+MAYBE	audit_validation_report.json	12	296	.json	0	0	1
+MAYBE	focused_audit_report.json	12	15	.json	0	0	1
+KEEP	README.md	12	15	.md	0	0	1	whitelist
+MAYBE	audit_menu_final.sh	12	7	.sh	1	1	1	suspicious_name
+MAYBE	audit_fix_menu.sh	12	5	.sh	1	0	1
+MAYBE	push_to_clean_slate.sh	12	5	.sh	1	0	1
+MAYBE	AUDIT_FIX_COMPLETE_SUMMARY.md	12	3	.md	0	0	1
+MAYBE	AUDIT_CHECKLIST_GUIDE.md	12	3	.md	0	0	1
+MAYBE	AUDIT_FIXES_README.md	12	3	.md	0	0	1
+MAYBE	REAL_AUDIT_STATUS.md	12	3	.md	0	0	1
+MAYBE	AUDIT_FIX_SCRIPTS_GUIDE.md	12	3	.md	0	0	1
+MAYBE	AUDIT_ANALYSIS_SUMMARY.md	12	2	.md	0	0	1
+MAYBE	commit_and_push_now.sh	12	2	.sh	1	0	1
+MAYBE	push_audit_checklist.sh	12	2	.sh	1	0	1
+MAYBE	push_now.sh	12	1	.sh	1	0	1
+MAYBE	PUSH_SUMMARY.md	12	1	.md	0	0	1
+MAYBE	MANUAL_GIT_COMMANDS.md	12	1	.md	0	0	1
+MAYBE	PUSH_AUDIT_COMMANDS.md	12	1	.md	0	0	1
+MAYBE	force_push_audit.sh	12	1	.sh	1	0	1
+MAYBE	QUICK_FIX_COMMIT.md	12	1	.md	0	0	1
+MAYBE	bypass_hooks_push.sh	12	1	.sh	1	0	1
+MAYBE	QUICK_REFERENCE.txt	12	1	.txt	0	0	1
+KEEP	LICENSE	12	1		0	0	1	whitelist
+MAYBE	check_git_status.sh	12	1	.sh	1	0	1
+MAYBE	apply_audit_fixes.sh	12	0	.sh	1	0	1
+MAYBE	run_tests.sh	12	0	.sh	1	0	1
+MAYBE	quick_push_clean_slate.sh	12	0	.sh	1	0	1
+MAYBE	one_line_push.sh	12	0	.sh	1	0	1
+MAYBE	.flake8	12	0		0	0	0	unreferenced
+MAYBE	__init__.py	12	0	.py	0	0	1
+MAYBE	quick_fix_init_files.py	10	1	.py	0	0	1
+MAYBE	test_autofix_example.py	10	1	.py	1	0	1
+KEEP	Makefile	10	0		0	0	1	whitelist
+MAYBE	docker-compose.obsv.yml	10	0	.yml	0	0	1
+KEEP	docker-compose.yml	10	0	.yml	0	0	1	whitelist
+MAYBE	requirements-otel.txt	10	0	.txt	0	0	1
+MAYBE	.dockerignore	10	0		0	0	0	unreferenced
+KEEP	.env.example	10	0	.example	0	0	0	whitelist
+MAYBE	validate_lint_clean.py	5	2	.py	1	0	1
+MAYBE	test_simple.py	5	1	.py	1	0	1
+MAYBE	diagnostic.py	5	1	.py	1	0	1
+MAYBE	test_api_startup.py	5	0	.py	1	0	1
+MAYBE	test_run_api.py	5	0	.py	1	0	1
+MAYBE	setup_dev_environment.sh	4	2	.sh	1	0	1
+KEEP	.gitignore	4	1		0	0	0	whitelist
+MAYBE	.ruff.toml.backup	4	0	.backup	0	0	0	unreferenced
+MAYBE	pytest.ini	4	0	.ini	0	0	1
+MAYBE	.ruff.toml.fixed	4	0	.fixed	0	0	0	unreferenced
+MAYBE	ruff_baseline.json	4	0	.json	0	0	1
+MAYBE	enhanced_cleanup.py	0	69	.py	1	0	1
+MAYBE	comprehensive_cleanup.py	0	33	.py	1	0	1
+MAYBE	implement_mvp_complete.py	0	23	.py	1	0	1
+MAYBE	genomevault_safe_fix_implementation.py	0	22	.py	1	0	1
+MAYBE	focused_cleanup.py	0	21	.py	1	0	1
+MAYBE	genomevault_autofix.py	0	19	.py	1	0	1
+MAYBE	lint_clean_implementation.py	0	17	.py	1	0	1
+MAYBE	genomevault_cleanup.py	0	17	.py	1	0	1
+MAYBE	validate_project_only.py	0	16	.py	1	0	1
+MAYBE	fix_audit_issues.py	0	15	.py	1	0	1
+MAYBE	green_toolchain_impl.py	0	14	.py	1	0	1
+MAYBE	final_verification.py	0	13	.py	1	1	1	suspicious_name
+MAYBE	manual_verification.py	0	10	.py	1	0	1
+MAYBE	GenomeVault_Safe_Fix_Implementation_Plan.md	0	9	.md	0	0	1
+MAYBE	task5_pytest_output.txt	0	9	.txt	0	0	1
+MAYBE	validate_audit_fixes.py	0	9	.py	1	0	1
+MAYBE	validate_implementation.py	0	9	.py	1	0	1
+MAYBE	dashboard_zero_red.py	0	8	.py	1	0	1
+MAYBE	fix_imports.py	0	8	.py	1	0	1
+MAYBE	final_validation.py	0	8	.py	1	1	1	suspicious_name
+MAYBE	VALIDATION_REPORT.md	0	7	.md	0	0	1
+MAYBE	apply_common_fixes.py	0	7	.py	1	0	1
+MAYBE	run_complete_lint_fix.py	0	7	.py	1	0	1
+MAYBE	fix_prover.py	0	6	.py	1	0	1
+MAYBE	comprehensive_status.py	0	6	.py	1	0	1
+MAYBE	proper_ruff_upgrade.py	0	6	.py	1	0	1
+MAYBE	CLAUDE.md	0	6	.md	0	0	1
+MAYBE	validate_lint_fixes.py	0	5	.py	1	0	1
+MAYBE	simple_autofix_demo.py	0	5	.py	1	0	1
+MAYBE	generate_comparison_report.py	0	5	.py	0	0	1
+MAYBE	verify_phase3_ready.py	0	5	.py	1	0	1
+MAYBE	MVP_IMPLEMENTATION_PLAN.md	0	4	.md	0	0	1
+MAYBE	apply_area_fixes.py	0	4	.py	1	0	1
+MAYBE	test_hamming_lut.py	0	4	.py	0	0	1
+MAYBE	MVP_SUCCESS_SUMMARY.md	0	4	.md	0	0	1
+MAYBE	test_fixes.py	0	4	.py	1	0	1
+MAYBE	upgrade_ruff.py	0	4	.py	1	0	1
+MAYBE	preflight_check.py	0	4	.py	1	0	1
+MAYBE	verify_mvp.sh	0	4	.sh	1	0	1
+MAYBE	test_ruff_upgrade.py	0	3	.py	1	0	1
+MAYBE	test_fixed_phase3.py	0	3	.py	1	0	1
+MAYBE	apply_lint_fixes.py	0	3	.py	1	0	1
+MAYBE	LINT_FIX_IMPLEMENTATION_SUMMARY.md	0	3	.md	0	0	1
+MAYBE	verify_fixes.py	0	3	.py	1	0	1
+MAYBE	pre_push_validation.sh	0	2	.sh	1	0	1
+MAYBE	test_phase3.py	0	2	.py	1	0	1
+KEEP	pyproject.toml	0	2	.toml	0	0	1	whitelist
+MAYBE	verify_ruff.py	0	2	.py	1	0	1
+MAYBE	check_lint_status.py	0	2	.py	1	0	1
+MAYBE	fix_python_compatibility.py	0	2	.py	1	0	1
+MAYBE	check_implementation_status.sh	0	2	.sh	1	0	1
+MAYBE	test_and_validate.sh	0	1	.sh	1	0	1
+MAYBE	AUDIT_IMPLEMENTATION_SUMMARY.md	0	1	.md	0	0	1
+MAYBE	focused_green_impl.py	0	1	.py	1	0	1
+MAYBE	test_constant.py	0	1	.py	1	0	1
+MAYBE	push_to_git.sh	0	1	.sh	1	0	1
+MAYBE	IMPLEMENTATION_REPORT.md	0	1	.md	0	0	1
+MAYBE	push_audit_implementation.sh	0	1	.sh	1	0	1
+KEEP	.pre-commit-config.yaml	0	0	.yaml	0	0	0	whitelist
+KEEP	Dockerfile	0	0		0	0	1	whitelist
+MAYBE	run_mvp_tests.sh	0	0	.sh	1	0	1
+MAYBE	.mypy.ini	0	0	.ini	0	0	0	unreferenced
+KEEP	.ruff.toml	0	0	.toml	0	0	0	whitelist
+KEEP	.pylintrc	0	0		0	0	0	whitelist
+MAYBE	run_ruff_task3.sh	0	0	.sh	1	0	1
+KEEP	mypy.ini	0	0	.ini	0	0	1	whitelist
+MAYBE	run_mypy_task4.sh	0	0	.sh	1	0	1
+MAYBE	run_ruff_fix_task3.sh	0	0	.sh	1	0	1
+MAYBE	run_pytest_task5.sh	0	0	.sh	1	0	1
+KEEP	requirements.txt	0	0	.txt	0	0	1	whitelist
+KEEP	.editorconfig	0	0		0	0	0	whitelist
+KEEP	requirements-dev.txt	0	0	.txt	0	0	1	whitelist
+MAYBE	task4_mypy_output.txt	0	0	.txt	0	0	1

@@ -28,7 +28,7 @@ UNTRACKED=$(git status --porcelain | grep '^??' | wc -l | tr -d ' ')
 DELETED=$(git status --porcelain | grep '^D' | wc -l | tr -d ' ')
 
 echo "Modified files: $MODIFIED"
-echo "Added files: $ADDED" 
+echo "Added files: $ADDED"
 echo "Untracked files: $UNTRACKED"
 echo "Deleted files: $DELETED"
 
