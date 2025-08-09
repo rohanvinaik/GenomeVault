@@ -1,0 +1,17 @@
+*.pyc
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+node_modules/
+dist/
+build/
+*.egg-info/
+.DS_Store
+*.log
+*.tmp
+*.bak
+.env
+.env.*
+.coverage*

@@ -45,7 +45,7 @@ if brew list ruff >/dev/null 2>&1; then
     brew uninstall ruff || echo "Failed to uninstall Homebrew ruff"
 fi
 
-# Remove pipx ruff if it exists  
+# Remove pipx ruff if it exists
 if pipx list | grep -q ruff; then
     echo "Removing pipx ruff..."
     pipx uninstall ruff || echo "Failed to uninstall pipx ruff"
@@ -170,7 +170,7 @@ MAX_PROOF_SIZE = 1024 * 1024  # 1MB
 # Node types and weights
 NODE_CLASS_WEIGHT = {
     "VALIDATOR": 3,
-    "COMPUTE": 2, 
+    "COMPUTE": 2,
     "STORAGE": 1,
     "CLIENT": 0
 }
@@ -210,7 +210,7 @@ pytest -q -k "not api and not nanopore" --maxfail=3 || echo "pytest had issues b
 echo ""
 echo "=== FINAL SUMMARY ==="
 echo "✅ Ruff version conflict resolved"
-echo "✅ Configuration updated for compatibility"  
+echo "✅ Configuration updated for compatibility"
 echo "✅ Missing exceptions and constants added"
 echo "✅ Phase 3 and 7 cleanup executed"
 echo ""

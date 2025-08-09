@@ -14,13 +14,13 @@ python - <<'PY'
 try:
     import genomevault
     print(f"✅ genomevault: {genomevault.__version__}")
-    
+
     from genomevault.utils import get_logger, get_metrics
     print("✅ utils imports")
-    
+
     from genomevault.utils.config import Config, NodeClass, CompressionTier
     print("✅ config imports")
-    
+
 except Exception as e:
     print(f"❌ Import error: {e}")
     exit(1)
@@ -37,7 +37,7 @@ logger.warning("Test warning message")
 print("✅ Logging working")
 PY
 
-# Test 3: Metrics Functionality  
+# Test 3: Metrics Functionality
 echo ""
 echo "3️⃣ Testing metrics functionality..."
 python - <<'PY'
@@ -94,7 +94,7 @@ echo ""
 echo "6️⃣ Running pytest (if available)..."
 if command -v pytest >/dev/null 2>&1; then
     echo "Found pytest, running basic tests..."
-    
+
     # Run tests excluding problematic modules
     if pytest --version >/dev/null 2>&1; then
         echo "Running: pytest -k 'not api and not nanopore' --tb=short -q"
@@ -109,7 +109,7 @@ echo "🎉 Test Suite Complete!"
 echo ""
 echo "📋 Summary:"
 echo "- ✅ Core imports working"
-echo "- ✅ Logging system functional"  
+echo "- ✅ Logging system functional"
 echo "- ✅ Metrics collection working"
 echo "- ✅ Configuration system operational"
 echo "- ✅ Module structure verified"

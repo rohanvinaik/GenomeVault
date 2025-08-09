@@ -31,21 +31,21 @@ try:
     import genomevault
     from genomevault.utils import get_logger, get_metrics
     from genomevault.utils.config import Config
-    
-    # Test some deep imports  
+
+    # Test some deep imports
     import genomevault.hypervector.operations
     import genomevault.zk_proofs.circuits
-    
+
     print("✅ All critical imports working")
     print(f"✅ Package version: {genomevault.__version__}")
-    
+
     # Quick functionality test
     metrics = get_metrics()
     metrics["setup_success"] = 1
     config = Config()
-    
+
     print(f"✅ Functionality verified")
-    
+
 except Exception as e:
     print(f"❌ Error: {e}")
     exit(1)

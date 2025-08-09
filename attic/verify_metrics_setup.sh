@@ -19,19 +19,19 @@ try:
     # Test the specific imports that were problematic
     from genomevault.utils import get_metrics, MetricsCollector
     from genomevault.utils.config import Config, NodeClass, CompressionTier
-    
+
     # Test functionality
     metrics = get_metrics()
     config = Config()
-    
+
     # Verify it works
     metrics["setup_test"] = 1
     voting_power = config.get_voting_power()
-    
+
     print("✅ All critical imports working")
     print(f"✅ Metrics: {dict(metrics)}")
     print(f"✅ Config voting power: {voting_power}")
-    
+
 except Exception as e:
     print(f"❌ Error: {e}")
     exit(1)
@@ -46,7 +46,7 @@ echo ""
 echo "🚀 Ready for Testing!"
 echo ""
 echo "Run these commands:"
-echo "• pytest -q tests/unit/test_config.py       # Config tests"  
+echo "• pytest -q tests/unit/test_config.py       # Config tests"
 echo "• pytest -q -k 'not api and not nanopore'  # All safe tests"
 echo "• python -c 'from genomevault.utils import get_metrics; print(get_metrics())'  # Quick test"
 echo ""

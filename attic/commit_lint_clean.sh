@@ -31,7 +31,7 @@ git commit -m "fix: implement lint clean checklist - replace magic numbers with 
 
 - Add domain-specific constants to eliminate PLR2004 magic numbers
 - tests/hv/test_encoding.py: Add similarity and performance thresholds
-- tests/pir/test_pir_protocol.py: Add timing and server constants  
+- tests/pir/test_pir_protocol.py: Add timing and server constants
 - tests/zk/test_zk_property_circuits.py: Add variant and verification limits
 - tests/smoke/test_api_startup.py: Add HTTP status constants
 - All constants follow ALL_CAPS naming convention

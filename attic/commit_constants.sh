@@ -16,7 +16,7 @@ git add test_constant.py
 # Commit with descriptive message
 git commit -m "feat(constants): add HYPERVECTOR_DIMENSIONS constant and verification suite
 
-- Added HYPERVECTOR_DIMENSIONS = 10_000 to core/constants.py  
+- Added HYPERVECTOR_DIMENSIONS = 10_000 to core/constants.py
 - Import and re-export constants from utils/constants.py for centralization
 - Created comprehensive final_verification.py script
 - Added test_constant.py for quick constant verification
@@ -25,7 +25,7 @@ git commit -m "feat(constants): add HYPERVECTOR_DIMENSIONS constant and verifica
 This enables:
 - from genomevault.core.constants import HYPERVECTOR_DIMENSIONS
 - UnifiedHypervectorEncoder imports with proper constants
-- Full ruff check --statistics execution  
+- Full ruff check --statistics execution
 - pytest -q -k 'not api and not nanopore' test collection"
 
 echo "✅ Constant and verification changes committed!"

@@ -10,7 +10,7 @@ cd /Users/rohanvinaik/genomevault
 
 # Add all the changed files
 git add .ruff.toml
-git add comprehensive_cleanup.py  
+git add comprehensive_cleanup.py
 git add genomevault/core/exceptions.py
 
 # Commit with the exact message requested
