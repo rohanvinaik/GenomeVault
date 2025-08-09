@@ -11,9 +11,7 @@ from pathlib import Path
 from typing import Tuple
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # Project root
@@ -281,9 +279,7 @@ def add_missing_init_files():
                 changes_made.append(f"Added __init__.py to {dir_path}")
                 logger.info(f"✓ Added __init__.py to {dir_path}")
             except Exception as e:
-                errors_encountered.append(
-                    f"Error adding __init__.py to {dir_path}: {e}"
-                )
+                errors_encountered.append(f"Error adding __init__.py to {dir_path}: {e}")
                 logger.error(f"✗ Failed to add __init__.py to {dir_path}: {e}")
 
 
@@ -459,9 +455,7 @@ def validate_features(X: np.ndarray) -> bool:
                     changes_made.append(f"Implemented MVP for {file_path}")
                     logger.info(f"✓ Implemented MVP for {file_path}")
             except Exception as e:
-                errors_encountered.append(
-                    f"Error implementing MVP for {file_path}: {e}"
-                )
+                errors_encountered.append(f"Error implementing MVP for {file_path}: {e}")
                 logger.error(f"✗ Failed to implement MVP for {file_path}: {e}")
 
 

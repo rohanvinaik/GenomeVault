@@ -62,12 +62,8 @@ class TrainingProofCircuit(BaseCircuit):
         """
         # Public inputs
         self.final_model_hash = FieldElement(int(public_inputs["final_model_hash"], 16))
-        self.training_start_time = FieldElement(
-            public_inputs["training_metadata"]["start_time"]
-        )
-        self.training_end_time = FieldElement(
-            public_inputs["training_metadata"]["end_time"]
-        )
+        self.training_start_time = FieldElement(public_inputs["training_metadata"]["start_time"])
+        self.training_end_time = FieldElement(public_inputs["training_metadata"]["end_time"])
         self.declared_dataset_hash = FieldElement(
             int(public_inputs["training_metadata"]["dataset_hash"], 16)
         )
@@ -77,8 +73,7 @@ class TrainingProofCircuit(BaseCircuit):
         self.model_commit = private_inputs["model_commit"]
         self.io_sequence_commit = private_inputs["io_sequence_commit"]
         self.training_snapshots = [
-            TrainingSnapshot(**snapshot)
-            for snapshot in private_inputs["training_snapshots"]
+            TrainingSnapshot(**snapshot) for snapshot in private_inputs["training_snapshots"]
         ]
 
     def generate_constraints(self):
@@ -191,9 +186,7 @@ class TrainingProofCircuit(BaseCircuit):
         """Verify final model hash matches declared commitment"""
         # Get the last snapshot's model hash
         if self.training_snapshots:
-            final_snapshot_hash = FieldElement(
-                int(self.training_snapshots[-1].model_hash, 16)
-            )
+            final_snapshot_hash = FieldElement(int(self.training_snapshots[-1].model_hash, 16))
 
             # Verify it matches the public final model hash
             self.add_constraint(
@@ -209,9 +202,7 @@ class TrainingProofCircuit(BaseCircuit):
         expected_commit = self._hash_pair(self.final_model_hash, model_commit_field)
 
         # Add commitment verification constraint
-        self.add_constraint(
-            expected_commit, model_commit_field, FieldElement(0), ql=1, qr=-1
-        )
+        self.add_constraint(expected_commit, model_commit_field, FieldElement(0), ql=1, qr=-1)
 
     def constrain_io_sequence(self):
         """Verify integrity of input/output training sequence"""
@@ -224,9 +215,7 @@ class TrainingProofCircuit(BaseCircuit):
         dataset_commit = self._hash_pair(self.declared_dataset_hash, io_commit_field)
 
         # Add IO sequence constraint
-        self.add_constraint(
-            dataset_commit, io_commit_field, FieldElement(0), ql=1, qr=-1
-        )
+        self.add_constraint(dataset_commit, io_commit_field, FieldElement(0), ql=1, qr=-1)
 
     def _hash_pair(self, left: FieldElement, right: FieldElement) -> FieldElement:
         """Hash two field elements together"""
@@ -256,9 +245,7 @@ class TrainingProofCircuit(BaseCircuit):
             "constraints_satisfied": True,  # Simplified - would run actual constraint verification
         }
 
-        logger.info(
-            f"Generated training proof with {len(self.constraints)} constraints"
-        )
+        logger.info(f"Generated training proof with {len(self.constraints)} constraints")
         return proof
 
     def verify_semantic_consistency(self, tolerance: float = 0.15) -> bool:

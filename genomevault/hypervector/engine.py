@@ -45,9 +45,7 @@ class HypervectorEngine:
     def _get(self, vid: str) -> np.ndarray:
         v = self.store.get(vid)
         if v is None:
-            raise ValidationError(
-                f"vector_id not found: {vid}", context={"vector_id": vid}
-            )
+            raise ValidationError(f"vector_id not found: {vid}", context={"vector_id": vid})
         return v
 
     # ---- public API ----
@@ -108,9 +106,7 @@ class HypervectorEngine:
         operation = (operation or "").lower()
         parameters = parameters or {}
         if operation not in {"permute", "bundle", "bind", "multiply", "convolve"}:
-            raise ValidationError(
-                "unsupported operation", context={"operation": operation}
-            )
+            raise ValidationError("unsupported operation", context={"operation": operation})
 
         if operation == "permute":
             if len(vector_ids) != 1:

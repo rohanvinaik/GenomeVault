@@ -23,9 +23,7 @@ metrics = MetricsCollector()
 class GnarkBackend:
     """Real ZK proof generation using gnark via FFI."""
 
-    def __init__(
-        self, circuit_dir: str = "./circuits/compiled", gnark_path: str | None = None
-    ):
+    def __init__(self, circuit_dir: str = "./circuits/compiled", gnark_path: str | None = None):
         """
         Initialize gnark backend.
 
@@ -73,9 +71,7 @@ class GnarkBackend:
         if result.returncode == 0:
             return str(Path(result.stdout.strip()).parent)
 
-        raise RuntimeError(
-            "gnark binaries not found. Please install gnark or specify path."
-        )
+        raise RuntimeError("gnark binaries not found. Please install gnark or specify path.")
 
     def _verify_binaries(self):
         """Verify required gnark binaries exist."""
@@ -240,9 +236,7 @@ class GnarkBackend:
             # Measure and record metrics
             proof_size = len(proof_data)
             metrics.record(f"{circuit_name}_proof_size", proof_size, "bytes")
-            metrics.record(
-                f"{circuit_name}_generation_time", generation_time * 1000, "ms"
-            )
+            metrics.record(f"{circuit_name}_generation_time", generation_time * 1000, "ms")
 
             logger.info(
                 "Generated %scircuit_name proof: %sproof_size bytes in %sgeneration_time:.3fs"
@@ -250,9 +244,7 @@ class GnarkBackend:
 
             return proof_data
 
-    def verify_proof(
-        self, circuit_name: str, proof: bytes, public_inputs: dict[str, Any]
-    ) -> bool:
+    def verify_proof(self, circuit_name: str, proof: bytes, public_inputs: dict[str, Any]) -> bool:
         """
         Verify proof using gnark verifier.
 
@@ -298,9 +290,7 @@ class GnarkBackend:
             verification_time = time.time() - start
 
             # Record metrics
-            metrics.record(
-                f"{circuit_name}_verification_time", verification_time * 1000, "ms"
-            )
+            metrics.record(f"{circuit_name}_verification_time", verification_time * 1000, "ms")
 
             valid = result.returncode == 0
 
@@ -314,9 +304,7 @@ class GnarkBackend:
 
             return valid
 
-    def batch_verify(
-        self, proofs: list[tuple[str, bytes, dict[str, Any]]]
-    ) -> list[bool]:
+    def batch_verify(self, proofs: list[tuple[str, bytes, dict[str, Any]]]) -> list[bool]:
         """
         Batch verify multiple proofs.
 
@@ -393,9 +381,7 @@ class SimulatedBackend:
 
         return proof_data
 
-    def verify_proof(
-        self, circuit_name: str, proof: bytes, public_inputs: dict[str, Any]
-    ) -> bool:
+    def verify_proof(self, circuit_name: str, proof: bytes, public_inputs: dict[str, Any]) -> bool:
         """Verify simulated proof."""
         # Simulate verification time
         time.sleep(0.025)

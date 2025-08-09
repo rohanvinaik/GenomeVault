@@ -3,15 +3,13 @@
 Fix common import and initialization issues in GenomeVault
 """
 
-import sys
 import ast
 import logging
+import sys
 from pathlib import Path
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 PROJECT_ROOT = Path(__file__).parent
@@ -80,9 +78,7 @@ def check_and_fix_imports():
             try:
                 ast.parse(content)
             except SyntaxError as e:
-                logger.warning(
-                    f"Syntax error in {file_path.relative_to(PROJECT_ROOT)}: {e}"
-                )
+                logger.warning(f"Syntax error in {file_path.relative_to(PROJECT_ROOT)}: {e}")
                 continue
 
             # Apply import fixes if needed
@@ -257,9 +253,7 @@ def main():
 
     # Test the result
     if test_api_import():
-        logger.info(
-            "\n✅ All import issues fixed! Try running: python -m genomevault.api.main"
-        )
+        logger.info("\n✅ All import issues fixed! Try running: python -m genomevault.api.main")
         return 0
     else:
         logger.warning("\n⚠️ Some import issues remain. Check the errors above.")

@@ -15,10 +15,8 @@ from pathlib import Path
 import numpy as np
 
 # Import GenomeVault PoT components
-from genomevault.integration.proof_of_training import \
-    ProofOfTrainingIntegration
-from genomevault.local_processing.differential_privacy_audit import \
-    PrivacyMechanism
+from genomevault.integration.proof_of_training import ProofOfTrainingIntegration
+from genomevault.local_processing.differential_privacy_audit import PrivacyMechanism
 
 
 # Simulate a simple model class

@@ -233,16 +233,8 @@ class ProofOfTrainingIntegration:
             # Force final snapshot
             snapshot_logger.log_snapshot(
                 model=final_model,
-                epoch=(
-                    snapshot_logger.snapshots[-1].epoch
-                    if snapshot_logger.snapshots
-                    else 0
-                ),
-                step=(
-                    snapshot_logger.snapshots[-1].step + 1
-                    if snapshot_logger.snapshots
-                    else 0
-                ),
+                epoch=(snapshot_logger.snapshots[-1].epoch if snapshot_logger.snapshots else 0),
+                step=(snapshot_logger.snapshots[-1].step + 1 if snapshot_logger.snapshots else 0),
                 loss=final_metrics.get("loss", 0),
                 metrics=final_metrics,
                 force=True,
@@ -297,9 +289,7 @@ class ProofOfTrainingIntegration:
                 training_start=proof["public_inputs"]["training_start_time"],
                 training_end=proof["public_inputs"]["training_end_time"],
                 snapshot_merkle_root=proof["commitments"]["snapshot_merkle_root"],
-                proof_hash=hashlib.sha256(
-                    json.dumps(proof, sort_keys=True).encode()
-                ).hexdigest(),
+                proof_hash=hashlib.sha256(json.dumps(proof, sort_keys=True).encode()).hexdigest(),
                 submitter=submitter_address,
                 metadata={
                     "session_id": session_id,
@@ -307,9 +297,7 @@ class ProofOfTrainingIntegration:
                 },
             )
 
-            logger.info(
-                "Attestation %sattestation_id submitted for session %ssession_id"
-            )
+            logger.info("Attestation %sattestation_id submitted for session %ssession_id")
             return attestation_id
 
         except (DatabaseError, json.JSONDecodeError, KeyError):
@@ -426,9 +414,7 @@ class ProofOfTrainingIntegration:
         is_multimodal = self.config.get("multimodal", False)
 
         if is_multimodal:
-            circuit = MultiModalTrainingProof(
-                max_snapshots=len(proof_data["snapshot_hashes"])
-            )
+            circuit = MultiModalTrainingProof(max_snapshots=len(proof_data["snapshot_hashes"]))
 
             # Add multi-modal specific inputs
             # (simplified for demo)
@@ -440,9 +426,7 @@ class ProofOfTrainingIntegration:
             proof_data["modality_commits"] = modality_commits
 
         else:
-            circuit = TrainingProofCircuit(
-                max_snapshots=len(proof_data["snapshot_hashes"])
-            )
+            circuit = TrainingProofCircuit(max_snapshots=len(proof_data["snapshot_hashes"]))
 
         # Setup inputs
         public_inputs = {
@@ -457,9 +441,7 @@ class ProofOfTrainingIntegration:
         private_inputs = {
             "snapshot_hashes": proof_data["snapshot_hashes"],
             "model_commit": hashlib.sha256(f"{session_id}_model".encode()).hexdigest(),
-            "io_sequence_commit": hashlib.sha256(
-                f"{session_id}_io".encode()
-            ).hexdigest(),
+            "io_sequence_commit": hashlib.sha256(f"{session_id}_io".encode()).hexdigest(),
             "training_snapshots": proof_data["snapshots"],
         }
 
@@ -483,9 +465,7 @@ class ProofOfTrainingIntegration:
         labels = []
 
         for snapshot in snapshot_logger.snapshots:
-            hv_path = (
-                snapshot_dir / f"snapshot_{snapshot.snapshot_id}" / "hypervector.npy"
-            )
+            hv_path = snapshot_dir / f"snapshot_{snapshot.snapshot_id}" / "hypervector.npy"
             if hv_path.exists():
                 import numpy as np
 

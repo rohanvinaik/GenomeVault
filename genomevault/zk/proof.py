@@ -108,9 +108,7 @@ class ProofGenerator:
                     "error_bound": zk_proof.error_bound,
                     "num_values": zk_proof.num_values,
                     "commitment": zk_proof.commitment.hex(),
-                    "sorted_commitments": [
-                        c.hex() for c in zk_proof.sorted_commitments
-                    ],
+                    "sorted_commitments": [c.hex() for c in zk_proof.sorted_commitments],
                     "median_opening": zk_proof.median_opening,
                     "range_proofs": zk_proof.range_proofs,
                     "challenge": zk_proof.challenge.hex(),
@@ -155,9 +153,7 @@ class ProofGenerator:
             logger.exception("Unhandled exception")
             logger.error("Failed to generate ZK proof: %se")
             # Fall back to mock proof for compatibility
-            return await self._generate_mock_proof(
-                results, median, budget, metadata, error=str(e)
-            )
+            return await self._generate_mock_proof(results, median, budget, metadata, error=str(e))
             raise RuntimeError("Unspecified error")
 
     async def _generate_mock_proof(
@@ -231,9 +227,7 @@ class ProofGenerator:
                 error_bound=proof_dict["error_bound"],
                 num_values=proof_dict["num_values"],
                 commitment=bytes.fromhex(proof_dict["commitment"]),
-                sorted_commitments=[
-                    bytes.fromhex(c) for c in proof_dict["sorted_commitments"]
-                ],
+                sorted_commitments=[bytes.fromhex(c) for c in proof_dict["sorted_commitments"]],
                 median_opening=proof_dict["median_opening"],
                 range_proofs=proof_dict["range_proofs"],
                 challenge=bytes.fromhex(proof_dict["challenge"]),

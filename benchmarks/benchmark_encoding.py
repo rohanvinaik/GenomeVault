@@ -3,8 +3,7 @@ import time
 
 import numpy as np
 
-from genomevault.hypervector.encoding.sparse_projection import \
-    SparseRandomProjection
+from genomevault.hypervector.encoding.sparse_projection import SparseRandomProjection
 from genomevault.observability.logging import configure_logging
 
 logger = configure_logging()

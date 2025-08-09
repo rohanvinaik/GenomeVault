@@ -45,12 +45,8 @@ def test_ruff_config():
                 if violations:
                     print("\\nFirst few violations:")
                     for i, v in enumerate(violations[:3]):
-                        file_short = v["filename"].replace(
-                            "/Users/rohanvinaik/genomevault/", ""
-                        )
-                        print(
-                            f"  {i+1}. {file_short}:{v['location']['row']} - {v['message']}"
-                        )
+                        file_short = v["filename"].replace("/Users/rohanvinaik/genomevault/", "")
+                        print(f"  {i+1}. {file_short}:{v['location']['row']} - {v['message']}")
 
                 return len(violations) > 0
             except json.JSONDecodeError:

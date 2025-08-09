@@ -45,9 +45,7 @@ class BaseNode(ABC):
         # Calculate voting power: w = c + s
         self.hardware_weight = self._get_hardware_weight()
         self.signatory_weight = (
-            SignatoryWeight.TRUSTED_SIGNATORY
-            if is_signatory
-            else SignatoryWeight.NON_SIGNER
+            SignatoryWeight.TRUSTED_SIGNATORY if is_signatory else SignatoryWeight.NON_SIGNER
         )
         self.voting_power = self.hardware_weight + self.signatory_weight
 
@@ -106,12 +104,8 @@ class BaseNode(ABC):
         block = Block(
             index=len(self.chain),
             timestamp=time.time(),
-            transactions=self.pending_transactions[
-                :100
-            ],  # Limit transactions per block
-            proof_hashes=[
-                tx.get("proof_hash", "") for tx in self.pending_transactions[:100]
-            ],
+            transactions=self.pending_transactions[:100],  # Limit transactions per block
+            proof_hashes=[tx.get("proof_hash", "") for tx in self.pending_transactions[:100]],
             previous_hash=self.chain[-1].hash if self.chain else "0",
             nonce=0,
             hash="",
@@ -128,9 +122,7 @@ class BaseNode(ABC):
         # Simplified selection based on voting power
         # In production, use proper BFT consensus
         int(time.time() / BLOCK_TIME_SECONDS)
-        selection_hash = hashlib.sha256(
-            b"{current_slot}:{self.voting_power}"
-        ).hexdigest()
+        selection_hash = hashlib.sha256(b"{current_slot}:{self.voting_power}").hexdigest()
         selection_value = int(selection_hash[:8], 16)
 
         # Probability proportional to voting power

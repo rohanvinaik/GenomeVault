@@ -67,9 +67,7 @@ class ComprehensiveCleanup:
         timestamp = time.strftime("%H:%M:%S")
         print(f"[{timestamp}] ✗ {message}")
 
-    def run_command_safe(
-        self, cmd: List[str], cwd: Path = None
-    ) -> Tuple[int, str, str]:
+    def run_command_safe(self, cmd: List[str], cwd: Path = None) -> Tuple[int, str, str]:
         """Safely run a command and return results."""
         if cwd is None:
             cwd = self.repo_root
@@ -130,9 +128,7 @@ class ComprehensiveCleanup:
 
         # Test the configuration
         print("Testing Ruff configuration...")
-        returncode, stdout, stderr = self.run_command_safe(
-            ["ruff", "check", "--version"]
-        )
+        returncode, stdout, stderr = self.run_command_safe(["ruff", "check", "--version"])
         if returncode == 0:
             self.log_fix("Ruff configuration validated")
         else:
@@ -349,9 +345,7 @@ class ComprehensiveCleanup:
 
                 # Add common missing imports
                 if "import logging" not in content:
-                    content = self._add_import_after_docstring(
-                        content, "import logging"
-                    )
+                    content = self._add_import_after_docstring(content, "import logging")
                     content = self._add_import_after_docstring(
                         content, "logger = logging.getLogger(__name__)"
                     )
@@ -365,9 +359,7 @@ class ComprehensiveCleanup:
 
                 for const_name, const_value in constants_to_add:
                     if const_name in content and f"{const_name} =" not in content:
-                        content = self._add_constant_definition(
-                            content, const_name, const_value
-                        )
+                        content = self._add_constant_definition(content, const_name, const_value)
 
                 if content != original_content:
                     full_path.write_text(content)
@@ -402,9 +394,7 @@ class ComprehensiveCleanup:
 
         return "\n".join(lines)
 
-    def _add_constant_definition(
-        self, content: str, const_name: str, const_value: str
-    ) -> str:
+    def _add_constant_definition(self, content: str, const_name: str, const_value: str) -> str:
         """Add constant definition at appropriate location."""
         lines = content.split("\n")
 
@@ -494,9 +484,7 @@ class ComprehensiveCleanup:
             stripped = line.strip()
 
             # Handle docstring
-            if not docstring_done and (
-                stripped.startswith('"""') or stripped.startswith("'''")
-            ):
+            if not docstring_done and (stripped.startswith('"""') or stripped.startswith("'''")):
                 in_docstring = not in_docstring
                 docstring_lines.append(line)
                 if not in_docstring:
@@ -505,9 +493,7 @@ class ComprehensiveCleanup:
             elif in_docstring:
                 docstring_lines.append(line)
                 continue
-            elif not docstring_done and (
-                stripped.startswith('"""') or stripped.startswith("'''")
-            ):
+            elif not docstring_done and (stripped.startswith('"""') or stripped.startswith("'''")):
                 docstring_lines.append(line)
                 docstring_done = True
                 continue
@@ -667,9 +653,7 @@ class ComprehensiveCleanup:
             else:
                 self.log_error(f"✗ {dir_path}/ missing")
 
-        self.log_fix(
-            f"Directory structure: {existing_dirs}/{len(key_dirs)} key directories exist"
-        )
+        self.log_fix(f"Directory structure: {existing_dirs}/{len(key_dirs)} key directories exist")
 
         # Summary recommendations
         print("\nVALIDATION SUMMARY:")
@@ -908,12 +892,8 @@ Examples:
         """,
     )
 
-    parser.add_argument(
-        "--phase", type=int, choices=range(1, 8), help="Run specific phase (1-7)"
-    )
-    parser.add_argument(
-        "--all", action="store_true", help="Run all phases sequentially"
-    )
+    parser.add_argument("--phase", type=int, choices=range(1, 8), help="Run specific phase (1-7)")
+    parser.add_argument("--all", action="store_true", help="Run all phases sequentially")
     parser.add_argument(
         "--repo-root",
         default="/Users/rohanvinaik/genomevault",

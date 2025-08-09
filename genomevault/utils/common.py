@@ -66,9 +66,7 @@ def get_user_credits(user_id: str, provider_type: str = "generic") -> int:
 
     final_credits = int(base_credits * multipliers.get(provider_type, 1.0))
 
-    logger.info(
-        f"User {user_id} allocated {final_credits} credits (type: {provider_type})"
-    )
+    logger.info(f"User {user_id} allocated {final_credits} credits (type: {provider_type})")
     return final_credits
 
 
@@ -105,9 +103,7 @@ def verify_hsm(hsm_serial: str, provider_type: str = "generic") -> bool:
     }
 
     # Validate against known manufacturers
-    is_known_manufacturer = any(
-        hsm_serial.startswith(prefix) for prefix in trusted_prefixes.keys()
-    )
+    is_known_manufacturer = any(hsm_serial.startswith(prefix) for prefix in trusted_prefixes.keys())
 
     if not is_known_manufacturer:
         logger.warning(f"HSM serial {hsm_serial} from unknown manufacturer")
@@ -117,9 +113,7 @@ def verify_hsm(hsm_serial: str, provider_type: str = "generic") -> bool:
         # Require FIPS 140-2 Level 3+ certified devices
         fips_certified_prefixes = ["HSM", "TPM", "NIT", "SGX"]
         if not any(hsm_serial.startswith(prefix) for prefix in fips_certified_prefixes):
-            logger.error(
-                f"HSM {hsm_serial} not FIPS 140-2 Level 3+ certified for HIPAA use"
-            )
+            logger.error(f"HSM {hsm_serial} not FIPS 140-2 Level 3+ certified for HIPAA use")
             return False
 
     # Additional validation for research institutions
@@ -179,9 +173,7 @@ def calculate_total_voting_power(nodes: dict[str, Any]) -> int:
         voting_power = class_weight + signatory_weight
         total_power += voting_power
 
-        logger.debug(
-            f"Node {node_id}: c={class_weight}, s={signatory_weight}, w={voting_power}"
-        )
+        logger.debug(f"Node {node_id}: c={class_weight}, s={signatory_weight}, w={voting_power}")
 
     logger.info(f"Total network voting power: {total_power} across {len(nodes)} nodes")
     return total_power
@@ -460,9 +452,7 @@ def create_hierarchical_encoder(
 # =============================================================================
 
 
-def check_hipaa_compliance(
-    data_dict: dict[str, Any], context: str = "general"
-) -> dict[str, Any]:
+def check_hipaa_compliance(data_dict: dict[str, Any], context: str = "general") -> dict[str, Any]:
     """
     Check HIPAA compliance for data processing and storage.
 
@@ -660,9 +650,7 @@ def validate_fix_implementation():
     # Test user credits
     try:
         credits = get_user_credits("hospital_test_001", "hipaa")
-        test_results.append(
-            ("get_user_credits", credits == 1500, f"Got {credits} credits")
-        )
+        test_results.append(("get_user_credits", credits == 1500, f"Got {credits} credits"))
     except Exception as e:
         from genomevault.observability.logging import configure_logging
 
@@ -700,9 +688,7 @@ def validate_fix_implementation():
     # Test configuration
     try:
         config_val = get_config("log_level", "DEBUG", "main")
-        test_results.append(
-            ("get_config", config_val is not None, f"Config: {config_val}")
-        )
+        test_results.append(("get_config", config_val is not None, f"Config: {config_val}"))
     except Exception as e:
         from genomevault.observability.logging import configure_logging
 

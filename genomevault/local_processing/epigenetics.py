@@ -287,8 +287,8 @@ class MethylationProcessor:
 
     def _load_bismark_output(self, file_path: Path) -> pd.DataFrame:
         """Load Bismark methylation extractor output"""
-logger = logging.getLogger(__name__)  # Added by cleanup
-        logger.info("Loading Bismark output from %sfile_path")
+        logger = logging.getLogger(__name__)  # Added by cleanup
+        logger.info(f"Loading Bismark output from {file_path}")
 
         # Mock data for demonstration
         # In production, would parse actual Bismark output
@@ -316,8 +316,8 @@ logger = logging.getLogger(__name__)  # Added by cleanup
 
     def _load_bedgraph(self, file_path: Path) -> pd.DataFrame:
         """Load BedGraph format methylation data"""
-logger = logging.getLogger(__name__)  # Added by cleanup
-        logger.info("Loading BedGraph from %sfile_path")
+        logger = logging.getLogger(__name__)  # Added by cleanup
+        logger.info(f"Loading BedGraph from {file_path}")
 
         # In production, would parse actual BedGraph file
         # For now, generate mock data
@@ -332,7 +332,7 @@ logger = logging.getLogger(__name__)  # Added by cleanup
         if context != MethylationContext.ALL:
             _ = _filtered[_filtered["context"] == context.value]
 
-logger = logging.getLogger(__name__)  # Added by cleanup
+        logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info(
             "Filtered to %slen(filtered) sites with coverage >= %sself.min_coverage"
         )
@@ -461,7 +461,7 @@ logger = logging.getLogger(__name__)  # Added by cleanup
             )
             _normalized_sites.append(normalized_site)
 
-logger = logging.getLogger(__name__)  # Added by cleanup
+        logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Applied beta-mixture quantile normalization")
         return normalized_sites
 
@@ -484,7 +484,7 @@ logger = logging.getLogger(__name__)  # Added by cleanup
         Returns:
             DataFrame with differential methylation results
         """
-logger = logging.getLogger(__name__)  # Added by cleanup
+        logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Performing differential methylation analysis")
 
         # Collect all sites
@@ -542,7 +542,7 @@ logger = logging.getLogger(__name__)  # Added by cleanup
                 )
 
         if not results:
-logger = logging.getLogger(__name__)  # Added by cleanup
+            logger = logging.getLogger(__name__)  # Added by cleanup
             logger.warning("No differential methylation sites found")
             return pd.DataFrame()
 
@@ -563,7 +563,7 @@ logger = logging.getLogger(__name__)  # Added by cleanup
         # Sort by p-value
         _results_df.sort_values("p_value", inplace=True)
 
-logger = logging.getLogger(__name__)  # Added by cleanup
+        logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info(
             "Found %sresults_df['significant'].sum() differentially methylated sites"
         )
@@ -596,7 +596,7 @@ class ChromatinAccessibilityProcessor:
         self.max_threads = max_threads
         self.gene_annotations = self._load_annotations()
 
-logger = logging.getLogger(__name__)  # Added by cleanup
+        logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Initialized ChromatinAccessibilityProcessor")
 
     def _load_annotations(self) -> dict[str, dict[str, Any]]:
@@ -623,7 +623,7 @@ logger = logging.getLogger(__name__)  # Added by cleanup
         Returns:
             EpigeneticProfile with chromatin accessibility data
         """
-logger = logging.getLogger(__name__)  # Added by cleanup
+        logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Processing ATAC-seq data for %ssample_id")
 
         try:
@@ -660,8 +660,8 @@ logger = logging.getLogger(__name__)  # Added by cleanup
                 },
             )
 
-logger = logging.getLogger(__name__)  # Added by cleanup
-            logger.info("Successfully processed %slen(annotated_peaks) chromatin peaks")
+            logger = logging.getLogger(__name__)  # Added by cleanup
+            logger.info(f"Successfully processed {len(annotated_peaks)} chromatin peaks")
             return profile
 
         except Exception as _:
@@ -675,7 +675,7 @@ logger = logging.getLogger(__name__)  # Added by cleanup
 
     def _load_peak_file(self, file_path: Path, format: str) -> pd.DataFrame:
         """Load peak file"""
-logger = logging.getLogger(__name__)  # Added by cleanup
+        logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Loading peaks from %sfile_path")
 
         if format == "narrowPeak":
@@ -705,7 +705,7 @@ logger = logging.getLogger(__name__)  # Added by cleanup
         self, input_paths: Path | list[Path], paired_end: bool
     ) -> pd.DataFrame:
         """Process FASTQ files to peaks (mock implementation)"""
-logger = logging.getLogger(__name__)  # Added by cleanup
+        logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Processing FASTQ to peaks (mock implementation)")
         return self._generate_mock_peaks()
 
@@ -832,7 +832,7 @@ logger = logging.getLogger(__name__)  # Added by cleanup
         Returns:
             DataFrame with differential peaks
         """
-logger = logging.getLogger(__name__)  # Added by cleanup
+        logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Finding differential chromatin accessibility")
 
         # This is a simplified implementation
@@ -903,7 +903,7 @@ logger = logging.getLogger(__name__)  # Added by cleanup
                 )
 
         if not results:
-logger = logging.getLogger(__name__)  # Added by cleanup
+            logger = logging.getLogger(__name__)  # Added by cleanup
             logger.warning("No differential peaks found")
             return pd.DataFrame()
 
@@ -924,7 +924,7 @@ logger = logging.getLogger(__name__)  # Added by cleanup
         # Sort by p-value
         _results_df.sort_values("p_value", inplace=True)
 
-logger = logging.getLogger(__name__)  # Added by cleanup
+        logger = logging.getLogger(__name__)  # Added by cleanup
         logger.info("Found %sresults_df['significant'].sum() differential peaks")
 
         return results_df

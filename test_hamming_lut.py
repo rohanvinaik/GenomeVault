@@ -3,8 +3,7 @@
 import numpy as np
 import torch
 
-from genomevault.hypervector.operations import (HammingLUT,
-                                                generate_popcount_lut)
+from genomevault.hypervector.operations import HammingLUT, generate_popcount_lut
 from genomevault.hypervector.operations.binding import HypervectorBinder
 from genomevault.observability.logging import configure_logging
 

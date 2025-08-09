@@ -88,9 +88,7 @@ class ConstantTimeOperations:
         return bytes(result)
 
     @staticmethod
-    def constant_time_select(
-        condition: bool, true_val: bytes, false_val: bytes
-    ) -> bytes:
+    def constant_time_select(condition: bool, true_val: bytes, false_val: bytes) -> bytes:
         """Select value based on condition in constant time."""
         # Ensure both values have same length
         max_len = max(len(true_val), len(false_val))
@@ -102,9 +100,7 @@ class ConstantTimeOperations:
         condition_byte = 0xFF if condition else 0x00
 
         for i in range(max_len):
-            result[i] = (true_val[i] & condition_byte) | (
-                false_val[i] & ~condition_byte
-            )
+            result[i] = (true_val[i] & condition_byte) | (false_val[i] & ~condition_byte)
 
         return bytes(result)
 
@@ -127,9 +123,7 @@ class TimingProtection:
 
             # Add jitter
             if self.config.jitter_ms > 0:
-                jitter = (
-                    random.uniform(-self.config.jitter_ms, self.config.jitter_ms) / 1000
-                )
+                jitter = random.uniform(-self.config.jitter_ms, self.config.jitter_ms) / 1000
                 delay += jitter
 
             if delay > 0:
@@ -246,9 +240,7 @@ class PIRServerStats:
 class SecurePIRServer:
     """Enhanced PIR server with comprehensive timing protection."""
 
-    def __init__(
-        self, backend: SupportsAnswer, config: PIRSecurityConfig | None = None
-    ):
+    def __init__(self, backend: SupportsAnswer, config: PIRSecurityConfig | None = None):
         self.backend = backend
         self.config = config or PIRSecurityConfig.from_env()
 
@@ -322,9 +314,7 @@ class SecurePIRServer:
                 response = await self._process_real_query(payload)
 
         # Apply constant-time padding
-        response = self.constant_ops.pad_response(
-            response, self.config.fixed_response_bytes
-        )
+        response = self.constant_ops.pad_response(response, self.config.fixed_response_bytes)
 
         # Add calibrated timing delay
         processing_time = time.time() - start_time
@@ -343,9 +333,7 @@ class SecurePIRServer:
 
         for cached_id, (response, timestamp) in self.response_cache.items():
             # Constant-time comparison
-            is_match = constant_time.bytes_eq(
-                cached_id.encode()[:16], query_id.encode()[:16]
-            )
+            is_match = constant_time.bytes_eq(cached_id.encode()[:16], query_id.encode()[:16])
 
             # Constant-time selection
             if is_match:
@@ -384,9 +372,7 @@ class SecurePIRServer:
         # Evict old entries if needed
         if len(self.response_cache) >= self.cache_size_limit:
             # Remove oldest entry
-            oldest_id = min(
-                self.response_cache.keys(), key=lambda k: self.response_cache[k][1]
-            )
+            oldest_id = min(self.response_cache.keys(), key=lambda k: self.response_cache[k][1])
             del self.response_cache[oldest_id]
 
         self.response_cache[query_id] = (response, time.time())
@@ -437,14 +423,10 @@ class SecurePIRServer:
 
                 # Collect batch
                 deadline = time.time() + (self.config.max_batch_wait_ms / 1000)
-                while (
-                    len(batch) < self.config.min_batch_size and time.time() < deadline
-                ):
+                while len(batch) < self.config.min_batch_size and time.time() < deadline:
                     try:
                         timeout = max(0, deadline - time.time())
-                        item = await asyncio.wait_for(
-                            self.batch_queue.get(), timeout=timeout
-                        )
+                        item = await asyncio.wait_for(self.batch_queue.get(), timeout=timeout)
                         batch.append(item)
                     except TimeoutError:
                         from genomevault.observability.logging import configure_logging
@@ -507,8 +489,7 @@ class SecurePIRServer:
             "timing_security": {
                 "variance": self.stats.timing_variance,
                 "target": self.config.timing_variance_target,
-                "achieved": self.stats.timing_variance
-                <= self.config.timing_variance_target,
+                "achieved": self.stats.timing_variance <= self.config.timing_variance_target,
             },
             "query_mixing": {
                 "total_queries": self.stats.total_queries,
@@ -545,9 +526,7 @@ class SecurePIRServer:
                 )
 
         if self.stats.cache_hit_rate < 0.3:
-            recommendations.append(
-                "Low cache hit rate. Consider increasing cache size or TTL."
-            )
+            recommendations.append("Low cache hit rate. Consider increasing cache size or TTL.")
 
         if not recommendations:
             recommendations.append("All security metrics within acceptable ranges.")

@@ -16,8 +16,9 @@ from typing import Any
 import numpy as np
 
 # Import GenomeVault modules
-from genomevault.hypervector_transform.advanced_compression import \
-    AdvancedHierarchicalCompressor
+from genomevault.hypervector_transform.advanced_compression import (
+    AdvancedHierarchicalCompressor,
+)
 from genomevault.pir.advanced.it_pir import InformationTheoreticPIR
 from genomevault.zk_proofs.advanced.recursive_snark import RecursiveSNARKProver
 from genomevault.zk_proofs.prover import Prover

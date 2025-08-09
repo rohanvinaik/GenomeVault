@@ -28,9 +28,7 @@ _LOG = get_logger(__name__)
 
 
 class ObservabilityMiddleware(BaseHTTPMiddleware):
-    async def dispatch(
-        self, request: Request, call_next: RequestResponseEndpoint
-    ) -> Response:
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         t0 = time.perf_counter()
         req_id = request.headers.get("x-request-id") or str(uuid.uuid4())
         # store in state for handlers to access
@@ -64,12 +62,8 @@ class ObservabilityMiddleware(BaseHTTPMiddleware):
         if _METRICS:
             route = request.scope.get("route")
             path_t = getattr(route, "path_format", None) or request.url.path
-            http_requests_total.labels(
-                method=request.method, path=path_t, status=str(status)
-            ).inc()
-            http_request_duration.labels(method=request.method, path=path_t).observe(
-                dt / 1000.0
-            )
+            http_requests_total.labels(method=request.method, path=path_t, status=str(status)).inc()
+            http_request_duration.labels(method=request.method, path=path_t).observe(dt / 1000.0)
 
         _LOG.info(
             "request complete",

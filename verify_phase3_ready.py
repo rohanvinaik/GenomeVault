@@ -14,9 +14,7 @@ def check_ruff_installation():
 
     # Check version
     try:
-        result = subprocess.run(
-            ["ruff", "--version"], capture_output=True, text=True, timeout=5
-        )
+        result = subprocess.run(["ruff", "--version"], capture_output=True, text=True, timeout=5)
         if result.returncode == 0:
             version = result.stdout.strip()
             print(f"✅ Ruff version: {version}")
@@ -58,12 +56,8 @@ def test_f821_detection():
                 if violations:
                     print("\\nSample violations:")
                     for i, v in enumerate(violations[:3]):
-                        file_short = v["filename"].replace(
-                            "/Users/rohanvinaik/genomevault/", ""
-                        )
-                        print(
-                            f"  {i+1}. {file_short}:{v['location']['row']} - {v['message']}"
-                        )
+                        file_short = v["filename"].replace("/Users/rohanvinaik/genomevault/", "")
+                        print(f"  {i+1}. {file_short}:{v['location']['row']} - {v['message']}")
 
                 return True
             except json.JSONDecodeError:

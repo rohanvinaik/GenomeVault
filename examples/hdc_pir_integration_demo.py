@@ -12,8 +12,12 @@ import time
 import numpy as np
 
 from genomevault.hypervector.error_handling import ErrorBudgetAllocator
-from genomevault.pir.client import (BatchedPIRQueryBuilder, GenomicQuery,
-                                    PIRClient, QueryType)
+from genomevault.pir.client import (
+    BatchedPIRQueryBuilder,
+    GenomicQuery,
+    PIRClient,
+    QueryType,
+)
 
 
 async def main():

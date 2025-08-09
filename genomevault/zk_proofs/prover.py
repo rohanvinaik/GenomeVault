@@ -5,7 +5,6 @@ Implements specialized circuits for genomic privacy.
 
 import hashlib
 import json
-import logging
 import time
 from dataclasses import dataclass
 from typing import Any
@@ -274,9 +273,7 @@ class Prover:
         start_time = time.time()
 
         # In production, would call actual PLONK prover
-        proof_data = self._simulate_proof_generation(
-            circuit, public_inputs, private_inputs
-        )
+        proof_data = self._simulate_proof_generation(circuit, public_inputs, private_inputs)
 
         generation_time = time.time() - start_time
 
@@ -328,9 +325,7 @@ class Prover:
 
         return circuit_map[circuit_name]
 
-    def _validate_inputs(
-        self, circuit: Circuit, public_inputs: dict, private_inputs: dict
-    ):
+    def _validate_inputs(self, circuit: Circuit, public_inputs: dict, private_inputs: dict):
         """Validate inputs match circuit requirements."""
         # Check public inputs
         for required_input in circuit.public_inputs:
@@ -372,9 +367,7 @@ class Prover:
             # Generic simulation
             return self._simulate_generic_proof(circuit, public_inputs)
 
-    def _simulate_variant_proof(
-        self, public_inputs: dict, private_inputs: dict
-    ) -> bytes:
+    def _simulate_variant_proof(self, public_inputs: dict, private_inputs: dict) -> bytes:
         """Simulate variant presence proof."""
         # Verify variant is in commitment
         variant_data = private_inputs["variant_data"]
@@ -417,9 +410,7 @@ class Prover:
 
         return json.dumps(proof_data).encode()[:384]
 
-    def _simulate_diabetes_proof(
-        self, public_inputs: dict, private_inputs: dict
-    ) -> bytes:
+    def _simulate_diabetes_proof(self, public_inputs: dict, private_inputs: dict) -> bytes:
         """Simulate diabetes risk alert proof."""
         # Extract values
         g = private_inputs["glucose_reading"]
@@ -504,7 +495,7 @@ class Prover:
             "aggregation_method": "recursive_snark",
         }
 
-        private_inputs = {
+        {
             "proofs": [p.proof_data for p in proofs],
             "witness_randomness": np.random.bytes(32).hex(),
         }
@@ -599,6 +590,4 @@ if __name__ == "__main__":
 
     logger.info(f"\nDiabetes risk proof generated: {diabetes_proof.proof_id}")
     logger.info(f"Proof size: {len(diabetes_proof.proof_data)} bytes")
-    print(
-        f"Verification time: {diabetes_proof.metadata['generation_time_seconds']*1000:.1f}ms"
-    )
+    print(f"Verification time: {diabetes_proof.metadata['generation_time_seconds']*1000:.1f}ms")

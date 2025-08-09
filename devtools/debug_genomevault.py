@@ -140,8 +140,7 @@ class GenomeVaultDebugger:
                     try:
                         __import__(pkg_name.replace("-", "_"))
                     except ImportError:
-                        from genomevault.observability.logging import \
-                            configure_logging
+                        from genomevault.observability.logging import configure_logging
 
                         logger = configure_logging()
                         logger.exception("Unhandled exception")

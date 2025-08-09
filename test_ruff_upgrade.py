@@ -11,9 +11,7 @@ def test_current_ruff():
     print("🔍 Testing current Ruff setup...")
 
     try:
-        result = subprocess.run(
-            ["ruff", "--version"], capture_output=True, text=True, timeout=10
-        )
+        result = subprocess.run(["ruff", "--version"], capture_output=True, text=True, timeout=10)
 
         if result.returncode == 0:
             version = result.stdout.strip()
@@ -45,9 +43,7 @@ def test_upgrade_process():
 
         # Test pip
         try:
-            result = subprocess.run(
-                ["pip", "--version"], capture_output=True, timeout=5
-            )
+            result = subprocess.run(["pip", "--version"], capture_output=True, timeout=5)
             if result.returncode == 0:
                 managers.append("pip")
         except:
@@ -55,9 +51,7 @@ def test_upgrade_process():
 
         # Test pip3
         try:
-            result = subprocess.run(
-                ["pip3", "--version"], capture_output=True, timeout=5
-            )
+            result = subprocess.run(["pip3", "--version"], capture_output=True, timeout=5)
             if result.returncode == 0:
                 managers.append("pip3")
         except:
@@ -65,9 +59,7 @@ def test_upgrade_process():
 
         # Test conda
         try:
-            result = subprocess.run(
-                ["conda", "--version"], capture_output=True, timeout=5
-            )
+            result = subprocess.run(["conda", "--version"], capture_output=True, timeout=5)
             if result.returncode == 0:
                 managers.append("conda")
         except:

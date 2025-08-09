@@ -141,8 +141,7 @@ class ModelSnapshotLogger:
             # Take last 10 IO pairs
             io_samples = self.io_buffer[-10:]
             io_sample_hashes = [
-                hashlib.sha256(f"{inp}{out}".encode()).hexdigest()[:8]
-                for inp, out in io_samples
+                hashlib.sha256(f"{inp}{out}".encode()).hexdigest()[:8] for inp, out in io_samples
             ]
 
         # Create snapshot
@@ -177,9 +176,7 @@ class ModelSnapshotLogger:
         # Clear IO buffer
         self.io_buffer = []
 
-        logger.info(
-            "Snapshot %ssnapshot_id saved: loss=%sloss:.4f, model_hash=%smodel_hash[:8]..."
-        )
+        logger.info("Snapshot %ssnapshot_id saved: loss=%sloss:.4f, model_hash=%smodel_hash[:8]...")
 
         return snapshot_id
 
@@ -258,9 +255,7 @@ class ModelSnapshotLogger:
                 curr_hv_hash = self.snapshots[i].hypervector_hash
 
                 # Simple drift metric based on hash difference
-                drift = sum(a != b for a, b in zip(prev_hv_hash, curr_hv_hash)) / len(
-                    prev_hv_hash
-                )
+                drift = sum(a != b for a, b in zip(prev_hv_hash, curr_hv_hash)) / len(prev_hv_hash)
                 drift_scores.append(drift)
 
         summary = {
@@ -269,8 +264,7 @@ class ModelSnapshotLogger:
             "snapshot_frequency": self.snapshot_frequency,
             "start_time": self.snapshots[0].timestamp,
             "end_time": self.snapshots[-1].timestamp,
-            "duration_seconds": self.snapshots[-1].timestamp
-            - self.snapshots[0].timestamp,
+            "duration_seconds": self.snapshots[-1].timestamp - self.snapshots[0].timestamp,
             "total_epochs": self.snapshots[-1].epoch,
             "merkle_root": self.get_snapshot_merkle_root(),
             "best_snapshot": {
@@ -490,7 +484,9 @@ class SnapshotVerifier:
         # Verify hashes
         for snapshot in snapshots:
             # Recompute snapshot ID
-            snapshot_data = f"{snapshot.epoch}{snapshot.step}{snapshot.weight_hash}{snapshot.timestamp}"
+            snapshot_data = (
+                f"{snapshot.epoch}{snapshot.step}{snapshot.weight_hash}{snapshot.timestamp}"
+            )
             expected_id_prefix = hashlib.sha256(snapshot_data.encode()).hexdigest()[:16]
 
             if not snapshot.snapshot_id.startswith(expected_id_prefix[:8]):

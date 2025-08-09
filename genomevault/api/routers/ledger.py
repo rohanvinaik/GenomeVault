@@ -35,6 +35,4 @@ def verify_chain():
 
 @router.get("/entries", response_model=LedgerEntriesResponse)
 def list_entries():
-    return LedgerEntriesResponse(
-        entries=[LedgerEntryModel(**e.__dict__) for e in _L.entries()]
-    )
+    return LedgerEntriesResponse(entries=[LedgerEntryModel(**e.__dict__) for e in _L.entries()])

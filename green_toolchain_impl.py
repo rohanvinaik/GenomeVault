@@ -175,19 +175,13 @@ class GreenToolchainImplementer:
                         typing_imports.append("Any")
 
                     if typing_imports:
-                        typing_import = (
-                            f"from typing import {', '.join(typing_imports)}"
-                        )
+                        typing_import = f"from typing import {', '.join(typing_imports)}"
                         lines.insert(import_insert_idx, typing_import)
                         content = "\n".join(lines)
                         modified = True
 
                 # Add logger declarations where missing
-                if (
-                    "logger." in content
-                    and "logger =" not in content
-                    and "logger:" not in content
-                ):
+                if "logger." in content and "logger =" not in content and "logger:" not in content:
                     lines = content.split("\n")
 
                     # Find where to insert logger
@@ -206,12 +200,10 @@ class GreenToolchainImplementer:
                             break
 
                 # Add -> None to functions without return type annotations
-                def_pattern = re.compile(
-                    r"^(\s*)def (\w+)\([^)]*\):(?!\s*->)", re.MULTILINE
-                )
+                def_pattern = re.compile(r"^(\s*)def (\w+)\([^)]*\):(?!\s*->)", re.MULTILINE)
 
                 def add_return_annotation(match):
-                    indent = match.group(1)
+                    match.group(1)
                     func_name = match.group(2)
                     # Skip __init__, __new__, and other special methods that typically don't need -> None
                     if func_name.startswith("__") and func_name.endswith("__"):
@@ -372,9 +364,7 @@ def test_nodeinfo_and_blockchainnode_agree():
         if success:
             print("\n🎉 Green the Toolchain implementation completed successfully!")
         else:
-            print(
-                "\n⚠️  Some validation steps failed, but core implementation is complete"
-            )
+            print("\n⚠️  Some validation steps failed, but core implementation is complete")
 
         return success
 

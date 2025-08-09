@@ -119,9 +119,7 @@ def demonstrate_diabetes_risk_assessment():
     logger.info("Verification time: {result.verification_time*1000:.1f}ms")
 
     if result.is_valid:
-        print(
-            "\n✓ Alert triggered: Patient meets both glucose AND genetic risk criteria"
-        )
+        print("\n✓ Alert triggered: Patient meets both glucose AND genetic risk criteria")
         logger.info("  (Without revealing actual values)")
 
     return proof, result
@@ -236,9 +234,7 @@ def demonstrate_pharmacogenomics():
 
     if result.is_valid:
         logger.info("\n✓ Pharmacogenomic prediction verified")
-        logger.info(
-            "  Recommendation: Consider alternative anticoagulant or dose adjustment"
-        )
+        logger.info("  Recommendation: Consider alternative anticoagulant or dose adjustment")
 
     return proof, result
 
@@ -265,9 +261,7 @@ def demonstrate_circuit_optimization():
     ]
 
     for scenario in scenarios:
-        optimal = manager.select_optimal_circuit(
-            scenario["analysis_type"], scenario["data"]
-        )
+        optimal = manager.select_optimal_circuit(scenario["analysis_type"], scenario["data"])
         logger.info("\nScenario: {scenario['analysis_type']}")
         logger.info("  Data: {scenario['data']}")
         logger.info("  Selected circuit: {optimal}")
@@ -345,9 +339,7 @@ def demonstrate_batch_operations():
     for i in range(3):
         variant = {"chr": "chr{i+1}", "pos": 1000000 + i * 1000, "re": "A", "alt": "G"}
 
-        variant_str = (
-            "{variant['chr']}:{variant['pos']}:{variant['re']}:{variant['alt']}"
-        )
+        variant_str = "{variant['chr']}:{variant['pos']}:{variant['re']}:{variant['alt']}"
 
         batch_requests.append(
             {
@@ -360,10 +352,7 @@ def demonstrate_batch_operations():
                 "private_inputs": {
                     "variant_data": variant,
                     "merkle_proof": {
-                        "path": [
-                            hashlib.sha256(b"batch_{i}_{j}").hexdigest()
-                            for j in range(20)
-                        ],
+                        "path": [hashlib.sha256(b"batch_{i}_{j}").hexdigest() for j in range(20)],
                         "indices": [j % 2 for j in range(20)],
                     },
                     "witness_randomness": np.random.bytes(32).hex(),

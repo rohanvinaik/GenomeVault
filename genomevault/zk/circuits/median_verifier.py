@@ -161,9 +161,7 @@ class MedianVerifierCircuit:
 
         # Generate proof ID
         proof_id = self.hash_function(
-            json.dumps(
-                {"median": claimed_median, "n": n, "timestamp": time.time()}
-            ).encode()
+            json.dumps({"median": claimed_median, "n": n, "timestamp": time.time()}).encode()
         ).hexdigest()[:16]
 
         logger.info(
@@ -344,16 +342,12 @@ class MedianVerifierCircuit:
             return False
 
         for proof in range_proofs:
-            if not all(
-                key in proof for key in ["index", "range", "in_range_commitment"]
-            ):
+            if not all(key in proof for key in ["index", "range", "in_range_commitment"]):
                 return False
 
         return True
 
-    def _prove_error_bound(
-        self, error: float, bound: float, challenge: bytes
-    ) -> dict[str, Any]:
+    def _prove_error_bound(self, error: float, bound: float, challenge: bytes) -> dict[str, Any]:
         """Prove that error is within bound without revealing exact error"""
         # Create a commitment to the fact that error <= bound
         is_within_bound = error <= bound
@@ -405,9 +399,7 @@ if __name__ == "__main__":
 
         logger.info(f"\nTest 2: {len(values2)} values, median = {median2}")
 
-        proof2 = circuit.generate_proof(
-            values=values2, claimed_median=median2, error_bound=0.1
-        )
+        proof2 = circuit.generate_proof(values=values2, claimed_median=median2, error_bound=0.1)
 
         is_valid2 = circuit.verify_proof(proof2)
         logger.info(f"Proof valid: {is_valid2}")

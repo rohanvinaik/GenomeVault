@@ -124,9 +124,7 @@ class PHILeakageDetector:
         try:
             with open(filepath, encoding="utf-8", errors="ignore") as f:
                 for line_num, line in enumerate(f, 1):
-                    line_findings = self._scan_line(
-                        line, line_num, str(filepath), max_context
-                    )
+                    line_findings = self._scan_line(line, line_num, str(filepath), max_context)
                     findings.extend(line_findings)
 
         except Exception:
@@ -285,9 +283,7 @@ class PHILeakageDetector:
 
         return redacted
 
-    def generate_report(
-        self, findings: list[dict[str, Any]], output_format: str = "json"
-    ) -> str:
+    def generate_report(self, findings: list[dict[str, Any]], output_format: str = "json") -> str:
         """
         Generate a PHI leakage report.
 
@@ -311,9 +307,7 @@ class PHILeakageDetector:
 
         elif output_format == "markdown":
             report = ["# PHI Leakage Detection Report\n"]
-            report.append(
-                f"**Scan Date**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
-            )
+            report.append(f"**Scan Date**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
             report.append(f"**Total Findings**: {len(findings)}\n")
 
             # Group by severity
@@ -325,15 +319,9 @@ class PHILeakageDetector:
                         f"\n## {severity.upper()} Severity ({len(by_severity[severity])})\n"
                     )
 
-                    for finding in by_severity[severity][
-                        :10
-                    ]:  # Limit to 10 per severity
-                        report.append(
-                            f"- **{finding['description']}** in `{finding['file']}`"
-                        )
-                        report.append(
-                            f"  - Line {finding['line']}: `{finding['match']}`"
-                        )
+                    for finding in by_severity[severity][:10]:  # Limit to 10 per severity
+                        report.append(f"- **{finding['description']}** in `{finding['file']}`")
+                        report.append(f"  - Line {finding['line']}: `{finding['match']}`")
                         report.append(f"  - Context: `...{finding['context']}...`\n")
 
             return "\n".join(report)
@@ -351,9 +339,7 @@ class PHILeakageDetector:
             html.append("</style></head><body>")
 
             html.append("<h1>PHI Leakage Detection Report</h1>")
-            html.append(
-                f"<p>Scan Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>"
-            )
+            html.append(f"<p>Scan Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>")
             html.append(f"<p>Total Findings: {len(findings)}</p>")
 
             by_severity = self._group_by_severity(findings)
@@ -370,9 +356,7 @@ class PHILeakageDetector:
                         html.append(
                             f"<strong>{finding['description']}</strong> in {finding['file']}<br>"
                         )
-                        html.append(
-                            f"Line {finding['line']}: <code>{finding['match']}</code><br>"
-                        )
+                        html.append(f"Line {finding['line']}: <code>{finding['match']}</code><br>")
                         html.append(f"<pre>{finding['context']}</pre>")
                         html.append("</li>")
 
@@ -384,9 +368,7 @@ class PHILeakageDetector:
         else:
             raise ValueError(f"Unknown output format: {output_format}")
 
-    def _group_by_severity(
-        self, findings: list[dict[str, Any]]
-    ) -> dict[str, list[dict[str, Any]]]:
+    def _group_by_severity(self, findings: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
         """Group findings by severity level."""
         grouped = {}
 
@@ -495,9 +477,7 @@ class RealTimePHIMonitor:
         """
         Trigger alert for PHI leakage.
         """
-        logger.critical(
-            "PHI LEAKAGE ALERT: %slen(self.findings_buffer) instances detected!"
-        )
+        logger.critical("PHI LEAKAGE ALERT: %slen(self.findings_buffer) instances detected!")
 
         # In production, would send alerts to:
         # - Security team

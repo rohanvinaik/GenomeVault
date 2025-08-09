@@ -4,10 +4,10 @@ Apply common fix patterns to GenomeVault codebase.
 This handles specific patterns like logging, f-strings, mutable defaults, etc.
 """
 
-import re
 import ast
-from pathlib import Path
 import logging
+import re
+from pathlib import Path
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)

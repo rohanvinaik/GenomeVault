@@ -245,9 +245,7 @@ class GPUBindingKernel:
             cp.copyto(self.buffers["events"][:n_events], cp.asarray(events))
 
             # Generate positions
-            positions = cp.arange(
-                start_position, start_position + n_events, dtype=cp.int32
-            )
+            positions = cp.arange(start_position, start_position + n_events, dtype=cp.int32)
             cp.copyto(self.buffers["positions"][:n_events], positions)
 
             # Step 1: Map events to k-mers
@@ -268,9 +266,7 @@ class GPUBindingKernel:
             )
 
             # Step 2: Load encoding tables from catalytic space
-            pos_table, kmer_table = await self._load_encoding_tables_async(
-                hv_encoder, stream
-            )
+            pos_table, kmer_table = await self._load_encoding_tables_async(hv_encoder, stream)
 
             # Step 3: Bind HVs
             output_hv = cp.zeros(hv_dim, dtype=cp.float32)

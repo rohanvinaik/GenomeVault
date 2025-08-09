@@ -4,10 +4,10 @@ Systematic lint fix implementation for GenomeVault codebase.
 This script applies black, ruff, and isort fixes as per the plan.
 """
 
+import logging
 import subprocess
 import sys
 from pathlib import Path
-import logging
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -111,9 +111,7 @@ def main():
     check_remaining_issues()
 
     # Step 5: Commit if there are changes
-    result = subprocess.run(
-        ["git", "status", "--porcelain"], capture_output=True, text=True
-    )
+    result = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True)
     if result.stdout.strip():
         commit_changes("style: black+ruff autofix baseline (no functional changes)")
         logger.info("Changes committed successfully")
