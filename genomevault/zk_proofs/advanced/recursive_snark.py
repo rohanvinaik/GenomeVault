@@ -13,6 +13,11 @@ from typing import Any
 
 import numpy as np
 
+from genomevault.crypto import (
+    H, hexH, TAGS,
+    pack_proof_components, be_int,
+    compress_proof, secure_bytes
+)
 from genomevault.utils.logging import get_logger
 from genomevault.utils.metrics import get_metrics
 from genomevault.zk_proofs.backends.gnark_backend import get_backend
@@ -72,7 +77,7 @@ class RecursiveSNARKProver:
     def _initialize_accumulator(self) -> dict[str, Any]:
         """Initialize cryptographic accumulator for proof aggregation."""
         return {
-            "accumulator_value": np.random.bytes(32),
+            "accumulator_value": secure_bytes(32),
             "witness_cache": {},
             "proof_count": 0,
             "last_update": time.time(),
@@ -265,7 +270,7 @@ class RecursiveSNARKProver:
             "right_proof": right.proof_data,
             "left_vk": left.verification_key,
             "right_vk": right.verification_key,
-            "witness_randomness": np.random.bytes(32).hex(),
+            "witness_randomness": secure_bytes(32).hex(),
         }
 
         # Generate composed proof
@@ -321,9 +326,9 @@ class RecursiveSNARKProver:
         else:
             # Fallback to simulation
             proof_components = {
-                "pi": np.random.bytes(192).hex(),  # Main proof
-                "recursive_commitment": np.random.bytes(32).hex(),
-                "accumulator_update": np.random.bytes(32).hex(),
+                "pi": secure_bytes(192).hex(),  # Main proof
+                "recursive_commitment": secure_bytes(32).hex(),
+                "accumulator_update": secure_bytes(32).hex(),
                 "circuit_digest": hashlib.sha256(
                     json.dumps(circuit, sort_keys=True).encode()
                 ).hexdigest(),
@@ -359,18 +364,21 @@ class RecursiveSNARKProver:
         """Generate proof of correct accumulator construction."""
         # Prove that final_acc correctly accumulates all proofs
 
+        # Use canonical commitment
+        witness_commitment = H(TAGS["PROOF_ID"], b"".join(w for w in witnesses))
+
         proof_components = {
-            "final_accumulator": final_acc.hex(),
-            "batch_proof": {
-                "commitment": hashlib.sha256(b"".join(w for w in witnesses)).hexdigest(),
-                "challenge": np.random.bytes(32).hex(),
-                "response": np.random.bytes(128).hex(),
-            },
-            "proof_count": len(proofs),
-            "timestamp": time.time(),
+            "final_accumulator": final_acc,
+            "commitment": witness_commitment,
+            "challenge": secure_bytes(32),
+            "response": secure_bytes(128),
+            "proof_count": be_int(len(proofs), 4),
+            "timestamp": be_int(int(time.time()), 8),
         }
 
-        return json.dumps(proof_components).encode()[:512]
+        # Use canonical serialization and compression (no truncation!)
+        packed = pack_proof_components(proof_components)
+        return compress_proof(packed)
 
     def _aggregate_public_inputs(self, proofs: list[Proof]) -> dict[str, Any]:
         """Aggregate public inputs from multiple proofs."""
@@ -431,17 +439,41 @@ class RecursiveSNARKProver:
             ),
         }
 
-        return hashlib.sha256(json.dumps(proof_data, sort_keys=True).encode()).hexdigest()
+        # Use canonical serialization
+        components = {}
+        for k, v in proof_data.items():
+            if isinstance(v, (int, float)):
+                components[k] = be_int(int(v), 8)
+            elif isinstance(v, str):
+                components[k] = v.encode()
+            elif isinstance(v, bytes):
+                components[k] = v
+            else:
+                components[k] = str(v).encode()
+
+        packed = pack_proof_components(components)
+        return hexH(TAGS["PROOF_ID"], packed)
 
     def _generate_proof_id(self, proofs: list[Proof]) -> str:
         """Generate ID for recursive proof."""
         content = {
             "sub_proof_ids": sorted([p.proof_id for p in proofs]),
             "timestamp": time.time(),
-            "nonce": np.random.bytes(8).hex(),
+            "nonce": secure_bytes(8).hex(),
         }
 
-        return hashlib.sha256(json.dumps(content, sort_keys=True).encode()).hexdigest()[:16]
+        # Use canonical serialization for proof ID
+        components = {
+            "proof_count": be_int(len(proofs), 4),
+            "timestamp": be_int(int(time.time()), 8),
+            "nonce": secure_bytes(8),
+        }
+        # Add proof IDs for uniqueness
+        for i, proof in enumerate(proofs[:10]):  # Limit to prevent unbounded growth
+            components[f"proof_{i}"] = proof.proof_id.encode()
+
+        packed = pack_proof_components(components)
+        return hexH(TAGS["PROOF_ID"], packed)[:16]
 
     def _wrap_single_proof(self, proof: Proof) -> RecursiveProof:
         """Wrap single proof as recursive proof."""
@@ -521,7 +553,7 @@ if __name__ == "__main__":
                 "merkle_proofs": [
                     hashlib.sha256(f"proof_{j}".encode()).hexdigest() for j in range(20)
                 ],
-                "witness_randomness": np.random.bytes(32).hex(),
+                "witness_randomness": secure_bytes(32).hex(),
             },
         )
         proofs.append(proof)

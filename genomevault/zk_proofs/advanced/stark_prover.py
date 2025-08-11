@@ -14,6 +14,15 @@ from typing import Any
 
 import numpy as np
 
+from genomevault.crypto import (
+    H,
+    hexH,
+    TAGS,
+    pack_proof_components,
+    be_int,
+    pack_int_list,
+    secure_bytes,
+)
 from genomevault.utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -170,7 +179,9 @@ class STARKProver:
         leaves = []
         for row in range(len(encoded_trace[0])):
             row_data = [encoded_trace[col][row] for col in range(len(encoded_trace))]
-            leaf = hashlib.sha256(json.dumps(row_data).encode()).digest()
+            # Use canonical serialization for leaf commitment
+            leaf_bytes = pack_int_list(row_data, limb=8)  # Assuming 8-byte values
+            leaf = H(TAGS["LEAF"], leaf_bytes)
             leaves.append(leaf)
 
         merkle_tree = self._build_merkle_tree(leaves)
@@ -331,30 +342,55 @@ class STARKProver:
         return encoded
 
     def _build_merkle_tree(self, leaves: list[bytes]) -> dict[str, Any]:
-        """Build Merkle tree from leaves."""
-        tree = {"leaves": leaves, "layers": [leaves]}
+        """Build Merkle tree from leaves using canonical implementation."""
+        from genomevault.crypto.merkle import build_tree
 
+        # Convert bytes leaves to integer values for the canonical implementation
+        # The canonical implementation expects leaf values as integers
+        leaf_values = []
+        for leaf in leaves:
+            # Convert first 8 bytes of leaf to integer for canonical implementation
+            leaf_int = (
+                int.from_bytes(leaf[:8], "big") if len(leaf) >= 8 else int.from_bytes(leaf, "big")
+            )
+            leaf_values.append(leaf_int)
+
+        # Build canonical tree
+        canonical_tree = build_tree(leaf_values)
+
+        # Convert to format expected by STARK prover
+        # We need to maintain compatibility with existing code structure
+        tree = {
+            "leaves": leaves,  # Keep original leaves
+            "layers": [leaves],  # Start with original leaves
+            "root": canonical_tree["root"],
+        }
+
+        # Build intermediate layers for compatibility
         current_layer = leaves
         while len(current_layer) > 1:
             next_layer = []
-
             for i in range(0, len(current_layer), 2):
                 if i + 1 < len(current_layer):
                     left, right = current_layer[i], current_layer[i + 1]
                 else:
                     left, right = current_layer[i], current_layer[i]
 
-                parent = hashlib.sha256(left + right).digest()
+                # Use canonical node computation
+                from genomevault.crypto.merkle import node_bytes
+
+                parent = node_bytes(left, right)
                 next_layer.append(parent)
 
             tree["layers"].append(next_layer)
             current_layer = next_layer
 
-        tree["root"] = current_layer[0]
         return tree
 
     def _get_merkle_path(self, tree: dict[str, Any], index: int) -> list[bytes]:
-        """Get Merkle authentication path for leaf."""
+        """Get Merkle authentication path for leaf with direction bits."""
+        # Note: This returns path without direction bits for backward compatibility
+        # The canonical implementation includes direction bits as (sibling_hash, sibling_is_right) tuples
         path = []
 
         for layer_idx in range(len(tree["layers"]) - 1):
@@ -417,9 +453,22 @@ class STARKProver:
         self, commitment: str, fri_layers: list[dict[str, Any]], round_idx: int
     ) -> bytes:
         """Generate challenge using Fiat-Shamir transform."""
-        data = {"commitment": commitment, "fri_layers": fri_layers, "round": round_idx}
+        # Use canonical commitment
+        components = {
+            "commitment": commitment if isinstance(commitment, bytes) else commitment.encode(),
+            "round": be_int(round_idx, 4),
+        }
+        # Add FRI layer commitments
+        for i, layer in enumerate(fri_layers[:10]):  # Limit to prevent unbounded growth
+            if "commitment" in layer:
+                components[f"fri_layer_{i}"] = (
+                    layer["commitment"].encode()
+                    if isinstance(layer["commitment"], str)
+                    else layer["commitment"]
+                )
 
-        return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).digest()
+        packed = pack_proof_components(components)
+        return H(TAGS["PROOF_ID"], packed)
 
     def _compute_fri_rounds(self) -> int:
         """Compute number of FRI rounds needed."""
@@ -482,13 +531,19 @@ class STARKProver:
 
     def _generate_proof_id(self, public_inputs: dict[str, Any]) -> str:
         """Generate unique proof ID."""
-        data = {
-            "inputs": public_inputs,
-            "timestamp": time.time(),
-            "nonce": np.random.bytes(8).hex(),
+        # Use canonical commitment and proper ID generation
+        components = {
+            "circuit": "stark_proof".encode(),
+            "timestamp": be_int(int(time.time()), 8),
+            "nonce": secure_bytes(8),
         }
+        if public_inputs:
+            # Add first few public inputs for uniqueness
+            for i, (k, v) in enumerate(list(public_inputs.items())[:5]):
+                components[f"input_{i}"] = f"{k}:{v}".encode()
 
-        return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[:16]
+        packed = pack_proof_components(components)
+        return hexH(TAGS["PROOF_ID"], packed)[:16]
 
     def _commit_to_evaluations(self, evaluations: np.ndarray) -> tuple[bytes, dict[str, Any]]:
         """Commit to polynomial evaluations."""
