@@ -9,6 +9,7 @@ Provides unconditional privacy guarantees without computational assumptions.
 import hashlib
 import json
 import logging
+import os
 import time
 from dataclasses import dataclass
 from typing import Any
@@ -222,7 +223,7 @@ class InformationTheoreticPIR:
         data = {
             "index": index,
             "timestamp": time.time(),
-            "nonce": np.random.bytes(8).hex(),
+            "nonce": os.urandom(8).hex(),
         }
 
         return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[:16]

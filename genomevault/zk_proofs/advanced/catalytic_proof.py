@@ -9,6 +9,7 @@ Implements catalytic computation to reduce memory requirements.
 import hashlib
 import json
 import logging
+import os
 import time
 from dataclasses import dataclass
 from typing import Any
@@ -53,7 +54,15 @@ class CatalyticSpace:
             size: Size of catalytic space in bytes
         """
         self.size = size
-        self.data = np.random.bytes(size)  # Random initial state
+        # FIXED: Use bytearray for mutable buffer and cryptographically secure randomness
+        import os
+
+        # Initialize with secure random data
+        initial_data = os.urandom(size)
+        # Use bytearray for mutability
+        self.data = bytearray(initial_data)
+        # Store a copy of initial state for proper reset
+        self.initial_data = bytes(initial_data)  # Immutable copy for restoration
         self.initial_fingerprint = self._compute_fingerprint()
         self.access_count = 0
         self.modification_count = 0
@@ -85,17 +94,22 @@ class CatalyticSpace:
         Returns:
             True if successfully reset
         """
-        # In real implementation, would restore exact initial state
-        # For now, verify fingerprint matches
+        # FIXED: Properly restore the exact initial state
         current_fingerprint = self._compute_fingerprint()
 
         if current_fingerprint != self.initial_fingerprint:
             logger.warning(f"Catalytic space modified: {self.modification_count} writes")
-            # Restore initial state (simplified)
-            self.data = np.random.bytes(self.size)
+            # Restore to exact initial state
+            self.data = bytearray(self.initial_data)
 
         self.access_count = 0
         self.modification_count = 0
+
+        # Verify restoration was successful
+        restored_fingerprint = self._compute_fingerprint()
+        if restored_fingerprint != self.initial_fingerprint:
+            logger.error("Failed to restore catalytic space to initial state")
+            return False
 
         return True
 
@@ -141,9 +155,9 @@ class CatalyticProofEngine:
         }
 
         logger.info(
-            "CatalyticProofEngine initialized: "
-            "clean=%sclean_space_limit / 1024:.1fKB, "
-            "catalytic=%scatalytic_space_size / 1024 / 1024:.1fMB"
+            f"CatalyticProofEngine initialized: "
+            f"clean={clean_space_limit / 1024:.1f}KB, "
+            f"catalytic={catalytic_space_size / 1024 / 1024:.1f}MB"
         )
 
     def _allocate_clean_space(self, size: int) -> bytearray:
@@ -209,9 +223,9 @@ class CatalyticProofEngine:
         )
 
         logger.info(
-            "Generated catalytic proof %sproof.proof_id: "
-            "clean_space=%sclean_space_used / 1024:.1fKB, "
-            "efficiency=%sproof.space_efficiency:.1fx"
+            f"Generated catalytic proof {proof.proof_id}: "
+            f"clean_space={clean_space_used / 1024:.1f}KB, "
+            f"efficiency={proof.space_efficiency:.1f}x"
         )
 
         return proof
@@ -474,7 +488,7 @@ class CatalyticProofEngine:
             "circuit": circuit_name,
             "public": public_inputs,
             "timestamp": time.time(),
-            "nonce": np.random.bytes(8).hex(),
+            "nonce": os.urandom(8).hex(),
         }
 
         return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[:16]
@@ -527,12 +541,12 @@ if __name__ == "__main__":
         private_inputs={
             "variant_data": {"chr": "chr1", "pos": 12345, "ref": "A", "alt": "G"},
             "merkle_proof": [hashlib.sha256(f"node_{i}".encode()).hexdigest() for i in range(20)],
-            "witness_randomness": np.random.bytes(32).hex(),
+            "witness_randomness": os.urandom(32).hex(),
         },
     )
 
     logger.info(f"Proof ID: {variant_proof.proof_id}")
-    logger.info(f"Clean space used: {variant_proof.clean_space_used} / 1024:.1f KB")
+    logger.info(f"Clean space used: {variant_proof.clean_space_used / 1024:.1f} KB")
     logger.info(f"Space efficiency: {variant_proof.space_efficiency:.1fx}")
 
     savings = engine.get_space_savings("variant_presence")
@@ -559,14 +573,14 @@ if __name__ == "__main__":
             "variants": np.random.randint(0, 2, num_variants).tolist(),
             "weights": np.random.rand(num_variants).tolist(),
             "merkle_proofs": [hashlib.sha256(f"proof_{i}".encode()).hexdigest() for i in range(20)],
-            "witness_randomness": np.random.bytes(32).hex(),
+            "witness_randomness": os.urandom(32).hex(),
         },
     )
 
     logger.info(f"Proof ID: {prs_proof.proof_id}")
-    logger.info(f"Clean space used: {prs_proof.clean_space_used} / 1024:.1f KB")
+    logger.info(f"Clean space used: {prs_proof.clean_space_used / 1024:.1f} KB")
     logger.info(f"Space efficiency: {prs_proof.space_efficiency:.1fx}")
-    logger.info(f"Computation time: {prs_proof.metadata['computation_time']} * 1000:.1f ms")
+    logger.info(f"Computation time: {prs_proof.metadata['computation_time'] * 1000:.1f} ms")
 
     savings = engine.get_space_savings("polygenic_risk_score")
     logger.info("\nSpace savings:")
@@ -577,8 +591,8 @@ if __name__ == "__main__":
     # Show catalytic space statistics
     logger.info("\nCatalytic space statistics:")
     stats = engine.catalytic_space.get_usage_stats()
-    logger.info(f"  Total size: {stats['size']} / 1024 / 1024:.1f MB")
+    logger.info(f"  Total size: {stats['size'] / 1024 / 1024:.1f} MB")
     logger.info(f"  Access count: {stats['access_count']}")
     logger.info(
-        "  State preserved: %sstats['fingerprint'] == engine.catalytic_space.initial_fingerprint"
+        f"  State preserved: {stats['fingerprint'] == engine.catalytic_space.initial_fingerprint}"
     )

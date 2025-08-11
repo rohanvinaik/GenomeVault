@@ -5,11 +5,13 @@ Implements the diabetes risk assessment system with:
 - Combined genetic risk score (PRS) and glucose monitoring
 - Zero-knowledge proofs for privacy-preserving alerts
 - HIPAA-compliant data handling
+"""
 
 from __future__ import annotations
 
 import hashlib
 import logging
+import os
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import Any
@@ -233,7 +235,7 @@ class DiabetesRiskCalculator:
         private_inputs = {
             "glucose_reading": glucose,
             "risk_score": prs,
-            "witness_randomness": np.random.bytes(32).hex(),
+            "witness_randomness": os.urandom(32).hex(),
         }
 
         # Generate proof
