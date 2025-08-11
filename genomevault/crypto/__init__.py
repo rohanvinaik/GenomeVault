@@ -28,6 +28,8 @@ from genomevault.crypto.types import (
     Response,
 )
 
+from genomevault.crypto.commit import H, hexH, TAGS
+
 __all__ = [
     "PublicKey",
     "PrivateKey",
@@ -54,4 +56,7 @@ __all__ = [
     "Commitment",
     "Challenge",
     "Response",
+    "H",
+    "hexH",
+    "TAGS",
 ]
