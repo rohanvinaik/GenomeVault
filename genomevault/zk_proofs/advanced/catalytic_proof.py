@@ -130,6 +130,55 @@ class CatalyticProofEngine:
     can solve problems with less clean space.
     """
 
+    def _decompress_proof_data(self, compressed_data: bytes) -> dict[str, Any]:
+        """
+        Decompress proof data that was compressed to avoid truncation.
+
+        FIXED: Added decompression support for the new compressed proof format.
+        Handles CPROOF (compressed proof) and CSEG (compressed segment) formats.
+        """
+        import zlib
+        import json
+
+        # Check for compressed format headers
+        if compressed_data.startswith(b"CPROOF") or compressed_data.startswith(b"CSEG"):
+            # Extract header type, original size and compressed data
+            header = (
+                compressed_data[:6]
+                if compressed_data.startswith(b"CPROOF")
+                else compressed_data[:4]
+            )
+            prefix_len = len(header)
+
+            original_size = int.from_bytes(compressed_data[prefix_len : prefix_len + 4], "big")
+            compressed_part = compressed_data[prefix_len + 4 :]
+
+            # Decompress
+            try:
+                decompressed = zlib.decompress(compressed_part)
+
+                # Verify size matches
+                if len(decompressed) != original_size:
+                    logger.warning(
+                        f"Decompressed size mismatch: expected {original_size}, "
+                        f"got {len(decompressed)}"
+                    )
+
+                # Parse JSON
+                return json.loads(decompressed.decode("utf-8"))
+
+            except (zlib.error, json.JSONDecodeError) as e:
+                logger.error(f"Failed to decompress/parse proof: {e}")
+                return {}
+        else:
+            # Try to parse as uncompressed JSON (backward compatibility)
+            try:
+                return json.loads(compressed_data.decode("utf-8"))
+            except (json.JSONDecodeError, UnicodeDecodeError):
+                # If it's not JSON, might be raw binary proof
+                logger.debug("Proof data is not compressed JSON, treating as raw binary")
+                return {"raw_proof": compressed_data.hex()}
+
     def __init__(
         self,
         clean_space_limit: int = 1024 * 1024,  # 1MB clean space
@@ -336,7 +385,15 @@ class CatalyticProofEngine:
             "catalytic_verification": True,
         }
 
-        proof_data = json.dumps(proof_components).encode()[:256]
+        # FIXED: Never truncate proof data - use compression instead
+        import zlib
+
+        proof_json = json.dumps(proof_components, sort_keys=True, separators=(",", ":"))
+        proof_data_raw = proof_json.encode("utf-8")
+
+        # Add compression with header for decompression
+        compressed = zlib.compress(proof_data_raw, level=9)
+        proof_data = b"CPROOF" + len(proof_data_raw).to_bytes(4, "big") + compressed
 
         return proof_data, clean_used
 
@@ -393,7 +450,15 @@ class CatalyticProofEngine:
             "batch_size": batch_size,
         }
 
-        proof_data = json.dumps(proof_components).encode()[:384]
+        # FIXED: Never truncate proof data - use compression instead
+        import zlib
+
+        proof_json = json.dumps(proof_components, sort_keys=True, separators=(",", ":"))
+        proof_data_raw = proof_json.encode("utf-8")
+
+        # Add compression with header for decompression
+        compressed = zlib.compress(proof_data_raw, level=9)
+        proof_data = b"CPROOF" + len(proof_data_raw).to_bytes(4, "big") + compressed
 
         return proof_data, clean_used
 
@@ -423,7 +488,24 @@ class CatalyticProofEngine:
 
             # Use catalytic space for segment comparisons
             segment_data = genome_segments[i]
-            segment_bytes = str(segment_data).encode()[:1024]
+            # FIXED: Never truncate segment data - use compression if needed
+            import zlib
+
+            segment_str = json.dumps(segment_data, sort_keys=True, separators=(",", ":"))
+            segment_raw = segment_str.encode("utf-8")
+
+            # If segment is too large, compress it
+            if len(segment_raw) > 1024:
+                compressed = zlib.compress(segment_raw, level=9)
+                segment_bytes = b"CSEG" + len(segment_raw).to_bytes(4, "big") + compressed
+            else:
+                segment_bytes = segment_raw
+
+            # Ensure we don't exceed allocated space
+            if len(segment_bytes) > 1024:
+                # Even compressed it's too large - store a hash reference instead
+                segment_hash = hashlib.sha256(segment_raw).digest()
+                segment_bytes = b"HASH" + segment_hash
 
             self.catalytic_space.write(
                 panel_offset + (i % 1000) * 1024, segment_bytes.ljust(1024, b"\0")
@@ -445,7 +527,15 @@ class CatalyticProofEngine:
             "catalytic_usage": "reference_panel",
         }
 
-        proof_data = json.dumps(proof_components).encode()[:512]
+        # FIXED: Never truncate proof data - use compression instead
+        import zlib
+
+        proof_json = json.dumps(proof_components, sort_keys=True, separators=(",", ":"))
+        proof_data_raw = proof_json.encode("utf-8")
+
+        # Add compression with header for decompression
+        compressed = zlib.compress(proof_data_raw, level=9)
+        proof_data = b"CPROOF" + len(proof_data_raw).to_bytes(4, "big") + compressed
 
         return proof_data, clean_used
 
@@ -519,7 +609,15 @@ class CatalyticProofEngine:
             "catalytic_storage": "expression_matrix",
         }
 
-        proof_data = json.dumps(proof_components).encode()[:512]
+        # FIXED: Never truncate proof data - use compression instead
+        import zlib
+
+        proof_json = json.dumps(proof_components, sort_keys=True, separators=(",", ":"))
+        proof_data_raw = proof_json.encode("utf-8")
+
+        # Add compression with header for decompression
+        compressed = zlib.compress(proof_data_raw, level=9)
+        proof_data = b"CPROOF" + len(proof_data_raw).to_bytes(4, "big") + compressed
 
         return proof_data, clean_used
 
