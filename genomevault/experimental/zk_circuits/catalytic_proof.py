@@ -9,6 +9,7 @@ Implements catalytic computation to reduce memory requirements.
 import hashlib
 import json
 import logging
+import os
 import time
 from dataclasses import dataclass
 from typing import Any
@@ -53,10 +54,15 @@ class CatalyticSpace:
             size: Size of catalytic space in bytes
         """
         self.size = size
-        # FIXED: Use cryptographically secure randomness
+        # FIXED: Use bytearray for mutable buffer and cryptographically secure randomness
         import os
 
-        self.data = os.urandom(size)  # Random initial state
+        # Initialize with secure random data
+        initial_data = os.urandom(size)
+        # Use bytearray for mutability
+        self.data = bytearray(initial_data)
+        # Store a copy of initial state for proper reset
+        self.initial_data = bytes(initial_data)  # Immutable copy for restoration
         self.initial_fingerprint = self._compute_fingerprint()
         self.access_count = 0
         self.modification_count = 0
@@ -88,20 +94,22 @@ class CatalyticSpace:
         Returns:
             True if successfully reset
         """
-        # In real implementation, would restore exact initial state
-        # For now, verify fingerprint matches
+        # FIXED: Properly restore the exact initial state
         current_fingerprint = self._compute_fingerprint()
 
         if current_fingerprint != self.initial_fingerprint:
             logger.warning(f"Catalytic space modified: {self.modification_count} writes")
-            # Restore initial state (simplified)
-            # FIXED: Use cryptographically secure randomness
-            import os
-
-            self.data = os.urandom(self.size)
+            # Restore to exact initial state
+            self.data = bytearray(self.initial_data)
 
         self.access_count = 0
         self.modification_count = 0
+
+        # Verify restoration was successful
+        restored_fingerprint = self._compute_fingerprint()
+        if restored_fingerprint != self.initial_fingerprint:
+            logger.error("Failed to restore catalytic space to initial state")
+            return False
 
         return True
 

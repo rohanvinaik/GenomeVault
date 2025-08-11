@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import time
 from dataclasses import dataclass, field
 from typing import Any
@@ -635,7 +636,6 @@ class CircuitManager:
 
     def _generate_test_data(self, circuit_name: str) -> dict[str, Any]:
         """Generate test data for benchmarking."""
-        import numpy as np
 
         if circuit_name == "variant_presence":
             return {
@@ -657,7 +657,7 @@ class CircuitManager:
                         ],
                         "indices": [i % 2 for i in range(20)],
                     },
-                    "witness_randomness": np.random.bytes(32).hex(),
+                    "witness_randomness": os.urandom(32).hex(),
                 },
             }
 
@@ -671,7 +671,7 @@ class CircuitManager:
                 "private_inputs": {
                     "glucose_reading": 140,
                     "risk_score": 0.82,
-                    "witness_randomness": np.random.bytes(32).hex(),
+                    "witness_randomness": os.urandom(32).hex(),
                 },
             }
 
@@ -679,5 +679,5 @@ class CircuitManager:
             # Generic test data
             return {
                 "public_inputs": {},
-                "private_inputs": {"witness_randomness": np.random.bytes(32).hex()},
+                "private_inputs": {"witness_randomness": os.urandom(32).hex()},
             }
