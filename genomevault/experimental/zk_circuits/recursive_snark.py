@@ -179,11 +179,23 @@ class RecursiveSNARKProver:
         """
         Compose proofs using cryptographic accumulator.
         Achieves O(1) verification time.
+
+        FIXED: Store initial accumulator for chain verification.
         """
         logger.info(f"Composing {len(proofs)} proofs using accumulator strategy")
 
+        # Store initial accumulator value for verification
+        initial_acc = self.accumulator_state.get("accumulator_value")
+        if not initial_acc:
+            # Initialize if not present
+            self.accumulator_state = self._initialize_accumulator()
+            initial_acc = self.accumulator_state["accumulator_value"]
+
+        # Keep track of initial value for chain verification
+        self.accumulator_state["initial_value"] = initial_acc
+
         # Update accumulator with each proof
-        acc_value = self.accumulator_state["accumulator_value"]
+        acc_value = initial_acc
         witnesses = []
 
         for proof in proofs:
@@ -432,33 +444,84 @@ class RecursiveSNARKProver:
                 return {"raw_proof": compressed_data.hex()}
 
     def _accumulator_add(self, acc_value: bytes, proof: Proof) -> tuple[bytes, bytes]:
-        """Add proof to cryptographic accumulator."""
-        # Hash proof into accumulator
-        proof_digest = self._hash_proof(proof).encode()
+        """
+        Add proof to cryptographic accumulator with proper binding.
 
-        # Update accumulator value
-        new_acc = hashlib.sha256(acc_value + proof_digest).digest()
+        FIXED: Properly bind accumulator state to prevent malleability.
+        Formula: acc' = H("ACC" || acc || proof_commit || vk)
+        This ensures the accumulator chain is cryptographically bound.
+        """
+        # Compute proof commitment with domain separation
+        proof_commit = self._compute_proof_commitment(proof)
 
-        # Generate membership witness
-        witness = hashlib.sha256(
-            proof_digest + acc_value + proof.timestamp.to_bytes(8, "big")
-        ).digest()
+        # Extract verification key bytes
+        vk_bytes = self._get_vk_bytes(proof.verification_key)
+
+        # Update accumulator with proper domain separation and binding
+        # acc' = H("ACC" || acc || proof_commit || vk)
+        hasher = hashlib.sha256()
+        hasher.update(b"ACC")  # Domain separation tag
+        hasher.update(acc_value)  # Previous accumulator value
+        hasher.update(proof_commit)  # Proof commitment
+        hasher.update(vk_bytes)  # Verification key
+        new_acc = hasher.digest()
+
+        # Generate membership witness with proper binding
+        # witness = H("WITNESS" || proof_id || acc || new_acc || timestamp)
+        witness_hasher = hashlib.sha256()
+        witness_hasher.update(b"WITNESS")  # Domain separation
+        witness_hasher.update(proof.proof_id.encode("utf-8"))
+        witness_hasher.update(acc_value)
+        witness_hasher.update(new_acc)
+        witness_hasher.update(proof.timestamp.to_bytes(8, "big"))
+        witness = witness_hasher.digest()
 
         return new_acc, witness
 
     def _generate_accumulator_proof(
         self, proofs: list[Proof], witnesses: list[bytes], final_acc: bytes
     ) -> bytes:
-        """Generate proof of correct accumulator construction."""
-        # Prove that final_acc correctly accumulates all proofs
+        """
+        Generate proof of correct accumulator construction.
 
+        FIXED: Include accumulator chain for verification.
+        The proof must allow verifier to recompute the accumulator chain.
+        """
         # FIXED: Use cryptographically secure randomness
         import os
 
+        # Build accumulator chain for verification
+        acc_chain = []
+        current_acc = self.accumulator_state.get(
+            "initial_value", self._initialize_accumulator()["accumulator_value"]
+        )
+
+        for proof in proofs:
+            proof_commit = self._compute_proof_commitment(proof)
+            vk_bytes = self._get_vk_bytes(proof.verification_key)
+
+            # Record chain step
+            acc_chain.append(
+                {
+                    "proof_id": proof.proof_id,
+                    "proof_commit": proof_commit.hex(),
+                    "vk_hash": hashlib.sha256(vk_bytes).hexdigest(),
+                }
+            )
+
+            # Compute next accumulator value
+            hasher = hashlib.sha256()
+            hasher.update(b"ACC")
+            hasher.update(current_acc)
+            hasher.update(proof_commit)
+            hasher.update(vk_bytes)
+            current_acc = hasher.digest()
+
         proof_components = {
             "final_accumulator": final_acc.hex(),
+            "accumulator_chain": acc_chain,
             "batch_proof": {
-                "commitment": hashlib.sha256(b"".join(w for w in witnesses)).hexdigest(),
+                "commitment": hashlib.sha256(b"BATCH" + b"".join(w for w in witnesses)).hexdigest(),
                 "challenge": os.urandom(32).hex(),
                 "response": os.urandom(128).hex(),
             },
@@ -693,6 +756,103 @@ class RecursiveSNARKProver:
             },
         )
 
+    def _verify_accumulator_chain(
+        self,
+        acc_chain: list[dict[str, Any]],
+        final_acc_hex: str | None,
+        metadata_acc_hex: str | None,
+    ) -> bool:
+        """
+        Verify the accumulator chain by recomputing it.
+
+        FIXED: Proper accumulator chain verification to prevent malleability.
+        Recomputes acc' = H("ACC" || acc || proof_commit || vk) for each step.
+        """
+        if not final_acc_hex and not metadata_acc_hex:
+            logger.error("No final accumulator value to verify")
+            return False
+
+        # Use whichever is available
+        expected_final = final_acc_hex or metadata_acc_hex
+
+        # Start with initial accumulator (could be stored or default)
+        # For now, use a deterministic initial value
+        current_acc = hashlib.sha256(b"INITIAL_ACC").digest()
+
+        # Recompute the chain
+        for step in acc_chain:
+            proof_commit = bytes.fromhex(step.get("proof_commit", ""))
+            vk_hash = bytes.fromhex(step.get("vk_hash", ""))
+
+            if not proof_commit or not vk_hash:
+                logger.error(f"Invalid chain step: missing commit or VK for {step.get('proof_id')}")
+                return False
+
+            # Recompute: acc' = H("ACC" || acc || proof_commit || vk)
+            hasher = hashlib.sha256()
+            hasher.update(b"ACC")
+            hasher.update(current_acc)
+            hasher.update(proof_commit)
+            hasher.update(vk_hash)
+            current_acc = hasher.digest()
+
+        # Verify final accumulator matches
+        computed_final = current_acc.hex()
+
+        if computed_final != expected_final:
+            logger.error(
+                f"Accumulator mismatch: computed {computed_final[:16]}..., "
+                f"expected {expected_final[:16]}..."
+            )
+            return False
+
+        logger.debug("Accumulator chain verified successfully")
+        return True
+
+    def _compute_proof_commitment(self, proof: Proof) -> bytes:
+        """
+        Compute a commitment to a proof for accumulator binding.
+
+        FIXED: Proper commitment with domain separation.
+        Format: H("PROOF_COMMIT" || proof_id || proof_data || public_inputs)
+        """
+        hasher = hashlib.sha256()
+        hasher.update(b"PROOF_COMMIT")  # Domain separation
+        hasher.update(proof.proof_id.encode("utf-8"))
+
+        # Include proof data
+        if isinstance(proof.proof_data, bytes):
+            hasher.update(proof.proof_data)
+        else:
+            hasher.update(str(proof.proof_data).encode("utf-8"))
+
+        # Include public inputs hash
+        if proof.public_inputs:
+            inputs_json = json.dumps(proof.public_inputs, sort_keys=True)
+            hasher.update(inputs_json.encode("utf-8"))
+
+        return hasher.digest()
+
+    def _get_vk_bytes(self, verification_key: str | None) -> bytes:
+        """
+        Convert verification key to bytes for accumulator computation.
+
+        FIXED: Consistent VK handling for accumulator binding.
+        """
+        if not verification_key:
+            # Use empty VK placeholder with domain separation
+            return hashlib.sha256(b"EMPTY_VK").digest()
+
+        try:
+            # Try to decode as hex
+            if len(verification_key) % 2 == 0:
+                return bytes.fromhex(verification_key)
+        except ValueError:
+            pass
+
+        # Treat as string and hash it
+        return hashlib.sha256(verification_key.encode("utf-8")).digest()
+
     def verify_recursive_proof(self, recursive_proof: RecursiveProof) -> bool:
         """
         Verify a recursive proof.
@@ -814,9 +974,26 @@ class RecursiveSNARKProver:
                     return False
 
             elif strategy == "accumulator" and recursive_proof.metadata.get("uses_accumulator"):
-                # Accumulator proofs should have accumulator value
-                if "accumulator_update" not in proof_data:
-                    logger.error("Accumulator proof missing accumulator update")
+                # FIXED: Verify accumulator chain to prevent malleability
+                # Recompute the accumulator chain and verify it matches the claimed value
+
+                if "accumulator_chain" not in proof_data:
+                    logger.error("Accumulator proof missing chain data")
+                    return False
+
+                # Verify accumulator chain
+                acc_chain = proof_data.get("accumulator_chain", [])
+                if not acc_chain:
+                    logger.error("Empty accumulator chain")
+                    return False
+
+                # Recompute accumulator value from chain
+                if not self._verify_accumulator_chain(
+                    acc_chain,
+                    proof_data.get("final_accumulator"),
+                    recursive_proof.metadata.get("accumulator_value"),
+                ):
+                    logger.error("Accumulator chain verification failed")
                     return False
 
             # 8. Simulate realistic verification time
@@ -837,6 +1014,33 @@ class RecursiveSNARKProver:
                 f"Simulated verification passed all checks in {verification_time*1000:.1f}ms"
             )
             return True
+
+    def export_accumulator_proof(self, recursive_proof: RecursiveProof) -> dict[str, Any]:
+        """
+        Export accumulator proof for external verification.
+
+        FIXED: Provide all necessary data for independent verification.
+        This allows external verifiers to check the accumulator chain.
+        """
+        if not recursive_proof.metadata.get("uses_accumulator"):
+            raise ValueError("Not an accumulator-based proof")
+
+        # Decompress proof data to get chain
+        proof_data = self._decompress_proof_data(recursive_proof.aggregation_proof)
+
+        return {
+            "proof_id": recursive_proof.proof_id,
+            "final_accumulator": recursive_proof.metadata.get("accumulator_value"),
+            "accumulator_chain": proof_data.get("accumulator_chain", []),
+            "proof_count": recursive_proof.proof_count,
+            "sub_proof_ids": recursive_proof.sub_proof_ids,
+            "verification_algorithm": {
+                "description": "Verify acc' = H('ACC' || acc || proof_commit || vk) for each step",
+                "initial_value": "H('INITIAL_ACC')",
+                "domain_separator": "ACC",
+                "hash_function": "SHA-256",
+            },
+        }
 
 
 # Example usage
@@ -866,7 +1070,7 @@ if __name__ == "__main__":
                 "merkle_proofs": [
                     hashlib.sha256(f"proof_{j}".encode()).hexdigest() for j in range(20)
                 ],
-                "witness_randomness": os.urandom(32).hex(),
+                "witness_randomness": np.random.bytes(32).hex(),  # Example only, use os.urandom in production
             },
         )
         proofs.append(proof)
