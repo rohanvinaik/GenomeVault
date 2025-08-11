@@ -39,6 +39,7 @@ from genomevault.crypto.serialization import (
     pack_kv_map,
     pack_proof_components,
 )
+from genomevault.crypto.rng import secure_bytes, xof, xof_uint_mod
 
 __all__ = [
     "PublicKey",
@@ -77,4 +78,7 @@ __all__ = [
     "pack_int_list",
     "pack_kv_map",
     "pack_proof_components",
+    "secure_bytes",
+    "xof",
+    "xof_uint_mod",
 ]
