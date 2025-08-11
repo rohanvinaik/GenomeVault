@@ -79,7 +79,7 @@ class PIRIntegrationDemo:
             )
             self.coordinator.register_server(server_info)
 
-        logger.info("✅ Created %slen(self.servers) PIR servers")
+        logger.info(f"✅ Created {len(self.servers)} PIR servers")
 
     async def demonstrate_basic_pir(self):
         """Demonstrate basic PIR retrieval."""
@@ -96,12 +96,12 @@ class PIRIntegrationDemo:
 
         # Target index to retrieve
         target_index = 42
-        logger.info("🎯 Target: Retrieve element at index %starget_index")
+        logger.info(f"🎯 Target: Retrieve element at index {target_index}")
 
         # Generate query vectors
         logger.info("\n1️⃣ Generating query vectors...")
         query_vectors = protocol.generate_query_vectors(target_index)
-        logger.info("   Generated %slen(query_vectors) query vectors")
+        logger.info(f"   Generated {len(query_vectors)} query vectors")
 
         # Select servers
         criteria = ServerSelectionCriteria(
@@ -136,7 +136,7 @@ class PIRIntegrationDemo:
             response = await server.process_query(query_data)
             (time.time() - start_time) * 1000
 
-            logger.info("   Server %sserver.server_id: %slatency:.1fms")
+            logger.info(f"   Server {server.server_id}: {latency:.1f}ms")
 
             # Convert response back to numpy array
             response_array = np.array(response["response"], dtype=np.uint8)
@@ -145,7 +145,7 @@ class PIRIntegrationDemo:
         # Reconstruct element
         logger.info("\n4️⃣ Reconstructing element...")
         protocol.reconstruct_element(responses)
-        logger.info("   Reconstructed element size: %slen(reconstructed) bytes")
+        logger.info(f"   Reconstructed element size: {len(reconstructed)} bytes")
 
         # Calculate privacy guarantees
         logger.info("\n5️⃣ Privacy Analysis:")
@@ -258,9 +258,9 @@ class PIRIntegrationDemo:
         await query_builder.execute_query(variant_query)
         (time.time() - start_time) * 1000
 
-        logger.info("   Query time: %squery_time:.1fms")
-        logger.info("   Result: %sresult.data['clinical_significance'] variant")
-        logger.info("   Global frequency: %sresult.data['population_frequencies']['global']:.4f")
+        logger.info(f"   Query time: {query_time:.1fms}")
+        logger.info(f"   Result: {result.data['clinical_significance']} variant")
+        logger.info(f"   Global frequency: {result.data['population_frequencies']['global']:.4f}")
 
         # Example 2: Gene scan
         logger.info("\n🧬 Gene Scan: BRCA1")
@@ -270,16 +270,16 @@ class PIRIntegrationDemo:
         await query_builder.execute_query(gene_query)
         (time.time() - start_time) * 1000
 
-        logger.info("   Query time: %squery_time:.1fms")
-        logger.info("   Variants found: %sresult.data['total_variants']")
-        logger.info("   PIR queries used: %sresult.pir_queries_used")
+        logger.info(f"   Query time: {query_time:.1fms}")
+        logger.info(f"   Variants found: {result.data['total_variants']}")
+        logger.info(f"   PIR queries used: {result.pir_queries_used}")
 
         # Show query statistics
         query_builder.get_query_statistics()
         logger.info("\n📈 Query Statistics:")
-        logger.info("   Cache size: %sstats['cache_size']")
-        logger.info("   Total PIR queries: %sstats['total_pir_queries']")
-        logger.info("   Avg computation time: %sstats['avg_computation_time_ms']:.1fms")
+        logger.info(f"   Cache size: {stats['cache_size']}")
+        logger.info(f"   Total PIR queries: {stats['total_pir_queries']}")
+        logger.info(f"   Avg computation time: {stats['avg_computation_time_ms']:.1fms}")
 
     async def demonstrate_batch_queries(self):
         """Demonstrate batch PIR queries."""
@@ -294,22 +294,22 @@ class PIRIntegrationDemo:
         batch_size = 50
         indices = np.random.choice(self.database_size, batch_size, replace=False).tolist()
 
-        logger.info("🎯 Retrieving %sbatch_size elements in batch")
+        logger.info(f"🎯 Retrieving {batch_size} elements in batch")
 
         # Generate batch queries
         start_time = time.time()
         batch_queries = batch_protocol.generate_batch_queries(indices)
         (time.time() - start_time) * 1000
 
-        logger.info("   Query generation: %sgen_time:.1fms")
-        logger.info("   Buckets used: %slen(batch_queries)")
+        logger.info(f"   Query generation: {gen_time:.1fms}")
+        logger.info(f"   Buckets used: {len(batch_queries)}")
 
         # Calculate efficiency
         single_query_size = self.database_size  # bits
         batch_query_size = len(batch_queries) * self.database_size
         (batch_size * single_query_size) / batch_query_size
 
-        logger.info("   Bandwidth efficiency: %sefficiency:.2fx")
+        logger.info(f"   Bandwidth efficiency: {efficiency:.2fx}")
 
     async def demonstrate_security_features(self):
         """Demonstrate security features."""
@@ -329,8 +329,8 @@ class PIRIntegrationDemo:
             timings.append(time_ms)
 
         np.var(timings)
-        logger.info("   Timing variance: %stiming_variance:.2fms²")
-        logger.info("   Max timing difference: %smax(timings) - min(timings):.2fms")
+        logger.info(f"   Timing variance: {timing_variance:.2fms}²")
+        logger.info(f"   Max timing difference: {max(timings)} - min(timings):.2fms")
 
         # 2. Replay protection
         logger.info("\n2️⃣ Replay Protection:")
@@ -362,9 +362,9 @@ class PIRIntegrationDemo:
         protocol.calculate_min_servers(target_prob, 0.95)
         min_mixed = protocol.calculate_min_servers(target_prob, 0.96)  # Mix of TS and LN
 
-        logger.info("   For %starget_prob:.0e failure probability:")
-        logger.info("   - Pure TS nodes: %smin_ts servers")
-        logger.info("   - Pure LN nodes: %smin_ln servers")
+        logger.info(f"   For {target_prob:.0e} failure probability:")
+        logger.info(f"   - Pure TS nodes: {min_ts} servers")
+        logger.info(f"   - Pure LN nodes: {min_ln} servers")
         logger.info(f"   - Mixed (TS+LN): {min_mixed} servers")
 
     async def cleanup(self):
@@ -397,10 +397,10 @@ async def main():
         logger.info("-" * 60)
 
         demo.coordinator.get_coordinator_stats()
-        logger.info("Total servers: %sstats['total_servers']")
-        logger.info("  - Trusted Signatories: %sstats['trusted_signatories']")
-        logger.info("  - Light Nodes: %sstats['light_nodes']")
-        logger.info("Geographic regions: %sstats['geographic_regions']")
+        logger.info(f"Total servers: {stats['total_servers']}")
+        logger.info(f"  - Trusted Signatories: {stats['trusted_signatories']}")
+        logger.info(f"  - Light Nodes: {stats['light_nodes']}")
+        logger.info(f"Geographic regions: {stats['geographic_regions']}")
 
         logger.info("\n✨ Key Features Demonstrated:")
         logger.info("  ✅ Information-theoretic security (zero leakage)")

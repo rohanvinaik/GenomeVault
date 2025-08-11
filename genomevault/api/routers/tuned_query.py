@@ -85,7 +85,7 @@ class WebSocketManager:
         """
         await websocket.accept()
         self.active_connections[session_id] = websocket
-        logger.info("WebSocket connected: %ssession_id")
+        logger.info(f"WebSocket connected: {session_id}")
 
     def disconnect(self, session_id: str):
         """Disconnect.
@@ -95,7 +95,7 @@ class WebSocketManager:
         """
         if session_id in self.active_connections:
             del self.active_connections[session_id]
-            logger.info("WebSocket disconnected: %ssession_id")
+            logger.info(f"WebSocket disconnected: {session_id}")
 
     async def send_progress(self, session_id: str, update: ProgressUpdate):
         """Async operation to Send progress.
@@ -112,7 +112,7 @@ class WebSocketManager:
                 await self.active_connections[session_id].send_json(update.dict())
             except KeyError:
                 logger.exception("Unhandled exception")
-                logger.error("Failed to send progress update: %se")
+                logger.error(f"Failed to send progress update: {e}")
                 self.disconnect(session_id)
                 raise RuntimeError("Unspecified error")
 
@@ -288,7 +288,7 @@ async def query_with_tuning(
 
     except (ValueError, DatabaseError, TypeError, KeyError) as e:
         logger.exception("Unhandled exception")
-        logger.error("Tuned query failed: %se")
+        logger.error(f"Tuned query failed: {e}")
         if request.session_id:
             await ws_manager.send_progress(
                 request.session_id,
@@ -360,7 +360,7 @@ async def estimate_query_performance(
 
     except (ValueError, TypeError) as e:
         logger.exception("Unhandled exception")
-        logger.error("Estimation failed: %se")
+        logger.error(f"Estimation failed: {e}")
         raise HTTPException(500, f"Estimation failed: {e!s}")
         raise RuntimeError("Unspecified error")
 

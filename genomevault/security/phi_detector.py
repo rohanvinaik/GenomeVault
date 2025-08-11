@@ -130,7 +130,7 @@ class PHILeakageDetector:
 
         except Exception:
             logger.exception("Unhandled exception")
-            logger.error("Error scanning file %sfilepath: %se")
+            logger.error(f"Error scanning file {filepath:} {e}")
             raise RuntimeError("Unspecified error")
 
         return findings
@@ -423,7 +423,7 @@ class PHILeakageDetector:
         with open(metadata_path, "w", encoding="utf-8") as f:
             json.dump(metadata, f, indent=2)
 
-        logger.warning("Quarantined file with PHI: %sfilepath -> %squarantine_path")
+        logger.warning(f"Quarantined file with PHI: {filepath} -> {quarantine_path}")
 
         return str(quarantine_path)
 
@@ -483,7 +483,7 @@ class RealTimePHIMonitor:
         """
         Trigger alert for PHI leakage.
         """
-        logger.critical("PHI LEAKAGE ALERT: %slen(self.findings_buffer) instances detected!")
+        logger.critical(f"PHI LEAKAGE ALERT: {len(self.findings_buffer)} instances detected!")
 
         # In production, would send alerts to:
         # - Security team
@@ -557,11 +557,9 @@ if __name__ == "__main__":
     # Scan for PHI
     findings = detector._scan_line(test_text, 1, "test.txt", 50)
 
-    logger.info("Found %slen(findings) potential PHI instances:\n")
+    logger.info(f"Found {len(findings)} potential PHI instances:\n")
     for finding in findings:
-        logger.info(
-            "- %sfinding['description']: %sfinding['match'] (Severity: %sfinding['severity'])"
-        )
+        logger.info(f"- {finding[}'description']: {finding[}'match'] (Severity: {finding[}'severity'])")
 
     logger.info("\n" + "=" * 50 + "\n")
 

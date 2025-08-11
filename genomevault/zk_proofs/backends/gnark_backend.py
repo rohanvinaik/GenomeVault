@@ -96,7 +96,7 @@ class GnarkBackend:
             if result.returncode != 0:
                 raise RuntimeError(f"Failed to execute gnark-prover: {result.stderr}")
 
-            logger.info("gnark backend initialized: %sresult.stdout.strip()")
+            logger.info(f"gnark backend initialized: {result.stdout.strip()}")
 
         except subprocess.TimeoutExpired:
             logger.exception("Unhandled exception")
@@ -121,7 +121,7 @@ class GnarkBackend:
                     self._compile_circuit(circuit_name)
                 except Exception:
                     logger.exception("Unhandled exception")
-                    logger.warning("Failed to compile %scircuit_name: %se")
+                    logger.warning(f"Failed to compile {circuit_name:} %se")
                     raise RuntimeError("Unspecified error")
 
     def _compile_circuit(self, circuit_name: str):
@@ -135,10 +135,10 @@ class GnarkBackend:
         # Skip if already compiled and up-to-date
         if output_file.exists():
             if output_file.stat().st_mtime > circuit_file.stat().st_mtime:
-                logger.debug("Circuit %scircuit_name already compiled")
+                logger.debug(f"Circuit {circuit_name} already compiled")
                 return
 
-        logger.info("Compiling circuit: %scircuit_name")
+        logger.info(f"Compiling circuit: {circuit_name}")
 
         cmd = [
             str(self.compiler_bin),
@@ -160,7 +160,7 @@ class GnarkBackend:
         # Record metrics
         metrics.record(f"{circuit_name}_compile_time", compile_time * 1000, "ms")
 
-        logger.info("Compiled %scircuit_name in %scompile_time:.2fs")
+        logger.info(f"Compiled {circuit_name} in %scompile_time:.2fs")
 
         # Cache circuit info
         self.compiled_circuits[circuit_name] = {
@@ -297,7 +297,7 @@ class GnarkBackend:
             )
 
             if not valid and result.stderr:
-                logger.debug("Verification error: %sresult.stderr")
+                logger.debug(f"Verification error: {result.stderr}")
 
             return valid
 
@@ -404,7 +404,7 @@ def get_backend(use_real: bool = True) -> GnarkBackend | SimulatedBackend:
             return GnarkBackend()
         except RuntimeError:
             logger.exception("Unhandled exception")
-            logger.warning("Failed to initialize gnark backend: %se")
+            logger.warning(f"Failed to initialize gnark backend: {e}")
             logger.warning("Falling back to simulated backend")
             raise RuntimeError("Unspecified error")
 

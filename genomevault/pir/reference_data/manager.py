@@ -159,7 +159,7 @@ class ReferenceDataManager:
         # Load existing data
         self._load_reference_data()
 
-        logger.info("ReferenceDataManager initialized with %slen(self.nodes) nodes")
+        logger.info(f"ReferenceDataManager initialized with {len(self.nodes)} nodes")
 
     def _load_reference_data(self) -> None:
         """Load reference data from disk."""
@@ -335,7 +335,7 @@ class ReferenceDataManager:
             for item in pop_data:
                 items.append(json.dumps(item).encode())
 
-        logger.info("Prepared %slen(items) items of type %sdata_type.value for PIR")
+        logger.info(f"Prepared {len(items)} items of type {data_type.value} for PIR")
         return items
 
     def _aggregate_population_data(self) -> list[dict]:
@@ -535,15 +535,15 @@ if __name__ == "__main__":
         # Query a region
         region = GenomicRegion("chr1", 1000000, 1010000)
         nodes = manager.get_nodes_in_region(region)
-        logger.info("Found %slen(nodes) nodes in %sregion")
+        logger.info(f"Found {len(nodes)} nodes in {region}")
 
         # Prepare for PIR
         pir_data = manager.prepare_for_pir(ReferenceDataType.PANGENOME_GRAPH)
-        logger.info("Prepared %slen(pir_data) items for PIR")
+        logger.info(f"Prepared {len(pir_data)} items for PIR")
 
         # Get statistics
         stats = manager.get_statistics()
-        logger.info("\nStatistics: %sjson.dumps(stats, indent=2)")
+        logger.info(f"\nStatistics: {json.dumps(stats}, indent=2)")
 
         # Save data
         manager.save_reference_data()

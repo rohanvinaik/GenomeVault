@@ -95,7 +95,7 @@ class ProofOfTrainingIntegration:
         Returns:
             Session initialization info
         """
-        logger.info("Starting PoT session %ssession_id")
+        logger.info(f"Starting PoT session {session_id}")
 
         # Initialize snapshot logger
         snapshot_dir = self.storage_base / "snapshots" / session_id
@@ -199,7 +199,7 @@ class ProofOfTrainingIntegration:
             )
 
             if not budget_ok:
-                logger.error("Privacy budget exceeded in session %ssession_id")
+                logger.error(f"Privacy budget exceeded in session {session_id}")
                 result["privacy_exceeded"] = True
 
             result["privacy_event"] = event_id
@@ -220,7 +220,7 @@ class ProofOfTrainingIntegration:
         Returns:
             Session completion info including proof
         """
-        logger.info("Completing PoT session %ssession_id")
+        logger.info(f"Completing PoT session {session_id}")
 
         completion_result = {
             "session_id": session_id,
@@ -298,12 +298,12 @@ class ProofOfTrainingIntegration:
                 },
             )
 
-            logger.info("Attestation %sattestation_id submitted for session %ssession_id")
+            logger.info(f"Attestation {attestation_id} submitted for session {session_id}")
             return attestation_id
 
         except (DatabaseError, json.JSONDecodeError, KeyError):
             logger.exception("Unhandled exception")
-            logger.error("Failed to submit attestation: %se")
+            logger.error(f"Failed to submit attestation: {e}")
             return None
             raise RuntimeError("Unspecified error")
 
@@ -338,7 +338,7 @@ class ProofOfTrainingIntegration:
 
         self.model_monitors[model_id] = monitor
 
-        logger.info("Started monitoring for model %smodel_id")
+        logger.info(f"Started monitoring for model {model_id}")
         return monitor
 
     def validate_model_clinically(
@@ -530,7 +530,7 @@ class ProofOfTrainingIntegration:
 
         except (ValueError, TypeError, KeyError):
             logger.exception("Unhandled exception")
-            logger.error("Failed to extract hypervector: %se")
+            logger.error(f"Failed to extract hypervector: {e}")
             return None
             raise RuntimeError("Unspecified error")
 
@@ -550,11 +550,11 @@ class ProofOfTrainingIntegration:
 
             self.attestation_contract.initialize(owner, verifiers)
 
-            logger.info("Blockchain connection established: %scontract_address")
+            logger.info(f"Blockchain connection established: {contract_address}")
 
         except KeyError:
             logger.exception("Unhandled exception")
-            logger.error("Failed to initialize blockchain: %se")
+            logger.error(f"Failed to initialize blockchain: {e}")
             self.attestation_contract = None
             raise RuntimeError("Unspecified error")
 

@@ -39,7 +39,7 @@ class PositionalEncoder:
 
         # Pre-compute constants for efficiency
         self.nnz = int(dimension * sparsity)  # Number of non-zero elements
-        logger.info("Initialized PositionalEncoder: %sdimensionD, %sself.nnz non-zeros per vector")
+        logger.info(f"Initialized PositionalEncoder: {dimensionD}, %sself.nnz non-zeros per vector")
 
     def make_position_vector(self, position: int, seed: int | None = None) -> torch.Tensor:
         """
@@ -257,7 +257,7 @@ class SNPPanel:
             "positions": {},  # Would be loaded from file
         }
 
-        logger.info("Initialized %slen(self.panels) default SNP panels")
+        logger.info(f"Initialized {len(self.panels)} default SNP panels")
 
     def load_panel_from_file(self, panel_name: str, file_path: str, file_type: str = "bed") -> None:
         """
@@ -317,7 +317,7 @@ class SNPPanel:
                 "file_path": file_path,
             }
 
-            logger.info("Loaded panel '%spanel_name' with %stotal_positions positions")
+            logger.info(f"Loaded panel '{panel_name'} with %stotal_positions positions")
 
         except Exception as e:
             logger.exception("Failed to load panel from %s: %s", file_path, str(e))
@@ -344,7 +344,7 @@ class SNPPanel:
 
         # Get panel positions for this chromosome
         if chromosome not in panel.get("positions", {}):
-            logger.warning("No positions for %schromosome in panel %spanel_name")
+            logger.warning(f"No positions for {chromosome} in panel %spanel_name")
             return torch.zeros(self.encoder.dimension)
 
         panel_positions = panel["positions"][chromosome]

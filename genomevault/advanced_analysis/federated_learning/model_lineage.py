@@ -108,7 +108,7 @@ class FederatedModelLineage:
         self._add_version(initial_version)
         self.active_branches.add("v0")
 
-        logger.info("Initialized federated lineage for %sfederation_id")
+        logger.info(f"Initialized federated lineage for {federation_id}")
 
     def record_local_update(
         self,
@@ -309,16 +309,14 @@ class FederatedModelLineage:
             self.active_branches.discard(version_id)
             self.active_branches.add(val_version_id)
 
-        logger.info(
-            "Recorded validation %sval_version_id for %sversion_id (passed: %svalidation_passed)"
-        )
+        logger.info(f"Recorded validation {val_version_id} for {version_id} (passed: {validation_passed)}")
 
         return val_version_id
 
     def advance_round(self) -> int:
         """Advance to next federated learning round"""
         self.current_round += 1
-        logger.info("Advanced to round %sself.current_round")
+        logger.info(f"Advanced to round {self.current_round}")
         return self.current_round
 
     def get_lineage_path(self, version_id: str) -> list[str]:

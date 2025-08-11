@@ -62,7 +62,7 @@ class GPUBindingKernel:
         # Allocate GPU buffers
         self._allocate_buffers()
 
-        logger.info("GPU kernel initialized with %sn_streams streams")
+        logger.info(f"GPU kernel initialized with {n_streams} streams")
 
     def _compile_kernels(self):
         """Compile CUDA kernels."""

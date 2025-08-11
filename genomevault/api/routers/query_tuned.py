@@ -103,7 +103,7 @@ async def query_with_panel(
         # Load custom panel if provided
         if panel_granularity == PanelGranularity.CUSTOM and request.custom_panel_path:
             encoder.load_custom_panel(request.custom_panel_path)
-            logger.info("Loaded custom panel from %srequest.custom_panel_path")
+            logger.info(f"Loaded custom panel from {request.custom_panel_path}")
 
         # Get panel info
         panel_info = encoder.snp_panel.get_panel_info(panel_granularity.value)
@@ -195,7 +195,7 @@ async def query_with_panel(
 
     except KeyError as e:
         logger.exception("Unhandled exception")
-        logger.error("Panel query failed: %se")
+        logger.error(f"Panel query failed: {e}")
         raise HTTPException(500, f"Panel query failed: {e!s}")
         raise RuntimeError("Unspecified error")
 
@@ -278,7 +278,7 @@ async def query_with_zoom(
 
     except (DatabaseError, KeyError) as e:
         logger.exception("Unhandled exception")
-        logger.error("Zoom query failed: %se")
+        logger.error(f"Zoom query failed: {e}")
         raise HTTPException(500, f"Zoom query failed: {e!s}")
         raise RuntimeError("Unspecified error")
 
@@ -308,7 +308,7 @@ async def get_panel_info(
         raise RuntimeError("Unspecified error")
     except KeyError as e:
         logger.exception("Unhandled exception")
-        logger.error("Failed to get panel info: %se")
+        logger.error(f"Failed to get panel info: {e}")
         raise HTTPException(500, f"Failed to get panel info: {e!s}")
         raise RuntimeError("Unspecified error")
 

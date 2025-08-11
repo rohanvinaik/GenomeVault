@@ -105,7 +105,7 @@ class STARKProver:
         Returns:
             Post-quantum secure STARK proof
         """
-        logger.info("Generating STARK proof for trace of size %scomputation_trace.shape")
+        logger.info(f"Generating STARK proof for trace of size {computation_trace.shape}")
 
         # Step 1: Commit to execution trace
         trace_commitment, trace_tree = self._commit_to_trace(computation_trace)
@@ -152,7 +152,7 @@ class STARKProver:
             },
         )
 
-        logger.info("Generated STARK proof: %sproof.proof_id, size: %sproof.proof_size_kb:.1fKB")
+        logger.info(f"Generated STARK proof: {proof.proof_id}, size: %sproof.proof_size_kb:.1fKB")
 
         return proof
 
@@ -517,7 +517,7 @@ class PostQuantumVerifier:
         Returns:
             True if proof is valid
         """
-        logger.info("Verifying STARK proof %sproof.proof_id")
+        logger.info(f"Verifying STARK proof {proof.proof_id}")
 
         try:
             # Verify proof of work
@@ -535,12 +535,12 @@ class PostQuantumVerifier:
                 logger.warning("Query response verification failed")
                 return False
 
-            logger.info("STARK proof %sproof.proof_id verified successfully")
+            logger.info(f"STARK proof {proof.proof_id} verified successfully")
             return True
 
         except Exception:
             logger.exception("Unhandled exception")
-            logger.error("STARK verification error: %se")
+            logger.error(f"STARK verification error: {e}")
             return False
             raise RuntimeError("Unspecified error")
 

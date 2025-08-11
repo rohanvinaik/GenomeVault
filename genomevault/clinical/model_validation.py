@@ -143,7 +143,7 @@ class ClinicalModelValidator:
             "out_of_distribution_detection": 0.90,
         }
 
-        logger.info("Clinical validator initialized: %svalidator_id")
+        logger.info(f"Clinical validator initialized: {validator_id}")
 
     def validate_model(
         self,

@@ -66,7 +66,7 @@ class RecursiveSNARKProver:
         # Initialize ZK backend
         self.backend = get_backend(use_real=use_real_backend)
 
-        logger.info("RecursiveSNARKProver initialized with max depth %smax_recursion_depth")
+        logger.info(f"RecursiveSNARKProver initialized with max depth {max_recursion_depth}")
         logger.info("Using %s'real gnark' if use_real_backend else 'simulated' backend")
 
     def _initialize_accumulator(self) -> dict[str, Any]:
@@ -115,7 +115,7 @@ class RecursiveSNARKProver:
         Compose proofs using balanced binary tree structure.
         Achieves O(log n) verification depth.
         """
-        logger.info("Composing %slen(proofs) proofs using balanced tree strategy")
+        logger.info(f"Composing {len(proofs)} proofs using balanced tree strategy")
 
         # Build tree bottom-up
         current_level = proofs
@@ -168,7 +168,7 @@ class RecursiveSNARKProver:
         Compose proofs using cryptographic accumulator.
         Achieves O(1) verification time.
         """
-        logger.info("Composing %slen(proofs) proofs using accumulator strategy")
+        logger.info(f"Composing {len(proofs)} proofs using accumulator strategy")
 
         # Update accumulator with each proof
         acc_value = self.accumulator_state["accumulator_value"]
@@ -209,7 +209,7 @@ class RecursiveSNARKProver:
 
     def _sequential_composition(self, proofs: list[Proof]) -> RecursiveProof:
         """Simple sequential proof composition (for comparison/testing)."""
-        logger.info("Composing %slen(proofs) proofs using sequential strategy")
+        logger.info(f"Composing {len(proofs)} proofs using sequential strategy")
 
         # Start with first proof
         current = proofs[0]
@@ -526,26 +526,26 @@ if __name__ == "__main__":
         )
         proofs.append(proof)
 
-    logger.info("Generated %slen(proofs) base proofs")
+    logger.info(f"Generated {len(proofs)} base proofs")
 
     # Test different aggregation strategies
     strategies = ["balanced_tree", "accumulator", "sequential"]
 
     for strategy in strategies:
-        logger.info("\nTesting %sstrategy aggregation:")
+        logger.info(f"\nTesting {strategy} aggregation:")
 
         start_time = time.time()
         recursive_proof = recursive_prover.compose_proofs(proofs, strategy)
         composition_time = time.time() - start_time
 
-        logger.info("  Composition time: %scomposition_time * 1000:.1fms")
-        logger.info("  Proof size: %slen(recursive_proof.aggregation_proof) bytes")
-        logger.info("  Verification complexity: %srecursive_proof.verification_complexity")
+        logger.info(f"  Composition time: {composition_time} * 1000:.1fms")
+        logger.info(f"  Proof size: {len(recursive_proof.aggregation_proof)} bytes")
+        logger.info(f"  Verification complexity: {recursive_proof.verification_complexity}")
 
         # Verify the recursive proof
         start_time = time.time()
         valid = recursive_prover.verify_recursive_proof(recursive_proof)
         verification_time = time.time() - start_time
 
-        logger.info("  Verification time: %sverification_time * 1000:.1fms")
-        logger.info("  Valid: %svalid")
+        logger.info(f"  Verification time: {verification_time} * 1000:.1fms")
+        logger.info(f"  Valid: {valid}")

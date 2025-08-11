@@ -339,7 +339,7 @@ if __name__ == "__main__":
 
     # Generate query vectors
     queries = protocol.generate_query_vectors(index)
-    logger.info("Generated %slen(queries) query vectors for index %sindex")
+    logger.info(f"Generated {len(queries)} query vectors for index {index}")
 
     # Simulate server databases (normally distributed across servers)
     # Each database element is 1024 bytes
@@ -353,7 +353,7 @@ if __name__ == "__main__":
         response = protocol.process_server_response(query, database)
         padded_response, time_ms = protocol.timing_safe_response(response)
         responses.append(padded_response)
-        logger.info("Server %si + 1 response generated in %stime_ms:.1fms")
+        logger.info(f"Server {i} + 1 response generated in {time_ms:.1fms}")
 
     # Reconstruct element
     reconstructed = protocol.reconstruct_element(responses)
@@ -368,14 +368,14 @@ if __name__ == "__main__":
     prob_ln = protocol.calculate_privacy_breach_probability(k_honest=3, honesty_prob=0.95)
 
     logger.info("\nPrivacy breach probabilities:")
-    logger.info("  2 HIPAA TS servers: %sprob_ts:.6f")
-    logger.info("  3 Light Node servers: %sprob_ln:.6f")
+    logger.info(f"  2 HIPAA TS servers: {prob_ts:.6f}")
+    logger.info(f"  3 Light Node servers: {prob_ln:.6f}")
 
     # Calculate minimum servers needed
     target_prob = 1e-4
     min_ts = protocol.calculate_min_servers(target_prob, 0.98)
     min_ln = protocol.calculate_min_servers(target_prob, 0.95)
 
-    logger.info("\nMinimum servers for %starget_prob failure probability:")
-    logger.info("  HIPAA TS nodes: %smin_ts")
-    logger.info("  Light Nodes: %smin_ln")
+    logger.info(f"\nMinimum servers for {target_prob} failure probability:")
+    logger.info(f"  HIPAA TS nodes: {min_ts}")
+    logger.info(f"  Light Nodes: {min_ln}")

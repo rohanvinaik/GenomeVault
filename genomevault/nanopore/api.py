@@ -107,7 +107,7 @@ async def start_streaming(
         "stats": None,
     }
 
-    logger.info("Started nanopore stream: %sstream_id")
+    logger.info(f"Started nanopore stream: {stream_id}")
 
     return {
         "stream_id": stream_id,
@@ -199,7 +199,7 @@ async def _process_fast5_async(stream_id: str, fast5_path: Path):
 
     except Exception as e:
         logger.exception("Unhandled exception")
-        logger.error("Error processing stream %sstream_id: %se")
+        logger.error(f"Error processing stream {stream_id:} %se")
         _results_cache[stream_id]["status"] = "error"
         _results_cache[stream_id]["error"] = str(e)
         raise RuntimeError("Unspecified error")
@@ -457,11 +457,11 @@ async def websocket_stream(
 
     except WebSocketDisconnect:
         logger.exception("Unhandled exception")
-        logger.info("WebSocket disconnected for stream %sstream_id")
+        logger.info(f"WebSocket disconnected for stream {stream_id}")
         raise RuntimeError("Unspecified error")
     except Exception as e:
         logger.exception("Unhandled exception")
-        logger.error("WebSocket error: %se")
+        logger.error(f"WebSocket error: {e}")
         await websocket.send_json(
             {
                 "type": "error",
