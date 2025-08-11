@@ -183,7 +183,8 @@ class STARKProver:
     ) -> np.ndarray:
         """Generate polynomial that encodes constraint satisfaction."""
         # Combine all constraints into single polynomial
-        combined_poly = np.zeros(trace.shape[0] * 8)  # With blowup
+        # FIXED: Use object dtype to avoid float64 precision loss in field arithmetic
+        combined_poly = np.zeros(trace.shape[0] * 8, dtype=object)  # With blowup
 
         for constraint in constraints:
             if constraint["type"] == "boundary":
@@ -200,8 +201,10 @@ class STARKProver:
             else:
                 raise ValueError(f"Unknown constraint type: {constraint['type']}")
 
-            # Combine with existing polynomial
+            # Combine with existing polynomial using proper field arithmetic
             combined_poly = self._add_polynomials(combined_poly, poly)
+            # Ensure all operations maintain integer precision in finite field
+            combined_poly = combined_poly.astype(object)
 
         return combined_poly
 
@@ -321,10 +324,12 @@ class STARKProver:
         """
         Reed-Solomon encode data with 8x blowup.
 
-        FIXED: Multiple critical issues resolved:
+        FIXED: Multiple critical cryptographic issues resolved:
         1. Previously used random coefficients - now uses proper Lagrange interpolation
         2. Previously used consecutive integers [0,1,2,...] as domain - now uses proper 
            multiplicative subgroup (roots of unity) required for Reed-Solomon/FRI soundness
+        3. Previously used float64 dtypes causing silent precision loss - now uses 
+           object dtype with Python ints for exact finite field arithmetic
         """
         # Interpolate polynomial from data using proper Lagrange interpolation
         poly_coeffs = self._interpolate_polynomial(data)
@@ -514,17 +519,25 @@ class STARKProver:
         return True
 
     def _evaluate_polynomial(self, coeffs: np.ndarray, domain: np.ndarray) -> np.ndarray:
-        """Evaluate polynomial on domain (simplified)."""
+        """Evaluate polynomial on domain with proper field arithmetic."""
         # In practice, would use FFT for efficiency
         evaluations = []
 
         for x in domain:
             y = 0
+            x_int = int(x) % self.field_size  # Ensure x is in field
             for i, coeff in enumerate(coeffs):
-                y = (y + coeff * pow(int(x), i, self.field_size)) % self.field_size
+                # Convert coefficient to int and ensure proper field arithmetic
+                coeff_int = int(coeff) % self.field_size
+                # Compute x^i mod p using fast exponentiation
+                x_power = pow(x_int, i, self.field_size)
+                # All arithmetic as Python ints to maintain precision
+                term = (coeff_int * x_power) % self.field_size
+                y = (y + term) % self.field_size
             evaluations.append(y)
 
-        return np.array(evaluations)
+        # Return as object array to maintain integer precision
+        return np.array(evaluations, dtype=object)
 
     def _get_evaluation_domain(self, size: int) -> np.ndarray:
         """
@@ -631,19 +644,25 @@ class STARKProver:
     def _fold_polynomial(
         self, poly: np.ndarray, challenge: bytes, folding_factor: int
     ) -> np.ndarray:
-        """Fold polynomial for FRI round."""
+        """Fold polynomial for FRI round with proper field arithmetic."""
         challenge_int = int.from_bytes(challenge, "big") % self.field_size
 
         # Simple folding (in practice, more sophisticated)
         new_size = len(poly) // folding_factor
-        folded = np.zeros(new_size, dtype=np.uint64)
+        # FIXED: Use object dtype to prevent uint64 overflow in field operations
+        folded = np.zeros(new_size, dtype=object)
 
         for i in range(new_size):
+            # Initialize with 0 as Python int for proper field arithmetic
+            folded[i] = 0
             for j in range(folding_factor):
                 idx = i * folding_factor + j
                 if idx < len(poly):
+                    # All operations as Python ints to avoid precision loss
                     weight = pow(challenge_int, j, self.field_size)
-                    folded[i] = (folded[i] + poly[idx] * weight) % self.field_size
+                    poly_coeff = int(poly[idx]) % self.field_size
+                    contribution = (poly_coeff * weight) % self.field_size
+                    folded[i] = (int(folded[i]) + contribution) % self.field_size
 
         return folded
 
@@ -679,14 +698,20 @@ class STARKProver:
         return hashlib.sha256((comm1 + comm2).encode()).hexdigest()
 
     def _add_polynomials(self, p1: np.ndarray, p2: np.ndarray) -> np.ndarray:
-        """Add two polynomials in field."""
-        result = np.zeros(max(len(p1), len(p2)), dtype=np.uint64)
+        """Add two polynomials in field with proper integer arithmetic."""
+        # FIXED: Use object dtype to handle arbitrary precision integers
+        # np.uint64 can overflow for Goldilocks field operations
+        result = np.zeros(max(len(p1), len(p2)), dtype=object)
 
+        # Add coefficients from first polynomial
         for i in range(len(p1)):
-            result[i] = (result[i] + p1[i]) % self.field_size
+            # Convert to Python int for arbitrary precision, then reduce modulo field_size
+            result[i] = (int(result[i]) + int(p1[i])) % self.field_size
 
+        # Add coefficients from second polynomial  
         for i in range(len(p2)):
-            result[i] = (result[i] + p2[i]) % self.field_size
+            # Convert to Python int for arbitrary precision, then reduce modulo field_size
+            result[i] = (int(result[i]) + int(p2[i])) % self.field_size
 
         return result
 
@@ -695,21 +720,28 @@ class STARKProver:
     ) -> np.ndarray:
         """Generate polynomial for boundary constraint."""
         # Constraint: trace[step, register] = value
-        poly = np.zeros(trace.shape[0] * 8)
-        poly[step] = (int(trace[step, register]) - value) % self.field_size
+        # FIXED: Use object dtype to prevent float64 precision loss in field arithmetic
+        poly = np.zeros(trace.shape[0] * 8, dtype=object)
+        # Ensure all arithmetic is done as integers with proper modular reduction
+        trace_val = int(trace[step, register])
+        constraint_val = int(value)
+        poly[step] = (trace_val - constraint_val) % self.field_size
         return poly
 
     def _transition_constraint_poly(self, trace: np.ndarray, expression: str) -> np.ndarray:
         """Generate polynomial for transition constraint."""
         # Parse and evaluate constraint expression
         # Simplified - in practice would have full expression parser
-        poly = np.zeros(trace.shape[0] * 8)
+        # FIXED: Use object dtype to prevent float64 precision loss in field arithmetic
+        poly = np.zeros(trace.shape[0] * 8, dtype=object)
 
         # Example: next_state = current_state + 1
         for i in range(trace.shape[0] - 1):
-            current = int(trace[i, 0])
-            next_val = int(trace[i + 1, 0])
+            # Ensure all values are properly converted to integers before field operations
+            current = int(trace[i, 0]) % self.field_size
+            next_val = int(trace[i + 1, 0]) % self.field_size
             expected = (current + 1) % self.field_size
+            # Store difference as integer to maintain precision
             poly[i] = (next_val - expected) % self.field_size
 
         return poly
