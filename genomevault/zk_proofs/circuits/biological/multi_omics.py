@@ -2,9 +2,10 @@ from __future__ import annotations
 
 """Multi Omics module."""
 import hashlib
-from typing import Dict, List
+from typing import Dict, List, cast
 
 import numpy as np
+from numpy.typing import NDArray
 
 from ...prover import Circuit
 from ..base_circuits import Any, BaseCircuit, FieldElement
@@ -87,7 +88,9 @@ class MultiOmicsCorrelationCircuit(BaseCircuit):
         """Convert hypervector to field elements."""
         # Extract first N dimensions for efficiency
         if hasattr(data, "numpy"):
-            values = data.numpy()[: self.max_dimensions]
+            values: NDArray[np.float32] = cast(
+                NDArray[np.float32], data.numpy()[: self.max_dimensions]
+            )
         else:
             values = np.array(data)[: self.max_dimensions]
 

@@ -3,6 +3,8 @@ from __future__ import annotations
 """Sparse Projection module."""
 import numpy as np
 import torch
+from typing import cast
+from numpy.typing import NDArray
 
 from genomevault.hypervector.types import MatrixF32
 
@@ -10,7 +12,9 @@ from genomevault.hypervector.types import MatrixF32
 def sparse_random_matrix(rows: int, cols: int, sparsity: float = 0.1) -> torch.Tensor:
     """Achlioptas sparse projection in {-1,0,+1}, scaled."""
     probs = [sparsity / 2, 1 - sparsity, sparsity / 2]
-    vals = np.random.choice([-1.0, 0.0, 1.0], size=(rows, cols), p=probs).astype(np.float32)
+    vals: NDArray[np.float32] = np.random.choice(
+        [-1.0, 0.0, 1.0], size=(rows, cols), p=probs
+    ).astype(np.float32, copy=False)
     mat = torch.from_numpy(vals)
     if sparsity > 0:
         mat = mat / np.sqrt(sparsity * cols)
@@ -60,6 +64,9 @@ class SparseRandomProjection:
         """
         if self._matrix is None:
             raise ValueError("Must call fit() before transform()")
-        X_tensor = torch.from_numpy(X.astype(np.float32))
+        # Explicit type conversion with no-copy when possible
+        X_tensor = torch.from_numpy(X.astype(np.float32, copy=False))
         result = torch.matmul(X_tensor, self._matrix.T)
-        return result.numpy()
+        # Cast the result back with explicit type annotation
+        out: MatrixF32 = cast(MatrixF32, result.numpy())
+        return out

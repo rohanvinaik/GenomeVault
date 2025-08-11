@@ -3,6 +3,7 @@ Prometheus metrics endpoint for monitoring.
 
 """
 
+from typing import Any
 from fastapi import APIRouter, Response
 from prometheus_client import (
     generate_latest,
@@ -131,7 +132,7 @@ async def get_metrics() -> Response:
 
 
 @router.get("/metrics/health")
-async def metrics_health() -> dict:
+async def metrics_health() -> Any:
     """
     Health check for metrics endpoint.
 

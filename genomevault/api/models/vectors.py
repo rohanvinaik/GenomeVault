@@ -1,8 +1,9 @@
+"""Vectors module."""
+
 from __future__ import annotations
 
-"""Vectors module."""
 from enum import Enum
-from typing import Any
+from typing import Any, Optional, Dict
 
 from pydantic import BaseModel, Field, validator
 
@@ -42,5 +43,28 @@ class VectorOperationRequest(BaseModel):
     """VectorOperationRequest implementation."""
 
     operation: str = Field(..., description="bundle, bind, permute, multiply, convolve")
-    vector_ids: list[str]
+    vector_ids: list[str] = Field(..., description="List of vector IDs to operate on")
     parameters: dict[str, Any] | None = None
+
+
+class VectorOperationPatch(BaseModel):
+    """PATCH model for updating vector operations - all fields optional."""
+
+    operation: Optional[str] = Field(None, description="bundle, bind, permute, multiply, convolve")
+    vector_ids: Optional[list[str]] = Field(None, description="List of vector IDs to operate on")
+    parameters: Optional[dict[str, Any]] = None
+
+    def dict_for_update(self) -> Dict[str, Any]:
+        """Return only set fields for update."""
+        return self.dict(exclude_unset=True, exclude_none=True)
+
+
+class VectorEncodeConfigPatch(BaseModel):
+    """PATCH model for updating encoding configuration."""
+
+    dimension: Optional[VectorDimension] = Field(None, description="Target dimension")
+    compression_tier: Optional[str] = Field(None, description="mini, clinical, or full")
+
+    def dict_for_update(self) -> Dict[str, Any]:
+        """Return only set fields for database update."""
+        return self.dict(exclude_unset=True, exclude_none=True)

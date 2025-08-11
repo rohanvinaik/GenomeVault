@@ -10,6 +10,8 @@ from typing import Dict, Any
 from fastapi import APIRouter, Response, status
 from pydantic import BaseModel
 
+from genomevault.api.types import HealthCheckResult, ComponentHealth
+
 from genomevault.utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -23,16 +25,16 @@ class HealthStatus(BaseModel):
     status: str
     timestamp: str
     version: str
-    checks: Dict[str, Any]
+    checks: Dict[str, HealthCheckResult]
 
 
 class DetailedHealthStatus(HealthStatus):
     """Detailed health check with component status."""
 
-    components: Dict[str, Dict[str, Any]]
+    components: Dict[str, ComponentHealth]
 
 
-def check_database() -> Dict[str, Any]:
+def check_database() -> HealthCheckResult:
     """Check database connectivity."""
     try:
         # Placeholder for future database connectivity check
@@ -43,7 +45,7 @@ def check_database() -> Dict[str, Any]:
         return {"status": "unhealthy", "error": str(e)}
 
 
-def check_cache() -> Dict[str, Any]:
+def check_cache() -> HealthCheckResult:
     """Check cache service connectivity."""
     try:
         # Placeholder for future cache connectivity check
@@ -53,7 +55,7 @@ def check_cache() -> Dict[str, Any]:
         return {"status": "unhealthy", "error": str(e)}
 
 
-def check_filesystem() -> Dict[str, Any]:
+def check_filesystem() -> HealthCheckResult:
     """Check filesystem access."""
     try:
         from genomevault.config import CACHE_DIR, DATA_DIR
@@ -75,7 +77,7 @@ def check_filesystem() -> Dict[str, Any]:
 
 
 @router.get("/healthz", response_model=HealthStatus)
-async def healthz(response: Response) -> HealthStatus:
+async def healthz(response: Response) -> Any:
     """
     Kubernetes-style health check endpoint.
 
@@ -105,7 +107,7 @@ async def healthz(response: Response) -> HealthStatus:
 
 
 @router.get("/healthz/live", response_model=Dict[str, str])
-async def liveness() -> Dict[str, str]:
+async def liveness() -> Any:
     """
     Kubernetes liveness probe endpoint.
 
@@ -116,7 +118,7 @@ async def liveness() -> Dict[str, str]:
 
 
 @router.get("/healthz/ready", response_model=DetailedHealthStatus)
-async def readiness(response: Response) -> DetailedHealthStatus:
+async def readiness(response: Response) -> Any:
     """
     Kubernetes readiness probe endpoint.
 
@@ -150,8 +152,8 @@ async def readiness(response: Response) -> DetailedHealthStatus:
     )
 
 
-@router.get("/healthz/startup")
-async def startup() -> Dict[str, str]:
+@router.get("/healthz/startup", response_model=Dict[str, str])
+async def startup() -> Any:
     """
     Kubernetes startup probe endpoint.
 

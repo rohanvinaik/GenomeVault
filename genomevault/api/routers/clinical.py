@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from typing import Any
 import numpy as np
 from fastapi import APIRouter, HTTPException
 
@@ -15,7 +16,7 @@ router = APIRouter(prefix="/clinical", tags=["clinical"])
 
 
 @router.post("/eval", response_model=ClinicalEvalResponse)
-def clinical_eval(req: ClinicalEvalRequest):
+def clinical_eval(req: ClinicalEvalRequest) -> Any:
     """Process clinical clinical eval.
 
     Args:
