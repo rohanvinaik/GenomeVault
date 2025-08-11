@@ -357,46 +357,46 @@ async def compute_similarity(request: HVSimilarityRequest) -> HVSimilarityRespon
 async def search_hypervectors(request: SearchRequest) -> SearchResponse:
     """
     Search for similar hypervectors in an index.
-    
+
     This endpoint performs k-nearest neighbor search on a pre-built index
     of hypervectors using the specified distance metric.
-    
+
     Args:
         request: Search request with query vector and parameters
-        
+
     Returns:
         SearchResponse with top-k results ordered by distance
-        
+
     Raises:
         HTTPException: If index not found or search fails
     """
     start_time = time.time()
-    
+
     try:
         # Validate and resolve index path
         index_path = Path(request.index_path)
-        
+
         # If relative path, resolve relative to a safe base directory
         if not index_path.is_absolute():
             # Use a safe base directory for indices
             base_dir = Path("data/indices")
             index_path = base_dir / index_path
-        
+
         # Check if index exists
         if not index_path.exists():
             logger.warning(f"Index not found at: {index_path}")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Index not found at: {request.index_path}"
+                detail=f"Index not found at: {request.index_path}",
             )
-        
+
         manifest_file = index_path / "manifest.json"
         if not manifest_file.exists():
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Index manifest not found at: {request.index_path}"
+                detail=f"Index manifest not found at: {request.index_path}",
             )
-        
+
         # Load index metadata
         try:
             metadata = hv_index.load_index_metadata(index_path)
@@ -404,71 +404,64 @@ async def search_hypervectors(request: SearchRequest) -> SearchResponse:
             logger.error(f"Failed to load index metadata: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Failed to load index metadata: {str(e)}"
+                detail=f"Failed to load index metadata: {str(e)}",
             )
-        
+
         # Validate query vector dimension
         query_dimension = len(request.query_vector)
-        if query_dimension != metadata.get('dimension', 0):
+        if query_dimension != metadata.get("dimension", 0):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Query vector dimension ({query_dimension}) doesn't match "
-                       f"index dimension ({metadata.get('dimension', 0)})"
+                f"index dimension ({metadata.get('dimension', 0)})",
             )
-        
+
         # Convert query vector to numpy array
         query_vector = np.array(request.query_vector, dtype=np.float32)
-        
+
         # Perform search
         try:
             search_results = hv_index.search(
-                query=query_vector,
-                path=index_path,
-                k=request.k,
-                metric=request.metric
+                query=query_vector, path=index_path, k=request.k, metric=request.metric
             )
         except ValueError as e:
             logger.error(f"Search validation error: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=str(e)
-            )
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
         except Exception as e:
             logger.error(f"Search failed: {e}", exc_info=True)
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Search failed: {str(e)}"
+                detail=f"Search failed: {str(e)}",
             )
-        
+
         # Calculate search time
         search_time_ms = (time.time() - start_time) * 1000
-        
+
         # Convert results to response format
         results = [
-            SearchResult(id=result['id'], distance=result['distance'])
-            for result in search_results
+            SearchResult(id=result["id"], distance=result["distance"]) for result in search_results
         ]
-        
+
         # Build response
         response = SearchResponse(
             results=results,
             query_dimension=query_dimension,
-            index_size=metadata.get('n_vectors', 0),
+            index_size=metadata.get("n_vectors", 0),
             metric=request.metric,
-            search_time_ms=round(search_time_ms, 2)
+            search_time_ms=round(search_time_ms, 2),
         )
-        
+
         # Update metrics
         request_count.labels(method="POST", endpoint="/search", status="success").inc()
         request_duration.labels(endpoint="/search").observe(time.time() - start_time)
-        
+
         logger.info(
             f"Search completed: found {len(results)} results in {search_time_ms:.2f}ms "
             f"from index with {metadata.get('n_vectors', 0)} vectors"
         )
-        
+
         return response
-        
+
     except HTTPException:
         request_count.labels(method="POST", endpoint="/search", status="client_error").inc()
         raise
@@ -477,5 +470,5 @@ async def search_hypervectors(request: SearchRequest) -> SearchResponse:
         logger.error(f"Search endpoint failed: {e}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Search operation failed: {str(e)}"
+            detail=f"Search operation failed: {str(e)}",
         )

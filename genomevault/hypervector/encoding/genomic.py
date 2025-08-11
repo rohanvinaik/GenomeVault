@@ -51,11 +51,11 @@ class GenomicEncoder:
     ):
         """Initialize instance.
 
-            Args:
-                dimension: Dimension value.
-                enable_snp_mode: SNP data.
-                panel_granularity: Panel granularity.
-            """
+        Args:
+            dimension: Dimension value.
+            enable_snp_mode: SNP data.
+            panel_granularity: Panel granularity.
+        """
         self.dimension = dimension
         self.base_vectors = self._init_base_vectors()
         self.enable_snp_mode = enable_snp_mode

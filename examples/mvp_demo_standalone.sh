@@ -2,7 +2,7 @@
 
 ################################################################################
 # GenomeVault MVP Demo Script - Standalone Version
-# 
+#
 # This version runs without requiring the API server
 # Uses CLI commands directly for demonstration
 ################################################################################
@@ -92,9 +92,9 @@ print_step "Using CLI to encode each patient's variants..."
 for file in $TEMP_DIR/patient_*.txt; do
     BASENAME=$(basename $file .txt)
     VARIANTS=$(cat $file | tr '\n' ' ')
-    
+
     echo "  Processing $BASENAME..."
-    
+
     # Use CLI to encode
     gv encode \
         --data "$VARIANTS" \
@@ -128,22 +128,22 @@ from pathlib import Path
 
 try:
     from genomevault.hypervector.index import build
-    
+
     vectors = []
     ids = []
     temp_dir = Path("temp_demo")
-    
+
     for i in range(1, 11):
         patient_id = f"patient_{i:03d}"
         vector_file = temp_dir / f"{patient_id}_vector.json"
-        
+
         if vector_file.exists():
             with open(vector_file, 'r') as f:
                 data = json.load(f)
                 vector = np.array(data.get('vector', data)[:1000])
                 vectors.append((vector > 0).astype(np.uint8))
                 ids.append(patient_id)
-    
+
     if vectors:
         index_path = Path("demo_index")
         build(vectors, ids, index_path, metric='hamming')
@@ -179,7 +179,7 @@ if [ -f "$QUERY_FILE" ]; then
         echo "    patient_005: distance = 342.1"
         echo "    patient_009: distance = 405.8"
     }
-    
+
     print_success "Found similar genomes based on variant patterns"
 fi
 
