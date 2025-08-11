@@ -42,6 +42,7 @@ from genomevault.crypto.serialization import (
 from genomevault.crypto.rng import secure_bytes, xof, xof_uint_mod
 from genomevault.crypto.transcript import Transcript
 from genomevault.crypto import merkle
+from genomevault.crypto.proof_io import compress_proof, decompress_proof
 
 __all__ = [
     "PublicKey",
@@ -85,4 +86,6 @@ __all__ = [
     "xof_uint_mod",
     "Transcript",
     "merkle",
+    "compress_proof",
+    "decompress_proof",
 ]
