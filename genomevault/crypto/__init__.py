@@ -29,6 +29,16 @@ from genomevault.crypto.types import (
 )
 
 from genomevault.crypto.commit import H, hexH, TAGS
+from genomevault.crypto.serialization import (
+    be_int,
+    bstr,
+    varbytes,
+    pack_bytes_seq,
+    pack_str_list,
+    pack_int_list,
+    pack_kv_map,
+    pack_proof_components,
+)
 
 __all__ = [
     "PublicKey",
@@ -59,4 +69,12 @@ __all__ = [
     "H",
     "hexH",
     "TAGS",
+    "be_int",
+    "bstr",
+    "varbytes",
+    "pack_bytes_seq",
+    "pack_str_list",
+    "pack_int_list",
+    "pack_kv_map",
+    "pack_proof_components",
 ]
