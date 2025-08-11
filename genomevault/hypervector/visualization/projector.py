@@ -3,7 +3,6 @@ Topographical Projection and Semantic Drift Detection for Model Training
 
 This module provides visualization tools for understanding model evolution
 during training using dimensionality reduction techniques.
-"""
 
 from __future__ import annotations
 
@@ -31,9 +30,9 @@ class ModelEvolutionVisualizer:
     def __init__(self, output_dir: str = "./visualizations"):
         """Initialize instance.
 
-            Args:
-                output_dir: Output dir.
-            """
+        Args:
+            output_dir: Output dir.
+        """
         self.output_dir = output_dir
         self.projections = {}
         self.drift_history = []
@@ -335,9 +334,7 @@ class ModelEvolutionVisualizer:
             v2 = projections[i + 1] - projections[i]
 
             # Angle between vectors
-            cos_angle = np.dot(v1, v2) / (
-                np.linalg.norm(v1) * np.linalg.norm(v2) + 1e-8
-            )
+            cos_angle = np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2) + 1e-8)
             angle = np.arccos(np.clip(cos_angle, -1, 1))
             curvatures.append(angle)
 
@@ -377,9 +374,7 @@ class ModelEvolutionVisualizer:
             return [(0, len(snapshot_vectors) - 1)]
 
         # Compute drift scores
-        drift_scores, _ = self.detect_semantic_drift(
-            snapshot_vectors, threshold=float("inf")
-        )
+        drift_scores, _ = self.detect_semantic_drift(snapshot_vectors, threshold=float("inf"))
 
         # Find phase boundaries using change point detection
         # Simple approach: find points with largest drift changes
@@ -422,9 +417,7 @@ class ModelEvolutionVisualizer:
         """
         # Get UMAP projection
         X = np.array(hypervectors)
-        reducer = umap.UMAP(
-            n_neighbors=min(15, len(X) - 1), min_dist=0.1, random_state=42
-        )
+        reducer = umap.UMAP(n_neighbors=min(15, len(X) - 1), min_dist=0.1, random_state=42)
         embeddings = reducer.fit_transform(X)
 
         plt.figure(figsize=(10, 8))
@@ -527,12 +520,8 @@ def create_semantic_debugging_report(
     phase_colors = plt.cm.Set3(np.linspace(0, 1, len(phases)))
 
     for idx, (start, end) in enumerate(phases):
-        ax3.axvspan(
-            start, end, alpha=0.3, color=phase_colors[idx], label=f"Phase {idx + 1}"
-        )
-    ax3.plot(
-        range(len(snapshot_vectors)), [0] * len(snapshot_vectors), "k.", markersize=10
-    )
+        ax3.axvspan(start, end, alpha=0.3, color=phase_colors[idx], label=f"Phase {idx + 1}")
+    ax3.plot(range(len(snapshot_vectors)), [0] * len(snapshot_vectors), "k.", markersize=10)
     ax3.set_title("Training Phases")
     ax3.set_xlabel("Snapshot Index")
     ax3.legend()

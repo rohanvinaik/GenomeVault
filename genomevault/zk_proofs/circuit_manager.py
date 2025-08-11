@@ -53,9 +53,9 @@ class CircuitMetadata:
     def to_dict(self) -> dict:
         """To dict.
 
-            Returns:
-                Dictionary result.
-            """
+        Returns:
+            Dictionary result.
+        """
         return {
             "name": self.name,
             "constraint_count": self.constraint_count,

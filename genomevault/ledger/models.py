@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Models module."""
-"""Models module."""
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -9,11 +8,13 @@ from pydantic import BaseModel, Field
 
 class LedgerAppendRequest(BaseModel):
     """LedgerAppendRequest implementation."""
+
     data: dict[str, Any] = Field(..., description="Arbitrary JSON-serializable payload")
 
 
 class LedgerEntryModel(BaseModel):
     """LedgerEntryModel implementation."""
+
     index: int
     timestamp: float
     data: dict[str, Any]
@@ -23,9 +24,11 @@ class LedgerEntryModel(BaseModel):
 
 class LedgerVerifyResponse(BaseModel):
     """LedgerVerifyResponse implementation."""
+
     valid: bool
 
 
 class LedgerEntriesResponse(BaseModel):
     """LedgerEntriesResponse implementation."""
+
     entries: list[LedgerEntryModel]

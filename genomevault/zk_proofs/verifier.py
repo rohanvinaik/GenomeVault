@@ -52,9 +52,9 @@ class VerificationResult:
     def to_dict(self) -> dict:
         """To dict.
 
-            Returns:
-                Dictionary result.
-            """
+        Returns:
+            Dictionary result.
+        """
         return {
             "is_valid": self.is_valid,
             "proof_id": self.proof_id,

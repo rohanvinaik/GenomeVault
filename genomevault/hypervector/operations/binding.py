@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Binding module."""
-"""Binding module."""
 import warnings
 from collections.abc import Iterable
 

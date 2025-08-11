@@ -1,6 +1,7 @@
 """
 Post-quantum STARK implementation for quantum-resistant proofs.
 Provides 128-bit post-quantum security.
+
 """
 
 from __future__ import annotations

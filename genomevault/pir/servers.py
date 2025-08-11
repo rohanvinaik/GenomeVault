@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Servers module."""
-"""Servers module."""
 import numpy as np
 
 
@@ -15,12 +14,12 @@ class PIRServer:
     def __init__(self, db: list[bytes]):
         """Initialize instance.
 
-            Args:
-                db: Db.
+        Args:
+            db: Db.
 
-            Raises:
-                ValueError: When operation fails.
-            """
+        Raises:
+            ValueError: When operation fails.
+        """
         if not db:
             raise ValueError("db must be non-empty")
         L = len(db[0])

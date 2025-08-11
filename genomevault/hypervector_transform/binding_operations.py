@@ -3,6 +3,7 @@ from __future__ import annotations
 
 """Binding Operations module."""
 from enum import Enum
+from typing import Optional
 
 import torch
 
@@ -33,7 +34,7 @@ class HypervectorBinder:
         if seed is not None:
             torch.manual_seed(seed)
 
-    def bind(
+    def bind(self, vectors: list, binding_type: Optional["BindingType"] = None) -> torch.Tensor:
         """Bind.
 
             Args:
@@ -46,10 +47,6 @@ class HypervectorBinder:
             Raises:
                 ValueError: When operation fails.
             """
-        self,
-        vectors: list[torch.Tensor],
-        binding_type: BindingType = BindingType.MULTIPLY,
-    ) -> torch.Tensor:
         if not vectors:
             raise ValueError("No vectors provided")
         result = vectors[0].clone()
@@ -57,7 +54,7 @@ class HypervectorBinder:
             result = result * v  # Simple element-wise multiply
         return result
 
-    def unbind(
+    def unbind(self, bound_vector: torch.Tensor, known_vectors: list, binding_type: Optional["BindingType"] = None) -> torch.Tensor:
         """Unbind.
 
             Args:
@@ -68,11 +65,6 @@ class HypervectorBinder:
             Returns:
                 Operation result.
             """
-        self,
-        bound_vector: torch.Tensor,
-        known_vectors: list[torch.Tensor],
-        binding_type: BindingType = BindingType.MULTIPLY,
-    ) -> torch.Tensor:
         result = bound_vector.clone()
         for v in known_vectors:
             result = result / (v + 1e-8)  # Avoid division by zero
@@ -98,7 +90,7 @@ class HypervectorBinder:
             result = result / torch.norm(result)
         return result
 
-    def create_composite_binding(
+    def create_composite_binding(self, role_filler_pairs: list, binding_type: Optional["BindingType"] = None) -> torch.Tensor:
         """Create composite binding.
 
             Args:
@@ -108,10 +100,6 @@ class HypervectorBinder:
             Returns:
                 Newly created composite binding.
             """
-        self,
-        role_filler_pairs: list[tuple[torch.Tensor, torch.Tensor]],
-        binding_type: BindingType = BindingType.MULTIPLY,
-    ) -> torch.Tensor:
         bound_pairs = []
         for role, filler in role_filler_pairs:
             bound = self.bind([role, filler], binding_type)

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Contract module."""
-"""Contract module."""
 import json
 import re
 from dataclasses import dataclass, field
@@ -14,6 +13,7 @@ import pandas as pd
 @dataclass
 class ColumnSpec:
     """Data container for columnspec information."""
+
     name: str
     dtype: str  # 'string' | 'int' | 'float' | 'bool' | 'datetime'
     required: bool = True
@@ -27,6 +27,7 @@ class ColumnSpec:
 @dataclass
 class TableContract:
     """Data container for tablecontract information."""
+
     name: str
     columns: list[ColumnSpec] = field(default_factory=list)
     unique_key: list[str] | None = None  # compound unique key (list of columns)
@@ -35,12 +36,12 @@ class TableContract:
     def from_json(path: str) -> TableContract:
         """From json.
 
-            Args:
-                path: File or directory path.
+        Args:
+            path: File or directory path.
 
-            Returns:
-                TableContract instance.
-            """
+        Returns:
+            TableContract instance.
+        """
         obj = json.loads(Path(path).read_text(encoding="utf-8"))
         cols = [ColumnSpec(**c) for c in obj["columns"]]
         return TableContract(
@@ -52,9 +53,9 @@ class TableContract:
     def to_json(self, path: str) -> None:
         """To json.
 
-            Args:
-                path: File or directory path.
-            """
+        Args:
+            path: File or directory path.
+        """
         obj = {
             "name": self.name,
             "columns": [c.__dict__ for c in self.columns],
@@ -90,15 +91,11 @@ def _dtype_ok(series: pd.Series, spec: ColumnSpec) -> bool:
     if spec.dtype == "datetime":
         return pd.api.types.is_datetime64_any_dtype(series)
     if spec.dtype == "string":
-        return pd.api.types.is_string_dtype(series) or pd.api.types.is_object_dtype(
-            series
-        )
+        return pd.api.types.is_string_dtype(series) or pd.api.types.is_object_dtype(series)
     if spec.dtype == "int":
         return pd.api.types.is_integer_dtype(series)
     if spec.dtype == "float":
-        return pd.api.types.is_float_dtype(series) or pd.api.types.is_integer_dtype(
-            series
-        )
+        return pd.api.types.is_float_dtype(series) or pd.api.types.is_integer_dtype(series)
     if spec.dtype == "bool":
         return pd.api.types.is_bool_dtype(series)
     return True
@@ -119,9 +116,7 @@ def validate_dataframe(df: pd.DataFrame, contract: TableContract) -> dict[str, A
         if spec.name not in df.columns:
             if spec.required:
                 report["ok"] = False
-                report["violations"].append(
-                    {"type": "missing_column", "column": spec.name}
-                )
+                report["violations"].append({"type": "missing_column", "column": spec.name})
             report["columns"][spec.name] = colrep
             continue
 
@@ -135,9 +130,7 @@ def validate_dataframe(df: pd.DataFrame, contract: TableContract) -> dict[str, A
         if not spec.allow_null and s.isna().any():
             report["ok"] = False
             n = int(s.isna().sum())
-            report["violations"].append(
-                {"type": "nulls", "column": spec.name, "count": n}
-            )
+            report["violations"].append({"type": "nulls", "column": spec.name, "count": n})
 
         if spec.regex:
             pat = re.compile(spec.regex)

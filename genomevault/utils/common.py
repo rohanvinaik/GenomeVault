@@ -6,7 +6,6 @@ across the GenomeVault codebase, eliminating duplication and ensuring
 consistent behavior.
 
 Created as part of the tail-chasing fixes initiative.
-"""
 
 from __future__ import annotations
 

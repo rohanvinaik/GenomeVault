@@ -1,7 +1,7 @@
 """
 Experimental advanced PIR (Private Information Retrieval) protocols.
 
-⚠️ EXPERIMENTAL: These PIR implementations are research prototypes.
+EXPERIMENTAL: These PIR implementations are research prototypes.
 They have not been audited for production use.
 """
 

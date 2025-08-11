@@ -1,7 +1,6 @@
 """
 Batched PIR Query Builder for HDC Error-Tuned Queries
 Implements repeat-aware PIR batching with median aggregation for uncertainty tuning
-"""
 
 from __future__ import annotations
 
@@ -67,17 +66,15 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
     def __init__(self, pir_client: PIRClient, index_mapping: dict[str, dict[str, int]]):
         """Initialize instance.
 
-            Args:
-                pir_client: Pir client.
-                index_mapping: Index position.
-            """
+        Args:
+            pir_client: Pir client.
+            index_mapping: Index position.
+        """
         super().__init__(pir_client, index_mapping)
         self.batch_cache: dict[str, BatchedQueryResult] = {}
         self.batch_cache_size = 50
 
-    def build_repeat_batch(
-        self, budget: ErrorBudget, query: GenomicQuery
-    ) -> BatchedQuery:
+    def build_repeat_batch(self, budget: ErrorBudget, query: GenomicQuery) -> BatchedQuery:
         """
         Build a batch of k queries with different seeds for median aggregation
 
@@ -115,9 +112,7 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
             budget=budget,
         )
 
-    def _generate_repeat_seed(
-        self, base_key: str, repeat_idx: int, dimension: int
-    ) -> int:
+    def _generate_repeat_seed(self, base_key: str, repeat_idx: int, dimension: int) -> int:
         """Generate deterministic seed for a repeat query"""
         seed_data = f"{base_key}:{repeat_idx}:{dimension}"
         seed_hash = hashlib.sha256(seed_data.encode()).digest()
@@ -176,9 +171,7 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
             },
         )
 
-    async def execute_batched_query(
-        self, batched_query: BatchedQuery
-    ) -> BatchedQueryResult:
+    async def execute_batched_query(self, batched_query: BatchedQuery) -> BatchedQueryResult:
         """
         Execute a batch of repeat queries and aggregate results
 
@@ -265,9 +258,7 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
 
             # Check for early termination if we have enough good results
             if self._can_terminate_early(batched_query, accumulated_results):
-                logger.info(
-                    "Early termination after %slen(accumulated_results) results"
-                )
+                logger.info("Early termination after %slen(accumulated_results) results")
                 # Cancel remaining tasks
                 for task in tasks:
                     if not task.done():
@@ -288,9 +279,7 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
 
         return decoded
 
-    async def _execute_indexed_repeat(
-        self, idx: int, pir_query: PIRQuery
-    ) -> tuple[int, Any]:
+    async def _execute_indexed_repeat(self, idx: int, pir_query: PIRQuery) -> tuple[int, Any]:
         """Execute a repeat query with its index"""
         result = await self._execute_single_repeat(pir_query)
         return (idx, result)
@@ -356,9 +345,7 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
             max_tiles = 100
             tile_results = []
 
-            for tile_idx in range(
-                tile_start, min(tile_end + 1, tile_start + max_tiles)
-            ):
+            for tile_idx in range(tile_start, min(tile_end + 1, tile_start + max_tiles)):
                 t_start = tile_idx * tile_size
                 t_end = min((tile_idx + 1) * tile_size - 1, end)
 
@@ -405,9 +392,7 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
             level1_results.append(result)
 
         # Aggregate proofs recursively
-        aggregated_proof = self._aggregate_zoom_proofs(
-            level0_results, level1_results, budget
-        )
+        aggregated_proof = self._aggregate_zoom_proofs(level0_results, level1_results, budget)
 
         return {
             "chromosome": chromosome,
@@ -595,9 +580,7 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
         }
 
         if self.batch_cache:
-            total_repeats = sum(
-                r.query.budget.repeats for r in self.batch_cache.values()
-            )
+            total_repeats = sum(r.query.budget.repeats for r in self.batch_cache.values())
             total_errors = sum(r.median_error for r in self.batch_cache.values())
             successes = sum(
                 1 for r in self.batch_cache.values() if r.metadata["error_within_bound"]

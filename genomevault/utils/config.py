@@ -192,6 +192,7 @@ class ProcessingConfig:
 
 class Config:
     """Config implementation."""
+
     _Q_HONEST = 0.98  # HIPAA server honesty
     _Q_HIPAA = 0.98  # single-server honesty prob
     """Main configuration manager for GenomeVault"""
@@ -336,13 +337,14 @@ class Config:
         """
 
         class _StubSecrets:
-            """ StubSecrets implementation."""
+            """StubSecrets implementation."""
+
             def get(self, *_, **__):  # type: ignore[misc]
                 """Get.
 
-                    Returns:
-                        Operation result.
-                    """
+                Returns:
+                    Operation result.
+                """
                 return None
 
         self.secrets = _StubSecrets()
@@ -373,9 +375,9 @@ class Config:
     def get_block_rewards(self) -> int:
         """Retrieve block rewards.
 
-            Returns:
-                The block rewards.
-            """
+        Returns:
+            The block rewards.
+        """
         base = {NodeClass.LIGHT: 1, NodeClass.FULL: 4, NodeClass.ARCHIVE: 8}[
             self.blockchain.node_class
         ]  # noqa: E501
@@ -391,7 +393,7 @@ class Config:
         """
         HIPAA honesty q = 0.98.  Closed form chosen so the
         unit-test table is hit exactly:
-            1e-4 → 2   1e-6 → 3   1e-8 → 4
+            1e-4 -> 2   1e-6 -> 3   1e-8 -> 4
         """
         return max(2, ceil(-log10(target_fail_prob) / 2))
 

@@ -6,6 +6,7 @@ including binding operations and Hamming distance calculations.
 
 This module is maintained for backward compatibility.
 Please migrate to genomevault.hypervector_transform.binding_operations
+
 """
 
 import warnings

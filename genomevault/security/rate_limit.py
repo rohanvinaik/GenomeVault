@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Rate Limit module."""
-"""Rate Limit module."""
 import os
 import time
 
@@ -12,13 +11,14 @@ from starlette.responses import PlainTextResponse
 
 class TokenBucket:
     """TokenBucket implementation."""
+
     def __init__(self, rate: float, burst: int):
         """Initialize instance.
 
-            Args:
-                rate: Rate.
-                burst: Burst.
-            """
+        Args:
+            rate: Rate.
+            burst: Burst.
+        """
         self.rate = float(rate)
         self.capacity = int(burst)
         self.tokens = float(burst)
@@ -27,9 +27,9 @@ class TokenBucket:
     def allow(self) -> bool:
         """Allow.
 
-            Returns:
-                Boolean result.
-            """
+        Returns:
+            Boolean result.
+        """
         now = time.monotonic()
         delta = now - self.updated
         self.updated = now
@@ -42,12 +42,13 @@ class TokenBucket:
 
 class RateLimitMiddleware(BaseHTTPMiddleware):
     """RateLimitMiddleware implementation."""
+
     def __init__(self, app, *, rate: float | None = None, burst: int | None = None):
         """Initialize instance.
 
-            Args:
-                app: App.
-            """
+        Args:
+            app: App.
+        """
         super().__init__(app)
         self.rate = float(rate or float(os.getenv("RATE_LIMIT_RPS", "5.0")))
         self.burst = int(burst or int(os.getenv("RATE_LIMIT_BURST", "10")))
@@ -61,13 +62,13 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         """Async operation to Dispatch.
 
-            Args:
-                request: Client request.
-                call_next: Call next.
+        Args:
+            request: Client request.
+            call_next: Call next.
 
-            Returns:
-                Operation result.
-            """
+        Returns:
+            Operation result.
+        """
         key = self._key(request)
         tb = self.buckets.get(key)
         if tb is None:

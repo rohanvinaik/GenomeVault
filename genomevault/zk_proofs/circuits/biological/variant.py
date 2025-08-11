@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Variant module."""
-"""Variant module."""
 import hashlib
 from typing import Dict, List
 
@@ -39,9 +38,9 @@ class VariantPresenceCircuit(BaseCircuit):
     def __init__(self, merkle_depth: int = 20):
         """Initialize instance.
 
-            Args:
-                merkle_depth: Merkle depth.
-            """
+        Args:
+            merkle_depth: Merkle depth.
+        """
         super().__init__("variant_presence", 5000)
         self.merkle_depth = merkle_depth
         self.merkle_circuit = MerkleTreeCircuit(merkle_depth)
@@ -56,9 +55,7 @@ class VariantPresenceCircuit(BaseCircuit):
         # Private inputs
         self.variant_data = private_inputs["variant_data"]
         self.merkle_proof = private_inputs["merkle_proof"]
-        self.witness_randomness = FieldElement(
-            int(private_inputs["witness_randomness"], 16)
-        )
+        self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
 
         # Compute variant leaf
         self.variant_leaf = self._compute_variant_leaf()
@@ -67,9 +64,7 @@ class VariantPresenceCircuit(BaseCircuit):
         """Generate variant presence constraints"""
         # 1. Verify variant hash matches computed hash
         computed_hash = self._hash_variant(self.variant_data)
-        self.add_constraint(
-            computed_hash, self.variant_hash, FieldElement(0), ql=1, qr=-1
-        )
+        self.add_constraint(computed_hash, self.variant_hash, FieldElement(0), ql=1, qr=-1)
 
         # 2. Verify variant is in Merkle tree
         self.merkle_circuit.setup(
@@ -139,9 +134,9 @@ class PolygenenicRiskScoreCircuit(BaseCircuit):
     def __init__(self, max_variants: int = 1000):
         """Initialize instance.
 
-            Args:
-                max_variants: Genetic variant information.
-            """
+        Args:
+            max_variants: Genetic variant information.
+        """
         super().__init__("polygenic_risk_score", 20000)
         self.max_variants = max_variants
         self.range_circuit = RangeProofCircuit(bit_width=32)
@@ -151,12 +146,8 @@ class PolygenenicRiskScoreCircuit(BaseCircuit):
         # Public inputs
         self.prs_model_hash = FieldElement(int(public_inputs["prs_model"], 16))
         self.score_range = public_inputs["score_range"]
-        self.result_commitment = FieldElement(
-            int(public_inputs["result_commitment"], 16)
-        )
-        self.genome_commitment = FieldElement(
-            int(public_inputs["genome_commitment"], 16)
-        )
+        self.result_commitment = FieldElement(int(public_inputs["result_commitment"], 16))
+        self.genome_commitment = FieldElement(int(public_inputs["genome_commitment"], 16))
 
         # Private inputs
         self.variants = [FieldElement(v) for v in private_inputs["variants"]]
@@ -164,9 +155,7 @@ class PolygenenicRiskScoreCircuit(BaseCircuit):
             FieldElement(int(w * 1000)) for w in private_inputs["weights"]
         ]  # Scale weights
         self.merkle_proofs = private_inputs["merkle_proofs"]
-        self.witness_randomness = FieldElement(
-            int(private_inputs["witness_randomness"], 16)
-        )
+        self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
 
         # Ensure we have matching variants and weights
         assert len(self.variants) == len(self.weights)
@@ -202,15 +191,11 @@ class PolygenenicRiskScoreCircuit(BaseCircuit):
 
         # 5. Create and verify commitment
         commitment = self._commit_score(scaled_score, self.witness_randomness)
-        self.add_constraint(
-            commitment, self.result_commitment, FieldElement(0), ql=1, qr=-1
-        )
+        self.add_constraint(commitment, self.result_commitment, FieldElement(0), ql=1, qr=-1)
 
         # 6. Verify PRS model hash
         model_hash = self._hash_prs_model(self.weights)
-        self.add_constraint(
-            model_hash, self.prs_model_hash, FieldElement(0), ql=1, qr=-1
-        )
+        self.add_constraint(model_hash, self.prs_model_hash, FieldElement(0), ql=1, qr=-1)
 
     def _add_genotype_constraint(self, genotype: FieldElement):
         """Constrain genotype to be 0, 1, or 2"""
@@ -227,9 +212,7 @@ class PolygenenicRiskScoreCircuit(BaseCircuit):
         self.add_multiplication_gate(temp, g_minus_2, result)
         self.add_constraint(result, FieldElement(0), FieldElement(0), ql=1)
 
-    def _commit_score(
-        self, score: FieldElement, randomness: FieldElement
-    ) -> FieldElement:
+    def _commit_score(self, score: FieldElement, randomness: FieldElement) -> FieldElement:
         """Create commitment to PRS score"""
         data = f"PRS:{score.value}:{randomness.value}".encode()
         hash_val = hashlib.sha256(data).hexdigest()
@@ -260,8 +243,7 @@ class DiabetesRiskCircuit(BaseCircuit):
     """
 
     def __init__(self):
-        """Initialize instance.
-            """
+        """Initialize instance."""
         super().__init__("diabetes_risk_alert", 15000)
         self.glucose_comparison = ComparisonCircuit()
         self.risk_comparison = ComparisonCircuit()
@@ -273,18 +255,12 @@ class DiabetesRiskCircuit(BaseCircuit):
             int(public_inputs["glucose_threshold"] * 100)
         )  # Scale to avoid decimals
         self.risk_threshold = FieldElement(int(public_inputs["risk_threshold"] * 1000))
-        self.result_commitment = FieldElement(
-            int(public_inputs["result_commitment"], 16)
-        )
+        self.result_commitment = FieldElement(int(public_inputs["result_commitment"], 16))
 
         # Private inputs
-        self.glucose_reading = FieldElement(
-            int(private_inputs["glucose_reading"] * 100)
-        )
+        self.glucose_reading = FieldElement(int(private_inputs["glucose_reading"] * 100))
         self.risk_score = FieldElement(int(private_inputs["risk_score"] * 1000))
-        self.witness_randomness = FieldElement(
-            int(private_inputs["witness_randomness"], 16)
-        )
+        self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
 
     def generate_constraints(self):
         """Generate diabetes risk assessment constraints"""
@@ -318,17 +294,13 @@ class DiabetesRiskCircuit(BaseCircuit):
 
         # 4. Create and verify commitment
         commitment = self._commit_result(condition_result, self.witness_randomness)
-        self.add_constraint(
-            commitment, self.result_commitment, FieldElement(0), ql=1, qr=-1
-        )
+        self.add_constraint(commitment, self.result_commitment, FieldElement(0), ql=1, qr=-1)
 
         # 5. Add range constraints for glucose and risk score
         self._add_glucose_range_constraint()
         self._add_risk_range_constraint()
 
-    def _commit_result(
-        self, result: FieldElement, randomness: FieldElement
-    ) -> FieldElement:
+    def _commit_result(self, result: FieldElement, randomness: FieldElement) -> FieldElement:
         """Commit to boolean result"""
         data = f"DIABETES_RISK:{result.value}:{randomness.value}".encode()
         hash_val = hashlib.sha256(data).hexdigest()
@@ -368,9 +340,9 @@ class PharmacogenomicCircuit(BaseCircuit):
     def __init__(self, max_star_alleles: int = 50):
         """Initialize instance.
 
-            Args:
-                max_star_alleles: Max star alleles.
-            """
+        Args:
+            max_star_alleles: Max star alleles.
+        """
         super().__init__("pharmacogenomic", 10000)
         self.max_star_alleles = max_star_alleles
         self._genes = ["CYP2C19", "CYP2D6", "CYP2C9", "VKORC1", "TPMT"]
@@ -388,9 +360,7 @@ class PharmacogenomicCircuit(BaseCircuit):
         self.activity_scores = [
             FieldElement(int(s * 100)) for s in private_inputs["activity_scores"]
         ]
-        self.witness_randomness = FieldElement(
-            int(private_inputs["witness_randomness"], 16)
-        )
+        self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
 
     def generate_constraints(self):
         """Generate pharmacogenomic prediction constraints"""
@@ -442,9 +412,7 @@ class PharmacogenomicCircuit(BaseCircuit):
         # Add constraint that gene is one of known genes
         # Simplified for demo
 
-    def _commit_genotypes(
-        self, genotypes: List[Dict], randomness: FieldElement
-    ) -> FieldElement:
+    def _commit_genotypes(self, genotypes: List[Dict], randomness: FieldElement) -> FieldElement:
         """Create commitment to genotypes"""
         genotype_str = ":".join(f"{g['variant']}={g['genotype']}" for g in genotypes)
         data = f"GENOTYPES:{genotype_str}:{randomness.value}".encode()
@@ -471,9 +439,9 @@ class PathwayEnrichmentCircuit(BaseCircuit):
     def __init__(self, max_genes: int = 20000):
         """Initialize instance.
 
-            Args:
-                max_genes: Max genes.
-            """
+        Args:
+            max_genes: Max genes.
+        """
         super().__init__("pathway_enrichment", 25000)
         self.max_genes = max_genes
 
@@ -481,34 +449,26 @@ class PathwayEnrichmentCircuit(BaseCircuit):
         """Setup pathway enrichment circuit"""
         # Public inputs
         self.pathway_id = FieldElement(public_inputs["pathway_id"])
-        self.enrichment_score = FieldElement(
-            int(public_inputs["enrichment_score"] * 1000)
-        )
+        self.enrichment_score = FieldElement(int(public_inputs["enrichment_score"] * 1000))
         self.significance = FieldElement(int(public_inputs["significance"], 16))
 
         # Private inputs
         self.expression_values = private_inputs["expression_values"]
         self.gene_sets = private_inputs["gene_sets"]
         self.permutation_seeds = private_inputs["permutation_seeds"]
-        self.witness_randomness = FieldElement(
-            int(private_inputs["witness_randomness"], 16)
-        )
+        self.witness_randomness = FieldElement(int(private_inputs["witness_randomness"], 16))
 
     def generate_constraints(self):
         """Generate pathway enrichment constraints"""
         # 1. Convert hypervector expressions to field elements
-        expression_elements = self._hypervectors_to_field_elements(
-            self.expression_values
-        )
+        expression_elements = self._hypervectors_to_field_elements(self.expression_values)
 
         # 2. Calculate enrichment score for pathway
         pathway_genes = self.gene_sets[str(self.pathway_id.value)]
         pathway_score = self._calculate_enrichment(expression_elements, pathway_genes)
 
         # 3. Verify enrichment score matches public input
-        self.add_constraint(
-            pathway_score, self.enrichment_score, FieldElement(0), ql=1, qr=-1
-        )
+        self.add_constraint(pathway_score, self.enrichment_score, FieldElement(0), ql=1, qr=-1)
 
         # 4. Perform permutation test for significance
         permutation_scores = []
@@ -523,13 +483,9 @@ class PathwayEnrichmentCircuit(BaseCircuit):
             pathway_score, permutation_scores, self.witness_randomness
         )
 
-        self.add_constraint(
-            _p_value_commitment, self.significance, FieldElement(0), ql=1, qr=-1
-        )
+        self.add_constraint(_p_value_commitment, self.significance, FieldElement(0), ql=1, qr=-1)
 
-    def _hypervectors_to_field_elements(
-        self, hypervectors: torch.Tensor
-    ) -> List[FieldElement]:
+    def _hypervectors_to_field_elements(self, hypervectors: torch.Tensor) -> List[FieldElement]:
         """Convert hypervector to field elements"""
         # Take first few dimensions for efficiency
         if isinstance(hypervectors, torch.Tensor):
@@ -582,9 +538,7 @@ class PathwayEnrichmentCircuit(BaseCircuit):
                 exceed_count += 1
 
         # p-value = (exceed_count + 1) / (num_permutations + 1)
-        _p_value = FieldElement(
-            (exceed_count + 1) * 1000 // (len(permutation_scores) + 1)
-        )
+        _p_value = FieldElement((exceed_count + 1) * 1000 // (len(permutation_scores) + 1))
 
         # Create commitment
         data = f"PVALUE:{_p_value.value}:{randomness.value}".encode()

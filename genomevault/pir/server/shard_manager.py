@@ -1,6 +1,7 @@
 """
 Shard manager for distributed PIR database.
 Handles data distribution, updates, and integrity verification.
+
 """
 
 from __future__ import annotations
@@ -40,9 +41,9 @@ class ShardMetadata:
     def to_dict(self) -> dict:
         """To dict.
 
-            Returns:
-                Dictionary result.
-            """
+        Returns:
+            Dictionary result.
+        """
         return {
             "id": self.shard_id,
             "index": self.shard_index,

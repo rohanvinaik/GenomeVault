@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Ledger module."""
-"""Ledger module."""
 from fastapi import APIRouter, HTTPException
 
 from genomevault.ledger.models import (
@@ -20,16 +19,16 @@ _L = InMemoryLedger()
 def append_entry(req: LedgerAppendRequest):
     """Append entry.
 
-        Args:
-            req: Req.
+    Args:
+        req: Req.
 
-        Returns:
-            Operation result.
+    Returns:
+        Operation result.
 
-        Raises:
-            HTTPException: When operation fails.
-            RuntimeError: When operation fails.
-        """
+    Raises:
+        HTTPException: When operation fails.
+        RuntimeError: When operation fails.
+    """
     try:
         e = _L.append(req.data)
         return LedgerEntryModel(**e.__dict__)
@@ -43,9 +42,9 @@ def append_entry(req: LedgerAppendRequest):
 def verify_chain():
     """Verify chain.
 
-        Returns:
-            Operation result.
-        """
+    Returns:
+        Operation result.
+    """
     return LedgerVerifyResponse(valid=_L.verify_chain())
 
 
@@ -53,7 +52,7 @@ def verify_chain():
 def list_entries():
     """List entries.
 
-        Returns:
-            Operation result.
-        """
+    Returns:
+        Operation result.
+    """
     return LedgerEntriesResponse(entries=[LedgerEntryModel(**e.__dict__) for e in _L.entries()])

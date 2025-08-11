@@ -3,6 +3,7 @@ Hypervector encoding modules
 
 This module is maintained for backward compatibility.
 Please migrate to genomevault.hypervector_transform.encoding
+
 """
 
 import warnings

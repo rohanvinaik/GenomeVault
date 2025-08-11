@@ -6,7 +6,6 @@ Handles mass spectrometry proteomics data including:
 - Post-translational modifications (PTMs)
 - Peptide spectrum matching
 - Label-free and labeled quantification
-"""
 
 from __future__ import annotations
 

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Recursive Aggregator module."""
-"""Recursive Aggregator module."""
 from typing import Iterable
 
 AGG_PREFIX = b"AGG("
@@ -10,12 +9,12 @@ AGG_PREFIX = b"AGG("
 def aggregate(proofs: Iterable[bytes]) -> bytes:
     """Aggregate.
 
-        Args:
-            proofs: Zero-knowledge proof.
+    Args:
+        proofs: Zero-knowledge proof.
 
-        Returns:
-            bytes instance.
-        """
+    Returns:
+        bytes instance.
+    """
     parts = [p for p in proofs if isinstance(p, (bytes, bytearray))]
     return AGG_PREFIX + b",".join(parts) + b")"
 
@@ -23,13 +22,13 @@ def aggregate(proofs: Iterable[bytes]) -> bytes:
 def verify_aggregate(agg: bytes, expected_count: int | None = None) -> bool:
     """Verify aggregate.
 
-        Args:
-            agg: Agg.
-            expected_count: Number of items.
+    Args:
+        agg: Agg.
+        expected_count: Number of items.
 
-        Returns:
-            Boolean result.
-        """
+    Returns:
+        Boolean result.
+    """
     if (
         not isinstance(agg, (bytes, bytearray))
         or not agg.startswith(AGG_PREFIX)

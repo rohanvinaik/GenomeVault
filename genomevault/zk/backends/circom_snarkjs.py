@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Circom Snarkjs module."""
-"""Circom Snarkjs module."""
 import json
 import shutil
 import subprocess
@@ -12,6 +11,7 @@ from pathlib import Path
 @dataclass
 class CircuitPaths:
     """Data container for circuitpaths information."""
+
     root: Path  # e.g., genomevault/zk/circuits/sum64
     circom: Path  # sum64.circom
     build: Path  # build directory inside root
@@ -24,12 +24,12 @@ class CircuitPaths:
     def for_sum64(repo_root: Path) -> CircuitPaths:
         """For sum64.
 
-            Args:
-                repo_root: Repo root.
+        Args:
+            repo_root: Repo root.
 
-            Returns:
-                CircuitPaths instance.
-            """
+        Returns:
+            CircuitPaths instance.
+        """
         root = repo_root / "genomevault" / "zk" / "circuits" / "sum64"
         return CircuitPaths(
             root=root,
@@ -49,19 +49,19 @@ def _which(cmd: str) -> str | None:
 def toolchain_available() -> bool:
     """Toolchain available.
 
-        Returns:
-            Boolean result.
-        """
+    Returns:
+        Boolean result.
+    """
     return bool(_which("circom") and _which("snarkjs") and _which("node"))
 
 
 def run(cmd: list[str], cwd: Path) -> None:
     """Run.
 
-        Args:
-            cmd: Cmd.
-            cwd: Cwd.
-        """
+    Args:
+        cmd: Cmd.
+        cwd: Cwd.
+    """
     subprocess.run(cmd, cwd=str(cwd), check=True)
 
 
@@ -182,17 +182,17 @@ def prove(paths: CircuitPaths, a: int, b: int, c_public: int) -> dict:
 def verify(paths: CircuitPaths, proof: dict, public: dict) -> bool:
     """Verify.
 
-        Args:
-            paths: File or directory paths.
-            proof: Zero-knowledge proof.
-            public: Public.
+    Args:
+        paths: File or directory paths.
+        proof: Zero-knowledge proof.
+        public: Public.
 
-        Returns:
-            Boolean result.
+    Returns:
+        Boolean result.
 
-        Raises:
-            RuntimeError: When operation fails.
-        """
+    Raises:
+        RuntimeError: When operation fails.
+    """
     ensure_built(paths)
     tmp_proof = paths.build / "tmp_proof.json"
     tmp_pub = paths.build / "tmp_public.json"

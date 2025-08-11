@@ -47,6 +47,99 @@ GenomeVault transforms genomic data analysis through innovative cryptographic te
 
 ---
 
+## ⚡ 60-Second Quickstart
+
+Get GenomeVault running in under a minute! Choose your preferred method:
+
+### 🐳 Docker Quickstart (Recommended)
+
+```bash
+# Start GenomeVault with one command
+docker compose up -d
+
+# Verify it's running
+curl http://localhost:8000/health
+```
+
+### 🔧 API Examples (curl)
+
+```bash
+# 1. Encode genomic variants into privacy-preserving vectors
+curl -X POST http://localhost:8000/api/v1/encode \
+  -H "Content-Type: application/json" \
+  -d '{
+    "variants": ["chr1:123456 A>G", "chr2:789012 C>T"],
+    "dimension": 10000
+  }'
+
+# 2. Calculate similarity between two vectors
+curl -X POST http://localhost:8000/api/v1/similarity \
+  -H "Content-Type: application/json" \
+  -d '{
+    "vector1": [0.1, -0.2, 0.3, ...],
+    "vector2": [0.2, -0.1, 0.4, ...],
+    "metric": "cosine"
+  }'
+
+# 3. Search for similar genomes
+curl -X POST http://localhost:8000/api/v1/search \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query_vector": [0.1, -0.2, 0.3, ...],
+    "k": 5
+  }'
+
+# 4. Generate zero-knowledge proof
+curl -X POST http://localhost:8000/api/v1/prove \
+  -H "Content-Type: application/json" \
+  -d '{
+    "public_input": {"threshold": 0.5},
+    "private_input": {"genome_data": "..."},
+    "circuit_type": "variant"
+  }'
+```
+
+### 💻 CLI Examples
+
+```bash
+# Install CLI
+pip install -e .
+
+# 1. Encode variants
+gv encode --data "chr1:123456 A>G" --dimension 10000 --out vector.json
+
+# 2. Calculate similarity
+gv sim --v1 vector1.json --v2 vector2.json --metric hamming
+
+# 3. Build search index
+gv index build --vectors "*.json" --out index/
+
+# 4. Search for similar vectors
+gv search --query vector.json --index index/ --k 5
+
+# 5. Generate and verify proofs
+gv prove --public public.json --private private.json --out proof.json
+gv verify --proof proof.json --public public.json
+```
+
+### 🎯 Full Example Flow
+
+For a complete end-to-end demonstration including encoding, searching, and privacy-preserving proofs:
+
+```bash
+# Run the complete MVP demo
+bash examples/mvp_demo.sh
+```
+
+This script demonstrates:
+- Encoding genomic variants into hypervectors
+- Building a searchable index
+- Finding similar genomes with privacy preservation
+- Generating zero-knowledge proofs of genomic properties
+- Federated learning across multiple sites
+
+---
+
 ## 🚄 Detailed Processing Speed Improvements
 
 | **Operation**                    | **Traditional** | **GenomeVault HD** | **GenomeVault KAN-HD** | **Speedup**   |

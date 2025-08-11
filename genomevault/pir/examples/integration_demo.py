@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Integration Demo module."""
-"""Integration Demo module."""
 """
 PIR Integration Demo
 Demonstrates end-to-end PIR functionality with ZK and HDC integration.
@@ -36,8 +35,7 @@ class PIRIntegrationDemo:
     """
 
     def __init__(self):
-        """Initialize instance.
-            """
+        """Initialize instance."""
         self.coordinator = PIRCoordinator()
         self.servers: list[EnhancedPIRServer] = []
         self.database_size = 10000
@@ -73,9 +71,7 @@ class PIRIntegrationDemo:
             # Register with coordinator
             server_info = ServerInfo(
                 server_id=server_id,
-                server_type=(
-                    ServerType.TRUSTED_SIGNATORY if is_ts else ServerType.LIGHT_NODE
-                ),
+                server_type=(ServerType.TRUSTED_SIGNATORY if is_ts else ServerType.LIGHT_NODE),
                 endpoint=f"http://localhost:808{len(self.servers)}",
                 location=location,
                 region=region,
@@ -117,21 +113,15 @@ class PIRIntegrationDemo:
         selected_servers = await self.coordinator.select_servers(criteria)
         logger.info("\n2️⃣ Selected servers:")
         for server in selected_servers:
-            logger.info(
-                f"   - server.server_id (server.server_type.value) in {server.region}"
-            )
+            logger.info(f"   - server.server_id (server.server_type.value) in {server.region}")
 
         # Process queries on servers
         logger.info("\n3️⃣ Processing queries on servers...")
         responses = []
 
-        for i, (server_info, query_vector) in enumerate(
-            zip(selected_servers[:2], query_vectors)
-        ):
+        for i, (server_info, query_vector) in enumerate(zip(selected_servers[:2], query_vectors)):
             # Find actual server instance
-            server = next(
-                s for s in self.servers if s.server_id == server_info.server_id
-            )
+            server = next(s for s in self.servers if s.server_id == server_info.server_id)
 
             # Create query request
             query_data = {
@@ -159,9 +149,7 @@ class PIRIntegrationDemo:
 
         # Calculate privacy guarantees
         logger.info("\n5️⃣ Privacy Analysis:")
-        prob_ts = protocol.calculate_privacy_breach_probability(
-            k_honest=2, honesty_prob=0.98
-        )
+        prob_ts = protocol.calculate_privacy_breach_probability(k_honest=2, honesty_prob=0.98)
         logger.info(f"   Privacy breach probability (2 TS nodes): {prob_ts:.6f}")
         logger.info("   Information leaked to single server: 0 bits ✅")
 
@@ -188,23 +176,22 @@ class PIRIntegrationDemo:
                 "chr17:43044300": [101],
                 "chr17:43044305": [102],
             },
-            "genes": {
-                "BRCA1": {"chromosome": "chr17", "start": 43044295, "end": 43044400}
-            },
+            "genes": {"BRCA1": {"chromosome": "chr17", "start": 43044295, "end": 43044400}},
         }
 
         # Create mock PIR client (would use real client in production)
         class MockPIRClient:
             """Client for mockpir operations."""
+
             async def execute_query(self, query):
                 """Async operation to Execute query.
 
-                    Args:
-                        query: Query string.
+                Args:
+                    query: Query string.
 
-                    Returns:
-                        Operation result.
-                    """
+                Returns:
+                    Operation result.
+                """
                 # Simulate query execution
                 await asyncio.sleep(0.1)
                 return {
@@ -224,23 +211,23 @@ class PIRIntegrationDemo:
             def create_query(self, index) -> None:
                 """Create query.
 
-                    Args:
-                        index: Index position.
+                Args:
+                    index: Index position.
 
-                    Returns:
-                        Newly created query.
-                    """
+                Returns:
+                    Newly created query.
+                """
                 return {"index": index}
 
             async def batch_query(self, indices):
                 """Async operation to Batch query.
 
-                    Args:
-                        indices: Indices.
+                Args:
+                    indices: Indices.
 
-                    Returns:
-                        Operation result.
-                    """
+                Returns:
+                    Operation result.
+                """
                 results = []
                 for idx in indices:
                     result = await self.execute_query(None)
@@ -250,13 +237,13 @@ class PIRIntegrationDemo:
             def decode_response(self, response, encoding) -> None:
                 """Decode response.
 
-                    Args:
-                        response: Server response.
-                        encoding: Character encoding.
+                Args:
+                    response: Server response.
+                    encoding: Character encoding.
 
-                    Returns:
-                        Operation result.
-                    """
+                Returns:
+                    Operation result.
+                """
                 return response
 
         # Create query builder
@@ -273,9 +260,7 @@ class PIRIntegrationDemo:
 
         logger.info("   Query time: %squery_time:.1fms")
         logger.info("   Result: %sresult.data['clinical_significance'] variant")
-        logger.info(
-            "   Global frequency: %sresult.data['population_frequencies']['global']:.4f"
-        )
+        logger.info("   Global frequency: %sresult.data['population_frequencies']['global']:.4f")
 
         # Example 2: Gene scan
         logger.info("\n🧬 Gene Scan: BRCA1")
@@ -307,9 +292,7 @@ class PIRIntegrationDemo:
 
         # Generate batch of indices
         batch_size = 50
-        indices = np.random.choice(
-            self.database_size, batch_size, replace=False
-        ).tolist()
+        indices = np.random.choice(self.database_size, batch_size, replace=False).tolist()
 
         logger.info("🎯 Retrieving %sbatch_size elements in batch")
 
@@ -377,9 +360,7 @@ class PIRIntegrationDemo:
 
         protocol.calculate_min_servers(target_prob, 0.98)
         protocol.calculate_min_servers(target_prob, 0.95)
-        min_mixed = protocol.calculate_min_servers(
-            target_prob, 0.96
-        )  # Mix of TS and LN
+        min_mixed = protocol.calculate_min_servers(target_prob, 0.96)  # Mix of TS and LN
 
         logger.info("   For %starget_prob:.0e failure probability:")
         logger.info("   - Pure TS nodes: %smin_ts servers")

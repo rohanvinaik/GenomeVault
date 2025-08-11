@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Post Quantum Crypto module."""
-"""Post Quantum Crypto module."""
 """Post-quantum cryptography implementations for GenomeVault."""
 
 import os
@@ -44,6 +43,7 @@ class MockKyber:
     @dataclass
     class Keypair:
         """Data container for keypair information."""
+
         public_key: bytes
         private_key: bytes
 
@@ -68,6 +68,7 @@ class MockDilithium:
     @dataclass
     class Keypair:
         """Data container for keypair information."""
+
         public_key: bytes
         private_key: bytes
 
@@ -88,8 +89,7 @@ class HybridPostQuantumCrypto:
     """Hybrid classical/post-quantum encryption system."""
 
     def __init__(self):
-        """Initialize instance.
-            """
+        """Initialize instance."""
         self.kyber = MockKyber()
         self.dilithium = MockDilithium()
 
@@ -115,9 +115,7 @@ class HybridPostQuantumCrypto:
         """Decrypt data using hybrid post-quantum scheme."""
         # Mock implementation
         _ = self.kyber.decapsulate(encrypted_data.kyber_encapsulated_key, private_key)
-        return (
-            encrypted_data.ciphertext
-        )  # In real implementation, this would be decrypted
+        return encrypted_data.ciphertext  # In real implementation, this would be decrypted
 
 
 def benchmark_post_quantum_crypto() -> dict[str, Any]:

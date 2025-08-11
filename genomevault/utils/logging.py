@@ -245,12 +245,12 @@ def log_operation(func: Callable) -> Callable:
     def wrapper(*args, **kwargs):
         """Wrapper.
 
-            Returns:
-                Operation result.
+        Returns:
+            Operation result.
 
-            Raises:
-                Exception: When operation fails.
-            """
+        Raises:
+            Exception: When operation fails.
+        """
         logger = get_logger(func.__module__)
         operation_name = f"{func.__module__}.{func.__name__}"
 
@@ -283,10 +283,10 @@ class ContextLogger:
     def __init__(self, logger: logging.Logger, operation: str, **context: Any):
         """Initialize instance.
 
-            Args:
-                logger: Logger instance.
-                operation: Operation.
-            """
+        Args:
+            logger: Logger instance.
+            operation: Operation.
+        """
         self.logger = logger
         self.operation = operation
         self.context = context
@@ -320,9 +320,9 @@ class AuditLogger:
     def __init__(self, logger: Optional[logging.Logger] = None):
         """Initialize instance.
 
-            Args:
-                logger: Logger instance.
-            """
+        Args:
+            logger: Logger instance.
+        """
         self.logger = logger or logging.getLogger("genomevault.audit")
         self.hipaa_mode = False
 

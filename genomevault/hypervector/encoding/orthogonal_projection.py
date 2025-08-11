@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Orthogonal Projection module."""
-"""Orthogonal Projection module."""
 import numpy as np
 
 from genomevault.core.exceptions import ProjectionError
@@ -13,13 +12,13 @@ class OrthogonalProjection:
     def __init__(self, n_components: int, seed: int | None = None) -> None:
         """Initialize instance.
 
-            Args:
-                n_components: N components.
-                seed: Seed.
+        Args:
+            n_components: N components.
+            seed: Seed.
 
-            Raises:
-                ProjectionError: When operation fails.
-            """
+        Raises:
+            ProjectionError: When operation fails.
+        """
         if not isinstance(n_components, int) or n_components <= 0:
             raise ProjectionError(
                 "n_components must be a positive integer",
@@ -33,15 +32,15 @@ class OrthogonalProjection:
     def fit(self, n_features: int) -> OrthogonalProjection:
         """Fit.
 
-            Args:
-                n_features: Feature array.
+        Args:
+            n_features: Feature array.
 
-            Returns:
-                OrthogonalProjection instance.
+        Returns:
+            OrthogonalProjection instance.
 
-            Raises:
-                ProjectionError: When operation fails.
-            """
+        Raises:
+            ProjectionError: When operation fails.
+        """
         if not isinstance(n_features, int) or n_features <= 0:
             raise ProjectionError(
                 "n_features must be a positive integer",
@@ -53,9 +52,7 @@ class OrthogonalProjection:
                 context={"n_features": n_features, "n_components": self.n_components},
             )
         # Gaussian random matrix, then QR
-        A = self.rng.standard_normal(
-            (n_features, self.n_components)
-        )  # (n_features, n_components)
+        A = self.rng.standard_normal((n_features, self.n_components))  # (n_features, n_components)
         Q, _ = np.linalg.qr(
             A, mode="reduced"
         )  # Q: (n_features, n_components) with orthonormal columns
@@ -66,15 +63,15 @@ class OrthogonalProjection:
     def transform(self, X: np.ndarray) -> np.ndarray:
         """Transform.
 
-            Args:
-                X: X.
+        Args:
+            X: X.
 
-            Returns:
-                Operation result.
+        Returns:
+            Operation result.
 
-            Raises:
-                ProjectionError: When operation fails.
-            """
+        Raises:
+            ProjectionError: When operation fails.
+        """
         if self._P is None or self._n_features is None:
             raise ProjectionError("fit() must be called before transform()")
         if not isinstance(X, np.ndarray) or X.ndim != 2:

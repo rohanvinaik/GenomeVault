@@ -1,7 +1,7 @@
 """
 Experimental KAN (Kolmogorov-Arnold Networks) implementation.
 
-⚠️ EXPERIMENTAL: This module is under active development.
+EXPERIMENTAL: This module is under active development.
 The API may change significantly between versions.
 """
 

@@ -1,4 +1,5 @@
 """Package initialization for circuits."""
+
 import hashlib
 import json
 import os
@@ -15,8 +16,7 @@ class PRSProofCircuit(BaseCircuit):
     """Circuit for proving PRS (Polygenic Risk Score) is within a range."""
 
     def __init__(self):
-        """Initialize instance.
-            """
+        """Initialize instance."""
         super().__init__()
         self.name = "prs_range_proof"
         self.proof_size = 384  # Groth16 proof size

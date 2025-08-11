@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 """Errors module."""
-"""Errors module."""
 import uuid
 
 from fastapi import FastAPI, Request

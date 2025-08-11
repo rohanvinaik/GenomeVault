@@ -1,6 +1,7 @@
 """
 Federated Learning Coordinator for privacy-preserving multi-institutional research.
 Implements secure aggregation with differential privacy.
+
 """
 
 from __future__ import annotations
@@ -42,9 +43,9 @@ class ModelArchitecture:
     def to_dict(self) -> dict:
         """To dict.
 
-            Returns:
-                Dictionary result.
-            """
+        Returns:
+            Dictionary result.
+        """
         return {
             "name": self.name,
             "model_type": self.model_type,

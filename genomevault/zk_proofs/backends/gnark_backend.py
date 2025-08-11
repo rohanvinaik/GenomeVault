@@ -4,6 +4,7 @@ Real ZK proof generation using gnark via FFI.
 This module provides a production-ready interface to gnark for generating
 and verifying SNARK proofs. It handles circuit compilation, proof generation,
 and verification with actual cryptographic guarantees.
+
 """
 
 from __future__ import annotations

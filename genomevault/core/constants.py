@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 """Constants module."""
-"""Constants module."""
 from enum import Enum
 
 # Hypervector defaults
@@ -21,6 +20,7 @@ MAX_PROOF_SIZE = 1024 * 1024  # 1MB
 
 class OmicsType(Enum):
     """OmicsType implementation."""
+
     GENOMIC = "genomic"
     TRANSCRIPTOMIC = "transcriptomic"
     PROTEOMIC = "proteomic"

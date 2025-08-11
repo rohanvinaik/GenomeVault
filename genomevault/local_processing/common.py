@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Common module."""
-"""Common module."""
 from pathlib import Path
 
 import numpy as np

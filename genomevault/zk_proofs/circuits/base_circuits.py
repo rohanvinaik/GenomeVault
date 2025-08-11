@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional
 
 class FieldElement:
     """Represents a field element for zero-knowledge proofs."""
-    
+
     def __init__(self, value: int, modulus: int = 2**256 - 1):
         """Initialize instance.
 
@@ -18,18 +18,18 @@ class FieldElement:
             """
         self.value = value % modulus
         self.modulus = modulus
-    
+
     def __add__(self, other: "FieldElement") -> "FieldElement":
         return FieldElement((self.value + other.value) % self.modulus, self.modulus)
-    
+
     def __mul__(self, other: "FieldElement") -> "FieldElement":
         return FieldElement((self.value * other.value) % self.modulus, self.modulus)
-    
+
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, FieldElement):
             return False
         return self.value == other.value and self.modulus == other.modulus
-    
+
     def __repr__(self) -> str:
         """Return detailed representation for debugging."""
         return f"FieldElement({self.value})"
@@ -38,13 +38,14 @@ class FieldElement:
 class BaseCircuit(ABC):
     """BaseCircuit implementation."""
     @abstractmethod
-    def public_statement(self) -> Dict[str, Any]: ...
-        """Public statement.
-            """
+    def public_statement(self) -> Dict[str, Any]:
+        """Public statement."""
+        ...
+        
     @abstractmethod
-    def witness(self) -> Dict[str, Any]: ...
-        """Witness.
-            """
+    def witness(self) -> Dict[str, Any]:
+        """Witness."""
+        ...
 
     def prove(self) -> bytes:
         """Prove.
@@ -71,7 +72,7 @@ class BaseCircuit(ABC):
 
 class MerkleTreeCircuit(BaseCircuit):
     """Circuit for Merkle tree membership proofs."""
-    
+
     def __init__(self, leaf: Optional[bytes] = None, root: Optional[bytes] = None):
         """Initialize instance.
 
@@ -82,40 +83,40 @@ class MerkleTreeCircuit(BaseCircuit):
         self.leaf = leaf or b""
         self.root = root or b""
         self.path = []
-        
+
     def public_statement(self) -> Dict[str, Any]:
         """Public inputs for Merkle proof."""
         return {
             "root": self.root.hex() if self.root else "",
             "leaf_hash": hashlib.sha256(self.leaf).hexdigest() if self.leaf else ""
         }
-    
+
     def witness(self) -> Dict[str, Any]:
         """Private witness for Merkle proof."""
         return {
             "leaf": self.leaf.hex() if self.leaf else "",
             "path": [p.hex() if isinstance(p, bytes) else str(p) for p in self.path]
         }
-    
+
     def verify_membership(self, leaf: bytes, path: List[bytes], root: bytes) -> bool:
         """Verify Merkle tree membership."""
         self.leaf = leaf
         self.path = path
         self.root = root
-        
+
         # Compute root from leaf and path
         current = hashlib.sha256(leaf).digest()
         for sibling in path:
             # Combine with sibling (order matters for real Merkle trees)
             combined = min(current, sibling) + max(current, sibling)
             current = hashlib.sha256(combined).digest()
-        
+
         return current == root
 
 
 class RangeProofCircuit(BaseCircuit):
     """Circuit for proving a value is within a range."""
-    
+
     def __init__(self, bit_width: int = 32):
         """Initialize instance.
 
@@ -126,7 +127,7 @@ class RangeProofCircuit(BaseCircuit):
         self.value = 0
         self.min_value = 0
         self.max_value = 2**bit_width - 1
-    
+
     def public_statement(self) -> Dict[str, Any]:
         """Public inputs for range proof."""
         return {
@@ -134,14 +135,14 @@ class RangeProofCircuit(BaseCircuit):
             "max_value": self.max_value,
             "bit_width": self.bit_width
         }
-    
+
     def witness(self) -> Dict[str, Any]:
         """Private witness for range proof."""
         return {
             "value": self.value,
             "binary_representation": bin(self.value)[2:].zfill(self.bit_width)
         }
-    
+
     def prove_in_range(self, value: int, min_val: int = None, max_val: int = None) -> bool:
         """Prove that value is within the specified range."""
         self.value = value
@@ -149,13 +150,13 @@ class RangeProofCircuit(BaseCircuit):
             self.min_value = min_val
         if max_val is not None:
             self.max_value = max_val
-        
+
         return self.min_value <= value <= self.max_value
 
 
 class ComparisonCircuit(BaseCircuit):
     """Circuit for private comparison operations."""
-    
+
     def __init__(self, value_a: Optional[int] = None, value_b: Optional[int] = None):
         """Initialize instance.
 
@@ -166,21 +167,21 @@ class ComparisonCircuit(BaseCircuit):
         self.value_a = value_a or 0
         self.value_b = value_b or 0
         self._result = None
-    
+
     def public_statement(self) -> Dict[str, Any]:
         """Public inputs for comparison."""
         return {
             "comparison_type": "less_than",
             "result": self._result
         }
-    
+
     def witness(self) -> Dict[str, Any]:
         """Private witness for comparison."""
         return {
             "value_a": self.value_a,
             "value_b": self.value_b
         }
-    
+
     def compare(self, value_a: int, value_b: int) -> bool:
         """Perform private comparison."""
         self.value_a = value_a

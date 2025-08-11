@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Core module."""
-"""Core module."""
 import numpy as np
 
 D = 10_000

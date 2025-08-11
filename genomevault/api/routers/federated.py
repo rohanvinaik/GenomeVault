@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Federated module."""
-"""Federated module."""
 from fastapi import APIRouter, HTTPException
 
 from genomevault.core.exceptions import GenomeVaultError
@@ -16,16 +15,16 @@ _agg = FedAvgAggregator()
 def aggregate(request: AggregateRequest):
     """Aggregate.
 
-        Args:
-            request: Client request.
+    Args:
+        request: Client request.
 
-        Returns:
-            Operation result.
+    Returns:
+        Operation result.
 
-        Raises:
-            HTTPException: When operation fails.
-            RuntimeError: When operation fails.
-        """
+    Raises:
+        HTTPException: When operation fails.
+        RuntimeError: When operation fails.
+    """
     try:
         return _agg.aggregate(request)
     except GenomeVaultError as e:

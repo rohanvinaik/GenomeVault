@@ -7,7 +7,6 @@ This module provides:
 - Point-in-time recovery
 - Automated backup scheduling
 - Integrity verification
-"""
 
 from __future__ import annotations
 
@@ -40,9 +39,9 @@ class BackupManager:
     def __init__(self, config: dict[str, Any]):
         """Initialize instance.
 
-            Args:
-                config: Configuration dictionary.
-            """
+        Args:
+            config: Configuration dictionary.
+        """
         self.config = config
         self.backup_dir = config.get("backup_dir", "/var/genomevault/backups")
         self.s3_bucket = config.get("s3_bucket")
@@ -252,12 +251,12 @@ class BackupManager:
         def run_scheduled_backup(backup_config):
             """Run scheduled backup.
 
-                Args:
-                    backup_config: Configuration dictionary.
+            Args:
+                backup_config: Configuration dictionary.
 
-                Raises:
-                    RuntimeError: When operation fails.
-                """
+            Raises:
+                RuntimeError: When operation fails.
+            """
             try:
                 # Get data provider function
                 _ = backup_config["data_provider"]
@@ -445,9 +444,9 @@ class DisasterRecoveryOrchestrator:
     def __init__(self, backup_manager: BackupManager):
         """Initialize instance.
 
-            Args:
-                backup_manager: Backup manager.
-            """
+        Args:
+            backup_manager: Backup manager.
+        """
         self.backup_manager = backup_manager
         self.recovery_points = {}
 

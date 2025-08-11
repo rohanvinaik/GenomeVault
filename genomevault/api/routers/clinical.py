@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Clinical module."""
-"""Clinical module."""
 import numpy as np
 from fastapi import APIRouter, HTTPException
 
@@ -15,16 +14,16 @@ router = APIRouter(prefix="/clinical", tags=["clinical"])
 def clinical_eval(req: ClinicalEvalRequest):
     """Process clinical clinical eval.
 
-        Args:
-            req: Req.
+    Args:
+        req: Req.
 
-        Returns:
-            Operation result.
+    Returns:
+        Operation result.
 
-        Raises:
-            HTTPException: When operation fails.
-            RuntimeError: When operation fails.
-        """
+    Raises:
+        HTTPException: When operation fails.
+        RuntimeError: When operation fails.
+    """
     try:
         y = np.asarray(req.y_true, dtype=np.int32)
         s = np.asarray(req.y_score, dtype=np.float64)
@@ -36,6 +35,5 @@ def clinical_eval(req: ClinicalEvalRequest):
             calibration_bins=rep.calibration_bins,
         )
     except Exception as e:
-        logger.exception("Unhandled exception")
-        raise HTTPException(status_code=400, detail=str(e))
-        raise RuntimeError("Unspecified error")
+        # logger.exception("Unhandled exception")  # TODO: Add logger import
+        raise HTTPException(status_code=400, detail=str(e)) from e

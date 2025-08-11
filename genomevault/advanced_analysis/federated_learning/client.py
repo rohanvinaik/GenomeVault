@@ -1,6 +1,7 @@
 """
 Federated Learning Client for secure model training participation.
 Implements local training with privacy guarantees.
+
 """
 
 from __future__ import annotations
@@ -31,9 +32,9 @@ class LocalDataset:
     def num_samples(self) -> int:
         """Num samples.
 
-            Returns:
-                Integer result.
-            """
+        Returns:
+            Integer result.
+        """
         return len(self.features)
 
 

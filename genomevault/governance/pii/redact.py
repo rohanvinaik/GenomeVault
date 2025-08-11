@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Redact module."""
-"""Redact module."""
 import hashlib
 import hmac
 import json
@@ -34,12 +33,12 @@ class PseudonymStore:
     def __init__(self, path: str | None = None):
         """Initialize instance.
 
-            Args:
-                path: File or directory path.
+        Args:
+            path: File or directory path.
 
-            Raises:
-                RuntimeError: When operation fails.
-            """
+        Raises:
+            RuntimeError: When operation fails.
+        """
         path = path or os.getenv("GV_PSEUDONYM_STORE", "")
         self.path = Path(path) if path else None
         self._lock = threading.Lock()
@@ -53,8 +52,7 @@ class PseudonymStore:
                 raise RuntimeError("Unspecified error")
 
     def save(self) -> None:
-        """Save.
-            """
+        """Save."""
         if not self.path:
             return
         with self._lock:
@@ -64,10 +62,10 @@ class PseudonymStore:
     def put(self, token: str, original: str) -> None:
         """Put.
 
-            Args:
-                token: Token.
-                original: Original.
-            """
+        Args:
+            token: Token.
+            original: Original.
+        """
         with self._lock:
             if token not in self._map:
                 self._map[token] = original
@@ -76,12 +74,12 @@ class PseudonymStore:
     def get(self, token: str) -> str | None:
         """Get.
 
-            Args:
-                token: Token.
+        Args:
+            token: Token.
 
-            Returns:
-                Operation result.
-            """
+        Returns:
+            Operation result.
+        """
         return self._map.get(token)
 
 

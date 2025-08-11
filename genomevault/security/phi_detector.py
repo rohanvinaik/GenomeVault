@@ -3,7 +3,6 @@ PHI (Protected Health Information) Leakage Detection.
 
 This module provides tools to scan logs, outputs, and code for potential
 PHI leakage patterns to ensure HIPAA compliance.
-"""
 
 from __future__ import annotations
 
@@ -273,12 +272,12 @@ class PHILeakageDetector:
             def replace_match(match):
                 """Replace match.
 
-                    Args:
-                        match: Match.
+                Args:
+                    match: Match.
 
-                    Returns:
-                        Operation result.
-                    """
+                Returns:
+                    Operation result.
+                """
                 matched_text = match.group()
                 # Keep first and last char for context
                 if len(matched_text) > 2:
