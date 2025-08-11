@@ -495,42 +495,171 @@ class RecursiveSNARKProver:
         return merged
 
     def _compute_aggregate_vk(self, proofs: list[Proof]) -> str:
-        """Compute aggregate verification key."""
-        # In practice, would compute proper aggregate VK
-        vk_components = [p.verification_key or p.proof_id for p in proofs]
-
-        aggregate_vk = hashlib.sha256("".join(sorted(vk_components)).encode()).hexdigest()
-
-        return aggregate_vk
+        """
+        Compute aggregate verification key with proper domain separation.
+        
+        FIXED: Use canonical byte layout with domain separation instead of JSON.
+        Format: H("VK_AGG" || len || VK1 || VK2 || ...)
+        """
+        hasher = hashlib.sha256()
+        
+        # Domain separation tag
+        hasher.update(b"VK_AGG")
+        
+        # Number of VKs being aggregated (4 bytes, big-endian)
+        hasher.update(len(proofs).to_bytes(4, 'big'))
+        
+        # Add each VK in deterministic order (sorted by proof ID for consistency)
+        sorted_proofs = sorted(proofs, key=lambda p: p.proof_id)
+        for proof in sorted_proofs:
+            vk = proof.verification_key or proof.proof_id
+            
+            # Convert VK to bytes (handle both hex strings and raw strings)
+            try:
+                vk_bytes = bytes.fromhex(vk) if len(vk) % 2 == 0 else vk.encode('utf-8')
+            except ValueError:
+                vk_bytes = vk.encode('utf-8')
+            
+            # Add VK length (4 bytes) followed by VK bytes
+            hasher.update(len(vk_bytes).to_bytes(4, 'big'))
+            hasher.update(vk_bytes)
+        
+        return hasher.hexdigest()
 
     def _combine_verification_keys(self, vk1: str, vk2: str) -> str:
-        """Combine two verification keys."""
-        return hashlib.sha256(f"{vk1}_{vk2}".encode()).hexdigest()
+        """
+        Combine two verification keys with proper domain separation.
+        
+        FIXED: Use canonical byte layout instead of string concatenation.
+        Format: H("VK_COMBINE" || VK1_len || VK1 || VK2_len || VK2)
+        """
+        hasher = hashlib.sha256()
+        
+        # Domain separation tag
+        hasher.update(b"VK_COMBINE")
+        
+        # Convert VKs to bytes
+        try:
+            vk1_bytes = bytes.fromhex(vk1) if len(vk1) % 2 == 0 else vk1.encode('utf-8')
+        except ValueError:
+            vk1_bytes = vk1.encode('utf-8')
+            
+        try:
+            vk2_bytes = bytes.fromhex(vk2) if len(vk2) % 2 == 0 else vk2.encode('utf-8')
+        except ValueError:
+            vk2_bytes = vk2.encode('utf-8')
+        
+        # Add VK1 length and bytes
+        hasher.update(len(vk1_bytes).to_bytes(4, 'big'))
+        hasher.update(vk1_bytes)
+        
+        # Add VK2 length and bytes
+        hasher.update(len(vk2_bytes).to_bytes(4, 'big'))
+        hasher.update(vk2_bytes)
+        
+        return hasher.hexdigest()
 
     def _hash_proof(self, proof: Proof) -> str:
-        """Compute hash of proof for aggregation."""
-        proof_data = {
-            "proof_id": proof.proof_id,
-            "circuit_name": proof.circuit_name,
-            "public_inputs": proof.public_inputs,
-            "proof_data": (
-                proof.proof_data.hex()
-                if isinstance(proof.proof_data, bytes)
-                else str(proof.proof_data)
-            ),
-        }
-
-        return hashlib.sha256(json.dumps(proof_data, sort_keys=True).encode()).hexdigest()
+        """
+        Compute hash of proof for aggregation with proper domain separation.
+        
+        FIXED: Use canonical byte layout instead of JSON serialization.
+        Format: H("SUBPROOF" || circuit_id || vk || proof_bytes_commit || public_inputs_commit)
+        """
+        hasher = hashlib.sha256()
+        
+        # Domain separation tag
+        hasher.update(b"SUBPROOF")
+        
+        # Circuit ID (proof_id as bytes)
+        circuit_id = proof.proof_id.encode('utf-8')
+        hasher.update(len(circuit_id).to_bytes(4, 'big'))
+        hasher.update(circuit_id)
+        
+        # Circuit name
+        circuit_name = proof.circuit_name.encode('utf-8')
+        hasher.update(len(circuit_name).to_bytes(4, 'big'))
+        hasher.update(circuit_name)
+        
+        # Verification key (if present)
+        if proof.verification_key:
+            try:
+                vk_bytes = bytes.fromhex(proof.verification_key)
+            except ValueError:
+                vk_bytes = proof.verification_key.encode('utf-8')
+            hasher.update(len(vk_bytes).to_bytes(4, 'big'))
+            hasher.update(vk_bytes)
+        else:
+            hasher.update((0).to_bytes(4, 'big'))  # Zero length for missing VK
+        
+        # Proof data commitment (hash of the actual proof bytes)
+        if isinstance(proof.proof_data, bytes):
+            proof_bytes_hash = hashlib.sha256(proof.proof_data).digest()
+        else:
+            proof_bytes_hash = hashlib.sha256(str(proof.proof_data).encode('utf-8')).digest()
+        hasher.update(proof_bytes_hash)
+        
+        # Public inputs commitment (canonical serialization)
+        if proof.public_inputs:
+            # Sort keys for deterministic ordering
+            sorted_items = sorted(proof.public_inputs.items())
+            inputs_hasher = hashlib.sha256()
+            
+            for key, value in sorted_items:
+                # Add key
+                key_bytes = key.encode('utf-8')
+                inputs_hasher.update(len(key_bytes).to_bytes(4, 'big'))
+                inputs_hasher.update(key_bytes)
+                
+                # Add value (handle different types)
+                if isinstance(value, (int, float)):
+                    value_bytes = str(value).encode('utf-8')
+                elif isinstance(value, bytes):
+                    value_bytes = value
+                else:
+                    value_bytes = str(value).encode('utf-8')
+                    
+                inputs_hasher.update(len(value_bytes).to_bytes(4, 'big'))
+                inputs_hasher.update(value_bytes)
+            
+            hasher.update(inputs_hasher.digest())
+        else:
+            # Empty public inputs
+            hasher.update(hashlib.sha256(b"EMPTY").digest())
+        
+        return hasher.hexdigest()
 
     def _generate_proof_id(self, proofs: list[Proof]) -> str:
-        """Generate ID for recursive proof."""
-        content = {
-            "sub_proof_ids": sorted([p.proof_id for p in proofs]),
-            "timestamp": time.time(),
-            "nonce": np.random.bytes(8).hex(),
-        }
-
-        return hashlib.sha256(json.dumps(content, sort_keys=True).encode()).hexdigest()[:16]
+        """
+        Generate ID for recursive proof with canonical format.
+        
+        FIXED: Use canonical byte layout instead of JSON.
+        Format: H("PROOF_ID" || count || sorted_ids || timestamp || nonce)
+        """
+        hasher = hashlib.sha256()
+        
+        # Domain separation tag
+        hasher.update(b"PROOF_ID")
+        
+        # Number of sub-proofs
+        hasher.update(len(proofs).to_bytes(4, 'big'))
+        
+        # Sorted proof IDs for deterministic ordering
+        sorted_ids = sorted([p.proof_id for p in proofs])
+        for proof_id in sorted_ids:
+            id_bytes = proof_id.encode('utf-8')
+            hasher.update(len(id_bytes).to_bytes(4, 'big'))
+            hasher.update(id_bytes)
+        
+        # Timestamp (8 bytes, microsecond precision)
+        timestamp_us = int(time.time() * 1_000_000)
+        hasher.update(timestamp_us.to_bytes(8, 'big'))
+        
+        # Random nonce for uniqueness (8 bytes)
+        hasher.update(np.random.bytes(8))
+        
+        # Return first 16 hex chars (64 bits) for shorter IDs
+        return hasher.hexdigest()[:16]
 
     def _wrap_single_proof(self, proof: Proof) -> RecursiveProof:
         """Wrap single proof as recursive proof."""
