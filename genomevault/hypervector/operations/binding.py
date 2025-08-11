@@ -6,6 +6,8 @@ from collections.abc import Iterable
 
 import numpy as np
 
+from genomevault.hypervector.types import VectorF64
+
 warnings.warn(
     "genomevault.hypervector.operations.binding is deprecated. "
     "Use genomevault.hypervector_transform.binding_operations instead.",
@@ -14,7 +16,7 @@ warnings.warn(
 )
 
 
-def circular_convolution(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+def circular_convolution(a: VectorF64, b: VectorF64) -> VectorF64:
     """Bind two hypervectors via circular convolution (fft-based).
 
     Args:
@@ -29,14 +31,14 @@ def circular_convolution(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     return np.real(np.fft.ifft(fa * fb))
 
 
-def element_wise_multiply(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+def element_wise_multiply(a: VectorF64, b: VectorF64) -> VectorF64:
     """Bind two hypervectors via element-wise multiplication."""
     if a.ndim != 1 or b.ndim != 1 or a.shape[0] != b.shape[0]:
         raise ValueError("a and b must be 1-D arrays with equal length")
     return a * b
 
 
-def permutation_binding(v: np.ndarray, shift: int = 1) -> np.ndarray:
+def permutation_binding(v: VectorF64, shift: int = 1) -> VectorF64:
     """Apply cyclic permutation (roll) used for sequence encoding."""
     if v.ndim != 1:
         raise ValueError("v must be a 1-D array")
@@ -46,12 +48,12 @@ def permutation_binding(v: np.ndarray, shift: int = 1) -> np.ndarray:
     return np.roll(v, shift % L)
 
 
-def _safe_norm(x: np.ndarray) -> float:
+def _safe_norm(x: VectorF64) -> float:
     n = float(np.linalg.norm(x))
     return n if n > 0.0 else 1.0
 
 
-def bundle(vectors: Iterable[np.ndarray]) -> np.ndarray:
+def bundle(vectors: Iterable[VectorF64]) -> VectorF64:
     """Bundle multiple hypervectors via normalized addition.
 
     Args:
@@ -71,13 +73,13 @@ def bundle(vectors: Iterable[np.ndarray]) -> np.ndarray:
     return s if n == 0.0 else s / n
 
 
-def _cosine(a: np.ndarray, b: np.ndarray) -> float:
+def _cosine(a: VectorF64, b: VectorF64) -> float:
     denom = _safe_norm(a) * _safe_norm(b)
     return float(a @ b / denom)
 
 
 def unbundle(
-    bundled: np.ndarray, item_memory: dict[str, np.ndarray], threshold: float = 0.3
+    bundled: VectorF64, item_memory: dict[str, VectorF64], threshold: float = 0.3
 ) -> list[tuple[str, float]]:
     """Retrieve components from a bundled vector using cosine similarity threshold.
 

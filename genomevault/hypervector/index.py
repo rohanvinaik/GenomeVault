@@ -12,15 +12,18 @@ from typing import Dict, List, Optional, Union
 import struct
 
 import numpy as np
-from numpy.typing import NDArray
 
+from genomevault.hypervector.types import (
+    VectorBool,
+    PackedBinary,
+)
 from genomevault.hypervector.operations.hamming_lut import (
     generate_popcount_lut,
     hamming_distance_batch_cpu,
 )
 
 
-def pack_binary_vectors(vectors: List[NDArray[np.bool_]]) -> NDArray[np.uint64]:
+def pack_binary_vectors(vectors: List[VectorBool]) -> PackedBinary:
     """
     Pack binary vectors into uint64 chunks for efficient Hamming distance.
 
@@ -76,7 +79,7 @@ def pack_binary_vectors(vectors: List[NDArray[np.bool_]]) -> NDArray[np.uint64]:
     return packed
 
 
-def unpack_binary_vectors(packed: NDArray[np.uint64], dimension: int) -> List[NDArray[np.bool_]]:
+def unpack_binary_vectors(packed: PackedBinary, dimension: int) -> List[VectorBool]:
     """
     Unpack uint64 chunks back to binary vectors.
 

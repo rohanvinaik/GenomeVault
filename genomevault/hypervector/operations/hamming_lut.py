@@ -20,13 +20,16 @@ import functools
 import os
 
 import numpy as np
+from numpy.typing import NDArray
 from numba import cuda, jit, prange
 
+from genomevault.hypervector.types import VectorUInt64
+
 # Global LUT cache - shared across all compute contexts
-_POPCOUNT_LUT_16: np.ndarray | None = None
+_POPCOUNT_LUT_16: NDArray[np.uint8] | None = None
 
 
-def generate_popcount_lut() -> np.ndarray:
+def generate_popcount_lut() -> NDArray[np.uint8]:
     """
     Generate a 16-bit popcount lookup table.
 
@@ -53,7 +56,7 @@ def get_cuda_popcount_lut() -> None:
 
 # CPU-optimized implementations
 @jit(nopython=True, parallel=True, cache=True)
-def hamming_distance_cpu(vec1: np.ndarray, vec2: np.ndarray, lut: np.ndarray) -> int:
+def hamming_distance_cpu(vec1: VectorUInt64, vec2: VectorUInt64, lut: NDArray[np.uint8]) -> int:
     """
     Compute Hamming distance between two binary vectors using LUT.
 
@@ -81,9 +84,7 @@ def hamming_distance_cpu(vec1: np.ndarray, vec2: np.ndarray, lut: np.ndarray) ->
 
 
 @jit(nopython=True, parallel=True, cache=True)
-def hamming_distance_batch_cpu(
-    vecs1: np.ndarray, vecs2: np.ndarray, lut: np.ndarray
-) -> np.ndarray:
+def hamming_distance_batch_cpu(vecs1: np.ndarray, vecs2: np.ndarray, lut: np.ndarray) -> np.ndarray:
     """
     Compute pairwise Hamming distances for batches of vectors.
 
@@ -206,7 +207,7 @@ class HammingLUT:
         if self.use_gpu:
             self.cuda_lut = get_cuda_popcount_lut()
 
-    def distance(self, vec1: np.ndarray, vec2: np.ndarray) -> int:
+    def distance(self, vec1: VectorUInt64, vec2: VectorUInt64) -> int:
         """
         Compute Hamming distance between two binary vectors.
 
@@ -242,7 +243,9 @@ class HammingLUT:
             # CPU implementation
             return hamming_distance_cpu(vec1, vec2, self.lut)
 
-    def distance_batch(self, vecs1: np.ndarray, vecs2: np.ndarray) -> np.ndarray:
+    def distance_batch(
+        self, vecs1: NDArray[np.uint64], vecs2: NDArray[np.uint64]
+    ) -> NDArray[np.int32]:
         """
         Compute pairwise Hamming distances for batches of vectors.
 
@@ -263,17 +266,11 @@ class HammingLUT:
             # GPU implementation
             d_vecs1 = cuda.to_device(vecs1)
             d_vecs2 = cuda.to_device(vecs2)
-            d_distances = cuda.device_array(
-                (vecs1.shape[0], vecs2.shape[0]), dtype=np.int32
-            )
+            d_distances = cuda.device_array((vecs1.shape[0], vecs2.shape[0]), dtype=np.int32)
 
             threads_per_block = (16, 16)
-            blocks_x = (vecs1.shape[0] + threads_per_block[0] - 1) // threads_per_block[
-                0
-            ]
-            blocks_y = (vecs2.shape[0] + threads_per_block[1] - 1) // threads_per_block[
-                1
-            ]
+            blocks_x = (vecs1.shape[0] + threads_per_block[0] - 1) // threads_per_block[0]
+            blocks_y = (vecs2.shape[0] + threads_per_block[1] - 1) // threads_per_block[1]
             blocks = (blocks_x, blocks_y)
 
             hamming_distance_batch_kernel[blocks, threads_per_block](

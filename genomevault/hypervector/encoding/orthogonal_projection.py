@@ -1,9 +1,11 @@
+"""Orthogonal Projection module."""
+
 from __future__ import annotations
 
-"""Orthogonal Projection module."""
 import numpy as np
 
 from genomevault.core.exceptions import ProjectionError
+from genomevault.hypervector.types import MatrixF32
 
 
 class OrthogonalProjection:
@@ -26,7 +28,7 @@ class OrthogonalProjection:
             )
         self.n_components = int(n_components)
         self.rng = np.random.default_rng(seed)
-        self._P: np.ndarray | None = None  # shape: (n_components, n_features)
+        self._P: MatrixF32 | None = None  # shape: (n_components, n_features)
         self._n_features: int | None = None
 
     def fit(self, n_features: int) -> OrthogonalProjection:
@@ -60,7 +62,7 @@ class OrthogonalProjection:
         self._n_features = n_features
         return self
 
-    def transform(self, X: np.ndarray) -> np.ndarray:
+    def transform(self, X: MatrixF32) -> MatrixF32:
         """Transform.
 
         Args:
