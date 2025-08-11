@@ -457,7 +457,7 @@ class STARKProver:
     ) -> str:
         """
         Generate proof integrity check hash.
-        
+
         FIXED: Removed cosmetic proof-of-work that only provided ~16 bits of security
         (trivially breakable). STARK proofs derive their security from the underlying
         mathematics, not from proof-of-work. This generates a deterministic integrity
@@ -1275,10 +1275,13 @@ class STARKProver:
 
     def _generate_proof_id(self, public_inputs: dict[str, Any]) -> str:
         """Generate unique proof ID."""
+        # FIXED: Use cryptographically secure randomness
+        import os
+
         data = {
             "inputs": public_inputs,
             "timestamp": time.time(),
-            "nonce": np.random.bytes(8).hex(),
+            "nonce": os.urandom(8).hex(),
         }
 
         return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[:16]
@@ -1339,7 +1342,7 @@ class PostQuantumVerifier:
     def _verify_proof_integrity_check(self, proof: STARKProof) -> bool:
         """
         Verify proof integrity check hash.
-        
+
         FIXED: Replaced cosmetic proof-of-work with proper integrity verification.
         This ensures the proof components are properly bound together and haven't
         been tampered with, which is the actual security property we need.
@@ -1347,20 +1350,20 @@ class PostQuantumVerifier:
         # Reconstruct the same data that was hashed during proof generation
         # Note: We need to extract the original commitments - this is simplified
         # In a real implementation, commitments would be stored separately
-        
+
         # For this educational implementation, we'll verify the integrity check
         # exists and has the correct format (64 hex characters = 32 bytes)
         if not proof.proof_of_work or len(proof.proof_of_work) != 64:
             logger.error("Invalid integrity check format")
             return False
-            
+
         # Verify it's a valid hex string
         try:
             bytes.fromhex(proof.proof_of_work)
         except ValueError:
             logger.error("Integrity check is not valid hex")
             return False
-            
+
         # In a full implementation, we would recompute and verify the hash
         # For now, we just validate the format since this is educational
         logger.debug("Proof integrity check validated")

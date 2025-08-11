@@ -579,7 +579,7 @@ if __name__ == "__main__":
         private_inputs={
             "glucose_reading": 140,
             "risk_score": 0.82,
-            "witness_randomness": np.random.bytes(32).hex(),
+            "witness_randomness": os.urandom(32).hex(),
         },
     )
 

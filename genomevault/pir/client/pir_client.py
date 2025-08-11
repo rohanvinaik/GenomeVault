@@ -35,7 +35,10 @@ class PIRQuery:
         if self.metadata is None:
             self.metadata = {}
         if self.nonce is None:
-            self.nonce = np.random.bytes(32)
+            # FIXED: Use cryptographically secure randomness
+            import os
+
+            self.nonce = os.urandom(32)
 
 
 class PIRClient:
@@ -128,7 +131,10 @@ class PIRClient:
         noise_positions = np.random.choice(len(query_vector), size=10, replace=False)
         query_vector[noise_positions] = np.random.random(10) * 0.1
 
-        nonce = np.random.bytes(32)
+        # FIXED: Use cryptographically secure randomness
+        import os
+
+        nonce = os.urandom(32)
 
         return PIRQuery(position=position, length=length, query_vector=query_vector, nonce=nonce)
 
@@ -265,7 +271,10 @@ class PIRClient:
         query_vector[noise_indices] = rng.random(len(noise_indices)) * 0.1
 
         # Generate nonce
-        nonce = rng.bytes(32) if seed is not None else np.random.bytes(32)
+        # FIXED: Use cryptographically secure randomness when seed is None
+        import os
+
+        nonce = rng.bytes(32) if seed is not None else os.urandom(32)
 
         return PIRQuery(
             indices=[db_index],

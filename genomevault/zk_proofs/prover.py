@@ -12,7 +12,6 @@ import time
 from dataclasses import dataclass
 from typing import Any
 
-import numpy as np
 
 from genomevault.core.config import get_config
 from genomevault.utils.logging import get_logger
@@ -376,7 +375,7 @@ class Prover:
             "circuit": circuit_name,
             "public_inputs": public_inputs,
             "timestamp": time.time(),
-            "nonce": np.random.bytes(16).hex(),
+            "nonce": os.urandom(16).hex(),
         }
 
         data_str = json.dumps(data, sort_keys=True)
@@ -412,10 +411,13 @@ class Prover:
             raise ValueError("Variant hash mismatch")
 
         # Generate mock proof (192 bytes)
+        # FIXED: Use cryptographically secure randomness
+        import os
+
         proof_data = {
-            "pi_a": np.random.bytes(48).hex(),
-            "pi_b": np.random.bytes(96).hex(),
-            "pi_c": np.random.bytes(48).hex(),
+            "pi_a": os.urandom(48).hex(),
+            "pi_b": os.urandom(96).hex(),
+            "pi_c": os.urandom(48).hex(),
         }
 
         return json.dumps(proof_data).encode()[:192]
@@ -434,11 +436,14 @@ class Prover:
             raise ValueError("Score out of range")
 
         # Generate mock proof (384 bytes)
+        # FIXED: Use cryptographically secure randomness
+        import os
+
         proof_data = {
-            "pi_a": np.random.bytes(48).hex(),
-            "pi_b": np.random.bytes(96).hex(),
-            "pi_c": np.random.bytes(48).hex(),
-            "commitments": [np.random.bytes(48).hex() for _ in range(4)],
+            "pi_a": os.urandom(48).hex(),
+            "pi_b": os.urandom(96).hex(),
+            "pi_c": os.urandom(48).hex(),
+            "commitments": [os.urandom(48).hex() for _ in range(4)],
         }
 
         return json.dumps(proof_data).encode()[:384]
@@ -455,14 +460,17 @@ class Prover:
         condition = (g > g_threshold) and (r > r_threshold)
 
         # Generate proof that proves the condition without revealing g or r
+        # FIXED: Use cryptographically secure randomness
+        import os
+
         proof_data = {
-            "pi_a": np.random.bytes(48).hex(),
-            "pi_b": np.random.bytes(96).hex(),
-            "pi_c": np.random.bytes(48).hex(),
+            "pi_a": os.urandom(48).hex(),
+            "pi_b": os.urandom(96).hex(),
+            "pi_c": os.urandom(48).hex(),
             "condition_commitment": hashlib.sha256(
                 f"{condition}:{private_inputs['witness_randomness']}".encode()
             ).hexdigest(),
-            "range_proofs": [np.random.bytes(32).hex() for _ in range(4)],
+            "range_proofs": [os.urandom(32).hex() for _ in range(4)],
         }
 
         return json.dumps(proof_data).encode()[:384]
@@ -472,11 +480,14 @@ class Prover:
         # Size based on circuit constraints
         proof_size = min(800, 192 + circuit.constraints // 100)
 
+        # FIXED: Use cryptographically secure randomness
+        import os
+
         proof_data = {
-            "pi_a": np.random.bytes(48).hex(),
-            "pi_b": np.random.bytes(96).hex(),
-            "pi_c": np.random.bytes(48).hex(),
-            "auxiliary": np.random.bytes(proof_size - 192).hex(),
+            "pi_a": os.urandom(48).hex(),
+            "pi_b": os.urandom(96).hex(),
+            "pi_c": os.urandom(48).hex(),
+            "auxiliary": os.urandom(proof_size - 192).hex(),
         }
 
         return json.dumps(proof_data).encode()[:proof_size]
@@ -528,16 +539,20 @@ class Prover:
             "aggregation_method": "recursive_snark",
         }
 
-        {
+        # FIXED: Use cryptographically secure randomness
+        import os
+
+        private_inputs = {
             "proofs": [p.proof_data for p in proofs],
-            "witness_randomness": np.random.bytes(32).hex(),
+            "witness_randomness": os.urandom(32).hex(),
         }
 
         # Generate recursive proof (simulated - no actual circuit needed)
+        # FIXED: Use cryptographically secure randomness
         proof_data = {
-            "pi_a": np.random.bytes(48).hex(),
-            "pi_b": np.random.bytes(96).hex(),
-            "pi_c": np.random.bytes(48).hex(),
+            "pi_a": os.urandom(48).hex(),
+            "pi_b": os.urandom(96).hex(),
+            "pi_c": os.urandom(48).hex(),
             "aggregated_proofs": len(proofs),
         }
 
@@ -599,7 +614,7 @@ if __name__ == "__main__":
         private_inputs={
             "variant_data": {"chr": "chr1", "pos": 12345, "ref": "A", "alt": "G"},
             "merkle_proof": ["hash1", "hash2", "hash3"],
-            "witness_randomness": np.random.bytes(32).hex(),
+            "witness_randomness": os.urandom(32).hex(),
         },
     )
 
@@ -617,7 +632,7 @@ if __name__ == "__main__":
         private_inputs={
             "glucose_reading": 140,  # Actual glucose (private)
             "risk_score": 0.82,  # Actual PRS (private)
-            "witness_randomness": np.random.bytes(32).hex(),
+            "witness_randomness": os.urandom(32).hex(),
         },
     )
 

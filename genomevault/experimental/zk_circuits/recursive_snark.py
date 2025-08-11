@@ -72,8 +72,11 @@ class RecursiveSNARKProver:
 
     def _initialize_accumulator(self) -> dict[str, Any]:
         """Initialize cryptographic accumulator for proof aggregation."""
+        # FIXED: Use cryptographically secure randomness instead of np.random
+        import os
+
         return {
-            "accumulator_value": np.random.bytes(32),
+            "accumulator_value": os.urandom(32),
             "witness_cache": {},
             "proof_count": 0,
             "last_update": time.time(),
@@ -285,12 +288,15 @@ class RecursiveSNARKProver:
         }
 
         # Private inputs: the actual proofs
+        # FIXED: Use cryptographically secure randomness
+        import os
+
         private_inputs = {
             "left_proof": left.proof_data,
             "right_proof": right.proof_data,
             "left_vk": left.verification_key,
             "right_vk": right.verification_key,
-            "witness_randomness": np.random.bytes(32).hex(),
+            "witness_randomness": os.urandom(32).hex(),
         }
 
         # Generate composed proof
@@ -345,10 +351,13 @@ class RecursiveSNARKProver:
             return proof_data
         else:
             # Fallback to simulation
+            # FIXED: Use cryptographically secure randomness
+            import os
+
             proof_components = {
-                "pi": np.random.bytes(192).hex(),  # Main proof
-                "recursive_commitment": np.random.bytes(32).hex(),
-                "accumulator_update": np.random.bytes(32).hex(),
+                "pi": os.urandom(192).hex(),  # Main proof
+                "recursive_commitment": os.urandom(32).hex(),
+                "accumulator_update": os.urandom(32).hex(),
                 "circuit_digest": hashlib.sha256(
                     json.dumps(circuit, sort_keys=True).encode()
                 ).hexdigest(),
@@ -357,58 +366,58 @@ class RecursiveSNARKProver:
             # FIXED: Never truncate proofs - use proper compression instead
             # Truncating JSON to 384 bytes corrupts the data structure completely.
             # Use deterministic serialization and compression for size optimization.
-            
+
             import zlib
-            
+
             # Serialize deterministically with sorted keys
-            proof_json = json.dumps(proof_components, sort_keys=True, separators=(',', ':'))
-            proof_data = proof_json.encode('utf-8')
-            
+            proof_json = json.dumps(proof_components, sort_keys=True, separators=(",", ":"))
+            proof_data = proof_json.encode("utf-8")
+
             # Compress using zlib for size reduction without data loss
             compressed_proof = zlib.compress(proof_data, level=9)
-            
+
             # Add a header to indicate compressed format
             # Format: b'CPROOF' (6 bytes) + 4-byte original size + compressed data
-            original_size = len(proof_data).to_bytes(4, 'big')
-            compressed_with_header = b'CPROOF' + original_size + compressed_proof
-            
+            original_size = len(proof_data).to_bytes(4, "big")
+            compressed_with_header = b"CPROOF" + original_size + compressed_proof
+
             logger.debug(
                 f"Proof compression: {len(proof_data)} bytes → "
                 f"{len(compressed_with_header)} bytes "
                 f"({100 * len(compressed_with_header) / len(proof_data):.1f}%)"
             )
-            
+
             return compressed_with_header
 
     def _decompress_proof_data(self, compressed_data: bytes) -> dict[str, Any]:
         """
         Decompress proof data that was compressed in _generate_recursive_proof.
-        
+
         FIXED: Added decompression support for the new compressed proof format.
         Handles both compressed (with CPROOF header) and uncompressed formats.
         """
         import zlib
-        
+
         # Check for compressed format header
-        if compressed_data.startswith(b'CPROOF'):
+        if compressed_data.startswith(b"CPROOF"):
             # Extract original size and compressed data
-            original_size = int.from_bytes(compressed_data[6:10], 'big')
+            original_size = int.from_bytes(compressed_data[6:10], "big")
             compressed_proof = compressed_data[10:]
-            
+
             # Decompress
             try:
                 decompressed = zlib.decompress(compressed_proof)
-                
+
                 # Verify size matches
                 if len(decompressed) != original_size:
                     logger.warning(
                         f"Decompressed size mismatch: expected {original_size}, "
                         f"got {len(decompressed)}"
                     )
-                
+
                 # Parse JSON
-                return json.loads(decompressed.decode('utf-8'))
-                
+                return json.loads(decompressed.decode("utf-8"))
+
             except (zlib.error, json.JSONDecodeError) as e:
                 logger.error(f"Failed to decompress/parse proof: {e}")
                 # Return empty dict or raise based on requirements
@@ -416,12 +425,12 @@ class RecursiveSNARKProver:
         else:
             # Try to parse as uncompressed JSON (backward compatibility)
             try:
-                return json.loads(compressed_data.decode('utf-8'))
+                return json.loads(compressed_data.decode("utf-8"))
             except (json.JSONDecodeError, UnicodeDecodeError):
                 # If it's not JSON, might be raw binary proof
                 logger.debug("Proof data is not compressed JSON, treating as raw binary")
                 return {"raw_proof": compressed_data.hex()}
-    
+
     def _accumulator_add(self, acc_value: bytes, proof: Proof) -> tuple[bytes, bytes]:
         """Add proof to cryptographic accumulator."""
         # Hash proof into accumulator
@@ -443,12 +452,15 @@ class RecursiveSNARKProver:
         """Generate proof of correct accumulator construction."""
         # Prove that final_acc correctly accumulates all proofs
 
+        # FIXED: Use cryptographically secure randomness
+        import os
+
         proof_components = {
             "final_accumulator": final_acc.hex(),
             "batch_proof": {
                 "commitment": hashlib.sha256(b"".join(w for w in witnesses)).hexdigest(),
-                "challenge": np.random.bytes(32).hex(),
-                "response": np.random.bytes(128).hex(),
+                "challenge": os.urandom(32).hex(),
+                "response": os.urandom(128).hex(),
             },
             "proof_count": len(proofs),
             "timestamp": time.time(),
@@ -456,10 +468,11 @@ class RecursiveSNARKProver:
 
         # FIXED: Never truncate proof data - use compression instead
         import zlib
-        proof_json = json.dumps(proof_components, sort_keys=True, separators=(',', ':'))
-        proof_data = proof_json.encode('utf-8')
+
+        proof_json = json.dumps(proof_components, sort_keys=True, separators=(",", ":"))
+        proof_data = proof_json.encode("utf-8")
         compressed = zlib.compress(proof_data, level=9)
-        return b'CPROOF' + len(proof_data).to_bytes(4, 'big') + compressed
+        return b"CPROOF" + len(proof_data).to_bytes(4, "big") + compressed
 
     def _aggregate_public_inputs(self, proofs: list[Proof]) -> dict[str, Any]:
         """Aggregate public inputs from multiple proofs."""
@@ -497,167 +510,170 @@ class RecursiveSNARKProver:
     def _compute_aggregate_vk(self, proofs: list[Proof]) -> str:
         """
         Compute aggregate verification key with proper domain separation.
-        
+
         FIXED: Use canonical byte layout with domain separation instead of JSON.
         Format: H("VK_AGG" || len || VK1 || VK2 || ...)
         """
         hasher = hashlib.sha256()
-        
+
         # Domain separation tag
         hasher.update(b"VK_AGG")
-        
+
         # Number of VKs being aggregated (4 bytes, big-endian)
-        hasher.update(len(proofs).to_bytes(4, 'big'))
-        
+        hasher.update(len(proofs).to_bytes(4, "big"))
+
         # Add each VK in deterministic order (sorted by proof ID for consistency)
         sorted_proofs = sorted(proofs, key=lambda p: p.proof_id)
         for proof in sorted_proofs:
             vk = proof.verification_key or proof.proof_id
-            
+
             # Convert VK to bytes (handle both hex strings and raw strings)
             try:
-                vk_bytes = bytes.fromhex(vk) if len(vk) % 2 == 0 else vk.encode('utf-8')
+                vk_bytes = bytes.fromhex(vk) if len(vk) % 2 == 0 else vk.encode("utf-8")
             except ValueError:
-                vk_bytes = vk.encode('utf-8')
-            
+                vk_bytes = vk.encode("utf-8")
+
             # Add VK length (4 bytes) followed by VK bytes
-            hasher.update(len(vk_bytes).to_bytes(4, 'big'))
+            hasher.update(len(vk_bytes).to_bytes(4, "big"))
             hasher.update(vk_bytes)
-        
+
         return hasher.hexdigest()
 
     def _combine_verification_keys(self, vk1: str, vk2: str) -> str:
         """
         Combine two verification keys with proper domain separation.
-        
+
         FIXED: Use canonical byte layout instead of string concatenation.
         Format: H("VK_COMBINE" || VK1_len || VK1 || VK2_len || VK2)
         """
         hasher = hashlib.sha256()
-        
+
         # Domain separation tag
         hasher.update(b"VK_COMBINE")
-        
+
         # Convert VKs to bytes
         try:
-            vk1_bytes = bytes.fromhex(vk1) if len(vk1) % 2 == 0 else vk1.encode('utf-8')
+            vk1_bytes = bytes.fromhex(vk1) if len(vk1) % 2 == 0 else vk1.encode("utf-8")
         except ValueError:
-            vk1_bytes = vk1.encode('utf-8')
-            
+            vk1_bytes = vk1.encode("utf-8")
+
         try:
-            vk2_bytes = bytes.fromhex(vk2) if len(vk2) % 2 == 0 else vk2.encode('utf-8')
+            vk2_bytes = bytes.fromhex(vk2) if len(vk2) % 2 == 0 else vk2.encode("utf-8")
         except ValueError:
-            vk2_bytes = vk2.encode('utf-8')
-        
+            vk2_bytes = vk2.encode("utf-8")
+
         # Add VK1 length and bytes
-        hasher.update(len(vk1_bytes).to_bytes(4, 'big'))
+        hasher.update(len(vk1_bytes).to_bytes(4, "big"))
         hasher.update(vk1_bytes)
-        
+
         # Add VK2 length and bytes
-        hasher.update(len(vk2_bytes).to_bytes(4, 'big'))
+        hasher.update(len(vk2_bytes).to_bytes(4, "big"))
         hasher.update(vk2_bytes)
-        
+
         return hasher.hexdigest()
 
     def _hash_proof(self, proof: Proof) -> str:
         """
         Compute hash of proof for aggregation with proper domain separation.
-        
+
         FIXED: Use canonical byte layout instead of JSON serialization.
         Format: H("SUBPROOF" || circuit_id || vk || proof_bytes_commit || public_inputs_commit)
         """
         hasher = hashlib.sha256()
-        
+
         # Domain separation tag
         hasher.update(b"SUBPROOF")
-        
+
         # Circuit ID (proof_id as bytes)
-        circuit_id = proof.proof_id.encode('utf-8')
-        hasher.update(len(circuit_id).to_bytes(4, 'big'))
+        circuit_id = proof.proof_id.encode("utf-8")
+        hasher.update(len(circuit_id).to_bytes(4, "big"))
         hasher.update(circuit_id)
-        
+
         # Circuit name
-        circuit_name = proof.circuit_name.encode('utf-8')
-        hasher.update(len(circuit_name).to_bytes(4, 'big'))
+        circuit_name = proof.circuit_name.encode("utf-8")
+        hasher.update(len(circuit_name).to_bytes(4, "big"))
         hasher.update(circuit_name)
-        
+
         # Verification key (if present)
         if proof.verification_key:
             try:
                 vk_bytes = bytes.fromhex(proof.verification_key)
             except ValueError:
-                vk_bytes = proof.verification_key.encode('utf-8')
-            hasher.update(len(vk_bytes).to_bytes(4, 'big'))
+                vk_bytes = proof.verification_key.encode("utf-8")
+            hasher.update(len(vk_bytes).to_bytes(4, "big"))
             hasher.update(vk_bytes)
         else:
-            hasher.update((0).to_bytes(4, 'big'))  # Zero length for missing VK
-        
+            hasher.update((0).to_bytes(4, "big"))  # Zero length for missing VK
+
         # Proof data commitment (hash of the actual proof bytes)
         if isinstance(proof.proof_data, bytes):
             proof_bytes_hash = hashlib.sha256(proof.proof_data).digest()
         else:
-            proof_bytes_hash = hashlib.sha256(str(proof.proof_data).encode('utf-8')).digest()
+            proof_bytes_hash = hashlib.sha256(str(proof.proof_data).encode("utf-8")).digest()
         hasher.update(proof_bytes_hash)
-        
+
         # Public inputs commitment (canonical serialization)
         if proof.public_inputs:
             # Sort keys for deterministic ordering
             sorted_items = sorted(proof.public_inputs.items())
             inputs_hasher = hashlib.sha256()
-            
+
             for key, value in sorted_items:
                 # Add key
-                key_bytes = key.encode('utf-8')
-                inputs_hasher.update(len(key_bytes).to_bytes(4, 'big'))
+                key_bytes = key.encode("utf-8")
+                inputs_hasher.update(len(key_bytes).to_bytes(4, "big"))
                 inputs_hasher.update(key_bytes)
-                
+
                 # Add value (handle different types)
                 if isinstance(value, (int, float)):
-                    value_bytes = str(value).encode('utf-8')
+                    value_bytes = str(value).encode("utf-8")
                 elif isinstance(value, bytes):
                     value_bytes = value
                 else:
-                    value_bytes = str(value).encode('utf-8')
-                    
-                inputs_hasher.update(len(value_bytes).to_bytes(4, 'big'))
+                    value_bytes = str(value).encode("utf-8")
+
+                inputs_hasher.update(len(value_bytes).to_bytes(4, "big"))
                 inputs_hasher.update(value_bytes)
-            
+
             hasher.update(inputs_hasher.digest())
         else:
             # Empty public inputs
             hasher.update(hashlib.sha256(b"EMPTY").digest())
-        
+
         return hasher.hexdigest()
 
     def _generate_proof_id(self, proofs: list[Proof]) -> str:
         """
         Generate ID for recursive proof with canonical format.
-        
+
         FIXED: Use canonical byte layout instead of JSON.
         Format: H("PROOF_ID" || count || sorted_ids || timestamp || nonce)
         """
         hasher = hashlib.sha256()
-        
+
         # Domain separation tag
         hasher.update(b"PROOF_ID")
-        
+
         # Number of sub-proofs
-        hasher.update(len(proofs).to_bytes(4, 'big'))
-        
+        hasher.update(len(proofs).to_bytes(4, "big"))
+
         # Sorted proof IDs for deterministic ordering
         sorted_ids = sorted([p.proof_id for p in proofs])
         for proof_id in sorted_ids:
-            id_bytes = proof_id.encode('utf-8')
-            hasher.update(len(id_bytes).to_bytes(4, 'big'))
+            id_bytes = proof_id.encode("utf-8")
+            hasher.update(len(id_bytes).to_bytes(4, "big"))
             hasher.update(id_bytes)
-        
+
         # Timestamp (8 bytes, microsecond precision)
         timestamp_us = int(time.time() * 1_000_000)
-        hasher.update(timestamp_us.to_bytes(8, 'big'))
-        
+        hasher.update(timestamp_us.to_bytes(8, "big"))
+
         # Random nonce for uniqueness (8 bytes)
-        hasher.update(np.random.bytes(8))
-        
+        # FIXED: Use cryptographically secure randomness
+        import os
+
+        hasher.update(os.urandom(8))
+
         # Return first 16 hex chars (64 bits) for shorter IDs
         return hasher.hexdigest()[:16]
 
@@ -700,9 +716,9 @@ class RecursiveSNARKProver:
         else:
             # FIXED: Implement proper verification checks even in simulated mode
             # Previously just returned True, now performs actual integrity checks
-            
+
             logger.debug("Performing simulated verification with integrity checks")
-            
+
             # 1. Decompress and parse the aggregation proof
             try:
                 proof_data = self._decompress_proof_data(recursive_proof.aggregation_proof)
@@ -712,25 +728,31 @@ class RecursiveSNARKProver:
             except Exception as e:
                 logger.error(f"Proof decompression error: {e}")
                 return False
-            
+
             # 2. Verify the aggregation proof contains expected components
-            required_components = ["pi", "recursive_commitment", "accumulator_update", "circuit_digest"]
+            required_components = [
+                "pi",
+                "recursive_commitment",
+                "accumulator_update",
+                "circuit_digest",
+            ]
             for component in required_components:
                 if component not in proof_data:
                     logger.error(f"Missing required proof component: {component}")
                     return False
-            
+
             # 3. Recompute commitment over subproof hashes
             # Extract subproof data from metadata
             subproof_hashes = recursive_proof.metadata.get("subproof_hashes", [])
             if subproof_hashes:
                 # Compute expected commitment
                 import hashlib
+
                 combined_hash = hashlib.sha256()
                 for subproof_hash in subproof_hashes:
                     combined_hash.update(bytes.fromhex(subproof_hash))
                 expected_commitment = combined_hash.hexdigest()
-                
+
                 # Verify against stored commitment
                 stored_commitment = proof_data.get("recursive_commitment", "")
                 if stored_commitment and stored_commitment != expected_commitment:
@@ -739,15 +761,15 @@ class RecursiveSNARKProver:
                         f"got {stored_commitment[:16]}..."
                     )
                     return False
-            
+
             # 4. Verify public aggregate matches expected
             expected_aggregate = recursive_proof.public_aggregate
             stored_aggregate = recursive_proof.metadata.get("stored_public_aggregate")
-            
+
             if stored_aggregate and stored_aggregate != expected_aggregate:
                 logger.error("Public aggregate mismatch")
                 return False
-            
+
             # 5. Verify aggregate VK equals combination of sub VKs
             if recursive_proof.verification_key:
                 # Check VK format (should be hex string of appropriate length)
@@ -759,27 +781,27 @@ class RecursiveSNARKProver:
                 except ValueError:
                     logger.error("Invalid verification key format")
                     return False
-                
+
                 # Verify VK matches expected combination
                 expected_vk = recursive_proof.metadata.get("expected_vk")
                 if expected_vk and recursive_proof.verification_key != expected_vk:
                     logger.error("Verification key mismatch")
                     return False
-            
+
             # 6. Check proof count consistency
             claimed_count = recursive_proof.proof_count
             metadata_count = recursive_proof.metadata.get("total_proof_count", claimed_count)
-            
+
             if claimed_count != metadata_count:
                 logger.error(
                     f"Proof count mismatch: claimed {claimed_count}, "
                     f"metadata says {metadata_count}"
                 )
                 return False
-            
+
             # 7. Verify proof structure based on strategy
             strategy = recursive_proof.metadata.get("strategy", "unknown")
-            
+
             if strategy == "tree":
                 # Tree-based proofs should have tree_depth
                 tree_depth = recursive_proof.metadata.get("tree_depth", 0)
@@ -790,26 +812,27 @@ class RecursiveSNARKProver:
                         f"depth={tree_depth}, count={claimed_count}"
                     )
                     return False
-                    
+
             elif strategy == "accumulator" and recursive_proof.metadata.get("uses_accumulator"):
                 # Accumulator proofs should have accumulator value
                 if "accumulator_update" not in proof_data:
                     logger.error("Accumulator proof missing accumulator update")
                     return False
-            
+
             # 8. Simulate realistic verification time
             if recursive_proof.metadata.get("uses_accumulator", False):
                 verification_time = 0.025  # 25ms constant for accumulator
             else:
                 # O(log n) for tree-based
                 verification_time = 0.025 + 0.005 * recursive_proof.metadata.get("tree_depth", 1)
-            
+
             # Add small random variation for realism
             import random
-            verification_time *= (0.9 + 0.2 * random.random())
-            
+
+            verification_time *= 0.9 + 0.2 * random.random()
+
             time.sleep(verification_time)
-            
+
             logger.debug(
                 f"Simulated verification passed all checks in {verification_time*1000:.1f}ms"
             )
@@ -843,7 +866,7 @@ if __name__ == "__main__":
                 "merkle_proofs": [
                     hashlib.sha256(f"proof_{j}".encode()).hexdigest() for j in range(20)
                 ],
-                "witness_randomness": np.random.bytes(32).hex(),
+                "witness_randomness": os.urandom(32).hex(),
             },
         )
         proofs.append(proof)
