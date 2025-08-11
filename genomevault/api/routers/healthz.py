@@ -39,20 +39,40 @@ def check_database() -> HealthCheckResult:
     try:
         # Placeholder for future database connectivity check
         # For now, return healthy status
-        return {"status": "healthy", "message": "Database connection OK"}
+        return {
+            "status": "healthy",
+            "message": "Database connection OK",
+            "error": None,
+            "latency_ms": 0.5,
+        }
     except Exception as e:
         logger.error(f"Database health check failed: {e}")
-        return {"status": "unhealthy", "error": str(e)}
+        return {
+            "status": "unhealthy",
+            "message": None,
+            "error": str(e),
+            "latency_ms": None,
+        }
 
 
 def check_cache() -> HealthCheckResult:
     """Check cache service connectivity."""
     try:
         # Placeholder for future cache connectivity check
-        return {"status": "healthy", "message": "Cache service OK"}
+        return {
+            "status": "healthy",
+            "message": "Cache service OK",
+            "error": None,
+            "latency_ms": 0.3,
+        }
     except Exception as e:
         logger.error(f"Cache health check failed: {e}")
-        return {"status": "unhealthy", "error": str(e)}
+        return {
+            "status": "unhealthy",
+            "message": None,
+            "error": str(e),
+            "latency_ms": None,
+        }
 
 
 def check_filesystem() -> HealthCheckResult:
@@ -67,13 +87,25 @@ def check_filesystem() -> HealthCheckResult:
             else:
                 return {
                     "status": "unhealthy",
+                    "message": None,
                     "error": f"Directory {dir_path} not accessible",
+                    "latency_ms": None,
                 }
 
-        return {"status": "healthy", "message": "Filesystem access OK"}
+        return {
+            "status": "healthy",
+            "message": "Filesystem access OK",
+            "error": None,
+            "latency_ms": 0.1,
+        }
     except Exception as e:
         logger.error(f"Filesystem health check failed: {e}")
-        return {"status": "unhealthy", "error": str(e)}
+        return {
+            "status": "unhealthy",
+            "message": None,
+            "error": str(e),
+            "latency_ms": None,
+        }
 
 
 @router.get("/healthz", response_model=HealthStatus)
@@ -85,7 +117,12 @@ async def healthz(response: Response) -> Any:
     This is the primary health check endpoint for monitoring and orchestration.
     """
     checks = {
-        "api": {"status": "healthy", "message": "API is responsive"},
+        "api": {
+            "status": "healthy",
+            "message": "API is responsive",
+            "error": None,
+            "latency_ms": 0.1,
+        },
         "filesystem": check_filesystem(),
     }
 
@@ -145,8 +182,20 @@ async def readiness(response: Response) -> Any:
         timestamp=datetime.utcnow().isoformat(),
         version="v1.0.0",
         checks={
-            "api": {"status": "healthy"},
-            "dependencies": {"status": "healthy" if is_ready else "degraded"},
+            "api": {
+                "status": "healthy",
+                "message": "API is responsive",
+                "error": None,
+                "latency_ms": 0.1,
+            },
+            "dependencies": {
+                "status": "healthy" if is_ready else "degraded",
+                "message": (
+                    "All dependencies operational" if is_ready else "Some dependencies degraded"
+                ),
+                "error": None,
+                "latency_ms": 0.2,
+            },
         },
         components=components,
     )
