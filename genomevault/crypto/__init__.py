@@ -40,6 +40,7 @@ from genomevault.crypto.serialization import (
     pack_proof_components,
 )
 from genomevault.crypto.rng import secure_bytes, xof, xof_uint_mod
+from genomevault.crypto.transcript import Transcript
 
 __all__ = [
     "PublicKey",
@@ -81,4 +82,5 @@ __all__ = [
     "secure_bytes",
     "xof",
     "xof_uint_mod",
+    "Transcript",
 ]
