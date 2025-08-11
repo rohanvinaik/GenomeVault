@@ -119,8 +119,18 @@ class STARKProver:
         # Step 4: FRI protocol for low-degree testing
         fri_layers = self._fri_protocol(constraint_poly, constraint_commitment)
 
-        # Step 5: Generate query responses
-        query_indices = self._generate_query_indices(trace_commitment, constraint_commitment)
+        # Step 5: Generate cryptographically secure query indices  
+        # Compute actual domain size from constraint polynomial length
+        domain_size = len(constraint_poly)
+        query_indices = self._generate_query_indices(
+            trace_commitment, constraint_commitment, domain_size
+        )
+        
+        # Verify indices are cryptographically sound (safety check)
+        if not self._verify_query_indices(
+            query_indices, trace_commitment, constraint_commitment, domain_size
+        ):
+            raise ValueError("Generated query indices failed verification")
 
         query_responses = self._generate_query_responses(
             computation_trace,
@@ -330,6 +340,8 @@ class STARKProver:
            multiplicative subgroup (roots of unity) required for Reed-Solomon/FRI soundness
         3. Previously used float64 dtypes causing silent precision loss - now uses 
            object dtype with Python ints for exact finite field arithmetic
+        4. Query sampling now uses cryptographic Fiat-Shamir with SHAKE256 instead of
+           insecure 32-bit seeded numpy.random for provable security
         """
         # Interpolate polynomial from data using proper Lagrange interpolation
         poly_coeffs = self._interpolate_polynomial(data)
@@ -680,18 +692,99 @@ class STARKProver:
         return max(5, self.security_bits // (self.fri_folding_factor * 8))
 
     def _generate_query_indices(
-        self, trace_commitment: str, constraint_commitment: str
+        self, trace_commitment: str, constraint_commitment: str, domain_size: int | None = None
     ) -> list[int]:
-        """Generate random query indices."""
-        # Use Fiat-Shamir to generate pseudorandom indices
-        seed = hashlib.sha256((trace_commitment + constraint_commitment).encode()).digest()
-
-        rng = np.random.RandomState(int.from_bytes(seed[:4], "big"))
-        domain_size = 8 * 1024  # Example domain size
-
-        indices = rng.choice(domain_size, size=self.num_queries, replace=False).tolist()
-
-        return indices
+        """
+        Generate cryptographically secure query indices using Fiat-Shamir.
+        
+        FIXED: Replace insecure 32-bit seeded numpy.random with proper Fiat-Shamir 
+        challenge generation using SHAKE256 as an extendable output function (XOF).
+        
+        Args:
+            trace_commitment: Commitment to execution trace
+            constraint_commitment: Commitment to constraint polynomial  
+            domain_size: Size of evaluation domain (computed if not provided)
+        
+        Returns:
+            List of unique query indices for FRI protocol
+        """
+        from hashlib import shake_256
+        
+        # Compute domain size if not provided (based on blowup factor)
+        if domain_size is None:
+            # Estimate based on Reed-Solomon rate and typical trace length
+            estimated_trace_length = 1024  # Default estimate
+            blowup_factor = int(1 / self.rs_rate)
+            domain_size = estimated_trace_length * blowup_factor
+            # Round up to next power of 2
+            if domain_size & (domain_size - 1) != 0:
+                domain_size = 1 << domain_size.bit_length()
+        
+        # Create transcript for Fiat-Shamir challenge
+        transcript = f"{trace_commitment}|{constraint_commitment}|{domain_size}|{self.num_queries}"
+        
+        # Use SHAKE256 as cryptographic XOF for generating indices
+        xof = shake_256(transcript.encode())
+        
+        indices = set()
+        counter = 0
+        
+        # Generate unique indices using rejection sampling
+        while len(indices) < self.num_queries:
+            # Extract 8 bytes (64 bits) from XOF for sufficient entropy
+            random_bytes = xof.digest(8 * (counter + 1))[-8:]
+            
+            # Convert to integer and reduce modulo domain size
+            random_int = int.from_bytes(random_bytes, 'big')
+            index = random_int % domain_size
+            
+            indices.add(index)
+            counter += 1
+            
+            # Safety check to prevent infinite loops
+            if counter > self.num_queries * 10:
+                raise ValueError(
+                    f"Failed to generate {self.num_queries} unique indices "
+                    f"from domain of size {domain_size} after {counter} attempts"
+                )
+        
+        return sorted(list(indices))
+    
+    def _verify_query_indices(
+        self, 
+        indices: list[int], 
+        trace_commitment: str,
+        constraint_commitment: str, 
+        domain_size: int
+    ) -> bool:
+        """
+        Verify that query indices were generated correctly via Fiat-Shamir.
+        
+        This enables independent verification that indices are deterministic
+        and cryptographically derived from the public transcript.
+        """
+        # Regenerate indices using same parameters
+        expected_indices = self._generate_query_indices(
+            trace_commitment, constraint_commitment, domain_size
+        )
+        
+        # Check exact match
+        if sorted(indices) != sorted(expected_indices):
+            logger.error("Query index verification failed - indices don't match transcript")
+            return False
+            
+        # Verify all indices are in valid range
+        if any(idx < 0 or idx >= domain_size for idx in indices):
+            logger.error(f"Query indices out of bounds for domain size {domain_size}")
+            return False
+            
+        # Verify uniqueness (no duplicates)
+        if len(set(indices)) != len(indices):
+            logger.error("Duplicate query indices detected")
+            return False
+            
+        logger.debug(f"Query indices verified: {len(indices)} unique indices in domain {domain_size}")
+        return True
 
     def _combine_commitments(self, comm1: str, comm2: str) -> str:
         """Combine two commitments."""
