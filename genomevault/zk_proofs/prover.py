@@ -52,6 +52,28 @@ class Circuit:
         }
 
 
+class CircuitFactory:
+    """Factory for creating standardized genomic circuits."""
+
+    @staticmethod
+    def create_genomic_circuit(
+        name: str,
+        constraints: int,
+        public_inputs: list[str],
+        private_inputs: list[str] | None = None,
+        parameters: dict[str, Any] | None = None,
+    ) -> Circuit:
+        """Create a standardized genomic circuit."""
+        return Circuit(
+            name=name,
+            circuit_type="genomic",
+            constraints=constraints,
+            public_inputs=public_inputs,
+            private_inputs=private_inputs or [],
+            parameters=parameters or {},
+        )
+
+
 @dataclass
 class Proof:
     """Zero-knowledge proof."""
@@ -87,9 +109,8 @@ class CircuitLibrary:
     @staticmethod
     def variant_presence_circuit() -> Circuit:
         """Circuit for proving variant presence without revealing position."""
-        return Circuit(
+        return CircuitFactory.create_genomic_circuit(
             name="variant_presence",
-            circuit_type="genomic",
             constraints=5000,
             public_inputs=[
                 "variant_hash",  # Hash of variant details
@@ -111,9 +132,8 @@ class CircuitLibrary:
     @staticmethod
     def polygenic_risk_score_circuit() -> Circuit:
         """Circuit for computing PRS without revealing individual variants."""
-        return Circuit(
+        return CircuitFactory.create_genomic_circuit(
             name="polygenic_risk_score",
-            circuit_type="genomic",
             constraints=20000,
             public_inputs=[
                 "prs_model",  # Hash of PRS model

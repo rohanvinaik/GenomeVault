@@ -7,6 +7,7 @@ from enum import Enum
 import re
 
 from pydantic import BaseModel, Field, validator, root_validator
+from .updates import UpdateModelMixin
 
 
 # Strict validation models with deterministic ordering
@@ -294,7 +295,7 @@ class HVEncodeRequest(BaseModel):
         }
 
 
-class HVEncodeConfigPatch(BaseModel):
+class HVEncodeConfigPatch(UpdateModelMixin):
     """PATCH model for updating encoding configuration - all fields optional."""
 
     version: Optional[EncodingVersion] = Field(None, description="Encoding version to use")
@@ -316,10 +317,6 @@ class HVEncodeConfigPatch(BaseModel):
             if v not in allowed:
                 raise ValueError(f"Dimension must be one of {allowed}")
         return v
-
-    def dict_for_update(self) -> Dict[str, Any]:
-        """Return only set fields for update."""
-        return self.dict(exclude_unset=True, exclude_none=True)
 
     class Config:
         """Config implementation."""
