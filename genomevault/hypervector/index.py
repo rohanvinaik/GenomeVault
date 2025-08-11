@@ -10,12 +10,14 @@ import json
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 import struct
+from datetime import datetime
 
 import numpy as np
+from numpy.typing import NDArray
 
+from genomevault.api.types import IndexManifest
 from genomevault.hypervector.types import (
     VectorBool,
-    PackedBinary,
 )
 from genomevault.hypervector.operations.hamming_lut import (
     generate_popcount_lut,
@@ -23,7 +25,7 @@ from genomevault.hypervector.operations.hamming_lut import (
 )
 
 
-def pack_binary_vectors(vectors: List[VectorBool]) -> PackedBinary:
+def pack_binary_vectors(vectors: List[VectorBool]) -> NDArray[np.uint64]:
     """
     Pack binary vectors into uint64 chunks for efficient Hamming distance.
 
@@ -79,7 +81,7 @@ def pack_binary_vectors(vectors: List[VectorBool]) -> PackedBinary:
     return packed
 
 
-def unpack_binary_vectors(packed: PackedBinary, dimension: int) -> List[VectorBool]:
+def unpack_binary_vectors(packed: NDArray[np.uint64], dimension: int) -> List[VectorBool]:
     """
     Unpack uint64 chunks back to binary vectors.
 
@@ -179,13 +181,15 @@ def build(vectors: List[np.ndarray], ids: List[str], path: Path, metric: str = "
             float_vectors.tofile(f)
 
     # Save metadata
-    manifest = {
+    manifest: IndexManifest = {
         "ids": ids,
         "dimension": dimension,
-        "metric": metric,
+        "metric": metric,  # type: ignore
         "n_vectors": len(vectors),
         "dtype": str(dtype),
         "version": "1.0",
+        "created_at": datetime.utcnow().isoformat(),
+        "metadata": None,
     }
 
     manifest_file = path / "manifest.json"
@@ -307,7 +311,7 @@ def search(
     return results
 
 
-def load_index_metadata(path: Path) -> Dict:
+def load_index_metadata(path: Path) -> IndexManifest:
     """
     Load index metadata without loading vectors.
 
@@ -406,3 +410,56 @@ def add_vectors(vectors: List[np.ndarray], ids: List[str], path: Path) -> None:
         json.dump(manifest, f, indent=2)
 
     print(f"Added {len(vectors)} vectors to index. Total: {manifest['n_vectors']}")
+
+
+def batch_hamming_distance(
+    queries: NDArray[np.uint64], targets: NDArray[np.uint64]
+) -> NDArray[np.uint32]:
+    """
+    Compute batch Hamming distances between packed binary vectors.
+
+    Args:
+        queries: Packed query vectors (n_queries, n_chunks) as uint64
+        targets: Packed target vectors (n_targets, n_chunks) as uint64
+
+    Returns:
+        Distance matrix (n_queries, n_targets) as uint32
+    """
+    if queries.ndim != 2 or targets.ndim != 2:
+        raise ValueError("Both queries and targets must be 2D arrays")
+
+    if queries.shape[1] != targets.shape[1]:
+        raise ValueError(f"Chunk dimension mismatch: {queries.shape[1]} vs {targets.shape[1]}")
+
+    lut = generate_popcount_lut()
+    distances = hamming_distance_batch_cpu(queries, targets, lut)
+    return distances.astype(np.uint32)
+
+
+def compute_packed_hamming(vec1: NDArray[np.uint64], vec2: NDArray[np.uint64]) -> np.uint32:
+    """
+    Compute Hamming distance between two packed uint64 vectors.
+
+    Args:
+        vec1: First packed vector (n_chunks,) as uint64
+        vec2: Second packed vector (n_chunks,) as uint64
+
+    Returns:
+        Hamming distance as uint32
+    """
+    if vec1.shape != vec2.shape:
+        raise ValueError(f"Shape mismatch: {vec1.shape} vs {vec2.shape}")
+
+    lut = generate_popcount_lut()
+    distance = np.uint32(0)
+
+    for i in range(len(vec1)):
+        xor_val = vec1[i] ^ vec2[i]
+        distance += (
+            lut[(xor_val >> 0) & 0xFFFF]
+            + lut[(xor_val >> 16) & 0xFFFF]
+            + lut[(xor_val >> 32) & 0xFFFF]
+            + lut[(xor_val >> 48) & 0xFFFF]
+        )
+
+    return distance

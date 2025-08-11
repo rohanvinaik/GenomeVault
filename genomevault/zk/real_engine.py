@@ -12,6 +12,8 @@ from typing import Any, Dict
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ed25519
 
+from genomevault.crypto.types import PrivateKey, PublicKey
+
 from genomevault.utils.logging import get_logger
 from genomevault.zk.backends.circom_snarkjs import (
     CircuitPaths,
@@ -58,6 +60,7 @@ class RealZKEngine:
 
         # Generate or load Ed25519 keypair for transcript fallback
         self.key_path = self.repo_root / ".zk_transcript_key"
+        self.signing_key: PrivateKey
         if self.key_path.exists():
             with open(self.key_path, "rb") as f:
                 key_bytes = f.read()
@@ -78,7 +81,7 @@ class RealZKEngine:
             except Exception as e:
                 logger.warning(f"Could not save transcript key: {e}")
 
-        self.verify_key = self.signing_key.public_key()
+        self.verify_key: PublicKey = self.signing_key.public_key()
 
     def _create_transcript(
         self, circuit_type: str, inputs: Dict[str, Any], claim: str = None

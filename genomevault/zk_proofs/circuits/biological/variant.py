@@ -2,9 +2,11 @@ from __future__ import annotations
 
 """Variant module."""
 import hashlib
-from typing import Dict, List
+from typing import Dict, List, cast
 
+import numpy as np
 import torch
+from numpy.typing import NDArray
 
 from genomevault.utils.logging import get_logger
 
@@ -489,7 +491,9 @@ class PathwayEnrichmentCircuit(BaseCircuit):
         """Convert hypervector to field elements"""
         # Take first few dimensions for efficiency
         if isinstance(hypervectors, torch.Tensor):
-            values = hypervectors[:100].numpy()  # Use first 100 dimensions
+            values: NDArray[np.float32] = cast(
+                NDArray[np.float32], hypervectors[:100].numpy()
+            )  # Use first 100 dimensions
         else:
             values = hypervectors[:100]
 

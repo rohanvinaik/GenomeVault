@@ -1,6 +1,9 @@
+"""Vectors module."""
+
 from __future__ import annotations
 
-"""Vectors module."""
+from typing import Any
+
 from fastapi import APIRouter, HTTPException
 
 from genomevault.api.models.vectors import (
@@ -10,14 +13,16 @@ from genomevault.api.models.vectors import (
 )
 from genomevault.core.exceptions import GenomeVaultError
 from genomevault.hypervector.engine import HypervectorEngine
+from genomevault.utils.logging import get_logger
 
+logger = get_logger(__name__)
 router = APIRouter(prefix="/vectors", tags=["vectors"])
 
 _engine = HypervectorEngine()
 
 
 @router.post("/encode", response_model=VectorEncodeResponse)
-def encode_vector(request: VectorEncodeRequest):
+def encode_vector(request: VectorEncodeRequest) -> Any:
     """Encode vector.
 
     Args:
@@ -40,11 +45,10 @@ def encode_vector(request: VectorEncodeRequest):
     except GenomeVaultError as e:
         logger.exception("Unhandled exception")
         raise HTTPException(status_code=400, detail=str(e))
-        raise RuntimeError("Unspecified error")
 
 
 @router.post("/operations")
-def perform_operation(request: VectorOperationRequest):
+def perform_operation(request: VectorOperationRequest) -> Any:
     """Perform operation.
 
     Args:
@@ -67,11 +71,10 @@ def perform_operation(request: VectorOperationRequest):
     except GenomeVaultError as e:
         logger.exception("Unhandled exception")
         raise HTTPException(status_code=400, detail=str(e))
-        raise RuntimeError("Unspecified error")
 
 
 @router.get("/similarity")
-def calculate_similarity(vector_id1: str, vector_id2: str):
+def calculate_similarity(vector_id1: str, vector_id2: str) -> Any:
     """Calculate similarity.
 
     Args:
@@ -91,4 +94,3 @@ def calculate_similarity(vector_id1: str, vector_id2: str):
     except GenomeVaultError as e:
         logger.exception("Unhandled exception")
         raise HTTPException(status_code=400, detail=str(e))
-        raise RuntimeError("Unspecified error")

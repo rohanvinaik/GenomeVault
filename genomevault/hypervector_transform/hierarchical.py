@@ -11,10 +11,11 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import torch
+from numpy.typing import NDArray
 
 from genomevault.core.config import get_config
 from genomevault.core.constants import HYPERVECTOR_DIMENSIONS, OmicsType
@@ -28,7 +29,7 @@ config = get_config()
 
 
 class ProjectionDomain(Enum):
-    """Domain-specific projection types"""
+    """Domain-specific projection types."""
 
     ONCOLOGY = "oncology"
     RARE_DISEASE = "rare_disease"
@@ -378,7 +379,7 @@ class HierarchicalEncoder:
         if isinstance(features, dict):
             features = self._extract_features(features, omics_type)
         elif isinstance(features, np.ndarray):
-            features = torch.from_numpy(features).float()
+            features = torch.from_numpy(features.astype(np.float32, copy=False))
 
         # Ensure features is a tensor
         if not isinstance(features, torch.Tensor):

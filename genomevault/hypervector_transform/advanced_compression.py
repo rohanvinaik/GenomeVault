@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from typing import Any
 
 import numpy as np
+from numpy.typing import NDArray
 
 from genomevault.utils.logging import get_logger
 
@@ -107,7 +108,7 @@ class AdvancedHierarchicalCompressor:
             "AdvancedHierarchicalCompressor initialized: %sbase_dimD -> %smid_dimD -> %shigh_dimD"
         )
 
-    def _init_projection_matrix(self, in_dim: int, out_dim: int) -> np.ndarray:
+    def _init_projection_matrix(self, in_dim: int, out_dim: int) -> NDArray[np.float32]:
         """Initialize random projection matrix preserving distances."""
         # Use sparse random projection for efficiency
         # Johnson-Lindenstrauss: need O(log n / ε²) dimensions
@@ -119,46 +120,46 @@ class AdvancedHierarchicalCompressor:
             [-1, 0, 1],
             size=(out_dim, in_dim),
             p=[sparsity / 2, 1 - sparsity, sparsity / 2],
-        )
+        ).astype(np.float32)
 
         # Normalize for distance preservation
-        row_norms = np.sqrt(np.sum(matrix != 0, axis=1, keepdims=True))
+        row_norms = np.sqrt(np.sum(matrix != 0, axis=1, keepdims=True)).astype(np.float32)
         row_norms[row_norms == 0] = 1  # Avoid division by zero
         matrix = matrix / row_norms
 
-        return matrix.astype(np.float32)
+        return matrix
 
-    def _init_modality_contexts(self) -> dict[str, np.ndarray]:
+    def _init_modality_contexts(self) -> dict[str, NDArray[np.float32]]:
         """Initialize context vectors for different modalities."""
         contexts = {
-            "genomic": np.random.randn(self.mid_dim),
-            "transcriptomic": np.random.randn(self.mid_dim),
-            "epigenetic": np.random.randn(self.mid_dim),
-            "proteomic": np.random.randn(self.mid_dim),
-            "clinical": np.random.randn(self.mid_dim),
-            "structural": np.random.randn(self.mid_dim),
+            "genomic": np.random.randn(self.mid_dim).astype(np.float32),
+            "transcriptomic": np.random.randn(self.mid_dim).astype(np.float32),
+            "epigenetic": np.random.randn(self.mid_dim).astype(np.float32),
+            "proteomic": np.random.randn(self.mid_dim).astype(np.float32),
+            "clinical": np.random.randn(self.mid_dim).astype(np.float32),
+            "structural": np.random.randn(self.mid_dim).astype(np.float32),
         }
 
         # Normalize context vectors
         for key in contexts:
-            contexts[key] = contexts[key] / np.linalg.norm(contexts[key])
+            contexts[key] = (contexts[key] / np.linalg.norm(contexts[key])).astype(np.float32)
 
         return contexts
 
-    def _init_semantic_contexts(self) -> dict[str, np.ndarray]:
+    def _init_semantic_contexts(self) -> dict[str, NDArray[np.float32]]:
         """Initialize context vectors for semantic concepts."""
         contexts = {
-            "disease_risk": np.random.randn(self.high_dim),
-            "drug_response": np.random.randn(self.high_dim),
-            "ancestry": np.random.randn(self.high_dim),
-            "trait_association": np.random.randn(self.high_dim),
-            "pathway_activity": np.random.randn(self.high_dim),
-            "structural_variant": np.random.randn(self.high_dim),
+            "disease_risk": np.random.randn(self.high_dim).astype(np.float32),
+            "drug_response": np.random.randn(self.high_dim).astype(np.float32),
+            "ancestry": np.random.randn(self.high_dim).astype(np.float32),
+            "trait_association": np.random.randn(self.high_dim).astype(np.float32),
+            "pathway_activity": np.random.randn(self.high_dim).astype(np.float32),
+            "structural_variant": np.random.randn(self.high_dim).astype(np.float32),
         }
 
         # Normalize
         for key in contexts:
-            contexts[key] = contexts[key] / np.linalg.norm(contexts[key])
+            contexts[key] = (contexts[key] / np.linalg.norm(contexts[key])).astype(np.float32)
 
         return contexts
 
@@ -333,8 +334,8 @@ class AdvancedHierarchicalCompressor:
         Create storage-optimized vector for specific tier.
 
         Implements the three tiers from specifications:
-        - Mini (25KB): Mobile apps, quick lookups
-        - Clinical (300KB): Clinical decision support
+        - Mini (25 KB): Mobile apps, quick lookups
+        - Clinical (300 KB): Clinical decision support
         - FullHDC: Full analysis, research
 
         Args:

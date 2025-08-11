@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 from fastapi import APIRouter, HTTPException, status
 
@@ -18,7 +18,7 @@ _engine = ZKProofEngine()  # Will use default PROJECT_ROOT
 
 
 @router.post("/create", status_code=status.HTTP_200_OK)
-def create_proof(request: ProofCreateRequest) -> Dict[str, Any]:
+def create_proof(request: ProofCreateRequest) -> Any:
     """Create proof.
 
     Args:
@@ -94,7 +94,7 @@ def create_proof(request: ProofCreateRequest) -> Dict[str, Any]:
 
 
 @router.post("/verify", status_code=status.HTTP_200_OK)
-def verify_proof(request: ProofVerifyRequest) -> Dict[str, Any]:
+def verify_proof(request: ProofVerifyRequest) -> Any:
     """Verify proof.
 
     Args:

@@ -26,6 +26,10 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
+from genomevault.crypto.types import (
+    KeyBytes,
+)
+
 from .logging import get_logger
 
 logger = get_logger(__name__)
@@ -36,7 +40,7 @@ class EncryptionKey:
     """Encryption key with metadata"""
 
     key_id: str
-    key_material: bytes
+    key_material: KeyBytes
     algorithm: str
     created_at: float
     expires_at: float | None = None

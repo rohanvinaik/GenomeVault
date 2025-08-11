@@ -16,6 +16,7 @@ from typing import Any
 
 import numpy as np
 import torch
+from numpy.typing import NDArray
 
 from .hdc_encoder import (
     HypervectorConfig,
@@ -683,11 +684,13 @@ class VersionMigrator:
         rng = np.random.RandomState(to_params.get("seed", 42))
 
         # Create projection matrix using Johnson-Lindenstrauss
-        projection = rng.randn(to_dim, from_dim) / np.sqrt(from_dim)
-        projection = torch.from_numpy(projection).float()
+        projection: NDArray[np.float32] = (rng.randn(to_dim, from_dim) / np.sqrt(from_dim)).astype(
+            np.float32
+        )
+        projection_tensor = torch.from_numpy(projection.astype(np.float32, copy=False))
 
         # Project to lower dimension
-        reduced = torch.matmul(projection, hv)
+        reduced = torch.matmul(projection_tensor, hv)
 
         return reduced
 
@@ -714,10 +717,12 @@ class VersionMigrator:
             noise_dim = to_dim - from_dim
 
             # Use random projection of original vector for correlation
-            projection = rng.randn(noise_dim, from_dim) * 0.1
-            projection = torch.from_numpy(projection).float()
+            projection: NDArray[np.float32] = (rng.randn(noise_dim, from_dim) * 0.1).astype(
+                np.float32
+            )
+            projection_tensor = torch.from_numpy(projection.astype(np.float32, copy=False))
 
-            correlated_noise = torch.matmul(projection, hv)
+            correlated_noise = torch.matmul(projection_tensor, hv)
             expanded[from_dim:] = correlated_noise
 
         return expanded

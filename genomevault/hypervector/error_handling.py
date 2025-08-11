@@ -199,7 +199,7 @@ class ECCEncoderMixin:
                 errors_corrected += 1
                 # Simple error correction: identify and flip the most likely error
                 # In practice, would use syndrome decoding
-                logger.debug("Parity error detected in block %si: %sparity_error.item()")
+                logger.debug(f"Parity error detected in block {i}: {parity_error.item()}")
 
             decoded_blocks.append(data_block)
 
@@ -270,8 +270,8 @@ class ErrorBudgetAllocator:
             repeats = int(math.ceil(repeats * extra_factor))
 
         logger.info(
-            "Budget allocation: dim=%sdimension, repeats=%srepeats, "
-            "ε=%sepsilon, δ=2^-%sdelta_exp, ECC=%secc_enabled"
+            f"Budget allocation: dim={dimension}, repeats={repeats}, "
+            f"ε={epsilon}, δ=2^-{delta_exp}, ECC={ecc_enabled}"
         )
 
         return ErrorBudget(
@@ -411,7 +411,6 @@ async def estimate_budget(request: ErrorBudgetRequest):
             except ValueError:
                 logger.exception("Unhandled exception")
                 raise HTTPException(400, "Invalid repeat_cap value")
-                raise RuntimeError("Unspecified error")
 
         # Plan budget
         budget = allocator.plan_budget(
@@ -440,7 +439,6 @@ async def estimate_budget(request: ErrorBudgetRequest):
         logger.exception("Unhandled exception")
         logger.error("Budget estimation failed: %s", str(e))
         raise HTTPException(500, "Failed to estimate error budget")
-        raise RuntimeError("Unspecified error")
 
 
 @router.post("/query", response_model=QueryResponse)
@@ -478,7 +476,7 @@ async def query_with_tuning(request: QueryRequest):
                 "alt": "T",
                 "type": "SNP",
             },
-            # ... more variants
+            # more variants would be added here
         ]
 
         # Encode with adaptive error handling
@@ -493,7 +491,9 @@ async def query_with_tuning(request: QueryRequest):
 
         # Mock results
         estimate = 142.7  # Mock statistic value
-        proof_uri = f"ipfs://Qm{torch.rand(1).item():.16f}..."
+        # Generate mock proof URI with random hash
+        proof_hash = hex(int(torch.rand(1).item() * 10**16))[2:].zfill(16)
+        proof_uri = f"ipfs://Qm{proof_hash}"
 
         # Prepare response
         return QueryResponse(
@@ -519,7 +519,6 @@ async def query_with_tuning(request: QueryRequest):
         logger.exception("Unhandled exception")
         logger.error("Query processing failed: %s", str(e))
         raise HTTPException(500, "Query processing failed")
-        raise RuntimeError("Unspecified error")
 
 
 # Module exports

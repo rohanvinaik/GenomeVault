@@ -96,7 +96,7 @@ def parse_genomic_data(data: str) -> Dict[str, Any]:
 
 
 @router.post("/encode", response_model=HVEncodeResponse)
-async def encode_hypervector(request: HVEncodeRequest) -> HVEncodeResponse:
+async def encode_hypervector(request: HVEncodeRequest) -> Any:
     """
     Encode genomic data into a privacy-preserving hypervector.
 
@@ -182,7 +182,7 @@ async def encode_hypervector(request: HVEncodeRequest) -> HVEncodeResponse:
 @router.post("/encode/batch", response_model=HVBatchEncodeResponse)
 async def batch_encode_hypervector(
     request: HVBatchEncodeRequest,
-) -> HVBatchEncodeResponse:
+) -> Any:
     """
     Batch encode multiple genomic samples into hypervectors.
 
@@ -271,7 +271,7 @@ async def batch_encode_hypervector(
 
 
 @router.post("/similarity", response_model=HVSimilarityResponse)
-async def compute_similarity(request: HVSimilarityRequest) -> HVSimilarityResponse:
+async def compute_similarity(request: HVSimilarityRequest) -> Any:
     """
     Compute similarity between two hypervectors.
 
@@ -354,7 +354,7 @@ async def compute_similarity(request: HVSimilarityRequest) -> HVSimilarityRespon
 
 
 @router.post("/search", response_model=SearchResponse, status_code=status.HTTP_200_OK)
-async def search_hypervectors(request: SearchRequest) -> SearchResponse:
+async def search_hypervectors(request: SearchRequest) -> Any:
     """
     Search for similar hypervectors in an index.
 

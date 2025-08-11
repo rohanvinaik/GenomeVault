@@ -10,7 +10,7 @@ import hashlib
 import json
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from genomevault.advanced_analysis.federated_learning.model_lineage import (
     FederatedModelLineage,
@@ -498,13 +498,15 @@ class ProofOfTrainingIntegration:
         """Extract hypervector representation from model"""
         # Simplified - in practice would use actual hypervector encoding
         import numpy as np
+        from numpy.typing import NDArray
 
         try:
             # Get model parameters
             if hasattr(model, "parameters"):  # PyTorch
                 params = []
                 for p in model.parameters():
-                    params.extend(p.detach().cpu().numpy().flatten()[:100])
+                    param_array: NDArray[np.float32] = cast(NDArray[np.float32], p.detach().cpu().numpy())
+                    params.extend(param_array.flatten()[:100])
             elif hasattr(model, "get_weights"):  # TensorFlow
                 weights = model.get_weights()
                 params = []

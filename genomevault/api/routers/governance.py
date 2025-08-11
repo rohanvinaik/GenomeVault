@@ -1,6 +1,9 @@
+"""Governance module."""
+
 from __future__ import annotations
 
-"""Governance module."""
+from typing import Any
+
 from fastapi import APIRouter
 
 from genomevault.governance.audit.events import list_events, record_event
@@ -13,7 +16,7 @@ _CONSENT = ConsentStore()
 
 
 @router.post("/consent/grant")
-def consent_grant(payload):
+def consent_grant(payload) -> Any:
     """Consent grant.
 
     Args:
@@ -33,7 +36,7 @@ def consent_grant(payload):
 
 
 @router.post("/consent/revoke")
-def consent_revoke(payload):
+def consent_revoke(payload) -> Any:
     """Consent revoke.
 
     Args:
@@ -49,7 +52,7 @@ def consent_revoke(payload):
 
 
 @router.get("/consent/check")
-def consent_check(subject_id: str, scope: str):
+def consent_check(subject_id: str, scope: str) -> Any:
     """Consent check.
 
     Args:
@@ -64,7 +67,7 @@ def consent_check(subject_id: str, scope: str):
 
 
 @router.post("/dsar/export")
-def dsar_export(payload):
+def dsar_export(payload) -> Any:
     """Dsar export.
 
     Args:
@@ -81,7 +84,7 @@ def dsar_export(payload):
 
 
 @router.post("/dsar/erase")
-def dsar_erase(payload):
+def dsar_erase(payload) -> Any:
     """Dsar erase.
 
     Args:
@@ -96,7 +99,7 @@ def dsar_erase(payload):
 
 
 @router.get("/ropa")
-def ropa():
+def ropa() -> Any:
     """Ropa.
 
     Returns:

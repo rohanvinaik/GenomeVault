@@ -14,6 +14,7 @@ import time
 
 import matplotlib.pyplot as plt
 import numpy as np
+from numpy.typing import NDArray
 import torch
 
 from genomevault.hypervector.operations.hamming_lut import (
@@ -31,12 +32,12 @@ BATCH_SIZES = [10, 50, 100, 500]
 NUM_TRIALS = 5
 
 
-def standard_hamming_distance(vec1: np.ndarray, vec2: np.ndarray) -> int:
+def standard_hamming_distance(vec1: NDArray[np.uint8], vec2: NDArray[np.uint8]) -> int:
     """Standard Hamming distance computation without optimization"""
-    return np.sum(vec1 != vec2)
+    return int(np.sum(vec1 != vec2))
 
 
-def standard_hamming_batch(vecs1: np.ndarray, vecs2: np.ndarray) -> np.ndarray:
+def standard_hamming_batch(vecs1: NDArray[np.uint8], vecs2: NDArray[np.uint8]) -> NDArray[np.int32]:
     """Standard batch Hamming distance computation"""
     n, d = vecs1.shape
     m, _ = vecs2.shape

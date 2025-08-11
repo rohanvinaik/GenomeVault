@@ -11,6 +11,7 @@ import time
 from dataclasses import dataclass
 from typing import Any
 
+from genomevault.crypto.types import ProofBytes, HashHex
 from genomevault.hypervector.error_handling import ErrorBudget
 from genomevault.utils.logging import get_logger
 from genomevault.zk.circuits.median_verifier import MedianProof, MedianVerifierCircuit
@@ -22,8 +23,8 @@ logger = get_logger(__name__)
 class ProofResult:
     """Result of proof generation"""
 
-    hash: str
-    proof_data: bytes
+    hash: HashHex
+    proof_data: ProofBytes
     public_inputs: dict[str, Any]
     generation_time_ms: float
     circuit_type: str

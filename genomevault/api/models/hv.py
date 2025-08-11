@@ -294,6 +294,45 @@ class HVEncodeRequest(BaseModel):
         }
 
 
+class HVEncodeConfigPatch(BaseModel):
+    """PATCH model for updating encoding configuration - all fields optional."""
+
+    version: Optional[EncodingVersion] = Field(None, description="Encoding version to use")
+    dimension: Optional[int] = Field(
+        None, description="Target hypervector dimension", ge=1000, le=100000
+    )
+    compression_tier: Optional[CompressionTier] = Field(
+        None, description="Compression tier for the output"
+    )
+    metadata: Optional[Dict[str, Any]] = Field(
+        None, description="Optional metadata to include with encoding"
+    )
+
+    @validator("dimension")
+    def validate_dimension(cls, v: Optional[int]) -> Optional[int]:
+        """Ensure dimension is in allowed values if provided."""
+        if v is not None:
+            allowed = [10000, 15000, 20000, 50000, 100000]
+            if v not in allowed:
+                raise ValueError(f"Dimension must be one of {allowed}")
+        return v
+
+    def dict_for_update(self) -> Dict[str, Any]:
+        """Return only set fields for update."""
+        return self.dict(exclude_unset=True, exclude_none=True)
+
+    class Config:
+        """Config implementation."""
+
+        schema_extra = {
+            "example": {
+                "dimension": 20000,
+                "compression_tier": "full",
+                # Other fields can be omitted in PATCH
+            }
+        }
+
+
 class HVEncodeResponse(BaseModel):
     """Response model for hypervector encoding."""
 
@@ -301,9 +340,7 @@ class HVEncodeResponse(BaseModel):
     dimension: int = Field(..., description="Actual dimension of the vector")
     version: str = Field(..., description="Encoding version used")
     compression_tier: str = Field(..., description="Compression tier applied")
-    metadata: Dict[str, Any] = Field(
-        default_factory=dict, description="Encoding metadata and statistics"
-    )
+    metadata: Dict[str, Any] = Field(..., description="Encoding metadata and statistics")
 
     class Config:
         """Config implementation."""
@@ -364,9 +401,7 @@ class HVSimilarityResponse(BaseModel):
 
     similarity: float = Field(..., description="Similarity score between vectors", ge=-1.0, le=1.0)
     metric: str = Field(..., description="Metric used for comparison")
-    metadata: Dict[str, Any] = Field(
-        default_factory=dict, description="Additional similarity metadata"
-    )
+    metadata: Optional[dict] = Field(default=None, description="Additional similarity metadata")
 
 
 class SearchRequest(BaseModel):

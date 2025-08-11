@@ -1,13 +1,17 @@
+"""Pir module."""
+
 from __future__ import annotations
 
-"""Pir module."""
 import base64
+from typing import Any
 
 from fastapi import APIRouter, HTTPException
 
 from genomevault.api.models.pir import PIRQueryRequest, PIRQueryResponse
 from genomevault.pir.engine import PIREngine
+from genomevault.utils.logging import get_logger
 
+logger = get_logger(__name__)
 router = APIRouter(prefix="/pir", tags=["pir"])
 
 # Static demo dataset (hashed to 32 bytes)
@@ -20,7 +24,7 @@ def _b64(b: bytes) -> str:
 
 
 @router.post("/query", response_model=PIRQueryResponse)
-def pir_query(request: PIRQueryRequest):
+def pir_query(request: PIRQueryRequest) -> Any:
     """Execute PIR pir query.
 
     Args:
@@ -39,4 +43,3 @@ def pir_query(request: PIRQueryRequest):
     except Exception as e:
         logger.exception("Unhandled exception")
         raise HTTPException(status_code=400, detail=str(e))
-        raise RuntimeError("Unspecified error")

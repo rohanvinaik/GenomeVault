@@ -29,6 +29,59 @@ from genomevault.hypervector.types import VectorUInt64
 _POPCOUNT_LUT_16: NDArray[np.uint8] | None = None
 
 
+def popcount_u64(arr: NDArray[np.uint64]) -> NDArray[np.uint64]:
+    """
+    Compute popcount for each uint64 element in array.
+
+    Args:
+        arr: Array of uint64 values
+
+    Returns:
+        Array of popcounts (uint64) for each element
+    """
+    lut = generate_popcount_lut()
+    result = np.zeros(arr.shape, dtype=np.uint64)
+
+    for idx in np.ndindex(arr.shape):
+        val = arr[idx]
+        count = (
+            lut[(val >> 0) & 0xFFFF]
+            + lut[(val >> 16) & 0xFFFF]
+            + lut[(val >> 32) & 0xFFFF]
+            + lut[(val >> 48) & 0xFFFF]
+        )
+        result[idx] = count
+
+    return result
+
+
+@jit(nopython=True, cache=True)
+def popcount_u64_fast(arr: NDArray[np.uint64], lut: NDArray[np.uint8]) -> NDArray[np.uint64]:
+    """
+    Fast JIT-compiled popcount for uint64 arrays.
+
+    Args:
+        arr: Array of uint64 values
+        lut: Precomputed 16-bit popcount lookup table
+
+    Returns:
+        Array of popcounts (uint64) for each element
+    """
+    result = np.zeros(arr.shape, dtype=np.uint64)
+
+    for i in range(arr.size):
+        val = arr.flat[i]
+        count = (
+            lut[(val >> 0) & 0xFFFF]
+            + lut[(val >> 16) & 0xFFFF]
+            + lut[(val >> 32) & 0xFFFF]
+            + lut[(val >> 48) & 0xFFFF]
+        )
+        result.flat[i] = count
+
+    return result
+
+
 def generate_popcount_lut() -> NDArray[np.uint8]:
     """
     Generate a 16-bit popcount lookup table.
@@ -84,7 +137,9 @@ def hamming_distance_cpu(vec1: VectorUInt64, vec2: VectorUInt64, lut: NDArray[np
 
 
 @jit(nopython=True, parallel=True, cache=True)
-def hamming_distance_batch_cpu(vecs1: np.ndarray, vecs2: np.ndarray, lut: np.ndarray) -> np.ndarray:
+def hamming_distance_batch_cpu(
+    vecs1: NDArray[np.uint64], vecs2: NDArray[np.uint64], lut: NDArray[np.uint8]
+) -> NDArray[np.int32]:
     """
     Compute pairwise Hamming distances for batches of vectors.
 
@@ -418,6 +473,86 @@ module hamming_lut_core #(
 
 endmodule
 """
+
+
+def hamming_weight(arr: NDArray[np.uint64]) -> np.uint64:
+    """
+    Compute total Hamming weight (popcount) of entire array.
+
+    Args:
+        arr: Array of uint64 values
+
+    Returns:
+        Total number of set bits across all elements
+    """
+    lut = generate_popcount_lut()
+    total: np.uint64 = np.uint64(0)
+
+    for val in arr.flat:
+        total += (
+            lut[(val >> 0) & 0xFFFF]
+            + lut[(val >> 16) & 0xFFFF]
+            + lut[(val >> 32) & 0xFFFF]
+            + lut[(val >> 48) & 0xFFFF]
+        )
+
+    return total
+
+
+@jit(nopython=True, cache=True)
+def hamming_weight_fast(arr: NDArray[np.uint64], lut: NDArray[np.uint8]) -> np.uint64:
+    """
+    Fast JIT-compiled total Hamming weight computation.
+
+    Args:
+        arr: Array of uint64 values
+        lut: Precomputed 16-bit popcount lookup table
+
+    Returns:
+        Total number of set bits across all elements
+    """
+    total = np.uint64(0)
+
+    for i in range(arr.size):
+        val = arr.flat[i]
+        total += (
+            lut[(val >> 0) & 0xFFFF]
+            + lut[(val >> 16) & 0xFFFF]
+            + lut[(val >> 32) & 0xFFFF]
+            + lut[(val >> 48) & 0xFFFF]
+        )
+
+    return total
+
+
+def xor_popcount_u64(arr1: NDArray[np.uint64], arr2: NDArray[np.uint64]) -> NDArray[np.uint64]:
+    """
+    Compute popcount of XOR between two uint64 arrays.
+
+    Args:
+        arr1: First array of uint64 values
+        arr2: Second array of uint64 values
+
+    Returns:
+        Array of popcounts for XOR of corresponding elements
+    """
+    if arr1.shape != arr2.shape:
+        raise ValueError("Arrays must have the same shape")
+
+    lut = generate_popcount_lut()
+    result = np.zeros(arr1.shape, dtype=np.uint64)
+
+    for idx in np.ndindex(arr1.shape):
+        xor_val = arr1[idx] ^ arr2[idx]
+        count = (
+            lut[(xor_val >> 0) & 0xFFFF]
+            + lut[(xor_val >> 16) & 0xFFFF]
+            + lut[(xor_val >> 32) & 0xFFFF]
+            + lut[(xor_val >> 48) & 0xFFFF]
+        )
+        result[idx] = count
+
+    return result
 
 
 # Export convenience functions

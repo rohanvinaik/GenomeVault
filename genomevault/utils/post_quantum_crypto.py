@@ -8,6 +8,12 @@ import time
 from dataclasses import dataclass
 from typing import Any
 
+from genomevault.crypto.types import (
+    Ciphertext,
+    KeyBytes,
+    Nonce,
+    Signature,
+)
 from genomevault.utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -17,10 +23,10 @@ logger = get_logger(__name__)
 class EncryptedData:
     """Container for encrypted data with post-quantum security."""
 
-    ciphertext: bytes
-    kyber_encapsulated_key: bytes
-    dilithium_signature: bytes
-    nonce: bytes
+    ciphertext: Ciphertext
+    kyber_encapsulated_key: KeyBytes
+    dilithium_signature: Signature
+    nonce: Nonce
 
     def to_bytes(self) -> bytes:
         """Serialize to bytes."""
@@ -44,8 +50,8 @@ class MockKyber:
     class Keypair:
         """Data container for keypair information."""
 
-        public_key: bytes
-        private_key: bytes
+        public_key: KeyBytes
+        private_key: KeyBytes
 
     def generate_keypair(self) -> "MockKyber.Keypair":
         """Generate mock keypair."""
@@ -69,8 +75,8 @@ class MockDilithium:
     class Keypair:
         """Data container for keypair information."""
 
-        public_key: bytes
-        private_key: bytes
+        public_key: KeyBytes
+        private_key: KeyBytes
 
     def generate_keypair(self) -> "MockDilithium.Keypair":
         """Generate mock keypair."""

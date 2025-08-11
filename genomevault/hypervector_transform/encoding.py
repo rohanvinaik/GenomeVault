@@ -9,6 +9,7 @@ from typing import Dict, Iterable, Mapping, Optional, Union
 
 import numpy as np
 import torch
+from numpy.typing import NDArray
 
 from genomevault.core.constants import HYPERVECTOR_DIMENSIONS, OmicsType
 from genomevault.core.exceptions import EncodingError, ProjectionError
@@ -107,7 +108,7 @@ class HypervectorEncoder:
             # deterministic order
             arrs = [np.asarray(v) for k, v in sorted(features.items())]
             x = np.concatenate([a.ravel() for a in arrs]).astype(np.float32)
-            return torch.from_numpy(x)
+            return torch.from_numpy(x.astype(np.float32, copy=False))
         if isinstance(features, np.ndarray):
             return torch.from_numpy(features.astype(np.float32).ravel())
         if isinstance(features, torch.Tensor):
@@ -139,8 +140,10 @@ class HypervectorEncoder:
     def _sparse_random(self, rows: int, cols: int, *, sparsity: float) -> torch.Tensor:
         # Achlioptas-style: values in {-1, 0, +1}
         probs = [sparsity / 2, 1 - sparsity, sparsity / 2]
-        vals = np.random.choice([-1.0, 0.0, 1.0], size=(rows, cols), p=probs).astype(np.float32)
-        mat = torch.from_numpy(vals)
+        vals: NDArray[np.float32] = np.random.choice(
+            [-1.0, 0.0, 1.0], size=(rows, cols), p=probs
+        ).astype(np.float32)
+        mat = torch.from_numpy(vals.astype(np.float32, copy=False))
         # scale so that E[||x||] is preserved
         if sparsity > 0:
             mat = mat / np.sqrt(sparsity * cols)
