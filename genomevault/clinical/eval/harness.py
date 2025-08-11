@@ -1,6 +1,7 @@
+"""Harness module."""
+
 from __future__ import annotations
 
-"""Harness module."""
 import csv
 from dataclasses import dataclass
 
@@ -21,6 +22,7 @@ from genomevault.clinical.calibration.metrics import (
 @dataclass
 class EvalReport:
     """Data container for evalreport information."""
+
     metrics: dict[str, float]
     threshold: float
     confusion: dict[str, float]
@@ -28,17 +30,19 @@ class EvalReport:
 
 
 def compute_report(
-    """Compute report.
-
-        Args:
-            y_true: Y true.
-            y_score: Y score.
-
-        Returns:
-            Calculated result.
-        """
     y_true: np.ndarray, y_score: np.ndarray, *, calibrator: str = "none", bins: int = 10
 ) -> EvalReport:
+    """Compute report.
+
+    Args:
+        y_true: Y true.
+        y_score: Y score.
+        calibrator: Calibrator type.
+        bins: Number of bins.
+
+    Returns:
+        Calculated result.
+    """
     # Calibrate if requested (on same data for simplicity; consider CV for unbiased estimates)
     y_prob, cal = fit_and_calibrate(y_true, y_score, method=calibrator)
     roc = auroc(y_true, y_prob)
@@ -48,10 +52,7 @@ def compute_report(
     m = mce(y_true, y_prob, n_bins=bins)
     t, stats = youdens_j_threshold(y_true, y_prob)
     centers, mean_pred, frac_pos = calibration_curve(y_true, y_prob, n_bins=bins)
-    bins_out = [
-        (float(c), float(mp), float(fp))
-        for c, mp, fp in zip(centers, mean_pred, frac_pos)
-    ]
+    bins_out = [(float(c), float(mp), float(fp)) for c, mp, fp in zip(centers, mean_pred, frac_pos)]
     return EvalReport(
         metrics={
             {
@@ -69,18 +70,18 @@ def compute_report(
 
 
 def load_csv(
-    """Load csv.
-
-        Args:
-            path: File or directory path.
-            y_col: Y col.
-            s_col: S col.
-
-        Returns:
-            Loaded data.
-        """
     path: str, y_col: str = "y_true", s_col: str = "y_score"
 ) -> tuple[np.ndarray, np.ndarray]:
+    """Load csv.
+
+    Args:
+        path: File or directory path.
+        y_col: Y col.
+        s_col: S col.
+
+    Returns:
+        Loaded data.
+    """
     with open(path, newline="") as f:
         r = csv.DictReader(f)
         y, s = [], []

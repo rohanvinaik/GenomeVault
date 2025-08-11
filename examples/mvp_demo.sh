@@ -2,7 +2,7 @@
 
 ################################################################################
 # GenomeVault MVP Demo Script
-# 
+#
 # This script demonstrates the core functionality of GenomeVault:
 # 1. Health check
 # 2. Encoding genomic variants into hypervectors
@@ -103,7 +103,7 @@ cat > $TEMP_DIR/sample_variants.json << 'EOF'
     ]
   },
   {
-    "id": "patient_002", 
+    "id": "patient_002",
     "description": "APOE4 carrier",
     "variants": [
       "chr19:45411941 T>C",
@@ -195,9 +195,9 @@ for i in {0..9}; do
     PATIENT_DATA=$(jq ".[$i]" $TEMP_DIR/sample_variants.json)
     PATIENT_ID=$(echo "$PATIENT_DATA" | jq -r '.id')
     VARIANTS=$(echo "$PATIENT_DATA" | jq -r '.variants')
-    
+
     echo -e "\n  Processing $PATIENT_ID..."
-    
+
     # Encode via API
     RESPONSE=$(curl -s -X POST "$API_URL/api/v1/hv/encode" \
         -H "Content-Type: application/json" \
@@ -206,10 +206,10 @@ for i in {0..9}; do
             \"dimension\": 10000,
             \"version\": \"v1\"
         }")
-    
+
     # Save the encoded vector
     echo "$RESPONSE" | jq ".vector" > "$TEMP_DIR/vector_$PATIENT_ID.json"
-    
+
     # Show summary
     DIMENSION=$(echo "$RESPONSE" | jq '.dimension')
     echo "    ✓ Encoded to $DIMENSION-dimensional hypervector"
@@ -279,7 +279,7 @@ SEARCH_RESPONSE=$(curl -s -X POST "$API_URL/api/v1/hv/search" \
 if echo "$SEARCH_RESPONSE" | jq -e '.results' > /dev/null 2>&1; then
     echo -e "\nSearch Results:"
     echo "$SEARCH_RESPONSE" | jq '.results[] | "  \(.id): distance = \(.distance)"' -r
-    
+
     SEARCH_TIME=$(echo "$SEARCH_RESPONSE" | jq '.search_time_ms')
     echo -e "\n  Search completed in ${SEARCH_TIME}ms"
     print_success "Similar genomes found successfully"

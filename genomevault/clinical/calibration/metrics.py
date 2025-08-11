@@ -1,6 +1,7 @@
+"""Metrics module."""
+
 from __future__ import annotations
 
-"""Metrics module."""
 import numpy as np
 
 
@@ -69,13 +70,13 @@ def average_precision(y_true: np.ndarray, y_score: np.ndarray) -> float:
 def brier_score(y_true: np.ndarray, y_prob: np.ndarray) -> float:
     """Brier score.
 
-        Args:
-            y_true: Y true.
-            y_prob: Y prob.
+    Args:
+        y_true: Y true.
+        y_prob: Y prob.
 
-        Returns:
-            Float result.
-        """
+    Returns:
+        Float result.
+    """
     y_true = np.asarray(y_true, dtype=np.float64)
     y_prob = _safe_prob(np.asarray(y_prob, dtype=np.float64))
     return float(np.mean((y_prob - y_true) ** 2))
@@ -106,14 +107,14 @@ def calibration_curve(
 def ece(y_true: np.ndarray, y_prob: np.ndarray, n_bins: int = 10) -> float:
     """Ece.
 
-        Args:
-            y_true: Y true.
-            y_prob: Y prob.
-            n_bins: N bins.
+    Args:
+        y_true: Y true.
+        y_prob: Y prob.
+        n_bins: N bins.
 
-        Returns:
-            Float result.
-        """
+    Returns:
+        Float result.
+    """
     bins, mean_pred, frac_pos = calibration_curve(y_true, y_prob, n_bins=n_bins)
     y_true = np.asarray(y_true, dtype=np.int32)
     y_prob = _safe_prob(np.asarray(y_prob, dtype=np.float64))
@@ -129,31 +130,29 @@ def ece(y_true: np.ndarray, y_prob: np.ndarray, n_bins: int = 10) -> float:
 def mce(y_true: np.ndarray, y_prob: np.ndarray, n_bins: int = 10) -> float:
     """Mce.
 
-        Args:
-            y_true: Y true.
-            y_prob: Y prob.
-            n_bins: N bins.
+    Args:
+        y_true: Y true.
+        y_prob: Y prob.
+        n_bins: N bins.
 
-        Returns:
-            Float result.
-        """
+    Returns:
+        Float result.
+    """
     _, mean_pred, frac_pos = calibration_curve(y_true, y_prob, n_bins=n_bins)
     return float(np.max(np.abs(frac_pos - mean_pred)))
 
 
-def confusion_at(
+def confusion_at(y_true: np.ndarray, y_prob: np.ndarray, threshold: float) -> dict[str, float]:
     """Confusion at.
 
-        Args:
-            y_true: Y true.
-            y_prob: Y prob.
-            threshold: Threshold value.
+    Args:
+        y_true: Y true.
+        y_prob: Y prob.
+        threshold: Threshold value.
 
-        Returns:
-            Operation result.
-        """
-    y_true: np.ndarray, y_prob: np.ndarray, threshold: float
-) -> dict[str, float]:
+    Returns:
+        Operation result.
+    """
     y_true = np.asarray(y_true, dtype=np.int32)
     y_prob = np.asarray(y_prob, dtype=np.float64)
     y_hat = (y_prob >= threshold).astype(np.int32)
@@ -179,9 +178,7 @@ def confusion_at(
     }
 
 
-def youdens_j_threshold(
-    y_true: np.ndarray, y_prob: np.ndarray
-) -> tuple[float, dict[str, float]]:
+def youdens_j_threshold(y_true: np.ndarray, y_prob: np.ndarray) -> tuple[float, dict[str, float]]:
     """Compute threshold that maximizes Youden's J = sensitivity + specificity - 1."""
     # candidate thresholds are unique probabilities
     probs = np.unique(np.asarray(y_prob, dtype=np.float64))

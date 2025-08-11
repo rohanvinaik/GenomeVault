@@ -1,11 +1,15 @@
+"""Clinical module."""
+
 from __future__ import annotations
 
-"""Clinical module."""
 import numpy as np
 from fastapi import APIRouter, HTTPException
 
 from genomevault.api.models.clinical import ClinicalEvalRequest, ClinicalEvalResponse
 from genomevault.clinical.eval.harness import compute_report
+from genomevault.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 router = APIRouter(prefix="/clinical", tags=["clinical"])
 
@@ -35,5 +39,5 @@ def clinical_eval(req: ClinicalEvalRequest):
             calibration_bins=rep.calibration_bins,
         )
     except Exception as e:
-        # logger.exception("Unhandled exception")  # TODO: Add logger import
+        logger.exception("Clinical evaluation error")
         raise HTTPException(status_code=400, detail=str(e)) from e
