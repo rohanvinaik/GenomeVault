@@ -176,11 +176,13 @@ class STARKProver:
             encoded_column = self._reed_solomon_encode(column)
             encoded_trace.append(encoded_column)
 
-        # Build Merkle tree
+        # Build Merkle tree with canonical leaf serialization
+        # FIXED: Replace non-deterministic json.dumps with canonical field element encoding
         leaves = []
         for row in range(len(encoded_trace[0])):
             row_data = [encoded_trace[col][row] for col in range(len(encoded_trace))]
-            leaf = hashlib.sha256(json.dumps(row_data).encode()).digest()
+            # Convert to canonical leaf using domain-separated hashing
+            leaf = self._leaf_bytes(row_data)
             leaves.append(leaf)
 
         merkle_tree = self._build_merkle_tree(leaves)
@@ -277,12 +279,16 @@ class STARKProver:
 
             for col in range(trace.shape[1]):
                 value = trace[idx % trace.shape[0], col]
+                # FIXED: Handle new path format with direction bits
                 path = self._get_merkle_path(trace_tree, idx)
 
                 trace_values.append(int(value))
-                trace_paths.append([p.hex() for p in path])
+                # Serialize path as list of {"hash": hex, "is_right": bool}
+                trace_paths.append([
+                    {"hash": p[0].hex(), "is_right": p[1]} for p in path
+                ])
 
-            # Get constraint polynomial evaluation and path
+            # Get constraint polynomial evaluation and path with direction bits
             constraint_value = int(constraint_poly[idx])
             constraint_path = self._get_merkle_path(constraint_tree, idx)
 
@@ -292,7 +298,9 @@ class STARKProver:
                     "trace_values": trace_values,
                     "trace_auth_paths": trace_paths,
                     "constraint_value": constraint_value,
-                    "constraint_auth_path": [p.hex() for p in constraint_path],
+                    "constraint_auth_path": [
+                        {"hash": p[0].hex(), "is_right": p[1]} for p in constraint_path
+                    ],
                 }
             )
 
@@ -329,6 +337,47 @@ class STARKProver:
             nonce += 1
 
         return f"{nonce:016x}"
+    
+    def _leaf_bytes(self, vals: list[int]) -> bytes:
+        """
+        Create canonical Merkle leaf from field elements.
+        
+        FIXED: Replace non-deterministic json.dumps() with canonical 32-byte 
+        big-endian serialization and domain separation tag.
+        
+        Args:
+            vals: List of field elements to serialize
+            
+        Returns:
+            32-byte canonical leaf hash with domain tag
+        """
+        # Serialize each field element as 32-byte big-endian integer
+        serialized = b''.join(
+            int(v).to_bytes(32, 'big') for v in vals
+        )
+        
+        # Domain separation: 0x00 = leaf, 0x01 = internal node
+        # This prevents length-extension and collision attacks
+        tagged_data = b'\x00' + serialized
+        
+        return hashlib.sha256(tagged_data).digest()
+    
+    def _internal_node_bytes(self, left: bytes, right: bytes) -> bytes:
+        """
+        Create canonical internal Merkle node hash.
+        
+        Args:
+            left: Left child hash (32 bytes)
+            right: Right child hash (32 bytes)
+            
+        Returns:
+            32-byte internal node hash with domain tag
+        """
+        # Domain separation: 0x01 = internal node  
+        # Ensures leaves and internal nodes have different hash domains
+        tagged_data = b'\x01' + left + right
+        
+        return hashlib.sha256(tagged_data).digest()
 
     def _reed_solomon_encode(self, data: np.ndarray) -> np.ndarray:
         """
@@ -342,6 +391,8 @@ class STARKProver:
            object dtype with Python ints for exact finite field arithmetic
         4. Query sampling now uses cryptographic Fiat-Shamir with SHAKE256 instead of
            insecure 32-bit seeded numpy.random for provable security
+        5. Merkle trees now use canonical leaf serialization with domain separation
+           and authentication paths include direction bits for sound verification
         """
         # Interpolate polynomial from data using proper Lagrange interpolation
         poly_coeffs = self._interpolate_polynomial(data)
@@ -376,7 +427,7 @@ class STARKProver:
         return encoded
 
     def _build_merkle_tree(self, leaves: list[bytes]) -> dict[str, Any]:
-        """Build Merkle tree from leaves."""
+        """Build Merkle tree with canonical internal node hashing."""
         tree = {"leaves": leaves, "layers": [leaves]}
 
         current_layer = leaves
@@ -387,9 +438,11 @@ class STARKProver:
                 if i + 1 < len(current_layer):
                     left, right = current_layer[i], current_layer[i + 1]
                 else:
+                    # Handle odd number of nodes by duplicating last node
                     left, right = current_layer[i], current_layer[i]
 
-                parent = hashlib.sha256(left + right).digest()
+                # FIXED: Use canonical internal node hashing with domain separation
+                parent = self._internal_node_bytes(left, right)
                 next_layer.append(parent)
 
             tree["layers"].append(next_layer)
@@ -398,22 +451,98 @@ class STARKProver:
         tree["root"] = current_layer[0]
         return tree
 
-    def _get_merkle_path(self, tree: dict[str, Any], index: int) -> list[bytes]:
-        """Get Merkle authentication path for leaf."""
+    def _get_merkle_path(self, tree: dict[str, Any], index: int) -> list[tuple[bytes, bool]]:
+        """
+        Get Merkle authentication path with direction bits.
+        
+        FIXED: Include direction bits for sound verification. Returns list of 
+        (sibling_hash, is_right) tuples where is_right indicates if sibling 
+        is the right child.
+        
+        Args:
+            tree: Merkle tree structure
+            index: Leaf index to create path for
+            
+        Returns:
+            List of (sibling_hash, is_right) pairs for verification
+        """
         path = []
+        current_index = index
 
         for layer_idx in range(len(tree["layers"]) - 1):
             layer = tree["layers"][layer_idx]
-            sibling_idx = index ^ 1  # XOR with 1 to get sibling
-
-            if sibling_idx < len(layer):
-                path.append(layer[sibling_idx])
+            
+            # Determine if current index is left (even) or right (odd) child
+            is_left_child = (current_index % 2 == 0)
+            
+            if is_left_child:
+                # Current is left child, sibling is right
+                sibling_idx = current_index + 1
+                sibling_is_right = True
             else:
-                path.append(layer[index])
-
-            index //= 2
+                # Current is right child, sibling is left  
+                sibling_idx = current_index - 1
+                sibling_is_right = False
+            
+            # Get sibling hash (handle edge case of odd number of nodes)
+            if sibling_idx < len(layer):
+                sibling_hash = layer[sibling_idx]
+            else:
+                # If no right sibling, duplicate the current node (padding)
+                sibling_hash = layer[current_index]
+                
+            path.append((sibling_hash, sibling_is_right))
+            
+            # Move up to parent layer
+            current_index //= 2
 
         return path
+    
+    def _verify_merkle_path(
+        self, 
+        leaf_data: list[int], 
+        path: list[tuple[bytes, bool]], 
+        root: bytes,
+        leaf_index: int
+    ) -> bool:
+        """
+        Verify Merkle authentication path with direction bits.
+        
+        Args:
+            leaf_data: Original leaf data (field elements)
+            path: Authentication path with (sibling_hash, is_right) pairs
+            root: Expected Merkle root
+            leaf_index: Index of the leaf being verified
+            
+        Returns:
+            True if path verification succeeds, False otherwise
+        """
+        # Compute canonical leaf hash
+        current_hash = self._leaf_bytes(leaf_data)
+        
+        # Traverse path from leaf to root
+        for sibling_hash, sibling_is_right in path:
+            if sibling_is_right:
+                # Sibling is right child, current is left child
+                left_hash = current_hash
+                right_hash = sibling_hash
+            else:
+                # Sibling is left child, current is right child
+                left_hash = sibling_hash
+                right_hash = current_hash
+            
+            # Compute parent hash using canonical internal node hashing
+            current_hash = self._internal_node_bytes(left_hash, right_hash)
+        
+        # Final hash should match root
+        verification_result = current_hash == root
+        
+        if not verification_result:
+            logger.warning(f"Merkle path verification failed for leaf {leaf_index}")
+            logger.debug(f"Computed root: {current_hash.hex()}")
+            logger.debug(f"Expected root: {root.hex()}")
+            
+        return verification_result
 
     def _interpolate_polynomial(self, y_values: np.ndarray) -> np.ndarray:
         """
