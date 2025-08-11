@@ -318,9 +318,21 @@ class STARKProver:
         return f"{nonce:016x}"
 
     def _reed_solomon_encode(self, data: np.ndarray) -> np.ndarray:
-        """Reed-Solomon encode data with 8x blowup."""
-        # Interpolate polynomial from data
+        """
+        Reed-Solomon encode data with 8x blowup.
+        
+        FIXED: Previously used random coefficients which made all commitments meaningless.
+        Now uses proper Lagrange interpolation over the Goldilocks field for cryptographic soundness.
+        """
+        # Interpolate polynomial from data using proper Lagrange interpolation
         poly_coeffs = self._interpolate_polynomial(data)
+        
+        # Verify interpolation correctness (only in debug builds for performance)
+        if len(data) <= 16:  # Only test for small polynomials to avoid performance impact
+            if not self._test_interpolation(data):
+                logger.error("Reed-Solomon interpolation verification failed!")
+                raise ValueError("Invalid polynomial interpolation in Reed-Solomon encoding")
+            logger.debug("Reed-Solomon interpolation verified successfully")
 
         # Evaluate on larger domain
         blowup_factor = int(1 / self.rs_rate)
@@ -370,11 +382,122 @@ class STARKProver:
 
         return path
 
-    def _interpolate_polynomial(self, points: np.ndarray) -> np.ndarray:
-        """Interpolate polynomial through points (simplified)."""
-        # In practice, would use FFT-based interpolation
-        # For now, return mock coefficients
-        return np.random.randint(0, self.field_size, len(points))
+    def _interpolate_polynomial(self, y_values: np.ndarray) -> np.ndarray:
+        """
+        Interpolate polynomial through points using Lagrange interpolation.
+        
+        Implements proper Lagrange interpolation over the prime field, computing
+        all polynomial coefficients correctly for Reed-Solomon encoding.
+        
+        Args:
+            y_values: Y-coordinate values at canonical domain points [0, 1, 2, ..., n-1]
+            
+        Returns:
+            Polynomial coefficients in monomial basis
+        """
+        n = len(y_values)
+        p = self.field_size
+        
+        if n == 0:
+            return np.array([], dtype=int)
+        if n == 1:
+            return np.array([int(y_values[0]) % p], dtype=int)
+        
+        # Use canonical domain points x = [0, 1, 2, ..., n-1] 
+        x_values = np.arange(n, dtype=int)
+        
+        # Initialize polynomial coefficients
+        coeffs = np.zeros(n, dtype=int)
+        
+        # Lagrange interpolation: P(x) = sum(y_i * L_i(x))
+        # where L_i(x) = product((x - x_j) / (x_i - x_j)) for j != i
+        for i in range(n):
+            y_i = int(y_values[i]) % p
+            if y_i == 0:
+                continue  # Skip zero terms for efficiency
+            
+            # Compute Lagrange basis polynomial L_i(x)
+            # Start with constant term of L_i(x)
+            numerator = 1
+            denominator = 1
+            
+            # Compute the denominator: product(x_i - x_j) for j != i
+            for j in range(n):
+                if i != j:
+                    diff = (x_values[i] - x_values[j]) % p
+                    denominator = (denominator * diff) % p
+            
+            # Compute modular inverse of denominator
+            if denominator == 0:
+                raise ValueError(f"Division by zero in Lagrange interpolation at point {i}")
+            
+            denominator_inv = pow(denominator, p - 2, p)  # Fermat's little theorem
+            
+            # Build the polynomial (x - x_0)(x - x_1)...(x - x_{i-1})(x - x_{i+1})...(x - x_{n-1})
+            # Start with polynomial representation [1] (constant 1)
+            lagrange_poly = np.zeros(n, dtype=int)
+            lagrange_poly[0] = 1
+            
+            # Multiply by each factor (x - x_j) for j != i
+            for j in range(n):
+                if i == j:
+                    continue
+                    
+                # Multiply current polynomial by (x - x_j)
+                # (ax^k + ...) * (x - x_j) = ax^{k+1} - ax_j*x^k + ...
+                new_poly = np.zeros(n, dtype=int)
+                
+                # Multiply by x (shift coefficients up)
+                for k in range(n - 1):
+                    if lagrange_poly[k] != 0:
+                        new_poly[k + 1] = (new_poly[k + 1] + lagrange_poly[k]) % p
+                
+                # Multiply by -x_j (subtract x_j times the original polynomial)
+                x_j = x_values[j]
+                for k in range(n):
+                    if lagrange_poly[k] != 0:
+                        new_poly[k] = (new_poly[k] - lagrange_poly[k] * x_j) % p
+                
+                lagrange_poly = new_poly
+            
+            # Scale by y_i / denominator and add to result
+            for k in range(n):
+                if lagrange_poly[k] != 0:
+                    coeff = (y_i * lagrange_poly[k] * denominator_inv) % p
+                    coeffs[k] = (coeffs[k] + coeff) % p
+        
+        return coeffs
+
+    def _test_interpolation(self, y_values: np.ndarray) -> bool:
+        """
+        Test that interpolation is correct by verifying P(i) = y_i.
+        
+        Args:
+            y_values: Y-coordinate values to test
+            
+        Returns:
+            True if interpolation is correct, False otherwise
+        """
+        coeffs = self._interpolate_polynomial(y_values)
+        n = len(y_values)
+        p = self.field_size
+        
+        # Verify that P(i) = y_i for all i
+        for i in range(n):
+            # Evaluate polynomial at point i
+            result = 0
+            for k, coeff in enumerate(coeffs):
+                result = (result + coeff * pow(i, k, p)) % p
+            
+            expected = int(y_values[i]) % p
+            if result != expected:
+                logger.warning(
+                    f"Interpolation test failed at point {i}: "
+                    f"P({i}) = {result}, expected {expected}"
+                )
+                return False
+        
+        return True
 
     def _evaluate_polynomial(self, coeffs: np.ndarray, domain: np.ndarray) -> np.ndarray:
         """Evaluate polynomial on domain (simplified)."""
