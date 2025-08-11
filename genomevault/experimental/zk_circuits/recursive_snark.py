@@ -848,7 +848,8 @@ class RecursiveSNARKProver:
             if len(verification_key) % 2 == 0:
                 return bytes.fromhex(verification_key)
         except ValueError:
-            pass
+            # Not valid hex, will hash as string below
+            logger.debug(f"VK not valid hex, hashing as string: {verification_key[:20]}...")
 
         # Treat as string and hash it
         return hashlib.sha256(verification_key.encode("utf-8")).digest()
