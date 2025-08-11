@@ -6,6 +6,7 @@ import csv
 from dataclasses import dataclass
 
 import numpy as np
+from numpy.typing import NDArray
 
 from genomevault.clinical.calibration.calibrators import fit_and_calibrate
 from genomevault.clinical.calibration.metrics import (
@@ -30,7 +31,11 @@ class EvalReport:
 
 
 def compute_report(
-    y_true: np.ndarray, y_score: np.ndarray, *, calibrator: str = "none", bins: int = 10
+    y_true: NDArray[np.float64],
+    y_score: NDArray[np.float64],
+    *,
+    calibrator: str = "none",
+    bins: int = 10,
 ) -> EvalReport:
     """Compute report.
 
@@ -71,7 +76,7 @@ def compute_report(
 
 def load_csv(
     path: str, y_col: str = "y_true", s_col: str = "y_score"
-) -> tuple[np.ndarray, np.ndarray]:
+) -> tuple[NDArray[np.int32], NDArray[np.float64]]:
     """Load csv.
 
     Args:

@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 import numpy as np
+from numpy.typing import NDArray
 
 
-def _safe_prob(p: np.ndarray) -> np.ndarray:
+def _safe_prob(p: NDArray[np.float64]) -> NDArray[np.float64]:
     return np.clip(p, 1e-12, 1.0 - 1e-12)
 
 
-def auroc(y_true: np.ndarray, y_score: np.ndarray) -> float:
+def auroc(y_true: NDArray[np.int32], y_score: NDArray[np.float64]) -> float:
     """AUROC via Mann–Whitney U statistic (no sklearn)."""
     y_true = np.asarray(y_true, dtype=np.int32)
     y_score = np.asarray(y_score, dtype=np.float64)
@@ -56,7 +57,7 @@ def precision_recall_curve(
     return precision, recall
 
 
-def average_precision(y_true: np.ndarray, y_score: np.ndarray) -> float:
+def average_precision(y_true: NDArray[np.int32], y_score: NDArray[np.float64]) -> float:
     """Sklearn-like AP (area under precision-recall curve using step interpolation)."""
     p, r = precision_recall_curve(y_true, y_score)
     # integrate precision over recall using step-wise method
@@ -67,7 +68,7 @@ def average_precision(y_true: np.ndarray, y_score: np.ndarray) -> float:
     return float(ap)
 
 
-def brier_score(y_true: np.ndarray, y_prob: np.ndarray) -> float:
+def brier_score(y_true: NDArray[np.float64], y_prob: NDArray[np.float64]) -> float:
     """Brier score.
 
     Args:
@@ -83,8 +84,8 @@ def brier_score(y_true: np.ndarray, y_prob: np.ndarray) -> float:
 
 
 def calibration_curve(
-    y_true: np.ndarray, y_prob: np.ndarray, n_bins: int = 10
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    y_true: NDArray[np.float64], y_prob: NDArray[np.float64], n_bins: int = 10
+) -> tuple[NDArray[np.float64], NDArray[np.float64], NDArray[np.float64]]:
     """Return (bin_centers, mean_pred, frac_positives) using equal-width bins in [0,1]."""
     y_true = np.asarray(y_true, dtype=np.int32)
     y_prob = _safe_prob(np.asarray(y_prob, dtype=np.float64))
@@ -104,7 +105,7 @@ def calibration_curve(
     return bin_centers, mean_pred, frac_pos
 
 
-def ece(y_true: np.ndarray, y_prob: np.ndarray, n_bins: int = 10) -> float:
+def ece(y_true: NDArray[np.int32], y_prob: NDArray[np.float64], n_bins: int = 10) -> float:
     """Ece.
 
     Args:
@@ -127,7 +128,7 @@ def ece(y_true: np.ndarray, y_prob: np.ndarray, n_bins: int = 10) -> float:
     return float(np.sum(weights * np.abs(frac_pos - mean_pred)))
 
 
-def mce(y_true: np.ndarray, y_prob: np.ndarray, n_bins: int = 10) -> float:
+def mce(y_true: NDArray[np.float64], y_prob: NDArray[np.float64], n_bins: int = 10) -> float:
     """Mce.
 
     Args:
@@ -142,7 +143,9 @@ def mce(y_true: np.ndarray, y_prob: np.ndarray, n_bins: int = 10) -> float:
     return float(np.max(np.abs(frac_pos - mean_pred)))
 
 
-def confusion_at(y_true: np.ndarray, y_prob: np.ndarray, threshold: float) -> dict[str, float]:
+def confusion_at(
+    y_true: NDArray[np.int32], y_prob: NDArray[np.float64], threshold: float
+) -> dict[str, float]:
     """Confusion at.
 
     Args:
@@ -178,7 +181,9 @@ def confusion_at(y_true: np.ndarray, y_prob: np.ndarray, threshold: float) -> di
     }
 
 
-def youdens_j_threshold(y_true: np.ndarray, y_prob: np.ndarray) -> tuple[float, dict[str, float]]:
+def youdens_j_threshold(
+    y_true: NDArray[np.int32], y_prob: NDArray[np.float64]
+) -> tuple[float, dict[str, float]]:
     """Compute threshold that maximizes Youden's J = sensitivity + specificity - 1."""
     # candidate thresholds are unique probabilities
     probs = np.unique(np.asarray(y_prob, dtype=np.float64))
