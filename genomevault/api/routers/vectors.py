@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Vectors module."""
-"""Vectors module."""
 from fastapi import APIRouter, HTTPException
 
 from genomevault.api.models.vectors import (
@@ -21,16 +20,16 @@ _engine = HypervectorEngine()
 def encode_vector(request: VectorEncodeRequest):
     """Encode vector.
 
-        Args:
-            request: Client request.
+    Args:
+        request: Client request.
 
-        Returns:
-            Operation result.
+    Returns:
+        Operation result.
 
-        Raises:
-            HTTPException: When operation fails.
-            RuntimeError: When operation fails.
-        """
+    Raises:
+        HTTPException: When operation fails.
+        RuntimeError: When operation fails.
+    """
     try:
         res = _engine.encode(
             data=request.data,
@@ -48,16 +47,16 @@ def encode_vector(request: VectorEncodeRequest):
 def perform_operation(request: VectorOperationRequest):
     """Perform operation.
 
-        Args:
-            request: Client request.
+    Args:
+        request: Client request.
 
-        Returns:
-            Operation result.
+    Returns:
+        Operation result.
 
-        Raises:
-            HTTPException: When operation fails.
-            RuntimeError: When operation fails.
-        """
+    Raises:
+        HTTPException: When operation fails.
+        RuntimeError: When operation fails.
+    """
     try:
         res = _engine.operate(
             operation=request.operation,
@@ -75,17 +74,17 @@ def perform_operation(request: VectorOperationRequest):
 def calculate_similarity(vector_id1: str, vector_id2: str):
     """Calculate similarity.
 
-        Args:
-            vector_id1: Vector id1.
-            vector_id2: Vector id2.
+    Args:
+        vector_id1: Vector id1.
+        vector_id2: Vector id2.
 
-        Returns:
-            Calculated result.
+    Returns:
+        Calculated result.
 
-        Raises:
-            HTTPException: When operation fails.
-            RuntimeError: When operation fails.
-        """
+    Raises:
+        HTTPException: When operation fails.
+        RuntimeError: When operation fails.
+    """
     try:
         sim = _engine.calculate_similarity(vector_id1, vector_id2)
         return {"similarity": sim, "vector_ids": [vector_id1, vector_id2]}

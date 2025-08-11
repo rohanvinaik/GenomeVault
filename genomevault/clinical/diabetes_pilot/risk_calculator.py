@@ -5,7 +5,6 @@ Implements the diabetes risk assessment system with:
 - Combined genetic risk score (PRS) and glucose monitoring
 - Zero-knowledge proofs for privacy-preserving alerts
 - HIPAA-compliant data handling
-"""
 
 from __future__ import annotations
 

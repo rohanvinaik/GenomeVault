@@ -3,7 +3,6 @@ Clinical Model Validation Framework
 
 This module provides clinical validation and capability attestation
 for ML models used in GenomeVault, ensuring FDA/EMA compliance.
-"""
 
 from __future__ import annotations
 
@@ -104,9 +103,9 @@ class ClinicalModelValidator:
     def __init__(self, validator_id: str):
         """Initialize instance.
 
-            Args:
-                validator_id: Validator id.
-            """
+        Args:
+            validator_id: Validator id.
+        """
         self.validator_id = validator_id
         self.validation_results: dict[str, ClinicalValidationResult] = {}
         self.attestations: dict[str, ModelCapabilityAttestation] = {}
@@ -179,9 +178,7 @@ class ClinicalModelValidator:
         validation_id = hashlib.sha256(val_data.encode()).hexdigest()[:16]
 
         # Perform validation tests
-        performance_metrics = self._evaluate_performance(
-            model, test_data, clinical_domain
-        )
+        performance_metrics = self._evaluate_performance(model, test_data, clinical_domain)
 
         safety_metrics = self._evaluate_safety(model, test_data, clinical_domain)
 
@@ -295,9 +292,7 @@ class ClinicalModelValidator:
             "expiration": expiration_date,
         }
 
-        signature = hashlib.sha256(
-            json.dumps(signature_data, sort_keys=True).encode()
-        ).hexdigest()
+        signature = hashlib.sha256(json.dumps(signature_data, sort_keys=True).encode()).hexdigest()
 
         # Create attestation
         attestation = ModelCapabilityAttestation(
@@ -371,9 +366,7 @@ class ClinicalModelValidator:
         return True, {
             "attestation_id": attestation_id,
             "model_hash": attestation.model_hash,
-            "valid_until": datetime.fromtimestamp(
-                attestation.expiration_date
-            ).isoformat(),
+            "valid_until": datetime.fromtimestamp(attestation.expiration_date).isoformat(),
             "clinical_domains": [d.value for d in attestation.clinical_domains],
             "validation_level": attestation.validation_level.value,
         }
@@ -464,9 +457,7 @@ class ClinicalModelValidator:
     ) -> bool:
         """Check if validation criteria are met"""
         # Check performance thresholds
-        domain_thresholds = self.performance_thresholds.get(
-            clinical_domain, {"auc": 0.85}
-        )
+        domain_thresholds = self.performance_thresholds.get(clinical_domain, {"auc": 0.85})
 
         for metric, threshold in domain_thresholds.items():
             if metric in performance_metrics:
@@ -488,9 +479,7 @@ class ClinicalModelValidator:
                         f"above threshold ({threshold})"
                     )
                     return False
-                elif (
-                    not metric.endswith("_rate") and safety_metrics[metric] < threshold
-                ):
+                elif not metric.endswith("_rate") and safety_metrics[metric] < threshold:
                     logger.warning(
                         f"Safety metric metric "
                         f"(safety_metrics[metric]:.3f) "
@@ -570,8 +559,7 @@ class ClinicalModelValidator:
             )
 
         if any(
-            d in [ClinicalDomain.ONCOLOGY, ClinicalDomain.RARE_DISEASE]
-            for d in clinical_domains
+            d in [ClinicalDomain.ONCOLOGY, ClinicalDomain.RARE_DISEASE] for d in clinical_domains
         ):
             standards.append(RegulatoryStandard.GDPR)  # EU data protection
 
@@ -595,11 +583,7 @@ class ClinicalModelValidator:
             metric_names.update(domain_metrics.keys())
 
         for metric in metric_names:
-            values = [
-                metrics.get(metric)
-                for metrics in all_metrics.values()
-                if metric in metrics
-            ]
+            values = [metrics.get(metric) for metrics in all_metrics.values() if metric in metrics]
 
             if values:
                 overall_metrics[metric] = {
@@ -653,12 +637,8 @@ class ClinicalValidationReport:
                 "attestation_id": attestation.attestation_id,
                 "intended_use": attestation.intended_use,
                 "contraindications": attestation.contraindications,
-                "regulatory_standards": [
-                    s.value for s in attestation.regulatory_standards
-                ],
-                "expiration_date": datetime.fromtimestamp(
-                    attestation.expiration_date
-                ).isoformat(),
+                "regulatory_standards": [s.value for s in attestation.regulatory_standards],
+                "expiration_date": datetime.fromtimestamp(attestation.expiration_date).isoformat(),
             }
 
         return report

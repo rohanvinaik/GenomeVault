@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Store module."""
-"""Store module."""
 import json
 from dataclasses import dataclass
 from hashlib import sha256
@@ -14,14 +13,13 @@ def _hash_bytes(b: bytes) -> str:
 
 
 def _hash_obj(obj: dict[str, Any]) -> str:
-    return _hash_bytes(
-        json.dumps(obj, sort_keys=True, separators=(",", ":")).encode("utf-8")
-    )
+    return _hash_bytes(json.dumps(obj, sort_keys=True, separators=(",", ":")).encode("utf-8"))
 
 
 @dataclass(frozen=True)
 class LedgerEntry:
     """LedgerEntry implementation."""
+
     index: int
     timestamp: float
     data: dict[str, Any]
@@ -33,13 +31,10 @@ class InMemoryLedger:
     """Minimal append-only ledger with hash chaining (NOT a consensus blockchain)."""
 
     def __init__(self) -> None:
-        """Initialize instance.
-            """
+        """Initialize instance."""
         self._entries: list[LedgerEntry] = []
 
-    def _compute_hash(
-        self, index: int, ts: float, data: dict[str, Any], prev_hash: str
-    ) -> str:
+    def _compute_hash(self, index: int, ts: float, data: dict[str, Any], prev_hash: str) -> str:
         payload = {
             "index": index,
             "timestamp": ts,
@@ -51,12 +46,12 @@ class InMemoryLedger:
     def append(self, data: dict[str, Any]) -> LedgerEntry:
         """Append.
 
-            Args:
-                data: Input data to process.
+        Args:
+            data: Input data to process.
 
-            Returns:
-                LedgerEntry instance.
-            """
+        Returns:
+            LedgerEntry instance.
+        """
         idx = len(self._entries)
         ts = time()
         prev = self._entries[-1].hash if self._entries else "GENESIS"
@@ -68,9 +63,9 @@ class InMemoryLedger:
     def verify_chain(self) -> bool:
         """Verify chain.
 
-            Returns:
-                Boolean result.
-            """
+        Returns:
+            Boolean result.
+        """
         prev = "GENESIS"
         for i, e in enumerate(self._entries):
             if e.index != i:
@@ -84,7 +79,7 @@ class InMemoryLedger:
     def entries(self) -> list[LedgerEntry]:
         """Entries.
 
-            Returns:
-                Operation result.
-            """
+        Returns:
+            Operation result.
+        """
         return list(self._entries)

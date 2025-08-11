@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Robust It Pir module."""
-"""Robust It Pir module."""
 from dataclasses import dataclass
 from typing import List, Sequence
 
@@ -9,21 +8,22 @@ from typing import List, Sequence
 @dataclass
 class RobustServer:
     """Server handling robust requests."""
+
     data: Sequence[int]
     alive: bool = True
 
     def get(self, i: int) -> int:
         """Get.
 
-            Args:
-                i: I.
+        Args:
+            i: I.
 
-            Returns:
-                Integer result.
+        Returns:
+            Integer result.
 
-            Raises:
-                RuntimeError: When operation fails.
-            """
+        Raises:
+            RuntimeError: When operation fails.
+        """
         if not self.alive:
             raise RuntimeError("server down")
         return int(self.data[i])
@@ -38,12 +38,12 @@ class RobustITPIR:
     def __init__(self, servers: List[RobustServer]):
         """Initialize instance.
 
-            Args:
-                servers: Servers.
+        Args:
+            servers: Servers.
 
-            Raises:
-                ValueError: When operation fails.
-            """
+        Raises:
+            ValueError: When operation fails.
+        """
         if not servers:
             raise ValueError("no servers")
         n = len(servers[0].data)
@@ -55,15 +55,15 @@ class RobustITPIR:
     def get(self, index: int) -> int:
         """Get.
 
-            Args:
-                index: Index position.
+        Args:
+            index: Index position.
 
-            Returns:
-                Integer result.
+        Returns:
+            Integer result.
 
-            Raises:
-                RuntimeError: When operation fails.
-            """
+        Raises:
+            RuntimeError: When operation fails.
+        """
         vals = []
         for s in self.servers:
             try:

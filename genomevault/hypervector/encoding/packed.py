@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Packed module."""
-"""Packed module."""
 import numpy as np
 import torch
 
@@ -19,12 +18,12 @@ def pack_bits(x: torch.Tensor) -> np.ndarray:
 def unpack_bits(packed: np.ndarray, length: int) -> torch.Tensor:
     """Unpack bits.
 
-        Args:
-            packed: Packed.
-            length: Length.
+    Args:
+        packed: Packed.
+        length: Length.
 
-        Returns:
-            Operation result.
-        """
+    Returns:
+        Operation result.
+    """
     bits = np.unpackbits(packed, bitorder="little")[:length].astype(np.uint8)
     return torch.from_numpy((bits * 2 - 1).astype(np.int8))

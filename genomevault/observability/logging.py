@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Logging module."""
-"""Logging module."""
 import logging
 import os
 import sys
@@ -12,9 +11,9 @@ _LEVEL = os.getenv("GENOMEVAULT_LOG_LEVEL", "INFO").upper()
 def configure_logging() -> logging.Logger:
     """Configure logging.
 
-        Returns:
-            Operation result.
-        """
+    Returns:
+        Operation result.
+    """
     logger = logging.getLogger("genomevault")
     if not logger.handlers:
         logger.setLevel(_LEVEL)

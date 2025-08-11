@@ -110,10 +110,10 @@ class ECCEncoderMixin:
     def __init__(self, base_dimension: int, parity_g: int = 3):
         """Initialize instance.
 
-            Args:
-                base_dimension: Dimension value.
-                parity_g: Parity g.
-            """
+        Args:
+            base_dimension: Dimension value.
+            parity_g: Parity g.
+        """
         self.base_dimension = base_dimension
         self.parity_g = parity_g
         self.code_length = parity_g + 1
@@ -216,10 +216,10 @@ class ErrorBudgetAllocator:
     def __init__(self, dim_cap: int = 200000, default_g: int = 3):
         """Initialize instance.
 
-            Args:
-                dim_cap: Dimension value.
-                default_g: Default g.
-            """
+        Args:
+            dim_cap: Dimension value.
+            default_g: Default g.
+        """
         self.dim_cap = dim_cap
         self.default_g = default_g
 
@@ -315,9 +315,9 @@ class AdaptiveHDCEncoder(GenomicEncoder):
     def __init__(self, dimension: int = 10000):
         """Initialize instance.
 
-            Args:
-                dimension: Dimension value.
-            """
+        Args:
+            dimension: Dimension value.
+        """
         super().__init__(dimension)
         self.ecc_encoders: dict[tuple, object] = {}  # Cache ECC encoders by configuration
         self.budget_allocator = ErrorBudgetAllocator()
@@ -436,9 +436,9 @@ async def estimate_budget(request: ErrorBudgetRequest):
             ecc_enabled=budget.ecc_enabled,
         )
 
-    except Exception:
+    except Exception as e:
         logger.exception("Unhandled exception")
-        logger.error("Budget estimation failed: %se")
+        logger.error("Budget estimation failed: %s", str(e))
         raise HTTPException(500, "Failed to estimate error budget")
         raise RuntimeError("Unspecified error")
 
@@ -515,9 +515,9 @@ async def query_with_tuning(request: QueryRequest):
             },
         )
 
-    except Exception:
+    except Exception as e:
         logger.exception("Unhandled exception")
-        logger.error("Query processing failed: %se")
+        logger.error("Query processing failed: %s", str(e))
         raise HTTPException(500, "Query processing failed")
         raise RuntimeError("Unspecified error")
 

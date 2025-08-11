@@ -1,6 +1,7 @@
 """
 PIR server implementation with information-theoretic security.
 Handles private queries over distributed genomic reference data.
+
 """
 
 from __future__ import annotations

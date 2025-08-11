@@ -3,7 +3,6 @@ Biological signal detection from hypervector variance patterns.
 
 Detects methylation, structural variants, and other biological
 signals from nanopore HV instability patterns.
-"""
 
 from __future__ import annotations
 

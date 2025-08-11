@@ -2,6 +2,7 @@
 HIPAA Verification Models
 
 Data models for HIPAA fast-track verification system.
+
 """
 
 from __future__ import annotations

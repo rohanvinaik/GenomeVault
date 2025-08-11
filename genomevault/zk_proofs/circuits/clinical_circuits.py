@@ -1,6 +1,7 @@
 """
 Clinical circuits module - placeholder for backward compatibility.
 Actual implementation moved to clinical subdirectory.
+
 """
 
 import warnings
@@ -11,8 +12,7 @@ class ClinicalBiomarkerCircuit:
     """Placeholder - use genomevault.zk_proofs.circuits.clinical instead"""
 
     def __init__(self):
-        """Initialize instance.
-            """
+        """Initialize instance."""
         warnings.warn(
             "ClinicalBiomarkerCircuit moved to genomevault.zk_proofs.circuits.clinical",
             DeprecationWarning,
@@ -24,8 +24,7 @@ class DiabetesRiskCircuit:
     """Placeholder - use genomevault.zk_proofs.circuits.clinical instead"""
 
     def __init__(self):
-        """Initialize instance.
-            """
+        """Initialize instance."""
         warnings.warn(
             "DiabetesRiskCircuit moved to genomevault.zk_proofs.circuits.clinical",
             DeprecationWarning,
@@ -37,8 +36,7 @@ class ProofData:
     """Placeholder - use genomevault.zk_proofs.circuits.clinical instead"""
 
     def __init__(self):
-        """Initialize instance.
-            """
+        """Initialize instance."""
         warnings.warn(
             "ProofData moved to genomevault.zk_proofs.circuits.clinical",
             DeprecationWarning,
@@ -50,8 +48,7 @@ class ClinicalCircuit:
     """Placeholder - use genomevault.zk_proofs.circuits.clinical instead"""
 
     def __init__(self):
-        """Initialize instance.
-            """
+        """Initialize instance."""
         warnings.warn(
             "ClinicalCircuit moved to genomevault.zk_proofs.circuits.clinical",
             DeprecationWarning,

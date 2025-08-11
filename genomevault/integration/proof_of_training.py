@@ -3,7 +3,6 @@ Integration module for Proof-of-Training and ZKML features
 
 This module integrates PoT and ZKML capabilities into the existing
 GenomeVault infrastructure.
-"""
 
 from __future__ import annotations
 

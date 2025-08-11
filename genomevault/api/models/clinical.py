@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 """Clinical module."""
-"""Clinical module."""
 from pydantic import BaseModel, Field
 
 
 class ClinicalEvalRequest(BaseModel):
     """ClinicalEvalRequest implementation."""
+
     y_true: list[int] = Field(..., description="Binary labels 0/1")
     y_score: list[float] = Field(..., description="Uncalibrated scores in [0,1]")
     calibrator: str = Field("none", description="none | platt | isotonic")
@@ -15,6 +15,7 @@ class ClinicalEvalRequest(BaseModel):
 
 class ClinicalEvalResponse(BaseModel):
     """ClinicalEvalResponse implementation."""
+
     metrics: dict[str, float]
     threshold: float
     confusion: dict[str, float]

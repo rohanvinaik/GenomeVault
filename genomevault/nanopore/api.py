@@ -3,6 +3,7 @@ FastAPI endpoints for nanopore streaming analysis.
 
 Provides REST API for real-time nanopore data processing
 with biological signal detection.
+
 """
 
 from __future__ import annotations
@@ -162,9 +163,9 @@ async def _process_fast5_async(stream_id: str, fast5_path: Path):
     async def collect_results(result):
         """Async operation to Collect results.
 
-            Args:
-                result: Operation result.
-            """
+        Args:
+            result: Operation result.
+        """
         results.append(result)
 
         # Detect biological signals

@@ -1,6 +1,7 @@
 """
 Zero-Knowledge Proof Generation Module
 Uses real ZK circuits for proof generation and verification
+
 """
 
 from __future__ import annotations
@@ -36,8 +37,7 @@ class ProofGenerator:
     """
 
     def __init__(self):
-        """Initialize instance.
-            """
+        """Initialize instance."""
         self.median_circuit = MedianVerifierCircuit()
         self.proof_cache = {}
         logger.info("ProofGenerator initialized with real ZK circuits")

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Otel module."""
-"""Otel module."""
 import os
 
 

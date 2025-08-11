@@ -3,6 +3,7 @@ Compatibility shim for deprecated module path.
 
 This module maintains backward compatibility for code using the old import path.
 Please migrate to genomevault.hypervector_transform.encoding
+
 """
 
 import warnings

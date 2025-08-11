@@ -6,7 +6,6 @@ This module provides:
 - Anomaly detection for suspicious access patterns
 - Security event correlation
 - Automated response to security threats
-"""
 
 from __future__ import annotations
 
@@ -29,9 +28,9 @@ class SecurityMonitor:
     def __init__(self, config: dict[str, Any]):
         """Initialize instance.
 
-            Args:
-                config: Configuration dictionary.
-            """
+        Args:
+            config: Configuration dictionary.
+        """
         self.config = config
         self.threat_threshold = config.get("threat_threshold", 0.8)
         self.anomaly_window = config.get("anomaly_window_minutes", 60)
@@ -395,9 +394,9 @@ class ComplianceMonitor:
     def __init__(self, config: dict[str, Any]):
         """Initialize instance.
 
-            Args:
-                config: Configuration dictionary.
-            """
+        Args:
+            config: Configuration dictionary.
+        """
         self.config = config
         self.compliance_checks = []
         self.violations = []

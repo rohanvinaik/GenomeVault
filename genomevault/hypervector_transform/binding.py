@@ -3,6 +3,7 @@ Binding operations for hyperdimensional computing
 
 This module implements various binding operations that combine hypervectors
 while preserving their mathematical properties and biological relationships.
+
 """
 
 from __future__ import annotations
@@ -262,9 +263,7 @@ class HypervectorBinder:
         inv_perm[perm] = torch.arange(self.dimension)
         return inv_perm
 
-    def bundle(
-        self, vectors: list[torch.Tensor], normalize: bool = True
-    ) -> torch.Tensor:
+    def bundle(self, vectors: list[torch.Tensor], normalize: bool = True) -> torch.Tensor:
         """
         Bundle vectors using superposition (addition)
 
@@ -347,9 +346,7 @@ class PositionalBinder(HypervectorBinder):
         pos_vector = self._get_position_vector(position)
         return self.bind([vector, pos_vector], BindingType.CIRCULAR)
 
-    def bind_sequence(
-        self, vectors: list[torch.Tensor], start_position: int = 0
-    ) -> torch.Tensor:
+    def bind_sequence(self, vectors: list[torch.Tensor], start_position: int = 0) -> torch.Tensor:
         """
         Bind a sequence of vectors with their positions
 

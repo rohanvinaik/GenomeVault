@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """It Pir Protocol module."""
-"""It Pir Protocol module."""
 """
 Information-Theoretic PIR Protocol Implementation
 Implements 2-server IT-PIR with XOR-based scheme and security guarantees.
@@ -87,9 +86,7 @@ class PIRProtocol:
         # Generate n-1 random vectors
         for i in range(self.params.num_servers - 1):
             # Generate random binary vector
-            random_vector = np.random.randint(
-                0, 2, self.params.database_size, dtype=np.uint8
-            )
+            random_vector = np.random.randint(0, 2, self.params.database_size, dtype=np.uint8)
             query_vectors.append(random_vector)
 
         # Last vector is chosen so sum equals unit vector
@@ -103,15 +100,11 @@ class PIRProtocol:
         sum_vec = np.zeros(self.params.database_size, dtype=np.uint8)
         for vec in query_vectors:
             sum_vec = (sum_vec + vec) % 2
-        assert np.array_equal(
-            sum_vec, unit_vector
-        ), "Query vectors do not sum to unit vector"
+        assert np.array_equal(sum_vec, unit_vector), "Query vectors do not sum to unit vector"
 
         return query_vectors
 
-    def process_server_response(
-        self, query_vector: np.ndarray, database: np.ndarray
-    ) -> np.ndarray:
+    def process_server_response(self, query_vector: np.ndarray, database: np.ndarray) -> np.ndarray:
         """
         Process query on server side.
 
@@ -152,9 +145,7 @@ class PIRProtocol:
             Reconstructed database element
         """
         if len(responses) != self.params.num_servers:
-            raise ValueError(
-                f"Expected {self.params.num_servers} responses, got {len(responses)}"
-            )
+            raise ValueError(f"Expected {self.params.num_servers} responses, got {len(responses)}")
 
         # XOR all responses together
         result = responses[0].copy()
@@ -215,9 +206,7 @@ class PIRProtocol:
             # Pad with random bytes
             padding_size = self.params.element_size - len(response)
             padding = secrets.token_bytes(padding_size)
-            response = np.concatenate(
-                [response, np.frombuffer(padding, dtype=np.uint8)]
-            )
+            response = np.concatenate([response, np.frombuffer(padding, dtype=np.uint8)])
         elif len(response) > self.params.element_size:
             # Truncate
             response = response[: self.params.element_size]
@@ -233,9 +222,7 @@ class PIRProtocol:
 
         return response, actual_time_ms
 
-    def calculate_privacy_breach_probability(
-        self, k_honest: int, honesty_prob: float
-    ) -> float:
+    def calculate_privacy_breach_probability(self, k_honest: int, honesty_prob: float) -> float:
         """
         Calculate probability of privacy breach.
 
@@ -252,9 +239,7 @@ class PIRProtocol:
         """
         return (1 - honesty_prob) ** k_honest
 
-    def calculate_min_servers(
-        self, target_failure_prob: float, honesty_prob: float
-    ) -> int:
+    def calculate_min_servers(self, target_failure_prob: float, honesty_prob: float) -> int:
         """
         Calculate minimum servers needed for target failure probability.
 
@@ -282,9 +267,9 @@ class BatchPIRProtocol(PIRProtocol):
     def __init__(self, params: PIRParameters):
         """Initialize instance.
 
-            Args:
-                params: Parameters dictionary.
-            """
+        Args:
+            params: Parameters dictionary.
+        """
         super().__init__(params)
         self.batch_size = 100  # Default batch size
 
@@ -379,12 +364,8 @@ if __name__ == "__main__":
     logger.info("✓ Successfully retrieved element via IT-PIR")
 
     # Calculate privacy guarantees
-    prob_ts = protocol.calculate_privacy_breach_probability(
-        k_honest=2, honesty_prob=0.98
-    )
-    prob_ln = protocol.calculate_privacy_breach_probability(
-        k_honest=3, honesty_prob=0.95
-    )
+    prob_ts = protocol.calculate_privacy_breach_probability(k_honest=2, honesty_prob=0.98)
+    prob_ln = protocol.calculate_privacy_breach_probability(k_honest=3, honesty_prob=0.95)
 
     logger.info("\nPrivacy breach probabilities:")
     logger.info("  2 HIPAA TS servers: %sprob_ts:.6f")

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Aggregator module."""
-"""Aggregator module."""
 import numpy as np
 
 from genomevault.core.exceptions import ValidationError
@@ -31,8 +30,7 @@ class FedAvgAggregator:
     """
 
     def __init__(self) -> None:
-        """Initialize instance.
-            """
+        """Initialize instance."""
         self._last_shape: int | None = None
 
     def _validate_and_prepare(
@@ -60,15 +58,15 @@ class FedAvgAggregator:
     def aggregate(self, req: AggregateRequest) -> AggregateResponse:
         """Aggregate.
 
-            Args:
-                req: Req.
+        Args:
+            req: Req.
 
-            Returns:
-                AggregateResponse instance.
+        Returns:
+            AggregateResponse instance.
 
-            Raises:
-                ValidationError: When operation fails.
-            """
+        Raises:
+            ValidationError: When operation fails.
+        """
         arrs, counts = self._validate_and_prepare(req.updates, req.clip_norm)
         total_examples = int(sum(counts))
         if total_examples <= 0:

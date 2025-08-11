@@ -3,6 +3,7 @@ Test HDC compression quality and similarity preservation.
 
 Quantifies the quality loss from hyperdimensional computing compression
 to ensure clinical validity.
+
 """
 
 import itertools
@@ -72,9 +73,7 @@ class TestHDCQuality:
                 "variant_pair": (var1, var2),
                 "edit_distance": expected_distance,
                 "hv_similarity": similarity,
-                "preserved": (
-                    similarity > 0.5 if expected_distance < 10 else similarity < 0.5
-                ),
+                "preserved": (similarity > 0.5 if expected_distance < 10 else similarity < 0.5),
             }
             results.append(result)
 
@@ -101,9 +100,7 @@ class TestHDCQuality:
         )
         monotonicity = decreasing_count / (len(similarities) - 1)
 
-        assert (
-            monotonicity >= 0.7
-        ), f"Similarity not monotonic with distance: {monotonicity}"
+        assert monotonicity >= 0.7, f"Similarity not monotonic with distance: {monotonicity}"
 
         return results
 
@@ -161,9 +158,7 @@ class TestHDCQuality:
             ratio = original_size / compressed_size
             compression_ratios[strategy] = ratio
 
-            metrics.record(
-                "hdc_compression_ratio", ratio, metadata={"strategy": strategy}
-            )
+            metrics.record("hdc_compression_ratio", ratio, metadata={"strategy": strategy})
 
         # Test assertions
         best_ratio = max(compression_ratios.values())
@@ -275,9 +270,7 @@ class TestHDCQuality:
 
         # All should be identical
         assert np.allclose(hv1_1, hv1_2), "Same encoder produces different results"
-        assert np.allclose(
-            hv1_1, hv2_1
-        ), "Different encoder instances produce different results"
+        assert np.allclose(hv1_1, hv2_1), "Different encoder instances produce different results"
         assert np.allclose(hv1_1, hv2_2), "Encodings not reproducible"
 
         # Test with different seed
@@ -358,13 +351,9 @@ class TestHDCQuality:
             "avg_pathogenic_similarity": (
                 np.mean(pathogenic_similarities) if pathogenic_similarities else 0
             ),
-            "avg_benign_similarity": (
-                np.mean(benign_similarities) if benign_similarities else 0
-            ),
+            "avg_benign_similarity": (np.mean(benign_similarities) if benign_similarities else 0),
             "avg_cross_similarity": np.mean(cross_similarities),
-            "separation_score": (
-                np.mean(pathogenic_similarities) + np.mean(benign_similarities)
-            )
+            "separation_score": (np.mean(pathogenic_similarities) + np.mean(benign_similarities))
             / 2
             - np.mean(cross_similarities),
         }
@@ -380,9 +369,7 @@ class TestHDCQuality:
         scaled = hv_array * 127 / np.max(np.abs(hv_array))
         return scaled.astype(np.int8)
 
-    def _calculate_sparse_size(
-        self, hv_array: np.ndarray, threshold: float = 0.01
-    ) -> int:
+    def _calculate_sparse_size(self, hv_array: np.ndarray, threshold: float = 0.01) -> int:
         """Calculate size when stored as sparse matrix."""
         # Count non-zero elements
         mask = np.abs(hv_array) > threshold
@@ -466,17 +453,13 @@ def run_hdc_quality_assessment():
     # 2. Compression ratio
     logger.info("\n2. Testing compression ratio...")
     compression_results = test.test_compression_ratio(encoder)
-    print(
-        f"   Best compression: {max(compression_results['compression_ratios'].values()):.1f}:1"
-    )
+    print(f"   Best compression: {max(compression_results['compression_ratios'].values()):.1f}:1")
     logger.info(f"   Best strategy: {compression_results['best_strategy']}")
 
     # 3. Discrimination ability
     logger.info("\n3. Testing discrimination ability...")
     discrimination_results = test.test_discrimination_ability(encoder)
-    logger.info(
-        f"   Discrimination gap: {discrimination_results['discrimination_gap']:.3f}"
-    )
+    logger.info(f"   Discrimination gap: {discrimination_results['discrimination_gap']:.3f}")
 
     # 4. Reproducibility
     logger.info("\n4. Testing reproducibility...")

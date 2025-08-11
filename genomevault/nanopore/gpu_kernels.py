@@ -3,7 +3,6 @@ GPU kernels for accelerated nanopore HV processing.
 
 Implements CuPy-based GPU kernels for streaming event binding
 with catalytic memory management.
-"""
 
 from __future__ import annotations
 

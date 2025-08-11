@@ -3,7 +3,6 @@ Real-time Model Drift Detection and Monitoring
 
 This module provides real-time monitoring of deployed models for
 performance degradation, distribution shifts, and semantic drift.
-"""
 
 from __future__ import annotations
 
@@ -127,9 +126,7 @@ class RealTimeModelMonitor:
         self.feature_windows: dict[str, deque] = defaultdict(
             lambda: deque(maxlen=self.config["window_size"])
         )
-        self.performance_window: deque = deque(
-            maxlen=self.config["performance_window_size"]
-        )
+        self.performance_window: deque = deque(maxlen=self.config["performance_window_size"])
 
         # Alert management
         self.alert_history: list[DriftEvent] = []
@@ -241,23 +238,17 @@ class RealTimeModelMonitor:
                 drift_stats[drift_type] = {
                     "count": len(events),
                     "last_occurrence": max(e.timestamp for e in events),
-                    "severity_distribution": dict(
-                        zip(*np.unique(severities, return_counts=True))
-                    ),
+                    "severity_distribution": dict(zip(*np.unique(severities, return_counts=True))),
                     "avg_drift_score": np.mean([e.drift_score for e in events]),
                 }
 
         return {
             "model_id": self.model_id,
-            "deployment_time": datetime.fromtimestamp(
-                self.state.deployment_time
-            ).isoformat(),
+            "deployment_time": datetime.fromtimestamp(self.state.deployment_time).isoformat(),
             "uptime_hours": round(uptime_hours, 2),
             "total_predictions": self.state.total_predictions,
             "predictions_per_hour": (
-                round(self.state.total_predictions / uptime_hours, 2)
-                if uptime_hours > 0
-                else 0
+                round(self.state.total_predictions / uptime_hours, 2) if uptime_hours > 0 else 0
             ),
             "current_status": self.state.alert_status,
             "total_drift_events": len(self.state.drift_events),
@@ -310,9 +301,7 @@ class RealTimeModelMonitor:
                 "severity": max(e.severity for e in critical_drifts).value,
                 "event_count": len(critical_drifts),
             },
-            "data_requirements": self._determine_data_requirements(
-                drift_types, affected_features
-            ),
+            "data_requirements": self._determine_data_requirements(drift_types, affected_features),
             "recommended_approach": self._recommend_retraining_approach(drift_types),
             "performance_baseline": self.state.performance_metrics,
             "evidence": {
@@ -395,9 +384,7 @@ class RealTimeModelMonitor:
         )
 
         # Set cooldown
-        self.alert_cooldown[drift_type] = int(
-            time.time() + self.config["alert_cooldown_seconds"]
-        )
+        self.alert_cooldown[drift_type] = int(time.time() + self.config["alert_cooldown_seconds"])
 
         return event
 
@@ -416,14 +403,10 @@ class RealTimeModelMonitor:
         else:
             return DriftSeverity.NONE
 
-    def _get_recommended_action(
-        self, drift_type: DriftType, severity: DriftSeverity
-    ) -> str:
+    def _get_recommended_action(self, drift_type: DriftType, severity: DriftSeverity) -> str:
         """Get recommended action for drift event"""
         if severity == DriftSeverity.CRITICAL:
-            return (
-                "Immediate model rollback recommended. Initiate emergency retraining."
-            )
+            return "Immediate model rollback recommended. Initiate emergency retraining."
         elif severity == DriftSeverity.HIGH:
             if drift_type == DriftType.PERFORMANCE:
                 return "Performance critically degraded. Schedule urgent retraining."
@@ -460,9 +443,7 @@ class RealTimeModelMonitor:
             # Binary classification metrics
             if all(isinstance(gt, (int, float)) for gt in ground_truths):
                 correct = sum(
-                    1
-                    for p, gt in zip(predictions, ground_truths)
-                    if round(p) == round(gt)
+                    1 for p, gt in zip(predictions, ground_truths) if round(p) == round(gt)
                 )
                 accuracy = correct / len(predictions)
 
@@ -501,9 +482,7 @@ class RealTimeModelMonitor:
             affected = set()
             for alert in input_alerts:
                 affected.update(alert.affected_features)
-            recommendations.append(
-                f"Monitor input features: {', '.join(list(affected)[:5])}"
-            )
+            recommendations.append(f"Monitor input features: {', '.join(list(affected)[:5])}")
 
         return recommendations
 
@@ -546,9 +525,9 @@ class CovariateShiftDetector:
     def __init__(self, baseline_stats: dict[str, Any]):
         """Initialize instance.
 
-            Args:
-                baseline_stats: Baseline stats.
-            """
+        Args:
+            baseline_stats: Baseline stats.
+        """
         self.baseline_stats = baseline_stats
 
     def detect_drift(
@@ -583,9 +562,7 @@ class CovariateShiftDetector:
                 mean_diff = abs(current["mean"] - baseline["mean"])
                 std_ratio = current["std"] / (baseline["std"] + 1e-8)
 
-                drift_score = mean_diff / (baseline["std"] + 1e-8) + abs(
-                    np.log(std_ratio)
-                )
+                drift_score = mean_diff / (baseline["std"] + 1e-8) + abs(np.log(std_ratio))
                 drift_scores.append(drift_score)
 
                 if drift_score > 0.5:
@@ -610,9 +587,9 @@ class PredictionDriftDetector:
     def __init__(self, baseline_stats: dict[str, Any]):
         """Initialize instance.
 
-            Args:
-                baseline_stats: Baseline stats.
-            """
+        Args:
+            baseline_stats: Baseline stats.
+        """
         self.baseline_stats = baseline_stats
 
     def detect_drift(
@@ -647,9 +624,7 @@ class PredictionDriftDetector:
         if "quantiles" in baseline_pred_stats:
             quantile_diffs = [
                 abs(c - b)
-                for c, b in zip(
-                    current_stats["quantiles"], baseline_pred_stats["quantiles"]
-                )
+                for c, b in zip(current_stats["quantiles"], baseline_pred_stats["quantiles"])
             ]
             drift_score += np.mean(quantile_diffs)
 
@@ -671,9 +646,9 @@ class PerformanceDriftDetector:
     def __init__(self, baseline_stats: dict[str, Any]):
         """Initialize instance.
 
-            Args:
-                baseline_stats: Baseline stats.
-            """
+        Args:
+            baseline_stats: Baseline stats.
+        """
         self.baseline_stats = baseline_stats
         self.performance_buffer = deque(maxlen=1000)
 
@@ -692,16 +667,12 @@ class PerformanceDriftDetector:
         recent_data = list(performance_window)[-100:]
 
         correct = sum(
-            1
-            for item in recent_data
-            if round(item["prediction"]) == round(item["ground_truth"])
+            1 for item in recent_data if round(item["prediction"]) == round(item["ground_truth"])
         )
         recent_accuracy = correct / len(recent_data)
 
         # Get baseline accuracy
-        baseline_accuracy = self.baseline_stats.get("performance", {}).get(
-            "accuracy", 0.9
-        )
+        baseline_accuracy = self.baseline_stats.get("performance", {}).get("accuracy", 0.9)
 
         # Calculate drift score
         accuracy_drop = baseline_accuracy - recent_accuracy
@@ -725,9 +696,9 @@ class SemanticDriftDetector:
     def __init__(self, baseline_stats: dict[str, Any]):
         """Initialize instance.
 
-            Args:
-                baseline_stats: Baseline stats.
-            """
+        Args:
+            baseline_stats: Baseline stats.
+        """
         self.baseline_stats = baseline_stats
         self.baseline_hypervector = baseline_stats.get("model_hypervector")
 

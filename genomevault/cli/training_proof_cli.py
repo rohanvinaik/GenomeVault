@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Training Proof Cli module."""
-"""Training Proof Cli module."""
 import argparse
 
 from genomevault.zk_proofs.circuits.implementations.plonk_circuits import (
@@ -13,12 +12,12 @@ from genomevault.zk_proofs.circuits.implementations.plonk_circuits import (
 def main(argv=None) -> int:
     """Main.
 
-        Args:
-            argv: Argv.
+    Args:
+        argv: Argv.
 
-        Returns:
-            Integer result.
-        """
+    Returns:
+        Integer result.
+    """
     p = argparse.ArgumentParser()
     p.add_argument("--sum", type=float, required=True)
     p.add_argument("--threshold", type=float, required=True)

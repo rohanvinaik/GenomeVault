@@ -1,6 +1,7 @@
 """
 Zero-knowledge proof generation using PLONK templates.
 Implements specialized circuits for genomic privacy.
+
 """
 
 from __future__ import annotations
@@ -38,9 +39,9 @@ class Circuit:
     def to_dict(self) -> dict:
         """To dict.
 
-            Returns:
-                Dictionary result.
-            """
+        Returns:
+            Dictionary result.
+        """
         return {
             "name": self.name,
             "circuit_type": self.circuit_type,
@@ -66,9 +67,9 @@ class Proof:
     def to_dict(self) -> dict:
         """To dict.
 
-            Returns:
-                Dictionary result.
-            """
+        Returns:
+            Dictionary result.
+        """
         return {
             "proof_id": self.proof_id,
             "circuit_name": self.circuit_name,

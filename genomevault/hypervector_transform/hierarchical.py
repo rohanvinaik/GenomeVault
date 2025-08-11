@@ -5,7 +5,6 @@ Implements the multi-resolution hypervector system as specified:
 - Base-level vectors: 10,000 dimensions
 - Mid-level vectors: 15,000 dimensions
 - High-level vectors: 20,000 dimensions
-"""
 
 from __future__ import annotations
 
@@ -134,8 +133,7 @@ class HierarchicalEncoder:
         self.projection_matrices = {}
         self.domain_projections = {}
         self.holographic_systems = {
-            level: HolographicRepresentation(dim)
-            for level, dim in self.dimensions.items()
+            level: HolographicRepresentation(dim) for level, dim in self.dimensions.items()
         }
 
         # Initialize domain-specific projections
@@ -176,13 +174,14 @@ class HierarchicalEncoder:
 
         class OncologyProjection(torch.nn.Module):
             """OncologyProjection implementation."""
+
             def __init__(self, input_dim: int, output_dim: int):
                 """Initialize instance.
 
-                    Args:
-                        input_dim: Dimension value.
-                        output_dim: Dimension value.
-                    """
+                Args:
+                    input_dim: Dimension value.
+                    output_dim: Dimension value.
+                """
                 super().__init__()
                 # Multi-layer projection with cancer gene emphasis
                 self.layer1 = torch.nn.Linear(input_dim, output_dim * 2)
@@ -192,12 +191,12 @@ class HierarchicalEncoder:
             def forward(self, x: torch.Tensor) -> torch.Tensor:
                 """Forward.
 
-                    Args:
-                        x: X.
+                Args:
+                    x: X.
 
-                    Returns:
-                        Operation result.
-                    """
+                Returns:
+                    Operation result.
+                """
                 # Apply cancer gene weights
                 weighted = x * self.cancer_gene_weights
                 # Project through layers
@@ -212,13 +211,14 @@ class HierarchicalEncoder:
 
         class RareDiseaseProjection(torch.nn.Module):
             """RareDiseaseProjection implementation."""
+
             def __init__(self, input_dim: int, output_dim: int):
                 """Initialize instance.
 
-                    Args:
-                        input_dim: Dimension value.
-                        output_dim: Dimension value.
-                    """
+                Args:
+                    input_dim: Dimension value.
+                    output_dim: Dimension value.
+                """
                 super().__init__()
                 # Sparse projection to preserve rare variants
                 self.sparse_proj = torch.nn.Linear(input_dim, output_dim, bias=False)
@@ -230,12 +230,12 @@ class HierarchicalEncoder:
             def forward(self, x: torch.Tensor) -> torch.Tensor:
                 """Forward.
 
-                    Args:
-                        x: X.
+                Args:
+                    x: X.
 
-                    Returns:
-                        Operation result.
-                    """
+                Returns:
+                    Operation result.
+                """
                 return self.sparse_proj(x)
 
         return RareDiseaseProjection(1000, dim)
@@ -245,13 +245,14 @@ class HierarchicalEncoder:
 
         class PopulationProjection(torch.nn.Module):
             """PopulationProjection implementation."""
+
             def __init__(self, input_dim: int, output_dim: int):
                 """Initialize instance.
 
-                    Args:
-                        input_dim: Dimension value.
-                        output_dim: Dimension value.
-                    """
+                Args:
+                    input_dim: Dimension value.
+                    output_dim: Dimension value.
+                """
                 super().__init__()
                 # Structured projection preserving population structure
                 self.population_embeddings = torch.nn.Embedding(26, output_dim // 26)
@@ -260,12 +261,12 @@ class HierarchicalEncoder:
             def forward(self, x: torch.Tensor) -> torch.Tensor:
                 """Forward.
 
-                    Args:
-                        x: X.
+                Args:
+                    x: X.
 
-                    Returns:
-                        Operation result.
-                    """
+                Returns:
+                    Operation result.
+                """
                 # Placeholder - would use actual population assignments
                 pop_indices = torch.zeros(x.shape[0], dtype=torch.long)
                 pop_embeds = self.population_embeddings(pop_indices)
@@ -281,13 +282,14 @@ class HierarchicalEncoder:
 
         class PharmacogenomicProjection(torch.nn.Module):
             """PharmacogenomicProjection implementation."""
+
             def __init__(self, input_dim: int, output_dim: int):
                 """Initialize instance.
 
-                    Args:
-                        input_dim: Dimension value.
-                        output_dim: Dimension value.
-                    """
+                Args:
+                    input_dim: Dimension value.
+                    output_dim: Dimension value.
+                """
                 super().__init__()
                 # Focus on known pharmacogenes
                 self.gene_specific = torch.nn.ModuleDict(
@@ -303,12 +305,12 @@ class HierarchicalEncoder:
             def forward(self, x: torch.Tensor) -> torch.Tensor:
                 """Forward.
 
-                    Args:
-                        x: X.
+                Args:
+                    x: X.
 
-                    Returns:
-                        Operation result.
-                    """
+                Returns:
+                    Operation result.
+                """
                 # Split input by gene regions (placeholder)
                 outputs = []
                 start_idx = 0
@@ -318,9 +320,7 @@ class HierarchicalEncoder:
                     else:
                         end_idx = x.shape[1]
 
-                    gene_features = (
-                        x[:, start_idx:end_idx] if x.dim() > 1 else x[start_idx:end_idx]
-                    )
+                    gene_features = x[:, start_idx:end_idx] if x.dim() > 1 else x[start_idx:end_idx]
                     outputs.append(layer(gene_features))
                     start_idx = end_idx
 
@@ -333,25 +333,26 @@ class HierarchicalEncoder:
 
         class GeneralProjection(torch.nn.Module):
             """GeneralProjection implementation."""
+
             def __init__(self, input_dim: int, output_dim: int):
                 """Initialize instance.
 
-                    Args:
-                        input_dim: Dimension value.
-                        output_dim: Dimension value.
-                    """
+                Args:
+                    input_dim: Dimension value.
+                    output_dim: Dimension value.
+                """
                 super().__init__()
                 self.projection = torch.nn.Linear(input_dim, output_dim)
 
             def forward(self, x: torch.Tensor) -> torch.Tensor:
                 """Forward.
 
-                    Args:
-                        x: X.
+                Args:
+                    x: X.
 
-                    Returns:
-                        Operation result.
-                    """
+                Returns:
+                    Operation result.
+                """
                 return self.projection(x)
 
         return GeneralProjection(1000, dim)
@@ -574,9 +575,7 @@ class HierarchicalEncoder:
             v2 = hv2.get_level(level)
 
             # Cosine similarity
-            sim = torch.nn.functional.cosine_similarity(
-                v1.view(1, -1), v2.view(1, -1)
-            ).item()
+            sim = torch.nn.functional.cosine_similarity(v1.view(1, -1), v2.view(1, -1)).item()
 
             similarities[level] = sim
 
@@ -585,9 +584,7 @@ class HierarchicalEncoder:
 
         return total_sim
 
-    def compress_to_tier(
-        self, hv: HierarchicalHypervector, tier: str = "clinical"
-    ) -> torch.Tensor:
+    def compress_to_tier(self, hv: HierarchicalHypervector, tier: str = "clinical") -> torch.Tensor:
         """
         Compress hierarchical hypervector to specific storage tier.
 
@@ -621,9 +618,7 @@ class HierarchicalEncoder:
     def _quantize_vector(self, vector: torch.Tensor, bits: int) -> torch.Tensor:
         """Quantize vector to specified bit depth"""
         # Normalize to [-1, 1]
-        normalized = (
-            2 * (vector - vector.min()) / (vector.max() - vector.min() + 1e-8) - 1
-        )
+        normalized = 2 * (vector - vector.min()) / (vector.max() - vector.min() + 1e-8) - 1
 
         # Quantize
         levels = 2**bits

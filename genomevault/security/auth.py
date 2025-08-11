@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 """Auth module."""
-"""Auth module."""
 import os
 
 from fastapi import Header, HTTPException, status
@@ -19,15 +18,15 @@ def _load_keys() -> list[str]:
 def require_api_key(x_api_key: str | None = Header(default=None, alias=_HEADER)) -> str:
     """Require api key.
 
-        Args:
-            x_api_key: Dictionary x_api_key.
+    Args:
+        x_api_key: Dictionary x_api_key.
 
-        Returns:
-            String result.
+    Returns:
+        String result.
 
-        Raises:
-            HTTPException: When operation fails.
-        """
+    Raises:
+        HTTPException: When operation fails.
+    """
     keys = _load_keys()
     if not keys:
         # Security off: allow (development mode). In prod, set GV_API_KEYS!

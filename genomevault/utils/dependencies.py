@@ -1,5 +1,6 @@
 """
 Utilities for checking optional dependencies and providing helpful error messages.
+
 """
 
 from __future__ import annotations
@@ -18,11 +19,11 @@ class OptionalDependencyError(ImportError):
     def __init__(self, package: str, feature: str, install_extra: str | None = None):
         """Initialize instance.
 
-            Args:
-                package: Package.
-                feature: Feature.
-                install_extra: Install extra.
-            """
+        Args:
+            package: Package.
+            feature: Feature.
+            install_extra: Install extra.
+        """
         if install_extra:
             message = (
                 f"The '{package}' package is required for {feature}. "
@@ -39,9 +40,7 @@ class OptionalDependencyError(ImportError):
         self.install_extra = install_extra
 
 
-def require_package(
-    package: str, feature: str, install_extra: str | None = None
-) -> Callable:
+def require_package(package: str, feature: str, install_extra: str | None = None) -> Callable:
     """
     Decorator to require an optional package for a function or method.
 
@@ -57,24 +56,25 @@ def require_package(
     def decorator(func: Callable) -> Callable:
         """Decorator.
 
-            Args:
-                func: Func.
+        Args:
+            func: Func.
+
+        Returns:
+            Callable instance.
+
+        Raises:
+            OptionalDependencyError: When operation fails.
+        """
+
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            """Wrapper.
 
             Returns:
-                Callable instance.
+                Any instance.
 
             Raises:
                 OptionalDependencyError: When operation fails.
             """
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
-            """Wrapper.
-
-                Returns:
-                    Any instance.
-
-                Raises:
-                    OptionalDependencyError: When operation fails.
-                """
             if not is_package_available(package):
                 raise OptionalDependencyError(package, feature, install_extra)
             return func(*args, **kwargs)

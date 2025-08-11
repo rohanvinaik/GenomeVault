@@ -1,6 +1,7 @@
 """
 Consolidated health check endpoint for GenomeVault API.
 Follows Kubernetes health check best practices.
+
 """
 
 from datetime import datetime

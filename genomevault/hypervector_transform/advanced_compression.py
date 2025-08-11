@@ -1,7 +1,6 @@
 """
 Enhanced hierarchical hypervector compression module.
 Implements the advanced compression from the project specifications.
-"""
 
 from __future__ import annotations
 

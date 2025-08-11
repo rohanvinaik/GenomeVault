@@ -1,5 +1,6 @@
 """
 Multi-omics processing pipeline orchestrator
+
 """
 
 from __future__ import annotations
@@ -26,9 +27,9 @@ class MultiOmicsPipeline:
     def __init__(self, compression_tier: CompressionTier = CompressionTier.CLINICAL):
         """Initialize instance.
 
-            Args:
-                compression_tier: Compression tier.
-            """
+        Args:
+            compression_tier: Compression tier.
+        """
         self.compression_tier = compression_tier
         self.compressor = TieredCompressor(tier=compression_tier)
         self.processors = {}
