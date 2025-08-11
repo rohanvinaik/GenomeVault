@@ -154,8 +154,11 @@ class PIRHandler:
         # Pad or truncate to 1024 bytes
         if len(data_bytes) < 1024:
             # Pad with random bytes
+            # FIXED: Use cryptographically secure randomness
+            import os
+
             padding_size = 1024 - len(data_bytes)
-            padding = np.random.bytes(padding_size)
+            padding = os.urandom(padding_size)
             return data_bytes + padding
         else:
             # Truncate

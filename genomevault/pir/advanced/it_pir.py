@@ -219,10 +219,13 @@ class InformationTheoreticPIR:
 
     def _generate_query_id(self, index: int) -> str:
         """Generate unique query ID."""
+        # FIXED: Use cryptographically secure randomness
+        import os
+
         data = {
             "index": index,
             "timestamp": time.time(),
-            "nonce": np.random.bytes(8).hex(),
+            "nonce": os.urandom(8).hex(),
         }
 
         return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[:16]

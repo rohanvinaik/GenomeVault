@@ -53,7 +53,10 @@ class CatalyticSpace:
             size: Size of catalytic space in bytes
         """
         self.size = size
-        self.data = np.random.bytes(size)  # Random initial state
+        # FIXED: Use cryptographically secure randomness
+        import os
+
+        self.data = os.urandom(size)  # Random initial state
         self.initial_fingerprint = self._compute_fingerprint()
         self.access_count = 0
         self.modification_count = 0
@@ -92,7 +95,10 @@ class CatalyticSpace:
         if current_fingerprint != self.initial_fingerprint:
             logger.warning("Catalytic space modified: %sself.modification_count writes")
             # Restore initial state (simplified)
-            self.data = np.random.bytes(self.size)
+            # FIXED: Use cryptographically secure randomness
+            import os
+
+            self.data = os.urandom(self.size)
 
         self.access_count = 0
         self.modification_count = 0
@@ -119,43 +125,47 @@ class CatalyticProofEngine:
     def _decompress_proof_data(self, compressed_data: bytes) -> dict[str, Any]:
         """
         Decompress proof data that was compressed to avoid truncation.
-        
+
         FIXED: Added decompression support for the new compressed proof format.
         Handles CPROOF (compressed proof) and CSEG (compressed segment) formats.
         """
         import zlib
         import json
-        
+
         # Check for compressed format headers
-        if compressed_data.startswith(b'CPROOF') or compressed_data.startswith(b'CSEG'):
+        if compressed_data.startswith(b"CPROOF") or compressed_data.startswith(b"CSEG"):
             # Extract header type, original size and compressed data
-            header = compressed_data[:6] if compressed_data.startswith(b'CPROOF') else compressed_data[:4]
+            header = (
+                compressed_data[:6]
+                if compressed_data.startswith(b"CPROOF")
+                else compressed_data[:4]
+            )
             prefix_len = len(header)
-                
-            original_size = int.from_bytes(compressed_data[prefix_len:prefix_len+4], 'big')
-            compressed_part = compressed_data[prefix_len+4:]
-            
+
+            original_size = int.from_bytes(compressed_data[prefix_len : prefix_len + 4], "big")
+            compressed_part = compressed_data[prefix_len + 4 :]
+
             # Decompress
             try:
                 decompressed = zlib.decompress(compressed_part)
-                
+
                 # Verify size matches
                 if len(decompressed) != original_size:
                     logger.warning(
                         f"Decompressed size mismatch: expected {original_size}, "
                         f"got {len(decompressed)}"
                     )
-                
+
                 # Parse JSON
-                return json.loads(decompressed.decode('utf-8'))
-                
+                return json.loads(decompressed.decode("utf-8"))
+
             except (zlib.error, json.JSONDecodeError) as e:
                 logger.error(f"Failed to decompress/parse proof: {e}")
                 return {}
         else:
             # Try to parse as uncompressed JSON (backward compatibility)
             try:
-                return json.loads(compressed_data.decode('utf-8'))
+                return json.loads(compressed_data.decode("utf-8"))
             except (json.JSONDecodeError, UnicodeDecodeError):
                 # If it's not JSON, might be raw binary proof
                 logger.debug("Proof data is not compressed JSON, treating as raw binary")
@@ -317,10 +327,11 @@ class CatalyticProofEngine:
 
         # FIXED: Never truncate proof data - use compression instead of slicing
         import zlib
-        proof_json = json.dumps(proof_components, sort_keys=True, separators=(',', ':'))
-        proof_data_raw = proof_json.encode('utf-8')
+
+        proof_json = json.dumps(proof_components, sort_keys=True, separators=(",", ":"))
+        proof_data_raw = proof_json.encode("utf-8")
         compressed = zlib.compress(proof_data_raw, level=9)
-        proof_data = b'CPROOF' + len(proof_data_raw).to_bytes(4, 'big') + compressed
+        proof_data = b"CPROOF" + len(proof_data_raw).to_bytes(4, "big") + compressed
 
         return proof_data, clean_used
 
@@ -379,10 +390,11 @@ class CatalyticProofEngine:
 
         # FIXED: Never truncate proof data - use compression instead of slicing
         import zlib
-        proof_json = json.dumps(proof_components, sort_keys=True, separators=(',', ':'))
-        proof_data_raw = proof_json.encode('utf-8')
+
+        proof_json = json.dumps(proof_components, sort_keys=True, separators=(",", ":"))
+        proof_data_raw = proof_json.encode("utf-8")
         compressed = zlib.compress(proof_data_raw, level=9)
-        proof_data = b'CPROOF' + len(proof_data_raw).to_bytes(4, 'big') + compressed
+        proof_data = b"CPROOF" + len(proof_data_raw).to_bytes(4, "big") + compressed
 
         return proof_data, clean_used
 
@@ -414,10 +426,11 @@ class CatalyticProofEngine:
             segment_data = genome_segments[i]
             # FIXED: Never truncate segment data - use compression
             import zlib
-            segment_str = json.dumps(segment_data, sort_keys=True, separators=(',', ':'))
-            segment_raw = segment_str.encode('utf-8')
+
+            segment_str = json.dumps(segment_data, sort_keys=True, separators=(",", ":"))
+            segment_raw = segment_str.encode("utf-8")
             compressed = zlib.compress(segment_raw, level=9)
-            segment_bytes = b'CSEG' + len(segment_raw).to_bytes(4, 'big') + compressed
+            segment_bytes = b"CSEG" + len(segment_raw).to_bytes(4, "big") + compressed
 
             self.catalytic_space.write(
                 panel_offset + (i % 1000) * 1024, segment_bytes.ljust(1024, b"\0")
@@ -441,10 +454,11 @@ class CatalyticProofEngine:
 
         # FIXED: Never truncate proof data - use compression instead of slicing
         import zlib
-        proof_json = json.dumps(proof_components, sort_keys=True, separators=(',', ':'))
-        proof_data_raw = proof_json.encode('utf-8')
+
+        proof_json = json.dumps(proof_components, sort_keys=True, separators=(",", ":"))
+        proof_data_raw = proof_json.encode("utf-8")
         compressed = zlib.compress(proof_data_raw, level=9)
-        proof_data = b'CPROOF' + len(proof_data_raw).to_bytes(4, 'big') + compressed
+        proof_data = b"CPROOF" + len(proof_data_raw).to_bytes(4, "big") + compressed
 
         return proof_data, clean_used
 
@@ -520,10 +534,11 @@ class CatalyticProofEngine:
 
         # FIXED: Never truncate proof data - use compression instead of slicing
         import zlib
-        proof_json = json.dumps(proof_components, sort_keys=True, separators=(',', ':'))
-        proof_data_raw = proof_json.encode('utf-8')
+
+        proof_json = json.dumps(proof_components, sort_keys=True, separators=(",", ":"))
+        proof_data_raw = proof_json.encode("utf-8")
         compressed = zlib.compress(proof_data_raw, level=9)
-        proof_data = b'CPROOF' + len(proof_data_raw).to_bytes(4, 'big') + compressed
+        proof_data = b"CPROOF" + len(proof_data_raw).to_bytes(4, "big") + compressed
 
         return proof_data, clean_used
 
@@ -544,7 +559,7 @@ class CatalyticProofEngine:
             "circuit": circuit_name,
             "public": public_inputs,
             "timestamp": time.time(),
-            "nonce": np.random.bytes(8).hex(),
+            "nonce": os.urandom(8).hex(),
         }
 
         return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[:16]
@@ -597,7 +612,7 @@ if __name__ == "__main__":
         private_inputs={
             "variant_data": {"chr": "chr1", "pos": 12345, "ref": "A", "alt": "G"},
             "merkle_proof": [hashlib.sha256(f"node_{i}".encode()).hexdigest() for i in range(20)],
-            "witness_randomness": np.random.bytes(32).hex(),
+            "witness_randomness": os.urandom(32).hex(),
         },
     )
 
@@ -629,7 +644,7 @@ if __name__ == "__main__":
             "variants": np.random.randint(0, 2, num_variants).tolist(),
             "weights": np.random.rand(num_variants).tolist(),
             "merkle_proofs": [hashlib.sha256(f"proof_{i}".encode()).hexdigest() for i in range(20)],
-            "witness_randomness": np.random.bytes(32).hex(),
+            "witness_randomness": os.urandom(32).hex(),
         },
     )
 
