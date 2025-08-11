@@ -320,13 +320,15 @@ class STARKProver:
     def _reed_solomon_encode(self, data: np.ndarray) -> np.ndarray:
         """
         Reed-Solomon encode data with 8x blowup.
-        
-        FIXED: Previously used random coefficients which made all commitments meaningless.
-        Now uses proper Lagrange interpolation over the Goldilocks field for cryptographic soundness.
+
+        FIXED: Multiple critical issues resolved:
+        1. Previously used random coefficients - now uses proper Lagrange interpolation
+        2. Previously used consecutive integers [0,1,2,...] as domain - now uses proper 
+           multiplicative subgroup (roots of unity) required for Reed-Solomon/FRI soundness
         """
         # Interpolate polynomial from data using proper Lagrange interpolation
         poly_coeffs = self._interpolate_polynomial(data)
-        
+
         # Verify interpolation correctness (only in debug builds for performance)
         if len(data) <= 16:  # Only test for small polynomials to avoid performance impact
             if not self._test_interpolation(data):
@@ -334,9 +336,23 @@ class STARKProver:
                 raise ValueError("Invalid polynomial interpolation in Reed-Solomon encoding")
             logger.debug("Reed-Solomon interpolation verified successfully")
 
-        # Evaluate on larger domain
+        # Evaluate on larger domain using proper multiplicative subgroup
         blowup_factor = int(1 / self.rs_rate)
-        evaluation_domain = self._get_evaluation_domain(len(data) * blowup_factor)
+        domain_size = len(data) * blowup_factor
+        
+        # Ensure domain size is a power of 2 for proper subgroup structure
+        if domain_size & (domain_size - 1) != 0:
+            # Round up to next power of 2
+            domain_size = 1 << (domain_size.bit_length())
+        
+        evaluation_domain = self._get_evaluation_domain(domain_size)
+        
+        # Verify domain is a proper multiplicative subgroup (only for small domains)
+        if domain_size <= 64:  # Performance optimization
+            if not self._verify_subgroup(evaluation_domain):
+                logger.error("Evaluation domain is not a proper multiplicative subgroup!")
+                raise ValueError("Invalid evaluation domain for Reed-Solomon encoding")
+            logger.debug(f"Verified evaluation domain of size {domain_size} is a proper subgroup")
 
         encoded = self._evaluate_polynomial(poly_coeffs, evaluation_domain)
 
@@ -385,110 +401,108 @@ class STARKProver:
     def _interpolate_polynomial(self, y_values: np.ndarray) -> np.ndarray:
         """
         Interpolate polynomial through points using Lagrange interpolation.
-        
+
         Implements proper Lagrange interpolation over the prime field, computing
         all polynomial coefficients correctly for Reed-Solomon encoding.
-        
+
         Args:
             y_values: Y-coordinate values at canonical domain points [0, 1, 2, ..., n-1]
-            
+
         Returns:
             Polynomial coefficients in monomial basis
         """
         n = len(y_values)
         p = self.field_size
-        
+
         if n == 0:
             return np.array([], dtype=int)
         if n == 1:
             return np.array([int(y_values[0]) % p], dtype=int)
-        
-        # Use canonical domain points x = [0, 1, 2, ..., n-1] 
+
+        # Use canonical domain points x = [0, 1, 2, ..., n-1]
         x_values = np.arange(n, dtype=int)
-        
+
         # Initialize polynomial coefficients
         coeffs = np.zeros(n, dtype=int)
-        
+
         # Lagrange interpolation: P(x) = sum(y_i * L_i(x))
         # where L_i(x) = product((x - x_j) / (x_i - x_j)) for j != i
         for i in range(n):
             y_i = int(y_values[i]) % p
             if y_i == 0:
                 continue  # Skip zero terms for efficiency
-            
+
             # Compute Lagrange basis polynomial L_i(x)
-            # Start with constant term of L_i(x)
-            numerator = 1
             denominator = 1
-            
+
             # Compute the denominator: product(x_i - x_j) for j != i
             for j in range(n):
                 if i != j:
                     diff = (x_values[i] - x_values[j]) % p
                     denominator = (denominator * diff) % p
-            
+
             # Compute modular inverse of denominator
             if denominator == 0:
                 raise ValueError(f"Division by zero in Lagrange interpolation at point {i}")
-            
+
             denominator_inv = pow(denominator, p - 2, p)  # Fermat's little theorem
-            
+
             # Build the polynomial (x - x_0)(x - x_1)...(x - x_{i-1})(x - x_{i+1})...(x - x_{n-1})
             # Start with polynomial representation [1] (constant 1)
             lagrange_poly = np.zeros(n, dtype=int)
             lagrange_poly[0] = 1
-            
+
             # Multiply by each factor (x - x_j) for j != i
             for j in range(n):
                 if i == j:
                     continue
-                    
+
                 # Multiply current polynomial by (x - x_j)
                 # (ax^k + ...) * (x - x_j) = ax^{k+1} - ax_j*x^k + ...
                 new_poly = np.zeros(n, dtype=int)
-                
+
                 # Multiply by x (shift coefficients up)
                 for k in range(n - 1):
                     if lagrange_poly[k] != 0:
                         new_poly[k + 1] = (new_poly[k + 1] + lagrange_poly[k]) % p
-                
+
                 # Multiply by -x_j (subtract x_j times the original polynomial)
                 x_j = x_values[j]
                 for k in range(n):
                     if lagrange_poly[k] != 0:
                         new_poly[k] = (new_poly[k] - lagrange_poly[k] * x_j) % p
-                
+
                 lagrange_poly = new_poly
-            
+
             # Scale by y_i / denominator and add to result
             for k in range(n):
                 if lagrange_poly[k] != 0:
                     coeff = (y_i * lagrange_poly[k] * denominator_inv) % p
                     coeffs[k] = (coeffs[k] + coeff) % p
-        
+
         return coeffs
 
     def _test_interpolation(self, y_values: np.ndarray) -> bool:
         """
         Test that interpolation is correct by verifying P(i) = y_i.
-        
+
         Args:
             y_values: Y-coordinate values to test
-            
+
         Returns:
             True if interpolation is correct, False otherwise
         """
         coeffs = self._interpolate_polynomial(y_values)
         n = len(y_values)
         p = self.field_size
-        
+
         # Verify that P(i) = y_i for all i
         for i in range(n):
             # Evaluate polynomial at point i
             result = 0
             for k, coeff in enumerate(coeffs):
                 result = (result + coeff * pow(i, k, p)) % p
-            
+
             expected = int(y_values[i]) % p
             if result != expected:
                 logger.warning(
@@ -496,7 +510,7 @@ class STARKProver:
                     f"P({i}) = {result}, expected {expected}"
                 )
                 return False
-        
+
         return True
 
     def _evaluate_polynomial(self, coeffs: np.ndarray, domain: np.ndarray) -> np.ndarray:
@@ -513,9 +527,106 @@ class STARKProver:
         return np.array(evaluations)
 
     def _get_evaluation_domain(self, size: int) -> np.ndarray:
-        """Get evaluation domain of given size."""
-        # In practice, would use roots of unity
-        return np.arange(size) % self.field_size
+        """
+        Get multiplicative evaluation domain of given size using roots of unity.
+        
+        For Reed-Solomon and FRI protocols, we need a multiplicative subgroup
+        of the field, not just consecutive integers. Uses the 2-adic structure
+        of the Goldilocks field.
+        
+        Args:
+            size: Domain size (must be a power of 2)
+            
+        Returns:
+            Array of field elements forming a multiplicative subgroup
+        """
+        # Ensure size is a power of 2 for proper subgroup structure
+        if size <= 0 or (size & (size - 1)) != 0:
+            raise ValueError(f"Domain size {size} must be a positive power of 2")
+        
+        p = self.field_size  # Goldilocks: 2^64 - 2^32 + 1
+        
+        # For Goldilocks field, we need to find a generator of order 2^k
+        # The field has a 2-adic structure: p - 1 = 2^32 * (2^32 - 1)
+        # So we can have subgroups of order up to 2^32
+        
+        max_order_log = 32  # Maximum 2-power in p-1 factorization
+        domain_log = size.bit_length() - 1  # log2(size)
+        
+        if domain_log > max_order_log:
+            raise ValueError(f"Requested domain size 2^{domain_log} too large for field (max 2^{max_order_log})")
+        
+        # Find a primitive root of unity of order 2^domain_log
+        # We'll use a known generator for Goldilocks field
+        primitive_root = self._get_primitive_root()
+        
+        # Compute g = primitive_root^((p-1) / size) to get order exactly size
+        exponent = (p - 1) // size
+        generator = pow(primitive_root, exponent, p)
+        
+        # Verify generator has correct order
+        if pow(generator, size, p) != 1:
+            raise ValueError(f"Generator {generator} does not have order {size}")
+        
+        if size > 1 and pow(generator, size // 2, p) == 1:
+            raise ValueError(f"Generator {generator} has order less than {size}")
+        
+        # Generate the multiplicative subgroup: [1, g, g^2, ..., g^(size-1)]
+        domain = np.zeros(size, dtype=int)
+        current = 1
+        
+        for i in range(size):
+            domain[i] = current
+            current = (current * generator) % p
+        
+        return domain
+    
+    def _get_primitive_root(self) -> int:
+        """
+        Get a primitive root for the Goldilocks field.
+        
+        Returns a generator of the multiplicative group F_p^*.
+        For Goldilocks field 2^64 - 2^32 + 1, we use a known primitive root.
+        """
+        # For Goldilocks field, 7 is a known primitive root
+        # This generates the full multiplicative group of order p-1
+        return 7
+    
+    def _verify_subgroup(self, domain: np.ndarray) -> bool:
+        """
+        Verify that the domain forms a proper multiplicative subgroup.
+        
+        Args:
+            domain: Array of field elements to verify
+            
+        Returns:
+            True if domain is a valid multiplicative subgroup
+        """
+        p = self.field_size
+        size = len(domain)
+        
+        # Check that all elements are distinct and non-zero
+        if len(set(domain)) != size or 0 in domain:
+            return False
+        
+        # Check closure under multiplication
+        domain_set = set(domain)
+        for a in domain:
+            for b in domain:
+                if (a * b) % p not in domain_set:
+                    return False
+        
+        # Check that it's cyclic (has a generator)
+        for g in domain:
+            generated = set()
+            current = 1
+            for _ in range(size):
+                generated.add(current)
+                current = (current * g) % p
+            if generated == domain_set:
+                return True
+        
+        return False
 
     def _fold_polynomial(
         self, poly: np.ndarray, challenge: bytes, folding_factor: int
