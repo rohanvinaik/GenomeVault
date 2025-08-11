@@ -34,76 +34,77 @@ logger = get_logger(__name__)
 class FiatShamirTranscript:
     """
     Cryptographic transcript for Fiat-Shamir challenges with domain separation.
-    
+
     FIXED: Replace raw JSON serialization with proper running hash transcript
     that maintains domain separation and deterministic ordering.
     """
-    
+
     def __init__(self):
         """Initialize empty transcript."""
         from hashlib import sha256
+
         self.hasher = sha256()
         self.round_counter = 0
-    
+
     def append_message(self, label: str, message: bytes) -> None:
         """
         Append domain-separated message to transcript.
-        
+
         Args:
             label: Domain separation label (e.g., "trace_commitment")
             message: Message bytes to append
         """
         # Domain separation: len(label) || label || len(message) || message
-        label_bytes = label.encode('utf-8')
-        label_len = len(label_bytes).to_bytes(4, 'big')
-        message_len = len(message).to_bytes(8, 'big')
-        
+        label_bytes = label.encode("utf-8")
+        label_len = len(label_bytes).to_bytes(4, "big")
+        message_len = len(message).to_bytes(8, "big")
+
         self.hasher.update(label_len + label_bytes + message_len + message)
-    
+
     def append_u32(self, label: str, value: int) -> None:
         """Append 32-bit unsigned integer."""
-        self.append_message(label, value.to_bytes(4, 'big'))
-    
+        self.append_message(label, value.to_bytes(4, "big"))
+
     def append_u64(self, label: str, value: int) -> None:
-        """Append 64-bit unsigned integer.""" 
-        self.append_message(label, value.to_bytes(8, 'big'))
-    
+        """Append 64-bit unsigned integer."""
+        self.append_message(label, value.to_bytes(8, "big"))
+
     def append_field_element(self, label: str, element: int) -> None:
         """Append field element as canonical 32-byte big-endian."""
-        self.append_message(label, element.to_bytes(32, 'big'))
-        
+        self.append_message(label, element.to_bytes(32, "big"))
+
     def append_commitment(self, label: str, commitment_hex: str) -> None:
         """Append commitment (hex string) as bytes."""
         commitment_bytes = bytes.fromhex(commitment_hex)
         self.append_message(label, commitment_bytes)
-    
+
     def get_challenge(self, label: str, output_bytes: int = 32) -> bytes:
         """
         Extract challenge bytes using SHAKE256 XOF.
-        
+
         Args:
             label: Challenge label for domain separation
             output_bytes: Number of challenge bytes to extract
-            
+
         Returns:
             Challenge bytes from SHAKE256(transcript || label || round)
         """
         from hashlib import shake_256
-        
+
         # Finalize current transcript state
         transcript_state = self.hasher.digest()
-        
+
         # Create challenge input: transcript || label || round_counter
-        label_bytes = label.encode('utf-8')
-        round_bytes = self.round_counter.to_bytes(4, 'big')
+        label_bytes = label.encode("utf-8")
+        round_bytes = self.round_counter.to_bytes(4, "big")
         challenge_input = transcript_state + label_bytes + round_bytes
-        
+
         # Extract challenge using SHAKE256 XOF
         challenge = shake_256(challenge_input).digest(output_bytes)
-        
+
         # Increment round counter for next challenge
         self.round_counter += 1
-        
+
         return challenge
 
 
@@ -165,10 +166,10 @@ class STARKProver:
         self.num_queries = self._compute_query_count()
 
         logger.info(
-            "STARKProver initialized: "
-            "field_size=%sfield_size, "
-            "security=%ssecurity_bits bits, "
-            "queries=%sself.num_queries"
+            f"STARKProver initialized: "
+            f"field_size={field_size}, "
+            f"security={security_bits} bits, "
+            f"queries={self.num_queries}"
         )
 
     def _compute_query_count(self) -> int:
@@ -193,18 +194,18 @@ class STARKProver:
         Returns:
             Post-quantum secure STARK proof
         """
-        logger.info("Generating STARK proof for trace of size %scomputation_trace.shape")
+        logger.info(f"Generating STARK proof for trace of size {computation_trace.shape}")
 
         # Initialize Fiat-Shamir transcript with domain separation
         # FIXED: Replace raw JSON serialization with proper transcript management
         transcript = FiatShamirTranscript()
-        
+
         # Add public parameters to transcript for binding
         transcript.append_u32("field_size", self.field_size)
         transcript.append_u32("security_bits", self.security_bits)
         transcript.append_u32("trace_rows", computation_trace.shape[0])
         transcript.append_u32("trace_cols", computation_trace.shape[1])
-        
+
         # Add public inputs to transcript
         for key, value in sorted(public_inputs.items()):
             if isinstance(value, int):
@@ -231,13 +232,11 @@ class STARKProver:
         domain_size = len(constraint_poly)
         transcript.append_u64("domain_size", domain_size)
         transcript.append_u32("num_queries", self.num_queries)
-        
+
         # Extract query challenge from transcript
         query_challenge = transcript.get_challenge("query_indices", 32)
-        query_indices = self._generate_query_indices_from_challenge(
-            query_challenge, domain_size
-        )
-        
+        query_indices = self._generate_query_indices_from_challenge(query_challenge, domain_size)
+
         # Verify indices are in valid range and unique (safety check)
         if not all(0 <= idx < domain_size for idx in query_indices):
             raise ValueError("Query indices out of bounds")
@@ -274,7 +273,7 @@ class STARKProver:
             },
         )
 
-        logger.info("Generated STARK proof: %sproof.proof_id, size: %sproof.proof_size_kb:.1fKB")
+        logger.info(f"Generated STARK proof: {proof.proof_id}, size: {proof.proof_size_kb:.1f}KB")
 
         return proof
 
@@ -333,11 +332,14 @@ class STARKProver:
         return combined_poly
 
     def _fri_protocol(
-        self, polynomial: np.ndarray, initial_commitment: str, transcript: FiatShamirTranscript
+        self,
+        polynomial: np.ndarray,
+        initial_commitment: str,
+        transcript: FiatShamirTranscript,
     ) -> list[dict[str, Any]]:
         """
         Fast Reed-Solomon IOP of Proximity with proper transcript management.
-        
+
         FIXED Issue 7: Record complete round information for proper verification.
         Records (commitment, challenge, fold_factor, evaluation_domain_size) per round.
         """
@@ -363,7 +365,7 @@ class STARKProver:
 
             # Commit to polynomial evaluations
             commitment, merkle_tree = self._commit_to_evaluations(current_evaluations)
-            
+
             # Add commitment to transcript for next challenge
             transcript.append_commitment(f"fri_commitment_{round_idx}", commitment)
 
@@ -375,7 +377,7 @@ class STARKProver:
                 {
                     "round": round_idx,
                     "commitment": commitment,  # Store as bytes, not hex
-                    "challenge": challenge,    # Store as bytes, not hex
+                    "challenge": challenge,  # Store as bytes, not hex
                     "fold_factor": self.fri_folding_factor,
                     "domain_size": current_domain_size,
                     "domain": current_domain.tolist(),  # For verification
@@ -392,12 +394,14 @@ class STARKProver:
             # Stop when polynomial is small enough
             if current_domain_size <= 256:
                 # Record final polynomial with all coefficients
-                fri_layers.append({
-                    "round": "final", 
-                    "coefficients": current_poly.tolist(),
-                    "domain_size": current_domain_size,
-                    "polynomial_degree": len(current_poly) - 1
-                })
+                fri_layers.append(
+                    {
+                        "round": "final",
+                        "coefficients": current_poly.tolist(),
+                        "domain_size": current_domain_size,
+                        "polynomial_degree": len(current_poly) - 1,
+                    }
+                )
                 break
 
         return fri_layers
@@ -425,9 +429,7 @@ class STARKProver:
 
                 trace_values.append(int(value))
                 # Serialize path as list of {"hash": hex, "is_right": bool}
-                trace_paths.append([
-                    {"hash": p[0].hex(), "is_right": p[1]} for p in path
-                ])
+                trace_paths.append([{"hash": p[0].hex(), "is_right": p[1]} for p in path])
 
             # Get constraint polynomial evaluation and path with direction bits
             constraint_value = int(constraint_poly[idx])
@@ -478,46 +480,44 @@ class STARKProver:
             nonce += 1
 
         return f"{nonce:016x}"
-    
+
     def _leaf_bytes(self, vals: list[int]) -> bytes:
         """
         Create canonical Merkle leaf from field elements.
-        
-        FIXED: Replace non-deterministic json.dumps() with canonical 32-byte 
+
+        FIXED: Replace non-deterministic json.dumps() with canonical 32-byte
         big-endian serialization and domain separation tag.
-        
+
         Args:
             vals: List of field elements to serialize
-            
+
         Returns:
             32-byte canonical leaf hash with domain tag
         """
         # Serialize each field element as 32-byte big-endian integer
-        serialized = b''.join(
-            int(v).to_bytes(32, 'big') for v in vals
-        )
-        
+        serialized = b"".join(int(v).to_bytes(32, "big") for v in vals)
+
         # Domain separation: 0x00 = leaf, 0x01 = internal node
         # This prevents length-extension and collision attacks
-        tagged_data = b'\x00' + serialized
-        
+        tagged_data = b"\x00" + serialized
+
         return hashlib.sha256(tagged_data).digest()
-    
+
     def _internal_node_bytes(self, left: bytes, right: bytes) -> bytes:
         """
         Create canonical internal Merkle node hash.
-        
+
         Args:
             left: Left child hash (32 bytes)
             right: Right child hash (32 bytes)
-            
+
         Returns:
             32-byte internal node hash with domain tag
         """
-        # Domain separation: 0x01 = internal node  
+        # Domain separation: 0x01 = internal node
         # Ensures leaves and internal nodes have different hash domains
-        tagged_data = b'\x01' + left + right
-        
+        tagged_data = b"\x01" + left + right
+
         return hashlib.sha256(tagged_data).digest()
 
     def _reed_solomon_encode(self, data: np.ndarray) -> np.ndarray:
@@ -526,9 +526,9 @@ class STARKProver:
 
         FIXED: Multiple critical cryptographic issues resolved:
         1. Previously used random coefficients - now uses proper Lagrange interpolation
-        2. Previously used consecutive integers [0,1,2,...] as domain - now uses proper 
+        2. Previously used consecutive integers [0,1,2,...] as domain - now uses proper
            multiplicative subgroup (roots of unity) required for Reed-Solomon/FRI soundness
-        3. Previously used float64 dtypes causing silent precision loss - now uses 
+        3. Previously used float64 dtypes causing silent precision loss - now uses
            object dtype with Python ints for exact finite field arithmetic
         4. Query sampling now uses cryptographic Fiat-Shamir with SHAKE256 instead of
            insecure 32-bit seeded numpy.random for provable security
@@ -550,14 +550,14 @@ class STARKProver:
         # Evaluate on larger domain using proper multiplicative subgroup
         blowup_factor = int(1 / self.rs_rate)
         domain_size = len(data) * blowup_factor
-        
+
         # Ensure domain size is a power of 2 for proper subgroup structure
         if domain_size & (domain_size - 1) != 0:
             # Round up to next power of 2
             domain_size = 1 << (domain_size.bit_length())
-        
+
         evaluation_domain = self._get_evaluation_domain(domain_size)
-        
+
         # Verify domain is a proper multiplicative subgroup (only for small domains)
         if domain_size <= 64:  # Performance optimization
             if not self._verify_subgroup(evaluation_domain):
@@ -597,15 +597,15 @@ class STARKProver:
     def _get_merkle_path(self, tree: dict[str, Any], index: int) -> list[tuple[bytes, bool]]:
         """
         Get Merkle authentication path with direction bits.
-        
-        FIXED: Include direction bits for sound verification. Returns list of 
-        (sibling_hash, is_right) tuples where is_right indicates if sibling 
+
+        FIXED: Include direction bits for sound verification. Returns list of
+        (sibling_hash, is_right) tuples where is_right indicates if sibling
         is the right child.
-        
+
         Args:
             tree: Merkle tree structure
             index: Leaf index to create path for
-            
+
         Returns:
             List of (sibling_hash, is_right) pairs for verification
         """
@@ -614,55 +614,55 @@ class STARKProver:
 
         for layer_idx in range(len(tree["layers"]) - 1):
             layer = tree["layers"][layer_idx]
-            
+
             # Determine if current index is left (even) or right (odd) child
-            is_left_child = (current_index % 2 == 0)
-            
+            is_left_child = current_index % 2 == 0
+
             if is_left_child:
                 # Current is left child, sibling is right
                 sibling_idx = current_index + 1
                 sibling_is_right = True
             else:
-                # Current is right child, sibling is left  
+                # Current is right child, sibling is left
                 sibling_idx = current_index - 1
                 sibling_is_right = False
-            
+
             # Get sibling hash (handle edge case of odd number of nodes)
             if sibling_idx < len(layer):
                 sibling_hash = layer[sibling_idx]
             else:
                 # If no right sibling, duplicate the current node (padding)
                 sibling_hash = layer[current_index]
-                
+
             path.append((sibling_hash, sibling_is_right))
-            
+
             # Move up to parent layer
             current_index //= 2
 
         return path
-    
+
     def _verify_merkle_path(
-        self, 
-        leaf_data: list[int], 
-        path: list[tuple[bytes, bool]], 
+        self,
+        leaf_data: list[int],
+        path: list[tuple[bytes, bool]],
         root: bytes,
-        leaf_index: int
+        leaf_index: int,
     ) -> bool:
         """
         Verify Merkle authentication path with direction bits.
-        
+
         Args:
             leaf_data: Original leaf data (field elements)
             path: Authentication path with (sibling_hash, is_right) pairs
             root: Expected Merkle root
             leaf_index: Index of the leaf being verified
-            
+
         Returns:
             True if path verification succeeds, False otherwise
         """
         # Compute canonical leaf hash
         current_hash = self._leaf_bytes(leaf_data)
-        
+
         # Traverse path from leaf to root
         for sibling_hash, sibling_is_right in path:
             if sibling_is_right:
@@ -673,18 +673,18 @@ class STARKProver:
                 # Sibling is left child, current is right child
                 left_hash = sibling_hash
                 right_hash = current_hash
-            
+
             # Compute parent hash using canonical internal node hashing
             current_hash = self._internal_node_bytes(left_hash, right_hash)
-        
+
         # Final hash should match root
         verification_result = current_hash == root
-        
+
         if not verification_result:
             logger.warning(f"Merkle path verification failed for leaf {leaf_index}")
             logger.debug(f"Computed root: {current_hash.hex()}")
             logger.debug(f"Expected root: {root.hex()}")
-            
+
         return verification_result
 
     def _interpolate_polynomial(self, y_values: np.ndarray) -> np.ndarray:
@@ -826,107 +826,111 @@ class STARKProver:
     def _get_evaluation_domain(self, size: int) -> np.ndarray:
         """
         Get multiplicative evaluation domain of given size using roots of unity.
-        
+
         For Reed-Solomon and FRI protocols, we need a multiplicative subgroup
         of the field, not just consecutive integers. Uses the 2-adic structure
         of the Goldilocks field.
-        
+
         Args:
             size: Domain size (must be a power of 2)
-            
+
         Returns:
             Array of field elements forming a multiplicative subgroup
         """
         # Ensure size is a power of 2 for proper subgroup structure
         if size <= 0 or (size & (size - 1)) != 0:
             raise ValueError(f"Domain size {size} must be a positive power of 2")
-        
+
         p = self.field_size  # Goldilocks: 2^64 - 2^32 + 1
-        
+
         # For Goldilocks field, we need to find a generator of order 2^k
         # The field has a 2-adic structure: p - 1 = 2^32 * (2^32 - 1)
         # So we can have subgroups of order up to 2^32
-        
+
         max_order_log = 32  # Maximum 2-power in p-1 factorization
         domain_log = size.bit_length() - 1  # log2(size)
-        
+
         if domain_log > max_order_log:
-            raise ValueError(f"Requested domain size 2^{domain_log} too large for field (max 2^{max_order_log})")
-        
+            raise ValueError(
+                f"Requested domain size 2^{domain_log} too large for field (max 2^{max_order_log})"
+            )
+
         # Find a primitive root of unity of order 2^domain_log
         # We'll use a known generator for Goldilocks field
         primitive_root = self._get_primitive_root()
-        
+
         # Compute g = primitive_root^((p-1) / size) to get order exactly size
         exponent = (p - 1) // size
         generator = pow(primitive_root, exponent, p)
-        
+
         # Verify generator has correct order
         if pow(generator, size, p) != 1:
             raise ValueError(f"Generator {generator} does not have order {size}")
-        
+
         if size > 1 and pow(generator, size // 2, p) == 1:
             raise ValueError(f"Generator {generator} has order less than {size}")
-        
+
         # Generate the multiplicative subgroup: [1, g, g^2, ..., g^(size-1)]
         domain = np.zeros(size, dtype=int)
         current = 1
-        
+
         for i in range(size):
             domain[i] = current
             current = (current * generator) % p
-        
+
         return domain
-    
+
     def _evaluate_polynomial(self, poly: np.ndarray, domain: np.ndarray) -> np.ndarray:
         """
         Evaluate polynomial on given domain using Horner's method.
-        
+
         Args:
             poly: Polynomial coefficients (degree n-1 polynomial has n coefficients)
             domain: Domain points to evaluate on
-            
+
         Returns:
             Array of polynomial evaluations on domain points
         """
         p = self.field_size
         evaluations = np.zeros(len(domain), dtype=int)
-        
+
         for i, x in enumerate(domain):
             # Horner's method: p(x) = a_0 + x(a_1 + x(a_2 + ... + x(a_n)))
             result = 0
             for coeff in reversed(poly):
                 result = (result * int(x) + int(coeff)) % p
             evaluations[i] = result
-            
+
         return evaluations
-    
-    def _expand_polynomial(self, poly: np.ndarray, challenge: bytes, fold_factor: int) -> np.ndarray:
+
+    def _expand_polynomial(
+        self, poly: np.ndarray, challenge: bytes, fold_factor: int
+    ) -> np.ndarray:
         """
         Expand polynomial (inverse of folding operation for verification).
-        
+
         This is the inverse of _fold_polynomial - used during verification
         to check that folded polynomials were computed correctly.
-        
+
         Args:
             poly: Folded polynomial coefficients
             challenge: Folding challenge used
             fold_factor: Folding factor used
-            
+
         Returns:
             Expanded polynomial
         """
         # In a real implementation, this would reconstruct the original polynomial
         # from the folded version using the challenge. For now, we provide a
         # simplified expansion that maintains degree consistency.
-        
+
         p = self.field_size
         original_degree = len(poly) * fold_factor
         expanded = np.zeros(original_degree, dtype=object)
-        
+
         # Convert challenge to field element
-        challenge_int = int.from_bytes(challenge, 'big') % p
-        
+        challenge_int = int.from_bytes(challenge, "big") % p
+
         # Simplified expansion: distribute coefficients with challenge scaling
         for i, coeff in enumerate(poly):
             for j in range(fold_factor):
@@ -935,57 +939,57 @@ class STARKProver:
                     # Scale coefficient by powers of challenge
                     scale = pow(challenge_int, j, p)
                     expanded[idx] = (int(coeff) * scale) % p
-                    
+
         return expanded
-    
+
     def _commitments_equal(self, comm1: bytes, comm2: bytes) -> bool:
         """
         Compare two commitments for equality.
-        
+
         Args:
             comm1: First commitment
             comm2: Second commitment
-            
+
         Returns:
             True if commitments are equal
         """
         return comm1 == comm2
-    
+
     def _get_primitive_root(self) -> int:
         """
         Get a primitive root for the Goldilocks field.
-        
+
         Returns a generator of the multiplicative group F_p^*.
         For Goldilocks field 2^64 - 2^32 + 1, we use a known primitive root.
         """
         # For Goldilocks field, 7 is a known primitive root
         # This generates the full multiplicative group of order p-1
         return 7
-    
+
     def _verify_subgroup(self, domain: np.ndarray) -> bool:
         """
         Verify that the domain forms a proper multiplicative subgroup.
-        
+
         Args:
             domain: Array of field elements to verify
-            
+
         Returns:
             True if domain is a valid multiplicative subgroup
         """
         p = self.field_size
         size = len(domain)
-        
+
         # Check that all elements are distinct and non-zero
         if len(set(domain)) != size or 0 in domain:
             return False
-        
+
         # Check closure under multiplication
         domain_set = set(domain)
         for a in domain:
             for b in domain:
                 if (a * b) % p not in domain_set:
                     return False
-        
+
         # Check that it's cyclic (has a generator)
         for g in domain:
             generated = set()
@@ -995,7 +999,7 @@ class STARKProver:
                 current = (current * g) % p
             if generated == domain_set:
                 return True
-        
+
         return False
 
     def _fold_polynomial(
@@ -1024,47 +1028,47 @@ class STARKProver:
         return folded
 
     def _create_transcript_for_verification(
-        self, 
+        self,
         trace_commitment: str,
         constraint_commitment: str,
         fri_layers: list[dict[str, Any]],
         public_inputs: dict[str, Any],
-        computation_trace: np.ndarray
+        computation_trace: np.ndarray,
     ) -> FiatShamirTranscript:
         """
         Recreate transcript for verification purposes.
-        
+
         FIXED: Verifiers can recreate the same transcript to independently
         derive all challenges and verify proof consistency.
         """
         transcript = FiatShamirTranscript()
-        
+
         # Add same public parameters as prover
         transcript.append_u32("field_size", self.field_size)
         transcript.append_u32("security_bits", self.security_bits)
         transcript.append_u32("trace_rows", computation_trace.shape[0])
         transcript.append_u32("trace_cols", computation_trace.shape[1])
-        
-        # Add public inputs 
+
+        # Add public inputs
         for key, value in sorted(public_inputs.items()):
             if isinstance(value, int):
                 transcript.append_field_element(f"public_input_{key}", value % self.field_size)
             elif isinstance(value, str):
                 transcript.append_message(f"public_input_{key}", value.encode())
-        
+
         # Add commitments in order
         transcript.append_commitment("trace_commitment", trace_commitment)
         transcript.append_commitment("constraint_commitment", constraint_commitment)
-        
+
         # Add FRI layer commitments
         transcript.append_u64("initial_poly_degree", len(fri_layers))
         transcript.append_u32("fri_folding_factor", self.fri_folding_factor)
-        
+
         for layer in fri_layers:
             round_idx = layer["round"]
             commitment = layer["commitment"]
             transcript.append_commitment(f"fri_commitment_{round_idx}", commitment)
-            
+
         return transcript
 
     def _compute_fri_rounds(self) -> int:
@@ -1073,24 +1077,27 @@ class STARKProver:
         return max(5, self.security_bits // (self.fri_folding_factor * 8))
 
     def _generate_query_indices(
-        self, trace_commitment: str, constraint_commitment: str, domain_size: int | None = None
+        self,
+        trace_commitment: str,
+        constraint_commitment: str,
+        domain_size: int | None = None,
     ) -> list[int]:
         """
         Generate cryptographically secure query indices using Fiat-Shamir.
-        
-        FIXED: Replace insecure 32-bit seeded numpy.random with proper Fiat-Shamir 
+
+        FIXED: Replace insecure 32-bit seeded numpy.random with proper Fiat-Shamir
         challenge generation using SHAKE256 as an extendable output function (XOF).
-        
+
         Args:
             trace_commitment: Commitment to execution trace
-            constraint_commitment: Commitment to constraint polynomial  
+            constraint_commitment: Commitment to constraint polynomial
             domain_size: Size of evaluation domain (computed if not provided)
-        
+
         Returns:
             List of unique query indices for FRI protocol
         """
         from hashlib import shake_256
-        
+
         # Compute domain size if not provided (based on blowup factor)
         if domain_size is None:
             # Estimate based on Reed-Solomon rate and typical trace length
@@ -1100,92 +1107,92 @@ class STARKProver:
             # Round up to next power of 2
             if domain_size & (domain_size - 1) != 0:
                 domain_size = 1 << domain_size.bit_length()
-        
+
         # Create transcript for Fiat-Shamir challenge
         transcript = f"{trace_commitment}|{constraint_commitment}|{domain_size}|{self.num_queries}"
-        
+
         # Use SHAKE256 as cryptographic XOF for generating indices
         xof = shake_256(transcript.encode())
-        
+
         indices = set()
         counter = 0
-        
+
         # Generate unique indices using rejection sampling
         while len(indices) < self.num_queries:
             # Extract 8 bytes (64 bits) from XOF for sufficient entropy
             random_bytes = xof.digest(8 * (counter + 1))[-8:]
-            
+
             # Convert to integer and reduce modulo domain size
-            random_int = int.from_bytes(random_bytes, 'big')
+            random_int = int.from_bytes(random_bytes, "big")
             index = random_int % domain_size
-            
+
             indices.add(index)
             counter += 1
-            
+
             # Safety check to prevent infinite loops
             if counter > self.num_queries * 10:
                 raise ValueError(
                     f"Failed to generate {self.num_queries} unique indices "
                     f"from domain of size {domain_size} after {counter} attempts"
                 )
-        
+
         return sorted(list(indices))
-    
+
     def _generate_query_indices_from_challenge(
         self, challenge: bytes, domain_size: int
     ) -> list[int]:
         """
         Generate query indices from transcript challenge.
-        
-        FIXED: Use transcript challenge instead of separate commitments for 
+
+        FIXED: Use transcript challenge instead of separate commitments for
         cryptographically sound index generation.
-        
+
         Args:
             challenge: Challenge bytes from transcript
             domain_size: Size of evaluation domain
-            
+
         Returns:
             List of unique query indices
         """
         from hashlib import shake_256
-        
+
         # Use challenge as seed for SHAKE256 XOF
         xof = shake_256(challenge)
-        
+
         indices = set()
         counter = 0
-        
+
         # Generate unique indices using rejection sampling
         while len(indices) < self.num_queries:
             # Extract 8 bytes (64 bits) from XOF
             random_bytes = xof.digest(8 * (counter + 1))[-8:]
-            
+
             # Convert to integer and reduce modulo domain size
-            random_int = int.from_bytes(random_bytes, 'big')
+            random_int = int.from_bytes(random_bytes, "big")
             index = random_int % domain_size
-            
+
             indices.add(index)
             counter += 1
-            
+
             # Safety check to prevent infinite loops
             if counter > self.num_queries * 10:
                 raise ValueError(
                     f"Failed to generate {self.num_queries} unique indices "
                     f"from domain of size {domain_size} after {counter} attempts"
                 )
-        
+
         return sorted(list(indices))
-    
+
     def _verify_query_indices(
-        self, 
-        indices: list[int], 
+        self,
+        indices: list[int],
         trace_commitment: str,
-        constraint_commitment: str, 
-        domain_size: int
+        constraint_commitment: str,
+        domain_size: int,
     ) -> bool:
         """
         Verify that query indices were generated correctly via Fiat-Shamir.
-        
+
         This enables independent verification that indices are deterministic
         and cryptographically derived from the public transcript.
         """
@@ -1193,23 +1200,25 @@ class STARKProver:
         expected_indices = self._generate_query_indices(
             trace_commitment, constraint_commitment, domain_size
         )
-        
+
         # Check exact match
         if sorted(indices) != sorted(expected_indices):
             logger.error("Query index verification failed - indices don't match transcript")
             return False
-            
+
         # Verify all indices are in valid range
         if any(idx < 0 or idx >= domain_size for idx in indices):
             logger.error(f"Query indices out of bounds for domain size {domain_size}")
             return False
-            
+
         # Verify uniqueness (no duplicates)
         if len(set(indices)) != len(indices):
             logger.error("Duplicate query indices detected")
             return False
-            
-        logger.debug(f"Query indices verified: {len(indices)} unique indices in domain {domain_size}")
+
+        logger.debug(
+            f"Query indices verified: {len(indices)} unique indices in domain {domain_size}"
+        )
         return True
 
     def _combine_commitments(self, comm1: str, comm2: str) -> str:
@@ -1227,7 +1236,7 @@ class STARKProver:
             # Convert to Python int for arbitrary precision, then reduce modulo field_size
             result[i] = (int(result[i]) + int(p1[i])) % self.field_size
 
-        # Add coefficients from second polynomial  
+        # Add coefficients from second polynomial
         for i in range(len(p2)):
             # Convert to Python int for arbitrary precision, then reduce modulo field_size
             result[i] = (int(result[i]) + int(p2[i])) % self.field_size
@@ -1302,7 +1311,7 @@ class PostQuantumVerifier:
         Returns:
             True if proof is valid
         """
-        logger.info("Verifying STARK proof %sproof.proof_id")
+        logger.info(f"Verifying STARK proof {proof.proof_id}")
 
         try:
             # Verify proof of work
@@ -1320,14 +1329,13 @@ class PostQuantumVerifier:
                 logger.warning("Query response verification failed")
                 return False
 
-            logger.info("STARK proof %sproof.proof_id verified successfully")
+            logger.info(f"STARK proof {proof.proof_id} verified successfully")
             return True
 
-        except Exception:
-            logger.exception("Unhandled exception")
-            logger.error("STARK verification error: %se")
+        except Exception as e:
+            logger.exception("STARK verification failed with exception")
+            logger.error(f"STARK verification error: {e}")
             return False
-            raise RuntimeError("Unspecified error")
 
     def _verify_proof_of_work(self, proof: STARKProof) -> bool:
         """Verify proof of work meets threshold."""
@@ -1350,59 +1358,61 @@ class PostQuantumVerifier:
     def _verify_fri_layers(self, fri_layers: list[dict[str, Any]]) -> bool:
         """
         Verify FRI protocol execution with proper consistency checks.
-        
+
         FIXED Issue 7: Implement complete FRI verification.
-        Recomputes folds from final poly upward on sampled points and 
+        Recomputes folds from final poly upward on sampled points and
         checks Merkle openings match committed layers.
         """
         if not fri_layers:
             logger.error("No FRI layers to verify")
             return False
-            
+
         # Find final layer
         final_layer = None
         round_layers = []
-        
+
         for layer in fri_layers:
             if layer["round"] == "final":
                 final_layer = layer
             else:
                 round_layers.append(layer)
-                
+
         if final_layer is None:
             logger.error("No final FRI layer found")
             return False
-            
+
         # Sort round layers by round number
         round_layers.sort(key=lambda x: x["round"])
-        
+
         # Step 1: Verify final polynomial is low degree
         final_coeffs = final_layer["coefficients"]
         nonzero_coeffs = len([c for c in final_coeffs if c != 0])
         if nonzero_coeffs > 256:
             logger.error(f"Final polynomial has {nonzero_coeffs} nonzero coefficients (max 256)")
             return False
-            
+
         # Step 2: Verify degree reduction consistency
         prev_degree = None
         for layer in round_layers:
             current_degree = layer["polynomial_degree"]
-            
+
             if prev_degree is not None:
                 fold_factor = layer.get("fold_factor", 4)
                 expected_degree = prev_degree // fold_factor
                 if current_degree > expected_degree:
-                    logger.error(f"Round {layer['round']}: degree reduction failed "
-                               f"({current_degree} > {expected_degree})")
+                    logger.error(
+                        f"Round {layer['round']}: degree reduction failed "
+                        f"({current_degree} > {expected_degree})"
+                    )
                     return False
-                    
+
             prev_degree = current_degree
-            
+
         # Step 3: Recompute foldings from final polynomial upward
         # This verifies that the committed layers are consistent
         try:
             current_poly = np.array(final_coeffs, dtype=object)
-            
+
             # Work backwards through the rounds
             for layer in reversed(round_layers):
                 # Get round parameters
@@ -1410,28 +1420,31 @@ class PostQuantumVerifier:
                 fold_factor = layer.get("fold_factor", 4)
                 domain_size = layer["domain_size"]
                 commitment = layer["commitment"]
-                
+
                 # Expand polynomial (inverse of folding)
                 expanded_poly = self._expand_polynomial(current_poly, challenge, fold_factor)
-                
+
                 # Evaluate on domain
-                domain = np.array(layer.get("domain", self._get_evaluation_domain(domain_size).tolist()), dtype=int)
+                domain = np.array(
+                    layer.get("domain", self._get_evaluation_domain(domain_size).tolist()),
+                    dtype=int,
+                )
                 expected_evaluations = self._evaluate_polynomial(expanded_poly, domain)
-                
+
                 # Recompute commitment
                 recomputed_commitment, _ = self._commit_to_evaluations(expected_evaluations)
-                
+
                 # Verify commitments match
                 if not self._commitments_equal(commitment, recomputed_commitment):
                     logger.error(f"Round {layer['round']}: commitment verification failed")
                     return False
-                    
+
                 # Update polynomial for next round
                 current_poly = expanded_poly
-                
+
             logger.info("FRI layer verification completed successfully")
             return True
-            
+
         except Exception as e:
             logger.error(f"FRI verification error: {e}")
             return False
