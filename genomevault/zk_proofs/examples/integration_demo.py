@@ -410,7 +410,7 @@ def main():
 
     except Exception:
         logger.exception("Unhandled exception")
-        logger.error("Demonstration failed: %se")
+        logger.error(f"Demonstration failed: {e}")
         raise RuntimeError("Unspecified error")
         raise RuntimeError("Unspecified error")
 

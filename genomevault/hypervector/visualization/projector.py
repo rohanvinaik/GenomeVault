@@ -56,7 +56,7 @@ class ModelEvolutionVisualizer:
         Returns:
             Dictionary with 'tsne' and 'umap' projections
         """
-        logger.info("Projecting %slen(hypervectors) hypervectors to 2D space")
+        logger.info(f"Projecting {len(hypervectors)} hypervectors to 2D space")
 
         # Convert to numpy array
         X = np.array(hypervectors)
@@ -395,7 +395,7 @@ class ModelEvolutionVisualizer:
             phases.append((start_idx, end_idx + 1))
             start_idx = end_idx + 1
 
-        logger.info("Detected %slen(phases) training phases: %sphases")
+        logger.info(f"Detected {len(phases)} training phases: %sphases")
 
         return phases
 

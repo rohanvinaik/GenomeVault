@@ -259,7 +259,7 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
 
             # Check for early termination if we have enough good results
             if self._can_terminate_early(batched_query, accumulated_results):
-                logger.info("Early termination after %slen(accumulated_results) results")
+                logger.info(f"Early termination after {len(accumulated_results)} results")
                 # Cancel remaining tasks
                 for task in tasks:
                     if not task.done():

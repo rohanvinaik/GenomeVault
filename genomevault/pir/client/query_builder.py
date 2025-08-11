@@ -466,17 +466,17 @@ if __name__ == "__main__":
             "alt_allele": "G",
         },
     )
-    logger.info("Variant Query: %svar_query.parameters")
+    logger.info(f"Variant Query: {var_query.parameters}")
 
     # Region scan
     region_query = GenomicQuery(
         query_type=QueryType.REGION_SCAN,
         parameters={"chromosome": "chr1", "start": 100000, "end": 100500},
     )
-    logger.info("Region Query: %sregion_query.parameters")
+    logger.info(f"Region Query: {region_query.parameters}")
 
     # Gene annotation
     gene_query = GenomicQuery(
         query_type=QueryType.GENE_ANNOTATION, parameters={"gene_symbol": "BRCA1"}
     )
-    logger.info("Gene Query: %sgene_query.parameters")
+    logger.info(f"Gene Query: {gene_query.parameters}")

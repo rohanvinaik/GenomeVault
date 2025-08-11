@@ -153,7 +153,7 @@ class ProofGenerator:
 
         except Exception as e:
             logger.exception("Unhandled exception")
-            logger.error("Failed to generate ZK proof: %se")
+            logger.error(f"Failed to generate ZK proof: {e}")
             # Fall back to mock proof for compatibility
             return await self._generate_mock_proof(results, median, budget, metadata, error=str(e))
             raise RuntimeError("Unspecified error")
@@ -241,12 +241,12 @@ class ProofGenerator:
             # Verify using the circuit
             is_valid = self.median_circuit.verify_proof(median_proof)
 
-            logger.info("Verified proof %sproof_id: valid=%sis_valid")
+            logger.info(f"Verified proof {proof_id}: valid={is_valid}")
             return is_valid
 
         except Exception:
             logger.exception("Unhandled exception")
-            logger.error("Proof verification failed: %se")
+            logger.error(f"Proof verification failed: {e}")
             return False
             raise RuntimeError("Unspecified error")
 

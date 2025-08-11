@@ -90,7 +90,7 @@ class CatalyticSpace:
         current_fingerprint = self._compute_fingerprint()
 
         if current_fingerprint != self.initial_fingerprint:
-            logger.warning("Catalytic space modified: %sself.modification_count writes")
+            logger.warning(f"Catalytic space modified: {self.modification_count} writes")
             # Restore initial state (simplified)
             self.data = np.random.bytes(self.size)
 
@@ -167,7 +167,7 @@ class CatalyticProofEngine:
         Returns:
             Proof generated with catalytic space
         """
-        logger.info("Generating catalytic proof for %scircuit_name")
+        logger.info(f"Generating catalytic proof for {circuit_name}")
 
         if circuit_name not in self.catalytic_algorithms:
             raise ValueError(f"No catalytic algorithm for circuit: {circuit_name}")
@@ -531,15 +531,15 @@ if __name__ == "__main__":
         },
     )
 
-    logger.info("Proof ID: %svariant_proof.proof_id")
-    logger.info("Clean space used: %svariant_proof.clean_space_used / 1024:.1f KB")
-    logger.info("Space efficiency: %svariant_proof.space_efficiency:.1fx")
+    logger.info(f"Proof ID: {variant_proof.proof_id}")
+    logger.info(f"Clean space used: {variant_proof.clean_space_used} / 1024:.1f KB")
+    logger.info(f"Space efficiency: {variant_proof.space_efficiency:.1fx}")
 
     savings = engine.get_space_savings("variant_presence")
     logger.info("\nSpace savings:")
-    logger.info("  Standard approach: %ssavings['standard_approach_mb']:.1f MB")
-    logger.info("  Catalytic clean: %ssavings['catalytic_clean_mb']:.1f MB")
-    logger.info("  Reduction: %ssavings['clean_space_reduction']:.1f%")
+    logger.info(f"  Standard approach: {savings['standard_approach_mb']:.1f} MB")
+    logger.info(f"  Catalytic clean: {savings['catalytic_clean_mb']:.1f} MB")
+    logger.info(f"  Reduction: {savings['clean_space_reduction']:.1f}%")
 
     # Example 2: PRS calculation with weight storage
     logger.info("\n\nExample 2: Catalytic PRS Proof")
@@ -563,22 +563,22 @@ if __name__ == "__main__":
         },
     )
 
-    logger.info("Proof ID: %sprs_proof.proof_id")
-    logger.info("Clean space used: %sprs_proof.clean_space_used / 1024:.1f KB")
-    logger.info("Space efficiency: %sprs_proof.space_efficiency:.1fx")
-    logger.info("Computation time: %sprs_proof.metadata['computation_time'] * 1000:.1f ms")
+    logger.info(f"Proof ID: {prs_proof.proof_id}")
+    logger.info(f"Clean space used: {prs_proof.clean_space_used} / 1024:.1f KB")
+    logger.info(f"Space efficiency: {prs_proof.space_efficiency:.1fx}")
+    logger.info(f"Computation time: {prs_proof.metadata['computation_time']} * 1000:.1f ms")
 
     savings = engine.get_space_savings("polygenic_risk_score")
     logger.info("\nSpace savings:")
-    logger.info("  Standard approach: %ssavings['standard_approach_mb']:.1f MB")
-    logger.info("  Catalytic clean: %ssavings['catalytic_clean_mb']:.1f MB")
-    logger.info("  Reduction: %ssavings['clean_space_reduction']:.1f%")
+    logger.info(f"  Standard approach: {savings['standard_approach_mb']:.1f} MB")
+    logger.info(f"  Catalytic clean: {savings['catalytic_clean_mb']:.1f} MB")
+    logger.info(f"  Reduction: {savings['clean_space_reduction']:.1f}%")
 
     # Show catalytic space statistics
     logger.info("\nCatalytic space statistics:")
     stats = engine.catalytic_space.get_usage_stats()
-    logger.info("  Total size: %sstats['size'] / 1024 / 1024:.1f MB")
-    logger.info("  Access count: %sstats['access_count']")
+    logger.info(f"  Total size: {stats['size']} / 1024 / 1024:.1f MB")
+    logger.info(f"  Access count: {stats['access_count']}")
     logger.info(
         "  State preserved: %sstats['fingerprint'] == engine.catalytic_space.initial_fingerprint"
     )

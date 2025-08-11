@@ -351,7 +351,7 @@ class BiologicalSignalDetector:
         # Train anomaly detector
         if X:
             self.anomaly_detector.fit(X)
-            logger.info("Trained on %slen(X) modification examples")
+            logger.info(f"Trained on {len(X)} modification examples")
 
     def export_signal_track(
         self,
@@ -447,11 +447,11 @@ def example_signal_detection():
         genomic_positions=np.arange(n_positions) * 100,  # Assume 100bp spacing
     )
 
-    logger.info("Detected %slen(signals) biological signals:")
+    logger.info(f"Detected {len(signals)} biological signals:")
     for signal in signals:
         logger.info(
-            "  %ssignal.signal_type.value at position %ssignal.genomic_position "
-            "(confidence: %ssignal.confidence:.2f)"
+            f"  {signal.signal_type.value} at position {signal.genomic_position} "
+            f"(confidence: {signal.confidence:.2f})"
         )
 
     # Export as track

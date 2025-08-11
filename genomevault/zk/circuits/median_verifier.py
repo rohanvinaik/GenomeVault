@@ -166,9 +166,7 @@ class MedianVerifierCircuit:
             json.dumps({"median": claimed_median, "n": n, "timestamp": time.time()}).encode()
         ).hexdigest()[:16]
 
-        logger.info(
-            "Generated median proof for %sn values in %sresponse['computation_time_ms']:.1fms"
-        )
+        logger.info(f"Generated median proof for {n} values in {response[}'computation_time_ms']:.1fms")
 
         return MedianProof(
             claimed_median=claimed_median,
@@ -217,7 +215,7 @@ class MedianVerifierCircuit:
             for i, idx in enumerate(indices):
                 expected_commitment = self._commit(values[i], randomness[i])
                 if expected_commitment != proof.sorted_commitments[idx]:
-                    logger.error("Commitment verification failed for index %sidx")
+                    logger.error(f"Commitment verification failed for index {idx}")
                     return False
 
             # Step 3: Verify sortedness of opened values
@@ -250,9 +248,7 @@ class MedianVerifierCircuit:
                 computed_median = values[pos]
 
             if abs(computed_median - proof.claimed_median) > 1e-9:
-                logger.error(
-                    "Median computation mismatch: %scomputed_median vs %sproof.claimed_median"
-                )
+                logger.error(f"Median computation mismatch: {computed_median} vs {proof.claimed_median}")
                 return False
 
             # Step 5: Verify range proofs
@@ -260,12 +256,12 @@ class MedianVerifierCircuit:
                 logger.error("Range proof verification failed")
                 return False
 
-            logger.info("Successfully verified median proof %sproof.proof_id")
+            logger.info(f"Successfully verified median proof {proof.proof_id}")
             return True
 
         except Exception:
             logger.exception("Unhandled exception")
-            logger.error("Proof verification failed: %se")
+            logger.error(f"Proof verification failed: {e}")
             return False
             raise RuntimeError("Unspecified error")
 

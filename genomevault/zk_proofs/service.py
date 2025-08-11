@@ -98,7 +98,7 @@ class ZKProofService:
 
     async def generate_proof(self, request: ProofRequest) -> ProofResponse:
         """Generate a ZK proof based on the request."""
-        logger.info("Generating %srequest.proof_type proof")
+        logger.info(f"Generating {request.proof_type} proof")
 
         if request.proof_type not in self.provers:
             raise ValueError(f"Unknown proof type: {request.proof_type}")
@@ -134,7 +134,7 @@ class ZKProofService:
         verifier_id: str | None = None,
     ) -> VerificationResult:
         """Verify a ZK proof."""
-        logger.info("Verifying proof%sf' for %sverifier_id' if verifier_id else ''")
+        logger.info(f"Verifying proof{f'} for %sverifier_id' if verifier_id else ''")
 
         # Determine proof type from verification key
         proof_type = self._get_proof_type_from_key(verification_key)
@@ -230,7 +230,7 @@ class ZKProofService:
     async def aggregate_proofs(self, proofs: list[ProofResponse]) -> Any:
         """Aggregate multiple proofs (placeholder for future implementation)."""
         # This would implement proof aggregation/batching
-        logger.info("Aggregating %slen(proofs) proofs")
+        logger.info(f"Aggregating {len(proofs)} proofs")
 
         # For now, return a simple aggregation result
         return {

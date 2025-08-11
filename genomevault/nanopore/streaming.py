@@ -251,7 +251,7 @@ class NanoporeStreamProcessor:
         Returns:
             Processing statistics
         """
-        logger.info("Processing Fast5: %sfast5_path")
+        logger.info(f"Processing Fast5: {fast5_path}")
 
         start_time = time.time()
 
