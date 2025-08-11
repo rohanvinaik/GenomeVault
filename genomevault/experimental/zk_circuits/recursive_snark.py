@@ -67,8 +67,8 @@ class RecursiveSNARKProver:
         # Initialize ZK backend
         self.backend = get_backend(use_real=use_real_backend)
 
-        logger.info("RecursiveSNARKProver initialized with max depth %smax_recursion_depth")
-        logger.info("Using %s'real gnark' if use_real_backend else 'simulated' backend")
+        logger.info(f"RecursiveSNARKProver initialized with max depth {max_recursion_depth}")
+        logger.info(f"Using {'real gnark' if use_real_backend else 'simulated'} backend")
 
     def _initialize_accumulator(self) -> dict[str, Any]:
         """Initialize cryptographic accumulator for proof aggregation."""
@@ -116,7 +116,7 @@ class RecursiveSNARKProver:
         Compose proofs using balanced binary tree structure.
         Achieves O(log n) verification depth.
         """
-        logger.info("Composing %slen(proofs) proofs using balanced tree strategy")
+        logger.info(f"Composing {len(proofs)} proofs using balanced tree strategy")
 
         # Build tree bottom-up
         current_level = proofs
@@ -169,7 +169,7 @@ class RecursiveSNARKProver:
         Compose proofs using cryptographic accumulator.
         Achieves O(1) verification time.
         """
-        logger.info("Composing %slen(proofs) proofs using accumulator strategy")
+        logger.info(f"Composing {len(proofs)} proofs using accumulator strategy")
 
         # Update accumulator with each proof
         acc_value = self.accumulator_state["accumulator_value"]
@@ -210,7 +210,7 @@ class RecursiveSNARKProver:
 
     def _sequential_composition(self, proofs: list[Proof]) -> RecursiveProof:
         """Simple sequential proof composition (for comparison/testing)."""
-        logger.info("Composing %slen(proofs) proofs using sequential strategy")
+        logger.info(f"Composing {len(proofs)} proofs using sequential strategy")
 
         # Start with first proof
         current = proofs[0]
@@ -330,15 +330,74 @@ class RecursiveSNARKProver:
                 ).hexdigest(),
             }
 
-            # Optimize proof size using compression
-            proof_data = json.dumps(proof_components).encode()
+            # FIXED: Never truncate proofs - use proper compression instead
+            # Truncating JSON to 384 bytes corrupts the data structure completely.
+            # Use deterministic serialization and compression for size optimization.
+            
+            import zlib
+            
+            # Serialize deterministically with sorted keys
+            proof_json = json.dumps(proof_components, sort_keys=True, separators=(',', ':'))
+            proof_data = proof_json.encode('utf-8')
+            
+            # Compress using zlib for size reduction without data loss
+            compressed_proof = zlib.compress(proof_data, level=9)
+            
+            # Add a header to indicate compressed format
+            # Format: b'CPROOF' (6 bytes) + 4-byte original size + compressed data
+            original_size = len(proof_data).to_bytes(4, 'big')
+            compressed_with_header = b'CPROOF' + original_size + compressed_proof
+            
+            logger.debug(
+                f"Proof compression: {len(proof_data)} bytes → "
+                f"{len(compressed_with_header)} bytes "
+                f"({100 * len(compressed_with_header) / len(proof_data):.1f}%)"
+            )
+            
+            return compressed_with_header
 
-            # Target size: ~384 bytes for recursive proofs
-            if len(proof_data) > 384:
-                proof_data = proof_data[:384]
-
-            return proof_data
-
+    def _decompress_proof_data(self, compressed_data: bytes) -> dict[str, Any]:
+        """
+        Decompress proof data that was compressed in _generate_recursive_proof.
+        
+        FIXED: Added decompression support for the new compressed proof format.
+        Handles both compressed (with CPROOF header) and uncompressed formats.
+        """
+        import zlib
+        
+        # Check for compressed format header
+        if compressed_data.startswith(b'CPROOF'):
+            # Extract original size and compressed data
+            original_size = int.from_bytes(compressed_data[6:10], 'big')
+            compressed_proof = compressed_data[10:]
+            
+            # Decompress
+            try:
+                decompressed = zlib.decompress(compressed_proof)
+                
+                # Verify size matches
+                if len(decompressed) != original_size:
+                    logger.warning(
+                        f"Decompressed size mismatch: expected {original_size}, "
+                        f"got {len(decompressed)}"
+                    )
+                
+                # Parse JSON
+                return json.loads(decompressed.decode('utf-8'))
+                
+            except (zlib.error, json.JSONDecodeError) as e:
+                logger.error(f"Failed to decompress/parse proof: {e}")
+                # Return empty dict or raise based on requirements
+                return {}
+        else:
+            # Try to parse as uncompressed JSON (backward compatibility)
+            try:
+                return json.loads(compressed_data.decode('utf-8'))
+            except (json.JSONDecodeError, UnicodeDecodeError):
+                # If it's not JSON, might be raw binary proof
+                logger.debug("Proof data is not compressed JSON, treating as raw binary")
+                return {"raw_proof": compressed_data.hex()}
+    
     def _accumulator_add(self, acc_value: bytes, proof: Proof) -> tuple[bytes, bytes]:
         """Add proof to cryptographic accumulator."""
         # Hash proof into accumulator
@@ -371,7 +430,12 @@ class RecursiveSNARKProver:
             "timestamp": time.time(),
         }
 
-        return json.dumps(proof_components).encode()[:512]
+        # FIXED: Never truncate proof data - use compression instead
+        import zlib
+        proof_json = json.dumps(proof_components, sort_keys=True, separators=(',', ':'))
+        proof_data = proof_json.encode('utf-8')
+        compressed = zlib.compress(proof_data, level=9)
+        return b'CPROOF' + len(proof_data).to_bytes(4, 'big') + compressed
 
     def _aggregate_public_inputs(self, proofs: list[Proof]) -> dict[str, Any]:
         """Aggregate public inputs from multiple proofs."""
@@ -468,8 +532,8 @@ class RecursiveSNARKProver:
             True if proof is valid
         """
         logger.info(
-            "Verifying recursive proof %srecursive_proof.proof_id "
-            "aggregating %srecursive_proof.proof_count proofs"
+            f"Verifying recursive proof {recursive_proof.proof_id} "
+            f"aggregating {recursive_proof.proof_count} proofs"
         )
 
         if self.use_real_backend:
@@ -527,26 +591,26 @@ if __name__ == "__main__":
         )
         proofs.append(proof)
 
-    logger.info("Generated %slen(proofs) base proofs")
+    logger.info(f"Generated {len(proofs)} base proofs")
 
     # Test different aggregation strategies
     strategies = ["balanced_tree", "accumulator", "sequential"]
 
     for strategy in strategies:
-        logger.info("\nTesting %sstrategy aggregation:")
+        logger.info(f"\nTesting {strategy} aggregation:")
 
         start_time = time.time()
         recursive_proof = recursive_prover.compose_proofs(proofs, strategy)
         composition_time = time.time() - start_time
 
-        logger.info("  Composition time: %scomposition_time * 1000:.1fms")
-        logger.info("  Proof size: %slen(recursive_proof.aggregation_proof) bytes")
-        logger.info("  Verification complexity: %srecursive_proof.verification_complexity")
+        logger.info(f"  Composition time: {composition_time * 1000:.1f}ms")
+        logger.info(f"  Proof size: {len(recursive_proof.aggregation_proof)} bytes")
+        logger.info(f"  Verification complexity: {recursive_proof.verification_complexity}")
 
         # Verify the recursive proof
         start_time = time.time()
         valid = recursive_prover.verify_recursive_proof(recursive_proof)
         verification_time = time.time() - start_time
 
-        logger.info("  Verification time: %sverification_time * 1000:.1fms")
-        logger.info("  Valid: %svalid")
+        logger.info(f"  Verification time: {verification_time * 1000:.1f}ms")
+        logger.info(f"  Valid: {valid}")
