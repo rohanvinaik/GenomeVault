@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import numpy as np
+from numpy.typing import NDArray
 
 
 class PlattCalibrator:
@@ -23,10 +24,10 @@ class PlattCalibrator:
         self.reg = float(reg)
 
     @staticmethod
-    def _sigmoid(z: np.ndarray) -> np.ndarray:
+    def _sigmoid(z: NDArray[np.float64]) -> NDArray[np.float64]:
         return 1.0 / (1.0 + np.exp(-z))
 
-    def fit(self, y_true: np.ndarray, y_score: np.ndarray) -> PlattCalibrator:
+    def fit(self, y_true: NDArray[np.float64], y_score: NDArray[np.float64]) -> PlattCalibrator:
         """Fit.
 
         Args:
@@ -56,7 +57,7 @@ class PlattCalibrator:
         self.intercept_, self.coef_ = float(w[0]), float(w[1])
         return self
 
-    def predict_proba(self, y_score: np.ndarray) -> np.ndarray:
+    def predict_proba(self, y_score: NDArray[np.float64]) -> NDArray[np.float64]:
         """Predict proba.
 
         Args:
@@ -76,10 +77,10 @@ class IsotonicCalibrator:
 
     def __init__(self):
         """Initialize instance."""
-        self.x_: np.ndarray | None = None  # breakpoints (sorted scores)
-        self.y_: np.ndarray | None = None  # fitted (piecewise-constant) probabilities
+        self.x_: NDArray[np.float64] | None = None  # breakpoints (sorted scores)
+        self.y_: NDArray[np.float64] | None = None  # fitted (piecewise-constant) probabilities
 
-    def fit(self, y_true: np.ndarray, y_score: np.ndarray) -> IsotonicCalibrator:
+    def fit(self, y_true: NDArray[np.float64], y_score: NDArray[np.float64]) -> IsotonicCalibrator:
         """Fit.
 
         Args:
@@ -122,7 +123,7 @@ class IsotonicCalibrator:
         self.y_ = g
         return self
 
-    def predict_proba(self, y_score: np.ndarray) -> np.ndarray:
+    def predict_proba(self, y_score: NDArray[np.float64]) -> NDArray[np.float64]:
         """Predict proba.
 
         Args:
@@ -140,8 +141,8 @@ class IsotonicCalibrator:
 
 
 def fit_and_calibrate(
-    y_true: np.ndarray, y_score: np.ndarray, method: str = "platt"
-) -> tuple[np.ndarray, object]:
+    y_true: NDArray[np.float64], y_score: NDArray[np.float64], method: str = "platt"
+) -> tuple[NDArray[np.float64], object]:
     """Fit and calibrate.
 
     Args:
