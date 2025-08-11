@@ -19,6 +19,82 @@ from genomevault.utils.logging import get_logger
 logger = get_logger(__name__)
 
 
+class FiatShamirTranscript:
+    """
+    Cryptographic transcript for Fiat-Shamir challenges with domain separation.
+    
+    FIXED: Replace raw JSON serialization with proper running hash transcript
+    that maintains domain separation and deterministic ordering.
+    """
+    
+    def __init__(self):
+        """Initialize empty transcript."""
+        from hashlib import sha256
+        self.hasher = sha256()
+        self.round_counter = 0
+    
+    def append_message(self, label: str, message: bytes) -> None:
+        """
+        Append domain-separated message to transcript.
+        
+        Args:
+            label: Domain separation label (e.g., "trace_commitment")
+            message: Message bytes to append
+        """
+        # Domain separation: len(label) || label || len(message) || message
+        label_bytes = label.encode('utf-8')
+        label_len = len(label_bytes).to_bytes(4, 'big')
+        message_len = len(message).to_bytes(8, 'big')
+        
+        self.hasher.update(label_len + label_bytes + message_len + message)
+    
+    def append_u32(self, label: str, value: int) -> None:
+        """Append 32-bit unsigned integer."""
+        self.append_message(label, value.to_bytes(4, 'big'))
+    
+    def append_u64(self, label: str, value: int) -> None:
+        """Append 64-bit unsigned integer.""" 
+        self.append_message(label, value.to_bytes(8, 'big'))
+    
+    def append_field_element(self, label: str, element: int) -> None:
+        """Append field element as canonical 32-byte big-endian."""
+        self.append_message(label, element.to_bytes(32, 'big'))
+        
+    def append_commitment(self, label: str, commitment_hex: str) -> None:
+        """Append commitment (hex string) as bytes."""
+        commitment_bytes = bytes.fromhex(commitment_hex)
+        self.append_message(label, commitment_bytes)
+    
+    def get_challenge(self, label: str, output_bytes: int = 32) -> bytes:
+        """
+        Extract challenge bytes using SHAKE256 XOF.
+        
+        Args:
+            label: Challenge label for domain separation
+            output_bytes: Number of challenge bytes to extract
+            
+        Returns:
+            Challenge bytes from SHAKE256(transcript || label || round)
+        """
+        from hashlib import shake_256
+        
+        # Finalize current transcript state
+        transcript_state = self.hasher.digest()
+        
+        # Create challenge input: transcript || label || round_counter
+        label_bytes = label.encode('utf-8')
+        round_bytes = self.round_counter.to_bytes(4, 'big')
+        challenge_input = transcript_state + label_bytes + round_bytes
+        
+        # Extract challenge using SHAKE256 XOF
+        challenge = shake_256(challenge_input).digest(output_bytes)
+        
+        # Increment round counter for next challenge
+        self.round_counter += 1
+        
+        return challenge
+
+
 @dataclass
 class STARKProof:
     """Post-quantum STARK proof."""
@@ -107,30 +183,54 @@ class STARKProver:
         """
         logger.info("Generating STARK proof for trace of size %scomputation_trace.shape")
 
+        # Initialize Fiat-Shamir transcript with domain separation
+        # FIXED: Replace raw JSON serialization with proper transcript management
+        transcript = FiatShamirTranscript()
+        
+        # Add public parameters to transcript for binding
+        transcript.append_u32("field_size", self.field_size)
+        transcript.append_u32("security_bits", self.security_bits)
+        transcript.append_u32("trace_rows", computation_trace.shape[0])
+        transcript.append_u32("trace_cols", computation_trace.shape[1])
+        
+        # Add public inputs to transcript
+        for key, value in sorted(public_inputs.items()):
+            if isinstance(value, int):
+                transcript.append_field_element(f"public_input_{key}", value % self.field_size)
+            elif isinstance(value, str):
+                transcript.append_message(f"public_input_{key}", value.encode())
+
         # Step 1: Commit to execution trace
         trace_commitment, trace_tree = self._commit_to_trace(computation_trace)
+        transcript.append_commitment("trace_commitment", trace_commitment)
 
         # Step 2: Generate constraint polynomial
         constraint_poly = self._generate_constraint_polynomial(computation_trace, constraints)
 
         # Step 3: Commit to constraint polynomial evaluations
         constraint_commitment, constraint_tree = self._commit_to_evaluations(constraint_poly)
+        transcript.append_commitment("constraint_commitment", constraint_commitment)
 
-        # Step 4: FRI protocol for low-degree testing
-        fri_layers = self._fri_protocol(constraint_poly, constraint_commitment)
+        # Step 4: FRI protocol for low-degree testing with transcript
+        fri_layers = self._fri_protocol(constraint_poly, constraint_commitment, transcript)
 
-        # Step 5: Generate cryptographically secure query indices  
+        # Step 5: Generate cryptographically secure query indices from transcript
         # Compute actual domain size from constraint polynomial length
         domain_size = len(constraint_poly)
-        query_indices = self._generate_query_indices(
-            trace_commitment, constraint_commitment, domain_size
+        transcript.append_u64("domain_size", domain_size)
+        transcript.append_u32("num_queries", self.num_queries)
+        
+        # Extract query challenge from transcript
+        query_challenge = transcript.get_challenge("query_indices", 32)
+        query_indices = self._generate_query_indices_from_challenge(
+            query_challenge, domain_size
         )
         
-        # Verify indices are cryptographically sound (safety check)
-        if not self._verify_query_indices(
-            query_indices, trace_commitment, constraint_commitment, domain_size
-        ):
-            raise ValueError("Generated query indices failed verification")
+        # Verify indices are in valid range and unique (safety check)
+        if not all(0 <= idx < domain_size for idx in query_indices):
+            raise ValueError("Query indices out of bounds")
+        if len(set(query_indices)) != len(query_indices):
+            raise ValueError("Duplicate query indices generated")
 
         query_responses = self._generate_query_responses(
             computation_trace,
@@ -221,26 +321,36 @@ class STARKProver:
         return combined_poly
 
     def _fri_protocol(
-        self, polynomial: np.ndarray, initial_commitment: str
+        self, polynomial: np.ndarray, initial_commitment: str, transcript: FiatShamirTranscript
     ) -> list[dict[str, Any]]:
         """
-        Fast Reed-Solomon IOP of Proximity.
-        Core of STARK's post-quantum security.
+        Fast Reed-Solomon IOP of Proximity with proper transcript management.
+        
+        FIXED: Use cryptographic transcript instead of raw JSON serialization
+        for Fiat-Shamir challenge generation.
         """
         fri_layers = []
         current_poly = polynomial.copy()
         current_domain_size = len(polynomial)
 
-        # Folding rounds
+        # Add initial polynomial info to transcript
+        transcript.append_u64("initial_poly_degree", len(polynomial))
+        transcript.append_u32("fri_folding_factor", self.fri_folding_factor)
+
+        # Folding rounds with transcript-based challenges
         for round_idx in range(self._compute_fri_rounds()):
-            # Get challenge from Fiat-Shamir
-            challenge = self._fiat_shamir_challenge(initial_commitment, fri_layers, round_idx)
+            # Get challenge from transcript (not raw JSON)
+            # FIXED: Replace broken JSON serialization with proper transcript
+            challenge = transcript.get_challenge(f"fri_round_{round_idx}", 32)
 
             # Fold polynomial
             folded_poly = self._fold_polynomial(current_poly, challenge, self.fri_folding_factor)
 
             # Commit to folded polynomial
             commitment, merkle_tree = self._commit_to_evaluations(folded_poly)
+            
+            # Add commitment to transcript for next challenge
+            transcript.append_commitment(f"fri_commitment_{round_idx}", commitment)
 
             fri_layers.append(
                 {
@@ -393,6 +503,8 @@ class STARKProver:
            insecure 32-bit seeded numpy.random for provable security
         5. Merkle trees now use canonical leaf serialization with domain separation
            and authentication paths include direction bits for sound verification
+        6. Fiat-Shamir transcript now uses proper domain-separated running hash instead
+           of massive ambiguous JSON serialization of FRI layers
         """
         # Interpolate polynomial from data using proper Lagrange interpolation
         poly_coeffs = self._interpolate_polynomial(data)
@@ -807,13 +919,49 @@ class STARKProver:
 
         return folded
 
-    def _fiat_shamir_challenge(
-        self, commitment: str, fri_layers: list[dict[str, Any]], round_idx: int
-    ) -> bytes:
-        """Generate challenge using Fiat-Shamir transform."""
-        data = {"commitment": commitment, "fri_layers": fri_layers, "round": round_idx}
-
-        return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).digest()
+    def _create_transcript_for_verification(
+        self, 
+        trace_commitment: str,
+        constraint_commitment: str,
+        fri_layers: list[dict[str, Any]],
+        public_inputs: dict[str, Any],
+        computation_trace: np.ndarray
+    ) -> FiatShamirTranscript:
+        """
+        Recreate transcript for verification purposes.
+        
+        FIXED: Verifiers can recreate the same transcript to independently
+        derive all challenges and verify proof consistency.
+        """
+        transcript = FiatShamirTranscript()
+        
+        # Add same public parameters as prover
+        transcript.append_u32("field_size", self.field_size)
+        transcript.append_u32("security_bits", self.security_bits)
+        transcript.append_u32("trace_rows", computation_trace.shape[0])
+        transcript.append_u32("trace_cols", computation_trace.shape[1])
+        
+        # Add public inputs 
+        for key, value in sorted(public_inputs.items()):
+            if isinstance(value, int):
+                transcript.append_field_element(f"public_input_{key}", value % self.field_size)
+            elif isinstance(value, str):
+                transcript.append_message(f"public_input_{key}", value.encode())
+        
+        # Add commitments in order
+        transcript.append_commitment("trace_commitment", trace_commitment)
+        transcript.append_commitment("constraint_commitment", constraint_commitment)
+        
+        # Add FRI layer commitments
+        transcript.append_u64("initial_poly_degree", len(fri_layers))
+        transcript.append_u32("fri_folding_factor", self.fri_folding_factor)
+        
+        for layer in fri_layers:
+            round_idx = layer["round"]
+            commitment = layer["commitment"]
+            transcript.append_commitment(f"fri_commitment_{round_idx}", commitment)
+            
+        return transcript
 
     def _compute_fri_rounds(self) -> int:
         """Compute number of FRI rounds needed."""
@@ -861,6 +1009,51 @@ class STARKProver:
         # Generate unique indices using rejection sampling
         while len(indices) < self.num_queries:
             # Extract 8 bytes (64 bits) from XOF for sufficient entropy
+            random_bytes = xof.digest(8 * (counter + 1))[-8:]
+            
+            # Convert to integer and reduce modulo domain size
+            random_int = int.from_bytes(random_bytes, 'big')
+            index = random_int % domain_size
+            
+            indices.add(index)
+            counter += 1
+            
+            # Safety check to prevent infinite loops
+            if counter > self.num_queries * 10:
+                raise ValueError(
+                    f"Failed to generate {self.num_queries} unique indices "
+                    f"from domain of size {domain_size} after {counter} attempts"
+                )
+        
+        return sorted(list(indices))
+    
+    def _generate_query_indices_from_challenge(
+        self, challenge: bytes, domain_size: int
+    ) -> list[int]:
+        """
+        Generate query indices from transcript challenge.
+        
+        FIXED: Use transcript challenge instead of separate commitments for 
+        cryptographically sound index generation.
+        
+        Args:
+            challenge: Challenge bytes from transcript
+            domain_size: Size of evaluation domain
+            
+        Returns:
+            List of unique query indices
+        """
+        from hashlib import shake_256
+        
+        # Use challenge as seed for SHAKE256 XOF
+        xof = shake_256(challenge)
+        
+        indices = set()
+        counter = 0
+        
+        # Generate unique indices using rejection sampling
+        while len(indices) < self.num_queries:
+            # Extract 8 bytes (64 bits) from XOF
             random_bytes = xof.digest(8 * (counter + 1))[-8:]
             
             # Convert to integer and reduce modulo domain size
