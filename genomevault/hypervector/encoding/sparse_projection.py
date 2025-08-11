@@ -4,6 +4,8 @@ from __future__ import annotations
 import numpy as np
 import torch
 
+from genomevault.hypervector.types import MatrixF32
+
 
 def sparse_random_matrix(rows: int, cols: int, sparsity: float = 0.1) -> torch.Tensor:
     """Achlioptas sparse projection in {-1,0,+1}, scaled."""
@@ -44,7 +46,7 @@ class SparseRandomProjection:
         self._matrix = sparse_random_matrix(self.n_components, n_features, self.density)
         return self
 
-    def transform(self, X: np.ndarray) -> np.ndarray:
+    def transform(self, X: MatrixF32) -> MatrixF32:
         """Transform.
 
         Args:

@@ -10,6 +10,7 @@ from typing import Literal, Union
 import numpy as np
 
 from genomevault.core.exceptions import HypervectorError, ProjectionError
+from genomevault.hypervector.types import VectorF32, MatrixF32
 from genomevault.hypervector.encoding.orthogonal_projection import OrthogonalProjection
 from genomevault.hypervector.encoding.sparse_projection import SparseRandomProjection
 from genomevault.hypervector.operations.binding import (
@@ -116,8 +117,8 @@ class UnifiedHypervectorEncoder:
         return self
 
     def encode_genomic_features(
-        self, features: np.ndarray, feature_names: list[str] | None = None
-    ) -> np.ndarray:
+        self, features: MatrixF32, feature_names: list[str] | None = None
+    ) -> MatrixF32:
         """
         Encode genomic features into hypervector space.
 
@@ -148,7 +149,7 @@ class UnifiedHypervectorEncoder:
         ref: str,
         alt: str,
         variant_type: str = "SNP",
-    ) -> np.ndarray:
+    ) -> VectorF32:
         """
         Encode a single genomic variant.
 
@@ -214,7 +215,7 @@ class UnifiedHypervectorEncoder:
         vec = rng.standard_normal(self.dimension)
         return vec / np.linalg.norm(vec)
 
-    def encode_sequence(self, sequence: str) -> np.ndarray:
+    def encode_sequence(self, sequence: str) -> VectorF32:
         """
         Encode a DNA sequence into a hypervector.
 
@@ -343,6 +344,4 @@ def create_encoder(
     Returns:
         Configured encoder instance
     """
-    return UnifiedHypervectorEncoder(
-        dimension=dimension, projection_type=projection_type, **kwargs
-    )
+    return UnifiedHypervectorEncoder(dimension=dimension, projection_type=projection_type, **kwargs)
