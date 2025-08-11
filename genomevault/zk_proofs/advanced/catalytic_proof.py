@@ -55,7 +55,6 @@ class CatalyticSpace:
         """
         self.size = size
         # FIXED: Use bytearray for mutable buffer and cryptographically secure randomness
-        import os
 
         # Initialize with secure random data
         initial_data = os.urandom(size)
@@ -317,7 +316,6 @@ class CatalyticProofEngine:
 
         # Use catalytic space for Merkle path verification
         path_cache_offset = 0
-        sibling_size = 32 * len(merkle_siblings)
 
         # Store Merkle siblings in catalytic space
         for i, node in enumerate(merkle_siblings):
@@ -439,12 +437,14 @@ class CatalyticProofEngine:
         # Add differential privacy noise (NON-CRYPTOGRAPHIC - for statistical privacy only)
         # This noise is explicitly NOT part of the proof commitment and uses non-crypto RNG
         dp_epsilon = public_inputs.get("differential_privacy_epsilon", 1.0)
-        
+
         # Create a deterministic but non-cryptographic RNG for DP noise
         # Using circuit_name and public inputs to make it reproducible but not secret
-        dp_seed = hash(("dp_noise", "polygenic_risk_score", str(sorted(public_inputs.items())))) % (2**32)
+        dp_seed = hash(("dp_noise", "polygenic_risk_score", str(sorted(public_inputs.items())))) % (
+            2**32
+        )
         dp_rng = np.random.RandomState(dp_seed)
-        
+
         # Generate Laplace noise for differential privacy (statistical only, not cryptographic)
         noise = dp_rng.laplace(0, 1 / dp_epsilon)
         final_score = score_accumulator + noise
@@ -650,14 +650,26 @@ class CatalyticProofEngine:
 
     def _generate_proof_id(self, circuit_name: str, public_inputs: dict[str, Any]) -> str:
         """Generate unique proof ID."""
-        data = {
-            "circuit": circuit_name,
-            "public": public_inputs,
-            "timestamp": time.time(),
-            "nonce": os.urandom(8).hex(),
-        }
+        # Use canonical serialization for proof ID
+        from genomevault.crypto import (
+            hexH,
+            TAGS,
+            pack_proof_components,
+            be_int,
+            secure_bytes,
+        )
 
-        return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[:16]
+        components = {
+            "circuit": circuit_name.encode(),
+            "timestamp": be_int(int(time.time()), 8),
+            "nonce": secure_bytes(8),
+        }
+        # Add first few public inputs for uniqueness
+        for i, (k, v) in enumerate(list(public_inputs.items())[:5]):
+            components[f"input_{i}"] = f"{k}:{v}".encode()
+
+        packed = pack_proof_components(components)
+        return hexH(TAGS["PROOF_ID"], packed)[:16]
 
     def get_space_savings(self, circuit_name: str) -> dict[str, Any]:
         """

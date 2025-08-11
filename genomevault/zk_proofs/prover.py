@@ -12,7 +12,15 @@ import time
 from dataclasses import dataclass
 from typing import Any
 
-
+from genomevault.crypto import (
+    H,
+    hexH,
+    TAGS,
+    pack_proof_components,
+    be_int,
+    compress_proof,
+    secure_bytes,
+)
 from genomevault.core.config import get_config
 from genomevault.utils.logging import get_logger
 
@@ -371,15 +379,18 @@ class Prover:
 
     def _generate_proof_id(self, circuit_name: str, public_inputs: dict) -> str:
         """Generate unique proof ID."""
-        data = {
-            "circuit": circuit_name,
-            "public_inputs": public_inputs,
-            "timestamp": time.time(),
-            "nonce": os.urandom(16).hex(),
+        # Use canonical commitment and secure randomness
+        components = {
+            "circuit": circuit_name.encode(),
+            "timestamp": be_int(int(time.time()), 8),
+            "nonce": secure_bytes(16),
         }
+        # Add first few public inputs for uniqueness
+        for i, (k, v) in enumerate(list(public_inputs.items())[:5]):
+            components[f"input_{i}"] = f"{k}:{v}".encode()
 
-        data_str = json.dumps(data, sort_keys=True)
-        return hashlib.sha256(data_str.encode()).hexdigest()[:16]
+        packed = pack_proof_components(components)
+        return hexH(TAGS["PROOF_ID"], packed)[:16]
 
     def _simulate_proof_generation(
         self, circuit: Circuit, public_inputs: dict, private_inputs: dict
@@ -412,15 +423,15 @@ class Prover:
 
         # Generate mock proof (192 bytes)
         # FIXED: Use cryptographically secure randomness
-        import os
-
-        proof_data = {
-            "pi_a": os.urandom(48).hex(),
-            "pi_b": os.urandom(96).hex(),
-            "pi_c": os.urandom(48).hex(),
+        proof_components = {
+            "pi_a": secure_bytes(48),
+            "pi_b": secure_bytes(96),
+            "pi_c": secure_bytes(48),
         }
 
-        return json.dumps(proof_data).encode()[:192]
+        # Use canonical serialization and compression (no truncation!)
+        packed = pack_proof_components(proof_components)
+        return compress_proof(packed)
 
     def _simulate_prs_proof(self, public_inputs: dict, private_inputs: dict) -> bytes:
         """Simulate PRS calculation proof."""
@@ -435,18 +446,20 @@ class Prover:
         if not (score_range["min"] <= score <= score_range["max"]):
             raise ValueError("Score out of range")
 
-        # Generate mock proof (384 bytes)
-        # FIXED: Use cryptographically secure randomness
-        import os
-
-        proof_data = {
-            "pi_a": os.urandom(48).hex(),
-            "pi_b": os.urandom(96).hex(),
-            "pi_c": os.urandom(48).hex(),
-            "commitments": [os.urandom(48).hex() for _ in range(4)],
+        # Generate mock proof
+        proof_components = {
+            "pi_a": secure_bytes(48),
+            "pi_b": secure_bytes(96),
+            "pi_c": secure_bytes(48),
+            "commitment_0": secure_bytes(48),
+            "commitment_1": secure_bytes(48),
+            "commitment_2": secure_bytes(48),
+            "commitment_3": secure_bytes(48),
         }
 
-        return json.dumps(proof_data).encode()[:384]
+        # Use canonical serialization and compression (no truncation!)
+        packed = pack_proof_components(proof_components)
+        return compress_proof(packed)
 
     def _simulate_diabetes_proof(self, public_inputs: dict, private_inputs: dict) -> bytes:
         """Simulate diabetes risk alert proof."""
@@ -460,37 +473,42 @@ class Prover:
         condition = (g > g_threshold) and (r > r_threshold)
 
         # Generate proof that proves the condition without revealing g or r
-        # FIXED: Use cryptographically secure randomness
-        import os
+        # Create canonical commitment to condition
+        condition_bytes = be_int(1 if condition else 0, 1)
+        witness_bytes = bytes.fromhex(private_inputs["witness_randomness"])
+        condition_commitment = H(TAGS["PROOF_ID"], condition_bytes, witness_bytes)
 
-        proof_data = {
-            "pi_a": os.urandom(48).hex(),
-            "pi_b": os.urandom(96).hex(),
-            "pi_c": os.urandom(48).hex(),
-            "condition_commitment": hashlib.sha256(
-                f"{condition}:{private_inputs['witness_randomness']}".encode()
-            ).hexdigest(),
-            "range_proofs": [os.urandom(32).hex() for _ in range(4)],
+        proof_components = {
+            "pi_a": secure_bytes(48),
+            "pi_b": secure_bytes(96),
+            "pi_c": secure_bytes(48),
+            "condition_commitment": condition_commitment,
+            "range_proof_0": secure_bytes(32),
+            "range_proof_1": secure_bytes(32),
+            "range_proof_2": secure_bytes(32),
+            "range_proof_3": secure_bytes(32),
         }
 
-        return json.dumps(proof_data).encode()[:384]
+        # Use canonical serialization and compression (no truncation!)
+        packed = pack_proof_components(proof_components)
+        return compress_proof(packed)
 
     def _simulate_generic_proof(self, circuit: Circuit, public_inputs: dict) -> bytes:
         """Generic proof simulation."""
         # Size based on circuit constraints
         proof_size = min(800, 192 + circuit.constraints // 100)
 
-        # FIXED: Use cryptographically secure randomness
-        import os
-
-        proof_data = {
-            "pi_a": os.urandom(48).hex(),
-            "pi_b": os.urandom(96).hex(),
-            "pi_c": os.urandom(48).hex(),
-            "auxiliary": os.urandom(proof_size - 192).hex(),
+        # Use cryptographically secure randomness
+        proof_components = {
+            "pi_a": secure_bytes(48),
+            "pi_b": secure_bytes(96),
+            "pi_c": secure_bytes(48),
+            "auxiliary": secure_bytes(max(0, proof_size - 192)),
         }
 
-        return json.dumps(proof_data).encode()[:proof_size]
+        # Use canonical serialization and compression (no truncation!)
+        packed = pack_proof_components(proof_components)
+        return compress_proof(packed)
 
     def batch_prove(self, proof_requests: list[dict]) -> list[Proof]:
         """
@@ -540,26 +558,27 @@ class Prover:
         }
 
         # FIXED: Use cryptographically secure randomness
-        import os
-
         private_inputs = {
             "proofs": [p.proof_data for p in proofs],
-            "witness_randomness": os.urandom(32).hex(),
+            "witness_randomness": secure_bytes(32).hex(),
         }
 
         # Generate recursive proof (simulated - no actual circuit needed)
-        # FIXED: Use cryptographically secure randomness
-        proof_data = {
-            "pi_a": os.urandom(48).hex(),
-            "pi_b": os.urandom(96).hex(),
-            "pi_c": os.urandom(48).hex(),
-            "aggregated_proofs": len(proofs),
+        proof_components = {
+            "pi_a": secure_bytes(48),
+            "pi_b": secure_bytes(96),
+            "pi_c": secure_bytes(48),
+            "aggregated_proofs": be_int(len(proofs), 4),
         }
+
+        # Use canonical serialization and compression (no truncation!)
+        packed = pack_proof_components(proof_components)
+        compressed = compress_proof(packed)
 
         recursive_proof = Proof(
             proof_id=self._generate_proof_id("recursive_aggregation", public_inputs),
             circuit_name="recursive_aggregation",
-            proof_data=json.dumps(proof_data).encode()[:512],
+            proof_data=compressed,
             public_inputs=public_inputs,
             timestamp=time.time(),
             metadata={
@@ -614,7 +633,7 @@ if __name__ == "__main__":
         private_inputs={
             "variant_data": {"chr": "chr1", "pos": 12345, "ref": "A", "alt": "G"},
             "merkle_proof": ["hash1", "hash2", "hash3"],
-            "witness_randomness": os.urandom(32).hex(),
+            "witness_randomness": secure_bytes(32).hex(),
         },
     )
 
@@ -632,7 +651,7 @@ if __name__ == "__main__":
         private_inputs={
             "glucose_reading": 140,  # Actual glucose (private)
             "risk_score": 0.82,  # Actual PRS (private)
-            "witness_randomness": os.urandom(32).hex(),
+            "witness_randomness": secure_bytes(32).hex(),
         },
     )
 
