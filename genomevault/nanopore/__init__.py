@@ -6,6 +6,7 @@ This module implements real-time nanopore data processing with:
 - Catalytic memory management
 - Biological signal detection (methylation, SVs, etc.)
 - Privacy-preserving anomaly detection
+"""
 
 from .biological_signals import BiologicalSignalDetector
 from .gpu_kernels import GPUBindingKernel

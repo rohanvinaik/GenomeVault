@@ -9,8 +9,16 @@ from typing import Optional, Any, Dict, List, TypedDict
 from pydantic import BaseModel, Field, validator, root_validator
 
 
+class UpdateModelMixin(BaseModel):
+    """Base mixin for models that support partial updates."""
+
+    def dict_for_update(self) -> Dict[str, Any]:
+        """Return only set fields for database update."""
+        return self.dict(exclude_unset=True, exclude_none=True)
+
+
 # Example 1: Basic PATCH model with all Optional fields
-class UserSettingsPatch(BaseModel):
+class UserSettingsPatch(UpdateModelMixin):
     """
     PATCH model for user settings - all fields are optional.
     Only provided fields will be updated.
@@ -71,7 +79,7 @@ class AnalysisConfigUpdate(TypedDict, total=False):
 
 
 # Example 4: Pydantic model with exclude_unset for PATCH
-class ExperimentSettingsPatch(BaseModel):
+class ExperimentSettingsPatch(UpdateModelMixin):
     """
     Model for PATCH operations using exclude_unset.
     """
@@ -80,13 +88,6 @@ class ExperimentSettingsPatch(BaseModel):
     description: Optional[str] = None
     is_active: Optional[bool] = None
     parameters: Optional[Dict[str, Any]] = None
-
-    def dict_for_update(self) -> Dict[str, Any]:
-        """
-        Return only set fields for database update.
-        This excludes fields that weren't provided in the request.
-        """
-        return self.dict(exclude_unset=True)
 
 
 # Example 5: Advanced pattern with field validation but optional updates
@@ -107,6 +108,7 @@ class GenomicAnalysisPatch(BaseModel):
             # Warning: low quality threshold
             # In production, log a warning here
             import logging
+
             logging.warning(f"Low quality threshold: {v}")
         return v
 

@@ -1,6 +1,7 @@
 """
 Batched PIR Query Builder for HDC Error-Tuned Queries
 Implements repeat-aware PIR batching with median aggregation for uncertainty tuning
+"""
 
 from __future__ import annotations
 
@@ -294,7 +295,7 @@ class BatchedPIRQueryBuilder(PIRQueryBuilder):
             chromosome: Chromosome name
             start: Start position
             end: End position
-            zoom_level: 0=genome-wide, 1=1Mb windows, 2=1kb tiles
+            zoom_level: 0=genome-wide, 1=1-Mb windows, 2=1-kb tiles
 
         Returns:
             Dict with zoom results

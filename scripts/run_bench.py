@@ -126,10 +126,10 @@ class CIBenchmarkRunner:
             TimeoutError,
             KeyError,
             ValueError,
-        ) as e:    logger.exception("Unhandled exception")
+        ) as e:
+            logger.exception("Unhandled exception")
             logger.error(f"PIR benchmark failed: {e}")
             return -1.0
-            raise
 
     async def _run_proof_benchmark(self) -> float:
         """Run proof generation benchmark and return average time in ms."""
