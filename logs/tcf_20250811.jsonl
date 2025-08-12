@@ -104,3 +104,15 @@
 {"timestamp": "2025-08-11T21:08:47.381630Z", "level": "INFO", "module": "cli", "function": "main", "line": 235, "message": "Analyzer semantic_hv completed in 0.00s"}
 {"timestamp": "2025-08-11T21:08:47.382155Z", "level": "INFO", "module": "cli", "function": "main", "line": 252, "message": "Analysis complete: 178 issues, risk score 22.44"}
 {"timestamp": "2025-08-11T21:08:47.382551Z", "level": "INFO", "module": "cli", "function": "main", "line": 327, "message": "Found 177 fixable issues"}
+{"timestamp": "2025-08-12T00:57:57.032174Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 118, "message": "Analyzing 403 files"}
+{"timestamp": "2025-08-12T00:57:58.054571Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 158, "message": "import_graph found 2 issues"}
+{"timestamp": "2025-08-12T00:57:58.888684Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 158, "message": "duplicates found 90 issues"}
+{"timestamp": "2025-08-12T00:57:59.115701Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 158, "message": "placeholders found 7 issues"}
+{"timestamp": "2025-08-12T00:58:00.109400Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 158, "message": "missing_symbols found 48 issues"}
+{"timestamp": "2025-08-12T00:58:01.685029Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 158, "message": "git_chains found 1 issues"}
+{"timestamp": "2025-08-12T00:58:01.685142Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 158, "message": "semantic_hv found 0 issues"}
+{"timestamp": "2025-08-12T00:58:01.685228Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 166, "message": "Running enhanced pattern detection"}
+{"timestamp": "2025-08-12T00:58:07.144713Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 170, "message": "Enhanced detection found 16 additional issues"}
+{"timestamp": "2025-08-12T00:58:07.144824Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 175, "message": "Running multimodal semantic analysis"}
+{"timestamp": "2025-08-12T00:58:07.258100Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 179, "message": "Semantic analysis found 85 additional issues"}
+{"timestamp": "2025-08-12T00:58:07.258209Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 186, "message": "Analysis complete: 249 total issues found"}
