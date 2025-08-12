@@ -10,6 +10,7 @@ from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, Field
 
 from genomevault.utils.logging import get_logger
+from genomevault.api.utils import dict_for_update as _dict_for_update, merge_with_existing as _merge_with_existing
 
 logger = get_logger(__name__)
 

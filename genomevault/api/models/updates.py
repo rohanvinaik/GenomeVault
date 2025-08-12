@@ -7,6 +7,7 @@ This module shows best practices for partial update models to avoid
 
 from typing import Optional, Any, Dict, List, TypedDict
 from pydantic import BaseModel, Field, validator, root_validator
+from genomevault.api.utils import dict_for_update as _dict_for_update
 
 
 class UpdateModelMixin(BaseModel):
@@ -14,7 +15,8 @@ class UpdateModelMixin(BaseModel):
 
     def dict_for_update(self) -> Dict[str, Any]:
         """Return only set fields for database update."""
-        return self.dict(exclude_unset=True, exclude_none=True)
+        # Use shared implementation but keep method for backward compatibility
+        return _dict_for_update(self)
 
 
 # Example 1: Basic PATCH model with all Optional fields

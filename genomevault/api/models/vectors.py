@@ -6,6 +6,7 @@ from enum import Enum
 from typing import Any, Optional, Dict
 
 from pydantic import BaseModel, Field, validator
+from genomevault.api.utils import dict_for_update as _dict_for_update
 
 
 class VectorDimension(str, Enum):
@@ -56,7 +57,7 @@ class VectorOperationPatch(BaseModel):
 
     def dict_for_update(self) -> Dict[str, Any]:
         """Return only set fields for update."""
-        return self.dict(exclude_unset=True, exclude_none=True)
+        return _dict_for_update(self)
 
 
 class VectorEncodeConfigPatch(BaseModel):
