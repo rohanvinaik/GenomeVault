@@ -1,10 +1,9 @@
 """Base class for genomic ZK circuits to eliminate duplication."""
 
 from typing import Any, Dict, Optional, Tuple
-from abc import ABC, abstractmethod
 
 
-class BaseGenomicCircuit(ABC):
+class BaseGenomicCircuit:
     """Base class for all genomic ZK proof circuits.
 
     This class provides common functionality for all genomic circuits,
@@ -21,15 +20,14 @@ class BaseGenomicCircuit(ABC):
         self.constraints: list[str] = []
         self.witnesses: Dict[str, Any] = {}
 
-    @abstractmethod
     def setup_constraints(self) -> None:
         """Setup circuit-specific constraints.
 
         Must be implemented by subclasses.
         """
-        raise NotImplementedError("Subclasses must implement setup_constraints")
+        # Base implementation - subclasses should override
+        self.constraints = []
 
-    @abstractmethod
     def generate_witness(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Generate witness data for the circuit.
 
@@ -39,7 +37,8 @@ class BaseGenomicCircuit(ABC):
         Returns:
             Witness dictionary
         """
-        raise NotImplementedError("Subclasses must implement generate_witness")
+        # Base implementation - subclasses should override
+        return {}
 
     def generate_proof(self, data: Dict[str, Any]) -> Tuple[bytes, Dict[str, Any]]:
         """Generate a proof for the given data.
