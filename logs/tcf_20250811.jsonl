@@ -116,3 +116,35 @@
 {"timestamp": "2025-08-12T00:58:07.144824Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 175, "message": "Running multimodal semantic analysis"}
 {"timestamp": "2025-08-12T00:58:07.258100Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 179, "message": "Semantic analysis found 85 additional issues"}
 {"timestamp": "2025-08-12T00:58:07.258209Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 186, "message": "Analysis complete: 249 total issues found"}
+{"timestamp": "2025-08-12T03:32:03.755528Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 126, "message": "Analyzing 410 files"}
+{"timestamp": "2025-08-12T03:32:04.900427Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 166, "message": "import_graph found 2 issues"}
+{"timestamp": "2025-08-12T03:32:05.829880Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 166, "message": "duplicates found 91 issues"}
+{"timestamp": "2025-08-12T03:32:06.066957Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 166, "message": "placeholders found 7 issues"}
+{"timestamp": "2025-08-12T03:32:07.104708Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 166, "message": "missing_symbols found 48 issues"}
+{"timestamp": "2025-08-12T03:32:08.692670Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 166, "message": "git_chains found 1 issues"}
+{"timestamp": "2025-08-12T03:32:08.692824Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 166, "message": "semantic_hv found 0 issues"}
+{"timestamp": "2025-08-12T03:32:18.210468Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 166, "message": "circular_import_resolver found 0 issues"}
+{"timestamp": "2025-08-12T03:32:18.376239Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 166, "message": "phantom_triage found 18 issues"}
+{"timestamp": "2025-08-12T03:32:19.738966Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 166, "message": "context_thrashing found 9 issues"}
+{"timestamp": "2025-08-12T03:33:11.194430Z", "level": "\u001b[31mERROR\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 169, "message": "chromatin_contact failed: 'CodeElement' object has no attribute 'raw_body'"}
+{"timestamp": "2025-08-12T03:33:11.194601Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 174, "message": "Running enhanced pattern detection"}
+{"timestamp": "2025-08-12T03:33:16.953051Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 178, "message": "Enhanced detection found 16 additional issues"}
+{"timestamp": "2025-08-12T03:33:16.953160Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 183, "message": "Running multimodal semantic analysis"}
+{"timestamp": "2025-08-12T03:33:17.092044Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 187, "message": "Semantic analysis found 109 additional issues"}
+{"timestamp": "2025-08-12T03:33:17.092152Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 194, "message": "Analysis complete: 301 total issues found"}
+{"timestamp": "2025-08-12T03:33:53.492497Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 126, "message": "Analyzing 410 files"}
+{"timestamp": "2025-08-12T03:33:54.574536Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 166, "message": "import_graph found 2 issues"}
+{"timestamp": "2025-08-12T03:33:55.503268Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 166, "message": "duplicates found 91 issues"}
+{"timestamp": "2025-08-12T03:33:55.735419Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 166, "message": "placeholders found 7 issues"}
+{"timestamp": "2025-08-12T03:33:56.777486Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 166, "message": "missing_symbols found 48 issues"}
+{"timestamp": "2025-08-12T03:33:58.166312Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 166, "message": "git_chains found 1 issues"}
+{"timestamp": "2025-08-12T03:33:58.166428Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 166, "message": "semantic_hv found 0 issues"}
+{"timestamp": "2025-08-12T03:34:07.849682Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 166, "message": "circular_import_resolver found 0 issues"}
+{"timestamp": "2025-08-12T03:34:08.014545Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 166, "message": "phantom_triage found 18 issues"}
+{"timestamp": "2025-08-12T03:34:09.340317Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 166, "message": "context_thrashing found 9 issues"}
+{"timestamp": "2025-08-12T03:35:00.041896Z", "level": "\u001b[31mERROR\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 169, "message": "chromatin_contact failed: 'CodeElement' object has no attribute 'raw_body'"}
+{"timestamp": "2025-08-12T03:35:00.042053Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 174, "message": "Running enhanced pattern detection"}
+{"timestamp": "2025-08-12T03:35:05.874701Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 178, "message": "Enhanced detection found 16 additional issues"}
+{"timestamp": "2025-08-12T03:35:05.875247Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 183, "message": "Running multimodal semantic analysis"}
+{"timestamp": "2025-08-12T03:35:05.998574Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 187, "message": "Semantic analysis found 109 additional issues"}
+{"timestamp": "2025-08-12T03:35:05.998676Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_enhanced", "function": "run", "line": 194, "message": "Analysis complete: 301 total issues found"}
