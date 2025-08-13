@@ -7,14 +7,15 @@ This module provides:
 - Security event correlation
 - Automated response to security threats
 
+"""
 from __future__ import annotations
 
-import json
 from collections import defaultdict
 from typing import Any
+import json
 
-import numpy as np
 from sklearn.ensemble import IsolationForest
+import numpy as np
 
 from ..genomevault.utils.logging import audit_logger, get_logger, security_logger
 from ..genomevault.utils.monitoring import metrics_collector

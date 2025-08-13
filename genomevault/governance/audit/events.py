@@ -1,11 +1,10 @@
+"""Events module."""
 from __future__ import annotations
 
-"""Events module."""
 from typing import Any
 
 from genomevault.ledger.store import InMemoryLedger
 
-# global singleton (simple)
 _LEDGER = InMemoryLedger()
 
 

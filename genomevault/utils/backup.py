@@ -8,25 +8,24 @@ This module provides:
 - Automated backup scheduling
 - Integrity verification
 
+"""
 from __future__ import annotations
 
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from datetime import datetime, timedelta
+from typing import Any
+import boto3
 import gzip
 import hashlib
 import json
 import os
+import schedule
 import threading
 import time
-from datetime import datetime, timedelta
-from typing import Any
-
-import boto3
-import schedule
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-
-from genomevault.utils.logging import get_logger
 
 from ..genomevault.utils.logging import audit_logger, get_logger
+from genomevault.utils.logging import get_logger
 
 logger = get_logger(__name__)
 

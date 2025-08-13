@@ -1,6 +1,6 @@
+"""Etl module."""
 from __future__ import annotations
 
-"""Etl module."""
 from pathlib import Path
 
 import pandas as pd

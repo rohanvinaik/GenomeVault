@@ -4,9 +4,8 @@ Validation utilities demonstrating proper use of Optional returns.
 This module shows best practices for functions that return Optional
 values, with explicit return None statements.
 """
-
-from typing import Optional, List, Dict, Any
 from pathlib import Path
+from typing import Optional, List, Dict, Any
 import re
 
 from genomevault.types import ValidationResult, GenomicAnnotation

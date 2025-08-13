@@ -1,12 +1,11 @@
+"""Variant Proof Circuit module."""
 from __future__ import annotations
 
-"""Variant Proof Circuit module."""
-import hashlib
 from typing import Any, Dict, List
-
-from genomevault.utils.logging import get_logger
+import hashlib
 
 from .constraint_system import ConstraintSystem, FieldElement, poseidon_hash
+from genomevault.utils.logging import get_logger
 
 logger = get_logger(__name__)
 

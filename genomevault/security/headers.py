@@ -1,12 +1,10 @@
+"""Headers module."""
 from __future__ import annotations
 
-"""Headers module."""
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
-
-# Reasonable defaults for an API (CSP largely irrelevant; disable framing/referrer; disable sniffing)
 SECURITY_HEADERS = {
     "X-Frame-Options": "DENY",
     "X-Content-Type-Options": "nosniff",

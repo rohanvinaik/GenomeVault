@@ -7,15 +7,14 @@ consistent behavior.
 
 Created as part of the tail-chasing fixes initiative.
 
+"""
 from __future__ import annotations
 
+from datetime import datetime
+from typing import Any
 import json
 import logging
 import os
-from datetime import datetime
-from typing import Any
-
-# Configure logging
 logger = logging.getLogger(__name__)
 
 # =============================================================================

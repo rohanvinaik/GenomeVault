@@ -278,7 +278,7 @@ class AutoFixTransformer(cst.CSTTransformer):
                 and isinstance(node.body[0].value, cst.Call)
             ):
                 # Heuristic: ignore logging/basicConfig or typing-only calls
-                call = node.body[0].value
+                node.body[0].value
                 text = node.code.strip()
                 if "logging.basicConfig" not in text:
                     # annotate with a trailing comment
@@ -292,7 +292,7 @@ class AutoFixTransformer(cst.CSTTransformer):
                             comment=cst.Comment(comment_text),
                             newline=node.trailing_whitespace.newline,
                         )
-                        new_node = node.with_changes(trailing_whitespace=new_trailing)
+                        node.with_changes(trailing_whitespace=new_trailing)
                         return False  # replace
         return True
 
@@ -337,7 +337,7 @@ class AutoFixTransformer(cst.CSTTransformer):
             if isinstance(t, cst.Name) and t.value in {"Exception", "BaseException"}:
                 is_broad = True
 
-        trailing = (
+        (
             updated_node.body.header.trailing_whitespace.comment
             if hasattr(updated_node.body, "header")
             else None
@@ -373,7 +373,6 @@ class AutoFixTransformer(cst.CSTTransformer):
         # If star import, append comment to the statement
         if isinstance(updated_node.names, cst.ImportStar):
             # add TODO trailing comment
-            comment = "  # TODO: replace star import with explicit names"
             # updated_node is a BaseSmallStatement; add comment at line end
             return updated_node.with_changes(
                 whitespace_after_from=updated_node.whitespace_after_from,
@@ -388,8 +387,8 @@ class AutoFixTransformer(cst.CSTTransformer):
     def leave_FunctionDef(
         self, original_node: cst.FunctionDef, updated_node: cst.FunctionDef
     ) -> cst.FunctionDef:
-        key = FunctionKey(name=original_node.name.value, lineno=original_node.line)
-        unused = {
+        FunctionKey(name=original_node.name.value, lineno=original_node.line)
+        {
             p
             for k, pset in self.unused_index.items()
             for p in (pset if isinstance(pset, set) else set())
@@ -509,7 +508,6 @@ def main():
     if ns.verbose:
         logger.debug(f"Discovered {len(py_files)} Python files under {ns.root}", file=sys.stderr)
 
-    total_changes = 0
     totals = {
         "files_changed": 0,
         "print_to_logger": 0,

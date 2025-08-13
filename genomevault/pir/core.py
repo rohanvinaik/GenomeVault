@@ -3,17 +3,14 @@
 This module provides the foundation for privacy-preserving database queries
 where the server cannot learn which item was retrieved.
 """
-
 from __future__ import annotations
 
-import hashlib
-import secrets
 from dataclasses import dataclass
 from typing import Any, List, Tuple
+import hashlib
+import secrets
 
 import numpy as np
-
-
 @dataclass
 class PIRConfig:
     """Configuration for PIR operations."""

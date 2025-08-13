@@ -3,18 +3,17 @@ Shard manager for distributed PIR database.
 Handles data distribution, updates, and integrity verification.
 
 """
-
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any
 import hashlib
 import json
 import shutil
 import threading
 import time
-from concurrent.futures import ThreadPoolExecutor
-from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Any
 
 from genomevault.utils.config import get_config
 from genomevault.utils.logging import get_logger, log_operation

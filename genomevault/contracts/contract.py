@@ -1,15 +1,13 @@
+"""Contract module."""
 from __future__ import annotations
 
-"""Contract module."""
-import json
-import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
+import json
+import re
 
 import pandas as pd
-
-
 @dataclass
 class ColumnSpec:
     """Data container for columnspec information."""

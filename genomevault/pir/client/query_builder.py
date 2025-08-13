@@ -1,20 +1,18 @@
-from __future__ import annotations
-
 """Query Builder module."""
 """
 PIR query builder for genomic data queries.
 Provides high-level interface for constructing privacy-preserving queries.
 """
+from __future__ import annotations
 
-import hashlib
-import json
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
-
-from genomevault.utils.logging import get_logger, logger
+import hashlib
+import json
 
 from ..client import PIRClient
+from genomevault.utils.logging import get_logger, logger
 
 logger = get_logger(__name__)
 

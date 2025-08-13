@@ -1,14 +1,10 @@
-#!/usr/bin/env python3
-
 """
 Minimal test to verify the import path fix works
 This avoids importing the full dependency chain
 """
-
 import logging
 import os
 import sys
-
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
@@ -94,3 +90,4 @@ logger.info("- structlog (needed by utils/logging.py)")
 logger.info("- numpy, torch, etc.")
 logger.info("\nTo run the full system, install dependencies:")
 logger.info("pip install -r requirements.txt")
+"""

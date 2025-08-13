@@ -4,17 +4,18 @@ Topographical Projection and Semantic Drift Detection for Model Training
 This module provides visualization tools for understanding model evolution
 during training using dimensionality reduction techniques.
 
+"""
 from __future__ import annotations
 
-import warnings
 from typing import Any
-
 import matplotlib.pyplot as plt
-import numpy as np
 import seaborn as sns
 import umap
+import warnings
+
 from sklearn.manifold import TSNE
 from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
 
 from genomevault.utils.logging import get_logger
 
@@ -395,7 +396,7 @@ class ModelEvolutionVisualizer:
             phases.append((start_idx, end_idx + 1))
             start_idx = end_idx + 1
 
-        logger.info(f"Detected {len(phases)} training phases: %sphases")
+        logger.info(f"Detected {len(phases)} training phases: {}phases")
 
         return phases
 
@@ -580,3 +581,4 @@ def create_semantic_debugging_report(
         "trajectory_metrics": metrics,
         "embeddings": embeddings,
     }
+"""

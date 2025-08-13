@@ -1,8 +1,6 @@
 import numpy as np
 
-
 from genomevault.clinical.eval.harness import compute_report
-
 
 def test_compute_report_smoke():
     rng = np.random.default_rng(0)

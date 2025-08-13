@@ -1,4 +1,8 @@
-# ruff: noqa: F401
+from __future__ import annotations
+
+from genomevault.utils.logging import get_logger
+
+logger = get_logger(__name__)
 """
 GenomeVault Configuration Management
 
@@ -6,7 +10,6 @@ This module provides centralized configuration management for all GenomeVault co
 including environment-specific settings, secrets management, and runtime configuration.
 """
 
-from __future__ import annotations
 
 import json
 import logging

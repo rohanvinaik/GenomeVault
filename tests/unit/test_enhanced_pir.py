@@ -1,15 +1,15 @@
 """
 Comprehensive tests for enhanced PIR implementation.
 """
-
 import asyncio
 import json
+import pytest
 import struct
 
 import numpy as np
-import pytest
 
 from genomevault.pir.server.enhanced_pir_server import (
+
     EnhancedPIRServer,
     GenomicRegion,
     OptimizedPIRDatabase,

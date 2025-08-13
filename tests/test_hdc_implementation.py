@@ -8,17 +8,17 @@ Tests all stages of the HDC implementation plan including:
 - Compression tiers
 - API endpoints
 """
-
-import time
-from pathlib import Path
-
-import numpy as np
-import pytest
-import torch
 from hypothesis import given, settings
 from hypothesis import strategies as st
+from pathlib import Path
+import pytest
+import time
+
+import numpy as np
+import torch
 
 from genomevault.hypervector_transform.binding_operations import (  # Test legacy import
+
     BindingOperations,
     BindingType,
     HypervectorBinder,

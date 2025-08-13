@@ -1,8 +1,6 @@
 from fastapi.testclient import TestClient
 
-
 from genomevault.api.app import app
-
 
 def test_vectors_encode_requires_api_key(monkeypatch):
     # Enable auth by setting a key

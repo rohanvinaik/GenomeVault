@@ -1,0 +1,48 @@
+{"timestamp": "2025-08-12T04:03:13.097397Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 126, "message": "Analyzing 410 files"}
+{"timestamp": "2025-08-12T04:03:14.193409Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "import_graph found 2 issues"}
+{"timestamp": "2025-08-12T04:03:15.075757Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "duplicates found 91 issues"}
+{"timestamp": "2025-08-12T04:03:15.303490Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "placeholders found 7 issues"}
+{"timestamp": "2025-08-12T04:03:16.323296Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "missing_symbols found 48 issues"}
+{"timestamp": "2025-08-12T04:03:17.767138Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "git_chains found 1 issues"}
+{"timestamp": "2025-08-12T04:03:17.767267Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "semantic_hv found 0 issues"}
+{"timestamp": "2025-08-12T04:03:27.180367Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "circular_import_resolver found 0 issues"}
+{"timestamp": "2025-08-12T04:03:27.342083Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "phantom_triage found 18 issues"}
+{"timestamp": "2025-08-12T04:03:28.633517Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "context_thrashing found 9 issues"}
+{"timestamp": "2025-08-12T04:04:19.453391Z", "level": "ERROR", "module": "cli_enhanced", "function": "run", "line": 169, "message": "chromatin_contact failed: 'CodeElement' object has no attribute 'raw_body'"}
+{"timestamp": "2025-08-12T04:04:19.453566Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 174, "message": "Running enhanced pattern detection"}
+{"timestamp": "2025-08-12T04:04:25.087427Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 178, "message": "Enhanced detection found 16 additional issues"}
+{"timestamp": "2025-08-12T04:04:25.087548Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 183, "message": "Running multimodal semantic analysis"}
+{"timestamp": "2025-08-12T04:04:25.223157Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 187, "message": "Semantic analysis found 67 additional issues"}
+{"timestamp": "2025-08-12T04:04:25.223268Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 194, "message": "Analysis complete: 259 total issues found"}
+{"timestamp": "2025-08-12T04:09:47.949239Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 126, "message": "Analyzing 413 files"}
+{"timestamp": "2025-08-12T04:09:49.030414Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "import_graph found 1 issues"}
+{"timestamp": "2025-08-12T04:09:49.926914Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "duplicates found 92 issues"}
+{"timestamp": "2025-08-12T04:09:50.159483Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "placeholders found 7 issues"}
+{"timestamp": "2025-08-12T04:09:51.330455Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "missing_symbols found 48 issues"}
+{"timestamp": "2025-08-12T04:09:52.582865Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "git_chains found 1 issues"}
+{"timestamp": "2025-08-12T04:09:52.583009Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "semantic_hv found 0 issues"}
+{"timestamp": "2025-08-12T04:10:02.054229Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "circular_import_resolver found 0 issues"}
+{"timestamp": "2025-08-12T04:10:02.218403Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "phantom_triage found 22 issues"}
+{"timestamp": "2025-08-12T04:10:03.516881Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "context_thrashing found 10 issues"}
+{"timestamp": "2025-08-12T04:10:55.043292Z", "level": "ERROR", "module": "cli_enhanced", "function": "run", "line": 169, "message": "chromatin_contact failed: 'CodeElement' object has no attribute 'raw_body'"}
+{"timestamp": "2025-08-12T04:10:55.043453Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 174, "message": "Running enhanced pattern detection"}
+{"timestamp": "2025-08-12T04:11:00.885315Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 178, "message": "Enhanced detection found 16 additional issues"}
+{"timestamp": "2025-08-12T04:11:00.885418Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 183, "message": "Running multimodal semantic analysis"}
+{"timestamp": "2025-08-12T04:11:01.011251Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 187, "message": "Semantic analysis found 82 additional issues"}
+{"timestamp": "2025-08-12T04:11:01.011355Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 194, "message": "Analysis complete: 279 total issues found"}
+{"timestamp": "2025-08-12T04:11:07.013752Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 126, "message": "Analyzing 413 files"}
+{"timestamp": "2025-08-12T04:11:08.066750Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "import_graph found 1 issues"}
+{"timestamp": "2025-08-12T04:11:08.982729Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "duplicates found 92 issues"}
+{"timestamp": "2025-08-12T04:11:09.221433Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "placeholders found 7 issues"}
+{"timestamp": "2025-08-12T04:11:10.436511Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "missing_symbols found 48 issues"}
+{"timestamp": "2025-08-12T04:11:11.668498Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "git_chains found 1 issues"}
+{"timestamp": "2025-08-12T04:11:11.668627Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "semantic_hv found 0 issues"}
+{"timestamp": "2025-08-12T04:11:21.302226Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "circular_import_resolver found 0 issues"}
+{"timestamp": "2025-08-12T04:11:21.468170Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "phantom_triage found 22 issues"}
+{"timestamp": "2025-08-12T04:11:22.807083Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 166, "message": "context_thrashing found 10 issues"}
+{"timestamp": "2025-08-12T04:12:14.930777Z", "level": "ERROR", "module": "cli_enhanced", "function": "run", "line": 169, "message": "chromatin_contact failed: 'CodeElement' object has no attribute 'raw_body'"}
+{"timestamp": "2025-08-12T04:12:14.930958Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 174, "message": "Running enhanced pattern detection"}
+{"timestamp": "2025-08-12T04:12:20.673248Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 178, "message": "Enhanced detection found 16 additional issues"}
+{"timestamp": "2025-08-12T04:12:20.673363Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 183, "message": "Running multimodal semantic analysis"}
+{"timestamp": "2025-08-12T04:12:20.793165Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 187, "message": "Semantic analysis found 64 additional issues"}
+{"timestamp": "2025-08-12T04:12:20.793272Z", "level": "INFO", "module": "cli_enhanced", "function": "run", "line": 194, "message": "Analysis complete: 261 total issues found"}

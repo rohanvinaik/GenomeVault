@@ -3,11 +3,7 @@ Clinical circuits module - placeholder for backward compatibility.
 Actual implementation moved to clinical subdirectory.
 
 """
-
 import warnings
-
-
-# Placeholder classes for backward compatibility
 class ClinicalBiomarkerCircuit:
     """Placeholder - use genomevault.zk_proofs.circuits.clinical instead"""
 

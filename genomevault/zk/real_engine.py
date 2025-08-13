@@ -1,21 +1,19 @@
 """Real Engine module."""
-
 from __future__ import annotations
-
-import hashlib
-import json
-import time
-from dataclasses import dataclass
-from pathlib import Path
-from typing import Any, Dict
 
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ed25519
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Dict
+import hashlib
+import json
+import time
 
 from genomevault.crypto.types import PrivateKey, PublicKey
-
 from genomevault.utils.logging import get_logger
 from genomevault.zk.backends.circom_snarkjs import (
+
     CircuitPaths,
     prove,
     toolchain_available,

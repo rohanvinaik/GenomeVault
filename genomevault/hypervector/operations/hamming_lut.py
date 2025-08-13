@@ -15,17 +15,15 @@ Performance targets:
 - 2-3× speedup on PULPv3 and FPGA fabric
 - >1.5× speedup on CPU/GPU platforms
 """
-
+from numba import cuda, jit, prange
 import functools
 import os
 
-import numpy as np
 from numpy.typing import NDArray
-from numba import cuda, jit, prange
+import numpy as np
 
 from genomevault.hypervector.types import VectorUInt64
 
-# Global LUT cache - shared across all compute contexts
 _POPCOUNT_LUT_16: NDArray[np.uint8] | None = None
 
 
@@ -389,6 +387,7 @@ uint32_t hamming_distance_pulp(const uint64_t* vec1, const uint64_t* vec2, size_
 
 
 # FPGA-specific implementation placeholder
+"""
 def generate_fpga_verilog() -> str:
     """
     Generate Verilog code for FPGA LUT implementation.
@@ -408,10 +407,10 @@ module hamming_lut_core #(
     input wire [VECTOR_WIDTH-1:0] vec2,
     output reg [31:0] hamming_distance,
     output reg done
-);
+)
 
     // 16-bit popcount LUT (implemented as distributed RAM)
-    reg [7:0] popcount_lut [0:65535];
+    reg [7:0] popcount_lut [0:65535]
 
     // Initialize LUT
     initial begin
@@ -475,6 +474,7 @@ endmodule
 """
 
 
+"""
 def hamming_weight(arr: NDArray[np.uint64]) -> np.uint64:
     """
     Compute total Hamming weight (popcount) of entire array.

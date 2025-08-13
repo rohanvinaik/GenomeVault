@@ -2,9 +2,11 @@
 HDC Error Tuning with PIR Batching - Complete Example
 Demonstrates the full pipeline from accuracy dial to batched PIR queries
 """
-
 from __future__ import annotations
 
+from genomevault.utils.logging import get_logger
+
+logger = get_logger(__name__)
 import asyncio
 import time
 

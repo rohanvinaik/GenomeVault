@@ -3,18 +3,18 @@ Post-quantum STARK implementation for quantum-resistant proofs.
 Provides 128-bit post-quantum security.
 
 """
-
 from __future__ import annotations
 
+from dataclasses import dataclass
+from typing import Any
 import hashlib
 import json
 import time
-from dataclasses import dataclass
-from typing import Any
 
 import numpy as np
 
 from genomevault.crypto import (
+
     H,
     hexH,
     TAGS,
@@ -161,7 +161,7 @@ class STARKProver:
             },
         )
 
-        logger.info(f"Generated STARK proof: {proof.proof_id}, size: %sproof.proof_size_kb:.1fKB")
+        logger.info(f"Generated STARK proof: {proof.proof_id}, size: {}proof.proof_size_kb:.1fKB")
 
         return proof
 

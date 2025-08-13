@@ -1,15 +1,12 @@
 """End-to-end tests for ZK proof system integration."""
-
+from tests.mocks import MockPRSCalculator as PRSCalculator
 import asyncio
 import json
-
 import pytest
 
 from genomevault.api.models import ProofRequest, ProofResponse
-from tests.mocks import MockPRSCalculator as PRSCalculator
-from genomevault.zk_proofs.service import ZKProofService
-
 from genomevault.utils.logging import get_logger
+from genomevault.zk_proofs.service import ZKProofService
 
 logger = get_logger(__name__)
 

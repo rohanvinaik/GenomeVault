@@ -1,10 +1,8 @@
 """Governance module."""
-
 from __future__ import annotations
 
-from typing import Any
-
 from fastapi import APIRouter
+from typing import Any
 
 from genomevault.governance.audit.events import list_events, record_event
 from genomevault.governance.consent.store import ConsentStore

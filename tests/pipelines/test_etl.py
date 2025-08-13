@@ -1,8 +1,6 @@
 import pandas as pd
 
-
 from genomevault.pipelines.etl import run_etl, transform
-
 
 def test_transform_standardizes_and_renames():
     df = pd.DataFrame(

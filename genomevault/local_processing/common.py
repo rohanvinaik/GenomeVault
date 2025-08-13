@@ -1,12 +1,10 @@
+"""Common module."""
 from __future__ import annotations
 
-"""Common module."""
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-
-
 def validate_features(X: np.ndarray) -> None:
     """Validate feature matrix.
 

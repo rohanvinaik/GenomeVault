@@ -1,12 +1,11 @@
 """GenomeVault CLI interface using Typer."""
-
-import json
+from glob import glob
 from pathlib import Path
 from typing import Optional
-from glob import glob
-
-import typer
 from typing_extensions import Annotated
+import json
+import typer
+
 import numpy as np
 
 from genomevault.hypervector_transform.hdc_encoder import HypervectorEncoder

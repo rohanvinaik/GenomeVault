@@ -1,12 +1,11 @@
+"""Packed module."""
 from __future__ import annotations
 
-"""Packed module."""
+from typing import cast
+
+from numpy.typing import NDArray
 import numpy as np
 import torch
-from typing import cast
-from numpy.typing import NDArray
-
-
 def pack_bits(x: torch.Tensor) -> NDArray[np.uint8]:
     """Pack {-1,+1} or {0,1} signs into bytes (numpy)."""
     x = x.detach().cpu().view(-1)

@@ -1,9 +1,6 @@
 """Basic tests to ensure CI passes."""
-
-import sys
 from pathlib import Path
-
-# Add parent directory to path
+import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 

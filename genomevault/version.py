@@ -3,13 +3,14 @@
 This module provides centralized version management for all components,
 protocols, and seeds used throughout the GenomeVault system.
 """
-
+"""Version tracking module for GenomeVault.
+This module provides centralized version management for all components,
+protocols, and seeds used throughout the GenomeVault system.
+"""
 from __future__ import annotations
 
 from datetime import datetime
 from typing import Any
-
-# Protocol Versions
 PIR_PROTOCOL_VERSION = "PIR-IT-1.0"
 PIR_PROTOCOL_REVISION = "2025.01.24"
 PIR_COMPATIBILITY = ["PIR-IT-0.9", "PIR-IT-1.0"]

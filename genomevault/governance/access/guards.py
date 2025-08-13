@@ -1,6 +1,6 @@
+"""Guards module."""
 from __future__ import annotations
 
-"""Guards module."""
 from fastapi import Depends, Header, HTTPException, status
 
 from genomevault.governance.consent.store import ConsentStore

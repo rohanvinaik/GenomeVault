@@ -1,10 +1,9 @@
+"""Logging module."""
 from __future__ import annotations
 
-"""Logging module."""
 import logging
 import os
 import sys
-
 _LEVEL = os.getenv("GENOMEVAULT_LOG_LEVEL", "INFO").upper()
 
 

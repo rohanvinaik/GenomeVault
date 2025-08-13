@@ -1,14 +1,14 @@
-from __future__ import annotations
-
 """Post Quantum Crypto module."""
 """Post-quantum cryptography implementations for GenomeVault."""
+from __future__ import annotations
 
-import os
-import time
 from dataclasses import dataclass
 from typing import Any
+import os
+import time
 
 from genomevault.crypto.types import (
+
     Ciphertext,
     KeyBytes,
     Nonce,
@@ -59,7 +59,7 @@ class MockKyber:
 
     def encapsulate(self, public_key: bytes) -> tuple[bytes, bytes]:
         """Mock encapsulation."""
-        _ = os.urandom(32)
+        shared_secret = os.urandom(32)
         ciphertext = os.urandom(1088)
         return shared_secret, ciphertext
 

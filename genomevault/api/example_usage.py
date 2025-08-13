@@ -1,12 +1,11 @@
-# genomevault/api/example_usage.py
 """
 Example showing how to use the standardized GV exception system in API endpoints.
 
 """
-
 from fastapi import APIRouter
 
 from genomevault.exceptions import (
+
     GVComputeError,
     GVInputError,
     GVNotFound,

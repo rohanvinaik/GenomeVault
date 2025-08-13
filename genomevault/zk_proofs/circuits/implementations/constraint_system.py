@@ -1,21 +1,20 @@
-from __future__ import annotations
-
 """Constraint System module."""
-import hashlib
-from dataclasses import dataclass, field
-from enum import Enum
-from typing import Any
-
-import numpy as np
-
-from genomevault.utils.logging import get_logger
-
 """
 Core constraint system for ZK proofs
 
 This module implements the fundamental constraint generation and solving
 for PLONK-style arithmetic circuits.
 """
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any
+import hashlib
+
+import numpy as np
+
+from genomevault.utils.logging import get_logger
 
 logger = get_logger(__name__)
 

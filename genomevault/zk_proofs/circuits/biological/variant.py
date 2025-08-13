@@ -1,16 +1,16 @@
+"""Variant module."""
 from __future__ import annotations
 
-"""Variant module."""
-import hashlib
 from typing import Dict, List, cast
+import hashlib
 
+from numpy.typing import NDArray
 import numpy as np
 import torch
-from numpy.typing import NDArray
-
-from genomevault.utils.logging import get_logger
 
 from ..base_circuits import (
+from genomevault.utils.logging import get_logger
+
     Any,
     BaseCircuit,
     ComparisonCircuit,

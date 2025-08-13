@@ -1,11 +1,10 @@
+"""Classifier module."""
 from __future__ import annotations
 
-"""Classifier module."""
-import json
-import os
 from dataclasses import dataclass
 from pathlib import Path
-
+import json
+import os
 DEFAULT_POLICY_PATH = os.getenv("GV_POLICY_PATH", "etc/policies/classification.json")
 
 

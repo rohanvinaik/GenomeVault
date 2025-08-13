@@ -1,13 +1,13 @@
-#!/usr/bin/env python3
 """
 Comprehensive tests for crypto refactoring.
 Ensures all the mechanical refactoring items are properly implemented.
 """
-
-import pytest
 import hashlib
 import json
+import pytest
+
 from genomevault.crypto import (
+
     H,
     hexH,
     TAGS,

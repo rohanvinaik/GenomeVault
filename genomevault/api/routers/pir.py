@@ -1,11 +1,9 @@
 """Pir module."""
-
 from __future__ import annotations
 
-import base64
-from typing import Any
-
 from fastapi import APIRouter, HTTPException
+from typing import Any
+import base64
 
 from genomevault.api.models.pir import PIRQueryRequest, PIRQueryResponse
 from genomevault.pir.engine import PIREngine

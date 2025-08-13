@@ -1,7 +1,9 @@
 """
 Example usage of packed hypervector encoding for genomic data
 """
+from genomevault.utils.logging import get_logger
 
+logger = get_logger(__name__)
 import numpy as np
 
 from genomevault.hypervector.encoding import PackedGenomicEncoder

@@ -7,6 +7,7 @@ Handles mass spectrometry proteomics data including:
 - Peptide spectrum matching
 - Label-free and labeled quantification
 
+"""
 from __future__ import annotations
 
 from collections import defaultdict

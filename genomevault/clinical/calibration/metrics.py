@@ -1,11 +1,8 @@
 """Metrics module."""
-
 from __future__ import annotations
 
-import numpy as np
 from numpy.typing import NDArray
-
-
+import numpy as np
 def _safe_prob(p: NDArray[np.float64]) -> NDArray[np.float64]:
     return np.clip(p, 1e-12, 1.0 - 1e-12)
 

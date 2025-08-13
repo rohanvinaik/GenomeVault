@@ -3,18 +3,16 @@ Integration tests for Proof-of-Training system
 
 This module tests the end-to-end functionality of the PoT implementation.
 """
-
+from pathlib import Path
 import json
+import pytest
 import shutil
 import tempfile
-from pathlib import Path
 
 import numpy as np
-import pytest
 
 from genomevault.integration.proof_of_training import ProofOfTrainingIntegration
 from genomevault.local_processing.differential_privacy_audit import PrivacyMechanism
-
 
 class MockModel:
     """Mock model for testing"""

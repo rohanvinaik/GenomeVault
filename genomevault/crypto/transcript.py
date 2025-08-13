@@ -1,8 +1,8 @@
-# genomevault/crypto/transcript.py
 from __future__ import annotations
-import hashlib
-from .rng import xof
 
+import hashlib
+
+from .rng import xof
 
 class Transcript:
     """

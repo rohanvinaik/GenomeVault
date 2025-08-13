@@ -1,12 +1,9 @@
 """Base Circuits module."""
-
 from __future__ import annotations
 
-import hashlib
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional
-
-
+import hashlib
 class FieldElement:
     """Represents a field element for zero-knowledge proofs."""
 

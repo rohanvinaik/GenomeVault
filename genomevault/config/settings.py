@@ -1,9 +1,7 @@
+"""Settings module."""
 from __future__ import annotations
 
-"""Settings module."""
 from pydantic import BaseSettings, Field
-
-
 class Settings(BaseSettings):
     """Settings implementation."""
 

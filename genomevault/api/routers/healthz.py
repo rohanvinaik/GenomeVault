@@ -3,15 +3,12 @@ Consolidated health check endpoint for GenomeVault API.
 Follows Kubernetes health check best practices.
 
 """
-
 from datetime import datetime
-from typing import Dict, Any
-
 from fastapi import APIRouter, Response, status
 from pydantic import BaseModel
+from typing import Dict, Any
 
 from genomevault.api.types import HealthCheckResult, ComponentHealth
-
 from genomevault.utils.logging import get_logger
 
 logger = get_logger(__name__)

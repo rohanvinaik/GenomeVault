@@ -1,11 +1,9 @@
+"""Profile module."""
 from __future__ import annotations
 
-"""Profile module."""
 from typing import Any
 
 import pandas as pd
-
-
 def profile_dataframe(df: pd.DataFrame) -> dict[str, Any]:
     """Profile dataframe.
 

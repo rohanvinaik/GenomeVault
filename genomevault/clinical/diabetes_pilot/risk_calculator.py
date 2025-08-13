@@ -6,15 +6,14 @@ Implements the diabetes risk assessment system with:
 - Zero-knowledge proofs for privacy-preserving alerts
 - HIPAA-compliant data handling
 """
-
 from __future__ import annotations
 
-import hashlib
-import logging
-import os
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import Any
+import hashlib
+import logging
+import os
 
 import numpy as np
 

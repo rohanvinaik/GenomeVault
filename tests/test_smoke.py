@@ -1,10 +1,8 @@
 """Smoke tests for GenomeVault core functionality."""
+import pytest
 
 import numpy as np
 import pandas as pd
-import pytest
-
-
 def test_imports():
     """Test that all core modules can be imported."""
     import genomevault

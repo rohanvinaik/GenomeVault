@@ -1,6 +1,6 @@
 """Configuration module for GenomeVault."""
-
 from .paths import (
+
     CACHE_DIR,
     CONFIG_DIR,
     DATA_DIR,

@@ -1,9 +1,7 @@
-# genomevault/crypto/rng.py
 from __future__ import annotations
-import os
+
 from hashlib import shake_256
-
-
+import os
 def secure_bytes(n: int) -> bytes:
     return os.urandom(n)
 

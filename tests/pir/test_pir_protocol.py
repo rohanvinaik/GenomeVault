@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from genomevault.utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -8,7 +10,6 @@ Test suite for Information-Theoretic PIR Protocol.
 Includes unit tests, adversarial tests, and performance benchmarks.
 """
 
-from __future__ import annotations
 
 import secrets
 import time

@@ -4,16 +4,15 @@ Biological signal detection from hypervector variance patterns.
 Detects methylation, structural variants, and other biological
 signals from nanopore HV instability patterns.
 """
-
 from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
+from scipy.stats import zscore
 from typing import Any
 
-import numpy as np
-from scipy.stats import zscore
 from sklearn.ensemble import IsolationForest
+import numpy as np
 
 from genomevault.utils.logging import get_logger
 

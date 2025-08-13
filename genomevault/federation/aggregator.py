@@ -1,11 +1,9 @@
+"""Aggregator module."""
 from __future__ import annotations
 
-"""Aggregator module."""
 from typing import Dict, List
 
 import torch
-
-
 class FedAvgAggregator:
     """Simple FedAvg over state_dicts (float tensors only)."""
 

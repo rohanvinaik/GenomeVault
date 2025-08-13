@@ -5,13 +5,12 @@ This implementation demonstrates the catalytic computing concept more explicitly
 by maintaining a write log of all modifications, allowing perfect restoration
 while being more space-efficient for sparse modifications.
 """
-
 from __future__ import annotations
 
-import hashlib
-import os
 from dataclasses import dataclass
 from typing import Any
+import hashlib
+import os
 
 from genomevault.utils.logging import get_logger
 

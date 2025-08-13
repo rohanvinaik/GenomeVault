@@ -1,34 +1,26 @@
-from __future__ import annotations
-
-# Standard library imports
 """Sequencing module."""
-import json
-import subprocess
-import tempfile
-from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Any
-
-# Third-party imports
-import numpy as np
-import pysam
-from Bio import SeqIO
-
-from genomevault.crypto.hashing import secure_hash
-from genomevault.utils.config import get_config
-
-# Local imports
-from genomevault.utils.logging import get_logger
-
 """
 GenomeVault Sequencing Data Processing
 
 Handles genomic sequencing data processing including alignment, variant calling,
 and reference-based differential storage.
 """
+from __future__ import annotations
 
+from Bio import SeqIO
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any
+import json
+import pysam
+import subprocess
+import tempfile
 
-# sequencing.py
+import numpy as np
+
+from genomevault.crypto.hashing import secure_hash
+from genomevault.utils.config import get_config
+from genomevault.utils.logging import get_logger
 
 logger = get_logger(__name__)
 config = get_config()

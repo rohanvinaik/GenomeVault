@@ -3,22 +3,22 @@ Federated Learning Coordinator for privacy-preserving multi-institutional resear
 Implements secure aggregation with differential privacy.
 
 """
-
 from __future__ import annotations
 
-import asyncio
-import hashlib
-import json
-import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+import asyncio
+import hashlib
+import json
+import time
 
 import numpy as np
 
 from genomevault.utils.config import get_config
 from genomevault.utils.logging import (
+
     audit_logger,
     get_logger,
     log_operation,

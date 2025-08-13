@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from genomevault.utils.logging import get_logger
+
+logger = get_logger(__name__)
 #!/usr/bin/env python3
 """
 Orphan Disease Research Workflow Example

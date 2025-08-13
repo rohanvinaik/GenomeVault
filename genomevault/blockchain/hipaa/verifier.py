@@ -1,8 +1,7 @@
+"""Verifier module."""
 from __future__ import annotations
 
-"""Verifier module."""
 from typing import Any, Dict
-
 REQUIRED_FIELDS = {"patient_id", "purpose", "consent_hash"}
 
 

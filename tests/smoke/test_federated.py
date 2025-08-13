@@ -4,7 +4,6 @@ import pytest
 
 from genomevault.federated.aggregate import aggregate
 
-
 class TestFederated:
     def test_aggregate_empty(self):
         """Test aggregation of empty list."""

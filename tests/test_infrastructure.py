@@ -1,10 +1,7 @@
 """
 Test to verify the test infrastructure is working correctly
 """
-
 import pytest
-
-
 def test_test_infrastructure():
     """Verify test infrastructure is set up correctly"""
     assert True, "Basic test infrastructure is working"

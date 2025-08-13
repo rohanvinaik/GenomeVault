@@ -1,16 +1,15 @@
-from __future__ import annotations
-
-import hashlib
-import time
-from typing import Any
-
-import pytest
-
 """
 Tests for Training Proof and Multi-Modal Training Proof circuits
 """
+from __future__ import annotations
+
+from typing import Any
+import hashlib
+import pytest
+import time
 
 from genomevault.zk_proofs.circuits.multi_modal_training_proof import (
+
     MultiModalTrainingProof,
 )
 from genomevault.zk_proofs.circuits.training_proof import TrainingProofCircuit

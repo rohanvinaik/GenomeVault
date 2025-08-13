@@ -1,13 +1,13 @@
+"""Encode module."""
 from __future__ import annotations
 
-"""Encode module."""
-import pandas as pd
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
+import pandas as pd
+
 from genomevault.hdc.core import encode
 from genomevault.local_processing.common import process
-
 
 class EncodeIn(BaseModel):
     """EncodeIn implementation."""

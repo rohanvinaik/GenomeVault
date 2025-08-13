@@ -3,26 +3,25 @@ Enhanced PIR server implementation with full information-theoretic security.
 Handles real genomic reference data with optimized query processing.
 
 """
-
 from __future__ import annotations
 
-import asyncio
-import hashlib
-import json
-import mmap
-import os
-import struct
-import time
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
-
 import aiofiles
+import asyncio
+import hashlib
+import json
 import lz4.frame
-import numpy as np
+import mmap
+import os
+import struct
+import time
 import uvloop
+
+import numpy as np
 
 from ...core.config import get_config
 from ...core.exceptions import SecurityError, ValidationError

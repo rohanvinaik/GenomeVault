@@ -94,7 +94,6 @@ def test_merkle_verification():
 
     # Test 3: Wrong direction bits (using parity)
     print("\n3. Testing with WRONG directions (using i % 2):")
-    wrong_directions_2 = [0, 1]  # This happens to be correct for leaf 2
     wrong_directions_0 = [0, 1]  # This is WRONG for leaf 0 (should be [0, 0])
 
     wrong_root_0 = compute_merkle_root(leaves[0], siblings_0, wrong_directions_0)

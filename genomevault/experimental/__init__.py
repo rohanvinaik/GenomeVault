@@ -5,11 +5,17 @@ Experimental features for GenomeVault.
 APIs may change without deprecation notices.
 Use at your own risk in production environments.
 """
+"""
+Experimental features for GenomeVault.
 
+⚠️ WARNING: This module contains experimental features.
+APIs may change without deprecation notices.
+Use at your own risk in production environments.
+"""
 from __future__ import annotations
 
+    import os
 import warnings
-
 warnings.warn(
     "This module contains experimental features. "
     "APIs may change without deprecation notices. "
@@ -30,7 +36,6 @@ EXPERIMENTAL_VERSION = "0.1.0-alpha"
 
 def is_experimental_enabled() -> bool:
     """Check if experimental features are enabled."""
-    import os
 
     return os.environ.get("GENOMEVAULT_EXPERIMENTAL", "false").lower() == "true"
 

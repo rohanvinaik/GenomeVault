@@ -4,15 +4,16 @@ Property-based tests for HDC implementation using Hypothesis
 Tests mathematical properties and invariants that should hold
 for all valid inputs.
 """
-
-import numpy as np
-import pytest
-import torch
 from hypothesis import assume, given, note, settings
 from hypothesis import strategies as st
+import pytest
+
 from hypothesis.extra.numpy import arrays
+import numpy as np
+import torch
 
 from genomevault.hypervector_transform.binding_operations import (
+
     BindingType,
     HypervectorBinder,
 )

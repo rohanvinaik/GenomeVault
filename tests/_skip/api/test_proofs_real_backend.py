@@ -1,8 +1,7 @@
 from fastapi.testclient import TestClient
-
+from tests.zk._toolcheck import require_toolchain
 
 from genomevault.api.app import app
-from tests.zk._toolcheck import require_toolchain
 
 client = TestClient(app)
 

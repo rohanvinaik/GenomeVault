@@ -4,14 +4,15 @@ Differential Privacy Audit Trail for Model Training
 This module implements privacy budget tracking and verification
 for differentially private model training in GenomeVault.
 
+"""
 from __future__ import annotations
 
-import hashlib
-import json
-import time
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any
+import hashlib
+import json
+import time
 
 import numpy as np
 

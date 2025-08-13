@@ -3,13 +3,12 @@ Zero-Knowledge Proof Generation Module
 Uses real ZK circuits for proof generation and verification
 
 """
-
 from __future__ import annotations
 
-import hashlib
-import time
 from dataclasses import dataclass
 from typing import Any
+import hashlib
+import time
 
 from genomevault.crypto.types import ProofBytes, HashHex
 from genomevault.hypervector.error_handling import ErrorBudget

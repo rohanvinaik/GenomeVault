@@ -4,16 +4,16 @@ PHI (Protected Health Information) Leakage Detection.
 This module provides tools to scan logs, outputs, and code for potential
 PHI leakage patterns to ensure HIPAA compliance.
 
+"""
 from __future__ import annotations
 
+from datetime import datetime
+from pathlib import Path
+from typing import Any
 import hashlib
 import json
 import logging
 import re
-from datetime import datetime
-from pathlib import Path
-from typing import Any
-
 logger = logging.getLogger(__name__)
 
 
@@ -572,3 +572,4 @@ if __name__ == "__main__":
     logger.info("\n" + "=" * 50 + "\n")
     logger.info("Markdown Report:")
     logger.info(detector.generate_report(findings, "markdown"))
+"""

@@ -4,11 +4,10 @@ Example models demonstrating PATCH/update patterns with Optional fields.
 This module shows best practices for partial update models to avoid
 "missing required field" type errors in PATCH-like handlers.
 """
-
-from typing import Optional, Any, Dict, List, TypedDict
 from pydantic import BaseModel, Field, validator, root_validator
-from genomevault.api.utils import dict_for_update as _dict_for_update
+from typing import Optional, Any, Dict, List, TypedDict
 
+from genomevault.api.utils import dict_for_update as _dict_for_update
 
 class UpdateModelMixin(BaseModel):
     """Base mixin for models that support partial updates."""

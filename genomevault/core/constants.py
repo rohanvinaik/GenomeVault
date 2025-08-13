@@ -1,10 +1,7 @@
-# genomevault/core/constants.py
+"""Constants module."""
 from __future__ import annotations
 
-"""Constants module."""
 from enum import Enum
-
-# Hypervector defaults
 HYPERVECTOR_DIMENSIONS: int = 10_000
 DEFAULT_SPARSITY: float = 0.1
 

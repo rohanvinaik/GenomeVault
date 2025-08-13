@@ -1,11 +1,9 @@
 """Unit tests for basic ZK proof functionality."""
-
 import pytest
 
 from genomevault.zk_proofs.circuits import PRSProofCircuit
 from genomevault.zk_proofs.prover import ZKProver
 from genomevault.zk_proofs.verifier import ZKVerifier
-
 
 class TestZKBasicFunctionality:
     """Test basic ZK proof operations."""

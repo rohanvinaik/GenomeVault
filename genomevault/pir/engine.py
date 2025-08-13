@@ -1,12 +1,11 @@
+"""Engine module."""
 from __future__ import annotations
 
-"""Engine module."""
 from hashlib import sha256
 
 import numpy as np
 
 from genomevault.pir.servers import PIRServer
-
 
 def _normalize_db(items: list[bytes]) -> list[bytes]:
     """Convert arbitrary byte-like items into fixed-length 32-byte records using SHA-256."""

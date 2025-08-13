@@ -3,14 +3,13 @@ Federated Learning Client for secure model training participation.
 Implements local training with privacy guarantees.
 
 """
-
 from __future__ import annotations
 
-import pickle
-import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+import pickle
+import time
 
 import numpy as np
 

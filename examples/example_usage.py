@@ -1,10 +1,7 @@
-#!/usr/bin/env python3
-
 """
 Example usage of GenomeVault 3.0 integrated system.
 Demonstrates the complete workflow from data processing to proof generation.
 """
-
 import asyncio
 
 import numpy as np

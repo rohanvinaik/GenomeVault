@@ -4,15 +4,12 @@ HIPAA Verification Models
 Data models for HIPAA fast-track verification system.
 
 """
-
 from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from typing import Any
-
-
 class VerificationStatus(Enum):
     """Status of HIPAA verification"""
 

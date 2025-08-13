@@ -1,8 +1,6 @@
 import numpy as np
 
-
 from genomevault.kan.hybrid import CompressionMetrics, HybridKANHD
-
 
 def synthetic_genomes(n=64, d=1024, seed=7):
     rng = np.random.default_rng(seed)

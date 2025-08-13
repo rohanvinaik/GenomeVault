@@ -1,19 +1,14 @@
-from genomevault.utils.logging import get_logger
-
-#!/usr/bin/env python3
 """
 GenomeVault 3.0 - Basic Usage Example
 
 This example demonstrates the core functionality of GenomeVault's
 privacy-preserving genomic data processing pipeline.
 """
-
-# Import GenomeVault components
 from genomevault import PhenotypeProcessor, SequencingProcessor, get_logger, init_config
 from genomevault.local_processing import DifferentialStorage
 from genomevault.utils import get_config
+from genomevault.utils.logging import get_logger
 
-# Initialize logging
 logger = get_logger(__name__)
 
 

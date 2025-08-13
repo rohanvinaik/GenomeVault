@@ -202,7 +202,7 @@ max-violations = 200
             if line_num < 0 or line_num >= len(lines):
                 continue
 
-            line = lines[line_num]
+            lines[line_num]
             message = error.get("message", "")
 
             # Extract undefined variable name

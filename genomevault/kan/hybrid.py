@@ -1,6 +1,4 @@
-# genomevault/kan/hybrid.py
 """KAN-HD Hybrid Architecture with 10-500x compression and interpretability."""
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -8,10 +6,6 @@ from enum import Enum, auto
 from typing import Any
 
 import numpy as np
-
-# ======================== KAN Components ========================
-
-
 class SplineMode(Enum):
     """Spline interpolation modes for KAN."""
 

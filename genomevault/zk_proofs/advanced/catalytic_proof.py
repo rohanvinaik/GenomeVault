@@ -1,18 +1,17 @@
-from __future__ import annotations
-
 """Catalytic Proof module."""
 """
 Catalytic space computing for proof efficiency.
 Implements catalytic computation to reduce memory requirements.
 """
+from __future__ import annotations
 
+from dataclasses import dataclass
+from typing import Any
 import hashlib
 import json
 import logging
 import os
 import time
-from dataclasses import dataclass
-from typing import Any
 
 import numpy as np
 

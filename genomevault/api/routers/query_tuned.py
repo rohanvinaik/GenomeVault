@@ -3,14 +3,12 @@ API Router for SNP-tuned and Zoom Queries
 Extends the tuned query endpoint with panel granularity and hierarchical zoom
 
 """
-
 from __future__ import annotations
-
-import time
-from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
+from typing import Any
+import time
 
 from genomevault.hypervector.encoding.genomic import GenomicEncoder, PanelGranularity
 from genomevault.hypervector.error_handling import ErrorBudgetAllocator
@@ -276,7 +274,7 @@ async def query_with_zoom(
             performance=performance,
         )
 
-    except (DatabaseError, KeyError) as e:
+    except (KeyError, Exception) as e:
         logger.exception("Unhandled exception")
         logger.error(f"Zoom query failed: {e}")
         raise HTTPException(500, f"Zoom query failed: {e!s}")

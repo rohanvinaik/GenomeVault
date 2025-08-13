@@ -1,7 +1,5 @@
-# tests/test_fs_indices_det.py
-from genomevault.crypto.transcript import Transcript
 from genomevault.crypto.rng import xof_uint_mod
-
+from genomevault.crypto.transcript import Transcript
 
 def derive_indices(trace_root_hex: str, cons_root_hex: str, n: int, domain: int):
     t = Transcript()

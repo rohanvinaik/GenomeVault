@@ -1,10 +1,10 @@
 """Clinical module."""
-
 from __future__ import annotations
 
-from typing import Any
-import numpy as np
 from fastapi import APIRouter, HTTPException
+from typing import Any
+
+import numpy as np
 
 from genomevault.api.models.clinical import ClinicalEvalRequest, ClinicalEvalResponse
 from genomevault.clinical.eval.harness import compute_report

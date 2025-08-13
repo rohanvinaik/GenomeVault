@@ -1,7 +1,9 @@
 """
 Shared pytest fixtures and configuration for GenomeVault tests
 """
+from genomevault.utils.logging import get_logger
 
+logger = get_logger(__name__)
 import os
 import shutil
 import tempfile

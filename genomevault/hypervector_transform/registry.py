@@ -4,21 +4,21 @@ Hypervector Registry for encoding version management.
 Manages hypervector encoding versions for reproducibility and compatibility.
 This is a core component for Stage 1 of the HDC implementation.
 """
-
 from __future__ import annotations
 
-import hashlib
-import json
-import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+import hashlib
+import json
+import logging
 
+from numpy.typing import NDArray
 import numpy as np
 import torch
-from numpy.typing import NDArray
 
 from .hdc_encoder import (
+
     HypervectorConfig,
     HypervectorEncoder,
     ProjectionType,
