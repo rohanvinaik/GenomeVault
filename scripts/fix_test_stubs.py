@@ -7,6 +7,10 @@ TESTS = ROOT / "tests"
 
 
 def is_pass_only(func: ast.FunctionDef) -> bool:
+    """Check if pass only.
+    Args:        func: Callback function.
+    Returns:
+        bool"""
     # Ignore docstring expr
     body = [
         n
@@ -21,6 +25,10 @@ def is_pass_only(func: ast.FunctionDef) -> bool:
 
 
 def fix_file(p: Path) -> bool:
+    """Fix file.
+    Args:        p: Parameter value.
+    Returns:
+        bool"""
     src = p.read_text(encoding="utf-8")
     t = ast.parse(src)
     changed = False
@@ -43,6 +51,9 @@ def fix_file(p: Path) -> bool:
 
 
 def main():
+    """Main.
+    Returns:
+        Result of the operation."""
     count = 0
     for p in TESTS.rglob("test_*.py"):
         if fix_file(p):

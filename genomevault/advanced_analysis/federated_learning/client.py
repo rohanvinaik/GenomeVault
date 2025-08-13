@@ -649,13 +649,15 @@ if __name__ == "__main__":
     results = client.train_local_model(global_model, num_epochs=3)
 
     print(
-        "Training complete: loss={results['final_loss']:.4f}, accuracy={results['final_accuracy']:.4f}"
+        f"Training complete: loss={results['final_loss']:.4f}, "
+        f"accuracy={results['final_accuracy']:.4f}"
     )
 
     # Apply differential privacy
     private_update = client.apply_differential_privacy(results["model_update"], epsilon=1.0)
     print(
-        "Update norm: original={np.linalg.norm(results['model_update']):.4f}, private={np.linalg.norm(private_update):.4f}"
+        f"Update norm: original={np.linalg.norm(results['model_update']):.4f}, "
+        f"private={np.linalg.norm(private_update):.4f}"
     )
 
     # Example 2: Hospital client

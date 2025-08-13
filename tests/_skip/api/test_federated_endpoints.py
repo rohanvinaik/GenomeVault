@@ -6,6 +6,7 @@ client = TestClient(app)
 
 
 def test_federated_aggregate_endpoint():
+    """Test federated aggregate endpoint."""
     payload = {
         "updates": [
             {"client_id": "a", "weights": [1.0, 1.0], "num_examples": 2},

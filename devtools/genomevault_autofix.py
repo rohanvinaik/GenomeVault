@@ -7,7 +7,7 @@ GenomeVault auto-fix codemod
 What it does (safe, conservative):
   1) Replaces `except:` with `except Exception:` and appends a TODO to narrow the exception.
   2) For `except Exception` / `except BaseException`, appends a TODO to narrow to specific exceptions.
-  3) Converts `print(...)` to `logger.info(...)` in library code; injects `import logging` and
+  pass  # Debug print removed
      `logger = logging.getLogger(__name__)` if needed. (Keeps prints in tests and under scripts/ if configured.)
   4) Renames unused parameters in function signatures to prefix '_' (skips self/cls). No body changes are needed.
   5) Flags `from x import *` with a TODO trailing comment to replace with explicit imports.
@@ -34,9 +34,14 @@ from __future__ import annotations
 
 import argparse
 import ast
+import logging
 import os
 import sys
 from dataclasses import dataclass, field
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+logger = logging.getLogger(__name__)
 
 try:
     import libcst as cst
@@ -312,10 +317,8 @@ class AutoFixTransformer(cst.CSTTransformer):
     ) -> cst.BaseSuite:
         return updated_node
 
-    # ----- print(...) -> logger.info(...) -----
 
     def leave_Call(self, original_node: cst.Call, updated_node: cst.Call) -> cst.Call:
-        # Only transform print(...) calls
         if m.matches(updated_node.func, m.Name("print")):
             # Convert to logger.info(...)
             self.state.print_to_logger_count += 1
@@ -347,10 +350,10 @@ class AutoFixTransformer(cst.CSTTransformer):
             self.state.bare_except_count += 1
             # change to Exception and add TODO
             updated_node = updated_node.with_changes(type=cst.Name("Exception"))
-            todo_comment = "  # TODO: narrow this bare 'except' to specific exception(s)"
+            todo_comment = "
         elif is_broad:
             self.state.broad_except_count += 1
-            todo_comment = "  # TODO: narrow broad 'except Exception' to specific exception(s)"
+            todo_comment = "
 
         if todo_comment:
             body = updated_node.body
@@ -506,7 +509,7 @@ def main():
         ns.root, include_tests=ns.include_tests, include_scripts=ns.include_scripts
     )
     if ns.verbose:
-        logger.debug(f"Discovered {len(py_files)} Python files under {ns.root}", file=sys.stderr)
+        logger.debug(f"Discovered {len(py_files)} Python files under {ns.root}")
 
     totals = {
         "files_changed": 0,
@@ -520,7 +523,7 @@ def main():
     for path in py_files:
         changed, msg, summary = process_file(path, apply=ns.apply, verbose=ns.verbose)
         if ns.verbose and changed:
-            logger.debug(f"[CHANGED] {path} -> {summary}", file=sys.stderr)
+            logger.debug(f"[CHANGED] {path} -> {summary}")
         if changed:
             totals["files_changed"] += 1
         for k in (
@@ -532,11 +535,11 @@ def main():
         ):
             totals[k] += summary.get(k, 0)
 
-    logger.debug("==== Autofix Summary ====")
+    logger.info("==== Autofix Summary ====")
     for k, v in totals.items():
-        logger.debug(f"{k}: {v}")
+        logger.info(f"{k}: {v}")
     if not ns.apply:
-        logger.debug("\n(Dry-run only; re-run with --apply to write changes.)")
+        logger.info("\n(Dry-run only; re-run with --apply to write changes.)")
 
 
 if __name__ == "__main__":

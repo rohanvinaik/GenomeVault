@@ -15,7 +15,7 @@ def fix_bare_except(content):
     # Pattern to match bare except:
     pattern = r"(\s*)except\s*:\s*$"
     replacement = (
-        r"\1except Exception:  # TODO: narrow this bare \'except\' to specific exception(s)"
+        r"\1except Exception:
     )
 
     fixed_content = re.sub(pattern, replacement, content, flags=re.MULTILINE)
@@ -54,7 +54,7 @@ def fix_print_statements(content):
 def fix_star_imports(content):
     """Add TODO comments to star imports"""
     pattern = r"(from\s+\S+\s+import\s+\*)"
-    replacement = r"\1  # TODO: replace star import with explicit names"
+    replacement = r"\1
 
     fixed_content = re.sub(pattern, replacement, content)
     return fixed_content

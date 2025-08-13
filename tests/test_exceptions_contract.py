@@ -20,6 +20,10 @@ from genomevault.exceptions import (
     ],
 )
 def test_exception_to_dict(exc_cls, kwargs):
+    """Test exception to dict.
+    Args:        exc_cls: List of items.        kwargs: List of items.
+    Returns:
+        Result of the operation."""
     exc = exc_cls(**kwargs)
     d = error_response(exc)
     assert d["type"] == exc_cls.__name__
@@ -29,6 +33,9 @@ def test_exception_to_dict(exc_cls, kwargs):
 
 
 def test_codec_roundtrip_known_codes():
+    """Test codec roundtrip known codes.
+    Returns:
+        Result of the operation."""
     for code, cls in CODEC.items():
         assert issubclass(cls, GVError)
         inst = cls("msg")

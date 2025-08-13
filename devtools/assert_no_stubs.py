@@ -38,10 +38,6 @@ def main() -> int:
             if STUB_RE.search(text):
                 offenders.append(p.relative_to(root))
     if offenders:
-        print(
-            "Stub‑guard failed. Remove TODO/pass/NotImplemented from critical paths:",
-            file=sys.stderr,
-        )
         for f in offenders:
             print(f" - {f}", file=sys.stderr)
         return 1

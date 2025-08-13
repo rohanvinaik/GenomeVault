@@ -4,6 +4,10 @@ from genomevault.api.app import app
 
 
 def test_rate_limit_exceeds_returns_429(monkeypatch):
+    """Test rate limit exceeds returns 429.
+    Args:        monkeypatch: Parameter value.
+    Returns:
+        Result of the operation."""
     monkeypatch.setenv("RATE_LIMIT_RPS", "1.0")
     monkeypatch.setenv("RATE_LIMIT_BURST", "2")
     client = TestClient(app)

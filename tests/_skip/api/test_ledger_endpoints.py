@@ -6,6 +6,7 @@ client = TestClient(app)
 
 
 def test_ledger_endpoints():
+    """Test ledger endpoints."""
     r1 = client.post("/ledger/append", json={"data": {"a": 1}})
     assert r1.status_code == 200
     r2 = client.post("/ledger/append", json={"data": {"b": 2}})

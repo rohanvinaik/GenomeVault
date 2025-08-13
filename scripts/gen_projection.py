@@ -28,6 +28,8 @@ class ProjectionGenerator:
     """Generate and cache random projection matrices."""
 
     def __init__(self, cache_dir: Path):
+        """Initialize the instance.
+        Args:        cache_dir: Parameter value."""
         self.cache_dir = cache_dir
         self.cache_dir.mkdir(parents=True, exist_ok=True)
 
@@ -174,6 +176,9 @@ class ProjectionGenerator:
 
 
 def main():
+    """Main.
+    Returns:
+        Result of the operation."""
     parser = argparse.ArgumentParser(
         description="Generate cached projection matrices for GenomeVault"
     )
@@ -259,7 +264,6 @@ def main():
             logger.info("✅ All projections generated and verified successfully!")
 
             # Print summary
-            print("\nGenerated projections:")
             print("-" * 50)
             for dim, filepath in generated:
                 size_mb = filepath.stat().st_size / (1024 * 1024)

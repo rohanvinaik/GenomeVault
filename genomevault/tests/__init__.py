@@ -1,3 +1,1 @@
-"""Package initialization for tests."""
-
-# Tests module initialization
+"""Test suite for tests functionality."""

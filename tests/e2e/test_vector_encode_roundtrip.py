@@ -7,6 +7,7 @@ client = TestClient(app)
 
 
 def test_vector_encode_roundtrip_e2e():
+    """Test vector encode roundtrip e2e."""
     dim = HYPERVECTOR_DIMENSIONS["base"]
     r = client.post(
         "/vectors/encode",

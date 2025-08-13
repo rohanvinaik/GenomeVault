@@ -4,6 +4,9 @@ from genomevault.zk.real_engine import RealZKEngine
 
 
 def test_sum64_proof_roundtrip():
+    """Test sum64 proof roundtrip.
+    Returns:
+        Result of the operation."""
     require_toolchain()
     eng = RealZKEngine(repo_root=str(PROJECT_ROOT))
     proof = eng.create_proof(circuit_type="sum64", inputs={"a": 7, "b": 5, "c": 12})

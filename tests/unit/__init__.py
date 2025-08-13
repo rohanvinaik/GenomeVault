@@ -1,1 +1,1 @@
-"""Module initialization."""
+"""Test suite for unit functionality."""

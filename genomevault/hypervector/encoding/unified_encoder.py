@@ -1,6 +1,6 @@
 """
 Unified hypervector encoder supporting sparse and orthogonal projections
-for genomic data at 10k/15k/20k dimensions with seed control and determinism.
+for genomic data at 10k/15k/20k dimensions with seed control and determinism.:
 """
 from __future__ import annotations
 
@@ -77,15 +77,7 @@ class UnifiedHypervectorEncoder:
         self._fitted = False
 
     def fit(self, n_features: int) -> "UnifiedHypervectorEncoder":
-        """
-        Fit the encoder to the input feature dimension.
-
-        Args:
-            n_features: Number of input features
-
-        Returns:
-            Self for method chaining
-        """
+        """Fit."""
         self.projection.fit(n_features)
         self._fitted = True
 
@@ -94,6 +86,15 @@ class UnifiedHypervectorEncoder:
 
         # Nucleotide base vectors (orthogonal)
         for i, base in enumerate(["A", "T", "G", "C"]):
+        """
+                Fit the encoder to the input feature dimension.
+
+                Args:
+                    n_features: Number of input features
+
+                Returns:
+                    Self for method chaining
+                """
             vec = np.zeros(self.dimension)
             start = i * (self.dimension // 4)
             end = (i + 1) * (self.dimension // 4)
@@ -108,7 +109,7 @@ class UnifiedHypervectorEncoder:
             self._base_vectors[variant_type] = vec
 
         # Chromosome vectors
-        for i in range(1, 25):  # chr1-22, X, Y
+        for i in range(1, 25):  # chr1-22, X, Y:
             chr_name = f"chr{i}" if i <= 22 else ("chrX" if i == 23 else "chrY")
             vec = rng.standard_normal(self.dimension)
             vec = vec / np.linalg.norm(vec)
@@ -118,6 +119,7 @@ class UnifiedHypervectorEncoder:
 
     def encode_genomic_features(
         self, features: MatrixF32, feature_names: list[str] | None = None
+        """Encode genomic features."""
     ) -> MatrixF32:
         """
         Encode genomic features into hypervector space.
@@ -145,6 +147,7 @@ class UnifiedHypervectorEncoder:
     def encode_variant(
         self,
         chromosome: str,
+        """Encode variant."""
         position: int,
         ref: str,
         alt: str,
@@ -201,7 +204,6 @@ class UnifiedHypervectorEncoder:
         return variant_vec
 
     def _encode_position(self, position: int) -> np.ndarray:
-        """
         Encode genomic position as a hypervector.
 
         Args:
@@ -216,15 +218,7 @@ class UnifiedHypervectorEncoder:
         return vec / np.linalg.norm(vec)
 
     def encode_sequence(self, sequence: str) -> VectorF32:
-        """
-        Encode a DNA sequence into a hypervector.
-
-        Args:
-            sequence: DNA sequence string
-
-        Returns:
-            Sequence hypervector
-        """
+        """Encode sequence."""
         if not self._fitted:
             self.fit(n_features=100)
 
@@ -234,6 +228,16 @@ class UnifiedHypervectorEncoder:
         # Encode each base with position binding
         vectors = []
         for i, base in enumerate(sequence.upper()):
+        """
+        """
+                Encode a DNA sequence into a hypervector.
+
+                Args:
+                    sequence: DNA sequence string
+
+                Returns:
+                    Sequence hypervector
+                """
             if base in self._base_vectors:
                 base_vec = self._base_vectors[base]
                 # Apply position-specific permutation
@@ -249,6 +253,7 @@ class UnifiedHypervectorEncoder:
     def cross_modal_binding(
         self,
         genomic_vec: np.ndarray,
+        """Cross modal binding."""
         clinical_vec: np.ndarray,
         modality_weights: dict[str, float] | None = None,
     ) -> np.ndarray:
@@ -291,7 +296,7 @@ class UnifiedHypervectorEncoder:
         return combined
 
     def similarity(self, vec1: np.ndarray, vec2: np.ndarray) -> float:
-        """
+        """Similarity."""
         Calculate cosine similarity between two hypervectors.
 
         Args:
@@ -311,6 +316,7 @@ class UnifiedHypervectorEncoder:
 
     def decode_components(
         self, hypervector: np.ndarray, threshold: float = 0.3
+        """Decode components."""
     ) -> list[tuple[str, float]]:
         """
         Attempt to decode components from a bundled hypervector.
@@ -330,6 +336,7 @@ class UnifiedHypervectorEncoder:
 
 def create_encoder(
     dimension: DimensionTier = 10000,
+    """Create encoder."""
     projection_type: ProjectionType = "sparse",
     **kwargs,
 ) -> UnifiedHypervectorEncoder:
@@ -345,3 +352,5 @@ def create_encoder(
         Configured encoder instance
     """
     return UnifiedHypervectorEncoder(dimension=dimension, projection_type=projection_type, **kwargs)
+
+        """

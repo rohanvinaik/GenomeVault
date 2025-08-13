@@ -2,6 +2,10 @@ from genomevault.governance.policy.classifier import classify_record
 
 
 def test_classify_record_uses_policy(tmp_path, monkeypatch):
+    """Test classify record uses policy.
+
+    Args:        tmp_path: Path to tmp.        monkeypatch: Monkeypatch parameter.
+    """
     policy = tmp_path / "policy.json"
     policy.write_text('{"fields":{"email":"restricted","age":"public"}}', encoding="utf-8")
     monkeypatch.setenv("GV_POLICY_PATH", str(policy))

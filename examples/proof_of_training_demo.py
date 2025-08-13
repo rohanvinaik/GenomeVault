@@ -23,6 +23,9 @@ class DemoGenomicModel:
     """Demo model for genomic prediction"""
 
     def __init__(self, input_dim: int = 1000, hidden_dim: int = 100, output_dim: int = 2):
+        """Initialize the instance.
+        Args:        input_dim: Parameter value.        hidden_dim: Parameter value.        output_dim: Parameter value.
+        """
         # Simulate model parameters
         self.weights = {
             "layer1": np.random.randn(input_dim, hidden_dim) * 0.01,

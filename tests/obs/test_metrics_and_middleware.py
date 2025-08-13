@@ -4,6 +4,9 @@ from genomevault.api.app import app
 
 
 def test_metrics_endpoint_exists():
+    """Test metrics endpoint exists.
+    Returns:
+        Result of the operation."""
     client = TestClient(app)
     r = client.get("/metrics")
     assert r.status_code in (200, 404)  # OK if metrics gated; if present, should be 200

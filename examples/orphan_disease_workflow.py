@@ -30,6 +30,8 @@ class OrphanDiseaseResearchDemo:
     """Demonstrates privacy-preserving orphan disease research workflow."""
 
     def __init__(self, disease_name: str = "Rett Syndrome"):
+        """Initialize the instance.
+        Args:        disease_name: Parameter value."""
         self.disease_name = disease_name
         self.compressor = AdvancedHierarchicalCompressor()
         self.prover = Prover()

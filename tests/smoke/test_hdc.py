@@ -6,6 +6,8 @@ from genomevault.hdc.core import D, bundle, encode, similarity
 
 
 class TestHDC:
+    """TestHDC class implementation."""
+
     def test_encode_basic(self):
         """Test basic encoding functionality."""
         X = np.random.randn(5, 10)

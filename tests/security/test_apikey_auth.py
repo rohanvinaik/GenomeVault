@@ -4,6 +4,10 @@ from genomevault.api.app import app
 
 
 def test_vectors_encode_requires_api_key(monkeypatch):
+    """Test vectors encode requires api key.
+    Args:        monkeypatch: Parameter value.
+    Returns:
+        Result of the operation."""
     # Enable auth by setting a key
     monkeypatch.setenv("GV_API_KEYS", "devkey")
     client = TestClient(app)

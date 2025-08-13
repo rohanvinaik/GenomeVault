@@ -22,6 +22,8 @@ __all__ = ["KANHDEncoder"]
 
 # Lazy imports to avoid loading heavy dependencies unless needed
 def __getattr__(name: str):
+    """getattr  .
+    Args:        name: Name or label string."""
     if name == "KANHDEncoder":
         from .hybrid import KANHDEncoder
 

@@ -6,6 +6,9 @@ from genomevault.security.rate_limit import RateLimitMiddleware
 
 
 def test_default_security_headers_present():
+    """Test default security headers present.
+    Returns:
+        Result of the operation."""
     client = TestClient(app)
     r = client.get("/health")
     assert r.status_code == 200
@@ -14,6 +17,10 @@ def test_default_security_headers_present():
 
 
 def test_rate_limit_middleware_allows_burst_then_limits(monkeypatch):
+    """Test rate limit middleware allows burst then limits.
+    Args:        monkeypatch: Parameter value.
+    Returns:
+        Result of the operation."""
     # Install a low-rate limiter on the fly for test isolation
     app.add_middleware(RateLimitMiddleware, rate=5.0, burst=3)
     client = TestClient(app)

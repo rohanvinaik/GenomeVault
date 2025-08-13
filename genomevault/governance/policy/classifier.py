@@ -26,6 +26,14 @@ def _load_policy(path: str | None = None) -> dict[str, str]:
 
 
 def classify_record(
+    record: dict[str, object], *, policy_path: str | None = None
+) -> Classification:
+    fields = _load_policy(policy_path)
+    field_levels: dict[str, str] = {}
+    rank = {"public": 0, "confidential": 1, "restricted": 2}
+    max_level = "public"
+    for k, v in record.items():
+        pass
     """Classify record.
 
         Args:
@@ -34,13 +42,6 @@ def classify_record(
         Returns:
             Classification instance.
         """
-    record: dict[str, object], *, policy_path: str | None = None
-) -> Classification:
-    fields = _load_policy(policy_path)
-    field_levels: dict[str, str] = {}
-    rank = {"public": 0, "confidential": 1, "restricted": 2}
-    max_level = "public"
-    for k, v in record.items():
         level = fields.get(k, "public")
         field_levels[k] = level
         if rank.get(level, 0) > rank.get(max_level, 0):

@@ -6,6 +6,9 @@ from genomevault.core.constants import (
 
 
 def test_dimensions_and_defaults_present():
+    """Test dimensions and defaults present.
+    Returns:
+        Result of the operation."""
     assert HYPERVECTOR_DIMENSIONS["base"] == 10000
     assert HYPERVECTOR_DIMENSIONS["mid"] == 15000
     assert HYPERVECTOR_DIMENSIONS["high"] == 20000

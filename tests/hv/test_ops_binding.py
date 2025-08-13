@@ -10,6 +10,9 @@ from genomevault.hypervector.operations.binding import (
 
 
 def test_circular_convolution_and_elementwise():
+    """Test circular convolution and elementwise.
+    Returns:
+        Result of the operation."""
     rng = np.random.default_rng(7)
     a = rng.standard_normal(64)
     b = rng.standard_normal(64)
@@ -21,6 +24,9 @@ def test_circular_convolution_and_elementwise():
 
 
 def test_permutation_binding_invertibility():
+    """Test permutation binding invertibility.
+    Returns:
+        Result of the operation."""
     v = np.arange(10.0)
     w = permutation_binding(v, shift=3)
     v_back = permutation_binding(w, shift=-3)
@@ -28,6 +34,9 @@ def test_permutation_binding_invertibility():
 
 
 def test_bundle_and_unbundle_retrieval():
+    """Test bundle and unbundle retrieval.
+    Returns:
+        Result of the operation."""
     rng = np.random.default_rng(123)
     L = 128
     A = rng.standard_normal(L)

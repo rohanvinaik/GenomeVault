@@ -46,6 +46,10 @@ class CircuitPaths:
 
 
 def _which(cmd: str) -> str | None:
+    """which.
+    Args:        cmd: Parameter value.
+    Returns:
+        str | None"""
     return shutil.which(cmd)
 
 

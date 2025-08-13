@@ -14,17 +14,18 @@ class ConsentRecord:
 
     @property
     def active(self) -> bool:
-        """Active.
-
-            Returns:
-                Boolean result.
-            """
         if self.revoked_at is not None:
             return False
         if (
             self.expires_at is not None
             and datetime.now(timezone.utc) >= self.expires_at
         ):
+            pass
+        """Active.
+
+                    Returns:
+                        Boolean result.
+                    """
             return False
         return True
 
@@ -33,21 +34,9 @@ class ConsentStore:
     """In-memory consent store. Replace with DB in production."""
 
     def __init__(self) -> None:
-        """Initialize instance.
-            """
         self._by_subject: dict[str, list[ConsentRecord]] = {}
 
     def grant(
-        """Grant.
-
-            Args:
-                subject_id: Subject id.
-                scope: Scope.
-                ttl_days: Ttl days.
-
-            Returns:
-                ConsentRecord instance.
-            """
         self, subject_id: str, scope: str, ttl_days: int | None = None
     ) -> ConsentRecord:
         now = datetime.now(timezone.utc)
@@ -70,12 +59,29 @@ class ConsentStore:
             """
         ok = False
         for rec in self._by_subject.get(subject_id, []):
+        """Grant.
+
+            Args:
+                subject_id: Subject id.
+                scope: Scope.
+                ttl_days: Ttl days.
+
+            Returns:
+                ConsentRecord instance.
+            """
+        """Initialize instance.
+                    """
             if rec.scope == scope and rec.active:
                 rec.revoked_at = datetime.now(timezone.utc)
                 ok = True
         return ok
 
     def has_consent(self, subject_id: str, scope: str) -> bool:
+        return any(
+            rec.scope == scope and rec.active
+            for rec in self._by_subject.get(subject_id, []):
+        )
+
         """Check if has consent.
 
             Args:
@@ -85,7 +91,3 @@ class ConsentStore:
             Returns:
                 True if condition is met, False otherwise.
             """
-        return any(
-            rec.scope == scope and rec.active
-            for rec in self._by_subject.get(subject_id, [])
-        )

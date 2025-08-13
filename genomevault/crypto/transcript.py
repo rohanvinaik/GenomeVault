@@ -11,10 +11,15 @@ class Transcript:
     """
 
     def __init__(self):
+        """Initialize the instance."""
         self._h = hashlib.sha256()
         self._round = 0
 
     def append(self, label: str, message: bytes) -> None:
+        """Append.
+        Args:        label: Name or label string.        message: Message or text content.
+        Returns:
+            None"""
         lbl = label.encode("utf-8")
         self._h.update(len(lbl).to_bytes(4, "big"))
         self._h.update(lbl)
@@ -22,9 +27,16 @@ class Transcript:
         self._h.update(message)
 
     def digest(self) -> bytes:
+        """Digest.
+        Returns:
+            bytes"""
         return self._h.digest()
 
     def challenge(self, label: str, nbytes: int) -> bytes:
+        """Challenge.
+        Args:        label: Name or label string.        nbytes: List of items.
+        Returns:
+            bytes"""
         self._round += 1
         seed = self.digest() + self._round.to_bytes(4, "big")
         return xof(label.encode("utf-8"), seed, nbytes)

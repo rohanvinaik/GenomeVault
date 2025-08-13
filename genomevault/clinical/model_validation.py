@@ -150,6 +150,7 @@ class ClinicalModelValidator:
     def validate_model(
         self,
         model: Any,
+        """Validate model."""
         model_hash: str,
         clinical_domain: ClinicalDomain,
         test_data: Any,
@@ -241,6 +242,7 @@ class ClinicalModelValidator:
     def issue_capability_attestation(
         self,
         model_hash: str,
+        """Issue capability attestation."""
         validation_results: list[ClinicalValidationResult],
         intended_use: str,
         contraindications: list[str],
@@ -608,6 +610,7 @@ class ClinicalValidationReport:
     @staticmethod
     def generate_validation_report(
         validation_result: ClinicalValidationResult,
+        """Generate validation report."""
         attestation: ModelCapabilityAttestation | None = None,
     ) -> dict[str, Any]:
         """Generate a comprehensive validation report"""

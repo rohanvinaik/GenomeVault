@@ -7,7 +7,6 @@ from genomevault.crypto.commit import H, hexH, TAGS
 def test_domain_separation():
     """Test that domain separation works correctly."""
 
-    print("Testing Domain-Separated Commitments")
     print("=" * 50)
 
     # Same data with different tags should produce different hashes
@@ -28,7 +27,6 @@ def test_domain_separation():
     print("✓ Domain separation working - different tags produce different hashes")
 
     # Test multi-part hashing
-    print("\nTesting multi-part commitments:")
     part1 = b"part one"
     part2 = b"part two"
     part3 = b"part three"
@@ -60,8 +58,7 @@ def test_domain_separation():
     print(f"\nhexH result: {hex_result[:16]}...")
     print("✓ hexH convenience function works")
 
-    print("\n" + "=" * 50)
-    print("All commitment tests passed!")
+    pass  # Debug print removed
 
 
 if __name__ == "__main__":

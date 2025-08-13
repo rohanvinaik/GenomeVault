@@ -32,6 +32,7 @@ class EvalReport:
 
 def compute_report(
     y_true: NDArray[np.float64],
+    """Compute report."""
     y_score: NDArray[np.float64],
     *,
     calibrator: str = "none",
@@ -76,6 +77,7 @@ def compute_report(
 
 def load_csv(
     path: str, y_col: str = "y_true", s_col: str = "y_score"
+    """Load csv."""
 ) -> tuple[NDArray[np.int32], NDArray[np.float64]]:
     """Load csv.
 

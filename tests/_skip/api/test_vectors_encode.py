@@ -7,6 +7,7 @@ client = TestClient(app)
 
 
 def test_vectors_encode_happy_path():
+    """Test vectors encode happy path."""
     dim = HYPERVECTOR_DIMENSIONS["base"]
     payload = {
         "data": {"genomic": [1.0, 2.0, 3.0]},
@@ -20,6 +21,7 @@ def test_vectors_encode_happy_path():
 
 
 def test_vectors_encode_bad_dim():
+    """Test vectors encode bad dim."""
     payload = {
         "data": {"genomic": [1.0, 2.0, 3.0]},
         "dimension": "99999",

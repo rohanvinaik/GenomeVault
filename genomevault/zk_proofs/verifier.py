@@ -469,6 +469,7 @@ class Verifier:
 
     def verify_recursive_proof(
         self, recursive_proof: Proof, original_proofs: list[Proof]
+        """Verify recursive proof."""
     ) -> VerificationResult:
         """
         Verify a recursive proof that aggregates multiple proofs.

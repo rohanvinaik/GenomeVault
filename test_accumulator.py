@@ -9,11 +9,9 @@ import hashlib
 def test_accumulator():
     """Test accumulator binding for proof aggregation."""
 
-    print("Testing Accumulator Binding Primitive")
     print("=" * 50)
 
     # Test initial accumulator
-    print("Testing initial accumulator:")
     print(f"  INITIAL_ACC: {INITIAL_ACC.hex()[:16]}...")
 
     # Verify it's deterministic
@@ -22,7 +20,7 @@ def test_accumulator():
     print("  ✓ Initial accumulator is deterministic")
 
     # Test single step
-    print("\nTesting accumulator step:")
+    pass  # Debug print removed
 
     proof_commit1 = hashlib.sha256(b"proof1").digest()
     vk_hash1 = hashlib.sha256(b"vk1").digest()
@@ -34,7 +32,7 @@ def test_accumulator():
     print("  ✓ Accumulator changes after step")
 
     # Test chaining
-    print("\nTesting accumulator chaining:")
+    pass  # Debug print removed
 
     proof_commit2 = hashlib.sha256(b"proof2").digest()
     vk_hash2 = hashlib.sha256(b"vk2").digest()
@@ -47,7 +45,7 @@ def test_accumulator():
     print("  ✓ Accumulator evolves with each step")
 
     # Test order matters
-    print("\nTesting order dependence:")
+    pass  # Debug print removed
 
     # Reverse order
     acc1_rev = step(INITIAL_ACC, proof_commit2, vk_hash2)
@@ -57,7 +55,7 @@ def test_accumulator():
     print("  ✓ Order matters (non-commutative)")
 
     # Test binding property
-    print("\nTesting binding properties:")
+    pass  # Debug print removed
 
     # Different proof, same VK
     proof_commit3 = hashlib.sha256(b"proof3").digest()
@@ -76,7 +74,7 @@ def test_accumulator():
     print("  ✓ Different VKs produce different accumulators")
 
     # Test chain verification
-    print("\nTesting chain verification:")
+    pass  # Debug print removed
 
     # Build a chain
     chain = [
@@ -122,7 +120,7 @@ def test_accumulator():
     print("  ✓ Empty chain verifies to initial")
 
     # Test tampered chain
-    print("\nTesting tamper detection:")
+    pass  # Debug print removed
 
     # Tamper with middle proof
     tampered_chain = [
@@ -144,7 +142,7 @@ def test_accumulator():
     print("  ✓ Reordered chain detected")
 
     # Test domain separation
-    print("\nTesting domain separation:")
+    pass  # Debug print removed
 
     # Manual computation should use ACC tag
     test_acc = H(TAGS["ACC"], INITIAL_ACC, proof_commit1, vk_hash1)
@@ -158,7 +156,7 @@ def test_accumulator():
     print("  ✓ Domain separation prevents cross-protocol attacks")
 
     # Test large chain
-    print("\nTesting large chain:")
+    pass  # Debug print removed
 
     large_chain = []
     acc_large = INITIAL_ACC
@@ -185,8 +183,7 @@ def test_accumulator():
     assert not verify_chain(large_chain, acc_large.hex())
     print("  ✓ Single tampered proof in large chain detected")
 
-    print("\n" + "=" * 50)
-    print("All accumulator tests passed!")
+    pass  # Debug print removed
 
 
 if __name__ == "__main__":

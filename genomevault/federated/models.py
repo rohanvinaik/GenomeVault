@@ -20,6 +20,8 @@ class ModelUpdate(BaseModel):
 
     @validator("weights")
     def _non_empty(cls, v: list[float]):
+        """non empty.
+        Args:        v: Parameter value."""
         if not isinstance(v, list) or len(v) == 0:
             raise ValueError("weights must be a non-empty list[float]")
         return v

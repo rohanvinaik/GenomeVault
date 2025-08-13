@@ -173,6 +173,11 @@ class TestPIRIntegration:
 
         # Mock HTTP client to use local servers
         async def mock_query_server(server_url, shard_id, query):
+            """Asynchronously mock query server.
+                Args:        server_url: Parameter value.        shard_id: Parameter value.     \
+                    query: Parameter value.
+                Returns:
+                    Result of the operation.    """
             response = await servers[shard_id].handle_query(
                 {
                     "query_id": query.query_id,

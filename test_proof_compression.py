@@ -67,11 +67,9 @@ def decompress_proof(compressed_data: bytes) -> dict:
 def test_proof_compression():
     """Test proof compression and decompression."""
 
-    print("Testing Proof Compression/Decompression")
     print("=" * 50)
 
     # Test 1: Small proof
-    print("\n1. Small proof (should compress well):")
     small_proof = {
         "variant_commitment": hashlib.sha256(b"test_variant").hexdigest(),
         "computed_root": hashlib.sha256(b"root1").hexdigest(),
@@ -94,7 +92,6 @@ def test_proof_compression():
     print("  ✓ Decompression successful")
 
     # Test 2: Large proof with many fields
-    print("\n2. Large proof with many fields:")
     large_proof = {
         "proof_id": hashlib.sha256(b"proof123").hexdigest(),
         "circuit_name": "variant_presence",
@@ -129,7 +126,7 @@ def test_proof_compression():
     print("  ✓ Decompression successful")
 
     # Test 3: Show why truncation is bad
-    print("\n3. Demonstrating why truncation destroys proofs:")
+    pass  # Debug print removed
 
     # Truncate the original JSON (old bad approach)
     truncated_json = original_json[:256]
@@ -150,7 +147,7 @@ def test_proof_compression():
     print("  ✓ No data loss with compression")
 
     # Test 4: Compression efficiency for different data types
-    print("\n4. Compression efficiency by content type:")
+    pass  # Debug print removed
 
     # Random hashes (don't compress well)
     random_proof = {
@@ -189,7 +186,6 @@ def test_proof_compression():
         f"({len(structured_json) / len(compressed_structured):.2f}x)"
     )
 
-    print("\n" + "=" * 50)
     print("Conclusion: Compression preserves all proof data while reducing size.")
     print("Truncation destroys proofs and must NEVER be used!")
 

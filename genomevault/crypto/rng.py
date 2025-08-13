@@ -5,6 +5,10 @@ import os
 
 
 def secure_bytes(n: int) -> bytes:
+    """Secure bytes.
+    Args:        n: Number or count value.
+    Returns:
+        bytes"""
     return os.urandom(n)
 
 
@@ -21,6 +25,11 @@ def xof(label: bytes, seed: bytes, out_len: int) -> bytes:
 
 
 def xof_uint_mod(label: bytes, seed: bytes, modulus: int) -> int:
+    """Xof uint mod.
+        Args:        label: Name or label string.        seed: Parameter value.         \
+            modulus: List of items.
+        Returns:
+            int    """
     # 8 bytes → 64-bit — iterate if you need many samples; caller ensures uniqueness
     r = int.from_bytes(xof(label, seed, 8), "big")
     return r % modulus

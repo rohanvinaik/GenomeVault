@@ -44,18 +44,15 @@ def main():
     results = {}
 
     # 1. Black formatting check
-    print("\n1. Checking code formatting with Black...")
     black_files = [str(hdc_module)] + [str(f) for f in hdc_tests if f.exists()]
     black_result = run_command(["black", "--check", "--diff"] + black_files)
     results["black"] = black_result
 
     # 2. isort import sorting check
-    print("\n2. Checking import sorting with isort...")
     isort_result = run_command(["isort", "--check-only", "--diff", str(hdc_module)])
     results["isort"] = isort_result
 
     # 3. Flake8 linting
-    print("\n3. Running flake8 linter...")
     flake8_result = run_command(
         [
             "flake8",
@@ -67,7 +64,6 @@ def main():
     results["flake8"] = flake8_result
 
     # 4. Type checking with mypy (if available)
-    print("\n4. Running mypy type checker...")
     try:
         mypy_result = run_command(
             [
@@ -80,12 +76,10 @@ def main():
         results["mypy"] = mypy_result
     except (FileNotFoundError, subprocess.CalledProcessError, Exception):
         logger.exception("Unhandled exception")
-        print("mypy not available, skipping type checking")
         results["mypy"] = None
         raise
 
     # 5. Run quick tests
-    print("\n5. Running quick unit tests...")
     test_result = run_command(
         [
             "pytest",
@@ -97,8 +91,6 @@ def main():
     results["tests"] = test_result
 
     # Summary
-    print("\n" + "=" * 60)
-    print("LINTER CHECK SUMMARY")
     print("=" * 60)
 
     all_passed = True
@@ -110,17 +102,11 @@ def main():
         else:
             status = "FAILED ✗"
             all_passed = False
-        print(f"{check:.<20} {status}")
+        pass  # Debug print removed
 
-    print("\n" + "=" * 60)
     if all_passed:
-        print("All checks passed! ✓")
         return 0
     else:
-        print("Some checks failed. ✗")
-        print("\nTo fix formatting issues, run:")
-        print("  black genomevault/hypervector_transform tests/")
-        print("  isort genomevault/hypervector_transform tests/")
         return 1
 
 

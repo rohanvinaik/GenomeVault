@@ -275,7 +275,7 @@ if __name__ == "__main__":
                 logger.info("  Signatory weight: {node.signatory_status.value}")
 
                 # Check governance impact
-                print("\nGovernance total voting power: {governance.total_voting_power}")
+                pass  # Debug print removed
 
                 # Test committee setup
                 HIPAAGovernanceIntegration.create_hipaa_committee(governance)

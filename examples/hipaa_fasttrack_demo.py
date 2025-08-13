@@ -3,10 +3,10 @@ HIPAA Fast-Track Example
 
 Demonstrates the complete HIPAA verification and governance integration flow.
 """
+
 import asyncio
 
 from genomevault.blockchain.governance import (
-
     CommitteeType,
     GovernanceSystem,
     ProposalStatus,
@@ -276,7 +276,6 @@ The HIPAA Fast-Track system provides:
 
 if __name__ == "__main__":
     # Configure logging
-"""
     import logging
 
     logging.basicConfig(

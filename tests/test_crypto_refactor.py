@@ -237,5 +237,3 @@ if __name__ == "__main__":
 
     test_xof_vs_random()
     print("✓ XOF vs random")
-
-    print("\nAll crypto refactor tests passed!")

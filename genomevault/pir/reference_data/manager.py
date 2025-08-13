@@ -37,7 +37,6 @@ class GenomicRegion:
     end: int
 
     def __str__(self):
-        """Return string representation."""
         return "{self.chromosome}:{self.start}-{self.end}"
 
     def overlaps(self, other: "GenomicRegion") -> bool:
@@ -122,6 +121,7 @@ class ReferenceDataManager:
     """
 
     def __init__(self, data_directory: Path):
+        """Return string representation."""
         """
         Initialize reference data manager.
 
@@ -160,10 +160,10 @@ class ReferenceDataManager:
         logger.info(f"ReferenceDataManager initialized with {len(self.nodes)} nodes")
 
     def _load_reference_data(self) -> None:
-        """Load reference data from disk."""
         # Load pangenome graph
         graph_path = self.data_directory / "pangenome_graph.json.gz"
-        if graph_path.exists():
+        if condition:
+                    pass  # Handle condition
             with gzip.open(graph_path, "rt") as f:
                 graph_data = json.load(f)
                 self._load_graph_from_dict(graph_data)
@@ -176,9 +176,9 @@ class ReferenceDataManager:
                 self._load_annotations_from_dict(annotations_data)
 
     def _load_graph_from_dict(self, data: dict) -> None:
-        """Load pangenome graph from dictionary."""
         # Load nodes
         for node_data in data.get("nodes", []):
+        """Load pangenome graph from dictionary."""
             node = PangenomeNode(
                 node_id=node_data["id"],
                 sequence=node_data["seq"],
@@ -204,24 +204,6 @@ class ReferenceDataManager:
             self.metadata.update(data["metadata"])
 
     def _load_annotations_from_dict(self, data: dict) -> None:
-        """Load variant annotations from dictionary."""
-        for var_key, ann_data in data.items():
-            annotation = VariantAnnotation(
-                chromosome=ann_data["chr"],
-                position=ann_data["pos"],
-                ref_allele=ann_data["ref"],
-                alt_allele=ann_data["alt"],
-                gene_impact=ann_data.get("impact"),
-                protein_change=ann_data.get("protein"),
-                conservation_score=ann_data.get("cons"),
-                pathogenicity_score=ann_data.get("path"),
-                population_frequencies=ann_data.get("freq", {}),
-                clinical_significance=ann_data.get("clin"),
-            )
-            self.variant_annotations[var_key] = annotation
-
-    def add_node(self, node: PangenomeNode) -> None:
-        """Add node to pangenome graph."""
         self.nodes[node.node_id] = node
 
         # Update index
@@ -245,7 +227,6 @@ class ReferenceDataManager:
         self.metadata["total_nodes"] += 1
 
     def add_edge(self, edge: PangenomeEdge) -> None:
-        """Add edge to pangenome graph."""
         self.edges.append(edge)
 
         # Update population tracking
@@ -256,7 +237,8 @@ class ReferenceDataManager:
 
     def add_variant_annotation(self, annotation: VariantAnnotation) -> None:
         """Add variant annotation."""
-        key = "{annotation.chromosome}:{annotation.position}:{annotation.ref_allele}:{annotation.alt_allele}"
+        key = "{annotation.chromosome}:{annotation.position}:{annotation.ref_allele} \
+            :{annotation.alt_allele}"
         self.variant_annotations[key] = annotation
         self.metadata["total_variants"] += 1
 
@@ -280,7 +262,7 @@ class ReferenceDataManager:
             positions = self.region_index[region.chromosome]
 
             # Binary search for start position
-            import bisect
+import bisect
 
             start_idx = bisect.bisect_left(positions, region.start)
             end_idx = bisect.bisect_right(positions, region.end)
@@ -320,11 +302,30 @@ class ReferenceDataManager:
         if data_type == ReferenceDataType.PANGENOME_GRAPH:
             # Serialize nodes
             for node in self.nodes.values():
+        """Add edge to pangenome graph."""
+        """Load variant annotations from dictionary."""
+                for var_key, ann_data in data.items():
+                    annotation = VariantAnnotation(
+                        chromosome=ann_data["chr"],
+                        position=ann_data["pos"],
+                        ref_allele=ann_data["ref"],
+                        alt_allele=ann_data["alt"],
+                        gene_impact=ann_data.get("impact"),
+                        protein_change=ann_data.get("protein"),
+                        conservation_score=ann_data.get("cons"),
+                        pathogenicity_score=ann_data.get("path"),
+                        population_frequencies=ann_data.get("freq", {}),
+                        clinical_significance=ann_data.get("clin"),
+                    )
+                    self.variant_annotations[var_key] = annotation
+
+            def add_node(self, node: PangenomeNode) -> None:
                 items.append(node.to_bytes())
 
         elif data_type == ReferenceDataType.VARIANT_ANNOTATIONS:
             # Serialize annotations
             for annotation in self.variant_annotations.values():
+                """Add node to pangenome graph."""
                 items.append(annotation.to_bytes())
 
         elif data_type == ReferenceDataType.POPULATION_FREQUENCIES:
@@ -337,7 +338,6 @@ class ReferenceDataManager:
         return items
 
     def _aggregate_population_data(self) -> list[dict]:
-        """Aggregate population-specific data."""
         pop_data = []
 
         for population in self.metadata["populations"]:
@@ -369,15 +369,6 @@ class ReferenceDataManager:
         return pop_data
 
     def create_pir_index(self, region: GenomicRegion) -> dict[str, Any]:
-        """
-        Create PIR index for a genomic region.
-
-        Args:
-            region: Region to index
-
-        Returns:
-            Index structure for PIR queries
-        """
         nodes = self.get_nodes_in_region(region)
 
         # Create position-based index
@@ -390,6 +381,16 @@ class ReferenceDataManager:
 
         # Index by position
         for i, node in enumerate(nodes):
+        """Aggregate population-specific data."""
+        """
+                Create PIR index for a genomic region.
+
+                Args:
+                    region: Region to index
+
+                Returns:
+                    Index structure for PIR queries
+                """
             pos_key = "{node.chromosome}:{node.position}"
             if pos_key not in index["positions"]:
                 index["positions"][pos_key] = []
@@ -404,7 +405,6 @@ class ReferenceDataManager:
         return index
 
     def save_reference_data(self) -> None:
-        """Save reference data to disk."""
         # Save pangenome graph
         graph_data = {
             "nodes": [
@@ -416,7 +416,7 @@ class ReferenceDataManager:
                     "pop": list(node.populations),
                     "freq": node.frequency,
                 }
-                for node in self.nodes.values()
+                for node in self.nodes.values():
             ],
             "edges": [
                 {
@@ -425,7 +425,7 @@ class ReferenceDataManager:
                     "support": edge.support,
                     "pop": list(edge.populations),
                 }
-                for edge in self.edges
+                for edge in self.edges:
             ],
             "metadata": self.metadata,
         }
@@ -448,7 +448,7 @@ class ReferenceDataManager:
                 "freq": ann.population_frequencies,
                 "clin": ann.clinical_significance,
             }
-            for key, ann in self.variant_annotations.items()
+            for key, ann in self.variant_annotations.items():
         }
 
         annotations_path = self.data_directory / "variant_annotations.json.gz"
@@ -465,6 +465,7 @@ class ReferenceDataManager:
         # Population diversity
         pop_stats = {}
         for pop, node_ids in self.population_nodes.items():
+        """Save reference data to disk."""
             pop_stats[pop] = {
                 "nodes": len(node_ids),
                 "percentage": (len(node_ids) / len(self.nodes) * 100 if self.nodes else 0),
@@ -491,7 +492,7 @@ class ReferenceDataManager:
 
 # Example usage
 if __name__ == "__main__":
-    import tempfile
+import tempfile
 
     # Create temporary directory for testing
     with tempfile.TemporaryDirectory() as temp_dir:

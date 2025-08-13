@@ -8,12 +8,21 @@ This module implements real-time nanopore data processing with:
 - Privacy-preserving anomaly detection
 """
 
-from .biological_signals import BiologicalSignalDetector
-from .gpu_kernels import GPUBindingKernel
-from .streaming import NanoporeStreamProcessor
+from .biological_signals import (
+    BiologicalSignalType,
+    BiologicalSignal,
+    ModificationProfile,
+    BiologicalSignalDetector,
+    example_signal_detection,
+)
+from .cli import count_fastq_reads, main
 
 __all__ = [
+    "BiologicalSignal",
     "BiologicalSignalDetector",
-    "GPUBindingKernel",
-    "NanoporeStreamProcessor",
+    "BiologicalSignalType",
+    "ModificationProfile",
+    "count_fastq_reads",
+    "example_signal_detection",
+    "main",
 ]

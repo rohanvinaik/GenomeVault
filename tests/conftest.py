@@ -184,10 +184,17 @@ def performance_benchmark():
     """Performance benchmarking utility"""
 
     class PerformanceBenchmark:
+        """PerformanceBenchmark class implementation."""
+
         def __init__(self):
+            """Initialize the instance."""
             self.results = {}
 
         def measure(self, name: str, func, *args, **kwargs):
+            """Measure.
+            Args:        name: Name or label string.        func: Callback function.
+            Returns:
+                Result of the operation."""
             import time
 
             start = time.perf_counter()
@@ -200,6 +207,10 @@ def performance_benchmark():
             return result
 
         def assert_performance(self, name: str, max_ms: float):
+            """Assert performance.
+            Args:        name: Name or label string.        max_ms: List of items.
+            Returns:
+                Result of the operation."""
             if name not in self.results:
                 pytest.fail("No benchmark results for {name}")
             actual_ms = self.results[name]["elapsed_ms"]
@@ -214,6 +225,8 @@ def cleanup_test_files():
     files_to_cleanup = []
 
     def _register(filepath):
+        """register.
+        Args:        filepath: Path to file or directory."""
         files_to_cleanup.append(filepath)
 
     yield _register

@@ -121,6 +121,7 @@ class GenomicEncoder:
         variant_type: str = "SNP",
         use_panel: bool = None,
     ) -> torch.Tensor:
+        """Encode variant."""
         """
         Encode a single genetic variant into a hypervector
 
@@ -301,6 +302,7 @@ class GenomicEncoder:
 
     def encode_genome_with_panel(
         self, variants: list[dict], panel_name: str | None = None
+        """Encode genome with panel."""
     ) -> torch.Tensor:
         """
         Encode genome using SNP panel for improved accuracy
@@ -366,6 +368,7 @@ class GenomicEncoder:
 
     def get_zoom_vector(
         self, chromosome: str, start: int, end: int, level: int = 0
+        """Get zoom vector."""
     ) -> torch.Tensor:
         """Get zoom vector for specified region and level"""
         if level == 0:

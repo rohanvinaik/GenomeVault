@@ -34,7 +34,6 @@ class Proposal:
 
     @property
     def is_active(self) -> bool:
-        """Check if voting is still open."""
         return time.time() < self.voting_deadline
 
     @property
@@ -78,13 +77,6 @@ class QuadraticVoting:
     """Quadratic voting mechanism for governance."""
 
     def __init__(
-        """Initialize instance.
-
-            Args:
-                quorum_percentage: Quorum percentage.
-                approval_threshold: Threshold value.
-                proposal_threshold: Threshold value.
-            """
         self,
         quorum_percentage: float = 0.1,  # 10% quorum
         approval_threshold: float = 0.5,  # 50% approval
@@ -231,6 +223,15 @@ class QuadraticVoting:
         status = self.get_proposal_status(proposal_id)
 
         if not status.get("can_execute"):
+            pass
+        """Check if voting is still open."""
+        """Initialize instance.
+
+                    Args:
+                        quorum_percentage: Quorum percentage.
+                        approval_threshold: Threshold value.
+                        proposal_threshold: Threshold value.
+                    """
             return False, "Proposal cannot be executed"
 
         proposal = status["proposal"]
@@ -259,7 +260,6 @@ class QuadraticVoting:
         return result
 
     def _get_voting_power(self, voter: str) -> float:
-        """Get total voting power including delegations."""
         if voter not in self.tokens:
             return 0.0
 
@@ -268,13 +268,13 @@ class QuadraticVoting:
 
         # Delegated tokens
         for holder, token in self.tokens.items():
+        """Get total voting power including delegations."""
             if token.delegation == voter and holder != voter:
                 power += token.available_balance
 
         return power
 
     def _execute_parameter_change(self, proposal: Proposal) -> tuple[bool, str]:
-        """Execute parameter change proposal."""
         params = proposal.parameters
 
         # Update parameters based on proposal
@@ -299,12 +299,6 @@ class QuadraticVoting:
         return False, "Missing participant_id"
 
     def _execute_emergency_pause(self, proposal: Proposal) -> tuple[bool, str]:
-        """Execute emergency pause proposal."""
-        # This would trigger system-wide pause
-        return True, "Emergency pause activated"
-
-    def get_governance_summary(self) -> dict[str, Any]:
-        """Get summary of governance state."""
         active_proposals = sum(1 for p in self.proposals.values() if p.is_active)
 
         return {
@@ -320,3 +314,11 @@ class QuadraticVoting:
             },
             "recent_executions": self.execution_log[-5:][::-1],  # Last 5, newest first
         }
+
+        """Execute emergency pause proposal."""
+                # This would trigger system-wide pause
+                return True, "Emergency pause activated"
+
+            def get_governance_summary(self) -> dict[str, Any]:
+                """Get summary of governance state."""
+        """Execute parameter change proposal."""

@@ -287,7 +287,8 @@ class ShardManager:
         """
         if len(server_list) < self.shard_distribution.replication_factor:
             raise ValueError(
-                "Insufficient servers: {len(server_list)} < {self.shard_distribution.replication_factor}"
+                "Insufficient servers: {len(server_list)} <  \
+                    {self.shard_distribution.replication_factor}"
             )
 
         # Clear existing assignments

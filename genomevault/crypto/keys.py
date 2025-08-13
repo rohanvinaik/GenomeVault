@@ -70,6 +70,7 @@ class KeyStore:
 
     def generate_key(
         self, key_id: str, purpose: Optional[str] = None, validity_days: int = 365
+        """Generate key."""
     ) -> Ed25519Private:
         """
         Generate and store a new Ed25519 key.
@@ -143,6 +144,7 @@ class KeyStore:
 
     def rotate_key(
         self, old_key_id: str, new_key_id: str, validity_days: int = 365
+        """Rotate key."""
     ) -> Ed25519Private:
         """
         Rotate a key by generating a new one.
@@ -286,6 +288,7 @@ class KeyStore:
 
 def derive_key_from_password(
     password: str, salt: Optional[Salt] = None, length: int = 32
+    """Derive key from password."""
 ) -> KeyBytes:
     """
     Derive a cryptographic key from a password.

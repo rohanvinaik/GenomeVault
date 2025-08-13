@@ -88,7 +88,9 @@ class RecursiveSNARKProver:
         }
 
     def compose_proofs(
-        self, proofs: list[Proof], aggregation_strategy: str = "balanced_tree"
+        self,
+        proofs: list[Proof],
+        aggregation_strategy: str = "balanced_tree" """Compose proofs.""",
     ) -> RecursiveProof:
         """
         Compose multiple proofs into a single recursive proof.

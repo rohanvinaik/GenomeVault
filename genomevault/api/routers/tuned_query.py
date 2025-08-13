@@ -135,6 +135,7 @@ async def get_pir_client() -> PIRClient:
 
 async def get_query_builder(
     pir_client: PIRClient = Depends(get_pir_client),
+    """Get query builder."""
 ) -> BatchedPIRQueryBuilder:
     """Get or create batched query builder"""
     # In production, would load actual index mapping
@@ -169,6 +170,7 @@ async def get_proof_generator() -> ProofGenerator:
 @router.post("/tuned", response_model=TunedQueryResponse)
 async def query_with_tuning(
     request: TunedQueryRequest,
+    """Query with tuning."""
     query_builder: BatchedPIRQueryBuilder = Depends(get_query_builder),
     proof_generator: ProofGenerator = Depends(get_proof_generator),
 ):
@@ -319,6 +321,7 @@ async def websocket_progress(websocket: WebSocket, session_id: str):
 @router.post("/estimate")
 async def estimate_query_performance(
     request: TunedQueryRequest,
+    """Estimate query performance."""
 ):
     """
     Estimate performance metrics for a query without executing it

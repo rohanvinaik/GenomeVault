@@ -1,17 +1,17 @@
 """Variant Frequency Circuit module."""
+
 from __future__ import annotations
 
 from typing import Any, Dict, List
 import hashlib
 
 from .constraint_system import (
-from genomevault.utils.logging import get_logger
-
     ConstraintSystem,
     FieldElement,
     LinearCombination,
     poseidon_hash,
 )
+from genomevault.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
@@ -40,8 +40,7 @@ class VariantFrequencyCircuit:
     """
 
     def __init__(self, max_snps: int = 32, merkle_depth: int = 20):
-        """
-        Initialize the variant frequency circuit.
+        """Initialize the variant frequency circuit.
 
         Args:
             max_snps: Maximum number of SNPs in a query (default 32)
@@ -136,7 +135,7 @@ class VariantFrequencyCircuit:
         self.setup_complete = True
 
     def generate_constraints(self):
-        """Generate all circuit constraints."""
+        """Generate constraints for the circuit."""
         if not self.setup_complete:
             raise RuntimeError("Circuit must be setup before generating constraints")
 
@@ -185,7 +184,6 @@ class VariantFrequencyCircuit:
 
     def _constrain_sum(self):
         """Constrain that the sum of counts equals the public sum."""
-
         # Build running sum
         running_sum_vars = []
         running_sum = FieldElement(0)
@@ -218,7 +216,6 @@ class VariantFrequencyCircuit:
 
     def _constrain_merkle_inclusions(self):
         """Verify Merkle inclusion proof for each allele count."""
-
         num_snps = int(self.cs.get_assignment(self.num_snps_var).value)
 
         for snp_idx in range(min(num_snps, self.max_snps)):
@@ -268,7 +265,6 @@ class VariantFrequencyCircuit:
 
     def _constrain_unused_slots(self):
         """Ensure counts for SNPs beyond num_snps are zero."""
-
         num_snps = int(self.cs.get_assignment(self.num_snps_var).value)
 
         for i in range(num_snps, self.max_snps):
@@ -277,7 +273,6 @@ class VariantFrequencyCircuit:
 
     def _add_zk_randomness(self):
         """Add randomness to achieve zero-knowledge property."""
-
         # Create blinding factors
         r1 = self.cs.add_variable("blind_1")
         r2 = self.cs.add_variable("blind_2")

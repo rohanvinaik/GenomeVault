@@ -1,1 +1,1 @@
-"""Module initialization."""
+"""Blockchain and ledger implementations for contracts."""

@@ -6,32 +6,27 @@ Security properties have not been formally verified.
 DO NOT use in production without thorough security audit.
 """
 
-import warnings
-
-warnings.warn(
-    "Experimental ZK circuits are not audited for production use. "
-    "These are research implementations that may have security vulnerabilities. "
-    "DO NOT use for sensitive data without formal verification.",
-    FutureWarning,
-    stacklevel=2,
+from .stark_prover import (
+    FiatShamirTranscript,
+    STARKProof,
+    STARKProver,
+    PostQuantumVerifier,
 )
-
-# Import with safety checks
-from .catalytic_proof import CatalyticProofEngine
+from .catalytic_proof import CatalyticProof, CatalyticSpace, CatalyticProofEngine
+from .post_quantum import PQEngine, prove, verify
 from .recursive_snark import RecursiveProof, RecursiveSNARKProver
-from .stark_prover import PostQuantumVerifier, STARKProver
-
-# Post-quantum is also experimental
-try:
-    from .post_quantum import PostQuantumZK
-except ImportError:
-    PostQuantumZK = None
 
 __all__ = [
+    "CatalyticProof",
     "CatalyticProofEngine",
+    "CatalyticSpace",
+    "FiatShamirTranscript",
+    "PQEngine",
     "PostQuantumVerifier",
     "RecursiveProof",
     "RecursiveSNARKProver",
+    "STARKProof",
     "STARKProver",
-    "PostQuantumZK",
+    "prove",
+    "verify",
 ]

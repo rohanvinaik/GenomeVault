@@ -4,6 +4,9 @@ from genomevault.pir.client import PIRClient
 
 
 def test_query_decode_roundtrip_minimal():
+    """Test query decode roundtrip minimal.
+    Returns:
+        Result of the operation."""
     tbl = np.arange(32).reshape(8, 4).tolist()
     cli = PIRClient()
     q = cli.build_query(index=5, table_shape=(8, 4))

@@ -24,6 +24,8 @@ class CIBenchmarkRunner:
     """Runs benchmarks and outputs CSV for CI/Grafana integration."""
 
     def __init__(self, output_dir: Path):
+        """Initialize the instance.
+        Args:        output_dir: Parameter value."""
         self.output_dir = output_dir
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.results = []
@@ -256,7 +258,6 @@ async def main():
     json_path = runner.save_json(timing_data, args.json_file)
 
     # Print summary
-    print("\n" + "=" * 50)
     print("BENCHMARK RESULTS SUMMARY")
     print("=" * 50)
     print(f"Encode time: {timing_data['encode_ms']:.2f} ms")
@@ -265,7 +266,6 @@ async def main():
     print("-" * 50)
     print(f"Total time:  {timing_data['total_ms']:.2f} ms")
     print("=" * 50)
-    print("\nResults saved to:")
     print(f"  CSV: {csv_path}")
     print(f"  JSON: {json_path}")
 

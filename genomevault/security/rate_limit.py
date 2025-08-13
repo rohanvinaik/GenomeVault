@@ -55,6 +55,10 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         self.buckets: dict[str, TokenBucket] = {}
 
     def _key(self, request: Request) -> str:
+        """key.
+        Args:        request: Parameter value.
+        Returns:
+            str"""
         # Per-client-IP key
         client = request.client.host if request.client else "unknown"
         return client

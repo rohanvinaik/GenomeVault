@@ -1,3 +1,71 @@
-"""Package initialization for models."""
+"""API endpoints and routers for models."""
 
-# auto-stub for importability
+from .vectors import (
+    VectorDimension,
+    VectorEncodeRequest,
+    VectorEncodeResponse,
+    VectorOperationRequest,
+    VectorOperationPatch,
+    VectorEncodeConfigPatch,
+)
+from .clinical import ClinicalEvalRequest, ClinicalEvalResponse
+from .pir import PIRQueryRequest, PIRQueryResponse
+from .hv import (
+    VariantInput,
+    VectorInput,
+    EncodingRequest,
+    EncodingVersion,
+    CompressionTier,
+    HVEncodeRequest,
+    HVEncodeConfigPatch,
+    HVEncodeResponse,
+    HVBatchEncodeRequest,
+    HVBatchEncodeResponse,
+    HVSimilarityRequest,
+    HVSimilarityResponse,
+    SearchRequest,
+    SearchResult,
+    SearchResponse,
+)
+from .governance import (
+    ConsentGrantRequest,
+    ConsentRevokeRequest,
+    ConsentCheckResponse,
+    DSARExportRequest,
+    DSAREraseRequest,
+    DSARExportResponse,
+)
+
+__all__ = [
+    "ClinicalEvalRequest",
+    "ClinicalEvalResponse",
+    "CompressionTier",
+    "ConsentCheckResponse",
+    "ConsentGrantRequest",
+    "ConsentRevokeRequest",
+    "DSAREraseRequest",
+    "DSARExportRequest",
+    "DSARExportResponse",
+    "EncodingRequest",
+    "EncodingVersion",
+    "HVBatchEncodeRequest",
+    "HVBatchEncodeResponse",
+    "HVEncodeConfigPatch",
+    "HVEncodeRequest",
+    "HVEncodeResponse",
+    "HVSimilarityRequest",
+    "HVSimilarityResponse",
+    "PIRQueryRequest",
+    "PIRQueryResponse",
+    "SearchRequest",
+    "SearchResponse",
+    "SearchResult",
+    "VariantInput",
+    "VectorDimension",
+    "VectorEncodeConfigPatch",
+    "VectorEncodeRequest",
+    "VectorEncodeResponse",
+    "VectorInput",
+    "VectorOperationPatch",
+    "VectorOperationRequest",
+]

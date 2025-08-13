@@ -4,6 +4,7 @@ from genomevault.clinical.eval.harness import compute_report
 
 
 def test_compute_report_smoke():
+    """Test compute report smoke."""
     rng = np.random.default_rng(0)
     y = rng.integers(0, 2, size=200)
     s = rng.random(200)

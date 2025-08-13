@@ -2,6 +2,9 @@ from genomevault.ledger.store import InMemoryLedger
 
 
 def test_ledger_append_and_verify():
+    """Test ledger append and verify.
+    Returns:
+        Result of the operation."""
     L = InMemoryLedger()
     e1 = L.append({"a": 1})
     e2 = L.append({"b": 2})

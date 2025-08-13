@@ -1,12 +1,14 @@
 """
 Tests for tailchasing configuration and calibration functionality.
 """
+
 from pathlib import Path
-from tailchasing.config import (
 from unittest.mock import patch
 import pytest
 import tempfile
 import yaml
+
+from tailchasing.config import (
     CalibrationResult,
     ConfigManager,
     DistanceWeights,

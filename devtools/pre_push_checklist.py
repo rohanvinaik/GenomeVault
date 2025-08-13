@@ -142,7 +142,7 @@ logger.info("-" * 40)
 
 # Check for print debugging statements
 debug_prints = subprocess.run(
-    ["grep", "-r", "print(", ".", "--include=*.py", "--exclude-dir=tests"],
+    ["grep", "-r", "print(", ".", "--include=*.py"],
     check=False,
     capture_output=True,
     text=True,

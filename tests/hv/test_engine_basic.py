@@ -6,6 +6,9 @@ from genomevault.hypervector.engine import HypervectorEngine
 
 
 def test_encode_and_similarity_roundtrip():
+    """Test encode and similarity roundtrip.
+    Returns:
+        Result of the operation."""
     engine = HypervectorEngine()
     dim = HYPERVECTOR_DIMENSIONS["base"]
     r1 = engine.encode(
@@ -17,6 +20,9 @@ def test_encode_and_similarity_roundtrip():
 
 
 def test_operate_and_bundle():
+    """Test operate and bundle.
+    Returns:
+        Result of the operation."""
     engine = HypervectorEngine()
     dim = HYPERVECTOR_DIMENSIONS["base"]
     a = engine.encode(data={"genomic": [1, 2, 3]}, dimension=dim)
@@ -26,6 +32,9 @@ def test_operate_and_bundle():
 
 
 def test_perm_and_bind():
+    """Test perm and bind.
+    Returns:
+        Result of the operation."""
     engine = HypervectorEngine()
     dim = HYPERVECTOR_DIMENSIONS["base"]
     a = engine.encode(data={"genomic": [1, 0, 0]}, dimension=dim)
@@ -38,12 +47,18 @@ def test_perm_and_bind():
 
 
 def test_invalid_dimension_raises():
+    """Test invalid dimension raises.
+    Returns:
+        Result of the operation."""
     engine = HypervectorEngine()
     with pytest.raises(ProjectionError):
         engine.encode(data={"genomic": [1, 2]}, dimension=123)
 
 
 def test_missing_vector_id_raises():
+    """Test missing vector id raises.
+    Returns:
+        Result of the operation."""
     engine = HypervectorEngine()
     with pytest.raises(ValidationError):
         engine.calculate_similarity("nope", "nope2")

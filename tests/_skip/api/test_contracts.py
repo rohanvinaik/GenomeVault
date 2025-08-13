@@ -6,11 +6,13 @@ client = TestClient(app)
 
 
 def test_health():
+    """Test health."""
     r = client.get("/health")
     assert r.status_code == 200 and r.json().get("status") == "healthy"
 
 
 def test_vectors_encode_roundtrip():
+    """Test vectors encode roundtrip."""
     payload = {"data": [[0, 1, 2, 3]], "dimension": 256}
     r = client.post("/vectors/encode", json=payload)
     assert r.status_code in (200, 422)  # allow validation gate if strict

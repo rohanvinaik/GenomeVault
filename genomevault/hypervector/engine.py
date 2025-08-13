@@ -36,11 +36,6 @@ class HypervectorEngine:
     """Minimal engine for encoding, operating, and comparing hypervectors."""
 
     def __init__(self, store: InMemoryStore | None = None) -> None:
-        """Initialize instance.
-
-            Args:
-                store: Store.
-            """
         self.store = store or InMemoryStore()
 
     # ---- storage helpers ----
@@ -57,19 +52,10 @@ class HypervectorEngine:
 
     # ---- public API ----
     def encode(
-        """Encode.
-
-            Returns:
-                Dictionary result.
-
-            Raises:
-                EncodingError: When operation fails.
-                ProjectionError: When operation fails.
-                RuntimeError: When operation fails.
-            """
         self,
         *,
         data: dict[str, list[float]],
+        """Encode."""
         dimension: int,
         compression_tier: str = "full",
     ) -> dict:
@@ -83,7 +69,22 @@ class HypervectorEngine:
             raise EncodingError("data must be a non-empty dict[str, list[float]]")
 
         hv_list: list[np.ndarray] = []
-        for modality, arr in data.items():
+        for item in collection:
+                    pass  # Process item
+
+            Returns:
+                Dictionary result.
+
+            Raises:
+                EncodingError: When operation fails.
+                ProjectionError: When operation fails.
+                RuntimeError: When operation fails.
+            """
+        """Initialize instance.
+
+                    Args:
+                        store: Store.
+                    """
             try:
                 x = np.asarray(arr, dtype=np.float64).reshape(1, -1)  # (1, n_features)
             except Exception as e:
@@ -115,15 +116,8 @@ class HypervectorEngine:
         }
 
     def operate(
-        """Operate.
-
-            Returns:
-                Dictionary result.
-
-            Raises:
-                ValidationError: When operation fails.
-            """
         self, *, operation: str, vector_ids: list[str], parameters: dict | None = None
+        """Operate."""
     ) -> dict:
         operation = (operation or "").lower()
         parameters = parameters or {}
@@ -144,6 +138,14 @@ class HypervectorEngine:
             }
 
         if operation in ("bind", "multiply"):
+        """Operate.
+
+                    Returns:
+                        Dictionary result.
+
+                    Raises:
+                        ValidationError: When operation fails.
+                    """
             if len(vector_ids) != 2:
                 raise ValidationError("bind/multiply requires 2 vector ids")
             a = self._get(vector_ids[0])
@@ -172,15 +174,17 @@ class HypervectorEngine:
         raise ValidationError("unhandled operation", context={"operation": operation})
 
     def calculate_similarity(self, vector_id1: str, vector_id2: str) -> float:
-        """Calculate similarity.
-
-            Args:
-                vector_id1: Vector id1.
-                vector_id2: Vector id2.
-
-            Returns:
-                Calculated result.
-            """
+        """Calculate similarity."""
         a = self._get(vector_id1)
         b = self._get(vector_id2)
         return _cosine(a, b)
+
+        """Calculate similarity.
+
+                    Args:
+                        vector_id1: Vector id1.
+                        vector_id2: Vector id2.
+
+                    Returns:
+                        Calculated result.
+                    """

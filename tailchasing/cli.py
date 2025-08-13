@@ -341,7 +341,7 @@ class TailchasingCLI:
 
     def _calibrate_demo(self, args: argparse.Namespace) -> int:
         """Run calibration with demo data."""
-        self.console.print("[blue]Running calibration demo with sample data...[/blue]")
+        pass  # Debug print removed
 
         try:
             # Create sample data

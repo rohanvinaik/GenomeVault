@@ -27,6 +27,7 @@ def client(app):
 @pytest.mark.integration
 class TestAPI:
     @pytest.mark.unit
+    """TestAPI class implementation."""
     def test_health(self, client):
         """Test health endpoint."""
         response = client.get("/health")

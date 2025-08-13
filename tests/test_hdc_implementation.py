@@ -239,16 +239,19 @@ class TestCompressionTiers:
             sim = encoder.similarity(hv1, hv2)
             tier_similarities[tier] = sim
 
-        # Higher tiers should preserve similarity better (with small tolerance for numerical precision)
+        # Higher tiers should preserve similarity better (with small tolerance for numerical  \
+            precision)
         tolerance = 0.01
         assert (
             tier_similarities[CompressionTier.MINI]
             <= tier_similarities[CompressionTier.CLINICAL] + tolerance
-        ), f"MINI: {tier_similarities[CompressionTier.MINI]}, CLINICAL: {tier_similarities[CompressionTier.CLINICAL]}"
+        ), f"MINI: {tier_similarities[CompressionTier.MINI]}, CLINICAL:
+            {tier_similarities[CompressionTier.CLINICAL]}"
         assert (
             tier_similarities[CompressionTier.CLINICAL]
             <= tier_similarities[CompressionTier.FULL] + tolerance
-        ), f"CLINICAL: {tier_similarities[CompressionTier.CLINICAL]}, FULL: {tier_similarities[CompressionTier.FULL]}"
+        ), f"CLINICAL: {tier_similarities[CompressionTier.CLINICAL]}, FULL:
+            {tier_similarities[CompressionTier.FULL]}"
 
 
 class TestPerformanceBenchmarks:

@@ -4,6 +4,9 @@ from genomevault.crypto.merkle import leaf_bytes, build, path, verify
 
 
 def test_merkle_path_bitflip_fails():
+    """Test merkle path bitflip fails.
+    Returns:
+        Result of the operation."""
     rows = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12]]
     leaves = [leaf_bytes(r) for r in rows]
     tree = build(leaves)

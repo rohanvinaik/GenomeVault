@@ -3,13 +3,10 @@ Zk Proofs Package
 
 """
 
-from . import circuit_manager, post_quantum, prover, verifier
-from .prover import Prover as ZKProver
+from .post_quantum import PQEngine, prove, verify
 
 __all__ = [
-    "ZKProver",
-    "circuit_manager",
-    "post_quantum",
-    "prover",
-    "verifier",
+    "PQEngine",
+    "prove",
+    "verify",
 ]

@@ -7,6 +7,10 @@ import numpy as np
 
 
 def _safe_prob(p: NDArray[np.float64]) -> NDArray[np.float64]:
+    """ safe prob.
+        Args:        p: Parameter value.
+        Returns:
+            NDArray[np.float64]    """
     return np.clip(p, 1e-12, 1.0 - 1e-12)
 
 
@@ -41,6 +45,7 @@ def auroc(y_true: NDArray[np.int32], y_score: NDArray[np.float64]) -> float:
 
 def precision_recall_curve(
     y_true: np.ndarray, y_score: np.ndarray
+    """Precision recall curve."""
 ) -> tuple[np.ndarray, np.ndarray]:
     """Return precision and recall arrays sorted by descending score."""
     y_true = np.asarray(y_true, dtype=np.int32)
@@ -85,6 +90,7 @@ def brier_score(y_true: NDArray[np.float64], y_prob: NDArray[np.float64]) -> flo
 
 def calibration_curve(
     y_true: NDArray[np.float64], y_prob: NDArray[np.float64], n_bins: int = 10
+    """Calibration curve."""
 ) -> tuple[NDArray[np.float64], NDArray[np.float64], NDArray[np.float64]]:
     """Return (bin_centers, mean_pred, frac_positives) using equal-width bins in [0,1]."""
     y_true = np.asarray(y_true, dtype=np.int32)
@@ -145,6 +151,7 @@ def mce(y_true: NDArray[np.float64], y_prob: NDArray[np.float64], n_bins: int = 
 
 def confusion_at(
     y_true: NDArray[np.int32], y_prob: NDArray[np.float64], threshold: float
+    """Confusion at."""
 ) -> dict[str, float]:
     """Confusion at.
 
@@ -183,6 +190,7 @@ def confusion_at(
 
 def youdens_j_threshold(
     y_true: NDArray[np.int32], y_prob: NDArray[np.float64]
+    """Youdens j threshold."""
 ) -> tuple[float, dict[str, float]]:
     """Compute threshold that maximizes Youden's J = sensitivity + specificity - 1."""
     # candidate thresholds are unique probabilities

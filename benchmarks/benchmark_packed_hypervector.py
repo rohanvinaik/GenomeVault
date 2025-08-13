@@ -115,7 +115,7 @@ def plot_results(results: dict[str, dict[str, float]]) -> None:
 
     plt.tight_layout()
     plt.savefig("packed_hypervector_benchmark.png", dpi=300)
-    print("\nBenchmark plot saved as 'packed_hypervector_benchmark.png'")
+    pass  # Debug print removed
 
 
 @profile
@@ -124,11 +124,9 @@ def memory_profile_test() -> None:
     dimension = 10000
     variants = generate_random_variants(1000)
 
-    print("\n=== Memory Profile: Standard Encoder ===")
     standard_encoder = GenomicEncoder(dimension=dimension)
     standard_hv = standard_encoder.encode_genome(variants)
 
-    print("\n=== Memory Profile: Packed Encoder ===")
     packed_encoder = PackedGenomicEncoder(dimension=dimension, packed=True)
     packed_hv = packed_encoder.encode_genome(variants)
 
@@ -146,7 +144,7 @@ def main() -> None:
     n_variants = 1000
 
     # Generate test data
-    print(f"\nGenerating {n_variants} random variants...")
+    pass  # Debug print removed
     variants = generate_random_variants(n_variants)
 
     # Initialize encoders
@@ -167,7 +165,6 @@ def main() -> None:
     )
 
     # Similarity benchmarks
-    print("\n\nSimilarity Computation Benchmark:")
     print("-" * 50)
 
     # Generate second genome for similarity
@@ -194,14 +191,12 @@ def main() -> None:
     }
 
     # Summary
-    print("\n\nSummary:")
     print("=" * 50)
     print(f"Encoding speedup: {std_batch / packed_batch:.2f}x")
     print(f"Memory reduction: {std_memory / packed_memory:.2f}x")
     print(f"Similarity speedup: {std_sim_time / packed_sim_time:.2f}x")
 
     # Accuracy check
-    print("\n\nAccuracy Verification:")
     print("-" * 50)
 
     # Convert packed to torch for comparison
@@ -218,11 +213,9 @@ def main() -> None:
         plot_results(results)
     except ImportError:
         logger.exception("Unhandled exception")
-        print("\nMatplotlib not available for plotting")
         raise
 
     # Memory profile
-    print("\n\nRunning memory profile...")
     memory_profile_test()
 
 

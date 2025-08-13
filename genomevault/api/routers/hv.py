@@ -182,6 +182,7 @@ async def encode_hypervector(request: HVEncodeRequest) -> Any:
 @router.post("/encode/batch", response_model=HVBatchEncodeResponse)
 async def batch_encode_hypervector(
     request: HVBatchEncodeRequest,
+    """Batch encode hypervector."""
 ) -> Any:
     """
     Batch encode multiple genomic samples into hypervectors.

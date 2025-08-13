@@ -5,10 +5,12 @@ This script shows how to use the tailchasing reporting module to visualize
 performance bottlenecks using Hi-C style contact matrices and polymer physics
 concepts.
 """
-from tailchasing.core.reporting import (
+
 import random
 
 import numpy as np
+
+from tailchasing.core.reporting import (
     HiCHeatmapGenerator,
     PolymerMetricsReport,
     TAD,
@@ -155,19 +157,16 @@ def demonstrate_heatmap_generation():
     generator = HiCHeatmapGenerator()
 
     # Basic heatmap
-    print("\n1. Basic Contact Heatmap:")
     print("-" * 30)
     heatmap = generator.generate_contact_heatmap(contact_matrix, title="Performance Contact Matrix")
     print(heatmap)
 
     # Heatmap with TAD boundaries
-    print("\n2. Heatmap with TAD Boundaries:")
     print("-" * 35)
     tad_heatmap = generator.show_tad_boundaries(contact_matrix, {tad.name: tad for tad in tads})
     print(tad_heatmap)
 
     # Risk highlighting
-    print("\n3. Thrash Risk Analysis:")
     print("-" * 25)
     # Create some risk scores for demonstration
     risk_scores = {}
@@ -186,7 +185,6 @@ def demonstrate_heatmap_generation():
 
 def demonstrate_polymer_metrics():
     """Demonstrate polymer metrics reporting."""
-    print("\n" + "=" * 60)
     print("POLYMER METRICS DEMO")
     print("=" * 60)
 
@@ -195,19 +193,16 @@ def demonstrate_polymer_metrics():
     reporter = PolymerMetricsReport()
 
     # Calculate polymer distances
-    print("\n1. Polymer Distance Analysis:")
     print("-" * 30)
     distances = reporter.calculate_polymer_distances(tads, interactions)
     print("Intra-TAD Distances:")
     for tad_name, metrics in distances["intra_tad_distances"].items():
         print(f"  {tad_name}: mean={metrics['mean']:.2f}, count={metrics['count']}")
 
-    print("\nInter-TAD Distances:")
     for pair_name, metrics in distances["inter_tad_distances"].items():
         print(f"  {pair_name}: mean={metrics['mean']:.2f}, count={metrics['count']}")
 
     # Contact probabilities
-    print("\n2. Contact Probability Distribution:")
     print("-" * 35)
     contact_probs = reporter.calculate_contact_probabilities(interactions)
     stats = contact_probs["statistics"]
@@ -217,7 +212,6 @@ def demonstrate_polymer_metrics():
     print(f"Long-range fraction: {stats['long_range_fraction']:.3f}")
 
     # Thrash reduction predictions
-    print("\n3. Thrash Reduction Predictions:")
     print("-" * 33)
     predictions = reporter.predict_thrash_reduction(fix_strategies)
     for strategy, pred in predictions.items():
@@ -228,13 +222,11 @@ def demonstrate_polymer_metrics():
         print(f"  Priority: {pred['recommended_priority']}")
 
     # Timeline visualization
-    print("\n4. Replication Timing Schedule:")
     print("-" * 32)
     timeline_viz = reporter.visualize_replication_timing(timeline_data)
     print(timeline_viz)
 
     # Comprehensive report
-    print("\n5. Comprehensive Metrics Summary:")
     print("-" * 35)
     comprehensive = reporter.generate_comprehensive_report(
         tads, interactions, fix_strategies, timeline_data
@@ -248,7 +240,6 @@ def demonstrate_polymer_metrics():
 
 def demonstrate_integration():
     """Demonstrate integration with existing reporting."""
-    print("\n" + "=" * 60)
     print("INTEGRATION DEMO")
     print("=" * 60)
 
@@ -275,12 +266,10 @@ def demonstrate_integration():
         timeline_data,
     )
 
-    print("\n1. Enhanced Report Structure:")
     print("-" * 30)
     print("Original sections:", list(existing_report.keys()))
     print("Enhanced sections:", list(enhanced_report.keys()))
 
-    print("\n2. Chromatin Analysis Summary:")
     print("-" * 32)
     chromatin = enhanced_report["chromatin_analysis"]
 
@@ -300,14 +289,12 @@ def demonstrate_integration():
     print(f"High-risk positions: {risk_analysis['high_risk_positions']}")
     print(f"Average risk score: {risk_analysis['average_risk_score']:.3f}")
 
-    print("\nRisk distribution:")
     for level, count in risk_analysis["risk_distribution"].items():
         print(f"  {level}: {count}")
 
 
 def demonstrate_comparative_analysis():
     """Demonstrate before/after comparative analysis."""
-    print("\n" + "=" * 60)
     print("COMPARATIVE ANALYSIS DEMO")
     print("=" * 60)
 
@@ -334,7 +321,6 @@ def demonstrate_comparative_analysis():
         before_matrix, after_matrix, tads, "Multi-layer Optimization"
     )
 
-    print("\n1. Overall Improvement Metrics:")
     print("-" * 33)
     metrics = comparative["metrics"]
     print(f"Total contacts before: {metrics['total_contacts_before']}")
@@ -343,7 +329,6 @@ def demonstrate_comparative_analysis():
     print(f"Reduction percentage: {metrics['reduction_percentage']:.1f}%")
     print(f"Improvement score: {metrics['improvement_score']:.3f}")
 
-    print("\n2. TAD-Specific Improvements:")
     print("-" * 30)
     for tad_name, improvement in comparative["tad_specific_improvements"].items():
         print(f"{tad_name}:")
@@ -351,12 +336,11 @@ def demonstrate_comparative_analysis():
         print(f"  Before: {improvement['contacts_before']}")
         print(f"  After: {improvement['contacts_after']}")
 
-    print("\n3. Visualization Previews:")
     print("-" * 25)
     print("✓ Before heatmap generated")
     print("✓ After heatmap generated")
     print("✓ Difference heatmap generated")
-    print("\n(Full visualizations available in comparative['visualizations'])")
+    pass  # Debug print removed
 
 
 def main():
@@ -373,16 +357,14 @@ def main():
         demonstrate_integration()
         demonstrate_comparative_analysis()
 
-        print("\n" + "=" * 60)
         print("DEMO COMPLETE")
         print("=" * 60)
-        print("\nKey takeaways:")
         print("• Hi-C style heatmaps reveal interaction patterns")
         print("• TAD boundaries help identify functional modules")
         print("• Polymer metrics quantify system organization")
         print("• Risk analysis highlights critical bottlenecks")
         print("• Comparative analysis measures optimization effectiveness")
-        print("\nFor more details, see the documentation in tailchasing/core/reporting.py")
+        pass  # Debug print removed
 
     except Exception as e:
         print(f"\nDemo failed with error: {e}")

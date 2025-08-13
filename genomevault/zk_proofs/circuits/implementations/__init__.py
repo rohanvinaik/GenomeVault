@@ -1,24 +1,16 @@
 """Package initialization for implementations."""
 
-"""
-Actual ZK Circuit Implementations
-
-This module provides working implementations of zero-knowledge proof circuits
-for genomic privacy, building on the theoretical framework but providing
-concrete, executable circuits using arkworks-style constraints.
-"""
-from .commitment_circuit import PedersenCommitmentCircuit
-from .diabetes_risk_circuit import DiabetesRiskCircuit
-from .merkle_tree_circuit import MerkleInclusionCircuit
-from .prs_circuit import PolygeneticRiskScoreCircuit
-from .range_proof_circuit import RangeProofCircuit
-from .variant_proof_circuit import VariantProofCircuit
+from .variant_proof_circuit import VariantProofCircuit, create_variant_proof_example
+from .variant_frequency_circuit import (
+    VariantFrequencyCircuit,
+    create_example_frequency_proof,
+)
+from .plonk_circuits import normalize_methylation
 
 __all__ = [
-    "DiabetesRiskCircuit",
-    "MerkleInclusionCircuit",
-    "PedersenCommitmentCircuit",
-    "PolygeneticRiskScoreCircuit",
-    "RangeProofCircuit",
+    "VariantFrequencyCircuit",
     "VariantProofCircuit",
+    "create_example_frequency_proof",
+    "create_variant_proof_example",
+    "normalize_methylation",
 ]

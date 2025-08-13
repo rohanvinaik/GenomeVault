@@ -223,6 +223,9 @@ class TestPerformance:
         encoder = PackedGenomicEncoder(dimension=10000)
 
         def encode():
+            """Encode.
+            Returns:
+                Result of the operation."""
             return encoder.encode_genome(sample_variants * 100)  # 300 variants
 
         result = benchmark(encode)
@@ -241,6 +244,9 @@ class TestPerformance:
         hv2.buf = rng.randint(0, 2**64, size=hv2.n_words, dtype=np.uint64)
 
         def compute_similarity():
+            """Compute similarity.
+            Returns:
+                Result of the operation."""
             return hv1.hamming_distance(hv2)
 
         result = benchmark(compute_similarity)

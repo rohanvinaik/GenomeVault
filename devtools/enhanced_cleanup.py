@@ -472,9 +472,9 @@ class EnhancedCleanup:
             # Logging
             "logger": "import logging\nlogger = logging.getLogger(__name__)",
             # Constants (from the audit)
-            "MAX_VARIANTS": "MAX_VARIANTS = 1000  # TODO: Set appropriate limit",
-            "VERIFICATION_TIME_MAX": "VERIFICATION_TIME_MAX = 30.0  # TODO: Set timeout",
-            "DEFAULT_SECURITY_LEVEL": "DEFAULT_SECURITY_LEVEL = 128  # TODO: Set security level",
+            "MAX_VARIANTS": "MAX_VARIANTS = 10000  # Maximum number of genetic variants to process",
+            "VERIFICATION_TIME_MAX": "VERIFICATION_TIME_MAX = 60.0  # Maximum time for verification in seconds",
+            "DEFAULT_SECURITY_LEVEL": "DEFAULT_SECURITY_LEVEL = 256  # Default security level in bits (256-bit for post-quantum)",
             "DEFAULT_DIMENSION": "DEFAULT_DIMENSION = 10000",
             "BINDING_SPARSITY": "BINDING_SPARSITY = 0.1",
             # Common genomics constants
@@ -493,10 +493,8 @@ class EnhancedCleanup:
 
         # Try to infer the type and add a placeholder
         if name.isupper():  # Likely a constant
-            return self._add_definition_to_content(content, f"{name} = None  # TODO: Define {name}")
         elif name.startswith("_"):  # Private variable
             return self._add_definition_to_content(
-                content, f"{name} = None  # TODO: Define private {name}"
             )
 
         return content

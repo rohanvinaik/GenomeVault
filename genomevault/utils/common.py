@@ -441,7 +441,8 @@ def create_hierarchical_encoder(
     default_config["storage_estimates_bytes"] = storage_estimate
 
     logger.info(
-        f"Hierarchical encoder configured with {dims} dimensions across {len(default_config['domain_projections'])} modalities"
+        f"Hierarchical encoder configured with {dims} dimensions across"
+        f"{len(default_config['domain_projections'])} modalities"
     )
     return default_config
 
@@ -585,7 +586,8 @@ def check_hipaa_compliance(data_dict: dict[str, Any], context: str = "general") 
 
     logger.info(
         f"HIPAA compliance check: {'PASS' if compliance_results['compliant'] else 'FAIL'} "
-        f"({len(compliance_results['violations'])} violations, {len(compliance_results['warnings'])} warnings)"
+        f"({len(compliance_results['violations'])} violations,"
+        f"{len(compliance_results['warnings'])} warnings)"
     )
 
     return compliance_results

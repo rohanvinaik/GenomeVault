@@ -8,8 +8,11 @@ import pandas as pd
 from genomevault.contracts.contract import TableContract, validate_dataframe
 
 try:
-    from genomevault.ledger.store import InMemoryLedger
-
+    pass  # Placeholder for try block
+except Exception:
+    pass
+except Exception:
+    pass
     _LEDGER = InMemoryLedger()
 except Exception:
     logger.exception("Unhandled exception")
@@ -39,14 +42,6 @@ def _rename_synonyms(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def load_csv(path: str) -> pd.DataFrame:
-    """Load csv.
-
-        Args:
-            path: File or directory path.
-
-        Returns:
-            Loaded data.
-        """
     return pd.read_csv(path)
 
 
@@ -96,3 +91,12 @@ def run_etl(
         )
 
     return {"ok": report["ok"], "report": report, "rows": int(df.shape[0])}
+
+    """Load csv.
+
+        Args:
+            path: File or directory path.
+
+        Returns:
+            Loaded data.
+        """

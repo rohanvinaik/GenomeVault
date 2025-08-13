@@ -7,11 +7,19 @@ VERSION = (1).to_bytes(2, "big")
 
 
 def compress_proof(raw: bytes) -> bytes:
+    """Compress proof.
+    Args:        raw: Parameter value.
+    Returns:
+        bytes"""
     comp = zlib.compress(raw, level=6)
     return MAGIC + VERSION + len(raw).to_bytes(8, "big") + comp
 
 
 def decompress_proof(blob: bytes) -> bytes:
+    """Decompress proof.
+    Args:        blob: Parameter value.
+    Returns:
+        bytes"""
     if not blob.startswith(MAGIC):
         raise ValueError("Unknown proof payload format")
     version = int.from_bytes(blob[len(MAGIC) : len(MAGIC) + 2], "big")

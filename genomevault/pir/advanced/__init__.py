@@ -1,12 +1,13 @@
 """Advanced PIR implementations including Information-Theoretic PIR."""
 
-from .graph_pir import GraphBasedPIR, PangenomeGraph
-from .it_pir import InformationTheoreticPIR, PIRQuery, PIRResponse
+from .it_pir import PIRQuery, PIRResponse, InformationTheoreticPIR, RobustITPIR
+from .robust_it_pir import RobustServer, RobustITPIR
 
 __all__ = [
-    "GraphBasedPIR",
     "InformationTheoreticPIR",
     "PIRQuery",
     "PIRResponse",
-    "PangenomeGraph",
+    "RobustITPIR",
+    "RobustITPIR",
+    "RobustServer",
 ]

@@ -6,6 +6,9 @@ client = TestClient(app)
 
 
 def test_metrics_endpoint_exposes_prometheus_text():
+    """Test metrics endpoint exposes prometheus text.
+    Returns:
+        Result of the operation."""
     r = client.get("/metrics")
     assert r.status_code == 200
     assert r.headers["content-type"].startswith("text/plain")

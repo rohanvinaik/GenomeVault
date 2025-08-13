@@ -16,11 +16,18 @@ from .patterns import detect, mask_value
 
 
 def _secret() -> bytes:
+    """secret.
+    Returns:
+        bytes"""
     key = os.getenv("GV_PII_SECRET", "dev-secret").encode("utf-8")
     return key
 
 
 def _hmac_token(kind: str, value: str) -> str:
+    """hmac token.
+    Args:        kind: Operation mode or type.        value: Value to process.
+    Returns:
+        str"""
     msg = f"{kind}:{value}".encode()
     digest = hmac.new(_secret(), msg, hashlib.sha256).hexdigest()[:16]
     return f"tok_{digest}"

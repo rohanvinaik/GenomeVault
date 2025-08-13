@@ -1,11 +1,13 @@
 """
 Tests for tailchasing calibration functionality.
 """
-from tailchasing.calibrate import (
+
 from unittest.mock import patch, MagicMock
 import pytest
 
 import numpy as np
+
+from tailchasing.calibrate import (
     CalibrationTool,
     CodebaseMetrics,
     ThrashEvent,

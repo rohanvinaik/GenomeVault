@@ -1,3 +1,1 @@
-"""Package initialization for zk."""
-
-# ZK Proof API routes
+"""API endpoints and routers for zk."""

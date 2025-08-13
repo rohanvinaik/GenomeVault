@@ -87,8 +87,6 @@ class PrintStatementTransformer(ast.NodeTransformer):
             elif any(word in content_lower for word in ["warn", "caution", "alert"]):
                 return "warning"
             elif any(
-                word in content_lower for word in ["debug", "trace", "verbose", "detail", "print("]
-            ):
                 return "debug"
             elif any(
                 word in content_lower

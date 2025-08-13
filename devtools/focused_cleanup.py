@@ -196,9 +196,9 @@ class FocusedCleanup:
 
         # Common undefined variables and their fixes
         common_fixes = {
-            "MAX_VARIANTS": "1000  # TODO: Set appropriate limit",
-            "VERIFICATION_TIME_MAX": "30.0  # TODO: Set appropriate timeout",
-            "DEFAULT_SECURITY_LEVEL": "128  # TODO: Set security level",
+            "MAX_VARIANTS": "10000  # Maximum number of genetic variants to process",
+            "VERIFICATION_TIME_MAX": "60.0  # Maximum time for verification in seconds",
+            "DEFAULT_SECURITY_LEVEL": "256  # Default security level in bits (256-bit for post-quantum)",
         }
 
         # Find functions that use these variables

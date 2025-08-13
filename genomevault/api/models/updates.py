@@ -33,6 +33,7 @@ class UserSettingsPatch(UpdateModelMixin):
     compression_tier: Optional[str] = None
 
     class Config:
+        """Configuration settings for ."""
         schema_extra = {
             "example": {
                 "notification_enabled": True,
@@ -116,6 +117,7 @@ class GenomicAnalysisPatch(BaseModel):
         return v
 
     class Config:
+        """Configuration settings for ."""
         # Allow mutation for in-place updates
         allow_mutation = True
         schema_extra = {
@@ -205,6 +207,7 @@ class PatientDataPatch(BaseModel):
 @router.patch("/config/{config_id}", response_model=ConfigResponse)
 async def update_config(
     config_id: str,
+    """Update config."""
     patch: HypervectorConfigUpdate  # All fields optional
 ) -> Any:
     # Only update provided fields

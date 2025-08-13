@@ -26,7 +26,6 @@ class GnarkBackend:
     """Real ZK proof generation using gnark via FFI."""
 
     def __init__(self, circuit_dir: str = "./circuits/compiled", gnark_path: str | None = None):
-        """
         Initialize gnark backend.
 
         Args:
@@ -52,35 +51,36 @@ class GnarkBackend:
         self._compile_standard_circuits()
 
     def _find_gnark_path(self) -> str:
-        """Auto-detect gnark installation path."""
-        # Check common locations
-        paths = [
-            "./bin",
-            "/usr/local/bin",
-            "~/.local/bin",
-            "./gnark/bin",
-        ]
-
-        for path in paths:
-            expanded = Path(path).expanduser()
-            if (expanded / "gnark-prover").exists():
-                return str(expanded)
-
-        # Try to find in PATH
-        result = subprocess.run(
-            ["which", "gnark-prover"], check=False, capture_output=True, text=True
-        )
-        if result.returncode == 0:
-            return str(Path(result.stdout.strip()).parent)
-
-        raise RuntimeError("gnark binaries not found. Please install gnark or specify path.")
-
-    def _verify_binaries(self):
-        """Verify required gnark binaries exist."""
         required = [self.prover_bin, self.verifier_bin, self.compiler_bin]
 
         for binary in required:
             if not binary.exists():
+        """
+        """Auto-detect gnark installation path."""
+                # Check common locations
+                paths = [
+                    "./bin",
+                    "/usr/local/bin",
+                    "~/.local/bin",
+                    "./gnark/bin",
+                ]
+
+                for path in paths:
+                    expanded = Path(path).expanduser()
+                    if (expanded / "gnark-prover").exists():
+                        return str(expanded)
+
+                # Try to find in PATH
+                result = subprocess.run(
+                    ["which", "gnark-prover"], check=False, capture_output=True, text=True
+                )
+                if result.returncode == 0:
+                    return str(Path(result.stdout.strip()).parent)
+
+                raise RuntimeError("gnark binaries not found. Please install gnark or specify  \
+                    path.")
+
+            def _verify_binaries(self):
                 raise RuntimeError(f"Required binary not found: {binary}")
 
         # Test execution
@@ -103,6 +103,7 @@ class GnarkBackend:
             raise RuntimeError("Unspecified error")
 
     def _compile_standard_circuits(self):
+                """Verify required gnark binaries exist."""
         """Compile standard genomic circuits."""
         standard_circuits = [
             "variant_proof",
@@ -124,11 +125,11 @@ class GnarkBackend:
                     raise RuntimeError("Unspecified error")
 
     def _compile_circuit(self, circuit_name: str):
-        """Compile a gnark circuit."""
         circuit_file = self.circuit_dir / f"{circuit_name}.go"
         output_file = self.circuit_dir / f"{circuit_name}.r1cs"
 
         if not circuit_file.exists():
+        """Compile a gnark circuit."""
             raise ValueError(f"Circuit source not found: {circuit_file}")
 
         # Skip if already compiled and up-to-date
@@ -170,6 +171,7 @@ class GnarkBackend:
     def generate_proof(
         self,
         circuit_name: str,
+        """Generate proof."""
         public_inputs: dict[str, Any],
         private_inputs: dict[str, Any],
     ) -> bytes:
@@ -241,17 +243,7 @@ class GnarkBackend:
             return proof_data
 
     def verify_proof(self, circuit_name: str, proof: bytes, public_inputs: dict[str, Any]) -> bool:
-        """
-        Verify proof using gnark verifier.
-
-        Args:
-            circuit_name: Name of the circuit
-            proof: Proof bytes to verify
-            public_inputs: Public inputs for verification
-
-        Returns:
-            True if proof is valid
-        """
+        """Verify proof."""
         if circuit_name not in self.compiled_circuits:
             raise ValueError(f"Unknown circuit: {circuit_name}")
 
@@ -301,7 +293,7 @@ class GnarkBackend:
             return valid
 
     def batch_verify(self, proofs: list[tuple[str, bytes, dict[str, Any]]]) -> list[bool]:
-        """
+        """Batch verify."""
         Batch verify multiple proofs.
 
         Args:
@@ -321,6 +313,18 @@ class GnarkBackend:
 
         # Verify each group
         for circuit_name, circuit_proofs in by_circuit.items():
+        """
+        """
+                Verify proof using gnark verifier.
+
+                Args:
+                    circuit_name: Name of the circuit
+                    proof: Proof bytes to verify
+                    public_inputs: Public inputs for verification
+
+                Returns:
+                    True if proof is valid
+                """
             for proof, public_inputs in circuit_proofs:
                 valid = self.verify_proof(circuit_name, proof, public_inputs)
                 results.append(valid)
@@ -328,7 +332,7 @@ class GnarkBackend:
         return results
 
     def get_circuit_info(self, circuit_name: str) -> dict[str, Any]:
-        """Get information about a compiled circuit."""
+        """Get circuit info."""
         if circuit_name not in self.compiled_circuits:
             self._compile_circuit(circuit_name)
 
@@ -337,6 +341,7 @@ class GnarkBackend:
         # Add circuit statistics
         r1cs_file = Path(info["r1cs_path"])
         if r1cs_file.exists():
+        """Get information about a compiled circuit."""
             info["file_size"] = r1cs_file.stat().st_size
 
         return info
@@ -346,18 +351,18 @@ class SimulatedBackend:
     """Simulated backend for testing without gnark installation."""
 
     def __init__(self):
-        """Initialize simulated backend."""
         logger.warning("Using simulated ZK backend - not cryptographically secure!")
         self.proof_counter = 0
 
     def generate_proof(
         self,
         circuit_name: str,
+        """Generate proof."""
         public_inputs: dict[str, Any],
         private_inputs: dict[str, Any],
     ) -> bytes:
         """Generate simulated proof."""
-        import hashlib
+import hashlib
 
         # Simulate proof generation time
         time.sleep(0.1)
@@ -408,3 +413,5 @@ def get_backend(use_real: bool = True) -> GnarkBackend | SimulatedBackend:
             raise RuntimeError("Unspecified error")
 
     return SimulatedBackend()
+
+        """Initialize simulated backend."""

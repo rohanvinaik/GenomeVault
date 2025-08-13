@@ -3,6 +3,10 @@ from genomevault.governance.pii.redact import PseudonymStore, redact_text, token
 
 
 def test_detect_and_redact_and_tokenize(tmp_path, monkeypatch):
+    """Test detect and redact and tokenize.
+
+    Args:        tmp_path: Path to tmp.        monkeypatch: Monkeypatch parameter.
+    """
     text = "Contact john.doe@example.com or +1-415-555-1212 from 192.168.0.5"
     ms = detect(text)
     kinds = sorted({m.kind for m in ms})

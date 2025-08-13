@@ -2,7 +2,7 @@
 GPU kernels for accelerated nanopore HV processing.
 
 Implements CuPy-based GPU kernels for streaming event binding
-with catalytic memory management.
+with catalytic memory management.:
 """
 from __future__ import annotations
 
@@ -15,7 +15,8 @@ from genomevault.utils.logging import get_logger
 logger = get_logger(__name__)
 
 try:
-    import cupy as cp
+    pass
+import cupy as cp
 
     GPU_AVAILABLE = True
 except ImportError:
@@ -28,7 +29,7 @@ class GPUBindingKernel:
     GPU kernel for nanopore event→HV binding.
 
     Uses fused kernels for efficient streaming processing
-    with catalytic memory management.
+    with catalytic memory management.:
     """
 
     def __init__(
@@ -64,7 +65,6 @@ class GPUBindingKernel:
         logger.info(f"GPU kernel initialized with {n_streams} streams")
 
     def _compile_kernels(self):
-        """Compile CUDA kernels."""
         # Event to k-mer mapping kernel
         self.event_to_kmer_kernel = cp.RawKernel(
             r"""
@@ -78,8 +78,9 @@ class GPUBindingKernel:
             float* probabilities      // Output probabilities
         ) {
             int idx = blockDim.x * blockIdx.x + threadIdx.x;
-            if (idx >= n_events) return;
-
+            if (idx >= n_events) return;:
+            if (idx >= n_events) return;:
+    pass
             float current = events[idx * 2];
             float dwell = events[idx * 2 + 1];
 
@@ -175,8 +176,9 @@ class GPUBindingKernel:
             int* count
         ) {
             int idx = blockDim.x * blockIdx.x + threadIdx.x;
-            if (idx >= n_events) return;
-
+            if (idx >= n_events) return;:
+            if (idx >= n_events) return;:
+    pass
             float var = local_variances[idx];
 
             // Welford's algorithm (atomic operations)
@@ -195,6 +197,7 @@ class GPUBindingKernel:
 
 """
     def _allocate_buffers(self):
+        """Compile CUDA kernels."""
         """Allocate GPU memory buffers."""
         self.buffers = {}
 
@@ -321,7 +324,6 @@ class GPUBindingKernel:
 
         This simulates loading pre-computed tables from
         catalytic memory without modification.
-        """
         # In real implementation, would read from catalytic space
         # For now, generate tables
 
@@ -339,10 +341,10 @@ class GPUBindingKernel:
         return pos_table, kmer_table
 
     def get_memory_usage(self) -> dict[str, float]:
-        """Get GPU memory usage statistics."""
         stats = {}
 
         for name, buffer in self.buffers.items():
+        """Get GPU memory usage statistics."""
             stats[f"{name}_mb"] = buffer.nbytes / (1024 * 1024)
 
         stats["total_mb"] = sum(v for k, v in stats.items() if k.endswith("_mb"))
@@ -357,13 +359,12 @@ class GPUBindingKernel:
 
 # Example usage
 async def example_gpu_processing():
-    """Example of GPU-accelerated processing."""
     if not GPU_AVAILABLE:
         logger.info("GPU not available - install CuPy for GPU acceleration")
         return
 
-    from genomevault.hypervector.encoding import HypervectorEncoder
-    from genomevault.zk_proofs.advanced.catalytic_proof import CatalyticSpace
+from genomevault.hypervector.encoding import HypervectorEncoder
+from genomevault.zk_proofs.advanced.catalytic_proof import CatalyticSpace
 
     # Initialize components
     encoder = HypervectorEncoder(dimension=10000)
@@ -389,6 +390,7 @@ async def example_gpu_processing():
     all_vars = []
 
     for i in range(0, n_events, batch_size):
+    """Example of GPU-accelerated processing."""
         batch = events[i : i + batch_size]
 
         hv, var = await gpu_kernel.process_events_async(batch, i, encoder)

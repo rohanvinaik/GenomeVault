@@ -50,6 +50,10 @@ def permutation_binding(v: VectorF64, shift: int = 1) -> VectorF64:
 
 
 def _safe_norm(x: VectorF64) -> float:
+    """ safe norm.
+        Args:        x: Parameter value.
+        Returns:
+            float    """
     n = float(np.linalg.norm(x))
     return n if n > 0.0 else 1.0
 
@@ -75,12 +79,17 @@ def bundle(vectors: Iterable[VectorF64]) -> VectorF64:
 
 
 def _cosine(a: VectorF64, b: VectorF64) -> float:
+    """ cosine.
+        Args:        a: Parameter value.        b: Parameter value.
+        Returns:
+            float    """
     denom = _safe_norm(a) * _safe_norm(b)
     return float(a @ b / denom)
 
 
 def unbundle(
     bundled: VectorF64, item_memory: dict[str, VectorF64], threshold: float = 0.3
+    """Unbundle."""
 ) -> list[tuple[str, float]]:
     """Retrieve components from a bundled vector using cosine similarity threshold.
 

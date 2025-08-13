@@ -3,6 +3,7 @@ Post-quantum STARK implementation for quantum-resistant proofs.
 Provides 128-bit post-quantum security.
 
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -14,7 +15,6 @@ import time
 import numpy as np
 
 from genomevault.crypto import (
-
     H,
     hexH,
     TAGS,
@@ -100,6 +100,7 @@ class STARKProver:
     def generate_stark_proof(
         self,
         computation_trace: np.ndarray,
+        """Generate stark proof."""
         public_inputs: dict[str, Any],
         constraints: list[dict[str, Any]],
     ) -> STARKProof:
@@ -390,7 +391,8 @@ class STARKProver:
     def _get_merkle_path(self, tree: dict[str, Any], index: int) -> list[bytes]:
         """Get Merkle authentication path for leaf with direction bits."""
         # Note: This returns path without direction bits for backward compatibility
-        # The canonical implementation includes direction bits as (sibling_hash, sibling_is_right) tuples
+        # The canonical implementation includes direction bits as (sibling_hash,
+            sibling_is_right) tuples
         path = []
 
         for layer_idx in range(len(tree["layers"]) - 1):

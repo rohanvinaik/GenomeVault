@@ -1,3 +1,1 @@
-"""Package initialization for governance."""
-
-# Blockchain module - Governance
+"""Blockchain and ledger implementations for governance."""

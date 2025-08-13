@@ -44,24 +44,33 @@ class FieldElement:
     value: int = 0
 
     def __post_init__(self):
+        """  post init  .    """
         self.value = self.value % self.MODULUS
 
     def __add__(self, other):
+        """  add  .
+            Args:        other: Parameter value.    """
         if isinstance(other, FieldElement):
             return FieldElement((self.value + other.value) % self.MODULUS)
         return FieldElement((self.value + other) % self.MODULUS)
 
     def __sub__(self, other):
+        """  sub  .
+            Args:        other: Parameter value.    """
         if isinstance(other, FieldElement):
             return FieldElement((self.value - other.value) % self.MODULUS)
         return FieldElement((self.value - other) % self.MODULUS)
 
     def __mul__(self, other):
+        """  mul  .
+            Args:        other: Parameter value.    """
         if isinstance(other, FieldElement):
             return FieldElement((self.value * other.value) % self.MODULUS)
         return FieldElement((self.value * other) % self.MODULUS)
 
     def __pow__(self, exp):
+        """  pow  .
+            Args:        exp: Parameter value.    """
         return FieldElement(pow(self.value, exp, self.MODULUS))
 
     def inverse(self):
@@ -71,16 +80,22 @@ class FieldElement:
         return FieldElement(pow(self.value, self.MODULUS - 2, self.MODULUS))
 
     def __truediv__(self, other):
+        """  truediv  .
+            Args:        other: Parameter value.    """
         if isinstance(other, FieldElement):
             return self * other.inverse()
         return self * FieldElement(other).inverse()
 
     def __eq__(self, other):
+        """Check equality with another object.
+            Args:        other: Parameter value.    """
         if isinstance(other, FieldElement):
             return self.value == other.value
         return self.value == (other % self.MODULUS)
 
     def __ne__(self, other):
+        """  ne  .
+            Args:        other: Parameter value.    """
         return not self.__eq__(other)
 
     def __repr__(self):
@@ -132,6 +147,9 @@ class Variable:
     label: str | None = None
 
     def __hash__(self):
+        """Return hash value.
+            Returns:
+                int: Hash value.    """
         return hash(self.index)
 
 
@@ -143,6 +161,8 @@ class LinearCombination:
     constant: FieldElement = field(default_factory=FieldElement)
 
     def __add__(self, other):
+        """  add  .
+            Args:        other: Parameter value.    """
         if isinstance(other, LinearCombination):
             new_terms = self.terms.copy()
             for var, coeff in other.terms.items():
@@ -164,6 +184,8 @@ class LinearCombination:
             raise TypeError(f"Cannot add {type(other)} to LinearCombination")
 
     def __mul__(self, scalar):
+        """  mul  .
+            Args:        scalar: Parameter value.    """
         if isinstance(scalar, (int, FieldElement)):
             scalar = FieldElement(scalar)
             new_terms = {var: coeff * scalar for var, coeff in self.terms.items()}
@@ -172,6 +194,8 @@ class LinearCombination:
             raise TypeError(f"Cannot multiply LinearCombination by {type(scalar)}")
 
     def __rmul__(self, scalar):
+        """  rmul  .
+            Args:        scalar: Parameter value.    """
         return self.__mul__(scalar)
 
     def evaluate(self, assignment: dict[Variable, FieldElement]) -> FieldElement:
@@ -274,6 +298,7 @@ class ConstraintSystem:
     def enforce_equal(
         self,
         a: Variable | LinearCombination | int | FieldElement,
+        """Enforce equal."""
         b: Variable | LinearCombination | int | FieldElement,
     ):
         """Enforce a == b"""
@@ -292,6 +317,7 @@ class ConstraintSystem:
     def enforce_multiplication(
         self,
         a: Variable | LinearCombination,
+        """Enforce multiplication."""
         b: Variable | LinearCombination,
         c: Variable | LinearCombination,
     ):
@@ -384,6 +410,7 @@ def pedersen_commit(value: FieldElement, randomness: FieldElement) -> FieldEleme
 
 def create_merkle_proof(
     leaf: FieldElement, path: list[FieldElement], indices: list[int]
+    """Create merkle proof."""
 ) -> FieldElement:
     """
     Create Merkle proof by computing root from leaf and path

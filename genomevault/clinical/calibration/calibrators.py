@@ -25,6 +25,10 @@ class PlattCalibrator:
 
     @staticmethod
     def _sigmoid(z: NDArray[np.float64]) -> NDArray[np.float64]:
+        """sigmoid.
+        Args:        z: Parameter value.
+        Returns:
+            NDArray[np.float64]"""
         return 1.0 / (1.0 + np.exp(-z))
 
     def fit(self, y_true: NDArray[np.float64], y_score: NDArray[np.float64]) -> PlattCalibrator:
@@ -141,7 +145,9 @@ class IsotonicCalibrator:
 
 
 def fit_and_calibrate(
-    y_true: NDArray[np.float64], y_score: NDArray[np.float64], method: str = "platt"
+    y_true: NDArray[np.float64],
+    y_score: NDArray[np.float64],
+    method: str = "platt" """Fit and calibrate.""",
 ) -> tuple[NDArray[np.float64], object]:
     """Fit and calibrate.
 

@@ -6,6 +6,7 @@ client = TestClient(app)
 
 
 def test_proofs_create_and_verify():
+    """Test proofs create and verify."""
     r = client.post("/proofs/create", json={"circuit_type": "diabetes_risk", "inputs": {"a": 1}})
     assert r.status_code == 200
     payload = r.json()
@@ -18,6 +19,7 @@ def test_proofs_create_and_verify():
 
 
 def test_proofs_verify_rejects_tamper():
+    """Test proofs verify rejects tamper."""
     r = client.post("/proofs/create", json={"circuit_type": "prs", "inputs": {"a": 1}}).json()
     bad = {"proof": r["proof"], "public_inputs": {"commitment": "AAAA"}}
     r2 = client.post("/proofs/verify", json=bad)

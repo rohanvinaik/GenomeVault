@@ -473,10 +473,8 @@ def main():
     success = fixer.fix_all()
 
     if success:
-        print("\n✅ Comprehensive fixes applied!")
-        print("Run 'ruff check .' to see remaining issues")
     else:
-        print("\n⚠️ No fixes were applied")
+        pass  # Debug print removed
 
     return 0 if success else 1
 

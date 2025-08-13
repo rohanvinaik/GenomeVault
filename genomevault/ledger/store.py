@@ -10,10 +10,18 @@ import json
 
 
 def _hash_bytes(b: bytes) -> str:
+    """hash bytes.
+    Args:        b: Parameter value.
+    Returns:
+        str"""
     return sha256(b).hexdigest()
 
 
 def _hash_obj(obj: dict[str, Any]) -> str:
+    """hash obj.
+    Args:        obj: Parameter value.
+    Returns:
+        str"""
     return _hash_bytes(json.dumps(obj, sort_keys=True, separators=(",", ":")).encode("utf-8"))
 
 
@@ -36,6 +44,11 @@ class InMemoryLedger:
         self._entries: list[LedgerEntry] = []
 
     def _compute_hash(self, index: int, ts: float, data: dict[str, Any], prev_hash: str) -> str:
+        """ compute hash.
+            Args:        index: Index position.        ts: List of items.        data: Data  \
+                payload.        prev_hash: Parameter value.
+            Returns:
+                str    """
         payload = {
             "index": index,
             "timestamp": ts,

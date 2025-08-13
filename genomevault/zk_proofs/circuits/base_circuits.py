@@ -21,12 +21,24 @@ class FieldElement:
         self.modulus = modulus
 
     def __add__(self, other: "FieldElement") -> "FieldElement":
+        """add  .
+        Args:        other: Parameter value.
+        Returns:
+            'FieldElement'"""
         return FieldElement((self.value + other.value) % self.modulus, self.modulus)
 
     def __mul__(self, other: "FieldElement") -> "FieldElement":
+        """mul  .
+        Args:        other: Parameter value.
+        Returns:
+            'FieldElement'"""
         return FieldElement((self.value * other.value) % self.modulus, self.modulus)
 
     def __eq__(self, other: object) -> bool:
+        """Check equality with another object.
+        Args:        other: Parameter value.
+        Returns:
+            bool"""
         if not isinstance(other, FieldElement):
             return False
         return self.value == other.value and self.modulus == other.modulus

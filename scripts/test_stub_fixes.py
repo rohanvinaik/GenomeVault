@@ -15,7 +15,6 @@ def test_imports():
 
     # Test 1: Import verifier module
     try:
-        print("Testing verifier import...")
         from genomevault.zk_proofs import verifier
 
         print("✓ Verifier module imported successfully")
@@ -24,7 +23,6 @@ def test_imports():
 
     # Test 2: Import circuit_manager
     try:
-        print("Testing circuit_manager import...")
         from genomevault.zk_proofs import circuit_manager
 
         print("✓ Circuit manager imported successfully")
@@ -33,7 +31,6 @@ def test_imports():
 
     # Test 3: Import base_circuits with all classes
     try:
-        print("Testing base_circuits classes...")
         from genomevault.zk_proofs.circuits.base_circuits import (
             BaseCircuit,
             FieldElement,
@@ -48,7 +45,6 @@ def test_imports():
 
     # Test 4: Import PIR core module
     try:
-        print("Testing PIR core module...")
         from genomevault.pir.core import PIRClient, PIRServer
 
         print("✓ PIR core module imported successfully")
@@ -57,7 +53,6 @@ def test_imports():
 
     # Test 5: Import diabetes circuits
     try:
-        print("Testing diabetes circuits...")
         from genomevault.zk_proofs.circuits.biological.diabetes import (
             DiabetesRiskCircuit,
             GlucoseMonitoringCircuit,
@@ -69,7 +64,6 @@ def test_imports():
 
     # Test 6: Import variant circuits
     try:
-        print("Testing variant circuits...")
         from genomevault.zk_proofs.circuits.biological.variant import (
             PathwayEnrichmentCircuit,
             PharmacogenomicCircuit,
@@ -83,11 +77,13 @@ def test_imports():
 
     # Test 7: Test the log_operation decorator
     try:
-        print("Testing log_operation decorator...")
         from genomevault.utils.logging import log_operation
 
         @log_operation
         def test_function():
+            """Test function.
+            Returns:
+                Result of the operation."""
             return "test"
 
         result = test_function()
@@ -97,7 +93,6 @@ def test_imports():
 
     # Test 8: Import prover module
     try:
-        print("Testing prover import...")
         from genomevault.zk_proofs.prover import Prover, Proof, Circuit
 
         print("✓ Prover module imported successfully")
@@ -110,13 +105,11 @@ def test_imports():
 def main():
     """Run all tests."""
     print("=" * 60)
-    print("Testing Stub Fixes")
     print("=" * 60)
-    print()
+    pass  # Debug print removed
 
     errors = test_imports()
 
-    print()
     print("=" * 60)
     if errors:
         print(f"FAILED: {len(errors)} errors found")

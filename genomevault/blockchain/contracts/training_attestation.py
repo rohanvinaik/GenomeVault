@@ -70,6 +70,8 @@ class TrainingAttestationContract:
     """
 
     def __init__(self, contract_address: str, chain_id: int):
+        """Initialize the instance.
+        Args:        contract_address: List of items.        chain_id: Parameter value."""
         self.contract_address = contract_address
         self.chain_id = chain_id
         self.attestations: dict[str, TrainingAttestation] = {}

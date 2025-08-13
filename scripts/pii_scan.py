@@ -10,6 +10,10 @@ logger = get_logger(__name__)
 
 
 def scan_file(path: Path):
+    """Scan file.
+    Args:        path: Path to file or directory.
+    Returns:
+        Result of the operation."""
     text = path.read_text(encoding="utf-8", errors="ignore")
     matches = detect(text)
     for m in matches:
@@ -17,6 +21,9 @@ def scan_file(path: Path):
 
 
 def main():
+    """Main.
+    Returns:
+        Result of the operation."""
     ap = argparse.ArgumentParser()
     ap.add_argument("target", help="File or directory to scan")
     args = ap.parse_args()

@@ -163,7 +163,7 @@ def process_file(file_path: Path, dry_run: bool = False, verbose: bool = False) 
 
         if modified_count > 0:
             if verbose:
-                print(f"Processing {file_path}: {modified_count} print statements found")
+                pass  # Debug print removed
 
             if not dry_run:
                 with open(file_path, "w", encoding="utf-8") as f:
@@ -209,7 +209,6 @@ def main():
 
     args = parser.parse_args()
 
-    print("Debug Print Removal Script")
     print("=" * 50)
 
     if args.dry_run:
@@ -224,7 +223,6 @@ def main():
             print(f"Warning: Directory not found: {dir_name}")
             continue
 
-        print(f"Processing {dir_name}/...")
         files_modified, prints_found = process_directory(dir_path, args.dry_run, args.verbose)
 
         total_files += files_modified
@@ -232,13 +230,11 @@ def main():
 
         print(f"  Modified {files_modified} files, {prints_found} print statements replaced")
 
-    print("\n" + "=" * 50)
     print(f"Total: {total_prints} print statements in {total_files} files")
 
     if args.dry_run:
-        print("\nRun without --dry-run to apply changes")
     else:
-        print("\nChanges applied successfully!")
+        pass  # Debug print removed
 
     return 0
 
