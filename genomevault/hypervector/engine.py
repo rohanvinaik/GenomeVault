@@ -1,11 +1,12 @@
+"""Engine module."""
 from __future__ import annotations
 
-"""Engine module."""
 from uuid import uuid4
 
 import numpy as np
 
 from genomevault.core.constants import (
+
     DEFAULT_DENSITY,
     DEFAULT_SEED,
     HYPERVECTOR_DIMENSIONS,

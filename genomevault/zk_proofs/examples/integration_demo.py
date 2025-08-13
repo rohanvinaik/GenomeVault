@@ -5,10 +5,6 @@ This example demonstrates the complete workflow for generating and
 verifying privacy-preserving proofs for genomic analyses.
 
 """
-
-# Note: This example uses logger.info() statements for demonstration purposes.
-# In production code, use proper logging instead.
-
 import hashlib
 import time
 

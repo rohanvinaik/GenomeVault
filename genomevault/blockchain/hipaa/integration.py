@@ -4,14 +4,11 @@ HIPAA Integration for Blockchain Governance
 Integrates HIPAA fast-track verification with the blockchain node system.
 
 """
-
 from __future__ import annotations
 
-import asyncio
 from datetime import datetime, timedelta
 from typing import Any
-
-from genomevault.utils.logging import get_logger
+import asyncio
 
 from ...core.constants import NodeType, SignatoryWeight
 from ...core.exceptions import VerificationError
@@ -20,6 +17,7 @@ from ..governance import GovernanceSystem
 from ..node import BlockchainNode
 from .models import HIPAACredentials, VerificationRecord
 from .verifier import CMSNPIRegistry, HIPAAVerifier
+from genomevault.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
@@ -62,17 +60,17 @@ class HIPAANodeIntegration:
             Registered blockchain node
         """
         # Submit verification
-        _ = await self.verifier.submit_verification(credentials)
+        verification_id = await self.verifier.submit_verification(credentials)
 
         try:
             # Process verification
-            _ = await self.verifier.process_verification(_verification_id)
+            record = await self.verifier.process_verification(verification_id)
 
             # Create node with trusted signatory status
-            _ = self._create_trusted_node(_record, node_config)
+            node = self._create_trusted_node(record, node_config)
 
             # Register node
-            self.node_registry[credentials.npi] = _node
+            self.node_registry[credentials.npi] = node
 
             # Update governance voting power
             self._update_governance_power(node)
@@ -92,12 +90,12 @@ class HIPAANodeIntegration:
     ) -> BlockchainNode:
         """Create a blockchain node with trusted signatory status"""
         # Determine node class from config
-        _ = config.get("node_class", NodeType.LIGHT)
+        node_class = config.get("node_class", NodeType.LIGHT)
 
         # Create node with enhanced properties
         node = BlockchainNode(
-            node_id="hipaa_{record.credentials.npi}",
-            node_type=_node_class,
+            node_id=f"hipaa_{record.credentials.npi}",
+            node_type=node_class,
             signatory_status=SignatoryWeight.TRUSTED_SIGNATORY,
             metadata={
                 "npi": record.credentials.npi,
@@ -139,10 +137,10 @@ class HIPAANodeIntegration:
 
         # Remove node if exists
         if npi in self.node_registry:
-            _ = self.node_registry[npi]
+            node = self.node_registry[npi]
 
             # Update governance power
-            self.governance.total_voting_power -= _node.voting_power
+            self.governance.total_voting_power -= node.voting_power
 
             # Remove from registry
             del self.node_registry[npi]
@@ -162,22 +160,22 @@ class HIPAANodeIntegration:
         Returns:
             Summary of refresh results
         """
-        _ = self.verifier.cleanup_expired()
+        expired_count = self.verifier.cleanup_expired()
 
         # Check all registered nodes
-        _ = []
+        revoked_nodes = []
         for npi, node in list(self.node_registry.items()):
-            _ = self.verifier.get_verification_status(npi)
+            record = self.verifier.get_verification_status(npi)
 
-            if not _record or not _record.is_active():
+            if not record or not record.is_active():
                 # Remove inactive nodes
                 self.governance.total_voting_power -= node.voting_power
                 del self.node_registry[npi]
-                _revoked_nodes.append(npi)
+                revoked_nodes.append(npi)
 
         return {
             "expired_verifications": expired_count,
-            "_revoked_nodes": len(revoked_nodes),
+            "revoked_nodes": len(revoked_nodes),
             "active_nodes": len(self.node_registry),
         }
 

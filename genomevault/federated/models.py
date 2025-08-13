@@ -1,11 +1,8 @@
+"""Models module."""
 from __future__ import annotations
 
-"""Models module."""
-from typing import Any
-
 from pydantic import BaseModel, Field, validator
-
-
+from typing import Any
 class ModelUpdate(BaseModel):
     """ModelUpdate implementation."""
 

@@ -1,9 +1,6 @@
 """Mock implementations for missing modules in tests."""
-
 from typing import Any, Dict, List
 from unittest.mock import MagicMock
-
-
 class MockPRSCalculator:
     """Mock implementation of PRSCalculator for tests."""
 

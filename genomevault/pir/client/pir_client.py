@@ -2,9 +2,11 @@
 PIR Client implementation for private genomic queries
 
 """
-
 from __future__ import annotations
 
+from genomevault.utils.logging import get_logger
+
+logger = get_logger(__name__)
 import asyncio
 import json
 from dataclasses import dataclass

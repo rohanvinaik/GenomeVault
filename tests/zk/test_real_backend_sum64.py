@@ -1,9 +1,6 @@
+from ._toolcheck import require_toolchain
 from genomevault.config import PROJECT_ROOT
 from genomevault.zk.real_engine import RealZKEngine
-
-
-from ._toolcheck import require_toolchain
-
 
 def test_sum64_proof_roundtrip():
     require_toolchain()

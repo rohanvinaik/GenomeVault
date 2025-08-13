@@ -8,17 +8,15 @@ This module provides comprehensive monitoring capabilities including:
 - Blockchain metrics
 - Privacy-preserving logging
 
+"""
 from __future__ import annotations
 
-import time
 from datetime import datetime
 from functools import wraps
 from typing import Any
-
 import prometheus_client
 import structlog
-
-# Initialize structured logger
+import time
 logger = structlog.get_logger(__name__)
 
 

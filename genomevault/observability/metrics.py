@@ -1,10 +1,9 @@
+"""Metrics module."""
 from __future__ import annotations
 
-"""Metrics module."""
 from typing import Dict
 
 from genomevault.utils.metrics import Counter, Gauge, Histogram
-
 
 class MetricsRegistry:
     """MetricsRegistry implementation."""

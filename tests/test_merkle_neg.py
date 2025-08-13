@@ -1,7 +1,6 @@
-# tests/test_merkle_neg.py
 import pytest
-from genomevault.crypto.merkle import leaf_bytes, build, path, verify
 
+from genomevault.crypto.merkle import leaf_bytes, build, path, verify
 
 def test_merkle_path_bitflip_fails():
     rows = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12]]

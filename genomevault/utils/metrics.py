@@ -1,10 +1,8 @@
+"""Metrics module."""
+"""Metrics module."""
 from __future__ import annotations
 
-"""Metrics module."""
-"""Metrics module."""
 from typing import Dict, Optional
-
-
 class Counter:
     """Counter implementation."""
 

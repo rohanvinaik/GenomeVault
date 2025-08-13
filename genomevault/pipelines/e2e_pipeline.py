@@ -1,13 +1,12 @@
+"""E2E Pipeline module."""
 from __future__ import annotations
 
-"""E2E Pipeline module."""
 import numpy as np
 
 from genomevault.governance.ledger import Ledger
 from genomevault.hypervector.engine import HypervectorEngine
 from genomevault.pir.client import PIRClient
 from genomevault.zk.engine import ProofEngine
-
 
 def run_e2e(seed=123):
     """Run e2e.

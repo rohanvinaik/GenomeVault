@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Demonstration of chromatin-inspired performance visualization.
 
@@ -6,12 +5,10 @@ This script shows how to use the tailchasing reporting module to visualize
 performance bottlenecks using Hi-C style contact matrices and polymer physics
 concepts.
 """
-
+from tailchasing.core.reporting import (
 import random
 
 import numpy as np
-
-from tailchasing.core.reporting import (
     HiCHeatmapGenerator,
     PolymerMetricsReport,
     TAD,

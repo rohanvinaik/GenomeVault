@@ -1,9 +1,11 @@
 """
 Topology API endpoints
 """
-
 from __future__ import annotations
 
+from genomevault.utils.logging import get_logger
+
+logger = get_logger(__name__)
 import asyncio
 
 from fastapi import APIRouter, HTTPException

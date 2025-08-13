@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from genomevault.utils.logging import get_logger
+
+logger = get_logger(__name__)
 """Benchmark Hamming Lut module."""
 """
 Benchmark script for Hamming distance LUT optimization in GenomeVault

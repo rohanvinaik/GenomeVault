@@ -4,11 +4,7 @@ Type definitions for API models.
 This module provides TypedDict and structured type definitions
 to replace "magical" dict[str, Any] in the API layer.
 """
-
 from typing import TypedDict, List, Optional, Literal
-
-
-# Health check types
 class HealthCheckResult(TypedDict):
     """Result of a single health check."""
 

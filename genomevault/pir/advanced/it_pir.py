@@ -1,17 +1,16 @@
-from __future__ import annotations
-
 """It Pir module."""
 """
 Information-Theoretic PIR implementation.
 Provides unconditional privacy guarantees without computational assumptions.
 """
+from __future__ import annotations
 
+from dataclasses import dataclass
+from typing import Any
 import hashlib
 import json
 import logging
 import time
-from dataclasses import dataclass
-from typing import Any
 
 import numpy as np
 

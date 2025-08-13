@@ -4,9 +4,7 @@ KAN module - compatibility shim to experimental.
 This module has been moved to genomevault.experimental.kan
 
 """
-
 import warnings
-
 warnings.warn(
     "genomevault.kan has been moved to genomevault.experimental.kan. "
     "Please update your imports. This compatibility shim will be removed in v2.0.",

@@ -1,14 +1,11 @@
-from __future__ import annotations
-
 """Rate Limit module."""
-import os
-import time
+from __future__ import annotations
 
 from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import PlainTextResponse
-
-
+import os
+import time
 class TokenBucket:
     """TokenBucket implementation."""
 

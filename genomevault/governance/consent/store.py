@@ -1,10 +1,8 @@
+"""Store module."""
 from __future__ import annotations
 
-"""Store module."""
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
-
-
 @dataclass
 class ConsentRecord:
     """Data container for consentrecord information."""

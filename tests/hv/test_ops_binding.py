@@ -1,7 +1,7 @@
 import numpy as np
 
-
 from genomevault.hypervector.operations.binding import (
+
     bundle,
     circular_convolution,
     element_wise_multiply,

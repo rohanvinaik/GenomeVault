@@ -3,15 +3,16 @@ Integration tests for hypervector encoding roundtrip functionality.
 
 Tests the complete pipeline from encoding to decoding genomic sequences.
 """
+import pytest
 
 import numpy as np
-import pytest
 import torch
 
 from genomevault.core.constants import HYPERVECTOR_DIMENSIONS
 from genomevault.hypervector.encoding import UnifiedHypervectorEncoder
 from genomevault.hypervector.encoding.packed import PackedGenomicEncoder, PackedHV
 from genomevault.hypervector_transform.hdc_encoder import (
+
     CompressionTier,
     HypervectorEncoder,
     OmicsType,

@@ -1,7 +1,6 @@
 """
 Unit tests for hypervector encoding module
 """
-
 import unittest
 
 import numpy as np
@@ -9,6 +8,7 @@ import torch
 
 from genomevault.core.constants import OmicsType
 from genomevault.hypervector_transform.binding import (
+
     BindingType,
     CrossModalBinder,
     HypervectorBinder,

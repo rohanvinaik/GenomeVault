@@ -3,17 +3,16 @@ API Router for Error-Tuned Queries
 Implements the /query_tuned endpoint with real-time progress updates
 
 """
-
 from __future__ import annotations
-
-import time
-from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel, Field
+from typing import Any
+import time
 
 from genomevault.hypervector.error_handling import ErrorBudget, ErrorBudgetAllocator
 from genomevault.pir.client import (
+
     BatchedPIRQueryBuilder,
     GenomicQuery,
     PIRClient,
@@ -286,7 +285,7 @@ async def query_with_tuning(
 
         return response
 
-    except (ValueError, DatabaseError, TypeError, KeyError) as e:
+    except (ValueError, TypeError, KeyError, Exception) as e:
         logger.exception("Unhandled exception")
         logger.error(f"Tuned query failed: {e}")
         if request.session_id:

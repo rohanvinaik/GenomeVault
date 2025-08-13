@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from genomevault.utils.logging import get_logger
+
+logger = get_logger(__name__)
 """Engine module."""
 import base64
 import json

@@ -1,17 +1,12 @@
 """
 Pydantic models for Hypervector encoding API endpoints.
 """
-
-from typing import Any, Dict, List, Optional
 from enum import Enum
+from pydantic import BaseModel, Field, validator, root_validator
+from typing import Any, Dict, List, Optional
 import re
 
-from pydantic import BaseModel, Field, validator, root_validator
 from .updates import UpdateModelMixin
-
-
-# Strict validation models with deterministic ordering
-
 
 class VariantInput(BaseModel):
     """Validates genomic variant in 'chr:pos ref>alt' format."""

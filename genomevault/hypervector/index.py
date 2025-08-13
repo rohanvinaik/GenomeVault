@@ -5,18 +5,18 @@ This module provides indexing and search capabilities for hypervectors,
 with optimized bit-packing for Hamming distance computation and support
 for multiple distance metrics.
 """
-
-import json
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Union
+import json
 import struct
-from datetime import datetime
 
-import numpy as np
 from numpy.typing import NDArray
+import numpy as np
 
 from genomevault.api.types import IndexManifest
 from genomevault.hypervector.types import (
+
     VectorBool,
 )
 from genomevault.hypervector.operations.hamming_lut import (

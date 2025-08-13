@@ -1,11 +1,10 @@
 """High-level ZK proof service API."""
-
 from __future__ import annotations
 
-import asyncio
-import uuid
 from datetime import datetime
 from typing import Any
+import asyncio
+import uuid
 
 from genomevault.utils.logging import get_logger, logger
 from genomevault.zk_proofs.circuits import PRSProofCircuit
@@ -134,7 +133,7 @@ class ZKProofService:
         verifier_id: str | None = None,
     ) -> VerificationResult:
         """Verify a ZK proof."""
-        logger.info(f"Verifying proof{f'} for %sverifier_id' if verifier_id else ''")
+        logger.info(f"Verifying proof{f'} for {}verifier_id' if verifier_id else ''")
 
         # Determine proof type from verification key
         proof_type = self._get_proof_type_from_key(verification_key)

@@ -1,6 +1,7 @@
-# genomevault/zk_proofs/core/accumulator.py
 from __future__ import annotations
+
 from typing import Dict, List
+
 from genomevault.crypto.commit import TAGS, H
 
 INITIAL_ACC = H(TAGS["ACC"], b"INITIAL_ACC")

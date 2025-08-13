@@ -1,11 +1,10 @@
+"""Training Proof module."""
 from __future__ import annotations
 
-"""Training Proof module."""
 from dataclasses import dataclass
 from typing import Any, Dict
 
 from .base_circuits import BaseCircuit
-
 
 @dataclass
 class TrainingProofCircuit(BaseCircuit):

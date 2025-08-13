@@ -1,13 +1,4 @@
-from __future__ import annotations
-
 """Multi Modal Training Proof module."""
-from dataclasses import dataclass
-from typing import Any
-
-from genomevault.utils.logging import get_logger
-from genomevault.zk_proofs.circuits.base_circuits import FieldElement
-from genomevault.zk_proofs.circuits.training_proof import TrainingProofCircuit
-
 """
 Multi-Modal Training Proof Circuit for Cross-Omics Verification
 
@@ -15,7 +6,14 @@ This module implements cryptographic proofs for verifying that ML models
 correctly learned from multiple biological modalities (genomic, transcriptomic, proteomic)
 with proper cross-modal alignment.
 """
+from __future__ import annotations
 
+from dataclasses import dataclass
+from typing import Any
+
+from genomevault.utils.logging import get_logger
+from genomevault.zk_proofs.circuits.base_circuits import FieldElement
+from genomevault.zk_proofs.circuits.training_proof import TrainingProofCircuit
 
 logger = get_logger(__name__)
 

@@ -1,9 +1,7 @@
+"""Servers module."""
 from __future__ import annotations
 
-"""Servers module."""
 import numpy as np
-
-
 def _xor_bytes(a: bytes, b: bytes) -> bytes:
     return bytes(x ^ y for x, y in zip(a, b))
 

@@ -4,7 +4,6 @@ Demonstration of GenomeVault Hypervector Encoding System
 This script demonstrates the key features of the hypervector encoding module,
 showing how genomic data is transformed into privacy-preserving representations.
 """
-
 import torch
 
 from genomevault.utils.logging import get_logger

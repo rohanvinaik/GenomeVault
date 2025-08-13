@@ -2,17 +2,13 @@
 Topological Data Analysis for genomic structure analysis
 
 """
-
 from __future__ import annotations
 
 from dataclasses import dataclass
-
-import networkx as nx
-import numpy as np
 from scipy.spatial import distance_matrix
+import networkx as nx
 
-# from genomevault.core.constants import MAX_HOMOLOGY_DIMENSION, PERSISTENCE_THRESHOLD
-# Define constants here if not available in core.constants
+import numpy as np
 MAX_HOMOLOGY_DIMENSION = 2
 PERSISTENCE_THRESHOLD = 0.1
 

@@ -147,12 +147,12 @@ def setup_virtual_environment(venv_name: str) -> Tuple[bool, Path]:
     # Get activation command based on OS
     if platform.system() == "Windows":
         activate_cmd = str(venv_path / "Scripts" / "activate.bat")
-        pip_path = venv_path / "Scripts" / "pip"
-        python_path = venv_path / "Scripts" / "python"
+        venv_path / "Scripts" / "pip"
+        venv_path / "Scripts" / "python"
     else:
         activate_cmd = f"source {venv_path / 'bin' / 'activate'}"
-        pip_path = venv_path / "bin" / "pip"
-        python_path = venv_path / "bin" / "python"
+        venv_path / "bin" / "pip"
+        venv_path / "bin" / "python"
 
     print_success(f"Virtual environment created at {venv_path}")
     logger.debug(f"\n  To activate manually, run: {Colors.BOLD}{activate_cmd}{Colors.ENDC}\n")

@@ -1,9 +1,7 @@
 """
 Unit tests for the refactored clinical circuits.
 """
-
 import unittest
-
 try:
     from tests.mocks import (
         MockClinicalBiomarkerCircuit as ClinicalBiomarkerCircuit,

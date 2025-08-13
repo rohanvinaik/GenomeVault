@@ -2,25 +2,23 @@
 Batched PIR Query Builder for HDC Error-Tuned Queries
 Implements repeat-aware PIR batching with median aggregation for uncertainty tuning
 """
-
 from __future__ import annotations
 
-import asyncio
-import hashlib
-import time
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any
+import asyncio
+import hashlib
+import time
 
 import numpy as np
 import torch
 
-from genomevault.hypervector.error_handling import ErrorBudget
-from genomevault.utils.logging import get_logger
-
 from .pir_client import PIRClient, PIRQuery
 from .query_builder import GenomicQuery, PIRQueryBuilder, QueryType
+from genomevault.hypervector.error_handling import ErrorBudget
+from genomevault.utils.logging import get_logger
 
 logger = get_logger(__name__)
 

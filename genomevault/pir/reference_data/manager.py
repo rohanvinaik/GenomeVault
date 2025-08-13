@@ -1,18 +1,17 @@
-from __future__ import annotations
-
 """Manager module."""
 """
 Reference data manager for PIR system.
 Handles pangenome graphs, annotations, and population-specific data.
 """
+from __future__ import annotations
 
-import gzip
-import json
-import time
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 from typing import Any
+import gzip
+import json
+import time
 
 from genomevault.utils.logging import get_logger, logger
 

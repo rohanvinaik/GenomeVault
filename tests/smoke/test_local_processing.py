@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import numpy as np
-import pandas as pd
 import pytest
 
-from genomevault.local_processing.common import process, validate_features
+import numpy as np
+import pandas as pd
 
+from genomevault.local_processing.common import process, validate_features
 
 class TestLocalProcessing:
     def test_process_dataframe(self):

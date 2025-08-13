@@ -1,11 +1,7 @@
+"""Verifier module."""
 from __future__ import annotations
 
-# ruff: noqa
-"""Verifier module."""
 import logging
-
-# import pytest
-
 logger = logging.getLogger(__name__)
 
 
@@ -28,7 +24,6 @@ from genomevault.utils.logging import (
     audit_logger,
     get_logger,
     logger,
-    performance_logger,
     log_operation,
 )
 
@@ -560,7 +555,6 @@ class Verifier:
 # pytest.skip("outdated example", allow_module_level=True)
 
 if __name__ == "__main__":
-    import numpy as np
 
     from .prover import Prover
 

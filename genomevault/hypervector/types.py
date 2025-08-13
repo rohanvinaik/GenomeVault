@@ -4,12 +4,10 @@ Type aliases for hypervector operations.
 This module provides consistent type aliases for numpy arrays used throughout
 the hypervector module, improving type safety and code readability.
 """
-
 from typing import TypeAlias, Union
-import numpy as np
-from numpy.typing import NDArray
 
-# Basic vector types
+from numpy.typing import NDArray
+import numpy as np
 VectorF32: TypeAlias = NDArray[np.float32]
 VectorF64: TypeAlias = NDArray[np.float64]
 VectorBool: TypeAlias = NDArray[np.bool_]

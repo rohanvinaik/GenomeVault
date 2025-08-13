@@ -1,8 +1,8 @@
-import pytest
 from fastapi.testclient import TestClient
+import pytest
+
 from genomevault.api.main import app
 from genomevault.exceptions import GVInputError
-
 
 client = TestClient(app)
 

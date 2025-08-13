@@ -1,10 +1,8 @@
 from fastapi.testclient import TestClient
 
-
 from genomevault.api.app import app
 from genomevault.security.headers import SECURITY_HEADERS
 from genomevault.security.rate_limit import RateLimitMiddleware
-
 
 def test_default_security_headers_present():
     client = TestClient(app)

@@ -4,18 +4,16 @@ Federated Model Lineage Tracking for Distributed Training
 This module tracks model evolution across federated learning rounds,
 creating a verifiable DAG (Directed Acyclic Graph) of model updates.
 """
-
 from __future__ import annotations
 
-import hashlib
-import json
-import time
 from dataclasses import asdict, dataclass
 from enum import Enum
 from typing import Any
-
+import hashlib
+import json
 import matplotlib.pyplot as plt
 import networkx as nx
+import time
 
 from genomevault.utils.logging import get_logger
 
@@ -309,7 +307,7 @@ class FederatedModelLineage:
             self.active_branches.discard(version_id)
             self.active_branches.add(val_version_id)
 
-        logger.info(f"Recorded validation {val_version_id} for {version_id} (passed: {validation_passed)}")
+        logger.info(f"Recorded validation {val_version_id} for {version_id} (passed: {validation_passed})")
 
         return val_version_id
 

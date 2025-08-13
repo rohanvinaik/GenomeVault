@@ -1,10 +1,10 @@
-# genomevault/exceptions.py
+"""Exceptions module."""
 from __future__ import annotations
 
-"""Exceptions module."""
 from typing import Any, Dict, Type
 
 from .core.exceptions import (
+
     EncodingError,
     GVComputeError,
     GVConfigError,

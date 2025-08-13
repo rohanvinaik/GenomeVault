@@ -5,8 +5,8 @@ This module maintains backward compatibility for code using the old import path.
 Please migrate to genomevault.hypervector_transform.encoding
 
 """
-
 import warnings
+
 from genomevault.hypervector_transform.encoding import *  # noqa: F401, F403
 
 warnings.warn(

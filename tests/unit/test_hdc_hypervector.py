@@ -1,12 +1,13 @@
 """
 Test suite for hypervector operations
 """
-
 import pytest
+
 import torch
 
 from genomevault.hypervector.encoding.genomic import GenomicEncoder
 from genomevault.hypervector.operations.binding import (
+
     BindingOperation,
     HypervectorBinder,
     MultiModalBinder,

@@ -4,11 +4,10 @@ Hypervector encoding for genomic data
 This module is maintained for backward compatibility.
 Please migrate to genomevault.hypervector_transform.encoding
 """
-
 from __future__ import annotations
 
-import warnings
 from enum import Enum
+import warnings
 
 import numpy as np
 import torch

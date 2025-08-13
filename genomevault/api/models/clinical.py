@@ -1,9 +1,7 @@
+"""Clinical module."""
 from __future__ import annotations
 
-"""Clinical module."""
 from pydantic import BaseModel, Field
-
-
 class ClinicalEvalRequest(BaseModel):
     """ClinicalEvalRequest implementation."""
 

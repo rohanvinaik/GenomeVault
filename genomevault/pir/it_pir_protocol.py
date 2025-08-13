@@ -1,15 +1,14 @@
-from __future__ import annotations
-
 """It Pir Protocol module."""
 """
 Information-Theoretic PIR Protocol Implementation
 Implements 2-server IT-PIR with XOR-based scheme and security guarantees.
 """
+from __future__ import annotations
 
-import secrets
-import time
 from dataclasses import dataclass
 from typing import Any
+import secrets
+import time
 
 import numpy as np
 

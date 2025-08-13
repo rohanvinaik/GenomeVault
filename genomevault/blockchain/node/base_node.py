@@ -1,9 +1,7 @@
+"""Base Node module."""
 from __future__ import annotations
 
-"""Base Node module."""
 from abc import ABC, abstractmethod
-
-
 class BaseNode(ABC):
     """Minimal node lifecycle interface."""
 

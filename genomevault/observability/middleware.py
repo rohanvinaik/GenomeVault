@@ -1,15 +1,13 @@
-from __future__ import annotations
-
 """Middleware module."""
-import time
-import uuid
+from __future__ import annotations
 
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
+import time
+import uuid
 
 from genomevault.observability.logging import get_logger
 
-# Metrics are optional; if import fails, we no-op
 try:
     from genomevault.observability.metrics import (
         http_request_duration,

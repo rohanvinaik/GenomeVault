@@ -1,12 +1,11 @@
 """
 Test HIPAA Fast-Track Verification System
 """
-
 from datetime import datetime, timedelta
-
 import pytest
 
 from genomevault.blockchain.hipaa import (
+
     CMSNPIRegistry,
     HIPAACredentials,
     HIPAAVerifier,

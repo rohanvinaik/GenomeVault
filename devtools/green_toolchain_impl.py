@@ -206,7 +206,7 @@ class GreenToolchainImplementer:
                 def_pattern = re.compile(r"^(\s*)def (\w+)\([^)]*\):(?!\s*->)", re.MULTILINE)
 
                 def add_return_annotation(match):
-                    indent = match.group(1)
+                    match.group(1)
                     func_name = match.group(2)
                     # Skip __init__, __new__, and other special methods that typically don't need -> None
                     if func_name.startswith("__") and func_name.endswith("__"):

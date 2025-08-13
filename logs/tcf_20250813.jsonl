@@ -1,0 +1,246 @@
+{"timestamp": "2025-08-13T16:17:58.108882Z", "level": "\u001b[32mINFO\u001b[0m", "module": "logging_setup", "function": "log_operation", "line": 256, "message": "Starting operation: cli_main", "operation": "cli_main"}
+{"timestamp": "2025-08-13T16:17:58.110663Z", "level": "\u001b[32mINFO\u001b[0m", "module": "resource_monitor", "function": "__init__", "line": 131, "message": "Memory monitor initialized with 52428MB limit"}
+{"timestamp": "2025-08-13T16:17:58.112678Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_main", "function": "main", "line": 677, "message": "Analyzing path: /Users/***REDACTED***"}
+{"timestamp": "2025-08-13T16:17:58.113982Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_main", "function": "main", "line": 766, "message": "Collecting Python files from /Users/***REDACTED***"}
+{"timestamp": "2025-08-13T16:17:58.554661Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_main", "function": "main", "line": 788, "message": "Found 383 Python files"}
+{"timestamp": "2025-08-13T16:18:00.374853Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 846, "message": "Successfully parsed 383 files"}
+{"timestamp": "2025-08-13T16:18:00.375596Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 859, "message": "Building symbol table"}
+{"timestamp": "2025-08-13T16:18:00.647536Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 943, "message": "Running analyzers"}
+{"timestamp": "2025-08-13T16:18:00.647981Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running import_graph analyzer"}
+{"timestamp": "2025-08-13T16:18:00.808102Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running lsh_duplicates analyzer"}
+{"timestamp": "2025-08-13T16:18:11.174462Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running missing_symbols analyzer"}
+{"timestamp": "2025-08-13T16:18:11.893665Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running git_chains analyzer"}
+{"timestamp": "2025-08-13T16:18:13.301589Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running semantic_hv analyzer"}
+{"timestamp": "2025-08-13T16:18:30.289174Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running circular_import_resolver analyzer"}
+{"timestamp": "2025-08-13T16:18:39.493964Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running phantom_function_detector analyzer"}
+{"timestamp": "2025-08-13T16:18:39.652163Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running context_thrashing analyzer"}
+{"timestamp": "2025-08-13T16:18:40.788022Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running function_coupling analyzer"}
+{"timestamp": "2025-08-13T16:18:41.333086Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running enhanced_placeholders analyzer"}
+{"timestamp": "2025-08-13T16:18:41.828161Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running llm_filler analyzer"}
+{"timestamp": "2025-08-13T16:18:44.544462Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1139, "message": "Saved analysis artifact for reuse"}
+{"timestamp": "2025-08-13T16:18:44.545572Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1331, "message": "Analysis complete: 472 issues, risk score 19.46"}
+{"timestamp": "2025-08-13T16:18:44.560574Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1455, "message": "Saved detailed report to .tailchasing_cache/detailed_report.json"}
+{"timestamp": "2025-08-13T16:18:44.560997Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1465, "message": "Found 471 fixable issues"}
+{"timestamp": "2025-08-13T16:18:44.562098Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1685, "message": "✓ Analysis completed in 41.8s (383 files, 545 issues found)"}
+{"timestamp": "2025-08-13T16:18:45.146252Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 386, "message": "Memory Usage Summary:"}
+{"timestamp": "2025-08-13T16:18:45.146356Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 387, "message": "  Current: 404.0MB (0.8%)"}
+{"timestamp": "2025-08-13T16:18:45.146424Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 388, "message": "  Peak: 404.0MB"}
+{"timestamp": "2025-08-13T16:18:45.146478Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 389, "message": "  Limit: 52428MB"}
+{"timestamp": "2025-08-13T16:18:45.146530Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 390, "message": "  Available: 52024.0MB"}
+{"timestamp": "2025-08-13T16:18:45.146580Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 391, "message": "  GC Collections: 0"}
+{"timestamp": "2025-08-13T16:18:45.146630Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 392, "message": "  Streaming Activations: 0"}
+{"timestamp": "2025-08-13T16:18:45.146677Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 393, "message": "  Dimension Reductions: 0"}
+{"timestamp": "2025-08-13T16:18:45.146723Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 394, "message": "  Current HV Dims: 1024"}
+{"timestamp": "2025-08-13T16:18:45.146812Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 399, "message": "  System Memory: 62.5% used"}
+{"timestamp": "2025-08-13T16:18:46.124743Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 386, "message": "Memory Usage Summary:"}
+{"timestamp": "2025-08-13T16:18:46.125346Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 387, "message": "  Current: 403.9MB (0.8%)"}
+{"timestamp": "2025-08-13T16:18:46.125538Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 388, "message": "  Peak: 404.0MB"}
+{"timestamp": "2025-08-13T16:18:46.125802Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 389, "message": "  Limit: 52428MB"}
+{"timestamp": "2025-08-13T16:18:46.125978Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 390, "message": "  Available: 52024.1MB"}
+{"timestamp": "2025-08-13T16:18:46.126143Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 391, "message": "  GC Collections: 0"}
+{"timestamp": "2025-08-13T16:18:46.126311Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 392, "message": "  Streaming Activations: 0"}
+{"timestamp": "2025-08-13T16:18:46.126473Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 393, "message": "  Dimension Reductions: 0"}
+{"timestamp": "2025-08-13T16:18:46.126630Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 394, "message": "  Current HV Dims: 1024"}
+{"timestamp": "2025-08-13T16:18:46.127279Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 399, "message": "  System Memory: 62.5% used"}
+{"timestamp": "2025-08-13T16:20:36.541370Z", "level": "\u001b[32mINFO\u001b[0m", "module": "logging_setup", "function": "log_operation", "line": 256, "message": "Starting operation: cli_main", "operation": "cli_main"}
+{"timestamp": "2025-08-13T16:20:36.543225Z", "level": "\u001b[32mINFO\u001b[0m", "module": "resource_monitor", "function": "__init__", "line": 131, "message": "Memory monitor initialized with 52428MB limit"}
+{"timestamp": "2025-08-13T16:20:36.543347Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_main", "function": "main", "line": 677, "message": "Analyzing path: /Users/***REDACTED***"}
+{"timestamp": "2025-08-13T16:20:36.545915Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_main", "function": "main", "line": 766, "message": "Collecting Python files from /Users/***REDACTED***"}
+{"timestamp": "2025-08-13T16:20:36.923810Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_main", "function": "main", "line": 788, "message": "Found 383 Python files"}
+{"timestamp": "2025-08-13T16:20:37.995982Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 846, "message": "Successfully parsed 383 files"}
+{"timestamp": "2025-08-13T16:20:37.996307Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 859, "message": "Building symbol table"}
+{"timestamp": "2025-08-13T16:20:38.601576Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 913, "message": "Reusing cached analysis artifact (no re-analysis needed)"}
+{"timestamp": "2025-08-13T16:20:38.602943Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running import_graph analyzer"}
+{"timestamp": "2025-08-13T16:20:38.768576Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running lsh_duplicates analyzer"}
+{"timestamp": "2025-08-13T16:20:49.405884Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running missing_symbols analyzer"}
+{"timestamp": "2025-08-13T16:20:50.298855Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running git_chains analyzer"}
+{"timestamp": "2025-08-13T16:20:51.506986Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running semantic_hv analyzer"}
+{"timestamp": "2025-08-13T16:21:09.194981Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running circular_import_resolver analyzer"}
+{"timestamp": "2025-08-13T16:21:18.421537Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running phantom_function_detector analyzer"}
+{"timestamp": "2025-08-13T16:21:18.587270Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running context_thrashing analyzer"}
+{"timestamp": "2025-08-13T16:21:19.736144Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running function_coupling analyzer"}
+{"timestamp": "2025-08-13T16:21:20.309220Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running enhanced_placeholders analyzer"}
+{"timestamp": "2025-08-13T16:21:20.816232Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running llm_filler analyzer"}
+{"timestamp": "2025-08-13T16:21:23.133357Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1139, "message": "Saved analysis artifact for reuse"}
+{"timestamp": "2025-08-13T16:21:23.134437Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1331, "message": "Analysis complete: 472 issues, risk score 19.46"}
+{"timestamp": "2025-08-13T16:21:23.149993Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1455, "message": "Saved detailed report to .tailchasing_cache/detailed_report.json"}
+{"timestamp": "2025-08-13T16:21:23.150461Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1487, "message": "No structured suggestions found, using Fix Planner"}
+{"timestamp": "2025-08-13T16:21:23.153786Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1509, "message": "Generated fix script via planner: tailchasing_fixes.py"}
+{"timestamp": "2025-08-13T16:21:23.155374Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1518, "message": "Generated detailed suggestions: tailchasing_suggestions.md"}
+{"timestamp": "2025-08-13T16:21:23.155754Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1685, "message": "✓ Analysis completed in 42.8s (383 files, 545 issues found)"}
+{"timestamp": "2025-08-13T16:26:27.041553Z", "level": "\u001b[32mINFO\u001b[0m", "module": "logging_setup", "function": "log_operation", "line": 256, "message": "Starting operation: cli_main", "operation": "cli_main"}
+{"timestamp": "2025-08-13T16:26:27.043668Z", "level": "\u001b[32mINFO\u001b[0m", "module": "resource_monitor", "function": "__init__", "line": 131, "message": "Memory monitor initialized with 52428MB limit"}
+{"timestamp": "2025-08-13T16:26:27.045710Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_main", "function": "main", "line": 677, "message": "Analyzing path: /Users/***REDACTED***"}
+{"timestamp": "2025-08-13T16:26:27.049329Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_main", "function": "main", "line": 766, "message": "Collecting Python files from /Users/***REDACTED***"}
+{"timestamp": "2025-08-13T16:26:27.380722Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_main", "function": "main", "line": 788, "message": "Found 383 Python files"}
+{"timestamp": "2025-08-13T16:26:28.599691Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 846, "message": "Successfully parsed 383 files"}
+{"timestamp": "2025-08-13T16:26:28.600515Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 859, "message": "Building symbol table"}
+{"timestamp": "2025-08-13T16:26:28.845867Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 943, "message": "Running analyzers"}
+{"timestamp": "2025-08-13T16:26:28.846424Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running import_graph analyzer"}
+{"timestamp": "2025-08-13T16:26:28.992509Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running lsh_duplicates analyzer"}
+{"timestamp": "2025-08-13T16:26:38.466373Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running missing_symbols analyzer"}
+{"timestamp": "2025-08-13T16:26:39.113037Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running git_chains analyzer"}
+{"timestamp": "2025-08-13T16:26:40.323506Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running semantic_hv analyzer"}
+{"timestamp": "2025-08-13T16:26:55.789269Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running circular_import_resolver analyzer"}
+{"timestamp": "2025-08-13T16:27:04.174469Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running phantom_function_detector analyzer"}
+{"timestamp": "2025-08-13T16:27:04.327148Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running context_thrashing analyzer"}
+{"timestamp": "2025-08-13T16:27:05.361700Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running function_coupling analyzer"}
+{"timestamp": "2025-08-13T16:27:05.872852Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running enhanced_placeholders analyzer"}
+{"timestamp": "2025-08-13T16:27:06.314466Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1054, "message": "Running llm_filler analyzer"}
+{"timestamp": "2025-08-13T16:27:08.898962Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1139, "message": "Saved analysis artifact for reuse"}
+{"timestamp": "2025-08-13T16:27:08.900514Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1331, "message": "Analysis complete: 472 issues, risk score 19.46"}
+{"timestamp": "2025-08-13T16:27:08.914188Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1455, "message": "Saved detailed report to .tailchasing_cache/detailed_report.json"}
+{"timestamp": "2025-08-13T16:27:08.914742Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1465, "message": "Found 471 fixable issues"}
+{"timestamp": "2025-08-13T16:27:08.915540Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1685, "message": "✓ Analysis completed in 38.0s (383 files, 545 issues found)"}
+{"timestamp": "2025-08-13T16:27:09.433495Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 386, "message": "Memory Usage Summary:"}
+{"timestamp": "2025-08-13T16:27:09.433586Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 387, "message": "  Current: 408.1MB (0.8%)"}
+{"timestamp": "2025-08-13T16:27:09.433637Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 388, "message": "  Peak: 407.8MB"}
+{"timestamp": "2025-08-13T16:27:09.433682Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 389, "message": "  Limit: 52428MB"}
+{"timestamp": "2025-08-13T16:27:09.433725Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 390, "message": "  Available: 52019.9MB"}
+{"timestamp": "2025-08-13T16:27:09.433767Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 391, "message": "  GC Collections: 0"}
+{"timestamp": "2025-08-13T16:27:09.433808Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 392, "message": "  Streaming Activations: 0"}
+{"timestamp": "2025-08-13T16:27:09.433847Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 393, "message": "  Dimension Reductions: 0"}
+{"timestamp": "2025-08-13T16:27:09.433886Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 394, "message": "  Current HV Dims: 1024"}
+{"timestamp": "2025-08-13T16:27:09.433966Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 399, "message": "  System Memory: 63.3% used"}
+{"timestamp": "2025-08-13T16:27:09.747918Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 386, "message": "Memory Usage Summary:"}
+{"timestamp": "2025-08-13T16:27:09.748131Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 387, "message": "  Current: 408.1MB (0.8%)"}
+{"timestamp": "2025-08-13T16:27:09.748245Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 388, "message": "  Peak: 407.8MB"}
+{"timestamp": "2025-08-13T16:27:09.748297Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 389, "message": "  Limit: 52428MB"}
+{"timestamp": "2025-08-13T16:27:09.748341Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 390, "message": "  Available: 52019.9MB"}
+{"timestamp": "2025-08-13T16:27:09.748384Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 391, "message": "  GC Collections: 0"}
+{"timestamp": "2025-08-13T16:27:09.748423Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 392, "message": "  Streaming Activations: 0"}
+{"timestamp": "2025-08-13T16:27:09.748461Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 393, "message": "  Dimension Reductions: 0"}
+{"timestamp": "2025-08-13T16:27:09.748497Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 394, "message": "  Current HV Dims: 1024"}
+{"timestamp": "2025-08-13T16:27:09.748560Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 399, "message": "  System Memory: 63.3% used"}
+{"timestamp": "2025-08-13T16:44:32.515881Z", "level": "\u001b[32mINFO\u001b[0m", "module": "logging_setup", "function": "log_operation", "line": 256, "message": "Starting operation: cli_main", "operation": "cli_main"}
+{"timestamp": "2025-08-13T16:44:32.517862Z", "level": "\u001b[32mINFO\u001b[0m", "module": "resource_monitor", "function": "__init__", "line": 131, "message": "Memory monitor initialized with 52428MB limit"}
+{"timestamp": "2025-08-13T16:44:32.519771Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_main", "function": "main", "line": 678, "message": "Analyzing path: /Users/***REDACTED***"}
+{"timestamp": "2025-08-13T16:44:32.522755Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_main", "function": "main", "line": 767, "message": "Collecting Python files from /Users/***REDACTED***"}
+{"timestamp": "2025-08-13T16:44:32.894939Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_main", "function": "main", "line": 789, "message": "Found 383 Python files"}
+{"timestamp": "2025-08-13T16:44:34.031856Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 847, "message": "Successfully parsed 383 files"}
+{"timestamp": "2025-08-13T16:44:34.032479Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 860, "message": "Building symbol table"}
+{"timestamp": "2025-08-13T16:44:34.281589Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 944, "message": "Running analyzers"}
+{"timestamp": "2025-08-13T16:44:34.282055Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running import_graph analyzer"}
+{"timestamp": "2025-08-13T16:44:34.422498Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running lsh_duplicates analyzer"}
+{"timestamp": "2025-08-13T16:44:43.883881Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running missing_symbols analyzer"}
+{"timestamp": "2025-08-13T16:44:44.522190Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running git_chains analyzer"}
+{"timestamp": "2025-08-13T16:44:45.808253Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running semantic_hv analyzer"}
+{"timestamp": "2025-08-13T16:45:01.265175Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running circular_import_resolver analyzer"}
+{"timestamp": "2025-08-13T16:45:09.384630Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running phantom_function_detector analyzer"}
+{"timestamp": "2025-08-13T16:45:09.520164Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running context_thrashing analyzer"}
+{"timestamp": "2025-08-13T16:45:10.506995Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running function_coupling analyzer"}
+{"timestamp": "2025-08-13T16:45:10.997592Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running enhanced_placeholders analyzer"}
+{"timestamp": "2025-08-13T16:45:11.437023Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running llm_filler analyzer"}
+{"timestamp": "2025-08-13T16:45:14.117157Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1140, "message": "Saved analysis artifact for reuse"}
+{"timestamp": "2025-08-13T16:45:14.118567Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1332, "message": "Analysis complete: 472 issues, risk score 19.46"}
+{"timestamp": "2025-08-13T16:45:14.132391Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1456, "message": "Saved detailed report to .tailchasing_cache/detailed_report.json"}
+{"timestamp": "2025-08-13T16:45:14.164229Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1483, "message": "Found 471 fixable issues"}
+{"timestamp": "2025-08-13T16:45:14.164945Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1703, "message": "✓ Analysis completed in 37.7s (383 files, 545 issues found)"}
+{"timestamp": "2025-08-13T16:45:14.278760Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 386, "message": "Memory Usage Summary:"}
+{"timestamp": "2025-08-13T16:45:14.278834Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 387, "message": "  Current: 409.1MB (0.8%)"}
+{"timestamp": "2025-08-13T16:45:14.278882Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 388, "message": "  Peak: 409.2MB"}
+{"timestamp": "2025-08-13T16:45:14.278932Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 389, "message": "  Limit: 52428MB"}
+{"timestamp": "2025-08-13T16:45:14.278971Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 390, "message": "  Available: 52018.9MB"}
+{"timestamp": "2025-08-13T16:45:14.279010Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 391, "message": "  GC Collections: 0"}
+{"timestamp": "2025-08-13T16:45:14.279047Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 392, "message": "  Streaming Activations: 0"}
+{"timestamp": "2025-08-13T16:45:14.279084Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 393, "message": "  Dimension Reductions: 0"}
+{"timestamp": "2025-08-13T16:45:14.279121Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 394, "message": "  Current HV Dims: 1024"}
+{"timestamp": "2025-08-13T16:45:14.279192Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 399, "message": "  System Memory: 63.3% used"}
+{"timestamp": "2025-08-13T16:45:14.301143Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 386, "message": "Memory Usage Summary:"}
+{"timestamp": "2025-08-13T16:45:14.301207Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 387, "message": "  Current: 409.1MB (0.8%)"}
+{"timestamp": "2025-08-13T16:45:14.301256Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 388, "message": "  Peak: 409.2MB"}
+{"timestamp": "2025-08-13T16:45:14.301300Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 389, "message": "  Limit: 52428MB"}
+{"timestamp": "2025-08-13T16:45:14.301343Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 390, "message": "  Available: 52018.9MB"}
+{"timestamp": "2025-08-13T16:45:14.301383Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 391, "message": "  GC Collections: 0"}
+{"timestamp": "2025-08-13T16:45:14.301424Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 392, "message": "  Streaming Activations: 0"}
+{"timestamp": "2025-08-13T16:45:14.301462Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 393, "message": "  Dimension Reductions: 0"}
+{"timestamp": "2025-08-13T16:45:14.301500Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 394, "message": "  Current HV Dims: 1024"}
+{"timestamp": "2025-08-13T16:45:14.301555Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 399, "message": "  System Memory: 63.3% used"}
+{"timestamp": "2025-08-13T17:09:13.813669Z", "level": "\u001b[32mINFO\u001b[0m", "module": "logging_setup", "function": "log_operation", "line": 256, "message": "Starting operation: cli_main", "operation": "cli_main"}
+{"timestamp": "2025-08-13T17:09:13.815631Z", "level": "\u001b[32mINFO\u001b[0m", "module": "resource_monitor", "function": "__init__", "line": 131, "message": "Memory monitor initialized with 52428MB limit"}
+{"timestamp": "2025-08-13T17:09:13.817643Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_main", "function": "main", "line": 678, "message": "Analyzing path: /Users/***REDACTED***"}
+{"timestamp": "2025-08-13T17:09:13.821239Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_main", "function": "main", "line": 767, "message": "Collecting Python files from /Users/***REDACTED***"}
+{"timestamp": "2025-08-13T17:09:14.231036Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_main", "function": "main", "line": 789, "message": "Found 383 Python files"}
+{"timestamp": "2025-08-13T17:09:15.432404Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 847, "message": "Successfully parsed 383 files"}
+{"timestamp": "2025-08-13T17:09:15.433143Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 860, "message": "Building symbol table"}
+{"timestamp": "2025-08-13T17:09:15.721833Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 944, "message": "Running analyzers"}
+{"timestamp": "2025-08-13T17:09:15.722340Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running import_graph analyzer"}
+{"timestamp": "2025-08-13T17:09:15.887468Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running lsh_duplicates analyzer"}
+{"timestamp": "2025-08-13T17:09:26.931759Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running missing_symbols analyzer"}
+{"timestamp": "2025-08-13T17:09:27.697029Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running git_chains analyzer"}
+{"timestamp": "2025-08-13T17:09:29.058546Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running semantic_hv analyzer"}
+{"timestamp": "2025-08-13T17:09:47.409943Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running circular_import_resolver analyzer"}
+{"timestamp": "2025-08-13T17:09:56.994553Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running phantom_function_detector analyzer"}
+{"timestamp": "2025-08-13T17:09:57.155868Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running context_thrashing analyzer"}
+{"timestamp": "2025-08-13T17:09:58.335265Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running function_coupling analyzer"}
+{"timestamp": "2025-08-13T17:09:58.891995Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running enhanced_placeholders analyzer"}
+{"timestamp": "2025-08-13T17:09:59.390220Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running llm_filler analyzer"}
+{"timestamp": "2025-08-13T17:10:02.186131Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1140, "message": "Saved analysis artifact for reuse"}
+{"timestamp": "2025-08-13T17:10:02.187126Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1332, "message": "Analysis complete: 472 issues, risk score 19.01"}
+{"timestamp": "2025-08-13T17:10:02.201776Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1456, "message": "Saved detailed report to .tailchasing_cache/detailed_report.json"}
+{"timestamp": "2025-08-13T17:10:02.236219Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1483, "message": "Found 471 fixable issues"}
+{"timestamp": "2025-08-13T17:10:02.237063Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1703, "message": "✓ Analysis completed in 44.3s (383 files, 546 issues found)"}
+{"timestamp": "2025-08-13T17:10:02.293341Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 386, "message": "Memory Usage Summary:"}
+{"timestamp": "2025-08-13T17:10:02.293432Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 387, "message": "  Current: 411.7MB (0.8%)"}
+{"timestamp": "2025-08-13T17:10:02.293491Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 388, "message": "  Peak: 411.8MB"}
+{"timestamp": "2025-08-13T17:10:02.293543Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 389, "message": "  Limit: 52428MB"}
+{"timestamp": "2025-08-13T17:10:02.293594Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 390, "message": "  Available: 52016.3MB"}
+{"timestamp": "2025-08-13T17:10:02.293640Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 391, "message": "  GC Collections: 0"}
+{"timestamp": "2025-08-13T17:10:02.293700Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 392, "message": "  Streaming Activations: 0"}
+{"timestamp": "2025-08-13T17:10:02.293744Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 393, "message": "  Dimension Reductions: 0"}
+{"timestamp": "2025-08-13T17:10:02.293788Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 394, "message": "  Current HV Dims: 1024"}
+{"timestamp": "2025-08-13T17:10:02.293865Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 399, "message": "  System Memory: 61.4% used"}
+{"timestamp": "2025-08-13T17:10:02.454731Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 386, "message": "Memory Usage Summary:"}
+{"timestamp": "2025-08-13T17:10:02.454832Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 387, "message": "  Current: 411.7MB (0.8%)"}
+{"timestamp": "2025-08-13T17:10:02.454906Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 388, "message": "  Peak: 411.8MB"}
+{"timestamp": "2025-08-13T17:10:02.454970Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 389, "message": "  Limit: 52428MB"}
+{"timestamp": "2025-08-13T17:10:02.455032Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 390, "message": "  Available: 52016.3MB"}
+{"timestamp": "2025-08-13T17:10:02.455091Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 391, "message": "  GC Collections: 0"}
+{"timestamp": "2025-08-13T17:10:02.455150Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 392, "message": "  Streaming Activations: 0"}
+{"timestamp": "2025-08-13T17:10:02.455207Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 393, "message": "  Dimension Reductions: 0"}
+{"timestamp": "2025-08-13T17:10:02.455264Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 394, "message": "  Current HV Dims: 1024"}
+{"timestamp": "2025-08-13T17:10:02.455351Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 399, "message": "  System Memory: 61.4% used"}
+{"timestamp": "2025-08-13T17:22:47.120892Z", "level": "\u001b[32mINFO\u001b[0m", "module": "logging_setup", "function": "log_operation", "line": 256, "message": "Starting operation: cli_main", "operation": "cli_main"}
+{"timestamp": "2025-08-13T17:22:47.122590Z", "level": "\u001b[32mINFO\u001b[0m", "module": "resource_monitor", "function": "__init__", "line": 131, "message": "Memory monitor initialized with 52428MB limit"}
+{"timestamp": "2025-08-13T17:22:47.124541Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_main", "function": "main", "line": 678, "message": "Analyzing path: /Users/***REDACTED***"}
+{"timestamp": "2025-08-13T17:22:47.127285Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_main", "function": "main", "line": 767, "message": "Collecting Python files from /Users/***REDACTED***"}
+{"timestamp": "2025-08-13T17:22:47.495783Z", "level": "\u001b[32mINFO\u001b[0m", "module": "cli_main", "function": "main", "line": 789, "message": "Found 384 Python files"}
+{"timestamp": "2025-08-13T17:22:49.453227Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 847, "message": "Successfully parsed 384 files"}
+{"timestamp": "2025-08-13T17:22:49.453982Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 860, "message": "Building symbol table"}
+{"timestamp": "2025-08-13T17:22:49.744074Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 944, "message": "Running analyzers"}
+{"timestamp": "2025-08-13T17:22:49.744554Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running import_graph analyzer"}
+{"timestamp": "2025-08-13T17:22:49.905898Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running lsh_duplicates analyzer"}
+{"timestamp": "2025-08-13T17:23:01.098166Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running missing_symbols analyzer"}
+{"timestamp": "2025-08-13T17:23:01.865616Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running git_chains analyzer"}
+{"timestamp": "2025-08-13T17:23:03.087901Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running semantic_hv analyzer"}
+{"timestamp": "2025-08-13T17:23:21.397493Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running circular_import_resolver analyzer"}
+{"timestamp": "2025-08-13T17:23:30.987985Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running phantom_function_detector analyzer"}
+{"timestamp": "2025-08-13T17:23:31.154019Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running context_thrashing analyzer"}
+{"timestamp": "2025-08-13T17:23:32.390629Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running function_coupling analyzer"}
+{"timestamp": "2025-08-13T17:23:32.959917Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running enhanced_placeholders analyzer"}
+{"timestamp": "2025-08-13T17:23:33.472597Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1055, "message": "Running llm_filler analyzer"}
+{"timestamp": "2025-08-13T17:23:36.005082Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1140, "message": "Saved analysis artifact for reuse"}
+{"timestamp": "2025-08-13T17:23:36.006194Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1332, "message": "Analysis complete: 538 issues, risk score 21.62"}
+{"timestamp": "2025-08-13T17:23:36.023573Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1456, "message": "Saved detailed report to .tailchasing_cache/detailed_report.json"}
+{"timestamp": "2025-08-13T17:23:36.065029Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1483, "message": "Found 537 fixable issues"}
+{"timestamp": "2025-08-13T17:23:36.066065Z", "level": "INFO", "module": "cli_main", "function": "main", "line": 1703, "message": "✓ Analysis completed in 44.3s (384 files, 624 issues found)"}
+{"timestamp": "2025-08-13T17:23:36.163115Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 386, "message": "Memory Usage Summary:"}
+{"timestamp": "2025-08-13T17:23:36.163227Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 387, "message": "  Current: 412.2MB (0.8%)"}
+{"timestamp": "2025-08-13T17:23:36.163301Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 388, "message": "  Peak: 412.2MB"}
+{"timestamp": "2025-08-13T17:23:36.163363Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 389, "message": "  Limit: 52428MB"}
+{"timestamp": "2025-08-13T17:23:36.163422Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 390, "message": "  Available: 52015.8MB"}
+{"timestamp": "2025-08-13T17:23:36.163479Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 391, "message": "  GC Collections: 0"}
+{"timestamp": "2025-08-13T17:23:36.163535Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 392, "message": "  Streaming Activations: 0"}
+{"timestamp": "2025-08-13T17:23:36.163590Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 393, "message": "  Dimension Reductions: 0"}
+{"timestamp": "2025-08-13T17:23:36.163644Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 394, "message": "  Current HV Dims: 1024"}
+{"timestamp": "2025-08-13T17:23:36.163761Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 399, "message": "  System Memory: 61.5% used"}
+{"timestamp": "2025-08-13T17:23:36.622834Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 386, "message": "Memory Usage Summary:"}
+{"timestamp": "2025-08-13T17:23:36.623260Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 387, "message": "  Current: 412.2MB (0.8%)"}
+{"timestamp": "2025-08-13T17:23:36.623554Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 388, "message": "  Peak: 412.2MB"}
+{"timestamp": "2025-08-13T17:23:36.623828Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 389, "message": "  Limit: 52428MB"}
+{"timestamp": "2025-08-13T17:23:36.624102Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 390, "message": "  Available: 52015.8MB"}
+{"timestamp": "2025-08-13T17:23:36.624360Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 391, "message": "  GC Collections: 0"}
+{"timestamp": "2025-08-13T17:23:36.625589Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 392, "message": "  Streaming Activations: 0"}
+{"timestamp": "2025-08-13T17:23:36.631150Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 393, "message": "  Dimension Reductions: 0"}
+{"timestamp": "2025-08-13T17:23:36.631459Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 394, "message": "  Current HV Dims: 1024"}
+{"timestamp": "2025-08-13T17:23:36.631604Z", "level": "INFO", "module": "resource_monitor", "function": "log_memory_summary", "line": 399, "message": "  System Memory: 61.5% used"}

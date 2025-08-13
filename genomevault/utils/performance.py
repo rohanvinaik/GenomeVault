@@ -1,11 +1,9 @@
+"""Performance module."""
 from __future__ import annotations
 
-"""Performance module."""
-import time
 from contextlib import contextmanager
 from typing import Callable, Tuple
-
-
+import time
 def time_fn(fn: Callable, *args, **kwargs) -> Tuple[float, any]:
     """Time fn.
 

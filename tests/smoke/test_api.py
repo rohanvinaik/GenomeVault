@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-import pytest
 from fastapi import FastAPI
 from httpx import ASGITransport, Client
+import pytest
 
 from genomevault.api.routers import encode, health
-
 
 @pytest.fixture
 def app():

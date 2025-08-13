@@ -6,16 +6,16 @@ Implements the multi-resolution hypervector system as specified:
 - Mid-level vectors: 15,000 dimensions
 - High-level vectors: 20,000 dimensions
 
+"""
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, cast
+from typing import Any
+import logging
 
 import numpy as np
 import torch
-from numpy.typing import NDArray
 
 from genomevault.core.config import get_config
 from genomevault.core.constants import HYPERVECTOR_DIMENSIONS, OmicsType

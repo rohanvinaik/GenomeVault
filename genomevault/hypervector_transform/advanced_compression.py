@@ -2,16 +2,17 @@
 Enhanced hierarchical hypervector compression module.
 Implements the advanced compression from the project specifications.
 
+"""
 from __future__ import annotations
 
+from dataclasses import dataclass
+from typing import Any
 import hashlib
 import logging
 import time
-from dataclasses import dataclass
-from typing import Any
 
-import numpy as np
 from numpy.typing import NDArray
+import numpy as np
 
 from genomevault.utils.logging import get_logger
 
@@ -172,6 +173,7 @@ class AdvancedHierarchicalCompressor:
         """
         Implement the hierarchical compression from the specification:
 
+"""
         def hierarchical_compression(base_vector):
             mid_vector = semantic_composition(base_vector, modality_context)
             high_vector = semantic_composition(mid_vector, overall_model_context)
@@ -236,6 +238,7 @@ class AdvancedHierarchicalCompressor:
 
         return compressed
 
+"""
     def semantic_composition(
         self, vector: np.ndarray, context: str, level: str
     ) -> np.ndarray:

@@ -5,17 +5,16 @@ Provides REST API for real-time nanopore data processing
 with biological signal detection.
 
 """
-
 from __future__ import annotations
 
+from fastapi import (
+from pathlib import Path
+from typing import Any
 import asyncio
 import hashlib
 import time
-from pathlib import Path
-from typing import Any
 
 import numpy as np
-from fastapi import (
     APIRouter,
     BackgroundTasks,
     Depends,
@@ -199,7 +198,7 @@ async def _process_fast5_async(stream_id: str, fast5_path: Path):
 
     except Exception as e:
         logger.exception("Unhandled exception")
-        logger.error(f"Error processing stream {stream_id:} %se")
+        logger.error(f"Error processing stream {stream_id:} {}e")
         _results_cache[stream_id]["status"] = "error"
         _results_cache[stream_id]["error"] = str(e)
         raise RuntimeError("Unspecified error")

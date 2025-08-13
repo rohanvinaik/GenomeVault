@@ -1,6 +1,4 @@
-# tests/test_accumulator_neg.py
 from genomevault.zk_proofs.core.accumulator import INITIAL_ACC, step, verify_chain
-
 
 def test_accumulator_drop_link_fails():
     # build small chain

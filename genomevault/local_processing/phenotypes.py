@@ -5,16 +5,15 @@ Handles clinical and phenotypic data processing including EHR integration,
 FHIR data parsing, and phenotype standardization.
 
 """
-
 from __future__ import annotations
 
-import datetime
-import json
-import re
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 from typing import Any
+import datetime
+import json
+import re
 
 from genomevault.utils import get_config, get_logger, secure_hash
 from genomevault.utils.logging import log_operation

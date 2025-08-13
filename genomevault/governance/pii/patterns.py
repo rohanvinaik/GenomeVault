@@ -1,11 +1,9 @@
+"""Patterns module."""
 from __future__ import annotations
 
-"""Patterns module."""
-import re
 from collections.abc import Iterable
 from dataclasses import dataclass
-
-
+import re
 @dataclass(frozen=True)
 class Match:
     """Match implementation."""

@@ -1,11 +1,8 @@
-# genomevault/zk_proofs/engine.py
+"""Engine module."""
 from __future__ import annotations
 
-"""Engine module."""
 from abc import ABC, abstractmethod
 from typing import Any, Dict
-
-
 class ProofEngine(ABC):
     """Zero-knowledge proof engine component."""
     @abstractmethod

@@ -1,8 +1,6 @@
-# genomevault/crypto/commit.py
 from __future__ import annotations
-import hashlib
 
-# Centralized domain tags (bytes!) to avoid typos across the codebase
+import hashlib
 TAGS = {
     "LEAF": b"\x00LEAF",
     "NODE": b"\x01NODE",

@@ -1,15 +1,15 @@
 """Harness module."""
-
 from __future__ import annotations
 
-import csv
 from dataclasses import dataclass
+import csv
 
-import numpy as np
 from numpy.typing import NDArray
+import numpy as np
 
 from genomevault.clinical.calibration.calibrators import fit_and_calibrate
 from genomevault.clinical.calibration.metrics import (
+
     auroc,
     average_precision,
     brier_score,

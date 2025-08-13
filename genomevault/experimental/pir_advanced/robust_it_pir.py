@@ -1,10 +1,8 @@
+"""Robust It Pir module."""
 from __future__ import annotations
 
-"""Robust It Pir module."""
 from dataclasses import dataclass
 from typing import List, Sequence
-
-
 @dataclass
 class RobustServer:
     """Server handling robust requests."""

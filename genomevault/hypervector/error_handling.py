@@ -2,16 +2,15 @@
 HDC Error Handling with Uncertainty Tuning for GenomeVault
 Implements the ECC-HDC core with dynamic budget allocation from the project knowledge
 """
-
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass
 from enum import Enum
-
-import torch
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
+import math
+
+import torch
 
 from genomevault.hypervector.encoding.genomic import GenomicEncoder
 from genomevault.utils.logging import get_logger

@@ -1,11 +1,10 @@
-import numpy as np
 import pytest
 
+import numpy as np
 
 from genomevault.hypervector_transform.binding import BindingOperations
 from genomevault.hypervector_transform.encoding import HypervectorEncoder
 from genomevault.hypervector_transform.holographic import HolographicRepresentation
-
 from genomevault.utils.logging import get_logger
 
 logger = get_logger(__name__)

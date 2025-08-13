@@ -5,7 +5,6 @@ This module implements holographic reduced representations (HRR) for
 encoding complex structured information in hypervectors.
 
 """
-
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -14,10 +13,9 @@ from typing import Any
 import numpy as np
 import torch
 
-from genomevault.utils.logging import get_logger
-
 from .binding import BindingType, HypervectorBinder
 from .encoding import HypervectorEncoder
+from genomevault.utils.logging import get_logger
 
 logger = get_logger(__name__)
 

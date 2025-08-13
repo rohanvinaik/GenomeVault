@@ -1,10 +1,9 @@
+"""Post Quantum module."""
 from __future__ import annotations
 
-"""Post Quantum module."""
 from typing import Any, Dict
 
 from genomevault.core.exceptions import GVComputeError
-
 
 class PQEngine:
     """

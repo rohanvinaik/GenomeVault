@@ -1,11 +1,12 @@
 """
 Test cases for HDC error handling with uncertainty tuning
 """
-
 import pytest
+
 import torch
 
 from genomevault.hypervector.error_handling import (
+
     AdaptiveHDCEncoder,
     ECCEncoderMixin,
     ErrorBudget,

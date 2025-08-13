@@ -2,7 +2,9 @@
 Adversarial tests for PIR implementation.
 Tests malformed queries, timing attacks, and collusion scenarios.
 """
+from genomevault.utils.logging import get_logger
 
+logger = get_logger(__name__)
 import asyncio
 import time
 from unittest.mock import Mock, patch

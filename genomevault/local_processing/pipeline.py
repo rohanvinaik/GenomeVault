@@ -2,19 +2,17 @@
 Multi-omics processing pipeline orchestrator
 
 """
-
 from __future__ import annotations
 
+from pathlib import Path
+from typing import Any
 import asyncio
 import json
 import logging
-from pathlib import Path
-from typing import Any
-
-from genomevault.core.constants import CompressionTier, OmicsType
 
 from .compression import TieredCompressor
 from .validators import validate_genomic_data, validate_transcriptomic_data
+from genomevault.core.constants import CompressionTier, OmicsType
 
 logger = logging.getLogger(__name__)
 

@@ -1,9 +1,7 @@
+"""Pir module."""
 from __future__ import annotations
 
-"""Pir module."""
 from pydantic import BaseModel
-
-
 class PIRQueryRequest(BaseModel):
     """Private information retrieval queryrequest component."""
 

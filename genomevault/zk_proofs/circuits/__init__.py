@@ -1,16 +1,13 @@
 """Package initialization for circuits."""
-
+"""ZK proof circuits for genomic applications."""
+from datetime import datetime
+from typing import Any
 import hashlib
 import json
 import os
-from datetime import datetime
-from typing import Any
 
 from .base_circuits import BaseCircuit
 from .clinical_circuits import ClinicalCircuit
-
-"""ZK proof circuits for genomic applications."""
-
 
 class PRSProofCircuit(BaseCircuit):
     """Circuit for proving PRS (Polygenic Risk Score) is within a range."""

@@ -1,12 +1,10 @@
 """Logging configuration presets for different environments."""
-
-import logging
-import os
 from pathlib import Path
 from typing import Dict, Any
+import logging
+import os
 
 from ..utils.logging import configure_logging
-
 
 def get_development_config() -> Dict[str, Any]:
     """Get logging configuration for development environment."""

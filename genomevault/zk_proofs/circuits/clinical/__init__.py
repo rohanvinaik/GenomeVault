@@ -1,7 +1,6 @@
 """Clinical validation circuits module."""
-
-# Import from the refactored clinical validation module
 from genomevault.clinical_validation.circuits import (
+
     ClinicalBiomarkerCircuit,
     DiabetesRiskCircuit,
     ProofData,

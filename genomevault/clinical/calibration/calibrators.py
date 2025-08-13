@@ -1,11 +1,8 @@
 """Calibrators module."""
-
 from __future__ import annotations
 
-import numpy as np
 from numpy.typing import NDArray
-
-
+import numpy as np
 class PlattCalibrator:
     """Logistic regression (1D) via IRLS to map scores -> probability."""
 

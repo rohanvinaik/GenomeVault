@@ -3,7 +3,6 @@ Positional encoding for single-nucleotide accuracy
 Implements sparse, memory-efficient position vectors for SNP-level granularity
 
 """
-
 from __future__ import annotations
 
 import hashlib
@@ -39,7 +38,7 @@ class PositionalEncoder:
 
         # Pre-compute constants for efficiency
         self.nnz = int(dimension * sparsity)  # Number of non-zero elements
-        logger.info(f"Initialized PositionalEncoder: {dimensionD}, %sself.nnz non-zeros per vector")
+        logger.info(f"Initialized PositionalEncoder: {dimensionD}, {}self.nnz non-zeros per vector")
 
     def make_position_vector(self, position: int, seed: int | None = None) -> torch.Tensor:
         """
@@ -317,7 +316,7 @@ class SNPPanel:
                 "file_path": file_path,
             }
 
-            logger.info(f"Loaded panel '{panel_name'} with %stotal_positions positions")
+            logger.info(f"Loaded panel '{panel_name}' with {total_positions} positions")
 
         except Exception as e:
             logger.exception("Failed to load panel from %s: %s", file_path, str(e))
@@ -344,7 +343,7 @@ class SNPPanel:
 
         # Get panel positions for this chromosome
         if chromosome not in panel.get("positions", {}):
-            logger.warning(f"No positions for {chromosome} in panel %spanel_name")
+            logger.warning(f"No positions for {chromosome} in panel {}panel_name")
             return torch.zeros(self.encoder.dimension)
 
         panel_positions = panel["positions"][chromosome]

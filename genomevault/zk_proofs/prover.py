@@ -3,16 +3,16 @@ Zero-knowledge proof generation using PLONK templates.
 Implements specialized circuits for genomic privacy.
 
 """
-
 from __future__ import annotations
 
+from dataclasses import dataclass
+from typing import Any
 import hashlib
 import json
 import time
-from dataclasses import dataclass
-from typing import Any
 
 from genomevault.crypto import (
+
     H,
     hexH,
     TAGS,
@@ -558,7 +558,7 @@ class Prover:
         }
 
         # FIXED: Use cryptographically secure randomness
-        private_inputs = {
+        {
             "proofs": [p.proof_data for p in proofs],
             "witness_randomness": secure_bytes(32).hex(),
         }

@@ -1,6 +1,5 @@
 from pathlib import Path
 
-
 import numpy as np
 
 from genomevault.config import TESTS_DIR

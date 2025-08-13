@@ -1,15 +1,13 @@
 """
 Test for Zero-Knowledge Median Verification Circuit
 """
-
 from __future__ import annotations
 
 import asyncio
 import json
 import logging
-import time
-
 import pytest
+import time
 
 from genomevault.hypervector.error_handling import ErrorBudget
 from genomevault.zk.circuits.median_verifier import MedianProof, MedianVerifierCircuit

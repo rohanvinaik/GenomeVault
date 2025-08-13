@@ -1,14 +1,12 @@
 """Proofs module."""
-
 from __future__ import annotations
 
+from fastapi import APIRouter, HTTPException, status
 from typing import Any
 
-from fastapi import APIRouter, HTTPException, status
-
+from genomevault.utils.logging import get_logger
 from genomevault.zk.engine import ZKProofEngine
 from genomevault.zk.models import ProofCreateRequest, ProofVerifyRequest
-from genomevault.utils.logging import get_logger
 
 logger = get_logger(__name__)
 

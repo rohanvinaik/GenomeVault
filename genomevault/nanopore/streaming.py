@@ -4,18 +4,19 @@ Streaming processor for nanopore sequencing data.
 Implements catalytic slice-wise processing of nanopore events
 with bounded memory usage.
 
+"""
 from __future__ import annotations
 
+from collections.abc import AsyncIterator
+from dataclasses import dataclass
+from ont_fast5_api.fast5_interface import get_fast5_file
+from pathlib import Path
+from typing import Any
 import asyncio
 import hashlib
 import time
-from collections.abc import AsyncIterator
-from dataclasses import dataclass
-from pathlib import Path
-from typing import Any
 
 import numpy as np
-from ont_fast5_api.fast5_interface import get_fast5_file
 
 from genomevault.hypervector.encoding import HypervectorEncoder
 from genomevault.utils.logging import get_logger

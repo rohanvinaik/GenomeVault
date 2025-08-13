@@ -1,17 +1,12 @@
 """
 Tests for tailchasing CLI functionality.
 """
-
-import tempfile
 from pathlib import Path
-from unittest.mock import patch, MagicMock, PropertyMock
-
-import pytest
-
 from tailchasing.cli import TailchasingCLI, main
 from tailchasing.config import PolymerConfig
-
-
+from unittest.mock import patch, MagicMock, PropertyMock
+import pytest
+import tempfile
 class TestTailchasingCLI:
     """Test TailchasingCLI functionality."""
 

@@ -1,10 +1,8 @@
 """Cryptographic hashing utilities"""
-
-import hashlib
 from typing import Union, Optional
+import hashlib
 
 from genomevault.crypto.types import HashDigest, HashHex, Salt
-
 
 def secure_hash(data: Union[str, bytes]) -> HashHex:
     """Create a secure SHA-256 hash of the input data.

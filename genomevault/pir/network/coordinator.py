@@ -1,10 +1,8 @@
+"""Coordinator module."""
 from __future__ import annotations
 
-"""Coordinator module."""
 from dataclasses import dataclass
 from typing import List
-
-
 @dataclass
 class NodeRef:
     """Data container for noderef information."""

@@ -5,16 +5,15 @@ Provides RESTful API endpoints for encoding genomic data using
 Hierarchical Hyperdimensional Computing (HDC).
 
 """
-
 from __future__ import annotations
 
-import logging
 from datetime import datetime
-from typing import Any
-
-import torch
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from pydantic import BaseModel, Field
+from typing import Any
+import logging
+
+import torch
 
 from .binding_operations import BindingType, HypervectorBinder
 from .hdc_encoder import CompressionTier, HypervectorEncoder, OmicsType, ProjectionType

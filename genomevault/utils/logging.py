@@ -7,7 +7,9 @@ This module provides comprehensive logging functionality including:
 - Structured logging with JSON support
 - Performance logging capabilities
 """
-
+from functools import wraps
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional, Union
 import json
 import logging
 import logging.config
@@ -15,11 +17,6 @@ import logging.handlers
 import os
 import sys
 import time
-from functools import wraps
-from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Union
-
-# Configuration constants
 DEFAULT_LOG_LEVEL = "INFO"
 DEFAULT_LOG_FORMAT = "%(asctime)s | %(levelname)-8s | %(name)-20s | %(message)s"
 DETAILED_FORMAT = (

@@ -2,7 +2,6 @@
 Unified hypervector encoder supporting sparse and orthogonal projections
 for genomic data at 10k/15k/20k dimensions with seed control and determinism.
 """
-
 from __future__ import annotations
 
 from typing import Literal, Union
@@ -10,10 +9,11 @@ from typing import Literal, Union
 import numpy as np
 
 from genomevault.core.exceptions import HypervectorError, ProjectionError
-from genomevault.hypervector.types import VectorF32, MatrixF32
 from genomevault.hypervector.encoding.orthogonal_projection import OrthogonalProjection
 from genomevault.hypervector.encoding.sparse_projection import SparseRandomProjection
 from genomevault.hypervector.operations.binding import (
+from genomevault.hypervector.types import VectorF32, MatrixF32
+
     bundle,
     circular_convolution,
     element_wise_multiply,

@@ -1,6 +1,6 @@
 """Package initialization for crypto."""
-
 from genomevault.crypto.types import (
+
     PublicKey,
     PrivateKey,
     Ed25519Private,
@@ -41,7 +41,7 @@ from genomevault.crypto.serialization import (
 )
 from genomevault.crypto.rng import secure_bytes, xof, xof_uint_mod
 from genomevault.crypto.transcript import Transcript
-from genomevault.crypto import merkle
+from . import merkle
 from genomevault.crypto.proof_io import compress_proof, decompress_proof
 
 __all__ = [

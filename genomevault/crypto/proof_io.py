@@ -1,7 +1,6 @@
-# genomevault/crypto/proof_io.py
 from __future__ import annotations
-import zlib
 
+import zlib
 MAGIC = b"CPROOF\0"  # format tag
 VERSION = (1).to_bytes(2, "big")
 

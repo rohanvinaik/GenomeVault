@@ -1,15 +1,15 @@
 """
 Comprehensive test suite for multi-omics processors.
 """
-
-import gzip
 from pathlib import Path
+import gzip
+import pytest
 
 import numpy as np
 import pandas as pd
-import pytest
 
 from genomevault.local_processing.epigenetics import (
+
     ChromatinAccessibilityProcessor,
     ChromatinPeak,
     EpigeneticDataType,

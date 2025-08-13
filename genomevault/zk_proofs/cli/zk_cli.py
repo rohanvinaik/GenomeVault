@@ -1,20 +1,21 @@
-#!/usr/bin/env python3
 """
 GenomeVault ZK Proof CLI Tool
 
 Command-line interface for generating and verifying zero-knowledge proofs.
 As specified in Stage 2 of the ZK implementation plan.
 
+"""
 from __future__ import annotations
 
+from typing import Any
 import argparse
 import json
 import sys
 import time
-from typing import Any
 
 from genomevault.zk_proofs import Prover, Verifier
 from genomevault.zk_proofs.circuits.implementations.variant_frequency_circuit import (
+
     VariantFrequencyCircuit,
     create_example_frequency_proof,
 )
@@ -415,3 +416,4 @@ Examples:
 
 if __name__ == "__main__":
     main()
+"""

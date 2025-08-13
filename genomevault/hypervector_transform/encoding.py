@@ -1,15 +1,14 @@
-# genomevault/hypervector_transform/encoding.py
+"""Encoding module."""
 from __future__ import annotations
 
-"""Encoding module."""
-import logging
 from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, Iterable, Mapping, Optional, Union
+import logging
 
+from numpy.typing import NDArray
 import numpy as np
 import torch
-from numpy.typing import NDArray
 
 from genomevault.core.constants import HYPERVECTOR_DIMENSIONS, OmicsType
 from genomevault.core.exceptions import EncodingError, ProjectionError

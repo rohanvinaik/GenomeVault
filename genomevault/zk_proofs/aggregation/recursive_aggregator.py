@@ -1,8 +1,7 @@
+"""Recursive Aggregator module."""
 from __future__ import annotations
 
-"""Recursive Aggregator module."""
 from typing import Iterable
-
 AGG_PREFIX = b"AGG("
 
 

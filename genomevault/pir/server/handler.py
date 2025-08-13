@@ -3,23 +3,19 @@ PIR server request handler with fixed-size responses and timing protection.
 Implements the server-side logic for IT-PIR protocol.
 
 """
-
+from aiohttp import web
+from typing import Any
 import asyncio
 import base64
 import json
-import time
-from typing import Any
-
 import jsonschema
-import numpy as np
-from aiohttp import web
+import time
 
-from genomevault.utils.logging import audit_logger, get_logger, logger
-from genomevault.version import PIR_PROTOCOL_VERSION
+import numpy as np
 
 from .pir_server import PIRServer
-
-# Load schemas
+from genomevault.utils.logging import audit_logger, get_logger, logger
+from genomevault.version import PIR_PROTOCOL_VERSION
 
 logger = get_logger(__name__)
 

@@ -1,22 +1,20 @@
-from __future__ import annotations
-
 """Multi Omics module."""
-import hashlib
-from typing import Dict, List, cast
-
-import numpy as np
-from numpy.typing import NDArray
-
-from ...prover import Circuit
-from ..base_circuits import Any, BaseCircuit, FieldElement
-
 """
 Multi-omics integration circuits for zero-knowledge proofs.
 
 This module implements circuits that integrate multiple omics data types
 while preserving privacy.
 """
+from __future__ import annotations
 
+from typing import Dict, List, cast
+import hashlib
+
+from numpy.typing import NDArray
+import numpy as np
+
+from ...prover import Circuit
+from ..base_circuits import Any, BaseCircuit, FieldElement
 
 class MultiOmicsCorrelationCircuit(BaseCircuit):
     """

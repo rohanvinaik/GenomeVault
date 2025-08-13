@@ -3,15 +3,15 @@ Training Attestation Smart Contract for GenomeVault
 
 This contract records cryptographic proofs of ML model training on-chain,
 enabling immutable audit trails for clinical AI/ML systems.
-
+"""
 from __future__ import annotations
 
-import hashlib
-import json
-import time
 from dataclasses import asdict, dataclass
 from enum import Enum
 from typing import Any
+import hashlib
+import json
+import time
 
 from genomevault.utils.logging import get_logger
 

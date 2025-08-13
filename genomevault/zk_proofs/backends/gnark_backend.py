@@ -6,16 +6,15 @@ and verifying SNARK proofs. It handles circuit compilation, proof generation,
 and verification with actual cryptographic guarantees.
 
 """
-
 from __future__ import annotations
 
+from pathlib import Path
+from typing import Any
 import json
 import logging
 import subprocess
 import tempfile
 import time
-from pathlib import Path
-from typing import Any
 
 from genomevault.utils.metrics import MetricsCollector
 
@@ -121,7 +120,7 @@ class GnarkBackend:
                     self._compile_circuit(circuit_name)
                 except Exception:
                     logger.exception("Unhandled exception")
-                    logger.warning(f"Failed to compile {circuit_name:} %se")
+                    logger.warning(f"Failed to compile {circuit_name:} {}e")
                     raise RuntimeError("Unspecified error")
 
     def _compile_circuit(self, circuit_name: str):
@@ -160,7 +159,7 @@ class GnarkBackend:
         # Record metrics
         metrics.record(f"{circuit_name}_compile_time", compile_time * 1000, "ms")
 
-        logger.info(f"Compiled {circuit_name} in %scompile_time:.2fs")
+        logger.info(f"Compiled {circuit_name} in {}compile_time:.2fs")
 
         # Cache circuit info
         self.compiled_circuits[circuit_name] = {

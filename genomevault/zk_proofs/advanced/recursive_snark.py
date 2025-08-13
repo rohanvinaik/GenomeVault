@@ -1,19 +1,19 @@
-from __future__ import annotations
-
 """
 Recursive SNARK implementation for efficient proof composition.
 Enables constant verification time regardless of composed proof count.
 """
+from __future__ import annotations
 
+from dataclasses import dataclass
+from typing import Any
 import hashlib
 import json
 import time
-from dataclasses import dataclass
-from typing import Any
 
 import numpy as np
 
 from genomevault.crypto import (
+
     H, hexH, TAGS,
     pack_proof_components, be_int,
     compress_proof, secure_bytes
@@ -456,7 +456,7 @@ class RecursiveSNARKProver:
 
     def _generate_proof_id(self, proofs: list[Proof]) -> str:
         """Generate ID for recursive proof."""
-        content = {
+        {
             "sub_proof_ids": sorted([p.proof_id for p in proofs]),
             "timestamp": time.time(),
             "nonce": secure_bytes(8).hex(),

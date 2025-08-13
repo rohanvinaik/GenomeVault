@@ -1,10 +1,8 @@
+"""Secure Wrapper module."""
 from __future__ import annotations
 
-"""Secure Wrapper module."""
 from dataclasses import dataclass
 from typing import Sequence
-
-
 @dataclass
 class PIRServer:
     """Toy 2-server info-theoretic PIR server holding a shard."""

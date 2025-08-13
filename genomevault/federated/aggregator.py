@@ -1,10 +1,11 @@
+"""Aggregator module."""
 from __future__ import annotations
 
-"""Aggregator module."""
 import numpy as np
 
 from genomevault.core.exceptions import ValidationError
 from genomevault.federated.models import (
+
     AggregateRequest,
     AggregateResponse,
     ModelUpdate,

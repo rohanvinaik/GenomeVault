@@ -1,8 +1,21 @@
 """Logging module."""
+import logging
+def setup_logging(level: int = logging.INFO) -> logging.Logger:
+    """Setup logging configuration.
+
+    Args:
+        level: Logging level
+
+    Returns:
+        Configured logger instance
+    """
+
+
+
 
 import logging
 
-
+"""Logging module."""
 def setup_logging(level: int = logging.INFO) -> logging.Logger:
     """Setup logging configuration.
 

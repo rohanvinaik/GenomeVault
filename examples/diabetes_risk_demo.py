@@ -2,11 +2,10 @@
 Example: Diabetes Risk Assessment with GenomeVault ZK Proofs
 Demonstrates privacy-preserving medical risk evaluation.
 """
-
 import asyncio
 
-from genomevault_zk_integration import GenomeVaultZKSystem
 from genomevault.utils.logging import get_logger
+from genomevault_zk_integration import GenomeVaultZKSystem
 
 logger = get_logger(__name__)
 
