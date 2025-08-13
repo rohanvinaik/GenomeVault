@@ -7,6 +7,7 @@ client = TestClient(app)
 
 
 def test_api_proofs_sum64_endpoints():
+    """Test api proofs sum64 endpoints."""
     require_toolchain()
     r = client.post(
         "/proofs/create",

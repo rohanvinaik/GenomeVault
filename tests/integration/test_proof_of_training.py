@@ -20,15 +20,22 @@ class MockModel:
     """Mock model for testing"""
 
     def __init__(self):
+        """Initialize the instance."""
         self.weights = {
             "layer1": np.random.randn(100, 50),
             "layer2": np.random.randn(50, 2),
         }
 
     def parameters(self):
+        """Parameters.
+        Returns:
+            Result of the operation."""
         return [self.weights["layer1"], self.weights["layer2"]]
 
     def __str__(self):
+        """Return string representation.
+        Returns:
+            str: String representation."""
         return "MockModel(layers=2)"
 
 

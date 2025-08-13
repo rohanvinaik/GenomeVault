@@ -1,0 +1,32 @@
+# CORRECT: Multiple Kubernetes resources with proper YAML document separators
+# Each resource is separated by '---' on its own line
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-1
+  namespace: default
+data:
+  key1: value1
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-2
+  namespace: default
+data:
+  key2: value2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-1
+  namespace: default
+spec:
+  selector:
+    app: myapp
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP

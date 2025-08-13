@@ -34,7 +34,6 @@ def compute_merkle_root(leaf: bytes, siblings: list[bytes], directions: list[int
 def test_merkle_verification():
     """Test the Merkle verification logic."""
 
-    print("Testing Merkle Proof Direction Bits")
     print("=" * 50)
 
     # Create a simple 4-leaf tree
@@ -58,11 +57,11 @@ def test_merkle_verification():
     print(f"  Root: {root.hex()[:16]}...")
     print(f"  Level 1: [{level1_left.hex()[:8]}..., {level1_right.hex()[:8]}...]")
     print(
-        f"  Leaves: [{leaves[0].hex()[:8]}..., {leaves[1].hex()[:8]}..., {leaves[2].hex()[:8]}..., {leaves[3].hex()[:8]}...]"
+        f"  Leaves: [{leaves[0].hex()[:8]}..., {leaves[1].hex()[:8]}...,
+            {leaves[2].hex()[:8]}..., {leaves[3].hex()[:8]}...]"
     )
 
     # Test 1: Proof for leaf 0
-    print("\n1. Testing proof for leaf 0:")
     siblings_0 = [leaves[1], level1_right]  # sibling at each level
     directions_0 = [0, 0]  # leaf 0 is on left at both levels
 
@@ -76,7 +75,6 @@ def test_merkle_verification():
     )
 
     # Test 2: Proof for leaf 2
-    print("\n2. Testing proof for leaf 2:")
     siblings_2 = [leaves[3], level1_left]  # sibling at each level
     directions_2 = [
         0,
@@ -93,7 +91,6 @@ def test_merkle_verification():
     )
 
     # Test 3: Wrong direction bits (using parity)
-    print("\n3. Testing with WRONG directions (using i % 2):")
     wrong_directions_0 = [0, 1]  # This is WRONG for leaf 0 (should be [0, 0])
 
     wrong_root_0 = compute_merkle_root(leaves[0], siblings_0, wrong_directions_0)
@@ -103,7 +100,6 @@ def test_merkle_verification():
     print(f"    Match: {wrong_root_0 == root} - This should be False!")
 
     # Test 4: Show why parity doesn't work
-    print("\n4. Why parity (i % 2) doesn't work:")
     print("  For leaf at index 0:")
     print("    - Level 0: index 0, parity = 0 (correct: on left)")
     print("    - Level 1: index 0, parity = 0 (correct: on left)")
@@ -113,9 +109,8 @@ def test_merkle_verification():
     print("  For leaf at index 1:")
     print("    - Level 0: index 1, parity = 1 (correct: on right)")
     print("    - Level 1: index 0, parity = 0 (correct: on left)")
-    print("\n  Using loop index i % 2 is WRONG because it doesn't track the actual position!")
+    pass  # Debug print removed
 
-    print("\n" + "=" * 50)
     print("Conclusion: Direction bits are REQUIRED for correct Merkle proofs!")
 
 

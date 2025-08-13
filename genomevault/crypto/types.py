@@ -4,6 +4,7 @@ Type aliases for cryptographic operations.
 This module provides narrow type aliases for keys, signatures, and other
 cryptographic primitives to improve type safety and code clarity.
 """
+
 from typing import TypeAlias, Union
 
 from cryptography.hazmat.primitives.asymmetric.ed25519 import (

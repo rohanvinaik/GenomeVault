@@ -18,7 +18,7 @@ from genomevault.hypervector_transform.encoding import (
 )
 from genomevault.pir.client import PIRClient, PIRServer
 from genomevault.pir.client.query_builder import PIRQueryBuilder
-from genomevault.zk_proofs.circuits.prs_circuit import PRSCircuit
+from genomevault.zk_proofs.circuits import PRSProofCircuit
 
 
 @pytest.mark.e2e
@@ -106,7 +106,7 @@ class TestPIRIntegration:
         prs_data = {"score": 1.25, "variants_used": 1000, "confidence": 0.95}
 
         # Generate ZK proof that PRS is in valid range
-        prs_circuit = PRSCircuit()
+        prs_circuit = PRSProofCircuit()
 
         # Create proof that score is between 0 and 3
         public_inputs = {
@@ -375,4 +375,3 @@ if __name__ == "__main__":
         f.write(DEMO_NOTEBOOK)
 
     logger.debug(f"Demo notebook saved to {notebook_path}")
-"""

@@ -1,4 +1,5 @@
 """Guards module."""
+
 from __future__ import annotations
 
 from fastapi import Depends, Header, HTTPException, status
@@ -9,15 +10,18 @@ _CONSENT = ConsentStore()  # simple singleton for app process
 
 
 def get_consent_store() -> ConsentStore:
-    """Retrieve consent store.
-
-        Returns:
-            The consent store.
-        """
+    """Get consent store.
+    Returns:
+        ConsentStore"""
     return _CONSENT
 
 
 def require_consent(scope: str):
+    """Retrieve consent store.
+
+    Returns:
+        The consent store.
+    """
     """Require consent.
 
         Args:
@@ -29,22 +33,23 @@ def require_consent(scope: str):
         Raises:
             HTTPException: When operation fails.
         """
+
     def dep(
-        """Dep.
-
-            Args:
-                subject_id: Subject id.
-                store: Store.
-
-            Returns:
-                Operation result.
-
-            Raises:
-                HTTPException: When operation fails.
-            """
         subject_id: str | None = Header(default=None, alias="X-Subject-ID"),
         store: ConsentStore = Depends(get_consent_store),
     ):
+        """Dep.
+
+        Args:
+            subject_id: Subject id.
+            store: Store.
+
+        Returns:
+            Operation result.
+
+        Raises:
+            HTTPException: When operation fails.
+        """
         if subject_id is None:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="Missing X-Subject-ID"

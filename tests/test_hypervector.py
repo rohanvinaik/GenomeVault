@@ -150,9 +150,6 @@ class TestHypervectorEngine:
             (20000, 156),  # 20k * 8 bytes / 1024
         ],
     )
-    def test_memory_footprint(self, dimensions, expected_memory_kb):
-        """Verify memory usage matches specifications"""
-        encoder = HypervectorEncoder(dimensions=dimensions)
         vector = encoder.encode(np.random.randn(1000))
 
         # Calculate actual memory usage

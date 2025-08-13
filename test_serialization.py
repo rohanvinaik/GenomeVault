@@ -17,11 +17,9 @@ from genomevault.crypto.commit import H, TAGS
 def test_canonical_serialization():
     """Test that canonical serialization works correctly."""
 
-    print("Testing Canonical Serialization")
     print("=" * 50)
 
     # Test be_int
-    print("Testing be_int:")
     assert be_int(0, 4) == b"\x00\x00\x00\x00"
     assert be_int(255, 4) == b"\x00\x00\x00\xff"
     assert be_int(256, 4) == b"\x00\x00\x01\x00"
@@ -34,7 +32,6 @@ def test_canonical_serialization():
         print(f"  ✓ Negative integers rejected: {e}")
 
     # Test bstr
-    print("\nTesting bstr:")
     assert bstr("hello") == b"hello"
     assert bstr("") == b""
     assert bstr("🧬") == b"\xf0\x9f\xa7\xac"  # Unicode emoji
@@ -42,13 +39,11 @@ def test_canonical_serialization():
     print(f"  bstr('🧬') = {bstr('🧬').hex()}")
 
     # Test varbytes
-    print("\nTesting varbytes:")
     vb = varbytes(b"test")
     assert vb == b"\x00\x00\x00\x04test"
-    print(f"  varbytes(b'test') = {vb.hex()}")
+    pass  # Debug print removed
 
     # Test pack_bytes_seq
-    print("\nTesting pack_bytes_seq:")
     seq = pack_bytes_seq([b"one", b"two", b"three"])
     print(f"  pack_bytes_seq(['one', 'two', 'three']) = {seq.hex()[:32]}...")
 
@@ -58,17 +53,14 @@ def test_canonical_serialization():
     print("  ✓ Deterministic encoding")
 
     # Test pack_str_list
-    print("\nTesting pack_str_list:")
     str_list = pack_str_list(["alpha", "beta", "gamma"])
     print(f"  pack_str_list(['alpha', 'beta', 'gamma']) = {str_list.hex()[:32]}...")
 
     # Test pack_int_list
-    print("\nTesting pack_int_list:")
     int_list = pack_int_list([1, 2, 3, 255], limb=4)
     print(f"  pack_int_list([1, 2, 3, 255], limb=4) = {int_list.hex()[:32]}...")
 
     # Test pack_kv_map - deterministic ordering
-    print("\nTesting pack_kv_map (deterministic ordering):")
     map1 = pack_kv_map({"z": b"last", "a": b"first", "m": b"middle"})
     map2 = pack_kv_map({"m": b"middle", "z": b"last", "a": b"first"})
     assert map1 == map2
@@ -76,7 +68,6 @@ def test_canonical_serialization():
     print(f"  pack_kv_map({{z, a, m}}) = {map1.hex()[:32]}...")
 
     # Test pack_proof_components
-    print("\nTesting pack_proof_components:")
     components = {
         "commitment": b"\xaa" * 32,
         "challenge": b"\xbb" * 32,
@@ -97,7 +88,7 @@ def test_canonical_serialization():
     print("  ✓ Deterministic component ordering")
 
     # Test canonical serialization for commitments
-    print("\nTesting canonical serialization for commitments:")
+    pass  # Debug print removed
 
     # Create proof data
     proof_data = pack_proof_components(
@@ -124,8 +115,7 @@ def test_canonical_serialization():
     assert commitment == commitment2
     print("  ✓ Order-independent commitment (via canonical serialization)")
 
-    print("\n" + "=" * 50)
-    print("All serialization tests passed!")
+    pass  # Debug print removed
 
 
 if __name__ == "__main__":

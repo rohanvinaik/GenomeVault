@@ -27,7 +27,6 @@ from genomevault.config.logging_config import (
 def test_basic_logging():
     """Test basic logging functionality."""
     print("=" * 60)
-    print("Testing Basic Logging Functionality")
     print("=" * 60)
 
     # Test basic logger creation
@@ -39,13 +38,11 @@ def test_basic_logging():
     logger.error("This is an ERROR message")
     logger.critical("This is a CRITICAL message")
 
-    print("✓ Basic logging levels tested")
+    pass  # Debug print removed
 
 
 def test_component_loggers():
     """Test component-specific loggers."""
-    print("\n" + "=" * 60)
-    print("Testing Component-Specific Loggers")
     print("=" * 60)
 
     components = [
@@ -61,13 +58,11 @@ def test_component_loggers():
         logger = get_logger(component)
         logger.info(f"Testing {component} logger")
 
-    print("✓ Component loggers tested")
+    pass  # Debug print removed
 
 
 def test_performance_logging():
     """Test performance logging functionality."""
-    print("\n" + "=" * 60)
-    print("Testing Performance Logging")
     print("=" * 60)
 
     # Test direct performance logging
@@ -83,13 +78,11 @@ def test_performance_logging():
     result = sample_operation()
     print(f"Operation result: {result}")
 
-    print("✓ Performance logging tested")
+    pass  # Debug print removed
 
 
 def test_context_logging():
     """Test context manager logging."""
-    print("\n" + "=" * 60)
-    print("Testing Context Manager Logging")
     print("=" * 60)
 
     logger = get_logger("test.context")
@@ -107,19 +100,17 @@ def test_context_logging():
     except ValueError:
         pass  # Expected
 
-    print("✓ Context logging tested")
+    pass  # Debug print removed
 
 
 def test_environment_configurations():
     """Test different environment configurations."""
-    print("\n" + "=" * 60)
-    print("Testing Environment Configurations")
     print("=" * 60)
 
     environments = ["development", "production", "testing", "staging"]
 
     for env in environments:
-        print(f"\nTesting {env} environment:")
+        pass  # Debug print removed
 
         # Set environment variable
         old_env = os.environ.get("GENOMEVAULT_ENV")
@@ -142,8 +133,6 @@ def test_environment_configurations():
 
 def test_log_files():
     """Test that log files are created and rotated properly."""
-    print("\n" + "=" * 60)
-    print("Testing Log File Creation")
     print("=" * 60)
 
     # Configure logging with file output
@@ -181,8 +170,6 @@ def test_log_files():
 
 def test_environment_variables():
     """Test environment variable configuration."""
-    print("\n" + "=" * 60)
-    print("Testing Environment Variable Configuration")
     print("=" * 60)
 
     # Test log level from environment
@@ -214,8 +201,6 @@ def test_environment_variables():
 
 def test_json_logging():
     """Test JSON logging format."""
-    print("\n" + "=" * 60)
-    print("Testing JSON Logging Format")
     print("=" * 60)
 
     # Configure with JSON logging
@@ -230,7 +215,7 @@ def test_json_logging():
     logger.info("This message should be in JSON format in the log file")
 
     print("✓ JSON logging configuration applied")
-    print("  Check test_logs_json/genomevault.log for JSON format")
+    pass  # Debug print removed
 
 
 def cleanup_test_logs():
@@ -247,11 +232,9 @@ def cleanup_test_logs():
 
 def main():
     """Run all logging tests."""
-    print("GenomeVault Logging Configuration Test Suite")
     print("=" * 60)
     print(f"Python version: {sys.version}")
-    print(f"Test directory: {Path.cwd()}")
-    print()
+    pass  # Debug print removed
 
     try:
         test_basic_logging()
@@ -263,24 +246,17 @@ def main():
         test_environment_variables()
         test_json_logging()
 
-        print("\n" + "=" * 60)
-        print("ALL TESTS COMPLETED SUCCESSFULLY! ✅")
         print("=" * 60)
-        print("\nLogging configuration is working properly.")
-        print("\nNext steps:")
-        print("1. Check the generated log files in test_logs/ and test_logs_json/")
         print("2. Set appropriate environment variables in your .env file")
         print("3. Use the new logging system throughout your application")
 
     except Exception as e:
-        print(f"\n❌ TEST FAILED: {e}")
         import traceback
 
         traceback.print_exc()
         sys.exit(1)
 
     finally:
-        print(f"\nCleaning up test files...")
         cleanup_test_logs()
 
 

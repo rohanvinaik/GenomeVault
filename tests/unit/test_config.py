@@ -43,9 +43,10 @@ class TestConfig:
             config.blockchain.is_trusted_signatory = is_ts
 
             voting_power = config.get_voting_power()
-            assert (
-                voting_power == expected_power
-            ), "Node {node_class.name} TS={is_ts} should have power {expected_power}, got {voting_power}"
+            assert voting_power == expected_power, (
+                "Node {node_class.name} TS={is_ts} should have power {expected_power}, got"
+                "{voting_power}"
+            )
 
     def test_block_rewards_calculation(self):
         """Test block rewards calculation."""
@@ -66,9 +67,10 @@ class TestConfig:
             config.blockchain.is_trusted_signatory = is_ts
 
             rewards = config.get_block_rewards()
-            assert (
-                rewards == expected_rewards
-            ), "Node {node_class.name} TS={is_ts} should get {expected_rewards} credits, got {rewards}"
+            assert rewards == expected_rewards, (
+                "Node {node_class.name} TS={is_ts} should get {expected_rewards} credits, got"
+                "{rewards}"
+            )
 
     def test_pir_failure_probability(self):
         """Test PIR privacy breach probability calculations."""

@@ -109,6 +109,7 @@ class DiabetesRiskCalculator:
 
     def calculate_genetic_risk(
         self, variants: list[dict[str, Any]], add_dp_noise: bool = True
+        """Calculate genetic risk."""
     ) -> GeneticRiskProfile:
         """
         Calculate polygenic risk score for diabetes.
@@ -198,6 +199,7 @@ class DiabetesRiskCalculator:
     def create_risk_alert(
         self,
         genetic_profile: GeneticRiskProfile,
+        """Create risk alert."""
         glucose_reading: GlucoseReading,
         risk_threshold: float = 0.75,
     ) -> DiabetesRiskAlert:
@@ -309,6 +311,7 @@ class DiabetesRiskCalculator:
     def monitor_continuous_risk(
         self,
         genetic_profile: GeneticRiskProfile,
+        """Monitor continuous risk."""
         glucose_readings: list[GlucoseReading],
         window_days: int = 7,
     ) -> dict[str, Any]:

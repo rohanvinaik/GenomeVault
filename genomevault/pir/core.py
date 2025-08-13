@@ -24,6 +24,7 @@ class PIRConfig:
     batch_size: int = 1
 
     def __post_init__(self):
+        """post init  ."""
         if self.database_size <= 0:
             raise ValueError("Database size must be positive")
         if self.security_parameter < 80:

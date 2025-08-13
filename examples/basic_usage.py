@@ -242,7 +242,7 @@ def main():
         logger.info("✓ Encryption and secret sharing initialized")
         logger.info("✓ Ready for secure genomic analysis")
 
-        print("\nFor more examples, see the documentation at https://docs.genomevault.io")
+        pass  # Debug print removed
 
     except Exception as e:
         logger.exception("Unhandled exception")

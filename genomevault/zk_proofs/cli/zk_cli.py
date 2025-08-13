@@ -5,6 +5,7 @@ Command-line interface for generating and verifying zero-knowledge proofs.
 As specified in Stage 2 of the ZK implementation plan.
 
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -15,7 +16,6 @@ import time
 
 from genomevault.zk_proofs import Prover, Verifier
 from genomevault.zk_proofs.circuits.implementations.variant_frequency_circuit import (
-
     VariantFrequencyCircuit,
     create_example_frequency_proof,
 )
@@ -249,7 +249,8 @@ def cmd_demo(args):
         logger.info(f"  Private: {args.circuit}_private.json")
         logger.info("\nYou can now run:")
         print(
-            f"  zk_prove --circuit {args.circuit} --public-input {args.circuit}_public.json --private-input {args.circuit}_private.json"
+            f"  zk_prove --circuit {args.circuit} --public-input"
+            f"{args.circuit}_public.json --private-input {args.circuit}_private.json"
         )
 
 
@@ -416,4 +417,3 @@ Examples:
 
 if __name__ == "__main__":
     main()
-"""

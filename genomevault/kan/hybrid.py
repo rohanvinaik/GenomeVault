@@ -6,6 +6,7 @@ from enum import Enum, auto
 from typing import Any
 
 import numpy as np
+from scipy import stats
 class SplineMode(Enum):
     """Spline interpolation modes for KAN."""
 
@@ -30,11 +31,6 @@ class Spline1D:
     """1D spline function for KAN edge computations."""
 
     def __init__(self, config: SplineConfig):
-        """Initialize instance.
-
-            Args:
-                config: Configuration dictionary.
-            """
         self.config = config
         self.knots = np.linspace(-1, 1, config.n_knots)
         self.coeffs = np.random.randn(config.n_knots) * config.init_scale
@@ -46,14 +42,15 @@ class Spline1D:
         y = np.zeros_like(x)
 
         for i in range(n):
-            # Basic B-spline basis function
+                    # Basic B-spline basis function
+                    basis = self._b_spline_basis(x, i, self.config.degree)
+                    y += self.coeffs[i] * basis
             basis = self._b_spline_basis(x, i, self.config.degree)
             y += self.coeffs[i] * basis
 
         return y
 
     def _b_spline_basis(self, x: np.ndarray, i: int, k: int) -> np.ndarray:
-        """Compute B-spline basis function."""
         if k == 0:
             return ((self.knots[i] <= x) & (x < self.knots[i + 1])).astype(float)
 
@@ -80,9 +77,10 @@ class Spline1D:
         """Extract symbolic mathematical expression."""
         terms = []
         for i, coeff in enumerate(self.coeffs):
-            if abs(coeff) > 1e-6:
-                terms.append(f"{coeff:.3f}*B_{i}(x)")
-        return " + ".join(terms) if terms else "0"
+        """Compute B-spline basis function."""
+        for i, coeff in enumerate(self.coeffs):
+                        if abs(coeff) > 1e-6:
+                            terms.append(f"{coeff:.3f}*B_{i}(x)")
 
 
 # ======================== KAN Encoder ========================
@@ -115,15 +113,6 @@ class KANEncoder:
     """Enhanced KAN encoder with interpretability and compression."""
 
     def __init__(
-        """Initialize instance.
-
-            Args:
-                input_dim: Dimension value.
-                hidden_dim: Dimension value.
-                output_dim: Dimension value.
-                n_layers: N layers.
-                spline_config: Configuration dictionary.
-            """
         self,
         input_dim: int,
         hidden_dim: int,
@@ -131,6 +120,15 @@ class KANEncoder:
         n_layers: int = 3,
         spline_config: SplineConfig | None = None,
     ):
+        """Initialize instance.
+
+                    Args:
+                        input_dim: Dimension value.
+                        hidden_dim: Dimension value.
+                        output_dim: Dimension value.
+                        n_layers: N layers.
+                        spline_config: Configuration dictionary.
+                    """
         self.input_dim = input_dim
         self.hidden_dim = hidden_dim
         self.output_dim = output_dim
@@ -142,7 +140,6 @@ class KANEncoder:
         self.patterns: list[BiologicalPattern] = []
 
     def _init_layers(self) -> list[dict[str, Any]]:
-        """Initialize KAN layers with spline edges."""
         layers = []
         dims = (
             [self.input_dim]
@@ -151,12 +148,13 @@ class KANEncoder:
         )
 
         for i in range(len(dims) - 1):
+        """Initialize KAN layers with spline edges."""
             layer = {
                 "in_dim": dims[i],
                 "out_dim": dims[i + 1],
                 "splines": [
                     [Spline1D(self.spline_config) for _ in range(dims[i])]
-                    for _ in range(dims[i + 1])
+                    for _ in range(dims[i + 1]):
                 ],
             }
             layers.append(layer)
@@ -164,48 +162,47 @@ class KANEncoder:
         return layers
 
     def encode(self, x: np.ndarray) -> tuple[np.ndarray, CompressionMetrics]:
-        """Encode genomic data with compression metrics."""
-        import time
-
-        start_time = time.time()
-
-        # Forward pass through KAN layers
-        h = x
-        for layer in self.layers:
-            h_new = np.zeros((h.shape[0], layer["out_dim"]))
-            for i in range(layer["out_dim"]):
-                for j in range(layer["in_dim"]):
-                    spline_out = layer["splines"][i][j].evaluate(h[:, j])
-                    h_new[:, i] += spline_out
-            h = np.tanh(h_new)  # Activation
-
-        encoding_time = time.time() - start_time
-
-        # Calculate compression metrics
-        original_size = x.nbytes
-        compressed_size = h.nbytes
-        compression_ratio = original_size / compressed_size
-
-        metrics = CompressionMetrics(
-            original_size=original_size,
-            compressed_size=compressed_size,
-            compression_ratio=compression_ratio,
-            reconstruction_error=0.0,  # Will be set during decode
-            encoding_time=encoding_time,
-            decoding_time=0.0,
-        )
-
-        return h, metrics
-
-    def discover_patterns(
-        self, x: np.ndarray, gene_names: list[str] | None = None
-    ) -> list[BiologicalPattern]:
-        """Discover biological patterns from learned splines."""
         self.patterns = []
 
         # Analyze spline patterns in first layer
-        layer = self.layers[0]
         for i in range(layer["out_dim"]):
+                    for j in range(layer["in_dim"]):
+                        spline = layer["splines"][i][j]
+                        pattern = self._analyze_spline_pattern(spline, j, gene_names)
+                        if pattern:
+                            self.patterns.append(pattern)
+                # Forward pass through KAN layers
+                h = x
+                for layer in self.layers:
+                    h_new = np.zeros((h.shape[0], layer["out_dim"]))
+                    for i in range(layer["out_dim"]):
+                        for j in range(layer["in_dim"]):
+                            spline_out = layer["splines"][i][j].evaluate(h[:, j])
+                            h_new[:, i] += spline_out
+                    h = np.tanh(h_new)  # Activation
+
+                encoding_time = time.time() - start_time
+
+                # Calculate compression metrics
+                original_size = x.nbytes
+                compressed_size = h.nbytes
+                compression_ratio = original_size / compressed_size
+
+                metrics = CompressionMetrics(
+                    original_size=original_size,
+                    compressed_size=compressed_size,
+                    compression_ratio=compression_ratio,
+                    reconstruction_error=0.0,  # Will be set during decode
+                    encoding_time=encoding_time,
+                    decoding_time=0.0,
+                )
+
+                return h, metrics
+
+            def discover_patterns(
+                self, x: np.ndarray, gene_names: list[str] | None = None
+            ) -> list[BiologicalPattern]:
+                """Discover biological patterns from learned splines."""
             for j in range(layer["in_dim"]):
                 spline = layer["splines"][i][j]
                 pattern = self._analyze_spline_pattern(spline, j, gene_names)
@@ -253,7 +250,6 @@ class KANEncoder:
         return None
 
     def _interpret_pattern(self, pattern_type: str, gene: str) -> str:
-        """Generate biological interpretation of discovered pattern."""
         interpretations = {
             "monotonic_increasing": f"{gene} shows dose-dependent upregulation",
             "monotonic_decreasing": f"{gene} exhibits negative regulation",
@@ -267,6 +263,7 @@ class KANEncoder:
 
 @dataclass
 class PrivacyTier(Enum):
+        """Generate biological interpretation of discovered pattern."""
     """Privacy levels for genomic data."""
 
     PUBLIC = auto()
@@ -289,15 +286,6 @@ class HybridKANHD:
     """Hybrid KAN-HD system with 10-500x compression and clinical compliance."""
 
     def __init__(
-        """Initialize instance.
-
-            Args:
-                genomic_dim: Dimension value.
-                hd_dims: Dimension value.
-                kan_hidden_dim: Dimension value.
-                kan_output_dim: Dimension value.
-                privacy_tier: Privacy tier.
-            """
         self,
         genomic_dim: int = 30000,
         hd_dims: list[int] = None,
@@ -305,6 +293,15 @@ class HybridKANHD:
         kan_output_dim: int = 64,
         privacy_tier: PrivacyTier = PrivacyTier.SENSITIVE,
     ):
+        """Initialize instance.
+
+                    Args:
+                        genomic_dim: Dimension value.
+                        hd_dims: Dimension value.
+                        kan_hidden_dim: Dimension value.
+                        kan_output_dim: Dimension value.
+                        privacy_tier: Privacy tier.
+                    """
         self.genomic_dim = genomic_dim
         self.hd_dims = hd_dims or [10000, 15000, 20000]  # Multi-resolution
         self.privacy_tier = privacy_tier
@@ -327,11 +324,11 @@ class HybridKANHD:
         self._init_clinical_calibrations()
 
     def _init_hd_projection(self, kan_dim: int, hd_dim: int) -> np.ndarray:
-        """Initialize HD projection matrix with JL guarantees."""
         # Random Gaussian projection for Johnson-Lindenstrauss
         return np.random.randn(kan_dim, hd_dim) / np.sqrt(kan_dim)
 
     def _init_clinical_calibrations(self):
+        """Initialize HD projection matrix with JL guarantees."""
         """Initialize clinical use-case calibrations."""
         use_cases = {
             "screening": ClinicalCalibration("screening", 0.05, 0.95),
@@ -386,7 +383,6 @@ class HybridKANHD:
         }
 
     def _compute_privacy_noise(self, error_budget: float) -> float:
-        """Compute privacy-preserving noise scale."""
         privacy_multipliers = {
             PrivacyTier.PUBLIC: 0.0,
             PrivacyTier.SENSITIVE: 0.1,
@@ -449,11 +445,11 @@ class HybridKANHD:
         total_relevance = (
             sum(
                 relevance_scores.get(p.pattern_type, 0.5) * p.confidence
-                for p in patterns
+                for p in patterns:
             )
             / len(patterns)
-            if patterns
-            else 0
+            if patterns:
+            else 0:
         )
 
         return {
@@ -495,6 +491,7 @@ class FederatedKANHD:
     """Federated learning framework for KAN-HD models."""
 
     def __init__(self, base_model: HybridKANHD, federation_config: FederationConfig):
+        """Compute privacy-preserving noise scale."""
         """Initialize instance.
 
             Args:
@@ -534,8 +531,8 @@ class FederatedKANHD:
         # Filter by reputation
         valid_updates = {
             pid: update
-            for pid, update in local_updates.items()
-            if self.reputation_scores.get(pid, 0) >= self.config.reputation_threshold
+            for pid, update in local_updates.items():
+            if self.reputation_scores.get(pid, 0) >= self.config.reputation_threshold:
         }
 
         if len(valid_updates) < self.config.min_participants:
@@ -572,7 +569,6 @@ class FederatedKANHD:
         return aggregated, round_info
 
     def _secure_mean_aggregation(self, updates: dict[str, np.ndarray]) -> np.ndarray:
-        """Secure averaging of updates."""
         values = list(updates.values())
         return np.mean(values, axis=0)
 
@@ -587,7 +583,6 @@ class FederatedKANHD:
             return np.mean(values, axis=0)
 
         # Trim along participant axis
-        from scipy import stats
 
         trimmed = stats.trim_mean(values, trim_pct, axis=0)
         return trimmed
@@ -605,6 +600,7 @@ class FederatedKANHD:
         return aggregated + noise
 
     def _update_reputation_scores(self, updates: dict[str, np.ndarray]):
+        """Secure averaging of updates."""
         """Update participant reputation based on contribution quality."""
         # Simple reputation: penalize outliers
         mean_update = np.mean(list(updates.values()), axis=0)
@@ -613,7 +609,7 @@ class FederatedKANHD:
             deviation = np.linalg.norm(update - mean_update)
 
             # Adaptive reputation update
-            if deviation < 2.0:  # Within reasonable range
+            if deviation < 2.0:  # Within reasonable range:
                 self.reputation_scores[pid] = min(
                     1.0, self.reputation_scores[pid] + 0.01
                 )
@@ -623,38 +619,6 @@ class FederatedKANHD:
                 )
 
     def generate_federation_report(self) -> dict[str, Any]:
-        """Generate comprehensive federation report."""
-        return {
-            "federation_size": len(self.participants),
-            "active_participants": sum(
-                1
-                for s in self.reputation_scores.values()
-                if s >= self.config.reputation_threshold
-            ),
-            "total_rounds": len(self.round_history),
-            "reputation_distribution": {
-                "excellent": sum(
-                    1 for s in self.reputation_scores.values() if s >= 0.9
-                ),
-                "good": sum(
-                    1 for s in self.reputation_scores.values() if 0.7 <= s < 0.9
-                ),
-                "fair": sum(
-                    1 for s in self.reputation_scores.values() if 0.5 <= s < 0.7
-                ),
-                "poor": sum(1 for s in self.reputation_scores.values() if s < 0.5),
-            },
-            "privacy_budget_remaining": max(
-                0,
-                self.config.dp_epsilon
-                - len(self.round_history)
-                * (self.config.dp_epsilon / self.config.communication_rounds),
-            ),
-            "convergence_metrics": self._compute_convergence_metrics(),
-        }
-
-    def _compute_convergence_metrics(self) -> dict[str, float]:
-        """Compute convergence metrics for the federation."""
         if len(self.round_history) < 2:
             return {"status": "insufficient_data"}
 
@@ -664,3 +628,35 @@ class FederatedKANHD:
             "estimated_rounds_to_convergence": 5,
             "communication_efficiency": 0.5,  # 50% reduction vs baseline
         }
+
+                return {
+                    "federation_size": len(self.participants),
+                    "active_participants": sum(
+                        1
+                        for s in self.reputation_scores.values():
+                        if s >= self.config.reputation_threshold:
+                    ),
+                    "total_rounds": len(self.round_history),
+                    "reputation_distribution": {
+                        "excellent": sum(
+                            1 for s in self.reputation_scores.values() if s >= 0.9
+                        ),
+                        "good": sum(
+                            1 for s in self.reputation_scores.values() if 0.7 <= s < 0.9
+                        ),
+                        "fair": sum(
+                            1 for s in self.reputation_scores.values() if 0.5 <= s < 0.7
+                        ),
+                        "poor": sum(1 for s in self.reputation_scores.values() if s < 0.5),
+                    },
+                    "privacy_budget_remaining": max(
+                        0,
+                        self.config.dp_epsilon
+                        - len(self.round_history)
+                        * (self.config.dp_epsilon / self.config.communication_rounds),
+                    ),
+                    "convergence_metrics": self._compute_convergence_metrics(),
+                }
+
+            def _compute_convergence_metrics(self) -> dict[str, float]:
+                """Compute convergence metrics for the federation."""

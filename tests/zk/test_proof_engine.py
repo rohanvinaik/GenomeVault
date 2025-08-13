@@ -2,6 +2,9 @@ from genomevault.zk.engine import ProofEngine
 
 
 def test_proof_verify_roundtrip():
+    """Test proof verify roundtrip.
+    Returns:
+        Result of the operation."""
     zk = ProofEngine()
     payload = {"x": 3, "y": 4}
     pf = zk.create_proof(payload=payload)
@@ -9,6 +12,9 @@ def test_proof_verify_roundtrip():
 
 
 def test_proof_verify_fail_on_tamper():
+    """Test proof verify fail on tamper.
+    Returns:
+        Result of the operation."""
     zk = ProofEngine()
     payload = {"x": 3, "y": 4}
     pf = zk.create_proof(payload=payload)

@@ -1,11 +1,20 @@
 """Package initialization for biological."""
 
-"""
-Biological Package
-"""
-from . import multi_omics, variant
+from .diabetes import DiabetesRiskCircuit, GlucoseMonitoringCircuit
+from .multi_omics import (
+    MultiOmicsCorrelationCircuit,
+    GenotypePhenotypeAssociationCircuit,
+    ClinicalTrialEligibilityCircuit,
+    RareVariantBurdenCircuit,
+    create_multi_omics_proof_suite,
+)
 
 __all__ = [
-    "multi_omics",
-    "variant",
+    "ClinicalTrialEligibilityCircuit",
+    "DiabetesRiskCircuit",
+    "GenotypePhenotypeAssociationCircuit",
+    "GlucoseMonitoringCircuit",
+    "MultiOmicsCorrelationCircuit",
+    "RareVariantBurdenCircuit",
+    "create_multi_omics_proof_suite",
 ]

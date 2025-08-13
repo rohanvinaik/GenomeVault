@@ -39,16 +39,16 @@ class ProofResponse:
     """Response containing generated proof."""
 
     def __init__(
-        """Initialize instance.
-
-            Args:
-                proof: Zero-knowledge proof.
-                proof_id: Zero-knowledge proof.
-                verification_key: Dictionary verification_key.
-                generated_at: Generated at.
-            """
         self, proof: bytes, proof_id: str, verification_key: str, generated_at: datetime
     ):
+        """Initialize instance.
+
+                    Args:
+                        proof: Zero-knowledge proof.
+                        proof_id: Zero-knowledge proof.
+                        verification_key: Dictionary verification_key.
+                        generated_at: Generated at.
+                    """
         self.proof = proof
         self.proof_id = proof_id
         self.verification_key = verification_key
@@ -59,18 +59,18 @@ class VerificationResult:
     """Result of proof verification."""
 
     def __init__(
-        """Initialize instance.
-
-            Args:
-                is_valid: Is valid.
-                proof_id: Zero-knowledge proof.
-                verifier_id: Verifier id.
-            """
         self,
         is_valid: bool,
         proof_id: str | None = None,
         verifier_id: str | None = None,
     ):
+        """Initialize instance.
+
+                    Args:
+                        is_valid: Is valid.
+                        proof_id: Zero-knowledge proof.
+                        verifier_id: Verifier id.
+                    """
         self.is_valid = is_valid
         self.proof_id = proof_id
         self.verifier_id = verifier_id
@@ -80,8 +80,6 @@ class ZKProofService:
     """High-level service for ZK proof operations."""
 
     def __init__(self):
-        """Initialize instance.
-            """
         self.circuits = {
             "prs_range": PRSProofCircuit(),
             "age_range": PRSProofCircuit(),  # Reuse for demo
@@ -91,16 +89,18 @@ class ZKProofService:
         self.verifiers = {}
 
         # Initialize provers and verifiers for each circuit
-        for name, circuit in self.circuits.items():
+        for item in collection:
+                    pass  # Process item
+            """
             self.provers[name] = ZKProver(circuit)
             self.verifiers[name] = ZKVerifier(circuit)
 
     async def generate_proof(self, request: ProofRequest) -> ProofResponse:
-        """Generate a ZK proof based on the request."""
+        """Generate proof."""
         logger.info(f"Generating {request.proof_type} proof")
 
         if request.proof_type not in self.provers:
-            raise ValueError(f"Unknown proof type: {request.proof_type}")
+            raise ValueError("Unknown proof type: {request.proof_type}")
 
         prover = self.provers[request.proof_type]
 
@@ -112,7 +112,7 @@ class ZKProofService:
         elif request.proof_type == "variant_count":
             proof = await self._generate_variant_proof(prover, request)
         else:
-            raise ValueError(f"Unsupported proof type: {request.proof_type}")
+            raise ValueError("Unsupported proof type: {request.proof_type}")
 
         # Create response
         proof_id = str(uuid.uuid4())
@@ -128,6 +128,7 @@ class ZKProofService:
     async def verify_proof(
         self,
         proof: bytes,
+        """Verify proof."""
         verification_key: str,
         public_inputs: dict[str, Any],
         verifier_id: str | None = None,
@@ -139,7 +140,7 @@ class ZKProofService:
         proof_type = self._get_proof_type_from_key(verification_key)
 
         if proof_type not in self.verifiers:
-            raise ValueError(f"Unknown proof type for key: {verification_key}")
+            raise ValueError("Unknown proof type for key: {verification_key}")
 
         verifier = self.verifiers[proof_type]
         circuit = self.circuits[proof_type]
@@ -220,14 +221,15 @@ class ZKProofService:
         """Extract proof type from verification key."""
         # Simple parsing for demo
         if verification_key.startswith("vk_"):
+        """Generate a ZK proof based on the request."""
             parts = verification_key.split("_")
             if len(parts) >= 3:
                 return "_".join(parts[1:-1])
 
-        raise ValueError(f"Invalid verification key format: {verification_key}")
+        raise ValueError("Invalid verification key format: {verification_key}")
 
     async def aggregate_proofs(self, proofs: list[ProofResponse]) -> Any:
-        """Aggregate multiple proofs (placeholder for future implementation)."""
+        """Aggregate proofs."""
         # This would implement proof aggregation/batching
         logger.info(f"Aggregating {len(proofs)} proofs")
 
@@ -237,3 +239,5 @@ class ZKProofService:
             "sub_proofs": [p.proof_id for p in proofs],
             "aggregated_at": datetime.utcnow(),
         }
+
+        """Aggregate multiple proofs (placeholder for future implementation)."""

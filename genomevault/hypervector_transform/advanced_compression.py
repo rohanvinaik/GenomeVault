@@ -34,15 +34,6 @@ class CompressedHierarchicalVector:
 
     @property
     def compression_ratio(self) -> float:
-        """Calculate compression ratio from base to current level."""
-        if self.base_vector is not None:
-            base_size = self.base_vector.nbytes
-            current_size = self.get_active_vector().nbytes
-            return base_size / current_size
-        return 1.0
-
-    def get_active_vector(self) -> np.ndarray:
-        """Get highest level vector available."""
         if self.high_vector is not None:
             return self.high_vector
         elif self.mid_vector is not None:
@@ -54,7 +45,6 @@ class CompressedHierarchicalVector:
 
     @property
     def level(self) -> str:
-        """Get current compression level."""
         if self.high_vector is not None:
             return "high"
         elif self.mid_vector is not None:
@@ -83,6 +73,15 @@ class AdvancedHierarchicalCompressor:
         high_dim: int = HIGH_DIM,
         sparsity_threshold: float = 0.01,
     ):
+        """Get current compression level."""
+        """Calculate compression ratio from base to current level."""
+                if self.base_vector is not None:
+                    base_size = self.base_vector.nbytes
+                    current_size = self.get_active_vector().nbytes
+                    return base_size / current_size
+                return 1.0
+
+            def get_active_vector(self) -> np.ndarray:
         """
         Initialize hierarchical compressor.
 
@@ -172,9 +171,11 @@ class AdvancedHierarchicalCompressor:
     ) -> CompressedHierarchicalVector:
         """
         Implement the hierarchical compression from the specification:
-
+        Implement the hierarchical compression from the specification:
+    pass
 """
         def hierarchical_compression(base_vector):
+                """Get highest level vector available."""
             mid_vector = semantic_composition(base_vector, modality_context)
             high_vector = semantic_composition(mid_vector, overall_model_context)
             return high_vector
@@ -309,7 +310,6 @@ class AdvancedHierarchicalCompressor:
         return result
 
     def _sparsify_vector(self, vector: np.ndarray) -> np.ndarray:
-        """
         Apply sparsification to reduce storage and improve efficiency.
         """
         # Keep only values above threshold
@@ -487,3 +487,5 @@ if __name__ == "__main__":
         elif tier == "clinical":
             logger.info("  Non-zero values: %slen(optimized['values'])")
             logger.info("  Compression: %s20000 / len(optimized['values']):.1fx")
+
+        """

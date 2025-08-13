@@ -405,6 +405,7 @@ class ZKCircuitStateMachine(RuleBasedStateMachine):
     """
 
     def __init__(self):
+        """Initialize the instance."""
         super().__init__()
         self.variants = []
         self.total_count = 0

@@ -6,6 +6,7 @@ client = TestClient(app)
 
 
 def test_consent_flow_and_dsar_endpoints():
+    """Test consent flow and dsar endpoints."""
     # grant
     r = client.post(
         "/governance/consent/grant",

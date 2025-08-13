@@ -1,12 +1,14 @@
 """
 Tests for tailchasing chromatin-inspired reporting functionality.
 """
-from tailchasing.core.reporting import (
+
 from typing import Dict, List
 import json
 import pytest
 
 import numpy as np
+
+from tailchasing.core.reporting import (
     HiCHeatmapGenerator,
     PolymerMetricsReport,
     TAD,

@@ -17,6 +17,10 @@ TAGS = {
 
 
 def _len_prefix(b: bytes) -> bytes:
+    """len prefix.
+    Args:        b: Parameter value.
+    Returns:
+        bytes"""
     # 4-byte BE length prefix — stable, portable
     return len(b).to_bytes(4, "big")
 
@@ -37,4 +41,8 @@ def H(tag: bytes, *parts: bytes) -> bytes:
 
 
 def hexH(tag: bytes, *parts: bytes) -> str:
+    """Hexh.
+    Args:        tag: Parameter value.
+    Returns:
+        str"""
     return H(tag, *parts).hex()

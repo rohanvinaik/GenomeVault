@@ -36,6 +36,9 @@ class TestMetricsCollector:
 
         @collector.track_processing("test_op", "genomic")
         def test_function():
+            """Test function.
+            Returns:
+                Result of the operation."""
             time.sleep(0.1)
             return "result"
 

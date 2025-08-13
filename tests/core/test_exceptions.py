@@ -15,6 +15,9 @@ from genomevault.core.exceptions import (
 
 
 def test_instantiation_and_str_contains_class():
+    """Test instantiation and str contains class.
+    Returns:
+        Result of the operation."""
     e = ProjectionError("bad dims", context={"dim": 100})
     s = str(e)
     assert "ProjectionError" in s
@@ -38,6 +41,10 @@ def test_instantiation_and_str_contains_class():
     ],
 )
 def test_all_exceptions_constructible(exc_cls):
+    """Test all exceptions constructible.
+    Args:        exc_cls: List of items.
+    Returns:
+        Result of the operation."""
     e = exc_cls("message", context={"k": 1})
     assert isinstance(e, Exception)
     assert e.context == {"k": 1}

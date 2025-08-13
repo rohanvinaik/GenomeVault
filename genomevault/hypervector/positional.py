@@ -23,7 +23,6 @@ class PositionalEncoder:
     """
 
     def __init__(self, dimension: int = 100000, sparsity: float = 0.01, cache_size: int = 10000):
-        """
         Initialize positional encoder
 
         Args:
@@ -73,6 +72,7 @@ class PositionalEncoder:
 
     def make_position_vectors_batch(
         self, positions: list[int], seed: int | None = None
+        """Make position vectors batch."""
     ) -> torch.Tensor:
         """
         Generate batch of position vectors efficiently
@@ -93,6 +93,7 @@ class PositionalEncoder:
 
     def encode_snp_positions(
         self, chromosome: str, positions: list[int], panel_name: str = "default"
+        """Encode snp positions."""
     ) -> torch.Tensor:
         """
         Encode a set of SNP positions into a single panel hypervector
@@ -182,25 +183,6 @@ class PositionalEncoder:
         return chr_num * 1000000  # Space out chromosome seeds
 
     def _create_sparse_vector(self, seed: int) -> torch.Tensor:
-        """Create sparse hypervector from seed"""
-        # Set random state
-        rng = np.random.RandomState(seed)
-
-        # Create sparse vector
-        vec = torch.zeros(self.dimension)
-
-        # Random positions
-        indices = rng.choice(self.dimension, size=self.nnz, replace=False)
-
-        # Random values from {-1, +1}
-        values = rng.choice([-1.0, 1.0], size=self.nnz)
-
-        vec[indices] = torch.tensor(values)
-
-        return vec
-
-    def get_memory_usage(self) -> dict[str, float]:
-        """Get memory usage statistics"""
         cache_size_mb = sum(vec.element_size() * vec.numel() for vec in self._cache.values()) / (
             1024**2
         )
@@ -226,6 +208,25 @@ class SNPPanel:
     """
 
     def __init__(self, positional_encoder: PositionalEncoder):
+        """
+        """Create sparse hypervector from seed"""
+                # Set random state
+                rng = np.random.RandomState(seed)
+
+                # Create sparse vector
+                vec = torch.zeros(self.dimension)
+
+                # Random positions
+                indices = rng.choice(self.dimension, size=self.nnz, replace=False)
+
+                # Random values from {-1, +1}
+                values = rng.choice([-1.0, 1.0], size=self.nnz)
+
+                vec[indices] = torch.tensor(values)
+
+                return vec
+
+            def get_memory_usage(self) -> dict[str, float]:
         """
         Initialize SNP panel manager
 
@@ -275,6 +276,7 @@ class SNPPanel:
                 with open(file_path) as f:
                     for line in f:
                         if line.startswith("#"):
+                """Get memory usage statistics"""
                             continue
                         parts = line.strip().split("\t")
                         if len(parts) >= 3:
@@ -324,6 +326,7 @@ class SNPPanel:
 
     def encode_with_panel(
         self, panel_name: str, chromosome: str, observed_bases: dict[int, str]
+        """Encode with panel."""
     ) -> torch.Tensor:
         """
         Encode observed bases using specified SNP panel
@@ -367,7 +370,6 @@ class SNPPanel:
             return torch.zeros(self.encoder.dimension)
 
     def _encode_base(self, base: str) -> torch.Tensor:
-        """Encode nucleotide base"""
         base_seeds = {"A": 1, "T": 2, "G": 3, "C": 4, "N": 5}
         seed = base_seeds.get(base.upper(), 5)
         return self.encoder._create_sparse_vector(seed * 1000)
@@ -378,16 +380,6 @@ class SNPPanel:
         return vec1 * vec2
 
     def _bundle_vectors(self, vectors: list[torch.Tensor]) -> torch.Tensor:
-        """Bundle multiple vectors using XOR-like operation"""
-        stacked = torch.stack(vectors)
-        # Majority vote for each dimension
-        bundled = torch.sign(stacked.sum(dim=0))
-        # Handle zeros
-        bundled[bundled == 0] = 1
-        return bundled
-
-    def get_panel_info(self, panel_name: str) -> dict:
-        """Get information about a panel"""
         if panel_name not in self.panels:
             raise ValueError(f"Unknown panel: {panel_name}")
 
@@ -403,3 +395,15 @@ class SNPPanel:
     def list_panels(self) -> list[str]:
         """List available panel names"""
         return list(self.panels.keys())
+
+        """Bundle multiple vectors using XOR-like operation"""
+                stacked = torch.stack(vectors)
+                # Majority vote for each dimension
+                bundled = torch.sign(stacked.sum(dim=0))
+                # Handle zeros
+                bundled[bundled == 0] = 1
+                return bundled
+
+            def get_panel_info(self, panel_name: str) -> dict:
+                """Get information about a panel"""
+        """Encode nucleotide base"""

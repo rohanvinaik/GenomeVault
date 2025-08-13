@@ -60,6 +60,10 @@ def test_performance_benchmark(performance_benchmark):
     """Test performance benchmark fixture"""
 
     def sample_function(n):
+        """Sample function.
+        Args:        n: Number or count value.
+        Returns:
+            Result of the operation."""
         return sum(range(n))
 
     result = performance_benchmark.measure("sum_calculation", sample_function, 1000)

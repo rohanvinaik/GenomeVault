@@ -23,6 +23,8 @@ class BenchmarkHarness:
     """Generic benchmarking harness for GenomeVault components."""
 
     def __init__(self, lane: str, output_dir: Path):
+        """Initialize the instance.
+        Args:        lane: Parameter value.        output_dir: Parameter value."""
         self.lane = lane
         self.output_dir = Path(output_dir) / lane
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -59,6 +61,8 @@ class PIRBenchmark:
     """PIR-specific benchmarks."""
 
     def __init__(self, harness: BenchmarkHarness):
+        """Initialize the instance.
+        Args:        harness: List of items."""
         self.harness = harness
 
     async def run_all(self):
@@ -221,6 +225,8 @@ class ZKBenchmark:
     """ZK proof benchmarks."""
 
     def __init__(self, harness: BenchmarkHarness):
+        """Initialize the instance.
+        Args:        harness: List of items."""
         self.harness = harness
 
     async def run_all(self):
@@ -241,6 +247,8 @@ class HDCBenchmark:
     """Hyperdimensional computing benchmarks."""
 
     def __init__(self, harness: BenchmarkHarness):
+        """Initialize the instance.
+        Args:        harness: List of items."""
         self.harness = harness
 
     async def run_all(self):
@@ -327,7 +335,10 @@ class HDCBenchmark:
         try:
             import time
 
-            from genomevault.hypervector_transform.hdc_encoder import OmicsType, create_encoder
+            from genomevault.hypervector_transform.hdc_encoder import (
+                OmicsType,
+                create_encoder,
+            )
 
             # Basic encoding benchmark
             encoder = create_encoder(dimension=10000)

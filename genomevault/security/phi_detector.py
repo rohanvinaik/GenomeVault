@@ -5,6 +5,7 @@ This module provides tools to scan logs, outputs, and code for potential
 PHI leakage patterns to ensure HIPAA compliance.
 
 """
+
 from __future__ import annotations
 
 from datetime import datetime
@@ -14,6 +15,7 @@ import hashlib
 import json
 import logging
 import re
+
 logger = logging.getLogger(__name__)
 
 
@@ -353,7 +355,8 @@ class PHILeakageDetector:
             for severity in ["critical", "high", "medium", "low"]:
                 if severity in by_severity:
                     html.append(
-                        f'<h2 class="{severity}">{severity.upper()} ({len(by_severity[severity])})</h2>'
+                        f'<h2 class="{severity}">{severity.upper()}" \
+                            f"({len(by_severity[severity])})</h2>'
                     )
                     html.append("<ul>")
 
@@ -559,7 +562,9 @@ if __name__ == "__main__":
 
     logger.info(f"Found {len(findings)} potential PHI instances:\n")
     for finding in findings:
-        logger.info(f"- {finding['description']}: {finding['match']} (Severity: {finding['severity']})")
+        logger.info(
+            f"- {finding['description']}: {finding['match']} (Severity: {finding['severity']})"
+        )
 
     logger.info("\n" + "=" * 50 + "\n")
 

@@ -35,6 +35,7 @@ class PIRQuery:
     nonce: bytes | None = None  # Query nonce
 
     def __post_init__(self):
+        """post init  ."""
         if self.metadata is None:
             self.metadata = {}
         if self.nonce is None:
@@ -70,10 +71,14 @@ class PIRClient:
             raise PIRError(f"Need at least {MIN_PIR_SERVERS} servers, got {len(server_urls)}")
 
     async def __aenter__(self):
+        """Asynchronously   aenter  ."""
         self.session = aiohttp.ClientSession()
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
+        """Asynchronously   aexit  .
+            Args:        exc_type: Parameter value.        exc_val: Parameter value.         \
+                exc_tb: Parameter value.    """
         if self.session:
             await self.session.close()
 

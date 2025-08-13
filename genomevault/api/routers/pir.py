@@ -19,6 +19,10 @@ _ENGINE = PIREngine(_DATASET, n_servers=3)
 
 
 def _b64(b: bytes) -> str:
+    """b64.
+    Args:        b: Parameter value.
+    Returns:
+        str"""
     return base64.b64encode(b).decode("ascii")
 
 

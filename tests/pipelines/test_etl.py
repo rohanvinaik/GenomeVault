@@ -4,6 +4,9 @@ from genomevault.pipelines.etl import run_etl, transform
 
 
 def test_transform_standardizes_and_renames():
+    """Test transform standardizes and renames.
+    Returns:
+        Result of the operation."""
     df = pd.DataFrame(
         {
             "Sample": ["s1"],
@@ -18,6 +21,10 @@ def test_transform_standardizes_and_renames():
 
 
 def test_run_etl_validates(tmp_path):
+    """Test run etl validates.
+    Args:        tmp_path: Parameter value.
+    Returns:
+        Result of the operation."""
     csv = tmp_path / "in.csv"
     csv.write_text("sample_id,chrom,pos,ref,alt\ns1,chr1,10,A,T\n", encoding="utf-8")
     # write minimal contract

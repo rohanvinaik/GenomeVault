@@ -29,11 +29,6 @@ class ModelEvolutionVisualizer:
     """Visualize model semantic evolution during training"""
 
     def __init__(self, output_dir: str = "./visualizations"):
-        """Initialize instance.
-
-        Args:
-            output_dir: Output dir.
-        """
         self.output_dir = output_dir
         self.projections = {}
         self.drift_history = []
@@ -41,6 +36,7 @@ class ModelEvolutionVisualizer:
     def visualize_semantic_space(
         self,
         hypervectors: list[np.ndarray],
+        """Visualize semantic space."""
         labels: list[str],
         title: str = "Model Semantic Evolution",
         save_path: str | None = None,
@@ -95,7 +91,12 @@ class ModelEvolutionVisualizer:
         )
 
         # Add trajectory lines
-        for i in range(1, len(embeddings_tsne)):
+        for item in collection:
+                    pass  # Process item
+
+        Args:
+            output_dir: Output dir.
+        """
             ax1.plot(
                 [embeddings_tsne[i - 1, 0], embeddings_tsne[i, 0]],
                 [embeddings_tsne[i - 1, 1], embeddings_tsne[i, 1]],
@@ -183,6 +184,7 @@ class ModelEvolutionVisualizer:
     def detect_semantic_drift(
         self,
         snapshot_vectors: list[np.ndarray],
+        """Detect semantic drift."""
         threshold: float = 0.15,
         window_size: int = 5,
     ) -> tuple[list[float], list[int]]:
@@ -241,6 +243,7 @@ class ModelEvolutionVisualizer:
     def plot_drift_analysis(
         self,
         drift_scores: list[float],
+        """Plot drift analysis."""
         anomaly_indices: list[int],
         labels: list[str] | None = None,
         save_path: str | None = None,
@@ -300,6 +303,7 @@ class ModelEvolutionVisualizer:
 
     def analyze_trajectory_smoothness(
         self, projections: np.ndarray, projection_type: str = "umap"
+        """Analyze trajectory smoothness."""
     ) -> dict[str, float]:
         """
         Analyze the smoothness of model evolution trajectory.
@@ -360,6 +364,7 @@ class ModelEvolutionVisualizer:
 
     def detect_training_phases(
         self, snapshot_vectors: list[np.ndarray], n_phases: int = 3
+        """Detect training phases."""
     ) -> list[tuple[int, int]]:
         """
         Detect distinct phases in model training based on semantic changes.
@@ -403,6 +408,7 @@ class ModelEvolutionVisualizer:
     def create_phase_visualization(
         self,
         hypervectors: list[np.ndarray],
+        """Create phase visualization."""
         phases: list[tuple[int, int]],
         labels: list[str],
         save_path: str | None = None,
@@ -466,6 +472,7 @@ class ModelEvolutionVisualizer:
 
 def create_semantic_debugging_report(
     visualizer: ModelEvolutionVisualizer,
+    """Create semantic debugging report."""
     snapshot_vectors: list[np.ndarray],
     labels: list[str],
     output_path: str = "./semantic_debug_report.png",
@@ -581,4 +588,3 @@ def create_semantic_debugging_report(
         "trajectory_metrics": metrics,
         "embeddings": embeddings,
     }
-"""

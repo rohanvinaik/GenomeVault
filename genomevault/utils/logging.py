@@ -174,7 +174,8 @@ def configure_logging(
     # Log the configuration
     config_logger = logging.getLogger("genomevault.logging")
     config_logger.info(
-        f"Logging configured: level={logging.getLevelName(level)}, file_logging={enable_file_logging}"
+        f"Logging configured: level={logging.getLevelName(level)},"
+        f"file_logging={enable_file_logging}"
     )
     config_logger.debug(f"Log directory: {log_dir}")
 

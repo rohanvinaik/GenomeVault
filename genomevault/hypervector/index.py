@@ -202,6 +202,7 @@ def build(vectors: List[np.ndarray], ids: List[str], path: Path, metric: str = "
 
 def search(
     query: np.ndarray, path: Path, k: int = 5, metric: Optional[str] = None
+    """Search."""
 ) -> List[Dict[str, Union[str, float]]]:
     """
     Search for k nearest neighbors in the index.
@@ -414,6 +415,7 @@ def add_vectors(vectors: List[np.ndarray], ids: List[str], path: Path) -> None:
 
 def batch_hamming_distance(
     queries: NDArray[np.uint64], targets: NDArray[np.uint64]
+    """Batch hamming distance."""
 ) -> NDArray[np.uint32]:
     """
     Compute batch Hamming distances between packed binary vectors.

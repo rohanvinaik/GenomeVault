@@ -1,0 +1,113 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: genomevault-config
+  namespace: genomevault
+data:
+  # Core configuration
+  ENVIRONMENT: "production"
+  LOG_LEVEL: "INFO"
+  API_PORT: "8000"
+
+  # Hypervector configuration
+  HYPERVECTOR_DIMENSIONS: "10000"
+  COMPRESSION_TIERS: "mini,clinical,full"
+
+  # PIR configuration
+  PIR_SERVER_COUNT: "5"
+  PIR_SHARD_COUNT: "3"
+  PIR_CACHE_SIZE: "1GB"
+
+  # Blockchain configuration
+  BLOCKCHAIN_NETWORK: "mainnet"
+  BLOCK_TIME_SECONDS: "5"
+  CONSENSUS_ALGORITHM: "tendermint"
+
+  # Privacy configuration
+  DIFFERENTIAL_PRIVACY_EPSILON: "1.0"
+  DIFFERENTIAL_PRIVACY_DELTA: "1e-6"
+
+  # Storage configuration
+  STORAGE_BACKEND: "s3"
+  BACKUP_RETENTION_DAYS: "30"
+
+  # Monitoring configuration
+  METRICS_ENABLED: "true"
+  METRICS_PORT: "9090"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: genomevault-secrets
+  namespace: genomevault
+data:
+  # Database configuration
+  DB_HOST: "postgres.genomevault.svc.cluster.local"
+  DB_PORT: "5432"
+  DB_NAME: "genomevault"
+  DB_SSL_MODE: "require"
+
+  # Redis configuration
+  REDIS_HOST: "redis.genomevault.svc.cluster.local"
+  REDIS_PORT: "6379"
+  REDIS_DB: "0"
+
+  # S3 configuration
+  S3_ENDPOINT: "https://s3.amazonaws.com"
+  S3_REGION: "us-west-2"
+  S3_BUCKET: "genomevault-data"
+
+  # Kafka configuration
+  KAFKA_BROKERS: "kafka-0.kafka:9092,kafka-1.kafka:9092,kafka-2.kafka:9092"
+  KAFKA_TOPIC_PREFIX: "genomevault"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: genomevault-scripts
+  namespace: genomevault
+data:
+  init.sh: |
+    #!/bin/bash
+    set -e
+
+    echo "Initializing GenomeVault..."
+
+    # Wait for database
+    until pg_isready -h $DB_HOST -p $DB_PORT; do
+      echo "Waiting for database..."
+      sleep 2
+    done
+
+    # Run migrations
+    echo "Running database migrations..."
+    python manage.py migrate
+
+    # Initialize hypervector cache
+    echo "Initializing hypervector cache..."
+    python -c "from genomevault.hypervector import init_cache; init_cache()"
+
+    # Load reference data
+    if [ "$LOAD_REFERENCE_DATA" = "true" ]; then
+      echo "Loading reference data..."
+      python manage.py load_reference_data
+    fi
+
+    echo "Initialization complete!"
+
+  health-check.sh: |
+    #!/bin/bash
+
+    # Check API health
+    curl -f http://localhost:8000/health || exit 1
+
+    # Check metrics endpoint
+    curl -f http://localhost:9090/metrics || exit 1
+
+    # Check blockchain connectivity
+    if [ "$BLOCKCHAIN_ENABLED" = "true" ]; then
+      curl -f http://localhost:26657/status || exit 1
+    fi
+
+    echo "Health check passed!"

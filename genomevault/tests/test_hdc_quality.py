@@ -133,7 +133,8 @@ class TestHDCQuality:
         original_size = 0
         for var in variants:
             # Typical VCF line: CHROM POS ID REF ALT QUAL FILTER INFO
-            vcf_line = f"{var['chr']}\t{var['pos']}\t.\t{var['ref']}\t{var['alt']}\t{var['quality']:.1f}\tPASS\t.\n"
+            vcf_line = f"{var['chr']}\t{var['pos']}\t.\t{var['ref']}\t{var['alt'] \
+                }\t{var['quality']:.1f}\tPASS\t.\n"
             original_size += len(vcf_line.encode())
 
         # Encode all variants
@@ -224,7 +225,8 @@ class TestHDCQuality:
         # Should have clear separation
         assert (
             avg_similar > avg_dissimilar + 0.2
-        ), f"Insufficient discrimination: similar={avg_similar:.3f}, dissimilar={avg_dissimilar:.3f}"
+        ), f"Insufficient discrimination: similar={avg_similar:.3f}," \
+            f"dissimilar={avg_dissimilar:.3f}"
 
         # All similar should be > 0.5
         assert all(
@@ -450,7 +452,8 @@ def run_hdc_quality_assessment():
     logger.info("\n1. Testing similarity preservation...")
     similarity_results = test.test_variant_similarity_preservation(encoder)
     print(
-        f"   Preservation rate: {sum(r['preserved'] for r in similarity_results) / len(similarity_results):.2%}"
+        f"   Preservation rate: {sum(r['preserved'] for r in similarity_results) /" \
+            f"len(similarity_results):.2%}"
     )
 
     # 2. Compression ratio

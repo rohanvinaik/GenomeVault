@@ -1,3 +1,19 @@
-"""Package initialization for backends."""
+"""Zero-knowledge proof implementations for backends."""
 
-# auto-stub for importability
+from .circom_snarkjs import (
+    CircuitPaths,
+    toolchain_available,
+    run,
+    ensure_built,
+    prove,
+    verify,
+)
+
+__all__ = [
+    "CircuitPaths",
+    "ensure_built",
+    "prove",
+    "run",
+    "toolchain_available",
+    "verify",
+]

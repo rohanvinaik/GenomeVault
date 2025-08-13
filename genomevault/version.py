@@ -4,10 +4,6 @@ This module provides centralized version management for all components,
 protocols, and seeds used throughout the GenomeVault system.
 """
 
-"""Version tracking module for GenomeVault.
-This module provides centralized version management for all components,
-protocols, and seeds used throughout the GenomeVault system.
-"""
 from __future__ import annotations
 
 from datetime import datetime

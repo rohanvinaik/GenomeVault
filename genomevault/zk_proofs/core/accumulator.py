@@ -8,6 +8,11 @@ INITIAL_ACC = H(TAGS["ACC"], b"INITIAL_ACC")
 
 
 def step(acc: bytes, proof_commit: bytes, vk_hash: bytes) -> bytes:
+    """Step.
+        Args:        acc: Parameter value.        proof_commit: Parameter value.         \
+            vk_hash: Parameter value.
+        Returns:
+            bytes    """
     return H(TAGS["ACC"], acc, proof_commit, vk_hash)
 
 

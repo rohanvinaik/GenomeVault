@@ -215,6 +215,7 @@ class CatalyticProofEngine:
     def generate_catalytic_proof(
         self,
         circuit_name: str,
+        """Generate catalytic proof."""
         public_inputs: dict[str, Any],
         private_inputs: dict[str, Any],
     ) -> CatalyticProof:

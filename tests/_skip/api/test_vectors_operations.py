@@ -7,6 +7,7 @@ client = TestClient(app)
 
 
 def test_operations_bundle_and_permute():
+    """Test operations bundle and permute."""
     dim = HYPERVECTOR_DIMENSIONS["base"]
     a = client.post(
         "/vectors/encode",

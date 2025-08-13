@@ -1,3 +1,7 @@
-"""Package initialization for stores."""
+"""Hyperdimensional computing implementations for stores."""
 
-# auto-stub for importability
+from .in_memory import InMemoryStore
+
+__all__ = [
+    "InMemoryStore",
+]

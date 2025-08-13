@@ -26,11 +26,19 @@ try:
 except ImportError:
     # If import fails, create a minimal version for testing
     class EnhancedCleanup:
+        """EnhancedCleanup class implementation."""
+
         def __init__(self, repo_root="/tmp/test"):
+            """Initialize the instance.
+            Args:        repo_root: Parameter value."""
             self.repo_root = Path(repo_root)
             self.errors_found = []
 
         def log_error(self, message, phase="general"):
+            """Log error.
+            Args:        message: Message or text content.        phase: Parameter value.
+            Returns:
+                Result of the operation."""
             logger.debug(f"ERROR: {message}")
             self.errors_found.append(message)
 
@@ -106,6 +114,10 @@ class TestEnhancedCleanupExceptions(unittest.TestCase):
         if not hasattr(self.cleanup, "_guard_example_code"):
 
             def mock_guard_example_code(dry_run=False):
+                """Mock guard example code.
+                Args:        dry_run: Parameter value.
+                Returns:
+                    Result of the operation."""
                 # Simplified version that triggers the exception path we're testing
                 for py_file in [test_file]:
                     try:

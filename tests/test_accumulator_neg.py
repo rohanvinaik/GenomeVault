@@ -2,6 +2,9 @@ from genomevault.zk_proofs.core.accumulator import INITIAL_ACC, step, verify_cha
 
 
 def test_accumulator_drop_link_fails():
+    """Test accumulator drop link fails.
+    Returns:
+        Result of the operation."""
     # build small chain
     acc = INITIAL_ACC
     chain = []

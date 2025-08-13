@@ -192,6 +192,10 @@ class TestBatchedPIRIntegration:
         call_count = 0
 
         async def mock_execute(q):
+            """Asynchronously mock execute.
+            Args:        q: Parameter value.
+            Returns:
+                Result of the operation."""
             nonlocal call_count
             if call_count < len(result_values):
                 val = result_values[call_count]

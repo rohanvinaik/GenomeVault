@@ -300,6 +300,10 @@ class TestHolographicEncoder(unittest.TestCase):
 
         # Count matching bits
         def count_matching_bits(h1, h2):
+            """Count matching bits.
+            Args:        h1: Parameter value.        h2: Parameter value.
+            Returns:
+                Result of the operation."""
             b1 = bin(int(h1, 16))[2:].zfill(64)
             b2 = bin(int(h2, 16))[2:].zfill(64)
             return sum(c1 == c2 for c1, c2 in zip(b1, b2))

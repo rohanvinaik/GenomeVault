@@ -171,6 +171,8 @@ class MockPIRClient(PIRClient):
     """Mock PIR client for demonstration"""
 
     def __init__(self, servers: list[str], database_size: int):
+        """Initialize the instance.
+        Args:        servers: List of items.        database_size: Parameter value."""
         # Don't call super().__init__ to avoid real connection
         self.server_urls = servers
         self.database_size = database_size

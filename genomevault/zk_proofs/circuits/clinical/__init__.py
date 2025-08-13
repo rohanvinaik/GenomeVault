@@ -1,6 +1,6 @@
 """Clinical validation circuits module."""
 
-from genomevault.clinical_validation.circuits import (
+from genomevault.zk_proofs.circuits.clinical_circuits import (
     ClinicalBiomarkerCircuit,
     DiabetesRiskCircuit,
     ProofData,

@@ -4,6 +4,10 @@ from genomevault.contracts.contract import TableContract, validate_dataframe
 
 
 def test_validate_dataframe_detects_violations(tmp_path):
+    """Test validate dataframe detects violations.
+    Args:        tmp_path: Parameter value.
+    Returns:
+        Result of the operation."""
     contract_path = tmp_path / "variant.json"
     contract = {
         "name": "variant_table",

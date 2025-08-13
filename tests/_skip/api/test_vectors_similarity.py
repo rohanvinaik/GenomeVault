@@ -7,6 +7,7 @@ client = TestClient(app)
 
 
 def test_similarity_of_same_vector_is_high():
+    """Test similarity of same vector is high."""
     dim = HYPERVECTOR_DIMENSIONS["base"]
     a = client.post(
         "/vectors/encode",

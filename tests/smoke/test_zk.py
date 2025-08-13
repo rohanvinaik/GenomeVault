@@ -4,6 +4,8 @@ from genomevault.zk.engine import ZKProofEngine
 
 
 class TestZKProofs:
+    """TestZKProofs class implementation."""
+
     def test_prove(self):
         """Test proof generation with fallback."""
         engine = ZKProofEngine()

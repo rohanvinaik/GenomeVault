@@ -33,7 +33,8 @@ class MaximumBodySizeMiddleware(BaseHTTPMiddleware):
         Returns:
             Operation result.
         """
-        # For multipart, rely on Content-Length; otherwise, read body into memory once (ASGI servers buffer anyway)
+        # For multipart, rely on Content-Length; otherwise,
+            read body into memory once (ASGI servers buffer anyway)
         cl = request.headers.get("content-length")
         if cl and cl.isdigit() and int(cl) > self.max_body:
             return PlainTextResponse("Request entity too large", status_code=413)

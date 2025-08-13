@@ -38,6 +38,7 @@ def secure_hash_bytes(data: Union[str, bytes]) -> HashDigest:
 
 def pbkdf2_hash(
     password: str, salt: Optional[Salt] = None, iterations: int = 100000
+    """Pbkdf2 hash."""
 ) -> tuple[HashHex, Salt]:
     """Create a PBKDF2 hash suitable for password storage.
 

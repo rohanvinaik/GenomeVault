@@ -67,7 +67,7 @@ class HDCBenchmark:
 
     def benchmark_encoding_throughput(self) -> dict[str, Any]:
         """Benchmark encoding throughput across dimensions and tiers"""
-        print("Benchmarking encoding throughput...")
+        pass  # Debug print removed
 
         results = {"description": "Encoding throughput (operations/second)", "data": {}}
 
@@ -108,7 +108,7 @@ class HDCBenchmark:
 
     def benchmark_memory_usage(self) -> dict[str, Any]:
         """Benchmark memory usage across tiers"""
-        print("\nBenchmarking memory usage...")
+        pass  # Debug print removed
 
         results = {"description": "Memory usage by compression tier", "data": {}}
 
@@ -148,7 +148,7 @@ class HDCBenchmark:
 
     def benchmark_binding_operations(self) -> dict[str, Any]:
         """Benchmark different binding operations"""
-        print("\nBenchmarking binding operations...")
+        pass  # Debug print removed
 
         results = {"description": "Binding operation performance", "data": {}}
 
@@ -199,7 +199,7 @@ class HDCBenchmark:
 
     def benchmark_similarity_computation(self) -> dict[str, Any]:
         """Benchmark similarity computation"""
-        print("\nBenchmarking similarity computation...")
+        pass  # Debug print removed
 
         results = {"description": "Similarity computation performance", "data": {}}
 
@@ -243,7 +243,7 @@ class HDCBenchmark:
 
     def benchmark_projection_types(self) -> dict[str, Any]:
         """Benchmark different projection types"""
-        print("\nBenchmarking projection types...")
+        pass  # Debug print removed
 
         results = {"description": "Performance by projection type", "data": {}}
 
@@ -294,7 +294,7 @@ class HDCBenchmark:
 
     def benchmark_scalability(self) -> dict[str, Any]:
         """Benchmark scalability with batch processing"""
-        print("\nBenchmarking batch scalability...")
+        pass  # Debug print removed
 
         results = {"description": "Batch processing scalability", "data": {}}
 
@@ -342,7 +342,7 @@ class HDCBenchmark:
 
     def benchmark_multimodal_encoding(self) -> dict[str, Any]:
         """Benchmark multi-modal encoding performance"""
-        print("\nBenchmarking multi-modal encoding...")
+        pass  # Debug print removed
 
         results = {
             "description": "Multi-modal encoding and binding performance",
@@ -412,7 +412,6 @@ class HDCBenchmark:
 
     def run_all_benchmarks(self):
         """Run all benchmarks"""
-        print("Starting HDC benchmarking suite...")
         print(f"Output directory: {self.output_dir}")
         print(f"Timestamp: {self.timestamp}")
         print("-" * 60)
@@ -468,7 +467,7 @@ class HDCBenchmark:
 
     def generate_plots(self):
         """Generate visualization plots"""
-        print("\nGenerating visualization plots...")
+        pass  # Debug print removed
 
         # Set plot style
         sns.set_style("whitegrid")
@@ -717,7 +716,7 @@ def main():
     # Run benchmarks
     if args.quick:
         # Quick mode - only essential benchmarks
-        print("Running quick benchmarks...")
+        pass  # Debug print removed
         benchmark.results["benchmarks"][
             "encoding_throughput"
         ] = benchmark.benchmark_encoding_throughput()

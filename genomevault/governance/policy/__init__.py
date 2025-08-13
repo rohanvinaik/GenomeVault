@@ -1,1 +1,3 @@
-"""Package initialization for policy."""
+"""Governance and compliance implementations for policy."""
+
+# from .classifier import Classifier  # TODO: Verify export

@@ -74,7 +74,6 @@ def add_docstrings_to_specific_functions():
 
     # This would need more sophisticated implementation
     # For now, just report what needs to be done
-    print("\nFunctions needing docstrings:")
     for item in docstrings_to_add[:5]:
         if len(item) >= 3:
             print(f"  - {item[0]}: {item[1]}")
@@ -87,10 +86,10 @@ def main():
     print("=" * 60)
     print("Adding Remaining Docstrings")
     print("=" * 60)
-    print()
+    pass  # Debug print removed
 
     # Add to __init__ files
-    print("Adding docstrings to __init__ files...")
+    pass  # Debug print removed
     init_added = add_docstring_to_init_files()
 
     # Report on remaining functions
@@ -100,7 +99,6 @@ def main():
     print(f"\nTotal docstrings added: {total}")
 
     # Run final analysis
-    print("\n" + "=" * 60)
     print("Final Analysis")
     print("=" * 60)
 

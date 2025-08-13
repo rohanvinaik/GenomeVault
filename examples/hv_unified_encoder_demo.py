@@ -17,6 +17,9 @@ from genomevault.hypervector.encoding import create_encoder
 
 
 def main():
+    """Main.
+    Returns:
+        Result of the operation."""
     logger.debug("GenomeVault Unified Hypervector Encoder Demo")
     logger.debug("=" * 50)
 

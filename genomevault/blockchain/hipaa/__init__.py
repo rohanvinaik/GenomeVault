@@ -3,39 +3,24 @@ Hipaa Package
 
 """
 
-from . import integration, verifier
 from .models import (
-    EXPIRED,
-    FAILED,
-    INDIVIDUAL,
-    ORGANIZATION,
-    PENDING,
-    REVOKED,
-    VERIFIED,
-    HIPAACredentials,
-    NPIRecord,
-    NPIType,
-    VerificationRecord,
     VerificationStatus,
-    is_active,
-    to_chain_data,
+    NPIType,
+    HIPAACredentials,
+    VerificationRecord,
+    NPIRecord,
 )
+from .integration import HIPAANodeIntegration, HIPAAGovernanceIntegration
+from .verifier import verify_access, REQUIRED_FIELDS
 
 __all__ = [
-    "EXPIRED",
-    "FAILED",
-    "INDIVIDUAL",
-    "ORGANIZATION",
-    "PENDING",
-    "REVOKED",
-    "VERIFIED",
     "HIPAACredentials",
+    "HIPAAGovernanceIntegration",
+    "HIPAANodeIntegration",
     "NPIRecord",
     "NPIType",
+    "REQUIRED_FIELDS",
     "VerificationRecord",
     "VerificationStatus",
-    "integration",
-    "is_active",
-    "to_chain_data",
-    "verifier",
+    "verify_access",
 ]

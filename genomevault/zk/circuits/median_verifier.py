@@ -2,6 +2,7 @@
 Zero-Knowledge Circuit for Median Verification
 Implements a real ZK proof system for verifying median computation
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -165,7 +166,9 @@ class MedianVerifierCircuit:
             json.dumps({"median": claimed_median, "n": n, "timestamp": time.time()}).encode()
         ).hexdigest()[:16]
 
-        logger.info(f"Generated median proof for {n} values in {response['computation_time_ms']:.1f}ms")
+        logger.info(
+            f"Generated median proof for {n} values in {response['computation_time_ms']:.1f}ms"
+        )
 
         return MedianProof(
             claimed_median=claimed_median,
@@ -247,7 +250,9 @@ class MedianVerifierCircuit:
                 computed_median = values[pos]
 
             if abs(computed_median - proof.claimed_median) > 1e-9:
-                logger.error(f"Median computation mismatch: {computed_median} vs {proof.claimed_median}")
+                logger.error(
+                    f"Median computation mismatch: {computed_median} vs {proof.claimed_median}"
+                )
                 return False
 
             # Step 5: Verify range proofs

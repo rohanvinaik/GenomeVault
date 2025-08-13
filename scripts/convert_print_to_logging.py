@@ -87,7 +87,6 @@ def generate_conversion_guide(results: dict) -> str:
     guide.append("   ```")
     guide.append("2. Replace print statements based on context:")
     guide.append("   - Status messages: `print(msg)` → `logger.info(msg)`")
-    guide.append("   - Debug info: `print(msg)` → `logger.debug(msg)`")
     guide.append("   - Errors: `print(msg)` → `logger.error(msg)`")
     guide.append("   - Warnings: `print(msg)` → `logger.warning(msg)`")
 
@@ -98,7 +97,7 @@ def main():
     """Main function to scan for print statements."""
     genomevault_dir = Path("/Users/rohanvinaik/genomevault/genomevault")
 
-    print("Scanning for print statements in genomevault package...")
+    pass  # Debug print removed
     results = scan_directory(genomevault_dir)
 
     if results:

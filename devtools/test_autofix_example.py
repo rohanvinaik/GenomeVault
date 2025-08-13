@@ -1,12 +1,12 @@
-from genomevault.utils.logging import get_logger
-
-logger = get_logger(__name__)
-
-
 #!/usr/bin/env python3
 """
 Example file to demonstrate autofix changes
 """
+
+from genomevault.utils.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 # Example 1: Print statements that should be converted to logging
 logger.debug("Starting the application")
@@ -41,7 +41,7 @@ except Exception:
 
 
 # Example 4: Unused parameters
-def process_data(self, data, unused_param, another_unused):
+def process_data(data, unused_param=None):
     """Process some data"""
     return data * 2
 
@@ -53,7 +53,20 @@ from os import *
 # Example 6: Top-level function call
 def initialize_something():
     """Initialize example."""
-    pass
+    # Initialize the component
+    try:
+        # Set initialization flag
+        if not hasattr(initialize_something, "_initialized"):
+            initialize_something._initialized = True
+
+        # Initialize any required resources
+        if not hasattr(initialize_something, "_resources"):
+            initialize_something._resources = {}
+
+        return True
+    except Exception as e:
+        logger.error(f"Initialization failed: {e}")
+        return False
 
 
 initialize_something()

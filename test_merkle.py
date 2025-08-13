@@ -8,11 +8,10 @@ from genomevault.crypto.commit import H, TAGS
 def test_merkle_tree():
     """Test Merkle tree construction and verification."""
 
-    print("Testing Canonical Merkle Tree")
     print("=" * 50)
 
     # Test leaf hashing
-    print("Testing leaf hashing:")
+    pass  # Debug print removed
 
     leaf1 = merkle.leaf_bytes([1, 2, 3])
     leaf2 = merkle.leaf_bytes([1, 2, 3])
@@ -25,7 +24,7 @@ def test_merkle_tree():
     print("  ✓ Deterministic leaf hashing")
 
     # Test tree building
-    print("\nTesting tree building:")
+    pass  # Debug print removed
 
     # Create leaves
     leaves = []
@@ -46,7 +45,7 @@ def test_merkle_tree():
     print("  ✓ Correct tree structure")
 
     # Test odd number of leaves (duplication)
-    print("\nTesting odd number of leaves:")
+    pass  # Debug print removed
 
     odd_leaves = leaves[:5]  # 5 leaves
     odd_tree = merkle.build(odd_leaves)
@@ -61,7 +60,7 @@ def test_merkle_tree():
     print("  ✓ Handles odd leaf count with duplication")
 
     # Test path generation
-    print("\nTesting path generation:")
+    pass  # Debug print removed
 
     # Get path for leaf at index 2
     path2 = merkle.path(tree, 2)
@@ -75,7 +74,7 @@ def test_merkle_tree():
     print("  ✓ Correct path length")
 
     # Test verification with correct path
-    print("\nTesting path verification:")
+    pass  # Debug print removed
 
     # Verify leaf 2 with its path
     leaf2_data = [2]
@@ -96,7 +95,7 @@ def test_merkle_tree():
     print("  ✓ Wrong root fails verification")
 
     # Test direction bits matter
-    print("\nTesting direction bits importance:")
+    pass  # Debug print removed
 
     # Flip all direction bits
     flipped_path = [(sib, not is_right) for sib, is_right in path2]
@@ -105,7 +104,7 @@ def test_merkle_tree():
     print("  ✓ Wrong direction bits fail verification")
 
     # Test all leaves verify
-    print("\nTesting all leaves verify:")
+    pass  # Debug print removed
 
     all_verify = True
     for i in range(len(leaves)):
@@ -118,7 +117,7 @@ def test_merkle_tree():
     print("  ✓ All 8 leaves verify correctly")
 
     # Test domain separation
-    print("\nTesting domain separation:")
+    pass  # Debug print removed
 
     # Manual computation should use proper tags
     test_leaf = H(TAGS["LEAF"], merkle.be_int(42, 32))
@@ -134,7 +133,7 @@ def test_merkle_tree():
     print("  ✓ Node uses NODE tag")
 
     # Test empty tree handling
-    print("\nTesting edge cases:")
+    pass  # Debug print removed
 
     try:
         merkle.build([])
@@ -150,8 +149,7 @@ def test_merkle_tree():
     assert merkle.verify([0], single_path, single_tree["root"])
     print("  ✓ Single leaf tree works")
 
-    print("\n" + "=" * 50)
-    print("All Merkle tree tests passed!")
+    pass  # Debug print removed
 
 
 if __name__ == "__main__":

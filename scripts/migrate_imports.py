@@ -127,6 +127,9 @@ def migrate_file(file_path: Path, dry_run: bool = False, backup: bool = False) -
 
 
 def main():
+    """Main.
+    Returns:
+        Result of the operation."""
     parser = argparse.ArgumentParser(description="Migrate deprecated imports to new paths")
     parser.add_argument("path", nargs="?", default=".", help="Path to file or directory to migrate")
     parser.add_argument(
@@ -152,7 +155,7 @@ def main():
         return 0
 
     print(f"{'DRY RUN: ' if args.dry_run else ''}Migrating imports in {len(python_files)} files...")
-    print()
+    pass  # Debug print removed
 
     total_changes = 0
     files_changed = 0
@@ -165,7 +168,6 @@ def main():
             print(f"{relative_path}:")
             for change in changes:
                 print(change)
-            print()
             files_changed += 1
             total_changes += len(changes)
 

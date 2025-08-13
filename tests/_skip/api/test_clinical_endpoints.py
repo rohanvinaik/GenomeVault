@@ -6,6 +6,10 @@ client = TestClient(app)
 
 
 def test_clinical_eval_endpoint(monkeypatch):
+    """Test clinical eval endpoint.
+
+    Args:        monkeypatch: Monkeypatch parameter.
+    """
     # Ensure consistent behavior: default to auth disabled unless GV_API_KEYS is set
     monkeypatch.delenv("GV_API_KEYS", raising=False)
     payload = {

@@ -8,14 +8,13 @@ from genomevault.crypto.serialization import be_int
 def test_transcript():
     """Test Fiat-Shamir transcript functionality."""
 
-    print("Testing Fiat-Shamir Transcript")
     print("=" * 50)
 
     # Create a transcript
     t = Transcript()
 
     # Test appending messages
-    print("Testing message appending:")
+    pass  # Debug print removed
 
     t.append("commitment", b"\xaa" * 32)
     digest1 = t.digest()
@@ -47,7 +46,7 @@ def test_transcript():
     print("  ✓ Length prefixing prevents concatenation ambiguity")
 
     # Test challenge generation
-    print("\nTesting challenge generation:")
+    pass  # Debug print removed
 
     challenge1 = t.challenge("alpha", 32)
     assert len(challenge1) == 32
@@ -75,7 +74,7 @@ def test_transcript():
     print("  ✓ Round counter prevents challenge replay")
 
     # Test variable-length challenges
-    print("\nTesting variable-length challenges:")
+    pass  # Debug print removed
 
     short_challenge = t.challenge("short", 16)
     long_challenge = t.challenge("long", 64)
@@ -87,7 +86,7 @@ def test_transcript():
     print("  ✓ Supports variable-length challenges")
 
     # Test typical proof protocol flow
-    print("\nTesting typical proof protocol:")
+    pass  # Debug print removed
 
     # Prover's transcript
     prover = Transcript()
@@ -137,8 +136,7 @@ def test_transcript():
     assert prover.digest() != verifier2.digest()
     print("  ✓ Different response produces different transcript")
 
-    print("\n" + "=" * 50)
-    print("All transcript tests passed!")
+    pass  # Debug print removed
 
 
 if __name__ == "__main__":

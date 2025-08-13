@@ -205,8 +205,7 @@ class ComprehensiveCleanup:
 
         # Try to get F821 errors - if ruff not available, skip
         returncode, stdout, stderr = self.run_command_safe(
-            ["python3", "-c", "import subprocess; print('Testing command execution')"]
-        )
+            pass  # Debug print removed
 
         if returncode != 0:
             self.log_error("Cannot execute Python commands, skipping automated F821 fixes")
@@ -248,9 +247,9 @@ class ComprehensiveCleanup:
 
                 # Add common constants
                 constants_to_add = [
-                    ("MAX_VARIANTS", "1000  # TODO: Set appropriate limit"),
-                    ("VERIFICATION_TIME_MAX", "30.0  # TODO: Set appropriate timeout"),
-                    ("DEFAULT_SECURITY_LEVEL", "128  # TODO: Set security level"),
+                    ("MAX_VARIANTS", "10000  # Maximum number of genetic variants to process"),
+                    ("VERIFICATION_TIME_MAX", "60.0  # Maximum time for verification in seconds"),
+                    ("DEFAULT_SECURITY_LEVEL", "256  # Default security level in bits (256-bit for post-quantum)"),
                 ]
 
                 for const_name, const_value in constants_to_add:
@@ -806,7 +805,30 @@ Examples:
     if args.dry_run:
         logger.debug("🔍 DRY RUN MODE - No changes will be made")
         logger.debug("This would analyze the repository and show planned fixes.")
-        # TODO: Implement dry run analysis
+
+        if dry_run:
+            print("\n=== DRY RUN MODE ===")
+            print("The following changes would be made:")
+
+            # Analyze what would be changed
+            changes = []
+            for file_path in self.find_python_files():
+                issues = self.analyze_file(file_path)
+                if issues:
+                    changes.append((file_path, len(issues)))
+
+            # Report changes
+            if changes:
+                print(f"\nWould modify {len(changes)} files:")
+                for file_path, issue_count in changes[:10]:
+                    print(f"  - {file_path}: {issue_count} issues")
+                if len(changes) > 10:
+                    print(f"  ... and {len(changes) - 10} more files")
+            else:
+                print("No changes would be made")
+
+            print("\nRun without --dry-run to apply changes")
+            return
         return
 
     cleanup = ComprehensiveCleanup(args.repo_root)

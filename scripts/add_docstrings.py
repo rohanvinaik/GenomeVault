@@ -15,6 +15,8 @@ class DocstringGenerator(ast.NodeVisitor):
     """Generate docstrings for Python code elements."""
 
     def __init__(self, source_lines: List[str]):
+        """Initialize the instance.
+        Args:        source_lines: List of items."""
         self.source_lines = source_lines
         self.insertions = []  # List of (line_number, docstring) tuples
 
@@ -319,7 +321,6 @@ def main():
     for pattern in priority_patterns:
         filepath = root / pattern
         if filepath.exists():
-            print(f"Processing {filepath.relative_to(root)}...")
             if add_docstrings_to_file(filepath):
                 processed += 1
                 print(f"  ✓ Added docstrings")

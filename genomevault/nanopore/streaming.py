@@ -2,8 +2,9 @@
 Streaming processor for nanopore sequencing data.
 
 Implements catalytic slice-wise processing of nanopore events
-with bounded memory usage.
-
+with bounded memory usage.:
+with bounded memory usage.:
+    pass
 """
 from __future__ import annotations
 
@@ -57,16 +58,16 @@ class SliceReader:
     """Reads nanopore data in memory-bounded slices."""
 
     def __init__(
-        """Initialize instance.
-
-            Args:
-                slice_size: Size value.
-                overlap: Overlap.
-            """
         self,
         slice_size: int = 50000,  # ~4MB per slice
         overlap: int = 1000,  # Event overlap between slices
     ):
+        """Initialize instance.
+
+                    Args:
+                        slice_size: Size value.
+                        overlap: Overlap.
+                    """
         self.slice_size = slice_size
         self.overlap = overlap
         self.current_read = None
@@ -137,7 +138,7 @@ class SliceReader:
         # Simulate streaming for now
         logger.warning("MinKNOW streaming not yet implemented - simulating")
 
-        for i in range(100):  # Simulate 100 slices
+        for i in range(100):  # Simulate 100 slices:
             events = np.random.randn(self.slice_size, 2)
             events[:, 0] *= 20  # Current values
             events[:, 1] = np.abs(events[:, 1]) * 0.01  # Dwell times
@@ -154,7 +155,6 @@ class SliceReader:
             await asyncio.sleep(0.1)  # Simulate real-time delay
 
     def _signal_to_events(self, raw_signal: np.ndarray, read) -> np.ndarray:
-        """
         Convert raw signal to events.
 
         Simple segmentation - in production would use
@@ -202,6 +202,7 @@ class NanoporeStreamProcessor:
         enable_gpu: bool = True,
     ):
         """
+        """
         Initialize stream processor.
 
         Args:
@@ -226,7 +227,7 @@ class NanoporeStreamProcessor:
         self.gpu_kernel = None
         if enable_gpu:
             try:
-                from .gpu_kernels import GPUBindingKernel
+from .gpu_kernels import GPUBindingKernel
 
                 self.gpu_kernel = GPUBindingKernel(self.catalytic_space)
                 logger.info("GPU acceleration enabled")
@@ -391,7 +392,6 @@ class NanoporeStreamProcessor:
         return batch_hv, variances
 
     def _update_variance_state(self, read_id: str, variances: np.ndarray):
-        """Update streaming variance statistics."""
         if read_id not in self.variance_state:
             self.variance_state[read_id] = {
                 "n": 0,
@@ -445,7 +445,7 @@ class NanoporeStreamProcessor:
         Returns:
             Proof bytes
         """
-        from genomevault.zk_proofs.advanced.catalytic_proof import CatalyticProofEngine
+from genomevault.zk_proofs.advanced.catalytic_proof import CatalyticProofEngine
 
         # Initialize proof engine with our catalytic space
         proof_engine = CatalyticProofEngine(
@@ -468,7 +468,7 @@ class NanoporeStreamProcessor:
                     "mean": r["variance_mean"],
                     "max": r["variance_max"],
                 }
-                for r in slice_results
+                for r in slice_results:
             ],
             "anomaly_positions": [r["anomalies"] for r in slice_results],
         }
@@ -485,8 +485,9 @@ class NanoporeStreamProcessor:
 
 # Example usage
 async def example_streaming_pipeline():
+        """Update streaming variance statistics."""
     """Example of streaming nanopore processing."""
-    from genomevault.hypervector.encoding import HypervectorEncoder
+from genomevault.hypervector.encoding import HypervectorEncoder
 
     # Initialize encoder
     encoder = HypervectorEncoder(dimension=10000)
@@ -503,11 +504,6 @@ async def example_streaming_pipeline():
     results = []
 
     async def collect_results(result):
-        """Async operation to Collect results.
-
-            Args:
-                result: Operation result.
-            """
         results.append(result)
         if result["anomalies"]:
             print(f"Anomalies detected in slice {result['slice_id']}: {len(result['anomalies'])}")
@@ -533,3 +529,9 @@ async def example_streaming_pipeline():
 
 if __name__ == "__main__":
     asyncio.run(example_streaming_pipeline())
+
+        """Async operation to Collect results.
+
+            Args:
+                result: Operation result.
+            """

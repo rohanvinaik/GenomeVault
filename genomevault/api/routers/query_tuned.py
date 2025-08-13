@@ -85,6 +85,7 @@ async def get_genomic_encoder(enable_snp: bool = True) -> GenomicEncoder:
 @router.post("/panel", response_model=PanelQueryResponse)
 async def query_with_panel(
     request: SNPPanelQueryRequest,
+    """Query with panel."""
     encoder: GenomicEncoder = Depends(get_genomic_encoder),
     query_builder: BatchedPIRQueryBuilder = Depends(),
     proof_generator: ProofGenerator = Depends(),
@@ -202,6 +203,7 @@ async def query_with_panel(
 @router.post("/zoom", response_model=ZoomQueryResponse)
 async def query_with_zoom(
     request: ZoomQueryRequest,
+    """Query with zoom."""
     encoder: GenomicEncoder = Depends(get_genomic_encoder),
     query_builder: BatchedPIRQueryBuilder = Depends(),
     proof_generator: ProofGenerator = Depends(),
@@ -285,6 +287,7 @@ async def query_with_zoom(
 @router.get("/panel/info")
 async def get_panel_info(
     panel_name: str = Query(..., description="Panel name"),
+    """Get panel info."""
     encoder: GenomicEncoder = Depends(get_genomic_encoder),
 ):
     """Get information about available SNP panels"""

@@ -33,7 +33,11 @@ def run_command(cmd_list, cwd=None):
 
 
 class ChecklistValidator:
+    """Validator for Checklist validation rules."""
+
     def __init__(self, project_root):
+        """Initialize the instance.
+        Args:        project_root: Parameter value."""
         self.project_root = Path(project_root)
         self.results = {}
 
@@ -304,7 +308,7 @@ class ChecklistValidator:
 
     def run_all_validations(self):
         """Run all validation checks."""
-        print("Running checklist validation...")
+        pass  # Debug print removed
 
         # Run each validation
         self.validate_item_1_packaging()
@@ -329,12 +333,11 @@ class ChecklistValidator:
         print("✓ Validated package structure")
 
         self.validate_item_11_tests_coverage()
-        print("✓ Validated tests and coverage")
+        pass  # Debug print removed
 
         # Generate report
         json_path, md_path = self.generate_report()
 
-        print("\nValidation complete!")
         print(f"JSON report: {json_path}")
         print(f"Markdown report: {md_path}")
 
@@ -344,7 +347,6 @@ class ChecklistValidator:
         print(f"\nOverall: {passed}/{total} items passed")
 
         if passed < total:
-            print("\nFailed items:")
             for item_name, result in self.results.items():
                 if not result["passed"]:
                     print(f"  - {item_name.replace('_', ' ').title()}")

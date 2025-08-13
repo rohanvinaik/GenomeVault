@@ -9,15 +9,11 @@ _LEDGER = InMemoryLedger()
 
 
 def record_event(
-    """Record event.
-
-        Args:
-            kind: Kind.
-            subject_id: Subject id.
-            scope: Scope.
-            details: Details.
-        """
     kind: str, subject_id: str, scope: str, details: dict[str, Any] | None = None
+    """Record event.
+        Args:        kind: Operation mode or type.        subject_id: Parameter value.        scope: Parameter value.        details: List of items.
+        Returns:
+            None    """
 ) -> None:
     data = {
         "type": "data_event",
@@ -36,3 +32,12 @@ def list_events() -> list[dict]:
             Operation result.
         """
     return [e.__dict__ for e in _LEDGER.entries() if e.data.get("type") == "data_event"]
+
+    """Record event.
+
+        Args:
+            kind: Kind.
+            subject_id: Subject id.
+            scope: Scope.
+            details: Details.
+        """

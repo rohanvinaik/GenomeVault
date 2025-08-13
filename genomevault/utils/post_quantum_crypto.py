@@ -1,4 +1,5 @@
 """Post-quantum cryptography implementations for GenomeVault."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass

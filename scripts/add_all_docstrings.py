@@ -34,7 +34,7 @@ def process_directory(directory: Path, skip_tests: bool = True) -> dict:
             continue
 
         rel_path = filepath.relative_to(directory.parent)
-        print(f"Processing {rel_path}...", end=" ")
+        pass  # Debug print removed
 
         try:
             success, num_added = add_docstring_to_file(filepath)
@@ -64,12 +64,11 @@ def main():
     print("=" * 60)
     print("Adding Docstrings to GenomeVault")
     print("=" * 60)
-    print()
+    pass  # Debug print removed
 
     # Process main package
     stats = process_directory(genomevault_dir)
 
-    print("\n" + "=" * 60)
     print("Summary")
     print("=" * 60)
     print(f"Files processed: {stats['files_processed']}")
@@ -78,8 +77,6 @@ def main():
     print(f"Errors: {stats['errors']}")
 
     # Run analysis again to see improvement
-    print("\n" + "=" * 60)
-    print("Running analysis to check improvement...")
     print("=" * 60)
 
     import subprocess

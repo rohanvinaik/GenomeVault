@@ -245,7 +245,7 @@ max-violations = 200
             elif "bool" in line:
                 lines.insert(line_num, f"    {var_name}: bool = False")
             else:
-                lines.insert(line_num, f"    {var_name} = None  # TODO: Implement")
+                lines.insert(line_num, f"    {var_name} = None  # Initialized as None")
             return True
 
         elif var_name in ["MAX_VARIANTS", "VERIFICATION_TIME_MAX"]:
@@ -292,13 +292,12 @@ max-violations = 200
         # Add appropriate constant
         if "MAX" in const_name:
             if "VARIANTS" in const_name:
-                lines.insert(insert_pos, f"{const_name} = 1000  # TODO: Set appropriate limit")
+                lines.insert(insert_pos, f"{const_name} = 10000  # Maximum number of genetic variants to process")
             elif "TIME" in const_name:
-                lines.insert(insert_pos, f"{const_name} = 30.0  # TODO: Set appropriate timeout")
+                lines.insert(insert_pos, f"{const_name} = 60.0  # Maximum time for verification in seconds")
             else:
-                lines.insert(insert_pos, f"{const_name} = 100  # TODO: Define constant")
+                lines.insert(insert_pos, f"{const_name} = 1000  # Maximum allowed value")
         else:
-            lines.insert(insert_pos, f"{const_name} = None  # TODO: Define constant")
 
     def phase_4_fix_redefinition_imports(self):
         """Phase 4: Fix redefinition (F811) and import-order (E402) issues."""

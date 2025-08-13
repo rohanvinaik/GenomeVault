@@ -7,10 +7,17 @@ from genomevault.hypervector.encoding.orthogonal_projection import OrthogonalPro
 
 
 def cosine(a: np.ndarray, b: np.ndarray) -> float:
+    """Cosine.
+    Args:        a: Parameter value.        b: Parameter value.
+    Returns:
+        float"""
     return float(a @ b / (np.linalg.norm(a) * np.linalg.norm(b)))
 
 
 def test_dimension_and_angle_preservation():
+    """Test dimension and angle preservation.
+    Returns:
+        Result of the operation."""
     rng = np.random.default_rng(123)
     X = rng.standard_normal((4, 256))  # small for speed
     proj = OrthogonalProjection(n_components=64, seed=42).fit(n_features=256)
@@ -26,6 +33,9 @@ def test_dimension_and_angle_preservation():
 
 
 def test_invalid_params_and_usage():
+    """Test invalid params and usage.
+    Returns:
+        Result of the operation."""
     with pytest.raises(ProjectionError):
         _ = OrthogonalProjection(n_components=0)
 

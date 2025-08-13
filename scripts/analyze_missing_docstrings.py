@@ -14,6 +14,8 @@ class DocstringAnalyzer(ast.NodeVisitor):
     """Analyze Python files for missing docstrings."""
 
     def __init__(self, filepath: str):
+        """Initialize the instance.
+        Args:        filepath: Path to file or directory."""
         self.filepath = filepath
         self.missing_docstrings = []
         self.has_docstrings = []
@@ -134,19 +136,16 @@ def main():
     print(f"Total existing docstrings: {stats['total_has']}")
     print(f"Coverage: {stats['total_has']/(stats['total_has'] + stats['total_missing'])*100:.1f}%")
 
-    print("\n" + "-" * 40)
     print("Missing by type:")
     for item_type, counts in stats["by_type"].items():
         if counts["missing"] > 0:
             print(f"  {item_type}: {counts['missing']} missing, {counts['has']} present")
 
-    print("\n" + "-" * 40)
     print("Top 10 files with most missing docstrings:")
     sorted_files = sorted(stats["by_file"].items(), key=lambda x: x[1]["missing"], reverse=True)
     for filepath, info in sorted_files[:10]:
         print(f"  {filepath}: {info['missing']} missing")
 
-    print("\n" + "-" * 40)
     print("Priority files (public APIs) missing docstrings:")
     for filepath in stats["priority_files"][:10]:
         if filepath in stats["by_file"]:

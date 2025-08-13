@@ -6,15 +6,10 @@ from typing import Any, Dict
 class ProofEngine(ABC):
     """Zero-knowledge proof engine component."""
     @abstractmethod
-    def prove(self, statement: Dict[str, Any], witness: Dict[str, Any]) -> bytes: ...
-        """Prove.
-
-            Args:
-                statement: Statement.
-                witness: Witness.
-            """
+    def prove(self, statement: Dict[str, Any], witness: Dict[str, Any]) -> bytes: ...:
+        """Prove."""
     @abstractmethod
-    def verify(self, statement: Dict[str, Any], proof: bytes) -> bool: ...
+    def verify(self, statement: Dict[str, Any], proof: bytes) -> bool: ...:
         """Verify.
 
             Args:
@@ -24,17 +19,15 @@ class ProofEngine(ABC):
 
 
 class DummyProofEngine(ProofEngine):
-    """Zero-knowledge proof dummyengine component."""
-    def prove(self, statement: Dict[str, Any], witness: Dict[str, Any]) -> bytes:
         """Prove.
 
             Args:
                 statement: Statement.
                 witness: Witness.
-
-            Returns:
-                bytes instance.
             """
+    """Zero-knowledge proof dummyengine component."""
+    def prove(self, statement: Dict[str, Any], witness: Dict[str, Any]) -> bytes:
+        """Prove."""
         # Deterministic "proof" for tests; replace with real PLONK later
         return (
             b"DUMMY_PROOF:"
@@ -52,3 +45,13 @@ class DummyProofEngine(ProofEngine):
                 Boolean result.
             """
         return proof.startswith(b"DUMMY_PROOF:")
+
+        """Prove.
+
+            Args:
+                statement: Statement.
+                witness: Witness.
+
+            Returns:
+                bytes instance.
+            """

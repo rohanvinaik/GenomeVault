@@ -20,7 +20,6 @@ def test_zk_system():
     prover = Prover()
     verifier = Verifier()
 
-    print("\nGenerating variant presence proof...")
     variant_proof = prover.generate_proof(
         circuit_name="variant_presence",
         public_inputs={
@@ -38,12 +37,10 @@ def test_zk_system():
     print(f"  Proof ID: {variant_proof.proof_id}")
     print(f"  Proof size: {len(variant_proof.proof_data)} bytes")
 
-    print("\nVerifying proof...")
     result = verifier.verify_proof(variant_proof)
     print(f"  Verification result: {result.is_valid}")
     print(f"  Verification time: {result.verification_time*1000:.1f}ms")
 
-    print("\nGenerating diabetes risk proof...")
     diabetes_proof = prover.generate_proof(
         circuit_name="diabetes_risk_alert",
         public_inputs={
@@ -61,12 +58,10 @@ def test_zk_system():
     print(f"  Proof ID: {diabetes_proof.proof_id}")
     print(f"  Proof size: {len(diabetes_proof.proof_data)} bytes")
 
-    print("\nVerifying diabetes proof...")
     result = verifier.verify_proof(diabetes_proof)
     print(f"  Verification result: {result.is_valid}")
     print(f"  Verification time: {result.verification_time*1000:.1f}ms")
 
-    print("\n✓ ZK proof system working correctly!")
     return True
 
 

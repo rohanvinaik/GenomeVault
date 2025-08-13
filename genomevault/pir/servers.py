@@ -6,6 +6,10 @@ import numpy as np
 
 
 def _xor_bytes(a: bytes, b: bytes) -> bytes:
+    """xor bytes.
+    Args:        a: Parameter value.        b: Parameter value.
+    Returns:
+        bytes"""
     return bytes(x ^ y for x, y in zip(a, b))
 
 

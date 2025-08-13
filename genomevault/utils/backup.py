@@ -16,17 +16,24 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from datetime import datetime, timedelta
 from typing import Any
-import boto3
 import gzip
 import hashlib
 import json
 import os
-import schedule
 import threading
 import time
 
-from ..genomevault.utils.logging import audit_logger, get_logger
-from genomevault.utils.logging import get_logger
+try:
+    import boto3
+except ImportError:
+    boto3 = None
+
+try:
+    import schedule
+except ImportError:
+    schedule = None
+
+from genomevault.utils.logging import audit_logger, get_logger
 
 logger = get_logger(__name__)
 

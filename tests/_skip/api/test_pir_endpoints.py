@@ -8,6 +8,7 @@ client = TestClient(app)
 
 
 def test_pir_query_endpoint_returns_expected_item():
+    """Test pir query endpoint returns expected item."""
     # Dataset in router: [b"alpha", b"bravo", b"charlie", b"delta"]
     idx = 2
     exp = base64.b64encode(sha256(b"charlie").digest()).decode("ascii")

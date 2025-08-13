@@ -76,6 +76,10 @@ _DTYPE_MAP = {
 
 
 def _coerce_types(df: pd.DataFrame, contract: TableContract) -> pd.DataFrame:
+    """coerce types.
+    Args:        df: Parameter value.        contract: Parameter value.
+    Returns:
+        pd.DataFrame"""
     out = df.copy()
     for col in contract.columns:
         if col.name not in out.columns:
@@ -89,6 +93,10 @@ def _coerce_types(df: pd.DataFrame, contract: TableContract) -> pd.DataFrame:
 
 
 def _dtype_ok(series: pd.Series, spec: ColumnSpec) -> bool:
+    """dtype ok.
+    Args:        series: List of items.        spec: Parameter value.
+    Returns:
+        bool"""
     if spec.dtype == "datetime":
         return pd.api.types.is_datetime64_any_dtype(series)
     if spec.dtype == "string":

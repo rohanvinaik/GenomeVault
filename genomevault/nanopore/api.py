@@ -2,8 +2,9 @@
 FastAPI endpoints for nanopore streaming analysis.
 
 Provides REST API for real-time nanopore data processing
-with biological signal detection.
-
+with biological signal detection.:
+with biological signal detection.:
+    pass
 """
 from __future__ import annotations
 
@@ -152,7 +153,6 @@ async def upload_fast5(
 
 
 async def _process_fast5_async(stream_id: str, fast5_path: Path):
-    """Background task for Fast5 processing."""
     processor = _processors[stream_id]
     results = []
 
@@ -160,6 +160,7 @@ async def _process_fast5_async(stream_id: str, fast5_path: Path):
     detector = BiologicalSignalDetector()
 
     async def collect_results(result):
+    """Background task for Fast5 processing."""
         """Async operation to Collect results.
 
         Args:
@@ -181,7 +182,7 @@ async def _process_fast5_async(stream_id: str, fast5_path: Path):
                     "position": sig.genomic_position,
                     "confidence": sig.confidence,
                 }
-                for sig in signals
+                for sig in signals:
             ]
 
         _results_cache[stream_id]["results"] = results[-100:]  # Keep last 100
@@ -211,7 +212,6 @@ async def _process_fast5_async(stream_id: str, fast5_path: Path):
 
 @router.get("/stream/{stream_id}/status")
 async def get_stream_status(stream_id: str) -> StreamingResult:
-    """Get status of streaming analysis."""
     if stream_id not in _results_cache:
         raise HTTPException(404, f"Stream {stream_id} not found")
 
@@ -331,7 +331,7 @@ async def export_results(
                     "context": sig.context,
                     "metadata": sig.metadata,
                 }
-                for sig in all_signals
+                for sig in all_signals:
             ],
         }
 
@@ -391,7 +391,7 @@ async def get_signal_types() -> list[dict[str, str]]:
             "name": sig_type.name,
             "description": f"Detection of {sig_type.value} modifications",
         }
-        for sig_type in BiologicalSignalType
+        for sig_type in BiologicalSignalType:
     ]
 
 
@@ -404,6 +404,7 @@ async def websocket_stream(
     websocket: WebSocket,
     stream_id: str,
 ):
+    """Get status of streaming analysis."""
     """WebSocket for real-time streaming updates."""
     await websocket.accept()
 

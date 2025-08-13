@@ -13,6 +13,7 @@ from genomevault.clinical.calibration.metrics import (
 
 
 def test_auroc_perfect_and_random():
+    """Test auroc perfect and random."""
     y = np.array([0, 0, 1, 1])
     s_perfect = np.array([0.1, 0.2, 0.8, 0.9])
     s_random = np.array([0.1, 0.9, 0.2, 0.8])
@@ -22,6 +23,7 @@ def test_auroc_perfect_and_random():
 
 
 def test_ap_and_brier_and_calibration_metrics():
+    """Test ap and brier and calibration metrics."""
     rng = np.random.default_rng(0)
     y = rng.integers(0, 2, size=200)
     p = rng.random(200)
@@ -37,6 +39,7 @@ def test_ap_and_brier_and_calibration_metrics():
 
 
 def test_confusion_and_j():
+    """Test confusion and j."""
     y = np.array([0, 0, 1, 1])
     p = np.array([0.1, 0.2, 0.8, 0.9])
     stats = confusion_at(y, p, threshold=0.5)

@@ -1,11 +1,9 @@
-"""Multi Omics module."""
-
-"""
-Multi-omics integration circuits for zero-knowledge proofs.
+"""Multi-omics integration circuits for zero-knowledge proofs.
 
 This module implements circuits that integrate multiple omics data types
 while preserving privacy.
 """
+
 from __future__ import annotations
 
 from typing import Dict, List, cast

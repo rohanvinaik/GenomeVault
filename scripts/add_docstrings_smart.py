@@ -442,7 +442,6 @@ def main():
     for file_path in priority_files:
         full_path = root / file_path
         if full_path.exists():
-            print(f"Processing {file_path}...")
             success, num_added = add_docstring_to_file(full_path)
             if success:
                 if num_added > 0:

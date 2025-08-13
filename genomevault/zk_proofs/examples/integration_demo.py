@@ -117,7 +117,6 @@ def demonstrate_diabetes_risk_assessment():
     logger.info("Verification time: {result.verification_time*1000:.1f}ms")
 
     if result.is_valid:
-        print("\n✓ Alert triggered: Patient meets both glucose AND genetic risk criteria")
         logger.info("  (Without revealing actual values)")
 
     return proof, result

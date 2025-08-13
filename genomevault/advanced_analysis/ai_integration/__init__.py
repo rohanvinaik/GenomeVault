@@ -1,3 +1,1 @@
-"""Package initialization for ai_integration."""
-
-# Advanced analysis modules
+"""Module for ai_integration functionality."""

@@ -7,11 +7,9 @@ from genomevault.crypto.rng import secure_bytes, xof, xof_uint_mod
 def test_secure_rng():
     """Test secure random number generation and XOF."""
 
-    print("Testing Secure RNG and XOF")
     print("=" * 50)
 
     # Test secure_bytes
-    print("Testing secure_bytes:")
     random1 = secure_bytes(32)
     random2 = secure_bytes(32)
 
@@ -29,7 +27,7 @@ def test_secure_rng():
     print("  ✓ Handles zero-length request")
 
     # Test XOF (Extensible Output Function)
-    print("\nTesting XOF:")
+    pass  # Debug print removed
 
     label = b"TEST_LABEL"
     seed = b"test_seed_12345"
@@ -70,7 +68,7 @@ def test_secure_rng():
     print("  ✓ Length prefixing prevents concatenation attacks")
 
     # Test xof_uint_mod
-    print("\nTesting xof_uint_mod:")
+    pass  # Debug print removed
 
     modulus = 1000
     samples = []
@@ -109,8 +107,7 @@ def test_secure_rng():
     assert 0 <= large_val < large_mod
     print(f"  ✓ Handles large modulus (2^60): {large_val}")
 
-    print("\n" + "=" * 50)
-    print("All RNG/XOF tests passed!")
+    pass  # Debug print removed
 
 
 if __name__ == "__main__":

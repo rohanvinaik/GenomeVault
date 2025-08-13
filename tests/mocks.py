@@ -8,6 +8,8 @@ class MockPRSCalculator:
     """Mock implementation of PRSCalculator for tests."""
 
     def __init__(self, snp_weights: Dict[str, float] = None):
+        """Initialize the instance.
+        Args:        snp_weights: List of items."""
         self.snp_weights = snp_weights or {}
 
     def calculate_score(self, variants: List[Dict[str, Any]]) -> float:
@@ -23,6 +25,8 @@ class MockClinicalBiomarkerCircuit:
     """Mock implementation of ClinicalBiomarkerCircuit."""
 
     def __init__(self, threshold: float = 0.5):
+        """Initialize the instance.
+        Args:        threshold: Parameter value."""
         self.threshold = threshold
 
     def generate_proof(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
@@ -38,6 +42,7 @@ class MockDiabetesRiskCircuit:
     """Mock implementation of DiabetesRiskCircuit."""
 
     def __init__(self):
+        """Initialize the instance."""
         self.risk_threshold = 0.5
         self.confidence_level = 0.85
 
@@ -50,6 +55,9 @@ class MockProofData:
     """Mock implementation of ProofData."""
 
     def __init__(self, circuit_type: str, proof: str, public_inputs: Dict[str, Any]):
+        """Initialize the instance.
+            Args:        circuit_type: Parameter value.        proof: Parameter value.         \
+                public_inputs: List of items.    """
         self.circuit_type = circuit_type
         self.proof = proof
         self.public_inputs = public_inputs
@@ -82,6 +90,7 @@ class MockGovernanceLedger:
     """Mock implementation of governance ledger."""
 
     def __init__(self):
+        """Initialize the instance."""
         self.entries = []
 
     def add_entry(self, entry: Dict[str, Any]) -> str:

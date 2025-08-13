@@ -18,6 +18,7 @@ class HDCImplementationValidator:
     """Validates HDC implementation against specification"""
 
     def __init__(self):
+        """Initialize the instance."""
         self.project_root = Path(__file__).parent.parent
         self.results = {
             "timestamp": datetime.now().isoformat(),

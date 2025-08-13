@@ -26,6 +26,8 @@ class VectorEncodeRequest(BaseModel):
 
     @validator("data")
     def _validate_data(cls, v: dict[str, list[float]]):
+        """validate data.
+        Args:        v: Parameter value."""
         if not isinstance(v, dict) or not v:
             raise ValueError("data must be a non-empty dict[str, list[float]]")
         return v

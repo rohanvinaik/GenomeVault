@@ -40,6 +40,10 @@ class PIREngine:
         self.servers = [PIRServer(self.db) for _ in range(self.m)]
 
     def _random_masks(self, index: int) -> list[np.ndarray]:
+        """random masks.
+        Args:        index: Index position.
+        Returns:
+            list[np.ndarray]"""
         rng = np.random.default_rng()
         masks = []
         # Generate m-1 random masks of length n over GF(2)

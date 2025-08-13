@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from genomevault.governance.ledger import Ledger
+from genomevault.ledger.store import InMemoryLedger
 from genomevault.hypervector.engine import HypervectorEngine
 from genomevault.pir.client import PIRClient
 from genomevault.zk.engine import ProofEngine
@@ -27,6 +27,6 @@ def run_e2e(seed=123):
     qres = pir.query(index=0, key="demo")
     zk = ProofEngine()
     proof = zk.create_proof(payload={"shape": len(getattr(encoded, "vector", []))})
-    led = Ledger()
+    led = InMemoryLedger()
     tx = led.record(event="e2e_ok", meta={"proof_id": getattr(proof, "id", "N/A")})
     return {"encoded": encoded, "pir": qres, "proof": proof, "tx": tx}

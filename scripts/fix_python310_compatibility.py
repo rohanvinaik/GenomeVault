@@ -34,7 +34,7 @@ def check_needs_future_annotations(file_path: Path) -> bool:
             if "from __future__ import annotations" not in content:
                 return True
     except Exception as e:
-        print(f"Error checking {file_path}: {e}")
+        pass  # Debug print removed
 
     return False
 
@@ -138,7 +138,6 @@ def main():
 
     files_needing_fix = []
 
-    print("🔍 Checking Python files for 3.10 compatibility...")
     for file_path in python_files:
         if check_needs_future_annotations(file_path):
             files_needing_fix.append(file_path)

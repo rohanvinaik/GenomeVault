@@ -1,6 +1,55 @@
-"""
-GenomeVault API Package
+"""API endpoints and routers for api."""
 
-"""
+from .types import (
+    HealthCheckResult,
+    ComponentHealth,
+    EncodingMetadata,
+    SampleData,
+    BatchResult,
+    BatchMetadata,
+    Variant,
+    GenomicFeatures,
+    QueryParams,
+    SearchMetadata,
+    ConfusionMatrix,
+    CalibrationBin,
+    ClinicalMetrics,
+    ConsentRecord,
+    DataSubjectInfo,
+    HypervectorConfig,
+    StorageConfig,
+    IndexManifest,
+    ProofMetadata,
+    VerificationResult,
+    PerformanceMetrics,
+    ErrorDetail,
+    ErrorResponse,
+)
+from .errors import register_error_handlers
 
-__all__: list[str] = []
+__all__ = [
+    "BatchMetadata",
+    "BatchResult",
+    "CalibrationBin",
+    "ClinicalMetrics",
+    "ComponentHealth",
+    "ConfusionMatrix",
+    "ConsentRecord",
+    "DataSubjectInfo",
+    "EncodingMetadata",
+    "ErrorDetail",
+    "ErrorResponse",
+    "GenomicFeatures",
+    "HealthCheckResult",
+    "HypervectorConfig",
+    "IndexManifest",
+    "PerformanceMetrics",
+    "ProofMetadata",
+    "QueryParams",
+    "SampleData",
+    "SearchMetadata",
+    "StorageConfig",
+    "Variant",
+    "VerificationResult",
+    "register_error_handlers",
+]

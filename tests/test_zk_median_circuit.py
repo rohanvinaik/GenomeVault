@@ -256,7 +256,8 @@ class TestMedianVerifierCircuit:
         logger.info("-----|----------|-------------|------------")
         for r in results:
             logger.info(
-                f"{r['n']:4} | {r['gen_time_ms']:7.1f}ms | {r['verify_time_ms']:10.1f}ms | {r['proof_size_bytes']:9} B"
+                f"{r['n']:4} | {r['gen_time_ms']:7.1f}ms | {r['verify_time_ms']:10.1f}ms
+                    | {r['proof_size_bytes']:9} B"
             )
 
         # All proofs should be valid

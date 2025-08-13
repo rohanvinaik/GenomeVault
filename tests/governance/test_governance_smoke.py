@@ -4,6 +4,7 @@ from genomevault.governance.policy import PolicyEngine
 
 
 def test_policy_access_and_consent_smoke():
+    """Test policy access and consent smoke."""
     pol = PolicyEngine()
     acc = AccessController(policy_engine=pol)
     cons = ConsentRegistry()

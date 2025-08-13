@@ -124,6 +124,10 @@ class TestTimingAttacks:
 
         # Mock the server responses
         async def mock_query_server(server, query):
+            """Asynchronously mock query server.
+            Args:        server: Host name or address.        query: Parameter value.
+            Returns:
+                Result of the operation."""
             # Simulate variable processing time
             if query.target_index < 5000:
                 await asyncio.sleep(0.01)  # Fast
@@ -333,6 +337,10 @@ class TestErrorInjection:
 
         # Mock servers returning corrupted data
         async def mock_query_with_corruption(server, query):
+            """Asynchronously mock query with corruption.
+            Args:        server: Host name or address.        query: Parameter value.
+            Returns:
+                Result of the operation."""
             if server.server_id == "s2":
                 # Server 2 returns corrupted data
                 return Mock(response_vector=None)

@@ -8,6 +8,7 @@ from genomevault.federated.models import AggregateRequest, ModelUpdate
 
 
 def test_fedavg_weighted_average():
+    """Test fedavg weighted average."""
     agg = FedAvgAggregator()
     u1 = ModelUpdate(client_id="a", weights=[1.0, 1.0], num_examples=2)
     u2 = ModelUpdate(client_id="b", weights=[3.0, 5.0], num_examples=1)
@@ -20,6 +21,7 @@ def test_fedavg_weighted_average():
 
 
 def test_length_mismatch_raises():
+    """Test length mismatch raises."""
     agg = FedAvgAggregator()
     u1 = ModelUpdate(client_id="a", weights=[1.0, 1.0], num_examples=2)
     u2 = ModelUpdate(client_id="b", weights=[3.0], num_examples=1)
@@ -28,6 +30,7 @@ def test_length_mismatch_raises():
 
 
 def test_clip_norm_shrinks_large_updates():
+    """Test clip norm shrinks large updates."""
     agg = FedAvgAggregator()
     u1 = ModelUpdate(client_id="a", weights=[10.0, 0.0], num_examples=1)
     req = AggregateRequest(updates=[u1], clip_norm=1.0)

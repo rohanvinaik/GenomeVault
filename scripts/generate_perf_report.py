@@ -22,6 +22,8 @@ class PerformanceReportGenerator:
     """Generate performance reports from benchmark data"""
 
     def __init__(self, input_dir: Path, output_dir: Path):
+        """Initialize the instance.
+        Args:        input_dir: Parameter value.        output_dir: Parameter value."""
         self.input_dir = Path(input_dir)
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -337,10 +339,10 @@ class PerformanceReportGenerator:
 
     def generate_report(self):
         """Generate complete performance report"""
-        print("Loading benchmark data...")
+        pass  # Debug print removed
         all_data = self.load_benchmark_data()
 
-        print("Analyzing performance...")
+        pass  # Debug print removed
         summary = self.generate_summary_report(all_data)
 
         # Save summary JSON
@@ -348,10 +350,10 @@ class PerformanceReportGenerator:
         with open(summary_path, "w") as f:
             json.dump(summary, f, indent=2)
 
-        print("Generating plots...")
+        pass  # Debug print removed
         self.generate_hdc_plots(all_data["hdc"])
 
-        print("Generating HTML report...")
+        pass  # Debug print removed
         self.generate_html_report(summary)
 
         print(f"\nPerformance report generated in: {self.output_dir}")

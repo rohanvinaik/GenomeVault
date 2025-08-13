@@ -6,6 +6,7 @@ client = TestClient(app)
 
 
 def test_error_handler_returns_400_for_domain_error():
+    """Test error handler returns 400 for domain error."""
     r = client.post(
         "/vectors/encode",
         json={

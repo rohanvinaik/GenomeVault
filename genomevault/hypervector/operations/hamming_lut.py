@@ -3,8 +3,9 @@ Hamming Distance Look-Up Table (LUT) Core
 ==========================================
 
 A high-performance Hamming distance computation module using 16-bit lookup tables
-for accelerated similarity calculations in hyperdimensional computing (HDC).
-
+for accelerated similarity calculations in hyperdimensional computing (HDC).:
+for accelerated similarity calculations in hyperdimensional computing (HDC).:
+    pass
 This module provides:
 - Shared LUT generation for CPU, GPU, PULP, and FPGA platforms
 - Optimized popcount operations for binary hypervectors
@@ -28,7 +29,7 @@ _POPCOUNT_LUT_16: NDArray[np.uint8] | None = None
 
 
 def popcount_u64(arr: NDArray[np.uint64]) -> NDArray[np.uint64]:
-    """
+    """Popcount u64."""
     Compute popcount for each uint64 element in array.
 
     Args:
@@ -41,6 +42,7 @@ def popcount_u64(arr: NDArray[np.uint64]) -> NDArray[np.uint64]:
     result = np.zeros(arr.shape, dtype=np.uint64)
 
     for idx in np.ndindex(arr.shape):
+    """
         val = arr[idx]
         count = (
             lut[(val >> 0) & 0xFFFF]
@@ -55,7 +57,7 @@ def popcount_u64(arr: NDArray[np.uint64]) -> NDArray[np.uint64]:
 
 @jit(nopython=True, cache=True)
 def popcount_u64_fast(arr: NDArray[np.uint64], lut: NDArray[np.uint8]) -> NDArray[np.uint64]:
-    """
+    """Popcount u64 fast."""
     Fast JIT-compiled popcount for uint64 arrays.
 
     Args:
@@ -68,6 +70,7 @@ def popcount_u64_fast(arr: NDArray[np.uint64], lut: NDArray[np.uint8]) -> NDArra
     result = np.zeros(arr.shape, dtype=np.uint64)
 
     for i in range(arr.size):
+    """
         val = arr.flat[i]
         count = (
             lut[(val >> 0) & 0xFFFF]
@@ -81,7 +84,7 @@ def popcount_u64_fast(arr: NDArray[np.uint64], lut: NDArray[np.uint8]) -> NDArra
 
 
 def generate_popcount_lut() -> NDArray[np.uint8]:
-    """
+    """Generate popcount lut."""
     Generate a 16-bit popcount lookup table.
 
     Returns:
@@ -93,6 +96,7 @@ def generate_popcount_lut() -> NDArray[np.uint8]:
         # Generate LUT using builtin popcount
         _POPCOUNT_LUT_16 = np.zeros(1 << 16, dtype=np.uint8)
         for i in range(1 << 16):
+    """
             _POPCOUNT_LUT_16[i] = bin(i).count("1")
 
     return _POPCOUNT_LUT_16
@@ -100,7 +104,7 @@ def generate_popcount_lut() -> NDArray[np.uint8]:
 
 @functools.lru_cache(maxsize=1)
 def get_cuda_popcount_lut() -> None:
-    """Get CUDA device memory copy of popcount LUT."""
+    """Get cuda popcount lut."""
     lut = generate_popcount_lut()
     return cuda.to_device(lut)
 
@@ -123,6 +127,7 @@ def hamming_distance_cpu(vec1: VectorUInt64, vec2: VectorUInt64, lut: NDArray[np
 
     # Process vectors as 64-bit words
     for i in prange(len(vec1)):
+    """Get CUDA device memory copy of popcount LUT."""
         xor_val = vec1[i] ^ vec2[i]
 
         # Split 64-bit word into four 16-bit lookups
@@ -137,6 +142,7 @@ def hamming_distance_cpu(vec1: VectorUInt64, vec2: VectorUInt64, lut: NDArray[np
 @jit(nopython=True, parallel=True, cache=True)
 def hamming_distance_batch_cpu(
     vecs1: NDArray[np.uint64], vecs2: NDArray[np.uint64], lut: NDArray[np.uint8]
+    """Hamming distance batch cpu."""
 ) -> NDArray[np.int32]:
     """
     Compute pairwise Hamming distances for batches of vectors.
@@ -173,7 +179,7 @@ def hamming_distance_batch_cpu(
 # GPU-optimized implementations
 @cuda.jit
 def hamming_distance_kernel(vec1, vec2, lut, result) -> None:
-    """
+    """Hamming distance kernel."""
     CUDA kernel for computing Hamming distance using LUT.
 
     Args:
@@ -195,6 +201,7 @@ def hamming_distance_kernel(vec1, vec2, lut, result) -> None:
 
     local_sum = 0
     for i in range(start, end):
+    """
         xor_val = vec1[i] ^ vec2[i]
 
         # Four 16-bit lookups
@@ -221,7 +228,7 @@ def hamming_distance_kernel(vec1, vec2, lut, result) -> None:
 
 @cuda.jit
 def hamming_distance_batch_kernel(vecs1, vecs2, lut, distances) -> None:
-    """
+    """Hamming distance batch kernel."""
     CUDA kernel for batch Hamming distance computation.
 
     Each thread computes one distance value.
@@ -231,6 +238,7 @@ def hamming_distance_batch_kernel(vecs1, vecs2, lut, distances) -> None:
     if i < vecs1.shape[0] and j < vecs2.shape[0]:
         dist = 0
         for k in range(vecs1.shape[1]):
+    """
             xor_val = vecs1[i, k] ^ vecs2[j, k]
 
             # Four 16-bit lookups
@@ -248,7 +256,6 @@ class HammingLUT:
     """
 
     def __init__(self, use_gpu: bool = False):
-        """
         Initialize Hamming LUT calculator.
 
         Args:
@@ -298,6 +305,7 @@ class HammingLUT:
 
     def distance_batch(
         self, vecs1: NDArray[np.uint64], vecs2: NDArray[np.uint64]
+        """Distance batch."""
     ) -> NDArray[np.int32]:
         """
         Compute pairwise Hamming distances for batches of vectors.
@@ -357,6 +365,7 @@ const uint8_t POPCOUNT_LUT_16[65536] = {
 
     # Generate LUT values
     for i in range(0, len(lut), 16):
+        """
         values = ", ".join(str(lut[j]) for j in range(i, min(i + 16, len(lut))))
         code += f"    {values},\n"
 
@@ -389,7 +398,7 @@ uint32_t hamming_distance_pulp(const uint64_t* vec1, const uint64_t* vec2, size_
 # FPGA-specific implementation placeholder
 """
 def generate_fpga_verilog() -> str:
-    """
+    """Generate fpga verilog."""
     Generate Verilog code for FPGA LUT implementation.
 
     Returns:
@@ -427,7 +436,7 @@ module hamming_lut_core #(
     reg [31:0] accumulator;
 
     always @(posedge clk) begin
-        if (rst) begin
+        if (rst) begin:
             state <= IDLE;
             hamming_distance <= 0;
             done <= 0;
@@ -443,7 +452,7 @@ module hamming_lut_core #(
                 end
 
                 COMPUTE: begin
-                    if (word_idx < VECTOR_WIDTH/WORD_WIDTH) begin
+                    if (word_idx < VECTOR_WIDTH/WORD_WIDTH) begin:
                         // XOR current 64-bit word
                         wire [63:0] xor_word = vec1[word_idx*64 +: 64] ^
                                               vec2[word_idx*64 +: 64];
@@ -514,6 +523,7 @@ def hamming_weight_fast(arr: NDArray[np.uint64], lut: NDArray[np.uint8]) -> np.u
     total = np.uint64(0)
 
     for i in range(arr.size):
+    """
         val = arr.flat[i]
         total += (
             lut[(val >> 0) & 0xFFFF]
@@ -526,7 +536,7 @@ def hamming_weight_fast(arr: NDArray[np.uint64], lut: NDArray[np.uint8]) -> np.u
 
 
 def xor_popcount_u64(arr1: NDArray[np.uint64], arr2: NDArray[np.uint64]) -> NDArray[np.uint64]:
-    """
+    """Xor popcount u64."""
     Compute popcount of XOR between two uint64 arrays.
 
     Args:
@@ -543,6 +553,7 @@ def xor_popcount_u64(arr1: NDArray[np.uint64], arr2: NDArray[np.uint64]) -> NDAr
     result = np.zeros(arr1.shape, dtype=np.uint64)
 
     for idx in np.ndindex(arr1.shape):
+    """
         xor_val = arr1[idx] ^ arr2[idx]
         count = (
             lut[(xor_val >> 0) & 0xFFFF]
@@ -557,7 +568,7 @@ def xor_popcount_u64(arr1: NDArray[np.uint64], arr2: NDArray[np.uint64]) -> NDAr
 
 # Export convenience functions
 def export_platform_implementations(output_dir: str) -> None:
-    """
+    """Export platform implementations."""
     Export platform-specific implementations to files.
 
     Args:
@@ -578,3 +589,5 @@ def export_platform_implementations(output_dir: str) -> None:
     with open(os.path.join(output_dir, "popcount_lut.hex"), "w") as f:
         for val in lut:
             f.write(f"{val:02x}\n")
+
+    """

@@ -214,6 +214,7 @@ async def list_vaults(address: str, status: str | None = None):
 @router.post("/transfer")
 async def transfer_credits(
     to_address: str,
+    """Transfer credits."""
     amount: int = Field(..., gt=0),
     from_address: str = "0x123...",  # Would come from auth
 ):
@@ -249,6 +250,7 @@ async def transfer_credits(
 @router.get("/earnings/estimate")
 async def estimate_earnings(
     node_type: str = "light", is_signatory: bool = False, blocks: int = 1000
+    """Estimate earnings."""
 ):
     """Estimate credit earnings for a node configuration"""
     # Base credits per block

@@ -3,6 +3,9 @@ import re
 
 
 def test_no_bare_excepts():
+    """Test no bare excepts.
+    Returns:
+        Result of the operation."""
     root = Path(__file__).resolve().parents[2]
     offenders = []
     for p in root.rglob("*.py"):

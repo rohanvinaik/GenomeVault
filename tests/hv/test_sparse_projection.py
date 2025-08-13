@@ -7,6 +7,9 @@ from genomevault.hypervector.encoding.sparse_projection import SparseRandomProje
 
 
 def test_dimensions_and_determinism():
+    """Test dimensions and determinism.
+    Returns:
+        Result of the operation."""
     rng = np.random.default_rng(123)
     X = rng.standard_normal((8, 64))  # small to keep tests fast
 
@@ -25,6 +28,9 @@ def test_dimensions_and_determinism():
 
 
 def test_invalid_params_and_usage():
+    """Test invalid params and usage.
+    Returns:
+        Result of the operation."""
     with pytest.raises(ProjectionError):
         _ = SparseRandomProjection(n_components=0)
 

@@ -6,6 +6,8 @@ from genomevault.federated.aggregate import aggregate
 
 
 class TestFederated:
+    """TestFederated class implementation."""
+
     def test_aggregate_empty(self):
         """Test aggregation of empty list."""
         result = aggregate([])

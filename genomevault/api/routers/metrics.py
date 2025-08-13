@@ -2,6 +2,7 @@
 Prometheus metrics endpoint for monitoring.
 
 """
+
 from typing import Any
 
 from fastapi import APIRouter, Response

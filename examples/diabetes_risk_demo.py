@@ -12,6 +12,9 @@ logger = get_logger(__name__)
 
 
 async def main():
+    """Asynchronously main.
+    Returns:
+        Result of the operation."""
     # Initialize ZK system
     zk_system = GenomeVaultZKSystem(max_workers=2)
     await zk_system.start()

@@ -153,6 +153,10 @@ class EncodingRequest(BaseModel):
 
         # Sort by chromosome, position, ref, alt for deterministic ordering
         def sort_key(variant: str) -> tuple:
+            """Sort key.
+            Args:        variant: Parameter value.
+            Returns:
+                tuple"""
             match = re.match(
                 r"^chr([1-9]|1[0-9]|2[0-2]|X|Y|M|MT):(\d+)\s+([ACGT]+)>([ACGT]+)$",
                 variant,

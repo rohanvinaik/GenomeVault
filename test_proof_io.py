@@ -9,11 +9,10 @@ import hashlib
 def test_proof_io():
     """Test proof compression and decompression."""
 
-    print("Testing Proof I/O Compression")
     print("=" * 50)
 
     # Test basic compression/decompression
-    print("Testing basic compression:")
+    pass  # Debug print removed
 
     # Create a simple proof
     simple_proof = b"This is a test proof " * 10
@@ -33,7 +32,7 @@ def test_proof_io():
     print("  ✓ Decompresses to original")
 
     # Test with typical proof data
-    print("\nTesting with typical proof components:")
+    pass  # Debug print removed
 
     proof_components = {
         "commitment": hashlib.sha256(b"commitment").digest(),
@@ -56,7 +55,7 @@ def test_proof_io():
     print("  ✓ Proof components round-trip correctly")
 
     # Test with highly compressible data
-    print("\nTesting with highly compressible data:")
+    pass  # Debug print removed
 
     repetitive = b"A" * 10000
     compressed_rep = compress_proof(repetitive)
@@ -67,7 +66,7 @@ def test_proof_io():
     print("  ✓ Highly compressible data works")
 
     # Test with random (incompressible) data
-    print("\nTesting with random data:")
+    pass  # Debug print removed
 
     random_data = hashlib.sha256(b"seed").digest() * 100  # 3.2KB of hashes
     compressed_rand = compress_proof(random_data)
@@ -78,7 +77,7 @@ def test_proof_io():
     print("  ✓ Random data works (low compression expected)")
 
     # Test empty proof
-    print("\nTesting edge cases:")
+    pass  # Debug print removed
 
     empty = b""
     compressed_empty = compress_proof(empty)
@@ -95,7 +94,7 @@ def test_proof_io():
     print("  ✓ 1MB proof preserves all data (NO TRUNCATION)")
 
     # Test version checking
-    print("\nTesting format validation:")
+    pass  # Debug print removed
 
     # Bad magic
     bad_magic = b"BADMAGIC" + compressed[7:]
@@ -122,7 +121,7 @@ def test_proof_io():
         print(f"  ✓ Size mismatch detected: {e}")
 
     # Test format details
-    print("\nTesting format structure:")
+    pass  # Debug print removed
 
     test_data = b"test"
     test_compressed = compress_proof(test_data)
@@ -135,7 +134,7 @@ def test_proof_io():
     print(f"  Magic: {magic}")
     print(f"  Version: {version}")
     print(f"  Original size field: {orig_size}")
-    print(f"  Actual original size: {len(test_data)}")
+    pass  # Debug print removed
 
     assert magic == b"CPROOF\0"
     assert version == 1
@@ -143,7 +142,7 @@ def test_proof_io():
     print("  ✓ Format structure correct")
 
     # Demonstrate NO TRUNCATION
-    print("\nDemonstrating NO TRUNCATION:")
+    pass  # Debug print removed
 
     # Create a proof with critical data at the end
     critical_proof = b"START" + b"\x00" * 10000 + b"CRITICAL_DATA_AT_END"
@@ -159,8 +158,7 @@ def test_proof_io():
     print("  ✗ Truncation would lose critical data")
     print("  ✓ Compression preserves ALL data")
 
-    print("\n" + "=" * 50)
-    print("All proof I/O tests passed!")
+    pass  # Debug print removed
 
 
 if __name__ == "__main__":

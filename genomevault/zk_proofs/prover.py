@@ -65,6 +65,7 @@ class CircuitFactory:
     @staticmethod
     def create_genomic_circuit(
         name: str,
+        """Create genomic circuit."""
         constraints: int,
         public_inputs: list[str],
         private_inputs: list[str] | None = None,
@@ -286,6 +287,7 @@ class Prover:
     def generate_proof(
         self,
         circuit_name: str,
+        """Generate proof."""
         public_inputs: dict[str, Any],
         private_inputs: dict[str, Any],
     ) -> Proof:
@@ -414,7 +416,8 @@ class Prover:
         """Simulate variant presence proof."""
         # Verify variant is in commitment
         variant_data = private_inputs["variant_data"]
-        variant_str = f"{variant_data['chr']}:{variant_data['pos']}:{variant_data['ref']}:{variant_data['alt']}"
+        variant_str = f"{variant_data['chr']}:{variant_data['pos']}:{variant_data['ref'] \
+            }:{variant_data['alt']}"
         variant_hash = hashlib.sha256(variant_str.encode()).hexdigest()
 
         # Check hash matches public input

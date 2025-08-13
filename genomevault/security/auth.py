@@ -9,6 +9,9 @@ _HEADER = "X-API-Key"
 
 
 def _load_keys() -> list[str]:
+    """load keys.
+    Returns:
+        list[str]"""
     raw = os.getenv("GV_API_KEYS", "").strip()
     if not raw:
         return []

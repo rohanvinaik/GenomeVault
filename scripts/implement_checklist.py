@@ -5,6 +5,7 @@ Run this to execute all checklist items in order.
 """
 
 import json
+import logging
 import os
 import shutil
 import subprocess
@@ -12,9 +13,20 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+# Configure logging
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+logger = logging.getLogger(__name__)
+
 
 class ChecklistImplementer:
+    """ChecklistImplementer class implementation."""
+
     def __init__(self, project_root):
+        """Initialize the ChecklistImplementer.
+
+        Args:
+            project_root: Path to the project root directory.
+        """
         self.project_root = Path(project_root)
         self.log_file = self.project_root / "checklist_implementation.log"
         self.backup_dir = (
@@ -67,12 +79,10 @@ class ChecklistImplementer:
                 self.log(f"Output: {result.stdout[:200]}...")
             return True
         except subprocess.CalledProcessError as e:
-            logger.exception("Unhandled exception")
             self.log(f"Error: {e}")
             if e.stderr:
                 self.log(f"Stderr: {e.stderr}")
             return False
-            raise
 
     def step_5_convert_prints(self):
         """Step 5: Convert print statements to logging."""
@@ -296,7 +306,6 @@ def main():
     implementer = ChecklistImplementer(project_root)
 
     # Confirm before proceeding
-    print("This script will implement the genomevault audit checklist.")
     print(f"Project root: {project_root}")
     print("\nThis will:")
     print("- Create a backup of current configuration files")
@@ -304,16 +313,13 @@ def main():
     print("- Install development dependencies")
     print("- Analyze and report on code quality issues")
     print("- Add missing __init__.py files")
-    print("- Extract TODO items")
     print("\nPress Enter to continue or Ctrl+C to cancel...")
 
     try:
         input()
     except KeyboardInterrupt:
-        logger.exception("Unhandled exception")
-        print("\nCancelled.")
+        print("\nCancelled by user")
         sys.exit(0)
-        raise
 
     implementer.implement_checklist()
 

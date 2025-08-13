@@ -9,6 +9,7 @@ from genomevault.clinical.calibration.metrics import brier_score
 
 
 def test_platt_reduces_brier_on_synthetic():
+    """Test platt reduces brier on synthetic."""
     rng = np.random.default_rng(0)
     y = rng.integers(0, 2, size=200)
     # create poorly calibrated scores: square of true probs (shrinks extremes)
@@ -22,6 +23,7 @@ def test_platt_reduces_brier_on_synthetic():
 
 
 def test_isotonic_monotone_and_reasonable():
+    """Test isotonic monotone and reasonable."""
     x = np.array([0.1, 0.4, 0.3, 0.8, 0.7])
     y = np.array([0, 0, 1, 1, 1])
     iso = IsotonicCalibrator().fit(y, x)
@@ -32,6 +34,7 @@ def test_isotonic_monotone_and_reasonable():
 
 
 def test_fit_and_calibrate_dispatch():
+    """Test fit and calibrate dispatch."""
     x = np.array([0.2, 0.9])
     y = np.array([0, 1])
     p, cal = fit_and_calibrate(y, x, method="platt")

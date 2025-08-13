@@ -186,6 +186,9 @@ class TestDiabetesPilot:
         """Test that risk calculation completes within performance bounds"""
 
         def calculate():
+            """Calculate.
+            Returns:
+                Result of the operation."""
             return risk_calculator.assess_combined_risk(
                 genetic_data=sample_genetic_data, clinical_data=sample_clinical_data
             )

@@ -9,12 +9,16 @@ GOLDEN_PATH = TESTS_DIR / "hv" / "golden" / "vec_100d_seed123.npy"
 
 
 def _make_input():
+    """make input."""
     x = np.zeros((1, 50), dtype=np.float64)
     x[0, 0] = 1.0
     return x
 
 
 def test_golden_vector_regression():
+    """Test golden vector regression.
+    Returns:
+        Result of the operation."""
     proj = SparseRandomProjection(n_components=100, density=0.1, seed=123).fit(n_features=50)
     x = _make_input()
     y = proj.transform(x)[0]

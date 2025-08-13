@@ -10,13 +10,14 @@ logger = get_logger(__name__)
 
 
 def main():
+    """Main.
+    Returns:
+        Result of the operation."""
     ap = argparse.ArgumentParser()
     ap.add_argument("--input", required=True, help="Path to input CSV")
     ap.add_argument("--contract", default=None, help="Path to contract JSON (optional)")
     ap.add_argument("--out", default=None, help="Optional path to write normalized CSV")
-    ap.add_argument(
-        "--report", default="etl_report.json", help="Where to write the report JSON"
-    )
+    ap.add_argument("--report", default="etl_report.json", help="Where to write the report JSON")
     args = ap.parse_args()
 
     res = run_etl(args.input, contract_path=args.contract, out_csv=args.out)

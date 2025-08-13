@@ -83,35 +83,32 @@ This directory contains various implementation and validation reports for the Ge
 
 def main():
     """Main organization function."""
-    print("📚 Organizing documentation files...")
+    pass  # Debug print removed
     print(f"   Working in: {ROOT_DIR}")
-    print()
+    pass  # Debug print removed
 
     # Create reports directory
     reports_dir = create_reports_dir()
     print(f"   Reports directory: {reports_dir}")
-    print()
+    pass  # Debug print removed
 
     # Move report files
     moved_count = 0
-    print("📦 Moving implementation reports to docs/reports/...")
+    pass  # Debug print removed
     for file_name in MOVE_TO_REPORTS:
         if move_report_file(file_name, reports_dir):
             moved_count += 1
 
     # Create index file
     if moved_count > 0:
-        print()
         create_reports_index(reports_dir)
 
     # Summary
-    print()
     print("✨ Documentation organization complete!")
     print(f"   • Moved {moved_count} reports to docs/reports/")
     print(f"   • Kept {len(KEEP_IN_ROOT)} core docs in root")
 
     # Show what's left in root
-    print()
     print("📄 Documentation files remaining in root:")
     for doc in KEEP_IN_ROOT:
         if (ROOT_DIR / doc).exists():
