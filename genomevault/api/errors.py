@@ -1,4 +1,5 @@
 """Errors module."""
+
 from __future__ import annotations
 
 from fastapi import FastAPI, Request
@@ -6,6 +7,7 @@ from fastapi.responses import JSONResponse
 import uuid
 
 from genomevault.exceptions import GVError
+
 
 async def gv_error_handler(request: Request, exc: GVError) -> JSONResponse:
     """Global exception handler for GV errors that returns consistent JSON."""

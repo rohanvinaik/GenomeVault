@@ -1,7 +1,9 @@
 """
 Unit tests for the refactored clinical circuits.
 """
+
 import unittest
+
 try:
     from tests.mocks import (
         MockClinicalBiomarkerCircuit as ClinicalBiomarkerCircuit,
@@ -11,9 +13,10 @@ try:
         verify_proof,
     )
     from enum import Enum
-    
+
     class CircuitType(Enum):
         """Mock CircuitType enum."""
+
         CLINICAL_BIOMARKER = "clinical_biomarker"
         DIABETES_RISK = "diabetes_risk"
 

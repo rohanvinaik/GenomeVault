@@ -4,6 +4,7 @@ Key management utilities for GenomeVault.
 This module provides utilities for managing cryptographic keys,
 including key generation, storage, rotation, and derivation.
 """
+
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ed25519
@@ -16,7 +17,6 @@ import json
 import os
 
 from genomevault.crypto.types import (
-
     PrivateKey,
     PublicKey,
     KeyBytes,

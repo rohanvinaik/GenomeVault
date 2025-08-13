@@ -4,6 +4,7 @@ import numpy as np
 
 from genomevault.hdc.core import D, bundle, encode, similarity
 
+
 class TestHDC:
     def test_encode_basic(self):
         """Test basic encoding functionality."""

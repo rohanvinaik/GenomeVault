@@ -1,6 +1,7 @@
 """
 Comprehensive tests for enhanced PIR implementation.
 """
+
 import asyncio
 import json
 import pytest
@@ -9,7 +10,6 @@ import struct
 import numpy as np
 
 from genomevault.pir.server.enhanced_pir_server import (
-
     EnhancedPIRServer,
     GenomicRegion,
     OptimizedPIRDatabase,
@@ -162,9 +162,7 @@ class TestEnhancedPIRServer:
         query = {
             "query_id": "test_query_001",
             "client_id": "client_123",
-            "query_vectors": [
-                np.zeros(1000, dtype=np.uint8)
-            ],  # All zeros for simplicity
+            "query_vectors": [np.zeros(1000, dtype=np.uint8)],  # All zeros for simplicity
             "query_type": "genomic",
             "parameters": {"regions": [{"chromosome": "chr1", "position": 1000000}]},
         }
@@ -361,9 +359,7 @@ class TestPIRIntegration:
             servers.append(server)
 
         # Simulate client creating distributed query
-        query_vectors = [
-            np.random.binomial(1, 0.001, 100).astype(np.uint8) for _ in range(3)
-        ]
+        query_vectors = [np.random.binomial(1, 0.001, 100).astype(np.uint8) for _ in range(3)]
 
         # Each server processes its part
         responses = []

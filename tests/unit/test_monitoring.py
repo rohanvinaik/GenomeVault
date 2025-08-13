@@ -1,13 +1,13 @@
 """
 Tests for monitoring and logging infrastructure.
 """
+
 from datetime import datetime
 import pytest
 import time
 
 from genomevault.utils.backup import BackupManager
 from genomevault.utils.logging import (
-
     audit_logger,
     filter_sensitive_data,
     get_logger,
@@ -317,9 +317,7 @@ class TestComplianceMonitor:
             "user_id": "doctor123",
         }
 
-        is_compliant = await compliance_monitor.check_hipaa_compliance(
-            "data_access", context
-        )
+        is_compliant = await compliance_monitor.check_hipaa_compliance("data_access", context)
 
         assert is_compliant is False  # Accessed unnecessary fields
 
@@ -333,9 +331,7 @@ class TestComplianceMonitor:
             "data_type": "genomic",
         }
 
-        is_compliant = await compliance_monitor.check_gdpr_compliance(
-            "data_processing", context
-        )
+        is_compliant = await compliance_monitor.check_gdpr_compliance("data_processing", context)
 
         assert is_compliant is False  # No consent
 

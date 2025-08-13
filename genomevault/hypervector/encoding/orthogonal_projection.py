@@ -1,10 +1,12 @@
 """Orthogonal Projection module."""
+
 from __future__ import annotations
 
 import numpy as np
 
 from genomevault.core.exceptions import ProjectionError
 from genomevault.hypervector.types import MatrixF32
+
 
 class OrthogonalProjection:
     """Orthogonal projection preserving inner products/angles approximately."""

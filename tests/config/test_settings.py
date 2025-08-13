@@ -1,5 +1,6 @@
 from genomevault.config.settings import settings
 
+
 def test_settings_defaults():
     assert settings.api_port == 8000
     assert settings.log_level in ("INFO", "DEBUG", "WARNING", "ERROR", "CRITICAL")

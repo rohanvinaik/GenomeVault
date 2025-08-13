@@ -1,4 +1,5 @@
 """Rate Limit module."""
+
 from __future__ import annotations
 
 from fastapi import Request
@@ -6,6 +7,8 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import PlainTextResponse
 import os
 import time
+
+
 class TokenBucket:
     """TokenBucket implementation."""
 

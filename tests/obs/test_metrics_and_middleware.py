@@ -2,6 +2,7 @@ from fastapi.testclient import TestClient
 
 from genomevault.api.app import app
 
+
 def test_metrics_endpoint_exists():
     client = TestClient(app)
     r = client.get("/metrics")

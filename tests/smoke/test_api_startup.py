@@ -2,6 +2,7 @@ from fastapi.testclient import TestClient
 
 from genomevault.api.main import app
 
+
 def test_health_and_status():
     with TestClient(app) as client:
         r = client.get("/health")

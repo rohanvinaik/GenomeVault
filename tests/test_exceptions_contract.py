@@ -1,7 +1,6 @@
 import pytest
 
 from genomevault.exceptions import (
-
     GVError,
     GVInputError,
     GVNotFound,

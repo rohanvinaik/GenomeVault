@@ -13,10 +13,12 @@ logger.debug("Starting the application")
 filename = "test.txt"  # Define variable before use
 logger.debug(f"Processing file: {filename}")
 
+
 # Example 2: Bare except clause
 def risky_operation():
     """Example risky operation."""
     raise ValueError("Example error")
+
 
 try:
     risky_operation()
@@ -25,10 +27,12 @@ except Exception:
     logger.debug("Something went wrong")
     raise
 
+
 # Example 3: Broad exception handling
 def another_operation():
     """Example operation."""
     pass
+
 
 try:
     another_operation()
@@ -45,10 +49,12 @@ def process_data(self, data, unused_param, another_unused):
 # Example 5: Star import
 from os import *
 
+
 # Example 6: Top-level function call
 def initialize_something():
     """Initialize example."""
     pass
+
 
 initialize_something()
 

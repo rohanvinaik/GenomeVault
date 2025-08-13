@@ -5,6 +5,7 @@ This module implements privacy budget tracking and verification
 for differentially private model training in GenomeVault.
 
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

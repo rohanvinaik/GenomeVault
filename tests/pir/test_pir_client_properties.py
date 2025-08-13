@@ -2,6 +2,7 @@ import numpy as np
 
 from genomevault.pir.client import PIRClient
 
+
 def test_query_decode_roundtrip_minimal():
     tbl = np.arange(32).reshape(8, 4).tolist()
     cli = PIRClient()

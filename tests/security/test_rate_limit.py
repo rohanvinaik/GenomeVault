@@ -2,6 +2,7 @@ from fastapi.testclient import TestClient
 
 from genomevault.api.app import app
 
+
 def test_rate_limit_exceeds_returns_429(monkeypatch):
     monkeypatch.setenv("RATE_LIMIT_RPS", "1.0")
     monkeypatch.setenv("RATE_LIMIT_BURST", "2")

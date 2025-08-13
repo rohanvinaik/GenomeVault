@@ -3,6 +3,7 @@ Zero-Knowledge Proof Generation Module
 Uses real ZK circuits for proof generation and verification
 
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

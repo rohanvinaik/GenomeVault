@@ -1,4 +1,5 @@
 """Compression module."""
+
 """
 GenomeVault Compression System - Multi-tier implementation
 

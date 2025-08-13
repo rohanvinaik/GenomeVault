@@ -2,6 +2,7 @@ import numpy as np
 
 from genomevault.nanopore.streaming import NanoporeSlice, NanoporeStreamProcessor
 
+
 def generate_signal(n_slices=8, length=256, seed=11):
     rng = np.random.default_rng(seed)
     for i in range(n_slices):

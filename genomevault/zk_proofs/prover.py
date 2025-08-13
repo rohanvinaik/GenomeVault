@@ -3,6 +3,7 @@ Zero-knowledge proof generation using PLONK templates.
 Implements specialized circuits for genomic privacy.
 
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -12,7 +13,6 @@ import json
 import time
 
 from genomevault.crypto import (
-
     H,
     hexH,
     TAGS,

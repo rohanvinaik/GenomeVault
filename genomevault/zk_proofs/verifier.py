@@ -1,7 +1,9 @@
 """Verifier module."""
+
 from __future__ import annotations
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -555,7 +557,6 @@ class Verifier:
 # pytest.skip("outdated example", allow_module_level=True)
 
 if __name__ == "__main__":
-
     from .prover import Prover
 
     # Initialize prover and verifier

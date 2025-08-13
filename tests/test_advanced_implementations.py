@@ -1,4 +1,5 @@
 """Advanced implementation integration tests."""
+
 import os
 import sys
 

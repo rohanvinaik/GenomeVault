@@ -5,6 +5,7 @@ This implementation demonstrates the catalytic computing concept more explicitly
 by maintaining a write log of all modifications, allowing perfect restoration
 while being more space-efficient for sparse modifications.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

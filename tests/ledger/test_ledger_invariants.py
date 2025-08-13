@@ -1,5 +1,6 @@
 from genomevault.ledger.store import Ledger
 
+
 def test_append_only_and_hash_chain():
     led = Ledger()
     e1 = led.append({"event": "a", "meta": {}})

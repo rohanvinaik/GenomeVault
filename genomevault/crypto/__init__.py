@@ -1,6 +1,6 @@
 """Package initialization for crypto."""
-from genomevault.crypto.types import (
 
+from genomevault.crypto.types import (
     PublicKey,
     PrivateKey,
     Ed25519Private,

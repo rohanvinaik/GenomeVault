@@ -7,6 +7,7 @@ Implements the multi-resolution hypervector system as specified:
 - High-level vectors: 20,000 dimensions
 
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

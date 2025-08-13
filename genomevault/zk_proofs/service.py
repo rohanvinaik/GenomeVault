@@ -18,18 +18,18 @@ class ProofRequest:
     """Request for proof generation."""
 
     def __init__(
-        """Initialize instance.
-
-            Args:
-                proof_type: Zero-knowledge proof.
-                private_inputs: Private inputs.
-                public_inputs: Public inputs.
-            """
         self,
         proof_type: str,
         private_inputs: dict[str, Any],
         public_inputs: dict[str, Any],
     ):
+        """Initialize instance.
+
+        Args:
+            proof_type: Zero-knowledge proof.
+            private_inputs: Private inputs.
+            public_inputs: Public inputs.
+        """
         self.proof_type = proof_type
         self.private_inputs = private_inputs
         self.public_inputs = public_inputs

@@ -4,6 +4,7 @@ Example configuration router demonstrating PATCH patterns.
 This router shows best practices for handling partial updates
 using Optional fields in Pydantic models.
 """
+
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, Field
 from typing import Any, Dict, Optional

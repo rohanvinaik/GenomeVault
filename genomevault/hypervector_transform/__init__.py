@@ -10,8 +10,8 @@ Key components:
 - HypervectorRegistry: Version management and reproducibility
 - HDC API: RESTful endpoints for encoding services
 """
-from .binding_operations import (
 
+from .binding_operations import (
     BindingOperations,  # Legacy compatibility
     BindingType,
     HypervectorBinder,

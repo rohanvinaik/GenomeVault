@@ -1,4 +1,5 @@
 """Vectors module."""
+
 from __future__ import annotations
 
 from enum import Enum
@@ -6,6 +7,7 @@ from pydantic import BaseModel, Field, validator
 from typing import Any, Optional, Dict
 
 from genomevault.api.utils import dict_for_update as _dict_for_update
+
 
 class VectorDimension(str, Enum):
     """VectorDimension implementation."""

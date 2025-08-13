@@ -5,10 +5,12 @@ This shows that the variant membership proof now properly:
 1. Uses direction bits instead of assuming parity
 2. Verifies against the expected root
 """
+
 from typing import List, Tuple
 import hashlib
 import os
 import sys
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
 
 # Import directly to avoid module initialization issues

@@ -1,10 +1,10 @@
 """Exceptions module."""
+
 from __future__ import annotations
 
 from typing import Any, Dict, Type
 
 from .core.exceptions import (
-
     EncodingError,
     GVComputeError,
     GVConfigError,

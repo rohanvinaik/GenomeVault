@@ -3,6 +3,7 @@ Federated Learning Coordinator for privacy-preserving multi-institutional resear
 Implements secure aggregation with differential privacy.
 
 """
+
 from __future__ import annotations
 
 from collections.abc import Callable
@@ -18,7 +19,6 @@ import numpy as np
 
 from genomevault.utils.config import get_config
 from genomevault.utils.logging import (
-
     audit_logger,
     get_logger,
     log_operation,

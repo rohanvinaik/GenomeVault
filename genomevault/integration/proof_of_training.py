@@ -5,6 +5,7 @@ This module integrates PoT and ZKML capabilities into the existing
 GenomeVault infrastructure.
 
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -14,7 +15,6 @@ import json
 import time
 
 from genomevault.advanced_analysis.federated_learning.model_lineage import (
-
     FederatedModelLineage,
 )
 from genomevault.blockchain.contracts.training_attestation import (
@@ -507,7 +507,9 @@ class ProofOfTrainingIntegration:
             if hasattr(model, "parameters"):  # PyTorch
                 params = []
                 for p in model.parameters():
-                    param_array: NDArray[np.float32] = cast(NDArray[np.float32], p.detach().cpu().numpy())
+                    param_array: NDArray[np.float32] = cast(
+                        NDArray[np.float32], p.detach().cpu().numpy()
+                    )
                     params.extend(param_array.flatten()[:100])
             elif hasattr(model, "get_weights"):  # TensorFlow
                 weights = model.get_weights()

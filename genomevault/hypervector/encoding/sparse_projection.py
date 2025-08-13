@@ -1,4 +1,5 @@
 """Sparse Projection module."""
+
 from __future__ import annotations
 
 from typing import cast
@@ -8,6 +9,7 @@ import numpy as np
 import torch
 
 from genomevault.hypervector.types import MatrixF32
+
 
 def sparse_random_matrix(rows: int, cols: int, sparsity: float = 0.1) -> torch.Tensor:
     """Achlioptas sparse projection in {-1,0,+1}, scaled."""

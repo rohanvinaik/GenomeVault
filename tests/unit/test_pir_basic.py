@@ -1,6 +1,7 @@
 """
 Test suite for PIR implementation
 """
+
 from unittest.mock import Mock, patch
 import pytest
 
@@ -9,6 +10,7 @@ import numpy as np
 from genomevault.core.exceptions import PIRError
 from genomevault.pir.client.query_builder import PIRClient, PIRQuery
 from genomevault.pir.server.shard_manager import PIRServer, ShardConfig
+
 
 class TestPIRClient:
     """Test PIR client functionality"""

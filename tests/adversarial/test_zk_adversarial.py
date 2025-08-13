@@ -1,4 +1,5 @@
 """Adversarial tests for ZK proof system security."""
+
 import pytest
 
 import numpy as np
@@ -6,6 +7,7 @@ import numpy as np
 from genomevault.zk_proofs.circuits import PRSProofCircuit
 from genomevault.zk_proofs.prover import ZKProver
 from genomevault.zk_proofs.verifier import ZKVerifier
+
 
 class TestZKAdversarial:
     """Test ZK proof system against adversarial attacks."""

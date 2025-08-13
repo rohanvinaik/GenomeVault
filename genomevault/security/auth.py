@@ -1,8 +1,10 @@
 """Auth module."""
+
 from __future__ import annotations
 
 from fastapi import Header, HTTPException, status
 import os
+
 _HEADER = "X-API-Key"
 
 

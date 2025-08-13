@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+
 TAGS = {
     "LEAF": b"\x00LEAF",
     "NODE": b"\x01NODE",

@@ -6,6 +6,7 @@ import pytest
 
 from genomevault.api.routers import encode, health
 
+
 @pytest.fixture
 def app():
     """Create test FastAPI app."""
@@ -25,7 +26,6 @@ def client(app):
 
 @pytest.mark.integration
 class TestAPI:
-    
     @pytest.mark.unit
     def test_health(self, client):
         """Test health endpoint."""

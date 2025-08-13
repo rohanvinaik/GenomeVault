@@ -1,9 +1,9 @@
 """Test suite for the diabetes risk pilot implementation"""
+
 from unittest.mock import patch
 import pytest
 
 from genomevault.clinical.diabetes_pilot.risk_calculator import (
-
     DiabetesRiskCalculator,
     RiskAssessment,
     generate_zkp_alert,

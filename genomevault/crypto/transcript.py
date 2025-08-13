@@ -4,6 +4,7 @@ import hashlib
 
 from .rng import xof
 
+
 class Transcript:
     """
     Domain-separated running hash transcript with XOF challenges.

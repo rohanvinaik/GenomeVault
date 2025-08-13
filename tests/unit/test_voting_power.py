@@ -3,6 +3,7 @@ import itertools
 from genomevault.blockchain.node import BlockchainNode, NodeInfo
 from genomevault.core.constants import NODE_CLASS_WEIGHT, NodeType
 
+
 def reference_vp(node_type, signatory):
     return NODE_CLASS_WEIGHT[node_type] + (2 if signatory else 0)
 

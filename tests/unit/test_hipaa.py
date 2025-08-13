@@ -1,11 +1,11 @@
 """
 Test HIPAA Fast-Track Verification System
 """
+
 from datetime import datetime, timedelta
 import pytest
 
 from genomevault.blockchain.hipaa import (
-
     CMSNPIRegistry,
     HIPAACredentials,
     HIPAAVerifier,
@@ -178,9 +178,7 @@ class TestHIPAAVerifier:
             assert record.is_active()
 
             # Revoke verification
-            success = verifier.revoke_verification(
-                credentials.npi, reason="Test revocation"
-            )
+            success = verifier.revoke_verification(credentials.npi, reason="Test revocation")
             assert success
 
             # Check status

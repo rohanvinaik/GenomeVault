@@ -4,6 +4,7 @@ GenomeVault 3.0 - Basic Usage Example
 This example demonstrates the core functionality of GenomeVault's
 privacy-preserving genomic data processing pipeline.
 """
+
 from genomevault import PhenotypeProcessor, SequencingProcessor, get_logger, init_config
 from genomevault.local_processing import DifferentialStorage
 from genomevault.utils import get_config

@@ -1,8 +1,11 @@
 """Cli module."""
+
 from __future__ import annotations
 
 from pathlib import Path
 import argparse
+
+
 def count_fastq_reads(path: Path) -> int:
     """Count fastq reads.
 

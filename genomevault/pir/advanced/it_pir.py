@@ -1,4 +1,5 @@
 """It Pir module."""
+
 """
 Information-Theoretic PIR implementation.
 Provides unconditional privacy guarantees without computational assumptions.

@@ -2,6 +2,7 @@
 Complete HDC-PIR Integration with Real ZK Proofs
 Demonstrates the full pipeline with actual zero-knowledge proof generation
 """
+
 from __future__ import annotations
 
 from genomevault.utils.logging import get_logger

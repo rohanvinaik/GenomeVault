@@ -5,6 +5,7 @@ Handles clinical and phenotypic data processing including EHR integration,
 FHIR data parsing, and phenotype standardization.
 
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field

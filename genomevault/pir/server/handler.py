@@ -3,6 +3,7 @@ PIR server request handler with fixed-size responses and timing protection.
 Implements the server-side logic for IT-PIR protocol.
 
 """
+
 from aiohttp import web
 from typing import Any
 import asyncio

@@ -1,7 +1,6 @@
 import pytest
 
 from genomevault.core.exceptions import (
-
     APISchemaError,
     ConfigurationError,
     EncodingError,

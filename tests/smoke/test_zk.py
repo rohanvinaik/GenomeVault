@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from genomevault.zk.engine import ZKProofEngine
 
+
 class TestZKProofs:
     def test_prove(self):
         """Test proof generation with fallback."""

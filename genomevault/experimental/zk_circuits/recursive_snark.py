@@ -1,4 +1,5 @@
 """Recursive Snark module."""
+
 """
 Recursive SNARK implementation for efficient proof composition.
 Enables constant verification time regardless of composed proof count.
@@ -1070,7 +1071,9 @@ if __name__ == "__main__":
                 "merkle_proofs": [
                     hashlib.sha256(f"proof_{j}".encode()).hexdigest() for j in range(20)
                 ],
-                "witness_randomness": np.random.bytes(32).hex(),  # Example only, use os.urandom in production
+                "witness_randomness": np.random.bytes(
+                    32
+                ).hex(),  # Example only, use os.urandom in production
             },
         )
         proofs.append(proof)

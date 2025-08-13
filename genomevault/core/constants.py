@@ -1,7 +1,9 @@
 """Constants module."""
+
 from __future__ import annotations
 
 from enum import Enum
+
 HYPERVECTOR_DIMENSIONS: int = 10_000
 DEFAULT_SPARSITY: float = 0.1
 

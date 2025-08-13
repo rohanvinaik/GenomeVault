@@ -5,6 +5,7 @@ from typing import Iterable, List, Tuple, Dict, Any
 from .commit import TAGS, H
 from .serialization import be_int
 
+
 def leaf_bytes(vals: Iterable[int]) -> bytes:
     data = b"".join(be_int(v, 32) for v in vals)
     return H(TAGS["LEAF"], data)

@@ -2,6 +2,7 @@
 Multi-omics processing pipeline orchestrator
 
 """
+
 from __future__ import annotations
 
 from pathlib import Path

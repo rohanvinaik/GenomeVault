@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from typing import Iterable, Mapping
+
+
 def be_int(x: int, size: int = 32) -> bytes:
     if x < 0:
         raise ValueError("Negative integers not supported in canonical encoding")

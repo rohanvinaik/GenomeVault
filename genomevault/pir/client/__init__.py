@@ -1,6 +1,6 @@
 """PIR client module."""
-from .batched_query_builder import (
 
+from .batched_query_builder import (
     AggregationMethod,
     BatchedPIRQueryBuilder,
     BatchedQuery,

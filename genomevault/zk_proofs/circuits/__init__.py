@@ -1,4 +1,5 @@
 """Package initialization for circuits."""
+
 """ZK proof circuits for genomic applications."""
 from datetime import datetime
 from typing import Any
@@ -8,6 +9,7 @@ import os
 
 from .base_circuits import BaseCircuit
 from .clinical_circuits import ClinicalCircuit
+
 
 class PRSProofCircuit(BaseCircuit):
     """Circuit for proving PRS (Polygenic Risk Score) is within a range."""

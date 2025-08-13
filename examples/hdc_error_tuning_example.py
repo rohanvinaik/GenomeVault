@@ -1,6 +1,7 @@
 """
 Example usage of HDC error handling with uncertainty tuning
 """
+
 from genomevault.utils.logging import get_logger
 
 logger = get_logger(__name__)

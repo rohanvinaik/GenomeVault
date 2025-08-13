@@ -1,4 +1,5 @@
 """Multi Omics module."""
+
 """
 Multi-omics integration circuits for zero-knowledge proofs.
 
@@ -15,6 +16,7 @@ import numpy as np
 
 from ...prover import Circuit
 from ..base_circuits import Any, BaseCircuit, FieldElement
+
 
 class MultiOmicsCorrelationCircuit(BaseCircuit):
     """

@@ -1,4 +1,5 @@
 """Store module."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -6,6 +7,8 @@ from hashlib import sha256
 from time import time
 from typing import Any
 import json
+
+
 def _hash_bytes(b: bytes) -> str:
     return sha256(b).hexdigest()
 

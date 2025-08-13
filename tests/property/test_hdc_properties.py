@@ -4,6 +4,7 @@ Property-based tests for HDC implementation using Hypothesis
 Tests mathematical properties and invariants that should hold
 for all valid inputs.
 """
+
 from hypothesis import assume, given, note, settings
 from hypothesis import strategies as st
 import pytest
@@ -13,7 +14,6 @@ import numpy as np
 import torch
 
 from genomevault.hypervector_transform.binding_operations import (
-
     BindingType,
     HypervectorBinder,
 )
@@ -96,9 +96,7 @@ class TestHDCProperties:
         assert hv.shape[0] == dimension
         assert torch.isfinite(hv).all()
 
-    @given(
-        features=feature_arrays(), seed=st.integers(min_value=0, max_value=2**32 - 1)
-    )
+    @given(features=feature_arrays(), seed=st.integers(min_value=0, max_value=2**32 - 1))
     @settings(max_examples=20)
     def test_encoding_determinism_property(self, features, seed):
         """Property: Same seed always produces same encoding"""
@@ -226,9 +224,7 @@ class TestBindingProperties:
                 assert torch.isfinite(bound).all()
             except ValueError as e:
                 # Some binding types may not support multiple vectors
-                pytest.skip(
-                    f"Binding type {binding_type} not supported for multiple vectors: {e}"
-                )
+                pytest.skip(f"Binding type {binding_type} not supported for multiple vectors: {e}")
             except NotImplementedError as e:
                 pytest.skip(f"Binding type {binding_type} not implemented: {e}")
             except Exception as e:
@@ -322,9 +318,7 @@ class TestBindingProperties:
 class TestCompressionProperties:
     """Property-based tests for compression tiers"""
 
-    @given(
-        features=feature_arrays(min_size=100, max_size=1000), tier=compression_tiers()
-    )
+    @given(features=feature_arrays(min_size=100, max_size=1000), tier=compression_tiers())
     @settings(max_examples=5, deadline=5000)
     def test_compression_tier_dimensions(self, features, tier):
         """Property: Each tier produces vectors of expected dimension"""
@@ -361,9 +355,7 @@ class TestCompressionProperties:
         # Encode with each tier
         similarities = {}
         for tier in CompressionTier:
-            encoder = HypervectorEncoder(
-                HypervectorConfig(compression_tier=tier, seed=42)
-            )
+            encoder = HypervectorEncoder(HypervectorConfig(compression_tier=tier, seed=42))
 
             hv1 = encoder.encode(features, OmicsType.GENOMIC, tier)
             hv2 = encoder.encode(features_noisy, OmicsType.GENOMIC, tier)
@@ -372,12 +364,8 @@ class TestCompressionProperties:
             similarities[tier] = sim
 
         # Higher tiers should preserve similarity better
-        assert (
-            similarities[CompressionTier.MINI] <= similarities[CompressionTier.CLINICAL]
-        )
-        assert (
-            similarities[CompressionTier.CLINICAL] <= similarities[CompressionTier.FULL]
-        )
+        assert similarities[CompressionTier.MINI] <= similarities[CompressionTier.CLINICAL]
+        assert similarities[CompressionTier.CLINICAL] <= similarities[CompressionTier.FULL]
 
 
 class TestPrivacyProperties:

@@ -2,6 +2,7 @@
 Topological Data Analysis for genomic structure analysis
 
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -9,6 +10,7 @@ from scipy.spatial import distance_matrix
 import networkx as nx
 
 import numpy as np
+
 MAX_HOMOLOGY_DIMENSION = 2
 PERSISTENCE_THRESHOLD = 0.1
 

@@ -1,10 +1,10 @@
 """Training Proof Cli module."""
+
 from __future__ import annotations
 
 import argparse
 
 from genomevault.zk_proofs.circuits.implementations.plonk_circuits import (
-
     prove_training_sum_over_threshold,
     verify_training_sum_over_threshold,
 )

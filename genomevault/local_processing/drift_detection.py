@@ -5,6 +5,7 @@ This module provides real-time monitoring of deployed models for
 performance degradation, distribution shifts, and semantic drift.
 
 """
+
 from __future__ import annotations
 
 from collections import defaultdict, deque
@@ -133,7 +134,7 @@ class RealTimeModelMonitor:
         self.alert_history: list[DriftEvent] = []
         self.alert_cooldown: dict[DriftType, int] = {}
 
-        logger.info("Real-time monitor initialized for model %smodel_id")
+        logger.info(f"Real-time monitor initialized for model {model_id}")
 
     def process_prediction(
         self,
@@ -312,8 +313,8 @@ class RealTimeModelMonitor:
         }
 
         logger.warning(
-            "Retraining protocol triggered for model %sself.model_id: "
-            "%sretraining_request['request_id']"
+            f"Retraining protocol triggered for model {self.model_id}: "
+            f"{retraining_request['request_id']}"
         )
 
         return retraining_request

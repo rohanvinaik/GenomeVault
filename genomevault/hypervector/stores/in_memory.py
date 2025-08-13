@@ -1,7 +1,10 @@
 """In Memory module."""
+
 from __future__ import annotations
 
 import numpy as np
+
+
 class InMemoryStore:
     """Extremely simple in-memory vector store keyed by id."""
 

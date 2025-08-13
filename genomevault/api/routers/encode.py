@@ -1,4 +1,5 @@
 """Encode module."""
+
 from __future__ import annotations
 
 from fastapi import APIRouter
@@ -8,6 +9,7 @@ import pandas as pd
 
 from genomevault.hdc.core import encode
 from genomevault.local_processing.common import process
+
 
 class EncodeIn(BaseModel):
     """EncodeIn implementation."""

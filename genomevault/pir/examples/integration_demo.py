@@ -1,4 +1,5 @@
 """Integration Demo module."""
+
 """
 PIR Integration Demo
 Demonstrates end-to-end PIR functionality with ZK and HDC integration.
@@ -13,7 +14,6 @@ import numpy as np
 from genomevault.pir.client.query_builder import PIRQueryBuilder
 from genomevault.pir.it_pir_protocol import BatchPIRProtocol, PIRParameters, PIRProtocol
 from genomevault.pir.network.coordinator import (
-
     PIRCoordinator,
     ServerInfo,
     ServerSelectionCriteria,

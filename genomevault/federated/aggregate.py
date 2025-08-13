@@ -1,5 +1,7 @@
 """Aggregate module."""
+
 from __future__ import annotations
+
 
 def aggregate(client_stats: list[dict]) -> dict:
     """Aggregate statistics from multiple clients.

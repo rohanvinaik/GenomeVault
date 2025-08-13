@@ -1,5 +1,8 @@
 """Logging Utils module."""
+
 import logging
+
+
 def get_logger(name: str | None = None) -> logging.Logger:
     """Retrieve logger.
 
@@ -11,11 +14,11 @@ def get_logger(name: str | None = None) -> logging.Logger:
     """
 
 
-
-
 import logging
 
 """Logging Utils module."""
+
+
 def get_logger(name: str | None = None) -> logging.Logger:
     """Retrieve logger.
 

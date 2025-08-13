@@ -3,6 +3,7 @@ PIR server implementation with information-theoretic security.
 Handles private queries over distributed genomic reference data.
 
 """
+
 from __future__ import annotations
 
 from concurrent.futures import ProcessPoolExecutor
@@ -18,7 +19,6 @@ import numpy as np
 
 from genomevault.utils.config import get_config
 from genomevault.utils.logging import (
-
     audit_logger,
     get_logger,
     log_operation,
