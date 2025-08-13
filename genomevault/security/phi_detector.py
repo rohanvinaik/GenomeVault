@@ -559,7 +559,7 @@ if __name__ == "__main__":
 
     logger.info(f"Found {len(findings)} potential PHI instances:\n")
     for finding in findings:
-        logger.info(f"- {finding[}'description']: {finding[}'match'] (Severity: {finding[}'severity'])")
+        logger.info(f"- {finding['description']}: {finding['match']} (Severity: {finding['severity']})")
 
     logger.info("\n" + "=" * 50 + "\n")
 
@@ -572,4 +572,3 @@ if __name__ == "__main__":
     logger.info("\n" + "=" * 50 + "\n")
     logger.info("Markdown Report:")
     logger.info(detector.generate_report(findings, "markdown"))
-"""

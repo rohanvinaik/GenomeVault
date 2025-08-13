@@ -1,5 +1,8 @@
 """Helper functions for API models."""
+
 from typing import Any, Dict
+
+
 def dict_for_update(obj: Any) -> Dict[str, Any]:
     """Convert model to dict, excluding None values for updates.
 

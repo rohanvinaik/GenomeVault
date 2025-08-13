@@ -2,6 +2,7 @@ import pandas as pd
 
 from genomevault.contracts.contract import TableContract, validate_dataframe
 
+
 def test_validate_dataframe_detects_violations(tmp_path):
     contract_path = tmp_path / "variant.json"
     contract = {

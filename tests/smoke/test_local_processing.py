@@ -7,6 +7,7 @@ import pandas as pd
 
 from genomevault.local_processing.common import process, validate_features
 
+
 class TestLocalProcessing:
     def test_process_dataframe(self):
         """Test processing of DataFrame."""

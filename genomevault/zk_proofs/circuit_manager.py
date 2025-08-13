@@ -13,11 +13,11 @@ import json
 import os
 import time
 
-from .circuits.base_circuits import BaseCircuit
-from .circuits.biological.diabetes import (
 from genomevault.utils.config import get_config
 from genomevault.utils.logging import get_logger, log_operation
 
+from .circuits.base_circuits import BaseCircuit
+from .circuits.biological.diabetes import (
     DiabetesRiskCircuit,
 )
 from .circuits.biological.multi_omics import (

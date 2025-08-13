@@ -5,12 +5,12 @@ This module is maintained for backward compatibility.
 Please migrate to genomevault.hypervector_transform.encoding
 
 """
+
 import warnings
 
 from .genomic import GenomicEncoder, PanelGranularity  # noqa: E402
 from .orthogonal_projection import OrthogonalProjection  # noqa: E402
 from .packed import (  # noqa: E402
-
     pack_bits,
     unpack_bits,
 )

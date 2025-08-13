@@ -1,13 +1,13 @@
 """
 Test suite for hypervector operations
 """
+
 import pytest
 
 import torch
 
 from genomevault.hypervector.encoding.genomic import GenomicEncoder
 from genomevault.hypervector.operations.binding import (
-
     BindingOperation,
     HypervectorBinder,
     MultiModalBinder,
@@ -209,9 +209,7 @@ class TestMultiModalBinder:
         vec2 = torch.randn(1000)
         vec2 = vec2 / torch.norm(vec2)
 
-        similarity = binder.cross_modal_similarity(
-            vec1, "genomic", vec2, "transcriptomic"
-        )
+        similarity = binder.cross_modal_similarity(vec1, "genomic", vec2, "transcriptomic")
 
         assert isinstance(similarity, float)
         assert -1 <= similarity <= 1

@@ -1,4 +1,3 @@
-"""Post Quantum Crypto module."""
 """Post-quantum cryptography implementations for GenomeVault."""
 from __future__ import annotations
 
@@ -8,7 +7,6 @@ import os
 import time
 
 from genomevault.crypto.types import (
-
     Ciphertext,
     KeyBytes,
     Nonce,
@@ -102,19 +100,19 @@ class HybridPostQuantumCrypto:
     def encrypt(self, plaintext: bytes, recipient_public_key: bytes) -> EncryptedData:
         """Encrypt data using hybrid post-quantum scheme."""
         # Mock implementation
-        _ = os.urandom(12)
-        _ = plaintext  # In real implementation, this would be encrypted
-        shared_secret, _ = self.kyber.encapsulate(recipient_public_key)
+        nonce = os.urandom(12)
+        ciphertext = plaintext  # In real implementation, this would be encrypted
+        shared_secret, encapsulated = self.kyber.encapsulate(recipient_public_key)
 
         # Sign the ciphertext
         signing_keypair = self.dilithium.generate_keypair()
-        _ = self.dilithium.sign(_ciphertext, signing_keypair.private_key)
+        signature = self.dilithium.sign(ciphertext, signing_keypair.private_key)
 
         return EncryptedData(
-            _ciphertext=ciphertext,
-            kyber_encapsulated_key=_encapsulated,
-            dilithium_signature=_signature,
-            _nonce=nonce,
+            ciphertext=ciphertext,
+            kyber_encapsulated_key=encapsulated,
+            dilithium_signature=signature,
+            nonce=nonce,
         )
 
     def decrypt(self, encrypted_data: EncryptedData, private_key: bytes) -> bytes:
@@ -126,31 +124,31 @@ class HybridPostQuantumCrypto:
 
 def benchmark_post_quantum_crypto() -> dict[str, Any]:
     """Benchmark post-quantum operations."""
-    _ = HybridPostQuantumCrypto()
-    _ = b"Test genomic data" * 100
+    crypto = HybridPostQuantumCrypto()
+    plaintext = b"Test genomic data" * 100
 
     # Generate keypair
-    _ = time.time()
-    _ = _crypto.kyber.generate_keypair()
-    _ = time.time() - _start
+    start = time.time()
+    keypair = crypto.kyber.generate_keypair()
+    keygen_time = time.time() - start
 
     # Encrypt
-    _ = time.time()
-    _ = _crypto.encrypt(_plaintext, _keypair.public_key)
-    _ = time.time() - _start
+    start = time.time()
+    encrypted = crypto.encrypt(plaintext, keypair.public_key)
+    encrypt_time = time.time() - start
 
     # Decrypt
-    _ = time.time()
-    _ = _crypto.decrypt(encrypted, _keypair.private_key)
-    _ = time.time() - _start
+    start = time.time()
+    decrypted = crypto.decrypt(encrypted, keypair.private_key)
+    decrypt_time = time.time() - start
 
-    _ = {
+    results = {
         "kyber": {
-            "keygen_time": "{keygen_time:.4f}s",
-            "encrypt_time": "{encrypt_time:.4f}s",
-            "decrypt_time": "{decrypt_time:.4f}s",
+            "keygen_time": f"{keygen_time:.4f}s",
+            "encrypt_time": f"{encrypt_time:.4f}s",
+            "decrypt_time": f"{decrypt_time:.4f}s",
             "ciphertext_size": len(encrypted.to_bytes()),
-            "success": decrypted == _plaintext,
+            "success": decrypted == plaintext,
         }
     }
 
@@ -160,28 +158,28 @@ def benchmark_post_quantum_crypto() -> dict[str, Any]:
 # Example usage
 if __name__ == "__main__":
     # Initialize hybrid system
-    _ = HybridPostQuantumCrypto()
+    crypto = HybridPostQuantumCrypto()
 
     # Example: Encrypt genomic data
-    _ = b"ACGTACGTACGT" * 1000
+    genomic_data = b"ACGTACGTACGT" * 1000
 
     # Generate recipient keypair
-    _ = _crypto.kyber.generate_keypair()
+    recipient_keypair = crypto.kyber.generate_keypair()
 
     # Encrypt
-    encrypted = _crypto.encrypt(_genomic_data, _recipient_keypair.public_key)
-    logger.info("Encrypted size: %slen(encrypted.to_bytes()) bytes")
+    encrypted = crypto.encrypt(genomic_data, recipient_keypair.public_key)
+    logger.info(f"Encrypted size: {len(encrypted.to_bytes())} bytes")
 
     # Decrypt
-    decrypted = _crypto.decrypt(encrypted, _recipient_keypair.private_key)
-    assert decrypted == _genomic_data
+    decrypted = crypto.decrypt(encrypted, recipient_keypair.private_key)
+    assert decrypted == genomic_data
     logger.info("Decryption successful!")
 
     # Benchmark
     logger.info("\nBenchmarking post-quantum crypto...")
-    _ = benchmark_post_quantum_crypto()
+    results = benchmark_post_quantum_crypto()
 
-    for algo, metrics in _results.items():
-        logger.info("\n%salgo:")
+    for algo, metrics in results.items():
+        logger.info(f"\n{algo}:")
         for key, value in metrics.items():
-            logger.info("  %skey: %svalue")
+            logger.info(f"  {key}: {value}")

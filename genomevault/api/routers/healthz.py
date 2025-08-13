@@ -3,6 +3,7 @@ Consolidated health check endpoint for GenomeVault API.
 Follows Kubernetes health check best practices.
 
 """
+
 from datetime import datetime
 from fastapi import APIRouter, Response, status
 from pydantic import BaseModel

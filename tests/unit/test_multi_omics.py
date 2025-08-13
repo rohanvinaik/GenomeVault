@@ -1,6 +1,7 @@
 """
 Comprehensive test suite for multi-omics processors.
 """
+
 from pathlib import Path
 import gzip
 import pytest
@@ -9,7 +10,6 @@ import numpy as np
 import pandas as pd
 
 from genomevault.local_processing.epigenetics import (
-
     ChromatinAccessibilityProcessor,
     ChromatinPeak,
     EpigeneticDataType,
@@ -282,14 +282,10 @@ class TestEpigeneticsProcessors:
         with open(peak_file, "w") as f:
             for i in range(50):
                 # chr start end name score strand signal pvalue qvalue peak
-                f.write(
-                    "chr1\t{i*10000}\t{i*10000+500}\tpeak{i}\t100\t.\t10.5\t1e-5\t1e-3\t250\n"
-                )
+                f.write("chr1\t{i*10000}\t{i*10000+500}\tpeak{i}\t100\t.\t10.5\t1e-5\t1e-3\t250\n")
 
         # Process
-        profile = chromatin_processor.process(
-            peak_file, "sample001", peak_format="narrowPeak"
-        )
+        profile = chromatin_processor.process(peak_file, "sample001", peak_format="narrowPeak")
 
         assert isinstance(profile, EpigeneticProfile)
         assert profile.data_type == EpigeneticDataType.CHROMATIN_ACCESSIBILITY
@@ -357,9 +353,7 @@ class TestEpigeneticsProcessors:
     def test_epigenetic_processor_factory(self):
         """Test processor factory function."""
         # Test methylation processor creation
-        meth_proc = create_epigenetic_processor(
-            EpigeneticDataType.METHYLATION, min_coverage=10
-        )
+        meth_proc = create_epigenetic_processor(EpigeneticDataType.METHYLATION, min_coverage=10)
         assert isinstance(meth_proc, MethylationProcessor)
         assert meth_proc.min_coverage == 10
 
@@ -469,18 +463,14 @@ class TestProteomicsProcessor:
         ]
 
         # Test label-free normalization
-        normalized = processor._normalize_abundances(
-            proteins, QuantificationMethod.LABEL_FREE
-        )
+        normalized = processor._normalize_abundances(proteins, QuantificationMethod.LABEL_FREE)
 
         # Check normalization worked
         assert all(p.normalized_abundance > 0 for p in normalized)
         # Check relative ordering preserved
         sorted_original = sorted(proteins, key=lambda p: p.abundance)
         sorted_normalized = sorted(normalized, key=lambda p: p.normalized_abundance)
-        assert [p.protein_id for p in sorted_original] == [
-            p.protein_id for p in sorted_normalized
-        ]
+        assert [p.protein_id for p in sorted_original] == [p.protein_id for p in sorted_normalized]
 
     def test_differential_expression(self, processor):
         """Test differential protein expression."""
@@ -601,9 +591,7 @@ class TestProteomicsProcessor:
         assert gene5.protein_id == "PROT0005"
 
         # Test getting modified proteins
-        phospho_proteins = profile.get_modified_proteins(
-            ModificationType.PHOSPHORYLATION
-        )
+        phospho_proteins = profile.get_modified_proteins(ModificationType.PHOSPHORYLATION)
         assert len(phospho_proteins) == 5
 
         # Test pathway enrichment

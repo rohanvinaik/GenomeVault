@@ -5,6 +5,7 @@ Provides cryptographic primitives and utilities for secure data handling,
 including AES-GCM encryption, homomorphic encryption support, and threshold cryptography.
 
 """
+
 from __future__ import annotations
 
 from cryptography.hazmat.backends import default_backend
@@ -25,7 +26,6 @@ import os
 import secrets
 
 from genomevault.crypto.types import (
-
     KeyBytes,
 )
 

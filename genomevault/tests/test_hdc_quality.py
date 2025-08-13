@@ -5,6 +5,7 @@ Quantifies the quality loss from hyperdimensional computing compression
 to ensure clinical validity.
 
 """
+
 from genomevault.utils.logging import get_logger
 
 logger = get_logger(__name__)

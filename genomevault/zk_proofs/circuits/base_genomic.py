@@ -1,5 +1,8 @@
 """Base class for genomic ZK circuits to eliminate duplication."""
+
 from typing import Any, Dict, Optional, Tuple
+
+
 class BaseGenomicCircuit:
     """Base class for all genomic ZK proof circuits.
 

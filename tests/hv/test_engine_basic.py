@@ -4,6 +4,7 @@ from genomevault.core.constants import HYPERVECTOR_DIMENSIONS
 from genomevault.core.exceptions import ProjectionError, ValidationError
 from genomevault.hypervector.engine import HypervectorEngine
 
+
 def test_encode_and_similarity_roundtrip():
     engine = HypervectorEngine()
     dim = HYPERVECTOR_DIMENSIONS["base"]

@@ -2,11 +2,13 @@
 Unit tests for configuration system.
 Tests dual-axis voting model, compression tiers, and PIR calculations.
 """
+
 from pathlib import Path
 import pytest
 import tempfile
 
 from genomevault.utils.config import CompressionTier, Config, NodeClass, SecurityConfig
+
 
 class TestConfig:
     """Test configuration system."""

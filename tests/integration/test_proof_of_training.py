@@ -3,6 +3,7 @@ Integration tests for Proof-of-Training system
 
 This module tests the end-to-end functionality of the PoT implementation.
 """
+
 from pathlib import Path
 import json
 import pytest
@@ -13,6 +14,7 @@ import numpy as np
 
 from genomevault.integration.proof_of_training import ProofOfTrainingIntegration
 from genomevault.local_processing.differential_privacy_audit import PrivacyMechanism
+
 
 class MockModel:
     """Mock model for testing"""
@@ -354,9 +356,7 @@ class TestProofOfTrainingIntegration:
         for epoch in range(10):
             # Modify model to simulate drift
             if epoch > 5:
-                model.weights["layer1"] += (
-                    np.random.randn(*model.weights["layer1"].shape) * 0.1
-                )
+                model.weights["layer1"] += np.random.randn(*model.weights["layer1"].shape) * 0.1
 
             pot_integration.log_training_step(
                 session_id=session_id,

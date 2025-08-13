@@ -38,7 +38,7 @@ class PositionalEncoder:
 
         # Pre-compute constants for efficiency
         self.nnz = int(dimension * sparsity)  # Number of non-zero elements
-        logger.info(f"Initialized PositionalEncoder: {dimensionD}, {}self.nnz non-zeros per vector")
+        logger.info(f"Initialized PositionalEncoder: {dimension}D, {self.nnz} non-zeros per vector")
 
     def make_position_vector(self, position: int, seed: int | None = None) -> torch.Tensor:
         """

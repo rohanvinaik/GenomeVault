@@ -1,11 +1,11 @@
 """Vectors module."""
+
 from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException
 from typing import Any
 
 from genomevault.api.models.vectors import (
-
     VectorEncodeRequest,
     VectorEncodeResponse,
     VectorOperationRequest,

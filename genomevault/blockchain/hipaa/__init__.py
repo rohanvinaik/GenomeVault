@@ -2,9 +2,9 @@
 Hipaa Package
 
 """
+
 from . import integration, verifier
 from .models import (
-
     EXPIRED,
     FAILED,
     INDIVIDUAL,

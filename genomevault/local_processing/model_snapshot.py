@@ -1,10 +1,13 @@
 """Model Snapshot module."""
+
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Dict
 import json
+
+
 @dataclass
 class ModelSnapshot:
     """Data container for modelsnapshot information."""

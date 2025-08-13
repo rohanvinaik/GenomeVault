@@ -5,6 +5,7 @@ This module implements various mappings that preserve biological relationships
 while transforming data into the hyperdimensional space.
 
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

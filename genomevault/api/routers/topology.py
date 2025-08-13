@@ -1,6 +1,7 @@
 """
 Topology API endpoints
 """
+
 from __future__ import annotations
 
 from genomevault.utils.logging import get_logger

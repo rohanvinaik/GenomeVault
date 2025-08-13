@@ -2,6 +2,7 @@
 Recursive SNARK implementation for efficient proof composition.
 Enables constant verification time regardless of composed proof count.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -13,10 +14,13 @@ import time
 import numpy as np
 
 from genomevault.crypto import (
-
-    H, hexH, TAGS,
-    pack_proof_components, be_int,
-    compress_proof, secure_bytes
+    H,
+    hexH,
+    TAGS,
+    pack_proof_components,
+    be_int,
+    compress_proof,
+    secure_bytes,
 )
 from genomevault.utils.logging import get_logger
 from genomevault.utils.metrics import get_metrics

@@ -6,6 +6,7 @@ Implements the diabetes risk assessment system with:
 - Zero-knowledge proofs for privacy-preserving alerts
 - HIPAA-compliant data handling
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

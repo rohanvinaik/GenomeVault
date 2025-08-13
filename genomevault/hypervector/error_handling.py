@@ -2,6 +2,7 @@
 HDC Error Handling with Uncertainty Tuning for GenomeVault
 Implements the ECC-HDC core with dynamic budget allocation from the project knowledge
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

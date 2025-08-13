@@ -1,4 +1,5 @@
 """Catalytic Proof module."""
+
 """
 Catalytic space computing for proof efficiency.
 Implements catalytic computation to reduce memory requirements.
@@ -436,12 +437,14 @@ class CatalyticProofEngine:
         # Add differential privacy noise (NON-CRYPTOGRAPHIC - for statistical privacy only)
         # This noise is explicitly NOT part of the proof commitment and uses non-crypto RNG
         dp_epsilon = public_inputs.get("differential_privacy_epsilon", 1.0)
-        
+
         # Create a deterministic but non-cryptographic RNG for DP noise
         # Using circuit_name and public inputs to make it reproducible but not secret
-        dp_seed = hash(("dp_noise", "polygenic_risk_score", str(sorted(public_inputs.items())))) % (2**32)
+        dp_seed = hash(("dp_noise", "polygenic_risk_score", str(sorted(public_inputs.items())))) % (
+            2**32
+        )
         dp_rng = np.random.RandomState(dp_seed)
-        
+
         # Generate Laplace noise for differential privacy (statistical only, not cryptographic)
         noise = dp_rng.laplace(0, 1 / dp_epsilon)
         final_score = score_accumulator + noise

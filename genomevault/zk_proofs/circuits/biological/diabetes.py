@@ -1,7 +1,9 @@
 """Diabetes-specific ZK proof circuits."""
+
 from typing import Any, Dict
 
 from ..base_circuits import BaseCircuit, ComparisonCircuit, RangeProofCircuit
+
 
 class DiabetesRiskCircuit(BaseCircuit):
     """Circuit for privacy-preserving diabetes risk assessment."""

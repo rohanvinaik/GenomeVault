@@ -9,6 +9,7 @@ This module provides comprehensive monitoring capabilities including:
 - Privacy-preserving logging
 
 """
+
 from __future__ import annotations
 
 from datetime import datetime
@@ -17,6 +18,7 @@ from typing import Any
 import prometheus_client
 import structlog
 import time
+
 logger = structlog.get_logger(__name__)
 
 

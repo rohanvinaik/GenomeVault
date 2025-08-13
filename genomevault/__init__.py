@@ -12,7 +12,6 @@ from genomevault.core.exceptions import *
 __all__ = ["Config"]
 
 
-
 from genomevault.core.constants import *
 from genomevault.core.exceptions import *
 

@@ -15,6 +15,7 @@ For production systems, use established libraries like Winterfell, Risc0, or Pol
 This implementation is for learning and research purposes only.
 
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

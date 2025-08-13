@@ -165,7 +165,7 @@ class MedianVerifierCircuit:
             json.dumps({"median": claimed_median, "n": n, "timestamp": time.time()}).encode()
         ).hexdigest()[:16]
 
-        logger.info(f"Generated median proof for {n} values in {response[}'computation_time_ms']:.1fms")
+        logger.info(f"Generated median proof for {n} values in {response['computation_time_ms']:.1f}ms")
 
         return MedianProof(
             claimed_median=claimed_median,

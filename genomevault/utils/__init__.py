@@ -1,4 +1,5 @@
 """Package initialization for utils."""
+
 from .logging import get_logger
 from .metrics import MetricsCollector, get_metrics
 

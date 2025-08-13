@@ -3,7 +3,6 @@ import pytest
 import numpy as np
 
 from genomevault.local_processing.compression import (
-
     CompressionTier,
     HDCCompressor,
     SNPCompressor,

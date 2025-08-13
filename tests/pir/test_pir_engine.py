@@ -2,6 +2,7 @@ from hashlib import sha256
 
 from genomevault.pir.engine import PIREngine
 
+
 def test_pir_engine_recovers_record():
     items = [b"alpha", b"bravo", b"charlie", b"delta"]
     eng = PIREngine(items, n_servers=3)

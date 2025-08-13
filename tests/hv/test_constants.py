@@ -1,5 +1,4 @@
 from genomevault.core.constants import (
-
     DEFAULT_DENSITY,
     DEFAULT_SEED,
     HYPERVECTOR_DIMENSIONS,

@@ -2,6 +2,7 @@
 Example: Diabetes Risk Assessment with GenomeVault ZK Proofs
 Demonstrates privacy-preserving medical risk evaluation.
 """
+
 import asyncio
 
 from genomevault.utils.logging import get_logger

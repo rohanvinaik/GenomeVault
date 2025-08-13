@@ -5,6 +5,7 @@ import numpy as np
 from genomevault.core.exceptions import ProjectionError
 from genomevault.hypervector.encoding.sparse_projection import SparseRandomProjection
 
+
 def test_dimensions_and_determinism():
     rng = np.random.default_rng(123)
     X = rng.standard_normal((8, 64))  # small to keep tests fast

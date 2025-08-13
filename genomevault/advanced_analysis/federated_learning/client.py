@@ -3,6 +3,7 @@ Federated Learning Client for secure model training participation.
 Implements local training with privacy guarantees.
 
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

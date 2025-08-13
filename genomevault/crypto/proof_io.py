@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import zlib
+
 MAGIC = b"CPROOF\0"  # format tag
 VERSION = (1).to_bytes(2, "big")
 

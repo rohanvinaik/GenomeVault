@@ -4,8 +4,10 @@ Experimental KAN (Kolmogorov-Arnold Networks) implementation.
 EXPERIMENTAL: This module is under active development.
 The API may change significantly between versions.
 """
+
 from typing import TYPE_CHECKING
 import warnings
+
 warnings.warn(
     "KAN networks are experimental. Performance and API stability not guaranteed.",
     FutureWarning,

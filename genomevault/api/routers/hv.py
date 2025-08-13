@@ -1,6 +1,7 @@
 """
 Hypervector encoding API endpoints.
 """
+
 from fastapi import APIRouter, HTTPException, status
 from pathlib import Path
 from prometheus_client import Counter, Histogram, Gauge
@@ -10,7 +11,6 @@ import time
 import numpy as np
 
 from genomevault.api.models.hv import (
-
     HVEncodeRequest,
     HVEncodeResponse,
     HVBatchEncodeRequest,

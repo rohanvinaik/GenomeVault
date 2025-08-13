@@ -6,6 +6,8 @@ from enum import Enum, auto
 from typing import Any
 
 import numpy as np
+
+
 class SplineMode(Enum):
     """Spline interpolation modes for KAN."""
 

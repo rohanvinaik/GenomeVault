@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from hashlib import shake_256
 import os
+
+
 def secure_bytes(n: int) -> bytes:
     return os.urandom(n)
 

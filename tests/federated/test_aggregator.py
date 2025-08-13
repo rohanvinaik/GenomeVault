@@ -6,6 +6,7 @@ from genomevault.core.exceptions import ValidationError
 from genomevault.federated.aggregator import FedAvgAggregator
 from genomevault.federated.models import AggregateRequest, ModelUpdate
 
+
 def test_fedavg_weighted_average():
     agg = FedAvgAggregator()
     u1 = ModelUpdate(client_id="a", weights=[1.0, 1.0], num_examples=2)

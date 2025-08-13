@@ -2,12 +2,12 @@
 Comprehensive tests for crypto refactoring.
 Ensures all the mechanical refactoring items are properly implemented.
 """
+
 import hashlib
 import json
 import pytest
 
 from genomevault.crypto import (
-
     H,
     hexH,
     TAGS,

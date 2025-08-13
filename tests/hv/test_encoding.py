@@ -1,6 +1,7 @@
 """
 Tests for hypervector encoding with golden vectors, stability tests, and benchmarks.
 """
+
 from __future__ import annotations
 
 from genomevault.utils.logging import get_logger

@@ -5,6 +5,7 @@ This module implements holographic reduced representations (HRR) for
 encoding complex structured information in hypervectors.
 
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

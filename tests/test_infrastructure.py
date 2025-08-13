@@ -1,7 +1,10 @@
 """
 Test to verify the test infrastructure is working correctly
 """
+
 import pytest
+
+
 def test_test_infrastructure():
     """Verify test infrastructure is set up correctly"""
     assert True, "Basic test infrastructure is working"
@@ -62,6 +65,4 @@ def test_performance_benchmark(performance_benchmark):
     result = performance_benchmark.measure("sum_calculation", sample_function, 1000)
 
     assert result == 499500
-    performance_benchmark.assert_performance(
-        "sum_calculation", 100
-    )  # Should complete in 100ms
+    performance_benchmark.assert_performance("sum_calculation", 100)  # Should complete in 100ms

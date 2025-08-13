@@ -1,8 +1,11 @@
 """Models module."""
+
 from __future__ import annotations
 
 from pydantic import BaseModel, Field, validator
 from typing import Any
+
+
 class ModelUpdate(BaseModel):
     """ModelUpdate implementation."""
 

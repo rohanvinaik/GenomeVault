@@ -4,6 +4,7 @@ Digital signature utilities using Ed25519.
 This module provides high-level functions for creating and verifying
 digital signatures using the Ed25519 algorithm.
 """
+
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ed25519
@@ -11,7 +12,6 @@ from typing import Optional, Tuple
 import base64
 
 from genomevault.crypto.types import (
-
     PrivateKey,
     PublicKey,
     Signature,

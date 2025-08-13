@@ -1,5 +1,7 @@
 from pathlib import Path
 import re
+
+
 def test_no_bare_excepts():
     root = Path(__file__).resolve().parents[2]
     offenders = []

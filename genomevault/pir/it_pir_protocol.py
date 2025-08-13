@@ -1,4 +1,5 @@
 """It Pir Protocol module."""
+
 """
 Information-Theoretic PIR Protocol Implementation
 Implements 2-server IT-PIR with XOR-based scheme and security guarantees.

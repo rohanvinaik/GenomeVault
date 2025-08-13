@@ -1,4 +1,5 @@
 """Transcriptomics module."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -6,6 +7,8 @@ from typing import Any, Dict, Union
 
 import numpy as np
 import pandas as pd
+
+
 def process(dataset: Union[pd.DataFrame, Path], config: Dict[str, Any]) -> np.ndarray:
     """Process transcriptomic data and return normalized expression matrix.
 

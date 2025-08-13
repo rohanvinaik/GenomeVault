@@ -1,4 +1,5 @@
 """Real Engine module."""
+
 from __future__ import annotations
 
 from cryptography.hazmat.primitives import serialization
@@ -13,7 +14,6 @@ import time
 from genomevault.crypto.types import PrivateKey, PublicKey
 from genomevault.utils.logging import get_logger
 from genomevault.zk.backends.circom_snarkjs import (
-
     CircuitPaths,
     prove,
     toolchain_available,

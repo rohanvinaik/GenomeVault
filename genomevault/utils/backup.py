@@ -9,6 +9,7 @@ This module provides:
 - Integrity verification
 
 """
+
 from __future__ import annotations
 
 from cryptography.hazmat.backends import default_backend

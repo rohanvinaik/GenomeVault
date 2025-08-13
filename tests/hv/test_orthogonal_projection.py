@@ -5,6 +5,7 @@ import numpy as np
 from genomevault.core.exceptions import ProjectionError
 from genomevault.hypervector.encoding.orthogonal_projection import OrthogonalProjection
 
+
 def cosine(a: np.ndarray, b: np.ndarray) -> float:
     return float(a @ b / (np.linalg.norm(a) * np.linalg.norm(b)))
 

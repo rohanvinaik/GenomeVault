@@ -1,5 +1,8 @@
 """Integration tests for API endpoints."""
+
 from fastapi.testclient import TestClient
+
+
 def test_health_endpoint():
     """Test health check endpoint."""
     from genomevault.api.main import app

@@ -4,6 +4,7 @@ Integration example: Local Processing + Hypervector Encoding
 This example demonstrates the complete flow from raw genomic data
 to privacy-preserving hypervector representation.
 """
+
 from pathlib import Path
 
 import torch
@@ -35,9 +36,7 @@ def process_and_encode_genome(vcf_path: str):
     logger.info("  - Processed {genomic_data['summary']['total_variants']} variants")
     logger.info("  - Found {genomic_data['summary']['snp_count']} SNPs")
     logger.info("  - Found {genomic_data['summary']['indel_count']} indels")
-    logger.info(
-        "  - Mean quality: {genomic_data['quality_metrics']['mean_quality']:.1f}"
-    )
+    logger.info("  - Mean quality: {genomic_data['quality_metrics']['mean_quality']:.1f}")
 
     # Phase 2: Hypervector Encoding
     logger.info("\nPhase 2: Encoding to hypervector...")
@@ -48,23 +47,17 @@ def process_and_encode_genome(vcf_path: str):
     logger.info("  - Encoded to {genomic_hv.shape[0]}D hypervector")
 
     # Calculate compression
-    (
-        genomic_data["summary"]["total_variants"] * 100
-    )  # Rough estimate bytes per variant
+    (genomic_data["summary"]["total_variants"] * 100)  # Rough estimate bytes per variant
     genomic_hv.shape[0] * 4  # 4 bytes per float
     logger.info("  - Compression ratio: {original_size / hv_size:.1f}:1")
 
     # Tier compression
     logger.info("\nPhase 2b: Tiered compression...")
     compressor = TieredCompressor(CompressionTier.CLINICAL)
-    compressed = compressor.compress(
-        {"hypervector": genomic_hv, **genomic_data}, OmicsType.GENOMIC
-    )
+    compressed = compressor.compress({"hypervector": genomic_hv, **genomic_data}, OmicsType.GENOMIC)
 
     logger.info("  - Clinical tier size: {compressed.compressed_size:,} bytes")
-    logger.info(
-        "  - Total compression: {original_size / compressed.compressed_size:.1f}:1"
-    )
+    logger.info("  - Total compression: {original_size / compressed.compressed_size:.1f}:1")
 
     return genomic_hv, compressed, genomic_data
 
@@ -90,9 +83,7 @@ def demonstrate_variant_encoding(genomic_data: dict):
             annotations=snp.get("annotations", {}),
         )
 
-        logger.info(
-            "  - Encoded variant {snp['chr']}:{snp['pos']} {snp['re']}>{snp['alt']}"
-        )
+        logger.info("  - Encoded variant {snp['chr']}:{snp['pos']} {snp['re']}>{snp['alt']}")
         logger.info("  - Holographic dimension: {variant_hv.shape[0]}")
 
         # Query for chromosome
@@ -114,9 +105,7 @@ def demonstrate_privacy_preservation(genomic_hv: torch.Tensor):
     modified_hv = modified_hv / torch.norm(modified_hv)
 
     # Compare
-    torch.nn.functional.cosine_similarity(
-        genomic_hv.unsqueeze(0), modified_hv.unsqueeze(0)
-    ).item()
+    torch.nn.functional.cosine_similarity(genomic_hv.unsqueeze(0), modified_hv.unsqueeze(0)).item()
 
     logger.info("  - Small changes in input create detectable changes in output")
     logger.info("  - Similarity after small modification: {similarity:.4f}")
@@ -133,9 +122,7 @@ def demonstrate_privacy_preservation(genomic_hv: torch.Tensor):
     partial_hv = torch.zeros_like(genomic_hv)
     partial_hv[top_indices] = genomic_hv[top_indices]
 
-    torch.nn.functional.cosine_similarity(
-        genomic_hv.unsqueeze(0), partial_hv.unsqueeze(0)
-    ).item()
+    torch.nn.functional.cosine_similarity(genomic_hv.unsqueeze(0), partial_hv.unsqueeze(0)).item()
 
     logger.info(
         "  - Information is distributed: top 10% of components only capture "
@@ -202,9 +189,7 @@ def main():
                     {"chr": "chr1", "pos": 200, "re": "C", "alt": "T", "quality": 40},
                     {"chr": "chr2", "pos": 300, "re": "G", "alt": "A", "quality": 35},
                 ],
-                "indels": [
-                    {"chr": "chr3", "pos": 400, "re": "AT", "alt": "A", "quality": 25}
-                ],
+                "indels": [{"chr": "chr3", "pos": 400, "re": "AT", "alt": "A", "quality": 25}],
                 "cnvs": [],
             },
             "quality_metrics": {
@@ -253,9 +238,7 @@ def main():
     logger.info("3. Mathematical privacy through high-dimensional projection")
     logger.info("4. Efficient compression for storage and transmission")
     logger.info("5. Multi-omics integration while maintaining privacy")
-    logger.info(
-        "\nNext: Zero-knowledge proofs will enable verification without disclosure"
-    )
+    logger.info("\nNext: Zero-knowledge proofs will enable verification without disclosure")
 
 
 if __name__ == "__main__":

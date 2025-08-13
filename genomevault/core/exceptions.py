@@ -1,7 +1,10 @@
 """Exceptions module."""
+
 from __future__ import annotations
 
 from typing import Any, Dict, Optional
+
+
 class GVError(Exception):
     """Base class for all GenomeVault errors."""
 

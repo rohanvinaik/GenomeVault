@@ -1,9 +1,12 @@
 """Config module."""
+
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from math import ceil, log10
 from pathlib import Path
 from typing import Optional, Union
+
+
 class NodeClass(Enum):
     """NodeClass implementation."""
 

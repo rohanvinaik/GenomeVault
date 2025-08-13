@@ -1,4 +1,5 @@
 """Contract module."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -8,6 +9,8 @@ import json
 import re
 
 import pandas as pd
+
+
 @dataclass
 class ColumnSpec:
     """Data container for columnspec information."""

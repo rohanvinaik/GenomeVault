@@ -5,7 +5,9 @@ EXPERIMENTAL: These ZK implementations are research prototypes.
 Security properties have not been formally verified.
 DO NOT use in production without thorough security audit.
 """
+
 import warnings
+
 warnings.warn(
     "Experimental ZK circuits are not audited for production use. "
     "These are research implementations that may have security vulnerabilities. "

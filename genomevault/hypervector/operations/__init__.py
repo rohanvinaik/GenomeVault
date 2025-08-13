@@ -8,10 +8,10 @@ This module is maintained for backward compatibility.
 Please migrate to genomevault.hypervector_transform.binding_operations
 
 """
+
 import warnings
 
 from .binding import (  # noqa: E402
-
     bundle,
     circular_convolution,
     element_wise_multiply,

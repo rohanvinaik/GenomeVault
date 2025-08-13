@@ -161,7 +161,7 @@ class STARKProver:
             },
         )
 
-        logger.info(f"Generated STARK proof: {proof.proof_id}, size: {}proof.proof_size_kb:.1fKB")
+        logger.info(f"Generated STARK proof: {proof.proof_id}, size: {proof.proof_size_kb:.1f}KB")
 
         return proof
 

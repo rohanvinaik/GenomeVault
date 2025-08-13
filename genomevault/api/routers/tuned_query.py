@@ -3,6 +3,7 @@ API Router for Error-Tuned Queries
 Implements the /query_tuned endpoint with real-time progress updates
 
 """
+
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
@@ -12,7 +13,6 @@ import time
 
 from genomevault.hypervector.error_handling import ErrorBudget, ErrorBudgetAllocator
 from genomevault.pir.client import (
-
     BatchedPIRQueryBuilder,
     GenomicQuery,
     PIRClient,
