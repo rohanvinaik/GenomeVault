@@ -2,6 +2,7 @@
 Unified hypervector encoder supporting sparse and orthogonal projections
 for genomic data at 10k/15k/20k dimensions with seed control and determinism.:
 """
+
 from __future__ import annotations
 
 from typing import Literal, Union
@@ -158,9 +159,16 @@ class UnifiedHypervectorEncoder:
             # Auto-fit with default feature size
             self.fit(n_features=100)
 
+        # Ensure base vectors exist after fitting
+        if not self._base_vectors or variant_type not in self._base_vectors:
+            # Re-initialize base vectors
+            self.fit(n_features=100)
+
         # Start with variant type vector
         if variant_type not in self._base_vectors:
-            raise HypervectorError(f"Unknown variant type: {variant_type}")
+            raise HypervectorError(
+                f"Unknown variant type: {variant_type}. Available types: {list(self._base_vectors.keys())}"
+            )
 
         variant_vec = self._base_vectors[variant_type].copy()
 
@@ -318,4 +326,3 @@ def create_encoder(
 ) -> UnifiedHypervectorEncoder:
     """Factory function to create a hypervector encoder."""
     return UnifiedHypervectorEncoder(dimension=dimension, projection_type=projection_type, **kwargs)
-
