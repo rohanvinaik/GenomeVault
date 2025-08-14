@@ -7,9 +7,10 @@ without revealing the underlying genomic sequences.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List, Tuple, Dict, Any, Optional
+from typing import List, Dict, Any, Optional
 
 from genomevault.crypto import merkle
+from genomevault.crypto.merkle import PathItem
 
 
 @dataclass
@@ -31,7 +32,7 @@ class SNPProof:
 
     position: int
     nucleotide: str
-    proof_path: List[Tuple[bytes, bool]]
+    proof_path: List[PathItem]
     commitment_root: bytes
 
     def verify(self) -> bool:

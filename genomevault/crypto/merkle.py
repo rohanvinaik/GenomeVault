@@ -1,35 +1,50 @@
 from __future__ import annotations
 
-from typing import Iterable, List, Tuple, Dict, Any
+from typing import Iterable, List, Dict, Any, Sequence, NamedTuple
 
 from .commit import TAGS, H
 from .serialization import be_int
 
 
+class PathItem(NamedTuple):
+    """Single step in a Merkle proof.
+
+    Attributes:
+        sibling: Hash of the sibling node.
+        is_right: ``True`` if ``sibling`` is on the right-hand side of the
+            current node, ``False`` if it is on the left.
+    """
+
+    sibling: bytes
+    is_right: bool
+
+
 def leaf_bytes(vals: Iterable[int]) -> bytes:
-    """Leaf bytes.
-    Args:        vals: List of items.
-    Returns:
-        bytes"""
+    """Hash a sequence of integers into a Merkle leaf node.
+
+    Each value is encoded as a 32-byte big-endian integer and concatenated
+    before being hashed with the ``LEAF`` domain-separation tag.
+    """
     data = b"".join(be_int(v, 32) for v in vals)
     return H(TAGS["LEAF"], data)
 
 
 def node_bytes(left: bytes, right: bytes) -> bytes:
-    """Node bytes.
-    Args:        left: Parameter value.        right: Parameter value.
-    Returns:
-        bytes"""
+    """Hash two child nodes to derive their parent node."""
     return H(TAGS["NODE"], left, right)
 
 
-def build(leaves: List[bytes]) -> Dict[str, Any]:
+def build(leaves: Sequence[bytes]) -> Dict[str, Any]:
+    """Build a Merkle tree and return its root and all layers.
+
+    The returned dictionary contains the Merkle ``root`` and ``layers`` where
+    ``layers[0]`` is the original list of ``leaves``.  If a layer has an odd
+    number of nodes, the last node is duplicated (Bitcoin-style padding).
     """
-    Returns {"root": bytes, "layers": List[List[bytes]]} where layers[0] = leaves.
-    Duplicates last node on odd layers (Bitcoin-style padding).
-    """
+
     if not leaves:
         raise ValueError("Empty leaf set")
+
     layers: List[List[bytes]] = [list(leaves)]
     cur = layers[0]
     while len(cur) > 1:
@@ -43,17 +58,20 @@ def build(leaves: List[bytes]) -> Dict[str, Any]:
     return {"root": cur[0], "layers": layers}
 
 
-def path(tree: Dict[str, Any], index: int) -> List[Tuple[bytes, bool]]:
+def path(tree: Dict[str, Any], index: int) -> List[PathItem]:
+    """Return the Merkle proof for a leaf at ``index``.
+
+    The proof is returned as a list of :class:`PathItem` objects describing the
+    sibling hash at each layer and whether that sibling is to the right of the
+    current node.
     """
-    Returns list of (sibling_hash, sibling_is_right).
-    """
+
     layers = tree["layers"]
     idx = index
-    out: List[Tuple[bytes, bool]] = []
+    out: List[PathItem] = []
     for lvl in range(len(layers) - 1):
         layer = layers[lvl]
         if idx % 2 == 0:
-            # left child
             sib_idx = idx + 1
             sib_right = True
         else:
@@ -61,23 +79,25 @@ def path(tree: Dict[str, Any], index: int) -> List[Tuple[bytes, bool]]:
             sib_right = False
         if sib_idx >= len(layer):
             sib_idx = idx
-        out.append((layer[sib_idx], sib_right))
+        out.append(PathItem(layer[sib_idx], sib_right))
         idx //= 2
     return out
 
 
-def verify(
-    leaf_data_vals: Iterable[int], path_items: List[Tuple[bytes, bool]], root: bytes
-) -> bool:
-    """Verify Merkle proof.
+def verify(leaf_data_vals: Iterable[int], path_items: List[PathItem], root: bytes) -> bool:
+    """Verify a Merkle proof for ``leaf_data_vals`` against ``root``.
 
     Args:
         leaf_data_vals: Values to create leaf from
-        path_items: List of (sibling_hash, is_right) tuples
+        path_items: List of PathItem objects returned by :func:`path`
         root: Expected Merkle root
 
     Returns:
         bool: True if proof is valid
+
+    Note:
+        The function recomputes the hashes up the tree and checks whether
+        the resulting value equals ``root``.
     """
     cur = leaf_bytes(list(leaf_data_vals))
     for sib, sib_is_right in path_items:

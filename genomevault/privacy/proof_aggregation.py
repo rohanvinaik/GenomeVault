@@ -105,7 +105,6 @@ class ProofAggregator:
 
         # Collect all required proof elements
         proof_elements = set()
-        layers = tree["layers"]
 
         for pos in positions:
             path = merkle.path(tree, pos)
@@ -277,7 +276,8 @@ class BatchVerifier:
         results = {}
 
         # Decompress proof elements
-        elements = self._decompress_proof(proof.aggregated_path)
+        # elements = self._decompress_proof(proof.aggregated_path)
+        # TODO: Use decompressed elements for verification
 
         # Verify each position
         for i, pos in enumerate(proof.positions):
@@ -301,7 +301,8 @@ class BatchVerifier:
         results = {}
 
         # Decompress batch
-        decompressed = self._decompress_batch(batch.compress())
+        # decompressed = self._decompress_batch(batch.compress())
+        # TODO: Use decompressed data for verification
 
         # Verify each proof in batch
         for pos, proof_data in batch.proofs:
