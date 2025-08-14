@@ -12,14 +12,13 @@ from genomevault.core.exceptions import HypervectorError, ProjectionError
 from genomevault.hypervector.encoding.orthogonal_projection import OrthogonalProjection
 from genomevault.hypervector.encoding.sparse_projection import SparseRandomProjection
 from genomevault.hypervector.operations.binding import (
-from genomevault.hypervector.types import VectorF32, MatrixF32
-
     bundle,
     circular_convolution,
     element_wise_multiply,
     permutation_binding,
     unbundle,
 )
+from genomevault.hypervector.types import VectorF32, MatrixF32
 
 ProjectionType = Literal["sparse", "orthogonal"]
 DimensionTier = Literal[10000, 15000, 20000]
@@ -86,15 +85,6 @@ class UnifiedHypervectorEncoder:
 
         # Nucleotide base vectors (orthogonal)
         for i, base in enumerate(["A", "T", "G", "C"]):
-        """
-                Fit the encoder to the input feature dimension.
-
-                Args:
-                    n_features: Number of input features
-
-                Returns:
-                    Self for method chaining
-                """
             vec = np.zeros(self.dimension)
             start = i * (self.dimension // 4)
             end = (i + 1) * (self.dimension // 4)
@@ -119,7 +109,6 @@ class UnifiedHypervectorEncoder:
 
     def encode_genomic_features(
         self, features: MatrixF32, feature_names: list[str] | None = None
-        """Encode genomic features."""
     ) -> MatrixF32:
         """
         Encode genomic features into hypervector space.
@@ -147,7 +136,6 @@ class UnifiedHypervectorEncoder:
     def encode_variant(
         self,
         chromosome: str,
-        """Encode variant."""
         position: int,
         ref: str,
         alt: str,
@@ -204,6 +192,7 @@ class UnifiedHypervectorEncoder:
         return variant_vec
 
     def _encode_position(self, position: int) -> np.ndarray:
+        """
         Encode genomic position as a hypervector.
 
         Args:
@@ -228,16 +217,6 @@ class UnifiedHypervectorEncoder:
         # Encode each base with position binding
         vectors = []
         for i, base in enumerate(sequence.upper()):
-        """
-        """
-                Encode a DNA sequence into a hypervector.
-
-                Args:
-                    sequence: DNA sequence string
-
-                Returns:
-                    Sequence hypervector
-                """
             if base in self._base_vectors:
                 base_vec = self._base_vectors[base]
                 # Apply position-specific permutation
@@ -253,7 +232,6 @@ class UnifiedHypervectorEncoder:
     def cross_modal_binding(
         self,
         genomic_vec: np.ndarray,
-        """Cross modal binding."""
         clinical_vec: np.ndarray,
         modality_weights: dict[str, float] | None = None,
     ) -> np.ndarray:
@@ -296,7 +274,7 @@ class UnifiedHypervectorEncoder:
         return combined
 
     def similarity(self, vec1: np.ndarray, vec2: np.ndarray) -> float:
-        """Similarity."""
+        """
         Calculate cosine similarity between two hypervectors.
 
         Args:
@@ -316,7 +294,6 @@ class UnifiedHypervectorEncoder:
 
     def decode_components(
         self, hypervector: np.ndarray, threshold: float = 0.3
-        """Decode components."""
     ) -> list[tuple[str, float]]:
         """
         Attempt to decode components from a bundled hypervector.
@@ -336,21 +313,9 @@ class UnifiedHypervectorEncoder:
 
 def create_encoder(
     dimension: DimensionTier = 10000,
-    """Create encoder."""
     projection_type: ProjectionType = "sparse",
     **kwargs,
 ) -> UnifiedHypervectorEncoder:
-    """
-    Factory function to create a hypervector encoder.
-
-    Args:
-        dimension: Target dimension (10000, 15000, or 20000)
-        projection_type: Type of projection ("sparse" or "orthogonal")
-        **kwargs: Additional arguments passed to encoder
-
-    Returns:
-        Configured encoder instance
-    """
+    """Factory function to create a hypervector encoder."""
     return UnifiedHypervectorEncoder(dimension=dimension, projection_type=projection_type, **kwargs)
 
-        """
