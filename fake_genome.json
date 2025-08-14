@@ -1,0 +1,26 @@
+{
+  "sample_id": "SAMPLE_001",
+  "variants": [
+    {
+      "chrom": "chr1",
+      "pos": 12345,
+      "ref": "A",
+      "alt": "G",
+      "impact": "HIGH"
+    },
+    {
+      "chrom": "chr2",
+      "pos": 67890,
+      "ref": "T",
+      "alt": "C",
+      "impact": "MODERATE"
+    },
+    {
+      "chrom": "chr3",
+      "pos": 99999,
+      "ref": "G",
+      "alt": "A",
+      "impact": "LOW"
+    }
+  ]
+}
