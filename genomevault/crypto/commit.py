@@ -17,20 +17,20 @@ TAGS = {
 
 
 def _len_prefix(b: bytes) -> bytes:
-    """len prefix.
-    Args:        b: Parameter value.
-    Returns:
-        bytes"""
+    """Return a 4-byte big-endian length prefix for ``b``."""
+
     # 4-byte BE length prefix — stable, portable
     return len(b).to_bytes(4, "big")
 
 
 def H(tag: bytes, *parts: bytes) -> bytes:
+    """Domain-separated SHA-256 hash.
+
+    The hash is computed as ``H(tag || len(tag) || len(part_i)||part_i ...)``.
+    This keeps the API stable if the underlying hash function is swapped out in
+    the future.
     """
-    Domain-separated SHA-256: H(tag || len(tag) || len(part_i)||part_i ...)
-    Keep it simple & reproducible; if you later swap to a different hash,
-    keep this API stable and change the implementation here.
-    """
+
     h = hashlib.sha256()
     h.update(_len_prefix(tag))
     h.update(tag)
@@ -41,8 +41,6 @@ def H(tag: bytes, *parts: bytes) -> bytes:
 
 
 def hexH(tag: bytes, *parts: bytes) -> str:
-    """Hexh.
-    Args:        tag: Parameter value.
-    Returns:
-        str"""
+    """Return the hexadecimal representation of :func:`H`."""
+
     return H(tag, *parts).hex()
