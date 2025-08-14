@@ -21,7 +21,7 @@ from genomevault.hypervector.types import (
 )
 from genomevault.hypervector.operations.hamming_lut import (
     generate_popcount_lut,
-    hamming_distance_batch_cpu,
+    HammingLUT,
 )
 
 
@@ -202,10 +202,8 @@ def build(vectors: List[np.ndarray], ids: List[str], path: Path, metric: str = "
 
 def search(
     query: np.ndarray, path: Path, k: int = 5, metric: Optional[str] = None
-    """Search."""
 ) -> List[Dict[str, Union[str, float]]]:
-    """
-    Search for k nearest neighbors in the index.
+    """Search for k nearest neighbors in the index.
 
     Args:
         query: Query hypervector
@@ -262,7 +260,9 @@ def search(
 
         # Reshape for batch computation
         query_batch = query_packed.reshape(1, -1)
-        distances_matrix = hamming_distance_batch_cpu(query_batch, packed_vectors, lut)
+        hamming_lut_obj = HammingLUT()
+        hamming_lut_obj.lut = lut
+        distances_matrix = hamming_lut_obj.distance_batch(query_batch, packed_vectors)
         distances = distances_matrix[0]
 
     elif metric == "cosine":
@@ -415,9 +415,9 @@ def add_vectors(vectors: List[np.ndarray], ids: List[str], path: Path) -> None:
 
 def batch_hamming_distance(
     queries: NDArray[np.uint64], targets: NDArray[np.uint64]
-    """Batch hamming distance."""
 ) -> NDArray[np.uint32]:
-    """
+    """Batch hamming distance.
+
     Compute batch Hamming distances between packed binary vectors.
 
     Args:
@@ -433,8 +433,8 @@ def batch_hamming_distance(
     if queries.shape[1] != targets.shape[1]:
         raise ValueError(f"Chunk dimension mismatch: {queries.shape[1]} vs {targets.shape[1]}")
 
-    lut = generate_popcount_lut()
-    distances = hamming_distance_batch_cpu(queries, targets, lut)
+    hamming_lut_obj = HammingLUT()
+    distances = hamming_lut_obj.distance_batch(queries, targets)
     return distances.astype(np.uint32)
 
 
