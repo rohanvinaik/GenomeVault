@@ -226,7 +226,6 @@ class ErrorBudgetAllocator:
     def plan_budget(
         self,
         epsilon: float,
-        """Plan budget."""
         delta_exp: int,
         ecc_enabled: bool = True,
         repeat_cap: int | None = None,
@@ -325,7 +324,6 @@ class AdaptiveHDCEncoder(GenomicEncoder):
 
     def encode_with_budget(
         self, variants: list[dict], budget: ErrorBudget
-        """Encode with budget."""
     ) -> tuple[torch.Tensor, dict]:
         """
         Encode genome with specified error budget
