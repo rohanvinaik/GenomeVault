@@ -8,7 +8,7 @@ for multiple distance metrics.
 
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, Iterable, List, Optional, Union
 import json
 import struct
 
@@ -23,6 +23,32 @@ from genomevault.hypervector.operations.hamming_lut import (
     generate_popcount_lut,
     HammingLUT,
 )
+
+
+def _is_binary_vector(vec: np.ndarray) -> bool:
+    """Check whether a vector contains only boolean or 0/1 integer values."""
+    if np.issubdtype(vec.dtype, np.bool_):
+        return True
+    if np.issubdtype(vec.dtype, np.integer):
+        return bool(np.all((vec == 0) | (vec == 1)))
+    return False
+
+
+def _validate_metric_dtype(metric: str, vectors: Iterable[np.ndarray]) -> None:
+    """Validate that vectors are compatible with the requested metric."""
+    for vec in vectors:
+        if metric == "hamming":
+            if not _is_binary_vector(vec):
+                raise ValueError(
+                    "Hamming metric requires boolean or 0/1 integer vectors",
+                )
+        elif metric in {"cosine", "euclidean"}:
+            if not np.issubdtype(vec.dtype, np.floating):
+                raise ValueError(
+                    f"Metric '{metric}' requires real-valued (floating) vectors",
+                )
+        else:
+            raise ValueError(f"Invalid metric: {metric}")
 
 
 def pack_binary_vectors(vectors: List[VectorBool]) -> NDArray[np.uint64]:
@@ -53,14 +79,11 @@ def pack_binary_vectors(vectors: List[VectorBool]) -> NDArray[np.uint64]:
     # Create padded binary matrix
     binary_matrix = np.zeros((n_vectors, packed_dim), dtype=np.uint8)
     for i, vec in enumerate(vectors):
-        # Convert to binary if needed
-        if vec.dtype == bool:
-            binary_vec = vec.astype(np.uint8)
-        elif vec.dtype in [np.float32, np.float64]:
-            binary_vec = (vec > 0).astype(np.uint8)
-        else:
-            binary_vec = vec.astype(np.uint8)
-
+        if not _is_binary_vector(vec):
+            raise ValueError(
+                f"Vector {i} contains non-binary values; Hamming distance requires 0/1 data",
+            )
+        binary_vec = vec.astype(np.uint8)
         binary_matrix[i, :dimension] = binary_vec
 
     # Pack into uint64 chunks
@@ -111,7 +134,12 @@ def unpack_binary_vectors(packed: NDArray[np.uint64], dimension: int) -> List[Ve
     return vectors
 
 
-def build(vectors: List[np.ndarray], ids: List[str], path: Path, metric: str = "hamming") -> None:
+def build(
+    vectors: List[np.ndarray],
+    ids: List[str],
+    path: Path,
+    metric: Optional[str] = None,
+) -> None:
     """
     Build a search index from vectors.
 
@@ -119,7 +147,8 @@ def build(vectors: List[np.ndarray], ids: List[str], path: Path, metric: str = "
         vectors: List of hypervectors
         ids: List of unique identifiers for each vector
         path: Directory path to save index files
-        metric: Distance metric ('hamming', 'cosine', 'euclidean')
+        metric: Distance metric ('hamming', 'cosine', 'euclidean'). If None,
+            the metric is inferred from vector dtype.
     """
     if len(vectors) != len(ids):
         raise ValueError(f"Mismatch: {len(vectors)} vectors vs {len(ids)} ids")
@@ -127,10 +156,14 @@ def build(vectors: List[np.ndarray], ids: List[str], path: Path, metric: str = "
     if not vectors:
         raise ValueError("Cannot build index from empty vectors")
 
-    # Validate metric
+    if metric is None:
+        metric = "hamming" if _is_binary_vector(vectors[0]) else "cosine"
+
     valid_metrics = ["hamming", "cosine", "euclidean"]
     if metric not in valid_metrics:
         raise ValueError(f"Invalid metric: {metric}. Must be one of {valid_metrics}")
+
+    _validate_metric_dtype(metric, vectors)
 
     # Create output directory
     path = Path(path)
@@ -236,6 +269,8 @@ def search(
             f"Query dimension {len(query)} doesn't match index dimension {manifest['dimension']}"
         )
 
+    _validate_metric_dtype(metric, [query])
+
     # Load index
     index_file = path / "index.bin"
     if not index_file.exists():
@@ -253,7 +288,7 @@ def search(
             packed_vectors = np.fromfile(f, dtype=np.uint64).reshape(n_vectors, n_chunks)
 
         # Pack query vector
-        query_packed = pack_binary_vectors([query])[0]
+        query_packed = pack_binary_vectors([query.astype(np.uint8)])[0]
 
         # Compute Hamming distances using LUT
         lut = generate_popcount_lut()
@@ -355,6 +390,8 @@ def add_vectors(vectors: List[np.ndarray], ids: List[str], path: Path) -> None:
             raise ValueError(
                 f"Vector {i} has dimension {len(vec)}, expected {manifest['dimension']}"
             )
+
+    _validate_metric_dtype(manifest["metric"], vectors)
 
     # Load existing index
     index_file = path / "index.bin"
