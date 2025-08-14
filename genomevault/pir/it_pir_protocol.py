@@ -1,9 +1,9 @@
-"""It Pir Protocol module."""
+"""It Pir Protocol module.
 
-"""
 Information-Theoretic PIR Protocol Implementation
 Implements 2-server IT-PIR with XOR-based scheme and security guarantees.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -13,7 +13,7 @@ import time
 
 import numpy as np
 
-from genomevault.utils.logging import get_logger, logger
+from genomevault.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
