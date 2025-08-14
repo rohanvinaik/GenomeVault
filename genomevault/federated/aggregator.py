@@ -13,18 +13,18 @@ from genomevault.federated.models import (
 
 
 def _l2_norm(x: np.ndarray) -> float:
-    """ l2 norm.
-        Args:        x: Parameter value.
-        Returns:
-            float    """
+    """l2 norm.
+    Args:        x: Parameter value.
+    Returns:
+        float"""
     return float(np.linalg.norm(x))
 
 
 def _clip_by_l2(x: np.ndarray, clip: float) -> np.ndarray:
-    """ clip by l2.
-        Args:        x: Parameter value.        clip: Parameter value.
-        Returns:
-            np.ndarray    """
+    """clip by l2.
+    Args:        x: Parameter value.        clip: Parameter value.
+    Returns:
+        np.ndarray"""
     n = _l2_norm(x)
     if n <= clip or clip <= 0.0:
         return x
@@ -44,11 +44,16 @@ class FedAvgAggregator:
 
     def _validate_and_prepare(
         self, updates: list[ModelUpdate], clip_norm: float | None
-        """ validate and prepare.
-            Args:        updates: List of items.        clip_norm: Parameter value.
-            Returns:
-                tuple[list[np.ndarray], list[int]]    """
     ) -> tuple[list[np.ndarray], list[int]]:
+        """Validate and prepare updates.
+
+        Args:
+            updates: List of model updates.
+            clip_norm: Norm clipping value.
+
+        Returns:
+            tuple[list[np.ndarray], list[int]]: Prepared arrays and sample counts.
+        """
         arrs: list[np.ndarray] = []
         counts: list[int] = []
         L: int | None = None

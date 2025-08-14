@@ -16,11 +16,10 @@ import datetime
 import json
 import re
 
-from genomevault.utils import get_config, get_logger, secure_hash
-from genomevault.utils.logging import log_operation
+from genomevault.utils import secure_hash
+from genomevault.utils.logging import get_logger, log_operation
 
 logger = get_logger(__name__)
-config = get_config()
 
 
 class PhenotypeCategory(Enum):

@@ -11,10 +11,12 @@ from .config import (
     UserPreferencesBase,
     UserPreferencesPatch,
 )
-from .encode import EncodeIn, EncodeOut, do_encode
+
+# from .encode import EncodeIn, EncodeOut, do_encode  # Temporarily disabled due to import issues
 from .health import health
 from .ledger import append_entry, verify_chain, list_entries
-from .federated import aggregate
+
+# from .federated import aggregate  # Temporarily disabled
 from .topology import NodeInfo, TopologyRequest, TopologyResponse, NETWORK_NODES
 from .healthz import (
     HealthStatus,
@@ -24,19 +26,20 @@ from .healthz import (
     check_filesystem,
 )
 from .proofs import create_proof, verify_proof
-from .governance import (
-    consent_grant,
-    consent_revoke,
-    consent_check,
-    dsar_export,
-    dsar_erase,
-    ropa,
-)
+
+# from .governance import (
+#     consent_grant,
+#     consent_revoke,
+#     consent_check,
+#     dsar_export,
+#     dsar_erase,
+#     ropa,
+# )  # Temporarily disabled
 
 __all__ = [
     "DetailedHealthStatus",
-    "EncodeIn",
-    "EncodeOut",
+    # "EncodeIn",
+    # "EncodeOut",
     "EncodingConfigBase",
     "EncodingConfigCreate",
     "EncodingConfigResponse",
@@ -48,26 +51,26 @@ __all__ = [
     "TopologyResponse",
     "UserPreferencesBase",
     "UserPreferencesPatch",
-    "aggregate",
+    # "aggregate",
     "append_entry",
     "calculate_similarity",
     "check_cache",
     "check_database",
     "check_filesystem",
     "clinical_eval",
-    "consent_check",
-    "consent_grant",
-    "consent_revoke",
+    # "consent_check",
+    # "consent_grant",
+    # "consent_revoke",
     "create_proof",
-    "do_encode",
-    "dsar_erase",
-    "dsar_export",
+    # "do_encode",
+    # "dsar_erase",
+    # "dsar_export",
     "encode_vector",
     "health",
     "list_entries",
     "perform_operation",
     "pir_query",
-    "ropa",
+    # "ropa",
     "verify_chain",
     "verify_proof",
 ]
