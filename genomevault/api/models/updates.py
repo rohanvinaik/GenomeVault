@@ -207,9 +207,9 @@ class PatientDataPatch(BaseModel):
 @router.patch("/config/{config_id}", response_model=ConfigResponse)
 async def update_config(
     config_id: str,
-    """Update config."""
     patch: HypervectorConfigUpdate  # All fields optional
 ) -> Any:
+    # Update config
     # Only update provided fields
     update_data = patch.dict(exclude_unset=True)
 

@@ -302,9 +302,9 @@ class GenomicEncoder:
 
     def encode_genome_with_panel(
         self, variants: list[dict], panel_name: str | None = None
-        """Encode genome with panel."""
     ) -> torch.Tensor:
-        """
+        """Encode genome with panel.
+        
         Encode genome using SNP panel for improved accuracy
 
         Args:
@@ -368,9 +368,8 @@ class GenomicEncoder:
 
     def get_zoom_vector(
         self, chromosome: str, start: int, end: int, level: int = 0
-        """Get zoom vector."""
     ) -> torch.Tensor:
-        """Get zoom vector for specified region and level"""
+        """Get zoom vector for specified region and level."""
         if level == 0:
             # Return full chromosome vector
             return self.zoom_levels[0].get(chromosome, torch.zeros(self.dimension))
