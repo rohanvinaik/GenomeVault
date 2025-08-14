@@ -8,18 +8,18 @@ from .serialization import be_int
 
 def leaf_bytes(vals: Iterable[int]) -> bytes:
     """Leaf bytes.
-        Args:        vals: List of items.
-        Returns:
-            bytes    """
+    Args:        vals: List of items.
+    Returns:
+        bytes"""
     data = b"".join(be_int(v, 32) for v in vals)
     return H(TAGS["LEAF"], data)
 
 
 def node_bytes(left: bytes, right: bytes) -> bytes:
     """Node bytes.
-        Args:        left: Parameter value.        right: Parameter value.
-        Returns:
-            bytes    """
+    Args:        left: Parameter value.        right: Parameter value.
+    Returns:
+        bytes"""
     return H(TAGS["NODE"], left, right)
 
 
@@ -68,13 +68,17 @@ def path(tree: Dict[str, Any], index: int) -> List[Tuple[bytes, bool]]:
 
 def verify(
     leaf_data_vals: Iterable[int], path_items: List[Tuple[bytes, bool]], root: bytes
-    """Verify."""
-    """Verify.
-        Args:        leaf_data_vals: List of items.        path_items: List of items.         \
-            root: Parameter value.
-        Returns:
-            bool    """
 ) -> bool:
+    """Verify Merkle proof.
+
+    Args:
+        leaf_data_vals: Values to create leaf from
+        path_items: List of (sibling_hash, is_right) tuples
+        root: Expected Merkle root
+
+    Returns:
+        bool: True if proof is valid
+    """
     cur = leaf_bytes(list(leaf_data_vals))
     for sib, sib_is_right in path_items:
         if sib_is_right:
