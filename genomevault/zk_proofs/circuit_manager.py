@@ -214,7 +214,6 @@ class CircuitManager:
 
     def select_optimal_circuit(
         self, analysis_type: str, data_characteristics: dict[str, Any]
-        """Select optimal circuit."""
     ) -> str:
         """
         Select optimal circuit based on analysis type and data.
@@ -342,7 +341,6 @@ class CircuitManager:
     @log_operation
     def optimize_circuit_parameters(
         self, circuit_name: str, target_metrics: dict[str, Any]
-        """Optimize circuit parameters."""
     ) -> dict[str, Any]:
         """
         Optimize circuit parameters for target metrics.
@@ -434,7 +432,6 @@ class CircuitManager:
     def validate_circuit_inputs(
         self,
         circuit_name: str,
-        """Validate circuit inputs."""
         public_inputs: dict[str, Any],
         private_inputs: dict[str, Any],
     ) -> tuple[bool, list[str]]:
@@ -578,7 +575,6 @@ class CircuitManager:
 
     def benchmark_circuit(
         self, circuit_name: str, test_data: dict[str, Any] | None = None
-        """Benchmark circuit."""
     ) -> dict[str, float]:
         """
         Benchmark a circuit's performance.
