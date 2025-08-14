@@ -3,11 +3,11 @@ Positional encoding for single-nucleotide accuracy
 Implements sparse, memory-efficient position vectors for SNP-level granularity
 
 """
+
 from __future__ import annotations
 
 import hashlib
 
-import numpy as np
 import torch
 
 from genomevault.core.exceptions import HypervectorError
@@ -72,7 +72,6 @@ class PositionalEncoder:
 
     def make_position_vectors_batch(
         self, positions: list[int], seed: int | None = None
-        """Make position vectors batch."""
     ) -> torch.Tensor:
         """
         Generate batch of position vectors efficiently
@@ -93,7 +92,6 @@ class PositionalEncoder:
 
     def encode_snp_positions(
         self, chromosome: str, positions: list[int], panel_name: str = "default"
-        """Encode snp positions."""
     ) -> torch.Tensor:
         """
         Encode a set of SNP positions into a single panel hypervector
@@ -209,25 +207,6 @@ class SNPPanel:
 
     def __init__(self, positional_encoder: PositionalEncoder):
         """
-        """Create sparse hypervector from seed"""
-                # Set random state
-                rng = np.random.RandomState(seed)
-
-                # Create sparse vector
-                vec = torch.zeros(self.dimension)
-
-                # Random positions
-                indices = rng.choice(self.dimension, size=self.nnz, replace=False)
-
-                # Random values from {-1, +1}
-                values = rng.choice([-1.0, 1.0], size=self.nnz)
-
-                vec[indices] = torch.tensor(values)
-
-                return vec
-
-            def get_memory_usage(self) -> dict[str, float]:
-        """
         Initialize SNP panel manager
 
         Args:
@@ -276,7 +255,6 @@ class SNPPanel:
                 with open(file_path) as f:
                     for line in f:
                         if line.startswith("#"):
-                """Get memory usage statistics"""
                             continue
                         parts = line.strip().split("\t")
                         if len(parts) >= 3:
@@ -326,7 +304,6 @@ class SNPPanel:
 
     def encode_with_panel(
         self, panel_name: str, chromosome: str, observed_bases: dict[int, str]
-        """Encode with panel."""
     ) -> torch.Tensor:
         """
         Encode observed bases using specified SNP panel
@@ -346,7 +323,7 @@ class SNPPanel:
 
         # Get panel positions for this chromosome
         if chromosome not in panel.get("positions", {}):
-            logger.warning(f"No positions for {chromosome} in panel {}panel_name")
+            logger.warning(f"No positions for {chromosome} in panel {panel_name}")
             return torch.zeros(self.encoder.dimension)
 
         panel_positions = panel["positions"][chromosome]
@@ -380,6 +357,23 @@ class SNPPanel:
         return vec1 * vec2
 
     def _bundle_vectors(self, vectors: list[torch.Tensor]) -> torch.Tensor:
+        """Bundle multiple hypervectors using superposition"""
+        if not vectors:
+            return torch.zeros(self.encoder.dimension)
+
+        # Sum all vectors (superposition)
+        result = torch.stack(vectors).sum(dim=0)
+        # Normalize to maintain sparsity
+        return torch.sign(result)
+
+    def list_panels(self) -> list[str]:
+        """List available panel names"""
+        return list(self.panels.keys())
+
+    def get_panel_info(self, panel_name: str) -> dict:
+        """
+        Get information about a panel.
+        """
         if panel_name not in self.panels:
             raise ValueError(f"Unknown panel: {panel_name}")
 
@@ -391,11 +385,3 @@ class SNPPanel:
             "chromosomes": list(panel.get("positions", {}).keys()),
             "file_path": panel.get("file_path", "built-in"),
         }
-
-    def list_panels(self) -> list[str]:
-        """List available panel names"""
-        return list(self.panels.keys())
-
-    def get_panel_info(self, panel_name: str) -> dict:
-        """Get information about a panel"""
-        return {}  # TODO: Implement panel info
