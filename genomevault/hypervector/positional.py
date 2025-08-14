@@ -23,7 +23,7 @@ class PositionalEncoder:
     """
 
     def __init__(self, dimension: int = 100000, sparsity: float = 0.01, cache_size: int = 10000):
-        Initialize positional encoder
+        """Initialize positional encoder.
 
         Args:
             dimension: Hypervector dimension
@@ -396,14 +396,6 @@ class SNPPanel:
         """List available panel names"""
         return list(self.panels.keys())
 
-        """Bundle multiple vectors using XOR-like operation"""
-                stacked = torch.stack(vectors)
-                # Majority vote for each dimension
-                bundled = torch.sign(stacked.sum(dim=0))
-                # Handle zeros
-                bundled[bundled == 0] = 1
-                return bundled
-
-            def get_panel_info(self, panel_name: str) -> dict:
-                """Get information about a panel"""
-        """Encode nucleotide base"""
+    def get_panel_info(self, panel_name: str) -> dict:
+        """Get information about a panel"""
+        return {}  # TODO: Implement panel info
