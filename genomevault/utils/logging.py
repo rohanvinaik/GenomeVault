@@ -314,6 +314,70 @@ class ContextLogger:
         return False  # Don't suppress exceptions
 
 
+class SecurityLogger:
+    """Logger for security-related events."""
+
+    def __init__(self, logger: Optional[logging.Logger] = None):
+        """Initialize instance.
+
+        Args:
+            logger: Logger instance.
+        """
+        self.logger = logger or logging.getLogger("genomevault.security")
+
+    def log_intrusion_attempt(
+        self,
+        source_ip: str,
+        attack_type: str,
+        target: str,
+        blocked: bool = False,
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> None:
+        """Log an intrusion attempt."""
+        event = {
+            "source_ip": source_ip,
+            "attack_type": attack_type,
+            "target": target,
+            "blocked": blocked,
+            "timestamp": time.time(),
+            "metadata": metadata or {},
+        }
+        level = logging.WARNING if not blocked else logging.INFO
+        self.logger.log(
+            level,
+            f"Intrusion attempt: {attack_type} from {source_ip} targeting {target} - {'blocked' if blocked else 'detected'}",
+            extra=event,
+        )
+
+    def log_security_event(
+        self,
+        event_type: str,
+        severity: str,
+        details: Dict[str, Any],
+    ) -> None:
+        """Log a security event."""
+        event = {
+            "event_type": event_type,
+            "severity": severity,
+            "details": details,
+            "timestamp": time.time(),
+        }
+        level = logging.CRITICAL if severity == "critical" else logging.WARNING
+        self.logger.log(level, f"Security event: {event_type} - severity: {severity}", extra=event)
+
+    def info(self, message: str, **kwargs):
+        """Log info level message."""
+        self.logger.info(message, **kwargs)
+
+    def warning(self, message: str, **kwargs):
+        """Log warning level message."""
+        self.logger.warning(message, **kwargs)
+
+    def error(self, message: str, **kwargs):
+        """Log error level message."""
+        self.logger.error(message, **kwargs)
+
+
 class AuditLogger:
     """Logger for audit and compliance events."""
 
@@ -440,6 +504,7 @@ def critical(message: str, logger_name: Optional[str] = None) -> None:
 logger = get_logger(__name__)
 performance_logger = get_logger("genomevault.performance")
 audit_logger = AuditLogger()
+security_logger = SecurityLogger()
 
 
 # Initialize logging when module is imported

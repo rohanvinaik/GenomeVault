@@ -104,10 +104,10 @@ class HypervectorEncoder:
     # --- internals ---
 
     def _as_tensor(self, features: Union[TensorLike, Mapping[str, TensorLike]]) -> torch.Tensor:
-        """ as tensor.
-            Args:        features: List of items.
-            Returns:
-                torch.Tensor    """
+        """as tensor.
+        Args:        features: List of items.
+        Returns:
+            torch.Tensor"""
         if isinstance(features, Mapping):
             # deterministic order
             arrs = [np.asarray(v) for k, v in sorted(features.items())]
@@ -129,12 +129,12 @@ class HypervectorEncoder:
 
     def _get_projection_matrix(
         self, input_dim: int, output_dim: int, omics_type: OmicsType
+    ) -> torch.Tensor:
         """ get projection matrix.
             Args:        input_dim: Parameter value.        output_dim: Parameter value.        \
                 omics_type: Parameter value.
             Returns:
                 torch.Tensor    """
-    ) -> torch.Tensor:
         key = self._cache_key(input_dim, output_dim, omics_type)
         if key in self._projection_cache:
             return self._projection_cache[key]
@@ -152,10 +152,10 @@ class HypervectorEncoder:
         return mat
 
     def _sparse_random(self, rows: int, cols: int, *, sparsity: float) -> torch.Tensor:
-        """ sparse random.
-            Args:        rows: List of items.        cols: List of items.
-            Returns:
-                torch.Tensor    """
+        """sparse random.
+        Args:        rows: List of items.        cols: List of items.
+        Returns:
+            torch.Tensor"""
         # Achlioptas-style: values in {-1, 0, +1}
         probs = [sparsity / 2, 1 - sparsity, sparsity / 2]
         vals: NDArray[np.float32] = np.random.choice(
@@ -168,28 +168,28 @@ class HypervectorEncoder:
         return mat
 
     def _orthogonal(self, rows: int, cols: int) -> torch.Tensor:
-        """ orthogonal.
-            Args:        rows: List of items.        cols: List of items.
-            Returns:
-                torch.Tensor    """
+        """orthogonal.
+        Args:        rows: List of items.        cols: List of items.
+        Returns:
+            torch.Tensor"""
         # Build via QR on a Gaussian matrix and crop/pad
         a = torch.randn(max(rows, cols), max(rows, cols))
         q, _ = torch.linalg.qr(a)
         return q[:rows, :cols].contiguous()
 
     def _normalize(self, hv: torch.Tensor) -> torch.Tensor:
-        """ normalize.
-            Args:        hv: Parameter value.
-            Returns:
-                torch.Tensor    """
+        """normalize.
+        Args:        hv: Parameter value.
+        Returns:
+            torch.Tensor"""
         n = torch.norm(hv, p=2).clamp_min(1e-12)
         return hv / n
 
     def _quantize(self, hv: torch.Tensor, *, bits: int = 8) -> torch.Tensor:
-        """ quantize.
-            Args:        hv: Parameter value.
-            Returns:
-                torch.Tensor    """
+        """quantize.
+        Args:        hv: Parameter value.
+        Returns:
+            torch.Tensor"""
         # symmetric uniform quantization to int8/intN
         scale = hv.abs().max().clamp_min(1e-8)
         q = torch.clamp(
