@@ -5,7 +5,7 @@ This module shows best practices for partial update models to avoid
 "missing required field" type errors in PATCH-like handlers.
 """
 
-from pydantic import BaseModel, Field, validator, root_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 from typing import Optional, Any, Dict, List, TypedDict
 
 from genomevault.api.utils import dict_for_update as _dict_for_update
@@ -100,12 +100,16 @@ class GenomicAnalysisPatch(BaseModel):
     PATCH model with validation on optional fields.
     """
 
-    analysis_type: Optional[str] = Field(None, regex="^(SNV|CNV|SV|INDEL)$")
+    analysis_type: Optional[str] = Field(
+        None, pattern="^(SNV|CNV|SV|INDEL)$"
+    )
     quality_threshold: Optional[float] = Field(None, ge=0.0, le=1.0)
-    reference_genome: Optional[str] = Field(None, regex="^(hg19|hg38|GRCh37|GRCh38)$")
+    reference_genome: Optional[str] = Field(
+        None, pattern="^(hg19|hg38|GRCh37|GRCh38)$"
+    )
     filters: Optional[Dict[str, Any]] = None
 
-    @validator("quality_threshold")  # type: ignore
+    @field_validator("quality_threshold")  # type: ignore
     def validate_quality(cls, v: Optional[float]) -> Optional[float]:
         """Validate quality threshold if provided."""
         if v is not None and v < 0.5:
@@ -148,13 +152,13 @@ class DataSourceUpdate(BaseModel):
     compression: Optional[bool] = None
     encryption_key: Optional[str] = Field(None, exclude=True)  # Exclude from response
 
-    @root_validator  # type: ignore
-    def validate_source_config(cls, values):
+    @model_validator(mode="after")  # type: ignore
+    def validate_source_config(cls, values: "DataSourceUpdate") -> "DataSourceUpdate":
         """Ensure only one source config is provided."""
         configs = [
-            values.get("s3_config"),
-            values.get("gcs_config"),
-            values.get("local_path"),
+            values.s3_config,
+            values.gcs_config,
+            values.local_path,
         ]
         if sum(c is not None for c in configs) > 1:
             raise ValueError("Only one source configuration can be updated at a time")
@@ -181,7 +185,7 @@ class PatientDataPatch(BaseModel):
         quality_score: Optional[float] = None
         coverage_depth: Optional[float] = None
 
-    patient_id: Optional[str] = Field(None, regex="^P[0-9]{6}$")
+    patient_id: Optional[str] = Field(None, pattern="^P[0-9]{6}$")
     clinical: Optional[ClinicalDataPatch] = None
     genomic: Optional[GenomicDataPatch] = None
     last_updated: Optional[str] = None  # ISO timestamp
