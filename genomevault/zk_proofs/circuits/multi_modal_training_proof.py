@@ -1,12 +1,10 @@
-"""Multi Modal Training Proof module."""
-
-"""
-Multi-Modal Training Proof Circuit for Cross-Omics Verification
+"""Multi-Modal Training Proof Circuit for Cross-Omics Verification.
 
 This module implements cryptographic proofs for verifying that ML models
 correctly learned from multiple biological modalities (genomic, transcriptomic, proteomic)
 with proper cross-modal alignment.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
