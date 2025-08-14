@@ -1,11 +1,10 @@
-"""
-Pydantic models for Hypervector encoding API endpoints.
-"""
+"""Pydantic models for Hypervector encoding API endpoints."""
 
 from enum import Enum
-from pydantic import BaseModel, Field, validator, root_validator
-from typing import Any, Dict, List, Optional
 import re
+from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from .updates import UpdateModelMixin
 
@@ -16,12 +15,12 @@ class VariantInput(BaseModel):
     variant: str = Field(
         ...,
         description="Variant in format 'chr:pos ref>alt' (e.g., 'chr1:123456 A>G')",
-        regex=r"^chr([1-9]|1[0-9]|2[0-2]|X|Y|M|MT):(\d+)\s+([ACGT]+)>([ACGT]+)$",
+        pattern=r"^chr([1-9]|1[0-9]|2[0-2]|X|Y|M|MT):(\d+)\s+([ACGT]+)>([ACGT]+)$",
         min_length=10,
         max_length=100,
     )
 
-    @validator("variant")
+    @field_validator("variant")
     def validate_variant_format(cls, v: str) -> str:
         """Validate and normalize variant format."""
         # Normalize chromosome naming (ensure 'chr' prefix)
@@ -58,7 +57,7 @@ class VectorInput(BaseModel):
         ..., description="Numeric vector/array", min_items=100, max_items=100000
     )
 
-    @validator("vector")
+    @field_validator("vector")
     def validate_vector(cls, v: List[float]) -> List[float]:
         """Validate vector contains only finite numbers."""
         if not v:
@@ -100,11 +99,11 @@ class EncodingRequest(BaseModel):
         default=10000, description="Target hypervector dimension", ge=1000, le=100000
     )
 
-    @root_validator
-    def validate_input_type(cls, values: dict) -> dict:
+    @model_validator(mode="after")
+    def validate_input_type(cls, values: "EncodingRequest") -> "EncodingRequest":
         """Ensure exactly one input type is provided."""
-        variants = values.get("variants")
-        vector = values.get("vector")
+        variants = values.variants
+        vector = values.vector
 
         if variants is not None and vector is not None:
             raise ValueError(
@@ -119,7 +118,7 @@ class EncodingRequest(BaseModel):
 
         return values
 
-    @validator("variants", each_item=True)
+    @field_validator("variants", mode="after", each_item=True)
     def validate_each_variant(cls, v: str) -> str:
         """Validate each variant in the list."""
         if not v:
@@ -145,7 +144,7 @@ class EncodingRequest(BaseModel):
 
         return v
 
-    @validator("variants")
+    @field_validator("variants")
     def ensure_deterministic_order(cls, v: Optional[List[str]]) -> Optional[List[str]]:
         """Sort variants for deterministic processing."""
         if v is None:
@@ -180,7 +179,7 @@ class EncodingRequest(BaseModel):
 
         return sorted(v, key=sort_key)
 
-    @validator("vector")
+    @field_validator("vector")
     def validate_vector_values(cls, v: Optional[List[float]]) -> Optional[List[float]]:
         """Validate vector contains only finite numbers."""
         if v is None:
@@ -199,7 +198,7 @@ class EncodingRequest(BaseModel):
 
         return v
 
-    @validator("dimension")
+    @field_validator("dimension")
     def validate_dimension(cls, v: int) -> int:
         """Ensure dimension is in allowed values."""
         allowed = [1000, 5000, 10000, 15000, 20000, 50000, 100000]
@@ -274,7 +273,7 @@ class HVEncodeRequest(BaseModel):
         default=None, description="Optional metadata to include with encoding"
     )
 
-    @validator("dimension")
+    @field_validator("dimension")
     def validate_dimension(cls, v: int) -> int:
         """Ensure dimension is in allowed values."""
         allowed = [10000, 15000, 20000, 50000, 100000]
@@ -310,7 +309,7 @@ class HVEncodeConfigPatch(UpdateModelMixin):
         None, description="Optional metadata to include with encoding"
     )
 
-    @validator("dimension")
+    @field_validator("dimension")
     def validate_dimension(cls, v: Optional[int]) -> Optional[int]:
         """Ensure dimension is in allowed values if provided."""
         if v is not None:
@@ -390,7 +389,7 @@ class HVSimilarityRequest(BaseModel):
     metric: str = Field(
         default="cosine",
         description="Similarity metric to use",
-        regex="^(cosine|euclidean|hamming)$",
+        pattern="^(cosine|euclidean|hamming)$",
     )
 
 
@@ -413,10 +412,10 @@ class SearchRequest(BaseModel):
     metric: str = Field(
         default="hamming",
         description="Distance metric to use",
-        regex="^(hamming|cosine|euclidean)$",
+        pattern="^(hamming|cosine|euclidean)$",
     )
 
-    @validator("query_vector")
+    @field_validator("query_vector")
     def validate_query_vector(cls, v: List[float]) -> List[float]:
         """Validate query vector contains finite numbers."""
         for i, val in enumerate(v):
@@ -428,7 +427,7 @@ class SearchRequest(BaseModel):
                 raise ValueError(f"Query vector element at index {i} is out of bounds: {val}")
         return v
 
-    @validator("index_path")
+    @field_validator("index_path")
     def validate_index_path(cls, v: str) -> str:
         """Ensure index path is safe."""
         # Basic path validation to prevent directory traversal

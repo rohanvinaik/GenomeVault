@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 from typing import Any, Optional, Dict
 
 from genomevault.api.utils import dict_for_update as _dict_for_update
@@ -24,7 +24,7 @@ class VectorEncodeRequest(BaseModel):
     dimension: VectorDimension = Field(VectorDimension.D10K, description="Target dimension")
     compression_tier: str = Field("full", description="mini, clinical, or full")
 
-    @validator("data")
+    @field_validator("data")
     def _validate_data(cls, v: dict[str, list[float]]):
         """validate data.
         Args:        v: Parameter value."""
