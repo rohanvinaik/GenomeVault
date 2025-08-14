@@ -1,7 +1,4 @@
-"""
-Prometheus metrics endpoint for monitoring.
-
-"""
+"""Prometheus metrics endpoint for monitoring."""
 
 from typing import Any
 
