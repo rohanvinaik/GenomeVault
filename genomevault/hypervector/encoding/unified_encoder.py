@@ -76,6 +76,10 @@ class UnifiedHypervectorEncoder:
         self._base_vectors: dict[str, np.ndarray] = {}
         self._fitted = False
 
+        # Cache for position encodings to improve performance
+        self._position_cache: dict[int, np.ndarray] = {}
+        self._max_cache_size = 10000
+
     def fit(self, n_features: int) -> "UnifiedHypervectorEncoder":
         """Fit."""
         self.projection.fit(n_features)
@@ -170,15 +174,25 @@ class UnifiedHypervectorEncoder:
                 f"Unknown variant type: {variant_type}. Available types: {list(self._base_vectors.keys())}"
             )
 
-        variant_vec = self._base_vectors[variant_type].copy()
+        # Use pre-allocated array for better performance
+        variant_vec = np.empty(self.dimension, dtype=np.float32)
+        np.copyto(variant_vec, self._base_vectors[variant_type])
 
         # Bind with chromosome vector
         if chromosome in self._base_vectors:
             chr_vec = self._base_vectors[chromosome]
             variant_vec = circular_convolution(variant_vec, chr_vec)
 
-        # Encode position using permutation
-        position_vec = self._encode_position(position)
+        # Use cached position encoding for better performance
+        if position not in self._position_cache:
+            if len(self._position_cache) >= self._max_cache_size:
+                # Simple LRU: clear oldest entries when cache is full
+                keys_to_remove = list(self._position_cache.keys())[: self._max_cache_size // 2]
+                for key in keys_to_remove:
+                    del self._position_cache[key]
+            self._position_cache[position] = self._encode_position(position)
+
+        position_vec = self._position_cache[position]
         variant_vec = element_wise_multiply(variant_vec, position_vec)
 
         # Add reference and alternative alleles if single nucleotides
@@ -192,12 +206,12 @@ class UnifiedHypervectorEncoder:
             alt_vec = permutation_binding(alt_vec, shift=1)
             variant_vec = circular_convolution(variant_vec, alt_vec)
 
-        # Normalize
+        # Fast normalization with in-place operation
         norm = np.linalg.norm(variant_vec)
         if norm > 0:
-            variant_vec = variant_vec / norm
+            variant_vec /= norm
 
-        return variant_vec
+        return variant_vec.astype(np.float32)
 
     def _encode_position(self, position: int) -> np.ndarray:
         """
@@ -211,8 +225,12 @@ class UnifiedHypervectorEncoder:
         """
         # Use position as seed for deterministic encoding
         rng = np.random.default_rng(position)
-        vec = rng.standard_normal(self.dimension)
-        return vec / np.linalg.norm(vec)
+        vec = rng.standard_normal(self.dimension).astype(np.float32)
+        # Fast normalization
+        norm = np.linalg.norm(vec)
+        if norm > 0:
+            vec /= norm
+        return vec
 
     def encode_sequence(self, sequence: str) -> VectorF32:
         """Encode sequence."""
@@ -317,6 +335,10 @@ class UnifiedHypervectorEncoder:
             return []
 
         return unbundle(hypervector, self._base_vectors, threshold)
+
+    def clear_cache(self):
+        """Clear the position cache to free memory."""
+        self._position_cache.clear()
 
 
 def create_encoder(
