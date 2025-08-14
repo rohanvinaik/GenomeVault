@@ -132,7 +132,6 @@ class PositionalEncoder:
         except Exception as e:
             logger.exception("Unhandled exception")
             raise HypervectorError(f"Failed to encode SNP positions: {e!s}")
-            raise RuntimeError("Unspecified error")
 
     def _position_to_seed(self, position: int) -> int:
         """Convert genomic position to deterministic seed"""
@@ -181,18 +180,18 @@ class PositionalEncoder:
         return chr_num * 1000000  # Space out chromosome seeds
 
     def _create_sparse_vector(self, seed: int) -> torch.Tensor:
-        cache_size_mb = sum(vec.element_size() * vec.numel() for vec in self._cache.values()) / (
-            1024**2
-        )
+        """Create a sparse hypervector using the provided seed.
 
-        return {
-            "cache_entries": len(self._cache),
-            "cache_size_mb": cache_size_mb,
-            "max_cache_size": self.cache_size,
-            "dimension": self.dimension,
-            "sparsity": self.sparsity,
-            "nnz_per_vector": self.nnz,
-        }
+        The vector contains ``nnz`` non-zero elements with values in ``{-1, 1}``.
+        The positions of the non-zero elements are chosen deterministically based on
+        ``seed`` to ensure reproducibility.
+        """
+        g = torch.Generator().manual_seed(seed)
+        vec = torch.zeros(self.dimension, dtype=torch.float32)
+        indices = torch.randperm(self.dimension, generator=g)[: self.nnz]
+        values = torch.randint(0, 2, (self.nnz,), generator=g, dtype=torch.float32) * 2 - 1
+        vec[indices] = values
+        return vec
 
     def clear_cache(self) -> None:
         """Clear the position vector cache"""
