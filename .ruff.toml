@@ -1,4 +1,7 @@
 # .ruff.toml - Compatible with Ruff 0.4.x
+target-version = "py311"
+line-length = 100
+
 [lint]
 # Removed global ignores as per audit Task 3
 # Previously had: extend-ignore = ["E501", "F401", "F541", "E722"]
@@ -8,6 +11,17 @@ extend-ignore = ["E501"]
 exclude = [
   "scripts/*",
   "tests/*",
+  "build",
+  "dist",
+  ".venv",
+  ".mypy_cache",
+  ".pytest_cache",
+  ".ruff_cache",
+  "__pycache__",
+  "*.egg-info",
+  ".git",
+  ".tox",
+  "node_modules",
 ]
 
 [lint.per-file-ignores]
