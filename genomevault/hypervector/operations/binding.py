@@ -89,7 +89,6 @@ def _cosine(a: VectorF64, b: VectorF64) -> float:
 
 def unbundle(
     bundled: VectorF64, item_memory: dict[str, VectorF64], threshold: float = 0.3
-    """Unbundle."""
 ) -> list[tuple[str, float]]:
     """Retrieve components from a bundled vector using cosine similarity threshold.
 
