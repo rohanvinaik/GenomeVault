@@ -1,4 +1,5 @@
 """Variant module."""
+
 from __future__ import annotations
 
 from typing import Dict, List, cast
@@ -39,7 +40,7 @@ class VariantPresenceCircuit(BaseCircuit):
 
     def __init__(self, merkle_depth: int = 20):
         """Initialize the instance.
-            Args:        merkle_depth: Parameter value.    """
+        Args:        merkle_depth: Parameter value."""
         super().__init__("variant_presence", 5000)
         self.merkle_depth = merkle_depth
         self.merkle_circuit = MerkleTreeCircuit(merkle_depth)
@@ -66,8 +67,8 @@ class VariantPresenceCircuit(BaseCircuit):
 
     def generate_constraints(self):
         """Generate constraints.
-            Returns:
-                The created instance.    """
+        Returns:
+            The created instance."""
         # 1. Verify variant hash matches computed hash
         computed_hash = self._hash_variant(self.variant_data)
         self.add_constraint(computed_hash, self.variant_hash, FieldElement(0), ql=1, qr=-1)
@@ -138,7 +139,7 @@ class PolygenenicRiskScoreCircuit(BaseCircuit):
 
     def __init__(self, max_variants: int = 1000):
         """Initialize the instance.
-            Args:        max_variants: List of items.    """
+        Args:        max_variants: List of items."""
         super().__init__("polygenic_risk_score", 20000)
         self.max_variants = max_variants
         self.range_circuit = RangeProofCircuit(bit_width=32)
@@ -205,8 +206,8 @@ class PolygenenicRiskScoreCircuit(BaseCircuit):
         self.add_constraint(model_hash, self.prs_model_hash, FieldElement(0), ql=1, qr=-1)
 
     def _add_genotype_constraint(self, genotype: FieldElement):
-        """ add genotype constraint.
-            Args:        genotype: Parameter value.    """
+        """add genotype constraint.
+        Args:        genotype: Parameter value."""
         # g * (g - 1) * (g - 2) = 0
         g_minus_1 = genotype - FieldElement(1)
         g_minus_2 = genotype - FieldElement(2)
@@ -250,7 +251,7 @@ class DiabetesRiskCircuit(BaseCircuit):
     """
 
     def __init__(self):
-        """Initialize the instance.    """
+        """Initialize the instance."""
         super().__init__("diabetes_risk_alert", 15000)
         self.glucose_comparison = ComparisonCircuit()
         self.risk_comparison = ComparisonCircuit()
@@ -272,8 +273,8 @@ class DiabetesRiskCircuit(BaseCircuit):
 
     def generate_constraints(self):
         """Generate constraints.
-            Returns:
-                The created instance.    """
+        Returns:
+            The created instance."""
         # 1. Prove G > G_threshold
         self.glucose_comparison.setup(
             public_inputs={
@@ -325,7 +326,7 @@ class DiabetesRiskCircuit(BaseCircuit):
         # In production, would add proper range proof
 
     def _add_risk_range_constraint(self):
-        """ add risk range constraint.    """
+        """add risk range constraint."""
         # Risk score is scaled by 1000, so check [0, 1000]
         max_risk = FieldElement(1000)
         _diff = max_risk - self.risk_score
@@ -349,7 +350,7 @@ class PharmacogenomicCircuit(BaseCircuit):
 
     def __init__(self, max_star_alleles: int = 50):
         """Initialize the instance.
-            Args:        max_star_alleles: List of items.    """
+        Args:        max_star_alleles: List of items."""
         super().__init__("pharmacogenomic", 10000)
         self.max_star_alleles = max_star_alleles
         self._genes = ["CYP2C19", "CYP2D6", "CYP2C9", "VKORC1", "TPMT"]
@@ -400,10 +401,10 @@ class PharmacogenomicCircuit(BaseCircuit):
         )
 
     def _activity_to_category(self, total_activity: FieldElement) -> FieldElement:
-        """ activity to category.
-            Args:        total_activity: Parameter value.
-            Returns:
-                FieldElement    """
+        """activity to category.
+        Args:        total_activity: Parameter value.
+        Returns:
+            FieldElement"""
         # Simplified mapping - in production would use circuit-friendly comparison
         # 0: Poor, 1: Normal, 2: Rapid, 3: Ultra-rapid
 
@@ -429,10 +430,10 @@ class PharmacogenomicCircuit(BaseCircuit):
         # Simplified for demo
 
     def _commit_genotypes(self, genotypes: List[Dict], randomness: FieldElement) -> FieldElement:
-        """ commit genotypes.
-            Args:        genotypes: List of items.        randomness: List of items.
-            Returns:
-                FieldElement    """
+        """commit genotypes.
+        Args:        genotypes: List of items.        randomness: List of items.
+        Returns:
+            FieldElement"""
         genotype_str = ":".join(f"{g['variant']}={g['genotype']}" for g in genotypes)
         data = f"GENOTYPES:{genotype_str}:{randomness.value}".encode()
         hash_val = hashlib.sha256(data).hexdigest()
@@ -456,7 +457,7 @@ class PathwayEnrichmentCircuit(BaseCircuit):
 
     def __init__(self, max_genes: int = 20000):
         """Initialize the instance.
-            Args:        max_genes: List of items.    """
+        Args:        max_genes: List of items."""
         super().__init__("pathway_enrichment", 25000)
         self.max_genes = max_genes
 
@@ -571,7 +572,6 @@ class PathwayEnrichmentCircuit(BaseCircuit):
 # Helper function to create proof for hypervector data
 def create_hypervector_proof(
     hypervector: torch.Tensor, proof_type: str, public_params: Dict[str, Any]
-    """Create hypervector proof."""
 ) -> Dict[str, Any]:
     """
     Create ZK proof for hypervector-encoded data
