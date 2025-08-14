@@ -6,6 +6,6 @@ httpx>=0.24.0
 numpy>=1.21.0,<2.0.0
 pandas>=2.0.0
 prometheus-client>=0.20.0
-pydantic>=1.10.0,<2.0.0  # Pinned to v1 for compatibility
+pydantic>=2.0.0
 python-multipart>=0.0.6
 uvicorn[standard]>=0.23.0
