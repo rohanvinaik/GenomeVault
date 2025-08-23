@@ -181,7 +181,7 @@ Tests run automatically on every push and pull request via GitHub Actions.
    - mypy static type analysis
 
 3. **Unit Tests**
-   - Run on Python 3.9, 3.10, 3.11
+   - Run on Python 3.11
    - Coverage report uploaded to Codecov
 
 4. **Security Scanning**
