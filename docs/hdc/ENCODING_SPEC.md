@@ -111,7 +111,7 @@ The encoding preserves similarity relationships:
 ## Implementation Requirements
 
 ### Dependencies
-- Python 3.9+
+- Python 3.11+
 - PyTorch 2.0+
 - NumPy 1.24+
 - Optional: CUDA for GPU acceleration
