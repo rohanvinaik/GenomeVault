@@ -2,12 +2,20 @@
 
 from __future__ import annotations
 
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+import os
 
-from genomevault.api.errors import gv_error_handler  # you'll add this below if missing
-from genomevault.api.routers import healthz
+from fastapi import FastAPI
+
+from genomevault.api.errors import gv_error_handler
+from genomevault.api.routers.healthz import router as healthz_router
 from genomevault.exceptions import GVError
+from genomevault.security import register_security
+
+allowed_origins = [
+    origin.strip()
+    for origin in os.getenv("GENOMEVAULT_CORS_ORIGINS", "").split(",")
+    if origin.strip()
+]
 
 app = FastAPI(
     title="GenomeVault API",
@@ -17,27 +25,17 @@ app = FastAPI(
     redoc_url="/api/redoc",
 )
 
-# CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Configure appropriately for production
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+register_security(app, allow_origins=allowed_origins)
 
-# Include routers
-app.include_router(healthz.router)
+app.include_router(healthz_router)
 
-# Import and include API v1 routers
 try:
-    from genomevault.api.routers import hv, metrics
+    import genomevault.api.routers.hv as hv
+    import genomevault.api.routers.metrics as metrics
 
     app.include_router(hv.router)
     app.include_router(metrics.router)
-except ImportError as e:
-    # Log but don't fail if routers aren't available yet
+except Exception as e:  # pragma: no cover - optional routers may fail
     print(f"Warning: Could not import API routers: {e}")
 
-# Uniform error responses
 app.add_exception_handler(GVError, gv_error_handler)
