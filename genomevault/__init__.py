@@ -1,4 +1,8 @@
-"""GenomeVault - Privacy-preserving genomic data management platform."""
+"""GenomeVault - Privacy-preserving genomic data management platform.
+
+The package's public API is defined by ``__all__`` below, which lists the
+symbols intentionally exported for external use.
+"""
 
 from .logging import setup_logging
 from .version import (
@@ -75,7 +79,6 @@ __all__ = [
     "check_compatibility",
     "error_response",
     "format_version_string",
-    "get_logger",
     "get_logger",
     "get_version_info",
     "setup_logging",
