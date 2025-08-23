@@ -5,7 +5,7 @@ metadata:
   name: genomevault-canary
   annotations:
     deployment.kubernetes.io/revision: "1"
-    
+
 namespace: genomevault
 
 resources:
@@ -39,7 +39,7 @@ commonLabels:
   app: genomevault
   component: api
   deployment: canary
-  
+
 commonAnnotations:
   deployment.genomevault.io/canary: "true"
   deployment.genomevault.io/traffic-split: "5%"

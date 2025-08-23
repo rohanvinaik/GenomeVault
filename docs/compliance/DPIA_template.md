@@ -16,9 +16,9 @@
 
 ## Executive Summary
 
-**Project Name:** {{project_name}}  
-**Assessment Date:** {{assessment_date}}  
-**Risk Level:** {{overall_risk_level}}  
+**Project Name:** {{project_name}}
+**Assessment Date:** {{assessment_date}}
+**Risk Level:** {{overall_risk_level}}
 **Recommendation:** {{executive_recommendation}}
 
 **Key Findings:**
@@ -439,7 +439,7 @@
 
 ### 7.3 Approval Decision
 
-**Decision:** 
+**Decision:**
 - [ ] Approve processing as proposed
 - [ ] Approve with conditions (see recommendations)
 - [ ] Reject - risks too high
@@ -457,28 +457,28 @@
 
 ## 8. SIGNATURES AND APPROVALS
 
-**Prepared by:**  
-Name: {{assessor_name}}  
-Title: {{assessor_title}}  
-Date: {{assessment_date}}  
+**Prepared by:**
+Name: {{assessor_name}}
+Title: {{assessor_title}}
+Date: {{assessment_date}}
 Signature: _________________________
 
-**Technical Review:**  
-Name: {{technical_reviewer}}  
-Title: Chief Technology Officer  
-Date: {{technical_review_date}}  
+**Technical Review:**
+Name: {{technical_reviewer}}
+Title: Chief Technology Officer
+Date: {{technical_review_date}}
 Signature: _________________________
 
-**Privacy Review:**  
-Name: {{privacy_reviewer}}  
-Title: Data Protection Officer  
-Date: {{privacy_review_date}}  
+**Privacy Review:**
+Name: {{privacy_reviewer}}
+Title: Data Protection Officer
+Date: {{privacy_review_date}}
 Signature: _________________________
 
-**Final Approval:**  
-Name: {{approver_name}}  
-Title: {{approver_title}}  
-Date: {{approval_date}}  
+**Final Approval:**
+Name: {{approver_name}}
+Title: {{approver_title}}
+Date: {{approval_date}}
 Signature: _________________________
 
 ---

@@ -14,7 +14,7 @@ spec:
       app: genomevault
       component: api
       version: canary
-  
+
   endpoints:
   - port: http
     path: /metrics
@@ -34,20 +34,20 @@ spec:
       targetLabel: deployment_type
     - targetLabel: canary
       replacement: "true"
-    
+
     metricRelabelings:
     # Add canary labels to all metrics
     - targetLabel: deployment_stage
       replacement: canary
     - targetLabel: traffic_percentage
       replacement: "5"
-    
+
     # Rename metrics for canary-specific tracking
     - sourceLabels: [__name__]
       regex: 'genomevault_(.+)'
       targetLabel: __name__
       replacement: 'genomevault_canary_${1}'
-  
+
   - port: node-metrics
     path: /metrics
     interval: 30s
@@ -72,7 +72,7 @@ spec:
   - name: genomevault-canary.rules
     interval: 30s
     rules:
-    
+
     # Canary Error Rate
     - alert: CanaryHighErrorRate
       expr: |
@@ -91,11 +91,11 @@ spec:
         description: |
           Canary deployment error rate is {{ $value | humanizePercentage }}
           which is above the 1% threshold. Consider immediate rollback.
-    
+
     # Canary Latency
     - alert: CanaryHighLatency
       expr: |
-        histogram_quantile(0.95, 
+        histogram_quantile(0.95,
           sum(rate(genomevault_canary_http_request_duration_seconds_bucket[5m])) by (le, deployment_type)
         ) > 0.5
       for: 3m
@@ -108,7 +108,7 @@ spec:
         description: |
           Canary deployment P95 latency is {{ $value }}s
           which is above the 500ms SLO threshold.
-    
+
     # Canary vs Stable Comparison
     - alert: CanaryPerformanceDegradation
       expr: |
@@ -132,7 +132,7 @@ spec:
           Canary P95 latency is {{ $value | humanize }}x worse than stable deployment.
           Current canary P95: {{ printf "histogram_quantile(0.95, sum(rate(genomevault_canary_http_request_duration_seconds_bucket{deployment_type=\"canary\"}[5m])) by (le))" | query | first | humanizeDuration }}
           Current stable P95: {{ printf "histogram_quantile(0.95, sum(rate(genomevault_http_request_duration_seconds_bucket{deployment_type=\"stable\"}[5m])) by (le))" | query | first | humanizeDuration }}
-    
+
     # Privacy Guarantee Alerts for Canary
     - alert: CanaryPIRFailures
       expr: |
@@ -148,7 +148,7 @@ spec:
           PIR queries are failing in canary deployment.
           Rate: {{ $value }} failures/sec
           This may compromise privacy guarantees.
-    
+
     - alert: CanaryZKProofFailures
       expr: |
         sum(rate(genomevault_canary_zk_proof_verification_failures_total[5m])) by (deployment_type) > 0
@@ -163,7 +163,7 @@ spec:
           Zero-knowledge proof verifications are failing in canary.
           Rate: {{ $value }} failures/sec
           This compromises proof integrity.
-    
+
     # Resource Usage Alerts
     - alert: CanaryHighMemoryUsage
       expr: |
@@ -182,7 +182,7 @@ spec:
         description: |
           Canary pod {{ $labels.pod }} memory usage is {{ $value | humanizePercentage }}
           of its limit.
-    
+
     - alert: CanaryHighCPUUsage
       expr: |
         (
@@ -200,7 +200,7 @@ spec:
         description: |
           Canary pod {{ $labels.pod }} CPU usage is {{ $value | humanizePercentage }}
           of its limit.
-    
+
     # Canary Health Check
     - alert: CanaryHealthCheckFailing
       expr: |
@@ -215,13 +215,13 @@ spec:
         description: |
           Canary deployment health check is failing.
           Pod {{ $labels.pod }} is not responding to health checks.
-    
+
     # Traffic Distribution Validation
     - alert: CanaryTrafficDistributionAnomaly
       expr: |
         abs(
           (
-            sum(rate(genomevault_canary_http_requests_total[5m])) 
+            sum(rate(genomevault_canary_http_requests_total[5m]))
             /
             (sum(rate(genomevault_canary_http_requests_total[5m])) + sum(rate(genomevault_http_requests_total{deployment_type="stable"}[5m])))
           ) - 0.05

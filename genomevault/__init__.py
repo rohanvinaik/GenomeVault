@@ -4,7 +4,7 @@ The package's public API is defined by ``__all__`` below, which lists the
 symbols intentionally exported for external use.
 """
 
-from .logging import setup_logging
+from .logging_config import setup_logging
 from .version import (
     get_version_info,
     check_compatibility,

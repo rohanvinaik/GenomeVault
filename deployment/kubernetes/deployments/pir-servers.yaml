@@ -31,7 +31,7 @@ spec:
         runAsNonRoot: true
         runAsUser: 1000
         fsGroup: 1000
-      
+
       initContainers:
       # Initialize database
       - name: init-database
@@ -47,12 +47,12 @@ spec:
         - name: config
           mountPath: /config
           readOnly: true
-      
+
       containers:
       - name: pir-server
         image: genomevault/pir-server:latest
         imagePullPolicy: IfNotPresent
-        
+
         env:
         - name: SERVER_ID
           value: "1"
@@ -76,7 +76,7 @@ spec:
           value: "60"
         - name: LOG_LEVEL
           value: "INFO"
-        
+
         ports:
         - name: http
           containerPort: 8080
@@ -90,7 +90,7 @@ spec:
         - name: health
           containerPort: 8081
           protocol: TCP
-        
+
         # Health checks
         livenessProbe:
           httpGet:
@@ -100,7 +100,7 @@ spec:
           periodSeconds: 10
           timeoutSeconds: 5
           failureThreshold: 3
-        
+
         readinessProbe:
           httpGet:
             path: /health/ready
@@ -109,7 +109,7 @@ spec:
           periodSeconds: 5
           timeoutSeconds: 3
           failureThreshold: 2
-        
+
         startupProbe:
           httpGet:
             path: /health/startup
@@ -118,7 +118,7 @@ spec:
           periodSeconds: 10
           timeoutSeconds: 3
           failureThreshold: 30
-        
+
         resources:
           requests:
             memory: "2Gi"
@@ -126,7 +126,7 @@ spec:
           limits:
             memory: "4Gi"
             cpu: "2000m"
-        
+
         volumeMounts:
         - name: data
           mountPath: /data
@@ -139,14 +139,14 @@ spec:
         - name: keys
           mountPath: /keys
           readOnly: true
-        
+
         securityContext:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
           capabilities:
             drop:
             - ALL
-      
+
       # Sidecar for monitoring
       - name: monitoring-agent
         image: genomevault/pir-monitor:latest
@@ -155,12 +155,12 @@ spec:
           value: "1"
         - name: MONITOR_PORT
           value: "9091"
-        
+
         ports:
         - name: monitor
           containerPort: 9091
           protocol: TCP
-        
+
         resources:
           requests:
             memory: "256Mi"
@@ -168,11 +168,11 @@ spec:
           limits:
             memory: "512Mi"
             cpu: "200m"
-        
+
         volumeMounts:
         - name: metrics
           mountPath: /metrics
-      
+
       volumes:
       - name: data
         persistentVolumeClaim:
@@ -188,7 +188,7 @@ spec:
           secretName: pir-server-1-keys
       - name: metrics
         emptyDir: {}
-      
+
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -236,12 +236,12 @@ spec:
         runAsNonRoot: true
         runAsUser: 1000
         fsGroup: 1000
-      
+
       containers:
       - name: pir-server
         image: genomevault/pir-server:latest
         imagePullPolicy: IfNotPresent
-        
+
         env:
         - name: SERVER_ID
           value: "2"
@@ -263,7 +263,7 @@ spec:
           value: "1024"
         - name: MAX_QUERY_AGE
           value: "60"
-        
+
         ports:
         - name: http
           containerPort: 8080
@@ -273,7 +273,7 @@ spec:
           containerPort: 9090
         - name: health
           containerPort: 8081
-        
+
         livenessProbe:
           httpGet:
             path: /health/live
@@ -282,7 +282,7 @@ spec:
           periodSeconds: 10
           timeoutSeconds: 5
           failureThreshold: 3
-        
+
         readinessProbe:
           httpGet:
             path: /health/ready
@@ -291,7 +291,7 @@ spec:
           periodSeconds: 5
           timeoutSeconds: 3
           failureThreshold: 2
-        
+
         resources:
           requests:
             memory: "2Gi"
@@ -299,7 +299,7 @@ spec:
           limits:
             memory: "4Gi"
             cpu: "2000m"
-        
+
         volumeMounts:
         - name: data
           mountPath: /data
@@ -312,7 +312,7 @@ spec:
         - name: keys
           mountPath: /keys
           readOnly: true
-      
+
       volumes:
       - name: data
         persistentVolumeClaim:
@@ -358,11 +358,11 @@ spec:
         runAsNonRoot: true
         runAsUser: 1000
         fsGroup: 1000
-      
+
       containers:
       - name: pir-server
         image: genomevault/pir-server:latest
-        
+
         env:
         - name: SERVER_ID
           value: "3"
@@ -374,7 +374,7 @@ spec:
           value: "true"
         - name: BYZANTINE_TOLERANCE
           value: "true"
-        
+
         ports:
         - name: http
           containerPort: 8080
@@ -382,19 +382,19 @@ spec:
           containerPort: 9090
         - name: health
           containerPort: 8081
-        
+
         livenessProbe:
           httpGet:
             path: /health/live
             port: health
           periodSeconds: 10
-        
+
         readinessProbe:
           httpGet:
             path: /health/ready
             port: health
           periodSeconds: 5
-        
+
         resources:
           requests:
             memory: "2Gi"
@@ -402,14 +402,14 @@ spec:
           limits:
             memory: "4Gi"
             cpu: "2000m"
-        
+
         volumeMounts:
         - name: data
           mountPath: /data
         - name: config
           mountPath: /config
           readOnly: true
-      
+
       volumes:
       - name: data
         persistentVolumeClaim:
@@ -440,11 +440,11 @@ spec:
         prometheus.io/port: "9090"
     spec:
       serviceAccountName: pir-coordinator
-      
+
       containers:
       - name: coordinator
         image: genomevault/pir-coordinator:latest
-        
+
         env:
         - name: PIR_SERVERS
           value: "pir-server-1.pir-server-1:8080,pir-server-2.pir-server-2:8080,pir-server-3.pir-server-3:8080"
@@ -458,7 +458,7 @@ spec:
           value: "1000"
         - name: ZK_VERIFICATION
           value: "true"
-        
+
         ports:
         - name: http
           containerPort: 8080
@@ -466,19 +466,19 @@ spec:
           containerPort: 8443
         - name: metrics
           containerPort: 9090
-        
+
         livenessProbe:
           httpGet:
             path: /health
             port: 8080
           periodSeconds: 10
-        
+
         readinessProbe:
           httpGet:
             path: /ready
             port: 8080
           periodSeconds: 5
-        
+
         resources:
           requests:
             memory: "1Gi"
@@ -635,18 +635,18 @@ data:
       constant_time_ns: 10000000
       max_query_age: 60
       response_padding_size: 1024
-      
+
     byzantine:
       enabled: true
       min_servers: 2
       error_correction_symbols: 10
       reputation_threshold: 0.7
-      
+
     monitoring:
       enabled: true
       metrics_port: 9090
       health_port: 8081
-      
+
     security:
       enable_tls: true
       require_client_cert: false
@@ -668,7 +668,7 @@ data:
       constant_time_ns: 10000000
       max_query_age: 60
       response_padding_size: 1024
-      
+
     byzantine:
       enabled: true
       min_servers: 2
@@ -690,7 +690,7 @@ data:
       constant_time_ns: 10000000
       max_query_age: 60
       response_padding_size: 1024
-      
+
     byzantine:
       enabled: true
       min_servers: 2

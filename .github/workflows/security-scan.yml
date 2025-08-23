@@ -31,12 +31,12 @@ jobs:
     name: SAST Security Analysis
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.scan_type == 'sast' || github.event.inputs.scan_type == 'full' || github.event.inputs.scan_type == '' }}
-    
+
     permissions:
       security-events: write
       actions: read
       contents: read
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -113,7 +113,7 @@ jobs:
     name: Dependency Security Scan
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.scan_type == 'dependencies' || github.event.inputs.scan_type == 'full' || github.event.inputs.scan_type == '' }}
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -181,12 +181,12 @@ jobs:
     name: Container Security Scan
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.scan_type == 'container' || github.event.inputs.scan_type == 'full' || github.event.inputs.scan_type == '' }}
-    
+
     permissions:
       contents: read
       packages: write
       security-events: write
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -267,7 +267,7 @@ jobs:
     name: PHI & Sensitive Data Scan
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.scan_type == 'phi' || github.event.inputs.scan_type == 'full' || github.event.inputs.scan_type == '' }}
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -334,7 +334,7 @@ jobs:
     name: Infrastructure Security Scan
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.scan_type == 'full' || github.event.inputs.scan_type == '' }}
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -388,7 +388,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [sast-scan, dependency-scan, container-scan, phi-scan, infrastructure-scan]
     if: always()
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -430,7 +430,7 @@ jobs:
           --threshold high \
           --phi-threshold zero \
           --output security-gate-result.json
-        
+
         # Set outputs for dependent jobs
         if [ $? -eq 0 ]; then
           echo "passed=true" >> $GITHUB_OUTPUT
@@ -457,32 +457,32 @@ jobs:
         script: |
           const fs = require('fs');
           const path = 'security-gate-result.json';
-          
+
           if (fs.existsSync(path)) {
             const result = JSON.parse(fs.readFileSync(path, 'utf8'));
-            
+
             const body = `## 🛡️ Security Scan Results
-            
+
             **Status:** ${result.passed ? '✅ PASSED' : '❌ FAILED'}
-            
+
             ### Summary
             - **SAST Issues:** ${result.sast_issues || 0}
             - **Dependency Vulnerabilities:** ${result.dependency_issues || 0}
             - **Container Issues:** ${result.container_issues || 0}
             - **PHI Leakages:** ${result.phi_issues || 0}
-            
-            ${result.passed ? 
-              '✅ All security checks passed! Safe to merge.' : 
+
+            ${result.passed ?
+              '✅ All security checks passed! Safe to merge.' :
               '❌ Security issues found. Please review and fix before merging.'}
-            
+
             <details>
             <summary>View detailed results</summary>
-            
+
             \`\`\`json
             ${JSON.stringify(result, null, 2)}
             \`\`\`
             </details>`;
-            
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -504,7 +504,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [security-report]
     if: always() && (github.event_name == 'schedule' || needs.security-report.outputs.passed != 'true')
-    
+
     steps:
     - name: Send security notification
       uses: 8398a7/action-slack@v3
@@ -512,12 +512,12 @@ jobs:
         status: ${{ needs.security-report.result }}
         text: |
           🛡️ Security scan completed for GenomeVault
-          
+
           **Repository:** ${{ github.repository }}
           **Branch:** ${{ github.ref_name }}
           **Status:** ${{ needs.security-report.result }}
           **Security Gate:** ${{ needs.security-report.outputs.passed == 'true' && 'PASSED' || 'FAILED' }}
-          
+
           Please review security artifacts in the workflow run.
         webhook_url: ${{ secrets.SECURITY_SLACK_WEBHOOK }}
       env:
@@ -533,24 +533,24 @@ jobs:
             repo: context.repo.repo,
             title: `🚨 Automated Security Scan Failures - ${new Date().toISOString().split('T')[0]}`,
             body: `## Security Scan Failures Detected
-            
+
             The scheduled security scan has detected issues that require attention.
-            
+
             **Scan Date:** ${new Date().toISOString()}
             **Workflow Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-            
+
             ### Required Actions
-            
+
             1. Review the security scan artifacts
             2. Address any high/critical severity issues
             3. Verify PHI scanning results
             4. Update dependencies with known vulnerabilities
             5. Re-run security scan to verify fixes
-            
+
             ### Security Artifacts
-            
+
             Check the workflow run for detailed security reports and findings.
-            
+
             **Priority:** High
             **Labels:** security, automated-scan
             `,

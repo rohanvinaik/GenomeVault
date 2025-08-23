@@ -2,7 +2,13 @@
 
 from __future__ import annotations
 
-from pydantic import BaseSettings, Field
+try:
+    from pydantic_settings import BaseSettings
+except ImportError:
+    # Fallback for older pydantic versions
+    from pydantic import BaseSettings
+
+from pydantic import Field
 
 
 class Settings(BaseSettings):
@@ -18,6 +24,7 @@ class Settings(BaseSettings):
 
         env_file = ".env"
         env_file_encoding = "utf-8"
+        extra = "ignore"  # Ignore extra environment variables
 
 
 settings = Settings()

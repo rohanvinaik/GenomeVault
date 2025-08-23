@@ -62,9 +62,9 @@ histogram_quantile(0.95, rate(genomevault_batch_processing_duration_seconds_buck
 
 #### PIR Query Latency
 
-**Objective:** 
+**Objective:**
 - P50 ≤ 100ms
-- P95 ≤ 500ms  
+- P95 ≤ 500ms
 - P99 ≤ 1 second
 
 **Definition:**
@@ -116,7 +116,7 @@ max(genomevault_dp_epsilon_consumed) by (user_id) < 10.0
 
 #### Hypervector Encoding Fidelity
 
-**Objective:** 
+**Objective:**
 - Hamming distance preservation: >99% accuracy
 - Variant reconstruction: >99.5% accuracy for clinical tier
 
@@ -127,7 +127,7 @@ max(genomevault_dp_epsilon_consumed) by (user_id) < 10.0
 #### KAN Compression
 
 **Objective:**
-- Compression ratio: 50-100× 
+- Compression ratio: 50-100×
 - Decompression accuracy: >99% for interpretable features
 
 ### 6. Throughput
@@ -154,7 +154,7 @@ rate(genomevault_hv_variants_encoded_total[1m]) / count(up{job="hv-worker"})
 
 #### Memory Usage
 
-**Objective:** 
+**Objective:**
 - API pods: <2GB per pod at P95 load
 - PIR servers: <8GB per server with 1M genome database
 
@@ -165,7 +165,7 @@ histogram_quantile(0.95, container_memory_working_set_bytes{pod=~"genomevault-.*
 
 #### CPU Utilization
 
-**Objective:** 
+**Objective:**
 - Target 60-80% utilization during peak hours
 - Autoscale before reaching 90%
 
@@ -182,7 +182,7 @@ rate(genomevault_phi_access_total[5m]) == rate(genomevault_audit_logs_written_to
 
 #### HIPAA Compliance
 
-**Objective:** 
+**Objective:**
 - 7-year audit log retention
 - Encryption at rest and in transit: 100%
 - Access control violations: 0

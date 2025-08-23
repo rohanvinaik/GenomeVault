@@ -15,19 +15,19 @@ data:
       refresh_token_expire_days: 7
       issuer: genomevault.io
       audience: api.genomevault.io
-      
+
     # Token rotation settings
     token_rotation:
       enabled: true
       check_interval: 1h
       force_rotation_after_days: 30
-      
+
     # Session management
     session:
       idle_timeout_minutes: 15  # HIPAA requirement
       absolute_timeout_hours: 12
       concurrent_sessions_allowed: 3
-      
+
   # OAuth2 Scopes Configuration
   scopes-config.yaml: |
     scopes:
@@ -36,26 +36,26 @@ data:
         description: "Read genomic data"
         risk_level: medium
         requires_mfa: false
-        
+
       write:genomic:
         description: "Write genomic data"
         risk_level: high
         requires_mfa: true
-        
+
       # Clinical data access
       read:clinical:
         description: "Read clinical data"
         risk_level: high
         requires_mfa: false
         audit_required: true
-        
+
       write:clinical:
         description: "Write clinical data"
         risk_level: critical
         requires_mfa: true
         audit_required: true
         requires_baa: true
-        
+
       # PHI data access
       read:phi:
         description: "Read PHI data"
@@ -64,7 +64,7 @@ data:
         audit_required: true
         requires_baa: true
         requires_npi: true
-        
+
       write:phi:
         description: "Write PHI data"
         risk_level: critical
@@ -73,53 +73,53 @@ data:
         requires_baa: true
         requires_npi: true
         approval_required: true
-        
+
       # Administrative scopes
       admin:users:
         description: "Manage users"
         risk_level: critical
         requires_mfa: true
         audit_required: true
-        
+
       admin:system:
         description: "System administration"
         risk_level: critical
         requires_mfa: true
         audit_required: true
-        
+
       admin:all:
         description: "Full administrative access"
         risk_level: critical
         requires_mfa: true
         audit_required: true
         approval_required: true
-        
+
       # Computational scopes
       pir:query:
         description: "Execute PIR queries"
         risk_level: medium
         rate_limited: true
-        
+
       zk:prove:
         description: "Generate zero-knowledge proofs"
         risk_level: medium
         compute_intensive: true
-        
+
       zk:verify:
         description: "Verify zero-knowledge proofs"
         risk_level: low
-        
+
       federated:participate:
         description: "Participate in federated learning"
         risk_level: medium
         compute_intensive: true
-        
+
       blockchain:write:
         description: "Write to blockchain"
         risk_level: high
         requires_mfa: true
         cost_tracked: true
-  
+
   # OIDC Provider Configuration
   oidc-providers.yaml: |
     providers:
@@ -145,7 +145,7 @@ data:
           genomevault-researchers: researcher
           genomevault-admins: admin
         mfa_trusted: true
-        
+
       # Auth0 Configuration
       auth0:
         enabled: true
@@ -167,7 +167,7 @@ data:
           clinician: clinician
           researcher: researcher
           admin: admin
-        
+
       # Azure AD Configuration
       azure_ad:
         enabled: true
@@ -192,7 +192,7 @@ data:
           Administrators: admin
         mfa_trusted: true
         conditional_access: true
-        
+
       # Google Configuration
       google:
         enabled: false
@@ -205,7 +205,7 @@ data:
           - profile
           - email
         hosted_domain: genomevault.io  # Restrict to domain
-  
+
   # MFA Configuration
   mfa-config.yaml: |
     mfa:
@@ -216,7 +216,7 @@ data:
         remember_device_days: 30
         max_attempts: 3
         lockout_duration_minutes: 30
-        
+
       # TOTP Configuration
       totp:
         enabled: true
@@ -227,7 +227,7 @@ data:
         window: 1  # Accept 1 period before/after
         qr_code_enabled: true
         backup_codes: 10
-        
+
       # SMS Configuration
       sms:
         enabled: true
@@ -236,7 +236,7 @@ data:
         code_validity_minutes: 5
         rate_limit_per_hour: 5
         template: "Your GenomeVault verification code is: {code}"
-        
+
       # Email Configuration
       email:
         enabled: true
@@ -245,7 +245,7 @@ data:
         code_validity_minutes: 10
         template_id: genomevault-mfa-email
         from_address: noreply@genomevault.io
-        
+
       # Hardware Token Configuration
       hardware_token:
         enabled: true
@@ -255,7 +255,7 @@ data:
           - webauthn
         attestation: direct
         user_verification: preferred
-        
+
       # Biometric Configuration
       biometric:
         enabled: false
@@ -264,14 +264,14 @@ data:
           - face_id
           - touch_id
         platform_authenticator: preferred
-        
+
       # Required for specific operations
       required_for:
         - write:clinical
         - write:phi
         - admin:all
         - blockchain:write
-  
+
   # Rate Limiting Configuration
   rate-limits.yaml: |
     rate_limits:
@@ -287,7 +287,7 @@ data:
           compute_requests_per_hour: 5
           max_concurrent_requests: 2
           monthly_budget: 0
-          
+
         basic:
           requests_per_minute: 60
           requests_per_hour: 1000
@@ -301,7 +301,7 @@ data:
           max_concurrent_requests: 5
           cost_per_request: 0.001
           monthly_budget: 100
-          
+
         professional:
           requests_per_minute: 300
           requests_per_hour: 5000
@@ -315,7 +315,7 @@ data:
           max_concurrent_requests: 20
           cost_per_request: 0.0005
           monthly_budget: 500
-          
+
         enterprise:
           requests_per_minute: 1000
           requests_per_hour: 20000
@@ -329,7 +329,7 @@ data:
           max_concurrent_requests: 100
           cost_per_request: 0.0001
           custom_billing: true
-          
+
         unlimited:
           requests_per_minute: 999999
           requests_per_hour: 999999
@@ -337,28 +337,28 @@ data:
           burst_size: 1000
           max_concurrent_requests: 1000
           cost_per_request: 0
-          
+
       # Endpoint-specific limits
       endpoint_limits:
         /api/v1/hypervector/encode:
           tokens_per_request: 10
           cooldown_seconds: 1
-          
+
         /api/v1/zk/prove:
           tokens_per_request: 20
           cooldown_seconds: 5
           max_per_hour: 100
-          
+
         /api/v1/pir/query:
           tokens_per_request: 5
           cooldown_seconds: 2
           max_per_hour: 500
-          
+
         /api/v1/federated/train:
           tokens_per_request: 50
           cooldown_seconds: 10
           max_per_day: 10
-  
+
   # API Key Configuration
   api-key-config.yaml: |
     api_keys:
@@ -368,7 +368,7 @@ data:
         length: 32
         algorithm: secrets.token_urlsafe
         hash_algorithm: sha256
-        
+
       # Rotation policy
       rotation:
         enabled: true
@@ -376,33 +376,33 @@ data:
         warning_days: 14
         auto_rotate: false
         keep_old_key_hours: 24
-        
+
       # Security settings
       security:
         ip_restriction_enabled: true
         max_ips_per_key: 5
         require_user_agent: true
         log_all_usage: true
-        
+
       # Limits per key type
       types:
         development:
           rate_limit_tier: basic
           expires_in_days: 30
           renewable: true
-          
+
         production:
           rate_limit_tier: professional
           expires_in_days: 365
           renewable: true
           requires_approval: true
-          
+
         service:
           rate_limit_tier: enterprise
           expires_in_days: null  # No expiration
           renewable: false
           requires_mfa: true
-          
+
   # Audit Configuration
   audit-config.yaml: |
     audit:
@@ -411,14 +411,14 @@ data:
         enabled: true
         level: INFO
         format: json
-        
+
       # Storage settings
       storage:
         backend: redis  # redis, elasticsearch, s3
         retention_days: 2555  # 7 years for HIPAA
         encryption: true
         compression: true
-        
+
       # Events to audit
       events:
         authentication:
@@ -431,32 +431,32 @@ data:
           - mfa_challenge
           - mfa_success
           - mfa_failure
-          
+
         authorization:
           - access_granted
           - access_denied
           - scope_elevation
           - privilege_escalation_attempt
-          
+
         data_access:
           - phi_read
           - phi_write
           - clinical_data_access
           - genomic_data_access
           - export_initiated
-          
+
         api_usage:
           - rate_limit_exceeded
           - api_key_created
           - api_key_rotated
           - api_key_revoked
-          
+
         security:
           - suspicious_activity
           - brute_force_attempt
           - session_hijack_attempt
           - ip_anomaly_detected
-          
+
       # SIEM integration
       siem:
         enabled: true
@@ -465,7 +465,7 @@ data:
         api_key: "${SIEM_API_KEY}"
         batch_size: 100
         flush_interval_seconds: 10
-        
+
       # Compliance reporting
       compliance:
         hipaa_mode: true
@@ -490,7 +490,7 @@ data:
     tcp-backlog 511
     timeout 0
     tcp-keepalive 300
-    
+
     # Persistence
     save 900 1
     save 300 10
@@ -500,15 +500,15 @@ data:
     rdbchecksum yes
     dbfilename auth-dump.rdb
     dir /data
-    
+
     # Security
     requirepass ${REDIS_PASSWORD}
-    
+
     # Limits
     maxclients 10000
     maxmemory 2gb
     maxmemory-policy allkeys-lru
-    
+
     # Append only file
     appendonly yes
     appendfilename "auth-appendonly.aof"
@@ -516,13 +516,13 @@ data:
     no-appendfsync-on-rewrite no
     auto-aof-rewrite-percentage 100
     auto-aof-rewrite-min-size 64mb
-    
+
     # Lua scripting
     lua-time-limit 5000
-    
+
     # Slow log
     slowlog-log-slower-than 10000
     slowlog-max-len 128
-    
+
     # Event notification
     notify-keyspace-events "Ex"

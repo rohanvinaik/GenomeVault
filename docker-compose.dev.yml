@@ -1,40 +1,166 @@
+# Development override for docker-compose.yml
+# Use with: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
 version: '3.8'
 
 services:
-  # FastAPI Main Service
-  fastapi:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  # PostgreSQL Development Overrides
+  postgres:
     ports:
-      - "8000:8000"
+      # Always expose PostgreSQL port for direct database access during development
+      - "5432:5432"
     environment:
-      - ENVIRONMENT=development
-      - DATABASE_URL=postgresql://genome:vault@postgres:5432/genomevault
-      - REDIS_URL=redis://redis:6379
-      - PIR_SERVERS=http://pir-server-1:9001,http://pir-server-2:9002,http://pir-server-3:9003,http://pir-server-4:9004
-      - BLOCKCHAIN_URL=http://local-chain:8545
-      - LOG_LEVEL=INFO
+      # Use simplified credentials for development
+      POSTGRES_DB: genomevault
+      POSTGRES_USER: genome
+      POSTGRES_PASSWORD: vault
+      # Enable verbose logging for development
+      POSTGRES_LOG_STATEMENT: "all"
+      POSTGRES_LOG_MIN_DURATION_STATEMENT: "0"
     volumes:
-      - ./config:/app/config:ro
-      - ./genomevault:/app/genomevault:ro
-    depends_on:
-      - redis
-      - postgres
-      - pir-server-1
-      - pir-server-2
-      - pir-server-3
-      - pir-server-4
-      - local-chain
-    restart: unless-stopped
+      # Mount SQL scripts for easy development database setup
+      - ./scripts/dev-seed.sql:/docker-entrypoint-initdb.d/dev-seed.sql:ro
+      - ./scripts/test-fixtures.sql:/docker-entrypoint-initdb.d/test-fixtures.sql:ro
+    command: >
+      postgres
+      -c log_statement=all
+      -c log_min_duration_statement=0
+      -c log_line_prefix='%t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h '
+      -c shared_preload_libraries=pg_stat_statements
+      -c pg_stat_statements.track=all
+      -c max_connections=200
+      -c shared_buffers=256MB
+      -c effective_cache_size=1GB
+      -c work_mem=4MB
+      -c maintenance_work_mem=64MB
+      -c fsync=off
+      -c synchronous_commit=off
+      -c full_page_writes=off
+
+  # Redis Development Overrides
+  redis:
+    ports:
+      # Always expose Redis port for direct access during development
+      - "6379:6379"
+    environment:
+      # Remove password requirement for development ease
+      REDIS_PASSWORD: ""
+    command: >
+      redis-server
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --save ""
+      --appendonly no
+      --loglevel debug
+
+  # API Development Overrides
+  api:
+    build:
+      target: development
+      args:
+        - INSTALL_DEV=true
+    ports:
+      # Expose additional ports for debugging and profiling
+      - "8000:8000"
+      - "5678:5678"  # Python debugger (debugpy)
+      - "9091:9090"  # Metrics endpoint (avoid conflict with prometheus)
+      - "8080:8080"  # Development dashboard
+    environment:
+      # Development-specific environment variables
+      - ENVIRONMENT=development
+      - GENOMEVAULT_ENV=development
+      - GENOMEVAULT_LOG_LEVEL=DEBUG
+      - GENOMEVAULT_API_DEBUG=true
+      - GENOMEVAULT_RELOAD=true
+      - GENOMEVAULT_PROFILING=true
+
+      # Database with simplified development connection
+      - DATABASE_URL=postgresql://genome:vault@postgres:5432/genomevault
+      - GENOMEVAULT_DATABASE_URL=postgresql://genome:vault@postgres:5432/genomevault
+      - DATABASE_LOG_LEVEL=INFO
+      - DATABASE_ECHO=true
+      - DATABASE_POOL_PRE_PING=true
+
+      # Redis with simplified development connection (no password)
+      - REDIS_URL=redis://redis:6379
+      - GENOMEVAULT_REDIS_URL=redis://redis:6379
+      - REDIS_LOG_LEVEL=DEBUG
+      - REDIS_DECODE_RESPONSES=true
+
+      # PIR Servers for development
+      - PIR_SERVERS=http://pir-server-1:9001,http://pir-server-2:9002,http://pir-server-3:9003,http://pir-server-4:9004
+
+      # Development features
+      - ENABLE_CORS=true
+      - ENABLE_DOCS=true
+      - ENABLE_REDOC=true
+      - ENABLE_OPENAPI=true
+
+      # Performance profiling
+      - ENABLE_PROFILER=true
+      - PROFILER_OUTPUT_DIR=/app/profiler-output
+
+      # Security - relaxed for development
+      - GENOMEVAULT_SECURITY_LEVEL=64
+      - RATE_LIMIT_RPS=100.0
+      - RATE_LIMIT_BURST=200
+      - JWT_EXPIRY_HOURS=24
+
+      # Hypervector development settings - smaller for faster dev testing
+      - GENOMEVAULT_HV_DIMENSION=1000
+      - GENOMEVAULT_COMPRESSION_TIER=basic
+      - GENOMEVAULT_MAX_VARIANTS=100
+
+      # ZK Proofs development settings - smaller for faster dev
+      - GENOMEVAULT_ZK_CIRCUIT_SIZE=512
+      - GENOMEVAULT_ZK_VERIFICATION_TIMEOUT=60.0
+
+      # Enable all monitoring in development
+      - GENOMEVAULT_ENABLE_METRICS=true
+      - GENOMEVAULT_ENABLE_TRACING=true
+      - GENOMEVAULT_ENABLE_HEALTH_CHECKS=true
+
+      # Python debugging
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+      - PYTHONDEBUG=1
+
+    volumes:
+      # Mount source code for live reloading
+      - .:/app:cached
+      - /app/__pycache__
+      - /app/.pytest_cache
+      - ./logs:/app/logs:rw
+      - ./profiler-output:/app/profiler-output:rw
+      - ./test-data:/app/test-data:ro
+      - ./docs:/app/docs:ro
+
+      # Development tools volumes
+      - ~/.gitconfig:/root/.gitconfig:ro
+      - ~/.ssh:/root/.ssh:ro
+
+    command: >
+      sh -c "
+        echo 'Starting development server with debugger support...' &&
+        python -m debugpy --listen 0.0.0.0:5678 -m uvicorn genomevault.api.v1.app:app
+        --host 0.0.0.0
+        --port 8000
+        --reload
+        --reload-dir /app/genomevault
+        --reload-exclude __pycache__
+        --log-level debug
+        --access-log
+        --use-colors
+      "
+
+    # Development-specific health check with longer intervals
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
+      test: ["CMD", "curl", "-f", "http://localhost:8000/v1/health"]
+      interval: 60s
       timeout: 10s
       retries: 3
-      start_period: 40s
+      start_period: 60s
 
-  # PIR Servers (1-4)
+  # PIR Servers (1-4) for development
   pir-server-1:
     build:
       context: .
@@ -95,7 +221,7 @@ services:
       - pir_data_4:/data
     restart: unless-stopped
 
-  # Local Blockchain (Hardhat)
+  # Local Blockchain (Hardhat) for development
   local-chain:
     build:
       context: ./blockchain
@@ -114,22 +240,7 @@ services:
       timeout: 5s
       retries: 3
 
-  # Contract Deployment (runs once)
-  deploy-contracts:
-    build:
-      context: ./blockchain
-      dockerfile: Dockerfile
-    depends_on:
-      local-chain:
-        condition: service_healthy
-    environment:
-      - HARDHAT_NETWORK=localhost
-      - BLOCKCHAIN_URL=http://local-chain:8545
-    command: ["npx", "hardhat", "run", "scripts/deploy.ts", "--network", "localhost"]
-    volumes:
-      - blockchain_data:/app/deployments
-
-  # ZK API Service
+  # ZK API Service for development
   zk-api:
     build:
       context: .
@@ -138,8 +249,8 @@ services:
       - "8001:8001"
     environment:
       - ZK_CONFIG_PATH=/app/config/zk_config.yaml
-      - LOG_LEVEL=INFO
-      - MAX_WORKERS=4
+      - LOG_LEVEL=DEBUG
+      - MAX_WORKERS=2  # Reduced for development
     volumes:
       - ./config:/app/config:ro
       - zk_cache:/app/cache
@@ -148,7 +259,7 @@ services:
       - postgres
     restart: unless-stopped
 
-  # ZK Workers
+  # ZK Workers for development
   zk-worker:
     build:
       context: .
@@ -164,40 +275,43 @@ services:
       - redis
       - postgres
     deploy:
-      replicas: 2
+      replicas: 1  # Reduced for development
     restart: unless-stopped
 
-  # Redis Cache
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    command: redis-server --appendonly yes --maxmemory 2gb --maxmemory-policy allkeys-lru
-    restart: unless-stopped
+  # Additional development services for database administration
 
-  # PostgreSQL Database
-  postgres:
-    image: postgres:15-alpine
+  # PostgreSQL Admin Interface
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: genomevault_pgadmin
+    restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "8081:80"
     environment:
-      - POSTGRES_DB=genomevault
-      - POSTGRES_USER=genome
-      - POSTGRES_PASSWORD=vault
-      - POSTGRES_INIT_SCRIPTS=/docker-entrypoint-initdb.d
+      PGADMIN_DEFAULT_EMAIL: admin@genomevault.dev
+      PGADMIN_DEFAULT_PASSWORD: genomevault_pgadmin_dev
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init.sql:ro
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U genome"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
 
-  # Prometheus Monitoring
+  # Redis Admin Interface
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: genomevault_redis_commander
+    restart: unless-stopped
+    ports:
+      - "8082:8081"
+    environment:
+      REDIS_HOSTS: "local:redis:6379:0:"
+      HTTP_USER: admin
+      HTTP_PASSWORD: genomevault_redis_commander_dev
+    depends_on:
+      - redis
+
+  # Prometheus Monitoring for development
   prometheus:
     image: prom/prometheus:latest
     ports:
@@ -210,9 +324,10 @@ services:
       - '--storage.tsdb.path=/prometheus'
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--log.level=debug'  # More verbose for development
     restart: unless-stopped
 
-  # Grafana Dashboards
+  # Grafana Dashboards for development
   grafana:
     image: grafana/grafana:latest
     ports:
@@ -221,6 +336,7 @@ services:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=genomevault
       - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_LOG_LEVEL=debug  # More verbose for development
     volumes:
       - grafana_data:/var/lib/grafana
       - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
@@ -229,20 +345,7 @@ services:
       - prometheus
     restart: unless-stopped
 
-  # Nginx Reverse Proxy (optional)
-  nginx:
-    image: nginx:alpine
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./config/ssl:/etc/nginx/ssl:ro
-    depends_on:
-      - fastapi
-      - grafana
-    restart: unless-stopped
-
+# Development-specific volumes with additional admin tools
 volumes:
   pir_data_1:
   pir_data_2:
@@ -250,12 +353,6 @@ volumes:
   pir_data_4:
   blockchain_data:
   zk_cache:
-  redis_data:
-  postgres_data:
+  pgadmin_data:
   prometheus_data:
   grafana_data:
-
-networks:
-  default:
-    name: genomevault
-    driver: bridge

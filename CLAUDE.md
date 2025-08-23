@@ -67,7 +67,7 @@ kubectl apply -f deployment/kubernetes/
 
 ### Accuracy Modes
 - `OFF`: 90-95% (basic screening)
-- `COMMON`: 95-98% (epidemiology)  
+- `COMMON`: 95-98% (epidemiology)
 - `CLINICAL`: 98-99.5% (diagnostics)
 - `KAN-HD`: 99%+ (regulatory)
 

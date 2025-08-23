@@ -7,14 +7,14 @@ across multiple API instances with support for different tiers and PHI access co
 
 import os
 import time
-import json
 import logging
+from typing import List, Optional, Dict, Any
 import hashlib
 from datetime import datetime, timedelta
-from typing import Optional, Dict, Any, Tuple
+from typing import Tuple
 from enum import Enum
 
-from fastapi import Request, HTTPException, status
+from fastapi import Request, status
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.types import ASGIApp
@@ -30,6 +30,7 @@ redis_client = redis.from_url(REDIS_URL, decode_responses=False)  # Use bytes fo
 
 class RateLimitTier(str, Enum):
     """Rate limit tiers for different user types."""
+
     FREE = "free"
     BASIC = "basic"
     PROFESSIONAL = "professional"
@@ -39,6 +40,7 @@ class RateLimitTier(str, Enum):
 
 class RateLimitConfig(BaseModel):
     """Rate limit configuration."""
+
     tier: RateLimitTier
     # Requests per time period
     requests_per_second: Optional[int] = None
@@ -193,7 +195,7 @@ if #bucket > 0 then
             last_refill = tonumber(bucket[i + 1])
         end
     end
-    
+
     -- Refill tokens based on time elapsed
     local elapsed = current_time - last_refill
     local tokens_to_add = elapsed * rate
@@ -218,129 +220,111 @@ return {1, tokens, 0}  -- Allowed, remaining tokens, no wait
 
 class RateLimiter:
     """Rate limiter implementation with multiple algorithms."""
-    
+
     def __init__(self):
         """Initialize rate limiter with Lua scripts."""
         # Register Lua scripts
         self.rate_limit_script = redis_client.register_script(RATE_LIMIT_LUA_SCRIPT)
         self.token_bucket_script = redis_client.register_script(TOKEN_BUCKET_LUA_SCRIPT)
-    
+
     def check_rate_limit(
-        self,
-        identifier: str,
-        limit: int,
-        window: int,
-        prefix: str = "rate_limit"
+        self, identifier: str, limit: int, window: int, prefix: str = "rate_limit"
     ) -> Tuple[bool, int, int]:
         """
         Check rate limit using sliding window counter.
-        
+
         Returns:
             Tuple of (allowed, current_count, ttl_seconds)
         """
         key = f"{prefix}:{identifier}:{window}"
         current_time = int(time.time())
-        
-        result = self.rate_limit_script(
-            keys=[key.encode()],
-            args=[limit, window, current_time]
-        )
-        
+
+        result = self.rate_limit_script(keys=[key.encode()], args=[limit, window, current_time])
+
         allowed = bool(result[0])
         current_count = int(result[1])
         ttl = int(result[2]) if result[2] > 0 else window
-        
+
         return allowed, current_count, ttl
-    
+
     def check_token_bucket(
         self,
         identifier: str,
         rate: float,
         capacity: int,
         tokens_requested: int = 1,
-        prefix: str = "token_bucket"
+        prefix: str = "token_bucket",
     ) -> Tuple[bool, float, float]:
         """
         Check rate limit using token bucket algorithm.
-        
+
         Returns:
             Tuple of (allowed, remaining_tokens, wait_time_seconds)
         """
         key = f"{prefix}:{identifier}"
         current_time = time.time()
-        
+
         result = self.token_bucket_script(
-            keys=[key.encode()],
-            args=[rate, capacity, current_time, tokens_requested]
+            keys=[key.encode()], args=[rate, capacity, current_time, tokens_requested]
         )
-        
+
         allowed = bool(result[0])
         remaining_tokens = float(result[1])
         wait_time = float(result[2])
-        
+
         return allowed, remaining_tokens, wait_time
-    
-    def check_concurrent_requests(
-        self,
-        identifier: str,
-        max_concurrent: int
-    ) -> Tuple[bool, int]:
+
+    def check_concurrent_requests(self, identifier: str, max_concurrent: int) -> Tuple[bool, int]:
         """
         Check concurrent request limit.
-        
+
         Returns:
             Tuple of (allowed, current_concurrent)
         """
         key = f"concurrent:{identifier}"
-        
+
         # Increment concurrent count
         current = redis_client.incr(key)
-        
+
         # Set expiry if first request
         if current == 1:
             redis_client.expire(key, 300)  # 5 minute timeout
-        
+
         if current > max_concurrent:
             # Decrement back if over limit
             redis_client.decr(key)
             return False, current - 1
-        
+
         return True, current
-    
+
     def release_concurrent_request(self, identifier: str):
         """Release a concurrent request slot."""
         key = f"concurrent:{identifier}"
         current = redis_client.decr(key)
-        
+
         # Clean up if no more concurrent requests
         if current <= 0:
             redis_client.delete(key)
-    
-    def track_usage(
-        self,
-        identifier: str,
-        cost: float,
-        endpoint: str,
-        response_time: float
-    ):
+
+    def track_usage(self, identifier: str, cost: float, endpoint: str, response_time: float):
         """Track API usage for billing and analytics."""
         # Daily usage tracking
         today = datetime.now().strftime("%Y%m%d")
         usage_key = f"usage:{identifier}:{today}"
-        
+
         # Increment counters
         redis_client.hincrby(usage_key, "requests", 1)
         redis_client.hincrbyfloat(usage_key, "cost", cost)
         redis_client.hincrbyfloat(usage_key, "total_response_time", response_time)
-        
+
         # Track per-endpoint usage
         endpoint_key = f"endpoint_usage:{identifier}:{today}"
         redis_client.hincrby(endpoint_key, endpoint, 1)
-        
+
         # Set expiry for 30 days
         redis_client.expire(usage_key, 30 * 24 * 3600)
         redis_client.expire(endpoint_key, 30 * 24 * 3600)
-    
+
     def get_usage_stats(self, identifier: str, days: int = 7) -> Dict[str, Any]:
         """Get usage statistics for an identifier."""
         stats = {
@@ -350,48 +334,52 @@ class RateLimiter:
             "average_response_time": 0,
             "endpoint_breakdown": {},
         }
-        
+
         total_response_time = 0
-        
+
         for i in range(days):
             date = (datetime.now() - timedelta(days=i)).strftime("%Y%m%d")
             usage_key = f"usage:{identifier}:{date}"
             endpoint_key = f"endpoint_usage:{identifier}:{date}"
-            
+
             # Get daily stats
             daily_data = redis_client.hgetall(usage_key)
             if daily_data:
                 requests = int(daily_data.get(b"requests", 0))
                 cost = float(daily_data.get(b"cost", 0))
                 response_time = float(daily_data.get(b"total_response_time", 0))
-                
-                stats["daily_usage"].append({
-                    "date": date,
-                    "requests": requests,
-                    "cost": cost,
-                    "average_response_time": response_time / requests if requests > 0 else 0,
-                })
-                
+
+                stats["daily_usage"].append(
+                    {
+                        "date": date,
+                        "requests": requests,
+                        "cost": cost,
+                        "average_response_time": response_time / requests if requests > 0 else 0,
+                    }
+                )
+
                 stats["total_requests"] += requests
                 stats["total_cost"] += cost
                 total_response_time += response_time
-            
+
             # Get endpoint breakdown
             endpoint_data = redis_client.hgetall(endpoint_key)
             for endpoint, count in endpoint_data.items():
                 endpoint_str = endpoint.decode() if isinstance(endpoint, bytes) else endpoint
-                stats["endpoint_breakdown"][endpoint_str] = stats["endpoint_breakdown"].get(endpoint_str, 0) + int(count)
-        
+                stats["endpoint_breakdown"][endpoint_str] = stats["endpoint_breakdown"].get(
+                    endpoint_str, 0
+                ) + int(count)
+
         if stats["total_requests"] > 0:
             stats["average_response_time"] = total_response_time / stats["total_requests"]
-        
+
         return stats
 
 
 class RateLimitMiddleware(BaseHTTPMiddleware):
     """
     Rate limiting middleware for API requests.
-    
+
     Features:
     - Multiple rate limit windows (second, minute, hour, day)
     - Different limits for PHI and compute-intensive endpoints
@@ -399,12 +387,12 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     - Concurrent request limiting
     - Usage tracking for billing
     """
-    
+
     def __init__(
         self,
         app: ASGIApp,
         default_tier: RateLimitTier = RateLimitTier.BASIC,
-        exempt_paths: List[str] = None
+        exempt_paths: List[str] = None,
     ):
         """Initialize rate limit middleware."""
         super().__init__(app)
@@ -418,14 +406,14 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             "/api/openapi.json",
         ]
         self.rate_limiter = RateLimiter()
-        
+
         # PHI endpoints that need stricter limits
         self.phi_endpoints = [
             "/api/v1/clinical",
             "/api/v1/phi",
             "/api/v1/patients",
         ]
-        
+
         # Compute-intensive endpoints
         self.compute_endpoints = [
             "/api/v1/hypervector/encode",
@@ -433,23 +421,23 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             "/api/v1/federated/train",
             "/api/v1/pir/query",
         ]
-    
+
     async def dispatch(self, request: Request, call_next):
         """Process request through rate limiting."""
         # Check if path is exempt
         if any(request.url.path.startswith(path) for path in self.exempt_paths):
             return await call_next(request)
-        
+
         # Get identifier (user ID, API key, or IP)
         identifier = self._get_identifier(request)
-        
+
         # Get user's rate limit configuration
         config = self._get_rate_limit_config(request)
-        
+
         # Determine endpoint type
         is_phi = any(request.url.path.startswith(path) for path in self.phi_endpoints)
         is_compute = any(request.url.path.startswith(path) for path in self.compute_endpoints)
-        
+
         # Select appropriate limits
         if is_phi:
             limits = [
@@ -471,16 +459,16 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 ("day", config.requests_per_day, 86400),
             ]
             prefix = "rate_limit"
-        
+
         # Check rate limits
         for window_name, limit, window_seconds in limits:
             allowed, current, ttl = self.rate_limiter.check_rate_limit(
                 identifier=identifier,
                 limit=limit,
                 window=window_seconds,
-                prefix=f"{prefix}:{window_name}"
+                prefix=f"{prefix}:{window_name}",
             )
-            
+
             if not allowed:
                 logger.warning(
                     f"Rate limit exceeded for {identifier}",
@@ -492,9 +480,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                         "current": current,
                         "endpoint": request.url.path,
                         "is_phi": is_phi,
-                    }
+                    },
                 )
-                
+
                 return JSONResponse(
                     status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                     content={
@@ -508,18 +496,18 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                         "X-RateLimit-Remaining": "0",
                         "X-RateLimit-Reset": str(int(time.time()) + ttl),
                         "Retry-After": str(ttl),
-                    }
+                    },
                 )
-        
+
         # Check token bucket for burst handling
         if config.requests_per_second:
             allowed, remaining, wait_time = self.rate_limiter.check_token_bucket(
                 identifier=identifier,
                 rate=config.requests_per_second,
                 capacity=config.burst_size,
-                tokens_requested=1
+                tokens_requested=1,
             )
-            
+
             if not allowed:
                 return JSONResponse(
                     status_code=status.HTTP_429_TOO_MANY_REQUESTS,
@@ -529,15 +517,14 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                     },
                     headers={
                         "Retry-After": str(int(wait_time) + 1),
-                    }
+                    },
                 )
-        
+
         # Check concurrent requests
         allowed, current_concurrent = self.rate_limiter.check_concurrent_requests(
-            identifier=identifier,
-            max_concurrent=config.max_concurrent_requests
+            identifier=identifier, max_concurrent=config.max_concurrent_requests
         )
-        
+
         if not allowed:
             return JSONResponse(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
@@ -549,52 +536,52 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 headers={
                     "X-RateLimit-Concurrent-Limit": str(config.max_concurrent_requests),
                     "X-RateLimit-Concurrent-Current": str(current_concurrent),
-                }
+                },
             )
-        
+
         try:
             # Track request start time
             start_time = time.time()
-            
+
             # Process request
             response = await call_next(request)
-            
+
             # Track usage
             response_time = time.time() - start_time
             self.rate_limiter.track_usage(
                 identifier=identifier,
                 cost=config.cost_per_request,
                 endpoint=request.url.path,
-                response_time=response_time
+                response_time=response_time,
             )
-            
+
             # Add rate limit headers to response
             response.headers["X-RateLimit-Limit"] = str(config.requests_per_minute)
             response.headers["X-RateLimit-Tier"] = config.tier.value
-            
+
             return response
-            
+
         finally:
             # Release concurrent request slot
             self.rate_limiter.release_concurrent_request(identifier)
-    
+
     def _get_identifier(self, request: Request) -> str:
         """Get identifier for rate limiting (user ID, API key, or IP)."""
         # Check for authenticated user
         if hasattr(request.state, "user") and request.state.user:
             return f"user:{request.state.user.username}"
-        
+
         # Check for API key
         if "x-api-key" in request.headers:
             api_key = request.headers["x-api-key"]
             # Hash API key for privacy
             key_hash = hashlib.sha256(api_key.encode()).hexdigest()[:16]
             return f"api_key:{key_hash}"
-        
+
         # Fall back to IP address
         client_ip = request.client.host if request.client else "unknown"
         return f"ip:{client_ip}"
-    
+
     def _get_rate_limit_config(self, request: Request) -> RateLimitConfig:
         """Get rate limit configuration for request."""
         # Check for authenticated user with tier
@@ -606,9 +593,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 tier = RateLimitTier(tier_str)
             except ValueError:
                 tier = self.default_tier
-            
+
             return TIER_CONFIGS.get(tier, TIER_CONFIGS[self.default_tier])
-        
+
         # Check for API key tier
         if "x-api-key-tier" in request.headers:
             tier_str = request.headers["x-api-key-tier"]
@@ -617,9 +604,6 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 return TIER_CONFIGS.get(tier, TIER_CONFIGS[self.default_tier])
             except ValueError:
                 pass
-        
+
         # Default tier for unauthenticated requests
         return TIER_CONFIGS[RateLimitTier.FREE]
-
-
-from typing import List  # Add this import at the top

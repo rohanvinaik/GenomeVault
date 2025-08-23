@@ -52,7 +52,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
-        
+
         # Core Secrets from Sealed Secrets
         - name: JWT_SECRET
           valueFrom:
@@ -74,7 +74,7 @@ spec:
             secretKeyRef:
               name: genomevault-core-secrets
               key: redis-password
-        
+
         # PHI/HIPAA Secrets (encrypted at rest)
         - name: NPI_NUMBER
           valueFrom:
@@ -100,7 +100,7 @@ spec:
               name: genomevault-phi-secrets
               key: hsm-serial
               optional: true
-        
+
         # Blockchain Secrets
         - name: BLOCKCHAIN_PRIVATE_KEY
           valueFrom:
@@ -114,7 +114,7 @@ spec:
               name: genomevault-blockchain-secrets
               key: ipfs-api-key
               optional: true
-        
+
         # External Secrets (from cloud providers)
         - name: AWS_KMS_KEY_ID
           valueFrom:

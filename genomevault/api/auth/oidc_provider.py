@@ -12,11 +12,11 @@ import httpx
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, Any, List
 from enum import Enum
-from urllib.parse import urlencode, quote
+from urllib.parse import urlencode
 
 from fastapi import HTTPException, status, Request
 from jose import jwt, JWTError
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, HttpUrl
 import redis
 
 from genomevault.api.auth.oauth2 import (
@@ -38,6 +38,7 @@ redis_client = redis.from_url(REDIS_URL, decode_responses=True)
 
 class OIDCProvider(str, Enum):
     """Supported OIDC providers."""
+
     OKTA = "okta"
     AUTH0 = "auth0"
     AZURE_AD = "azure_ad"
@@ -47,6 +48,7 @@ class OIDCProvider(str, Enum):
 
 class OIDCConfig(BaseModel):
     """OIDC provider configuration."""
+
     provider: OIDCProvider
     client_id: str
     client_secret: str
@@ -74,6 +76,7 @@ class OIDCConfig(BaseModel):
 
 class OIDCUserInfo(BaseModel):
     """OIDC user information from provider."""
+
     sub: str  # Subject identifier
     preferred_username: Optional[str] = None
     email: Optional[str] = None
@@ -93,13 +96,13 @@ class OIDCUserInfo(BaseModel):
 
 class OIDCManager:
     """Manager for OIDC provider integrations."""
-    
+
     def __init__(self):
         """Initialize OIDC manager with provider configurations."""
         self.providers: Dict[OIDCProvider, OIDCConfig] = {}
         self._load_provider_configs()
         self.http_client = httpx.AsyncClient(timeout=30.0)
-    
+
     def _load_provider_configs(self):
         """Load OIDC provider configurations from environment."""
         # Okta configuration
@@ -113,7 +116,9 @@ class OIDCManager:
                 token_endpoint=f"https://{os.getenv('OKTA_DOMAIN')}/oauth2/v1/token",
                 userinfo_endpoint=f"https://{os.getenv('OKTA_DOMAIN')}/oauth2/v1/userinfo",
                 jwks_uri=f"https://{os.getenv('OKTA_DOMAIN')}/oauth2/v1/keys",
-                redirect_uri=os.getenv("OKTA_REDIRECT_URI", "https://api.genomevault.io/auth/callback/okta"),
+                redirect_uri=os.getenv(
+                    "OKTA_REDIRECT_URI", "https://api.genomevault.io/auth/callback/okta"
+                ),
                 domain=os.getenv("OKTA_DOMAIN"),
                 scopes=["openid", "profile", "email", "groups"],
                 groups_claim="groups",
@@ -121,7 +126,7 @@ class OIDCManager:
                 organization_claim="organization_id",
                 baa_claim="baa_signed",
             )
-        
+
         # Auth0 configuration
         if os.getenv("AUTH0_DOMAIN"):
             self.providers[OIDCProvider.AUTH0] = OIDCConfig(
@@ -133,7 +138,9 @@ class OIDCManager:
                 token_endpoint=f"https://{os.getenv('AUTH0_DOMAIN')}/oauth/token",
                 userinfo_endpoint=f"https://{os.getenv('AUTH0_DOMAIN')}/userinfo",
                 jwks_uri=f"https://{os.getenv('AUTH0_DOMAIN')}/.well-known/jwks.json",
-                redirect_uri=os.getenv("AUTH0_REDIRECT_URI", "https://api.genomevault.io/auth/callback/auth0"),
+                redirect_uri=os.getenv(
+                    "AUTH0_REDIRECT_URI", "https://api.genomevault.io/auth/callback/auth0"
+                ),
                 domain=os.getenv("AUTH0_DOMAIN"),
                 audience=os.getenv("AUTH0_AUDIENCE"),
                 scopes=["openid", "profile", "email"],
@@ -143,7 +150,7 @@ class OIDCManager:
                 organization_claim="https://genomevault.io/organization_id",
                 baa_claim="https://genomevault.io/baa_signed",
             )
-        
+
         # Azure AD configuration
         if os.getenv("AZURE_TENANT_ID"):
             tenant_id = os.getenv("AZURE_TENANT_ID")
@@ -156,7 +163,9 @@ class OIDCManager:
                 token_endpoint=f"https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token",
                 userinfo_endpoint="https://graph.microsoft.com/v1.0/me",
                 jwks_uri=f"https://login.microsoftonline.com/{tenant_id}/discovery/v2.0/keys",
-                redirect_uri=os.getenv("AZURE_REDIRECT_URI", "https://api.genomevault.io/auth/callback/azure"),
+                redirect_uri=os.getenv(
+                    "AZURE_REDIRECT_URI", "https://api.genomevault.io/auth/callback/azure"
+                ),
                 tenant_id=tenant_id,
                 scopes=["openid", "profile", "email", "User.Read"],
                 username_claim="preferred_username",
@@ -166,7 +175,7 @@ class OIDCManager:
                 organization_claim="companyName",
                 baa_claim="extension_baa_signed",
             )
-        
+
         # Google configuration
         if os.getenv("GOOGLE_CLIENT_ID"):
             self.providers[OIDCProvider.GOOGLE] = OIDCConfig(
@@ -178,25 +187,23 @@ class OIDCManager:
                 token_endpoint="https://oauth2.googleapis.com/token",
                 userinfo_endpoint="https://openidconnect.googleapis.com/v1/userinfo",
                 jwks_uri="https://www.googleapis.com/oauth2/v3/certs",
-                redirect_uri=os.getenv("GOOGLE_REDIRECT_URI", "https://api.genomevault.io/auth/callback/google"),
+                redirect_uri=os.getenv(
+                    "GOOGLE_REDIRECT_URI", "https://api.genomevault.io/auth/callback/google"
+                ),
                 scopes=["openid", "profile", "email"],
                 username_claim="email",
                 email_claim="email",
                 name_claim="name",
             )
-    
+
     def get_authorization_url(
-        self,
-        provider: OIDCProvider,
-        state: str,
-        nonce: str,
-        code_challenge: Optional[str] = None
+        self, provider: OIDCProvider, state: str, nonce: str, code_challenge: Optional[str] = None
     ) -> str:
         """Generate authorization URL for OIDC provider."""
         config = self.providers.get(provider)
         if not config:
             raise ValueError(f"Provider {provider} not configured")
-        
+
         params = {
             "client_id": config.client_id,
             "response_type": "code",
@@ -205,37 +212,34 @@ class OIDCManager:
             "state": state,
             "nonce": nonce,
         }
-        
+
         # Add PKCE if provided
         if code_challenge:
             params["code_challenge"] = code_challenge
             params["code_challenge_method"] = "S256"
-        
+
         # Provider-specific parameters
         if provider == OIDCProvider.AUTH0 and config.audience:
             params["audience"] = config.audience
-        
+
         if provider == OIDCProvider.AZURE_AD:
             params["response_mode"] = "query"
             params["prompt"] = "select_account"
-        
+
         if provider == OIDCProvider.GOOGLE:
             params["access_type"] = "offline"
             params["prompt"] = "consent"
-        
+
         return f"{config.authorization_endpoint}?{urlencode(params)}"
-    
+
     async def exchange_code_for_tokens(
-        self,
-        provider: OIDCProvider,
-        code: str,
-        code_verifier: Optional[str] = None
+        self, provider: OIDCProvider, code: str, code_verifier: Optional[str] = None
     ) -> Dict[str, Any]:
         """Exchange authorization code for tokens."""
         config = self.providers.get(provider)
         if not config:
             raise ValueError(f"Provider {provider} not configured")
-        
+
         data = {
             "grant_type": "authorization_code",
             "code": code,
@@ -243,32 +247,32 @@ class OIDCManager:
             "client_secret": config.client_secret,
             "redirect_uri": str(config.redirect_uri),
         }
-        
+
         # Add PKCE verifier if provided
         if code_verifier:
             data["code_verifier"] = code_verifier
-        
+
         try:
             response = await self.http_client.post(
                 str(config.token_endpoint),
                 data=data,
-                headers={"Content-Type": "application/x-www-form-urlencoded"}
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
             )
             response.raise_for_status()
-            
+
             tokens = response.json()
-            
+
             # Log token exchange
             logger.info(
                 f"Token exchange successful for provider {provider}",
                 extra={
                     "event": "oidc_token_exchange",
                     "provider": provider.value,
-                }
+                },
             )
-            
+
             return tokens
-            
+
         except httpx.HTTPError as e:
             logger.error(
                 f"Token exchange failed for provider {provider}: {str(e)}",
@@ -276,47 +280,40 @@ class OIDCManager:
                     "event": "oidc_token_exchange_failed",
                     "provider": provider.value,
                     "error": str(e),
-                }
+                },
             )
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Token exchange failed: {str(e)}"
+                status_code=status.HTTP_400_BAD_REQUEST, detail=f"Token exchange failed: {str(e)}"
             )
-    
-    async def get_user_info(
-        self,
-        provider: OIDCProvider,
-        access_token: str
-    ) -> OIDCUserInfo:
+
+    async def get_user_info(self, provider: OIDCProvider, access_token: str) -> OIDCUserInfo:
         """Get user information from OIDC provider."""
         config = self.providers.get(provider)
         if not config:
             raise ValueError(f"Provider {provider} not configured")
-        
+
         try:
             # Special handling for Azure AD (uses Microsoft Graph)
             if provider == OIDCProvider.AZURE_AD:
                 headers = {"Authorization": f"Bearer {access_token}"}
-                
+
                 # Get basic user info
                 response = await self.http_client.get(
-                    str(config.userinfo_endpoint),
-                    headers=headers
+                    str(config.userinfo_endpoint), headers=headers
                 )
                 response.raise_for_status()
                 user_data = response.json()
-                
+
                 # Get user groups
                 groups_response = await self.http_client.get(
-                    "https://graph.microsoft.com/v1.0/me/memberOf",
-                    headers=headers
+                    "https://graph.microsoft.com/v1.0/me/memberOf", headers=headers
                 )
                 if groups_response.status_code == 200:
                     groups_data = groups_response.json()
                     groups = [g["displayName"] for g in groups_data.get("value", [])]
                 else:
                     groups = []
-                
+
                 # Map Azure AD data to OIDCUserInfo
                 return OIDCUserInfo(
                     sub=user_data.get("id"),
@@ -334,16 +331,16 @@ class OIDCManager:
                     npi_number=user_data.get("extension_npi_number"),
                     baa_signed=user_data.get("extension_baa_signed", False),
                 )
-            
+
             else:
                 # Standard OIDC userinfo endpoint
                 response = await self.http_client.get(
                     str(config.userinfo_endpoint),
-                    headers={"Authorization": f"Bearer {access_token}"}
+                    headers={"Authorization": f"Bearer {access_token}"},
                 )
                 response.raise_for_status()
                 user_data = response.json()
-                
+
                 # Map provider-specific claims
                 return OIDCUserInfo(
                     sub=user_data.get("sub"),
@@ -355,13 +352,19 @@ class OIDCManager:
                     family_name=user_data.get("family_name"),
                     groups=user_data.get(config.groups_claim, []),
                     npi_number=user_data.get(config.npi_claim) if config.npi_claim else None,
-                    organization_id=user_data.get(config.organization_claim) if config.organization_claim else None,
-                    baa_signed=user_data.get(config.baa_claim, False) if config.baa_claim else False,
+                    organization_id=(
+                        user_data.get(config.organization_claim)
+                        if config.organization_claim
+                        else None
+                    ),
+                    baa_signed=(
+                        user_data.get(config.baa_claim, False) if config.baa_claim else False
+                    ),
                     roles=user_data.get("roles", []),
                     department=user_data.get("department"),
                     job_title=user_data.get("job_title"),
                 )
-            
+
         except httpx.HTTPError as e:
             logger.error(
                 f"Failed to get user info from {provider}: {str(e)}",
@@ -369,51 +372,47 @@ class OIDCManager:
                     "event": "oidc_userinfo_failed",
                     "provider": provider.value,
                     "error": str(e),
-                }
+                },
             )
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Failed to get user info: {str(e)}"
+                status_code=status.HTTP_400_BAD_REQUEST, detail=f"Failed to get user info: {str(e)}"
             )
-    
+
     async def validate_id_token(
-        self,
-        provider: OIDCProvider,
-        id_token: str,
-        nonce: str
+        self, provider: OIDCProvider, id_token: str, nonce: str
     ) -> Dict[str, Any]:
         """Validate and decode OIDC ID token."""
         config = self.providers.get(provider)
         if not config:
             raise ValueError(f"Provider {provider} not configured")
-        
+
         try:
             # Get JWKS from cache or fetch
             jwks_cache_key = f"jwks:{provider.value}"
             jwks_data = redis_client.get(jwks_cache_key)
-            
+
             if not jwks_data:
                 response = await self.http_client.get(str(config.jwks_uri))
                 response.raise_for_status()
                 jwks_data = response.text
                 # Cache for 1 hour
                 redis_client.setex(jwks_cache_key, 3600, jwks_data)
-            
+
             jwks = json.loads(jwks_data)
-            
+
             # Decode and validate ID token
             unverified_header = jwt.get_unverified_header(id_token)
-            
+
             # Find the key
             rsa_key = None
             for key in jwks["keys"]:
                 if key["kid"] == unverified_header["kid"]:
                     rsa_key = key
                     break
-            
+
             if not rsa_key:
                 raise ValueError("Unable to find appropriate key")
-            
+
             # Validate token
             payload = jwt.decode(
                 id_token,
@@ -422,28 +421,28 @@ class OIDCManager:
                 audience=config.client_id,
                 issuer=str(config.issuer),
             )
-            
+
             # Validate nonce
             if payload.get("nonce") != nonce:
                 raise ValueError("Invalid nonce")
-            
+
             # Check expiration
             if "exp" in payload:
                 exp_time = datetime.fromtimestamp(payload["exp"], tz=timezone.utc)
                 if datetime.now(timezone.utc) > exp_time:
                     raise ValueError("Token expired")
-            
+
             logger.info(
                 f"ID token validated for provider {provider}",
                 extra={
                     "event": "oidc_token_validated",
                     "provider": provider.value,
                     "sub": payload.get("sub"),
-                }
+                },
             )
-            
+
             return payload
-            
+
         except (JWTError, ValueError) as e:
             logger.error(
                 f"ID token validation failed for {provider}: {str(e)}",
@@ -451,18 +450,13 @@ class OIDCManager:
                     "event": "oidc_token_validation_failed",
                     "provider": provider.value,
                     "error": str(e),
-                }
+                },
             )
             raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail=f"Invalid ID token: {str(e)}"
+                status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Invalid ID token: {str(e)}"
             )
-    
-    def map_groups_to_roles(
-        self,
-        groups: List[str],
-        provider: OIDCProvider
-    ) -> List[UserRole]:
+
+    def map_groups_to_roles(self, groups: List[str], provider: OIDCProvider) -> List[UserRole]:
         """Map OIDC groups to GenomeVault roles."""
         role_mapping = {
             # Okta groups
@@ -487,7 +481,7 @@ class OIDCManager:
             "research-staff": UserRole.RESEARCHER,
             "it-admins": UserRole.ADMIN,
         }
-        
+
         roles = []
         for group in groups:
             group_lower = group.lower()
@@ -495,11 +489,11 @@ class OIDCManager:
                 if pattern.lower() in group_lower:
                     if role not in roles:
                         roles.append(role)
-        
+
         # Default to patient if no roles found
         if not roles:
             roles = [UserRole.PATIENT]
-        
+
         logger.info(
             f"Mapped {len(groups)} groups to {len(roles)} roles",
             extra={
@@ -507,25 +501,23 @@ class OIDCManager:
                 "provider": provider.value,
                 "groups": groups,
                 "roles": [r.value for r in roles],
-            }
+            },
         )
-        
+
         return roles
-    
+
     async def create_genomevault_user(
-        self,
-        provider: OIDCProvider,
-        user_info: OIDCUserInfo
+        self, provider: OIDCProvider, user_info: OIDCUserInfo
     ) -> User:
         """Create or update GenomeVault user from OIDC user info."""
         # Map groups to roles
         roles = self.map_groups_to_roles(user_info.groups, provider)
-        
+
         # Aggregate scopes from all roles
         scopes = set()
         for role in roles:
             scopes.update(ROLE_SCOPES.get(role, set()))
-        
+
         # Create user object
         user = User(
             username=user_info.preferred_username or user_info.email or user_info.sub,
@@ -534,20 +526,17 @@ class OIDCManager:
             disabled=False,
             roles=roles,
             scopes=list(scopes),
-            mfa_enabled=provider in [OIDCProvider.OKTA, OIDCProvider.AZURE_AD],  # Enterprise providers usually have MFA
+            mfa_enabled=provider
+            in [OIDCProvider.OKTA, OIDCProvider.AZURE_AD],  # Enterprise providers usually have MFA
             npi_number=user_info.npi_number,
             organization_id=user_info.organization_id,
             baa_signed=user_info.baa_signed,
         )
-        
+
         # Store user in cache (in production, would sync with database)
         user_cache_key = f"user:{user.username}"
-        redis_client.setex(
-            user_cache_key,
-            timedelta(hours=1),
-            user.json()
-        )
-        
+        redis_client.setex(user_cache_key, timedelta(hours=1), user.json())
+
         logger.info(
             f"Created/updated user from {provider}",
             extra={
@@ -557,11 +546,11 @@ class OIDCManager:
                 "roles": [r.value for r in roles],
                 "has_npi": bool(user.npi_number),
                 "baa_signed": user.baa_signed,
-            }
+            },
         )
-        
+
         return user
-    
+
     async def authenticate_oidc_user(
         self,
         provider: OIDCProvider,
@@ -569,35 +558,27 @@ class OIDCManager:
         state: str,
         nonce: str,
         code_verifier: Optional[str] = None,
-        request: Optional[Request] = None
+        request: Optional[Request] = None,
     ) -> Token:
         """Complete OIDC authentication flow and return GenomeVault tokens."""
         # Exchange code for tokens
-        oidc_tokens = await self.exchange_code_for_tokens(
-            provider, code, code_verifier
-        )
-        
+        oidc_tokens = await self.exchange_code_for_tokens(provider, code, code_verifier)
+
         # Validate ID token if present
         if "id_token" in oidc_tokens:
-            await self.validate_id_token(
-                provider,
-                oidc_tokens["id_token"],
-                nonce
-            )
-        
+            await self.validate_id_token(provider, oidc_tokens["id_token"], nonce)
+
         # Get user info
-        user_info = await self.get_user_info(
-            provider,
-            oidc_tokens["access_token"]
-        )
-        
+        user_info = await self.get_user_info(provider, oidc_tokens["access_token"])
+
         # Create or update GenomeVault user
         user = await self.create_genomevault_user(provider, user_info)
-        
+
         # Generate session ID
         import secrets
+
         session_id = secrets.token_urlsafe(32)
-        
+
         # Create GenomeVault tokens
         token_data = TokenData(
             username=user.username,
@@ -610,35 +591,34 @@ class OIDCManager:
             organization_id=user.organization_id,
             baa_signed=user.baa_signed,
         )
-        
+
         access_token = create_access_token(token_data)
-        
+
         # Get client info for refresh token
         ip_address = None
         user_agent = None
         if request:
             ip_address = request.client.host if request.client else None
             user_agent = request.headers.get("user-agent")
-        
+
         refresh_token = create_refresh_token(
-            user,
-            session_id=session_id,
-            ip_address=ip_address,
-            user_agent=user_agent
+            user, session_id=session_id, ip_address=ip_address, user_agent=user_agent
         )
-        
+
         # Store OIDC tokens for later use (e.g., API calls to provider)
         oidc_cache_key = f"oidc_tokens:{user.username}:{provider.value}"
         redis_client.setex(
             oidc_cache_key,
             timedelta(hours=1),
-            json.dumps({
-                "access_token": oidc_tokens.get("access_token"),
-                "refresh_token": oidc_tokens.get("refresh_token"),
-                "expires_in": oidc_tokens.get("expires_in", 3600),
-            })
+            json.dumps(
+                {
+                    "access_token": oidc_tokens.get("access_token"),
+                    "refresh_token": oidc_tokens.get("refresh_token"),
+                    "expires_in": oidc_tokens.get("expires_in", 3600),
+                }
+            ),
         )
-        
+
         logger.info(
             f"OIDC authentication successful for {user.username} via {provider}",
             extra={
@@ -647,19 +627,19 @@ class OIDCManager:
                 "username": user.username,
                 "session_id": session_id,
                 "ip_address": ip_address,
-            }
+            },
         )
-        
+
         from genomevault.api.auth.oauth2 import ACCESS_TOKEN_EXPIRE_MINUTES
-        
+
         return Token(
             access_token=access_token,
             token_type="bearer",
             expires_in=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
             refresh_token=refresh_token,
-            scope=" ".join(user.scopes)
+            scope=" ".join(user.scopes),
         )
-    
+
     async def close(self):
         """Close HTTP client."""
         await self.http_client.aclose()

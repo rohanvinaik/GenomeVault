@@ -1,12 +1,144 @@
 version: "3.8"
+
+networks:
+  genomevault:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
 services:
+  # PostgreSQL Database Service
+  postgres:
+    image: postgres:15-alpine
+    container_name: genomevault_postgres
+    restart: unless-stopped
+    networks:
+      - genomevault
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-genomevault}
+      POSTGRES_USER: ${POSTGRES_USER:-genomevault}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-genomevault_dev_password}
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-genomevault} -d ${POSTGRES_DB:-genomevault}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    command: >
+      postgres
+      -c shared_preload_libraries=pg_stat_statements
+      -c pg_stat_statements.track=all
+      -c max_connections=200
+      -c shared_buffers=256MB
+      -c effective_cache_size=1GB
+      -c work_mem=4MB
+      -c maintenance_work_mem=64MB
+
+  # Redis Cache Service
+  redis:
+    image: redis:7-alpine
+    container_name: genomevault_redis
+    restart: unless-stopped
+    networks:
+      - genomevault
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-genomevault_redis_dev_password}
+    volumes:
+      - redis_data:/data
+      - ./config/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    command: >
+      redis-server /usr/local/etc/redis/redis.conf
+      --requirepass ${REDIS_PASSWORD:-genomevault_redis_dev_password}
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --save 900 1
+      --save 300 10
+      --save 60 10000
+
+  # GenomeVault API Service
   api:
     build:
       context: .
+      dockerfile: Dockerfile
+      target: development
     image: genomevault/api:local
     container_name: genomevault_api
+    restart: unless-stopped
+    networks:
+      - genomevault
     ports:
-      - "8000:8000"
+      - "${API_PORT:-8000}:8000"
     environment:
-      - UVICORN_WORKERS=2
-    command: ["uvicorn", "genomevault.api.app:app", "--host", "0.0.0.0", "--port", "8000"]
+      # Application Config
+      - GENOMEVAULT_ENV=${GENOMEVAULT_ENV:-development}
+      - GENOMEVAULT_LOG_LEVEL=${GENOMEVAULT_LOG_LEVEL:-INFO}
+      - GENOMEVAULT_API_HOST=0.0.0.0
+      - GENOMEVAULT_API_DEBUG=${GENOMEVAULT_API_DEBUG:-true}
+      - GENOMEVAULT_SECRET_KEY=${GENOMEVAULT_SECRET_KEY:-dev-secret-key-change-in-production}
+
+      # Database Configuration
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-genomevault}:${POSTGRES_PASSWORD:-genomevault_dev_password}@postgres:5432/${POSTGRES_DB:-genomevault}
+      - GENOMEVAULT_DATABASE_URL=postgresql://${POSTGRES_USER:-genomevault}:${POSTGRES_PASSWORD:-genomevault_dev_password}@postgres:5432/${POSTGRES_DB:-genomevault}
+      - GENOMEVAULT_DATABASE_POOL_SIZE=${GENOMEVAULT_DATABASE_POOL_SIZE:-10}
+
+      # Redis Configuration
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-genomevault_redis_dev_password}@redis:6379/0
+      - GENOMEVAULT_REDIS_URL=redis://:${REDIS_PASSWORD:-genomevault_redis_dev_password}@redis:6379/0
+
+      # Hypervector Configuration
+      - GENOMEVAULT_HV_DIMENSION=${GENOMEVAULT_HV_DIMENSION:-10000}
+      - GENOMEVAULT_COMPRESSION_TIER=${GENOMEVAULT_COMPRESSION_TIER:-clinical}
+      - GENOMEVAULT_MAX_VARIANTS=${GENOMEVAULT_MAX_VARIANTS:-1000}
+
+      # Performance Configuration
+      - UVICORN_WORKERS=${GENOMEVAULT_WORKERS:-2}
+      - GENOMEVAULT_WORKERS=${GENOMEVAULT_WORKERS:-2}
+      - GENOMEVAULT_MAX_QUEUE_SIZE=${GENOMEVAULT_MAX_QUEUE_SIZE:-1000}
+
+      # Security Configuration
+      - GENOMEVAULT_SECURITY_LEVEL=${GENOMEVAULT_SECURITY_LEVEL:-128}
+      - RATE_LIMIT_RPS=${RATE_LIMIT_RPS:-5.0}
+      - RATE_LIMIT_BURST=${RATE_LIMIT_BURST:-10}
+
+      # Monitoring Configuration
+      - GENOMEVAULT_ENABLE_METRICS=${GENOMEVAULT_ENABLE_METRICS:-true}
+      - GENOMEVAULT_METRICS_PORT=${GENOMEVAULT_METRICS_PORT:-9090}
+      - GENOMEVAULT_HEALTH_CHECK_INTERVAL=${GENOMEVAULT_HEALTH_CHECK_INTERVAL:-30}
+
+    volumes:
+      - .:/app:cached
+      - /app/node_modules
+      - ./logs:/app/logs
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+    command: ["uvicorn", "genomevault.api.v1.app:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

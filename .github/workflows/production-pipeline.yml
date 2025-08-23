@@ -36,7 +36,7 @@ jobs:
       version: ${{ steps.version.outputs.version }}
       security-passed: ${{ steps.security-gate.outputs.passed }}
       phi-clean: ${{ steps.phi-scan.outputs.clean }}
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -137,7 +137,7 @@ jobs:
       fail-fast: false
       matrix:
         test-type: [unit, integration, privacy, performance]
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -219,7 +219,7 @@ jobs:
     outputs:
       image-digest: ${{ steps.build.outputs.digest }}
       sbom-digest: ${{ steps.sbom.outputs.digest }}
-    
+
     permissions:
       contents: read
       packages: write
@@ -325,10 +325,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: [quality-checks, build-image]
     if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'dev'
-    environment: 
+    environment:
       name: development
       url: https://dev.genomevault.io
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -362,7 +362,7 @@ jobs:
     environment:
       name: staging
       url: https://staging.genomevault.io
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -370,7 +370,7 @@ jobs:
     - name: Configure kubectl
       uses: azure/k8s-set-context@v3
       with:
-        method: kubeconfig  
+        method: kubeconfig
         kubeconfig: ${{ secrets.STAGING_KUBECONFIG }}
 
     - name: Deploy to staging
@@ -401,7 +401,7 @@ jobs:
     environment:
       name: production-canary
       url: https://genomevault.io
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -417,7 +417,7 @@ jobs:
         cd deployment/kubernetes/canary
         kustomize edit set image genomevault=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.quality-checks.outputs.version }}
         kubectl apply -k .
-        
+
         # Update Istio virtual service for 5% canary traffic
         kubectl patch virtualservice genomevault-vs -n genomevault --type='json' \
           -p='[{"op": "replace", "path": "/spec/http/0/route/0/weight", "value": 95},
@@ -427,10 +427,10 @@ jobs:
       run: |
         echo "Monitoring canary for 10 minutes..."
         sleep 300
-        
+
         # Check SLO metrics
         python scripts/slo_check.py --environment prod --canary --duration 300
-        
+
         if [ $? -ne 0 ]; then
           echo "SLO breach detected, initiating rollback"
           kubectl patch virtualservice genomevault-vs -n genomevault --type='json' \
@@ -442,7 +442,7 @@ jobs:
     - name: Run production synthetic tests
       run: |
         python scripts/synthetic_monitors.py --environment prod --canary
-        
+
         # Privacy guarantee validation
         python scripts/privacy_validator.py --environment prod --validate-pir --validate-zk
 
@@ -454,7 +454,7 @@ jobs:
     environment:
       name: production
       url: https://genomevault.io
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -471,14 +471,14 @@ jobs:
         for weight in 25 50 100; do
           echo "Increasing canary traffic to $weight%"
           stable_weight=$((100 - weight))
-          
+
           kubectl patch virtualservice genomevault-vs -n genomevault --type='json' \
             -p="[{\"op\": \"replace\", \"path\": \"/spec/http/0/route/0/weight\", \"value\": $stable_weight},
                  {\"op\": \"replace\", \"path\": \"/spec/http/0/route/1/weight\", \"value\": $weight}]"
-          
+
           # Wait and monitor
           sleep 180
-          
+
           # Check SLOs
           python scripts/slo_check.py --environment prod --duration 180
           if [ $? -ne 0 ]; then
@@ -525,12 +525,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: [deploy-prod-full]
     if: always() && needs.deploy-prod-full.result == 'success'
-    
+
     steps:
     - name: Start monitoring job
       run: |
         echo "Starting 24-hour enhanced monitoring for deployment ${{ needs.quality-checks.outputs.version }}"
-        
+
         # Trigger monitoring workflow
         curl -X POST \
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
@@ -544,7 +544,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [deploy-prod-full, quality-checks]
     if: always()
-    
+
     steps:
     - name: Notify deployment result
       uses: 8398a7/action-slack@v3
@@ -570,26 +570,26 @@ jobs:
         prerelease: false
         body: |
           ## Production Deployment
-          
+
           **Version:** ${{ needs.quality-checks.outputs.version }}
           **Deployed:** ${{ github.event.head_commit.timestamp }}
-          
+
           ### Security & Compliance
           - ✅ PHI scanner clean
-          - ✅ SAST scans passed  
+          - ✅ SAST scans passed
           - ✅ Container vulnerabilities resolved
           - ✅ Image signed with cosign
           - ✅ SBOM generated and attested
-          
+
           ### Testing
           - ✅ Unit test coverage ≥80%
           - ✅ Integration tests passed
           - ✅ Privacy guarantee tests passed
           - ✅ Performance benchmarks met
-          
+
           ### Deployment
           - ✅ Canary deployment successful
           - ✅ SLO monitoring passed
           - ✅ Full production rollout complete
-          
+
           **Image:** `${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.quality-checks.outputs.version }}`

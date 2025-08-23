@@ -51,7 +51,7 @@ spec:
           value: "hipaa-ts"  # hipaa-ts or generic
         - name: HONESTY_PROBABILITY
           value: "0.98"
-        
+
         # PIR Server Secrets
         - name: PIR_ENCRYPTION_KEY
           valueFrom:
@@ -63,7 +63,7 @@ spec:
             secretKeyRef:
               name: genomevault-pir-secrets
               key: signing-key
-        
+
         # PHI/HIPAA Secrets for HIPAA-TS servers
         - name: TS_KEY_1
           valueFrom:
@@ -77,7 +77,7 @@ spec:
               name: genomevault-phi-secrets
               key: ts-key-2
               optional: true
-        
+
         # TLS Configuration
         - name: TLS_CERT_PATH
           value: "/etc/tls/tls.crt"
@@ -85,7 +85,7 @@ spec:
           value: "/etc/tls/tls.key"
         - name: CA_CERT_PATH
           value: "/etc/tls/ca.crt"
-        
+
         # HSM Configuration for cryptographic operations
         - name: HSM_ENABLED
           value: "true"
@@ -122,7 +122,7 @@ spec:
         - name: hsm-config
           mountPath: /etc/hsm
           readOnly: true
-      
+
       volumes:
       - name: reference-data
         persistentVolumeClaim:

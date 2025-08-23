@@ -39,7 +39,7 @@ spec:
     spec:
       priorityClassName: genomevault-high
       serviceAccountName: genomevault-api
-      
+
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -62,7 +62,7 @@ spec:
                   operator: In
                   values: [genomevault]
               topologyKey: topology.kubernetes.io/zone
-      
+
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
@@ -70,12 +70,12 @@ spec:
         fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
-      
+
       containers:
       - name: api
         image: genomevault:latest
         imagePullPolicy: Always
-        
+
         securityContext:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
@@ -85,7 +85,7 @@ spec:
           capabilities:
             drop:
             - ALL
-        
+
         ports:
         - name: http
           containerPort: 8000
@@ -93,7 +93,7 @@ spec:
         - name: metrics
           containerPort: 9090
           protocol: TCP
-        
+
         env:
         - name: ENVIRONMENT
           value: "production"
@@ -117,7 +117,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
-        
+
         envFrom:
         - configMapRef:
             name: genomevault-config
@@ -125,7 +125,7 @@ spec:
             name: canary-config
         - secretRef:
             name: genomevault-secrets
-        
+
         resources:
           requests:
             memory: "2Gi"
@@ -135,7 +135,7 @@ spec:
             memory: "4Gi"
             cpu: "2000m"
             ephemeral-storage: "2Gi"
-        
+
         livenessProbe:
           httpGet:
             path: /health/live
@@ -146,7 +146,7 @@ spec:
           timeoutSeconds: 5
           failureThreshold: 3
           successThreshold: 1
-        
+
         readinessProbe:
           httpGet:
             path: /health/ready
@@ -157,7 +157,7 @@ spec:
           timeoutSeconds: 3
           failureThreshold: 3
           successThreshold: 1
-        
+
         startupProbe:
           httpGet:
             path: /health/startup
@@ -168,7 +168,7 @@ spec:
           timeoutSeconds: 3
           failureThreshold: 30
           successThreshold: 1
-        
+
         volumeMounts:
         - name: tmp
           mountPath: /tmp
@@ -182,12 +182,12 @@ spec:
         - name: zk-keys
           mountPath: /var/genomevault/zk/keys
           readOnly: true
-      
+
       # Sidecar for enhanced monitoring
       - name: monitoring-agent
         image: prom/node-exporter:latest
         imagePullPolicy: IfNotPresent
-        
+
         securityContext:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
@@ -196,12 +196,12 @@ spec:
           capabilities:
             drop:
             - ALL
-        
+
         ports:
         - name: node-metrics
           containerPort: 9100
           protocol: TCP
-        
+
         resources:
           requests:
             memory: "64Mi"
@@ -209,14 +209,14 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "100m"
-        
+
         volumeMounts:
         - name: tmp
           mountPath: /tmp
         - name: var-run
           mountPath: /var/run
           readOnly: true
-      
+
       volumes:
       - name: tmp
         emptyDir:
@@ -235,13 +235,13 @@ spec:
         secret:
           secretName: zk-proof-keys
           defaultMode: 0400
-      
+
       terminationGracePeriodSeconds: 60
-      
+
       nodeSelector:
         kubernetes.io/arch: amd64
         node-role.kubernetes.io/worker: "true"
-      
+
       tolerations:
       - key: "genomevault.io/canary"
         operator: "Equal"

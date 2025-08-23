@@ -18,7 +18,7 @@ groups:
           summary: "PIR server collusion attempt detected"
           description: "Detected potential collusion between PIR servers: {{ $labels.server_ids }}"
           runbook_url: "docs/runbooks/pir-server-collusion.md"
-          
+
       # PIR Server Health
       - alert: PIRServerDown
         expr: |
@@ -31,7 +31,7 @@ groups:
           summary: "PIR server {{ $labels.server_id }} is down"
           description: "PIR server {{ $labels.server_id }} in trust domain {{ $labels.trust_domain }} has been unhealthy for > 2 minutes"
           runbook_url: "docs/runbooks/pir-server-failure.md"
-      
+
       # PIR Query Latency
       - alert: PIRQueryLatencyHigh
         expr: |
@@ -44,7 +44,7 @@ groups:
           summary: "PIR query latency P99 > 1s"
           description: "PIR server {{ $labels.server_id }} has P99 latency of {{ $value }}s (threshold: 1s)"
           runbook_url: "docs/runbooks/pir-high-latency.md"
-      
+
       # Byzantine Faults
       - alert: ByzantineFaultDetected
         expr: |
@@ -58,7 +58,7 @@ groups:
           summary: "Byzantine fault detected in PIR server {{ $labels.server_id }}"
           description: "PIR server {{ $labels.server_id }} is exhibiting Byzantine behavior: {{ $labels.fault_type }}"
           runbook_url: "docs/runbooks/byzantine-fault.md"
-      
+
       # Timing Attack Anomaly
       - alert: TimingAttackAnomaly
         expr: |
@@ -90,7 +90,7 @@ groups:
           summary: "PHI leakage detected"
           description: "Detected PHI leakage of type {{ $labels.detection_type }} with severity {{ $labels.severity }}"
           runbook_url: "docs/runbooks/phi-leakage.md"
-      
+
       # Differential Privacy Budget Exhaustion
       - alert: PrivacyBudgetExhausted
         expr: |
@@ -103,7 +103,7 @@ groups:
           summary: "Privacy budget nearly exhausted for user {{ $labels.user_id }}"
           description: "User {{ $labels.user_id }} has only {{ $value }} epsilon remaining in privacy budget"
           runbook_url: "docs/runbooks/privacy-budget.md"
-      
+
       # Unauthorized PHI Access
       - alert: UnauthorizedPHIAccess
         expr: |
@@ -134,7 +134,7 @@ groups:
           summary: "High ZK proof verification failure rate"
           description: "ZK proof verification failure rate is {{ $value | humanizePercentage }} for type {{ $labels.proof_type }}"
           runbook_url: "docs/runbooks/zk-proof-failure.md"
-      
+
       # ZK Proof Generation Slow
       - alert: ZKProofGenerationSlow
         expr: |
@@ -164,7 +164,7 @@ groups:
           summary: "High API error rate"
           description: "API error rate is {{ $value | humanizePercentage }} for endpoint {{ $labels.endpoint }}"
           runbook_url: "docs/runbooks/api-errors.md"
-      
+
       # API Latency
       - alert: APILatencyHigh
         expr: |
@@ -177,7 +177,7 @@ groups:
           summary: "High API latency"
           description: "API P95 latency is {{ $value }}s for endpoint {{ $labels.endpoint }}"
           runbook_url: "docs/runbooks/api-latency.md"
-      
+
       # Request Rate Spike
       - alert: RequestRateSpike
         expr: |
@@ -207,7 +207,7 @@ groups:
           summary: "Hypervector encoding is slow"
           description: "HV encoding P95 is {{ $value }}s for dimension {{ $labels.dimension }}"
           runbook_url: "docs/runbooks/hv-performance.md"
-      
+
       # Memory Usage High
       - alert: HVMemoryUsageHigh
         expr: |
@@ -220,7 +220,7 @@ groups:
           summary: "High hypervector memory usage"
           description: "HV operation {{ $labels.operation }} is using {{ $value | humanize }}B of memory"
           runbook_url: "docs/runbooks/hv-memory.md"
-      
+
       # Compression Ratio Low
       - alert: HVCompressionRatioLow
         expr: |
@@ -251,7 +251,7 @@ groups:
           summary: "Unusual clinical data access pattern detected"
           description: "High rate of clinical queries ({{ $value }}/s) for {{ $labels.data_category }}"
           runbook_url: "docs/runbooks/clinical-access-pattern.md"
-      
+
       # Clinical Data Latency
       - alert: ClinicalDataAccessSlow
         expr: |
@@ -281,7 +281,7 @@ groups:
           summary: "Multiple PIR servers are down"
           description: "{{ $value }} PIR servers are currently unhealthy, system may not meet privacy guarantees"
           runbook_url: "docs/runbooks/multiple-server-failure.md"
-      
+
       # Privacy Guarantee Violation Risk
       - alert: PrivacyGuaranteeAtRisk
         expr: |
@@ -305,27 +305,27 @@ groups:
       # PIR Query Latency Percentiles
       - record: pir_query_latency_p50
         expr: histogram_quantile(0.50, rate(genomevault_pir_query_duration_seconds_bucket[5m]))
-      
+
       - record: pir_query_latency_p95
         expr: histogram_quantile(0.95, rate(genomevault_pir_query_duration_seconds_bucket[5m]))
-      
+
       - record: pir_query_latency_p99
         expr: histogram_quantile(0.99, rate(genomevault_pir_query_duration_seconds_bucket[5m]))
-      
+
       # API Request Rate
       - record: api_request_rate_5m
         expr: rate(genomevault_api_requests_total[5m])
-      
+
       # Error Rates
       - record: api_error_rate_5m
         expr: rate(genomevault_api_errors_total[5m]) / rate(genomevault_api_requests_total[5m])
-      
+
       # ZK Proof Success Rate
       - record: zk_proof_success_rate_5m
         expr: |
           rate(genomevault_zk_proofs_total{status="verified"}[5m]) /
           rate(genomevault_zk_proofs_total[5m])
-      
+
       # Privacy Budget Consumption Rate
       - record: privacy_budget_consumption_rate_1h
         expr: increase(genomevault_dp_epsilon_consumed[1h])

@@ -43,7 +43,7 @@ spec:
       annotations:
         summary: "Backup failed for {{ $labels.type }}"
         description: "Backup type {{ $labels.type }} has failed in the last hour"
-        
+
     # Alert if no backups in expected time
     - alert: BackupMissing
       expr: |
@@ -55,11 +55,11 @@ spec:
       annotations:
         summary: "No recent backup for {{ $labels.type }}"
         description: "No successful {{ $labels.type }} backup in the last 65 minutes (expected hourly)"
-        
+
     # Alert if backup size anomaly
     - alert: BackupSizeAnomaly
       expr: |
-        abs(genomevault_backup_size_bytes - avg_over_time(genomevault_backup_size_bytes[7d])) 
+        abs(genomevault_backup_size_bytes - avg_over_time(genomevault_backup_size_bytes[7d]))
         > (2 * stddev_over_time(genomevault_backup_size_bytes[7d]))
       for: 15m
       labels:
@@ -68,7 +68,7 @@ spec:
       annotations:
         summary: "Backup size anomaly detected"
         description: "Backup size for {{ $labels.type }} deviates significantly from 7-day average"
-        
+
     # Alert if restore test fails
     - alert: RestoreTestFailed
       expr: |
@@ -80,7 +80,7 @@ spec:
       annotations:
         summary: "Disaster recovery test failed"
         description: "The weekly disaster recovery restore test has failed"
-        
+
     # Alert if backup duration exceeds threshold
     - alert: BackupSlow
       expr: |
@@ -92,7 +92,7 @@ spec:
       annotations:
         summary: "Backup taking too long"
         description: "95th percentile backup duration for {{ $labels.type }} exceeds 1 hour"
-        
+
     # Alert if data integrity check fails
     - alert: DataIntegrityCheckFailed
       expr: |

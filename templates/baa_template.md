@@ -1,15 +1,15 @@
 # Business Associate Agreement (BAA) Template
 
-**GenomeVault, Inc.**  
+**GenomeVault, Inc.**
 **HIPAA Business Associate Agreement**
 
 ---
 
 ## Agreement Information
 
-**Effective Date:** {{effective_date}}  
-**BAA Reference ID:** {{baa_hash}}  
-**Agreement Version:** 2.1  
+**Effective Date:** {{effective_date}}
+**BAA Reference ID:** {{baa_hash}}
+**Agreement Version:** 2.1
 
 **Covered Entity:**
 - Name: {{covered_entity_name}}
@@ -307,17 +307,17 @@ This Agreement may only be amended by written agreement signed by both parties.
 
 **COVERED ENTITY:**
 
-Signature: _________________________________  
-Print Name: {{ce_signatory_name}}  
-Title: {{ce_signatory_title}}  
-Date: {{ce_signature_date}}  
+Signature: _________________________________
+Print Name: {{ce_signatory_name}}
+Title: {{ce_signatory_title}}
+Date: {{ce_signature_date}}
 
 **BUSINESS ASSOCIATE (GenomeVault, Inc.):**
 
-Signature: _________________________________  
-Print Name: {{ba_signatory_name}}  
-Title: Privacy Officer  
-Date: {{ba_signature_date}}  
+Signature: _________________________________
+Print Name: {{ba_signatory_name}}
+Title: Privacy Officer
+Date: {{ba_signature_date}}
 
 ---
 

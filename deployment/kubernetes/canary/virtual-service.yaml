@@ -14,11 +14,11 @@ spec:
   - genomevault.io
   - api.genomevault.io
   - genomevault-api.genomevault.svc.cluster.local
-  
+
   gateways:
   - genomevault-gateway
   - mesh
-  
+
   http:
   # Health check routes (always to stable)
   - match:
@@ -33,7 +33,7 @@ spec:
       response:
         add:
           x-canary-route: health-check
-  
+
   # Admin routes (always to stable for consistency)
   - match:
     - uri:
@@ -47,7 +47,7 @@ spec:
       response:
         add:
           x-canary-route: admin
-  
+
   # PIR query routes with traffic splitting
   - match:
     - uri:
@@ -76,7 +76,7 @@ spec:
       attempts: 3
       perTryTimeout: 3s
       retryOn: 5xx,reset,connect-failure,refused-stream
-  
+
   # ZK proof routes with traffic splitting
   - match:
     - uri:
@@ -95,7 +95,7 @@ spec:
       attempts: 2
       perTryTimeout: 10s
       retryOn: 5xx,reset,connect-failure
-  
+
   # Hypervector encoding routes
   - match:
     - uri:
@@ -114,7 +114,7 @@ spec:
       attempts: 3
       perTryTimeout: 2s
       retryOn: 5xx,reset,connect-failure
-  
+
   # All other API routes
   - match:
     - uri:
@@ -139,7 +139,7 @@ spec:
         percentage:
           value: 0.1
         fixedDelay: 1ms
-  
+
   # Default route (catch-all)
   - route:
     - destination:
@@ -162,7 +162,7 @@ metadata:
     component: api
 spec:
   host: genomevault-api.genomevault.svc.cluster.local
-  
+
   trafficPolicy:
     loadBalancer:
       simple: LEAST_CONN
@@ -184,7 +184,7 @@ spec:
       baseEjectionTime: 30s
       maxEjectionPercent: 50
       minHealthPercent: 30
-  
+
   subsets:
   - name: stable
     labels:
@@ -205,7 +205,7 @@ spec:
           consecutive5xxErrors: 5
           interval: 60s
           baseEjectionTime: 60s
-  
+
   - name: canary
     labels:
       version: canary
@@ -276,7 +276,7 @@ spec:
   - to:
     - operation:
         paths: ["/health/*", "/metrics", "/ready", "/live"]
-  
+
   # Allow API access from authenticated sources
   - from:
     - source:
@@ -286,7 +286,7 @@ spec:
     to:
     - operation:
         paths: ["/api/*"]
-  
+
   # Allow internal service mesh communication
   - from:
     - source:
@@ -318,7 +318,7 @@ spec:
           value: |
             has(request.headers['x-canary-version']) ? request.headers['x-canary-version'] : 'stable'
         deployment_type:
-          operation: UPSERT  
+          operation: UPSERT
           value: |
             has(destination.labels['deployment']) ? destination.labels['deployment'] : 'stable'
   tracing:
