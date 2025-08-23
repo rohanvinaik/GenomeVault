@@ -1,0 +1,559 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      scan_type:
+        description: 'Type of security scan'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+          - full
+          - sast
+          - dependencies
+          - container
+          - phi
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  # Static Application Security Testing
+  sast-scan:
+    name: SAST Security Analysis
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.scan_type == 'sast' || github.event.inputs.scan_type == 'full' || github.event.inputs.scan_type == '' }}
+    
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Install security tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install bandit[toml] semgrep safety pip-audit
+
+    # Bandit - Python security linter
+    - name: Run Bandit security scan
+      run: |
+        bandit -r genomevault/ \
+          -f json \
+          -o bandit-report.json \
+          -f sarif \
+          -o bandit-results.sarif \
+          --severity-level medium
+      continue-on-error: true
+
+    - name: Upload Bandit results to GitHub Security
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: bandit-results.sarif
+        category: bandit
+
+    # Semgrep - Multi-language SAST
+    - name: Run Semgrep SAST scan
+      uses: returntocorp/semgrep-action@v1
+      with:
+        config: >-
+          p/security-audit
+          p/secrets
+          p/owasp-top-10
+          p/cwe-top-25
+          p/python
+          p/django
+        generateBaseline: true
+      env:
+        SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_TOKEN }}
+
+    # CodeQL Analysis
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: python
+        queries: +security-and-quality
+
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v2
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+      with:
+        category: codeql
+
+    - name: Upload SAST artifacts
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: sast-results
+        path: |
+          bandit-report.json
+          bandit-results.sarif
+
+  # Dependency Security Scanning
+  dependency-scan:
+    name: Dependency Security Scan
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.scan_type == 'dependencies' || github.event.inputs.scan_type == 'full' || github.event.inputs.scan_type == '' }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e ".[full]"
+        pip install safety pip-audit cyclonedx-bom
+
+    # Safety - Python package vulnerability scanner
+    - name: Run Safety scan
+      run: |
+        safety check \
+          --json \
+          --output safety-report.json \
+          --continue-on-error
+      continue-on-error: true
+
+    # Pip-audit - Official Python package auditor
+    - name: Run pip-audit
+      run: |
+        pip-audit \
+          --format=json \
+          --output=pip-audit-report.json \
+          --requirement=requirements.txt
+      continue-on-error: true
+
+    # Generate Software Bill of Materials (SBOM)
+    - name: Generate SBOM
+      run: |
+        cyclonedx-py \
+          --output-format json \
+          --output-file sbom-dependencies.json \
+          requirements.txt
+
+    # OSV Scanner - Google's vulnerability scanner
+    - name: Run OSV-Scanner
+      uses: google/osv-scanner-action@v1.6.2
+      with:
+        scan-args: |-
+          --output=osv-results.json
+          --format=json
+          ./
+      continue-on-error: true
+
+    - name: Upload dependency scan results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: dependency-scan-results
+        path: |
+          safety-report.json
+          pip-audit-report.json
+          sbom-dependencies.json
+          osv-results.json
+
+  # Container Security Scanning
+  container-scan:
+    name: Container Security Scan
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.scan_type == 'container' || github.event.inputs.scan_type == 'full' || github.event.inputs.scan_type == '' }}
+    
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build test image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: false
+        tags: genomevault:security-test
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    # Trivy - Comprehensive security scanner
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'genomevault:security-test'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        severity: 'CRITICAL,HIGH,MEDIUM'
+
+    - name: Upload Trivy results to GitHub Security
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: trivy-results.sarif
+        category: trivy
+
+    # Grype - Anchore vulnerability scanner
+    - name: Install Grype
+      uses: anchore/scan-action/download-grype@v3
+
+    - name: Run Grype scan
+      run: |
+        grype genomevault:security-test \
+          --output json \
+          --file grype-results.json \
+          --fail-on critical
+      continue-on-error: true
+
+    # Syft - SBOM generator
+    - name: Install Syft
+      uses: anchore/sbom-action/download-syft@v0
+
+    - name: Generate container SBOM
+      run: |
+        syft genomevault:security-test \
+          --output spdx-json=sbom-container.spdx.json \
+          --output cyclonedx-json=sbom-container.cyclonedx.json
+
+    # Docker Scout (if available)
+    - name: Docker Scout scan
+      uses: docker/scout-action@v1
+      if: ${{ github.event_name != 'pull_request_target' }}
+      with:
+        command: cves
+        image: genomevault:security-test
+        sarif-file: scout-results.sarif
+      continue-on-error: true
+
+    - name: Upload container scan results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: container-scan-results
+        path: |
+          trivy-results.sarif
+          grype-results.json
+          sbom-container.*.json
+          scout-results.sarif
+
+  # PHI and Sensitive Data Scanning
+  phi-scan:
+    name: PHI & Sensitive Data Scan
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.scan_type == 'phi' || github.event.inputs.scan_type == 'full' || github.event.inputs.scan_type == '' }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e ".[dev]"
+
+    # Custom PHI scanner
+    - name: Run PHI leakage scanner
+      run: |
+        python scripts/phi_scanner.py \
+          --path genomevault/ \
+          --output-format json \
+          --output-file phi-scan-results.json \
+          --strict \
+          --check-comments \
+          --check-docstrings
+      continue-on-error: false
+
+    # TruffleHog - Secrets scanner
+    - name: Run TruffleHog secrets scanner
+      uses: trufflesecurity/trufflehog@main
+      with:
+        path: ./
+        base: main
+        head: HEAD
+        extra_args: --debug --only-verified --json --output trufflehog-results.json
+
+    # GitLeaks - Alternative secrets scanner
+    - name: Run GitLeaks
+      uses: gitleaks/gitleaks-action@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+      continue-on-error: true
+
+    # Custom genomic data pattern scanner
+    - name: Scan for genomic data patterns
+      run: |
+        python scripts/genomic_data_scanner.py \
+          --path genomevault/ \
+          --output genomic-scan-results.json
+      continue-on-error: false
+
+    - name: Upload PHI scan results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: phi-scan-results
+        path: |
+          phi-scan-results.json
+          trufflehog-results.json
+          genomic-scan-results.json
+
+  # Infrastructure Security Scan
+  infrastructure-scan:
+    name: Infrastructure Security Scan
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.scan_type == 'full' || github.event.inputs.scan_type == '' }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # Checkov - Infrastructure as Code scanner
+    - name: Run Checkov scan
+      uses: bridgecrewio/checkov-action@master
+      with:
+        directory: deployment/
+        output_format: sarif
+        output_file_path: checkov-results.sarif
+        quiet: false
+        framework: kubernetes,dockerfile,github_actions
+      continue-on-error: true
+
+    - name: Upload Checkov results to GitHub Security
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: checkov-results.sarif
+        category: checkov
+
+    # Terraform/K8s security scanning
+    - name: Run tfsec (if Terraform present)
+      uses: aquasecurity/tfsec-action@v1.0.3
+      if: hashFiles('**/*.tf') != ''
+      with:
+        soft_fail: true
+        format: sarif
+        output: tfsec-results.sarif
+
+    # Kubernetes security scanning
+    - name: Run Kubesec scan
+      run: |
+        docker run --rm -v $PWD:/work kubesec/kubesec:latest scan /work/deployment/kubernetes/**/*.yaml > kubesec-results.json
+      continue-on-error: true
+
+    - name: Upload infrastructure scan results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: infrastructure-scan-results
+        path: |
+          checkov-results.sarif
+          tfsec-results.sarif
+          kubesec-results.json
+
+  # Security Report Aggregation
+  security-report:
+    name: Security Report Summary
+    runs-on: ubuntu-latest
+    needs: [sast-scan, dependency-scan, container-scan, phi-scan, infrastructure-scan]
+    if: always()
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download all artifacts
+      uses: actions/download-artifact@v3
+      with:
+        path: security-artifacts/
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Install report generator
+      run: |
+        pip install jinja2 markdown pyyaml
+
+    - name: Generate security report
+      run: |
+        python scripts/security_report_generator.py \
+          --input security-artifacts/ \
+          --output security-report.html \
+          --format html \
+          --include-remediation
+
+    - name: Generate security metrics
+      run: |
+        python scripts/security_metrics.py \
+          --input security-artifacts/ \
+          --output security-metrics.json
+
+    # Security gate evaluation
+    - name: Evaluate security gate
+      id: security-gate
+      run: |
+        python scripts/security_gate.py \
+          --input security-artifacts/ \
+          --threshold high \
+          --phi-threshold zero \
+          --output security-gate-result.json
+        
+        # Set outputs for dependent jobs
+        if [ $? -eq 0 ]; then
+          echo "passed=true" >> $GITHUB_OUTPUT
+          echo "::notice::Security gate PASSED"
+        else
+          echo "passed=false" >> $GITHUB_OUTPUT
+          echo "::error::Security gate FAILED - review security issues"
+        fi
+
+    - name: Upload security report
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: security-report
+        path: |
+          security-report.html
+          security-metrics.json
+          security-gate-result.json
+
+    - name: Comment security report on PR
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const path = 'security-gate-result.json';
+          
+          if (fs.existsSync(path)) {
+            const result = JSON.parse(fs.readFileSync(path, 'utf8'));
+            
+            const body = `## 🛡️ Security Scan Results
+            
+            **Status:** ${result.passed ? '✅ PASSED' : '❌ FAILED'}
+            
+            ### Summary
+            - **SAST Issues:** ${result.sast_issues || 0}
+            - **Dependency Vulnerabilities:** ${result.dependency_issues || 0}
+            - **Container Issues:** ${result.container_issues || 0}
+            - **PHI Leakages:** ${result.phi_issues || 0}
+            
+            ${result.passed ? 
+              '✅ All security checks passed! Safe to merge.' : 
+              '❌ Security issues found. Please review and fix before merging.'}
+            
+            <details>
+            <summary>View detailed results</summary>
+            
+            \`\`\`json
+            ${JSON.stringify(result, null, 2)}
+            \`\`\`
+            </details>`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+          }
+
+    # Fail the build if security gate fails
+    - name: Fail on security gate failure
+      if: steps.security-gate.outputs.passed != 'true'
+      run: |
+        echo "::error::Security gate failed - blocking deployment"
+        exit 1
+
+  # Schedule security notifications
+  notify-security-team:
+    name: Notify Security Team
+    runs-on: ubuntu-latest
+    needs: [security-report]
+    if: always() && (github.event_name == 'schedule' || needs.security-report.outputs.passed != 'true')
+    
+    steps:
+    - name: Send security notification
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ needs.security-report.result }}
+        text: |
+          🛡️ Security scan completed for GenomeVault
+          
+          **Repository:** ${{ github.repository }}
+          **Branch:** ${{ github.ref_name }}
+          **Status:** ${{ needs.security-report.result }}
+          **Security Gate:** ${{ needs.security-report.outputs.passed == 'true' && 'PASSED' || 'FAILED' }}
+          
+          Please review security artifacts in the workflow run.
+        webhook_url: ${{ secrets.SECURITY_SLACK_WEBHOOK }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SECURITY_SLACK_WEBHOOK }}
+
+    - name: Create security issue for failures
+      if: needs.security-report.outputs.passed != 'true' && github.event_name == 'schedule'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: `🚨 Automated Security Scan Failures - ${new Date().toISOString().split('T')[0]}`,
+            body: `## Security Scan Failures Detected
+            
+            The scheduled security scan has detected issues that require attention.
+            
+            **Scan Date:** ${new Date().toISOString()}
+            **Workflow Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            
+            ### Required Actions
+            
+            1. Review the security scan artifacts
+            2. Address any high/critical severity issues
+            3. Verify PHI scanning results
+            4. Update dependencies with known vulnerabilities
+            5. Re-run security scan to verify fixes
+            
+            ### Security Artifacts
+            
+            Check the workflow run for detailed security reports and findings.
+            
+            **Priority:** High
+            **Labels:** security, automated-scan
+            `,
+            labels: ['security', 'automated-scan', 'high-priority'],
+            assignees: ['security-team'] // Replace with actual security team members
+          });

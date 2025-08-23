@@ -1,0 +1,859 @@
+openapi: 3.0.3
+info:
+  title: GenomeVault API
+  version: 1.0.0
+  description: |
+    Privacy-preserving genomic computing platform using hyperdimensional computing,
+    zero-knowledge proofs, and federated learning for secure genomic data analysis.
+
+    ## Privacy Model
+
+    GenomeVault uses mathematical privacy guarantees rather than traditional encryption:
+    - **Hyperdimensional Computing**: Genomic variants encoded as high-dimensional vectors
+    - **Private Information Retrieval (PIR)**: Query databases without revealing what you're looking for
+    - **Zero-Knowledge Proofs**: Verify computations without revealing the data
+    - **Differential Privacy**: Mathematical bounds on information leakage
+
+    ## Rate Limits
+
+    API requests are subject to rate limiting:
+    - **Standard tier**: 1000 requests/hour per API key
+    - **Clinical tier**: 10000 requests/hour per API key
+    - **Research tier**: 50000 requests/hour per API key
+
+    Rate limit headers are included in all responses:
+    - `X-RateLimit-Limit`: Request limit per window
+    - `X-RateLimit-Remaining`: Requests remaining in current window
+    - `X-RateLimit-Reset`: Time when rate limit resets (Unix timestamp)
+
+  contact:
+    name: GenomeVault Support
+    url: https://github.com/genomevault/genomevault
+    email: support@genomevault.io
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  x-logo:
+    url: "https://genomevault.io/logo.png"
+    altText: "GenomeVault Logo"
+
+servers:
+  - url: https://api.genomevault.io/v1
+    description: Production server
+  - url: https://staging-api.genomevault.io/v1
+    description: Staging server
+  - url: http://localhost:8000/v1
+    description: Development server
+
+paths:
+  /health:
+    get:
+      tags:
+        - System
+      summary: Health check
+      description: Check system health and readiness
+      operationId: healthCheck
+      responses:
+        '200':
+          description: System is healthy
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              example:
+                status: "healthy"
+                timestamp: "2024-01-15T10:30:00Z"
+                version: "1.0.0"
+                services:
+                  database: "healthy"
+                  pir_engine: "healthy"
+                  zk_prover: "healthy"
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+
+  /hv/encode:
+    post:
+      tags:
+        - Hypervector
+      summary: Encode genomic data to hypervector
+      description: |
+        Convert genomic variants or numeric features into high-dimensional vectors
+        for privacy-preserving computation.
+
+        ## Input Types
+        - **Variants**: VCF-like variant objects with chromosome, position, ref, alt
+        - **Numeric**: Pre-processed numeric feature arrays
+
+        ## Privacy Guarantees
+        - Input data is not stored on servers
+        - Hypervectors provide k-anonymity through high-dimensional encoding
+        - Original genomic data cannot be reconstructed from hypervectors
+      operationId: encodeHypervector
+      security:
+        - ApiKeyAuth: []
+        - OAuth2: [genomic:read]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EncodeRequest'
+            examples:
+              variants_example:
+                summary: Encode genomic variants
+                value:
+                  variants:
+                    - chrom: "1"
+                      pos: 1234567
+                      ref: "A"
+                      alt: "T"
+                      impact: "missense"
+                    - chrom: "2"
+                      pos: 9876543
+                      ref: "G"
+                      alt: "C"
+                      impact: "synonymous"
+                  dim: 8192
+                  binary: false
+              numeric_example:
+                summary: Encode numeric features
+                value:
+                  numeric: [0.1, 0.8, 0.3, 0.9, 0.2]
+                  dim: 4096
+                  binary: true
+      responses:
+        '200':
+          description: Successfully encoded data
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EncodeResponse'
+              example:
+                dim: 8192
+                binary: false
+                vector: [0.12, -0.34, 0.56, 0.78]
+                privacy_level: "k-anonymous"
+                compression_ratio: 87.3
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /pir/query:
+    post:
+      tags:
+        - Private Information Retrieval
+      summary: Execute PIR query
+      description: |
+        Perform private information retrieval query without revealing the query index
+        to the server. This maintains query privacy while retrieving genomic data.
+
+        ## Privacy Guarantees
+        - Server cannot determine which record was queried
+        - Cryptographic privacy protection using lattice-based PIR
+        - Query patterns are not logged or tracked
+      operationId: pirQuery
+      security:
+        - ApiKeyAuth: []
+        - OAuth2: [pir:query]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PIRQueryRequest'
+            example:
+              index: 42
+              query_id: "unique-query-identifier"
+      responses:
+        '200':
+          description: PIR query executed successfully
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PIRQueryResponse'
+              example:
+                index: 42
+                item_base64: "YWxwaGE="
+                privacy_proof: "zk_proof_hash_example"
+                query_time_ms: 125
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /zk/prove:
+    post:
+      tags:
+        - Zero-Knowledge Proofs
+      summary: Generate zero-knowledge proof
+      description: |
+        Generate cryptographic proof of computation validity without revealing
+        the underlying genomic data or intermediate computation steps.
+
+        ## Supported Proof Types
+        - **genomic**: Variant analysis proofs
+        - **clinical**: Clinical decision support proofs
+        - **research**: Population genetics proofs
+      operationId: generateProof
+      security:
+        - ApiKeyAuth: []
+        - OAuth2: [zk:prove]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProofRequest'
+            example:
+              proof_type: "genomic"
+              public_inputs:
+                population: "EUR"
+                analysis_type: "gwas"
+              private_inputs_hash: "sha256_hash_of_private_data"
+      responses:
+        '200':
+          description: Proof generated successfully
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProofResponse'
+              example:
+                proof_id: "proof_12345"
+                proof_data: "zk_snark_proof_hex"
+                verification_key: "verification_key_hex"
+                public_signals: ["signal1", "signal2"]
+                validity_period_hours: 24
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /clinical/analyze:
+    post:
+      tags:
+        - Clinical
+      summary: Clinical genomic analysis
+      description: |
+        Perform privacy-preserving clinical analysis of genomic variants
+        with HIPAA-compliant processing and audit trails.
+
+        ## Clinical Privacy
+        - All PHI is processed using differential privacy
+        - Audit logs are cryptographically signed
+        - Results include confidence intervals and p-values
+      operationId: clinicalAnalyze
+      security:
+        - ApiKeyAuth: []
+        - OAuth2: [clinical:analyze]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClinicalAnalysisRequest'
+            example:
+              patient_id_hash: "sha256_hash"
+              variants:
+                - gene: "BRCA1"
+                  variant: "c.68_69delAG"
+                  classification: "pathogenic"
+              analysis_type: "risk_assessment"
+              population_reference: "gnomAD"
+      responses:
+        '200':
+          description: Analysis completed successfully
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClinicalAnalysisResponse'
+              example:
+                analysis_id: "analysis_67890"
+                risk_score: 0.85
+                confidence_interval: [0.78, 0.92]
+                recommendations:
+                  - "Consider genetic counseling"
+                  - "Regular screening recommended"
+                audit_trail_hash: "audit_hash_example"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: |
+        API key for authentication. Get your API key from the GenomeVault console.
+
+        Example: `X-API-Key: gv_1234567890abcdef`
+
+    OAuth2:
+      type: oauth2
+      description: |
+        OAuth 2.0 with PKCE for secure authentication. Supports the following scopes:
+
+        - `genomic:read` - Read genomic data and perform basic encoding
+        - `pir:query` - Execute private information retrieval queries
+        - `zk:prove` - Generate and verify zero-knowledge proofs
+        - `clinical:analyze` - Perform clinical genomic analysis
+        - `admin:manage` - Administrative operations
+
+      flows:
+        authorizationCode:
+          authorizationUrl: https://auth.genomevault.io/oauth/authorize
+          tokenUrl: https://auth.genomevault.io/oauth/token
+          scopes:
+            genomic:read: Read genomic data
+            pir:query: Execute PIR queries
+            zk:prove: Generate ZK proofs
+            clinical:analyze: Clinical analysis
+            admin:manage: Administrative access
+
+  headers:
+    X-RateLimit-Limit:
+      description: Request limit per time window
+      schema:
+        type: integer
+        example: 1000
+    X-RateLimit-Remaining:
+      description: Requests remaining in current window
+      schema:
+        type: integer
+        example: 999
+    X-RateLimit-Reset:
+      description: Time when rate limit resets (Unix timestamp)
+      schema:
+        type: integer
+        example: 1642248600
+
+  schemas:
+    HealthResponse:
+      type: object
+      required: [status, timestamp, version]
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+          description: Overall system status
+        timestamp:
+          type: string
+          format: date-time
+          description: Health check timestamp
+        version:
+          type: string
+          description: API version
+          example: "1.0.0"
+        services:
+          type: object
+          description: Status of individual services
+          additionalProperties:
+            type: string
+            enum: [healthy, unhealthy]
+
+    EncodeRequest:
+      type: object
+      properties:
+        numeric:
+          type: array
+          items:
+            type: number
+          description: Numeric feature array (alternative to variants)
+          example: [0.1, 0.8, 0.3, 0.9]
+        variants:
+          type: array
+          items:
+            $ref: '#/components/schemas/GenomicVariant'
+          description: Genomic variants to encode (alternative to numeric)
+        dim:
+          type: integer
+          default: 8192
+          minimum: 1024
+          maximum: 100000
+          description: Hypervector dimension
+        binary:
+          type: boolean
+          default: false
+          description: Return binary (-1/+1) or continuous values
+      oneOf:
+        - required: [numeric]
+        - required: [variants]
+
+    GenomicVariant:
+      type: object
+      required: [chrom, pos, ref, alt]
+      properties:
+        chrom:
+          type: string
+          description: Chromosome (1-22, X, Y, M)
+          pattern: "^(chr)?(1[0-9]|2[0-2]|[1-9]|X|Y|M|MT)$"
+          example: "1"
+        pos:
+          type: integer
+          minimum: 1
+          description: Genomic position (1-based)
+          example: 1234567
+        ref:
+          type: string
+          pattern: "^[ATCGN]+$"
+          description: Reference allele
+          example: "A"
+        alt:
+          type: string
+          pattern: "^[ATCGN]+$"
+          description: Alternative allele
+          example: "T"
+        impact:
+          type: string
+          enum: [missense, nonsense, synonymous, frameshift, splice_site, intron, intergenic]
+          description: Predicted functional impact
+          example: "missense"
+        quality:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Variant quality score
+          example: 99.5
+
+    EncodeResponse:
+      type: object
+      required: [dim, binary, vector]
+      properties:
+        dim:
+          type: integer
+          description: Hypervector dimension
+        binary:
+          type: boolean
+          description: Whether vector contains binary values
+        vector:
+          type: array
+          items:
+            oneOf:
+              - type: integer
+              - type: number
+          description: Encoded hypervector
+        privacy_level:
+          type: string
+          enum: [k-anonymous, differential_private, information_theoretic]
+          description: Privacy guarantee level
+        compression_ratio:
+          type: number
+          description: Data compression ratio achieved
+          example: 87.3
+
+    PIRQueryRequest:
+      type: object
+      required: [index]
+      properties:
+        index:
+          type: integer
+          minimum: 0
+          description: Index to query (kept private from server)
+        query_id:
+          type: string
+          format: uuid
+          description: Unique query identifier for tracking
+        timeout_seconds:
+          type: integer
+          default: 30
+          minimum: 1
+          maximum: 300
+          description: Query timeout
+
+    PIRQueryResponse:
+      type: object
+      required: [index, item_base64]
+      properties:
+        index:
+          type: integer
+          description: Queried index (for client verification)
+        item_base64:
+          type: string
+          format: byte
+          description: Base64-encoded retrieved item
+        privacy_proof:
+          type: string
+          description: Cryptographic proof of privacy preservation
+        query_time_ms:
+          type: integer
+          description: Query execution time in milliseconds
+
+    ProofRequest:
+      type: object
+      required: [proof_type, public_inputs, private_inputs_hash]
+      properties:
+        proof_type:
+          type: string
+          enum: [genomic, clinical, research]
+          description: Type of proof to generate
+        public_inputs:
+          type: object
+          description: Public inputs visible to verifiers
+          additionalProperties: true
+        private_inputs_hash:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+          description: SHA-256 hash of private inputs
+        circuit_params:
+          type: object
+          description: Circuit-specific parameters
+          additionalProperties: true
+
+    ProofResponse:
+      type: object
+      required: [proof_id, proof_data, verification_key]
+      properties:
+        proof_id:
+          type: string
+          format: uuid
+          description: Unique proof identifier
+        proof_data:
+          type: string
+          description: Hex-encoded zk-SNARK proof
+        verification_key:
+          type: string
+          description: Verification key for proof validation
+        public_signals:
+          type: array
+          items:
+            type: string
+          description: Public signals from the proof
+        validity_period_hours:
+          type: integer
+          description: Proof validity period
+
+    ClinicalAnalysisRequest:
+      type: object
+      required: [patient_id_hash, variants, analysis_type]
+      properties:
+        patient_id_hash:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+          description: SHA-256 hash of patient identifier
+        variants:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClinicalVariant'
+          description: Clinical variants for analysis
+        analysis_type:
+          type: string
+          enum: [risk_assessment, pharmacogenomics, carrier_screening, diagnostic]
+          description: Type of clinical analysis
+        population_reference:
+          type: string
+          enum: [gnomAD, 1000G, ESP, ExAC]
+          description: Population reference database
+        consent_hash:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+          description: Hash of patient consent documentation
+
+    ClinicalVariant:
+      type: object
+      required: [gene, variant]
+      properties:
+        gene:
+          type: string
+          description: Gene symbol (HGNC approved)
+          pattern: "^[A-Z0-9-]+$"
+          example: "BRCA1"
+        variant:
+          type: string
+          description: HGVS notation variant
+          example: "c.68_69delAG"
+        classification:
+          type: string
+          enum: [pathogenic, likely_pathogenic, uncertain_significance, likely_benign, benign]
+          description: Clinical variant classification
+        evidence_level:
+          type: string
+          enum: [A, B, C, D]
+          description: Evidence level (ClinGen guidelines)
+
+    ClinicalAnalysisResponse:
+      type: object
+      required: [analysis_id, risk_score, confidence_interval]
+      properties:
+        analysis_id:
+          type: string
+          format: uuid
+          description: Unique analysis identifier
+        risk_score:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Calculated risk score
+        confidence_interval:
+          type: array
+          items:
+            type: number
+          minItems: 2
+          maxItems: 2
+          description: 95% confidence interval [lower, upper]
+        recommendations:
+          type: array
+          items:
+            type: string
+          description: Clinical recommendations
+        audit_trail_hash:
+          type: string
+          description: Cryptographic hash of audit trail
+        differential_privacy_epsilon:
+          type: number
+          description: Differential privacy parameter used
+
+    Error:
+      type: object
+      required: [type, code, message]
+      properties:
+        type:
+          type: string
+          description: Error type classification
+          example: "ValidationError"
+        code:
+          type: string
+          description: Machine-readable error code
+          example: "GV_INVALID_INPUT"
+        message:
+          type: string
+          description: Human-readable error message (PHI-safe)
+          example: "Invalid genomic coordinate format"
+        details:
+          type: object
+          description: Additional error context
+          properties:
+            request_id:
+              type: string
+              format: uuid
+              description: Unique request identifier for support
+            field:
+              type: string
+              description: Field that caused validation error
+            allowed_values:
+              type: array
+              items:
+                type: string
+              description: List of allowed values
+        trace_id:
+          type: string
+          description: Distributed tracing identifier
+
+  responses:
+    BadRequest:
+      description: Invalid request parameters
+      headers:
+        X-RateLimit-Limit:
+          $ref: '#/components/headers/X-RateLimit-Limit'
+        X-RateLimit-Remaining:
+          $ref: '#/components/headers/X-RateLimit-Remaining'
+        X-RateLimit-Reset:
+          $ref: '#/components/headers/X-RateLimit-Reset'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: "ValidationError"
+            code: "GV_INVALID_INPUT"
+            message: "Invalid genomic coordinate format"
+            details:
+              request_id: "req_1234567890"
+              field: "variants[0].chrom"
+              allowed_values: ["1", "2", "3", "...", "22", "X", "Y", "M"]
+
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: "AuthenticationError"
+            code: "GV_UNAUTHORIZED"
+            message: "Valid authentication required"
+            details:
+              request_id: "req_1234567890"
+
+    Forbidden:
+      description: Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: "AuthorizationError"
+            code: "GV_FORBIDDEN"
+            message: "Insufficient permissions for clinical analysis"
+            details:
+              request_id: "req_1234567890"
+              required_scope: "clinical:analyze"
+
+    RateLimited:
+      description: Rate limit exceeded
+      headers:
+        X-RateLimit-Limit:
+          $ref: '#/components/headers/X-RateLimit-Limit'
+        X-RateLimit-Remaining:
+          $ref: '#/components/headers/X-RateLimit-Remaining'
+        X-RateLimit-Reset:
+          $ref: '#/components/headers/X-RateLimit-Reset'
+        Retry-After:
+          description: Seconds until rate limit resets
+          schema:
+            type: integer
+            example: 3600
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: "RateLimitError"
+            code: "GV_RATE_LIMITED"
+            message: "Rate limit exceeded"
+            details:
+              request_id: "req_1234567890"
+              limit: 1000
+              window_seconds: 3600
+              retry_after: 3600
+
+    ServiceUnavailable:
+      description: Service temporarily unavailable
+      headers:
+        Retry-After:
+          description: Seconds to wait before retrying
+          schema:
+            type: integer
+            example: 60
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: "ServiceUnavailableError"
+            code: "GV_SERVICE_UNAVAILABLE"
+            message: "Service temporarily unavailable"
+            details:
+              request_id: "req_1234567890"
+              retry_after: 60
+
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            type: "InternalServerError"
+            code: "GV_INTERNAL_ERROR"
+            message: "An unexpected error occurred"
+            details:
+              request_id: "req_1234567890"
+
+  examples:
+    BRCAVariant:
+      summary: BRCA1 pathogenic variant
+      value:
+        chrom: "17"
+        pos: 43104121
+        ref: "AA"
+        alt: "A"
+        impact: "frameshift"
+        quality: 99.8
+
+    CommonSNP:
+      summary: Common population variant
+      value:
+        chrom: "1"
+        pos: 1234567
+        ref: "A"
+        alt: "G"
+        impact: "missense"
+        quality: 95.2
+
+tags:
+  - name: System
+    description: System health and status endpoints
+  - name: Hypervector
+    description: |
+      Hyperdimensional computing operations for privacy-preserving genomic encoding.
+
+      Hypervectors provide mathematical privacy guarantees through high-dimensional
+      representation that prevents reconstruction of original genomic data.
+  - name: Private Information Retrieval
+    description: |
+      PIR queries enable private database access without revealing query patterns.
+
+      Uses lattice-based cryptography to ensure servers cannot determine which
+      records are being accessed by clients.
+  - name: Zero-Knowledge Proofs
+    description: |
+      Generate and verify cryptographic proofs of genomic computations without
+      revealing the underlying data.
+
+      Enables third-party verification while maintaining data privacy.
+  - name: Clinical
+    description: |
+      HIPAA-compliant clinical genomic analysis with differential privacy and
+      comprehensive audit trails.
+
+      All clinical operations maintain strict privacy controls and regulatory compliance.
+
+externalDocs:
+  description: GenomeVault Documentation
+  url: https://docs.genomevault.io

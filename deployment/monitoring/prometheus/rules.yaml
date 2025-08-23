@@ -1,0 +1,331 @@
+---
+# Prometheus alerting rules for GenomeVault
+groups:
+  # PIR Server Alerts
+  - name: pir_server_alerts
+    interval: 30s
+    rules:
+      # PIR Server Collusion Detection
+      - alert: PIRServerCollusionDetected
+        expr: |
+          increase(genomevault_pir_collusion_attempts_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+          component: pir
+          security: true
+        annotations:
+          summary: "PIR server collusion attempt detected"
+          description: "Detected potential collusion between PIR servers: {{ $labels.server_ids }}"
+          runbook_url: "docs/runbooks/pir-server-collusion.md"
+          
+      # PIR Server Health
+      - alert: PIRServerDown
+        expr: |
+          genomevault_pir_server_health == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: pir
+        annotations:
+          summary: "PIR server {{ $labels.server_id }} is down"
+          description: "PIR server {{ $labels.server_id }} in trust domain {{ $labels.trust_domain }} has been unhealthy for > 2 minutes"
+          runbook_url: "docs/runbooks/pir-server-failure.md"
+      
+      # PIR Query Latency
+      - alert: PIRQueryLatencyHigh
+        expr: |
+          histogram_quantile(0.99, rate(genomevault_pir_query_duration_seconds_bucket[5m])) > 1.0
+        for: 5m
+        labels:
+          severity: warning
+          component: pir
+        annotations:
+          summary: "PIR query latency P99 > 1s"
+          description: "PIR server {{ $labels.server_id }} has P99 latency of {{ $value }}s (threshold: 1s)"
+          runbook_url: "docs/runbooks/pir-high-latency.md"
+      
+      # Byzantine Faults
+      - alert: ByzantineFaultDetected
+        expr: |
+          rate(genomevault_pir_byzantine_faults_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: critical
+          component: pir
+          security: true
+        annotations:
+          summary: "Byzantine fault detected in PIR server {{ $labels.server_id }}"
+          description: "PIR server {{ $labels.server_id }} is exhibiting Byzantine behavior: {{ $labels.fault_type }}"
+          runbook_url: "docs/runbooks/byzantine-fault.md"
+      
+      # Timing Attack Anomaly
+      - alert: TimingAttackAnomaly
+        expr: |
+          stddev_over_time(genomevault_pir_query_duration_seconds[5m]) < 0.001
+        for: 10m
+        labels:
+          severity: warning
+          component: pir
+          security: true
+        annotations:
+          summary: "Potential timing attack - queries too uniform"
+          description: "PIR query timing variance is suspiciously low ({{ $value }}s), indicating possible timing attack"
+          runbook_url: "docs/runbooks/timing-attack.md"
+
+  # Privacy and PHI Alerts
+  - name: privacy_alerts
+    interval: 30s
+    rules:
+      # PHI Leakage Detection
+      - alert: PHILeakageDetected
+        expr: |
+          increase(genomevault_phi_leakage_detected_total[1m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+          component: privacy
+          compliance: hipaa
+        annotations:
+          summary: "PHI leakage detected"
+          description: "Detected PHI leakage of type {{ $labels.detection_type }} with severity {{ $labels.severity }}"
+          runbook_url: "docs/runbooks/phi-leakage.md"
+      
+      # Differential Privacy Budget Exhaustion
+      - alert: PrivacyBudgetExhausted
+        expr: |
+          genomevault_dp_epsilon_remaining < 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: privacy
+        annotations:
+          summary: "Privacy budget nearly exhausted for user {{ $labels.user_id }}"
+          description: "User {{ $labels.user_id }} has only {{ $value }} epsilon remaining in privacy budget"
+          runbook_url: "docs/runbooks/privacy-budget.md"
+      
+      # Unauthorized PHI Access
+      - alert: UnauthorizedPHIAccess
+        expr: |
+          increase(genomevault_phi_access_total{outcome="denied"}[5m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+          component: privacy
+          security: true
+        annotations:
+          summary: "Multiple unauthorized PHI access attempts"
+          description: "Detected {{ $value }} unauthorized PHI access attempts for {{ $labels.resource_type }}"
+          runbook_url: "docs/runbooks/unauthorized-access.md"
+
+  # Zero-Knowledge Proof Alerts
+  - name: zk_proof_alerts
+    interval: 30s
+    rules:
+      # ZK Proof Verification Failures
+      - alert: ZKProofVerificationFailureHigh
+        expr: |
+          rate(genomevault_zk_proofs_total{status="failed"}[5m]) / rate(genomevault_zk_proofs_total[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          component: zk_proof
+        annotations:
+          summary: "High ZK proof verification failure rate"
+          description: "ZK proof verification failure rate is {{ $value | humanizePercentage }} for type {{ $labels.proof_type }}"
+          runbook_url: "docs/runbooks/zk-proof-failure.md"
+      
+      # ZK Proof Generation Slow
+      - alert: ZKProofGenerationSlow
+        expr: |
+          histogram_quantile(0.95, rate(genomevault_zk_proof_generation_seconds_bucket[5m])) > 5
+        for: 10m
+        labels:
+          severity: warning
+          component: zk_proof
+        annotations:
+          summary: "ZK proof generation is slow"
+          description: "ZK proof generation P95 is {{ $value }}s for type {{ $labels.proof_type }}"
+          runbook_url: "docs/runbooks/zk-proof-performance.md"
+
+  # API and System Alerts
+  - name: api_alerts
+    interval: 30s
+    rules:
+      # API Error Rate
+      - alert: APIErrorRateHigh
+        expr: |
+          rate(genomevault_api_errors_total[5m]) / rate(genomevault_api_requests_total[5m]) > 0.01
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "High API error rate"
+          description: "API error rate is {{ $value | humanizePercentage }} for endpoint {{ $labels.endpoint }}"
+          runbook_url: "docs/runbooks/api-errors.md"
+      
+      # API Latency
+      - alert: APILatencyHigh
+        expr: |
+          histogram_quantile(0.95, rate(genomevault_api_request_duration_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "High API latency"
+          description: "API P95 latency is {{ $value }}s for endpoint {{ $labels.endpoint }}"
+          runbook_url: "docs/runbooks/api-latency.md"
+      
+      # Request Rate Spike
+      - alert: RequestRateSpike
+        expr: |
+          rate(genomevault_api_requests_total[1m]) > 1000
+        for: 2m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "Unusual spike in request rate"
+          description: "Request rate is {{ $value }} req/s, possible DDoS or scanning attempt"
+          runbook_url: "docs/runbooks/request-spike.md"
+
+  # Hypervector Performance Alerts
+  - name: hypervector_alerts
+    interval: 30s
+    rules:
+      # HV Encoding Performance
+      - alert: HVEncodingSlow
+        expr: |
+          histogram_quantile(0.95, rate(genomevault_hv_encoding_seconds_bucket[5m])) > 0.5
+        for: 10m
+        labels:
+          severity: warning
+          component: hypervector
+        annotations:
+          summary: "Hypervector encoding is slow"
+          description: "HV encoding P95 is {{ $value }}s for dimension {{ $labels.dimension }}"
+          runbook_url: "docs/runbooks/hv-performance.md"
+      
+      # Memory Usage High
+      - alert: HVMemoryUsageHigh
+        expr: |
+          genomevault_hv_memory_bytes > 10737418240  # 10GB
+        for: 5m
+        labels:
+          severity: warning
+          component: hypervector
+        annotations:
+          summary: "High hypervector memory usage"
+          description: "HV operation {{ $labels.operation }} is using {{ $value | humanize }}B of memory"
+          runbook_url: "docs/runbooks/hv-memory.md"
+      
+      # Compression Ratio Low
+      - alert: HVCompressionRatioLow
+        expr: |
+          genomevault_hv_compression_ratio < 10
+        for: 15m
+        labels:
+          severity: info
+          component: hypervector
+        annotations:
+          summary: "Low hypervector compression ratio"
+          description: "HV compression ratio is {{ $value }} for data type {{ $labels.data_type }}"
+          runbook_url: "docs/runbooks/hv-compression.md"
+
+  # Clinical Data Access Alerts
+  - name: clinical_alerts
+    interval: 30s
+    rules:
+      # Unusual Access Pattern
+      - alert: UnusualClinicalAccessPattern
+        expr: |
+          rate(genomevault_clinical_queries_total[5m]) > 100
+        for: 5m
+        labels:
+          severity: warning
+          component: clinical
+          compliance: hipaa
+        annotations:
+          summary: "Unusual clinical data access pattern detected"
+          description: "High rate of clinical queries ({{ $value }}/s) for {{ $labels.data_category }}"
+          runbook_url: "docs/runbooks/clinical-access-pattern.md"
+      
+      # Clinical Data Latency
+      - alert: ClinicalDataAccessSlow
+        expr: |
+          histogram_quantile(0.95, rate(genomevault_clinical_access_seconds_bucket[5m])) > 2
+        for: 10m
+        labels:
+          severity: warning
+          component: clinical
+        annotations:
+          summary: "Clinical data access is slow"
+          description: "Clinical data access P95 is {{ $value }}s for {{ $labels.data_type }}"
+          runbook_url: "docs/runbooks/clinical-latency.md"
+
+  # Infrastructure Alerts
+  - name: infrastructure_alerts
+    interval: 30s
+    rules:
+      # Multiple PIR Servers Down
+      - alert: MultiplePIRServersDown
+        expr: |
+          count(genomevault_pir_server_health == 0) > 1
+        for: 2m
+        labels:
+          severity: critical
+          component: infrastructure
+        annotations:
+          summary: "Multiple PIR servers are down"
+          description: "{{ $value }} PIR servers are currently unhealthy, system may not meet privacy guarantees"
+          runbook_url: "docs/runbooks/multiple-server-failure.md"
+      
+      # Privacy Guarantee Violation Risk
+      - alert: PrivacyGuaranteeAtRisk
+        expr: |
+          count(genomevault_pir_server_health == 1) < 2
+        for: 5m
+        labels:
+          severity: critical
+          component: infrastructure
+          compliance: hipaa
+        annotations:
+          summary: "Privacy guarantee at risk - insufficient healthy PIR servers"
+          description: "Only {{ $value }} healthy PIR servers, minimum 2 required for privacy guarantee"
+          runbook_url: "docs/runbooks/privacy-guarantee-risk.md"
+
+---
+# Recording Rules for Performance Optimization
+groups:
+  - name: performance_recording_rules
+    interval: 30s
+    rules:
+      # PIR Query Latency Percentiles
+      - record: pir_query_latency_p50
+        expr: histogram_quantile(0.50, rate(genomevault_pir_query_duration_seconds_bucket[5m]))
+      
+      - record: pir_query_latency_p95
+        expr: histogram_quantile(0.95, rate(genomevault_pir_query_duration_seconds_bucket[5m]))
+      
+      - record: pir_query_latency_p99
+        expr: histogram_quantile(0.99, rate(genomevault_pir_query_duration_seconds_bucket[5m]))
+      
+      # API Request Rate
+      - record: api_request_rate_5m
+        expr: rate(genomevault_api_requests_total[5m])
+      
+      # Error Rates
+      - record: api_error_rate_5m
+        expr: rate(genomevault_api_errors_total[5m]) / rate(genomevault_api_requests_total[5m])
+      
+      # ZK Proof Success Rate
+      - record: zk_proof_success_rate_5m
+        expr: |
+          rate(genomevault_zk_proofs_total{status="verified"}[5m]) /
+          rate(genomevault_zk_proofs_total[5m])
+      
+      # Privacy Budget Consumption Rate
+      - record: privacy_budget_consumption_rate_1h
+        expr: increase(genomevault_dp_epsilon_consumed[1h])

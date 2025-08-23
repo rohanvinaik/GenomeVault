@@ -1,0 +1,249 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: genomevault-api-canary
+  namespace: genomevault
+  labels:
+    app: genomevault
+    component: api
+    version: canary
+    deployment: canary
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+    flagger.app/load-testing: "true"
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: genomevault
+      component: api
+      version: canary
+  template:
+    metadata:
+      labels:
+        app: genomevault
+        component: api
+        version: canary
+        deployment: canary
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+        sidecar.istio.io/inject: "true"
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+    spec:
+      priorityClassName: genomevault-high
+      serviceAccountName: genomevault-api
+      
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values: [genomevault]
+                - key: component
+                  operator: In
+                  values: [api]
+              topologyKey: kubernetes.io/hostname
+          - weight: 50
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values: [genomevault]
+              topologyKey: topology.kubernetes.io/zone
+      
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      
+      containers:
+      - name: api
+        image: genomevault:latest
+        imagePullPolicy: Always
+        
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+          capabilities:
+            drop:
+            - ALL
+        
+        ports:
+        - name: http
+          containerPort: 8000
+          protocol: TCP
+        - name: metrics
+          containerPort: 9090
+          protocol: TCP
+        
+        env:
+        - name: ENVIRONMENT
+          value: "production"
+        - name: DEPLOYMENT_TYPE
+          value: "canary"
+        - name: LOG_LEVEL
+          value: "INFO"
+        - name: METRICS_ENABLED
+          value: "true"
+        - name: CANARY_DEPLOYMENT
+          value: "true"
+        - name: INSTANCE_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        
+        envFrom:
+        - configMapRef:
+            name: genomevault-config
+        - configMapRef:
+            name: canary-config
+        - secretRef:
+            name: genomevault-secrets
+        
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
+            ephemeral-storage: "1Gi"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+            ephemeral-storage: "2Gi"
+        
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+          successThreshold: 1
+        
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+          successThreshold: 1
+        
+        startupProbe:
+          httpGet:
+            path: /health/startup
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 30
+          successThreshold: 1
+        
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: var-run
+          mountPath: /var/run
+        - name: app-logs
+          mountPath: /var/log/genomevault
+        - name: pir-keys
+          mountPath: /var/genomevault/pir/keys
+          readOnly: true
+        - name: zk-keys
+          mountPath: /var/genomevault/zk/keys
+          readOnly: true
+      
+      # Sidecar for enhanced monitoring
+      - name: monitoring-agent
+        image: prom/node-exporter:latest
+        imagePullPolicy: IfNotPresent
+        
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
+          capabilities:
+            drop:
+            - ALL
+        
+        ports:
+        - name: node-metrics
+          containerPort: 9100
+          protocol: TCP
+        
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+        
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: var-run
+          mountPath: /var/run
+          readOnly: true
+      
+      volumes:
+      - name: tmp
+        emptyDir:
+          sizeLimit: "100Mi"
+      - name: var-run
+        emptyDir:
+          sizeLimit: "100Mi"
+      - name: app-logs
+        emptyDir:
+          sizeLimit: "500Mi"
+      - name: pir-keys
+        secret:
+          secretName: pir-keys
+          defaultMode: 0400
+      - name: zk-keys
+        secret:
+          secretName: zk-proof-keys
+          defaultMode: 0400
+      
+      terminationGracePeriodSeconds: 60
+      
+      nodeSelector:
+        kubernetes.io/arch: amd64
+        node-role.kubernetes.io/worker: "true"
+      
+      tolerations:
+      - key: "genomevault.io/canary"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"

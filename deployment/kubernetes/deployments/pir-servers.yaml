@@ -1,0 +1,698 @@
+---
+# PIR Server 1 Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pir-server-1
+  namespace: pir-server-1
+  labels:
+    app: pir-server
+    server-id: "1"
+    trust-domain: "domain-1"
+spec:
+  replicas: 2  # HA within same trust domain
+  selector:
+    matchLabels:
+      app: pir-server
+      server-id: "1"
+  template:
+    metadata:
+      labels:
+        app: pir-server
+        server-id: "1"
+        trust-domain: "domain-1"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: pir-server
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+      
+      initContainers:
+      # Initialize database
+      - name: init-database
+        image: genomevault/pir-init:latest
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          echo "Initializing PIR database..."
+          /app/init_database.sh
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        - name: config
+          mountPath: /config
+          readOnly: true
+      
+      containers:
+      - name: pir-server
+        image: genomevault/pir-server:latest
+        imagePullPolicy: IfNotPresent
+        
+        env:
+        - name: SERVER_ID
+          value: "1"
+        - name: TRUST_DOMAIN
+          value: "domain-1"
+        - name: PORT
+          value: "8080"
+        - name: SECURE_PORT
+          value: "8443"
+        - name: METRICS_PORT
+          value: "9090"
+        - name: HEALTH_PORT
+          value: "8081"
+        - name: CONSTANT_TIME_MODE
+          value: "true"
+        - name: BYZANTINE_TOLERANCE
+          value: "true"
+        - name: RESPONSE_PADDING_SIZE
+          value: "1024"  # 1KB blocks
+        - name: MAX_QUERY_AGE
+          value: "60"
+        - name: LOG_LEVEL
+          value: "INFO"
+        
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        - name: https
+          containerPort: 8443
+          protocol: TCP
+        - name: metrics
+          containerPort: 9090
+          protocol: TCP
+        - name: health
+          containerPort: 8081
+          protocol: TCP
+        
+        # Health checks
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: health
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: health
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 2
+        
+        startupProbe:
+          httpGet:
+            path: /health/startup
+            port: health
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 30
+        
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+        
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        - name: config
+          mountPath: /config
+          readOnly: true
+        - name: tls
+          mountPath: /tls
+          readOnly: true
+        - name: keys
+          mountPath: /keys
+          readOnly: true
+        
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+      
+      # Sidecar for monitoring
+      - name: monitoring-agent
+        image: genomevault/pir-monitor:latest
+        env:
+        - name: SERVER_ID
+          value: "1"
+        - name: MONITOR_PORT
+          value: "9091"
+        
+        ports:
+        - name: monitor
+          containerPort: 9091
+          protocol: TCP
+        
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "200m"
+        
+        volumeMounts:
+        - name: metrics
+          mountPath: /metrics
+      
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: pir-server-1-data
+      - name: config
+        configMap:
+          name: pir-server-config
+      - name: tls
+        secret:
+          secretName: pir-server-1-tls
+      - name: keys
+        secret:
+          secretName: pir-server-1-keys
+      - name: metrics
+        emptyDir: {}
+      
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - pir-server
+              - key: server-id
+                operator: NotIn
+                values:
+                - "1"
+            topologyKey: kubernetes.io/hostname
+---
+# PIR Server 2 Deployment (similar structure, different trust domain)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pir-server-2
+  namespace: pir-server-2
+  labels:
+    app: pir-server
+    server-id: "2"
+    trust-domain: "domain-2"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pir-server
+      server-id: "2"
+  template:
+    metadata:
+      labels:
+        app: pir-server
+        server-id: "2"
+        trust-domain: "domain-2"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: pir-server
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+      
+      containers:
+      - name: pir-server
+        image: genomevault/pir-server:latest
+        imagePullPolicy: IfNotPresent
+        
+        env:
+        - name: SERVER_ID
+          value: "2"
+        - name: TRUST_DOMAIN
+          value: "domain-2"
+        - name: PORT
+          value: "8080"
+        - name: SECURE_PORT
+          value: "8443"
+        - name: METRICS_PORT
+          value: "9090"
+        - name: HEALTH_PORT
+          value: "8081"
+        - name: CONSTANT_TIME_MODE
+          value: "true"
+        - name: BYZANTINE_TOLERANCE
+          value: "true"
+        - name: RESPONSE_PADDING_SIZE
+          value: "1024"
+        - name: MAX_QUERY_AGE
+          value: "60"
+        
+        ports:
+        - name: http
+          containerPort: 8080
+        - name: https
+          containerPort: 8443
+        - name: metrics
+          containerPort: 9090
+        - name: health
+          containerPort: 8081
+        
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: health
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: health
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 2
+        
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+        
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        - name: config
+          mountPath: /config
+          readOnly: true
+        - name: tls
+          mountPath: /tls
+          readOnly: true
+        - name: keys
+          mountPath: /keys
+          readOnly: true
+      
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: pir-server-2-data
+      - name: config
+        configMap:
+          name: pir-server-config
+      - name: tls
+        secret:
+          secretName: pir-server-2-tls
+      - name: keys
+        secret:
+          secretName: pir-server-2-keys
+---
+# PIR Server 3 Deployment (Byzantine tolerance)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pir-server-3
+  namespace: pir-server-3
+  labels:
+    app: pir-server
+    server-id: "3"
+    trust-domain: "domain-3"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pir-server
+      server-id: "3"
+  template:
+    metadata:
+      labels:
+        app: pir-server
+        server-id: "3"
+        trust-domain: "domain-3"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+    spec:
+      serviceAccountName: pir-server
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+      
+      containers:
+      - name: pir-server
+        image: genomevault/pir-server:latest
+        
+        env:
+        - name: SERVER_ID
+          value: "3"
+        - name: TRUST_DOMAIN
+          value: "domain-3"
+        - name: PORT
+          value: "8080"
+        - name: CONSTANT_TIME_MODE
+          value: "true"
+        - name: BYZANTINE_TOLERANCE
+          value: "true"
+        
+        ports:
+        - name: http
+          containerPort: 8080
+        - name: metrics
+          containerPort: 9090
+        - name: health
+          containerPort: 8081
+        
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: health
+          periodSeconds: 10
+        
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: health
+          periodSeconds: 5
+        
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+        
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        - name: config
+          mountPath: /config
+          readOnly: true
+      
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: pir-server-3-data
+      - name: config
+        configMap:
+          name: pir-server-config
+---
+# PIR Coordinator Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pir-coordinator
+  namespace: pir-coordinator
+  labels:
+    app: pir-coordinator
+spec:
+  replicas: 3  # HA coordinator
+  selector:
+    matchLabels:
+      app: pir-coordinator
+  template:
+    metadata:
+      labels:
+        app: pir-coordinator
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+    spec:
+      serviceAccountName: pir-coordinator
+      
+      containers:
+      - name: coordinator
+        image: genomevault/pir-coordinator:latest
+        
+        env:
+        - name: PIR_SERVERS
+          value: "pir-server-1.pir-server-1:8080,pir-server-2.pir-server-2:8080,pir-server-3.pir-server-3:8080"
+        - name: MIN_SERVERS
+          value: "2"  # Minimum servers for reconstruction
+        - name: BYZANTINE_THRESHOLD
+          value: "1"  # Tolerate 1 Byzantine server
+        - name: ENABLE_CACHING
+          value: "true"
+        - name: CACHE_SIZE
+          value: "1000"
+        - name: ZK_VERIFICATION
+          value: "true"
+        
+        ports:
+        - name: http
+          containerPort: 8080
+        - name: https
+          containerPort: 8443
+        - name: metrics
+          containerPort: 9090
+        
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          periodSeconds: 10
+        
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          periodSeconds: 5
+        
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+---
+# Services
+apiVersion: v1
+kind: Service
+metadata:
+  name: pir-server-1
+  namespace: pir-server-1
+  labels:
+    app: pir-server
+    server-id: "1"
+spec:
+  type: ClusterIP
+  selector:
+    app: pir-server
+    server-id: "1"
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  - name: https
+    port: 8443
+    targetPort: 8443
+  - name: metrics
+    port: 9090
+    targetPort: 9090
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pir-server-2
+  namespace: pir-server-2
+  labels:
+    app: pir-server
+    server-id: "2"
+spec:
+  type: ClusterIP
+  selector:
+    app: pir-server
+    server-id: "2"
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  - name: https
+    port: 8443
+    targetPort: 8443
+  - name: metrics
+    port: 9090
+    targetPort: 9090
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pir-server-3
+  namespace: pir-server-3
+  labels:
+    app: pir-server
+    server-id: "3"
+spec:
+  type: ClusterIP
+  selector:
+    app: pir-server
+    server-id: "3"
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  - name: metrics
+    port: 9090
+    targetPort: 9090
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pir-coordinator
+  namespace: pir-coordinator
+  labels:
+    app: pir-coordinator
+spec:
+  type: ClusterIP
+  selector:
+    app: pir-coordinator
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  - name: https
+    port: 8443
+    targetPort: 8443
+  - name: metrics
+    port: 9090
+    targetPort: 9090
+---
+# PersistentVolumeClaims
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pir-server-1-data
+  namespace: pir-server-1
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: fast-ssd
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pir-server-2-data
+  namespace: pir-server-2
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: fast-ssd
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pir-server-3-data
+  namespace: pir-server-3
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: fast-ssd
+---
+# ConfigMap for PIR server configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pir-server-config
+  namespace: pir-server-1
+data:
+  config.yaml: |
+    server:
+      database_size: 1000000
+      block_size: 1024
+      num_servers: 3
+      security_parameter: 128
+      constant_time_ns: 10000000
+      max_query_age: 60
+      response_padding_size: 1024
+      
+    byzantine:
+      enabled: true
+      min_servers: 2
+      error_correction_symbols: 10
+      reputation_threshold: 0.7
+      
+    monitoring:
+      enabled: true
+      metrics_port: 9090
+      health_port: 8081
+      
+    security:
+      enable_tls: true
+      require_client_cert: false
+      enable_replay_protection: true
+      nonce_cache_size: 10000
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pir-server-config
+  namespace: pir-server-2
+data:
+  config.yaml: |
+    server:
+      database_size: 1000000
+      block_size: 1024
+      num_servers: 3
+      security_parameter: 128
+      constant_time_ns: 10000000
+      max_query_age: 60
+      response_padding_size: 1024
+      
+    byzantine:
+      enabled: true
+      min_servers: 2
+      error_correction_symbols: 10
+      reputation_threshold: 0.7
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pir-server-config
+  namespace: pir-server-3
+data:
+  config.yaml: |
+    server:
+      database_size: 1000000
+      block_size: 1024
+      num_servers: 3
+      security_parameter: 128
+      constant_time_ns: 10000000
+      max_query_age: 60
+      response_padding_size: 1024
+      
+    byzantine:
+      enabled: true
+      min_servers: 2
+      error_correction_symbols: 10
+      reputation_threshold: 0.7

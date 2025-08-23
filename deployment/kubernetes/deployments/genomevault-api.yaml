@@ -52,20 +52,89 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
+        
+        # Core Secrets from Sealed Secrets
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-core-secrets
+              key: jwt-secret
         - name: ENCRYPTION_KEY
           valueFrom:
             secretKeyRef:
-              name: genomevault-secrets
+              name: genomevault-core-secrets
               key: encryption-key
         - name: DATABASE_URL
           valueFrom:
             secretKeyRef:
-              name: genomevault-secrets
+              name: genomevault-core-secrets
               key: database-url
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-core-secrets
+              key: redis-password
+        
+        # PHI/HIPAA Secrets (encrypted at rest)
+        - name: NPI_NUMBER
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-phi-secrets
+              key: npi-number
+              optional: true
+        - name: BAA_HASH
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-phi-secrets
+              key: baa-hash
+              optional: true
+        - name: RISK_ANALYSIS_HASH
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-phi-secrets
+              key: risk-analysis-hash
+              optional: true
+        - name: HSM_SERIAL
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-phi-secrets
+              key: hsm-serial
+              optional: true
+        
+        # Blockchain Secrets
+        - name: BLOCKCHAIN_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-blockchain-secrets
+              key: blockchain-private-key
+              optional: true
+        - name: IPFS_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-blockchain-secrets
+              key: ipfs-api-key
+              optional: true
+        
+        # External Secrets (from cloud providers)
+        - name: AWS_KMS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-aws-secrets
+              key: kms-key-id
+              optional: true
+        - name: GCP_KMS_KEY_NAME
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-gcp-secrets
+              key: kms-key-name
+              optional: true
 
         envFrom:
         - configMapRef:
             name: genomevault-config
+        - configMapRef:
+            name: external-secrets-config
+            optional: true
 
         resources:
           requests:

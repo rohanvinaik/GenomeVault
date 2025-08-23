@@ -1,0 +1,440 @@
+---
+# Network isolation policies for PIR servers
+# Ensures independent trust domains and prevents collusion
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: pir-server-1-isolation
+  namespace: pir-server-1
+spec:
+  podSelector:
+    matchLabels:
+      app: pir-server
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Only allow traffic from coordinator
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: pir-coordinator
+      podSelector:
+        matchLabels:
+          app: pir-coordinator
+    ports:
+    - protocol: TCP
+      port: 8080  # PIR query port
+    - protocol: TCP
+      port: 8443  # Secure PIR port
+  # Allow health checks from monitoring
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: genomevault-monitoring
+    ports:
+    - protocol: TCP
+      port: 9090  # Metrics port
+    - protocol: TCP
+      port: 8081  # Health check port
+  egress:
+  # Allow DNS
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: kube-system
+    ports:
+    - protocol: UDP
+      port: 53
+  # Allow response to coordinator
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: pir-coordinator
+    ports:
+    - protocol: TCP
+      port: 8080
+    - protocol: TCP
+      port: 8443
+  # Block all other egress (especially to other PIR servers)
+  - to:
+    - ipBlock:
+        cidr: 10.0.0.0/8
+        except:
+        - 10.0.1.0/24  # Coordinator subnet
+    ports: []  # No ports allowed
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: pir-server-2-isolation
+  namespace: pir-server-2
+spec:
+  podSelector:
+    matchLabels:
+      app: pir-server
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Only allow traffic from coordinator
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: pir-coordinator
+      podSelector:
+        matchLabels:
+          app: pir-coordinator
+    ports:
+    - protocol: TCP
+      port: 8080
+    - protocol: TCP
+      port: 8443
+  # Allow health checks
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: genomevault-monitoring
+    ports:
+    - protocol: TCP
+      port: 9090
+    - protocol: TCP
+      port: 8081
+  egress:
+  # Allow DNS
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: kube-system
+    ports:
+    - protocol: UDP
+      port: 53
+  # Allow response to coordinator
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: pir-coordinator
+    ports:
+    - protocol: TCP
+      port: 8080
+    - protocol: TCP
+      port: 8443
+  # Block all other egress
+  - to:
+    - ipBlock:
+        cidr: 10.0.0.0/8
+        except:
+        - 10.0.1.0/24
+    ports: []
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: pir-server-3-isolation
+  namespace: pir-server-3
+spec:
+  podSelector:
+    matchLabels:
+      app: pir-server
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: pir-coordinator
+      podSelector:
+        matchLabels:
+          app: pir-coordinator
+    ports:
+    - protocol: TCP
+      port: 8080
+    - protocol: TCP
+      port: 8443
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: genomevault-monitoring
+    ports:
+    - protocol: TCP
+      port: 9090
+    - protocol: TCP
+      port: 8081
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: kube-system
+    ports:
+    - protocol: UDP
+      port: 53
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: pir-coordinator
+    ports:
+    - protocol: TCP
+      port: 8080
+    - protocol: TCP
+      port: 8443
+  - to:
+    - ipBlock:
+        cidr: 10.0.0.0/8
+        except:
+        - 10.0.1.0/24
+    ports: []
+---
+# Block inter-server communication explicitly
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: block-inter-server-communication
+  namespace: pir-server-1
+spec:
+  podSelector:
+    matchLabels:
+      app: pir-server
+  policyTypes:
+  - Egress
+  egress:
+  # Explicitly deny traffic to other PIR servers
+  - to:
+    - namespaceSelector:
+        matchExpressions:
+        - key: name
+          operator: In
+          values:
+          - pir-server-2
+          - pir-server-3
+    ports: []  # No ports allowed
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: block-inter-server-communication
+  namespace: pir-server-2
+spec:
+  podSelector:
+    matchLabels:
+      app: pir-server
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchExpressions:
+        - key: name
+          operator: In
+          values:
+          - pir-server-1
+          - pir-server-3
+    ports: []
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: block-inter-server-communication
+  namespace: pir-server-3
+spec:
+  podSelector:
+    matchLabels:
+      app: pir-server
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchExpressions:
+        - key: name
+          operator: In
+          values:
+          - pir-server-1
+          - pir-server-2
+    ports: []
+---
+# Coordinator network policy
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: pir-coordinator-policy
+  namespace: pir-coordinator
+spec:
+  podSelector:
+    matchLabels:
+      app: pir-coordinator
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Allow client connections
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: genomevault
+    ports:
+    - protocol: TCP
+      port: 8080
+    - protocol: TCP
+      port: 8443
+  # Allow responses from PIR servers
+  - from:
+    - namespaceSelector:
+        matchExpressions:
+        - key: name
+          operator: In
+          values:
+          - pir-server-1
+          - pir-server-2
+          - pir-server-3
+    ports:
+    - protocol: TCP
+      port: 8080
+    - protocol: TCP
+      port: 8443
+  egress:
+  # Allow DNS
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: kube-system
+    ports:
+    - protocol: UDP
+      port: 53
+  # Allow queries to PIR servers
+  - to:
+    - namespaceSelector:
+        matchExpressions:
+        - key: name
+          operator: In
+          values:
+          - pir-server-1
+          - pir-server-2
+          - pir-server-3
+    ports:
+    - protocol: TCP
+      port: 8080
+    - protocol: TCP
+      port: 8443
+  # Allow responses to clients
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: genomevault
+    ports:
+    - protocol: TCP
+---
+# Default deny all for PIR namespaces
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: pir-server-1
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: pir-server-2
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: pir-server-3
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: pir-coordinator
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+---
+# Monitoring access policy
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: monitoring-access
+  namespace: pir-server-1
+spec:
+  podSelector:
+    matchLabels:
+      app: pir-server
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: genomevault-monitoring
+      podSelector:
+        matchLabels:
+          app: prometheus
+    ports:
+    - protocol: TCP
+      port: 9090  # Metrics
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: monitoring-access
+  namespace: pir-server-2
+spec:
+  podSelector:
+    matchLabels:
+      app: pir-server
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: genomevault-monitoring
+      podSelector:
+        matchLabels:
+          app: prometheus
+    ports:
+    - protocol: TCP
+      port: 9090
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: monitoring-access
+  namespace: pir-server-3
+spec:
+  podSelector:
+    matchLabels:
+      app: pir-server
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: genomevault-monitoring
+      podSelector:
+        matchLabels:
+          app: prometheus
+    ports:
+    - protocol: TCP
+      port: 9090

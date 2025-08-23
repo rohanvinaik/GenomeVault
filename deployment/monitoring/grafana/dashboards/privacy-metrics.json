@@ -1,0 +1,447 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "genomevault-privacy",
+    "title": "GenomeVault - Privacy & Compliance Metrics",
+    "tags": ["genomevault", "privacy", "compliance", "hipaa", "security"],
+    "timezone": "browser",
+    "schemaVersion": 38,
+    "version": 1,
+    "refresh": "30s",
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "templating": {
+      "list": [
+        {
+          "name": "user_id",
+          "type": "query",
+          "datasource": "Prometheus",
+          "query": "label_values(genomevault_dp_epsilon_consumed, user_id)",
+          "multi": false,
+          "includeAll": true,
+          "current": {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          }
+        },
+        {
+          "name": "resource_type",
+          "type": "query",
+          "datasource": "Prometheus",
+          "query": "label_values(genomevault_phi_access_total, resource_type)",
+          "multi": true,
+          "includeAll": true
+        }
+      ]
+    },
+    "panels": [
+      {
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+        "id": 1,
+        "title": "Differential Privacy Budget Status",
+        "type": "gauge",
+        "targets": [
+          {
+            "expr": "genomevault_dp_epsilon_remaining{user_id=~\"$user_id\"}",
+            "legendFormat": "Remaining ε for {{user_id}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "min": 0,
+            "max": 10,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 2},
+                {"color": "green", "value": 5}
+              ]
+            },
+            "unit": "none",
+            "displayName": "Privacy Budget (ε)"
+          }
+        },
+        "options": {
+          "showThresholdLabels": true,
+          "showThresholdMarkers": true
+        }
+      },
+      {
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+        "id": 2,
+        "title": "PHI Leakage Detection Events",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(increase(genomevault_phi_leakage_detected_total[1h]))",
+            "legendFormat": "Leakage Events (1h)",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "green", "value": 0},
+                {"color": "yellow", "value": 1},
+                {"color": "red", "value": 5}
+              ]
+            },
+            "unit": "short",
+            "displayName": "PHI Leakage Detections"
+          }
+        },
+        "options": {
+          "colorMode": "background",
+          "graphMode": "area",
+          "justifyMode": "center",
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": ["lastNotNull"],
+            "fields": "",
+            "values": false
+          },
+          "text": {
+            "titleSize": 14,
+            "valueSize": 36
+          }
+        }
+      },
+      {
+        "gridPos": {"h": 10, "w": 12, "x": 0, "y": 8},
+        "id": 3,
+        "title": "Privacy Budget Consumption Over Time",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "genomevault_dp_epsilon_consumed{user_id=~\"$user_id\"}",
+            "legendFormat": "User {{user_id}}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "short",
+            "label": "Epsilon Consumed",
+            "show": true
+          }
+        ],
+        "xaxis": {
+          "show": true
+        },
+        "lines": true,
+        "fill": 2,
+        "linewidth": 2,
+        "nullPointMode": "null",
+        "thresholds": [
+          {
+            "value": 8,
+            "op": "gt",
+            "fill": true,
+            "line": true,
+            "colorMode": "warning",
+            "yaxis": "left"
+          }
+        ]
+      },
+      {
+        "gridPos": {"h": 10, "w": 12, "x": 12, "y": 8},
+        "id": 4,
+        "title": "PHI Access Patterns",
+        "type": "piechart",
+        "targets": [
+          {
+            "expr": "sum(increase(genomevault_phi_access_total{resource_type=~\"$resource_type\"}[1h])) by (resource_type)",
+            "legendFormat": "{{resource_type}}",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "pieType": "donut",
+          "tooltipDisplayMode": "single",
+          "legendDisplayMode": "table",
+          "legendPlacement": "right",
+          "legendValues": ["value", "percent"]
+        }
+      },
+      {
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 18},
+        "id": 5,
+        "title": "PHI Access Timeline",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "sum(rate(genomevault_phi_access_total{outcome=\"allowed\"}[5m])) by (resource_type)",
+            "legendFormat": "{{resource_type}} - Allowed",
+            "refId": "A"
+          },
+          {
+            "expr": "sum(rate(genomevault_phi_access_total{outcome=\"denied\"}[5m])) by (resource_type)",
+            "legendFormat": "{{resource_type}} - Denied",
+            "refId": "B"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "ops",
+            "label": "Access Rate",
+            "show": true
+          }
+        ],
+        "seriesOverrides": [
+          {
+            "alias": "/.* - Denied/",
+            "color": "#E02F44",
+            "dashes": true
+          }
+        ]
+      },
+      {
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 26},
+        "id": 6,
+        "title": "PHI Leakage by Severity",
+        "type": "bargauge",
+        "targets": [
+          {
+            "expr": "sum(increase(genomevault_phi_leakage_detected_total[24h])) by (severity)",
+            "legendFormat": "{{severity}}",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "displayMode": "gradient",
+          "orientation": "horizontal",
+          "showUnfilled": true
+        },
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "green", "value": 0},
+                {"color": "yellow", "value": 5},
+                {"color": "red", "value": 10}
+              ]
+            },
+            "unit": "short"
+          }
+        }
+      },
+      {
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 26},
+        "id": 7,
+        "title": "Unauthorized Access Attempts",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "sum(rate(genomevault_phi_access_total{outcome=\"denied\"}[5m])) by (access_type)",
+            "legendFormat": "{{access_type}}",
+            "refId": "A"
+          }
+        ],
+        "alert": {
+          "conditions": [
+            {
+              "evaluator": {
+                "params": [10],
+                "type": "gt"
+              },
+              "operator": {
+                "type": "and"
+              },
+              "query": {
+                "params": ["A", "5m", "now"]
+              },
+              "reducer": {
+                "params": [],
+                "type": "sum"
+              },
+              "type": "query"
+            }
+          ],
+          "executionErrorState": "alerting",
+          "frequency": "60s",
+          "handler": 1,
+          "name": "Unauthorized Access Alert",
+          "noDataState": "no_data",
+          "notifications": []
+        }
+      },
+      {
+        "gridPos": {"h": 8, "w": 8, "x": 0, "y": 34},
+        "id": 8,
+        "title": "Clinical Data Access (Anonymized)",
+        "type": "heatmap",
+        "targets": [
+          {
+            "expr": "sum(rate(genomevault_clinical_queries_total[5m])) by (data_category, anonymized_org)",
+            "format": "heatmap",
+            "legendFormat": "{{data_category}} - {{anonymized_org}}",
+            "refId": "A"
+          }
+        ],
+        "dataFormat": "timeseries",
+        "cards": {
+          "cardPadding": 2,
+          "cardRound": 2
+        },
+        "color": {
+          "mode": "spectrum",
+          "scheme": "interpolateGreens"
+        }
+      },
+      {
+        "gridPos": {"h": 8, "w": 8, "x": 8, "y": 34},
+        "id": 9,
+        "title": "Privacy Guarantee Score",
+        "type": "gauge",
+        "targets": [
+          {
+            "expr": "(1 - (sum(increase(genomevault_phi_leakage_detected_total[24h])) / 1000)) * 100",
+            "legendFormat": "Privacy Score",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 95},
+                {"color": "green", "value": 99}
+              ]
+            },
+            "unit": "percent",
+            "displayName": "Privacy Guarantee"
+          }
+        }
+      },
+      {
+        "gridPos": {"h": 8, "w": 8, "x": 16, "y": 34},
+        "id": 10,
+        "title": "HIPAA Compliance Status",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "up{job=\"genomevault-audit\"} * 100",
+            "legendFormat": "Audit System",
+            "refId": "A"
+          },
+          {
+            "expr": "(genomevault_retention_days >= 2555) * 100",
+            "legendFormat": "7-Year Retention",
+            "refId": "B"
+          },
+          {
+            "expr": "(genomevault_encryption_enabled == 1) * 100",
+            "legendFormat": "Encryption at Rest",
+            "refId": "C"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "green", "value": 100}
+              ]
+            },
+            "unit": "percent",
+            "displayName": "Compliance"
+          }
+        },
+        "options": {
+          "colorMode": "background",
+          "graphMode": "none",
+          "justifyMode": "center",
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": ["lastNotNull"],
+            "fields": "",
+            "values": false
+          }
+        }
+      },
+      {
+        "gridPos": {"h": 6, "w": 24, "x": 0, "y": 42},
+        "id": 11,
+        "title": "Privacy Budget Alerts",
+        "type": "table",
+        "targets": [
+          {
+            "expr": "genomevault_dp_epsilon_remaining < 2",
+            "format": "table",
+            "instant": true,
+            "refId": "A"
+          }
+        ],
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {},
+              "indexByName": {},
+              "renameByName": {
+                "user_id": "User ID",
+                "Value": "Remaining Budget",
+                "Time": "Last Updated"
+              }
+            }
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "align": "auto",
+              "displayMode": "color-background",
+              "filterable": true
+            },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 1},
+                {"color": "green", "value": 2}
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "annotations": {
+      "list": [
+        {
+          "datasource": "Prometheus",
+          "enable": true,
+          "expr": "increase(genomevault_phi_leakage_detected_total[1m]) > 0",
+          "iconColor": "red",
+          "name": "PHI Leakage Events",
+          "tagKeys": "detection_type,severity",
+          "titleFormat": "PHI Leakage Detected"
+        },
+        {
+          "datasource": "Prometheus",
+          "enable": true,
+          "expr": "genomevault_dp_epsilon_remaining < 1",
+          "iconColor": "yellow",
+          "name": "Privacy Budget Warnings",
+          "tagKeys": "user_id",
+          "titleFormat": "Low Privacy Budget"
+        }
+      ]
+    }
+  },
+  "overwrite": true,
+  "folderId": 0,
+  "message": "GenomeVault Privacy & Compliance Metrics Dashboard"
+}

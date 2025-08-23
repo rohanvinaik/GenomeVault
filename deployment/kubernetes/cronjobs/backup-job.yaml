@@ -1,0 +1,596 @@
+---
+# Kubernetes CronJob for automated database backups
+# Implements RPO < 1 hour with encrypted backups to cloud storage
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: genomevault-backup
+---
+# ConfigMap for backup script
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backup-scripts
+  namespace: genomevault-backup
+data:
+  backup.sh: |
+    #!/bin/bash
+    set -euo pipefail
+    
+    # Source the main backup script
+    source /scripts/backup_restore.sh
+    
+    # Run backup based on schedule
+    case "${BACKUP_TYPE}" in
+      hourly)
+        # Incremental backup every hour
+        perform_incremental_backup
+        ;;
+      daily)
+        # Full backup once a day
+        perform_full_backup
+        # Run cleanup after daily backup
+        cleanup_old_backups
+        ;;
+      weekly)
+        # Weekly disaster recovery test
+        test_disaster_recovery
+        ;;
+      *)
+        echo "Unknown backup type: ${BACKUP_TYPE}"
+        exit 1
+        ;;
+    esac
+    
+    # Monitor backup status
+    monitor_backups
+---
+# Secret for backup encryption key
+apiVersion: v1
+kind: Secret
+metadata:
+  name: backup-encryption-key
+  namespace: genomevault-backup
+type: Opaque
+data:
+  # Base64 encoded encryption key (replace with actual key)
+  backup-key: Y2hhbmdlbWVpbnByb2R1Y3Rpb24K
+---
+# Secret for database credentials
+apiVersion: v1
+kind: Secret
+metadata:
+  name: database-credentials
+  namespace: genomevault-backup
+type: Opaque
+data:
+  # Base64 encoded credentials (replace with actual values)
+  username: Z2Vub21ldmF1bHQ=
+  password: Y2hhbmdlbWVpbnByb2R1Y3Rpb24=
+---
+# Secret for cloud storage credentials
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cloud-storage-credentials
+  namespace: genomevault-backup
+type: Opaque
+data:
+  # AWS credentials (base64 encoded)
+  aws-access-key-id: QUtJQUlPU0ZPRE5ON0VYQU1QTEU=
+  aws-secret-access-key: d0phbHJYVXRuRkVNSS9LN01ERU5HL2JQeFJmaUNZRVhBTVBMRUtFWQ==
+  # GCP service account key (base64 encoded JSON)
+  gcp-service-account-key: ewogICJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsCiAgInByb2plY3RfaWQiOiAiZ2Vub21ldmF1bHQtcHJvZCIKfQ==
+---
+# PersistentVolumeClaim for local backup storage
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: backup-storage
+  namespace: genomevault-backup
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: fast-ssd
+---
+# ServiceAccount for backup jobs
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: backup-service-account
+  namespace: genomevault-backup
+---
+# Role for backup operations
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: backup-role
+  namespace: genomevault-backup
+rules:
+- apiGroups: [""]
+  resources: ["secrets", "configmaps"]
+  verbs: ["get", "list"]
+- apiGroups: ["batch"]
+  resources: ["jobs", "cronjobs"]
+  verbs: ["get", "list", "watch"]
+---
+# RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: backup-role-binding
+  namespace: genomevault-backup
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: backup-role
+subjects:
+- kind: ServiceAccount
+  name: backup-service-account
+  namespace: genomevault-backup
+---
+# Hourly incremental backup CronJob (RPO < 1 hour)
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: hourly-incremental-backup
+  namespace: genomevault-backup
+spec:
+  schedule: "0 * * * *"  # Every hour
+  concurrencyPolicy: Forbid  # Don't run concurrent backups
+  successfulJobsHistoryLimit: 24
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 3600  # 1 hour timeout
+      template:
+        metadata:
+          labels:
+            app: genomevault-backup
+            backup-type: incremental
+        spec:
+          serviceAccountName: backup-service-account
+          restartPolicy: OnFailure
+          
+          initContainers:
+          # Check database connectivity
+          - name: check-database
+            image: postgres:14-alpine
+            env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: password
+            command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h genomevault-postgres -p 5432 -U genomevault; do
+                echo "Waiting for database..."
+                sleep 5
+              done
+              echo "Database is ready"
+          
+          containers:
+          - name: backup
+            image: genomevault/backup-agent:latest
+            imagePullPolicy: IfNotPresent
+            
+            env:
+            - name: BACKUP_TYPE
+              value: "hourly"
+            - name: DATABASE_HOST
+              value: "genomevault-postgres"
+            - name: DATABASE_PORT
+              value: "5432"
+            - name: DATABASE_NAME
+              value: "genomevault"
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: username
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: password
+            
+            # AWS S3 configuration
+            - name: S3_BACKUP_BUCKET
+              value: "genomevault-backups-prod"
+            - name: S3_BACKUP_PREFIX
+              value: "postgres/incremental"
+            - name: AWS_REGION
+              value: "us-east-1"
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: cloud-storage-credentials
+                  key: aws-access-key-id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cloud-storage-credentials
+                  key: aws-secret-access-key
+            
+            # GCS configuration
+            - name: GCS_BACKUP_BUCKET
+              value: "genomevault-backups-prod"
+            - name: GCS_BACKUP_PREFIX
+              value: "postgres/incremental"
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: "/etc/gcp/service-account-key.json"
+            
+            # Backup configuration
+            - name: BACKUP_DIR
+              value: "/backups"
+            - name: ENCRYPTION_KEY_FILE
+              value: "/etc/encryption/backup-key"
+            - name: LOG_FILE
+              value: "/var/log/backup.log"
+            - name: BACKUP_RETENTION_DAYS
+              value: "7"  # Keep incremental backups for 7 days
+            
+            # Slack notifications (optional)
+            - name: SLACK_WEBHOOK
+              valueFrom:
+                secretKeyRef:
+                  name: slack-webhook
+                  key: url
+                  optional: true
+            
+            volumeMounts:
+            - name: backup-storage
+              mountPath: /backups
+            - name: backup-scripts
+              mountPath: /scripts
+              readOnly: true
+            - name: encryption-key
+              mountPath: /etc/encryption
+              readOnly: true
+            - name: gcp-credentials
+              mountPath: /etc/gcp
+              readOnly: true
+            - name: logs
+              mountPath: /var/log
+            
+            resources:
+              requests:
+                memory: "1Gi"
+                cpu: "500m"
+              limits:
+                memory: "2Gi"
+                cpu: "1000m"
+          
+          volumes:
+          - name: backup-storage
+            persistentVolumeClaim:
+              claimName: backup-storage
+          - name: backup-scripts
+            configMap:
+              name: backup-scripts
+              defaultMode: 0755
+          - name: encryption-key
+            secret:
+              secretName: backup-encryption-key
+              defaultMode: 0400
+          - name: gcp-credentials
+            secret:
+              secretName: cloud-storage-credentials
+              items:
+              - key: gcp-service-account-key
+                path: service-account-key.json
+          - name: logs
+            emptyDir: {}
+---
+# Daily full backup CronJob
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: daily-full-backup
+  namespace: genomevault-backup
+spec:
+  schedule: "0 2 * * *"  # 2 AM daily
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 7
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 14400  # 4 hour timeout
+      template:
+        metadata:
+          labels:
+            app: genomevault-backup
+            backup-type: full
+        spec:
+          serviceAccountName: backup-service-account
+          restartPolicy: OnFailure
+          
+          containers:
+          - name: backup
+            image: genomevault/backup-agent:latest
+            imagePullPolicy: IfNotPresent
+            
+            env:
+            - name: BACKUP_TYPE
+              value: "daily"
+            - name: DATABASE_HOST
+              value: "genomevault-postgres"
+            - name: DATABASE_PORT
+              value: "5432"
+            - name: DATABASE_NAME
+              value: "genomevault"
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: username
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: password
+            
+            # S3 configuration for full backups
+            - name: S3_BACKUP_BUCKET
+              value: "genomevault-backups-prod"
+            - name: S3_BACKUP_PREFIX
+              value: "postgres/full"
+            - name: AWS_REGION
+              value: "us-east-1"
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: cloud-storage-credentials
+                  key: aws-access-key-id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cloud-storage-credentials
+                  key: aws-secret-access-key
+            
+            # GCS configuration for full backups
+            - name: GCS_BACKUP_BUCKET
+              value: "genomevault-backups-prod"
+            - name: GCS_BACKUP_PREFIX
+              value: "postgres/full"
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: "/etc/gcp/service-account-key.json"
+            
+            # Backup configuration
+            - name: BACKUP_DIR
+              value: "/backups"
+            - name: ENCRYPTION_KEY_FILE
+              value: "/etc/encryption/backup-key"
+            - name: LOG_FILE
+              value: "/var/log/backup.log"
+            - name: BACKUP_RETENTION_DAYS
+              value: "90"  # Keep full backups for 90 days
+            
+            volumeMounts:
+            - name: backup-storage
+              mountPath: /backups
+            - name: backup-scripts
+              mountPath: /scripts
+              readOnly: true
+            - name: encryption-key
+              mountPath: /etc/encryption
+              readOnly: true
+            - name: gcp-credentials
+              mountPath: /etc/gcp
+              readOnly: true
+            - name: logs
+              mountPath: /var/log
+            
+            resources:
+              requests:
+                memory: "2Gi"
+                cpu: "1000m"
+              limits:
+                memory: "4Gi"
+                cpu: "2000m"
+          
+          volumes:
+          - name: backup-storage
+            persistentVolumeClaim:
+              claimName: backup-storage
+          - name: backup-scripts
+            configMap:
+              name: backup-scripts
+              defaultMode: 0755
+          - name: encryption-key
+            secret:
+              secretName: backup-encryption-key
+              defaultMode: 0400
+          - name: gcp-credentials
+            secret:
+              secretName: cloud-storage-credentials
+              items:
+              - key: gcp-service-account-key
+                path: service-account-key.json
+          - name: logs
+            emptyDir: {}
+---
+# Weekly disaster recovery test CronJob
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: weekly-dr-test
+  namespace: genomevault-backup
+spec:
+  schedule: "0 3 * * 0"  # 3 AM on Sundays
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 4
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      activeDeadlineSeconds: 21600  # 6 hour timeout
+      template:
+        metadata:
+          labels:
+            app: genomevault-backup
+            backup-type: dr-test
+        spec:
+          serviceAccountName: backup-service-account
+          restartPolicy: OnFailure
+          
+          containers:
+          - name: dr-test
+            image: genomevault/backup-agent:latest
+            imagePullPolicy: IfNotPresent
+            
+            env:
+            - name: BACKUP_TYPE
+              value: "weekly"
+            - name: DATABASE_HOST
+              value: "genomevault-postgres"
+            - name: DATABASE_PORT
+              value: "5432"
+            - name: DATABASE_NAME
+              value: "genomevault"
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: username
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: password
+            
+            # Cloud storage configuration
+            - name: S3_BACKUP_BUCKET
+              value: "genomevault-backups-prod"
+            - name: AWS_REGION
+              value: "us-east-1"
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: cloud-storage-credentials
+                  key: aws-access-key-id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cloud-storage-credentials
+                  key: aws-secret-access-key
+            
+            # Test configuration
+            - name: BACKUP_DIR
+              value: "/backups"
+            - name: ENCRYPTION_KEY_FILE
+              value: "/etc/encryption/backup-key"
+            - name: LOG_FILE
+              value: "/var/log/dr-test.log"
+            
+            # Slack notifications for DR test results
+            - name: SLACK_WEBHOOK
+              valueFrom:
+                secretKeyRef:
+                  name: slack-webhook
+                  key: url
+                  optional: true
+            
+            volumeMounts:
+            - name: backup-storage
+              mountPath: /backups
+            - name: backup-scripts
+              mountPath: /scripts
+              readOnly: true
+            - name: encryption-key
+              mountPath: /etc/encryption
+              readOnly: true
+            - name: logs
+              mountPath: /var/log
+            
+            resources:
+              requests:
+                memory: "2Gi"
+                cpu: "1000m"
+              limits:
+                memory: "4Gi"
+                cpu: "2000m"
+          
+          volumes:
+          - name: backup-storage
+            persistentVolumeClaim:
+              claimName: backup-storage
+          - name: backup-scripts
+            configMap:
+              name: backup-scripts
+              defaultMode: 0755
+          - name: encryption-key
+            secret:
+              secretName: backup-encryption-key
+              defaultMode: 0400
+          - name: logs
+            emptyDir: {}
+---
+# Monitoring and alerting for backup jobs
+apiVersion: v1
+kind: Service
+metadata:
+  name: backup-metrics
+  namespace: genomevault-backup
+  labels:
+    app: genomevault-backup
+spec:
+  ports:
+  - name: metrics
+    port: 9090
+    targetPort: 9090
+  selector:
+    app: genomevault-backup
+---
+# NetworkPolicy for backup namespace
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backup-network-policy
+  namespace: genomevault-backup
+spec:
+  podSelector:
+    matchLabels:
+      app: genomevault-backup
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: genomevault-monitoring
+    ports:
+    - protocol: TCP
+      port: 9090
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: genomevault
+    ports:
+    - protocol: TCP
+      port: 5432  # PostgreSQL
+  - to:
+    - podSelector: {}
+    ports:
+    - protocol: TCP
+      port: 53  # DNS
+    - protocol: UDP
+      port: 53
+  - to:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+        except:
+        - 169.254.169.254/32  # Block metadata service
+    ports:
+    - protocol: TCP
+      port: 443  # HTTPS for S3/GCS

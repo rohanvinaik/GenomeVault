@@ -1,0 +1,314 @@
+---
+# Kubernetes namespaces for PIR servers with independent trust domains
+# Each server runs in isolation to prevent collusion
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pir-server-1
+  labels:
+    app: genomevault
+    component: pir
+    server-id: "1"
+    trust-domain: "domain-1"
+    security-level: "critical"
+  annotations:
+    genomevault/description: "First PIR server - independent trust domain"
+    genomevault/compliance: "HIPAA,GDPR"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pir-server-2
+  labels:
+    app: genomevault
+    component: pir
+    server-id: "2"
+    trust-domain: "domain-2"
+    security-level: "critical"
+  annotations:
+    genomevault/description: "Second PIR server - independent trust domain"
+    genomevault/compliance: "HIPAA,GDPR"
+---
+# Optional: Third server for Byzantine fault tolerance
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pir-server-3
+  labels:
+    app: genomevault
+    component: pir
+    server-id: "3"
+    trust-domain: "domain-3"
+    security-level: "critical"
+  annotations:
+    genomevault/description: "Third PIR server - Byzantine fault tolerance"
+    genomevault/compliance: "HIPAA,GDPR"
+---
+# Coordinator namespace for client queries
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pir-coordinator
+  labels:
+    app: genomevault
+    component: pir
+    role: coordinator
+    security-level: "critical"
+  annotations:
+    genomevault/description: "PIR query coordinator and response aggregator"
+    genomevault/compliance: "HIPAA,GDPR"
+---
+# ResourceQuota for each PIR server namespace
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: pir-server-quota
+  namespace: pir-server-1
+spec:
+  hard:
+    requests.cpu: "4"
+    requests.memory: 16Gi
+    limits.cpu: "8"
+    limits.memory: 32Gi
+    persistentvolumeclaims: "10"
+    services.nodeports: "0"  # Prevent NodePort services
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: pir-server-quota
+  namespace: pir-server-2
+spec:
+  hard:
+    requests.cpu: "4"
+    requests.memory: 16Gi
+    limits.cpu: "8"
+    limits.memory: 32Gi
+    persistentvolumeclaims: "10"
+    services.nodeports: "0"
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: pir-server-quota
+  namespace: pir-server-3
+spec:
+  hard:
+    requests.cpu: "4"
+    requests.memory: 16Gi
+    limits.cpu: "8"
+    limits.memory: 32Gi
+    persistentvolumeclaims: "10"
+    services.nodeports: "0"
+---
+# LimitRange for resource constraints
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: pir-server-limits
+  namespace: pir-server-1
+spec:
+  limits:
+  - max:
+      cpu: "4"
+      memory: 16Gi
+    min:
+      cpu: "100m"
+      memory: 128Mi
+    default:
+      cpu: "1"
+      memory: 2Gi
+    defaultRequest:
+      cpu: "500m"
+      memory: 1Gi
+    type: Container
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: pir-server-limits
+  namespace: pir-server-2
+spec:
+  limits:
+  - max:
+      cpu: "4"
+      memory: 16Gi
+    min:
+      cpu: "100m"
+      memory: 128Mi
+    default:
+      cpu: "1"
+      memory: 2Gi
+    defaultRequest:
+      cpu: "500m"
+      memory: 1Gi
+    type: Container
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: pir-server-limits
+  namespace: pir-server-3
+spec:
+  limits:
+  - max:
+      cpu: "4"
+      memory: 16Gi
+    min:
+      cpu: "100m"
+      memory: 128Mi
+    default:
+      cpu: "1"
+      memory: 2Gi
+    defaultRequest:
+      cpu: "500m"
+      memory: 1Gi
+    type: Container
+---
+# ServiceAccount for each PIR server
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pir-server
+  namespace: pir-server-1
+  annotations:
+    genomevault/role: "PIR Server 1"
+    genomevault/trust-domain: "domain-1"
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pir-server
+  namespace: pir-server-2
+  annotations:
+    genomevault/role: "PIR Server 2"
+    genomevault/trust-domain: "domain-2"
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pir-server
+  namespace: pir-server-3
+  annotations:
+    genomevault/role: "PIR Server 3"
+    genomevault/trust-domain: "domain-3"
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pir-coordinator
+  namespace: pir-coordinator
+  annotations:
+    genomevault/role: "PIR Query Coordinator"
+---
+# RBAC for PIR servers - minimal permissions
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pir-server-role
+  namespace: pir-server-1
+rules:
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get", "list"]
+  resourceNames: ["pir-config"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get"]
+  resourceNames: ["pir-server-key"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pir-server-binding
+  namespace: pir-server-1
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: pir-server-role
+subjects:
+- kind: ServiceAccount
+  name: pir-server
+  namespace: pir-server-1
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pir-server-role
+  namespace: pir-server-2
+rules:
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get", "list"]
+  resourceNames: ["pir-config"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get"]
+  resourceNames: ["pir-server-key"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pir-server-binding
+  namespace: pir-server-2
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: pir-server-role
+subjects:
+- kind: ServiceAccount
+  name: pir-server
+  namespace: pir-server-2
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pir-server-role
+  namespace: pir-server-3
+rules:
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get", "list"]
+  resourceNames: ["pir-config"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get"]
+  resourceNames: ["pir-server-key"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pir-server-binding
+  namespace: pir-server-3
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: pir-server-role
+subjects:
+- kind: ServiceAccount
+  name: pir-server
+  namespace: pir-server-3
+---
+# PodSecurityPolicy for PIR servers (if PSP is enabled)
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: pir-server-psp
+spec:
+  privileged: false
+  allowPrivilegeEscalation: false
+  requiredDropCapabilities:
+  - ALL
+  volumes:
+  - 'configMap'
+  - 'emptyDir'
+  - 'projected'
+  - 'secret'
+  - 'persistentVolumeClaim'
+  runAsUser:
+    rule: 'MustRunAsNonRoot'
+  seLinux:
+    rule: 'RunAsAny'
+  fsGroup:
+    rule: 'RunAsAny'
+  readOnlyRootFilesystem: true

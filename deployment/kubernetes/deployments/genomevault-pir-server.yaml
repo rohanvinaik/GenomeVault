@@ -51,6 +51,56 @@ spec:
           value: "hipaa-ts"  # hipaa-ts or generic
         - name: HONESTY_PROBABILITY
           value: "0.98"
+        
+        # PIR Server Secrets
+        - name: PIR_ENCRYPTION_KEY
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-core-secrets
+              key: encryption-key
+        - name: PIR_SIGNING_KEY
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-pir-secrets
+              key: signing-key
+        
+        # PHI/HIPAA Secrets for HIPAA-TS servers
+        - name: TS_KEY_1
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-phi-secrets
+              key: ts-key-1
+              optional: true
+        - name: TS_KEY_2
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-phi-secrets
+              key: ts-key-2
+              optional: true
+        
+        # TLS Configuration
+        - name: TLS_CERT_PATH
+          value: "/etc/tls/tls.crt"
+        - name: TLS_KEY_PATH
+          value: "/etc/tls/tls.key"
+        - name: CA_CERT_PATH
+          value: "/etc/tls/ca.crt"
+        
+        # HSM Configuration for cryptographic operations
+        - name: HSM_ENABLED
+          value: "true"
+        - name: HSM_SERIAL
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-phi-secrets
+              key: hsm-serial
+              optional: true
+        - name: HSM_PIN
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-hsm-secrets
+              key: pin
+              optional: true
 
         resources:
           requests:
@@ -66,6 +116,32 @@ spec:
         - name: reference-data
           mountPath: /data/reference
           readOnly: true
+        - name: tls-certs
+          mountPath: /etc/tls
+          readOnly: true
+        - name: hsm-config
+          mountPath: /etc/hsm
+          readOnly: true
+      
+      volumes:
+      - name: reference-data
+        persistentVolumeClaim:
+          claimName: genomevault-reference-data
+      - name: tls-certs
+        secret:
+          secretName: genomevault-tls
+          items:
+          - key: tls.crt
+            path: tls.crt
+          - key: tls.key
+            path: tls.key
+            mode: 0600
+          - key: ca.crt
+            path: ca.crt
+      - name: hsm-config
+        configMap:
+          name: genomevault-hsm-config
+          optional: true
 
   volumeClaimTemplates:
   - metadata:

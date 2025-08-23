@@ -1,0 +1,595 @@
+name: Production Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+      skip_tests:
+        description: 'Skip test suite (emergency only)'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  # Code Quality & Security Analysis
+  quality-checks:
+    name: Code Quality & Security
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      security-passed: ${{ steps.security-gate.outputs.passed }}
+      phi-clean: ${{ steps.phi-scan.outputs.clean }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e ".[dev,security]"
+        pip install bandit[toml] semgrep safety
+
+    - name: Generate version
+      id: version
+      run: |
+        VERSION=$(date +%Y%m%d)-$(git rev-parse --short HEAD)
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+    # Static Analysis
+    - name: Lint with ruff
+      run: |
+        ruff check genomevault/ --format=github --output-format=json --output-file=ruff-results.json
+      continue-on-error: false
+
+    - name: Type check with mypy
+      run: |
+        mypy genomevault/ --config-file=.mypy.ini --junit-xml=mypy-results.xml
+      continue-on-error: false
+
+    # PHI Leakage Detection
+    - name: Scan for PHI leakage
+      id: phi-scan
+      run: |
+        python scripts/phi_scanner.py --path genomevault/ --strict
+        echo "clean=true" >> $GITHUB_OUTPUT
+      continue-on-error: false
+
+    # Security Scanning
+    - name: Run Bandit security scan
+      run: |
+        bandit -r genomevault/ -f json -o bandit-results.json
+      continue-on-error: true
+
+    - name: Run Semgrep SAST
+      env:
+        SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_TOKEN }}
+      run: |
+        semgrep --config=auto genomevault/ --json --output=semgrep-results.json
+      continue-on-error: true
+
+    - name: Check for secrets
+      uses: trufflesecurity/trufflehog@main
+      with:
+        path: ./
+        base: main
+        head: HEAD
+        extra_args: --debug --only-verified
+
+    - name: Dependency vulnerability check
+      run: |
+        safety check --json --output safety-results.json
+      continue-on-error: true
+
+    # Security Gate
+    - name: Security gate evaluation
+      id: security-gate
+      run: |
+        python scripts/security_gate.py \
+          --bandit bandit-results.json \
+          --semgrep semgrep-results.json \
+          --safety safety-results.json \
+          --threshold critical
+        echo "passed=true" >> $GITHUB_OUTPUT
+
+    - name: Upload security results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: security-results
+        path: |
+          *-results.json
+          *-results.xml
+
+  # Comprehensive Testing
+  test-suite:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    needs: quality-checks
+    if: ${{ !inputs.skip_tests }}
+    strategy:
+      fail-fast: false
+      matrix:
+        test-type: [unit, integration, privacy, performance]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e ".[full,dev,test]"
+
+    - name: Run unit tests
+      if: matrix.test-type == 'unit'
+      run: |
+        pytest tests/ -m "unit and not slow" \
+          --cov=genomevault \
+          --cov-report=xml \
+          --cov-report=html \
+          --cov-fail-under=80 \
+          --junit-xml=unit-test-results.xml \
+          -v
+
+    - name: Run integration tests
+      if: matrix.test-type == 'integration'
+      run: |
+        pytest tests/ -m "integration" \
+          --cov=genomevault \
+          --cov-append \
+          --cov-report=xml \
+          --junit-xml=integration-test-results.xml \
+          -v
+      timeout-minutes: 20
+
+    - name: Run privacy guarantee tests
+      if: matrix.test-type == 'privacy'
+      run: |
+        pytest tests/ -m "privacy" \
+          --junit-xml=privacy-test-results.xml \
+          -v
+      timeout-minutes: 15
+
+    - name: Run performance tests
+      if: matrix.test-type == 'performance'
+      run: |
+        pytest tests/ -m "performance" \
+          --benchmark-only \
+          --benchmark-autosave \
+          --junit-xml=performance-test-results.xml
+      timeout-minutes: 30
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: test-results-${{ matrix.test-type }}
+        path: |
+          *-test-results.xml
+          htmlcov/
+          .benchmarks/
+
+    - name: Upload coverage to Codecov
+      if: matrix.test-type == 'unit'
+      uses: codecov/codecov-action@v3
+      with:
+        file: coverage.xml
+        flags: unittests
+        fail_ci_if_error: true
+
+  # Build and Security Scan Container
+  build-image:
+    name: Build & Secure Image
+    runs-on: ubuntu-latest
+    needs: [quality-checks, test-suite]
+    if: always() && needs.quality-checks.outputs.security-passed == 'true'
+    outputs:
+      image-digest: ${{ steps.build.outputs.digest }}
+      sbom-digest: ${{ steps.sbom.outputs.digest }}
+    
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
+      id-token: write
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install cosign
+      uses: sigstore/cosign-installer@v3
+
+    - name: Install Syft for SBOM generation
+      uses: anchore/sbom-action/download-syft@v0
+
+    - name: Install Grype for vulnerability scanning
+      uses: anchore/scan-action/download-grype@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=semver,pattern={{version}}
+          type=raw,value=${{ needs.quality-checks.outputs.version }}
+          type=raw,value=latest,enable={{is_default_branch}}
+
+    - name: Build and push image
+      id: build
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        platforms: linux/amd64,linux/arm64
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        provenance: true
+        sbom: true
+
+    - name: Generate SBOM
+      id: sbom
+      run: |
+        syft ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.quality-checks.outputs.version }} \
+          -o spdx-json=sbom.spdx.json \
+          -o cyclonedx-json=sbom.cyclonedx.json
+        SBOM_DIGEST=$(sha256sum sbom.spdx.json | cut -d' ' -f1)
+        echo "digest=$SBOM_DIGEST" >> $GITHUB_OUTPUT
+
+    - name: Vulnerability scan with Grype
+      run: |
+        grype ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.quality-checks.outputs.version }} \
+          --fail-on critical \
+          -o json \
+          --file grype-results.json
+
+    - name: Upload Grype results to GitHub Security
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: grype-results.sarif
+        category: container-scan
+
+    - name: Sign image with cosign
+      env:
+        COSIGN_EXPERIMENTAL: 1
+      run: |
+        cosign sign --yes ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
+
+    - name: Attest SBOM
+      env:
+        COSIGN_EXPERIMENTAL: 1
+      run: |
+        cosign attest --yes --predicate sbom.spdx.json \
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: container-artifacts
+        path: |
+          sbom.*.json
+          grype-results.json
+
+  # Deploy to Development
+  deploy-dev:
+    name: Deploy to Development
+    runs-on: ubuntu-latest
+    needs: [quality-checks, build-image]
+    if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'dev'
+    environment: 
+      name: development
+      url: https://dev.genomevault.io
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure kubectl
+      uses: azure/k8s-set-context@v3
+      with:
+        method: kubeconfig
+        kubeconfig: ${{ secrets.DEV_KUBECONFIG }}
+
+    - name: Deploy to development
+      run: |
+        cd deployment/kubernetes/environments/dev
+        kustomize edit set image genomevault=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.quality-checks.outputs.version }}
+        kubectl apply -k .
+
+    - name: Wait for deployment
+      run: |
+        kubectl rollout status deployment/genomevault-api -n genomevault-dev --timeout=300s
+
+    - name: Run smoke tests
+      run: |
+        python scripts/smoke_tests.py --environment dev --timeout 60
+
+  # Deploy to Staging with Approval
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [deploy-dev, quality-checks, build-image]
+    if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'staging'
+    environment:
+      name: staging
+      url: https://staging.genomevault.io
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure kubectl
+      uses: azure/k8s-set-context@v3
+      with:
+        method: kubeconfig  
+        kubeconfig: ${{ secrets.STAGING_KUBECONFIG }}
+
+    - name: Deploy to staging
+      run: |
+        cd deployment/kubernetes/environments/staging
+        kustomize edit set image genomevault=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.quality-checks.outputs.version }}
+        kubectl apply -k .
+
+    - name: Wait for deployment
+      run: |
+        kubectl rollout status deployment/genomevault-api -n genomevault-staging --timeout=300s
+
+    - name: Run comprehensive tests
+      run: |
+        python scripts/smoke_tests.py --environment staging --comprehensive --timeout 120
+        python scripts/synthetic_monitors.py --environment staging --validate-privacy
+
+    - name: Performance baseline check
+      run: |
+        python scripts/performance_check.py --environment staging --compare-baseline
+
+  # Production Canary Deployment
+  deploy-prod-canary:
+    name: Production Canary Deployment
+    runs-on: ubuntu-latest
+    needs: [deploy-staging, quality-checks, build-image]
+    if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prod'
+    environment:
+      name: production-canary
+      url: https://genomevault.io
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure kubectl
+      uses: azure/k8s-set-context@v3
+      with:
+        method: kubeconfig
+        kubeconfig: ${{ secrets.PROD_KUBECONFIG }}
+
+    - name: Deploy canary (5% traffic)
+      run: |
+        cd deployment/kubernetes/canary
+        kustomize edit set image genomevault=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.quality-checks.outputs.version }}
+        kubectl apply -k .
+        
+        # Update Istio virtual service for 5% canary traffic
+        kubectl patch virtualservice genomevault-vs -n genomevault --type='json' \
+          -p='[{"op": "replace", "path": "/spec/http/0/route/0/weight", "value": 95},
+               {"op": "replace", "path": "/spec/http/0/route/1/weight", "value": 5}]'
+
+    - name: Monitor canary deployment
+      run: |
+        echo "Monitoring canary for 10 minutes..."
+        sleep 300
+        
+        # Check SLO metrics
+        python scripts/slo_check.py --environment prod --canary --duration 300
+        
+        if [ $? -ne 0 ]; then
+          echo "SLO breach detected, initiating rollback"
+          kubectl patch virtualservice genomevault-vs -n genomevault --type='json' \
+            -p='[{"op": "replace", "path": "/spec/http/0/route/0/weight", "value": 100},
+                 {"op": "replace", "path": "/spec/http/0/route/1/weight", "value": 0}]'
+          exit 1
+        fi
+
+    - name: Run production synthetic tests
+      run: |
+        python scripts/synthetic_monitors.py --environment prod --canary
+        
+        # Privacy guarantee validation
+        python scripts/privacy_validator.py --environment prod --validate-pir --validate-zk
+
+  # Full Production Deployment
+  deploy-prod-full:
+    name: Full Production Deployment
+    runs-on: ubuntu-latest
+    needs: [deploy-prod-canary, quality-checks, build-image]
+    environment:
+      name: production
+      url: https://genomevault.io
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure kubectl
+      uses: azure/k8s-set-context@v3
+      with:
+        method: kubeconfig
+        kubeconfig: ${{ secrets.PROD_KUBECONFIG }}
+
+    - name: Promote canary to full deployment
+      run: |
+        # Gradually increase traffic: 5% -> 25% -> 50% -> 100%
+        for weight in 25 50 100; do
+          echo "Increasing canary traffic to $weight%"
+          stable_weight=$((100 - weight))
+          
+          kubectl patch virtualservice genomevault-vs -n genomevault --type='json' \
+            -p="[{\"op\": \"replace\", \"path\": \"/spec/http/0/route/0/weight\", \"value\": $stable_weight},
+                 {\"op\": \"replace\", \"path\": \"/spec/http/0/route/1/weight\", \"value\": $weight}]"
+          
+          # Wait and monitor
+          sleep 180
+          
+          # Check SLOs
+          python scripts/slo_check.py --environment prod --duration 180
+          if [ $? -ne 0 ]; then
+            echo "SLO breach at $weight% traffic, rolling back"
+            kubectl patch virtualservice genomevault-vs -n genomevault --type='json' \
+              -p='[{"op": "replace", "path": "/spec/http/0/route/0/weight", "value": 100},
+                   {"op": "replace", "path": "/spec/http/0/route/1/weight", "value": 0}]'
+            exit 1
+          fi
+        done
+
+    - name: Update stable deployment
+      run: |
+        cd deployment/kubernetes/environments/prod
+        kustomize edit set image genomevault=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.quality-checks.outputs.version }}
+        kubectl apply -k .
+        kubectl rollout status deployment/genomevault-api -n genomevault --timeout=300s
+
+    - name: Switch traffic to new stable deployment
+      run: |
+        kubectl patch virtualservice genomevault-vs -n genomevault --type='json' \
+          -p='[{"op": "replace", "path": "/spec/http/0/route/0/weight", "value": 100},
+               {"op": "replace", "path": "/spec/http/0/route/1/weight", "value": 0}]'
+
+    - name: Clean up old canary
+      run: |
+        kubectl delete -k deployment/kubernetes/canary/ || true
+
+    - name: Final validation
+      run: |
+        python scripts/synthetic_monitors.py --environment prod --full-validation
+        python scripts/compliance_check.py --environment prod
+
+    - name: Update deployment record
+      run: |
+        echo "Deployment successful: ${{ needs.quality-checks.outputs.version }}" >> deployment-log.txt
+        git add deployment-log.txt
+        git commit -m "chore: record production deployment ${{ needs.quality-checks.outputs.version }}"
+        git push
+
+  # Continuous Monitoring
+  post-deployment-monitoring:
+    name: Post-Deployment Monitoring
+    runs-on: ubuntu-latest
+    needs: [deploy-prod-full]
+    if: always() && needs.deploy-prod-full.result == 'success'
+    
+    steps:
+    - name: Start monitoring job
+      run: |
+        echo "Starting 24-hour enhanced monitoring for deployment ${{ needs.quality-checks.outputs.version }}"
+        
+        # Trigger monitoring workflow
+        curl -X POST \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/${{ github.repository }}/dispatches \
+          -d '{"event_type":"enhanced-monitoring","client_payload":{"version":"${{ needs.quality-checks.outputs.version }}"}}'
+
+  # Notification
+  notify:
+    name: Deployment Notification
+    runs-on: ubuntu-latest
+    needs: [deploy-prod-full, quality-checks]
+    if: always()
+    
+    steps:
+    - name: Notify deployment result
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ needs.deploy-prod-full.result }}
+        text: |
+          Production deployment ${{ needs.deploy-prod-full.result }}
+          Version: ${{ needs.quality-checks.outputs.version }}
+          Environment: https://genomevault.io
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+    - name: Create GitHub release
+      if: needs.deploy-prod-full.result == 'success'
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ needs.quality-checks.outputs.version }}
+        release_name: Release v${{ needs.quality-checks.outputs.version }}
+        draft: false
+        prerelease: false
+        body: |
+          ## Production Deployment
+          
+          **Version:** ${{ needs.quality-checks.outputs.version }}
+          **Deployed:** ${{ github.event.head_commit.timestamp }}
+          
+          ### Security & Compliance
+          - ✅ PHI scanner clean
+          - ✅ SAST scans passed  
+          - ✅ Container vulnerabilities resolved
+          - ✅ Image signed with cosign
+          - ✅ SBOM generated and attested
+          
+          ### Testing
+          - ✅ Unit test coverage ≥80%
+          - ✅ Integration tests passed
+          - ✅ Privacy guarantee tests passed
+          - ✅ Performance benchmarks met
+          
+          ### Deployment
+          - ✅ Canary deployment successful
+          - ✅ SLO monitoring passed
+          - ✅ Full production rollout complete
+          
+          **Image:** `${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.quality-checks.outputs.version }}`

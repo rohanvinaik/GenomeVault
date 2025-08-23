@@ -1,0 +1,11 @@
+# Python dependencies for backup agent
+boto3==1.28.62
+google-cloud-storage==2.10.0
+psycopg2-binary==2.9.9
+cryptography==41.0.5
+python-gnupg==0.5.1
+prometheus-client==0.18.0
+slack-sdk==3.23.0
+pyyaml==6.0.1
+python-dateutil==2.8.2
+retrying==1.3.4

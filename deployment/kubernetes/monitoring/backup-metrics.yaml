@@ -1,0 +1,246 @@
+---
+# ServiceMonitor for backup job metrics
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: backup-metrics
+  namespace: genomevault-backup
+  labels:
+    app: genomevault-backup
+    prometheus: kube-prometheus
+spec:
+  selector:
+    matchLabels:
+      app: genomevault-backup
+  endpoints:
+  - port: metrics
+    interval: 30s
+    path: /metrics
+    scheme: http
+---
+# PrometheusRule for backup alerts
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: backup-alerts
+  namespace: genomevault-backup
+  labels:
+    prometheus: kube-prometheus
+    role: alert-rules
+spec:
+  groups:
+  - name: backup.rules
+    interval: 30s
+    rules:
+    # Alert if backup fails
+    - alert: BackupFailed
+      expr: |
+        increase(genomevault_backup_failures_total[1h]) > 0
+      for: 5m
+      labels:
+        severity: critical
+        component: backup
+      annotations:
+        summary: "Backup failed for {{ $labels.type }}"
+        description: "Backup type {{ $labels.type }} has failed in the last hour"
+        
+    # Alert if no backups in expected time
+    - alert: BackupMissing
+      expr: |
+        time() - genomevault_backup_last_success_timestamp > 3900
+      for: 10m
+      labels:
+        severity: warning
+        component: backup
+      annotations:
+        summary: "No recent backup for {{ $labels.type }}"
+        description: "No successful {{ $labels.type }} backup in the last 65 minutes (expected hourly)"
+        
+    # Alert if backup size anomaly
+    - alert: BackupSizeAnomaly
+      expr: |
+        abs(genomevault_backup_size_bytes - avg_over_time(genomevault_backup_size_bytes[7d])) 
+        > (2 * stddev_over_time(genomevault_backup_size_bytes[7d]))
+      for: 15m
+      labels:
+        severity: warning
+        component: backup
+      annotations:
+        summary: "Backup size anomaly detected"
+        description: "Backup size for {{ $labels.type }} deviates significantly from 7-day average"
+        
+    # Alert if restore test fails
+    - alert: RestoreTestFailed
+      expr: |
+        genomevault_restore_test_success == 0
+      for: 5m
+      labels:
+        severity: critical
+        component: backup
+      annotations:
+        summary: "Disaster recovery test failed"
+        description: "The weekly disaster recovery restore test has failed"
+        
+    # Alert if backup duration exceeds threshold
+    - alert: BackupSlow
+      expr: |
+        histogram_quantile(0.95, rate(genomevault_backup_duration_seconds_bucket[1h])) > 3600
+      for: 30m
+      labels:
+        severity: warning
+        component: backup
+      annotations:
+        summary: "Backup taking too long"
+        description: "95th percentile backup duration for {{ $labels.type }} exceeds 1 hour"
+        
+    # Alert if data integrity check fails
+    - alert: DataIntegrityCheckFailed
+      expr: |
+        increase(genomevault_data_integrity_checks_total{status="failure"}[1h]) > 0
+      for: 5m
+      labels:
+        severity: critical
+        component: backup
+      annotations:
+        summary: "Data integrity check failed"
+        description: "Backup data integrity validation has failed"
+---
+# Grafana Dashboard ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backup-dashboard
+  namespace: genomevault-monitoring
+  labels:
+    grafana_dashboard: "1"
+data:
+  backup-dashboard.json: |
+    {
+      "dashboard": {
+        "title": "GenomeVault Backup Monitoring",
+        "uid": "genomevault-backup",
+        "version": 1,
+        "timezone": "UTC",
+        "panels": [
+          {
+            "id": 1,
+            "title": "Backup Success Rate",
+            "type": "graph",
+            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+            "targets": [
+              {
+                "expr": "rate(genomevault_backup_successes_total[1h]) / rate(genomevault_backup_attempts_total[1h])",
+                "legendFormat": "{{ type }}"
+              }
+            ]
+          },
+          {
+            "id": 2,
+            "title": "Backup Size Trend",
+            "type": "graph",
+            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+            "targets": [
+              {
+                "expr": "genomevault_backup_size_bytes",
+                "legendFormat": "{{ type }}"
+              }
+            ]
+          },
+          {
+            "id": 3,
+            "title": "Backup Duration",
+            "type": "graph",
+            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.95, rate(genomevault_backup_duration_seconds_bucket[1h]))",
+                "legendFormat": "95th percentile - {{ type }}"
+              },
+              {
+                "expr": "histogram_quantile(0.50, rate(genomevault_backup_duration_seconds_bucket[1h]))",
+                "legendFormat": "50th percentile - {{ type }}"
+              }
+            ]
+          },
+          {
+            "id": 4,
+            "title": "Restore Test Status",
+            "type": "singlestat",
+            "gridPos": {"h": 4, "w": 6, "x": 12, "y": 8},
+            "targets": [
+              {
+                "expr": "genomevault_restore_test_success"
+              }
+            ],
+            "format": "none",
+            "thresholds": "0.5,1",
+            "colors": ["red", "yellow", "green"],
+            "colorBackground": true
+          },
+          {
+            "id": 5,
+            "title": "Failed Backups (24h)",
+            "type": "singlestat",
+            "gridPos": {"h": 4, "w": 6, "x": 18, "y": 8},
+            "targets": [
+              {
+                "expr": "sum(increase(genomevault_backup_failures_total[24h]))"
+              }
+            ],
+            "format": "none",
+            "thresholds": "1,5",
+            "colors": ["green", "yellow", "red"],
+            "colorBackground": true
+          },
+          {
+            "id": 6,
+            "title": "Data Integrity Checks",
+            "type": "graph",
+            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12},
+            "targets": [
+              {
+                "expr": "rate(genomevault_data_integrity_checks_total[1h])",
+                "legendFormat": "{{ status }}"
+              }
+            ]
+          },
+          {
+            "id": 7,
+            "title": "Backup Schedule Adherence",
+            "type": "table",
+            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+            "targets": [
+              {
+                "expr": "time() - genomevault_backup_last_success_timestamp",
+                "format": "table",
+                "instant": true
+              }
+            ],
+            "columns": [
+              {"text": "Type", "value": "type"},
+              {"text": "Time Since Last Backup", "value": "Value"}
+            ]
+          }
+        ],
+        "refresh": "30s",
+        "time": {
+          "from": "now-24h",
+          "to": "now"
+        }
+      }
+    }
+---
+# PodMonitor for backup agent metrics
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: backup-agent-metrics
+  namespace: genomevault-backup
+spec:
+  selector:
+    matchLabels:
+      app: genomevault-backup
+  podMetricsEndpoints:
+  - port: metrics
+    interval: 30s
+    path: /metrics

@@ -1,0 +1,353 @@
+---
+# HSM/KMS Integration Configuration for GenomeVault
+# Supports AWS CloudHSM, GCP Cloud HSM, Azure Dedicated HSM, and on-premise HSM devices
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: genomevault-hsm-config
+  namespace: genomevault
+data:
+  # HSM Provider Configuration
+  hsm-config.yaml: |
+    # Primary HSM configuration
+    primary:
+      provider: aws-cloudhsm  # aws-cloudhsm, gcp-cloudhsm, azure-hsm, pkcs11, tpm
+      cluster_id: cluster-genomevault-prod
+      region: us-east-1
+      high_availability: true
+      load_balancing: round-robin
+      
+      # AWS CloudHSM specific
+      aws:
+        hsm_ca_cert: /etc/hsm/customerCA.crt
+        server_client_cert: /etc/hsm/client.crt
+        server_client_key: /etc/hsm/client.key
+        mtls_enabled: true
+        
+      # Connection settings
+      connection:
+        timeout_ms: 5000
+        retry_count: 3
+        keepalive: true
+        pool_size: 10
+    
+    # Backup HSM for disaster recovery
+    backup:
+      provider: gcp-cloudhsm
+      project_id: genomevault-dr
+      location: us-central1
+      key_ring: genomevault-backup
+      
+    # PKCS#11 configuration for on-premise HSM
+    pkcs11:
+      library_path: /usr/lib/softhsm/libsofthsm2.so
+      slot_id: 0
+      user_pin_secret: genomevault-hsm-pin  # Reference to Kubernetes secret
+      
+    # Key hierarchy
+    keys:
+      master:
+        algorithm: AES-256-GCM
+        purpose: ENCRYPT_DECRYPT
+        rotation_period: 90d
+        versions_to_keep: 5
+        
+      phi_encryption:
+        algorithm: AES-256-GCM
+        purpose: ENCRYPT_DECRYPT
+        rotation_period: 30d
+        versions_to_keep: 10
+        compliance: HIPAA
+        
+      signing:
+        algorithm: RSA-4096
+        purpose: ASYMMETRIC_SIGN
+        rotation_period: 365d
+        versions_to_keep: 3
+        
+      blockchain:
+        algorithm: ECDSA-P256
+        purpose: ASYMMETRIC_SIGN
+        rotation_period: never  # Blockchain keys should not rotate
+        
+    # Compliance settings
+    compliance:
+      fips_140_2_level: 3
+      common_criteria: EAL4+
+      audit_logging: true
+      key_attestation: true
+      secure_key_injection: true
+      
+    # Performance settings
+    performance:
+      cache_enabled: true
+      cache_ttl_seconds: 300
+      batch_size: 100
+      parallel_operations: 10
+      
+    # Monitoring
+    monitoring:
+      metrics_enabled: true
+      metrics_port: 9091
+      health_check_interval: 30s
+      alert_on_failure: true
+---
+# KMS Integration for Cloud Providers
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: genomevault-kms-config
+  namespace: genomevault
+data:
+  kms-config.yaml: |
+    # AWS KMS Configuration
+    aws_kms:
+      enabled: true
+      region: us-east-1
+      
+      # Key aliases for different purposes
+      keys:
+        genomevault-master:
+          arn: arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012
+          purpose: master_key
+          grant_tokens: []
+          
+        genomevault-phi:
+          arn: arn:aws:kms:us-east-1:123456789012:key/87654321-4321-4321-4321-210987654321
+          purpose: phi_encryption
+          grant_tokens: []
+          
+        genomevault-database:
+          arn: arn:aws:kms:us-east-1:123456789012:key/11111111-2222-3333-4444-555555555555
+          purpose: database_encryption
+          
+      # Encryption context for additional security
+      encryption_context:
+        application: genomevault
+        environment: production
+        compliance: hipaa
+        
+      # Key policies
+      key_policy:
+        enable_iam_user_permissions: false
+        key_administrators:
+        - arn:aws:iam::123456789012:role/genomevault-kms-admin
+        key_users:
+        - arn:aws:iam::123456789012:role/genomevault-app
+        
+    # GCP Cloud KMS Configuration
+    gcp_kms:
+      enabled: true
+      project_id: genomevault-production
+      location: global
+      
+      # Key rings and keys
+      key_rings:
+        genomevault-primary:
+          location: us-central1
+          keys:
+            master-key:
+              purpose: ENCRYPT_DECRYPT
+              algorithm: GOOGLE_SYMMETRIC_ENCRYPTION
+              rotation_period: 7776000s  # 90 days
+              
+            phi-key:
+              purpose: ENCRYPT_DECRYPT
+              algorithm: GOOGLE_SYMMETRIC_ENCRYPTION
+              rotation_period: 2592000s  # 30 days
+              labels:
+                compliance: hipaa
+                data_classification: phi
+                
+            signing-key:
+              purpose: ASYMMETRIC_SIGN
+              algorithm: RSA_SIGN_PKCS1_4096_SHA512
+              
+    # Azure Key Vault Configuration
+    azure_keyvault:
+      enabled: false
+      vault_name: genomevault-prod-kv
+      tenant_id: 12345678-1234-1234-1234-123456789012
+      
+      # Managed HSM settings
+      managed_hsm:
+        name: genomevaulthsm
+        security_domain_quorum: 3
+        security_domain_shares: 5
+        
+      keys:
+        master-key:
+          key_type: RSA-HSM
+          key_size: 4096
+          key_ops:
+          - encrypt
+          - decrypt
+          - wrapKey
+          - unwrapKey
+          
+    # HashiCorp Vault Transit Engine
+    vault_transit:
+      enabled: true
+      address: https://vault.genomevault.internal:8200
+      namespace: genomevault
+      
+      # Transit keys
+      keys:
+        genomevault-master:
+          type: aes256-gcm96
+          derived: false
+          exportable: false
+          allow_plaintext_backup: false
+          
+        genomevault-phi:
+          type: aes256-gcm96
+          derived: true  # Enable key derivation for per-record encryption
+          convergent_encryption: true
+          exportable: false
+          min_decryption_version: 1
+          min_encryption_version: 1
+          
+      # Auto-unseal configuration using KMS
+      auto_unseal:
+        provider: awskms
+        kms_key_id: arn:aws:kms:us-east-1:123456789012:key/vault-unseal
+---
+# HSM Operator Configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hsm-operator-config
+  namespace: genomevault
+data:
+  operator-config.yaml: |
+    # HSM Operator settings for automated key management
+    operator:
+      # Automatic key rotation
+      rotation:
+        enabled: true
+        check_interval: 1h
+        
+      # Key lifecycle management
+      lifecycle:
+        auto_create_keys: true
+        auto_delete_old_versions: true
+        retention_period: 7y  # HIPAA requirement
+        
+      # Backup and recovery
+      backup:
+        enabled: true
+        schedule: "0 2 * * *"  # Daily at 2 AM
+        destination: s3://genomevault-hsm-backups
+        encryption: true
+        retention: 30d
+        
+      # Monitoring and alerting
+      monitoring:
+        prometheus_enabled: true
+        alert_rules:
+        - name: hsm_connectivity_lost
+          expr: up{job="hsm"} == 0
+          for: 5m
+          severity: critical
+          
+        - name: key_rotation_overdue
+          expr: time() - hsm_key_last_rotation_timestamp > 7776000
+          for: 1h
+          severity: warning
+          
+        - name: hsm_capacity_low
+          expr: hsm_available_slots < 100
+          for: 10m
+          severity: warning
+---
+# HSM Deployment for Local Testing (SoftHSM)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: softhsm-proxy
+  namespace: genomevault
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: softhsm-proxy
+  template:
+    metadata:
+      labels:
+        app: softhsm-proxy
+        app.kubernetes.io/name: hsm-proxy
+    spec:
+      containers:
+      - name: softhsm
+        image: genomevault/softhsm-proxy:latest
+        ports:
+        - name: pkcs11
+          containerPort: 11111
+          protocol: TCP
+        
+        env:
+        - name: SOFTHSM2_CONF
+          value: /etc/softhsm/softhsm2.conf
+        - name: PKCS11_PROXY_SOCKET
+          value: tcp://0.0.0.0:11111
+        
+        volumeMounts:
+        - name: softhsm-config
+          mountPath: /etc/softhsm
+        - name: softhsm-tokens
+          mountPath: /var/lib/softhsm/tokens
+        
+        livenessProbe:
+          exec:
+            command:
+            - pkcs11-tool
+            - --module=/usr/lib/softhsm/libsofthsm2.so
+            - -I
+          initialDelaySeconds: 10
+          periodSeconds: 30
+        
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+      
+      volumes:
+      - name: softhsm-config
+        configMap:
+          name: softhsm-config
+      - name: softhsm-tokens
+        persistentVolumeClaim:
+          claimName: softhsm-tokens
+---
+# SoftHSM Configuration for Testing
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: softhsm-config
+  namespace: genomevault
+data:
+  softhsm2.conf: |
+    # SoftHSM v2 configuration file
+    directories.tokendir = /var/lib/softhsm/tokens/
+    objectstore.backend = file
+    log.level = INFO
+    slots.removable = false
+    slots.mechanisms = ALL
+---
+# PVC for SoftHSM tokens
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: softhsm-tokens
+  namespace: genomevault
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: standard

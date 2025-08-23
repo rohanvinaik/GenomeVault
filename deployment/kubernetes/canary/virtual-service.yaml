@@ -1,0 +1,329 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: genomevault-vs
+  namespace: genomevault
+  labels:
+    app: genomevault
+    component: api
+  annotations:
+    canary.deployment/traffic-split: "stable:95,canary:5"
+    canary.deployment/metrics: "request_success_rate,request_duration"
+spec:
+  hosts:
+  - genomevault.io
+  - api.genomevault.io
+  - genomevault-api.genomevault.svc.cluster.local
+  
+  gateways:
+  - genomevault-gateway
+  - mesh
+  
+  http:
+  # Health check routes (always to stable)
+  - match:
+    - uri:
+        prefix: /health
+    route:
+    - destination:
+        host: genomevault-api.genomevault.svc.cluster.local
+        subset: stable
+      weight: 100
+    headers:
+      response:
+        add:
+          x-canary-route: health-check
+  
+  # Admin routes (always to stable for consistency)
+  - match:
+    - uri:
+        prefix: /admin
+    route:
+    - destination:
+        host: genomevault-api.genomevault.svc.cluster.local
+        subset: stable
+      weight: 100
+    headers:
+      response:
+        add:
+          x-canary-route: admin
+  
+  # PIR query routes with traffic splitting
+  - match:
+    - uri:
+        prefix: /api/v1/pir
+    route:
+    - destination:
+        host: genomevault-api.genomevault.svc.cluster.local
+        subset: stable
+      weight: 95
+      headers:
+        response:
+          add:
+            x-canary-route: stable
+            x-canary-version: stable
+    - destination:
+        host: genomevault-api.genomevault.svc.cluster.local
+        subset: canary
+      weight: 5
+      headers:
+        response:
+          add:
+            x-canary-route: canary
+            x-canary-version: canary
+    timeout: 10s
+    retries:
+      attempts: 3
+      perTryTimeout: 3s
+      retryOn: 5xx,reset,connect-failure,refused-stream
+  
+  # ZK proof routes with traffic splitting
+  - match:
+    - uri:
+        prefix: /api/v1/zk
+    route:
+    - destination:
+        host: genomevault-api.genomevault.svc.cluster.local
+        subset: stable
+      weight: 95
+    - destination:
+        host: genomevault-api.genomevault.svc.cluster.local
+        subset: canary
+      weight: 5
+    timeout: 30s
+    retries:
+      attempts: 2
+      perTryTimeout: 10s
+      retryOn: 5xx,reset,connect-failure
+  
+  # Hypervector encoding routes
+  - match:
+    - uri:
+        prefix: /api/v1/hv
+    route:
+    - destination:
+        host: genomevault-api.genomevault.svc.cluster.local
+        subset: stable
+      weight: 95
+    - destination:
+        host: genomevault-api.genomevault.svc.cluster.local
+        subset: canary
+      weight: 5
+    timeout: 5s
+    retries:
+      attempts: 3
+      perTryTimeout: 2s
+      retryOn: 5xx,reset,connect-failure
+  
+  # All other API routes
+  - match:
+    - uri:
+        prefix: /api
+    route:
+    - destination:
+        host: genomevault-api.genomevault.svc.cluster.local
+        subset: stable
+      weight: 95
+    - destination:
+        host: genomevault-api.genomevault.svc.cluster.local
+        subset: canary
+      weight: 5
+    timeout: 15s
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: 5xx,reset,connect-failure,refused-stream
+    fault:
+      delay:
+        # Add 1ms delay to canary for A/B testing
+        percentage:
+          value: 0.1
+        fixedDelay: 1ms
+  
+  # Default route (catch-all)
+  - route:
+    - destination:
+        host: genomevault-api.genomevault.svc.cluster.local
+        subset: stable
+      weight: 100
+    headers:
+      response:
+        add:
+          x-canary-route: default
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: genomevault-dr
+  namespace: genomevault
+  labels:
+    app: genomevault
+    component: api
+spec:
+  host: genomevault-api.genomevault.svc.cluster.local
+  
+  trafficPolicy:
+    loadBalancer:
+      simple: LEAST_CONN
+    connectionPool:
+      tcp:
+        maxConnections: 100
+        connectTimeout: 30s
+      http:
+        http1MaxPendingRequests: 50
+        http2MaxRequests: 100
+        maxRequestsPerConnection: 10
+        maxRetries: 3
+        idleTimeout: 60s
+        h2UpgradePolicy: UPGRADE
+    outlierDetection:
+      consecutive5xxErrors: 3
+      consecutiveGatewayErrors: 3
+      interval: 30s
+      baseEjectionTime: 30s
+      maxEjectionPercent: 50
+      minHealthPercent: 30
+  
+  subsets:
+  - name: stable
+    labels:
+      version: stable
+    trafficPolicy:
+      portLevelSettings:
+      - port:
+          number: 8000
+        loadBalancer:
+          simple: ROUND_ROBIN
+        connectionPool:
+          tcp:
+            maxConnections: 50
+          http:
+            http1MaxPendingRequests: 30
+            maxRequestsPerConnection: 5
+        outlierDetection:
+          consecutive5xxErrors: 5
+          interval: 60s
+          baseEjectionTime: 60s
+  
+  - name: canary
+    labels:
+      version: canary
+    trafficPolicy:
+      portLevelSettings:
+      - port:
+          number: 8000
+        loadBalancer:
+          simple: ROUND_ROBIN
+        connectionPool:
+          tcp:
+            maxConnections: 20
+          http:
+            http1MaxPendingRequests: 15
+            maxRequestsPerConnection: 3
+        outlierDetection:
+          consecutive5xxErrors: 2  # More sensitive for canary
+          interval: 30s
+          baseEjectionTime: 30s
+          maxEjectionPercent: 100  # Allow full ejection of canary
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: ServiceEntry
+metadata:
+  name: genomevault-external-deps
+  namespace: genomevault
+spec:
+  hosts:
+  - external-pir-server-1.genomevault.io
+  - external-pir-server-2.genomevault.io
+  ports:
+  - number: 443
+    name: https
+    protocol: HTTPS
+  - number: 8081
+    name: pir
+    protocol: TCP
+  location: MESH_EXTERNAL
+  resolution: DNS
+
+---
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: genomevault-mtls
+  namespace: genomevault
+spec:
+  selector:
+    matchLabels:
+      app: genomevault
+  mtls:
+    mode: STRICT
+
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: genomevault-authz
+  namespace: genomevault
+spec:
+  selector:
+    matchLabels:
+      app: genomevault
+      component: api
+  rules:
+  # Allow health checks from anywhere
+  - to:
+    - operation:
+        paths: ["/health/*", "/metrics", "/ready", "/live"]
+  
+  # Allow API access from authenticated sources
+  - from:
+    - source:
+        principals: ["cluster.local/ns/genomevault/sa/genomevault-client"]
+    - source:
+        principals: ["cluster.local/ns/istio-system/sa/istio-proxy"]
+    to:
+    - operation:
+        paths: ["/api/*"]
+  
+  # Allow internal service mesh communication
+  - from:
+    - source:
+        principals: ["cluster.local/ns/genomevault/sa/*"]
+    to:
+    - operation:
+        paths: ["/*"]
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: Telemetry
+metadata:
+  name: genomevault-canary-metrics
+  namespace: genomevault
+spec:
+  selector:
+    matchLabels:
+      app: genomevault
+      component: api
+  metrics:
+  - providers:
+    - name: prometheus
+  - overrides:
+    - match:
+        metric: ALL_METRICS
+      tagOverrides:
+        canary_version:
+          operation: UPSERT
+          value: |
+            has(request.headers['x-canary-version']) ? request.headers['x-canary-version'] : 'stable'
+        deployment_type:
+          operation: UPSERT  
+          value: |
+            has(destination.labels['deployment']) ? destination.labels['deployment'] : 'stable'
+  tracing:
+  - providers:
+    - name: jaeger
+  accessLogging:
+  - providers:
+    - name: otel

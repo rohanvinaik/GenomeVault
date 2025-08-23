@@ -1,167 +1,131 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Quick reference for Claude Code when working with the GenomeVault codebase.
 
 ## Project Overview
 
-GenomeVault is a privacy-preserving genomic computing platform that uses hyperdimensional computing (HDC), Kolmogorov-Arnold Networks (KAN), zero-knowledge proofs, and federated learning to enable secure genomic data analysis. The system achieves 50-100× compression while maintaining privacy and interpretability.
+GenomeVault: Privacy-preserving genomic computing platform using hyperdimensional computing (HDC), Kolmogorov-Arnold Networks (KAN), zero-knowledge proofs, and federated learning. Achieves 50-100× compression with mathematical privacy guarantees.
 
-## Key Architecture Components
+## Quick Start
 
-### Core Modules
-- `genomevault/hypervector/` - Hyperdimensional encoding and operations for privacy-preserving genomic vectors
-- `genomevault/kan/` - Kolmogorov-Arnold Network implementation for interpretable compression
-- `genomevault/zk_proofs/` - Zero-knowledge proof generation and verification
-- `genomevault/pir/` - Private Information Retrieval implementations
-- `genomevault/federated/` - Federated learning infrastructure
-- `genomevault/nanopore/` - Real-time nanopore sequencing support
-- `genomevault/blockchain/` - Blockchain governance and decentralized control
-
-### Important Design Patterns
-- HD encoding transforms genomic variants into high-dimensional vectors (typically 10,000-100,000 dimensions)
-- KAN-HD hybrid architecture combines spline functions with HD vectors for interpretable compression
-- Hamming distance operations are optimized using lookup tables (LUTs)
-- Privacy is maintained through mathematical guarantees, not just encryption
-
-## Development Commands
-
-### Environment Setup
 ```bash
-# Create and activate virtual environment
-python -m venv venv
-source venv/bin/activate  # On macOS/Linux
+# Setup
+python -m venv venv && source venv/bin/activate
+pip install -e ".[dev]"  # or ".[full]" for all features
 
-# Install dependencies
-pip install -e .                    # Basic installation
-pip install -e ".[dev]"             # Development tools
-pip install -e ".[ml,zk,nanopore]"  # With ML, ZK proofs, and nanopore support
-pip install -e ".[full]"            # All optional dependencies
+# Run API
+uvicorn genomevault.api.main:app --reload --port 8000
+
+# Run tests & checks
+make test        # or: pytest
+make lint        # or: ruff check . && ruff format .
+make typecheck   # or: mypy genomevault
+
+# Database setup
+alembic upgrade head
+python scripts/seed_data.py  # Load test data
 ```
 
-### Common Development Tasks
-```bash
-# Run tests
-pytest                              # Run all tests
-pytest tests/test_hypervector.py    # Run specific test file
-pytest -k "test_encoding"           # Run tests matching pattern
-pytest -v --cov=genomevault         # Run with coverage
+## Core Architecture
 
-# Linting and formatting
-ruff check .                        # Run linter
-ruff format .                       # Format code
-mypy genomevault                    # Type checking
-
-# Using Makefile shortcuts
-make test                           # Run test suite
-make lint                           # Run linting
-make fmt                            # Format code (if black/isort installed)
-
-# Docker operations
-make build                          # Build Docker image
-make run                            # Run API in foreground
-make up                             # Start API detached
-make down                           # Stop services
+```
+genomevault/
+├── api/              # FastAPI endpoints, OAuth2/OIDC auth
+├── hypervector/      # HD encoding (10K-100K dimensions)
+├── kan/              # KAN compression with splines
+├── zk_proofs/        # Zero-knowledge proof circuits
+├── federated/        # Federated learning
+├── pir/              # Private information retrieval
+├── clinical/         # Clinical evaluation & calibration
+├── blockchain/       # Governance & audit trail
+└── models/           # SQLAlchemy models (partitioned tables)
 ```
 
-### Running Benchmarks
+## Essential Commands
+
 ```bash
-python scripts/bench.py             # General benchmarks
-python scripts/bench_hdc.py         # HD computing benchmarks
-python scripts/bench_pir.py         # PIR benchmarks
-python scripts/generate_perf_report.py  # Generate performance report
+# Development
+pytest tests/test_hypervector.py  # Run specific tests
+ruff check --fix .                 # Auto-fix linting issues
+python scripts/bench_hdc.py        # Performance benchmarks
+
+# Database operations
+alembic revision --autogenerate -m "description"
+python scripts/backup_restore.sh --backup full
+
+# Docker/K8s
+docker-compose up -d
+kubectl apply -f deployment/kubernetes/
 ```
 
-### Code Analysis
-```bash
-python scripts/analyze_complexity.py    # Analyze code complexity
-radon cc genomevault -s                # Cyclomatic complexity
-```
+## Key Features & Usage
 
-## Project Configuration
-
-### Key Configuration Files
-- `pyproject.toml` - Main project configuration, dependencies, and tool settings
-- `.ruff.toml` - Linting and formatting rules (line length: 100, Python 3.11+)
-- `.mypy.ini` - Type checking configuration (strict mode enabled)
-- `.env.example` - Environment variables template
-
-### Dependency Groups
-- `dev` - Development tools (ruff, mypy, pytest, radon)
-- `ml` - Machine learning (torch, scikit-learn, numpy)
-- `zk` - Zero-knowledge proofs (pysnark)
-- `nanopore` - Nanopore sequencing (ont-fast5-api, pyslow5)
-- `gpu` - GPU acceleration (cupy)
-
-## Testing Strategy
-
-Tests are organized by module in the `tests/` directory. Key test areas:
-- Hypervector encoding correctness
-- Privacy preservation guarantees
-- Compression/decompression accuracy
-- Zero-knowledge proof verification
-- Federated learning convergence
-
-Run tests for specific modules:
-```bash
-pytest tests/test_hypervector_encoding.py
-pytest tests/test_zk_proofs.py
-pytest tests/test_federated_learning.py
-```
-
-## Common Issues and Solutions
-
-### Import Errors
-The codebase has some import issues (e.g., missing `ProjectionError`). When encountering import errors:
-1. Check if the exception/class exists in the target module
-2. Create it if missing or update the import path
-3. Common missing imports are in `genomevault/core/exceptions.py`
-
-### Performance Optimization
-- HD operations use Hamming LUTs for 10-20× speedup
-- Batch operations are preferred over individual computations
-- GPU acceleration available via cupy for large-scale operations
-
-## CLI Usage
-The project provides two CLI entry points:
-```bash
-genomevault [command]  # Full command
-gv [command]          # Shorthand
-```
-
-## Working with Genomic Data
-
-### Input Formats
-- VCF files for variant data
-- FASTA/FASTQ for sequence data
-- BED files for genomic regions
-- Custom SNP panels via JSON
+### API Endpoints
+- `POST /hv/encode` - Encode genomic data to hypervector
+- `GET /health` - System health check with auth
+- OAuth2 flows at `/auth/token`, `/auth/refresh`
 
 ### Accuracy Modes
-The system supports different accuracy levels via SNP panel selection:
-- `OFF` - Basic screening (90-95% single run)
-- `COMMON` - Epidemiology (95-98% single run)
-- `CLINICAL` - Clinical diagnostics (98-99.5% single run)
-- `KAN-HD` - Regulatory approval (99%+ single run)
+- `OFF`: 90-95% (basic screening)
+- `COMMON`: 95-98% (epidemiology)  
+- `CLINICAL`: 98-99.5% (diagnostics)
+- `KAN-HD`: 99%+ (regulatory)
 
-Multiple runs exponentially increase accuracy due to mathematical error convergence.
+### Environment Variables
+```bash
+DATABASE_URL=postgresql://user:pass@localhost/genomevault
+JWT_SECRET_KEY=your-secret-key
+ENABLE_MFA=true
+S3_BACKUP_BUCKET=genomevault-backups
+```
 
-## Security and Privacy
+## Common Tasks
 
-- Never commit sensitive data or API keys
-- All genomic data operations maintain privacy through HD encoding
-- Zero-knowledge proofs enable verification without data exposure
-- Federated learning keeps data distributed and private
+### Fix Import Errors
+```python
+# Missing imports usually in:
+genomevault/core/exceptions.py  # Add custom exceptions here
+```
 
-## Branch Strategy
+### Add New Feature
+1. Create feature branch from `main`
+2. Add tests in `tests/`
+3. Run `make lint test` before commit
+4. Ensure migrations if DB changes
 
-Current branch workflow suggests:
-- `main` - Main development branch (use for PRs)
-- `chore/lint-sweep` - Current cleanup branch
-- Feature branches for new development
+### Deploy Updates
+```bash
+# Build and push Docker image
+docker build -t genomevault/api:latest .
+docker push genomevault/api:latest
 
-## Note on Current State
+# Update Kubernetes
+kubectl set image deployment/genomevault-api api=genomevault/api:latest
+```
 
-The repository is undergoing a linting cleanup (see git status). There are:
-- Deleted backup files in `.cleanup_backups/`
-- Active refactoring to improve code quality
-- Some import errors that need resolution
+## Performance Tips
+- Use Hamming LUTs for 10-20× speedup
+- Batch operations over individual calls
+- Enable GPU with `pip install -e ".[gpu]"`
+
+## Security Checklist
+- [ ] No secrets in code (use `.env`)
+- [ ] HD encoding for all genomic data
+- [ ] Audit logs for PHI access
+- [ ] Encrypted backups (AES-256)
+- [ ] HIPAA compliance (7-year retention)
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Import errors | Check `genomevault/core/exceptions.py` |
+| Slow HD ops | Enable LUTs, use batch operations |
+| Auth failures | Verify JWT_SECRET_KEY, check token expiry |
+| DB connection | Check DATABASE_URL, run migrations |
+| Backup fails | Verify S3/GCS credentials, check disk space |
+
+## Current Status
+- Branch: `clean-slate` (PR target: `main`)
+- Modified: `genomevault/zk_proofs/` files
+- Pending: Some import fixes needed
