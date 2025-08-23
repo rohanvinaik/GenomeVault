@@ -65,7 +65,7 @@
 
 ### CI/CD Pipeline
 - Multi-stage pipeline (lint, test, security, build)
-- Python 3.9, 3.10, 3.11 compatibility testing
+- Python 3.11 compatibility testing
 - Security scanning with Bandit and Semgrep
 - Docker build and smoke tests
 
