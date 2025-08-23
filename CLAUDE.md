@@ -103,6 +103,76 @@ docker push genomevault/api:latest
 kubectl set image deployment/genomevault-api api=genomevault/api:latest
 ```
 
+## End-to-End Pipeline Testing
+
+### Quick E2E Test
+```bash
+# Run comprehensive E2E test with full statistics
+python run_e2e_test.py
+
+# Or use the CLI for component testing
+genomevault demo run --type full
+```
+
+### Manual E2E Pipeline
+```bash
+# 1. Encode genomic data
+echo '[1.5, 2.3, 0.8, 3.2, 1.1]' > expression.json
+genomevault hdc encode --json expression.json --dimension 1000 --out encoded.json
+
+# 2. Compare vectors
+genomevault hdc compare --v1 encoded1.json --v2 encoded2.json --metric all
+
+# 3. Start PIR server
+echo '["record1", "record2", "record3"]' > database.json
+genomevault pir serve --data database.json --port 8001
+
+# 4. Query PIR server
+genomevault pir query --servers "http://localhost:8001" --index 1
+
+# 5. Generate ZK proof (requires setup files)
+genomevault zk build --circuit-type variant
+genomevault zk prove --public pub.json --private priv.json
+genomevault zk verify --proof proof.json --public pub.json
+```
+
+### Python E2E Example
+```python
+from genomevault.hypervector_transform.encoding import HypervectorEncoder, HypervectorConfig
+from genomevault.core.constants import OmicsType
+from genomevault.pir.servers import PIRServer
+from genomevault.zk_proofs.prover import Prover
+import numpy as np
+
+# 1. HDC Encoding
+config = HypervectorConfig(dimension=1000)
+encoder = HypervectorEncoder(config=config)
+data = np.array([1.0, 2.0, 3.0, 4.0, 5.0], dtype=np.float32)
+encoded = encoder.encode(data, OmicsType.GENOMIC)
+
+# 2. PIR Storage & Retrieval
+records = [b"variant1", b"variant2", b"variant3"]
+server = PIRServer(records)
+mask = np.zeros(len(records), dtype=np.uint8)
+mask[1] = 1  # Retrieve second record privately
+result = server.answer(mask)
+
+# 3. ZK Proof
+prover = Prover()
+public = {"threshold": 0.5}
+private = {"actual": 0.75}
+# proof = prover.prove_variant(public, private)  # Requires complete inputs
+
+print(f"✅ E2E Pipeline Complete")
+print(f"  HDC Vector: {encoded.shape if hasattr(encoded, 'shape') else len(encoded)} dimensions")
+print(f"  PIR Result: {result.rstrip(b'\\0').decode()}")
+```
+
+### E2E Test Results Location
+- Comprehensive results: `genomevault_e2e_results.json`
+- CLI demo output: `/tmp/demo_output/`
+- Test artifacts: `/tmp/encoded_vector.json`
+
 ## Performance Tips
 - Use Hamming LUTs for 10-20× speedup
 - Batch operations over individual calls
