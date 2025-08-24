@@ -1,0 +1,103 @@
+{
+  "timestamp": "2025-08-24T14:28:20.921096",
+  "components": {
+    "hdc_encoding": {
+      "status": "success",
+      "metrics": [
+        {
+          "dimension": 1000,
+          "encoding_time_ms": 21.79,
+          "sparsity": 0.483,
+          "compression_ratio": "3.2x"
+        },
+        {
+          "dimension": 8192,
+          "encoding_time_ms": 1.6,
+          "sparsity": 0.501,
+          "compression_ratio": "0.4x"
+        },
+        {
+          "dimension": 16384,
+          "encoding_time_ms": 1.77,
+          "sparsity": 0.5,
+          "compression_ratio": "0.2x"
+        }
+      ],
+      "hardware": "CPU"
+    },
+    "zk_proofs": {
+      "status": "success",
+      "metrics": [
+        {
+          "size": "small",
+          "generation_time_ms": 40.78,
+          "backend": "mock"
+        },
+        {
+          "size": "medium",
+          "generation_time_ms": 47.92,
+          "backend": "mock"
+        },
+        {
+          "size": "large",
+          "generation_time_ms": 18.15,
+          "backend": "mock"
+        }
+      ]
+    },
+    "pir": {
+      "status": "success",
+      "metrics": [
+        {
+          "database_size": 100,
+          "query_time_ms": 0.1,
+          "protocol": "IT-PIR"
+        },
+        {
+          "database_size": 1000,
+          "query_time_ms": 0.7,
+          "protocol": "IT-PIR"
+        },
+        {
+          "database_size": 10000,
+          "query_time_ms": 7.12,
+          "protocol": "IT-PIR"
+        }
+      ]
+    },
+    "database": {
+      "status": "success",
+      "metrics": [
+        {
+          "operation": "batch_insert",
+          "count": 100,
+          "time_ms": 0.46,
+          "per_record_ms": 0.0046
+        },
+        {
+          "operation": "batch_insert",
+          "count": 1000,
+          "time_ms": 1.26,
+          "per_record_ms": 0.0013
+        },
+        {
+          "operation": "batch_insert",
+          "count": 5000,
+          "time_ms": 4.55,
+          "per_record_ms": 0.0009
+        }
+      ]
+    },
+    "federated_learning": {
+      "status": "success",
+      "aggregation_time_ms": 0.02,
+      "num_clients": 3
+    }
+  },
+  "metrics": {},
+  "pipeline_performance": {
+    "status": "success",
+    "total_time_ms": 7.79,
+    "throughput": "128.39 genomes/second"
+  }
+}

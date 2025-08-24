@@ -1,0 +1,36 @@
+{
+  "timestamp": "2025-08-24T14:18:47.319437",
+  "components": {
+    "hdc_encoding": {
+      "status": "fallback",
+      "error": "mean() received an invalid combination of arguments - got (out=NoneType, dtype=NoneType, axis=NoneType, ), but expected one of:\n * (*, torch.dtype dtype)\n * (tuple of ints dim, bool keepdim, *, torch.dtype dtype)\n * (tuple of names dim, bool keepdim, *, torch.dtype dtype)\n",
+      "stats": {
+        "dimension": 1000,
+        "sparsity": 0.6,
+        "encoding_time_ms": 50
+      }
+    },
+    "zk_proof": {
+      "status": "success",
+      "proof_time_ms": 0.003,
+      "circuit_type": "variant_presence"
+    },
+    "pir_protocol": {
+      "status": "fallback",
+      "error": "'list' object has no attribute 'num_servers'",
+      "query_time_ms": 10,
+      "result": "mock_record"
+    },
+    "database": {
+      "status": "success",
+      "operation_time_ms": 1.224,
+      "variants_stored": 3
+    }
+  },
+  "performance": {
+    "success_rate": 0.5,
+    "total_components": 4,
+    "successful_components": 2
+  },
+  "status": "completed"
+}
