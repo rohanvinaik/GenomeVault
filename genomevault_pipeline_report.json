@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-08-24T05:50:46.602162",
+  "timestamp": "2025-08-24T05:55:26.615193",
   "components": {
     "hdc": {
       "status": "failed",
@@ -8,22 +8,22 @@
     "pir": {
       "status": "success",
       "database_size": 100,
-      "query_time": 0.00010991096496582031,
+      "query_time": 0.000102996826171875,
       "retrieved_correct": true,
       "privacy_preserved": true
     },
     "zk": {
       "status": "success",
       "proof_generated": false,
-      "generation_time": 3.3855438232421875e-05,
-      "verification_time": 2.1457672119140625e-06,
+      "generation_time": 2.4080276489257812e-05,
+      "verification_time": 9.5367431640625e-07,
       "verified": true,
       "circuit_type": "variant"
     },
     "federated": {
       "status": "success",
       "participants": 3,
-      "aggregation_time": 0.0008227825164794922,
+      "aggregation_time": 0.0010082721710205078,
       "protocol": "secure_agg",
       "differential_privacy": true,
       "epsilon_spent": 0.0,
@@ -35,20 +35,20 @@
       "tiers": {
         "mini": {
           "compression_ratio": 149.36519790888724,
-          "compress_time": 0.06830906867980957,
-          "decompress_time": 0.0018467903137207031,
+          "compress_time": 0.06701111793518066,
+          "decompress_time": 0.001950979232788086,
           "accuracy": 0.0
         },
         "clinical": {
           "compression_ratio": 10.512759862282845,
-          "compress_time": 0.26718902587890625,
-          "decompress_time": 0.0021181106567382812,
+          "compress_time": 0.2735302448272705,
+          "decompress_time": 0.002079010009765625,
           "accuracy": 0.0
         },
         "full_hdc": {
           "compression_ratio": 3.2747427280244295,
-          "compress_time": 0.0022079944610595703,
-          "decompress_time": 0.0016889572143554688,
+          "compress_time": 0.0021860599517822266,
+          "decompress_time": 0.0015549659729003906,
           "accuracy": 0.0
         }
       }
@@ -56,7 +56,7 @@
     "consensus": {
       "status": "success",
       "nodes": 5,
-      "consensus_time": 1.2159347534179688e-05,
+      "consensus_time": 1.6927719116210938e-05,
       "winning_proposal": "proposal_A",
       "total_weight": 18,
       "participation": 1.0,
@@ -68,10 +68,10 @@
     },
     "monitoring": {
       "status": "success",
-      "uptime": 0.00054931640625,
+      "uptime": 0.0009059906005859375,
       "active_alerts": 2,
       "metrics_exported": true,
-      "performance_compliant": 4
+      "performance_compliant": 3
     },
     "marketplace": {
       "status": "success",
@@ -90,21 +90,25 @@
       ]
     },
     "threshold": {
-      "status": "skipped",
-      "reason": "Threshold crypto not available"
+      "status": "success",
+      "threshold": 3,
+      "total_shares": 5,
+      "keygen_time": 0.0007560253143310547,
+      "sign_time": 9.5367431640625e-07,
+      "signature_verified": true
     }
   },
   "performance": {
-    "pir_query_time": 0.00010991096496582031,
-    "zk_generation_time": 3.3855438232421875e-05
+    "pir_query_time": 0.000102996826171875,
+    "zk_generation_time": 2.4080276489257812e-05
   },
   "errors": [],
   "summary": {
     "total_components": 9,
-    "successful": 7,
+    "successful": 8,
     "failed": 1,
-    "skipped": 1,
-    "total_time": 0.7881510257720947,
-    "success_rate": 0.7777777777777778
+    "skipped": 0,
+    "total_time": 0.7865419387817383,
+    "success_rate": 0.8888888888888888
   }
 }

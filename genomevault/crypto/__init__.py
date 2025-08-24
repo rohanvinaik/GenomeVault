@@ -3,6 +3,15 @@
 from .transcript import Transcript
 from .rng import secure_bytes, xof, xof_uint_mod
 from .commit import H, hexH, TAGS
+from .threshold_service import (
+    ThresholdService,
+    ThresholdCryptoService,
+    ThresholdConfig,
+    SecretShare,
+    ThresholdSession,
+    QuorumStatus,
+    ShareType,
+)
 from .signatures import (
     SignatureManager,
     generate_keypair,
@@ -30,8 +39,15 @@ from .proof_io import compress_proof, decompress_proof, MAGIC, VERSION
 __all__ = [
     "H",
     "MAGIC",
+    "QuorumStatus",
+    "SecretShare",
+    "ShareType",
     "SignatureManager",
     "TAGS",
+    "ThresholdConfig",
+    "ThresholdCryptoService",
+    "ThresholdService",
+    "ThresholdSession",
     "Transcript",
     "VERSION",
     "be_int",
