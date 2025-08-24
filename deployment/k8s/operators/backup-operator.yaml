@@ -231,29 +231,29 @@ spec:
         - |
           echo "Starting restore process..."
           BACKUP_NAME=${BACKUP_NAME:-latest}
-          
+
           # Download backup from S3
           aws s3 cp s3://${S3_BACKUP_BUCKET}/backups/${BACKUP_NAME}/ /restore/ --recursive
-          
+
           # Decrypt backup
           openssl enc -aes-256-gcm -d -in /restore/backup.tar.gz.enc \
             -out /restore/backup.tar.gz -k ${ENCRYPTION_KEY}
-          
+
           # Extract backup
           tar -xzf /restore/backup.tar.gz -C /restore/
-          
+
           # Restore database
           psql ${DATABASE_URL} < /restore/database.sql
-          
+
           # Restore volumes
           kubectl apply -f /restore/volumes.yaml
-          
+
           # Restore configurations
           kubectl apply -f /restore/configs.yaml
-          
+
           # Verify restore
           genomevault verify-restore --backup ${BACKUP_NAME}
-          
+
           echo "Restore completed successfully"
         env:
         - name: BACKUP_NAME

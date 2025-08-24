@@ -28,7 +28,7 @@ from genomevault.api.gateway.routes import (
 
 __all__ = [
     "algorithms",
-    "health", 
+    "health",
     "models",
     "pipelines",
     "proofs",

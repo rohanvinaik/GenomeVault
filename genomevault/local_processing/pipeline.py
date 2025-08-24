@@ -12,6 +12,7 @@ import json
 import logging
 
 from .compression import CompressionEngine
+
 # from .validators import validate_genomic_data, validate_transcriptomic_data
 from genomevault.core.constants import CompressionTier, OmicsType
 

@@ -20,7 +20,7 @@ from genomevault.api.gateway.middleware.security import SecurityMiddleware
 
 __all__ = [
     "AuthenticationMiddleware",
-    "RateLimitingMiddleware", 
+    "RateLimitingMiddleware",
     "ErrorHandlingMiddleware",
     "LoggingMiddleware",
     "SecurityMiddleware",

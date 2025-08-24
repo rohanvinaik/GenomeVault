@@ -15,7 +15,7 @@ from genomevault.api.gateway.models.base import BaseModel
 
 class ProofType(str, Enum):
     """Types of zero-knowledge proofs."""
-    
+
     GENOMIC = "genomic"
     CLINICAL = "clinical"
     RESEARCH = "research"
@@ -26,7 +26,7 @@ class ProofType(str, Enum):
 
 class ProofSystem(str, Enum):
     """Zero-knowledge proof systems."""
-    
+
     GROTH16 = "groth16"
     PLONK = "plonk"
     STARK = "stark"
@@ -36,7 +36,7 @@ class ProofSystem(str, Enum):
 
 class CircuitType(str, Enum):
     """Circuit types for proof generation."""
-    
+
     VARIANT_FREQUENCY = "variant_frequency"
     POPULATION_STATS = "population_stats"
     CLINICAL_DECISION = "clinical_decision"
@@ -47,11 +47,11 @@ class CircuitType(str, Enum):
 
 class ProofGenerationRequest(BaseModel):
     """Request model for zero-knowledge proof generation."""
-    
+
     proof_type: ProofType = Field(..., description="Type of proof to generate")
     circuit_type: CircuitType = Field(..., description="Circuit type for the proof")
     proof_system: ProofSystem = Field(ProofSystem.GROTH16, description="Proof system to use")
-    
+
     # Inputs
     public_inputs: Dict[str, Any] = Field(..., description="Public inputs visible to verifiers")
     private_inputs_hash: str = Field(
@@ -59,26 +59,26 @@ class ProofGenerationRequest(BaseModel):
         pattern=r"^[a-f0-9]{64}$",
         description="SHA-256 hash of private inputs"
     )
-    
+
     # Circuit parameters
     circuit_params: Optional[Dict[str, Any]] = Field(None, description="Circuit-specific parameters")
-    
+
     # Generation options
     use_cached_setup: bool = Field(True, description="Use cached trusted setup if available")
     compress_proof: bool = Field(False, description="Compress proof data")
     include_public_signals: bool = Field(True, description="Include public signals in response")
-    
+
     # Metadata
     description: Optional[str] = Field(None, description="Human-readable proof description")
     metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
-    
+
     @field_validator("public_inputs")
     def validate_public_inputs(cls, v):
         """Validate public inputs."""
         if not v:
             raise ValueError("Public inputs cannot be empty")
         return v
-    
+
     model_config = {
         "json_schema_extra": {
             "examples": {
@@ -119,25 +119,25 @@ class ProofGenerationRequest(BaseModel):
 
 class ProofGenerationResponse(BaseModel):
     """Response model for zero-knowledge proof generation."""
-    
+
     proof_id: str = Field(..., description="Unique proof identifier")
     proof_type: ProofType = Field(..., description="Type of proof generated")
     proof_system: ProofSystem = Field(..., description="Proof system used")
-    
+
     # Proof data
     proof_data: str = Field(..., description="Hex-encoded proof data")
     verification_key: str = Field(..., description="Verification key for proof validation")
     public_signals: Optional[List[str]] = Field(None, description="Public signals from the proof")
-    
+
     # Metadata
     generation_time_ms: float = Field(..., description="Proof generation time in milliseconds")
     proof_size_bytes: int = Field(..., description="Proof size in bytes")
     validity_period_hours: int = Field(..., description="Proof validity period in hours")
-    
+
     # Verification info
     verification_endpoint: str = Field(..., description="Endpoint for proof verification")
     verification_instructions: Optional[str] = Field(None, description="Verification instructions")
-    
+
     model_config = {
         "json_schema_extra": {
             "example": {
@@ -157,17 +157,17 @@ class ProofGenerationResponse(BaseModel):
 
 class ProofVerificationRequest(BaseModel):
     """Request model for zero-knowledge proof verification."""
-    
+
     proof_id: Optional[str] = Field(None, description="Proof ID (if verifying stored proof)")
     proof_data: Optional[str] = Field(None, description="Hex-encoded proof data")
     verification_key: Optional[str] = Field(None, description="Verification key")
     public_signals: Optional[List[str]] = Field(None, description="Public signals")
-    
+
     # Verification options
     check_validity_period: bool = Field(True, description="Check if proof is still valid")
     verify_public_inputs: bool = Field(True, description="Verify public inputs match expectations")
     expected_public_inputs: Optional[Dict[str, Any]] = Field(None, description="Expected public inputs")
-    
+
     @field_validator("proof_data", "verification_key", "public_signals", mode="before")
     @classmethod
     def validate_proof_components(cls, v, info):
@@ -176,7 +176,7 @@ class ProofVerificationRequest(BaseModel):
             field_name = info.field_name
             raise ValueError(f"Must provide {field_name} when not using proof_id")
         return v
-    
+
     model_config = {
         "json_schema_extra": {
             "examples": {
@@ -206,20 +206,20 @@ class ProofVerificationRequest(BaseModel):
 
 class ProofVerificationResponse(BaseModel):
     """Response model for zero-knowledge proof verification."""
-    
+
     valid: bool = Field(..., description="Whether the proof is valid")
     proof_id: Optional[str] = Field(None, description="Proof identifier (if applicable)")
     verification_time_ms: float = Field(..., description="Verification time in milliseconds")
-    
+
     # Verification details
     checks_performed: List[str] = Field(..., description="List of verification checks performed")
     public_inputs_valid: Optional[bool] = Field(None, description="Whether public inputs are valid")
     validity_period_check: Optional[bool] = Field(None, description="Whether proof is within validity period")
-    
+
     # Error information (if invalid)
     error_message: Optional[str] = Field(None, description="Error message if verification failed")
     failure_details: Optional[Dict[str, str]] = Field(None, description="Detailed failure information")
-    
+
     model_config = {
         "json_schema_extra": {
             "example": {
@@ -239,12 +239,12 @@ class ProofVerificationResponse(BaseModel):
 
 class ProofBatchRequest(BaseModel):
     """Request model for batch proof operations."""
-    
+
     operation: str = Field(..., pattern=r"^(generate|verify)$", description="Batch operation type")
     requests: List[Dict[str, Any]] = Field(..., description="List of individual requests")
     parallel_execution: bool = Field(True, description="Execute requests in parallel")
     fail_fast: bool = Field(False, description="Stop on first failure")
-    
+
     @field_validator("requests")
     def validate_requests(cls, v):
         """Validate batch requests."""
@@ -253,7 +253,7 @@ class ProofBatchRequest(BaseModel):
         if len(v) > 100:
             raise ValueError("Batch size cannot exceed 100 requests")
         return v
-    
+
     model_config = {
         "json_schema_extra": {
             "example": {
@@ -274,16 +274,16 @@ class ProofBatchRequest(BaseModel):
 
 class ProofBatchResponse(BaseModel):
     """Response model for batch proof operations."""
-    
+
     total_requests: int = Field(..., description="Total number of requests processed")
     successful: int = Field(..., description="Number of successful operations")
     failed: int = Field(..., description="Number of failed operations")
     execution_time_ms: float = Field(..., description="Total execution time in milliseconds")
-    
+
     # Results
     results: List[Dict[str, Any]] = Field(..., description="Individual operation results")
     errors: List[Dict[str, str]] = Field(..., description="Error details for failed operations")
-    
+
     model_config = {
         "json_schema_extra": {
             "example": {
@@ -310,17 +310,17 @@ class ProofBatchResponse(BaseModel):
 
 class ProofListRequest(BaseModel):
     """Request model for listing proofs."""
-    
+
     proof_type: Optional[ProofType] = Field(None, description="Filter by proof type")
-    circuit_type: Optional[CircuitType] = Field(None, description="Filter by circuit type") 
+    circuit_type: Optional[CircuitType] = Field(None, description="Filter by circuit type")
     created_after: Optional[datetime] = Field(None, description="Filter by creation date")
     created_before: Optional[datetime] = Field(None, description="Filter by creation date")
     valid_only: bool = Field(True, description="Only return valid (non-expired) proofs")
-    
+
     # Pagination
     page: int = Field(1, ge=1, description="Page number")
     per_page: int = Field(20, ge=1, le=100, description="Items per page")
-    
+
     model_config = {
         "json_schema_extra": {
             "example": {
@@ -335,7 +335,7 @@ class ProofListRequest(BaseModel):
 
 class ProofSummary(BaseModel):
     """Summary information for a proof."""
-    
+
     proof_id: str = Field(..., description="Proof identifier")
     proof_type: ProofType = Field(..., description="Proof type")
     circuit_type: CircuitType = Field(..., description="Circuit type")
@@ -347,13 +347,13 @@ class ProofSummary(BaseModel):
 
 class ProofListResponse(BaseModel):
     """Response model for listing proofs."""
-    
+
     proofs: List[ProofSummary] = Field(..., description="List of proof summaries")
     total: int = Field(..., description="Total number of matching proofs")
     page: int = Field(..., description="Current page number")
     per_page: int = Field(..., description="Items per page")
     total_pages: int = Field(..., description="Total number of pages")
-    
+
     model_config = {
         "json_schema_extra": {
             "example": {

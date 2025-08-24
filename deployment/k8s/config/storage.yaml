@@ -220,7 +220,7 @@ spec:
             - |
               echo "Starting backup process..."
               DATE=$(date +%Y%m%d-%H%M%S)
-              
+
               # Create volume snapshots
               kubectl create -f - <<EOF
               apiVersion: snapshot.storage.k8s.io/v1
@@ -233,19 +233,19 @@ spec:
                 source:
                   persistentVolumeClaimName: genomevault-data-genomevault-full-node-0
               EOF
-              
+
               # Backup to S3
               aws s3 sync /data s3://${S3_BACKUP_BUCKET}/backup-${DATE}/ \
                 --storage-class GLACIER \
                 --sse AES256
-              
+
               # Clean up old snapshots (keep last 30 days)
               kubectl get volumesnapshot -n genomevault \
                 --sort-by=.metadata.creationTimestamp \
                 | head -n -30 \
                 | awk '{print $1}' \
                 | xargs -I {} kubectl delete volumesnapshot {} -n genomevault
-              
+
               echo "Backup completed successfully"
             env:
             - name: S3_BACKUP_BUCKET
@@ -297,32 +297,32 @@ data:
         retention_days: 2555  # 7 years
         compliance: HIPAA
         encryption: AES-256
-        
+
       clinical_data:
         retention_days: 2555  # 7 years
         compliance: HIPAA
         encryption: AES-256
-        
+
       audit_logs:
         retention_days: 2555  # 7 years
         compliance: HIPAA
         immutable: true
-        
+
       performance_metrics:
         retention_days: 90
         compression: enabled
-        
+
       temporary_data:
         retention_days: 7
         auto_delete: true
-        
+
     backup_policy:
       frequency: daily
       full_backup_interval: weekly
       incremental_backup: daily
       geographic_redundancy: 3
       encryption: AES-256-GCM
-      
+
     disaster_recovery:
       rpo_minutes: 15  # Recovery Point Objective
       rto_minutes: 60  # Recovery Time Objective

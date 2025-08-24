@@ -15,7 +15,7 @@ from genomevault.api.gateway.models.base import BaseModel
 
 class HealthStatus(str, Enum):
     """Overall system health status."""
-    
+
     HEALTHY = "healthy"
     DEGRADED = "degraded"
     UNHEALTHY = "unhealthy"
@@ -23,7 +23,7 @@ class HealthStatus(str, Enum):
 
 class ServiceStatus(str, Enum):
     """Individual service status."""
-    
+
     HEALTHY = "healthy"
     UNHEALTHY = "unhealthy"
     UNKNOWN = "unknown"
@@ -31,7 +31,7 @@ class ServiceStatus(str, Enum):
 
 class ServiceDetails(BaseModel):
     """Details for individual service health."""
-    
+
     status: ServiceStatus = Field(..., description="Service health status")
     response_time_ms: Optional[float] = Field(None, description="Service response time in milliseconds")
     last_check: datetime = Field(..., description="Last health check timestamp")
@@ -41,14 +41,14 @@ class ServiceDetails(BaseModel):
 
 class HealthCheckResponse(BaseModel):
     """System health check response."""
-    
+
     status: HealthStatus = Field(..., description="Overall system health status")
     timestamp: datetime = Field(..., description="Health check timestamp")
     version: str = Field(..., description="API version")
     uptime_seconds: int = Field(..., description="System uptime in seconds")
     services: Dict[str, ServiceDetails] = Field(..., description="Individual service health details")
     system_info: Optional[Dict[str, str]] = Field(None, description="System information")
-    
+
     model_config = {
         "json_schema_extra": {
             "example": {
@@ -84,14 +84,14 @@ class HealthCheckResponse(BaseModel):
 
 class DetailedHealthResponse(HealthCheckResponse):
     """Detailed health check response with additional metrics."""
-    
+
     memory_usage_mb: Optional[float] = Field(None, description="Memory usage in MB")
     cpu_usage_percent: Optional[float] = Field(None, description="CPU usage percentage")
     disk_usage_percent: Optional[float] = Field(None, description="Disk usage percentage")
     active_connections: Optional[int] = Field(None, description="Active database connections")
     request_rate_per_minute: Optional[float] = Field(None, description="Current request rate per minute")
     error_rate_percent: Optional[float] = Field(None, description="Error rate percentage (last 5 minutes)")
-    
+
     model_config = {
         "json_schema_extra": {
             "example": {
@@ -118,11 +118,11 @@ class DetailedHealthResponse(HealthCheckResponse):
 
 class ReadinessCheckResponse(BaseModel):
     """Kubernetes readiness check response."""
-    
+
     ready: bool = Field(..., description="Service readiness status")
     timestamp: datetime = Field(..., description="Check timestamp")
     checks: Dict[str, bool] = Field(..., description="Individual readiness checks")
-    
+
     model_config = {
         "json_schema_extra": {
             "example": {
@@ -139,10 +139,10 @@ class ReadinessCheckResponse(BaseModel):
 
 class LivenessCheckResponse(BaseModel):
     """Kubernetes liveness check response."""
-    
+
     alive: bool = Field(..., description="Service liveness status")
     timestamp: datetime = Field(..., description="Check timestamp")
-    
+
     model_config = {
         "json_schema_extra": {
             "example": {

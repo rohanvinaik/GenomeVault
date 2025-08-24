@@ -12,20 +12,20 @@ data:
   network_id: "genomevault-mainnet"
   chain_id: "genomevault-1"
   genesis_time: "2024-01-01T00:00:00Z"
-  
+
   # Node Configuration
   min_gas_price: "0.0001ugeno"
   pruning: "custom"
   pruning_keep_recent: "100"
   pruning_keep_every: "1000"
   pruning_interval: "10"
-  
+
   # P2P Configuration
   p2p_max_num_inbound_peers: "40"
   p2p_max_num_outbound_peers: "10"
   p2p_seed_mode: "false"
   p2p_private_peer_ids: ""
-  
+
   # Consensus Configuration
   consensus_timeout_propose: "3s"
   consensus_timeout_propose_delta: "500ms"
@@ -34,24 +34,24 @@ data:
   consensus_timeout_precommit: "1s"
   consensus_timeout_precommit_delta: "500ms"
   consensus_timeout_commit: "5s"
-  
+
   # Privacy Configuration
   privacy_mode: "enhanced"
   differential_privacy_epsilon: "1.0"
   differential_privacy_delta: "1e-5"
   homomorphic_encryption: "CKKS"
-  
+
   # HDC Configuration
   hypervector_dimension: "10000"
   hypervector_similarity_threshold: "0.85"
   compression_tier_default: "clinical"
-  
+
   # Storage Configuration
   storage_backend: "s3"
   storage_endpoint: "s3.amazonaws.com"
   storage_region: "us-east-1"
   storage_bucket: "genomevault-data"
-  
+
   # Monitoring
   telemetry_enabled: "true"
   telemetry_service_name: "genomevault"
@@ -78,19 +78,19 @@ data:
     max_memory_gb = 8
     max_cpu_cores = 4
     storage_limit_gb = 500
-    
+
     [features]
     enable_api = false
     enable_grpc = false
     enable_websocket = false
     enable_archive = false
     enable_indexing = false
-    
+
     [performance]
     cache_size_mb = 512
     batch_size = 100
     worker_threads = 2
-  
+
   # Full Node Configuration
   full.toml: |
     [node]
@@ -99,19 +99,19 @@ data:
     max_memory_gb = 64
     max_cpu_cores = 16
     storage_limit_gb = 4000
-    
+
     [features]
     enable_api = true
     enable_grpc = true
     enable_websocket = false
     enable_archive = false
     enable_indexing = true
-    
+
     [performance]
     cache_size_mb = 16384
     batch_size = 1000
     worker_threads = 8
-  
+
   # Archive Node Configuration
   archive.toml: |
     [node]
@@ -120,7 +120,7 @@ data:
     max_memory_gb = 256
     max_cpu_cores = 48
     storage_limit_gb = 100000
-    
+
     [features]
     enable_api = true
     enable_grpc = true
@@ -128,12 +128,12 @@ data:
     enable_archive = true
     enable_indexing = true
     enable_historical_queries = true
-    
+
     [performance]
     cache_size_mb = 65536
     batch_size = 10000
     worker_threads = 16
-    
+
     [archive]
     prune_nothing = true
     index_everything = true
@@ -157,14 +157,14 @@ data:
       port: 8000
       workers: 4
       keepalive: 75
-      
+
     cors:
       enabled: true
       allow_origins: ["*"]
       allow_methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
       allow_headers: ["*"]
       expose_headers: ["X-Request-ID", "X-Rate-Limit-*"]
-      
+
     rate_limiting:
       enabled: true
       default_limit: 1000
@@ -174,7 +174,7 @@ data:
         basic: 1000
         premium: 10000
         enterprise: 50000
-        
+
     authentication:
       jwt_enabled: true
       jwt_algorithm: "RS256"
@@ -182,12 +182,12 @@ data:
       refresh_token_expiry_seconds: 604800
       oauth2_enabled: true
       mfa_enabled: true
-      
+
     logging:
       level: INFO
       format: json
       output: stdout
-      
+
     tracing:
       enabled: true
       sampling_rate: 0.1
@@ -246,12 +246,12 @@ data:
     coordinator:
       mode: primary
       backup_coordinators: 1
-      
+
     protocol:
       aggregation: SECAGG
       homomorphic_encryption: CKKS
       secure_multiparty: true
-      
+
     privacy:
       differential_privacy:
         enabled: true
@@ -261,7 +261,7 @@ data:
         max_grad_norm: 1.0
       privacy_budget: 10.0
       composition_method: renyi
-      
+
     training:
       min_participants: 3
       max_participants: 100
@@ -270,13 +270,13 @@ data:
       max_rounds: 100
       convergence_threshold: 0.001
       checkpoint_interval: 10
-      
+
     selection:
       strategy: fair
       reputation_weight: 0.3
       availability_weight: 0.3
       performance_weight: 0.4
-      
+
     incentives:
       enabled: true
       base_reward: 100
@@ -298,7 +298,7 @@ data:
     global:
       scrape_interval: 15s
       evaluation_interval: 15s
-      
+
     scrape_configs:
     - job_name: 'genomevault-nodes'
       kubernetes_sd_configs:
@@ -327,7 +327,7 @@ data:
       - source_labels: [__meta_kubernetes_pod_name]
         action: replace
         target_label: kubernetes_pod_name
-  
+
   alerts.yml: |
     groups:
     - name: genomevault
@@ -341,7 +341,7 @@ data:
         annotations:
           summary: "High PIR query latency"
           description: "PIR query latency {{ $value }}ms exceeds threshold"
-      
+
       - alert: PrivacyBreach
         expr: genomevault_privacy_breach_probability > 0.0001
         for: 1m
@@ -350,7 +350,7 @@ data:
         annotations:
           summary: "Privacy breach risk detected"
           description: "Privacy breach probability {{ $value }} exceeds threshold"
-      
+
       - alert: LowCompression
         expr: genomevault_compression_ratio < 100
         for: 10m
@@ -359,7 +359,7 @@ data:
         annotations:
           summary: "Low compression ratio"
           description: "Compression ratio {{ $value }} below target"
-      
+
       - alert: NodeDown
         expr: up{job="genomevault-nodes"} == 0
         for: 5m

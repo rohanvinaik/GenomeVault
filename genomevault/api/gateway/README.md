@@ -213,7 +213,7 @@ All errors return standardized JSON responses:
 ```json
 {
   "type": "ValidationError",
-  "code": "GV_INVALID_INPUT", 
+  "code": "GV_INVALID_INPUT",
   "message": "Invalid genomic coordinate format",
   "details": {
     "request_id": "req_1234567890",

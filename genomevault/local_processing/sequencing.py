@@ -4,6 +4,7 @@ GenomeVault Sequencing Data Processing
 Handles genomic sequencing data processing including alignment, variant calling,
 and reference-based differential storage.
 """
+
 from __future__ import annotations
 
 from Bio import SeqIO

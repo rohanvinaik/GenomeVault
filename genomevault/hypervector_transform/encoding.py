@@ -33,6 +33,7 @@ except ImportError:
 try:
     from genomevault.hypervector.metal_engine import MetalHypervectorEngine, MetalConfig
     import mlx.core as mx
+
     METAL_AVAILABLE = True
     print("METAL ACCELERATION DETECTED!")  # Debug print
     logger.info("Metal acceleration support detected")
@@ -71,6 +72,7 @@ class HypervectorConfig:
     normalize: bool = True
     quantize: bool = False
     quantization_bits: int = 8
+    similarity_threshold: float = 0.85  # Threshold for similarity comparisons
     # Differential privacy parameters
     use_differential_privacy: bool = False
     privacy_level: Optional["PrivacyLevel"] = None
@@ -106,10 +108,12 @@ class HypervectorEncoder:
                         dimension=self.config.dimension,
                         max_memory_gb=self.config.metal_memory_gb,
                         use_neural_engine=True,
-                        precision="float32"
+                        precision="float32",
                     )
                     self.metal_engine = MetalHypervectorEngine(metal_config)
-                    logger.info(f"🍎 Metal acceleration auto-enabled with {self.config.metal_memory_gb}GB memory")
+                    logger.info(
+                        f"🍎 Metal acceleration auto-enabled with {self.config.metal_memory_gb}GB memory"
+                    )
                 except Exception as e:
                     logger.warning(f"Metal auto-detection failed: {e}")
         elif self.config.use_metal and METAL_AVAILABLE:
@@ -118,10 +122,12 @@ class HypervectorEncoder:
                 dimension=self.config.dimension,
                 max_memory_gb=self.config.metal_memory_gb,
                 use_neural_engine=True,
-                precision="float32"
+                precision="float32",
             )
             self.metal_engine = MetalHypervectorEngine(metal_config)
-            logger.info(f"🍎 Metal acceleration enabled with {self.config.metal_memory_gb}GB memory")
+            logger.info(
+                f"🍎 Metal acceleration enabled with {self.config.metal_memory_gb}GB memory"
+            )
 
         # Initialize differential privacy if requested
         self.dp_mechanism = None
@@ -180,20 +186,22 @@ class HypervectorEncoder:
                     features_np = features.detach().cpu().numpy()
                 elif isinstance(features, dict):
                     # Handle dict features
-                    features_np = np.concatenate([
-                        v.detach().cpu().numpy() if isinstance(v, torch.Tensor) else v
-                        for v in features.values()
-                    ])
+                    features_np = np.concatenate(
+                        [
+                            v.detach().cpu().numpy() if isinstance(v, torch.Tensor) else v
+                            for v in features.values()
+                        ]
+                    )
                 else:
                     features_np = np.array(features)
-                
+
                 # Encode with Metal
                 hv_metal = self.metal_engine.encode_with_metal(features_np, omics_type)
-                
+
                 # Convert back to torch tensor
                 hv_np = self.metal_engine.to_numpy(hv_metal)
                 hv = torch.from_numpy(hv_np).float()
-                
+
                 # Metal already normalizes, skip additional normalization
             else:
                 # Original CPU/CUDA path

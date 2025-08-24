@@ -41,7 +41,7 @@ nodes:
       maxReplicas: 20
       targetCPUUtilizationPercentage: 70
       targetMemoryUtilizationPercentage: 80
-  
+
   full:
     enabled: true
     replicaCount: 2
@@ -67,7 +67,7 @@ nodes:
       minReplicas: 2
       maxReplicas: 10
       targetCPUUtilizationPercentage: 60
-  
+
   archive:
     enabled: true
     replicaCount: 1

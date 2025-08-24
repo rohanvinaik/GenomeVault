@@ -89,7 +89,7 @@ Monitoring:
   {{- range .Values.monitoring.grafana.dashboards }}
     - {{ . }}
   {{- end }}
-  
+
   Access Grafana:
     kubectl port-forward --namespace {{ .Values.namespace.name }} svc/{{ .Release.Name }}-grafana 3000:80
     Username: admin

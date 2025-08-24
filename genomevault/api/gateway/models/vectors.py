@@ -14,7 +14,7 @@ from genomevault.api.gateway.models.base import BaseModel, GenomicVariant, Priva
 
 class VectorType(str, Enum):
     """Hypervector types."""
-    
+
     BINARY = "binary"
     BIPOLAR = "bipolar"
     REAL_VALUED = "real_valued"
@@ -23,7 +23,7 @@ class VectorType(str, Enum):
 
 class EncodingType(str, Enum):
     """Encoding algorithm types."""
-    
+
     STANDARD = "standard"
     PACKED = "packed"
     ORTHOGONAL_PROJECTION = "orthogonal_projection"
@@ -33,7 +33,7 @@ class EncodingType(str, Enum):
 
 class SimilarityMetric(str, Enum):
     """Vector similarity metrics."""
-    
+
     HAMMING = "hamming"
     COSINE = "cosine"
     EUCLIDEAN = "euclidean"
@@ -43,7 +43,7 @@ class SimilarityMetric(str, Enum):
 
 class VectorEncodeRequest(BaseModel):
     """Request model for vector encoding."""
-    
+
     # Input data (mutually exclusive)
     numeric: Optional[List[float]] = Field(
         None,
@@ -54,7 +54,7 @@ class VectorEncodeRequest(BaseModel):
         None,
         description="Genomic variants to encode (alternative to numeric)"
     )
-    
+
     # Encoding parameters
     dimension: int = Field(
         8192,
@@ -70,7 +70,7 @@ class VectorEncodeRequest(BaseModel):
         VectorType.BINARY,
         description="Output vector type"
     )
-    
+
     # Privacy parameters
     privacy_level: Optional[PrivacyLevel] = Field(
         None,
@@ -82,11 +82,11 @@ class VectorEncodeRequest(BaseModel):
         le=1.0,
         description="Differential privacy noise level"
     )
-    
+
     # Additional parameters
     seed: Optional[int] = Field(None, description="Random seed for reproducibility")
     metadata: Optional[Dict[str, Any]] = Field(None, description="Additional encoding metadata")
-    
+
     @field_validator("variants", "numeric")
     def validate_input_data(cls, v, values, field):
         """Ensure exactly one input type is provided."""
@@ -97,21 +97,21 @@ class VectorEncodeRequest(BaseModel):
             if values.get("variants") is not None:
                 raise ValueError("Cannot specify both 'variants' and 'numeric'")
         return v
-    
+
     @field_validator("numeric")
     def validate_numeric_input(cls, v):
         """Validate numeric input array."""
         if v is not None and len(v) == 0:
             raise ValueError("Numeric array cannot be empty")
         return v
-    
+
     @field_validator("variants")
     def validate_variants_input(cls, v):
         """Validate variants input."""
         if v is not None and len(v) == 0:
             raise ValueError("Variants array cannot be empty")
         return v
-    
+
     model_config = {
         "json_schema_extra": {
             "examples": {
@@ -147,23 +147,23 @@ class VectorEncodeRequest(BaseModel):
 
 class VectorEncodeResponse(BaseModel):
     """Response model for vector encoding."""
-    
+
     vector_id: str = Field(..., description="Unique vector identifier")
     dimension: int = Field(..., description="Hypervector dimension")
     vector_type: VectorType = Field(..., description="Vector type")
     encoding_type: EncodingType = Field(..., description="Encoding algorithm used")
-    
+
     # Vector data
     vector: List[Union[int, float]] = Field(..., description="Encoded hypervector")
-    
+
     # Privacy guarantees
     privacy_level: PrivacyLevel = Field(..., description="Achieved privacy level")
     compression_ratio: Optional[float] = Field(None, description="Data compression ratio achieved")
-    
+
     # Metadata
     encoding_time_ms: float = Field(..., description="Encoding time in milliseconds")
     metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
-    
+
     model_config = {
         "json_schema_extra": {
             "example": {
@@ -181,20 +181,20 @@ class VectorEncodeResponse(BaseModel):
 
 class VectorCompareRequest(BaseModel):
     """Request model for vector comparison."""
-    
+
     vector1_id: Optional[str] = Field(None, description="First vector ID (if stored)")
     vector2_id: Optional[str] = Field(None, description="Second vector ID (if stored)")
-    
+
     vector1: Optional[List[Union[int, float]]] = Field(None, description="First vector data")
     vector2: Optional[List[Union[int, float]]] = Field(None, description="Second vector data")
-    
+
     metrics: List[SimilarityMetric] = Field(
         [SimilarityMetric.HAMMING],
         description="Similarity metrics to compute"
     )
-    
+
     normalize: bool = Field(False, description="Whether to normalize similarity scores")
-    
+
     @field_validator("vector1", "vector2")
     def validate_vector_or_id(cls, v, values, field):
         """Ensure either vector ID or data is provided."""
@@ -204,7 +204,7 @@ class VectorCompareRequest(BaseModel):
         if v is not None and values.get(id_field) is not None:
             raise ValueError(f"Cannot specify both {field.name} and {id_field}")
         return v
-    
+
     model_config = {
         "json_schema_extra": {
             "example": {
@@ -218,11 +218,11 @@ class VectorCompareRequest(BaseModel):
 
 class VectorCompareResponse(BaseModel):
     """Response model for vector comparison."""
-    
+
     similarity_scores: Dict[str, float] = Field(..., description="Similarity scores by metric")
     comparison_time_ms: float = Field(..., description="Comparison time in milliseconds")
     metadata: Optional[Dict[str, Any]] = Field(None, description="Additional comparison metadata")
-    
+
     model_config = {
         "json_schema_extra": {
             "example": {
@@ -237,17 +237,17 @@ class VectorCompareResponse(BaseModel):
 
 class VectorSearchRequest(BaseModel):
     """Request model for vector similarity search."""
-    
+
     query_vector: List[Union[int, float]] = Field(..., description="Query vector")
     search_space: Optional[str] = Field(None, description="Search space identifier")
     top_k: int = Field(10, ge=1, le=1000, description="Number of top results to return")
     similarity_threshold: Optional[float] = Field(None, ge=0.0, le=1.0, description="Minimum similarity threshold")
     metric: SimilarityMetric = Field(SimilarityMetric.HAMMING, description="Similarity metric")
-    
+
     # Filtering parameters
     filters: Optional[Dict[str, Any]] = Field(None, description="Search filters")
     privacy_preserving: bool = Field(True, description="Use privacy-preserving search")
-    
+
     model_config = {
         "json_schema_extra": {
             "example": {
@@ -262,7 +262,7 @@ class VectorSearchRequest(BaseModel):
 
 class VectorSearchResult(BaseModel):
     """Individual vector search result."""
-    
+
     vector_id: str = Field(..., description="Vector identifier")
     similarity_score: float = Field(..., description="Similarity score")
     metadata: Optional[Dict[str, Any]] = Field(None, description="Vector metadata")
@@ -270,12 +270,12 @@ class VectorSearchResult(BaseModel):
 
 class VectorSearchResponse(BaseModel):
     """Response model for vector similarity search."""
-    
+
     results: List[VectorSearchResult] = Field(..., description="Search results")
     total_candidates: int = Field(..., description="Total number of candidates searched")
     search_time_ms: float = Field(..., description="Search time in milliseconds")
     privacy_guarantees: Optional[Dict[str, str]] = Field(None, description="Privacy guarantees provided")
-    
+
     model_config = {
         "json_schema_extra": {
             "example": {
@@ -286,7 +286,7 @@ class VectorSearchResponse(BaseModel):
                         "metadata": {"source": "patient_cohort_1"}
                     },
                     {
-                        "vector_id": "vec_def456", 
+                        "vector_id": "vec_def456",
                         "similarity_score": 0.87,
                         "metadata": {"source": "population_reference"}
                     }
@@ -303,12 +303,12 @@ class VectorSearchResponse(BaseModel):
 
 class VectorStoreRequest(BaseModel):
     """Request model for storing vectors."""
-    
+
     vector_id: Optional[str] = Field(None, description="Vector identifier (generated if not provided)")
     vector: List[Union[int, float]] = Field(..., description="Vector data")
     metadata: Optional[Dict[str, Any]] = Field(None, description="Vector metadata")
     ttl_seconds: Optional[int] = Field(None, ge=60, description="Time to live in seconds")
-    
+
     model_config = {
         "json_schema_extra": {
             "example": {
@@ -325,11 +325,11 @@ class VectorStoreRequest(BaseModel):
 
 class VectorStoreResponse(BaseModel):
     """Response model for storing vectors."""
-    
+
     vector_id: str = Field(..., description="Stored vector identifier")
     storage_time_ms: float = Field(..., description="Storage time in milliseconds")
     expiration_time: Optional[str] = Field(None, description="Vector expiration time (ISO format)")
-    
+
     model_config = {
         "json_schema_extra": {
             "example": {

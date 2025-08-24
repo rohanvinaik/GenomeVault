@@ -23,25 +23,25 @@ logger = get_logger(__name__)
 class ErrorHandlingMiddleware(BaseHTTPMiddleware):
     """
     Comprehensive error handling middleware.
-    
+
     Handles different types of errors:
     - HTTP exceptions
     - Validation errors
     - Application-specific errors
     - Unexpected exceptions
     """
-    
+
     def __init__(self, app, include_debug_info: bool = False):
         """
         Initialize error handling middleware.
-        
+
         Args:
             app: FastAPI application instance
             include_debug_info: Whether to include debug information in error responses
         """
         super().__init__(app)
         self.include_debug_info = include_debug_info
-        
+
         # Error type mappings
         self.error_mappings = {
             400: ErrorType.VALIDATION_ERROR,
@@ -53,57 +53,54 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
             503: ErrorType.SERVICE_UNAVAILABLE,
             500: ErrorType.INTERNAL_ERROR,
         }
-    
+
     async def dispatch(self, request: Request, call_next) -> Response:
         """
         Process request with comprehensive error handling.
-        
+
         Args:
             request: Incoming HTTP request
             call_next: Next middleware or route handler
-            
+
         Returns:
             HTTP response with proper error formatting
         """
         request_id = getattr(request.state, "request_id", str(uuid.uuid4()))
-        
+
         try:
             # Process the request
             response = await call_next(request)
             return response
-            
+
         except HTTPException as exc:
             return await self._handle_http_exception(exc, request_id, request)
-            
+
         except RequestValidationError as exc:
             return await self._handle_validation_error(exc, request_id, request)
-            
+
         except ValidationError as exc:
             return await self._handle_pydantic_validation_error(exc, request_id, request)
-            
+
         except Exception as exc:
             return await self._handle_unexpected_error(exc, request_id, request)
-    
+
     async def _handle_http_exception(
-        self, 
-        exc: HTTPException, 
-        request_id: str,
-        request: Request
+        self, exc: HTTPException, request_id: str, request: Request
     ) -> JSONResponse:
         """
         Handle FastAPI HTTP exceptions.
-        
+
         Args:
             exc: HTTP exception
             request_id: Request identifier
             request: HTTP request
-            
+
         Returns:
             JSON error response
         """
         # Determine error type
         error_type = self.error_mappings.get(exc.status_code, ErrorType.INTERNAL_ERROR)
-        
+
         # Extract error details
         if isinstance(exc.detail, dict):
             # Structured error detail
@@ -115,16 +112,16 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
             error_code = f"GV_HTTP_{exc.status_code}"
             message = str(exc.detail)
             details = None
-        
+
         # Create error response
         error_response = ErrorResponse(
             type=error_type,
             code=error_code,
             message=message,
             details=details,
-            request_id=request_id
+            request_id=request_id,
         )
-        
+
         # Log the error
         logger.warning(
             f"HTTP exception: {exc.status_code} {message}",
@@ -134,35 +131,30 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
                 "path": request.url.path,
                 "method": request.method,
                 "error_code": error_code,
-                "client_ip": request.client.host if request.client else None
-            }
+                "client_ip": request.client.host if request.client else None,
+            },
         )
-        
+
         # Prepare response headers
         headers = {"X-Request-ID": request_id}
         if hasattr(exc, "headers") and exc.headers:
             headers.update(exc.headers)
-        
+
         return JSONResponse(
-            status_code=exc.status_code,
-            content=error_response.dict(),
-            headers=headers
+            status_code=exc.status_code, content=error_response.dict(), headers=headers
         )
-    
+
     async def _handle_validation_error(
-        self,
-        exc: RequestValidationError,
-        request_id: str,
-        request: Request
+        self, exc: RequestValidationError, request_id: str, request: Request
     ) -> JSONResponse:
         """
         Handle FastAPI request validation errors.
-        
+
         Args:
             exc: Validation error
             request_id: Request identifier
             request: HTTP request
-            
+
         Returns:
             JSON error response
         """
@@ -170,24 +162,19 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
         error_details = []
         for error in exc.errors():
             location = " -> ".join(str(loc) for loc in error["loc"])
-            error_details.append({
-                "field": location,
-                "message": error["msg"],
-                "type": error["type"]
-            })
-        
+            error_details.append(
+                {"field": location, "message": error["msg"], "type": error["type"]}
+            )
+
         # Create error response
         error_response = ErrorResponse(
             type=ErrorType.VALIDATION_ERROR,
             code="GV_VALIDATION_ERROR",
             message="Request validation failed",
-            details={
-                "validation_errors": error_details,
-                "request_id": request_id
-            },
-            request_id=request_id
+            details={"validation_errors": error_details, "request_id": request_id},
+            request_id=request_id,
         )
-        
+
         # Log validation error
         logger.info(
             f"Request validation error: {len(error_details)} errors",
@@ -195,30 +182,27 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
                 "request_id": request_id,
                 "path": request.url.path,
                 "method": request.method,
-                "validation_errors": error_details
-            }
+                "validation_errors": error_details,
+            },
         )
-        
+
         return JSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content=error_response.dict(),
-            headers={"X-Request-ID": request_id}
+            headers={"X-Request-ID": request_id},
         )
-    
+
     async def _handle_pydantic_validation_error(
-        self,
-        exc: ValidationError,
-        request_id: str,
-        request: Request
+        self, exc: ValidationError, request_id: str, request: Request
     ) -> JSONResponse:
         """
         Handle Pydantic model validation errors.
-        
+
         Args:
             exc: Pydantic validation error
             request_id: Request identifier
             request: HTTP request
-            
+
         Returns:
             JSON error response
         """
@@ -226,24 +210,19 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
         error_details = []
         for error in exc.errors():
             location = " -> ".join(str(loc) for loc in error["loc"])
-            error_details.append({
-                "field": location,
-                "message": error["msg"],
-                "type": error["type"]
-            })
-        
+            error_details.append(
+                {"field": location, "message": error["msg"], "type": error["type"]}
+            )
+
         # Create error response
         error_response = ErrorResponse(
             type=ErrorType.VALIDATION_ERROR,
             code="GV_MODEL_VALIDATION_ERROR",
             message="Data model validation failed",
-            details={
-                "validation_errors": error_details,
-                "request_id": request_id
-            },
-            request_id=request_id
+            details={"validation_errors": error_details, "request_id": request_id},
+            request_id=request_id,
         )
-        
+
         # Log validation error
         logger.info(
             f"Pydantic validation error: {len(error_details)} errors",
@@ -251,46 +230,43 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
                 "request_id": request_id,
                 "path": request.url.path,
                 "method": request.method,
-                "validation_errors": error_details
-            }
+                "validation_errors": error_details,
+            },
         )
-        
+
         return JSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content=error_response.dict(),
-            headers={"X-Request-ID": request_id}
+            headers={"X-Request-ID": request_id},
         )
-    
+
     async def _handle_unexpected_error(
-        self,
-        exc: Exception,
-        request_id: str,
-        request: Request
+        self, exc: Exception, request_id: str, request: Request
     ) -> JSONResponse:
         """
         Handle unexpected application errors.
-        
+
         Args:
             exc: Unexpected exception
             request_id: Request identifier
             request: HTTP request
-            
+
         Returns:
             JSON error response
         """
         # Get exception details
         exc_type = type(exc).__name__
         exc_message = str(exc)
-        
+
         # Prepare debug information
         debug_info = None
         if self.include_debug_info:
             debug_info = {
                 "exception_type": exc_type,
                 "exception_message": exc_message,
-                "traceback": traceback.format_exc()
+                "traceback": traceback.format_exc(),
             }
-        
+
         # Create error response
         error_response = ErrorResponse(
             type=ErrorType.INTERNAL_ERROR,
@@ -299,11 +275,11 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
             details={
                 "request_id": request_id,
                 "error_type": exc_type,
-                **({"debug_info": debug_info} if debug_info else {})
+                **({"debug_info": debug_info} if debug_info else {}),
             },
-            request_id=request_id
+            request_id=request_id,
         )
-        
+
         # Log the error with full details
         logger.error(
             f"Unexpected error: {exc_type}: {exc_message}",
@@ -312,24 +288,24 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
                 "path": request.url.path,
                 "method": request.method,
                 "exception_type": exc_type,
-                "client_ip": request.client.host if request.client else None
+                "client_ip": request.client.host if request.client else None,
             },
-            exc_info=True
+            exc_info=True,
         )
-        
+
         return JSONResponse(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             content=error_response.dict(),
-            headers={"X-Request-ID": request_id}
+            headers={"X-Request-ID": request_id},
         )
-    
+
     def _sanitize_error_message(self, message: str) -> str:
         """
         Sanitize error message to prevent information leakage.
-        
+
         Args:
             message: Original error message
-            
+
         Returns:
             Sanitized error message
         """
@@ -342,14 +318,17 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
             r"\b\d{4}[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}\b",  # Credit card numbers
             r"\b\d{3}-\d{2}-\d{4}\b",  # SSN
         ]
-        
+
         sanitized_message = message
         for pattern in sensitive_patterns:
             import re
-            sanitized_message = re.sub(pattern, "[REDACTED]", sanitized_message, flags=re.IGNORECASE)
-        
+
+            sanitized_message = re.sub(
+                pattern, "[REDACTED]", sanitized_message, flags=re.IGNORECASE
+            )
+
         return sanitized_message
-    
+
     def create_error_response(
         self,
         error_type: ErrorType,
@@ -357,11 +336,11 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
         message: str,
         status_code: int = 500,
         details: Optional[Dict[str, Any]] = None,
-        request_id: Optional[str] = None
+        request_id: Optional[str] = None,
     ) -> JSONResponse:
         """
         Create a standardized error response.
-        
+
         Args:
             error_type: Type of error
             code: Error code
@@ -369,23 +348,23 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
             status_code: HTTP status code
             details: Additional error details
             request_id: Request identifier
-            
+
         Returns:
             JSON error response
         """
         if not request_id:
             request_id = str(uuid.uuid4())
-        
+
         error_response = ErrorResponse(
             type=error_type,
             code=code,
             message=self._sanitize_error_message(message),
             details=details,
-            request_id=request_id
+            request_id=request_id,
         )
-        
+
         return JSONResponse(
             status_code=status_code,
             content=error_response.dict(),
-            headers={"X-Request-ID": request_id}
+            headers={"X-Request-ID": request_id},
         )

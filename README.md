@@ -47,8 +47,8 @@ GenomeVault achieves an unprecedented **2,116× compression ratio**, encoding 20
 | **Processing Time (400K variants)** | 80-400 seconds | **2.26 seconds** | **35-177× faster** |
 | **Privacy Preservation** | ❌ Not standard | ✅ **Built-in** | **∞** |
 
-¹ *BCFtools, GATK on standard hardware*  
-² *Standard VCF compression (bgzip)*  
+¹ *BCFtools, GATK on standard hardware*
+² *Standard VCF compression (bgzip)*
 ³ *Typical VCF file in memory*
 
 ### **Real-World Impact**
@@ -68,7 +68,7 @@ GenomeVault achieves an unprecedented **2,116× compression ratio**, encoding 20
 ```
 🧬 400,000 variants → 🔄 8-core CPU → 🍎 Metal GPU → 📦 1.3KB output
                       (parallel)      (HDC encoding)   (2,116× smaller)
-                      
+
 Total time: 2.26 seconds
 ```
 
@@ -288,7 +288,7 @@ GenomeVault's Accuracy Dial precisely adjusts accuracy for different clinical ne
 
 ### Privacy Guarantees Validated
 - **Information-Theoretic Security**: Mathematical privacy via HDC encoding
-- **Zero-Knowledge Proofs**: Computation verification without data exposure  
+- **Zero-Knowledge Proofs**: Computation verification without data exposure
 - **Private Information Retrieval**: Database queries remain completely private
 - **No Data Leakage**: All operations preserve genomic confidentiality
 

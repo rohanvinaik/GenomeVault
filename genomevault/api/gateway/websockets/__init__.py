@@ -18,6 +18,6 @@ from genomevault.api.gateway.websockets.subscription_manager import Subscription
 
 __all__ = [
     "websocket_router",
-    "ConnectionManager", 
+    "ConnectionManager",
     "SubscriptionManager",
 ]

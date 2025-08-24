@@ -7,14 +7,12 @@ privacy-preserving genomic computing platform.
 
 from __future__ import annotations
 
-import logging
 import os
 from contextlib import asynccontextmanager
 from typing import Any, AsyncGenerator
 
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import RedirectResponse
 
@@ -31,7 +29,7 @@ from genomevault.api.gateway.routes import (
     vectors,
     health,
     specialized,
-    ai_models
+    ai_models,
 )
 from genomevault.api.gateway.websockets import websocket_router
 from genomevault.observability.logging import get_logger
@@ -48,7 +46,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("Starting GenomeVault API Gateway")
     logger.info(f"Environment: {os.getenv('ENVIRONMENT', 'development')}")
     logger.info(f"Version: {app.version}")
-    
+
     # Initialize services
     try:
         # Add any startup initialization here
@@ -62,7 +60,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 def create_app() -> FastAPI:
     """
     Create and configure the FastAPI application.
-    
+
     Returns:
         FastAPI: Configured FastAPI application
     """
@@ -124,7 +122,7 @@ def create_app() -> FastAPI:
         for origin in os.getenv("GENOMEVAULT_CORS_ORIGINS", "").split(",")
         if origin.strip()
     ]
-    
+
     if not allowed_origins:
         allowed_origins = ["*"]  # Allow all origins in development
 
@@ -232,33 +230,25 @@ def create_app() -> FastAPI:
                     "X-RateLimit-Reset": {"$ref": "#/components/headers/X-RateLimit-Reset"},
                 },
                 "content": {
-                    "application/json": {
-                        "schema": {"$ref": "#/components/schemas/ErrorResponse"}
-                    }
+                    "application/json": {"schema": {"$ref": "#/components/schemas/ErrorResponse"}}
                 },
             },
             "Unauthorized": {
                 "description": "Authentication required",
                 "content": {
-                    "application/json": {
-                        "schema": {"$ref": "#/components/schemas/ErrorResponse"}
-                    }
+                    "application/json": {"schema": {"$ref": "#/components/schemas/ErrorResponse"}}
                 },
             },
             "Forbidden": {
                 "description": "Insufficient permissions",
                 "content": {
-                    "application/json": {
-                        "schema": {"$ref": "#/components/schemas/ErrorResponse"}
-                    }
+                    "application/json": {"schema": {"$ref": "#/components/schemas/ErrorResponse"}}
                 },
             },
             "InternalError": {
                 "description": "Internal server error",
                 "content": {
-                    "application/json": {
-                        "schema": {"$ref": "#/components/schemas/ErrorResponse"}
-                    }
+                    "application/json": {"schema": {"$ref": "#/components/schemas/ErrorResponse"}}
                 },
             },
         }
@@ -279,7 +269,7 @@ app = create_app()
 async def add_process_time_header(request: Request, call_next) -> Response:
     """Add process time header to responses."""
     import time
-    
+
     start_time = time.perf_counter()
     response = await call_next(request)
     process_time = time.perf_counter() - start_time

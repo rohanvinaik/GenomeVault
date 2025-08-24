@@ -21,6 +21,7 @@ try:
         monitor_performance,
         monitoring,  # Global instance
     )
+
     MONITORING_AVAILABLE = True
 except ImportError as e:
     print(f"Monitoring module not available: {e}")
@@ -35,6 +36,7 @@ try:
         add_enhanced_observability_middleware,
         add_performance_timing_middleware,
     )
+
     ENHANCED_AVAILABLE = True
 except ImportError as e:
     # Fallback if enhanced modules aren't available
@@ -53,28 +55,32 @@ __all__ = [
 
 # Add monitoring exports if available
 if MONITORING_AVAILABLE:
-    __all__.extend([
-        "MonitoringSystem",
-        "PrometheusExporter",
-        "PerformanceMonitor",
-        "PerformanceTarget",
-        "AlertManager",
-        "Alert",
-        "AlertSeverity",
-        "GrafanaDashboard",
-        "MetricType",
-        "monitor_performance",
-        "monitoring",
-    ])
+    __all__.extend(
+        [
+            "MonitoringSystem",
+            "PrometheusExporter",
+            "PerformanceMonitor",
+            "PerformanceTarget",
+            "AlertManager",
+            "Alert",
+            "AlertSeverity",
+            "GrafanaDashboard",
+            "MetricType",
+            "monitor_performance",
+            "monitoring",
+        ]
+    )
 
 # Add enhanced functionality if available
 if ENHANCED_AVAILABLE:
-    __all__.extend([
-        "get_metrics_collector",
-        "get_prometheus_metrics",
-        "get_structured_logger",
-        "configure_structured_logging",
-        "get_tracing_manager",
-        "add_enhanced_observability_middleware",
-        "add_performance_timing_middleware",
-    ])
+    __all__.extend(
+        [
+            "get_metrics_collector",
+            "get_prometheus_metrics",
+            "get_structured_logger",
+            "configure_structured_logging",
+            "get_tracing_manager",
+            "add_enhanced_observability_middleware",
+            "add_performance_timing_middleware",
+        ]
+    )

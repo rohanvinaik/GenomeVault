@@ -1,0 +1,60 @@
+{
+  "timestamp": "2025-08-24T05:16:58.503492",
+  "components": {
+    "hdc": {
+      "status": "failed",
+      "error": "mean() received an invalid combination of arguments - got (out=NoneType, dtype=NoneType, axis=NoneType, ), but expected one of:\n * (*, torch.dtype dtype)\n * (tuple of ints dim, bool keepdim, *, torch.dtype dtype)\n * (tuple of names dim, bool keepdim, *, torch.dtype dtype)\n"
+    },
+    "pir": {
+      "status": "skipped",
+      "reason": "PIR not available"
+    },
+    "zk": {
+      "status": "success",
+      "proof_generated": false,
+      "generation_time": 2.8848648071289062e-05,
+      "verification_time": 2.1457672119140625e-06,
+      "verified": true,
+      "circuit_type": "variant"
+    },
+    "federated": {
+      "status": "skipped",
+      "reason": "Federated learning not available"
+    },
+    "compression": {
+      "status": "skipped",
+      "reason": "Compression not available"
+    },
+    "consensus": {
+      "status": "skipped",
+      "reason": "Consensus not available"
+    },
+    "monitoring": {
+      "status": "success",
+      "uptime": 0.0009002685546875,
+      "active_alerts": 1,
+      "metrics_exported": true,
+      "performance_compliant": 3
+    },
+    "marketplace": {
+      "status": "failed",
+      "error": "PYTHON"
+    },
+    "threshold": {
+      "status": "skipped",
+      "reason": "Threshold crypto not available"
+    }
+  },
+  "performance": {
+    "zk_generation_time": 2.8848648071289062e-05
+  },
+  "errors": [],
+  "summary": {
+    "total_components": 9,
+    "successful": 2,
+    "failed": 2,
+    "skipped": 5,
+    "total_time": 0.06395101547241211,
+    "success_rate": 0.2222222222222222
+  }
+}

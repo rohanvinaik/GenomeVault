@@ -28,49 +28,41 @@ __all__ = [
     "SuccessResponse",
     "PaginatedResponse",
     "RequestMetadata",
-    
     # Health models
     "HealthStatus",
     "ServiceStatus",
     "HealthCheckResponse",
-    
     # Pipeline models
     "PipelineConfig",
     "PipelineStatus",
     "PipelineExecution",
     "PipelineResult",
-    
     # Vector models
     "VectorEncodeRequest",
     "VectorEncodeResponse",
     "VectorCompareRequest",
     "VectorCompareResponse",
-    
     # Proof models
     "ProofGenerationRequest",
     "ProofGenerationResponse",
     "ProofVerificationRequest",
     "ProofVerificationResponse",
-    
     # Query models
     "PIRQueryRequest",
     "PIRQueryResponse",
     "QueryExecutionRequest",
     "QueryExecutionResponse",
-    
     # Model management
     "ModelCreateRequest",
     "ModelUpdateRequest",
     "ModelResponse",
     "ModelTrainingRequest",
     "ModelTrainingResponse",
-    
     # Algorithm marketplace
     "AlgorithmListRequest",
     "AlgorithmResponse",
     "AlgorithmExecutionRequest",
     "AlgorithmExecutionResponse",
-    
     # Specialized endpoints
     "TopologyRequest",
     "TopologyResponse",
@@ -78,7 +70,6 @@ __all__ = [
     "CreditRedemptionResponse",
     "AuditChallengeRequest",
     "AuditChallengeResponse",
-    
     # WebSocket models
     "WebSocketMessage",
     "WebSocketResponse",

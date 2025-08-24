@@ -20,7 +20,7 @@ T = TypeVar("T")
 
 class BaseModel(PydanticBaseModel):
     """Base model with common configuration."""
-    
+
     model_config = {
         "use_enum_values": True,
         "validate_assignment": True,
@@ -28,14 +28,16 @@ class BaseModel(PydanticBaseModel):
         "json_encoders": {
             datetime: lambda v: v.isoformat(),
             uuid.UUID: str,
-        }
+        },
     }
 
 
 class RequestMetadata(BaseModel):
     """Metadata included in API requests."""
-    
-    request_id: str = Field(default_factory=lambda: str(uuid.uuid4()), description="Unique request identifier")
+
+    request_id: str = Field(
+        default_factory=lambda: str(uuid.uuid4()), description="Unique request identifier"
+    )
     timestamp: datetime = Field(default_factory=datetime.utcnow, description="Request timestamp")
     user_agent: Optional[str] = Field(None, description="Client user agent")
     client_ip: Optional[str] = Field(None, description="Client IP address")
@@ -44,7 +46,7 @@ class RequestMetadata(BaseModel):
 
 class ErrorType(str, Enum):
     """Error type classifications."""
-    
+
     VALIDATION_ERROR = "ValidationError"
     AUTHENTICATION_ERROR = "AuthenticationError"
     AUTHORIZATION_ERROR = "AuthorizationError"
@@ -57,7 +59,7 @@ class ErrorType(str, Enum):
 
 class ErrorResponse(BaseModel):
     """Standard error response model."""
-    
+
     type: ErrorType = Field(..., description="Error type classification")
     code: str = Field(..., description="Machine-readable error code")
     message: str = Field(..., description="Human-readable error message")
@@ -65,7 +67,7 @@ class ErrorResponse(BaseModel):
     request_id: str = Field(..., description="Unique request identifier for support")
     timestamp: datetime = Field(default_factory=datetime.utcnow, description="Error timestamp")
     trace_id: Optional[str] = Field(None, description="Distributed tracing identifier")
-    
+
     model_config = {
         "json_schema_extra": {
             "example": {
@@ -74,10 +76,10 @@ class ErrorResponse(BaseModel):
                 "message": "Invalid genomic coordinate format",
                 "details": {
                     "field": "variants[0].chrom",
-                    "allowed_values": ["1", "2", "3", "...", "22", "X", "Y", "M"]
+                    "allowed_values": ["1", "2", "3", "...", "22", "X", "Y", "M"],
                 },
                 "request_id": "req_1234567890",
-                "timestamp": "2024-01-15T10:30:00Z"
+                "timestamp": "2024-01-15T10:30:00Z",
             }
         }
     }
@@ -85,7 +87,7 @@ class ErrorResponse(BaseModel):
 
 class SuccessResponse(BaseModel, Generic[T]):
     """Standard success response wrapper."""
-    
+
     success: bool = Field(True, description="Operation success indicator")
     data: T = Field(..., description="Response data")
     request_id: str = Field(..., description="Unique request identifier")
@@ -95,10 +97,10 @@ class SuccessResponse(BaseModel, Generic[T]):
 
 class PaginationParams(BaseModel):
     """Pagination parameters."""
-    
+
     page: int = Field(1, ge=1, description="Page number (1-based)")
     per_page: int = Field(20, ge=1, le=100, description="Items per page")
-    
+
     @property
     def offset(self) -> int:
         """Calculate offset for database queries."""
@@ -107,7 +109,7 @@ class PaginationParams(BaseModel):
 
 class PaginatedResponse(BaseModel, Generic[T]):
     """Paginated response wrapper."""
-    
+
     items: List[T] = Field(..., description="Page items")
     total: int = Field(..., description="Total number of items")
     page: int = Field(..., description="Current page number")
@@ -115,7 +117,7 @@ class PaginatedResponse(BaseModel, Generic[T]):
     total_pages: int = Field(..., description="Total number of pages")
     has_next: bool = Field(..., description="Whether there are more pages")
     has_previous: bool = Field(..., description="Whether there are previous pages")
-    
+
     @field_validator("total_pages", mode="before")
     @classmethod
     def calculate_total_pages(cls, v, info):
@@ -123,7 +125,7 @@ class PaginatedResponse(BaseModel, Generic[T]):
         total = info.data.get("total", 0)
         per_page = info.data.get("per_page", 1)
         return (total + per_page - 1) // per_page if total > 0 else 0
-    
+
     @field_validator("has_next", mode="before")
     @classmethod
     def calculate_has_next(cls, v, info):
@@ -131,7 +133,7 @@ class PaginatedResponse(BaseModel, Generic[T]):
         page = info.data.get("page", 1)
         total_pages = info.data.get("total_pages", 0)
         return page < total_pages
-    
+
     @field_validator("has_previous", mode="before")
     @classmethod
     def calculate_has_previous(cls, v, info):
@@ -142,15 +144,15 @@ class PaginatedResponse(BaseModel, Generic[T]):
 
 class PrivacyLevel(str, Enum):
     """Privacy guarantee levels."""
-    
+
     K_ANONYMOUS = "k-anonymous"
-    DIFFERENTIAL_PRIVATE = "differential_private" 
+    DIFFERENTIAL_PRIVATE = "differential_private"
     INFORMATION_THEORETIC = "information_theoretic"
 
 
 class ProcessingStatus(str, Enum):
     """Processing status values."""
-    
+
     PENDING = "pending"
     RUNNING = "running"
     COMPLETED = "completed"
@@ -160,11 +162,11 @@ class ProcessingStatus(str, Enum):
 
 class GenomicVariant(BaseModel):
     """Genomic variant representation."""
-    
+
     chrom: str = Field(
         ...,
         pattern=r"^(chr)?(1[0-9]|2[0-2]|[1-9]|X|Y|M|MT)$",
-        description="Chromosome (1-22, X, Y, M)"
+        description="Chromosome (1-22, X, Y, M)",
     )
     pos: int = Field(..., ge=1, description="Genomic position (1-based)")
     ref: str = Field(..., pattern=r"^[ATCGN]+$", description="Reference allele")
@@ -172,10 +174,10 @@ class GenomicVariant(BaseModel):
     impact: Optional[str] = Field(
         None,
         pattern=r"^(missense|nonsense|synonymous|frameshift|splice_site|intron|intergenic)$",
-        description="Predicted functional impact"
+        description="Predicted functional impact",
     )
     quality: Optional[float] = Field(None, ge=0, le=100, description="Variant quality score")
-    
+
     model_config = {
         "json_schema_extra": {
             "example": {
@@ -184,7 +186,7 @@ class GenomicVariant(BaseModel):
                 "ref": "A",
                 "alt": "T",
                 "impact": "missense",
-                "quality": 99.5
+                "quality": 99.5,
             }
         }
     }
@@ -192,7 +194,7 @@ class GenomicVariant(BaseModel):
 
 class RateLimitInfo(BaseModel):
     """Rate limiting information."""
-    
+
     limit: int = Field(..., description="Request limit per window")
     remaining: int = Field(..., description="Requests remaining in current window")
     reset_time: int = Field(..., description="Time when rate limit resets (Unix timestamp)")
@@ -201,7 +203,7 @@ class RateLimitInfo(BaseModel):
 
 class AuditTrail(BaseModel):
     """Audit trail information."""
-    
+
     user_id: Optional[str] = Field(None, description="User identifier")
     action: str = Field(..., description="Action performed")
     resource: str = Field(..., description="Resource accessed")

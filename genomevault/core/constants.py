@@ -29,7 +29,7 @@ class OmicsType(Enum):
 
 class CompressionTier(str, Enum):
     """Compression tier levels."""
-    
+
     MINI = "mini"  # ~25KB - 5,000 most-studied SNPs
     CLINICAL = "clinical"  # ~300KB - ACMG + PharmGKB variants
     FULL = "full"  # 100-200KB per modality - Full HDC vectors
