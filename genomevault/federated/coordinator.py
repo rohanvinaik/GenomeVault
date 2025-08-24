@@ -28,6 +28,7 @@ import numpy as np
 
 from genomevault.utils.logging import get_logger
 from genomevault.federated.aggregator import SecureAggregator
+from genomevault.federated.models import FederatedConfig
 
 logger = get_logger(__name__)
 
@@ -386,6 +387,20 @@ class PrivacyAccountant:
             "rounds_completed": len(self.round_budgets),
             "history": self.history[-10:],  # Last 10 entries
             "timestamp": datetime.now().isoformat(),
+        }
+
+    def get_privacy_spent(self) -> Dict[str, float]:
+        """
+        Get the privacy budget spent so far
+
+        Returns:
+            Dictionary with epsilon and delta spent
+        """
+        return {
+            "epsilon": self.consumed_epsilon,
+            "delta": self.consumed_delta,
+            "remaining_epsilon": self.total_epsilon - self.consumed_epsilon,
+            "remaining_delta": self.total_delta - self.consumed_delta,
         }
 
 
@@ -986,3 +1001,39 @@ if __name__ == "__main__":
     print(f"Converged: {results['convergence']['converged']}")
     print(f"Privacy consumed: ε={results['privacy']['consumed_budget']['epsilon']:.2f}")
     print(f"Final loss: {results['final_loss']:.4f}" if results["final_loss"] else "N/A")
+
+
+# Helper function to create coordinator from FederatedConfig
+def create_coordinator_from_config(config: FederatedConfig) -> FederatedCoordinator:
+    """Create FederatedCoordinator from simplified FederatedConfig"""
+    # Map FederatedConfig to TrainingConfig
+    training_config = TrainingConfig(
+        num_rounds=config.rounds,
+        local_epochs=config.local_epochs,
+        batch_size=config.batch_size,
+        learning_rate=config.learning_rate,
+        min_participants=config.min_participants,
+        dropout_tolerance=config.dropout_tolerance,
+        protocol=config.protocol if config.protocol else AggregationProtocol.SECURE_AGG,
+    )
+
+    # Map privacy settings to PrivacyParameters
+    privacy_params = PrivacyParameters(
+        epsilon=config.epsilon,
+        delta=config.delta,
+        clip_norm=config.clip_norm if config.clip_norm else 1.0,
+    )
+
+    return FederatedCoordinator(training_config, privacy_params)
+
+
+# Export key classes
+__all__ = [
+    "FederatedCoordinator",
+    "FederatedConfig",
+    "AggregationProtocol",
+    "ParticipantStatus",
+    "TrainingConfig",
+    "PrivacyParameters",
+    "create_coordinator_from_config",
+]

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-08-24T05:28:15.691567",
+  "timestamp": "2025-08-24T05:40:38.203988",
   "components": {
     "hdc": {
       "status": "failed",
@@ -8,21 +8,26 @@
     "pir": {
       "status": "success",
       "database_size": 100,
-      "query_time": 0.00011920928955078125,
+      "query_time": 0.00010800361633300781,
       "retrieved_correct": true,
       "privacy_preserved": true
     },
     "zk": {
       "status": "success",
       "proof_generated": false,
-      "generation_time": 3.2901763916015625e-05,
-      "verification_time": 2.1457672119140625e-06,
+      "generation_time": 3.504753112792969e-05,
+      "verification_time": 9.5367431640625e-07,
       "verified": true,
       "circuit_type": "variant"
     },
     "federated": {
-      "status": "skipped",
-      "reason": "Federated learning not available"
+      "status": "success",
+      "participants": 3,
+      "aggregation_time": 0.0007963180541992188,
+      "protocol": "secure_agg",
+      "differential_privacy": true,
+      "epsilon_spent": 0.0,
+      "dropout_tolerance": 0.3
     },
     "compression": {
       "status": "skipped",
@@ -34,7 +39,7 @@
     },
     "monitoring": {
       "status": "success",
-      "uptime": 0.0005450248718261719,
+      "uptime": 0.0004987716674804688,
       "active_alerts": 2,
       "metrics_exported": true,
       "performance_compliant": 4
@@ -61,16 +66,16 @@
     }
   },
   "performance": {
-    "pir_query_time": 0.00011920928955078125,
-    "zk_generation_time": 3.2901763916015625e-05
+    "pir_query_time": 0.00010800361633300781,
+    "zk_generation_time": 3.504753112792969e-05
   },
   "errors": [],
   "summary": {
     "total_components": 9,
-    "successful": 4,
+    "successful": 5,
     "failed": 1,
-    "skipped": 4,
-    "total_time": 0.03734278678894043,
-    "success_rate": 0.4444444444444444
+    "skipped": 3,
+    "total_time": 0.04021310806274414,
+    "success_rate": 0.5555555555555556
   }
 }

@@ -3,7 +3,44 @@
 from __future__ import annotations
 
 from pydantic import BaseModel, Field, validator
-from typing import Any
+from typing import Any, Optional
+from dataclasses import dataclass
+
+
+@dataclass
+class FederatedConfig:
+    """Configuration for federated learning."""
+
+    # Core settings
+    aggregation_method: str = "federated_avg"  # federated_avg, weighted_avg, median
+    min_clients: int = 2  # Minimum number of clients for aggregation
+    min_participants: int = 2  # Alternative name for min_clients
+    rounds: int = 10  # Number of federated learning rounds
+
+    # Protocol settings
+    protocol: Optional[Any] = None  # AggregationProtocol enum (SECAGG, FEDAVG, etc.)
+    dropout_tolerance: float = 0.3  # Fraction of clients that can drop out
+
+    # Privacy settings
+    differential_privacy: bool = False  # Enable differential privacy
+    differential_privacy_enabled: bool = False  # Alternative name
+    epsilon: float = 1.0  # DP epsilon parameter
+    delta: float = 1e-5  # DP delta parameter
+    clip_norm: Optional[float] = None  # L2 norm clipping threshold
+
+    # Security settings
+    secure_aggregation: bool = False  # Enable secure aggregation
+
+    # Training settings
+    learning_rate: float = 0.01  # Client learning rate
+    batch_size: int = 32  # Client batch size
+    local_epochs: int = 5  # Epochs per client per round
+    validation_split: float = 0.2  # Validation data split
+    patience: int = 5  # Early stopping patience
+
+    # Optimization settings
+    model_compression: bool = False  # Enable model compression
+    compression_rate: float = 0.5  # Compression ratio
 
 
 class ModelUpdate(BaseModel):
