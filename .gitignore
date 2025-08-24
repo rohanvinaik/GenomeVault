@@ -1,4 +1,39 @@
-# Python
+# Sensitive Data - NEVER COMMIT
+keys/
+*.key
+*.pem
+*.p12
+*.pfx
+.env
+.env.*
+*_secret*
+*_private*
+credentials.json
+service-account.json
+
+# Zero-Knowledge Artifacts
+.zk_transcript_key
+*.witness
+*.proof
+trusted_setup/
+*.r1cs
+*.wasm
+*.zkey
+*.ptau
+
+# Database Files
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-wal
+*.db-shm
+history.db
+
+# Generated Files
+*.hdc
+*.compressed
+*.encrypted
 __pycache__/
 *.py[cod]
 *$py.class
@@ -16,120 +51,38 @@ parts/
 sdist/
 var/
 wheels/
-share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-MANIFEST
 
-# PyInstaller
-*.manifest
-*.spec
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
+# Test & Coverage
+.pytest_cache/
+.coverage
+.coverage.*
 htmlcov/
 .tox/
 .nox/
-.coverage
-.coverage.*
+.hypothesis/
+*.cover
 .cache
 nosetests.xml
 coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-.pytest_cache/
-cover/
-
-# Translations
-*.mo
-*.pot
-
-# Django stuff:
 *.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
 
-# Flask stuff:
-instance/
-.webassets-cache
-
-# Scrapy stuff:
-.scrapy
-
-# Sphinx documentation
-docs/_build/
-
-# PyBuilder
-.pybuilder/
-target/
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# IPython
-profile_default/
-ipython_config.py
-
-# pyenv
-.python-version
-
-# pipenv
-Pipfile.lock
-
-# poetry
-poetry.lock
-
-# pdm
-.pdm.toml
-
-# PEP 582
-__pypackages__/
-
-# Celery stuff
-celerybeat-schedule
-celerybeat.pid
-
-# SageMath parsed files
-*.sage.py
-
-# Environments
-.env
-.venv
-env/
+# Virtual Environments
 venv/
+.venv/
 ENV/
-env.bak/
-venv.bak/
+env/
+.virtualenv/
 
-# Spyder project settings
-.spyderproject
-.spyproject
-
-# Rope project settings
-.ropeproject
-
-# mkdocs documentation
-/site
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pyre type checker
-.pyre/
-
-# pytype static type analyzer
-.pytype/
-
-# Cython debug symbols
-cython_debug/
+# Node Dependencies (NEVER commit)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
 
 # IDE
 .vscode/
@@ -137,8 +90,11 @@ cython_debug/
 *.swp
 *.swo
 *~
+.project
+.pydevproject
+.settings/
 
-# OS
+# OS Files
 .DS_Store
 .DS_Store?
 ._*
@@ -146,48 +102,67 @@ cython_debug/
 .Trashes
 ehthumbs.db
 Thumbs.db
+desktop.ini
 
-# GenomeVault specific
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Logs
+logs/
 *.log
-*.tmp
-temp/
+*.out
+*.err
+
+# Temporary Files
 tmp/
-.benchmarks/
-test_output*.log
-clinical_validation/temp/
-
-# Cleanup and temporary scripts
-cleanup_for_github.py
-cleanup_auto.py
-preview_cleanup.py
-.cleanup_backup/
-.cleanup_backups/
-test_*.py  # One-off test files in root
-task*_output/
-task*_output.txt
-
-# Backup files
+temp/
+*.tmp
 *.bak
 *.backup
+*.old
 
-# Development tools (now in devtools/)
-/tools/
-/devtools/__pycache__/
-/devtools/*.pyc
-/devtools/.pytest_cache/
+# Data (keep directory structure only)
+data/raw/*
+data/processed/*
+data/encrypted/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/encrypted/.gitkeep
 
-# One-off scripts in root (should be in devtools/)
-apply_*.py
-fix_*.py
-validate_*.py
-verify_*.py
-check_*.py
-run_*.py
-push_*.sh
-commit_*.sh
+# Results (optional - may want to share some)
+results/*
+!results/.gitkeep
+!results/README.md
 
-# Cryptographic keys (security)
-*.key
-*.pem
-*.crt
-secrets/
+# Documentation build
+docs/_build/
+docs/_static/
+docs/_templates/
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre
+.pyre/
+
+# Local configuration
+local_config.yaml
+*.local.yaml
+
+# Benchmark results
+giab_benchmark_results/
+mock_test.vcf
+real_zk_proof.json
+
+# Python history
+.python_history
+
+# Test artifacts
+test_*.py
+test_*.json
+genomevault_*.json
+*_test_results.json
+*_performance_metrics.json
