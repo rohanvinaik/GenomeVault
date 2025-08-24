@@ -70,7 +70,7 @@ This isn't an incremental improvement. It's a complete reimagining of how genomi
 | Cloud dependent | Edge native | **Works anywhere** |
 | Privacy risks | Zero-knowledge | **Perfect privacy** |
 
-This is why leading institutions are adopting GenomeVault. It's not just better—it's a fundamental reimagining of what personal genomics can be.
+This isn't just better—it's a fundamental reimagining of what personal genomics can be.
 
 ## 🎯 Live Demo - See It Work in 30 Seconds
 
