@@ -1,0 +1,18 @@
+Benchmark Run: 20250824_183652
+==================================================
+
+hdc_compression_1k:
+  Duration: 0.11ms
+  Checksum: 37014ee796a7e615
+  Success: True
+
+zk_variant_presence:
+  Duration: 0.01ms
+  Checksum: e047d3606086245a
+  Success: True
+
+pir_query_100:
+  Duration: 0.00ms
+  Checksum: bc0130c99f9cb784
+  Success: True
+

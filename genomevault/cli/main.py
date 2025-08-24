@@ -41,6 +41,9 @@ app.add_typer(demo_app, name="demo")
 benchmark_app = typer.Typer(help="Benchmarking operations")
 app.add_typer(benchmark_app, name="benchmark")
 
+hsm_app = typer.Typer(help="Hardware Security Module operations")
+app.add_typer(hsm_app, name="hsm")
+
 
 @demo_app.command("run")
 def demo_run(
@@ -891,6 +894,145 @@ def verify(
 
         typer.echo(json.dumps(output))
 
+    except Exception as e:
+        typer.echo(json.dumps({"error": str(e)}))
+        raise typer.Exit(1)
+
+
+@hsm_app.command("status")
+def hsm_status():
+    """Show HSM status and key inventory."""
+    try:
+        from genomevault.security.hsm_integration import get_hsm_manager
+        
+        manager = get_hsm_manager()
+        status_info = manager.get_hsm_status()
+        
+        output = {
+            "backend_type": status_info['backend_type'],
+            "status": status_info['status'],
+            "key_count": status_info['key_count'],
+            "keys": [
+                {
+                    "id": key['id'], 
+                    "algorithm": key['algorithm'],
+                    "usage": key['usage']
+                }
+                for key in status_info['keys']
+            ]
+        }
+        
+        typer.echo(json.dumps(output, indent=2))
+        
+    except Exception as e:
+        typer.echo(json.dumps({"error": str(e)}))
+        raise typer.Exit(1)
+
+
+@hsm_app.command("setup")
+def hsm_setup(
+    force: Annotated[bool, typer.Option("--force", help="Force key generation")] = False
+):
+    """Set up standard GenomeVault HSM keys."""
+    try:
+        from genomevault.security.hsm_integration import get_hsm_manager
+        
+        manager = get_hsm_manager()
+        
+        if not force:
+            existing_keys = manager.backend.list_keys()
+            genomevault_keys = [k for k in existing_keys if 'genomevault' in k.key_id.lower()]
+            if genomevault_keys:
+                typer.echo(
+                    json.dumps({
+                        "message": f"Found {len(genomevault_keys)} existing keys",
+                        "existing_keys": [k.key_id for k in genomevault_keys],
+                        "note": "Use --force to recreate keys"
+                    })
+                )
+                return
+        
+        created_keys = manager.setup_genomevault_keys()
+        
+        output = {
+            "status": "success",
+            "keys_created": len(created_keys),
+            "created_keys": list(created_keys.keys()) if created_keys else [],
+            "message": "HSM setup complete" if created_keys else "All keys already exist"
+        }
+        
+        typer.echo(json.dumps(output, indent=2))
+        
+    except Exception as e:
+        typer.echo(json.dumps({"error": str(e)}))
+        raise typer.Exit(1)
+
+
+@hsm_app.command("test")
+def hsm_test(
+    data_size: Annotated[int, typer.Option("--size", help="Test data size")] = 1024,
+    iterations: Annotated[int, typer.Option("--iterations", help="Test iterations")] = 10
+):
+    """Test HSM performance."""
+    try:
+        import time
+        import secrets
+        from genomevault.security.hsm_integration import get_hsm_manager
+        
+        manager = get_hsm_manager()
+        
+        # Ensure test key exists
+        try:
+            existing_keys = manager.backend.list_keys()
+            if not any(k.key_id == 'genomevault-data-encryption' for k in existing_keys):
+                manager.backend.generate_key(
+                    key_id='genomevault-data-encryption',
+                    algorithm='AES-256',
+                    key_usage=['encrypt', 'decrypt'],
+                    description='Test key for performance testing'
+                )
+        except Exception:
+            pass
+        
+        # Generate test data
+        test_data = secrets.token_bytes(data_size)
+        
+        # Test encryption performance
+        encrypt_times = []
+        for _ in range(iterations):
+            start = time.perf_counter()
+            ciphertext = manager.backend.encrypt('genomevault-data-encryption', test_data)
+            encrypt_times.append(time.perf_counter() - start)
+        
+        # Test decryption performance
+        decrypt_times = []
+        for _ in range(iterations):
+            start = time.perf_counter()
+            decrypted = manager.backend.decrypt('genomevault-data-encryption', ciphertext)
+            decrypt_times.append(time.perf_counter() - start)
+        
+        # Calculate statistics
+        avg_encrypt = sum(encrypt_times) / len(encrypt_times)
+        avg_decrypt = sum(decrypt_times) / len(decrypt_times)
+        total_time = sum(encrypt_times) + sum(decrypt_times)
+        throughput = (data_size * iterations * 2) / total_time / 1024
+        
+        output = {
+            "backend": manager.backend.__class__.__name__,
+            "test_parameters": {
+                "data_size_bytes": data_size,
+                "iterations": iterations
+            },
+            "results": {
+                "avg_encrypt_ms": round(avg_encrypt * 1000, 3),
+                "avg_decrypt_ms": round(avg_decrypt * 1000, 3),
+                "total_time_s": round(total_time, 3),
+                "throughput_kb_per_s": round(throughput, 2)
+            }
+        }
+        
+        typer.echo(json.dumps(output, indent=2))
+        
     except Exception as e:
         typer.echo(json.dumps({"error": str(e)}))
         raise typer.Exit(1)

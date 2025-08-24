@@ -437,30 +437,37 @@ class Prover:
     def _check_circom_dependencies(self) -> bool:
         """Check if all Circom dependencies are available."""
         try:
-            # Check for circomlib
-            circomlib_path = Path("zk_circuits/node_modules/circomlib")
+            # Find repository root by looking for zk_circuits directory
+            repo_root = Path(__file__).parent.parent.parent
+            circomlib_path = repo_root / "zk_circuits" / "node_modules" / "circomlib"
             if not circomlib_path.exists():
                 logger.warning("Circomlib not found, installing...")
-                result = subprocess.run(
-                    ["bash", "scripts/install_circomlib.sh"],
-                    check=True,
-                    capture_output=True,
-                    text=True,
-                )
-                logger.info("Circomlib installation completed")
-                logger.debug(f"Installation output: {result.stdout}")
+                install_script = repo_root / "scripts" / "install_circomlib.sh"
+                if install_script.exists():
+                    result = subprocess.run(
+                        ["bash", str(install_script)],
+                        check=True,
+                        capture_output=True,
+                        text=True,
+                        cwd=str(repo_root),
+                    )
+                    logger.info("Circomlib installation completed")
+                    logger.debug(f"Installation output: {result.stdout}")
+                else:
+                    logger.warning("Installation script not found, checking if circomlib exists anyway")
 
             # Check for poseidon
-            poseidon_path = circomlib_path / "circuits/poseidon.circom"
+            poseidon_path = circomlib_path / "circuits" / "poseidon.circom"
             if not poseidon_path.exists():
                 logger.warning("Poseidon circuit not found, using simplified version")
                 # Check for our local implementation
-                local_poseidon = Path("zk_circuits/circuits/lib/poseidon.circom")
+                local_poseidon = repo_root / "zk_circuits" / "circuits" / "lib" / "poseidon.circom"
                 if local_poseidon.exists():
                     logger.info("Found local Poseidon implementation")
                     return True
                 return False
 
+            logger.info(f"✓ Circomlib found at {circomlib_path}")
             return True
 
         except subprocess.CalledProcessError as e:
