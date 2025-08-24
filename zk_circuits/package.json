@@ -9,17 +9,18 @@
     "benchmark": "node benchmark.js"
   },
   "dependencies": {
-    "circomlib": "^2.0.5",
-    "snarkjs": "^0.7.3",
-    "circomlibjs": "^0.1.7",
+    "@iden3/binfileutils": "^0.0.12",
     "circom_runtime": "^0.1.25",
+    "circomlib": "^2.0.5",
+    "circomlib-ml": "^2.3.0",
+    "circomlibjs": "^0.1.7",
+    "fastfile": "^0.0.20",
     "ffjavascript": "^0.3.0",
     "r1csfile": "^0.0.48",
-    "fastfile": "^0.0.20",
-    "@iden3/binfileutils": "^0.0.12"
+    "snarkjs": "^0.7.5"
   },
   "devDependencies": {
-    "mocha": "^10.2.0",
-    "chai": "^4.3.10"
+    "chai": "^4.3.10",
+    "mocha": "^10.2.0"
   }
 }
