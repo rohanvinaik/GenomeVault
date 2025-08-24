@@ -1,5 +1,3 @@
-from pathlib import Path
-
 """
 GenomeVault 3.0 Consolidated Utilities
 
@@ -12,6 +10,8 @@ Created as part of the tail-chasing fixes initiative.
 """
 
 from __future__ import annotations
+
+from pathlib import Path
 
 from datetime import datetime
 from typing import Any

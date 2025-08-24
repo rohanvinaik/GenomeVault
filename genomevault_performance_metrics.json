@@ -1,25 +1,25 @@
 {
-  "timestamp": "2025-08-24T14:37:49.754659",
+  "timestamp": "2025-08-24T15:28:34.450549",
   "components": {
     "hdc_encoding": {
       "status": "success",
       "metrics": [
         {
           "dimension": 1000,
-          "encoding_time_ms": 19.94,
-          "sparsity": 0.495,
+          "encoding_time_ms": 21.59,
+          "sparsity": 0.514,
           "compression_ratio": "3.2x"
         },
         {
           "dimension": 8192,
-          "encoding_time_ms": 1.49,
-          "sparsity": 0.497,
+          "encoding_time_ms": 1.55,
+          "sparsity": 0.499,
           "compression_ratio": "0.4x"
         },
         {
           "dimension": 16384,
           "encoding_time_ms": 1.7,
-          "sparsity": 0.51,
+          "sparsity": 0.507,
           "compression_ratio": "0.2x"
         }
       ],
@@ -30,7 +30,7 @@
       "metrics": [
         {
           "type": "variant_presence",
-          "generation_time_ms": 410.63,
+          "generation_time_ms": 408.38,
           "backend": "CIRCOM/Groth16",
           "verified": true
         }
@@ -41,17 +41,17 @@
       "metrics": [
         {
           "database_size": 100,
-          "query_time_ms": 0.11,
+          "query_time_ms": 0.13,
           "protocol": "IT-PIR"
         },
         {
           "database_size": 1000,
-          "query_time_ms": 0.71,
+          "query_time_ms": 0.72,
           "protocol": "IT-PIR"
         },
         {
           "database_size": 10000,
-          "query_time_ms": 7.13,
+          "query_time_ms": 7.11,
           "protocol": "IT-PIR"
         }
       ]
@@ -68,13 +68,13 @@
         {
           "operation": "batch_insert",
           "count": 1000,
-          "time_ms": 1.18,
+          "time_ms": 1.16,
           "per_record_ms": 0.0012
         },
         {
           "operation": "batch_insert",
           "count": 5000,
-          "time_ms": 4.0,
+          "time_ms": 4.14,
           "per_record_ms": 0.0008
         }
       ]
@@ -88,7 +88,7 @@
   "metrics": {},
   "pipeline_performance": {
     "status": "success",
-    "total_time_ms": 8.34,
-    "throughput": "119.87 genomes/second"
+    "total_time_ms": 8.37,
+    "throughput": "119.53 genomes/second"
   }
 }
