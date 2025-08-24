@@ -428,7 +428,7 @@ python benchmark_giab.py
 │  │  (Apple) │ (NVIDIA) │  (AMD)   │ (Fallback) │               │
 │  └──────────────────────────────────────────────┘               │
 │                           ↓                                       │
-│  Output: 1.3KB Privacy-Preserving Representation                │
+│  Output: 25-300KB Privacy-Preserving Representation             │
 │                                                                   │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -437,7 +437,7 @@ python benchmark_giab.py
 
 ### Completed Validation ✅
 - **Synthetic Benchmarks**: 400,000 variants in 2.26 seconds
-- **Compression Validation**: 2,116× verified on standard VCF files
+- **Compression Validation**: 50-100× verified on standard VCF files
 - **Privacy Proofs**: Information-theoretic security mathematically proven
 - **Hardware Tests**: Metal, CUDA, CPU backends validated
 - **E2E Pipeline**: Full system integration confirmed
