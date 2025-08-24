@@ -1,0 +1,19 @@
+{
+  "name": "genomevault",
+  "version": "0.1.0",
+  "description": "Privacy-preserving genomic computing platform",
+  "private": true,
+  "workspaces": [
+    "zk_circuits"
+  ],
+  "scripts": {
+    "install:circuits": "cd zk_circuits && npm install",
+    "compile:circuits": "cd zk_circuits && npm run compile",
+    "test:circuits": "cd zk_circuits && npm test",
+    "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf {} +"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}

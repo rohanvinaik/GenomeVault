@@ -1,19 +1,25 @@
 {
-  "name": "zk_circuits",
+  "name": "genomevault-zk-circuits",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Zero-knowledge circuits for GenomeVault",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "compile": "bash ../scripts/compile_circuits.sh",
+    "test": "mocha test/*.js",
+    "benchmark": "node benchmark.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
     "circomlib": "^2.0.5",
-    "circomlib-ml": "^2.3.0",
+    "snarkjs": "^0.7.3",
     "circomlibjs": "^0.1.7",
-    "snarkjs": "^0.7.5"
+    "circom_runtime": "^0.1.25",
+    "ffjavascript": "^0.3.0",
+    "r1csfile": "^0.0.48",
+    "fastfile": "^0.0.20",
+    "@iden3/binfileutils": "^0.0.12"
+  },
+  "devDependencies": {
+    "mocha": "^10.2.0",
+    "chai": "^4.3.10"
   }
 }
