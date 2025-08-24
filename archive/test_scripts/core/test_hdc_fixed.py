@@ -5,7 +5,7 @@ import sys
 import time
 import numpy as np
 
-sys.path.insert(0, "/Users/rohanvinaik/genomevault")
+sys.path.insert(0, ".")
 
 from genomevault.hypervector_transform.encoding import HypervectorEncoder, HypervectorConfig
 from genomevault.core.constants import OmicsType

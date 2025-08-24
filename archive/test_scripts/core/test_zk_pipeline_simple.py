@@ -10,7 +10,7 @@ import numpy as np
 from typing import Dict
 import psutil
 
-sys.path.insert(0, "/Users/rohanvinaik/genomevault")
+sys.path.insert(0, ".")
 
 from genomevault.zk_proofs.prover import Prover
 from genomevault.zk_proofs.witness_cache import get_witness_cache

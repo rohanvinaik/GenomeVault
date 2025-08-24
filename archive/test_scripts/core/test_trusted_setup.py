@@ -3,7 +3,7 @@
 
 import sys
 
-sys.path.insert(0, "/Users/rohanvinaik/genomevault")
+sys.path.insert(0, ".")
 
 from genomevault.zk_proofs.backends.circom_backend import CircomBackend
 

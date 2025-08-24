@@ -6,7 +6,7 @@ import sys
 import numpy as np
 
 # Add genomevault to path
-sys.path.insert(0, "/Users/rohanvinaik/genomevault")
+sys.path.insert(0, ".")
 
 from genomevault.zk_proofs.gpu_prover import GPUProver, get_gpu_prover
 from genomevault.utils.logging import get_logger

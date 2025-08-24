@@ -6,7 +6,7 @@ import sys
 import json
 
 # Add genomevault to path
-sys.path.insert(0, "/Users/rohanvinaik/genomevault")
+sys.path.insert(0, ".")
 
 from genomevault.zk_proofs.witness_cache import LRUCache, get_witness_cache, reset_witness_cache
 from genomevault.zk_proofs.prover import Prover

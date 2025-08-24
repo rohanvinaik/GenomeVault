@@ -6,7 +6,7 @@ import os
 import hashlib
 from unittest.mock import patch
 
-sys.path.insert(0, "/Users/rohanvinaik/genomevault")
+sys.path.insert(0, ".")
 
 from genomevault.utils.production_safety import (
     is_production,

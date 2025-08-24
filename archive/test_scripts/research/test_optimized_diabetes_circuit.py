@@ -6,7 +6,7 @@ import numpy as np
 import sys
 
 # Add genomevault to path
-sys.path.insert(0, "/Users/rohanvinaik/genomevault")
+sys.path.insert(0, ".")
 
 from genomevault.zk_proofs.circuits.biological.diabetes import DiabetesRiskCircuit
 from genomevault.zk_proofs.circuits.optimized.diabetes_risk_alert import (

@@ -30,7 +30,7 @@ logger.info("\n2. Testing specific failing imports...")
 # PIR Client
 logger.info("\n  Testing PIR Client...")
 try:
-    sys.path.insert(0, "/Users/rohanvinaik/genomevault")
+    sys.path.insert(0, ".")
 
     logger.info("  ✓ PIR Client imported")
 except Exception:
@@ -39,7 +39,7 @@ except Exception:
     # Try to see what's in the pir directory
     import os
 
-    pir_path = "/Users/rohanvinaik/genomevault/pir"
+    pir_path = "./pir"
     if os.path.exists(pir_path):
         logger.info("  PIR directory contents: {os.listdir(pir_path)}")
         client_path = os.path.join(pir_path, "client.py")

@@ -8,7 +8,7 @@ import hashlib
 import gc
 
 # Add genomevault to path
-sys.path.insert(0, "/Users/rohanvinaik/genomevault")
+sys.path.insert(0, ".")
 
 from genomevault.zk_proofs.memory_pool import MemoryPool, get_memory_manager, MemoryEfficientProver
 from genomevault.utils.logging import get_logger

@@ -7,7 +7,7 @@ import numpy as np
 import sys
 import unittest
 
-sys.path.insert(0, "/Users/rohanvinaik/genomevault")
+sys.path.insert(0, ".")
 
 from genomevault.accelerator import Accelerator
 

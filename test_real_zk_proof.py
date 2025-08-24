@@ -7,7 +7,7 @@ import sys
 import json
 import time
 
-sys.path.insert(0, "/Users/rohanvinaik/genomevault")
+sys.path.insert(0, ".")
 
 print("🚀 Testing REAL Circom ZK Proof Generation")
 print("=" * 50)

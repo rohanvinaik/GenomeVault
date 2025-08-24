@@ -5,7 +5,7 @@ import sys
 import json
 import numpy as np
 
-sys.path.insert(0, "/Users/rohanvinaik/genomevault")
+sys.path.insert(0, ".")
 
 
 def test_variable_length_records():

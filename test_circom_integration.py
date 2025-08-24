@@ -5,7 +5,7 @@ Test Circom Integration - Verify real ZK proofs are being generated
 
 import sys
 
-sys.path.insert(0, "/Users/rohanvinaik/genomevault")
+sys.path.insert(0, ".")
 
 print("🔍 Testing Circom ZK Proof Integration")
 print("=" * 50)

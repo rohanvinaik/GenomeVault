@@ -20,7 +20,7 @@ import psutil
 import traceback
 
 # Add genomevault to path
-sys.path.insert(0, "/Users/rohanvinaik/genomevault")
+sys.path.insert(0, ".")
 
 from genomevault.zk_proofs.prover import Prover
 from genomevault.zk_proofs.circuits.optimized.diabetes_risk_alert import (

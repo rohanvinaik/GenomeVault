@@ -7,7 +7,7 @@ import hashlib
 import numpy as np
 
 # Add genomevault to path
-sys.path.insert(0, "/Users/rohanvinaik/genomevault")
+sys.path.insert(0, ".")
 
 from genomevault.zk_proofs.parallel_prover import ParallelProver, ProofTask
 from genomevault.zk_proofs.prover import Prover

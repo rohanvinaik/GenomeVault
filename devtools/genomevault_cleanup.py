@@ -31,7 +31,7 @@ from typing import Any, Dict, List
 
 
 class GenomeVaultCleanup:
-    def __init__(self, repo_root: str = "/Users/rohanvinaik/genomevault"):
+    def __init__(self, repo_root: str = "."):
         self.repo_root = Path(repo_root)
         self.ruff_config = self.repo_root / ".ruff.toml"
         self.mypy_config = self.repo_root / "mypy.ini"
@@ -477,7 +477,7 @@ def main():
     parser.add_argument("--all", action="store_true", help="Run all phases")
     parser.add_argument(
         "--repo-root",
-        default="/Users/rohanvinaik/genomevault",
+        default=".",
         help="Repository root path",
     )
 

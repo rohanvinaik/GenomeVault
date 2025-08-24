@@ -8,7 +8,7 @@ import threading
 from pathlib import Path
 
 # Add genomevault to path
-sys.path.insert(0, "/Users/rohanvinaik/genomevault")
+sys.path.insert(0, ".")
 
 from genomevault.zk_proofs.performance_monitor import PerformanceMonitor, get_monitor
 from genomevault.zk_proofs.dashboard import PerformanceDashboard, HTMLDashboard, run_dashboard

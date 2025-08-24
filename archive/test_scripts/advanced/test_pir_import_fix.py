@@ -3,7 +3,7 @@
 
 import sys
 
-sys.path.insert(0, "/Users/rohanvinaik/genomevault")
+sys.path.insert(0, ".")
 
 print("=" * 60)
 print("🔍 TESTING PIR IMPORT FIXES")

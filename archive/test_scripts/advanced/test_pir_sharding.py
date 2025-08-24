@@ -7,7 +7,7 @@ import numpy as np
 # Add genomevault to path
 import sys
 
-sys.path.insert(0, "/Users/rohanvinaik/genomevault")
+sys.path.insert(0, ".")
 
 from genomevault.pir.servers import ShardHealth, ShardManager, ShardedPIRServer, FECEncoder
 

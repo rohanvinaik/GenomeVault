@@ -126,7 +126,7 @@ def test_ruff_functionality():
         # Test basic check
         result = subprocess.run(
             ["ruff", "check", ".", "--quiet"],
-            cwd="/Users/rohanvinaik/genomevault",
+            cwd=".",
             capture_output=True,
             text=True,
             timeout=15,
@@ -141,7 +141,7 @@ def test_ruff_functionality():
         # Test F821 JSON output
         result2 = subprocess.run(
             ["ruff", "check", ".", "--select", "F821", "--output-format", "json"],
-            cwd="/Users/rohanvinaik/genomevault",
+            cwd=".",
             capture_output=True,
             text=True,
             timeout=30,
@@ -168,7 +168,7 @@ def update_ruff_config():
     """Update .ruff.toml to use modern features."""
     logger.debug("📝 Updating .ruff.toml...")
 
-    ruff_config = Path("/Users/rohanvinaik/genomevault/.ruff.toml")
+    ruff_config = Path("./.ruff.toml")
 
     if not ruff_config.exists():
         logger.debug("❌ .ruff.toml not found")

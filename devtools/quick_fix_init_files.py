@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 def add_init_files():
-    base_path = Path("/Users/rohanvinaik/genomevault")
+    base_path = Path(".")
 
     # Directories that need __init__.py based on the audit
     missing_init_dirs = [

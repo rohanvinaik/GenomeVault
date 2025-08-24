@@ -60,7 +60,7 @@ def update_ruff_config():
     """Update .ruff.toml to use max-violations."""
     logger.debug("📝 Updating Ruff configuration...")
 
-    ruff_config = Path("/Users/rohanvinaik/genomevault/.ruff.toml")
+    ruff_config = Path("./.ruff.toml")
 
     if not ruff_config.exists():
         logger.debug("❌ .ruff.toml not found")
@@ -106,7 +106,7 @@ def verify_setup():
     try:
         result = subprocess.run(
             ["ruff", "check", ".", "--quiet"],
-            cwd="/Users/rohanvinaik/genomevault",
+            cwd=".",
             capture_output=True,
             text=True,
             timeout=10,

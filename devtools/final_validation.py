@@ -229,7 +229,7 @@ def main():
     logger.debug(f"Python version: {sys.version}")
 
     # Ensure we're in the right directory
-    os.chdir("/Users/rohanvinaik/genomevault")
+    os.chdir(".")
 
     # Run all tests
     tests = {

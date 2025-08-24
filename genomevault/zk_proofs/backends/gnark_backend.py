@@ -57,7 +57,7 @@ class GnarkBackend:
         paths = [
             "./bin",
             "/usr/local/bin",
-            "~/.local/bin",
+            "Path.home() / .local/bin",
             "./gnark/bin",
         ]
 

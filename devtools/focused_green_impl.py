@@ -14,7 +14,7 @@ from pathlib import Path
 
 
 def main():
-    project_root = Path("/Users/rohanvinaik/genomevault")
+    project_root = Path(".")
     os.chdir(project_root)
 
     logger.debug("Starting focused Green Toolchain implementation...")

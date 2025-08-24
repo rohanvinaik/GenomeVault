@@ -33,7 +33,7 @@ def generate_comparison_report():
     }
 
     # Try to load current validation report
-    current_report_path = Path("/Users/rohanvinaik/genomevault/audit_validation_report.json")
+    current_report_path = Path("./audit_validation_report.json")
     if current_report_path.exists():
         with open(current_report_path) as f:
             current_audit = json.load(f)

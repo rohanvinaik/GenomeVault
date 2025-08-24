@@ -14,7 +14,7 @@ from pathlib import Path
 
 
 def check_current_state():
-    base_path = Path("/Users/rohanvinaik/genomevault")
+    base_path = Path(".")
 
     logger.debug("GenomeVault Pre-Flight Check")
     logger.debug("=" * 50)

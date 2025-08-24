@@ -374,7 +374,7 @@ def test_nodeinfo_and_blockchainnode_agree():
 
 def main():
     """Main entry point"""
-    project_root = "/Users/rohanvinaik/genomevault"
+    project_root = "."
     implementer = GreenToolchainImplementer(project_root)
     implementer.implement_green_toolchain()
 

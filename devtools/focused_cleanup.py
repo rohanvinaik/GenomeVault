@@ -21,7 +21,7 @@ from typing import List
 
 
 class FocusedCleanup:
-    def __init__(self, repo_root: str = "/Users/rohanvinaik/genomevault"):
+    def __init__(self, repo_root: str = "."):
         self.repo_root = Path(repo_root)
         self.fixes_applied: List[str] = []
 
@@ -610,7 +610,7 @@ def main():
     parser = argparse.ArgumentParser(description="Focused GenomeVault Cleanup")
     parser.add_argument(
         "--repo-root",
-        default="/Users/rohanvinaik/genomevault",
+        default=".",
         help="Repository root path",
     )
     parser.add_argument(

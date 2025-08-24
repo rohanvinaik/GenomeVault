@@ -95,14 +95,14 @@ def generate_conversion_guide(results: dict) -> str:
 
 def main():
     """Main function to scan for print statements."""
-    genomevault_dir = Path("/Users/rohanvinaik/genomevault/genomevault")
+    genomevault_dir = Path("./genomevault")
 
     pass  # Debug print removed
     results = scan_directory(genomevault_dir)
 
     if results:
         guide = generate_conversion_guide(results)
-        output_file = Path("/Users/rohanvinaik/genomevault/print_to_logging_guide.md")
+        output_file = Path("./print_to_logging_guide.md")
         with open(output_file, "w", encoding="utf-8") as f:
             f.write(guide)
         print(f"Conversion guide written to: {output_file}")

@@ -52,7 +52,7 @@ def test_hdc_with_metal():
 
     # Check logs for Metal usage
     print("\nChecking logs for Metal acceleration...")
-    with open("/Users/rohanvinaik/genomevault/logs/genomevault.log", "r") as f:
+    with open("./logs/genomevault.log", "r") as f:
         lines = f.readlines()[-100:]  # Last 100 lines
         metal_lines = [
             l for l in lines if "Metal" in l or "🍎" in l or "hypervector using HDC" in l

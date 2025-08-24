@@ -11,7 +11,7 @@ import numpy as np
 from datetime import datetime
 
 # Add project root to path
-sys.path.insert(0, "/Users/rohanvinaik/genomevault")
+sys.path.insert(0, ".")
 
 # Performance results container
 performance_results = {

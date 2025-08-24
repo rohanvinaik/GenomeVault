@@ -38,7 +38,7 @@ from typing import Dict, List, Optional, Tuple
 
 
 class EnhancedCleanup:
-    def __init__(self, repo_root: str = "/Users/rohanvinaik/genomevault"):
+    def __init__(self, repo_root: str = "."):
         self.repo_root = Path(repo_root).resolve()
         self.fixes_applied = []
         self.errors_found = []
@@ -1392,7 +1392,7 @@ Examples:
     parser.add_argument("--all", action="store_true", help="Run all phases sequentially")
     parser.add_argument(
         "--repo-root",
-        default="/Users/rohanvinaik/genomevault",
+        default=".",
         help="Repository root path",
     )
     parser.add_argument(

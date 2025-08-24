@@ -183,7 +183,7 @@ logger.info(f'Syntax check: {success_count}/{total_count} files compile successf
 
 def main():
     """Main verification function"""
-    os.chdir("/Users/rohanvinaik/genomevault")
+    os.chdir(".")
 
     logger.debug("🚀 GENOMEVAULT COMPREHENSIVE FIX VERIFICATION")
     logger.error("Checking all issues mentioned in the error report")

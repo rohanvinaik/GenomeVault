@@ -297,7 +297,7 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message
 
 def main():
     """Main function."""
-    project_root = Path("/Users/rohanvinaik/genomevault")
+    project_root = Path(".")
 
     if not project_root.exists():
         print(f"Error: Project root not found: {project_root}")

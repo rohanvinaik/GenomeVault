@@ -4,7 +4,7 @@
 import sys
 import hashlib
 
-sys.path.insert(0, "/Users/rohanvinaik/genomevault")
+sys.path.insert(0, ".")
 
 from genomevault.zk_proofs.prover import Prover
 

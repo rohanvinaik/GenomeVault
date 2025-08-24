@@ -5,7 +5,7 @@ import sys
 import subprocess
 from pathlib import Path
 
-sys.path.insert(0, "/Users/rohanvinaik/genomevault")
+sys.path.insert(0, ".")
 
 print("=" * 60)
 print("🔧 TESTING CIRCOM COMPILATION WITH DEPENDENCIES")

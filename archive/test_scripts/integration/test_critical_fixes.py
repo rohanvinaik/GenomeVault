@@ -6,7 +6,7 @@ import numpy as np
 import hashlib
 import time
 
-sys.path.insert(0, "/Users/rohanvinaik/genomevault")
+sys.path.insert(0, ".")
 
 
 def test_hdc_metal_fix():

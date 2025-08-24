@@ -93,7 +93,7 @@ def analyze_complexity(package_dir: Path):
 
 def main():
     """Main function to analyze complexity."""
-    genomevault_dir = Path("/Users/rohanvinaik/genomevault/genomevault")
+    genomevault_dir = Path("./genomevault")
 
     if not genomevault_dir.exists():
         logger.info(f"Error: Directory not found: {genomevault_dir}")

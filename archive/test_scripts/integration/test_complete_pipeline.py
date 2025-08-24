@@ -30,7 +30,7 @@ import numpy as np
 from datetime import datetime
 from pathlib import Path
 
-sys.path.insert(0, "/Users/rohanvinaik/genomevault")
+sys.path.insert(0, ".")
 
 # Import all major components
 from genomevault.hypervector_transform.encoding import HypervectorEncoder, HypervectorConfig

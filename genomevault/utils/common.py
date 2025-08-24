@@ -1,3 +1,5 @@
+from pathlib import Path
+
 """
 GenomeVault 3.0 Consolidated Utilities
 
@@ -207,8 +209,8 @@ def get_config(key: str, default: Any = None, config_type: str = "main") -> Any:
             "enable_metrics": True,
         },
         "local": {
-            "data_dir": "~/.genomevault/data",
-            "cache_dir": "~/.genomevault/cache",
+            "data_dir": "Path.home() / .genomevault/data",
+            "cache_dir": "Path.home() / .genomevault/cache",
             "max_storage_gb": 100,
             "auto_backup": True,
         },
