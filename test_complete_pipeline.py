@@ -81,20 +81,20 @@ except Exception as e:
 print("\n2️⃣ Testing ZK Proof Generation...")
 try:
     from genomevault.zk_proofs.backends.circom_backend import CircomBackend
-    
+
     # Use Circom backend directly for real proofs
     backend = CircomBackend()
-    
+
     # Test with real Circom proofs
     proof_metrics = []
-    
+
     # Test case for variant presence circuit
     public_inputs = {
         "variant_hash": "12345678901234567890123456789012345678901234567890123456789012",
         "reference_hash": "98765432109876543210987654321098765432109876543210987654321098",
         "commitment_root": "11111111111111111111111111111111111111111111111111111111111111",
     }
-    
+
     private_inputs = {
         "chr": "1",
         "position": "123456",
@@ -102,32 +102,34 @@ try:
         "alt_allele": "71",  # ASCII 'G'
         "merkle_proof": ["0"] * 20,
         "merkle_indices": ["0"] * 20,
-        "witness_randomness": "42424242424242424242424242424242424242424242424242424242424242"
+        "witness_randomness": "42424242424242424242424242424242424242424242424242424242424242",
     }
-    
+
     # Generate real SNARK proof
     start_time = time.perf_counter()
     result = backend.generate_proof("variant_presence", public_inputs, private_inputs)
     proof_time = (time.perf_counter() - start_time) * 1000
-    
+
     if result:
         proof, public_signals = result
         backend_type = "CIRCOM/Groth16"
         print(f"  ✅ Real SNARK proof: {proof_time:.2f}ms")
-        
+
         # Verify the proof
         is_valid = backend.verify_proof("variant_presence", proof, public_signals)
         print(f"  ✅ Proof verification: {'VALID' if is_valid else 'INVALID'}")
     else:
         backend_type = "fallback"
         print(f"  ⚠️ Using fallback: {proof_time:.2f}ms")
-    
-    proof_metrics.append({
-        "type": "variant_presence",
-        "generation_time_ms": round(proof_time, 2),
-        "backend": backend_type,
-        "verified": is_valid if result else False
-    })
+
+    proof_metrics.append(
+        {
+            "type": "variant_presence",
+            "generation_time_ms": round(proof_time, 2),
+            "backend": backend_type,
+            "verified": is_valid if result else False,
+        }
+    )
 
     performance_results["components"]["zk_proofs"] = {"status": "success", "metrics": proof_metrics}
 

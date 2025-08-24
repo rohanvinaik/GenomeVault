@@ -1,0 +1,102 @@
+name: GIAB Benchmark
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'genomevault/**'
+      - 'benchmark_giab.py'
+      - '.github/workflows/benchmark.yml'
+  pull_request:
+    branches: [main]
+  schedule:
+    # Run weekly on Sundays at 2 AM UTC
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install bcftools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y bcftools
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e ".[dev]"
+
+    - name: Run GIAB Benchmark
+      run: |
+        python benchmark_giab.py
+
+    - name: Upload benchmark results
+      uses: actions/upload-artifact@v3
+      with:
+        name: giab-benchmark-results
+        path: |
+          giab_benchmark_results/giab_benchmark.json
+          giab_benchmark_results/GIAB_BENCHMARK_REPORT.md
+
+    - name: Check benchmark criteria
+      run: |
+        python -c "
+        import json
+        with open('giab_benchmark_results/giab_benchmark.json', 'r') as f:
+            results = json.load(f)
+
+        # Check funding gate criteria
+        concordance = results['concordance']['concordance']
+        total_hours = results['total_pipeline_time_hours']
+        compression = results['compression']['compression_ratio']
+
+        print(f'Concordance: {concordance:.1%} (target: >95%)')
+        print(f'Total time: {total_hours:.2f} hours (target: <6 hours)')
+        print(f'Compression: {compression:.1f}x (target: >1000x)')
+
+        # Fail if criteria not met
+        if concordance < 0.95:
+            raise ValueError(f'Concordance {concordance:.1%} below 95% threshold')
+        if total_hours > 6:
+            raise ValueError(f'Processing time {total_hours:.2f}h exceeds 6 hour limit')
+        if compression < 1000:
+            raise ValueError(f'Compression {compression:.1f}x below 1000x threshold')
+
+        print('✅ All benchmark criteria passed!')
+        "
+
+    - name: Comment PR with results
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const report = fs.readFileSync('giab_benchmark_results/GIAB_BENCHMARK_REPORT.md', 'utf8');
+
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: `## GIAB Benchmark Results\n\n${report}`
+          })
+
+    - name: Store benchmark metrics
+      if: github.ref == 'refs/heads/main'
+      uses: benchmark-action/github-action-benchmark@v1
+      with:
+        name: GIAB Benchmark
+        tool: 'customBiggerIsBetter'
+        output-file-path: giab_benchmark_results/giab_benchmark.json
+        benchmark-data-dir-path: dev/bench
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        auto-push: true

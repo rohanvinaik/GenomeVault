@@ -1,5 +1,10 @@
 FROM python:3.11-slim
 
+# Add labels for provenance
+LABEL org.opencontainers.image.source="https://github.com/rohanvinaik/genomevault"
+LABEL org.opencontainers.image.description="GenomeVault - Privacy-Preserving Genomics"
+LABEL org.opencontainers.image.licenses="MIT"
+
 WORKDIR /app
 
 # Install system dependencies

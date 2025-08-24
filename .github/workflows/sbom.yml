@@ -1,22 +1,68 @@
-name: SBOM
+name: SBOM and Container Signing
+
 on:
-  workflow_dispatch:
   push:
-    branches: [ clean-slate ]
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
 
 jobs:
-  cyclonedx:
+  sbom:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: Generate SBOM
-        run: |
-          bash scripts/make_sbom.sh SBOM.json
-      - name: Upload SBOM artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: sbom-json
-          path: SBOM.json
+    - uses: actions/checkout@v3
+
+    - name: Install Syft
+      run: |
+        curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+
+    - name: Generate SBOM
+      run: |
+        syft . -o cyclonedx-json > sbom.json
+        syft . -o spdx-json > sbom.spdx.json
+
+    - name: Install Cosign
+      uses: sigstore/cosign-installer@v3
+
+    - name: Build Docker Image
+      run: |
+        docker build -t genomevault:${{ github.sha }} .
+        docker tag genomevault:${{ github.sha }} ghcr.io/${{ github.repository }}:latest
+
+    - name: Sign Container
+      env:
+        COSIGN_EXPERIMENTAL: 1
+      run: |
+        cosign sign --yes ghcr.io/${{ github.repository }}:latest
+
+    - name: Attach SBOM to Container
+      run: |
+        cosign attach sbom --sbom sbom.json ghcr.io/${{ github.repository }}:latest
+
+    - name: Generate Provenance
+      uses: slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@v1.9.0
+      with:
+        image: ghcr.io/${{ github.repository }}
+        digest: ${{ steps.build.outputs.digest }}
+
+    - name: Upload SBOM artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: sbom
+        path: |
+          sbom.json
+          sbom.spdx.json
+
+    - name: Create SBOM Release Asset
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          sbom.json
+          sbom.spdx.json

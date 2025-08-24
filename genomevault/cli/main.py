@@ -38,6 +38,9 @@ app.add_typer(hdc_app, name="hdc")
 demo_app = typer.Typer(help="Demo and example operations")
 app.add_typer(demo_app, name="demo")
 
+benchmark_app = typer.Typer(help="Benchmarking operations")
+app.add_typer(benchmark_app, name="benchmark")
+
 
 @demo_app.command("run")
 def demo_run(
@@ -590,6 +593,66 @@ def zk_build(
 
     except Exception as e:
         typer.echo(json.dumps({"error": str(e)}))
+        raise typer.Exit(1)
+
+
+@benchmark_app.command("giab")
+def benchmark_giab(
+    output_dir: Annotated[
+        Optional[Path], typer.Option("--output", "-o", help="Output directory")
+    ] = None,
+    full: Annotated[bool, typer.Option("--full", help="Run full benchmark")] = True,
+):
+    """Run GIAB (Genome in a Bottle) benchmark for clinical validation."""
+    import sys
+
+    sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
+    try:
+        from benchmark_giab import GIABBenchmark
+
+        if output_dir:
+            benchmark = GIABBenchmark(output_dir=output_dir)
+        else:
+            benchmark = GIABBenchmark()
+
+        typer.echo("Starting GIAB Benchmark...")
+        typer.echo("=" * 50)
+
+        if full:
+            benchmark.run_full_benchmark()
+        else:
+            # Quick benchmark
+            typer.echo("Running quick benchmark (compression only)...")
+            from pathlib import Path
+
+            # Create mock VCF
+            mock_vcf = Path("mock_test.vcf")
+            with open(mock_vcf, "w") as f:
+                f.write("##fileformat=VCFv4.2\n")
+                f.write("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n")
+                for i in range(100):
+                    f.write(f"chr1\t{i*1000}\t.\tA\tG\t30\tPASS\t.\n")
+
+            results = benchmark.benchmark_compression(mock_vcf)
+
+            typer.echo(f"✅ Compression: {results['compression_ratio']:.1f}x")
+            typer.echo(f"✅ Encoding: {results['encode_time_seconds']:.3f}s")
+            typer.echo(
+                f"✅ Throughput: {results['throughput_variants_per_second']:.0f} variants/sec"
+            )
+
+            # Clean up
+            mock_vcf.unlink()
+
+        typer.echo("\n✅ Benchmark complete!")
+
+    except ImportError:
+        typer.echo("❌ Error: benchmark_giab module not found", err=True)
+        typer.echo("Make sure benchmark_giab.py is in the project root", err=True)
+        raise typer.Exit(1)
+    except Exception as e:
+        typer.echo(f"❌ Benchmark failed: {e}", err=True)
         raise typer.Exit(1)
 
 
