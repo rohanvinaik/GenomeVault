@@ -7,7 +7,7 @@ Implements specialized circuits for genomic privacy.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 import hashlib
 import json
 import time
@@ -27,6 +27,7 @@ from genomevault.utils.logging import get_logger
 # Try to import Circom backend
 try:
     from genomevault.zk_proofs.backends.circom_backend import CircomBackend
+
     CIRCOM_AVAILABLE = True
 except ImportError:
     CIRCOM_AVAILABLE = False
@@ -266,10 +267,10 @@ class CircuitLibrary:
 class Prover:
     """
     Zero-knowledge proof generator using PLONK/Groth16.
-    
+
     Production mode: Uses Circom/SnarkJS for cryptographically secure proofs
     Development mode: Falls back to mock proofs (NOT SECURE - testing only)
-    
+
     IMPORTANT: Mock proofs provide NO security guarantees and should NEVER
     be used in production. They exist only for development and testing when
     Circom toolchain is not available.
@@ -285,11 +286,11 @@ class Prover:
         """
         self.circuit_library = circuit_library or CircuitLibrary()
         self.trusted_setup = self._load_trusted_setup()
-        
+
         # Initialize Circom backend if available and requested
         self.circom_backend = None
         self.is_production_ready = False
-        
+
         if use_circom and CIRCOM_AVAILABLE:
             try:
                 self.circom_backend = CircomBackend()
@@ -438,33 +439,35 @@ class Prover:
         if self.circom_backend:
             circuit_mapping = {
                 "variant_presence": "variant_presence",
-                "diabetes_risk_alert": "diabetes_risk"
+                "diabetes_risk_alert": "diabetes_risk",
             }
-            
+
             if circuit.name in circuit_mapping:
                 circom_name = circuit_mapping[circuit.name]
                 try:
-                    logger.info(f"Attempting to generate real proof using Circom for {circuit.name}")
-                    result = self.circom_backend.generate_proof(
-                        circom_name,
-                        public_inputs,
-                        private_inputs
+                    logger.info(
+                        f"Attempting to generate real proof using Circom for {circuit.name}"
                     )
-                    
+                    result = self.circom_backend.generate_proof(
+                        circom_name, public_inputs, private_inputs
+                    )
+
                     if result:
                         proof_data, public_signals = result
                         # Convert Circom proof to bytes
                         proof_json = json.dumps(proof_data)
-                        return proof_json.encode('utf-8')
+                        return proof_json.encode("utf-8")
                     else:
-                        logger.info(f"Circom proof generation returned None, falling back to mock")
+                        logger.info("Circom proof generation returned None, falling back to mock")
                 except Exception as e:
                     logger.warning(f"Circom proof generation failed: {e}, falling back to mock")
-        
+
         # Fall back to mock proof generation - NOT SECURE
         if not self.is_production_ready:
             logger.warning("⚠️ GENERATING MOCK PROOF - NOT CRYPTOGRAPHICALLY SECURE")
-            logger.warning("This proof provides NO privacy guarantees and should NOT be used in production")
+            logger.warning(
+                "This proof provides NO privacy guarantees and should NOT be used in production"
+            )
         if circuit.name == "variant_presence":
             return self._simulate_variant_proof(public_inputs, private_inputs)
         elif circuit.name == "polygenic_risk_score":
@@ -687,12 +690,12 @@ class Prover:
     def is_production_mode(self) -> bool:
         """
         Check if the prover is running in production mode with real ZK proofs.
-        
+
         Returns:
             True if using Circom/SnarkJS, False if using mock proofs
         """
         return self.is_production_ready and self.circom_backend is not None
-    
+
     def prove_variant(self, public_input: dict[str, Any], private_input: dict[str, Any]) -> Proof:
         """
         Generate a zero-knowledge proof for a genomic variant.

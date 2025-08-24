@@ -1,0 +1,300 @@
+---
+# Backup Operator Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: genomevault-backup-operator
+  namespace: genomevault
+  labels:
+    app: genomevault
+    component: backup-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: genomevault
+      component: backup-operator
+  template:
+    metadata:
+      labels:
+        app: genomevault
+        component: backup-operator
+    spec:
+      serviceAccountName: genomevault-service
+      containers:
+      - name: backup-operator
+        image: genomevault/backup-operator:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: WATCH_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: OPERATOR_NAME
+          value: "genomevault-backup-operator"
+        - name: BACKUP_SCHEDULE
+          value: "0 */6 * * *"  # Every 6 hours
+        - name: RETENTION_DAYS
+          value: "2555"  # 7 years for HIPAA
+        - name: S3_BACKUP_BUCKET
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-secrets
+              key: s3_backup_bucket
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+          limits:
+            cpu: "2"
+            memory: "2Gi"
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+
+---
+# Custom Resource Definition for Backup
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: backups.genomevault.io
+spec:
+  group: genomevault.io
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              schedule:
+                type: string
+                pattern: '^(\d+|\*)(/\d+)?(\s+(\d+|\*)(/\d+)?){4}$'
+              retentionPolicy:
+                type: object
+                properties:
+                  keepDaily:
+                    type: integer
+                    minimum: 1
+                  keepWeekly:
+                    type: integer
+                    minimum: 1
+                  keepMonthly:
+                    type: integer
+                    minimum: 1
+                  keepYearly:
+                    type: integer
+                    minimum: 1
+              storageLocation:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    enum: ["s3", "gcs", "azure", "local"]
+                  bucket:
+                    type: string
+                  path:
+                    type: string
+              encryption:
+                type: object
+                properties:
+                  enabled:
+                    type: boolean
+                  algorithm:
+                    type: string
+                    enum: ["AES-256", "AES-256-GCM"]
+              volumeSnapshotLocations:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    provider:
+                      type: string
+              includedNamespaces:
+                type: array
+                items:
+                  type: string
+              excludedResources:
+                type: array
+                items:
+                  type: string
+              hooks:
+                type: object
+                properties:
+                  preBackup:
+                    type: array
+                    items:
+                      type: string
+                  postBackup:
+                    type: array
+                    items:
+                      type: string
+          status:
+            type: object
+            properties:
+              phase:
+                type: string
+                enum: ["New", "InProgress", "Completed", "Failed"]
+              lastBackupTime:
+                type: string
+              nextBackupTime:
+                type: string
+              backupCount:
+                type: integer
+              totalSize:
+                type: string
+  scope: Namespaced
+  names:
+    plural: backups
+    singular: backup
+    kind: Backup
+
+---
+# Backup configuration for GenomeVault
+apiVersion: genomevault.io/v1
+kind: Backup
+metadata:
+  name: genomevault-backup
+  namespace: genomevault
+spec:
+  schedule: "0 2 * * *"  # Daily at 2 AM
+  retentionPolicy:
+    keepDaily: 7
+    keepWeekly: 4
+    keepMonthly: 12
+    keepYearly: 7  # HIPAA compliance
+  storageLocation:
+    type: s3
+    bucket: genomevault-backups
+    path: /backups
+  encryption:
+    enabled: true
+    algorithm: AES-256-GCM
+  volumeSnapshotLocations:
+  - name: aws-snapshots
+    provider: aws
+  includedNamespaces:
+  - genomevault
+  excludedResources:
+  - events
+  - pods
+  - jobs
+  hooks:
+    preBackup:
+    - "kubectl exec -n genomevault genomevault-full-node-0 -- /bin/sh -c 'genomevault checkpoint create'"
+    postBackup:
+    - "kubectl exec -n genomevault genomevault-full-node-0 -- /bin/sh -c 'genomevault checkpoint verify'"
+
+---
+# Restore Job Template
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: genomevault-restore-template
+  namespace: genomevault
+  labels:
+    app: genomevault
+    component: restore
+spec:
+  template:
+    metadata:
+      labels:
+        app: genomevault
+        component: restore
+    spec:
+      serviceAccountName: genomevault-service
+      containers:
+      - name: restore
+        image: genomevault/restore:latest
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          echo "Starting restore process..."
+          BACKUP_NAME=${BACKUP_NAME:-latest}
+          
+          # Download backup from S3
+          aws s3 cp s3://${S3_BACKUP_BUCKET}/backups/${BACKUP_NAME}/ /restore/ --recursive
+          
+          # Decrypt backup
+          openssl enc -aes-256-gcm -d -in /restore/backup.tar.gz.enc \
+            -out /restore/backup.tar.gz -k ${ENCRYPTION_KEY}
+          
+          # Extract backup
+          tar -xzf /restore/backup.tar.gz -C /restore/
+          
+          # Restore database
+          psql ${DATABASE_URL} < /restore/database.sql
+          
+          # Restore volumes
+          kubectl apply -f /restore/volumes.yaml
+          
+          # Restore configurations
+          kubectl apply -f /restore/configs.yaml
+          
+          # Verify restore
+          genomevault verify-restore --backup ${BACKUP_NAME}
+          
+          echo "Restore completed successfully"
+        env:
+        - name: BACKUP_NAME
+          value: "latest"
+        - name: S3_BACKUP_BUCKET
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-secrets
+              key: s3_backup_bucket
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-secrets
+              key: database_url
+        - name: ENCRYPTION_KEY
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-secrets
+              key: master_encryption_key
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-secrets
+              key: aws_access_key_id
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-secrets
+              key: aws_secret_access_key
+        resources:
+          requests:
+            cpu: "2"
+            memory: "4Gi"
+          limits:
+            cpu: "4"
+            memory: "8Gi"
+        volumeMounts:
+        - name: restore
+          mountPath: /restore
+      volumes:
+      - name: restore
+        emptyDir:
+          sizeLimit: 100Gi
+      restartPolicy: OnFailure

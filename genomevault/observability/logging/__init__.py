@@ -7,7 +7,7 @@ from .structured import (
     set_request_context,
     generate_request_id,
     get_request_id,
-    GenomeVaultLogger
+    GenomeVaultLogger,
 )
 
 # Import from parent logging.py module to maintain compatibility
@@ -16,6 +16,7 @@ import sys
 import logging
 
 _LEVEL = os.getenv("GENOMEVAULT_LOG_LEVEL", "INFO").upper()
+
 
 def configure_logging() -> logging.Logger:
     """Configure basic logging (compatibility function)."""
@@ -32,17 +33,19 @@ def configure_logging() -> logging.Logger:
         logger.propagate = False
     return logger
 
+
 def get_logger(name: str) -> logging.Logger:
     """Get a basic logger instance (compatibility function)."""
     return configure_logging()
 
+
 __all__ = [
     "get_structured_logger",
-    "configure_structured_logging", 
+    "configure_structured_logging",
     "set_request_context",
     "generate_request_id",
     "get_request_id",
     "GenomeVaultLogger",
     "configure_logging",
-    "get_logger"
+    "get_logger",
 ]

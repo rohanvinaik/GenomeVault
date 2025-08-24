@@ -1,0 +1,40 @@
+apiVersion: v2
+name: genomevault
+description: Privacy-preserving genomic computing platform with HDC, ZK proofs, and federated learning
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - genomics
+  - privacy
+  - hyperdimensional-computing
+  - zero-knowledge
+  - federated-learning
+  - blockchain
+home: https://genomevault.io
+sources:
+  - https://github.com/genomevault/genomevault
+maintainers:
+  - name: GenomeVault Team
+    email: team@genomevault.io
+icon: https://genomevault.io/logo.png
+dependencies:
+  - name: postgresql
+    version: "12.1.9"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: postgresql.enabled
+  - name: redis
+    version: "17.7.3"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: redis.enabled
+  - name: prometheus
+    version: "19.3.3"
+    repository: "https://prometheus-community.github.io/helm-charts"
+    condition: monitoring.prometheus.enabled
+  - name: grafana
+    version: "6.50.7"
+    repository: "https://grafana.github.io/helm-charts"
+    condition: monitoring.grafana.enabled
+annotations:
+  category: Healthcare
+  license: Apache-2.0

@@ -11,11 +11,11 @@ from genomevault.observability.logging import get_logger
 
 try:
     from genomevault.observability.metrics import REGISTRY
-    
+
     # Get or create metrics
     http_requests_total = REGISTRY.counter("http_requests_total")
     http_request_duration = REGISTRY.histogram("http_request_duration_seconds")
-    
+
     _METRICS = True
 except Exception as e:
     print(f"Warning: Could not import metrics: {e}")

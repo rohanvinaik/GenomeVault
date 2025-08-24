@@ -1,5 +1,3 @@
-"""Sequencing module."""
-
 """
 GenomeVault Sequencing Data Processing
 
@@ -164,7 +162,6 @@ class SequencingProcessor:
             logger.warning("Missing tools: %s', '.join(missing_tools)")
             logger.warning("Some processing features may be unavailable")
 
-    @_log_operation("process_sequencing_data")
     def process(self, input_path: Path, sample_id: str) -> GenomicProfile:
         """
         Process sequencing data to generate genomic profile

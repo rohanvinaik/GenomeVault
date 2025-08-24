@@ -24,6 +24,7 @@ try:
         refresh_access_token,
         oauth2_scheme,
     )
+
     OAUTH2_AVAILABLE = True
 except ImportError:
     OAUTH2_AVAILABLE = False
@@ -36,6 +37,7 @@ try:
         OIDCManager,
         oidc_manager,
     )
+
     OIDC_AVAILABLE = True
 except ImportError:
     OIDC_AVAILABLE = False
@@ -57,7 +59,7 @@ from .api_key import (
 __all__ = [
     # Enhanced API Key Authentication
     "APIKeyScope",
-    "APIKeyType", 
+    "APIKeyType",
     "APIKeyInfo",
     "APIKeyManager",
     "get_api_key_manager",
@@ -69,30 +71,34 @@ __all__ = [
 
 # Add OAuth2 imports if available
 if OAUTH2_AVAILABLE:
-    __all__.extend([
-        "Token",
-        "TokenData",
-        "User",
-        "UserRole",
-        "create_access_token",
-        "create_refresh_token",
-        "authenticate_user",
-        "get_current_user",
-        "get_current_active_user",
-        "require_scopes",
-        "require_mfa",
-        "revoke_token",
-        "revoke_all_user_tokens",
-        "refresh_access_token",
-        "oauth2_scheme",
-    ])
+    __all__.extend(
+        [
+            "Token",
+            "TokenData",
+            "User",
+            "UserRole",
+            "create_access_token",
+            "create_refresh_token",
+            "authenticate_user",
+            "get_current_user",
+            "get_current_active_user",
+            "require_scopes",
+            "require_mfa",
+            "revoke_token",
+            "revoke_all_user_tokens",
+            "refresh_access_token",
+            "oauth2_scheme",
+        ]
+    )
 
 # Add OIDC imports if available
 if OIDC_AVAILABLE:
-    __all__.extend([
-        "OIDCProvider",
-        "OIDCConfig",
-        "OIDCUserInfo",
-        "OIDCManager",
-        "oidc_manager",
-    ])
+    __all__.extend(
+        [
+            "OIDCProvider",
+            "OIDCConfig",
+            "OIDCUserInfo",
+            "OIDCManager",
+            "oidc_manager",
+        ]
+    )

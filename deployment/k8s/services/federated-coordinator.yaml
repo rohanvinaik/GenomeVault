@@ -1,0 +1,240 @@
+---
+# Federated Learning Coordinator Deployment
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: genomevault-federated-coordinator
+  namespace: genomevault
+  labels:
+    app: genomevault
+    component: federated-coordinator
+    tier: compute
+spec:
+  serviceName: genomevault-federated
+  replicas: 2
+  selector:
+    matchLabels:
+      app: genomevault
+      component: federated-coordinator
+  template:
+    metadata:
+      labels:
+        app: genomevault
+        component: federated-coordinator
+        tier: compute
+        version: v1.0.0
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: genomevault-service
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: component
+                operator: In
+                values: ["federated-coordinator"]
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - name: coordinator
+        image: genomevault/federated-coordinator:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8200
+          name: grpc
+          protocol: TCP
+        - containerPort: 8201
+          name: http
+          protocol: TCP
+        - containerPort: 9090
+          name: metrics
+          protocol: TCP
+        env:
+        - name: COORDINATOR_MODE
+          value: "primary"
+        - name: AGGREGATION_PROTOCOL
+          value: "SECAGG"
+        - name: HOMOMORPHIC_ENCRYPTION
+          value: "CKKS"
+        - name: DIFFERENTIAL_PRIVACY_EPSILON
+          value: "1.0"
+        - name: DIFFERENTIAL_PRIVACY_DELTA
+          value: "1e-5"
+        - name: MIN_PARTICIPANTS
+          value: "3"
+        - name: DROPOUT_TOLERANCE
+          value: "0.3"
+        - name: ROUND_TIMEOUT_SECONDS
+          value: "300"
+        - name: MAX_ROUNDS
+          value: "100"
+        - name: CONVERGENCE_THRESHOLD
+          value: "0.001"
+        - name: MODEL_CHECKPOINT_INTERVAL
+          value: "10"
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        envFrom:
+        - configMapRef:
+            name: genomevault-federated-config
+        - secretRef:
+            name: genomevault-federated-secrets
+        resources:
+          requests:
+            cpu: "16"
+            memory: "64Gi"
+            nvidia.com/gpu: "1"  # GPU for homomorphic operations
+          limits:
+            cpu: "32"
+            memory: "128Gi"
+            nvidia.com/gpu: "1"
+        volumeMounts:
+        - name: models
+          mountPath: /models
+        - name: checkpoints
+          mountPath: /checkpoints
+        - name: config
+          mountPath: /etc/federated
+          readOnly: true
+        livenessProbe:
+          grpc:
+            port: 8200
+          initialDelaySeconds: 45
+          periodSeconds: 15
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8201
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+      - name: privacy-accountant
+        image: genomevault/privacy-accountant:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8202
+          name: accountant
+        env:
+        - name: PRIVACY_BUDGET
+          value: "10.0"
+        - name: COMPOSITION_METHOD
+          value: "renyi"
+        resources:
+          requests:
+            cpu: "2"
+            memory: "8Gi"
+          limits:
+            cpu: "4"
+            memory: "16Gi"
+        volumeMounts:
+        - name: privacy-logs
+          mountPath: /logs
+      volumes:
+      - name: config
+        configMap:
+          name: genomevault-federated-config
+      - name: privacy-logs
+        emptyDir:
+          sizeLimit: 10Gi
+  volumeClaimTemplates:
+  - metadata:
+      name: models
+      labels:
+        app: genomevault
+        component: federated-coordinator
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: fast-ssd
+      resources:
+        requests:
+          storage: 100Gi
+  - metadata:
+      name: checkpoints
+      labels:
+        app: genomevault
+        component: federated-coordinator
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: fast-ssd
+      resources:
+        requests:
+          storage: 500Gi
+
+---
+# Service for Federated Coordinators
+apiVersion: v1
+kind: Service
+metadata:
+  name: genomevault-federated
+  namespace: genomevault
+  labels:
+    app: genomevault
+    component: federated-coordinator
+spec:
+  type: ClusterIP
+  clusterIP: None  # Headless service for StatefulSet
+  selector:
+    app: genomevault
+    component: federated-coordinator
+  ports:
+  - name: grpc
+    port: 8200
+    targetPort: 8200
+  - name: http
+    port: 8201
+    targetPort: 8201
+  - name: metrics
+    port: 9090
+    targetPort: 9090
+
+---
+# Service for external access
+apiVersion: v1
+kind: Service
+metadata:
+  name: genomevault-federated-external
+  namespace: genomevault
+  labels:
+    app: genomevault
+    component: federated-coordinator
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+spec:
+  type: LoadBalancer
+  selector:
+    app: genomevault
+    component: federated-coordinator
+  ports:
+  - name: grpc
+    port: 8200
+    targetPort: 8200
+    protocol: TCP
+
+---
+# PodDisruptionBudget
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: genomevault-federated-pdb
+  namespace: genomevault
+  labels:
+    app: genomevault
+    component: federated-coordinator
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: genomevault
+      component: federated-coordinator

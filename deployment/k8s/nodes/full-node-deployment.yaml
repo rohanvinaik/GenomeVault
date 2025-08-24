@@ -1,0 +1,249 @@
+---
+# Full Node Deployment - 16 cores, 64GB RAM, 4TB storage
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: genomevault-full-node
+  namespace: genomevault
+  labels:
+    app: genomevault
+    tier: full
+    component: node
+spec:
+  serviceName: genomevault-full-node
+  replicas: 2
+  selector:
+    matchLabels:
+      app: genomevault
+      tier: full
+      component: node
+  template:
+    metadata:
+      labels:
+        app: genomevault
+        tier: full
+        component: node
+        version: v1.0.0
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: genomevault-service
+      nodeSelector:
+        node.kubernetes.io/instance-type: "high-memory"
+      tolerations:
+      - key: "genomevault/full-node"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: tier
+                operator: In
+                values: ["full"]
+            topologyKey: kubernetes.io/hostname
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            preference:
+              matchExpressions:
+              - key: node.kubernetes.io/instance-type
+                operator: In
+                values: ["m5.4xlarge", "m5.8xlarge", "m5.12xlarge"]
+      initContainers:
+      - name: init-chain
+        image: genomevault/init:latest
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          echo "Initializing full node data..."
+          mkdir -p /data/blockchain
+          mkdir -p /data/hypervectors
+          mkdir -p /data/proofs
+          mkdir -p /data/indices
+          mkdir -p /data/cache
+          echo "Downloading chain snapshot..."
+          # wget -O /data/snapshot.tar.gz https://snapshots.genomevault.io/latest
+          # tar -xzf /data/snapshot.tar.gz -C /data/blockchain
+          echo "Initialization complete"
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        resources:
+          requests:
+            cpu: "2"
+            memory: "4Gi"
+      containers:
+      - name: full-node
+        image: genomevault/full-node:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: http
+        - containerPort: 9090
+          name: metrics
+        - containerPort: 26656
+          name: p2p
+        - containerPort: 26657
+          name: rpc
+        - containerPort: 26658
+          name: grpc
+        - containerPort: 1317
+          name: api
+        env:
+        - name: NODE_TYPE
+          value: "full"
+        - name: NODE_CLASS
+          value: "FULL"
+        - name: VOTING_POWER
+          value: "4"
+        - name: ENABLE_API
+          value: "true"
+        - name: ENABLE_GRPC
+          value: "true"
+        - name: CACHE_SIZE_GB
+          value: "16"
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        envFrom:
+        - configMapRef:
+            name: genomevault-config
+        - secretRef:
+            name: genomevault-secrets
+        resources:
+          requests:
+            cpu: "16"
+            memory: "64Gi"
+            ephemeral-storage: "50Gi"
+          limits:
+            cpu: "16"
+            memory: "64Gi"
+            ephemeral-storage: "100Gi"
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        - name: config
+          mountPath: /etc/genomevault
+          readOnly: true
+        - name: cache
+          mountPath: /cache
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 15
+          timeoutSeconds: 10
+          failureThreshold: 5
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          failureThreshold: 30
+      - name: sidecar-monitor
+        image: genomevault/monitor:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9091
+          name: sidecar-metrics
+        env:
+        - name: MONITOR_TARGET
+          value: "localhost:9090"
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "1Gi"
+          limits:
+            cpu: "1"
+            memory: "2Gi"
+      volumes:
+      - name: config
+        configMap:
+          name: genomevault-node-config
+      - name: cache
+        emptyDir:
+          sizeLimit: 50Gi
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+      labels:
+        app: genomevault
+        tier: full
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: fast-ssd
+      resources:
+        requests:
+          storage: 4Ti
+
+---
+# Service for Full Nodes
+apiVersion: v1
+kind: Service
+metadata:
+  name: genomevault-full-node
+  namespace: genomevault
+  labels:
+    app: genomevault
+    tier: full
+    component: node
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+spec:
+  type: LoadBalancer
+  selector:
+    app: genomevault
+    tier: full
+    component: node
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  - name: api
+    port: 1317
+    targetPort: 1317
+  - name: grpc
+    port: 26658
+    targetPort: 26658
+  - name: rpc
+    port: 26657
+    targetPort: 26657
+
+---
+# PodDisruptionBudget for Full Nodes
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: genomevault-full-node-pdb
+  namespace: genomevault
+  labels:
+    app: genomevault
+    tier: full
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: genomevault
+      tier: full
+      component: node

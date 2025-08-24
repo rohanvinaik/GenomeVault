@@ -10,11 +10,9 @@ from .differential_privacy import (
     GaussianMechanism,
     PrivacyAccountant,
     RenyiAccountant,
-    
     # Privacy levels
     PrivacyLevel,
     PrivacyParameters,
-    
     # Integrated components
     DifferentiallyPrivateHDC,
     DifferentiallyPrivateFederated,
@@ -22,12 +20,12 @@ from .differential_privacy import (
 )
 
 __all__ = [
-    'GaussianMechanism',
-    'PrivacyAccountant',
-    'RenyiAccountant',
-    'PrivacyLevel',
-    'PrivacyParameters',
-    'DifferentiallyPrivateHDC',
-    'DifferentiallyPrivateFederated',
-    'DifferentiallyPrivatePIR',
+    "GaussianMechanism",
+    "PrivacyAccountant",
+    "RenyiAccountant",
+    "PrivacyLevel",
+    "PrivacyParameters",
+    "DifferentiallyPrivateHDC",
+    "DifferentiallyPrivateFederated",
+    "DifferentiallyPrivatePIR",
 ]

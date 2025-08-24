@@ -27,17 +27,18 @@ async def get_metrics() -> Response:
     try:
         # Update system metrics
         collector = get_metrics_collector()
-        
+
         try:
             import psutil
+
             process = psutil.Process()
-            
+
             # Update database connections (example)
             collector.update_database_connections("sqlite", 1)
-            
+
             # Update active users (example)
             collector.update_active_users(1)
-            
+
         except ImportError:
             logger.debug("psutil not available, skipping system metrics")
         except Exception as e:

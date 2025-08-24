@@ -214,10 +214,10 @@ The enhanced federated aggregator enables:
 
 Successfully implemented both secure aggregation through masking and differential privacy for the federated aggregator. The implementation:
 
-✅ Correctly implements mask cancellation (verified to < 1e-15 error)  
-✅ Adds calibrated Gaussian noise for differential privacy  
-✅ Supports both mechanisms independently or combined  
-✅ Integrates with existing PrivacyAccountant for budget tracking  
-✅ Maintains backward compatibility with existing code  
+✅ Correctly implements mask cancellation (verified to < 1e-15 error)
+✅ Adds calibrated Gaussian noise for differential privacy
+✅ Supports both mechanisms independently or combined
+✅ Integrates with existing PrivacyAccountant for budget tracking
+✅ Maintains backward compatibility with existing code
 
 The enhanced aggregator provides strong privacy guarantees for federated learning, enabling secure multi-party genomic studies while preserving individual privacy.

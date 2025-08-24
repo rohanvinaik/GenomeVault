@@ -37,6 +37,7 @@ from .prover import Proof, CircuitLibrary
 # Try to import Circom backend
 try:
     from genomevault.zk_proofs.backends.circom_backend import CircomBackend
+
     CIRCOM_AVAILABLE = True
 except ImportError:
     CIRCOM_AVAILABLE = False
@@ -87,7 +88,7 @@ class Verifier:
         self.circuit_library = circuit_library or CircuitLibrary()
         self.verification_keys = self._load_verification_keys()
         self.trusted_setup = self._load_trusted_setup()
-        
+
         # Initialize Circom backend if available and requested
         self.circom_backend = None
         if use_circom and CIRCOM_AVAILABLE:
@@ -264,21 +265,23 @@ class Verifier:
         if self.circom_backend:
             circuit_mapping = {
                 "variant_presence": "variant_presence",
-                "diabetes_risk_alert": "diabetes_risk"
+                "diabetes_risk_alert": "diabetes_risk",
             }
-            
+
             if proof.circuit_name in circuit_mapping:
                 circom_name = circuit_mapping[proof.circuit_name]
                 try:
                     # Check if proof data looks like a Circom proof
                     if isinstance(proof.proof_data, bytes):
-                        proof_str = proof.proof_data.decode('utf-8')
+                        proof_str = proof.proof_data.decode("utf-8")
                         proof_json = json.loads(proof_str)
-                        
+
                         # Check for Circom proof structure
                         if isinstance(proof_json, dict) and "pi_a" in proof_json:
-                            logger.info(f"Attempting to verify Circom proof for {proof.circuit_name}")
-                            
+                            logger.info(
+                                f"Attempting to verify Circom proof for {proof.circuit_name}"
+                            )
+
                             # Extract public signals from public_inputs
                             public_signals = []
                             for key in proof.public_inputs:
@@ -288,22 +291,24 @@ class Verifier:
                                 else:
                                     # Convert to field element
                                     public_signals.append(str(self._to_field_element(value)))
-                            
+
                             is_valid = self.circom_backend.verify_proof(
-                                circom_name,
-                                proof_json,
-                                public_signals
+                                circom_name, proof_json, public_signals
                             )
-                            
+
                             if is_valid:
-                                logger.info(f"Circom proof verified successfully for {proof.circuit_name}")
+                                logger.info(
+                                    f"Circom proof verified successfully for {proof.circuit_name}"
+                                )
                             else:
-                                logger.warning(f"Circom proof verification failed for {proof.circuit_name}")
-                            
+                                logger.warning(
+                                    f"Circom proof verification failed for {proof.circuit_name}"
+                                )
+
                             return is_valid
                 except Exception as e:
                     logger.warning(f"Circom verification failed: {e}, falling back to mock")
-        
+
         # Fall back to mock verification
         if proof.circuit_name == "variant_presence":
             return self._verify_variant_proof(proof)
@@ -320,7 +325,7 @@ class Verifier:
         else:
             # Generic verification
             return self._verify_generic_proof(proof, vk)
-    
+
     def _to_field_element(self, value: Any) -> int:
         """Convert a value to a field element."""
         if isinstance(value, int):
@@ -330,8 +335,9 @@ class Verifier:
                 return int(value, 16)
             # Hash and convert to field element
             import hashlib
+
             hash_bytes = hashlib.sha256(value.encode()).digest()
-            return int.from_bytes(hash_bytes[:31], 'big')
+            return int.from_bytes(hash_bytes[:31], "big")
         return 0
 
     def _verify_variant_proof(self, proof: Proof) -> bool:

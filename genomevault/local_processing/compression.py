@@ -1,5 +1,3 @@
-"""Compression module."""
-
 """
 GenomeVault Compression System - Multi-tier implementation
 
@@ -8,6 +6,7 @@ Implements the three-tier compression system as specified:
 - Clinical tier: ~300KB - ACMG + PharmGKB variants (~120k)
 - Full HDC tier: 100-200KB per modality - 10,000-D vectors
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -17,7 +16,8 @@ import hashlib
 import json
 
 from genomevault.core.constants import CompressionTier, OmicsType
-from genomevault.utils import get_config, get_logger
+from genomevault.observability.logging import get_logger
+from genomevault.utils.config import get_config
 
 logger = get_logger(__name__)
 config = get_config()
@@ -72,7 +72,7 @@ class CompressionEngine:
             max_size_kb=300,
             feature_count=120000,
             description="ACMG + PharmGKB variants",
-            omics_types=[OmicsType.GENOMIC, OmicsType.PHENOTYPIC],
+            omics_types=[OmicsType.GENOMIC],
         ),
         CompressionTier.FULL: CompressionProfile(
             tier=CompressionTier.FULL,
@@ -82,9 +82,8 @@ class CompressionEngine:
             omics_types=[
                 OmicsType.GENOMIC,
                 OmicsType.TRANSCRIPTOMIC,
-                OmicsType.EPIGENETIC,
+                OmicsType.EPIGENOMIC,
                 OmicsType.PROTEOMIC,
-                OmicsType.PHENOTYPIC,
             ],
         ),
     }

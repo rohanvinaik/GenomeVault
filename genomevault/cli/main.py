@@ -52,51 +52,57 @@ def demo_run(
         #     {"chromosome": "chr2", "position": 67890, "ref": "G", "alt": "C"},
         #     {"chromosome": "chr3", "position": 54321, "ref": "C", "alt": "A"}
         # ]
-        
+
         demo_results = {
             "demo_type": demo_type,
             "timestamp": int(time.time()),
-            "components_demonstrated": []
+            "components_demonstrated": [],
         }
-        
+
         if demo_type in ["basic", "full"]:
             # HDC Encoding Demo
             config = HypervectorConfig(dimension=1000)
             encoder = HypervectorEncoder(config=config)
-            
+
             # Convert to numeric features for demo
             numeric_data = np.array([1.0, 2.0, 3.0, 4.0, 5.0], dtype=np.float32)
             encoded = encoder.encode(numeric_data, OmicsType.GENOMIC)
-            
-            demo_results["components_demonstrated"].append({
-                "component": "HDC Encoding",
-                "input_features": 5,
-                "output_dimension": 1000,
-                "sparsity": float(np.sum(encoded.detach().cpu().numpy() != 0) / 1000),
-                "status": "success"
-            })
-        
+
+            demo_results["components_demonstrated"].append(
+                {
+                    "component": "HDC Encoding",
+                    "input_features": 5,
+                    "output_dimension": 1000,
+                    "sparsity": float(np.sum(encoded.detach().cpu().numpy() != 0) / 1000),
+                    "status": "success",
+                }
+            )
+
         if demo_type in ["zk", "full"]:
             # ZK Proof Demo
             _ = Prover()  # Initialize prover for demonstration
-            demo_results["components_demonstrated"].append({
-                "component": "ZK Proof System",
-                "circuit_type": "variant",
-                "status": "initialized",
-                "note": "Proof generation requires public/private input files"
-            })
-        
+            demo_results["components_demonstrated"].append(
+                {
+                    "component": "ZK Proof System",
+                    "circuit_type": "variant",
+                    "status": "initialized",
+                    "note": "Proof generation requires public/private input files",
+                }
+            )
+
         if demo_type in ["pir", "full"]:
             # PIR Demo
             demo_records = [b"record1", b"record2", b"record3"]
             pir_server = PIRServer(demo_records)
-            demo_results["components_demonstrated"].append({
-                "component": "PIR Server",
-                "record_count": len(demo_records),
-                "record_length": pir_server.record_len,
-                "status": "initialized"
-            })
-        
+            demo_results["components_demonstrated"].append(
+                {
+                    "component": "PIR Server",
+                    "record_count": len(demo_records),
+                    "record_length": pir_server.record_len,
+                    "status": "initialized",
+                }
+            )
+
         # Add summary
         demo_results["summary"] = {
             "total_components": len(demo_results["components_demonstrated"]),
@@ -105,27 +111,30 @@ def demo_run(
             "next_steps": [
                 "Try 'genomevault hdc encode' with real genomic data",
                 "Explore 'genomevault zk prove' for verification",
-                "Test 'genomevault pir query' for private retrieval"
-            ]
+                "Test 'genomevault pir query' for private retrieval",
+            ],
         }
-        
+
         if out:
             out.mkdir(parents=True, exist_ok=True)
             demo_file = out / f"demo_{demo_type}_{int(time.time())}.json"
             with open(demo_file, "w") as f:
                 json.dump(demo_results, f, indent=2)
-            typer.echo(json.dumps({
-                "success": True,
-                "demo_file": str(demo_file),
-                "components_tested": len(demo_results["components_demonstrated"])
-            }))
+            typer.echo(
+                json.dumps(
+                    {
+                        "success": True,
+                        "demo_file": str(demo_file),
+                        "components_tested": len(demo_results["components_demonstrated"]),
+                    }
+                )
+            )
         else:
             typer.echo(json.dumps(demo_results, indent=2))
-            
+
     except Exception as e:
         typer.echo(json.dumps({"error": str(e)}))
         raise typer.Exit(1)
-
 
 
 @hdc_app.command("encode")
@@ -161,7 +170,13 @@ def encode(
         try:
             omics_enum = OmicsType(omics_type.lower())
         except ValueError:
-            typer.echo(json.dumps({"error": f"Invalid omics type: {omics_type}. Valid options: genomic, transcriptomic, proteomic, metabolomic, epigenomic"}))
+            typer.echo(
+                json.dumps(
+                    {
+                        "error": f"Invalid omics type: {omics_type}. Valid options: genomic, transcriptomic, proteomic, metabolomic, epigenomic"
+                    }
+                )
+            )
             raise typer.Exit(1)
 
         # Encode data
@@ -189,7 +204,13 @@ def encode(
                     typer.echo(json.dumps({"error": f"Cannot convert data to numeric array: {e}"}))
                     raise typer.Exit(1)
             else:
-                typer.echo(json.dumps({"error": "Dict input must contain 'data' key with numeric values or 'variants' key for genomic data"}))
+                typer.echo(
+                    json.dumps(
+                        {
+                            "error": "Dict input must contain 'data' key with numeric values or 'variants' key for genomic data"
+                        }
+                    )
+                )
                 raise typer.Exit(1)
         else:
             # Single item encoding - convert to numpy array
@@ -201,7 +222,7 @@ def encode(
                 raise typer.Exit(1)
 
         # Prepare output - handle torch tensors
-        if hasattr(encoded, 'detach'):
+        if hasattr(encoded, "detach"):
             # torch tensor
             encoded_array = encoded.detach().cpu().numpy()
             output = {
@@ -218,8 +239,14 @@ def encode(
         elif isinstance(encoded, list):
             output = {
                 "dimension": dimension,
-                "vectors": [v.detach().cpu().numpy().tolist() if hasattr(v, 'detach') 
-                           else (v.tolist() if isinstance(v, np.ndarray) else v) for v in encoded],
+                "vectors": [
+                    (
+                        v.detach().cpu().numpy().tolist()
+                        if hasattr(v, "detach")
+                        else (v.tolist() if isinstance(v, np.ndarray) else v)
+                    )
+                    for v in encoded
+                ],
                 "count": len(encoded),
                 "type": "hypervector_batch",
             }
@@ -295,8 +322,6 @@ def sim(
         raise typer.Exit(1)
 
 
-
-
 @hdc_app.command("decode")
 def hdc_decode(
     vector: Annotated[Path, typer.Option("--vector", help="Hypervector file to decode")],
@@ -308,14 +333,14 @@ def hdc_decode(
         # Load hypervector
         with open(vector, "r") as f:
             vector_data = json.load(f)
-        
+
         # Extract vector
         if "vector" in vector_data:
             hv = np.array(vector_data["vector"])
         else:
             typer.echo(json.dumps({"error": "Input file must contain 'vector' field"}))
             raise typer.Exit(1)
-        
+
         # Simple decoding - in a real implementation this would be more sophisticated
         # For now, just return basic statistics and information
         decoded_info = {
@@ -326,16 +351,16 @@ def hdc_decode(
             "mean": float(np.mean(hv)),
             "std": float(np.std(hv)),
             "decoded_features": "Feature reconstruction requires training data or codebook",
-            "note": "HDC decoding is typically approximate and requires domain knowledge"
+            "note": "HDC decoding is typically approximate and requires domain knowledge",
         }
-        
+
         if out:
             with open(out, "w") as f:
                 json.dump(decoded_info, f, indent=2)
             typer.echo(json.dumps({"success": True, "decoded_file": str(out)}))
         else:
             typer.echo(json.dumps(decoded_info))
-            
+
     except Exception as e:
         typer.echo(json.dumps({"error": str(e)}))
         raise typer.Exit(1)
@@ -365,7 +390,7 @@ def hdc_compare(
 
         # Calculate multiple similarity metrics
         results = {"metric_requested": metric, "comparisons": {}}
-        
+
         # Hamming similarity (for binary/sparse vectors)
         if metric.lower() in ["hamming", "all"]:
             if vec1.dtype != bool:
@@ -380,19 +405,17 @@ def hdc_compare(
             hamming_similarity = 1.0 - (hamming_distance / len(vec1))
             results["comparisons"]["hamming"] = {
                 "distance": float(hamming_distance),
-                "similarity": float(hamming_similarity)
+                "similarity": float(hamming_similarity),
             }
-        
+
         # Cosine similarity
         if metric.lower() in ["cosine", "all"]:
             dot_product = np.dot(vec1, vec2)
             norm1 = np.linalg.norm(vec1)
             norm2 = np.linalg.norm(vec2)
             cosine_sim = dot_product / (norm1 * norm2) if norm1 * norm2 > 0 else 0
-            results["comparisons"]["cosine"] = {
-                "similarity": float(cosine_sim)
-            }
-        
+            results["comparisons"]["cosine"] = {"similarity": float(cosine_sim)}
+
         # Euclidean distance/similarity
         if metric.lower() in ["euclidean", "all"]:
             euclidean_dist = np.linalg.norm(vec1 - vec2)
@@ -400,15 +423,13 @@ def hdc_compare(
             euclidean_sim = 1.0 - min(euclidean_dist / max_distance, 1.0)
             results["comparisons"]["euclidean"] = {
                 "distance": float(euclidean_dist),
-                "similarity": float(euclidean_sim)
+                "similarity": float(euclidean_sim),
             }
-        
+
         # Manhattan distance
         if metric.lower() in ["manhattan", "all"]:
             manhattan_dist = np.sum(np.abs(vec1 - vec2))
-            results["comparisons"]["manhattan"] = {
-                "distance": float(manhattan_dist)
-            }
+            results["comparisons"]["manhattan"] = {"distance": float(manhattan_dist)}
 
         if out:
             with open(out, "w") as f:
@@ -433,37 +454,59 @@ def pir_serve(
         # Load database records
         with open(data, "r") as f:
             db_data = json.load(f)
-        
+
         # Convert records to bytes
         if isinstance(db_data, list):
             # List of strings/records
-            records = [record.encode("utf-8") if isinstance(record, str) else json.dumps(record).encode("utf-8") for record in db_data]
+            records = [
+                (
+                    record.encode("utf-8")
+                    if isinstance(record, str)
+                    else json.dumps(record).encode("utf-8")
+                )
+                for record in db_data
+            ]
         elif isinstance(db_data, dict) and "records" in db_data:
             # Dict with records key
-            records = [record.encode("utf-8") if isinstance(record, str) else json.dumps(record).encode("utf-8") for record in db_data["records"]]
+            records = [
+                (
+                    record.encode("utf-8")
+                    if isinstance(record, str)
+                    else json.dumps(record).encode("utf-8")
+                )
+                for record in db_data["records"]
+            ]
         else:
-            typer.echo(json.dumps({"error": "Database must be a list of records or dict with 'records' key"}))
+            typer.echo(
+                json.dumps(
+                    {"error": "Database must be a list of records or dict with 'records' key"}
+                )
+            )
             raise typer.Exit(1)
-        
+
         # Ensure all records have the same length by padding
         if records:
             max_len = max(len(r) for r in records)
-            records = [r + b'\0' * (max_len - len(r)) for r in records]
-        
+            records = [r + b"\0" * (max_len - len(r)) for r in records]
+
         # Initialize PIR server
         server = PIRServer(records)
-        
-        typer.echo(json.dumps({
-            "status": "PIR server started",
-            "host": host,
-            "port": port,
-            "record_count": len(records),
-            "record_length": server.record_len
-        }))
-        
+
+        typer.echo(
+            json.dumps(
+                {
+                    "status": "PIR server started",
+                    "host": host,
+                    "port": port,
+                    "record_count": len(records),
+                    "record_length": server.record_len,
+                }
+            )
+        )
+
         # Note: In a real implementation, you'd start an actual HTTP server here
         # For now, just show the setup information
-        
+
     except Exception as e:
         typer.echo(json.dumps({"error": str(e)}))
         raise typer.Exit(1)
@@ -479,12 +522,12 @@ def pir_query(
     try:
         # Parse server URLs
         server_urls = [url.strip() for url in servers.split(",")]
-        
+
         # Create server configurations (simplified for CLI)
         server_configs = []
         for i, url in enumerate(server_urls):
             server_configs.append({"url": url, "server_id": i})
-        
+
         # For CLI demonstration, create a mock response
         query_result = {
             "query_id": f"query_{int(time.time())}",
@@ -492,20 +535,20 @@ def pir_query(
             "index_requested": index,
             "status": "success",
             "result": f"Mock result for index {index}",
-            "privacy_guarantee": "Information-theoretic security"
+            "privacy_guarantee": "Information-theoretic security",
         }
-        
+
         if out:
             with open(out, "w") as f:
                 json.dump(query_result, f, indent=2)
-            typer.echo(json.dumps({
-                "success": True,
-                "query_file": str(out),
-                "servers_queried": len(server_urls)
-            }))
+            typer.echo(
+                json.dumps(
+                    {"success": True, "query_file": str(out), "servers_queried": len(server_urls)}
+                )
+            )
         else:
             typer.echo(json.dumps(query_result))
-            
+
     except Exception as e:
         typer.echo(json.dumps({"error": str(e)}))
         raise typer.Exit(1)
@@ -513,36 +556,38 @@ def pir_query(
 
 @zk_app.command("build")
 def zk_build(
-    circuit_type: Annotated[str, typer.Option("--circuit-type", help="Type of circuit to build")] = "variant",
+    circuit_type: Annotated[
+        str, typer.Option("--circuit-type", help="Type of circuit to build")
+    ] = "variant",
     out: Annotated[Optional[Path], typer.Option("--out", "-o", help="Output directory")] = None,
 ):
     """Build ZK circuit setup and keys."""
     try:
         # Initialize prover to build circuit
         _ = Prover()  # Initialize for circuit building demonstration
-        
+
         # Build circuit setup
         setup_info = {
             "circuit_type": circuit_type,
             "status": "built",
             "timestamp": str(int(time.time())),
-            "description": f"ZK circuit setup for {circuit_type} operations"
+            "description": f"ZK circuit setup for {circuit_type} operations",
         }
-        
+
         # Create output directory if specified
         if out:
             out.mkdir(parents=True, exist_ok=True)
             setup_file = out / f"{circuit_type}_setup.json"
             with open(setup_file, "w") as f:
                 json.dump(setup_info, f, indent=2)
-            typer.echo(json.dumps({
-                "success": True,
-                "circuit_type": circuit_type,
-                "setup_file": str(setup_file)
-            }))
+            typer.echo(
+                json.dumps(
+                    {"success": True, "circuit_type": circuit_type, "setup_file": str(setup_file)}
+                )
+            )
         else:
             typer.echo(json.dumps(setup_info))
-            
+
     except Exception as e:
         typer.echo(json.dumps({"error": str(e)}))
         raise typer.Exit(1)

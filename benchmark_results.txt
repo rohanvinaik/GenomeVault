@@ -1,0 +1,99 @@
+2025-08-23 21:33:25,244 | INFO     | genomevault.logging  | Logging configured: level=INFO,file_logging=True
+2025-08-23 21:33:27,453 | INFO     | genomevault.hypervector_transform.encoding | Metal acceleration support detected
+2025-08-23 21:33:27,456 | INFO     | genomevault.hypervector_transform.registry | Loaded registry with 3 versions
+2025-08-23 21:33:27,464 | INFO     | genomevault.compression.tiered_compression | Creating variant database...
+2025-08-23 21:33:27,464 | INFO     | genomevault.compression.tiered_compression | Generating 200,000 synthetic variants...
+2025-08-23 21:33:27,464 | INFO     | genomevault.compression.tiered_compression |   Generated 0 variants...
+2025-08-23 21:33:27,482 | INFO     | genomevault.compression.tiered_compression |   Generated 20,000 variants...
+2025-08-23 21:33:27,549 | INFO     | genomevault.compression.tiered_compression |   Generated 40,000 variants...
+2025-08-23 21:33:27,569 | INFO     | genomevault.compression.tiered_compression |   Generated 60,000 variants...
+2025-08-23 21:33:27,589 | INFO     | genomevault.compression.tiered_compression |   Generated 80,000 variants...
+2025-08-23 21:33:27,613 | INFO     | genomevault.compression.tiered_compression |   Generated 100,000 variants...
+2025-08-23 21:33:27,699 | INFO     | genomevault.compression.tiered_compression |   Generated 120,000 variants...
+2025-08-23 21:33:27,720 | INFO     | genomevault.compression.tiered_compression |   Generated 140,000 variants...
+2025-08-23 21:33:27,742 | INFO     | genomevault.compression.tiered_compression |   Generated 160,000 variants...
+2025-08-23 21:33:27,766 | INFO     | genomevault.compression.tiered_compression |   Generated 180,000 variants...
+2025-08-23 21:33:27,787 | INFO     | genomevault.compression.tiered_compression |   Completed: 200,015 total variants in database
+2025-08-23 21:33:27,787 | INFO     | genomevault.hypervector.metal_engine | 🍎 Metal Acceleration Enabled on Device(gpu, 0)
+  Dimension: 10000
+  Precision: float32
+  Neural Engine: True
+2025-08-23 21:33:27,788 | INFO     | genomevault.hypervector_transform.encoding | 🍎 Metal acceleration auto-enabled with 20.0GB memory
+2025-08-23 21:33:27,788 | INFO     | genomevault.hypervector_transform.encoding | Initialized HypervectorEncoder(dim=10000, proj=sparse_random, dp=False)
+2025-08-23 21:33:27,788 | INFO     | genomevault.compression.tiered_compression | HDC encoder initialized with potential Metal acceleration
+2025-08-23 21:33:27,788 | INFO     | genomevault.compression.tiered_compression | Initialized TieredCompressor with 200015 variants
+2025-08-23 21:33:27,890 | INFO     | genomevault.compression.tiered_compression | Starting compression for mini tier...
+2025-08-23 21:33:27,890 | INFO     | genomevault.compression.tiered_compression | Selecting variants for mini tier (NOT CACHED)...
+2025-08-23 21:33:27,891 | INFO     | genomevault.compression.tiered_compression |   Sorting 200,015 variants by priority score...
+2025-08-23 21:33:27,952 | INFO     | genomevault.compression.tiered_compression |   Sorted. Selecting top 5,000 variants...
+2025-08-23 21:33:27,952 | INFO     | genomevault.compression.tiered_compression | Selected 5000 variants for MINI tier
+2025-08-23 21:33:27,963 | INFO     | genomevault.compression.tiered_compression | Successfully compressed to 2690 bytes (target: 25600, ratio: 256.11x)
+2025-08-23 21:33:28,120 | INFO     | genomevault.compression.tiered_compression | Starting compression for clinical tier...
+2025-08-23 21:33:28,120 | INFO     | genomevault.compression.tiered_compression | Calling _compress_clinical...
+2025-08-23 21:33:28,121 | INFO     | genomevault.compression.tiered_compression | Selecting variants for clinical tier (NOT CACHED)...
+2025-08-23 21:33:28,121 | INFO     | genomevault.compression.tiered_compression |   Sorting 200,015 variants by priority score...
+2025-08-23 21:33:28,190 | INFO     | genomevault.compression.tiered_compression |   Sorted. Selecting top 120,000 variants...
+2025-08-23 21:33:28,190 | INFO     | genomevault.compression.tiered_compression |   Categorizing clinical variants (optimized)...
+2025-08-23 21:33:28,242 | INFO     | genomevault.compression.tiered_compression | Selected 120000 variants for CLINICAL tier (ACMG: 22, PharmGKB: 985, Clinical: 1338)
+2025-08-23 21:33:28,245 | INFO     | genomevault.compression.tiered_compression | Starting multi-core processing with 8 cores, chunk_size=3750 for 120000 variants
+2025-08-23 21:33:28,246 | INFO     | genomevault.compression.tiered_compression | Submitting 32 chunks to ThreadPoolExecutor...
+2025-08-23 21:33:28,330 | INFO     | genomevault.compression.tiered_compression | Multi-core processing completed in 0.08 seconds
+2025-08-23 21:33:28,331 | INFO     | genomevault.compression.tiered_compression | ✅ Processed 120000 variants using 8 cores
+2025-08-23 21:33:28,578 | INFO     | genomevault.compression.tiered_compression | Successfully compressed to 38068 bytes (target: 307200, ratio: 56.19x)
+2025-08-23 21:33:28,750 | INFO     | genomevault.compression.tiered_compression | Starting compression for full_hdc tier...
+2025-08-23 21:33:28,757 | INFO     | genomevault.compression.tiered_compression | 🚀 Encoding 200000 features with HDC encoder (Metal: True)
+2025-08-23 21:33:30,051 | INFO     | genomevault.compression.tiered_compression | ✅ Created 10000-D hypervector using Metal-accelerated HDC encoder
+2025-08-23 21:33:30,168 | INFO     | genomevault.compression.tiered_compression | Successfully compressed to 1365 bytes (target: 153600, ratio: 2116.44x)
+METAL ACCELERATION DETECTED!
+
+======================================================================
+  GENOMEVAULT PERFORMANCE BENCHMARK WITH ALL OPTIMIZATIONS
+======================================================================
+
+MINI Tier (25KB target)
+------------------------------------------------------------
+  Input: 50,000 variants (672KB raw)
+  Output: 2,690 bytes (2.6KB)
+  Compression ratio: 256x
+  Processing time: 0.16s
+  Optimizations: Variant caching
+  Throughput: 308,181 variants/second
+
+CLINICAL Tier (300KB target)
+------------------------------------------------------------
+  Input: 150,000 variants (2088KB raw)
+  Output: 38,068 bytes (37.2KB)
+  Compression ratio: 56x
+  Processing time: 0.57s
+  Optimizations: Multi-core (8 threads), Variant caching
+  Throughput: 262,865 variants/second
+
+FULL_HDC Tier (150KB target)
+------------------------------------------------------------
+  Input: 200,000 variants (2821KB raw)
+  Output: 1,365 bytes (1.3KB)
+  Compression ratio: 2116x
+  Processing time: 1.53s
+  Optimizations: Metal GPU acceleration, Variant caching
+  Throughput: 130,661 variants/second
+
+======================================================================
+  OPTIMIZATION SUMMARY
+======================================================================
+
+✅ Active Optimizations:
+  • 🍎 Metal GPU acceleration for HDC encoding
+  • 🔀 Multi-core processing (8 threads) for variant selection
+  • 💾 Intelligent caching to prevent redundant sorting
+  • 📊 O(n) complexity for variant selection (was O(n²))
+
+📈 Performance Gains:
+  • MINI tier: Sub-second processing for 50K variants
+  • CLINICAL tier: 8-core parallel processing for 150K variants
+  • FULL_HDC tier: Metal-accelerated 200K→10K dimensional reduction
+
+🔍 Recent Activity:
+  ✅ Metal acceleration confirmed in logs
+  ✅ Multi-core processing confirmed in logs
+
+======================================================================

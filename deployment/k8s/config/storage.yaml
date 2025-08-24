@@ -1,0 +1,329 @@
+---
+# StorageClass for fast NVMe SSD storage
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast-nvme
+  labels:
+    app: genomevault
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp3
+  iops: "16000"
+  throughput: "1000"
+  fsType: ext4
+  encrypted: "true"
+reclaimPolicy: Retain
+allowVolumeExpansion: true
+volumeBindingMode: WaitForFirstConsumer
+
+---
+# StorageClass for standard SSD storage
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast-ssd
+  labels:
+    app: genomevault
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp3
+  iops: "3000"
+  throughput: "125"
+  fsType: ext4
+  encrypted: "true"
+reclaimPolicy: Retain
+allowVolumeExpansion: true
+volumeBindingMode: WaitForFirstConsumer
+
+---
+# StorageClass for cold/archive storage
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: cold-storage
+  labels:
+    app: genomevault
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: sc1
+  fsType: ext4
+  encrypted: "true"
+reclaimPolicy: Retain
+allowVolumeExpansion: true
+volumeBindingMode: WaitForFirstConsumer
+
+---
+# PersistentVolume for shared genomic data
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: genomevault-shared-data
+  labels:
+    app: genomevault
+    type: shared-data
+spec:
+  capacity:
+    storage: 10Ti
+  accessModes:
+    - ReadOnlyMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: fast-ssd
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: fs-0123456789abcdef  # Replace with actual EFS ID
+    volumeAttributes:
+      path: /genomevault-shared
+
+---
+# PersistentVolumeClaim for shared data
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: genomevault-shared-data-pvc
+  namespace: genomevault
+  labels:
+    app: genomevault
+spec:
+  accessModes:
+    - ReadOnlyMany
+  storageClassName: fast-ssd
+  resources:
+    requests:
+      storage: 10Ti
+  selector:
+    matchLabels:
+      type: shared-data
+
+---
+# PersistentVolume for model storage
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: genomevault-models
+  labels:
+    app: genomevault
+    type: models
+spec:
+  capacity:
+    storage: 5Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: fast-ssd
+  nfs:
+    server: nfs-server.genomevault.svc.cluster.local
+    path: /exports/models
+
+---
+# PersistentVolumeClaim for models
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: genomevault-models-pvc
+  namespace: genomevault
+  labels:
+    app: genomevault
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: fast-ssd
+  resources:
+    requests:
+      storage: 5Ti
+  selector:
+    matchLabels:
+      type: models
+
+---
+# PersistentVolume for backups
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: genomevault-backups
+  labels:
+    app: genomevault
+    type: backups
+spec:
+  capacity:
+    storage: 50Ti
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: cold-storage
+  hostPath:
+    path: /mnt/backups/genomevault
+    type: DirectoryOrCreate
+
+---
+# PersistentVolumeClaim for backups
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: genomevault-backups-pvc
+  namespace: genomevault
+  labels:
+    app: genomevault
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: cold-storage
+  resources:
+    requests:
+      storage: 50Ti
+  selector:
+    matchLabels:
+      type: backups
+
+---
+# VolumeSnapshotClass for backup snapshots
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: genomevault-snapshots
+  labels:
+    app: genomevault
+driver: ebs.csi.aws.com
+deletionPolicy: Retain
+parameters:
+  encrypted: "true"
+
+---
+# Backup CronJob using volume snapshots
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: genomevault-backup
+  namespace: genomevault
+  labels:
+    app: genomevault
+    component: backup
+spec:
+  schedule: "0 2 * * *"  # Daily at 2 AM
+  successfulJobsHistoryLimit: 7
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: genomevault
+            component: backup
+        spec:
+          serviceAccountName: genomevault-service
+          containers:
+          - name: backup
+            image: genomevault/backup:latest
+            imagePullPolicy: IfNotPresent
+            command: ["/bin/sh", "-c"]
+            args:
+            - |
+              echo "Starting backup process..."
+              DATE=$(date +%Y%m%d-%H%M%S)
+              
+              # Create volume snapshots
+              kubectl create -f - <<EOF
+              apiVersion: snapshot.storage.k8s.io/v1
+              kind: VolumeSnapshot
+              metadata:
+                name: genomevault-snapshot-${DATE}
+                namespace: genomevault
+              spec:
+                volumeSnapshotClassName: genomevault-snapshots
+                source:
+                  persistentVolumeClaimName: genomevault-data-genomevault-full-node-0
+              EOF
+              
+              # Backup to S3
+              aws s3 sync /data s3://${S3_BACKUP_BUCKET}/backup-${DATE}/ \
+                --storage-class GLACIER \
+                --sse AES256
+              
+              # Clean up old snapshots (keep last 30 days)
+              kubectl get volumesnapshot -n genomevault \
+                --sort-by=.metadata.creationTimestamp \
+                | head -n -30 \
+                | awk '{print $1}' \
+                | xargs -I {} kubectl delete volumesnapshot {} -n genomevault
+              
+              echo "Backup completed successfully"
+            env:
+            - name: S3_BACKUP_BUCKET
+              valueFrom:
+                secretKeyRef:
+                  name: genomevault-secrets
+                  key: s3_backup_bucket
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: genomevault-secrets
+                  key: aws_access_key_id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: genomevault-secrets
+                  key: aws_secret_access_key
+            volumeMounts:
+            - name: data
+              mountPath: /data
+              readOnly: true
+            resources:
+              requests:
+                cpu: "2"
+                memory: "4Gi"
+              limits:
+                cpu: "4"
+                memory: "8Gi"
+          volumes:
+          - name: data
+            persistentVolumeClaim:
+              claimName: genomevault-backups-pvc
+          restartPolicy: OnFailure
+
+---
+# Data retention policy
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: genomevault-retention-policy
+  namespace: genomevault
+  labels:
+    app: genomevault
+data:
+  policy.yaml: |
+    # HIPAA Compliance: 7-year retention
+    retention_policies:
+      genomic_data:
+        retention_days: 2555  # 7 years
+        compliance: HIPAA
+        encryption: AES-256
+        
+      clinical_data:
+        retention_days: 2555  # 7 years
+        compliance: HIPAA
+        encryption: AES-256
+        
+      audit_logs:
+        retention_days: 2555  # 7 years
+        compliance: HIPAA
+        immutable: true
+        
+      performance_metrics:
+        retention_days: 90
+        compression: enabled
+        
+      temporary_data:
+        retention_days: 7
+        auto_delete: true
+        
+    backup_policy:
+      frequency: daily
+      full_backup_interval: weekly
+      incremental_backup: daily
+      geographic_redundancy: 3
+      encryption: AES-256-GCM
+      
+    disaster_recovery:
+      rpo_minutes: 15  # Recovery Point Objective
+      rto_minutes: 60  # Recovery Time Objective
+      test_frequency: quarterly

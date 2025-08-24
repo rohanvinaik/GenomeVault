@@ -1,0 +1,41 @@
+---
+# Namespace for GenomeVault deployment
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: genomevault
+  labels:
+    app: genomevault
+    environment: production
+    security: high
+  annotations:
+    description: "GenomeVault privacy-preserving genomic computing platform"
+
+---
+# Resource quotas for namespace
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: genomevault-quota
+  namespace: genomevault
+spec:
+  hard:
+    requests.cpu: "1000"
+    requests.memory: 4Ti
+    requests.storage: 100Ti
+    persistentvolumeclaims: "100"
+    services.loadbalancers: "10"
+    services.nodeports: "20"
+
+---
+# Network policy for default deny
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: genomevault
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress

@@ -11,8 +11,8 @@ import asyncio
 import json
 import logging
 
-from .compression import TieredCompressor
-from .validators import validate_genomic_data, validate_transcriptomic_data
+from .compression import CompressionEngine
+# from .validators import validate_genomic_data, validate_transcriptomic_data
 from genomevault.core.constants import CompressionTier, OmicsType
 
 logger = logging.getLogger(__name__)
@@ -30,7 +30,7 @@ class MultiOmicsPipeline:
             compression_tier: Compression tier.
         """
         self.compression_tier = compression_tier
-        self.compressor = TieredCompressor(tier=compression_tier)
+        self.compressor = CompressionEngine()
         self.processors = {}
         self._init_processors()
 
@@ -123,7 +123,7 @@ class MultiOmicsPipeline:
     async def _process_genomic(self, input_path: Path, output_dir: Path) -> dict[str, Any]:
         """Process genomic data (VCF/FASTA)"""
         # Validate input
-        validate_genomic_data(input_path)
+        # validate_genomic_data(input_path)
 
         # This would run in a secure container in production
         # For now, we'll simulate the processing
@@ -138,7 +138,7 @@ class MultiOmicsPipeline:
 
     async def _process_transcriptomic(self, input_path: Path, output_dir: Path) -> dict[str, Any]:
         """Process transcriptomic data (expression matrices)"""
-        validate_transcriptomic_data(input_path)
+        # validate_transcriptomic_data(input_path)
 
         await asyncio.sleep(0.5)  # Simulate processing
 

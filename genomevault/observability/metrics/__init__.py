@@ -6,11 +6,12 @@ from .prometheus import (
     get_prometheus_metrics,
     get_metrics_content_type,
     MetricsCollector,
-    GENOMEVAULT_REGISTRY
+    GENOMEVAULT_REGISTRY,
 )
 
 # Import basic metrics from parent for compatibility
 from typing import Dict
+
 try:
     from genomevault.utils.metrics import Counter, Gauge, Histogram
 except ImportError:
@@ -18,20 +19,24 @@ except ImportError:
     class Counter:
         def __init__(self):
             self.value = 0
+
         def inc(self, amount=1):
             self.value += amount
-    
+
     class Gauge:
         def __init__(self):
             self.value = 0
+
         def set(self, value):
             self.value = value
-            
+
     class Histogram:
         def __init__(self):
             self.values = []
+
         def observe(self, value):
             self.values.append(value)
+
 
 class MetricsRegistry:
     """MetricsRegistry implementation."""
@@ -57,17 +62,18 @@ class MetricsRegistry:
         self.hists.setdefault(name, Histogram())
         return self.hists[name]
 
+
 REGISTRY = MetricsRegistry()
 
 __all__ = [
     "get_metrics_collector",
-    "get_prometheus_metrics", 
+    "get_prometheus_metrics",
     "get_metrics_content_type",
     "MetricsCollector",
     "GENOMEVAULT_REGISTRY",
     "MetricsRegistry",
     "REGISTRY",
     "Counter",
-    "Gauge", 
-    "Histogram"
+    "Gauge",
+    "Histogram",
 ]

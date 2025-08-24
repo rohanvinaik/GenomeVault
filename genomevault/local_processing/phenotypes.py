@@ -287,7 +287,7 @@ class PhenotypeProcessor:
         # In production, would load from comprehensive terminology services
         return {"loinc": self.LOINC_CODES, "icd10_patterns": self.ICD10_PATTERNS}
 
-    @log_operation("process_phenotypes")
+    @log_operation
     def process(
         self,
         input_data: dict[str, Any] | Path,

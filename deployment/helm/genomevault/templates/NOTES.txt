@@ -1,0 +1,117 @@
+Thank you for installing {{ .Chart.Name }}.
+
+Your release is named {{ .Release.Name }}.
+
+To learn more about the release, try:
+
+  $ helm status {{ .Release.Name }}
+  $ helm get all {{ .Release.Name }}
+
+{{- if .Values.apiGateway.enabled }}
+
+API Gateway:
+{{- if .Values.apiGateway.ingress.enabled }}
+  The API is available at:
+  {{- range .Values.apiGateway.ingress.hosts }}
+    https://{{ .host }}
+  {{- end }}
+{{- else }}
+  Get the API URL by running these commands:
+  {{- if contains "LoadBalancer" .Values.apiGateway.service.type }}
+    NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+    You can watch the status by running:
+    kubectl get --namespace {{ .Values.namespace.name }} svc -w {{ include "genomevault.fullname" . }}-api
+
+    export SERVICE_IP=$(kubectl get svc --namespace {{ .Values.namespace.name }} {{ include "genomevault.fullname" . }}-api -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+    echo http://$SERVICE_IP:{{ .Values.apiGateway.service.port }}
+  {{- end }}
+{{- end }}
+{{- end }}
+
+{{- if .Values.nodes.light.enabled }}
+
+Light Nodes:
+  {{ .Values.nodes.light.replicaCount }} light nodes deployed
+  Voting power: {{ .Values.nodes.light.votingPower }} each
+{{- end }}
+
+{{- if .Values.nodes.full.enabled }}
+
+Full Nodes:
+  {{ .Values.nodes.full.replicaCount }} full nodes deployed
+  Voting power: {{ .Values.nodes.full.votingPower }} each
+  API enabled: {{ .Values.nodes.full.features.api }}
+  gRPC enabled: {{ .Values.nodes.full.features.grpc }}
+{{- end }}
+
+{{- if .Values.nodes.archive.enabled }}
+
+Archive Nodes:
+  {{ .Values.nodes.archive.replicaCount }} archive nodes deployed
+  Voting power: {{ .Values.nodes.archive.votingPower }} each
+  Historical queries: {{ .Values.nodes.archive.features.historicalQueries }}
+{{- end }}
+
+{{- if .Values.pirServers.enabled }}
+
+PIR Servers:
+  {{ .Values.pirServers.replicaCount }} PIR servers deployed
+  Mode: {{ .Values.pirServers.mode }}
+  Database size: {{ .Values.pirServers.databaseSize }}
+{{- end }}
+
+{{- if .Values.federatedLearning.enabled }}
+
+Federated Learning:
+  {{ .Values.federatedLearning.coordinators }} coordinators deployed
+  Protocol: {{ .Values.federatedLearning.protocol }}
+  Homomorphic encryption: {{ .Values.federatedLearning.homomorphicEncryption }}
+  Differential privacy: ε={{ .Values.federatedLearning.differentialPrivacy.epsilon }}, δ={{ .Values.federatedLearning.differentialPrivacy.delta }}
+{{- end }}
+
+Privacy Settings:
+  Mode: {{ .Values.privacy.mode }}
+  Differential Privacy: {{ .Values.privacy.differentialPrivacy.enabled }}
+  Homomorphic Encryption: {{ .Values.privacy.homomorphicEncryption.enabled }}
+  Zero-Knowledge Proofs: {{ .Values.privacy.zeroKnowledgeProofs.enabled }}
+
+HDC Configuration:
+  Dimension: {{ .Values.hdc.dimension }}
+  Similarity threshold: {{ .Values.hdc.similarityThreshold }}
+  Compression tier: {{ .Values.hdc.compressionTier }}
+
+{{- if .Values.monitoring.prometheus.enabled }}
+
+Monitoring:
+  Prometheus is enabled with {{ .Values.monitoring.prometheus.retention }} retention
+  {{- if .Values.monitoring.grafana.enabled }}
+  Grafana is available with the following dashboards:
+  {{- range .Values.monitoring.grafana.dashboards }}
+    - {{ . }}
+  {{- end }}
+  
+  Access Grafana:
+    kubectl port-forward --namespace {{ .Values.namespace.name }} svc/{{ .Release.Name }}-grafana 3000:80
+    Username: admin
+    Password: Get it by running:
+      kubectl get secret --namespace {{ .Values.namespace.name }} {{ .Release.Name }}-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+  {{- end }}
+{{- end }}
+
+{{- if .Values.compliance.hipaa.enabled }}
+
+HIPAA Compliance:
+  ✓ Audit logging enabled
+  ✓ {{ .Values.compliance.hipaa.dataRetentionYears }}-year data retention
+  ✓ Encryption at rest
+  ✓ Encryption in transit
+{{- end }}
+
+{{- if .Values.storage.backup.enabled }}
+
+Backups:
+  Schedule: {{ .Values.storage.backup.schedule }}
+  Retention: {{ .Values.storage.backup.retention.daily }} daily, {{ .Values.storage.backup.retention.weekly }} weekly, {{ .Values.storage.backup.retention.monthly }} monthly, {{ .Values.storage.backup.retention.yearly }} yearly
+{{- end }}
+
+For more information, visit: https://docs.genomevault.io

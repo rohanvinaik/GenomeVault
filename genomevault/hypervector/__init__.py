@@ -3,7 +3,8 @@ Hypervector module for genomic data encoding and operations
 """
 
 # Import from hypervector_transform module as per encoder.py compatibility shim
-from genomevault.hypervector_transform.encoding import HypervectorEncoder, HypervectorConfig
+# NOTE: Commented out to avoid circular import when metal_engine is imported
+# from genomevault.hypervector_transform.encoding import HypervectorEncoder, HypervectorConfig
 from .encoding.genomic import GenomicEncoder
 from .error_handling import (
     AdaptiveHDCEncoder,
@@ -18,6 +19,6 @@ __all__ = [
     "ErrorBudget",
     "ErrorBudgetAllocator",
     "GenomicEncoder",
-    "HypervectorEncoder",
-    "HypervectorConfig",
+    # "HypervectorEncoder",  # Removed from __all__ due to circular import
+    # "HypervectorConfig",   # Removed from __all__ due to circular import
 ]

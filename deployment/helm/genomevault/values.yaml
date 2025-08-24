@@ -1,0 +1,389 @@
+# Default values for genomevault
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+  imageRegistry: ""
+  imagePullSecrets: []
+  storageClass: fast-ssd
+
+# Namespace configuration
+namespace:
+  create: true
+  name: genomevault
+
+# RBAC configuration
+rbac:
+  create: true
+  serviceAccountName: genomevault-service
+
+# Node tiers configuration
+nodes:
+  light:
+    enabled: true
+    replicaCount: 3
+    image:
+      repository: genomevault/light-node
+      tag: latest
+      pullPolicy: IfNotPresent
+    resources:
+      requests:
+        cpu: 4
+        memory: 8Gi
+        storage: 500Gi
+      limits:
+        cpu: 4
+        memory: 8Gi
+    votingPower: 1
+    autoscaling:
+      enabled: true
+      minReplicas: 3
+      maxReplicas: 20
+      targetCPUUtilizationPercentage: 70
+      targetMemoryUtilizationPercentage: 80
+  
+  full:
+    enabled: true
+    replicaCount: 2
+    image:
+      repository: genomevault/full-node
+      tag: latest
+      pullPolicy: IfNotPresent
+    resources:
+      requests:
+        cpu: 16
+        memory: 64Gi
+        storage: 4Ti
+      limits:
+        cpu: 16
+        memory: 64Gi
+    votingPower: 4
+    features:
+      api: true
+      grpc: true
+      websocket: false
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 60
+  
+  archive:
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: genomevault/archive-node
+      tag: latest
+      pullPolicy: IfNotPresent
+    resources:
+      requests:
+        cpu: 32
+        memory: 128Gi
+        storage: 16Ti
+        archiveStorage: 100Ti
+      limits:
+        cpu: 48
+        memory: 256Gi
+    votingPower: 8
+    features:
+      api: true
+      grpc: true
+      websocket: true
+      historicalQueries: true
+      pruneNothing: true
+
+# API Gateway configuration
+apiGateway:
+  enabled: true
+  replicaCount: 3
+  image:
+    repository: genomevault/api-gateway
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: LoadBalancer
+    port: 80
+    httpsPort: 443
+  ingress:
+    enabled: true
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    hosts:
+      - host: api.genomevault.io
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: genomevault-tls
+        hosts:
+          - api.genomevault.io
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 20
+    targetCPUUtilizationPercentage: 50
+  resources:
+    requests:
+      cpu: 2
+      memory: 4Gi
+    limits:
+      cpu: 4
+      memory: 8Gi
+
+# PIR Servers configuration
+pirServers:
+  enabled: true
+  replicaCount: 3
+  image:
+    repository: genomevault/pir-server
+    tag: latest
+    pullPolicy: IfNotPresent
+  mode: IT_PIR
+  databaseSize: 100Gi
+  resources:
+    requests:
+      cpu: 8
+      memory: 32Gi
+    limits:
+      cpu: 16
+      memory: 64Gi
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+
+# Federated Learning configuration
+federatedLearning:
+  enabled: true
+  coordinators: 2
+  image:
+    repository: genomevault/federated-coordinator
+    tag: latest
+    pullPolicy: IfNotPresent
+  protocol: SECAGG
+  homomorphicEncryption: CKKS
+  differentialPrivacy:
+    enabled: true
+    epsilon: 1.0
+    delta: 1e-5
+  resources:
+    requests:
+      cpu: 16
+      memory: 64Gi
+      gpu: 1
+    limits:
+      cpu: 32
+      memory: 128Gi
+      gpu: 1
+
+# Privacy settings
+privacy:
+  mode: enhanced
+  differentialPrivacy:
+    enabled: true
+    epsilon: 1.0
+    delta: 1e-5
+  homomorphicEncryption:
+    enabled: true
+    scheme: CKKS
+  zeroKnowledgeProofs:
+    enabled: true
+    circuitTypes:
+      - variant
+      - training
+      - clinical
+
+# Hyperdimensional Computing settings
+hdc:
+  dimension: 10000
+  similarityThreshold: 0.85
+  compressionTier: clinical
+  enableGPU: false
+
+# Storage configuration
+storage:
+  backend: s3
+  endpoint: s3.amazonaws.com
+  region: us-east-1
+  bucket: genomevault-data
+  encryption:
+    enabled: true
+    algorithm: AES-256-GCM
+  backup:
+    enabled: true
+    schedule: "0 2 * * *"
+    retention:
+      daily: 7
+      weekly: 4
+      monthly: 12
+      yearly: 7
+
+# Database configuration
+postgresql:
+  enabled: true
+  auth:
+    database: genomevault
+    username: genomevault
+    password: changeme
+    postgresPassword: changeme
+  primary:
+    persistence:
+      enabled: true
+      size: 100Gi
+      storageClass: fast-ssd
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+
+# Redis configuration
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    password: changeme
+  master:
+    persistence:
+      enabled: true
+      size: 10Gi
+      storageClass: fast-ssd
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+
+# Monitoring configuration
+monitoring:
+  prometheus:
+    enabled: true
+    retention: 30d
+    storageSize: 100Gi
+  grafana:
+    enabled: true
+    adminPassword: changeme
+    dashboards:
+      - system-overview
+      - privacy-monitoring
+      - network-topology
+      - clinical-analysis
+  alerts:
+    enabled: true
+    rules:
+      - high-latency
+      - privacy-breach
+      - low-compression
+      - node-down
+
+# Security configuration
+security:
+  tls:
+    enabled: true
+    certManager:
+      enabled: true
+      issuer: letsencrypt-prod
+  networkPolicies:
+    enabled: true
+    defaultDenyAll: true
+  podSecurityPolicies:
+    enabled: false  # Deprecated in K8s 1.25+
+  secrets:
+    provider: kubernetes  # or vault, aws-secrets-manager
+    rotation:
+      enabled: true
+      frequency: 30d
+
+# OAuth2 configuration
+oauth2:
+  enabled: true
+  provider: google
+  clientId: changeme
+  clientSecret: changeme
+  redirectUri: https://api.genomevault.io/auth/callback
+  emailDomains:
+    - genomevault.io
+
+# Resource quotas
+resourceQuota:
+  enabled: true
+  limits:
+    cpu: "1000"
+    memory: 4Ti
+    storage: 100Ti
+    persistentvolumeclaims: "100"
+    services.loadbalancers: "10"
+    services.nodeports: "20"
+
+# Operators configuration
+operators:
+  autoscaler:
+    enabled: true
+    image:
+      repository: genomevault/autoscaler-operator
+      tag: latest
+  backup:
+    enabled: true
+    image:
+      repository: genomevault/backup-operator
+      tag: latest
+  certificateRotation:
+    enabled: true
+    rotationDays: 90
+
+# Compliance settings
+compliance:
+  hipaa:
+    enabled: true
+    auditLogging: true
+    dataRetentionYears: 7
+    encryptionAtRest: true
+    encryptionInTransit: true
+  gdpr:
+    enabled: true
+    dataMinimization: true
+    rightToErasure: true
+    dataPortability: true
+
+# Performance tuning
+performance:
+  cacheSizeMB: 16384
+  batchSize: 1000
+  workerThreads: 8
+  connectionPoolSize: 100
+
+# Feature flags
+features:
+  enableAPI: true
+  enableGRPC: true
+  enableWebSocket: true
+  enableArchive: false
+  enableIndexing: true
+  enableHistoricalQueries: false
+
+# Logging configuration
+logging:
+  level: INFO
+  format: json
+  output: stdout
+  retention: 7d
+
+# Tracing configuration
+tracing:
+  enabled: true
+  provider: jaeger
+  endpoint: http://jaeger-collector:14268/api/traces
+  samplingRate: 0.1
+
+# Testing configuration
+testing:
+  enabled: false
+  e2e:
+    enabled: false
+    schedule: "0 4 * * *"
+  chaos:
+    enabled: false
+    experiments:
+      - pod-failure
+      - network-latency
+      - cpu-stress

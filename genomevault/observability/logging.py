@@ -31,10 +31,10 @@ def configure_logging() -> logging.Logger:
 
 def get_logger(name: str) -> logging.Logger:
     """Get a logger instance.
-    
+
     Args:
         name: Logger name
-        
+
     Returns:
         Configured logger instance
     """

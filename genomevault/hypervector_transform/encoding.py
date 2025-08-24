@@ -14,20 +14,42 @@ import torch
 from genomevault.core.constants import HYPERVECTOR_DIMENSIONS, OmicsType
 from genomevault.core.exceptions import EncodingError, ProjectionError
 
+logger = logging.getLogger(__name__)
+
 # Optional differential privacy integration
 try:
     from genomevault.privacy import (
         GaussianMechanism,
         PrivacyLevel,
         PrivacyAccountant,
-        DifferentiallyPrivateHDC
+        DifferentiallyPrivateHDC,
     )
+
     DP_AVAILABLE = True
 except ImportError:
     DP_AVAILABLE = False
 
+# Optional Metal acceleration
+try:
+    from genomevault.hypervector.metal_engine import MetalHypervectorEngine, MetalConfig
+    import mlx.core as mx
+    METAL_AVAILABLE = True
+    print("METAL ACCELERATION DETECTED!")  # Debug print
+    logger.info("Metal acceleration support detected")
+except ImportError as e:
+    METAL_AVAILABLE = False
+    MetalHypervectorEngine = None
+    MetalConfig = None
+    print(f"METAL IMPORT FAILED: {e}")  # Debug print
+    logger.debug(f"Metal acceleration not available: {e}")
+except Exception as e:
+    METAL_AVAILABLE = False
+    MetalHypervectorEngine = None
+    MetalConfig = None
+    print(f"METAL IMPORT ERROR (non-ImportError): {e}")  # Debug print
+    logger.debug(f"Metal acceleration error: {e}")
+
 TensorLike = Union[np.ndarray, torch.Tensor]
-logger = logging.getLogger(__name__)
 
 
 class ProjectionType(Enum):
@@ -51,9 +73,12 @@ class HypervectorConfig:
     quantization_bits: int = 8
     # Differential privacy parameters
     use_differential_privacy: bool = False
-    privacy_level: Optional['PrivacyLevel'] = None
+    privacy_level: Optional["PrivacyLevel"] = None
     privacy_epsilon: Optional[float] = None
     privacy_delta: Optional[float] = None
+    # Metal acceleration parameters
+    use_metal: Optional[bool] = None  # None = auto-detect
+    metal_memory_gb: float = 20.0  # Target memory allocation for Metal
 
 
 class HypervectorEncoder:
@@ -70,11 +95,38 @@ class HypervectorEncoder:
             torch.manual_seed(self.config.seed)
             np.random.seed(self.config.seed)
         self._projection_cache: Dict[str, torch.Tensor] = {}
-        
+
+        # Initialize Metal acceleration if available and requested
+        self.metal_engine = None
+        if self.config.use_metal is None:
+            # Auto-detect Metal availability
+            if METAL_AVAILABLE:
+                try:
+                    metal_config = MetalConfig(
+                        dimension=self.config.dimension,
+                        max_memory_gb=self.config.metal_memory_gb,
+                        use_neural_engine=True,
+                        precision="float32"
+                    )
+                    self.metal_engine = MetalHypervectorEngine(metal_config)
+                    logger.info(f"🍎 Metal acceleration auto-enabled with {self.config.metal_memory_gb}GB memory")
+                except Exception as e:
+                    logger.warning(f"Metal auto-detection failed: {e}")
+        elif self.config.use_metal and METAL_AVAILABLE:
+            # Explicitly requested Metal
+            metal_config = MetalConfig(
+                dimension=self.config.dimension,
+                max_memory_gb=self.config.metal_memory_gb,
+                use_neural_engine=True,
+                precision="float32"
+            )
+            self.metal_engine = MetalHypervectorEngine(metal_config)
+            logger.info(f"🍎 Metal acceleration enabled with {self.config.metal_memory_gb}GB memory")
+
         # Initialize differential privacy if requested
         self.dp_mechanism = None
         self.privacy_accountant = None
-        
+
         if self.config.use_differential_privacy and DP_AVAILABLE:
             if self.config.privacy_level:
                 # Use predefined privacy level
@@ -86,27 +138,29 @@ class HypervectorEncoder:
             else:
                 # Default to clinical level
                 epsilon, delta = 1.0, 1e-7
-            
+
             # Initialize privacy accountant
             self.privacy_accountant = PrivacyAccountant(
                 total_epsilon=epsilon * 100,  # Budget for 100 operations
-                total_delta=delta * 100
+                total_delta=delta * 100,
             )
-            
+
             # Sensitivity for normalized hypervectors (max L2 distance = sqrt(2))
             sensitivity = np.sqrt(2.0)
-            
+
             self.dp_mechanism = GaussianMechanism(epsilon, delta, sensitivity)
             logger.info(
                 "Differential privacy enabled: ε=%.2f, δ=%.2e, σ=%.4f",
-                epsilon, delta, self.dp_mechanism.sigma
+                epsilon,
+                delta,
+                self.dp_mechanism.sigma,
             )
-        
+
         logger.info(
             "Initialized HypervectorEncoder(dim=%d, proj=%s, dp=%s)",
             self.config.dimension,
             self.config.projection_type.value,
-            self.config.use_differential_privacy
+            self.config.use_differential_privacy,
         )
 
     def encode(
@@ -119,42 +173,68 @@ class HypervectorEncoder:
     ) -> torch.Tensor:
         """Encode features into a single hypervector with optional differential privacy."""
         try:
-            x = self._as_tensor(features)
-            proj = self._get_projection_matrix(x.shape[-1], self.config.dimension, omics_type)
-            hv = proj @ x.float()
-            if self.config.normalize:
-                hv = self._normalize(hv)
-            
+            # Use Metal acceleration if available
+            if self.metal_engine is not None:
+                # Convert features to numpy for Metal
+                if isinstance(features, torch.Tensor):
+                    features_np = features.detach().cpu().numpy()
+                elif isinstance(features, dict):
+                    # Handle dict features
+                    features_np = np.concatenate([
+                        v.detach().cpu().numpy() if isinstance(v, torch.Tensor) else v
+                        for v in features.values()
+                    ])
+                else:
+                    features_np = np.array(features)
+                
+                # Encode with Metal
+                hv_metal = self.metal_engine.encode_with_metal(features_np, omics_type)
+                
+                # Convert back to torch tensor
+                hv_np = self.metal_engine.to_numpy(hv_metal)
+                hv = torch.from_numpy(hv_np).float()
+                
+                # Metal already normalizes, skip additional normalization
+            else:
+                # Original CPU/CUDA path
+                x = self._as_tensor(features)
+                proj = self._get_projection_matrix(x.shape[-1], self.config.dimension, omics_type)
+                hv = proj @ x.float()
+                if self.config.normalize:
+                    hv = self._normalize(hv)
+
             # Add differential privacy noise if enabled
             if self.config.use_differential_privacy and add_dp_noise and self.dp_mechanism:
                 try:
                     # Convert to numpy for DP mechanism
                     hv_numpy = hv.detach().cpu().numpy()
-                    
+
                     # Allocate privacy budget if accountant available
                     if self.privacy_accountant:
                         params = self.privacy_accountant.allocate_budget(
-                            'hdc_encoder',
-                            f'encode_{omics_type.value}',
-                            self.dp_mechanism.params.epsilon
+                            "hdc_encoder",
+                            f"encode_{omics_type.value}",
+                            self.dp_mechanism.params.epsilon,
                         )
                         # Update mechanism with allocated budget
                         self.dp_mechanism.params = params
-                    
+
                     # Add noise
                     hv_noisy = self.dp_mechanism.add_noise(hv_numpy)
-                    
+
                     # Re-normalize after adding noise
                     hv_noisy = hv_noisy / (np.linalg.norm(hv_noisy) + 1e-10)
-                    
+
                     # Convert back to tensor
                     hv = torch.from_numpy(hv_noisy).float()
-                    
-                    logger.debug("Added differential privacy noise (σ=%.4f)", self.dp_mechanism.sigma)
-                    
+
+                    logger.debug(
+                        "Added differential privacy noise (σ=%.4f)", self.dp_mechanism.sigma
+                    )
+
                 except Exception as e:
                     logger.warning(f"Failed to add DP noise: {e}, continuing without privacy")
-            
+
             if self.config.quantize:
                 hv = self._quantize(hv, bits=self.config.quantization_bits)
             return hv.view(-1)

@@ -1,0 +1,327 @@
+---
+# Archive Node Deployment - 32+ cores, 128GB+ RAM, 16TB+ storage
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: genomevault-archive-node
+  namespace: genomevault
+  labels:
+    app: genomevault
+    tier: archive
+    component: node
+spec:
+  serviceName: genomevault-archive-node
+  replicas: 1
+  selector:
+    matchLabels:
+      app: genomevault
+      tier: archive
+      component: node
+  template:
+    metadata:
+      labels:
+        app: genomevault
+        tier: archive
+        component: node
+        version: v1.0.0
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: genomevault-service
+      nodeSelector:
+        node.kubernetes.io/instance-type: "high-performance"
+        genomevault/node-class: "archive"
+      tolerations:
+      - key: "genomevault/archive-node"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      - key: "node.kubernetes.io/high-memory"
+        operator: "Exists"
+        effect: "NoSchedule"
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: tier
+                operator: In
+                values: ["archive"]
+            topologyKey: kubernetes.io/hostname
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: node.kubernetes.io/instance-type
+                operator: In
+                values: ["m5.16xlarge", "m5.24xlarge", "m5.metal", "r5.16xlarge", "r5.24xlarge"]
+      initContainers:
+      - name: init-archive
+        image: genomevault/init:latest
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          echo "Initializing archive node storage..."
+          mkdir -p /data/blockchain
+          mkdir -p /data/hypervectors
+          mkdir -p /data/proofs
+          mkdir -p /data/indices
+          mkdir -p /data/cache
+          mkdir -p /data/archive
+          mkdir -p /data/snapshots
+          echo "Setting up archival indexing..."
+          # Initialize archive database schema
+          # Setup bloom filters for quick lookups
+          echo "Archive initialization complete"
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        - name: archive
+          mountPath: /archive
+        resources:
+          requests:
+            cpu: "4"
+            memory: "8Gi"
+      containers:
+      - name: archive-node
+        image: genomevault/archive-node:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: http
+        - containerPort: 9090
+          name: metrics
+        - containerPort: 26656
+          name: p2p
+        - containerPort: 26657
+          name: rpc
+        - containerPort: 26658
+          name: grpc
+        - containerPort: 1317
+          name: api
+        - containerPort: 9944
+          name: websocket
+        env:
+        - name: NODE_TYPE
+          value: "archive"
+        - name: NODE_CLASS
+          value: "ARCHIVE"
+        - name: VOTING_POWER
+          value: "8"
+        - name: ENABLE_API
+          value: "true"
+        - name: ENABLE_GRPC
+          value: "true"
+        - name: ENABLE_WEBSOCKET
+          value: "true"
+        - name: CACHE_SIZE_GB
+          value: "64"
+        - name: INDEX_EVERYTHING
+          value: "true"
+        - name: PRUNE_NOTHING
+          value: "true"
+        - name: ENABLE_HISTORICAL_QUERIES
+          value: "true"
+        - name: SNAPSHOT_INTERVAL
+          value: "1000"
+        - name: COMPRESSION_LEVEL
+          value: "9"
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        envFrom:
+        - configMapRef:
+            name: genomevault-config
+        - secretRef:
+            name: genomevault-secrets
+        resources:
+          requests:
+            cpu: "32"
+            memory: "128Gi"
+            ephemeral-storage: "100Gi"
+          limits:
+            cpu: "48"
+            memory: "256Gi"
+            ephemeral-storage: "200Gi"
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        - name: archive
+          mountPath: /archive
+        - name: config
+          mountPath: /etc/genomevault
+          readOnly: true
+        - name: cache
+          mountPath: /cache
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 120
+          periodSeconds: 30
+          timeoutSeconds: 15
+          failureThreshold: 5
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 15
+          timeoutSeconds: 10
+          failureThreshold: 3
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          failureThreshold: 40
+      - name: archival-indexer
+        image: genomevault/indexer:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9092
+          name: indexer-metrics
+        env:
+        - name: INDEX_MODE
+          value: "archive"
+        - name: BATCH_SIZE
+          value: "1000"
+        - name: WORKERS
+          value: "8"
+        resources:
+          requests:
+            cpu: "4"
+            memory: "16Gi"
+          limits:
+            cpu: "8"
+            memory: "32Gi"
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        - name: archive
+          mountPath: /archive
+      - name: snapshot-manager
+        image: genomevault/snapshot:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9093
+          name: snapshot-metrics
+        env:
+        - name: SNAPSHOT_INTERVAL_BLOCKS
+          value: "1000"
+        - name: RETENTION_DAYS
+          value: "2555"  # 7 years for HIPAA
+        - name: COMPRESSION_ALGORITHM
+          value: "zstd"
+        - name: S3_BACKUP_BUCKET
+          valueFrom:
+            secretKeyRef:
+              name: genomevault-secrets
+              key: s3-backup-bucket
+        resources:
+          requests:
+            cpu: "2"
+            memory: "8Gi"
+          limits:
+            cpu: "4"
+            memory: "16Gi"
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        - name: archive
+          mountPath: /archive
+      volumes:
+      - name: config
+        configMap:
+          name: genomevault-node-config
+      - name: cache
+        emptyDir:
+          sizeLimit: 100Gi
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+      labels:
+        app: genomevault
+        tier: archive
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: fast-nvme
+      resources:
+        requests:
+          storage: 16Ti
+  - metadata:
+      name: archive
+      labels:
+        app: genomevault
+        tier: archive
+        purpose: long-term
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: cold-storage
+      resources:
+        requests:
+          storage: 100Ti
+
+---
+# Service for Archive Nodes
+apiVersion: v1
+kind: Service
+metadata:
+  name: genomevault-archive-node
+  namespace: genomevault
+  labels:
+    app: genomevault
+    tier: archive
+    component: node
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+spec:
+  type: LoadBalancer
+  selector:
+    app: genomevault
+    tier: archive
+    component: node
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  - name: api
+    port: 1317
+    targetPort: 1317
+  - name: grpc
+    port: 26658
+    targetPort: 26658
+  - name: rpc
+    port: 26657
+    targetPort: 26657
+  - name: websocket
+    port: 9944
+    targetPort: 9944
+
+---
+# PodDisruptionBudget for Archive Nodes
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: genomevault-archive-node-pdb
+  namespace: genomevault
+  labels:
+    app: genomevault
+    tier: archive
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: genomevault
+      tier: archive
+      component: node
