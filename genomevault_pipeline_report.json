@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-08-24T05:45:36.999102",
+  "timestamp": "2025-08-24T05:50:46.602162",
   "components": {
     "hdc": {
       "status": "failed",
@@ -8,22 +8,22 @@
     "pir": {
       "status": "success",
       "database_size": 100,
-      "query_time": 0.00010800361633300781,
+      "query_time": 0.00010991096496582031,
       "retrieved_correct": true,
       "privacy_preserved": true
     },
     "zk": {
       "status": "success",
       "proof_generated": false,
-      "generation_time": 2.6226043701171875e-05,
-      "verification_time": 9.5367431640625e-07,
+      "generation_time": 3.3855438232421875e-05,
+      "verification_time": 2.1457672119140625e-06,
       "verified": true,
       "circuit_type": "variant"
     },
     "federated": {
       "status": "success",
       "participants": 3,
-      "aggregation_time": 0.0009253025054931641,
+      "aggregation_time": 0.0008227825164794922,
       "protocol": "secure_agg",
       "differential_privacy": true,
       "epsilon_spent": 0.0,
@@ -33,3 +33,78 @@
       "status": "success",
       "original_size_bytes": 400000,
       "tiers": {
+        "mini": {
+          "compression_ratio": 149.36519790888724,
+          "compress_time": 0.06830906867980957,
+          "decompress_time": 0.0018467903137207031,
+          "accuracy": 0.0
+        },
+        "clinical": {
+          "compression_ratio": 10.512759862282845,
+          "compress_time": 0.26718902587890625,
+          "decompress_time": 0.0021181106567382812,
+          "accuracy": 0.0
+        },
+        "full_hdc": {
+          "compression_ratio": 3.2747427280244295,
+          "compress_time": 0.0022079944610595703,
+          "decompress_time": 0.0016889572143554688,
+          "accuracy": 0.0
+        }
+      }
+    },
+    "consensus": {
+      "status": "success",
+      "nodes": 5,
+      "consensus_time": 1.2159347534179688e-05,
+      "winning_proposal": "proposal_A",
+      "total_weight": 18,
+      "participation": 1.0,
+      "weight_distribution": {
+        "FULL": 8,
+        "LIGHT": 2,
+        "ARCHIVE": 8
+      }
+    },
+    "monitoring": {
+      "status": "success",
+      "uptime": 0.00054931640625,
+      "active_alerts": 2,
+      "metrics_exported": true,
+      "performance_compliant": 4
+    },
+    "marketplace": {
+      "status": "success",
+      "registered": true,
+      "search_results": 1,
+      "validation": {
+        "security": true,
+        "privacy": true,
+        "performance": true
+      },
+      "runtime_environments": [
+        "python_sandbox",
+        "docker",
+        "webassembly",
+        "native"
+      ]
+    },
+    "threshold": {
+      "status": "skipped",
+      "reason": "Threshold crypto not available"
+    }
+  },
+  "performance": {
+    "pir_query_time": 0.00010991096496582031,
+    "zk_generation_time": 3.3855438232421875e-05
+  },
+  "errors": [],
+  "summary": {
+    "total_components": 9,
+    "successful": 7,
+    "failed": 1,
+    "skipped": 1,
+    "total_time": 0.7881510257720947,
+    "success_rate": 0.7777777777777778
+  }
+}

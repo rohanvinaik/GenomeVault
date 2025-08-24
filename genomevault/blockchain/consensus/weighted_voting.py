@@ -404,7 +404,7 @@ class BFTConsensus:
         for vote in winning_votes:
             if vote.node_id not in rewarded_nodes:
                 node = self.nodes[vote.node_id]
-                reward = node.award_credits()
+                _ = node.award_credits()  # Award credits, return value logged elsewhere
                 rewarded_nodes.add(vote.node_id)
 
         logger.info(
@@ -600,3 +600,65 @@ if __name__ == "__main__":
     print("\n" + "=" * 70)
     print("  Dual-axis weighted voting system ready!")
     print("=" * 70)
+
+
+# Wrapper class for compatibility with tests
+class WeightedVotingConsensus:
+    """Wrapper for BFTConsensus with test-compatible interface."""
+
+    def __init__(self):
+        """Initialize with empty node list."""
+        self.nodes_list = []
+        self.consensus = None
+
+    def add_node(self, node):
+        """Add a node to the consensus."""
+        self.nodes_list.append(node)
+        # Recreate consensus with updated nodes
+        self.consensus = BFTConsensus(self.nodes_list)
+
+    def calculate_consensus(self, votes: dict) -> dict:
+        """Calculate consensus from votes."""
+        if not self.consensus:
+            self.consensus = BFTConsensus(self.nodes_list)
+
+        # Convert votes to weight-based tally
+        vote_tally = {}
+        for node_id, proposal in votes.items():
+            if node_id in self.consensus.nodes:
+                node = self.consensus.nodes[node_id]
+                weight = node.voting_weight
+                vote_tally[proposal] = vote_tally.get(proposal, 0) + weight
+
+        # Find winner
+        winner = max(vote_tally.items(), key=lambda x: x[1])[0] if vote_tally else None
+        total_weight = sum(node.voting_weight for node in self.nodes_list)
+
+        return {
+            "winner": winner,
+            "total_weight": total_weight,
+            "participation": len(votes) / len(self.nodes_list) if self.nodes_list else 0,
+            "vote_tally": vote_tally,
+        }
+
+    def get_weight_distribution(self) -> dict:
+        """Get distribution of weights by resource class."""
+        if not self.consensus:
+            return {}
+
+        distribution = {}
+        for node in self.nodes_list:
+            class_name = (
+                node.resource_class.name
+                if hasattr(node.resource_class, "name")
+                else str(node.resource_class)
+            )
+            if class_name not in distribution:
+                distribution[class_name] = 0
+            distribution[class_name] += node.voting_weight
+
+        return distribution
+
+
+# Aliases for compatibility
+Node = DualAxisNode
