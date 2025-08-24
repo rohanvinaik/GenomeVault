@@ -1,12 +1,26 @@
 """Module for cli functionality."""
 
-from .training_proof_cli import main as training_main
-from .main import encode, sim, index_build, search, prove, verify, main
+# Import the main entry point from the cli module
+try:
+    from ..cli import main, app
+except ImportError:
+    # Fallback to importing from main
+    from .main import main
+    app = None
+
+# Import legacy functions for backward compatibility
+try:
+    from .training_proof_cli import main as training_main
+    from .main import encode, sim, index_build, search, prove, verify
+except ImportError:
+    training_main = None
+    encode = sim = index_build = search = prove = verify = None
 
 __all__ = [
+    "app",
+    "main",
     "encode",
     "index_build",
-    "main",
     "prove",
     "search",
     "sim",
