@@ -22,6 +22,7 @@ from genomevault.crypto import (
     secure_bytes,
 )
 from genomevault.core.config import get_config
+from genomevault.config.security import SecurityConfig
 from genomevault.utils.logging import get_logger
 
 # Try to import Circom backend
@@ -297,15 +298,26 @@ class Prover:
                 if self.circom_backend.check_dependencies():
                     logger.info("✓ Circom backend initialized - PRODUCTION READY")
                     self.is_production_ready = True
+                    # Validate the backend is allowed for current environment
+                    SecurityConfig.validate_proof_backend("circom")
                 else:
+                    # Validate mock backend usage
+                    SecurityConfig.validate_proof_backend("mock")
+                    SecurityConfig.warn_mock_mode()
                     logger.warning("⚠️ Circom dependencies not found - USING INSECURE MOCK PROOFS")
                     logger.warning("Install circom and snarkjs for production use")
                     self.circom_backend = None
             except Exception as e:
                 logger.warning(f"⚠️ Failed to initialize Circom backend: {e}")
                 logger.warning("USING INSECURE MOCK PROOFS - NOT FOR PRODUCTION")
+                # Validate mock backend usage
+                SecurityConfig.validate_proof_backend("mock")
+                SecurityConfig.warn_mock_mode()
                 self.circom_backend = None
         else:
+            # Validate mock backend usage
+            SecurityConfig.validate_proof_backend("mock")
+            SecurityConfig.warn_mock_mode()
             logger.warning("⚠️ Circom backend disabled or unavailable - USING INSECURE MOCK PROOFS")
 
         logger.info("Prover initialized", extra={"privacy_safe": True})
@@ -464,6 +476,9 @@ class Prover:
 
         # Fall back to mock proof generation - NOT SECURE
         if not self.is_production_ready:
+            # Validate mock backend usage before generating mock proof
+            SecurityConfig.validate_proof_backend("mock")
+            SecurityConfig.warn_mock_mode()
             logger.warning("⚠️ GENERATING MOCK PROOF - NOT CRYPTOGRAPHICALLY SECURE")
             logger.warning(
                 "This proof provides NO privacy guarantees and should NOT be used in production"
