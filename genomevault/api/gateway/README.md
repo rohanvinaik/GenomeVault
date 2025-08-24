@@ -339,4 +339,4 @@ For questions, issues, or contributions:
 
 ## License
 
-Apache 2.0 License - see LICENSE file for details.
+MIT License - see LICENSE file for details.

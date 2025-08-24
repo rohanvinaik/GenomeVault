@@ -31,8 +31,8 @@ info:
     url: https://github.com/genomevault/genomevault
     email: support@genomevault.io
   license:
-    name: Apache 2.0
-    url: https://www.apache.org/licenses/LICENSE-2.0.html
+    name: MIT
+    url: https://opensource.org/licenses/MIT
   x-logo:
     url: "https://genomevault.io/logo.png"
     altText: "GenomeVault Logo"

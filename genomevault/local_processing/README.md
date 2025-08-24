@@ -263,4 +263,4 @@ When adding new processors:
 
 ## License
 
-This module is part of GenomeVault 3.0 and is licensed under the Apache License 2.0.
+This module is part of GenomeVault 3.0 and is licensed under the MIT License.

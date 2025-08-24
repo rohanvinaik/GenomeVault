@@ -37,4 +37,4 @@ dependencies:
     condition: monitoring.grafana.enabled
 annotations:
   category: Healthcare
-  license: Apache-2.0
+  license: MIT

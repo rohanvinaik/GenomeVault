@@ -70,7 +70,7 @@ We've successfully implemented the foundational components of the GenomeVault 3.
 ```
 genomevault/
 ├── README.md                 # Project overview
-├── LICENSE                   # Apache 2.0 license
+├── LICENSE                   # MIT license
 ├── setup.py                  # Package setup
 ├── pyproject.toml           # Modern Python packaging
 ├── requirements.txt         # Dependencies
