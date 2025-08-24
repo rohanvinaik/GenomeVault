@@ -19,25 +19,32 @@ GenomeVault transforms genomic data analysis through innovative cryptographic te
 
 | **Feature**                   | **Description**                                    | **Status** |
 | ----------------------------- | -------------------------------------------------- | ---------- |
-| Hyperdimensional Encoding     | Transforms genomes into privacy-preserving vectors | Production |
-| KAN-HD Hybrid Architecture    | Interpretable compression (50–100× efficiency)     | Production |
-| Zero-Knowledge Proofs         | Proves genomic properties without revealing data   | Production |
-| Federated Learning            | Distributed, private model training                | Production |
-| Private Information Retrieval | Queries databases privately                        | Production |
-| Blockchain Governance         | Decentralized control                              | Production |
-| Nanopore Streaming            | Real-time sequencing analysis                      | Beta       |
-| Accuracy Dial                 | Tune precision vs. speed                           | Production |
-| Hierarchical Zoom             | Multi-resolution queries                           | Production |
-| Hamming LUT Optimization      | Accelerates similarity computations                | Production |
-| Scientific Interpretability   | Regulatory-compliant explanations                  | Production |
+| Hyperdimensional Encoding     | Transforms genomes into privacy-preserving vectors | Beta       |
+| KAN-HD Hybrid Architecture    | Interpretable compression (50–100× efficiency)     | Beta       |
+| Zero-Knowledge Proofs         | Proves genomic properties without revealing data   | Beta       |
+| Federated Learning            | Distributed, private model training                | Beta       |
+| Private Information Retrieval | Queries databases privately                        | Beta       |
+| Blockchain Governance         | Decentralized control                              | Beta       |
+| Nanopore Streaming            | Real-time sequencing analysis                      | Alpha      |
+| Accuracy Dial                 | Tune precision vs. speed                           | Beta       |
+| Hierarchical Zoom             | Multi-resolution queries                           | Beta       |
+| Hamming LUT Optimization      | Accelerates similarity computations                | Beta       |
+| Scientific Interpretability   | Regulatory-compliant explanations                  | Beta       |
+
+**Status Legend:**
+- **Alpha** = Prototype (research/experimental)
+- **Beta** = Demo-ready (tested with synthetic data)
+- **GA** = Production-tested (validated with clinical data)
 
 ## 🚀 **Performance: Redefining What's Possible in Genomics**
 
-### **Your Entire Genome in a Tweet™**
+### **Your Entire Genome in a Tweet™***
 
 GenomeVault achieves an unprecedented **2,116× compression ratio**, encoding 200,000 genomic variants into just **1.3KB** - small enough to fit in a single tweet. This isn't just compression; it's a fundamental reimagining of genomic data representation.
 
-### **Speed: Orders of Magnitude Beyond Industry Standards**
+**\* Based on synthetic variant set benchmark. See benchmark_results.txt for details.*
+
+### **Speed: Orders of Magnitude Beyond Industry Standards***
 
 | Metric | Industry Standard | GenomeVault v0.2 | **Improvement** |
 |--------|------------------|------------------|------------------|
@@ -50,6 +57,8 @@ GenomeVault achieves an unprecedented **2,116× compression ratio**, encoding 20
 ¹ *BCFtools, GATK on standard hardware*
 ² *Standard VCF compression (bgzip)*
 ³ *Typical VCF file in memory*
+
+**\* Performance metrics from synthetic variant benchmark. Clinical validation in progress.*
 
 ### **Real-World Impact**
 
@@ -107,6 +116,34 @@ This isn't iterative improvement - it's a paradigm shift:
 ---
 
 *"We didn't just optimize genomic processing. We reimagined it from first principles with privacy and performance as non-negotiable requirements."*
+
+## 📊 Performance Benchmarks
+
+### Synthetic Benchmark Results
+*Current performance metrics based on synthetic variant datasets*
+
+| Benchmark | Dataset Size | Processing Time | Compression | Memory Usage |
+|-----------|-------------|-----------------|-------------|--------------|
+| Variant Encoding | 400,000 variants | 2.26 seconds | 2,116× | 1.3 KB |
+| HD Vector Generation | 10,000 dims | 0.15 seconds | N/A | 40 KB |
+| PIR Query | 100,000 records | 0.8 seconds | N/A | < 1 MB |
+| ZK Proof Generation | Single variant | 15 ms | N/A | < 100 KB |
+| Federated Aggregation | 10 clients | 1.2 seconds | N/A | < 10 MB |
+
+*See `benchmark_results.txt` for detailed methodology and raw data.*
+
+### Clinical WGS Pipeline
+*Real-world performance with clinical whole genome sequencing data*
+
+| Pipeline Stage | Target Performance | Status |
+|----------------|-------------------|---------|
+| VCF Ingestion | < 5 minutes/genome | TBD - Awaiting GIAB benchmark |
+| Quality Filtering | 99.9% accuracy | TBD - Awaiting clinical validation |
+| HD Encoding | < 30 seconds/genome | TBD - Awaiting WGS datasets |
+| Clinical Annotation | Real-time | TBD - ClinVar integration pending |
+| Privacy Preservation | Information-theoretic | TBD - Security audit pending |
+
+*Clinical benchmarks will be updated following validation with [Genome in a Bottle (GIAB)](https://www.nist.gov/programs-projects/genome-bottle) reference materials.*
 
 ## ⚡ 60-Second Quickstart
 
