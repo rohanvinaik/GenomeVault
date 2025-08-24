@@ -56,9 +56,9 @@ check_root() {
 # Check prerequisites
 check_prerequisites() {
     print_status "Checking prerequisites..."
-    
+
     local missing_deps=()
-    
+
     # Check for Docker
     if ! command -v docker &> /dev/null; then
         missing_deps+=("docker")
@@ -66,7 +66,7 @@ check_prerequisites() {
         docker_version=$(docker --version | cut -d' ' -f3 | cut -d',' -f1)
         print_success "Docker $docker_version found"
     fi
-    
+
     # Check for Docker Compose
     if ! command -v docker-compose &> /dev/null; then
         if ! docker compose version &> /dev/null; then
@@ -78,13 +78,13 @@ check_prerequisites() {
         compose_version=$(docker-compose --version | cut -d' ' -f3 | cut -d',' -f1)
         print_success "Docker Compose $compose_version found"
     fi
-    
+
     # Check for Python 3.10+
     if command -v python3 &> /dev/null; then
         python_version=$(python3 --version | cut -d' ' -f2)
         major=$(echo $python_version | cut -d'.' -f1)
         minor=$(echo $python_version | cut -d'.' -f2)
-        
+
         if [[ $major -eq 3 && $minor -ge 10 ]]; then
             print_success "Python $python_version found"
         else
@@ -93,7 +93,7 @@ check_prerequisites() {
     else
         missing_deps+=("python3")
     fi
-    
+
     # Check for Git
     if ! command -v git &> /dev/null; then
         missing_deps+=("git")
@@ -101,12 +101,12 @@ check_prerequisites() {
         git_version=$(git --version | cut -d' ' -f3)
         print_success "Git $git_version found"
     fi
-    
+
     # Check for curl
     if ! command -v curl &> /dev/null; then
         missing_deps+=("curl")
     fi
-    
+
     # Report missing dependencies
     if [ ${#missing_deps[@]} -ne 0 ]; then
         print_error "Missing required dependencies:"
@@ -120,14 +120,14 @@ check_prerequisites() {
         echo "  Git:            https://git-scm.com/downloads"
         exit 1
     fi
-    
+
     print_success "All prerequisites satisfied"
 }
 
 # Detect operating system
 detect_os() {
     print_status "Detecting operating system..."
-    
+
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         # Linux
         if [ -f /etc/os-release ]; then
@@ -144,7 +144,7 @@ detect_os() {
         OS="macOS"
         VER=$(sw_vers -productVersion)
         print_success "Detected: macOS $VER"
-        
+
         # Check for Homebrew
         if ! command -v brew &> /dev/null; then
             print_warning "Homebrew not found. Installing..."
@@ -159,18 +159,18 @@ detect_os() {
 # Install system dependencies
 install_dependencies() {
     print_status "Installing system dependencies..."
-    
+
     if [[ "$OS" == "macOS" ]]; then
         # macOS dependencies
         brew install cmake node npm
-        
+
         # Install Rust for accelerator
         if ! command -v rustc &> /dev/null; then
             print_status "Installing Rust..."
             curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
             source "$HOME/.cargo/env"
         fi
-        
+
     elif [[ "$OS" == "Ubuntu" ]] || [[ "$OS" == "Debian"* ]]; then
         # Ubuntu/Debian dependencies
         sudo apt-get update
@@ -182,14 +182,14 @@ install_dependencies() {
             libssl-dev \
             pkg-config \
             postgresql-client
-        
+
         # Install Rust
         if ! command -v rustc &> /dev/null; then
             print_status "Installing Rust..."
             curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
             source "$HOME/.cargo/env"
         fi
-        
+
     elif [[ "$OS" == "CentOS"* ]] || [[ "$OS" == "Red Hat"* ]] || [[ "$OS" == "Fedora"* ]]; then
         # RHEL-based dependencies
         sudo yum groupinstall -y "Development Tools"
@@ -200,40 +200,40 @@ install_dependencies() {
             openssl-devel \
             postgresql
     fi
-    
+
     # Install Circom and SnarkJS
     print_status "Installing Zero-Knowledge toolchain..."
     sudo npm install -g circom snarkjs
-    
+
     print_success "Dependencies installed"
 }
 
 # Setup directories
 setup_directories() {
     print_status "Setting up directories..."
-    
+
     # Create directories with proper permissions
     sudo mkdir -p "$INSTALL_DIR" "$DATA_DIR" "$LOG_DIR" "$CONFIG_DIR"
     sudo mkdir -p "$DATA_DIR/uploads" "$DATA_DIR/cache" "$DATA_DIR/results"
     sudo mkdir -p "$LOG_DIR/api" "$LOG_DIR/worker" "$LOG_DIR/audit"
-    
+
     # Set ownership
     sudo chown -R $USER:$USER "$INSTALL_DIR" "$DATA_DIR" "$LOG_DIR" "$CONFIG_DIR"
-    
+
     # Set permissions (restricted for HIPAA compliance)
     chmod 750 "$DATA_DIR"
     chmod 750 "$LOG_DIR"
     chmod 755 "$CONFIG_DIR"
-    
+
     print_success "Directories created with proper permissions"
 }
 
 # Clone and setup repository
 setup_repository() {
     print_status "Setting up GenomeVault repository..."
-    
+
     cd "$INSTALL_DIR"
-    
+
     # Clone if not exists
     if [ ! -d "genomevault" ]; then
         print_status "Cloning repository..."
@@ -243,21 +243,21 @@ setup_repository() {
         cd genomevault
         git pull origin main
     fi
-    
+
     cd "$INSTALL_DIR/genomevault"
-    
+
     # Create virtual environment
     print_status "Creating Python virtual environment..."
     python3 -m venv venv
     source venv/bin/activate
-    
+
     # Upgrade pip
     pip install --upgrade pip setuptools wheel
-    
+
     # Install GenomeVault with all extras
     print_status "Installing GenomeVault packages..."
     pip install -e ".[all]"
-    
+
     # Install additional clinical requirements
     pip install \
         cryptography \
@@ -268,16 +268,16 @@ setup_repository() {
         aiofiles \
         prometheus-client \
         structlog
-    
+
     print_success "Repository setup complete"
 }
 
 # Build Rust accelerator
 build_rust_accelerator() {
     print_status "Building Rust accelerator for performance..."
-    
+
     cd "$INSTALL_DIR/genomevault"
-    
+
     if [ -f "build_rust.sh" ]; then
         ./build_rust.sh
         print_success "Rust accelerator built successfully"
@@ -289,43 +289,43 @@ build_rust_accelerator() {
 # Setup ZK toolchain
 setup_zk_toolchain() {
     print_status "Setting up Zero-Knowledge proof system..."
-    
+
     cd "$INSTALL_DIR/genomevault"
-    
+
     # Create directories
     mkdir -p zk_circuits/trusted_setup
     mkdir -p zk_circuits/compiled
-    
+
     cd zk_circuits/trusted_setup
-    
+
     # Download trusted setup (Powers of Tau)
     if [ ! -f "powersOfTau28_hez_final_15.ptau" ]; then
         print_status "Downloading trusted setup parameters..."
         curl -L -o powersOfTau28_hez_final_15.ptau \
             https://hermez.s3-eu-west-1.amazonaws.com/powersOfTau28_hez_final_15.ptau
     fi
-    
+
     cd "$INSTALL_DIR/genomevault"
-    
+
     # Compile circuits if script exists
     if [ -f "scripts/compile_circuits.sh" ]; then
         print_status "Compiling ZK circuits..."
         ./scripts/compile_circuits.sh
     fi
-    
+
     print_success "ZK toolchain ready"
 }
 
 # Generate secure configuration
 generate_config() {
     print_status "Generating secure configuration..."
-    
+
     # Generate secure passwords
     DB_PASSWORD=$(openssl rand -base64 32)
     JWT_SECRET=$(openssl rand -base64 64)
     ENCRYPTION_KEY=$(openssl rand -base64 32)
     REDIS_PASSWORD=$(openssl rand -base64 32)
-    
+
     # Create .env file
     cat > "$CONFIG_DIR/genomevault.env" << EOF
 # GenomeVault Configuration
@@ -367,19 +367,19 @@ ENABLE_METRICS=true
 METRICS_PORT=9090
 LOG_LEVEL=INFO
 EOF
-    
+
     # Secure the config file
     chmod 600 "$CONFIG_DIR/genomevault.env"
-    
+
     print_success "Configuration generated"
 }
 
 # Setup Docker services
 setup_docker_services() {
     print_status "Setting up Docker services..."
-    
+
     cd "$INSTALL_DIR/genomevault"
-    
+
     # Create docker-compose.yml for clinic deployment
     cat > docker-compose.clinic.yml << 'EOF'
 version: '3.8'
@@ -489,22 +489,22 @@ volumes:
   prometheus_data:
   nginx_logs:
 EOF
-    
+
     # Source environment variables
     source "$CONFIG_DIR/genomevault.env"
     export DB_PASSWORD REDIS_PASSWORD
-    
+
     # Start services
     print_status "Starting Docker services..."
     docker-compose -f docker-compose.clinic.yml up -d
-    
+
     print_success "Docker services running"
 }
 
 # Setup systemd service for non-Docker deployment
 setup_systemd() {
     print_status "Setting up systemd service..."
-    
+
     sudo cat > /etc/systemd/system/genomevault.service << EOF
 [Unit]
 Description=GenomeVault API Service
@@ -535,20 +535,20 @@ ReadWritePaths=$DATA_DIR $LOG_DIR
 [Install]
 WantedBy=multi-user.target
 EOF
-    
+
     sudo systemctl daemon-reload
     sudo systemctl enable genomevault
-    
+
     print_success "Systemd service configured"
 }
 
 # Initialize database
 initialize_database() {
     print_status "Initializing database..."
-    
+
     cd "$INSTALL_DIR/genomevault"
     source venv/bin/activate
-    
+
     # Wait for PostgreSQL to be ready
     print_status "Waiting for database to be ready..."
     for i in {1..30}; do
@@ -557,30 +557,30 @@ initialize_database() {
         fi
         sleep 2
     done
-    
+
     # Run migrations
     print_status "Running database migrations..."
     source "$CONFIG_DIR/genomevault.env"
     export DATABASE_URL
-    
+
     python -m alembic upgrade head
-    
+
     # Load initial data if script exists
     if [ -f "scripts/seed_data.py" ]; then
         print_status "Loading initial data..."
         python scripts/seed_data.py
     fi
-    
+
     print_success "Database initialized"
 }
 
 # Setup SSL certificates
 setup_ssl() {
     print_status "Setting up SSL certificates..."
-    
+
     SSL_DIR="$INSTALL_DIR/genomevault/deploy/nginx/ssl"
     mkdir -p "$SSL_DIR"
-    
+
     # Generate self-signed certificate for testing
     # In production, use Let's Encrypt or proper certificates
     if [ ! -f "$SSL_DIR/cert.pem" ]; then
@@ -591,17 +591,17 @@ setup_ssl() {
             -days 365 \
             -subj "/C=US/ST=State/L=City/O=Clinic/CN=localhost"
     fi
-    
+
     chmod 600 "$SSL_DIR/key.pem"
     chmod 644 "$SSL_DIR/cert.pem"
-    
+
     print_success "SSL certificates configured"
 }
 
 # Create CLI shortcuts
 create_cli_shortcuts() {
     print_status "Creating CLI shortcuts..."
-    
+
     # Create wrapper script
     cat > "$INSTALL_DIR/genomevault/bin/genomevault" << EOF
 #!/bin/bash
@@ -609,22 +609,22 @@ source $INSTALL_DIR/genomevault/venv/bin/activate
 source $CONFIG_DIR/genomevault.env
 python -m genomevault.cli "\$@"
 EOF
-    
+
     chmod +x "$INSTALL_DIR/genomevault/bin/genomevault"
-    
+
     # Create symlink
     sudo ln -sf "$INSTALL_DIR/genomevault/bin/genomevault" /usr/local/bin/genomevault
-    
+
     print_success "CLI shortcuts created"
 }
 
 # Run health checks
 run_health_checks() {
     print_status "Running health checks..."
-    
+
     # Wait for services to start
     sleep 10
-    
+
     # Check API
     if curl -f http://localhost:8000/health > /dev/null 2>&1; then
         print_success "API is healthy"
@@ -633,28 +633,28 @@ run_health_checks() {
         docker logs genomevault-api
         exit 1
     fi
-    
+
     # Check database
     if docker exec genomevault-db pg_isready -U genomevault > /dev/null 2>&1; then
         print_success "Database is healthy"
     else
         print_error "Database health check failed"
     fi
-    
+
     # Check Redis
     if docker exec genomevault-cache redis-cli ping > /dev/null 2>&1; then
         print_success "Redis is healthy"
     else
         print_error "Redis health check failed"
     fi
-    
+
     # Check Grafana
     if curl -f http://localhost:3000/api/health > /dev/null 2>&1; then
         print_success "Grafana is healthy"
     else
         print_warning "Grafana not responding (may still be starting)"
     fi
-    
+
     # Check Prometheus
     if curl -f http://localhost:9090/-/healthy > /dev/null 2>&1; then
         print_success "Prometheus is healthy"
@@ -666,11 +666,11 @@ run_health_checks() {
 # Setup backups
 setup_backups() {
     print_status "Setting up automated backups..."
-    
+
     # Create backup directory
     BACKUP_DIR="$DATA_DIR/backups"
     mkdir -p "$BACKUP_DIR"
-    
+
     # Create backup script
     cat > "$INSTALL_DIR/genomevault/bin/backup.sh" << 'EOF'
 #!/bin/bash
@@ -690,12 +690,12 @@ find "$BACKUP_DIR" -name "*.gz" -mtime +7 -delete
 
 echo "Backup completed: $TIMESTAMP"
 EOF
-    
+
     chmod +x "$INSTALL_DIR/genomevault/bin/backup.sh"
-    
+
     # Add to crontab (daily at 2 AM)
     (crontab -l 2>/dev/null; echo "0 2 * * * $INSTALL_DIR/genomevault/bin/backup.sh") | crontab -
-    
+
     print_success "Automated backups configured"
 }
 
@@ -753,13 +753,13 @@ print_summary() {
 # Cleanup on error
 cleanup_on_error() {
     print_error "Installation failed. Check log: $LOG_FILE"
-    
+
     # Optionally stop services
     if [ -f "$INSTALL_DIR/genomevault/docker-compose.clinic.yml" ]; then
         cd "$INSTALL_DIR/genomevault"
         docker-compose -f docker-compose.clinic.yml down 2>/dev/null || true
     fi
-    
+
     exit 1
 }
 
@@ -771,7 +771,7 @@ main() {
     echo "Starting GenomeVault clinic installation..."
     echo "Installation log: $LOG_FILE"
     echo ""
-    
+
     # Confirm installation
     read -p "This will install GenomeVault on your system. Continue? (y/N) " -n 1 -r
     echo
@@ -779,7 +779,7 @@ main() {
         echo "Installation cancelled."
         exit 0
     fi
-    
+
     # Run installation steps
     check_root
     check_prerequisites
@@ -798,7 +798,7 @@ main() {
     setup_backups
     run_health_checks
     print_summary
-    
+
     print_success "Installation completed successfully!"
     print_status "Log saved to: $LOG_FILE"
 }

@@ -8,7 +8,7 @@ use blake3;
 pub fn compute_cosine_similarity(a: &ArrayView1<f32>, b: &ArrayView1<f32>) -> f32 {
     let chunks = 8; // Process 8 elements at a time for SIMD
     let len = a.len();
-    
+
     let (dot, norm_a_sq, norm_b_sq) = (0..len)
         .into_par_iter()
         .chunks(chunks)
@@ -16,7 +16,7 @@ pub fn compute_cosine_similarity(a: &ArrayView1<f32>, b: &ArrayView1<f32>) -> f3
             let mut local_dot = 0.0f32;
             let mut local_norm_a = 0.0f32;
             let mut local_norm_b = 0.0f32;
-            
+
             for i in chunk {
                 if i < len {
                     let a_val = a[i];
@@ -26,14 +26,14 @@ pub fn compute_cosine_similarity(a: &ArrayView1<f32>, b: &ArrayView1<f32>) -> f3
                     local_norm_b += b_val * b_val;
                 }
             }
-            
+
             (local_dot, local_norm_a, local_norm_b)
         })
         .reduce(
             || (0.0, 0.0, 0.0),
             |acc, x| (acc.0 + x.0, acc.1 + x.1, acc.2 + x.2)
         );
-    
+
     dot / (norm_a_sq.sqrt() * norm_b_sq.sqrt() + 1e-10)
 }
 
@@ -49,26 +49,26 @@ pub fn encode_variant_to_hypervector(
     let variant_str = format!("chr{}:{}:{}>{}", chromosome, position, ref_allele, alt_allele);
     let hash = blake3::hash(variant_str.as_bytes());
     let hash_bytes = hash.as_bytes();
-    
+
     // Generate hypervector from hash
     let mut hypervector = vec![0.0f32; dimension];
     let mut rng = XorShiftRng::from_bytes(hash_bytes);
-    
+
     // Use hash to determine sparse activation pattern
     let sparsity = 0.1; // 10% active
     let num_active = (dimension as f32 * sparsity) as usize;
-    
+
     // Generate random indices for active positions
     let mut indices: Vec<usize> = (0..dimension).collect();
     shuffle_array(&mut indices, &mut rng);
-    
+
     // Set active positions
     for i in 0..num_active {
         let idx = indices[i];
         // Random value between -1 and 1
         hypervector[idx] = rng.next_f32() * 2.0 - 1.0;
     }
-    
+
     // Normalize
     let norm: f32 = hypervector.iter().map(|x| x * x).sum::<f32>().sqrt();
     if norm > 0.0 {
@@ -76,7 +76,7 @@ pub fn encode_variant_to_hypervector(
             *val /= norm;
         }
     }
-    
+
     Ok(hypervector)
 }
 
@@ -88,7 +88,7 @@ pub fn batch_encode_variants_to_hypervectors(
 ) -> Result<Vec<f32>, String> {
     let n = chromosomes.len();
     let mut result = vec![0.0f32; n * dimension];
-    
+
     result.par_chunks_mut(dimension)
         .enumerate()
         .try_for_each(|(i, chunk)| {
@@ -102,7 +102,7 @@ pub fn batch_encode_variants_to_hypervectors(
             chunk.copy_from_slice(&hv);
             Ok::<(), String>(())
         })?;
-    
+
     Ok(result)
 }
 
@@ -122,7 +122,7 @@ pub fn sparse_dot_product(
             }
         })
         .sum();
-    
+
     Ok(result)
 }
 
@@ -135,7 +135,7 @@ pub fn knn_search(
     if k > database.nrows() {
         return Err("k larger than database size".to_string());
     }
-    
+
     // Compute all similarities in parallel
     let mut similarities: Vec<(usize, f32)> = database
         .axis_iter(Axis(0))
@@ -146,16 +146,16 @@ pub fn knn_search(
             (idx, sim)
         })
         .collect();
-    
+
     // Sort by similarity (descending)
     similarities.par_sort_unstable_by(|a, b| {
         b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal)
     });
-    
+
     // Take top k
     let indices: Vec<usize> = similarities.iter().take(k).map(|&(idx, _)| idx).collect();
     let distances: Vec<f32> = similarities.iter().take(k).map(|&(_, sim)| sim).collect();
-    
+
     Ok((indices, distances))
 }
 
@@ -178,21 +178,21 @@ impl XorShiftRng {
         }
         XorShiftRng { state }
     }
-    
+
     fn next(&mut self) -> u32 {
         let t = self.state[3];
         let s = self.state[0];
         self.state[3] = self.state[2];
         self.state[2] = self.state[1];
         self.state[1] = s;
-        
+
         let t = t ^ (t << 11);
         let t = t ^ (t >> 8);
         self.state[0] = t ^ s ^ (s >> 19);
-        
+
         self.state[0]
     }
-    
+
     fn next_f32(&mut self) -> f32 {
         (self.next() as f32) / (u32::MAX as f32)
     }

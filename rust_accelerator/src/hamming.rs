@@ -6,7 +6,7 @@ use rayon::prelude::*;
 pub fn compute_hamming_distance(a: &ArrayView1<u8>, b: &ArrayView1<u8>) -> u32 {
     // Use parallel chunks for large arrays
     const CHUNK_SIZE: usize = 1024;
-    
+
     if a.len() > CHUNK_SIZE * 4 {
         // Parallel version for large arrays
         a.as_slice()
@@ -57,7 +57,7 @@ pub fn find_min_hamming(
 pub fn pairwise_hamming_distances(vectors: &ArrayView2<u8>) -> Vec<Vec<u32>> {
     let n = vectors.nrows();
     let mut distances = vec![vec![0u32; n]; n];
-    
+
     // Compute upper triangle in parallel
     (0..n).into_par_iter().for_each(|i| {
         for j in (i + 1)..n {
@@ -72,7 +72,7 @@ pub fn pairwise_hamming_distances(vectors: &ArrayView2<u8>) -> Vec<Vec<u32>> {
             }
         }
     });
-    
+
     distances
 }
 
@@ -85,10 +85,10 @@ pub fn approximate_hamming_distance(
     if sample_rate >= 1.0 {
         return compute_hamming_distance(a, b);
     }
-    
+
     let sample_size = (a.len() as f32 * sample_rate) as usize;
     let step = a.len() / sample_size;
-    
+
     let sampled_dist: u32 = (0..sample_size)
         .into_par_iter()
         .map(|i| {
@@ -100,7 +100,7 @@ pub fn approximate_hamming_distance(
             }
         })
         .sum();
-    
+
     // Scale up the sampled distance
     (sampled_dist as f32 / sample_rate) as u32
 }
@@ -112,14 +112,14 @@ pub fn bounded_hamming_distance(
     max_distance: u32,
 ) -> Option<u32> {
     let mut distance = 0u32;
-    
+
     for (&x, &y) in a.iter().zip(b.iter()) {
         distance += (x ^ y).count_ones();
         if distance > max_distance {
             return None;
         }
     }
-    
+
     Some(distance)
 }
 
@@ -131,21 +131,21 @@ pub struct HammingLUT {
 impl HammingLUT {
     pub fn new() -> Self {
         let mut table = vec![0u8; 256 * 256];
-        
+
         // Precompute all possible byte-wise Hamming distances
         for i in 0..256 {
             for j in 0..256 {
                 table[i * 256 + j] = (i as u8 ^ j as u8).count_ones() as u8;
             }
         }
-        
+
         HammingLUT { table }
     }
-    
+
     pub fn distance(&self, a: u8, b: u8) -> u8 {
         self.table[(a as usize) * 256 + (b as usize)]
     }
-    
+
     pub fn array_distance(&self, a: &[u8], b: &[u8]) -> u32 {
         a.iter()
             .zip(b.iter())

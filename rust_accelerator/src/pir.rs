@@ -6,7 +6,7 @@ use rayon::prelude::*;
 pub fn apply_xor_mask(data: &ArrayView1<u8>, mask: &ArrayView1<u8>) -> Vec<u8> {
     // Process in chunks for better cache locality
     const CHUNK_SIZE: usize = 64;
-    
+
     data.as_slice()
         .unwrap()
         .par_chunks(CHUNK_SIZE)
@@ -24,7 +24,7 @@ pub fn apply_xor_mask(data: &ArrayView1<u8>, mask: &ArrayView1<u8>) -> Vec<u8> {
 pub fn process_pir_query(database: &ArrayView2<u8>, query_mask: &ArrayView1<u8>) -> Vec<u8> {
     let record_len = database.ncols();
     let mut result = vec![0u8; record_len];
-    
+
     // Process each row in parallel
     let partial_results: Vec<Vec<u8>> = database
         .axis_iter(Axis(0))
@@ -38,14 +38,14 @@ pub fn process_pir_query(database: &ArrayView2<u8>, query_mask: &ArrayView1<u8>)
             }
         })
         .collect();
-    
+
     // XOR all selected rows together
     for partial in partial_results {
         for (i, &byte) in partial.iter().enumerate() {
             result[i] ^= byte;
         }
     }
-    
+
     result
 }
 
@@ -69,13 +69,13 @@ pub fn generate_pir_response(
 ) -> Vec<u8> {
     let record_len = database.ncols();
     let mut response = vec![0u8; record_len];
-    
+
     // Convert query to binary selection
     let selections: Vec<bool> = query_vector
         .iter()
         .map(|&val| val > threshold)
         .collect();
-    
+
     // Aggregate selected records
     for (i, row) in database.axis_iter(Axis(0)).enumerate() {
         if selections[i] {
@@ -84,7 +84,7 @@ pub fn generate_pir_response(
             }
         }
     }
-    
+
     response
 }
 
@@ -106,10 +106,10 @@ pub fn secure_aggregate_responses(responses: &[Vec<u8>]) -> Vec<u8> {
     if responses.is_empty() {
         return Vec::new();
     }
-    
+
     let len = responses[0].len();
     let mut result = vec![0u8; len];
-    
+
     // Parallel XOR aggregation
     result.par_iter_mut()
         .enumerate()
@@ -119,7 +119,7 @@ pub fn secure_aggregate_responses(responses: &[Vec<u8>]) -> Vec<u8> {
                 .map(|r| r[i])
                 .fold(0u8, |acc, b| acc ^ b);
         });
-    
+
     result
 }
 

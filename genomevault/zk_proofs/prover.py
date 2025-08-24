@@ -354,62 +354,58 @@ class Prover:
         # Performance monitoring
         monitor = get_monitor()
         start_time = time.perf_counter()
-        
+
         # Calculate input size for monitoring
         input_size = len(str(public_inputs)) + len(str(private_inputs))
-        
+
         try:
             # Use witness cache for improved performance
             cache = get_witness_cache()
-            
+
             # Define computation function
             def compute_proof(c_name, inputs):
-                return self._generate_proof_uncached(c_name, inputs['public'], inputs['private'])
-            
+                return self._generate_proof_uncached(c_name, inputs["public"], inputs["private"])
+
             # Try to get from cache
-            combined_inputs = {'public': public_inputs, 'private': private_inputs}
-            proof, was_cached = cache.get_or_compute(
-                circuit_name,
-                combined_inputs,
-                compute_proof
-            )
-            
+            combined_inputs = {"public": public_inputs, "private": private_inputs}
+            proof, was_cached = cache.get_or_compute(circuit_name, combined_inputs, compute_proof)
+
             # Add cache metadata
-            if hasattr(proof, 'metadata'):
-                proof.metadata['cached'] = was_cached
+            if hasattr(proof, "metadata"):
+                proof.metadata["cached"] = was_cached
                 if was_cached:
-                    proof.metadata['cache_hit'] = True
+                    proof.metadata["cache_hit"] = True
                     logger.debug(f"Cache hit for {circuit_name} proof")
-            
+
             # Record successful operation
             duration_ms = (time.perf_counter() - start_time) * 1000
             monitor.record_operation(
                 circuit_type=circuit_name,
-                operation='proof',
+                operation="proof",
                 duration_ms=duration_ms,
                 input_size=input_size,
                 cache_hit=was_cached,
-                device=proof.metadata.get('device', 'cpu') if hasattr(proof, 'metadata') else 'cpu',
-                success=True
+                device=proof.metadata.get("device", "cpu") if hasattr(proof, "metadata") else "cpu",
+                success=True,
             )
-            
+
             return proof
-            
+
         except Exception as e:
             # Record failed operation
             duration_ms = (time.perf_counter() - start_time) * 1000
             monitor.record_operation(
                 circuit_type=circuit_name,
-                operation='proof',
+                operation="proof",
                 duration_ms=duration_ms,
                 input_size=input_size,
                 cache_hit=False,
-                device='cpu',
+                device="cpu",
                 success=False,
-                error=str(e)
+                error=str(e),
             )
             raise
-    
+
     def _generate_proof_uncached(
         self,
         circuit_name: str,

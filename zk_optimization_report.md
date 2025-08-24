@@ -20,7 +20,7 @@ Based on benchmark analysis of GenomeVault's zero-knowledge proof circuits, we'v
 The following circuits show the highest latencies and should be prioritized for optimization:
 
 - **diabetes_risk_alert** (size 10): 3.1ms - 138% above average
-- **variant_presence** (size 10): 3.0ms - 131% above average  
+- **variant_presence** (size 10): 3.0ms - 131% above average
 - **diabetes_risk_alert** (size 1): 3.0ms - 131% above average
 
 ### 2. Scaling Characteristics
@@ -48,7 +48,7 @@ circuit.add_constraints(constraints)
 ```
 **Expected Impact**: 40-60% reduction in witness generation time
 
-#### variant_presence Circuit  
+#### variant_presence Circuit
 **Problem**: High latency for small inputs (3.0ms for size 10)
 **Root Cause**: Fixed overhead dominates for small inputs
 **Solution**:
@@ -69,12 +69,12 @@ def select_variant_circuit(input_size):
 class WitnessCache:
     def __init__(self, max_size=1000):
         self.cache = LRUCache(max_size)
-    
+
     def get_or_compute(self, circuit_name, inputs_hash):
         key = f"{circuit_name}:{inputs_hash}"
         if key in self.cache:
             return self.cache[key]
-        
+
         witness = compute_witness(circuit_name, inputs)
         self.cache[key] = witness
         return witness
@@ -88,12 +88,12 @@ from concurrent.futures import ThreadPoolExecutor
 class ParallelProver:
     def __init__(self, max_workers=4):
         self.executor = ThreadPoolExecutor(max_workers)
-    
+
     def batch_prove(self, circuits):
         futures = []
         for circuit in circuits:
             future = self.executor.submit(
-                self.generate_witness, 
+                self.generate_witness,
                 circuit
             )
             futures.append(future)
@@ -109,10 +109,10 @@ class MemoryPool:
         for _ in range(pool_size):
             buffer = allocate_circuit_buffer(circuit_type)
             self.buffers.append(buffer)
-    
+
     def acquire(self):
         return self.buffers.pop() if self.buffers else None
-    
+
     def release(self, buffer):
         buffer.clear()
         self.buffers.append(buffer)
@@ -187,7 +187,7 @@ After implementing all optimizations:
 def validate_optimizations():
     baseline = run_benchmark(use_optimizations=False)
     optimized = run_benchmark(use_optimizations=True)
-    
+
     assert optimized.avg_time < baseline.avg_time * 0.5
     assert optimized.memory < baseline.memory * 0.7
     assert optimized.correctness == baseline.correctness
@@ -207,7 +207,7 @@ def validate_optimizations():
 The current ZK proof implementation performs well but has significant room for optimization. By implementing the recommended changes in priority order, we can achieve:
 
 - **3-4x improvement** in witness generation speed
-- **50% reduction** in memory usage  
+- **50% reduction** in memory usage
 - **Near-zero latency** for cached operations
 - **Production-ready performance** for clinical applications
 

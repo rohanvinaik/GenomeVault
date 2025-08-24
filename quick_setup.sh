@@ -33,7 +33,7 @@ pip install -e ".[dev]"
 if command -v docker-compose &> /dev/null; then
     echo "Starting Docker services..."
     docker-compose up -d postgres redis
-    
+
     # Wait for services
     echo "Waiting for services to start..."
     sleep 5
