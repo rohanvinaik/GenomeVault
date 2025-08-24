@@ -171,7 +171,7 @@ spec:
 
         volumeMounts:
         - name: tmp
-          mountPath: /tmp
+          mountPath: ${TMPDIR}
         - name: var-run
           mountPath: /var/run
         - name: app-logs
@@ -212,7 +212,7 @@ spec:
 
         volumeMounts:
         - name: tmp
-          mountPath: /tmp
+          mountPath: ${TMPDIR}
         - name: var-run
           mountPath: /var/run
           readOnly: true

@@ -58,7 +58,7 @@ echo ""
 # 4. Test API startup
 echo "4. Testing API startup..."
 echo "Starting API server..."
-timeout 5 python -m genomevault.api.main > /tmp/genomevault_api.log 2>&1 &
+timeout 5 python -m genomevault.api.main > ${TMPDIR:-${TMPDIR:-/tmp}}/genomevault_api.log 2>&1 &
 API_PID=$!
 sleep 3
 
@@ -81,7 +81,7 @@ if ps -p $API_PID > /dev/null; then
     wait $API_PID 2>/dev/null
 else
     echo -e "${RED}✗${NC} API server failed to start"
-    echo "Check /tmp/genomevault_api.log for errors"
+    echo "Check ${TMPDIR:-${TMPDIR:-/tmp}}/genomevault_api.log for errors"
 fi
 echo ""
 

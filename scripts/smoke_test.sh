@@ -30,7 +30,7 @@ TESTS_PASSED=0
 TESTS_FAILED=0
 
 # Log file for capturing errors
-LOG_FILE="/tmp/genomevault_smoke_test_$(date +%Y%m%d_%H%M%S).log"
+LOG_FILE="${TMPDIR:-${TMPDIR:-/tmp}}/genomevault_smoke_test_$(date +%Y%m%d_%H%M%S).log"
 
 # Timer
 START_TIME=$(date +%s)
@@ -298,7 +298,7 @@ echo "────────────────────────�
 run_test "Application logs"
 
 # Check for GenomeVault log files
-app_log="/var/log/genomevault/app.log"
+app_log="${GENOMEVAULT_LOGS:-/var/log/genomevault}/app.log"
 if [[ ! -f "$app_log" ]]; then
     app_log="./genomevault.log"
 fi

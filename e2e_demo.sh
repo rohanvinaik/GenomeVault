@@ -89,7 +89,7 @@ echo -e "${BLUE}Step 2: Checking GenomeVault API...${NC}"
 
 if ! curl -s "$API_URL/health" > /dev/null 2>&1; then
     echo -e "${YELLOW}API not running, starting in background...${NC}"
-    cd /Users/rohanvinaik/genomevault
+    cd ${GENOMEVAULT_ROOT:-$(pwd)}
     uvicorn genomevault.api.main:app --host 0.0.0.0 --port 8000 > "$DEMO_DIR/api.log" 2>&1 &
     API_PID=$!
     cd "$DEMO_DIR"
@@ -138,7 +138,7 @@ else
     # Fallback to local HDC encoding
     python3 << 'EOF'
 import sys
-sys.path.insert(0, '/Users/rohanvinaik/genomevault')
+sys.path.insert(0, '${GENOMEVAULT_ROOT:-$(pwd)}')
 from genomevault.hypervector_transform.encoding import HypervectorEncoder, HypervectorConfig
 from genomevault.core.constants import OmicsType
 import numpy as np
@@ -222,7 +222,7 @@ else
     # Use local ZK proof generation
     python3 << 'EOF'
 import sys
-sys.path.insert(0, '/Users/rohanvinaik/genomevault')
+sys.path.insert(0, '${GENOMEVAULT_ROOT:-$(pwd)}')
 import json
 from datetime import datetime
 
@@ -287,7 +287,7 @@ else
     echo -e "${YELLOW}⚠ PIR API unavailable, using local implementation${NC}"
     python3 << 'EOF'
 import sys
-sys.path.insert(0, '/Users/rohanvinaik/genomevault')
+sys.path.insert(0, '${GENOMEVAULT_ROOT:-$(pwd)}')
 import json
 import numpy as np
 from datetime import datetime
@@ -343,7 +343,7 @@ echo -e "${BLUE}Step 6: Complete E2E Pipeline Test...${NC}"
 
 python3 << 'EOF'
 import sys
-sys.path.insert(0, '/Users/rohanvinaik/genomevault')
+sys.path.insert(0, '${GENOMEVAULT_ROOT:-$(pwd)}')
 import json
 import numpy as np
 from datetime import datetime

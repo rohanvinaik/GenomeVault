@@ -55,7 +55,7 @@ services:
       - COLLECTOR_OTLP_ENABLED=true
       - COLLECTOR_ZIPKIN_HOST_PORT=:9411
     volumes:
-      - jaeger_data:/tmp
+      - jaeger_data:${TMPDIR}
     networks:
       - genomevault-monitoring
     restart: unless-stopped

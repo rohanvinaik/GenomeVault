@@ -42,12 +42,12 @@ install_circom() {
 
         # Install from source for latest version
         echo "Building Circom from source..."
-        git clone https://github.com/iden3/circom.git /tmp/circom
-        cd /tmp/circom
+        git clone https://github.com/iden3/circom.git ${TMPDIR:-/tmp}/circom
+        cd ${TMPDIR:-/tmp}/circom
         cargo build --release
         cargo install --path circom
         cd -
-        rm -rf /tmp/circom
+        rm -rf ${TMPDIR:-/tmp}/circom
 
         echo -e "${GREEN}✓ Circom installed${NC}"
     fi

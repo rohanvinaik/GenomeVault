@@ -11,7 +11,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BACKUP_DIR="${BACKUP_DIR:-/var/backups/genomevault}"
 BACKUP_RETENTION_DAYS="${BACKUP_RETENTION_DAYS:-90}"
 ENCRYPTION_KEY_FILE="${ENCRYPTION_KEY_FILE:-/etc/genomevault/backup-key}"
-LOG_FILE="${LOG_FILE:-/var/log/genomevault/backup.log}"
+LOG_FILE="${LOG_FILE:-${GENOMEVAULT_LOGS:-/var/log/genomevault}/backup.log}"
 SLACK_WEBHOOK="${SLACK_WEBHOOK:-}"
 
 # Database configuration from environment
