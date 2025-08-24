@@ -1,14 +1,15 @@
 """Prometheus metrics endpoint for monitoring."""
 
-from typing import Any
+from typing import Any, Dict
 
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Response, HTTPException
 
 from genomevault.observability.metrics.prometheus import (
     get_prometheus_metrics,
     get_metrics_content_type,
     get_metrics_collector,
 )
+from genomevault.zk_proofs.prover import Prover
 from genomevault.utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -80,3 +81,90 @@ async def metrics_health() -> Any:
             "status": "unhealthy",
             "message": f"Metrics collection failed: {str(e)}",
         }
+
+
+@router.get("/metrics/zk/dashboard")
+async def get_zk_dashboard() -> Dict[str, Any]:
+    """
+    Get ZK proof performance dashboard data.
+    
+    Returns comprehensive performance metrics for ZK operations including:
+    - Proof generation statistics
+    - Memory usage patterns  
+    - Device utilization
+    - Cache hit rates
+    - Error rates
+    """
+    try:
+        prover = Prover()
+        dashboard_data = prover.get_performance_dashboard()
+        system_info = prover.get_system_info()
+        
+        return {
+            "status": "success",
+            "system_info": system_info,
+            "performance_metrics": dashboard_data,
+            "timestamp": dashboard_data.get("timestamp")
+        }
+    except Exception as e:
+        logger.error(f"Failed to get ZK dashboard data: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to get ZK dashboard data: {str(e)}"
+        )
+
+
+@router.get("/metrics/zk/report")
+async def get_zk_performance_report() -> Dict[str, Any]:
+    """
+    Get comprehensive ZK performance report.
+    
+    Returns detailed text report with:
+    - Performance summary statistics
+    - Operation breakdown by circuit type
+    - Memory and timing analysis
+    - Optimization recommendations
+    """
+    try:
+        prover = Prover()
+        report = prover.get_performance_report()
+        
+        return {
+            "status": "success",
+            "report": report,
+            "format": "text"
+        }
+    except Exception as e:
+        logger.error(f"Failed to get ZK performance report: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to get ZK performance report: {str(e)}"
+        )
+
+
+@router.get("/metrics/zk/system")
+async def get_zk_system_info() -> Dict[str, Any]:
+    """
+    Get current ZK system status and information.
+    
+    Returns real-time system metrics including:
+    - Current device (CPU/GPU)
+    - Memory usage
+    - Backend availability
+    - Production readiness status
+    - Process information
+    """
+    try:
+        prover = Prover()
+        system_info = prover.get_system_info()
+        
+        return {
+            "status": "success",
+            "system": system_info
+        }
+    except Exception as e:
+        logger.error(f"Failed to get ZK system info: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to get ZK system info: {str(e)}"
+        )

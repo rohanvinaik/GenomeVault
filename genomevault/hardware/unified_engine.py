@@ -233,6 +233,11 @@ class UnifiedAccelerationEngine:
             Result matrix (device array)
         """
         if self.backend.type == AcceleratorType.METAL and hasattr(self, "mx"):
+            # Convert numpy arrays to MLX arrays if needed
+            if isinstance(a, np.ndarray):
+                a = self.mx.array(a)
+            if isinstance(b, np.ndarray):
+                b = self.mx.array(b)
             result = self.mx.matmul(a, b)
             self.mx.eval(result)
             return result

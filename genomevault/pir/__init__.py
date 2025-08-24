@@ -12,9 +12,15 @@ from .engine import PIREngine
 from .secure_wrapper import SecurePIRServer, SecurePIRWrapper
 from .it_pir_protocol import PIRParameters, PIRProtocol, BatchPIRProtocol
 
+# Create aliases for backward compatibility and expected names
+ITPrivateInformationRetrieval = PIRProtocol  # Alias for tests expecting this name
+ITPIRProtocol = PIRProtocol  # Another common alias
+
 __all__ = [
     "BatchPIRProtocol",
     "FECEncoder",
+    "ITPrivateInformationRetrieval",  # Alias
+    "ITPIRProtocol",  # Alias
     "PIRClient",
     "PIRConfig",
     "PIREngine",

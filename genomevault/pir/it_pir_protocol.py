@@ -379,3 +379,8 @@ if __name__ == "__main__":
     logger.info(f"\nMinimum servers for {target_prob} failure probability:")
     logger.info(f"  HIPAA TS nodes: {min_ts}")
     logger.info(f"  Light Nodes: {min_ln}")
+
+
+# Create aliases for backward compatibility
+ITPrivateInformationRetrieval = PIRProtocol  # Alias for expected import name
+ITPIRProtocol = PIRProtocol  # Another common alias

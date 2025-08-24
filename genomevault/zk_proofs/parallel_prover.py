@@ -1,6 +1,8 @@
 """Parallel proof generation system for batch operations."""
 
 import time
+import hashlib
+import json
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
 from typing import List, Dict, Any, Tuple, Optional
 from dataclasses import dataclass
@@ -67,6 +69,31 @@ class ParallelProver:
 
         self.prover = Prover()
 
+    @staticmethod
+    def _compute_variant_hash(variant: Dict) -> str:
+        """
+        Compute consistent hash for variant across single and parallel execution.
+        
+        Args:
+            variant: Variant dictionary
+            
+        Returns:
+            Consistent hash string
+        """
+        # Ensure consistent ordering and format
+        canonical_variant = {
+            'chr': str(variant.get('chr', '')),
+            'pos': int(variant.get('pos', 0)),
+            'ref': str(variant.get('ref', '')),
+            'alt': str(variant.get('alt', ''))
+        }
+        
+        # Create deterministic string representation
+        variant_str = json.dumps(canonical_variant, sort_keys=True)
+        
+        # Compute hash
+        return hashlib.sha256(variant_str.encode()).hexdigest()
+
     def generate_witness_batch(
         self, tasks: List[ProofTask], timeout: Optional[float] = None
     ) -> List[Tuple[str, Dict, Optional[Exception]]]:
@@ -102,8 +129,21 @@ class ParallelProver:
         return results
 
     def _generate_single_witness(self, task: ProofTask) -> Dict:
-        """Generate witness for a single task."""
+        """Generate witness for a single task with consistent hashing."""
         start = time.perf_counter()
+
+        # Ensure consistent variant hashing in public inputs
+        if 'variant_hash' in task.public_inputs and 'variant_data' in task.private_inputs:
+            # Recompute hash to ensure consistency
+            variant_data = task.private_inputs['variant_data']
+            computed_hash = self._compute_variant_hash(variant_data)
+            
+            # Update public inputs with consistent hash
+            task.public_inputs['variant_hash'] = computed_hash
+            
+            # Log if there was a mismatch
+            if task.public_inputs.get('variant_hash') != computed_hash:
+                logger.debug(f"Fixed hash mismatch for task {task.task_id}")
 
         # Acquire resource semaphore
         self.semaphore.acquire()

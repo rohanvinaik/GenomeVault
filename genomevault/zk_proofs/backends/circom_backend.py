@@ -102,12 +102,17 @@ class CircomBackend:
         return True
 
     def _run_command(
-        self, cmd: list[str], cwd: Optional[Path] = None
+        self, cmd: list[str], cwd: Optional[Path] = None, input_text: Optional[str] = None
     ) -> subprocess.CompletedProcess:
-        """Run a shell command."""
+        """Run a shell command with optional input for interactive commands."""
         try:
             result = subprocess.run(
-                cmd, cwd=str(cwd) if cwd else None, capture_output=True, text=True, check=True
+                cmd, 
+                cwd=str(cwd) if cwd else None, 
+                capture_output=True, 
+                text=True, 
+                check=True,
+                input=input_text
             )
             return result
         except subprocess.CalledProcessError as e:
@@ -140,6 +145,10 @@ class CircomBackend:
         try:
             # Compile circuit
             logger.info(f"Compiling circuit {circuit_name}")
+            
+            # Add circomlib include path
+            circomlib_path = self.repo_root.parent / "zk_circuits" / "node_modules" / "circomlib" / "circuits"
+            
             self._run_command(
                 [
                     "circom",
@@ -148,6 +157,8 @@ class CircomBackend:
                     "--wasm",
                     "--output",
                     str(circuit.build_dir),
+                    "-l",
+                    str(circomlib_path),
                 ],
                 cwd=circuit.circuit_path.parent,
             )
@@ -158,7 +169,7 @@ class CircomBackend:
             return False
 
     def setup_trusted_setup(self, circuit_name: str, tau_power: int = 12) -> bool:
-        """Perform trusted setup for a circuit."""
+        """Perform proper Powers of Tau ceremony and trusted setup for a circuit."""
         if circuit_name not in self.circuits:
             return False
 
@@ -175,68 +186,127 @@ class CircomBackend:
             return True
 
         try:
-            # Powers of tau ceremony (simplified for development)
+            logger.info(f"Starting Powers of Tau ceremony for {circuit_name} (tau_power={tau_power})")
+            
+            # Powers of tau ceremony files
             pot_0 = circuit.build_dir / f"pot{tau_power}_0000.ptau"
+            pot_1 = circuit.build_dir / f"pot{tau_power}_0001.ptau"
+            pot_2 = circuit.build_dir / f"pot{tau_power}_0002.ptau"
             pot_final = circuit.build_dir / f"pot{tau_power}_final.ptau"
-
-            if not pot_final.exists():
-                # New ceremony
+            
+            # Step 1: Start Powers of Tau ceremony
+            if not pot_0.exists():
+                logger.info("Starting new Powers of Tau ceremony...")
                 self._run_command(
                     ["snarkjs", "powersoftau", "new", "bn128", str(tau_power), str(pot_0)],
                     cwd=circuit.build_dir,
                 )
+                logger.info(f"Created initial ceremony file: {pot_0.name}")
 
-                # Contribute (in production, multiple parties would contribute)
+            # Step 2: First contribution (using simplified syntax)
+            if not pot_1.exists():
+                logger.info("Making first contribution to ceremony...")
+                self._run_command(
+                    ["snarkjs", "powersoftau", "contribute", str(pot_0), str(pot_1)],
+                    cwd=circuit.build_dir,
+                    input_text=f"GenomeVault Development Contribution 1\ndev_entropy_{hash(str(pot_0))}\n"
+                )
+                logger.info(f"First contribution complete: {pot_1.name}")
+
+            # Step 3: Second contribution (in production, this would be from different party)
+            if not pot_2.exists():
+                logger.info("Making second contribution to ceremony...")
+                self._run_command(
+                    ["snarkjs", "powersoftau", "contribute", str(pot_1), str(pot_2)],
+                    cwd=circuit.build_dir,
+                    input_text=f"GenomeVault Development Contribution 2\ndev_entropy_{hash(str(pot_1))}\n"
+                )
+                logger.info(f"Second contribution complete: {pot_2.name}")
+
+            # Step 4: Prepare phase 2
+            if not pot_final.exists():
+                logger.info("Preparing phase 2...")
+                self._run_command(
+                    ["snarkjs", "powersoftau", "prepare", "phase2", str(pot_2), str(pot_final)],
+                    cwd=circuit.build_dir,
+                )
+                logger.info(f"Phase 2 preparation complete: {pot_final.name}")
+
+            # Step 5: Verify the ceremony (optional but recommended)
+            logger.info("Verifying Powers of Tau ceremony...")
+            self._run_command(
+                ["snarkjs", "powersoftau", "verify", str(pot_final)],
+                cwd=circuit.build_dir,
+            )
+            logger.info("Powers of Tau verification successful")
+
+            # Step 6: Generate circuit-specific proving key
+            zkey_0 = circuit.build_dir / f"{circuit.name}_0000.zkey"
+            if not zkey_0.exists():
+                logger.info("Generating circuit-specific proving key...")
                 self._run_command(
                     [
                         "snarkjs",
-                        "powersoftau",
-                        "contribute",
-                        str(pot_0),
+                        "groth16",
+                        "setup",
+                        str(circuit.r1cs_path),
                         str(pot_final),
-                        "--name",
-                        "First contribution",
-                        "-e",
-                        "random_entropy",
+                        str(zkey_0),
                     ],
                     cwd=circuit.build_dir,
                 )
+                logger.info(f"Circuit proving key generated: {zkey_0.name}")
 
-            # Generate zkey
-            zkey_0 = circuit.build_dir / f"{circuit.name}_0000.zkey"
+            # Step 7: Contribute to circuit-specific ceremony
+            zkey_1 = circuit.build_dir / f"{circuit.name}_0001.zkey"
+            if not zkey_1.exists():
+                logger.info("Contributing to circuit-specific ceremony...")
+                self._run_command(
+                    ["snarkjs", "zkey", "contribute", str(zkey_0), str(zkey_1)],
+                    cwd=circuit.build_dir,
+                    input_text=f"GenomeVault Circuit Contribution\ncircuit_entropy_{hash(circuit_name)}\n"
+                )
+                logger.info(f"Circuit contribution complete: {zkey_1.name}")
+
+            # Step 8: Export verification key
+            if not circuit.vkey_path.exists():
+                logger.info("Exporting verification key...")
+                self._run_command(
+                    [
+                        "snarkjs",
+                        "zkey",
+                        "export",
+                        "verificationkey",
+                        str(zkey_1),
+                        str(circuit.vkey_path),
+                    ],
+                    cwd=circuit.build_dir,
+                )
+                logger.info(f"Verification key exported: {circuit.vkey_path.name}")
+
+            # Step 9: Finalize proving key
+            if not circuit.zkey_path.exists():
+                shutil.copy(zkey_1, circuit.zkey_path)
+                logger.info(f"Final proving key ready: {circuit.zkey_path.name}")
+
+            # Step 10: Verify the final keys
+            logger.info("Verifying final proving key...")
             self._run_command(
-                [
-                    "snarkjs",
-                    "groth16",
-                    "setup",
-                    str(circuit.r1cs_path),
-                    str(pot_final),
-                    str(zkey_0),
-                ],
+                ["snarkjs", "zkey", "verify", str(circuit.r1cs_path), str(pot_final), str(circuit.zkey_path)],
                 cwd=circuit.build_dir,
             )
 
-            # Export verification key
-            self._run_command(
-                [
-                    "snarkjs",
-                    "zkey",
-                    "export",
-                    "verificationkey",
-                    str(zkey_0),
-                    str(circuit.vkey_path),
-                ],
-                cwd=circuit.build_dir,
-            )
-
-            # Mark as final (in production, would have more contributions)
-            shutil.copy(zkey_0, circuit.zkey_path)
-
-            logger.info(f"Trusted setup complete for {circuit_name}")
+            logger.info(f"🎉 Complete trusted setup successful for {circuit_name}")
+            logger.info(f"   Proving key: {circuit.zkey_path}")
+            logger.info(f"   Verification key: {circuit.vkey_path}")
             return True
 
         except Exception as e:
             logger.error(f"Failed to perform trusted setup: {e}")
+            # Clean up partial files on failure
+            for f in [pot_0, pot_1, pot_2, pot_final]:
+                if f.exists():
+                    f.unlink()
             return False
 
     def generate_witness(self, circuit_name: str, inputs: Dict[str, Any]) -> Optional[Path]:

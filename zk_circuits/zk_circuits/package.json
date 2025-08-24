@@ -1,0 +1,24 @@
+{
+  "name": "genomevault-zk-circuits",
+  "version": "1.0.0",
+  "description": "Complete ZK circuit implementation for GenomeVault",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "compile": "circom circuits/*.circom --r1cs --wasm --sym -o build/",
+    "test": "node test/circuit_test.js"
+  },
+  "dependencies": {
+    "@iden3/binfileutils": "^0.0.12",
+    "@iden3/js-crypto": "^1.3.1",
+    "circomlib": "^2.0.5",
+    "circomlibjs": "^0.1.7",
+    "ffjavascript": "^0.3.0",
+    "snarkjs": "^0.7.4"
+  },
+  "devDependencies": {
+    "circom_tester": "^0.0.21"
+  },
+  "author": "GenomeVault",
+  "license": "MIT"
+}
