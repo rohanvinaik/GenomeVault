@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-08-24T05:16:58.503492",
+  "timestamp": "2025-08-24T05:22:11.543908",
   "components": {
     "hdc": {
       "status": "failed",
@@ -12,7 +12,7 @@
     "zk": {
       "status": "success",
       "proof_generated": false,
-      "generation_time": 2.8848648071289062e-05,
+      "generation_time": 2.7894973754882812e-05,
       "verification_time": 2.1457672119140625e-06,
       "verified": true,
       "circuit_type": "variant"
@@ -31,14 +31,26 @@
     },
     "monitoring": {
       "status": "success",
-      "uptime": 0.0009002685546875,
+      "uptime": 0.0005731582641601562,
       "active_alerts": 1,
       "metrics_exported": true,
-      "performance_compliant": 3
+      "performance_compliant": 4
     },
     "marketplace": {
-      "status": "failed",
-      "error": "PYTHON"
+      "status": "success",
+      "registered": true,
+      "search_results": 1,
+      "validation": {
+        "security": true,
+        "privacy": true,
+        "performance": true
+      },
+      "runtime_environments": [
+        "python_sandbox",
+        "docker",
+        "webassembly",
+        "native"
+      ]
     },
     "threshold": {
       "status": "skipped",
@@ -46,15 +58,15 @@
     }
   },
   "performance": {
-    "zk_generation_time": 2.8848648071289062e-05
+    "zk_generation_time": 2.7894973754882812e-05
   },
   "errors": [],
   "summary": {
     "total_components": 9,
-    "successful": 2,
-    "failed": 2,
+    "successful": 3,
+    "failed": 1,
     "skipped": 5,
-    "total_time": 0.06395101547241211,
-    "success_rate": 0.2222222222222222
+    "total_time": 0.03591513633728027,
+    "success_rate": 0.3333333333333333
   }
 }
