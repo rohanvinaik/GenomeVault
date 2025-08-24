@@ -2,9 +2,34 @@
 
 This module implements a comprehensive zero-knowledge proof system for genomic privacy, enabling users to prove properties about their genetic data without revealing the underlying information.
 
+## ⚠️ CRITICAL SECURITY REQUIREMENTS
+
+**FOR PRODUCTION USE:**
+- This system REQUIRES Circom and SnarkJS for cryptographically secure proofs
+- Mock proofs are provided ONLY for development/testing purposes
+- Mock proofs provide **NO SECURITY GUARANTEES** and **MUST NEVER** be used in production
+- Using mock proofs in production would **COMPLETELY COMPROMISE** all privacy guarantees
+
+### Installation for Production
+
+```bash
+# 1. Install Circom (v2.1.6+)
+brew install circom  # macOS
+# or see https://docs.circom.io/getting-started/installation/
+
+# 2. Install SnarkJS
+npm install -g snarkjs
+
+# 3. Install Circomlib (in project root)
+npm install circomlib
+
+# 4. Verify production readiness
+python -c "from genomevault.zk_proofs.prover import Prover; p = Prover(); print('Production ready:', p.is_production_mode())"
+```
+
 ## Overview
 
-The ZK proof system implements PLONK-based proofs with specialized circuits for genomic applications, including:
+The ZK proof system implements PLONK/Groth16-based proofs with specialized circuits for genomic applications, including:
 
 - **Variant Verification**: Prove presence of genetic variants without revealing location
 - **Risk Score Calculation**: Compute polygenic risk scores while maintaining privacy

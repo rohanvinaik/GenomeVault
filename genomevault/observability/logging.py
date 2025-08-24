@@ -27,3 +27,26 @@ def configure_logging() -> logging.Logger:
         logger.addHandler(h)
         logger.propagate = False
     return logger
+
+
+def get_logger(name: str) -> logging.Logger:
+    """Get a logger instance.
+    
+    Args:
+        name: Logger name
+        
+    Returns:
+        Configured logger instance
+    """
+    logger = logging.getLogger(name)
+    if not logger.handlers:
+        logger.setLevel(_LEVEL)
+        h = logging.StreamHandler(stream=sys.stderr)
+        fmt = logging.Formatter(
+            fmt="%(asctime)s %(levelname)s %(name)s %(message)s",
+            datefmt="%Y-%m-%dT%H:%M:%S%z",
+        )
+        h.setFormatter(fmt)
+        logger.addHandler(h)
+        logger.propagate = False
+    return logger

@@ -32,7 +32,7 @@ class EncodingConfigCreate(EncodingConfigBase):
 
     name: str = Field(..., min_length=1, max_length=100)
     dimension: int = Field(..., ge=10000, le=100000)
-    compression_tier: str = Field(..., regex="^(mini|clinical|full)$")
+    compression_tier: str = Field(..., pattern="^(mini|clinical|full)$")
     enabled: bool = Field(True)
 
 
@@ -41,7 +41,7 @@ class EncodingConfigUpdate(EncodingConfigBase):
 
     name: Optional[str] = Field(None, min_length=1, max_length=100)
     dimension: Optional[int] = Field(None, ge=10000, le=100000)
-    compression_tier: Optional[str] = Field(None, regex="^(mini|clinical|full)$")
+    compression_tier: Optional[str] = Field(None, pattern="^(mini|clinical|full)$")
     enabled: Optional[bool] = None
 
     def dict_for_update(self) -> Dict[str, Any]:
@@ -210,8 +210,8 @@ class UserPreferencesPatch(BaseModel):
         allow_research: Optional[bool] = None
         retention_days: Optional[int] = Field(None, ge=1, le=3650)
 
-    theme: Optional[str] = Field(None, regex="^(light|dark|auto)$")
-    language: Optional[str] = Field(None, regex="^[a-z]{2}(-[A-Z]{2})?$")
+    theme: Optional[str] = Field(None, pattern="^(light|dark|auto)$")
+    language: Optional[str] = Field(None, pattern="^[a-z]{2}(-[A-Z]{2})?$")
     notifications: Optional[NotificationSettingsPatch] = None
     privacy: Optional[PrivacySettingsPatch] = None
 

@@ -46,12 +46,12 @@ def demo_run(
 ):
     """Run a GenomeVault demonstration."""
     try:
-        # Create sample genomic data
-        sample_variants = [
-            {"chromosome": "chr1", "position": 12345, "ref": "A", "alt": "T"},
-            {"chromosome": "chr2", "position": 67890, "ref": "G", "alt": "C"},
-            {"chromosome": "chr3", "position": 54321, "ref": "C", "alt": "A"}
-        ]
+        # Create sample genomic data (for future use)
+        # sample_variants = [
+        #     {"chromosome": "chr1", "position": 12345, "ref": "A", "alt": "T"},
+        #     {"chromosome": "chr2", "position": 67890, "ref": "G", "alt": "C"},
+        #     {"chromosome": "chr3", "position": 54321, "ref": "C", "alt": "A"}
+        # ]
         
         demo_results = {
             "demo_type": demo_type,
@@ -78,7 +78,7 @@ def demo_run(
         
         if demo_type in ["zk", "full"]:
             # ZK Proof Demo
-            prover = Prover()
+            _ = Prover()  # Initialize prover for demonstration
             demo_results["components_demonstrated"].append({
                 "component": "ZK Proof System",
                 "circuit_type": "variant",
@@ -519,7 +519,7 @@ def zk_build(
     """Build ZK circuit setup and keys."""
     try:
         # Initialize prover to build circuit
-        prover = Prover()
+        _ = Prover()  # Initialize for circuit building demonstration
         
         # Build circuit setup
         setup_info = {

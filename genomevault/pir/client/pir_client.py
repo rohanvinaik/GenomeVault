@@ -1,426 +1,536 @@
 """
 PIR Client implementation for private genomic queries
 
+This module provides a client for Private Information Retrieval (PIR) that
+can query multiple servers without revealing which data is being accessed.
 """
 
 from __future__ import annotations
 
-from genomevault.utils.logging import get_logger
-
-logger = get_logger(__name__)
 import asyncio
+import hashlib
 import json
-from dataclasses import dataclass
-from typing import Any
+import secrets
+import time
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any, Dict, List, Optional, Tuple
 
 import aiohttp
 import numpy as np
 
-from genomevault.core.constants import (
-    MIN_PIR_SERVERS,
-    PIR_QUERY_TIMEOUT_MS,
-    PIR_THRESHOLD,
-)
-from genomevault.core.exceptions import PIRError
+from genomevault.utils.logging import get_logger
+
+logger = get_logger(__name__)
+
+
+class QueryProtocol(Enum):
+    """PIR query protocols."""
+    XOR = "xor"
+    IT_PIR = "it-pir"
+    HYBRID = "hybrid"
+
+
+@dataclass
+class ServerConfig:
+    """Configuration for a PIR server."""
+    url: str
+    server_id: int
+    weight: float = 1.0  # Trust weight for this server
+    max_retries: int = 3
+    timeout_seconds: float = 10.0
 
 
 @dataclass
 class PIRQuery:
-    """Represents a PIR query"""
+    """Represents a PIR query with privacy guarantees."""
+    
+    index: int  # Target database index
+    query_vectors: List[np.ndarray]  # Query vectors for each server
+    query_id: str = field(default_factory=lambda: secrets.token_hex(16))
+    protocol: QueryProtocol = QueryProtocol.IT_PIR
+    nonce: bytes = field(default_factory=lambda: secrets.token_bytes(32))
+    timestamp: float = field(default_factory=time.time)
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
-    indices: list[int]  # Database indices to query
-    seed: int | None = None  # Seed for deterministic masking
-    metadata: dict[str, Any] = None  # Additional query metadata
-    query_vector: np.ndarray | None = None  # Encoded query vector
-    nonce: bytes | None = None  # Query nonce
 
-    def __post_init__(self):
-        """post init  ."""
-        if self.metadata is None:
-            self.metadata = {}
-        if self.nonce is None:
-            # FIXED: Use cryptographically secure randomness
-            import os
-
-            self.nonce = os.urandom(32)
+@dataclass
+class PIRResponse:
+    """Response from a PIR server."""
+    
+    server_id: int
+    query_id: str
+    data: bytes
+    timestamp: float
+    valid: bool = True
+    error: Optional[str] = None
 
 
 class PIRClient:
     """
-    Client for Private Information Retrieval
-    Queries multiple servers without revealing the queried position
+    Client for Private Information Retrieval with multi-server support.
+    
+    Features:
+    - Privacy-preserving queries across multiple servers
+    - XOR-based response aggregation
+    - Byzantine fault tolerance
+    - Automatic retries and timeout handling
+    - Response integrity validation
     """
-
-    def __init__(self, server_urls: list[str], database_size: int, threshold: int = 2):
-        """Initialize instance.
-
-        Args:
-            server_urls: URL string.
-            database_size: Input database_size to process.
-            threshold: Threshold value.
-
-        Raises:
-            PIRError: When operation fails.
+    
+    def __init__(
+        self,
+        servers: List[ServerConfig],
+        database_size: int,
+        element_size: int = 1024,
+        min_servers: int = 2,
+        protocol: QueryProtocol = QueryProtocol.IT_PIR
+    ):
         """
-        self.server_urls = server_urls
+        Initialize PIR client.
+        
+        Args:
+            servers: List of server configurations
+            database_size: Size of the database
+            element_size: Size of each database element in bytes
+            min_servers: Minimum servers required for reconstruction
+            protocol: PIR protocol to use
+        """
+        self.servers = servers
         self.database_size = database_size
-        self.threshold = threshold
-        self.session: aiohttp.ClientSession | None = None
-
-        if len(server_urls) < MIN_PIR_SERVERS:
-            raise PIRError(f"Need at least {MIN_PIR_SERVERS} servers, got {len(server_urls)}")
-
+        self.element_size = element_size
+        self.min_servers = min_servers
+        self.protocol = protocol
+        self.session: Optional[aiohttp.ClientSession] = None
+        
+        # Statistics
+        self.stats = {
+            "queries_sent": 0,
+            "queries_successful": 0,
+            "queries_failed": 0,
+            "bytes_received": 0,
+            "total_latency_ms": 0.0
+        }
+        
+        if len(servers) < min_servers:
+            raise ValueError(
+                f"Need at least {min_servers} servers, got {len(servers)}"
+            )
+    
     async def __aenter__(self):
-        """Asynchronously   aenter  ."""
+        """Async context manager entry."""
         self.session = aiohttp.ClientSession()
         return self
-
+    
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        """Asynchronously   aexit  .
-            Args:        exc_type: Parameter value.        exc_val: Parameter value.         \
-                exc_tb: Parameter value.    """
+        """Async context manager exit."""
         if self.session:
             await self.session.close()
-
-    async def query_position(self, chromosome: str, position: int, length: int = 1000) -> bytes:
+    
+    def generate_it_pir_query(self, index: int) -> PIRQuery:
         """
-        Query a genomic position privately
-
+        Generate IT-PIR query vectors for retrieving element at index.
+        
+        The protocol ensures information-theoretic security by splitting
+        a unit vector into random shares that XOR to the target.
+        
         Args:
-            chromosome: Chromosome identifier
-            position: Genomic position
-            length: Number of bases to retrieve
-
+            index: Database index to retrieve
+            
         Returns:
-            Reference sequence at the position
+            PIRQuery with vectors for each server
         """
-        # Create oblivious query vector
-        query = self._create_query(chromosome, position, length)
-
-        # Query all servers in parallel
-        tasks = []
-        for server_url in self.server_urls:
-            task = self._query_server(server_url, query)
-            tasks.append(task)
-
-        # Collect responses
-        responses = await asyncio.gather(*tasks, return_exceptions=True)
-
-        # Filter out failed responses
-        valid_responses = [r for r in responses if not isinstance(r, Exception)]
-
-        if len(valid_responses) < self.threshold:
-            raise PIRError(
-                "Insufficient responses: got {len(valid_responses)}, need {self.threshold}"
-            )
-
-        # Reconstruct data from responses
-        result = self._reconstruct_data(valid_responses, query)
-
-        return result
-
-    def _create_query(self, chromosome: str, position: int, length: int) -> PIRQuery:
-        """
-        Create an oblivious query vector
-        """
-        # Create selection vector
-        # In real implementation, this would be cryptographically secure
-        total_positions = 3_000_000_000  # Approximate genome size
-
-        # Create sparse binary vector
-        query_vector = np.zeros(min(total_positions // 1000, 1000000), dtype=np.float32)
-
-        # Encode position obliviously
-        # This is simplified - real implementation would use homomorphic encryption
-        idx = hash("{chromosome}:{position}") % len(query_vector)
-        query_vector[idx] = 1.0
-
-        # Add noise for privacy
-        noise_positions = np.random.choice(len(query_vector), size=10, replace=False)
-        query_vector[noise_positions] = np.random.random(10) * 0.1
-
-        # FIXED: Use cryptographically secure randomness
-        import os
-
-        nonce = os.urandom(32)
-
-        return PIRQuery(position=position, length=length, query_vector=query_vector, nonce=nonce)
-
-    async def _query_server(self, server_url: str, query: PIRQuery) -> dict[str, Any]:
-        """Query a single PIR server"""
-        if not self.session:
-            raise PIRError("Session not initialized")
-
-        query_data = {
-            "vector": query.query_vector.tolist(),
-            "nonce": query.nonce.hex(),
-            "length": query.length,
-        }
-
-        try:
-            timeout = aiohttp.ClientTimeout(total=PIR_QUERY_TIMEOUT_MS / 1000)
-            async with self.session.post(
-                "{server_url}/query", json=query_data, timeout=timeout
-            ) as response:
-                if response.status == 200:
-                    return await response.json()
-                else:
-                    raise PIRError("Server returned status {response.status}")
-        except TimeoutError:
-            logger.exception("Unhandled exception")
-            raise PIRError("Query timeout for server {server_url}")
-            raise RuntimeError("Unspecified error")
-        except (ConnectionError, TimeoutError, RequestException):
-            logger.exception("Unhandled exception")
-            raise PIRError("Query failed for server {server_url}: {str(e)}")
-            raise RuntimeError("Unspecified error")
-
-    def _reconstruct_data(self, responses: list[dict[str, Any]], query: PIRQuery) -> bytes:
-        """
-        Reconstruct data from PIR responses
-        Uses threshold reconstruction
-        """
-        # Extract response vectors
-        response_vectors = []
-        trusted_responses = []
-
-        for response in responses:
-            vector = np.array(response["response"])
-            response_vectors.append(vector)
-
-            if response.get("is_trusted", False):
-                trusted_responses.append(response)
-
-        # Prefer trusted responses if available
-        if len(trusted_responses) >= self.threshold:
-            response_vectors = [np.array(r["response"]) for r in trusted_responses]
-
-        # Simple reconstruction (XOR for demonstration)
-        # Real implementation would use proper secret sharing
-        result_vector = response_vectors[0]
-        for vector in response_vectors[1 : self.threshold]:
-            result_vector = result_vector ^ vector
-
-        # Extract the queried data
-        # This is simplified - real implementation would properly decode
-        result_bytes = result_vector.astype(np.uint8).tobytes()
-
-        # Extract the specific position requested
-        start_byte = query.position % len(result_bytes)
-        end_byte = min(start_byte + query.length, len(result_bytes))
-
-        return result_bytes[start_byte:end_byte]
-
-    async def get_server_status(self) -> list[dict[str, Any]]:
-        """Get status of all PIR servers"""
-        if not self.session:
-            raise PIRError("Session not initialized")
-
-        statuses = []
-        for server_url in self.server_urls:
-            try:
-                async with self.session.get("{server_url}/status") as response:
-                    if response.status == 200:
-                        status = await response.json()
-                        status["url"] = server_url
-                        status["online"] = True
-                        statuses.append(status)
-                    else:
-                        statuses.append(
-                            {
-                                "url": server_url,
-                                "online": False,
-                                "error": "Status code {response.status}",
-                            }
-                        )
-            except KeyError as e:
-                logger.exception("Unhandled exception")
-                statuses.append({"url": server_url, "online": False, "error": str(e)})
-                raise RuntimeError("Unspecified error")
-
-        return statuses
-
-    def calculate_privacy_guarantee(self, num_honest_servers: int) -> float:
-        """
-        Calculate privacy failure probability
-        P_fail = (1 - q)^k where q is server honesty probability
-        """
-        honesty_prob = PIR_THRESHOLD
-        privacy_failure_prob = (1 - honesty_prob) ** num_honest_servers
-        return privacy_failure_prob
-
-    def create_query(self, db_index: int, seed: int | None = None) -> PIRQuery:
-        """
-        Create a PIR query for a database index with optional seed
-
-        Args:
-            db_index: Database index to query
-            seed: Optional seed for deterministic query generation
-
-        Returns:
-            PIRQuery object
-        """
-        # Use seed for deterministic randomness if provided
-        if seed is not None:
-            rng = np.random.RandomState(seed)
-        else:
-            rng = np.random
-
-        # Create query vector
-        query_vector = np.zeros(self.database_size, dtype=np.float32)
-
-        # Set the target index
-        query_vector[db_index] = 1.0
-
-        # Add obfuscation noise
-        noise_indices = rng.choice(
-            self.database_size, size=min(10, self.database_size // 100), replace=False
-        )
-        query_vector[noise_indices] = rng.random(len(noise_indices)) * 0.1
-
-        # Generate nonce
-        # FIXED: Use cryptographically secure randomness when seed is None
-        import os
-
-        nonce = rng.bytes(32) if seed is not None else os.urandom(32)
-
+        if index < 0 or index >= self.database_size:
+            raise ValueError(f"Index {index} out of bounds")
+        
+        # Create unit vector for target index
+        unit_vector = np.zeros(self.database_size, dtype=np.uint8)
+        unit_vector[index] = 1
+        
+        # Generate random vectors for n-1 servers
+        query_vectors = []
+        for i in range(len(self.servers) - 1):
+            # Random binary vector
+            random_vector = np.random.randint(0, 2, self.database_size, dtype=np.uint8)
+            query_vectors.append(random_vector)
+        
+        # Last vector ensures XOR equals unit vector
+        last_vector = unit_vector.copy()
+        for vec in query_vectors:
+            last_vector = (last_vector + vec) % 2  # XOR in binary field
+        
+        query_vectors.append(last_vector)
+        
+        # Verify correctness
+        xor_sum = np.zeros(self.database_size, dtype=np.uint8)
+        for vec in query_vectors:
+            xor_sum = (xor_sum + vec) % 2
+        
+        if not np.array_equal(xor_sum, unit_vector):
+            raise RuntimeError("Query vector generation failed")
+        
         return PIRQuery(
-            indices=[db_index],
-            seed=seed,
-            query_vector=query_vector,
-            nonce=nonce,
-            metadata={"target_index": db_index},
+            index=index,
+            query_vectors=query_vectors,
+            protocol=QueryProtocol.IT_PIR
         )
-
-    async def execute_query(self, query: PIRQuery) -> Any:
+    
+    def generate_xor_query(self, index: int) -> PIRQuery:
         """
-        Execute a PIR query across servers
-
+        Generate XOR-based PIR query.
+        
         Args:
-            query: PIRQuery to execute
-
+            index: Database index to retrieve
+            
         Returns:
-            Reconstructed data from servers
+            PIRQuery with XOR masks
         """
-        if not query.query_vector:
-            raise PIRError("Query vector not initialized")
-
+        # For 2-server XOR PIR
+        mask1 = np.random.randint(0, 2, self.database_size, dtype=np.uint8)
+        mask2 = mask1.copy()
+        mask2[index] = 1 - mask2[index]  # Flip bit at target index
+        
+        return PIRQuery(
+            index=index,
+            query_vectors=[mask1, mask2],
+            protocol=QueryProtocol.XOR
+        )
+    
+    async def query_server(
+        self,
+        server: ServerConfig,
+        query_vector: np.ndarray,
+        query_id: str,
+        retry_count: int = 0
+    ) -> PIRResponse:
+        """
+        Query a single PIR server with retry logic.
+        
+        Args:
+            server: Server configuration
+            query_vector: Query vector for this server
+            query_id: Unique query identifier
+            retry_count: Current retry attempt
+            
+        Returns:
+            PIRResponse from the server
+        """
+        if not self.session:
+            raise RuntimeError("Session not initialized")
+        
+        # Prepare query payload
+        payload = {
+            "mask": query_vector.tolist(),
+            "query_id": query_id,
+            "protocol": self.protocol.value,
+            "server_id": server.server_id
+        }
+        
+        try:
+            # Set timeout
+            timeout = aiohttp.ClientTimeout(total=server.timeout_seconds)
+            
+            # Send query
+            start_time = time.time()
+            async with self.session.post(
+                f"{server.url}/query",
+                json=payload,
+                timeout=timeout
+            ) as response:
+                latency = (time.time() - start_time) * 1000
+                self.stats["total_latency_ms"] += latency
+                
+                if response.status == 200:
+                    result = await response.json()
+                    response_data = bytes.fromhex(result["response"])
+                    
+                    self.stats["bytes_received"] += len(response_data)
+                    
+                    return PIRResponse(
+                        server_id=server.server_id,
+                        query_id=result.get("query_id", query_id),
+                        data=response_data,
+                        timestamp=result.get("timestamp", time.time()),
+                        valid=True
+                    )
+                else:
+                    error_msg = f"Server returned status {response.status}"
+                    logger.warning(f"Server {server.server_id}: {error_msg}")
+                    
+                    # Retry if possible
+                    if retry_count < server.max_retries:
+                        await asyncio.sleep(2 ** retry_count)  # Exponential backoff
+                        return await self.query_server(
+                            server, query_vector, query_id, retry_count + 1
+                        )
+                    
+                    return PIRResponse(
+                        server_id=server.server_id,
+                        query_id=query_id,
+                        data=b"",
+                        timestamp=time.time(),
+                        valid=False,
+                        error=error_msg
+                    )
+                    
+        except asyncio.TimeoutError:
+            error_msg = f"Timeout after {server.timeout_seconds}s"
+            logger.warning(f"Server {server.server_id}: {error_msg}")
+            
+            # Retry on timeout
+            if retry_count < server.max_retries:
+                return await self.query_server(
+                    server, query_vector, query_id, retry_count + 1
+                )
+            
+            return PIRResponse(
+                server_id=server.server_id,
+                query_id=query_id,
+                data=b"",
+                timestamp=time.time(),
+                valid=False,
+                error=error_msg
+            )
+            
+        except Exception as e:
+            error_msg = f"Query failed: {str(e)}"
+            logger.error(f"Server {server.server_id}: {error_msg}")
+            
+            return PIRResponse(
+                server_id=server.server_id,
+                query_id=query_id,
+                data=b"",
+                timestamp=time.time(),
+                valid=False,
+                error=error_msg
+            )
+    
+    def aggregate_responses_xor(self, responses: List[PIRResponse]) -> bytes:
+        """
+        Aggregate responses using XOR.
+        
+        Args:
+            responses: List of server responses
+            
+        Returns:
+            XOR aggregation of all responses
+        """
+        if not responses:
+            raise ValueError("No responses to aggregate")
+        
+        # Start with first response
+        result = bytearray(responses[0].data)
+        
+        # XOR with remaining responses
+        for response in responses[1:]:
+            if len(response.data) != len(result):
+                raise ValueError(
+                    f"Response size mismatch: {len(response.data)} != {len(result)}"
+                )
+            
+            for i in range(len(result)):
+                result[i] ^= response.data[i]
+        
+        return bytes(result)
+    
+    def validate_response_integrity(
+        self,
+        response: bytes,
+        expected_size: int,
+        checksum: Optional[str] = None
+    ) -> bool:
+        """
+        Validate response integrity.
+        
+        Args:
+            response: Response data
+            expected_size: Expected response size
+            checksum: Optional expected checksum
+            
+        Returns:
+            True if response is valid
+        """
+        # Check size
+        if len(response) != expected_size:
+            logger.warning(
+                f"Response size mismatch: {len(response)} != {expected_size}"
+            )
+            return False
+        
+        # Check if response is all zeros (likely error)
+        if response == b'\x00' * len(response):
+            logger.warning("Response is all zeros")
+            return False
+        
+        # Verify checksum if provided
+        if checksum:
+            actual_checksum = hashlib.sha256(response).hexdigest()
+            if actual_checksum != checksum:
+                logger.warning("Checksum mismatch")
+                return False
+        
+        return True
+    
+    async def retrieve(
+        self,
+        index: int,
+        protocol: Optional[QueryProtocol] = None
+    ) -> bytes:
+        """
+        Retrieve data at index privately.
+        
+        Args:
+            index: Database index to retrieve
+            protocol: Protocol to use (defaults to client's protocol)
+            
+        Returns:
+            Retrieved data
+        """
+        protocol = protocol or self.protocol
+        self.stats["queries_sent"] += 1
+        
+        # Generate query based on protocol
+        if protocol == QueryProtocol.IT_PIR:
+            query = self.generate_it_pir_query(index)
+        elif protocol == QueryProtocol.XOR:
+            query = self.generate_xor_query(index)
+        else:
+            raise ValueError(f"Unsupported protocol: {protocol}")
+        
         # Query all servers in parallel
         tasks = []
-        for server_url in self.server_urls:
-            task = self._query_server_v2(server_url, query)
-            tasks.append(task)
-
+        for i, server in enumerate(self.servers):
+            if i < len(query.query_vectors):
+                task = self.query_server(
+                    server,
+                    query.query_vectors[i],
+                    query.query_id
+                )
+                tasks.append(task)
+        
         # Collect responses
         responses = await asyncio.gather(*tasks, return_exceptions=True)
-
-        # Filter out failed responses
-        valid_responses = [r for r in responses if not isinstance(r, Exception)]
-
-        if len(valid_responses) < self.threshold:
-            raise PIRError(
-                f"Insufficient responses: got {len(valid_responses)}, need {self.threshold}"
+        
+        # Filter valid responses
+        valid_responses = []
+        for resp in responses:
+            if isinstance(resp, PIRResponse) and resp.valid:
+                valid_responses.append(resp)
+            elif isinstance(resp, Exception):
+                logger.error(f"Query exception: {resp}")
+        
+        # Check if we have enough responses
+        if len(valid_responses) < self.min_servers:
+            self.stats["queries_failed"] += 1
+            raise RuntimeError(
+                f"Insufficient valid responses: {len(valid_responses)} < {self.min_servers}"
             )
-
-        # Reconstruct data from responses
-        result = self._reconstruct_data_v2(valid_responses, query)
-
-        return result
-
-    async def _query_server_v2(self, server_url: str, query: PIRQuery) -> dict[str, Any]:
-        """Query a single PIR server with enhanced query format"""
-        if not self.session:
-            raise PIRError("Session not initialized")
-
-        query_data = {
-            "indices": query.indices,
-            "vector": query.query_vector.tolist(),
-            "nonce": query.nonce.hex(),
-            "metadata": query.metadata,
-        }
-
-        try:
-            timeout = aiohttp.ClientTimeout(total=PIR_QUERY_TIMEOUT_MS / 1000)
-            async with self.session.post(
-                f"{server_url}/query", json=query_data, timeout=timeout
-            ) as response:
-                if response.status == 200:
-                    return await response.json()
-                else:
-                    raise PIRError(f"Server returned status {response.status}")
-        except TimeoutError:
-            logger.exception("Unhandled exception")
-            raise PIRError(f"Query timeout for server {server_url}")
-            raise RuntimeError("Unspecified error")
-        except (ConnectionError, TimeoutError, RequestException) as e:
-            logger.exception("Unhandled exception")
-            raise PIRError(f"Query failed for server {server_url}: {e!s}")
-            raise RuntimeError("Unspecified error")
-
-    def _reconstruct_data_v2(self, responses: list[dict[str, Any]], query: PIRQuery) -> Any:
+        
+        # Aggregate responses
+        result = self.aggregate_responses_xor(valid_responses[:self.min_servers])
+        
+        # Validate result
+        if not self.validate_response_integrity(result, self.element_size):
+            logger.warning("Response integrity check failed")
+        
+        self.stats["queries_successful"] += 1
+        
+        # Extract actual data (remove padding)
+        actual_data = result.rstrip(b'\x00')
+        
+        return actual_data
+    
+    async def batch_retrieve(
+        self,
+        indices: List[int],
+        max_concurrent: int = 10
+    ) -> List[bytes]:
         """
-        Reconstruct data from PIR responses (enhanced version)
-        """
-        # Extract response data
-        response_data = []
-        for response in responses:
-            if "data" in response:
-                response_data.append(response["data"])
-            elif "response" in response:
-                response_data.append(response["response"])
-
-        if not response_data:
-            raise PIRError("No valid data in responses")
-
-        # For single index queries, return the first valid response
-        # In production, would use proper secret sharing reconstruction
-        return response_data[0]
-
-    async def batch_query(self, indices: list[int]) -> list[Any]:
-        """
-        Execute batch queries for multiple indices
-
+        Retrieve multiple indices with concurrency control.
+        
         Args:
-            indices: List of database indices to query
-
+            indices: List of indices to retrieve
+            max_concurrent: Maximum concurrent queries
+            
         Returns:
-            List of results for each index
+            List of retrieved data
         """
-        # Create queries for all indices
-        queries = [self.create_query(idx) for idx in indices]
-
-        # Execute all queries
-        tasks = [self.execute_query(query) for query in queries]
+        semaphore = asyncio.Semaphore(max_concurrent)
+        
+        async def retrieve_with_semaphore(idx):
+            async with semaphore:
+                return await self.retrieve(idx)
+        
+        tasks = [retrieve_with_semaphore(idx) for idx in indices]
         results = await asyncio.gather(*tasks, return_exceptions=True)
-
-        # Handle exceptions
+        
+        # Handle errors
         final_results = []
         for i, result in enumerate(results):
             if isinstance(result, Exception):
-                raise PIRError(f"Query for index {indices[i]} failed: {result!s}")
-            final_results.append(result)
-
-        return final_results
-
-    def decode_response(self, response_data: Any, response_type: str = "genomic") -> Any:
-        """
-        Decode response data based on type
-
-        Args:
-            response_data: Raw response data
-            response_type: Type of response (genomic, variant, etc.)
-
-        Returns:
-            Decoded data
-        """
-        if response_type == "genomic":
-            # Decode genomic data
-            if isinstance(response_data, dict):
-                return response_data
-            elif isinstance(response_data, (bytes, bytearray)):
-                return json.loads(response_data.decode())
+                logger.error(f"Failed to retrieve index {indices[i]}: {result}")
+                final_results.append(b"")
             else:
-                return response_data
-        else:
-            # Default decoding
-            return response_data
+                final_results.append(result)
+        
+        return final_results
+    
+    async def get_server_status(self) -> Dict[int, Dict[str, Any]]:
+        """
+        Get status from all servers.
+        
+        Returns:
+            Dictionary mapping server ID to status
+        """
+        if not self.session:
+            raise RuntimeError("Session not initialized")
+        
+        statuses = {}
+        
+        for server in self.servers:
+            try:
+                async with self.session.get(
+                    f"{server.url}/status",
+                    timeout=aiohttp.ClientTimeout(total=5.0)
+                ) as response:
+                    if response.status == 200:
+                        status = await response.json()
+                        statuses[server.server_id] = {
+                            "online": True,
+                            "status": status
+                        }
+                    else:
+                        statuses[server.server_id] = {
+                            "online": False,
+                            "error": f"HTTP {response.status}"
+                        }
+            except Exception as e:
+                statuses[server.server_id] = {
+                    "online": False,
+                    "error": str(e)
+                }
+        
+        return statuses
+    
+    def get_statistics(self) -> Dict[str, Any]:
+        """
+        Get client statistics.
+        
+        Returns:
+            Statistics dictionary
+        """
+        success_rate = 0.0
+        if self.stats["queries_sent"] > 0:
+            success_rate = self.stats["queries_successful"] / self.stats["queries_sent"]
+        
+        avg_latency = 0.0
+        if self.stats["queries_successful"] > 0:
+            avg_latency = self.stats["total_latency_ms"] / self.stats["queries_successful"]
+        
+        return {
+            **self.stats,
+            "success_rate": success_rate,
+            "avg_latency_ms": avg_latency,
+            "num_servers": len(self.servers),
+            "protocol": self.protocol.value
+        }

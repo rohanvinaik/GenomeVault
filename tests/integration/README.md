@@ -185,7 +185,7 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     services:
       postgres:
         image: postgres:14
@@ -196,7 +196,7 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-      
+
       redis:
         image: redis:7
         options: >-
@@ -204,18 +204,18 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-    
+
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
       with:
         python-version: '3.11'
-    
+
     - name: Install dependencies
       run: |
         pip install -e ".[dev]"
         pip install pytest-cov
-    
+
     - name: Run integration tests
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost/test
@@ -223,7 +223,7 @@ jobs:
       run: |
         cd tests/integration
         pytest --cov=genomevault.api --cov-report=xml
-    
+
     - name: Upload coverage
       uses: codecov/codecov-action@v3
       with:

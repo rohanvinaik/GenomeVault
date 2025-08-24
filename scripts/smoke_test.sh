@@ -73,7 +73,7 @@ run_test() {
 check_service() {
     local service_name="$1"
     local port="$2"
-    
+
     if lsof -Pi :$port -sTCP:LISTEN -t >/dev/null 2>&1; then
         return 0
     else
@@ -86,19 +86,19 @@ make_request() {
     local endpoint="$2"
     local data="${3:-}"
     local expected_status="${4:-200}"
-    
+
     local curl_opts="-s -w \n%{http_code} -X $method"
     curl_opts="$curl_opts --connect-timeout $TIMEOUT --max-time $((TIMEOUT * 2))"
-    
+
     if [[ -n "$data" ]]; then
         curl_opts="$curl_opts -H 'Content-Type: application/json' -d '$data'"
     fi
-    
+
     local response
     response=$(eval "curl $curl_opts '$API_BASE_URL$endpoint'" 2>&1)
     local status_code=$(echo "$response" | tail -n1)
     local body=$(echo "$response" | head -n-1)
-    
+
     if [[ "$status_code" == "$expected_status" ]]; then
         echo "$body"
         return 0
@@ -112,14 +112,14 @@ make_request() {
 check_logs_for_errors() {
     local log_file="$1"
     local error_count=0
-    
+
     if [[ -f "$log_file" ]]; then
         # Check for common error patterns
         error_count=$(grep -Ei "(error|exception|fatal|critical)" "$log_file" 2>/dev/null | \
                      grep -Ev "(0 errors|no error|error_count.*0)" | \
                      wc -l)
     fi
-    
+
     echo "$error_count"
 }
 
@@ -335,14 +335,14 @@ for endpoint in "${endpoints[@]}"; do
     if make_request GET "$endpoint" >/dev/null 2>&1; then
         end=$(date +%s%N)
         elapsed=$((($end - $start) / 1000000))  # Convert to milliseconds
-        
+
         if [[ $elapsed -gt 1000 ]]; then
             slow_count=$((slow_count + 1))
             log_warning "$endpoint: ${elapsed}ms (slow)"
         else
             log_info "$endpoint: ${elapsed}ms"
         fi
-        
+
         total_time=$((total_time + elapsed))
     fi
 done

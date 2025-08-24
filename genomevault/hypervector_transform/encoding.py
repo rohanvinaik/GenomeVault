@@ -14,6 +14,18 @@ import torch
 from genomevault.core.constants import HYPERVECTOR_DIMENSIONS, OmicsType
 from genomevault.core.exceptions import EncodingError, ProjectionError
 
+# Optional differential privacy integration
+try:
+    from genomevault.privacy import (
+        GaussianMechanism,
+        PrivacyLevel,
+        PrivacyAccountant,
+        DifferentiallyPrivateHDC
+    )
+    DP_AVAILABLE = True
+except ImportError:
+    DP_AVAILABLE = False
+
 TensorLike = Union[np.ndarray, torch.Tensor]
 logger = logging.getLogger(__name__)
 
@@ -37,6 +49,11 @@ class HypervectorConfig:
     normalize: bool = True
     quantize: bool = False
     quantization_bits: int = 8
+    # Differential privacy parameters
+    use_differential_privacy: bool = False
+    privacy_level: Optional['PrivacyLevel'] = None
+    privacy_epsilon: Optional[float] = None
+    privacy_delta: Optional[float] = None
 
 
 class HypervectorEncoder:
@@ -53,10 +70,43 @@ class HypervectorEncoder:
             torch.manual_seed(self.config.seed)
             np.random.seed(self.config.seed)
         self._projection_cache: Dict[str, torch.Tensor] = {}
+        
+        # Initialize differential privacy if requested
+        self.dp_mechanism = None
+        self.privacy_accountant = None
+        
+        if self.config.use_differential_privacy and DP_AVAILABLE:
+            if self.config.privacy_level:
+                # Use predefined privacy level
+                epsilon, delta = self.config.privacy_level.value
+            elif self.config.privacy_epsilon and self.config.privacy_delta:
+                # Use custom privacy parameters
+                epsilon = self.config.privacy_epsilon
+                delta = self.config.privacy_delta
+            else:
+                # Default to clinical level
+                epsilon, delta = 1.0, 1e-7
+            
+            # Initialize privacy accountant
+            self.privacy_accountant = PrivacyAccountant(
+                total_epsilon=epsilon * 100,  # Budget for 100 operations
+                total_delta=delta * 100
+            )
+            
+            # Sensitivity for normalized hypervectors (max L2 distance = sqrt(2))
+            sensitivity = np.sqrt(2.0)
+            
+            self.dp_mechanism = GaussianMechanism(epsilon, delta, sensitivity)
+            logger.info(
+                "Differential privacy enabled: ε=%.2f, δ=%.2e, σ=%.4f",
+                epsilon, delta, self.dp_mechanism.sigma
+            )
+        
         logger.info(
-            "Initialized HypervectorEncoder(dim=%d, proj=%s)",
+            "Initialized HypervectorEncoder(dim=%d, proj=%s, dp=%s)",
             self.config.dimension,
             self.config.projection_type.value,
+            self.config.use_differential_privacy
         )
 
     def encode(
@@ -65,14 +115,46 @@ class HypervectorEncoder:
         omics_type: OmicsType,
         *,
         resolution: str = "base",
+        add_dp_noise: bool = True,
     ) -> torch.Tensor:
-        """Encode features into a single hypervector."""
+        """Encode features into a single hypervector with optional differential privacy."""
         try:
             x = self._as_tensor(features)
             proj = self._get_projection_matrix(x.shape[-1], self.config.dimension, omics_type)
             hv = proj @ x.float()
             if self.config.normalize:
                 hv = self._normalize(hv)
+            
+            # Add differential privacy noise if enabled
+            if self.config.use_differential_privacy and add_dp_noise and self.dp_mechanism:
+                try:
+                    # Convert to numpy for DP mechanism
+                    hv_numpy = hv.detach().cpu().numpy()
+                    
+                    # Allocate privacy budget if accountant available
+                    if self.privacy_accountant:
+                        params = self.privacy_accountant.allocate_budget(
+                            'hdc_encoder',
+                            f'encode_{omics_type.value}',
+                            self.dp_mechanism.params.epsilon
+                        )
+                        # Update mechanism with allocated budget
+                        self.dp_mechanism.params = params
+                    
+                    # Add noise
+                    hv_noisy = self.dp_mechanism.add_noise(hv_numpy)
+                    
+                    # Re-normalize after adding noise
+                    hv_noisy = hv_noisy / (np.linalg.norm(hv_noisy) + 1e-10)
+                    
+                    # Convert back to tensor
+                    hv = torch.from_numpy(hv_noisy).float()
+                    
+                    logger.debug("Added differential privacy noise (σ=%.4f)", self.dp_mechanism.sigma)
+                    
+                except Exception as e:
+                    logger.warning(f"Failed to add DP noise: {e}, continuing without privacy")
+            
             if self.config.quantize:
                 hv = self._quantize(hv, bits=self.config.quantization_bits)
             return hv.view(-1)

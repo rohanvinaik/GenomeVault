@@ -118,31 +118,39 @@ class EncodingRequest(BaseModel):
 
         return values
 
-    @field_validator("variants", mode="after", each_item=True)
-    def validate_each_variant(cls, v: str) -> str:
+    @field_validator("variants", mode="after")
+    def validate_each_variant(cls, variants: Optional[List[str]]) -> Optional[List[str]]:
         """Validate each variant in the list."""
-        if not v:
-            raise ValueError("Empty variant string")
-
-        # Normalize and validate format
-        if not v.startswith("chr"):
-            v = "chr" + v
-
+        if not variants:
+            return variants
+        
+        validated = []
         pattern = r"^chr([1-9]|1[0-9]|2[0-2]|X|Y|M|MT):(\d+)\s+([ACGT]+)>([ACGT]+)$"
-        if not re.match(pattern, v, re.IGNORECASE):
-            raise ValueError(
-                f"Invalid variant format: '{v}'. Expected 'chr:pos ref>alt' "
-                f"(e.g., 'chr1:123456 A>G')"
-            )
-
-        # Normalize to uppercase
-        parts = v.split()
-        if len(parts) == 2:
-            chr_pos = parts[0]
-            alleles = parts[1].upper()
-            v = f"{chr_pos} {alleles}"
-
-        return v
+        
+        for v in variants:
+            if not v:
+                raise ValueError("Empty variant string")
+            
+            # Normalize and validate format
+            if not v.startswith("chr"):
+                v = "chr" + v
+            
+            if not re.match(pattern, v, re.IGNORECASE):
+                raise ValueError(
+                    f"Invalid variant format: '{v}'. Expected 'chr:pos ref>alt' "
+                    f"(e.g., 'chr1:123456 A>G')"
+                )
+            
+            # Normalize to uppercase
+            parts = v.split()
+            if len(parts) == 2:
+                chr_pos = parts[0]
+                alleles = parts[1].upper()
+                v = f"{chr_pos} {alleles}"
+            
+            validated.append(v)
+        
+        return validated
 
     @field_validator("variants")
     def ensure_deterministic_order(cls, v: Optional[List[str]]) -> Optional[List[str]]:

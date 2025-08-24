@@ -10,15 +10,16 @@ import uuid
 from genomevault.observability.logging import get_logger
 
 try:
-    from genomevault.observability.metrics import (
-        http_request_duration,
-        http_requests_total,
-    )
-
+    from genomevault.observability.metrics import REGISTRY
+    
+    # Get or create metrics
+    http_requests_total = REGISTRY.counter("http_requests_total")
+    http_request_duration = REGISTRY.histogram("http_request_duration_seconds")
+    
     _METRICS = True
-except Exception:  # pragma: no cover    logger.exception("Unhandled exception")
+except Exception as e:
+    print(f"Warning: Could not import metrics: {e}")
     _METRICS = False
-    raise RuntimeError("Unspecified error")
 
 _LOG = get_logger(__name__)
 
@@ -45,8 +46,7 @@ class ObservabilityMiddleware(BaseHTTPMiddleware):
         request.state.request_id = req_id
         try:
             resp = await call_next(request)
-        except Exception:
-            logger.exception("Unhandled exception")
+        except Exception as e:
             # still log, then raise
             dt = (time.perf_counter() - t0) * 1000.0
             _LOG.error(
@@ -58,10 +58,10 @@ class ObservabilityMiddleware(BaseHTTPMiddleware):
                     "status_code": 500,
                     "duration_ms": round(dt, 2),
                     "client": request.client.host if request.client else None,
+                    "error": str(e),
                 },
             )
-            raise RuntimeError("Unspecified error")
-            raise RuntimeError("Unspecified error")
+            raise
 
         dt = (time.perf_counter() - t0) * 1000.0
         status = resp.status_code
@@ -69,8 +69,8 @@ class ObservabilityMiddleware(BaseHTTPMiddleware):
         if _METRICS:
             route = request.scope.get("route")
             path_t = getattr(route, "path_format", None) or request.url.path
-            http_requests_total.labels(method=request.method, path=path_t, status=str(status)).inc()
-            http_request_duration.labels(method=request.method, path=path_t).observe(dt / 1000.0)
+            http_requests_total.inc()  # Simplified for basic counter
+            http_request_duration.observe(dt / 1000.0)  # Simplified for basic histogram
 
         _LOG.info(
             "request complete",

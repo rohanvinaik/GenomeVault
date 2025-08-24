@@ -20,6 +20,7 @@ from sqlalchemy.pool import StaticPool
 
 # Add project root to path
 import sys
+
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
@@ -49,17 +50,17 @@ def test_db_engine():
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
-    
+
     # Import all models to ensure tables are created
     from genomevault.api.routers.hdc import Base as HDCBase
     from genomevault.api.routers.zk import Base as ZKBase
-    
+
     # Create all tables
     HDCBase.metadata.create_all(bind=engine)
     ZKBase.metadata.create_all(bind=engine)
-    
+
     yield engine
-    
+
     # Clean up
     HDCBase.metadata.drop_all(bind=engine)
     ZKBase.metadata.drop_all(bind=engine)
@@ -69,12 +70,8 @@ def test_db_engine():
 @pytest.fixture(scope="function")
 def test_db(test_db_engine) -> Generator[Session, None, None]:
     """Create test database session."""
-    SessionLocal = sessionmaker(
-        autocommit=False,
-        autoflush=False,
-        bind=test_db_engine
-    )
-    
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_db_engine)
+
     session = SessionLocal()
     try:
         yield session
@@ -100,7 +97,7 @@ async def async_client() -> AsyncGenerator[AsyncClient, None]:
 def mock_redis() -> MagicMock:
     """Mock Redis client for testing."""
     mock = MagicMock()
-    
+
     # Mock common Redis operations
     mock.get = MagicMock(return_value=None)
     mock.set = MagicMock(return_value=True)
@@ -113,7 +110,7 @@ def mock_redis() -> MagicMock:
     mock.exists = MagicMock(return_value=0)
     mock.pipeline = MagicMock(return_value=mock)
     mock.execute = MagicMock(return_value=[True, True])
-    
+
     return mock
 
 
@@ -136,7 +133,7 @@ def sample_genomic_data():
                 "alt": "G",
                 "quality": 30.0,
                 "gene": "GENE1",
-                "impact": "MODERATE"
+                "impact": "MODERATE",
             },
             {
                 "chromosome": "2",
@@ -145,7 +142,7 @@ def sample_genomic_data():
                 "alt": "C",
                 "quality": 40.0,
                 "gene": "GENE2",
-                "impact": "HIGH"
+                "impact": "HIGH",
             },
             {
                 "chromosome": "X",
@@ -154,7 +151,7 @@ def sample_genomic_data():
                 "alt": "A",
                 "quality": 35.0,
                 "gene": "GENE3",
-                "impact": "LOW"
+                "impact": "LOW",
             },
             {
                 "chromosome": "7",
@@ -163,23 +160,23 @@ def sample_genomic_data():
                 "alt": "C",
                 "quality": 99.0,
                 "gene": "CFTR",
-                "impact": "HIGH"
-            }
+                "impact": "HIGH",
+            },
         ],
         "samples": [
             {
                 "sample_id": "SAMPLE_001",
                 "patient_id": "PATIENT_001",
                 "tissue_type": "Blood",
-                "sequencing_platform": "Illumina"
+                "sequencing_platform": "Illumina",
             },
             {
                 "sample_id": "SAMPLE_002",
                 "patient_id": "PATIENT_002",
                 "tissue_type": "Tumor",
-                "sequencing_platform": "Nanopore"
-            }
-        ]
+                "sequencing_platform": "Nanopore",
+            },
+        ],
     }
 
 
@@ -211,7 +208,7 @@ X	11111	rs456	G	A	35	PASS	AF=0.4;DP=45;GENE=GENE3;IMPACT=LOW	GT:GQ:DP	1/1:35:45
 def mock_zk_engine():
     """Mock ZK engine for testing."""
     mock_engine = MagicMock()
-    
+
     # Mock proof generation
     mock_proof = {
         "proof": {
@@ -219,16 +216,16 @@ def mock_zk_engine():
             "pi_b": [["0x789", "0xabc"], ["0xdef", "0x012"]],
             "pi_c": ["0x345", "0x678"],
             "protocol": "groth16",
-            "curve": "bn128"
+            "curve": "bn128",
         },
         "public": {"c": 42},
-        "circuit_type": "sum64"
+        "circuit_type": "sum64",
     }
-    
+
     mock_engine.generate_proof = MagicMock(return_value=mock_proof)
     mock_engine.verify_proof = MagicMock(return_value=True)
     mock_engine.toolchain_available = True
-    
+
     return mock_engine
 
 
@@ -236,23 +233,16 @@ def mock_zk_engine():
 def mock_pir_client():
     """Mock PIR client for testing."""
     mock_client = MagicMock()
-    
+
     mock_client.database_size = 100
-    mock_client.generate_it_pir_query = MagicMock(return_value={
-        "queries": [
-            [0, 1, 0, 1, 0],
-            [1, 0, 1, 0, 1],
-            [1, 1, 1, 1, 1]
-        ],
-        "index": 42
-    })
-    
-    mock_client.retrieve = MagicMock(return_value={
-        "result": b"test_data",
-        "success": True,
-        "server_responses": 3
-    })
-    
+    mock_client.generate_it_pir_query = MagicMock(
+        return_value={"queries": [[0, 1, 0, 1, 0], [1, 0, 1, 0, 1], [1, 1, 1, 1, 1]], "index": 42}
+    )
+
+    mock_client.retrieve = MagicMock(
+        return_value={"result": b"test_data", "success": True, "server_responses": 3}
+    )
+
     return mock_client
 
 
@@ -261,10 +251,11 @@ def reset_singletons():
     """Reset singleton instances between tests."""
     # Reset ZK engine singleton
     import genomevault.api.routers.zk as zk_module
+
     zk_module._zk_engine = None
-    
+
     yield
-    
+
     # Clean up after test
     zk_module._zk_engine = None
 
@@ -275,7 +266,7 @@ def api_headers():
     return {
         "Content-Type": "application/json",
         "User-Agent": "GenomeVault-Test/1.0",
-        "X-Request-ID": "test-request-123"
+        "X-Request-ID": "test-request-123",
     }
 
 
@@ -283,10 +274,7 @@ def api_headers():
 def auth_headers():
     """Authentication headers for protected endpoints."""
     # In a real app, this would include JWT tokens or API keys
-    return {
-        "Authorization": "Bearer test-token-123",
-        "X-API-Key": "test-api-key"
-    }
+    return {"Authorization": "Bearer test-token-123", "X-API-Key": "test-api-key"}
 
 
 # Markers for different test types
@@ -295,15 +283,7 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "slow: marks tests as slow (deselect with '-m \"not slow\"')"
     )
-    config.addinivalue_line(
-        "markers", "integration: marks tests as integration tests"
-    )
-    config.addinivalue_line(
-        "markers", "unit: marks tests as unit tests"
-    )
-    config.addinivalue_line(
-        "markers", "requires_redis: marks tests that require Redis"
-    )
-    config.addinivalue_line(
-        "markers", "requires_postgres: marks tests that require PostgreSQL"
-    )
+    config.addinivalue_line("markers", "integration: marks tests as integration tests")
+    config.addinivalue_line("markers", "unit: marks tests as unit tests")
+    config.addinivalue_line("markers", "requires_redis: marks tests that require Redis")
+    config.addinivalue_line("markers", "requires_postgres: marks tests that require PostgreSQL")

@@ -32,9 +32,15 @@ app.include_router(healthz_router)
 try:
     import genomevault.api.routers.hv as hv
     import genomevault.api.routers.metrics as metrics
+    import genomevault.api.routers.zk as zk
+    import genomevault.api.routers.hdc as hdc
+    import genomevault.api.routers.pir as pir
 
     app.include_router(hv.router)
     app.include_router(metrics.router)
+    app.include_router(zk.router)
+    app.include_router(hdc.router)
+    app.include_router(pir.router)
 except Exception as e:  # pragma: no cover - optional routers may fail
     print(f"Warning: Could not import API routers: {e}")
 

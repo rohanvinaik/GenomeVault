@@ -5,7 +5,11 @@ This module provides TypedDict and structured type definitions
 to replace "magical" dict[str, Any] in the API layer.
 """
 
-from typing import TypedDict, List, Optional, Literal
+from typing import List, Optional, Literal
+try:
+    from typing import TypedDict  # Python 3.12+
+except ImportError:
+    from typing_extensions import TypedDict  # Python < 3.12
 
 
 class HealthCheckResult(TypedDict):
