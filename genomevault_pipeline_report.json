@@ -1,18 +1,21 @@
 {
-  "timestamp": "2025-08-24T05:22:11.543908",
+  "timestamp": "2025-08-24T05:28:15.691567",
   "components": {
     "hdc": {
       "status": "failed",
       "error": "mean() received an invalid combination of arguments - got (out=NoneType, dtype=NoneType, axis=NoneType, ), but expected one of:\n * (*, torch.dtype dtype)\n * (tuple of ints dim, bool keepdim, *, torch.dtype dtype)\n * (tuple of names dim, bool keepdim, *, torch.dtype dtype)\n"
     },
     "pir": {
-      "status": "skipped",
-      "reason": "PIR not available"
+      "status": "success",
+      "database_size": 100,
+      "query_time": 0.00011920928955078125,
+      "retrieved_correct": true,
+      "privacy_preserved": true
     },
     "zk": {
       "status": "success",
       "proof_generated": false,
-      "generation_time": 2.7894973754882812e-05,
+      "generation_time": 3.2901763916015625e-05,
       "verification_time": 2.1457672119140625e-06,
       "verified": true,
       "circuit_type": "variant"
@@ -31,8 +34,8 @@
     },
     "monitoring": {
       "status": "success",
-      "uptime": 0.0005731582641601562,
-      "active_alerts": 1,
+      "uptime": 0.0005450248718261719,
+      "active_alerts": 2,
       "metrics_exported": true,
       "performance_compliant": 4
     },
@@ -58,15 +61,16 @@
     }
   },
   "performance": {
-    "zk_generation_time": 2.7894973754882812e-05
+    "pir_query_time": 0.00011920928955078125,
+    "zk_generation_time": 3.2901763916015625e-05
   },
   "errors": [],
   "summary": {
     "total_components": 9,
-    "successful": 3,
+    "successful": 4,
     "failed": 1,
-    "skipped": 5,
-    "total_time": 0.03591513633728027,
-    "success_rate": 0.3333333333333333
+    "skipped": 4,
+    "total_time": 0.03734278678894043,
+    "success_rate": 0.4444444444444444
   }
 }

@@ -93,7 +93,7 @@ class PIRClient:
         return data
 
 
-class PIRServer:
+class SimplePIRServer:
     """Server for Private Information Retrieval."""
 
     def __init__(self, database: List[bytes], config: PIRConfig):
@@ -162,7 +162,7 @@ class SimplePIR:
             database: Input database to process.
         """
         self.config = PIRConfig(database_size=len(database))
-        self.server = PIRServer(database, self.config)
+        self.server = SimplePIRServer(database, self.config)
         self.client = PIRClient(self.config)
 
     def retrieve(self, index: int) -> bytes:
@@ -181,7 +181,7 @@ class SimplePIR:
 
 def create_pir_system(
     database: List[bytes], security_parameter: int = 128
-) -> Tuple[PIRClient, PIRServer]:
+) -> Tuple[PIRClient, SimplePIRServer]:
     """Create a PIR client-server pair.
 
     Args:
@@ -194,7 +194,7 @@ def create_pir_system(
     config = PIRConfig(database_size=len(database), security_parameter=security_parameter)
 
     client = PIRClient(config)
-    server = PIRServer(database, config)
+    server = SimplePIRServer(database, config)
 
     return client, server
 
@@ -203,7 +203,7 @@ def create_pir_system(
 __all__ = [
     "PIRConfig",
     "PIRClient",
-    "PIRServer",
+    "SimplePIRServer",
     "SimplePIR",
     "create_pir_system",
 ]

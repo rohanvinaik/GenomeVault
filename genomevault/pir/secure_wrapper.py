@@ -7,7 +7,7 @@ from typing import Sequence
 
 
 @dataclass
-class PIRServer:
+class SecurePIRServer:
     """Toy 2-server info-theoretic PIR server holding a shard."""
 
     data: Sequence[int]
@@ -36,7 +36,7 @@ class SecurePIRWrapper:
     - correctness: server1(mask1) ^ server2(mask2) == data[index]
     """
 
-    def __init__(self, server1: PIRServer, server2: PIRServer):
+    def __init__(self, server1: SecurePIRServer, server2: SecurePIRServer):
         """Initialize instance.
 
         Args:
@@ -83,4 +83,4 @@ class SecurePIRWrapper:
             Operation result.
         """
         # Duplicate data across both servers (fine for tests)
-        return SecurePIRWrapper(PIRServer(arr), PIRServer(arr))
+        return SecurePIRWrapper(SecurePIRServer(arr), SecurePIRServer(arr))
