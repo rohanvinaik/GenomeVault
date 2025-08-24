@@ -1,19 +1,25 @@
-# Development dependencies for GenomeVault
-# Generated from pyproject.toml
+# Include base requirements
+-r requirements.in
 
--r requirements.txt
+# Development only
+ipython>=8.14.0,<9.0.0
+jupyter>=1.0.0,<2.0.0
+notebook>=7.0.0,<8.0.0
 
-# Development tools
-ruff>=0.1.0
-mypy>=1.0.0
-types-cryptography
-pytest>=7.4.0
-pytest-asyncio>=0.21.0
-pytest-benchmark>=4.0.0
-pytest-cov>=4.0.0
-pyupgrade>=3.0.0
-radon>=6.0.0
-pip-tools>=7.0.0
-bandit>=1.7.0
-requests>=2.31.0
-pre-commit>=3.0.0
+# Profiling
+py-spy>=0.3.14,<1.0.0
+memory-profiler>=0.61.0,<1.0.0
+line-profiler>=4.1.0,<5.0.0
+
+# Security scanning
+bandit[toml]>=1.7.5,<2.0.0
+# safety>=3.0.0,<4.0.0  # Temporarily disabled due to packaging conflict
+
+# Code quality
+pylint>=2.17.0,<3.0.0
+flake8>=6.0.0,<7.0.0
+isort>=5.12.0,<6.0.0
+
+# Documentation generation
+sphinx>=7.0.0,<8.0.0
+sphinx-rtd-theme>=1.3.0,<2.0.0
