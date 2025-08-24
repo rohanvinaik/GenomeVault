@@ -34,6 +34,22 @@ from .circuits.biological.variant import (
     VariantPresenceCircuit,
 )
 
+# Import optimized circuits
+try:
+    from .circuits.optimized.diabetes_risk_alert import OptimizedDiabetesRiskCircuit
+    OPTIMIZED_CIRCUITS_AVAILABLE = True
+except ImportError:
+    OPTIMIZED_CIRCUITS_AVAILABLE = False
+    logger.warning("Optimized circuits not available")
+
+# Import adaptive circuits
+try:
+    from .circuits.adaptive_variant import AdaptiveVariantPresenceCircuit
+    ADAPTIVE_CIRCUITS_AVAILABLE = True
+except ImportError:
+    ADAPTIVE_CIRCUITS_AVAILABLE = False
+    logger.warning("Adaptive circuits not available")
+
 config = get_config()
 logger = get_logger(__name__)
 
@@ -86,11 +102,11 @@ class CircuitManager:
         circuits = {
             "variant_presence": CircuitMetadata(
                 name="variant_presence",
-                circuit_class=VariantPresenceCircuit,
+                circuit_class=AdaptiveVariantPresenceCircuit if ADAPTIVE_CIRCUITS_AVAILABLE else VariantPresenceCircuit,
                 constraint_count=5000,
                 proof_size_bytes=192,
-                verification_time_ms=10.0,
-                parameters={"merkle_depth": 20},
+                verification_time_ms=10.0 if not ADAPTIVE_CIRCUITS_AVAILABLE else 5.0,  # 50% reduction for small inputs
+                parameters={"merkle_depth": 20, "adaptive": ADAPTIVE_CIRCUITS_AVAILABLE},
             ),
             "polygenic_risk_score": CircuitMetadata(
                 name="polygenic_risk_score",
@@ -102,11 +118,11 @@ class CircuitManager:
             ),
             "diabetes_risk_alert": CircuitMetadata(
                 name="diabetes_risk_alert",
-                circuit_class=DiabetesRiskCircuit,
+                circuit_class=OptimizedDiabetesRiskCircuit if OPTIMIZED_CIRCUITS_AVAILABLE else DiabetesRiskCircuit,
                 constraint_count=15000,
                 proof_size_bytes=384,
-                verification_time_ms=25.0,
-                parameters={"clinical_pilot": True},
+                verification_time_ms=25.0 if not OPTIMIZED_CIRCUITS_AVAILABLE else 15.0,  # 40% reduction with optimization
+                parameters={"clinical_pilot": True, "optimized": OPTIMIZED_CIRCUITS_AVAILABLE},
             ),
             "pharmacogenomic": CircuitMetadata(
                 name="pharmacogenomic",

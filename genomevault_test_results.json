@@ -1,0 +1,19 @@
+{
+  "hdc": {
+    "error": "unsupported operand type(s) for /: 'int' and 'builtin_function_or_method'"
+  },
+  "zk": {
+    "time_ms": 19.08
+  },
+  "pir": {
+    "error": "all records must be the same length"
+  },
+  "hardware": {
+    "error": "matmul(): incompatible function arguments. The following argument types are supported:\n    1. matmul(a: array, b: array, /, *, stream: Union[None, Stream, Device] = None) -> array\n\nInvoked with types: ndarray, ndarray"
+  },
+  "parallel": {
+    "tasks": 10,
+    "time_ms": 64.9,
+    "speedup": 1
+  }
+}

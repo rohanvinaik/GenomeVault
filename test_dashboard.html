@@ -1,0 +1,191 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ZK Performance Dashboard</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .metric-card {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background: #333;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00ff00;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+        th { background: #333; }
+        .alert {
+            background: #ff3333;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .graph {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        canvas { width: 100%; height: 200px; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧬 ZK Performance Dashboard</h1>
+            <p>Real-time monitoring of zero-knowledge proof generation</p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-value">88</div>
+                <div class="stat-label">Total Operations</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">95.5%</div>
+                <div class="stat-label">Success Rate</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">70.5%</div>
+                <div class="stat-label">Cache Hit Rate</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">40</div>
+                <div class="stat-label">Active Alerts</div>
+            </div>
+        </div>
+        
+        <div class="metric-card">
+            <h2>Circuit Performance</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Circuit</th>
+                        <th>Operations</th>
+                        <th>Success Rate</th>
+                        <th>Avg Latency</th>
+                        <th>P95 Latency</th>
+                        <th>Cache Hits</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>variant_presence</td>
+                        <td>21</td>
+                        <td>85.7%</td>
+                        <td>0.81ms</td>
+                        <td>2.27ms</td>
+                        <td>52.4%</td>
+                    </tr>
+                    <tr>
+                        <td>diabetes_risk_alert</td>
+                        <td>19</td>
+                        <td>94.7%</td>
+                        <td>0.60ms</td>
+                        <td>1.54ms</td>
+                        <td>78.9%</td>
+                    </tr>
+                    <tr>
+                        <td>polygenic_risk_score</td>
+                        <td>27</td>
+                        <td>100.0%</td>
+                        <td>0.70ms</td>
+                        <td>2.16ms</td>
+                        <td>77.8%</td>
+                    </tr>
+                    <tr>
+                        <td>ancestry_composition</td>
+                        <td>21</td>
+                        <td>100.0%</td>
+                        <td>1.23ms</td>
+                        <td>3.17ms</td>
+                        <td>71.4%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="graph">
+            <h2>Latency Trend</h2>
+            <canvas id="latencyChart"></canvas>
+        </div>
+        
+        <script>
+            // Latency chart
+            const ctx = document.getElementById('latencyChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19'],
+                    datasets: [{
+                        label: 'Witness Latency (ms)',
+                        data: [1.7963051003376902,0.23855596880787902,0.5847776783617251,0.30475256073585644,2.689992499341502,0.2753782674756801,0.23335255264421667],
+                        borderColor: '#00ff00',
+                        backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: '#00ff00' } }
+                    },
+                    scales: {
+                        y: { ticks: { color: '#888' }, grid: { color: '#444' } },
+                        x: { ticks: { color: '#888' }, grid: { color: '#444' } }
+                    }
+                }
+            });
+            
+            // Auto-refresh
+            setTimeout(() => location.reload(), 5000);
+        </script>
+    </div>
+</body>
+</html>
+        

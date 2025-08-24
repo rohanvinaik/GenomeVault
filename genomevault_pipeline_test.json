@@ -1,0 +1,32 @@
+{
+  "timestamp": "2025-08-24T11:51:05.937736",
+  "hdc": {
+    "status": "failed",
+    "error": "unsupported operand type(s) for /: 'int' and 'builtin_function_or_method'"
+  },
+  "zk_proofs": {
+    "status": "failed",
+    "error": "'Prover' object has no attribute 'verify_proof'"
+  },
+  "parallel": {
+    "status": "success",
+    "total_tasks": 10,
+    "successful": 10,
+    "batch_time_ms": 63.53,
+    "throughput_per_sec": 42.6,
+    "speedup": 3.7
+  },
+  "pir": {
+    "status": "failed",
+    "error": "cannot import name 'ITPIRProtocol' from 'genomevault.pir.it_pir_protocol' (/Users/rohanvinaik/genomevault/genomevault/pir/it_pir_protocol.py)"
+  },
+  "hardware": {
+    "status": "failed",
+    "error": "'HardwareBackend' object has no attribute 'matmul'"
+  },
+  "circom": {
+    "status": "success",
+    "version": "circom compiler 2.2.2",
+    "compile_time_ms": 19.33
+  }
+}

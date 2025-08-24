@@ -1,0 +1,222 @@
+{
+  "timestamp": 1756044808.374605,
+  "backend": "mock",
+  "hardware": {
+    "cpu_cores": 10,
+    "cpu_threads": 10,
+    "ram_gb": 64.0,
+    "platform": "darwin"
+  },
+  "results": [
+    {
+      "circuit": "variant_presence",
+      "measurements": [
+        {
+          "input_size": 1,
+          "constraints": 5000,
+          "witness_time_ms": 0.6923750042915344,
+          "proof_time_ms": 0.6923750042915344,
+          "verify_time_ms": 1.0,
+          "proof_size_bytes": 256,
+          "cpu_usage_percent": 0.1,
+          "memory_delta_mb": 0.015625,
+          "backend": "mock",
+          "success": true
+        },
+        {
+          "input_size": 10,
+          "constraints": 5000,
+          "witness_time_ms": 3.0239160114433616,
+          "proof_time_ms": 3.0239160114433616,
+          "verify_time_ms": 1.0,
+          "proof_size_bytes": 257,
+          "cpu_usage_percent": 0,
+          "memory_delta_mb": 0.109375,
+          "backend": "mock",
+          "success": true
+        },
+        {
+          "input_size": 100,
+          "constraints": 5000,
+          "witness_time_ms": 0.5089580081403255,
+          "proof_time_ms": 0.5089580081403255,
+          "verify_time_ms": 1.0,
+          "proof_size_bytes": 255,
+          "cpu_usage_percent": 0,
+          "memory_delta_mb": 0.015625,
+          "backend": "mock",
+          "success": true
+        }
+      ],
+      "backend": "mock"
+    },
+    {
+      "circuit": "polygenic_risk_score",
+      "measurements": [
+        {
+          "input_size": 10,
+          "constraints": 20000,
+          "witness_time_ms": 0.6905000191181898,
+          "proof_time_ms": 0.6905000191181898,
+          "verify_time_ms": null,
+          "proof_size_bytes": null,
+          "cpu_usage_percent": 0,
+          "memory_delta_mb": 0,
+          "backend": "mock",
+          "success": false
+        },
+        {
+          "input_size": 50,
+          "constraints": 20000,
+          "witness_time_ms": 2.117166994139552,
+          "proof_time_ms": 2.117166994139552,
+          "verify_time_ms": null,
+          "proof_size_bytes": null,
+          "cpu_usage_percent": 0,
+          "memory_delta_mb": 0,
+          "backend": "mock",
+          "success": false
+        },
+        {
+          "input_size": 200,
+          "constraints": 20000,
+          "witness_time_ms": 0.9967919904738665,
+          "proof_time_ms": 0.9967919904738665,
+          "verify_time_ms": null,
+          "proof_size_bytes": null,
+          "cpu_usage_percent": 0,
+          "memory_delta_mb": 0,
+          "backend": "mock",
+          "success": false
+        }
+      ],
+      "backend": "mock"
+    },
+    {
+      "circuit": "pharmacogenomic",
+      "measurements": [
+        {
+          "input_size": 5,
+          "constraints": 10000,
+          "witness_time_ms": 0.4379170131869614,
+          "proof_time_ms": 0.4379170131869614,
+          "verify_time_ms": 1.0,
+          "proof_size_bytes": 377,
+          "cpu_usage_percent": 0,
+          "memory_delta_mb": 0,
+          "backend": "mock",
+          "success": true
+        },
+        {
+          "input_size": 20,
+          "constraints": 10000,
+          "witness_time_ms": 0.6103329942561686,
+          "proof_time_ms": 0.6103329942561686,
+          "verify_time_ms": 1.0,
+          "proof_size_bytes": 377,
+          "cpu_usage_percent": 0.1,
+          "memory_delta_mb": 0,
+          "backend": "mock",
+          "success": true
+        },
+        {
+          "input_size": 50,
+          "constraints": 10000,
+          "witness_time_ms": 0.5996660038363189,
+          "proof_time_ms": 0.5996660038363189,
+          "verify_time_ms": 1.0,
+          "proof_size_bytes": 377,
+          "cpu_usage_percent": 0,
+          "memory_delta_mb": 0,
+          "backend": "mock",
+          "success": true
+        }
+      ],
+      "backend": "mock"
+    },
+    {
+      "circuit": "diabetes_risk_alert",
+      "measurements": [
+        {
+          "input_size": 1,
+          "constraints": 15000,
+          "witness_time_ms": 2.982458012411371,
+          "proof_time_ms": 2.982458012411371,
+          "verify_time_ms": 1.0,
+          "proof_size_bytes": 485,
+          "cpu_usage_percent": 0,
+          "memory_delta_mb": 0.03125,
+          "backend": "mock",
+          "success": true
+        },
+        {
+          "input_size": 5,
+          "constraints": 15000,
+          "witness_time_ms": 0.7429590041283518,
+          "proof_time_ms": 0.7429590041283518,
+          "verify_time_ms": 1.0,
+          "proof_size_bytes": 483,
+          "cpu_usage_percent": 0,
+          "memory_delta_mb": 0,
+          "backend": "mock",
+          "success": true
+        },
+        {
+          "input_size": 10,
+          "constraints": 15000,
+          "witness_time_ms": 3.0993330001365393,
+          "proof_time_ms": 3.0993330001365393,
+          "verify_time_ms": 1.0,
+          "proof_size_bytes": 484,
+          "cpu_usage_percent": 0,
+          "memory_delta_mb": 0.125,
+          "backend": "mock",
+          "success": true
+        }
+      ],
+      "backend": "mock"
+    },
+    {
+      "circuit": "ancestry_composition",
+      "measurements": [
+        {
+          "input_size": 10,
+          "constraints": 15000,
+          "witness_time_ms": 1.30733399419114,
+          "proof_time_ms": 1.30733399419114,
+          "verify_time_ms": 1.0,
+          "proof_size_bytes": 427,
+          "cpu_usage_percent": 0,
+          "memory_delta_mb": 0,
+          "backend": "mock",
+          "success": true
+        },
+        {
+          "input_size": 50,
+          "constraints": 15000,
+          "witness_time_ms": 0.48645801143720746,
+          "proof_time_ms": 0.48645801143720746,
+          "verify_time_ms": 1.0,
+          "proof_size_bytes": 427,
+          "cpu_usage_percent": 0,
+          "memory_delta_mb": 0.03125,
+          "backend": "mock",
+          "success": true
+        },
+        {
+          "input_size": 100,
+          "constraints": 15000,
+          "witness_time_ms": 0.57441700482741,
+          "proof_time_ms": 0.57441700482741,
+          "verify_time_ms": 1.0,
+          "proof_size_bytes": 427,
+          "cpu_usage_percent": 0,
+          "memory_delta_mb": 0,
+          "backend": "mock",
+          "success": true
+        }
+      ],
+      "backend": "mock"
+    }
+  ]
+}
