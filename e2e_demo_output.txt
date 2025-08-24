@@ -1,0 +1,109 @@
+🧬 GenomeVault End-to-End Demo
+================================
+Testing complete privacy-preserving genomic pipeline
+
+📁 Results will be stored in: results/e2e_demos/2025-08-24_14-36-48
+
+[0;34mStep 1: Generating test genomic data...[0m
+[0;32m✓ Test data generated[0m
+  - VCF variants: 5 variants
+  - Expression features: 10 dimensions
+  - Clinical features: Generated
+
+[0;34mStep 2: Checking GenomeVault API...[0m
+[1;33mAPI not running, starting in background...[0m
+Waiting for API to start...
+..
+[0;32m✓ API is running[0m
+
+[0;34mStep 3: HDC Encoding (Hyperdimensional Computing)...[0m
+[1;33m⚠ HDC encoding via API failed, using local implementation[0m
+2025-08-24 14:36:52,818 | INFO     | genomevault.logging  | Logging configured: level=INFO,file_logging=True
+2025-08-24 14:36:52,839 | WARNING  | genomevault.crypto.threshold_service | BLS signatures not available, using simulation mode
+2025-08-24 14:36:54,187 | INFO     | genomevault.hypervector_transform.encoding | Metal acceleration support detected
+2025-08-24 14:36:54,190 | INFO     | genomevault.hypervector_transform.registry | Initialized hypervector registry with version v1.0.0
+2025-08-24 14:36:54,197 | INFO     | genomevault.hypervector.metal_engine | 🍎 Metal Acceleration Enabled on Device(gpu, 0)
+  Dimension: 8192
+  Precision: float32
+  Neural Engine: True
+2025-08-24 14:36:54,197 | INFO     | genomevault.hypervector_transform.encoding | 🍎 Metal acceleration auto-enabled with 20.0GB memory
+2025-08-24 14:36:54,197 | INFO     | genomevault.hypervector_transform.encoding | Initialized HypervectorEncoder(dim=8192, proj=sparse_random, dp=False)
+METAL ACCELERATION DETECTED!
+✓ Local HDC encoding: 8192 dimensions
+  Sparsity: 50.5%
+
+[0;34mStep 4: Zero-Knowledge Proof Generation...[0m
+[1;33m⚠ ZK proof API unavailable, using local implementation[0m
+2025-08-24 14:36:54,617 | INFO     | genomevault.logging  | Logging configured: level=INFO,file_logging=True
+2025-08-24 14:36:55,682 | WARNING  | genomevault.crypto.threshold_service | BLS signatures not available, using simulation mode
+2025-08-24 14:36:55,765 | WARNING  | genomevault.zk_proofs.prover | Circomlib not found, installing...
+2025-08-24 14:36:55,778 | ERROR    | genomevault.zk_proofs.prover | Failed to install circomlib dependencies: Command '['bash', 'scripts/install_circomlib.sh']' returned non-zero exit status 127.
+2025-08-24 14:36:55,778 | ERROR    | genomevault.zk_proofs.prover | stderr: bash: scripts/install_circomlib.sh: No such file or directory
+
+/Users/rohanvinaik/genomevault/genomevault/zk_proofs/prover.py:341: RuntimeWarning: ⚠️  WARNING: Using MOCK proof backend - NOT cryptographically secure! This is for development only. Install Circom toolchain for real proofs.
+  SecurityConfig.warn_mock_mode()
+2025-08-24 14:36:55,779 | WARNING  | genomevault.zk_proofs.prover | ⚠️ Circom dependencies not found - USING INSECURE MOCK PROOFS
+2025-08-24 14:36:55,779 | WARNING  | genomevault.zk_proofs.prover | Install circom and snarkjs for production use
+2025-08-24 14:36:55,779 | INFO     | genomevault.zk_proofs.prover | Prover initialized
+✓ Local ZK proof: demo_proof_1756060615
+
+[0;34mStep 5: Private Information Retrieval (PIR)...[0m
+[1;33m⚠ PIR API unavailable, using local implementation[0m
+2025-08-24 14:36:56,094 | INFO     | genomevault.logging  | Logging configured: level=INFO,file_logging=True
+2025-08-24 14:36:56,145 | WARNING  | genomevault.crypto.threshold_service | BLS signatures not available, using simulation mode
+✓ Mock PIR query: mock_genomic_reference_data
+
+[0;34mStep 6: Complete E2E Pipeline Test...[0m
+2025-08-24 14:36:57,912 | INFO     | genomevault.logging  | Logging configured: level=INFO,file_logging=True
+2025-08-24 14:36:57,934 | WARNING  | genomevault.crypto.threshold_service | BLS signatures not available, using simulation mode
+2025-08-24 14:36:59,282 | INFO     | genomevault.hypervector_transform.encoding | Metal acceleration support detected
+2025-08-24 14:36:59,284 | INFO     | genomevault.hypervector_transform.registry | Loaded registry with 3 versions
+2025-08-24 14:36:59,291 | INFO     | genomevault.hypervector.metal_engine | 🍎 Metal Acceleration Enabled on Device(gpu, 0)
+  Dimension: 1000
+  Precision: float32
+  Neural Engine: True
+2025-08-24 14:36:59,291 | INFO     | genomevault.hypervector_transform.encoding | 🍎 Metal acceleration auto-enabled with 20.0GB memory
+2025-08-24 14:36:59,291 | INFO     | genomevault.hypervector_transform.encoding | Initialized HypervectorEncoder(dim=1000, proj=sparse_random, dp=False)
+2025-08-24 14:36:59,314 | WARNING  | genomevault.zk_proofs.prover | Circomlib not found, installing...
+2025-08-24 14:36:59,334 | ERROR    | genomevault.zk_proofs.prover | Failed to install circomlib dependencies: Command '['bash', 'scripts/install_circomlib.sh']' returned non-zero exit status 127.
+2025-08-24 14:36:59,334 | ERROR    | genomevault.zk_proofs.prover | stderr: bash: scripts/install_circomlib.sh: No such file or directory
+
+/Users/rohanvinaik/genomevault/genomevault/zk_proofs/prover.py:341: RuntimeWarning: ⚠️  WARNING: Using MOCK proof backend - NOT cryptographically secure! This is for development only. Install Circom toolchain for real proofs.
+  SecurityConfig.warn_mock_mode()
+2025-08-24 14:36:59,335 | WARNING  | genomevault.zk_proofs.prover | ⚠️ Circom dependencies not found - USING INSECURE MOCK PROOFS
+2025-08-24 14:36:59,335 | WARNING  | genomevault.zk_proofs.prover | Install circom and snarkjs for production use
+2025-08-24 14:36:59,335 | INFO     | genomevault.zk_proofs.prover | Prover initialized
+2025-08-24 14:36:59,337 | INFO     | genomevault.pir.servers | pyeclib not available, FEC disabled. Install with: pip install pyeclib
+Running complete E2E test...
+METAL ACCELERATION DETECTED!
+✓ HDC Encoding: Mock implementation (1000 dims)
+✓ ZK Proof: Generated in 0.0ms
+✓ PIR Protocol: Mock implementation
+✓ Database: Stored 3 variants in 1.9ms
+
+🎯 E2E Pipeline: 2/4 components successful
+   Success rate: 50.0%
+
+[0;34mStep 7: Performance Summary[0m
+================================
+Demo Duration: 11s
+HDC Compression: 8192 dimensions, 60.0% sparsity
+Component Success: 4/5 (80%)
+Privacy Level: Information-theoretic security
+
+[0;34mStep 8: Generating Demo Report...[0m
+[0;32m✓ Demo report generated[0m
+
+[0;34mStep 9: System Resource Monitoring...[0m
+Resource Utilization:
+  - Memory: 365MB
+  - CPU: 22.89%
+  - Disk: 42%
+
+[0;32m✓ Performance metrics collected[0m
+
+[0;34mStep 10: Updating results pipeline...[0m
+cp: results/e2e_demos/2025-08-24_14-36-48: No such file or directory
+
+[1;33mCleaning up...[0m
+[0;32m✓ Cleanup complete[0m

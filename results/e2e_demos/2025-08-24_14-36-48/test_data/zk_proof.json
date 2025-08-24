@@ -1,10 +1,10 @@
 {
-  "proof_id": "demo_proof_1756059525",
+  "proof_id": "demo_proof_1756060615",
   "circuit_type": "variant_presence",
   "proof": "mock_proof_data_for_demo",
   "public_inputs": {
     "threshold": 0.5
   },
-  "timestamp": "2025-08-24T14:18:45.707727",
+  "timestamp": "2025-08-24T14:36:55.780011",
   "status": "generated"
 }

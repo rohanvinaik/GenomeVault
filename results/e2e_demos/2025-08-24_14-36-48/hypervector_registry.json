@@ -1,11 +1,11 @@
 {
   "compatibility_map": {},
   "current_version": "v1.0.0",
-  "last_updated": "2025-08-24T14:18:44.083179",
+  "last_updated": "2025-08-24T14:36:54.189765",
   "performance_metrics": {},
   "versions": {
     "full_v1.0.0": {
-      "created_at": "2025-08-24T14:18:44.083177",
+      "created_at": "2025-08-24T14:36:54.189763",
       "description": "Full tier for comprehensive analysis",
       "fingerprint": "f453233a13b1e4a2",
       "params": {
@@ -17,7 +17,7 @@
       "tier": "full"
     },
     "mini_v1.0.0": {
-      "created_at": "2025-08-24T14:18:44.083171",
+      "created_at": "2025-08-24T14:36:54.189757",
       "description": "Mini tier for most-studied SNPs",
       "fingerprint": "fbb1c39d577e219e",
       "params": {
@@ -29,7 +29,7 @@
       "tier": "mini"
     },
     "v1.0.0": {
-      "created_at": "2025-08-24T14:18:44.083155",
+      "created_at": "2025-08-24T14:36:54.189744",
       "description": "Default HDC encoding parameters - Clinical tier",
       "fingerprint": "d752288b187d0cbd",
       "params": {

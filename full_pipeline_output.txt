@@ -1,0 +1,75 @@
+2025-08-24 14:37:50,355 | INFO     | genomevault.logging  | Logging configured: level=INFO,file_logging=True
+2025-08-24 14:37:50,378 | WARNING  | genomevault.crypto.threshold_service | BLS signatures not available, using simulation mode
+2025-08-24 14:37:51,761 | INFO     | genomevault.hypervector_transform.encoding | Metal acceleration support detected
+2025-08-24 14:37:51,763 | INFO     | genomevault.hypervector_transform.registry | Loaded registry with 3 versions
+2025-08-24 14:37:51,771 | INFO     | genomevault.hypervector.metal_engine | 🍎 Metal Acceleration Enabled on Device(gpu, 0)
+  Dimension: 1000
+  Precision: float32
+  Neural Engine: True
+2025-08-24 14:37:51,771 | INFO     | genomevault.hypervector_transform.encoding | 🍎 Metal acceleration auto-enabled with 20.0GB memory
+2025-08-24 14:37:51,771 | INFO     | genomevault.hypervector_transform.encoding | Initialized HypervectorEncoder(dim=1000, proj=sparse_random, dp=False)
+2025-08-24 14:37:51,791 | INFO     | genomevault.hypervector.metal_engine | 🍎 Metal Acceleration Enabled on Device(gpu, 0)
+  Dimension: 8192
+  Precision: float32
+  Neural Engine: True
+2025-08-24 14:37:51,791 | INFO     | genomevault.hypervector_transform.encoding | 🍎 Metal acceleration auto-enabled with 20.0GB memory
+2025-08-24 14:37:51,791 | INFO     | genomevault.hypervector_transform.encoding | Initialized HypervectorEncoder(dim=8192, proj=sparse_random, dp=False)
+2025-08-24 14:37:51,793 | INFO     | genomevault.hypervector.metal_engine | 🍎 Metal Acceleration Enabled on Device(gpu, 0)
+  Dimension: 16384
+  Precision: float32
+  Neural Engine: True
+2025-08-24 14:37:51,793 | INFO     | genomevault.hypervector_transform.encoding | 🍎 Metal acceleration auto-enabled with 20.0GB memory
+2025-08-24 14:37:51,793 | INFO     | genomevault.hypervector_transform.encoding | Initialized HypervectorEncoder(dim=16384, proj=sparse_random, dp=False)
+2025-08-24 14:37:51,797 | INFO     | genomevault.zk_proofs.backends.circom_backend | Circuit variant_presence already compiled
+2025-08-24 14:37:51,797 | INFO     | genomevault.zk_proofs.backends.circom_backend | Trusted setup already complete for variant_presence
+2025-08-24 14:37:52,207 | INFO     | genomevault.zk_proofs.backends.circom_backend | Generated real ZK proof for variant_presence
+2025-08-24 14:37:52,462 | INFO     | genomevault.pir.servers | pyeclib not available, FEC disabled. Install with: pip install pyeclib
+2025-08-24 14:37:52,494 | INFO     | genomevault.federated.aggregator | Initialized SecureAggregator for 3 clients, vector size 100
+2025-08-24 14:37:52,495 | INFO     | genomevault.hypervector.metal_engine | 🍎 Metal Acceleration Enabled on Device(gpu, 0)
+  Dimension: 8192
+  Precision: float32
+  Neural Engine: True
+2025-08-24 14:37:52,495 | INFO     | genomevault.hypervector_transform.encoding | 🍎 Metal acceleration auto-enabled with 20.0GB memory
+2025-08-24 14:37:52,495 | INFO     | genomevault.hypervector_transform.encoding | Initialized HypervectorEncoder(dim=8192, proj=sparse_random, dp=False)
+🧬 GenomeVault Complete Pipeline Performance Test
+==================================================
+
+1️⃣ Testing HDC Encoding...
+METAL ACCELERATION DETECTED!
+  ✅ 1000D: 19.94ms, 49.5% sparse, 3.2x compression
+  ✅ 8192D: 1.49ms, 49.7% sparse, 0.4x compression
+  ✅ 16384D: 1.70ms, 51.0% sparse, 0.2x compression
+
+2️⃣ Testing ZK Proof Generation...
+  ✅ Real SNARK proof: 410.63ms
+  ✅ Proof verification: VALID
+
+3️⃣ Testing PIR Query Performance...
+  ✅ 100 records: 0.11ms
+  ✅ 1000 records: 0.71ms
+  ✅ 10000 records: 7.13ms
+
+4️⃣ Testing Database Operations...
+  ✅ Insert 100: 0.64ms (0.0064ms/record)
+  ✅ Insert 1000: 1.18ms (0.0012ms/record)
+  ✅ Insert 5000: 4.00ms (0.0008ms/record)
+
+5️⃣ Testing Federated Learning...
+  ✅ Aggregation (3 clients): 0.05ms
+
+6️⃣ Testing Complete E2E Pipeline...
+  ✅ Complete pipeline: 8.34ms
+
+==================================================
+📊 Performance Summary
+==================================================
+HDC Encoding: 7.71ms average
+ZK Proofs: 410.63ms average
+PIR Queries: 2.65ms average
+Database: 0.0028ms per record
+E2E Pipeline: 8.34ms total
+Throughput: 119.87 genomes/second
+
+💾 Results saved to: genomevault_performance_metrics.json
+
+✅ Performance testing complete!

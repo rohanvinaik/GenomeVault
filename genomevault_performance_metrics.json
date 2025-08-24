@@ -1,25 +1,25 @@
 {
-  "timestamp": "2025-08-24T14:28:20.921096",
+  "timestamp": "2025-08-24T14:37:49.754659",
   "components": {
     "hdc_encoding": {
       "status": "success",
       "metrics": [
         {
           "dimension": 1000,
-          "encoding_time_ms": 21.79,
-          "sparsity": 0.483,
+          "encoding_time_ms": 19.94,
+          "sparsity": 0.495,
           "compression_ratio": "3.2x"
         },
         {
           "dimension": 8192,
-          "encoding_time_ms": 1.6,
-          "sparsity": 0.501,
+          "encoding_time_ms": 1.49,
+          "sparsity": 0.497,
           "compression_ratio": "0.4x"
         },
         {
           "dimension": 16384,
-          "encoding_time_ms": 1.77,
-          "sparsity": 0.5,
+          "encoding_time_ms": 1.7,
+          "sparsity": 0.51,
           "compression_ratio": "0.2x"
         }
       ],
@@ -29,19 +29,10 @@
       "status": "success",
       "metrics": [
         {
-          "size": "small",
-          "generation_time_ms": 40.78,
-          "backend": "mock"
-        },
-        {
-          "size": "medium",
-          "generation_time_ms": 47.92,
-          "backend": "mock"
-        },
-        {
-          "size": "large",
-          "generation_time_ms": 18.15,
-          "backend": "mock"
+          "type": "variant_presence",
+          "generation_time_ms": 410.63,
+          "backend": "CIRCOM/Groth16",
+          "verified": true
         }
       ]
     },
@@ -50,17 +41,17 @@
       "metrics": [
         {
           "database_size": 100,
-          "query_time_ms": 0.1,
+          "query_time_ms": 0.11,
           "protocol": "IT-PIR"
         },
         {
           "database_size": 1000,
-          "query_time_ms": 0.7,
+          "query_time_ms": 0.71,
           "protocol": "IT-PIR"
         },
         {
           "database_size": 10000,
-          "query_time_ms": 7.12,
+          "query_time_ms": 7.13,
           "protocol": "IT-PIR"
         }
       ]
@@ -71,33 +62,33 @@
         {
           "operation": "batch_insert",
           "count": 100,
-          "time_ms": 0.46,
-          "per_record_ms": 0.0046
+          "time_ms": 0.64,
+          "per_record_ms": 0.0064
         },
         {
           "operation": "batch_insert",
           "count": 1000,
-          "time_ms": 1.26,
-          "per_record_ms": 0.0013
+          "time_ms": 1.18,
+          "per_record_ms": 0.0012
         },
         {
           "operation": "batch_insert",
           "count": 5000,
-          "time_ms": 4.55,
-          "per_record_ms": 0.0009
+          "time_ms": 4.0,
+          "per_record_ms": 0.0008
         }
       ]
     },
     "federated_learning": {
       "status": "success",
-      "aggregation_time_ms": 0.02,
+      "aggregation_time_ms": 0.05,
       "num_clients": 3
     }
   },
   "metrics": {},
   "pipeline_performance": {
     "status": "success",
-    "total_time_ms": 7.79,
-    "throughput": "128.39 genomes/second"
+    "total_time_ms": 8.34,
+    "throughput": "119.87 genomes/second"
   }
 }

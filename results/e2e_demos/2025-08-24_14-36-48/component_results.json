@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-08-24T14:18:47.319437",
+  "timestamp": "2025-08-24T14:36:57.371660",
   "components": {
     "hdc_encoding": {
       "status": "fallback",
@@ -12,7 +12,7 @@
     },
     "zk_proof": {
       "status": "success",
-      "proof_time_ms": 0.003,
+      "proof_time_ms": 0.004,
       "circuit_type": "variant_presence"
     },
     "pir_protocol": {
@@ -23,7 +23,7 @@
     },
     "database": {
       "status": "success",
-      "operation_time_ms": 1.224,
+      "operation_time_ms": 1.853,
       "variants_stored": 3
     }
   },
