@@ -7,6 +7,3 @@ exports.pedersenHash = require("./src/pedersenHash");
 exports.SMT = require("./src/smt").SMT;
 exports.SMTMemDB = require("./src/smt_memdb");
 exports.poseidon = require("./src/poseidon");
-
-
-

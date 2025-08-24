@@ -1,0 +1,16 @@
+{
+  "patient_id": "demo_001",
+  "age": 45,
+  "gender": "F",
+  "bmi": 24.5,
+  "smoking_status": "never",
+  "family_history": {
+    "breast_cancer": true,
+    "ovarian_cancer": false
+  },
+  "biomarkers": {
+    "psa": 1.2,
+    "cea": 2.8,
+    "ca125": 15.3
+  }
+}

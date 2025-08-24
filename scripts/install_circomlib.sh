@@ -35,10 +35,10 @@ pragma circom 2.0.0;
 template Poseidon(nInputs) {
     signal input inputs[nInputs];
     signal output out;
-    
+
     // Simplified Poseidon for testing
     // In production, use the full implementation from circomlib
-    
+
     component hasher = PoseidonHasher(nInputs);
     for (var i = 0; i < nInputs; i++) {
         hasher.inputs[i] <== inputs[i];
@@ -49,21 +49,21 @@ template Poseidon(nInputs) {
 template PoseidonHasher(n) {
     signal input inputs[n];
     signal output out;
-    
+
     // Constants (simplified - use real Poseidon constants)
     var C[n];
     for (var i = 0; i < n; i++) {
         C[i] = i * 7919; // Prime multiplier
     }
-    
+
     // Sponge construction (simplified)
     signal state[n+1];
     state[0] <== 0;
-    
+
     for (var i = 0; i < n; i++) {
         state[i+1] <== state[i] + inputs[i] * C[i];
     }
-    
+
     out <== state[n];
 }
 EOF
@@ -95,18 +95,18 @@ template VariantPresence(maxVariants) {
     signal input query[3];
     signal output found;
     signal output variant_hash;
-    
+
     // Hash the query variant
     component hasher = Poseidon(3);
     hasher.inputs[0] <== query[0];
     hasher.inputs[1] <== query[1];
     hasher.inputs[2] <== query[2];
     variant_hash <== hasher.out;
-    
+
     // Check each variant
     component isEqual[maxVariants][3];
     signal matches[maxVariants];
-    
+
     for (var i = 0; i < maxVariants; i++) {
         var match = 1;
         for (var j = 0; j < 3; j++) {
@@ -117,15 +117,15 @@ template VariantPresence(maxVariants) {
         }
         matches[i] <== match;
     }
-    
+
     // OR all matches
     signal accumulated[maxVariants];
     accumulated[0] <== matches[0];
-    
+
     for (var i = 1; i < maxVariants; i++) {
         accumulated[i] <== accumulated[i-1] + matches[i] - accumulated[i-1] * matches[i];
     }
-    
+
     found <== accumulated[maxVariants - 1];
 }
 

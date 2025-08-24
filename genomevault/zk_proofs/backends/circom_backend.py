@@ -107,12 +107,12 @@ class CircomBackend:
         """Run a shell command with optional input for interactive commands."""
         try:
             result = subprocess.run(
-                cmd, 
-                cwd=str(cwd) if cwd else None, 
-                capture_output=True, 
-                text=True, 
+                cmd,
+                cwd=str(cwd) if cwd else None,
+                capture_output=True,
+                text=True,
                 check=True,
-                input=input_text
+                input=input_text,
             )
             return result
         except subprocess.CalledProcessError as e:
@@ -145,10 +145,12 @@ class CircomBackend:
         try:
             # Compile circuit
             logger.info(f"Compiling circuit {circuit_name}")
-            
+
             # Add circomlib include path
-            circomlib_path = self.repo_root.parent / "zk_circuits" / "node_modules" / "circomlib" / "circuits"
-            
+            circomlib_path = (
+                self.repo_root.parent / "zk_circuits" / "node_modules" / "circomlib" / "circuits"
+            )
+
             self._run_command(
                 [
                     "circom",
@@ -186,14 +188,16 @@ class CircomBackend:
             return True
 
         try:
-            logger.info(f"Starting Powers of Tau ceremony for {circuit_name} (tau_power={tau_power})")
-            
+            logger.info(
+                f"Starting Powers of Tau ceremony for {circuit_name} (tau_power={tau_power})"
+            )
+
             # Powers of tau ceremony files
             pot_0 = circuit.build_dir / f"pot{tau_power}_0000.ptau"
             pot_1 = circuit.build_dir / f"pot{tau_power}_0001.ptau"
             pot_2 = circuit.build_dir / f"pot{tau_power}_0002.ptau"
             pot_final = circuit.build_dir / f"pot{tau_power}_final.ptau"
-            
+
             # Step 1: Start Powers of Tau ceremony
             if not pot_0.exists():
                 logger.info("Starting new Powers of Tau ceremony...")
@@ -209,7 +213,7 @@ class CircomBackend:
                 self._run_command(
                     ["snarkjs", "powersoftau", "contribute", str(pot_0), str(pot_1)],
                     cwd=circuit.build_dir,
-                    input_text=f"GenomeVault Development Contribution 1\ndev_entropy_{hash(str(pot_0))}\n"
+                    input_text=f"GenomeVault Development Contribution 1\ndev_entropy_{hash(str(pot_0))}\n",
                 )
                 logger.info(f"First contribution complete: {pot_1.name}")
 
@@ -219,7 +223,7 @@ class CircomBackend:
                 self._run_command(
                     ["snarkjs", "powersoftau", "contribute", str(pot_1), str(pot_2)],
                     cwd=circuit.build_dir,
-                    input_text=f"GenomeVault Development Contribution 2\ndev_entropy_{hash(str(pot_1))}\n"
+                    input_text=f"GenomeVault Development Contribution 2\ndev_entropy_{hash(str(pot_1))}\n",
                 )
                 logger.info(f"Second contribution complete: {pot_2.name}")
 
@@ -264,7 +268,7 @@ class CircomBackend:
                 self._run_command(
                     ["snarkjs", "zkey", "contribute", str(zkey_0), str(zkey_1)],
                     cwd=circuit.build_dir,
-                    input_text=f"GenomeVault Circuit Contribution\ncircuit_entropy_{hash(circuit_name)}\n"
+                    input_text=f"GenomeVault Circuit Contribution\ncircuit_entropy_{hash(circuit_name)}\n",
                 )
                 logger.info(f"Circuit contribution complete: {zkey_1.name}")
 
@@ -292,7 +296,14 @@ class CircomBackend:
             # Step 10: Verify the final keys
             logger.info("Verifying final proving key...")
             self._run_command(
-                ["snarkjs", "zkey", "verify", str(circuit.r1cs_path), str(pot_final), str(circuit.zkey_path)],
+                [
+                    "snarkjs",
+                    "zkey",
+                    "verify",
+                    str(circuit.r1cs_path),
+                    str(pot_final),
+                    str(circuit.zkey_path),
+                ],
                 cwd=circuit.build_dir,
             )
 

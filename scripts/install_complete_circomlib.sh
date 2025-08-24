@@ -74,7 +74,7 @@ include "../../node_modules/circomlib/circuits/poseidon.circom";
 template GenomeVaultPoseidon(nInputs) {
     signal input inputs[nInputs];
     signal output out;
-    
+
     // Use the complete circomlib Poseidon implementation
     component hasher = Poseidon(nInputs);
     for (var i = 0; i < nInputs; i++) {
@@ -88,17 +88,17 @@ template VariantHasher() {
     signal input chromosome;  // Encoded chromosome (1-24)
     signal input position;    // Genomic position
     signal input ref_allele;  // Reference allele (encoded)
-    signal input alt_allele;  // Alternative allele (encoded) 
+    signal input alt_allele;  // Alternative allele (encoded)
     signal input sample_id;   // Sample identifier
     signal output hash;
-    
+
     component poseidon = GenomeVaultPoseidon(5);
     poseidon.inputs[0] <== chromosome;
     poseidon.inputs[1] <== position;
     poseidon.inputs[2] <== ref_allele;
     poseidon.inputs[3] <== alt_allele;
     poseidon.inputs[4] <== sample_id;
-    
+
     hash <== poseidon.out;
 }
 
@@ -107,7 +107,7 @@ template GenomicCommitment(nVariants) {
     signal input variants[nVariants][4]; // [chr, pos, ref, alt]
     signal input randomness;
     signal output commitment;
-    
+
     // Hash each variant
     component variant_hashers[nVariants];
     for (var i = 0; i < nVariants; i++) {
@@ -117,18 +117,18 @@ template GenomicCommitment(nVariants) {
         variant_hashers[i].inputs[2] <== variants[i][2];
         variant_hashers[i].inputs[3] <== variants[i][3];
     }
-    
+
     // Accumulate all variant hashes
     signal accumulated_hash[nVariants];
     accumulated_hash[0] <== variant_hashers[0].out;
-    
+
     for (var i = 1; i < nVariants; i++) {
         component accumulator = GenomeVaultPoseidon(2);
         accumulator.inputs[0] <== accumulated_hash[i-1];
         accumulator.inputs[1] <== variant_hashers[i].out;
         accumulated_hash[i] <== accumulator.out;
     }
-    
+
     // Final commitment with randomness
     component final_commit = GenomeVaultPoseidon(2);
     final_commit.inputs[0] <== accumulated_hash[nVariants-1];
@@ -148,19 +148,19 @@ include "../../node_modules/circomlib/circuits/switcher.circom";
 // Complete Merkle tree inclusion proof verification
 template MerkleTreeInclusionProof(levels) {
     signal input leaf;
-    signal input root; 
+    signal input root;
     signal input pathElements[levels];
     signal input pathIndices[levels];
     signal output valid;
-    
+
     // Hash function components
     component hashers[levels];
     component selectors[levels];
-    
+
     // Current hash starts with the leaf
     signal current_hash[levels + 1];
     current_hash[0] <== leaf;
-    
+
     // Verify each level of the Merkle path
     for (var i = 0; i < levels; i++) {
         // Select left/right based on path index
@@ -168,15 +168,15 @@ template MerkleTreeInclusionProof(levels) {
         selectors[i].sel <== pathIndices[i];
         selectors[i].L <== current_hash[i];
         selectors[i].R <== pathElements[i];
-        
+
         // Hash the pair
         hashers[i] = Poseidon(2);
         hashers[i].inputs[0] <== selectors[i].outL;
         hashers[i].inputs[1] <== selectors[i].outR;
-        
+
         current_hash[i + 1] <== hashers[i].out;
     }
-    
+
     // Check if final hash equals root
     component root_check = IsEqual();
     root_check.in[0] <== current_hash[levels];
@@ -193,7 +193,7 @@ template GenomicMerkleTree(levels, nVariants) {
     signal input merkle_indices[levels];
     signal output inclusion_verified;
     signal output variant_hash;
-    
+
     // Hash the query variant
     component query_hasher = Poseidon(4);
     query_hasher.inputs[0] <== query_variant[0];
@@ -201,7 +201,7 @@ template GenomicMerkleTree(levels, nVariants) {
     query_hasher.inputs[2] <== query_variant[2];
     query_hasher.inputs[3] <== query_variant[3];
     variant_hash <== query_hasher.out;
-    
+
     // Verify Merkle inclusion proof
     component inclusion_proof = MerkleTreeInclusionProof(levels);
     inclusion_proof.leaf <== variant_hash;
@@ -210,7 +210,7 @@ template GenomicMerkleTree(levels, nVariants) {
         inclusion_proof.pathElements[i] <== merkle_proof[i];
         inclusion_proof.pathIndices[i] <== merkle_indices[i];
     }
-    
+
     inclusion_verified <== inclusion_proof.valid;
 }
 EOF
@@ -232,7 +232,7 @@ template VariantPresence(merkle_levels) {
     signal input database_commitment;    // Commitment to the genomic database
     signal input merkle_root;           // Merkle root of the variant database
     signal input nullifier;             // Prevents double-spending/queries
-    
+
     // Private inputs (known only to prover)
     signal input chromosome;            // Chromosome number (1-24)
     signal input position;             // Genomic position
@@ -243,11 +243,11 @@ template VariantPresence(merkle_levels) {
     signal input merkle_proof[merkle_levels];   // Merkle inclusion proof
     signal input merkle_indices[merkle_levels]; // Merkle path indices
     signal input witness_randomness;    // Additional randomness for privacy
-    
+
     // Public outputs
     signal output variant_present;      // 1 if variant is present, 0 otherwise
     signal output privacy_nullifier;   // Prevents linkability
-    
+
     // Step 1: Verify the variant hash matches the provided variant data
     component variant_hasher = VariantHasher();
     variant_hasher.chromosome <== chromosome;
@@ -255,11 +255,11 @@ template VariantPresence(merkle_levels) {
     variant_hasher.ref_allele <== ref_allele;
     variant_hasher.alt_allele <== alt_allele;
     variant_hasher.sample_id <== sample_id;
-    
+
     component hash_check = IsEqual();
     hash_check.in[0] <== variant_hasher.hash;
     hash_check.in[1] <== variant_hash;
-    
+
     // Step 2: Verify the variant is included in the committed database
     component merkle_verification = GenomicMerkleTree(merkle_levels, 1);
     merkle_verification.variants[0][0] <== chromosome;
@@ -271,22 +271,22 @@ template VariantPresence(merkle_levels) {
     merkle_verification.query_variant[1] <== position;
     merkle_verification.query_variant[2] <== ref_allele;
     merkle_verification.query_variant[3] <== alt_allele;
-    
+
     for (var i = 0; i < merkle_levels; i++) {
         merkle_verification.merkle_proof[i] <== merkle_proof[i];
         merkle_verification.merkle_indices[i] <== merkle_indices[i];
     }
-    
+
     // Step 3: Verify database commitment
     component commitment_hasher = GenomeVaultPoseidon(3);
     commitment_hasher.inputs[0] <== merkle_root;
     commitment_hasher.inputs[1] <== sample_id;
     commitment_hasher.inputs[2] <== commitment_randomness;
-    
+
     component commitment_check = IsEqual();
     commitment_check.in[0] <== commitment_hasher.out;
     commitment_check.in[1] <== database_commitment;
-    
+
     // Step 4: Generate privacy nullifier to prevent linkability
     component nullifier_generator = GenomeVaultPoseidon(4);
     nullifier_generator.inputs[0] <== nullifier;
@@ -294,13 +294,13 @@ template VariantPresence(merkle_levels) {
     nullifier_generator.inputs[2] <== sample_id;
     nullifier_generator.inputs[3] <== witness_randomness;
     privacy_nullifier <== nullifier_generator.out;
-    
+
     // Step 5: Final verification - all conditions must be satisfied
     signal verification_steps[3];
     verification_steps[0] <== hash_check.out;
     verification_steps[1] <== merkle_verification.inclusion_verified;
     verification_steps[2] <== commitment_check.out;
-    
+
     // AND all verification steps
     signal partial_and;
     partial_and <== verification_steps[0] * verification_steps[1];
@@ -337,7 +337,7 @@ echo "Compiling variant presence circuit..."
 circom circuits/variant_presence.circom --r1cs --wasm --sym -o build/ --prime bn128
 
 # Compile test circuit
-echo "Compiling test circuit..."  
+echo "Compiling test circuit..."
 circom circuits/test/variant_presence_test.circom --r1cs --wasm --sym -o build/ --prime bn128
 
 # Generate trusted setup (for testing - use ceremony for production)

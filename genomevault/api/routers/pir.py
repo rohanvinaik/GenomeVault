@@ -19,7 +19,7 @@ from pydantic import BaseModel, Field, validator
 
 from genomevault.pir.engine import PIREngine
 from genomevault.pir.byzantine_handler import ByzantineHandler
-from genomevault.pir.xor_scheme import XORBasedPIR
+from genomevault.pir.xor_scheme import XORPIRScheme
 from genomevault.utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -182,7 +182,10 @@ def execute_pir_query_with_byzantine(
     start_time = time.perf_counter()
 
     # Create XOR-based PIR scheme
-    pir_scheme = XORBasedPIR(len(dataset))
+    from genomevault.pir.xor_scheme import XORSchemeParams
+
+    params = XORSchemeParams(database_size=len(dataset))
+    pir_scheme = XORPIRScheme(params)
 
     # Generate queries for each server
     queries = []

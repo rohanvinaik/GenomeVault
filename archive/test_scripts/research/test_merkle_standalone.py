@@ -57,8 +57,8 @@ def test_merkle_verification():
     print(f"  Root: {root.hex()[:16]}...")
     print(f"  Level 1: [{level1_left.hex()[:8]}..., {level1_right.hex()[:8]}...]")
     print(
-        f"  Leaves: [{leaves[0].hex()[:8]}..., {leaves[1].hex()[:8]}...,
-            {leaves[2].hex()[:8]}..., {leaves[3].hex()[:8]}...]"
+        f"  Leaves: [{leaves[0].hex()[:8]}..., {leaves[1].hex()[:8]}..., "
+        f"{leaves[2].hex()[:8]}..., {leaves[3].hex()[:8]}...]"
     )
 
     # Test 1: Proof for leaf 0

@@ -87,10 +87,10 @@ async def metrics_health() -> Any:
 async def get_zk_dashboard() -> Dict[str, Any]:
     """
     Get ZK proof performance dashboard data.
-    
+
     Returns comprehensive performance metrics for ZK operations including:
     - Proof generation statistics
-    - Memory usage patterns  
+    - Memory usage patterns
     - Device utilization
     - Cache hit rates
     - Error rates
@@ -99,26 +99,23 @@ async def get_zk_dashboard() -> Dict[str, Any]:
         prover = Prover()
         dashboard_data = prover.get_performance_dashboard()
         system_info = prover.get_system_info()
-        
+
         return {
             "status": "success",
             "system_info": system_info,
             "performance_metrics": dashboard_data,
-            "timestamp": dashboard_data.get("timestamp")
+            "timestamp": dashboard_data.get("timestamp"),
         }
     except Exception as e:
         logger.error(f"Failed to get ZK dashboard data: {e}", exc_info=True)
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to get ZK dashboard data: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to get ZK dashboard data: {str(e)}")
 
 
 @router.get("/metrics/zk/report")
 async def get_zk_performance_report() -> Dict[str, Any]:
     """
     Get comprehensive ZK performance report.
-    
+
     Returns detailed text report with:
     - Performance summary statistics
     - Operation breakdown by circuit type
@@ -128,17 +125,12 @@ async def get_zk_performance_report() -> Dict[str, Any]:
     try:
         prover = Prover()
         report = prover.get_performance_report()
-        
-        return {
-            "status": "success",
-            "report": report,
-            "format": "text"
-        }
+
+        return {"status": "success", "report": report, "format": "text"}
     except Exception as e:
         logger.error(f"Failed to get ZK performance report: {e}", exc_info=True)
         raise HTTPException(
-            status_code=500,
-            detail=f"Failed to get ZK performance report: {str(e)}"
+            status_code=500, detail=f"Failed to get ZK performance report: {str(e)}"
         )
 
 
@@ -146,7 +138,7 @@ async def get_zk_performance_report() -> Dict[str, Any]:
 async def get_zk_system_info() -> Dict[str, Any]:
     """
     Get current ZK system status and information.
-    
+
     Returns real-time system metrics including:
     - Current device (CPU/GPU)
     - Memory usage
@@ -157,14 +149,8 @@ async def get_zk_system_info() -> Dict[str, Any]:
     try:
         prover = Prover()
         system_info = prover.get_system_info()
-        
-        return {
-            "status": "success",
-            "system": system_info
-        }
+
+        return {"status": "success", "system": system_info}
     except Exception as e:
         logger.error(f"Failed to get ZK system info: {e}", exc_info=True)
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to get ZK system info: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to get ZK system info: {str(e)}")

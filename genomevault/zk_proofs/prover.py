@@ -7,7 +7,7 @@ Implements specialized circuits for genomic privacy.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 import hashlib
 import json
 import time
@@ -18,6 +18,7 @@ from pathlib import Path
 # Memory and process monitoring
 try:
     import psutil
+
     PSUTIL_AVAILABLE = True
 except ImportError:
     PSUTIL_AVAILABLE = False
@@ -41,10 +42,9 @@ from genomevault.utils.production_safety import (
     require_real_backend,
     validate_not_mock,
     validate_proof_structure,
-    fail_loud_in_production,
     require_secure_environment,
     get_environment_info,
-    ProductionSafetyError
+    ProductionSafetyError,
 )
 
 # Try to import Circom backend
@@ -309,10 +309,10 @@ class Prover:
         """
         self.circuit_library = circuit_library or CircuitLibrary()
         self.trusted_setup = self._load_trusted_setup()
-        
+
         # Initialize performance monitoring
         self.monitor = get_monitor()
-        
+
         # Initialize process monitoring if available
         if PSUTIL_AVAILABLE:
             self.process = psutil.Process()
@@ -328,7 +328,7 @@ class Prover:
             try:
                 # Check and install circomlib dependencies first
                 deps_available = self._check_circom_dependencies()
-                
+
                 self.circom_backend = CircomBackend()
                 if self.circom_backend.check_dependencies() and deps_available:
                     logger.info("✓ Circom backend initialized - PRODUCTION READY")
@@ -360,15 +360,17 @@ class Prover:
     def has_real_backend(self) -> bool:
         """Check if real cryptographic backend is available."""
         return self.circom_backend is not None and self.is_production_ready
-    
+
     def get_environment_status(self) -> Dict[str, Any]:
         """Get environment and backend status for safety checks."""
         env_info = get_environment_info()
-        env_info.update({
-            'circom_backend_available': self.circom_backend is not None,
-            'production_ready': self.is_production_ready,
-            'real_backend_active': self.has_real_backend()
-        })
+        env_info.update(
+            {
+                "circom_backend_available": self.circom_backend is not None,
+                "production_ready": self.is_production_ready,
+                "real_backend_active": self.has_real_backend(),
+            }
+        )
         return env_info
 
     def _get_memory_usage_mb(self) -> float:
@@ -379,54 +381,56 @@ class Prover:
             except Exception:
                 return 0.0
         return 0.0
-    
+
     def _get_device(self) -> str:
         """Get current computation device."""
-        if hasattr(self, 'circom_backend') and self.circom_backend:
+        if hasattr(self, "circom_backend") and self.circom_backend:
             # Check if GPU acceleration is available
-            if hasattr(self.circom_backend, 'device'):
+            if hasattr(self.circom_backend, "device"):
                 return self.circom_backend.device
-        return 'cpu'
-    
-    def _calculate_input_size(self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]) -> int:
+        return "cpu"
+
+    def _calculate_input_size(
+        self, public_inputs: Dict[str, Any], private_inputs: Dict[str, Any]
+    ) -> int:
         """Calculate input size for monitoring."""
         size = 0
-        
+
         # Count variants if present
-        if 'variant_data' in private_inputs:
-            variant_data = private_inputs['variant_data']
+        if "variant_data" in private_inputs:
+            variant_data = private_inputs["variant_data"]
             if isinstance(variant_data, dict):
                 size += 1
             elif isinstance(variant_data, list):
                 size += len(variant_data)
-        
+
         # Count other inputs
         size += len(public_inputs) + len(private_inputs)
-        
+
         return size
 
     @staticmethod
     def _compute_variant_hash(variant: dict[str, Any]) -> str:
         """
         Compute consistent hash for variant.
-        
+
         Args:
             variant: Variant dictionary
-            
+
         Returns:
             Consistent hash string
         """
         # Ensure consistent ordering and format
         canonical_variant = {
-            'chr': str(variant.get('chr', '')),
-            'pos': int(variant.get('pos', 0)),
-            'ref': str(variant.get('ref', '')),
-            'alt': str(variant.get('alt', ''))
+            "chr": str(variant.get("chr", "")),
+            "pos": int(variant.get("pos", 0)),
+            "ref": str(variant.get("ref", "")),
+            "alt": str(variant.get("alt", "")),
         }
-        
+
         # Create deterministic string representation
         variant_str = json.dumps(canonical_variant, sort_keys=True)
-        
+
         # Compute hash
         return hashlib.sha256(variant_str.encode()).hexdigest()
 
@@ -441,11 +445,11 @@ class Prover:
                     ["bash", "scripts/install_circomlib.sh"],
                     check=True,
                     capture_output=True,
-                    text=True
+                    text=True,
                 )
                 logger.info("Circomlib installation completed")
                 logger.debug(f"Installation output: {result.stdout}")
-            
+
             # Check for poseidon
             poseidon_path = circomlib_path / "circuits/poseidon.circom"
             if not poseidon_path.exists():
@@ -456,9 +460,9 @@ class Prover:
                     logger.info("Found local Poseidon implementation")
                     return True
                 return False
-                
+
             return True
-            
+
         except subprocess.CalledProcessError as e:
             logger.error(f"Failed to install circomlib dependencies: {e}")
             logger.error(f"stderr: {e.stderr}")
@@ -498,11 +502,11 @@ class Prover:
         # Start comprehensive performance monitoring
         start_time = time.perf_counter()
         start_memory = self._get_memory_usage_mb()
-        
+
         # Calculate input size for monitoring
         input_size = self._calculate_input_size(public_inputs, private_inputs)
         device = self._get_device()
-        
+
         success = True
         error_msg = None
         proof = None
@@ -510,15 +514,15 @@ class Prover:
 
         try:
             # Ensure consistent variant hashing before processing
-            if 'variant_hash' in public_inputs and 'variant_data' in private_inputs:
+            if "variant_hash" in public_inputs and "variant_data" in private_inputs:
                 # Recompute hash to ensure consistency
-                variant_data = private_inputs['variant_data']
+                variant_data = private_inputs["variant_data"]
                 computed_hash = self._compute_variant_hash(variant_data)
-                
+
                 # Update public inputs with consistent hash
-                original_hash = public_inputs.get('variant_hash')
-                public_inputs['variant_hash'] = computed_hash
-                
+                original_hash = public_inputs.get("variant_hash")
+                public_inputs["variant_hash"] = computed_hash
+
                 # Log if there was a mismatch
                 if original_hash != computed_hash:
                     logger.debug(f"Fixed hash mismatch: {original_hash} -> {computed_hash}")
@@ -547,7 +551,7 @@ class Prover:
             error_msg = str(e)
             logger.error(f"Proof generation failed for {circuit_name}: {e}")
             logger.debug(traceback.format_exc())
-            
+
             # Create a fallback proof object for error tracking
             proof = Proof(
                 proof_id=f"error_{int(time.time())}",
@@ -555,15 +559,15 @@ class Prover:
                 proof_data=b"",
                 public_inputs=public_inputs,
                 timestamp=time.time(),
-                metadata={"error": error_msg, "device": device}
+                metadata={"error": error_msg, "device": device},
             )
-            
+
         finally:
             # Calculate comprehensive metrics
             duration_ms = (time.perf_counter() - start_time) * 1000
             end_memory = self._get_memory_usage_mb()
             memory_delta = max(0.0, end_memory - start_memory)  # Avoid negative values
-            
+
             # Record operation in monitor
             self.monitor.record_operation(
                 circuit_type=circuit_name,
@@ -574,45 +578,47 @@ class Prover:
                 cache_hit=cache_hit,
                 device=device,
                 success=success,
-                error=error_msg
+                error=error_msg,
             )
-            
+
             # Add performance metrics to proof metadata
             if proof and hasattr(proof, "metadata"):
                 if not proof.metadata:
                     proof.metadata = {}
-                proof.metadata.update({
-                    "_performance": {
-                        "duration_ms": round(duration_ms, 2),
-                        "memory_delta_mb": round(memory_delta, 2),
-                        "cache_hit": cache_hit,
-                        "device": device,
-                        "input_size": input_size
-                    },
-                    "_safety": {
-                        "backend_type": "real" if self.has_real_backend() else "mock",
-                        "environment": get_environment_info()["environment"],
-                        "production_ready": self.is_production_ready
+                proof.metadata.update(
+                    {
+                        "_performance": {
+                            "duration_ms": round(duration_ms, 2),
+                            "memory_delta_mb": round(memory_delta, 2),
+                            "cache_hit": cache_hit,
+                            "device": device,
+                            "input_size": input_size,
+                        },
+                        "_safety": {
+                            "backend_type": "real" if self.has_real_backend() else "mock",
+                            "environment": get_environment_info()["environment"],
+                            "production_ready": self.is_production_ready,
+                        },
                     }
-                })
-            
+                )
+
             # Production safety validation
             if success and proof:
                 try:
                     # Validate proof is not mock
                     validate_not_mock(proof)
-                    
+
                     # Validate proof structure
                     validate_proof_structure(proof)
-                    
+
                     logger.debug(f"Proof safety validation passed for {circuit_name}")
-                    
+
                 except ProductionSafetyError as e:
                     # Production safety error - this is critical
                     logger.error(f"Production safety violation in proof generation: {e}")
                     success = False
                     error_msg = str(e)
-                    
+
                     # Re-record the failed operation
                     self.monitor.record_operation(
                         circuit_type=circuit_name,
@@ -623,20 +629,24 @@ class Prover:
                         cache_hit=cache_hit,
                         device=device,
                         success=False,
-                        error=f"Safety violation: {error_msg}"
+                        error=f"Safety violation: {error_msg}",
                     )
-                    
+
                     # In production, we must not return unsafe proofs
                     raise e
-                    
+
             # Log performance summary
             if success:
-                logger.info(f"Proof generated for {circuit_name}: {duration_ms:.2f}ms, "
-                           f"memory: +{memory_delta:.2f}MB, device: {device}, "
-                           f"cached: {cache_hit}, backend: {'real' if self.has_real_backend() else 'mock'}")
+                logger.info(
+                    f"Proof generated for {circuit_name}: {duration_ms:.2f}ms, "
+                    f"memory: +{memory_delta:.2f}MB, device: {device}, "
+                    f"cached: {cache_hit}, backend: {'real' if self.has_real_backend() else 'mock'}"
+                )
             else:
-                logger.error(f"Proof generation failed for {circuit_name}: {duration_ms:.2f}ms, "
-                            f"error: {error_msg}")
+                logger.error(
+                    f"Proof generation failed for {circuit_name}: {duration_ms:.2f}ms, "
+                    f"error: {error_msg}"
+                )
 
         return proof
 
@@ -1137,10 +1147,12 @@ class Prover:
         # Start comprehensive performance monitoring
         start_time = time.perf_counter()
         start_memory = self._get_memory_usage_mb()
-        
-        circuit_type = circuit_name or proof.circuit_name if hasattr(proof, 'circuit_name') else "unknown"
+
+        circuit_type = (
+            circuit_name or proof.circuit_name if hasattr(proof, "circuit_name") else "unknown"
+        )
         input_size = len(public_inputs) if public_inputs else 0
-        
+
         success = True
         error_msg = None
         is_valid = False
@@ -1157,7 +1169,7 @@ class Prover:
                 success = False
                 error_msg = str(e)
                 is_valid = False
-                
+
                 # Record safety violation
                 self.monitor.record_operation(
                     circuit_type=circuit_type,
@@ -1168,17 +1180,17 @@ class Prover:
                     cache_hit=False,
                     device="cpu",
                     success=False,
-                    error=f"Safety violation: {error_msg}"
+                    error=f"Safety violation: {error_msg}",
                 )
-                
+
                 raise e
-            
+
             # If we have a real Circom backend, use it
             if self.circom_backend and self.is_production_ready:
                 logger.info(f"Attempting to verify real proof using Circom for {circuit_type}")
                 result = self.circom_backend.verify_proof(
                     circuit_name=circuit_type,
-                    proof=proof.proof_data if hasattr(proof, 'proof_data') else proof.__dict__,
+                    proof=proof.proof_data if hasattr(proof, "proof_data") else proof.__dict__,
                     public_signals=list(public_inputs.values()) if public_inputs else None,
                 )
                 # Only use Circom result if it successfully verified
@@ -1211,7 +1223,7 @@ class Prover:
             duration_ms = (time.perf_counter() - start_time) * 1000
             end_memory = self._get_memory_usage_mb()
             memory_delta = max(0.0, end_memory - start_memory)
-            
+
             # Record operation in monitor
             self.monitor.record_operation(
                 circuit_type=circuit_type,
@@ -1222,39 +1234,49 @@ class Prover:
                 cache_hit=False,  # Verification is not cached
                 device="cpu",  # Verification is always CPU-bound
                 success=success,
-                error=error_msg
+                error=error_msg,
             )
-            
+
             # Log performance summary
             if success:
-                backend_type = "real" if (self.circom_backend and self.is_production_ready) else "mock"
-                logger.info(f"Proof verification for {circuit_type}: {duration_ms:.2f}ms, "
-                           f"valid: {is_valid}, memory: +{memory_delta:.2f}MB, "
-                           f"backend: {backend_type}")
-                
+                backend_type = (
+                    "real" if (self.circom_backend and self.is_production_ready) else "mock"
+                )
+                logger.info(
+                    f"Proof verification for {circuit_type}: {duration_ms:.2f}ms, "
+                    f"valid: {is_valid}, memory: +{memory_delta:.2f}MB, "
+                    f"backend: {backend_type}"
+                )
+
                 # Add safety warning for mock verification
                 if backend_type == "mock":
                     env_info = get_environment_info()
                     if env_info["is_production"]:
-                        logger.error("CRITICAL: Mock verification in production - this is a security violation!")
+                        logger.error(
+                            "CRITICAL: Mock verification in production - this is a security violation!"
+                        )
                     elif env_info["is_staging"]:
-                        logger.warning("STAGING WARNING: Mock verification - ensure real backend before production!")
+                        logger.warning(
+                            "STAGING WARNING: Mock verification - ensure real backend before production!"
+                        )
                     else:
                         logger.debug("Development: Using mock verification")
             else:
-                logger.error(f"Proof verification failed for {circuit_type}: {duration_ms:.2f}ms, "
-                            f"error: {error_msg}")
+                logger.error(
+                    f"Proof verification failed for {circuit_type}: {duration_ms:.2f}ms, "
+                    f"error: {error_msg}"
+                )
 
         return is_valid
-    
+
     def get_performance_report(self) -> str:
         """Get comprehensive performance report from monitor."""
         return self.monitor.generate_report()
-    
+
     def get_performance_dashboard(self) -> Dict:
-        """Get dashboard data from monitor.""" 
+        """Get dashboard data from monitor."""
         return self.monitor.get_dashboard_data()
-    
+
     def get_system_info(self) -> Dict[str, Any]:
         """Get current system performance information."""
         info = {
@@ -1263,20 +1285,22 @@ class Prover:
             "circom_backend_available": self.circom_backend is not None,
             "production_ready": self.is_production_ready,
         }
-        
+
         if self.process and PSUTIL_AVAILABLE:
             try:
-                info.update({
-                    "cpu_percent": self.process.cpu_percent(),
-                    "memory_info": {
-                        "rss": self.process.memory_info().rss / 1024 / 1024,  # MB
-                        "vms": self.process.memory_info().vms / 1024 / 1024,  # MB
-                    },
-                    "threads": self.process.num_threads(),
-                })
+                info.update(
+                    {
+                        "cpu_percent": self.process.cpu_percent(),
+                        "memory_info": {
+                            "rss": self.process.memory_info().rss / 1024 / 1024,  # MB
+                            "vms": self.process.memory_info().vms / 1024 / 1024,  # MB
+                        },
+                        "threads": self.process.num_threads(),
+                    }
+                )
             except Exception:
                 pass
-                
+
         return info
 
     def _verify_mock_proof(self, proof: Proof, public_inputs: dict[str, Any]) -> bool:
@@ -1291,7 +1315,7 @@ class Prover:
             True if mock proof is valid
         """
         # For Proof dataclass, check if it has the expected structure
-        if hasattr(proof, 'proof_id') and hasattr(proof, 'circuit_name'):
+        if hasattr(proof, "proof_id") and hasattr(proof, "circuit_name"):
             # Basic structural validation
             if not proof.proof_id or not proof.circuit_name:
                 logger.warning("Mock proof missing required fields")
@@ -1304,7 +1328,7 @@ class Prover:
 
         # For dict-based proofs
         if isinstance(proof, dict):
-            required_fields = ['proof_id', 'circuit_name', 'proof']
+            required_fields = ["proof_id", "circuit_name", "proof"]
             for field in required_fields:
                 if field not in proof:
                     logger.warning(f"Mock proof missing field: {field}")

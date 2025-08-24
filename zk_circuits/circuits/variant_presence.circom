@@ -4,7 +4,7 @@ include "../node_modules/circomlib/circuits/comparators.circom";
 include "./lib/poseidon.circom";
 
 template VariantPresence() {
-    // Public inputs  
+    // Public inputs
     signal input variant_hash;
     signal input reference_hash;
     signal input commitment_root;

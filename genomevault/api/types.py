@@ -7,10 +7,7 @@ to replace "magical" dict[str, Any] in the API layer.
 
 from typing import List, Optional, Literal
 
-try:
-    from typing import TypedDict  # Python 3.12+
-except ImportError:
-    from typing_extensions import TypedDict  # Python < 3.12
+from typing_extensions import TypedDict  # Use typing_extensions for compatibility
 
 
 class HealthCheckResult(TypedDict):

@@ -1,0 +1,209 @@
+{
+  "timestamp": "2025-08-23T19:13:48.075545",
+  "system_info": {
+    "platform": "Darwin",
+    "python_version": "3.11.8",
+    "cpu_count": 10,
+    "memory_total_gb": 64.0
+  },
+  "tests": {
+    "hdc_encoding": {
+      "status": "success",
+      "error": null,
+      "result": [
+        {
+          "input_size": 20,
+          "output_dimension": 2000,
+          "sparsity": 0.877,
+          "norm": 1.0,
+          "mean": 0.0006511883111670613,
+          "std": 0.02235119603574276,
+          "min": -0.0925769954919815,
+          "max": 0.08342167735099792,
+          "compression_ratio": 0.01
+        },
+        "[-0.03580242  0.         -0.02497791 ...  0.05976294  0.02406501\n  0.        ]"
+      ]
+    },
+    "similarity_metrics": {
+      "status": "success",
+      "error": null,
+      "result": {
+        "hamming": {
+          "distance": 783,
+          "similarity": 0.6085
+        },
+        "cosine": {
+          "similarity": 0.3985612146673683
+        },
+        "euclidean": {
+          "distance": 2.238268340814711
+        },
+        "manhattan": {
+          "distance": 81.00711989728323
+        },
+        "jaccard": {
+          "similarity": 0.423841059602649
+        }
+      }
+    },
+    "pir_protocol": {
+      "status": "success",
+      "error": null,
+      "result": {
+        "database_size": 100,
+        "record_size_bytes": 256,
+        "total_size_mb": 0.02,
+        "queries_tested": 5,
+        "avg_query_time_ms": 0.15,
+        "query_results": [
+          {
+            "target_index": 0,
+            "query_time_ms": 0.39,
+            "result_size": 37
+          },
+          {
+            "target_index": 25,
+            "query_time_ms": 0.1,
+            "result_size": 41
+          },
+          {
+            "target_index": 50,
+            "query_time_ms": 0.09,
+            "result_size": 41
+          },
+          {
+            "target_index": 75,
+            "query_time_ms": 0.09,
+            "result_size": 42
+          },
+          {
+            "target_index": 99,
+            "query_time_ms": 0.09,
+            "result_size": 42
+          }
+        ]
+      }
+    },
+    "zk_proofs": {
+      "status": "success",
+      "error": null,
+      "result": {
+        "prover_initialized": true,
+        "verifier_initialized": true,
+        "public_input_size": 68,
+        "private_input_size": 88,
+        "circuit_type": "variant",
+        "proof_generated": false,
+        "proof_error": "Missing public input: variant_hash"
+      }
+    },
+    "full_pipeline": {
+      "status": "success",
+      "error": null,
+      "result": {
+        "stages": [
+          {
+            "name": "data_generation",
+            "time_s": 0.0006,
+            "output": "50 variants"
+          },
+          {
+            "name": "feature_extraction",
+            "time_s": 0.0,
+            "output": "150 features"
+          },
+          {
+            "name": "hdc_encoding",
+            "time_s": 0.0076,
+            "output": "2000-dim vector"
+          },
+          {
+            "name": "pir_storage",
+            "time_s": 0.0,
+            "output": "32 chunks"
+          },
+          {
+            "name": "pir_retrieval",
+            "time_s": 0.0001,
+            "output": "256 bytes retrieved"
+          }
+        ],
+        "total_time": 0.0084,
+        "data_flow": {
+          "input_variants": 50,
+          "features": 150,
+          "hdc_dimension": 2000,
+          "hdc_sparsity": 1.0,
+          "pir_chunks": 32,
+          "chunk_size": 256,
+          "privacy_preserved": true
+        }
+      }
+    }
+  },
+  "timings": {
+    "hdc_encoding": {
+      "duration_seconds": 0.0148,
+      "start": 1755990828.075707,
+      "end": 1755990828.0904908
+    },
+    "similarity_metrics": {
+      "duration_seconds": 0.0001,
+      "start": 1755990828.090624,
+      "end": 1755990828.090722
+    },
+    "pir_protocol": {
+      "duration_seconds": 0.0009,
+      "start": 1755990828.090863,
+      "end": 1755990828.091779
+    },
+    "zk_proofs": {
+      "duration_seconds": 0.0003,
+      "start": 1755990828.091838,
+      "end": 1755990828.0921128
+    },
+    "full_pipeline": {
+      "duration_seconds": 0.0084,
+      "start": 1755990828.092164,
+      "end": 1755990828.100558
+    }
+  },
+  "memory_usage": {
+    "hdc_encoding": {
+      "before_mb": 323.77,
+      "after_mb": 326.27,
+      "delta_mb": 2.5
+    },
+    "similarity_metrics": {
+      "before_mb": 326.27,
+      "after_mb": 326.31,
+      "delta_mb": 0.04
+    },
+    "pir_protocol": {
+      "before_mb": 326.31,
+      "after_mb": 326.42,
+      "delta_mb": 0.11
+    },
+    "zk_proofs": {
+      "before_mb": 326.42,
+      "after_mb": 326.42,
+      "delta_mb": 0.0
+    },
+    "full_pipeline": {
+      "before_mb": 326.42,
+      "after_mb": 333.33,
+      "delta_mb": 6.91
+    }
+  },
+  "errors": [],
+  "summary": {
+    "total_tests": 5,
+    "passed": 5,
+    "failed": 0,
+    "success_rate": 1.0,
+    "total_time_seconds": 0.0245,
+    "total_memory_mb": 9.56,
+    "avg_time_per_test": 0.0049
+  }
+}

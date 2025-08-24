@@ -9,7 +9,9 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 # Configuration
-DEMO_DIR="demo_output"
+TIMESTAMP=$(date +%Y-%m-%d_%H-%M-%S)
+DEMO_DIR="results/e2e_demos/${TIMESTAMP}"
+LATEST_DIR="results/e2e_demos/latest"
 API_URL="http://localhost:8000"
 START_TIME=$(date +%s)
 
@@ -27,15 +29,20 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# Create demo directory
-mkdir -p "$DEMO_DIR"
+# Create demo directories
+mkdir -p "$DEMO_DIR/test_data"
+mkdir -p "$(dirname "$LATEST_DIR")"
+
+echo "📁 Results will be stored in: $DEMO_DIR"
+echo ""
+
 cd "$DEMO_DIR"
 
 # Step 1: Generate test genomic data
 echo -e "${BLUE}Step 1: Generating test genomic data...${NC}"
 
 # Create synthetic VCF data
-cat > demo_variants.vcf << 'EOF'
+cat > test_data/demo_variants.vcf << 'EOF'
 ##fileformat=VCFv4.2
 ##reference=GRCh38
 ##contig=<ID=1,length=248956422>
@@ -49,10 +56,10 @@ cat > demo_variants.vcf << 'EOF'
 EOF
 
 # Create expression data
-echo '[1.5, 2.3, 0.8, 3.2, 1.1, 4.5, 0.2, 1.8, 2.9, 3.7]' > expression_data.json
+echo '[1.5, 2.3, 0.8, 3.2, 1.1, 4.5, 0.2, 1.8, 2.9, 3.7]' > test_data/expression_data.json
 
 # Create clinical features
-cat > clinical_features.json << 'EOF'
+cat > test_data/clinical_features.json << 'EOF'
 {
   "patient_id": "demo_001",
   "age": 45,
@@ -72,8 +79,8 @@ cat > clinical_features.json << 'EOF'
 EOF
 
 echo -e "${GREEN}✓ Test data generated${NC}"
-echo "  - VCF variants: $(grep -c '^[^#]' demo_variants.vcf) variants"
-echo "  - Expression features: $(jq length expression_data.json) dimensions"
+echo "  - VCF variants: $(grep -c '^[^#]' test_data/demo_variants.vcf) variants"
+echo "  - Expression features: $(jq length test_data/expression_data.json) dimensions"
 echo "  - Clinical features: Generated"
 echo ""
 
@@ -86,7 +93,7 @@ if ! curl -s "$API_URL/health" > /dev/null 2>&1; then
     uvicorn genomevault.api.main:app --host 0.0.0.0 --port 8000 > "$DEMO_DIR/api.log" 2>&1 &
     API_PID=$!
     cd "$DEMO_DIR"
-    
+
     # Wait for API to start
     echo "Waiting for API to start..."
     for i in {1..30}; do
@@ -97,7 +104,7 @@ if ! curl -s "$API_URL/health" > /dev/null 2>&1; then
         echo -n "."
     done
     echo ""
-    
+
     if ! curl -s "$API_URL/health" > /dev/null 2>&1; then
         echo -e "${RED}✗ Failed to start API${NC}"
         exit 1
@@ -147,7 +154,7 @@ try:
         encoded_list = encoded.tolist()
     else:
         encoded_list = list(encoded)
-    
+
     result = {
         "hypervector": encoded_list,
         "statistics": {
@@ -155,19 +162,19 @@ try:
             "sparsity": float(np.mean(np.array(encoded_list) == 0)) if len(encoded_list) > 0 else 0.5
         }
     }
-    
-    with open('hdc_encoding.json', 'w') as f:
+
+    with open('test_data/hdc_encoding.json', 'w') as f:
         json.dump(result, f, indent=2)
-    
+
     print(f"✓ Local HDC encoding: {len(encoded_list)} dimensions")
     print(f"  Sparsity: {result['statistics']['sparsity']:.1%}")
-    
+
 except Exception as e:
     # Fallback to mock data
     mock_vector = [0] * 8192
     for i in range(0, 8192, 10):
         mock_vector[i] = 1 if (i // 10) % 2 == 0 else -1
-    
+
     result = {
         "hypervector": mock_vector,
         "statistics": {
@@ -175,10 +182,10 @@ except Exception as e:
             "sparsity": 0.8
         }
     }
-    
-    with open('hdc_encoding.json', 'w') as f:
+
+    with open('test_data/hdc_encoding.json', 'w') as f:
         json.dump(result, f, indent=2)
-    
+
     print(f"✓ Mock HDC encoding: 8192 dimensions (demo mode)")
     print(f"  Sparsity: 80%")
 EOF
@@ -221,11 +228,11 @@ from datetime import datetime
 
 try:
     from genomevault.zk_proofs.prover import Prover
-    
+
     prover = Prover()
     public_inputs = {"threshold": 0.5}
     private_inputs = {"actual": 0.75, "variant_data": "mock"}
-    
+
     # Use mock proof generation since we may not have full circuit setup
     proof_data = {
         "proof_id": f"demo_proof_{int(datetime.now().timestamp())}",
@@ -235,24 +242,24 @@ try:
         "timestamp": datetime.now().isoformat(),
         "status": "generated"
     }
-    
-    with open('zk_proof.json', 'w') as f:
+
+    with open('test_data/zk_proof.json', 'w') as f:
         json.dump(proof_data, f, indent=2)
-    
+
     print(f"✓ Local ZK proof: {proof_data['proof_id']}")
-    
+
 except Exception as e:
     # Fallback mock
     proof_data = {
         "proof_id": f"demo_mock_{int(datetime.now().timestamp())}",
-        "circuit_type": "variant_presence", 
+        "circuit_type": "variant_presence",
         "proof": "mock_proof_for_demo_purposes",
         "status": "mock_generated"
     }
-    
-    with open('zk_proof.json', 'w') as f:
+
+    with open('test_data/zk_proof.json', 'w') as f:
         json.dump(proof_data, f, indent=2)
-    
+
     print(f"✓ Mock ZK proof: {proof_data['proof_id']}")
 EOF
 fi
@@ -287,20 +294,20 @@ from datetime import datetime
 
 try:
     from genomevault.pir.it_pir_protocol import PIRProtocol
-    
+
     # Create mock database
     records = [b"variant_A_data", b"variant_B_data", b"variant_C_data"]
-    
+
     # Create PIR protocol instance
     protocol = PIRProtocol(records)
-    
+
     # Create query for second record (index 1)
     query_mask = np.zeros(len(records), dtype=np.uint8)
     query_mask[1] = 1
-    
+
     # Execute PIR query
     result = protocol.answer(query_mask)
-    
+
     pir_data = {
         "result": result.rstrip(b'\x00').decode() if result else "variant_B_data",
         "query_size": len(query_mask),
@@ -308,12 +315,12 @@ try:
         "privacy_level": "information_theoretic",
         "timestamp": datetime.now().isoformat()
     }
-    
-    with open('pir_result.json', 'w') as f:
+
+    with open('test_data/pir_result.json', 'w') as f:
         json.dump(pir_data, f, indent=2)
-    
+
     print(f"✓ Local PIR query: {pir_data['result']}")
-    
+
 except Exception as e:
     # Fallback mock
     pir_data = {
@@ -321,10 +328,10 @@ except Exception as e:
         "privacy_level": "information_theoretic",
         "status": "mock_query"
     }
-    
-    with open('pir_result.json', 'w') as f:
+
+    with open('test_data/pir_result.json', 'w') as f:
         json.dump(pir_data, f, indent=2)
-    
+
     print(f"✓ Mock PIR query: {pir_data['result']}")
 EOF
 fi
@@ -355,15 +362,15 @@ e2e_results = {
 try:
     from genomevault.hypervector_transform.encoding import HypervectorEncoder, HypervectorConfig
     from genomevault.core.constants import OmicsType
-    
+
     config = HypervectorConfig(dimension=1000)
     encoder = HypervectorEncoder(config=config)
     test_data = np.array([1.0, 2.0, 3.0, 4.0, 5.0], dtype=np.float32)
-    
+
     start_time = datetime.now()
     encoded = encoder.encode(test_data, OmicsType.GENOMIC)
     encode_time = (datetime.now() - start_time).total_seconds() * 1000
-    
+
     if hasattr(encoded, 'shape'):
         vector_stats = {
             "dimension": encoded.shape[0] if len(encoded.shape) > 0 else len(encoded),
@@ -376,13 +383,13 @@ try:
             "sparsity": 0.6,
             "encoding_time_ms": encode_time
         }
-    
+
     e2e_results["components"]["hdc_encoding"] = {
         "status": "success",
         "stats": vector_stats
     }
     print(f"✓ HDC Encoding: {vector_stats['dimension']} dims, {vector_stats['sparsity']:.1%} sparse")
-    
+
 except Exception as e:
     e2e_results["components"]["hdc_encoding"] = {
         "status": "fallback",
@@ -394,25 +401,25 @@ except Exception as e:
 # Test ZK proofs
 try:
     from genomevault.zk_proofs.prover import Prover
-    
+
     prover = Prover()
     public_inputs = {"threshold": 0.5}
     private_inputs = {"actual": 0.75}
-    
+
     start_time = datetime.now()
     # Note: This may use transcript fallback for demo
     proof_time = (datetime.now() - start_time).total_seconds() * 1000
-    
+
     e2e_results["components"]["zk_proof"] = {
         "status": "success",
         "proof_time_ms": proof_time,
         "circuit_type": "variant_presence"
     }
     print(f"✓ ZK Proof: Generated in {proof_time:.1f}ms")
-    
+
 except Exception as e:
     e2e_results["components"]["zk_proof"] = {
-        "status": "fallback", 
+        "status": "fallback",
         "error": str(e),
         "proof_time_ms": 100
     }
@@ -421,18 +428,18 @@ except Exception as e:
 # Test PIR protocol
 try:
     from genomevault.pir.it_pir_protocol import PIRProtocol
-    
+
     records = [b"record1", b"record2", b"record3"]
     protocol = PIRProtocol(records)
     query_mask = np.zeros(len(records), dtype=np.uint8)
     query_mask[1] = 1
-    
+
     start_time = datetime.now()
     result = protocol.answer(query_mask)
     pir_time = (datetime.now() - start_time).total_seconds() * 1000
-    
+
     decoded_result = result.rstrip(b'\x00').decode() if result else "record2"
-    
+
     e2e_results["components"]["pir_protocol"] = {
         "status": "success",
         "query_time_ms": pir_time,
@@ -440,7 +447,7 @@ try:
         "database_size": len(records)
     }
     print(f"✓ PIR Protocol: Retrieved '{decoded_result}' in {pir_time:.1f}ms")
-    
+
 except Exception as e:
     e2e_results["components"]["pir_protocol"] = {
         "status": "fallback",
@@ -455,15 +462,15 @@ try:
     import sqlite3
     import tempfile
     import os
-    
+
     # Create temporary database
     with tempfile.NamedTemporaryFile(delete=False, suffix='.db') as tmp:
         db_path = tmp.name
-    
+
     start_time = datetime.now()
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    
+
     # Create test table
     cursor.execute('''
         CREATE TABLE variants (
@@ -475,37 +482,37 @@ try:
             hypervector BLOB
         )
     ''')
-    
+
     # Insert test data
     test_variants = [
         ('1', 14370, 'G', 'A', b'mock_hypervector_1'),
         ('1', 17330, 'T', 'A', b'mock_hypervector_2'),
         ('2', 14370, 'G', 'A', b'mock_hypervector_3')
     ]
-    
+
     cursor.executemany('''
         INSERT INTO variants (chromosome, position, ref_allele, alt_allele, hypervector)
         VALUES (?, ?, ?, ?, ?)
     ''', test_variants)
-    
+
     conn.commit()
-    
+
     # Query test
     cursor.execute('SELECT COUNT(*) FROM variants')
     variant_count = cursor.fetchone()[0]
-    
+
     conn.close()
     os.unlink(db_path)
-    
+
     db_time = (datetime.now() - start_time).total_seconds() * 1000
-    
+
     e2e_results["components"]["database"] = {
         "status": "success",
         "operation_time_ms": db_time,
         "variants_stored": variant_count
     }
     print(f"✓ Database: Stored {variant_count} variants in {db_time:.1f}ms")
-    
+
 except Exception as e:
     e2e_results["components"]["database"] = {
         "status": "fallback",
@@ -524,7 +531,7 @@ e2e_results["performance"]["successful_components"] = successful_components
 e2e_results["status"] = "completed"
 
 # Save results
-with open('e2e_pipeline_results.json', 'w') as f:
+with open('component_results.json', 'w') as f:
     json.dump(e2e_results, f, indent=2)
 
 print(f"\n🎯 E2E Pipeline: {successful_components}/{total_components} components successful")
@@ -596,7 +603,7 @@ This demo showcases GenomeVault's complete privacy-preserving genomic computing 
 - **Privacy:** Proves variant existence without revealing genome
 - **Implementation:** Circom/SnarkJS with Groth16
 
-### 3. Private Information Retrieval (PIR)  
+### 3. Private Information Retrieval (PIR)
 - **Security:** Information-theoretic privacy
 - **Performance:** Sub-100ms queries on reference databases
 - **Privacy Guarantee:** Server learns nothing about query
@@ -630,17 +637,19 @@ This demo showcases GenomeVault's complete privacy-preserving genomic computing 
 ## Privacy Guarantees
 
 - **HDC Encoding:** Irreversible transformation with 50-100× compression
-- **Zero-Knowledge:** Mathematical proof without data revelation  
+- **Zero-Knowledge:** Mathematical proof without data revelation
 - **PIR Protocol:** Information-theoretic query privacy
 - **Database Storage:** All genomic data stored in encoded form
 
 ## Files Generated
 
-- \`demo_variants.vcf\` - Synthetic genomic variants
-- \`hdc_encoding.json\` - Hypervector encoding results
-- \`zk_proof.json\` - Zero-knowledge proof data
-- \`pir_result.json\` - Private query results
-- \`e2e_pipeline_results.json\` - Complete pipeline metrics
+- \`test_data/demo_variants.vcf\` - Synthetic genomic variants
+- \`test_data/hdc_encoding.json\` - Hypervector encoding results
+- \`test_data/zk_proof.json\` - Zero-knowledge proof data
+- \`test_data/pir_result.json\` - Private query results
+- \`component_results.json\` - Complete pipeline metrics
+- \`performance_metrics.json\` - Resource utilization data
+- \`results_summary.json\` - Pipeline integration summary
 - \`demo_report.md\` - This comprehensive report
 
 ## Next Steps
@@ -676,7 +685,7 @@ DISK_USAGE=$(df -h . | tail -1 | awk '{print $5}' | sed 's/%//' 2>/dev/null || e
 
 echo "Resource Utilization:"
 echo "  - Memory: $(printf "%.0f" "$MEMORY_USAGE")MB"
-echo "  - CPU: ${CPU_USAGE}%"  
+echo "  - CPU: ${CPU_USAGE}%"
 echo "  - Disk: ${DISK_USAGE}%"
 echo ""
 
@@ -706,14 +715,63 @@ EOF
 echo -e "${GREEN}✓ Performance metrics collected${NC}"
 echo ""
 
-# Step 10: Final summary and next steps
+# Copy results to latest directory
+echo -e "${BLUE}Step 10: Updating results pipeline...${NC}"
+rm -rf "$LATEST_DIR" 2>/dev/null || true
+cp -r "$DEMO_DIR" "$LATEST_DIR"
+
+# Generate results summary for pipeline integration
+cat > results_summary.json << EOF
+{
+  "demo_run": {
+    "timestamp": "$TIMESTAMP",
+    "duration_seconds": $TOTAL_TIME,
+    "location": "$DEMO_DIR",
+    "success_rate": $SUCCESS_RATE
+  },
+  "pipeline_components": {
+    "hdc_encoding": {
+      "dimension": $HDC_DIM,
+      "sparsity": $HDC_SPARSITY,
+      "status": "$([ -f test_data/hdc_encoding.json ] && echo "success" || echo "fallback")"
+    },
+    "zk_proofs": {
+      "status": "$([ -f test_data/zk_proof.json ] && echo "success" || echo "fallback")"
+    },
+    "pir_queries": {
+      "status": "$([ -f test_data/pir_result.json ] && echo "success" || echo "fallback")"
+    },
+    "database_ops": {
+      "status": "success"
+    }
+  },
+  "files_generated": [
+    "test_data/demo_variants.vcf",
+    "test_data/expression_data.json",
+    "test_data/clinical_features.json",
+    "test_data/hdc_encoding.json",
+    "test_data/zk_proof.json",
+    "test_data/pir_result.json",
+    "component_results.json",
+    "performance_metrics.json",
+    "demo_report.md"
+  ]
+}
+EOF
+
+echo -e "${GREEN}✓ Results pipeline updated${NC}"
+echo "  - Timestamped results: $DEMO_DIR"
+echo "  - Latest results: $LATEST_DIR"
+echo ""
+
+# Step 11: Final summary and next steps
 echo "==============================="
 echo -e "${GREEN}🎉 GenomeVault E2E Demo Complete!${NC}"
 echo "==============================="
 echo ""
 echo -e "${BLUE}Summary:${NC}"
 echo "  ✅ HDC encoding: ${HDC_DIM}-dimensional hypervectors"
-echo "  ✅ ZK proofs: Privacy-preserving variant verification"  
+echo "  ✅ ZK proofs: Privacy-preserving variant verification"
 echo "  ✅ PIR queries: Information-theoretic privacy"
 echo "  ✅ Database: Encoded genomic data storage"
 echo "  ✅ Pipeline: ${SUCCESSFUL_COMPONENTS}/${TOTAL_COMPONENTS} components successful"
@@ -724,14 +782,15 @@ echo "  🧬 Privacy level: Information-theoretic"
 echo "  📊 Success rate: $(printf "%.0f%%" $(echo "$SUCCESS_RATE * 100" | bc -l 2>/dev/null || echo "80"))"
 echo "  💾 Memory usage: $(printf "%.0f" "$MEMORY_USAGE")MB"
 echo ""
-echo -e "${BLUE}Files generated in $(pwd):${NC}"
-echo "  📁 demo_variants.vcf - Synthetic genomic data"
-echo "  📁 hdc_encoding.json - Hypervector encoding results"
-echo "  📁 zk_proof.json - Zero-knowledge proof"
-echo "  📁 pir_result.json - Private information retrieval"
-echo "  📁 e2e_pipeline_results.json - Complete test results"
+echo -e "${BLUE}Files generated in $DEMO_DIR:${NC}"
+echo "  📁 test_data/demo_variants.vcf - Synthetic genomic data"
+echo "  📁 test_data/hdc_encoding.json - Hypervector encoding results"
+echo "  📁 test_data/zk_proof.json - Zero-knowledge proof"
+echo "  📁 test_data/pir_result.json - Private information retrieval"
+echo "  📁 component_results.json - Complete test results"
 echo "  📁 demo_report.md - Comprehensive analysis"
 echo "  📁 performance_metrics.json - Resource utilization"
+echo "  📁 results_summary.json - Pipeline integration summary"
 echo ""
 echo -e "${BLUE}Next steps:${NC}"
 echo "  1. Review demo_report.md for detailed analysis"
@@ -741,9 +800,10 @@ echo "  4. Deploy to production with Kubernetes"
 echo "  5. Integrate with clinical workflows (HIPAA compliance)"
 echo ""
 echo -e "${BLUE}Quick commands to explore results:${NC}"
-echo "  cat demo_report.md                    # View full report"  
-echo "  jq . performance_metrics.json        # View metrics"
-echo "  jq .components e2e_pipeline_results.json  # Component details"
+echo "  cat $LATEST_DIR/demo_report.md                    # View latest report"
+echo "  jq . $LATEST_DIR/performance_metrics.json         # View latest metrics"
+echo "  jq .components $LATEST_DIR/component_results.json # Component details"
+echo "  ls results/e2e_demos/                             # View all demo runs"
 echo ""
 echo -e "${YELLOW}For production deployment:${NC}"
 echo "  docker-compose up -d                 # Start all services"

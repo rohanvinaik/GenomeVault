@@ -11,7 +11,7 @@ echo "Compiling variant presence circuit..."
 circom circuits/variant_presence.circom --r1cs --wasm --sym -o build/ --prime bn128
 
 # Compile test circuit
-echo "Compiling test circuit..."  
+echo "Compiling test circuit..."
 circom circuits/test/variant_presence_test.circom --r1cs --wasm --sym -o build/ --prime bn128
 
 # Generate trusted setup (for testing - use ceremony for production)

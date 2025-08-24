@@ -6,7 +6,9 @@ This module shows best practices for partial update models to avoid
 """
 
 from pydantic import BaseModel, Field, field_validator, model_validator
-from typing import Optional, Any, Dict, List, TypedDict
+from typing import Optional, Any, Dict, List
+
+from typing_extensions import TypedDict  # Use typing_extensions for compatibility
 
 from genomevault.api.utils import dict_for_update as _dict_for_update
 
@@ -34,6 +36,7 @@ class UserSettingsPatch(UpdateModelMixin):
 
     class Config:
         """Configuration settings for ."""
+
         schema_extra = {
             "example": {
                 "notification_enabled": True,
@@ -100,13 +103,9 @@ class GenomicAnalysisPatch(BaseModel):
     PATCH model with validation on optional fields.
     """
 
-    analysis_type: Optional[str] = Field(
-        None, pattern="^(SNV|CNV|SV|INDEL)$"
-    )
+    analysis_type: Optional[str] = Field(None, pattern="^(SNV|CNV|SV|INDEL)$")
     quality_threshold: Optional[float] = Field(None, ge=0.0, le=1.0)
-    reference_genome: Optional[str] = Field(
-        None, pattern="^(hg19|hg38|GRCh37|GRCh38)$"
-    )
+    reference_genome: Optional[str] = Field(None, pattern="^(hg19|hg38|GRCh37|GRCh38)$")
     filters: Optional[Dict[str, Any]] = None
 
     @field_validator("quality_threshold")  # type: ignore
@@ -122,6 +121,7 @@ class GenomicAnalysisPatch(BaseModel):
 
     class Config:
         """Configuration settings for ."""
+
         # Allow mutation for in-place updates
         allow_mutation = True
         schema_extra = {

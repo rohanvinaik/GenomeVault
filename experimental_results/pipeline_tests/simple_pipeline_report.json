@@ -1,0 +1,23 @@
+{
+  "timestamp": "2025-08-24T05:17:41.988669",
+  "components": {
+    "hdc": {
+      "status": "success",
+      "dimension": 5000,
+      "encoding_time": 0.01757526397705078,
+      "shape": "(100, 5000)",
+      "similarity_example": 0.544999999999999
+    },
+    "zk": {
+      "status": "success",
+      "generation_time": 9.5367431640625e-07,
+      "verification_time": 0.0,
+      "verified": true
+    },
+    "monitoring": {
+      "status": "success",
+      "uptime": 0.009537935256958008,
+      "active_alerts": 0
+    }
+  }
+}

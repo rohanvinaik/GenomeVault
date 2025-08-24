@@ -11,7 +11,9 @@ Core type definitions for GenomeVault internal boundaries.
 This module provides TypedDict and structured types to replace
 "magical" dict[str, Any] throughout the codebase.
 """
-from typing import TypedDict, List, Optional, Dict, Literal, Any
+from typing import List, Optional, Dict, Literal, Any
+
+from typing_extensions import TypedDict  # Use typing_extensions for compatibility
 
 
 class ShardMetadata(TypedDict):

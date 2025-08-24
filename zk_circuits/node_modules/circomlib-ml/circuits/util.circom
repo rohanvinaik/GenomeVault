@@ -12,7 +12,7 @@ template IsNegative() {
     component num2Bits = Num2Bits(254);
     num2Bits.in <== in;
     component sign = Sign();
-    
+
     for (var i = 0; i < 254; i++) {
         sign.in[i] <== num2Bits.out[i];
     }
@@ -20,7 +20,7 @@ template IsNegative() {
     out <== sign.sign;
 }
 
-/* Currently, IsPositive() treats zero as a positive number for better performance. 
+/* Currently, IsPositive() treats zero as a positive number for better performance.
    The following is the correct version which output is 1 when the signal in is a positive number, 0 when it is zero or a negative number
 
 template IsPositive() {
@@ -30,14 +30,14 @@ template IsPositive() {
     component num2Bits = Num2Bits(254);
     num2Bits.in <== in;
     component sign = Sign();
-    
+
     for (var i = 0; i < 254; i++) {
         sign.in[i] <== num2Bits.out[i];
     }
-    
+
     component isz = IsZero();
     isz.in <== in;
-    
+
 
     out <== (1 - sign.sign) * (1 - isz.out);
 }
@@ -50,7 +50,7 @@ template IsPositive() {
     component num2Bits = Num2Bits(254);
     num2Bits.in <== in;
     component sign = Sign();
-    
+
     for (var i = 0; i < 254; i++) {
         sign.in[i] <== num2Bits.out[i];
     }
@@ -64,7 +64,7 @@ template Sum(nInputs) {
 
     signal partialSum[nInputs];
     partialSum[0] <== in[0];
-    
+
     for (var i=1; i<nInputs; i++) {
         partialSum[i] <== partialSum[i-1] + in[i];
     }
