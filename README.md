@@ -57,6 +57,7 @@ With GenomeVault, that entire process is transformed.
 - Study genetic patterns from millions of people without violating privacy
 - Accelerate drug discovery by 10× through private genetic collaborations
 - Enable precision medicine breakthroughs impossible with current systems
+- **Beyond BLAST:** Analyze population-wide patterns while preserving individual privacy—something sequence alignment tools cannot do
 
 **For Healthcare Systems:**
 - Reduce genetic testing costs by 200×
@@ -94,6 +95,21 @@ cd GenomeVault
 **WORLD FIRST:** GenomeVault is the first platform to apply brain-inspired Hyperdimensional Computing to genomics at scale. We transform a massive 40MB of genetic data into a 1.3KB "genetic sketch."
 
 This isn't standard zip compression. It's a new form of lossy-but-meaningful encoding that preserves the essential, discriminative information of a genome while achieving a **2,116× compression ratio**.
+
+#### GenomeVault vs. BLAST: Complementary Technologies
+
+**BLAST (Basic Local Alignment Search Tool)** is the gold standard for finding similar sequences in genomic databases. But BLAST and GenomeVault solve fundamentally different problems:
+
+| **Aspect** | **BLAST** | **GenomeVault** | **When to Use** |
+| :--- | :--- | :--- | :--- |
+| **Purpose** | Find similar sequences | Encode entire genomes for privacy & speed | BLAST: Discovering homologs<br>GenomeVault: Clinical decisions |
+| **Query Type** | "What sequences match this gene?" | "Does this patient have variant X?" | BLAST: Research discovery<br>GenomeVault: Yes/no diagnostics |
+| **Speed** | Seconds to hours for large DBs | **1.49ms** for any query | BLAST: Batch analysis OK<br>GenomeVault: Real-time required |
+| **Privacy** | Raw sequences exposed | **Zero-knowledge proofs** | BLAST: Public data<br>GenomeVault: Patient data |
+| **Data Size** | Requires full sequences (GB) | **1.3KB hypervector** | BLAST: Research servers<br>GenomeVault: Mobile devices |
+| **Accuracy** | Exact sequence alignment | Pattern-preserving encoding | BLAST: Base-pair precision<br>GenomeVault: Clinical classification |
+
+**The Power of Combination:** GenomeVault can identify which genomes to analyze, then BLAST can perform detailed sequence alignment on those candidates—combining privacy-preserving filtering with precise sequence analysis.
 
 | Metric | Industry Standard | **GenomeVault** | Improvement | Validation |
 | :--- | :--- | :--- | :--- | :--- |
@@ -234,6 +250,16 @@ curl -X POST http://localhost:8000/api/v1/encode \
 - **Drug discovery**: Genomic signatures without data sharing
 - **Population genomics**: Ancestry analysis on edge devices
 - **Biobank federation**: Global collaboration with local privacy
+
+#### Genomic Pattern Analysis: Beyond What BLAST Can Do
+
+**Private Population Studies:** Unlike BLAST which requires raw sequences, GenomeVault enables:
+- **Privacy-Preserving Cohort Discovery:** Find patients with similar genomic patterns without exposing anyone's DNA
+- **Encrypted Pattern Matching:** Search for disease signatures across millions of genomes while maintaining HIPAA compliance
+- **Real-Time Outbreak Tracking:** Monitor viral mutations across populations without centralizing genomic data
+- **Federated Meta-Analysis:** Combine results from multiple studies without sharing raw genetic data
+
+**Example:** A researcher studying rare disease patterns can query 10 million patient genomes in different hospitals simultaneously, finding matching patterns in seconds—all while the actual DNA sequences never leave their original institutions. BLAST would require copying all 30TB of raw data to a central server, violating privacy regulations.
 
 ### 📱 **Consumer Applications**
 - **Wearable health**: Real-time genetic insights
