@@ -1,6 +1,6 @@
 # HDC Fingerprint Validation Report
 **Protocol**: Subject Disjoint
-**Generated**: 2025-08-24T22:54:53.071284
+**Generated**: 2025-08-24T23:17:56.861058
 
 ## Protocol Configuration
 - **Split Strategy**: subject_disjoint
@@ -25,10 +25,10 @@
 ## Aggregate Performance
 - **AUC**: 1.000 [1.000, 1.000]
 - **EER**: 0.000 (95% upper bound: 0.000)
-- **d-prime**: 28.82
-- **Score Margin**: 0.130
+- **d-prime**: 38.01
+- **Score Margin**: 0.107
 - **Genuine**: μ=0.976, σ=0.005
-- **Impostor**: μ=0.520, σ=0.025
+- **Impostor**: μ=0.516, σ=0.024
 
 ## Operating Points
 | Operating Point | FAR | FRR |
@@ -41,19 +41,19 @@
 | 5% FAR | 0.05 | 1.0000 |
 
 ## Validation Checks ✓
-- **Label Shuffle AUC**: 0.476 (should be ≈ 0.5)
-- **Label Shuffle EER**: 0.476 (should be ≈ 0.5)
+- **Label Shuffle AUC**: 0.521 (should be ≈ 0.5)
+- **Label Shuffle EER**: 0.479 (should be ≈ 0.5)
 - **Duplicate Rate**: 0.000 (should be ≈ 0)
 - **Validation Status**: ✅
 
 ## Per-Fold Results
 | Fold | AUC | CI | EER | d' | Margin | μ_gen±σ | μ_imp±σ | N_pairs |
 |------|-----|----|----|----|---------|---------|---------|---------| 
-| 0 | 1.000 | [1.000, 1.000] | 0.000 | 41.9 | 0.135 | 0.976±0.004 | 0.516±0.023 | 5000+40000 |
-| 1 | 1.000 | [1.000, 1.000] | 0.000 | 26.9 | 0.101 | 0.975±0.005 | 0.519±0.028 | 5000+40000 |
-| 2 | 1.000 | [1.000, 1.000] | 0.000 | 28.6 | 0.111 | 0.977±0.004 | 0.526±0.027 | 5000+40000 |
-| 3 | 1.000 | [1.000, 1.000] | 0.000 | 28.8 | 0.130 | 0.976±0.005 | 0.519±0.021 | 5000+40000 |
-| 4 | 1.000 | [1.000, 1.000] | 0.000 | 33.7 | 0.136 | 0.977±0.005 | 0.521±0.027 | 5000+40000 |
+| 0 | 1.000 | [1.000, 1.000] | 0.000 | 38.0 | 0.106 | 0.977±0.006 | 0.510±0.024 | 5000+40000 |
+| 1 | 1.000 | [1.000, 1.000] | 0.000 | 43.0 | 0.107 | 0.975±0.004 | 0.514±0.026 | 5000+40000 |
+| 2 | 1.000 | [1.000, 1.000] | 0.000 | 28.8 | 0.075 | 0.975±0.005 | 0.519±0.026 | 5000+40000 |
+| 3 | 1.000 | [1.000, 1.000] | 0.000 | 33.4 | 0.133 | 0.977±0.005 | 0.518±0.024 | 5000+40000 |
+| 4 | 1.000 | [1.000, 1.000] | 0.000 | 43.8 | 0.148 | 0.975±0.005 | 0.520±0.022 | 5000+40000 |
 
 ## Artifacts
 - **ROC Curves**: roc_curves.png
@@ -61,9 +61,9 @@
 - **Score Distributions**: score_distributions.png
 
 ## Provenance
-- **Timestamp**: 2025-08-24T22:54:53.071284
+- **Timestamp**: 2025-08-24T23:17:56.861058
 - **Dataset SHA256**: `1269cbf6a5ce66b82579d9a340f73efdc459145ad93b0a7b24aecc408c4a6da2`
-- **Code Git SHA**: `7dfd95b5f7988d6e24f15e3176689857d553ff42`
+- **Code Git SHA**: `894f3047b5150bfd00fe06cda4f0728b06857c5e`
 - **Python Version**: 3.11.8 | packaged by conda-forge | (main, Feb 16 2024, 20:49:36) [Clang 16.0.6 ]
 
 ## PIR Performance Context
@@ -88,14 +88,6 @@
 
 ## Signature Verification
 ```bash
-# Verify bundle integrity (from repository root)
-openssl dgst -sha256 -verify docs/keys/benchmark_pubkey.pem -signature benchmark_results/bundle_subject_disjoint.tar.gz.sig benchmark_results/bundle_subject_disjoint.tar.gz
-
-# Or verify using key from extracted bundle
-openssl dgst -sha256 -verify benchmark_pubkey.pem -signature ../bundle_subject_disjoint.tar.gz.sig ../bundle_subject_disjoint.tar.gz
-```
-
-**Public Key Fingerprint (SHA256):**
-```
-sha256:92be6e68e3811afb4a29a3cafac2c9beeec445cdb3de2435a2479f8e1b9b3f22
+# Verify bundle integrity
+openssl dgst -sha256 -verify docs/keys/benchmark_pubkey.pem -signature bundle_subject_disjoint.tar.gz.sig bundle_subject_disjoint.tar.gz
 ```

@@ -1,6 +1,6 @@
 # HDC Fingerprint Validation Report
 **Protocol**: Lfamo
-**Generated**: 2025-08-24T22:54:55.165190
+**Generated**: 2025-08-24T23:17:59.036678
 
 ## Protocol Configuration
 - **Split Strategy**: LFamO
@@ -25,10 +25,10 @@
 ## Aggregate Performance
 - **AUC**: 1.000 [1.000, 1.000]
 - **EER**: 0.000 (95% upper bound: 0.001)
-- **d-prime**: 37.60
-- **Score Margin**: 0.098
-- **Genuine**: μ=0.975, σ=0.005
-- **Impostor**: μ=0.519, σ=0.025
+- **d-prime**: 38.43
+- **Score Margin**: 0.133
+- **Genuine**: μ=0.974, σ=0.005
+- **Impostor**: μ=0.523, σ=0.025
 
 ## Operating Points
 | Operating Point | FAR | FRR |
@@ -41,19 +41,19 @@
 | 5% FAR | 0.05 | 1.0000 |
 
 ## Validation Checks ✓
-- **Label Shuffle AUC**: 0.512 (should be ≈ 0.5)
-- **Label Shuffle EER**: 0.488 (should be ≈ 0.5)
+- **Label Shuffle AUC**: 0.455 (should be ≈ 0.5)
+- **Label Shuffle EER**: 0.455 (should be ≈ 0.5)
 - **Duplicate Rate**: 0.000 (should be ≈ 0)
 - **Validation Status**: ✅
 
 ## Per-Fold Results
 | Fold | AUC | CI | EER | d' | Margin | μ_gen±σ | μ_imp±σ | N_pairs |
 |------|-----|----|----|----|---------|---------|---------|---------| 
-| 0 | 1.000 | [1.000, 1.000] | 0.000 | 36.8 | 0.138 | 0.977±0.004 | 0.519±0.027 | 500+5000 |
-| 1 | 1.000 | [1.000, 1.000] | 0.000 | 37.6 | 0.142 | 0.976±0.005 | 0.526±0.024 | 500+5000 |
-| 2 | 1.000 | [1.000, 1.000] | 0.000 | 38.4 | 0.084 | 0.975±0.005 | 0.516±0.026 | 500+5000 |
-| 3 | 1.000 | [1.000, 1.000] | 0.000 | 40.0 | 0.098 | 0.973±0.005 | 0.515±0.024 | 500+5000 |
-| 4 | 1.000 | [1.000, 1.000] | 0.000 | 32.5 | 0.086 | 0.974±0.005 | 0.518±0.026 | 500+5000 |
+| 0 | 1.000 | [1.000, 1.000] | 0.000 | 39.5 | 0.159 | 0.974±0.006 | 0.517±0.023 | 500+5000 |
+| 1 | 1.000 | [1.000, 1.000] | 0.000 | 36.5 | 0.086 | 0.973±0.006 | 0.533±0.024 | 500+5000 |
+| 2 | 1.000 | [1.000, 1.000] | 0.000 | 38.4 | 0.152 | 0.974±0.005 | 0.524±0.025 | 500+5000 |
+| 3 | 1.000 | [1.000, 1.000] | 0.000 | 26.6 | 0.105 | 0.976±0.004 | 0.522±0.029 | 500+5000 |
+| 4 | 1.000 | [1.000, 1.000] | 0.000 | 39.4 | 0.133 | 0.975±0.005 | 0.516±0.025 | 500+5000 |
 
 ## Artifacts
 - **ROC Curves**: roc_curves.png
@@ -61,9 +61,9 @@
 - **Score Distributions**: score_distributions.png
 
 ## Provenance
-- **Timestamp**: 2025-08-24T22:54:55.165190
+- **Timestamp**: 2025-08-24T23:17:59.036678
 - **Dataset SHA256**: `1269cbf6a5ce66b82579d9a340f73efdc459145ad93b0a7b24aecc408c4a6da2`
-- **Code Git SHA**: `7dfd95b5f7988d6e24f15e3176689857d553ff42`
+- **Code Git SHA**: `894f3047b5150bfd00fe06cda4f0728b06857c5e`
 - **Python Version**: 3.11.8 | packaged by conda-forge | (main, Feb 16 2024, 20:49:36) [Clang 16.0.6 ]
 
 ## PIR Performance Context
@@ -88,14 +88,6 @@
 
 ## Signature Verification
 ```bash
-# Verify bundle integrity (from repository root)
-openssl dgst -sha256 -verify docs/keys/benchmark_pubkey.pem -signature benchmark_results/bundle_LFamO.tar.gz.sig benchmark_results/bundle_LFamO.tar.gz
-
-# Or verify using key from extracted bundle
-openssl dgst -sha256 -verify benchmark_pubkey.pem -signature ../bundle_LFamO.tar.gz.sig ../bundle_LFamO.tar.gz
-```
-
-**Public Key Fingerprint (SHA256):**
-```
-sha256:92be6e68e3811afb4a29a3cafac2c9beeec445cdb3de2435a2479f8e1b9b3f22
+# Verify bundle integrity
+openssl dgst -sha256 -verify docs/keys/benchmark_pubkey.pem -signature bundle_LFamO.tar.gz.sig bundle_LFamO.tar.gz
 ```
