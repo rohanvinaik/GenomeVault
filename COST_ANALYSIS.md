@@ -382,14 +382,75 @@ Total: $750/month (vs $2,243 flat)
 ## Break-Even Analysis
 
 ### PIR: CPIR vs IT-PIR
-- **Break-even for 100K DB**: ~150K queries/day (CPIR cheaper below this)
-- **Break-even for 1M DB**: ~25K queries/day (CPIR cheaper below this)
-- **Security trade-off**: IT-PIR provides unconditional privacy but requires trust in non-collusion
+
+**Formula**: For break-even queries per day Q*:
+```
+F₁ + 30·Q·v₁ = F₂ + 30·Q·v₂
+Q* = (F₂ - F₁) / (30·(v₁ - v₂))
+```
+Where F = fixed monthly cost, v = variable cost per query
+
+#### 100K Database
+```
+CPIR: F₁ = $30, v₁ = $0.000016
+IT-PIR: F₂ = $183, v₂ = $0.00027
+
+Q* = (183 - 30) / (30 × (0.000016 - 0.00027))
+Q* = 153 / (30 × -0.000254)
+Q* = 153 / -0.00762
+Q* = -20,079 queries/day
+
+Since Q* is negative, IT-PIR is NEVER cheaper for 100K database
+(CPIR always wins due to much lower fixed costs)
+```
+
+#### 1M Database
+```
+CPIR: F₁ = $61, v₁ = $0.00010
+IT-PIR: F₂ = $415, v₂ = $0.00113
+
+Q* = (415 - 61) / (30 × (0.00010 - 0.00113))
+Q* = 354 / (30 × -0.00103)
+Q* = 354 / -0.0309
+Q* = -11,456 queries/day
+
+Since Q* is negative, IT-PIR is NEVER cheaper for 1M database
+(CPIR always wins for this configuration)
+```
+
+**Conclusion**: CPIR is always more cost-effective than IT-PIR at these scales, but IT-PIR provides unconditional privacy (no computational assumptions)
 
 ### ZK: Groth16 vs Halo2
-- **Setup cost recovery**: 18 months at 10K/day
-- Short-term (<18mo): Halo2 cheaper
-- Long-term (>18mo): Groth16 cheaper (if ceremony done)
+
+#### 15K Constraints
+```
+Groth16: F₁ = $61, v₁ = $0.000013
+Halo2: F₂ = $122, v₂ = $0.000021
+
+Q* = (122 - 61) / (30 × (0.000013 - 0.000021))
+Q* = 61 / (30 × -0.000008)
+Q* = 61 / -0.00024
+Q* = -254,167 queries/day
+
+Since Q* is negative, Halo2 is NEVER cheaper for 15K constraints
+(But Halo2 avoids $10-50K trusted setup ceremony)
+```
+
+#### 1M Constraints
+```
+Groth16: F₁ = $366, v₁ = $0.003910
+Halo2: F₂ = $732, v₂ = $0.009558
+
+Q* = (732 - 366) / (30 × (0.003910 - 0.009558))
+Q* = 366 / (30 × -0.005648)
+Q* = 366 / -0.16944
+Q* = -2,160 queries/day
+
+Since Q* is negative, Halo2 is NEVER cheaper for 1M constraints
+(Groth16 wins on pure operational cost, but requires trusted setup)
+```
+
+**Conclusion**: Groth16 is operationally cheaper, but Halo2 eliminates trusted setup requirements worth $10-50K
 
 ## Cloud Provider Comparison
 
@@ -403,6 +464,15 @@ Total: $750/month (vs $2,243 flat)
 ## Pricing Calculator
 
 ```python
+def calculate_breakeven(f1: float, v1: float, f2: float, v2: float) -> float:
+    """Calculate break-even point between two configurations.
+    
+    Returns queries/day where costs are equal, or negative if config 2 never wins.
+    """
+    if v1 == v2:
+        return float('inf') if f1 < f2 else 0
+    return (f2 - f1) / (30 * (v1 - v2))
+
 def calculate_monthly_cost(
     queries_per_day: int,
     database_rows: int,
@@ -474,6 +544,27 @@ cost = calculate_monthly_cost(
 )
 print(f"Monthly cost: ${cost['total_monthly']:.2f}")
 print(f"Variable per query: ${cost['cost_per_query_variable']:.6f}")
+
+# Break-even analysis
+print("\n=== Break-Even Analysis ===")
+
+# PIR: CPIR vs IT-PIR for 1M database
+cpir_fixed, cpir_var = 61, 0.00010
+itpir_fixed, itpir_var = 415, 0.00113
+breakeven = calculate_breakeven(cpir_fixed, cpir_var, itpir_fixed, itpir_var)
+if breakeven < 0:
+    print(f"PIR (1M DB): CPIR always cheaper than IT-PIR")
+else:
+    print(f"PIR (1M DB): Break-even at {breakeven:.0f} queries/day")
+
+# ZK: Groth16 vs Halo2 for 15K constraints
+groth_fixed, groth_var = 61, 0.000013
+halo_fixed, halo_var = 122, 0.000021
+breakeven = calculate_breakeven(groth_fixed, groth_var, halo_fixed, halo_var)
+if breakeven < 0:
+    print(f"ZK (15K): Halo2 never cheaper (but avoids trusted setup)")
+else:
+    print(f"ZK (15K): Break-even at {breakeven:.0f} queries/day")
 ```
 
 ## Key Takeaways
