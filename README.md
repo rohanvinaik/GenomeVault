@@ -175,6 +175,8 @@ We confirmed this with rigorous, multi-strategy validation, including family-awa
 
 We believe in "trust, but verify." All our results are bundled, cryptographically signed, and available for independent verification.
 
+**Security Model**: Our hypervector non-invertibility is formally proven. See [HYPERVECTOR_SECURITY.md](HYPERVECTOR_SECURITY.md) for the complete threat model and security proof.
+
 **Public Key:** [`docs/keys/benchmark_pubkey.pem`](docs/keys/benchmark_pubkey.pem)
 **Fingerprint:** `sha256:92be6e68e3811afb4a29a3cafac2c9beeec445cdb3de2435a2479f8e1b9b3f22`
 
