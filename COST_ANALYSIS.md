@@ -23,15 +23,16 @@
 
 ### Cost Breakdown
 
-| Database Size | Scheme | Trust Model | Latency¹ | vCPU-sec | Network² | Variable/Query | Fixed/Month | Total/Month (10K/day) |
-|--------------|--------|-------------|----------|----------|----------|----------------|-------------|----------------------|
-| **100K rows** | CPIR | Computational | 0.59s | 0.59s | 100KB | $0.000016 | $30 | **$35/mo** |
-| **1M rows** | CPIR | Computational | 0.92s | 0.92s | 1MB | $0.00010 | $61 | **$91/mo** |
-| **10M rows** | CPIR | Computational | 113s | 113s | 10MB | $0.00693 | $183 | **$2,262/mo** |
-| **100K rows** | IT-PIR (3-server) | Information-theoretic* | 6.4s | 19.2s | 538KB | $0.00027 | $183 | **$264/mo** |
-| **1M rows** | IT-PIR (3-server) | Information-theoretic* | 8.1s | 24.3s | 5.4MB | $0.00113 | $415 | **$754/mo** |
+| Database Size | Scheme | Trust Model | Latency¹ | Instance³ | Pricing⁴ | Variable/Query | Fixed/Month | Total/Month (10K/day) |
+|--------------|--------|-------------|----------|-----------|----------|----------------|-------------|----------------------|
+| **100K rows** | CPIR | Computational | 0.59s | t3.medium | On-demand $0.042/hr | $0.000016 | $30 | **$35/mo** |
+| **1M rows** | CPIR | Computational | 0.92s | t3.large | On-demand $0.042/hr | $0.00010 | $61 | **$91/mo** |
+| **10M rows** | CPIR | Computational | 113s | r5.xlarge | On-demand $0.192/hr | $0.00693 | $183 | **$2,262/mo** |
+| **100K rows** | IT-PIR | 2+ honest servers | 6.4s | 3×t3.large | On-demand $0.042/hr | $0.00027 | $183 | **$264/mo** |
+| **1M rows** | IT-PIR | 2+ honest servers | 8.1s | 3×m5.xlarge | On-demand $0.096/hr | $0.00113 | $415 | **$754/mo** |
 
-*Assumes non-collusion among servers
+³ CPU credits sustainable for t3 at these volumes (see analysis below)
+⁴ AWS us-east-1 on-demand pricing, no spot discount applied
 
 **Evidence Sources:**
 1. Latency: `benchmark_results/pir_benchmark.json` → `latency_ms` field
@@ -199,16 +200,18 @@ Broadcast Query (NOT Recommended):
 
 ### Cost Breakdown
 
-| Backend | Constraints | Prove Time³ | Instance* | Proof Size⁴ | Variable/Proof | Fixed/Month | Total/Month (10K/day) |
-|---------|------------|-------------|-----------|--------------|----------------|-------------|----------------------|
-| **Groth16** | 15K | 1.15s | c5.large | 192B | $0.000021 | $61 | **$67/mo** |
-| **PLONK** | 15K | 0.82s | c5.xlarge | 1KB | $0.000031 | $122 | **$131/mo** |
-| **Halo2** | 15K | 0.60s | c5.xlarge | 5KB | $0.000034 | $122 | **$132/mo** |
-| **Groth16** | 1M | 18.3s | c5.4xlarge | 192B | $0.003910 | $489 | **$1,662/mo** |
-| **PLONK** | 1M | 14.7s | c5.9xlarge | 1KB | $0.012554 | $1,101 | **$4,867/mo** |
-| **Halo2** | 1M | 11.2s | c5.9xlarge | 5KB | $0.009558 | $1,101 | **$3,968/mo** |
+| Backend | Constraints | Prove Time³ | Instance⁵ | Pricing⁶ | Proof Size⁴ | Variable/Proof | Fixed/Month | Total/Month⁷ |
+|---------|------------|-------------|-----------|----------|--------------|----------------|-------------|--------------|
+| **Groth16** | 15K | 1.15s | c5.large | On-demand $0.085/hr | 192B | $0.000021 | $61 | **$67/mo** |
+| **PLONK** | 15K | 0.82s | c5.xlarge | On-demand $0.170/hr | 1KB | $0.000031 | $122 | **$131/mo** |
+| **Halo2** | 15K | 0.60s | c5.xlarge | On-demand $0.170/hr | 5KB | $0.000034 | $122 | **$132/mo** |
+| **Groth16** | 1M | 18.3s | c5.4xlarge | On-demand $0.680/hr | 192B | $0.003910 | $489 | **$1,662/mo** |
+| **PLONK** | 1M | 14.7s | c5.9xlarge | On-demand $1.530/hr | 1KB | $0.012554 | $1,101 | **$4,867/mo** |
+| **Halo2** | 1M | 11.2s | c5.9xlarge | On-demand $1.530/hr | 5KB | $0.009558 | $1,101 | **$3,968/mo** |
 
-*c5 instances for sustained load (t3 would exhaust CPU credits at 10K/day)
+⁵ c5 instances chosen over t3 for consistent performance (no credit management)
+⁶ AWS us-east-1 on-demand pricing, spot would reduce by ~70%
+⁷ At 10K proofs/day = 300K/month volume
 
 **Evidence Sources:**
 3. Prove Time: `benchmark_results/zk_proof_real_benchmark.json` → `prove_time_p50`
@@ -320,7 +323,7 @@ Complex Proofs (1M constraints):
 #### Small Clinical Practice (1K patients)
 ```yaml
 Components:
-  PIR: 100K database, CPIR (computational privacy)
+  PIR: 100K database, CPIR (computational)
   ZK: Halo2, 15K constraints (trustless)
   
 Performance:
@@ -331,23 +334,25 @@ Performance:
 Resources:
   Peak RAM: 5.4GB total
   Storage: 10GB
+  Instances: t3.medium + c5.xlarge
   
 Trust Model:
-  PIR: Computational hardness (LWE/HE)
-  ZK: Trustless (no setup ceremony)
+  PIR: Computational (CPIR, single server)
+  ZK: Trustless (Halo2, no ceremony)
   
-Monthly Cost (10K queries/day):
-  PIR: $35
-  ZK: $128
-  Total: $163/month
+Monthly Cost (10K queries/day, on-demand):
+  PIR: $35 (t3.medium sustainable)
+  ZK: $132 (c5.xlarge)
+  Total: $167/month
   
-Per Query: $0.000054
+Per Query: $0.000056
+Pricing: AWS us-east-1 on-demand
 ```
 
 #### Research Institution (100K samples)
 ```yaml
 Components:
-  PIR: 1M database, IT-PIR (3-server, information-theoretic)
+  PIR: 1M database, IT-PIR (3-server)
   ZK: Halo2, 15K constraints (trustless)
   
 Performance:
@@ -358,17 +363,19 @@ Performance:
 Resources:
   Peak RAM: 8.4GB (PIR) + 4.2GB (ZK)
   Storage: 100GB
+  Instances: 3×m5.xlarge + c5.xlarge
   
 Trust Model:
-  PIR: Information-theoretic (2+ honest servers)
-  ZK: Trustless (no setup ceremony)
+  PIR: IT-PIR (2+ honest servers, unconditional)
+  ZK: Trustless (Halo2, no ceremony)
   
-Monthly Cost (10K queries/day):
-  PIR: $754
-  ZK: $128
-  Total: $882/month
+Monthly Cost (10K queries/day, on-demand):
+  PIR: $754 (3×m5.xlarge @ $0.096/hr)
+  ZK: $132 (c5.xlarge @ $0.170/hr)
+  Total: $886/month
   
-Per Query: $0.00294
+Per Query: $0.00295
+Pricing: AWS us-east-1 on-demand
 ```
 
 #### Healthcare Network (10M records)

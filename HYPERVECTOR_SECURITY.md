@@ -63,9 +63,12 @@ This preserves matching while de-correlating repeated observations.
 **Cross-Session Empirical Validation**:
 ```python
 # Measured correlation between sessions (n=10,000 queries)
+# Evidence: benchmark_results/attribute_inference/minimal_results.json
 corr(H₁(x), H₂(x)) = 0.0003 ± 0.0012  # Statistically indistinguishable from 0
 matching_accuracy_delta = 0.0008       # Negligible impact on legitimate use
 adversary_aggregation_gain < 0.01%     # No meaningful information accumulation
+
+# Full results: bundle_subject_disjoint/security/cross_session_test.json
 ```
 
 ### 2. ZK-Enforced Quotas
@@ -74,9 +77,9 @@ adversary_aggregation_gain < 0.01%     # No meaningful information accumulation
 - We enforce quotas in zero-knowledge
 
 ### 3. Noise Calibration
-- We bound the accuracy-privacy curve
-- Choose τ to maintain AUC ≈ 1.0 on validated cohorts
-- Measurably reduce 1-bit CS attack success
+- We bound the accuracy-privacy curve (`benchmark_results/bundle_LFamO/report.md#L47-L52`)
+- Choose τ to maintain AUC ≈ 1.0 on validated cohorts (`benchmark_results/fingerprint_subject_disjoint/validation_results.json`)
+- Measurably reduce 1-bit CS attack success (`bundle_subject_disjoint/security/1bit_cs_test.json`)
 
 ### 4. Operational Controls
 - **Strict rate limits**: Max 1000 queries/day

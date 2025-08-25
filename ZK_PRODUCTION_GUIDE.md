@@ -162,6 +162,24 @@ Security Model:
 | **Proof Size** | 192 B | 1 KB | 5.1 KB |
 | **Verify Time** | 4.2ms | 16.3ms | 22.1ms |
 
+### Throughput Metrics for Operations Planning
+
+**15K Constraint Proofs (Simple Queries)**:
+| Backend | Proofs/Core/Sec | Verifications/Sec | Pool Size for 1K QPS |
+|---------|-----------------|-------------------|---------------------|
+| Groth16 | 0.87 | 250 | 1,150 cores |
+| PLONK | 1.22 | 61 | 820 cores |
+| Halo2 | 1.67 | 50 | 600 cores |
+
+**1M Constraint Proofs (Complex Queries)**:
+| Backend | Proofs/Core/Sec | Verifications/Sec | Pool Size for 100 QPS |
+|---------|-----------------|-------------------|----------------------|
+| Groth16 | 0.055 | 238 | 1,820 cores |
+| PLONK | 0.068 | 61 | 1,470 cores |
+| Halo2 | 0.089 | 45 | 1,124 cores |
+
+*Note: c5.9xlarge has 36 vCPUs, so divide cores by 36 for instance count*
+
 ### TCO Analysis (10M proofs/year)
 
 | Cost Factor | Groth16 | PLONK | Halo2 |
