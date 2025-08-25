@@ -162,9 +162,9 @@ How can we be sure our "genetic sketch" is accurate? We created the most precise
 
 | Validation Strategy | Accuracy (AUC) | Error Rate (EER) | **D-Prime (Higher is Better)** | Test Pairs | Raw Data |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Subject-Disjoint** | **1.000** | **0.000** | **🔥 38.01** | 25K genuine, 200K impostor | [📊 JSON](benchmark_results/fingerprint_subject_disjoint/validation_results.json) |
-| **Leave-Family-Out**| **1.000** | **0.000** | **🚀 38.43 (World Record)** | 2.5K genuine, 25K impostor | [📊 JSON](benchmark_results/fingerprint_LFamO/validation_results.json) |
-| **Leave-Batch-Out** | **1.000** | **0.000** | **⚡ 37.26** | 15K genuine, 150K impostor | [📊 JSON](benchmark_results/fingerprint_LBxO/validation_results.json) |
+| **Subject-Disjoint** | **1.000** | **0.000** | **🔥 38.01** | 25K genuine, 200K impostor | [📊 JSON](./benchmark_results/fingerprint_subject_disjoint/validation_results.json) |
+| **Leave-Family-Out**| **1.000** | **0.000** | **🚀 38.43 (World Record)** | 2.5K genuine, 25K impostor | [📊 JSON](./benchmark_results/fingerprint_LFamO/validation_results.json) |
+| **Leave-Batch-Out** | **1.000** | **0.000** | **⚡ 37.26** | 15K genuine, 150K impostor | [📊 JSON](./benchmark_results/fingerprint_LBxO/validation_results.json) |
 
 We confirmed this with rigorous, multi-strategy validation, including family-aware data splitting to ensure performance is not due to shared genetics.
 
@@ -209,7 +209,7 @@ All raw data and reports are linked directly in the repository for full transpar
 | **HDC Encoding** | 1.49ms @ 8192D | [🎯 Results](benchmark_results/bundle_subject_disjoint/results.json#L191-L195) |
 | **ZK Proofs** | 603-1148ms proving | [⚡ Timings](benchmark_results/zk_circuits/zk_circuit_report_20250824_193112.md) |
 | **PIR Queries** | 0.11ms-113.5s range | [📊 Scaling](benchmark_results/pir/pir_benchmark_report_20250824_194842.md) |
-| **Fingerprinting** | AUC=1.000 perfect | [🏆 Validation](benchmark_results/fingerprint_subject_disjoint/validation_results.json) |
+| **Fingerprinting** | AUC=1.000 perfect | [🏆 Validation](./benchmark_results/fingerprint_subject_disjoint/validation_results.json) |
 | **Compression** | 2,116× end-to-end | [📈 Analysis](benchmark_results/bundle_subject_disjoint/results.json#L35-L40) |
 
 -----
