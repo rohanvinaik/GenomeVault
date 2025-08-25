@@ -9,6 +9,10 @@
 
 ## Private Information Retrieval (PIR) Costs
 
+### PIR Trust Models
+- **CPIR (Computational PIR)**: Single-server setup relying on computational hardness assumptions (e.g., LWE, homomorphic encryption). Server sees encrypted queries but cannot decrypt them.
+- **IT-PIR (Information-Theoretic PIR)**: Multi-server setup providing unconditional privacy as long as servers don't collude. Typically requires 2-3 non-colluding servers.
+
 ### Pricing Methodology
 - AWS us-east-1 pricing (2024)
 - vCPU-hour: $0.042 (t3.large), $0.096 (m5.xlarge), $0.192 (r5.xlarge)
@@ -18,22 +22,25 @@
 
 ### Cost Breakdown
 
-| Database Size | Scheme | Latency | vCPU-sec | Network | Variable/Query | Fixed/Month | Total/Month (10K/day) |
-|--------------|--------|---------|----------|---------|----------------|-------------|----------------------|
-| **100K rows** | Single | 0.59s | 0.59s | 100KB | $0.000016 | $30 | **$35/mo** |
-| **1M rows** | Single | 0.92s | 0.92s | 1MB | $0.00010 | $61 | **$91/mo** |
-| **10M rows** | Single | 113s | 113s | 10MB | $0.00693 | $183 | **$2,262/mo** |
-| **100K rows** | 3-Server | 6.4s | 19.2s | 538KB | $0.00027 | $183 | **$264/mo** |
-| **1M rows** | 3-Server | 8.1s | 24.3s | 5.4MB | $0.00113 | $415 | **$754/mo** |
+| Database Size | Scheme | Trust Model | Latency | vCPU-sec | Network | Variable/Query | Fixed/Month | Total/Month (10K/day) |
+|--------------|--------|-------------|---------|----------|---------|----------------|-------------|----------------------|
+| **100K rows** | CPIR | Computational | 0.59s | 0.59s | 100KB | $0.000016 | $30 | **$35/mo** |
+| **1M rows** | CPIR | Computational | 0.92s | 0.92s | 1MB | $0.00010 | $61 | **$91/mo** |
+| **10M rows** | CPIR | Computational | 113s | 113s | 10MB | $0.00693 | $183 | **$2,262/mo** |
+| **100K rows** | IT-PIR (3-server) | Information-theoretic* | 6.4s | 19.2s | 538KB | $0.00027 | $183 | **$264/mo** |
+| **1M rows** | IT-PIR (3-server) | Information-theoretic* | 8.1s | 24.3s | 5.4MB | $0.00113 | $415 | **$754/mo** |
+
+*Assumes non-collusion among servers
 
 ### Detailed Cost Calculation
 
-#### 100K Single-Server
+#### 100K CPIR (Single-Server)
 ```
 Variable per query:
 - Compute: 0.59s × $0.042/3600 = $0.0000069
 - Network: 0.0001GB × $0.09 = $0.0000090
 - Total variable: $0.0000159 ≈ $0.000016
+- Trust: Computational privacy (server sees encrypted query)
 
 Monthly (300K queries):
 - Variable: 300,000 × $0.000016 = $4.80
@@ -41,12 +48,13 @@ Monthly (300K queries):
 - Total: $35/month
 ```
 
-#### 1M Single-Server  
+#### 1M CPIR (Single-Server)
 ```
 Variable per query:
 - Compute: 0.92s × $0.042/3600 = $0.0000107
 - Network: 0.001GB × $0.09 = $0.0000900
 - Total variable: $0.0001007 ≈ $0.00010
+- Trust: Computational privacy (server sees encrypted query)
 
 Monthly (300K queries):
 - Variable: 300,000 × $0.00010 = $30
@@ -54,12 +62,13 @@ Monthly (300K queries):
 - Total: $91/month
 ```
 
-#### 10M Single-Server
+#### 10M CPIR (Single-Server)
 ```
 Variable per query:
 - Compute: 113s × $0.192/3600 = $0.006027
 - Network: 0.01GB × $0.09 = $0.000900
 - Total variable: $0.006927 ≈ $0.00693
+- Trust: Computational privacy (server sees encrypted query)
 
 Monthly (300K queries):
 - Variable: 300,000 × $0.00693 = $2,079
@@ -67,12 +76,13 @@ Monthly (300K queries):
 - Total: $2,262/month
 ```
 
-#### 100K 3-Server
+#### 100K IT-PIR (3-Server)
 ```
 Variable per query (3 servers total):
 - Compute: 6.4s × 3 × $0.042/3600 = $0.000224
 - Network: 0.000538GB × $0.09 = $0.000048
 - Total variable: $0.000272 ≈ $0.00027
+- Trust: Information-theoretic (requires 2+ honest servers)
 
 Monthly (300K queries):
 - Variable: 300,000 × $0.00027 = $81
@@ -80,12 +90,13 @@ Monthly (300K queries):
 - Total: $264/month
 ```
 
-#### 1M 3-Server
+#### 1M IT-PIR (3-Server)
 ```
 Variable per query (3 servers total):
 - Compute: 8.1s × 3 × $0.096/3600 = $0.000648
 - Network: 0.0054GB × $0.09 = $0.000486
 - Total variable: $0.001134 ≈ $0.00113
+- Trust: Information-theoretic (requires 2+ honest servers)
 
 Monthly (300K queries):
 - Variable: 300,000 × $0.00113 = $339
@@ -97,25 +108,49 @@ Monthly (300K queries):
 
 ```yaml
 100K Database (Recommended for Clinical):
-  Query Time: 590ms
-  Peak RAM: 1.2GB
-  Network: 100KB/query
-  Monthly Cost: $35 (single), $264 (3-server)
+  CPIR (Single-Server):
+    Query Time: 590ms
+    Peak RAM: 1.2GB
+    Network: 100KB/query
+    Monthly Cost: $35
+    Trust: Computational privacy
+    
+  IT-PIR (3-Server):
+    Query Time: 6.4s
+    Peak RAM: 3.6GB total
+    Network: 538KB/query
+    Monthly Cost: $264
+    Trust: Information-theoretic (non-collusion)
+  
   Use Case: Patient lookups, variant checks
 
 1M Database (Research Scale):
-  Query Time: 920ms
-  Peak RAM: 2.8GB
-  Network: 1MB/query
-  Monthly Cost: $91 (single), $754 (3-server)
+  CPIR (Single-Server):
+    Query Time: 920ms
+    Peak RAM: 2.8GB
+    Network: 1MB/query
+    Monthly Cost: $91
+    Trust: Computational privacy
+    
+  IT-PIR (3-Server):
+    Query Time: 8.1s
+    Peak RAM: 8.4GB total
+    Network: 5.4MB/query
+    Monthly Cost: $754
+    Trust: Information-theoretic (non-collusion)
+  
   Use Case: Cohort studies, biobank queries
 
 10M Database (Population Scale):
-  Query Time: 113s
-  Peak RAM: 14GB
-  Network: 10MB/query
-  Monthly Cost: $2,262 (single)
-  Use Case: Population genomics (consider sharding)
+  CPIR (Single-Server):
+    Query Time: 113s
+    Peak RAM: 14GB
+    Network: 10MB/query
+    Monthly Cost: $2,262
+    Trust: Computational privacy
+    Note: Consider sharding for better performance
+  
+  Use Case: Population genomics
 ```
 
 ## Zero-Knowledge Proof Costs
@@ -218,8 +253,8 @@ Complex Proofs (1M constraints):
 #### Small Clinical Practice (1K patients)
 ```yaml
 Components:
-  PIR: 100K database, single server
-  ZK: Halo2, 15K constraints
+  PIR: 100K database, CPIR (computational privacy)
+  ZK: Halo2, 15K constraints (trustless)
   
 Performance:
   PIR Latency: 590ms
@@ -229,6 +264,10 @@ Performance:
 Resources:
   Peak RAM: 5.4GB total
   Storage: 10GB
+  
+Trust Model:
+  PIR: Computational hardness (LWE/HE)
+  ZK: Trustless (no setup ceremony)
   
 Monthly Cost (10K queries/day):
   PIR: $35
@@ -241,31 +280,35 @@ Per Query: $0.000054
 #### Research Institution (100K samples)
 ```yaml
 Components:
-  PIR: 1M database, single server
-  ZK: Halo2, 15K constraints
+  PIR: 1M database, IT-PIR (3-server, information-theoretic)
+  ZK: Halo2, 15K constraints (trustless)
   
 Performance:
-  PIR Latency: 920ms
+  PIR Latency: 8.1s
   ZK Latency: 600ms
-  Total: ~1.5s per query
+  Total: ~8.7s per query
   
 Resources:
-  Peak RAM: 7GB total
+  Peak RAM: 8.4GB (PIR) + 4.2GB (ZK)
   Storage: 100GB
   
-Monthly Cost (10K queries/day):
-  PIR: $91
-  ZK: $128
-  Total: $219/month
+Trust Model:
+  PIR: Information-theoretic (2+ honest servers)
+  ZK: Trustless (no setup ceremony)
   
-Per Query: $0.00073
+Monthly Cost (10K queries/day):
+  PIR: $754
+  ZK: $128
+  Total: $882/month
+  
+Per Query: $0.00294
 ```
 
 #### Healthcare Network (10M records)
 ```yaml
 Components:
-  PIR: 10M database, single server
-  ZK: Halo2, 1M constraints
+  PIR: 10M database, CPIR (computational privacy)
+  ZK: Halo2, 1M constraints (trustless)
   
 Performance:
   PIR Latency: 113s
@@ -273,8 +316,12 @@ Performance:
   Total: ~124s per query
   
 Resources:
-  Peak RAM: 48GB (ZK) + 14GB (PIR)
+  Peak RAM: 14GB (PIR) + 48GB (ZK)
   Storage: 1TB
+  
+Trust Model:
+  PIR: Computational hardness (LWE/HE)
+  ZK: Trustless (no setup ceremony)
   
 Monthly Cost (10K queries/day):
   PIR: $2,262
@@ -334,10 +381,10 @@ Total: $750/month (vs $2,243 flat)
 
 ## Break-Even Analysis
 
-### PIR: Single vs Multi-Server
-- **Break-even**: 50K queries/day
-- Below 50K: Use single server
-- Above 50K: Multi-server more cost-effective
+### PIR: CPIR vs IT-PIR
+- **Break-even for 100K DB**: ~150K queries/day (CPIR cheaper below this)
+- **Break-even for 1M DB**: ~25K queries/day (CPIR cheaper below this)
+- **Security trade-off**: IT-PIR provides unconditional privacy but requires trust in non-collusion
 
 ### ZK: Groth16 vs Halo2
 - **Setup cost recovery**: 18 months at 10K/day
