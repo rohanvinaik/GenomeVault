@@ -2,32 +2,96 @@
 
 ## Executive Summary
 
-**Bottom Line Costs (10K queries/day)**:
-- **PIR**: $73-782/month depending on database size
-- **ZK Proofs**: $31-93/month depending on backend
-- **Combined**: $104-875/month for full privacy stack
+**Bottom Line Costs (10K queries/day = 300K/month)**:
+- **PIR**: $35-2,262/month depending on database size
+- **ZK Proofs**: $65-3,600/month depending on backend and complexity
+- **Combined**: $163-5,862/month for full privacy stack
 
 ## Private Information Retrieval (PIR) Costs
 
-### Cost Per Query
+### Pricing Methodology
+- AWS us-east-1 pricing (2024)
+- vCPU-hour: $0.042 (t3.large), $0.096 (m5.xlarge), $0.192 (r5.xlarge)
+- Network egress: $0.09/GB
+- Instance costs are fixed monthly
+- Variable costs = compute + network per query
 
-| Database Size | Scheme | Latency | Peak RAM | Network | Cost/Query | Cost/10K |
-|--------------|--------|---------|----------|---------|------------|----------|
-| **100K rows** | Single-Server | 0.59s | 1.2GB | 100KB | $0.00024 | $2.40 |
-| **1M rows** | Single-Server | 0.92s | 2.8GB | 1MB | $0.00038 | $3.80 |
-| **10M rows** | Single-Server | 113s | 14GB | 10MB | $0.04650 | $465.00 |
-| **100K rows** | 3-Server PIR | 6.4s | 3.6GB | 538KB | $0.00260 | $26.00 |
-| **1M rows** | 3-Server PIR | 8.1s | 8.4GB | 5.4MB | $0.00330 | $33.00 |
+### Cost Breakdown
 
-### Monthly Costs (10K queries/day = 300K/month)
+| Database Size | Scheme | Latency | vCPU-sec | Network | Variable/Query | Fixed/Month | Total/Month (10K/day) |
+|--------------|--------|---------|----------|---------|----------------|-------------|----------------------|
+| **100K rows** | Single | 0.59s | 0.59s | 100KB | $0.000016 | $30 | **$35/mo** |
+| **1M rows** | Single | 0.92s | 0.92s | 1MB | $0.00010 | $61 | **$91/mo** |
+| **10M rows** | Single | 113s | 113s | 10MB | $0.00693 | $183 | **$2,262/mo** |
+| **100K rows** | 3-Server | 6.4s | 19.2s | 538KB | $0.00027 | $183 | **$264/mo** |
+| **1M rows** | 3-Server | 8.1s | 24.3s | 5.4MB | $0.00113 | $415 | **$754/mo** |
 
-| Configuration | Instance Type | Instance Cost | Network Cost | Total Monthly |
-|--------------|--------------|---------------|--------------|---------------|
-| **100K Single** | t3.medium | $30/mo | $9/mo | **$73/mo** |
-| **1M Single** | t3.large | $61/mo | $90/mo | **$151/mo** |
-| **10M Single** | r5.xlarge | $183/mo | $900/mo | **$1,083/mo** |
-| **100K 3-Server** | 3× t3.large | $183/mo | $48/mo | **$231/mo** |
-| **1M 3-Server** | 3× m5.xlarge | $415/mo | $486/mo | **$901/mo** |
+### Detailed Cost Calculation
+
+#### 100K Single-Server
+```
+Variable per query:
+- Compute: 0.59s × $0.042/3600 = $0.0000069
+- Network: 0.0001GB × $0.09 = $0.0000090
+- Total variable: $0.0000159 ≈ $0.000016
+
+Monthly (300K queries):
+- Variable: 300,000 × $0.000016 = $4.80
+- Fixed (t3.medium): $30
+- Total: $35/month
+```
+
+#### 1M Single-Server  
+```
+Variable per query:
+- Compute: 0.92s × $0.042/3600 = $0.0000107
+- Network: 0.001GB × $0.09 = $0.0000900
+- Total variable: $0.0001007 ≈ $0.00010
+
+Monthly (300K queries):
+- Variable: 300,000 × $0.00010 = $30
+- Fixed (t3.large): $61
+- Total: $91/month
+```
+
+#### 10M Single-Server
+```
+Variable per query:
+- Compute: 113s × $0.192/3600 = $0.006027
+- Network: 0.01GB × $0.09 = $0.000900
+- Total variable: $0.006927 ≈ $0.00693
+
+Monthly (300K queries):
+- Variable: 300,000 × $0.00693 = $2,079
+- Fixed (r5.xlarge): $183
+- Total: $2,262/month
+```
+
+#### 100K 3-Server
+```
+Variable per query (3 servers total):
+- Compute: 6.4s × 3 × $0.042/3600 = $0.000224
+- Network: 0.000538GB × $0.09 = $0.000048
+- Total variable: $0.000272 ≈ $0.00027
+
+Monthly (300K queries):
+- Variable: 300,000 × $0.00027 = $81
+- Fixed (3× t3.large): $183
+- Total: $264/month
+```
+
+#### 1M 3-Server
+```
+Variable per query (3 servers total):
+- Compute: 8.1s × 3 × $0.096/3600 = $0.000648
+- Network: 0.0054GB × $0.09 = $0.000486
+- Total variable: $0.001134 ≈ $0.00113
+
+Monthly (300K queries):
+- Variable: 300,000 × $0.00113 = $339
+- Fixed (3× m5.xlarge): $415
+- Total: $754/month
+```
 
 ### PIR Performance Characteristics
 
@@ -36,47 +100,72 @@
   Query Time: 590ms
   Peak RAM: 1.2GB
   Network: 100KB/query
-  Monthly Cost: $73 (single), $231 (3-server)
+  Monthly Cost: $35 (single), $264 (3-server)
   Use Case: Patient lookups, variant checks
 
 1M Database (Research Scale):
   Query Time: 920ms
   Peak RAM: 2.8GB
   Network: 1MB/query
-  Monthly Cost: $151 (single), $901 (3-server)
+  Monthly Cost: $91 (single), $754 (3-server)
   Use Case: Cohort studies, biobank queries
 
 10M Database (Population Scale):
   Query Time: 113s
   Peak RAM: 14GB
   Network: 10MB/query
-  Monthly Cost: $1,083 (single)
+  Monthly Cost: $2,262 (single)
   Use Case: Population genomics (consider sharding)
 ```
 
 ## Zero-Knowledge Proof Costs
 
-### Cost Per Proof
+### Pricing Methodology
+- AWS us-east-1 pricing (2024)
+- vCPU-hour: $0.042 (t3.large), $0.084 (t3.xlarge), $0.384 (r5.2xlarge), $0.768 (r5.4xlarge)
+- Network egress: $0.09/GB
+- Storage: $0.10/GB/month
 
-| Backend | Constraints | Prove Time | Peak RAM | Proof Size | Cost/Proof | Cost/10K |
-|---------|------------|------------|----------|------------|------------|----------|
-| **Groth16** | 15K | 1.15s | 2.1GB | 192B | $0.00010 | $1.00 |
-| **PLONK** | 15K | 0.82s | 3.8GB | 1KB | $0.00007 | $0.70 |
-| **Halo2** | 15K | 0.60s | 4.2GB | 5KB | $0.00005 | $0.50 |
-| **Groth16** | 1M | 18.3s | 28GB | 192B | $0.00150 | $15.00 |
-| **PLONK** | 1M | 14.7s | 42GB | 1KB | $0.00120 | $12.00 |
-| **Halo2** | 1M | 11.2s | 48GB | 5.1KB | $0.00092 | $9.20 |
+### Cost Breakdown
 
-### Monthly Costs (10K proofs/day = 300K/month)
+| Backend | Constraints | Prove Time | vCPU-sec | Proof Size | Variable/Proof | Fixed/Month | Total/Month (10K/day) |
+|---------|------------|------------|----------|------------|----------------|-------------|----------------------|
+| **Groth16** | 15K | 1.15s | 1.15s | 192B | $0.000013 | $61 | **$65/mo** |
+| **PLONK** | 15K | 0.82s | 0.82s | 1KB | $0.000019 | $122 | **$128/mo** |
+| **Halo2** | 15K | 0.60s | 0.60s | 5KB | $0.000021 | $122 | **$128/mo** |
+| **Groth16** | 1M | 18.3s | 36.6s* | 192B | $0.003910 | $366 | **$1,539/mo** |
+| **PLONK** | 1M | 14.7s | 58.8s** | 1KB | $0.012554 | $732 | **$4,498/mo** |
+| **Halo2** | 1M | 11.2s | 44.8s** | 5KB | $0.009558 | $732 | **$3,600/mo** |
 
-| Configuration | Instance Type | Compute Cost | Storage | Network | Total Monthly |
-|--------------|--------------|--------------|---------|---------|---------------|
-| **Groth16-15K** | t3.large | $61/mo | $0.01/mo | $0.05/mo | **$61/mo** |
-| **PLONK-15K** | t3.xlarge | $122/mo | $0.03/mo | $0.27/mo | **$122/mo** |
-| **Halo2-15K** | t3.xlarge | $122/mo | $0.15/mo | $1.35/mo | **$123/mo** |
-| **Groth16-1M** | r5.2xlarge | $366/mo | $0.01/mo | $0.05/mo | **$366/mo** |
-| **PLONK-1M** | r5.4xlarge | $732/mo | $0.03/mo | $0.27/mo | **$732/mo** |
-| **Halo2-1M** | r5.4xlarge | $732/mo | $0.15/mo | $1.35/mo | **$733/mo** |
+*2 vCPUs, **4 vCPUs for complex proofs
+
+### Detailed Cost Calculation
+
+#### Groth16-15K
+```
+Variable per proof:
+- Compute: 1.15s × $0.042/3600 = $0.0000134
+- Network: 0.000000192GB × $0.09 = $0.0000000
+- Total variable: $0.0000134 ≈ $0.000013
+
+Monthly (300K proofs):
+- Variable: 300,000 × $0.000013 = $3.90
+- Fixed (t3.large): $61
+- Total: $65/month
+```
+
+#### Halo2-1M
+```
+Variable per proof:
+- Compute: 11.2s × 4 × $0.768/3600 = $0.009557
+- Network: 0.0000051GB × $0.09 = $0.0000005
+- Total variable: $0.009558 ≈ $0.00956
+
+Monthly (300K proofs):
+- Variable: 300,000 × $0.00956 = $2,868
+- Fixed (r5.4xlarge): $732
+- Total: $3,600/month
+```
 
 ### Setup Costs (One-Time)
 
@@ -91,33 +180,33 @@
 ```yaml
 Simple Proofs (15K constraints):
   Groth16:
-    Monthly: $61
+    Monthly: $65
     Proof Size: 192B (best for blockchain)
     Trust: Requires ceremony
     
   PLONK:
-    Monthly: $122
+    Monthly: $128
     Proof Size: 1KB
     Trust: Universal setup
     
   Halo2 (Recommended):
-    Monthly: $123
+    Monthly: $128
     Proof Size: 5KB
     Trust: ZERO (trustless)
 
 Complex Proofs (1M constraints):
   Groth16:
-    Monthly: $366
+    Monthly: $1,539
     Peak RAM: 28GB
     Use Case: On-chain verification
     
   PLONK:
-    Monthly: $732
+    Monthly: $4,498
     Peak RAM: 42GB
     Use Case: Flexible circuits
     
   Halo2:
-    Monthly: $733
+    Monthly: $3,600
     Peak RAM: 48GB
     Use Case: Regulatory compliance
 ```
@@ -141,12 +230,12 @@ Resources:
   Peak RAM: 5.4GB total
   Storage: 10GB
   
-Monthly Cost:
-  PIR: $73
-  ZK: $123
-  Total: $196/month
+Monthly Cost (10K queries/day):
+  PIR: $35
+  ZK: $128
+  Total: $163/month
   
-Per Query: $0.00065
+Per Query: $0.000054
 ```
 
 #### Research Institution (100K samples)
@@ -164,35 +253,35 @@ Resources:
   Peak RAM: 7GB total
   Storage: 100GB
   
-Monthly Cost:
-  PIR: $151
-  ZK: $123
-  Total: $274/month
+Monthly Cost (10K queries/day):
+  PIR: $91
+  ZK: $128
+  Total: $219/month
   
-Per Query: $0.00091
+Per Query: $0.00073
 ```
 
 #### Healthcare Network (10M records)
 ```yaml
 Components:
-  PIR: 10M sharded (10×1M)
+  PIR: 10M database, single server
   ZK: Halo2, 1M constraints
   
 Performance:
-  PIR Latency: 920ms (sharded)
+  PIR Latency: 113s
   ZK Latency: 11.2s
-  Total: ~12s per query
+  Total: ~124s per query
   
 Resources:
-  Peak RAM: 48GB (ZK) + 28GB (PIR)
+  Peak RAM: 48GB (ZK) + 14GB (PIR)
   Storage: 1TB
   
-Monthly Cost:
-  PIR: $1,510 (10 shards)
-  ZK: $733
-  Total: $2,243/month
+Monthly Cost (10K queries/day):
+  PIR: $2,262
+  ZK: $3,600
+  Total: $5,862/month
   
-Per Query: $0.00748
+Per Query: $0.01954
 ```
 
 ## Cost Optimization Strategies
@@ -274,37 +363,62 @@ def calculate_monthly_cost(
     backend: str = "halo2"
 ) -> dict:
     
-    # PIR costs
-    pir_base = {
-        100_000: 73,
-        1_000_000: 151,
-        10_000_000: 1083
+    # Variable costs per query
+    pir_variable = {
+        100_000: 0.000016,
+        1_000_000: 0.00010,
+        10_000_000: 0.00693
     }
     
-    # ZK costs
-    zk_costs = {
+    # Fixed monthly costs
+    pir_fixed = {
+        100_000: 30,
+        1_000_000: 61,
+        10_000_000: 183
+    }
+    
+    # ZK variable costs per proof
+    zk_variable = {
+        ("groth16", 15_000): 0.000013,
+        ("plonk", 15_000): 0.000019,
+        ("halo2", 15_000): 0.000021,
+        ("groth16", 1_000_000): 0.003910,
+        ("plonk", 1_000_000): 0.012554,
+        ("halo2", 1_000_000): 0.009558
+    }
+    
+    # ZK fixed monthly costs
+    zk_fixed = {
         ("groth16", 15_000): 61,
         ("plonk", 15_000): 122,
-        ("halo2", 15_000): 123,
+        ("halo2", 15_000): 122,
         ("groth16", 1_000_000): 366,
         ("plonk", 1_000_000): 732,
-        ("halo2", 1_000_000): 733
+        ("halo2", 1_000_000): 732
     }
     
-    pir_monthly = pir_base.get(database_rows, 151)
-    zk_monthly = zk_costs.get((backend, zk_constraints), 123)
+    # Calculate totals
+    queries_per_month = queries_per_day * 30
     
-    # Scale by volume
-    scale_factor = queries_per_day / 10_000
+    pir_var_month = pir_variable.get(database_rows, 0.00010) * queries_per_month
+    pir_fix_month = pir_fixed.get(database_rows, 61)
+    
+    zk_var_month = zk_variable.get((backend, zk_constraints), 0.000021) * queries_per_month
+    zk_fix_month = zk_fixed.get((backend, zk_constraints), 122)
+    
+    total_monthly = pir_var_month + pir_fix_month + zk_var_month + zk_fix_month
+    cost_per_query = (pir_var_month + zk_var_month) / queries_per_month
     
     return {
-        "pir_cost": pir_monthly * scale_factor,
-        "zk_cost": zk_monthly * scale_factor,
-        "total_monthly": (pir_monthly + zk_monthly) * scale_factor,
-        "cost_per_query": (pir_monthly + zk_monthly) / 300_000
+        "pir_variable_monthly": pir_var_month,
+        "pir_fixed_monthly": pir_fix_month,
+        "zk_variable_monthly": zk_var_month,
+        "zk_fixed_monthly": zk_fix_month,
+        "total_monthly": total_monthly,
+        "cost_per_query_variable": cost_per_query
     }
 
-# Example: Healthcare network
+# Example: Research institution
 cost = calculate_monthly_cost(
     queries_per_day=10_000,
     database_rows=1_000_000,
@@ -312,17 +426,18 @@ cost = calculate_monthly_cost(
     backend="halo2"
 )
 print(f"Monthly cost: ${cost['total_monthly']:.2f}")
-print(f"Per query: ${cost['cost_per_query']:.5f}")
+print(f"Variable per query: ${cost['cost_per_query_variable']:.6f}")
 ```
 
 ## Key Takeaways
 
-1. **PIR dominates costs** at scale (10M+ rows)
-2. **Halo2 recommended** despite 2× proof size (no ceremony cost)
-3. **Caching essential** for production (40% cost reduction)
-4. **Sharding required** above 10M rows
-5. **Batch processing** can reduce costs by 60%+
+1. **PIR costs grow rapidly** with database size ($35 → $2,262/month for 100K → 10M rows)
+2. **ZK proof costs scale with complexity** ($128 → $3,600/month for 15K → 1M constraints)
+3. **Fixed costs dominate at low volume**, variable costs dominate at high volume
+4. **Halo2 recommended** for trustless setup despite higher costs for complex proofs
+5. **Batch processing and caching** can reduce costs by 40-60%
+6. **Small practices** can operate for <$200/month, enterprises need $5K+/month
 
 ---
 
-*Prices based on AWS us-east-1 as of 2024. Add 20% for multi-region deployment.*
+*Prices based on AWS us-east-1 as of 2024. Assumes 10K queries/day (300K/month). Add 20% for multi-region deployment.*
