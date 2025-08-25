@@ -86,7 +86,7 @@ def create_comprehensive_results(existing_results: Dict, split_type: str) -> Dic
             "split": split_type,
             "folds": existing_results["protocol"]["folds"],
             "seed": existing_results["protocol"]["seed"],
-            "cluster_bootstrap": "subject" if "subject" in split_type else "family",
+            "cluster_bootstrap": "family" if "LFamO" in split_type else "subject",
             "normalization_fit": "train-only"
         },
         "cohort": {

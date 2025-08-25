@@ -36,11 +36,11 @@ class ExperimentConfig:
     dimension: int = 8192
     sparsity: float = 0.5
     
-    # Cohort parameters  
-    n_subjects: int = 200
-    n_families: int = 50  # Subjects grouped into families
+    # Cohort parameters - SCALED FOR STATISTICAL POWER
+    n_subjects: int = 1000  # Scale up for ≥20K impostor pairs
+    n_families: int = 200   # Subjects grouped into families  
     samples_per_subject: int = 5
-    n_batches: int = 10  # Technical batches/sites
+    n_batches: int = 20     # Technical batches/sites
     
     # Split strategy
     split_type: str = "subject_disjoint"  # "subject_disjoint", "LFamO", "LBxO"
