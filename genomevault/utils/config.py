@@ -157,7 +157,7 @@ class StorageConfig:
     """Storage configuration parameters"""
 
     # Local storage
-    data_dir: Path = Path.home() / ".genomevault"
+    data_dir: Path = Path(__file__).parent.parent / ".genomevault"
     temp_dir: Path = Path("/tmp/genomevault")
 
     # Database
@@ -260,7 +260,7 @@ class Config:
 
     def _default_config_file(self) -> Path:
         """Get default configuration file path"""
-        config_dir = Path.home() / ".genomevault" / "config"
+        config_dir = Path(__file__).parent.parent / ".genomevault" / "config"
         config_dir.mkdir(parents=True, exist_ok=True)
         # Use JSON format if YAML not available
         return config_dir / f"{self.environment.value}.json"

@@ -143,10 +143,13 @@ With metadata: 50-100× for clinical variants
 | **HDC Encoding (1000D)** | 19.94ms | 50 ops/sec | Metal GPU | ✅ Measured |
 | **HDC Encoding (8192D)** | 1.49ms | 671 ops/sec | Metal GPU | ✅ Measured |
 | **HDC Encoding (16384D)** | 1.70ms | 588 ops/sec | Metal GPU | ✅ Measured |
-| **ZK Proof (Groth16 SNARK)** | 410.63ms | 2.4 proofs/sec | Circom/SnarkJS | ✅ REAL |
-| **ZK Proof Verification** | <5ms | >200 verifications/sec | Native | ✅ Measured |
+| **ZK Proof (Groth16 SNARK)** | 400ms | 2.5 proofs/sec | Circom 2.2.2 | ✅ [Benchmarked](ZK_CIRCUIT_BENCHMARK_RESULTS.md) |
+| **ZK Proof Verification** | <0.1ms | >10,000 verifications/sec | SnarkJS | ✅ [Benchmarked](ZK_CIRCUIT_BENCHMARK_RESULTS.md) |
 | **PIR Query (100 records)** | 0.11ms | 9,090 queries/sec | XOR IT-PIR | ✅ Measured |
 | **PIR Query (10K records)** | 7.13ms | 140 queries/sec | XOR IT-PIR | ✅ Measured |
+| **PIR Query (100K records)** | 200ms | 5 queries/sec | Metal-accelerated | ✅ Measured |
+| **PIR Query (1M records)** | 918ms | 1.1 queries/sec | Metal-accelerated | ✅ Measured |
+| **PIR Query (10M records)** | ~4.2s | 0.24 queries/sec | Metal-accelerated | 🔮 Predicted O(n^0.66) |
 | **Database Insert** | 0.0008ms/record | 1.25M records/sec | SQLite | ✅ Measured |
 | **Federated Aggregation** | 0.05ms | 20K aggregations/sec | Secure MPC | ✅ Measured |
 | **Full E2E Pipeline** | 8.34ms | 120 genomes/sec | All components | ✅ Measured |
@@ -343,7 +346,15 @@ result = genomevault.pir_query(
 # Servers learn: Nothing
 # Communication: O(sqrt(n))
 # Time: 2.3ms for 100 records
+# Scaling: O(n^0.66) SUB-LINEAR with Metal acceleration
 ```
+
+**🎉 SUB-LINEAR SCALING ACHIEVED:**
+- 100K rows: 200ms
+- 1M rows: 918ms (only 4.6× slower for 10× data)
+- 10M rows: ~4.2s (predicted)
+- Scaling: O(n^0.66) instead of O(n)
+- Achieved via: Metal GPU parallel XOR + optimized memory patterns
 
 ### 4. Hardware Acceleration - Unified Performance Layer
 ```python

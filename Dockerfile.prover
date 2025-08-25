@@ -1,0 +1,28 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js for Circom (optional)
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g snarkjs circom
+
+# Copy requirements
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY genomevault /app/genomevault
+COPY circuits /app/circuits
+
+# Create non-root user
+RUN useradd -m -u 1000 genomevault && chown -R genomevault:genomevault /app
+USER genomevault
+
+CMD ["python", "-m", "genomevault.zk_proofs.service"]

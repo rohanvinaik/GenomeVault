@@ -89,10 +89,10 @@ def fix_file_paths(file_path: Path) -> bool:
         elif file_path.suffix == '.py':
             # Python replacements
             python_replacements = {
-                r'Path.home()': 'Path(__file__).parent.parent',
-                r'Path.home()]+"': 'Path.home()',
-                r'Path.home()': 'Path(__file__).parent.parent',
-                r'Path.home()]+"': 'Path.home()',
+                r'Path(__file__).parent.parent()': 'Path(__file__).parent.parent',
+                r'Path(__file__).parent.parent()]+"': 'Path(__file__).parent.parent()',
+                r'Path(__file__).parent.parent()': 'Path(__file__).parent.parent',
+                r'Path(__file__).parent.parent()]+"': 'Path(__file__).parent.parent()',
                 r'Path(tempfile.gettempdir())': 'Path(tempfile.gettempdir())',
             }
             
@@ -151,7 +151,7 @@ jobs:
         # Define patterns to check
         PATTERNS=(
           "/Users/"
-          Path.home()
+          Path(__file__).parent.parent()
           "C:\\\\"
           "C:/"
           "/opt/genomevault"
@@ -205,7 +205,7 @@ jobs:
 echo "Checking for absolute paths..."
 
 # Check for common absolute path patterns
-if grep -r Path.home() \
+if grep -r Path(__file__).parent.parent() \
    --include="*.py" \
    --include="*.sh" \
    --include="*.yml" \

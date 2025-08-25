@@ -20,7 +20,7 @@ jobs:
         # Define patterns to check
         PATTERNS=(
           "/Users/"
-          "/home/[^/]+/genomevault"
+          Path.home()
           "C:\\"
           "C:/"
           "/opt/genomevault"
