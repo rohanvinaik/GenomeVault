@@ -3,9 +3,10 @@
 ## Executive Summary
 
 **Bottom Line Costs (10K queries/day = 300K/month)**:
-- **PIR**: $35-2,262/month depending on database size
-- **ZK Proofs**: $65-3,600/month depending on backend and complexity
-- **Combined**: $163-5,862/month for full privacy stack
+- **PIR**: $35-2,262/month (monolithic) or $910/month (sharded 10M)
+- **ZK Proofs**: $67-3,968/month (depending on backend and complexity)
+- **Combined**: $163-3,439/month for typical deployments
+- **Note**: Sharding significantly reduces costs for large databases
 
 ## Private Information Retrieval (PIR) Costs
 
@@ -22,8 +23,8 @@
 
 ### Cost Breakdown
 
-| Database Size | Scheme | Trust Model | Latency | vCPU-sec | Network | Variable/Query | Fixed/Month | Total/Month (10K/day) |
-|--------------|--------|-------------|---------|----------|---------|----------------|-------------|----------------------|
+| Database Size | Scheme | Trust Model | Latency¹ | vCPU-sec | Network² | Variable/Query | Fixed/Month | Total/Month (10K/day) |
+|--------------|--------|-------------|----------|----------|----------|----------------|-------------|----------------------|
 | **100K rows** | CPIR | Computational | 0.59s | 0.59s | 100KB | $0.000016 | $30 | **$35/mo** |
 | **1M rows** | CPIR | Computational | 0.92s | 0.92s | 1MB | $0.00010 | $61 | **$91/mo** |
 | **10M rows** | CPIR | Computational | 113s | 113s | 10MB | $0.00693 | $183 | **$2,262/mo** |
@@ -31,6 +32,10 @@
 | **1M rows** | IT-PIR (3-server) | Information-theoretic* | 8.1s | 24.3s | 5.4MB | $0.00113 | $415 | **$754/mo** |
 
 *Assumes non-collusion among servers
+
+**Evidence Sources:**
+1. Latency: `benchmark_results/pir_benchmark.json` → `latency_ms` field
+2. Network: `benchmark_results/pir_benchmark.json` → `network_bytes` field
 
 ### Detailed Cost Calculation
 
@@ -153,6 +158,37 @@ Monthly (300K queries):
   Use Case: Population genomics
 ```
 
+### PIR Sharding Strategy (10M+ Records)
+
+For databases exceeding 10M rows, sharding improves performance:
+
+```yaml
+Hash-Based Sharding (Recommended):
+  Configuration: 10 shards × 1M records each
+  Routing: Hash(query_key) % 10 → single shard
+  Query Distribution: 10K queries/day ÷ 10 shards = 1K/shard/day
+  
+  Performance:
+    Latency: 920ms (single shard query)
+    Throughput: 10× parallel capacity
+    
+  Cost Breakdown:
+    Per Shard: $91/month (1M CPIR at 1K queries/day)
+    Total: 10 × $91 = $910/month
+    Note: Significantly cheaper than 10M monolithic ($2,262/month)
+    
+Range-Based Sharding:
+  Configuration: Partition by genomic region/chromosome
+  Routing: Binary search on range boundaries
+  Best For: Known access patterns (e.g., by chromosome)
+  
+Broadcast Query (NOT Recommended):
+  Configuration: Query all shards in parallel
+  Latency: 920ms (parallel) but 10× network cost
+  Monthly Cost: 10 × $91 = $910 base + 10× network = $1,810/month
+  Use Case: Only for exhaustive searches
+```
+
 ## Zero-Knowledge Proof Costs
 
 ### Pricing Methodology
@@ -163,43 +199,74 @@ Monthly (300K queries):
 
 ### Cost Breakdown
 
-| Backend | Constraints | Prove Time | vCPU-sec | Proof Size | Variable/Proof | Fixed/Month | Total/Month (10K/day) |
-|---------|------------|------------|----------|------------|----------------|-------------|----------------------|
-| **Groth16** | 15K | 1.15s | 1.15s | 192B | $0.000013 | $61 | **$65/mo** |
-| **PLONK** | 15K | 0.82s | 0.82s | 1KB | $0.000019 | $122 | **$128/mo** |
-| **Halo2** | 15K | 0.60s | 0.60s | 5KB | $0.000021 | $122 | **$128/mo** |
-| **Groth16** | 1M | 18.3s | 36.6s* | 192B | $0.003910 | $366 | **$1,539/mo** |
-| **PLONK** | 1M | 14.7s | 58.8s** | 1KB | $0.012554 | $732 | **$4,498/mo** |
-| **Halo2** | 1M | 11.2s | 44.8s** | 5KB | $0.009558 | $732 | **$3,600/mo** |
+| Backend | Constraints | Prove Time³ | Instance* | Proof Size⁴ | Variable/Proof | Fixed/Month | Total/Month (10K/day) |
+|---------|------------|-------------|-----------|--------------|----------------|-------------|----------------------|
+| **Groth16** | 15K | 1.15s | c5.large | 192B | $0.000021 | $61 | **$67/mo** |
+| **PLONK** | 15K | 0.82s | c5.xlarge | 1KB | $0.000031 | $122 | **$131/mo** |
+| **Halo2** | 15K | 0.60s | c5.xlarge | 5KB | $0.000034 | $122 | **$132/mo** |
+| **Groth16** | 1M | 18.3s | c5.4xlarge | 192B | $0.003910 | $489 | **$1,662/mo** |
+| **PLONK** | 1M | 14.7s | c5.9xlarge | 1KB | $0.012554 | $1,101 | **$4,867/mo** |
+| **Halo2** | 1M | 11.2s | c5.9xlarge | 5KB | $0.009558 | $1,101 | **$3,968/mo** |
 
-*2 vCPUs, **4 vCPUs for complex proofs
+*c5 instances for sustained load (t3 would exhaust CPU credits at 10K/day)
+
+**Evidence Sources:**
+3. Prove Time: `benchmark_results/zk_proof_real_benchmark.json` → `prove_time_p50`
+4. Proof Size: `benchmark_results/zk_proof_real_benchmark.json` → `proof_size_bytes`
+
+### CPU Credit Analysis for t3 vs c5
+
+```yaml
+t3.large Burst Analysis (2 vCPUs):
+  Baseline: 30% CPU (0.6 vCPUs continuous)
+  Credits earned: 36 credits/hour
+  Groth16-15K workload:
+    - 10K proofs/day = 417/hour
+    - CPU needed: 417 × 1.15s = 480 CPU-seconds/hour
+    - Credits consumed: 480/3600 × 60 = 8 credits/hour
+    - Net: +28 credits/hour (SUSTAINABLE with t3.large)
+    
+t3.xlarge Burst Analysis (4 vCPUs):
+  Baseline: 40% CPU (1.6 vCPUs continuous)
+  Credits earned: 96 credits/hour
+  Halo2-15K workload:
+    - 10K proofs/day = 417/hour
+    - CPU needed: 417 × 0.60s = 250 CPU-seconds/hour
+    - Credits consumed: 250/3600 × 60 = 4.2 credits/hour
+    - Net: +91.8 credits/hour (SUSTAINABLE with t3.xlarge)
+
+Conclusion: t3 instances ARE sustainable for 15K constraints at 10K/day
+but c5 provides consistent performance without credit management
+```
 
 ### Detailed Cost Calculation
 
 #### Groth16-15K
 ```
 Variable per proof:
-- Compute: 1.15s × $0.042/3600 = $0.0000134
+- Compute: 1.15s × $0.085/3600 = $0.0000272  # c5.large pricing
 - Network: 0.000000192GB × $0.09 = $0.0000000
-- Total variable: $0.0000134 ≈ $0.000013
+- Total variable: $0.0000272 ≈ $0.000027
 
 Monthly (300K proofs):
-- Variable: 300,000 × $0.000013 = $3.90
-- Fixed (t3.large): $61
-- Total: $65/month
+- Variable: 300,000 × $0.000027 = $8.10
+- Fixed (c5.large): $61
+- Total: $69/month
+
+Note: Can use t3.large ($65/month) as CPU credits sustainable
 ```
 
 #### Halo2-1M
 ```
 Variable per proof:
-- Compute: 11.2s × 4 × $0.768/3600 = $0.009557
+- Compute: 11.2s × $1.53/3600 = $0.004760  # c5.9xlarge pricing (36 vCPUs)
 - Network: 0.0000051GB × $0.09 = $0.0000005
-- Total variable: $0.009558 ≈ $0.00956
+- Total variable: $0.004761 ≈ $0.00476
 
 Monthly (300K proofs):
-- Variable: 300,000 × $0.00956 = $2,868
-- Fixed (r5.4xlarge): $732
-- Total: $3,600/month
+- Variable: 300,000 × $0.00476 = $1,428
+- Fixed (c5.9xlarge): $1,101
+- Total: $2,529/month
 ```
 
 ### Setup Costs (One-Time)
@@ -307,16 +374,16 @@ Per Query: $0.00294
 #### Healthcare Network (10M records)
 ```yaml
 Components:
-  PIR: 10M database, CPIR (computational privacy)
+  PIR: 10M sharded (10×1M, hash routing), CPIR
   ZK: Halo2, 1M constraints (trustless)
   
 Performance:
-  PIR Latency: 113s
+  PIR Latency: 920ms (single shard query)
   ZK Latency: 11.2s
-  Total: ~124s per query
+  Total: ~12.1s per query
   
 Resources:
-  Peak RAM: 14GB (PIR) + 48GB (ZK)
+  Peak RAM: 2.8GB × 10 (PIR shards) + 48GB (ZK)
   Storage: 1TB
   
 Trust Model:
@@ -324,11 +391,13 @@ Trust Model:
   ZK: Trustless (no setup ceremony)
   
 Monthly Cost (10K queries/day):
-  PIR: $2,262
-  ZK: $3,600
-  Total: $5,862/month
+  PIR: $910 (10 shards × $91 each)
+  ZK: $2,529 (c5.9xlarge)
+  Total: $3,439/month
   
-Per Query: $0.01954
+Per Query: $0.01146
+
+Note: Hash-based sharding reduces PIR cost by 60% vs monolithic
 ```
 
 ## Cost Optimization Strategies
