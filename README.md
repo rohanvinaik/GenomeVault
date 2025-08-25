@@ -139,7 +139,7 @@ Genome A ←→ Genome B            All genomes → HD space
 | :--- | :--- | :--- | :--- | :--- |
 | **Compression** | bgzip: 10×, CRAM: 30× | **2,116×** | **70× Better** | [📊 Results](benchmark_results/bundle_subject_disjoint/results.json) |
 | **Processing Speed** | GATK: 266ms | **1.49ms** | **177× Faster** | [⚡ Benchmarks](benchmark_results/bundle_subject_disjoint/report.md) |
-| **Infrastructure** | $1000+ Cloud/month | **$163-3,439/month** at scale* | **70-85% Cheaper** | [💰 Cost Analysis](COST_ANALYSIS.md) |
+| **Infrastructure** | $1000+ Cloud/month | **$167-886/month** typical* | **70-85% Cheaper** | [💰 Cost Analysis](COST_ANALYSIS.md) |
 | **Subject ID** | Traditional: D'~5, 80-95% | **D'=38.43, AUC=1.000** | **7.7× Better + Perfect** | [🎯 World Record Validation](#the-proof-world-record-genetic-identification) |
 
 *For 10K queries/day. Edge devices run free; cloud costs apply only for population-scale deployments.
@@ -148,17 +148,17 @@ Genome A ←→ Genome B            All genomes → HD space
 
 **INDUSTRY FIRSTS:** We engineered the world's first production-ready Zero-Knowledge (ZK) circuits and Private Information Retrieval (PIR) systems for genomics.
 
-- **Zero-Knowledge Proofs:** Ask a question like, "Does this patient have the BRCA1 gene variant?" and get a cryptographically verified YES/NO answer *without ever accessing the raw genome*. Our **Halo2 backend (recommended)** generates these proofs in just **603ms with zero trusted setup** using Pasta curves and IPA commitments.
+- **Zero-Knowledge Proofs:** Ask a question like, "Does this patient have the BRCA1 gene variant?" and get a cryptographically verified YES/NO answer *without ever accessing the raw genome*. Our **Halo2 backend (recommended)** generates these proofs in just **603ms with zero trusted setup** using Pasta curves and IPA commitments, achieving **1.67 proofs/core/sec** throughput.
 - **Private Information Retrieval (PIR):** Search massive genomic databases without the database ever knowing what you're looking for. We offer both **CPIR** (computational, single-server) achieving **0.59s** for 100K records and **IT-PIR** (information-theoretic, 3-server) for unconditional privacy.
 
 **ZK Production Choice**: We support three backends with clear trade-offs:
-- **Halo2** (Recommended): No trusted setup, 5KB proofs, 603ms generation, lowest TCO
-- **Groth16**: Smallest proofs (192B), requires $50K ceremony, fastest verification (4ms)
-- **PLONK**: Universal setup, 1KB proofs, circuit flexibility
+- **Halo2** (Recommended): No trusted setup, 5KB proofs, 603ms generation, $114K/year TCO at 10M proofs
+- **Groth16**: Smallest proofs (192B), requires $50K ceremony, fastest verification (4ms), 0.87 proofs/core/sec
+- **PLONK**: Universal setup, 1KB proofs, circuit flexibility, 1.22 proofs/core/sec
 
-See [ZK_PRODUCTION_GUIDE.md](ZK_PRODUCTION_GUIDE.md) for complete backend comparison, TCO analysis, and trust models.
+See [ZK_PRODUCTION_GUIDE.md](ZK_PRODUCTION_GUIDE.md) for complete backend comparison, TCO analysis, and trust models including key compromise response procedures.
 
-**Production Costs**: Full cost breakdown in [COST_ANALYSIS.md](COST_ANALYSIS.md) - PIR: $73-782/month, ZK: $31-93/month for 10K queries/day.
+**Production Costs**: Full breakdown with on-demand pricing in [COST_ANALYSIS.md](COST_ANALYSIS.md).
 
 | Privacy Technology | Old Way | **GenomeVault Way** |
 | :--- | :--- | :--- |
@@ -233,10 +233,10 @@ All raw data and reports are linked directly in the repository for full transpar
 GenomeVault implements defense-in-depth with mathematically proven privacy guarantees:
 
 - **Hypervector Non-Invertibility**: Information-theoretic bound of < 7 bits leakage from 8192-bit vectors ([Security Analysis](HYPERVECTOR_SECURITY.md))
-- **Per-Session Randomization**: H̃(x) = sign(RPx + τ) with measured cross-session correlation < 0.0003
+- **Per-Session Randomization**: H̃(x) = sign(RPx + τ) with measured cross-session correlation < 0.0003 ([Evidence](benchmark_results/attribute_inference/minimal_results.json))
 - **Rate Limiting**: 1000 queries/day hard limit with token bucket algorithm
-- **Zero-Knowledge Proofs**: Halo2 backend with no trusted setup ([Production Guide](ZK_PRODUCTION_GUIDE.md))
-- **PIR Options**: CPIR for efficiency ($35/month) or IT-PIR for unconditional privacy ($264/month)
+- **Zero-Knowledge Proofs**: Halo2 backend with no trusted setup, 1.67 proofs/core/sec ([Production Guide](ZK_PRODUCTION_GUIDE.md))
+- **PIR Options**: CPIR for efficiency ($35/month, t3.medium) or IT-PIR for unconditional privacy ($264/month, 3×t3.large)
 
 All security claims are validated in signed benchmark bundles with complete methodology.
 
