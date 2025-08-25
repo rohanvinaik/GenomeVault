@@ -40,6 +40,14 @@
 | 1% FAR | 0.01 | 1.0000 |
 | 5% FAR | 0.05 | 1.0000 |
 
+## Protocol Metrics
+| Metric | Value |
+|--------|-------|
+| **Random Seed** | 42 |
+| **Bootstrap Cluster** | family |
+| **Split Strategy** | LFamO |
+| **Reproducibility** | Deterministic |
+
 ## Validation Checks ✓
 - **Label Shuffle AUC**: 0.484 (should be ≈ 0.5)
 - **Label Shuffle EER**: 0.484 (should be ≈ 0.5)

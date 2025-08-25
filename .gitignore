@@ -173,6 +173,12 @@ results/
 experimental_results/
 benchmark_results/**/*.json
 !benchmark_results/fingerprint_*/validation_results.json
+!benchmark_results/bundle_*/results.json
+
+# Bundle directories are build artifacts - keep only linked files
+benchmark_results/bundle_*/*
+!benchmark_results/bundle_*/results.json
+!benchmark_results/bundle_*/report.md
 .mypy_cache/
 
 # Path Sanitization - Files with absolute paths
