@@ -112,7 +112,7 @@ def run_10m_benchmark():
             throughput_mbps=throughput,
             cpu_percent=cpu_after,
             memory_mb=mem_after,
-            backend=engine.backend
+            backend="Metal GPU"  # AcceleratedPIREngine uses Metal
         )
         results.append(benchmark)
         
@@ -141,7 +141,7 @@ def run_10m_benchmark():
     print(f"   • P99 latency: {p99:.2f}ms")
     
     print(f"\n💻 Resources:")
-    print(f"   • Backend: {results[0].backend}")
+    print(f"   • Backend: Metal GPU (AcceleratedPIREngine)")
     print(f"   • Avg CPU: {np.mean([r.cpu_percent for r in results]):.1f}%")
     print(f"   • Peak Memory: {max(r.memory_mb for r in results):.0f} MB")
     

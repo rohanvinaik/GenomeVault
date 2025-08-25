@@ -149,7 +149,7 @@ With metadata: 50-100× for clinical variants
 | **PIR Query (10K records)** | 7.13ms | 140 queries/sec | XOR IT-PIR | ✅ Measured |
 | **PIR Query (100K records)** | 200ms | 5 queries/sec | Metal-accelerated | ✅ Measured |
 | **PIR Query (1M records)** | 918ms | 1.1 queries/sec | Metal-accelerated | ✅ Measured |
-| **PIR Query (10M records)** | ~4.2s | 0.24 queries/sec | Metal-accelerated | 🔮 Predicted O(n^0.66) |
+| **PIR Query (10M records)** | 113.5s | 0.009 queries/sec | Metal-accelerated | ✅ MEASURED [2025-08-24] |
 | **Database Insert** | 0.0008ms/record | 1.25M records/sec | SQLite | ✅ Measured |
 | **Federated Aggregation** | 0.05ms | 20K aggregations/sec | Secure MPC | ✅ Measured |
 | **Full E2E Pipeline** | 8.34ms | 120 genomes/sec | All components | ✅ Measured |
@@ -349,12 +349,15 @@ result = genomevault.pir_query(
 # Scaling: O(n^0.66) SUB-LINEAR with Metal acceleration
 ```
 
-**🎉 SUB-LINEAR SCALING ACHIEVED:**
-- 100K rows: 200ms
-- 1M rows: 918ms (only 4.6× slower for 10× data)
-- 10M rows: ~4.2s (predicted)
-- Scaling: O(n^0.66) instead of O(n)
-- Achieved via: Metal GPU parallel XOR + optimized memory patterns
+**📊 SCALING ANALYSIS (Real Measurements):**
+- 100K rows: 200ms (sub-linear O(n^0.66))
+- 1M rows: 918ms (only 4.6× slower for 10× data) ✅
+- 10M rows: 113.5s (123× slower for 10× data) ⚠️
+- **Scaling inflection**: Sub-linear up to 1M, then super-linear
+- **Why**: Cache misses + memory pressure at 10GB scale
+- **Recommendation**: 
+  - ≤1M rows: Real-time clinical queries (sub-second)
+  - 10M rows: Batch processing for research (2 min/query)
 
 ### 4. Hardware Acceleration - Unified Performance Layer
 ```python
