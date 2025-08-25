@@ -42,7 +42,7 @@ This broken system creates needless suffering:
 With GenomeVault, rare disease patients finally have hope:
 
 - **Instant Pattern Matching:** Any doctor can compare your genome to millions of others in **1.49 milliseconds**, finding similar patients instantly.
-- **Global Collaboration:** Researchers worldwide can study your anonymized pattern without ever seeing your DNA—accelerating discovery by 100×.
+- **Global Collaboration:** Researchers can finally study patterns across all 200 patients with your condition worldwide—**enabling research that was impossible before**.
 - **Automatic Trial Matching:** Clinical trials can find you through privacy-preserving queries—**you're discovered without being exposed**.
 - **Essentially Free:** Reanalysis happens on your phone continuously as new discoveries emerge—no more $5,000 bills.
 
@@ -55,10 +55,10 @@ With GenomeVault, rare disease patients finally have hope:
 - **Continuous hope:** Your genome is reanalyzed instantly as new discoveries emerge—for free
 
 **For Researchers:**
-- **Find every patient:** Study all 200 cases of an ultra-rare disease globally without privacy barriers
-- **Accelerate discovery:** What took 10 years of recruitment now happens in 10 minutes
-- **Natural history studies:** Track disease progression across populations while preserving individual privacy
-- **Drug development:** Test hypotheses on real patient patterns without accessing raw genomic data
+- **Impossible becomes possible:** Finally study ultra-rare diseases with only 200 cases globally—research that couldn't exist before
+- **Complete cohorts:** Access patterns from every single patient worldwide, not just the 5% at major medical centers
+- **Natural history studies:** Track disease progression across all patients globally—creating datasets that were impossible to assemble
+- **Statistical power:** Turn "too rare to study" into "rare but researchable" by accessing global populations
 
 **For Healthcare Systems:**
 - **End diagnostic odysseys:** 5-year journeys become same-day answers
