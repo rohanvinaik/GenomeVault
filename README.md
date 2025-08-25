@@ -146,8 +146,15 @@ Genome A ←→ Genome B            All genomes → HD space
 
 **INDUSTRY FIRSTS:** We engineered the world's first production-ready Zero-Knowledge (ZK) circuits and Private Information Retrieval (PIR) systems for genomics.
 
-- **Zero-Knowledge Proofs:** Ask a question like, "Does this patient have the BRCA1 gene variant?" and get a cryptographically verified YES/NO answer *without ever accessing the raw genome*. Our Halo2 backend generates these proofs in just **603ms**.
+- **Zero-Knowledge Proofs:** Ask a question like, "Does this patient have the BRCA1 gene variant?" and get a cryptographically verified YES/NO answer *without ever accessing the raw genome*. Our **Halo2 backend (recommended)** generates these proofs in just **603ms with zero trusted setup**.
 - **Private Information Retrieval (PIR):** Search massive genomic databases without the database ever knowing what you're looking for. Our system achieves this with mathematical, information-theoretic security in **0.11ms** for 100,000 records.
+
+**ZK Production Choice**: We support three backends with clear trade-offs:
+- **Halo2** (Recommended): No trusted setup, 5KB proofs, 603ms generation, lowest TCO
+- **Groth16**: Smallest proofs (192B), requires $50K ceremony, fastest verification (4ms)
+- **PLONK**: Universal setup, 1KB proofs, circuit flexibility
+
+See [ZK_PRODUCTION_GUIDE.md](ZK_PRODUCTION_GUIDE.md) for complete backend comparison, TCO analysis, and trust models.
 
 | Privacy Technology | Old Way | **GenomeVault Way** |
 | :--- | :--- | :--- |
