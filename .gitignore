@@ -166,3 +166,10 @@ test_*.json
 genomevault_*.json
 *_test_results.json
 *_performance_metrics.json
+
+
+# Exclude directories with potential absolute paths
+results/
+experimental_results/
+benchmark_results/**/*.json
+.mypy_cache/
