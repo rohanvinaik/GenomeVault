@@ -111,6 +111,8 @@ GenomeVault introduces **multi-resolution sequence alignment** through hypervect
 
 **Real-World Impact:** Search 1 million genomes in 1 second vs. days with BLAST.
 
+**Note on BLAST**: While BLAST offers single-nucleotide accuracy without privacy guarantees, its structural simplicity makes it a valuable complementary tool in the analytical pipeline, particularly for researchers requiring base-pair precision after GenomeVault's privacy-preserving filtering identifies candidates.
+
 | **Aspect** | **BLAST** | **GenomeVault** | **GenomeVault Advantage** |
 | :--- | :--- | :--- | :--- |
 | **Similarity Search** | O(n×m) pairwise | **O(1) hypervector cosine** | **1000× faster** |
