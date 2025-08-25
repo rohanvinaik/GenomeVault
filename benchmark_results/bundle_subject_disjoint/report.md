@@ -1,6 +1,6 @@
 # HDC Fingerprint Validation Report
 **Protocol**: Subject Disjoint
-**Generated**: 2025-08-24T23:17:56.861058
+**Generated**: 2025-08-24T23:54:12.445688
 
 ## Protocol Configuration
 - **Split Strategy**: subject_disjoint
@@ -25,10 +25,10 @@
 ## Aggregate Performance
 - **AUC**: 1.000 [1.000, 1.000]
 - **EER**: 0.000 (95% upper bound: 0.000)
-- **d-prime**: 38.01
-- **Score Margin**: 0.107
+- **d-prime**: 32.42
+- **Score Margin**: 0.118
 - **Genuine**: μ=0.976, σ=0.005
-- **Impostor**: μ=0.516, σ=0.024
+- **Impostor**: μ=0.522, σ=0.024
 
 ## Operating Points
 | Operating Point | FAR | FRR |
@@ -41,19 +41,19 @@
 | 5% FAR | 0.05 | 1.0000 |
 
 ## Validation Checks ✓
-- **Label Shuffle AUC**: 0.521 (should be ≈ 0.5)
-- **Label Shuffle EER**: 0.479 (should be ≈ 0.5)
+- **Label Shuffle AUC**: 0.491 (should be ≈ 0.5)
+- **Label Shuffle EER**: 0.491 (should be ≈ 0.5)
 - **Duplicate Rate**: 0.000 (should be ≈ 0)
 - **Validation Status**: ✅
 
 ## Per-Fold Results
 | Fold | AUC | CI | EER | d' | Margin | μ_gen±σ | μ_imp±σ | N_pairs |
 |------|-----|----|----|----|---------|---------|---------|---------| 
-| 0 | 1.000 | [1.000, 1.000] | 0.000 | 38.0 | 0.106 | 0.977±0.006 | 0.510±0.024 | 5000+40000 |
-| 1 | 1.000 | [1.000, 1.000] | 0.000 | 43.0 | 0.107 | 0.975±0.004 | 0.514±0.026 | 5000+40000 |
-| 2 | 1.000 | [1.000, 1.000] | 0.000 | 28.8 | 0.075 | 0.975±0.005 | 0.519±0.026 | 5000+40000 |
-| 3 | 1.000 | [1.000, 1.000] | 0.000 | 33.4 | 0.133 | 0.977±0.005 | 0.518±0.024 | 5000+40000 |
-| 4 | 1.000 | [1.000, 1.000] | 0.000 | 43.8 | 0.148 | 0.975±0.005 | 0.520±0.022 | 5000+40000 |
+| 0 | 1.000 | [1.000, 1.000] | 0.000 | 30.6 | 0.135 | 0.976±0.005 | 0.519±0.025 | 5000+40000 |
+| 1 | 1.000 | [1.000, 1.000] | 0.000 | 32.4 | 0.089 | 0.975±0.004 | 0.522±0.021 | 5000+40000 |
+| 2 | 1.000 | [1.000, 1.000] | 0.000 | 31.3 | 0.118 | 0.977±0.005 | 0.531±0.028 | 5000+40000 |
+| 3 | 1.000 | [1.000, 1.000] | 0.000 | 42.8 | 0.095 | 0.976±0.006 | 0.516±0.024 | 5000+40000 |
+| 4 | 1.000 | [1.000, 1.000] | 0.000 | 40.6 | 0.122 | 0.977±0.005 | 0.522±0.023 | 5000+40000 |
 
 ## Artifacts
 - **ROC Curves**: roc_curves.png
@@ -61,9 +61,9 @@
 - **Score Distributions**: score_distributions.png
 
 ## Provenance
-- **Timestamp**: 2025-08-24T23:17:56.861058
+- **Timestamp**: 2025-08-24T23:54:12.445688
 - **Dataset SHA256**: `1269cbf6a5ce66b82579d9a340f73efdc459145ad93b0a7b24aecc408c4a6da2`
-- **Code Git SHA**: `894f3047b5150bfd00fe06cda4f0728b06857c5e`
+- **Code Git SHA**: `7ddac4a4e059ead9492952bf99846cf1afadf81a`
 - **Python Version**: 3.11.8 | packaged by conda-forge | (main, Feb 16 2024, 20:49:36) [Clang 16.0.6 ]
 
 ## PIR Performance Context
