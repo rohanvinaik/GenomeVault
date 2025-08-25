@@ -151,6 +151,59 @@
     "score_distributions": "score_distributions.png",
     "aggregate_roc": "aggregate_roc.png"
   },
+  "security_analysis": {
+    "experiment": "attribute_inference",
+    "configurations_tested": 4,
+    "mitigation_effectiveness": {
+      "no_protection_accuracy": 0.4,
+      "full_protection_accuracy": 0.3333333333333333,
+      "attack_success_reduction_percent": 100.0
+    },
+    "security_assessment": {
+      "worst_case_accuracy": 0.4,
+      "best_case_accuracy": 0.3,
+      "randomization_effective": false,
+      "noise_effective": true
+    },
+    "detailed_results": [
+      {
+        "configuration": "no_protection",
+        "attribute": "ancestry",
+        "accuracy": 0.4,
+        "baseline": 0.3333333333333333,
+        "improvement": 0.06666666666666671,
+        "n_samples": 200,
+        "hypervector_dim": 8192
+      },
+      {
+        "configuration": "with_randomization",
+        "attribute": "ancestry",
+        "accuracy": 0.4,
+        "baseline": 0.3333333333333333,
+        "improvement": 0.06666666666666671,
+        "n_samples": 200,
+        "hypervector_dim": 8192
+      },
+      {
+        "configuration": "with_noise",
+        "attribute": "ancestry",
+        "accuracy": 0.3,
+        "baseline": 0.3333333333333333,
+        "improvement": -0.033333333333333326,
+        "n_samples": 200,
+        "hypervector_dim": 8192
+      },
+      {
+        "configuration": "full_protection",
+        "attribute": "ancestry",
+        "accuracy": 0.3333333333333333,
+        "baseline": 0.3333333333333333,
+        "improvement": 0.0,
+        "n_samples": 200,
+        "hypervector_dim": 8192
+      }
+    ]
+  },
   "pir_context": {
     "rows": [
       100000,
@@ -233,9 +286,9 @@
     }
   },
   "provenance": {
-    "timestamp": "2025-08-24T23:54:16.528372",
+    "timestamp": "2025-08-25T10:03:20.372834",
     "dataset_sha256": "1269cbf6a5ce66b82579d9a340f73efdc459145ad93b0a7b24aecc408c4a6da2",
-    "code_git_sha": "7ddac4a4e059ead9492952bf99846cf1afadf81a",
+    "code_git_sha": "2e0804f75a61d3f39920afcfce6409dd0e0f8680",
     "python_version": "3.11.8 | packaged by conda-forge | (main, Feb 16 2024, 20:49:36) [Clang 16.0.6 ]",
     "dependencies": [
       "accelerate==1.10.0",

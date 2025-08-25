@@ -152,6 +152,7 @@ def create_comprehensive_results(existing_results: Dict, split_type: str) -> Dic
             "score_distributions": "score_distributions.png",
             "aggregate_roc": "aggregate_roc.png"
         },
+        "security_analysis": load_attribute_inference_results(),
         "pir_context": {
             "rows": [100000, 1000000],
             "scheme": "IT-PIR",
@@ -624,6 +625,33 @@ def get_detailed_dependencies() -> List[Dict]:
         pass
     
     return deps
+
+def load_attribute_inference_results() -> dict:
+    """Load attribute inference security analysis results."""
+    attr_inf_path = Path("benchmark_results/attribute_inference/minimal_results.json")
+    
+    # Run experiment if results don't exist
+    if not attr_inf_path.exists():
+        print("Running attribute inference experiment...")
+        import subprocess
+        subprocess.run(["python", "benchmarks/attribute_inference_minimal.py"], check=True)
+    
+    # Load results
+    if attr_inf_path.exists():
+        with open(attr_inf_path) as f:
+            data = json.load(f)
+        return {
+            "experiment": "attribute_inference",
+            "configurations_tested": len(data.get("results", [])),
+            "mitigation_effectiveness": data.get("mitigation_effectiveness", {}),
+            "security_assessment": data.get("security_assessment", {}),
+            "detailed_results": data.get("results", [])
+        }
+    
+    return {
+        "experiment": "attribute_inference",
+        "status": "not_available"
+    }
 
 def calculate_dataset_sha() -> str:
     """Calculate SHA256 of synthetic dataset parameters"""

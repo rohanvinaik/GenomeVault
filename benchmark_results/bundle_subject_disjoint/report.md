@@ -1,6 +1,6 @@
 # HDC Fingerprint Validation Report
 **Protocol**: Subject Disjoint
-**Generated**: 2025-08-24T23:54:12.445688
+**Generated**: 2025-08-25T10:03:15.929810
 
 ## Protocol Configuration
 - **Split Strategy**: subject_disjoint
@@ -40,14 +40,6 @@
 | 1% FAR | 0.01 | 1.0000 |
 | 5% FAR | 0.05 | 1.0000 |
 
-## Protocol Metrics
-| Metric | Value |
-|--------|-------|
-| **Random Seed** | 42 |
-| **Bootstrap Cluster** | subject |
-| **Split Strategy** | subject_disjoint |
-| **Reproducibility** | Deterministic |
-
 ## Validation Checks ✓
 - **Label Shuffle AUC**: 0.491 (should be ≈ 0.5)
 - **Label Shuffle EER**: 0.491 (should be ≈ 0.5)
@@ -69,9 +61,9 @@
 - **Score Distributions**: score_distributions.png
 
 ## Provenance
-- **Timestamp**: 2025-08-24T23:54:12.445688
+- **Timestamp**: 2025-08-25T10:03:15.929810
 - **Dataset SHA256**: `1269cbf6a5ce66b82579d9a340f73efdc459145ad93b0a7b24aecc408c4a6da2`
-- **Code Git SHA**: `7ddac4a4e059ead9492952bf99846cf1afadf81a`
+- **Code Git SHA**: `2e0804f75a61d3f39920afcfce6409dd0e0f8680`
 - **Python Version**: 3.11.8 | packaged by conda-forge | (main, Feb 16 2024, 20:49:36) [Clang 16.0.6 ]
 
 ## PIR Performance Context
