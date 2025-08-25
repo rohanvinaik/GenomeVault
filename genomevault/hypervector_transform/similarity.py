@@ -5,10 +5,7 @@ Provides similarity metrics appropriate for hyperdimensional vectors
 
 import numpy as np
 import torch
-from typing import Union, Optional
-import logging
-
-logger = logging.getLogger(__name__)
+from typing import Union
 
 TensorLike = Union[np.ndarray, torch.Tensor]
 
@@ -147,51 +144,3 @@ def compute_fingerprint_similarity(fp1: TensorLike, fp2: TensorLike) -> float:
         Similarity score in [0, 1]
     """
     return HDCSimilarity.compute(fp1, fp2, method="weighted")
-
-
-def batch_similarity_matrix(fingerprints: list, method: str = "weighted") -> np.ndarray:
-    """Compute pairwise similarity matrix for a batch of fingerprints.
-    
-    Args:
-        fingerprints: List of hypervectors
-        method: Similarity method to use
-        
-    Returns:
-        Symmetric similarity matrix
-    """
-    n = len(fingerprints)
-    sim_matrix = np.zeros((n, n))
-    
-    for i in range(n):
-        sim_matrix[i, i] = 1.0  # Self-similarity
-        for j in range(i + 1, n):
-            sim = HDCSimilarity.compute(fingerprints[i], fingerprints[j], method)
-            sim_matrix[i, j] = sim
-            sim_matrix[j, i] = sim  # Symmetric
-    
-    return sim_matrix
-
-
-def find_nearest_neighbors(query: TensorLike, database: list, 
-                          k: int = 5, method: str = "weighted") -> list:
-    """Find k nearest neighbors in database.
-    
-    Args:
-        query: Query hypervector
-        database: List of database hypervectors
-        k: Number of neighbors to return
-        method: Similarity method
-        
-    Returns:
-        List of (index, similarity) tuples for k nearest neighbors
-    """
-    similarities = []
-    
-    for i, db_vector in enumerate(database):
-        sim = HDCSimilarity.compute(query, db_vector, method)
-        similarities.append((i, sim))
-    
-    # Sort by similarity (descending)
-    similarities.sort(key=lambda x: x[1], reverse=True)
-    
-    return similarities[:k]

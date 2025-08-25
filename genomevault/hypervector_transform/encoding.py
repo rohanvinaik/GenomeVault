@@ -87,16 +87,25 @@ class HypervectorEncoder:
     """Minimal, correct encoder to unblock tests."""
 
     def __init__(self, config: Optional[HypervectorConfig] = None) -> None:
-        """Initialize instance.
-
+        """Initialize instance with deterministic behavior.
+        
         Args:
             config: Configuration dictionary.
         """
         self.config = config or HypervectorConfig()
-        if self.config.seed is not None:
-            torch.manual_seed(self.config.seed)
-            np.random.seed(self.config.seed)
+        
+        # CRITICAL FIX: Always use deterministic seed for reproducibility
+        if self.config.seed is None:
+            self.config.seed = 42  # Default to fixed seed
+            logger.info("Using default seed=42 for reproducibility")
+        
+        torch.manual_seed(self.config.seed)
+        np.random.seed(self.config.seed)
+        
         self._projection_cache: Dict[str, torch.Tensor] = {}
+        
+        # Pre-initialize common projection matrices
+        self._initialize_common_projections()
 
         # Initialize Metal acceleration if available and requested
         self.metal_engine = None
@@ -289,6 +298,35 @@ class HypervectorEncoder:
             return features.view(-1).float()
         raise EncodingError(f"Unsupported feature type: {type(features)!r}")
 
+    def _initialize_common_projections(self):
+        """Pre-compute projection matrices for common dimensions.
+        
+        This ensures consistency across multiple encodings and improves
+        fingerprint quality by using the same projection for all samples.
+        """
+        # Common genomic feature dimensions
+        common_input_dims = [100, 1000, 5000, 10000, 50000, 100000]
+        
+        for input_dim in common_input_dims:
+            # Only pre-compute for genomic type
+            key = self._cache_key(input_dim, self.config.dimension, OmicsType.GENOMIC)
+            
+            if key not in self._projection_cache:
+                # Generate and cache the projection matrix
+                if self.config.projection_type == ProjectionType.RANDOM_GAUSSIAN:
+                    mat = torch.randn(self.config.dimension, input_dim) / np.sqrt(input_dim)
+                elif self.config.projection_type == ProjectionType.SPARSE_RANDOM:
+                    mat = self._sparse_random(self.config.dimension, input_dim, 
+                                            sparsity=self.config.sparsity)
+                elif self.config.projection_type == ProjectionType.ORTHOGONAL:
+                    mat = self._orthogonal(self.config.dimension, input_dim)
+                else:
+                    continue
+                
+                self._projection_cache[key] = mat
+                
+        logger.info(f"Pre-initialized {len(self._projection_cache)} projection matrices")
+
     def _cache_key(self, input_dim: int, output_dim: int, omics_type: OmicsType) -> str:
         """ cache key.
             Args:        input_dim: Parameter value.        output_dim: Parameter value.        \
@@ -300,15 +338,27 @@ class HypervectorEncoder:
     def _get_projection_matrix(
         self, input_dim: int, output_dim: int, omics_type: OmicsType
     ) -> torch.Tensor:
-        """ get projection matrix.
-            Args:        input_dim: Parameter value.        output_dim: Parameter value.        \
-                omics_type: Parameter value.
-            Returns:
-                torch.Tensor    """
+        """Get projection matrix with guaranteed consistency.
+        
+        Args:
+            input_dim: Input dimension
+            output_dim: Output dimension (hypervector dimension)
+            omics_type: Type of omics data
+            
+        Returns:
+            Cached or newly generated projection matrix
+        """
         key = self._cache_key(input_dim, output_dim, omics_type)
+        
+        # Return cached matrix if available
         if key in self._projection_cache:
             return self._projection_cache[key]
-
+        
+        # Set seed for consistent generation
+        torch.manual_seed(self.config.seed + hash(key) % 10000)
+        np.random.seed(self.config.seed + hash(key) % 10000)
+        
+        # Generate projection matrix
         if self.config.projection_type == ProjectionType.RANDOM_GAUSSIAN:
             mat = torch.randn(output_dim, input_dim) / np.sqrt(input_dim)
         elif self.config.projection_type == ProjectionType.SPARSE_RANDOM:
@@ -317,8 +367,14 @@ class HypervectorEncoder:
             mat = self._orthogonal(output_dim, input_dim)
         else:
             raise ProjectionError(f"Unsupported projection type {self.config.projection_type}")
-
+        
+        # Cache for future use
         self._projection_cache[key] = mat
+        
+        # Reset seed to configured value
+        torch.manual_seed(self.config.seed)
+        np.random.seed(self.config.seed)
+        
         return mat
 
     def _sparse_random(self, rows: int, cols: int, *, sparsity: float) -> torch.Tensor:

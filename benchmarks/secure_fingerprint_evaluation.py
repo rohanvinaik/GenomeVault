@@ -26,6 +26,7 @@ warnings.filterwarnings('ignore')
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from genomevault.hypervector_transform.encoding import HypervectorEncoder, HypervectorConfig
+from genomevault.hypervector_transform.similarity import compute_fingerprint_similarity
 from genomevault.core.constants import OmicsType
 
 @dataclass
@@ -380,43 +381,8 @@ class RigorousFingerprintEvaluator:
         return np.array(genuine_scores), np.array(impostor_scores)
     
     def _compute_similarity(self, fp1: np.ndarray, fp2: np.ndarray) -> float:
-        """Compute HDC-appropriate similarity"""
-        # Handle sparse vectors properly
-        active1 = np.abs(fp1) > 1e-10
-        active2 = np.abs(fp2) > 1e-10
-        
-        # Structural similarity (Jaccard on active components)
-        intersection = np.sum(active1 & active2)
-        union = np.sum(active1 | active2)
-        
-        if union == 0:
-            return 0.0
-        
-        jaccard = intersection / union
-        
-        # Magnitude similarity (cosine on active components)
-        active_both = active1 & active2
-        if np.sum(active_both) > 0:
-            v1 = fp1[active_both]
-            v2 = fp2[active_both]
-            
-            dot = np.dot(v1, v2)
-            norm1 = np.linalg.norm(v1)
-            norm2 = np.linalg.norm(v2)
-            
-            if norm1 > 0 and norm2 > 0:
-                cosine = dot / (norm1 * norm2)
-                # Map to [0, 1]
-                cosine = (cosine + 1) / 2
-            else:
-                cosine = 0.0
-        else:
-            cosine = 0.0
-        
-        # Weighted combination
-        similarity = 0.3 * jaccard + 0.7 * cosine
-        
-        return similarity
+        """Compute HDC-appropriate similarity using the new similarity module"""
+        return compute_fingerprint_similarity(fp1, fp2)
     
     def compute_metrics(self, genuine_scores: np.ndarray, 
                        impostor_scores: np.ndarray) -> ValidationMetrics:
