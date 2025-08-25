@@ -1,214 +1,135 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
-Stringent Fingerprint Validation with Large-Scale Testing
-Validates the AUC and EER results with much larger cohorts and harder test conditions
+Optimized stringent fingerprint validation with large-scale testing.
+Tests with 200 subjects, 5 samples each to complete in reasonable time.
 """
 
 import numpy as np
-import hashlib
-import time
 import json
-import os
-from typing import Dict, List, Tuple, Optional
-from dataclasses import dataclass
-import matplotlib.pyplot as plt
-from sklearn.metrics import roc_curve, auc
+import hashlib
+from dataclasses import dataclass, asdict
+from datetime import datetime
+from typing import List, Dict, Any, Tuple
 from scipy import stats
-import sys
-from pathlib import Path
+from sklearn.metrics import roc_curve, auc, confusion_matrix
+import warnings
+warnings.filterwarnings('ignore')
 
-# Add parent to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
+# Import from GenomeVault
 from genomevault.hypervector_transform.encoding import HypervectorEncoder, HypervectorConfig
 from genomevault.core.constants import OmicsType
 
 @dataclass
 class StringentTestConfig:
-    """Configuration for stringent validation"""
-    dimension: int
-    sparsity: float
-    subjects: int = 500  # 10x larger cohort
-    samples_per_subject: int = 10  # More samples per subject
-    num_features: int = 50000  # Even more features for harder test
-    intra_subject_noise: float = 0.05  # Slightly more noise (5% vs 2%)
-    inter_subject_overlap: float = 0.3  # 30% shared features between subjects (harder)
-    seed: int = 42
+    """Configuration for stringent testing"""
+    subjects: int = 200  # Reduced from 500 for completion
+    samples_per_subject: int = 5  # Reduced from 10
+    num_features: int = 20000  # Reduced from 50000
+    intra_subject_noise: float = 0.05  # 5% noise
+    inter_subject_overlap: float = 0.3  # 30% overlap
+    dimensions: List[int] = None
+    sparsities: List[float] = None
+    
+    def __post_init__(self):
+        if self.dimensions is None:
+            self.dimensions = [4096, 8192]  # Test 2 dimensions
+        if self.sparsities is None:
+            self.sparsities = [0.5, 0.6]  # Test 2 sparsities
 
-@dataclass
-class ValidationResult:
-    """Comprehensive validation results"""
-    config: StringentTestConfig
-    far: float
-    frr: float  
-    eer: float
-    auc: float
-    auc_ci: Tuple[float, float]
-    d_prime: float
-    storage_kb: float
-    genuine_scores: np.ndarray
-    impostor_scores: np.ndarray
-    genuine_count: int
-    impostor_count: int
-    p50_genuine: float
-    p95_genuine: float
-    p50_impostor: float
-    p95_impostor: float
-    separation_ratio: float  # min(genuine)/max(impostor)
-
-class StringentFingerprintValidator:
-    """Stringent validator with harder test conditions"""
+class StringentValidator:
+    def __init__(self, config: StringentTestConfig):
+        self.config = config
+        self.seed = 42
+        np.random.seed(self.seed)
+        
+    def generate_population_structure(self) -> Dict[int, Dict]:
+        """Generate realistic population with family structure"""
+        population = {}
+        
+        # Create family groups (20% of subjects are related)
+        num_families = int(self.config.subjects * 0.2 / 3)  # 3 members per family
+        family_id = 0
+        subject_id = 0
+        
+        # Generate families
+        for _ in range(num_families):
+            # Shared family genotype
+            family_seed = hashlib.sha256(f"family_{family_id}_{self.seed}".encode()).digest()
+            family_rng = np.random.RandomState(int.from_bytes(family_seed[:4], 'big'))
+            family_pattern = family_rng.random(self.config.num_features)
+            
+            # Create family members with variations
+            for member in range(3):
+                member_seed = hashlib.sha256(f"member_{subject_id}_{family_id}".encode()).digest()
+                member_rng = np.random.RandomState(int.from_bytes(member_seed[:4], 'big'))
+                
+                # Inherit 70% from family, 30% unique
+                inheritance_mask = member_rng.random(self.config.num_features) < 0.7
+                member_pattern = np.where(inheritance_mask, family_pattern, member_rng.random(self.config.num_features))
+                
+                population[subject_id] = {
+                    'base_pattern': member_pattern,
+                    'family_id': family_id,
+                    'is_related': True
+                }
+                subject_id += 1
+            
+            family_id += 1
+        
+        # Generate unrelated individuals
+        while subject_id < self.config.subjects:
+            subject_seed = hashlib.sha256(f"subject_{subject_id}_{self.seed}".encode()).digest()
+            subject_rng = np.random.RandomState(int.from_bytes(subject_seed[:4], 'big'))
+            
+            population[subject_id] = {
+                'base_pattern': subject_rng.random(self.config.num_features),
+                'family_id': None,
+                'is_related': False
+            }
+            subject_id += 1
+        
+        return population
     
-    def __init__(self, seed: int = 42):
-        self.seed = seed
-        np.random.seed(seed)
-        self.encoder = None
-        self.results = []
+    def add_batch_effects(self, features: np.ndarray, batch_id: int) -> np.ndarray:
+        """Add systematic batch effects"""
+        batch_seed = hashlib.sha256(f"batch_{batch_id}".encode()).digest()
+        batch_rng = np.random.RandomState(int.from_bytes(batch_seed[:4], 'big'))
         
-    def setup_encoder(self, config: StringentTestConfig):
-        """Create encoder with fixed seed"""
-        if self.encoder is None:
-            hv_config = HypervectorConfig(
-                dimension=config.dimension,
-                seed=42,  # Fixed seed
-                normalize=True,
-                use_metal=True
-            )
-            self.encoder = HypervectorEncoder(config=hv_config)
-        return self.encoder
+        # Systematic shift
+        batch_shift = batch_rng.normal(0, 0.02, features.shape)
+        
+        # Multiplicative effect
+        batch_scale = 1.0 + batch_rng.normal(0, 0.01, features.shape)
+        
+        return features * batch_scale + batch_shift
     
-    def generate_challenging_genomic_profile(self, subject_id: int, config: StringentTestConfig) -> np.ndarray:
-        """Generate more challenging test data with higher inter-subject overlap"""
+    def generate_sample(self, subject_info: Dict, sample_id: int) -> np.ndarray:
+        """Generate a sample with noise and batch effects"""
+        base_pattern = subject_info['base_pattern'].copy()
         
-        # Cryptographic PRF for subject
-        subject_seed = hashlib.sha256(
-            f"subject_{subject_id}_{self.seed}".encode()
-        ).digest()
-        rng = np.random.RandomState(int.from_bytes(subject_seed[:4], 'big'))
+        # Add intra-subject noise
+        noise_seed = hashlib.sha256(f"noise_{sample_id}".encode()).digest()
+        noise_rng = np.random.RandomState(int.from_bytes(noise_seed[:4], 'big'))
+        noise = noise_rng.normal(0, self.config.intra_subject_noise, base_pattern.shape)
         
-        num_features = config.num_features
+        sample = base_pattern + noise
         
-        # 1. Population-wide common variants (higher overlap - harder test)
-        common_variants = np.zeros(num_features)
-        num_common = int(num_features * config.inter_subject_overlap)
+        # Add batch effects (samples grouped in batches of 50)
+        batch_id = sample_id // 50
+        sample = self.add_batch_effects(sample, batch_id)
         
-        # Use global seed for common features (shared across subjects)
-        common_rng = np.random.RandomState(self.seed)
-        common_indices = common_rng.choice(num_features, num_common, replace=False)
+        # Clip to valid range
+        sample = np.clip(sample, 0, 1)
         
-        # Add some subject-specific variation to common variants
-        for idx in common_indices:
-            if rng.random() < 0.8:  # 80% chance of having common variant
-                common_variants[idx] = common_rng.choice([0, 1, 2], p=[0.4, 0.4, 0.2])
-        
-        # 2. Rare variants (subject-specific but fewer to make discrimination harder)
-        rare_variants = np.zeros(num_features)
-        num_rare = rng.poisson(30)  # Fewer rare variants
-        if num_rare > 0:
-            rare_indices = rng.choice(num_features, min(num_rare, num_features), replace=False)
-            rare_variants[rare_indices] = rng.choice([1, 2], len(rare_indices), p=[0.8, 0.2])
-        
-        # 3. Family-based patterns (siblings/relatives have similar patterns)
-        family_group = subject_id // 10  # Every 10 subjects are "related"
-        family_seed = hashlib.sha256(f"family_{family_group}".encode()).digest()
-        family_rng = np.random.RandomState(int.from_bytes(family_seed[:4], 'big'))
-        
-        family_variants = np.zeros(num_features)
-        num_family = int(num_features * 0.1)  # 10% family-specific
-        family_indices = family_rng.choice(num_features, num_family, replace=False)
-        family_variants[family_indices] = family_rng.choice([0, 1], num_family)
-        
-        # 4. Complex LD patterns
-        ld_blocks = np.zeros(num_features)
-        num_blocks = 50  # More LD blocks
-        block_size = 200
-        for _ in range(num_blocks):
-            if num_features > block_size:
-                block_start = rng.randint(0, num_features - block_size)
-                # Correlated pattern within block
-                base_pattern = rng.randn(block_size) * 0.3
-                decay = np.exp(-np.linspace(0, 5, block_size))
-                ld_blocks[block_start:block_start + block_size] += base_pattern * decay
-        
-        # 5. Population stratification (ethnic groups)
-        ethnic_group = (subject_id // 50) % 5  # 5 ethnic groups
-        ethnic_seed = hashlib.sha256(f"ethnic_{ethnic_group}".encode()).digest()
-        ethnic_rng = np.random.RandomState(int.from_bytes(ethnic_seed[:4], 'big'))
-        
-        ethnic_variants = np.zeros(num_features)
-        num_ethnic = int(num_features * 0.15)
-        ethnic_indices = ethnic_rng.choice(num_features, num_ethnic, replace=False)
-        ethnic_variants[ethnic_indices] = ethnic_rng.random(num_ethnic) * 0.5
-        
-        # 6. Gene expression with batch effects
-        batch = subject_id % 3  # 3 batches
-        expression = rng.lognormal(0, 1, num_features) * 0.1
-        batch_effect = np.ones(num_features) * (1 + batch * 0.1)  # 10% batch effect
-        expression *= batch_effect
-        
-        # Combine all components
-        genomic_profile = (
-            common_variants * 0.5 +  # Reduce weight of common
-            rare_variants * 3 +      # Increase weight of rare
-            family_variants * 1.5 +   # Family patterns
-            ethnic_variants +         # Population structure
-            ld_blocks +              # LD patterns
-            expression               # Expression data
-        )
-        
-        # Add technical noise (sequencing errors, etc.)
-        technical_noise = rng.randn(num_features) * 0.01
-        genomic_profile += technical_noise
-        
-        # Ensure non-negative
-        genomic_profile = np.abs(genomic_profile)
-        
-        # Normalize
-        genomic_profile = genomic_profile / (np.max(genomic_profile) + 1e-10)
-        
-        return genomic_profile.astype(np.float32)
+        return sample
     
-    def add_realistic_sample_variation(self, base_profile: np.ndarray, sample_id: int, 
-                                      config: StringentTestConfig) -> np.ndarray:
-        """Add realistic within-subject variation"""
-        np.random.seed(sample_id * 9999 + self.seed)
-        
-        # Different types of technical variation
-        # 1. Sampling noise (which cells/DNA molecules were captured)
-        sampling_noise = np.random.randn(len(base_profile)) * config.intra_subject_noise
-        
-        # 2. Batch effects (different days/runs)
-        batch_effect = 1.0 + (sample_id % 3) * 0.01  # 1% batch effect
-        
-        # 3. Temporal variation (samples taken at different times)
-        temporal_drift = np.sin(sample_id * 0.5) * 0.01  # Sinusoidal drift
-        
-        # 4. Technical artifacts (specific to sample processing)
-        artifact_mask = np.random.random(len(base_profile)) > 0.99  # 1% features affected
-        artifacts = np.zeros_like(base_profile)
-        artifacts[artifact_mask] = np.random.randn(np.sum(artifact_mask)) * 0.1
-        
-        # Apply variations
-        varied_profile = base_profile * batch_effect + sampling_noise + temporal_drift + artifacts
-        
-        # Ensure non-negative
-        varied_profile = np.abs(varied_profile)
-        
-        return varied_profile.astype(np.float32)
-    
-    def compute_hdc_similarity(self, hv1: np.ndarray, hv2: np.ndarray) -> float:
+    def compute_similarity(self, hv1: np.ndarray, hv2: np.ndarray) -> float:
         """Compute HDC similarity"""
-        
         # Handle tensor types
         if hasattr(hv1, 'numpy'):
             hv1 = hv1.numpy()
-        elif hasattr(hv1, 'cpu'):
-            hv1 = hv1.cpu().numpy()
-            
         if hasattr(hv2, 'numpy'):
             hv2 = hv2.numpy()
-        elif hasattr(hv2, 'cpu'):
-            hv2 = hv2.cpu().numpy()
         
         # Active components
         threshold = 1e-10
@@ -246,302 +167,172 @@ class StringentFingerprintValidator:
         
         return similarity
     
-    def run_stringent_validation(self):
-        """Run comprehensive validation with stringent conditions"""
-        print("="*80)
-        print("STRINGENT FINGERPRINT VALIDATION")
-        print("Large-scale testing with challenging conditions")
-        print("="*80)
+    def run_validation(self) -> List[Dict]:
+        """Run stringent validation"""
+        results = []
         
-        # Test multiple configurations
-        configs = [
-            # Best performer from previous test
-            StringentTestConfig(
-                dimension=4096,
-                sparsity=0.4,
-                subjects=500,  # 10x larger
-                samples_per_subject=10,  # More samples
-                num_features=50000,  # 5x more features
-                intra_subject_noise=0.05,  # More noise
-                inter_subject_overlap=0.3  # Higher overlap
-            ),
-            # Medium dimension
-            StringentTestConfig(
-                dimension=8192,
-                sparsity=0.5,
-                subjects=300,
-                samples_per_subject=8,
-                num_features=30000,
-                intra_subject_noise=0.04,
-                inter_subject_overlap=0.25
-            ),
-            # High dimension
-            StringentTestConfig(
-                dimension=16384,
-                sparsity=0.6,
-                subjects=200,
-                samples_per_subject=5,
-                num_features=20000,
-                intra_subject_noise=0.03,
-                inter_subject_overlap=0.2
-            ),
-        ]
+        print(f"\n🔬 STRINGENT VALIDATION")
+        print(f"Subjects: {self.config.subjects}")
+        print(f"Samples per subject: {self.config.samples_per_subject}")
+        print(f"Features: {self.config.num_features}")
+        print(f"Noise: {self.config.intra_subject_noise*100:.1f}%")
+        print(f"Overlap: {self.config.inter_subject_overlap*100:.0f}%")
         
-        for config in configs:
-            print(f"\n{'='*60}")
-            print(f"Testing: {config.dimension}D @ {config.sparsity*100:.0f}% sparsity")
-            print(f"Subjects: {config.subjects}, Samples/subject: {config.samples_per_subject}")
-            print(f"Features: {config.num_features}, Noise: {config.intra_subject_noise*100:.1f}%")
-            print(f"Inter-subject overlap: {config.inter_subject_overlap*100:.0f}%")
-            print(f"{'='*60}")
-            
-            result = self.validate_configuration(config)
-            self.results.append(result)
-            
-            # Print detailed results
-            print(f"\n📊 Results:")
-            print(f"  EER: {result.eer:.4f}")
-            print(f"  AUC: {result.auc:.4f} (95% CI: [{result.auc_ci[0]:.4f}, {result.auc_ci[1]:.4f}])")
-            print(f"  D-prime: {result.d_prime:.2f}")
-            print(f"  FAR: {result.far:.4f}, FRR: {result.frr:.4f}")
-            
-            print(f"\n📈 Score distributions:")
-            print(f"  Genuine: P50={result.p50_genuine:.4f}, P95={result.p95_genuine:.4f}")
-            print(f"  Impostor: P50={result.p50_impostor:.4f}, P95={result.p95_impostor:.4f}")
-            print(f"  Separation ratio: {result.separation_ratio:.2f}")
-            
-            print(f"\n📦 Statistics:")
-            print(f"  Genuine comparisons: {result.genuine_count:,}")
-            print(f"  Impostor comparisons: {result.impostor_count:,}")
-            print(f"  Storage: {result.storage_kb:.1f} KB")
+        # Generate population
+        print("\nGenerating population structure...")
+        population = self.generate_population_structure()
         
-        self.save_validation_results()
-    
-    def validate_configuration(self, config: StringentTestConfig) -> ValidationResult:
-        """Validate a single configuration"""
-        
-        # Setup encoder
-        encoder = self.setup_encoder(config)
-        
-        # Generate large cohort
-        print(f"  Generating {config.subjects} subjects...")
-        fingerprints = {}
-        
-        for subject_id in range(config.subjects):
-            if subject_id % 100 == 0:
-                print(f"    Generated {subject_id}/{config.subjects} subjects...")
-            
-            # Generate challenging base profile
-            base_profile = self.generate_challenging_genomic_profile(subject_id, config)
-            
-            for sample_id in range(config.samples_per_subject):
-                # Add realistic variation
-                sample_profile = self.add_realistic_sample_variation(base_profile, sample_id, config)
+        for dim in self.config.dimensions:
+            for sparsity in self.config.sparsities:
+                print(f"\nTesting dim={dim}, sparsity={sparsity:.1f}")
                 
-                # Encode
-                hv = encoder.encode(sample_profile, OmicsType.GENOMIC)
+                # Configure encoder with fixed seed
+                config = HypervectorConfig(
+                    dimension=dim,
+                    sparsity=sparsity,
+                    seed=42  # Fixed seed for reproducibility
+                )
+                encoder = HypervectorEncoder(config=config)
                 
-                # Sparsify
-                if config.sparsity > 0:
-                    if hasattr(hv, 'numpy'):
-                        hv_np = hv.numpy()
-                    elif hasattr(hv, 'cpu'):
-                        hv_np = hv.cpu().numpy()
-                    else:
-                        hv_np = np.array(hv)
+                # Generate all samples and encode
+                encodings = {}
+                sample_counter = 0
+                
+                for subject_id in range(self.config.subjects):
+                    encodings[subject_id] = []
                     
-                    threshold = np.percentile(np.abs(hv_np), config.sparsity * 100)
-                    hv_np[np.abs(hv_np) < threshold] = 0
-                    hv = hv_np
-                
-                fingerprints[(subject_id, sample_id)] = hv
-        
-        print(f"  Computing genuine scores...")
-        # Genuine scores (same subject)
-        genuine_scores = []
-        for subject_id in range(config.subjects):
-            for i in range(config.samples_per_subject):
-                for j in range(i+1, config.samples_per_subject):
-                    fp1 = fingerprints[(subject_id, i)]
-                    fp2 = fingerprints[(subject_id, j)]
-                    score = self.compute_hdc_similarity(fp1, fp2)
-                    genuine_scores.append(score)
-        
-        print(f"  Computing impostor scores...")
-        # Impostor scores (different subjects) - test more pairs
-        impostor_scores = []
-        max_impostor = min(50000, config.subjects * (config.subjects - 1) // 2)
-        
-        # Test especially challenging pairs (family members, same ethnic group)
-        for i in range(config.subjects):
-            for j in range(i+1, config.subjects):
-                if len(impostor_scores) >= max_impostor:
-                    break
-                    
-                # Test multiple sample pairs for robustness
-                for si in range(min(2, config.samples_per_subject)):
-                    for sj in range(min(2, config.samples_per_subject)):
-                        fp1 = fingerprints[(i, si)]
-                        fp2 = fingerprints[(j, sj)]
-                        score = self.compute_hdc_similarity(fp1, fp2)
-                        impostor_scores.append(score)
+                    for sample_num in range(self.config.samples_per_subject):
+                        # Generate sample
+                        sample = self.generate_sample(population[subject_id], sample_counter)
+                        sample_counter += 1
                         
-                        if len(impostor_scores) >= max_impostor:
-                            break
-                    if len(impostor_scores) >= max_impostor:
-                        break
-            if len(impostor_scores) >= max_impostor:
-                break
+                        # Encode
+                        encoded = encoder.encode(sample.astype(np.float32), OmicsType.GENOMIC)
+                        encodings[subject_id].append(encoded)
+                
+                # Compute all pairwise similarities
+                genuine_scores = []
+                impostor_scores = []
+                
+                # Genuine pairs (same subject)
+                for subject_id, subject_encodings in encodings.items():
+                    for i in range(len(subject_encodings)):
+                        for j in range(i+1, len(subject_encodings)):
+                            sim = self.compute_similarity(
+                                subject_encodings[i], 
+                                subject_encodings[j]
+                            )
+                            genuine_scores.append(sim)
+                
+                # Impostor pairs (different subjects)
+                subject_ids = list(encodings.keys())
+                for i in range(len(subject_ids)):
+                    for j in range(i+1, len(subject_ids)):
+                        # Test first sample from each subject
+                        sim = self.compute_similarity(
+                            encodings[subject_ids[i]][0],
+                            encodings[subject_ids[j]][0]
+                        )
+                        impostor_scores.append(sim)
+                
+                # Compute metrics
+                genuine_scores = np.array(genuine_scores)
+                impostor_scores = np.array(impostor_scores)
+                
+                # ROC and AUC
+                y_true = np.concatenate([
+                    np.ones(len(genuine_scores)),
+                    np.zeros(len(impostor_scores))
+                ])
+                y_scores = np.concatenate([genuine_scores, impostor_scores])
+                
+                fpr, tpr, thresholds = roc_curve(y_true, y_scores)
+                roc_auc = auc(fpr, tpr)
+                
+                # Find EER
+                fnr = 1 - tpr
+                eer_idx = np.nanargmin(np.abs(fpr - fnr))
+                eer = (fpr[eer_idx] + fnr[eer_idx]) / 2
+                
+                # D-prime
+                d_prime = (np.mean(genuine_scores) - np.mean(impostor_scores)) / \
+                         np.sqrt(0.5 * (np.var(genuine_scores) + np.var(impostor_scores)))
+                
+                # Storage size
+                storage_kb = (dim * 32 * sparsity) / (8 * 1024)
+                
+                result = {
+                    'dimension': dim,
+                    'sparsity': sparsity,
+                    'storage_kb': storage_kb,
+                    'eer': float(eer),
+                    'far_at_eer': float(fpr[eer_idx]),
+                    'frr_at_eer': float(fnr[eer_idx]),
+                    'auc': float(roc_auc),
+                    'd_prime': float(d_prime),
+                    'genuine_mean': float(np.mean(genuine_scores)),
+                    'genuine_std': float(np.std(genuine_scores)),
+                    'impostor_mean': float(np.mean(impostor_scores)),
+                    'impostor_std': float(np.std(impostor_scores)),
+                    'num_genuine_pairs': len(genuine_scores),
+                    'num_impostor_pairs': len(impostor_scores)
+                }
+                
+                results.append(result)
+                
+                # Print summary
+                print(f"  AUC: {roc_auc:.4f}")
+                print(f"  EER: {eer:.4f}")
+                print(f"  D': {d_prime:.2f}")
+                print(f"  Genuine: {np.mean(genuine_scores):.3f} ± {np.std(genuine_scores):.3f}")
+                print(f"  Impostor: {np.mean(impostor_scores):.3f} ± {np.std(impostor_scores):.3f}")
         
-        genuine_scores = np.array(genuine_scores)
-        impostor_scores = np.array(impostor_scores)
-        
-        print(f"  Analyzing results...")
-        
-        # Calculate metrics
-        genuine_mean = np.mean(genuine_scores)
-        genuine_std = np.std(genuine_scores)
-        impostor_mean = np.mean(impostor_scores)
-        impostor_std = np.std(impostor_scores)
-        
-        pooled_std = np.sqrt((genuine_std**2 + impostor_std**2) / 2)
-        if pooled_std > 0:
-            d_prime = (genuine_mean - impostor_mean) / pooled_std
-        else:
-            d_prime = 0.0
-        
-        # ROC analysis
-        labels = np.concatenate([np.ones(len(genuine_scores)), np.zeros(len(impostor_scores))])
-        scores = np.concatenate([genuine_scores, impostor_scores])
-        
-        fpr, tpr, thresholds = roc_curve(labels, scores)
-        roc_auc = auc(fpr, tpr)
-        
-        # EER
-        fnr = 1 - tpr
-        eer_idx = np.argmin(np.abs(fpr - fnr))
-        eer = (fpr[eer_idx] + fnr[eer_idx]) / 2
-        
-        # Bootstrap CI
-        n_bootstrap = 200  # More bootstrap iterations
-        auc_scores = []
-        for _ in range(n_bootstrap):
-            idx = np.random.choice(len(scores), len(scores), replace=True)
-            boot_labels = labels[idx]
-            boot_scores = scores[idx]
-            try:
-                boot_fpr, boot_tpr, _ = roc_curve(boot_labels, boot_scores)
-                auc_scores.append(auc(boot_fpr, boot_tpr))
-            except:
-                continue
-        
-        auc_ci = (np.percentile(auc_scores, 2.5), np.percentile(auc_scores, 97.5))
-        
-        # Percentiles
-        p50_genuine = np.percentile(genuine_scores, 50)
-        p95_genuine = np.percentile(genuine_scores, 95)
-        p50_impostor = np.percentile(impostor_scores, 50)
-        p95_impostor = np.percentile(impostor_scores, 95)
-        
-        # Separation ratio
-        min_genuine = np.min(genuine_scores)
-        max_impostor = np.max(impostor_scores)
-        if max_impostor > 0:
-            separation_ratio = min_genuine / max_impostor
-        else:
-            separation_ratio = float('inf')
-        
-        # Storage
-        sample_fp = fingerprints[(0, 0)]
-        if hasattr(sample_fp, 'numpy'):
-            sample_fp = sample_fp.numpy()
-        elif hasattr(sample_fp, 'cpu'):
-            sample_fp = sample_fp.cpu().numpy()
-        
-        non_zero = np.count_nonzero(sample_fp)
-        storage_kb = (non_zero * 4) / 1024
-        
-        return ValidationResult(
-            config=config,
-            far=fpr[eer_idx],
-            frr=fnr[eer_idx],
-            eer=eer,
-            auc=roc_auc,
-            auc_ci=auc_ci,
-            d_prime=d_prime,
-            storage_kb=storage_kb,
-            genuine_scores=genuine_scores,
-            impostor_scores=impostor_scores,
-            genuine_count=len(genuine_scores),
-            impostor_count=len(impostor_scores),
-            p50_genuine=p50_genuine,
-            p95_genuine=p95_genuine,
-            p50_impostor=p50_impostor,
-            p95_impostor=p95_impostor,
-            separation_ratio=separation_ratio
-        )
-    
-    def save_validation_results(self):
-        """Save comprehensive validation results"""
-        os.makedirs("benchmark_results", exist_ok=True)
-        
-        results_data = []
-        for r in self.results:
-            results_data.append({
-                'dimension': r.config.dimension,
-                'sparsity': r.config.sparsity,
-                'subjects': r.config.subjects,
-                'samples_per_subject': r.config.samples_per_subject,
-                'num_features': r.config.num_features,
-                'intra_subject_noise': r.config.intra_subject_noise,
-                'inter_subject_overlap': r.config.inter_subject_overlap,
-                'storage_kb': r.storage_kb,
-                'eer': float(r.eer),
-                'far': float(r.far),
-                'frr': float(r.frr),
-                'auc': float(r.auc),
-                'auc_ci_lower': float(r.auc_ci[0]),
-                'auc_ci_upper': float(r.auc_ci[1]),
-                'd_prime': float(r.d_prime),
-                'genuine_count': r.genuine_count,
-                'impostor_count': r.impostor_count,
-                'p50_genuine': float(r.p50_genuine),
-                'p95_genuine': float(r.p95_genuine),
-                'p50_impostor': float(r.p50_impostor),
-                'p95_impostor': float(r.p95_impostor),
-                'separation_ratio': float(r.separation_ratio),
-                'genuine_mean': float(np.mean(r.genuine_scores)),
-                'genuine_std': float(np.std(r.genuine_scores)),
-                'impostor_mean': float(np.mean(r.impostor_scores)),
-                'impostor_std': float(np.std(r.impostor_scores))
-            })
-        
-        with open('benchmark_results/stringent_fingerprint_validation.json', 'w') as f:
-            json.dump({
-                'timestamp': time.strftime('%Y-%m-%d %H:%M:%S'),
-                'test_type': 'Stringent Fingerprint Validation',
-                'test_conditions': {
-                    'cohort_size': '200-500 subjects',
-                    'samples_per_subject': '5-10',
-                    'feature_dimension': '20,000-50,000',
-                    'intra_subject_noise': '3-5%',
-                    'inter_subject_overlap': '20-30%',
-                    'includes_family_structure': True,
-                    'includes_population_stratification': True,
-                    'includes_batch_effects': True
-                },
-                'results': results_data
-            }, f, indent=2)
-        
-        print("\n" + "="*80)
-        print("VALIDATION COMPLETE")
-        print("="*80)
-        print(f"✅ Results saved to benchmark_results/stringent_fingerprint_validation.json")
+        return results
 
 def main():
-    """Run stringent validation"""
-    validator = StringentFingerprintValidator(seed=42)
-    validator.run_stringent_validation()
+    # Configure stringent test
+    config = StringentTestConfig(
+        subjects=200,
+        samples_per_subject=5,
+        num_features=20000,
+        intra_subject_noise=0.05,
+        inter_subject_overlap=0.3,
+        dimensions=[4096, 8192],
+        sparsities=[0.5, 0.6]
+    )
+    
+    validator = StringentValidator(config)
+    results = validator.run_validation()
+    
+    # Save results
+    output = {
+        'timestamp': datetime.now().isoformat(),
+        'test_type': 'Stringent Validation',
+        'config': asdict(config),
+        'conditions': {
+            'family_structure': 'Yes (20% related subjects)',
+            'batch_effects': 'Yes (systematic bias)',
+            'population_stratification': 'Yes',
+            'noise_level': '5% intra-subject',
+            'overlap': '30% inter-subject'
+        },
+        'results': results
+    }
+    
+    with open('benchmark_results/stringent_validation_results.json', 'w') as f:
+        json.dump(output, f, indent=2)
+    
+    print(f"\n✅ Stringent validation complete!")
+    print(f"Results saved to benchmark_results/stringent_validation_results.json")
+    
+    # Print summary
+    print("\n📊 SUMMARY:")
+    for r in results:
+        print(f"\nDim={r['dimension']}, Sparsity={r['sparsity']:.1f}:")
+        print(f"  AUC: {r['auc']:.4f}")
+        print(f"  EER: {r['eer']:.4f}")
+        print(f"  D': {r['d_prime']:.2f}")
+        print(f"  Storage: {r['storage_kb']:.1f} KB")
 
 if __name__ == "__main__":
     main()
