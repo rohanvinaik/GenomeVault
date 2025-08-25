@@ -325,6 +325,14 @@ Each bundle includes:
 - ✅ **Publication-quality plots** (ROC/DET curves, score distributions)
 - ✅ **Full provenance tracking** (Git SHA, dependencies, reproducibility)
 - ✅ **Digital signatures** for integrity verification
+- ✅ **Public key included** for independent verification ([`docs/keys/benchmark_pubkey.pem`](docs/keys/benchmark_pubkey.pem))
+
+**🔐 Bundle Verification:**
+```bash
+# Verify any bundle from repository root
+openssl dgst -sha256 -verify docs/keys/benchmark_pubkey.pem -signature benchmark_results/bundle_subject_disjoint.tar.gz.sig benchmark_results/bundle_subject_disjoint.tar.gz
+```
+**Public Key Fingerprint:** `sha256:92be6e68e3811afb4a29a3cafac2c9beeec445cdb3de2435a2479f8e1b9b3f22`
 
 #### ⚡ Key Performance Highlights
 - **ZK Proofs**: 603-1148ms proving time (15,234 constraints, real circuits)
