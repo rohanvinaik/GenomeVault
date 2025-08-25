@@ -173,3 +173,10 @@ results/
 experimental_results/
 benchmark_results/**/*.json
 .mypy_cache/
+
+# Path Sanitization - Files with absolute paths
+experimental_results/
+benchmarks/benchmark_results/
+tailchasing_suggestions.md
+genomevault/api/gateway/README.md
+docs/PUSH_INSTRUCTIONS.md
