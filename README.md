@@ -43,7 +43,7 @@ With GenomeVault, that entire process is transformed.
 
 - **Instant Answers:** Your doctor gets an answer in **1.49 milliseconds**.
 - **Absolute Privacy:** A zero-knowledge proof verifies the drug match without your raw DNA *ever* being seen.
-- **Trivial Cost:** The analysis costs **$5 on a basic device**, not $1000 on a server farm.
+- **Essentially Free:** The analysis runs on your existing device—**zero cloud costs**, versus $1000+ for traditional genomic analysis.
 - **You Are in Control:** Your "genome key" is on your phone or watch, empowering you and accelerating research on your terms.
 
 ### Real-World Impact: Lives Changed
@@ -138,7 +138,7 @@ Genome A ←→ Genome B            All genomes → HD space
 | :--- | :--- | :--- | :--- | :--- |
 | **Compression** | bgzip: 10×, CRAM: 30× | **2,116×** | **70× Better** | [📊 Results](benchmark_results/bundle_subject_disjoint/results.json) |
 | **Processing Speed** | GATK: 266ms | **1.49ms** | **177× Faster** | [⚡ Benchmarks](benchmark_results/bundle_subject_disjoint/report.md) |
-| **Infrastructure** | $1000+ Servers | **$5 Device** | **200× Cheaper** | [📱 Edge Demo](e2e_demo.sh) |
+| **Infrastructure** | $1000+ Cloud/month | **Your existing device** | **∞ Cheaper (free)** | [📱 Edge Demo](e2e_demo.sh) |
 | **Subject ID** | Traditional: D'~5, 80-95% | **D'=38.43, AUC=1.000** | **7.7× Better + Perfect** | [🎯 World Record Validation](#the-proof-world-record-genetic-identification) |
 
 ### 2. The Trust Layer: Zero-Knowledge & Information-Theoretic Privacy
