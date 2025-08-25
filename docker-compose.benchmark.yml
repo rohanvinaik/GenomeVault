@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  benchmark:
+    build:
+      context: .
+      dockerfile: Dockerfile.benchmark
+    image: genomevault-benchmark:latest
+    container_name: genomevault-benchmark
+    environment:
+      - GENOMEVAULT_SEED=${GENOMEVAULT_SEED:-42}
+      - GENOMEVAULT_DOCKER=1
+      - PYTHONHASHSEED=42
+    volumes:
+      - ./results:/genomevault/results
+      - ./logs:/genomevault/logs
+    command: python reproducible_harness.py
+    networks:
+      - benchmark-net
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 2G
+
+  verifier:
+    build:
+      context: .
+      dockerfile: Dockerfile.benchmark
+    image: genomevault-benchmark:latest
+    container_name: genomevault-verifier
+    volumes:
+      - ./results:/genomevault/results:ro
+    command: /bin/bash -c "sleep 5 && find /genomevault/results -name verify.py -exec {} $(dirname {}) \;"
+    depends_on:
+      - benchmark
+    networks:
+      - benchmark-net
+
+networks:
+  benchmark-net:
+    driver: bridge
