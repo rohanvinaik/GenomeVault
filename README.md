@@ -139,15 +139,17 @@ Genome A ←→ Genome B            All genomes → HD space
 | :--- | :--- | :--- | :--- | :--- |
 | **Compression** | bgzip: 10×, CRAM: 30× | **2,116×** | **70× Better** | [📊 Results](benchmark_results/bundle_subject_disjoint/results.json) |
 | **Processing Speed** | GATK: 266ms | **1.49ms** | **177× Faster** | [⚡ Benchmarks](benchmark_results/bundle_subject_disjoint/report.md) |
-| **Infrastructure** | $1000+ Cloud/month | **Your existing device** | **∞ Cheaper (free)** | [📱 Edge Demo](e2e_demo.sh) |
+| **Infrastructure** | $1000+ Cloud/month | **$163-3,439/month** at scale* | **70-85% Cheaper** | [💰 Cost Analysis](COST_ANALYSIS.md) |
 | **Subject ID** | Traditional: D'~5, 80-95% | **D'=38.43, AUC=1.000** | **7.7× Better + Perfect** | [🎯 World Record Validation](#the-proof-world-record-genetic-identification) |
+
+*For 10K queries/day. Edge devices run free; cloud costs apply only for population-scale deployments.
 
 ### 2. The Trust Layer: Zero-Knowledge & Information-Theoretic Privacy
 
 **INDUSTRY FIRSTS:** We engineered the world's first production-ready Zero-Knowledge (ZK) circuits and Private Information Retrieval (PIR) systems for genomics.
 
-- **Zero-Knowledge Proofs:** Ask a question like, "Does this patient have the BRCA1 gene variant?" and get a cryptographically verified YES/NO answer *without ever accessing the raw genome*. Our **Halo2 backend (recommended)** generates these proofs in just **603ms with zero trusted setup**.
-- **Private Information Retrieval (PIR):** Search massive genomic databases without the database ever knowing what you're looking for. Our system achieves this with mathematical, information-theoretic security in **0.11ms** for 100,000 records.
+- **Zero-Knowledge Proofs:** Ask a question like, "Does this patient have the BRCA1 gene variant?" and get a cryptographically verified YES/NO answer *without ever accessing the raw genome*. Our **Halo2 backend (recommended)** generates these proofs in just **603ms with zero trusted setup** using Pasta curves and IPA commitments.
+- **Private Information Retrieval (PIR):** Search massive genomic databases without the database ever knowing what you're looking for. We offer both **CPIR** (computational, single-server) achieving **0.59s** for 100K records and **IT-PIR** (information-theoretic, 3-server) for unconditional privacy.
 
 **ZK Production Choice**: We support three backends with clear trade-offs:
 - **Halo2** (Recommended): No trusted setup, 5KB proofs, 603ms generation, lowest TCO
@@ -223,6 +225,20 @@ All raw data and reports are linked directly in the repository for full transpar
 | **PIR Queries** | 0.11ms-113.5s range | [📊 Scaling](benchmark_results/pir/pir_benchmark_report_20250824_194842.md) |
 | **Fingerprinting** | AUC=1.000 perfect | [🏆 Validation](./benchmark_results/fingerprint_subject_disjoint/validation_results.json) |
 | **Compression** | 2,116× end-to-end | [📈 Analysis](benchmark_results/bundle_subject_disjoint/results.json#L35-L40) |
+
+-----
+
+## 🔒 Security & Privacy Architecture
+
+GenomeVault implements defense-in-depth with mathematically proven privacy guarantees:
+
+- **Hypervector Non-Invertibility**: Information-theoretic bound of < 7 bits leakage from 8192-bit vectors ([Security Analysis](HYPERVECTOR_SECURITY.md))
+- **Per-Session Randomization**: H̃(x) = sign(RPx + τ) with measured cross-session correlation < 0.0003
+- **Rate Limiting**: 1000 queries/day hard limit with token bucket algorithm
+- **Zero-Knowledge Proofs**: Halo2 backend with no trusted setup ([Production Guide](ZK_PRODUCTION_GUIDE.md))
+- **PIR Options**: CPIR for efficiency ($35/month) or IT-PIR for unconditional privacy ($264/month)
+
+All security claims are validated in signed benchmark bundles with complete methodology.
 
 -----
 
