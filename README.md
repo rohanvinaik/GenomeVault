@@ -156,6 +156,8 @@ Genome A ←→ Genome B            All genomes → HD space
 
 See [ZK_PRODUCTION_GUIDE.md](ZK_PRODUCTION_GUIDE.md) for complete backend comparison, TCO analysis, and trust models.
 
+**Production Costs**: Full cost breakdown in [COST_ANALYSIS.md](COST_ANALYSIS.md) - PIR: $73-782/month, ZK: $31-93/month for 10K queries/day.
+
 | Privacy Technology | Old Way | **GenomeVault Way** |
 | :--- | :--- | :--- |
 | **Sharing Data** | Raw DNA is copied & exposed | **Nothing is exposed, only proofs** |
