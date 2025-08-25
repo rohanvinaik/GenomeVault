@@ -172,6 +172,7 @@ genomevault_*.json
 results/
 experimental_results/
 benchmark_results/**/*.json
+!benchmark_results/fingerprint_*/validation_results.json
 .mypy_cache/
 
 # Path Sanitization - Files with absolute paths
