@@ -88,6 +88,14 @@
 
 ## Signature Verification
 ```bash
-# Verify bundle integrity
-openssl dgst -sha256 -verify docs/keys/benchmark_pubkey.pem -signature bundle_LFamO.tar.gz.sig bundle_LFamO.tar.gz
+# Verify bundle integrity (from repository root)
+openssl dgst -sha256 -verify docs/keys/benchmark_pubkey.pem -signature benchmark_results/bundle_LFamO.tar.gz.sig benchmark_results/bundle_LFamO.tar.gz
+
+# Or verify using key from extracted bundle
+openssl dgst -sha256 -verify benchmark_pubkey.pem -signature ../bundle_LFamO.tar.gz.sig ../bundle_LFamO.tar.gz
+```
+
+**Public Key Fingerprint (SHA256):**
+```
+sha256:92be6e68e3811afb4a29a3cafac2c9beeec445cdb3de2435a2479f8e1b9b3f22
 ```
