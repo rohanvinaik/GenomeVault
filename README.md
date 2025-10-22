@@ -24,6 +24,40 @@ GenomeVault is a **production-ready** privacy-preserving genomic computing platf
 - **6.85ms PIR Queries**: Information-theoretic security with 0.25% breach probability
 - **Blockchain Integration**: 40/40 tests passing, <2ms overhead for cryptographic attestation
 
+### 🔬 Planned: Hybrid KAN-HD Optimization (Research Prototype)
+
+**Status**: 🧪 **Experimental** - Implementation complete, optimization in progress
+
+GenomeVault includes a research prototype combining **Kolmogorov-Arnold Networks (KAN)** with **Hyperdimensional Computing (HDC)** for next-generation compression and interpretability. When fully optimized, this system is projected to achieve:
+
+**Theoretical Performance (Post-Optimization):**
+
+| Metric | Current Production | With KAN-HD (Optimized) | Improvement |
+|--------|-------------------|-------------------------|-------------|
+| **Complete Pipeline** | 2.15s | 2.13-2.16s | +25-50ms overhead |
+| **Architectural Compression** | 264× | **2,640-132,000×** | **10-500× additional** |
+| **Effective Compression** | 38.4× empirical | **50-200× effective** | **1.3-5.2× gain** |
+| **Interpretability** | None | **Full biological pattern discovery** | **New capability** |
+| **Clinical Calibration** | Manual | **Automatic error budgets** | **FDA-ready** |
+| **Federated Learning** | Not supported | **Multi-institutional training** | **New capability** |
+
+**Key Benefits:**
+- **Explainable AI**: Extract interpretable biological patterns from learned representations
+- **Semantic Compression**: 10-500× beyond baseline through pattern learning and redundancy removal
+- **Clinical Compliance**: Automatic calibration for screening, diagnostic, research, and regulatory use cases
+- **Federated Learning**: Privacy-preserving collaborative training across institutions
+- **Multi-Resolution Encoding**: Flexible trade-off between compression (10K/15K/20K dimensions)
+
+**Current Implementation Status:**
+- ✅ Core architecture implemented (`genomevault/kan/hybrid.py`, 663 lines)
+- ✅ Smoke tests passing
+- ⚠️ Performance optimization in progress (GPU acceleration, sparsity, quantization)
+- 📊 Comprehensive benchmarking pending
+
+**Documentation**: See [`docs/guides/hybrid_kan_hd_optimization_guide.md`](docs/guides/hybrid_kan_hd_optimization_guide.md) for complete technical details, implementation roadmap, and usage examples.
+
+**Note**: This is a research prototype demonstrating theoretical capabilities. Production deployment requires completion of GPU optimization, clinical calibration, and comprehensive validation.
+
 -----
 
 ## 🚀 Quick Start
