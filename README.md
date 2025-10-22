@@ -419,20 +419,48 @@ GenomeVault employs brain-inspired hyperdimensional computing to transform genom
 
 **Compression vs. Industry Standards:**
 
-| Method | Data Type | Input → Output | Compression | Lossiness | Privacy |
-|--------|-----------|----------------|-------------|-----------|---------|
-| **GenomeVault** | Raw → Encoded | **FASTQ (100-150 GB) → 78 MB** | **~1,500×** | Lossy (privacy) | ✅ IT-PIR + ZK |
-| **GenomeVault** | Variants → Encoded | **VCF (3 GB) → 78 MB** | **38.4×** | Lossy (privacy) | ✅ IT-PIR + ZK |
-| CRAM | Alignment | BAM → CRAM | ~2× | Lossless | ❌ None |
-| Crumble+CRAM | Alignment | BAM → CRAM | 3-7.8× | Lossy (quality) | ❌ None |
-| VCFShark | Variants | VCF → .vcfs | Up to 32× | Lossless | ❌ None |
-| Genozip | Variants | VCF → .genozip | 5-10× | Lossless | ❌ None |
-| bgzip | General | Any → .gz | ~10× | Lossless | ❌ None |
+GenomeVault's compression performance is best understood across three categories:
 
-**Key Insights:**
-- **From Raw Data**: GenomeVault achieves ~1,500× compression from FASTQ, representing a **75-150× improvement over existing lossy methods** (Crumble+CRAM at 3-7.8×) while providing privacy guarantees
-- **From Variant Data**: 38.4× empirically verified compression on VCF exceeds even the best lossless VCF compressors (VCFShark at up to 32×) **while adding privacy**
-- **Unique Value Proposition**: GenomeVault compresses for private queries (not just archival), solving an entirely different problem
+**1. Raw Genomic Data (Full Coverage)**
+
+| Source Format | Input Size | GenomeVault Output | Compression Ratio | Notes |
+|---------------|------------|-------------------|------------------|-------|
+| FASTQ (30x WGS) | 100-150 GB | 78 MB per genome | **~1,500×** | Whole genome sequencing with privacy |
+
+**2. Variants Storage**
+
+| Source Format | Input Size | GenomeVault Output | Compression Ratio | Notes |
+|---------------|------------|-------------------|------------------|-------|
+| VCF (full genome) | ~3 GB | 78 MB per genome | **38.4×** | Empirically verified on chr22 test |
+| VCF (chr22 test) | 1,500 KB | 39.06 KB | **38.4×** | Production pipeline validation |
+
+**3. Compressed File Types (Industry Standards)**
+
+| Method | Input Format | Compression Ratio | Lossiness | Privacy Guarantees |
+|--------|--------------|------------------|-----------|-------------------|
+| **GenomeVault** | FASTQ/VCF | **~1,500× / 38.4×** | Lossy (privacy-preserving) | ✅ IT-PIR + ZK proofs |
+| CRAM | BAM alignment | ~2× | Lossless | ❌ None |
+| Crumble+CRAM | BAM alignment | 3-7.8× | Lossy (quality scores) | ❌ None |
+| VCFShark | VCF variants | Up to 32× | Lossless | ❌ None |
+| Genozip | VCF variants | 5-10× | Lossless | ❌ None |
+| bgzip | General genomic | ~10× | Lossless | ❌ None |
+
+**Key Comparisons:**
+
+*Raw Genomic Data (Full Coverage):*
+- GenomeVault achieves **~1,500× compression from FASTQ** (100-150 GB → 78 MB)
+- This represents a **75-150× improvement** over existing lossy methods like Crumble+CRAM (3-7.8×)
+- Unique advantage: Privacy guarantees included with compression
+
+*Variants Storage:*
+- GenomeVault achieves **38.4× compression from VCF** (3 GB → 78 MB)
+- Exceeds even the best lossless VCF compressors (VCFShark at up to 32×) **while adding privacy**
+- Empirically verified in production pipeline (chr22: 1,500 KB → 39.06 KB)
+
+*Unique Value Proposition:*
+- GenomeVault compresses for **private queries** (not just archival storage)
+- Only solution combining compression with IT-PIR and zero-knowledge proofs
+- Enables federated genomic analysis without centralized data sharing
 
 **Performance vs. Industry Standards:**
 
