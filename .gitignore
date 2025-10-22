@@ -11,6 +11,9 @@ keys/
 credentials.json
 service-account.json
 
+# Original white paper (timestamped IP evidence - keep private)
+docs/Initial White Paper Timestamp.pdf
+
 # Zero-Knowledge Artifacts
 .zk_transcript_key
 *.witness
