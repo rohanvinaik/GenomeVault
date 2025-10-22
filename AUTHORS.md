@@ -6,20 +6,20 @@
 [Your ORCID iD - get one at https://orcid.org if you don't have one]
 [Your LinkedIn/Academic Profile]
 
-**Conception Date**: [Early date - update with actual] (See: Initial White Paper)
-**Implementation Start**: July 2025
-**Production Release**: October 2025
-**Total Duration**: [X months/years - significantly longer than July-October]
+**Conception Date**: December 2017 (Initial architectural draft)
+**Implementation Start**: July 2025 (Mature technologies available)
+**Production Release**: October 2025 (Version 1.0.0)
+**Total Duration**: 8 years (December 2017 - October 2025)
 **Current Version**: 1.0.0 (Production Ready)
 **Last Updated**: October 22, 2025
 
-**Early Evidence**: See `docs/Initial White Paper Timestamp.pdf` for timestamped proof of early conceptual work.
+**Early Evidence**: See `docs/Initial White Paper Timestamp.pdf` (December 2017) for proof of original architectural vision.
 
 ---
 
 ## Research Contributions
 
-This work represents **[X months/years]** of research and development into privacy-preserving genomic computing (conception to production), including:
+This work represents **eight years** of research and development into privacy-preserving genomic computing (December 2017 - October 2025), including:
 
 ### Novel Architectural Contributions
 
