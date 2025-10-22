@@ -13,7 +13,7 @@
 
 ## Overview
 
-**GenomeVault enables genomic medicine and analysis that is currently comprehensively impossible.**
+**GenomeVault enables genomic medicine and analysis not feasible with existing privacy-preserving systems.**
 
 Genomic data silos exist because researchers cannot share data without catastrophic privacy risks. GenomeVault solves this fundamental problem by providing the **first production-ready system** that combines:
 
@@ -22,7 +22,7 @@ Genomic data silos exist because researchers cannot share data without catastrop
 ✅ **Sub-second queries** (2.15s complete pipeline on consumer hardware)
 ✅ **Actionable research insights** (variant-level analysis preserved with 100% accuracy)
 
-**This is not incremental improvement—it's a fundamentally new capability.**
+**This represents a fundamental architectural advancement in privacy-preserving genomic computing.**
 
 ### What Becomes Possible
 
@@ -97,14 +97,14 @@ GenomeVault with KAN-HD provides a third option:
 
 **Economic Value to Researchers:**
 
-For a typical genetics research lab, the ability to access previously siloed genomic data for privacy-preserving analysis would justify **75% of total research budget**. Why?
+The ability to access previously siloed genomic data for privacy-preserving analysis addresses several critical limitations in current genomic research:
 
 - **Rare disease cohorts**: Access to patient populations currently impossible to aggregate
 - **Multi-institutional GWAS**: Collaborative studies without data transfer agreements
 - **Biobank federation**: Query across institutions without centralized repositories
 - **Regulatory compliance**: HIPAA/GDPR-compliant by design
 
-Even under conservative computational assumptions (5s queries, 50× compression), the system operates on **consumer hardware** and enables discoveries that are **currently comprehensively impossible** with any existing technology.
+Even under conservative computational assumptions (5s queries, 50× compression), the system operates on **consumer hardware** and enables discoveries that are **currently impossible** with any existing technology.
 
 **Projected Performance (Post-Optimization):**
 
