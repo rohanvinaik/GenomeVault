@@ -3,7 +3,7 @@
 ### Privacy-Preserving Genomic Computing Platform
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%203.0-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Status: Production Ready](https://img.shields.io/badge/Status-Production%20Ready-brightgreen.svg)](https://github.com/rohanvinaik/GenomeVault)
 [![Paper: Under Review](https://img.shields.io/badge/Paper-Under%20Review-blue.svg)](docs/GenomeVault_Paper_Current/)
 
@@ -885,7 +885,28 @@ We welcome contributions! Please see our contributing guidelines.
 
 ## 📄 License
 
-MIT License - see [LICENSE](LICENSE) for details.
+**Dual-Licensed Software**
+
+GenomeVault is available under two licensing options:
+
+### Open Source: AGPL-3.0
+- ✅ **Free** for academic research, open-source projects, and personal use
+- ✅ Full access to source code
+- ⚠️ **Requires** source code disclosure for SaaS deployments (network use = distribution)
+- See [LICENSE](LICENSE) for full AGPL-3.0 terms
+
+### Commercial License
+- ✅ **Proprietary** use without source code disclosure
+- ✅ **SaaS** deployments without AGPL-3.0 obligations
+- ✅ Commercial support and custom features available
+- 📧 Contact for pricing: See [docs/legal/COMMERCIAL_LICENSE.md](docs/legal/COMMERCIAL_LICENSE.md)
+
+**Copyright © 2025 [Your Name]. All Rights Reserved.**
+
+For more information on licensing options, see:
+- [COMMERCIAL_LICENSE.md](docs/legal/COMMERCIAL_LICENSE.md) - Commercial licensing details
+- [AUTHORS.md](AUTHORS.md) - Copyright and attribution information
+- [DEVELOPMENT_HISTORY.md](docs/legal/DEVELOPMENT_HISTORY.md) - Project timeline and IP evidence
 
 -----
 
