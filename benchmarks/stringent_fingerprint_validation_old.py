@@ -21,7 +21,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from genomevault.hypervector_transform.encoding import HypervectorEncoder, HypervectorConfig
-from genomevault.core.constants import OmicsType
 
 @dataclass
 class StringentTestConfig:
@@ -74,7 +73,8 @@ class StringentFingerprintValidator:
                 normalize=True,
                 use_metal=True
             )
-            self.encoder = HypervectorEncoder(config=hv_config)
+    # Note: Use create_backend_encoder(backend='auto') to leverage hardware acceleration
+            self.encoder = create_backend_encoder(dimension=8192)
         return self.encoder
     
     def generate_challenging_genomic_profile(self, subject_id: int, config: StringentTestConfig) -> np.ndarray:
@@ -339,7 +339,7 @@ class StringentFingerprintValidator:
                 sample_profile = self.add_realistic_sample_variation(base_profile, sample_id, config)
                 
                 # Encode
-                hv = encoder.encode(sample_profile, OmicsType.GENOMIC)
+                hv = encoder.encode_single(sample_profile)
                 
                 # Sparsify
                 if config.sparsity > 0:

@@ -1,0 +1,18 @@
+{
+  "timestamp": "2025-10-19T20:15:42.435601",
+  "genomevault_version": "2.0.0",
+  "architecture": "differential_encoding_core",
+  "paper": "docs/GenomeVault_Academic_Paper.md",
+  "pdf": "docs/paper_submission/GenomeVault_Manuscript.pdf",
+  "figures": [
+    "docs/paper_figures/figure2_chunking_strategies.png",
+    "docs/paper_figures/figure4_end_to_end_performance.png",
+    "docs/paper_figures/figure1_differential_encoding_overview.png",
+    "docs/paper_figures/figure3_hypervector_encoding.png"
+  ],
+  "results": {
+    "differential_encoding": "benchmark_results/differential_encoding/latest_results.json",
+    "hdc": [],
+    "pir": []
+  }
+}

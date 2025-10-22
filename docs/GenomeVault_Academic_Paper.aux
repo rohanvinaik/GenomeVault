@@ -1,0 +1,169 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{birney2021}
+\citation{gymrek2013,erlich2014}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Background and Motivation}{1}{subsection.1.1}\protected@file@percent }
+\citation{homer2008,im2012}
+\citation{kim2015,chen2016}
+\citation{kamm2013}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}The GenomeVault Approach}{2}{subsection.1.2}\protected@file@percent }
+\citation{bogatyy2020}
+\citation{karunaratne2021}
+\citation{bogatyy2020,demmler2019}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Key Contributions}{3}{subsection.1.3}\protected@file@percent }
+\citation{chen2016}
+\citation{wang2017}
+\citation{kamm2013}
+\citation{keller2020}
+\citation{raisaro2018}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Related Work}{4}{section.2}\protected@file@percent }
+\newlabel{sec:related}{{2}{4}{Related Work}{section.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Privacy-Preserving Genomic Computation}{4}{subsection.2.1}\protected@file@percent }
+\citation{kanerva2009}
+\citation{plate1995}
+\citation{imani2019framework,rahimi2020}
+\citation{imani2019adapthd}
+\citation{hernandez2019}
+\citation{burrello2020}
+\citation{poduval2020}
+\citation{bogatyy2020}
+\citation{demmler2019}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Hyperdimensional Computing}{5}{subsection.2.2}\protected@file@percent }
+\citation{jobling2004,kidd2014}
+\citation{phillips2018}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Zero-Knowledge Proofs in Genomics}{6}{subsection.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Genetic Identification and Fingerprinting}{6}{subsection.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Gap in Existing Work}{7}{subsection.2.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Methods}{7}{section.3}\protected@file@percent }
+\newlabel{sec:methods}{{3}{7}{Methods}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}System Architecture}{7}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.1}Hyperdimensional Encoder}{8}{subsubsection.3.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.2}Zero-Knowledge Prover}{8}{subsubsection.3.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.3}Private Information Retrieval Engine}{9}{subsubsection.3.1.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.4}API and Integration Layer}{9}{subsubsection.3.1.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Hyperdimensional Computing Encoding}{10}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.1}Theoretical Foundation}{10}{subsubsection.3.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.2}Structural Correspondence Between DNA Topology and Hyperdimensional Geometry}{10}{subsubsection.3.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.3}Genomic Encoding Algorithm}{11}{subsubsection.3.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.4}Hardware Acceleration}{12}{subsubsection.3.2.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces \textbf  {Hyperdimensional genomic encoding pipeline.} The system transforms raw genomic variants through binding (element-wise multiplication) of chromosome, position, allele, and genotype vectors, followed by bundling (summation) across all variants, and finally applying sign-based binarization with 60\% sparsity thresholding. This produces an 8,192-dimensional representation that preserves genetic relationships while providing information-theoretic privacy guarantees.}}{13}{figure.1}\protected@file@percent }
+\newlabel{fig:hypervector_encoding}{{1}{13}{\textbf {Hyperdimensional genomic encoding pipeline.} The system transforms raw genomic variants through binding (element-wise multiplication) of chromosome, position, allele, and genotype vectors, followed by bundling (summation) across all variants, and finally applying sign-based binarization with 60\% sparsity thresholding. This produces an 8,192-dimensional representation that preserves genetic relationships while providing information-theoretic privacy guarantees}{figure.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.5}Differential Encoding}{13}{subsubsection.3.2.5}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Adaptive Chunking Strategies for Differential Encoding}}{14}{table.1}\protected@file@percent }
+\newlabel{tab:chunking_strategies}{{1}{14}{Adaptive Chunking Strategies for Differential Encoding}{table.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces \textbf  {Adaptive chunking strategy visualization.} Five distinct chunking approaches partition genomic variants according to different biological and analytical priorities. Sliding window (top) provides uniform 5KB segments for general-purpose analysis. Gene region (second) aligns boundaries to functional units preserving gene-level signal. Variant density (middle) adapts chunk size to local mutation rate, preventing rare variant dilution. Functional region (fourth) segments by regulatory elements and conserved sequences for clinical interpretation. Chromosomal (bottom) processes whole chromosomes for structural analysis. Color intensity indicates feature density within each chunk.}}{15}{figure.2}\protected@file@percent }
+\newlabel{fig:chunking_strategies}{{2}{15}{\textbf {Adaptive chunking strategy visualization.} Five distinct chunking approaches partition genomic variants according to different biological and analytical priorities. Sliding window (top) provides uniform 5KB segments for general-purpose analysis. Gene region (second) aligns boundaries to functional units preserving gene-level signal. Variant density (middle) adapts chunk size to local mutation rate, preventing rare variant dilution. Functional region (fourth) segments by regulatory elements and conserved sequences for clinical interpretation. Chromosomal (bottom) processes whole chromosomes for structural analysis. Color intensity indicates feature density within each chunk}{figure.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Zero-Knowledge Proof Circuits}{15}{subsection.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.1}Circuit Design}{15}{subsubsection.3.3.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {1}Circom circuit for variant presence verification}{15}{lstlisting.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces \textbf  {Differential encoding pipeline.} The system selects population-matched reference genomes, computes variant differences (new mutations, missing variants, genotype differences), applies adaptive chunking strategies, extracts 384-dimensional feature vectors per chunk, and projects to high-dimensional hypervectors via random matrix multiplication. Cryptographic binding with HMAC-SHA256 ensures reference genome integrity and prevents substitution attacks.}}{16}{figure.3}\protected@file@percent }
+\newlabel{fig:differential_encoding}{{3}{16}{\textbf {Differential encoding pipeline.} The system selects population-matched reference genomes, computes variant differences (new mutations, missing variants, genotype differences), applies adaptive chunking strategies, extracts 384-dimensional feature vectors per chunk, and projects to high-dimensional hypervectors via random matrix multiplication. Cryptographic binding with HMAC-SHA256 ensures reference genome integrity and prevents substitution attacks}{figure.3}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.2}Backend Comparison}{16}{subsubsection.3.3.2}\protected@file@percent }
+\citation{regev2009}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces ZK Proof Backend Performance}}{17}{table.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Private Information Retrieval}{17}{subsection.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.1}Computational PIR (Single-Server)}{17}{subsubsection.3.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.2}Information-Theoretic PIR (Multi-Server)}{17}{subsubsection.3.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Validation Methodology}{18}{subsection.3.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.1}Dataset}{18}{subsubsection.3.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.2}Validation Protocols}{18}{subsubsection.3.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.3}Evaluation Metrics}{19}{subsubsection.3.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Results}{19}{section.4}\protected@file@percent }
+\newlabel{sec:results}{{4}{19}{Results}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Hyperdimensional Encoding Performance}{19}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.1}Encoding Speed and Compression}{19}{subsubsection.4.1.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces HDC Encoding Performance Across Platforms}}{19}{table.3}\protected@file@percent }
+\newlabel{tab:hdc_performance}{{3}{19}{HDC Encoding Performance Across Platforms}{table.3}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.2}Comparison with Existing Methods}{20}{subsubsection.4.1.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Comparison with Existing Genomic Processing Methods}}{20}{table.4}\protected@file@percent }
+\newlabel{tab:pipeline_comparison}{{4}{20}{Comparison with Existing Genomic Processing Methods}{table.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Genetic Fingerprinting Performance}{20}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.1}Subject-Disjoint Validation (Primary Result)}{20}{subsubsection.4.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces \textbf  {End-to-end pipeline performance breakdown.} Complete workflow from raw VCF input to verified query result, showing latency contributions from each component: HDC encoding (5.04ms, 0.4\% of total), ZK proof generation (603ms, 49.4\%), PIR database query (590ms, 48.4\%), and proof verification (20.4ms, 1.7\%). Total end-to-end latency of 1.22s represents 4.6$\times $ overhead versus unprotected operations while providing cryptographic privacy guarantees. Bar colors indicate component categories: encoding (blue), cryptographic proof (red), database operations (green), verification (orange).}}{21}{figure.4}\protected@file@percent }
+\newlabel{fig:end_to_end_performance}{{4}{21}{\textbf {End-to-end pipeline performance breakdown.} Complete workflow from raw VCF input to verified query result, showing latency contributions from each component: HDC encoding (5.04ms, 0.4\% of total), ZK proof generation (603ms, 49.4\%), PIR database query (590ms, 48.4\%), and proof verification (20.4ms, 1.7\%). Total end-to-end latency of 1.22s represents 4.6$\times $ overhead versus unprotected operations while providing cryptographic privacy guarantees. Bar colors indicate component categories: encoding (blue), cryptographic proof (red), database operations (green), verification (orange)}{figure.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.2}Leave-Family-Out Validation}{21}{subsubsection.4.2.2}\protected@file@percent }
+\citation{jain2004}
+\citation{phillips2011}
+\citation{daugman2004}
+\citation{campbell1997}
+\citation{phillips2018}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Comparison with Existing Biometric Systems}{22}{subsection.4.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Comparison with State-of-the-Art Biometric Systems}}{22}{table.5}\protected@file@percent }
+\newlabel{tab:biometric_comparison}{{5}{22}{Comparison with State-of-the-Art Biometric Systems}{table.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Zero-Knowledge Proof Performance}{22}{subsection.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.4.1}Proof Generation and Verification}{22}{subsubsection.4.4.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces ZK Proof Performance (15,234 constraints)}}{22}{table.6}\protected@file@percent }
+\newlabel{tab:zk_performance}{{6}{22}{ZK Proof Performance (15,234 constraints)}{table.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Private Information Retrieval Performance}{23}{subsection.4.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.5.1}Computational PIR (Single-Server)}{23}{subsubsection.4.5.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Computational PIR Performance}}{23}{table.7}\protected@file@percent }
+\newlabel{tab:cpir_performance}{{7}{23}{Computational PIR Performance}{table.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Security Analysis}{23}{subsection.4.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.6.1}Threat Model}{23}{subsubsection.4.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.6.2}Attribute Inference Attack}{23}{subsubsection.4.6.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Attribute Inference Attack Results}}{24}{table.8}\protected@file@percent }
+\newlabel{tab:privacy_attack}{{8}{24}{Attribute Inference Attack Results}{table.8}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.6.3}Information-Theoretic Security Bound}{24}{subsubsection.4.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}Projected Deployment Costs for Clinical Translation}{25}{subsection.4.7}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces Projected Deployment Costs (AWS us-east-1, assumes successful clinical validation)}}{25}{table.9}\protected@file@percent }
+\newlabel{tab:deployment_costs}{{9}{25}{Projected Deployment Costs (AWS us-east-1, assumes successful clinical validation)}{table.9}{}}
+\newlabel{tab:deployment_costs}{{9}{25}{Projected Deployment Costs (AWS us-east-1, assumes successful clinical validation)}{table.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.8}Differential Encoding Performance}{25}{subsection.4.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.8.1}Encoding Speed and Throughput}{25}{subsubsection.4.8.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.8.2}Storage Efficiency}{25}{subsubsection.4.8.2}\protected@file@percent }
+\citation{kim2015,chen2016}
+\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces Differential Encoding Performance}}{26}{table.10}\protected@file@percent }
+\newlabel{tab:differential_encoding}{{10}{26}{Differential Encoding Performance}{table.10}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces Differential Encoding Compression}}{26}{table.11}\protected@file@percent }
+\newlabel{tab:differential_compression}{{11}{26}{Differential Encoding Compression}{table.11}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Discussion}{26}{section.5}\protected@file@percent }
+\newlabel{sec:discussion}{{5}{26}{Discussion}{section.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Key Findings}{26}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.1}Eliminating the Privacy-Utility Trade-Off}{26}{subsubsection.5.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.2}Hyperdimensional Computing as a Privacy Primitive}{26}{subsubsection.5.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Comparison with Related Work}{26}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.2.1}vs Homomorphic Encryption}{26}{subsubsection.5.2.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {12}{\ignorespaces Comparison with Homomorphic Encryption Systems}}{27}{table.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Limitations and Future Work}{27}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.1}Current Limitations}{27}{subsubsection.5.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Broader Impact}{29}{subsection.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.4.1}Ethical Considerations}{29}{subsubsection.5.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.4.2}Blockchain Integration and Genomic Data Markets}{29}{subsubsection.5.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.4.3}Research Applications Enabled by This Framework}{30}{subsubsection.5.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Reproducibility and Open Science}{30}{subsection.5.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusions}{31}{section.6}\protected@file@percent }
+\newlabel{sec:conclusions}{{6}{31}{Conclusions}{section.6}{}}
+\bibcite{birney2021}{1}
+\bibcite{gymrek2013}{2}
+\bibcite{erlich2014}{3}
+\bibcite{homer2008}{4}
+\bibcite{im2012}{5}
+\bibcite{kim2015}{6}
+\bibcite{chen2016}{7}
+\bibcite{kamm2013}{8}
+\bibcite{karunaratne2021}{9}
+\bibcite{bogatyy2020}{10}
+\bibcite{demmler2019}{11}
+\bibcite{wang2017}{12}
+\bibcite{keller2020}{13}
+\bibcite{raisaro2018}{14}
+\bibcite{kanerva2009}{15}
+\bibcite{plate1995}{16}
+\bibcite{imani2019framework}{17}
+\bibcite{rahimi2020}{18}
+\bibcite{imani2019adapthd}{19}
+\bibcite{hernandez2019}{20}
+\bibcite{burrello2020}{21}
+\bibcite{poduval2020}{22}
+\bibcite{jobling2004}{23}
+\bibcite{kidd2014}{24}
+\bibcite{phillips2018}{25}
+\bibcite{regev2009}{26}
+\bibcite{jain2004}{27}
+\bibcite{phillips2011}{28}
+\bibcite{daugman2004}{29}
+\bibcite{campbell1997}{30}
+\gdef \@abspage@last{33}

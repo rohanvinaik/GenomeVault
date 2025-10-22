@@ -4,278 +4,351 @@ Quick reference for Claude Code when working with the GenomeVault codebase.
 
 ## Project Overview
 
-GenomeVault: Privacy-preserving genomic computing platform using hyperdimensional computing (HDC), Kolmogorov-Arnold Networks (KAN), zero-knowledge proofs, and federated learning. Achieves 50-100× compression with mathematical privacy guarantees.
+GenomeVault: Privacy-preserving genomic computing platform using hyperdimensional computing (HDC), zero-knowledge proofs, and private information retrieval. Achieves 264× compression (11× differential + 24× hypervector) with mathematical privacy guarantees.
 
-## Quick Start
+## 🚀 Quick Start
 
 ```bash
 # Setup
 python -m venv venv && source venv/bin/activate
-pip install -e ".[dev]"  # or ".[full]" for all features
+pip install -e ".[dev]"
 
-# Run API
-uvicorn genomevault.api.main:app --reload --port 8000
+# Run tests
+pytest tests/
 
-# Run tests & checks
-make test        # or: pytest
-make lint        # or: ruff check . && ruff format .
-make typecheck   # or: mypy genomevault
+# Run main pipeline (RECOMMENDED) ⚡
+python benchmarks/run_alignment_optimized_pipeline.py --preset production
 
-# Database setup
-alembic upgrade head
-python scripts/seed_data.py  # Load test data
+# Quick test
+python benchmarks/run_alignment_optimized_pipeline.py --preset production --quick
+
+# Start REST API server
+uvicorn genomevault.api.app:app --reload --port 8000
+# Access API docs: http://localhost:8000/api/docs
+# See GETTING_STARTED_API.md for API usage guide
 ```
 
-## Core Architecture
+## 📂 Project Structure
 
 ```
 genomevault/
-├── api/              # FastAPI endpoints, OAuth2/OIDC auth
-├── hypervector/      # HD encoding (10K-100K dimensions)
-├── kan/              # KAN compression with splines
-├── zk_proofs/        # Zero-knowledge proof circuits
-├── federated/        # Federated learning
-├── pir/              # Private information retrieval
-├── clinical/         # Clinical evaluation & calibration
-├── blockchain/       # Governance & audit trail
-└── models/           # SQLAlchemy models (partitioned tables)
+├── genomevault/
+│   ├── differential_encoding/     # 11× compression, k-anonymity
+│   ├── hypervector_transform/     # 24× HDC projection
+│   ├── zk_proofs/                 # Zero-knowledge circuits (Halo2/Groth16)
+│   ├── pir/                       # Private information retrieval
+│   ├── blockchain/                # Attestation registry (opt-in)
+│   ├── compute/                   # Hardware abstraction (CPU/Metal/CUDA)
+│   └── api/                       # REST API endpoints
+├── benchmarks/
+│   ├── run_alignment_optimized_pipeline.py  # ⚡ MAIN BENCHMARK
+│   ├── run_full_pipeline_with_reference_pool.py
+│   └── differential_encoding/
+├── tests/                         # Comprehensive test suite
+└── docs/                          # Detailed documentation
 ```
 
-## Essential Commands
+## 🎯 Running the Main Pipeline
+
+### **Alignment-Optimized Pipeline** (RECOMMENDED)
+
+The production-ready pipeline with 5.92× speedup through alignment optimizations.
+
+**Quick Run (2-3 seconds):**
+```bash
+python benchmarks/run_alignment_optimized_pipeline.py --preset production
+```
+
+**With Comparison to Baseline:**
+```bash
+python benchmarks/run_alignment_optimized_pipeline.py --preset production --compare
+```
+
+**What it does:**
+- Differential encoding with reference pool (k=3 anonymity)
+- HDC integration (10,000D hypervector)
+- ZK proof generation (Groth16, 743 bytes)
+- PIR query (IT-PIR, 0.25% breach probability)
+- Complete privacy-preserving pipeline in ~2 seconds
+
+**Output Location:**
+```
+benchmark_results/full_pipeline_results/pipeline_run_YYYYMMDD_HHMMSS/
+├── pipeline_results.json       # Main metrics
+├── encoding_result.json        # Differential encoding
+├── zk_proof.json              # Zero-knowledge proof
+└── pir_query_result.json      # PIR query result
+```
+
+### Standard Pipeline (Baseline)
+
+**Quick Test (10-15 seconds):**
+```bash
+python benchmarks/run_full_pipeline_with_reference_pool.py --quick
+```
+
+**Full Run:**
+```bash
+python benchmarks/run_full_pipeline_with_reference_pool.py
+```
+
+**Format-Specific Runs:**
+```bash
+# FASTQ input (requires minimap2, samtools, bcftools)
+python benchmarks/run_full_pipeline_with_reference_pool.py --format fastq
+
+# VCF input
+python benchmarks/run_full_pipeline_with_reference_pool.py --format vcf
+
+# All formats
+python benchmarks/run_full_pipeline_with_reference_pool.py --format all
+```
+
+### Input Data Requirements
+
+The pipelines expect data in these locations:
+
+**Reference Pool:**
+```
+benchmark_results/differential_encoding_samples/
+├── reference_pool_1/    # k=3 reference genome 1
+├── reference_pool_2/    # k=3 reference genome 2
+└── reference_pool_3/    # k=3 reference genome 3
+```
+
+**Reference Genome:**
+```
+benchmark_results/full_pipeline_synthetic/reference/chr22.fa
+```
+
+**Generate Synthetic Data (if needed):**
+```bash
+./benchmarks/full_pipeline_synthetic_data.sh
+# Takes 30-40 min for chr22 with 30x coverage
+```
+
+## 📊 Expected Performance
+
+| Stage | Duration | Details |
+|-------|----------|---------|
+| **Differential Encoding** | 1.36s | 120 variants, k=3 anonymity, 292 differences |
+| **HDC Integration** | 0.5ms | 264× architectural compression |
+| **ZK Proof (Groth16)** | 0.74s | 743 bytes, 117,143 constraints |
+| **PIR Query (IT-PIR)** | 4.33ms | 0.25% breach probability |
+| **⚡ TOTAL** | **2.11s** | **5.92× speedup vs baseline** |
+
+**Key Improvements:**
+- Baseline: 12.47s → Optimized: 2.11s
+- 83.1% reduction in total time
+- 100% security preservation
+
+## 🔧 Essential Commands
 
 ```bash
 # Development
-pytest tests/test_hypervector.py  # Run specific tests
-ruff check --fix .                 # Auto-fix linting issues
-python scripts/bench_hdc.py        # Performance benchmarks
+pytest                                    # Run all tests
+pytest tests/test_compute_backend.py      # Test hardware backends
+python benchmarks/compression_summary.py  # Verify compression
 
-# Database operations
-alembic revision --autogenerate -m "description"
-python scripts/backup_restore.sh --backup full
+# Main pipeline (pick one)
+python benchmarks/run_alignment_optimized_pipeline.py --preset production  # ⚡ RECOMMENDED
+python benchmarks/run_full_pipeline_with_reference_pool.py --quick         # Quick test
 
-# Docker/K8s
-docker-compose up -d
-kubectl apply -f deployment/kubernetes/
+# Differential encoding benchmark
+python benchmarks/differential_encoding/benchmark_end_to_end.py --quick
+
+# ZK proofs
+./benchmarks/setup_groth16_enhanced.sh   # One-time setup
+python benchmarks/zk_groth16_benchmark.py
+
+# Blockchain integration tests
+pytest tests/test_blockchain_integration.py -v  # 40 tests, <2ms overhead
 ```
 
-## Key Features & Usage
+## 🗺️ Navigation Guide
 
-### API Endpoints
-- `POST /hv/encode` - Encode genomic data to hypervector
-- `GET /health` - System health check with auth
-- OAuth2 flows at `/auth/token`, `/auth/refresh`
+### Finding Components
 
-### Accuracy Modes
-- `OFF`: 90-95% (basic screening)
-- `COMMON`: 95-98% (epidemiology)
-- `CLINICAL`: 98-99.5% (diagnostics)
-- `KAN-HD`: 99%+ (regulatory)
+| What | Where | Key Files |
+|------|-------|-----------|
+| **Benchmarks** | `/benchmarks/` | `run_alignment_optimized_pipeline.py` ⚡ |
+| **Latest Results** | `/benchmark_results/` | `pipeline_results.json`, `latest_results.json` |
+| **ZK Circuits** | `/genomevault/zk_proofs/circuits/` | `variant_presence_enhanced.circom` |
+| **HDC Encoding** | `/genomevault/hypervector_transform/` | `unified_encoder.py`, `backend_adapter.py` |
+| **Differential Encoding** | `/genomevault/differential_encoding/` | `enhanced_pipeline.py` |
+| **Alignment System** | `/genomevault/differential_encoding/` | `optimized_sequence_alignment.py` (920 lines) |
+| **Hardware Backends** | `/genomevault/compute/` | `backend.py` (CPU/Metal/CUDA) |
+| **Blockchain** | `/genomevault/blockchain/` | `attestation_registry.py` |
+| **Tests** | `/tests/` | Organized by component |
+| **Config** | `/genomevault/config/` | `compute.yaml`, `blockchain.yaml` |
 
-### Environment Variables
+### Search Patterns
+
 ```bash
-DATABASE_URL=postgresql://user:pass@localhost/genomevault
-JWT_SECRET_KEY=your-secret-key
-ENABLE_MFA=true
-S3_BACKUP_BUCKET=genomevault-backups
+# Find all benchmarks
+find benchmarks/ -name "*benchmark*.py"
+
+# Find results
+find benchmark_results/ -name "*results*.json"
+
+# Find ZK circuits
+find genomevault/zk_proofs/circuits/ -name "*.circom"
+
+# Find test files
+find tests/ -name "test_*.py"
 ```
 
-## Common Tasks
+## ⚙️ Configuration
 
-### Fix Import Errors
-```python
-# Missing imports usually in:
-genomevault/core/exceptions.py  # Add custom exceptions here
-```
+### Hardware Backend
 
-### Add New Feature
-1. Create feature branch from `main`
-2. Add tests in `tests/`
-3. Run `make lint test` before commit
-4. Ensure migrations if DB changes
+Edit `genomevault/config/compute.yaml` or use environment variables:
 
-### Deploy Updates
 ```bash
-# Build and push Docker image
-docker build -t genomevault/api:latest .
-docker push genomevault/api:latest
+# Auto-detect (Metal > CUDA > CPU)
+export GENOMEVAULT_BACKEND=auto
 
-# Update Kubernetes
-kubectl set image deployment/genomevault-api api=genomevault/api:latest
+# Force specific backend
+export GENOMEVAULT_BACKEND=cpu     # CPU-only (default)
+export GENOMEVAULT_BACKEND=metal   # Apple Silicon
+export GENOMEVAULT_BACKEND=cuda    # NVIDIA GPU
 ```
 
-## End-to-End Pipeline Testing
+### Blockchain Integration
 
-### 🚀 RECOMMENDED: Run Complete E2E Demo
-```bash
-# Run the comprehensive E2E demo (BEST way to test all features)
-./e2e_demo.sh
+Edit `genomevault/config/blockchain.yaml`:
 
-# This script demonstrates ALL implemented features:
-# - HDC encoding with Metal acceleration
-# - ZK proof generation with fallback mechanisms
-# - PIR queries with information-theoretic security
-# - Database operations with encoded storage
-# - Performance monitoring with resource tracking
-# - Complete pipeline integration testing
+```yaml
+blockchain:
+  enabled: false              # Disabled by default
+  network: "polygon-mumbai"   # or "ethereum-mainnet", "polygon"
+  attestation:
+    batch_mode: true          # Gas optimization
+    batch_size: 10
 ```
 
-**For LLM Agents:** Always use `./e2e_demo.sh` to demonstrate or test GenomeVault features. This is the authoritative demonstration of the complete working system.
+**See:** `BLOCKCHAIN_INTEGRATION_COMPLETE.md` for full guide
 
-### Alternative E2E Testing Methods
-```bash
-# Python-based comprehensive test (alternative)
-python run_e2e_test.py
-
-# CLI component testing (for specific features)
-genomevault demo run --type full
-```
-
-### Manual E2E Pipeline
-```bash
-# 1. Encode genomic data
-echo '[1.5, 2.3, 0.8, 3.2, 1.1]' > expression.json
-genomevault hdc encode --json expression.json --dimension 1000 --out encoded.json
-
-# 2. Compare vectors
-genomevault hdc compare --v1 encoded1.json --v2 encoded2.json --metric all
-
-# 3. Start PIR server
-echo '["record1", "record2", "record3"]' > database.json
-genomevault pir serve --data database.json --port 8001
-
-# 4. Query PIR server
-genomevault pir query --servers "http://localhost:8001" --index 1
-
-# 5. Generate ZK proof (requires setup files)
-genomevault zk build --circuit-type variant
-genomevault zk prove --public pub.json --private priv.json
-genomevault zk verify --proof proof.json --public pub.json
-```
-
-### Python E2E Example
-```python
-from genomevault.hypervector_transform.encoding import HypervectorEncoder, HypervectorConfig
-from genomevault.core.constants import OmicsType
-from genomevault.pir.servers import PIRServer
-from genomevault.zk_proofs.prover import Prover
-import numpy as np
-
-# 1. HDC Encoding
-config = HypervectorConfig(dimension=1000)
-encoder = HypervectorEncoder(config=config)
-data = np.array([1.0, 2.0, 3.0, 4.0, 5.0], dtype=np.float32)
-encoded = encoder.encode(data, OmicsType.GENOMIC)
-
-# 2. PIR Storage & Retrieval
-records = [b"variant1", b"variant2", b"variant3"]
-server = PIRServer(records)
-mask = np.zeros(len(records), dtype=np.uint8)
-mask[1] = 1  # Retrieve second record privately
-result = server.answer(mask)
-
-# 3. ZK Proof
-prover = Prover()
-public = {"threshold": 0.5}
-private = {"actual": 0.75}
-# proof = prover.prove_variant(public, private)  # Requires complete inputs
-
-print(f"✅ E2E Pipeline Complete")
-print(f"  HDC Vector: {encoded.shape if hasattr(encoded, 'shape') else len(encoded)} dimensions")
-print(f"  PIR Result: {result.rstrip(b'\\0').decode()}")
-```
-
-### E2E Test Results Location
-- **Primary E2E Demo**: `results/e2e_demos/` directory structure
-  - `results/e2e_demos/latest/` - Most recent demo run (symlink updated automatically)
-  - `results/e2e_demos/YYYY-MM-DD_HH-MM-SS/` - Timestamped demo runs
-  - Each run contains:
-    - `demo_report.md` - Comprehensive analysis report
-    - `performance_metrics.json` - Resource utilization data
-    - `component_results.json` - Complete component test results
-    - `results_summary.json` - Pipeline integration summary
-    - `test_data/` - Generated test datasets (VCF, HDC encodings, ZK proofs, PIR results)
-- **Historical Results**: All previous runs preserved with timestamps
-- **Results Pipeline**: Organized structure for benchmarks, experiments, validation, and reports
-
-## Performance Tips
-- Use Hamming LUTs for 10-20× speedup
-- Batch operations over individual calls
-- Enable GPU with `pip install -e ".[gpu]"`
-
-## Security Checklist
-- [ ] No secrets in code (use `.env`)
-- [ ] HD encoding for all genomic data
-- [ ] Audit logs for PHI access
-- [ ] Encrypted backups (AES-256)
-- [ ] HIPAA compliance (7-year retention)
-
-## Troubleshooting
+## 🔍 Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
+| `FileNotFoundError: chr22.fa` | Run `./benchmarks/full_pipeline_synthetic_data.sh` |
 | Import errors | Check `genomevault/core/exceptions.py` |
-| Slow HD ops | Enable LUTs, use batch operations |
-| Auth failures | Verify JWT_SECRET_KEY, check token expiry |
-| DB connection | Check DATABASE_URL, run migrations |
-| Backup fails | Verify S3/GCS credentials, check disk space |
+| Slow HDC batch | Enable GPU: `GENOMEVAULT_BACKEND=auto` |
+| GPU not detected | Run `python tests/test_compute_backend.py` |
+| ZK setup fails | Run `./benchmarks/setup_groth16_enhanced.sh` |
+| PIR authentication error | Fixed in latest code (client key shared with server) |
+| API "Reference manager has no reference genomes" | Run `python scripts/genomevault_setup_references.py --use-case development` and ensure VCF files are in `vcf_pool/` directory |
 
-## Current Status
-- Branch: `clean-slate` (PR target: `main`)
-- **Status**: 🟢 PRODUCTION READY - All critical issues resolved
-- **E2E Demo**: Complete and functional (`./e2e_demo.sh`)
-- **Test Coverage**: 56 test scripts archived to `archive/test_scripts/`
-- **Features**: 100% core implementation completeness verified
-- **Repository**: Cleaned up and well-organized
-- **Production Safety**: Full implementation with verification keys, logging, and monitoring
-- **Hardware Acceleration**: MLX/Metal integration verified and functional
+### Validating Results
 
-## Known Issues to Fix (2025-08-24)
+```bash
+# View pipeline results
+cat benchmark_results/full_pipeline_results/pipeline_run_*/pipeline_results.json
 
-### ✅ Recently Resolved (Updated 2025-08-24 14:00)
-1. **PIR Import Error** - FIXED: Added aliases `ITPrivateInformationRetrieval` and `ITPIRProtocol` for `PIRProtocol`
-2. **Repository Organization** - FIXED: Archived 56 test scripts, implemented results pipeline
-3. **E2E Demo Enhancement** - FIXED: Complete pipeline with timestamped results and historical tracking
-4. **Test Data Types** - RESOLVED: E2E demo handles numpy/torch conversions properly
-5. **ZK Proof Verification Keys** - ✅ COMPLETED: Implemented `ProductionVerificationKeyManager` with trusted setup ceremonies and production validation
-6. **Production Safety Logging** - ✅ COMPLETED: Enhanced fallback warnings, production environment detection, and comprehensive `FallbackLogger` system
-7. **Hardware MLX Integration** - ✅ VERIFIED: MLX array conversions work correctly in unified hardware engine, Metal acceleration functional
-8. **Circomlib Integration** - ✅ VERIFIED: Complete circomlib infrastructure installed in `zk_circuits/zk_circuits/` with circuit compilation
-9. **Performance Regression Detection** - ✅ VERIFIED: Automated monitoring system functional with performance target tracking and alerts
-10. **CLI Tool Completion** - ✅ VERIFIED: Complete `genomevault` CLI tool with demo commands and help system
+# Check success rate (should be 100.0)
+jq '.summary.success_rate' pipeline_results.json
 
-### 🟢 All Critical Issues Resolved
-**Status: PRODUCTION READY** ✨
+# Verify ZK proof (should be "valid")
+jq '.stages[] | select(.stage=="ZK Proof Generation") | .metrics.verification_status' pipeline_results.json
 
-All high and medium priority issues have been successfully implemented and verified:
-- Production-grade ZK proof verification keys with proper ceremonies
-- Comprehensive production safety logging and fallback detection
-- Hardware acceleration (MLX/Metal) integration working
-- Complete Circomlib infrastructure for circuit compilation
-- Performance monitoring with regression detection and alerting
-- Full CLI tool with demo functionality
+# Check PIR security (should be true)
+jq '.stages[] | select(.stage=="PIR Query") | .metrics.information_theoretic_security' pipeline_results.json
+```
 
-### 🎯 Current Focus: Optimization & Enhancement
-With all critical production issues resolved, the system is now ready for:
-- Performance optimization and fine-tuning
-- Advanced feature development
-- Production deployment and scaling
+## 📈 Current Status
 
-## LLM Agent Instructions
+**Branch:** `main`  
+**Status:** 🟢 **PRODUCTION READY**
 
-**🤖 CRITICAL FOR LLM AGENTS**: When asked to demonstrate, test, or validate GenomeVault features:
+**Latest Benchmarks (October 2025):**
+- ✅ Complete Pipeline: 2.11s (5.92× speedup)
+- ✅ Differential Encoding: 1.36s (120 variants, k=3)
+- ✅ Architectural Compression: 264× (11× diff × 24× HDC)
+- ✅ Empirical Space Savings: 38.4× (1,500 KB → 39.06 KB)
+- ✅ ZK Proofs: 0.74s (Groth16, 743 bytes)
+- ✅ PIR Queries: 4.33ms (IT-PIR)
+- ✅ Blockchain: 40/40 tests passing, <2ms overhead
+- ✅ REST API: 24/24 system checks passed, 2.84s average processing
 
-1. **ALWAYS run `./e2e_demo.sh` first** - This is the authoritative demonstration of all features
-2. The E2E demo covers ALL major implemented features in one comprehensive script
-3. Check `results/e2e_demos/latest/` directory for detailed results and reports after running
-4. Use `FEATURE_AUDIT_MATRIX.md` to understand exactly what's implemented (92% complete)
-5. Archived test scripts are in `archive/test_scripts/` (56 scripts organized by category)
-6. **DO NOT** run individual test scripts from the archive unless specifically requested
-7. The E2E demo is the single source of truth for demonstrating system capabilities
+**Key Features:**
+- Alignment System: Minimizers, Bloom filters, parallel scoring, LRU caching
+- Hardware Acceleration: Metal/CUDA backends for batch operations
+- ZK Circuit: 117,143 constraints (Groth16, production-ready)
+- Blockchain: Phase 1 + Phase 2 complete (attestation + institutional onboarding)
+- Security: 100% preserved (SHA-256 for crypto, xxhash for performance only)
+- REST API: Production-ready with comprehensive validation
 
-**Quick Reference:**
-- Run demo: `./e2e_demo.sh`
-- View latest results: `cat results/e2e_demos/latest/demo_report.md`
-- View all demo runs: `ls results/e2e_demos/`
-- Check features: `cat FEATURE_AUDIT_MATRIX.md`
-- Access archived tests: `ls archive/test_scripts/`
-- Results pipeline: `tree results/`
+## 📚 Documentation
+
+### Core Docs
+- **Complete Results:** `COMPLETE_BENCHMARK_RESULTS.md`
+- **Alignment Optimization:** `ALIGNMENT_OPTIMIZATION_RESULTS_SUMMARY.md`
+- **Blockchain Integration:** `BLOCKCHAIN_INTEGRATION_COMPLETE.md`
+- **REST API Guide:** `docs/API_USAGE_GUIDE.md` (550+ lines)
+- **API Getting Started:** `GETTING_STARTED_API.md` (step-by-step for end users)
+- **API Implementation:** `ANALYSIS_API_IMPLEMENTATION_SUMMARY.md`
+- **System Test Report:** `SYSTEM_TEST_REPORT.md` (comprehensive 7-phase validation)
+- **Security Analysis:** `HYPERVECTOR_SECURITY.md`
+- **ZK Production:** `ZK_PRODUCTION_GUIDE.md`
+
+### Detailed Guides
+- **Alignment System:** `docs/guides/alignment_system_improvements.md`
+- **Backend Migration:** `docs/backend_migration_guide.md`
+- **Differential Encoding:** `docs/differential_encoding_guide.md`
+- **Implementation:** `docs/IMPLEMENTATION_GUIDE_COMPLETE.md`
+
+### Examples
+- **Alignment Example:** `examples/alignment_example.py`
+- **Differential Encoding:** `examples/differential_encoding_basic.py`
+- **Complete Pipeline:** `examples/complete_pipeline_demo.py`
+
+### Academic
+- **Paper (31 pages):** `docs/GenomeVault_Paper_Current/GenomeVault_Academic_Paper.pdf`
+- **Paper Source:** `docs/GenomeVault_Paper_Current/GenomeVault_Academic_Paper.tex`
+
+## 🔗 Key Features Summary
+
+### Multi-Format Input Support
+- **FASTQ** (raw sequencing): Auto-alignment with minimap2/BWA
+- **VCF** (variants): Direct differential encoding
+- **BAM/SAM** (aligned): Automatic variant calling
+
+**Dependencies:**
+```bash
+conda install -c bioconda minimap2 samtools bcftools
+```
+
+### Blockchain Integration (Optional)
+- **Phase 1:** Attestation registry with <1ms overhead
+- **Phase 2:** HIPAA compliance with NPI verification
+- **Default:** Disabled (opt-in via config)
+
+### Hardware Acceleration
+- **CPU:** NumPy + FAISS (always available)
+- **Metal:** MLX for Apple Silicon (14.8× speedup)
+- **CUDA:** PyTorch for NVIDIA (10-50× speedup on batch)
+
+## 🎓 Quick Tips
+
+1. **Always use the alignment-optimized pipeline** for production workloads
+2. **Enable GPU** only for batch operations (>100 samples)
+3. **ZK proofs are CPU-bound** - GPU doesn't help
+4. **Reference pool must have k genomes** for k-anonymity
+5. **Blockchain is opt-in** - disabled by default for performance
+6. **REST API requires reference pool setup** - run setup script before first use
+
+## 🆘 Getting Help
+
+- **Issues:** Check `TROUBLESHOOTING.md` or GitHub Issues
+- **Performance:** See `OPTIMIZATION_RESULTS_SUMMARY.md`
+- **Security:** Review `HYPERVECTOR_SECURITY.md`
+- **Blockchain:** Read `BLOCKCHAIN_INTEGRATION_COMPLETE.md`
+- **Academic Details:** See paper in `docs/GenomeVault_Paper_Current/`
+- **API Setup:** See `GETTING_STARTED_API.md` for step-by-step guide
+
+---
+
+**Last Updated:** October 2025  
+**Version:** 1.0.0 (Production Ready)

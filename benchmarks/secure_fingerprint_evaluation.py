@@ -27,7 +27,6 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from genomevault.hypervector_transform.encoding import HypervectorEncoder, HypervectorConfig
 from genomevault.hypervector_transform.similarity import compute_fingerprint_similarity
-from genomevault.core.constants import OmicsType
 
 @dataclass
 class ExperimentConfig:
@@ -322,7 +321,8 @@ class RigorousFingerprintEvaluator:
                 normalize=True,
                 sparsity=self.config.sparsity
             )
-            self.encoder = HypervectorEncoder(config)
+    # Note: Use create_backend_encoder(backend='auto') to leverage hardware acceleration
+            self.encoder = create_backend_encoder(dimension=8192)
         
         fingerprints = {}
         
@@ -332,7 +332,7 @@ class RigorousFingerprintEvaluator:
             
             for sample in subject_data['samples']:
                 # Encode to hypervector
-                hv = self.encoder.encode(sample, OmicsType.GENOMIC)
+                hv = self.encoder.encode_single(sample)
                 
                 # Convert to numpy
                 if hasattr(hv, 'numpy'):

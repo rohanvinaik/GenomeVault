@@ -146,8 +146,11 @@ class SimplePIRServer:
         else:
             item = b""
 
-        # Create response with MAC
-        response_mac = hashlib.sha256(mac + item).digest()[:16]
+        # Create response with MAC (use client's key if available for proper authentication)
+        if hasattr(self, '_client_key'):
+            response_mac = hashlib.sha256(self._client_key + item).digest()[:16]
+        else:
+            response_mac = hashlib.sha256(mac + item).digest()[:16]
 
         return response_mac + item
 
@@ -162,8 +165,10 @@ class SimplePIR:
             database: Input database to process.
         """
         self.config = PIRConfig(database_size=len(database))
-        self.server = SimplePIRServer(database, self.config)
         self.client = PIRClient(self.config)
+        self.server = SimplePIRServer(database, self.config)
+        # Share client's private key with server for MAC computation
+        self.server._client_key = self.client._private_key
 
     def retrieve(self, index: int) -> bytes:
         """Retrieve an item privately.

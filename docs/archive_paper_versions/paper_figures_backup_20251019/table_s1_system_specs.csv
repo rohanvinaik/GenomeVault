@@ -1,0 +1,8 @@
+Component,Specification
+Architecture,Differential Encoding Core
+Primary Feature,Reference-based variant difference computation
+Encoding Method,Adaptive chunking + hypervector projection
+Compression Tier Options,"Mini (25KB), Clinical (150KB), Research (200KB)"
+Hardware Platform,"Apple M1 Max (10 cores, 64GB RAM, 32-core GPU)"
+Acceleration,MLX Metal acceleration (14.8× speedup)
+Software Stack,"Python 3.11, PyTorch 2.3.1, MLX 0.28.0"

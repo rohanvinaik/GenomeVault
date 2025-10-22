@@ -21,7 +21,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from genomevault.hypervector_transform.encoding import HypervectorEncoder, HypervectorConfig
-from genomevault.core.constants import OmicsType
 
 @dataclass
 class FingerprintConfig:
@@ -67,7 +66,8 @@ class SecureFingerprintEvaluator:
                 normalize=True,
                 use_metal=True  # Maintain Metal acceleration if available
             )
-            self.encoder = HypervectorEncoder(config=hv_config)
+    # Note: Use create_backend_encoder(backend='auto') to leverage hardware acceleration
+            self.encoder = create_backend_encoder(dimension=8192)
         return self.encoder
     
     def generate_secure_genomic_profile(self, subject_id: int, config: FingerprintConfig) -> np.ndarray:
@@ -203,7 +203,7 @@ class SecureFingerprintEvaluator:
                 sample_profile = self.add_sample_variation(base_profile, sample_id)
                 
                 # Encode to hypervector
-                hv = encoder.encode(sample_profile, OmicsType.GENOMIC)
+                hv = encoder.encode_single(sample_profile)
                 
                 # Apply sparsification
                 if config.sparsity > 0:
@@ -411,7 +411,7 @@ class SecureFingerprintEvaluator:
             start = time.time()
             test_data = np.random.randn(10000).astype(np.float32)
             if self.encoder:
-                _ = self.encoder.encode(test_data, OmicsType.GENOMIC)
+                _ = self.encoder.encode_single(test_data)
             encoding_times.append((time.time() - start) * 1000)
         
         avg_encoding_time = np.mean(encoding_times)

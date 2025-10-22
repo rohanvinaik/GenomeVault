@@ -1,0 +1,9 @@
+Component,Specification
+CPU,Apple M1 Max
+Cores,10 (8 performance + 2 efficiency)
+Memory,64GB unified memory
+GPU,32-core integrated GPU
+OS,macOS 14.0 (Darwin 26.0)
+Python,Python 3.11.8
+PyTorch,PyTorch 2.3.1
+MLX,MLX 0.28.0 (Metal acceleration)

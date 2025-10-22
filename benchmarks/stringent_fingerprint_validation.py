@@ -192,7 +192,8 @@ class StringentValidator:
                     sparsity=sparsity,
                     seed=42  # Fixed seed for reproducibility
                 )
-                encoder = HypervectorEncoder(config=config)
+    # Note: Use create_backend_encoder(backend='auto') to leverage hardware acceleration
+                encoder = create_backend_encoder(dimension=8192)
                 
                 # Generate all samples and encode
                 encodings = {}

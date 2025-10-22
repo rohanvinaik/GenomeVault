@@ -15,7 +15,6 @@ import pandas as pd
 import numpy as np
 
 from genomevault.hypervector_transform.encoding import HypervectorEncoder, HypervectorConfig
-from genomevault.core.constants import OmicsType
 from genomevault.zk_proofs.prover import Prover
 from genomevault.zk_proofs.backends.circom_backend import CircomBackend
 import logging
@@ -33,7 +32,8 @@ class GIABBenchmark:
 
         # Initialize components with correct imports
         config = HypervectorConfig(dimension=10000)
-        self.encoder = HypervectorEncoder(config=config)
+    # Note: Use create_backend_encoder(backend='auto') to leverage hardware acceleration
+        self.encoder = create_backend_encoder(dimension=8192)
         self.prover = Prover(use_circom=True)
         self.circom_backend = CircomBackend() if self.prover.circom_backend else None
 
@@ -180,7 +180,7 @@ class GIABBenchmark:
         data_array = np.array(
             numeric_features[:1000], dtype=np.float32
         )  # Ensure we have valid size
-        encoded = self.encoder.encode(data_array, OmicsType.GENOMIC)
+        encoded = self.encoder.encode_single(data_array)
         encode_time = time.time() - start
 
         # Calculate compression

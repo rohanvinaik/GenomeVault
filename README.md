@@ -62,23 +62,49 @@ GenomeVault includes a research prototype combining **Kolmogorov-Arnold Networks
 
 ## 🚀 Quick Start
 
-### Run the Complete Demo (30 seconds)
+### REST API
 
+**For step-by-step instructions**, see [GETTING_STARTED_API.md](GETTING_STARTED_API.md).
+
+**Start the API server:**
 ```bash
 git clone https://github.com/rohanvinaik/GenomeVault.git
 cd GenomeVault
-./e2e_demo.sh
+python -m venv venv && source venv/bin/activate
+pip install -e ".[dev]"
+
+# Setup reference pool (required for k-anonymity)
+python scripts/genomevault_setup_references.py --use-case development
+
+# Start server
+uvicorn genomevault.api.app:app --reload --port 8000
+# Access at http://localhost:8000/api/docs
 ```
 
-**What you'll see:**
-1. HDC encoding with Metal acceleration
-2. Zero-knowledge proof generation (Halo2 backend)
-3. Private information retrieval queries
-4. Perfect genetic identification
+**Submit analysis:**
+```bash
+curl -X POST "http://localhost:8000/api/v1/analysis/submit" \
+  -F "file=@genome.vcf.gz" \
+  -F "analysis_type=whole_genome" \
+  -F "k_anonymity=3" \
+  -F "enable_zk_proof=true"
 
-**Results**: Output saved to `results/e2e_demos/latest/` with comprehensive metrics.
+# Returns: {"analysis_id": "...", "status": "queued"}
+```
+
+**Retrieve results:**
+```bash
+curl "http://localhost:8000/api/v1/analysis/{analysis_id}/status"
+curl "http://localhost:8000/api/v1/analysis/{analysis_id}/results"
+```
+
+**Verified Performance (October 22, 2025)**: 2.84s average (2.52s differential encoding + 0.32s HDC encoding), 24/24 system checks passed, 100% success rate. See `SYSTEM_TEST_REPORT.md`.
+
+---
 
 ### Python Library
+
+Direct programmatic access:
 
 ```python
 from genomevault.hypervector_transform import UnifiedGenomicEncoder, EncodingMode
@@ -115,16 +141,73 @@ encoded.save(Path("patient_001.enc.gz"), compress=True)
 assert encoded.verify(), "Verification failed!"
 ```
 
-### Docker Deployment
+### Docker
+
+For production deployment:
 
 ```bash
 docker compose up -d
 
-# Query the API
-curl -X POST http://localhost:8000/api/v1/encode \
-  -H "Content-Type: application/json" \
-  -d '{"variants": ["chr1:123456:A:G"], "dimension": 8192}'
+# API available at http://localhost:8000
+# Access docs at http://localhost:8000/api/docs
 ```
+
+-----
+
+## 🌐 REST API
+
+Production-ready REST API for genomic analysis with privacy guarantees. Verified operational with 24/24 system checks passing.
+
+**Documentation**: See [GETTING_STARTED_API.md](GETTING_STARTED_API.md) for step-by-step guide.
+
+### Endpoints
+
+```
+POST   /api/v1/analysis/submit        # Submit genome file
+GET    /api/v1/analysis/{id}/status   # Check progress
+GET    /api/v1/analysis/{id}/results  # Retrieve results
+GET    /healthz                        # Health check
+```
+
+**Interactive Documentation**: http://localhost:8000/api/docs
+
+### Configuration
+
+**Required**: Reference genome pool for k-anonymity
+
+```bash
+# Setup reference pool
+python scripts/genomevault_setup_references.py --use-case development
+
+# Expected structure:
+benchmark_results/differential_encoding_samples/vcf_pool/
+├── reference_001.vcf  # 10K+ variants
+├── reference_002.vcf  # 10K+ variants
+└── reference_003.vcf  # 10K+ variants
+```
+
+**Environment Variables**:
+```bash
+export GENOMEVAULT_API_PORT=8000
+export GENOMEVAULT_K_ANONYMITY=3
+export GENOMEVAULT_ENABLE_ZK_PROOFS=true
+export GENOMEVAULT_REFERENCE_POOL="benchmark_results/differential_encoding_samples/vcf_pool"
+```
+
+### Performance (October 22, 2025)
+
+| Metric | Value | Status |
+|--------|-------|--------|
+| End-to-end latency | 2.84s | ✅ 43% under target |
+| Differential encoding | 2.52s | ✅ |
+| HDC encoding | 0.32s | ✅ |
+| System verification | 24/24 passed | ✅ 100% |
+| Integration tests | 3/3 passed | ✅ 100% |
+
+**Supported Formats**: VCF, FASTQ, BAM, SAM (up to 10 GB)  
+**Analysis Types**: whole_genome, exome, pharmacogenomics, ancestry, risk_assessment, carrier_screening, targeted_panel, variant_pathogenicity
+
+**Full API Reference**: See `docs/API_USAGE_GUIDE.md` (550+ lines) and `SYSTEM_TEST_REPORT.md` for comprehensive validation details.
 
 -----
 

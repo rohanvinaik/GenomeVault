@@ -1,0 +1,21 @@
+# simuG configuration for realistic human variant simulation
+# Format: -snp_count <num> -indel_count <num> -cnv_count <num> -inversion_count <num>
+
+# Realistic variant counts for a 50Mb chromosome region:
+# - SNPs: ~1 per 1000bp = 50,000 SNPs
+# - Indels: ~1 per 10,000bp = 5,000 indels
+# - CNVs: ~10-20 per chromosome
+# - Inversions: ~1-2 per chromosome
+
+# For this benchmark, we'll use moderate numbers:
+-snp_count 10000
+-snp_vcf ${SIMUG_DIR}/snps.vcf
+-indel_count 2000
+-indel_vcf ${SIMUG_DIR}/indels.vcf
+-cnv_count 20
+-cnv_vcf ${SIMUG_DIR}/cnvs.vcf
+-inversion_count 3
+-inversion_vcf ${SIMUG_DIR}/inversions.vcf
+-titv_ratio 2.0
+-prefix ${SIMUG_DIR}/simulated
+-seed 42

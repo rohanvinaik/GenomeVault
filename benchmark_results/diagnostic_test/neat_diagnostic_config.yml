@@ -1,0 +1,11 @@
+reference: /Users/rohanvinaik/genomevault/benchmark_results/full_pipeline_synthetic/reference/chr22.fa
+read_len: 150
+fragment_mean: 300
+fragment_st_dev: 50
+coverage: 10
+paired_ended: true
+rng_seed: 999
+produce_bam: false
+produce_vcf: true
+ploidy: 2
+threads: 4

@@ -1,0 +1,5 @@
+Benchmark,Dataset Size,Iterations,Metric
+Chunking Strategies,30K variants,100,Time (ms)
+Difference Computation,30K variants,100,Throughput (variants/sec)
+Hypervector Encoding,10K dimensions,100,Time (ms)
+End-to-End Pipeline,30K variants,50,Total time (ms)

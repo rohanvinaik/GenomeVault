@@ -50,18 +50,18 @@ def benchmark_hdc_encoding():
     """Benchmark HDC encoding with fixed data."""
     try:
         from genomevault.hypervector_transform.encoding import HypervectorEncoder, HypervectorConfig
-        from genomevault.core.constants import OmicsType
-
+        
         # Generate deterministic test data
         np.random.seed(SEED)
         data = np.random.randn(100).astype(np.float32)
 
         config = HypervectorConfig(dimension=1000)
-        encoder = HypervectorEncoder(config=config)
+    # Note: Use create_backend_encoder(backend='auto') to leverage hardware acceleration
+        encoder = create_backend_encoder(dimension=8192)
 
         # Benchmark
         start = time.perf_counter()
-        encoded = encoder.encode(data, OmicsType.GENOMIC)
+        encoded = encoder.encode_single(data)
         duration = time.perf_counter() - start
 
         # Convert to numpy array if needed

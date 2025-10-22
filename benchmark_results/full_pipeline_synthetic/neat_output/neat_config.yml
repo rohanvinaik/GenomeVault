@@ -1,0 +1,22 @@
+# NEAT configuration for realistic Illumina sequencing simulation
+
+# Reference genome (use the simulated genome from simuG)
+reference: /Users/rohanvinaik/GenomeVault/benchmark_results/full_pipeline_synthetic/simug_output/simulated.simseq.genome.fa
+
+# Output directory
+output: /Users/rohanvinaik/GenomeVault/benchmark_results/full_pipeline_synthetic/neat_output
+
+# Read length and coverage
+read_len: 150
+coverage: 30
+
+# Paired-end configuration
+paired_ended: true
+fragment_mean: 300
+fragment_st_dev: 50
+
+# Number of threads
+threads: 4
+
+# Random seed for reproducibility
+rng_seed: 42

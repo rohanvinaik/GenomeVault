@@ -240,7 +240,8 @@ def run_comprehensive_experiment(output_dir: Path):
         
         # Create encoder with specific config
         encoder = SecureHypervectorEncoder(
-            base_config=HypervectorConfig(dimension=8192),
+            base_config=HypervectorConfig(dimension=8192)
+    # Note: Use create_backend_encoder(backend='auto') to leverage hardware acceleration,
             rate_limit_config=RateLimitConfig(
                 max_queries_per_day=10000,  # High limit for testing
                 max_queries_per_hour=5000,

@@ -1475,3 +1475,12 @@ zipp==3.23.0 \
     --hash=sha256:071652d6115ed432f5ce1d34c336c0adfd6a884660d1e9712a256d3d3bd4b14e \
     --hash=sha256:a07157588a12518c9d4034df3fbbee09c814741a33ff63c05fa29d26a2404166
     # via importlib-metadata
+
+# Performance optimizations (safe dependencies)
+intervaltree>=3.1.0  # Interval tree for efficient position matching
+pysam>=0.22.0  # FASTA indexing for reference genome caching
+
+# Alignment system optimizations (safe dependencies)
+xxhash>=3.0.0  # Fast non-cryptographic hashing for k-mer indexing
+pybloom-live>=4.0.0  # Bloom filter for k-mer pre-screening
+scipy>=1.10.0  # Statistical tests for confidence scoring

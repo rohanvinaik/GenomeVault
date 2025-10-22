@@ -1,0 +1,88 @@
+\contentsline {section}{\numberline {1}GenomeVault: A Privacy-Preserving Genomic Computing Platform Using Hyperdimensional Computing and Zero-Knowledge Proofs}{1}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Abstract}{1}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}1. Introduction}{2}{subsection.1.2}%
+\contentsline {subsubsection}{\numberline {1.2.1}1.1 Background and Motivation}{2}{subsubsection.1.2.1}%
+\contentsline {subsubsection}{\numberline {1.2.2}1.2 The GenomeVault Approach}{2}{subsubsection.1.2.2}%
+\contentsline {subsubsection}{\numberline {1.2.3}1.3 Key Contributions}{3}{subsubsection.1.2.3}%
+\contentsline {subsection}{\numberline {1.3}2. Related Work}{3}{subsection.1.3}%
+\contentsline {subsubsection}{\numberline {1.3.1}2.1 Privacy-Preserving Genomic Computation}{3}{subsubsection.1.3.1}%
+\contentsline {subsubsection}{\numberline {1.3.2}2.2 Hyperdimensional Computing}{3}{subsubsection.1.3.2}%
+\contentsline {subsubsection}{\numberline {1.3.3}2.3 Zero-Knowledge Proofs in Genomics}{4}{subsubsection.1.3.3}%
+\contentsline {subsubsection}{\numberline {1.3.4}2.4 Genetic Identification and Fingerprinting}{4}{subsubsection.1.3.4}%
+\contentsline {subsubsection}{\numberline {1.3.5}2.5 Gap in Existing Work}{4}{subsubsection.1.3.5}%
+\contentsline {subsection}{\numberline {1.4}3. Methods}{4}{subsection.1.4}%
+\contentsline {subsubsection}{\numberline {1.4.1}3.1 System Architecture}{4}{subsubsection.1.4.1}%
+\contentsline {paragraph}{\numberline {1.4.1.1}3.1.1 Hyperdimensional Encoder}{4}{paragraph.1.4.1.1}%
+\contentsline {paragraph}{\numberline {1.4.1.2}3.1.2 Zero-Knowledge Prover}{4}{paragraph.1.4.1.2}%
+\contentsline {paragraph}{\numberline {1.4.1.3}3.1.3 Private Information Retrieval Engine}{5}{paragraph.1.4.1.3}%
+\contentsline {paragraph}{\numberline {1.4.1.4}3.1.4 API and Integration Layer}{5}{paragraph.1.4.1.4}%
+\contentsline {subsubsection}{\numberline {1.4.2}3.2 Hyperdimensional Computing Encoding}{5}{subsubsection.1.4.2}%
+\contentsline {paragraph}{\numberline {1.4.2.1}3.2.1 Theoretical Foundation}{5}{paragraph.1.4.2.1}%
+\contentsline {paragraph}{\numberline {1.4.2.2}3.2.2 Genomic Encoding Algorithm}{5}{paragraph.1.4.2.2}%
+\contentsline {paragraph}{\numberline {1.4.2.3}3.2.3 Hardware Acceleration}{6}{paragraph.1.4.2.3}%
+\contentsline {paragraph}{\numberline {1.4.2.4}3.2.4 Differential Encoding}{6}{paragraph.1.4.2.4}%
+\contentsline {subsubsection}{\numberline {1.4.3}3.3 Zero-Knowledge Proof Circuits}{7}{subsubsection.1.4.3}%
+\contentsline {paragraph}{\numberline {1.4.3.1}3.3.1 Circuit Design}{7}{paragraph.1.4.3.1}%
+\contentsline {paragraph}{\numberline {1.4.3.2}3.3.2 Backend Comparison}{8}{paragraph.1.4.3.2}%
+\contentsline {subsubsection}{\numberline {1.4.4}3.4 Private Information Retrieval}{8}{subsubsection.1.4.4}%
+\contentsline {paragraph}{\numberline {1.4.4.1}3.4.1 Computational PIR (Single-Server)}{8}{paragraph.1.4.4.1}%
+\contentsline {paragraph}{\numberline {1.4.4.2}3.4.2 Information-Theoretic PIR (Multi-Server)}{9}{paragraph.1.4.4.2}%
+\contentsline {subsubsection}{\numberline {1.4.5}3.5 Validation Methodology}{9}{subsubsection.1.4.5}%
+\contentsline {paragraph}{\numberline {1.4.5.1}3.5.1 Dataset}{9}{paragraph.1.4.5.1}%
+\contentsline {paragraph}{\numberline {1.4.5.2}3.5.2 Validation Protocols}{9}{paragraph.1.4.5.2}%
+\contentsline {paragraph}{\numberline {1.4.5.3}3.5.3 Evaluation Metrics}{9}{paragraph.1.4.5.3}%
+\contentsline {paragraph}{\numberline {1.4.5.4}3.5.4 Reproducibility}{10}{paragraph.1.4.5.4}%
+\contentsline {subsection}{\numberline {1.5}4. Results}{10}{subsection.1.5}%
+\contentsline {subsubsection}{\numberline {1.5.1}4.1 Hyperdimensional Encoding Performance}{10}{subsubsection.1.5.1}%
+\contentsline {paragraph}{\numberline {1.5.1.1}4.1.1 Encoding Speed and Compression}{10}{paragraph.1.5.1.1}%
+\contentsline {paragraph}{\numberline {1.5.1.2}4.1.2 Comparison with Existing Methods}{10}{paragraph.1.5.1.2}%
+\contentsline {subsubsection}{\numberline {1.5.2}4.2 Genetic Fingerprinting Performance}{11}{subsubsection.1.5.2}%
+\contentsline {paragraph}{\numberline {1.5.2.1}4.2.1 Subject-Disjoint Validation (Primary Result)}{11}{paragraph.1.5.2.1}%
+\contentsline {paragraph}{\numberline {1.5.2.2}4.2.2 Leave-Family-Out Validation}{11}{paragraph.1.5.2.2}%
+\contentsline {paragraph}{\numberline {1.5.2.3}4.2.3 Leave-Batch-Out Validation}{11}{paragraph.1.5.2.3}%
+\contentsline {subsubsection}{\numberline {1.5.3}4.3 Comparison with Existing Biometric Systems}{11}{subsubsection.1.5.3}%
+\contentsline {subsubsection}{\numberline {1.5.4}4.4 Zero-Knowledge Proof Performance}{12}{subsubsection.1.5.4}%
+\contentsline {paragraph}{\numberline {1.5.4.1}4.4.1 Proof Generation and Verification}{12}{paragraph.1.5.4.1}%
+\contentsline {paragraph}{\numberline {1.5.4.2}4.4.2 Scalability to Complex Circuits}{12}{paragraph.1.5.4.2}%
+\contentsline {subsubsection}{\numberline {1.5.5}4.5 Private Information Retrieval Performance}{12}{subsubsection.1.5.5}%
+\contentsline {paragraph}{\numberline {1.5.5.1}4.5.1 Computational PIR (Single-Server)}{12}{paragraph.1.5.5.1}%
+\contentsline {paragraph}{\numberline {1.5.5.2}4.5.2 Information-Theoretic PIR (Multi-Server)}{13}{paragraph.1.5.5.2}%
+\contentsline {paragraph}{\numberline {1.5.5.3}4.5.3 Network Impact Analysis}{13}{paragraph.1.5.5.3}%
+\contentsline {subsubsection}{\numberline {1.5.6}4.6 Security Analysis}{13}{subsubsection.1.5.6}%
+\contentsline {paragraph}{\numberline {1.5.6.1}4.6.1 Attribute Inference Attack}{13}{paragraph.1.5.6.1}%
+\contentsline {paragraph}{\numberline {1.5.6.2}4.6.2 Information-Theoretic Security Bound}{13}{paragraph.1.5.6.2}%
+\contentsline {subsubsection}{\numberline {1.5.7}4.7 Production Deployment Costs}{14}{subsubsection.1.5.7}%
+\contentsline {paragraph}{\numberline {1.5.7.1}4.7.1 Cost Analysis by Scale}{14}{paragraph.1.5.7.1}%
+\contentsline {paragraph}{\numberline {1.5.7.2}4.7.2 Comparison with Traditional Platforms}{14}{paragraph.1.5.7.2}%
+\contentsline {subsubsection}{\numberline {1.5.8}4.8 End-to-End Pipeline Performance}{14}{subsubsection.1.5.8}%
+\contentsline {subsubsection}{\numberline {1.5.9}4.9 Differential Encoding Performance}{15}{subsubsection.1.5.9}%
+\contentsline {paragraph}{\numberline {1.5.9.1}4.9.1 Encoding Speed and Throughput}{15}{paragraph.1.5.9.1}%
+\contentsline {paragraph}{\numberline {1.5.9.2}4.9.2 Storage Efficiency}{15}{paragraph.1.5.9.2}%
+\contentsline {paragraph}{\numberline {1.5.9.3}4.9.3 Comparison with Traditional Methods}{15}{paragraph.1.5.9.3}%
+\contentsline {subsection}{\numberline {1.6}5. Discussion}{16}{subsection.1.6}%
+\contentsline {subsubsection}{\numberline {1.6.1}5.1 Key Findings}{16}{subsubsection.1.6.1}%
+\contentsline {paragraph}{\numberline {1.6.1.1}5.1.1 Eliminating the Privacy-Utility Trade-Off}{16}{paragraph.1.6.1.1}%
+\contentsline {paragraph}{\numberline {1.6.1.2}5.1.2 Hyperdimensional Computing as a Privacy Primitive}{16}{paragraph.1.6.1.2}%
+\contentsline {paragraph}{\numberline {1.6.1.3}5.1.3 Enabling New Research Paradigms}{16}{paragraph.1.6.1.3}%
+\contentsline {subsubsection}{\numberline {1.6.2}5.2 Comparison with Related Work}{16}{subsubsection.1.6.2}%
+\contentsline {paragraph}{\numberline {1.6.2.1}5.2.1 vs Homomorphic Encryption}{16}{paragraph.1.6.2.1}%
+\contentsline {paragraph}{\numberline {1.6.2.2}5.2.2 vs Differential Privacy}{17}{paragraph.1.6.2.2}%
+\contentsline {paragraph}{\numberline {1.6.2.3}5.2.3 vs Traditional DNA Fingerprinting}{17}{paragraph.1.6.2.3}%
+\contentsline {subsubsection}{\numberline {1.6.3}5.3 Limitations and Future Work}{17}{subsubsection.1.6.3}%
+\contentsline {paragraph}{\numberline {1.6.3.1}5.3.1 Current Limitations}{17}{paragraph.1.6.3.1}%
+\contentsline {paragraph}{\numberline {1.6.3.2}5.3.2 Ongoing Development}{18}{paragraph.1.6.3.2}%
+\contentsline {subsubsection}{\numberline {1.6.4}5.4 Broader Impact}{18}{subsubsection.1.6.4}%
+\contentsline {paragraph}{\numberline {1.6.4.1}5.4.1 Ethical Considerations}{18}{paragraph.1.6.4.1}%
+\contentsline {paragraph}{\numberline {1.6.4.2}5.4.2 Societal Impact}{18}{paragraph.1.6.4.2}%
+\contentsline {subsubsection}{\numberline {1.6.5}5.5 Reproducibility and Open Science}{18}{subsubsection.1.6.5}%
+\contentsline {subsection}{\numberline {1.7}6. Conclusions}{19}{subsection.1.7}%
+\contentsline {subsection}{\numberline {1.8}Acknowledgments}{20}{subsection.1.8}%
+\contentsline {subsection}{\numberline {1.9}Author Contributions}{20}{subsection.1.9}%
+\contentsline {subsection}{\numberline {1.10}Competing Interests}{20}{subsection.1.10}%
+\contentsline {subsection}{\numberline {1.11}Data Availability}{20}{subsection.1.11}%
+\contentsline {subsection}{\numberline {1.12}Code Availability}{20}{subsection.1.12}%
+\contentsline {subsection}{\numberline {1.13}References}{20}{subsection.1.13}%
+\contentsline {subsection}{\numberline {1.14}Supplementary Materials}{22}{subsection.1.14}%
+\contentsline {subsubsection}{\numberline {1.14.1}Supplementary Figures}{22}{subsubsection.1.14.1}%
+\contentsline {subsubsection}{\numberline {1.14.2}Supplementary Tables}{22}{subsubsection.1.14.2}%
+\contentsline {subsubsection}{\numberline {1.14.3}Supplementary Methods}{23}{subsubsection.1.14.3}%

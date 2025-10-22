@@ -5,10 +5,22 @@ This module implements Hierarchical Hyperdimensional Computing (HDC) for
 privacy-preserving genomic data encoding.
 
 Key components:
-- HypervectorEncoder: Main encoder for transforming genomic data
+- UnifiedGenomicEncoder: Unified interface supporting differential and legacy encoding
+- HypervectorEncoder: Legacy direct encoding (backward compatible)
+- DifferentialGenomicEncoder: New cryptographic differential encoding
 - HypervectorBinder: Binding operations for combining hypervectors
 - HypervectorRegistry: Version management and reproducibility
 - HDC API: RESTful endpoints for encoding services
+
+Migration Guide:
+    # Legacy code (still works):
+    from genomevault.hypervector_transform import HypervectorEncoder
+    encoder = HypervectorEncoder(config)
+
+    # New unified interface (recommended):
+    from genomevault.hypervector_transform import UnifiedGenomicEncoder, EncodingMode
+    encoder = UnifiedGenomicEncoder(mode=EncodingMode.DIFFERENTIAL)
+    encoded = encoder.encode_genome(genome, AnalysisType.SLIDING_WINDOW)
 """
 
 from .holographic import (
@@ -64,6 +76,19 @@ from .mapping import (
     create_biological_mapper,
     preserve_similarities,
 )
+from .hdc_encoder import (
+    UnifiedGenomicEncoder,
+    EncodingMode,
+    EncodingFeatureFlags,
+    # Legacy exports for backward compatibility
+    HypervectorEncoder,
+    HypervectorConfig,
+    ProjectionType,
+    # Hardware-accelerated backend system
+    BackendOptimizedEncoder,
+    BackendEncoderConfig,
+    create_backend_encoder,
+)
 
 __all__ = [
     "BindingOperation",
@@ -108,4 +133,16 @@ __all__ = [
     "protect_vector",
     "query_hologram",
     "superpose",
+    # Unified encoding interface
+    "UnifiedGenomicEncoder",
+    "EncodingMode",
+    "EncodingFeatureFlags",
+    # Legacy encoding components
+    "HypervectorEncoder",
+    "HypervectorConfig",
+    "ProjectionType",
+    # Hardware-accelerated backend system
+    "BackendOptimizedEncoder",
+    "BackendEncoderConfig",
+    "create_backend_encoder",
 ]

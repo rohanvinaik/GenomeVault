@@ -44,4 +44,11 @@ try:
 except Exception as e:  # pragma: no cover - optional routers may fail
     print(f"Warning: Could not import API routers: {e}")
 
+# Analysis router - loaded separately to avoid dependency issues
+try:
+    import genomevault.api.routers.analysis as analysis
+    app.include_router(analysis.router)
+except Exception as e:  # pragma: no cover
+    print(f"Warning: Could not import analysis router: {e}")
+
 app.add_exception_handler(GVError, gv_error_handler)

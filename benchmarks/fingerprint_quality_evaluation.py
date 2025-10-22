@@ -82,7 +82,8 @@ class FingerprintEvaluator:
             dimension=config.dimension,
             seed=42
         )
-        encoder = HypervectorEncoder(config=hdc_config)
+    # Note: Use create_backend_encoder(backend='auto') to leverage hardware acceleration
+        encoder = create_backend_encoder(dimension=8192)
         
         # Encode to hypervector
         hypervector = encoder.encode(data.astype(np.float32), OmicsType.GENOMIC)

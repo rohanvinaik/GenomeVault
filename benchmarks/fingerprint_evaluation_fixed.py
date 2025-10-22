@@ -16,7 +16,6 @@ from scipy import stats
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from genomevault.hypervector_transform.encoding import HypervectorEncoder, HypervectorConfig
-from genomevault.core.constants import OmicsType
 
 @dataclass
 class FingerprintConfig:
@@ -57,10 +56,11 @@ class FingerprintEvaluator:
     def encode_fingerprint(self, data: np.ndarray, config: FingerprintConfig) -> np.ndarray:
         """Encode genomic data into HDC fingerprint"""
         hv_config = HypervectorConfig(dimension=config.dimension)
-        encoder = HypervectorEncoder(config=hv_config)
+    # Note: Use create_backend_encoder(backend='auto') to leverage hardware acceleration
+        encoder = create_backend_encoder(dimension=8192)
         
         # Encode
-        encoded = encoder.encode(data, OmicsType.GENOMIC)
+        encoded = encoder.encode_single(data)
         
         # Convert to numpy if needed
         if hasattr(encoded, 'numpy'):

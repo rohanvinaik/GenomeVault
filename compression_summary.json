@@ -1,0 +1,25 @@
+{
+  "timestamp": "2025-10-21T23:08:50.953659",
+  "source_data": {
+    "file": "benchmark_results/differential_encoding/latest_results.json",
+    "timestamp": "2025-10-19T20:21:07.595450"
+  },
+  "compression_ratios": {
+    "differential_encoding": 11,
+    "hypervector_projection": 24,
+    "combined_multiplicative": 264
+  },
+  "size_calculation_example": {
+    "input_variants": 10000,
+    "raw_vcf_mb": 0.95,
+    "after_differential_kb": 88.8,
+    "after_hypervector_kb": 3.7,
+    "final_size_kb": 3.7
+  },
+  "paper_claim": {
+    "claimed_compression": "264\u00d7",
+    "calculated_compression": "264\u00d7",
+    "method": "11\u00d7 (differential) \u00d7 24\u00d7 (hypervector)",
+    "status": "VERIFIED"
+  }
+}

@@ -187,3 +187,24 @@ benchmarks/benchmark_results/
 tailchasing_suggestions.md
 genomevault/api/gateway/README.md
 docs/PUSH_INSTRUCTIONS.md
+
+# Large genomic data files (18GB+) - do not commit
+benchmark_results/differential_encoding_samples/**/*.fastq.gz
+benchmark_results/differential_encoding_samples/**/*.fastq
+benchmark_results/differential_encoding_samples/**/*.bam
+benchmark_results/differential_encoding_samples/**/*.sam
+benchmark_results/differential_encoding_samples/**/*.fa
+benchmark_results/differential_encoding_samples/**/*.fasta
+benchmark_results/differential_encoding_samples/references/
+benchmark_results/differential_encoding_samples/temp/
+benchmark_results/differential_encoding_samples/temp_*/
+benchmark_results/differential_encoding_samples/query/
+benchmark_results/full_pipeline_synthetic/reference/*.fa
+benchmark_results/full_pipeline_synthetic/reference/*.fasta
+
+# Keep only small VCF reference pool files
+!benchmark_results/differential_encoding_samples/vcf_pool/*.vcf
+
+# Test scripts - exclude from gitignore to commit
+!test_api_integration.py
+!test_system_verification.py

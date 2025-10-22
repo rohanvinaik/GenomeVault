@@ -1,0 +1,35 @@
+# NEAT configuration for realistic Illumina sequencing simulation
+# Fixed version: Minimal config with no variant generation
+
+# Reference genome (use the simulated genome from simuG with variants already included)
+reference: /Users/rohanvinaik/GenomeVault/benchmark_results/full_pipeline_synthetic/simug_output/simulated.simseq.genome.fa
+
+# Output directory
+output: /Users/rohanvinaik/GenomeVault/benchmark_results/full_pipeline_synthetic/neat_output
+
+# Read length and coverage
+read_len: 150
+coverage: 30
+
+# Paired-end configuration
+paired_ended: true
+fragment_mean: 300
+fragment_st_dev: 50
+
+# Number of threads
+threads: 4
+
+# Random seed for reproducibility
+rng_seed: 42
+
+# Disable VCF output (genome already has variants from simuG)
+produce_vcf: false
+
+# Quality score offset
+quality_offset: 33
+
+# Disable mutation models to avoid variant placement errors
+mutation_rate: 0.0
+
+# Discard N bases
+discard_n: true
