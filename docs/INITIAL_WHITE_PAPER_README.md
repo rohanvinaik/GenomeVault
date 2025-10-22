@@ -102,8 +102,8 @@ The 2017 draft correctly identified problems that remain central today:
 
 ### Immediate
 1. ✅ **Added to repository** (this commit)
-2. ⚠️ **Update AUTHORS.md** with actual project start date
-3. ⚠️ **Update DEVELOPMENT_HISTORY.md** with pre-implementation phases
+2. ⚠️ **Update ../AUTHORS.md** with actual project start date
+3. ⚠️ **Update ../legal/DEVELOPMENT_HISTORY.md** with pre-implementation phases
 
 ### Soon
 1. **Email yourself** a copy with read receipt (establishes external timestamp)
@@ -122,9 +122,9 @@ The 2017 draft correctly identified problems that remain central today:
 ## Integration with Existing Documentation
 
 This white paper complements:
-- **DEVELOPMENT_HISTORY.md**: Shows pre-implementation conception phase
-- **ARCHITECTURE.md**: Validates that architectural decisions were original
-- **AUTHORS.md**: Establishes longer research timeline
+- **../legal/DEVELOPMENT_HISTORY.md**: Shows pre-implementation conception phase
+- **architecture/ARCHITECTURE.md**: Validates that architectural decisions were original
+- **../AUTHORS.md**: Establishes longer research timeline
 
 ---
 

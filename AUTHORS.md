@@ -120,7 +120,7 @@ This work represents **eight years** of research and development into privacy-pr
 
 This software is dual-licensed:
 - **AGPL-3.0**: For open-source, academic, and research use
-- **Commercial License**: For proprietary/commercial use (see COMMERCIAL_LICENSE.md)
+- **Commercial License**: For proprietary/commercial use (see docs/legal/COMMERCIAL_LICENSE.md)
 
 ### What This Means
 
@@ -154,7 +154,7 @@ This software is dual-licensed:
 - **[Month Year]**: Blockchain attestation system (Phase 1 & 2)
 - **October 2025**: Production-ready release (v1.0.0)
 
-*See DEVELOPMENT_HISTORY.md for detailed chronology with commit hashes*
+*See docs/legal/DEVELOPMENT_HISTORY.md for detailed chronology with commit hashes*
 
 ---
 

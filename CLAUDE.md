@@ -227,7 +227,7 @@ blockchain:
     batch_size: 10
 ```
 
-**See:** `BLOCKCHAIN_INTEGRATION_COMPLETE.md` for full guide
+**See:** `docs/reports/BLOCKCHAIN_INTEGRATION_COMPLETE.md` for full guide
 
 ## 🔍 Troubleshooting
 
@@ -283,15 +283,15 @@ jq '.stages[] | select(.stage=="PIR Query") | .metrics.information_theoretic_sec
 ## 📚 Documentation
 
 ### Core Docs
-- **Complete Results:** `COMPLETE_BENCHMARK_RESULTS.md`
-- **Alignment Optimization:** `ALIGNMENT_OPTIMIZATION_RESULTS_SUMMARY.md`
-- **Blockchain Integration:** `BLOCKCHAIN_INTEGRATION_COMPLETE.md`
+- **Complete Results:** `docs/reports/COMPLETE_BENCHMARK_RESULTS.md`
+- **Alignment Optimization:** `docs/reports/ALIGNMENT_OPTIMIZATION_RESULTS_SUMMARY.md`
+- **Blockchain Integration:** `docs/reports/BLOCKCHAIN_INTEGRATION_COMPLETE.md`
 - **REST API Guide:** `docs/API_USAGE_GUIDE.md` (550+ lines)
-- **API Getting Started:** `GETTING_STARTED_API.md` (step-by-step for end users)
-- **API Implementation:** `ANALYSIS_API_IMPLEMENTATION_SUMMARY.md`
-- **System Test Report:** `SYSTEM_TEST_REPORT.md` (comprehensive 7-phase validation)
-- **Security Analysis:** `HYPERVECTOR_SECURITY.md`
-- **ZK Production:** `ZK_PRODUCTION_GUIDE.md`
+- **API Getting Started:** `docs/api-docs/GETTING_STARTED_API.md` (step-by-step for end users)
+- **API Implementation:** `docs/api-docs/ANALYSIS_API_IMPLEMENTATION_SUMMARY.md`
+- **System Test Report:** `docs/reports/SYSTEM_TEST_REPORT.md` (comprehensive 7-phase validation)
+- **Security Analysis:** `docs/guides/HYPERVECTOR_SECURITY.md`
+- **ZK Production:** `docs/guides/ZK_PRODUCTION_GUIDE.md`
 
 ### Detailed Guides
 - **Alignment System:** `docs/guides/alignment_system_improvements.md`
@@ -342,11 +342,11 @@ conda install -c bioconda minimap2 samtools bcftools
 ## 🆘 Getting Help
 
 - **Issues:** Check `TROUBLESHOOTING.md` or GitHub Issues
-- **Performance:** See `OPTIMIZATION_RESULTS_SUMMARY.md`
-- **Security:** Review `HYPERVECTOR_SECURITY.md`
-- **Blockchain:** Read `BLOCKCHAIN_INTEGRATION_COMPLETE.md`
+- **Performance:** See `docs/reports/OPTIMIZATION_RESULTS_SUMMARY.md`
+- **Security:** Review `docs/guides/HYPERVECTOR_SECURITY.md`
+- **Blockchain:** Read `docs/reports/BLOCKCHAIN_INTEGRATION_COMPLETE.md`
 - **Academic Details:** See paper in `docs/GenomeVault_Paper_Current/`
-- **API Setup:** See `GETTING_STARTED_API.md` for step-by-step guide
+- **API Setup:** See `docs/api-docs/GETTING_STARTED_API.md` for step-by-step guide
 
 ---
 

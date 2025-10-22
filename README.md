@@ -64,7 +64,7 @@ GenomeVault includes a research prototype combining **Kolmogorov-Arnold Networks
 
 ### REST API
 
-**For step-by-step instructions**, see [GETTING_STARTED_API.md](GETTING_STARTED_API.md).
+**For step-by-step instructions**, see [GETTING_STARTED_API.md](docs/api-docs/GETTING_STARTED_API.md).
 
 **Start the API server:**
 ```bash
@@ -158,7 +158,7 @@ docker compose up -d
 
 Production-ready REST API for genomic analysis with privacy guarantees. Verified operational with 24/24 system checks passing.
 
-**Documentation**: See [GETTING_STARTED_API.md](GETTING_STARTED_API.md) for step-by-step guide.
+**Documentation**: See [GETTING_STARTED_API.md](docs/api-docs/GETTING_STARTED_API.md) for step-by-step guide.
 
 ### Endpoints
 
@@ -321,9 +321,9 @@ Both compression metrics are measured and valid, quantifying different aspects:
 | Test Success Rate | 100% | 100% (44/44) | ✅ **Perfect** |
 
 **Documentation:**
-- Complete benchmarks: `COMPLETE_BENCHMARK_RESULTS.md`
-- Blockchain integration: `BLOCKCHAIN_INTEGRATION_COMPLETE.md`
-- Marketing report: `GENOMEVAULT_MARKETING_REPORT_VERIFIED.md`
+- Complete benchmarks: `docs/reports/COMPLETE_BENCHMARK_RESULTS.md`
+- Blockchain integration: `docs/reports/BLOCKCHAIN_INTEGRATION_COMPLETE.md`
+- Marketing report: `docs/marketing/GENOMEVAULT_MARKETING_REPORT_VERIFIED.md`
 
 -----
 
@@ -567,12 +567,12 @@ openssl dgst -sha256 -verify docs/keys/benchmark_pubkey.pem \
 | Component | Metric | Data Location |
 |-----------|--------|---------------|
 | **Complete Pipeline** | 2.15s total, 100% success | [pipeline_results.json](benchmark_results/full_pipeline_results/pipeline_run_20251021_224307/pipeline_results.json) |
-| **Differential Encoding** | 1.37s, 120 variants, k=3 anonymity | [COMPLETE_BENCHMARK_RESULTS.md](COMPLETE_BENCHMARK_RESULTS.md) |
+| **Differential Encoding** | 1.37s, 120 variants, k=3 anonymity | [COMPLETE_BENCHMARK_RESULTS.md](docs/reports/COMPLETE_BENCHMARK_RESULTS.md) |
 | **Architectural Compression** | 264× (11× diff × 24× HDC) | [latest_results.json](benchmark_results/differential_encoding/latest_results.json) |
 | **Empirical Space Savings** | 38.4× (1,500KB → 39KB) | [pipeline_results.json](benchmark_results/full_pipeline_results/pipeline_run_20251021_224307/pipeline_results.json) |
-| **ZK Proofs** | 768ms (Groth16), 743 bytes, 117,143 constraints | [COMPLETE_BENCHMARK_RESULTS.md](COMPLETE_BENCHMARK_RESULTS.md) |
-| **PIR Queries** | 6.85ms (IT-PIR), 0.25% breach probability | [COMPLETE_BENCHMARK_RESULTS.md](COMPLETE_BENCHMARK_RESULTS.md) |
-| **Blockchain Integration** | 40/40 tests, <2ms overhead | [BLOCKCHAIN_INTEGRATION_COMPLETE.md](BLOCKCHAIN_INTEGRATION_COMPLETE.md) |
+| **ZK Proofs** | 768ms (Groth16), 743 bytes, 117,143 constraints | [COMPLETE_BENCHMARK_RESULTS.md](docs/reports/COMPLETE_BENCHMARK_RESULTS.md) |
+| **PIR Queries** | 6.85ms (IT-PIR), 0.25% breach probability | [COMPLETE_BENCHMARK_RESULTS.md](docs/reports/COMPLETE_BENCHMARK_RESULTS.md) |
+| **Blockchain Integration** | 40/40 tests, <2ms overhead | [BLOCKCHAIN_INTEGRATION_COMPLETE.md](docs/reports/BLOCKCHAIN_INTEGRATION_COMPLETE.md) |
 
 -----
 
