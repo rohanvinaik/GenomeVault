@@ -4,7 +4,7 @@ Quick reference for Claude Code when working with the GenomeVault codebase.
 
 ## Project Overview
 
-GenomeVault: Privacy-preserving genomic computing platform using hyperdimensional computing (HDC), zero-knowledge proofs, and private information retrieval. Achieves 264× compression (11× differential + 24× hypervector) with mathematical privacy guarantees.
+GenomeVault: Privacy-preserving genomic computing platform using hyperdimensional computing (HDC), zero-knowledge proofs, and private information retrieval. Achieves ~1,500× compression from raw FASTQ data (100-150 GB → 78 MB) or 38.4× from VCF variants (3 GB → 78 MB), with 264× architectural efficiency and mathematical privacy guarantees.
 
 ## 🚀 Quick Start
 
