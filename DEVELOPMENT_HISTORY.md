@@ -8,6 +8,31 @@
 
 ## Project Timeline
 
+**IMPORTANT**: Project conception and early research began significantly earlier than the July 2025 implementation start date. See `docs/Initial White Paper Timestamp.pdf` for evidence of early conceptual work.
+
+**Total Project Duration**: [Early conception date - update with actual date] to October 2025
+
+### Phase 0: Conception and Research (Pre-Implementation)
+
+**Evidence**: `docs/Initial White Paper Timestamp.pdf` (8-page white paper)
+
+**Key Activities**:
+- Initial concept development for privacy-preserving genomics
+- Research into hyperdimensional computing applications
+- Exploration of differential privacy techniques
+- Architecture design and feasibility analysis
+- Literature review and prior art analysis
+
+**Significance**: This pre-implementation phase demonstrates:
+- Independent development of concepts
+- Original thinking and problem-solving
+- Sustained research effort over extended period
+- Evidence against claims of copying
+
+**Duration**: [Start date] to July 2025 (update with actual dates)
+
+---
+
 ### Phase 1: Initial Architecture (July 2025)
 
 **Commit**: `5778bfdd` (2025-07-18)
