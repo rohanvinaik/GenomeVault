@@ -17,10 +17,10 @@
 
 Genomic data silos exist because researchers cannot share data without catastrophic privacy risks. GenomeVault solves this fundamental problem by providing the **first production-ready system** that combines:
 
-✅ **Mathematical privacy guarantees** (information-theoretic PIR + zero-knowledge proofs)
-✅ **Practical compression** (38.4× measured on real data, 264× architectural efficiency)
-✅ **Sub-second queries** (2.15s complete pipeline on consumer hardware)
-✅ **Actionable research insights** (variant-level analysis preserved with 100% accuracy)
+- ✅ **Mathematical privacy guarantees** (information-theoretic PIR + zero-knowledge proofs)
+- ✅ **Practical compression** (38.4× measured on real data, 264× architectural efficiency)
+- ✅ **Sub-second queries** (2.15s complete pipeline on consumer hardware)
+- ✅ **Actionable research insights** (variant-level analysis preserved with 100% accuracy)
 
 **This represents a fundamental architectural advancement in privacy-preserving genomic computing.**
 
@@ -62,9 +62,9 @@ Genomic data silos exist because researchers cannot share data without catastrop
 
 This gap represents **engineering headroom, not a limitation**. The 38.4× measured compression already exceeds industry standards (VCFShark: 5-20× typical, Genozip: 5-10× typical), while the 264× architectural efficiency shows clear paths for optimization:
 
-✅ **Current baseline is industry-leading** (38.4× beats typical commercial tools)
-✅ **Substantial engineering upside** (264× theoretical provides optimization roadmap)
-✅ **Proven compression pipeline** (FASTQ benchmark measured end-to-end through complete system)
+- ✅ **Current baseline is industry-leading** (38.4× beats typical commercial tools)
+- ✅ **Substantial engineering upside** (264× theoretical provides optimization roadmap)
+- ✅ **Proven compression pipeline** (FASTQ benchmark measured end-to-end through complete system)
 
 The theoretical maximum represents the product of stage-level compression ratios measured independently. Real-world pipelines include metadata overhead, bundling costs, and privacy-preserving transformations. **This is expected behavior** in compression systems and provides a clear engineering improvement trajectory.
 
@@ -89,10 +89,12 @@ The KAN-HD integration represents a **fundamental architectural advancement**, n
 **Why This Matters:**
 
 Currently, **no system exists** that enables privacy-preserving whole-genome analysis for research. Researchers face a binary choice:
+
 1. ❌ **Share raw data** → Privacy catastrophe, regulatory non-compliance
 2. ❌ **Don't collaborate** → Genomic data remains siloed, discoveries impossible
 
 GenomeVault with KAN-HD provides a third option:
+
 3. ✅ **Private collaboration** → Mathematical privacy + actionable insights
 
 **Economic Value to Researchers:**
@@ -138,11 +140,13 @@ Even under conservative computational assumptions (5s queries, 50× compression)
 GenomeVault **intentionally discards** certain information to enable privacy guarantees. This is a fundamental design choice:
 
 **What Is Lost:**
+
 - ❌ Exact base-pair sequences → Replaced with differential encoding vs. k≥3 reference genomes
 - ❌ Individual-level identification → k-anonymity mathematically enforced
 - ❌ Quality scores → Not required for variant-level analysis
 
 **What Is Preserved (100% Accuracy):**
+
 - ✅ **Variant presence/absence** (cryptographically verified via ZK proofs)
 - ✅ **Allele frequencies** (population-level analysis unchanged)
 - ✅ **Genotype calls** (retained in hypervector encoding)
@@ -150,6 +154,7 @@ GenomeVault **intentionally discards** certain information to enable privacy gua
 - ✅ **Clinical actionability** (pharmacogenomic markers, disease risk, carrier status)
 
 **Empirical Validation**:
+
 - 100% success rate on variant queries (chr22 benchmark, 120 variants)
 - Zero false positives/negatives in ZK proof verification (40/40 tests)
 - Perfect analytical utility for privacy-preserving research
@@ -469,12 +474,14 @@ Maximum compression based on system design (not typically achieved in practice):
 GenomeVault's differential encoding system represents genomic data as cryptographically verified differences from reference genomes, achieving unprecedented compression with privacy preservation.
 
 **Key Features:**
+
 - **95%+ Storage Reduction**: Store only differences from reference genomes
 - **Cryptographic Binding**: HMAC-SHA256 ensures data integrity and tamper detection
 - **Privacy-Preserving**: Randomized reference selection prevents inference attacks
 - **Multiple Analysis Types**: Sliding window, gene regions, variant density, functional regions
 
 **Performance (Production Pipeline - October 21, 2025):**
+
 - **Complete Pipeline**: 2.15s total (chr22, 4 samples, 120 variants)
 - **Differential Encoding**: 1.37s (12 chunks, 292 differences, k=3 anonymity)
 - **Architectural Compression**: 264× (11× differential × 24× hypervector, measured from stage benchmarks)
@@ -536,11 +543,13 @@ print(f"Verified: {result.verify()}")
 GenomeVault employs brain-inspired hyperdimensional computing to transform genomic variants into high-dimensional binary vectors (8,192 dimensions) that preserve similarity relationships while providing information-theoretic privacy.
 
 **Architecture:**
+
 - **Encoding Pipeline**: Variant preprocessing → Position encoding → Allele binding → Bundling → Sparsity thresholding
 - **Hardware Acceleration**: MLX/Metal integration for 14.8× speedup on Apple Silicon
 - **Three Encoding Modes**: Absolute (whole-genome), differential (variant-level), streaming (real-time)
 
 **Key Design Choices (Validated via Ablation Studies):**
+
 - **Dimension**: D = 8,192 (optimal balance of capacity vs. efficiency)
 - **Sparsity**: 50% threshold (collision rate < 0.01% at 400K variants)
 - **Position Interpolation**: Sinusoidal encoding for chromosomal context
@@ -569,6 +578,7 @@ Understanding compression metrics requires distinguishing between **theoretical 
 | bgzip | ~10× | ~10× | General | Lossless | ❌ None |
 
 **Key Insight - Apples-to-Apples Comparison:**
+
 - GenomeVault's **empirical 38.4×** on VCF **exceeds** VCFShark's **typical 5-20×** and is competitive with its **theoretical maximum of 32×**
 - GenomeVault's **empirical ~61,500×** on FASTQ is **~7,900-20,500× better** than Crumble+CRAM's **typical 3-6×**
 
@@ -579,11 +589,13 @@ Understanding compression metrics requires distinguishing between **theoretical 
 GenomeVault's compression is **intentionally lossy** to enable privacy-preserving genomic analysis. This is a fundamental design choice, not a limitation:
 
 **What Is Lost (Intentionally):**
+
 - ❌ Exact base-pair sequences (replaced with differential encoding vs. reference genomes)
 - ❌ Individual-level identification (protected by k-anonymity, k≥3)
 - ❌ Raw quality scores (not needed for variant-level analysis)
 
 **What Is Preserved (Rigorously):**
+
 - ✅ **Variant presence/absence** (cryptographically verified with ZK proofs)
 - ✅ **Allele frequencies** (accurate for population-level analysis)
 - ✅ **Genotype calls** (preserved in hypervector encoding)
@@ -591,6 +603,7 @@ GenomeVault's compression is **intentionally lossy** to enable privacy-preservin
 - ✅ **Analytical validity** (100% accuracy for variant queries in benchmark tests)
 
 **Privacy Guarantees Through Intentional Loss:**
+
 1. **k-Anonymity (k≥3)**: Individual genomes indistinguishable from k-1 others
 2. **Differential Encoding**: Only differences from reference genomes stored
 3. **Information-Theoretic PIR**: Queries reveal zero information about database contents
@@ -602,6 +615,7 @@ GenomeVault's compression is **intentionally lossy** to enable privacy-preservin
 - **GenomeVault (privacy-lossy)**: Intentionally transform data to enable private queries while preserving analytical utility
 
 **Empirical Validation:**
+
 - ✅ 100% success rate on variant presence queries (chr22 benchmark)
 - ✅ Perfect genetic fingerprinting (D' = 38.43, AUC = 1.000, EER = 0.000)
 - ✅ Zero false positives/negatives in ZK proof verification (40/40 tests passed)
@@ -631,11 +645,13 @@ Production-ready ZK circuits enable cryptographic verification of genomic proper
 | PLONK | 1 KB | 820ms | 1.22 proofs/core/sec | Universal |
 
 **Halo2 Advantages:**
+
 - **No trusted setup**: Eliminates ceremony costs and trust assumptions
 - **Pasta curves**: Efficient IPA commitments for fast proving
 - **Production-ready**: Complete with verification key management and fallback logging
 
 **Example Use Cases:**
+
 - Prove genetic trait presence without revealing genome
 - Verify ancestry without exposing variants
 - Demonstrate risk score threshold compliance
@@ -655,11 +671,13 @@ GenomeVault supports both computational and information-theoretic PIR for privat
 | **IT-PIR** | Information-theoretic (3-server) | 113.5s for 100K records | $264/month (3×t3.large) |
 
 **IT-PIR Advantages:**
+
 - **Unconditional privacy**: No cryptographic assumptions required
 - **Quantum-resistant**: Security holds even against quantum computers
 - **Non-colluding servers**: Privacy guaranteed if < 3 servers collude
 
 **Use Cases:**
+
 - Private genomic database search
 - Clinical trial matching without exposure
 - Pharmacogenomic lookups on encrypted data
@@ -700,12 +718,14 @@ GenomeVault implements defense-in-depth with mathematically proven privacy guara
 ### Threat Model
 
 **Adversary Capabilities:**
+
 - Access to encoded hypervectors
 - Unlimited query budget (up to rate limits)
 - Knowledge of encoding algorithm
 - Statistical analysis capabilities
 
 **Attack Resistance:**
+
 - **Attribute Inference**: < 7 bits information leakage (formal bound)
 - **Membership Inference**: Randomization prevents cross-session linking
 - **Reconstruction Attacks**: Information-theoretic impossibility (8192-D → sparse genome)
@@ -745,6 +765,7 @@ openssl dgst -sha256 -verify docs/keys/benchmark_pubkey.pem \
 ```
 
 **Available Bundles:**
+
 - [Subject-Disjoint Bundle](benchmark_results/bundle_subject_disjoint.tar.gz) (584 KB)
 - [Leave-Family-Out Bundle](benchmark_results/bundle_LFamO.tar.gz) (584 KB)
 - [Leave-Batch-Out Bundle](benchmark_results/bundle_LBxO.tar.gz) (584 KB)
@@ -756,18 +777,21 @@ openssl dgst -sha256 -verify docs/keys/benchmark_pubkey.pem \
 ## 🌍 Real-World Applications
 
 ### Clinical Genomics
+
 - **Pharmacogenomics**: Instant drug-gene interaction checks without raw data exposure
 - **Rare Disease Diagnosis**: Population-scale pattern matching in milliseconds
 - **Hereditary Cancer Screening**: BRCA analysis with mathematical privacy guarantees
 - **Emergency Medicine**: Critical genetic information on mobile devices
 
 ### Research & Biotech
+
 - **Federated GWAS**: Multi-site genome-wide association studies with perfect privacy
 - **Drug Discovery**: Genomic signatures without centralized data sharing
 - **Population Genomics**: Ancestry analysis on edge devices
 - **Biobank Federation**: Global collaboration with local data sovereignty
 
 ### Consumer Applications
+
 - **Wearable Health**: Real-time genetic insights on smartwatches
 - **Family Planning**: Carrier screening with cryptographic privacy
 - **Fitness Optimization**: Personalized training based on genetic markers
@@ -795,6 +819,7 @@ GenomeVault enables a revolutionary three-layer hierarchical search approach:
 **Total Time**: 1.11 seconds vs. weeks with BLAST
 
 **Applications:**
+
 - Instant phylogenetic trees for millions of organisms
 - Real-time pandemic tracking across global populations
 - Massive GWAS studies (100M+ individuals) with privacy
@@ -995,7 +1020,8 @@ docker compose up -d --build
 
 **Status**: Under review for submission to high-impact computational biology journals
 
-**Key Results**:
+**Key Results:**
+
 - 2.15s complete pipeline with blockchain integration (chr22, 4 samples, 120 variants)
 - 264× architectural compression + 38.4× empirical space savings
 - 768ms zero-knowledge proofs (Groth16, 743 bytes, 117,143 constraints)
@@ -1067,12 +1093,14 @@ We welcome contributions! Please see our contributing guidelines.
 GenomeVault is available under two licensing options:
 
 ### Open Source: AGPL-3.0
+
 - ✅ **Free** for academic research, open-source projects, and personal use
 - ✅ Full access to source code
 - ⚠️ **Requires** source code disclosure for SaaS deployments (network use = distribution)
 - See [LICENSE](LICENSE) for full AGPL-3.0 terms
 
 ### Commercial License
+
 - ✅ **Proprietary** use without source code disclosure
 - ✅ **SaaS** deployments without AGPL-3.0 obligations
 - ✅ Commercial support and custom features available
@@ -1081,6 +1109,7 @@ GenomeVault is available under two licensing options:
 **Copyright © 2025 [Your Name]. All Rights Reserved.**
 
 For more information on licensing options, see:
+
 - [COMMERCIAL_LICENSE.md](docs/legal/COMMERCIAL_LICENSE.md) - Commercial licensing details
 - [AUTHORS.md](AUTHORS.md) - Copyright and attribution information
 - [DEVELOPMENT_HISTORY.md](docs/legal/DEVELOPMENT_HISTORY.md) - Project timeline and IP evidence
@@ -1090,6 +1119,7 @@ For more information on licensing options, see:
 ## 🙏 Acknowledgments
 
 GenomeVault builds on foundational work in:
+
 - **Hyperdimensional Computing**: Brain-inspired computing paradigm
 - **Zero-Knowledge Proofs**: Cryptographic privacy guarantees
 - **Private Information Retrieval**: Information-theoretic security
