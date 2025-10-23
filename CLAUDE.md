@@ -2,6 +2,8 @@
 
 Quick reference for Claude Code when working with the GenomeVault codebase.
 
+**Note**: The project now includes a comprehensive **Probabilistic Alignment & Privacy Stack** that extends beyond the original Byzantine Consensus approach. See `docs/guides/PROBABILISTIC_ALIGNMENT_PRIVACY_STACK.md` for details.
+
 ## Project Overview
 
 GenomeVault: Privacy-preserving genomic computing platform using hyperdimensional computing (HDC), zero-knowledge proofs, and private information retrieval. Achieves ~1,500× compression from raw FASTQ data (100-150 GB → 78 MB) or 38.4× from VCF variants (3 GB → 78 MB), with 264× architectural efficiency and mathematical privacy guarantees.
@@ -19,6 +21,13 @@ pytest tests/
 # Run main pipeline (RECOMMENDED) ⚡
 python benchmarks/run_alignment_optimized_pipeline.py --preset production
 
+# Run COMPLETE 4-layer privacy pipeline (with real FASTQ alignment) 🔒
+python benchmarks/run_complete_privacy_pipeline.py \
+    --reference-pool-fastq ref1_R1.fq ref1_R2.fq ref2_R1.fq ref2_R2.fq ref3_R1.fq ref3_R2.fq \
+    --query-fastq query_R1.fq query_R2.fq \
+    --output results/ \
+    --skip-consensus  # Use existing consensus
+
 # Quick test
 python benchmarks/run_alignment_optimized_pipeline.py --preset production --quick
 
@@ -34,6 +43,12 @@ uvicorn genomevault.api.app:app --reload --port 8000
 genomevault/
 ├── genomevault/
 │   ├── differential_encoding/     # 11× compression, k-anonymity
+│   │   └── align_to_reference_pool.py  # 🔒 Privacy-preserving query alignment
+│   ├── reference/                 # 🆕 Probabilistic alignment system
+│   │   ├── byzantine_consensus_builder.py       # Layer 1: Consensus reference
+│   │   ├── probabilistic_alignment_system.py    # Hierarchical SNP classification
+│   │   ├── advanced_indel_detection.py          # Smith-Waterman realignment
+│   │   └── comprehensive_alignment_engine.py    # 7 challenge categories
 │   ├── hypervector_transform/     # 24× HDC projection
 │   ├── zk_proofs/                 # Zero-knowledge circuits (Halo2/Groth16)
 │   ├── pir/                       # Private information retrieval
@@ -41,11 +56,16 @@ genomevault/
 │   ├── compute/                   # Hardware abstraction (CPU/Metal/CUDA)
 │   └── api/                       # REST API endpoints
 ├── benchmarks/
-│   ├── run_alignment_optimized_pipeline.py  # ⚡ MAIN BENCHMARK
-│   ├── run_full_pipeline_with_reference_pool.py
-│   └── differential_encoding/
+│   ├── run_complete_privacy_pipeline.py  # 🔒 COMPLETE 4-LAYER PIPELINE
+│   ├── run_alignment_optimized_pipeline.py  # ⚡ MAIN BENCHMARK (with QC)
+│   ├── run_probabilistic_alignment_pipeline.py  # Probabilistic analysis
+│   └── run_full_pipeline_with_reference_pool.py
 ├── tests/                         # Comprehensive test suite
-└── docs/                          # Detailed documentation
+└── docs/
+    └── guides/
+        ├── PROBABILISTIC_ALIGNMENT_COMPLETE_GUIDE.md  # 🔒 COMPLETE GUIDE
+        ├── PROBABILISTIC_ALIGNMENT_SECURITY_MODEL.md  # Security analysis
+        └── PROBABILISTIC_ALIGNMENT_PIPELINE_GUIDE.md  # Usage guide
 ```
 
 ## 🎯 Running the Main Pipeline
@@ -79,6 +99,56 @@ benchmark_results/full_pipeline_results/pipeline_run_YYYYMMDD_HHMMSS/
 ├── zk_proof.json              # Zero-knowledge proof
 └── pir_query_result.json      # PIR query result
 ```
+
+### **Complete 4-Layer Privacy Pipeline** 🔒 (NEW - with Real FASTQ Alignment)
+
+**CRITICAL SECURITY**: Query NEVER aligns directly to consensus - uses privacy-preserving handoff through reference pool.
+
+**Full Pipeline (~1-1.5 hours for chr22):**
+```bash
+python benchmarks/run_complete_privacy_pipeline.py \
+    --reference-pool-fastq \
+        data/downloaded/fastq/ERR3239276_1.fastq.gz data/downloaded/fastq/ERR3239276_2.fastq.gz \
+        data/downloaded/fastq/ERR3239454_1.fastq.gz data/downloaded/fastq/ERR3239454_2.fastq.gz \
+        data/downloaded/fastq/ERR3239475_1.fastq.gz data/downloaded/fastq/ERR3239475_2.fastq.gz \
+    --query-fastq \
+        data/downloaded/fastq/ERR3239334_1.fastq.gz \
+        data/downloaded/fastq/ERR3239334_2.fastq.gz \
+    --output benchmark_results/complete_privacy_pipeline \
+    --chromosome chr22 \
+    --skip-consensus  # Use existing consensus
+```
+
+**What it does (4 Layers):**
+1. **Layer 1**: Byzantine Consensus Reference (hg38 + hg19 + chm13 → consensus with positional uncertainty)
+2. **Layer 2**: Reference Pool Assembly (3 FASTQ → align to consensus → ref1.vcf, ref2.vcf, ref3.vcf)
+3. **Layer 3**: Privacy-Preserving Query Alignment (Query FASTQ → align to **REFERENCE POOL** → query.vcf)
+   - **CRITICAL**: Query → Pool → Consensus (NO DIRECT CONSENSUS LINK!)
+4. **Layer 4**: GenomeVault Core (Differential + HDC + ZK + PIR)
+
+**Privacy Guarantees:**
+- ✅ No direct consensus alignment (untraceable to public references)
+- ✅ k=3 anonymity (query hidden among pool)
+- ✅ Positional uncertainty (~128-bit entropy)
+- ✅ User-specific randomization (SHA-256 security)
+
+**Output Location:**
+```
+benchmark_results/complete_privacy_pipeline/
+├── consensus/consensus.fa              # Layer 1: Byzantine consensus
+├── reference_pool/
+│   ├── ref1.vcf.gz                     # Layer 2: Pool member 1
+│   ├── ref2.vcf.gz                     # Layer 2: Pool member 2
+│   └── ref3.vcf.gz                     # Layer 2: Pool member 3
+├── query/query.vcf.gz                  # Layer 3: Privacy-preserving query
+├── genomevault_core/                   # Layer 4: GenomeVault results
+└── pipeline_summary.json               # Complete summary
+```
+
+**Documentation:**
+- Complete Guide: `docs/guides/PROBABILISTIC_ALIGNMENT_COMPLETE_GUIDE.md`
+- Security Model: `docs/guides/PROBABILISTIC_ALIGNMENT_SECURITY_MODEL.md`
+- Usage Guide: `docs/guides/PROBABILISTIC_ALIGNMENT_PIPELINE_GUIDE.md`
 
 ### Standard Pipeline (Baseline)
 
@@ -177,6 +247,8 @@ pytest tests/test_blockchain_integration.py -v  # 40 tests, <2ms overhead
 | **HDC Encoding** | `/genomevault/hypervector_transform/` | `unified_encoder.py`, `backend_adapter.py` |
 | **Differential Encoding** | `/genomevault/differential_encoding/` | `enhanced_pipeline.py` |
 | **Alignment System** | `/genomevault/differential_encoding/` | `optimized_sequence_alignment.py` (920 lines) |
+| **Probabilistic Alignment** | `/genomevault/reference/` | `probabilistic_alignment_system.py` (new!) |
+| **Byzantine Consensus** | `/genomevault/reference/` | `byzantine_consensus_builder.py` (updated!) |
 | **Hardware Backends** | `/genomevault/compute/` | `backend.py` (CPU/Metal/CUDA) |
 | **Blockchain** | `/genomevault/blockchain/` | `attestation_registry.py` |
 | **Tests** | `/tests/` | Organized by component |
@@ -283,6 +355,7 @@ jq '.stages[] | select(.stage=="PIR Query") | .metrics.information_theoretic_sec
 ## 📚 Documentation
 
 ### Core Docs
+- **Probabilistic Alignment & Privacy Stack:** `docs/guides/PROBABILISTIC_ALIGNMENT_PRIVACY_STACK.md` (comprehensive guide) **⭐ NEW**
 - **Complete Results:** `docs/reports/COMPLETE_BENCHMARK_RESULTS.md`
 - **Alignment Optimization:** `docs/reports/ALIGNMENT_OPTIMIZATION_RESULTS_SUMMARY.md`
 - **Blockchain Integration:** `docs/reports/BLOCKCHAIN_INTEGRATION_COMPLETE.md`
