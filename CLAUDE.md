@@ -31,6 +31,12 @@ python benchmarks/run_complete_privacy_pipeline.py \
 # Quick test
 python benchmarks/run_alignment_optimized_pipeline.py --preset production --quick
 
+# Privacy-preserving genome query (ZK + PIR) 🔒
+python genomevault/cli/privacy_query.py \
+    --vcf <path_to_vcf> \
+    --chrom chr22 --pos 4169 --ref C --alt A \
+    --output query_results.json
+
 # Start REST API server
 uvicorn genomevault.api.app:app --reload --port 8000
 # Access API docs: http://localhost:8000/api/docs
@@ -48,7 +54,17 @@ python -m genomevault.clinical_db.data_acquisition \
 python -m genomevault.cli.clinical_query_cli query-position --chr chr11 --pos 5227002
 python -m genomevault.cli.clinical_query_cli query-gene BRCA1
 python -m genomevault.cli.clinical_query_cli stats
+
+# Data Acquisition (Scale to k=10+ diverse reference pools)
+# See comprehensive guides in data/acquisition_plan/
+bash scripts/create_data_structure.sh                      # Setup directories
+# Download European samples (k=3 → k=10):
+#   See data/acquisition_plan/QUICK_START_GUIDE.md for detailed instructions
+# Generate metadata:
+python scripts/generate_sample_metadata.py --pool european
+python scripts/generate_pool_manifest.py --pool european
 ```
+
 
 ## 📂 Project Structure
 
@@ -71,6 +87,7 @@ genomevault/
 │   ├── blockchain/                # Attestation registry (opt-in)
 │   ├── compute/                   # Hardware abstraction (CPU/Metal/CUDA)
 │   ├── cli/                       # Command-line tools
+│   │   ├── privacy_query.py       # 🔒 Privacy-preserving genome queries (ZK + PIR)
 │   │   └── clinical_query_cli.py  # Clinical variant queries
 │   └── api/                       # REST API endpoints
 │       └── routers/clinical_query.py  # Clinical variant API
@@ -80,11 +97,23 @@ genomevault/
 │   ├── run_probabilistic_alignment_pipeline.py  # Probabilistic analysis
 │   └── run_full_pipeline_with_reference_pool.py
 ├── tests/                         # Comprehensive test suite
+├── data/
+│   ├── acquisition_plan/          # 📦 Data acquisition system (k=3→k=10+)
+│   │   ├── README.md              # Navigation hub
+│   │   ├── IMPLEMENTATION_SUMMARY.md  # High-level overview
+│   │   ├── QUICK_START_GUIDE.md   # Step-by-step execution
+│   │   └── DATA_ACQUISITION_PLAN.md   # Complete 60+ page reference
+│   └── downloaded/                # Raw genomic data (FASTQ, reference genomes)
+├── scripts/
+│   ├── create_data_structure.sh   # Setup organized directories
+│   ├── generate_sample_metadata.py    # Per-sample JSON metadata
+│   └── generate_pool_manifest.py  # Pool-level aggregation
 └── docs/
     └── guides/
         ├── PROBABILISTIC_ALIGNMENT_COMPLETE_GUIDE.md  # 🔒 COMPLETE GUIDE
         ├── PROBABILISTIC_ALIGNMENT_SECURITY_MODEL.md  # Security analysis
-        └── PROBABILISTIC_ALIGNMENT_PIPELINE_GUIDE.md  # Usage guide
+        ├── PROBABILISTIC_ALIGNMENT_PIPELINE_GUIDE.md  # Usage guide
+        └── CLINICAL_SNP_QUICK_START.md  # Clinical variant database guide
 ```
 
 ## 🎯 Running the Main Pipeline
@@ -216,6 +245,102 @@ benchmark_results/full_pipeline_synthetic/reference/chr22.fa
 # Takes 30-40 min for chr22 with 30x coverage
 ```
 
+## 🔒 Privacy-Preserving Genome Queries
+
+**Execute privacy-preserving variant queries with Zero-Knowledge Proofs + Private Information Retrieval.**
+
+### User-Facing CLI
+
+Query your genome for specific variants while maintaining complete cryptographic privacy:
+
+```bash
+python genomevault/cli/privacy_query.py \
+    --vcf <path_to_user_vcf> \
+    --chrom chr22 \
+    --pos 4169 \
+    --ref C \
+    --alt A \
+    --output query_results.json
+```
+
+**Real Example (Validated with ERR3239334):**
+```bash
+python genomevault/cli/privacy_query.py \
+    --vcf benchmark_results/enhanced_privacy_pipeline/layer3_query/query.vcf.gz \
+    --chrom chr22 --pos 4169 --ref C --alt A \
+    --output benchmark_results/PRIVACY_QUERY_CLI_RESULTS.json
+```
+
+### What the Query Does (5 Steps)
+
+1. **Variant Lookup**: Checks if variant exists in your VCF file
+2. **Hypervector Encoding**: Transforms variant into 10,000D irreversible representation (39 KB)
+3. **Zero-Knowledge Proof**: Generates 739-byte proof (128-bit security, reveals NOTHING)
+4. **PIR Query**: Information-theoretic retrieval (0 bits leaked to database operator)
+5. **Result Delivery**: Returns clinical significance (e.g., "benign", "pathogenic")
+
+### Privacy Guarantees
+
+**✅ What Database Operators Learn:**
+- Someone made a query
+- Query size: 743 bytes
+- Response size: 2,048 bytes
+
+**❌ What Database Operators DO NOT Learn:**
+- User identity (HIDDEN)
+- Chromosome queried (HIDDEN)
+- Position queried (HIDDEN)
+- Alleles queried (HIDDEN)
+- Which database record was accessed (HIDDEN)
+- Clinical result (HIDDEN)
+
+### Security Maintained
+
+- **k-Anonymity**: k=3 (query indistinguishable from 2 others)
+- **SHA-256² Entropy**: 261.2 bits active
+- **Hypervector**: 10,000D irreversible transformation
+- **ZK Proof**: 128-bit security (2^128 soundness)
+- **IT-PIR**: 0 bits mutual information (unconditional security, quantum-resistant)
+- **Forward Secrecy**: Pool entropy rotation enabled
+
+### Output Format
+
+The CLI saves results as JSON:
+
+```json
+{
+  "timestamp": 1761325202.038291,
+  "query": "chr22:4169 C>A",
+  "steps": [
+    {"step": 1, "name": "variant_lookup", "result": "found", "quality": "154.036"},
+    {"step": 2, "name": "hypervector_encoding", "dimension": 10000, "size_kb": 39.06},
+    {"step": 3, "name": "zk_proof_generation", "verification_status": "valid", "proof_size_bytes": 739},
+    {"step": 4, "name": "pir_query", "protocol": "IT-PIR", "query_time_ms": 0.12},
+    {"step": 5, "name": "result_delivery", "clinical_result": {"clinical_significance": "benign"}}
+  ],
+  "privacy_preserved": true,
+  "security_guarantees": {
+    "k_anonymity": 3,
+    "zk_proof_security_bits": 128,
+    "pir_information_theoretic": true
+  }
+}
+```
+
+### Validation
+
+**Complete system validation confirmed:**
+- ✅ Data lineage: ERR3239334 (23 GB FASTQ) → Hypervector (39 KB)
+- ✅ Privacy query: chr22:4169 C>A executed via CLI
+- ✅ All security guarantees maintained
+- ✅ 0 bits leaked to database operators
+- ✅ Clinical utility demonstrated
+
+**Validation Documents:**
+- `benchmark_results/FINAL_VALIDATION_SUMMARY.md`
+- `benchmark_results/DATA_LINEAGE_VALIDATION_ADDENDUM.md`
+- `benchmark_results/GENOMEVAULT_COMPLETE_SYSTEM_VALIDATION_PROOF_PACKAGE.md`
+
 ## 📊 Expected Performance
 
 | Stage | Duration | Details |
@@ -242,6 +367,11 @@ python benchmarks/compression_summary.py  # Verify compression
 # Main pipeline (pick one)
 python benchmarks/run_alignment_optimized_pipeline.py --preset production  # ⚡ RECOMMENDED
 python benchmarks/run_full_pipeline_with_reference_pool.py --quick         # Quick test
+
+# Privacy-preserving query (ZK + PIR) 🔒
+python genomevault/cli/privacy_query.py \
+    --vcf query.vcf.gz --chrom chr22 --pos 4169 --ref C --alt A \
+    --output query_results.json
 
 # Differential encoding benchmark
 python benchmarks/differential_encoding/benchmark_end_to_end.py --quick
@@ -270,8 +400,10 @@ pytest tests/test_blockchain_integration.py -v  # 40 tests, <2ms overhead
 | **Byzantine Consensus** | `/genomevault/reference/` | `byzantine_consensus_builder.py` (updated!) |
 | **Hardware Backends** | `/genomevault/compute/` | `backend.py` (CPU/Metal/CUDA) |
 | **Blockchain** | `/genomevault/blockchain/` | `attestation_registry.py` |
+| **Privacy Query CLI** | `/genomevault/cli/` | `privacy_query.py` (user-facing) |
 | **Tests** | `/tests/` | Organized by component |
 | **Config** | `/genomevault/config/` | `compute.yaml`, `blockchain.yaml` |
+| **Validation Proofs** | `/benchmark_results/` | `FINAL_VALIDATION_SUMMARY.md`, `DATA_LINEAGE_VALIDATION_ADDENDUM.md` |
 
 ### Search Patterns
 
@@ -360,6 +492,8 @@ jq '.stages[] | select(.stage=="PIR Query") | .metrics.information_theoretic_sec
 - ✅ Empirical Space Savings: 38.4× (1,500 KB → 39.06 KB)
 - ✅ ZK Proofs: 0.74s (Groth16, 743 bytes)
 - ✅ PIR Queries: 4.33ms (IT-PIR)
+- ✅ Privacy-Preserving Query CLI: Validated with ERR3239334 (chr22:4169 C>A)
+- ✅ Complete Data Lineage: 23 GB FASTQ → 39 KB hypervector (MD5 verified)
 - ✅ Blockchain: 40/40 tests passing, <2ms overhead
 - ✅ REST API: 24/24 system checks passed, 2.84s average processing
 
@@ -374,7 +508,15 @@ jq '.stages[] | select(.stage=="PIR Query") | .metrics.information_theoretic_sec
 ## 📚 Documentation
 
 ### Core Docs
+- **Complete System Validation:** `benchmark_results/FINAL_VALIDATION_SUMMARY.md` (project certification) **✅ NEW**
+- **Data Lineage Proof:** `benchmark_results/DATA_LINEAGE_VALIDATION_ADDENDUM.md` (cryptographic chain of custody) **✅ NEW**
+- **Full Validation Package:** `benchmark_results/GENOMEVAULT_COMPLETE_SYSTEM_VALIDATION_PROOF_PACKAGE.md` (1,930+ lines) **✅ NEW**
 - **Probabilistic Alignment & Privacy Stack:** `docs/guides/PROBABILISTIC_ALIGNMENT_PRIVACY_STACK.md` (comprehensive guide) **⭐ NEW**
+- **Data Acquisition System:** `data/acquisition_plan/` (scale to k=10+ diverse reference pools) **📦 NEW**
+  - `README.md` - Navigation hub and quick reference
+  - `IMPLEMENTATION_SUMMARY.md` - High-level overview (5 min read)
+  - `QUICK_START_GUIDE.md` - Step-by-step execution (Phase 1: k=3→k=10 European)
+  - `DATA_ACQUISITION_PLAN.md` - Complete 60+ page reference with 66 sample accessions
 - **Complete Results:** `docs/reports/COMPLETE_BENCHMARK_RESULTS.md`
 - **Alignment Optimization:** `docs/reports/ALIGNMENT_OPTIMIZATION_RESULTS_SUMMARY.md`
 - **Blockchain Integration:** `docs/reports/BLOCKCHAIN_INTEGRATION_COMPLETE.md`
@@ -430,12 +572,15 @@ conda install -c bioconda minimap2 samtools bcftools
 4. **Reference pool must have k genomes** for k-anonymity
 5. **Blockchain is opt-in** - disabled by default for performance
 6. **REST API requires reference pool setup** - run setup script before first use
+7. **Privacy-preserving queries** - Use `genomevault/cli/privacy_query.py` for cryptographically secure variant queries (0 bits leaked to operators)
 
 ## 🆘 Getting Help
 
 - **Issues:** Check `TROUBLESHOOTING.md` or GitHub Issues
 - **Performance:** See `docs/reports/OPTIMIZATION_RESULTS_SUMMARY.md`
 - **Security:** Review `docs/guides/HYPERVECTOR_SECURITY.md`
+- **Privacy Queries:** See privacy query CLI section above or `genomevault/cli/privacy_query.py`
+- **Validation:** Complete system validation at `benchmark_results/FINAL_VALIDATION_SUMMARY.md`
 - **Blockchain:** Read `docs/reports/BLOCKCHAIN_INTEGRATION_COMPLETE.md`
 - **Academic Details:** See paper in `docs/GenomeVault_Paper_Current/`
 - **API Setup:** See `docs/api-docs/GETTING_STARTED_API.md` for step-by-step guide
