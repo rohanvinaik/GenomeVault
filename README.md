@@ -590,7 +590,7 @@ cd docs && pdflatex GenomeVault_Academic_Paper.tex
 | **Analytical Utility** | Raw Data (no privacy) | 100% accuracy | **100% for variants** ✅ | Perfect utility + privacy |
 | **Federated Collaboration** | No solution exists | N/A | **Experimental** 🚧 | First privacy-preserving platform |
 | **Analysis on Encrypted Data** | Homomorphic Encryption | Hours per query | **KAN-HD: Direct** 🚧 | 1,000× faster potential |
-| **Population Storage Cost** | VCF (no privacy) | $82.8M/year (100M genomes) | **$2.15M/year (hospital IT budget)** ✅ | 38× cheaper with privacy |
+| **Population Storage Cost** | VCF (no privacy) | $82.8M/year (100M genomes) | **$2.15M/year (hospital IT budget)** ✅ | 38× cheaper WITH privacy |
 
 **Key Advantages TODAY (Production-Ready):**
 - ✅ **Better compression** than best lossless compressors (38.4× vs 32× VCFShark)
