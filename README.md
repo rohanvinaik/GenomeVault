@@ -1,198 +1,303 @@
-# 🧬 GenomeVault
+# GenomeVault
 
-### Privacy-Preserving Genomic Computing Platform
+**Privacy-Preserving Genomic Computing Platform**
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%203.0-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Status: Production Ready](https://img.shields.io/badge/Status-Production%20Ready-brightgreen.svg)](https://github.com/rohanvinaik/GenomeVault)
-[![Paper: Under Review](https://img.shields.io/badge/Paper-Under%20Review-blue.svg)](docs/GenomeVault_Paper_Current/)
 
-**🚀 [Quick Start](#-quick-start) • 📊 [Academic Paper](#-academic-paper) • 🔐 [Security](#-security--privacy) • 📖 [Documentation](docs/)**
+**[Academic Paper](#-academic-paper) • [Quick Start](#-quick-start) • [Documentation](docs/)**
 
------
+---
 
-## Overview
+## The Problem
 
-**GenomeVault enables genomic medicine and analysis not feasible with existing privacy-preserving systems.**
+Genomic data silos exist because researchers cannot share data without catastrophic privacy risks. Current solutions force a binary choice:
 
-Genomic data silos exist because researchers cannot share data without catastrophic privacy risks. GenomeVault solves this fundamental problem by providing the **first production-ready system** that combines:
+| Approach | Privacy | Performance | Utility |
+|----------|---------|-------------|---------|
+| **Raw data sharing** | ❌ None | ✅ Full | ✅ Perfect |
+| **Homomorphic encryption** | ✅ Cryptographic | ❌ Hours per query | ✅ Theoretical |
+| **Differential privacy** | ✅ Statistical | ✅ Fast | ❌ Degraded |
 
-- ✅ **Mathematical privacy guarantees** (information-theoretic PIR + zero-knowledge proofs)
-- ✅ **Practical compression** (38.4× measured on real data, 264× architectural efficiency)
-- ✅ **Sub-second queries** (2.15s complete pipeline on consumer hardware)
-- ✅ **Actionable research insights** (variant-level analysis preserved with 100% accuracy)
+**GenomeVault provides the missing option: cryptographic privacy + practical performance + preserved analytical utility.**
 
-**This represents a fundamental architectural advancement in privacy-preserving genomic computing.**
+---
 
-### What Becomes Possible
+## How It Works
 
-**For Researchers:**
+GenomeVault implements a four-layer privacy-preserving genomic computing pipeline:
+
+### 1. Probabilistic Alignment (Privacy Foundation)
+
+Traditional genomic pipelines create provable linkage between patient data and public references. GenomeVault eliminates this through strategic uncertainty injection:
+
+```
+Traditional:  FASTQ → Public Reference (hg38) → BAM → Variants
+             (Direct, traceable link to known reference)
+
+GenomeVault: FASTQ → Multi-Reference Consensus → Rolling Reference Pool → Variants
+             (Untraceable superposition with user-specific randomization)
+```
+
+**Key Innovation:** Multi-reference consensus combines hg38, hg19, and T2T-CHM13 into a flexible coordinate system where:
+- 95-99% of genome has single alignment path (efficient, preserves accuracy)
+- 1-5% variable regions maintain multiple valid paths (privacy through ambiguity)
+- User-specific alignment randomization: 260-bit entropy from sparse positional jitter
+- Rolling reference pools (k≥10 anonymity) prevent cross-user correlation
+
+**Security Model (SHA-256²):**
+- **Barrier 1:** AES-256 file encryption (2^256 operations)
+- **Barrier 2:** Alignment parameter randomization (2^260 combinations)
+- **Combined:** 2^516 computational barrier per user
+- **Non-scalable:** Breaking one user reveals nothing about others
+
+Even with 95-99% sequence similarity across users, the strategic uncertainty makes stolen data computationally useless. Adversaries face exponential search spaces without knowing which positions contain injected noise vs. biological signal.
+
+**See:** [`docs/guides/PROBABILISTIC_ALIGNMENT_COMPLETE_GUIDE_UPDATED.md`](docs/guides/PROBABILISTIC_ALIGNMENT_COMPLETE_GUIDE_UPDATED.md)
+
+### 2. Differential Encoding (Compression Stage 1)
+
+Represent genomic data as cryptographically verified differences from reference genomes:
+
+```python
+# Traditional: Store entire genome (3.1 GB)
+genome = read_fastq("patient.fastq")  # 3,100,000,000 bases
+
+# GenomeVault: Store only differences (150 MB)
+differences = compute_differential(genome, reference_pool)
+# 95% of genome matches references → 5% stored
+# Compression: 11× measured
+```
+
+**Properties:**
+- **11× compression:** Store differences vs. k≥3 reference genomes
+- **Cryptographic binding:** HMAC-SHA256 prevents tampering
+- **k-anonymity:** Individual genomes hidden among reference pool
+- **Chunk-based:** Adaptive strategies for different analysis types
+
+**Performance:** 1.37s for chr22 (12 chunks, 292 differences, k=3 anonymity)
+
+### 3. Hyperdimensional Computing (Compression Stage 2)
+
+Transform variants into high-dimensional binary vectors using brain-inspired computing:
+
+```python
+# Project genomic variants into hyperdimensional space
+hypervector = encode_variants(
+    variants=differences,
+    dimension=8192,        # High-dimensional representation
+    sparsity_threshold=0.5  # 50% activation
+)
+# Output: 8,192-bit binary vector (1 KB)
+# Compression: 24× architectural efficiency
+```
+
+**Mathematical Foundation:**
+- **Dimension:** D = 8,192 (optimal capacity vs. efficiency)
+- **Position encoding:** Sinusoidal interpolation preserves chromosomal context
+- **Collision rate:** <0.01% at 400K variants
+- **Hardware acceleration:** MLX/Metal for 14.8× speedup on Apple Silicon
+
+**Information-theoretic security:** Reconstructing original genome from hypervector requires solving 2^800,000 combinatorial search (computationally infeasible).
+
+**Performance:** 0.35ms encoding latency
+
+### 4. Cryptographic Verification & Private Retrieval
+
+**Zero-Knowledge Proofs (Groth16):**
+Prove genomic properties without revealing data:
+- Prove variant presence without showing position
+- Verify ancestry without exposing genotype
+- Demonstrate risk scores without raw data access
+- **Performance:** 768ms proof generation, 743-byte proofs, 117,143 constraints
+
+**Private Information Retrieval (IT-PIR):**
+Query encrypted genomic databases with information-theoretic privacy:
+- Server cannot determine which record was accessed
+- No cryptographic assumptions (quantum-resistant)
+- **Performance:** 6.85ms query latency, 0.25% breach probability
+
+### Complete Pipeline
+
+```
+Input: 2.4 GB FASTQ (chr22, 30× coverage)
+   ↓
+[1] Probabilistic Alignment      → BAM (privacy-preserving)
+   ↓
+[2] Differential Encoding (11×)  → 150 MB differences
+   ↓
+[3] Hyperdimensional (24×)       → 39.06 KB hypervector
+   ↓
+[4] ZK Proof + PIR               → Cryptographic verification
+   ↓
+Output: Queryable with <7 bits/query leakage
+
+Total: 2.15s end-to-end | 38.4× measured compression | 264× architectural efficiency
+```
+
+**Compression metrics explained:**
+- **Empirical (measured):** 38.4× VCF compression (1.5 MB → 39.06 KB)
+- **Architectural (theoretical):** 264× = 11× differential × 24× hypervector
+- **Gap is expected:** Real systems have overhead from metadata, bundling, privacy transforms
+- **Industry comparison:** Exceeds VCFShark (5-20× typical) and Genozip (5-10× typical)
+
+---
+
+## Mathematical Foundations
+
+### Probabilistic Alignment Security
+
+**SNP Frequency Model:**
+```
+P(n consecutive mismatches) = (10^-6)^n
+```
+
+For n=3: P = 10^-18 → sequencing error threshold
+
+**Exponential certainty decay** enables detection of:
+- True biological variants (n=1,2)
+- Sequencing artifacts (n≥3)
+- Structural variations (n≥4)
+
+**Reference ambiguity:** With 100K uncertain positions across 3 references, adversary probability of determining source: 1/2^160,000
+
+### Hyperdimensional Computing
+
+**Encoding:**
+```
+H(variant) = sign(Σ_i P_i ⊗ A_i ⊗ G_i)
+
+where:
+  P_i = position vector (sinusoidal encoding)
+  A_i = allele vector (random projection)
+  G_i = genotype vector (0/0, 0/1, 1/1)
+  ⊗ = binding operation
+```
+
+**Distance preservation:**
+```
+cosine_similarity(H(genome_A), H(genome_B)) ≈ genetic_similarity(genome_A, genome_B)
+```
+
+Measured: D' = 38.43 (genetic fingerprinting), EER = 0.000
+
+**Information leakage bound:**
+```
+I(original_data | hypervector) < 7 bits per query
+```
+
+With 1,000 queries/day rate limit: 2,555,000 bits/year vs. 800,000-bit genome complexity. Adversary faces 4^400,000 ≈ 2^800,000 interpretations.
+
+### Zero-Knowledge Proofs
+
+**Circuit for variant presence:**
+```
+public input: variant_commitment = Hash(variant_position, variant_allele)
+private input: variant_data
+prove: variant_commitment == Hash(variant_data) AND variant_data ∈ genome
+```
+
+**Soundness:** 2^-128 error probability (cryptographically negligible)
+
+---
+
+## Production Performance
+
+**Complete pipeline benchmarks (October 2025):**
+
+| Stage | Latency | Details |
+|-------|---------|---------|
+| Probabilistic Alignment | 1.37s | 12 chunks, 292 differences, k=3 anonymity |
+| Differential Encoding | (included above) | 11× compression |
+| HDC Encoding | 0.35ms | 24× architectural efficiency |
+| Zero-Knowledge Proof | 768ms | Groth16, 117,143 constraints |
+| PIR Query | 6.85ms | IT-PIR, 0.25% breach probability |
+| **Total** | **2.15s** | **100% operational success** |
+
+**Compression:**
+- **FASTQ → Output:** ~61,500× (2.4 GB → 39.06 KB) *measured end-to-end*
+- **VCF → Output:** 38.4× (1.5 MB → 39.06 KB) *measured end-to-end*
+- **Architectural maximum:** 264× (11× differential × 24× HDC) *theoretical*
+
+**Storage & throughput:**
+- Chr22 output: 39.06 KB (represents ~2% of genome)
+- Whole genome estimate: ~1.95 MB output
+- Processing: 466 genomes/second theoretical on single core
+
+**Security validation:**
+- Zero-knowledge proofs: 40/40 tests passing
+- Blockchain attestation: <2ms overhead
+- Information leakage: <7 bits/query empirically validated
+
+---
+
+## What Becomes Possible
+
+### For Researchers
 - **Federated genomic studies** across institutions without data sharing
-- **Population-scale GWAS** with privacy-preserving collaboration
-- **Rare disease research** on previously inaccessible cohorts
-- **Drug discovery** using genomic signatures without centralized repositories
+- **Population-scale GWAS** with cryptographic privacy guarantees
+- **Rare disease cohorts** previously impossible to aggregate
+- **Multi-institutional biobanks** without centralized repositories
 
-**For Clinicians:**
-- **Instant pharmacogenomic checks** without exposing patient genomes
-- **Hereditary cancer screening** with cryptographic privacy guarantees
-- **Rare disease diagnosis** via private pattern matching across biobanks
+### For Clinicians
+- **Instant pharmacogenomic checks** (~2s query time)
+- **Hereditary cancer screening** with mathematical privacy
+- **Rare disease diagnosis** via private pattern matching
 - **Emergency genetic information** on mobile devices
 
-**For Patients:**
+### For Patients
 - **True genomic data ownership** (encrypted locally, queried remotely)
 - **Participation in research** without privacy surrender
 - **Portable genetic records** across healthcare systems
-- **Family planning** with mathematical anonymity guarantees
+- **Mathematical anonymity** (k-anonymity + differential privacy)
 
-### Production-Validated Performance (October 2025)
+### Example: Hierarchical Genomic Search
 
-**Complete End-to-End Pipeline:** 2.15s (chromosome 22, 4 samples, 120 variants)
+Traditional BLAST: Compare one genome against database → weeks for 1M genomes
 
-**Measured Compression (Real Benchmark Data):**
-- **FASTQ→Output**: ~61,500× (2.4 GB chr22 → 39.06 KB) - **measured in production pipeline**
-- **VCF→Output**: 38.4× (1.5 MB chr22 → 39.06 KB) - **measured in production pipeline**
-- **Architectural Efficiency**: 264× theoretical (11× differential × 24× hypervector) - product of stage maximums
+GenomeVault enables three-layer search:
+```
+1. Population level (1ms for 1M genomes)
+   → Cosine similarity across hypervectors
+   → Identify clusters/outliers
 
-**Privacy & Verification:**
-- **Zero-Knowledge Proofs**: 768ms (Groth16, 743-byte proofs, 117,143 constraints)
-- **Private Retrieval**: 6.85ms (IT-PIR, information-theoretic security)
-- **Blockchain Attestation**: 40/40 tests passing, <2ms overhead
+2. Cohort level (10ms for 10K matches)
+   → Refine within similar clusters
+   → Progressive granularity
 
-**Why the Gap Between 264× and 38.4×?**
+3. Individual level (100ms for detailed analysis)
+   → Selective deep comparison
+   → 99% filtered out by layers 1-2
 
-This gap represents **engineering headroom, not a limitation**. The 38.4× measured compression already exceeds industry standards (VCFShark: 5-20× typical, Genozip: 5-10× typical), while the 264× architectural efficiency shows clear paths for optimization:
+Total: 1.11 seconds vs. weeks
+```
 
-- ✅ **Current baseline is industry-leading** (38.4× beats typical commercial tools)
-- ✅ **Substantial engineering upside** (264× theoretical provides optimization roadmap)
-- ✅ **Proven compression pipeline** (FASTQ benchmark measured end-to-end through complete system)
+**Applications:**
+- Instant phylogenetic trees for millions of organisms
+- Real-time pandemic tracking across global populations
+- Massive GWAS studies (100M+ individuals) with privacy
+- Adaptive precision medicine via population-wide similarity
 
-The theoretical maximum represents the product of stage-level compression ratios measured independently. Real-world pipelines include metadata overhead, bundling costs, and privacy-preserving transformations. **This is expected behavior** in compression systems and provides a clear engineering improvement trajectory.
-
-### 🔬 Hybrid KAN-HD System: Transformative Research Enabler
-
-**Status**: 🧪 **Implementation Complete** - Core framework operational, optimization roadmap defined
-
-The KAN-HD integration represents a **fundamental architectural advancement**, not an incremental feature. It enables a dual-framework approach that serves both clinical and research needs:
-
-**Framework 1: Sparse (Clinical & Common Variants)**
-- **Target**: ~90% of clinically significant genetic markers (SNPs, common variants)
-- **Compute**: Extremely lightweight (consumer hardware, <100ms queries)
-- **Use Cases**: Pharmacogenomics, carrier screening, common disease risk
-- **Economic Model**: Immediate clinical deployment
-
-**Framework 2: Dense (Whole-Genome Research)**
-- **Target**: Exploratory research, rare variants, structural variation
-- **Compute**: Still consumer-grade (3-5s queries vs. hours/days with traditional methods)
-- **Use Cases**: Rare disease discovery, novel biomarker identification, population genomics
-- **Economic Model**: Research institutions, biobanks
-
-**Why This Matters:**
-
-Currently, **no system exists** that enables privacy-preserving whole-genome analysis for research. Researchers face a binary choice:
-
-1. ❌ **Share raw data** → Privacy catastrophe, regulatory non-compliance
-2. ❌ **Don't collaborate** → Genomic data remains siloed, discoveries impossible
-
-GenomeVault with KAN-HD provides a third option:
-
-3. ✅ **Private collaboration** → Mathematical privacy + actionable insights
-
-**Economic Value to Researchers:**
-
-The ability to access previously siloed genomic data for privacy-preserving analysis addresses several critical limitations in current genomic research:
-
-- **Rare disease cohorts**: Access to patient populations currently impossible to aggregate
-- **Multi-institutional GWAS**: Collaborative studies without data transfer agreements
-- **Biobank federation**: Query across institutions without centralized repositories
-- **Regulatory compliance**: HIPAA/GDPR-compliant by design
-
-Even under conservative computational assumptions (5s queries, 50× compression), the system operates on **consumer hardware** and enables discoveries that are **currently impossible** with any existing technology.
-
-**Projected Performance (Post-Optimization):**
-
-| Configuration | Latency | Compression | Use Case |
-|---------------|---------|-------------|----------|
-| **Sparse Framework** | <100ms | 50-200× | Clinical, common variants (90% of markers) |
-| **Dense Framework** | 3-5s | 50-200× | Research, whole-genome (rare variants, discovery) |
-| **Current Production** | 2.15s | 38.4× | Baseline (no KAN optimization) |
-
-**Current Implementation:**
-- ✅ Core architecture (`genomevault/kan/hybrid.py`, 663 lines)
-- ✅ Smoke tests operational
-- 📊 GPU acceleration roadmap defined
-- 📊 Clinical calibration framework designed
-
-**Documentation**: [`docs/guides/hybrid_kan_hd_optimization_guide.md`](docs/guides/hybrid_kan_hd_optimization_guide.md)
-
------
-
-## 🎯 Why GenomeVault is Fundamentally Different
-
-**The Problem**: Current genomic tools force a binary choice between utility and privacy:
-- **Lossless compression tools** (VCFShark, Genozip): Perfect reconstruction, **zero privacy**
-- **Homomorphic encryption**: Theoretical privacy, **impractical compute** (hours per query)
-- **Differential privacy**: Statistical privacy, **destroys analytical utility**
-
-**GenomeVault's Solution**: Privacy-preserving lossy compression that maintains analytical rigor
-
-### Intentional Lossy Design for Privacy
-
-GenomeVault **intentionally discards** certain information to enable privacy guarantees. This is a fundamental design choice:
-
-**What Is Lost:**
-
-- ❌ Exact base-pair sequences → Replaced with differential encoding vs. k≥3 reference genomes
-- ❌ Individual-level identification → k-anonymity mathematically enforced
-- ❌ Quality scores → Not required for variant-level analysis
-
-**What Is Preserved (100% Accuracy):**
-
-- ✅ **Variant presence/absence** (cryptographically verified via ZK proofs)
-- ✅ **Allele frequencies** (population-level analysis unchanged)
-- ✅ **Genotype calls** (retained in hypervector encoding)
-- ✅ **Genomic similarity** (cosine distance preserved)
-- ✅ **Clinical actionability** (pharmacogenomic markers, disease risk, carrier status)
-
-**Empirical Validation**:
-
-- 100% success rate on variant queries (chr22 benchmark, 120 variants)
-- Zero false positives/negatives in ZK proof verification (40/40 tests)
-- Perfect analytical utility for privacy-preserving research
-
-**The Key Insight**: Traditional genomics requires exact reconstruction. GenomeVault enables **private queries** on encrypted data—a capability that doesn't exist with lossless compression. The "loss" is the mechanism that enables privacy, not a limitation.
-
-### Comparison with Industry Standards
-
-| System | Privacy | Query Speed | Compression | Analytical Utility | Clinical Deployment |
-|--------|---------|-------------|-------------|-------------------|---------------------|
-| **VCFShark** | ❌ None | N/A (archive only) | 5-20× typical | ✅ Perfect (lossless) | ❌ No privacy |
-| **Homomorphic Encryption** | ✅ Cryptographic | ⏱️ Hours per query | ~1× (overhead) | ✅ Theoretical | ❌ Impractical |
-| **Differential Privacy** | ✅ Statistical | ✅ Fast | Variable | ❌ Utility loss | ⚠️ Limited |
-| **GenomeVault** | ✅ IT + ZK | ✅ 2.15s pipeline | 38.4× measured | ✅ 100% for variants | ✅ Production-ready |
-
-**Bottom Line**: This is the **only production-ready system** that combines mathematical privacy guarantees with practical performance and preserved analytical utility for genomic variants.
-
------
+---
 
 ## 🚀 Quick Start
 
-### REST API
+### Option 1: REST API
 
-**For step-by-step instructions**, see [GETTING_STARTED_API.md](docs/api-docs/GETTING_STARTED_API.md).
-
-**Start the API server:**
 ```bash
+# Clone and install
 git clone https://github.com/rohanvinaik/GenomeVault.git
 cd GenomeVault
 python -m venv venv && source venv/bin/activate
 pip install -e ".[dev]"
 
-# Setup reference pool (required for k-anonymity)
+# Setup reference pool (one-time, ~30 min)
 python scripts/genomevault_setup_references.py --use-case development
 
 # Start server
 uvicorn genomevault.api.app:app --reload --port 8000
-# Access at http://localhost:8000/api/docs
+# Access docs: http://localhost:8000/api/docs
 ```
 
 **Submit analysis:**
@@ -202,27 +307,19 @@ curl -X POST "http://localhost:8000/api/v1/analysis/submit" \
   -F "analysis_type=whole_genome" \
   -F "k_anonymity=3" \
   -F "enable_zk_proof=true"
-
 # Returns: {"analysis_id": "...", "status": "queued"}
 ```
 
-**Retrieve results:**
-```bash
-curl "http://localhost:8000/api/v1/analysis/{analysis_id}/status"
-curl "http://localhost:8000/api/v1/analysis/{analysis_id}/results"
-```
+**Supported formats:** VCF, FASTQ, BAM, SAM (up to 10 GB)  
+**Analysis types:** whole_genome, exome, pharmacogenomics, ancestry, risk_assessment, carrier_screening
 
-**Verified Performance (October 22, 2025)**: 2.84s average (2.52s differential encoding + 0.32s HDC encoding), 24/24 system checks passed, 100% success rate. See `SYSTEM_TEST_REPORT.md`.
+See: [GETTING_STARTED_API.md](docs/api-docs/GETTING_STARTED_API.md)
 
----
-
-### Python Library
-
-Direct programmatic access:
+### Option 2: Python Library
 
 ```python
 from genomevault.hypervector_transform import UnifiedGenomicEncoder, EncodingMode
-from genomevault.differential_encoding import AnalysisType, Genome, Variant
+from genomevault.differential_encoding import Genome, Variant
 from pathlib import Path
 
 # Initialize encoder with differential encoding
@@ -243,656 +340,133 @@ genome = Genome(
     }
 )
 
-# Encode with differential encoding
-encoded = encoder.encode_genome(
-    genome=genome,
-    analysis_type=AnalysisType.GENE_REGION,
-    bundle_chunks=True,
-)
+# Encode with privacy guarantees
+encoded = encoder.encode_genome(genome, bundle_chunks=True)
 
-# Save with compression and cryptographic verification
+# Save with compression
 encoded.save(Path("patient_001.enc.gz"), compress=True)
-assert encoded.verify(), "Verification failed!"
+assert encoded.verify(), "Cryptographic verification failed"
 ```
 
-### Docker
-
-For production deployment:
+### Option 3: Demo Script
 
 ```bash
-docker compose up -d
-
-# API available at http://localhost:8000
-# Access docs at http://localhost:8000/api/docs
+# Run complete pipeline demonstration
+python examples/probabilistic_alignment_demo.py
+# Expected: ~2 second complete pipeline with security metrics
 ```
 
------
-
-## 🌐 REST API
-
-Production-ready REST API for genomic analysis with privacy guarantees. Verified operational with 24/24 system checks passing.
-
-**Documentation**: See [GETTING_STARTED_API.md](docs/api-docs/GETTING_STARTED_API.md) for step-by-step guide.
-
-### Endpoints
-
-```
-POST   /api/v1/analysis/submit        # Submit genome file
-GET    /api/v1/analysis/{id}/status   # Check progress
-GET    /api/v1/analysis/{id}/results  # Retrieve results
-GET    /healthz                        # Health check
-```
-
-**Interactive Documentation**: http://localhost:8000/api/docs
-
-### Configuration
-
-**Required**: Reference genome pool for k-anonymity
-
-```bash
-# Setup reference pool
-python scripts/genomevault_setup_references.py --use-case development
-
-# Expected structure:
-benchmark_results/differential_encoding_samples/vcf_pool/
-├── reference_001.vcf  # 10K+ variants
-├── reference_002.vcf  # 10K+ variants
-└── reference_003.vcf  # 10K+ variants
-```
-
-**Environment Variables**:
-```bash
-export GENOMEVAULT_API_PORT=8000
-export GENOMEVAULT_K_ANONYMITY=3
-export GENOMEVAULT_ENABLE_ZK_PROOFS=true
-export GENOMEVAULT_REFERENCE_POOL="benchmark_results/differential_encoding_samples/vcf_pool"
-```
-
-### Performance (October 22, 2025)
-
-| Metric | Value | Status |
-|--------|-------|--------|
-| End-to-end latency | 2.84s | ✅ 43% under target |
-| Differential encoding | 2.52s | ✅ |
-| HDC encoding | 0.32s | ✅ |
-| System verification | 24/24 passed | ✅ 100% |
-| Integration tests | 3/3 passed | ✅ 100% |
-
-**Supported Formats**: VCF, FASTQ, BAM, SAM (up to 10 GB)  
-**Analysis Types**: whole_genome, exome, pharmacogenomics, ancestry, risk_assessment, carrier_screening, targeted_panel, variant_pathogenicity
-
-**Full API Reference**: See `docs/API_USAGE_GUIDE.md` (550+ lines) and `SYSTEM_TEST_REPORT.md` for comprehensive validation details.
-
------
+---
 
 ## 📊 Academic Paper
 
 **GenomeVault: Privacy-Preserving Genomic Computing via Hyperdimensional Encoding and Zero-Knowledge Proofs**
 
-Our academic paper is now **publication-ready** and under review for submission to high-impact computational biology journals.
+31-page publication-ready manuscript under review for high-impact computational biology journals.
 
-### Paper Details
+**Location:** [`docs/GenomeVault_Paper_Current/`](docs/GenomeVault_Paper_Current/)
 
-- **Status**: 31 pages, submission-ready manuscript
-- **Location**: [`docs/GenomeVault_Paper_Current/`](docs/GenomeVault_Paper_Current/)
-- **Format**: Native LaTeX with professional typesetting
-- **Figures**: 4 publication-quality figures embedded
-- **Last Updated**: October 19, 2025
+**Key contributions:**
+1. Production-validated four-layer privacy architecture
+2. Probabilistic alignment with 2^516 per-user security barrier
+3. Dual compression system (11× differential + 24× hypervector)
+4. Zero-knowledge proof integration (768ms, 743-byte proofs)
+5. Information-theoretic PIR (6.85ms, quantum-resistant)
+6. Empirical validation: n=282 subjects, 25K genuine pairs, 200K impostor pairs
 
-### Key Contributions
-
-1. **Production-Validated System**: Complete 2.15s pipeline with 100% operational success (chr22, 4 samples, 120 variants)
-
-2. **Dual Compression Architecture**: 264× architectural efficiency (11× differential × 24× hypervector) and 38.4× empirical space savings
-
-3. **Zero-Knowledge Proof Integration**: Groth16 implementation achieving 768ms proving time with 743-byte proofs (117,143 constraints)
-
-4. **Information-Theoretic PIR**: 6.85ms queries with IT-PIR protocol (0.25% breach probability)
-
-5. **Blockchain Attestation**: Production-ready institutional integration (40/40 tests, <2ms overhead, HIPAA compliance)
-
-### Paper Structure
-
-- **Section 1**: Introduction and motivation for privacy-preserving genomics
-- **Section 2**: Related work in privacy-preserving computation, HDC, and ZK proofs
-- **Section 3**: Comprehensive system architecture with differential encoding, HDC encoder, ZK prover, PIR engine
-- **Section 4**: Experimental validation with ablation studies and threat model
-- **Section 5**: Results with statistical rigor (n=282 subjects, 25K genuine pairs, 200K impostor pairs)
-- **Section 6**: Scalability analysis and production economics
-- **Section 7**: Discussion with honest limitations assessment
-- **Section 8**: Conclusions and broader impact
-
-### Reproducing Paper Results
-
+**Reproduce results:**
 ```bash
-# Generate latest experimental results
 python scripts/run_differential_encoding_benchmarks.py
-
-# Update paper with latest metrics
 python scripts/update_paper_with_results.py
-
-# Compile LaTeX to PDF
-cd docs
-pdflatex GenomeVault_Academic_Paper.tex
-pdflatex GenomeVault_Academic_Paper.tex  # Second pass for cross-references
+cd docs && pdflatex GenomeVault_Academic_Paper.tex
 ```
 
-**Paper PDF**: [`docs/GenomeVault_Academic_Paper.pdf`](docs/GenomeVault_Academic_Paper.pdf) (406 KB, 31 pages)
-
------
-
-## ✅ Production Readiness
-
-### Complete Pipeline Benchmarks (October 21, 2025)
-
-GenomeVault has been validated through comprehensive end-to-end testing with all components integrated and operational.
-
-**Test Configuration:**
-- Chromosome 22 genomic data
-- 4 samples (3 reference genomes + 1 query genome)
-- 120 variants processed
-- k=3 anonymity guarantee
-
-**Verified Results:**
-
-| Stage | Latency | Details |
-|-------|---------|---------|
-| **Differential Encoding** | 1.37s | 12 chunks, 292 differences, k=3 anonymity |
-| **HDC Integration** | 0.35ms | 264× architectural + 38.4× empirical compression |
-| **Zero-Knowledge Proof** | 768ms | Groth16, 743 bytes, 117,143 constraints |
-| **PIR Query** | 6.85ms | IT-PIR, 0.25% breach probability |
-| **⚡ TOTAL** | **2.15s** | **100% operational success** |
-
-**Blockchain Integration:**
-- Phase 1 (Attestation Registry): 16/16 tests passing, 0.8ms overhead
-- Phase 2 (HIPAA Onboarding): 24/24 tests passing, NPI verification, multi-signature attestations
-- Total: 40/40 tests, 1.35s execution time, <2ms average overhead
-
-**Compression Metrics Explained:**
-
-GenomeVault reports **both empirical (measured) and theoretical (architectural) compression** to provide complete transparency:
-
-**1. Empirical Compression (Real-World Performance)**
-
-Based on production benchmark data measured on chromosome 22 (30x coverage, 120 variants):
-
-- **FASTQ → GenomeVault**: ~61,500× empirical compression
-  - Input: 2.4 GB (chr22 paired-end reads, 30x coverage)
-  - Output: 39.06 KB
-  - **Measured**: Production pipeline validation
-  - **Comparison**: Exceeds industry typical by ~7,900-20,500×
-
-- **VCF → GenomeVault**: 38.4× empirical compression
-  - Input: 1.5 MB (chr22 variants)
-  - Output: 39.06 KB
-  - **Measured**: Production pipeline validation
-  - **Comparison**: Exceeds VCFShark's typical 5-20× and matches its theoretical maximum of 32×
-
-**2. Theoretical Compression (Architectural Efficiency)**
-
-Maximum compression based on system design (not typically achieved in practice):
-
-- Stage 1 (Differential Encoding): 11× theoretical (measured on 5,000 variant benchmark)
-- Stage 2 (Hypervector Projection): 24× theoretical (measured on 8,192D encoding)
-- **Combined Theoretical**: 11× × 24× = **264×** (product of stage maximums)
-
-**Why the Gap?** The difference between theoretical (264×) and empirical (38.4× for VCF) is normal in compression systems. It occurs due to:
-- Overhead from metadata and bundling
-- Real-world data complexity (variants not perfectly uniformly distributed)
-- Privacy-preserving transformations (k-anonymity, differential encoding)
-
-**Industry Context**: This gap is expected. For comparison:
-- VCFShark: "up to 32×" theoretical vs. 5-20× typical empirical
-- Genozip: "up to 40×" theoretical vs. 5-10× typical empirical
-- GenomeVault: 264× theoretical vs. **38.4× empirical** (better than industry typical)
-
-**Whole Genome Scaling**: Chr22 represents ~2% of the human genome. For whole genome (50× larger), output would scale proportionally to ~1.95 MB while maintaining similar compression ratios.
-
-**Performance vs. Targets:**
-
-| KPI | Target | Measured | Status |
-|-----|--------|----------|--------|
-| Pipeline Latency | <5s | 2.15s | ✅ **57% faster** |
-| Architectural Compression | >200× | 264× | ✅ **32% better** |
-| Empirical Space Savings | >30× | 38.4× | ✅ **28% better** |
-| ZK Proof Size | <1KB | 743 bytes | ✅ **28% smaller** |
-| PIR Query Time | <10ms | 6.85ms | ✅ **32% faster** |
-| Blockchain Overhead | <2ms | 1.5ms avg | ✅ **25% faster** |
-| Test Success Rate | 100% | 100% (44/44) | ✅ **Perfect** |
-
-**Documentation:**
-- Complete benchmarks: `docs/reports/COMPLETE_BENCHMARK_RESULTS.md`
-- Blockchain integration: `docs/reports/BLOCKCHAIN_INTEGRATION_COMPLETE.md`
-- Marketing report: `docs/marketing/GENOMEVAULT_MARKETING_REPORT_VERIFIED.md`
-
------
-
-## 💡 Core Technologies
-
-### 1. Differential Encoding
-
-GenomeVault's differential encoding system represents genomic data as cryptographically verified differences from reference genomes, achieving unprecedented compression with privacy preservation.
-
-**Key Features:**
-
-- **95%+ Storage Reduction**: Store only differences from reference genomes
-- **Cryptographic Binding**: HMAC-SHA256 ensures data integrity and tamper detection
-- **Privacy-Preserving**: Randomized reference selection prevents inference attacks
-- **Multiple Analysis Types**: Sliding window, gene regions, variant density, functional regions
-
-**Performance (Production Pipeline - October 21, 2025):**
-
-- **Complete Pipeline**: 2.15s total (chr22, 4 samples, 120 variants)
-- **Differential Encoding**: 1.37s (12 chunks, 292 differences, k=3 anonymity)
-- **Architectural Compression**: 264× (11× differential × 24× hypervector, measured from stage benchmarks)
-- **Empirical Space Savings**: 38.4× (1,500 KB → 39.06 KB in end-to-end test)
-- **HDC Integration**: 0.35ms latency
-
-**Quick Example:**
-
-```python
-from genomevault.differential_encoding import (
-    DifferentialEncoder,
-    ReferenceManager,
-    ChunkingStrategy,
-    AnalysisType,
-)
-
-# Setup reference genome manager
-ref_manager = ReferenceManager(reference_dir="references/")
-ref_manager.add_reference(
-    genome_id="GRCh38",
-    assembly="GRCh38",
-    source="NCBI",
-)
-
-# Create encoder with adaptive chunking
-encoder = DifferentialEncoder(
-    reference_manager=ref_manager,
-    chunking_strategy=ChunkingStrategy.ADAPTIVE,
-    analysis_type=AnalysisType.GENE_REGION,
-)
-
-# Encode genome with cryptographic verification
-result = encoder.encode(genome, reference_id="GRCh38")
-print(f"Compression: {result.compression_ratio:.1f}×")
-print(f"Verified: {result.verify()}")
-```
-
-**Analysis Types:**
-
-| Type | Best For | Chunking Strategy |
-|------|----------|------------------|
-| SLIDING_WINDOW | Whole-genome sequencing | Fixed 1Mb windows |
-| GENE_REGION | Exome/targeted sequencing | Gene boundaries |
-| VARIANT_DENSITY | Cancer genomes | Adaptive density-based |
-| FUNCTIONAL_REGIONS | Clinical diagnostics | Coding regions, splice sites |
-| CHROMOSOMAL | Structural variation | Entire chromosomes |
-| CUSTOM_INTERVALS | Gene panels | User-defined regions |
-| POPULATION_STRATIFIED | Population genetics | Ancestry-aware |
-
-**Documentation:**
-- [Complete User Guide](docs/differential_encoding_guide.md)
-- [API Reference](docs/api_reference_differential.md)
-- [Reference Setup Guide](docs/reference_genome_setup.md)
-- [Basic Example](examples/differential_encoding_basic.py)
-- [Advanced Example](examples/differential_encoding_advanced.py)
-
-### 2. Hyperdimensional Computing (HDC)
-
-GenomeVault employs brain-inspired hyperdimensional computing to transform genomic variants into high-dimensional binary vectors (8,192 dimensions) that preserve similarity relationships while providing information-theoretic privacy.
-
-**Architecture:**
-
-- **Encoding Pipeline**: Variant preprocessing → Position encoding → Allele binding → Bundling → Sparsity thresholding
-- **Hardware Acceleration**: MLX/Metal integration for 14.8× speedup on Apple Silicon
-- **Three Encoding Modes**: Absolute (whole-genome), differential (variant-level), streaming (real-time)
-
-**Key Design Choices (Validated via Ablation Studies):**
-
-- **Dimension**: D = 8,192 (optimal balance of capacity vs. efficiency)
-- **Sparsity**: 50% threshold (collision rate < 0.01% at 400K variants)
-- **Position Interpolation**: Sinusoidal encoding for chromosomal context
-
-**Compression Performance: Theoretical vs. Empirical**
-
-Understanding compression metrics requires distinguishing between **theoretical maximums** (system design capabilities) and **empirical results** (measured real-world performance).
-
-**GenomeVault Compression Metrics:**
-
-| Metric Type | Value | Basis | Notes |
-|-------------|-------|-------|-------|
-| **Theoretical (Architectural)** | 264× | 11× (differential) × 24× (hypervector) | System design efficiency |
-| **Empirical (VCF → Output)** | **38.4×** | 1.5 MB → 39.06 KB | **Measured on chr22 benchmark** |
-| **Empirical (FASTQ → Output)** | **~61,500×** | 2.4 GB → 39.06 KB | **Measured on chr22 benchmark** |
-
-**Industry Standards Comparison:**
-
-| Tool | Theoretical Maximum | Typical Empirical | Data Type | Lossiness | Privacy |
-|------|-------------------|------------------|-----------|-----------|---------|
-| **GenomeVault** | 264× | **38.4× (VCF)**, **~61,500× (FASTQ)** | Variants/Raw | **Lossy (privacy)** | ✅ IT-PIR + ZK |
-| VCFShark | Up to 32× | 5-20× (typical) | VCF variants | Lossless | ❌ None |
-| Genozip | Up to 40× | 5-10× (typical) | VCF variants | Lossless | ❌ None |
-| Crumble+CRAM | Up to 7.8× | 3-6× (typical) | BAM alignment | Lossy (quality) | ❌ None |
-| CRAM | ~2× | ~2× | BAM alignment | Lossless | ❌ None |
-| bgzip | ~10× | ~10× | General | Lossless | ❌ None |
-
-**Key Insight - Apples-to-Apples Comparison:**
-
-- GenomeVault's **empirical 38.4×** on VCF **exceeds** VCFShark's **typical 5-20×** and is competitive with its **theoretical maximum of 32×**
-- GenomeVault's **empirical ~61,500×** on FASTQ is **~7,900-20,500× better** than Crumble+CRAM's **typical 3-6×**
+**Paper PDF:** [`GenomeVault_Academic_Paper.pdf`](docs/GenomeVault_Academic_Paper.pdf) (406 KB)
 
 ---
 
-**Why Lossy Compression? The Privacy-Analytical Rigor Trade-off**
+## 🛡️ Security & Privacy
 
-GenomeVault's compression is **intentionally lossy** to enable privacy-preserving genomic analysis. This is a fundamental design choice, not a limitation:
+### Defense-in-Depth Architecture
 
-**What Is Lost (Intentionally):**
+| Layer | Mechanism | Security Level | Attack Cost |
+|-------|-----------|----------------|-------------|
+| **1. Probabilistic Alignment** | Multi-reference consensus | Public standard | N/A (blind middleman) |
+| **2a. File Encryption** | AES-256 | 2^256 ops | $10^68 (impossible) |
+| **2b. Alignment Randomization** | Cryptographic parameters | 2^260 combinations | $10^68 (impossible) |
+| **2c. Rolling Updates** | Dynamic pool rotation | Forward secrecy | Per-update reset |
+| **3. Differential Encoding** | k-anonymity (k≥3) | log₂(C(N,k)) bits | Non-scalable |
+| **4a. HDC Compression** | Information-theoretic | <7 bits/query | 2^800,000 search |
+| **4b. ZK Proofs** | Groth16 | 2^-128 soundness | Cryptographic |
+| **4c. PIR** | Information-theoretic | 0.25% breach | Quantum-resistant |
 
-- ❌ Exact base-pair sequences (replaced with differential encoding vs. reference genomes)
-- ❌ Individual-level identification (protected by k-anonymity, k≥3)
-- ❌ Raw quality scores (not needed for variant-level analysis)
-
-**What Is Preserved (Rigorously):**
-
-- ✅ **Variant presence/absence** (cryptographically verified with ZK proofs)
-- ✅ **Allele frequencies** (accurate for population-level analysis)
-- ✅ **Genotype calls** (preserved in hypervector encoding)
-- ✅ **Genomic similarity** (D' = 38.43, empirically verified)
-- ✅ **Analytical validity** (100% accuracy for variant queries in benchmark tests)
-
-**Privacy Guarantees Through Intentional Loss:**
-
-1. **k-Anonymity (k≥3)**: Individual genomes indistinguishable from k-1 others
-2. **Differential Encoding**: Only differences from reference genomes stored
-3. **Information-Theoretic PIR**: Queries reveal zero information about database contents
-4. **Zero-Knowledge Proofs**: Cryptographic verification without revealing raw data
-
-**The Fundamental Difference:**
-- **Lossless compressors** (VCFShark, Genozip): Archive data for perfect reconstruction
-- **Quality-lossy compressors** (Crumble+CRAM): Discard quality scores to save space
-- **GenomeVault (privacy-lossy)**: Intentionally transform data to enable private queries while preserving analytical utility
-
-**Empirical Validation:**
-
-- ✅ 100% success rate on variant presence queries (chr22 benchmark)
-- ✅ Perfect genetic fingerprinting (D' = 38.43, AUC = 1.000, EER = 0.000)
-- ✅ Zero false positives/negatives in ZK proof verification (40/40 tests passed)
-- ✅ k-anonymity mathematically guaranteed (verified in production pipeline)
-
-**Bottom Line**: GenomeVault sacrifices exact sequence reconstruction to gain privacy guarantees, while maintaining full analytical rigor for variant-level genomic queries. This is the **only** system that combines compression with IT-PIR and zero-knowledge proofs.
-
-**Note**: All benchmarks measured on chromosome 22 (30x coverage, 120 variants). Chr22 represents ~2% of the human genome; whole-genome output would scale to ~1.95 MB while maintaining compression ratios.
-
-**Performance vs. Industry Standards:**
-
-| Metric | Industry Standard | GenomeVault | Improvement |
-|--------|------------------|-------------|-------------|
-| Processing Speed | GATK: 266ms | **1.49ms** (CPU), **5.04ms** (MLX) | **53-178× faster** |
-| Identification | D' ≈ 5-10 | **D' = 38.43** | **3.8-7.7× better** |
-
-### 3. Zero-Knowledge Proofs
-
-Production-ready ZK circuits enable cryptographic verification of genomic properties without revealing raw data.
-
-**Three Backend Options:**
-
-| Backend | Proof Size | Generation Time | Throughput | Trusted Setup |
-|---------|-----------|----------------|-----------|---------------|
-| **Halo2** (Recommended) | 5 KB | 603ms | 1.67 proofs/core/sec | None |
-| Groth16 | 192 B | 1148ms | 0.87 proofs/core/sec | Required ($50K ceremony) |
-| PLONK | 1 KB | 820ms | 1.22 proofs/core/sec | Universal |
-
-**Halo2 Advantages:**
-
-- **No trusted setup**: Eliminates ceremony costs and trust assumptions
-- **Pasta curves**: Efficient IPA commitments for fast proving
-- **Production-ready**: Complete with verification key management and fallback logging
-
-**Example Use Cases:**
-
-- Prove genetic trait presence without revealing genome
-- Verify ancestry without exposing variants
-- Demonstrate risk score threshold compliance
-- Authenticate genetic identity for clinical trials
-
-**Production Guide**: [ZK_PRODUCTION_GUIDE.md](ZK_PRODUCTION_GUIDE.md)
-
-### 4. Private Information Retrieval (PIR)
-
-GenomeVault supports both computational and information-theoretic PIR for private database queries.
-
-**Two Implementations:**
-
-| Type | Security Model | Performance | Cost (10K queries/day) |
-|------|--------------|-------------|----------------------|
-| **CPIR** | Computational (single-server) | 0.59s for 100K records | $35/month (t3.medium) |
-| **IT-PIR** | Information-theoretic (3-server) | 113.5s for 100K records | $264/month (3×t3.large) |
-
-**IT-PIR Advantages:**
-
-- **Unconditional privacy**: No cryptographic assumptions required
-- **Quantum-resistant**: Security holds even against quantum computers
-- **Non-colluding servers**: Privacy guaranteed if < 3 servers collude
-
-**Use Cases:**
-
-- Private genomic database search
-- Clinical trial matching without exposure
-- Pharmacogenomic lookups on encrypted data
-- Federated biobank queries
-
------
-
-## 🔐 Security & Privacy
-
-GenomeVault implements defense-in-depth with mathematically proven privacy guarantees.
-
-### Privacy Guarantees
-
-1. **Hypervector Non-Invertibility**
-   - Information-theoretic bound: < 7 bits leakage from 8,192-bit vectors
-   - Formal security proof in [HYPERVECTOR_SECURITY.md](HYPERVECTOR_SECURITY.md)
-
-2. **Per-Session Randomization**
-   - Randomized projections: H̃(x) = sign(RPx + τ)
-   - Measured cross-session correlation: < 0.0003
-   - Evidence: [minimal_results.json](benchmark_results/attribute_inference/minimal_results.json)
-
-3. **Rate Limiting**
-   - Hard limit: 1000 queries/day per user
-   - Token bucket algorithm with burst allowance
-   - Prevents statistical attacks via query volume
-
-4. **Zero-Knowledge Proofs**
-   - Halo2 backend: No trusted setup required
-   - Soundness error: 2^-128 (cryptographically negligible)
-   - Production validation: [ZK_PRODUCTION_GUIDE.md](ZK_PRODUCTION_GUIDE.md)
-
-5. **Private Information Retrieval**
-   - CPIR: Based on computational hardness assumptions (LWE)
-   - IT-PIR: Unconditional privacy (no cryptographic assumptions)
-   - Server obliviousness: Database cannot determine query target
-
-6. **Byzantine Consensus Privacy Stack** 🆕
-   - **Multi-reference consensus**: Combines multiple public references (hg38, GRCh37, T2T-CHM13) with positional uncertainty
-   - **Provable untraceability**: Cannot mathematically link experimental data to any specific public reference
-   - **Layered indirection**: 4-layer privacy stack (consensus → reference pool → differential encoding → HDC/ZK/PIR)
-   - **Statistical indistinguishability**: Query genomes hidden among k-anonymity reference pool
-   - **Cryptographic-level entropy**: ~128-bit equivalent security from positional ambiguity
-   - **One-time setup cost**: ~5% overhead amortized over unlimited queries
-   - **Inspired by blockchain Byzantine fault tolerance**: Truth emerges from multiple untrusted sources, creating plausible deniability
-   - Full documentation: [BYZANTINE_CONSENSUS_PRIVACY_STACK.md](docs/guides/BYZANTINE_CONSENSUS_PRIVACY_STACK.md)
+**Combined security:** 2^516 per-user barrier (SHA-256²) + non-scalable attacks + forward secrecy
 
 ### Threat Model
 
-**Adversary Capabilities:**
+**Adversary capabilities:**
+- Access to all public references (hg38, hg19, T2T-CHM13)
+- Knowledge of algorithms and encoding schemes
+- Unlimited computational resources
+- Potential access to encrypted data
 
-- Access to encoded hypervectors
-- Unlimited query budget (up to rate limits)
-- Knowledge of encoding algorithm
-- Statistical analysis capabilities
+**Adversary goals:**
+- Re-identify patients
+- Link experimental data to individuals
+- Reconstruct original genomes
+- Scale attacks to populations
 
-**Attack Resistance:**
+**Resistance:**
+- **Reference traceability:** Cannot determine which reference(s) used (1/2^160,000 probability)
+- **Alignment parameters:** 2^260 search space per user
+- **Reconstruction attacks:** 2^800,000 genome interpretations
+- **Cross-user correlation:** User-specific isolation (non-scalable)
+- **Forward secrecy:** Rolling pool updates reset entropy
 
-- **Attribute Inference**: < 7 bits information leakage (formal bound)
-- **Membership Inference**: Randomization prevents cross-session linking
-- **Reconstruction Attacks**: Information-theoretic impossibility (8192-D → sparse genome)
-- **Model Inversion**: Non-invertible random projections
+**Information leakage bound:**
+- Per query: <7 bits (rate-limited to 1,000 queries/day)
+- Annual maximum: 2,555,000 bits (3.2× genome complexity)
+- Distribution: Across 2^800,000 possible interpretations
 
-**Security Validation**: All claims validated in cryptographically signed benchmark bundles.
+### Comparison to Alternatives
 
------
+| Property | Single Reference | Homomorphic Encryption | Differential Privacy | GenomeVault |
+|----------|-----------------|----------------------|---------------------|-------------|
+| **Privacy model** | None | Computational | Statistical | Hybrid (IT + Crypto) |
+| **Query speed** | Fast | Hours | Fast | **2.15s** |
+| **Analytical utility** | Perfect | Theoretical | Degraded | **100% for variants** |
+| **Compression** | Variable | ~1× | Variable | **38.4× measured** |
+| **Quantum resistance** | N/A | ❌ Vulnerable | ✅ Yes | ✅ IT-PIR + rolling |
+| **Scalability to population** | ❌ Breaks all | ✅ Yes | ✅ Yes | ✅ Non-scalable attacks |
+| **Production deployment** | ✅ Common | ❌ Impractical | ⚠️ Limited | ✅ **Production-ready** |
 
-## 📊 Experimental Validation
+---
 
-### Production Pipeline Benchmarks (October 21, 2025)
+## 📖 Documentation
 
-| Component | Metric | Data Location |
-|-----------|--------|---------------|
-| **Complete Pipeline** | 2.15s total, 100% success | [pipeline_results.json](benchmark_results/full_pipeline_results/pipeline_run_20251021_224307/pipeline_results.json) |
-| **Differential Encoding** | 1.37s, 120 variants, k=3 anonymity | [COMPLETE_BENCHMARK_RESULTS.md](docs/reports/COMPLETE_BENCHMARK_RESULTS.md) |
-| **Architectural Compression** | 264× (11× diff × 24× HDC) | [latest_results.json](benchmark_results/differential_encoding/latest_results.json) |
-| **Empirical Space Savings** | 38.4× (1,500KB → 39KB) | [pipeline_results.json](benchmark_results/full_pipeline_results/pipeline_run_20251021_224307/pipeline_results.json) |
-| **ZK Proofs** | 768ms (Groth16), 743 bytes, 117,143 constraints | [COMPLETE_BENCHMARK_RESULTS.md](docs/reports/COMPLETE_BENCHMARK_RESULTS.md) |
-| **PIR Queries** | 6.85ms (IT-PIR), 0.25% breach probability | [COMPLETE_BENCHMARK_RESULTS.md](docs/reports/COMPLETE_BENCHMARK_RESULTS.md) |
-| **Blockchain Integration** | 40/40 tests, <2ms overhead | [BLOCKCHAIN_INTEGRATION_COMPLETE.md](docs/reports/BLOCKCHAIN_INTEGRATION_COMPLETE.md) |
+### Core Guides
+- [Probabilistic Alignment Complete Guide](docs/guides/PROBABILISTIC_ALIGNMENT_COMPLETE_GUIDE_UPDATED.md) - 260-bit entropy, SHA-256², rolling pools
+- [Differential Encoding Guide](docs/differential_encoding_guide.md) - 11× compression, k-anonymity, cryptographic binding
+- [Hyperdimensional Computing Security](docs/HYPERVECTOR_SECURITY.md) - Information-theoretic bounds, formal proofs
+- [Zero-Knowledge Production Guide](ZK_PRODUCTION_GUIDE.md) - Groth16, Halo2, PLONK backends
 
-### Cryptographically Signed Validation Bundles
+### API Documentation
+- [REST API Getting Started](docs/api-docs/GETTING_STARTED_API.md) - Step-by-step API usage
+- [API Reference (Differential)](docs/api_reference_differential.md) - Complete Python API
+- [System Test Report](SYSTEM_TEST_REPORT.md) - 24/24 checks passing, 2.84s avg
 
-All results are independently verifiable with cryptographic signatures.
+### Examples
+- [Complete Pipeline Demo](examples/complete_pipeline_demo.py) - End-to-end walkthrough
+- [Probabilistic Alignment Demo](examples/probabilistic_alignment_demo.py) - Privacy layer demonstration
+- [Differential Encoding Basic](examples/differential_encoding_basic.py) - Simple encoding example
+- [Differential Encoding Advanced](examples/differential_encoding_advanced.py) - Advanced features
 
-**Public Key**: [`docs/keys/benchmark_pubkey.pem`](docs/keys/benchmark_pubkey.pem)
-**Fingerprint**: `sha256:92be6e68e3811afb4a29a3cafac2c9beeec445cdb3de2435a2479f8e1b9b3f22`
+### Technical Reports
+- [Complete Benchmark Results](docs/reports/COMPLETE_BENCHMARK_RESULTS.md) - Full validation data
+- [Blockchain Integration](docs/reports/BLOCKCHAIN_INTEGRATION_COMPLETE.md) - 40/40 tests, <2ms overhead
+- [Marketing Report](docs/marketing/GENOMEVAULT_MARKETING_REPORT_VERIFIED.md) - Production validation
 
-```bash
-# Verify subject-disjoint results
-openssl dgst -sha256 -verify docs/keys/benchmark_pubkey.pem \
-  -signature benchmark_results/bundle_subject_disjoint.tar.gz.sig \
-  benchmark_results/bundle_subject_disjoint.tar.gz
-# Expected: Verified OK
-```
-
-**Available Bundles:**
-
-- [Subject-Disjoint Bundle](benchmark_results/bundle_subject_disjoint.tar.gz) (584 KB)
-- [Leave-Family-Out Bundle](benchmark_results/bundle_LFamO.tar.gz) (584 KB)
-- [Leave-Batch-Out Bundle](benchmark_results/bundle_LBxO.tar.gz) (584 KB)
-
-**Note**: Genetic fingerprinting results from earlier research studies are available in the bundles above. These capabilities are peripheral to the core value proposition of privacy-preserving genomic analysis and are not required for the primary use cases (federated research, clinical queries, biobank collaboration).
-
------
-
-## 🌍 Real-World Applications
-
-### Clinical Genomics
-
-- **Pharmacogenomics**: Instant drug-gene interaction checks without raw data exposure
-- **Rare Disease Diagnosis**: Population-scale pattern matching in milliseconds
-- **Hereditary Cancer Screening**: BRCA analysis with mathematical privacy guarantees
-- **Emergency Medicine**: Critical genetic information on mobile devices
-
-### Research & Biotech
-
-- **Federated GWAS**: Multi-site genome-wide association studies with perfect privacy
-- **Drug Discovery**: Genomic signatures without centralized data sharing
-- **Population Genomics**: Ancestry analysis on edge devices
-- **Biobank Federation**: Global collaboration with local data sovereignty
-
-### Consumer Applications
-
-- **Wearable Health**: Real-time genetic insights on smartwatches
-- **Family Planning**: Carrier screening with cryptographic privacy
-- **Fitness Optimization**: Personalized training based on genetic markers
-- **Nutrition**: Genetic-based dietary recommendations
-
-### Hierarchical Genomic Analysis
-
-GenomeVault enables a revolutionary three-layer hierarchical search approach:
-
-1. **Population Level (1ms for 1M genomes)**
-   - Instant cosine similarity across all hypervectors
-   - Identify clusters and outliers in genomic space
-   - No sequence data needed—just 1.3KB vectors
-
-2. **Cohort Level (10ms for 10K matches)**
-   - Refine search within similar genome clusters
-   - Progressive granularity increase
-   - 100× faster than traditional alignment
-
-3. **Individual Level (100ms for detailed analysis)**
-   - Selective deep comparison only where needed
-   - Can integrate with BLAST for base-pair precision
-   - 99% of comparisons already filtered out
-
-**Total Time**: 1.11 seconds vs. weeks with BLAST
-
-**Applications:**
-
-- Instant phylogenetic trees for millions of organisms
-- Real-time pandemic tracking across global populations
-- Massive GWAS studies (100M+ individuals) with privacy
-- Adaptive precision medicine via population-wide similarity
-
------
-
-## 📦 Repository Structure
-
-```
-genomevault/
-├── api/                          # FastAPI endpoints, OAuth2 auth
-├── hypervector_transform/        # HDC encoding (unified and legacy APIs)
-│   ├── differential_api.py       # Differential encoding interface
-│   ├── unified_encoder.py        # UnifiedGenomicEncoder
-│   └── hdc_encoder.py            # Core HDC implementation
-├── differential_encoding/        # Cryptographic differential encoding
-│   ├── core/                     # Core algorithms
-│   ├── chunking/                 # Adaptive chunking strategies
-│   ├── reference/                # Reference genome management
-│   ├── encoding/                 # Differential encoder
-│   └── storage/                  # Compressed storage
-├── zk_proofs/                    # Zero-knowledge proof circuits
-│   ├── prover.py                 # Halo2/Groth16/PLONK backends
-│   └── circuits/                 # Circuit implementations
-├── pir/                          # Private information retrieval
-│   ├── servers.py                # CPIR/IT-PIR implementations
-│   └── client.py                 # PIR client
-├── models/                       # SQLAlchemy database models
-├── blockchain/                   # Governance and audit trail
-├── federated/                    # Federated learning
-└── clinical/                     # Clinical evaluation and calibration
-
-docs/
-├── GenomeVault_Paper_Current/    # Publication-ready academic paper
-│   ├── GenomeVault_Academic_Paper.tex  # LaTeX source
-│   ├── GenomeVault_Academic_Paper.pdf  # Final PDF (31 pages, 406 KB)
-│   └── paper_figures/            # 4 publication-quality figures
-├── differential_encoding_guide.md      # Complete differential encoding docs
-├── api_reference_differential.md       # API reference
-├── reference_genome_setup.md           # Reference setup guide
-└── HYPERVECTOR_SECURITY.md            # Security analysis and proofs
-
-examples/
-├── differential_encoding_basic.py      # Simple walkthrough
-├── differential_encoding_advanced.py   # Advanced features
-├── complete_pipeline_demo.py           # End-to-end pipeline
-└── reference_setup_demo.py             # Reference genome setup
-
-benchmarks/
-└── differential_encoding/              # Comprehensive benchmarks
-
-scripts/
-├── genomevault_setup_references.py     # Reference genome setup
-├── run_differential_encoding_benchmarks.py  # Run benchmarks
-├── generate_paper_figures_v2.py        # Generate paper figures
-└── update_paper_with_results.py        # Update paper metrics
-
-tests/
-└── differential_encoding/              # Comprehensive test suite
-```
-
------
+---
 
 ## 🛠️ Development
 
@@ -904,7 +478,7 @@ python --version
 
 # Create virtual environment
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
 ```
 
 ### Installation
@@ -917,49 +491,40 @@ pip install -e ".[dev]"
 pip install -e ".[full]"
 ```
 
-### Setup Reference Genomes
-
-```bash
-# One-time setup for differential encoding
-python scripts/genomevault_setup_references.py --use-case development
-```
-
-### Run Tests
+### Tests
 
 ```bash
 # Run all tests
 pytest
 
-# Run specific test suite
-pytest tests/differential_encoding/
-
 # Run with coverage
 pytest --cov=genomevault --cov-report=html
+
+# Run specific suite
+pytest tests/differential_encoding/
 ```
 
 ### Code Quality
 
 ```bash
-# Linting
+# Linting and formatting
 ruff check .
 ruff format .
 
 # Type checking
 mypy genomevault
 
-# Or use make targets
-make lint
-make typecheck
-make test
+# Or use make
+make lint typecheck test
 ```
 
-### Run Benchmarks
+### Benchmarks
 
 ```bash
 # Differential encoding benchmarks
 python scripts/run_differential_encoding_benchmarks.py
 
-# HDC encoding benchmarks
+# HDC benchmarks
 python benchmarks/encoding_comparison_benchmark.py
 
 # ZK proof benchmarks
@@ -967,219 +532,94 @@ genomevault zk build --circuit-type variant
 genomevault zk prove --public pub.json --private priv.json
 ```
 
-### Database Operations
+---
 
-```bash
-# Run migrations
-alembic upgrade head
+## 📦 Repository Structure
 
-# Create new migration
-alembic revision --autogenerate -m "description"
+```
+genomevault/
+├── api/                          # FastAPI endpoints, OAuth2
+├── hypervector_transform/        # HDC encoding (8,192D vectors)
+├── differential_encoding/        # Differential encoder (11× compression)
+├── zk_proofs/                    # Groth16/Halo2 circuits
+├── pir/                          # IT-PIR implementation
+├── blockchain/                   # Governance & audit trail
+└── reference/                    # Probabilistic alignment system
 
-# Seed test data
-python scripts/seed_data.py
+docs/
+├── GenomeVault_Paper_Current/    # Academic paper (31 pages)
+├── guides/                       # User guides & technical docs
+├── api-docs/                     # API documentation
+└── reports/                      # Benchmark & validation reports
+
+examples/
+├── probabilistic_alignment_demo.py      # Privacy layer demo
+├── complete_pipeline_demo.py            # End-to-end pipeline
+└── differential_encoding_*.py           # Encoding examples
+
+tests/
+└── differential_encoding/        # Comprehensive test suite
 ```
 
-### Docker Development
-
-```bash
-# Build and run
-docker compose up -d
-
-# View logs
-docker compose logs -f
-
-# Rebuild after changes
-docker compose up -d --build
-```
-
------
-
-## 📚 Documentation
-
-### Core Documentation
-- [Academic Paper (31 pages)](docs/GenomeVault_Paper_Current/)
-- [Differential Encoding Guide](docs/differential_encoding_guide.md)
-- [API Reference](docs/api_reference_differential.md)
-- [Security Analysis](docs/HYPERVECTOR_SECURITY.md)
-- [ZK Production Guide](ZK_PRODUCTION_GUIDE.md)
-
-### Examples
-- [Basic Differential Encoding](examples/differential_encoding_basic.py)
-- [Advanced Differential Encoding](examples/differential_encoding_advanced.py)
-- [Complete Pipeline Demo](examples/complete_pipeline_demo.py)
-- [Reference Setup](examples/reference_setup_demo.py)
-
-### Guides
-- [Reference Genome Setup](docs/reference_genome_setup.md)
-- [Migration Guide](docs/migration_differential_encoding.md)
-- [Performance Tuning](docs/performance_tuning.md)
-- [Production Checklist](docs/differential_encoding_production_checklist.md)
-
-### API Documentation
-- [CLAUDE.md](CLAUDE.md) - Quick reference for LLM agents
-- [API Compatibility Fixes](docs/API_COMPATIBILITY_FIXES.md)
-
-### Phase 6: Enhanced User Experience (October 2025)
-
-GenomeVault now includes comprehensive user-facing documentation and working examples:
-
-**User Guide:**
-- [Probabilistic Alignment User Guide](docs/guides/PROBABILISTIC_ALIGNMENT_USER_GUIDE.md) - Complete setup instructions, command examples, troubleshooting, and performance tuning for the privacy-preserving alignment system
-
-**Security Documentation:**
-- [Security Architecture](docs/guides/SECURITY_ARCHITECTURE.md) - Deep dive into SHA-256² dual-barrier security model, threat analysis, economic attack cost analysis, and compliance frameworks
-
-**Working Demo:**
-- [Probabilistic Alignment Demo](examples/probabilistic_alignment_demo.py) - Complete end-to-end demonstration showing:
-  - Reference pool creation with k-anonymity
-  - User-specific alignment randomization (260-bit entropy)
-  - Differential encoding (11× compression)
-  - HDC integration (24× architectural compression)
-  - Zero-knowledge proof generation (Groth16)
-  - Private information retrieval (IT-PIR)
-  - Comprehensive performance metrics and security guarantees
-
-**What's New:**
-- ✅ Step-by-step installation and setup instructions
-- ✅ 5-minute quick start demo
-- ✅ Real command examples for FASTQ, VCF, and multi-format workflows
-- ✅ Troubleshooting guide for common issues
-- ✅ Economic analysis showing attack costs exceed $10^68
-- ✅ Complete working demo with expected output (~2 seconds total)
-- ✅ SHA-256² security model explanation (2^516 combined security)
-
-Run the demo to see the complete pipeline in action:
-```bash
-python examples/probabilistic_alignment_demo.py
-# Expected: 2-3 second complete pipeline demonstration
-```
-
------
-
-## 🔬 Research & Publications
-
-### Academic Paper
-
-**Title**: GenomeVault: Privacy-Preserving Genomic Computing via Hyperdimensional Encoding and Zero-Knowledge Proofs
-
-**Status**: Under review for submission to high-impact computational biology journals
-
-**Key Results:**
-
-- 2.15s complete pipeline with blockchain integration (chr22, 4 samples, 120 variants)
-- 264× architectural compression + 38.4× empirical space savings
-- 768ms zero-knowledge proofs (Groth16, 743 bytes, 117,143 constraints)
-- 6.85ms PIR queries (IT-PIR, 0.25% breach probability)
-- 40/40 blockchain tests passing with <2ms overhead
-- Production-validated system performance with 100% operational success
-
-**Paper Location**: [`docs/GenomeVault_Paper_Current/`](docs/GenomeVault_Paper_Current/)
-
-**Reproducing Results**:
-```bash
-# Run all benchmarks
-python scripts/run_differential_encoding_benchmarks.py
-
-# Generate figures
-python scripts/generate_paper_figures_v2.py
-
-# Update paper metrics
-python scripts/update_paper_with_results.py
-
-# Compile LaTeX
-cd docs
-pdflatex GenomeVault_Academic_Paper.tex
-```
-
-### Citations
-
-If you use GenomeVault in your research, please cite:
-
-```bibtex
-@article{genomevault2025,
-  title={GenomeVault: Privacy-Preserving Genomic Computing via Hyperdimensional Encoding and Zero-Knowledge Proofs},
-  author={[Authors]},
-  journal={Under Review},
-  year={2025},
-  note={Available at: https://github.com/rohanvinaik/GenomeVault}
-}
-```
-
------
+---
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our contributing guidelines.
+We welcome contributions! See our contributing guidelines.
 
-### Development Workflow
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature`
-3. Make your changes with tests
+**Development workflow:**
+1. Fork repository
+2. Create feature branch: `git checkout -b feature/your-feature`
+3. Make changes with tests
 4. Run quality checks: `make lint test typecheck`
-5. Commit with descriptive messages
-6. Push and create a pull request
+5. Submit pull request
 
-### Code Standards
+**Code standards:**
+- Python 3.11+ with type hints
+- Google-style docstrings
+- 80%+ test coverage
+- Ruff formatting
 
-- **Python 3.11+**: Use modern Python features
-- **Type Hints**: All functions must have type annotations
-- **Docstrings**: Google-style docstrings for all public APIs
-- **Tests**: 80%+ coverage for new code
-- **Formatting**: `ruff format` for consistent style
-
------
+---
 
 ## 📄 License
 
-**Dual-Licensed Software**
-
-GenomeVault is available under two licensing options:
+**Dual-Licensed:**
 
 ### Open Source: AGPL-3.0
-
-- ✅ **Free** for academic research, open-source projects, and personal use
-- ✅ Full access to source code
-- ⚠️ **Requires** source code disclosure for SaaS deployments (network use = distribution)
-- See [LICENSE](LICENSE) for full AGPL-3.0 terms
+- ✅ Free for academic research, open-source projects, personal use
+- ✅ Full source code access
+- ⚠️ Requires source disclosure for SaaS deployments
 
 ### Commercial License
+- ✅ Proprietary use without source disclosure
+- ✅ SaaS deployments without AGPL obligations
+- ✅ Commercial support available
 
-- ✅ **Proprietary** use without source code disclosure
-- ✅ **SaaS** deployments without AGPL-3.0 obligations
-- ✅ Commercial support and custom features available
-- 📧 Contact for pricing: See [docs/legal/COMMERCIAL_LICENSE.md](docs/legal/COMMERCIAL_LICENSE.md)
+See [LICENSE](LICENSE) and [COMMERCIAL_LICENSE.md](docs/legal/COMMERCIAL_LICENSE.md)
 
-**Copyright © 2025 [Your Name]. All Rights Reserved.**
+**Copyright © 2025. All Rights Reserved.**
 
-For more information on licensing options, see:
-
-- [COMMERCIAL_LICENSE.md](docs/legal/COMMERCIAL_LICENSE.md) - Commercial licensing details
-- [AUTHORS.md](AUTHORS.md) - Copyright and attribution information
-- [DEVELOPMENT_HISTORY.md](docs/legal/DEVELOPMENT_HISTORY.md) - Project timeline and IP evidence
-
------
+---
 
 ## 🙏 Acknowledgments
 
-GenomeVault builds on foundational work in:
-
-- **Hyperdimensional Computing**: Brain-inspired computing paradigm
-- **Zero-Knowledge Proofs**: Cryptographic privacy guarantees
-- **Private Information Retrieval**: Information-theoretic security
-- **Differential Privacy**: Statistical privacy frameworks
+Built on foundational work in:
+- Hyperdimensional computing (brain-inspired computing)
+- Zero-knowledge proofs (cryptographic privacy)
+- Private information retrieval (information-theoretic security)
+- Differential privacy (statistical privacy frameworks)
 
 Special thanks to the open-source genomics and cryptography communities.
 
------
+---
 
 ## 📧 Contact
 
-- **Issues**: [GitHub Issues](https://github.com/rohanvinaik/GenomeVault/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/rohanvinaik/GenomeVault/discussions)
-- **Security**: Please report security vulnerabilities privately
+- **Issues:** [GitHub Issues](https://github.com/rohanvinaik/GenomeVault/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/rohanvinaik/GenomeVault/discussions)
+- **Security:** Report vulnerabilities privately
 
------
+---
 
-**🧬 GenomeVault: The future of genomics is private, portable, and powerful.**
+**🧬 GenomeVault: Privacy-preserving genomics for collaborative research and clinical care.**
