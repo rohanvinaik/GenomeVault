@@ -116,14 +116,36 @@ class PipelineMonitor:
                             if len(cmd) > 100:
                                 cmd = cmd[:97] + "..."
 
+                            # Get detailed timing info (elapsed time, CPU time)
+                            pid = int(fields[1])
+                            try:
+                                time_result = subprocess.run(
+                                    f"ps -p {pid} -o etime,cputime",
+                                    shell=True,
+                                    capture_output=True,
+                                    text=True
+                                )
+                                time_lines = time_result.stdout.strip().split('\n')
+                                if len(time_lines) > 1:
+                                    time_fields = time_lines[1].split()
+                                    elapsed_time = time_fields[0] if len(time_fields) > 0 else "0:00"
+                                    cpu_time = time_fields[1] if len(time_fields) > 1 else "0:00"
+                                else:
+                                    elapsed_time = fields[9]
+                                    cpu_time = fields[9]
+                            except:
+                                elapsed_time = fields[9]
+                                cpu_time = fields[9]
+
                             subprocesses.append({
                                 'tool': tool,
-                                'pid': int(fields[1]),
+                                'pid': pid,
                                 'cpu_percent': float(fields[2]),
                                 'mem_percent': float(fields[3]),
                                 'mem_gb': float(fields[3]) / 100 * self._get_total_memory_gb(),
                                 'state': fields[7],
-                                'time': fields[9],
+                                'elapsed_time': elapsed_time,
+                                'cpu_time': cpu_time,
                                 'command': cmd
                             })
             except:
@@ -317,8 +339,10 @@ class PipelineMonitor:
                 icon = "⚡" if proc['cpu_percent'] > 100 else "🔄"
                 print(f"{icon} {proc['tool'].upper():<12} PID {proc['pid']:<7} "
                       f"CPU: {proc['cpu_percent']:>6.1f}%  "
-                      f"Mem: {proc['mem_gb']:>5.2f}GB  "
-                      f"Time: {proc['time']}")
+                      f"Mem: {proc['mem_gb']:>5.2f}GB")
+                print(f"   └─ Elapsed: {proc['elapsed_time']:<12} "
+                      f"CPU Time: {proc['cpu_time']:<12} "
+                      f"(~{proc['cpu_percent']/100:.1f}× parallelization)")
 
             print()
         else:
@@ -355,7 +379,16 @@ class PipelineMonitor:
 
             # Show temporary files (work in progress)
             if progress.get('temp_files'):
-                print(f"  Temp Files: {len(progress['temp_files'])} files being created")
+                num_temp = len(progress['temp_files'])
+                print(f"  Temp Files: {num_temp} files being created")
+
+                # Estimate progress based on typical temp file count
+                # samtools typically creates ~30-40 temp files for whole genome
+                if num_temp > 0:
+                    estimated_total_temp = 35  # typical for whole genome
+                    estimated_progress = min(95, (num_temp / estimated_total_temp) * 100)
+                    print(f"  Estimated:  ~{estimated_progress:.0f}% complete (based on temp file count)")
+
                 for temp in progress['temp_files'][:3]:
                     print(f"              - {temp['name']}: {self.format_bytes(temp['size'])}")
                 if len(progress['temp_files']) > 3:
