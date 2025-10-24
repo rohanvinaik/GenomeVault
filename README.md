@@ -504,6 +504,36 @@ python examples/probabilistic_alignment_demo.py
 # Expected: ~2 second complete pipeline with security metrics
 ```
 
+### Option 4: Clinical Variant Database
+
+Query clinically-relevant variants (ClinVar) while maintaining privacy:
+
+```bash
+# Build ClinVar database (pathogenic variants only, ~15 min)
+python -m genomevault.clinical_db.data_acquisition \
+    --genome-build GRCh38 \
+    --output-dir data \
+    --pathogenic-only \
+    --min-stars 1
+
+# Query specific variant (e.g., Sickle Cell rs334)
+python -m genomevault.cli.clinical_query_cli query-position --chr chr11 --pos 5227002
+
+# Query gene (e.g., BRCA1)
+python -m genomevault.cli.clinical_query_cli query-gene BRCA1
+
+# Database statistics
+python -m genomevault.cli.clinical_query_cli stats
+```
+
+**Database sizes:**
+- Pathogenic-only (1★+): ~45,000 variants, 15 MB
+- High confidence (3★+): ~10,000 variants, 3 MB
+
+**Query performance:** <1ms (O(1) hash index)
+
+See: [CLINICAL_SNP_QUICK_START.md](docs/guides/CLINICAL_SNP_QUICK_START.md)
+
 ---
 
 ## 📊 Academic Paper

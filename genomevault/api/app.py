@@ -51,4 +51,19 @@ try:
 except Exception as e:  # pragma: no cover
     print(f"Warning: Could not import analysis router: {e}")
 
+# Clinical query router - for querying ClinVar database
+try:
+    import genomevault.api.routers.clinical_query as clinical_query
+    app.include_router(clinical_query.router)
+
+    # Initialize clinical database at startup if available
+    @app.on_event("startup")
+    async def startup_clinical_database():
+        try:
+            clinical_query.init_clinical_database("data/clinical_snps_v1.0.0.json.gz")
+        except Exception as e:
+            print(f"Warning: Could not load clinical database: {e}")
+except Exception as e:  # pragma: no cover
+    print(f"Warning: Could not import clinical query router: {e}")
+
 app.add_exception_handler(GVError, gv_error_handler)

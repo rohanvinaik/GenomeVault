@@ -35,6 +35,19 @@ python benchmarks/run_alignment_optimized_pipeline.py --preset production --quic
 uvicorn genomevault.api.app:app --reload --port 8000
 # Access API docs: http://localhost:8000/api/docs
 # See GETTING_STARTED_API.md for API usage guide
+
+# Clinical SNP Database (Query clinically-relevant variants)
+# 1. Build clinical database from ClinVar
+python -m genomevault.clinical_db.data_acquisition \
+    --genome-build GRCh38 \
+    --output-dir data \
+    --pathogenic-only \
+    --min-stars 1
+
+# 2. Query clinical variants
+python -m genomevault.cli.clinical_query_cli query-position --chr chr11 --pos 5227002
+python -m genomevault.cli.clinical_query_cli query-gene BRCA1
+python -m genomevault.cli.clinical_query_cli stats
 ```
 
 ## 📂 Project Structure
@@ -49,12 +62,18 @@ genomevault/
 │   │   ├── probabilistic_alignment_system.py    # Hierarchical SNP classification
 │   │   ├── advanced_indel_detection.py          # Smith-Waterman realignment
 │   │   └── comprehensive_alignment_engine.py    # 7 challenge categories
+│   ├── clinical_db/               # 🩺 Clinical SNP database (ClinVar)
+│   │   ├── database.py            # Query clinical variants
+│   │   └── data_acquisition.py    # Download and build database
 │   ├── hypervector_transform/     # 24× HDC projection
 │   ├── zk_proofs/                 # Zero-knowledge circuits (Halo2/Groth16)
 │   ├── pir/                       # Private information retrieval
 │   ├── blockchain/                # Attestation registry (opt-in)
 │   ├── compute/                   # Hardware abstraction (CPU/Metal/CUDA)
+│   ├── cli/                       # Command-line tools
+│   │   └── clinical_query_cli.py  # Clinical variant queries
 │   └── api/                       # REST API endpoints
+│       └── routers/clinical_query.py  # Clinical variant API
 ├── benchmarks/
 │   ├── run_complete_privacy_pipeline.py  # 🔒 COMPLETE 4-LAYER PIPELINE
 │   ├── run_alignment_optimized_pipeline.py  # ⚡ MAIN BENCHMARK (with QC)
