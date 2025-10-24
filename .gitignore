@@ -1,4 +1,93 @@
+# ===========================================
+# 🔥 CORE ALGORITHMIC IP - DO NOT COMMIT
+# ===========================================
+
+# CRITICAL: Differential Encoding (11× compression breakthrough)
+genomevault/differential_encoding/optimized_sequence_alignment.py
+genomevault/differential_encoding/enhanced_differential_encoding_pipeline.py
+genomevault/differential_encoding/enhanced_pipeline.py
+genomevault/differential_encoding/minimizer_index.py
+genomevault/differential_encoding/bloom_filter_optimization.py
+genomevault/differential_encoding/cached_alignment.py
+genomevault/differential_encoding/blockchain_integration.py
+
+# CRITICAL: Hyperdimensional Computing (24× compression + privacy)
+genomevault/hypervector_transform/hdc_encoder.py
+genomevault/hypervector_transform/unified_encoder.py
+genomevault/hypervector_transform/position_encoding.py
+genomevault/hypervector_transform/collision_optimization.py
+genomevault/hypervector_transform/hardware_acceleration/
+genomevault/hypervector_transform/mlx_backend/
+genomevault/hypervector_transform/backend_adapter.py
+
+# CRITICAL: KAN-HD Breakthrough (10-500× additional compression)
+genomevault/kan/
+genomevault/kan/*.py
+
+# CRITICAL: Zero-Knowledge Proofs & PIR
+genomevault/zk_proofs/circuits/
+genomevault/zk_proofs/groth16_genomic.py
+genomevault/zk_proofs/proof_generation/
+genomevault/zk_proofs/verification_optimized.py
+genomevault/zk_proofs/enhanced_circuit_builder.py
+genomevault/pir/it_pir_protocol.py
+genomevault/pir/information_theoretic_security.py
+genomevault/pir/query_optimization.py
+genomevault/pir/enhanced_pir.py
+
+# CRITICAL: Privacy Architecture (4-layer system)
+genomevault/alignment/probabilistic_aligner.py
+genomevault/alignment/multi_reference_consensus.py
+
+# CRITICAL: Blockchain Consensus (Weighted Byzantine)
+genomevault/blockchain/consensus/
+genomevault/blockchain/contracts/training_attestation.py
+genomevault/blockchain/contracts/royalty_distribution.py
+
+# CRITICAL: Hardware Acceleration
+genomevault/compute/mlx_acceleration.py
+genomevault/compute/metal_kernels/
+genomevault/compute/cuda_implementations/
+genomevault/compute/backend.py
+
+# CRITICAL: Advanced Reference Building
+genomevault/reference/superposition_consensus_builder.py
+genomevault/reference/byzantine_consensus_builder.py
+
+# CRITICAL: Production Configurations
+genomevault/config/compute.yaml
+genomevault/config/blockchain.yaml
+
+# CRITICAL: Sensitive Documentation (implementation details)
+docs/guides/alignment_system_improvements.md
+docs/guides/HYPERVECTOR_SECURITY.md
+docs/guides/BYZANTINE_REFERENCE_ALIGNMENT_SYSTEM.md
+docs/guides/ZK_PRODUCTION_GUIDE.md
+docs/backend_migration_guide.md
+docs/differential_encoding_guide.md
+docs/IMPLEMENTATION_GUIDE_COMPLETE.md
+docs/reports/ALIGNMENT_OPTIMIZATION_RESULTS_SUMMARY.md
+docs/reports/BLOCKCHAIN_INTEGRATION_COMPLETE.md
+docs/reports/COMPLETE_BENCHMARK_RESULTS.md
+docs/reports/OPTIMIZATION_RESULTS_SUMMARY.md
+docs/reports/SYSTEM_TEST_REPORT.md
+
+# CRITICAL: Benchmark Implementations
+benchmarks/differential_encoding/benchmark_end_to_end.py
+benchmarks/run_alignment_optimized_pipeline.py
+benchmarks/run_full_pipeline_with_reference_pool.py
+benchmarks/zk_groth16_benchmark.py
+benchmarks/compression_summary.py
+benchmarks/setup_groth16_enhanced.sh
+
+# CRITICAL: Advanced Examples
+examples/alignment_example.py
+examples/differential_encoding_basic.py
+examples/complete_pipeline_demo.py
+
+# ===========================================
 # Sensitive Data - NEVER COMMIT
+# ===========================================
 keys/
 *.key
 *.pem
