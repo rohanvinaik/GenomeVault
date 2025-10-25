@@ -269,8 +269,10 @@ scripts/monitor_repository_insights.py
 scripts/monitor_github_visitors.py
 scripts/privacy_preserving_insights.py
 scripts/check_privacy_insights_status.sh
+scripts/archive_privacy_insights.py
 scripts/purge_sensitive_files.sh
 repository_insights/
+repository_insights_archive/
 traffic_history/
 
 
