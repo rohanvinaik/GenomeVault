@@ -5,9 +5,10 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%203.0-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Status: Validated](https://img.shields.io/badge/Status-System%20Validated-brightgreen.svg)](benchmark_results/FINAL_VALIDATION_SUMMARY.md)
-![Visitor Count](https://visitor-badge.laobi.icu/badge?page_id=rohanvinaik.GenomeVault)
-![GitHub stars](https://img.shields.io/github/stars/rohanvinaik/GenomeVault?style=social)
-![GitHub forks](https://img.shields.io/github/forks/rohanvinaik/GenomeVault?style=social)
+![Repository Insights](https://komarev.com/ghpvc/?username=rohanvinaik&repo=GenomeVault&label=Repository+Access+Insights&color=brightgreen&style=flat-square)
+![Community Engagement](https://visitor-badge.laobi.icu/badge?page_id=rohanvinaik.GenomeVault&left_text=Community%20Engagement&left_color=blue&right_color=green)
+![GitHub stars](https://img.shields.io/github/stars/rohanvinaik/GenomeVault?style=social&label=Community%20Endorsements)
+![GitHub forks](https://img.shields.io/github/forks/rohanvinaik/GenomeVault?style=social&label=Derivative%20Projects)
 
 **Validated October 2025** | [Academic Paper](docs/GenomeVault_Paper_Current/) | [Quick Start](#-quick-start) | [Full Validation](benchmark_results/GENOMEVAULT_COMPLETE_SYSTEM_VALIDATION_PROOF_PACKAGE.md)
 
