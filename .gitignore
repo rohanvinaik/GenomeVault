@@ -262,10 +262,12 @@ genomevault_*.json
 # Engagement analytics documentation
 docs/REPOSITORY_INSIGHTS_SYSTEM.md
 docs/SECURITY_AND_TRACKING_COMPLETE.md
+docs/PRIVACY_PRESERVING_ANALYTICS_SYSTEM.md
 SECURITY_AND_TRACKING_COMPLETE.md
 SECURITY_AUDIT_CLEANUP.md
 scripts/monitor_repository_insights.py
 scripts/monitor_github_visitors.py
+scripts/privacy_preserving_insights.py
 scripts/purge_sensitive_files.sh
 repository_insights/
 traffic_history/
