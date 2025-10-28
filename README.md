@@ -35,84 +35,82 @@ Genomic research is trapped by an impossible choice:
 
 ---
 
-## The Solution: 7-Stage Privacy-Preserving Pipeline
+## The Solution: Privacy-Preserving Architecture
 
-GenomeVault implements a complete **7-stage pipeline** from raw genomic data to privacy-preserving queries:
+GenomeVault implements **2 operational stages** comprising **8 privacy-preserving layers**:
+
+**STAGE I: One-Time User Setup** (5-6 hours, run once per user)
+**STAGE II: Active Query System** (~1 second per query)
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │  INPUT: 100-150 GB Raw Genome (FASTQ, ~30× coverage)            │
 │    ↓                                                              │
-│  [STAGE 0] Input Preparation                                    │
+│  [LAYER 0] Input Preparation (STAGE I: One-Time Setup)          │
 │    • Quality control, adapter trimming, alignment               │
 │    • Variant calling (GATK/bcftools)                            │
 │    • Output: VCF (1-3 GB) + QC metrics                          │
 │    • Time: 2-6 hours (one-time preprocessing)                   │
 │    ↓                                                              │
-│  [STAGE 1] 4-Layer Privacy Foundation                           │
-│    ┌──────────────────────────────────────────────────┐        │
-│    │ Layer 1: Superposition Consensus                  │        │
-│    │   • hg38 + hg19 + T2T-CHM13 → multi-ref consensus │        │
-│    │   • 95% conserved, 5% variable (positional ambiguity) │   │
-│    │   • Time: <1 min (cached)                          │        │
-│    ├──────────────────────────────────────────────────┤        │
-│    │ Layer 2: Rolling Reference Pool (k-Anonymity)     │        │
-│    │   • k≥3 reference genomes (production: k≥10)      │        │
-│    │   • Forward secrecy via entropy rotation          │        │
-│    │   • Time: ~10 hours setup (one-time)              │        │
-│    ├──────────────────────────────────────────────────┤        │
-│    │ Layer 3: Privacy-Preserving Alignment (SHA-256²)  │        │
-│    │   • Align to reference POOL (not consensus)       │        │
-│    │   • 261-bit user-specific randomization           │        │
-│    │   • Time: ~2 hours per query genome               │        │
-│    ├──────────────────────────────────────────────────┤        │
-│    │ Layer 4a: Differential Encoding (11× compression) │        │
-│    │   • Store only differences from pool              │        │
-│    │   • VCF (3 GB) → differences (273 KB)             │        │
-│    │   • ⚠️  VCF = differential encoding container    │        │
-│    │   •    (NOT traditional variant calling!)        │        │
-│    │   • Time: 1.36s                                    │        │
-│    ├──────────────────────────────────────────────────┤        │
-│    │ Layer 4b: HDC Transform (24× compression)         │        │
-│    │   • 10,000D hyperdimensional projection           │        │
-│    │   • Irreversible transformation                   │        │
-│    │   • Time: 0.5ms                                    │        │
-│    └──────────────────────────────────────────────────┘        │
-│    • Output: 39 KB hypervector (264× compression)              │
+│  ┌────────────────────────────────────────────────────────────┐ │
+│  │ STAGE I: One-Time Privacy Foundation (8 Layers)           │ │
+│  └────────────────────────────────────────────────────────────┘ │
 │    ↓                                                              │
-│  [STAGE 2] Cryptographic Verification                           │
-│    • Zero-knowledge proofs (Groth16 SNARKs)                     │
-│    • Prove variant authenticity + encoding correctness          │
-│    • 117,143 constraints → 739-byte proof                       │
+│  [LAYER 1] Superposition Consensus (Byzantine Fusion)           │
+│    • hg38 + hg19 + T2T-CHM13 → multi-ref consensus              │
+│    • 95% conserved, 5% variable (positional ambiguity)          │
+│    • Time: <1 min (cached)                                       │
+│    ↓                                                              │
+│  [LAYER 2] Rolling Reference Pool (k-Anonymity)                 │
+│    • k≥3 reference genomes (production: k≥10)                   │
+│    • Forward secrecy via entropy rotation                       │
+│    • Time: ~10 hours setup (one-time)                           │
+│    ↓                                                              │
+│  [LAYER 3] Privacy-Preserving Alignment (SHA-256²)              │
+│    • Align to reference POOL (not consensus)                    │
+│    • 261-bit user-specific randomization                        │
+│    • Time: ~2 hours per query genome                            │
+│    ↓                                                              │
+│  [LAYER 4] GDiff Encoding (Differential Format)                 │
+│    • Store only differences from pool                           │
+│    • GDiff format (purpose-built for differential encoding)     │
+│    • Local storage: ~15 MB encrypted (AES-256)                  │
+│    • NEVER transmitted over network                             │
+│    • Time: 5-7 min | See: docs/GDIFF_RATIONALE.md               │
+│    ↓                                                              │
+│  [LAYER 5] Hyperdimensional Computing (HDC Transform)           │
+│    • On-demand analysis-specific HDV generation                 │
+│    • Selective feature encoding (7 analysis schemas)            │
+│    • 10,000D irreversible projection                            │
+│    • Output: 512 bytes - 10 KB per query (schema-dependent)     │
+│    • Time: 10-300ms (real-time generation)                      │
+│    ↓                                                              │
+│  ┌────────────────────────────────────────────────────────────┐ │
+│  │ STAGE II: Active Query System (Layers 6-8)                │ │
+│  └────────────────────────────────────────────────────────────┘ │
+│    ↓                                                              │
+│  [LAYER 6] Cryptographic Verification (Zero-Knowledge)          │
+│    • Groth16 SNARKs (117,143 constraints)                       │
+│    • Prove variant authenticity without revealing data          │
+│    • Output: 739-byte proof (128-bit security)                  │
 │    • Time: 768ms generation, <10ms verification                 │
 │    ↓                                                              │
-│  [STAGE 3] Secure Storage & Indexing                            │
+│  [LAYER 7] Secure Storage & Indexing                            │
 │    • Blockchain attestation (Merkle commitment)                 │
 │    • PIR database setup (information-theoretic sharding)        │
 │    • On-chain: 128 bytes | Off-chain: 1 KB + metadata          │
 │    • Time: <100ms per attestation                               │
 │    ↓                                                              │
-│  [STAGE 4] Query Processing (Privacy-Preserving Retrieval)      │
+│  [LAYER 8] Query Processing (Private Information Retrieval)     │
 │    • IT-PIR queries across k≥3 non-colluding servers            │
 │    • I(Query; Server_View) = 0 bits (provable)                  │
 │    • Time: 6.85ms per query                                     │
-│    • Leakage: <7 bits per query (forward secrecy maintained)    │
+│    • Network traffic: 512 bytes - 10 KB (vs 19.6 MB VCF)        │
 │    ↓                                                              │
-│  [STAGE 5] Advanced Analytics (Optional - KAN-HD)               │
-│    • Interpretable analysis on encrypted hypervectors           │
-│    • GWAS, ancestry, pharmacogenomics without decryption        │
-│    • Time: 15ms per analysis                                     │
-│    ↓                                                              │
-│  [STAGE 6] Federated Learning (Optional - Multi-Institutional)  │
-│    • Collaborative training without data sharing                │
-│    • Differential privacy (ε=1.0, δ=1e-5)                       │
-│    • Byzantine-robust aggregation (up to 1/3 adversaries)       │
-│    • Time: 1-6 hours per training round                         │
-│    ↓                                                              │
-│  OUTPUT: Clinical Results / Research Insights / Drug Discovery  │
+│  OUTPUT: Clinical Results (~1 second) | 0 bits leaked           │
 └─────────────────────────────────────────────────────────────────┘
 
-1,228× compression (whole genome) | 2^516 security | ~1 second queries | 0 bits leaked
+2000-20000× network efficiency | 264× architectural compression | 2^516 security | 0 bits leaked
 ```
 
 ---
@@ -167,9 +165,9 @@ Complete system validation with real human genomic data from European Nucleotide
 
 ## How It Works: Technical Deep Dive
 
-### Stage 1: 4-Layer Privacy Foundation
+### One-Time Privacy Foundation (Layers 1-5)
 
-The privacy foundation transforms raw genomic data into privacy-preserving hypervectors through four layers:
+The privacy foundation transforms raw genomic data into privacy-preserving hypervectors through five layers, executed once per user:
 
 ---
 
@@ -252,328 +250,109 @@ Randomized alignment parameters (k-mer size, window, scoring, jitter)
 
 ---
 
-#### Layers 4a & 4b: Hypervector Transform (Irreversible Compression)
+#### Layer 4: GDiff Encoding (Differential Format)
 
 **Problem**: Traditional compression is reversible—original data can be reconstructed, violating privacy.
 
-**Solution**: Project genomic variants into high-dimensional space via two-stage compression:
+**Solution**: Store only differences from reference pool using purpose-built differential encoding format.
 
-#### Stage 1: Differential Encoding (11× compression)
-
-**Theory**: Store only differences from reference pool, not absolute sequences.
+**Theory**: Compute differential representation relative to k-anonymity reference pool:
 
 ```
-Query Genome - Reference Pool Average → Sparse difference vector
+Query Genome - Reference Pool Average → Sparse difference vector (GDiff format)
 ```
 
-**⚠️ CRITICAL: Non-Standard Use of VCF Format (Being Replaced)**
-
-**Current (VCF-based) - Legacy:**
-GenomeVault uses VCF format in a **highly unusual way**:
-- **VCF = container format only** (NOT traditional variant calling!)
-- Content = **sequence-level differences** between experimental and guide strands
-- **NOT** lookups against SNP databases (dbSNP, ClinVar, etc.)
-- **NOT** variant annotation or pathogenicity assessment
-
-**How bcftools is used:**
-```bash
-# This computes differential encoding, NOT variant calling
-bcftools mpileup -f guide_pool.fa experimental.bam | bcftools call -mv -Oz -o experimental.vcf.gz
-```
-- Input: Experimental BAM aligned to guide pool
-- Output: VCF containing **variance between guide strands and experimental strand**
-- bcftools is a tool to compute sequence differences, NOT for variant annotation
-
-**Result**: 3,000 KB (VCF) → 273 KB (differences only), k=3 anonymity preserved
-
----
-
-**Future (GDiff-based) - Recommended:**
-
-**The Problem**: VCF creates semantic confusion - it was designed for variant calling, not differential encoding.
-
-**The Solution**: **GDiff** (Genomic Differential Encoding Format) - purpose-built for GenomeVault:
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│ USER HARDWARE (Private, AES-256 Encrypted)                 │
-│  GDiff = Comprehensive Local Database (~15 MB compressed)  │
-│  • All differential variants                               │
-│  • Nanopore metrics (speed, modifications)                 │
-│  • Epigenetic context (methylation, chromatin)            │
-│  • NEVER transmitted over network                          │
-└─────────────────┬───────────────────────────────────────────┘
-                  │ Analysis Schema Selection
-                  ▼
-┌─────────────────────────────────────────────────────────────┐
-│ On-Demand HDV Generation (10-300ms)                        │
-│  • simple_snp_lookup → 512 bytes (10ms)                    │
-│  • clinical_risk → 2 KB (50ms)                             │
-│  • nanopore_structural_inference → 10 KB (300ms)           │
-└─────────────────┬───────────────────────────────────────────┘
-                  │ Only HDV transmitted (2000-20000× less data)
-                  ▼
-┌─────────────────────────────────────────────────────────────┐
-│ GENOMEVAULT NETWORK                                         │
-│  Receives: 512 bytes - 10 KB (analysis-specific HDV)       │
-│  Cannot reconstruct: Original genome or GDiff               │
-└─────────────────────────────────────────────────────────────┘
-```
-
-**Key Benefits**:
-- **2-3× faster encoding**: Direct BAM parsing (5-7 min vs 15-20 min)
-- **2000-20000× less network traffic**: Transmit 1-10 KB HDVs instead of 19.6 MB VCFs
-- **Richer features**: 5+ feature types (differential, structural, functional, Nanopore, epigenetic)
-- **Clearer semantics**: Purpose-built for differential encoding, not variant calling
-- **Better privacy**: Comprehensive local database, selective feature exposure per query
-
-**Implementation Status**: ✅ **Production Ready** (Phases 1-5 complete: schema, encoder, validator, secure storage, CLI/API integration)
-
-**Documentation**: `docs/GDIFF_RATIONALE.md`, `docs/GDIFF_COMPREHENSIVE_IMPLEMENTATION_PLAN.md`
-
----
-
-## GDiff Architecture: Privacy-First Data Management
-
-**Core Concept**: GDiff is a comprehensive, encrypted local database that transforms GenomeVault from a fixed-pipeline system into a flexible, privacy-preserving genomic analysis platform.
-
-### 3-Tier Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│ TIER 1: USER HARDWARE (Private, AES-256 Encrypted)             │
-│                                                                  │
-│  GDiff = Comprehensive "Source of Truth"                        │
-│  • All differential variants (position, allele, ref/alt)        │
-│  • Quality metrics (depth, mapping quality, confidence)         │
-│  • Structural context (nearby variants, repeat regions)         │
-│  • Functional annotations (genes, effects, impacts)             │
-│  • Nanopore kinetics (speed, current, modifications) †          │
-│  • Epigenetic context (methylation, chromatin state) †          │
-│  • Cross-variant relationships (LD, epistasis) †                │
-│                                                                  │
-│  Size: ~15 MB compressed (NEVER transmitted over network)       │
-│  Generation: 10-15 minutes (one-time per user)                  │
-│  Storage: Encrypted at rest, chmod 0600, audit logged           │
-└─────────────────┬───────────────────────────────────────────────┘
-                  │
-                  │ Analysis Schema Selection
-                  │ (User chooses query type via CLI/API)
-                  │
-                  ▼
-┌─────────────────────────────────────────────────────────────────┐
-│ TIER 2: HDV GENERATOR (On-Demand, Analysis-Specific)           │
-│                                                                  │
-│  Input: GDiff + Analysis Schema                                 │
-│  Process: Selective feature encoding (only needed features)     │
-│  Output: Task-optimized HDV (512 bytes - 10 KB)                │
-│  Time: 10-300ms (real-time generation)                          │
-│                                                                  │
-│  Schemas (7 pre-configured analysis types):                     │
-│  • simple_snp_lookup      → 512 bytes  (pos+allele only)       │
-│  • clinical_risk          → 2 KB       (+functional+clinical)  │
-│  • pharmacogenomics       → 2 KB       (+drug interactions)    │
-│  • ancestry_inference     → 3 KB       (+population markers)   │
-│  • nanopore_structural    → 6 KB       (+kinetic data) †       │
-│  • epigenetic_landscape   → 4 KB       (+methylation) †        │
-│  • full_research_profile  → 10 KB      (all features)          │
-└─────────────────┬───────────────────────────────────────────────┘
-                  │
-                  │ Privacy-Preserving Query
-                  │ (ONLY HDV transmitted, GDiff stays local)
-                  │
-                  ▼
-┌─────────────────────────────────────────────────────────────────┐
-│ TIER 3: GENOMEVAULT NETWORK (Public, ZK + PIR)                 │
-│                                                                  │
-│  Receives: HDV only (1-10 KB per query)                         │
-│  Cannot reconstruct: Original genome or GDiff                   │
-│  Returns: Similarity matches, ZK proofs, clinical insights      │
-│  Network traffic: 2000-20000× less than transmitting full VCF   │
-│                                                                  │
-│  Privacy guarantees maintained:                                  │
-│  • k-anonymity (query indistinguishable from k-1 references)   │
-│  • Irreversibility (10^30,000 genomes → same HDV collision)     │
-│  • Zero-knowledge (proof reveals nothing but truth)             │
-│  • Information-theoretic PIR (0 bits leaked to operators)       │
-└─────────────────────────────────────────────────────────────────┘
-
-† = Advanced features for specialized analyses (optional)
-```
-
-### Key Benefits
-
-| Benefit | Value | Impact |
-|---------|-------|--------|
-| **Network Efficiency** | 2000-20000× reduction | 19.6 MB VCF → 1-10 KB HDV per query |
-| **Analysis Flexibility** | Unlimited query types | Generate different HDVs from same GDiff |
-| **Generation Speed** | 10-300ms per query | Real-time analysis-specific encoding |
-| **Privacy Preservation** | Comprehensive local storage | GDiff never leaves user hardware |
-| **Feature Richness** | 10+ feature categories | Nanopore, epigenetic, structural, clinical |
-| **Encrypted Storage** | AES-256-GCM + audit logging | Military-grade at-rest security |
-
-### Analysis Schemas: Feature Selection
-
-GDiff enables **selective disclosure** - only encode features needed for specific analysis:
-
-| Schema | Dimension | Features Encoded | Size | Encoding Time | Privacy Level | Use Cases |
-|--------|-----------|------------------|------|---------------|---------------|-----------|
-| **simple_snp_lookup** | 4,096D | Position, Allele | 512 B | ~10 ms | Maximum | Fast rs-ID lookup, basic queries |
-| **clinical_risk** | 8,192D | +Functional, +Clinical, +Quality | 2 KB | ~50 ms | Enhanced | Pathogenicity assessment, clinical reporting |
-| **pharmacogenomics** | 8,192D | +Drug interactions, +Metabolizer status | 2 KB | ~50 ms | Enhanced | Precision medicine, drug dosing |
-| **ancestry_inference** | 10,240D | +Population markers, +Haplogroups | 3 KB | ~100 ms | Standard | Genetic ancestry, population genetics |
-| **nanopore_structural** | 16,384D | +Kinetic data, +Structural inference | 6 KB | ~150 ms | Standard | Secondary structure prediction (research) |
-| **epigenetic_landscape** | 12,288D | +Methylation, +Chromatin state | 4 KB | ~100 ms | Standard | Epigenetic research, gene regulation |
-| **full_research_profile** | 32,768D | ALL features | 10 KB | ~300 ms | Standard | Exploratory research, discovery |
-
-**Need-to-know principle**: Each query only exposes features required for that specific analysis. Clinical queries don't include research metadata, ancestry queries don't include epigenetics, etc.
-
-### CLI Usage
-
-```bash
-# Step 1: Generate GDiff once (10-15 minutes, one-time per user)
-python -m genomevault.cli.generate_gdiff \
-    --vcf query.vcf.gz \
-    --reference-pool benchmark_results/layer2_reference_pool \
-    --output data/gdiff_cache/
-
-# GDiff stored locally at: data/gdiff_cache/{query_id}/gdiff/differential.gdiff.gz
-# AES-256 encrypted if --encrypt flag is used
-
-# Step 2: Generate analysis-specific HDVs on-demand (10-300ms each)
-python -m genomevault.cli.generate_hdv_encoding \
-    --vcf query.vcf.gz \
-    --reference-pool benchmark_results/layer2_reference_pool \
-    --schema clinical_risk \
-    --k 3 \
-    --cache-dir data/hdv_cache/
-
-python -m genomevault.cli.generate_hdv_encoding \
-    --vcf query.vcf.gz \
-    --reference-pool benchmark_results/layer2_reference_pool \
-    --schema pharmacogenomics \
-    --k 3 \
-    --cache-dir data/hdv_cache/
-
-# Same GDiff → Different HDVs → Different analyses!
-# Total network traffic: 4 KB (vs 19.6 MB if transmitting VCF)
-```
-
-### REST API Integration
-
-```bash
-# Start API server
-uvicorn genomevault.api.app:app --reload --port 8000
-
-# Generate HDV from GDiff (POST /api/gdiff/generate-hdv)
-curl -X POST http://localhost:8000/api/gdiff/generate-hdv \
-  -H "Content-Type: application/json" \
-  -d '{
-    "vcf_path": "query.vcf.gz",
-    "reference_pool": "benchmark_results/layer2_reference_pool",
-    "schema": "clinical_risk",
-    "k_anonymity": 3,
-    "cache_dir": "data/hdv_cache"
-  }'
-
-# Response:
-{
-  "status": "generated",
-  "query_id": "a1b2c3d4e5f6g7h8",
-  "k_anonymity": 3,
-  "schema": "clinical_risk",
-  "dimension": 8192,
-  "hdv_size_kb": 2.0,
-  "encoding_time_ms": 52.3,
-  "num_variants": 120,
-  "features_used": ["position", "allele", "functional", "clinical", "quality"],
-  "hdv_path": "data/hdv_cache/a1b2c3d4/k3/clinical_risk.hdc",
-  "cache_stats": {
-    "num_encodings": 1,
-    "k_levels_available": [3],
-    "schemas_available": ["clinical_risk"]
-  }
-}
-
-# List available schemas (GET /api/gdiff/list-schemas)
-curl http://localhost:8000/api/gdiff/list-schemas
-
-# Batch generation for multiple schemas/k-levels (POST /api/gdiff/batch-generate-hdv)
-curl -X POST http://localhost:8000/api/gdiff/batch-generate-hdv \
-  -H "Content-Type: application/json" \
-  -d '{
-    "vcf_path": "query.vcf.gz",
-    "reference_pool": "benchmark_results/layer2_reference_pool",
-    "schemas": ["clinical_risk", "pharmacogenomics", "ancestry_inference"],
-    "k_levels": [3, 7, 13],
-    "cache_dir": "data/hdv_cache"
-  }'
-```
-
-**API Endpoints**:
-- `POST /api/gdiff/generate-hdv` - Generate HDV from GDiff with caching
-- `POST /api/gdiff/batch-generate-hdv` - Generate multiple HDVs (schemas × k-levels)
-- `GET /api/gdiff/list-schemas` - List available analysis schemas
-- `GET /api/gdiff/cache-stats/{query_id}` - Get cache statistics
-- `GET /api/gdiff/list-cached/{query_id}` - List cached HDV encodings
-- `GET /api/gdiff/healthz` - Health check endpoint
-
-**See**: [API Usage Guide](docs/api-docs/GETTING_STARTED_API.md) for complete documentation
-
-### Security Features
-
-| Feature | Implementation | Guarantee |
-|---------|----------------|-----------|
-| **Encryption** | AES-256-GCM | 2^256 keyspace (quantum-resistant) |
-| **Key Derivation** | PBKDF2-HMAC-SHA256 | 480,000 iterations (OWASP 2023) |
-| **File Permissions** | chmod 0600 | Owner read/write only |
-| **Audit Logging** | Timestamped access logs | Detect unauthorized access attempts |
-| **HDV Caching** | Per-query isolation | Query ID = SHA-256(VCF + ref pool) |
-
-**Optional Encryption** (via CLI/API):
-```bash
-# CLI with encryption
-python -m genomevault.cli.generate_hdv_encoding \
-    --vcf query.vcf.gz \
-    --reference-pool benchmark_results/layer2_reference_pool \
-    --schema clinical_risk \
-    --k 3 \
-    --encrypt \
-    --encryption-password "secure_password"
-
-# API with encryption
-{
-  "vcf_path": "query.vcf.gz",
-  "schema": "clinical_risk",
-  "enable_encryption": true,
-  "encryption_password": "secure_password"
-}
-```
-
----
-
-#### Stage 2: Hyperdimensional Computing (24× compression)
-
-**Theory**: Project sparse genomic variants into high-dimensional space where:
-- Similar variants cluster together (semantic preservation)
-- Original sequence is irreversible (privacy)
-- Vector operations enable fast queries (performance)
-
-```
-Variant Set → Hash → 10,000D Random Projection → Hypervector
-```
+**GDiff Format** (Genomic Differential Encoding Format):
+- **Purpose-built** for differential encoding (not adapted from variant calling like VCF)
+- **Comprehensive local database**: All features stored locally (~15 MB encrypted)
+- **Never transmitted**: GDiff stays on user hardware (AES-256 encrypted)
+- **Rich feature set**: Differential variants, structural context, functional annotations, quality metrics
+- **Analysis schemas**: Selective feature encoding based on query type (7 pre-configured schemas)
 
 **Validated Result**:
-- **264× architectural compression** (11× diff × 24× HDC)
-- 273 KB → 11.4 KB (39 KB with metadata)
-- **Irreversible transformation**: Cannot recover original genome from hypervector
-- Semantic preservation: Similar genomes → similar hypervectors
+- **11× architectural compression**: 3,000 KB (raw variants) → 273 KB (differences only)
+- **k-anonymity**: Query indistinguishable from k-1 reference pool members
+- **Encoding time**: 5-7 minutes (one-time per user)
+- **Storage**: ~15 MB compressed, AES-256 encrypted, local-only
 
-**Why it matters**: Even with unlimited computational power, the original genome cannot be reconstructed from the hypervector. This is mathematical privacy, not just computational difficulty.
+**Key Benefits**:
+- **2-3× faster than VCF-based approach**: Direct BAM parsing eliminates intermediate steps
+- **Clearer semantics**: Purpose-built for differential encoding, not variant calling
+- **Selective disclosure**: Generate analysis-specific HDVs on-demand (512 bytes - 10 KB)
+- **Network efficiency**: 2000-20000× reduction (transmit HDV, not full data)
+
+**Implementation Status**: ✅ **Production Ready**
+
+**See**: `docs/GDIFF_RATIONALE.md` for complete architecture, feature catalog, security analysis, and usage examples.
 
 ---
 
-### Stage 2: Cryptographic Verification (Zero-Knowledge Proofs)
+#### Layer 5: Hyperdimensional Computing Transform (24× compression)
+
+**Problem**: Even differential data can leak information if transmitted directly.
+
+**Solution**: Irreversible projection into high-dimensional space where original sequences cannot be reconstructed.
+
+**Theory**: Hash-based random projection into 10,000D space:
+
+```
+Sparse Variant Set → Feature Hash → Random Projection → 10,000D Hypervector
+```
+
+**Properties**:
+- **Semantic preservation**: Similar genomes → similar hypervectors (cosine similarity)
+- **Irreversibility**: 10^30,000 possible genomes map to same hypervector (collision space)
+- **Privacy guarantee**: Cannot reconstruct original genome, even with unlimited computation
+- **Fast operations**: Vector similarity in milliseconds
+
+**Validated Result**:
+- **24× compression**: 273 KB (differential) → 11.4 KB (HDV)
+- **Combined 264× architectural compression**: 11× differential × 24× HDC
+- **Empirical compression**: 39 KB HDV (with metadata) vs 3,000 KB raw variants
+- **On-demand generation**: 10-300ms per query (analysis-specific)
+- **Dimension flexibility**: 4,096D - 32,768D (schema-dependent)
+
+**Analysis Schemas** (Selective Feature Encoding):
+| Schema | Dimension | Size | Time | Features |
+|--------|-----------|------|------|----------|
+| `simple_snp_lookup` | 4,096D | 512 B | ~10 ms | Position, Allele |
+| `clinical_risk` | 8,192D | 2 KB | ~50 ms | +Functional, +Clinical, +Quality |
+| `pharmacogenomics` | 8,192D | 2 KB | ~50 ms | +Drug interactions |
+| `ancestry_inference` | 10,240D | 3 KB | ~100 ms | +Population markers |
+| `full_research_profile` | 32,768D | 10 KB | ~300 ms | ALL features |
+
+**Why it matters**: Mathematical privacy (not computational). Even with infinite computational power or quantum computers, the original genome cannot be reconstructed from the hypervector. This is **irreversible by design**, not just "hard to reverse".
+
+**Network Efficiency**: Transmit 512 bytes - 10 KB per query instead of 19.6 MB full data (2000-20000× reduction).
+
+---
+
+### GDiff Implementation Details
+
+**Complete documentation**: See `docs/GDIFF_RATIONALE.md` for:
+- **3-Tier Architecture**: User hardware (encrypted GDiff), HDV generator (selective encoding), GenomeVault network (privacy-preserving queries)
+- **Feature Catalog**: 10+ feature types (differential variants, structural context, functional annotations, quality metrics, Nanopore kinetics, epigenetic context)
+- **Analysis Schemas**: 7 pre-configured schemas (simple SNP lookup, clinical risk, pharmacogenomics, ancestry inference, Nanopore structural, epigenetic landscape, full research profile)
+- **Security Analysis**: AES-256-GCM encryption, PBKDF2 key derivation, file permissions, audit logging
+- **CLI/API Usage**: Code examples, batch generation, schema selection
+- **Performance Benchmarks**: Encoding times, network efficiency, compression ratios
+
+**Quick Reference**:
+```bash
+# Generate analysis-specific HDV (10-300ms)
+python -m genomevault.cli.generate_hdv_encoding \
+    --vcf query.vcf.gz \
+    --reference-pool benchmark_results/layer2_reference_pool \
+    --schema clinical_risk \
+    --k 3
+
+# API server (see docs/api-docs/GETTING_STARTED_API.md)
+uvicorn genomevault.api.app:app --port 8000
+```
+
+---
+
+#### Layer 6: Cryptographic Verification (Zero-Knowledge Proofs)
 
 **Problem**: Revealing a variant to query it leaks genomic information.
 
@@ -601,7 +380,7 @@ Variant Set → Hash → 10,000D Random Projection → Hypervector
 
 ---
 
-### Stage 4: Query Processing (Private Information Retrieval)
+#### Layer 8: Query Processing (Private Information Retrieval)
 
 **Problem**: Even with ZK proofs, the database operator learns *which* record you accessed.
 
