@@ -2,6 +2,329 @@
 
 Quick reference for Claude Code when working with the GenomeVault codebase.
 
+## ⚠️ CRITICAL: Core Privacy Architecture (READ THIS FIRST)
+
+**THIS IS THE FOUNDATION OF THE ENTIRE SYSTEM. VIOLATING THESE PRINCIPLES INVALIDATES 8 YEARS OF WORK.**
+
+### The Iron Law of Privacy
+
+**ANY CONTACT BETWEEN EXPERIMENTAL DATA AND PUBLIC REFERENCE/CONSENSUS DATA IS ASSUMED TO INVALIDATE ALL PRIVACY GUARANTEES.**
+
+### 3-Layer Architecture
+
+**Layer 1: Reference Superposition Consensus**
+- Public genome data: hg38 + hg19 + chm13
+- Byzantine consensus with positional uncertainty
+- Creates `consensus.fa` (2.9 GB)
+- **EXPERIMENTAL DATA MUST NEVER TOUCH THIS DIRECTLY**
+
+**Layer 2: Guide Strands (Blind Middleman)**
+- Real genomic samples: ERR3239276, ERR3239454, ERR3239475 (k=3 for dev, k=10+ for production)
+- Guide FASTQ → align to consensus → Guide BAM files (ref1.sorted.bam, ref2.sorted.bam, ref3.sorted.bam)
+- Guide BAMs contain aligned sequences that serve as:
+  1. Alignment reference for experimental data
+  2. Source for differential encoding (sequence-level, NOT variant-level)
+- **Guide VCFs are irrelevant** - we need the aligned BAM sequences
+- Random cycling between guides per chunk = information-theoretic privacy
+
+**Layer 3: Experimental Strand (Patient/Query Data)**
+- Example: ERR3239334 FASTQ (23 GB)
+- **CORRECT workflow:**
+  1. **Extract guide sequences from guide BAMs:**
+     ```bash
+     # Extract guide 1, 2, 3 sequences in parallel
+     samtools consensus --threads 8 guide_bam/ref1.sorted.bam | pigz -p 8 > guide1.fa.gz &
+     samtools consensus --threads 8 guide_bam/ref2.sorted.bam | pigz -p 8 > guide2.fa.gz &
+     samtools consensus --threads 8 guide_bam/ref3.sorted.bam | pigz -p 8 > guide3.fa.gz &
+     wait
+     ```
+  2. **Align experimental FASTQ to GUIDE sequences (NOT consensus!):**
+     ```python
+     from genomevault.differential_encoding.align_to_reference_pool import PrivacyPreservingReferencePoolAligner
+
+     aligner = PrivacyPreservingReferencePoolAligner(
+         guide_fasta_files=[Path("guide1.fa.gz"), Path("guide2.fa.gz"), Path("guide3.fa.gz")],
+         threads=8
+     )
+
+     aligner.align_query_to_pool(
+         query_fastq_1=Path("experimental_R1.fastq.gz"),
+         query_fastq_2=Path("experimental_R2.fastq.gz"),
+         output_vcf=Path("experimental.vcf.gz"),
+         privacy_preserving=True  # Ensures no consensus contact
+     )
+     ```
+  3. Compute sequence-level differences between experimental and guides
+  4. DifferentialHypervectorEncoder with random guide cycling
+  5. Output: privacy-preserving hypervector
+- **NEVER align experimental data directly to consensus**
+- **NEVER use guide VCFs for alignment - use extracted FASTA sequences**
+
+### Terminology (Use Exactly)
+
+- **Reference/Consensus**: Public genome superposition (Layer 1)
+- **Guide strands**: Real samples serving as blind middleman (Layer 2)
+- **Experimental strand**: Patient/query data being encoded (Layer 3)
+- **Differential encoding**: Sequence-level differences (NOT variant encoding)
+
+### Privacy Guarantee
+
+Experimental strand → Guide strands → Consensus
+
+The guide strands act as a cryptographic blind - experimental data never creates a traceable link to public references.
+
+### What NOT To Do
+
+❌ Align experimental FASTQ to consensus
+❌ Use guide VCFs for differential encoding
+❌ Create any direct link between experimental and public data
+❌ Confuse "differential encoding" with "variant encoding"
+❌ Use terms like "reference pool" when you mean "guide strands"
+
+### What To Do
+
+✅ Extract guide sequences from guide BAMs using `samtools consensus`
+✅ Align experimental to extracted guide FASTA sequences (NOT consensus!)
+✅ Use `PrivacyPreservingReferencePoolAligner` with `guide_fasta_files` parameter
+✅ Use DifferentialHypervectorEncoder for sequence differences
+✅ Randomly cycle guides per chunk
+✅ Maintain zero contact between experimental and consensus
+
+### Critical Implementation Details
+
+**Extracting Guide Sequences:**
+```bash
+# From guide BAM files (already aligned to consensus)
+samtools consensus --threads 8 --show-del yes --show-ins yes \
+    guide_bam/ref1.sorted.bam | pigz -p 8 > guide1.fa.gz
+```
+
+**CRITICAL: Non-Standard Use of VCF Format**
+
+⚠️ **GenomeVault uses VCF format in a HIGHLY UNUSUAL WAY - this is NOT traditional variant calling!**
+
+**What VCF means in GenomeVault:**
+- VCF is used as a **container format only**
+- Content represents **differential encoding schema** - sequence-level differences between experimental and guide strands
+- **NOT** lookups against SNP databases (dbSNP, ClinVar, etc.)
+- **NOT** variant annotation or pathogenicity assessment
+- **NOT** known genetic variants
+
+**How bcftools is used:**
+```bash
+# This is NOT variant calling - it's differential encoding computation
+bcftools mpileup -f guide_pool_reference.fa experimental.bam | \
+    bcftools call -mv -Oz -o experimental.vcf.gz
+```
+- `bcftools` is used as a **tool to compute sequence differences**
+- Input: Experimental BAM aligned to guide pool
+- Output: VCF containing sequence-level differences (differential encoding)
+- The VCF represents **variance between guide strands and experimental strand**
+
+**Pipeline Flow:**
+1. Experimental FASTQ → minimap2 → Guide pool sequences → BAM (alignment)
+2. BAM + Guide pool reference → bcftools → VCF (differential encoding)
+3. The VCF is NOT "variants" - it's a differential encoding schema logging sequence differences
+
+**Why this matters:**
+- Traditional bioinformatics: "VCF" = known genetic variants
+- GenomeVault: "VCF" = differential encoding container
+- **Always say "differential encoding VCF" or "sequence difference VCF" to avoid confusion**
+- **Never say "variant calling" - say "computing differential encoding" or "generating sequence difference VCF"**
+
+---
+
+## 🧬 GDiff Format: Purpose-Built Differential Encoding (RECOMMENDED)
+
+**VCF is being replaced with GDiff** - a purpose-built format designed specifically for GenomeVault's differential encoding needs.
+
+### Why GDiff?
+
+**The Problem with VCF:**
+- VCF was designed for variant calling against SNP databases (dbSNP, ClinVar)
+- GenomeVault performs differential encoding (sequence differences from guide pool)
+- Semantic mismatch creates confusion: "variant calling" vs "differential encoding"
+- Limited feature support: VCF can't express differential semantics, pool coverage, or Nanopore-specific metrics
+
+**The GDiff Solution:**
+- **Purpose-built format** for differential encoding
+- **Comprehensive local database** that stores ALL genomic information (encrypted, never transmitted)
+- **On-demand HDV generation** - create analysis-specific hypervectors in 10-300ms
+- **Richer features** - Nanopore metrics, epigenetic context, structural inference, cross-variant relationships
+- **2-3× faster** - Direct BAM parsing, no bcftools external process
+- **Better privacy** - Explicit differential semantics, k-anonymity validation, entropy tracking
+
+### Architecture: GDiff as Local Database
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ USER HARDWARE (Private, Encrypted at Rest)                 │
+│  GDiff = Comprehensive "Source of Truth"                   │
+│  • All differential variants                               │
+│  • Nanopore-specific: speed, uncertainty, modifications    │
+│  • Epigenetic predictions                                  │
+│  Size: ~150 MB (uncompressed), ~15 MB (gzipped)           │
+│  Security: AES-256 encrypted, NEVER transmitted            │
+└─────────────────┬───────────────────────────────────────────┘
+                  │ Analysis Schema Selection
+                  ▼
+┌─────────────────────────────────────────────────────────────┐
+│ HDV GENERATOR (On-Demand, Analysis-Specific)               │
+│  Input: GDiff + Analysis Schema                            │
+│  Time: 10-300ms per HDV                                    │
+│  Size: 512 bytes - 10 KB                                   │
+└─────────────────┬───────────────────────────────────────────┘
+                  │ Privacy-Preserving Query (Only HDV transmitted)
+                  ▼
+┌─────────────────────────────────────────────────────────────┐
+│ GENOMEVAULT NETWORK (Public)                               │
+│  Receives: HDV (1-10 KB)                                   │
+│  Cannot reconstruct: Original GDiff or genome              │
+│  Network traffic: 2000-20000× less than VCF approach       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Quick Start with GDiff
+
+**Step 1: Generate GDiff (one-time, replaces VCF creation)**
+```python
+from genomevault.differential_encoding.gdiff import GDiffEncoder
+
+encoder = GDiffEncoder(
+    query_bam="experimental.bam",
+    pool_bams=["guide1.bam", "guide2.bam", "guide3.bam"],
+    reference_fasta="consensus.fa",
+    min_base_quality=20,
+    min_mapping_quality=20,
+)
+
+gdiff = encoder.compute_differential_encoding()
+gdiff.save("experimental.gdiff.gz", compress=True)
+```
+
+**Step 2: Query with Analysis Schemas (real-time, on-demand)**
+```python
+from genomevault.hypervector_transform.gdiff_encoder import SelectiveHDVEncoder
+
+# Simple SNP lookup (512 bytes, 10ms)
+encoder = SelectiveHDVEncoder(schema="simple_snp_lookup", dimension=1024)
+hdv = encoder.encode_from_gdiff("experimental.gdiff.gz")
+
+# Clinical risk assessment (2 KB, 50ms)
+encoder = SelectiveHDVEncoder(schema="clinical_risk", dimension=5000)
+hdv = encoder.encode_from_gdiff("experimental.gdiff.gz")
+
+# Nanopore structural inference (10 KB, 300ms)
+encoder = SelectiveHDVEncoder(schema="nanopore_structural_inference", dimension=10000)
+hdv = encoder.encode_from_gdiff("experimental.gdiff.gz")
+```
+
+### Analysis Schemas (Pre-Configured Feature Sets)
+
+| Schema | Features Encoded | HDV Size | Use Case |
+|--------|------------------|----------|----------|
+| **simple_snp_lookup** | Position + allele only | 512 B | Basic variant queries |
+| **clinical_risk** | + functional impact + pathogenicity | 2 KB | Clinical genomics |
+| **pharmacogenomics** | + drug interactions + metabolism | 3 KB | Precision medicine |
+| **ancestry_inference** | + population markers + LD structure | 5 KB | Ancestry analysis |
+| **nanopore_structural_inference** | + translocation speed + modification probability | 10 KB | Long-read sequencing |
+| **epigenetic_landscape** | + methylation + chromatin state | 8 KB | Epigenomics |
+| **full_research_profile** | All features | 15 KB | Comprehensive research |
+
+### Key Benefits
+
+| Benefit | VCF Approach | GDiff Approach |
+|---------|--------------|----------------|
+| **Encoding time** | 15-20 min (bcftools) | 5-7 min (direct BAM parsing) |
+| **File size** | 19.6 MB (compressed) | ~15 MB (comprehensive) |
+| **Parse time** | 8-12s | 3-5s |
+| **HDV generation** | 8-12s (parse VCF each time) | 10-300ms (on-demand from GDiff) |
+| **Features** | 2 (position, allele) | 5+ (differential, structural, functional, etc.) |
+| **Network traffic** | 19.6 MB per query | 1-10 KB per query (2000-20000× reduction) |
+| **Semantic clarity** | Confusing (variant calling?) | Clear (differential encoding) |
+
+### Implementation Status
+
+- ✅ **Phase 1 Complete**: GDiff schema (630 lines), encoder (850 lines), validator (450 lines), tests (900 lines)
+- ✅ **Phase 2 Complete**: Core implementation validated
+- 🚧 **Phase 3 In Progress**: Enhanced schema with Nanopore/Epigenetic features
+- ⏳ **Phase 4 Pending**: Validation against VCF baseline
+- ⏳ **Phase 5 Pending**: Production migration
+
+**Documentation:**
+- **Rationale**: `docs/GDIFF_RATIONALE.md` - Why GDiff is necessary
+- **Implementation Plan**: `docs/GDIFF_COMPREHENSIVE_IMPLEMENTATION_PLAN.md` - 10-week roadmap
+- **Status**: `docs/GDIFF_IMPLEMENTATION_STATUS.md` - Current progress
+
+**Files:**
+- Schema: `genomevault/differential_encoding/gdiff/schema.py`
+- Encoder: `genomevault/differential_encoding/gdiff/encoder.py`
+- Validator: `genomevault/differential_encoding/gdiff/validator.py`
+- Tests: `tests/test_gdiff_schema.py`, `tests/test_gdiff_validator.py`
+
+**Privacy-Preserving Alignment (@SQ Header Fix - CRITICAL):**
+
+When aligning experimental FASTQ to concatenated guide sequences (k=3 genomes = 65 chromosomes), minimap2 treats this as a "multi-part index" and WILL NOT output @SQ (sequence dictionary) headers, causing `samtools sort` to fail.
+
+**Problem:**
+```bash
+# ❌ This FAILS - no @SQ headers in output
+minimap2 -ax sr guide_pool.mmi reads.fq | samtools sort -o out.bam -
+# Error: [E::sam_parse1] no SQ lines present in the header
+# Error: samtools sort: truncated file. Aborting
+```
+
+**Solution (MUST use this approach):**
+```bash
+# ✅ This WORKS - rebuild @SQ headers from reference FASTA
+# Step 1: Align to SAM file (minimap2 won't include @SQ for multi-part index)
+minimap2 -ax sr guide_pool.mmi reads_R1.fq reads_R2.fq > aligned.sam
+
+# Step 2: Rebuild headers from reference FASTA and convert to sorted BAM
+samtools view -h -bt guide_pool_reference.fa aligned.sam | samtools sort -o sorted.bam -
+```
+
+**Implementation in `align_to_reference_pool.py`:**
+- Modified `align_query_to_pool()` method (lines 164-200)
+- Outputs minimap2 SAM to file first (no pipe to samtools)
+- Uses `samtools view -bt <reference.fa>` to rebuild @SQ headers from the concatenated guide pool FASTA
+- Then pipes to `samtools sort` for final sorted BAM
+- File: `genomevault/differential_encoding/align_to_reference_pool.py`
+
+**Why this happens:**
+- When k=3 guide genomes are concatenated (8 GB total, 65 sequences), minimap2 creates a "multi-part index"
+- Multi-part indexes output this warning: `[WARNING] For a multi-part index, no @SQ lines will be outputted. Please use --split-prefix.`
+- Building the minimap2 index with `minimap2 -d` doesn't solve this - the issue persists during alignment
+- The ONLY solution is to use the reference FASTA with `samtools view -bt` to rebuild headers
+
+**Time estimates for whole genome (ERR3239334, 22.5 GB FASTQ):**
+- Guide pool preparation: ~25 seconds (decompress 3× 828MB guide FASTA files)
+- Minimap2 index building: ~2.5 minutes (creates 18.5 GB .mmi file)
+- Minimap2 alignment: ~1-2 hours (aligns 22.5 GB FASTQ to k=3 guide pool)
+- SAM→BAM conversion with headers: ~10-15 minutes
+- BAM indexing: ~2-3 minutes
+- Variant calling: ~15-20 minutes
+- **Total: ~2.5-3 hours**
+
+**Aligning Experimental:**
+```python
+# Use extracted guide FASTA files, NOT VCFs!
+aligner = PrivacyPreservingReferencePoolAligner(
+    guide_fasta_files=[guide1_fa, guide2_fa, guide3_fa],  # FASTA not VCF!
+    threads=8
+)
+```
+
+**Privacy Flow:**
+```
+Experimental FASTQ → Guide FASTA sequences → Differential encoding → Hypervector
+                     (blind middleman)
+
+NO DIRECT PATH: Experimental ❌→ Consensus
+```
+
+---
+
 **Note**: The project now includes a comprehensive **Probabilistic Alignment & Privacy Stack** that extends beyond the original Byzantine Consensus approach. See `docs/guides/PROBABILISTIC_ALIGNMENT_PRIVACY_STACK.md` for details.
 
 ## Project Overview
@@ -28,6 +351,30 @@ python benchmarks/run_complete_privacy_pipeline.py \
     --output results/ \
     --skip-consensus  # Use existing consensus
 
+# ⚡ OPTIMIZED PIPELINE (5× FASTER - RECOMMENDED FOR PRODUCTION)
+# Run hardware detection to get optimized settings for YOUR system
+python3 scripts/check_hardware_and_recommend.py
+
+# Phase 1 (30 min effort, 5.6 hours saved - DEPLOY IMMEDIATELY)
+python3 scripts/run_enhanced_privacy_pipeline_optimized.py \
+    --output-dir benchmark_results/enhanced_privacy_k13_optimized \
+    --num-references 12 \
+    --use-sambamba \
+    --sambamba-threads 10 \
+    --sambamba-memory 8G \
+    --parallel-bcftools \
+    --bcftools-threads 5 \
+    --gpu-backend metal \
+    --threads 10
+
+# Phase 2 (add after Phase 1 validated - 2.4 hours additional savings)
+# Add these flags to Phase 1 command:
+#   --enable-index-caching --enable-amx
+
+# Phase 3 (for whole-genome data - 2.1 hours additional savings)
+# Add these flags to Phase 1+2 command:
+#   --use-chromosome-partitioned-sort --use-parallel-vcf-parsing --vcf-workers 5
+
 # Quick test
 python benchmarks/run_alignment_optimized_pipeline.py --preset production --quick
 
@@ -40,7 +387,7 @@ python genomevault/cli/privacy_query.py \
 # Start REST API server
 uvicorn genomevault.api.app:app --reload --port 8000
 # Access API docs: http://localhost:8000/api/docs
-# See GETTING_STARTED_API.md for API usage guide
+# See API section below for complete usage guide
 
 # Clinical SNP Database (Query clinically-relevant variants)
 # 1. Build clinical database from ClinVar
@@ -118,7 +465,138 @@ genomevault/
 
 ## 🎯 Running the Main Pipeline
 
-### **Alignment-Optimized Pipeline** (RECOMMENDED)
+### **⚡ OPTIMIZED Pipeline** (RECOMMENDED FOR PRODUCTION)
+
+**Hardware-aware optimization system with 4.3× speedup for whole-genome processing.**
+
+#### Step 1: Detect Your Hardware & Get Recommendations
+
+```bash
+# Get hardware-specific optimization recommendations
+python3 scripts/check_hardware_and_recommend.py
+
+# Save configuration to file
+python3 scripts/check_hardware_and_recommend.py --save-config
+
+# Just show deployment commands (quiet mode)
+python3 scripts/check_hardware_and_recommend.py --quiet
+```
+
+**What gets detected:**
+- CPU cores, architecture (Apple Silicon M1/M2/M3/M4, x86_64), AMX/AVX support
+- RAM (total, recommended settings)
+- GPU (Metal, CUDA, OpenCL)
+- Storage (SSD/NVMe)
+- Installed tools (sambamba, bcftools, minimap2, pigz)
+
+#### Step 2: Deploy Optimizations (Phased Approach)
+
+**Phase 1: Immediate Wins** (30 min effort, 5.6 hours saved)
+
+```bash
+# Run with auto-detected optimal settings
+python3 scripts/run_enhanced_privacy_pipeline_optimized.py \
+    --output-dir benchmark_results/enhanced_privacy_k13_phase1 \
+    --num-references 12 \
+    --use-sambamba \
+    --sambamba-threads 10 \
+    --sambamba-memory 8G \
+    --parallel-bcftools \
+    --bcftools-threads 5 \
+    --gpu-backend metal \
+    --threads 10
+```
+
+**Optimizations enabled:**
+- ✅ Sambamba parallel sorting (2-3× faster than samtools)
+- ✅ Parallel BCFtools variant calling (1.5-2× faster)
+- ✅ Metal GPU HDC encoding (43× faster on Apple Silicon)
+
+**Expected performance:** 12 hours → 6.4 hours
+
+---
+
+**Phase 2: High-Impact** (add after Phase 1 validated, 2.4 hours additional savings)
+
+```bash
+# Add these flags to Phase 1 command:
+python3 scripts/run_enhanced_privacy_pipeline_optimized.py \
+    --output-dir benchmark_results/enhanced_privacy_k13_phase2 \
+    --num-references 12 \
+    --use-sambamba \
+    --sambamba-threads 10 \
+    --sambamba-memory 8G \
+    --parallel-bcftools \
+    --bcftools-threads 5 \
+    --gpu-backend metal \
+    --threads 10 \
+    --enable-index-caching \
+    --enable-amx
+```
+
+**Additional optimizations:**
+- ✅ Minimap2 index caching (save 60 sec per reference)
+- ✅ AMX alignment acceleration (2-3× faster, Apple Silicon only)
+
+**Expected performance:** 6.4 hours → 4.0 hours
+
+---
+
+**Phase 3: Advanced (WHOLE-GENOME DATA)** (2.1 hours additional savings)
+
+**IMPORTANT:** Chromosome-parallel sorting provides significant benefit for whole-genome data (chr1-22, X, Y, M) but minimal benefit for single-chromosome (chr22-only) data.
+
+```bash
+# Full optimized pipeline for whole-genome processing
+python3 scripts/run_enhanced_privacy_pipeline_optimized.py \
+    --output-dir benchmark_results/enhanced_privacy_k13_phase3 \
+    --num-references 12 \
+    --use-sambamba \
+    --sambamba-threads 10 \
+    --sambamba-memory 8G \
+    --parallel-bcftools \
+    --bcftools-threads 5 \
+    --gpu-backend metal \
+    --threads 10 \
+    --enable-index-caching \
+    --enable-amx \
+    --use-chromosome-partitioned-sort \
+    --use-parallel-vcf-parsing \
+    --vcf-workers 5
+```
+
+**Additional optimizations:**
+- ✅ Chromosome-partitioned parallel sorting (2.5-3× faster for whole-genome)
+- ✅ Parallel VCF parsing for consensus building (2-3× faster)
+
+**Expected performance:** 4.0 hours → 2.4 hours
+
+**When to use Phase 3:**
+- ✅ Processing whole-genome data (chr1-22, X, Y, M)
+- ✅ Have 10+ CPU cores
+- ✅ Have 24+ GB RAM
+- ✅ Have fast SSD/NVMe storage
+
+**Skip Phase 3 if:**
+- ❌ Processing single chromosome only (chr22)
+- ❌ Have <10 cores or <24 GB RAM
+
+---
+
+#### Performance Summary
+
+| Phase | Time (12 refs) | Speedup | Effort | Best For |
+|-------|---------------|---------|--------|----------|
+| Baseline | 12 hours | 1× | - | - |
+| Phase 1 | 6.4 hours | 1.9× | 30 min | Everyone ⭐⭐⭐ |
+| Phase 2 | 4.0 hours | 3.0× | 5 hours | Apple Silicon ⭐⭐ |
+| Phase 3 | 2.4 hours | 5.0× | 8 hours | Whole-genome ⭐ |
+
+**Recommendation:** Deploy Phase 1 immediately. Add Phase 2+3 for whole-genome processing.
+
+---
+
+### **Alignment-Optimized Pipeline** (Legacy - use optimized pipeline above instead)
 
 The production-ready pipeline with 5.92× speedup through alignment optimizations.
 
@@ -343,6 +821,8 @@ The CLI saves results as JSON:
 
 ## 📊 Expected Performance
 
+### GenomeVault Core (Layer 4 - Differential + HDC + ZK + PIR)
+
 | Stage | Duration | Details |
 |-------|----------|---------|
 | **Differential Encoding** | 1.36s | 120 variants, k=3 anonymity, 292 differences |
@@ -356,6 +836,58 @@ The CLI saves results as JSON:
 - 83.1% reduction in total time
 - 100% security preservation
 
+### k=13 Enhanced Privacy Pipeline (Complete 4-Layer System)
+
+**With hardware-aware optimizations (Apple Silicon M1 Max, 10 cores, 64 GB RAM):**
+
+| Phase | Per Reference | 12 References | Speedup | Implementation Time |
+|-------|---------------|---------------|---------|---------------------|
+| **Baseline** | 60 min | 12 hours | 1× | - |
+| **Phase 1** | 32 min | 6.4 hours | 1.9× | 30 min |
+| **Phase 2** | 20 min | 4.0 hours | 3.0× | 5 hours |
+| **Phase 3** | 12 min | 2.4 hours | 5.0× | 8 hours |
+
+**Phase 3 savings breakdown (whole-genome):**
+- Chromosome-partitioned sorting: 2.5-3× faster (25 min → 8 min per ref)
+- Parallel VCF parsing: 2-3× faster (60 min → 20 min one-time)
+
+**Total optimization time saved: 9.6 hours per k=13 run (78% reduction)**
+
+## 🌐 REST API Quick Start
+
+```bash
+# 1. Start API server
+uvicorn genomevault.api.app:app --host 0.0.0.0 --port 8000
+
+# 2. Submit complete privacy-preserving analysis (k=3)
+curl -X POST http://localhost:8000/api/v1/analysis/submit \
+  -F "file=@query.vcf.gz" \
+  -F "analysis_type=whole_genome" \
+  -F "k_anonymity=3" \
+  -F "dimension=10000" \
+  -F "enable_zk_proof=true" \
+  -F "enable_pir=true"
+# Returns: {"analysis_id": "abc123...", "status": "queued"}
+
+# 3. Check status
+curl http://localhost:8000/api/v1/analysis/abc123.../status
+
+# 4. Get results
+curl http://localhost:8000/api/v1/analysis/abc123.../results
+
+# 5. View interactive docs
+open http://localhost:8000/api/docs
+```
+
+**Valid analysis_type values:**
+`whole_genome` | `exome` | `targeted_panel` | `pharmacogenomics` | `ancestry` | `risk_assessment` | `carrier_screening` | `variant_pathogenicity`
+
+**Key Parameters:**
+- `k_anonymity`: 2-10 (default 3) - Number of reference genomes for k-anonymity
+- `dimension`: 1024-100000 (default 10000) - Hypervector dimension
+- `enable_zk_proof`: true/false (default true) - Generate zero-knowledge proof
+- `enable_pir`: true/false (default false) - Enable private information retrieval
+
 ## 🔧 Essential Commands
 
 ```bash
@@ -364,8 +896,28 @@ pytest                                    # Run all tests
 pytest tests/test_compute_backend.py      # Test hardware backends
 python benchmarks/compression_summary.py  # Verify compression
 
-# Main pipeline (pick one)
-python benchmarks/run_alignment_optimized_pipeline.py --preset production  # ⚡ RECOMMENDED
+# Hardware-aware optimization (check YOUR system capabilities) ⚡ NEW
+python3 scripts/check_hardware_and_recommend.py              # Full report
+python3 scripts/check_hardware_and_recommend.py --save-config  # Save config
+python3 scripts/check_hardware_and_recommend.py --quiet       # Just commands
+
+# Main pipeline - OPTIMIZED (RECOMMENDED FOR PRODUCTION) ⚡
+# Phase 1 (30 min effort, 5.6 hours saved)
+python3 scripts/run_enhanced_privacy_pipeline_optimized.py \
+    --output-dir benchmark_results/k13_optimized \
+    --num-references 12 \
+    --use-sambamba --sambamba-threads 10 --sambamba-memory 8G \
+    --parallel-bcftools --bcftools-threads 5 \
+    --gpu-backend metal --threads 10
+
+# Phase 2 (add to Phase 1 for 2.4 hours additional savings)
+# Add flags: --enable-index-caching --enable-amx
+
+# Phase 3 (add to Phase 1+2 for whole-genome, 2.1 hours additional savings)
+# Add flags: --use-chromosome-partitioned-sort --use-parallel-vcf-parsing --vcf-workers 5
+
+# Legacy pipelines
+python benchmarks/run_alignment_optimized_pipeline.py --preset production  # Layer 4 only
 python benchmarks/run_full_pipeline_with_reference_pool.py --quick         # Quick test
 
 # Privacy-preserving query (ZK + PIR) 🔒
@@ -392,9 +944,13 @@ pytest tests/test_blockchain_integration.py -v  # 40 tests, <2ms overhead
 |------|-------|-----------|
 | **Benchmarks** | `/benchmarks/` | `run_alignment_optimized_pipeline.py` ⚡ |
 | **Latest Results** | `/benchmark_results/` | `pipeline_results.json`, `latest_results.json` |
+| **GDiff Format** | `/genomevault/differential_encoding/gdiff/` | `schema.py` (630 lines), `encoder.py` (850 lines), `validator.py` (450 lines) 🆕 |
+| **GDiff Docs** | `/docs/` | `GDIFF_RATIONALE.md`, `GDIFF_COMPREHENSIVE_IMPLEMENTATION_PLAN.md`, `GDIFF_IMPLEMENTATION_STATUS.md` 🆕 |
+| **GDiff Tests** | `/tests/` | `test_gdiff_schema.py` (450 lines), `test_gdiff_validator.py` (450 lines) 🆕 |
 | **ZK Circuits** | `/genomevault/zk_proofs/circuits/` | `variant_presence_enhanced.circom` |
 | **HDC Encoding** | `/genomevault/hypervector_transform/` | `unified_encoder.py`, `backend_adapter.py` |
-| **Differential Encoding** | `/genomevault/differential_encoding/` | `enhanced_pipeline.py` |
+| **Selective HDV** | `/genomevault/hypervector_transform/` | `gdiff_encoder.py` (on-demand, analysis-specific) 🚧 |
+| **Differential Encoding** | `/genomevault/differential_encoding/` | `enhanced_pipeline.py` (VCF-based, legacy) |
 | **Alignment System** | `/genomevault/differential_encoding/` | `optimized_sequence_alignment.py` (920 lines) |
 | **Probabilistic Alignment** | `/genomevault/reference/` | `probabilistic_alignment_system.py` (new!) |
 | **Byzantine Consensus** | `/genomevault/reference/` | `byzantine_consensus_builder.py` (updated!) |
@@ -566,18 +1122,27 @@ conda install -c bioconda minimap2 samtools bcftools
 
 ## 🎓 Quick Tips
 
-1. **Always use the alignment-optimized pipeline** for production workloads
-2. **Enable GPU** only for batch operations (>100 samples)
-3. **ZK proofs are CPU-bound** - GPU doesn't help
-4. **Reference pool must have k genomes** for k-anonymity
-5. **Blockchain is opt-in** - disabled by default for performance
-6. **REST API requires reference pool setup** - run setup script before first use
-7. **Privacy-preserving queries** - Use `genomevault/cli/privacy_query.py` for cryptographically secure variant queries (0 bits leaked to operators)
+1. **Use hardware-aware optimized pipeline** for production (5× faster than baseline)
+2. **Run hardware detection first** - `python3 scripts/check_hardware_and_recommend.py`
+3. **Phase 1 is critical** - 30 min effort for 5.6 hours savings (11× ROI)
+4. **Phase 3 chromosome-parallel** - Only for whole-genome data (chr1-22, X, Y, M)
+5. **Enable GPU** - Metal (Apple Silicon) or CUDA (NVIDIA) for 43× HDC speedup
+6. **ZK proofs are CPU-bound** - GPU doesn't help with proving
+7. **Reference pool must have k genomes** for k-anonymity
+8. **Blockchain is opt-in** - disabled by default for performance
+9. **REST API requires reference pool setup** - run setup script before first use
+10. **Privacy-preserving queries** - Use `genomevault/cli/privacy_query.py` for cryptographically secure variant queries (0 bits leaked to operators)
 
 ## 🆘 Getting Help
 
 - **Issues:** Check `TROUBLESHOOTING.md` or GitHub Issues
 - **Performance:** See `docs/reports/OPTIMIZATION_RESULTS_SUMMARY.md`
+- **Optimization Guides:** Complete 4-phase roadmap at `docs/optimization/MASTER_OPTIMIZATION_ROADMAP.md`
+  - Phase 1: `docs/optimization/PHASE1_IMPLEMENTATION_GUIDE.md` (immediate wins)
+  - Phase 2: `docs/optimization/PHASE2_IMPLEMENTATION_GUIDE.md` (high-impact)
+  - Phase 3: `docs/optimization/PHASE3_IMPLEMENTATION_GUIDE.md` (whole-genome)
+  - Phase 4: `docs/optimization/PHASE4_IMPLEMENTATION_GUIDE.md` (skip - low ROI)
+- **Hardware Detection:** Run `python3 scripts/check_hardware_and_recommend.py`
 - **Security:** Review `docs/guides/HYPERVECTOR_SECURITY.md`
 - **Privacy Queries:** See privacy query CLI section above or `genomevault/cli/privacy_query.py`
 - **Validation:** Complete system validation at `benchmark_results/FINAL_VALIDATION_SUMMARY.md`

@@ -2,6 +2,12 @@
 # 🔥 CORE ALGORITHMIC IP - DO NOT COMMIT
 # ===========================================
 
+# CRITICAL: GDiff Format (Purpose-Built Differential Encoding - Core IP)
+genomevault/differential_encoding/gdiff/
+genomevault/differential_encoding/gdiff/*.py
+tests/test_gdiff_*.py
+docs/GDIFF_*.md
+
 # CRITICAL: Differential Encoding (11× compression breakthrough)
 genomevault/differential_encoding/optimized_sequence_alignment.py
 genomevault/differential_encoding/enhanced_differential_encoding_pipeline.py
@@ -296,22 +302,76 @@ tailchasing_suggestions.md
 genomevault/api/gateway/README.md
 docs/PUSH_INSTRUCTIONS.md
 
-# Large genomic data files (18GB+) - do not commit
+# ===========================================
+# GENOMIC DATA FILES - NEVER COMMIT
+# ===========================================
+
+# Raw sequencing data
+*.fastq
+*.fastq.gz
+*.fq
+*.fq.gz
+
+# Alignment files
+*.bam
+*.bai
+*.sam
+*.cram
+*.crai
+
+# Variant files
+*.vcf
+*.vcf.gz
+*.vcf.idx
+*.tbi
+*.bcf
+*.bcf.csi
+
+# Reference genomes
+*.fa
+*.fa.gz
+*.fasta
+*.fasta.gz
+*.fna
+*.fna.gz
+
+# GDiff files (differential encoding format)
+*.gdiff
+*.gdiff.gz
+*.gdiff.enc
+
+# Downloaded genomic data directories
+data/downloaded/**
+data/reference_genomes/**
+data/clinical_snps*.json.gz
+
+# Benchmark results with large genomic files
 benchmark_results/differential_encoding_samples/**/*.fastq.gz
 benchmark_results/differential_encoding_samples/**/*.fastq
 benchmark_results/differential_encoding_samples/**/*.bam
 benchmark_results/differential_encoding_samples/**/*.sam
 benchmark_results/differential_encoding_samples/**/*.fa
 benchmark_results/differential_encoding_samples/**/*.fasta
+benchmark_results/differential_encoding_samples/**/*.vcf.gz
+benchmark_results/differential_encoding_samples/**/*.vcf
 benchmark_results/differential_encoding_samples/references/
 benchmark_results/differential_encoding_samples/temp/
 benchmark_results/differential_encoding_samples/temp_*/
 benchmark_results/differential_encoding_samples/query/
 benchmark_results/full_pipeline_synthetic/reference/*.fa
 benchmark_results/full_pipeline_synthetic/reference/*.fasta
+benchmark_results/enhanced_privacy_*/**/*.bam
+benchmark_results/enhanced_privacy_*/**/*.vcf.gz
+benchmark_results/enhanced_privacy_*/**/*.fa.gz
+benchmark_results/k3_whole_genome_benchmark/**/*.fa.gz
+benchmark_results/k3_whole_genome_benchmark/**/*.bam
+benchmark_results/complete_privacy_pipeline/**/*.bam
+benchmark_results/complete_privacy_pipeline/**/*.vcf.gz
+benchmark_results/superposition_*/**/*.fa.gz
 
-# Keep only small VCF reference pool files
-!benchmark_results/differential_encoding_samples/vcf_pool/*.vcf
+# HDV cache (may contain large files)
+data/hdv_cache/**/*.gdiff.gz
+data/hdv_cache/**/*.hdc
 
 # Test scripts - exclude from gitignore to commit
 !test_api_integration.py
