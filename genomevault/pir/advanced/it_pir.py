@@ -1,10 +1,11 @@
+from __future__ import annotations
+
 """It Pir module."""
 
 """
 Information-Theoretic PIR implementation.
 Provides unconditional privacy guarantees without computational assumptions.
 """
-from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any
@@ -135,28 +136,52 @@ class InformationTheoreticPIR:
         n = self.num_servers
         shares = []
 
+        # Ensure vector is uint64
+        vector = vector.astype(np.uint64)
+
         # Generate n-1 random shares
         for i in range(n - 1):
             share = np.random.randint(0, self.field_size, size=len(vector), dtype=np.uint64)
             shares.append(share)
 
         # Compute last share to ensure sum equals original vector
-        last_share = vector.copy()
+        # Handle modular subtraction properly to avoid underflow
+        last_share = vector.copy().astype(np.uint64)
         for share in shares:
-            last_share = (last_share - share) % self.field_size
+            # Add field_size before subtraction to handle negative values
+            last_share = (last_share + self.field_size - share) % self.field_size
 
         shares.append(last_share)
 
         # Verify reconstruction
-        reconstructed = np.zeros_like(vector)
+        reconstructed = np.zeros_like(vector, dtype=np.uint64)
         for share in shares:
             reconstructed = (reconstructed + share) % self.field_size
 
-        assert np.array_equal(
-            reconstructed % self.field_size, vector % self.field_size
-        ), "Failed to correctly split vector"
+        # Ensure both sides use the same modulo before comparison
+        reconstructed_mod = reconstructed.astype(np.uint64) % self.field_size
+        vector_mod = vector.astype(np.uint64) % self.field_size
+
+        if not np.array_equal(reconstructed_mod, vector_mod):
+            raise ValueError("Failed to correctly split vector")
 
         return shares
+
+    def process_query(
+        self, query: PIRQuery, database: list[bytes], server_id: int
+    ) -> np.ndarray:
+        """
+        Process PIR query (convenience wrapper for process_server_query).
+
+        Args:
+            query: PIR query from client
+            database: Server's database
+            server_id: ID of this server
+
+        Returns:
+            Response vector
+        """
+        return self.process_server_query(server_id, query, database)
 
     def process_server_query(
         self, server_id: int, query: PIRQuery, database: list[bytes]

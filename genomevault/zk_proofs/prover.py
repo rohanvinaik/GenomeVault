@@ -488,7 +488,7 @@ class Prover:
         }
 
     @require_real_backend
-    @require_secure_environment
+    @require_secure_environment()
     def generate_proof(
         self,
         circuit_name: str,
@@ -1133,7 +1133,7 @@ class Prover:
             private_inputs=private_input,
         )
 
-    @require_secure_environment
+    @require_secure_environment()
     def verify_proof(
         self,
         proof: Proof,
