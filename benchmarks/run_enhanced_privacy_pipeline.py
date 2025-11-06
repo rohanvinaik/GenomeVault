@@ -189,7 +189,36 @@ class EnhancedPrivacyPipeline:
         consensus_dir = self.output_dir / "layer1_consensus"
         consensus_dir.mkdir(exist_ok=True)
 
-        if self.enable_superposition and len(references) >= 2:
+        # If single pre-built consensus passed, use it directly
+        if len(references) == 1 and Path(references[0]).exists():
+            logger.info("Using pre-built consensus reference...")
+            prebuilt_consensus = Path(references[0])
+            consensus_fa = consensus_dir / "consensus.fa"
+
+            # Copy or symlink the pre-built consensus
+            import shutil
+            if prebuilt_consensus.suffix == '.gz':
+                # Decompress if needed
+                logger.info(f"  Decompressing {prebuilt_consensus.name}...")
+                import gzip
+                with gzip.open(prebuilt_consensus, 'rb') as f_in:
+                    with open(consensus_fa, 'wb') as f_out:
+                        shutil.copyfileobj(f_in, f_out)
+            else:
+                shutil.copy(prebuilt_consensus, consensus_fa)
+
+            logger.info(f"  ✓ Using consensus: {prebuilt_consensus}")
+            logger.info(f"  Size: {prebuilt_consensus.stat().st_size / 1e6:.1f} MB")
+
+            self.layer_results['layer_1'] = {
+                'type': 'prebuilt_consensus',
+                'consensus_file': str(consensus_fa),
+                'source': str(prebuilt_consensus),
+            }
+
+            return consensus_fa
+
+        elif self.enable_superposition and len(references) >= 2:
             logger.info("Building superposition consensus with population variants...")
 
             # Build superposition consensus
@@ -332,10 +361,11 @@ class EnhancedPrivacyPipeline:
             start = time.time()
 
             align_cmd = f"""
-            minimap2 -ax sr -t {self.threads} {align_params} {consensus_ref} {r1} {r2} | \\
-                samtools sort -@ {self.threads} -o {bam_file} -
+            minimap2 -ax sr -t 10 -K 250M -2 {align_params} {consensus_ref} \\
+                <(pigz -dc -p 4 {r1}) <(pigz -dc -p 4 {r2}) | \\
+                samtools sort -@ 4 -o {bam_file} -
             """
-            subprocess.run(align_cmd, shell=True, check=True, capture_output=True)
+            subprocess.run(align_cmd, shell=True, check=True, capture_output=True, executable='/bin/bash')
             subprocess.run(f"samtools index {bam_file}", shell=True, check=True)
 
             align_time = time.time() - start
@@ -346,8 +376,9 @@ class EnhancedPrivacyPipeline:
             vcall_start = time.time()
 
             vcall_cmd = f"""
-            bcftools mpileup -f {consensus_ref} {bam_file} | \\
-                bcftools call -mv -Oz -o {vcf_file}
+            bcftools mpileup -Ou -f {consensus_ref} {bam_file} | \\
+                bcftools call -Ou -mv | \\
+                bcftools filter -Oz -o {vcf_file} -
             """
             subprocess.run(vcall_cmd, shell=True, check=True, capture_output=True)
             subprocess.run(f"bcftools index {vcf_file}", shell=True, check=True)
@@ -377,25 +408,19 @@ class EnhancedPrivacyPipeline:
         if self.enable_rolling_pool and len(output_vcfs) >= k_min:
             from genomevault.reference.rolling_reference_pool import GenomeReference
 
-            # Convert to GenomeReference objects
+            # Use ALL available references (not just k_min)
+            # This ensures k=N privacy where N is the total number of references
             genome_refs = [
                 GenomeReference(
                     genome_id=g['genome_id'],
                     vcf_path=Path(g['vcf_path']),
                     variant_count=g['variant_count']
                 )
-                for g in available_genomes[:k_min]
+                for g in available_genomes  # Use ALL, not just [:k_min]
             ]
 
-            # Available genomes for rotation
-            available_refs = [
-                GenomeReference(
-                    genome_id=g['genome_id'],
-                    vcf_path=Path(g['vcf_path']),
-                    variant_count=g['variant_count']
-                )
-                for g in available_genomes[k_min:]
-            ]
+            # No additional genomes for rotation (all are in the pool)
+            available_refs = []
 
             self.rolling_pool = RollingReferencePool(
                 initial_pool=genome_refs,
@@ -479,11 +504,12 @@ class EnhancedPrivacyPipeline:
             pool_ref = reference_pool_vcfs[0]
 
             align_cmd = f"""
-            minimap2 -ax sr -t {self.threads} {align_params} {consensus_ref} {query_r1} {query_r2} | \\
-                samtools sort -@ {self.threads} -o {query_bam} -
+            minimap2 -ax sr -t 10 -K 250M -2 {align_params} {consensus_ref} \\
+                <(pigz -dc -p 4 {query_r1}) <(pigz -dc -p 4 {query_r2}) | \\
+                sambamba sort -t 4 -o {query_bam} /dev/stdin
             """
-            subprocess.run(align_cmd, shell=True, check=True, capture_output=True)
-            subprocess.run(f"samtools index {query_bam}", shell=True, check=True)
+            subprocess.run(align_cmd, shell=True, check=True, capture_output=True, executable='/bin/bash')
+            subprocess.run(f"sambamba index {query_bam}", shell=True, check=True)
 
             align_time = time.time() - start
             logger.info(f"  ✓ Query aligned in {align_time:.1f}s")
@@ -494,8 +520,9 @@ class EnhancedPrivacyPipeline:
             vcall_start = time.time()
 
             vcall_cmd = f"""
-            bcftools mpileup -f {consensus_ref} {query_bam} | \\
-                bcftools call -mv -Oz -o {query_vcf}
+            bcftools mpileup -Ou -f {consensus_ref} {query_bam} | \\
+                bcftools call -Ou -mv | \\
+                bcftools filter -Oz -o {query_vcf} -
             """
             subprocess.run(vcall_cmd, shell=True, check=True, capture_output=True)
             subprocess.run(f"bcftools index {query_vcf}", shell=True, check=True)

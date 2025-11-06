@@ -41,10 +41,16 @@ class PipelineMonitor:
                 'size_estimate': 50_000_000,  # 50 MB
             },
             'layer2_reference_pool': {
-                'name': 'Layer 2: Rolling Reference Pool',
+                'name': 'Layer 2: Rolling Reference Pool (k=12)',
                 'files': ['ref1.sorted.bam', 'ref2.sorted.bam', 'ref3.sorted.bam',
-                         'ref1.vcf.gz', 'ref2.vcf.gz', 'ref3.vcf.gz'],
-                'size_estimate': 5_000_000_000,  # 5 GB per BAM
+                         'ref4.sorted.bam', 'ref5.sorted.bam', 'ref6.sorted.bam',
+                         'ref7.sorted.bam', 'ref8.sorted.bam', 'ref9.sorted.bam',
+                         'ref10.sorted.bam', 'ref11.sorted.bam', 'ref12.sorted.bam',
+                         'ref1.vcf.gz', 'ref2.vcf.gz', 'ref3.vcf.gz',
+                         'ref4.vcf.gz', 'ref5.vcf.gz', 'ref6.vcf.gz',
+                         'ref7.vcf.gz', 'ref8.vcf.gz', 'ref9.vcf.gz',
+                         'ref10.vcf.gz', 'ref11.vcf.gz', 'ref12.vcf.gz'],
+                'size_estimate': 60_000_000_000,  # ~5 GB per BAM × 12 refs
             },
             'layer3_query_alignment': {
                 'name': 'Layer 3: Query Alignment',
@@ -184,15 +190,36 @@ class PipelineMonitor:
                 'temp_files': []
             }
 
-        # Check which files exist
-        files_found = []
-        total_size = 0
+        # For Layer 2, dynamically count actual BAM and VCF files
+        if layer_dir == 'layer2_reference_pool':
+            bam_files = list(layer_path.glob('ref*.sorted.bam'))
+            vcf_files = list(layer_path.glob('ref*.vcf.gz'))
 
-        for filename in layer_info['files']:
-            file_path = layer_path / filename
-            if file_path.exists():
-                files_found.append(filename)
-                total_size += file_path.stat().st_size
+            files_found = [f.name for f in bam_files + vcf_files]
+            total_size = sum(f.stat().st_size for f in bam_files + vcf_files)
+
+            # Expected: equal number of BAMs and VCFs
+            # Find max ref number from BAM files
+            max_ref_num = 0
+            for bam in bam_files:
+                import re
+                match = re.search(r'ref(\d+)', bam.name)
+                if match:
+                    max_ref_num = max(max_ref_num, int(match.group(1)))
+
+            # Expected files = max_ref_num * 2 (BAM + VCF for each)
+            files_expected = max_ref_num * 2 if max_ref_num > 0 else len(layer_info['files'])
+        else:
+            # Check which files exist
+            files_found = []
+            total_size = 0
+            files_expected = len(layer_info['files'])
+
+            for filename in layer_info['files']:
+                file_path = layer_path / filename
+                if file_path.exists():
+                    files_found.append(filename)
+                    total_size += file_path.stat().st_size
 
         # Check for temporary files (indicates work in progress)
         temp_files = []
@@ -210,19 +237,19 @@ class PipelineMonitor:
             status = 'pending'
         elif len(temp_files) > 0:
             status = 'in_progress'
-        elif len(files_found) == len(layer_info['files']):
+        elif len(files_found) >= files_expected:
             status = 'complete'
         else:
             status = 'in_progress'
 
         # Calculate progress percentage
-        progress_pct = (len(files_found) / len(layer_info['files'])) * 100
+        progress_pct = (len(files_found) / files_expected) * 100 if files_expected > 0 else 0.0
 
         return {
             'status': status,
             'files_found': len(files_found),
-            'files_expected': len(layer_info['files']),
-            'files': files_found,
+            'files_expected': files_expected,
+            'files': files_found if isinstance(files_found, list) else list(files_found),
             'size_bytes': total_size,
             'progress_pct': progress_pct,
             'temp_files': temp_files

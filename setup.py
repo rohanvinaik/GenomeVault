@@ -26,6 +26,7 @@ INSTALL_REQUIRES = [
     # Configuration and utilities
     "pyyaml>=6.0",
     "click>=8.0",
+    "psutil>=5.9.0",  # Memory monitoring for GDiff encoder
     # Web/API (for future API module)
     "fastapi>=0.85.0",
     "uvicorn>=0.18.0",

@@ -29,20 +29,36 @@ register_security(app, allow_origins=allowed_origins)
 
 app.include_router(healthz_router)
 
+# Register routers individually to allow partial failures
 try:
     import genomevault.api.routers.hv as hv
-    import genomevault.api.routers.metrics as metrics
-    import genomevault.api.routers.zk as zk
-    import genomevault.api.routers.hdc as hdc
-    import genomevault.api.routers.pir as pir
-
     app.include_router(hv.router)
+except Exception as e:
+    print(f"Warning: Could not import HV router: {e}")
+
+try:
+    import genomevault.api.routers.metrics as metrics
     app.include_router(metrics.router)
-    app.include_router(zk.router)
+except Exception as e:
+    print(f"Warning: Could not import metrics router: {e}")
+
+try:
+    import genomevault.api.routers.hdc as hdc
     app.include_router(hdc.router)
+except Exception as e:
+    print(f"Warning: Could not import HDC router: {e}")
+
+try:
+    import genomevault.api.routers.zk as zk
+    app.include_router(zk.router)
+except Exception as e:
+    print(f"Warning: Could not import ZK router: {e}")
+
+try:
+    import genomevault.api.routers.pir as pir
     app.include_router(pir.router)
-except Exception as e:  # pragma: no cover - optional routers may fail
-    print(f"Warning: Could not import API routers: {e}")
+except Exception as e:
+    print(f"Warning: Could not import PIR router: {e}")
 
 # Analysis router - loaded separately to avoid dependency issues
 try:
@@ -65,5 +81,12 @@ try:
             print(f"Warning: Could not load clinical database: {e}")
 except Exception as e:  # pragma: no cover
     print(f"Warning: Could not import clinical query router: {e}")
+
+# GDiff/HDV router - for GDiff-based HDV encoding with caching
+try:
+    import genomevault.api.routers.gdiff as gdiff
+    app.include_router(gdiff.router)
+except Exception as e:  # pragma: no cover
+    print(f"Warning: Could not import GDiff router: {e}")
 
 app.add_exception_handler(GVError, gv_error_handler)

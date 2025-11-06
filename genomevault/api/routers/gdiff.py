@@ -2,7 +2,7 @@
 GDiff/HDV API router.
 
 Provides REST API endpoints for GDiff-based HDV encoding with caching,
-schema selection, and k-anonymity configuration.
+schema selection, k-anonymity configuration, and production pipeline.
 """
 
 import logging
@@ -12,6 +12,7 @@ from typing import List, Dict, Any
 
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 
 from genomevault.api.models.gdiff import (
     GDiffHDVGenerateRequest,
@@ -33,6 +34,7 @@ from genomevault.differential_encoding.gdiff.analysis_schemas import (
     get_schema_summary,
     validate_schema_compatibility,
 )
+from genomevault.pipelines.production_pipeline import ProductionPipeline, PipelineConfig
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +43,25 @@ router = APIRouter(
     tags=["GDiff", "HDV Encoding"],
     responses={404: {"description": "Not found"}},
 )
+
+
+# Production Pipeline Models
+class ProductionPipelineRequest(BaseModel):
+    gdiff_path: str
+    hdc_dimension: int = 10000
+    hdc_backend: str = "auto"
+    enable_zk_proof: bool = True
+    enable_pir: bool = False
+    pir_database_size: int = 100
+    sample_variants: int | None = None
+
+
+class ProductionPipelineResponse(BaseModel):
+    pipeline_id: str
+    success: bool
+    total_duration_s: float
+    stages: Dict[str, Any]
+    summary: Dict[str, Any]
 
 
 @router.post("/generate-hdv", response_model=GDiffHDVGenerateResponse)
@@ -478,3 +499,84 @@ async def list_cached_hdvs(query_id: str, cache_dir: str = "data/hdv_cache"):
 async def healthz():
     """Health check endpoint."""
     return {"status": "healthy", "service": "gdiff-hdv-encoding"}
+
+
+@router.post("/production-pipeline", response_model=ProductionPipelineResponse)
+async def run_production_pipeline(request: ProductionPipelineRequest):
+    """
+    Run complete GDiff → HDC → ZK → PIR production pipeline.
+
+    This endpoint orchestrates the full genomevault workflow:
+    1. Load GDiff differential encoding document
+    2. Generate HDC hypervector encoding
+    3. Generate zero-knowledge proof (optional)
+    4. Execute PIR query (optional)
+
+    Args:
+        request: Production pipeline configuration
+
+    Returns:
+        Complete pipeline results with stage-by-stage metrics
+
+    Example:
+        POST /api/gdiff/production-pipeline
+        {
+          "gdiff_path": "benchmark_results/k3_whole_genome_benchmark/experimental.gdiff.gz",
+          "hdc_dimension": 10000,
+          "hdc_backend": "auto",
+          "enable_zk_proof": true,
+          "enable_pir": false,
+          "sample_variants": 1000
+        }
+    """
+    try:
+        logger.info(f"Production pipeline request: {request.gdiff_path}")
+
+        # Validate GDiff file exists
+        gdiff_path = Path(request.gdiff_path)
+        if not gdiff_path.exists():
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"GDiff file not found: {request.gdiff_path}"
+            )
+
+        # Create pipeline configuration
+        config = PipelineConfig(
+            hdc_dimension=request.hdc_dimension,
+            hdc_backend=request.hdc_backend,
+            enable_zk_proof=request.enable_zk_proof,
+            enable_pir=request.enable_pir,
+            pir_database_size=request.pir_database_size,
+            sample_variants=request.sample_variants
+        )
+
+        # Initialize and run pipeline
+        pipeline = ProductionPipeline(config)
+
+        import uuid
+        pipeline_id = str(uuid.uuid4())[:8]
+
+        result = pipeline.run(gdiff_path, pipeline_id)
+
+        # Convert to response model
+        return ProductionPipelineResponse(
+            pipeline_id=result.pipeline_id,
+            success=result.success,
+            total_duration_s=result.total_duration_s,
+            stages={name: {
+                "duration_s": stage.duration_s,
+                "success": stage.success,
+                "metrics": stage.metrics,
+                "error": stage.error
+            } for name, stage in result.stages.items()},
+            summary=result.summary
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Production pipeline failed: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Pipeline execution failed: {str(e)}"
+        )

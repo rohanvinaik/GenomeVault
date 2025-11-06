@@ -23,7 +23,7 @@ from sqlalchemy.dialects.postgresql import UUID
 import uuid
 
 from genomevault.zk.real_engine import RealZKEngine, RealProof
-from genomevault.zk.models import CircuitType
+# CircuitType not available in zk.models, using circuit names as strings instead
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +77,7 @@ class ZKProofRecord(Base):
     verification_count = Column(Integer, default=0)
     generation_time_ms = Column(Float, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
-    metadata = Column(Text, nullable=True)  # JSON string
+    metadata_json = Column(Text, nullable=True)  # JSON string (renamed from metadata to avoid SQLAlchemy conflict)
 
 
 # Pydantic Models for Request/Response
@@ -377,7 +377,7 @@ def store_proof_record(
         public_inputs=json.dumps(public_inputs),
         private_inputs_hash=private_hash,
         generation_time_ms=generation_time_ms,
-        metadata=json.dumps(metadata) if metadata else None,
+        metadata_json=json.dumps(metadata) if metadata else None,
     )
 
     db.add(record)
@@ -428,14 +428,9 @@ async def generate_proof(
         start_time = time.perf_counter()
 
         try:
-            # Map circuit name to CircuitType if needed
-            circuit_type = None
-            if request.circuit_name == "sum64":
-                circuit_type = CircuitType.SUM64
-
-            # Generate proof using RealZKEngine
+            # Generate proof using RealZKEngine (using circuit name as string)
             proof = zk_engine.prove(
-                circuit_type=circuit_type or request.circuit_name,
+                circuit_type=request.circuit_name,
                 public_inputs=public_inputs,
                 private_inputs=private_inputs,
             )
@@ -547,20 +542,15 @@ async def verify_proof(
         start_time = time.perf_counter()
 
         try:
-            # Map circuit name to CircuitType if needed
-            circuit_type = None
-            if circuit_name == "sum64":
-                circuit_type = CircuitType.SUM64
-
             # Create RealProof object if needed
             if not isinstance(request.proof, RealProof):
                 proof_obj = RealProof(proof=request.proof, public=request.public_inputs)
             else:
                 proof_obj = request.proof
 
-            # Verify using RealZKEngine
+            # Verify using RealZKEngine (using circuit name as string)
             is_valid = zk_engine.verify(
-                circuit_type=circuit_type or circuit_name,
+                circuit_type=circuit_name,
                 proof=proof_obj,
                 public_inputs=request.public_inputs,
             )
@@ -702,9 +692,9 @@ async def get_proof_info(proof_id: str, db: Session = Depends(get_db)):
 
         # Parse metadata if present
         metadata = None
-        if record.metadata:
+        if record.metadata_json:
             try:
-                metadata = json.loads(record.metadata)
+                metadata = json.loads(record.metadata_json)
             except json.JSONDecodeError:
                 logger.warning(f"Failed to parse metadata for proof {proof_id}")
 
@@ -773,17 +763,12 @@ async def batch_verify_proofs(
                     if record:
                         circuit_name = record.circuit_name
 
-                # Map circuit name to CircuitType if needed
-                circuit_type = None
-                if circuit_name == "sum64":
-                    circuit_type = CircuitType.SUM64
-
                 # Create RealProof object
                 proof_obj = RealProof(proof=proof_request.proof, public=proof_request.public_inputs)
 
-                # Verify
+                # Verify (using circuit name as string)
                 is_valid = zk_engine.verify(
-                    circuit_type=circuit_type or circuit_name,
+                    circuit_type=circuit_name,
                     proof=proof_obj,
                     public_inputs=proof_request.public_inputs,
                 )
