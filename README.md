@@ -74,9 +74,10 @@ GenomeVault implements **2 operational stages** comprising **8 privacy-preservin
 │  [LAYER 4] GDiff Encoding (Differential Format)                 │
 │    • Store only differences from pool                           │
 │    • GDiff format (purpose-built for differential encoding)     │
+│    • Secure Guide Reference System: full nucleotide resolution  │
 │    • Local storage: ~15 MB encrypted (AES-256)                  │
 │    • NEVER transmitted over network                             │
-│    • Time: 5-7 min | See: docs/GDIFF_RATIONALE.md               │
+│    • Time: 5-7 min | See: docs/SECURE_GUIDE_REFERENCE_SYSTEM.md │
 │    ↓                                                            │
 │  [LAYER 5] Hyperdimensional Computing (HDC Transform)           │
 │    • On-demand analysis-specific HDV generation                 │

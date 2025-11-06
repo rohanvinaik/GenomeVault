@@ -254,6 +254,9 @@ uvicorn genomevault.api.app:app --host 0.0.0.0 --port 8000
 |------|-------|
 | **Production Pipeline** | `genomevault/pipelines/production_pipeline.py` |
 | **GDiff Format** | `genomevault/differential_encoding/gdiff/` |
+| **Secure Guide Reference** | `genomevault/differential_encoding/gdiff/secure_guide_reference_builder.py` |
+| **Nucleotide Resolver** | `genomevault/query/nucleotide_resolver.py` |
+| **Resolution-Aware HDV** | `genomevault/hypervector_transform/resolution_aware_encoder.py` |
 | **Privacy Query CLI** | `genomevault/cli/privacy_query.py` |
 | **ZK Circuits** | `genomevault/zk_proofs/circuits/` |
 | **HDC Encoding** | `genomevault/hypervector_transform/` |
@@ -261,6 +264,7 @@ uvicorn genomevault.api.app:app --host 0.0.0.0 --port 8000
 | **Benchmarks** | `benchmarks/run_alignment_optimized_pipeline.py` |
 | **Latest Results** | `benchmark_results/pipeline_results.json` |
 | **Validation Proofs** | `benchmark_results/FINAL_VALIDATION_SUMMARY.md` |
+| **SGRS Documentation** | `docs/SECURE_GUIDE_REFERENCE_SYSTEM.md` |
 
 ## 🔧 Essential Commands
 
