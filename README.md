@@ -45,68 +45,68 @@ GenomeVault implements **2 operational stages** comprising **8 privacy-preservin
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │  INPUT: 100-150 GB Raw Genome (FASTQ, ~30× coverage)            │
-│    ↓                                                              │
+│    ↓                                                            │
 │  [LAYER 0] Input Preparation (STAGE I: One-Time Setup)          │
 │    • Quality control, adapter trimming, alignment               │
 │    • Variant calling (GATK/bcftools)                            │
 │    • Output: VCF (1-3 GB) + QC metrics                          │
 │    • Time: 2-6 hours (one-time preprocessing)                   │
-│    ↓                                                              │
+│    ↓                                                            │
 │  ┌────────────────────────────────────────────────────────────┐ │
-│  │ STAGE I: One-Time Privacy Foundation (8 Layers)           │ │
+│  │ STAGE I: One-Time Privacy Foundation (8 Layers)            │ │
 │  └────────────────────────────────────────────────────────────┘ │
-│    ↓                                                              │
+│    ↓                                                            │
 │  [LAYER 1] Superposition Consensus (Byzantine Fusion)           │
 │    • hg38 + hg19 + T2T-CHM13 → multi-ref consensus              │
 │    • 95% conserved, 5% variable (positional ambiguity)          │
-│    • Time: <1 min (cached)                                       │
-│    ↓                                                              │
+│    • Time: <1 min (cached)                                      │
+│    ↓                                                            │
 │  [LAYER 2] Rolling Reference Pool (k-Anonymity)                 │
 │    • k≥3 reference genomes (production: k≥10)                   │
 │    • Forward secrecy via entropy rotation                       │
 │    • Time: ~10 hours setup (one-time)                           │
-│    ↓                                                              │
+│    ↓                                                            │
 │  [LAYER 3] Privacy-Preserving Alignment (SHA-256²)              │
 │    • Align to reference POOL (not consensus)                    │
 │    • 261-bit user-specific randomization                        │
 │    • Time: ~2 hours per query genome                            │
-│    ↓                                                              │
+│    ↓                                                            │
 │  [LAYER 4] GDiff Encoding (Differential Format)                 │
 │    • Store only differences from pool                           │
 │    • GDiff format (purpose-built for differential encoding)     │
 │    • Local storage: ~15 MB encrypted (AES-256)                  │
 │    • NEVER transmitted over network                             │
 │    • Time: 5-7 min | See: docs/GDIFF_RATIONALE.md               │
-│    ↓                                                              │
+│    ↓                                                            │
 │  [LAYER 5] Hyperdimensional Computing (HDC Transform)           │
 │    • On-demand analysis-specific HDV generation                 │
 │    • Selective feature encoding (7 analysis schemas)            │
 │    • 10,000D irreversible projection                            │
 │    • Output: 512 bytes - 10 KB per query (schema-dependent)     │
 │    • Time: 10-300ms (real-time generation)                      │
-│    ↓                                                              │
+│    ↓                                                            │
 │  ┌────────────────────────────────────────────────────────────┐ │
-│  │ STAGE II: Active Query System (Layers 6-8)                │ │
+│  │ STAGE II: Active Query System (Layers 6-8)                 │ │
 │  └────────────────────────────────────────────────────────────┘ │
-│    ↓                                                              │
+│    ↓                                                            │
 │  [LAYER 6] Cryptographic Verification (Zero-Knowledge)          │
 │    • Groth16 SNARKs (117,143 constraints)                       │
 │    • Prove variant authenticity without revealing data          │
 │    • Output: 739-byte proof (128-bit security)                  │
 │    • Time: 768ms generation, <10ms verification                 │
-│    ↓                                                              │
+│    ↓                                                            │
 │  [LAYER 7] Secure Storage & Indexing                            │
 │    • Blockchain attestation (Merkle commitment)                 │
 │    • PIR database setup (information-theoretic sharding)        │
-│    • On-chain: 128 bytes | Off-chain: 1 KB + metadata          │
+│    • On-chain: 128 bytes | Off-chain: 1 KB + metadata           │
 │    • Time: <100ms per attestation                               │
-│    ↓                                                              │
+│    ↓                                                            │
 │  [LAYER 8] Query Processing (Private Information Retrieval)     │
 │    • IT-PIR queries across k≥3 non-colluding servers            │
 │    • I(Query; Server_View) = 0 bits (provable)                  │
 │    • Time: 6.85ms per query                                     │
 │    • Network traffic: 512 bytes - 10 KB (vs 19.6 MB VCF)        │
-│    ↓                                                              │
+│    ↓                                                            │
 │  OUTPUT: Clinical Results (~1 second) | 0 bits leaked           │
 └─────────────────────────────────────────────────────────────────┘
 
