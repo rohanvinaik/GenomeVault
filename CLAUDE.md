@@ -2,6 +2,33 @@
 
 Quick reference for Claude Code when working with the GenomeVault codebase.
 
+---
+
+# 🚨🚨🚨 CRITICAL WARNING - READ BEFORE ANY FILE OPERATIONS 🚨🚨🚨
+
+## ⛔ NEVER DELETE ANYTHING IN benchmark_results/ WITHOUT EXPLICIT CONFIRMATION ⛔
+
+**LAYER 2 GUIDE STRANDS ARE STORED IN benchmark_results/enhanced_privacy_k13_phase123_optimized/layer2_reference_pool/**
+
+**These files represent ~350 GB and 4+ DAYS of processing:**
+- **12 BAM files** (ref1-12.sorted.bam): 25-29 GB each
+- **12 FASTA files** (ref1-12.fa.gz): ~830 MB each
+- **IRREPLACEABLE - Takes 30+ hours to regenerate**
+
+### 🔴 BEFORE deleting benchmark_results/ directories:
+1. **STOP** - Check if it contains Layer 2 guide strands
+2. **ASK USER** for explicit confirmation before any deletion
+3. **VERIFY** files can be recovered from Time Machine
+4. **NEVER assume** benchmark data is disposable
+
+### ✅ Proper Layer 2 Storage Location (TODO - Migration needed):
+- **Current (WRONG):** `benchmark_results/*/layer2_reference_pool/`
+- **Future (CORRECT):** `data/guide_strands/` (permanent storage, excluded from benchmarks)
+
+**Nov 6, 2025: Near-catastrophic deletion prevented only by Time Machine recovery**
+
+---
+
 ## ⚠️ CRITICAL: Core Privacy Architecture (READ THIS FIRST)
 
 **THIS IS THE FOUNDATION OF THE ENTIRE SYSTEM. VIOLATING THESE PRINCIPLES INVALIDATES 8 YEARS OF WORK.**
