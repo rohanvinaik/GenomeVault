@@ -376,3 +376,43 @@ data/hdv_cache/**/*.hdc
 # Test scripts - exclude from gitignore to commit
 !test_api_integration.py
 !test_system_verification.py
+
+# ===========================================
+# HYPERVECTOR ENCODING OUTPUTS - NEVER COMMIT
+# ===========================================
+
+# Large HDF5 encoding files (can be 40-700 GB)
+*.h5
+data/experimental_strands/**/hdv_encoding/*.h5
+benchmark_results/**/hdv_encoding/*.h5
+
+# NPZ genome encodings
+genome_hdv_*.npz
+*_genome_*.npz
+encoded_genome*.npz
+
+# Encoding validation outputs
+validation_results_*.txt
+*_validation_output.txt
+reconstruction_validation_results.txt
+full_genome_empirical_results.txt
+
+# Encoding log files
+encode_*.log
+*_hdc_error_profiling.py
+float32_streaming_*.py
+int*_lightning_hdc*.py
+binary_lightning_hdc*.py
+bipolar_*_hdc*.py
+magnitude_direction_hdc.py
+onehot_*.py
+
+# HDV validation packages
+HDV_VALIDATION_PACKAGE/
+
+# Temporary encoding data
+data/experimental_strands/**/encoding/temp/
+data/experimental_strands/**/temp/
+benchmark_results/**/temp/
+# ERR directories contain large SRA files
+ERR*/

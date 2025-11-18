@@ -1,0 +1,137 @@
+# GenomeVault Data Download Configuration
+#
+# This file defines what genomic data to download for your project.
+# Edit this file and run: python scripts/download_genomic_data.py --config data_config.yaml
+
+# Project information
+project:
+  name: "GenomeVault Test Data"
+  description: "Curated genomic datasets for testing GenomeVault pipeline"
+  output_directory: "data/downloaded"
+
+# Reference genomes to download
+reference_genomes:
+  - id: hg38_chr22
+    enabled: true
+    description: "Quick testing with chr22 only"
+  
+  # - id: hg38_full
+  #   enabled: false
+  #   description: "Complete human genome (large download)"
+
+# VCF datasets (variant calls)
+vcf_datasets:
+  - id: 1kg_phase3_chr22
+    enabled: true
+    description: "1000 Genomes Phase 3, chr22 - diverse population variants"
+  
+  # - id: giab_na12878_vcf
+  #   enabled: false
+  #   description: "GIAB gold standard variants"
+
+# Curated FASTQ/BAM datasets
+curated_datasets:
+  # 1000 Genomes samples
+  - id: 1kg_hg00096_exome
+    enabled: true
+    description: "British (GBR) sample, chr22 exome"
+  
+  - id: 1kg_na19238_wgs
+    enabled: true
+    description: "Yoruba (YRI) sample, chr22 - population diversity"
+  
+  # GIAB gold standard
+  # - id: giab_na12878_illumina
+  #   enabled: false
+  #   description: "Gold standard reference sample (large)"
+  
+  # Platinum Genomes
+  # - id: platinum_na12877
+  #   enabled: false
+  #   description: "High-quality Illumina Platinum Genome"
+
+# SRA accessions (from Sequence Read Archive)
+sra_accessions:
+  enabled: false
+  accessions: []
+    # - SRR000001  # Example accession
+    # - SRR000002
+
+# SRA projects (download all runs from project)
+sra_projects:
+  enabled: false
+  projects: []
+    # - PRJNA000001  # Example project
+
+# Advanced options
+options:
+  # Use aria2c for faster parallel downloads
+  use_aria2: true
+  
+  # Maximum file size to download (GB)
+  max_file_size_gb: 100
+  
+  # Number of parallel downloads
+  parallel_downloads: 2
+  
+  # Verify checksums after download
+  verify_checksums: true
+  
+  # Automatically decompress .gz files
+  auto_decompress: true
+  
+  # Generate quality control reports
+  run_fastqc: false
+  
+  # Clean up intermediate files
+  cleanup_cache: true
+
+# Post-download actions
+post_download:
+  # Create symbolic links for easy access
+  create_symlinks: true
+  symlink_directory: "data/current"
+  
+  # Generate manifest file
+  generate_manifest: true
+  
+  # Validate files
+  validate_files: true
+  
+  # Create GenomeVault config
+  create_pipeline_config: true
+
+# Presets - Quick configurations for common use cases
+presets:
+  quick_test:
+    description: "Small dataset for quick testing (~500 MB)"
+    reference_genomes: [hg38_chr22]
+    vcf_datasets: [1kg_phase3_chr22]
+    curated_datasets: [1kg_hg00096_exome]
+  
+  comprehensive:
+    description: "Diverse samples for thorough testing (~5 GB)"
+    reference_genomes: [hg38_chr22]
+    vcf_datasets: [1kg_phase3_chr22, giab_na12878_vcf]
+    curated_datasets: [1kg_hg00096_exome, 1kg_na19238_wgs, giab_na12878_illumina]
+  
+  population_diversity:
+    description: "Samples from diverse populations"
+    reference_genomes: [hg38_chr22]
+    curated_datasets: [1kg_hg00096_exome, 1kg_na19238_wgs]
+    # Add more populations as needed
+  
+  gold_standard:
+    description: "High-quality GIAB reference samples"
+    reference_genomes: [hg38_full]
+    vcf_datasets: [giab_na12878_vcf]
+    curated_datasets: [giab_na12878_illumina]
+
+# Custom datasets - Add your own data sources
+custom_datasets:
+  # Example custom dataset
+  # - name: "My Custom Dataset"
+  #   url: "https://example.com/data/my_sample.fastq.gz"
+  #   type: fastq
+  #   md5: "abc123..."
+  #   description: "Custom sample from my lab"

@@ -1,0 +1,77 @@
+pipeline:
+  name: GenomeVault Enhanced Privacy Pipeline
+  auto_configured: true
+  hardware_detected: true
+hardware:
+  cpu_cores: 10
+  total_memory_gb: 64.0
+  gpu_backend: metal
+  storage_type: SSD
+phase1:
+  enabled: true
+  description: Immediate wins (30 min, 5.6 hours saved)
+  optimizations:
+    sambamba_sorting:
+      enabled: true
+      threads: 10
+      memory: 8G
+      expected_speedup: "2-3\xD7"
+    parallel_bcftools:
+      enabled: true
+      threads: 5
+      expected_speedup: "1.5-2\xD7"
+    metal_gpu_hdc:
+      enabled: true
+      backend: metal
+      expected_speedup: "43\xD7"
+phase2:
+  enabled: true
+  description: High-impact (5 hours, 2.4 hours saved)
+  optimizations:
+    minimap2_index_caching:
+      enabled: true
+      cache_dir: ~/.genomevault/minimap2_cache
+      expected_savings: 60 sec per reference
+    amx_alignment:
+      enabled: true
+      chip: M1
+      expected_speedup: "2-3\xD7"
+phase3:
+  enabled: true
+  description: Advanced (8 hours, 2.1 hours saved)
+  optimizations:
+    chromosome_parallel_sort:
+      enabled: false
+      max_parallel: 12
+      expected_speedup: "1\xD7"
+      note: Best for whole-genome data (24 chromosomes)
+    parallel_vcf_parsing:
+      enabled: true
+      workers: 5
+      expected_speedup: "2-3\xD7"
+command_line_args:
+  required:
+  - --output-dir
+  - benchmark_results/enhanced_privacy_k13_optimized_$(date +%Y%m%d_%H%M%S)
+  - --num-references
+  - '12'
+  phase1:
+  - --use-sambamba
+  - --sambamba-threads
+  - '10'
+  - --sambamba-memory
+  - 8G
+  - --parallel-bcftools
+  - --bcftools-threads
+  - '5'
+  - --gpu-backend
+  - metal
+  - --threads
+  - '10'
+  phase2:
+  - --enable-index-caching
+  - --enable-amx
+  phase3:
+  - --use-parallel-vcf-parsing
+  - --vcf-workers
+  - '5'

@@ -1,0 +1,256 @@
+\begin{thebibliography}{10}
+
+\bibitem{Relling2011}
+Mary~V Relling and Teri~E Klein.
+\newblock Cpic: Clinical pharmacogenetics implementation consortium of the
+  pharmacogenomics research network.
+\newblock {\em Clinical Pharmacology \& Therapeutics}, 89(3):464--467, 2011.
+
+\bibitem{Ayday2013}
+Erman Ayday, Jean~Louis Raisaro, Jean-Pierre Hubaux, and Jacques Rougemont.
+\newblock Protecting and evaluating genomic privacy in medical tests and
+  personalized medicine.
+\newblock In {\em Proceedings of the 12th ACM workshop on Workshop on privacy
+  in the electronic society}, pages 95--106, 2013.
+
+\bibitem{Levine2016}
+Glenn~N Levine, Eric~R Bates, John~A Bittl, Ralph~G Brindis, Stephan~D Fihn,
+  Lee~A Fleisher, Christopher~B Granger, Richard~A Lange, Michael~J Mack, Laura
+  Mauri, et~al.
+\newblock 2016 acc/aha guideline focused update on duration of dual
+  antiplatelet therapy in patients with coronary artery disease.
+\newblock {\em Journal of the American College of Cardiology},
+  68(10):1082--1115, 2016.
+
+\bibitem{Mega2009}
+Jessica~L Mega, Simon~L Close, Stephen~D Wiviott, Lian Shen, Robert~D Hockett,
+  John~T Brandt, Joseph~R Walker, Elliott~M Antman, William Macias, Eugene
+  Braunwald, et~al.
+\newblock Cytochrome p-450 polymorphisms and response to clopidogrel.
+\newblock {\em New England Journal of Medicine}, 360(4):354--362, 2009.
+
+\bibitem{Scott2013}
+Stuart~A Scott, Katrin Sangkuhl, C~Michael Stein, Jean-S{\'e}bastien Hulot,
+  Jessica~L Mega, Dan~M Roden, Teri~E Klein, Marc~S Sabatine, Julie~A Johnson,
+  and Alan~R Shuldiner.
+\newblock Clinical pharmacogenetics implementation consortium guidelines for
+  cyp2c19 genotype and clopidogrel therapy: 2013 update.
+\newblock {\em Clinical Pharmacology \& Therapeutics}, 94(3):317--323, 2013.
+
+\bibitem{HIPAA2013}
+{US Department of Health and Human Services}.
+\newblock Guidance regarding methods for de-identification of protected health
+  information in accordance with the health insurance portability and
+  accountability act (hipaa) privacy rule.
+\newblock Technical report, Office for Civil Rights, 2012.
+\newblock Available at:
+  \url{https://www.hhs.gov/hipaa/for-professionals/privacy/special-topics/de-identification/index.html}.
+
+\bibitem{healer2020}
+Hao Chen, Wei Dai, Miran Kim, and Yongsoo Song.
+\newblock Healer: Homomorphic computation of exact logistic regression for
+  secure rare disease variants analysis in gwas.
+\newblock In {\em Proceedings of the 2020 ACM SIGSAC Conference on Computer and
+  Communications Security}, pages 1681--1696, 2020.
+
+\bibitem{Simmons2016}
+Sean Simmons and Bonnie Berger.
+\newblock Enabling privacy-preserving gwass in heterogeneous human populations.
+\newblock {\em Cell systems}, 3(1):54--61, 2016.
+
+\bibitem{Kamm2013}
+Liina Kamm, Dan Bogdanov, Sven Laur, and Jaak Vilo.
+\newblock A new way to protect privacy in large-scale genome-wide association
+  studies.
+\newblock In {\em International Conference on Theory and Practice of Natural
+  Computing}, pages 137--148. Springer, 2013.
+
+\bibitem{Erlich2018}
+Yaniv Erlich, Tal Shor, Itsik Pe'er, and Shai Carmi.
+\newblock Identity inference of genomic data using long-range familial
+  searches.
+\newblock {\em Science}, 362(6415):690--694, 2018.
+
+\bibitem{Wan2017}
+Paul Scheet and Matthew Stephens.
+\newblock Rapid and accurate haplotype phasing and missing-data inference for
+  whole-genome association studies by use of localized haplotype clustering.
+\newblock {\em The American Journal of Human Genetics}, 81(5):1084--1097, 2007.
+
+\bibitem{Homer2008}
+Nils Homer, Szabolcs Szelinger, Margot Redman, David Duggan, Waibhav Tembe,
+  Jill Muehling, John~V Pearson, Dietrich~A Stephan, Stanley~F Nelson, and
+  David~W Craig.
+\newblock Resolving individuals contributing trace amounts of dna to highly
+  complex mixtures using high-density snp genotyping microarrays.
+\newblock {\em PLoS genetics}, 4(8):e1000167, 2008.
+
+\bibitem{Gymrek2013}
+Melissa Gymrek, Amy~L McGuire, David Golan, Eran Halperin, and Yaniv Erlich.
+\newblock Identifying personal genomes by surname inference.
+\newblock {\em Science}, 339(6117):321--324, 2013.
+
+\bibitem{Dwork2006}
+Cynthia Dwork, Frank McSherry, Kobbi Nissim, and Adam Smith.
+\newblock Calibrating noise to sensitivity in private data analysis.
+\newblock {\em Theory of Cryptography Conference}, pages 265--284, 2006.
+
+\bibitem{Johnson2013}
+Aaron Johnson and Vitaly Shmatikov.
+\newblock Privacy-preserving data exploration in genome-wide association
+  studies.
+\newblock {\em Proceedings of the 19th ACM SIGKDD international conference on
+  Knowledge discovery and data mining}, pages 1079--1087, 2013.
+
+\bibitem{VanBulck2018}
+Jo~Van~Bulck, Marina Minkin, Ofir Weisse, Daniel Genkin, Baris Kasikci, Frank
+  Piessens, Mark Silberstein, Thomas~F Wenisch, Yuval Yarom, and Raoul Strackx.
+\newblock Foreshadow: Extracting the keys to the intel {SGX} kingdom with
+  transient out-of-order execution.
+\newblock In {\em 27th USENIX Security Symposium (USENIX Security 18)}, pages
+  991--1008, 2018.
+
+\bibitem{sgx2016}
+{Intel Corporation}.
+\newblock Intel software guard extensions (intel sgx).
+\newblock
+  \url{https://www.intel.com/content/www/us/en/architecture-and-technology/software-guard-extensions.html},
+  2016.
+
+\bibitem{Andrews2010}
+Simon Andrews et~al.
+\newblock Fastqc: A quality control tool for high throughput sequence data,
+  2010.
+
+\bibitem{Bolger2014}
+Anthony~M Bolger, Marc Lohse, and Bjoern Usadel.
+\newblock Trimmomatic: a flexible trimmer for illumina sequence data.
+\newblock {\em Bioinformatics}, 30(15):2114--2120, 2014.
+
+\bibitem{Li2018}
+Heng Li.
+\newblock Minimap2: pairwise alignment for nucleotide sequences.
+\newblock {\em Bioinformatics}, 34(18):3094--3100, 2018.
+
+\bibitem{McKenna2010}
+Aaron McKenna, Matthew Hanna, Eric Banks, Andrey Sivachenko, Kristian
+  Cibulskis, Andrew Kernytsky, Kiran Garimella, David Altshuler, Stacey
+  Gabriel, Mark Daly, et~al.
+\newblock The genome analysis toolkit: a mapreduce framework for analyzing
+  next-generation dna sequencing data.
+\newblock {\em Genome research}, 20(9):1297--1303, 2010.
+
+\bibitem{Li2011}
+Heng Li.
+\newblock A statistical framework for snp calling, mutation discovery,
+  association mapping and population genetical parameter estimation from
+  sequencing data.
+\newblock {\em Bioinformatics}, 27(21):2987--2993, 2011.
+
+\bibitem{Genomes2015}
+{1000 Genomes Project Consortium}.
+\newblock A global reference for human genetic variation.
+\newblock {\em Nature}, 526(7571):68--74, 2015.
+
+\bibitem{Groth2016}
+Jens Groth.
+\newblock On the size of pairing-based non-interactive arguments.
+\newblock {\em Advances in Cryptology--EUROCRYPT 2016: 35th Annual
+  International Conference on the Theory and Applications of Cryptographic
+  Techniques}, pages 305--326, 2016.
+
+\bibitem{Liu2024}
+Ziming Liu, Yixuan Wang, Sachin Vaidya, Fabian Ruehle, James Halverson, Marin
+  Solja{\v{c}}i{\'c}, Thomas~Y Hou, and Max Tegmark.
+\newblock Kolmogorov-arnold networks.
+\newblock {\em arXiv preprint arXiv:2404.19756}, 2024.
+
+\bibitem{Sudlow2015}
+Cathie Sudlow, John Gallacher, Naomi Allen, Valerie Beral, Paul Burton, John
+  Danesh, Paul Downey, Paul Elliott, Jane Green, Martin Landray, et~al.
+\newblock Uk biobank: an open access resource for identifying the causes of a
+  wide range of complex diseases of middle and old age.
+\newblock {\em PLoS medicine}, 12(3):e1001779, 2015.
+
+\bibitem{Shringarpure2015}
+Suyash~S Shringarpure and Carlos~D Bustamante.
+\newblock Privacy risks from genomic data-sharing beacons.
+\newblock {\em The American Journal of Human Genetics}, 97(5):631--646, 2015.
+
+\bibitem{Fritz2011}
+Markus Hsi-Yang Fritz, Rasko Leinonen, Guy Cochrane, and Ewan Birney.
+\newblock Efficient storage of high throughput dna sequencing data using
+  reference-based compression.
+\newblock {\em Genome research}, 21(5):734--740, 2011.
+
+\bibitem{Cheon2017}
+Jung~Hee Cheon, Andrey Kim, Miran Kim, and Yongsoo Song.
+\newblock Homomorphic encryption for arithmetic of approximate numbers.
+\newblock {\em Advances in Cryptology--ASIACRYPT 2017: 23rd International
+  Conference on the Theory and Applications of Cryptology and Information
+  Security}, pages 409--437, 2017.
+
+\bibitem{Yao1986}
+Andrew~C Yao.
+\newblock How to generate and exchange secrets.
+\newblock {\em 27th Annual Symposium on Foundations of Computer Science (sfcs
+  1986)}, pages 162--167, 1986.
+
+\bibitem{Tople2018}
+Shruti Tople, Karan Grover, Shweta Sharma, Ranjita Bhagwan, and Ramachandran
+  Ramjee.
+\newblock Privado: Practical and secure dnn inference with enclaves.
+\newblock In {\em Proceedings of the 2018 Workshop on Privacy in the Electronic
+  Society}, pages 177--180, 2018.
+
+\bibitem{Garrison2018}
+Erik Garrison, Jouni Sir{\'e}n, Adam~M Novak, Glenn Hickey, Jordan~M Eizenga,
+  Eric~T Dawson, William Jones, Shilpa Garg, Charles Markello, Michael~F Lin,
+  et~al.
+\newblock Variation graph toolkit improves read mapping by representing genetic
+  variation in the reference.
+\newblock {\em Nature biotechnology}, 36(9):875--879, 2018.
+
+\bibitem{Chandak2019}
+Shubham Chandak, Kedar Tatwawadi, Idoia Ochoa, Mikel Hernaez, and Tsachy
+  Weissman.
+\newblock Spring: a next-generation compressor for fastq data.
+\newblock {\em Bioinformatics}, 35(15):2674--2676, 2019.
+
+\bibitem{Grishin2018}
+Dennis Grishin, Kamal Obbad, and George~M Church.
+\newblock Nebula genomics: A blockchain-enabled platform for genomic data
+  sharing and analysis.
+\newblock {\em White paper}, 2018.
+
+\bibitem{Encrypgen2017}
+{Encrypgen}.
+\newblock Gene-chain: A decentralized, distributed ledger for secure gene data
+  storage and sharing.
+\newblock {\em White paper}, 2017.
+
+\bibitem{Kanerva2009}
+Pentti Kanerva.
+\newblock Hyperdimensional computing: An introduction to computing in
+  distributed representation with high-dimensional random vectors.
+\newblock {\em Cognitive computation}, 1(2):139--159, 2009.
+
+\bibitem{Rahimi2016}
+Abbas Rahimi, Simone Benatti, Pentti Kanerva, Luca Benini, and Jan~M Rabaey.
+\newblock A robust and energy-efficient classifier using brain-inspired
+  hyperdimensional computing.
+\newblock In {\em Proceedings of the 2016 International Symposium on Low Power
+  Electronics and Design}, pages 64--69, 2016.
+
+\bibitem{BenSasson2018}
+Eli Ben-Sasson, Iddo Bentov, Yinon Horesh, and Michael Riabzev.
+\newblock Scalable, transparent, and post-quantum secure computational
+  integrity.
+\newblock In {\em IACR Cryptology ePrint Archive}, volume 2018, page~46, 2018.
+
+\bibitem{Buterin2019}
+Vitalik Buterin, Zo{\"e} Hitzig, and E~Glen Weyl.
+\newblock Quadratic payments: A primer.
+\newblock {\em Available at SSRN 3243656}, 2019.
+
+\end{thebibliography}

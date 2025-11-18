@@ -6,26 +6,27 @@ Quick reference for Claude Code when working with the GenomeVault codebase.
 
 # 🚨🚨🚨 CRITICAL WARNING - READ BEFORE ANY FILE OPERATIONS 🚨🚨🚨
 
-## ⛔ NEVER DELETE ANYTHING IN benchmark_results/ WITHOUT EXPLICIT CONFIRMATION ⛔
+## ⛔ NEVER DELETE LAYER 2 GUIDE STRANDS WITHOUT EXPLICIT CONFIRMATION ⛔
 
-**LAYER 2 GUIDE STRANDS ARE STORED IN benchmark_results/enhanced_privacy_k13_phase123_optimized/layer2_reference_pool/**
+**LAYER 2 GUIDE STRANDS ARE PERMANENTLY STORED IN: `data/guide_strands/`**
 
-**These files represent ~350 GB and 4+ DAYS of processing:**
-- **12 BAM files** (ref1-12.sorted.bam): 25-29 GB each
-- **12 FASTA files** (ref1-12.fa.gz): ~830 MB each
+**These files represent 338 GB and 4+ DAYS of processing:**
+- **12 BAM files** (ref1-12.sorted.bam): 25-30 GB each (~320 GB total)
+- **12 FASTA files** (ref1-12.fa.gz): ~830 MB each (~10 GB total)
 - **IRREPLACEABLE - Takes 30+ hours to regenerate**
 
-### 🔴 BEFORE deleting benchmark_results/ directories:
-1. **STOP** - Check if it contains Layer 2 guide strands
-2. **ASK USER** for explicit confirmation before any deletion
-3. **VERIFY** files can be recovered from Time Machine
-4. **NEVER assume** benchmark data is disposable
+### 🔴 BEFORE deleting ANY directories containing ref*.sorted.bam or ref*.fa.gz:
+1. **STOP** - Verify you're not deleting Layer 2 guide strands
+2. **CHECK** `data/guide_strands/` for these critical files
+3. **ASK USER** for explicit confirmation before any deletion
+4. **VERIFY** files can be recovered from Time Machine
+5. **NEVER assume** any genomic data is disposable
 
-### ✅ Proper Layer 2 Storage Location (TODO - Migration needed):
-- **Current (WRONG):** `benchmark_results/*/layer2_reference_pool/`
-- **Future (CORRECT):** `data/guide_strands/` (permanent storage, excluded from benchmarks)
+### ✅ Layer 2 Storage Location (Migration Complete - Nov 6, 2025):
+- **CORRECT LOCATION:** `data/guide_strands/` ✓
+- **OLD LOCATION (deprecated):** `benchmark_results/*/layer2_reference_pool/` (DO NOT USE)
 
-**Nov 6, 2025: Near-catastrophic deletion prevented only by Time Machine recovery**
+**Nov 6, 2025: Near-catastrophic deletion prevented by Time Machine recovery. Files migrated to permanent storage.**
 
 ---
 
@@ -48,9 +49,13 @@ Quick reference for Claude Code when working with the GenomeVault codebase.
 **Layer 2: Guide Strands (Blind Middleman)**
 - Real genomic samples: k=12 diverse whole-genome FASTQ samples
 - **Pipeline workflow:**
-  1. Guide FASTQ → align to consensus → Guide BAM files (ref1.sorted.bam, ref2.sorted.bam, etc.)
-  2. Guide BAM → `samtools consensus` → Guide FASTA files (ref1.fa.gz, ref2.fa.gz, etc., ~828 MB each)
+  1. Guide FASTQ → align to consensus → Guide BAM (consensus coords, ref1.sorted.bam, etc.)
+  2. Guide BAM (consensus coords) → `samtools consensus` → Guide FASTA files (ref1.fa.gz, ref2.fa.gz, etc., ~828 MB each)
+  3. **CRITICAL FOR GDIFF:** Guide FASTQ → align to Guide FASTA → Guide BAM (guide FASTA coords, ref1_gdiff.bam, etc.)
 - **Guide FASTA files are the actual blind middleman** - rearranged genomic sequences, NOT variant calls
+- **Guide BAMs must exist in TWO coordinate systems:**
+  - Consensus coords (for FASTA extraction)
+  - Guide FASTA coords (for GDiff comparison with experimental data)
 - Random cycling between guides per chunk = information-theoretic privacy
 
 **Layer 3: Experimental Strand (Patient/Query Data)**

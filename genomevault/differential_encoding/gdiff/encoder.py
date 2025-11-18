@@ -41,6 +41,7 @@ from .secure_guide_reference_builder import (
     SecureGuideReferenceBuilder,
     GuidePoolMetadata,
 )
+from .template_utils import auto_detect_template, should_use_template
 
 logger = logging.getLogger(__name__)
 
@@ -72,6 +73,8 @@ class GDiffEncoder:
         max_memory_gb: int = 16,  # Maximum RAM to use before warning
         population_template: Optional[any] = None,  # TemplateBuilder for LOCAL lookups
         template_path: Optional[str] = None,  # Path to GDiff template (auto-detect if None)
+        enable_template_autodetect: bool = True,  # CRITICAL: Set False to disable template loading
+        use_streaming_template: bool = True,  # Use SQLite streaming instead of loading to RAM
         enable_quality_check: bool = True,  # Enable pre-flight quality validation
         target_epsilon: Optional[float] = None,  # Target error bound for quality check
         fastq_path: Optional[str] = None,  # Optional FASTQ path for quality assessment
@@ -170,15 +173,49 @@ class GDiffEncoder:
         # k-anonymity level
         self.k_anonymity = len(self.pool_bams) + 1  # k-1 pool + 1 query
 
-        # Template-based encoding (optional)
+        # Template-based encoding (optional with auto-detection)
         self.template_path = template_path
-        self.template_index = {}  # (chrom, pos, ref, alt) → variant data
+        self.use_streaming_template = use_streaming_template
+        self.template_index = {}  # (chrom, pos, ref, alt) → variant data (if not streaming)
+        self.template_db = None  # SQLite streaming DB (if streaming)
         self.novel_variants = []  # Variants not in template
+        self.enable_template_autodetect = enable_template_autodetect
+
+        # Auto-detect template if not explicitly disabled
+        if self.template_path is None and enable_template_autodetect and should_use_template(genome_build, self.k_anonymity):
+            detected_template = auto_detect_template(genome_build)
+            if detected_template:
+                logger.info(f"Auto-detected template: {detected_template}")
+                self.template_path = str(detected_template)
 
         if self.template_path is not None:
-            logger.info(f"Loading GDiff template from {self.template_path}...")
-            self._load_template(Path(self.template_path))
-            logger.info(f"Template loaded: {len(self.template_index):,} variant sites indexed")
+            if use_streaming_template:
+                # Use streaming SQLite database (minimal RAM)
+                from genomevault.differential_encoding.gdiff.template_db import StreamingTemplateDB, convert_template_to_db
+
+                # Convert to SQLite if needed
+                db_path = Path(str(self.template_path).replace('.json.gz', '.db').replace('.json', '.db'))
+                if not db_path.exists():
+                    logger.info(f"Converting template to SQLite (one-time)...")
+                    convert_template_to_db(Path(self.template_path), db_path)
+
+                logger.info(f"Opening streaming template database: {db_path}")
+                self.template_db = StreamingTemplateDB(db_path)
+                logger.info(f"✓ Streaming template ready (minimal RAM usage)")
+            else:
+                # Legacy: Load entire template into RAM
+                logger.info(f"Loading GDiff template from {self.template_path}...")
+                self._load_template(Path(self.template_path))
+                logger.info(f"✓ Template loaded: {len(self.template_index):,} variant sites indexed")
+
+            logger.info(f"  Common variants will be deduplicated during encoding")
+        elif not enable_template_autodetect:
+            logger.debug("Template auto-detection explicitly disabled (worker mode)")
+        else:
+            logger.warning(
+                f"No template found for {genome_build} (k={self.k_anonymity}). "
+                f"All differential variants will be encoded (may be 60-100× larger)."
+            )
 
         logger.info(f"GDiffEncoder initialized:")
         logger.info(f"  Query: {self.query_bam}")
@@ -535,20 +572,48 @@ class GDiffEncoder:
         """
         Process a genomic region to find differential variants.
 
-        PRIVACY: Pool-only comparison - query compared ONLY to pool consensus.
-        NO reference genome involvement.
+        PRIVACY: Query compared to ONE randomly-selected guide per chunk.
+        Guide selection uses cryptographic binding via SGRS (chunk_guide_map).
 
         Args:
             chrom: Chromosome name
             start: Start position (0-based)
             end: End position (0-based, exclusive)
             query_bam: Query BAM handle
-            pool_bams: Pool BAM handles
+            pool_bams: Pool BAM handles (all k-1 guides available)
 
         Returns:
             List of DifferentialVariant objects
         """
         variants = []
+
+        # Determine which guide to use for this chunk (SGRS-based selection)
+        # If chunk_guide_map exists, use cryptographic guide selection
+        # Otherwise, randomly select one guide for this entire region
+        if self.chunk_guide_map is not None:
+            # Use SGRS: chunk_id is based on start position
+            chunk_id = start // self.chunk_size
+            if chunk_id in self.chunk_guide_map:
+                selected_guide_idx, alignment_seed = self.chunk_guide_map[chunk_id]
+            else:
+                # Fallback: use deterministic selection based on chunk_id
+                import random
+                rng = random.Random(chunk_id)
+                selected_guide_idx = rng.randint(0, len(pool_bams) - 1)
+                alignment_seed = 0
+        else:
+            # No SGRS: randomly select one guide for entire region
+            import random
+            selected_guide_idx = random.randint(0, len(pool_bams) - 1)
+            alignment_seed = 0
+
+        # Use ONLY the selected guide for comparison
+        selected_guide_bam = pool_bams[selected_guide_idx]
+
+        logger.debug(
+            f"Region {chrom}:{start}-{end} using guide #{selected_guide_idx + 1} "
+            f"(seed: {alignment_seed})"
+        )
 
         # Pileup through query BAM
         for pileup_column in query_bam.pileup(
@@ -571,21 +636,25 @@ class GDiffEncoder:
             # Get consensus allele from query
             query_allele = self._get_consensus_allele(query_alleles)
 
-            # PRIVACY: Get pool consensus at this position
-            pool_alleles_by_member = self._get_pool_alleles_at_position(
-                chrom, pos, pool_bams
+            # PRIVACY: Get alleles from ONLY the selected guide (not all guides)
+            guide_alleles = self._get_guide_alleles_at_position(
+                chrom, pos, selected_guide_bam
             )
 
-            # Compute pool consensus (most common allele across pool members)
-            pool_consensus = self._compute_pool_consensus(pool_alleles_by_member)
+            # Get consensus allele from selected guide
+            guide_consensus = self._get_consensus_allele(guide_alleles) if guide_alleles else None
 
-            # Skip if no pool coverage
-            if pool_consensus is None:
+            # Skip if no guide coverage
+            if guide_consensus is None:
                 continue
 
-            # PRIVACY: Compare query to pool consensus (NOT to reference)
-            # Only report positions where query differs from pool
-            if query_allele == pool_consensus:
+            # DEBUG: Log specific position
+            if pos == 10000804:
+                logger.info(f"DEBUG pos 10000804: query={query_allele} guide={guide_consensus} match={query_allele == guide_consensus}")
+
+            # PRIVACY: Compare query to SINGLE selected guide (NOT to all-pool consensus)
+            # Only report positions where query differs from this guide
+            if query_allele == guide_consensus:
                 continue  # No difference - skip
 
             # Compute quality metrics
@@ -595,14 +664,18 @@ class GDiffEncoder:
             if quality_metrics.read_depth < self.min_depth:
                 continue
 
-            # Check which pool members have query allele vs pool consensus
+            # For k-anonymity tracking: check if other guides also have this variant
+            # (Still use all guides for pool_coverage metadata, but comparison is vs selected guide)
+            pool_alleles_by_member = self._get_pool_alleles_at_position(
+                chrom, pos, pool_bams
+            )
             pool_coverage = self._compute_pool_coverage_for_allele(
                 query_allele, pool_alleles_by_member
             )
 
-            # Determine differential type
+            # Determine differential type (query vs selected guide)
             diff_type = self._compute_differential_type(
-                query_allele, pool_consensus, pool_coverage
+                query_allele, guide_consensus, pool_coverage
             )
 
             # Compute differential context
@@ -621,8 +694,8 @@ class GDiffEncoder:
             )
 
             # Compute structural context
-            # PRIVACY: ref = pool_consensus, alt = query_allele
-            variant_type = self._classify_variant_type(pool_consensus, query_allele)
+            # PRIVACY: ref = guide_consensus (selected guide), alt = query_allele
+            variant_type = self._classify_variant_type(guide_consensus, query_allele)
             structural_context = StructuralContext(
                 variant_type=variant_type,
                 haplotype_block=None,
@@ -639,10 +712,28 @@ class GDiffEncoder:
             population_context_data = None
             AF_population = None
 
+            # Check template for population annotation (NOT filtering!)
+            variant_key = (chrom, pos + 1, guide_consensus, query_allele)
+
+            # Support both streaming DB and in-memory template
+            template_entry = None
+            if self.template_db is not None:
+                # Streaming template database (minimal RAM)
+                template_entry = self.template_db.lookup(chrom, pos + 1, guide_consensus, query_allele)
+            elif variant_key in self.template_index:
+                # Legacy in-memory template
+                template_entry = self.template_index[variant_key]
+
+            if template_entry is not None:
+                # Found in template - ADD annotation, don't skip
+                AF_population = template_entry.get('allele_frequency', None)
+                # Convert template dict to population context if needed
+                # (Template provides annotation, not filtering)
+
             if self.population_template is not None:
                 # LOCAL lookup - no network queries
                 pop_result = self.population_template.lookup_variant(
-                    chrom, pos + 1, pool_consensus, query_allele
+                    chrom, pos + 1, guide_consensus, query_allele
                 )
                 if pop_result is not None:
                     AF_population = pop_result.allele_frequency
@@ -663,17 +754,18 @@ class GDiffEncoder:
             )
 
             # Skip obvious errors (significance < 0.2)
-            if not classification_result['decision']['include_in_gdiff']:
-                continue  # Skip this variant (likely error)
+            # TEMPORARILY DISABLED FOR DEBUGGING - Accept all variants
+            # if not classification_result['decision']['include_in_gdiff']:
+            #     continue  # Skip this variant (likely error)
 
             # Create variant with classification
-            # PRIVACY: ref = pool_consensus (NOT reference genome)
+            # PRIVACY: ref = guide_consensus (selected guide via SGRS)
             #          alt = query_allele
             variant = DifferentialVariant(
                 chrom=chrom,
                 pos=pos + 1,  # Convert to 1-based for output
-                ref=pool_consensus,  # Pool consensus, not reference
-                alt=query_allele,    # Query allele
+                ref=guide_consensus,  # Selected guide consensus (SGRS-based)
+                alt=query_allele,     # Query allele
                 differential_context=differential_context,
                 structural_context=structural_context,
                 functional_context=functional_context,
@@ -685,7 +777,161 @@ class GDiffEncoder:
 
             variants.append(variant)
 
+        # PASS 2: Mark template variants that are NOT present in experimental
+        # This enables full nucleotide resolution - decoder knows which template variants to use
+        if self.template_index:
+            variants.extend(self._mark_template_deletions(
+                chrom, start, end, variants, query_bam, selected_guide_bam
+            ))
+
         return variants
+
+    def _mark_template_deletions(
+        self,
+        chrom: str,
+        start: int,
+        end: int,
+        found_variants: List[DifferentialVariant],
+        query_bam: pysam.AlignmentFile,
+        guide_bam: pysam.AlignmentFile,
+    ) -> List[DifferentialVariant]:
+        """
+        Mark template variants that are NOT present in experimental genome.
+
+        This is CRITICAL for nucleotide resolution - enables decoder to know:
+        - If position not in GDiff AND not in template → use guide sequence
+        - If position IS in template but marked missing_from_query → DON'T use template
+
+        Args:
+            chrom: Chromosome
+            start: Region start
+            end: Region end
+            found_variants: Variants already found in Pass 1
+            query_bam: Query BAM handle
+            guide_bam: Selected guide BAM handle
+
+        Returns:
+            List of template variants marked as "missing_from_query"
+        """
+        deletion_variants = []
+
+        # Create set of positions we already encoded
+        encoded_positions = {(v.chrom, v.pos) for v in found_variants}
+
+        # Iterate through template variants in this region
+        for variant_key, template_entry in self.template_index.items():
+            t_chrom, t_pos, t_ref, t_alt = variant_key
+
+            # Skip if not in this region
+            if t_chrom != chrom or t_pos < start or t_pos >= end:
+                continue
+
+            # Skip if we already encoded this position
+            if (t_chrom, t_pos) in encoded_positions:
+                continue
+
+            # Check if experimental has coverage at this position
+            # Use 0-based for pysam
+            pos_0based = t_pos - 1
+
+            # Get experimental allele at this position
+            exp_alleles = []
+            for pileup_column in query_bam.pileup(
+                t_chrom, pos_0based, pos_0based + 1,
+                truncate=True,
+                stepper="samtools",
+                min_base_quality=self.min_base_quality,
+                min_mapping_quality=self.min_mapping_quality,
+            ):
+                if pileup_column.pos == pos_0based:
+                    exp_alleles = self._get_alleles_at_position(pileup_column)
+                    break
+
+            # Get guide allele at this position
+            guide_alleles = []
+            for pileup_column in guide_bam.pileup(
+                t_chrom, pos_0based, pos_0based + 1,
+                truncate=True,
+                stepper="samtools",
+                min_base_quality=self.min_base_quality,
+                min_mapping_quality=self.min_mapping_quality,
+            ):
+                if pileup_column.pos == pos_0based:
+                    guide_alleles = self._get_alleles_at_position(pileup_column)
+                    break
+
+            if not guide_alleles:
+                continue  # No guide coverage, skip
+
+            guide_consensus = self._get_consensus_allele(guide_alleles)
+
+            # Check if template variant exists in experimental
+            # Template says: ref→alt variant exists
+            # If experimental matches ref (guide), then variant is NOT present
+            if exp_alleles:
+                exp_consensus = self._get_consensus_allele(exp_alleles)
+
+                # Template variant NOT in experimental if:
+                # - Experimental matches template ref (not the alt)
+                if exp_consensus == t_ref and exp_consensus == guide_consensus:
+                    # Mark as missing_from_query
+                    deletion_variant = DifferentialVariant(
+                        chrom=t_chrom,
+                        pos=t_pos,
+                        ref=t_ref,
+                        alt=t_alt,
+                        differential_context=DifferentialContext(
+                            diff_type="missing_from_query",
+                            pool_coverage=[0] * len(self.pool_bams),  # Template variant not in pool
+                            confidence=0.95,  # High confidence - from template
+                            local_entropy=0.0,  # Not computed for template deletions
+                        ),
+                        structural_context=StructuralContext(
+                            variant_type=self._classify_variant_type(t_ref, t_alt),
+                        ),
+                        functional_context=FunctionalContext(),
+                        quality_metrics=None,  # No quality metrics for template deletions
+                        population_context=None,  # Could add template annotation here
+                        significance_score=0.8,  # Template variants are significant
+                        variant_classification="template_deletion",
+                    )
+                    deletion_variants.append(deletion_variant)
+
+        return deletion_variants
+
+    def _get_guide_alleles_at_position(
+        self,
+        chrom: str,
+        pos: int,
+        guide_bam: pysam.AlignmentFile,
+    ) -> List[str]:
+        """
+        Get alleles from a single guide BAM at specific position.
+
+        Args:
+            chrom: Chromosome
+            pos: Position (0-based)
+            guide_bam: Single guide BAM handle
+
+        Returns:
+            List of alleles at this position in the guide
+        """
+        alleles = []
+
+        for pileup_column in guide_bam.pileup(
+            chrom, pos, pos + 1,
+            truncate=True,
+            stepper="samtools",
+            min_base_quality=self.min_base_quality,
+            min_mapping_quality=self.min_mapping_quality,
+        ):
+            if pileup_column.pos != pos:
+                continue
+
+            alleles = self._get_alleles_at_position(pileup_column)
+            break
+
+        return alleles
 
     def _get_alleles_at_position(
         self,

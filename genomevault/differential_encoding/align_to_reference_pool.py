@@ -23,6 +23,7 @@ This module implements the privacy-preserving handoff by:
 
 import argparse
 import logging
+import os
 import subprocess
 import tempfile
 import time
@@ -133,6 +134,100 @@ class PrivacyPreservingReferencePoolAligner:
 
         logger.info(f"✓ All {len(extracted_fastas)} guide sequences extracted successfully")
         return extracted_fastas
+
+    @staticmethod
+    def align_guides_to_own_fastas(
+        guide_data: List[tuple],  # [(guide_fasta, fastq_r1, fastq_r2, output_bam), ...]
+        threads: int = 8
+    ) -> List[Path]:
+        """
+        Re-align guide FASTQs to their own guide FASTAs.
+
+        CRITICAL for GDiff encoding: Guide BAMs and experimental BAM must be in the
+        SAME coordinate system. This method creates guide BAMs in guide FASTA coords.
+
+        ARCHITECTURE:
+        - Guide BAMs (consensus coords) are used to create guide FASTAs
+        - This method re-aligns guide FASTQs to their OWN guide FASTAs
+        - Result: Guide BAMs in guide FASTA coordinate space
+        - GDiff encoder can now compare experimental BAM vs guide BAMs correctly
+
+        Args:
+            guide_data: List of (guide_fasta_path, fastq_r1, fastq_r2, output_bam) tuples
+            threads: Number of threads for alignment and sorting
+
+        Returns:
+            List of paths to re-aligned guide BAMs (in guide FASTA coordinate space)
+
+        Example:
+            guide_data = [
+                (Path("ref1.fa.gz"), Path("ERR1_R1.fq.gz"), Path("ERR1_R2.fq.gz"), Path("ref1_gdiff.bam")),
+                (Path("ref2.fa.gz"), Path("ERR2_R1.fq.gz"), Path("ERR2_R2.fq.gz"), Path("ref2_gdiff.bam")),
+            ]
+            guide_bams = PrivacyPreservingReferencePoolAligner.align_guides_to_own_fastas(
+                guide_data=guide_data,
+                threads=10
+            )
+        """
+        logger.info("=" * 80)
+        logger.info("RE-ALIGNING GUIDES TO OWN FASTAs (GDiff Coordinate System Fix)")
+        logger.info("=" * 80)
+        logger.info(f"Processing {len(guide_data)} guide references...")
+        logger.info("This ensures guide BAMs and experimental BAM are in same coordinate space")
+        logger.info("=" * 80)
+
+        realigned_bams = []
+
+        for i, (guide_fasta, fastq_r1, fastq_r2, output_bam) in enumerate(guide_data, 1):
+            logger.info(f"\n[{i}/{len(guide_data)}] Re-aligning guide {guide_fasta.stem} to its own FASTA...")
+
+            # Verify inputs
+            if not guide_fasta.exists():
+                raise FileNotFoundError(f"Guide FASTA not found: {guide_fasta}")
+            if not fastq_r1.exists() or not fastq_r2.exists():
+                raise FileNotFoundError(f"Guide FASTQ files not found: {fastq_r1}, {fastq_r2}")
+
+            # Skip if already exists
+            if output_bam.exists() and (output_bam.parent / f"{output_bam.name}.bai").exists():
+                logger.info(f"  ✓ Already exists: {output_bam.name}, skipping...")
+                realigned_bams.append(output_bam)
+                continue
+
+            start_time = time.time()
+
+            # Step 1: Align guide FASTQ to its own guide FASTA
+            logger.info(f"  Aligning {fastq_r1.name} + {fastq_r2.name} → {guide_fasta.name}...")
+
+            # Use minimap2 short-read preset
+            align_cmd = f"""
+            minimap2 -ax sr -t {threads} \
+                {guide_fasta} \
+                {fastq_r1} {fastq_r2} | \
+            samtools sort -@ {threads} -o {output_bam} -
+            """
+
+            subprocess.run(align_cmd, shell=True, check=True)
+
+            # Step 2: Index BAM
+            logger.info(f"  Indexing BAM...")
+            subprocess.run(f"samtools index {output_bam}", shell=True, check=True)
+
+            elapsed = time.time() - start_time
+
+            # Verify output
+            if output_bam.exists():
+                size_gb = output_bam.stat().st_size / (1024**3)
+                logger.info(f"  ✓ Guide {i} re-aligned: {output_bam.name} ({size_gb:.2f} GB, {elapsed/60:.1f} min)")
+                realigned_bams.append(output_bam)
+            else:
+                raise RuntimeError(f"Failed to create re-aligned BAM: {output_bam}")
+
+        logger.info("=" * 80)
+        logger.info(f"✓ ALL {len(realigned_bams)} GUIDE BAMs RE-ALIGNED SUCCESSFULLY")
+        logger.info("  Guide BAMs now in guide FASTA coordinate space (ready for GDiff)")
+        logger.info("=" * 80)
+
+        return realigned_bams
 
     def _initialize_parameters(self):
         """Initialize alignment parameters (with or without randomization)."""
@@ -248,8 +343,15 @@ class PrivacyPreservingReferencePoolAligner:
         else:
             logger.warning("⚠ Privacy mode DISABLED - for testing only!")
 
-        with tempfile.TemporaryDirectory() as tmpdir:
+        # Use SD card for temp files (guide pool + index) to save system drive space
+        sd_card_path = Path("/Volumes/1TBStorage")
+        temp_dir_location = sd_card_path if sd_card_path.exists() else None
+
+        with tempfile.TemporaryDirectory(dir=temp_dir_location) as tmpdir:
             tmpdir = Path(tmpdir)
+
+            if temp_dir_location:
+                logger.info(f"✓ Using SD card for temp files: {tmpdir}")
 
             # Step 1: Prepare guide pool reference from extracted FASTA files
             pool_reference = tmpdir / "guide_pool_reference.fa"
@@ -269,8 +371,13 @@ class PrivacyPreservingReferencePoolAligner:
             # Step 3: Align query to guide sequences using index
             logger.info(f"Aligning query to GUIDE POOL index...")
 
-            query_sam = tmpdir / "query.sam"
+            # SAM file goes to system /tmp (not SD card) to have enough space for ~250 GB
+            system_tmpdir = Path(tempfile.gettempdir())
+            query_sam = system_tmpdir / f"genomevault_query_{os.getpid()}.sam"
             query_bam = tmpdir / "query.sorted.bam"
+
+            logger.info(f"  SAM temp location: {query_sam.parent} (system drive)")
+            logger.info(f"  BAM location: {query_bam.parent} ({'SD card' if temp_dir_location else 'system'})")
 
             if self.randomizer:
                 logger.info("  Using randomized alignment parameters (SHA-256² security)")
@@ -294,12 +401,17 @@ class PrivacyPreservingReferencePoolAligner:
             subprocess.run(align_cmd, shell=True, check=True)
 
             # Step 3b: Add @SQ headers from reference FASTA and convert to sorted BAM
-            logger.info("  Adding reference headers and sorting...")
+            logger.info("  Adding reference headers and converting to BAM...")
             view_sort_cmd = f"""
             samtools view -h -bt {pool_reference} {query_sam} | \
                 samtools sort -@ {self.threads} -o {query_bam} -
             """
             subprocess.run(view_sort_cmd, shell=True, check=True)
+
+            # Delete SAM file immediately to free space
+            logger.info("  Deleting temporary SAM file to free disk space...")
+            query_sam.unlink()
+            logger.info(f"  ✓ Freed {query_sam} (~250 GB)")
 
             logger.info("  Indexing BAM...")
             subprocess.run(f"samtools index {query_bam}", shell=True, check=True)
@@ -504,22 +616,39 @@ class PrivacyPreservingReferencePoolAligner:
             logger.info(f"✓ Processed {chunk_num} chunks with random guide selection")
             logger.info(f"  Privacy guarantee: k={len(guide_indexes)} anonymity maintained")
 
-            # Step 3: Merge all chunk BAMs
-            logger.info(f"Merging {len(chunk_bams)} chunk BAMs...")
+            # Step 3: Keep chunk BAMs separate (DO NOT MERGE)
+            # Each chunk has different coordinate system (aligned to different guide)
+            # Merging would create coordinate system collisions → false variants
+            logger.info(f"✓ Keeping {len(chunk_bams)} chunk BAMs separate (privacy-preserving)")
 
-            merge_cmd = f"samtools merge -@ {self.threads} {output_bam} " + " ".join(str(b) for b in chunk_bams)
-            subprocess.run(merge_cmd, shell=True, check=True)
-            subprocess.run(f"samtools index {output_bam}", shell=True, check=True)
+            # Create output directory for chunks
+            chunk_dir = output_bam.parent / "chunks"
+            chunk_dir.mkdir(exist_ok=True)
 
-            logger.info(f"✓ Merged BAM created: {output_bam.stat().st_size / (1024**3):.2f} GB")
+            # Move chunk BAMs to permanent storage
+            final_chunk_bams = []
+            for i, chunk_bam in enumerate(chunk_bams, 1):
+                final_path = chunk_dir / f"chunk_{i}.bam"
+                chunk_bam.rename(final_path)
+                # Also move index
+                chunk_idx = chunk_bam.with_suffix('.bam.bai')
+                if chunk_idx.exists():
+                    chunk_idx.rename(final_path.with_suffix('.bam.bai'))
+                final_chunk_bams.append(final_path)
+
+            total_size = sum(bam.stat().st_size for bam in final_chunk_bams) / (1024**3)
+            logger.info(f"✓ Chunk BAMs saved: {total_size:.2f} GB total")
+            logger.info(f"  Location: {chunk_dir}")
+            logger.info("  NOTE: Chunks NOT merged - each has different coordinate system!")
 
             # Step 4: Save guide selection metadata
-            metadata_file = output_bam.with_suffix('.guide_selection.json')
+            metadata_file = chunk_dir / 'chunk_guide_map.json'
             metadata = {
                 'k_anonymity': len(guide_indexes),
                 'chunk_size': chunk_size,
                 'total_chunks': chunk_num,
                 'guide_selections': guide_selections,
+                'chunk_bams': [str(bam.name) for bam in final_chunk_bams],
                 'timestamp': time.strftime("%Y-%m-%d %H:%M:%S"),
                 'privacy_guarantee': f"Information-theoretic k={len(guide_indexes)} anonymity"
             }
@@ -531,6 +660,7 @@ class PrivacyPreservingReferencePoolAligner:
             logger.info("="*80)
             logger.info("PRIVACY GUARANTEE MAINTAINED:")
             logger.info(f"  - Each chunk aligned to RANDOM guide")
+            logger.info(f"  - Chunk BAMs kept SEPARATE (different coordinate systems)")
             logger.info(f"  - Attacker cannot determine guide selection")
             logger.info(f"  - k={len(guide_indexes)} anonymity preserved")
             logger.info("="*80)

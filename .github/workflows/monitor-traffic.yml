@@ -1,0 +1,159 @@
+name: Monitor GenomeVault Traffic (Backup)
+
+on:
+  schedule:
+    # Run daily at 12:30 PM UTC (7:30 AM EST / 8:30 AM EDT)
+    # Matches your local cron time
+    - cron: '30 12 * * *'
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  capture-traffic:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read  # Read repo data
+      
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up output directory
+        run: |
+          mkdir -p traffic_backup
+          DATE=$(date +%Y%m%d_%H%M%S)
+          echo "DATE=$DATE" >> $GITHUB_ENV
+          echo "📊 Capturing traffic data for $DATE"
+          
+      - name: Capture GitHub traffic data
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DATE=$(date +%Y%m%d)
+          OUTPUT_DIR="traffic_backup"
+          
+          echo "Installing gh CLI..."
+          # GitHub Actions runners have gh pre-installed, but verify
+          gh --version || (echo "Installing gh..." && \
+            curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg && \
+            echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null && \
+            sudo apt update && \
+            sudo apt install gh -y)
+          
+          echo "📊 Capturing traffic data..."
+          
+          # Save clone data
+          gh api /repos/${{ github.repository }}/traffic/clones > "$OUTPUT_DIR/clones_$DATE.json"
+          
+          # Save view data
+          gh api /repos/${{ github.repository }}/traffic/views > "$OUTPUT_DIR/views_$DATE.json"
+          
+          # Save referrers (if any)
+          gh api /repos/${{ github.repository }}/traffic/popular/referrers > "$OUTPUT_DIR/referrers_$DATE.json" 2>/dev/null || echo "[]" > "$OUTPUT_DIR/referrers_$DATE.json"
+          
+          # Save popular paths (if any)
+          gh api /repos/${{ github.repository }}/traffic/popular/paths > "$OUTPUT_DIR/paths_$DATE.json" 2>/dev/null || echo "[]" > "$OUTPUT_DIR/paths_$DATE.json"
+          
+          # Create summary
+          cat > "$OUTPUT_DIR/summary_$DATE.txt" <<SUMMARY
+          GitHub Traffic Summary - $DATE
+          Repository: ${{ github.repository }}
+          Captured by: GitHub Actions (Backup)
+          
+          Clones (last 14 days):
+          $(gh api /repos/${{ github.repository }}/traffic/clones | jq '{total: .count, unique: .uniques}')
+          
+          Views (last 14 days):
+          $(gh api /repos/${{ github.repository }}/traffic/views | jq '{total: .count, unique: .uniques}')
+          
+          Latest daily activity:
+          $(gh api /repos/${{ github.repository }}/traffic/clones | jq '.clones[-1]')
+          SUMMARY
+          
+          echo "✅ Traffic data captured successfully"
+          echo ""
+          echo "Files created:"
+          ls -lh "$OUTPUT_DIR/"
+          
+      - name: Create analysis report
+        run: |
+          DATE=$(date +%Y%m%d)
+          OUTPUT_DIR="traffic_backup"
+          
+          # Extract key metrics
+          TOTAL_CLONES=$(jq '.count' "$OUTPUT_DIR/clones_$DATE.json")
+          UNIQUE_CLONERS=$(jq '.uniques' "$OUTPUT_DIR/clones_$DATE.json")
+          TOTAL_VIEWS=$(jq '.count' "$OUTPUT_DIR/views_$DATE.json")
+          UNIQUE_VIEWERS=$(jq '.uniques' "$OUTPUT_DIR/views_$DATE.json")
+          
+          # Calculate ratio
+          if [ "$UNIQUE_CLONERS" != "0" ]; then
+            RATIO=$(echo "scale=2; $TOTAL_CLONES / $UNIQUE_CLONERS" | bc)
+          else
+            RATIO="N/A"
+          fi
+          
+          # Create analysis
+          cat > "$OUTPUT_DIR/analysis_$DATE.md" <<ANALYSIS
+          # Traffic Analysis - $DATE
+          
+          ## Quick Stats
+          - **Total Clones:** $TOTAL_CLONES
+          - **Unique Cloners:** $UNIQUE_CLONERS
+          - **Clone Ratio:** $RATIO (normal: 1-3, bots: >10)
+          - **Total Views:** $TOTAL_VIEWS
+          - **Unique Viewers:** $UNIQUE_VIEWERS
+          
+          ## Bot Detection
+          $(if [ "$UNIQUE_VIEWERS" = "0" ] || [ "$UNIQUE_VIEWERS" = "1" ]; then
+            echo "⚠️ **WARNING:** Very low viewer count suggests automated traffic"
+          else
+            echo "✅ Normal viewer pattern detected"
+          fi)
+          
+          $(if [ "$RATIO" != "N/A" ]; then
+            if (( $(echo "$RATIO > 10" | bc -l) )); then
+              echo "⚠️ **WARNING:** High clone ratio suggests bot activity"
+            else
+              echo "✅ Clone ratio within normal range"
+            fi
+          fi)
+          
+          ## Data Files
+          - \`clones_$DATE.json\` - Clone statistics
+          - \`views_$DATE.json\` - View statistics  
+          - \`referrers_$DATE.json\` - Traffic sources
+          - \`paths_$DATE.json\` - Popular file paths
+          - \`summary_$DATE.txt\` - Daily summary
+          
+          ## Backup Information
+          - **Captured:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          - **Source:** GitHub Actions (automated backup)
+          - **Retention:** 90 days (GitHub Actions artifact)
+          - **Repository:** ${{ github.repository }}
+          
+          ---
+          
+          *This is an automated backup. Primary monitoring runs locally via cron.*
+          ANALYSIS
+          
+          echo "✅ Analysis report created"
+          
+      - name: Upload traffic data as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: traffic-data-${{ env.DATE }}
+          path: traffic_backup/
+          retention-days: 90  # Keep for 90 days
+          
+      - name: Summary
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✅ Traffic monitoring complete (backup)"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "📊 Data saved to GitHub Actions artifacts"
+          echo "⏱️  Retention: 90 days"
+          echo "🔗 View: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo ""
+          echo "This is a BACKUP. Primary monitoring: local cron at 12:30 PM"

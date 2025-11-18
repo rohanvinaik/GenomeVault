@@ -1,0 +1,49 @@
+This is BibTeX, Version 0.99d (TeX Live 2025)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: compiled/GenomeVault_Paper.aux
+The style file: unsrt.bst
+Database file #1: genomevault_refs.bib
+Warning--entry type for "Andrews2010" isn't style-file defined
+--line 119 of file genomevault_refs.bib
+You've used 39 entries,
+            1791 wiz_defined-function locations,
+            716 strings with 12802 characters,
+and the built_in function-call counts, 11218 in all, are:
+= -- 982
+> -- 594
+< -- 13
++ -- 214
+- -- 175
+* -- 831
+:= -- 1744
+add.period$ -- 118
+call.type$ -- 39
+change.case$ -- 40
+chr.to.int$ -- 0
+cite$ -- 39
+duplicate$ -- 461
+empty$ -- 1000
+format.name$ -- 175
+if$ -- 2481
+int.to.chr$ -- 0
+int.to.str$ -- 39
+missing$ -- 36
+newline$ -- 198
+num.names$ -- 39
+pop$ -- 103
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 264
+stack$ -- 0
+substring$ -- 890
+swap$ -- 150
+text.length$ -- 13
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 0
+while$ -- 111
+width$ -- 41
+write$ -- 427
+(There was 1 warning)

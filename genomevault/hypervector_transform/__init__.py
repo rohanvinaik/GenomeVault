@@ -89,6 +89,12 @@ from .hdc_encoder import (
     BackendEncoderConfig,
     create_backend_encoder,
 )
+from .privacy_preserving_genome_hdv import (
+    PrivacyPreservingGenomeHDV,
+    EncodingSchema,
+    SchemaConfig,
+    QueryResult,
+)
 
 __all__ = [
     "BindingOperation",
@@ -145,4 +151,9 @@ __all__ = [
     "BackendOptimizedEncoder",
     "BackendEncoderConfig",
     "create_backend_encoder",
+    # Privacy-preserving genome HDV
+    "PrivacyPreservingGenomeHDV",
+    "EncodingSchema",
+    "SchemaConfig",
+    "QueryResult",
 ]

@@ -1,0 +1,72 @@
+% Clinical Vignette - Insert into Introduction (Section 1)
+% Location: After "Limitations of Existing Approaches" subsection
+
+\subsection{Clinical Motivation: Real-Time Precision Medicine}
+
+\textbf{Scenario: Emergency Pharmacogenomics in Acute Coronary Syndrome}
+
+A 52-year-old patient presents to the emergency department with ST-elevation myocardial infarction (heart attack). Standard of care requires immediate dual antiplatelet therapy with aspirin plus clopidogrel (Plavix) to prevent recurrent thrombosis~\cite{Levine2016}. However, clopidogrel is a prodrug requiring hepatic CYP2C19 enzyme activation. Patients carrying CYP2C19 loss-of-function alleles (*2, *3, *17) exhibit 30--40\% reduced drug efficacy and 3.45× higher risk of major adverse cardiovascular events within 30 days~\cite{Mega2009,Scott2013}.
+
+\textbf{Current clinical dilemma:}
+\begin{itemize}
+\item \textbf{Option 1 - Empirical treatment:} Administer clopidogrel without genotyping. Risk: 25--30\% of patients (heterozygous or homozygous for loss-of-function alleles) receive suboptimal therapy~\cite{Scott2013}.
+\item \textbf{Option 2 - Send-out genotyping:} Order CYP2C19 test. Turnaround time: 24--72 hours. Patient must be treated empirically during wait, defeating the purpose of precision medicine.
+\item \textbf{Option 3 - Access stored genome:} If patient previously underwent whole genome sequencing, accessing their data requires either (a) decrypting the entire 3.2 GB genome file (HIPAA ``minimum necessary'' violation~\cite{HIPAA2013}), or (b) using homomorphic encryption-based queries (500--1000 seconds~\cite{Ayday2013}, too slow for emergency use).
+\end{itemize}
+
+\textbf{GenomeVault solution:}
+\begin{enumerate}
+\item \textbf{Selective query:} Clinician queries: ``Does patient carry CYP2C19 *2, *3, or *17?''
+\item \textbf{Response time:} 45 milliseconds (KAN-HD selective decoding of chromosome 10q23.33)
+\item \textbf{Privacy preservation:} Query processed without decrypting full genome. Only CYP2C19 genotype revealed to clinician. Audit trail recorded on blockchain for HIPAA compliance.
+\item \textbf{Clinical action:} If loss-of-function alleles detected, switch to prasugrel or ticagrelor (alternative P2Y12 inhibitors unaffected by CYP2C19 status)~\cite{Levine2016}.
+\end{enumerate}
+
+\textbf{Why existing systems fail this use case:}
+\begin{itemize}
+\item \textbf{Homomorphic encryption (HEALER~\cite{healer2020}):} 10--15 minutes per query (too slow for emergency department workflow)
+\item \textbf{Differential privacy (Simmons et al.~\cite{Simmons2016}):} Adds Laplace noise to genotype calls; unacceptable for binary clinical decisions (patient either has loss-of-function allele or doesn't)
+\item \textbf{Secure Multi-Party Computation (Kamm et al.~\cite{Kamm2013}):} Requires coordination between multiple hospitals; impractical for single-institution emergency queries
+\item \textbf{Access control systems:} Enable fast queries but require full genome decryption, creating risk of unauthorized access (e.g., insurer accessing Alzheimer's risk alleles~\cite{Erlich2018})
+\end{itemize}
+
+GenomeVault uniquely achieves \textit{both} sub-second response time \textit{and} cryptographic privacy guarantees, enabling precision medicine at the point of care without compromising patient privacy.
+
+% Required new citations (add to genomevault_refs.bib):
+% @article{Levine2016,
+%   title={2016 ACC/AHA guideline focused update on duration of dual antiplatelet therapy in patients with coronary artery disease},
+%   author={Levine, Glenn N and Bates, Eric R and Bittl, John A and others},
+%   journal={Journal of the American College of Cardiology},
+%   volume={68},
+%   number={10},
+%   pages={1082--1115},
+%   year={2016}
+% }
+%
+% @article{Mega2009,
+%   title={Cytochrome P-450 polymorphisms and response to clopidogrel},
+%   author={Mega, Jessica L and Close, Simon L and Wiviott, Stephen D and others},
+%   journal={New England Journal of Medicine},
+%   volume={360},
+%   number={4},
+%   pages={354--362},
+%   year={2009}
+% }
+%
+% @article{Scott2013,
+%   title={Clinical Pharmacogenetics Implementation Consortium guidelines for CYP2C19 genotype and clopidogrel therapy: 2013 update},
+%   author={Scott, Stuart A and Sangkuhl, Katrin and Stein, C Michael and others},
+%   journal={Clinical Pharmacology \& Therapeutics},
+%   volume={94},
+%   number={3},
+%   pages={317--323},
+%   year={2013}
+% }
+%
+% @techreport{HIPAA2013,
+%   title={Guidance regarding methods for de-identification of protected health information in accordance with HIPAA Privacy Rule},
+%   author={{US Department of Health and Human Services}},
+%   institution={Office for Civil Rights},
+%   year={2013},
+%   url={https://www.hhs.gov/hipaa/for-professionals/privacy/special-topics/de-identification/index.html}
+% }
