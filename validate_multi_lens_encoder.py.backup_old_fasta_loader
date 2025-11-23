@@ -1,0 +1,675 @@
+#!/usr/bin/env python3
+"""
+Comprehensive Multi-Lens Encoder Validation Suite
+
+Tests each lens independently with tunable parameters to find optimal configurations.
+Analyzes overlap effect, coverage effect, and cross-lens agreement.
+"""
+
+import json
+import time
+import logging
+import numpy as np
+from pathlib import Path
+from typing import Dict, List, Tuple
+from collections import defaultdict
+from biophysical_signature_encoder import (
+    MultiLensEncoder, LensConfig, ChemicalLens
+)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s | %(levelname)-8s | %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+
+def load_real_genomic_sequence(
+    fasta_path: Path,
+    chrom: str = "chr22",
+    start: int = 0,
+    length: int = 500000
+) -> str:
+    """
+    Load real genomic sequence from reference FASTA.
+
+    Uses actual biological DNA to test if biophysical lenses capture
+    real patterns that emerge from DNA structure.
+    """
+    import gzip
+
+    logger.info(f"Loading {length:,} bases from {chrom} in {fasta_path.name}")
+
+    sequence = []
+    in_target_chrom = False
+    current_pos = 0
+
+    # Handle gzipped or plain FASTA
+    if fasta_path.suffix == '.gz':
+        f = gzip.open(fasta_path, 'rt')
+    else:
+        f = open(fasta_path, 'r')
+
+    try:
+        for line in f:
+            line = line.strip()
+            if line.startswith('>'):
+                # Check if this is our target chromosome
+                if chrom in line or chrom.replace('chr', '') in line:
+                    in_target_chrom = True
+                    logger.info(f"Found {chrom} header: {line[:80]}")
+                    current_pos = 0
+                else:
+                    in_target_chrom = False
+            elif in_target_chrom:
+                # Skip to start position
+                if current_pos < start:
+                    skip_len = min(len(line), start - current_pos)
+                    current_pos += skip_len
+                    line = line[skip_len:]
+
+                # Collect sequence
+                if current_pos >= start and len(sequence) < length:
+                    needed = length - len(sequence)
+                    sequence.append(line[:needed].upper())
+
+                current_pos += len(line)
+
+                if len(''.join(sequence)) >= length:
+                    break
+    finally:
+        f.close()
+
+    result = ''.join(sequence)
+
+    # Compute actual biophysical properties
+    if len(result) > 0:
+        gc_content = (result.count('G') + result.count('C')) / len(result)
+        pu_count = result.count('A') + result.count('G')
+        py_count = result.count('T') + result.count('C')
+        pupy_ratio = pu_count / (pu_count + py_count) if (pu_count + py_count) > 0 else 0.5
+
+        logger.info(f"Loaded {len(result):,} bases: GC={gc_content:.2%}, Pu/Py={pupy_ratio:.2%}")
+
+    return result
+
+
+def test_single_lens_parameters() -> Dict:
+    """
+    Test 1: Parameter grid search for each lens type.
+
+    Tests each chemical property lens across different D, N, overlap, coverage values
+    to find optimal configurations.
+    """
+    logger.info("=" * 80)
+    logger.info("TEST 1: SINGLE LENS PARAMETER OPTIMIZATION")
+    logger.info("=" * 80)
+    logger.info("")
+
+    # Parameter grid
+    dimensions = [5000, 10000, 20000]
+    chunk_sizes = [1000, 2000, 4000]
+    overlap_fractions = [0.0, 0.25, 0.5]
+    coverage_values = [1.0, 2.0]
+
+    # Test sequences - 200k bases to get ~100 chunks with N=2000
+    test_sequences = {
+        'normal_gc': generate_controlled_sequence(200000, gc_content=0.5, seed=42),
+        'at_rich': generate_controlled_sequence(200000, gc_content=0.3, seed=43),
+        'gc_rich': generate_controlled_sequence(200000, gc_content=0.7, seed=44),
+    }
+
+    # Lens configurations to test
+    lens_types = [
+        ('AT', ('A',), ('T',)),
+        ('GC', ('G',), ('C',)),
+        ('PuPy', ('A', 'G'), ('T', 'C')),
+        ('AmKe', ('A', 'C'), ('G', 'T')),
+    ]
+
+    results = []
+
+    for lens_name, pos_nucs, neg_nucs in lens_types:
+        logger.info(f"Testing lens: {lens_name}")
+        logger.info("-" * 80)
+
+        for D in dimensions:
+            for N in chunk_sizes:
+                for overlap in overlap_fractions:
+                    for coverage in coverage_values:
+
+                        # Only test with sequences long enough
+                        if N > 4000:
+                            continue
+
+                        # Create lens
+                        config = LensConfig(
+                            name=lens_name,
+                            dimension=D,
+                            chunk_size=N,
+                            overlap_fraction=overlap,
+                            coverage=coverage,
+                            positive_nucleotides=pos_nucs,
+                            negative_nucleotides=neg_nucs,
+                            seed=42
+                        )
+
+                        lens = ChemicalLens(config)
+
+                        # Test on all sequences
+                        accuracies = []
+                        encode_times = []
+
+                        for seq_type, sequence in test_sequences.items():
+                            # Trim to chunk size
+                            test_seq = sequence[:N]
+
+                            # Encode
+                            start = time.time()
+                            result = lens.encode_chunk(test_seq, f"{seq_type}_test", codebook_idx=0)
+                            encode_time = (time.time() - start) * 1000
+                            encode_times.append(encode_time)
+
+                            # Test retrieval accuracy
+                            test_positions = np.random.choice(N, size=min(100, N), replace=False)
+                            correct = 0
+
+                            for pos in test_positions:
+                                sign, conf = lens.query_position(result['bin_vec'], pos, codebook_idx=0)
+
+                                # Map sign to nucleotide category
+                                ground_truth = test_seq[pos]
+
+                                if sign > 0 and ground_truth in pos_nucs:
+                                    correct += 1
+                                elif sign < 0 and ground_truth in neg_nucs:
+                                    correct += 1
+                                elif sign == 0 and ground_truth not in pos_nucs and ground_truth not in neg_nucs:
+                                    correct += 1
+
+                            accuracy = (correct / len(test_positions)) * 100
+                            accuracies.append(accuracy)
+
+                        # Record results
+                        results.append({
+                            'lens_name': lens_name,
+                            'dimension': D,
+                            'chunk_size': N,
+                            'overlap_fraction': overlap,
+                            'coverage': coverage,
+                            'mean_accuracy': float(np.mean(accuracies)),
+                            'std_accuracy': float(np.std(accuracies)),
+                            'mean_encode_time_ms': float(np.mean(encode_times)),
+                        })
+
+                        logger.info(
+                            f"  D={D:5d} N={N:4d} overlap={overlap:.2f} coverage={coverage:.1f}x: "
+                            f"{np.mean(accuracies):5.1f}% ± {np.std(accuracies):4.1f}% "
+                            f"({np.mean(encode_times):6.1f}ms)"
+                        )
+
+        logger.info("")
+
+    return {'parameter_grid_results': results}
+
+
+def test_overlap_effect() -> Dict:
+    """
+    Test 2: Analyze how overlap affects consensus accuracy.
+
+    With 50% overlap, each position is encoded in two chunks. This tests whether
+    consensus between overlapping chunks improves accuracy.
+    """
+    logger.info("=" * 80)
+    logger.info("TEST 2: OVERLAP EFFECT ANALYSIS")
+    logger.info("=" * 80)
+    logger.info("")
+
+    # Generate test sequence - 500k bases for ~250 chunks with N=2000
+    sequence = generate_controlled_sequence(500000, gc_content=0.5, seed=42)
+
+    # Test with and without overlap
+    overlap_configs = [
+        ('No overlap', 0.0),
+        ('25% overlap', 0.25),
+        ('50% overlap', 0.5),
+        ('75% overlap', 0.75),
+    ]
+
+    results = []
+
+    for desc, overlap in overlap_configs:
+        config = LensConfig(
+            name="AT",
+            dimension=10000,
+            chunk_size=2000,
+            overlap_fraction=overlap,
+            coverage=1.0,
+            positive_nucleotides=('A',),
+            negative_nucleotides=('T',),
+            seed=42
+        )
+
+        lens = ChemicalLens(config)
+
+        # Encode sequence in chunks
+        stride = config.stride
+        chunks_data = []
+        start = 0
+
+        while start + config.chunk_size <= len(sequence):
+            chunk_seq = sequence[start:start + config.chunk_size]
+            result = lens.encode_chunk(chunk_seq, f"chunk_{start}", codebook_idx=0)
+            chunks_data.append({
+                'start': start,
+                'end': start + config.chunk_size,
+                'data': result
+            })
+            start += stride
+
+        logger.info(f"{desc}: {len(chunks_data)} chunks generated")
+
+        # For positions covered by multiple chunks, test consensus
+        if overlap > 0:
+            position_predictions = defaultdict(list)
+
+            for chunk in chunks_data:
+                for pos in range(chunk['start'], chunk['end']):
+                    local_pos = pos - chunk['start']
+                    sign, conf = lens.query_position(
+                        chunk['data']['bin_vec'],
+                        local_pos,
+                        codebook_idx=0
+                    )
+                    position_predictions[pos].append((sign, conf))
+
+            # Analyze consensus
+            positions_with_overlap = [p for p, preds in position_predictions.items() if len(preds) > 1]
+
+            if positions_with_overlap:
+                # Test subset of positions
+                test_positions = np.random.choice(
+                    positions_with_overlap,
+                    size=min(100, len(positions_with_overlap)),
+                    replace=False
+                )
+
+                correct_single = 0
+                correct_consensus = 0
+
+                for pos in test_positions:
+                    preds = position_predictions[pos]
+                    ground_truth = sequence[pos]
+
+                    # Single prediction (first chunk)
+                    sign_single = preds[0][0]
+
+                    # Consensus prediction (weighted vote)
+                    total_conf_pos = sum(conf for sign, conf in preds if sign > 0)
+                    total_conf_neg = sum(conf for sign, conf in preds if sign < 0)
+
+                    if total_conf_pos > total_conf_neg:
+                        sign_consensus = 1
+                    elif total_conf_neg > total_conf_pos:
+                        sign_consensus = -1
+                    else:
+                        sign_consensus = 0
+
+                    # Check accuracy
+                    if sign_single > 0 and ground_truth == 'A':
+                        correct_single += 1
+                    elif sign_single < 0 and ground_truth == 'T':
+                        correct_single += 1
+
+                    if sign_consensus > 0 and ground_truth == 'A':
+                        correct_consensus += 1
+                    elif sign_consensus < 0 and ground_truth == 'T':
+                        correct_consensus += 1
+
+                accuracy_single = (correct_single / len(test_positions)) * 100
+                accuracy_consensus = (correct_consensus / len(test_positions)) * 100
+
+                improvement = accuracy_consensus - accuracy_single
+
+                logger.info(f"  Single chunk: {accuracy_single:.1f}%")
+                logger.info(f"  Consensus:    {accuracy_consensus:.1f}%")
+                logger.info(f"  Improvement:  {improvement:+.1f}%")
+                logger.info("")
+
+                results.append({
+                    'overlap_fraction': overlap,
+                    'num_chunks': len(chunks_data),
+                    'positions_tested': len(test_positions),
+                    'accuracy_single': accuracy_single,
+                    'accuracy_consensus': accuracy_consensus,
+                    'improvement': improvement
+                })
+
+    return {'overlap_effect_results': results}
+
+
+def test_coverage_effect() -> Dict:
+    """
+    Test 3: Analyze how multiple codebooks (coverage) improve accuracy via voting.
+
+    Coverage > 1.0 means encoding the same chunk with multiple independent codebooks.
+    This tests whether voting across codebooks improves accuracy.
+    """
+    logger.info("=" * 80)
+    logger.info("TEST 3: COVERAGE EFFECT ANALYSIS")
+    logger.info("=" * 80)
+    logger.info("")
+
+    # Generate test sequence
+    sequence = generate_controlled_sequence(2000, gc_content=0.5, seed=42)
+
+    # Test different coverage values
+    coverage_configs = [1.0, 2.0, 3.0, 4.0]
+
+    results = []
+
+    for coverage in coverage_configs:
+        config = LensConfig(
+            name="AT",
+            dimension=10000,
+            chunk_size=2000,
+            overlap_fraction=0.0,
+            coverage=coverage,
+            positive_nucleotides=('A',),
+            negative_nucleotides=('T',),
+            seed=42
+        )
+
+        lens = ChemicalLens(config)
+
+        # Encode with each codebook
+        encoded_results = []
+        for cb_idx in range(int(coverage)):
+            result = lens.encode_chunk(sequence, f"test_cb{cb_idx}", codebook_idx=cb_idx)
+            encoded_results.append(result)
+
+        # Test positions
+        test_positions = np.random.choice(2000, size=100, replace=False)
+
+        # Compare single codebook vs voting
+        correct_single = 0
+        correct_voting = 0
+
+        for pos in test_positions:
+            ground_truth = sequence[pos]
+
+            # Single codebook (first one)
+            sign_single, _ = lens.query_position(
+                encoded_results[0]['bin_vec'],
+                pos,
+                codebook_idx=0
+            )
+
+            # Voting across all codebooks
+            votes = []
+            for cb_idx, result in enumerate(encoded_results):
+                sign, conf = lens.query_position(result['bin_vec'], pos, codebook_idx=cb_idx)
+                votes.append(sign * conf)  # Weighted vote
+
+            # Majority vote
+            vote_sum = sum(votes)
+            if vote_sum > 0:
+                sign_voting = 1
+            elif vote_sum < 0:
+                sign_voting = -1
+            else:
+                sign_voting = 0
+
+            # Check accuracy
+            if sign_single > 0 and ground_truth == 'A':
+                correct_single += 1
+            elif sign_single < 0 and ground_truth == 'T':
+                correct_single += 1
+
+            if sign_voting > 0 and ground_truth == 'A':
+                correct_voting += 1
+            elif sign_voting < 0 and ground_truth == 'T':
+                correct_voting += 1
+
+        accuracy_single = (correct_single / len(test_positions)) * 100
+        accuracy_voting = (correct_voting / len(test_positions)) * 100
+        improvement = accuracy_voting - accuracy_single
+
+        logger.info(f"Coverage {coverage}x:")
+        logger.info(f"  Single codebook: {accuracy_single:.1f}%")
+        logger.info(f"  Voting:          {accuracy_voting:.1f}%")
+        logger.info(f"  Improvement:     {improvement:+.1f}%")
+        logger.info("")
+
+        results.append({
+            'coverage': coverage,
+            'num_codebooks': int(coverage),
+            'accuracy_single': accuracy_single,
+            'accuracy_voting': accuracy_voting,
+            'improvement': improvement
+        })
+
+    return {'coverage_effect_results': results}
+
+
+def analyze_cross_lens_agreement() -> Dict:
+    """
+    Test 4: Analyze how different lenses agree/disagree on nucleotide identity.
+
+    Each nucleotide has a unique biophysical signature across lenses:
+    - A: AT(+), GC(0), PuPy(+), AmKe(+)
+    - T: AT(-), GC(0), PuPy(-), AmKe(-)
+    - G: AT(0), GC(+), PuPy(+), AmKe(-)
+    - C: AT(0), GC(-), PuPy(-), AmKe(+)
+    """
+    logger.info("=" * 80)
+    logger.info("TEST 4: CROSS-LENS AGREEMENT ANALYSIS")
+    logger.info("=" * 80)
+    logger.info("")
+
+    # Expected signatures for each nucleotide
+    expected_signatures = {
+        'A': {'AT': 1, 'GC': 0, 'PuPy': 1, 'AmKe': 1, 'StWk': -1},
+        'T': {'AT': -1, 'GC': 0, 'PuPy': -1, 'AmKe': -1, 'StWk': -1},
+        'G': {'AT': 0, 'GC': 1, 'PuPy': 1, 'AmKe': -1, 'StWk': 1},
+        'C': {'AT': 0, 'GC': -1, 'PuPy': -1, 'AmKe': 1, 'StWk': 1},
+    }
+
+    # Generate balanced test sequence
+    sequence = generate_controlled_sequence(2000, gc_content=0.5, seed=42)
+
+    # Create multi-lens encoder
+    encoder = MultiLensEncoder()
+    encoder.add_standard_lenses(D=10000, N=2000, overlap=0.0, coverage=1.0)
+
+    # Encode sequence
+    results = encoder.encode_sequence(sequence, "test_seq")
+
+    # Test positions
+    test_positions = np.random.choice(2000, size=200, replace=False)
+
+    # Track agreement
+    nucleotide_results = {nuc: defaultdict(list) for nuc in ['A', 'T', 'G', 'C']}
+
+    for pos in test_positions:
+        ground_truth = sequence[pos]
+
+        # Query each lens
+        observed_signature = {}
+
+        for lens_name in ['AT', 'GC', 'PuPy', 'AmKe', 'StWk']:
+            lens_data = results['lenses'][lens_name]['chunks'][0]  # First chunk
+            lens = encoder.lenses[lens_name]
+
+            sign, conf = lens.query_position(lens_data['data']['bin_vec'], pos, codebook_idx=0)
+            observed_signature[lens_name] = sign
+
+        # Compare to expected
+        expected = expected_signatures[ground_truth]
+
+        for lens_name, expected_sign in expected.items():
+            observed_sign = observed_signature[lens_name]
+            agrees = (expected_sign == observed_sign)
+            nucleotide_results[ground_truth][lens_name].append(agrees)
+
+    # Report agreement rates
+    logger.info(f"{'Nucleotide':<12} | {'AT':>8} | {'GC':>8} | {'PuPy':>8} | {'AmKe':>8} | {'StWk':>8}")
+    logger.info("-" * 70)
+
+    summary_results = {}
+
+    for nuc in ['A', 'T', 'G', 'C']:
+        agreement_rates = {}
+        row = [nuc]
+
+        for lens_name in ['AT', 'GC', 'PuPy', 'AmKe', 'StWk']:
+            agreements = nucleotide_results[nuc][lens_name]
+            if agreements:
+                rate = (sum(agreements) / len(agreements)) * 100
+                agreement_rates[lens_name] = rate
+                row.append(f"{rate:7.1f}%")
+            else:
+                agreement_rates[lens_name] = 0.0
+                row.append("    N/A")
+
+        logger.info(f"{row[0]:<12} | {row[1]} | {row[2]} | {row[3]} | {row[4]} | {row[5]}")
+
+        summary_results[nuc] = agreement_rates
+
+    logger.info("")
+
+    # Overall accuracy: Can we correctly identify nucleotide from multi-lens signature?
+    correct_identifications = 0
+
+    for pos in test_positions:
+        ground_truth = sequence[pos]
+
+        # Get observed signature
+        observed_signature = {}
+        for lens_name in ['AT', 'GC', 'PuPy', 'AmKe', 'StWk']:
+            lens_data = results['lenses'][lens_name]['chunks'][0]
+            lens = encoder.lenses[lens_name]
+            sign, _ = lens.query_position(lens_data['data']['bin_vec'], pos, codebook_idx=0)
+            observed_signature[lens_name] = sign
+
+        # Find best matching nucleotide
+        best_match = None
+        best_score = -1
+
+        for candidate_nuc in ['A', 'T', 'G', 'C']:
+            expected = expected_signatures[candidate_nuc]
+            score = sum(1 for lens in ['AT', 'GC', 'PuPy', 'AmKe', 'StWk']
+                       if expected[lens] == observed_signature[lens])
+
+            if score > best_score:
+                best_score = score
+                best_match = candidate_nuc
+
+        if best_match == ground_truth:
+            correct_identifications += 1
+
+    overall_accuracy = (correct_identifications / len(test_positions)) * 100
+
+    logger.info(f"Overall nucleotide identification accuracy: {overall_accuracy:.1f}%")
+    logger.info(f"(using multi-lens consensus)")
+    logger.info("")
+
+    return {
+        'cross_lens_agreement': summary_results,
+        'overall_accuracy': overall_accuracy,
+        'positions_tested': len(test_positions)
+    }
+
+
+def run_comprehensive_validation():
+    """Main runner for all validation tests."""
+    logger.info("=" * 80)
+    logger.info("MULTI-LENS BIOPHYSICAL ENCODER - COMPREHENSIVE VALIDATION")
+    logger.info("=" * 80)
+    logger.info("")
+
+    all_results = {
+        'metadata': {
+            'validation_type': 'multi_lens_comprehensive',
+            'timestamp': time.strftime('%Y-%m-%d %H:%M:%S'),
+            'version': '1.0'
+        }
+    }
+
+    # Test 1: Parameter optimization
+    logger.info("Running Test 1: Single Lens Parameter Optimization...")
+    test1_results = test_single_lens_parameters()
+    all_results.update(test1_results)
+
+    # Test 2: Overlap effect
+    logger.info("Running Test 2: Overlap Effect Analysis...")
+    test2_results = test_overlap_effect()
+    all_results.update(test2_results)
+
+    # Test 3: Coverage effect
+    logger.info("Running Test 3: Coverage Effect Analysis...")
+    test3_results = test_coverage_effect()
+    all_results.update(test3_results)
+
+    # Test 4: Cross-lens agreement
+    logger.info("Running Test 4: Cross-Lens Agreement Analysis...")
+    test4_results = analyze_cross_lens_agreement()
+    all_results.update(test4_results)
+
+    # Save results
+    output_dir = Path("HDV_VALIDATION_PACKAGE/biophysical_tests")
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    output_file = output_dir / "multi_lens_validation_results.json"
+    with open(output_file, 'w') as f:
+        json.dump(all_results, f, indent=2)
+
+    logger.info("=" * 80)
+    logger.info(f"✓ Results saved to: {output_file}")
+    logger.info("=" * 80)
+    logger.info("")
+
+    # Print key findings
+    logger.info("KEY FINDINGS:")
+    logger.info("")
+
+    # Best parameter configuration
+    param_results = all_results['parameter_grid_results']
+    best_config = max(param_results, key=lambda x: x['mean_accuracy'])
+    logger.info(f"1. Best parameter configuration:")
+    logger.info(f"   Lens: {best_config['lens_name']}")
+    logger.info(f"   D={best_config['dimension']}, N={best_config['chunk_size']}, "
+               f"overlap={best_config['overlap_fraction']}, coverage={best_config['coverage']}x")
+    logger.info(f"   Accuracy: {best_config['mean_accuracy']:.1f}% ± {best_config['std_accuracy']:.1f}%")
+    logger.info(f"   Encoding time: {best_config['mean_encode_time_ms']:.1f}ms")
+    logger.info("")
+
+    # Overlap benefit
+    if 'overlap_effect_results' in all_results and all_results['overlap_effect_results']:
+        best_overlap = max(all_results['overlap_effect_results'], key=lambda x: x['improvement'])
+        logger.info(f"2. Overlap effect:")
+        logger.info(f"   Best overlap: {best_overlap['overlap_fraction']:.0%}")
+        logger.info(f"   Improvement: {best_overlap['improvement']:+.1f}%")
+        logger.info("")
+
+    # Coverage benefit
+    if 'coverage_effect_results' in all_results:
+        best_coverage = max(all_results['coverage_effect_results'], key=lambda x: x['improvement'])
+        logger.info(f"3. Coverage effect:")
+        logger.info(f"   Best coverage: {best_coverage['coverage']}x")
+        logger.info(f"   Improvement: {best_coverage['improvement']:+.1f}%")
+        logger.info("")
+
+    # Multi-lens accuracy
+    if 'overall_accuracy' in all_results:
+        logger.info(f"4. Multi-lens consensus:")
+        logger.info(f"   Nucleotide identification: {all_results['overall_accuracy']:.1f}%")
+        logger.info("")
+
+    logger.info("=" * 80)
+    logger.info("✅ COMPREHENSIVE VALIDATION COMPLETE")
+    logger.info("=" * 80)
+
+
+if __name__ == "__main__":
+    run_comprehensive_validation()

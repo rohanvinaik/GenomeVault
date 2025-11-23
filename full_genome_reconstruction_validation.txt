@@ -1,0 +1,23 @@
+[E::fai_build_core] File truncated at line 1
+[E::fai_build3_core] Cannot index files compressed with gzip, please use bgzip
+================================================================================
+FULL GENOME NUCLEOTIDE RECOVERY VALIDATION
+Critical Test: Can we determine ANY nucleotide from GDiff?
+================================================================================
+
+Loading GDiff: data/experimental_strands/ERR3239334/encoding/experimental.gdiff.gz
+  Loaded 3,018,354 variants
+  Covering 312 regions
+  Guide pool: ['ref1', 'ref2', 'ref3', 'ref4', 'ref5', 'ref6', 'ref7', 'ref8', 'ref9', 'ref10', 'ref11']
+
+Loading guide FASTA files...
+Traceback (most recent call last):
+  File "/Users/rohanvinaik/genomevault/validate_full_genome_reconstruction.py", line 298, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/Users/rohanvinaik/genomevault/validate_full_genome_reconstruction.py", line 168, in main
+    guide_fastas[i] = pysam.FastaFile(str(fasta_path))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "pysam/libcfaidx.pyx", line 121, in pysam.libcfaidx.FastaFile.__cinit__
+  File "pysam/libcfaidx.pyx", line 181, in pysam.libcfaidx.FastaFile._open
+OSError: error when opening file `/Volumes/1TBStorage/guide_strands/ref1.fa.gz`

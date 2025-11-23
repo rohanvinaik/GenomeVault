@@ -1,0 +1,103 @@
+# GenomeVault Blockchain Configuration
+# Attestation system for immutable audit trails
+
+blockchain:
+  # Enable/disable blockchain integration
+  # Default: false (opt-in)
+  enabled: false
+
+  # Network selection
+  # Options: ethereum-mainnet, ethereum-goerli, polygon, polygon-mumbai, localhost
+  # Recommended: polygon-mumbai (testnet) or polygon (mainnet)
+  network: "polygon-mumbai"
+
+  # Deployed contract address
+  # Update after deploying VerificationContract.sol
+  contract_address: ""  # e.g., "0x1234567890abcdef1234567890abcdef12345678"
+
+  # RPC provider API key (optional, for Alchemy/Infura)
+  # If using public RPC, leave empty
+  api_key: ""
+
+  # Private key for signing transactions (optional, for write operations)
+  # ⚠️ WARNING: Never commit private keys to git
+  # Use environment variable: export GENOMEVAULT_PRIVATE_KEY="0x..."
+  private_key: ""  # Or set via environment variable
+
+  # Attestation configuration
+  attestation:
+    # Record differential encoding attestations
+    record_encoding: true
+
+    # Record ZK proof attestations
+    record_zk_proofs: true
+
+    # Record PIR query attestations
+    # Note: Privacy-sensitive, consider disabling for maximum privacy
+    record_pir_queries: false
+
+    # Record HDC encoding attestations
+    record_hdc_encoding: false
+
+    # Record KAN encoding attestations (future)
+    record_kan_encoding: false
+
+    # Batch mode: batch multiple attestations to reduce gas costs
+    # Recommended: true for production
+    batch_mode: true
+
+    # Batch size: number of attestations per batch
+    # Larger batches = lower gas per attestation, but higher latency
+    batch_size: 10
+
+    # Auto-flush: automatically flush pending batches after this many seconds
+    # Set to 0 to disable auto-flush (manual flush required)
+    auto_flush_seconds: 300  # 5 minutes
+
+  # Gas settings
+  gas:
+    # Gas limit for single attestation
+    single_attestation_limit: 200000
+
+    # Gas limit for batch attestation
+    batch_attestation_limit: 500000
+
+    # Gas price multiplier (e.g., 1.2 = 20% above network average)
+    # Higher = faster confirmation, more expensive
+    price_multiplier: 1.0
+
+  # Network-specific settings
+  networks:
+    polygon-mumbai:
+      rpc_url: "https://rpc-mumbai.maticvigil.com"
+      chain_id: 80001
+      block_explorer: "https://mumbai.polygonscan.com"
+
+    polygon:
+      rpc_url: "https://polygon-rpc.com"
+      chain_id: 137
+      block_explorer: "https://polygonscan.com"
+
+    ethereum-goerli:
+      rpc_url: "https://eth-goerli.g.alchemy.com/v2/"
+      chain_id: 5
+      block_explorer: "https://goerli.etherscan.io"
+
+    ethereum-mainnet:
+      rpc_url: "https://eth-mainnet.g.alchemy.com/v2/"
+      chain_id: 1
+      block_explorer: "https://etherscan.io"
+
+# Example: Enable blockchain for production
+# blockchain:
+#   enabled: true
+#   network: "polygon"
+#   contract_address: "0xYourDeployedContractAddress"
+#   api_key: "${ALCHEMY_API_KEY}"  # From environment variable
+#   private_key: "${GENOMEVAULT_PRIVATE_KEY}"  # From environment variable
+#   attestation:
+#     record_encoding: true
+#     record_zk_proofs: true
+#     record_pir_queries: false
+#     batch_mode: true
+#     batch_size: 20

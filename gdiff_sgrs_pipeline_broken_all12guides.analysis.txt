@@ -1,0 +1,53 @@
+================================================================================
+GDiff Pipeline Run Analysis
+================================================================================
+
+Run Time: 3:19:04
+  Started:  2025-11-06 11:37:48
+  Finished: 2025-11-06 14:56:52
+
+Configuration:
+  K Anonymity: 13
+  Chunk Size Mb: 3.9
+  Total Chunks: 790
+
+Input Quality:
+  Q Input: 0.9989
+  Avg Qscore: 29.5
+  Q30 Pct: 97.04
+
+Overall Statistics:
+  Total Variants: 84,328,549
+  Chunks Processed: 159
+  Progress: 20.1%
+
+Chunk Processing Performance:
+  Mean time per chunk: 63.9s
+  Median time: 43.5s
+  Min time: 1.0s
+  Max time: 298.0s
+  Std dev: 62.6s
+
+Chromosome Breakdown:
+Chromosome               Variants   Chunks   Avg Time
+----------------------------------------------------
+chr10_consensus        18,463,424       35      73.5s
+chr11_consensus        18,499,717       35      62.3s
+chr12_consensus        13,747,717       24      63.5s
+chr1_consensus         33,617,691       65      59.7s
+
+Biological/Performance Patterns:
+
+  Highest variant density:
+    chr1_consensus: 517,195 variants/chunk
+    chr11_consensus: 528,563 variants/chunk
+    chr10_consensus: 527,526 variants/chunk
+    chr12_consensus: 572,822 variants/chunk
+
+  Slowest processing (potential bottlenecks):
+    chr10_consensus: 73.5s/chunk
+    chr12_consensus: 63.5s/chunk
+    chr11_consensus: 62.3s/chunk
+    chr1_consensus: 59.7s/chunk
+
+================================================================================

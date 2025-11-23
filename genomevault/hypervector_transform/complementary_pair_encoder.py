@@ -121,15 +121,34 @@ class ComplementaryPairEncoder:
 
     def _generate_position_codebook(self) -> np.ndarray:
         """
-        Generate position codebook: N random D-dimensional bipolar vectors
+        Generate SPARSE position codebook: N random D-dimensional bipolar vectors
 
-        Each position i gets a unique random vector with elements ∈ {-1, +1}
-        Uses int8 for memory efficiency (1 byte per element vs 4 for int32)
+        CRITICAL FIX (November 21, 2025): Each position vector has EXACTLY ONE non-zero element.
+        This is locality-sensitive hashing, not broadcasting!
 
-        Memory: N × D bytes (2,000 × 10,000 = 20 MB)
+        Each position i → random dimension d_i with value ±1
+        - Position 0 → dimension 2847: [0, 0, ..., ±1, ..., 0]
+        - Position 1 → dimension 0193: [0, 0, ..., ±1, ..., 0]
+        - ...
+        - Position N-1 → dimension 4201: [0, 0, ..., ±1, ..., 0]
+
+        This ensures:
+        - Each nucleotide contributes to exactly ONE dimension
+        - 1024 nucleotides collectively activate ~1024 random dimensions
+        - Out of D=5120, that's ~20% natural density before bank transparency
+        - With bank transparency (50% silent per bank), ~10-20% final sparsity
+
+        Memory: N × D bytes (still sparse, but stored as full array for speed)
         """
         np.random.seed(self.seed)
-        codebook = np.random.choice([-1, 1], size=(self.N, self.D)).astype(np.int8)
+        codebook = np.zeros((self.N, self.D), dtype=np.int8)
+
+        # Each position gets exactly ONE random dimension with ±1
+        for pos_idx in range(self.N):
+            random_dim = np.random.randint(0, self.D)
+            random_sign = np.random.choice([-1, 1])
+            codebook[pos_idx, random_dim] = random_sign
+
         return codebook
 
     def _index_variants_by_chrom(self) -> Dict[str, List[dict]]:
@@ -197,7 +216,9 @@ class ComplementaryPairEncoder:
         if guide_id in self.guide_fastas:
             try:
                 # pysam uses 0-based coordinates
-                nucleotide = self.guide_fastas[guide_id].fetch(chrom, pos, pos + 1).upper()
+                # Guide FASTAs have "_consensus" suffix on chromosome names
+                chrom_fasta = f"{chrom}_consensus"
+                nucleotide = self.guide_fastas[guide_id].fetch(chrom_fasta, pos, pos + 1).upper()
                 if nucleotide in ['A', 'T', 'G', 'C']:
                     return nucleotide
             except Exception:
@@ -282,7 +303,9 @@ class ComplementaryPairEncoder:
 
                 first_guide = list(self.guide_fastas.values())[0]
                 try:
-                    chrom_length = first_guide.get_reference_length(chrom)
+                    # Guide FASTAs have "_consensus" suffix on chromosome names
+                    chrom_fasta = f"{chrom}_consensus"
+                    chrom_length = first_guide.get_reference_length(chrom_fasta)
                 except Exception:
                     continue
 

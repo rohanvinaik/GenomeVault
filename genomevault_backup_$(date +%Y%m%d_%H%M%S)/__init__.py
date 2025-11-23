@@ -1,0 +1,85 @@
+"""GenomeVault - Privacy-preserving genomic data management platform.
+
+The package's public API is defined by ``__all__`` below, which lists the
+symbols intentionally exported for external use.
+"""
+
+from .logging_config import setup_logging
+from .version import (
+    get_version_info,
+    check_compatibility,
+    format_version_string,
+    PIR_PROTOCOL_VERSION,
+    PIR_PROTOCOL_REVISION,
+    PIR_COMPATIBILITY,
+    ZK_CIRCUIT_VERSION,
+    HDC_ENCODER_VERSION,
+    VERIFIER_CONTRACT_VERSION,
+    MASTER_SEED_PREFIX,
+    HDC_SEED,
+    ZK_SEED,
+    COMPONENT_VERSIONS,
+)
+from .types import (
+    ShardMetadata,
+    CacheStats,
+    ModelMetadata,
+    TrainingConfig,
+    PipelineStep,
+    PipelineResult,
+    GenomicAnnotation,
+    ReferenceGenome,
+    AuditLog,
+    AccessControl,
+    FederatedNode,
+    FederatedUpdate,
+    BlockData,
+    TransactionData,
+    SystemMetrics,
+    QueryMetrics,
+    DatabaseConfig,
+    CacheConfig,
+    ValidationResult,
+    ErrorContext,
+)
+from .exceptions import error_response
+from .logging_utils import get_logger
+
+__all__ = [
+    "AccessControl",
+    "AuditLog",
+    "BlockData",
+    "COMPONENT_VERSIONS",
+    "CacheConfig",
+    "CacheStats",
+    "DatabaseConfig",
+    "ErrorContext",
+    "FederatedNode",
+    "FederatedUpdate",
+    "GenomicAnnotation",
+    "HDC_ENCODER_VERSION",
+    "HDC_SEED",
+    "MASTER_SEED_PREFIX",
+    "ModelMetadata",
+    "PIR_COMPATIBILITY",
+    "PIR_PROTOCOL_REVISION",
+    "PIR_PROTOCOL_VERSION",
+    "PipelineResult",
+    "PipelineStep",
+    "QueryMetrics",
+    "ReferenceGenome",
+    "ShardMetadata",
+    "SystemMetrics",
+    "TrainingConfig",
+    "TransactionData",
+    "VERIFIER_CONTRACT_VERSION",
+    "ValidationResult",
+    "ZK_CIRCUIT_VERSION",
+    "ZK_SEED",
+    "check_compatibility",
+    "error_response",
+    "format_version_string",
+    "get_logger",
+    "get_version_info",
+    "setup_logging",
+]

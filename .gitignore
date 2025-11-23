@@ -414,5 +414,13 @@ HDV_VALIDATION_PACKAGE/
 data/experimental_strands/**/encoding/temp/
 data/experimental_strands/**/temp/
 benchmark_results/**/temp/
+
+# Large benchmark output directories (37+ GB)
+benchmark_results/**/index_cache/
+benchmark_results/**/layer1_consensus/
+benchmark_results/**/guide_sequences/
+data/templates/
+genomevault/hdv_validation/hdc_experimentation/output/
+
 # ERR directories contain large SRA files
 ERR*/
