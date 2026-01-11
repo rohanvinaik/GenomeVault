@@ -10,7 +10,16 @@ import typer
 
 import numpy as np
 
-from genomevault.hypervector_transform.encoding import HypervectorEncoder, HypervectorConfig
+# Legacy encoder imports - conditionally import for backwards compatibility
+# These are used in demo commands; production code should use AdaptiveEncoder
+try:
+    from genomevault.hypervector_transform.encoding import HypervectorEncoder, HypervectorConfig
+    LEGACY_ENCODER_AVAILABLE = True
+except ImportError:
+    HypervectorEncoder = None
+    HypervectorConfig = None
+    LEGACY_ENCODER_AVAILABLE = False
+
 from genomevault.core.constants import OmicsType
 from genomevault.zk_proofs.prover import Prover
 from genomevault.zk_proofs.verifier import Verifier
@@ -44,6 +53,10 @@ app.add_typer(benchmark_app, name="benchmark")
 hsm_app = typer.Typer(help="Hardware Security Module operations")
 app.add_typer(hsm_app, name="hsm")
 
+# Unified production pipeline
+from genomevault.cli.unified import app as unified_app
+app.add_typer(unified_app, name="unified")
+
 
 @demo_app.command("run")
 def demo_run(
@@ -67,6 +80,9 @@ def demo_run(
 
         if demo_type in ["basic", "full"]:
             # HDC Encoding Demo
+            if not LEGACY_ENCODER_AVAILABLE:
+                typer.echo("Legacy encoder not available. Use 'unified' commands for production encoding.")
+                raise typer.Exit(1)
             config = HypervectorConfig(dimension=1000)
             encoder = HypervectorEncoder(config=config)
 
@@ -169,6 +185,9 @@ def encode(
                 input_data = {"data": data}
 
         # Initialize encoder
+        if not LEGACY_ENCODER_AVAILABLE:
+            typer.echo("Legacy encoder not available. Use 'unified' commands for production encoding.")
+            raise typer.Exit(1)
         config = HypervectorConfig(dimension=dimension)
         encoder = HypervectorEncoder(config=config)
 

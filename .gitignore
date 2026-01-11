@@ -424,3 +424,6 @@ genomevault/hdv_validation/hdc_experimentation/output/
 
 # ERR directories contain large SRA files
 ERR*/
+
+# Archive directory (legacy code and old documentation)
+archive/

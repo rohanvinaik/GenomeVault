@@ -1,43 +1,37 @@
 """
 Hypervector Transform Module for GenomeVault
 
-This module implements Hierarchical Hyperdimensional Computing (HDC) for
+This module implements Hyperdimensional Computing (HDC) for
 privacy-preserving genomic data encoding.
 
-Key components:
-- UnifiedGenomicEncoder: Unified interface supporting differential and legacy encoding
-- HypervectorEncoder: Legacy direct encoding (backward compatible)
-- DifferentialGenomicEncoder: New cryptographic differential encoding
-- HypervectorBinder: Binding operations for combining hypervectors
-- HypervectorRegistry: Version management and reproducibility
-- HDC API: RESTful endpoints for encoding services
+Primary Components:
+- AdaptiveEncoder: Production encoder with adaptive k-selection (99.2% accuracy)
+- AdaptiveSparseHadamardCodebook: The core codebook implementation
+- DifficultyScorer: Adaptive k-selection based on sequence difficulty
 
-Migration Guide:
-    # Legacy code (still works):
-    from genomevault.hypervector_transform import HypervectorEncoder
-    encoder = HypervectorEncoder(config)
+Usage:
+    from genomevault.hypervector_transform import AdaptiveEncoder
 
-    # New unified interface (recommended):
-    from genomevault.hypervector_transform import UnifiedGenomicEncoder, EncodingMode
-    encoder = UnifiedGenomicEncoder(mode=EncodingMode.DIFFERENTIAL)
-    encoded = encoder.encode_genome(genome, AnalysisType.SLIDING_WINDOW)
+    encoder = AdaptiveEncoder()
+    encoded, _ = encoder.encode_chunk(sequence, k=6)
+    decoded = encoder.decode_chunk(encoded, k=6)
 """
 
-from .holographic import (
-    HolographicStructure,
-    HolographicEncoder,
-    encode_variant,
-    query_hologram,
+# Primary production encoder (promoted from experimental)
+from .adaptive_encoder import (
+    AdaptiveEncoder,
+    AdaptiveSparseHadamardCodebook,
+    DifficultyScorer,
+    GenomicDataLoader,
+    EncodingConfig,
+    run_production_encoding,
+    sanity_check_encoding,
+    # Constants
+    D, N, STEP, N_BANKS, BASE_SEED,
+    DIFFICULTY_THRESHOLDS,
 )
-from .registry import HypervectorRegistry, VersionMigrator
-from .hierarchical import (
-    ProjectionDomain,
-    HierarchicalHypervector,
-    HolographicRepresentation,
-    HierarchicalEncoder,
-    create_hierarchical_encoder,
-    encode_genomic_hierarchical,
-)
+
+# Binding operations (core functionality, no broken dependencies)
 from .binding_operations import (
     BindingOperation,
     BindingType,
@@ -49,111 +43,27 @@ from .binding_operations import (
     fourier_bind,
     protect_vector,
 )
-from .hdc_api import (
-    EncodingRequest,
-    EncodingResponse,
-    MultiModalEncodingRequest,
-    SimilarityRequest,
-    DecodeRequest,
-    VersionInfo,
-    PerformanceMetrics,
-    get_encoder,
-    include_routes,
-)
-from .binding import (
-    BindingType,
-    HypervectorBinder,
-    PositionalBinder,
-    CrossModalBinder,
-    circular_bind,
-    protect_vector,
-)
-from .mapping import (
-    MappingConfig,
-    SimilarityPreservingMapper,
-    BiologicalSimilarityMapper,
-    ManifoldPreservingMapper,
-    create_biological_mapper,
-    preserve_similarities,
-)
-from .hdc_encoder import (
-    UnifiedGenomicEncoder,
-    EncodingMode,
-    EncodingFeatureFlags,
-    # Legacy exports for backward compatibility
-    HypervectorEncoder,
-    HypervectorConfig,
-    ProjectionType,
-    # Hardware-accelerated backend system
-    BackendOptimizedEncoder,
-    BackendEncoderConfig,
-    create_backend_encoder,
-)
-from .privacy_preserving_genome_hdv import (
-    PrivacyPreservingGenomeHDV,
-    EncodingSchema,
-    SchemaConfig,
-    QueryResult,
-)
 
 __all__ = [
+    # Primary encoder
+    "AdaptiveEncoder",
+    "AdaptiveSparseHadamardCodebook",
+    "DifficultyScorer",
+    "GenomicDataLoader",
+    "EncodingConfig",
+    "run_production_encoding",
+    "sanity_check_encoding",
+    # Constants
+    "D", "N", "STEP", "N_BANKS", "BASE_SEED",
+    "DIFFICULTY_THRESHOLDS",
+    # Binding
     "BindingOperation",
     "BindingOperations",
     "BindingType",
-    "BindingType",
-    "BiologicalSimilarityMapper",
-    "CrossModalBinder",
-    "DecodeRequest",
-    "EncodingRequest",
-    "EncodingResponse",
-    "HierarchicalEncoder",
-    "HierarchicalHypervector",
-    "HolographicEncoder",
-    "HolographicRepresentation",
-    "HolographicStructure",
     "HypervectorBinder",
-    "HypervectorBinder",
-    "HypervectorRegistry",
-    "ManifoldPreservingMapper",
-    "MappingConfig",
-    "MultiModalEncodingRequest",
-    "PerformanceMetrics",
-    "PositionalBinder",
-    "ProjectionDomain",
-    "SimilarityPreservingMapper",
-    "SimilarityRequest",
-    "VersionInfo",
-    "VersionMigrator",
     "bind",
-    "circular_bind",
-    "circular_bind",
-    "create_biological_mapper",
-    "create_hierarchical_encoder",
-    "encode_genomic_hierarchical",
-    "encode_variant",
-    "fourier_bind",
-    "get_encoder",
-    "include_routes",
-    "preserve_similarities",
-    "protect_vector",
-    "protect_vector",
-    "query_hologram",
     "superpose",
-    # Unified encoding interface
-    "UnifiedGenomicEncoder",
-    "EncodingMode",
-    "EncodingFeatureFlags",
-    # Legacy encoding components
-    "HypervectorEncoder",
-    "HypervectorConfig",
-    "ProjectionType",
-    # Hardware-accelerated backend system
-    "BackendOptimizedEncoder",
-    "BackendEncoderConfig",
-    "create_backend_encoder",
-    # Privacy-preserving genome HDV
-    "PrivacyPreservingGenomeHDV",
-    "EncodingSchema",
-    "SchemaConfig",
-    "QueryResult",
+    "circular_bind",
+    "fourier_bind",
+    "protect_vector",
 ]
