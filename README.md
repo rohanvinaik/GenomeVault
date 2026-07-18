@@ -1,18 +1,11 @@
 # GenomeVault
 
-**Privacy-Preserving Genomic Computing with Cryptographic Guarantees**
+**Compute on a genome without ever holding it.**
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%203.0-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-[![Status: Production Ready](https://img.shields.io/badge/Status-Production%20Ready-brightgreen.svg)](benchmark_results/FINAL_VALIDATION_SUMMARY.md)
 
----
-
-## The Problem
-
-Genomic data is uniquely sensitive - it identifies individuals, reveals disease risks, and exposes family relationships. Yet genomic research requires data sharing across institutions.
-
-Current solutions force an impossible trade-off:
+Your genome is a password you can never change — and it is not only yours. It carries your siblings, your parents, your children; leak it once and it is exposed for three generations, permanently. Yet genomic research runs on shared data, so every institution meets the same trade nobody should have to make: keep the genome private, or make it useful.
 
 | Approach | Privacy | Speed | Utility |
 |----------|---------|-------|---------|
@@ -20,15 +13,7 @@ Current solutions force an impossible trade-off:
 | Homomorphic encryption | Strong | Hours/query | Limited |
 | Differential privacy | Statistical | Fast | Degraded |
 
-**Result:** Research stalls because sharing data means destroying privacy.
-
----
-
-## The Solution
-
-GenomeVault enables **cryptographic privacy** with **sub-second queries** and **full analytical utility**.
-
-### How It Works
+Homomorphic encryption buys privacy at hours per query; differential privacy buys speed by degrading the answer; raw sharing buys everything except the one thing that matters. The trade looks like a law of nature. It is an unsolved engineering problem, and GenomeVault solves it: **cryptographic privacy, sub-second queries, and full analytical utility, at once.** A 150 GB genome becomes a 1–10 KB encrypted query; a zero-knowledge proof answers the question without revealing the genome that answered it; private information retrieval fetches the answer without revealing the question. Zero bits leaked — and the whole pipeline runs in 2.11 seconds on real whole-genome data.
 
 ```
 Raw Genome (150 GB)
@@ -44,7 +29,9 @@ Zero-Knowledge Proof          Private Information Retrieval
 (proves without revealing)     (retrieves without exposing query)
 ```
 
-### The 7 Layers
+## Seven layers, each closing one way to leak
+
+Privacy here is not a single trick; it is seven, composed so that no layer ever sees what the layer before it protected. The genome is never aligned to a public reference — it is aligned to a pool of real genomes acting as blind middlemen, encoded as a difference against that pool, projected into a hypervector, and answered only through a proof and a retrieval that each reveal nothing.
 
 | Layer | Function | Output |
 |-------|----------|--------|
@@ -56,11 +43,9 @@ Zero-Knowledge Proof          Private Information Retrieval
 | 6. ZK Proofs | Groth16 proofs (128-bit security) | 743-byte proof |
 | 7. PIR Queries | Information-theoretic retrieval | 0 bits leaked |
 
----
+## What it costs
 
-## Performance
-
-**Validated on real whole-genome data:**
+Measured on real whole-genome data — not a model, not a projection:
 
 | Operation | Time | Security |
 |-----------|------|----------|
@@ -69,9 +54,7 @@ Zero-Knowledge Proof          Private Information Retrieval
 | ZK proof generation | 0.74s | 128-bit |
 | PIR query | 4.33ms | 0 bits leaked |
 
----
-
-## Quick Start
+## Quick start
 
 ```bash
 # Install
@@ -88,25 +71,34 @@ python -m genomevault.cli.main unified run \
     --output output/
 ```
 
----
+## Where it goes
 
-## Use Cases
+- **Clinical genomics** — query a patient's variants without exposing the raw genome.
+- **Multi-site studies** — collaborate across institutions with no data transfer at all.
+- **Rare disease research** — pool cohorts while every individual stays private.
+- **Pharmacogenomics** — predict drug response under cryptographic guarantee.
 
-- **Clinical Genomics**: Query patient variants without exposing raw data
-- **Multi-Site Studies**: Collaborate across institutions without data transfer
-- **Rare Disease Research**: Pool data while preserving individual privacy
-- **Pharmacogenomics**: Drug response prediction with cryptographic guarantees
+## Real, not simulated
 
----
+The distinction the field usually blurs, stated plainly:
 
-## Key Features
+- **Adaptive HDC encoding** — 99.2% accuracy, Numba JIT-accelerated.
+- **Real ZK proofs** — production Groth16 via Circom, not a simulation of one.
+- **IT-PIR protocol** — information-theoretic security, so it is quantum-resistant by construction, not by key length.
+- **GPU acceleration** — Metal (Apple Silicon) and CUDA.
 
-- **Adaptive HDC Encoding**: 99.2% accuracy with Numba JIT acceleration
-- **Real ZK Proofs**: Production Groth16 via Circom (not simulation)
-- **IT-PIR Protocol**: Information-theoretic security (quantum-resistant)
-- **GPU Acceleration**: Metal (Apple Silicon) and CUDA support
+## Architecture
 
----
+```
+genomevault/
+├── pipelines/               # Unified production pipeline
+├── hypervector_transform/   # Adaptive HDC encoder
+├── differential_encoding/   # GDiff format implementation
+│   └── gdiff/               # Encoder, validator, schemas
+├── zk_proofs/               # Groth16 ZK proof system
+├── pir/                     # IT-PIR protocol
+└── cli/                     # Command-line interface
+```
 
 ## Documentation
 
@@ -115,26 +107,7 @@ python -m genomevault.cli.main unified run \
 - [Privacy Architecture](docs/SECURE_GUIDE_REFERENCE_SYSTEM.md)
 - [Academic Paper](docs/GenomeVault_Paper_Current/GenomeVault_Academic_Paper.pdf)
 
----
-
-## Architecture
-
-```
-genomevault/
-├── pipelines/           # Unified production pipeline
-├── hypervector_transform/  # Adaptive HDC encoder
-├── differential_encoding/  # GDiff format implementation
-│   └── gdiff/             # Encoder, validator, schemas
-├── zk_proofs/            # Groth16 ZK proof system
-├── pir/                  # IT-PIR protocol
-└── cli/                  # Command-line interface
-```
-
----
-
 ## Citation
-
-If you use GenomeVault in research, please cite:
 
 ```bibtex
 @software{genomevault2025,
@@ -145,12 +118,10 @@ If you use GenomeVault in research, please cite:
 }
 ```
 
----
-
 ## License
 
-AGPL-3.0 - See [LICENSE](LICENSE) for details.
+AGPL-3.0 — see [LICENSE](LICENSE).
 
 ---
 
-**GenomeVault**: Because genomic privacy shouldn't require sacrificing research utility.
+The privacy-versus-utility trade was never fundamental to genomics. It was the cost of not having built this yet.
